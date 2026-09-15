@@ -1,0 +1,63 @@
+Nexus Mods page text for OpenKeep (the page is created by hand; mod_id and file_id go into nexus.json afterwards).
+Paste each block into the matching field on the page's edit form. Category: Utilities.
+
+===== SUMMARY (plain text, one paragraph) =====
+Storage and inventory in one mod: craft, build and feed stations from nearby chests, ship holds and carts; stow, top up, sort, junk and route from the inventory panel; a Salvage tab that returns materials; stack sizes and weights; bigger chests with contents on hover; carts as workbenches; an automatic contents sign above every chest; two players in one chest with the chest owner's game as referee. Server synced, lockable, hot reloaded config and YAML rules.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+OpenKeep is the storage mod of the MilkyTeam workspace. Reach lets you craft, build and feed smelters, fires, cooking stations and fermenters from every container around you, ship holds and carts included: the crafting rows show what comes from storage, paying takes from your inventory first and then from the nearest chest. Stow is one workflow for a full inventory: stow it into the open chest (Quick stack and Stow all), top your stacks up from the chests, sort, mark junk and destroy it in one go, and route what belongs elsewhere by click, with favourites that never move, a find key that marks the chests holding an item, chest cycling, and ground pickup by rule. Salvage is a third tab in the crafting panel that gives a configurable fraction of an item's materials back. Stacks scales stack sizes and weights or sets them per item, Capacity resizes containers and shows their contents on hover, Carts turns every cart into a workbench, and Shared lets a second player look into, or work in, a chest someone else has open. Convenience features are on by default; stack sizes, weights and chest sizes default to vanilla. On a server the server's settings and rule files are used by everyone.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install OpenKeep. On a server, install it on the server and on every client.
+[*]Start the game once. BepInEx/config/milkyteam.openkeep.cfg and the six OpenKeep.*.yml rule files are written.
+[/list]
+For manual install, drop OpenKeep.dll into BepInEx/plugins. Jotunn is not required.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Reach: crafting, upgrading, building and station feeding count and pay from nearby containers (20 m by default, per container rules in OpenKeep.Reach.yml). Requirement rows show "3 + 12" with the storage part coloured. Hold Shift at a station to fill it, hold Alt to pull a stack into your inventory. Alt + R toggles it per character, Alt + L draws lines from chests to the stations they serve.
+[*]Ships and carts count as containers: standing on a moored Karve, Longship or Drakkar you craft from its hold. Containers are detected by the game's own component, so modded ships and chests work the same way and are addressed by their prefab names.
+[*]Stow: Quick stack (Q), Stow all (G), Top up (R), Sort inventory (T) and Sort container (Y) as buttons (a row below the player panel, movable with Button Row Offset) and hotkeys, sort by category, name, weight or value, auto sort on open.
+[*]Favourite items (F) and favourite slots (Shift + F) are never moved, trashed or salvaged; junk marks (J) with Destroy Junk (Shift + Delete), Trash (Delete) and a trash can, all with the game's confirmation popup.
+[*]Route a stack with Ctrl + click to the chest that holds it or its group, store one with V, find every chest holding an item (Z), dump to all nearby chests from outside the inventory (Alt + D), cycle chests with the arrow keys or the mouse wheel.
+[*]Ground pickup: chests you mark in OpenKeep.Stow.yml pull dropped items from the ground after a delay.
+[*]Salvage tab: every inventory stack with a recipe can be broken down for a fraction of its materials (0.75 by default, rounding and at-least-one rules, upgrade materials included), with a deny list and per item fractions in OpenKeep.Salvage.yml. Backspace salvages the hovered stack.
+[*]Stacks: stack and weight multipliers, absolute values per item, pattern or group in OpenKeep.Stacks.yml, optional per item config entries, ignore the portal restriction, merge into a chest's partial stacks when dragging.
+[*]Capacity: OpenKeep.Containers.yml lists every container prefab of your game with its vanilla size; change the numbers to resize chests, ship holds and carts. Hovering a container shows how full it is and what is inside.
+[*]Carts: a workbench on every cart (Shift + E to craft), with its own level and range.
+[*]Signs (off by default): a real vanilla sign above every chest you built, listing what is inside, most numerous first, kept up to date by the game that owns the chest. Optional counts, item and character limits, height and rotation, per prefab rules in OpenKeep.Signs.yml. Write your own text on a sign and it stays; remove a sign with the hammer and that chest gets none again until openkeep signs reset.
+[*]Shared chests: with Shared Chests = View a chest another player has open shows read-only, titled "(in use by <player>)", and goes live when they close it; with Full both players work the same chest and the chest owner's game decides every move, so nothing is ever duplicated or lost.
+[*]Console command openkeep: reload, containers, write docs, signs (item and container lists next to the cfg).
+[*]Every gameplay setting is server synced and lockable; hotkeys and display settings are per player. Config and YAML edits apply within seconds without a restart, in the file, with ConfigurationManager, or in the in-game YAML editor.
+[/list]
+
+[size=4][b]Shared chests[/b][/size]
+The game lets one player into a chest at a time. Shared Chests (section 0. Containers, default Off) adds two modes. View: interacting with a chest someone else has open shows its contents read-only with the title "(in use by <player>)"; when they close it your panel turns live without closing. Full: click, drag and drop, Take all, Stack all and OpenKeep's own quick stack, top up, routing and trash are sent as requests to the game of the player who owns the chest, which applies them or refuses them. Nothing moves on your side until it says yes, so if two players grab the same stack exactly one gets it ("Someone else got there first"); a slot the other player is moving is tinted and its tooltip says who. A request without an answer after 2 seconds counts as refused. Sorting a chest someone else is using is refused, and crafting never pays from one. Both players need the mod.
+
+[size=4][b]Warnings[/b][/size]
+[list]
+[*]Items in the extra rows of an enlarged chest are invisible to players without the mod and to the vanilla game.
+[*]Lowering a stack size limit, or removing the mod, loses the part of a stack above the new limit when the inventory holding it loads. Split large stacks first.
+[*]Automatic signs are real pieces: they stay in the world, with their last text, when the mod is removed.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]Optional: ConfigurationManager to change values and open the YAML editor in game.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/OpenKeep.
+
+[size=4][b]Tips[/b][/size]
+[url=https://ko-fi.com/milkeyman]ko-fi.com/milkeyman[/url]
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings come from the server. With Lock Configuration on (the default), every player uses the server's values and cannot change them locally; server admins can still edit them in game. With it off, each player uses their own file. In the console (F5), [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions, with a refusal code that is also written to the server's and your own log.
+
+[size=4][b]Shout outs[/b][/size]
+The BepInEx and Harmony teams, Iron Gate Studio for Valheim, and Nexus Mods for hosting this page. The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game, and every modder who keeps their mods open source so others can collaborate, learn and build on them.

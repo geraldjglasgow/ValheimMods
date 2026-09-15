@@ -1,0 +1,108 @@
+using System.Collections.Generic;
+using OpenKeep.Core;
+
+namespace OpenKeep.Stow
+{
+    /// <summary>
+    /// Quick stack, stow all and dump: the player's movable stacks go into containers, as far as they fit, every
+    /// stack through the writer (<see cref="ChestBatch"/>). What moved at once is reported at the end; a shared
+    /// chest reports itself when its replies are in. Equipped items, quest items, favourite items, favourite slots
+    /// and stacks with a request under way stay; a container's <c>refuse</c> list is honoured.
+    /// </summary>
+    public static class StowActions
+    {
+        /// <summary>The module is on and there is a local player who is not teleporting; says so otherwise.</summary>
+        public static bool Ready(out Player player)
+        {
+            player = Player.m_localPlayer;
+            if (!StowSettings.Enabled.Value)
+            {
+                Messages.Center(StowWords.Off);
+                return false;
+            }
+            return player != null && !player.IsTeleporting();
+        }
+
+        /// <summary>Stacks whose item the open container already holds go there; with Quick Stack Nearby, or with no
+        /// container open, every nearby container that holds the item is a target too.</summary>
+        public static void QuickStack()
+        {
+            if (!Ready(out Player player))
+                return;
+            bool nearby = StowSettings.QuickStackNearby.Value;
+            List<Container> targets = nearby ? StowTargets.Nearby(player) : StowTargets.OpenOnly();
+            if (targets.Count == 0)
+            {
+                if (nearby)
+                    Messages.Center(StowWords.Nothing);
+                else
+                    StowTargets.SayNoOpen();
+                return;
+            }
+            StackInto(player, targets, true);
+        }
+
+        /// <summary>Quick stack to every nearby container from outside the inventory.</summary>
+        public static void Dump()
+        {
+            if (!Ready(out Player player))
+                return;
+            if (!StowSettings.QuickStackNearby.Value)
+            {
+                Messages.Center(StowWords.NearbyOff);
+                return;
+            }
+            StackInto(player, StowTargets.Nearby(player), true);
+        }
+
+        /// <summary>Every movable item goes into the open container as far as it fits.</summary>
+        public static void StowAll()
+        {
+            if (!Ready(out Player player))
+                return;
+            List<Container> targets = StowTargets.OpenOnly();
+            if (targets.Count == 0)
+            {
+                StowTargets.SayNoOpen();
+                return;
+            }
+            StackInto(player, targets, false);
+        }
+
+        /// <summary>Moves the movable stacks into the targets in order; with <paramref name="onlyHeld"/> only into
+        /// containers that already hold the item. Reports the stacks that moved at least partly.</summary>
+        private static void StackInto(Player player, List<Container> targets, bool onlyHeld)
+        {
+            int stacks = 0;
+            bool waiting = false;
+            foreach (Container container in targets)
+            {
+                ChestBatch batch = new ChestBatch(container, StowWords.MovedTo);
+                foreach (ItemDrop.ItemData item in Candidates(player, container, onlyHeld))
+                    batch.Put(item, item.m_stack, 1);
+                batch.Finish();
+                if (batch.Waiting)
+                    waiting = true;
+                else
+                    stacks += batch.Moved;
+            }
+            StackMover.ReportAction(stacks, waiting);
+        }
+
+        private static List<ItemDrop.ItemData> Candidates(Player player, Container container, bool onlyHeld)
+        {
+            Inventory inventory = player.GetInventory();
+            Inventory target = container.GetInventory();
+            List<ItemDrop.ItemData> list = new List<ItemDrop.ItemData>();
+            foreach (ItemDrop.ItemData item in new List<ItemDrop.ItemData>(inventory.GetAllItems()))
+            {
+                if (!Movable.CanMove(player, inventory, item) || StowRules.Refuses(container, item))
+                    continue;
+                if (onlyHeld && !target.ContainsItemByName(item.m_shared.m_name))
+                    continue;
+                list.Add(item);
+            }
+            return list;
+        }
+    }
+}

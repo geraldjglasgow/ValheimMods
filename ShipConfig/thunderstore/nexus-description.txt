@@ -1,0 +1,51 @@
+Nexus Mods page text for ShipConfig (https://www.nexusmods.com/valheim/mods/3009).
+Paste each block into the matching field on the page's edit form. Category: Utilities.
+Consider renaming the page from "Ship Config" to "ShipConfig" to match the file and the Thunderstore package.
+
+===== SUMMARY (plain text, one paragraph) =====
+Every ship configurable: health, sail and paddle force, steering, drag, weather wear, damage taken, invulnerability, Ashlands ocean damage and build cost, plus global multipliers, for vanilla ships and modded ones. Changes apply immediately, also to ships already built. Server synced, hot reloaded, no Jotunn needed.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+ShipConfig gives every ship in Valheim its own settings: Raft, Karve, Longship, Drakkar, and any modded ship that has both a Ship and a WearNTear component. Entries are named after the prefab (VikingShip.Health is the Longship): Health, SailForce, PaddleForce, RudderSpeed, TurnForceSailing, TurnForcePaddling, ForwardDrag, SidewaysDrag, AngularDamping, WaterImpactDamage, UpsideDownDamage, WeatherWear, AshlandsOceanDamage, DamageTaken, Invulnerable and BuildCost, every default the ship's vanilla value, plus a Multipliers section that applies on top of every ship's own values. It was made for ship mods whose big ships come with very little health. Values apply to newly built ships and to ships already in the world, without a restart. On a server the server's values are used for everyone.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install ShipConfig. On a server, install it on the server and on every client.
+[*]Load a world once. The ship entries are added to the config file when a world is loaded, because the ship prefabs only exist in a loaded world.
+[/list]
+For manual install, drop ShipConfig.dll into BepInEx/plugins. Jotunn is not required.
+
+[size=4][b]Changing ship settings[/b][/size]
+[list]
+[*]In game: load a world, then open ConfigurationManager. The Ship section has one entry per ship and setting, the Multipliers section the global factors. Changes apply at once.
+[*]In the file: edit BepInEx/config/com.ShipConfig.cfg after the first world load. It is reloaded a few seconds after saving.
+[*]On a server the server's config is used and the clients' values are locked while Lock Configuration is on, which is the default.
+[/list]
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Every setting per ship, discovered from the loaded world, so modded ships with a Ship and a WearNTear component get entries too: health, sail force, paddle force, rudder speed, turning force, drag, angular damping, water impact and capsize damage, weather wear, Ashlands ocean damage, damage taken, invulnerability, build cost.
+[*]Global multipliers for health, sail force, paddle force, turning, damage taken and build cost, on top of the per-ship values.
+[*]Values apply to new ships and to ships already loaded.
+[*]Health changes only the maximum: a loaded ship keeps its current health, so raising the max shows more damage until it is repaired, and lowering it leaves the ship above max until it takes damage.
+[*]AshlandsOceanDamage off lets a ship sail the burning Ashlands ocean unharmed. WARNING: that removes the progression gate that makes the Drakkar necessary, and the ocean effects and world key it triggers.
+[*]Config changes apply immediately, no restart.
+[*]Server enforces its settings for all connected players; Lock Configuration prevents clients from overriding them.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]Optional: ConfigurationManager to change values in game.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/ShipConfig.
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings come from the server. With Lock Configuration on (the default), every player uses the server's values and cannot change them locally; server admins can still edit them in game. With it off, each player uses their own file. In the console (F5), [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions, with a refusal code that is also written to the server's and your own log.
+
+[size=4][b]Shout outs[/b][/size]
+The BepInEx and Harmony teams, Iron Gate Studio for Valheim, and Nexus Mods for hosting this page. The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game, and every modder who keeps their mods open source so others can collaborate, learn and build on them.

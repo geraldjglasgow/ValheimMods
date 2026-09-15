@@ -1,0 +1,74 @@
+Nexus Mods page text for Elite Creatures Reborn (https://www.nexusmods.com/valheim/mods/3727).
+Paste each block into the matching field on the page's edit form. Category: Gameplay.
+
+===== SUMMARY (plain text, one paragraph) =====
+Creature stars up to 5, mutations, elemental attunements, boss aspects, world tiers, retaliation zones, loot rules and multiplayer scaling. Tunable per creature, pack, biome and tier through YAML, synced from the server and hot reloaded.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+Elite Creatures Reborn makes Valheim's creatures worth looking at twice. Every creature can spawn with up to five stars, including the ones that never level in the plain game, and starred creatures can carry mutations, elemental attunements and, for bosses, aspects that change how a fight plays out. A world tier follows your progress so the danger grows with you, and zones where you kill a lot push back with bonus stars. Every number is yours to tune through the config file and two YAML rule files, synced from the server and reloaded while you play.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install Elite Creatures Reborn on the server and on every client. Clients without it are rejected by the server.
+[*]Start the game once. The config file gglasgow.elitecreaturesreborn.cfg and the rule files EliteCreaturesReborn.Creatures.yml and EliteCreaturesReborn.Items.yml are written to BepInEx/config.
+[*]Edit any of them while playing. Changes apply a few seconds after saving.
+[/list]
+For manual install, drop EliteCreaturesReborn.dll into BepInEx/plugins. The mod is standalone: it does not read the config files, save data or API of any other mod. If you used a different creature star mod before, remove it and its config files first. Creatures keep the stars the game stores, everything else is rolled fresh. Updating from 1.x: the traits are stored under new save keys since 2.0.0, so every existing creature re-rolls its mutations, attunement or aspects once, the next time it loads; stars are kept.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Stars up to 5 on every creature, including creatures the game itself never stars. Six presets from Gentle to Nightmare, or your own chance tables. With the default preset about a quarter of the creatures at world tier 0 carry a star and one in twenty two or more; about a fifth are mutated and a tenth attuned. All of it rises with the world tier.
+[*]A world tier from 0 to 7 driven by bosses killed, days passed, distance from spawn or a fixed value. Star chances and rules can differ per tier, and distance tiers are drawn as rings on the map.
+[*]Mutations for starred creatures, shown as coloured stars and a name line: Bounty (worth more, flees when hurt), Cloaked (unseen until close), Frenzied, Guardian (shields its kin), Hardened (takes less damage, moves slower), Leeching, Multiplying (splits on death into copies with one star fewer), Renewing, Shrieker, Stalwart, Swift, Tenacious (turns rabid when hurt), Thunderous (slams the ground), Volatile, Warded and Watchful. One or several per creature; pairs that make no sense together, such as Frenzied and Swift, never roll together. Every mutation's strength is a setting, and so are the details behind them, such as how much a Hardened creature slows down.
+[*]Tamed creatures pass their stars, mutations and attunements on to their offspring, with a small chance of one star more or less, and young ones keep them when they grow up.
+[*]Elemental attunements: Fire, Frost, Lightning, Poison, Spirit or Wild, with matching damage, resistance, weakness and flames. Lightning-touched hits stagger harder, Spirit-touched hits slow you for a moment, Poison-touched hits leave a poison that lasts longer. A Wild creature picks its element at spawn and again each time it loses a third of its health.
+[*]Boss aspects: Arcane (deals part of its damage as its element), Deflecting (shrugs off part of every arrow, bolt and thrown weapon and sends a little of it back), Furious (hits harder the more health it has lost), Herald (calls its kin every 45 seconds of combat), Mirrored (a twin; part of the damage one takes echoes on the other), Phasing (new aspects each phase), Restoring (heals once out of combat), Thorned (hurts whoever hits it) and Unstable (an element that shifts each phase).
+[*]Health, damage, movement, attack speed, size and loot per star, separately for creatures and bosses. Camps and dungeons respawn, dungeon loot regenerates, and the Queen spawns through her altar like every other boss.
+[*]Loot modes: the game's own, multiplied per star, chance based, or guaranteed with fractional amounts. Trophies are handled on their own.
+[*]Multiplayer scaling you control: health and damage per player, phantom players, the counted range and limits.
+[*]Retaliation zones: areas where you kill a lot grow bonus stars, with announcements, optional map pings and a minimap label.
+[*]Creature rules in YAML per creature, pack, biome, world tier and star count, under conditions such as tamed, night, dungeon or global keys. The shipped file is a complete tuning, ready to switch on.
+[*]Item rules in YAML: weight, stack size, yield, auto pickup, floating, portal rules and keeping items on death, per item or item group, by tier.
+[*]The elite console command for testing and tuning, and an in-game YAML editor opened from ConfigurationManager.
+[/list]
+
+[size=4][b]Configuration[/b][/size]
+The config file has a section per topic: Server, World tier, Stars, Creatures, Mutations, Attunements, Bosses, Loot, Multiplayer, Retaliation, YAML, Diagnostics and Colours. Every setting has a description. Everything that changes gameplay is synced from the server and lockable; display preferences (star display, nameplate range, flame brightness, tier rings, and the star colours in the Colours section, one colour per mutation) are per player. ConfigurationManager is supported and hides settings that do not apply to the chosen preset or tier source.
+
+[size=4][b]Console commands[/b][/size]
+Run from the in-game console (F5). Tab completes the sub-commands; elite help lists them.
+[code]elite tier                                   the current world tier
+elite chances [creature]                     star chances here, or for a creature
+elite dump <creature> [stars] [tier] [tamed] every resolved value for a creature and which rule set it
+elite zonekills                              kills counted in your zone
+elite resetzones                             forget the kills around you              (admin)
+elite summon <prefab> [stars] [trait ...]    a creature in front of you with chosen traits (admin)
+elite purge [n]                              remove loaded creatures with n or more stars, never bosses (admin; default 1)[/code]
+On a locked server the Command access setting decides what non-admins may use.
+
+[size=4][b]Files[/b][/size]
+[list]
+[*]BepInEx/config/gglasgow.elitecreaturesreborn.cfg: all settings. Hot reloaded, synced.
+[*]BepInEx/config/EliteCreaturesReborn.Creatures.yml: creature rules. Hot reloaded, synced, validated.
+[*]BepInEx/config/EliteCreaturesReborn.Items.yml: item rules. Hot reloaded, synced, validated.
+[*]BepInEx/plugins/EliteCreaturesReborn.<Language>.yml: an optional translation of the nameplate template, trait names, messages and setting texts.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]The mod must be installed on the server and on every client.
+[*]Not compatible with Valheim Plus.
+[*]Optional: ConfigurationManager for editing settings and the YAML files in game.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/EliteCreaturesReborn.
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings come from the server. With Lock configuration on (the default), every player uses the server's values and cannot change them locally; server admins can still edit them in game. With it off, each player uses their own file. In the console (F5), [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions, with a refusal code that is also written to the server's and your own log.
+
+[size=4][b]Shout outs[/b][/size]
+Thanks to the BepInEx and Harmony teams for the tools every Valheim mod stands on.

@@ -1,0 +1,66 @@
+Nexus Mods page text for FeastMaster (https://www.nexusmods.com/valheim/mods/2104).
+Paste each block into the matching field on the page's edit form. Category: Utilities.
+
+===== SUMMARY (plain text, one paragraph) =====
+Configure every food and mead: global multipliers, a section per item, a fade curve or no degradation, continuous food healing, Vigor (stamina and eitr regen from food), stamina and eitr regeneration rules, a multiplier for every stamina cost, base values, skill gain, world rate overrides and HUD options. Every setting defaults to vanilla. Server synced, hot reloaded.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+FeastMaster lets you decide what food and mead are worth, and how stamina behaves. Global multipliers scale health, stamina, eitr, duration and health regeneration for every food at once, and each food and mead also gets its own section, so single items can be tuned exactly. Foods and meads are discovered from the game, so modded consumables get entries too. On top of that: a food fade curve, continuous food healing, Vigor (stamina regeneration from food), stamina regeneration rules, a multiplier for every stamina cost and base stamina from skills. Every setting defaults to vanilla behaviour, so nothing changes until you opt in. On a server the server's values are used for everyone.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install FeastMaster. On a server, install it on the server and on every client.
+[*]Start the game once. BepInEx/config/com.FeastMaster.cfg is written with the global settings and one section per food and mead.
+[/list]
+For manual install, drop FeastMaster.dll into BepInEx/plugins. Jotunn is not required.
+
+[size=4][b]Main features[/b][/size]
+[b]What you eat[/b]
+[list]
+[*]Global multipliers: health, stamina, eitr, duration and health regen of every food at once.
+[*]Per food: health, stamina, eitr, duration, health regen, Vigor and Eitr Vigor. Configured values show on tooltips right away.
+[*]Per mead: duration, the health, stamina and eitr restored over time, the regeneration multipliers and the run and jump stamina modifiers of its effect.
+[*]Food degradation: keep food at full strength, or set the fade curve (0.3 is the game's, 1 linear, higher fades sooner, 0 never fades).
+[*]Eat again: decide how far a food must have run down before it can be eaten again.
+[/list]
+[b]How you recover[/b]
+[list]
+[*]Continuous food healing: the food's regen is healed a little every frame over the 10 seconds instead of once, no floating numbers.
+[*]Vigor: a stamina regeneration bonus on every food that lasts as long as the food does. One value gives every food a Vigor in proportion to its stamina, each food can get its own on top, and a multiplier scales the total. Eitr Vigor does the same for eitr.
+[*]Stamina and eitr regeneration: base regen, regen delay and blocking factor; regen per point of extra stamina; a sneak skill bonus while crouched and still; regeneration while encumbered or swimming.
+[*]Regen curves: faster regeneration when the bar is low and slower when it is high, for stamina and for eitr.
+[/list]
+[b]What actions cost[/b]
+[list]
+[*]Stamina costs: one multiplier for every drain (run, jump, dodge, block, attack, sneak, swim, encumbered, tools, fishing, harpoon).
+[*]Out of combat: cheaper running, jumping, dodging and sneaking when nothing targets or has noticed you.
+[*]Free sneaking: sneaking drains nothing while no enemy is near.
+[*]Skill discount: block, dodge and jump get cheaper as the matching skill rises.
+[*]Drowning damage: scale the damage taken when stamina runs out in the water.
+[/list]
+[b]Display[/b]
+[list]
+[*]Hidden numbers: hide the health, stamina or eitr number on the HUD, per player.
+[*]Food timers: show or hide the timers under the food icons, per player.
+[/list]
+Also: base health and stamina without food, extra stamina at Run, Jump, Sneak, Swim and Fishing skill 100, experience multipliers for those skills, and overrides for the world's food, stamina, move stamina and stamina regen rates. Config changes apply immediately, no restart (edit the file or use ConfigurationManager in game), and the server enforces its settings for all connected players; Lock Configuration prevents clients from overriding them.
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]Optional: ConfigurationManager to change values in game.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/FeastMaster.
+
+[size=4][b]Tips[/b][/size]
+[url=https://ko-fi.com/milkeyman]ko-fi.com/milkeyman[/url]
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings come from the server. With Lock Configuration on (the default), every player uses the server's values and cannot change them locally; server admins can still edit them in game. With it off, each player uses their own file. In the console (F5), [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions, with a refusal code that is also written to the server's and your own log.
+
+[size=4][b]Shout outs[/b][/size]
+The BepInEx and Harmony teams, Iron Gate Studio for Valheim, and Nexus Mods for hosting this page. The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game, and every modder who keeps their mods open source so others can collaborate, learn and build on them.

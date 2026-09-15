@@ -1,0 +1,9 @@
+{
+    "name": "ShipConfig",
+    "version_number": "1.2.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/ShipConfig",
+    "description": "Configure every ship: health, sail and paddle force, turning, drag, damage taken, weather wear and build cost per ship, plus global multipliers. Server synced, live config reload.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

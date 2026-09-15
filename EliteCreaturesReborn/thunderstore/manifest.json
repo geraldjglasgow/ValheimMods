@@ -1,0 +1,9 @@
+{
+    "name": "EliteCreaturesReborn",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteCreaturesReborn",
+    "description": "Creatures spawn with mutations that change how they fight - fast, armoured, exploding, splitting, devouring. Rebuilt from scratch; tunable per biome.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

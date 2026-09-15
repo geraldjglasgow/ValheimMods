@@ -1,0 +1,30 @@
+<Project>
+  <!-- Merges the shared libraries into the plugin so a single DLL can be shipped. -->
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <PropertyGroup>
+      <!-- r2modman profile used for testing on this machine, override with -p:TestPluginsPath=... -->
+      <TestPluginsPath Condition="'$(TestPluginsPath)' == ''">$(APPDATA)\r2modmanPlus-local\Valheim\profiles\LocalTesting\BepInEx\plugins</TestPluginsPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <InputAssemblies Include="$(TargetPath)" />
+      <InputAssemblies Include="$(OutDir)SyncedConfig.dll" />
+      <InputAssemblies Include="$(OutDir)YamlConfig.dll" />
+      <InputAssemblies Include="$(OutDir)ConfigReload.dll" />
+      <InputAssemblies Include="$(OutDir)Charter.dll" />
+      <InputAssemblies Include="$(OutDir)PatchGuard.dll" />
+      <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <LibraryPaths Include="$(OutDir)" />
+      <LibraryPaths Include="$(ManagedPath)" />
+      <LibraryPaths Include="$(BepInExCore)" />
+    </ItemGroup>
+    <ILRepack Parallel="true" DebugInfo="false" Internalize="true" InputAssemblies="@(InputAssemblies)"
+              OutputFile="$(TargetPath)" TargetKind="SameAsPrimaryAssembly" LibraryPath="@(LibraryPaths)" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)\BepInEx\plugins" Condition="Exists('$(GamePath)\BepInEx\plugins')" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(TestPluginsPath)" Condition="Exists('$(TestPluginsPath)')" />
+    <Message Importance="high" Text="ShipConfig build finished: $(MSBuildProjectDirectory)\..\dist\ShipConfig.dll" />
+  </Target>
+</Project>

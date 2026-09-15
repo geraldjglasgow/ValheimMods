@@ -1,0 +1,41 @@
+# Build output
+**/bin/
+**/obj/
+**/dist/
+*.binlog
+
+# Thunderstore packaging output (the zips are uploaded, not committed)
+**/thunderstore/*.zip
+**/thunderstore/stage/
+**/thunderstore/icon_source.png
+
+# Game and BepInEx assemblies copied in for building
+**/lib/
+
+# Third-party mods patched locally for the test profile
+patched-plugins/
+.quarantine/
+
+# IDE and OS clutter
+.vs/
+.idea/
+*.user
+*.suo
+*.swp
+Thumbs.db
+.DS_Store
+
+# Scratch
+*.tmp
+*.log
+
+# Specifications are working documents, not shipped artefacts
+**/SPEC.md
+**/SPEC-*.md
+
+# The clean room is build scaffolding, not the product: the Docker image, the slice specs,
+# the per-pass source archives and the run logs. The mod itself lives in its own folder.
+cleanroom/
+
+# Clean-room agent working notes, not part of the mod
+DECISIONS.md

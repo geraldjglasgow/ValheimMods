@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>PatchGuard</AssemblyName>
+    <RootNamespace>PatchGuard</RootNamespace>
+    <Version>1.0.0</Version>
+    <Description>Run and Wrap guards that log exceptions thrown by a mod's own code under that mod's name, then rethrow; a profiler for the methods the mod patched.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

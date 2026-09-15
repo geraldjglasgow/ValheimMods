@@ -1,0 +1,9 @@
+{
+    "name": "Lockstep",
+    "version_number": "0.3.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/Lockstep",
+    "description": "The next boss stays sealed until every player on the server has defeated the previous one. Server synced.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

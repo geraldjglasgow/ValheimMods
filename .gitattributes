@@ -1,0 +1,8 @@
+* text=auto
+*.png binary
+*.dll binary
+*.zip binary
+
+# Container scripts must keep LF or they break inside Docker
+*.sh text eol=lf
+Dockerfile text eol=lf

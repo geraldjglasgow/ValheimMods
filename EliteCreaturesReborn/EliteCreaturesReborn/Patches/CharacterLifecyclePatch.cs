@@ -1,0 +1,27 @@
+using EliteCreaturesReborn.Runtime;
+using HarmonyLib;
+using PatchGuard;
+
+namespace EliteCreaturesReborn.Patches
+{
+    /// <summary>
+    /// Gives every non-player creature an <see cref="EliteController"/> as it wakes. The controller does the rest on
+    /// its own first frame - by then any spawner has already set the vanilla star level, so nothing is lost. Bosses
+    /// and players are filtered inside the controller, so this stays a single, cheap attach.
+    /// </summary>
+    [HarmonyPatch(typeof(Character), "Awake")]
+    public static class CharacterLifecyclePatch
+    {
+        private static void Postfix(Character __instance) =>
+            Guard.Run("Character.Awake attach", () => Attach(__instance));
+
+        private static void Attach(Character character)
+        {
+            if (character.IsPlayer() || character.GetComponent<EliteController>() != null)
+            {
+                return;
+            }
+            character.gameObject.AddComponent<EliteController>();
+        }
+    }
+}

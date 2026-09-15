@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33130.400
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenKeep", "OpenKeep\OpenKeep.csproj", "{7E2A1C44-3B6F-4D1E-9A55-0C2F6B8D1E10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E2A1C44-3B6F-4D1E-9A55-0C2F6B8D1E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E2A1C44-3B6F-4D1E-9A55-0C2F6B8D1E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E2A1C44-3B6F-4D1E-9A55-0C2F6B8D1E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E2A1C44-3B6F-4D1E-9A55-0C2F6B8D1E10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B9D3F21-7C4E-4A8B-B2D6-1E0F9A7C3D52}
+	EndGlobalSection
+EndGlobal

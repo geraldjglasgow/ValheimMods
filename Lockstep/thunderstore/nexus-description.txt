@@ -1,0 +1,73 @@
+NOTE FOR THE UPLOADER (do not paste): rename the file group on the Files tab from "OathBound" to "Lockstep" if that has not been done yet.
+
+Nexus Mods page text for Lockstep (https://www.nexusmods.com/valheim/mods/3677).
+Paste each block into the matching field on the page's edit form. Category: Gameplay.
+
+===== SUMMARY (plain text, one paragraph) =====
+The next boss stays sealed until every player on the server has beaten the previous one, so nobody outpaces the group. Per-player credit for anyone who fought or stood nearby, a self-maintaining roster with ignore and inactivity rules, catch-up for new players, admin commands, and a YAML boss chain for modded bosses. Server synced.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+Lockstep keeps a co-op server moving as one group. The next boss stays sealed until every player has defeated the previous one. A player who races ahead can still explore, gather and build, but the Elder will not answer until everyone has beaten Eikthyr, and so on down the chain. Progress is earned together, so nobody logs in to find the group three biomes ahead.
+
+Lockstep was published as OathBound until September 2026. It was renamed because an unrelated class mod called Oathbound exists; if you have OathBound installed, remove it and its config files and install Lockstep instead.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install Lockstep on the server and on every client. The server rejects clients without it.
+[*]Start the server once. The config file, the chain file and the roster are created automatically.
+[/list]
+For manual install, drop Lockstep.dll into BepInEx/plugins.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Boss altars only work once everyone in the group has cleared the boss before it. The altar tells you who the group is still waiting for.
+[*]Credit is per player. Everyone who hit the boss is credited, plus everyone within a configurable distance when it dies. Admins can grant or revoke credit.
+[*]The roster fills itself as players log in. Players away longer than a configurable number of days stop holding the group back, and admins can ignore or forget players.
+[*]New players catch up automatically with everything the world has already cleared (configurable).
+[*]Safe to install mid-playthrough: bosses the world has already defeated count as cleared for everyone.
+[*]The boss chain is a YAML file, so modded bosses can be added and the order changed.
+[*]Config is synced from the server, locked for clients, and hot reloaded on edit.
+[/list]
+
+[size=4][b]Console commands[/b][/size]
+Run from the in-game console (F5). The changes are made on the server and answered there.
+[code]lockstep status                    every stage: open or waiting for whom, and the roster
+lockstep grant <player> <stage>    credit a player with a boss           (admin)
+lockstep revoke <player> <stage>   take that credit away                 (admin)
+lockstep ignore <player>           the player never holds the group back (admin)
+lockstep unignore <player>         count the player again                (admin)
+lockstep forget <player>           remove the player from the roster     (admin)[/code]
+<player> is a name or a player ID, <stage> is a stage name from the chain (Eikthyr, TheElder, Bonemass, Moder, Yagluth, TheQueen, Fader) or its global key.
+
+[size=4][b]Files[/b][/size]
+[list]
+[*]BepInEx/config/com.Lockstep.cfg: credit radius, inactive days, late joiner mode, gate options. Hot reloaded, synced.
+[*]BepInEx/config/LockstepChain.yml: the chain of stages, one entry per boss with its order, global key and boss prefab. Hot reloaded, synced.
+[*]BepInEx/config/Lockstep.<world>.roster.yml: written by the server, one entry per player with last seen, ignored flag and cleared stages. Hot reloaded when an admin edits it.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]The mod must be installed on the server and on every client.
+[*]The Queen and Fader use keys that live in the game's asset bundles. If summoning either misbehaves, run listkeys in the console after a kill and correct the key in LockstepChain.yml.
+[*]Vanilla world keys are untouched, so raids and other mods that read boss keys behave as before.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/Lockstep.
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings come from the server. With Lock Configuration on (the default), every player uses the server's values and cannot change them locally; server admins can still edit them in game. With it off, each player uses their own file. In the console (F5), [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions, with a refusal code that is also written to the server's and your own log.
+
+[size=4][b]Shout outs[/b][/size]
+[list]
+[*]The BepInEx and Harmony teams.
+[*]Iron Gate Studio for Valheim.
+[*]Nexus Mods for hosting this page.
+[*]The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game.
+[*]Every modder who keeps their mods open source so others can collaborate, learn and build on them.
+[*]The co-op group that kept waiting at the Elder altar for the one player who was still at work.
+[/list]

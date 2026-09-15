@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>ConfigReload</AssemblyName>
+    <RootNamespace>ConfigReload</RootNamespace>
+    <Version>1.0.0</Version>
+    <Description>Save the BepInEx config on startup and hot reload it when it changes on disk.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+# Publish settings for tcli. No secrets here: the token comes from TCLI_AUTH_TOKEN or --token.
+#   tcli publish --config-path EliteCreaturesReborn/thunderstore/thunderstore.toml --file EliteCreaturesReborn/thunderstore/EliteCreaturesReborn-X.Y.Z.zip
+[config]
+schemaVersion = "0.0.1"
+
+[general]
+repository = "https://thunderstore.io"
+
+[package]
+namespace = "MilkyTeam"
+name = "EliteCreaturesReborn"
+
+[publish]
+communities = ["valheim"]
+
+[publish.categories]
+valheim = ["mods", "enemies", "client-side", "server-side"]

@@ -1,0 +1,41 @@
+# Lockstep progression chain. Each top level entry is one boss stage.
+#   order: position in the chain; the stage with the lowest order is always open
+#   key:   global key the game sets when the boss dies (check with the console command "listkeys")
+#   boss:  prefab name of the boss the altar spawns
+# A stage can only be summoned once every counted player has cleared the stage before it.
+# Add modded bosses as new entries, or reorder the vanilla ones.
+
+Eikthyr:
+  order: 1
+  key: defeated_eikthyr
+  boss: Eikthyr
+
+TheElder:
+  order: 2
+  key: defeated_gdking
+  boss: gd_king
+
+Bonemass:
+  order: 3
+  key: defeated_bonemass
+  boss: Bonemass
+
+Moder:
+  order: 4
+  key: defeated_dragon
+  boss: Dragon
+
+Yagluth:
+  order: 5
+  key: defeated_goblinking
+  boss: GoblinKing
+
+TheQueen:
+  order: 6
+  key: defeated_queen
+  boss: SeekerQueen
+
+Fader:
+  order: 7
+  key: defeated_fader
+  boss: Fader
