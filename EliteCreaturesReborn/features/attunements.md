@@ -260,4 +260,4 @@ Newest last. One line per session that changed something: what moved, and the co
 
 | Date | What changed | Commit |
 | --- | --- | --- |
-| 2026-09-16 | Attunements renamed to plain element names (Fire, Frost, Poison, Lightning, Spirit); Gale kept. Table restructured to carry only what differs. Checklist added. | _pending_ |
+| 2026-09-16 | Attunements renamed to plain element names (Fire, Frost, Poison, Lightning, Spirit); Gale kept. Table restructured to carry only what differs. Checklist added. | bfd5d8f |
