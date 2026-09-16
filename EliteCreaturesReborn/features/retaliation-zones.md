@@ -115,3 +115,48 @@ biome, is the obvious refinement and is not specified either way.
 **How a zone is anchored.** A zone has a position and a radius, but nothing says whether that position is fixed at
 the first kill, or is the moving centre of mass of recent kills. The first is simple and can be walked out of by
 fifty metres; the second follows the player and is harder to escape by accident.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## The zone
+
+- [ ] A zone forms where players grind, rises with kills and decays over world time
+- [ ] A ceiling, so a zone cannot rise indefinitely
+- [ ] Zones survive a server restart, decay clock included
+
+## What a player is told
+
+- [ ] On-screen message when a zone's level rises
+- [ ] Map marker, optional
+- [ ] Minimap label, optional
+
+## Multiplayer
+
+- [ ] The server owns every zone: level, position and decay clock; kills are reported to it
+- [ ] A zone raised by one player is felt by every player who goes there
+- [ ] Announcements scoped to players inside or entering the zone, never broadcast
+- [ ] Markers and labels drawn locally from zone state
+- [ ] Pressure contribution read by the creature's owner at spawn
+
+## Configuration
+
+- [ ] Off switch; with zones off every other feature keeps working
+- [ ] Radius, kill contribution, ceiling, decay rate
+- [ ] Announcements, markers and labels each independently
+
+## Blocked on a decision
+
+- [ ] Depends on `pressure.md`, which is also unbuilt. Do not start before it.
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

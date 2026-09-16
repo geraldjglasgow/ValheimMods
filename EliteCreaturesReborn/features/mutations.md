@@ -951,3 +951,48 @@ except for Cloaked, which is the opposite problem and is the point of that mutat
 Decide, build it, and write the decision and your reasoning in `DECISIONS.md` alongside the source.
 Do not guess at how another mod might have done it - you have no way to know what those are, and
 that is deliberate.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The set
+
+- [ ] The nine, as specified
+- [ ] Devouring in full, including its multiplayer section
+- [ ] Bloated in full, including which corpse in multiplayer
+- [ ] Miasmic in full - both poison paths, the trail, and harming players only
+- [ ] Splintering in full
+- [ ] How many a creature gets, and which
+
+## Visuals
+
+- [ ] Miasmic clouds visible for their whole life
+- [ ] Bloated has a tell during its delay
+- [ ] The rules for all of them in section "Rules for all of them"
+
+## Multiplayer
+
+- [ ] Rolled once by the owner, stored in the ZDO, read by everyone
+- [ ] The wire stays quiet
+- [ ] Every client sees what section "What every client must see" lists
+- [ ] Damage is the owner's decision; drawing is everyone's
+- [ ] Every case in "Cases that must work"
+
+## Verification
+
+- [ ] Tested in a live multiplayer session
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

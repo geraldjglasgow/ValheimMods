@@ -130,3 +130,40 @@ feature files exist to prevent.
 **Whether `help` counts as one of the seven.** The table lists seven functional sub-commands and the shape
 description mentions a `help` that lists them. Whether that is an eighth or simply the bare command with no
 argument is not stated.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The commands
+
+- [~] `spawn`, `inspect`, `purge` and `effects` exist
+- [ ] The three specified but missing sub-commands
+- [ ] Inspect and Pressure are read-only; Summon, Purge and Tier change the world
+
+## Multiplayer
+
+- [ ] Read-only commands answered locally where possible
+- [ ] World-changing commands executed on the server, replicating the ordinary way
+- [ ] Access checked on the server, never on the client that typed it
+- [ ] Tier only sets where the source is Manual
+- [ ] Reload re-reads the server's files and re-sends them to every player
+
+## Configuration
+
+- [ ] Command access level
+- [ ] The permitted-players list for the middle level
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

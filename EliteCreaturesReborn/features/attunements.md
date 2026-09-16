@@ -26,22 +26,25 @@ deleted.
 
 ## The six
 
-| Attunement | Deals | Resists | Vulnerable to |
-| --- | --- | --- | --- |
-| Ember | Fire | Fire | Frost |
-| Rime | Frost | Frost | Fire |
-| Blight | Poison | Poison | Fire |
-| Storm | Lightning | Lightning | Poison |
-| Wraith | Spirit, and ordinary weapons bite less | Spirit | Fire |
-| Gale | Blunt, with heavy knockback | Knockback and stagger | Lightning |
+An attunement deals its own element and resists it. That is the rule, so the table carries only what differs:
 
-Five of the six follow Valheim's own damage types, which is the game's design rather than anyone's choice. **Gale
-is the one addition**, and it is the odd one out deliberately: it is the attunement with no elemental resist gear,
-so it is answered by positioning rather than by equipment.
+| Attunement | Vulnerable to | Beyond the rule |
+| --- | --- | --- |
+| Fire | Frost | |
+| Frost | Fire | |
+| Poison | Fire | |
+| Lightning | Poison | |
+| Spirit | Fire | ordinary weapons bite less |
+| Gale | Lightning | deals Blunt with heavy knockback, and resists knockback and stagger rather than an element |
+
+Five of the six are Valheim's own damage types and are named for exactly that - the name is the mechanic, and a
+player who reads it knows what to switch to without learning our vocabulary first. **Gale is the one addition**,
+and it is the odd one out deliberately: it is the attunement with no elemental resist gear, so it is answered by
+positioning rather than by equipment.
 
 ## Nothing is immune
 
-Resistance is resistance. A Rime creature takes reduced frost damage, never none.
+Resistance is resistance. A Frost creature takes reduced frost damage, never none.
 
 An immunity turns a fight into a gear check and tells the player "you brought the wrong weapon, go home". A
 resistance tells them "this will take longer". The vulnerability column is the reward for reading the creature and
@@ -64,18 +67,18 @@ These are the numbers most likely to feel unfair in play. Expect to move them.
 Three kinds of effect, all short and all readable. Each is a cost, not a sentence: long enough to change what you
 do next, short enough that it never removes your ability to respond.
 
-- **A brief impairment.** Ember blurs vision for a moment. Gale staggers you and throws you back.
-- **Lingering harm.** Blight leaves poison ticking after you disengage. Rime leaves a chill that slows you until
+- **A brief impairment.** Fire blurs vision for a moment. Gale staggers you and throws you back.
+- **Lingering harm.** Poison leaves poison ticking after you disengage. Frost leaves a chill that slows you until
   you warm up.
-- **A resource drain.** Storm drains stamina on each hit. Wraith drains eitr, and health instead if you have none.
+- **A resource drain.** Lightning drains stamina on each hit. Spirit drains eitr, and health instead if you have none.
 
 | Attunement | Effect on the player | Default |
 | --- | --- | --- |
-| Ember | Vision blurs | 2 seconds |
-| Rime | Movement slowed, refreshed by each hit, cleared faster near a fire | 25% for 6 seconds |
-| Blight | Poison, refreshed by each hit | 8 seconds |
-| Storm | Stamina drained per hit | 15 |
-| Wraith | Eitr drained per hit, or health if you have no eitr | 10 eitr, or 5 health |
+| Fire | Vision blurs | 2 seconds |
+| Frost | Movement slowed, refreshed by each hit, cleared faster near a fire | 25% for 6 seconds |
+| Poison | Poison, refreshed by each hit | 8 seconds |
+| Lightning | Stamina drained per hit | 15 |
+| Spirit | Eitr drained per hit, or health if you have no eitr | 10 eitr, or 5 health |
 | Gale | Staggered and thrown back | about 3 metres |
 
 **All six effects can be switched off as a group**, leaving the damage conversion, resistances and vulnerabilities
@@ -89,8 +92,8 @@ wildlife is a hazard nobody can see working.
 
 # 3. What a player sees
 
-**The creature itself is tinted its element's colour.** An Ember wolf runs hot orange, a Rime wolf pale blue, a
-Wraith wolf washed-out and grey. This is the tell that reads at distance, long before a nameplate resolves, and it
+**The creature itself is tinted its element's colour.** An Fire wolf runs hot orange, a Frost wolf pale blue, a
+Spirit wolf washed-out and grey. This is the tell that reads at distance, long before a nameplate resolves, and it
 is the one visual in the mod that changes the creature rather than decorating it.
 
 A coloured flame effect rides along with the tint, brighter at higher star counts.
@@ -100,7 +103,7 @@ strength and flame brightness are per-player settings, down to off**, because so
 play at night. Like every display preference they are never locked by the server - they change only what one
 player sees.
 
-The attunement joins the creature's name: *Sinewed Ember Greydwarf*.
+The attunement joins the creature's name: *Sinewed Fire Greydwarf*.
 
 Together with mutations this gives the mod one consistent visual language, each channel carrying exactly one
 thing:
@@ -190,9 +193,71 @@ but it needs three things decided:
 ## The effect mapping
 
 The old list paired the effects differently: lightning hits staggering harder, spirit hits slowing you, poison
-hits leaving a longer poison. This specification instead gives the stagger to **Gale**, the slow to **Rime**, the
-poison to **Blight**, and makes Storm and Wraith resource drains.
+hits leaving a longer poison. This specification instead gives the stagger to **Gale**, the slow to **Frost**, the
+poison to **Poison**, and makes Lightning and Spirit resource drains.
 
 The specification's mapping is the one written here because each effect follows from its own element rather than
 being distributed for variety - a gale throws you, ice slows you, blight poisons you. If the older pairing is
 wanted, it is a table edit, but it should be a decision rather than a drift.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## Core
+
+- [ ] Attunement rolled once by the owner, written to the ZDO under our own key prefix, never re-rolled
+- [ ] Read deterministically by every machine; a creature met before its owner has rolled resolves cleanly, once
+- [ ] Chance configurable per biome and per star count, rolled independently of mutations
+- [ ] Bosses excluded
+
+## Damage
+
+- [ ] 40% of physical damage converted to the element, never added
+- [ ] Resisted type −50%; vulnerable type +50%; no immunities anywhere
+- [ ] Spirit: ordinary weapons bite less
+- [ ] Gale: deals Blunt with heavy knockback, resists knockback and stagger
+- [ ] Creature-on-creature hits convert damage and nothing more
+
+## Player effects
+
+- [ ] Fire — vision blurs, 2s
+- [ ] Frost — movement slowed 25% for 6s, refreshed per hit, cleared faster near a fire
+- [ ] Poison — poison 8s, refreshed per hit
+- [ ] Lightning — 15 stamina drained per hit
+- [ ] Spirit — 10 eitr per hit, or 5 health with no eitr
+- [ ] Gale — stagger and knockback
+- [ ] Scoped to the player hit; nobody else's screen is touched
+- [ ] Off switch for all six as a group, leaving damage and resistances working
+
+## Presentation
+
+- [ ] Creature tinted its element's colour, readable at distance
+- [ ] Coloured flame effect, brighter at higher star counts
+- [ ] Tint strength and flame brightness are per-player, down to off, never server-locked
+- [ ] Attunement joins the creature's name
+
+## Configuration
+
+- [ ] Whole-feature off switch; every other feature keeps working without it
+- [ ] Per-biome and per-star chance in `creature_rules.yml`
+- [ ] Per-attunement power fields: conversion share, resist and vulnerable multipliers, each effect's numbers
+- [ ] Per-attunement tint colour; tint strength and flame brightness in the `.cfg`
+- [ ] Hot reload on edit; bound to the server's copy while `lock to server` is true
+- [ ] `elite inspect` reports the resolved attunement and its numbers
+
+## Blocked on a decision
+
+- [ ] The shifting attunement (`Wyrd`) — see section 7. Do not build until settled.
+- [ ] Effect mapping confirmed as written — see section 7.
+
+## Work log
+
+Newest last. One line per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Attunements renamed to plain element names (Fire, Frost, Poison, Lightning, Spirit); Gale kept. Table restructured to carry only what differs. Checklist added. | _pending_ |

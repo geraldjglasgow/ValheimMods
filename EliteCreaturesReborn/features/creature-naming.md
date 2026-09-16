@@ -19,10 +19,10 @@ A modified creature's nameplate reads its traits in a fixed order:
 
 > **mutations, in colour order - then attunement - then the creature's own name.**
 
-*Distended Warding Ember Troll.*
+*Distended Warding Fire Troll.*
 
 The order is fixed rather than roll order so that the same combination always reads the same way. A player who
-learns to recognise "Warding Ember" as a shape of fight should see those two words in that order every time,
+learns to recognise "Warding Fire" as a shape of fight should see those two words in that order every time,
 rather than having to parse an adjective list that shuffles.
 
 **An unmodified creature's nameplate is untouched.** A plain greydwarf is a Greydwarf, with the game's own
@@ -105,3 +105,39 @@ one more to retrofit. Worth doing before the text grows much further.
 words before the creature's own name, and the specification caps mutations at four with no cap on the resulting
 string. Whether a long name wraps, truncates, or is simply allowed to be long is not decided. On a server running
 a raised star ceiling with stacking turned up, this stops being hypothetical.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The name
+
+- [ ] Order is mutations in colour order, then attunement, then the creature's own name
+- [ ] Stars are always drawn individually, never collapsed into a count
+- [ ] All on-screen text is translatable
+
+## Multiplayer
+
+- [ ] No name is sent over the wire; every client computes it from replicated trait state
+- [ ] Colours are per-player, so two players may correctly see one creature differently
+
+## Configuration
+
+- [ ] Nameplate display distance
+- [ ] Whether trait names show at all - stars without the adjectives
+- [ ] Star colour palette, per mutation
+- [ ] Attunement tint palette, per attunement
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

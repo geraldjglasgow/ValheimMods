@@ -118,3 +118,41 @@ independent channel and the file does not say whether it follows the same roll, 
 **Whether tamed creatures count for multiplayer scaling.** They presumably do not - see
 `multiplayer-scaling.md` - but a player with a bred pack of eight wolves is the case where it would matter, and
 nothing says either way.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## Inheritance
+
+- [ ] Taming does not strip traits
+- [ ] Offspring inherit from both parents by the section 3 roll
+- [ ] Growing up preserves what a juvenile had
+
+## Multiplayer
+
+- [ ] The inheritance roll is performed by the owner of the offspring, once, at creation
+- [ ] Traits live in the ZDO and survive everything the game survives
+- [ ] The juvenile-to-adult transition must not re-roll
+- [ ] Every client sees the same pup
+
+## Configuration
+
+- [ ] Off switch for inheritance, leaving taming itself untouched
+- [ ] Pass-on chance, default 40%
+- [ ] Per-trait rules under the `tamed` condition
+
+## Blocked on a decision
+
+- [ ] Whether stars are inherited, and how - see Open decisions.
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

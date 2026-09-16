@@ -103,3 +103,47 @@ nameplate distance is a number with no stated floor or ceiling. Whether zero mea
 whether a very large value is allowed to reveal every creature in a valley is not written down - and the second
 one is arguably a gameplay setting wearing a display setting's clothes, since it tells a player what is out there.
 That is the one entry in the table where the line in section 1 is genuinely debatable.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The rule
+
+- [ ] Every setting here is per player and never locked by the server
+- [ ] No feature assumes another player has the same display settings
+- [~] Colour palette and nameplate settings exist for stars and mutations
+
+## The settings
+
+- [ ] Mutation colour palette, per mutation
+- [ ] Attunement tint palette, per attunement
+- [ ] Creature tint strength, down to off
+- [ ] Attunement flame brightness, down to off
+- [ ] Nameplate display distance
+- [ ] Whether trait names show at all
+
+## Multiplayer
+
+- [ ] These values never leave the machine they are set on, and are not bound by Charter
+- [ ] Preferences survive joining a locked server, unchanged
+- [ ] Hot-reloaded on edit, taking effect on creatures already on screen
+
+## Blocked on a decision
+
+- [ ] Whether a colourblind-friendly default palette ships alongside the design one.
+- [ ] What nameplate distance does at its extremes.
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

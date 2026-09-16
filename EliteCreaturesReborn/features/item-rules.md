@@ -140,3 +140,39 @@ item-only, or it may want a warning where it is documented. Not decided.
 copies, but an item that was in the Wood group and is now named individually has been through two rules in one
 session. The precedence is defined; what is not defined is whether the re-application is idempotent for
 properties like weight that a player may have already been carrying.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## What changes
+
+- [ ] The seven properties, per group and per item
+- [ ] Changes reach items that already exist, not only new ones
+- [ ] Groups as section 2 defines them
+
+## Compatibility
+
+- [ ] OpenKeep wins on stack size - stack sizes applied only when OpenKeep is absent
+
+## Multiplayer
+
+- [ ] Rule file bound to the server's copy while lock-to-server is true
+- [ ] Each client applies values locally to its own prefabs and live copies; no item sent over the wire
+- [ ] Kept-on-death and portal transport agree between client and server
+
+## Configuration
+
+- [ ] Per group, per item, per world tier
+- [ ] Off switch, leaving every creature feature working
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

@@ -111,3 +111,43 @@ feature and an argument.
 **Whether tamed creatures and phantom players interact.** A player with five tamed wolves is not five players, but
 the count has to be defined against something. Tamed creatures presumably do not count - see `tamed-creatures.md` -
 but it is not written down.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## The mechanic
+
+- [ ] Health and damage scale with nearby player count
+- [ ] Health climbs steeply, damage gently - deliberately not one setting
+- [ ] A ceiling, so a large group cannot produce something unkillable
+- [ ] Phantom players: a small group can ask to be treated as larger
+
+## Multiplayer
+
+- [ ] The creature's owner counts nearby players and applies the scaling
+- [ ] Re-evaluated as players arrive and leave
+- [ ] The proportion of health remaining is preserved across a rescale
+- [ ] Nothing written to the ZDO as a trait - it is derived from the world each time
+- [ ] The damage multiplier applied where the game resolves damage; no extra message per hit
+
+## Configuration
+
+- [ ] Off switch, radius, health per player, damage per player, ceiling, phantom players
+
+## Blocked on a decision
+
+- [ ] Every number - radius, per-player figures, ceiling - is unspecified.
+- [ ] Whether phantom players are a server setting or a group's own.
+- [ ] Whether tamed creatures count toward the player count.
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

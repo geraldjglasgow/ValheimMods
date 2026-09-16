@@ -127,3 +127,34 @@ the rule file entirely, but the off switch and the OpenKeep stack-size interacti
 **What the in-game editor can edit.** "Rule files can be edited from inside the game" does not say whether that is
 free-text YAML with validation on save, or a structured editor over the known keys. The first is far easier and
 hands an admin a way to break their server from a text box; the second is a lot of work. Not decided.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The files
+
+- [~] Settings file, `creature_rules.yml`, validation and hot reload - built and shipping
+- [ ] Everything can be turned off, feature by feature
+- [ ] Diagnostics as section 4 says
+
+## Multiplayer
+
+- [ ] Settings and both rule files server-owned while lock-to-server is true, reaching clients on join
+- [ ] A hot reload on the server propagates to every connected player
+- [ ] Validation runs on both sides
+- [ ] The display section never syncs, on any server, in any lock state
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

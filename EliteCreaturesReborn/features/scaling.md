@@ -197,3 +197,41 @@ Not yet done. In the `LocalTesting` profile:
    timer, confirm it refilled once and not twice, and that a half-emptied chest is untouched.
 7. **Dedicated server** - every one of the above with a server and two clients, confirming both clients see the
    same boss stars and the same chest contents.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## Stars
+
+- [ ] What a star is worth, as section 1 says
+- [ ] Health never falls below 5% of base
+- [ ] Movement never falls below 5%
+- [ ] Run speed clamped so no creature outruns an unburdened player, logged once when the clamp bites
+- [ ] Additive, never multiplicative
+- [ ] Bosses on their own table
+
+## Respawning
+
+- [ ] Spawner behaviour as section 3 says
+- [ ] A spawner the game already gave a timer of its own is never touched
+- [ ] Loot regeneration only when emptied, only inside a generated room, only on the owner
+- [ ] The known gap in section 3 closed or re-stated
+
+## Verification
+
+- [ ] Tested in a live multiplayer session, not only by build and by reading
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

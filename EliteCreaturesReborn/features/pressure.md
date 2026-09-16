@@ -142,3 +142,37 @@ starts, because it is the difference between a preset being a promise and a pres
 **What counts as a hearth.** "The nearest player-built hearth" needs one concrete answer: a fire, a workbench, a
 bed, or any player-built piece at all. Each gives a different game - a fire is a deliberate act, any piece at all
 means a dropped workbench pacifies a region. Not yet chosen.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## The model
+
+- [ ] Pressure from three terms: biome, world tier, distance from the nearest player-built hearth
+- [ ] Range and scaling as section 2 says
+- [ ] Creatures the game never levels handled as section 3 says
+- [ ] Six presets, plus custom per-tier chance rows
+
+## Multiplayer
+
+- [ ] Rolled by the creature's owner and stored, never re-rolled
+
+## Configuration
+
+- [ ] Preset or custom
+- [ ] Star ceiling, no enforced maximum
+- [ ] Per-biome pressure floor and ceiling
+- [ ] The weight of each pressure term
+- [ ] Per creature: may this creature take stars at all, off by default
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

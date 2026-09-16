@@ -115,3 +115,39 @@ it.
 star ceiling. A twenty-star creature on a server that has raised the ceiling would roll its whole drop table
 twenty-one times. That is arguably the point, but it is the same shape of problem as the Splintering cascade in
 `mutations.md`, and that one has caps.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The modes
+
+- [ ] Vanilla, Scaled, Rolled and Curated all selectable
+- [~] Per-star quantity multiplier for Scaled - built and shipping
+- [ ] Trophies handled separately, off by default
+- [ ] Mutations and attunements do not change loot
+
+## Multiplayer
+
+- [ ] Drop list built on the dying creature's owner, where the game builds it
+- [ ] Rolled mode's extra rolls happen once on the owner, not once per client
+
+## Configuration
+
+- [ ] Mode selection
+- [ ] Per-creature and per-group drop rules for Curated, and per-drop overrides elsewhere
+- [ ] Per-tier loot quantity
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

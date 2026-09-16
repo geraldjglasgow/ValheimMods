@@ -121,3 +121,33 @@ change that cannot take effect now and may surprise them when they next play alo
 **Whether a version mismatch should refuse or warn.** Refusing is correct while the mod's ZDO keys or rule format
 can change between versions. Once the mod is at 1.0.0 and promising compatibility, a patch-level difference
 refusing a join is stricter than it needs to be. Not decided, and not urgent until 1.0.0.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+> Items are unticked because nothing here has been verified against the code in this pass. Tick them as you
+> confirm each one, and bring the `Status:` line into agreement.
+
+## The rule
+
+- [ ] Gameplay settings bound to the server's copy; display settings never locked
+- [ ] Joining without the mod behaves as section 3 says
+- [ ] The rule files do what section 4 says
+
+## Configuration
+
+- [ ] Lock configuration, on by default
+- [ ] Admin editing in game, without file access
+- [ ] Command access levels
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

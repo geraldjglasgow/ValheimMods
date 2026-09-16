@@ -188,3 +188,49 @@ written down. Three things need deciding, in this order:
 
 Until this is settled the feature cannot be built, because the aspect list is the one thing every other part of it
 indexes - the rotation, the altar text, the loot table and the ZDO encoding all need the same nine names.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## The aspect
+
+- [ ] The set, as section 1 lists it
+- [ ] One outcome is "no aspect" - a plain vanilla boss fight
+- [ ] A reroll never repeats the current aspect
+- [ ] Summoning locks the aspect in
+- [ ] Every altar rolls independently
+- [ ] The Queen keeps her vanilla summon
+- [ ] Loot scales with the aspect
+
+## Multiplayer
+
+- [ ] Current aspect and next-reroll time live in the altar's own ZDO
+- [ ] The reroll is performed by the altar's owner on the in-game hour
+- [ ] On summoning, the locked-in aspect is written to the boss's own ZDO
+- [ ] Altar text drawn locally; no message sent for it
+- [ ] Phase changes decided by the boss's owner
+- [ ] Loot multiplied on the owner
+- [ ] Every player sees the same aspect at the same altar, surviving a restart
+
+## Configuration
+
+- [ ] Reroll interval, including zero to fix every altar
+- [ ] Chance of "no aspect"
+- [ ] Which aspects are in rotation, per boss
+- [ ] Loot multiplier per aspect, and each aspect's own numbers
+
+## Blocked on a decision
+
+- [ ] Draining is described but unranked; Sundering and Unbound are ranked but undescribed.
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |

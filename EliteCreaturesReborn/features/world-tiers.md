@@ -132,3 +132,41 @@ new player meets was rolled at the *veteran's* tier if the veteran happened to b
 That undoes the entire reason Personal exists. Either the roll has to consider the nearest player rather than the
 owner, or Personal has to be documented as single-player-only. This is the decision that matters most in this
 file.
+
+---
+
+# Build checklist
+
+How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
+seen working on a dedicated server. Tick from observed behaviour, never from the `Status:` line.
+
+## The tier
+
+- [ ] Four sources: Personal, Server, Elapsed, Manual
+- [ ] Pressure takes the tier as one of its three terms
+- [ ] Respawning brings a cleared camp back at the world's current tier
+
+## What a player sees
+
+- [ ] A tier change is announced
+- [ ] Map rings, off by default, colours a per-player display preference
+
+## Multiplayer
+
+- [ ] Under Server, Elapsed and Manual the server owns the tier and sends it on join and on change
+- [ ] Under Personal each client computes its own from that player's boss kills
+- [ ] Creatures already alive are not re-rolled when the tier advances
+- [ ] Map rings drawn locally; nothing sent for them
+
+## Configuration
+
+- [ ] Source, tier ceiling, which bosses advance it and by how much, days per tier
+- [ ] Off switch - with tiers off the world sits permanently at tier 0
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | _pending_ |
