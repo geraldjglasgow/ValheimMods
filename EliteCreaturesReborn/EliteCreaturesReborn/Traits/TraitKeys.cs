@@ -41,6 +41,9 @@ namespace EliteCreaturesReborn.Traits
         /// the devourer's ZDO by its owner when it banks a meal; read anywhere to gate its next bite through the cooldown.</summary>
         public const string DevourReadyAt = "ecr_dev_ready";
 
+        /// <summary>Respawning: the world time (ticks) a dungeon loot chest was last filled, for its regeneration timer.</summary>
+        public const string LootFilledAt = "ecr_loot_at";
+
         /// <summary>Devouring: which devourer instant-killed THIS prey, as its ZDOID, set on the prey's ZDO at the bite so
         /// it survives a handover. Set only on a genuine devour, so the prey's death path feeds that devourer and no other.</summary>
         public const string DevouredBy = "ecr_devoured_by";

@@ -14,6 +14,12 @@ namespace EliteCreaturesReborn.Rules
         public bool LockToServer = true;
         public int MaxMutations = 1;
         public BiomeRules Defaults = new BiomeRules();
+
+        /// <summary>The boss table. One for the whole world: boss stars do not follow a biome or the world's pressure.</summary>
+        public BossRules Boss = new BossRules();
+
+        /// <summary>How camps, dungeons and dungeon loot repopulate. One set of timers for the whole world.</summary>
+        public RespawnRules Respawn = new RespawnRules();
         public readonly Dictionary<string, BiomeRules> Biomes =
             new Dictionary<string, BiomeRules>(StringComparer.OrdinalIgnoreCase);
 

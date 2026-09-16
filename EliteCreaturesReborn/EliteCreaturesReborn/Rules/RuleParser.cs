@@ -34,6 +34,8 @@ namespace EliteCreaturesReborn.Rules
                 MaxMutations = Math.Max(0, YamlRead.Int(root, "max mutations", 1, result.Errors)),
             };
             ReadDefaults(set, root, result);
+            ReadBosses(set, root, result);
+            ReadRespawning(set, root, result);
             ReadBiomes(set, root, result);
             SeedStarFallback(set);
             result.Rules = set;
@@ -78,6 +80,24 @@ namespace EliteCreaturesReborn.Rules
             if (YamlRead.Child(root, "defaults") is YamlMappingNode block)
             {
                 RuleOverlay.Apply(set.Defaults, block, result.Errors, result.Warnings);
+            }
+        }
+
+        private static void ReadBosses(RuleSet set, YamlMappingNode root, Result result)
+        {
+            set.Boss = RuleDefaults.BaselineBoss();
+            if (YamlRead.Child(root, "bosses") is YamlMappingNode block)
+            {
+                BossOverlay.Apply(set.Boss, block, result.Errors);
+            }
+        }
+
+        private static void ReadRespawning(RuleSet set, YamlMappingNode root, Result result)
+        {
+            set.Respawn = new RespawnRules();
+            if (YamlRead.Child(root, "respawning") is YamlMappingNode block)
+            {
+                RespawnOverlay.Apply(set.Respawn, block, result.Errors);
             }
         }
 

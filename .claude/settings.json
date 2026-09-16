@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "deny": [
+      "WebSearch",
+      "WebFetch",
+      "Read(//C:/Users/gglasgow/AppData/Roaming/r2modmanPlus-local/**)",
+      "Read(//C:/Program Files (x86)/Steam/steamapps/common/Valheim/BepInEx/plugins/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|Read|Grep|Glob|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:/Users/gglasgow/projects/ValheimMods/.claude/hooks/cleanroom_guard.py\"",
+            "timeout": 10,
+            "statusMessage": "Clean-room check"
+          }
+        ]
+      }
+    ]
+  }
+}

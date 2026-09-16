@@ -95,6 +95,8 @@ Rules that keep the layout standard:
 
 ## Developing mods
 
+**`CLEANROOM.md` at the root is the boundary every agent and every session works inside: what may be read, what may never be, and how behaviour gets decided. Read it before writing code.** The rest of this section is the same rules in brief.
+
 Mods here are developed black-box, the way Elite Creatures Reborn was rewritten. That means:
 
 - **Behaviour first, in our own words.** Before writing code for a mod that replaces, mirrors or is inspired by

@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0
+## 3.0.0
 
 Rebuilt from scratch. Not an update to earlier versions — none of the old code remains. This release covers
 mutations only; the rest of the mod's features return over the next releases.

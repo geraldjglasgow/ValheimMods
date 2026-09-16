@@ -25,6 +25,7 @@ namespace EliteCreaturesReborn.Runtime
         private bool _movementClamped;
         private CreatureTraits? _forced;
         private Heightmap.Biome _forcedBiome;
+        private bool _isBoss;
 
         public CreatureTraits Traits { get; private set; } = new CreatureTraits(0, 0);
         public BiomeRules Rules { get; private set; } = RuleState.Active.Defaults;
@@ -40,9 +41,15 @@ namespace EliteCreaturesReborn.Runtime
         {
             _character = GetComponent<Character>();
             _nview = _character != null ? _character.GetComponent<ZNetView>() : null!;
-            if (_character == null || _nview == null || !_nview.IsValid() || _character.IsBoss() || _character.IsPlayer())
+            if (_character == null || _nview == null || !_nview.IsValid() || _character.IsPlayer())
             {
                 enabled = false;
+                return;
+            }
+            _isBoss = _character.IsBoss();
+            if (_isBoss && !RuleState.Active.Boss.Enabled)
+            {
+                enabled = false; // boss stars switched off: the boss is left exactly as the game ships it
                 return;
             }
             EliteRpc.EnsureRegistered();
@@ -92,8 +99,14 @@ namespace EliteCreaturesReborn.Runtime
                 return false;
             }
             Traits = TraitStore.Load(zdo);
-            Rules = RuleState.Active.For(TraitStore.GetBiome(zdo));
+            Rules = ResolveRules(TraitStore.GetBiome(zdo));
             return true;
+        }
+
+        /// <summary>A boss scales on the boss table; every other creature on its biome's.</summary>
+        private BiomeRules ResolveRules(Heightmap.Biome biome)
+        {
+            return _isBoss ? BossView.For(RuleState.Active.Boss) : RuleState.Active.For(biome);
         }
 
         // OWNER ONLY: the single roll, written to the ZDO for everyone. Reached here only when this machine owns it. When
@@ -101,12 +114,23 @@ namespace EliteCreaturesReborn.Runtime
         private void RollFresh(ZDO zdo)
         {
             Heightmap.Biome biome = _forced != null ? _forcedBiome : Heightmap.FindBiome(_character.transform.position);
-            CreatureTraits fresh = _forced ?? TraitRoller.Roll(RuleState.Active.For(biome), RuleState.Active.MaxMutations);
+            CreatureTraits fresh = _forced ?? RollFor(biome);
             TraitStore.Save(zdo, fresh);
             TraitStore.SetBiome(zdo, biome);
             _character.SetLevel(1);
             FreshlyResolved = true;
             _forced = null;
+        }
+
+        // A boss draws a star count from the boss distribution and nothing else - no mutation is ever rolled for it,
+        // so the roll cannot be shared with the creature path however similar the two look.
+        private CreatureTraits RollFor(Heightmap.Biome biome)
+        {
+            if (_isBoss)
+            {
+                return new CreatureTraits(TraitRoller.RollStars(BossView.For(RuleState.Active.Boss)), 0);
+            }
+            return TraitRoller.Roll(RuleState.Active.For(biome), RuleState.Active.MaxMutations);
         }
 
         /// <summary>
@@ -130,7 +154,10 @@ namespace EliteCreaturesReborn.Runtime
             {
                 StatApplier.ApplyHealth(_character, Rules, Traits, FreshlyResolved); // owner writes s_maxHealth; others read it
             }
-            BehaviourInstaller.Install(this);
+            if (!_isBoss)
+            {
+                BehaviourInstaller.Install(this); // mutation behaviours; a boss has no mutations to install
+            }
             _ready = true;
             enabled = false; // resolution is done; stop the poll. Other components still read this via GetComponent.
         }

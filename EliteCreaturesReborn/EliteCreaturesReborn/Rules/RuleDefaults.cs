@@ -31,7 +31,32 @@ namespace EliteCreaturesReborn.Rules
         }
 
         /// <summary>A whole rule set of nothing but defaults, for the rare case the file cannot be written or read.</summary>
-        public static RuleSet BuildDefault() => new RuleSet { Defaults = Baseline() };
+        public static RuleSet BuildDefault() =>
+            new RuleSet { Defaults = Baseline(), Boss = BaselineBoss(), Respawn = new RespawnRules() };
+
+        /// <summary>
+        /// The boss table's defaults. Conservative: nine bosses in ten stay plain, because a boss is a set-piece a
+        /// group has prepared for and a surprise five-star Bonemass is a wasted evening. Health and damage climb
+        /// harder per star than a creature's, size climbs less - a boss already fills its arena and one scaled much
+        /// past that clips through the terrain it stands on.
+        /// </summary>
+        public static BossRules BaselineBoss()
+        {
+            return new BossRules
+            {
+                Enabled = true,
+                StarChances = new[] { 90f, 6f, 3f, 1f },
+                Star = new StarPower
+                {
+                    Growth = new[] { 0f, 0.05f, 0.10f, 0.15f, 0.20f, 0.20f },
+                    Hp = new[] { 1f, 1.5f, 2.25f, 3.4f, 5.1f, 7.6f },
+                    Attack = new[] { 1f, 1.25f, 1.55f, 1.9f, 2.3f, 2.75f },
+                    SwingSpeed = new[] { 1f },
+                    Speed = new[] { 1f },
+                    Drops = new[] { 1f, 1.5f, 2f, 2.5f, 3f, 3.5f },
+                },
+            };
+        }
 
         public static float Power(Mutation mutation, string field)
         {

@@ -117,6 +117,53 @@ defaults:
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
     Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
 
+# Repopulating the world. All three are OFF by default: run too fast, this
+# quietly undoes a player's sense of progress, so a camp should be worth
+# clearing again after real days rather than hours. Timers are in world days
+# (one world day is 30 real minutes at default speed).
+#   camps             - Cleared camp spawners start spawning again.
+#   dungeons          - Cleared dungeon spawners start spawning again.
+#   dungeon loot      - Emptied dungeon chests refill from their own table.
+#   ...days           - How long each waits. Loot is deliberately the slowest:
+#                       a crypt worth re-looting weekly is a landmark, one worth
+#                       re-looting hourly is a vending machine.
+# A spawner the game already gave a timer of its own is left alone. A chest is
+# only refilled once it has been emptied - one you are still working through is
+# never topped up under you.
+respawning:
+  camps: false
+  camp days: 5
+  dungeons: false
+  dungeon days: 7
+  dungeon loot: false
+  dungeon loot days: 14
+
+# Bosses. They scale on their own table and never on the creature lines above, so
+# a server can make the world brutal and leave bosses alone, or the reverse. A
+# boss takes no mutations. Its stars are drawn from the distribution here and not
+# from where its altar happens to sit - a boss is a set-piece you choose to walk
+# into, not something you stumble across.
+#   stars        - false leaves every boss exactly as the game ships it.
+#   star chances - Weights per star count, index 0 being no stars. 90 in 100 stay
+#                  plain by default: a surprise five-star Bonemass is a wasted
+#                  evening for a group that prepared for the ordinary one.
+#   star power   - The boss lines. Health and damage climb harder per star than a
+#                  creature's; growth climbs less and stops at 20%, because a
+#                  boss already fills its arena and one scaled much past that
+#                  clips through the terrain it is standing on. Swing speed and
+#                  speed are left at 1 - a faster boss breaks its own telegraphs,
+#                  which is what makes the fight readable.
+bosses:
+  stars: true
+  star chances: [90, 6, 3, 1]
+  star power:
+    growth:      [0,   0.05, 0.10, 0.15, 0.20, 0.20]
+    hp:          [1,   1.5,  2.25, 3.4,  5.1,  7.6]
+    attack:      [1,   1.25, 1.55, 1.9,  2.3,  2.75]
+    swing speed: [1]
+    speed:       [1]
+    drops:       [1,   1.5,  2,    2.5,  3,    3.5]
+
 # Every biome below overrides only what it names. Delete a line to fall back to
 # `defaults`; delete a whole biome to make it behave like the defaults entirely.
 #
