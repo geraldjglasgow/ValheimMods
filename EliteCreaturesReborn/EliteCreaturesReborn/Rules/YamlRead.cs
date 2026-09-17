@@ -63,6 +63,12 @@ namespace EliteCreaturesReborn.Rules
                 && float.TryParse(scalar.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
         }
 
+        public static bool TryBool(YamlNode? node, out bool value)
+        {
+            value = false;
+            return node is YamlScalarNode scalar && bool.TryParse(scalar.Value, out value);
+        }
+
         public static bool Bool(YamlMappingNode map, string key, bool fallback, List<string> errors)
         {
             YamlNode? node = Child(map, key);

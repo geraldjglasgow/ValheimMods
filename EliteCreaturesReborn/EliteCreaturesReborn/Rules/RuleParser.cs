@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using EliteCreaturesReborn.Traits;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -33,6 +34,7 @@ namespace EliteCreaturesReborn.Rules
                 LockToServer = YamlRead.Bool(root, "lock to server", true, result.Errors),
                 MaxMutations = Math.Max(0, YamlRead.Int(root, "max mutations", 1, result.Errors)),
             };
+            ReadMutationEnabled(set, root, result);
             ReadDefaults(set, root, result);
             ReadBosses(set, root, result);
             ReadRespawning(set, root, result);
@@ -72,6 +74,35 @@ namespace EliteCreaturesReborn.Rules
                 errors.Add($"could not read the file: {ex.Message}");
             }
             return null;
+        }
+
+        private static void ReadMutationEnabled(RuleSet set, YamlMappingNode root, Result result)
+        {
+            foreach (Mutation mutation in MutationCatalog.InOrder)
+            {
+                set.MutationEnabled[mutation] = true;
+            }
+            if (!(YamlRead.Child(root, "mutations enabled") is YamlMappingNode map))
+            {
+                return;
+            }
+            foreach (KeyValuePair<YamlNode, YamlNode> pair in map.Children)
+            {
+                string name = (pair.Key as YamlScalarNode)?.Value ?? "";
+                Mutation? mutation = MutationCatalog.FromName(name);
+                if (mutation == null)
+                {
+                    YamlRead.AddError(result.Errors, pair.Key, $"'{name}' is not one of the nine mutations");
+                }
+                else if (YamlRead.TryBool(pair.Value, out bool value))
+                {
+                    set.MutationEnabled[mutation.Value] = value;
+                }
+                else
+                {
+                    YamlRead.AddError(result.Errors, pair.Value, $"'{name}' should be true or false");
+                }
+            }
         }
 
         private static void ReadDefaults(RuleSet set, YamlMappingNode root, Result result)

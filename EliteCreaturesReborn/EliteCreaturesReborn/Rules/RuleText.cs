@@ -16,34 +16,34 @@ namespace EliteCreaturesReborn.Rules
 # Biome names must match the game's own: Meadows, BlackForest, Swamp, Mountain,
 # Plains, Mistlands, AshLands, DeepNorth, Ocean.
 
-# When true, players on a server use the server's copy of this file and cannot
-# override it. Their own file is ignored while connected and restored when they
-# leave. Display preferences in the .cfg (colours, nameplate distance) are never
-# locked - they change only what that player sees.
+# When true, connected players use the server's copy and cannot override it locally.
 lock to server: true
 
-# The most mutations one creature may carry. 1 by default: a creature is Mad, or
-# it is Cloaked, but not both. Raise it for stacked monsters; 0 means no cap at
-# all. Where more roll than the cap allows, the survivors are picked at random.
+# Most mutations one creature may carry at once. 0 means no cap. Where more roll
+# than the cap allows, the survivors are picked at random.
 max mutations: 1
 
+# Turn a mutation off everywhere, regardless of its chance curves below.
+mutations enabled:
+  Mad: true
+  Bloated: true
+  Cloaked: true
+  Splintering: true
+  Leeching: true
+  Warding: true
+  Plated: true
+  Miasmic: true
+  Devouring: true
+
 defaults:
-  # How much stronger a mutation is when it sits on a large star (worth 5 stars)
-  # rather than a small one. Multiplies the mutation's BONUS, never its cost: a
-  # Mad creature on a large star is much faster but still has half health. 5 -
-  # matching the star's worth - is available but produces absurdities like a
-  # creature outrunning the player, so the default is deliberately lower. A biome
-  # may override it, so Ash Lands large stars can be ferocious and the Meadows not.
+  # How much stronger a mutation is on a large star (worth 5) versus a small one.
+  # Multiplies the mutation's bonus, never its cost. A biome may override this.
   large star power: 2
 
-  # What a star is worth. One entry per star count, so index 0 is an unstarred
-  # creature and index 5 a five-star one.
-  #   growth      - Size bonus, added to 1. 0.20 at 3 stars means 20% larger.
-  #   hp          - Max health multiplier. 2.75 at 3 stars means 2.75x.
-  #   attack      - Damage multiplier, applied to everything it deals.
-  #   swing speed - Attack and animation speed multiplier. Deliberately gentle.
-  #   speed       - Movement speed multiplier. Also gentle.
-  #   drops       - Loot quantity multiplier. Stars do not pay until the second.
+  # What a star is worth, one entry per star count (index 0 = unstarred).
+  #   growth, hp, attack   - size, max health and damage multipliers
+  #   swing speed, speed   - attack/animation and movement multipliers, kept gentle
+  #   drops                - loot quantity multiplier
   star power:
     growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30]
     hp:          [1,    1.4,  1.95, 2.75, 3.85, 5.4]
@@ -52,60 +52,18 @@ defaults:
     speed:       [1,    1,    1.03, 1.06, 1.1,  1.15]
     drops:       [1,    1,    1.5,  2,    2.5,  3]
 
-  # The chance that ANY ONE mutation appears, indexed by the creature's star
-  # count. Applied to every mutation that has no entry of its own below. Each
-  # mutation is rolled separately, so these do not sum to anything.
+  # Chance any one mutation appears, by star count. Applies to any mutation with
+  # no override below; each mutation rolls separately, so these don't sum to 100.
   mutation chance: [2.5, 3.5, 5, 6, 7.5, 10]
 
-  # Per-mutation overrides. Anything not listed here uses `mutation chance` above.
-  # Devouring is deliberately rarer everywhere: one of them changes a whole area.
+  # Per-mutation overrides of the curve above.
   mutation chances:
     Devouring:   [0.6, 0.9, 1.2, 1.5, 1.8, 2.4]
 
-  # How strong each mutation is. Named fields, not positional numbers. A field
-  # marked (enhanced) is multiplied by `large star power` when the mutation sits
-  # on a large star; a cost is never multiplied. Meaning:
-  #   Mad         move          - Movement speed multiplier. 1.6 = 60% faster. (enhanced)
-  #   Mad         attack speed  - Attack and animation speed multiplier. (enhanced)
-  #   Mad         health        - Max health multiplier. 0.5 = half. Its cost.
-  #   Bloated     health        - Max health multiplier. (enhanced)
-  #   Bloated     delay         - Seconds between death and the blast. The blast
-  #                               goes off at the corpse's resting place, not the
-  #                               spot of death; the warning rides the corpse.
-  #   Bloated     damage        - Blunt damage at 0 stars, times (1 + stars). (enhanced)
-  #   Bloated     radius        - Blast radius in metres. (enhanced)
-  #   Bloated     blast effect  - Vanilla prefab cloned for the explosion.
-  #   Bloated     warning effect - Vanilla prefab played on the corpse during the delay.
-  #   Cloaked     reveal distance - Metres at which it becomes visible. (enhanced)
-  #   Cloaked     fade time     - Seconds to phase in or out. 0 snaps.
-  #   Cloaked     fade margin   - Extra metres before it fades back out (stops strobing).
-  #   Splintering damage        - Damage multiplier. 0.6 = 40% weaker.
-  #   Splintering max generations - Cascade-depth cap. 0 = unlimited.
-  #   Splintering max descendants - Live-descendant cap. 0 = unlimited.
-  #   Leeching    regen         - Percent of max health regained per second. (enhanced)
-  #   Leeching    lifesteal     - Percent of damage dealt returned as health. (enhanced)
-  #   Warding     reflect       - Percent of incoming damage returned. (enhanced)
-  #   Warding     knockback     - Force applied to a melee attacker. (enhanced)
-  #   Plated      armour        - Percent armour bonus at full health, to 0 hurt. (enhanced)
-  #   Plated      damage        - Percent damage bonus at zero health, to 0 full. (enhanced)
-  #   Miasmic     cloud life    - Seconds a dropped cloud lasts.
-  #   Miasmic     cloud damage  - Strength of the vanilla Poison applied to a player
-  #                               it hits or who stands in a cloud - not direct
-  #                               damage; the status effect does the harming. (enhanced)
-  #   Miasmic     clouds per second - How often it drops one while moving. (enhanced)
-  #   Miasmic     cloud radius  - Metres. The visible cloud matches this exactly.
-  #   Miasmic     cloud effect  - Vanilla prefab cloned for a trail cloud.
-  #   Miasmic     body effect   - Vanilla poison visual worn on the creature at all
-  #                               times. It looks poisoned; it is not, and takes no harm.
-  #   Devouring   absorb health - Percent of a victim's max health it keeps, added to
-  #                               its own permanently. An instant kill always lands the
-  #                               killing blow, so the whole amount is kept. (enhanced)
-  #   Devouring   absorb damage - Percent of a victim's damage it keeps, permanently. (enhanced)
-  #   Devouring   slow per 100 health - Percent speed lost per 100 eaten health. Its cost.
-  #   Devouring   player threshold - Fraction of a player's max health its per-hit
-  #                                  damage must pass before it hunts players for good.
-  #   Devouring   devour cooldown - Seconds it must wait after a meal before it can eat
-  #                                 again. During it the creature fights as an ordinary one.
+  # How strong each mutation is, in named fields rather than positional numbers.
+  # A field marked (enhanced) in the README is multiplied by `large star power`
+  # on a large star; a cost field never is. Full field-by-field meanings are in
+  # the mod's README, under Mutation power fields.
   mutation power:
     Mad:         { move: 1.6, attack speed: 1.5, health: 0.5 }
     Bloated:     { health: 2.0, delay: 1.0, damage: 40, radius: 4, blast effect: fx_barrel_destroyed, warning effect: fx_Smoke }
@@ -117,19 +75,10 @@ defaults:
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
     Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
 
-# Repopulating the world. All three are OFF by default: run too fast, this
-# quietly undoes a player's sense of progress, so a camp should be worth
-# clearing again after real days rather than hours. Timers are in world days
-# (one world day is 30 real minutes at default speed).
-#   camps             - Cleared camp spawners start spawning again.
-#   dungeons          - Cleared dungeon spawners start spawning again.
-#   dungeon loot      - Emptied dungeon chests refill from their own table.
-#   ...days           - How long each waits. Loot is deliberately the slowest:
-#                       a crypt worth re-looting weekly is a landmark, one worth
-#                       re-looting hourly is a vending machine.
-# A spawner the game already gave a timer of its own is left alone. A chest is
-# only refilled once it has been emptied - one you are still working through is
-# never topped up under you.
+# Repopulating the world. All off by default, so clearing a camp or dungeon
+# stays worth doing. Timers are in world days (one day = 30 real minutes at
+# default speed). A spawner the game already timers on its own is left alone; a
+# chest refills only once it has been fully emptied.
 respawning:
   camps: false
   camp days: 5
@@ -138,21 +87,12 @@ respawning:
   dungeon loot: false
   dungeon loot days: 14
 
-# Bosses. They scale on their own table and never on the creature lines above, so
-# a server can make the world brutal and leave bosses alone, or the reverse. A
-# boss takes no mutations. Its stars are drawn from the distribution here and not
-# from where its altar happens to sit - a boss is a set-piece you choose to walk
-# into, not something you stumble across.
-#   stars        - false leaves every boss exactly as the game ships it.
-#   star chances - Weights per star count, index 0 being no stars. 90 in 100 stay
-#                  plain by default: a surprise five-star Bonemass is a wasted
-#                  evening for a group that prepared for the ordinary one.
-#   star power   - The boss lines. Health and damage climb harder per star than a
-#                  creature's; growth climbs less and stops at 20%, because a
-#                  boss already fills its arena and one scaled much past that
-#                  clips through the terrain it is standing on. Swing speed and
-#                  speed are left at 1 - a faster boss breaks its own telegraphs,
-#                  which is what makes the fight readable.
+# Bosses scale on their own table, never the creature lines above, and never take
+# mutations. `stars: false` leaves every boss exactly as the game ships it.
+# `star chances` are weights per star count (index 0 = no stars); 90 in 100 stay
+# plain by default. `star power` climbs harder than a creature's on health and
+# damage but less on growth, and leaves swing speed/speed at 1 so a boss fight
+# stays readable.
 bosses:
   stars: true
   star chances: [90, 6, 3, 1]
@@ -164,18 +104,14 @@ bosses:
     speed:       [1]
     drops:       [1,   1.5,  2,    2.5,  3,    3.5]
 
-# Every biome below overrides only what it names. Delete a line to fall back to
-# `defaults`; delete a whole biome to make it behave like the defaults entirely.
+# Every biome below overrides only what it names; delete a line to fall back to
+# `defaults`, or a whole biome to use defaults entirely.
 #
-# `star chances` is per-biome ONLY - there is deliberately no global default,
-# because how starry a biome is is the main thing that separates one from the
-# next. One entry per star count, and they should add up to 100. This is a
-# straight distribution, not a chain: [73, 10, 10, 5, 1, 1] means 73 creatures in
-# 100 have no stars, 10 have one, 10 have two, 5 have three, 1 has four and 1 has
-# five. Even the gentlest biome keeps a sliver at the top - that is the rare
-# large-star creature, and it should exist everywhere, just barely. Adding a
-# seventh entry raises that biome's ceiling to 6 stars, and so on. An unlisted or
-# modded biome takes the Meadows row for stars.
+# `star chances` is per-biome only, with no global default - it's the main thing
+# that tells one biome apart from the next. One entry per star count, summing to
+# 100: [73, 10, 10, 5, 1, 1] means 73 in 100 creatures are unstarred, 10 have one
+# star, and so on up to 1 in 100 with five. A seventh entry raises the ceiling to
+# six stars. An unlisted or modded biome takes the Meadows row.
 biomes:
   - match: Meadows
     star chances:    [73, 10, 10, 5, 1, 1]

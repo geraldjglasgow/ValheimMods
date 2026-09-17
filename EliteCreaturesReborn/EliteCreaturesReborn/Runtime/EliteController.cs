@@ -130,7 +130,7 @@ namespace EliteCreaturesReborn.Runtime
             {
                 return new CreatureTraits(TraitRoller.RollStars(BossView.For(RuleState.Active.Boss)), 0);
             }
-            return TraitRoller.Roll(RuleState.Active.For(biome), RuleState.Active.MaxMutations);
+            return TraitRoller.Roll(RuleState.Active.For(biome), RuleState.Active.MaxMutations, RuleState.Active);
         }
 
         /// <summary>

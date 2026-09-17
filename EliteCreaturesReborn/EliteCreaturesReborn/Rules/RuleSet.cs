@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
 
 namespace EliteCreaturesReborn.Rules
@@ -14,6 +15,11 @@ namespace EliteCreaturesReborn.Rules
         public bool LockToServer = true;
         public int MaxMutations = 1;
         public BiomeRules Defaults = new BiomeRules();
+
+        /// <summary>Per-mutation on/off switch. An entry missing here (an old file, an unlisted mutation) means enabled.</summary>
+        public readonly Dictionary<Mutation, bool> MutationEnabled = new Dictionary<Mutation, bool>();
+
+        public bool IsEnabled(Mutation mutation) => !MutationEnabled.TryGetValue(mutation, out bool value) || value;
 
         /// <summary>The boss table. One for the whole world: boss stars do not follow a biome or the world's pressure.</summary>
         public BossRules Boss = new BossRules();

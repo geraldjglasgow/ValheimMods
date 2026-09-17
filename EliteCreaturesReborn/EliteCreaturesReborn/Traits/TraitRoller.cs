@@ -7,15 +7,15 @@ namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
     /// Rolls a fresh creature's traits from its biome's rules: a star count drawn from the biome's straight star-chance
-    /// distribution, then every one of the nine mutations rolled independently at its own biome-and-star chance. A
-    /// creature that fails every roll is plain; one that passes several carries several. `max mutations` caps the set.
+    /// distribution, then every enabled mutation rolled independently at its own biome-and-star chance. A creature
+    /// that fails every roll is plain; one that passes several carries several. `max mutations` caps the set.
     /// </summary>
     public static class TraitRoller
     {
-        public static CreatureTraits Roll(BiomeRules rules, int maxMutations)
+        public static CreatureTraits Roll(BiomeRules rules, int maxMutations, RuleSet ruleSet)
         {
             int stars = RollStars(rules);
-            int mask = RollMutations(rules, stars, maxMutations);
+            int mask = RollMutations(rules, stars, maxMutations, ruleSet);
             return new CreatureTraits(stars, mask);
         }
 
@@ -48,12 +48,12 @@ namespace EliteCreaturesReborn.Traits
             return chances.Length - 1;
         }
 
-        private static int RollMutations(BiomeRules rules, int stars, int maxMutations)
+        private static int RollMutations(BiomeRules rules, int stars, int maxMutations, RuleSet ruleSet)
         {
             List<Mutation> hits = new List<Mutation>();
             foreach (Mutation mutation in MutationCatalog.InOrder)
             {
-                if (Dice.Percent(rules.ChanceOf(mutation, stars)))
+                if (ruleSet.IsEnabled(mutation) && Dice.Percent(rules.ChanceOf(mutation, stars)))
                 {
                     hits.Add(mutation);
                 }

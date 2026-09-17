@@ -22,6 +22,34 @@ Nine, one per creature by default, each with its own colour and its own name on 
 | Miasmic | Trails poison clouds; poisons players, never creatures |
 | Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you |
 
+## Mutation power fields
+
+`mutation power` in the rule file sets how strong each mutation is, in named fields rather than positional
+numbers. A field marked (enhanced) is multiplied by `large star power` on a large star; a cost field never is.
+Any mutation can also be switched off entirely with `mutations enabled`, regardless of its chance curves.
+
+- **Mad** - `move`/`attack speed` multipliers (enhanced); `health` multiplier, its cost
+- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, which goes off at the
+  corpse's resting place; `damage` (enhanced) and `radius` (enhanced) of the blast; `blast effect`/`warning effect`
+  vanilla prefabs for the explosion and the pre-blast warning
+- **Cloaked** - `reveal distance` metres to become visible (enhanced); `fade time` seconds to phase, 0 snaps;
+  `fade margin` extra metres before fading back out, to stop strobing
+- **Splintering** - `damage` multiplier per split; `max generations` cascade-depth cap, 0 = unlimited;
+  `max descendants` live-descendant cap, 0 = unlimited
+- **Leeching** - `regen` percent max health per second (enhanced); `lifesteal` percent of damage dealt returned as
+  health (enhanced)
+- **Warding** - `reflect` percent of incoming damage returned (enhanced); `knockback` force on a melee attacker
+  (enhanced)
+- **Plated** - `armour` percent bonus at full health, to 0 hurt (enhanced); `damage` percent bonus at zero health,
+  to 0 full (enhanced)
+- **Miasmic** - `cloud life` seconds a dropped cloud lasts; `cloud damage` strength of the vanilla Poison a cloud
+  or hit applies, not direct damage (enhanced); `clouds per second` while moving (enhanced); `cloud radius` metres;
+  `cloud effect`/`body effect` vanilla prefabs for the trail cloud and the permanent worn poison look (cosmetic)
+- **Devouring** - `absorb health`/`absorb damage` percent kept permanently from a victim (enhanced; an instant
+  kill always lands the killing blow, so the full amount is kept); `slow per 100 health`, its cost;
+  `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
+  `devour cooldown` seconds after a meal before it can eat again
+
 ## Stars
 
 Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a
@@ -33,7 +61,8 @@ Two files, both written and documented on first run, both hot-reloaded while you
 
 - `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` — the settings: star chances, mutation chances and mutation
   strength per biome, colours, nameplate distance, and an off switch for everything.
-- `BepInEx/config/creature_rules.yml` — the rule file, for anything too structured for a flat settings file.
+- `BepInEx/config/creature_rules.yml` — the rule file, for anything too structured for a flat settings file,
+  including a `mutations enabled` switch that turns any mutation off everywhere.
 
 A server binds connected players to its own rules. Display preferences — colours, tint strength, nameplate
 distance, whether trait names show at all — stay with each player and are never locked.
