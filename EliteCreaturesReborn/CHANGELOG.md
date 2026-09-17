@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.1.0
+
+**Mutations enabled** — a new `mutations enabled` switch in the rule file turns any of the nine mutations off
+everywhere, regardless of its chance curves. Old rule files keep working unchanged; an unlisted mutation stays
+enabled.
+
+**Rule file** — the generated `creature_rules.yml` comments are much shorter. The full field-by-field reference
+for `mutation power` moved to the README's new "Mutation power fields" section instead of living inline.
+
 ## 3.0.0
 
 Rebuilt from scratch. Not an update to earlier versions — none of the old code remains. This release covers
