@@ -23,7 +23,7 @@ server raise the ceiling without rewriting every line.
 | Line | What it multiplies | Default at 0-5 stars |
 | --- | --- | --- |
 | `growth` | Size bonus, added to 1 | 0.06, 0.10, 0.15, 0.20, 0.25, 0.30 |
-| `hp` | Maximum health | 1, 1.4, 1.95, 2.75, 3.85, 5.4 |
+| `hp` | Maximum health | 1, 1.4, 1.95, 2.6, 3.3, 4.0 |
 | `attack` | Everything it deals | 1, 1.2, 1.45, 1.75, 2.1, 2.5 |
 | `swing speed` | Attack and animation speed | 1, 1.02, 1.05, 1.08, 1.12, 1.16 |
 | `speed` | Movement speed | 1, 1, 1.03, 1.06, 1.1, 1.15 |

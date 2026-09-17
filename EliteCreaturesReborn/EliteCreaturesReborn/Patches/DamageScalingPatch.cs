@@ -10,8 +10,8 @@ namespace EliteCreaturesReborn.Patches
     /// <summary>
     /// Scales a hit as it lands, on the victim's owner - the single choke point every damage source passes through.
     /// The attacker's traits raise or lower what it deals (star attack, Splintering, Plated's rising bite, Devouring's
-    /// eaten damage), summed additively; the victim's Plated armour softens what comes in, using the game's own armour
-    /// curve. Two more attacker-mutation hit tweaks live here because this is the prefix that owns the outgoing hit:
+    /// eaten damage), summed additively; the victim's Plated mutation cuts what comes in by a flat, capped percentage.
+    /// Two more attacker-mutation hit tweaks live here because this is the prefix that owns the outgoing hit:
     /// Miasmic adds vanilla Poison when it hits a player, and Devouring zeroes knockback so its prey never tumbles away.
     /// Hits with no attacker - poison clouds, explosions, reflected damage - carry no traits and pass through.
     /// </summary>
@@ -79,10 +79,10 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            float armour = DamageMath.PlatedArmour(controller.Rules, controller.Traits, victim.GetHealthPercentage());
-            if (armour > 0f)
+            float reduction = DamageMath.PlatedReduction(controller.Rules, controller.Traits, victim.GetHealthPercentage());
+            if (reduction > 0f)
             {
-                hit.ApplyArmor(armour);
+                hit.ApplyModifier(1f - reduction);
             }
         }
     }

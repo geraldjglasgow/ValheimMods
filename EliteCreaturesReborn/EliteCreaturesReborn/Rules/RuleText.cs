@@ -23,7 +23,9 @@ lock to server: true
 # than the cap allows, the survivors are picked at random.
 max mutations: 1
 
-# Turn a mutation off everywhere, regardless of its chance curves below.
+# Turn a mutation off everywhere, regardless of its chance curves below. No biome
+# block can turn it back on. Creatures already spawned keep whatever they rolled -
+# this only changes what the next one rolls.
 mutations enabled:
   Mad: true
   Bloated: true
@@ -38,7 +40,7 @@ mutations enabled:
 defaults:
   # How much stronger a mutation is on a large star (worth 5) versus a small one.
   # Multiplies the mutation's bonus, never its cost. A biome may override this.
-  large star power: 2
+  large star power: 1
 
   # What a star is worth, one entry per star count (index 0 = unstarred).
   #   growth, hp, attack   - size, max health and damage multipliers
@@ -46,7 +48,7 @@ defaults:
   #   drops                - loot quantity multiplier
   star power:
     growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30]
-    hp:          [1,    1.4,  1.95, 2.75, 3.85, 5.4]
+    hp:          [1,    1.4,  1.95, 2.6,  3.3,  4.0]
     attack:      [1,    1.2,  1.45, 1.75, 2.1,  2.5]
     swing speed: [1,    1.02, 1.05, 1.08, 1.12, 1.16]
     speed:       [1,    1,    1.03, 1.06, 1.1,  1.15]
@@ -69,9 +71,9 @@ defaults:
     Bloated:     { health: 2.0, delay: 1.0, damage: 40, radius: 4, blast effect: fx_barrel_destroyed, warning effect: fx_Smoke }
     Cloaked:     { reveal distance: 6, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
-    Leeching:    { regen: 2, lifesteal: 30 }
+    Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }
     Warding:     { reflect: 30, knockback: 4 }
-    Plated:      { armour: 100, damage: 60 }
+    Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
     Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
 
@@ -150,14 +152,14 @@ biomes:
       Devouring:   [2, 3, 4, 5, 6, 8]
 
   - match: AshLands
-    star chances:    [12, 20, 24, 20, 15, 9]
+    star chances:    [16, 22, 26, 21, 11, 4]
     mutation chance: [7.5,  10.5, 14,   18,   22,   28]
     mutation chances:
       Bloated:     [38, 50, 64, 78, 92, 100]
       Splintering: [28, 37, 48, 58, 69, 82]
 
   - match: DeepNorth
-    star chances:    [12, 20, 24, 20, 15, 9]
+    star chances:    [16, 22, 26, 21, 11, 4]
     mutation chance: [7.5,  10.5, 14,   18,   22,   28]
     mutation chances:
       Plated:      [38, 50, 64, 78, 92, 100]

@@ -9,6 +9,24 @@ enabled.
 **Rule file** — the generated `creature_rules.yml` comments are much shorter. The full field-by-field reference
 for `mutation power` moved to the README's new "Mutation power fields" section instead of living inline.
 
+**Leeching and Plated rebalanced** — both could make a creature nearly unkillable:
+
+- Leeching's regen dropped from 2% to 0.5% max health per second, and lifesteal from 30% to 10%. Regen now pauses
+  for `combat cooldown` (5s default) after the creature last took damage, is hard-capped at `regen cap` (20 hp/s
+  default) so a high-health creature cannot out-heal a fight on regen alone, and is no longer large-star enhanced.
+- Plated's `armour` field is now a damage-reduction *percentage* (40% default, was a flat 100 armour points fed
+  into vanilla's armour curve, whose quadratic low end erased almost all of a weak hit's damage). A new
+  `max reduction` field (55% default) hard-caps it so large-star enhancement cannot approach invulnerability.
+  **This changes what an existing `armour` value in a customised rule file means** — a server that set its own
+  number should revisit it.
+
+**Large stars toned down** — `large star power` defaults to `1` instead of `2`: a large star (already worth five
+ordinary ones) no longer also doubles every mutation's bonus on top of that. `star power`'s `hp` line is flattened
+at the top (`3.85`/`5.4` at 4/5 stars down to `3.3`/`4.0`) so a five-star creature's health climbs less steeply.
+Ash Lands and Deep North's `star chances` trim the 4-5 star tail (`15, 9` down to `11, 4`) and pad the bulk of the
+distribution instead, so their harshest creatures are rarer. `max mutations: 1` already capped how many of these
+a single creature can stack, and stays unchanged.
+
 ## 3.0.0
 
 Rebuilt from scratch. Not an update to earlier versions — none of the old code remains. This release covers

@@ -19,7 +19,7 @@ namespace EliteCreaturesReborn.Rules
                 // uses (the Meadows row); the parser overwrites it from the file's own Meadows entry when there is one.
                 StarChances = new[] { 73f, 10f, 10f, 5f, 1f, 1f },
                 Star = BaselineStarPower(),
-                LargeStarPower = 2f,
+                LargeStarPower = 1f,
                 MutationChance = new[] { 2.5f, 3.5f, 5f, 6f, 7.5f, 10f },
             };
             rules.MutationChances[Mutation.Devouring] = new[] { 0.6f, 0.9f, 1.2f, 1.5f, 1.8f, 2.4f };
@@ -75,7 +75,7 @@ namespace EliteCreaturesReborn.Rules
             return new StarPower
             {
                 Growth = new[] { 0.06f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f },
-                Hp = new[] { 1f, 1.4f, 1.95f, 2.75f, 3.85f, 5.4f },
+                Hp = new[] { 1f, 1.4f, 1.95f, 2.6f, 3.3f, 4.0f },
                 Attack = new[] { 1f, 1.2f, 1.45f, 1.75f, 2.1f, 2.5f },
                 SwingSpeed = new[] { 1f, 1.02f, 1.05f, 1.08f, 1.12f, 1.16f },
                 Speed = new[] { 1f, 1f, 1.03f, 1.06f, 1.1f, 1.15f },
@@ -115,9 +115,12 @@ namespace EliteCreaturesReborn.Rules
                     { [Fields.RevealDistance] = 6f, [Fields.FadeTime] = 0.5f, [Fields.FadeMargin] = 1f },
                 [Mutation.Splintering] = new Dictionary<string, float>
                     { [Fields.Damage] = 0.6f, [Fields.MaxGenerations] = 0f, [Fields.MaxDescendants] = 0f },
-                [Mutation.Leeching] = new Dictionary<string, float> { [Fields.Regen] = 2f, [Fields.Lifesteal] = 30f },
+                [Mutation.Leeching] = new Dictionary<string, float>
+                    { [Fields.Regen] = 0.5f, [Fields.Lifesteal] = 10f, [Fields.RegenCap] = 20f,
+                      [Fields.CombatCooldown] = 5f },
                 [Mutation.Warding] = new Dictionary<string, float> { [Fields.Reflect] = 30f, [Fields.Knockback] = 4f },
-                [Mutation.Plated] = new Dictionary<string, float> { [Fields.Armour] = 100f, [Fields.Damage] = 60f },
+                [Mutation.Plated] = new Dictionary<string, float>
+                    { [Fields.Armour] = 40f, [Fields.Damage] = 60f, [Fields.MaxReduction] = 55f },
                 [Mutation.Miasmic] = new Dictionary<string, float>
                     { [Fields.CloudLife] = 6f, [Fields.CloudDamage] = 5f, [Fields.CloudsPerSecond] = 1f,
                       [Fields.CloudRadius] = 4f },

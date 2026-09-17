@@ -36,11 +36,13 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `fade margin` extra metres before fading back out, to stop strobing
 - **Splintering** - `damage` multiplier per split; `max generations` cascade-depth cap, 0 = unlimited;
   `max descendants` live-descendant cap, 0 = unlimited
-- **Leeching** - `regen` percent max health per second (enhanced); `lifesteal` percent of damage dealt returned as
-  health (enhanced)
+- **Leeching** - `regen` percent max health per second, never enhanced; `regen cap` hard HP/s ceiling on a single
+  tick, so a huge-health creature cannot out-heal a fight; `combat cooldown` seconds since its last damage taken
+  before regen resumes; `lifesteal` percent of damage dealt returned as health (enhanced)
 - **Warding** - `reflect` percent of incoming damage returned (enhanced); `knockback` force on a melee attacker
   (enhanced)
-- **Plated** - `armour` percent bonus at full health, to 0 hurt (enhanced); `damage` percent bonus at zero health,
+- **Plated** - `armour` percent of incoming damage cut at full health, to 0 hurt (enhanced); `max reduction` hard
+  ceiling on that percent, so enhancement cannot approach invulnerability; `damage` percent bonus at zero health,
   to 0 full (enhanced)
 - **Miasmic** - `cloud life` seconds a dropped cloud lasts; `cloud damage` strength of the vanilla Poison a cloud
   or hit applies, not direct damage (enhanced); `clouds per second` while moving (enhanced); `cloud radius` metres;

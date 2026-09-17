@@ -40,15 +40,17 @@ here.
 | Bloated | Double health. On death it pauses a second, then explodes | None |
 | Cloaked | Invisible at more than 6 metres, nameplate included | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
-| Leeching | Regenerates 2% of max health per second, and heals 30% of damage it deals | None |
+| Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
 | Warding | Reflects 30% of damage taken back at the attacker, and knocks them back on any melee hit | None |
-| Plated | Heavily armoured at full health | Sheds that armour as it is hurt, and its damage rises as it does |
+| Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
 | Miasmic | Leaves a trail of poison clouds as it moves; each cloud lingers 6 seconds then fades | None |
 | Devouring | Eats other creatures and keeps what it takes. See below | Grows slower the more it has eaten |
 
-Judgement calls in that table, all tunable: the Mad percentages; Bloated's one-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Splintering's 40% damage reduction; Leeching's two
-rates; Warding's 30% reflection; Plated running from +100% armour at full health to none at zero
-while its damage climbs from nothing to +60%; Miasmic's clouds doing poison damage on a par with a
+Judgement calls in that table, all tunable: the Mad percentages; Bloated's one-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Splintering's 40% damage reduction; Leeching's regen
+and lifesteal rates, its 5-second combat cooldown and its 20 hp/s regen cap - a high-health creature must be
+beatable on regen alone; Warding's 30% reflection; Plated running from a 40% damage cut at full health to none at
+zero, hard-capped at 55% so a large star cannot approach invulnerability, while its damage climbs from nothing to
++60%; Miasmic's clouds doing poison damage on a par with a
 Blob's and appearing about one per second of movement.
 
 ## Devouring, in full
@@ -237,6 +239,42 @@ a server once, be talked about, and not be the norm.
 Two safety knobs exist and are **off by default**: a cap on how many generations deep a cascade may
 go, and a cap on how many live descendants one cascade may have at once. Turning either on
 truncates a cascade rather than preventing the mutation.
+
+### Investigated: "copies despawn when kited" (Roman6Migrish) - not reproduced, no defect found
+
+Reported: a Splintering copy vanishes if the player leaves the area before killing it. Not reproduced in testing.
+Checked `Mutations/Splitter.cs`'s `SpawnCopy`/`Configure` against the game's own `ZNetView`, `ZNetScene` and
+`ZDOMan` (decompiled to `~/scratch/decomp` for signatures only, per `CLEANROOM.md`):
+
+- **ZDO persistence.** `ZNetView.Awake()` sets `zdo.Persistent = m_persistent` straight from the prefab's own
+  component, whatever GameObject creation path triggered `Awake()`. A copy uses
+  `ZNetScene.instance.GetPrefab(prefabHash)` - the identical prefab reference a normal spawn of that creature
+  uses - so its persistence is whatever that species already ships with, unchanged by splitting.
+- **`Object.Instantiate` vs `ZNetScene`.** Vanilla's own networked spawn RPC, `ZNetScene.SpawnObject` /
+  `RPC_SpawnObject`, does nothing more than `UnityEngine.Object.Instantiate(prefab, pos, rot)` - the exact call
+  `SpawnCopy` makes. `ZNetView.Awake()` creates the ZDO and registers it with `ZNetScene` on its own, triggered by
+  Unity's component lifecycle; there is no separate registration step a direct `Instantiate` call skips.
+- **Ownership.** `ZDOMan.CreateNewZDO` assigns the creating machine's own session as owner immediately, and
+  `Splitter.Split` only ever runs from the local machine's own creature dying (`DeathPatch.Capture` requires
+  `nview.IsOwner()`), so a copy is owned exactly the way any owner-side spawn is. Ownership moving to another peer
+  as it leaves range is the same automatic, distance-based reassignment every `ZNetView` object goes through -
+  nothing here singles a copy out.
+- **`despawnInDay`/`eventCreature`.** Per-prefab `MonsterAI` flags, read from the ZDO with the prefab's own field
+  as fallback. A copy inherits whatever the species already carries; if this were the cause, the un-split parent
+  of the same species would despawn on the same schedule regardless of Splintering.
+- **Zone unload.** Destroying and later recreating a GameObject when its zone falls out of range - and, for a
+  non-persistent creature, dropping the ZDO itself rather than just the GameObject - is standard Valheim behaviour
+  for the species, not something `SpawnCopy` opts a copy into or out of.
+
+**No defect found.** `SpawnCopy` sets up a copy exactly the way vanilla's own spawn path does, using the same
+prefab as the parent, so a copy cannot be more or less persistent than an ordinary member of its species. The
+likeliest explanation is standard despawn-on-zone-unload behaviour for whichever creature was split, made
+noticeable only because the player was watching the copies chase and then vanish - not something Splintering
+introduces. One thing this could not check: the prefab's actual `m_persistent` value is Unity asset data, not
+code, so it cannot be read from the assembly - but it is shared by parent and copy either way, so it cannot explain
+a copy-only symptom. Not fixed, because nothing here is broken; reopen only with a reproduction that names the
+exact species, single-player vs dedicated server, and whether the unsplit parent shows the same behaviour under
+the same conditions.
 
 ## Console commands
 
@@ -492,14 +530,14 @@ max mutations: 1
 # creature on a large star is much faster but still has half health. 5 - matching
 # the star's worth - is available but produces absurdities like a creature
 # outrunning the player, so the default is deliberately lower.
-large star power: 2
+large star power: 1
 
 defaults:
   # What a star is worth. One entry per star count, so index 0 is an unstarred
   # creature and index 5 a five-star one. Every line is documented below.
   star power:
     growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30]
-    hp:          [1,    1.4,  1.95, 2.75, 3.85, 5.4]
+    hp:          [1,    1.4,  1.95, 2.6,  3.3,  4.0]
     attack:      [1,    1.2,  1.45, 1.75, 2.1,  2.5]
     swing speed: [1,    1.02, 1.05, 1.08, 1.12, 1.16]
     speed:       [1,    1,    1.03, 1.06, 1.1,  1.15]
@@ -523,9 +561,9 @@ defaults:
     Bloated:     { health: 2.0, delay: 1.0, damage: 40, radius: 4 }
     Cloaked:     { reveal distance: 6, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
-    Leeching:    { regen: 2, lifesteal: 30 }
+    Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }
     Warding:     { reflect: 30, knockback: 4 }
-    Plated:      { armour: 100, damage: 60 }
+    Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4 }
     Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
 
@@ -579,14 +617,14 @@ biomes:
       Devouring:   [2, 3, 4, 5, 6, 8]
 
   - match: AshLands
-    star chances:    [12, 20, 24, 20, 15, 9]
+    star chances:    [16, 22, 26, 21, 11, 4]
     mutation chance: [7.5,  10.5, 14,   18,   22,   28]
     mutation chances:
       Bloated:     [38, 50, 64, 78, 92, 100]
       Splintering: [28, 37, 48, 58, 69, 82]
 
   - match: DeepNorth
-    star chances:    [12, 20, 24, 20, 15, 9]
+    star chances:    [16, 22, 26, 21, 11, 4]
     mutation chance: [7.5,  10.5, 14,   18,   22,   28]
     mutation chances:
       Plated:      [38, 50, 64, 78, 92, 100]
@@ -624,16 +662,16 @@ are added together, and the total is applied once:
 final = 1 + (star value - 1) + sum of (mutation value - 1) for every mutation it carries
 ```
 
-So a 4-star Bloated creature, with `hp[4] = 3.85` and Bloated `health: 2.0`:
+So a 4-star Bloated creature, with `hp[4] = 3.3` and Bloated `health: 2.0`:
 
 ```
-1 + (3.85 - 1) + (2.0 - 1) = 4.85x health
+1 + (3.3 - 1) + (2.0 - 1) = 4.3x health
 ```
 
-not `3.85 x 2.0 = 7.7x`. Multiplying is what makes a four-mutation creature absurd rather than memorable, and
+not `3.3 x 2.0 = 6.6x`. Multiplying is what makes a four-mutation creature absurd rather than memorable, and
 it is why the stacked extremes in this spec are survivable at all.
 
-**A note on the arithmetic.** Adding the multipliers outright - `3.85 + 2.0` - looks simpler but double-counts
+**A note on the arithmetic.** Adding the multipliers outright - `3.3 + 2.0` - looks simpler but double-counts
 the creature it started as: an unstarred Bloated would come out at `1.0 + 2.0 = 3x` health when Bloated alone
 should give `2x`. Subtracting the 1 from each term fixes that, at the cost of the headline number being slightly
 lower than a straight sum: "3x stars plus 3x mutation" lands on 5x, not 6x. If you want the 6x, raise the values
@@ -672,11 +710,14 @@ The implementation must repeat this table as comments inside the generated file.
 | Splintering | `damage` | Damage multiplier for a splintering creature. `0.6` = 40% weaker. |
 | Splintering | `max generations` | Safety cap on cascade depth. `0` = unlimited, the default. |
 | Splintering | `max descendants` | Safety cap on live descendants at once. `0` = unlimited. |
-| Leeching | `regen` | Percent of max health regained per second. |
+| Leeching | `regen` | Percent of max health regained per second. Never large-star enhanced. |
+| Leeching | `regen cap` | Hard HP/s ceiling on a single regen tick, regardless of max health. Its cost. |
+| Leeching | `combat cooldown` | Seconds since its last damage taken before regen resumes. |
 | Leeching | `lifesteal` | Percent of damage dealt returned to it as health. |
 | Warding | `reflect` | Percent of incoming damage returned to the attacker. |
 | Warding | `knockback` | Force applied to whoever lands a melee hit on it. |
-| Plated | `armour` | Percent armour bonus at full health, falling to zero as it is hurt. |
+| Plated | `armour` | Percent of incoming damage cut at full health, falling to zero as it is hurt. |
+| Plated | `max reduction` | Hard ceiling on that percent, so a large star's enhancement cannot approach invulnerability. |
 | Plated | `damage` | Percent damage bonus at zero health, rising as it is hurt. |
 | Miasmic | `cloud life` | Seconds a dropped cloud lasts before fading. |
 | Miasmic | `cloud damage` | Strength of the Poison applied to a player standing in one. |
@@ -705,15 +746,15 @@ defaults are tuned so a quarter of Meadows creatures are something, rising to th
 | Mountain | 50% | 4% |
 | Plains | 59% | 5% |
 | Mistlands | 67% | 7% |
-| Ash Lands | 75% | 9% |
+| Ash Lands | 75% | 4% |
 | Ocean | 29% | 1% |
 
 **It tops out at three quarters on purpose.** An unmutated creature has to stay a real possibility even in the
 worst biome, or "mutated" stops meaning anything and the ordinary ones stop being a relief.
 
-**Large stars exist everywhere, barely.** One Meadows creature in a hundred has five stars, rising to nine in a
-hundred in the Ash Lands. Even the gentlest biome can produce one, so the enhanced-mutation rule is a rare
-event a new player might meet once rather than something gated behind progression.
+**Large stars exist everywhere, barely.** One Meadows creature in a hundred has five stars, rising to four in a
+hundred in the Ash Lands. Even the gentlest biome can produce one, and now that `large star power` defaults to
+`1` a large star is a size-and-damage event rather than a mutation-runaway one.
 
 Lower the `mutation chance` curve if you want mutations rarer, or raise `star chances` at the top end if you
 want big creatures commoner. The two dials are independent.
@@ -730,7 +771,12 @@ want big creatures commoner. The two dials are independent.
   server owner editing one number should not have to rebalance the rest by hand.
 - **A bad file never takes the server down.** Errors are reported line by line in the log and the previously
   loaded rules stay in force.
+- **`mutations enabled: <name>: false` turns a mutation off everywhere.** It is read once at the root, before any
+  `defaults` or biome overlay runs, so no biome block has a key that could turn it back on.
 - **The file reloads on edit**, while playing, without a restart.
+- **A rule change, this switch included, never touches a creature already spawned.** Traits are rolled once by
+  the owner and stored in the ZDO; a reload only changes what the *next* creature rolls, the same rule
+  `world-tiers.md` states for tier changes.
 - **The file is written on first run** with every value at its default and every comment in place, so a server
   owner always has a complete, documented file to edit rather than a blank one.
 
@@ -904,15 +950,19 @@ cap is 1 and the question never arises.
 A large star is worth five. A mutation sitting on one is correspondingly **stronger** - that is what makes a
 high-star creature different in kind rather than just carrying more labels.
 
-**`large star power` multiplies the mutation's gain, and only its gain.** Default `2`.
+**`large star power` multiplies the mutation's gain, and only its gain.** Default `1` - no extra multiplier at
+all. A large star is already worth five ordinary ones through `star power` alone; multiplying mutation gains on
+top of that as well is what let a large-star creature become unkillable. Raise it if a server wants large stars
+to hit harder on their mutations too, understanding that is a deliberate escalation above the shipped default.
 
 ```yaml
   # How much stronger a mutation is when it sits on a large star (worth 5 stars)
   # rather than a small one. Multiplies the mutation's BONUS, never its cost:
   # a Mad creature on a large star is much faster but still has half health.
-  # 5 - matching the star's worth - is available but produces absurdities like a
-  # creature outrunning the player, so the default is deliberately lower.
-  large star power: 2
+  # 1 is the default - a large star's own star power is already the reward: no
+  # extra multiplier on top of it. Raising this stacks another escalation on
+  # creatures that are already the rarest and biggest a biome produces.
+  large star power: 1
 ```
 
 Read against the additive model: a mutation's bonus is `value - 1`, that bonus is multiplied by
@@ -931,9 +981,9 @@ and "enhanced" should mean better at being itself, not worse.
 | Bloated | `health`, `damage`, `radius` | `delay` - a longer fuse helps the player, not the creature |
 | Cloaked | `reveal distance` | `fade time`, `fade margin` |
 | Splintering | - | all of it; the split table already keys off stars |
-| Leeching | `regen`, `lifesteal` | - |
+| Leeching | `lifesteal` | `regen` and `regen cap` (a cost-like ceiling) - a huge-health creature must stay beatable on regen alone; `combat cooldown` |
 | Warding | `reflect`, `knockback` | - |
-| Plated | `armour`, `damage` | - |
+| Plated | `armour`, `damage` | `max reduction` - the hard cap must not itself scale, or it stops being a cap |
 | Miasmic | `cloud damage`, `clouds per second` | `cloud life`, `cloud radius` |
 | Devouring | `absorb health`, `absorb damage` | `slow per 100 health` (a cost), `player threshold` |
 

@@ -38,6 +38,8 @@ namespace EliteCreaturesReborn.Rules
         // Leeching
         public const string Regen = "regen";
         public const string Lifesteal = "lifesteal";
+        public const string RegenCap = "regen cap";
+        public const string CombatCooldown = "combat cooldown";
 
         // Warding
         public const string Reflect = "reflect";
@@ -45,6 +47,7 @@ namespace EliteCreaturesReborn.Rules
 
         // Plated
         public const string Armour = "armour";
+        public const string MaxReduction = "max reduction";
 
         // Miasmic
         public const string CloudLife = "cloud life";
