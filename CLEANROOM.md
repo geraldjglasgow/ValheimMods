@@ -85,7 +85,11 @@ this boundary costs the mod its place on the store, and it is not recoverable by
 ## History, so this is not mistaken for ceremony
 
 Elite Creatures Reborn was rejected twice by Thunderstore as still carrying another mod's structure, and its
-package is no longer listed there at all. It was rebuilt in a Docker clean room - no network beyond the API, no
-repository, no git history, only a specification and the game's assemblies.
+package was delisted. It was rebuilt in a Docker clean room - no network beyond the API, no repository, no git
+history, only a specification and the game's assemblies.
 
-On 2026-09-15 the modstore  judged the repository clean and those libraries fine to use. This file is what the Docker room is enforcing. Moving from sealed docker room to sealed server. 
+The rebuild worked. Elite Creatures Reborn is listed on Thunderstore again - 3.0.0 published, 3.1.0 packaged as
+of 2026-09-17 - which is what the boundary in this file bought, and what a third rejection would cost.
+
+On 2026-09-15 the modstore judged the repository clean and those libraries fine to use. The Docker room is gone;
+this file is what replaced it. The repository itself is now the clean room, and these rules travel with it. 

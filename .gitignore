@@ -39,3 +39,6 @@ cleanroom/
 
 # Clean-room agent working notes, not part of the mod
 DECISIONS.md
+
+# Local agent configuration - machine-specific, not shared
+.claude/
