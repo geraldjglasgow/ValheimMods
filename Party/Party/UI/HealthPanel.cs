@@ -14,14 +14,27 @@ namespace Party.UI
         public static void ToggleEditMode(bool on)
         {
             EditMode = on;
-            Cursor.lockState = on ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = on;
+            if (!on)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+
+        /// <summary>Re-asserts the free cursor every frame - the game's own controller re-locks it otherwise.</summary>
+        public static void EnforceCursor()
+        {
+            if (!EditMode)
+                return;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         public static void Draw()
         {
             if (!PartyClientState.InParty && !EditMode)
                 return;
+            EnsurePosition();
             float scale = Mathf.Max(0.5f, PartyConfig.PanelScale.Value);
             GUIUtility.ScaleAroundPivot(new Vector2(scale, scale), new Vector2(PartyConfig.PanelX.Value, PartyConfig.PanelY.Value));
             Rect rect = new Rect(PartyConfig.PanelX.Value, PartyConfig.PanelY.Value, PanelWidth(), PanelHeight());
@@ -34,9 +47,16 @@ namespace Party.UI
 
         private static string Title() => PartyClientState.Name.Length > 0 ? PartyClientState.Name : "Party";
 
+        /// <summary>First-run default: about half way down the screen, independent of resolution.</summary>
+        private static void EnsurePosition()
+        {
+            if (PartyConfig.PanelY.Value < 0f)
+                PartyConfig.PanelY.Value = Screen.height * 0.5f;
+        }
+
         private static void DrawWindow(int id)
         {
-            float y = 20f;
+            float y = PartyConfig.FontSize.Value + PartyConfig.PanelPadding.Value * 0.5f;
             if (PartyConfig.ShowOwnRow.Value)
                 y = HealthPanelRow.Draw(SelfRow(), y, null);
             Vector3 localPos = Player.m_localPlayer != null ? Player.m_localPlayer.transform.position : Vector3.zero;
@@ -78,14 +98,15 @@ namespace Party.UI
             wasDragging = dragging;
         }
 
-        private static float PanelWidth() => PartyConfig.BarWidth.Value + 90f;
+        private static float PanelWidth() => PartyConfig.BarWidth.Value + PartyConfig.PanelPadding.Value * 2f;
 
         private static float PanelHeight()
         {
             int otherCount = System.Math.Max(0, PartyClientState.Members.Count - 1);
             int rows = (PartyConfig.ShowOwnRow.Value ? 1 : 0) + otherCount;
             float rowHeight = HealthPanelRow.RowHeight();
-            return 24f + rows * (rowHeight + PartyConfig.RowSpacing.Value);
+            float titleHeight = PartyConfig.FontSize.Value + PartyConfig.PanelPadding.Value;
+            return titleHeight + rows * (rowHeight + PartyConfig.RowSpacing.Value) + PartyConfig.PanelPadding.Value;
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Party
         public static ConfigEntry<float> BarWidth { get; private set; }
         public static ConfigEntry<float> BarHeight { get; private set; }
         public static ConfigEntry<float> RowSpacing { get; private set; }
+        public static ConfigEntry<float> PanelPadding { get; private set; }
         public static ConfigEntry<int> FontSize { get; private set; }
         public static ConfigEntry<bool> ShowOwnRow { get; private set; }
         public static ConfigEntry<bool> ShowStamina { get; private set; }
@@ -64,14 +65,16 @@ namespace Party
 
         private static void BindPanelLayout(SyncedConfiguration config)
         {
-            PanelX = config.Bind("Health Panel", "Panel X", 16f, "Client side. Saved automatically when you drag the panel.", synced: false);
-            PanelY = config.Bind("Health Panel", "Panel Y", 120f, "Client side. Saved automatically when you drag the panel.", synced: false);
+            PanelX = config.Bind("Health Panel", "Panel X", 24f, "Client side. Saved automatically when you drag the panel.", synced: false);
+            PanelY = config.Bind("Health Panel", "Panel Y", -1f,
+                "Client side. Saved automatically when you drag the panel. -1 means unset: centers vertically on first draw.", synced: false);
             PanelScale = config.Bind("Health Panel", "Panel Scale", 1f, "Client side.", synced: false);
             PanelOpacity = config.Bind("Health Panel", "Panel Opacity", 0.85f, "Client side.", synced: false);
-            BarWidth = config.Bind("Health Panel", "Bar Width", 160f, "Client side.", synced: false);
-            BarHeight = config.Bind("Health Panel", "Bar Height", 14f, "Client side.", synced: false);
-            RowSpacing = config.Bind("Health Panel", "Row Spacing", 6f, "Client side.", synced: false);
-            FontSize = config.Bind("Health Panel", "Font Size", 14, "Client side.", synced: false);
+            BarWidth = config.Bind("Health Panel", "Bar Width", 220f, "Client side.", synced: false);
+            BarHeight = config.Bind("Health Panel", "Bar Height", 18f, "Client side.", synced: false);
+            RowSpacing = config.Bind("Health Panel", "Row Spacing", 10f, "Client side.", synced: false);
+            PanelPadding = config.Bind("Health Panel", "Panel Padding", 14f, "Client side. Space around the panel's edges.", synced: false);
+            FontSize = config.Bind("Health Panel", "Font Size", 16, "Client side.", synced: false);
             ShowOwnRow = config.Bind("Health Panel", "Show Own Row", true, "Client side. Whether your own row appears in the panel.", synced: false);
             ShowStamina = config.Bind("Health Panel", "Show Stamina", false, "Client side.", synced: false);
             ShowEitr = config.Bind("Health Panel", "Show Eitr", false, "Client side.", synced: false);

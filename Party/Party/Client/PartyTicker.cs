@@ -36,6 +36,9 @@ namespace Party.Client
             InviteManager.Tick();
         }
 
+        /// <summary>Runs after every script's Update, so it wins the race against the game's own camera controller.</summary>
+        private void LateUpdate() => HealthPanel.EnforceCursor();
+
         private void OnGUI()
         {
             HealthPanel.Draw();
