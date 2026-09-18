@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.2.0
+
+**Thieving** — a tenth mutation, and the only one whose threat is not damage. A Thieving creature takes one item
+from your inventory when it lands a hit, carries it where you can see it, and drops every bit of it when it dies.
+
+- **What it takes** — one whole stack from an unequipped slot, backpack first and the hotbar only as a last
+  resort. **It never takes equipped gear** — not your weapon, shield, armour or tools — and a hit you fully
+  block, parry or resist takes nothing. The item is preserved exactly: stack size, quality, durability, crafter's
+  name and custom data all ride with it and come back unchanged.
+- **You are told immediately.** A status message names what went — `Thieving Greydwarf stole Silver x14` — with
+  a sound and an effect, and the creature's nameplate shows the item's own icon for as long as it holds it.
+- **Nothing is ever destroyed.** Goods drop at the corpse when it dies, and also when it despawns or is cleared
+  with `elite purge` — which otherwise drops nothing at all. Stolen items are **never** multiplied by `drops`,
+  star count, loot mode, a boss aspect or `large star power`; they are your own items being handed back.
+- **They drop for whoever lands the kill**, and the mod does not chase items back to their original owner.
+- **Configured** by one field, `mutation power: Thieving: {{ max items: 1 }}`. One item is the default and what the
+  mutation is designed around; it is hard-capped at 8 whatever you set. Suggested biome bumps for Black Forest,
+  Plains and Mistlands are in the written rule file; Meadows deliberately gets none.
+- Spawn one to look at with `elite spawn Greydwarf 0 Thieving`.
+
+Bosses never take mutations, this one included. Existing rule files keep working untouched — an unlisted mutation
+stays enabled and `max items` falls back to its default.
+
 ## 3.1.0
 
 **Mutations enabled** — a new `mutations enabled` switch in the rule file turns any of the nine mutations off
@@ -19,6 +42,11 @@ for `mutation power` moved to the README's new "Mutation power fields" section i
   `max reduction` field (55% default) hard-caps it so large-star enhancement cannot approach invulnerability.
   **This changes what an existing `armour` value in a customised rule file means** — a server that set its own
   number should revisit it.
+
+**Attack animation speed fixed** — a starred or Mad creature's animator speed was multiplied every fixed step
+during attacks, minor actions, emotes and stagger, because the game only resets it while idle or moving. It
+compounded once per step and ran away. The scaled speed is now written absolutely and only inside the game's own
+reset window, so an attack inherits it once for the whole swing. (Shipped in 3.1.0; missing from its notes.)
 
 **Large stars toned down** — `large star power` defaults to `1` instead of `2`: a large star (already worth five
 ordinary ones) no longer also doubles every mutation's bonus on top of that. `star power`'s `hp` line is flattened
