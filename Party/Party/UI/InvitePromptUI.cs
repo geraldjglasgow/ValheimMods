@@ -6,7 +6,7 @@ namespace Party.UI
     /// <summary>The accept/decline popup for an incoming <c>Party_InvitePrompt</c>, with its own countdown.</summary>
     public static class InvitePromptUI
     {
-        private const int WindowId = 0x50617274 + 1;
+        private static readonly int WindowId = "Party.InvitePrompt".GetStableHashCode();
 
         private static string inviterName;
         private static float remainingSeconds;
