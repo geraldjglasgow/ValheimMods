@@ -1,6 +1,7 @@
 using System.Collections;
 using EliteCreaturesReborn.Display;
 using EliteCreaturesReborn.Runtime;
+using EliteCreaturesReborn.Traits;
 using HarmonyLib;
 using PatchGuard;
 using UnityEngine;
@@ -36,12 +37,16 @@ namespace EliteCreaturesReborn.Patches
         {
             Character character = data.Field("m_character").GetValue<Character>();
             GameObject gui = data.Field("m_gui").GetValue<GameObject>();
-            if (character == null || gui == null || !IsElite(character) || !Config.Configuration.ColouredStars.Value)
+            if (character == null || gui == null || !IsElite(character))
             {
                 return;
             }
-            HideVanillaBadges(gui);
-            EnsureRow(gui, character);
+            if (Config.Configuration.ColouredStars.Value)
+            {
+                HideVanillaBadges(gui);
+                EnsureRow(gui, character);
+            }
+            EnsurePouchIcons(gui, character);
         }
 
         private static bool IsElite(Character character)
@@ -77,6 +82,23 @@ namespace EliteCreaturesReborn.Patches
                 return;
             }
             gui.AddComponent<StarRow>().Init(character, sprite, bar);
+        }
+
+        private static void EnsurePouchIcons(GameObject gui, Character character)
+        {
+            if (!Config.Configuration.ShowStolenItems.Value || gui.GetComponent<PouchIcons>() != null)
+            {
+                return;
+            }
+            EliteController controller = character.GetComponent<EliteController>();
+            if (controller == null || !controller.Ready || !controller.Traits.Has(Mutation.Thieving))
+            {
+                return;
+            }
+            if (gui.transform.Find("Health") is RectTransform bar)
+            {
+                gui.AddComponent<PouchIcons>().Init(character, bar);
+            }
         }
 
         private static Sprite? FindStarSprite(GameObject gui)

@@ -10,7 +10,7 @@ namespace EliteCreaturesReborn.Traits
         public static readonly Mutation[] InOrder =
         {
             Mutation.Mad, Mutation.Bloated, Mutation.Cloaked, Mutation.Splintering, Mutation.Leeching,
-            Mutation.Warding, Mutation.Plated, Mutation.Miasmic, Mutation.Devouring,
+            Mutation.Warding, Mutation.Plated, Mutation.Miasmic, Mutation.Devouring, Mutation.Thieving,
         };
 
         /// <summary>The mutation a rule-file name (its display word) refers to, or null for an unknown word.</summary>
@@ -38,6 +38,7 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Plated => "Plated",
             Mutation.Miasmic => "Miasmic",
             Mutation.Devouring => "Devouring",
+            Mutation.Thieving => "Thieving",
             _ => "",
         };
 
@@ -53,6 +54,7 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Plated => "#F2C40C",      // Yellow
             Mutation.Miasmic => "#1E6B2E",     // Dark green
             Mutation.Devouring => "#7A0F0F",   // Dark red
+            Mutation.Thieving => "#A64BE0",    // Violet
             _ => "#FFFFFF",
         };
     }

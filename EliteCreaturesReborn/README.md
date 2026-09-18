@@ -8,7 +8,7 @@ Rebuilt from scratch. This release covers mutations and stars; the rest returns 
 
 ## Mutations
 
-Nine, one per creature by default, each with its own colour and its own name on the nameplate.
+Ten, one per creature by default, each with its own colour and its own name on the nameplate.
 
 | Mutation | What it does |
 | --- | --- |
@@ -21,6 +21,7 @@ Nine, one per creature by default, each with its own colour and its own name on 
 | Plated | Armoured while healthy, hits harder as that armour goes |
 | Miasmic | Trails poison clouds; poisons players, never creatures |
 | Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you |
+| Thieving | Steals an item on its first landed hit and carries it on its nameplate; kill it to get everything back |
 
 ## Mutation power fields
 
@@ -51,6 +52,8 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   kill always lands the killing blow, so the full amount is kept); `slow per 100 health`, its cost;
   `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
   `devour cooldown` seconds after a meal before it can eat again
+- **Thieving** - `max items` the most it will ever hold (enhanced), hard-capped at 8; never takes equipped gear
+  or more than one item per landed hit, and gives back everything it holds when it is killed
 
 ## Stars
 
@@ -75,7 +78,7 @@ distance, whether trait names show at all — stay with each player and are neve
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing |
 | `elite inspect` | Prints the resolved stars, mutations and numbers for the creature under your crosshair |
-| `elite purge` | Removes the loaded creatures this mod has marked, with no drops |
+| `elite purge` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first) |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 
 ## Install

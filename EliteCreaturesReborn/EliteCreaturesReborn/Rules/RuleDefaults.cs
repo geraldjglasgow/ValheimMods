@@ -128,6 +128,7 @@ namespace EliteCreaturesReborn.Rules
                     { [Fields.AbsorbHealth] = 100f, [Fields.AbsorbDamage] = 100f,
                       [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f,
                       [Fields.DevourCooldown] = 10f },
+                [Mutation.Thieving] = new Dictionary<string, float> { [Fields.MaxItems] = 1f },
             };
         }
     }

@@ -19,6 +19,8 @@ namespace EliteCreaturesReborn.Visuals
         public static readonly string[] Reflect = { "shield", "spark", "hit", "block", "staff" };
         // The instant-kill tell: a death/gore burst that carries its own sound, so a distant player sees and hears a creature cease.
         public static readonly string[] Devour = { "death", "gore", "corpse", "destr", "blood", "hit" };
+        // Thieving gets no prefab field in the spec's power table either; the steal tell resolves by keyword only.
+        public static readonly string[] Steal = { "steal", "pickpocket", "pocket", "grab", "loot", "coin" };
 
         private static readonly Dictionary<string, GameObject?> Cache = new Dictionary<string, GameObject?>();
 
@@ -50,7 +52,11 @@ namespace EliteCreaturesReborn.Visuals
             {
                 return ByKeyword(role, Reflect);
             }
-            return role == "devour" ? ByKeyword(role, Devour) : null;
+            if (role == "devour")
+            {
+                return ByKeyword(role, Devour);
+            }
+            return role == "steal" ? ByKeyword(role, Steal) : null;
         }
 
         /// <summary>Resolves an effect purely by keyword for tells the spec gives no config field; logged once per role.</summary>

@@ -47,5 +47,9 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Devouring: which devourer instant-killed THIS prey, as its ZDOID, set on the prey's ZDO at the bite so
         /// it survives a handover. Set only on a genuine devour, so the prey's death path feeds that devourer and no other.</summary>
         public const string DevouredBy = "ecr_devoured_by";
+
+        /// <summary>Thieving: the pouch of stolen items, as one packed byte array. Owner-written, everyone-read, so the
+        /// nameplate icons and `elite inspect` agree with what the creature actually holds on every machine.</summary>
+        public const string Pouch = "ecr_stolen";
     }
 }

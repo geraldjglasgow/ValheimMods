@@ -67,6 +67,11 @@ mutation that paid best rather than fighting whatever the world produced.
 
 A server can make them pay through the rule files if it wants to. The default is that they do not.
 
+**Thieving's pouch is the one exception, and it is not really an exception.** What it drops on death is the
+player's own property being handed back, never anything the creature's own loot table produced - so it is never
+multiplied by mode, by `drops`, by star count, or by a boss aspect. See `thieving.md` for the full rule; this is
+not a mutation "paying" in the sense the paragraph above is about.
+
 Boss aspects are the deliberate exception, and `boss-aspects.md` explains why: an aspect is **visible and
 rerollable before you commit**, so without a loot difference a group would simply wait for the easiest one every
 time. That argument does not apply to a mutation, which you meet rather than choose.

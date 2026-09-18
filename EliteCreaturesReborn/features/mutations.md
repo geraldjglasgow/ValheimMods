@@ -24,15 +24,15 @@ A mutation is a **named, visible character** a creature can carry. Where stars m
 bigger, a mutation makes it *different* - a fight you approach differently once you have learned to
 recognise it.
 
-**Not every mutation is a drawback-balanced trade.** Four of the nine below cost the creature
-something; five are pure gains with no downside. That is deliberate. The balancing lever for this
+**Not every mutation is a drawback-balanced trade.** Four of the ten below cost the creature
+something; six are pure gains with no downside. That is deliberate. The balancing lever for this
 feature is **how often mutations appear**, not making each one internally fair. A player who meets
 a Miasmic Cloaked troll is supposed to be in trouble.
 
 Mutations are never elemental. Elemental behaviour belongs to a later slice and must not appear
 here.
 
-## The nine
+## The ten
 
 | Mutation | Gains | Costs |
 | --- | --- | --- |
@@ -45,13 +45,15 @@ here.
 | Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
 | Miasmic | Leaves a trail of poison clouds as it moves; each cloud lingers 6 seconds then fades | None |
 | Devouring | Eats other creatures and keeps what it takes. See below | Grows slower the more it has eaten |
+| Thieving | Takes one item from your inventory on each strike that lands, up to `max items`, and carries it. See `thieving.md` | None |
 
 Judgement calls in that table, all tunable: the Mad percentages; Bloated's one-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Splintering's 40% damage reduction; Leeching's regen
 and lifesteal rates, its 5-second combat cooldown and its 20 hp/s regen cap - a high-health creature must be
 beatable on regen alone; Warding's 30% reflection; Plated running from a 40% damage cut at full health to none at
 zero, hard-capped at 55% so a large star cannot approach invulnerability, while its damage climbs from nothing to
 +60%; Miasmic's clouds doing poison damage on a par with a
-Blob's and appearing about one per second of movement.
+Blob's and appearing about one per second of movement; Thieving's no-theft-on-a-blocked-hit rule and its
+`max items: 1` default - see `thieving.md` for both.
 
 ## Devouring, in full
 
@@ -230,6 +232,9 @@ creature breaks straight into two plain ones.
 
 Copies keep the parent's other mutations. They are the same creature, weaker, so their health and
 damage come from ordinary star scaling rather than any special rule.
+
+**A Thieving parent drops its pouch at the moment it splits, exactly as any other death, and the copies are born
+carrying nothing.** A copy inheriting or sharing the pouch would duplicate stolen items; see `thieving.md`.
 
 In practice a 5-star Splintering kill produces about **nine** extra creatures over two or three
 short generations. The full unbroken chain still reaches 62, but a single lineage running 5 to 4 to
@@ -484,6 +489,9 @@ the mod being broken.
 - **Devouring across owners.** A Devouring creature that kills something owned by another machine still absorbs
   it. Route the work to the owner rather than skipping it: skipping means the mutation quietly stops working on
   a busy server, which is exactly where it matters most.
+- **Thieving's two-authority steal.** The robbed player's own client decides and removes the item (their
+  Inventory is authoritative nowhere else); the creature's owner decides whether there is room and banks it. See
+  `thieving.md` for the full split and the accepted risk window it documents.
 - **A rule file change mid-session.** Covered by `lock to server`: the server pushes its rules, clients adopt
   them. Creatures already rolled keep the mark they were born with; new creatures use the new rules.
 
@@ -566,6 +574,7 @@ defaults:
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4 }
     Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
+    Thieving:    { max items: 1 }
 
 # Every biome below overrides only what it names. Delete a line to fall back to
 # `defaults`; delete a whole biome to make it behave like the defaults entirely.
@@ -732,6 +741,7 @@ The implementation must repeat this table as comments inside the generated file.
 | Devouring | `slow per 100 health` | Percent movement speed lost per 100 absorbed health. Its cost. |
 | Devouring | `player threshold` | Fraction of a player's max health its per-hit damage must reach before it hunts players for good. `0.333` = a third. |
 | Devouring | `devour cooldown` | Seconds before it can devour again after a meal. `10` by default. |
+| Thieving | `max items` | The most items one creature may ever hold, hard-capped at 8. `1` by default. See `thieving.md`. |
 
 ### What these defaults actually produce
 
@@ -814,6 +824,7 @@ plain:
 | Plated | Yellow |
 | Miasmic | Dark green |
 | Devouring | Dark red |
+| Thieving | Violet |
 
 **Cloaked is blue and Warding is dark blue**, so those two must be clearly separable on a small star: keep
 Cloaked a bright, light blue and Warding genuinely dark, near navy. Judge it at a small star's size against
@@ -986,6 +997,7 @@ and "enhanced" should mean better at being itself, not worse.
 | Plated | `armour`, `damage` | `max reduction` - the hard cap must not itself scale, or it stops being a cap |
 | Miasmic | `cloud damage`, `clouds per second` | `cloud life`, `cloud radius` |
 | Devouring | `absorb health`, `absorb damage` | `slow per 100 health` (a cost), `player threshold` |
+| Thieving | `max items` | - |
 
 **Movement is clamped regardless.** However the numbers land, a creature may not end up faster than an
 unburdened player - a fight you cannot disengage from is not a fight. Clamp and log rather than obey.
@@ -1046,3 +1058,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-09-17 | Thieving added as the tenth mutation: table, star colour, large-star enhancement, `mutation power` block, Splintering interaction, and a "cases that must work" line for its two-authority steal. See `thieving.md`. | - |

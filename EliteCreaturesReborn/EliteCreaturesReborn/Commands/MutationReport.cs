@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
@@ -27,6 +28,7 @@ namespace EliteCreaturesReborn.Commands
                 Mutation.Plated => $"Plated: {DamageMath.PlatedPercent(r, t):0}% damage cut at full hp (hard cap {r.PowerOf(m, Fields.MaxReduction):0}%), damage +{Enhance.Magnitude(r, t, m, Fields.Damage):0}% at empty{tag}",
                 Mutation.Miasmic => $"Miasmic: poison str {Enhance.Magnitude(r, t, m, Fields.CloudDamage):0.0}, {Enhance.Magnitude(r, t, m, Fields.CloudsPerSecond):0.00} clouds/s, life {r.PowerOf(m, Fields.CloudLife):0.0}s, r{r.PowerOf(m, Fields.CloudRadius):0.0}{tag}",
                 Mutation.Devouring => $"Devouring: absorb {Enhance.Magnitude(r, t, m, Fields.AbsorbHealth):0}% hp / {Enhance.Magnitude(r, t, m, Fields.AbsorbDamage):0}% dmg, slow {r.PowerOf(m, Fields.SlowPer100Health):0.0}%/100hp, hunts at {r.PowerOf(m, Fields.PlayerThreshold):0.00}x player hp, cooldown {r.PowerOf(m, Fields.DevourCooldown):0}s{tag}",
+                Mutation.Thieving => $"Thieving: max items {PouchStore.ResolvedMaxItems(r, t)} (hard cap {PouchStore.HardCap}){tag}",
                 _ => MutationCatalog.Word(m),
             };
         }

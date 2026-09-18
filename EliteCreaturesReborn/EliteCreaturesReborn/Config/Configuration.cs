@@ -20,6 +20,8 @@ namespace EliteCreaturesReborn.Config
         public static ConfigEntry<float> EffectDensity = null!;
         public static ConfigEntry<float> SmallStarSize = null!;
         public static ConfigEntry<float> LargeStarSize = null!;
+        public static ConfigEntry<bool> ShowStolenItems = null!;
+        public static ConfigEntry<float> StolenIconSize = null!;
 
         public static void BindAll(ConfigFile config)
         {
@@ -42,6 +44,10 @@ namespace EliteCreaturesReborn.Config
             LargeStarSize = config.Bind(Display, "Large star size", 2.2f,
                 "Size of a large star glyph (worth five) as a multiple of the size vanilla draws a star at. Client side; "
                 + "never locked.");
+            ShowStolenItems = config.Bind(Display, "Show stolen items", true,
+                "Draw the icons of items a Thieving creature is carrying on its nameplate. Client side; never locked.");
+            StolenIconSize = config.Bind(Display, "Stolen item icon size", 1.6f,
+                "Size of a stolen-item icon as a multiple of the size vanilla draws a star at. Client side; never locked.");
             PaletteSettings.Bind(config);
             BindDiagnostics(config);
         }

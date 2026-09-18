@@ -3,6 +3,10 @@
 One feature of the mod, specified on its own. The other feature files sit beside it; `../SPEC.md` is the whole-mod
 behaviour document they are all drawn from.
 
+**Confirmed for `thieving.md`: a boss cannot carry a Thieving pouch, and its stolen-goods drop path is
+unreachable from a boss death.** Bosses never take mutations at all (see below), so there is nothing here for
+that mutation's death handling to reach.
+
 This file covers what an aspect is, the set of them, how an aspect is read at the altar before you summon, and how
 loot pays for the harder ones. **Boss stars** - how a boss scales once it has them - are in `scaling.md`, on a
 table entirely separate from ordinary creatures. Bosses take no mutations (`mutations.md`) and no attunements

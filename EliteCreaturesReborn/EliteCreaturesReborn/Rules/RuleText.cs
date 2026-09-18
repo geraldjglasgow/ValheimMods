@@ -36,6 +36,7 @@ mutations enabled:
   Plated: true
   Miasmic: true
   Devouring: true
+  Thieving: true
 
 defaults:
   # How much stronger a mutation is on a large star (worth 5) versus a small one.
@@ -76,6 +77,7 @@ defaults:
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
     Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
+    Thieving:    { max items: 1 }
 
 # Repopulating the world. All off by default, so clearing a camp or dungeon
 # stays worth doing. Timers are in world days (one day = 30 real minutes at
@@ -122,6 +124,8 @@ biomes:
   - match: BlackForest
     star chances:    [62, 15, 12, 6, 3, 2]
     mutation chance: [3.5,  4.5,  6,    8,    10,   12.5]
+    mutation chances:
+      Thieving:    [6,  8,  11, 14, 17, 21]   # greydwarves already take things that are not theirs
 
   - match: Swamp
     star chances:    [52, 18, 14, 8, 5, 3]
@@ -143,6 +147,7 @@ biomes:
     mutation chances:
       Mad:         [22, 30, 40, 50, 60, 72]
       Devouring:   [1.5, 2, 3, 4, 5, 6]
+      Thieving:    [8,  11, 14, 18, 22, 27]  # fulings, and a biome where you are carrying something worth taking
 
   - match: Mistlands
     star chances:    [22, 22, 22, 16, 11, 7]
@@ -150,6 +155,7 @@ biomes:
     mutation chances:
       Cloaked:     [30, 40, 52, 64, 76, 90]  # the mist hides things already
       Devouring:   [2, 3, 4, 5, 6, 8]
+      Thieving:    [7,  10, 13, 17, 21, 26]  # a thief you cannot see is the encounter this mutation is for
 
   - match: AshLands
     star chances:    [16, 22, 26, 21, 11, 4]

@@ -23,6 +23,11 @@ Three separate guarantees, and all three have to hold or the feature does not wo
 - **Growing up preserves what a juvenile had.** A trait that vanished at adulthood would make every breeding
   project unverifiable until the moment it failed.
 
+**One per-trait exception, anticipated here and specified in `thieving.md`: a tamed Thieving creature never
+steals**, from its owner or from anyone. It keeps the mutation - it still shows on the nameplate, it can still be
+bred and inherited by this feature's own rules - but the theft itself stops the moment it is tamed. If it was
+already carrying goods when tamed, it keeps holding them and still drops them on death.
+
 ---
 
 # 2. Why this matters more than it looks

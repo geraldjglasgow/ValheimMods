@@ -54,6 +54,7 @@ namespace EliteCreaturesReborn.Runtime
             }
             EliteRpc.EnsureRegistered();
             CreatureRpc.Register(_nview, _character, this); // on every machine, so a routed command reaches the owner
+            ThievingRpc.Register(_nview, this); // same shape: the robbed player's client routes a steal to the owner
             if (!TryResolve())
             {
                 _pending = true; // a non-owner meeting an unrolled creature: wait, then apply exactly once

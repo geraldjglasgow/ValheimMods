@@ -24,9 +24,9 @@ sub-commands discoverable, and a `help` sub-command lists them.
 | Sub-command | Does |
 | --- | --- |
 | **Pressure** | Prints the pressure where you stand, and what contributed to it |
-| **Inspect** | Prints the resolved traits and values for the creature you are looking at |
+| **Inspect** | Prints the resolved traits and values for the creature you are looking at, including a Thieving creature's pouch (`thieving.md`) |
 | **Summon** | Spawns a creature with chosen stars, mutation and attunement, for testing |
-| **Purge** | Removes loaded modified creatures |
+| **Purge** | Removes loaded modified creatures - dropping any stolen goods first, the one documented exception to "no drops" (`thieving.md`) |
 | **Zones** | Lists retaliation zones, their level and their decay |
 | **Tier** | Shows the world tier and its source, and sets it where the source is manual |
 | **Reload** | Re-reads the settings and rule files from disk |

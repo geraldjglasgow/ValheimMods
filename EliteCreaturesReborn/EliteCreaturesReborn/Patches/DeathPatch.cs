@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
@@ -40,6 +41,7 @@ namespace EliteCreaturesReborn.Patches
             public Vector3 Pos;
             public Quaternion Rot;
             public ZDOID Devourer;
+            public List<PouchStore.Entry> Pouch = new List<PouchStore.Entry>();
         }
 
         private static Snapshot? _pending;
@@ -84,7 +86,7 @@ namespace EliteCreaturesReborn.Patches
                 PrefabHash = zdo.GetPrefab(), Generation = zdo.GetInt(TraitKeys.Generation),
                 CascadeRoot = stored, ResolvedRoot = resolved, Biome = TraitStore.GetBiome(zdo),
                 MaxHealth = victim.GetMaxHealth(), Pos = victim.transform.position, Rot = victim.transform.rotation,
-                Devourer = TraitStore.GetDevouredBy(zdo),
+                Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo),
             };
         }
 
@@ -115,6 +117,12 @@ namespace EliteCreaturesReborn.Patches
                 Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
                 Splitter.Split(snap.Pos, snap.Rot, snap.PrefabHash, snap.Traits, snap.Rules,
                     snap.Generation, snap.ResolvedRoot, snap.Biome);
+            }
+            if (snap.Traits.Has(Mutation.Thieving))
+            {
+                // Splintering copies never inherit the pouch (Splitter.Configure never touches TraitKeys.Pouch), so a
+                // Thieving+Splintering death both empties this parent's pouch here AND is born-empty as two copies.
+                PouchDrop.DropAll(snap.Pouch, snap.Pos);
             }
         }
 

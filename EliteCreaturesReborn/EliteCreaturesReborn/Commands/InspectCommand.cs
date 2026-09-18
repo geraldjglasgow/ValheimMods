@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
@@ -44,6 +46,27 @@ namespace EliteCreaturesReborn.Commands
             {
                 EliteCommands.Reply(args, "  " + MutationReport.Line(r, t, m));
             }
+            if (t.Has(Mutation.Thieving))
+            {
+                EliteCommands.Reply(args, "  " + PouchLine(controller.View.GetZDO()));
+            }
+        }
+
+        // The only way to check the icon on the nameplate matches what the ZDO actually holds - the gap between the
+        // two is where this feature's bugs live, per the spec.
+        private static string PouchLine(ZDO zdo)
+        {
+            List<PouchStore.Entry> pouch = PouchStore.Load(zdo);
+            if (pouch.Count == 0)
+            {
+                return "carrying: nothing";
+            }
+            List<string> items = new List<string>();
+            foreach (PouchStore.Entry entry in pouch)
+            {
+                items.Add($"{entry.Item.m_shared.m_name} x{entry.Item.m_stack}");
+            }
+            return "carrying: " + string.Join(", ", items);
         }
 
         // Reads from wherever the admin is looking: a ray straight down the camera, first collider that belongs to a

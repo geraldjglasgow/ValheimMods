@@ -67,5 +67,8 @@ namespace EliteCreaturesReborn.Rules
         public const string SlowPer100Health = "slow per 100 health";
         public const string PlayerThreshold = "player threshold";
         public const string DevourCooldown = "devour cooldown";
+
+        // Thieving
+        public const string MaxItems = "max items";
     }
 }
