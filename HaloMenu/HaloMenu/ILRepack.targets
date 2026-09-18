@@ -1,0 +1,32 @@
+<Project>
+  <!--
+    Merges the shared libraries into the plugin so a single DLL can be shipped for them. HaloMenu.API.dll is
+    deliberately NOT in this list and NOT internalized: dependent mods load their own copy of HaloMenu.API.dll,
+    and it must be the exact same assembly identity HaloMenu.dll uses to implement HaloMenuAPI.Provide, or the
+    two sides would be talking about unrelated, same-named types. It ships as its own file next to HaloMenu.dll.
+  -->
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <PropertyGroup>
+      <!-- r2modman profile used for testing on this machine, override with -p:TestPluginsPath=... -->
+      <TestPluginsPath Condition="'$(TestPluginsPath)' == ''">$(APPDATA)\r2modmanPlus-local\Valheim\profiles\LocalTesting\BepInEx\plugins</TestPluginsPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <InputAssemblies Include="$(TargetPath)" />
+      <InputAssemblies Include="$(OutDir)PatchGuard.dll" />
+      <InputAssemblies Include="$(OutDir)ConfigReload.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <LibraryPaths Include="$(OutDir)" />
+      <LibraryPaths Include="$(ManagedPath)" />
+      <LibraryPaths Include="$(BepInExCore)" />
+    </ItemGroup>
+    <ILRepack Parallel="true" DebugInfo="false" Internalize="true" InputAssemblies="@(InputAssemblies)"
+              OutputFile="$(TargetPath)" TargetKind="SameAsPrimaryAssembly" LibraryPath="@(LibraryPaths)" />
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(OutDir)HaloMenu.API.dll" DestinationFolder="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(TargetPath);$(OutDir)HaloMenu.API.dll" DestinationFolder="$(GamePath)\BepInEx\plugins" Condition="Exists('$(GamePath)\BepInEx\plugins')" />
+    <Copy SourceFiles="$(TargetPath);$(OutDir)HaloMenu.API.dll" DestinationFolder="$(TestPluginsPath)" Condition="Exists('$(TestPluginsPath)')" />
+    <Message Importance="high" Text="HaloMenu build finished: $(MSBuildProjectDirectory)\..\dist\HaloMenu.dll (+ HaloMenu.API.dll)" />
+  </Target>
+</Project>
