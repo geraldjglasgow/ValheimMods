@@ -4,6 +4,6 @@ namespace Party
     {
         public const string PluginGuid = "com.Party";
         public const string PluginName = "Party";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "0.1.0";
     }
 }

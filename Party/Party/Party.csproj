@@ -5,7 +5,7 @@
     <AssemblyName>Party</AssemblyName>
     <RootNamespace>Party</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>1.0.0</Version>
+    <Version>0.1.0</Version>
     <Product>Party</Product>
     <Description>Party: shared parties, chat, health bars, map visibility, friendly-fire protection, an API for other mods</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

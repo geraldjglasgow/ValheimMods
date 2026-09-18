@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0
+## 0.1.0
 
 - First release: party membership (server-owned roster, one leader, size cap, automatic leadership succession,
   parties survive logout and server restart), invites with a timeout and an accept/decline prompt, `/party`
