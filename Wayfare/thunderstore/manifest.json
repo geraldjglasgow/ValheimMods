@@ -1,0 +1,9 @@
+{
+    "name": "Wayfare",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/Wayfare",
+    "description": "Map-based portal targeting: walk into any portal, pick your destination from the world map. Public/Private/Admin access modes, favourites, server synced. Required on the server too.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

@@ -17,6 +17,7 @@ ValheimMods/
   Lockstep/          boss progression gated on the whole group
   OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
+  Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
 ```
 
@@ -44,6 +45,12 @@ container sizes, carts as stations, contents signs and shared chests. Design in 
 **Party**: shared parties - a server-owned roster with one leader, invites, party chat, a draggable health panel,
 colored floating names, always-on map pins, friendly-fire protection, a party-only map ping, and a public API for
 other mods. Design and the judgement calls the spec left open in `Party/PLAN.md`.
+
+**Wayfare**: replaces portal tag-pairing with map-based targeting - walk into a portal, pick the destination from
+the world map, click to teleport through the game's own teleport path. Public/Private/Admin access modes owned by
+the acting player, a favourites panel, any mod's portal prefab discovered by component rather than a name list.
+Required on the server as well as every client. Design and the judgement calls the spec left open in
+`Wayfare/PLAN.md`.
 
 ### The libraries (ValheimModLibs)
 
