@@ -44,9 +44,10 @@ namespace HaloMenu.Rendering
 
         public void SetContent(Sprite sprite, bool slotFilled)
         {
-            gameObject.SetActive(slotFilled);
+            // The wedge itself always renders, filled or not - an empty ring is still a visible ring (see
+            // SPEC.md: "it opens an empty ring"). Only the icon depends on whether a slot has an entry.
             icon.sprite = sprite;
-            icon.enabled = sprite != null;
+            icon.enabled = slotFilled && sprite != null;
         }
 
         public void TriggerShake() => shakeTimer = ShakeDuration;

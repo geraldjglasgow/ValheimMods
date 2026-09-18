@@ -24,9 +24,13 @@ registered, it opens an empty ring and does nothing else.
 ### For players
 
 Install [BepInEx for Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/), then drop
-`HaloMenu.dll` and `HaloMenu.API.dll` into `BepInEx/plugins`. Both files are required. By itself HaloMenu does
-nothing visible; install a mod that uses it (or see `Sample.HaloMenuDemo` in this repository for what that looks
-like) to get an actual menu.
+`HaloMenu.dll` and `HaloMenu.API.dll` (from `dist/`) into `BepInEx/plugins`. Both files are required. By itself
+HaloMenu opens an empty, icon-less ring - it needs a mod that registers entries to be worth looking at.
+
+To try `Sample.HaloMenuDemo` for that: build it (see "Building" below, or just build the whole `HaloMenu.sln`),
+then copy both files from `Sample.HaloMenuDemo/dist/` - `Sample.HaloMenuDemo.dll` and `HaloMenu.API.dll` (the same
+one HaloMenu itself ships; either copy is fine, they're identical) - into `BepInEx/plugins` alongside
+`HaloMenu.dll`. It registers two entries on the default ring (hold Left Alt) and its own 6-segment ring on `[`.
 
 Default hotkey: hold Left Alt.
 
@@ -94,8 +98,9 @@ this one (see the workspace root `CLAUDE.md`).
 "/c/Program Files/dotnet/dotnet" build HaloMenu/HaloMenu.sln -c Release
 ```
 
-Output: `dist/HaloMenu.dll` and `dist/HaloMenu.API.dll` (both required). `Sample.HaloMenuDemo` builds to its own
-`bin/` - it exists to prove the API compiles and loads standalone, not as a mod to ship.
+Output: `dist/HaloMenu.dll` and `dist/HaloMenu.API.dll` (both required). `Sample.HaloMenuDemo/dist/` gets its own
+DLL plus a copy of `HaloMenu.API.dll` the same way - it exists mainly to prove the API compiles and loads
+standalone, but it is a real, installable mod if you want something to test the ring with.
 
 ### License
 

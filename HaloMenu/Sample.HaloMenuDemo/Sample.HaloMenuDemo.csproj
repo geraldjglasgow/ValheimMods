@@ -59,4 +59,23 @@
     </Reference>
   </ItemGroup>
 
+  <!--
+    No libraries to merge here (this project deliberately has none besides HaloMenu.API), so a plain copy is
+    enough - unlike HaloMenu/ILRepack.targets there is no ILRepack step. Both this DLL and HaloMenu.API.dll need
+    to land in BepInEx/plugins together, the same pairing rule as HaloMenu.dll + HaloMenu.API.dll.
+  -->
+  <Target Name="CopyToDist" AfterTargets="Build">
+    <PropertyGroup>
+      <TestPluginsPath Condition="'$(TestPluginsPath)' == ''">$(APPDATA)\r2modmanPlus-local\Valheim\profiles\LocalTesting\BepInEx\plugins</TestPluginsPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <SampleOutputs Include="$(TargetPath);$(OutDir)HaloMenu.API.dll" />
+    </ItemGroup>
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\Sample.HaloMenuDemo\dist" />
+    <Copy SourceFiles="@(SampleOutputs)" DestinationFolder="$(MSBuildProjectDirectory)\..\Sample.HaloMenuDemo\dist" />
+    <Copy SourceFiles="@(SampleOutputs)" DestinationFolder="$(GamePath)\BepInEx\plugins" Condition="Exists('$(GamePath)\BepInEx\plugins')" />
+    <Copy SourceFiles="@(SampleOutputs)" DestinationFolder="$(TestPluginsPath)" Condition="Exists('$(TestPluginsPath)')" />
+    <Message Importance="high" Text="Sample.HaloMenuDemo build finished: $(MSBuildProjectDirectory)\..\Sample.HaloMenuDemo\dist\Sample.HaloMenuDemo.dll (+ HaloMenu.API.dll)" />
+  </Target>
+
 </Project>

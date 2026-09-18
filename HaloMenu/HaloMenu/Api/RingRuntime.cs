@@ -57,18 +57,22 @@ namespace HaloMenu.Api
         /// <summary>Called once a frame by the HaloMenuDriver for every ring, open or closed.</summary>
         public void TickInput(float deltaTime)
         {
+            bool justOpened = false;
             if (state == RingState.Closed)
             {
-                if (InputSource.Pressed(settings.Hotkey) && !BlockingUiWatcher.IsBlocked())
-                    Open();
-                return;
+                if (!InputSource.Pressed(settings.Hotkey) || BlockingUiWatcher.IsBlocked())
+                    return;
+                Open();
+                if (state == RingState.Closed) // OnRingOpening blocked it
+                    return;
+                justOpened = true; // the same key-down that opened it must not also close it this frame
             }
             if (BlockingUiWatcher.IsBlocked())
             {
                 Close(cancel: true);
                 return;
             }
-            if (HandleCloseInput())
+            if (!justOpened && HandleCloseInput())
                 return;
             UpdateSelection();
             UpdateView(deltaTime);
