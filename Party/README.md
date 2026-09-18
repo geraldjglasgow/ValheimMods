@@ -16,6 +16,7 @@ installed mod already owns that word - if a short form doesn't respond, use the 
 
 | Command | Short form | What it does |
 | --- | --- | --- |
+| `/party create [name]` | - | Creates a party with just you as leader, optionally named. For solo testing, or to set up before inviting anyone. |
 | `/party invite <name>` | `/invite <name>` | Invites an online player. If you have no party yet, this creates one and makes you its leader. Any member can invite, not just the leader. |
 | `/party leave` | `/leave` | Leaves your current party. |
 | `/party remove <name>` | `/remove <name>` | Leader only. Removes that member. |

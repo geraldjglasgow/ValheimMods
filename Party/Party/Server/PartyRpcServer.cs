@@ -7,6 +7,7 @@ namespace Party.Server
     /// <summary>Server RPCs, registered everywhere; every handler no-ops unless <see cref="Identity.IsServer"/>.</summary>
     public static class PartyRpcServer
     {
+        public const string RpcCreate = "Party_Create";
         public const string RpcInvite = "Party_Invite";
         public const string RpcInvitePrompt = "Party_InvitePrompt";
         public const string RpcInviteRespond = "Party_InviteRespond";
@@ -28,6 +29,7 @@ namespace Party.Server
         public static void RegisterRpcs()
         {
             ZRoutedRpc rpc = ZRoutedRpc.instance;
+            rpc.Register<string>(RpcCreate, (s, name) => Guard.Run("party create", () => Server(() => OnCreate(s, name))));
             rpc.Register<string>(RpcInvite, (s, name) => Guard.Run("party invite", () => Server(() => InviteFlow.OnInvite(s, name))));
             rpc.Register<bool>(RpcInviteRespond, (s, ok) => Guard.Run("party invite respond", () => Server(() => InviteFlow.OnRespond(s, ok))));
             rpc.Register(RpcLeave, s => Guard.Run("party leave", () => Server(() => OnLeave(s))));
@@ -46,6 +48,21 @@ namespace Party.Server
         {
             if (Identity.IsServer)
                 action();
+        }
+
+        private static void OnCreate(long senderPeerId, string name)
+        {
+            if (!Identity.TryFindByPeerId(senderPeerId, out OnlinePlayer player))
+                return;
+            if (PartyManager.FindPartyOf(player.Id) != null)
+            {
+                Reply(player.Id, "You already have a party.");
+                return;
+            }
+            PartyRecord party = PartyManager.CreateParty(player.Id, player.Name);
+            PartyManager.Rename(party, name);
+            PartyManager.SaveAndPublish(party);
+            Reply(player.Id, party.Name.Length > 0 ? $"Party '{party.Name}' created." : "Party created.");
         }
 
         private static void OnLeave(long senderPeerId)

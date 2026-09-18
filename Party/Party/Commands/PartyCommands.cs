@@ -8,12 +8,12 @@ namespace Party.Commands
     /// <summary><c>/party ...</c>, always registered, plus short aliases when the word isn't already taken.</summary>
     public static class PartyCommands
     {
-        private const string Usage = "party invite <name> | leave | remove <name> | promote <name> | p [text] | panel edit|done | name [text] | status";
+        private const string Usage = "party create [name] | invite <name> | leave | remove <name> | promote <name> | p [text] | panel edit|done | name [text] | status";
 
         public static void Register()
         {
             new Terminal.ConsoleCommand("party", Usage, args => Guard.Run("party command", () => RunParty(args)),
-                isCheat: false, isNetwork: true, optionsFetcher: () => new List<string> { "invite", "leave", "remove", "promote", "p", "panel", "name", "status" });
+                isCheat: false, isNetwork: true, optionsFetcher: () => new List<string> { "create", "invite", "leave", "remove", "promote", "p", "panel", "name", "status" });
 
             RegisterAlias("invite", args => Guard.Run("invite alias", () => CommandHandlers.Invite(Rest(args, 1))), CommandHandlers.OnlinePlayerNames);
             RegisterAlias("leave", args => Guard.Run("leave alias", CommandHandlers.Leave), null);
@@ -37,6 +37,7 @@ namespace Party.Commands
         {
             switch (verb)
             {
+                case "create": CommandHandlers.Create(TextAfter(args, 1)); break;
                 case "invite": CommandHandlers.Invite(Rest(args, 2)); break;
                 case "leave": CommandHandlers.Leave(); break;
                 case "remove": CommandHandlers.Remove(Rest(args, 2)); break;

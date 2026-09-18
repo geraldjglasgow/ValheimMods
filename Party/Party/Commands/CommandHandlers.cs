@@ -15,6 +15,13 @@ namespace Party.Commands
             return true;
         }
 
+        public static void Create(string name)
+        {
+            if (NotConnected())
+                return;
+            ZRoutedRpc.instance.InvokeRoutedRPC(PartyRpcServer.RpcCreate, name ?? "");
+        }
+
         public static void Invite(string[] rest)
         {
             if (NotConnected())
