@@ -7,11 +7,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace Party.Server
 {
-    /// <summary>
-    /// The server's record of parties: one YAML file per world in the config folder, written on every change and
-    /// polled for admin edits, the same shape every hand-editable file in this workspace uses (see Lockstep's
-    /// Roster). This is what makes a party survive a server restart, not just a disconnect.
-    /// </summary>
+    /// <summary>One YAML file per world holding every party. Survives a server restart, not just a disconnect.</summary>
     public sealed class PartyStore
     {
         public const string TimeFormat = "yyyy-MM-dd HH:mm";
@@ -75,7 +71,7 @@ namespace Party.Server
             }
         }
 
-        /// <summary>Polls the file every five seconds for admin edits. See ConfigReload/Lockstep's Roster for why not a FileSystemWatcher.</summary>
+        /// <summary>Polls every five seconds for admin edits (no FileSystemWatcher - see ConfigReload).</summary>
         public void Watch()
         {
             if (poller != null)

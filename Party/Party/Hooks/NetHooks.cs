@@ -4,11 +4,7 @@ using Party.Server;
 
 namespace Party.Hooks
 {
-    /// <summary>
-    /// Game lifecycle attachment points, the same shape Lockstep uses: RPC registration and world start/end on
-    /// <see cref="ZNet"/>, player identity on the <c>PlayerID</c> RPC and disconnect, and the host's own join
-    /// (a dedicated server never spawns a player, and a host is not a peer of its own server).
-    /// </summary>
+    /// <summary>RPC registration, world start/end, and player identity on join/disconnect.</summary>
     [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
     public static class ZNetAwakePatch
     {

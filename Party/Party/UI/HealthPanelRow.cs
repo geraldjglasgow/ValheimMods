@@ -20,11 +20,13 @@ namespace Party.UI
             return Mathf.Max(height, PartyConfig.FontSize.Value + 2f);
         }
 
-        public static float Draw(PartyMemberView member, float y)
+        public static float Draw(PartyMemberView member, float y, float? distance)
         {
             Color previous = GUI.color;
             GUI.color = member.Online ? Color.white : new Color(0.6f, 0.6f, 0.6f, 0.6f);
             DrawName(member, y);
+            if (distance.HasValue)
+                DrawDistance(distance.Value, y);
             float barY = y + PartyConfig.FontSize.Value + 2f;
             barY = DrawBar(barY, member.Online ? member.Health : 0f, HealthColor);
             if (PartyConfig.ShowStamina.Value)
@@ -43,6 +45,13 @@ namespace Party.UI
             style.fontStyle = leader ? FontStyle.Bold : FontStyle.Normal;
             string label = (leader ? "* " : "") + member.Name;
             GUI.Label(new Rect(8, y, PartyConfig.BarWidth.Value + 60f, PartyConfig.FontSize.Value + 4f), label, style);
+        }
+
+        private static void DrawDistance(float distance, float y)
+        {
+            GUIStyle style = new GUIStyle(GUI.skin.label) { fontSize = PartyConfig.FontSize.Value - 2, alignment = TextAnchor.UpperRight };
+            style.normal.textColor = new Color(1f, 1f, 1f, 0.7f) * GUI.color;
+            GUI.Label(new Rect(8, y, PartyConfig.BarWidth.Value + 52f, PartyConfig.FontSize.Value + 4f), $"{distance:0}m", style);
         }
 
         private static float DrawBar(float y, float fraction, Color color, float heightScale = 1f)

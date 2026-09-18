@@ -82,6 +82,20 @@ namespace Party.Commands
             PartyCommandOutput.Print(edit ? "Party panel: drag it, then 'party panel done'." : "Party panel: back to normal play.");
         }
 
+        public static void Name(string text)
+        {
+            if (NotConnected())
+                return;
+            ZRoutedRpc.instance.InvokeRoutedRPC(PartyRpcServer.RpcRename, text ?? "");
+        }
+
+        public static void Status()
+        {
+            if (NotConnected())
+                return;
+            ZRoutedRpc.instance.InvokeRoutedRPC(PartyRpcServer.RpcStatus);
+        }
+
         /// <summary>Tab-complete source for <c>/invite</c>: everyone currently online.</summary>
         public static System.Collections.Generic.List<string> OnlinePlayerNames() =>
             ZNet.instance != null ? ZNet.instance.GetPlayerList().Select(p => p.m_name).Distinct().ToList() : new System.Collections.Generic.List<string>();

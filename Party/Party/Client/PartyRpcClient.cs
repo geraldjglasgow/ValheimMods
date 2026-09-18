@@ -10,7 +10,6 @@ namespace Party.Client
     /// <summary>Client side RPC registrations: everything the server pushes to a player about their own party.</summary>
     public static class PartyRpcClient
     {
-        private const float VitalsIntervalSeconds = 1f;
         private static float vitalsTimer;
 
         public static void RegisterRpcs()
@@ -23,16 +22,18 @@ namespace Party.Client
             rpc.Register<string, Vector3>(PartyRpcServer.RpcPingDeliver, (s, name, pos) => Guard.Run("party ping deliver", () => PartyPing.OnDeliver(name, pos)));
             rpc.Register<long, float, float, float, Vector3, bool>(PartyRpcServer.RpcVitalsDeliver,
                 (s, id, hp, st, ei, pos, valid) => Guard.Run("party vitals deliver", () => PartyClientState.ApplyVitals(id, hp, st, ei, pos, valid)));
+            rpc.Register<string, Vector3>(PartyRpcServer.RpcDeathDeliver, (s, name, pos) => Guard.Run("party death deliver", () => PartyDeathNotice.OnDeliver(name, pos)));
         }
 
-        /// <summary>Called every frame from <see cref="PartyTicker"/>: self-reports this player's own vitals once a second.</summary>
+        /// <summary>Self-reports this player's own vitals at <see cref="PartyConfig.VitalsUpdatesPerSecond"/>.</summary>
         public static void Tick(float deltaTime)
         {
             Player local = Player.m_localPlayer;
             if (local == null || !PartyClientState.InParty || ZRoutedRpc.instance == null)
                 return;
             vitalsTimer += deltaTime;
-            if (vitalsTimer < VitalsIntervalSeconds)
+            float interval = 1f / Mathf.Max(1, PartyConfig.VitalsUpdatesPerSecond.Value);
+            if (vitalsTimer < interval)
                 return;
             vitalsTimer = 0f;
             Report(local);

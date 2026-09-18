@@ -37,11 +37,11 @@ namespace Party.Server
                 Publish(party);
         }
 
-        /// <summary>partyId\tleaderId, then one id\tname\tonline(0/1) line per member.</summary>
+        /// <summary>partyId\tleaderId\tname, then one id\tname\tonline(0/1) line per member.</summary>
         private static string Encode(PartyRecord party)
         {
             StringBuilder text = new StringBuilder();
-            text.Append(party.PartyId).Append('\t').Append(party.LeaderId).Append('\n');
+            text.Append(party.PartyId).Append('\t').Append(party.LeaderId).Append('\t').Append(party.Name).Append('\n');
             foreach (PartyMember member in party.Members)
             {
                 bool online = Identity.TryFind(member.Id, out _);

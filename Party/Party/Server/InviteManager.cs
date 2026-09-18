@@ -12,11 +12,7 @@ namespace Party.Server
         public DateTime ExpiresAtUtc;
     }
 
-    /// <summary>
-    /// Pending invites, keyed by target player so a target has at most one at a time (a second invite to an
-    /// already-pending target is refused to the new inviter rather than silently replacing the first - see
-    /// <see cref="InviteFlow"/> - so nobody's invite is ever cancelled out from under them without being told).
-    /// </summary>
+    /// <summary>Pending invites, one per target - a second invite is refused, never silently replaces the first.</summary>
     public static class InviteManager
     {
         private static readonly Dictionary<long, PendingInvite> pending = new Dictionary<long, PendingInvite>();

@@ -5,19 +5,15 @@ using PatchGuard;
 
 namespace Party.Commands
 {
-    /// <summary>
-    /// <c>/party invite|leave|remove|promote|p</c>, always registered, plus the short aliases
-    /// <c>/invite</c>, <c>/leave</c>, <c>/remove</c>, <c>/promote</c>, <c>/p</c> - each registered only if no other
-    /// mod has already claimed that word. See PLAN.md, "Command surface: collision handling".
-    /// </summary>
+    /// <summary><c>/party ...</c>, always registered, plus short aliases when the word isn't already taken.</summary>
     public static class PartyCommands
     {
-        private const string Usage = "party invite <name> | leave | remove <name> | promote <name> | p [text] | panel edit|done";
+        private const string Usage = "party invite <name> | leave | remove <name> | promote <name> | p [text] | panel edit|done | name [text] | status";
 
         public static void Register()
         {
             new Terminal.ConsoleCommand("party", Usage, args => Guard.Run("party command", () => RunParty(args)),
-                isCheat: false, isNetwork: true, optionsFetcher: () => new List<string> { "invite", "leave", "remove", "promote", "p" });
+                isCheat: false, isNetwork: true, optionsFetcher: () => new List<string> { "invite", "leave", "remove", "promote", "p", "panel", "name", "status" });
 
             RegisterAlias("invite", args => Guard.Run("invite alias", () => CommandHandlers.Invite(Rest(args, 1))), CommandHandlers.OnlinePlayerNames);
             RegisterAlias("leave", args => Guard.Run("leave alias", CommandHandlers.Leave), null);
@@ -47,11 +43,13 @@ namespace Party.Commands
                 case "promote": CommandHandlers.Promote(Rest(args, 2)); break;
                 case "p": CommandHandlers.P(TextAfter(args, 1)); break;
                 case "panel": CommandHandlers.Panel(Rest(args, 2)); break;
+                case "name": CommandHandlers.Name(TextAfter(args, 1)); break;
+                case "status": CommandHandlers.Status(); break;
                 default: PartyCommandOutput.Print($"Usage: {Usage}"); break;
             }
         }
 
-        /// <summary>Registers a short alias only if the word is still free, per PLAN.md's best-effort collision check.</summary>
+        /// <summary>Registers a short alias only if the word is still free.</summary>
         private static void RegisterAlias(string word, Terminal.ConsoleEvent action, Terminal.ConsoleOptionsFetcher fetcher)
         {
             if (Terminal.commands.ContainsKey(word))

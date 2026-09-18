@@ -3,12 +3,7 @@ using Party.Client;
 
 namespace Party.Hooks
 {
-    /// <summary>
-    /// Friendly fire, per PLAN.md: a prefix on <c>Character.RPC_Damage</c> right where vanilla already short-circuits
-    /// PvP, adding one more condition - attacker and victim are party members. This runs only on the victim's own
-    /// client (the ZDO owner, which is where the game already routes this RPC), so no server round trip is needed,
-    /// the same trust model vanilla PvP already uses.
-    /// </summary>
+    /// <summary>Friendly fire: extends vanilla's own PvP check in <c>Character.RPC_Damage</c> on the victim's client.</summary>
     [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class DamagePatch
     {

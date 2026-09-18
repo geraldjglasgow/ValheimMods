@@ -22,6 +22,8 @@ installed mod already owns that word - if a short form doesn't respond, use the 
 | `/party promote <name>` | `/promote <name>` | Leader only. Hands leadership to that member. |
 | `/party p [text]` | `/p [text]` | With text, sends a party-only chat message. With no text, toggles party-chat mode: everything you type goes to the party until you toggle it off again (a `[Party Chat]` indicator shows while it's on). |
 | `/party panel edit` / `/party panel done` | - | Frees your mouse so you can drag the health panel; `done` (or Escape) returns to normal play. |
+| `/party name [text]` | - | Leader only. Names your party (shown on the health panel); no text clears it. |
+| `/party status` | - | Admin only. Lists every party on the server. |
 
 `/invite` tab-completes against everyone online; `/remove` and `/promote` tab-complete against your own party.
 
@@ -40,10 +42,11 @@ and so on. An invite is a prompt the other player can accept or decline; either 
 
 ## Health panel
 
-A panel on the left of the screen lists your party: name and a live health bar, offline members greyed out.
-Drag it anywhere with `/party panel edit` (Escape or `/party panel done` to finish) - it remembers where you put
-it. Position, scale, opacity, bar size, row spacing, font size, whether your own row shows, and whether stamina
-and eitr show alongside health are all yours to set; none of it is pushed by the server.
+A panel on the left of the screen lists your party: name, distance, and a live health bar, offline members
+greyed out. Drag it anywhere with `/party panel edit` (Escape or `/party panel done` to finish) - it remembers
+where you put it. Position, scale, opacity, bar size, row spacing, font size, whether your own row shows, and
+whether stamina and eitr show alongside health are all yours to set; none of it is pushed by the server. Members
+outside your view get a small arrow at the edge of the screen pointing toward them.
 
 ## Colored names and map pins
 
@@ -51,6 +54,10 @@ A party member's floating name is drawn in your party color (the leader marked d
 one when you're near them. Party members are always visible on your map and minimap in that color, even when
 their own public-position sharing is off - this only applies within your party; everyone else is still subject
 to the normal sharing rules.
+
+## Death notices
+
+When a party member dies, everyone online in the party gets a chat line and a temporary map pin at the spot.
 
 ## Friendly fire
 
@@ -65,7 +72,8 @@ ping, drawn in your party color and marked private, instead of the normal server
 
 ## Configuration
 
-Gameplay settings - `Max Party Size`, `Friendly Fire Protection`, `Invite Timeout Seconds` - are pushed from the
+Gameplay settings - `Max Party Size`, `Friendly Fire Protection`, `Invite Timeout Seconds`, `Vitals Updates Per
+Second` (default 3, how often health/stamina/eitr refresh) - are pushed from the
 server and can be locked with `Lock Configuration` so clients can't override them. Display settings - colors,
 the ping key, everything under `Health Panel` - are always personal to each player and never pushed.
 

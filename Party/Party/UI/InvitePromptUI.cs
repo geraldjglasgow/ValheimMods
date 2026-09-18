@@ -19,7 +19,7 @@ namespace Party.UI
             active = true;
         }
 
-        /// <summary>Advances the countdown. Called once a frame from <see cref="Client.PartyTicker"/>, never from OnGUI.</summary>
+        /// <summary>Advances the countdown. Called from Update, never from OnGUI.</summary>
         public static void Tick(float deltaTime)
         {
             if (!active)

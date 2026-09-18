@@ -4,11 +4,7 @@ using Party.Api;
 
 namespace Party.Server
 {
-    /// <summary>
-    /// Server side roster operations: create, join, leave, remove, promote, dissolve. Every method is a no-op
-    /// unless this instance is the server (dedicated, or the hosting player) - see <see cref="Identity.IsServer"/>.
-    /// Publishing the result to clients is <see cref="PartyPublisher"/>.
-    /// </summary>
+    /// <summary>Roster operations: create, join, leave, remove, promote, dissolve. Publishing is <see cref="PartyPublisher"/>.</summary>
     public static class PartyManager
     {
         private static PartyStore store;
@@ -54,7 +50,7 @@ namespace Party.Server
             PartyApi.RaiseJoined(party.LeaderId, id);
         }
 
-        /// <summary>Removes a member. Dissolves an emptied party, or hands leadership on per PLAN.md if the leader left.</summary>
+        /// <summary>Removes a member; dissolves an empty party, or hands off leadership if the leader left.</summary>
         public static void RemoveMember(PartyRecord party, long id)
         {
             bool wasLeader = party.LeaderId == id;
@@ -73,8 +69,7 @@ namespace Party.Server
             }
         }
 
-        /// <summary>Longest-tenured online member (join order is preserve order in <see cref="PartyRecord.Members"/>);
-        /// if nobody is online, the oldest member keeps the party from being leaderless.</summary>
+        /// <summary>Longest-tenured online member, or just the oldest if nobody's online.</summary>
         private static long NextLeader(PartyRecord party)
         {
             foreach (PartyMember member in party.Members)
@@ -89,6 +84,14 @@ namespace Party.Server
         {
             party.LeaderId = newLeaderId;
             PartyApi.RaiseLeaderChanged(newLeaderId, newLeaderId);
+        }
+
+        private const int MaxNameLength = 24;
+
+        public static void Rename(PartyRecord party, string name)
+        {
+            name = (name ?? "").Replace('\t', ' ').Replace('\n', ' ').Trim();
+            party.Name = name.Length > MaxNameLength ? name.Substring(0, MaxNameLength) : name;
         }
 
         public static void Touch(PartyRecord party, long id, string name)

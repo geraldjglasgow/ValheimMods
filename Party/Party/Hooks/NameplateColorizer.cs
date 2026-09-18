@@ -2,12 +2,7 @@ using Party.Client;
 
 namespace Party.Hooks
 {
-    /// <summary>
-    /// Recolors a party member's floating name where <see cref="EnemyHud"/> already draws it (the game's one class
-    /// for every floating name-and-bar, players included - see PLAN.md, "Floating names and map pins"). A poll, not
-    /// a Harmony patch: nothing needs to be intercepted, only read and re-colored every frame; left alone for
-    /// everyone else.
-    /// </summary>
+    /// <summary>Recolors a party member's floating name via <see cref="EnemyHud"/>. A poll, not a patch.</summary>
     public static class NameplateColorizer
     {
         public static void Tick()
