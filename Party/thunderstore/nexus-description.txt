@@ -1,0 +1,55 @@
+Nexus Mods page text for Party. No page exists yet - the user creates it by hand on nexusmods.com (Nexus'
+upload API cannot create a mod page) and uploads the first file there; only after that does thunderstore/nexus.json
+get its real mod_id/file_id and nexus-upload.py become usable for later versions. Category: Utilities.
+
+===== SUMMARY (plain text, one paragraph) =====
+Shared parties for Valheim: a server-owned roster with one leader, invites, party-only chat, a draggable health panel, colored floating names, always-on map pins, friendly-fire protection, a party-only map ping, and a public API for other mods. Server synced where it matters, personal to each player everywhere else.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+Party adds real parties to Valheim: form a group with one leader, invite friends by name, and get shared chat, live health bars, always-visible map pins and friendly-fire protection that all work across a dedicated server, not just for a host. The server owns the roster, so a party survives logging out and a server restart; members are tracked by their persistent player ID, never by name, so two players who share a name are never confused.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install Party. On a server, install it on the server to have it enforce the gameplay settings; every client needs it too.
+[/list]
+For manual install, drop Party.dll into BepInEx/plugins.
+
+[size=4][b]Commands[/b][/size]
+[list]
+[*][b]/party invite <name>[/b] (or /invite) - invites an online player; creates your party and makes you its leader if you have none yet. Any member may invite.
+[*][b]/party leave[/b] (or /leave) - leaves your current party.
+[*][b]/party remove <name>[/b] (or /remove) - leader only; removes that member.
+[*][b]/party promote <name>[/b] (or /promote) - leader only; hands leadership to that member.
+[*][b]/party p [text][/b] (or /p) - with text, sends a party-only message; with no text, toggles party-chat mode.
+[*][b]/party panel edit[/b] / [b]done[/b] - drag the health panel, then lock it back in place.
+[/list]
+Short forms register only if another mod hasn't already claimed the word; /party ... always works. Every command answers you in chat, success or failure. /invite tab-completes against online players; /remove and /promote against your own party.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Server-owned roster: one leader, a configurable size cap (default 8), automatic leadership succession when the leader leaves.
+[*]Invites are a prompt the other player accepts or declines, with a timeout; either way you learn the outcome.
+[*]Party chat reaches every online member regardless of distance, in your own chosen color, with a toggle mode and an on-screen indicator.
+[*]A draggable, fully configurable health panel: position, scale, opacity, bar size, row spacing, font, and optional stamina/eitr bars, all personal to you.
+[*]Floating names of nearby party members draw in your party color, leader marked distinctly.
+[*]Party members always show on your map and minimap in your party color, even with their own position sharing off - this only applies within your party.
+[*]Friendly-fire protection, on by default, covering melee, projectiles and area damage alike, without affecting creatures, falls, fire or drowning.
+[*]Hold a modifier key while pinging the map to ping only your party, drawn in your party color and marked private.
+[*]A public API for other mods to check party membership, fetch members, and subscribe to changes, without a hard dependency.
+[/list]
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings - party size, friendly-fire protection, invite timeout - come from the server and can be locked so clients can't override them, the default. Display settings - colors, panel layout, the ping key - are always personal to each player and never pushed.
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/Party.
+
+[size=4][b]Shout outs[/b][/size]
+The BepInEx and Harmony teams, Iron Gate Studio for Valheim, and Nexus Mods for hosting this page. The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game, and every modder who keeps their mods open source so others can collaborate, learn and build on them.

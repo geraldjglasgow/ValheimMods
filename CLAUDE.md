@@ -16,6 +16,7 @@ ValheimMods/
   ShipConfig/        ship health
   Lockstep/          boss progression gated on the whole group
   OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs
+  Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
 ```
 
@@ -39,6 +40,10 @@ commands, a YAML chain. Design and status in `Lockstep/PLAN.md`.
 
 **OpenKeep**: storage and inventory in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
 container sizes, carts as stations, contents signs and shared chests. Design in `OpenKeep/CLAUDE.md`.
+
+**Party**: shared parties - a server-owned roster with one leader, invites, party chat, a draggable health panel,
+colored floating names, always-on map pins, friendly-fire protection, a party-only map ping, and a public API for
+other mods. Design and the judgement calls the spec left open in `Party/PLAN.md`.
 
 ### The libraries (ValheimModLibs)
 

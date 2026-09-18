@@ -1,0 +1,9 @@
+{
+    "name": "Party",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/Party",
+    "description": "Shared parties: membership, chat, health bars, always-on map pins, friendly-fire protection, and an API other mods can build on.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}
