@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Party
 {
-    /// <summary>One online player as the server (or a hosting client) sees it: persistent ID, current name, peer routing ID, position.</summary>
+    /// <summary>One online player: persistent ID, name, peer ID, position.</summary>
     public struct OnlinePlayer
     {
         public long Id;
@@ -12,7 +12,7 @@ namespace Party
         public Vector3 Position;
     }
 
-    /// <summary>Resolving persistent player identity, the same way <c>Lockstep</c> does it: peers, plus the host as a special case.</summary>
+    /// <summary>Resolves persistent player identity from peers, host included.</summary>
     public static class Identity
     {
         public static bool IsServer => ZNet.instance != null && ZNet.instance.IsServer();

@@ -42,3 +42,6 @@ DECISIONS.md
 
 # Local agent configuration - machine-specific, not shared
 .claude/
+
+# Kept local only, like .claude/ above - not in the repository
+CLEANROOM.md

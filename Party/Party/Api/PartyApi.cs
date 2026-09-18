@@ -5,13 +5,7 @@ using Party.Server;
 
 namespace Party.Api
 {
-    /// <summary>
-    /// The public surface other mods build on. Accurate for any player on the side that has full knowledge - a
-    /// dedicated server or the host, via <see cref="PartyManager"/> - and, on a bare client, accurate only for the
-    /// local player's own party, since the server never tells a client about anyone else's (see PLAN.md). A mod
-    /// without a compile-time reference to Party never sees this type at all and should treat every player as
-    /// party-less; see the README for the soft-dependency pattern.
-    /// </summary>
+    /// <summary>Public API. Full accuracy on the server; a bare client only knows its own party.</summary>
     public static class PartyApi
     {
         /// <summary>A party this player belongs to changed in some way.</summary>

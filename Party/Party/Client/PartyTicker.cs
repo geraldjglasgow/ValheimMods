@@ -6,10 +6,7 @@ using Party.UI;
 
 namespace Party.Client
 {
-    /// <summary>
-    /// The mod's one MonoBehaviour: drives every per-frame client responsibility and draws every IMGUI overlay.
-    /// Everything it calls is a static class with its own single responsibility; this only decides when.
-    /// </summary>
+    /// <summary>The mod's one MonoBehaviour: ticks and draws everything else, which are all static classes.</summary>
     public class PartyTicker : MonoBehaviour
     {
         private float inviteExpiryTimer;
@@ -23,13 +20,13 @@ namespace Party.Client
             TickInviteExpiry(dt);
             MapPins.Tick();
             NameplateColorizer.Tick();
-            PartyPing.Tick(dt);
+            TempPartyPins.Tick();
             InvitePromptUI.Tick(dt);
             if (HealthPanel.EditMode && Input.GetKeyDown(KeyCode.Escape))
                 HealthPanel.ToggleEditMode(false);
         }
 
-        /// <summary>Server-side invite timeouts, checked once a second. <see cref="InviteManager.Tick"/> no-ops on clients.</summary>
+        /// <summary>Server-side invite timeouts, checked once a second.</summary>
         private void TickInviteExpiry(float dt)
         {
             inviteExpiryTimer += dt;
@@ -44,6 +41,7 @@ namespace Party.Client
             HealthPanel.Draw();
             InvitePromptUI.Draw();
             ChatIndicator.Draw();
+            OffscreenArrows.Draw();
         }
     }
 }

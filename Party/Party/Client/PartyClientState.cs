@@ -19,14 +19,11 @@ namespace Party.Client
         public bool IsLeader => Id == PartyClientState.LeaderId;
     }
 
-    /// <summary>
-    /// The local player's view of their own party: applied from <c>Party_Roster</c> (membership) and
-    /// <c>Party_VitalsDeliver</c> (health/stamina/eitr/position). Nothing here is authoritative - the server owns
-    /// the roster - this is only what the server has told this client about itself.
-    /// </summary>
+    /// <summary>The local player's own party, as last reported by the server. Not authoritative.</summary>
     public static class PartyClientState
     {
         public static string PartyId { get; private set; } = "";
+        public static string Name { get; private set; } = "";
         public static long LeaderId { get; private set; }
         public static List<PartyMemberView> Members { get; private set; } = new List<PartyMemberView>();
 
@@ -35,7 +32,7 @@ namespace Party.Client
 
         public static PartyMemberView Find(long id) => Members.Find(m => m.Id == id);
 
-        /// <summary>Parses the <c>Party_Roster</c> wire text (see <c>PartyPublisher.Encode</c>); an empty string means no party.</summary>
+        /// <summary>Parses the <c>Party_Roster</c> wire text; empty means no party.</summary>
         public static void ApplyRoster(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -47,6 +44,7 @@ namespace Party.Client
             string[] header = lines[0].Split('\t');
             PartyId = header[0];
             LeaderId = long.Parse(header[1]);
+            Name = header.Length > 2 ? header[2] : "";
             Members = ParseMembers(lines);
             PartyApi.RaiseChanged(Identity.LocalPlayerId);
         }
@@ -83,6 +81,7 @@ namespace Party.Client
         {
             bool wasInParty = InParty;
             PartyId = "";
+            Name = "";
             LeaderId = 0;
             Members = new List<PartyMemberView>();
             if (wasInParty)

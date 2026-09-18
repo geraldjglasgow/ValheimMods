@@ -23,8 +23,7 @@ namespace Party.Server
             Start(inviter, target);
         }
 
-        /// <summary>Everything that can be checked before the invite exists. Creates the inviter's own party of one
-        /// if they had none, per spec ("this creates one and makes you the leader").</summary>
+        /// <summary>Checks the invite, creating the inviter's own party of one if they had none.</summary>
         private static string Validate(OnlinePlayer inviter, OnlinePlayer target)
         {
             if (target.Id == inviter.Id)

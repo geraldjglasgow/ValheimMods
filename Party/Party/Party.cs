@@ -27,8 +27,7 @@ namespace Party
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-            // RPCs register on ZNet.Awake (ZRoutedRpc.instance does not exist yet here) and console
-            // commands register on Terminal.InitTerminal - see Hooks/NetHooks.cs and Commands/PartyCommands.cs.
+            // RPCs and commands register later (ZNet.Awake / Terminal.InitTerminal) - see NetHooks/PartyCommands.
 
             gameObject.AddComponent<PartyTicker>();
 

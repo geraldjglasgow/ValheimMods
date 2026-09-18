@@ -1,12 +1,10 @@
+using System.Text;
 using PatchGuard;
 using UnityEngine;
 
 namespace Party.Server
 {
-    /// <summary>
-    /// Server side RPC registrations. Registered on every instance (client, host, dedicated server); every handler
-    /// no-ops unless <see cref="Identity.IsServer"/>, the same shape as Lockstep's <c>ProgressServer</c>.
-    /// </summary>
+    /// <summary>Server RPCs, registered everywhere; every handler no-ops unless <see cref="Identity.IsServer"/>.</summary>
     public static class PartyRpcServer
     {
         public const string RpcInvite = "Party_Invite";
@@ -22,6 +20,10 @@ namespace Party.Server
         public const string RpcPingDeliver = "Party_PingDeliver";
         public const string RpcVitalsReport = "Party_VitalsReport";
         public const string RpcVitalsDeliver = "Party_VitalsDeliver";
+        public const string RpcDeath = "Party_Death";
+        public const string RpcDeathDeliver = "Party_DeathDeliver";
+        public const string RpcRename = "Party_Rename";
+        public const string RpcStatus = "Party_Status";
 
         public static void RegisterRpcs()
         {
@@ -35,6 +37,9 @@ namespace Party.Server
             rpc.Register<Vector3>(RpcPing, (s, pos) => Guard.Run("party ping", () => Server(() => OnPing(s, pos))));
             rpc.Register<float, float, float, Vector3, bool>(RpcVitalsReport,
                 (s, hp, st, ei, pos, valid) => Guard.Run("party vitals", () => Server(() => OnVitals(s, hp, st, ei, pos, valid))));
+            rpc.Register<Vector3>(RpcDeath, (s, pos) => Guard.Run("party death", () => Server(() => OnDeath(s, pos))));
+            rpc.Register<string>(RpcRename, (s, name) => Guard.Run("party rename", () => Server(() => OnRename(s, name))));
+            rpc.Register(RpcStatus, s => Guard.Run("party status", () => Server(() => OnStatus(s))));
         }
 
         private static void Server(System.Action action)
@@ -120,23 +125,26 @@ namespace Party.Server
         {
             if (!Identity.TryFindByPeerId(senderPeerId, out OnlinePlayer sender))
                 return;
-            PartyRecord party = PartyManager.FindPartyOf(sender.Id);
-            if (party == null)
-                return;
-            foreach (PartyMember member in party.Members)
-            {
-                if (member.Id == sender.Id)
-                    continue;
-                long peerId = Identity.PeerIdFor(member.Id);
-                if (peerId != 0)
-                    ZRoutedRpc.instance.InvokeRoutedRPC(peerId, RpcPingDeliver, sender.Name, pos);
-            }
+            RelayToOthers(sender, RpcPingDeliver, sender.Name, pos);
         }
 
         private static void OnVitals(long senderPeerId, float health, float stamina, float eitr, Vector3 pos, bool posValid)
         {
             if (!Identity.TryFindByPeerId(senderPeerId, out OnlinePlayer sender))
                 return;
+            RelayToOthers(sender, RpcVitalsDeliver, sender.Id, health, stamina, eitr, pos, posValid);
+        }
+
+        private static void OnDeath(long senderPeerId, Vector3 pos)
+        {
+            if (!Identity.TryFindByPeerId(senderPeerId, out OnlinePlayer sender))
+                return;
+            RelayToOthers(sender, RpcDeathDeliver, sender.Name, pos);
+        }
+
+        /// <summary>Sends an RPC to every other online member of the sender's party. No-ops if the sender has none.</summary>
+        private static void RelayToOthers(OnlinePlayer sender, string rpcName, params object[] args)
+        {
             PartyRecord party = PartyManager.FindPartyOf(sender.Id);
             if (party == null)
                 return;
@@ -146,7 +154,60 @@ namespace Party.Server
                     continue;
                 long peerId = Identity.PeerIdFor(member.Id);
                 if (peerId != 0)
-                    ZRoutedRpc.instance.InvokeRoutedRPC(peerId, RpcVitalsDeliver, sender.Id, health, stamina, eitr, pos, posValid);
+                    ZRoutedRpc.instance.InvokeRoutedRPC(peerId, rpcName, args);
+            }
+        }
+
+        private static void OnRename(long senderPeerId, string name)
+        {
+            if (!TryLeaderAction(senderPeerId, out OnlinePlayer leader, out PartyRecord party, out string error))
+            {
+                Reply(leader.Id, error);
+                return;
+            }
+            PartyManager.Rename(party, name);
+            PartyManager.SaveAndPublish(party);
+            Reply(leader.Id, party.Name.Length > 0 ? $"Party renamed to '{party.Name}'." : "Party name cleared.");
+        }
+
+        private static void OnStatus(long senderPeerId)
+        {
+            if (!IsAdmin(senderPeerId))
+            {
+                ZRoutedRpc.instance.InvokeRoutedRPC(senderPeerId, RpcReply, "Party: only admins can see server-wide status.");
+                return;
+            }
+            ZRoutedRpc.instance.InvokeRoutedRPC(senderPeerId, RpcReply, BuildStatus());
+        }
+
+        private static bool IsAdmin(long senderPeerId)
+        {
+            if (senderPeerId == ZNet.GetUID())
+                return true;
+            ZNetPeer peer = ZNet.instance.GetPeer(senderPeerId);
+            return peer != null && ZNet.instance.IsAdmin(peer.m_socket.GetHostName());
+        }
+
+        private static string BuildStatus()
+        {
+            System.Collections.Generic.List<PartyRecord> parties = PartyManager.EnsureStore().Data.Parties;
+            if (parties.Count == 0)
+                return "Party status: no parties.";
+            StringBuilder text = new StringBuilder("Party status\n");
+            foreach (PartyRecord party in parties)
+                AppendParty(text, party);
+            return text.ToString().TrimEnd('\n');
+        }
+
+        private static void AppendParty(StringBuilder text, PartyRecord party)
+        {
+            string label = party.Name.Length > 0 ? party.Name : party.PartyId.Substring(0, 6);
+            string leaderName = party.Find(party.LeaderId)?.Name ?? "?";
+            text.Append("  ").Append(label).Append(" - leader: ").Append(leaderName).Append('\n');
+            foreach (PartyMember member in party.Members)
+            {
+                bool online = Identity.TryFind(member.Id, out _);
+                text.Append("    ").Append(member.Name).Append(online ? " (online)" : " (offline)").Append('\n');
             }
         }
 

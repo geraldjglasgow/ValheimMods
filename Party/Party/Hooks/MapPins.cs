@@ -3,10 +3,7 @@ using Party.Client;
 
 namespace Party.Hooks
 {
-    /// <summary>
-    /// Always-on map/minimap pins for online party members, independent of each player's own "share position"
-    /// setting (per spec). Position comes from the vitals channel - see PLAN.md, "Floating names and map pins".
-    /// </summary>
+    /// <summary>Always-on map/minimap pins for online party members, from the vitals channel.</summary>
     public static class MapPins
     {
         private static readonly Dictionary<long, Minimap.PinData> pins = new Dictionary<long, Minimap.PinData>();

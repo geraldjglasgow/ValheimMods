@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Party.Chat
 {
-    /// <summary>The "everything you type goes to the party" indicator, shown while toggle mode is on and the chat box is open.</summary>
+    /// <summary>The toggle-mode indicator, shown while chat is open.</summary>
     public static class ChatIndicator
     {
         private static readonly GUIStyle style = new GUIStyle { fontSize = 14, fontStyle = FontStyle.Bold };

@@ -3,11 +3,7 @@ using Party.Server;
 
 namespace Party.Chat
 {
-    /// <summary>
-    /// Party chat never goes through <see cref="Talker"/> (no new <c>Talker.Type</c> can be added to a compiled
-    /// enum, per PLAN.md): the raw text goes to the server over <c>Party_Chat</c>, and every online member's own
-    /// client formats and displays its own colored line.
-    /// </summary>
+    /// <summary>Party chat bypasses <see cref="Talker"/> entirely; each client formats and colors its own line.</summary>
     public static class PartyChatState
     {
         public static bool ToggleModeOn { get; private set; }
@@ -25,13 +21,6 @@ namespace Party.Chat
             ZRoutedRpc.instance.InvokeRoutedRPC(PartyRpcServer.RpcChat, text);
         }
 
-        /// <summary>A party message arrived for the local player. Formatted in this player's own color preference.</summary>
-        public static void OnDeliver(string senderName, string text)
-        {
-            if (global::Chat.instance == null)
-                return;
-            string color = PartyConfig.PartyColor.Value;
-            global::Chat.instance.AddString($"<color={color}>[Party] {senderName}: {text}</color>");
-        }
+        public static void OnDeliver(string senderName, string text) => PartyAnnounce.Print($"{senderName}: {text}");
     }
 }

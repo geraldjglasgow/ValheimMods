@@ -58,8 +58,9 @@ condition they need (`IsServer`, a receiving client) holds, the pattern already 
 - `Party_Ping` (member -> server, Vector3) and `Party_PingDeliver` (server -> online party members, name +
   position): reuses the same server-relay shape as chat.
 
-1 second was chosen for the vitals tick as a judgement call: fast enough to read as "live" on a health bar,
-cheap enough not to matter at party-size-8. Argue with it in `PartyRpcClient` if it feels wrong in testing.
+The vitals tick rate is `Vitals Updates Per Second` (server-synced, default 3, clamped 1-5) rather than a fixed
+constant, since it trades bar smoothness against RPC volume - an admin can turn it down on a busy server or up for
+a small group. Default 3 was a judgement call: visibly live without meaningfully adding to traffic at party-size-8.
 
 ## Friendly fire
 
@@ -128,6 +129,19 @@ Soft dependency is the standard BepInEx shape, not reflection: a consumer adds a
 `Party.dll`, declares `[BepInDependency(Party.PartyPlugin.PluginGuid, BepInDependency.DependencyFlags.SoftDependency)]`,
 and guards every call with a `Chainloader.PluginInfos.ContainsKey(...)` check so a server without Party is simply
 seen as party-less. The README carries the copy-paste version of this.
+
+## Later additions
+
+- **Death notices**: `Player.OnDeath` postfix, owner-side like every other self-report here, sends `Party_Death`;
+  the server relays it through the same `RelayToOthers` helper as ping and vitals. Judgement call: the death pin
+  lasts 120s (vanilla's own death marker is permanent, but a temporary one fits Party's other pins better).
+- **Named parties**: `PartyRecord.Name`, leader-only via `/party name`, capped at 24 chars, carried as a third
+  header field in the `Party_Roster` wire text. Shown as the health panel's window title.
+- **Distance and off-screen arrows**: both read straight off the existing vitals-reported `Position`, no new RPC.
+  Arrows are a rotated solid rect (no art asset in this repo - see the icon placeholder note in packaging), not a
+  sprite; good enough to read as directional.
+- **`/party status`**: admin-only (same `IsAdmin` check Lockstep uses: host, or on the server's admin list) since
+  it lists every party's membership server-wide, which is a moderation view, not a player-facing one.
 
 ## Status (2026-09-18)
 

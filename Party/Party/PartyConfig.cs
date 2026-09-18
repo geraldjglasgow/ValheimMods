@@ -3,11 +3,7 @@ using SyncedConfig;
 
 namespace Party
 {
-    /// <summary>
-    /// Gameplay settings are Charter clauses: pushed from the server, lockable with <see cref="LockConfiguration"/>.
-    /// Display settings are bound unsynced (<c>synced: false</c>): personal to each player, never pushed.
-    /// See PLAN.md, "Configuration".
-    /// </summary>
+    /// <summary>Gameplay settings sync and lock; display settings (<c>synced: false</c>) stay local.</summary>
     public static class PartyConfig
     {
         // ---------------------------------------------------------------- gameplay (synced, lockable)
@@ -15,6 +11,7 @@ namespace Party
         public static ConfigEntry<int> MaxPartySize { get; private set; }
         public static ConfigEntry<bool> FriendlyFire { get; private set; }
         public static ConfigEntry<int> InviteTimeoutSeconds { get; private set; }
+        public static ConfigEntry<int> VitalsUpdatesPerSecond { get; private set; }
 
         // ---------------------------------------------------------------- display (local only)
         public static ConfigEntry<string> PartyColor { get; private set; }
@@ -49,6 +46,9 @@ namespace Party
                 "Server only. When on, party members cannot damage each other even with PvP enabled.");
             InviteTimeoutSeconds = config.Bind("General", "Invite Timeout Seconds", 60,
                 "Server only. How long an invite waits for a response before it expires.");
+            VitalsUpdatesPerSecond = config.Bind("General", "Vitals Updates Per Second", 3,
+                "Server only. How often each client reports health/stamina/eitr for the health panel and map pins.",
+                acceptableValues: new AcceptableValueRange<int>(1, 5));
         }
 
         private static void BindDisplay(SyncedConfiguration config)
