@@ -2,22 +2,21 @@ using UnityEngine;
 
 namespace Party.UI
 {
-    /// <summary>A small 9-sliceable rounded-rect texture, built once at runtime (no art assets in this repo).</summary>
-    public static class RoundedTexture
+    /// <summary>A small rounded-rect sprite, 9-sliced so it stays crisp at any size. Built once at runtime (no art assets in this repo).</summary>
+    public static class RoundedSprite
     {
         private const int Size = 64;
         private const int Radius = 20;
-        private static GUIStyle style;
+        private static Sprite sprite;
 
-        /// <summary>A style whose background is the rounded texture, 9-sliced so any rect size stays crisp.</summary>
-        public static GUIStyle Style()
+        public static Sprite Get()
         {
-            if (style == null)
-                style = new GUIStyle { normal = { background = Build() }, border = new RectOffset(Radius, Radius, Radius, Radius) };
-            return style;
+            if (sprite == null)
+                sprite = Build();
+            return sprite;
         }
 
-        private static Texture2D Build()
+        private static Sprite Build()
         {
             Texture2D tex = new Texture2D(Size, Size, TextureFormat.ARGB32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
             Color32[] pixels = new Color32[Size * Size];
@@ -28,7 +27,8 @@ namespace Party.UI
             }
             tex.SetPixels32(pixels);
             tex.Apply();
-            return tex;
+            Vector4 border = new Vector4(Radius, Radius, Radius, Radius);
+            return Sprite.Create(tex, new Rect(0, 0, Size, Size), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, border);
         }
 
         /// <summary>Distance-based soft edge (~1px falloff) instead of a hard cutoff, so the curve doesn't look stair-stepped.</summary>

@@ -22,6 +22,7 @@ namespace Party.Client
             NameplateColorizer.Tick();
             TempPartyPins.Tick();
             InvitePromptUI.Tick(dt);
+            HealthPanel.Tick();
             if (HealthPanel.EditMode && Input.GetKeyDown(KeyCode.Escape))
                 HealthPanel.ToggleEditMode(false);
         }
@@ -41,7 +42,6 @@ namespace Party.Client
 
         private void OnGUI()
         {
-            HealthPanel.Draw();
             InvitePromptUI.Draw();
             ChatIndicator.Draw();
             OffscreenArrows.Draw();

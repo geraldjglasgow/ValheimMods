@@ -121,6 +121,22 @@ draggable because the game owns the cursor during play. Decision: a console comm
 so the panel's `GUI.Window` can be dragged, and pressing Escape exits edit mode and returns the cursor to the
 game. This is the concrete trigger the spec left open, written down so it can be argued with.
 
+## Health panel: rewritten as a real Canvas
+
+The panel was originally `OnGUI`/`GUI.Window` - the classic IMGUI system. Two problems proved fundamental rather
+than fixable with more patching: (1) Valheim's own UI is entirely Canvas + TextMeshPro, so `OnGUI` can never use
+the game's real font or panel art; (2) dragging fought the camera controller, because unlocking the cursor alone
+doesn't stop `PlayerController` from reading mouse movement as look input - that only stops when the game treats
+a menu as open (`PlayerController.InInventoryEtc`), which `Hooks/PanelDragInputPatch.cs` now also returns true
+for while in edit mode. Rebuilt in `UI/HealthPanel.cs` and `UI/PartyRowView.cs` as an actual `Canvas` (`Image`,
+`TextMeshProUGUI`, Unity's own event system for dragging via `PartyDragHandler`). Rounded bars use a `Mask`
+component with a 9-sliced procedural sprite (`RoundedSprite.cs`) as both the visible background and the clip
+shape, and a plain rectangular fill child clipped by it - Unity's native masking, not hand-rolled `GUI.BeginGroup`
+clipping. The font comes from `Resources.FindObjectsOfTypeAll<TMP_FontAsset>()` (Party ships no font of its own).
+One accepted simplification: a row always reserves space for all three bars (`HealthPanelLayout.RowHeight()`),
+even when stamina/eitr are toggled off, rather than dynamically resizing - a minor wasted-space tradeoff for not
+having to reflow sibling rows on every settings change.
+
 ## API
 
 `Party.PartyApi` (public static class, its own events with plain `Action<...>` delegates) - `IsInParty`,
