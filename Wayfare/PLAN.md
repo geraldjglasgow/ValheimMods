@@ -36,13 +36,20 @@ on every client) is ignored exactly as vanilla ignores it.
 
 Vanilla's own "is this ZDO a portal" test is `Game.instance.PortalPrefabHash.Contains(prefabHash)`
 (`ZDOMan.AddIfPortal`), and `PortalPrefabHash` is filled once in `Game.Awake` from a **hardcoded serialized list**,
-`m_portalPrefabs` - exactly what SPEC item 5 forbids relying on for discovery. But that hash list is also what puts
-a ZDO into `ZDOMan.m_portalObjects`, the one category of ZDO the game distributes to *every* connected peer
-regardless of distance (confirmed in `ZDOMan.CreateNewZDO` and the receive path in `ZDOMan.RPC_ZDOData`, both call
-`AddIfPortal` unconditionally on every machine, client or server, the instant a ZDO is created or received). That
-global distribution is exactly what SPEC item 1 needs ("every portal the player may target", not just loaded ones)
-and item 4's "game's own ~5s sync cadence" describes (`Game.ConnectPortalsCoroutine`'s `WaitForSeconds(5f)` loop is
-the visible half of this channel).
+`m_portalPrefabs` - exactly what SPEC item 5 forbids relying on for discovery. That hash list is also what puts a
+ZDO into `ZDOMan.m_portalObjects` - the portal list that is always loaded **server-side** (its own save chunk,
+kept whole for `Game.ConnectPortals`). An earlier revision of this document claimed that list is distributed to
+every peer regardless of distance; that was wrong - `AddIfPortal` in `ZDOMan.RPC_ZDOData` classifies whatever
+happens to arrive, but the only send path (`ZDOMan.CreateSyncList` → `FindSectorObjects`) covers sectors near the
+peer, so a pure client only ever holds the portals it has been near this session. SPEC item 1 ("every portal the
+player may target") is therefore met by Wayfare's own sync: on the registry's ~5s tick a client sends
+`wf_RequestPortals` (routed, no target = the server) and the server replies `wf_PortalList` with a snapshot built
+from its authoritative `GetPortalList()` (`Portals/PortalSync.cs`). For the same reason the `wf_TeleportGranted`
+reply carries the destination position and rotation - the requesting client usually holds no ZDO for the target
+portal. And because widening `PortalPrefabHash` happens after `ZDOMan` has already loaded/received ZDOs,
+`PortalDiscovery` re-classifies existing ZDOs whose prefab it just added (`ZDOMan.AddIfPortal`); without that the
+save-writer (`GetSaveClonePerChunk` skips hash-listed ZDOs from regular chunks) would silently drop a modded
+portal from the next save.
 
 Decision: a postfix on `Game.Awake` walks every prefab registered in `ZNetScene` (after it has registered them;
 `ZNetScene.Awake` postfix, `Priority.Low`, matching OpenKeep's own scene-scan precedent), finds every one carrying a

@@ -124,7 +124,7 @@ Mods here are developed black-box, the way Elite Creatures Reborn was rewritten.
   it would be convenient for players switching over.
 - **Implement from the spec, verify against the spec.** Every feature is built from the specification and the game
   code alone, then tested in the `LocalTesting` profile against the spec's checklist. A behaviour the spec did not
-  cover is decided with the user and written into the mod's `CLAUDE.md`, not guessed from how another mod does it.
+  cover is decided with the user, not guessed from how another mod does it.
 - **Multiplayer is not optional.** Every feature in every mod must work on a dedicated server, not only for a
   host or in single player, and it must work when it is first built rather than in a later pass. Decide world
   changes on the owner, draw on every client, keep persistent state in the ZDO so the game replicates it, and

@@ -16,16 +16,19 @@ namespace Wayfare.Targeting
         public const string GrantedRpc = "wf_TeleportGranted";
         public const string DeniedRpc = "wf_TeleportDenied";
 
-        private static bool registered;
+        // The instance registered on, not a bool: every new session (rejoining after a quit to menu) constructs
+        // a fresh ZRoutedRpc with empty handler tables, and an unknown routed method is dropped silently.
+        private static ZRoutedRpc registeredOn;
 
         public static void EnsureRegistered()
         {
-            if (registered || ZRoutedRpc.instance == null)
+            ZRoutedRpc rpc = ZRoutedRpc.instance;
+            if (rpc == null || registeredOn == rpc)
                 return;
-            registered = true;
-            ZRoutedRpc.instance.Register<ZDOID, ZDOID>(RequestRpc, OnRequestTeleport);
-            ZRoutedRpc.instance.Register<ZDOID>(GrantedRpc, OnGranted);
-            ZRoutedRpc.instance.Register<ZDOID, string>(DeniedRpc, OnDenied);
+            registeredOn = rpc;
+            rpc.Register<ZDOID, ZDOID>(RequestRpc, OnRequestTeleport);
+            rpc.Register<ZDOID, Vector3, Quaternion>(GrantedRpc, OnGranted);
+            rpc.Register<ZDOID, string>(DeniedRpc, OnDenied);
         }
 
         public static void RequestTeleport(ZDOID source, ZDOID target)
@@ -40,9 +43,14 @@ namespace Wayfare.Targeting
                 return;
             string denial = Evaluate(sender, sourceId, targetId);
             if (denial != null)
+            {
                 Deny(sender, targetId, denial);
-            else
-                ZRoutedRpc.instance.InvokeRoutedRPC(sender, GrantedRpc, targetId);
+                return;
+            }
+            // The grant carries the destination itself: the requesting client usually does not hold the target
+            // portal's ZDO at all (the game never sends distant portal ZDOs to peers), so it cannot look this up.
+            ZDO targetZdo = ZDOMan.instance.GetZDO(targetId);
+            ZRoutedRpc.instance.InvokeRoutedRPC(sender, GrantedRpc, targetId, targetZdo.GetPosition(), targetZdo.GetRotation());
         }
 
         /// <summary>Null when the request is granted, otherwise the localised denial reason token to send back.</summary>
@@ -87,20 +95,33 @@ namespace Wayfare.Targeting
             ZRoutedRpc.instance.InvokeRoutedRPC(sender, DeniedRpc, targetId, reasonToken);
         }
 
-        private static void OnGranted(long sender, ZDOID targetId) => TargetingSession.CompleteTeleport(targetId);
+        private static void OnGranted(long sender, ZDOID targetId, Vector3 targetPos, Quaternion targetRot)
+        {
+            if (SenderIdentity.IsFromServer(sender))
+                TargetingSession.CompleteTeleport(targetPos, targetRot);
+        }
 
-        private static void OnDenied(long sender, ZDOID targetId, string reasonToken) => TargetingSession.Deny(reasonToken);
+        private static void OnDenied(long sender, ZDOID targetId, string reasonToken)
+        {
+            if (SenderIdentity.IsFromServer(sender))
+                TargetingSession.Deny(reasonToken);
+        }
     }
 
     /// <summary>Registers the moment <c>ZRoutedRpc</c> exists, on every machine including a headless dedicated
     /// server (which never runs the portal registry's tick, the other place this mod is active) - the server must
-    /// have its request handler registered before the first client can possibly send a request.</summary>
+    /// have its request handler registered before the first client can possibly send a request. Runs again for
+    /// every new session, since each one constructs a fresh <c>ZRoutedRpc</c>.</summary>
     [HarmonyPatch(typeof(ZRoutedRpc))]
     [HarmonyPatch(MethodType.Constructor)]
     [HarmonyPatch(new[] { typeof(bool) })]
     public static class ZRoutedRpcConstructedPatch
     {
         [HarmonyPostfix]
-        public static void Postfix() => TeleportGate.EnsureRegistered();
+        public static void Postfix()
+        {
+            TeleportGate.EnsureRegistered();
+            PortalSync.EnsureRegistered();
+        }
     }
 }

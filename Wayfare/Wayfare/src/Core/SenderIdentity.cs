@@ -14,6 +14,19 @@ namespace Wayfare.Core
             return Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerID() : 0L;
         }
 
+        /// <summary>True when a routed RPC came from the server: the server peer's uid on a client, this
+        /// machine's own routed id where it is the server itself (a locally routed call). Handlers for
+        /// server-only replies check this so another client cannot forge a grant or a portal list.</summary>
+        public static bool IsFromServer(long sender)
+        {
+            if (ZNet.instance == null || ZRoutedRpc.instance == null)
+                return false;
+            if (ZNet.instance.IsServer())
+                return sender == ZRoutedRpc.instance.m_id;
+            ZNetPeer server = ZNet.instance.GetServerPeer();
+            return server != null && sender == server.m_uid;
+        }
+
         public static bool IsAdmin(long sender)
         {
             if (ZNet.instance == null)

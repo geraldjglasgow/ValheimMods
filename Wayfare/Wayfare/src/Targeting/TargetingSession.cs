@@ -36,17 +36,13 @@ namespace Wayfare.Targeting
             TeleportGate.RequestTeleport(SourcePortal.m_nview.GetZDO().m_uid, target);
         }
 
-        public static void CompleteTeleport(ZDOID target)
+        /// <summary>The destination comes from the server's grant, never from a local ZDO lookup - a client
+        /// usually holds no ZDO at all for a distant portal.</summary>
+        public static void CompleteTeleport(Vector3 targetPos, Quaternion targetRot)
         {
-            if (Player.m_localPlayer == null || SourcePortal == null || ZDOMan.instance == null)
+            if (Player.m_localPlayer == null || SourcePortal == null)
             {
                 Close();
-                return;
-            }
-            ZDO targetZdo = ZDOMan.instance.GetZDO(target);
-            if (targetZdo == null)
-            {
-                Deny(Words.DeniedGeneric);
                 return;
             }
             if (!Player.m_localPlayer.IsTeleportable(SourcePortal.m_allowAllItems))
@@ -54,8 +50,8 @@ namespace Wayfare.Targeting
                 Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_noteleport");
                 return;
             }
-            Vector3 exitPos = targetZdo.GetPosition() + targetZdo.GetRotation() * Vector3.forward * SourcePortal.m_exitDistance + Vector3.up;
-            Player.m_localPlayer.TeleportTo(exitPos, targetZdo.GetRotation(), distantTeleport: true);
+            Vector3 exitPos = targetPos + targetRot * Vector3.forward * SourcePortal.m_exitDistance + Vector3.up;
+            Player.m_localPlayer.TeleportTo(exitPos, targetRot, distantTeleport: true);
             Game.instance.IncrementPlayerStat(PlayerStatType.PortalsUsed);
             if (Minimap.instance != null)
                 Minimap.instance.SetMapMode(Minimap.MapMode.Small);
