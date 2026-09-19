@@ -133,9 +133,27 @@ for while in edit mode. Rebuilt in `UI/HealthPanel.cs` and `UI/PartyRowView.cs` 
 component with a 9-sliced procedural sprite (`RoundedSprite.cs`) as both the visible background and the clip
 shape, and a plain rectangular fill child clipped by it - Unity's native masking, not hand-rolled `GUI.BeginGroup`
 clipping. The font comes from `Resources.FindObjectsOfTypeAll<TMP_FontAsset>()` (Party ships no font of its own).
-One accepted simplification: a row always reserves space for all three bars (`HealthPanelLayout.RowHeight()`),
-even when stamina/eitr are toggled off, rather than dynamically resizing - a minor wasted-space tradeoff for not
-having to reflow sibling rows on every settings change.
+
+Judgement calls made while debugging the first Canvas version, written down so they can be argued with:
+
+- **The canvas scales against a 1920x1080 reference** (`CanvasScaler.ScaleWithScreenSize`, match height), so the
+  layout settings and saved position mean the same thing at any resolution; drag deltas divide by the canvas
+  scale factor to compensate.
+- **Rows are rebuilt, not patched, when a layout setting changes**: they bake sizes at construction, and the
+  panel compares a settings signature each tick and throws the rows away when it differs. That also made row
+  height honest - a row only reserves space for the bars that are toggled on.
+- **The panel never blocks the mouse outside edit mode** (`CanvasGroup.blocksRaycasts`), and dragging is
+  edit-mode only - an earlier version let any free cursor drag it, which stole clicks from the map and inventory.
+- **The panel's per-frame layout pass leaves the position alone mid-drag** (it would otherwise snap the panel
+  back to the saved position every frame); the spot is persisted once on release, clamped on-screen so the saved
+  Y can never collide with the -1 "unset" sentinel.
+- **While the local player is dead** there is no `Player` object, so the own-row falls back to the roster entry
+  (last reported vitals) and the local identity falls back to the profile ID - otherwise the row math places
+  more rows than it counted.
+- **Bar colors follow the game's own vitals palette** (red health, yellow stamina, blue eitr), the rounded
+  sprite's sliced corners are scaled per bar so thin bars keep a clean half-height radius, bars ease toward the
+  reported value instead of jumping at the vitals tick rate, names ellipsize instead of wrapping onto the bars,
+  and an offline member shows "offline" in the distance slot.
 
 ## API
 

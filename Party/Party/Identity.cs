@@ -17,7 +17,10 @@ namespace Party
     {
         public static bool IsServer => ZNet.instance != null && ZNet.instance.IsServer();
 
-        public static long LocalPlayerId => Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerID() : 0L;
+        /// <summary>Falls back to the profile so the ID survives the local player being dead (no Player object).</summary>
+        public static long LocalPlayerId => Player.m_localPlayer != null
+            ? Player.m_localPlayer.GetPlayerID()
+            : Game.instance != null && Game.instance.GetPlayerProfile() != null ? Game.instance.GetPlayerProfile().GetPlayerID() : 0L;
 
         public static string LocalPlayerName => Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerName() : "";
 

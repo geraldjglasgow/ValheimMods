@@ -8,9 +8,12 @@ namespace Party.UI
     /// <summary>One health/stamina/eitr bar: a rounded, masked background with a plain fill clipped to that shape.</summary>
     public sealed class BarView
     {
+        private const float SmoothRate = 12f;
+
         private readonly GameObject root;
         private readonly RectTransform fill;
         private readonly float height;
+        private float shown = 1f;
 
         public BarView(Transform parent, float y, float width, float barHeight, Color color)
         {
@@ -18,8 +21,7 @@ namespace Party.UI
             GameObject mask = NewRect("BarBackground", parent, 0, y, width, barHeight);
             root = mask;
             Image background = mask.AddComponent<Image>();
-            background.sprite = RoundedSprite.Get();
-            background.type = Image.Type.Sliced;
+            RoundedSprite.Apply(background, barHeight * 0.5f);
             background.color = new Color(0f, 0f, 0f, 0.55f);
             mask.AddComponent<Mask>().showMaskGraphic = true;
 
@@ -29,14 +31,14 @@ namespace Party.UI
             fill = fillGo.GetComponent<RectTransform>();
         }
 
+        /// <summary>Eases toward the target so the few-per-second vitals reports read as movement, not jumps.</summary>
         public void SetFraction(float fraction, float fullWidth)
         {
-            float width = fullWidth * Mathf.Clamp01(fraction);
+            shown = Mathf.Lerp(shown, Mathf.Clamp01(fraction), 1f - Mathf.Exp(-SmoothRate * Time.deltaTime));
+            float width = fullWidth * shown;
             fill.sizeDelta = new Vector2(width, height);
             fill.gameObject.SetActive(width > 0.5f);
         }
-
-        public void SetActive(bool active) => root.SetActive(active);
 
         private static GameObject NewRect(string name, Transform parent, float x, float y, float width, float height)
         {
@@ -50,16 +52,23 @@ namespace Party.UI
         }
     }
 
-    /// <summary>One party member's row: name, distance, and up to three bars. Built once, updated every tick.</summary>
+    /// <summary>
+    /// One party member's row: name, distance/offline status, and the enabled bars. Built once for the current
+    /// layout settings (the panel rebuilds rows when those change), updated every tick. Bar colors follow the
+    /// game's own vitals palette: red health, yellow stamina, blue eitr.
+    /// </summary>
     public sealed class PartyRowView
     {
+        private const float StatusWidth = 80f;
+
         public readonly GameObject Root;
         private readonly TMP_Text nameText;
-        private readonly TMP_Text distanceText;
+        private readonly TMP_Text statusText;
         private readonly BarView health;
         private readonly BarView stamina;
         private readonly BarView eitr;
         private readonly float barWidth;
+        private float nextBarY;
 
         public PartyRowView(Transform parent, float width)
         {
@@ -70,18 +79,24 @@ namespace Party.UI
             rootRect.anchorMin = rootRect.anchorMax = rootRect.pivot = new Vector2(0f, 1f);
             rootRect.sizeDelta = new Vector2(width, HealthPanelLayout.RowHeight());
 
-            nameText = CreateText("Name", 0f, width - 70f);
-            distanceText = CreateText("Distance", 0f, 70f);
-            distanceText.GetComponent<RectTransform>().anchoredPosition = new Vector2(width - 70f, 0f);
-            distanceText.alignment = TextAlignmentOptions.TopRight;
-            distanceText.fontSize = PartyConfig.FontSize.Value - 4;
+            nameText = CreateText("Name", 0f, width - StatusWidth);
+            statusText = CreateText("Status", width - StatusWidth, StatusWidth);
+            statusText.alignment = TextAlignmentOptions.TopRight;
+            statusText.fontSize = Mathf.Max(8, PartyConfig.FontSize.Value - 3);
 
-            float barY = PartyConfig.FontSize.Value + 6f;
-            health = new BarView(Root.transform, barY, width, PartyConfig.BarHeight.Value, new Color(0.8f, 0.1f, 0.1f));
-            barY += PartyConfig.BarHeight.Value + 4f;
-            stamina = new BarView(Root.transform, barY, width, PartyConfig.BarHeight.Value * 0.6f, new Color(0.15f, 0.7f, 0.15f));
-            barY += PartyConfig.BarHeight.Value * 0.6f + 4f;
-            eitr = new BarView(Root.transform, barY, width, PartyConfig.BarHeight.Value * 0.6f, new Color(0.2f, 0.5f, 0.9f));
+            nextBarY = HealthPanelLayout.NameHeight();
+            health = BuildBar(PartyConfig.BarHeight.Value, new Color(0.78f, 0.2f, 0.16f));
+            if (PartyConfig.ShowStamina.Value)
+                stamina = BuildBar(HealthPanelLayout.SubBarHeight(), new Color(0.85f, 0.75f, 0.24f));
+            if (PartyConfig.ShowEitr.Value)
+                eitr = BuildBar(HealthPanelLayout.SubBarHeight(), new Color(0.4f, 0.55f, 0.95f));
+        }
+
+        private BarView BuildBar(float height, Color color)
+        {
+            BarView bar = new BarView(Root.transform, nextBarY, barWidth, height, color);
+            nextBarY += height + HealthPanelLayout.BarGap;
+            return bar;
         }
 
         private TMP_Text CreateText(string name, float x, float width)
@@ -91,11 +106,13 @@ namespace Party.UI
             RectTransform rect = go.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
             rect.anchoredPosition = new Vector2(x, 0f);
-            rect.sizeDelta = new Vector2(width, PartyConfig.FontSize.Value + 6f);
+            rect.sizeDelta = new Vector2(width, HealthPanelLayout.NameHeight());
             TextMeshProUGUI text = go.AddComponent<TextMeshProUGUI>();
             text.font = PartyFont.Get();
             text.fontSize = PartyConfig.FontSize.Value;
             text.color = Color.white;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
             return text;
         }
 
@@ -105,17 +122,14 @@ namespace Party.UI
             nameText.text = (leader ? "* " : "") + member.Name;
             nameText.color = leader ? ColorHelper.Parse(PartyConfig.LeaderColor.Value) : Color.white;
             nameText.fontStyle = leader ? FontStyles.Bold : FontStyles.Normal;
-            float alpha = member.Online ? 1f : 0.5f;
+            float alpha = member.Online ? 1f : 0.45f;
             nameText.alpha = alpha;
-            distanceText.gameObject.SetActive(distance.HasValue);
-            if (distance.HasValue)
-                distanceText.text = $"{distance.Value:0}m";
+            statusText.alpha = member.Online ? 0.8f : 0.45f;
+            statusText.text = member.Online ? (distance.HasValue ? $"{distance.Value:0}m" : "") : "offline";
 
             health.SetFraction(member.Online ? member.Health : 0f, barWidth);
-            stamina.SetFraction(member.Online ? member.Stamina : 0f, barWidth);
-            eitr.SetFraction(member.Online ? member.Eitr : 0f, barWidth);
-            stamina.SetActive(PartyConfig.ShowStamina.Value);
-            eitr.SetActive(PartyConfig.ShowEitr.Value);
+            stamina?.SetFraction(member.Online ? member.Stamina : 0f, barWidth);
+            eitr?.SetFraction(member.Online ? member.Eitr : 0f, barWidth);
         }
     }
 }

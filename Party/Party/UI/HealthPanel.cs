@@ -9,7 +9,9 @@ namespace Party.UI
 {
     /// <summary>
     /// The party health panel, built as a real Canvas (Valheim's own font, native rounded sprites, drag via the
-    /// event system) instead of OnGUI. Ticked once a frame from <see cref="Client.PartyTicker"/>.
+    /// event system). Scaled against a 1920x1080 reference so the layout settings mean the same thing at any
+    /// resolution. Ticked once a frame from <see cref="Client.PartyTicker"/>. Mouse input passes straight through
+    /// it except in edit mode, so it can never steal clicks from the map or inventory.
     /// </summary>
     public static class HealthPanel
     {
@@ -20,6 +22,7 @@ namespace Party.UI
         private static CanvasGroup canvasGroup;
         private static TMP_Text titleText;
         private static readonly List<PartyRowView> rows = new List<PartyRowView>();
+        private static string lastRowSignature = "";
 
         public static void ToggleEditMode(bool on)
         {
@@ -40,12 +43,14 @@ namespace Party.UI
             Cursor.visible = true;
         }
 
-        public static bool CanDrag() => EditMode || Cursor.lockState == CursorLockMode.None;
+        public static bool CanDrag() => EditMode;
 
+        /// <summary>Clamped so the panel stays reachable and the saved Y can never hit the "unset" sentinel (-1).</summary>
         public static void PersistPosition(Vector2 anchoredPosition)
         {
-            PartyConfig.PanelX.Value = anchoredPosition.x;
-            PartyConfig.PanelY.Value = -anchoredPosition.y;
+            Rect area = ((RectTransform)canvasRoot.transform).rect;
+            PartyConfig.PanelX.Value = Mathf.Clamp(anchoredPosition.x, 0f, area.width - 60f);
+            PartyConfig.PanelY.Value = Mathf.Clamp(-anchoredPosition.y, 0f, area.height - 60f);
         }
 
         public static void Tick()
@@ -55,8 +60,10 @@ namespace Party.UI
             canvasRoot.SetActive(shouldShow);
             if (!shouldShow)
                 return;
-            ApplyLayout();
-            UpdateContent();
+            EnsureRowsMatchSettings();
+            List<(PartyMemberView member, float? distance)> content = RowContents();
+            ApplyLayout(content.Count);
+            UpdateRows(content);
         }
 
         private static void EnsureBuilt()
@@ -82,7 +89,10 @@ namespace Party.UI
             Canvas canvas = canvasRoot.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 500;
-            canvasRoot.GetComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+            CanvasScaler scaler = canvasRoot.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 1f;
 
             GameObject panelGo = new GameObject("Panel", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
             panelGo.transform.SetParent(canvasRoot.transform, false);
@@ -91,8 +101,7 @@ namespace Party.UI
             canvasGroup = panelGo.GetComponent<CanvasGroup>();
 
             Image background = panelGo.GetComponent<Image>();
-            background.sprite = RoundedSprite.Get();
-            background.type = Image.Type.Sliced;
+            RoundedSprite.Apply(background, 10f);
             background.color = new Color(0.05f, 0.05f, 0.05f, 0.75f);
             panelGo.AddComponent<PartyDragHandler>();
 
@@ -109,71 +118,93 @@ namespace Party.UI
             titleText.font = PartyFont.Get();
             titleText.color = Color.white;
             titleText.fontStyle = FontStyles.Bold;
+            titleText.textWrappingMode = TextWrappingModes.NoWrap;
+            titleText.overflowMode = TextOverflowModes.Ellipsis;
         }
 
         private static string Title() => PartyClientState.Name.Length > 0 ? PartyClientState.Name : "Party";
 
-        /// <summary>First-run default: upper-middle of the screen, clear of the hotbar, independent of resolution.</summary>
+        /// <summary>First-run default: upper-middle of the screen, clear of the hotbar, in canvas units.</summary>
         private static void EnsurePosition()
         {
             if (PartyConfig.PanelY.Value < 0f)
-                PartyConfig.PanelY.Value = Screen.height * 0.35f;
+                PartyConfig.PanelY.Value = ((RectTransform)canvasRoot.transform).rect.height * 0.35f;
         }
 
-        private static void ApplyLayout()
+        private static void ApplyLayout(int rowCount)
         {
             EnsurePosition();
             float padding = PartyConfig.PanelPadding.Value;
             float width = PartyConfig.BarWidth.Value + padding * 2f;
             float titleHeight = PartyConfig.TitleFontSize.Value + padding;
-            int rowCount = RowCount();
             float height = titleHeight + rowCount * (HealthPanelLayout.RowHeight() + PartyConfig.RowSpacing.Value) + padding;
 
-            panelRect.anchoredPosition = new Vector2(PartyConfig.PanelX.Value, -PartyConfig.PanelY.Value);
+            if (!PartyDragHandler.Dragging)
+                panelRect.anchoredPosition = new Vector2(PartyConfig.PanelX.Value, -PartyConfig.PanelY.Value);
             panelRect.sizeDelta = new Vector2(width, height);
             panelRect.localScale = Vector3.one * Mathf.Max(0.5f, PartyConfig.PanelScale.Value);
             canvasGroup.alpha = PartyConfig.PanelOpacity.Value;
+            canvasGroup.blocksRaycasts = EditMode;
+            ApplyTitle(width, padding, titleHeight);
+        }
 
+        private static void ApplyTitle(float width, float padding, float titleHeight)
+        {
             RectTransform titleRect = titleText.GetComponent<RectTransform>();
             titleRect.anchoredPosition = new Vector2(padding, -padding * 0.5f);
             titleRect.sizeDelta = new Vector2(width - padding * 2f, titleHeight);
             titleText.fontSize = PartyConfig.TitleFontSize.Value;
-            titleText.text = CanDrag() ? Title() + " (drag me)" : Title();
+            titleText.text = EditMode ? Title() + "  (drag me, Esc when done)" : Title();
         }
 
-        private static int RowCount()
+        /// <summary>Rows bake sizes at construction; when a layout setting changes they are rebuilt, not patched.</summary>
+        private static void EnsureRowsMatchSettings()
         {
-            int otherCount = System.Math.Max(0, PartyClientState.Members.Count - 1);
-            return (PartyConfig.ShowOwnRow.Value ? 1 : 0) + otherCount;
+            string signature = $"{PartyConfig.FontSize.Value}|{PartyConfig.BarWidth.Value}|{PartyConfig.BarHeight.Value}|" +
+                               $"{PartyConfig.ShowStamina.Value}|{PartyConfig.ShowEitr.Value}";
+            if (signature == lastRowSignature)
+                return;
+            lastRowSignature = signature;
+            foreach (PartyRowView row in rows)
+                Object.Destroy(row.Root);
+            rows.Clear();
         }
 
-        private static void UpdateContent()
+        /// <summary>
+        /// Who gets a row this frame. The local player's row is the live Player when there is one; while dead
+        /// (no Player object) their roster entry stands in, so the counts always match what is placed.
+        /// </summary>
+        private static List<(PartyMemberView member, float? distance)> RowContents()
         {
-            float padding = PartyConfig.PanelPadding.Value;
-            float width = PartyConfig.BarWidth.Value;
-            float titleHeight = PartyConfig.TitleFontSize.Value + padding;
-            EnsureRowCount(RowCount(), width);
-
-            int index = 0;
-            float rowStep = HealthPanelLayout.RowHeight() + PartyConfig.RowSpacing.Value;
-            if (PartyConfig.ShowOwnRow.Value)
-                PlaceRow(index++, SelfRow(), null, padding, titleHeight, rowStep);
-            Vector3 localPos = Player.m_localPlayer != null ? Player.m_localPlayer.transform.position : Vector3.zero;
+            List<(PartyMemberView, float?)> content = new List<(PartyMemberView, float?)>();
+            Player local = Player.m_localPlayer;
+            long selfId = Identity.LocalPlayerId;
+            if (PartyConfig.ShowOwnRow.Value && local != null)
+                content.Add((SelfRow(local), null));
             foreach (PartyMemberView member in PartyClientState.Members)
             {
-                if (member.Id == Identity.LocalPlayerId)
+                if (member.Id == selfId && !(PartyConfig.ShowOwnRow.Value && local == null))
                     continue;
-                float? distance = member.PositionValid ? Vector3.Distance(localPos, member.Position) : (float?)null;
-                PlaceRow(index++, member, distance, padding, titleHeight, rowStep);
+                float? distance = member.PositionValid && local != null
+                    ? Vector3.Distance(local.transform.position, member.Position)
+                    : (float?)null;
+                content.Add((member, distance));
             }
+            return content;
         }
 
-        private static void PlaceRow(int index, PartyMemberView member, float? distance, float padding, float titleHeight, float rowStep)
+        private static void UpdateRows(List<(PartyMemberView member, float? distance)> content)
         {
-            PartyRowView row = rows[index];
-            RectTransform rect = row.Root.GetComponent<RectTransform>();
-            rect.anchoredPosition = new Vector2(padding, -(titleHeight + index * rowStep));
-            row.Apply(member, distance);
+            EnsureRowCount(content.Count, PartyConfig.BarWidth.Value);
+            float padding = PartyConfig.PanelPadding.Value;
+            float titleHeight = PartyConfig.TitleFontSize.Value + padding;
+            float rowStep = HealthPanelLayout.RowHeight() + PartyConfig.RowSpacing.Value;
+            for (int i = 0; i < content.Count; i++)
+            {
+                RectTransform rect = rows[i].Root.GetComponent<RectTransform>();
+                rect.anchoredPosition = new Vector2(padding, -(titleHeight + i * rowStep));
+                rows[i].Apply(content[i].member, content[i].distance);
+            }
         }
 
         private static void EnsureRowCount(int needed, float width)
@@ -187,18 +218,19 @@ namespace Party.UI
             }
         }
 
-        private static PartyMemberView SelfRow()
+        private static PartyMemberView SelfRow(Player local)
         {
-            Player local = Player.m_localPlayer;
             return new PartyMemberView
             {
                 Id = Identity.LocalPlayerId,
                 Name = Identity.LocalPlayerName,
                 Online = true,
-                Health = local != null && local.GetMaxHealth() > 0 ? local.GetHealth() / local.GetMaxHealth() : 1f,
-                Stamina = local != null && local.GetMaxStamina() > 0 ? local.GetStamina() / local.GetMaxStamina() : 1f,
-                Eitr = local != null && local.GetMaxEitr() > 0 ? local.GetEitr() / local.GetMaxEitr() : 1f,
+                Health = Fraction(local.GetHealth(), local.GetMaxHealth()),
+                Stamina = Fraction(local.GetStamina(), local.GetMaxStamina()),
+                Eitr = Fraction(local.GetEitr(), local.GetMaxEitr()),
             };
         }
+
+        private static float Fraction(float value, float max) => max > 0f ? Mathf.Clamp01(value / max) : 0f;
     }
 }

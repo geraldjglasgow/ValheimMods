@@ -16,6 +16,17 @@ namespace Party.UI
             return sprite;
         }
 
+        /// <summary>
+        /// Sets up an Image with the rounded sprite at a given corner radius. The sprite's sliced border is 20px,
+        /// far taller than a bar; without scaling it down the corners overlap and thin bars render as blobs.
+        /// </summary>
+        public static void Apply(UnityEngine.UI.Image image, float cornerRadius)
+        {
+            image.sprite = Get();
+            image.type = UnityEngine.UI.Image.Type.Sliced;
+            image.pixelsPerUnitMultiplier = Radius / Mathf.Max(1f, cornerRadius);
+        }
+
         private static Sprite Build()
         {
             Texture2D tex = new Texture2D(Size, Size, TextureFormat.ARGB32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
