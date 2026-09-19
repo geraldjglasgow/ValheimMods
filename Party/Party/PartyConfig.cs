@@ -70,7 +70,7 @@ namespace Party
                 "Client side. In 1920x1080-reference units. Saved automatically when you drag the panel.", synced: false);
             PanelY = config.Bind("Health Panel", "Panel Y", -1f,
                 "Client side. In 1920x1080-reference units. Saved automatically when you drag the panel. -1 means unset: upper-middle on first draw.", synced: false);
-            PanelScale = config.Bind("Health Panel", "Panel Scale", 1f, "Client side.", synced: false);
+            PanelScale = config.Bind("Health Panel", "Panel Scale", 0.75f, "Client side.", synced: false);
             PanelOpacity = config.Bind("Health Panel", "Panel Opacity", 0.85f, "Client side.", synced: false);
             BarWidth = config.Bind("Health Panel", "Bar Width", 260f, "Client side.", synced: false);
             BarHeight = config.Bind("Health Panel", "Bar Height", 16f, "Client side.", synced: false);

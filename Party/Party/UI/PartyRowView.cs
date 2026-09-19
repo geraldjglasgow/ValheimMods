@@ -106,7 +106,9 @@ namespace Party.UI
             RectTransform rect = go.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
             rect.anchoredPosition = new Vector2(x, 0f);
-            rect.sizeDelta = new Vector2(width, HealthPanelLayout.NameHeight());
+            // Twice the font size, not NameHeight(): TMP's Ellipsis mode drops the whole line when the
+            // font's line height exceeds the rect, which made names vanish in a FontSize + 6 box.
+            rect.sizeDelta = new Vector2(width, PartyConfig.FontSize.Value * 2f);
             TextMeshProUGUI text = go.AddComponent<TextMeshProUGUI>();
             text.font = PartyFont.Get();
             text.fontSize = PartyConfig.FontSize.Value;
