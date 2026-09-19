@@ -454,6 +454,11 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   Restriction returns true unconditionally.
 - Hover contents are summed by shared name, most first, shown only for a valid container the player could open
   (guard stone and privacy checks). The read-only grid on hover is not built (no setting for it).
+- A container entry that lost its indentation when uncommented (players delete the whole `#  `, landing the key
+  at the file's root) is read anyway with a warning naming the fix; a non-map root key warns as unknown. Generated
+  and default files comment entries as `  # entry` - indentation first - so removing the `#` alone also works.
+  `ContainerTemplate.Normalize` treats the 1.1.0 style (`#  entry`) as still-default so updating players keep
+  getting the generated list.
 - The container list is generated at `ZNetScene.Awake` on the author while the file still equals the
   embedded default, through `Yaml.Replace(saveToDisk: true)`. Sizes are set on the prefab's `m_width` /
   `m_height` and on every loaded instance's `Container` and `Inventory` fields, then `Changed()`; shrinking below

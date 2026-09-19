@@ -15,10 +15,27 @@ namespace OpenKeep.Capacity
         protected override void Read(YamlNode root)
         {
             YamlNode containers = root.Get("containers");
-            if (containers.Kind == YamlNodeKind.Null || containers.Kind == YamlNodeKind.Missing)
-                return;
-            foreach (KeyValuePair<string, YamlNode> entry in containers.Entries)
+            if (containers.Kind == YamlNodeKind.Map)
+                foreach (KeyValuePair<string, YamlNode> entry in containers.Entries)
+                    ReadSize(entry.Key, entry.Value);
+            ReadMisplaced(root);
+        }
+
+        /// <summary>An entry uncommented without its indentation lands at the top of the file; read it and say so.</summary>
+        private void ReadMisplaced(YamlNode root)
+        {
+            foreach (KeyValuePair<string, YamlNode> entry in root.Entries)
+            {
+                if (string.Equals(entry.Key, "containers", StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (entry.Value.Kind != YamlNodeKind.Map)
+                {
+                    entry.Value.Warn("unknown key");
+                    continue;
+                }
+                entry.Value.Warn("this entry sits at the top of the file; indent it two spaces so it is inside 'containers:' (applied anyway)");
                 ReadSize(entry.Key, entry.Value);
+            }
         }
 
         private void ReadSize(string prefab, YamlNode node)

@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1
+
+- Multiplayer: joining a busy server no longer fails with "you have no copy" when every player runs the same
+  version. The join check raced the config push over the same connection and gave up after a single 5 s deadline;
+  it now greets first, retries every 5 s and only refuses after 20 s without any answer.
+- Capacity: a container entry uncommented without its indentation (at the top of the file instead of inside
+  `containers:`) is now applied anyway, with a warning explaining the indentation. Generated files comment
+  entries as `  # piece_chest_wood: ...` so removing the `#` keeps the indentation.
+
 ## 1.1.0
 
 - Stacks: config and YAML edits now reach items already picked up, items lying in the world and an open chest.

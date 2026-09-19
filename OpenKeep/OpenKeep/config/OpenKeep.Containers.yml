@@ -10,7 +10,7 @@
 # read as well. The first time a world loads, every container prefab of the game and of other mods is listed
 # below with its vanilla size, commented out: remove the # of a line and change the numbers.
 containers:
-#  piece_chest_wood: { width: 5, height: 2 }
-#  piece_chest: { width: 6, height: 3 }
-#  VikingShip: { width: 8, height: 2 }
-#  Cart: { width: 6, height: 3 }
+  # piece_chest_wood: { width: 5, height: 2 }
+  # piece_chest: { width: 6, height: 3 }
+  # VikingShip: { width: 8, height: 2 }
+  # Cart: { width: 6, height: 3 }

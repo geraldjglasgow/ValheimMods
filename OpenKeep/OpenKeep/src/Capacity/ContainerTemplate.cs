@@ -46,7 +46,8 @@ namespace OpenKeep.Capacity
             return bytes != null ? new UTF8Encoding(false).GetString(bytes) : null;
         }
 
-        private static string Normalize(string text) => text.TrimStart('\uFEFF').Replace("\r\n", "\n").TrimEnd();
+        /// <summary>The 1.1.0 default commented its examples "#  entry"; both spellings count as still default.</summary>
+        private static string Normalize(string text) => text.TrimStart('\uFEFF').Replace("\r\n", "\n").Replace("\n#  ", "\n  # ").TrimEnd();
 
         /// <summary>The template up to and including the containers: line, then one commented line per prefab.</summary>
         public static string Generate(string template, Dictionary<string, Container> prefabs)
@@ -63,7 +64,7 @@ namespace OpenKeep.Capacity
             foreach (KeyValuePair<string, Container> prefab in prefabs.OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
             {
                 ContainerSize vanilla = VanillaSizes.Remember(prefab.Key, prefab.Value);
-                text.Append("#  ").Append(prefab.Key).Append(": { width: ").Append(vanilla.Width).Append(", height: ").Append(vanilla.Height).Append(" }\n");
+                text.Append("  # ").Append(prefab.Key).Append(": { width: ").Append(vanilla.Width).Append(", height: ").Append(vanilla.Height).Append(" }\n");
             }
             return text.ToString();
         }
