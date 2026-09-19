@@ -8,16 +8,24 @@ namespace Charter;
 /// The join check of the lead copy: the server sends its family registry to a new peer, the player answers with
 /// its own, both compare. The server refuses a mismatching peer with a refusal code and disconnects it a second
 /// later; the player refuses itself when the server lacks a mod it requires; a peer that never answers is
-/// refused after five seconds when any of the server's mods is mandatory.
+/// re-greeted every five seconds and refused only once twenty seconds have passed without a reply, when any of
+/// the server's mods is mandatory.
 /// </summary>
 internal static class FamilyRpc
 {
 	private const string FamilyName = "Charter_Family";
 	private const string RefuseName = "Charter_Refuse";
-	private const float Patience = 5f;
+	private const float RetryInterval = 5f;
+	private const float MaxWait = 20f;
 	private const float Grace = 1f;
 
-	private static readonly Dictionary<ZNetPeer, float> awaiting = new();
+	private sealed class Waiting
+	{
+		public float NextRetry;
+		public float Deadline;
+	}
+
+	private static readonly Dictionary<ZNetPeer, Waiting> awaiting = new();
 	private static readonly Dictionary<ZNetPeer, float> leaving = new();
 	private static float now;
 
@@ -41,24 +49,55 @@ internal static class FamilyRpc
 	/// <summary>Server: sends the registry to a peer the game just accepted and starts waiting for the answer.</summary>
 	public static void Greet(ZNetPeer peer)
 	{
+		SendFamily(peer);
+		awaiting[peer] = new Waiting { NextRetry = now + RetryInterval, Deadline = now + MaxWait };
+	}
+
+	private static void SendFamily(ZNetPeer peer)
+	{
 		ZPackage pkg = new();
 		FamilyEntry.Write(pkg, Family.Entries());
 		peer.m_rpc.Invoke(FamilyName, pkg);
-		awaiting[peer] = now + Patience;
 	}
 
 	public static void Tick(float time)
 	{
 		now = time;
-		foreach (ZNetPeer peer in awaiting.Where(p => p.Value <= now).Select(p => p.Key).ToList())
+		TickAwaiting();
+		TickLeaving();
+	}
+
+	private static void TickAwaiting()
+	{
+		foreach (ZNetPeer peer in awaiting.Where(p => p.Value.NextRetry <= now).Select(p => p.Key).ToList())
+		{
+			TickPeer(peer, awaiting[peer]);
+		}
+	}
+
+	private static void TickPeer(ZNetPeer peer, Waiting waiting)
+	{
+		if (!Side.IsPresent(peer))
+		{
+			awaiting.Remove(peer);
+			return;
+		}
+		if (now >= waiting.Deadline)
 		{
 			awaiting.Remove(peer);
 			List<FamilyEntry> mine = Family.Entries();
-			if (Side.IsPresent(peer) && mine.Any(e => e.Mandatory))
+			if (mine.Any(e => e.Mandatory))
 			{
 				Refuse(peer, FamilyCheck.Compare(mine, new List<FamilyEntry>()));
 			}
+			return;
 		}
+		SendFamily(peer);
+		waiting.NextRetry = now + RetryInterval;
+	}
+
+	private static void TickLeaving()
+	{
 		foreach (ZNetPeer peer in leaving.Where(p => p.Value <= now).Select(p => p.Key).ToList())
 		{
 			leaving.Remove(peer);

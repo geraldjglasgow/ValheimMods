@@ -88,13 +88,13 @@ internal static class GameHooks
 			{
 				return;
 			}
-			foreach (Charter charter in charters)
-			{
-				charter.Publisher.SendFirst(peer);
-			}
 			if (Lead)
 			{
 				FamilyRpc.Greet(peer);
+			}
+			foreach (Charter charter in charters)
+			{
+				charter.Publisher.SendFirst(peer);
 			}
 		}
 		catch (Exception e)
