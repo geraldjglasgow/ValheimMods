@@ -50,6 +50,7 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `cloud effect`/`body effect` vanilla prefabs for the trail cloud and the permanent worn poison look (cosmetic)
 - **Devouring** - `absorb health`/`absorb damage` percent kept permanently from a victim (enhanced; an instant
   kill always lands the killing blow, so the full amount is kept); `slow per 100 health`, its cost;
+  `move` base speed multiplier before the slow (`0.5` halves it; not enhanced);
   `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
   `devour cooldown` seconds after a meal before it can eat again
 - **Thieving** - `max items` the most it will ever hold (enhanced), hard-capped at 8; never takes equipped gear

@@ -71,19 +71,22 @@ On that kill it gains, permanently:
 - `absorb health` percent of the victim's maximum health, added to its own.
 - `absorb damage` percent of the victim's damage, added to its own.
 
-Both default to 100. These accumulate with every meal, so one left alone in a busy area becomes genuinely
-enormous - and visibly so, because it grows with what it has eaten.
+Health defaults to 50, damage to 25 - a meal makes it stronger, several meals make it a problem, but only a long
+unattended feast makes it lethal (100/100 shipped originally and a camp-fed greydwarf one-tapped players through
+a parry; damage is cut hardest because damage is what kills). These accumulate with every meal, so one left alone
+in a busy area still becomes genuinely enormous - and visibly so, because it grows with what it has eaten.
 
 An instant kill needs an unmistakable tell: a sound and an effect at the moment it happens, so a player watching
 from a distance sees a creature simply cease rather than wondering what became of it.
 
 ### Then it has to wait
 
-After a meal it **cannot devour again for `devour cooldown` seconds** - 10 by default. It carries on as an
-ordinary creature during that time: it can move, it can be fought, it can be killed. It just cannot eat.
+After a meal it **cannot devour again for `devour cooldown` seconds** - 60 by default (10 originally, which
+consumed a camp faster than a player could reasonably respond to). It carries on as an ordinary creature during
+that time: it can move, it can be fought, it can be killed. It just cannot eat.
 
 The cooldown is what makes the mutation a decision rather than a disaster. A camp is not consumed in a second;
-it goes one creature every ten, and you can watch it happen and choose whether to intervene.
+it goes one creature a minute, and you can watch it happen and choose whether to intervene.
 
 ### It ignores you, until it does not
 
@@ -132,6 +135,10 @@ of them.
 Movement speed falls as its accumulated health rises (`slow per 100 health`). A well-fed one is a slow-moving
 disaster you can see coming and outrun, rather than something that is simply unfair. This is its only cost, and
 it is what makes leaving one alone a survivable mistake.
+
+Its base speed - before the slow - is the `move` multiplier, `1` by default: a fresh devourer moves like its
+base creature. Admins who find that too hot can ship it slower from the first bite (`move: 0.5` halves it). The
+knob is deliberately not enhancement-scaled: it is tuning, not power.
 
 ## Bloated, in full
 
@@ -573,7 +580,7 @@ defaults:
     Warding:     { reflect: 30, knockback: 4 }
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4 }
-    Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
+    Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60 }
     Thieving:    { max items: 1 }
 
 # Every biome below overrides only what it names. Delete a line to fall back to
@@ -736,11 +743,12 @@ The implementation must repeat this table as comments inside the generated file.
 | Miasmic | `body effect` | Name of the vanilla poison visual worn on the creature itself, at all times. |
 | Bloated | `blast effect` | Name of the vanilla prefab cloned for the explosion. |
 | Bloated | `warning effect` | Name of the vanilla prefab played on the corpse during the delay. |
-| Devouring | `absorb health` | Percent of a victim's max health added to its own. |
-| Devouring | `absorb damage` | Percent of a victim's damage added to its own. |
+| Devouring | `move` | Base movement multiplier, before the slow. `1` by default; a tuning knob, never enhancement-scaled. |
+| Devouring | `absorb health` | Percent of a victim's max health added to its own. `50` by default. |
+| Devouring | `absorb damage` | Percent of a victim's damage added to its own. `25` by default. |
 | Devouring | `slow per 100 health` | Percent movement speed lost per 100 absorbed health. Its cost. |
 | Devouring | `player threshold` | Fraction of a player's max health its per-hit damage must reach before it hunts players for good. `0.333` = a third. |
-| Devouring | `devour cooldown` | Seconds before it can devour again after a meal. `10` by default. |
+| Devouring | `devour cooldown` | Seconds before it can devour again after a meal. `60` by default. |
 | Thieving | `max items` | The most items one creature may ever hold, hard-capped at 8. `1` by default. See `thieving.md`. |
 
 ### What these defaults actually produce

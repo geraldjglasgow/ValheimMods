@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.3.0
+
+**Devouring reined in.** Out of the box it ate a camp in under two minutes and came out one-tapping players
+through a parry; the defaults now leave it a situation you can respond to. A YAML file from an earlier version
+pins the old numbers in its `mutation power:` block - edit its Devouring line (or delete it to take the new
+defaults).
+
+- `devour cooldown` default 10 → 60: one bite a minute, not six.
+- `absorb health` default 100 → 50, `absorb damage` default 100 → 25: it keeps a share of a meal, not the whole
+  animal; damage is cut hardest because damage is what kills.
+- New `move` field: the devourer's base speed multiplier before its well-fed slow, default 1. Set `move: 0.5`
+  to ship them at half speed from the first bite. Never enhancement-scaled.
+
 ## 3.2.0
 
 **Thieving** — a tenth mutation, and the only one whose threat is not damage. A Thieving creature takes one item

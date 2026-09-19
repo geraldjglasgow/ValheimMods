@@ -125,9 +125,9 @@ namespace EliteCreaturesReborn.Rules
                     { [Fields.CloudLife] = 6f, [Fields.CloudDamage] = 5f, [Fields.CloudsPerSecond] = 1f,
                       [Fields.CloudRadius] = 4f },
                 [Mutation.Devouring] = new Dictionary<string, float>
-                    { [Fields.AbsorbHealth] = 100f, [Fields.AbsorbDamage] = 100f,
+                    { [Fields.Move] = 1f, [Fields.AbsorbHealth] = 50f, [Fields.AbsorbDamage] = 25f,
                       [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f,
-                      [Fields.DevourCooldown] = 10f },
+                      [Fields.DevourCooldown] = 60f },
                 [Mutation.Thieving] = new Dictionary<string, float> { [Fields.MaxItems] = 1f },
             };
         }

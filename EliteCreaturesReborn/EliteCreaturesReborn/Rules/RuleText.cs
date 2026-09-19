@@ -76,7 +76,7 @@ defaults:
     Warding:     { reflect: 30, knockback: 4 }
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
-    Devouring:   { absorb health: 100, absorb damage: 100, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 10 }
+    Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60 }
     Thieving:    { max items: 1 }
 
 # Repopulating the world. All off by default, so clearing a camp or dungeon

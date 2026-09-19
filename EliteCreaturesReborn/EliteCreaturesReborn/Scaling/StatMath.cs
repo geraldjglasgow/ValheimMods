@@ -45,6 +45,10 @@ namespace EliteCreaturesReborn.Scaling
             {
                 bonus += Enhance.Stat(rules, traits, Mutation.Mad, Fields.Move) - 1f;
             }
+            if (traits.Has(Mutation.Devouring))
+            {
+                bonus += rules.PowerOf(Mutation.Devouring, Fields.Move) - 1f; // a tuning knob, usually <= 1: never enhanced
+            }
             return Mathf.Max(MoveFloor, 1f + bonus);
         }
 
