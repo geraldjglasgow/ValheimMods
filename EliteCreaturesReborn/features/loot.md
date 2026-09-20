@@ -10,10 +10,11 @@ are handled on their own. **Boss loot** is multiplied further by the boss's aspe
 
 Numbers are defaults and all of them are configurable.
 
-**Status: partly built.** The per-star quantity multiplier is built and shipping: a creature's drop quantities are
-scaled by its star count, which is the Scaled mode below. The **mode switch does not exist** - there is no Vanilla,
-Rolled or Curated - and **trophies are not yet handled separately**, so they currently scale with everything else.
-Rolled is meant to be the default, so what ships today is not the intended out-of-the-box behaviour.
+**Status: built, not yet verified in game.** All four modes, the extra-roll settings, the global and boss
+multipliers, trophy separation, the `creatures:` rules and `elite reference` are implemented
+(`Loot/LootEngine.cs`, `Rules/LootOverlay.cs`, `Commands/ReferenceCommand.cs`; parsing verified outside the game,
+including the error paths). Nothing below is ticked until it has been seen working on a dedicated server.
+**Per-tier loot quantity is not built** - it waits on `world-tiers.md`.
 
 ---
 
@@ -95,31 +96,96 @@ This must work on a dedicated server the first time it is built, not in a later 
 
 # 5. Configuration
 
-In the main settings file's loot section, with the tables in the creature rule file:
+In a `loot:` block of `creature_rules.yml` - the .cfg is per-player display preferences only, and everything here
+changes gameplay, so it lives with the other synced, lockable rules:
 
 - **Mode**: Vanilla, Scaled, Rolled or Curated.
 - **The per-star quantity line** for Scaled, one entry per star count. Already built.
-- **Trophy multiplication**: off by default; on makes trophies follow the mode.
-- **Per-creature and per-group drop rules** for Curated, and for overriding individual drops in the other modes.
+- **Extra roll chance** for Rolled: one entry per star count, the percent chance that that star's extra roll
+  happens at all. Default 100 everywhere, which is plain Rolled; lowering entries turns "one more roll per star"
+  into "a chance of one more roll per star".
+- **Max extra rolls** for Rolled: a cap on extra rolls however many stars the creature has. Default 5, matching
+  the default star ceiling. 0 means uncapped, for the server that has raised the ceiling and means it. This
+  answers the twenty-star problem the same way the Splintering caps do in `mutations.md`.
+- **Global loot multiplier**: one number over every dropped quantity, applied after the mode. Default 1.
+- **Boss loot multiplier**: the same, bosses only, applied on top of the boss `drops` line and the aspect
+  multiplier (`boss-aspects.md`). Default 1.
+- **Trophy multiplication**: off by default; on makes trophies follow the mode. A drop is a trophy when its item
+  type is the game's own Trophy type, so modded trophies are covered without a name list.
+- **Per-creature and per-boss drop rules** in `creature_rules.yml` - section 6.
 - **Per-tier loot quantity**, so a server can make a mature world pay differently (`world-tiers.md`).
+
+Order of application, so two settings never argue: the mode produces quantities, per-creature rules override and
+extend them, then the global (or boss) multiplier scales the result. Trophies step out of all of it unless trophy
+multiplication is on.
+
+**Another mod's drops pass through untouched.** A mod that injects rows into the same drop list (EpicLoot's
+materials, for instance) keeps them exactly as it rolled them: the engine only reworks rows it owns - the
+creature's own table and rows the rule files name - so the outcome never depends on which mod's patch happens to
+run first. Curated replaces our table, not theirs. The one exception is a row the rule file names explicitly,
+which is the server's own words and is honoured wherever the row came from.
 
 An off switch for the whole feature leaves every other feature working, as `configuration.md` requires of all of
 them - the mod with loot off still stars, mutates and scales creatures and simply never touches what they drop.
 
 ---
 
-# 6. Open decisions
+# 6. Per-creature rules
 
-**What Curated mode's rule file actually looks like** is not specified. Every other mode reuses the creature's own
-drop table, so the rule file only has to adjust it; Curated replaces it, which means the rule file needs a way to
-express a whole drop table - item, quantity range, chance, and per-star variation - that nothing else in the mod
-currently needs. That format wants designing before Curated is built, and the other three modes do not depend on
-it.
+A `creatures:` section in `creature_rules.yml`, matched by **prefab name** - the same name the game itself uses,
+so a row works for a modded creature exactly as it does for a vanilla one. One vocabulary serves every mode: in
+Vanilla/Scaled/Rolled it adjusts the creature's own table, and Curated mode is simply this format used alone,
+ignoring the creature's table. That is the whole answer to what Curated's file looks like - it is not a second
+format.
 
-**Whether Rolled's extra rolls are capped.** Each star adds an independent roll, and `pressure.md` sets no maximum
-star ceiling. A twenty-star creature on a server that has raised the ceiling would roll its whole drop table
-twenty-one times. That is arguably the point, but it is the same shape of problem as the Splintering cascade in
-`mutations.md`, and that one has caps.
+```yaml
+creatures:
+  - match: Troll
+    drops: [1, 1.5, 2, 3, 4, 5]      # overrides the biome/default drops line
+    multiply trophies: true           # per-creature exception to the global switch
+    drop overrides:                   # adjust rows of the creature's own table
+      - item: TrollHide
+        amount: [2, 5]
+        chance: 100
+      - item: Coins
+        remove: true
+    extra drops:                      # additions; Curated mode uses only these
+      - item: Ruby
+        chance: 10
+        amount: [1, 1]
+        per star: true                # rerolls per star like the creature's own rows
+```
+
+A drop row can say everything the game's own drop entries can - item, min and max amount, chance, one per player -
+so nothing expressible in the game's tables is inexpressible here. Bosses use the same section; the boss-wide
+knobs (its `drops` line, the boss loot multiplier, aspects) stack on top as section 5 orders.
+
+---
+
+# 7. The creature reference file
+
+**`elite reference` writes `creature_reference.yml` next to the config files**: every creature the running game
+has registered, grouped by biome, with its prefab name, display name, base health and its vanilla drop table -
+item, amount range, chance. Bosses are a section of their own rather than a biome's - nothing in the game's data
+ties a boss to a biome without loading location assets.
+
+The point is delegation: a server owner pastes this file and `creature_rules.yml` at an assistant, describes the
+loot economy they want, and gets back rules that use real prefab names and adjust real drop tables. The file's
+header comment says exactly that, so the paste carries its own instructions.
+
+**Generated, never shipped or hand-written**, for three reasons that are really one reason - it cannot be wrong:
+
+- It is read from the game's own registry (every registered prefab with a Character component), so **creatures
+  added by other mods appear automatically**, under the prefab names the `creatures:` rules match on.
+- A game update changes the world; the next dump is correct. A shipped list rots.
+- Biome grouping comes from the game's spawn data (open-world spawn lists, and the spawners placed in camps and
+  dungeons). A creature nothing spawns naturally - summons, event-only, some modded ones - still appears, in an
+  `Unassigned` section at the end, because a creature Claude cannot see is a creature nobody writes rules for.
+
+It runs in-game because prefabs do not exist in the main menu, and the file is written on the machine that typed
+the command - which is where the person who wants to paste it somewhere actually is. It is read-only in the world
+- it writes one fixed-name report and changes nothing - so it sits with Inspect and Pressure in the access model
+(`console-commands.md`).
 
 ---
 
@@ -137,6 +203,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [~] Per-star quantity multiplier for Scaled - built and shipping
 - [ ] Trophies handled separately, off by default
 - [ ] Mutations and attunements do not change loot
+- [ ] Rows another mod injects into the drop list pass through untouched, in every mode
 
 ## Multiplayer
 
@@ -146,8 +213,16 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 ## Configuration
 
 - [ ] Mode selection
-- [ ] Per-creature and per-group drop rules for Curated, and per-drop overrides elsewhere
+- [ ] Extra roll chance and max extra rolls for Rolled
+- [ ] Global and boss loot multipliers
+- [ ] Per-creature `creatures:` rules - drops line, trophy switch, drop overrides, extra drops
 - [ ] Per-tier loot quantity
+
+## The reference file
+
+- [ ] `ecr reference` writes `creature_reference.yml`, grouped by biome, prefab names, drop tables
+- [ ] Modded creatures appear, from the game's own prefab registry
+- [ ] Creatures with no spawn data land in `Unassigned` rather than vanishing
 
 ## Work log
 
@@ -156,3 +231,5 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-09-20 | Decided with the user: extra roll chance, max extra rolls, global and boss loot multipliers, the `creatures:` rule format (which is Curated's format - open decision resolved), and the generated creature reference file. Sections 5-7 rewritten; both former open decisions closed. Then built: modes, trophy separation, per-creature rules, `elite reference`; judgement calls in `DECISIONS.md`. | pending |
+| 2026-09-20 | Drop-mod compatibility: the engine now only reworks rows it owns (the creature's table plus rule-file rows), so drops another mod injects - EpicLoot was the prompt - survive every mode, strip and multiplier, whatever the Harmony patch order. | pending |

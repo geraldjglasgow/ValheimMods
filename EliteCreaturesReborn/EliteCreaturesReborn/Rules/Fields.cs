@@ -70,5 +70,22 @@ namespace EliteCreaturesReborn.Rules
 
         // Thieving
         public const string MaxItems = "max items";
+
+        // loot block
+        public const string Mode = "mode";
+        public const string ExtraRollChance = "extra roll chance";
+        public const string MaxExtraRolls = "max extra rolls";
+        public const string GlobalMultiplier = "global multiplier";
+        public const string BossMultiplier = "boss multiplier";
+        public const string MultiplyTrophies = "multiply trophies";
+
+        // creature loot rows
+        public const string Item = "item";
+        public const string Amount = "amount";
+        public const string Chance = "chance";
+        public const string Remove = "remove";
+        public const string PerStar = "per star";
+        public const string DropOverrides = "drop overrides";
+        public const string ExtraDrops = "extra drops";
     }
 }

@@ -38,6 +38,7 @@ namespace EliteCreaturesReborn.Rules
             ReadDefaults(set, root, result);
             ReadBosses(set, root, result);
             ReadRespawning(set, root, result);
+            ReadLoot(set, root, result);
             ReadBiomes(set, root, result);
             SeedStarFallback(set);
             result.Rules = set;
@@ -129,6 +130,19 @@ namespace EliteCreaturesReborn.Rules
             if (YamlRead.Child(root, "respawning") is YamlMappingNode block)
             {
                 RespawnOverlay.Apply(set.Respawn, block, result.Errors);
+            }
+        }
+
+        private static void ReadLoot(RuleSet set, YamlMappingNode root, Result result)
+        {
+            set.Loot = new LootRules();
+            if (YamlRead.Child(root, "loot") is YamlMappingNode block)
+            {
+                LootOverlay.Apply(set.Loot, block, result.Errors);
+            }
+            if (YamlRead.Child(root, "creatures") is YamlNode creatures)
+            {
+                LootOverlay.ApplyCreatures(set, creatures, result.Errors);
             }
         }
 

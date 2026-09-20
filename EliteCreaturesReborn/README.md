@@ -61,6 +61,21 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
 Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a
 large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows.
 
+## Loot
+
+What a kill drops is governed by a `loot:` block in the rule file. Four modes, chosen for the whole world:
+**Vanilla** (drops untouched), **Scaled** (quantities raised by the per-star `drops` line), **Rolled** (the
+creature's own drop table rolled once more per star, each roll independent — the default, so a hard fight has a
+real chance at the rare thing), and **Curated** (per-creature rules decide everything). An `extra roll chance`
+line and a `max extra rolls` cap tune Rolled; a global multiplier and a separate boss multiplier scale everything
+after the mode. Trophies are never multiplied unless you switch that on — one kill, one trophy.
+
+Per-creature rules in the same file, matched by prefab name, override any of it: a creature's own drops line,
+adjusted or removed rows of its drop table, extra drops with their own chance and amounts. `elite reference`
+writes `creature_reference.yml` with every creature the game knows — modded ones included — under its exact
+prefab name with its vanilla drop table; paste it and `creature_rules.yml` at an AI assistant, describe the
+economy you want, and drop the rules it writes back into the file.
+
 ## Configuration
 
 Two files, both written and documented on first run, both hot-reloaded while you play:
@@ -81,6 +96,7 @@ distance, whether trait names show at all — stay with each player and are neve
 | `elite inspect` | Prints the resolved stars, mutations and numbers for the creature under your crosshair |
 | `elite purge` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first) |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
+| `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
 
 ## Install
 

@@ -1,5 +1,35 @@
 # Changelog
 
+## 3.4.0
+
+**Loot has grown from one multiplier into a system.** A `loot:` block in `creature_rules.yml` picks one of four
+server-wide modes:
+
+- **Vanilla** - drops untouched; the loot feature's off switch, the rest of the mod still works.
+- **Scaled** - the creature's own table, quantities raised by the star `drops` line: predictable abundance.
+- **Rolled** (the default) - the creature's own table rolled once more per star, each roll independent, so a
+  hard fight has a real *chance* at the rare drop instead of a guaranteed stack of the common one.
+- **Curated** - the rule files decide entirely, for servers building their own economy.
+
+The knobs around them:
+
+- `extra roll chance` per star and `max extra rolls` (default 5, 0 = uncapped) tune Rolled.
+- `global multiplier` over every kill and `boss multiplier` on top for bosses, applied after the mode.
+- **Trophies are not multiplied** unless `multiply trophies` says so - twelve identical trophies from one kill
+  is clutter, not a reward. A per-creature override exists for the server that disagrees about one creature.
+- **Per-creature rules** in a `creatures:` section, matched by prefab name so modded creatures work exactly like
+  vanilla ones: a `drops` line, `drop overrides` that change or remove rows of the creature's own table, and
+  `extra drops` additions - which is also the whole of Curated's format, not a second one.
+- Mutations and attunements still change the fight, not the reward; stars are what pays.
+
+**`elite reference` writes `creature_reference.yml`**: every creature the running game knows, grouped by biome,
+with prefab name, display name, base health and its vanilla drop table. Paste it and `creature_rules.yml` at an
+assistant, describe the economy you want, and get back rules that use real names against real tables.
+
+**Plays fair with other loot mods.** The engine only reworks rows it owns - the creature's own table and rows
+your rule files name. Drops another mod injects into the same kill (EpicLoot's enchanting materials, say) pass
+through untouched in every mode, whichever mod's patch happens to run first.
+
 ## 3.3.0
 
 **Devouring reined in.** Out of the box it ate a camp in under two minutes and came out one-tapping players

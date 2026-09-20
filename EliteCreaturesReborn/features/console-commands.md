@@ -15,10 +15,10 @@ added.
 
 # 1. The shape
 
-**Seven sub-commands under one mod command**, plus a separate settings command with three of its own.
+**Eight sub-commands under one mod command**, plus a separate settings command with three of its own.
 
-One command with sub-commands rather than seven top-level commands, because the console is shared with the game
-and every other mod, and a mod that claims seven names in it is a bad neighbour. Tab completion makes the
+One command with sub-commands rather than eight top-level commands, because the console is shared with the game
+and every other mod, and a mod that claims eight names in it is a bad neighbour. Tab completion makes the
 sub-commands discoverable, and a `help` sub-command lists them.
 
 | Sub-command | Does |
@@ -30,6 +30,7 @@ sub-commands discoverable, and a `help` sub-command lists them.
 | **Zones** | Lists retaliation zones, their level and their decay |
 | **Tier** | Shows the world tier and its source, and sets it where the source is manual |
 | **Reload** | Re-reads the settings and rule files from disk |
+| **Reference** | Writes `creature_reference.yml` - every registered creature, grouped by biome, with its vanilla drop table (`loot.md`) |
 
 The separate settings command is `charter`, provided by the workspace library of the same name, with `status`,
 `diff` and `versions` (`server-enforcement.md`). It is not redesigned here.
@@ -70,7 +71,8 @@ The split follows one line: **read-only or world-changing.**
   can move the difficulty of the entire server. These are admin tools on any server that locks anything.
 
 Zones is read-only. Reload re-reads files and so changes what everyone is playing, which puts it with the second
-group.
+group. Reference changes nothing in the world - it writes one fixed-name report next to the config files - so it
+sits with the read-only group; a server that dislikes even that can restrict it, since access is a setting.
 
 ---
 
@@ -167,3 +169,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-09-20 | `Reference` added as the eighth sub-command, read-only group (`loot.md` section 7). | pending |

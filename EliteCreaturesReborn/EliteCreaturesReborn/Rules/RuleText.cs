@@ -108,6 +108,51 @@ bosses:
     speed:       [1]
     drops:       [1,   1.5,  2,    2.5,  3,    3.5]
 
+# What a kill drops. `mode` is one of:
+#   Vanilla - the mod never touches drops; the loot feature's off switch
+#   Scaled  - the creature's own table, quantities raised by its star `drops` line
+#   Rolled  - the creature's own table rolled once more per star, each roll
+#             independent, so a hard fight has a real chance at the rare thing
+#   Curated - the `creatures:` rules below decide entirely; a creature with no
+#             entry drops nothing (its trophy excepted)
+# Trophies are never multiplied or rerolled unless `multiply trophies` is true -
+# twelve identical trophies from one kill is clutter, not a reward.
+loot:
+  mode: Rolled
+  # Chance each star's extra roll happens, one entry per star count like every
+  # other line (index 0 = unstarred, which never rolls). The last entry repeats.
+  extra roll chance: [0, 100]
+  # Most extra rolls one kill can make, however many stars. 0 means no cap.
+  max extra rolls: 5
+  # Multiply every dropped quantity, after the mode. Bosses take both numbers.
+  global multiplier: 1
+  boss multiplier: 1
+  multiply trophies: false
+
+# Per-creature and per-boss loot rules, matched by prefab name. `elite reference`
+# writes creature_reference.yml next to this file with every creature this game
+# knows - vanilla and modded - under its exact prefab name, with its drop table.
+#   drops           - overrides the star `drops` line for this creature
+#   drop overrides  - adjusts rows of its own table: `amount: [min, max]`
+#                     (inclusive), `chance` 0-100, `remove: true` deletes the row
+#   extra drops     - adds rows; `per star: true` makes one follow the mode like
+#                     the creature's own rows. In Curated mode these are the table.
+#creatures:
+#  - match: Troll
+#    drops: [1, 1.5, 2, 3, 4, 5]
+#    multiply trophies: true
+#    drop overrides:
+#      - item: TrollHide
+#        amount: [2, 5]
+#        chance: 100
+#      - item: Coins
+#        remove: true
+#    extra drops:
+#      - item: Ruby
+#        chance: 10
+#        amount: [1, 1]
+#        per star: true
+
 # Every biome below overrides only what it names; delete a line to fall back to
 # `defaults`, or a whole biome to use defaults entirely.
 #

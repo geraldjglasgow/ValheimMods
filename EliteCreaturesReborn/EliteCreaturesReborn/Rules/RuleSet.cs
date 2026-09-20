@@ -26,6 +26,13 @@ namespace EliteCreaturesReborn.Rules
 
         /// <summary>How camps, dungeons and dungeon loot repopulate. One set of timers for the whole world.</summary>
         public RespawnRules Respawn = new RespawnRules();
+
+        /// <summary>The world-wide loot settings: mode, extra rolls, multipliers, the trophy switch.</summary>
+        public LootRules Loot = new LootRules();
+
+        /// <summary>Per-creature loot rules, keyed by prefab name. A creature without an entry follows the mode alone.</summary>
+        public readonly Dictionary<string, CreatureLootRule> CreatureLoot =
+            new Dictionary<string, CreatureLootRule>(StringComparer.OrdinalIgnoreCase);
         public readonly Dictionary<string, BiomeRules> Biomes =
             new Dictionary<string, BiomeRules>(StringComparer.OrdinalIgnoreCase);
 
