@@ -118,7 +118,9 @@ Mods here are developed black-box, the way Elite Creatures Reborn was rewritten.
   verified against it (the README and the mod's `CLAUDE.md` then carry the behaviour).
 - **Never read the other implementation.** No source, decompiled DLL, config file, YAML, save data or API of any
   other mod is read, grepped, quoted or copied. The only code that may be decompiled is the game's own
-  `assembly_valheim.dll`, into the scratch folder, to verify signatures.
+  `assembly_valheim.dll`, into the scratch folder, to verify signatures. One exception: an integration API a
+  mod's author published for other mods to compile against may be staged by the user into `~/thirdpartyapis/`
+  (outside the repo) and read when the user asks for an integration - `CLEANROOM.md` has the limits.
 - **Own names everywhere.** New plugin GUID, config file name, config keys, YAML keys, ZDO keys, console command,
   localization keys and vocabulary. No compatibility layer, migration or reader for another mod's files, even when
   it would be convenient for players switching over.
