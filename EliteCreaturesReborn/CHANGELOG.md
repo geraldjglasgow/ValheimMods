@@ -13,6 +13,11 @@ defaults).
 - New `move` field: the devourer's base speed multiplier before its well-fed slow, default 1. Set `move: 0.5`
   to ship them at half speed from the first bite. Never enhancement-scaled.
 
+**Joining a server no longer refuses a correct client under load.** The version check raced the config pushes over
+the same connection and was judged by one 5-second deadline, so a valid reply that arrived slightly late was
+reported as "you have no copy" and the join was refused. The check is now sent before the config pushes, and
+retries every 5 seconds up to 20 before concluding a player is genuinely unmodded.
+
 ## 3.2.0
 
 **Thieving** — a tenth mutation, and the only one whose threat is not damage. A Thieving creature takes one item
