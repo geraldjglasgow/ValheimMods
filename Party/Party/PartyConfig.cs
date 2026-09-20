@@ -31,6 +31,7 @@ namespace Party
         public static ConfigEntry<bool> ShowOwnRow { get; private set; }
         public static ConfigEntry<bool> ShowStamina { get; private set; }
         public static ConfigEntry<bool> ShowEitr { get; private set; }
+        public static ConfigEntry<bool> ShowAilments { get; private set; }
 
         public static void Initialize(SyncedConfiguration config)
         {
@@ -81,6 +82,8 @@ namespace Party
             ShowOwnRow = config.Bind("Health Panel", "Show Own Row", true, "Client side. Whether your own row appears in the panel.", synced: false);
             ShowStamina = config.Bind("Health Panel", "Show Stamina", false, "Client side.", synced: false);
             ShowEitr = config.Bind("Health Panel", "Show Eitr", false, "Client side.", synced: false);
+            ShowAilments = config.Bind("Health Panel", "Show Ailments", true,
+                "Client side. Small icons under each member's bars for burning, poison, frost and the other ailments.", synced: false);
         }
     }
 }

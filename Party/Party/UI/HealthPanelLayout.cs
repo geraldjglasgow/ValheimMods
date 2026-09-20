@@ -9,6 +9,8 @@ namespace Party.UI
 
         public static float SubBarHeight() => PartyConfig.BarHeight.Value * 0.6f;
 
+        public static float AilmentIconSize() => 16f;
+
         /// <summary>Only the bars actually shown take space; the panel rebuilds its rows when the toggles change.</summary>
         public static float RowHeight()
         {
@@ -17,6 +19,8 @@ namespace Party.UI
                 height += SubBarHeight() + BarGap;
             if (PartyConfig.ShowEitr.Value)
                 height += SubBarHeight() + BarGap;
+            if (PartyConfig.ShowAilments.Value)
+                height += AilmentIconSize() + BarGap;
             return height;
         }
     }

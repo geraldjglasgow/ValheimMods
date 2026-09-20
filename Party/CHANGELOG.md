@@ -11,3 +11,6 @@
   lockable; display settings (colors, panel layout, ping key) are always local to each player.
 - Death notices (chat line + temporary map pin), distance and off-screen direction arrows on the health panel,
   named parties (`/party name`), and an admin `/party status` command.
+- Ailment icons on the health panel: burning, spirit fire, poison, frost, lightning, smoked, tarred, freezing,
+  cold and wet show as small icons under each member's bars, using the game's own status icons (`Show Ailments`
+  to turn them off).

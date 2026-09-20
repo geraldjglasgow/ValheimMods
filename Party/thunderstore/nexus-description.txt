@@ -33,6 +33,7 @@ Short forms register only if another mod hasn't already claimed the word; /party
 [*]Invites are a prompt the other player accepts or declines, with a timeout; either way you learn the outcome.
 [*]Party chat reaches every online member regardless of distance, in your own chosen color, with a toggle mode and an on-screen indicator.
 [*]A draggable, fully configurable health panel: position, scale, opacity, bar size, row spacing, font, and optional stamina/eitr bars, all personal to you.
+[*]Ailment icons under each member's bars - burning, spirit fire, poison, frost, lightning, smoked, tarred, freezing, cold and wet - using the game's own status icons; switchable off.
 [*]Floating names of nearby party members draw in your party color, leader marked distinctly.
 [*]Party members always show on your map and minimap in your party color, even with their own position sharing off - this only applies within your party.
 [*]Friendly-fire protection, on by default, covering melee, projectiles and area damage alike, without affecting creatures, falls, fire or drowning.

@@ -44,10 +44,12 @@ and so on. An invite is a prompt the other player can accept or decline; either 
 ## Health panel
 
 A panel on the left of the screen lists your party: name, distance, and a live health bar, offline members
-greyed out. Drag it anywhere with `/party panel edit` (Escape or `/party panel done` to finish) - it remembers
-where you put it. Position, scale, opacity, bar size, row spacing, font size, whether your own row shows, and
-whether stamina and eitr show alongside health are all yours to set; none of it is pushed by the server. Members
-outside your view get a small arrow at the edge of the screen pointing toward them.
+greyed out. Under each member's bars, small icons show their current ailments - burning, spirit fire, poison,
+frost, lightning, smoked, tarred, freezing, cold and wet - using the game's own status icons. Drag the panel
+anywhere with `/party panel edit` (Escape or `/party panel done` to finish) - it remembers where you put it.
+Position, scale, opacity, bar size, row spacing, font size, whether your own row shows, whether stamina and
+eitr show alongside health, and whether the ailment icons show are all yours to set; none of it is pushed by
+the server. Members outside your view get a small arrow at the edge of the screen pointing toward them.
 
 ## Colored names and map pins
 

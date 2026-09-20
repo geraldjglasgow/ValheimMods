@@ -13,6 +13,7 @@ namespace Party.Client
         public float Health = 1f;
         public float Stamina = 1f;
         public float Eitr = 1f;
+        public int Ailments;
         public Vector3 Position;
         public bool PositionValid;
 
@@ -65,16 +66,12 @@ namespace Party.Client
             return parsed;
         }
 
-        public static void ApplyVitals(long id, float health, float stamina, float eitr, Vector3 pos, bool posValid)
+        public static void ApplyVitals(long id, ZPackage pkg)
         {
             PartyMemberView member = Find(id);
             if (member == null)
                 return;
-            member.Health = health;
-            member.Stamina = stamina;
-            member.Eitr = eitr;
-            member.Position = pos;
-            member.PositionValid = posValid;
+            VitalsWire.Apply(member, pkg);
         }
 
         public static void Reset()

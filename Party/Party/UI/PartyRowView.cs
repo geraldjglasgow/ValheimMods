@@ -67,6 +67,7 @@ namespace Party.UI
         private readonly BarView health;
         private readonly BarView stamina;
         private readonly BarView eitr;
+        private readonly Image[] ailmentIcons;
         private readonly float barWidth;
         private float nextBarY;
 
@@ -90,6 +91,8 @@ namespace Party.UI
                 stamina = BuildBar(HealthPanelLayout.SubBarHeight(), new Color(0.85f, 0.75f, 0.24f));
             if (PartyConfig.ShowEitr.Value)
                 eitr = BuildBar(HealthPanelLayout.SubBarHeight(), new Color(0.4f, 0.55f, 0.95f));
+            if (PartyConfig.ShowAilments.Value)
+                ailmentIcons = BuildAilmentIcons();
         }
 
         private BarView BuildBar(float height, Color color)
@@ -97,6 +100,26 @@ namespace Party.UI
             BarView bar = new BarView(Root.transform, nextBarY, barWidth, height, color);
             nextBarY += height + HealthPanelLayout.BarGap;
             return bar;
+        }
+
+        /// <summary>One hidden Image per tracked ailment, in a strip under the bars; Apply toggles them.</summary>
+        private Image[] BuildAilmentIcons()
+        {
+            Image[] icons = new Image[Ailments.Count];
+            float size = HealthPanelLayout.AilmentIconSize();
+            for (int i = 0; i < icons.Length; i++)
+            {
+                GameObject go = new GameObject("Ailment", typeof(RectTransform));
+                RectTransform rect = go.GetComponent<RectTransform>();
+                rect.SetParent(Root.transform, false);
+                rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+                rect.anchoredPosition = new Vector2(i * (size + 2f), -nextBarY);
+                rect.sizeDelta = new Vector2(size, size);
+                icons[i] = go.AddComponent<Image>();
+                icons[i].preserveAspect = true;
+                go.SetActive(false);
+            }
+            return icons;
         }
 
         private TMP_Text CreateText(string name, float x, float width)
@@ -132,6 +155,26 @@ namespace Party.UI
             health.SetFraction(member.Online ? member.Health : 0f, barWidth);
             stamina?.SetFraction(member.Online ? member.Stamina : 0f, barWidth);
             eitr?.SetFraction(member.Online ? member.Eitr : 0f, barWidth);
+            ApplyAilments(member);
+        }
+
+        /// <summary>Icons pack to the left in bit order; sprites resolve lazily so a missing ObjectDB just retries.</summary>
+        private void ApplyAilments(PartyMemberView member)
+        {
+            if (ailmentIcons == null)
+                return;
+            int shown = 0;
+            float size = HealthPanelLayout.AilmentIconSize();
+            for (int i = 0; i < ailmentIcons.Length; i++)
+            {
+                bool on = member.Online && (member.Ailments & (1 << i)) != 0;
+                if (on && ailmentIcons[i].sprite == null)
+                    ailmentIcons[i].sprite = Ailments.Icon(i);
+                on &= ailmentIcons[i].sprite != null;
+                ailmentIcons[i].gameObject.SetActive(on);
+                if (on)
+                    ailmentIcons[i].rectTransform.anchoredPosition = new Vector2(shown++ * (size + 2f), ailmentIcons[i].rectTransform.anchoredPosition.y);
+            }
         }
     }
 }

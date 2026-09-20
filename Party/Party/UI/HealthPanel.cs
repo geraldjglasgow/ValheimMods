@@ -161,7 +161,7 @@ namespace Party.UI
         private static void EnsureRowsMatchSettings()
         {
             string signature = $"{PartyConfig.FontSize.Value}|{PartyConfig.BarWidth.Value}|{PartyConfig.BarHeight.Value}|" +
-                               $"{PartyConfig.ShowStamina.Value}|{PartyConfig.ShowEitr.Value}";
+                               $"{PartyConfig.ShowStamina.Value}|{PartyConfig.ShowEitr.Value}|{PartyConfig.ShowAilments.Value}";
             if (signature == lastRowSignature)
                 return;
             lastRowSignature = signature;
@@ -228,6 +228,7 @@ namespace Party.UI
                 Health = Fraction(local.GetHealth(), local.GetMaxHealth()),
                 Stamina = Fraction(local.GetStamina(), local.GetMaxStamina()),
                 Eitr = Fraction(local.GetEitr(), local.GetMaxEitr()),
+                Ailments = Ailments.Mask(local),
             };
         }
 
