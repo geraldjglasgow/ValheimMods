@@ -5,6 +5,10 @@
 - New per-ship setting `SailForceOffset`: the height above the ship's center of mass where the sail's force
   pushes. Lowering it makes a ship heel less and capsize less easily at high `SailForce`; 0 removes the sail's
   heeling entirely, negative pushes below the center of mass. Defaults to the ship's vanilla value.
+- Joining a server no longer refuses a correct client under load. The version check raced the config pushes over
+  the same connection and was judged by one 5-second deadline, so a valid reply that arrived slightly late was
+  reported as "you have no copy" and the join was refused. The check is now sent before the config pushes, and
+  retries every 5 seconds up to 20 before concluding a player is genuinely unmodded.
 
 ## 1.2.0
 
