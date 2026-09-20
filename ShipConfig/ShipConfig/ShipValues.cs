@@ -62,6 +62,7 @@ namespace ShipConfig
         private static void WriteFields(Ship ship, WearNTear wearNTear, ShipEntries entries)
         {
             ship.m_sailForceFactor = entries.EffectiveSailForce;
+            ship.m_sailForceOffset = entries.EffectiveSailForceOffset;
             ship.m_backwardForce = entries.EffectivePaddleForce;
             ship.m_rudderSpeed = entries.EffectiveRudderSpeed;
             ship.m_stearVelForceFactor = entries.EffectiveTurnForceSailing;

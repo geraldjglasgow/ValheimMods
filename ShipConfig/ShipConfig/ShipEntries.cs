@@ -17,6 +17,7 @@ namespace ShipConfig
 
         public ConfigEntry<float> Health { get; private set; }
         public ConfigEntry<float> SailForce { get; private set; }
+        public ConfigEntry<float> SailForceOffset { get; private set; }
         public ConfigEntry<float> PaddleForce { get; private set; }
         public ConfigEntry<float> RudderSpeed { get; private set; }
         public ConfigEntry<float> TurnForceSailing { get; private set; }
@@ -45,6 +46,8 @@ namespace ShipConfig
 
         public float EffectiveHealth => Positive(Health.Value) * ShipMultipliers.Health;
         public float EffectiveSailForce => Positive(SailForce.Value) * ShipMultipliers.SailForce;
+        /// <summary>Not clamped: negative moves the point below the center of mass, which is the point of lowering it.</summary>
+        public float EffectiveSailForceOffset => SailForceOffset.Value;
         public float EffectivePaddleForce => Positive(PaddleForce.Value) * ShipMultipliers.PaddleForce;
         public float EffectiveRudderSpeed => Positive(RudderSpeed.Value);
         public float EffectiveTurnForceSailing => Positive(TurnForceSailing.Value) * ShipMultipliers.Turning;
@@ -75,6 +78,8 @@ namespace ShipConfig
         {
             SailForce = BindEntry(synced, "SailForce", defaults.SailForce,
                 "Thrust from the sail. Top speed under sail, scaled by wind and sail size.");
+            SailForceOffset = BindEntry(synced, "SailForceOffset", defaults.SailForceOffset,
+                "Height above the ship's center of mass, in meters, where the sail's force pushes. Lower makes the ship heel less and capsize less easily at high sail force; negative pushes below the center of mass. 0 removes the heeling from the sail entirely.");
             PaddleForce = BindEntry(synced, "PaddleForce", defaults.PaddleForce,
                 "Force when paddling forward (slow) and backward.");
             RudderSpeed = BindEntry(synced, "RudderSpeed", defaults.RudderSpeed,

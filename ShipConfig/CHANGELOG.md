@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- New per-ship setting `SailForceOffset`: the height above the ship's center of mass where the sail's force
+  pushes. Lowering it makes a ship heel less and capsize less easily at high `SailForce`; 0 removes the sail's
+  heeling entirely, negative pushes below the center of mass. Defaults to the ship's vanilla value.
+
 ## 1.2.0
 
 - Every ship gets a full set of settings beside `Health`: `SailForce`, `PaddleForce`, `RudderSpeed`,

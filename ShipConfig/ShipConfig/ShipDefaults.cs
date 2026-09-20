@@ -10,6 +10,7 @@ namespace ShipConfig
     {
         public float Health;
         public float SailForce;
+        public float SailForceOffset;
         public float PaddleForce;
         public float RudderSpeed;
         public float TurnForceSailing;
@@ -50,6 +51,7 @@ namespace ShipConfig
         private void ReadSailing(Ship ship)
         {
             SailForce = ship.m_sailForceFactor;
+            SailForceOffset = ship.m_sailForceOffset;
             PaddleForce = ship.m_backwardForce;
             RudderSpeed = ship.m_rudderSpeed;
             TurnForceSailing = ship.m_stearVelForceFactor;

@@ -6,7 +6,7 @@ more, with server sync and live config reloading.
 ### Features
 - One entry per ship and setting in the `Ship` section, named after the prefab (`VikingShip.Health` is the Longship): Raft, Karve,
   Longship, Drakkar, and any modded ship that has both a `Ship` and a `WearNTear` component
-- Per ship: `Health`, `SailForce`, `PaddleForce`, `RudderSpeed`, `TurnForceSailing`, `TurnForcePaddling`,
+- Per ship: `Health`, `SailForce`, `SailForceOffset`, `PaddleForce`, `RudderSpeed`, `TurnForceSailing`, `TurnForcePaddling`,
   `ForwardDrag`, `SidewaysDrag`, `AngularDamping`, `WaterImpactDamage`, `UpsideDownDamage`, `WeatherWear`,
   `AshlandsOceanDamage`, `DamageTaken`, `Invulnerable` and `BuildCost`. Every default is the ship's vanilla value
 - Global multipliers on top of the per-ship values: health, sail force, paddle force, turning, damage taken, build cost
