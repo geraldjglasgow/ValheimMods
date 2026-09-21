@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0
+
+- Reach: new `stations:` map in `OpenKeep.Reach.yml` — per station prefab `enabled` and `allow` / `deny` item
+  lists for station feeding (interact, Fill, Pull and the `From storage` hover line). Deny a meat and it is never
+  pulled onto the cooking station; crafting and building still see it. Unlisted stations behave as before.
+- Stow: new per-player setting `Sort Favourite Items` (on, the old behaviour). Off: the sort leaves favourite
+  items where they are — for items kept in extra slots other mods add, which the sort used to pull into the main
+  inventory.
+
 ## 1.1.1
 
 - Multiplayer: joining a busy server no longer fails with "you have no copy" when every player runs the same

@@ -55,7 +55,8 @@ OpenKeep/OpenKeep/src/
     Command.cs              the openkeep console command (Terminal.InitTerminal postfix)
   Reach/                    section 1
     ReachModule.cs, ReachSettings.cs, ReachMode.cs, RequirementDisplay.cs
-    ReachModel.cs, ContainerRule.cs, ReachRules.cs   OpenKeep.Reach*.yml, per prefab rule, gate and ranges
+    ReachModel.cs, ContainerRule.cs, StationRule.cs, ReachRules.cs   OpenKeep.Reach*.yml, per prefab container
+                            and station rules, gate and ranges
     ReachCount.cs           reachable containers (one list per frame), counting per stack with allow/deny
     ReachPayment.cs         the payment window (ConsumeResources, DoCrafting) and the RemoveItem prefix
     ReachPull.cs            moving items from containers into the inventory, never in two places
@@ -201,10 +202,10 @@ Prefix and finalizer (the payment window): `InventoryGui.DoCrafting`, `Player.Co
 
 `General` (`Lock Configuration`), `0. Containers` (`Ships`, `Carts`, `Player Chests`, `Honour Wards`, `Shared
 Chests`: the enum `Off`, `View`, `Full`, default `Off`), `1. Reach` (`Enabled`, `Range`, `Crafting`, `Building`,
-`Upgrading`, `Feed Stations`; unsynced `Fill Modifier`, `Pull Modifier`, `Toggle Key`, `Show Links`, `Link Key`,
+`Upgrading`, `Feed Stations`, and the YAML `stations:` map; unsynced `Fill Modifier`, `Pull Modifier`, `Toggle Key`, `Show Links`, `Link Key`,
 `Link Seconds`, `Requirement Display`, `Storage Colour`, `Flash On Pull`), `2. Stow` (`Enabled`, `Quick Stack
 Nearby`, `Nearby Range`, `Ground Pickup`, `Pickup Range`, `Pickup Interval`, `Pickup Delay`, `Pickup Only Held
-Items`; unsynced every key, `Sort Order`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
+Items`; unsynced every key, `Sort Order`, `Sort Favourite Items`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
 Uses Salvage`, `Cycle With Wheel`, `Show Favourites`, `Button Row Offset`), `3. Salvage` (`Enabled`, `Return Fraction`, `Rounding`, `At
 Least One`, `Upgrade Materials`, `Require Known Recipe`, `Require Station`; unsynced `Salvage Key`), `4. Stacks`
 (`Enabled`, `Stack Multiplier`, `Weight Multiplier`, `Ignore Teleport Restriction`, `Merge Into Chests`, `Per Item
@@ -332,6 +333,11 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `Particles/Standard Unlit` and the cart's rope material. `PlacePiece` matches the placed container within 1.5 m.
 - YAML: `range:` is shipped commented out; a container entry with no value warns; `containers:` keys are trimmed,
   case-insensitive.
+- The `stations:` map (1.2.0) narrows feeding only: `StationAccepts` composes the rule's allow/deny into every
+  accepts predicate (so Borrow, Fill, Pull and the hover count all honour it), `StationFeed.Wanted` and
+  `StationHover.Shows` gate `enabled` per station. The station's prefab name is its net view object's, as for
+  containers. Crafting, building and upgrading counts are deliberately untouched — the request behind it was
+  "don't cook my meats", not "hide them from recipes".
 - Toggling with the Toggle Key applies at once (the flag is read at use time).
 
 ### Stow
@@ -340,7 +346,10 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Favourite slots are stored as `x:y` because the sets are comma separated.
 - Sorting never touches the hotbar row (row 0) of the player inventory; favourite slots, equipped items and
   stacks with a put under way are pinned; containers pin nothing. Stacks of the same item, quality and world level
-  merge while sorting.
+  merge while sorting. With `Sort Favourite Items` off (1.2.0, default on) favourite items are pinned too — the
+  supported answer for mods that keep items in extra inventory cells the sort would otherwise pull into the main
+  grid (the sort walks every cell of the player `Inventory` and cannot know which cells another mod considers
+  its own).
 - Dump Key requires `Quick Stack Nearby`; with it off the centre message says so.
 - Favourite items are refused by Store one and Route; Top up still refills them.
 - Trash from the container grid is allowed (the container is claimed and saved). `Trash Uses Salvage` applies only
@@ -606,13 +615,19 @@ from a script.
    hold Pull (Alt) and the ore lands in the inventory. Same with a campfire's wood (plain E and Shift + E), a
    kiln, a cooking station's meat, an oven's fuel switch and a fermenter's mead base. Hover texts show
    `From storage: n`. Rebind Fill Modifier to LeftControl and check a brazier or hearth (a fire that can be turned
-   off) is not toggled repeatedly.
+   off) is not toggled repeatedly. Add `stations: { piece_cookingstation: { deny: [NeckTail] } }` to the Reach
+   YAML: neck tails in a chest are no longer borrowed, filled or pulled onto the cooking station, its hover count
+   drops, and crafting still counts them; `charcoal_kiln: { enabled: false }` removes the kiln's feeding and hover
+   line entirely (verify the prefab names against the log's `openkeep containers` style output or the sign; they
+   were written from memory, not the assets).
 4. Stow: check the button row below the player panel and the Sort button below the container panel's Take all
    line overlap no item slot and no game text (with and without a chest open; note what `Button Row Offset` a
    clean layout needs, and that a changed offset moves the buttons at once); quick stack, stow all, top up, sort by each order,
    favourite item and slot (star, border, cross drawn), trash with confirmation, destroy junk, route with
    Ctrl click (with and without a chest open), store one with V, find (line and floating count), dump
    outside the inventory, cycle with arrows and wheel between three chests within 4 m. Favourites survive a relog.
+   `Sort Favourite Items` off: sorting the inventory leaves a favourite item's stack in its cell (and still merges
+   and sorts the rest); on (default): it is sorted as before.
    Gamepad: the buttons are selectable, the popup confirms and cancels.
 5. Ground pickup on with `pickup: true` for the chest's prefab in `OpenKeep.Stow.yml`: drop copper ore near a
    chest holding copper; after the delay it is inside the chest. An item inside a stranger's ward is not taken.

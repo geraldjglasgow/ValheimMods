@@ -8,8 +8,8 @@ namespace OpenKeep.Stow
     /// <summary>
     /// Sorts an inventory by <c>Sort Order</c>: stacks of the same item merge, pinned items keep their cell, the
     /// rest are written into the free cells in order (row by row) and the inventory reports the change. In the
-    /// player inventory the hotbar row, favourite slots, equipped items and stacks with a request under way are
-    /// pinned; a container pins nothing. A chest another player is using cannot be sorted: a sort rewrites every
+    /// player inventory the hotbar row, favourite slots, equipped items, stacks with a request under way and
+    /// (with <c>Sort Favourite Items</c> off) favourite items are pinned; a container pins nothing. A chest another player is using cannot be sorted: a sort rewrites every
     /// cell at once, which no request carries, so it is refused with a message (auto sort skips it quietly).
     /// </summary>
     public static class Sorting
@@ -60,7 +60,9 @@ namespace OpenKeep.Stow
 
         private static bool Pinned(Player player, ItemDrop.ItemData item)
         {
-            return item.m_equipped || player.IsItemEquiped(item) || Favourites.IsFavouriteSlot(item.m_gridPos) || StackMover.IsPending(item);
+            if (item.m_equipped || player.IsItemEquiped(item) || Favourites.IsFavouriteSlot(item.m_gridPos) || StackMover.IsPending(item))
+                return true;
+            return !StowSettings.SortFavouriteItems.Value && Favourites.IsFavouriteItem(item);
         }
 
         /// <summary>Sorts the loose items into the cells from <paramref name="firstRow"/> on. Returns their number.</summary>

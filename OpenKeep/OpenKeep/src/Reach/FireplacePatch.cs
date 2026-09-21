@@ -17,12 +17,12 @@ namespace OpenKeep.Reach
         public static bool Prefix(Fireplace __instance, Humanoid user, bool hold, bool alt, ref StationFeed.Loan __state, ref bool __result)
         {
             __state = null;
-            if (!StationFeed.Wanted(user) || !CanRefuel(__instance) || Repeating(__instance, hold))
+            if (!StationFeed.Wanted(user, __instance) || !CanRefuel(__instance) || Repeating(__instance, hold))
                 return true;
             float fuel = __instance.m_nview.GetZDO().GetFloat(ZDOVars.s_fuel);
             if (Toggles(__instance, hold, alt, fuel))
                 return true;
-            Func<ItemDrop.ItemData, bool> accepts = StationAccepts.Fuel(__instance.m_fuelItem);
+            Func<ItemDrop.ItemData, bool> accepts = StationAccepts.Fuel(__instance, __instance.m_fuelItem);
             if (!hold && StationFeed.PullHeld)
             {
                 __result = StationFeed.Pull(user, accepts);
@@ -38,7 +38,7 @@ namespace OpenKeep.Reach
         public static void Postfix(Fireplace __instance, Humanoid user, bool hold, bool alt, StationFeed.Loan __state, bool __result)
         {
             StationFeed.Settle(user, __state);
-            if (!__result || hold || !StationFeed.Wanted(user) || !CanRefuel(__instance))
+            if (!__result || hold || !StationFeed.Wanted(user, __instance) || !CanRefuel(__instance))
                 return;
             if (__instance.m_canTurnOff && !alt)
                 return;

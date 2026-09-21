@@ -14,7 +14,7 @@ namespace OpenKeep.Reach
         public static bool Prefix(Fermenter __instance, Humanoid user, bool hold, ref StationFeed.Loan __state, ref bool __result)
         {
             __state = null;
-            if (hold || !StationFeed.Wanted(user) || !PrivateArea.CheckAccess(__instance.transform.position, 0f, false))
+            if (hold || !StationFeed.Wanted(user, __instance) || !PrivateArea.CheckAccess(__instance.transform.position, 0f, false))
                 return true;
             if (__instance.GetContent() != 0)
                 return true;

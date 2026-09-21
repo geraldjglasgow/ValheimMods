@@ -21,6 +21,7 @@ namespace OpenKeep.Stow
         public static ConfigEntry<KeyboardShortcut> SortInventoryKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SortContainerKey { get; private set; }
         public static ConfigEntry<SortOrder> SortOrder { get; private set; }
+        public static ConfigEntry<bool> SortFavouriteItems { get; private set; }
         public static ConfigEntry<bool> AutoSortContainers { get; private set; }
         public static ConfigEntry<bool> AutoSortInventory { get; private set; }
         public static ConfigEntry<KeyboardShortcut> FavouriteItemKey { get; private set; }
@@ -84,6 +85,8 @@ namespace OpenKeep.Stow
                 "Inventory open with a container: sorts the open container by Sort Order.", synced: false);
             SortOrder = synced.Bind(Section, "Sort Order", Stow.SortOrder.Category,
                 "Category (item type, then name), Name, Weight (heaviest first) or Value (most valuable first). Stacks of the same item merge while sorting.", synced: false);
+            SortFavouriteItems = synced.Bind(Section, "Sort Favourite Items", true,
+                "Off: the sort leaves favourite items where they are. Turn off when another mod keeps items in extra slots the sort would pull out - favourite those items and they stay put.", synced: false);
             AutoSortContainers = synced.Bind(Section, "Auto Sort Containers", false,
                 "A container is sorted when it is opened.", synced: false);
             AutoSortInventory = synced.Bind(Section, "Auto Sort Inventory", false,

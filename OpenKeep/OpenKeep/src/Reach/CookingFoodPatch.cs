@@ -15,7 +15,7 @@ namespace OpenKeep.Reach
         public static bool Prefix(CookingStation __instance, Humanoid user, ref StationFeed.Loan __state, ref bool __result)
         {
             __state = null;
-            if (!StationFeed.Wanted(user) || __instance.HaveDoneItem())
+            if (!StationFeed.Wanted(user, __instance) || __instance.HaveDoneItem())
                 return true;
             Func<ItemDrop.ItemData, bool> accepts = StationAccepts.CookingFood(__instance);
             if (StationFeed.PullHeld)
@@ -35,7 +35,7 @@ namespace OpenKeep.Reach
         public static void Postfix(CookingStation __instance, Humanoid user, StationFeed.Loan __state, bool __result)
         {
             StationFeed.Settle(user, __state);
-            if (__result && StationFeed.Wanted(user) && !__instance.HaveDoneItem())
+            if (__result && StationFeed.Wanted(user, __instance) && !__instance.HaveDoneItem())
                 StationFeed.Fill(__instance.m_nview, __instance.m_slots.Length, () => __instance.OnInteract(user));
         }
     }

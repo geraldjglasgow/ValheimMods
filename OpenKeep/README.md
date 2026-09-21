@@ -17,7 +17,9 @@ that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
 - Stations: use a smelter, kiln, blast furnace, spinning wheel, windmill, campfire, torch, hot tub, cooking
   station, oven or fermenter with nothing to add in your inventory and one unit comes from the nearest container.
   Hold `Fill Modifier` (Shift) to fill it up, hold `Pull Modifier` (Alt) to move a stack into your inventory
-  instead. Hover texts get a `From storage: n` line.
+  instead. Hover texts get a `From storage: n` line. The `stations:` map in `OpenKeep.Reach.yml` narrows this
+  per station prefab: `deny` keeps items out of the feeding (raw meat you want to keep raw, say), `allow` limits
+  it to a list, `enabled: false` leaves a station entirely alone — crafting and building are untouched.
 - A reachable container has the game's `Container` component and is within `Range` (20 m by default), passes the
   game's own privacy and ward checks, and is not open by another player (see "Shared chests"). Detection is by
   component, never by a name list: any object with a container is a container, it is a ship when it carries the
@@ -36,7 +38,8 @@ whose item the open container (or, with `Quick Stack Nearby`, any container with
 and `Stow all` (`G`) moves everything that may move into the open container. Then top up (`R`): every stack you
 carry that is not full is refilled from the chests, so you leave with what you came with. Sort (`T` for the
 inventory, `Y` for the container) orders by `Category`, `Name`, `Weight` or `Value`; the hotbar, favourite slots
-and equipped items stay put and stacks merge. What you never want to keep is junk: mark an item with `J`, and
+and equipped items stay put and stacks merge; with `Sort Favourite Items` off, favourite items stay put too —
+turn it off when another mod keeps items in extra slots the sort would pull out, and favourite those items. What you never want to keep is junk: mark an item with `J`, and
 `Destroy Junk` (Shift + Delete) destroys every junk stack in one go; `Trash Key` (Delete) destroys the hovered
 stack and the trash can takes a dragged one, each after the game's confirmation popup. What does not belong in
 the open chest is routed: Ctrl + click sends a stack to the nearest container that holds the item, an item of its
@@ -165,7 +168,8 @@ editable in game through the Configuration Manager entries `Edit YAML`. Extra fi
 `$item_wood`), `prefix:Trophy`, `suffix:Ore`, `type:Material`, `group:Ores` (a group of the file's `groups:` map),
 `*` (everything). Container keys are prefab names; `OpenKeep.Containers.txt` lists them all.
 
-`OpenKeep.Reach.yml`: which containers Reach may use, per prefab range and item lists.
+`OpenKeep.Reach.yml`: which containers Reach may use, per prefab range and item lists, and what each station
+prefab may be fed (feeding, Fill, Pull and the hover line only; crafting and building are untouched).
 ```yaml
 # range: 20
 groups:
@@ -179,6 +183,13 @@ containers:
     deny: [type:Trophy]
   piece_chest_blackmetal:
     allow: [group:Ores, type:Material]
+stations:
+  piece_cookingstation:
+    deny: [NeckTail]        # never pulled onto the cooking station; crafting still sees it
+  smelter:
+    allow: [group:Ores]
+  charcoal_kiln:
+    enabled: false          # no feeding, filling, pulling or hover line for this station
 ```
 
 Ground pickup is off unless `Ground Pickup` is on in the config and the chest prefab has `pickup: true` in the YAML; it is a world tick that runs on the chest owner's client, so turn it on deliberately.

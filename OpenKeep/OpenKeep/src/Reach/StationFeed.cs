@@ -32,10 +32,11 @@ namespace OpenKeep.Reach
 
         private static bool filling;
 
-        /// <summary>The interacting humanoid is the local player and station feeding is on.</summary>
-        public static bool Wanted(Humanoid user)
+        /// <summary>The interacting humanoid is the local player, station feeding is on and the station's prefab is not disabled.</summary>
+        public static bool Wanted(Humanoid user, UnityEngine.Component station)
         {
-            return user != null && user == Player.m_localPlayer && ReachRules.Active(ReachMode.Stations);
+            return user != null && user == Player.m_localPlayer && ReachRules.Active(ReachMode.Stations)
+                && ReachRules.StationRuleFor(station).Enabled;
         }
 
         public static bool PullHeld => Keys.Held(ReachSettings.PullModifier);

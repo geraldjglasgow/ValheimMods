@@ -15,7 +15,7 @@ namespace OpenKeep.Reach
         public static bool Prefix(Smelter __instance, Humanoid user, ItemDrop.ItemData item, ref StationFeed.Loan __state, ref bool __result)
         {
             __state = null;
-            if (item != null || !StationFeed.Wanted(user))
+            if (item != null || !StationFeed.Wanted(user, __instance))
                 return true;
             Func<ItemDrop.ItemData, bool> accepts = StationAccepts.SmelterOre(__instance);
             if (StationFeed.PullHeld)
@@ -33,7 +33,7 @@ namespace OpenKeep.Reach
         public static void Postfix(Smelter __instance, Switch sw, Humanoid user, ItemDrop.ItemData item, StationFeed.Loan __state, bool __result)
         {
             StationFeed.Settle(user, __state);
-            if (item == null && __result && StationFeed.Wanted(user))
+            if (item == null && __result && StationFeed.Wanted(user, __instance))
                 StationFeed.Fill(__instance.m_nview, __instance.m_maxOre, () => __instance.OnAddOre(sw, user, null));
         }
     }

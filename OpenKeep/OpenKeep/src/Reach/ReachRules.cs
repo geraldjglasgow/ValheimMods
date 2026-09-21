@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using UnityEngine;
 using YamlConfig;
 
 namespace OpenKeep.Reach
@@ -20,7 +21,8 @@ namespace OpenKeep.Reach
             Current = model as ReachModel;
             ContainerRules.SetEnabled(EnabledTable());
             int listed = Current != null ? Current.Containers.Count : 0;
-            Plugin.Log.LogInfo($"OpenKeep: reach rules applied, {listed} container prefabs listed.");
+            int stations = Current != null ? Current.Stations.Count : 0;
+            Plugin.Log.LogInfo($"OpenKeep: reach rules applied, {listed} container and {stations} station prefabs listed.");
         }
 
         private static Dictionary<string, bool> EnabledTable()
@@ -72,6 +74,23 @@ namespace OpenKeep.Reach
         }
 
         public static ContainerRule RuleFor(Container container) => RuleFor(ContainerScan.PrefabName(container));
+
+        public static StationRule StationRuleFor(string prefabName)
+        {
+            if (Current != null && prefabName != null && Current.Stations.TryGetValue(prefabName, out StationRule rule))
+                return rule;
+            return StationRule.Default;
+        }
+
+        /// <summary>The rule of the station component's net object prefab (the net view's object, as for containers).</summary>
+        public static StationRule StationRuleFor(Component station)
+        {
+            if (station == null)
+                return StationRule.Default;
+            ZNetView view = station.GetComponentInParent<ZNetView>();
+            GameObject root = view != null ? view.gameObject : station.gameObject;
+            return StationRuleFor(Utils.GetPrefabName(root));
+        }
 
         /// <summary>The prefab's own range when set, else <see cref="Range"/>.</summary>
         public static float RangeFor(Container container)
