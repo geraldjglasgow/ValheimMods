@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>1.1.1</Version>
+    <Version>1.2.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
