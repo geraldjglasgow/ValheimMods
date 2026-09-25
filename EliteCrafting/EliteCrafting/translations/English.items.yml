@@ -1,0 +1,5 @@
+# EliteCrafting - words of the Items area (stone prefabs). Key without the $ -> text.
+
+# A reserved prefab (ECF_Custom01-16) that no stone definition on this server names (prefabs.md section 5).
+ecf_ui_stone_unbound: "Unbound Stone"
+ecf_ui_stone_unbound_desc: "A stone this world does not define. It does nothing until the server gives it a definition."

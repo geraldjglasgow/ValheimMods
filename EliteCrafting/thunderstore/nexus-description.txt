@@ -1,0 +1,56 @@
+Nexus Mods page text for EliteCrafting. No page exists yet - the user creates it by hand on nexusmods.com (Nexus'
+upload API cannot create a mod page) and uploads the first file there; only after that does thunderstore/nexus.json
+get its real mod_id/file_id and nexus-upload.py become usable for later versions. Category: Gameplay.
+Keep in step with README.md.
+
+===== SUMMARY (plain text, one paragraph) =====
+Crafting stones and magic gear across six rarities. Creatures and chests drop stones and pre-rolled magic gear; click a stone onto an item to raise it from Common to Mythic, add, swap, reroll, lock or corrupt its affixes. 27 stones, 16 biome essences, sigils, salvage into shards, 162 affixes with biome tiers, colored names, a tooltip block and a ground glow on magic drops. Server synced YAML, reloaded live. Required on the server and every client.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+EliteCrafting adds crafting stones and magic item affixes to Valheim. Creatures drop stones, and sometimes a piece of gear whose name is colored by its rarity: green, blue, purple, orange. On the ground that gear glows in its color, so a good drop reads from across a clearing. Its tooltip lists the rarity and a few affixes, each a plain sentence like "You move 6% faster" with a tier from one to seven: the further from the Meadows the item comes from, the stronger its affixes can be. Pick up a stone stack in the inventory and click it onto an item to change it. Biome essences reshape an item around their family, sigils steer the next stone, and magic items you do not want grind into shards that fuse back into stones. Rarities, affixes, stones and drop tables are YAML files, synced from the server and reloaded while the game runs.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install EliteCrafting on the server and on every client, same version everywhere.
+[*]Start the game once. BepInEx/config/com.EliteCrafting.cfg, EliteCrafting_affixes.yml and EliteCrafting_economy.yml are written.
+[/list]
+For a manual install, drop EliteCrafting.dll into BepInEx/plugins.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Six rarities: Common (never glows), Uncommon, Rare, Epic, Legendary and Mythic. Rarity is the number of affixes, 1-2 on Uncommon up to 6 on Mythic. Mythic never drops; the Stone of Apotheosis makes it.
+[*]162 affixes on weapons, shields, armor, capes, utility items and tools, with slot sanity: armor stats never roll on weapons, weapon stats never on armor, skill bonuses only on items of that skill. Brands, slayers, leech and restore-on-kill, wards and bulwarks, movement, weather, loot find (Norns' Favour, Fateweaver, Trophy Taker, Hoardfinder) and more; some switch on only at low health.
+[*]Affix tiers 1-7, one per biome. An item rolls at most the tier its materials come from.
+[*]27 stones: Awakening, Ascension, Exaltation, Transcendence and Apotheosis climb the ladder; Growth, Turmoil, Upheaval, Perfection and Severing in a Lesser and a Greater grade add, swap, reroll or remove affixes; Unmaking strips an item to Common; the Serpent Stone corrupts and seals it for a gamble; Binding locks an affix; Chance turns a Common into a random rarity; Reflection copies an item; Honing and Tempering add up to 10% damage or armor; five sigils steer the next stone. A stone that cannot work says why and is not used up.
+[*]16 essences, a Lesser and a Greater for each of eight biome families: they reroll an item and always add an affix of their family. Each biome's creatures and boss drop its own.
+[*]Salvage: Shift + End over a magic item grinds it into shards of the stone that made its rarity; right-click five shards to fuse a stone.
+[*]Drops: stones and pre-rolled Uncommon to Legendary gear on kills a player took part in, better with stars, guaranteed from bosses; world chests roll once when the game fills them.
+[*]Colored names in the inventory, on the ground, in the pickup message, in the workbench's upgrade tab and on item and armor stands; a tooltip block in three detail levels.
+[*]Ground glow on magic drops, capped to the nearest 25 lights.
+[*]Magic items keep their affixes through a workbench upgrade.
+[*]Console command ecraft: help, inspect, stats, list, give, roll, reroll, affix, reload, dump, tiers, ecr.
+[*]Optional Elite Creatures Reborn synergy (off by default): elite stars raise the drops; its Cloven twin and Phantom husks drop nothing of ours.
+[*]With OpenKeep: OpenKeep's Salvage tab leaves magic items alone; this mod's Salvage key grinds them into shards.
+[*]Two YAML families over complete built-in defaults: add your own files next to them, turn affixes off, retune every weight, cost and drop table. A file with an error is reported with file and line and the previous rules stay.
+[/list]
+
+[size=4][b]Warnings[/b][/size]
+[list]
+[*]Removing the mod deletes every stone, essence and shard from inventories, chests and the ground the next time they load. Magic gear keeps its data and gets its affixes back when the mod returns.
+[*]If another mod makes weapons or armor stackable, those items stop taking stones, and the game may merge two magic items into one stack.
+[*]A server that ran 0.1.0: delete or rename its main EliteCrafting_economy.yml, or the stones 0.1.0 had not finished stay disabled and bosses drop no essences.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]The mod must be installed on the server and on every client.
+[/list]
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings and both YAML families come from the server: every player rolls, drops and applies stones under the server's rules. Display, ground glow and the confirm mode stay per player. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions.
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/EliteCrafting.

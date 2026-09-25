@@ -1,0 +1,33 @@
+# EliteCrafting - salvage (salvage.md): the five shards, grinding and fusing messages, the dialog.
+
+ecf_fragment_shard_awakening: "Shard of Awakening"
+ecf_fragment_shard_awakening_desc: "A chip of a Stone of Awakening, ground from a magic item. Right-click with enough of them to fuse a stone."
+ecf_fragment_shard_ascension: "Shard of Ascension"
+ecf_fragment_shard_ascension_desc: "A chip of a Stone of Ascension, ground from a magic item. Right-click with enough of them to fuse a stone."
+ecf_fragment_shard_exaltation: "Shard of Exaltation"
+ecf_fragment_shard_exaltation_desc: "A chip of a Stone of Exaltation, ground from a magic item. Right-click with enough of them to fuse a stone."
+ecf_fragment_shard_transcendence: "Shard of Transcendence"
+ecf_fragment_shard_transcendence_desc: "A chip of a Stone of Transcendence, ground from a magic item. Right-click with enough of them to fuse a stone."
+ecf_fragment_shard_apotheosis: "Shard of Apotheosis"
+ecf_fragment_shard_apotheosis_desc: "A chip of a Stone of Apotheosis, ground from a magic item. Right-click with enough of them to fuse a stone."
+
+ecf_msg_salvage_disabled: "Grinding is disabled on this server."
+ecf_msg_salvage_not_own: "Only items in your own inventory can be ground."
+ecf_msg_salvage_not_magic: "Only magic items can be ground into shards."
+ecf_msg_salvage_sigil_pending: "Spend the pending sigil before grinding this item."
+ecf_msg_salvage_no_yield: "$1 items grind into nothing on this server."
+ecf_msg_salvage_station: "You need to be near a $1 to grind items."
+ecf_msg_salvage_no_room: "No room for the shards."
+ecf_msg_salvage_confirm: "Hold Shift to grind $1."
+ecf_msg_ground: "$1 is ground into $2."
+
+ecf_msg_fuse_short: "You need $1 $2 to fuse a $3."
+ecf_msg_fuse_no_room: "No room for the $1."
+ecf_msg_fused: "$1 $2 fuse into a $3."
+ecf_msg_fused_many: "$1 $2 fuse into $4 $3."
+
+ecf_ui_salvage_title: "Grind $1?"
+ecf_ui_salvage_body: "It becomes $2. This cannot be undone."
+ecf_ui_salvage_nothing: "nothing"
+# the tooltip line under a shard's description
+ecf_ui_fuse_line: "Right-click with $1 to fuse a $2."

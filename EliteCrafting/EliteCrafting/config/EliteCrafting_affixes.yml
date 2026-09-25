@@ -1,0 +1,2664 @@
+# EliteCrafting - affixes
+#
+# Every affix the mod can roll. Written once, on first run, as a full copy of the
+# built-in defaults; the mod never rewrites it. The built-in defaults stay underneath
+# this file (set `use_defaults: false` to make the files the whole configuration), so
+# an entry you delete here comes back from the defaults: turn an affix off with
+# `enabled: false` instead (existing copies go dormant), or stop it rolling with
+# `weight: 0` (existing copies keep working).
+#
+# Extra files named EliteCrafting_affixes_<anything>.yml are read after this one, in
+# file-name order. An entry there with an existing id changes only the fields it
+# names; a new id adds an affix. Lists (slots, tiers) are replaced whole.
+#
+# Fields: id, name, effect, param, value (percent | flat | flag), unit (ms | deg | m |
+# min, flat only), slots, requires { skill, hands, traits }, category (offense |
+# defense | utility), mythic_only, condition (none | health_critical),
+# exclusion_group, weight (default 100), enabled, hook (easy | medium | hard),
+# tiers [{ tier 1-7, min, max, weight (default 100) }]. A flag affix lists only
+# `tier` (and optionally `weight`) per row. Tier 1 = meadows ... 7 = ashlands.
+#
+# Only affixes whose effect this build implements are listed; the rest of the catalog
+# arrives with later releases. An affix naming an unknown effect is an error.
+
+# Health-critical: at or below this percent of maximum health the health_critical
+# affixes apply. The threshold affix raises it, never past max_threshold.
+health_critical:
+  threshold: 30
+  max_threshold: 50
+
+# Caps on the summed total of a channel across everything you wear. Keys: effect,
+# effect:param, effect@health_critical, effect:param@health_critical. `null` removes a cap.
+caps:
+  health_recovery: 150
+  stamina_recovery: 100
+  eitr_recovery: 100
+  move_speed: 25
+  move_speed_sneak: 50
+  jump_height: 50
+  fall_damage_taken: 80
+  run_stamina_cost: 60
+  jump_stamina_cost: 60
+  attack_stamina_cost: 60
+  block_stamina_cost: 60
+  dodge_stamina_cost: 60
+  home_item_stamina_cost: 60
+  skill_gain: 100
+  attack_eitr_cost: 60
+  draw_stamina_cost: 60
+  reload_speed: 50
+  pickup_radius: 100
+  build_range: 100
+  explore_radius: 100
+  find_rarity: 200
+  find_stones: 200
+  find_trophy: 200
+  find_coins: 200
+  # Phase 2
+  move_speed_sprint: 30
+  move_speed_encumbered: 50
+  move_speed_after_dodge: 40
+  move_speed_paved: 30
+  slope_penalty: 75
+  terrain_slow: 75
+  swimmer: 50
+  noise_made: 75
+  stealth: 75
+  stagger_taken: 75
+  hc_threshold: 20
+  damage_taken: 60
+  ranged_damage_taken: 60
+  avoid_hit: 25
+  knockback_taken: 75
+  debuff_decay: 75
+  frost_slow_taken: 100
+  stagger_recovery: 75
+  skill_loss: 75
+  food_duration: 100
+  rest_comfort: 3
+  forsaken_cooldown: 50
+  mead_cooldown: 50
+  demist_radius: 100
+  taming_speed: 100
+  sail_speed: 50
+  yield_pickable: 100
+  attack_health_cost: 60
+  draw_speed: 50
+  ammo_save: 50
+  perfect_block_window: 150
+
+affixes:
+  - id: honed_might
+    effect: damage_dealt
+    param: physical
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: damage_physical
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: primal_fury
+    effect: damage_dealt
+    param: elemental
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    exclusion_group: damage_elemental
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: nightstalker
+    effect: night_damage
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: emberbrand
+    effect: brand_damage
+    param: fire
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_elemental
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: rimebrand
+    effect: brand_damage
+    param: frost
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_elemental
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: stormbrand
+    effect: brand_damage
+    param: lightning
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_elemental
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: venombrand
+    effect: brand_damage
+    param: poison
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_elemental
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: spiritbrand
+    effect: brand_damage
+    param: spirit
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_elemental
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: bonebreaker
+    effect: brand_damage
+    param: blunt
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_physical
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: keen_edge
+    effect: brand_damage
+    param: slash
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_physical
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: needlepoint
+    effect: brand_damage
+    param: pierce
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: brand_physical
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: balanced_grip
+    effect: attack_stamina_cost
+    value: percent
+    slots: [melee_weapon]
+    category: offense
+    exclusion_group: attack_cost
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: easy_draw
+    effect: draw_stamina_cost
+    value: percent
+    slots: [ranged_weapon]
+    requires: { skill: [Bows] }
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: quick_windlass
+    effect: reload_speed
+    value: percent
+    slots: [ranged_weapon]
+    requires: { skill: [Crossbows] }
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: seidr_thrift
+    effect: attack_eitr_cost
+    value: percent
+    slots: [magic_weapon]
+    category: offense
+    exclusion_group: attack_cost
+    hook: easy
+    tiers:
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: blade_mastery
+    effect: skill_level
+    param: Swords
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Swords] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: axe_mastery
+    effect: skill_level
+    param: Axes
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Axes] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: club_mastery
+    effect: skill_level
+    param: Clubs
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Clubs] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: knife_mastery
+    effect: skill_level
+    param: Knives
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Knives] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: spear_mastery
+    effect: skill_level
+    param: Spears
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Spears] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: polearm_mastery
+    effect: skill_level
+    param: Polearms
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Polearms] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: fist_mastery
+    effect: skill_level
+    param: Unarmed
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [Unarmed] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: bow_mastery
+    effect: skill_level
+    param: Bows
+    value: flat
+    slots: [ranged_weapon]
+    requires: { skill: [Bows] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: crossbow_mastery
+    effect: skill_level
+    param: Crossbows
+    value: flat
+    slots: [ranged_weapon]
+    requires: { skill: [Crossbows] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: elemental_mastery
+    effect: skill_level
+    param: ElementalMagic
+    value: flat
+    slots: [magic_weapon]
+    requires: { skill: [ElementalMagic] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: blood_mastery
+    effect: skill_level
+    param: BloodMagic
+    value: flat
+    slots: [magic_weapon]
+    requires: { skill: [BloodMagic] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: woodcutting_mastery
+    effect: skill_level
+    param: WoodCutting
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [WoodCutting] }
+    category: utility
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: pick_mastery
+    effect: skill_level
+    param: Pickaxes
+    value: flat
+    slots: [tool]
+    requires: { skill: [Pickaxes] }
+    category: utility
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: fishing_mastery
+    effect: skill_level
+    param: Fishing
+    value: flat
+    slots: [tool]
+    requires: { skill: [Fishing] }
+    category: utility
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: shield_mastery
+    effect: skill_level
+    param: Blocking
+    value: flat
+    slots: [shield]
+    requires: { skill: [Blocking] }
+    category: offense
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: wanderer_mastery
+    effect: skill_level
+    param: Run,Jump,Swim,Sneak
+    value: flat
+    slots: [legs, cape]
+    category: utility
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: artisan_mastery
+    effect: skill_level
+    param: Crafting,Cooking
+    value: flat
+    slots: [head, utility_item]
+    category: utility
+    exclusion_group: skill_level
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: farming_mastery
+    effect: skill_level
+    param: Farming
+    value: flat
+    slots: [tool]
+    requires: { skill: [Farming] }
+    category: utility
+    exclusion_group: skill_level
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 5 }
+      - { tier: 3, min: 5, max: 7 }
+      - { tier: 4, min: 7, max: 9 }
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: well_forged
+    effect: item_durability
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon, shield, head, chest, legs, cape, tool]
+    requires: { traits: [wears_out] }
+    category: utility
+    exclusion_group: item_wear
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 15 }
+      - { tier: 2, min: 15, max: 20 }
+      - { tier: 3, min: 20, max: 30 }
+      - { tier: 4, min: 30, max: 40 }
+      - { tier: 5, min: 40, max: 50 }
+      - { tier: 6, min: 50, max: 65 }
+      - { tier: 7, min: 65, max: 80 }
+
+  - id: lightened
+    effect: item_lighten
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon, shield, head, chest, legs, cape, tool, utility_item]
+    category: utility
+    exclusion_group: item_lighten
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: stalwart
+    effect: item_block
+    value: percent
+    slots: [shield]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 16 }
+      - { tier: 5, min: 16, max: 20 }
+      - { tier: 6, min: 20, max: 25 }
+      - { tier: 7, min: 25, max: 30 }
+
+  - id: perfect_guard
+    effect: parry_bonus
+    value: percent
+    slots: [shield]
+    requires: { traits: [can_parry] }
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: repelling_guard
+    effect: item_deflection
+    value: percent
+    slots: [shield]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: tireless_guard
+    effect: block_stamina_cost
+    value: percent
+    slots: [shield]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: vigor
+    effect: max_health
+    value: flat
+    slots: [head, chest]
+    category: defense
+    exclusion_group: max_health
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 8 }
+      - { tier: 3, min: 8, max: 11 }
+      - { tier: 4, min: 11, max: 14 }
+      - { tier: 5, min: 14, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: endurance
+    effect: max_stamina
+    value: flat
+    slots: [chest, legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 19 }
+      - { tier: 6, min: 19, max: 23 }
+      - { tier: 7, min: 23, max: 28 }
+
+  - id: wellspring
+    effect: max_eitr
+    value: flat
+    slots: [head, cape]
+    category: defense
+    exclusion_group: max_eitr
+    hook: easy
+    tiers:
+      - { tier: 5, min: 8, max: 12 }
+      - { tier: 6, min: 12, max: 18 }
+      - { tier: 7, min: 18, max: 25 }
+
+  - id: troll_blood
+    effect: health_recovery
+    value: percent
+    slots: [chest, legs]
+    category: defense
+    exclusion_group: health_recovery
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 8 }
+      - { tier: 3, min: 8, max: 11 }
+      - { tier: 4, min: 11, max: 14 }
+      - { tier: 5, min: 14, max: 17 }
+      - { tier: 6, min: 17, max: 20 }
+      - { tier: 7, min: 20, max: 25 }
+
+  - id: second_wind
+    effect: stamina_recovery
+    value: percent
+    slots: [head, legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 8 }
+      - { tier: 3, min: 8, max: 11 }
+      - { tier: 4, min: 11, max: 14 }
+      - { tier: 5, min: 14, max: 17 }
+      - { tier: 6, min: 17, max: 20 }
+      - { tier: 7, min: 20, max: 25 }
+
+  - id: seidr_flow
+    effect: eitr_recovery
+    value: percent
+    slots: [head, cape]
+    category: defense
+    exclusion_group: eitr_recovery
+    hook: easy
+    tiers:
+      - { tier: 5, min: 14, max: 17 }
+      - { tier: 6, min: 17, max: 20 }
+      - { tier: 7, min: 20, max: 25 }
+
+  - id: hardened
+    effect: item_armor
+    value: percent
+    slots: [head, chest, legs, cape]
+    category: defense
+    exclusion_group: item_armor
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 16 }
+      - { tier: 5, min: 16, max: 20 }
+      - { tier: 6, min: 20, max: 25 }
+      - { tier: 7, min: 25, max: 30 }
+
+  - id: fleetfoot
+    effect: move_speed
+    value: percent
+    slots: [legs]
+    category: utility
+    exclusion_group: move_speed
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 2 }
+      - { tier: 2, min: 2, max: 3 }
+      - { tier: 3, min: 3, max: 4 }
+      - { tier: 4, min: 4, max: 5 }
+      - { tier: 5, min: 5, max: 6 }
+      - { tier: 6, min: 6, max: 7 }
+      - { tier: 7, min: 7, max: 8 }
+
+  - id: ghostwalk
+    effect: move_speed_sneak
+    value: percent
+    slots: [cape]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: spring_heeled
+    effect: jump_height
+    value: percent
+    slots: [legs]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: soft_landing
+    effect: fall_damage_taken
+    value: percent
+    slots: [legs, cape]
+    category: defense
+    exclusion_group: fall
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 35 }
+      - { tier: 7, min: 35, max: 40 }
+
+  - id: long_wind
+    effect: run_stamina_cost
+    value: percent
+    slots: [legs]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: light_leap
+    effect: jump_stamina_cost
+    value: percent
+    slots: [legs]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: nimble
+    effect: dodge_stamina_cost
+    value: percent
+    slots: [legs, cape]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: broad_back
+    effect: carry_capacity
+    value: flat
+    slots: [chest, utility_item]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 15 }
+      - { tier: 2, min: 15, max: 20 }
+      - { tier: 3, min: 20, max: 30 }
+      - { tier: 4, min: 30, max: 40 }
+      - { tier: 5, min: 40, max: 50 }
+      - { tier: 6, min: 50, max: 60 }
+      - { tier: 7, min: 60, max: 75 }
+
+  - id: magpie
+    effect: pickup_radius
+    value: percent
+    slots: [cape, utility_item]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: huginns_eye
+    effect: explore_radius
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: norns_favour
+    effect: find_rarity
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    weight: 50
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: fateweaver
+    effect: find_stones
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    weight: 50
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: trophy_taker
+    effect: find_trophy
+    value: percent
+    slots: [utility_item]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: hoardfinder
+    effect: find_coins
+    value: percent
+    slots: [utility_item]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: mimirs_insight
+    effect: skill_gain
+    param: All
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: builders_reach
+    effect: build_range
+    value: percent
+    slots: [tool]
+    requires: { traits: [builds] }
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: tireless_hands
+    effect: home_item_stamina_cost
+    value: percent
+    slots: [tool]
+    requires: { traits: [builds] }
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 8 }
+      - { tier: 3, min: 8, max: 11 }
+      - { tier: 4, min: 11, max: 14 }
+      - { tier: 5, min: 14, max: 17 }
+      - { tier: 6, min: 17, max: 20 }
+      - { tier: 7, min: 20, max: 25 }
+
+  # Phase 2 (0.2.0): the easy and medium effects of the catalog, in catalog order.
+
+  - id: berserkergang
+    effect: damage_dealt
+    param: all
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    condition: health_critical
+    exclusion_group: damage_critical
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: slayer_undead
+    effect: slayer
+    param: undead
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    exclusion_group: slayer
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: slayer_beasts
+    effect: slayer
+    param: beasts
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    exclusion_group: slayer
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: slayer_sea
+    effect: slayer
+    param: sea
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    exclusion_group: slayer
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: godslayer
+    effect: slayer
+    param: boss
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    weight: 50
+    hook: easy
+    tiers:
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: ambusher
+    effect: surprise_bonus
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: deathblow
+    effect: low_health_opener
+    value: percent
+    slots: [melee_weapon, ranged_weapon, magic_weapon]
+    category: offense
+    hook: medium
+    tiers:
+      - { tier: 1, min: 10, max: 15 }
+      - { tier: 2, min: 15, max: 20 }
+      - { tier: 3, min: 20, max: 30 }
+      - { tier: 4, min: 30, max: 40 }
+      - { tier: 5, min: 40, max: 50 }
+      - { tier: 6, min: 50, max: 60 }
+      - { tier: 7, min: 60, max: 75 }
+
+  - id: cruel_opening
+    effect: exploit_stagger
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: press_the_advantage
+    effect: staggered_target_damage
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: reaper
+    effect: on_kill_restore
+    param: stamina
+    value: flat
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: on_kill
+    hook: medium
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: blood_drinker
+    effect: leech
+    param: health
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    exclusion_group: leech_health
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 1, max: 1.5 }
+      - { tier: 2, min: 1.5, max: 2 }
+      - { tier: 3, min: 2, max: 2.5 }
+      - { tier: 4, min: 2.5, max: 3 }
+      - { tier: 5, min: 3, max: 3.5 }
+      - { tier: 6, min: 3.5, max: 4 }
+      - { tier: 7, min: 4, max: 5 }
+
+  - id: blood_drinker_hc
+    effect: leech
+    param: health
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    condition: health_critical
+    exclusion_group: leech_health
+    weight: 50
+    hook: medium
+    tiers:
+      - { tier: 1, min: 3, max: 4 }
+      - { tier: 2, min: 4, max: 5 }
+      - { tier: 3, min: 5, max: 6 }
+      - { tier: 4, min: 6, max: 7 }
+      - { tier: 5, min: 7, max: 8 }
+      - { tier: 6, min: 8, max: 9 }
+      - { tier: 7, min: 9, max: 10 }
+
+  - id: evaders_fury
+    effect: dodge_fury
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: fafnirs_greed
+    effect: coin_damage
+    value: percent
+    slots: [melee_weapon]
+    category: offense
+    weight: 40
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 2 }
+      - { tier: 2, min: 2, max: 3 }
+      - { tier: 3, min: 3, max: 4 }
+      - { tier: 4, min: 4, max: 5 }
+      - { tier: 5, min: 5, max: 6 }
+      - { tier: 6, min: 6, max: 7 }
+      - { tier: 7, min: 7, max: 8 }
+
+  - id: staggering_blows
+    effect: stagger_power
+    value: percent
+    slots: [melee_weapon]
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 9 }
+      - { tier: 3, min: 9, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: dazing_blows
+    effect: stagger_duration_dealt
+    value: percent
+    slots: [melee_weapon]
+    category: offense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: hamstring
+    effect: on_hit_slow
+    value: percent
+    slots: [melee_weapon, ranged_weapon]
+    category: offense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 10 }
+      - { tier: 3, min: 10, max: 12 }
+      - { tier: 4, min: 12, max: 15 }
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 21 }
+      - { tier: 7, min: 21, max: 25 }
+
+  - id: long_reach
+    effect: attack_reach
+    value: percent
+    slots: [melee_weapon]
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 4 }
+      - { tier: 3, min: 4, max: 5 }
+      - { tier: 4, min: 5, max: 6 }
+      - { tier: 5, min: 6, max: 7 }
+      - { tier: 6, min: 7, max: 8 }
+      - { tier: 7, min: 8, max: 10 }
+
+  - id: sweeping_arc
+    effect: attack_arc
+    value: flat
+    unit: deg
+    slots: [melee_weapon]
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: blood_price
+    effect: blood_price
+    value: flag
+    slots: [melee_weapon]
+    category: offense
+    exclusion_group: attack_cost
+    weight: 30
+    hook: medium
+    tiers:
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: rune_edge
+    effect: rune_edge
+    value: percent
+    slots: [melee_weapon]
+    category: offense
+    exclusion_group: attack_cost
+    weight: 30
+    hook: medium
+    tiers:
+      - { tier: 5, min: 9, max: 11 }
+      - { tier: 6, min: 11, max: 13 }
+      - { tier: 7, min: 13, max: 15 }
+
+  - id: lone_blade
+    effect: lone_blade
+    value: percent
+    slots: [melee_weapon]
+    requires: { hands: one }
+    category: offense
+    weight: 40
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: steel_rhythm
+    effect: combo_finisher
+    value: percent
+    slots: [melee_weapon]
+    category: defense
+    weight: 40
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: heartwood
+    effect: yield_lumber
+    value: flat
+    slots: [melee_weapon]
+    requires: { skill: [WoodCutting] }
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 1, max: 1 }
+      - { tier: 2, min: 1, max: 1 }
+      - { tier: 3, min: 1, max: 2 }
+      - { tier: 4, min: 1, max: 2 }
+      - { tier: 5, min: 1, max: 2 }
+      - { tier: 6, min: 2, max: 2 }
+      - { tier: 7, min: 2, max: 3 }
+
+  - id: swift_string
+    effect: draw_speed
+    value: percent
+    slots: [ranged_weapon]
+    requires: { skill: [Bows] }
+    category: offense
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 2, max: 3 }
+      - { tier: 2, min: 3, max: 4 }
+      - { tier: 3, min: 4, max: 5 }
+      - { tier: 4, min: 5, max: 6 }
+      - { tier: 5, min: 6, max: 7 }
+      - { tier: 6, min: 7, max: 8 }
+      - { tier: 7, min: 8, max: 10 }
+
+  - id: true_flight
+    effect: projectile_velocity
+    value: percent
+    slots: [ranged_weapon, magic_weapon]
+    requires: { traits: [projectile] }
+    category: offense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: thrifty_quiver
+    effect: ammo_save
+    value: percent
+    slots: [ranged_weapon]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: volley
+    effect: multishot
+    value: flag
+    slots: [ranged_weapon]
+    requires: { skill: [Bows] }
+    category: offense
+    weight: 20
+    hook: medium
+    tiers:
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: skirmisher
+    effect: draw_move_penalty
+    value: percent
+    slots: [ranged_weapon]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: blood_thrift
+    effect: attack_health_cost
+    value: percent
+    slots: [magic_weapon]
+    requires: { skill: [BloodMagic] }
+    category: offense
+    exclusion_group: attack_cost_health
+    hook: easy
+    tiers:
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: twincast
+    effect: twincast
+    value: flag
+    slots: [magic_weapon]
+    requires: { skill: [ElementalMagic] }
+    category: offense
+    weight: 20
+    hook: medium
+    tiers:
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: soul_reaper
+    effect: on_kill_restore
+    param: eitr
+    value: flat
+    slots: [magic_weapon]
+    category: offense
+    exclusion_group: on_kill
+    hook: medium
+    tiers:
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: seidr_siphon
+    effect: leech
+    param: eitr
+    value: percent
+    slots: [melee_weapon, magic_weapon]
+    category: offense
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 5, min: 3, max: 3.5 }
+      - { tier: 6, min: 3.5, max: 4 }
+      - { tier: 7, min: 4, max: 5 }
+
+  - id: grave_command
+    effect: summon_damage
+    value: percent
+    slots: [magic_weapon]
+    requires: { skill: [BloodMagic] }
+    category: offense
+    hook: medium
+    tiers:
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: grave_vigor
+    effect: summon_health
+    value: percent
+    slots: [magic_weapon]
+    requires: { skill: [BloodMagic] }
+    category: defense
+    hook: medium
+    tiers:
+      - { tier: 5, min: 15, max: 18 }
+      - { tier: 6, min: 18, max: 22 }
+      - { tier: 7, min: 22, max: 26 }
+
+  - id: everlasting
+    effect: item_unbreakable
+    value: flag
+    slots: [melee_weapon, ranged_weapon, magic_weapon, shield, head, chest, legs, cape, tool]
+    requires: { traits: [wears_out] }
+    category: utility
+    exclusion_group: item_wear
+    weight: 25
+    hook: medium
+    tiers:
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: gossamer
+    effect: item_zero_weight
+    value: flag
+    slots: [melee_weapon, ranged_weapon, magic_weapon, shield, head, chest, legs, cape, tool, utility_item]
+    category: utility
+    exclusion_group: item_lighten
+    weight: 20
+    hook: easy
+    tiers:
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: supple_fit
+    effect: item_no_move_penalty
+    value: flag
+    slots: [melee_weapon, shield, head, chest, legs, cape]
+    requires: { traits: [movement_penalty] }
+    category: utility
+    weight: 40
+    hook: easy
+    tiers:
+      - { tier: 2 }
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: keen_guard
+    effect: perfect_block_window
+    value: flat
+    unit: ms
+    slots: [shield]
+    requires: { traits: [can_parry] }
+    category: defense
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 10, max: 15 }
+      - { tier: 2, min: 15, max: 20 }
+      - { tier: 3, min: 20, max: 30 }
+      - { tier: 4, min: 30, max: 40 }
+      - { tier: 5, min: 40, max: 50 }
+      - { tier: 6, min: 50, max: 55 }
+      - { tier: 7, min: 55, max: 60 }
+
+  - id: anchored_guard
+    effect: block_steadfast
+    value: flag
+    slots: [shield]
+    category: defense
+    weight: 30
+    hook: medium
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: seidr_riposte
+    effect: parry_restore
+    param: eitr
+    value: flat
+    slots: [shield]
+    requires: { traits: [can_parry] }
+    category: defense
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: troll_blood_hc
+    effect: health_recovery
+    value: percent
+    slots: [chest]
+    category: defense
+    condition: health_critical
+    exclusion_group: health_recovery
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 15 }
+      - { tier: 2, min: 15, max: 20 }
+      - { tier: 3, min: 20, max: 28 }
+      - { tier: 4, min: 28, max: 36 }
+      - { tier: 5, min: 36, max: 44 }
+      - { tier: 6, min: 44, max: 52 }
+      - { tier: 7, min: 52, max: 60 }
+
+  - id: mending
+    effect: health_recovery_flat
+    value: flat
+    slots: [head, chest]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 1 }
+      - { tier: 2, min: 1, max: 2 }
+      - { tier: 3, min: 2, max: 2 }
+      - { tier: 4, min: 2, max: 3 }
+      - { tier: 5, min: 3, max: 3 }
+      - { tier: 6, min: 3, max: 4 }
+      - { tier: 7, min: 4, max: 5 }
+
+  - id: stout_heart
+    effect: health_for_regen
+    value: flat
+    slots: [chest]
+    category: defense
+    exclusion_group: max_health
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 6, max: 10 }
+      - { tier: 2, min: 10, max: 16 }
+      - { tier: 3, min: 16, max: 22 }
+      - { tier: 4, min: 22, max: 28 }
+      - { tier: 5, min: 28, max: 36 }
+      - { tier: 6, min: 36, max: 44 }
+      - { tier: 7, min: 44, max: 52 }
+
+  - id: restless_mind
+    effect: eitr_for_regen
+    value: percent
+    slots: [head]
+    category: defense
+    exclusion_group: eitr_recovery
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 5, min: 28, max: 34 }
+      - { tier: 6, min: 34, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: valhallas_edge
+    effect: hc_threshold
+    value: percent
+    slots: [head]
+    category: defense
+    weight: 50
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 2 }
+      - { tier: 2, min: 2, max: 3 }
+      - { tier: 3, min: 3, max: 4 }
+      - { tier: 4, min: 4, max: 5 }
+      - { tier: 5, min: 5, max: 6 }
+      - { tier: 6, min: 6, max: 7 }
+      - { tier: 7, min: 7, max: 8 }
+
+  - id: hardened_hc
+    effect: item_armor
+    value: percent
+    slots: [chest, legs]
+    category: defense
+    condition: health_critical
+    exclusion_group: item_armor
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 15 }
+      - { tier: 2, min: 15, max: 22 }
+      - { tier: 3, min: 22, max: 30 }
+      - { tier: 4, min: 30, max: 38 }
+      - { tier: 5, min: 38, max: 46 }
+      - { tier: 6, min: 46, max: 54 }
+      - { tier: 7, min: 54, max: 62 }
+
+  - id: padded
+    effect: damage_taken
+    param: blunt
+    value: percent
+    slots: [chest, legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: mailed
+    effect: damage_taken
+    param: slash
+    value: percent
+    slots: [chest, legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: riveted
+    effect: damage_taken
+    param: pierce
+    value: percent
+    slots: [chest, legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: ironclad
+    effect: damage_taken
+    param: physical
+    value: percent
+    slots: [chest]
+    category: defense
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 2 }
+      - { tier: 2, min: 2, max: 3 }
+      - { tier: 3, min: 3, max: 4 }
+      - { tier: 4, min: 4, max: 5 }
+      - { tier: 5, min: 5, max: 6 }
+      - { tier: 6, min: 6, max: 8 }
+      - { tier: 7, min: 8, max: 10 }
+
+  - id: flameward
+    effect: damage_taken
+    param: fire
+    value: percent
+    slots: [chest, cape]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: frostward
+    effect: damage_taken
+    param: frost
+    value: percent
+    slots: [head, cape]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: stormward
+    effect: damage_taken
+    param: lightning
+    value: percent
+    slots: [head, cape]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: venomward
+    effect: damage_taken
+    param: poison
+    value: percent
+    slots: [legs, cape]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: elemental_ward
+    effect: damage_taken
+    param: elemental
+    value: percent
+    slots: [cape]
+    category: defense
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 2 }
+      - { tier: 2, min: 2, max: 3 }
+      - { tier: 3, min: 3, max: 4 }
+      - { tier: 4, min: 4, max: 5 }
+      - { tier: 5, min: 5, max: 6 }
+      - { tier: 6, min: 6, max: 8 }
+      - { tier: 7, min: 8, max: 10 }
+
+  - id: bulwark_fire
+    effect: resist_modifier
+    param: fire
+    value: flag
+    slots: [cape]
+    category: defense
+    exclusion_group: elemental_bulwark
+    weight: 30
+    hook: easy
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: bulwark_frost
+    effect: resist_modifier
+    param: frost
+    value: flag
+    slots: [cape]
+    category: defense
+    exclusion_group: elemental_bulwark
+    weight: 30
+    hook: easy
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: bulwark_lightning
+    effect: resist_modifier
+    param: lightning
+    value: flag
+    slots: [cape]
+    category: defense
+    exclusion_group: elemental_bulwark
+    weight: 30
+    hook: easy
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: bulwark_poison
+    effect: resist_modifier
+    param: poison
+    value: flag
+    slots: [cape]
+    category: defense
+    exclusion_group: elemental_bulwark
+    weight: 30
+    hook: easy
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: arrowward
+    effect: ranged_damage_taken
+    value: percent
+    slots: [chest]
+    category: defense
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 2, max: 4 }
+      - { tier: 2, min: 4, max: 6 }
+      - { tier: 3, min: 6, max: 8 }
+      - { tier: 4, min: 8, max: 10 }
+      - { tier: 5, min: 10, max: 12 }
+      - { tier: 6, min: 12, max: 14 }
+      - { tier: 7, min: 14, max: 16 }
+
+  - id: mist_veil
+    effect: avoid_hit
+    value: percent
+    slots: [legs, cape]
+    category: defense
+    exclusion_group: avoid_hit
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 1, max: 2 }
+      - { tier: 2, min: 2, max: 3 }
+      - { tier: 3, min: 3, max: 4 }
+      - { tier: 4, min: 4, max: 5 }
+      - { tier: 5, min: 5, max: 6 }
+      - { tier: 6, min: 6, max: 7 }
+      - { tier: 7, min: 7, max: 8 }
+
+  - id: mist_veil_hc
+    effect: avoid_hit
+    value: percent
+    slots: [cape]
+    category: defense
+    condition: health_critical
+    exclusion_group: avoid_hit
+    weight: 50
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: bramblehide
+    effect: thorns
+    value: percent
+    slots: [chest]
+    category: defense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 20 }
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: runic_ward
+    effect: calm_ward
+    value: flat
+    slots: [chest]
+    category: defense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 8 }
+      - { tier: 2, min: 8, max: 12 }
+      - { tier: 3, min: 12, max: 16 }
+      - { tier: 4, min: 16, max: 22 }
+      - { tier: 5, min: 22, max: 28 }
+      - { tier: 6, min: 28, max: 35 }
+      - { tier: 7, min: 35, max: 45 }
+
+  - id: resolute
+    effect: stagger_taken
+    value: percent
+    slots: [chest, legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: ironroot
+    effect: knockback_taken
+    value: percent
+    slots: [legs]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: quick_recovery
+    effect: stagger_recovery
+    value: percent
+    slots: [head]
+    category: defense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: purity
+    effect: debuff_decay
+    value: percent
+    slots: [head, chest]
+    category: defense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: coldblood
+    effect: frost_slow_taken
+    value: percent
+    slots: [legs, cape]
+    category: defense
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: fleetfoot_hc
+    effect: move_speed
+    value: percent
+    slots: [legs]
+    category: utility
+    condition: health_critical
+    exclusion_group: move_speed
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 1, min: 4, max: 6 }
+      - { tier: 2, min: 6, max: 8 }
+      - { tier: 3, min: 8, max: 10 }
+      - { tier: 4, min: 10, max: 12 }
+      - { tier: 5, min: 12, max: 14 }
+      - { tier: 6, min: 14, max: 16 }
+      - { tier: 7, min: 16, max: 20 }
+
+  - id: stride
+    effect: move_speed_sprint
+    value: percent
+    slots: [legs]
+    category: utility
+    exclusion_group: move_speed
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: pack_mule
+    effect: move_speed_encumbered
+    value: percent
+    slots: [legs, cape]
+    category: utility
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 6, max: 10 }
+      - { tier: 2, min: 10, max: 14 }
+      - { tier: 3, min: 14, max: 18 }
+      - { tier: 4, min: 18, max: 22 }
+      - { tier: 5, min: 22, max: 26 }
+      - { tier: 6, min: 26, max: 30 }
+      - { tier: 7, min: 30, max: 36 }
+
+  - id: momentum
+    effect: move_speed_after_dodge
+    value: percent
+    slots: [legs]
+    category: utility
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: pathfinder
+    effect: move_speed_paved
+    value: percent
+    slots: [legs]
+    category: utility
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 3, max: 5 }
+      - { tier: 2, min: 5, max: 7 }
+      - { tier: 3, min: 7, max: 9 }
+      - { tier: 4, min: 9, max: 11 }
+      - { tier: 5, min: 11, max: 13 }
+      - { tier: 6, min: 13, max: 15 }
+      - { tier: 7, min: 15, max: 18 }
+
+  - id: mountain_goat
+    effect: slope_penalty
+    value: percent
+    slots: [legs]
+    category: utility
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: marshstrider
+    effect: terrain_slow
+    value: percent
+    slots: [legs]
+    category: utility
+    weight: 60
+    hook: medium
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: strong_swimmer
+    effect: swimmer
+    value: percent
+    slots: [cape]
+    category: utility
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: ravens_glide
+    effect: slow_fall
+    value: flag
+    slots: [cape]
+    category: utility
+    exclusion_group: fall
+    weight: 30
+    hook: easy
+    tiers:
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: soft_tread
+    effect: noise_made
+    value: percent
+    slots: [legs, cape]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: shadowmeld
+    effect: stealth
+    value: percent
+    slots: [head, cape]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: ashen_skin
+    effect: heat_resist
+    value: percent
+    slots: [chest, cape]
+    category: defense
+    hook: easy
+    tiers:
+      - { tier: 5, min: 20, max: 25 }
+      - { tier: 6, min: 25, max: 30 }
+      - { tier: 7, min: 30, max: 35 }
+
+  - id: emberheart
+    effect: cold_immunity
+    value: flag
+    slots: [chest, cape]
+    category: defense
+    weight: 40
+    hook: medium
+    tiers:
+      - { tier: 2 }
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: winterborn
+    effect: freeze_immunity
+    value: flag
+    slots: [chest, cape]
+    category: defense
+    weight: 25
+    hook: easy
+    tiers:
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: oilskin
+    effect: rain_shield
+    value: flag
+    slots: [head, cape]
+    category: utility
+    exclusion_group: wet
+    weight: 40
+    hook: medium
+    tiers:
+      - { tier: 2 }
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: sealegs
+    effect: ignore_wet
+    value: flag
+    slots: [chest]
+    category: utility
+    exclusion_group: wet
+    weight: 40
+    hook: medium
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: hearthlight
+    effect: light_aura
+    value: flag
+    slots: [head]
+    category: utility
+    weight: 40
+    hook: medium
+    tiers:
+      - { tier: 1 }
+      - { tier: 2 }
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: mistbane
+    effect: demist_radius
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: hearthbound
+    effect: rest_comfort
+    value: flat
+    slots: [chest, cape, utility_item]
+    category: utility
+    weight: 60
+    hook: easy
+    tiers:
+      - { tier: 3, min: 1, max: 1 }
+      - { tier: 4, min: 1, max: 1 }
+      - { tier: 5, min: 1, max: 2 }
+      - { tier: 6, min: 1, max: 2 }
+      - { tier: 7, min: 2, max: 2 }
+
+  - id: gourmand
+    effect: food_duration
+    value: percent
+    slots: [chest, utility_item]
+    category: utility
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: soulbound
+    effect: skill_loss
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: brewers_haste
+    effect: mead_cooldown
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: forsaken_favour
+    effect: forsaken_cooldown
+    value: percent
+    slots: [head, utility_item]
+    category: utility
+    weight: 70
+    hook: easy
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: reflex_draught
+    effect: auto_mead
+    value: flag
+    slots: [chest, utility_item]
+    category: defense
+    condition: health_critical
+    exclusion_group: mead_critical
+    weight: 30
+    hook: medium
+    tiers:
+      - { tier: 2 }
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: swift_draught
+    effect: mead_burst
+    value: flag
+    slots: [utility_item]
+    category: defense
+    condition: health_critical
+    exclusion_group: mead_critical
+    weight: 30
+    hook: medium
+    tiers:
+      - { tier: 3 }
+      - { tier: 4 }
+      - { tier: 5 }
+      - { tier: 6 }
+      - { tier: 7 }
+
+  - id: harvester
+    effect: yield_pickable
+    value: percent
+    slots: [utility_item]
+    category: utility
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: beast_whisperer
+    effect: taming_speed
+    value: percent
+    slots: [cape, utility_item]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 10, max: 20 }
+      - { tier: 2, min: 20, max: 30 }
+      - { tier: 3, min: 30, max: 40 }
+      - { tier: 4, min: 40, max: 50 }
+      - { tier: 5, min: 50, max: 60 }
+      - { tier: 6, min: 60, max: 80 }
+      - { tier: 7, min: 80, max: 100 }
+
+  - id: fair_winds
+    effect: sail_speed
+    value: percent
+    slots: [cape, utility_item]
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 5, max: 10 }
+      - { tier: 2, min: 10, max: 15 }
+      - { tier: 3, min: 15, max: 20 }
+      - { tier: 4, min: 20, max: 25 }
+      - { tier: 5, min: 25, max: 30 }
+      - { tier: 6, min: 30, max: 40 }
+      - { tier: 7, min: 40, max: 50 }
+
+  - id: deep_vein
+    effect: yield_mining
+    value: flat
+    slots: [tool]
+    requires: { skill: [Pickaxes] }
+    category: utility
+    weight: 70
+    hook: medium
+    tiers:
+      - { tier: 1, min: 1, max: 1 }
+      - { tier: 2, min: 1, max: 1 }
+      - { tier: 3, min: 1, max: 2 }
+      - { tier: 4, min: 1, max: 2 }
+      - { tier: 5, min: 1, max: 2 }
+      - { tier: 6, min: 2, max: 2 }
+      - { tier: 7, min: 2, max: 3 }

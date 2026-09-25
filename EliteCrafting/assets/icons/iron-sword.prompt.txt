@@ -1,0 +1,12 @@
+Generated with the built-in image_gen tool.
+Asset: iron-sword.png (inventory artwork; not wired into the mod).
+
+Use case: stylized-concept
+Asset type: square inventory item icon for EliteCrafting, a Valheim mod.
+Primary request: one iron sword, original artwork suited to Valheim's rustic low-poly Norse fantasy aesthetic.
+Scene/backdrop: genuinely transparent background with alpha, no scenery or ground plane.
+Subject: practical one-handed Viking iron sword with a straight double-edged blade, shallow central fuller, short simple iron crossguard, worn dark brown leather-wrapped grip, and compact iron lobed pommel. Weathered gray forged iron, subtle hammer marks and small edge nicks, readable bright bevels; functional and modest.
+Style/medium: stylized low-poly 3D item render with restrained hand-painted texture, broad angular facets and clear silhouette readable at small inventory sizes.
+Composition/framing: one complete sword centered diagonally, pommel at lower left and blade tip at upper right, blade face visible in a slight three-quarter view. Entire object within frame with generous transparent margin, square 1024x1024 canvas.
+Lighting/mood: soft directional light defining iron facets with crisp silhouette.
+Constraints: only one sword. No text, watermark, frame, UI, hands, scabbard, extra objects, gold, jewels, magical glow, cast shadow on a backdrop, or checkerboard pattern. Preserve genuine transparent pixels outside the object.

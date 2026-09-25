@@ -1,0 +1,9 @@
+{
+    "name": "EliteCrafting",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteCrafting",
+    "description": "Crafting stones and magic gear: creatures drop stones that promote, add, swap and reroll affixes across six rarities. Server synced. Required on server and all clients.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

@@ -1,0 +1,52 @@
+# EliteCrafting - words of using stones: refusals, feedback and the confirm dialog (stones.md sections 2-3,
+# applying-stones.md, localization.md). Owned by the Stones area. Key without the $ -> text.
+# $1, $2, $3 are the game's placeholders, filled with already-localized names.
+# newer_format and unknown_rarity live in English.core.yml.
+
+# refusals: the stone is kept, the item unchanged
+ecf_msg_not_own_inventory: "Stones work only on items in your own inventory."
+ecf_msg_not_magic_base: "This item cannot hold affixes."
+ecf_msg_stone_disabled: "The $1 is disabled on this server."
+ecf_msg_wrong_item_type: "The $1 does not work on this kind of item."
+ecf_msg_sealed: "This item is sealed. No stone can change it."
+ecf_msg_equipped: "Unequip this item first."
+ecf_msg_wrong_rarity: "The $1 does not work on $2 items."
+ecf_msg_not_enough_stones: "You need $1 $2 for this."
+ecf_msg_affixes_full: "This item cannot hold another affix."
+ecf_msg_affixes_minimum: "This item cannot lose another affix."
+ecf_msg_already_bound: "This item already has a bound affix."
+ecf_msg_nothing_to_bind: "This item has no affix that can be bound."
+ecf_msg_quality_capped: "This item cannot be improved further by the $1."
+ecf_msg_sigil_pending: "A sigil already waits on this item."
+ecf_msg_sigil_would_strand: "The Serpent Stone would seal the pending sigil away. Use a stone the sigil steers first."
+ecf_msg_inventory_full: "You need a free inventory slot for the copy."
+ecf_msg_no_eligible_affix: "No affix can roll on this item."
+ecf_msg_nothing_to_change: "Nothing on this item can be changed by the $1."
+ecf_msg_sigil_no_match: "The pending $1 finds nothing to steer toward on this item."
+ecf_msg_confirm_required: "Hold Shift to use the $1."
+
+# feedback on success
+ecf_msg_promoted: "$1 rises to $2."
+ecf_msg_affix_added: "$1 gains $2."
+ecf_msg_affix_swapped: "$1 loses $2 and gains $3."
+ecf_msg_affixes_rerolled: "$1 is reshaped."
+ecf_msg_values_rerolled: "$1's values shift."
+ecf_msg_affix_removed: "$1 loses $2."
+ecf_msg_stripped: "$1 is unmade."
+ecf_msg_corrupt_seal: "The Serpent seals $1. Nothing else changes."
+ecf_msg_corrupt_add: "The Serpent seals $1 and grants $2."
+ecf_msg_corrupt_chaos: "The Serpent seals $1 and twists every affix."
+ecf_msg_corrupt_promote: "The Serpent seals $1 and raises it to $2."
+ecf_msg_corrupt_demote: "The Serpent seals $1 and drags it down to $2."
+ecf_msg_bound: "$2 is bound to $1."
+ecf_msg_gambled: "$1 becomes $2."
+ecf_msg_gamble_fizzle: "The $2 crumbles. $1 stays as it was."
+ecf_msg_reflected: "A sealed copy of $1 appears."
+ecf_msg_honed: "$1 is honed to +$2%."
+ecf_msg_tempered: "$1 is tempered to +$2%."
+ecf_msg_sigil_set: "The $2 waits on $1."
+ecf_msg_sigil_spent: "The $2 steers the stone."
+
+# confirm dialog (Dialog mode): $1 the stone in the title; $1 the item, $2 the stone in the body
+ecf_ui_confirm_title: "Use the $1?"
+ecf_ui_confirm_body: "$2 cannot be undone."
