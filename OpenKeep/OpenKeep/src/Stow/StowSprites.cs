@@ -1,14 +1,17 @@
 using System;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace OpenKeep.Stow
 {
-    /// <summary>Small white sprites drawn in code (no asset bundle): a star, a cross, a hollow border (nine-sliced)
-    /// and a trash bin. The Image that shows them supplies the colour.</summary>
+    /// <summary>The Stow module's sprites. The slot marks are small white shapes drawn in code, coloured by the Image
+    /// that shows them: a star, a cross and a hollow border (nine-sliced). The trash can's icon is a PNG embedded in
+    /// the mod (<c>assets/trash.png</c>, 128 px) and keeps its own colours.</summary>
     public static class StowSprites
     {
         private const int MarkSize = 16;
-        private const int BinSize = 24;
+        private const string TrashResource = "OpenKeep.assets.trash.png";
 
         private static Sprite star;
         private static Sprite cross;
@@ -21,7 +24,8 @@ namespace OpenKeep.Stow
 
         public static Sprite Border => border != null ? border : (border = Make(MarkSize, BorderPixel, new Vector4(3f, 3f, 3f, 3f)));
 
-        public static Sprite Bin => bin != null ? bin : (bin = Make(BinSize, BinPixel, Vector4.zero));
+        /// <summary>The trash can's icon; null when the embedded image cannot be read, which is logged.</summary>
+        public static Sprite Bin => bin != null ? bin : (bin = Load(TrashResource));
 
         private static Sprite Make(int size, Func<int, int, int, bool> inside, Vector4 slices)
         {
@@ -39,6 +43,52 @@ namespace OpenKeep.Stow
             Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, slices);
             sprite.name = "OpenKeep_sprite";
             return sprite;
+        }
+
+        /// <summary>A sprite from a PNG embedded in the mod, with mipmaps so it stays smooth at any interface scale.</summary>
+        private static Sprite Load(string resource)
+        {
+            byte[] bytes = ReadResource(resource);
+            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, true)
+            {
+                filterMode = FilterMode.Trilinear,
+                wrapMode = TextureWrapMode.Clamp,
+            };
+            if (bytes == null || !Decode(texture, bytes))
+            {
+                Plugin.Log.LogWarning($"could not read the embedded image {resource}");
+                UnityEngine.Object.Destroy(texture);
+                return null;
+            }
+            Plugin.Log.LogInfo($"{resource}: {texture.width}x{texture.height}, {texture.mipmapCount} mip levels");
+            Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f);
+            sprite.name = "OpenKeep_sprite";
+            return sprite;
+        }
+
+        /// <summary>The game's PNG decoder, <c>ImageConversion.LoadImage(Texture2D, byte[], bool)</c>, which also builds
+        /// the mipmaps. Its module is built against netstandard 2.1 (for a <c>ReadOnlySpan</c> overload), which this
+        /// net48 project cannot reference (CS1705), so the method is found at runtime; the texture is marked
+        /// non-readable afterwards.</summary>
+        private static bool Decode(Texture2D texture, byte[] png)
+        {
+            MethodInfo loadImage = Type.GetType("UnityEngine.ImageConversion, UnityEngine.ImageConversionModule")
+                ?.GetMethod("LoadImage", new[] { typeof(Texture2D), typeof(byte[]), typeof(bool) });
+            return loadImage != null && (bool)loadImage.Invoke(null, new object[] { texture, png, true });
+        }
+
+        private static byte[] ReadResource(string resource)
+        {
+            using (Stream stream = typeof(StowSprites).Assembly.GetManifestResourceStream(resource))
+            {
+                if (stream == null)
+                    return null;
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    stream.CopyTo(memory);
+                    return memory.ToArray();
+                }
+            }
         }
 
         /// <summary>A five pointed star: the radius at an angle swings between the inner and the outer radius.</summary>
@@ -67,16 +117,6 @@ namespace OpenKeep.Stow
         {
             const int width = 2;
             return x < width || y < width || x >= size - width || y >= size - width;
-        }
-
-        /// <summary>A bin with a lid and a handle, the body striped by two gaps.</summary>
-        private static bool BinPixel(int x, int y, int size)
-        {
-            bool body = x >= 5 && x <= 18 && y >= 2 && y <= 14;
-            bool gap = body && (x == 9 || x == 14) && y >= 4 && y <= 12;
-            bool lid = x >= 3 && x <= 20 && y >= 16 && y <= 18;
-            bool handle = x >= 9 && x <= 14 && y >= 19 && y <= 20;
-            return (body && !gap) || lid || handle;
         }
     }
 }

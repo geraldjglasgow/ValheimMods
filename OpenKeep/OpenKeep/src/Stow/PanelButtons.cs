@@ -12,12 +12,12 @@ namespace OpenKeep.Stow
     /// <summary>
     /// The panel buttons: <c>Quick stack</c>, <c>Store all</c>, <c>Top up</c> and <c>Sort</c> in a row hanging
     /// below the bottom edge of the player panel, centred, and <c>Sort</c> centred below the bottom edge of the
-    /// container panel, under the game's take-all line. The trash can sits between the weight and the armour
-    /// readouts on the panel's right (<see cref="TrashPlate"/>); only when those cannot be found does it join the
-    /// row. Nothing inside either panel is free: the player
-    /// panel grows exactly one grid row per inventory row (<c>InventoryGui.SetInventorySize</c>), so its last item
-    /// row sits on its bottom edge, and the container panel ends with the take-all buttons. Every button is a
-    /// clone of the game's take-all button, so style, font and gamepad selection are the game's; the container
+    /// container panel, under the game's take-all line. First the armour and weight readouts on the panel's right
+    /// are pinned and restyled (<see cref="StatPlates"/>); the trash can then gets its own plate between them
+    /// (<see cref="TrashPlate"/>), and only when that fails does it join the row. Nothing inside either panel is
+    /// free: the player panel grows exactly one grid row per inventory row (<c>InventoryGui.SetInventorySize</c>),
+    /// so its last item row sits on its bottom edge, and the container panel ends with the take-all buttons. Every
+    /// button is a clone of the game's take-all button, so style, font and gamepad selection are the game's; the container
     /// panel's button shares the panel's visibility, the player panel's row is part of the panel. The per player
     /// <c>Button Row Offset</c> moves both and is applied at once when it changes.
     /// </summary>
@@ -52,7 +52,8 @@ namespace OpenKeep.Stow
         {
             if (gui == null || gui.m_takeAllButton == null || gui.m_player == null || gui.m_container == null)
                 return;
-            bool onPlate = TrashPlate.TryCreate(gui, () => Trash.TrashDragged(gui));
+            StatPlates plates = StatPlates.Arrange(gui);
+            bool onPlate = plates != null && TrashPlate.TryCreate(plates, () => Trash.TrashDragged(gui));
             float x = -(1.5f * Width + 1.5f * Gap) - (onPlate ? 0f : (Height + Gap) / 2f);
             Add(gui, gui.m_player, StowWords.QuickStack, x, StowActions.QuickStack);
             x += Width + Gap;
@@ -112,16 +113,8 @@ namespace OpenKeep.Stow
             Place((RectTransform)go.transform, centreX, new Vector2(Height, Height));
             Image image = go.GetComponent<Image>();
             image.sprite = StowSprites.Bin;
-            image.color = new Color(0.85f, 0.75f, 0.6f, 0.95f);
             image.preserveAspect = true;
-            Button button = go.GetComponent<Button>();
-            button.targetGraphic = image;
-            ColorBlock colours = button.colors;
-            colours.highlightedColor = new Color(1f, 0.55f, 0.45f, 1f);
-            colours.selectedColor = colours.highlightedColor;
-            colours.pressedColor = new Color(1f, 0.3f, 0.2f, 1f);
-            button.colors = colours;
-            button.onClick.AddListener(() => Guard.Run("trash can", () => Trash.TrashDragged(gui)));
+            TrashPlate.MakeButton(go, image, () => Trash.TrashDragged(gui));
         }
     }
 }

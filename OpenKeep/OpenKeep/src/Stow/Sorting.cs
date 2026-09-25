@@ -8,8 +8,9 @@ namespace OpenKeep.Stow
     /// <summary>
     /// Sorts an inventory by <c>Sort Order</c>: stacks of the same item merge, pinned items keep their cell, the
     /// rest are written into the free cells in order (row by row) and the inventory reports the change. In the
-    /// player inventory the hotbar row, favourite slots, equipped items, stacks with a request under way and
-    /// (with <c>Sort Favourite Items</c> off) favourite items are pinned; a container pins nothing. A chest another player is using cannot be sorted: a sort rewrites every
+    /// player inventory the hotbar row, the rows below the main grid (<see cref="MainGrid"/>: nothing is taken from
+    /// them or put there), favourite slots, equipped items, stacks with a request under way and (with
+    /// <c>Sort Favourite Items</c> off) favourite items are pinned; a container pins nothing. A chest another player is using cannot be sorted: a sort rewrites every
     /// cell at once, which no request carries, so it is refused with a message (auto sort skips it quietly).
     /// </summary>
     public static class Sorting
@@ -19,7 +20,7 @@ namespace OpenKeep.Stow
             if (player == null || !StowSettings.Enabled.Value)
                 return;
             Inventory inventory = player.GetInventory();
-            int stacks = Sort(inventory, item => Pinned(player, item), 1);
+            int stacks = Sort(inventory, item => Pinned(player, item), 1, MainGrid.Rows(player, inventory));
             if (!quiet)
                 Messages.Center(StowWords.Format(StowWords.Sorted, stacks));
         }
@@ -41,7 +42,8 @@ namespace OpenKeep.Stow
             }
             if (!ContainerScan.Claim(container))
                 return;
-            int stacks = Sort(container.GetInventory(), item => false, 0);
+            Inventory inventory = container.GetInventory();
+            int stacks = Sort(inventory, item => false, 0, inventory.GetHeight());
             ContainerScan.Save(container);
             if (!quiet)
                 Messages.Center(StowWords.Format(StowWords.Sorted, stacks));
@@ -65,8 +67,9 @@ namespace OpenKeep.Stow
             return !StowSettings.SortFavouriteItems.Value && Favourites.IsFavouriteItem(item);
         }
 
-        /// <summary>Sorts the loose items into the cells from <paramref name="firstRow"/> on. Returns their number.</summary>
-        public static int Sort(Inventory inventory, Func<ItemDrop.ItemData, bool> pinned, int firstRow)
+        /// <summary>Sorts the loose items into the cells of the rows from <paramref name="firstRow"/> up to
+        /// <paramref name="rows"/>; items outside those rows stay. Returns the number of loose items.</summary>
+        public static int Sort(Inventory inventory, Func<ItemDrop.ItemData, bool> pinned, int firstRow, int rows)
         {
             List<ItemDrop.ItemData> all = inventory.GetAllItems();
             List<ItemDrop.ItemData> loose = new List<ItemDrop.ItemData>();
@@ -74,14 +77,14 @@ namespace OpenKeep.Stow
             int width = inventory.GetWidth();
             foreach (ItemDrop.ItemData item in all)
             {
-                if (pinned(item) || item.m_gridPos.y < firstRow)
+                if (pinned(item) || item.m_gridPos.y < firstRow || item.m_gridPos.y >= rows)
                     taken.Add(item.m_gridPos.y * width + item.m_gridPos.x);
                 else
                     loose.Add(item);
             }
             Merge(loose, all);
             loose.Sort(Compare);
-            Place(inventory, loose, taken, firstRow * width);
+            Place(inventory, loose, taken, firstRow * width, rows * width);
             inventory.Changed();
             return loose.Count;
         }
@@ -111,10 +114,9 @@ namespace OpenKeep.Stow
             }
         }
 
-        private static void Place(Inventory inventory, List<ItemDrop.ItemData> loose, HashSet<int> taken, int firstCell)
+        private static void Place(Inventory inventory, List<ItemDrop.ItemData> loose, HashSet<int> taken, int firstCell, int cells)
         {
             int width = inventory.GetWidth();
-            int cells = width * inventory.GetHeight();
             int cell = firstCell;
             foreach (ItemDrop.ItemData item in loose)
             {

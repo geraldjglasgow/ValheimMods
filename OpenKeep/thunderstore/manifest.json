@@ -1,6 +1,6 @@
 {
     "name": "OpenKeep",
-    "version_number": "1.3.0",
+    "version_number": "1.4.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/OpenKeep",
     "description": "Craft from chests, quick stack, sort, trash, salvage, stack sizes, chest sizes, carts as workbenches, contents signs. Open source, server synced.",
     "dependencies": [

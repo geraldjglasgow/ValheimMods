@@ -1,6 +1,6 @@
 # CLAUDE.md - OpenKeep
 
-Storage and inventory for Valheim, version 1.3.0: crafting, building and station feeding from nearby containers
+Storage and inventory for Valheim, version 1.4.0: crafting, building and station feeding from nearby containers
 (Reach), stow, top up, sort, junk, trash, routing, chest cycling and ground pickup (Stow), a Salvage tab, stack
 sizes and weights (Stacks), container sizes and hover contents (Capacity), carts as workbenches (Carts), several
 players in one chest (Shared), and a contents sign above every player-built container (Signs). Written black-box
@@ -80,11 +80,14 @@ OpenKeep/OpenKeep/src/
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
     StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
     PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button
+    StatPlates.cs, TrashPlate.cs   the armour and weight plates pinned top-right with large centred icons; the
+                            trash can's own plate between them
     HoveredItem.cs          the slot under the pointer (or the gamepad selection)
     ClickRouting.cs         InventoryGui.OnSelectedItem prefix: Route Modifier + click
     DumpKeyPatch.cs         Player.Update postfix: Dump Key outside the inventory
     AutoSortPatch.cs        InventoryGui.Show prefix/postfix
-    FavouriteOverlay.cs, SlotMarks.cs, StowSprites.cs   star, cross, border marks on the grid elements
+    FavouriteOverlay.cs, SlotMarks.cs, StowSprites.cs   star, cross, border marks on the grid elements; the trash
+                            icon from assets/trash.png
     LinkMarker.cs           Find Key: a line from the player and a floating count
     GroundPickup.cs         Container.CheckForChanges postfix
   Salvage/                  section 3
@@ -153,13 +156,15 @@ OpenKeep/OpenKeep/src/
     Touches.cs              OpenKeep_Touch: InventoryGrid.OnLeftDown, InventoryGui.Update, InventoryGrid.UpdateGui
 OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, OpenKeep.Stow.yml,
                             OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml
+OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon (128 px, scaled down from the
+                            author's 1254 px drawing, which is not in the repository)
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `SharedModule.Initialize` last (the spec's order; each binds its settings, registers its YAML set and its words), every patch class on its
-own, `Synced.Finish`, the `Loading [OpenKeep 1.3.0]` line, `Guard.Install` last.
+own, `Synced.Finish`, the `Loading [OpenKeep 1.4.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt), Stow's
@@ -348,10 +353,17 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Favourite slots are stored as `x:y` because the sets are comma separated.
 - Sorting never touches the hotbar row (row 0) of the player inventory; favourite slots, equipped items and
   stacks with a put under way are pinned; containers pin nothing. Stacks of the same item, quality and world level
-  merge while sorting. With `Sort Favourite Items` off (1.2.0, default on) favourite items are pinned too — the
-  supported answer for mods that keep items in extra inventory cells the sort would otherwise pull into the main
-  grid (the sort walks every cell of the player `Inventory` and cannot know which cells another mod considers
-  its own).
+  merge while sorting. With `Sort Favourite Items` off (1.2.0, default on) favourite items are pinned too, for
+  extra cells a mod keeps inside the game's rows.
+- Main grid (1.4.0, `MainGrid`): quick stack, store all, dump and the player sort work only on the rows the game
+  gives the player: its unique key `invrows` (`Player.InventoryRowsKey`, set by `Player.SetInventorySize`, 4 until
+  set, more once rows are bought from the trader). Rows below belong to other mods: nothing is taken from them and
+  the sort places nothing there. Top up is deliberately not limited, so food and ammo slots are refilled (the
+  user's call, 2026-09-24). Store one, Route, Trash, Destroy Junk and Salvage act on an item the player chose and
+  are not limited either. `Main Inventory Rows` (per player, 0 = the game's rows, 1-20 a fixed count) covers mods
+  that add ordinary rows without the key. Observed with ExtraSlots in Ravenholt: the character's `invrows` is 4 and
+  its equipped helmet, chest and legs sit in cells (0,6), (1,6) and (2,6) of the player `Inventory`, read from the
+  character save's inventory block (the game's own format), not from the mod.
 - Dump Key requires `Quick Stack Nearby`; with it off the centre message says so.
 - Favourite items are refused by Store one and Route; Top up still refills them.
 - Trash from the container grid is allowed (the container is claimed and saved). `Trash Uses Salvage` applies only
@@ -373,16 +385,29 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   button sits 4 px under the edge, plus the per player `Button Row Offset` (default 0, positive up). Inside the
   panels nothing is free: `InventoryGui.SetInventorySize` grows `m_player` by exactly one grid row per inventory
   row, so the last item row sits on the panel's bottom edge (a row 6 px up covered it), and `m_container` ends
-  with the take-all line. The prefab's spacing between the two panels is not in the game code; if the container
-  panel abuts the player panel, the row overlaps its title and the offset is the remedy. `PanelButtons` keeps the
+  with the take-all line. The game's scene makes `m_container` a child of `m_player`, anchored to its bottom-left
+  corner at (0, -30): the row fills that gap with 4 px to spare above it, so with a chest open a negative offset
+  overlaps the container panel and one above 4 overlaps the player panel. `PanelButtons` keeps the
   placed rects and `Reposition` (from `StowModule`, on `SettingChanged`) re-places them without a restart. The
-  trash can (`TrashPlate`) sits between the weight and armour readouts on the player panel's right: the game
-  exposes only the two `TMP_Text`s, so the plate is the nearest ancestor of `m_weight` below `m_player` whose
-  `Image` draws a sprite; it is cloned (children and other behaviours removed, `LayoutElement.ignoreLayout`),
-  the bin drawn inside a 20% inset, and the copy centred between the two plates in world space, scaled down
-  when the gap is narrower than a plate. It is not part of the row and ignores `Button Row Offset`; if no plate
-  is found the can joins the row as before. The
   hovered item mirrors `InventoryGrid.UpdateGui`'s tooltip choice (gamepad selection, else the hovered element).
+- The stat plates (`StatPlates`, read from the game's scene with UnityPy on 2026-09-24) are the game's
+  `Player/Armor` and `Player/Weight`, the direct children of `m_player` holding `m_armor` and `m_weight`. Each is
+  80x64 with three children: the wood (`bkg`, sprite `woodpanel_flik`, the largest Image child), a 32 px icon
+  poking 14 px above the plate (`ac_bkg_large`, 64 px source; `weight_icon_32`, 32 px source) and the text. The
+  game only writes the texts (`UpdateCharacterStats`, `UpdateInventoryWeight`); nothing positions the plates. The
+  prefab anchors armour to the panel's right edge at mid-height and weight to its bottom-right corner, so rows
+  bought from the trader (`SetInventorySize`, up to 9) pulled them apart; both are re-anchored to the top-right
+  corner where they are (armour at 32, -71.5; weight at 32, -227). Each icon (the Image child that is neither the
+  wood nor the text) becomes 48 px, centred on its text and drawn before it, so the number sits on the icon; the
+  weight icon is upscaled from its 32 px source. The trash can (`TrashPlate`) is a copy of the restyled armour
+  plate keeping only the wood and the icon, which shows `StowSprites.Bin` in its own colours (`assets/trash.png`,
+  embedded in the DLL and decoded with mipmaps by the game's `ImageConversion.LoadImage`, called through
+  reflection because that module targets netstandard 2.1, which a net48 project cannot reference), set at
+  the midpoint (32, -149.25; 13.75 px between plates) and placed right after the armour plate among `m_player`'s
+  children, so the panel's background covers its inner 8 px as it covers the game's plates. It is not part of the
+  row and ignores `Button Row Offset`. When either plate is missing, or the two are closer than two plate heights,
+  the can joins the row instead. The container panel's own weight plate (`Container/Weight`) is left as the game
+  draws it.
 - Shared chests (SPEC 9.3): every container write of Stow goes through `Shared.ChestWriter`, one `Put` or `Take`
   per stack, whether the chest answers at once (the local client owns it or may claim it: claim, the game's
   inventory methods, save, all inside the writer) or by request (`Full` mode, another player using it). Sorting
@@ -618,7 +643,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.3.0]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
+1. Log shows `Loading [OpenKeep 1.4.0]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -645,6 +670,15 @@ from a script.
    `Sort Favourite Items` off: sorting the inventory leaves a favourite item's stack in its cell (and still merges
    and sorts the rest); on (default): it is sorted as before.
    Gamepad: the buttons are selectable, the popup confirms and cancels.
+   Stat plates: on the player panel's right the armour plate is on top, the trash plate in the middle and the
+   weight plate at the bottom, evenly spaced; the shield and the weight fill most of their wood, centred, with the
+   number readable on top (the weight flashes red when over the limit); the grey metal bin sits on its own wood,
+   turns red on hover, and a stack dragged onto it is destroyed; the button row is four buttons with no can. The log
+   shows `stat plates pinned to the player panel's top-right`, `OpenKeep.assets.trash.png: 128x128, 8 mip levels`
+   (fewer levels means the game dropped the mipmaps: the bin may shimmer when small) and `trash can on its own
+   plate`. With `devcommands`,
+   `inventorysize 6` grows the panel downward and the three plates stay where they were (use a test character:
+   the size is saved with it, and going back with `inventorysize 4` drops what sits in the removed rows).
 5. Ground pickup on with `pickup: true` for the chest's prefab in `OpenKeep.Stow.yml`: drop copper ore near a
    chest holding copper; after the delay it is inside the chest. An item inside a stranger's ward is not taken.
 6. Salvage tab appears after Upgrade (position with and without a station), lists an iron sword, returns the

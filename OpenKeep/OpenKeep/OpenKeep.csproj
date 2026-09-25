@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>1.3.0</Version>
+    <Version>1.4.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -102,6 +102,9 @@
   <ItemGroup>
     <!-- Default YAML files, written next to the .cfg when none exists. Add a file to config/ and it is embedded. -->
     <EmbeddedResource Include="config\*.yml" LogicalName="OpenKeep.config.%(Filename)%(Extension)" />
+    <!-- UI images, decoded at runtime through the game's ImageConversion (StowSprites.Decode, by reflection: the
+         module targets netstandard 2.1). Keep them small: the in-game size, not the source. -->
+    <EmbeddedResource Include="assets\*.png" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

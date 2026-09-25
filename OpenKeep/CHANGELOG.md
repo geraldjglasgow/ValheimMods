@@ -1,10 +1,19 @@
 # Changelog
 
-## 1.3.0
-- Stow: the trash can moved off the button row into the gap between the weight and armour readouts on the right
-  of the player panel, on a copy of their plate. The row below the panel is now four buttons and re-centred.
-- Stow: `Confirm Trash` now defaults to off, so the Trash Key, the trash can and Destroy Junk act at once. Turn it
-  on to get the game's popup back.
+## 1.4.0
+- Stow: quick stack, store all, dump and sort only work on the rows of the player inventory that the game gives you
+  (four, more once bought from the trader). Mods such as ExtraSlots keep their equipment, food and ammo slots in rows
+  below those: these actions no longer empty them into chests, and the sort no longer pulls items out of them or
+  fills them. Top up still refills the stacks there.
+- Stow: new per-player setting `Main Inventory Rows` (0: the game's rows). Set a number when a mod adds ordinary
+  inventory rows that should be stowed and sorted too.
+- Stow: the trash can moved off the button row onto its own wood plate, with a new icon, between the armour and
+  weight readouts on the right of the player panel. The row below the panel is now four buttons and re-centred.
+- Stow: the armour and weight readouts show their icon larger and centred on the plate, with the number on top,
+  and both stay where they are when the inventory grows with rows bought from the trader.
+- Stow: `Confirm Trash` now defaults to off, so the Trash Key, the trash can and Destroy Junk act at once. A config
+  written by an earlier version keeps the value it saved: set it to false there to lose the popup. Turn it on to
+  get the game's popup back.
 - Stow: the `Stow all` button is `Store all` again, next to `Store one`; `Stow All Key` is `Store All Key` and a
   cfg from 1.1.0 or 1.2.0 keeps its binding. The section `2. Stow` and `OpenKeep.Stow.yml` keep their names.
 - Salvage: new synced settings `Skip Items With Mod Data` (on) and `Mod Data Prefixes` (`ecf_`). An item carrying

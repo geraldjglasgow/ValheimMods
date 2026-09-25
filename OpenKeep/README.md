@@ -30,8 +30,9 @@ that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
   every container in range to the stations it serves, and placing a chest draws them too.
 
 ### Stow: stow, top up, sort, junk, route
-A row of buttons just below the player panel (`Quick stack`, `Store all`, `Top up`, `Sort`), a trash can between
-the weight and armour readouts on the panel's right, and a `Sort` button below the open container's panel, under
+A row of buttons just below the player panel (`Quick stack`, `Store all`, `Top up`, `Sort`), a trash can on its
+own wood plate between the armour and weight readouts on the panel's right (those two show a larger icon behind
+their number and stay put when the inventory grows), and a `Sort` button below the open container's panel, under
 its `Take all` line; `Button Row Offset` moves the rows up or down if your screen layout needs it. Every action also has a hotkey that works while the inventory is open. The module is
 one workflow for coming home with a full inventory. Open a chest and stow: quick stack (`Q`) moves every stack
 whose item the open container (or, with `Quick Stack Nearby`, any container within `Nearby Range`) already holds,
@@ -39,7 +40,11 @@ and `Store all` (`G`) moves everything that may move into the open container. Th
 carry that is not full is refilled from the chests, so you leave with what you came with. Sort (`T` for the
 inventory, `Y` for the container) orders by `Category`, `Name`, `Weight` or `Value`; the hotbar, favourite slots
 and equipped items stay put and stacks merge; with `Sort Favourite Items` off, favourite items stay put too —
-turn it off when another mod keeps items in extra slots the sort would pull out, and favourite those items. What you never want to keep is junk: mark an item with `J`, and
+turn it off when another mod keeps items in extra slots the sort would pull out, and favourite those items. Quick
+stack, store all, dump and sort work only on the rows the game gives you (four, more once you buy them from the
+trader). Mods that add equipment, food or ammo slots keep them in rows below those, so these actions leave the
+slots alone, and top up still refills the food and ammo there. If a mod adds ordinary inventory rows you want
+stowed and sorted too, set `Main Inventory Rows` to the number of rows to use. What you never want to keep is junk: mark an item with `J`, and
 `Destroy Junk` (Shift + Delete) destroys every junk stack in one go; `Trash Key` (Delete) destroys the hovered
 stack and the trash can takes a dragged one, at once (turn on `Confirm Trash` for the game's popup first). What does not belong in
 the open chest is routed: Ctrl + click sends a stack to the nearest container that holds the item, an item of its
