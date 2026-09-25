@@ -10,6 +10,7 @@ A comprehensive food and mead configuration mod for Valheim; the server's settin
 - **Mead Customization** - Duration, the health, stamina and eitr restored over time, regeneration multipliers and run/jump stamina modifiers, per mead
 - **Food Degradation** - Keep food at full strength or pick your own fade curve (linear, faster, slower)
 - **Eat Again** - Decide how far a food must have run down before it can be eaten again
+- **Fermenter** - Set how long a batch of mead brews and how many meads it gives
 
 **How you recover**
 - **Continuous Food Healing** - The food's regen is healed a little every frame over the 10 seconds instead of once
@@ -47,6 +48,7 @@ The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start.
 | `6. Skills` | `Run/Jump/Sneak/Swim/Fishing Skill Gain`: experience multipliers, on top of the world's skill gain rate |
 | `7. World Rates` | `Food Rate`, `Stamina Rate`, `Move Stamina Rate`, `Stamina Regen Rate`: above 0 overrides the world modifier, 0 leaves the world's value |
 | `8. Display` | `Hide Health Number`, `Hide Stamina Number`, `Hide Eitr Number`, `Food Timers` (Vanilla, Always, Never); per player and not synced |
+| `9. Fermenter` | `Fermentation Time` (seconds a batch brews; 0 keeps the barrel's own, the game's is 2400) and `Batch Yield` (meads per batch; 0 keeps each recipe's own). Both apply to barrels already brewing |
 | one per food | `Health`, `Stamina`, `Eitr`, `Duration`, `HealthRegen`, `Vigor` (extra percent of stamina regeneration while the food is active, added to the food's stamina times `Vigor Per Stamina Point`) and `EitrVigor` (the same for eitr) |
 | one per mead | `Duration`, `HealthOverTime`, `StaminaOverTime`, `EitrOverTime`, `HealthRegenMultiplier`, `StaminaRegenMultiplier`, `EitrRegenMultiplier`, `RunStaminaModifier`, `JumpStaminaModifier` (-0.2 makes running 20% cheaper while the mead lasts) |
 

@@ -39,6 +39,7 @@ FeastMaster/FeastMaster/FeastMasterCore/
   Settings.cs             sections 1 to 3: Health Regeneration, Stamina Regeneration, Eitr Regeneration
   SettingsMore.cs         sections 4 to 8: Stamina Costs, Base Values, Skills, World Rates, Display (per client);
                           the FoodTimers enum
+  SettingsKitchen.cs      section 9: Fermenter
   ItemValues.cs           writes the configured values into the items' shared data (the prefab and every live
                           copy, through ItemCopies; new copies via Copies.HookSpawns) and the mead status effect
                           assets on load and on every SettingChanged / ConfigReloaded, then forces the player's
@@ -59,6 +60,7 @@ FeastMaster/FeastMaster/FeastMasterCore/
   StaminaCostsActions.cs  block, attack, tool, fishing, harpoon costs
   GameplayRules.cs        Eat Again At (Food.CanEatAgain), skill gain (Skills.RaiseSkill), Drowning Damage
   WorldRates.cs           world rate overrides (Game.UpdateWorldRates postfix, refresh on setting change)
+  Fermenting.cs           Fermentation Time (Fermenter.GetStatus) and Batch Yield (DelayedTap)
   Display.cs              hidden HUD numbers, Food Timers, the Vigor / Eitr Vigor tooltip lines, the localization words
 ```
 
@@ -77,7 +79,8 @@ parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOther
 Prefix: `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
 `Player.UpdateFood`, `SEMan.AddStatusEffect(StatusEffect, ...)` (target picked by first parameter),
 `Skills.RaiseSkill` (`ref float factor`).
-Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `FishingFloat.FixedUpdate`,
+Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `Fermenter.GetStatus`,
+`Fermenter.DelayedTap`, `FishingFloat.FixedUpdate`,
 `Humanoid.BlockAttack`, `Player.CheckRun`, `Player.OnSneaking`, `Player.OnSwimming`, `Player.RPC_UseEitr`,
 `Player.RPC_UseStamina`, `Player.UpdateStats(float)` (encumbered cost and the regen basics), `SE_Harpooned.UpdateStatusEffect`.
 
@@ -88,7 +91,7 @@ against the game assemblies and checks the injected parameter names; run it afte
 ## Config sections
 
 `0. Global Settings`, `1. Health Regeneration`, `2. Stamina Regeneration`, `3. Eitr Regeneration`,
-`4. Stamina Costs`, `5. Base Values`, `6. Skills`, `7. World Rates`, `8. Display` (unsynced), then one section per
+`4. Stamina Costs`, `5. Base Values`, `6. Skills`, `7. World Rates`, `8. Display` (unsynced), `9. Fermenter`, then one section per
 food prefab (seven entries) and one per mead prefab (nine entries). BepInEx writes sections sorted by name; digits
 sort before letters, so the numbered sections come first and the items follow alphabetically. Keys and defaults
 are listed in `README.md`. Renames from 3.3.x with migration: `General/Lock Configuration` to `0. Global Settings`,
@@ -145,6 +148,12 @@ whose former per-10-points value is divided by 10. Localization keys: `$fm_vigor
   which is also their section name, so a change is applied to that one item.
 - `Localization.AddWord` is private and the dictionary is cleared on every language setup, so the words are added
   in a postfix of `SetupLanguage` (assembly_guiutils, publicized).
+- Fermenter settings are one global value each, not per mead or per barrel: `Fermentation Time` is absolute seconds
+  (0 = the barrel's own, so modded barrels keep theirs), `Batch Yield` replaces every recipe's count (0 = the
+  recipe's own). The barrel keeps only its start time in the ZDO and GetStatus compares at read time, so a changed
+  time applies to barrels already brewing: shorter makes a long-brewing barrel ready at once, longer can turn a
+  ready, untapped barrel back to brewing. Every peer evaluates GetStatus (hover, visuals, interact) and the ZDO
+  owner rechecks it before a tap and spawns the batch, so the synced value keeps them in agreement.
 
 ## Test checklist (LocalTesting profile)
 
@@ -186,3 +195,9 @@ from a script.
 25. Drink a mead, then change its `StaminaRegenMultiplier` (or `StaminaOverTime`) in the file and save: the
     running effect follows without re-drinking; changing its `Duration` keeps the same share of the timer left.
 26. `Hide Health Number`, `Hide Eitr Number`, `Food Timers` Never: the HUD follows, per client.
+27. `Fermentation Time` 60: a new batch shows ready after one minute of world time; a barrel already brewing for
+    over a minute turns ready within 2 s of saving the file, with no restart. Back to 0: 2400 s again.
+28. `Batch Yield` 10: tapping spawns 10 meads; 0 restores the recipe's count.
+29. Dedicated server, both settings changed in the server's file while a client stands at a barrel: the client's
+    hover text and the barrel's lid follow the server's time, and the tap (spawned by the ZDO owner) gives the
+    server's yield, whichever client owns the barrel.

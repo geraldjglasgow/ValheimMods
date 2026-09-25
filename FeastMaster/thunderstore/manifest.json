@@ -1,6 +1,6 @@
 {
     "name": "FeastMaster",
-    "version_number": "4.1.0",
+    "version_number": "4.2.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/FeastMaster",
     "description": "Tune every food and mead, the food fade curve, continuous food healing, Vigor (stamina regen from food), stamina regen rules, every stamina cost and base stamina from skills. Vanilla by default, server synced, hot reloaded.",
     "dependencies": [

@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.2.0
+
+- New `9. Fermenter`: `Fermentation Time` and `Batch Yield`. Both default to the game's values, sync from the server
+  and apply to barrels already brewing.
+
 ## 4.1.0
 
 - Config edits now reach items already picked up, foods already eaten and a mead currently running.
