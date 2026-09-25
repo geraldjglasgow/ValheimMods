@@ -2,8 +2,8 @@
 
 ## 4.6.0
 
-- Food Slots: how many foods a player can have active at once, 1 to 5 (the game's 3 by default). The HUD shows the
-  extra foods. Lowering it keeps extra foods until they run out.
+- Food Slots: how many foods a player can have active at once, 1 to 5 (the game's 3 by default). The HUD shows
+  exactly that many slots. Lowering it keeps extra foods, and their slots, until they run out.
 
 ## 4.5.0
 

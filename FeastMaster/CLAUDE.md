@@ -47,6 +47,7 @@ FeastMaster/FeastMaster/FeastMasterCore/
   SettingsEating.cs       Food Slots and Allow Auto Eat (section 0, synced), Auto Eat (section 8, per player)
   FoodSlots.cs            Food Slots (Player.CanEat and Player.EatFood prefixes)
   FoodSlotsHud.cs         five food slots on the HUD (Hud.Awake postfix copies the last slot)
+  FoodSlotFrames.cs       shows Food Slots slot frames (Hud.UpdateFood postfix hides the rest)
   AutoEat.cs              Auto Eat (Player.UpdateFood prefix/postfix, local player)
   Rested.cs               Rested entries in section 2, bound from the item database with the effect asset's values
                           as defaults; written into the asset and the local player's running effect by ItemValues
@@ -199,8 +200,10 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
   in `CanEat` and `EatFood` only (the `m_maxFoods` constant is unused); the totals, the regen and the save handle
   any count, so a removed mod leaves extra foods to run out. The prefixes run the game's method whenever it would
   decide the same, and replicate its eat (message, add or replace the most depleted, statistics, forced update)
-  otherwise. Lowering the count keeps extra foods until they run out. The HUD is always built with five slots,
-  unused ones hidden by the game's own loop; the prefab's hierarchy is not visible outside the game, so the copy
+  otherwise. Lowering the count keeps extra foods until they run out. The HUD is always built with five slots.
+  The game hides only an empty slot's bar, icon and timer, never its frame (it always uses all its slots), so the
+  frames beyond max(Food Slots, foods held) are hidden after every `Hud.UpdateFood`; a root that is itself
+  the bar, icon or timer is left to the game. The prefab's hierarchy is not visible outside the game, so the copy
   finds each element's slot root at run time instead of assuming a layout.
 
 ## Test checklist (LocalTesting profile)
@@ -271,7 +274,8 @@ from a script.
     Stamina Regen` 3 while rested: stamina refills visibly faster at once, without resting again.
 40. A mead's description in the file mentions the cooldown; `Duration` 30 on Minor Healing Mead lets the next one be
     drunk after 30 s.
-41. `Food Slots` 5: five different foods can be eaten; the HUD shows five icons with timers in one line with the
+41. `Food Slots` 3: the HUD shows three slots, as the game does; 1 shows one; 4 shows four, even when empty.
+    `Food Slots` 5: five different foods can be eaten; the HUD shows five icons with timers in one line with the
     first three, nothing overlapping; the sixth food is refused as full unless one can be eaten again, and then
     replaces the most depleted. Health and stamina include all five.
 42. Log out and back in with five foods: all five are back. `Food Slots` 3 with five active: nothing is removed, no

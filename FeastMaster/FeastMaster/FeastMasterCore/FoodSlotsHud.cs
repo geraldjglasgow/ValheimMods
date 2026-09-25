@@ -9,10 +9,11 @@ namespace FeastMaster
     /// <summary>
     /// The HUD's food slots. Hud.UpdateFood draws one food per entry of m_foodBars, m_foodIcons and m_foodTime and
     /// hides the entries beyond the foods held, so the three lists are extended to <see cref="FoodSlots.MaxSlots"/>
-    /// once, when the HUD is created, whatever Food Slots is: unused slots stay hidden. A new slot copies the last
+    /// once, when the HUD is created, whatever Food Slots is. A new slot copies the last
     /// one and moves it by the distance between the last two. The copied object is each element's slot root, the
     /// highest ancestor that does not also hold the previous slot's element, so a slot built as one object with
-    /// its bar, icon and timer inside is copied once and its parts found in the copy by their path.
+    /// its bar, icon and timer inside is copied once and its parts found in the copy by their path. Only Food Slots
+    /// of them are shown, see <see cref="FoodSlotFrames"/>.
     /// </summary>
     [HarmonyPatch(typeof(Hud), nameof(Hud.Awake))]
     public static class FoodSlotsHud
@@ -31,6 +32,7 @@ namespace FeastMaster
             __instance.m_foodBars = bars.ToArray();
             __instance.m_foodIcons = icons.ToArray();
             __instance.m_foodTime = times.ToArray();
+            FoodSlotFrames.Capture(__instance);
         }
 
         private static void AddSlot(List<Image> bars, List<Image> icons, List<TMP_Text> times)
@@ -52,7 +54,8 @@ namespace FeastMaster
             return Counterpart(copy, root, last).GetComponent<T>();
         }
 
-        private static Transform SlotRoot(Transform element, Transform other)
+        /// <summary>The highest ancestor of <paramref name="element"/> that does not also hold <paramref name="other"/>.</summary>
+        public static Transform SlotRoot(Transform element, Transform other)
         {
             Transform root = element;
             while (root.parent != null && !other.IsChildOf(root.parent))
