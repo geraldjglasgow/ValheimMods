@@ -12,6 +12,7 @@ A comprehensive food and mead configuration mod for Valheim; the server's settin
 - **Eat Again** - Decide how far a food must have run down before it can be eaten again
 - **Fermenter** - Set how long a batch of mead brews and how many meads it gives
 - **Cooking** - Cook time per recipe on every cooking station and oven, one multiplier for all of them, and a switch that stops food from burning
+- **Feasts** - Set how many servings a placed feast holds; every feast's food has its own section like any other food
 
 **How you recover**
 - **Continuous Food Healing** - The food's regen is healed a little every frame over the 10 seconds instead of once
@@ -49,7 +50,7 @@ The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start.
 | `6. Skills` | `Run/Jump/Sneak/Swim/Fishing Skill Gain`: experience multipliers, on top of the world's skill gain rate |
 | `7. World Rates` | `Food Rate`, `Stamina Rate`, `Move Stamina Rate`, `Stamina Regen Rate`: above 0 overrides the world modifier, 0 leaves the world's value |
 | `8. Display` | `Hide Health Number`, `Hide Stamina Number`, `Hide Eitr Number`, `Food Timers` (Vanilla, Always, Never); per player and not synced |
-| `9. Kitchen` | `Fermentation Time` (seconds a batch brews; 0 keeps the barrel's own, the game's is 2400) and `Batch Yield` (meads per batch; 0 keeps each recipe's own), both applying to barrels already brewing; `Cook Time Multiplier` (on every recipe of every cooking station and oven, 0.5 cooks twice as fast) and `Food Can Burn` (off: cooked food waits on the station forever) |
+| `9. Kitchen` | `Fermentation Time` (seconds a batch brews; 0 keeps the barrel's own, the game's is 2400) and `Batch Yield` (meads per batch; 0 keeps each recipe's own), both applying to barrels already brewing; `Cook Time Multiplier` (on every recipe of every cooking station and oven, 0.5 cooks twice as fast) and `Food Can Burn` (off: cooked food waits on the station forever); `Feast Servings` (servings a placed feast holds; 0 keeps each feast's own; a feast already eaten from keeps the servings it has left) |
 | one per food | `Health`, `Stamina`, `Eitr`, `Duration`, `HealthRegen`, `Vigor` (extra percent of stamina regeneration while the food is active, added to the food's stamina times `Vigor Per Stamina Point`) and `EitrVigor` (the same for eitr) |
 | one per cooking station | Named after the station's prefab; one entry per recipe, named after the raw item: seconds it takes to cook, defaulting to the game's time. `Cook Time Multiplier` applies on top. Modded stations get a section too |
 | one per mead | `Duration`, `HealthOverTime`, `StaminaOverTime`, `EitrOverTime`, `HealthRegenMultiplier`, `StaminaRegenMultiplier`, `EitrRegenMultiplier`, `RunStaminaModifier`, `JumpStaminaModifier` (-0.2 makes running 20% cheaper while the mead lasts) |

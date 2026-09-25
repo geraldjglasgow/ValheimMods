@@ -4,18 +4,6 @@ using HarmonyLib;
 
 namespace FeastMaster
 {
-    /// <summary>
-    /// Binds the per-station cook time sections once the prefabs are registered. Last, so a station another mod
-    /// registers in its own ZNetScene.Awake postfix is found too.
-    /// </summary>
-    [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
-    public static class CookTimesBindPatch
-    {
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.Last)]
-        public static void Postfix(ZNetScene __instance) => CookTimes.BindAll(__instance);
-    }
-
     /// <summary>The station's own values, replaced for one cooking tick.</summary>
     public sealed class CookingSwap
     {

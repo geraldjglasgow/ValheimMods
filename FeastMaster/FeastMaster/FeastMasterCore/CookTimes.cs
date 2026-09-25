@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using BepInEx.Configuration;
-using UnityEngine;
 
 namespace FeastMaster
 {
     /// <summary>
     /// Per-recipe cook times: one section per prefab with a CookingStation component in ZNetScene (the game's
     /// cooking stations and oven, and modded ones), one entry per recipe named after the raw item, defaulting to
-    /// the game's time. Bound on ZNetScene.Awake, in the same scene load as the food sections, so the entries exist
-    /// before the server's first push. In memory the entries are keyed by the raw item's prefab, which every live
+    /// the game's time. Bound from <see cref="ScenePrefabs"/>, in the same scene load as the food sections, so the
+    /// entries exist before the server's first push. In memory the entries are keyed by the raw item's prefab, which every live
     /// station's conversions reference as well.
     /// </summary>
     public static class CookTimes
@@ -23,38 +22,21 @@ namespace FeastMaster
             return byStation.TryGetValue(prefabHash, out entries);
         }
 
-        /// <summary>Binds every station not bound yet; the file is written once, and only when entries were added.</summary>
-        public static void BindAll(ZNetScene scene)
+        /// <summary>Binds one station's section unless it has one already. Returns whether a section was added.</summary>
+        public static bool Bind(string prefabName, CookingStation station)
         {
-            ConfigFile file = FeastMaster.Synced.Config;
-            bool saveOnSet = file.SaveOnConfigSet;
-            int before = byStation.Count;
-            file.SaveOnConfigSet = false;
+            int hash = prefabName.GetStableHashCode();
+            if (byStation.ContainsKey(hash))
+                return false;
             try
             {
-                foreach (GameObject prefab in scene.m_prefabs)
-                    BindStation(prefab);
-            }
-            finally
-            {
-                file.SaveOnConfigSet = saveOnSet;
-            }
-            if (byStation.Count != before && saveOnSet)
-                file.Save();
-        }
-
-        private static void BindStation(GameObject prefab)
-        {
-            CookingStation station = prefab != null ? prefab.GetComponent<CookingStation>() : null;
-            if (station == null || byStation.ContainsKey(prefab.name.GetStableHashCode()))
-                return;
-            try
-            {
-                byStation[prefab.name.GetStableHashCode()] = BindRecipes(prefab.name, station.m_conversion);
+                byStation[hash] = BindRecipes(prefabName, station.m_conversion);
+                return true;
             }
             catch (ArgumentException e)
             {
-                FeastMaster.Log.LogWarning($"Cook times of {prefab.name} cannot be configured: {e.Message}");
+                FeastMaster.Log.LogWarning($"Cook times of {prefabName} cannot be configured: {e.Message}");
+                return false;
             }
         }
 

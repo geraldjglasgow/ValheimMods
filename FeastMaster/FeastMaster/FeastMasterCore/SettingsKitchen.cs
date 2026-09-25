@@ -4,8 +4,8 @@ using SyncedConfig;
 namespace FeastMaster
 {
     /// <summary>
-    /// Section 9: the kitchen (fermenter and cooking stations). Synced, and read whenever a barrel is checked or
-    /// tapped and on every cooking tick. The per-recipe cook times live in one section per cooking station, see
+    /// Section 9: the kitchen (fermenter, cooking stations, feasts). Synced, and read at use time: whenever a
+    /// barrel or feast is checked, a barrel tapped, and on every cooking tick. The per-recipe cook times live in one section per cooking station, see
     /// <see cref="CookTimes"/>.
     /// </summary>
     public static partial class Settings
@@ -18,6 +18,7 @@ namespace FeastMaster
         public static ConfigEntry<int> BatchYield { get; private set; }
         public static ConfigEntry<float> CookTimeMultiplier { get; private set; }
         public static ConfigEntry<bool> FoodCanBurn { get; private set; }
+        public static ConfigEntry<int> FeastServings { get; private set; }
 
         private static void BindKitchen(SyncedConfiguration config)
         {
@@ -27,6 +28,9 @@ namespace FeastMaster
                 acceptableValues: new AcceptableValueRange<float>(0.01f, 100f));
             FoodCanBurn = config.Bind(KitchenSection, "Food Can Burn", true,
                 "On: cooked food left on a station burns as in the game, at twice its cook time. Off: cooked food never burns and waits on the station until it is taken.");
+            FeastServings = config.Bind(KitchenSection, "Feast Servings", 0,
+                "Servings a placed feast holds. 0 keeps each feast's own count. Feasts nobody has eaten from follow a change at once; a feast already started keeps the servings it has left.",
+                acceptableValues: new AcceptableValueRange<int>(0, 100));
         }
 
         private static void BindFermenter(SyncedConfiguration config)

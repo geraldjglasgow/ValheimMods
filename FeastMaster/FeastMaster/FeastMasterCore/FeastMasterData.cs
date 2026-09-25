@@ -162,6 +162,21 @@ namespace FeastMaster
                 foodsByToken[shared.m_name] = prefabName;
         }
 
+        /// <summary>
+        /// Binds the food a placed feast feeds, found through the feast in ZNetScene rather than the item database,
+        /// so it gets a section whatever its item type. Returns whether a section was added.
+        /// </summary>
+        public static bool BindFeastFood(ItemDrop food)
+        {
+            ItemDrop.ItemData.SharedData shared = food.m_itemData.m_shared;
+            string prefabName = food.gameObject.name;
+            if (FoodConfigs.ContainsKey(prefabName) || (shared.m_food <= 0f && shared.m_foodStamina <= 0f && shared.m_foodEitr <= 0f))
+                return false;
+            BindFood(prefabName, shared);
+            ItemValues.RegisterFood(prefabName);
+            return true;
+        }
+
         /// <summary>Mead sections were named 0Meads_prefab up to 3.3.5; the four old values are carried over.</summary>
         private static void BindMead(string prefabName, SE_Stats effect)
         {

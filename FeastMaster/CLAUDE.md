@@ -39,9 +39,12 @@ FeastMaster/FeastMaster/FeastMasterCore/
   Settings.cs             sections 1 to 3: Health Regeneration, Stamina Regeneration, Eitr Regeneration
   SettingsMore.cs         sections 4 to 8: Stamina Costs, Base Values, Skills, World Rates, Display (per client);
                           the FoodTimers enum
-  SettingsKitchen.cs      section 9: Kitchen (fermenter, cook time multiplier, burning; carries over 4.2.0's 9. Fermenter)
-  CookTimes.cs            one section per cooking station prefab found in ZNetScene, one entry per recipe (raw item),
-                          bound on ZNetScene.Awake
+  SettingsKitchen.cs      section 9: Kitchen (fermenter, cook time multiplier, burning, feast servings; carries over
+                          4.2.0's 9. Fermenter)
+  ScenePrefabs.cs         ZNetScene.Awake pass: binds the station sections and every feast's food section, file
+                          written and item values applied once
+  CookTimes.cs            one section per cooking station prefab, one entry per recipe (raw item)
+  FeastServings.cs        Feast Servings (Feast.GetStack, GetStackPercentige capped at 1, GetHoverText)
   Cooking.cs              cook times and burning (CookingStation.UpdateCooking, on the station's owner)
   ItemValues.cs           writes the configured values into the items' shared data (the prefab and every live
                           copy, through ItemCopies; new copies via Copies.HookSpawns) and the mead status effect
@@ -73,7 +76,7 @@ Startup order in `Awake`: `FeastMasterData.Initialize`, `Settings.Initialize`, `
 
 ## Patched game methods
 
-Postfix: `Attack.GetAttackStamina`, `ZNetScene.Awake` (`Priority.Last`, binds the station sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
+Postfix: `Attack.GetAttackStamina`, `Feast.GetStackPercentige` (capped at 1), `ZNetScene.Awake` (`Priority.Last`, binds the station and feast food sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
 `Hud.UpdateStamina`, `Hud.UpdateEitr`, `Hud.UpdateFood`, `ItemDrop.ItemData.GetTooltip` (static, six
 parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `Player.Food.CanEatAgain`,
 `Player.GetBuildStamina`, `Player.GetDodgeStaminaUse`, `Player.GetTotalFoodValue` (`ref float stamina`),
@@ -82,7 +85,7 @@ parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOther
 Prefix: `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
 `Player.UpdateFood`, `SEMan.AddStatusEffect(StatusEffect, ...)` (target picked by first parameter),
 `Skills.RaiseSkill` (`ref float factor`).
-Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `CookingStation.UpdateCooking`, `Fermenter.GetStatus`,
+Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `CookingStation.UpdateCooking`, `Feast.GetStack`, `Feast.GetStackPercentige`, `Feast.GetHoverText`, `Fermenter.GetStatus`,
 `Fermenter.DelayedTap`, `FishingFloat.FixedUpdate`,
 `Humanoid.BlockAttack`, `Player.CheckRun`, `Player.OnSneaking`, `Player.OnSwimming`, `Player.RPC_UseEitr`,
 `Player.RPC_UseStamina`, `Player.UpdateStats(float)` (encumbered cost and the regen basics), `SE_Harpooned.UpdateStatusEffect`.
@@ -167,6 +170,13 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
   Cooking runs only on the station's ZDO owner and the cooked time lives in the ZDO, so the values are applied
   only there; an edit reaches food already on the fire at the next one-second tick. Food that is already burnt
   stays burnt, and food already done stays done when the time is raised.
+- Feast servings: one global count, not per feast (0 = each feast's own). The ZDO holds the servings left only once
+  someone has eaten, so untouched feasts follow a change and started ones keep what they have left; their share
+  is capped at 1, because the deconstruct refund multiplies the feast's resources by it and a lowered count would
+  otherwise refund more feasts than were placed. The visual stages redraw on the next serving or load.
+- Feast food: the feast's `m_foodItem` (or the feast prefab's own ItemDrop) is bound as a food from the ZNetScene
+  pass whatever its item type, so its values and the global modifiers apply like any food's. Placed feasts get
+  the values through the ItemDrop.Awake copy hook and `Player.EatFood`.
 
 ## Test checklist (LocalTesting profile)
 
@@ -222,3 +232,9 @@ from a script.
     entry per recipe, and a 4.2.0 file's `9. Fermenter` values appear under `9. Kitchen` after the first start.
 33. Dedicated server, change `Cook Time Multiplier` in the server's file while a client cooks: the food follows
     the server's value whichever player owns the station, without a restart.
+34. `Feast Servings` 10: a freshly placed feast shows `10/10` on hover and serves 10 times; the visual stages step
+    down with it. A feast eaten to 3 left under 5 still has 3 left after the change.
+35. A feast's own section (its food prefab) exists in the file; its `Health` changed there is what eating from the
+    placed feast gives.
+36. Lower `Feast Servings` below a started feast's remaining servings, then deconstruct it: no more feasts come back
+    than were placed.

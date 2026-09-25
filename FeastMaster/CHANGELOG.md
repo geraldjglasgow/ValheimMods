@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.4.0
+
+- Feasts: `Feast Servings` in `9. Kitchen` sets how many servings a placed feast holds. A feast already eaten from
+  keeps the servings it has left.
+- Every feast's food gets a food section, even when the game does not list it as a consumable.
+- Faster world loading: the cooking station sections no longer re-apply every food value once per entry.
+
 ## 4.3.0
 
 - Cooking: every cooking station and oven gets its own section with the cook time of each recipe, and `9. Kitchen`
