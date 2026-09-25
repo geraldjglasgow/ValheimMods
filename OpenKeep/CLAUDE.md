@@ -1,6 +1,6 @@
 # CLAUDE.md - OpenKeep
 
-Storage and inventory for Valheim, version 1.1.1: crafting, building and station feeding from nearby containers
+Storage and inventory for Valheim, version 1.3.0: crafting, building and station feeding from nearby containers
 (Reach), stow, top up, sort, junk, trash, routing, chest cycling and ground pickup (Stow), a Salvage tab, stack
 sizes and weights (Stacks), container sizes and hover contents (Capacity), carts as workbenches (Carts), several
 players in one chest (Shared), and a contents sign above every player-built container (Signs). Written black-box
@@ -75,7 +75,7 @@ OpenKeep/OpenKeep/src/
     StowTargets.cs          the open container and the nearby ones: usable now or shared (Full mode)
     ChestBatch.cs           one action's writes to one container through Shared.ChestWriter, with the summary
     StackMover.cs           stacks with a put under way (never moved twice), the end-of-action message
-    StowActions.cs          quick stack, stow all, dump
+    StowActions.cs          quick stack, store all, dump
     TopUp.cs, Sorting.cs, Trash.cs, Routing.cs, Finder.cs, Cycling.cs
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
     StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
@@ -90,6 +90,7 @@ OpenKeep/OpenKeep/src/
   Salvage/                  section 3
     SalvageModule.cs, SalvageSettings.cs, SalvageWords.cs, RoundingMode.cs
     SalvageModel.cs, FractionOverride.cs, SalvageRules.cs   OpenKeep.Salvage*.yml, recipe lookup, blockers
+    ModDataCheck.cs         blocker: item custom data keys under a Mod Data Prefix (another mod's state)
     SalvageReturns.cs, SalvageReturn.cs   what a stack returns
     SalvageInventory.cs     the exact fit simulation and the add with rollback
     SalvageActions.cs       the public face: CanSalvage, WhyNot, Returns, Salvage, Confirm
@@ -158,7 +159,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `SharedModule.Initialize` last (the spec's order; each binds its settings, registers its YAML set and its words), every patch class on its
-own, `Synced.Finish`, the `Loading [OpenKeep 1.2.0]` line, `Guard.Install` last.
+own, `Synced.Finish`, the `Loading [OpenKeep 1.3.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt), Stow's
@@ -207,7 +208,8 @@ Chests`: the enum `Off`, `View`, `Full`, default `Off`), `1. Reach` (`Enabled`, 
 Nearby`, `Nearby Range`, `Ground Pickup`, `Pickup Range`, `Pickup Interval`, `Pickup Delay`, `Pickup Only Held
 Items`; unsynced every key, `Sort Order`, `Sort Favourite Items`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
 Uses Salvage`, `Cycle With Wheel`, `Show Favourites`, `Button Row Offset`), `3. Salvage` (`Enabled`, `Return Fraction`, `Rounding`, `At
-Least One`, `Upgrade Materials`, `Require Known Recipe`, `Require Station`; unsynced `Salvage Key`), `4. Stacks`
+Least One`, `Upgrade Materials`, `Require Known Recipe`, `Require Station`, `Skip Items With Mod Data`, `Mod Data
+Prefixes`; unsynced `Salvage Key`), `4. Stacks`
 (`Enabled`, `Stack Multiplier`, `Weight Multiplier`, `Ignore Teleport Restriction`, `Merge Into Chests`, `Per Item
 Config Entries`, `Write Documentation`), `4a. Item Stacks` and `4b. Item Weights` (`<prefab>.Stack`,
 `<prefab>.Weight`, only with Per Item Config Entries), `5. Capacity` (`Enabled`; unsynced `Hover Contents`, `Hover
@@ -365,7 +367,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   (`ItemDrop.IsPiece`); the age comes from the drop's `spawntime` ZDO value against `ZNet.GetTime`; rule order is
   refuse, accept, then the only-held rule; the drop is claimed, loaded, added with `AddItem`, then destroyed
   through `ZNetScene` or reduced and saved. Unchanged by the Shared module: owner only.
-- Buttons are clones of `m_takeAllButton`: Quick stack, Stow all, Top up, Sort and a trash can, 78x26 px,
+- Buttons are clones of `m_takeAllButton`: Quick stack, Store all, Top up and Sort, 78x26 px,
   anchored bottom-centre of `m_player` with the pivot at the bottom; one Sort centred at the bottom of
   `m_container`. Both hang below their panel's bottom edge: `anchoredPosition.y` is `-(26 + 4)`, so the top of a
   button sits 4 px under the edge, plus the per player `Button Row Offset` (default 0, positive up). Inside the
@@ -374,6 +376,12 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   with the take-all line. The prefab's spacing between the two panels is not in the game code; if the container
   panel abuts the player panel, the row overlaps its title and the offset is the remedy. `PanelButtons` keeps the
   placed rects and `Reposition` (from `StowModule`, on `SettingChanged`) re-places them without a restart. The
+  trash can (`TrashPlate`) sits between the weight and armour readouts on the player panel's right: the game
+  exposes only the two `TMP_Text`s, so the plate is the nearest ancestor of `m_weight` below `m_player` whose
+  `Image` draws a sprite; it is cloned (children and other behaviours removed, `LayoutElement.ignoreLayout`),
+  the bin drawn inside a 20% inset, and the copy centred between the two plates in world space, scaled down
+  when the gap is narrower than a plate. It is not part of the row and ignores `Button Row Offset`; if no plate
+  is found the can joins the row as before. The
   hovered item mirrors `InventoryGrid.UpdateGui`'s tooltip choice (gamepad selection, else the hovered element).
 - Shared chests (SPEC 9.3): every container write of Stow goes through `Shared.ChestWriter`, one `Put` or `Take`
   per stack, whether the chest answers at once (the local client owns it or may claim it: claim, the game's
@@ -382,7 +390,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   shares is refused ("Viewing only" in View mode, "The chest cannot be changed right now" in Full mode; auto sort
   skips it quietly). A Stow target (`StowTargets`) is a container that is usable now or shared; the nearby list
   holds both, nearest first, the open one first, no duplicates. A chest the player only views (View mode) is no
-  target: quick stack to the open container, Stow all and Store one say "Viewing only" for it; quick stack
+  target: quick stack to the open container, Store all and Store one say "Viewing only" for it; quick stack
   nearby, Dump, Top up and Route skip it silently and use the other chests.
 - Summary messages stay honest: what moved at once is reported at the end of the action ("Moved n stacks",
   "Topped up n items"); every shared chest reports itself once its last reply is in ("Moved n stacks to <chest>",
@@ -411,13 +419,13 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   section 0 switches (the rules are repeated in `Cycling.Viewable` because `ContainerScan` has no viewable query;
   moving it into Core would be cleaner). In `Off` the ring is the usable containers, as before.
 - Find marks shared chests too (they are targets), so the player sees where a quick stack would go.
-- Vocabulary since 1.1.0: the chest-side button that stores your matching items is `Stow all` (`Stow All Key`, was
-  `Store All Key`), the button that refills your stacks from the chests is `Top up` (`Top Up Key`, was `Restock
+- Vocabulary: the chest-side button that stores your matching items is `Store all` (`Store All Key`; 1.1.0 to 1.2.0
+  called it `Stow all` / `Stow All Key`, carried over; 1.0.0 already used `Store All Key`), the button that refills your stacks from the chests is `Top up` (`Top Up Key`, was `Restock
   Key`), an item marked for destruction is junk (`Junk Key`, was `Trash Flag Key`; `Destroy Junk Key`, was `Trash
   Flagged Key`; custom data `OpenKeep.junk`, was `OpenKeep.trashFlags`, old marks are not read). Destroying an item
   stays "trash" (`Trash Key`, `Confirm Trash`, `Trash Uses Salvage`). A cfg from 1.0.0 keeps its bindings through
   `Core.RenamedKeys.Carry`, which reads the old line from BepInEx's orphaned entries before the new key is bound.
-- The defaults `G` (Stow all) and `V` (Store one) share keys with the game's radial menu (`OpenEmote`) and auto
+- The defaults `G` (Store all) and `V` (Store one) share keys with the game's radial menu (`OpenEmote`) and auto
   pickup toggle (`AutoPickup`), which is safe: both are read in `Player.Update` inside `if (TakeInput())`
   (`HandleRadialInput` and `ZInput.GetButtonDown("AutoPickup")` sit in the branch reached only when `flag2 =
   TakeInput()` is true), and `Player.TakeInput` returns false while `InventoryGui.IsVisible()`. `InventoryGui.Update`
@@ -435,6 +443,14 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Returns: fraction, rounding (Round is half up), cap at `ceil(full cost)`, then At Least One; materials with the
   same name are merged before rounding. The fraction override order is exact name, first matching pattern, cfg.
 - Favourites come from Stow's `OpenKeep.favouriteItems`; prefab and shared name both count.
+- Blocker order: disabled, trophy or quest item, no recipe, favourite, deny list, mod data, equipped, unknown
+  recipe, station. Mod data (user decision 2026-09-24, EliteCrafting DECISIONS.md SAL-14): with `Skip Items With
+  Mod Data` on, an item whose `m_customData` has a key starting with one of `Mod Data Prefixes` (comma separated,
+  ordinal case-sensitive match, default `ecf_` = EliteCrafting's magic items) is not listed and not salvaged
+  (`$ok_salvage_moddata`). Only keys are compared; nothing of the other mod is referenced. The prefix list is
+  re-split only when the setting's text changes, and an empty `m_customData` is skipped before any enumeration.
+  With `Trash Uses Salvage` on, such an item is trashed by the Trash Key (after `Confirm Trash`) like any other
+  item salvage refuses.
 - Require Station is satisfied by the current station or any station of that name within build range.
 - The fit check is an exact simulation of `Inventory.AddItem`: partial stacks of quality 1 at the current world
   level fill first, the rest needs empty slots, the salvaged stack's own slot counts as free. The stack is removed
@@ -602,7 +618,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.2.0]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
+1. Log shows `Loading [OpenKeep 1.3.0]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -622,7 +638,7 @@ from a script.
    were written from memory, not the assets).
 4. Stow: check the button row below the player panel and the Sort button below the container panel's Take all
    line overlap no item slot and no game text (with and without a chest open; note what `Button Row Offset` a
-   clean layout needs, and that a changed offset moves the buttons at once); quick stack, stow all, top up, sort by each order,
+   clean layout needs, and that a changed offset moves the buttons at once); quick stack, store all, top up, sort by each order,
    favourite item and slot (star, border, cross drawn), trash with confirmation, destroy junk, route with
    Ctrl click (with and without a chest open), store one with V, find (line and floating count), dump
    outside the inventory, cycle with arrows and wheel between three chests within 4 m. Favourites survive a relog.
@@ -633,7 +649,9 @@ from a script.
    chest holding copper; after the delay it is inside the chest. An item inside a stranger's ward is not taken.
 6. Salvage tab appears after Upgrade (position with and without a station), lists an iron sword, returns the
    rounded fraction; with a full inventory the button is disabled and the hotkey says so. Backspace on a hovered
-   stack asks first. `Trash Uses Salvage` on: Delete salvages instead. Gamepad steps through the list.
+   stack asks first. `Trash Uses Salvage` on: Delete salvages instead. Gamepad steps through the list. An item
+   with an `ecf_` custom data key (an EliteCrafting magic item) is not listed and Backspace on it says "Another mod
+   keeps data on this item"; `Skip Items With Mod Data = false` lists it again.
 7. Stacks: `Stack Multiplier = 2` doubles wood stacks in the tooltip and inventory; YAML `Wood: {stack: 200}`
    wins; `Ignore Teleport Restriction` lets ore through a portal; dragging a stack onto a chest with a partial
    stack merges first; `Per Item Config Entries` on adds sections 4a and 4b after the item database loads.
@@ -646,7 +664,7 @@ from a script.
     reachable again.
 11. Two clients, `Shared Chests = View`: A opens a chest, B interacts: B sees the contents and the title
     `<chest> (in use by A)`, cannot move anything (click, drag, right click, Take all and Stack all say `Viewing
-    only`, the buttons are greyed), B's Y and Stow all say `Viewing only`, B's Ctrl click routes elsewhere; A
+    only`, the buttons are greyed), B's Y and Store all say `Viewing only`, B's Ctrl click routes elsewhere; A
     closes, B's panel turns live without closing (the title loses the suffix and B can move items). B's log shows
     `viewing piece_chest_wood used by A`, every few seconds `viewer asks to open ... (free: False)`, then
     `no longer viewing ...` when the panel turns live or closes. A pulled cart's storage opens the same way.

@@ -10,9 +10,11 @@ using UnityEngine.UI;
 namespace OpenKeep.Stow
 {
     /// <summary>
-    /// The panel buttons: <c>Quick stack</c>, <c>Stow all</c>, <c>Top up</c>, <c>Sort</c> and the trash can in a
-    /// row hanging below the bottom edge of the player panel, centred, and <c>Sort</c> centred below the bottom
-    /// edge of the container panel, under the game's take-all line. Nothing inside either panel is free: the player
+    /// The panel buttons: <c>Quick stack</c>, <c>Store all</c>, <c>Top up</c> and <c>Sort</c> in a row hanging
+    /// below the bottom edge of the player panel, centred, and <c>Sort</c> centred below the bottom edge of the
+    /// container panel, under the game's take-all line. The trash can sits between the weight and the armour
+    /// readouts on the panel's right (<see cref="TrashPlate"/>); only when those cannot be found does it join the
+    /// row. Nothing inside either panel is free: the player
     /// panel grows exactly one grid row per inventory row (<c>InventoryGui.SetInventorySize</c>), so its last item
     /// row sits on its bottom edge, and the container panel ends with the take-all buttons. Every button is a
     /// clone of the game's take-all button, so style, font and gamepad selection are the game's; the container
@@ -50,15 +52,17 @@ namespace OpenKeep.Stow
         {
             if (gui == null || gui.m_takeAllButton == null || gui.m_player == null || gui.m_container == null)
                 return;
-            float x = -(2f * Width + 1.5f * Gap) - (Height + Gap) / 2f;
+            bool onPlate = TrashPlate.TryCreate(gui, () => Trash.TrashDragged(gui));
+            float x = -(1.5f * Width + 1.5f * Gap) - (onPlate ? 0f : (Height + Gap) / 2f);
             Add(gui, gui.m_player, StowWords.QuickStack, x, StowActions.QuickStack);
             x += Width + Gap;
-            Add(gui, gui.m_player, StowWords.StowAll, x, StowActions.StowAll);
+            Add(gui, gui.m_player, StowWords.StoreAll, x, StowActions.StoreAll);
             x += Width + Gap;
             Add(gui, gui.m_player, StowWords.TopUp, x, TopUp.Run);
             x += Width + Gap;
             Add(gui, gui.m_player, StowWords.Sort, x, () => Sorting.SortPlayer(Player.m_localPlayer, false));
-            AddTrash(gui, gui.m_player, x + Width / 2f + Gap + Height / 2f);
+            if (!onPlate)
+                AddTrash(gui, gui.m_player, x + Width / 2f + Gap + Height / 2f);
             Add(gui, gui.m_container, StowWords.Sort, 0f, Sorting.SortOpenContainer);
         }
 

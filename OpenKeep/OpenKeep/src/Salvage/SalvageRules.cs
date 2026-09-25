@@ -5,8 +5,9 @@ namespace OpenKeep.Salvage
 {
     /// <summary>
     /// What may be salvaged and at which fraction: the recipe lookup in the object database, the YAML exclusions
-    /// and overrides, favourites, equipped items, known recipes and stations. <see cref="Blocker"/> gives the
-    /// reason an item cannot be salvaged as a "$ok_..." word, or null when it can.
+    /// and overrides, favourites, items carrying another mod's item data, equipped items, known recipes and
+    /// stations. <see cref="Blocker"/> gives the reason an item cannot be salvaged as a "$ok_..." word, or null
+    /// when it can.
     /// </summary>
     public static class SalvageRules
     {
@@ -115,6 +116,8 @@ namespace OpenKeep.Salvage
                 return SalvageWords.Favourite;
             if (IsExcluded(item))
                 return SalvageWords.Excluded;
+            if (ModDataCheck.Carries(item))
+                return SalvageWords.ModData;
             return PlayerBlocker(player, item, recipe);
         }
 

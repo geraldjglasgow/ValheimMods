@@ -16,6 +16,7 @@ namespace OpenKeep.Salvage
         public const string NoRecipe = "$ok_salvage_norecipe";
         public const string Favourite = "$ok_salvage_favourite";
         public const string Excluded = "$ok_salvage_excluded";
+        public const string ModData = "$ok_salvage_moddata";
         public const string Equipped = "$ok_salvage_equipped";
         public const string Unknown = "$ok_salvage_unknown";
         public const string NoStation = "$ok_salvage_nostation";
@@ -34,6 +35,7 @@ namespace OpenKeep.Salvage
             Language.Add("ok_salvage_norecipe", "This item has no recipe to salvage");
             Language.Add("ok_salvage_favourite", "Favourite items are not salvaged");
             Language.Add("ok_salvage_excluded", "This item is excluded from salvaging");
+            Language.Add("ok_salvage_moddata", "Another mod keeps data on this item; it is not salvaged");
             Language.Add("ok_salvage_equipped", "Unequip the item before salvaging it");
             Language.Add("ok_salvage_unknown", "You do not know this recipe yet");
             Language.Add("ok_salvage_nostation", "The recipe's crafting station is not in range");

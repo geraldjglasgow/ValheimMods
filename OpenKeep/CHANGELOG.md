@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.0
+- Stow: the trash can moved off the button row into the gap between the weight and armour readouts on the right
+  of the player panel, on a copy of their plate. The row below the panel is now four buttons and re-centred.
+- Stow: `Confirm Trash` now defaults to off, so the Trash Key, the trash can and Destroy Junk act at once. Turn it
+  on to get the game's popup back.
+- Stow: the `Stow all` button is `Store all` again, next to `Store one`; `Stow All Key` is `Store All Key` and a
+  cfg from 1.1.0 or 1.2.0 keeps its binding. The section `2. Stow` and `OpenKeep.Stow.yml` keep their names.
+- Salvage: new synced settings `Skip Items With Mod Data` (on) and `Mod Data Prefixes` (`ecf_`). An item carrying
+  custom item data under one of the prefixes — data another mod keeps on it, such as EliteCrafting's magic affixes —
+  is no longer listed in the Salvage tab and the Salvage Key refuses it with a reason, so salvaging cannot destroy
+  what that mod added. With EliteCrafting installed, OpenKeep salvages ordinary items into materials and
+  EliteCrafting grinds its magic items into shards.
+
 ## 1.2.0
 
 - Reach: new `stations:` map in `OpenKeep.Reach.yml` — per station prefab `enabled` and `allow` / `deny` item

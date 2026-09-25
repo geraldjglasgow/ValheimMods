@@ -19,12 +19,15 @@ namespace OpenKeep.Salvage
         public static ConfigEntry<bool> UpgradeMaterials { get; private set; }
         public static ConfigEntry<bool> RequireKnownRecipe { get; private set; }
         public static ConfigEntry<bool> RequireStation { get; private set; }
+        public static ConfigEntry<bool> SkipModData { get; private set; }
+        public static ConfigEntry<string> ModDataPrefixes { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SalvageKey { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
         {
             BindReturns(synced);
             BindConditions(synced);
+            BindModData(synced);
         }
 
         private static void BindReturns(SyncedConfiguration synced)
@@ -50,6 +53,14 @@ namespace OpenKeep.Salvage
                 "Salvaging needs the recipe's crafting station within its build range (any level). Items whose recipe has no station are unaffected.");
             SalvageKey = synced.Bind(Section, "Salvage Key", new KeyboardShortcut(KeyCode.Backspace),
                 "Hovering an item in the inventory: salvages the whole stack after a yes/no confirmation. Per player.", synced: false);
+        }
+
+        private static void BindModData(SyncedConfiguration synced)
+        {
+            SkipModData = synced.Bind(Section, "Skip Items With Mod Data", true,
+                "Items carrying item data another mod keeps on them (a key starting with one of the Mod Data Prefixes) are not listed and not salvaged, so salvaging cannot destroy what that mod added to the item.");
+            ModDataPrefixes = synced.Bind(Section, "Mod Data Prefixes", "ecf_",
+                "Item data key prefixes that Skip Items With Mod Data looks for, separated by commas. Case-sensitive. The default ecf_ marks EliteCrafting's magic items.");
         }
     }
 }

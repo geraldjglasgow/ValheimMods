@@ -30,18 +30,18 @@ that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
   every container in range to the stations it serves, and placing a chest draws them too.
 
 ### Stow: stow, top up, sort, junk, route
-A row of buttons just below the player panel (`Quick stack`, `Stow all`, `Top up`, `Sort`, a trash can) and a
-`Sort` button below the open container's panel, under its `Take all` line; `Button Row Offset` moves both up or
-down if your screen layout needs it. Every action also has a hotkey that works while the inventory is open. The module is
+A row of buttons just below the player panel (`Quick stack`, `Store all`, `Top up`, `Sort`), a trash can between
+the weight and armour readouts on the panel's right, and a `Sort` button below the open container's panel, under
+its `Take all` line; `Button Row Offset` moves the rows up or down if your screen layout needs it. Every action also has a hotkey that works while the inventory is open. The module is
 one workflow for coming home with a full inventory. Open a chest and stow: quick stack (`Q`) moves every stack
 whose item the open container (or, with `Quick Stack Nearby`, any container within `Nearby Range`) already holds,
-and `Stow all` (`G`) moves everything that may move into the open container. Then top up (`R`): every stack you
+and `Store all` (`G`) moves everything that may move into the open container. Then top up (`R`): every stack you
 carry that is not full is refilled from the chests, so you leave with what you came with. Sort (`T` for the
 inventory, `Y` for the container) orders by `Category`, `Name`, `Weight` or `Value`; the hotbar, favourite slots
 and equipped items stay put and stacks merge; with `Sort Favourite Items` off, favourite items stay put too —
 turn it off when another mod keeps items in extra slots the sort would pull out, and favourite those items. What you never want to keep is junk: mark an item with `J`, and
 `Destroy Junk` (Shift + Delete) destroys every junk stack in one go; `Trash Key` (Delete) destroys the hovered
-stack and the trash can takes a dragged one, each after the game's confirmation popup. What does not belong in
+stack and the trash can takes a dragged one, at once (turn on `Confirm Trash` for the game's popup first). What does not belong in
 the open chest is routed: Ctrl + click sends a stack to the nearest container that holds the item, an item of its
 group, or accepts it in `OpenKeep.Stow.yml`; Store one (`V`) sends a single item; Find (`Z`) marks every nearby
 container holding the hovered item with a line and a count; Dump (Alt + D) quick stacks to every nearby container
@@ -59,8 +59,13 @@ Favourites and junk marks are saved with the character and follow it between wor
 A third tab, `Salvage`, after Craft and Upgrade. It lists every stack in your inventory that has a recipe; select
 one and the requirement rows show what comes back, the craft button reads `Salvage`. Returns are `Return
 Fraction` (0.75) of each material, rounded, at least one, upgrade materials included; never more than the item
-cost. Trophies, quest items, favourites and items on the deny list of `OpenKeep.Salvage.yml` are not listed. `Salvage
-Key` (Backspace) salvages the hovered stack after confirmation. If the materials do not fit, nothing happens.
+cost. Trophies, quest items, favourites and items on the deny list of `OpenKeep.Salvage.yml` are not listed. Nor are
+items carrying another mod's item data (`Skip Items With Mod Data`, on; `Mod Data Prefixes`, default `ecf_`), so
+salvaging never destroys affixes or other state a mod keeps on the item. `Salvage Key` (Backspace) salvages the
+hovered stack after confirmation. If the materials do not fit, nothing happens.
+
+With EliteCrafting installed: OpenKeep salvages ordinary crafted items into materials and leaves EliteCrafting's
+magic items alone; those are ground into shards by EliteCrafting's own Salvage key.
 
 ### Stacks: stack sizes and weights
 `Stack Multiplier` and `Weight Multiplier` (both 1 by default) scale every item; `OpenKeep.Stacks.yml` sets
@@ -117,7 +122,7 @@ in section `0. Containers` (default `Off`) changes that:
   and its tooltip says `<name> is moving this`. A request without an answer after `Request Timeout` (2 s)
   counts as refused: `The chest did not answer`.
 
-OpenKeep's own quick stack, stow all, top up, routing, store one, dump and trash work into a shared chest the
+OpenKeep's own quick stack, store all, top up, routing, store one, dump and trash work into a shared chest the
 same way; the message for such a chest arrives when its answer does (`Moved n stacks to Chest`). Sorting a
 chest someone else is using is refused. Crafting, building and station feeding never count or pay from a chest
 another player is using, whatever the mode, so a requirement is never shown as covered by an item the other
@@ -132,7 +137,7 @@ player may take first. Both players need the mod; a player without it gets the g
 | `1. Reach / Toggle Key` | LeftAlt + R | Reach on or off for this character |
 | `1. Reach / Link Key` | LeftAlt + L | draws the container to station lines for `Link Seconds` |
 | `2. Stow / Quick Stack Key` | Q | quick stack |
-| `2. Stow / Stow All Key` | G | stow all into the open container |
+| `2. Stow / Store All Key` | G | store all into the open container |
 | `2. Stow / Top Up Key` | R | top up from containers |
 | `2. Stow / Sort Inventory Key` | T | sort the player inventory |
 | `2. Stow / Sort Container Key` | Y | sort the open container |

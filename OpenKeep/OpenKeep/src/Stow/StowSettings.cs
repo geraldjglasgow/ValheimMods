@@ -16,7 +16,7 @@ namespace OpenKeep.Stow
         public static ConfigEntry<bool> Enabled { get; private set; }
         public static ConfigEntry<KeyboardShortcut> QuickStackKey { get; private set; }
         public static ConfigEntry<bool> QuickStackNearby { get; private set; }
-        public static ConfigEntry<KeyboardShortcut> StowAllKey { get; private set; }
+        public static ConfigEntry<KeyboardShortcut> StoreAllKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> TopUpKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SortInventoryKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SortContainerKey { get; private set; }
@@ -66,7 +66,7 @@ namespace OpenKeep.Stow
                 "Inventory open: every non-favourite stack whose item already exists in the open container (or, with no container open, in any nearby container) moves there.", synced: false);
             QuickStackNearby = synced.Bind(Section, "Quick Stack Nearby", true,
                 "Quick stack also reaches every nearby container, not only the open one. Off also disables the Dump key.");
-            StowAllKey = synced.Bind(Section, "Stow All Key", RenamedKeys.Carry(synced.Config, Section, "Store All Key", "Stow All Key", new KeyboardShortcut(KeyCode.G)),
+            StoreAllKey = synced.Bind(Section, "Store All Key", RenamedKeys.Carry(synced.Config, Section, "Stow All Key", "Store All Key", new KeyboardShortcut(KeyCode.G)),
                 "Inventory open with a container: every non-favourite item moves into the open container as far as it fits.", synced: false);
             TopUpKey = synced.Bind(Section, "Top Up Key", RenamedKeys.Carry(synced.Config, Section, "Restock Key", "Top Up Key", new KeyboardShortcut(KeyCode.R)),
                 "Inventory open: every stack in the inventory that is not full is topped up from the open container or nearby containers. Favourite items included.", synced: false);
@@ -110,9 +110,9 @@ namespace OpenKeep.Stow
             TrashKey = synced.Bind(Section, "Trash Key", new KeyboardShortcut(KeyCode.Delete),
                 "Hovering an item: the stack is trashed after confirmation.", synced: false);
             DestroyJunkKey = synced.Bind(Section, "Destroy Junk Key", RenamedKeys.Carry(synced.Config, Section, "Trash Flagged Key", "Destroy Junk Key", new KeyboardShortcut(KeyCode.Delete, KeyCode.LeftShift)),
-                "Destroys every junk stack in the inventory after confirmation.", synced: false);
-            ConfirmTrash = synced.Bind(Section, "Confirm Trash", true,
-                "The game's popup asks before anything is destroyed; gamepad confirm and cancel work.", synced: false);
+                "Destroys every junk stack in the inventory (after the popup when Confirm Trash is on).", synced: false);
+            ConfirmTrash = synced.Bind(Section, "Confirm Trash", false,
+                "The game's popup asks before anything is destroyed; gamepad confirm and cancel work. Off by default: trashing is immediate.", synced: false);
             TrashUsesSalvage = synced.Bind(Section, "Trash Uses Salvage", false,
                 "Trashing a whole stack from the inventory salvages it instead (section 3) when the item can be salvaged.", synced: false);
         }

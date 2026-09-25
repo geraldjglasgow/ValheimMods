@@ -7,7 +7,7 @@ namespace OpenKeep.Stow
     public static class StowWords
     {
         public const string QuickStack = "$ok_stow_quickstack";
-        public const string StowAll = "$ok_stow_stowall";
+        public const string StoreAll = "$ok_stow_storeall";
         public const string TopUp = "$ok_stow_topup";
         public const string Sort = "$ok_stow_sort";
         public const string Trash = "$ok_stow_trash";
@@ -45,7 +45,7 @@ namespace OpenKeep.Stow
         public static void Register()
         {
             Language.Add("ok_stow_quickstack", "Quick stack");
-            Language.Add("ok_stow_stowall", "Stow all");
+            Language.Add("ok_stow_storeall", "Store all");
             Language.Add("ok_stow_topup", "Top up");
             Language.Add("ok_stow_sort", "Sort");
             Language.Add("ok_stow_trash", "Trash");

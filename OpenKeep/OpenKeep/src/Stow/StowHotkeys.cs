@@ -32,8 +32,8 @@ namespace OpenKeep.Stow
         {
             if (Keys.Pressed(StowSettings.QuickStackKey))
                 StowActions.QuickStack();
-            else if (Keys.Pressed(StowSettings.StowAllKey))
-                StowActions.StowAll();
+            else if (Keys.Pressed(StowSettings.StoreAllKey))
+                StowActions.StoreAll();
             else if (Keys.Pressed(StowSettings.TopUpKey))
                 TopUp.Run();
             else if (Keys.Pressed(StowSettings.SortInventoryKey))

@@ -4,7 +4,7 @@ using OpenKeep.Core;
 namespace OpenKeep.Stow
 {
     /// <summary>
-    /// Quick stack, stow all and dump: the player's movable stacks go into containers, as far as they fit, every
+    /// Quick stack, store all and dump: the player's movable stacks go into containers, as far as they fit, every
     /// stack through the writer (<see cref="ChestBatch"/>). What moved at once is reported at the end; a shared
     /// chest reports itself when its replies are in. Equipped items, quest items, favourite items, favourite slots
     /// and stacks with a request under way stay; a container's <c>refuse</c> list is honoured.
@@ -56,7 +56,7 @@ namespace OpenKeep.Stow
         }
 
         /// <summary>Every movable item goes into the open container as far as it fits.</summary>
-        public static void StowAll()
+        public static void StoreAll()
         {
             if (!Ready(out Player player))
                 return;
