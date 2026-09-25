@@ -99,6 +99,7 @@ namespace FeastMaster
         private static bool BindAll(ObjectDB db)
         {
             int entriesBefore = FoodConfigs.Count + MeadConfigs.Count;
+            bool restedBound = false;
             ConfigFile configFile = synced.Config;
             bool saveOnSet = configFile.SaveOnConfigSet;
             configFile.SaveOnConfigSet = false;
@@ -107,13 +108,14 @@ namespace FeastMaster
             {
                 foreach (GameObject prefab in db.m_items)
                     BindConsumable(prefab);
+                restedBound = Rested.Bind(db);
             }
             finally
             {
                 configFile.SaveOnConfigSet = saveOnSet;
                 ItemValues.SuspendWhileBinding(false);
             }
-            bool changed = FoodConfigs.Count + MeadConfigs.Count != entriesBefore;
+            bool changed = restedBound || FoodConfigs.Count + MeadConfigs.Count != entriesBefore;
             if (changed && saveOnSet)
                 configFile.Save();
             return changed;
@@ -185,7 +187,7 @@ namespace FeastMaster
 
             MeadEffectConfig config = new MeadEffectConfig
             {
-                Duration = BindMigratedMead(prefabName, "Duration", effect.m_ttl, $"Duration of {prefabName} effect in seconds."),
+                Duration = BindMigratedMead(prefabName, "Duration", effect.m_ttl, $"Duration of {prefabName} effect in seconds. While it runs, neither this mead nor another of its group (the healing meads, for example) can be drunk, so this is also the mead's cooldown."),
                 HealthOverTime = BindMigratedMead(prefabName, "HealthOverTime", effect.m_healthOverTime, $"Total health restored over time by {prefabName}."),
                 StaminaOverTime = BindMigratedMead(prefabName, "StaminaOverTime", effect.m_staminaOverTime, $"Total stamina restored over time by {prefabName}."),
                 EitrOverTime = BindMigratedMead(prefabName, "EitrOverTime", effect.m_eitrOverTime, $"Total eitr restored over time by {prefabName}."),

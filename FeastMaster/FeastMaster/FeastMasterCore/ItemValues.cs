@@ -54,6 +54,7 @@ namespace FeastMaster
             Copies.ApplyAll(ApplyNamed);
             foreach (KeyValuePair<string, SE_Stats> mead in meads)
                 ApplyMead(mead.Key, mead.Value);
+            Rested.ApplyAll();
             RefreshEatenFood();
         }
 

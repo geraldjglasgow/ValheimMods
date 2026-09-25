@@ -5,7 +5,7 @@
     <AssemblyName>FeastMaster</AssemblyName>
     <RootNamespace>FeastMaster</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>4.4.0</Version>
+    <Version>4.5.0</Version>
     <Product>FeastMaster</Product>
     <Description>FeastMaster: configure food and mead values in Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

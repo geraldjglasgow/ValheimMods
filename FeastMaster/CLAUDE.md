@@ -44,6 +44,10 @@ FeastMaster/FeastMaster/FeastMasterCore/
   ScenePrefabs.cs         ZNetScene.Awake pass: binds the station sections and every feast's food section, file
                           written and item values applied once
   CookTimes.cs            one section per cooking station prefab, one entry per recipe (raw item)
+  SettingsEating.cs       Allow Auto Eat (section 0, synced) and Auto Eat (section 8, per player)
+  AutoEat.cs              Auto Eat (Player.UpdateFood prefix/postfix, local player)
+  Rested.cs               Rested entries in section 2, bound from the item database with the effect asset's values
+                          as defaults; written into the asset and the local player's running effect by ItemValues
   FeastServings.cs        Feast Servings (Feast.GetStack, GetStackPercentige capped at 1, GetHoverText)
   Cooking.cs              cook times and burning (CookingStation.UpdateCooking, on the station's owner)
   ItemValues.cs           writes the configured values into the items' shared data (the prefab and every live
@@ -82,6 +86,7 @@ parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOther
 `Player.GetBuildStamina`, `Player.GetDodgeStaminaUse`, `Player.GetTotalFoodValue` (`ref float stamina`),
 `Player.OnSwimming` (stroke timer), `Player.UpdateStats(float)` (encumbered and swimming regen),
 `SEMan.ModifyStaminaRegen`, `SEMan.ModifyEitrRegen`.
+Prefix and postfix: `Player.UpdateFood` (Auto Eat; the expiring food in the prefix, the refill in the postfix).
 Prefix: `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
 `Player.UpdateFood`, `SEMan.AddStatusEffect(StatusEffect, ...)` (target picked by first parameter),
 `Skills.RaiseSkill` (`ref float factor`).
@@ -177,6 +182,16 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
 - Feast food: the feast's `m_foodItem` (or the feast prefab's own ItemDrop) is bound as a food from the ZNetScene
   pass whatever its item type, so its values and the global modifiers apply like any food's. Placed feasts get
   the values through the ItemDrop.Awake copy hook and `Player.EatFood`.
+- Mead cooldown: the game has none of its own. A mead cannot be drunk while its own effect or one of the same
+  category runs (`Player.CanConsumeItem`), so `Duration` is the cooldown; decided with the user to document that
+  rather than add a separate entry.
+- Auto Eat: the server permits (`Allow Auto Eat`, synced, default off) and each player opts out (`Auto Eat` in
+  section 8, default on), decided with the user. The replacement is the same food by shared name, eaten through
+  `Humanoid.UseItem` with `fromInventoryGui: true` (otherwise it would be used on the hovered interactable, a
+  cooking station for example). No food of the same kind: nothing is eaten.
+- Rested lives in `2. Stamina Regeneration`: a new numbered section would sort `10.` before `2.`. Its entries are
+  absolute values with the effect asset's as defaults, like the food and mead sections. A changed duration applies
+  from the next rest (the game computes the running effect's time once, at the start); regeneration follows at once.
 
 ## Test checklist (LocalTesting profile)
 
@@ -238,3 +253,11 @@ from a script.
     placed feast gives.
 36. Lower `Feast Servings` below a started feast's remaining servings, then deconstruct it: no more feasts come back
     than were placed.
+37. `Allow Auto Eat` on, two cooked meat in the inventory, `Food Rate` 50: when the eaten meat runs out another is
+    eaten with the eat sound, and the stack drops by one; with none left nothing is eaten. `Auto Eat` off in
+    section 8: nothing is eaten for this player only. `Allow Auto Eat` off on the server: nobody auto-eats.
+38. Auto Eat while looking at a cooking station: the meat is eaten, not put on the station.
+39. `Rested Duration` 60 and `Rested Duration Per Comfort` 0: after sleeping, Rested shows one minute. `Rested
+    Stamina Regen` 3 while rested: stamina refills visibly faster at once, without resting again.
+40. A mead's description in the file mentions the cooldown; `Duration` 30 on Minor Healing Mead lets the next one be
+    drunk after 30 s.

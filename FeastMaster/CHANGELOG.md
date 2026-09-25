@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.5.0
+
+- Auto Eat: a food that runs out is replaced by another of the same from the inventory. The server allows it
+  (`Allow Auto Eat`, off by default); each player can turn it off (`Auto Eat` in `8. Display`).
+- Rested: `Rested Duration`, `Rested Duration Per Comfort` and the rested stamina, health and eitr regeneration, in
+  `2. Stamina Regeneration`. Defaults are the game's values.
+- A mead's `Duration` is also its cooldown; its description now says so.
+
 ## 4.4.0
 
 - Feasts: `Feast Servings` in `9. Kitchen` sets how many servings a placed feast holds. A feast already eaten from

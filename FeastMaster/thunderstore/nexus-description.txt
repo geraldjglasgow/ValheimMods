@@ -2,7 +2,7 @@ Nexus Mods page text for FeastMaster (https://www.nexusmods.com/valheim/mods/210
 Paste each block into the matching field on the page's edit form. Category: Utilities.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Configure every food and mead: global multipliers, a section per item, a fade curve or no degradation, continuous food healing, Vigor (stamina and eitr regen from food), stamina and eitr regeneration rules, a multiplier for every stamina cost, base values, skill gain, world rate overrides, fermenter brew time and yield, cook times and burning, feast servings, and HUD options. Every setting defaults to vanilla. Server synced, hot reloaded.
+Configure every food and mead: global multipliers, a section per item, a fade curve or no degradation, continuous food healing, Vigor (stamina and eitr regen from food), stamina and eitr regeneration rules, a multiplier for every stamina cost, base values, skill gain, world rate overrides, fermenter brew time and yield, cook times and burning, feast servings, auto eat, the rested buff, and HUD options. Every setting defaults to vanilla. Server synced, hot reloaded.
 
 ===== DESCRIPTION (BBCode) =====
 [size=4][b]Description[/b][/size]
@@ -21,9 +21,10 @@ For manual install, drop FeastMaster.dll into BepInEx/plugins. Jotunn is not req
 [list]
 [*]Global multipliers: health, stamina, eitr, duration and health regen of every food at once.
 [*]Per food: health, stamina, eitr, duration, health regen, Vigor and Eitr Vigor. Configured values show on tooltips right away.
-[*]Per mead: duration, the health, stamina and eitr restored over time, the regeneration multipliers and the run and jump stamina modifiers of its effect.
+[*]Per mead: duration (also its cooldown), the health, stamina and eitr restored over time, the regeneration multipliers and the run and jump stamina modifiers of its effect.
 [*]Food degradation: keep food at full strength, or set the fade curve (0.3 is the game's, 1 linear, higher fades sooner, 0 never fades).
 [*]Eat again: decide how far a food must have run down before it can be eaten again.
+[*]Auto eat: when a food runs out, eat another of the same from the inventory. The server allows it, each player can opt out.
 [*]Fermenter: set how long a batch of mead brews and how many meads it gives. Applies to barrels already brewing.
 [*]Cooking: cook time per recipe on every cooking station and oven, one multiplier for all of them, and a switch that stops food from burning.
 [*]Feasts: set how many servings a placed feast holds.
@@ -34,6 +35,7 @@ For manual install, drop FeastMaster.dll into BepInEx/plugins. Jotunn is not req
 [*]Vigor: a stamina regeneration bonus on every food that lasts as long as the food does. One value gives every food a Vigor in proportion to its stamina, each food can get its own on top, and a multiplier scales the total. Eitr Vigor does the same for eitr.
 [*]Stamina and eitr regeneration: base regen, regen delay and blocking factor; regen per point of extra stamina; a sneak skill bonus while crouched and still; regeneration while encumbered or swimming.
 [*]Regen curves: faster regeneration when the bar is low and slower when it is high, for stamina and for eitr.
+[*]Rested: how long it lasts, how much each comfort level adds, and its stamina, health and eitr regeneration.
 [/list]
 [b]What actions cost[/b]
 [list]
