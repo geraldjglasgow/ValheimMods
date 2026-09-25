@@ -5,7 +5,7 @@
     <AssemblyName>FeastMaster</AssemblyName>
     <RootNamespace>FeastMaster</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>4.2.0</Version>
+    <Version>4.3.0</Version>
     <Product>FeastMaster</Product>
     <Description>FeastMaster: configure food and mead values in Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -50,6 +50,10 @@
     </Reference>
     <Reference Include="assembly_valheim" Publicize="true">
       <HintPath>$(ManagedPath)\assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils">
+      <HintPath>$(ManagedPath)\assembly_utils.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="assembly_guiutils" Publicize="true">

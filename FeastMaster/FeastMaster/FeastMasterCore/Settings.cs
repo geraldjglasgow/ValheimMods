@@ -5,7 +5,7 @@ namespace FeastMaster
 {
     /// <summary>
     /// The numbered global sections 1 to 9. This file holds the regeneration sections (health, stamina, eitr);
-    /// <c>SettingsMore.cs</c> holds costs, base values, skills, world rates and display; <c>SettingsKitchen.cs</c> the fermenter. Every gameplay entry is
+    /// <c>SettingsMore.cs</c> holds costs, base values, skills, world rates and display; <c>SettingsKitchen.cs</c> the kitchen. Every gameplay entry is
     /// synced from the server; the display entries are per client. Values are read at use time so edits, reloads
     /// and server pushes apply at once. BepInEx sorts sections by name, which the numbering relies on.
     /// </summary>
@@ -19,7 +19,7 @@ namespace FeastMaster
         public const string SkillsSection = "6. Skills";
         public const string WorldRatesSection = "7. World Rates";
         public const string DisplaySection = "8. Display";
-        public const string FermenterSection = "9. Fermenter";
+        public const string KitchenSection = "9. Kitchen";
 
         /// <summary>The game's regeneration factor while holding block, replaced by the configured factors.</summary>
         public const float GameBlockingRegenFactor = 0.8f;
@@ -65,7 +65,7 @@ namespace FeastMaster
             BindSkills(config);
             BindWorldRates(config);
             BindDisplay(config);
-            BindFermenter(config);
+            BindKitchen(config);
         }
 
         /// <summary>Called Steady Regeneration up to 4.0.0; the old line's value is carried over.</summary>

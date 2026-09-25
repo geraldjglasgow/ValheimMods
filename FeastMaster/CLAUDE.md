@@ -39,7 +39,10 @@ FeastMaster/FeastMaster/FeastMasterCore/
   Settings.cs             sections 1 to 3: Health Regeneration, Stamina Regeneration, Eitr Regeneration
   SettingsMore.cs         sections 4 to 8: Stamina Costs, Base Values, Skills, World Rates, Display (per client);
                           the FoodTimers enum
-  SettingsKitchen.cs      section 9: Fermenter
+  SettingsKitchen.cs      section 9: Kitchen (fermenter, cook time multiplier, burning; carries over 4.2.0's 9. Fermenter)
+  CookTimes.cs            one section per cooking station prefab found in ZNetScene, one entry per recipe (raw item),
+                          bound on ZNetScene.Awake
+  Cooking.cs              cook times and burning (CookingStation.UpdateCooking, on the station's owner)
   ItemValues.cs           writes the configured values into the items' shared data (the prefab and every live
                           copy, through ItemCopies; new copies via Copies.HookSpawns) and the mead status effect
                           assets on load and on every SettingChanged / ConfigReloaded, then forces the player's
@@ -70,7 +73,7 @@ Startup order in `Awake`: `FeastMasterData.Initialize`, `Settings.Initialize`, `
 
 ## Patched game methods
 
-Postfix: `Attack.GetAttackStamina`, `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
+Postfix: `Attack.GetAttackStamina`, `ZNetScene.Awake` (`Priority.Last`, binds the station sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
 `Hud.UpdateStamina`, `Hud.UpdateEitr`, `Hud.UpdateFood`, `ItemDrop.ItemData.GetTooltip` (static, six
 parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `Player.Food.CanEatAgain`,
 `Player.GetBuildStamina`, `Player.GetDodgeStaminaUse`, `Player.GetTotalFoodValue` (`ref float stamina`),
@@ -79,7 +82,7 @@ parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOther
 Prefix: `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
 `Player.UpdateFood`, `SEMan.AddStatusEffect(StatusEffect, ...)` (target picked by first parameter),
 `Skills.RaiseSkill` (`ref float factor`).
-Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `Fermenter.GetStatus`,
+Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `CookingStation.UpdateCooking`, `Fermenter.GetStatus`,
 `Fermenter.DelayedTap`, `FishingFloat.FixedUpdate`,
 `Humanoid.BlockAttack`, `Player.CheckRun`, `Player.OnSneaking`, `Player.OnSwimming`, `Player.RPC_UseEitr`,
 `Player.RPC_UseStamina`, `Player.UpdateStats(float)` (encumbered cost and the regen basics), `SE_Harpooned.UpdateStatusEffect`.
@@ -91,13 +94,15 @@ against the game assemblies and checks the injected parameter names; run it afte
 ## Config sections
 
 `0. Global Settings`, `1. Health Regeneration`, `2. Stamina Regeneration`, `3. Eitr Regeneration`,
-`4. Stamina Costs`, `5. Base Values`, `6. Skills`, `7. World Rates`, `8. Display` (unsynced), `9. Fermenter`, then one section per
-food prefab (seven entries) and one per mead prefab (nine entries). BepInEx writes sections sorted by name; digits
+`4. Stamina Costs`, `5. Base Values`, `6. Skills`, `7. World Rates`, `8. Display` (unsynced), `9. Kitchen`, then one section per
+food prefab (seven entries), one per mead prefab (nine entries) and one per cooking station prefab (one entry per
+recipe, keyed by the raw item's prefab name). BepInEx writes sections sorted by name; digits
 sort before letters, so the numbered sections come first and the items follow alphabetically. Keys and defaults
 are listed in `README.md`. Renames from 3.3.x with migration: `General/Lock Configuration` to `0. Global Settings`,
 `0Meads_<prefab>` to `<prefab>`. Renames from 4.0.0 with migration (same section, new key; the three settings named
 in the 4.1.0 changelog): `Continuous Food Healing`, `Count Food Stamina Only` and `Regen Per Extra Stamina Point`,
-whose former per-10-points value is divided by 10. Localization keys: `$fm_vigor` ("Vigor"), `$fm_vigor_regen` ("stamina regen"),
+whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migration: section `9. Fermenter` to
+`9. Kitchen` (same keys). Localization keys: `$fm_vigor` ("Vigor"), `$fm_vigor_regen` ("stamina regen"),
 `$fm_eitr_vigor` ("Eitr Vigor"), `$fm_eitr_vigor_regen` ("eitr regen").
 
 ## Decisions where the spec was silent
@@ -154,6 +159,14 @@ whose former per-10-points value is divided by 10. Localization keys: `$fm_vigor
   time applies to barrels already brewing: shorter makes a long-brewing barrel ready at once, longer can turn a
   ready, untapped barrel back to brewing. Every peer evaluates GetStatus (hover, visuals, interact) and the ZDO
   owner rechecks it before a tap and spawns the batch, so the synced value keeps them in agreement.
+- Cook times: one entry per station and recipe, absolute seconds defaulting to the game's time, times the global
+  `Cook Time Multiplier` (the same shape as the food values and their global modifiers). Per station rather than
+  in the cooked food's section, because the same food can cook on more than one station. The cauldron is a
+  crafting station (instant recipes), not a CookingStation, so it has no cook time to configure.
+  `Food Can Burn` off clears the station's `m_canOvercookItems` for the tick; on keeps each station's own flag.
+  Cooking runs only on the station's ZDO owner and the cooked time lives in the ZDO, so the values are applied
+  only there; an edit reaches food already on the fire at the next one-second tick. Food that is already burnt
+  stays burnt, and food already done stays done when the time is raised.
 
 ## Test checklist (LocalTesting profile)
 
@@ -201,3 +214,11 @@ from a script.
 29. Dedicated server, both settings changed in the server's file while a client stands at a barrel: the client's
     hover text and the barrel's lid follow the server's time, and the tap (spawned by the ZDO owner) gives the
     server's yield, whichever client owns the barrel.
+30. `Cook Time Multiplier` 0.1 with raw meat on the cooking station: done in a few seconds instead of the game's
+    time; the station's own section (e.g. `RawMeat`) set to 60 with multiplier 1: done after a minute.
+31. `Food Can Burn` off: cooked meat left on the fire stays cooked for minutes; on again: it burns at the next tick
+    if it has been on for over twice its cook time.
+32. The oven: `Cook Time Multiplier` applies to bread and pies too; the file has a section per station with one
+    entry per recipe, and a 4.2.0 file's `9. Fermenter` values appear under `9. Kitchen` after the first start.
+33. Dedicated server, change `Cook Time Multiplier` in the server's file while a client cooks: the food follows
+    the server's value whichever player owns the station, without a restart.

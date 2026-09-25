@@ -11,6 +11,7 @@ A comprehensive food and mead configuration mod for Valheim; the server's settin
 - **Food Degradation** - Keep food at full strength or pick your own fade curve (linear, faster, slower)
 - **Eat Again** - Decide how far a food must have run down before it can be eaten again
 - **Fermenter** - Set how long a batch of mead brews and how many meads it gives
+- **Cooking** - Cook time per recipe on every cooking station and oven, one multiplier for all of them, and a switch that stops food from burning
 
 **How you recover**
 - **Continuous Food Healing** - The food's regen is healed a little every frame over the 10 seconds instead of once
@@ -35,7 +36,7 @@ setting defaults to vanilla behaviour, nothing changes until you opt in; changes
 restarting the game, and on a server the server's configuration applies to every connected player.
 
 ### Settings
-The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start. The numbered sections hold the global settings, in order; below them every food and mead has a section named after its prefab. Foods and meads are discovered from the game, so modded consumables get sections too.
+The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start. The numbered sections hold the global settings, in order; below them every food, mead and cooking station has a section named after its prefab. Foods and meads are discovered from the game, so modded consumables get sections too.
 
 | Section | What it does |
 | --- | --- |
@@ -48,11 +49,12 @@ The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start.
 | `6. Skills` | `Run/Jump/Sneak/Swim/Fishing Skill Gain`: experience multipliers, on top of the world's skill gain rate |
 | `7. World Rates` | `Food Rate`, `Stamina Rate`, `Move Stamina Rate`, `Stamina Regen Rate`: above 0 overrides the world modifier, 0 leaves the world's value |
 | `8. Display` | `Hide Health Number`, `Hide Stamina Number`, `Hide Eitr Number`, `Food Timers` (Vanilla, Always, Never); per player and not synced |
-| `9. Fermenter` | `Fermentation Time` (seconds a batch brews; 0 keeps the barrel's own, the game's is 2400) and `Batch Yield` (meads per batch; 0 keeps each recipe's own). Both apply to barrels already brewing |
+| `9. Kitchen` | `Fermentation Time` (seconds a batch brews; 0 keeps the barrel's own, the game's is 2400) and `Batch Yield` (meads per batch; 0 keeps each recipe's own), both applying to barrels already brewing; `Cook Time Multiplier` (on every recipe of every cooking station and oven, 0.5 cooks twice as fast) and `Food Can Burn` (off: cooked food waits on the station forever) |
 | one per food | `Health`, `Stamina`, `Eitr`, `Duration`, `HealthRegen`, `Vigor` (extra percent of stamina regeneration while the food is active, added to the food's stamina times `Vigor Per Stamina Point`) and `EitrVigor` (the same for eitr) |
+| one per cooking station | Named after the station's prefab; one entry per recipe, named after the raw item: seconds it takes to cook, defaulting to the game's time. `Cook Time Multiplier` applies on top. Modded stations get a section too |
 | one per mead | `Duration`, `HealthOverTime`, `StaminaOverTime`, `EitrOverTime`, `HealthRegenMultiplier`, `StaminaRegenMultiplier`, `EitrRegenMultiplier`, `RunStaminaModifier`, `JumpStaminaModifier` (-0.2 makes running 20% cheaper while the mead lasts) |
 
-Everything except the Display section is synced from the server and hot reloads when the file is edited (in game or with ConfigurationManager). A config file from 3.3.x or 4.0.0 keeps working: the moved `Lock Configuration`, the renamed mead sections and the settings renamed in 4.1.0 are carried over on the first start.
+Everything except the Display section is synced from the server and hot reloads when the file is edited (in game or with ConfigurationManager). A config file from 3.3.x, 4.0.0 or 4.2.0 keeps working: the moved `Lock Configuration`, the renamed mead sections, the settings renamed in 4.1.0 and section `9. Fermenter` (renamed `9. Kitchen` in 4.3.0) are carried over on the first start.
 
 Vigor and `Regen Per Extra Stamina Point` both reward stamina from food, so with both switched on food stamina counts twice. Pick one: Vigor for a per-food value shown on the tooltip, extra stamina for a rule that also counts meads and gear.
 

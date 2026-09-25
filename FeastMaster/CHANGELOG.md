@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3.0
+
+- Cooking: every cooking station and oven gets its own section with the cook time of each recipe, and `9. Kitchen`
+  gets `Cook Time Multiplier` for all of them and `Food Can Burn`. Defaults are the game's values; edits reach food
+  already on the fire.
+- Section `9. Fermenter` is now `9. Kitchen`. Its values carry over.
+
 ## 4.2.0
 
 - New `9. Fermenter`: `Fermentation Time` and `Batch Yield`. Both default to the game's values, sync from the server
