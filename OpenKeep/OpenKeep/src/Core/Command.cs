@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using HarmonyLib;
+using OpenKeep.Signs;
+using OpenKeep.Stacks;
 using PatchGuard;
 using UnityEngine;
 
@@ -10,8 +11,7 @@ namespace OpenKeep.Core
     /// <summary>
     /// The <c>openkeep</c> console command: <c>reload</c> (cfg and every YAML file; admin or host on a server),
     /// <c>containers</c> (the reachable containers around the player), <c>write docs</c> (the Stacks module's
-    /// documentation files) and <c>signs</c> (the Signs module's list, reset and rewrite), the last two through
-    /// reflection so Core does not depend on those modules.
+    /// documentation files) and <c>signs</c> (the Signs module's list, reset and rewrite).
     /// </summary>
     public static class Command
     {
@@ -91,28 +91,11 @@ namespace OpenKeep.Core
                 args.Context.AddString("Usage: openkeep write docs");
                 return;
             }
-            Type documentation = typeof(Command).Assembly.GetType("OpenKeep.Stacks.Documentation");
-            MethodInfo write = documentation?.GetMethod("Write", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static, null, Type.EmptyTypes, null);
-            if (write == null)
-            {
-                args.Context.AddString("OpenKeep: the Stacks module is not built; there is nothing to write.");
-                return;
-            }
-            write.Invoke(null, null);
+            Documentation.Write();
             args.Context.AddString("OpenKeep: documentation files written next to the cfg.");
         }
 
-        private static void Signs(Terminal.ConsoleEventArgs args)
-        {
-            Type command = typeof(Command).Assembly.GetType("OpenKeep.Signs.SignsCommand");
-            MethodInfo run = command?.GetMethod("Run", BindingFlags.Public | BindingFlags.Static, null, new[] { typeof(Terminal.ConsoleEventArgs) }, null);
-            if (run == null)
-            {
-                args.Context.AddString("OpenKeep: the Signs module is not built.");
-                return;
-            }
-            run.Invoke(null, new object[] { args });
-        }
+        private static void Signs(Terminal.ConsoleEventArgs args) => SignsCommand.Run(args);
     }
 
     /// <summary>Registers the command once the game has set up its own; InitTerminal itself runs only once.</summary>

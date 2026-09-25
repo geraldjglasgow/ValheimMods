@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1
+- The `openkeep signs` and `openkeep write docs` console commands call the Signs and Stacks code directly instead
+  of looking it up by name through reflection. No change in behaviour.
+
 ## 1.4.0
 - Stow: quick stack, store all, dump and sort only work on the rows of the player inventory that the game gives you
   (four, more once bought from the trader). Mods such as ExtraSlots keep their equipment, food and ammo slots in rows
