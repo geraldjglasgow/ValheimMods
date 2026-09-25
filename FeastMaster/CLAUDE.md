@@ -44,7 +44,9 @@ FeastMaster/FeastMaster/FeastMasterCore/
   ScenePrefabs.cs         ZNetScene.Awake pass: binds the station sections and every feast's food section, file
                           written and item values applied once
   CookTimes.cs            one section per cooking station prefab, one entry per recipe (raw item)
-  SettingsEating.cs       Allow Auto Eat (section 0, synced) and Auto Eat (section 8, per player)
+  SettingsEating.cs       Food Slots and Allow Auto Eat (section 0, synced), Auto Eat (section 8, per player)
+  FoodSlots.cs            Food Slots (Player.CanEat and Player.EatFood prefixes)
+  FoodSlotsHud.cs         five food slots on the HUD (Hud.Awake postfix copies the last slot)
   AutoEat.cs              Auto Eat (Player.UpdateFood prefix/postfix, local player)
   Rested.cs               Rested entries in section 2, bound from the item database with the effect asset's values
                           as defaults; written into the asset and the local player's running effect by ItemValues
@@ -80,14 +82,15 @@ Startup order in `Awake`: `FeastMasterData.Initialize`, `Settings.Initialize`, `
 
 ## Patched game methods
 
-Postfix: `Attack.GetAttackStamina`, `Feast.GetStackPercentige` (capped at 1), `ZNetScene.Awake` (`Priority.Last`, binds the station and feast food sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
+Postfix: `Attack.GetAttackStamina`, `Hud.Awake` (food slots), `Feast.GetStackPercentige` (capped at 1), `ZNetScene.Awake` (`Priority.Last`, binds the station and feast food sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
 `Hud.UpdateStamina`, `Hud.UpdateEitr`, `Hud.UpdateFood`, `ItemDrop.ItemData.GetTooltip` (static, six
 parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `Player.Food.CanEatAgain`,
 `Player.GetBuildStamina`, `Player.GetDodgeStaminaUse`, `Player.GetTotalFoodValue` (`ref float stamina`),
 `Player.OnSwimming` (stroke timer), `Player.UpdateStats(float)` (encumbered and swimming regen),
 `SEMan.ModifyStaminaRegen`, `SEMan.ModifyEitrRegen`.
 Prefix and postfix: `Player.UpdateFood` (Auto Eat; the expiring food in the prefix, the refill in the postfix).
-Prefix: `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
+Prefix: `Player.CanEat` and `Player.EatFood` (`Priority.Low`) for Food Slots, skipping the game's method only where
+the configured count and 3 decide differently; `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
 `Player.UpdateFood`, `SEMan.AddStatusEffect(StatusEffect, ...)` (target picked by first parameter),
 `Skills.RaiseSkill` (`ref float factor`).
 Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `CookingStation.UpdateCooking`, `Feast.GetStack`, `Feast.GetStackPercentige`, `Feast.GetHoverText`, `Fermenter.GetStatus`,
@@ -192,6 +195,13 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
 - Rested lives in `2. Stamina Regeneration`: a new numbered section would sort `10.` before `2.`. Its entries are
   absolute values with the effect asset's as defaults, like the food and mead sections. A changed duration applies
   from the next rest (the game computes the running effect's time once, at the start); regeneration follows at once.
+- Food Slots: 1 to 5, synced, always available (no boss unlock), decided with the user. The game's 3 is a literal
+  in `CanEat` and `EatFood` only (the `m_maxFoods` constant is unused); the totals, the regen and the save handle
+  any count, so a removed mod leaves extra foods to run out. The prefixes run the game's method whenever it would
+  decide the same, and replicate its eat (message, add or replace the most depleted, statistics, forced update)
+  otherwise. Lowering the count keeps extra foods until they run out. The HUD is always built with five slots,
+  unused ones hidden by the game's own loop; the prefab's hierarchy is not visible outside the game, so the copy
+  finds each element's slot root at run time instead of assuming a layout.
 
 ## Test checklist (LocalTesting profile)
 
@@ -261,3 +271,10 @@ from a script.
     Stamina Regen` 3 while rested: stamina refills visibly faster at once, without resting again.
 40. A mead's description in the file mentions the cooldown; `Duration` 30 on Minor Healing Mead lets the next one be
     drunk after 30 s.
+41. `Food Slots` 5: five different foods can be eaten; the HUD shows five icons with timers in one line with the
+    first three, nothing overlapping; the sixth food is refused as full unless one can be eaten again, and then
+    replaces the most depleted. Health and stamina include all five.
+42. Log out and back in with five foods: all five are back. `Food Slots` 3 with five active: nothing is removed, no
+    new food until fewer than three remain (or one can be eaten again).
+43. `Food Slots` 1: a second food is refused as full; once the first can be eaten again, a different food replaces it.
+44. A feast and Auto Eat with `Food Slots` 4: eating from a feast fills the fourth slot; Auto Eat refills it.

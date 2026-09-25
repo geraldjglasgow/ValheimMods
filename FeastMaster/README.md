@@ -10,6 +10,7 @@ A comprehensive food and mead configuration mod for Valheim; the server's settin
 - **Mead Customization** - Duration (which is also the mead's cooldown), the health, stamina and eitr restored over time, regeneration multipliers and run/jump stamina modifiers, per mead
 - **Food Degradation** - Keep food at full strength or pick your own fade curve (linear, faster, slower)
 - **Eat Again** - Decide how far a food must have run down before it can be eaten again
+- **Food Slots** - Up to five foods at once, or fewer than the game's three
 - **Auto Eat** - When a food runs out, eat another of the same from the inventory; the server allows it, each player can opt out
 - **Fermenter** - Set how long a batch of mead brews and how many meads it gives
 - **Cooking** - Cook time per recipe on every cooking station and oven, one multiplier for all of them, and a switch that stops food from burning
@@ -43,7 +44,7 @@ The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start.
 
 | Section | What it does |
 | --- | --- |
-| `0. Global Settings` | Multipliers for health, stamina, eitr, duration and health regen of all foods; `Disable Food Degradation`; `Degradation Curve` (0.3 is the game's curve, 1 linear, higher fades sooner, 0 never fades); `Eat Again At` (fraction of the duration below which food can be re-eaten, game 0.5); `Allow Auto Eat` (a food that runs out is replaced by another of the same from the inventory); `Lock Configuration` (the server's values are enforced on every client) |
+| `0. Global Settings` | Multipliers for health, stamina, eitr, duration and health regen of all foods; `Disable Food Degradation`; `Degradation Curve` (0.3 is the game's curve, 1 linear, higher fades sooner, 0 never fades); `Eat Again At` (fraction of the duration below which food can be re-eaten, game 0.5); `Food Slots` (foods active at once, 1 to 5, game 3; lowering it keeps extra foods until they run out); `Allow Auto Eat` (a food that runs out is replaced by another of the same from the inventory); `Lock Configuration` (the server's values are enforced on every client) |
 | `1. Health Regeneration` | `Continuous Food Healing`: the food regen amount is spread over the 10 seconds and healed a little every frame, no floating numbers |
 | `2. Stamina Regeneration` | `Stamina Regen Multiplier`, `Low Stamina Regen Bonus`, `Stamina Regen Delay`, `Blocking Regen Factor` (game 0.8); `Vigor Per Stamina Point` and `Vigor Multiplier`; `Regen Curve Strength` and `Regen Curve Pivot` (faster regen when the bar is low, slower when high); `Regen Per Extra Stamina Point` (percent per point of stamina above the base) and `Count Food Stamina Only`; `Sneak Skill Regen Bonus` while crouched and still; `Encumbered Regen Fraction`, `Swimming Regen Fraction` and `Swimming Regen Delay`; `Rested Duration` and `Rested Duration Per Comfort` (seconds at comfort 1 and per level above it, the game's values by default, applying from the next rest) and `Rested Stamina/Health/Eitr Regen` |
 | `3. Eitr Regeneration` | `Eitr Vigor Per Eitr Point` and `Eitr Vigor Multiplier`; `Eitr Regen Multiplier`, `Eitr Regen Delay`; `Eitr Regen Curve Strength` and `Eitr Regen Curve Pivot`; `Blocking Eitr Regen Factor` |
@@ -58,6 +59,8 @@ The config file is `BepInEx/config/com.FeastMaster.cfg`, written on first start.
 | one per mead | `Duration` (while it runs, neither this mead nor another of its group, such as the healing meads, can be drunk, so it is also the cooldown), `HealthOverTime`, `StaminaOverTime`, `EitrOverTime`, `HealthRegenMultiplier`, `StaminaRegenMultiplier`, `EitrRegenMultiplier`, `RunStaminaModifier`, `JumpStaminaModifier` (-0.2 makes running 20% cheaper while the mead lasts) |
 
 Everything except the Display section is synced from the server and hot reloads when the file is edited (in game or with ConfigurationManager). A config file from 3.3.x, 4.0.0 or 4.2.0 keeps working: the moved `Lock Configuration`, the renamed mead sections, the settings renamed in 4.1.0 and section `9. Fermenter` (renamed `9. Kitchen` in 4.3.0) are carried over on the first start.
+
+More `Food Slots` add a lot of health and stamina: a fourth and fifth food can be balanced with the health and stamina multipliers in section 0. Another mod that also changes the number of food slots will conflict with this setting; use one or the other.
 
 Vigor and `Regen Per Extra Stamina Point` both reward stamina from food, so with both switched on food stamina counts twice. Pick one: Vigor for a per-food value shown on the tooltip, extra stamina for a rule that also counts meads and gear.
 

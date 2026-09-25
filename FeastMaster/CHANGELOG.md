@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.6.0
+
+- Food Slots: how many foods a player can have active at once, 1 to 5 (the game's 3 by default). The HUD shows the
+  extra foods. Lowering it keeps extra foods until they run out.
+
 ## 4.5.0
 
 - Auto Eat: a food that runs out is replaced by another of the same from the inventory. The server allows it

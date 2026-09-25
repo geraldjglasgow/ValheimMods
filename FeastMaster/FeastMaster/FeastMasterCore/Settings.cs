@@ -66,7 +66,7 @@ namespace FeastMaster
             BindWorldRates(config);
             BindDisplay(config);
             BindKitchen(config);
-            BindAutoEat(config);
+            BindEating(config);
         }
 
         /// <summary>Called Steady Regeneration up to 4.0.0; the old line's value is carried over.</summary>

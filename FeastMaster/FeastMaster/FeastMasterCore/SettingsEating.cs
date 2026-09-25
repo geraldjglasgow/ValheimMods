@@ -3,14 +3,18 @@ using SyncedConfig;
 
 namespace FeastMaster
 {
-    /// <summary>Auto Eat: the server's permission in section 0, the player's own choice in section 8.</summary>
+    /// <summary>Food Slots, and Auto Eat: the server's permission in section 0, the player's own choice in section 8.</summary>
     public static partial class Settings
     {
         public static ConfigEntry<bool> AllowAutoEat { get; private set; }
         public static ConfigEntry<bool> AutoEat { get; private set; }
+        public static ConfigEntry<int> FoodSlots { get; private set; }
 
-        private static void BindAutoEat(SyncedConfiguration config)
+        private static void BindEating(SyncedConfiguration config)
         {
+            FoodSlots = config.Bind(FeastMasterData.GlobalSection, "Food Slots", global::FeastMaster.FoodSlots.GameSlots,
+                "How many foods a player can have active at once. The game uses 3. More slots add a lot of health and stamina; the global multipliers above can balance that. Lowering it keeps extra foods until they run out.",
+                acceptableValues: new AcceptableValueRange<int>(1, global::FeastMaster.FoodSlots.MaxSlots));
             AllowAutoEat = config.Bind(FeastMasterData.GlobalSection, "Allow Auto Eat", false,
                 "When on, a player whose food runs out automatically eats another of the same food from their inventory, if they have one. Each player can still turn it off for themselves with Auto Eat in section 8.");
             AutoEat = config.Bind(DisplaySection, "Auto Eat", true,
