@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.6.1
+
+**Admin commands work for admins on a dedicated server.** A player on the server's `adminlist.txt` could be told that
+`elite spawn`, `inspect`, `purge`, `effects` and `reference` need admin rights. The mod now asks the server, which
+checks the player against its own admin list the same way the game checks `kick` and `ban`.
+
+- **Update the server as well as every player**: the server answers the check. A player on 3.6.1 whose server still
+  runs an older version is told the server did not answer.
+- A refusal names the exact ID the server knows the player by, ready to add to `adminlist.txt`. The server reads the
+  file again within 10 seconds, so no restart or reconnect is needed, and it logs every check.
+- A mistyped `elite` subcommand now lists the subcommands for every player, admin or not.
+
 ## 3.6.0
 
 **World tiers.** The world now hardens as bosses fall. It starts at tier 0 and goes up one tier the first time each
