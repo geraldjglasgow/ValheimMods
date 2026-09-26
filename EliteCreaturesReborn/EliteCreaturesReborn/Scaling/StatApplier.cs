@@ -23,7 +23,7 @@ namespace EliteCreaturesReborn.Scaling
 
         // OWNER ONLY: SetMaxHealth writes the ZDO's s_maxHealth, which the game replicates - so every other machine reads
         // the same scaled maximum (and a correct health-bar fraction) without this ever running there. The refill on a
-        // fresh roll is likewise an owner-only SetHealth. A non-owner call would be dropped by the game, so callers gate.
+        // fresh roll is likewise owner-only. A non-owner call would be dropped by the game, so callers gate.
         public static void ApplyHealth(Character character, BiomeRules rules, CreatureTraits traits, bool freshlyResolved)
         {
             ZDO zdo = character.GetComponent<ZNetView>().GetZDO();
@@ -33,10 +33,16 @@ namespace EliteCreaturesReborn.Scaling
                 ? AspectMath.PhantomHealth()
                 : starred * AspectMath.HealthFactor(traits) + devoured;
             character.SetMaxHealth(max);
-            if (freshlyResolved)
+            if (zdo != null && (freshlyResolved || PinnedAt(zdo, max)))
             {
-                character.SetHealth(max);
+                zdo.RemoveFloat(ZDOVars.s_health);
             }
         }
+
+        // Full the game's way: no stored health, so health follows the maximum. Up to 3.7.0 a fresh roll wrote the
+        // number instead, which pinned it, and a mod that raised the maximum afterwards left the creature part-hurt. A
+        // creature still holding exactly that number is released when it next loads.
+        private static bool PinnedAt(ZDO zdo, float max) =>
+            Mathf.Approximately(zdo.GetFloat(ZDOVars.s_health, -1f), max);
     }
 }

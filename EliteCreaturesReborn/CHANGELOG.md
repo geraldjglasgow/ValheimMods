@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.7.1
+
+**Creatures spawn at full health alongside mods that raise creature health.** With a mod that multiplies creature
+health (Path of Valheim, for one), mobs and bosses could spawn with only 10-15% of their health bar. A new creature
+now counts as full health the way the game does it, so it stays full whatever another mod does to its maximum.
+Creatures that already spawned part-hurt this way are restored to full the next time they load.
+
 ## 3.7.0
 
 **Boss damage board.** When a boss dies, everyone on the server sees who fought it: the boss's name and every player
