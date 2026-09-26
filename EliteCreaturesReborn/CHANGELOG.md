@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.7.0
+
+**Boss damage board.** When a boss dies, everyone on the server sees who fought it: the boss's name and every player
+who hurt it, with the health each one took off it, most first, at the top of the screen for a minute.
+
+- It counts what the boss actually lost - after its resistances, without the overkill - and only players count.
+- Twin bosses are one fight and one board, with both twins' damage added together.
+- Two new per-player settings in the .cfg: `Boss damage board` turns it off, `Boss damage board seconds` sets how
+  long it stays.
+- **Update the server as well as every player**: the tally is kept by whoever runs the boss, which can be any of them.
+
 ## 3.6.1
 
 **Admin commands work for admins on a dedicated server.** A player on the server's `adminlist.txt` could be told that

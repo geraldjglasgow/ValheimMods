@@ -83,5 +83,9 @@ namespace EliteCreaturesReborn.Traits
 
         /// <summary>Summoner: how many waves the boss has called, so a hand-over neither repeats nor skips one.</summary>
         public const string SummonWaves = "ecr_waves";
+
+        /// <summary>Boss damage board: on a boss, the health each player has taken off it, written by its owner at each
+        /// hit so a hand-over mid-fight keeps the count.</summary>
+        public const string BossDamage = "ecr_boss_dmg";
     }
 }

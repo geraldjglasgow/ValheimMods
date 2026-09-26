@@ -22,6 +22,8 @@ namespace EliteCreaturesReborn.Config
         public static ConfigEntry<float> LargeStarSize = null!;
         public static ConfigEntry<bool> ShowStolenItems = null!;
         public static ConfigEntry<float> StolenIconSize = null!;
+        public static ConfigEntry<bool> ShowBossBoard = null!;
+        public static ConfigEntry<float> BossBoardSeconds = null!;
 
         public static void BindAll(ConfigFile config)
         {
@@ -48,8 +50,19 @@ namespace EliteCreaturesReborn.Config
                 "Draw the icons of items a Thieving creature is carrying on its nameplate. Client side; never locked.");
             StolenIconSize = config.Bind(Display, "Stolen item icon size", 1.6f,
                 "Size of a stolen-item icon as a multiple of the size vanilla draws a star at. Client side; never locked.");
+            BindBossBoard(config);
             PaletteSettings.Bind(config);
             BindDiagnostics(config);
+        }
+
+        private static void BindBossBoard(ConfigFile config)
+        {
+            ShowBossBoard = config.Bind(Display, "Boss damage board", true,
+                "When a boss dies, show every player who hurt it and how much health they took off it, at the top of "
+                + "the screen. Client side; never locked.");
+            BossBoardSeconds = config.Bind(Display, "Boss damage board seconds", 60f,
+                new ConfigDescription("How long the boss damage board stays on screen. Client side; never locked.",
+                    new AcceptableValueRange<float>(5f, 600f)));
         }
 
         // Not a display preference and never locked: a switch that makes the death/split/absorb chain log every step, so

@@ -47,6 +47,9 @@ A boss never takes a mutation. It takes an [b]aspect[/b], named before the boss 
 [/list]
 Harder aspects pay more: each has its own loot multiplier. Every number, the chances, the shift interval and each boss's summons are in the rule file.
 
+[size=4][b]Boss damage board[/b][/size]
+When a boss dies, everyone on the server sees who fought it: the boss's name and every player who hurt it, with the health each one took off it, most first, at the top of the screen for a minute. It counts what the boss actually lost - after its resistances, without the overkill - and only players count. Twin bosses are one fight and one board. Each player can turn it off or change how long it stays.
+
 [size=4][b]Installation[/b][/size]
 [list=1]
 [*]Install BepInExPack for Valheim.

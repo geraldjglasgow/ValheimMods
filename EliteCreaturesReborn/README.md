@@ -126,6 +126,14 @@ Everything is in the `aspects:` block under `bosses:` in the rule file: the off 
 each altar), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
 Summoner calls and, optionally, which aspects that boss may roll.
 
+## Boss damage board
+
+When a boss dies, everyone on the server sees who fought it: the boss's name and every player who hurt it, with the
+health each one took off it, most first, at the top of the screen for a minute. It counts what the boss actually
+lost - after its resistances, without the overkill - and only players count, not tames or summons. Twin bosses are
+one fight and one board. Each player can turn it off (`Boss damage board`) or change how long it stays
+(`Boss damage board seconds`) in the .cfg.
+
 ## Loot
 
 What a kill drops is governed by a `loot:` block in the rule file. Four modes, chosen for the whole world:
