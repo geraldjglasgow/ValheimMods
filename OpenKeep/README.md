@@ -36,7 +36,7 @@ their number and stay put when the inventory grows), and a `Sort` button below t
 its `Take all` line; `Button Row Offset` moves the rows up or down if your screen layout needs it. Every action also has a hotkey that works while the inventory is open. The module is
 one workflow for coming home with a full inventory. Open a chest and stow: quick stack (`Q`) moves every stack
 whose item the open container (or, with `Quick Stack Nearby`, any container within `Nearby Range`) already holds,
-and `Store all` (`G`) moves everything that may move into the open container. Then top up (`R`): every stack you
+and `Store all` (`G`) moves everything that may move into the open container; neither touches your hotbar. Then top up (`R`): every stack you
 carry that is not full is refilled from the chests, so you leave with what you came with. Sort (`T` for the
 inventory, `Y` for the container) orders by `Category`, `Name`, `Weight` or `Value`; the hotbar, favourite slots
 and equipped items stay put and stacks merge; with `Sort Favourite Items` off, favourite items stay put too —

@@ -1,6 +1,6 @@
 # CLAUDE.md - OpenKeep
 
-Storage and inventory for Valheim, version 1.4.0: crafting, building and station feeding from nearby containers
+Storage and inventory for Valheim, version 1.4.2: crafting, building and station feeding from nearby containers
 (Reach), stow, top up, sort, junk, trash, routing, chest cycling and ground pickup (Stow), a Salvage tab, stack
 sizes and weights (Stacks), container sizes and hover contents (Capacity), carts as workbenches (Carts), several
 players in one chest (Shared), and a contents sign above every player-built container (Signs). Written black-box
@@ -164,7 +164,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `SharedModule.Initialize` last (the spec's order; each binds its settings, registers its YAML set and its words), every patch class on its
-own, `Synced.Finish`, the `Loading [OpenKeep 1.4.1]` line, `Guard.Install` last.
+own, `Synced.Finish`, the `Loading [OpenKeep 1.4.2]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt), Stow's
@@ -355,6 +355,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   stacks with a put under way are pinned; containers pin nothing. Stacks of the same item, quality and world level
   merge while sorting. With `Sort Favourite Items` off (1.2.0, default on) favourite items are pinned too, for
   extra cells a mod keeps inside the game's rows.
+- Hotbar (1.4.2, `MainGrid.FirstRow`): quick stack, store all and dump never take from the hotbar row (row 0) of the
+  player inventory either, the same row the sort has always left alone (the user's call, 2026-09-25). Store one,
+  Route, Trash and top up still act on it.
 - Main grid (1.4.0, `MainGrid`): quick stack, store all, dump and the player sort work only on the rows the game
   gives the player: its unique key `invrows` (`Player.InventoryRowsKey`, set by `Player.SetInventorySize`, 4 until
   set, more once rows are bought from the trader). Rows below belong to other mods: nothing is taken from them and
@@ -643,7 +646,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.4.1]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
+1. Log shows `Loading [OpenKeep 1.4.2]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the

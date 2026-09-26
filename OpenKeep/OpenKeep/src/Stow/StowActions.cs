@@ -7,8 +7,8 @@ namespace OpenKeep.Stow
     /// Quick stack, store all and dump: the player's movable stacks go into containers, as far as they fit, every
     /// stack through the writer (<see cref="ChestBatch"/>). What moved at once is reported at the end; a shared
     /// chest reports itself when its replies are in. Equipped items, quest items, favourite items, favourite slots,
-    /// items below the main grid (<see cref="MainGrid"/>) and stacks with a request under way stay; a container's
-    /// <c>refuse</c> list is honoured.
+    /// the hotbar, items below the main grid (<see cref="MainGrid"/>) and stacks with a request under way stay; a
+    /// container's <c>refuse</c> list is honoured.
     /// </summary>
     public static class StowActions
     {
@@ -94,11 +94,14 @@ namespace OpenKeep.Stow
         {
             Inventory inventory = player.GetInventory();
             Inventory target = container.GetInventory();
+            int first = MainGrid.FirstRow(player, inventory);
             int rows = MainGrid.Rows(player, inventory);
             List<ItemDrop.ItemData> list = new List<ItemDrop.ItemData>();
             foreach (ItemDrop.ItemData item in new List<ItemDrop.ItemData>(inventory.GetAllItems()))
             {
-                if (item.m_gridPos.y >= rows || !Movable.CanMove(player, inventory, item) || StowRules.Refuses(container, item))
+                if (item.m_gridPos.y < first || item.m_gridPos.y >= rows)
+                    continue;
+                if (!Movable.CanMove(player, inventory, item) || StowRules.Refuses(container, item))
                     continue;
                 if (onlyHeld && !target.ContainsItemByName(item.m_shared.m_name))
                     continue;

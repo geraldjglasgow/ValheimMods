@@ -20,7 +20,7 @@ namespace OpenKeep.Stow
             if (player == null || !StowSettings.Enabled.Value)
                 return;
             Inventory inventory = player.GetInventory();
-            int stacks = Sort(inventory, item => Pinned(player, item), 1, MainGrid.Rows(player, inventory));
+            int stacks = Sort(inventory, item => Pinned(player, item), MainGrid.FirstRow(player, inventory), MainGrid.Rows(player, inventory));
             if (!quiet)
                 Messages.Center(StowWords.Format(StowWords.Sorted, stacks));
         }

@@ -89,7 +89,7 @@ namespace OpenKeep.Stow
             SortFavouriteItems = synced.Bind(Section, "Sort Favourite Items", true,
                 "Off: the sort leaves favourite items where they are. Turn off when another mod keeps items in extra slots the sort would pull out - favourite those items and they stay put.", synced: false);
             MainInventoryRows = synced.Bind(Section, "Main Inventory Rows", 0,
-                "Rows of the player inventory, hotbar included, that quick stack, store all, dump and sort work on. 0: the rows the game gives you (4, more once bought from the trader). Mods that add equipment, food or ammo slots keep them in rows below, which these actions leave alone; top up still fills the stacks there. Set a number when a mod adds ordinary inventory rows; 20 covers every row.",
+                "Rows of the player inventory, hotbar included, that quick stack, store all, dump and sort work on; the hotbar itself is always left alone. 0: the rows the game gives you (4, more once bought from the trader). Mods that add equipment, food or ammo slots keep them in rows below, which these actions leave alone; top up still fills the stacks there. Set a number when a mod adds ordinary inventory rows; 20 covers every row.",
                 synced: false, acceptableValues: new AcceptableValueRange<int>(0, 20));
             AutoSortContainers = synced.Bind(Section, "Auto Sort Containers", false,
                 "A container is sorted when it is opened.", synced: false);

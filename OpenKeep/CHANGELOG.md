@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.2
+- Stow: quick stack, store all and dump leave the hotbar alone, as the sort always has. Items on the hotbar stay
+  there; Store one, Ctrl + click routing and the trash still act on a hotbar item you pick, and top up still
+  refills stacks there.
+
 ## 1.4.1
 - The `openkeep signs` and `openkeep write docs` console commands call the Signs and Stacks code directly instead
   of looking it up by name through reflection. No change in behaviour.
