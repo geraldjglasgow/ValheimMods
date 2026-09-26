@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
@@ -14,7 +15,8 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// The death-triggered mutations, all on the dying creature's owner: Bloated leaves a fuse-and-blast behind,
-    /// Splintering breaks into copies, and a Devouring killer keeps its victim's health and damage.
+    /// Splintering breaks into copies, and a Devouring killer keeps its victim's health and damage. Boss aspects too: a
+    /// Twin's partner falls with it, and a Phantom boss's copies vanish with it.
     /// <para>
     /// The fault this fixes: vanilla <c>Character.OnDeath</c> ends with <c>ZNetScene.Destroy</c>, which calls
     /// <c>ResetZDO</c> and nulls the creature's ZDO. A postfix therefore sees <c>IsValid()</c>/<c>IsOwner()</c> false and
@@ -42,6 +44,7 @@ namespace EliteCreaturesReborn.Patches
             public Quaternion Rot;
             public ZDOID Devourer;
             public List<PouchStore.Entry> Pouch = new List<PouchStore.Entry>();
+            public ZDOID Id;
         }
 
         private static Snapshot? _pending;
@@ -71,6 +74,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 return null; // all death work is the owner's, and only on a resolved creature
             }
+            AspectDeath.Capture(victim, controller, nview!); // while the ZDO still answers: a twin's fall, a copy's puff
             return Build(victim, controller, nview!.GetZDO());
         }
 
@@ -86,7 +90,7 @@ namespace EliteCreaturesReborn.Patches
                 PrefabHash = zdo.GetPrefab(), Generation = zdo.GetInt(TraitKeys.Generation),
                 CascadeRoot = stored, ResolvedRoot = resolved, Biome = TraitStore.GetBiome(zdo),
                 MaxHealth = victim.GetMaxHealth(), Pos = victim.transform.position, Rot = victim.transform.rotation,
-                Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo),
+                Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo), Id = zdo.m_uid,
             };
         }
 
@@ -102,6 +106,10 @@ namespace EliteCreaturesReborn.Patches
                 return; // no valid snapshot for this creature (not owner, not resolved, or capture failed)
             }
             RunTraitDeaths(snap);
+            if (snap.Traits.Aspect == Aspect.Phantom && !snap.Traits.PhantomCopy)
+            {
+                PhantomReaper.Release(snap.Id); // the boss is gone, so are its phantoms
+            }
             Feed(snap);
             DescendantRegistry.Unregister(snap.CascadeRoot);
         }

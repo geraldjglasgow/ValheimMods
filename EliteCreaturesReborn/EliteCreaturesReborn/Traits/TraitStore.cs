@@ -13,13 +13,21 @@ namespace EliteCreaturesReborn.Traits
         {
             int stars = zdo.GetInt(TraitKeys.Stars);
             int mask = zdo.GetInt(TraitKeys.Mask);
-            return new CreatureTraits(stars, mask);
+            return new CreatureTraits(stars, mask)
+            {
+                Aspect = (Aspect)zdo.GetInt(TraitKeys.Aspect),
+                PhantomCopy = zdo.GetZDOID(TraitKeys.PhantomOf) != ZDOID.None,
+            };
         }
 
         public static void Save(ZDO zdo, CreatureTraits traits)
         {
             zdo.Set(TraitKeys.Stars, traits.Stars);
             zdo.Set(TraitKeys.Mask, traits.Mask);
+            if (traits.Aspect != Aspect.None)
+            {
+                zdo.Set(TraitKeys.Aspect, (int)traits.Aspect); // only bosses carry one; creatures send no extra key
+            }
             zdo.Set(TraitKeys.Resolved, true);
         }
 

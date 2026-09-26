@@ -91,25 +91,9 @@ respawning:
   dungeon loot: false
   dungeon loot days: 14
 
-# Bosses scale on their own table, never the creature lines above, and never take
-# mutations. `stars: false` leaves every boss exactly as the game ships it.
-# `star chances` are weights per star count (index 0 = no stars); 90 in 100 stay
-# plain by default. `star power` climbs harder than a creature's on health and
-# damage but less on growth, and leaves swing speed/speed at 1 so a boss fight
-# stays readable.
-bosses:
-  stars: true
-  star chances: [90, 6, 3, 1]
-  star power:
-    growth:      [0,   0.05, 0.10, 0.15, 0.20, 0.20]
-    hp:          [1,   1.5,  2.25, 3.4,  5.1,  7.6]
-    attack:      [1,   1.25, 1.55, 1.9,  2.3,  2.75]
-    swing speed: [1]
-    speed:       [1]
-    drops:       [1,   1.5,  2,    2.5,  3,    3.5]
-
-# What a kill drops. `mode` is one of:
-#   Vanilla - the mod never touches drops; the loot feature's off switch
+" + BossRuleText.Block + @"# What a kill drops. `mode` is one of:
+#   Vanilla - the mod never touches drops, save a boss aspect's own multiplier;
+#             the loot feature's off switch
 #   Scaled  - the creature's own table, quantities raised by its star `drops` line
 #   Rolled  - the creature's own table rolled once more per star, each roll
 #             independent, so a hard fight has a real chance at the rare thing

@@ -25,7 +25,21 @@ Nine, one per creature by default, each with its own colour and its own word bef
 [/list]
 
 [size=4][b]Stars[/b][/size]
-Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows.
+Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows. Bosses have their own star table, and a boss's stars are drawn under its health bar.
+
+[size=4][b]Boss aspects[/b][/size]
+A boss never takes a mutation. It takes an [b]aspect[/b], named before the boss ("Enraged Eikthyr") and shown at its altar before you summon: hover the offering bowl for the current aspect, what it does, what it pays, and how long until it shifts. Every altar shifts to a different aspect each in-game hour, so a group can wait for the fight it wants. The Queen and console-spawned bosses roll theirs when they appear.
+[list]
+[*][b]Reflective[/b] - 15% of each hit you land comes back to you as true damage.
+[*][b]Shielded[/b] - 30% less damage from arrows and bolts.
+[*][b]Mending[/b] - regenerates 0.3% of its health every second, in combat too.
+[*][b]Summoner[/b] - calls two 2-star creatures of its own biome each time it loses 33% of its health.
+[*][b]Elementalist[/b] - 20% more elemental damage.
+[*][b]Enraged[/b] - 20% more physical damage.
+[*][b]Twin[/b] - comes as two sharing one health pool, 25% less health and damage each; both drop full loot.
+[*][b]Phantom[/b] - brings four copies with 100 health and half its damage; they drop nothing and vanish when the boss dies.
+[/list]
+Harder aspects pay more: each has its own loot multiplier. Every number, the chances, the shift interval and each boss's summons are in the rule file.
 
 [size=4][b]Installation[/b][/size]
 [list=1]
@@ -44,7 +58,8 @@ Gameplay settings come from the server and bind every connected player; display 
 [size=4][b]Console commands[/b][/size]
 Run from the in-game console (F5).
 [code]elite spawn <prefab> <stars> [mutation...]  a creature in front of you with chosen traits, bypassing every roll
-elite inspect                               the resolved stars, mutations and numbers for the creature under your crosshair
+                                            (a boss takes one aspect instead: elite spawn Bonemass 2 Twin)
+elite inspect                               the resolved stars, mutations or aspect, and numbers for the creature under your crosshair
 elite purge                                 remove the loaded creatures this mod has marked, with no drops
 elite effects <text>                        list loaded effect prefabs matching the text and play one[/code]
 

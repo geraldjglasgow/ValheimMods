@@ -13,10 +13,22 @@ namespace EliteCreaturesReborn.Traits
         public int Stars;
         public int Mask;
 
+        /// <summary>A boss's aspect; always None for a creature. Rolled once with the stars and stored beside them.</summary>
+        public Aspect Aspect;
+
+        /// <summary>True on the copies a Phantom boss brings - never on the boss itself. Read from the copy's ZDO.</summary>
+        public bool PhantomCopy;
+
         public CreatureTraits(int stars, int mask)
         {
             Stars = stars;
             Mask = mask;
+        }
+
+        public CreatureTraits(int stars, Aspect aspect)
+        {
+            Stars = stars;
+            Aspect = aspect;
         }
 
         public bool Has(Mutation mutation) => (Mask & (1 << (int)mutation)) != 0;

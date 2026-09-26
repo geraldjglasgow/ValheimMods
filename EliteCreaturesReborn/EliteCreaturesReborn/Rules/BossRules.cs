@@ -6,7 +6,7 @@ namespace EliteCreaturesReborn.Rules
     /// The boss table: star chances and star power for bosses, entirely separate from the creature lines so a server
     /// can make the world brutal and leave bosses alone, or the reverse. Bosses roll their stars independently of the
     /// world's pressure - a boss is a set-piece you choose to walk into, not something you stumble across - so this is
-    /// one table for every boss rather than a per-biome block. Bosses take no mutations.
+    /// one table for every boss rather than a per-biome block. Bosses take no mutations; they take an aspect instead.
     /// </summary>
     public sealed class BossRules
     {
@@ -19,6 +19,9 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>The boss lines. Health, attack, size and drops scale; speed and swing speed are left alone.</summary>
         public StarPower Star = new StarPower();
 
+        /// <summary>The boss aspects - the one modifier a boss carries in place of mutations. Independent of the stars.</summary>
+        public AspectRules Aspects = new AspectRules();
+
         /// <summary>The highest star count the boss distribution can produce.</summary>
         public int StarCeiling => Mathf.Max(0, StarChances.Length - 1);
 
@@ -27,6 +30,7 @@ namespace EliteCreaturesReborn.Rules
             return new BossRules
             {
                 Enabled = Enabled, StarChances = (float[])StarChances.Clone(), Star = Star.Clone(),
+                Aspects = Aspects.Clone(),
             };
         }
     }

@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
@@ -10,7 +11,8 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// The reactions to a hit that has landed: Warding reflects a share back at the attacker and knocks it back on a
-    /// melee hit, and Leeching heals the attacker for a share of what it dealt. Both key off the amount actually dealt,
+    /// melee hit, Leeching heals the attacker for a share of what it dealt, and a Reflective boss returns a share of
+    /// what it took as true damage. Both key off the amount actually dealt,
     /// so they run in a postfix once the hit is resolved, on the victim's owner, reading their percentages from the
     /// biome rules each creature carries.
     /// </summary>
@@ -35,6 +37,7 @@ namespace EliteCreaturesReborn.Patches
             }
             Warding(victim, attacker, hit, dealt);
             Leech(attacker, dealt);
+            ReflectiveHit.Return(victim, attacker, dealt);
         }
 
         private static void Warding(Character victim, Character attacker, HitData hit, float dealt)

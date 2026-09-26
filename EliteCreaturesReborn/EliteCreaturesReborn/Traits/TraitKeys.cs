@@ -51,5 +51,23 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Thieving: the pouch of stolen items, as one packed byte array. Owner-written, everyone-read, so the
         /// nameplate icons and `elite inspect` agree with what the creature actually holds on every machine.</summary>
         public const string Pouch = "ecr_stolen";
+
+        /// <summary>Boss aspects: the boss's rolled aspect, by its enum value. Written only when it is not None.</summary>
+        public const string Aspect = "ecr_aspect";
+
+        /// <summary>Boss aspects: the aspect currently on an altar, on the altar's own ZDO; -1 (absent) until first rolled.</summary>
+        public const string AltarAspect = "ecr_altar_aspect";
+
+        /// <summary>Boss aspects: the world time (whole milliseconds) of an altar's next shift, on the altar's ZDO.</summary>
+        public const string AltarShiftAt = "ecr_altar_shift";
+
+        /// <summary>Twin: the partner boss's ZDOID, on each of the two, so either can find the other to share its health.</summary>
+        public const string TwinPartner = "ecr_twin";
+
+        /// <summary>Phantom: on a copy, the ZDOID of the boss that brought it. Its presence is what makes a copy a copy.</summary>
+        public const string PhantomOf = "ecr_phantom_of";
+
+        /// <summary>Summoner: how many waves the boss has called, so a hand-over neither repeats nor skips one.</summary>
+        public const string SummonWaves = "ecr_waves";
     }
 }

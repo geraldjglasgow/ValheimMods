@@ -186,7 +186,8 @@ but it needs three things decided:
 1. **Whether to have it at all.** It is the only attunement whose answer changes while you are fighting, which is
    either the most interesting one or the one that makes the tint meaningless.
 2. **Its name.** "Wild" is the old build's word and is not ours to take. `Wyrd` is proposed: Norse, fits the
-   game's vocabulary, and does not collide with the boss aspects, where `Shifting` is already taken.
+   game's vocabulary. (It was chosen to avoid the boss aspect `Shifting`, which the 2026-09-26 aspect set retired,
+   so `Shifting` is free again if it reads better.)
 3. **What a player sees at the moment it changes.** A tint that changes with no event is a bug to the player. It
    wants a visible break - a flash, a shed of the old element - or it should not shift at all.
 

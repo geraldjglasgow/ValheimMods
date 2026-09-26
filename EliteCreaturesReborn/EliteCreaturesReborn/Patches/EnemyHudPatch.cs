@@ -12,7 +12,8 @@ namespace EliteCreaturesReborn.Patches
     /// <summary>
     /// Replaces the nameplate's stars with the mod's coloured row. Each frame, for every elite creature's nameplate it
     /// hides the vanilla two- and three-star badges (which only ever cover those two counts) and ensures the coloured
-    /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count.
+    /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count - on
+    /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite.
     /// </summary>
     [HarmonyPatch(typeof(EnemyHud), "UpdateHuds")]
     public static class EnemyHudPatch
@@ -104,7 +105,26 @@ namespace EliteCreaturesReborn.Patches
         private static Sprite? FindStarSprite(GameObject gui)
         {
             Sprite? sprite = SpriteUnder(gui.transform.Find("level_3"));
-            return sprite != null ? sprite : SpriteUnder(gui.transform.Find("level_2"));
+            if (sprite == null)
+            {
+                sprite = SpriteUnder(gui.transform.Find("level_2"));
+            }
+            return sprite != null ? sprite : PlainHudStar();
+        }
+
+        /// <summary>
+        /// The boss health bar carries no star badges of its own, so a starred boss borrows the ordinary creature bar's
+        /// star - read from the HUD's template, never instantiated - and draws its row under the boss bar like any other.
+        /// </summary>
+        private static Sprite? PlainHudStar()
+        {
+            GameObject? template = EnemyHud.instance != null ? EnemyHud.instance.m_baseHud : null;
+            if (template == null)
+            {
+                return null;
+            }
+            Sprite? sprite = SpriteUnder(template.transform.Find("level_3"));
+            return sprite != null ? sprite : SpriteUnder(template.transform.Find("level_2"));
         }
 
         private static Sprite? SpriteUnder(Transform badge)

@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
@@ -12,14 +13,18 @@ namespace EliteCreaturesReborn.Runtime
     /// scopes to the clients that actually hold the creature. One is an owner-directed command - "you devoured this, take
     /// it" (to the devourer's owner, where its ZDO and health live). The other is a scoped effect broadcast - the Warding
     /// reflect flash - which every client holding the creature draws and no one else receives, unlike the world-wide bus
-    /// in <see cref="EliteRpc"/>. (The prey pin is not here: a bite pins the prey directly on the prey's own owner, which
-    /// is the same machine the hit resolves on, so it needs no routing.) Registered once per creature; sending to an
-    /// object you already own is delivered locally, so a single-machine session uses one path.
+    /// in <see cref="EliteRpc"/>. Two more owner-directed commands serve the boss aspects: a Twin's share of its
+    /// partner's lost health, and a Phantom copy's dismissal when its boss dies. (The prey pin is not here: a bite pins
+    /// the prey directly on the prey's own owner, which is the same machine the hit resolves on, so it needs no
+    /// routing.) Registered once per creature; sending to an object you already own is delivered locally, so a
+    /// single-machine session uses one path.
     /// </summary>
     public static class CreatureRpc
     {
         public const string Devour = "ecr_devour";
         public const string Flash = "ecr_flash";
+        public const string TwinShare = "ecr_twin_share";
+        public const string VanishCall = "ecr_vanish";
 
         /// <summary>Registers all handlers on a creature, capturing its own Character/controller. Called once per creature.</summary>
         public static void Register(ZNetView nview, Character character, EliteController controller)
@@ -29,6 +34,41 @@ namespace EliteCreaturesReborn.Runtime
                 (sender, health, damage) => ApplyAbsorb(character, controller, health, damage));
             // The flash handler runs on EVERY client holding the creature, drawing a pure cosmetic; nobody gates it.
             nview.Register<Vector3, float, string>(Flash, (sender, pos, radius, role) => DrawFlash(pos, radius, role));
+            // Twin's share of a partner's lost health, and a Phantom copy's dismissal: both commands to this owner.
+            nview.Register<float, bool>(TwinShare, (sender, loss, fatal) => ReceiveShare(character, loss, fatal));
+            nview.Register(VanishCall, sender => Guard.Run("CreatureRpc.Vanish", () => Fall(character)));
+        }
+
+        private static void ReceiveShare(Character character, float loss, bool fatal) =>
+            Guard.Run("CreatureRpc.TwinShare", () => ShareInto(character, loss, fatal));
+
+        private static void ShareInto(Character character, float loss, bool fatal)
+        {
+            TwinLink link = character.GetComponent<TwinLink>();
+            if (link != null)
+            {
+                link.Receive(loss, fatal);
+            }
+        }
+
+        /// <summary>Boss-owner side, when a Phantom boss dies: routes the copy's dismissal to whichever machine owns it.</summary>
+        public static void Vanish(Character copy)
+        {
+            ZNetView nview = copy.GetComponent<ZNetView>();
+            if (nview != null && nview.IsValid())
+            {
+                nview.InvokeRPC(VanishCall); // targets the copy's owner; delivered locally when that is this machine
+            }
+        }
+
+        // On the copy's owner: health to zero, so the game's own death check lets it fall - hollow, so no drops, no body.
+        private static void Fall(Character copy)
+        {
+            ZNetView nview = copy.GetComponent<ZNetView>();
+            if (nview != null && nview.IsValid() && nview.IsOwner() && !copy.IsDead())
+            {
+                copy.SetHealth(0f);
+            }
         }
 
         /// <summary>

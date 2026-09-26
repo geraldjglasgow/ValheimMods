@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 using PatchGuard;
@@ -21,7 +22,11 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            character.gameObject.AddComponent<EliteController>();
+            EliteController controller = character.gameObject.AddComponent<EliteController>();
+            if (character.IsBoss())
+            {
+                AltarSummon.Claim(controller); // a boss an altar is instantiating right now takes the aspect it offered for
+            }
         }
     }
 }

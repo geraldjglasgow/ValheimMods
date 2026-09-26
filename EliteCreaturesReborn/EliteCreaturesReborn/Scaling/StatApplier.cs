@@ -7,7 +7,8 @@ namespace EliteCreaturesReborn.Scaling
     /// <summary>
     /// Applies the one-shot scaling that is not a live multiplier: the creature's visual size and its maximum health.
     /// Both replace vanilla's level scaling rather than stacking on it - the creature is kept at vanilla level 1, so the
-    /// figures here are the whole story. Movement and swing speed are live and handled by the controller and a patch.
+    /// figures here are the whole story. A boss's aspect multiplies the starred health (Twin), or replaces it outright
+    /// on a Phantom copy. Movement and swing speed are live and handled by the controller and a patch.
     /// </summary>
     public static class StatApplier
     {
@@ -27,7 +28,10 @@ namespace EliteCreaturesReborn.Scaling
         {
             ZDO zdo = character.GetComponent<ZNetView>().GetZDO();
             float devoured = zdo != null ? TraitStore.GetDevouredHealth(zdo) : 0f;
-            float max = character.GetMaxHealthBase() * StatMath.HealthMultiplier(rules, traits) + devoured;
+            float starred = character.GetMaxHealthBase() * StatMath.HealthMultiplier(rules, traits);
+            float max = traits.PhantomCopy
+                ? AspectMath.PhantomHealth()
+                : starred * AspectMath.HealthFactor(traits) + devoured;
             character.SetMaxHealth(max);
             if (freshlyResolved)
             {

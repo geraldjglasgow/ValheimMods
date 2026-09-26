@@ -67,7 +67,12 @@ Bosses scale on a table entirely separate from the creature lines, so a server c
 leave bosses alone, or the reverse.
 
 **Bosses take stars. They never take mutations.** Stars say how hard; a mutation is a change to the *kind* of
-fight and belongs to the creatures you meet by surprise.
+fight and belongs to the creatures you meet by surprise. A boss's change of kind is its **aspect**, specified in
+`boss-aspects.md` and independent of its stars.
+
+**A boss's stars are drawn under its health bar** at the top of the screen, in the same row of small and large
+glyphs a creature's nameplate uses. The game's boss bar has no star badges of its own, so the row borrows the
+creature bar's star (2026-09-26).
 
 **Boss stars do not follow the world.** They are drawn from one distribution for the whole world, not from the
 biome the altar happens to sit in and not from any measure of what the players have done. A boss is a set-piece
@@ -75,7 +80,7 @@ you choose to walk into, so its difficulty is a server's decision rather than a 
 
 | Setting | Default | Why |
 | --- | --- | --- |
-| `stars` | `true` | `false` leaves every boss exactly as the game ships it, with the rest of the mod still working |
+| `stars` | `true` | `false` turns boss stars off, with the rest of the mod still working. Aspects have their own switch; with both off a boss is exactly as the game ships it |
 | `star chances` | 90, 6, 3, 1 | Nine bosses in ten stay plain. A surprise five-star Bonemass is a wasted evening for a group that prepared for the ordinary one |
 | `hp` | 1, 1.5, 2.25, 3.4, 5.1, 7.6 | Climbs harder per star than a creature's - a boss is a prepared fight, and the preparation should matter |
 | `attack` | 1, 1.25, 1.55, 1.9, 2.3, 2.75 | As above |
@@ -190,7 +195,8 @@ Not yet done. In the `LocalTesting` profile:
    clamp logs once naming the creature.
 3. **A starred boss** - raise `star chances` to force one; confirm its health bar, size and damage follow the boss
    table and not the creature one, and that it carries no mutation.
-4. **`stars: false`** - confirm a boss is then identical to vanilla.
+4. **`stars: false`** - with `aspects: enabled: false` as well, confirm a boss is then identical to vanilla.
+   With aspects left on, confirm bosses stay unstarred but still carry aspects.
 5. **Camp respawn** - set `camps: true` with a low `camp days`, clear a camp, wait, confirm it repopulates; confirm
    a spawner that already had a timer of its own is unaffected.
 6. **Dungeon loot** - set `dungeon loot: true` with a low timer, empty a crypt chest, leave, return after the
@@ -216,6 +222,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Run speed clamped so no creature outruns an unburdened player, logged once when the clamp bites
 - [ ] Additive, never multiplicative
 - [ ] Bosses on their own table
+- [ ] A boss's stars drawn under its health bar
 
 ## Respawning
 

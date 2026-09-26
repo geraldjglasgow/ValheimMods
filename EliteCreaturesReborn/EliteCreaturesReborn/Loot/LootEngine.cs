@@ -24,6 +24,7 @@ namespace EliteCreaturesReborn.Loot
             public CreatureLootRule? Rule;
             public int Stars;
             public bool IsBoss;
+            public float AspectMultiplier = 1f;
             public float DropsMultiplier;
             public int ExtraRolls;
             public readonly HashSet<string> Overridden = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -41,6 +42,7 @@ namespace EliteCreaturesReborn.Loot
             LootRules loot = RuleState.Active.Loot;
             if (loot.Mode == LootMode.Vanilla)
             {
+                AspectLoot.ApplyAlone(drop, controller, result); // a boss aspect pays even with the loot rules off
                 return;
             }
             Context ctx = Build(loot, drop, controller);
@@ -66,6 +68,7 @@ namespace EliteCreaturesReborn.Loot
                 Rule = FindRule(controller),
                 Stars = controller.Traits.Stars,
                 IsBoss = controller.Creature != null && controller.Creature.IsBoss(),
+                AspectMultiplier = AspectLoot.Factor(controller),
             };
             ctx.TrophiesFollow = ctx.Rule?.MultiplyTrophies ?? loot.MultiplyTrophies;
             ctx.DropsMultiplier = ctx.Rule?.Drops != null
@@ -253,10 +256,10 @@ namespace EliteCreaturesReborn.Loot
             DropRoller.Add(result, prefab, amount);
         }
 
-        /// <summary>The world-wide multiplier, after everything else; a boss takes the boss factor on top.</summary>
+        /// <summary>The world-wide multiplier, after everything else; a boss takes the boss and aspect factors on top.</summary>
         private static void Multiply(Context ctx, List<KeyValuePair<GameObject, int>> result)
         {
-            float factor = ctx.Loot.GlobalMultiplier * (ctx.IsBoss ? ctx.Loot.BossMultiplier : 1f);
+            float factor = ctx.Loot.GlobalMultiplier * (ctx.IsBoss ? ctx.Loot.BossMultiplier * ctx.AspectMultiplier : 1f);
             if (Mathf.Approximately(factor, 1f))
             {
                 return;

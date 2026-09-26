@@ -55,6 +55,7 @@ namespace EliteCreaturesReborn.Rules
                     Speed = new[] { 1f },
                     Drops = new[] { 1f, 1.5f, 2f, 2.5f, 3f, 3.5f },
                 },
+                Aspects = AspectDefaults.Build(),
             };
         }
 

@@ -4,8 +4,8 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
-    /// Reads the file's top-level <c>bosses</c> block onto the boss defaults: the on switch, the star distribution and
-    /// the boss star-power lines. Anything the block leaves out keeps its default, the same way a biome block does.
+    /// Reads the file's top-level <c>bosses</c> block onto the boss defaults: the stars switch, the star distribution,
+    /// the boss star-power lines and the <c>aspects</c> block. Anything the block leaves out keeps its default, the same way a biome block does.
     /// </summary>
     internal static class BossOverlay
     {
@@ -18,6 +18,11 @@ namespace EliteCreaturesReborn.Rules
                 boss.StarChances = chances;
             }
             ApplyPower(boss.Star, block, errors);
+            if (YamlRead.Child(block, Fields.Aspects) is YamlNode aspects
+                && YamlRead.Map(aspects, errors, "'aspects'") is YamlMappingNode map)
+            {
+                AspectOverlay.Apply(boss.Aspects, map, errors);
+            }
         }
 
         private static void ApplyPower(StarPower star, YamlMappingNode block, List<string> errors)

@@ -21,6 +21,9 @@ namespace EliteCreaturesReborn.Visuals
         public static readonly string[] Devour = { "death", "gore", "corpse", "destr", "blood", "hit" };
         // Thieving gets no prefab field in the spec's power table either; the steal tell resolves by keyword only.
         public static readonly string[] Steal = { "steal", "pickpocket", "pocket", "grab", "loot", "coin" };
+        // Boss aspects: Summoner's arrival tell and a Phantom copy's vanishing puff, keyword-only like the rest.
+        public static readonly string[] Summon = { "spawn", "summon", "portal", "smoke", "puff" };
+        public static readonly string[] Phantom = { "ghost", "wisp", "puff", "smoke", "vanish", "poof" };
 
         private static readonly Dictionary<string, GameObject?> Cache = new Dictionary<string, GameObject?>();
 
@@ -55,6 +58,10 @@ namespace EliteCreaturesReborn.Visuals
             if (role == "devour")
             {
                 return ByKeyword(role, Devour);
+            }
+            if (role == "summon" || role == "phantom")
+            {
+                return ByKeyword(role, role == "summon" ? Summon : Phantom);
             }
             return role == "steal" ? ByKeyword(role, Steal) : null;
         }

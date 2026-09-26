@@ -71,6 +71,28 @@ namespace EliteCreaturesReborn.Rules
         // Thieving
         public const string MaxItems = "max items";
 
+        // boss aspects block (under `bosses:`)
+        public const string Aspects = "aspects";
+        public const string Enabled = "enabled";
+        public const string ShiftHours = "shift hours";
+        public const string Chances = "chances";
+        public const string Loot = "loot";
+        public const string Power = "power";
+        public const string PerBoss = "per boss";
+        public const string Match = "match";
+        public const string Summons = "summons";
+
+        // aspect power fields (Reflect and Health above are shared)
+        public const string ArrowReduction = "arrow reduction";
+        public const string Every = "every";
+        public const string Count = "count";
+        public const string Stars = "stars";
+        public const string ElementalBonus = "elemental bonus";
+        public const string PhysicalBonus = "physical bonus";
+        public const string LessHealth = "less health";
+        public const string LessDamage = "less damage";
+        public const string Copies = "copies";
+
         // loot block
         public const string Mode = "mode";
         public const string ExtraRollChance = "extra roll chance";

@@ -8,7 +8,8 @@ namespace EliteCreaturesReborn.Commands
     /// <summary>
     /// <c>elite spawn &lt;prefab&gt; &lt;stars&gt; [mutation...]</c>: makes exactly that creature and bypasses EVERYTHING -
     /// the star distribution, the mutation chances, <c>max mutations</c> and the glyph limit - so a rule can be checked
-    /// in ten seconds. It instantiates the prefab (the machine that runs this owns it), then hands the exact traits to
+    /// in ten seconds. A boss takes one aspect word instead of mutations (<c>elite spawn Bonemass 2 Twin</c>), and its
+    /// twin or phantom copies arrive with it exactly as they would from the altar. It instantiates the prefab (the machine that runs this owns it), then hands the exact traits to
     /// its controller before the controller resolves, which writes them to the ZDO as a fresh roll. A typo suggests near
     /// matches rather than failing silently.
     /// </summary>
@@ -18,7 +19,7 @@ namespace EliteCreaturesReborn.Commands
         {
             if (args.Length < 4)
             {
-                EliteCommands.Reply(args, "usage: elite spawn <prefab> <stars> [mutation...]");
+                EliteCommands.Reply(args, "usage: elite spawn <prefab> <stars> [mutation... | boss aspect]");
                 return;
             }
             GameObject? prefab = Lookup(args[2]);
@@ -32,7 +33,35 @@ namespace EliteCreaturesReborn.Commands
                 EliteCommands.Reply(args, $"elite spawn: '{args[3]}' is not a star count (0 or more).");
                 return;
             }
-            Place(args, prefab, stars, ParseMutations(args));
+            CreatureTraits? traits = prefab.GetComponent<Character>().IsBoss()
+                ? BossTraits(args, stars) : CreatureTraitsFrom(args, stars);
+            if (traits != null)
+            {
+                Place(args, prefab, traits);
+            }
+        }
+
+        // A boss takes one aspect word, `none` for the plain fight; leaving it out is the plain fight too.
+        private static CreatureTraits? BossTraits(Terminal.ConsoleEventArgs args, int stars)
+        {
+            Aspect? aspect = args.Length > 4 ? AspectCatalog.FromName(args[4]) : Aspect.None;
+            if (aspect == null)
+            {
+                EliteCommands.Reply(args, $"elite spawn: '{args[4]}' is not a boss aspect. Use none, "
+                    + string.Join(", ", System.Array.ConvertAll(AspectCatalog.InOrder, AspectCatalog.Word)) + ".");
+                return null;
+            }
+            return new CreatureTraits(stars, aspect.Value);
+        }
+
+        private static CreatureTraits CreatureTraitsFrom(Terminal.ConsoleEventArgs args, int stars)
+        {
+            CreatureTraits traits = new CreatureTraits(stars, 0);
+            foreach (Mutation m in ParseMutations(args))
+            {
+                traits.Add(m);
+            }
+            return traits;
         }
 
         private static GameObject? Lookup(string name)
@@ -42,7 +71,7 @@ namespace EliteCreaturesReborn.Commands
         }
 
         // Runs on the machine that will OWN the new creature (it instantiates it); its controller forces the traits.
-        private static void Place(Terminal.ConsoleEventArgs args, GameObject prefab, int stars, List<Mutation> muts)
+        private static void Place(Terminal.ConsoleEventArgs args, GameObject prefab, CreatureTraits traits)
         {
             Player player = Player.m_localPlayer;
             if (player == null)
@@ -52,24 +81,19 @@ namespace EliteCreaturesReborn.Commands
             }
             Vector3 pos = player.transform.position + player.transform.forward * 2.5f;
             GameObject go = Object.Instantiate(prefab, pos, Quaternion.identity);
-            Force(args, go, stars, muts, pos);
+            Force(args, go, traits, pos);
         }
 
-        private static void Force(Terminal.ConsoleEventArgs args, GameObject go, int stars, List<Mutation> muts, Vector3 pos)
+        private static void Force(Terminal.ConsoleEventArgs args, GameObject go, CreatureTraits traits, Vector3 pos)
         {
             EliteController? controller = go.GetComponent<EliteController>();
-            if (controller == null || go.GetComponent<Character>().IsBoss())
+            if (controller == null)
             {
-                EliteCommands.Reply(args, "elite spawn: that prefab is a boss or unsupported creature and cannot mutate.");
+                EliteCommands.Reply(args, "elite spawn: that prefab is not a creature this mod can mark.");
                 return;
             }
-            CreatureTraits traits = new CreatureTraits(stars, 0);
-            foreach (Mutation m in muts)
-            {
-                traits.Add(m);
-            }
             controller.ForceTraits(traits, Heightmap.FindBiome(pos));
-            EliteCommands.Reply(args, $"elite spawn: {go.name} at {stars} star(s){Words(muts)}.");
+            EliteCommands.Reply(args, $"elite spawn: {go.name} at {traits.Stars} star(s){Words(traits)}.");
         }
 
         // Named mutations are applied whether or not the rules would ever have given them; an unknown word is warned and
@@ -92,18 +116,18 @@ namespace EliteCreaturesReborn.Commands
             return muts;
         }
 
-        private static string Words(List<Mutation> muts)
+        private static string Words(CreatureTraits traits)
         {
-            if (muts.Count == 0)
-            {
-                return "";
-            }
             List<string> words = new List<string>();
-            foreach (Mutation m in muts)
+            if (traits.Aspect != Aspect.None)
+            {
+                words.Add(AspectCatalog.Word(traits.Aspect));
+            }
+            foreach (Mutation m in traits.Active())
             {
                 words.Add(MutationCatalog.Word(m));
             }
-            return " [" + string.Join(", ", words) + "]";
+            return words.Count == 0 ? "" : " [" + string.Join(", ", words) + "]";
         }
 
         private static string Suggest(string typed)

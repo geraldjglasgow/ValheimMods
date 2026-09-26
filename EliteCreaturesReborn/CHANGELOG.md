@@ -1,5 +1,43 @@
 # Changelog
 
+## 3.5.0
+
+**Boss aspects.** A boss never takes a mutation; it now takes an **aspect** - one modifier that changes what kind of
+fight it is, named before the boss ("Twin Bonemass"). Eight of them, plus a plain fight one time in five:
+
+- **Reflective** - 15% of each hit you land comes back to you as true damage armour does not reduce. Burn and
+  poison ticks are never returned.
+- **Shielded** - 30% less damage from bows and crossbows.
+- **Mending** - regenerates 0.3% of its health every second, in combat too.
+- **Summoner** - each time it loses 33% of its health it calls two 2-star creatures of its own biome.
+- **Elementalist** - 20% more fire, frost, lightning, poison and spirit damage.
+- **Enraged** - 20% more physical damage.
+- **Twin** - a second copy of the boss arrives with it; the two share one health pool, each has 25% less health and
+  damage, they die together and both drop full loot.
+- **Phantom** - four copies arrive with it, with 100 health and half its damage. They drop nothing, leave no body,
+  never count as the boss's defeat, and vanish when the boss dies.
+
+**Read it at the altar.** Hover the offering bowl to see the current aspect, what it does, what it pays and when it
+shifts. Every altar shifts to a different aspect each in-game hour (75 real seconds), independently of the others,
+and every player at a bowl reads the same thing, across restarts. The aspect on the bowl when you make the offering
+is the one you fight. The Queen, and any boss spawned by console or another mod, rolls its aspect when it appears.
+
+**Harder aspects pay more**: each has a loot multiplier (x1.1 Shielded to x1.5 Summoner), applied on top of the
+boss's star drops and the boss multiplier - in Vanilla loot mode too, where it is the only thing that touches a
+boss's drops.
+
+**Boss stars now show** under the boss health bar, in the same row of small and large stars as a creature's
+nameplate. They were rolled and scaled before but never drawn.
+
+All of it lives in a new `aspects:` block under `bosses:` in `creature_rules.yml`: an off switch, the shift
+interval (0 fixes each altar), each outcome's chance, each aspect's loot multiplier and numbers, and per boss what
+Summoner calls and which aspects it may roll. A rule file from an earlier version has no such block and takes the
+defaults. `stars: false` now turns off only boss stars; a boss is left exactly as the game ships it when aspects
+are off too.
+
+`elite spawn` makes bosses now, with one aspect word in place of mutations (`elite spawn Bonemass 2 Twin`), and
+`elite inspect` reports a boss's aspect, its loot multiplier and its twin or phantom links.
+
 ## 3.4.0
 
 **Loot has grown from one multiplier into a system.** A `loot:` block in `creature_rules.yml` picks one of four

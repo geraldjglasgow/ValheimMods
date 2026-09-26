@@ -24,6 +24,7 @@ namespace EliteCreaturesReborn.Runtime
         private bool _pending;
         private bool _movementClamped;
         private CreatureTraits? _forced;
+        private Aspect? _forcedAspect;
         private Heightmap.Biome _forcedBiome;
         private bool _isBoss;
 
@@ -47,9 +48,9 @@ namespace EliteCreaturesReborn.Runtime
                 return;
             }
             _isBoss = _character.IsBoss();
-            if (_isBoss && !RuleState.Active.Boss.Enabled)
+            if (_isBoss && !RuleState.Active.Boss.Enabled && !RuleState.Active.Boss.Aspects.Enabled)
             {
-                enabled = false; // boss stars switched off: the boss is left exactly as the game ships it
+                enabled = false; // boss stars and aspects both off: the boss is left exactly as the game ships it
                 return;
             }
             EliteRpc.EnsureRegistered();
@@ -121,15 +122,20 @@ namespace EliteCreaturesReborn.Runtime
             _character.SetLevel(1);
             FreshlyResolved = true;
             _forced = null;
+            _forcedAspect = null;
         }
 
-        // A boss draws a star count from the boss distribution and nothing else - no mutation is ever rolled for it,
-        // so the roll cannot be shared with the creature path however similar the two look.
+        // A boss draws a star count from the boss distribution and an aspect - the altar's, when it was summoned at one,
+        // else its own roll - and never a mutation, so the roll cannot be shared with the creature path.
         private CreatureTraits RollFor(Heightmap.Biome biome)
         {
             if (_isBoss)
             {
-                return new CreatureTraits(TraitRoller.RollStars(BossView.For(RuleState.Active.Boss)), 0);
+                BossRules boss = RuleState.Active.Boss;
+                int stars = boss.Enabled ? TraitRoller.RollStars(BossView.For(boss)) : 0;
+                Aspect aspect = boss.Aspects.Enabled
+                    ? _forcedAspect ?? AspectRoller.Roll(Utils.GetPrefabName(gameObject), null) : Aspect.None;
+                return new CreatureTraits(stars, aspect);
             }
             return TraitRoller.Roll(RuleState.Active.For(biome), RuleState.Active.MaxMutations, RuleState.Active);
         }
@@ -145,6 +151,12 @@ namespace EliteCreaturesReborn.Runtime
             _forcedBiome = biome;
         }
 
+        /// <summary>
+        /// Altar hook: the aspect locked in at the offering, handed over in the same frame the altar instantiates the
+        /// boss. The stars still roll; only the aspect is fixed. Ignored once the boss has been rolled.
+        /// </summary>
+        public void ForceAspect(Aspect aspect) => _forcedAspect = aspect;
+
         private void Apply()
         {
             _baseSpeeds = BaseSpeeds.Capture(_character);
@@ -158,6 +170,10 @@ namespace EliteCreaturesReborn.Runtime
             if (!_isBoss)
             {
                 BehaviourInstaller.Install(this); // mutation behaviours; a boss has no mutations to install
+            }
+            else
+            {
+                AspectInstaller.Install(this); // a boss's aspect behaviours, and on its first roll the twin or phantoms
             }
             _ready = true;
             enabled = false; // resolution is done; stop the poll. Other components still read this via GetComponent.

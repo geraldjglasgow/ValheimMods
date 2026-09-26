@@ -24,8 +24,8 @@ sub-commands discoverable, and a `help` sub-command lists them.
 | Sub-command | Does |
 | --- | --- |
 | **Pressure** | Prints the pressure where you stand, and what contributed to it |
-| **Inspect** | Prints the resolved traits and values for the creature you are looking at, including a Thieving creature's pouch (`thieving.md`) |
-| **Summon** | Spawns a creature with chosen stars, mutation and attunement, for testing |
+| **Inspect** | Prints the resolved traits and values for the creature you are looking at, including a Thieving creature's pouch (`thieving.md`) and a boss's aspect, its loot multiplier, its twin or phantom link and Summoner's waves (`boss-aspects.md`) |
+| **Summon** | Spawns a creature with chosen stars, mutation and attunement, for testing. A boss takes one aspect word instead (`elite spawn Bonemass 2 Twin`), and brings its twin or phantom copies as it would from the altar |
 | **Purge** | Removes loaded modified creatures - dropping any stolen goods first, the one documented exception to "no drops" (`thieving.md`) |
 | **Zones** | Lists retaliation zones, their level and their decay |
 | **Tier** | Shows the world tier and its source, and sets it where the source is manual |

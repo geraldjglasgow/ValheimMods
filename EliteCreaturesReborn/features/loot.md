@@ -24,7 +24,7 @@ How drops are decided, chosen server-wide:
 
 | Mode | Behaviour |
 | --- | --- |
-| Vanilla | Untouched. The mod's other features still work |
+| Vanilla | Untouched, save a boss aspect's own multiplier (`boss-aspects.md`). The mod's other features still work |
 | Scaled | The creature's own drop table, with quantities raised by star level |
 | Rolled | The creature's own drop table, rolled once more per star, each roll independent |
 | Curated | The rule files decide entirely, ignoring the creature's own table |

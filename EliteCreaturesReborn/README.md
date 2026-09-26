@@ -4,7 +4,12 @@ Creatures spawn with **mutations** — named, visible traits that change how a f
 you twice as fast on half the health. A Bloated draugr takes twice the killing and then explodes in your face. A
 Devouring wolf eats the boars around it and grows on what it eats until it comes looking for you.
 
-Rebuilt from scratch. This release covers mutations and stars; the rest returns over the next releases.
+Bosses take an **aspect** instead: one modifier, shown at the altar before you summon, that changes what kind of
+fight it is. A Twin Bonemass comes as two sharing one health pool; a Reflective Moder hurts you with every hit you
+land.
+
+Rebuilt from scratch. This release covers mutations, stars, loot and boss aspects; the rest returns over the next
+releases.
 
 ## Mutations
 
@@ -61,6 +66,33 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
 Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a
 large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows.
 
+Bosses have their own star table, the same for the whole world, and nine in ten stay plain by default. A boss's
+stars are drawn under its health bar at the top of the screen.
+
+## Boss aspects
+
+A boss never takes a mutation. It takes an **aspect**, which is in its name - "Enraged Eikthyr" - and on its altar
+before you commit: hover the offering bowl to see the current aspect, what it does, what it pays, and how long
+until it shifts. Every altar shifts to a different aspect each in-game hour (75 real seconds), so a group can wait
+for the fight it wants. The aspect on the bowl when you make the offering is the one you fight. A boss with no
+altar - the Queen, or a console spawn - rolls its aspect when it first appears.
+
+| Aspect | What it does | Loot |
+| --- | --- | --- |
+| none | The fight as the game ships it (one in five) | x1 |
+| Reflective | 15% of each hit you land comes back to you as true damage | x1.4 |
+| Shielded | 30% less damage from arrows and bolts | x1.1 |
+| Mending | Regenerates 0.3% of its health every second, in combat too | x1.3 |
+| Summoner | Calls two 2-star creatures of its own biome each time it loses 33% of its health | x1.5 |
+| Elementalist | 20% more fire, frost, lightning, poison and spirit damage | x1.2 |
+| Enraged | 20% more physical damage | x1.2 |
+| Twin | A second copy of the boss; the two share one health pool, 25% less health and damage each, and both drop full loot | x1 each |
+| Phantom | Four copies with 100 health and half its damage; they drop nothing, leave no body, and vanish when the boss dies | x1.3 |
+
+Everything is in the `aspects:` block under `bosses:` in the rule file: the off switch, the shift interval (0 fixes
+each altar), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
+Summoner calls and, optionally, which aspects that boss may roll.
+
 ## Loot
 
 What a kill drops is governed by a `loot:` block in the rule file. Four modes, chosen for the whole world:
@@ -68,7 +100,8 @@ What a kill drops is governed by a `loot:` block in the rule file. Four modes, c
 creature's own drop table rolled once more per star, each roll independent — the default, so a hard fight has a
 real chance at the rare thing), and **Curated** (per-creature rules decide everything). An `extra roll chance`
 line and a `max extra rolls` cap tune Rolled; a global multiplier and a separate boss multiplier scale everything
-after the mode. Trophies are never multiplied unless you switch that on — one kill, one trophy.
+after the mode, and a boss's aspect multiplies its drops on top - even in Vanilla mode, where it is the only thing
+that does. Trophies are never multiplied unless you switch that on — one kill, one trophy.
 
 Per-creature rules in the same file, matched by prefab name, override any of it: a creature's own drops line,
 adjusted or removed rows of its drop table, extra drops with their own chance and amounts. `elite reference`
@@ -92,8 +125,8 @@ distance, whether trait names show at all — stay with each player and are neve
 
 | Command | Does |
 | --- | --- |
-| `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing |
-| `elite inspect` | Prints the resolved stars, mutations and numbers for the creature under your crosshair |
+| `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin` |
+| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair |
 | `elite purge` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first) |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
