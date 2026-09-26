@@ -27,6 +27,12 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>How camps, dungeons and dungeon loot repopulate. One set of timers for the whole world.</summary>
         public RespawnRules Respawn = new RespawnRules();
 
+        /// <summary>The world tier: which boss defeats raise it and how much each tier boosts stars and mutations.</summary>
+        public TierRules Tiers = new TierRules();
+
+        /// <summary>What a newborn of tamed parents inherits from them.</summary>
+        public BreedingRules Breeding = new BreedingRules();
+
         /// <summary>The world-wide loot settings: mode, extra rolls, multipliers, the trophy switch.</summary>
         public LootRules Loot = new LootRules();
 

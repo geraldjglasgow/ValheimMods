@@ -143,12 +143,12 @@ A chest refills from its own drop table, exactly as the game fills a fresh one.
 - A chest seen for the first time has its clock started rather than being refilled, so installing the mod does not
   immediately re-stock every crypt in the world.
 
-## Known gap
+## Respawning and the world tier
 
-A respawned camp should come back at the world's **current** tier rather than the tier it was cleared at - the
-world moves on, and a camp cleared in the Meadows era should not still be a Meadows-era camp once everything else
-has hardened. World tiers are a separate feature and do not exist yet, so respawn is tier-blind for now. This is a
-deliberate omission, not an oversight, and it wires up when tiers land.
+A respawned camp comes back at the world's **current** tier rather than the tier it was cleared at - the world
+moves on, and a camp cleared in the Meadows era should not still be a Meadows-era camp once everything else has
+hardened. This needs no code of its own: a respawned creature is a new creature, and every new creature rolls at the
+tier the world is at when it appears (`world-tiers.md`, built in 3.6.0).
 
 ---
 
@@ -229,7 +229,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Spawner behaviour as section 3 says
 - [ ] A spawner the game already gave a timer of its own is never touched
 - [ ] Loot regeneration only when emptied, only inside a generated room, only on the owner
-- [ ] The known gap in section 3 closed or re-stated
+- [~] A respawned camp rolls at the world's current tier - closed by world tiers in 3.6.0, not tested in game
 
 ## Verification
 
@@ -242,3 +242,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-09-26 | Respawn tier gap closed by world tiers: a respawned creature rolls at the current tier. | EliteCreaturesReborn-v3.6.0 |

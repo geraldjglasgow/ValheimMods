@@ -91,7 +91,7 @@ respawning:
   dungeon loot: false
   dungeon loot days: 14
 
-" + BossRuleText.Block + @"# What a kill drops. `mode` is one of:
+" + WorldRuleText.Block + BossRuleText.Block + @"# What a kill drops. `mode` is one of:
 #   Vanilla - the mod never touches drops, save a boss aspect's own multiplier;
 #             the loot feature's off switch
 #   Scaled  - the creature's own table, quantities raised by its star `drops` line

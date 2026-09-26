@@ -93,6 +93,14 @@ namespace EliteCreaturesReborn.Rules
         public const string LessDamage = "less damage";
         public const string Copies = "copies";
 
+        // world tiers and breeding blocks (Enabled above is shared)
+        public const string WorldTiers = "world tiers";
+        public const string BossKeys = "bosses";
+        public const string StarBoost = "star boost";
+        public const string MutationBoost = "mutation boost";
+        public const string Breeding = "breeding";
+        public const string MutationChance = "mutation chance";
+
         // loot block
         public const string Mode = "mode";
         public const string ExtraRollChance = "extra roll chance";

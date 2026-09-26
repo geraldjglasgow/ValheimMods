@@ -3,135 +3,146 @@
 One feature of the mod, specified on its own. The other feature files sit beside it; `../SPEC.md` is the whole-mod
 behaviour document they are all drawn from.
 
-This file covers the world tier: what it is, the four things it can follow, and what it changes. The tier is an
-**input** to almost everything else - it is one of the three terms that raise pressure in `pressure.md`, and every
-rule table in the mod can vary by it. It decides nothing on its own.
+This file covers the world tier: what it is, what raises it, and what it changes. The tier is an **input** to the
+spawn roll - it decides nothing on its own, it leans the rolls every biome already makes.
 
-**Status: specified, not built.** Nothing in this file exists in the mod. The rule files already have the shape
-for per-tier rows; nothing fills them in yet.
+**Status: built, not tested in game.** Everything in sections 1 to 6 is in the mod as of 3.6.0. Map
+rings are not built (section 7).
 
 ---
 
 # 1. What a tier is
 
-**A single number for the whole world, 0 to 7**, that raises pressure everywhere as the world progresses.
-
-Tier 0 is an untouched world. Tier 7 is a world where everything has fallen and nowhere is safe.
+**A single number for the whole world**, 0 for an untouched world and one higher for each boss that has fallen. With
+the seven vanilla bosses that is **tier 0 to tier 7**: tier 7 is a world where everything has fallen and nowhere is
+safe.
 
 It is one number for the whole map, not a per-biome or per-region value. The map already varies by place - that is
-what biomes and the hearth-distance term in `pressure.md` are for. The tier is the axis that varies by **time**,
-so that a Meadows at tier 6 is not the Meadows you started in.
+what biomes are for. The tier is the axis that varies by **progress**, so that a Meadows at tier 6 is not the Meadows
+you started in.
 
 ---
 
-# 2. Four sources
+# 2. What raises it
 
-How the tier advances, chosen per server:
+**The first defeat of each listed boss, by anyone on the server, in any order.** Killing a boss again changes
+nothing. Decided with the user on 2026-09-26, over the alternative of counting every kill (which would let a group
+farming Eikthyr for trophies reach tier 7 in an evening).
 
-| Source | The tier follows |
-| --- | --- |
-| Personal | Bosses that *this player* has killed |
-| Server | Bosses killed by anyone on the server |
-| Elapsed | Days the world has been alive |
-| Manual | Only what an admin sets |
+The tier is read from the game's own record of defeated bosses: every boss sets a world key when it dies
+(`defeated_eikthyr`, `defeated_gdking`, `defeated_bonemass`, `defeated_dragon`, `defeated_goblinking`,
+`defeated_queen`, `defeated_fader`). The tier is the number of listed keys the world carries. That has three
+consequences worth knowing:
 
-**Server is the default.** It makes the world one shared place, which is what a group playing together wants: the
-world hardened when Eikthyr fell, for everyone, and that is a thing the group did together.
+- **A world that already killed bosses before the mod was installed starts at that tier.** The world has progressed,
+  and the tier says so.
+- **A modded boss counts once its key is added to the list.** `elite tier` prints every boss the game knows with its
+  key, so the key never has to be guessed.
+- **An admin can try a tier out with the game's own `setkey` and `removekey`.** No command of the mod's own sets the
+  tier; the tier always agrees with the world's history.
 
-**Personal** exists for one specific problem: a new player joining a mature server and being flattened on arrival.
-With Personal, their world is at the tier their own progress has earned. The cost is that two players standing in
-the same field are fighting different creatures, which is strange in a different way - so it is a choice a server
-makes knowing both halves.
-
-**Elapsed** suits a long-running world where nobody is rushing bosses, and where the danger should grow because
-time passed rather than because someone finally got round to Moder.
-
-**Manual** hands the whole thing to an admin and the `elite tier` command (`console-commands.md`), which is also
-the only source where that command can *set* the tier rather than just report it.
+Earlier drafts of this file offered four sources - Personal, Server, Elapsed and Manual. The user settled on boss
+defeats, server-wide, and the other three are not planned. That also retires the old open question of how Personal
+could work when a creature is rolled once by its owner.
 
 ---
 
 # 3. What varies by tier
 
-**Every chance and value in the mod can differ by tier**: star chances, mutation frequency, attunement frequency,
-loot quantity, item rules. This is where a server expresses its difficulty curve - not as one multiplier, but as
-eight rows of whatever it wants each stage of the world to feel like.
+**Star and mutation chances, in every biome**, through two lines in the rule file with one entry per tier (index 0 =
+no boss down), the last entry repeating past the end - the same convention as the star lines.
 
-Two features read the tier for something other than a table lookup:
+- **Star boost.** Each star count's weight in a biome's `star chances` is multiplied by the boost once per star, and
+  the row is scaled back to 100. At 1.5 a one-star creature becomes 1.5 times as likely against an unstarred one, a
+  two-star 2.25 times, a five-star 7.6 times. Every biome keeps its own character; the whole row moves upward, and
+  the top end moves most.
+- **Mutation boost.** Multiplies every mutation chance, capped at 100. `max mutations` still caps how many one
+  creature carries.
 
-- **Pressure** takes it as one of three terms, so the tier raises star counts everywhere without anyone writing a
-  per-tier star table at all (`pressure.md`).
-- **Respawning** brings a cleared camp back at the world's **current** tier, not the tier it was cleared at
-  (`scaling.md`). The world moves on, and a camp cleared in the Meadows era should not still be a Meadows-era camp
-  once everything else has hardened.
+**Defaults, a judgement call** (tunable, arguable): star boost `[1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]`, mutation
+boost `[1, 1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2]`. What the star boost does to the default rows:
+
+| Biome | Tier 0 unstarred / 5-star | Tier 2 | Tier 4 | Tier 7 |
+| --- | --- | --- | --- | --- |
+| Meadows | 73% / 1% | 65% / 2.2% | 56% / 4.2% | 44% / 8.6% |
+| Black Forest | 62% / 2% | 52% / 4.2% | 43% / 7.4% | 30% / 13.8% |
+| Plains | 32% / 5% | 23% / 9% | 16% / 13.8% | 10% / 21.6% |
+| Ashlands | 16% / 4% | 11% / 6.7% | 7% / 9.8% | 4% / 14.9% |
+
+Two things deliberately do **not** read the tier:
+
+- **Bosses.** A boss rolls on its own table, the same at every tier - a boss is a set-piece a group prepares for.
+- **Newborns of tamed parents.** They inherit from their parents (`tamed-creatures.md`); the world does not reach
+  into a breeding pen.
+
+**Respawning** needs no special case: a respawned camp's creatures are new creatures, so they roll at the world's
+**current** tier, not the tier the camp was cleared at (`scaling.md`).
+
+**Pressure** (`pressure.md`) is not built. When it is, the tier becomes one of its terms; until then the two boost
+lines are how the tier reaches the roll.
 
 ---
 
 # 4. What a player sees
 
-**Tier boundaries can be drawn on the map as rings**, so progression is something you can look at rather than read
-out of a config file.
-
-**Optional and off by default** - some players want the world unlabelled, and a map with rings on it is a map that
-has told you where the game gets harder before you have been there.
-
-`elite tier` prints the current tier and its source at any time, and is one of the read-only commands that is safe
-to leave open to everyone on a locked server.
+- **A tier rise is announced** to everyone, in the middle of the screen: "The world hardens: tier 3 of 7". A world
+  that silently got harder looks like bad luck. A tier that falls (an admin's `removekey`) is not announced.
+- **`elite tier`** prints the tier, what the two boosts are right now, every listed boss with whether it is down,
+  and any boss the game knows that the list leaves out. It only reads, so it is open to every player, admin or not
+  (`console-commands.md`).
+- **`elite inspect`** says which tier a wild creature was rolled at, when it was above 0.
 
 ---
 
 # 5. Multiplayer
 
-The tier is **world state**, not creature state, and it is the one value in the mod that every machine must agree
-on continuously rather than once.
+The tier is **world state**, not creature state, and it is the one value every machine must agree on continuously.
 
-- **Under Server, Elapsed and Manual the server owns the tier** and sends it to clients on join and on every
-  change. A client never computes it.
-- **Under Personal each client's tier is its own**, computed from that player's own boss kills. The server still
-  owns the *rules*; only the index into them differs per player.
-- **A tier change is announced**, because a world that silently got harder is indistinguishable from bad luck -
-  the same argument `retaliation-zones.md` makes about zones.
+- **The server owns it, through the game's own keys.** A boss's death sends its key to the server, which stores it
+  and pushes the key list to every client on join and on every change. The tier is derived from that list, so the
+  client that owns and rolls a creature reads the same tier as the server with no message of the mod's own. Nothing
+  about the tier is saved by the mod.
+- **The rules are the server's.** The `world tiers:` block is part of the rule file the server pushes, so every
+  machine uses the same key list and boost lines.
+- **The announcement comes from the server.** It compares the tier before and after each new key and broadcasts a
+  rise to everybody, the host included; each client shows it locally. A dedicated server has no screen and skips it.
 - **Creatures already alive are not re-rolled** when the tier advances. Traits are rolled once by the owner and
-  stored, and that does not change here: the tier decides what the *next* creature rolls. A world that hardened
-  ten minutes ago is populated by creatures that hardened as they spawned.
-- **The map rings are drawn locally** by each client from the tier and the boundary table. Nothing is sent for
-  them.
-
-This must work on a dedicated server the first time it is built, not in a later pass.
+  stored; the tier decides what the *next* creature rolls. The rolled tier is stored with the traits (only when above
+  0) so `elite inspect` can report it on any machine.
 
 ---
 
 # 6. Configuration
 
-In the main settings file's world tiers section:
+A top-level `world tiers:` block in `creature_rules.yml`, written with its comments on first run, hot reloaded, bound
+to the server's copy while `lock to server` is true. A rule file from before 3.6.0 has no such block and takes the
+defaults - tiers on.
 
-- **Source**: Personal, Server, Elapsed or Manual.
-- **The tier ceiling**, if a server wants to stop below 7.
-- **For Server and Personal**: which bosses advance the tier, and by how much.
-- **For Elapsed**: how many days per tier.
-- **Map rings**: off by default, with their colours as a per-player display preference
-  (`display-preferences.md`).
-- **An off switch** for the whole feature. With tiers off the world sits permanently at tier 0, every per-tier
-  table uses its first row, and every other feature keeps working.
+```yaml
+world tiers:
+  enabled: true
+  bosses: [defeated_eikthyr, defeated_gdking, defeated_bonemass, defeated_dragon, defeated_goblinking, defeated_queen, defeated_fader]
+  star boost:     [1, 1.1,  1.2, 1.3,  1.4, 1.5,  1.6, 1.7]
+  mutation boost: [1, 1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2]
+```
 
-Configuration UIs hide the settings that do not apply to the chosen source - days-per-tier is not shown while the
-source is Server (`configuration.md`).
+- **`enabled: false`** holds the world at tier 0: both lines use their first entry, nothing is announced, and every
+  other feature keeps working.
+- **`bosses`** is the list of keys that count, one tier each. Keys are matched without regard to case; a key listed
+  twice counts once; an empty list keeps the world at tier 0. A listed key that no boss the game knows sets is logged
+  as a warning when the world starts.
+- **A negative boost entry** is an error on its line and is read as 0.
 
 ---
 
 # 7. Open decisions
 
-**What the eight tiers map to under Server.** Valheim has five bosses and the mod has eight tiers, so the mapping
-is not one boss per tier. Whether the remaining three come from the Queen and Fader and a final "all of them", or
-whether some bosses advance the tier by two, is not written down anywhere. It needs settling before the feature is
-built, because the default table is the thing almost every server will run unedited.
+**Map rings.** Earlier drafts wanted tier boundaries drawn on the map, off by default. With one tier for the whole
+world there are no boundaries to draw; if rings come back they would have to show pressure, not the tier. Not built,
+and waiting on `pressure.md`.
 
-**Whether Personal is compatible with shared creatures at all.** Under Personal, two players in one field index
-different rule rows - but a creature is rolled **once, by its owner**, using that owner's tier. So the creature a
-new player meets was rolled at the *veteran's* tier if the veteran happened to be the one whose machine owned it.
-That undoes the entire reason Personal exists. Either the roll has to consider the nearest player rather than the
-owner, or Personal has to be documented as single-player-only. This is the decision that matters most in this
-file.
+**Whether bosses should read the tier.** Deliberately not, for now (section 3). A server that wants later bosses
+harder can already raise the boss star table.
 
 ---
 
@@ -142,26 +153,35 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 ## The tier
 
-- [ ] Four sources: Personal, Server, Elapsed, Manual
-- [ ] Pressure takes the tier as one of its three terms
-- [ ] Respawning brings a cleared camp back at the world's current tier
+- [~] The tier counts the listed bosses' defeat keys, each once - built, not tested in game
+- [~] Star boost and mutation boost lean every biome's roll by tier - built; parser and weighting exercised outside
+  the game, rolls not seen in game
+- [~] Bosses and newborns ignore the tier - built, not tested in game
+- [~] Respawning brings a cleared camp back at the world's current tier - follows from the roll, not tested in game
+- [ ] Pressure takes the tier as one of its terms - waits on `pressure.md`
 
 ## What a player sees
 
-- [ ] A tier change is announced
-- [ ] Map rings, off by default, colours a per-player display preference
+- [~] A tier rise is announced to everyone - built, not tested in game
+- [~] `elite tier` reports tier, boosts and bosses, open to every player - built, not tested in game
+- [~] `elite inspect` shows the rolled tier - built, not tested in game
 
 ## Multiplayer
 
-- [ ] Under Server, Elapsed and Manual the server owns the tier and sends it on join and on change
-- [ ] Under Personal each client computes its own from that player's boss kills
-- [ ] Creatures already alive are not re-rolled when the tier advances
-- [ ] Map rings drawn locally; nothing sent for them
+- [~] The tier is derived from the server's global keys on every machine - built, not tested on a dedicated server
+- [~] The announcement is decided on the server and shown on every client - built, not tested on a dedicated server
+- [~] Creatures already alive are not re-rolled when the tier advances - by construction, not tested in game
 
 ## Configuration
 
-- [ ] Source, tier ceiling, which bosses advance it and by how much, days per tier
-- [ ] Off switch - with tiers off the world sits permanently at tier 0
+- [~] `world tiers:` block: switch, boss key list, star boost, mutation boost - built; parser exercised outside the
+  game including bad values and an old file without the block
+- [~] Off switch - with tiers off the world sits permanently at tier 0 - built, not tested in game
+- [~] A listed key no boss sets is logged at world start - built, not tested in game
+
+## Not planned or waiting
+
+- [ ] Map rings - see Open decisions
 
 ## Work log
 
@@ -170,3 +190,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-09-26 | User settled the source: first defeat of each boss, server-wide; Personal, Elapsed and Manual dropped. Built the tier from the game's defeat keys, the two boost lines, the announcement, `elite tier` open to all, the rolled tier in `elite inspect`. Rule parser exercised outside the game. | EliteCreaturesReborn-v3.6.0 |

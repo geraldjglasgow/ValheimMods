@@ -2,13 +2,13 @@ Nexus Mods page text for Elite Creatures Reborn (https://www.nexusmods.com/valhe
 Paste each block into the matching field on the page's edit form. Category: Gameplay.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Creatures spawn with mutations that change how the fight goes: Mad ones are twice as fast on half the health, Bloated ones explode when killed, Splintering ones split in two, and a Devouring one eats the pack around it until it comes for you. Nine mutations, stars beyond vanilla's two, tunable per biome, server synced and hot reloaded.
+Creatures spawn with mutations that change how the fight goes: Mad ones are twice as fast on half the health, Bloated ones explode when killed, Splintering ones split in two, and a Devouring one eats the pack around it until it comes for you. Stars beyond vanilla's two, a world tier that climbs with every boss you defeat, and tamed creatures that pass their traits on to their young. Tunable per biome, server synced and hot reloaded.
 
 ===== DESCRIPTION (BBCode) =====
 [size=4][b]Description[/b][/size]
 Elite Creatures Reborn makes the creature in front of you worth reading before you swing at it. Creatures spawn with named, visible mutations that change how a fight goes rather than only how long it takes, and with stars beyond the two the plain game gives out. A Mad greydwarf comes at you twice as fast on half the health. A Bloated draugr takes twice the killing and then explodes in your face. A Devouring wolf eats the boars around it and grows on what it eats until it comes looking for you.
 
-This version is a rebuild from scratch and is not an update to earlier releases: none of the old code remains. It covers mutations and stars. The rest of the mod's features return over the next releases.
+This version is a rebuild from scratch and is not an update to earlier releases: none of the old code remains. It covers mutations, stars, world tiers, breeding, loot and boss aspects. The rest of the mod's features return over the next releases.
 
 [size=4][b]Mutations[/b][/size]
 Nine, one per creature by default, each with its own colour and its own word before the creature's name.
@@ -26,6 +26,12 @@ Nine, one per creature by default, each with its own colour and its own word bef
 
 [size=4][b]Stars[/b][/size]
 Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows. Bosses have their own star table, and a boss's stars are drawn under its health bar.
+
+[size=4][b]World tiers[/b][/size]
+The world starts at tier 0 and goes up one tier the first time each boss is defeated - by anyone, in any order - so the seven bosses take it to tier 7. Killing a boss again changes nothing, and every rise is announced to everyone on the server. Each tier makes stars and mutations more common in every biome while keeping each biome's character: by tier 7 the share of unstarred Meadows creatures falls from 73 in 100 to 44, five-star Plains creatures rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffected, and creatures already alive keep what they rolled. A world that killed bosses before the mod was installed starts at that tier. The off switch, which bosses count (modded ones too) and the boost per tier are in the rule file.
+
+[size=4][b]Breeding[/b][/size]
+Tamed creatures keep their traits and pass them on. A newborn - a pup, a piglet, a calf, or an egg and the chick that hatches from it - takes one of its parents' mutations whenever either has one, and a star count from 0 up to its stronger parent's, every count equally likely. Two plain parents have plain young, so a strong line stays strong only if you keep the good ones. Young creatures keep their traits when they grow up, and eggs keep theirs when carried and say what they will hatch. A bred mutation behaves exactly as it does in the wild - a Miasmic pet still trails poison.
 
 [size=4][b]Boss aspects[/b][/size]
 A boss never takes a mutation. It takes an [b]aspect[/b], named before the boss ("Enraged Eikthyr") and shown at its altar before you summon: hover the offering bowl for the current aspect, what it does, what it pays, and how long until it shifts. Every altar shifts to a different aspect each in-game hour, so a group can wait for the fight it wants. The Queen and console-spawned bosses roll theirs when they appear.
@@ -61,7 +67,9 @@ Run from the in-game console (F5).
                                             (a boss takes one aspect instead: elite spawn Bonemass 2 Twin)
 elite inspect                               the resolved stars, mutations or aspect, and numbers for the creature under your crosshair
 elite purge                                 remove the loaded creatures this mod has marked, with no drops
-elite effects <text>                        list loaded effect prefabs matching the text and play one[/code]
+elite effects <text>                        list loaded effect prefabs matching the text and play one
+elite reference                             write creature_reference.yml: every creature the game knows, with its drop table
+elite tier                                  the world tier, what it does to the rolls, and which bosses count (any player)[/code]
 
 [size=4][b]Multiplayer[/b][/size]
 Creature state travels in the world data the game already shares, so every player sees the same creature with the same traits. Install the mod on the dedicated server as well as on every client. In the console, [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides.

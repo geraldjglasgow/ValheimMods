@@ -353,4 +353,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
-| 2026-09-26 | Set replaced with the user's eight; open decisions settled; whole feature built, untested; boss stars drawn on the boss health bar. | uncommitted |
+| 2026-09-26 | Set replaced with the user's eight; open decisions settled; whole feature built, untested; boss stars drawn on the boss health bar. | 61a0c3e |

@@ -19,6 +19,20 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>The biome the creature was rolled in, so its rules stay fixed as it wanders. Stored as the flag value.</summary>
         public const string Biome = "ecr_biome";
 
+        /// <summary>World tiers: the tier a wild creature was rolled at, for `elite inspect`. Written only when above 0.</summary>
+        public const string Tier = "ecr_tier";
+
+        /// <summary>Breeding: the partner's stars plus one, on the pregnant parent's ZDO from conception to birth; 0 or absent
+        /// means no partner was beside it. Plus one so a plain partner still reads as a partner.</summary>
+        public const string SireStars = "ecr_sire_stars";
+
+        /// <summary>Breeding: the partner's mutation set, beside <see cref="SireStars"/>.</summary>
+        public const string SireMask = "ecr_sire_mask";
+
+        /// <summary>Breeding: an egg's inherited traits, in the egg item's own custom data rather than a ZDO, so they travel
+        /// with it through inventories and chests. "stars,mask,biome", invariant integers.</summary>
+        public const string EggTraits = "ecr_egg";
+
         /// <summary>Devouring: accumulated maximum-health eaten, added on top of star scaling.</summary>
         public const string DevouredHealth = "ecr_dev_hp";
 

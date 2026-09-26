@@ -57,9 +57,9 @@ A rented dedicated server is the normal case for a Valheim group, and many of th
 access at all.
 
 **Config UI.** The mod presents cleanly in third-party configuration UIs, **including hiding settings that do not
-apply given other choices** - the custom star table is not shown while a preset is selected (`pressure.md`), and
-days-per-tier is not shown while the tier source is Server (`world-tiers.md`). A settings screen that shows every
-option including the inert ones teaches the player nothing about which ones matter.
+apply given other choices** - the custom star table is not shown while a preset is selected (`pressure.md`). A
+settings screen that shows every option including the inert ones teaches the player nothing about which ones
+matter.
 
 ---
 

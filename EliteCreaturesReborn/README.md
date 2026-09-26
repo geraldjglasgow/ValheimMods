@@ -8,8 +8,12 @@ Bosses take an **aspect** instead: one modifier, shown at the altar before you s
 fight it is. A Twin Bonemass comes as two sharing one health pool; a Reflective Moder hurts you with every hit you
 land.
 
-Rebuilt from scratch. This release covers mutations, stars, loot and boss aspects; the rest returns over the next
-releases.
+The world hardens as bosses fall: every boss's first defeat raises the **world tier**, and each tier makes stars and
+mutations more common everywhere. Tamed creatures **pass their traits on**: a newborn inherits a mutation and stars
+from its parents.
+
+Rebuilt from scratch. This release covers mutations, stars, world tiers, breeding, loot and boss aspects; the rest
+returns over the next releases.
 
 ## Mutations
 
@@ -68,6 +72,35 @@ large star is stronger. Star chances and mutation chances are set per biome, so 
 
 Bosses have their own star table, the same for the whole world, and nine in ten stay plain by default. A boss's
 stars are drawn under its health bar at the top of the screen.
+
+## World tiers
+
+The world starts at tier 0 and goes up one tier the first time each boss is defeated - by anyone, in any order -
+so the seven bosses take it to tier 7. Killing a boss again changes nothing. Every rise is announced to everyone
+on the server.
+
+Each tier makes stars and mutations more common in every biome while keeping each biome's character. At the default
+settings, by tier 7 the share of unstarred Meadows creatures falls from 73 in 100 to 44, five-star Plains creatures
+rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffected, and creatures already alive keep
+what they rolled - the tier decides what the next one rolls. A world that killed bosses before the mod was installed
+starts at that tier.
+
+`elite tier` shows any player the current tier, what it is doing to the rolls, and which bosses count. The
+`world tiers:` block in the rule file has the off switch, the list of bosses that count (a modded boss counts once
+its defeat key is listed; `elite tier` shows every boss's key), and the star and mutation boost for each tier.
+
+## Breeding
+
+Tamed creatures keep their traits and pass them on. A newborn - a pup, a piglet, a calf, or an egg and the chick
+that hatches from it - takes one of its parents' mutations whenever either has one, and a star count from 0 up to
+its stronger parent's, every count equally likely. Two plain parents have plain young and nothing new is ever
+rolled, so a strong line stays strong only if you keep the good ones.
+
+Young creatures keep their traits when they grow up. Eggs keep theirs when carried, and say what they will hatch
+("Hatches with 2 stars, Leeching") on their hover text and tooltip; an egg's stars are its quality, so eggs of
+different stars do not stack. A bred mutation behaves exactly as it does in the wild - a Miasmic pet
+still trails poison. The `breeding:` block in the rule file has an off switch and the mutation chance (100 by
+default).
 
 ## Boss aspects
 
@@ -130,6 +163,7 @@ distance, whether trait names show at all — stay with each player and are neve
 | `elite purge` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first) |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
+| `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the rest are admin only |
 
 ## Install
 

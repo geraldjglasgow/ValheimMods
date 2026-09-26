@@ -1,5 +1,42 @@
 # Changelog
 
+## 3.6.0
+
+**World tiers.** The world now hardens as bosses fall. It starts at tier 0 and goes up one tier the first time each
+boss is defeated - by anyone, in any order - so the seven bosses take it to tier 7. Killing a boss again changes
+nothing. Every rise is announced to everyone on the server ("The world hardens: tier 3 of 7").
+
+- Each tier makes **stars and mutations more common in every biome**. A star boost leans each biome's star chances
+  upward (the top end most), and a mutation boost multiplies every mutation chance. At the defaults, by tier 7 the
+  unstarred share of the Meadows falls from 73 in 100 to 44, five-star Plains creatures rise from 5 in 100 to 22,
+  and mutation chances double.
+- **Bosses are unaffected**, and **creatures already alive keep what they rolled** - the tier decides what the next
+  one rolls. A respawned camp comes back at the current tier.
+- The tier is read from the game's own record of defeated bosses, so **a world that killed bosses before this
+  version starts at that tier**, and an admin can try a tier out with the game's `setkey` and `removekey`.
+- **`elite tier`** shows the tier, what it does to the rolls and which bosses count, and it is open to every player,
+  not just admins. `elite inspect` now says which tier a creature was rolled at.
+- A new `world tiers:` block in `creature_rules.yml` has the off switch, the list of bosses that count (add a modded
+  boss's defeat key to count it; `elite tier` lists every boss's key) and the star and mutation boost for each tier.
+
+**Breeding.** Tamed creatures now pass their traits on, where their young used to roll like wild creatures.
+
+- A newborn - a pup, a piglet, a calf, or an egg and the chick that hatches from it - takes **one of its parents'
+  mutations** whenever either has one, and **a star count from 0 up to its stronger parent's**, every count equally
+  likely. Two plain parents have plain young, and nothing new is ever rolled, so a strong line stays strong only if
+  you keep the good ones.
+- **Young creatures keep their traits when they grow up.** They used to roll again as adults.
+- **Eggs keep their traits** when carried or stored, and say what they will hatch - "Hatches with 2 stars,
+  Leeching" - on their hover text and tooltip. An egg's stars are its quality, so eggs of different stars no longer
+  stack together.
+- A bred mutation behaves exactly as it does in the wild - a Miasmic pet still trails poison.
+- A new `breeding:` block in `creature_rules.yml` has the off switch (newborns then roll like wild creatures, as
+  before) and the chance a newborn takes a parent's mutation, 100 by default.
+
+A rule file from an earlier version has neither block and takes the defaults, with both features on. To tune them,
+move your `creature_rules.yml` aside, start the game once for a fresh documented copy, and carry the two blocks
+across.
+
 ## 3.5.0
 
 **Boss aspects.** A boss never takes a mutation; it now takes an **aspect** - one modifier that changes what kind of

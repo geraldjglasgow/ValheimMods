@@ -1,4 +1,5 @@
 using EliteCreaturesReborn.Aspects;
+using EliteCreaturesReborn.Breeding;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 using PatchGuard;
@@ -26,6 +27,10 @@ namespace EliteCreaturesReborn.Patches
             if (character.IsBoss())
             {
                 AltarSummon.Claim(controller); // a boss an altar is instantiating right now takes the aspect it offered for
+            }
+            else
+            {
+                Lineage.Claim(controller); // a creature being born, hatched or grown right now takes what it inherits
             }
         }
     }

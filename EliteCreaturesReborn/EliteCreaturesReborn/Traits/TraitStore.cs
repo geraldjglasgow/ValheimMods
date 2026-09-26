@@ -17,6 +17,7 @@ namespace EliteCreaturesReborn.Traits
             {
                 Aspect = (Aspect)zdo.GetInt(TraitKeys.Aspect),
                 PhantomCopy = zdo.GetZDOID(TraitKeys.PhantomOf) != ZDOID.None,
+                Tier = zdo.GetInt(TraitKeys.Tier),
             };
         }
 
@@ -28,7 +29,33 @@ namespace EliteCreaturesReborn.Traits
             {
                 zdo.Set(TraitKeys.Aspect, (int)traits.Aspect); // only bosses carry one; creatures send no extra key
             }
+            if (traits.Tier > 0)
+            {
+                zdo.Set(TraitKeys.Tier, traits.Tier); // a tier-0 world sends no extra key
+            }
             zdo.Set(TraitKeys.Resolved, true);
+        }
+
+        /// <summary>Breeding, at conception, on the pregnant parent's owner: remember the partner's traits (or that there
+        /// was none) until the birth, since the partner may have wandered off by then.</summary>
+        public static void SetSire(ZDO zdo, CreatureTraits? sire)
+        {
+            zdo.Set(TraitKeys.SireStars, sire != null ? sire.Stars + 1 : 0);
+            zdo.Set(TraitKeys.SireMask, sire?.Mask ?? 0);
+        }
+
+        /// <summary>Breeding, at birth: the partner remembered at conception, cleared so the next pregnancy starts fresh.
+        /// Null when there was no partner, or the pregnancy began before this was recorded.</summary>
+        public static CreatureTraits? TakeSire(ZDO zdo)
+        {
+            int stars = zdo.GetInt(TraitKeys.SireStars);
+            if (stars <= 0)
+            {
+                return null;
+            }
+            CreatureTraits sire = new CreatureTraits(stars - 1, zdo.GetInt(TraitKeys.SireMask));
+            SetSire(zdo, null);
+            return sire;
         }
 
         public static void SetBiome(ZDO zdo, Heightmap.Biome biome) => zdo.Set(TraitKeys.Biome, (int)biome);

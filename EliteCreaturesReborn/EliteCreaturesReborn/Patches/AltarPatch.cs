@@ -41,7 +41,7 @@ namespace EliteCreaturesReborn.Patches
     public static class AltarLockPatch
     {
         private static void Prefix(OfferingBowl __instance) =>
-            AltarSafety.Run("OfferingBowl.SpawnBoss aspect", () => Lock(__instance));
+            SafeCall.Run("OfferingBowl.SpawnBoss aspect", () => Lock(__instance));
 
         private static void Lock(OfferingBowl bowl)
         {
@@ -61,7 +61,7 @@ namespace EliteCreaturesReborn.Patches
     public static class AltarSpawnPatch
     {
         private static void Prefix(OfferingBowl __instance) =>
-            AltarSafety.Run("OfferingBowl.DelayedSpawnBoss aspect", () => Hold(__instance));
+            SafeCall.Run("OfferingBowl.DelayedSpawnBoss aspect", () => Hold(__instance));
 
         private static void Hold(OfferingBowl bowl)
         {
@@ -73,25 +73,6 @@ namespace EliteCreaturesReborn.Patches
         {
             AltarSummon.End();
             return __exception;
-        }
-    }
-
-    /// <summary>
-    /// The altar prefixes run just before the game spends the offering and spawns the boss, so they must never throw
-    /// into it: a failure is reported under the mod's name and swallowed, and the boss simply rolls its own aspect.
-    /// </summary>
-    internal static class AltarSafety
-    {
-        public static void Run(string context, Action action)
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception e)
-            {
-                Guard.Report(e, context);
-            }
         }
     }
 }

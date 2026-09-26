@@ -38,6 +38,7 @@ namespace EliteCreaturesReborn.Rules
             ReadDefaults(set, root, result);
             ReadBosses(set, root, result);
             ReadRespawning(set, root, result);
+            ReadWorld(set, root, result);
             ReadLoot(set, root, result);
             ReadBiomes(set, root, result);
             SeedStarFallback(set);
@@ -130,6 +131,20 @@ namespace EliteCreaturesReborn.Rules
             if (YamlRead.Child(root, "respawning") is YamlMappingNode block)
             {
                 RespawnOverlay.Apply(set.Respawn, block, result.Errors);
+            }
+        }
+
+        private static void ReadWorld(RuleSet set, YamlMappingNode root, Result result)
+        {
+            if (YamlRead.Child(root, Fields.WorldTiers) is YamlNode tiers
+                && YamlRead.Map(tiers, result.Errors, $"'{Fields.WorldTiers}'") is YamlMappingNode tierBlock)
+            {
+                WorldOverlay.ApplyTiers(set.Tiers, tierBlock, result.Errors);
+            }
+            if (YamlRead.Child(root, Fields.Breeding) is YamlNode breeding
+                && YamlRead.Map(breeding, result.Errors, $"'{Fields.Breeding}'") is YamlMappingNode breedBlock)
+            {
+                WorldOverlay.ApplyBreeding(set.Breeding, breedBlock, result.Errors);
             }
         }
 

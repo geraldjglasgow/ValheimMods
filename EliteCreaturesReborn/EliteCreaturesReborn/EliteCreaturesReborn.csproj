@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesReborn</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>3.5.0</Version>
+    <Version>3.6.0</Version>
     <Product>Elite Creatures Reborn</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>

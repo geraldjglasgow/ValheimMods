@@ -19,6 +19,9 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>True on the copies a Phantom boss brings - never on the boss itself. Read from the copy's ZDO.</summary>
         public bool PhantomCopy;
 
+        /// <summary>The world tier a wild creature was rolled at; 0 for tier 0, and for a newborn, boss or console spawn.</summary>
+        public int Tier;
+
         public CreatureTraits(int stars, int mask)
         {
             Stars = stars;

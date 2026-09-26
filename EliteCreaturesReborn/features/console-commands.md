@@ -28,7 +28,7 @@ sub-commands discoverable, and a `help` sub-command lists them.
 | **Summon** | Spawns a creature with chosen stars, mutation and attunement, for testing. A boss takes one aspect word instead (`elite spawn Bonemass 2 Twin`), and brings its twin or phantom copies as it would from the altar |
 | **Purge** | Removes loaded modified creatures - dropping any stolen goods first, the one documented exception to "no drops" (`thieving.md`) |
 | **Zones** | Lists retaliation zones, their level and their decay |
-| **Tier** | Shows the world tier and its source, and sets it where the source is manual |
+| **Tier** | Shows the world tier, what it does to the rolls right now, and which bosses count toward it. Read-only |
 | **Reload** | Re-reads the settings and rule files from disk |
 | **Reference** | Writes `creature_reference.yml` - every registered creature, grouped by biome, with its vanilla drop table (`loot.md`) |
 
@@ -67,8 +67,10 @@ The split follows one line: **read-only or world-changing.**
 - **Inspect and Pressure are read-only and safe to open up.** They tell a player about a world they are already
   standing in. Opening them costs a server nothing and makes the mod explain itself to everyone rather than to
   admins.
-- **Summon, Purge and Tier change the world and are not.** Summon creates creatures, Purge deletes them, and Tier
-  can move the difficulty of the entire server. These are admin tools on any server that locks anything.
+- **Summon and Purge change the world and are not.** Summon creates creatures and Purge deletes them. These are
+  admin tools on any server that locks anything.
+- **Tier is read-only too.** It was once meant to set the tier under a Manual source; the tier is now always
+  derived from the world's boss defeats (`world-tiers.md`), so it only reports, and it is open to every player.
 
 Zones is read-only. Reload re-reads files and so changes what everyone is playing, which puts it with the second
 group. Reference changes nothing in the world - it writes one fixed-name report next to the config files - so it
@@ -85,9 +87,9 @@ sits with the read-only group; a server that dislikes even that can restrict it,
   removes loaded creatures on every machine, not just the caller's screen.
 - **Access is checked on the server**, never on the client that typed the command. A client-side check is a
   suggestion.
-- **Tier only sets where the source is Manual** (`world-tiers.md`). Under Server or Elapsed the tier is derived,
-  and letting a command override a derived value would mean the world's difficulty disagreed with its own
-  history.
+- **Tier never sets.** The tier is derived from the boss defeat keys the server already shares (`world-tiers.md`),
+  and a command that overrode it would make the world's difficulty disagree with its own history. An admin who
+  wants to try a tier out uses the game's own `setkey` and `removekey`.
 - **Reload re-reads the server's files and re-sends them**, so one admin's reload reaches every connected player -
   which is the point of it, and also why it is not a read-only command.
 
@@ -113,7 +115,7 @@ This must work on a dedicated server the first time it is built, not in a later 
 | Purge | `purge` | Agrees |
 | Pressure | - | Blocked on `pressure.md` |
 | Zones | - | Blocked on `retaliation-zones.md` |
-| Tier | - | Blocked on `world-tiers.md` |
+| Tier | `tier` | Agrees; read-only, open to every player |
 | Reload | - | Not built |
 | - | `effects` | Built, unspecified |
 
@@ -146,15 +148,16 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 ## The commands
 
 - [~] `spawn`, `inspect`, `purge` and `effects` exist
-- [ ] The three specified but missing sub-commands
-- [ ] Inspect and Pressure are read-only; Summon, Purge and Tier change the world
+- [~] `tier` exists and is open to every player - built in 3.6.0, not tested in game
+- [ ] The two specified but missing sub-commands (Pressure, Zones), and Reload
+- [ ] Inspect, Pressure and Tier are read-only; Summon and Purge change the world
 
 ## Multiplayer
 
 - [ ] Read-only commands answered locally where possible
 - [ ] World-changing commands executed on the server, replicating the ordinary way
 - [ ] Access checked on the server, never on the client that typed it
-- [ ] Tier only sets where the source is Manual
+- [~] Tier never sets; it reports the tier derived from the server's keys - built, not tested in game
 - [ ] Reload re-reads the server's files and re-sends them to every player
 
 ## Configuration
@@ -170,3 +173,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-20 | `Reference` added as the eighth sub-command, read-only group (`loot.md` section 7). | pending |
+| 2026-09-26 | `tier` built: read-only, open to every player; the Manual source it was to set is dropped (`world-tiers.md`). | EliteCreaturesReborn-v3.6.0 |
