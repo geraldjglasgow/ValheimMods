@@ -107,9 +107,14 @@ Rules that keep the layout standard:
 
 ## Developing mods
 
-**`CLEANROOM.md` at the root is the boundary every agent and every session works inside: what may be read, what may never be, and how behaviour gets decided. Read it before writing code.** The rest of this section is the same rules in brief.
+### Clean room: only while `CLEANROOM.md` exists
 
-Mods here are developed black-box, the way Elite Creatures Reborn was rewritten. That means:
+**When `CLEANROOM.md` is at the root, it is the boundary every agent and every session works inside: what may be
+read, what may never be, and how behaviour gets decided. Read it before writing code and follow it. When there is
+no `CLEANROOM.md`, nothing in this subsection applies:** another mod's DLL, config or documentation may be read or
+decompiled (into the scratch folder, never into a repository) to understand how it does something.
+
+While it exists, mods are developed black-box, the way Elite Creatures Reborn was rewritten. In brief:
 
 - **Behaviour first, in our own words.** Before writing code for a mod that replaces, mirrors or is inspired by
   another mod, write a behaviour specification: what the player sees, every
@@ -127,6 +132,9 @@ Mods here are developed black-box, the way Elite Creatures Reborn was rewritten.
 - **Implement from the spec, verify against the spec.** Every feature is built from the specification and the game
   code alone, then tested in the `LocalTesting` profile against the spec's checklist. A behaviour the spec did not
   cover is decided with the user, not guessed from how another mod does it.
+
+### Always
+
 - **Multiplayer is not optional.** Every feature in every mod must work on a dedicated server, not only for a
   host or in single player, and it must work when it is first built rather than in a later pass. Decide world
   changes on the owner, draw on every client, keep persistent state in the ZDO so the game replicates it, and
