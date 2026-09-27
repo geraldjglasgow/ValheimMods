@@ -1,13 +1,14 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking, Sailing, Woodcutting and Pickaxes. A good cook makes better food: every dish comes
+Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes and Foraging. A good cook makes better food: every dish comes
 out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the
 stars you want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds
 tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that
 marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs
 in one blow, finds what trees hide, and gets more wood from the giants of the forest. A good miner reads stone: strikes
 the seams that glint in the rock, knows a rich vein at a glance, hears where the next deposit lies, and turns up amber
-and rubies.
+and rubies. A good forager picks starred berries, mushrooms and herbs for the kitchen, knows when each plant is at its
+best, and clears a whole patch in one sweep.
 
 ### Cooking
 
@@ -117,6 +118,28 @@ at level 100, and milestones unlock at levels 25, 50 and 100.
   and finds, so all of it works on a dedicated server. Seams, Echo and Read the rock are yours alone; the drops and
   finds everyone sees. Like the rest of the mod, it must be installed on the server and on every client.
 
+### Foraging
+
+A new skill in the skills panel, for what you pick in the wild: berries, mushrooms, thistle, dandelions, fiddleheads,
+royal jelly, and the flint, stones and branches lying about. In the game those picks train Farming; with Foraging they
+train Foraging instead, while crops stay with Farming.
+
+- **Stars on what you pick.** Berries, mushrooms and herbs come off the plant with 0 to 3 stars, rolled from your
+  Foraging level with the same odds as cooked dishes. Starred forage gives more when eaten raw, and in the kitchen it
+  is a starred ingredient, so a good forager's raspberries make better jam. Flint, stones, branches, wild barley and
+  wild flax never carry stars.
+- **Pick at the right time.** Every plant has its best moment: berries on a dry day, mushrooms in the rain, thistles
+  at night. Picked then, it rolls its stars as if you were 20 levels higher. Look at a plant to see when it is best
+  picked, or that it is at its best now.
+- **Extra yield.** Up to half your picks give one more at level 100 (the game's own bonus stops at 25%).
+- **Sweep picking, from level 25.** Picking a plant also picks every plant of the same kind around it: 1 m around it
+  at level 25, 2 m at 50, 4 m at 100.
+- **Experience** for every pick, 25% more for each biome further along the game (Black Forest ×1.25 up to Ashlands
+  and Deep North ×2.5), half for flint, stones and branches, and triple the first time you pick each kind
+  ("Discovered Thistle!").
+- **Multiplayer.** Your level travels with each pick and the machine that owns the plant rolls the stars, so it works
+  on a dedicated server. Like the rest of the mod, it must be installed on the server and on every client.
+
 ### Every skill
 
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
@@ -155,16 +178,22 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
   and cooldown.
 - **Pickaxe Perks:** extra ore, pickaxe wear and splash damage at level 100.
 - **Mine Finds:** the chance of a find at level 0 and at level 100.
+- **Foraging:** a switch for the whole skill, the experience per pick, per biome step and for discoveries, and whether
+  you see callouts and plant hints (each player's own).
+- **Forage Perks:** extra yield at level 100, the best-time bonus, and sweep picking's level and reach.
 
 `GrindstoneSkills.Finds.yml` and `GrindstoneSkills.MineFinds.yml`, next to the .cfg, list what trees and broken rock
 can hide, per biome and per kind of tree or deposit: named finds with a weight and their items. They come from the
 server, reload while the game runs, and explain themselves in their comments. Extra files named
 `GrindstoneSkills.Finds<anything>.yml` or `GrindstoneSkills.MineFinds<anything>.yml` next to them are read as well.
 
+`GrindstoneSkills.Forage.yml` lists what counts as foraging: each item, whether its picks roll stars, when its plant is
+at its best, and how much experience a pick gives. Items from other mods can be added by their prefab name.
+
 ### Console
 
 With `devcommands` on, `raiseskill sailing 50` and `resetskill sailing` work like they do for the game's skills, and
-`raiseskill all` includes Sailing.
+`raiseskill all` includes Sailing. The same works for Foraging (`raiseskill foraging 50`).
 
 ### Server settings
 
@@ -181,7 +210,11 @@ lists where the server's values differ from your own file, and `charter versions
 
 ### Good to know
 - Sailing is a skill of this mod's own (the game has none). If you remove GrindstoneSkills, the game forgets your
-  Sailing level the next time it saves your character.
+  Sailing level the next time it saves your character. The same goes for Foraging.
+- Jotun puffs, magecap, seed carrots, turnips and onions, and vineberries are the same plants you can grow, so they
+  stay with Farming even where they grow wild.
+- Berries and mushrooms can carry stars now, so in a recipe a 0★ one counts toward the ingredients' average stars
+  where it used to be left out.
 - Ships built before you installed GrindstoneSkills keep the game's health.
 - Logs felled before you installed GrindstoneSkills get no domino, log safety or old growth bonus.
 - The Thunderblood Axe and Greataxe don't train Woodcutting in the game, so they get no Woodcutting perks here either.

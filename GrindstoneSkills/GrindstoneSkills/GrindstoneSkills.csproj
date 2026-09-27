@@ -5,7 +5,7 @@
     <AssemblyName>GrindstoneSkills</AssemblyName>
     <RootNamespace>GrindstoneSkills</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Product>GrindstoneSkills</Product>
     <Description>GrindstoneSkills: deeper skills for Valheim, cooking and sailing</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -43,6 +43,7 @@
     <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -103,6 +104,8 @@
   <ItemGroup>
     <!-- Embedded default YAML files: GrindstoneSkills.config.<file> -->
     <EmbeddedResource Include="config\*.yml" LogicalName="GrindstoneSkills.config.%(Filename)%(Extension)" />
+    <!-- Embedded images (skill and plate icons): GrindstoneSkills.assets.<file> -->
+    <EmbeddedResource Include="assets\*.png" LogicalName="GrindstoneSkills.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

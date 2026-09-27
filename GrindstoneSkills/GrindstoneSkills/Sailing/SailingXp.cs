@@ -5,15 +5,11 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Sailing experience, and the level every client publishes, once a second on each player's own client.
-    /// <list type="bullet">
-    /// <item>The local player's Sailing level goes to their own ZDO whenever it changed, so the owner of a ship they
-    /// steer can read it (<see cref="HelmSpeed"/>).</item>
-    /// <item>Aboard a ship that someone steers, the distance the ship moved over the water since the last second earns
-    /// experience: the full rate for the helmsman, the crew share for everyone else. The distance is measured flat, so
-    /// bobbing earns nothing, and a jump of more than <see cref="MaxStep"/> metres in a second (a teleport, a ship
-    /// that just loaded) earns nothing either. A ship nobody steers earns nothing.</item>
-    /// </list>
+    /// Sailing experience, once a second on each player's own client. Aboard a ship that someone steers, the distance
+    /// the ship moved over the water since the last second earns experience: the full rate for the helmsman, the crew
+    /// share for everyone else. The distance is measured flat, so bobbing earns nothing, and a jump of more than
+    /// <see cref="MaxStep"/> metres in a second (a teleport, a ship that just loaded) earns nothing either. A ship nobody
+    /// steers earns nothing. The level every client publishes for <see cref="HelmSpeed"/> is <see cref="CustomSkillLevels"/>.
     /// </summary>
     public static class SailingXp
     {
@@ -23,8 +19,6 @@ namespace GrindstoneSkills
         private static float timer;
         private static Ship lastShip;
         private static Vector3 lastPosition;
-        private static Player publishedFor;
-        private static float published;
 
         [HarmonyPatch(typeof(Player), nameof(Player.Update))]
         private static class Tick
@@ -38,23 +32,8 @@ namespace GrindstoneSkills
                 if (timer < Interval)
                     return;
                 timer = 0f;
-                Guard.Run("sailing tick", () =>
-                {
-                    Publish(__instance);
-                    Earn(__instance);
-                });
+                Guard.Run("sailing tick", () => Earn(__instance));
             }
-        }
-
-        private static void Publish(Player player)
-        {
-            float level = player.GetSkillLevel(SailingSkill.Type);
-            ZNetView nview = player.m_nview;
-            if ((publishedFor == player && published == level) || nview == null || !nview.IsValid() || !nview.IsOwner())
-                return;
-            nview.GetZDO().Set(Keys.SailingLevel, level);
-            publishedFor = player;
-            published = level;
         }
 
         private static void Earn(Player player)

@@ -350,7 +350,8 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
 - **The game has no sailing skill** (`Skills.SkillType` stops at Ride 110), so Sailing is GrindstoneSkills' own. Its
   type number is the stable hash of `grindstone_sailing`, masked positive: far from the game's numbers and from
   small numbers other mods pick.
-- **Registration (`Sailing/SkillRegistration.cs`), read from the game code 2026-09-27:**
+- **Registration (shared by every skill of our own: `Skills/CustomSkill.cs`, `Skills/CustomSkills.cs`),
+  read from the game code 2026-09-27:**
   - `Skills.GetSkill` creates a skill for any type, with the definition `GetSkillDef` finds in `m_skills`, or null.
     A null definition breaks the level-up message, so `Skills.Awake` adds Sailing's definition to every `Skills`.
   - `Skills.Load` keeps only types the enum defines (`IsSkillValid`), so without a patch a saved Sailing level is
@@ -360,7 +361,9 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
   - The icon is the Karve's piece icon, read when `ZNetScene` wakes.
   - The death penalty (`LowerAllSkills`), the skills panel and the world's skill-gain modifier work unchanged.
 - **Console:** `raiseskill` and `resetskill` match the enum's names, so "sailing" is handled by a patch and "all"
-  includes Sailing (`Sailing/SkillCheats.cs`).
+  includes Sailing (`Skills/CustomSkillCheats.cs`, for every skill of our own).
+- **Level on the ZDO:** every skill of our own is published to the player's ZDO once a second when it changed
+  (`Skills/CustomSkillLevels.cs`); Sailing's key is `grindstone_sailing_level`.
 - **Removing GrindstoneSkills loses the Sailing level** at the next save, as for any mod-added skill: the game's
   loader skips a type it does not know.
 
@@ -874,6 +877,111 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   - [ ] Drops and "Found …!" show for both; no splash damage numbers anywhere; nothing in the server log.
   - [ ] The first hit on an intact deposit splashes once, and names another deposit for Echo.
 
+## Foraging
+
+### The request (user, 2026-09-27)
+
+A Foraging skill for picking berries, mushrooms, flowers, thistles and the like. From the ideas offered, the user took
+the first set: stars on picks that feed Cooking, experience and extra yield through the game's own pick hook,
+first-pick experience, better odds at each plant's best time, and sweep picking. Answers: flint, stones and branches
+count, but never carry stars; stars are rolled on pick (not stored on the plant); Foraging is the mod's own skill,
+and the user makes its icon.
+
+### What the game already does with wild picks
+
+Read from the prefab bundles (UnityPy) and the decompiled assembly, 2026-09-27:
+
+- **The game trains Farming with wild plants.** `Pickable.m_pickRaiseSkill` is Farming (106) on raspberry,
+  blueberry, cloudberry and lingonberry bushes, red, yellow and blue mushrooms, smoke puffs, fiddleheads, thistle,
+  dandelion, wild barley and wild flax, and on every crop. Flint, stone, branches, royal jelly and the rest have None.
+- **Its pick hook:** `Pickable.Interact` runs on the picker's client. With a skill set it raises it by 1 (not again
+  while the pick is in flight, `m_pickedLocal`) and rolls one extra item with chance
+  `skillFactor * m_maxLevelBonusChance` (0.25 everywhere), showing "+1". It then sends `RPC_Pick(bonus)` to the
+  plant's owner, which spawns the items (`Drop`: instantiate, `ItemDrop.OnCreateNew`) and the plant's extra drops.
+- **Crops:** a crop is a pickable some `Plant.m_grownPrefabs` lists. Several are the same prefab wild and planted
+  (Jotun puffs, magecap, `Pickable_Seed*`, `VineAsh`); `Plant.Grow` does not mark what it grows.
+- **Environment:** `EnvMan.IsDay`, `IsNight` and `IsWet` are the local player's.
+
+### The split with Farming (agreed with the Farming module, 2026-09-27)
+
+- **Crops are Farming's, wild or planted:** a pickable whose prefab name is in any `Plant.m_grownPrefabs`
+  (`ForageCrops`, a private copy until Farming's `Core/Crops.cs` merges). So wild Jotun puffs, magecap, seed carrots,
+  turnips and onions, and vineberries train Farming.
+- **Forage is everything else whose item is on the Forage list.** Wild barley and flax (`Pickable_Barley_Wild`,
+  `Pickable_Flax_Wild`) are not crop prefabs, so they are forage.
+
+### Design (`Foraging/`)
+
+- **The skill:** a `CustomSkill` (`ForagingSkill`, identity `grindstone_foraging`, level published as
+  `grindstone_foraging_level`). Icon: `assets/skill_foraging.png` embedded when present, else the Raspberry icon.
+- **The list (`GrindstoneSkills.Forage*.yml`, synced, hot reloaded):** one entry per item prefab with `stars`, `best`
+  (day, night, wet, dry; all listed must hold) and `experience` (a factor). Default: berries, mushrooms, smoke puffs,
+  fiddleheads, thistle, dandelion and royal jelly with stars; flint, stone, grausten, wood, frostwood (×0.5
+  experience), wild barley and flax without.
+- **Starred forage carries stars like dishes:** items with `stars` join `Kitchen`'s items (`ForageStarItems`, via
+  `Kitchen.AddItem`), so stacking, icons, tooltips, recipe counting, the ingredient average and eating work unchanged.
+  Items join from every file applied in the session and never leave while the game runs.
+- **The pick (`ForagePick`, picker's client):** for forage, the plant's `m_pickRaiseSkill` becomes Foraging and
+  `m_maxLevelBonusChance` the Extra Yield Chance for the one call, then both are put back. The game's own code then
+  raises Foraging and rolls the extra item from the Foraging level.
+- **Stars (`ForageMarks`, `ForageSpawn`):** before the game's `RPC_Pick`, the picker sends `grindstone_ForageMark`
+  (float effective level: Foraging level, plus Best Time Levels at the plant's best) to the owner, who keeps it per
+  plant and sender for 10 s. Routed RPCs from one peer arrive in order. While `RPC_Pick` runs with that sender's mark,
+  every new item whose entry has stars rolls its own stars from the odds table at that level and is saved at once.
+- **Experience (`ForageXp`):** the game's raise, scaled inside the pick's scope to Experience Per Pick × the item's
+  factor × (1 + Experience Per Biome Step × the Pickaxes biome step of the plant's spot), × Discovery Multiplier the
+  first time the character picks the item (player custom data `grindstone_foraged`, callout "Discovered X!").
+- **Sweep (`ForageSweep`):** after a top-level pick, every plant of the same prefab within level / 100 × Sweep Radius
+  At 100 (from Sweep Level) that can be picked is picked with the game's `Interact`, each a full forage pick.
+- **Hint (`ForageHover`):** a starred plant with a best time adds "Best picked at night" or "At its best now" to its
+  hover text.
+
+### Settings
+
+- **33 - Foraging:** Foraging Enabled, Show Callouts and Show Hints (each player's own), Experience Per Pick (3),
+  Experience Per Biome Step (25%), Discovery Multiplier (3).
+- **34 - Forage Perks:** Extra Yield Chance At 100 (50%), Best Time Levels (20), Sweep Level (25), Sweep Radius At
+  100 (4 m).
+- The star odds are the Cooking odds table (section 3), read at the forager's effective level.
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- **Foraging takes wild picks away from Farming** while it is on; with it off, picks are the game's again.
+- **Each item rolls its own stars**, so one pick of royal jelly (5 items) can give several stacks.
+- **Pacing:** 3 per pick in the Meadows up to 7.5 in the Ashlands (the skill's step is 1, the game's curve), so
+  level 50 takes about 1,200 picks of Meadows forage or 500 of Ashlands forage, and level 100 about 6,800 or 2,700.
+  Flint, stones and branches count half.
+- **Default best times:** berries a dry day, red, yellow mushrooms and smoke puffs rain, blue mushrooms and thistle
+  night, dandelion, fiddlehead and royal jelly day.
+- **Sweep** needs no key: it happens on every pick from Sweep Level, never on a held (repeat) interact. Swept picks
+  earn experience and roll stars like any pick.
+- **Berries and mushrooms now count in the ingredient average** (they used to be left out as items without stars),
+  so a 0★ mushroom lowers a dish's odds a little where it used to count for nothing.
+
+### Known gaps
+
+- Turning `stars` off for an item after starred copies exist: after the next restart recipes no longer count those
+  copies (they are not star items any more). The file says so.
+- A lost mark (the plant's owner changing between the mark and the pick) gives a plain pick.
+- A vanilla client's picks are plain and train Farming, as without the mod.
+- All texts are English.
+
+### Test checklist
+
+- [ ] Skills panel: Foraging with its icon (Raspberry until the PNG is in); `raiseskill foraging 50`; the level
+      survives relog and the death penalty lowers it.
+- [ ] Picking a raspberry at level 0 trains Foraging, not Farming; "Discovered Raspberries!" and triple experience
+      once; a planted carrot still trains Farming; wild Jotun puffs train Farming.
+- [ ] Stars: at `raiseskill foraging 100` most berries come out starred, stacks stay apart, the icon shows the stars,
+      eating a 3★ raspberry gives more; flint and branches never starred.
+- [ ] Best time: a thistle at night hovers "At its best now", by day "Best picked at night"; Show Hints off hides it.
+- [ ] Extra yield: about half of picks at 100 show "+1".
+- [ ] Sweep: nothing below 25; at 100 one pick clears the same kind within 4 m, not other kinds, not crops.
+- [ ] Cooking: Queen's jam from 3★ berries rolls better than from 0★.
+- [ ] Foraging Enabled off: picks as in the game (Farming, 25%, no stars, no hints, no sweep).
+- [ ] Dedicated server with two clients, the bushes owned by the other client: stars, extra yield, sweep and
+      experience at the picker's level; nothing in the server log.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
@@ -892,6 +1000,12 @@ build is clean (0 warnings). The Woodcutting decisions above wait for the user's
 as a foundation, then seven features in parallel, then a review and a docs pass; the build is clean (0 warnings). The
 user set splash in 10-level steps, Clean Strike Damage ×2 and Clean Strike Experience 1; the other Pickaxes decisions
 above wait for the user's confirmation.
+
+0.5.0 (Foraging) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.5.0), before any in-game test; the
+build is clean (0 warnings). It also moves Sailing onto the shared custom-skill registration (`Skills/CustomSkill*.cs`,
+written by the Defense module). Built from HEAD plus Foraging while the Defense, Husbandry, Fishing and Farming
+modules were being written in the same tree, so none of them is in it. Farming's `Core/Crops.cs` is to replace
+`ForageCrops`. The Foraging decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

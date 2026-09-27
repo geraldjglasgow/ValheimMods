@@ -83,5 +83,17 @@ namespace GrindstoneSkills
         public const string MinedDeposits = "grindstone_mined";
         /// <summary>Charter sync key of the Mine Finds YAML files (GrindstoneSkills.MineFinds*.yml).</summary>
         public const string MineFindsSync = "grindstone_mine_finds";
+
+        // Foraging.
+        /// <summary>The Foraging skill's identity: its SkillType number is this name's stable hash.</summary>
+        public const string ForagingSkillName = "grindstone_foraging";
+        /// <summary>float on a player's own ZDO, written by that player's client: their Foraging level (CustomSkills publishes it).</summary>
+        public const string ForagingLevel = "grindstone_foraging_level";
+        /// <summary>On a forage pickable, to its owner: (float level) - the sender's next pick of it rolls stars at this effective level. Sent just before the game's RPC_Pick, kept in memory for 10 s.</summary>
+        public const string RpcForageMark = "grindstone_ForageMark";
+        /// <summary>Player custom data: comma-separated item prefab names of every kind of forage the character has picked.</summary>
+        public const string ForagedKinds = "grindstone_foraged";
+        /// <summary>Charter sync key of the Forage YAML files (GrindstoneSkills.Forage*.yml).</summary>
+        public const string ForageSync = "grindstone_forage";
     }
 }

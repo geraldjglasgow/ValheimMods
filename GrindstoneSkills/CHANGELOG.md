@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.5.0
+
+- New: Foraging, a skill of its own for what you pick in the wild: berries, mushrooms, thistle, dandelions,
+  fiddleheads, royal jelly, and the flint, stones and branches lying about. In the game those picks trained Farming;
+  now they train Foraging, and crops stay with Farming.
+- Stars on what you pick: berries, mushrooms and herbs come off the plant with 0 to 3 stars, rolled from your
+  Foraging level with the cooking odds. Starred forage gives more when eaten raw and is a starred ingredient in the
+  kitchen. Flint, stones, branches, wild barley and wild flax never carry stars.
+- Best time: every plant has its moment (berries on a dry day, mushrooms in the rain, thistles at night). Picked then,
+  it rolls its stars as if you were 20 levels higher, and looking at a plant tells you when.
+- Extra yield: up to a 50% chance of one more at level 100 (the game's own bonus stopped at 25%).
+- Sweep picking, from level 25: picking a plant also picks every plant of the same kind around it, up to 4 m away at
+  level 100.
+- Foraging experience for every pick, more in later biomes, half for flint, stones and branches, and triple the first
+  time you pick each kind.
+- What counts as foraging is listed in `GrindstoneSkills.Forage.yml`: synced from the server, reloaded while the game
+  runs, and open to items from other mods.
+- Changed: berries and mushrooms can carry stars now, so a 0★ one counts toward a dish's ingredient stars where it
+  used to be left out.
+- `raiseskill` and `resetskill` work for Foraging as they do for Sailing.
+
 ## 0.4.0
 
 - New: Pickaxes, built on the game's own skill, so existing levels count. A good miner learns to read stone.
