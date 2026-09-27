@@ -18,7 +18,7 @@ ValheimMods/
   OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs; bed respawn, honey
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
-  EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, limits, shovel
+  EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, height limits
   GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
 ```
@@ -65,7 +65,7 @@ Skill loss on death is configurable for every skill. Design in `GrindstoneSkills
 
 **EarthWright**: terraforming for the hoe and cultivator - brush size, shapes, edges and exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits per biome, ward and zone
-protection, new menu entries and a shovel. Required on the server and every client: edits travel as EarthWright's
+protection and new menu entries. Required on the server and every client: edits travel as EarthWright's
 own RPC to the owner of each terrain compiler. Design, module map and decisions in `EarthWright/PLAN.md`; code map
 in `EarthWright/CLAUDE.md`.
 

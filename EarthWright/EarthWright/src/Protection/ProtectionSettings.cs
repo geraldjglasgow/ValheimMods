@@ -92,7 +92,7 @@ namespace EarthWright.Protection
             AdminsBypassLock = synced.Bind(Sections.Protection, "Admins Bypass Lock", true,
                 "Admins may still change terrain while terrain editing is locked. Their edits are checked by the server.");
             ExemptTools = synced.Bind(Sections.Protection, "Exempt Tools", "",
-                "Item prefab names that keep working while terrain editing is locked, separated by commas, for example 'Cultivator' or 'Cultivator, PickaxeIron'. EarthWright's shovel is 'EW_Shovel' (the word 'Shovel' works too). An exempt tool may also clear objects and uproot while locked.");
+                "Item prefab names that keep working while terrain editing is locked, separated by commas, for example 'Cultivator' or 'Cultivator, PickaxeIron'. An exempt tool may also clear objects and uproot while locked.");
         }
 
         private static void BindZonesAndCombat(SyncedConfiguration synced)

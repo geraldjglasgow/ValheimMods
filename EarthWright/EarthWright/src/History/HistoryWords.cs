@@ -22,7 +22,6 @@ namespace EarthWright.History
         public static string PanelTitle { get; private set; }
         public static string UndoButton { get; private set; }
         public static string RedoButton { get; private set; }
-        public static string Hint { get; private set; }
         public static string ResetSource { get; private set; }
 
         public static void Register()
@@ -44,7 +43,6 @@ namespace EarthWright.History
             PanelTitle = Language.Add("ew_history_panel", "Undo");
             UndoButton = Language.Add("ew_history_undo_button", "Undo ($1)");
             RedoButton = Language.Add("ew_history_redo_button", "Redo ($1)");
-            Hint = Language.Add("ew_history_hint", "$1 undo ($2)   $3 redo ($4)");
             ResetSource = Language.Add("ew_history_reset", "Reset");
         }
     }

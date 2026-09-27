@@ -13,7 +13,6 @@ namespace EarthWright.Menu
     /// </summary>
     public static class EntryDescriptions
     {
-        private static readonly HintKind[] CustomHints = { HintKind.Adjust, HintKind.Next, HintKind.Shape, HintKind.Paint };
         private static readonly Dictionary<string, string> originals = new Dictionary<string, string>();
 
         public static void ApplyAll()
@@ -25,15 +24,15 @@ namespace EarthWright.Menu
                     Set(piece, GameText(entry, piece));
             }
             foreach (EntryDef def in EntryDefs.All)
-                Set(EntryRegistry.PieceOf(def.Id), Compose("$" + def.DescriptionKey, def.Hints, def.Action));
+                Set(EntryRegistry.PieceOf(def.Id), Compose("$" + def.DescriptionKey, def.Action, def.Hints));
             foreach (CustomEntry entry in CustomEntries.All)
-                Set(EntryRegistry.PieceOf(entry.PrefabName), Compose(entry.Description ?? "", CustomHints, ActionCatalog.ById(entry.PrefabName)));
+                Set(EntryRegistry.PieceOf(entry.PrefabName), Compose(entry.Description ?? "", ActionCatalog.ById(entry.PrefabName)));
         }
 
         /// <summary>The description with the key line appended, or either alone when the other is empty or hints are off.</summary>
-        public static string Compose(string description, HintKind[] hints, ToolAction action)
+        public static string Compose(string description, ToolAction action, HintKind[] pathKeys = null)
         {
-            string line = MenuSettings.ShowKeyHints.Value ? KeyHints.Line(hints, action) : "";
+            string line = MenuSettings.ShowKeyHints.Value ? KeyHints.Line(KeyHints.For(action, pathKeys), action) : "";
             if (line.Length == 0)
                 return description;
             return description.Length == 0 ? line : description + "\n\n" + line;
@@ -47,8 +46,8 @@ namespace EarthWright.Menu
                 return originals[entry.Id];
             ToolAction action = ActionCatalog.ById(entry.Id);
             if (entry.EnglishFlatDescription != null && !GameEntryBehaviour.Levels(entry.Id))
-                return Compose("$" + entry.FlatDescriptionKey, entry.FlatHints ?? entry.Hints, action);
-            return Compose("$" + entry.DescriptionKey, entry.Hints, action);
+                return Compose("$" + entry.FlatDescriptionKey, action);
+            return Compose("$" + entry.DescriptionKey, action);
         }
 
         private static void Set(Piece piece, string text)

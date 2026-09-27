@@ -7,6 +7,10 @@ and the work split while the mod is unfinished. Written from the user's list and
 (`assembly_valheim.dll` decompiled into the session scratch folder, the game's asset bundles read with UnityPy); no
 other mod's source, DLL, config or documentation beyond the user's list is read.
 
+> **Changed after 0.1.1 (user, 2026-09-27):** the shovel is removed (item, recipe, levels, the Dig entry and their
+> settings); the controls-hint line above the build bar is removed and the entry descriptions list every key. Where
+> this plan still mentions the shovel or `HintText`, that part no longer applies.
+
 ## How the game edits terrain (decompiled, game build of 2026-09)
 
 - **Heightmaps**: 64 m zones, `m_width` 64, `m_scale` 1, so height vertices sit on whole world metres; 65 x 65 vertices,

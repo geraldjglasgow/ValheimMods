@@ -7,7 +7,6 @@ namespace EarthWright.Actions
     {
         Hoe = 0,
         Cultivator = 1,
-        Shovel = 2,
         /// <summary>A terrain piece added by another mod; its action is read from its own TerrainOp.</summary>
         Modded = 3,
     }

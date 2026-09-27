@@ -5,8 +5,8 @@ namespace EarthWright.Menu
     /// <summary>
     /// Finds build-menu entry prefabs by piece prefab name: EarthWright's own entries (made by the Menu module), the
     /// custom entries of EarthWright.Entries.yml ("ew_custom_&lt;id&gt;") and the game's hoe and cultivator pieces (also
-    /// those an entry toggle took out of a table). Valid from GameReady.OnObjectDb order 100 on. The Gear module builds
-    /// the shovel's menu from it; an entry switched off in section 12 is a disabled piece the game leaves out of any menu.
+    /// those an entry toggle took out of a table). Valid from GameReady.OnObjectDb order 100 on. An entry switched off in
+    /// section 12 is a disabled piece the game leaves out of any menu.
     /// </summary>
     public static class EntryRegistry
     {

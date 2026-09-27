@@ -1,4 +1,4 @@
-# EarthWright custom menu entries: any console command as an entry in the hoe's, the cultivator's or the shovel's
+# EarthWright custom menu entries: any console command as an entry in the hoe's or the cultivator's
 # build menu. On a server this file is pushed to every player; edits are picked up within five seconds.
 #
 # Each entry has these keys (only id and command are required):
@@ -6,8 +6,8 @@
 #   name:        the name in the build menu, as written (default: the id); the menu's search field finds it.
 #   description: the text under the name, as written. Both may use the game's own $words ($piece_levelground).
 #   icon:        the icon of any piece or item by prefab name (mud_road_v2, Stone, Hoe ...), or one of EarthWright's:
-#                lower, smooth, paint, reset, ramp, road, clear, groundbreaker, terraform, till, uproot, dig, custom.
-#   tool:        hoe, cultivator or shovel (default hoe).
+#                lower, smooth, paint, reset, ramp, road, clear, groundbreaker, terraform, till, uproot, custom.
+#   tool:        hoe or cultivator (default hoe).
 #   position:    the place in the tool's menu, 0 is the first (default: right after EarthWright's own entries).
 #   radius:      the brush radius the entry starts with (the size keys change it afterwards).
 #   height:      the brush amount in metres the entry starts with, for {height}.

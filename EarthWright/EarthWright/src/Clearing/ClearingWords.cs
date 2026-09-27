@@ -20,8 +20,6 @@ namespace EarthWright.Clearing
         public static string Interior { get; private set; }
         public static string ResetAround { get; private set; }
         public static string NoAim { get; private set; }
-        public static string HintBrush { get; private set; }
-        public static string HintAround { get; private set; }
         public static string NeedTool { get; private set; }
 
         public static void Register()
@@ -36,8 +34,6 @@ namespace EarthWright.Clearing
             Interior = Language.Add("ew_clear_interior", "Clearing does not work in here");
             ResetAround = Language.Add("ew_clear_resetaround", "Ground reset within $1 m");
             NoAim = Language.Add("ew_clear_noaim", "Aim at the ground first");
-            HintBrush = Language.Add("ew_clear_hint_brush", "reset brush area");
-            HintAround = Language.Add("ew_clear_hint_around", "reset around you");
             NeedTool = Language.Add("ew_clear_needtool", "Take your hoe in hand to clear with a command");
         }
 

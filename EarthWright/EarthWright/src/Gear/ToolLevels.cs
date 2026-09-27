@@ -1,13 +1,13 @@
 using System.Collections.Generic;
+using BepInEx.Configuration;
 using EarthWright.Core;
 using UnityEngine;
 
 namespace EarthWright.Gear
 {
     /// <summary>
-    /// Applies the tool level settings: highest level and durability per level of the hoe, cultivator and shovel (into
-    /// the prefabs and every live copy), the shovel's durability and wear, the shovel recipe, and the hoe and cultivator
-    /// upgrade costs. The game's own values of the hoe and cultivator are remembered first, so switching EarthWright off
+    /// Applies the tool level settings: highest level and durability per level of the hoe and cultivator (into the
+    /// prefabs and every live copy) and their upgrade costs. The game's own values of the hoe and cultivator are remembered first, so switching EarthWright off
     /// restores them. Runs on every machine whenever an object database is ready and whenever a setting changes, so client
     /// and server agree on what can be upgraded.
     /// </summary>
@@ -22,7 +22,7 @@ namespace EarthWright.Gear
 
         private static readonly Dictionary<string, GameValues> game = new Dictionary<string, GameValues>();
 
-        public static IEnumerable<ToolLevelSettings> Tools => new[] { GearSettings.Hoe, GearSettings.Cultivator, GearSettings.Shovel };
+        public static IEnumerable<ToolLevelSettings> Tools => new[] { GearSettings.Hoe, GearSettings.Cultivator };
 
         /// <summary>Applies everything to the current object database; nothing happens before one exists.</summary>
         public static void ApplyAll() => ApplyAll(ObjectDB.instance);
@@ -34,7 +34,6 @@ namespace EarthWright.Gear
                 return;
             foreach (ToolLevelSettings tool in Tools)
                 ApplyLevels(db, tool);
-            ShovelRecipe.Apply(db);
             ToolRecipes.ApplyUpgradeCost(db, GearSettings.Hoe);
             ToolRecipes.ApplyUpgradeCost(db, GearSettings.Cultivator);
         }
@@ -46,26 +45,14 @@ namespace EarthWright.Gear
             if (drop == null)
                 return;
             GameValues original = Remember(tool.Prefab, drop.m_itemData.m_shared);
-            // The shovel is EarthWright's own item: its settings apply even with the master switch off.
-            bool own = GeneralSettings.Enabled.Value || tool.Prefab == ToolNames.Shovel;
-            int maxQuality = own ? tool.MaxLevel.Value : original.MaxQuality;
-            float perLevel = own ? tool.DurabilityPerLevel.Value : original.DurabilityPerLevel;
-            bool shovel = tool.Prefab == ToolNames.Shovel;
+            bool on = GeneralSettings.Enabled.Value;
+            int maxQuality = on ? tool.MaxLevel.Value : original.MaxQuality;
+            float perLevel = on ? tool.DurabilityPerLevel.Value : original.DurabilityPerLevel;
             ItemCopies.Copies.Apply(tool.Prefab, shared =>
             {
                 shared.m_maxQuality = maxQuality;
                 shared.m_durabilityPerLevel = perLevel;
-                if (shovel)
-                    WriteShovel(shared);
             });
-        }
-
-        private static void WriteShovel(ItemDrop.ItemData.SharedData shared)
-        {
-            shared.m_maxDurability = GearSettings.ShovelMaxDurability.Value;
-            shared.m_useDurabilityDrain = GearSettings.ShovelWearPerUse.Value;
-            shared.m_useDurability = true;
-            shared.m_canBeReparied = true;
         }
 
         private static GameValues Remember(string prefab, ItemDrop.ItemData.SharedData shared)
@@ -76,6 +63,24 @@ namespace EarthWright.Gear
                 game[prefab] = values;
             }
             return values;
+        }
+
+        /// <summary>Re-applies the levels and upgrade costs when their settings change (hot reload or the server's values).</summary>
+        public static void WatchSettings()
+        {
+            Watch(GeneralSettings.Enabled);
+            foreach (ToolLevelSettings tool in Tools)
+            {
+                Watch(tool.MaxLevel);
+                Watch(tool.UpgradeCost);
+                Watch(tool.DurabilityPerLevel);
+            }
+        }
+
+        private static void Watch<T>(ConfigEntry<T> entry)
+        {
+            string name = "EarthWright tools: " + entry.Definition.Key;
+            entry.SettingChanged += (_, __) => Safe.Run(name, ApplyAll);
         }
     }
 }

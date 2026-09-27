@@ -49,7 +49,9 @@ namespace EarthWright.Menu
             Language.Add("ew_menu_hint_hard", "hard level");
             Language.Add("ew_menu_hint_paint", "paint");
             Language.Add("ew_menu_hint_grid", "grid mode");
-            Language.Add("ew_menu_hint_undo", "undo");
+            Language.Add("ew_menu_hint_undo", "undo / redo");
+            Language.Add("ew_menu_hint_edge", "aim at the edge");
+            Language.Add("ew_menu_hint_resetaround", "reset around you");
             Language.Add("ew_menu_hint_reset", "reset the brush area");
             Language.Add("ew_menu_hint_profile", "ramp profile");
             Language.Add("ew_menu_hint_back", "remove the last point");

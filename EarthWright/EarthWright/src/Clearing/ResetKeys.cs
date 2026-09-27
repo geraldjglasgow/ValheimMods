@@ -9,16 +9,13 @@ namespace EarthWright.Clearing
     /// <summary>
     /// The reset keys, only while a terrain tool is out with its menu closed and EarthWright is on for this player:
     /// U resets the brush area, Shift+U a circle of "Reset Around Radius" around the player. Both are free and go
-    /// through the dispatcher like any stroke (wards and locks refuse them there). Also keeps the controls hint line.
+    /// through the dispatcher like any stroke (wards and locks refuse them there).
     /// </summary>
     public static class ResetKeys
     {
         internal static void Initialize()
         {
             Ticker.OnUpdate("EarthWright reset keys", Update);
-            ClearingSettings.ResetKey.SettingChanged += (sender, args) => RefreshHint();
-            ClearingSettings.ResetAroundKey.SettingChanged += (sender, args) => RefreshHint();
-            RefreshHint();
         }
 
         private static void Update()
@@ -47,21 +44,6 @@ namespace EarthWright.Clearing
             float radius = ClearingSettings.ResetAroundRadius.Value;
             if (Dispatcher.Submit(ResetEdits.Around(player.transform.position, radius)))
                 Messages.TopLeft(ClearingWords.Format(ClearingWords.ResetAround, ClearingWords.Metres(radius)));
-        }
-
-        private static void RefreshHint()
-        {
-            string brush = KeyText(ClearingSettings.ResetKey.Value);
-            string around = KeyText(ClearingSettings.ResetAroundKey.Value);
-            HintText.Set("reset", $"[{brush}] {ClearingWords.HintBrush}   [{around}] {ClearingWords.HintAround}");
-        }
-
-        /// <summary>Modifiers first, then the key ("LeftShift + U"), as the other hint lines write keys.</summary>
-        private static string KeyText(KeyboardShortcut shortcut)
-        {
-            if (shortcut.MainKey == KeyCode.None)
-                return "-";
-            return string.Join(" + ", shortcut.Modifiers.Concat(new[] { shortcut.MainKey }).Select(k => k.ToString()));
         }
     }
 }

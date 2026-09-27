@@ -9,21 +9,16 @@ namespace EarthWright.Menu
     /// <summary>
     /// The build tables of the terrain tools. The hoe's and the cultivator's are EarthWright's to arrange: the game's
     /// terrain entries that are switched on, then EarthWright's entries, then the custom ones, before the game's other
-    /// pieces (stones, saplings). Other terrain tools (the Gear module's shovel, found as any item registered with
-    /// <see cref="LocalTool.AddTool"/>) keep their own list; only the custom entries for the shovel are added to them.
+    /// pieces (stones, saplings).
     /// The tables are prefab assets that outlive the object database, so every pass starts from what is there.
     /// </summary>
     public static class ToolTables
     {
-        private static readonly List<PieceTable> others = new List<PieceTable>();
         private static readonly Dictionary<PieceTable, int> anchors = new Dictionary<PieceTable, int>();
 
         public static PieceTable Hoe { get; private set; }
 
         public static PieceTable Cultivator { get; private set; }
-
-        /// <summary>The other terrain tools' tables that were found (the shovel's).</summary>
-        public static IEnumerable<PieceTable> Others => others.Where(t => t != null);
 
         public static void Find(ObjectDB db)
         {
@@ -31,28 +26,11 @@ namespace EarthWright.Menu
             Cultivator = TableOf(db.GetItemPrefab("Cultivator"));
         }
 
-        /// <summary>The tables of the other terrain tools; run once those tools exist (order 300).</summary>
-        public static void FindOthers(ObjectDB db)
-        {
-            others.Clear();
-            foreach (GameObject item in db.m_items)
-            {
-                PieceTable table = item != null && LocalTool.IsToolName(item.name) ? TableOf(item) : null;
-                if (table != null && table != Hoe && table != Cultivator && !others.Contains(table))
-                    others.Add(table);
-            }
-        }
-
-        /// <summary>
-        /// Lays out every table; true when any list changed. Cheap and repeatable, so it also restores the custom shovel
-        /// entries after the Gear module rebuilt the shovel's list from its own setting.
-        /// </summary>
+        /// <summary>Lays out both tables; true when any list changed. Cheap and repeatable.</summary>
         public static bool ApplyAll()
         {
             bool changed = ApplyOwn(Hoe, ToolFamily.Hoe);
             changed |= ApplyOwn(Cultivator, ToolFamily.Cultivator);
-            foreach (PieceTable table in others.Where(t => t != null))
-                changed |= Relaid(table, () => TableLayout.Rebuild(table.m_pieces, CustomPrefabs.IsCustomName, new List<GameObject>(), Custom(ToolFamily.Shovel), table.m_pieces.Count));
             return changed;
         }
 

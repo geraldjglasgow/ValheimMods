@@ -15,7 +15,7 @@ namespace EarthWright.Menu
         /// <summary>The names of the embedded icons, for custom entries and the YAML file's comments.</summary>
         public static readonly string[] Names =
         {
-            "lower", "smooth", "paint", "reset", "ramp", "road", "clear", "groundbreaker", "terraform", "till", "uproot", "dig", "custom",
+            "lower", "smooth", "paint", "reset", "ramp", "road", "clear", "groundbreaker", "terraform", "till", "uproot", "custom",
         };
 
         private static readonly Dictionary<string, Sprite> loaded = new Dictionary<string, Sprite>();

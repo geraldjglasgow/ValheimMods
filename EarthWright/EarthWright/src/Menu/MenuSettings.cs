@@ -6,7 +6,7 @@ using SyncedConfig;
 namespace EarthWright.Menu
 {
     /// <summary>
-    /// Section "12. Menu": which entries the hoe, cultivator and shovel menus list (synced, so every player sees the
+    /// Section "12. Menu": which entries the hoe and cultivator menus list (synced, so every player sees the
     /// server's menu), how the game's paved road and cultivate entries behave (synced), the repeat rate of custom
     /// entries (synced), and each player's own display choices: key hints in descriptions and the full build menu.
     /// </summary>
@@ -43,10 +43,10 @@ namespace EarthWright.Menu
                 "Seconds between two runs of a custom entry's command while the button is held (entries with 'repeat: true' in EarthWright.Entries.yml).",
                 acceptableValues: new AcceptableValueRange<float>(0.05f, 5f));
             ShowKeyHints = synced.Bind(Sections.Menu, "Show Key Hints In Descriptions", true,
-                "Your own choice: the descriptions in the hoe, cultivator and shovel menus end with the keys that work with each entry, as you have bound them.",
+                "Your own choice: the descriptions in the hoe and cultivator menus end with the keys that work with each entry, as you have bound them.",
                 synced: false);
             FullBuildMenu = synced.Bind(Sections.Menu, "Full Build Menu", true,
-                "Your own choice: the hoe, cultivator and shovel use the game's full build menu, like the hammer: a search field, recent pieces and favourites (middle click an entry). Off: the game's plain list without a search field.",
+                "Your own choice: the hoe and cultivator use the game's full build menu, like the hammer: a search field, recent pieces and favourites (middle click an entry). Off: the game's plain list without a search field.",
                 synced: false);
         }
 
@@ -65,7 +65,7 @@ namespace EarthWright.Menu
 
         private static string Tool(Actions.ToolFamily tool)
         {
-            return tool == Actions.ToolFamily.Cultivator ? "cultivator's" : tool == Actions.ToolFamily.Shovel ? "shovel's" : "hoe's";
+            return tool == Actions.ToolFamily.Cultivator ? "cultivator's" : "hoe's";
         }
     }
 }

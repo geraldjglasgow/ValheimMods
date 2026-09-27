@@ -17,7 +17,6 @@ namespace EarthWright.Costs
         public static ConfigEntry<int> ExtraItemAmount { get; private set; }
         public static ConfigEntry<bool> HoeNeedsStations { get; private set; }
         public static ConfigEntry<bool> CultivatorNeedsStations { get; private set; }
-        public static ConfigEntry<bool> ShovelNeedsStations { get; private set; }
         public static ConfigEntry<bool> ModdedNeedsStations { get; private set; }
         public static ConfigEntry<bool> PavedNeedsStonecutter { get; private set; }
         public static ConfigEntry<float> StonePerCubicMetre { get; private set; }
@@ -51,8 +50,6 @@ namespace EarthWright.Costs
                 "Hoe entries need their crafting station nearby as in the game (a workbench for Raise ground, a stonecutter for Paved road). Off: the hoe works anywhere. An entry's stationRequired in EarthWright.Costs.yml overrides this.");
             CultivatorNeedsStations = synced.Bind(Sections.Costs, "Cultivator Needs Stations", true,
                 "Cultivator entries need their crafting station nearby, if they have one. Off: the cultivator works anywhere.");
-            ShovelNeedsStations = synced.Bind(Sections.Costs, "Shovel Needs Stations", true,
-                "Shovel entries need their crafting station nearby, if they have one. Off: the shovel works anywhere.");
             ModdedNeedsStations = synced.Bind(Sections.Costs, "Modded Entries Need Stations", true,
                 "Terrain entries added by other mods need their crafting station nearby, if they have one. Off: they work anywhere.");
             PavedNeedsStonecutter = synced.Bind(Sections.Costs, "Paved Road Needs Stonecutter", true,

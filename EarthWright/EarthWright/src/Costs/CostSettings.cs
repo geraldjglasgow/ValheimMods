@@ -58,7 +58,7 @@ namespace EarthWright.Costs
         private static void BindStamina(SyncedConfiguration synced)
         {
             Stamina = synced.Bind(Sections.Costs, "Stamina Mode", StaminaMode.Vanilla,
-                "Stamina a terrain entry of the hoe, cultivator or shovel uses per swing. Vanilla: the game's own cost. Off: none. Fixed: the amount in Stamina Per Use. Scaled: the game's cost times Stamina Factor, growing with the brush radius as Stamina Radius Exponent sets. A longer reach never lowers the cost.");
+                "Stamina a terrain entry of the hoe or cultivator uses per swing. Vanilla: the game's own cost. Off: none. Fixed: the amount in Stamina Per Use. Scaled: the game's cost times Stamina Factor, growing with the brush radius as Stamina Radius Exponent sets. A longer reach never lowers the cost.");
             StaminaPerUse = synced.Bind(Sections.Costs, "Stamina Per Use", 5f,
                 "Stamina per terrain swing while Stamina Mode is Fixed.",
                 acceptableValues: new AcceptableValueRange<float>(0f, 100f));
@@ -82,7 +82,7 @@ namespace EarthWright.Costs
         private static void BindWear(SyncedConfiguration synced)
         {
             ToolWear = synced.Bind(Sections.Costs, "Tool Wear", true,
-                "Terrain swings wear the hoe, cultivator and shovel down as in the game. Off: terrain work never costs durability.");
+                "Terrain swings wear the hoe and cultivator down as in the game. Off: terrain work never costs durability.");
             ToolWearFactor = synced.Bind(Sections.Costs, "Tool Wear Factor", 1f,
                 "The game's durability loss per terrain swing is multiplied by this (0.5: half the wear, 2: double).",
                 acceptableValues: new AcceptableValueRange<float>(0f, 10f));

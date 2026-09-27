@@ -18,7 +18,6 @@ namespace EarthWright.History
             Pruner.Initialize();
             Ticker.OnUpdate("EarthWright press tracker", PressTracker.Sample);
             Ticker.OnUpdate("EarthWright undo keys", UndoActions.OnUpdate);
-            Ticker.OnUpdate("EarthWright undo hint", HistoryHint.Update);
             HistoryCommands.Register();
             SnapshotCommands.Register();
             LanguageCommands.Register();

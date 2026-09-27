@@ -9,7 +9,6 @@ namespace EarthWright.Menu
     {
         Hoe,
         Cultivator,
-        Shovel,
     }
 
     /// <summary>
@@ -37,7 +36,7 @@ namespace EarthWright.Menu
 
         public string SpecialKey => "custom:" + Id;
 
-        public ToolFamily Family => Tool == CustomTool.Cultivator ? ToolFamily.Cultivator : Tool == CustomTool.Shovel ? ToolFamily.Shovel : ToolFamily.Hoe;
+        public ToolFamily Family => Tool == CustomTool.Cultivator ? ToolFamily.Cultivator : ToolFamily.Hoe;
 
         /// <summary>The game piece the entry's prefab is cloned from: a paint-only piece of its tool.</summary>
         public string BasePrefab => Tool == CustomTool.Cultivator ? "replant_v2" : "path_v2";

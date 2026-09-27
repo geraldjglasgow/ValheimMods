@@ -1,8 +1,8 @@
 # EarthWright
 
 Terraforming for Valheim's hoe and cultivator. Resize the brush, pick its shape and edge, level to an exact
-height, raise and lower by exact amounts, smooth, paint, reset, build ramps and curved roads, undo what you did,
-and dig with a new shovel, all inside the game's own build menu. Costs, height limits, wards and admin rules are
+height, raise and lower by exact amounts, smooth, paint, reset, build ramps and curved roads and undo what you did,
+all inside the game's own build menu. Costs, height limits, wards and admin rules are
 set by the server. Every gameplay setting is synced and lockable, every key and display option is per player, and
 the config file and five YAML files hot reload.
 
@@ -54,9 +54,8 @@ The game's Level ground, Raise ground, Pathen, Paved road, Cultivate and Replant
   Clear objects (off unless the server allows clearing) and Terraform (admins: level past the height limits).
 - **Cultivator**: Till (cultivate without changing the height) and Uproot (removes wild berries, mushrooms,
   branches and stones in the brush).
-- **Shovel**: a new tool made at the workbench (Wood 5, Flint 3 by default) that digs, smooths, levels and resets.
 - The hoe and cultivator menus get the game's full build menu with search, recent and favourites. Every entry can
-  be switched off, and each description lists the keys you have bound. Any console command can become a menu
+  be switched off, and each entry's description lists every key that works with it, as you have bound them. Any console command can become a menu
   entry through `EarthWright.Entries.yml`.
 
 ### Ramps and roads
@@ -72,7 +71,7 @@ The game's Level ground, Raise ground, Pathen, Paved road, Cultivate and Replant
 - The outline of the brush follows the ground; markers show every point that will change (raise, lower, held by a
   limit); a translucent volume shows the ground up to the target; buildings inside the area are highlighted.
 - Next to the crosshair: size, shape, edge, amount, style, paint, target height and source, cost, and the tile and
-  height under the cursor. A key hint sits above the build bar, a badge shows when the server locks the settings.
+  height under the cursor. A badge shows when the server locks the settings.
 - `F8` draws a world grid on the ground. `F6` (or the EarthWright button in the Esc menu) opens a panel to type
   exact values, use raise presets (1×2, 5×2, 5×3, 8×3), undo and redo, and for admins the protection settings.
 - Colours, sizes and every part of the display are personal settings. Dust from the hoe can be switched off.
@@ -97,11 +96,11 @@ where you stand.
 - The server can allow terrain tools to everyone, admins only or nobody, lock all terrain editing (admins bypass,
   tools can be exempt, the pickaxe included), refuse edits while hostile creatures are hunting you, and limit
   terraforming to admin zones (`ew zone add <name> <radius> [player]`, `ew zone list`, `ew zone remove <name>`).
-- The same rules apply to clearing objects and uprooting. To exempt the shovel from the lock, list `EW_Shovel`.
+- The same rules apply to clearing objects and uprooting.
 
 ### Tools
 While a terrain tool is out: reach 20 m (5 to 50), a light on the tool that everyone sees (its colour is yours),
-faster running, and a torch that stays in the left hand. Hoe, cultivator and shovel upgrade to level 6.
+faster running, and a torch that stays in the left hand. The hoe and cultivator upgrade to level 6.
 Sprinting on dirt roads is 10 % faster and cheaper, on paved roads 20 %. Seeds can snap to a grid (`I` with a seed
 selected), and the cultivator can be allowed on ground the game forbids.
 

@@ -5,12 +5,12 @@ using SyncedConfig;
 namespace EarthWright.Gear
 {
     /// <summary>
-    /// The level settings of one terrain tool (hoe, cultivator or shovel): its highest upgrade level, what each upgrade
+    /// The level settings of one terrain tool (hoe or cultivator): its highest upgrade level, what each upgrade
     /// costs and how much durability each level adds. One instance per tool keeps the three sets of keys alike.
     /// </summary>
     public sealed class ToolLevelSettings
     {
-        /// <summary>The item prefab name ("Hoe", "Cultivator", "EW_Shovel").</summary>
+        /// <summary>The item prefab name ("Hoe", "Cultivator").</summary>
         public string Prefab { get; }
 
         public ConfigEntry<int> MaxLevel { get; private set; }

@@ -58,8 +58,6 @@ namespace EarthWright.Costs
                     return MaterialSettings.HoeNeedsStations.Value;
                 case ToolFamily.Cultivator:
                     return MaterialSettings.CultivatorNeedsStations.Value;
-                case ToolFamily.Shovel:
-                    return MaterialSettings.ShovelNeedsStations.Value;
                 default:
                     return MaterialSettings.ModdedNeedsStations.Value;
             }

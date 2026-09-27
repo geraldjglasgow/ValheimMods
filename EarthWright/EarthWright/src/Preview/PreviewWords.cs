@@ -34,7 +34,7 @@ namespace EarthWright.Preview
         {
             Language.Add("ew_preview_panel_title", "EarthWright");
             Language.Add("ew_preview_panel_brush", "Brush");
-            Language.Add("ew_preview_panel_noentry", "Hold the hoe, cultivator or shovel and pick a terrain entry to change its brush here.");
+            Language.Add("ew_preview_panel_noentry", "Hold the hoe or cultivator and pick a terrain entry to change its brush here.");
             Language.Add("ew_preview_close", "Close");
             Language.Add("ew_preview_radius", "Radius (m)");
             Language.Add("ew_preview_rotation", "Rotation (°)");

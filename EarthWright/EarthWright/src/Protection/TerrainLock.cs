@@ -13,7 +13,7 @@ namespace EarthWright.Protection
     /// <list type="bullet">
     /// <item>Sender: this player's admin status; exempt when the held item or the entry's tool is on the list.</item>
     /// <item>Owner: an admin passes only when the server approved the edit; exemption is judged from the entry's tool
-    /// (its item "Hoe", "Cultivator", "EW_Shovel", or the family word "Shovel"). A source that names no entry ("reset",
+    /// (its item "Hoe" or "Cultivator"). A source that names no entry ("reset",
     /// "undo", "command:terrain") is trusted to the sender's check whenever any tool is exempt.</item>
     /// </list>
     /// </summary>
@@ -65,7 +65,6 @@ namespace EarthWright.Protection
             {
                 case ToolFamily.Hoe: return ToolNames.Hoe;
                 case ToolFamily.Cultivator: return ToolNames.Cultivator;
-                case ToolFamily.Shovel: return ToolNames.Shovel;
                 default: return null;
             }
         }

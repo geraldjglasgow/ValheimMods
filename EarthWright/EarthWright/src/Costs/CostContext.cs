@@ -14,7 +14,7 @@ namespace EarthWright.Costs
     /// built for the local player while EarthWright is on for them and a terrain tool is in the right hand, and only
     /// for a piece the action catalog knows as terrain work, so the hammer and every other piece keep the game's costs.
     /// The tool is only a terrain tool (a console command run with an axe in hand wears nothing), and the tool family
-    /// for the station switches is the tool in hand (the shovel's menu also lists hoe entries such as Level ground).
+    /// for the station switches is the tool in hand.
     /// </summary>
     internal sealed class CostContext
     {
@@ -94,8 +94,6 @@ namespace EarthWright.Costs
             string name = tool != null && tool.m_dropPrefab != null ? tool.m_dropPrefab.name : null;
             if (action.Family == ToolFamily.Modded || name == null)
                 return action.Family;
-            if (name == ToolNames.Shovel)
-                return ToolFamily.Shovel;
             return name == ToolNames.Cultivator ? ToolFamily.Cultivator : name == ToolNames.Hoe ? ToolFamily.Hoe : action.Family;
         }
 

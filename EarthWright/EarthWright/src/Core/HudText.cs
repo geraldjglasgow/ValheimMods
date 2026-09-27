@@ -37,22 +37,4 @@ namespace EarthWright.Core
             return lines.Values.OrderBy(l => l.Order).Select(l => Language.Localize(l.Text)).ToList();
         }
     }
-
-    /// <summary>
-    /// The controls hint above the hotbar: modules set their own hint line the same way as <see cref="HudText"/>.
-    /// </summary>
-    public static class HintText
-    {
-        private static readonly SortedDictionary<string, string> hints = new SortedDictionary<string, string>();
-
-        public static void Set(string key, string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                hints.Remove(key);
-            else
-                hints[key] = text;
-        }
-
-        public static List<string> Current() => hints.Values.Select(Language.Localize).ToList();
-    }
 }

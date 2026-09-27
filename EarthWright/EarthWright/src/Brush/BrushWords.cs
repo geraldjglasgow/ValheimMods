@@ -9,7 +9,6 @@ namespace EarthWright.Brush
         public static string Size, Edge, Hardness, Amount, MaxStep, Strength, Density, Rotation, Paint, Target, Grid, AimEdge;
         public static string Inner, Depth, Band, Metres;
         public static string HardLevelNeeds, LevelLocked, NoFloor, FloorCopied, Locked, Released, TargetMode;
-        public static string Wheel, HintValue, HintChange, HintShape, HintStyle, HintPaint, HintLock, HintTarget, HintGrid, HintEdge, HintHard;
         private static string[] shapes, styles, paints, sources;
         private static string on, off, noFlat;
 
@@ -17,7 +16,6 @@ namespace EarthWright.Brush
         {
             RegisterValues();
             RegisterMessages();
-            RegisterHints();
             shapes = new[] { W("shape_circle", "Circle"), W("shape_square", "Square"), W("shape_rectangle", "Rectangle"), W("shape_ring", "Ring"), W("shape_frame", "Frame") };
             styles = new[] { W("style_ease", "Ease"), W("style_step", "Step"), W("style_instant", "Instant") };
             paints = new[]
@@ -61,21 +59,6 @@ namespace EarthWright.Brush
             on = W("on", "on");
             off = W("off", "off");
             noFlat = W("noflat", "no flat found");
-        }
-
-        private static void RegisterHints()
-        {
-            Wheel = W("wheel", "Wheel");
-            HintValue = W("hint_value", "value");
-            HintChange = W("hint_change", "change");
-            HintShape = W("hint_shape", "shape");
-            HintStyle = W("hint_style", "style");
-            HintPaint = W("hint_paint", "paint");
-            HintLock = W("hint_lock", "lock height");
-            HintTarget = W("hint_target", "target");
-            HintGrid = W("hint_grid", "grid");
-            HintEdge = W("hint_edge", "edge");
-            HintHard = W("hint_hard", "hard level");
         }
 
         private static string W(string key, string english) => Language.Add("ew_brush_" + key, english);

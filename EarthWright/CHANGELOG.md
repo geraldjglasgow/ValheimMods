@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0
+- The shovel is gone: its item, recipe, upgrade levels, build menu and Dig entry, and its settings ("Shovel ..." in
+  section 13, "Shovel Needs Stations" in section 8). Shovels made with 0.1.x disappear from inventories. EarthWright
+  now works on the hoe and the cultivator only. Custom entries take `tool: hoe` or `tool: cultivator`.
+- Keys are shown in one place: each entry's description now lists every key that works with it (size, value, shape,
+  rotate, level style, lock height, target mode, hard level, paint, grid, aim at the edge, reset, reset around you,
+  undo / redo; ramps and roads their own keys). The separate hint line above the build bar and its settings
+  ("Show Controls Hint", "Hint Height") are removed.
+
 ## 0.1.1
 - New icons for every EarthWright menu entry (Lower ground, Smooth, Paint, Reset, Ramp, Road, Groundbreaker,
   Clear objects, Terraform, Till, Uproot, Dig) and for the Shovel.

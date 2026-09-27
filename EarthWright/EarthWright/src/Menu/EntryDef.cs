@@ -28,7 +28,7 @@ namespace EarthWright.Menu
 
         public HintKind[] Hints;
 
-        /// <summary>Which tool lists the entry. The shovel's menu is built by the Gear module from <see cref="EntryRegistry"/>.</summary>
+        /// <summary>Which tool lists the entry.</summary>
         public ToolFamily Tool => Action.Family;
 
         /// <summary>The id without the "ew_" prefix, used in word keys.</summary>

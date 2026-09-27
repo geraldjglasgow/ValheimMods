@@ -44,13 +44,16 @@ namespace EarthWright.Menu
         public static readonly KeyRef CycleTarget = new KeyRef(Sections.Controls, "Target Mode Key", KeyCode.Y);
         public static readonly KeyRef CyclePaint = new KeyRef(Sections.Controls, "Paint Key", KeyCode.P);
         public static readonly KeyRef GridMode = new KeyRef(Sections.Controls, "Grid Mode Key", KeyCode.I);
+        public static readonly KeyRef AimAtEdge = new KeyRef(Sections.Controls, "Aim At Edge Key", KeyCode.O);
         public static readonly KeyRef HardLevel = new KeyRef(Sections.Controls, "Hard Level Key", KeyCode.F9);
 
         // History module, section "7. Undo".
         public static readonly KeyRef Undo = new KeyRef(Sections.History, "Undo Key", KeyCode.Z, KeyCode.LeftControl);
+        public static readonly KeyRef Redo = new KeyRef(Sections.History, "Redo Key", KeyCode.Y, KeyCode.LeftControl);
 
         // Clearing module, section "5. Reset and Clearing".
         public static readonly KeyRef ResetArea = new KeyRef(Sections.Reset, "Reset Key", KeyCode.U);
+        public static readonly KeyRef ResetAround = new KeyRef(Sections.Reset, "Reset Around Key", KeyCode.U, KeyCode.LeftShift);
 
         // Paths module, section "4. Ramps and Roads".
         // The ramp profile cycles on the Brush module's shape key while the ramp entry is selected.

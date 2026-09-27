@@ -25,8 +25,6 @@ namespace EarthWright.Preview
             float scale = HudSettings.HudScale.Value;
             HudStyles.Ensure(scale);
             DrawBlock(scale);
-            if (HudSettings.ShowHint.Value)
-                DrawHint(scale);
         }
 
         public static bool CanDraw() => GeneralSettings.Active && LocalTool.InTerrainTool && !GameUiOpen();
@@ -75,23 +73,6 @@ namespace EarthWright.Preview
             if (CursorReadout.Text != null)
                 lines.Add("<color=#c8c8c8>" + CursorReadout.Text + "</color>");
             return lines;
-        }
-
-        /// <summary>The hints, one per module, stacked upward from the configured height above the bottom edge.</summary>
-        private static void DrawHint(float scale)
-        {
-            List<string> hints = HintText.Current();
-            if (hints.Count == 0)
-                return;
-            float width = Mathf.Max(MinWidth, Screen.width - 8f * Margin);
-            float x = (Screen.width - width) * 0.5f;
-            float y = Screen.height - HudSettings.HintHeight.Value * scale;
-            for (int i = hints.Count - 1; i >= 0; i--)
-            {
-                float height = HudStyles.Hint.CalcHeight(new GUIContent(hints[i]), width);
-                y -= height + scale;
-                HudStyles.Shadowed(new Rect(x, y, width, height), hints[i], HudStyles.Hint, HudStyles.HintShadow, scale);
-            }
         }
     }
 }

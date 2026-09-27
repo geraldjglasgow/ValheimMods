@@ -38,7 +38,7 @@ namespace EarthWright.Menu
 
         /// <summary>
         /// Sets <c>Piece.m_enabled</c> on every managed prefab. The game leaves a disabled piece out of every build menu
-        /// (so the shovel's menu follows the toggles too) and never adds it to the player's known pieces.
+        /// and never adds it to the player's known pieces.
         /// </summary>
         public static void ApplyFlags()
         {

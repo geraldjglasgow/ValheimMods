@@ -26,6 +26,10 @@ namespace EarthWright.Menu
         QuickRamp,
         Carve,
         CarvePaved,
+        /// <summary>The aim-at-the-edge toggle.</summary>
+        Edge,
+        /// <summary>Reset around the player (the reset key is <see cref="Reset"/>).</summary>
+        ResetAround,
     }
 
     /// <summary>
@@ -46,7 +50,8 @@ namespace EarthWright.Menu
             { HintKind.Hard, (KeyNames.HardLevel, "$ew_menu_hint_hard") },
             { HintKind.Paint, (KeyNames.CyclePaint, "$ew_menu_hint_paint") },
             { HintKind.Grid, (KeyNames.GridMode, "$ew_menu_hint_grid") },
-            { HintKind.Undo, (KeyNames.Undo, "$ew_menu_hint_undo") },
+            { HintKind.Edge, (KeyNames.AimAtEdge, "$ew_menu_hint_edge") },
+            { HintKind.ResetAround, (KeyNames.ResetAround, "$ew_menu_hint_resetaround") },
             { HintKind.Reset, (KeyNames.ResetArea, "$ew_menu_hint_reset") },
             { HintKind.Profile, (KeyNames.RampProfile, "$ew_menu_hint_profile") },
             { HintKind.Back, (KeyNames.RemovePoint, "$ew_menu_hint_back") },
@@ -54,6 +59,24 @@ namespace EarthWright.Menu
             { HintKind.Carve, (KeyNames.CarveRoad, "$ew_menu_hint_carve") },
             { HintKind.CarvePaved, (KeyNames.CarvePaved, "$ew_menu_hint_carvepaved") },
         };
+
+        /// <summary>
+        /// Every key the brush honours with a plain brush entry (clear, uproot, groundbreaker and custom entries too); the
+        /// hints that do not apply to an entry are dropped by <see cref="HintRules"/>.
+        /// </summary>
+        public static readonly HintKind[] Brush =
+        {
+            HintKind.Adjust, HintKind.Next, HintKind.Shape, HintKind.Rotate, HintKind.Style, HintKind.Lock, HintKind.Mode,
+            HintKind.Hard, HintKind.Paint, HintKind.Grid, HintKind.Edge, HintKind.Reset, HintKind.ResetAround, HintKind.Undo,
+        };
+
+        /// <summary>The keys an entry's description lists: a ramp's or road's own keys, every brush key for the rest.</summary>
+        public static IEnumerable<HintKind> For(ToolAction action, IEnumerable<HintKind> pathKeys)
+        {
+            if (action == null || !action.IsPathTool)
+                return Brush;
+            return (pathKeys ?? Enumerable.Empty<HintKind>()).Concat(new[] { HintKind.Lock, HintKind.Undo }).Distinct();
+        }
 
         /// <summary>"$ew_menu_keys" and the hints that apply to the action, joined by commas; empty when none is bound.</summary>
         public static string Line(IEnumerable<HintKind> kinds, ToolAction action)
@@ -67,7 +90,9 @@ namespace EarthWright.Menu
             if (kind == HintKind.Adjust)
                 return Adjust(HintRules.AdjustWord(action));
             if (kind == HintKind.Rotate)
-                return Pair(KeyNames.RotateLeft, KeyNames.RotateRight, "$ew_menu_hint_rotate");
+                return Pair(KeyNames.RotateLeft, KeyNames.RotateRight, "$ew_menu_hint_rotate", " / ");
+            if (kind == HintKind.Undo)
+                return Pair(KeyNames.Undo, KeyNames.Redo, "$ew_menu_hint_undo", " / ");
             if (!simple.TryGetValue(kind, out var hint))
                 return null;
             string key = KeyText.Of(hint.Key);
@@ -78,7 +103,7 @@ namespace EarthWright.Menu
         private static string Adjust(string word)
         {
             string modifier = KeyText.Of(KeyNames.AdjustModifier);
-            string keys = Keys(KeyNames.DecreaseValue, KeyNames.IncreaseValue);
+            string keys = Keys(KeyNames.DecreaseValue, KeyNames.IncreaseValue, " ");
             List<string> ways = new List<string>();
             if (modifier != null)
                 ways.Add(Yellow(modifier + "+$ew_menu_key_wheel"));
@@ -87,20 +112,20 @@ namespace EarthWright.Menu
             return ways.Count == 0 ? null : string.Join(" / ", ways) + " " + word;
         }
 
-        private static string Pair(KeyRef first, KeyRef second, string word)
+        private static string Pair(KeyRef first, KeyRef second, string word, string separator)
         {
-            string keys = Keys(first, second);
+            string keys = Keys(first, second, separator);
             return keys == null ? null : Yellow(keys) + " " + word;
         }
 
-        /// <summary>Two keys as "A B", or the one that is bound, or null.</summary>
-        private static string Keys(KeyRef first, KeyRef second)
+        /// <summary>Two keys joined by the separator ("[ ]", "Ctrl+Z / Ctrl+Y"), or the one that is bound, or null.</summary>
+        private static string Keys(KeyRef first, KeyRef second, string separator)
         {
             string a = KeyText.Of(first);
             string b = KeyText.Of(second);
             if (a == null || b == null)
                 return a ?? b;
-            return a + " " + b;
+            return a + separator + b;
         }
 
         private static string Yellow(string text) => "<color=yellow>" + text + "</color>";

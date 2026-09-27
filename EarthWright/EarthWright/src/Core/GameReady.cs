@@ -11,7 +11,7 @@ namespace EarthWright.Core
     /// throws is logged and skipped, never passed on: the game's own database wake-up must not break.
     /// <list type="bullet">
     /// <item><see cref="OnObjectDb"/>: after <c>ObjectDB.Awake</c> and <c>ObjectDB.CopyOtherDB</c>, once the items exist.
-    /// Menu pieces register at order 100, tools (the shovel) at 200, anything that reads tool tables at 300 or later.</item>
+    /// Menu pieces register at order 100, the tool levels apply at 210.</item>
     /// <item><see cref="OnScene"/>: after <c>ZNetScene.Awake</c>, when every networked prefab is registered.</item>
     /// </list>
     /// </summary>

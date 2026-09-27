@@ -4,7 +4,7 @@ namespace EarthWright.Gear
 {
     /// <summary>
     /// What the local player has in the right hand, refreshed once per frame: whether it is a terrain tool (hoe,
-    /// cultivator, shovel or another registered tool) and its level. The movement patches run every physics step and the
+    /// cultivator) and its level. The movement patches run every physics step and the
     /// brush asks every frame, so they read this instead of looking the item's prefab name up each time.
     /// </summary>
     public static class HeldTool

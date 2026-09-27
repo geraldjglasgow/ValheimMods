@@ -6,8 +6,7 @@ namespace EarthWright.Menu
     /// <summary>
     /// Which key hints an entry's description may show: the Brush module's own rules decide (its public predicates for
     /// the level style, the target keys and hard level), so a description never names a key the brush ignores for that
-    /// entry. The brush leaves the shape, rotation, grid and value-selector keys to plain brush entries; special entries
-    /// (ramp, road, clearing, uproot, groundbreaker, custom) only resize and pick a paint.
+    /// entry. Ramps and roads take no shape, rotation, grid, edge or value-selector keys; every other entry takes them.
     /// </summary>
     public static class HintRules
     {
@@ -24,6 +23,7 @@ namespace EarthWright.Menu
                 case HintKind.Shape:
                 case HintKind.Rotate:
                 case HintKind.Grid:
+                case HintKind.Edge:
                 case HintKind.Next: return !action.IsPathTool;
                 default: return true;
             }

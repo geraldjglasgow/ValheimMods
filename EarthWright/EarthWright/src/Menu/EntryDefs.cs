@@ -7,7 +7,7 @@ namespace EarthWright.Menu
 {
     /// <summary>
     /// EarthWright's own entries in menu order: the hoe's (after the game's four terrain entries), the cultivator's (after
-    /// Cultivate and Replant) and the shovel's. Starting values (radius, amount, hardness) are what the brush uses the
+    /// Cultivate and Replant). Starting values (radius, amount, hardness) are what the brush uses the
     /// first time an entry is selected; the player changes them with the brush keys.
     /// </summary>
     public static class EntryDefs
@@ -24,19 +24,16 @@ namespace EarthWright.Menu
         {
             yield return Def("ew_lower", "Lower", "raise_v2", "Lower ground",
                 "Lowers the ground inside the brush by the set amount. Repeated swings dig down to the dig limit.",
-                Lower("ew_lower", ToolFamily.Hoe, 2f), HintKind.Adjust, HintKind.Next, HintKind.Shape, HintKind.Undo);
+                Lower("ew_lower", ToolFamily.Hoe, 2f));
             yield return Def("ew_smooth", "Smooth", "mud_road_v2", "Smooth ground",
                 "Evens out bumps and ridges inside the brush without flattening the slope. The strength sets how much each swing smooths.",
-                new ToolAction { Id = "ew_smooth", Height = HeightOp.Smooth, Strength = 0.5f, BaseRadius = 3f, Hardness = 0.2f },
-                HintKind.Adjust, HintKind.Next, HintKind.Shape, HintKind.Undo);
+                new ToolAction { Id = "ew_smooth", Height = HeightOp.Smooth, Strength = 0.5f, BaseRadius = 3f, Hardness = 0.2f });
             yield return Def("ew_paint", "Paint", "path_v2", "Paint ground",
                 "Paints the ground inside the brush without changing its height. The paint key picks the paint: dirt, paved, tilled, grass, the biome's own ground or vegetation.",
-                new ToolAction { Id = "ew_paint", Paint = PaintOp.Paved, BaseRadius = 2f, Hardness = 1f },
-                HintKind.Adjust, HintKind.Paint, HintKind.Shape, HintKind.Undo);
+                new ToolAction { Id = "ew_paint", Paint = PaintOp.Paved, BaseRadius = 2f, Hardness = 1f });
             yield return Def("ew_reset", "Reset", "mud_road_v2", "Reset ground",
                 "Returns the ground inside the brush to the world's original height and texture. Buildings, trees and rocks are left alone.",
-                new ToolAction { Id = "ew_reset", Height = HeightOp.Reset, Paint = PaintOp.Original, BaseRadius = 3f, Hardness = 0.8f },
-                HintKind.Adjust, HintKind.Shape, HintKind.Reset, HintKind.Undo);
+                new ToolAction { Id = "ew_reset", Height = HeightOp.Reset, Paint = PaintOp.Original, BaseRadius = 3f, Hardness = 0.8f });
         }
 
         private static IEnumerable<EntryDef> HoeSpecialEntries()
@@ -49,27 +46,23 @@ namespace EarthWright.Menu
                 Special("ew_road", "road", ToolFamily.Hoe, 2f), HintKind.Carve, HintKind.CarvePaved, HintKind.Adjust, HintKind.Back, HintKind.Paint);
             yield return Def("ew_groundbreaker", "Groundbreaker", "mud_road_v2", "Groundbreaker",
                 "One swing does it all: clears trees, rocks and shrubs inside the brush (while clearing is switched on), levels the ground toward the target height and paves it.",
-                Groundbreaker(), HintKind.Adjust, HintKind.Shape, HintKind.Lock, HintKind.Mode, HintKind.Paint);
+                Groundbreaker());
             yield return Def("ew_clear", "Clear Objects", "path_v2", "Clear objects",
                 "Removes trees, stumps, logs, shrubs, rocks and pickables inside the brush. Warded ground is left alone.",
-                Special("ew_clear", "clear", ToolFamily.Hoe, 4f), HintKind.Adjust, HintKind.Shape);
+                Special("ew_clear", "clear", ToolFamily.Hoe, 4f));
             yield return Def("ew_terraform", "Terraform", "mud_road_v2", "Terraform (admin)",
                 "Admins only: sets every point inside the brush to the target height in one swing, past the height limits when the server allows it.",
-                Terraform(), HintKind.Adjust, HintKind.Next, HintKind.Lock, HintKind.Mode, HintKind.Style);
+                Terraform());
         }
 
         private static IEnumerable<EntryDef> OtherToolEntries()
         {
             yield return Def("ew_till", "Till", "cultivate_v2", "Till",
                 "Tills the ground inside the brush for planting without changing its height.",
-                new ToolAction { Id = "ew_till", Family = ToolFamily.Cultivator, Paint = PaintOp.Cultivated, BaseRadius = 3f, Hardness = 1f },
-                HintKind.Adjust, HintKind.Shape, HintKind.Undo);
+                new ToolAction { Id = "ew_till", Family = ToolFamily.Cultivator, Paint = PaintOp.Cultivated, BaseRadius = 3f, Hardness = 1f });
             yield return Def("ew_uproot", "Uproot", "replant_v2", "Uproot",
                 "Pulls up natural pickables inside the brush: berry bushes, mushrooms, flowers, thistle and the like.",
-                Special("ew_uproot", "uproot", ToolFamily.Cultivator, 3f), HintKind.Adjust, HintKind.Shape);
-            yield return Def("ew_dig", "Dig", "raise_v2", "Dig",
-                "Digs the ground inside the brush down by the set amount.",
-                Lower("ew_dig", ToolFamily.Shovel, 1.5f), HintKind.Adjust, HintKind.Next, HintKind.Shape, HintKind.Undo);
+                Special("ew_uproot", "uproot", ToolFamily.Cultivator, 3f));
         }
 
         /// <summary>An entry; its icon is named after the id without "ew_" (menu_lower.png for ew_lower).</summary>
@@ -89,7 +82,7 @@ namespace EarthWright.Menu
             return new ToolAction
             {
                 Id = id, Family = tool, Height = HeightOp.Lower, Paint = PaintOp.Dirt, BaseRadius = radius,
-                PaintRatio = 1.25f, Amount = 1f, UsesAmount = true, Hardness = tool == ToolFamily.Shovel ? 0.3f : 0f,
+                PaintRatio = 1.25f, Amount = 1f, UsesAmount = true, Hardness = 0f,
             };
         }
 

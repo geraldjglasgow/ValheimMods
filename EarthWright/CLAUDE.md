@@ -1,8 +1,8 @@
 # CLAUDE.md - EarthWright
 
-Terraforming for Valheim's hoe and cultivator, plus a shovel: brush size, shapes and edges, exact target heights,
+Terraforming for Valheim's hoe and cultivator: brush size, shapes and edges, exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits, protection, new menu
-entries. The log line `Loading [EarthWright 0.1.1]` confirms the version. Built on 2026-09-27 from the user's
+entries. The log line `Loading [EarthWright 0.2.0]` confirms the version. Built on 2026-09-27 from the user's
 feature list (`SPEC.md`, gitignored) and the game's own code, by a main session and ten module agents following
 `PLAN.md`, which holds the design, the feature map and the judgement calls. This file is the code map, the patched
 methods, the network names and the in-game test checklist.
@@ -40,7 +40,7 @@ Rules that apply to every change:
 
 | Folder | What it holds |
 | --- | --- |
-| `Core/` | settings section 0, `Command` (`ew`), `Keys`, `Language` + `LanguageFiles` + `WordList` (translations), `Messages`, `HudText`/`HintText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
+| `Core/` | settings section 0, `Command` (`ew`), `Keys`, `Language` + `LanguageFiles` + `WordList` (translations), `Messages`, `HudText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
 | `Terrain/` | edit model (`TerrainEdit`, `BrushStroke`, `VertexSet`, wire), `Dispatcher`, `OwnerHandler`, `ServerRelay`, `Refusals`, `EditGuards`/`EditEvents`, `TerrainRead`; the engine (`Engine*`, `Math/Footprint`, `HeightView`, `ChangeBuffer`, `PaintOps`, `SlopeRelax`), limits (`HeightLimits`, `Limit*`, `EngineBaseHeights`), `ew limits` |
 | `Actions/` | `ToolAction`, `ActionCatalog`, `VanillaActions` (the game's six entries), `SpecialActions`, `EditFactory`, `PlacementHook` |
 | `Brush/` | `BrushState` (read by all), values and memory per entry, keys, wheel capture, target height modes, ghost placement ("no silent blocks"), repeat, hard level, game key guards, HUD lines, `BrushCaps` |
@@ -51,7 +51,7 @@ Rules that apply to every change:
 | `Clearing/` | reset keys, clear and groundbreaker entries, survival clearing, `ew reset/forestry/debris/pieces/terrain` |
 | `Protection/` | guards (wards, no-build, dungeons, tools switch, lock, admin entries, zones, combat), `ObjectRules`, zones (file, RPC, commands, panel), dig exceptions, admin routing |
 | `Menu/` | EarthWright's entries (cloned prefabs, icons), toggles, table layout, full build menu, descriptions with key hints, custom YAML entries, `EntryRegistry` |
-| `Gear/` | shovel item, tool levels and level gate, reach, light, speed, torch |
+| `Gear/` | tool levels and level gate, reach, light, speed, torch |
 | `Extras/` | road travel bonus, seed grid, cultivate anywhere, uproot |
 
 Seams between modules: `BrushCaps` (level radius, unlocks, entry refusal), `UndoHooks.AddFirst`, `MenuHooks`,
@@ -66,7 +66,7 @@ Seams between modules: `BrushCaps` (level radius, unlocks, entry refusal), `Undo
 - YAML sets (pattern, sync key): `EarthWright.Brushes*.yml` `earthwright_brushes`, `EarthWright.Costs*.yml`
   `earthwright_costs`, `EarthWright.Entries*.yml` `earthwright_entries`, `EarthWright.Limits*.yml`
   `earthwright_limits`, `EarthWright.Zones.yml` `ew.zones.file` (server data, written back by the server).
-- Prefabs: `EW_Shovel`, `EW_ShovelPieceTable`; menu pieces `ew_*`, custom entries `ew_custom_<id>`. Words `ew_*`.
+- Prefabs: menu pieces `ew_*`, custom entries `ew_custom_<id>` (no items of its own). Words `ew_*`.
 - No ZDO keys of its own: terrain lives in the game's compiler ZDO (`s_TCData`).
 
 ## Patched game methods
@@ -106,6 +106,10 @@ names and types match): scratch harness `patchcheck`, reflection only.
 
 ## Decisions made during integration (beyond PLAN.md)
 
+- The shovel was removed on 2026-09-27 at the user's request (item, recipe, levels, Dig entry, its settings).
+- Keys are listed in one place only: the selected entry's description (Menu `KeyHints`, every key the brush honours for
+  that entry). The separate controls-hint line above the build bar was removed at the user's request.
+
 - The hoe and cultivator tables hide the game's search/recent/favourites (`m_hideAdvancedMenu`); "Full Build Menu"
   (local, on) turns it on for terrain tools.
 - The ramp profile cycles on the Brush shape key (N); the snap-while-held key is Z (not while Ctrl is down); the
@@ -125,7 +129,7 @@ names and types match): scratch harness `patchcheck`, reflection only.
 
 Single player first, then a dedicated server with an admin (A) and a player (B). Nothing below has been run in game.
 
-1. Load: `Loading [EarthWright 0.1.1]`, no failed patches, no exceptions; `ew help` lists the subcommands.
+1. Load: `Loading [EarthWright 0.2.0]`, no failed patches, no exceptions; `ew help` lists the subcommands.
 2. Hoe menu: the game's four entries, then Lower, Smooth, Paint, Reset, Ramp, Road, Groundbreaker (Clear only with
    Clearing Enabled; Terraform only for admins); icons; search finds "lower"; cultivator shows Till and Uproot.
 3. Brush: Alt+wheel and `[`/`]` resize without zooming; B cycles values; N shapes; arrows rotate; I grid; O edge;
@@ -141,8 +145,8 @@ Single player first, then a dedicated server with an admin (A) and a player (B).
     admin Right Alt past the limits; gentle slopes; strict dig exceptions near copper and in tar.
 11. Protection: wards over the brush edge (sender and owner), no-build, dungeon, tools switch, lock (pickaxe too),
     zones via `ew zone`, combat lock, admin-only Terraform.
-12. Shovel: recipe, table, durability, repair, upgrades to 6; reach 20 m; tool light seen by the other player;
+12. Tools: hoe and cultivator upgrade to 6; reach 20 m; tool light seen by the other player;
     torch in the left hand; faster running; road sprint bonus; seed grid; cultivate anywhere; uproot keeps crops.
 13. Panel F6 and the Esc button: typed values stick, presets, sections; Esc closes it; no hotkeys while typing.
 14. Dedicated server: B's edits on ground A owns are applied by A and seen by both; a privileged edit goes through
-    the server; the server log stays clean; the shovel survives a server restart.
+    the server; the server log stays clean.

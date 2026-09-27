@@ -27,7 +27,7 @@ namespace EarthWright.Brush
     }
 
     /// <summary>
-    /// The parsed EarthWright.Brushes*.yml files: a <c>families:</c> map (hoe, cultivator, shovel, modded) and an
+    /// The parsed EarthWright.Brushes*.yml files: a <c>families:</c> map (hoe, cultivator, modded) and an
     /// <c>entries:</c> map by piece prefab name, each with the keys of <see cref="EntryRule"/>. Out-of-range values
     /// are errors, so a broken file never applies half-read.
     /// </summary>
@@ -43,7 +43,7 @@ namespace EarthWright.Brush
                 if (Enum.TryParse(family.Key.Trim(), true, out ToolFamily kind) && Enum.IsDefined(typeof(ToolFamily), kind))
                     FamilyRules[kind] = ReadRule(family.Value);
                 else
-                    family.Value.Warn("unknown tool family '" + family.Key + "' (hoe, cultivator, shovel or modded), ignored");
+                    family.Value.Warn("unknown tool family '" + family.Key + "' (hoe, cultivator or modded), ignored");
             }
             foreach (KeyValuePair<string, YamlNode> entry in MapOf(root.Get("entries")))
                 EntryRules[entry.Key.Trim()] = ReadRule(entry.Value);

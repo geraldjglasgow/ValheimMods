@@ -25,8 +25,6 @@ namespace EarthWright.Preview
         public static ConfigEntry<float> HudOffsetX { get; private set; }
         public static ConfigEntry<float> HudOffsetY { get; private set; }
         public static ConfigEntry<bool> ShowReadout { get; private set; }
-        public static ConfigEntry<bool> ShowHint { get; private set; }
-        public static ConfigEntry<float> HintHeight { get; private set; }
         public static ConfigEntry<bool> ShowLockedBadge { get; private set; }
 
         public static ConfigEntry<KeyboardShortcut> GridKey { get; private set; }
@@ -59,12 +57,10 @@ namespace EarthWright.Preview
         private static void BindHud()
         {
             ShowHud = Local("Show HUD", true, "Shows EarthWright's lines (brush, target, costs, points) next to the crosshair while a terrain tool is out.");
-            HudScale = Local("HUD Scale", 1f, "Size of the text next to the crosshair, the controls hint and the badge.", new AcceptableValueRange<float>(0.5f, 3f));
+            HudScale = Local("HUD Scale", 1f, "Size of the text next to the crosshair and the badge.", new AcceptableValueRange<float>(0.5f, 3f));
             HudOffsetX = Local("HUD Offset X", 40f, "Horizontal distance of the text block from the crosshair, in pixels (negative: to the left).", new AcceptableValueRange<float>(-2000f, 2000f));
             HudOffsetY = Local("HUD Offset Y", 24f, "Vertical distance of the text block from the crosshair, in pixels (negative: upward).", new AcceptableValueRange<float>(-2000f, 2000f));
             ShowReadout = Local("Show Cursor Readout", true, "Adds a line with the tile coordinate, the ground height under the crosshair (and how far it is from the world's original height) and the target height.");
-            ShowHint = Local("Show Controls Hint", true, "Shows the controls of the selected entry at the bottom of the screen, above the build bar.");
-            HintHeight = Local("Hint Height", 190f, "Distance of the controls hint from the bottom edge of the screen, in pixels.", new AcceptableValueRange<float>(0f, 2000f));
             ShowLockedBadge = Local("Show Locked Badge", true, "Shows a small note while the server has locked EarthWright's settings.");
         }
 
@@ -83,7 +79,7 @@ namespace EarthWright.Preview
         private static void BindOther()
         {
             HighlightPieces = Local("Highlight Pieces", true, "Highlights building pieces standing inside the brush footprint.");
-            RemoveDust = Local("Remove Dust", false, "Removes the dust and pebble effects of the hoe, the cultivator and the shovel on terrain entries (the sounds stay). Other players then see no dust from your tool either.");
+            RemoveDust = Local("Remove Dust", false, "Removes the dust and pebble effects of the hoe and the cultivator on terrain entries (the sounds stay). Other players then see no dust from your tool either.");
             PanelKey = Local("Panel Key", new KeyboardShortcut(KeyCode.F6), "Opens or closes the EarthWright panel with typed brush values, presets and module settings (also in the Esc menu).");
             PanelPosition = Local("Panel Position", new Vector2(60f, 120f), "Where the panel was last dragged to (pixels from the top left corner).");
             PanelScale = Local("Panel Scale", 1f, "Size of the panel.", new AcceptableValueRange<float>(0.5f, 3f));

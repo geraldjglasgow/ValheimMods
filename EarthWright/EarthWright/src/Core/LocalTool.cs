@@ -3,16 +3,12 @@ using System.Collections.Generic;
 namespace EarthWright.Core
 {
     /// <summary>
-    /// What the local player holds. A terrain tool is an item whose build table is the hoe's or the cultivator's, or an
-    /// item another module registered with <see cref="AddTool"/> (the shovel). A terrain piece is any build piece with
+    /// What the local player holds. A terrain tool is the hoe or the cultivator. A terrain piece is any build piece with
     /// a <c>TerrainOp</c>, or one registered as a special action (ramp, road, clearing, custom entries).
     /// </summary>
     public static class LocalTool
     {
         private static readonly HashSet<string> tools = new HashSet<string> { "Hoe", "Cultivator" };
-
-        /// <summary>Registers another item prefab name as a terrain tool.</summary>
-        public static void AddTool(string itemPrefabName) => tools.Add(itemPrefabName);
 
         public static bool IsToolName(string itemPrefabName) => itemPrefabName != null && tools.Contains(itemPrefabName);
 

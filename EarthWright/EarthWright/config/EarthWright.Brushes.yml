@@ -1,11 +1,11 @@
-# EarthWright.Brushes.yml - starting sizes and limits of the hoe, cultivator and shovel entries.
+# EarthWright.Brushes.yml - starting sizes and limits of the hoe and cultivator entries.
 #
 # Every key is optional. A value missing for an entry falls back to its tool family, then to the .cfg (section
 # "1. Brush": Minimum Radius, Maximum Radius, Default Level Style) and finally to the entry's own values (the game's
 # own sizes for the vanilla entries). What a player changes in game is remembered per entry until logout; editing this
 # file starts every entry from its new defaults.
 #
-# families:     hoe, cultivator, shovel, modded (terrain pieces other mods add)
+# families:     hoe, cultivator, modded (terrain pieces other mods add)
 # entries:      by piece prefab name: mud_road_v2 (Level ground), raise_v2 (Raise ground), path_v2 (Pathen),
 #               paved_road_v2 (Paved road), cultivate_v2 (Cultivate), replant_v2 (Replant grass), EarthWright's own
 #               entries (ew_...) and any modded terrain piece.
@@ -31,7 +31,6 @@ families:
   hoe:
   cultivator:
 #    maxRadius: 12
-  shovel:
   modded:
 
 entries:

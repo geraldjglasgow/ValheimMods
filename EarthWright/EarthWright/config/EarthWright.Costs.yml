@@ -1,6 +1,6 @@
 # EarthWright - costs per menu entry
 #
-# This file changes what single terrain entries of the hoe, the cultivator and the shovel cost. Everything an entry
+# This file changes what single terrain entries of the hoe and the cultivator cost. Everything an entry
 # does not set here follows section "8. Costs" of the .cfg. The server's copy is sent to every player and replaces
 # theirs while they are connected; edits are picked up without a restart.
 #

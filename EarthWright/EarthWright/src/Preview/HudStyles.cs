@@ -16,8 +16,6 @@ namespace EarthWright.Preview
 
         public static GUIStyle Line { get; private set; }
         public static GUIStyle Shadow { get; private set; }
-        public static GUIStyle Hint { get; private set; }
-        public static GUIStyle HintShadow { get; private set; }
         public static GUIStyle Badge { get; private set; }
         public static GUIStyle BadgeShadow { get; private set; }
 
@@ -29,8 +27,6 @@ namespace EarthWright.Preview
             int size = Mathf.RoundToInt(15f * scale);
             Line = Make(size, TextAnchor.UpperLeft, new Color(1f, 0.96f, 0.88f));
             Shadow = Make(size, TextAnchor.UpperLeft, new Color(0f, 0f, 0f, 0.85f));
-            Hint = Make(Mathf.RoundToInt(14f * scale), TextAnchor.UpperCenter, new Color(0.95f, 0.9f, 0.78f));
-            HintShadow = Make(Mathf.RoundToInt(14f * scale), TextAnchor.UpperCenter, new Color(0f, 0f, 0f, 0.85f));
             Badge = Make(Mathf.RoundToInt(12f * scale), TextAnchor.UpperLeft, new Color(1f, 0.72f, 0.3f));
             BadgeShadow = Make(Mathf.RoundToInt(12f * scale), TextAnchor.UpperLeft, new Color(0f, 0f, 0f, 0.85f));
         }
