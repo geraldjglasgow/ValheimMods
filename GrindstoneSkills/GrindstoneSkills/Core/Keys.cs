@@ -51,5 +51,27 @@ namespace GrindstoneSkills
 
         /// <summary>The Sailing skill's identity: its SkillType number is this name's stable hash.</summary>
         public const string SailingSkillName = "grindstone_sailing";
+
+        // Woodcutting. Log keys are written by the log's owner when it spawns; halves inherit them from their log.
+        /// <summary>long on a log's ZDO: player ID of the woodcutter who felled its tree (0 when unknown).</summary>
+        public const string WoodPlayer = "grindstone_wood_player";
+        /// <summary>float on a log's ZDO: that woodcutter's Woodcutting level when the tree fell.</summary>
+        public const string WoodLevel = "grindstone_wood_level";
+        /// <summary>int on a log's ZDO: its domino depth; 0 for a tree felled by a swing, 1 for a tree a felled log knocked over.</summary>
+        public const string WoodChain = "grindstone_wood_chain";
+        /// <summary>bool on a log's ZDO: the log was split cleanly, so its wood gets the clean split bonus.</summary>
+        public const string CleanSplit = "grindstone_clean_split";
+        /// <summary>float 0..1 on a log's ZDO: how big its tree was within its kind's size range (old growth).</summary>
+        public const string WoodSize = "grindstone_wood_size";
+        /// <summary>Routed RPC to everybody. ZPackage: long playerId, int kind, string species, float amount, int chain; only that player's client acts on it.</summary>
+        public const string RpcWoodCredit = "grindstone_WoodCredit";
+        /// <summary>Routed RPC to everybody: (Vector3 position, string text); each client near the spot shows the text there.</summary>
+        public const string RpcWoodCallout = "grindstone_WoodCallout";
+        /// <summary>Player custom data: comma-separated species (log prefab names) of every tree the character has felled.</summary>
+        public const string FelledTrees = "grindstone_felled";
+        /// <summary>bool on a sapling's ZDO: Replanting planted it, so a felled log lying on it delays it instead of killing it.</summary>
+        public const string Replanted = "grindstone_replanted";
+        /// <summary>Charter sync key of the Finds YAML files (GrindstoneSkills.Finds*.yml).</summary>
+        public const string FindsSync = "grindstone_finds";
     }
 }

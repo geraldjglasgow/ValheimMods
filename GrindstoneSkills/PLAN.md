@@ -462,6 +462,153 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
       the ship; the crew see tags on serpents or drakes up to 100 m away for 30 s; no tags on bosses or tamed
       animals; nothing breaks on a dedicated server.
 
+## Woodcutting
+
+### The request (user, 2026-09-27)
+
+Deeper Woodcutting on the game's own skill, without a grading system: Timber! (aim, callout, log safety), Domino
+felling, perks (stamina refund, axe wear, Clean fell, Replanting), experience, Clean splits, Finds and Old growth,
+all working on a dedicated server. Starred logs were proposed and turned down.
+
+### What the game's Woodcutting already does
+
+Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
+
+- **Skill 13, "Wood Cutting"**, described as "Axe damage when hitting trees", increase step 1.
+- **Who trains it:** axes and battleaxes are Axes weapons (`m_skillType` 7), but their attacks set
+  `m_specialHitSkill` WoodCutting for `m_specialHitType` Tree. Tree-type targets are `TreeBase`, `TreeLog` and about 40
+  `Destructible`s of type Tree (stumps, saplings, small trees, bushes, branches, old logs).
+- **Damage:** a wood hit rolls its damage factor from Woodcutting (`GetRandomSkillFactor`: lerp(0.4, 1, level/100)
+  ± 0.15, clamped): level 0 gives 25-55% of the axe's chop damage, level 100 85-100%. The same factor scales push force.
+- **Experience:** +1 per swing that hits any wood (not per target), ×1.5 if the swing also hit a creature, Rested +50%.
+  Level 100 takes about 20,300 such swings.
+- **Not affected:** stamina (the Axes skill: −33% at 100), axe wear, drops, tool tiers, falling-log damage (an impact
+  hit has no attacker). No food, mead, set or Forsaken power changes Woodcutting.
+- **Quirk, left as it is:** the Thunderblood Axe and Greataxe have no tree special hit, so on wood they roll from Axes
+  and train nothing.
+- **Where things happen:** a tree's damage, fall, log spawn and canopy drops run on the tree's ZDO owner; a log's
+  damage, break and drops on the log's owner; `ImpactEffect` (a falling log hitting things) on the log's owner. The
+  hit's own `m_skillLevel` is the weapon skill's level (Axes).
+- **A falling log's hit:** every log and log half's `ImpactEffect` has hit type **Tree** (13), not Impact (the
+  component's default): blunt 50 and chop 30 (Ashlands blunt 110, chop 40, fire 20), tool tier 2, full damage from
+  5 m/s, one impact per 0.25 s. Wood is immune to everything but chop, so an impact lands at most 30 on a tree.
+
+### Foundation (`Woodcutting/Core`)
+
+- **The hit carries the woodcutter (`WoodHit`).** Before a hit on wood is sent to its owner, fields HitData already
+  sends and wood never reads are filled: `m_skill` WoodCutting, `m_skillLevel` the woodcutter's level, `m_attacker` the
+  woodcutter's player, and on an impact `m_skillRaiseAmount` the chain depth. `Woodcutter.FromHit` reads it on the owner.
+- **Logs remember their woodcutter.** When a tree falls, its owner writes the woodcutter (player ID, level, chain) to the
+  new log's ZDO (`Felling`, `LogSpawns`); halves inherit it and the clean mark (`LogBreaking`).
+- **Scopes:** `SwingScope` (the local player's melee swing; the Woodcutting raise in it is "this swing hit wood"),
+  `ImpactScope` (a felled log's impact, on its owner), `Felling.Open` (SpawnLog), `LogBreaking.Open` (TreeLog.Destroy).
+- **Dispatch:** the foundation calls each feature's hook, each guarded (`WoodGuard`), so a failing feature never stops a
+  tree from falling. Fell order: Old growth (stores the tree's size on the log), Timber, Clean fell, Replanting,
+  Finds, experience.
+- **Impacts:** a hit counts as a falling log's when its type is Tree or Impact (`WoodHit.IsImpact`) while the log's
+  `ImpactScope` is open; a log's hit on itself stays the game's (defensive: every game log has `m_damageToSelf` off).
+- **Yield:** Old growth and Clean splits each return a bonus; they add up and scale the log half's drop count.
+- **Credit (`WoodCredit`):** fell and split experience goes to the woodcutter by routed RPC, like the cook credit; an
+  offline woodcutter loses it. **Callouts (`WoodCallout`):** a routed RPC; every client within 40 m draws the text with
+  the game's floating damage text, if its own "Show Callouts" is on.
+
+### Features (defaults at level 100, linear from 0, synced and lockable)
+
+| Feature | Default | Whose level, where it runs |
+| --- | --- | --- |
+| Fall push (Timber!) | +900% of the game's push (×10) | the feller's, tree owner |
+| Log safety (Timber!) | 100% less damage from logs of your own trees | the feller's, log owner |
+| Domino impact | +200% impact damage on other wood (×3), chains up to 5 trees | the feller's, log owner |
+| Stamina refund | 30% of a swing's stamina when it hits wood | your own, your client |
+| Axe wear | 50% less wear for swings that hit wood | your own, your client |
+| Clean fell | 100% chance the stump comes out and drops its wood | the feller's, tree owner |
+| Replanting | 50% chance a sapling of the same kind takes root; free | the feller's, tree owner |
+| Clean split | 20% of hits on a log split it at once; +50% wood | the hitter's, log owner |
+| Old growth | up to +100% wood from the biggest trees of each kind | the breaker's (else the feller's), log owner |
+| Finds | 2% chance at level 0 to 15% at 100, per fell | the feller's, tree owner |
+
+- **Timber!:** the log gets the game's own push again, times the level share, along the felling hit. "Timber!" floats
+  above every tree that falls to a woodcutter.
+- **Domino:** a felled log's impacts on other trees, logs and stumps are multiplied; a tree it fells counts as the
+  woodcutter's (its log carries the chain on), and the woodcutter sees "Chain ×N!". Players, creatures and buildings
+  take the game's own log damage.
+- **Replanting** takes the stump out too. The sapling is found from the game's saplings (`Plant.m_grownPrefabs`), so
+  trees without one (swamp, Mistlands, Ashlands) are never replanted.
+- **Finds:** a YAML file (`GrindstoneSkills.Finds*.yml`, synced, hot reloaded) lists per biome, or per tree, what a
+  tree can hide: named finds of existing items with weights. No creatures (the ambush idea is left out for now).
+- **Clean split:** the hit is raised to finish the log (tool tier still applies); a whole log's halves keep the mark,
+  so their wood gets the bonus; "Clean split!" floats above it.
+- **Old growth is relative to the tree's kind.** Sizes differ by kind (beech 0.8 to 1.5, birch 0.5 to 1.0, firs 1.5
+  to 3.0), so one absolute scale fits no forest. When a tree falls its size within its kind's range (world generator
+  and sapling ranges, built at runtime) is stored on the log (`grindstone_wood_size`, 0..1) and passed to the
+  halves; the bonus grows from nothing at 50% of the range to all of it at the top.
+  - The range is the tree prefab's own (so Meadows birches, 0.5 to 1.0, are not judged against the Plains heath's
+    1.0 to 1.5), else its log kind's. Sources: `ZoneSystem.m_vegetation` (filled on every machine in
+    `SetupLocations`), saplings' `Plant.m_minScale..m_maxScale`, and a prefab's root scale when it is not 1.
+  - Known gap: FirTree is one prefab for the Black Forest (2.0 to 2.5), the mountains (1.5 to 3.0) and saplings
+    (1.0 to 2.5), so Black Forest firs reach at most half the bonus. A per-biome range would fix it.
+
+### Experience (section 10, synced)
+
+- The game's +1 per swing stays, scaled by the hardest wood the swing hit: +50% per tool tier it needs (birch and oak
+  ×2, Yggdrasil ×3), and 25% for wood with less than 30 health (saplings, small trees), so they are no XP farm.
+- **Fell:** 5 per tree, times its tier, to the feller, chain fells included. **Split:** 2 per log half broken into
+  wood, times its tier, to the breaker.
+- **Discovery:** the first fell of each kind of tree (its log prefab) ×3, recorded in player custom data.
+- An Experience Multiplier over all of it. Credits never run the swing perks or the swing scaling again.
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- Log safety covers the feller only (the party could come later through Party's API). It covers log halves too.
+- Replanting is free (no seed taken) and always takes the stump out.
+- Finds carry items only; the Greyling ambush is not in.
+- The Thunderblood axes keep the game's quirk.
+- **Timber!:** the extra push is the flat part of the felling direction (a tilt would only lift the log or press it
+  into the stump); nearly vertical hits get none. It applies to chain fells too.
+- **Domino:** every damage type is scaled (only chop lands on wood, and the drop conversions keep their majority
+  type). A boosted impact takes the log's own tool tier when it is higher, so Yggdrasil logs can knock over the next
+  shoot (tier 4). The chain message shows for every chain fell, including ones past Max Chain. The boost also
+  applies to the log's hits on its own tree's stump, so at high levels a hard landing can knock the stump out even
+  when Clean fell did not roll.
+- **Clean splits:** a hit that would break the log anyway can still be a clean split (late axes break halves in one
+  hit). The bonus is flat, not scaled by level; the chance is. The bonus follows the mark, whoever breaks the log.
+- **Replanting:** a sapling is planted only where it could grow (biome, roof, grow space ignoring the fell's own
+  tree, log and stump), so dense spots get fewer. A replanted sapling (`grindstone_replanted`) waits instead of dying
+  while a log lies within its grow radius. Autumn birches get birch saplings (lookup by tree, then by log kind).
+- **Experience:** wood too hard for the axe gets no tier bonus (it would be an endless farm). A felled log that
+  breaks a log half credits the split to its feller. Discovery is not used up while the credit is 0.
+- **Finds:** a tree listed in the file replaces its biome's table. The world's resource rate does not scale finds.
+- **Chain credit needs the woodcutter nearby:** a domino fell is credited only if the woodcutter's player is loaded
+  on the log's owner; otherwise the chain carries on anonymously.
+
+### Known gaps
+
+- Axe swings can cut a replanted sapling standing at the log's base, as with any sapling (1 health).
+- Credits reach the woodcutter as one raise; the game gives at most one level per raise, so a large first-fell credit
+  at a low level loses its excess.
+- The woodcutter's player ID is read on the target's owner from the attacker's player ZDO. For a chain, the struck
+  tree's owner may not have it (the woodcutter far away); that fell is then anonymous (no credit, no chain message).
+  HitData has no other 64-bit field that is always sent.
+- A tagged impact carries the woodcutter as attacker, so the game counts tree stats for them and a Destructible with
+  `m_triggerPrivateArea` (Dvergr areas) reacts as if they had hit it. Check in the Mistlands.
+
+### Test checklist
+
+- [ ] Level 0 with every feature on plays like vanilla apart from finds (2%), callouts and experience.
+- [ ] Timber!: at 100 the tree falls away from you, faster; "Timber!" for players within 40 m; your own log does not
+      hurt you, another player's does.
+- [ ] Domino: at 100 a beech felled into a beech knocks it over; "Chain ×2!"; Max Chain 1 stops the boost at the
+      second tree; players and buildings take vanilla damage.
+- [ ] Stamina and wear: an iron axe at 100 refunds 3 of 10 stamina per hit on wood; 10 swings wear 5.
+- [ ] Clean fell and Replanting: no stump, its wood drops; a sapling where there is room, none in swamp, Mistlands,
+      Ashlands; the sapling survives a log lying on it and grows once it is cleared.
+- [ ] Clean splits: Chance 100 splits a log in one hit, the halves drop about 15 instead of 10, the damage number is
+      the log's remaining health.
+- [ ] Old growth: the biggest beech of an area gives more wood than a small one; logs felled earlier give none.
+- [ ] Finds: Chance 100 drops a find per fell, per biome and for Oak1; the YAML hot reloads; a bad biome is refused.
+- [ ] Experience: birch twice beech, saplings a quarter, the first fell of a kind triple, splits credited.
+- [ ] Dedicated server with two clients, the trees owned by the other client: every credit, callout and bonus above.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
@@ -471,6 +618,9 @@ passes. Open: the raw-fish question.
 
 0.2.0 (Sailing) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.2.0), before any in-game test: the
 build is clean (0 warnings). The Sailing decisions above wait for the user's confirmation.
+
+Woodcutting written 2026-09-27 (foundation, then eight features in parallel, then a review), not released and not
+tested in game. The build is clean (0 warnings). The Woodcutting decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

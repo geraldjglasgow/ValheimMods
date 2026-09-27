@@ -1,10 +1,11 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking and Sailing. A good cook makes better food: every dish comes out with 0 to 3
-stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the stars you want.
-Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds tougher ships,
+Deeper skills for Valheim: Cooking, Sailing and Woodcutting. A good cook makes better food: every dish comes out with
+0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the stars you
+want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds tougher ships,
 sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that marks every enemy
-around the ship.
+around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs in one blow,
+finds what trees hide, and gets more wood from the giants of the forest.
 
 ### Cooking
 
@@ -46,6 +47,36 @@ A new skill in the skills panel. Every perk grows from nothing at level 0 to its
 - **Multiplayer.** A ship's health is the same on every machine, and the speed follows whoever is at the helm, even
   when the ship's physics runs on another player's machine.
 
+### Woodcutting
+
+Built on the game's own Woodcutting skill, so the levels you already have count. In the game it only makes axes hit
+trees harder; here every perk grows from nothing at level 0 to its full value at level 100.
+
+- **Timber!** A tree falls away from where you chopped it, pushed up to ten times harder than in the game, so you
+  decide where it lands. "Timber!" floats above every falling tree for everyone nearby.
+- **Log safety.** Logs from your own trees hurt you less, not at all at level 100. Other players, creatures and
+  buildings still take the game's damage.
+- **Domino felling.** A log from your tree hits other trees, logs and stumps up to three times harder, so one good
+  fell can knock over the next tree, and that one the next, up to five deep. While you're nearby, every tree in the
+  chain counts as yours, and you see "Chain ×3!".
+- **Clean splits.** Up to one hit in five splits a log at once, with a crack and "Clean split!", and a cleanly split
+  log gives 50% more wood.
+- **Old growth.** The biggest trees of each kind give up to twice the wood: trees grow at random sizes, and the
+  larger half of each kind earns a growing share of the bonus.
+- **Finds.** A falling tree sometimes hides something: a bird's nest, a wild hive, a squirrel's stash, a lost purse,
+  and rarer things in every biome. From 2% of trees at level 0 to 15% at level 100. Server admins set what each
+  biome or tree can hide in `GrindstoneSkills.Finds.yml`.
+- **Easier chopping.** A swing that hits wood gives back up to 30% of its stamina and wears your axe up to 50% less.
+- **Clean fell.** The stump comes out with the tree and drops its wood.
+- **Replanting.** Up to half the time, a sapling of the same kind takes root where the tree stood, if it has room to
+  grow. A log lying on it only delays it. Beech, birch, oak, fir and pine have saplings; swamp, snow, Mistlands and
+  Ashlands trees are never replanted.
+- **Experience** as the game gives it per swing, more for harder wood (birch and oak twice, Yggdrasil three times),
+  a quarter for saplings and tiny trees, plus a bonus for every tree felled and every log broken, and triple the
+  first time you fell each kind of tree.
+- **Multiplayer.** Your level travels with every hit, and the machine that owns a tree or a log decides. Experience
+  for a tree felled, a chain or a split log reaches you wherever the tree's physics runs.
+
 ### Every skill
 
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
@@ -71,6 +102,14 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Display** (each player's own): stars on icons, and which stars recipes use first.
 - **Sailing:** a switch for the whole skill, each perk's value at level 100, and the helm and crew experience.
 - **Lookout:** the level it unlocks at, its radius, how long tags stay and the cooldown; the key is each player's own.
+- **Woodcutting:** a switch for the whole skill, the experience rates, and whether you see callouts (each player's
+  own).
+- **Felling:** the fall push, log safety, domino strength and depth, clean fell and replanting.
+- **Chopping:** stamina refund, axe wear, clean split chance and bonus, and old growth.
+- **Finds:** the chance of a find at level 0 and at level 100.
+
+`GrindstoneSkills.Finds.yml`, next to the .cfg, lists what trees can hide per biome and per tree: named finds with a
+weight and their items. It comes from the server, reloads while the game runs, and explains itself in its comments.
 
 ### Console
 
@@ -94,6 +133,8 @@ lists where the server's values differ from your own file, and `charter versions
 - Sailing is a skill of this mod's own (the game has none). If you remove GrindstoneSkills, the game forgets your
   Sailing level the next time it saves your character.
 - Ships built before you installed GrindstoneSkills keep the game's health.
+- Logs felled before you installed GrindstoneSkills get no domino, log safety or old growth bonus.
+- The Thunderblood Axe and Greataxe don't train Woodcutting in the game, so they get no Woodcutting perks here either.
 
 ### Building
 Requirements: .NET SDK 8, Valheim installed with BepInEx, and the `ValheimModLibs` repository checked out next to this

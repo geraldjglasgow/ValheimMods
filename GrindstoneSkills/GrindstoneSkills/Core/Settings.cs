@@ -26,6 +26,7 @@ namespace GrindstoneSkills
             DisplaySettings.Initialize(config);
             SailingSettings.Initialize(config);
             LookoutSettings.Initialize(config);
+            WoodcuttingSettings.Initialize(config);
         }
 
         /// <summary>A range from 0 to the given maximum, for percent and multiplier settings.</summary>

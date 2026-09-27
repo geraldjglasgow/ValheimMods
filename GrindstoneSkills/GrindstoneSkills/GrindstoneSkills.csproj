@@ -5,7 +5,7 @@
     <AssemblyName>GrindstoneSkills</AssemblyName>
     <RootNamespace>GrindstoneSkills</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Product>GrindstoneSkills</Product>
     <Description>GrindstoneSkills: deeper skills for Valheim, cooking and sailing</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -98,6 +98,11 @@
       <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Embedded default YAML files: GrindstoneSkills.config.<file> -->
+    <EmbeddedResource Include="config\*.yml" LogicalName="GrindstoneSkills.config.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->
