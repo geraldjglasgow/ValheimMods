@@ -1,17 +1,19 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging, Husbandry and Defense. A good cook makes
-better food: every dish comes out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can
-throw away dishes below the stars you want. Built on the game's own Cooking skill, so the levels you already have
-count. A good sailor builds tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send
-out a lookout pulse that marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree
+Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging, Husbandry, Defense and Farming. A good
+cook makes better food: every dish comes out with 0 to 3 stars, stars make food stronger and last longer, and every
+kitchen can throw away dishes below the stars you want. Built on the game's own Cooking skill, so the levels you
+already have count. A good sailor builds tougher ships, sails them faster, sees more of the map at sea, and from level
+50 can send out a lookout pulse that marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree
 into the next, splits logs in one blow, finds what trees hide, and gets more wood from the giants of the forest. A
 good miner reads stone: strikes the seams that glint in the rock, knows a rich vein at a glance, hears where the next
 deposit lies, and turns up amber and rubies. A good forager picks starred berries, mushrooms and herbs for the
 kitchen, knows when each plant is at its best, and clears a whole patch in one sweep. A good keeper tames faster,
 walks among the animals being tamed without a fight, breeds stronger young, and gets more from the herd. A good
 defender takes a beating: more health, less damage, cheaper blocks and dodges, and from level 25 on a parry that
-powers the riposte, a shield wall for the friends behind, and one last stand against a killing blow.
+powers the riposte, a shield wall for the friends behind, and one last stand against a killing blow. A good farmer
+grows starred crops from heirloom seeds, plants whole rows at once, now and then pulls a giant turnip, and feeds the
+fields from a compost bin.
 
 ### Cooking
 
@@ -220,6 +222,48 @@ Every perk grows from nothing at level 0 to its full value at level 100. Animals
 - **Multiplayer.** Animals follow the keeper's level wherever their owner's machine is, so it all works on a dedicated
   server. Like the rest of the mod, it must be installed on the server and on every client.
 
+### Farming
+
+Built on the game's own Farming skill, so the levels you already have count. In the game it only gives a small chance
+of an extra crop, cheaper cultivating and a wider scythe. Here the planter's level decides how crops grow and ripen,
+and the picker's level decides the harvest. Perks grow from nothing at level 0 to their full value at level 100.
+
+- **Stars on crops.** Crops ripen with 0 to 3 stars, rolled from the planter's Farming level with the same odds as
+  cooked dishes. Starred crops stand a little taller in the field and show their stars when you look at them. In the
+  kitchen they are starred ingredients, and eaten raw they give more.
+- **Heirloom seeds.** Seeds carry stars too, and a starred seed ripens with better odds: 10 levels per star. Plant
+  3★ carrots for 3★ seed carrots, and each generation of good seed breeds the next. Which seeds you plant first
+  follows the Ingredient Order setting (lowest stars first by default; set it to highest to breed).
+- **Companion planting.** Each other kind of crop growing within 2 m adds 5 levels to a crop's roll, up to three
+  kinds.
+- **Giant crops.** Up to 2% of crops ripen into a giant at level 100: two and a half times the size, always 3★, six
+  times the crop.
+- **Faster growth.** Everything you plant grows up to 40% faster, and half again as fast while it rains.
+- **Closer rows.** Crops need up to 40% less room around them.
+- **Tending.** Press the use key on a growing plant once a day. It and every growing plant within 2.5 m gain a tenth
+  of their growing time.
+- **The almanac.** Look at a growing plant to see when it will be ripe. From level 20 you also see the odds of the
+  stars it will ripen with.
+- **Better harvests.** Up to half your picks give an extra crop (the game's own bonus stops at 25%). Up to 30% give
+  back the seed the plant grew from.
+- **Row planting, from level 25.** Placing a seed plants three in a row, five from level 50. Each pays its own seed.
+  Hold Shift to plant one.
+- **Auto-replant, from level 50.** Picking a crop, by hand or with the scythe, puts its plant back in the same spot
+  with a seed from your inventory.
+- **Hardy crops.** From level 75 your crops grow in the Ashlands without a shield. At level 100, crops that grow in
+  the Meadows also grow in the Mountains and the Deep North.
+- **The windmill keeps stars.** Starred barley makes starred flour, starred oats starred oat flour, in separate stacks.
+- **Compost bin.** A new barrel in the cultivator's menu (10 wood, 4 stone, next to a workbench). Put scraps in it:
+  food, spare crops and seeds, entrails and bone fragments.
+  - Every 30 seconds it turns one into compost, and it feeds the growing crops within 12 m.
+  - Fertilized crops grow 25% faster and ripen with better stars.
+  - Dishes a kitchen's trash filter throws away nearby go in too.
+- **Experience** as the game gives it for planting and picking, more for richer crops, five times for a giant, triple
+  the first time you pick each kind of crop, and a little for tending.
+- **Multiplayer.** The planter's level travels with the plant, and the machine that owns a plant rolls its stars. The
+  picker's level decides the harvest perks, so it all works on a dedicated server. Like the rest of the mod, it must
+  be installed on the server and on every client.
+
 ### Every skill
 
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
@@ -279,6 +323,14 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Husbandry Experience:** the multiplier, taming, tamed, first-tame, feeding, birth, petting, butchering and honey
   experience.
 
+- **Farming:** a switch for the whole skill, crop stars, how many levels a seed's star and a companion are worth,
+  giant crops, and each player's own callouts, row planting and auto-replant.
+- **Farming Perks:** growth speed, grow space, bonus yield and seed return at level 100; the levels of auto-replant,
+  rows, heat and cold tolerance and the almanac; rain and tending (above 100 turns a level off).
+- **Farming Experience:** the multiplier, tier scaling, the first-pick and giant bonuses, and tending experience.
+- **Compost:** a switch, how fast bins compost, how much they hold and how far they reach, what fertilized crops gain,
+  kitchen trash, and more items that compost.
+
 `GrindstoneSkills.Finds.yml` and `GrindstoneSkills.MineFinds.yml`, next to the .cfg, list what trees and broken rock
 can hide, per biome and per kind of tree or deposit: named finds with a weight and their items. They come from the
 server, reload while the game runs, and explain themselves in their comments. Extra files named
@@ -316,9 +368,12 @@ lists where the server's values differ from your own file, and `charter versions
 - Jotun puffs, magecap, seed carrots, turnips and onions, and vineberries are the same plants you can grow, so they
   stay with Farming even where they grow wild.
 - Berries and mushrooms can carry stars now, so in a recipe a 0★ one counts toward the ingredients' average stars
-  where it used to be left out. The same goes for eggs, and for raw meat while Prime cuts is on.
+  where it used to be left out. The same goes for eggs, for raw meat while Prime cuts is on, and for crops and flour.
 - Husbandry is a skill of this mod's own too: removing GrindstoneSkills forgets it. Without the mod, Animal Feeders you
-  built no longer load, and neither does the food in them: empty them and take them down before you remove it.
+  built no longer load, and neither does the food in them: empty them and take them down before you remove it. The
+  same goes for Compost bins.
+- Crops planted before you installed Farming, and wild ones, ripen with 0 stars. Flax never carries stars, so linen
+  is unchanged. Vines grow as in the game.
 - Ships built before you installed GrindstoneSkills keep the game's health.
 - Logs felled before you installed GrindstoneSkills get no domino, log safety or old growth bonus.
 - The Thunderblood Axe and Greataxe don't train Woodcutting in the game, so they get no Woodcutting perks here either.

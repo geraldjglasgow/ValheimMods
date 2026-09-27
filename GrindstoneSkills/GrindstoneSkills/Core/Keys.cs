@@ -138,5 +138,44 @@ namespace GrindstoneSkills
         /// <summary>Player custom data: comma-separated name tokens ("$enemy_greydwarf") of every kind of creature the character has blocked.</summary>
         public const string BlockedFoes = "grindstone_blocked";
 
+        // Farming. Plant keys are written by the planting client, which owns the new plant's ZDO.
+        /// <summary>long on a plant's ZDO: player ID of the player who planted it (0 or absent: not planted by a player with Farming).</summary>
+        public const string FarmPlanter = "grindstone_farm_planter";
+        /// <summary>float on a plant's ZDO: the planter's Farming level when it was planted.</summary>
+        public const string FarmLevel = "grindstone_farm_level";
+        /// <summary>int on a plant's ZDO: the stars of the seed it was planted from (heirloom).</summary>
+        public const string FarmSeedStars = "grindstone_farm_seed";
+        /// <summary>bool on a plant's ZDO: a compost bin fertilized it.</summary>
+        public const string FarmFed = "grindstone_farm_fed";
+        /// <summary>int on a plant's ZDO: the in-game day it was last tended (EnvMan.GetDay).</summary>
+        public const string FarmTended = "grindstone_farm_tended";
+        /// <summary>int on a ripe crop's ZDO, written by the plant's owner when it grew: its stars.</summary>
+        public const string FarmStars = "grindstone_farm_stars";
+        /// <summary>bool on a ripe crop's ZDO: it grew into a giant crop.</summary>
+        public const string FarmGiant = "grindstone_farm_giant";
+        /// <summary>int on a ripe crop's ZDO: the prefab hash of the plant it grew from, for auto-replant and seed return.</summary>
+        public const string FarmFrom = "grindstone_farm_from";
+        /// <summary>On a plant, to its owner: (int day) - a player tended it on that in-game day.</summary>
+        public const string RpcTend = "grindstone_Tend";
+        /// <summary>On a plant, to its owner: () - a compost bin fertilized it.</summary>
+        public const string RpcFertilize = "grindstone_Fertilize";
+        /// <summary>Player custom data: comma-separated pickable prefab names of every crop kind the character has picked.</summary>
+        public const string HarvestedCrops = "grindstone_harvested";
+
+        // Windmill: the stars of the queued items, parallel to the game's item0..itemN queue.
+        /// <summary>string on a mill's ZDO: one digit per queued item, aligned to the end of the queue (older items without a digit have 0 stars).</summary>
+        public const string MillStars = "grindstone_mill_stars";
+        /// <summary>int on a mill's ZDO: the stars of the output stack it is gathering (s_spawnOre / s_spawnAmount).</summary>
+        public const string MillSpawnStars = "grindstone_mill_spawn";
+        /// <summary>On a Smelter, to its owner. ZPackage: string item, bool cheated, int stars.</summary>
+        public const string RpcAddMill = "grindstone_AddMill";
+
+        // Compost bin.
+        /// <summary>The compost bin's prefab name (a copy of the game's barrel), the same on every machine.</summary>
+        public const string CompostPrefab = "grindstone_compost_bin";
+        /// <summary>float on a compost bin's ZDO: its compost points.</summary>
+        public const string CompostPoints = "grindstone_compost";
+        /// <summary>On a compost bin, to its owner: (float points) - kitchen trash to add.</summary>
+        public const string RpcAddCompost = "grindstone_AddCompost";
     }
 }

@@ -1,0 +1,46 @@
+using System.Collections.Generic;
+using HarmonyLib;
+using UnityEngine;
+
+namespace GrindstoneSkills
+{
+    /// <summary>
+    /// Crops belong to the Farming module, never to Foraging: a pickable whose prefab name is in any Plant's
+    /// m_grownPrefabs, planted or wild (jotun puffs, magecap and the seed carrots, turnips and onions grow wild from the
+    /// same prefabs; vines too, though Farming leaves them to the game). Filled from the scene's prefabs when ZNetScene
+    /// wakes, so plants other mods register in their own Awake postfix count too.
+    /// </summary>
+    public static class Crops
+    {
+        private static readonly HashSet<string> names = new HashSet<string>();
+
+        /// <summary>Whether this pickable is a crop (its prefab grows from a plant).</summary>
+        public static bool IsCrop(Pickable pickable) => pickable != null && names.Contains(Utils.GetPrefabName(pickable.gameObject));
+
+        /// <summary>Whether a pickable prefab of this name is a crop.</summary>
+        public static bool IsCropPrefab(string prefabName) => prefabName != null && names.Contains(prefabName);
+
+        [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
+        private static class SceneAwake
+        {
+            [HarmonyPostfix]
+            [HarmonyPriority(Priority.Last)]
+            private static void Postfix(ZNetScene __instance)
+            {
+                foreach (GameObject prefab in __instance.m_prefabs)
+                    Add(prefab != null ? prefab.GetComponent<Plant>() : null);
+            }
+        }
+
+        private static void Add(Plant plant)
+        {
+            if (plant?.m_grownPrefabs == null)
+                return;
+            foreach (GameObject grown in plant.m_grownPrefabs)
+            {
+                if (grown != null && grown.GetComponent<Pickable>() != null)
+                    names.Add(grown.name);
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Which pickables are forage: one whose item the Forage file lists and which is not a crop
-    /// (<see cref="ForageCrops"/>). Everything else that can be picked (crops, surtling cores, treasure, tin, dragon
+    /// (<see cref="Crops"/>). Everything else that can be picked (crops, surtling cores, treasure, tin, dragon
     /// eggs...) is left to the game and to the other modules. Nothing is forage while Foraging is off.
     /// </summary>
     public static class Forage
@@ -10,7 +10,7 @@ namespace GrindstoneSkills
         /// <summary>The pickable's forage entry, or null when it is not forage.</summary>
         public static ForageEntry Of(Pickable pickable)
         {
-            if (!ForagingSkill.Active || pickable == null || pickable.m_itemPrefab == null || ForageCrops.Is(pickable))
+            if (!ForagingSkill.Active || pickable == null || pickable.m_itemPrefab == null || Crops.IsCrop(pickable))
                 return null;
             return ForageFile.Find(pickable.m_itemPrefab.name);
         }

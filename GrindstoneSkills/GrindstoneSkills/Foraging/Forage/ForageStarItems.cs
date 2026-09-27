@@ -46,7 +46,7 @@ namespace GrindstoneSkills
             if (ObjectDB.instance == null)
                 return;
             foreach (string name in names)
-                Kitchen.AddItem(Kitchen.ItemPrefab(name));
+                Kitchen.AddStarItem(Kitchen.ItemPrefab(name));
         }
     }
 }

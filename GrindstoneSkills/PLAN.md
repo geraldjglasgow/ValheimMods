@@ -905,8 +905,8 @@ Read from the prefab bundles (UnityPy) and the decompiled assembly, 2026-09-27:
 ### The split with Farming (agreed with the Farming module, 2026-09-27)
 
 - **Crops are Farming's, wild or planted:** a pickable whose prefab name is in any `Plant.m_grownPrefabs`
-  (`ForageCrops`, a private copy until Farming's `Core/Crops.cs` merges). So wild Jotun puffs, magecap, seed carrots,
-  turnips and onions, and vineberries train Farming.
+  (`Crops.IsCrop`, shared in Core since Farming merged; it replaced Foraging's private `ForageCrops`). So wild Jotun
+  puffs, magecap, seed carrots, turnips and onions, and vineberries train Farming.
 - **Forage is everything else whose item is on the Forage list.** Wild barley and flax (`Pickable_Barley_Wild`,
   `Pickable_Flax_Wild`) are not crop prefabs, so they are forage.
 
@@ -1410,6 +1410,239 @@ Companions by three agents in parallel, then a review. The build is clean (0 war
 passes every patch class of the mod, the 35 Husbandry ones included. The decisions above wait for the user's
 confirmation; the test checklist above is next.
 
+## Farming
+
+### The request (user, 2026-09-27)
+
+Ideas for a Farming skill were given in chat (starred crops, heirloom seeds, giant crops, companion planting, rain,
+an almanac hover, daily tending, level perks, experience, mill star pass-through, a compost bin). The user asked for
+all of it, with the best decision taken for anything left vague. The decisions below are those calls, for the user
+to confirm.
+
+### What the game's Farming already does
+
+Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
+
+- **Skill 106, Farming.** The cultivator's piece table (`_CultivatorPieceTable.m_skill`) is Farming.
+  - Every placement raises it by 1, paying off the remove debt first.
+  - Build stamina drops by up to 50% with the level (`GetBuildStamina`).
+  - Every crop pickable has `m_pickRaiseSkill` Farming, so picking raises it by 1.
+  - Picking gives a bonus of `m_bonusYieldAmount` (1) with chance `skillFactor * m_maxLevelBonusChance` (0.25), rolled
+    on the picker's client.
+  - The scythe's harvest radius grows with the level (`Attack` and `Piece.OnPlaced` harvest).
+- **Crop plants** (`sapling_*`): grow 4000 to 5000 s (seeded per plant), need cultivated ground, grow radius 0.5
+  (magecap 0.8), scale 0.9 to 1.1, die when they cannot grow.
+  - Carrot, onion, kale, oat, poteitr and the seed variants grow in the Meadows, Black Forest, Plains and Ashlands.
+    Turnips add the Swamp and Mistlands. Barley and flax grow only in the Plains, jotun puffs and magecap only in the
+    Mistlands. No crop grows in the Mountain or Deep North.
+  - The Ashlands and cold biomes also need `m_tolerateHeat` / `m_tolerateCold` or a shield generator.
+- **What each plant uses and gives:**
+
+  | Plant | Uses | Gives |
+  | --- | --- | --- |
+  | carrot | carrot seeds | 1 carrot |
+  | seed carrot | 1 carrot | 3 carrot seeds |
+  | turnip, onion, kale, and their seed variants | the same pattern | kale gives 3, seed plants give 3 seeds |
+  | barley, flax | barley, flax | 2 each |
+  | jotun puffs, magecap | the mushroom | 3 |
+  | oat | oat seeds | 3 oat seeds |
+  | poteitr | poteitr seeds | 3 poteitr and 1 to 2 poteitr seeds |
+
+- **Growth:** `Plant.SUpdate` checks on every slow-update pass. Its 10 s gate (`!(time > m_updateTime)`, then
+  `m_updateTime = time + 10`) never closes, so in practice that is several times a second (IL checked, 2026-09-27).
+  When the time since `s_plantTime` passes `GetGrowTime()`, the plant's owner calls `Grow()`, which instantiates the
+  grown prefab (the owner owns the new ZDO), scales it and destroys the plant. `UpdateHealth` (status) and the
+  half-grown look run on every client.
+- **Picking:**
+  - `Pickable.Interact` runs on the picker's client: it rolls the bonus, raises the skill, then sends
+    `RPC_Pick(bonus)`.
+  - The owner runs `RPC_Pick`: it drops `m_amount` (scaled by the world's resource rate) plus the bonus, then the extra
+    drops, each through `Drop` → `Instantiate` + `ItemDrop.OnCreateNew`.
+  - A crop has no respawn, so the owner destroys it.
+- **Windmill** (a Smelter without fuel, spawns stacks): barley → barley flour, oat seeds → oats, oats → oat flour.
+  - The queue is item names in the windmill's ZDO (`item0..n`).
+  - The owner processes it (`UpdateSmelter` → `RemoveOneOre` + `QueueProcessed` → `Spawn`).
+  - Players add through `OnAddOre` → `RPC_AddOre(name, cheated)`.
+- **Spinning wheel:** flax → linen thread. **Vines** (`VineAsh`, `VineGreen`) grow segments as networked objects of
+  their own, their berries respawn and give no Farming experience.
+
+### Whose level counts
+
+- **The planter's**, written on the plant at placement: star odds, growth speed, grow space, heat and cold tolerance,
+  giant crops. The row width is the placing player's.
+- **The picker's**, on their client: bonus yield, seed return, auto-replant, discovery.
+- **Anyone's:** tending, rain and compost are the same for everyone.
+
+### Which items carry stars
+
+- **A crop plant** is a Plant whose grown prefab has a Pickable and is not a tree (`TreeBase`) or a vine (`Vine`). Its
+  seed is its piece's first resource; its crops are its pickable's item and extra drop items. `Crops.IsCrop` /
+  `Crops.IsCropPrefab` (Core) answer "a crop pickable", for the Foraging module too.
+- **Kitchen relevant:** an item that is edible, an ingredient of a kitchen recipe, an input of a kitchen station or
+  fermenter, or milled (a Smelter conversion) into something kitchen relevant.
+- **A crop plant whose seed or crop is kitchen relevant** makes its seed and all its crops star items
+  (`Kitchen.AddStarItem`). Then every Smelter conversion whose input carries stars gives its output stars too
+  (barley flour, oats, oat flour).
+- **Flax** is none of these, so it has no stars and the spinning wheel is left alone: starred linen would do nothing.
+- **Effect on Cooking:** crops now count in a dish's ingredient average, so starred crops raise its odds and 0★ crops
+  pull it down (before, vegetables never counted). Starred raw crops that are eaten (carrots, onions, mushrooms, kale,
+  oats, poteitr) get the star food bonus as any dish does.
+
+### Stars at ripening
+
+- **Rolled by the plant's owner in `Grow`,** with the same odds table as dishes (section 3). The effective level is
+  the sum of:
+  - the planter's level;
+  - Seed Levels Per Star (10) × the stars of the seed planted (heirloom);
+  - Companion Levels (5) for each other crop kind growing or ripe within 2 m, up to 3 kinds;
+  - Compost Star Levels (10) when fertilized.
+- **Kind:** a seed and its crop are one kind (carrot and seed carrot), so companions must be real neighbours.
+- **Stored on the grown pickable's ZDO,** with the plant it grew from (for auto-replant). Starred crops stand 6% taller
+  per star.
+- **Size:** the owner sets it with `ZNetView.SetLocalScale`, which reaches other clients only for prefabs that sync
+  their scale (most crops, not magecap). For the others every client applies it when the crop loads (`CropLook`).
+- **No roll:** wild crops, crops that ripened before Farming, and every crop while Farming or Crop Stars is off have
+  0 stars.
+- **Giant crops:** planter's share of 2% at level 100. A giant is always 3★, 2.5× the size and gives 6× the crop
+  (scaled by the world's resource rate, in full stacks). The picker sees "Giant turnip!" and earns 5× the picking
+  experience. Giants also grow while Crop Stars is off and from crops without stars (flax), then with 0 stars.
+
+### Picking
+
+- **Owner (`RPC_Pick`):** every dropped item that carries stars gets the crop's stars (extra drops too); a giant adds
+  its extra stack.
+- **Picker's client (`Interact`)** does the rest:
+  - Bonus yield: 50% chance at level 100 instead of the game's 25%, via the instance's `m_maxLevelBonusChance`
+    during the call.
+  - Seed return: 30% at 100. One seed of the plant it grew from, with the crop's stars, pops out at the crop.
+  - Auto-replant from level 50, each player's own switch: the same plant goes back in the same spot, paid with a seed
+    from the inventory.
+    - The seed's stars count, as in manual planting. It costs no stamina and earns planting experience.
+    - Nothing happens without a seed or where the spot is not valid.
+- **The scythe** picks through `Interact`, so all of this applies to every crop it cuts.
+
+### Planting
+
+- **Planter keys:** when the local player places a plant, its ZDO gets the planter's ID and Farming level (the
+  placing client owns the new ZDO).
+- **Heirloom seeds:** the stars of the seed paid for it are recorded while the placement pays (`ConsumeResources`,
+  through `CraftRecord`, so the player's Ingredient Order decides which stack is used). Each placement takes the
+  next plant waiting for its seed.
+- **Row planting:** from level 25 a row of 3, from 50 a row of 5, each player's own switch. Hold the game's
+  alternative place key (Shift) to plant one.
+  - The row runs across the view, snapped to the nearest world axis. Spacing is twice the planter's grow radius plus
+    0.1 m.
+  - Each extra plant pays its own seed and needs a valid spot (cultivated ground where needed, no ward or no-build
+    zone, room to grow). A spot that fails is skipped.
+  - No extra stamina or wear, planting experience for each.
+  - EarthWright's seed grid snaps the centre plant; its default spacing matches below level 1.
+
+### Growing
+
+- **Growth speed:** the planter's 40% at level 100, plus 25% when fertilized. `GetGrowTime` is divided by it on
+  every client, from the ZDO, so the half-grown look agrees everywhere.
+- **Rain:** at most once per 10 s of game time per plant (a mark in memory), the owner credits half the time since
+  the last mark while it is wet at the owner's client (+50%), by moving `s_plantTime` back. Dry time moves the mark
+  without credit; one credit is at most 30 s.
+- **Tending:** E (the game's use key) on a growing plant tends it and every growing plant within 2.5 m that the
+  player may access (ward).
+  - Each gains 10% of its grow time, once per in-game day, through an RPC to its owner.
+  - 0.25 experience per plant. The client remembers the plants it sent a tend to today, so pressing again before
+    the owner's record comes back pays nothing.
+- **Vines** get no planter, so none of the growth perks.
+- **Grow space:** the planter's grow radius shrinks by up to 40% at level 100, set on each instance on every client.
+- **Heat tolerance** from level 75: crops grow in the Ashlands without a shield. **Cold tolerance** from 100: crops
+  that grow in the Meadows also grow in the Mountain and Deep North.
+- **Almanac (hover):** a growing plant shows "Ripe in 12 min", tending ("[E] Tend" or "Tended today") and
+  "Fertilized". From level 20 (the viewer's), it also shows the star odds of its roll, companions counted at hover.
+- **Ripe crops** show their stars and "Giant" in the hover.
+
+### Windmill
+
+- **Adding:** `OnAddOre` sends our own RPC carrying the item's stars instead of the game's `RPC_AddOre`. The owner runs
+  the game's add, then appends the stars to a parallel queue (one digit per item, `grindstone_mill_stars`).
+- **Processing:** `RemoveOneOre` pops the front digit; `QueueProcessed` spawns the pending stack first when its stars
+  differ (`grindstone_mill_spawn`). The spawned output gets the stars.
+- **Breaking the windmill** drops queued items with their stars. Adds from other mods count as 0★.
+- **Always on,** whatever Farming Enabled says: the stars belong to the items, like their stacking, and a queue whose
+  digits stopped being kept would give later items the wrong stars.
+
+### Compost bin
+
+- **The piece:** a new piece in the cultivator's menu, a copy of the game's barrel (`piece_chest_barrel`: same model,
+  container and workbench need). It is registered on every machine from code, so the prefab name matches everywhere.
+  Cost: 10 wood, 4 stone.
+- **Filling:** players put scraps in through the normal chest window, so quick stack works.
+- **Composting:** every 30 s the bin's owner composts one unit into 1 point (up to 100). Compostable:
+  - anything with food value;
+  - anything that carries stars;
+  - the Compost Items list (default Entrails, BoneFragments).
+- **Feeding:** every 10 s the owner spends 1 point per growing crop within 12 m that is not fertilized, at most 20 per
+  round, and marks it (directly, or by RPC to the plant's owner).
+- **Fertilized** crops grow 25% faster and roll 10 levels better.
+- **Kitchen trash:** a dish the trash filter throws away within 20 m of a bin adds 1 point to the nearest one.
+- **Hover:** "Compost 23 / 100".
+
+### Experience (section 31, synced)
+
+- **The game's own:** 1 per planting, 1 per crop picked.
+- **Scaling:** both are multiplied by Experience Multiplier and the crop's tier.
+  - The tier is its value over Tier Reference Value (30), 1 to 3.
+  - The value is the best food value among the plant's seed and crops, or what they are milled into, or the best
+    kitchen dish they go into.
+- **Bonuses:** Discovery ×3 on the first pick of each crop kind (player custom data). Giant crops ×5. Tending 0.25
+  per plant.
+
+### Settings
+
+- **29 - Farming:** Farming Enabled, Crop Stars, Seed Levels Per Star, Companion Levels, Companion Radius, Companion
+  Kinds, Giant Crop Chance At 100, Giant Crop Yield, Giant Crop Size, and each player's own Show Callouts, Row
+  Planting, Auto Replant.
+- **30 - Farming Perks:** Growth Speed At 100, Grow Space Reduction At 100, Bonus Yield Chance At 100, Seed Return
+  Chance At 100, Auto Replant Level, Row Of Three Level, Row Of Five Level, Heat Tolerance Level, Cold Tolerance Level,
+  Rain Growth Bonus, Tending Bonus, Tending Radius, Almanac Level.
+- **31 - Farming Experience:** Experience Multiplier, Tier Scaling, Tier Reference Value, Tier Maximum, Discovery
+  Multiplier, Giant Crop Multiplier, Tending Experience.
+- **32 - Compost:** Compost Enabled, Compost Time, Compost Capacity, Compost Radius, Compost Growth Speed, Compost Star
+  Levels, Kitchen Trash Compost, Compost Items.
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- **Seeds carry stars** (heirloom breeding) and only kitchen-relevant crops do. Flax does not, so neither does linen.
+- **No auto-pickup filter:** in a base, items left on the ground never despawn. The compost bin is where spare crops
+  go.
+- **Vines stay vanilla:** their berries live on segment objects the vine spawns, and they give no Farming experience.
+- **Shared odds table:** crops use the dishes' odds (section 3), so one table decides every star.
+- **Row planting belongs to Farming,** not EarthWright: it is a level perk. EarthWright's grid only snaps the ghost.
+- **Hardy crops** extend where generalist crops grow; barley, flax and the Mistlands mushrooms keep their biomes.
+
+### Known gaps
+
+- Rain follows the weather at the plant owner's client (the biome that player stands in).
+- Items added to the windmill by other mods, and crops placed by other mods, carry no stars or planter.
+- A plant placed close to a lower-level planter's crop can take its room, as in the game.
+- The hover counts companions when it is shown. Neighbours can change before the crop ripens.
+- The compost bin's feeding RPC can be lost if the plant unloads first; the point is then spent.
+- All texts are English.
+
+### Test checklist
+
+- [ ] Farming Enabled off: planting, growing, picking and experience exactly vanilla; bins stop; the windmill still
+      keeps the stars items already have.
+- [ ] The log reads "Farming: N crop plants, M carry stars; star mills: windmill." (flax the only one without).
+- [ ] Planting stores planter and seed stars; row of 3 at 25 and 5 at 50, skipping bad spots; Shift plants one;
+      each extra pays its seed.
+- [ ] Growth: 40% faster at level 100; rain shortens it; tending once per day in radius; almanac time matches.
+- [ ] Grow space at 100 lets crops stand closer; heat tolerance in the Ashlands at 75; cold at 100 in the Mountain.
+- [ ] Ripening rolls stars from the planter's level plus seed, companions and compost; giants appear at chance 100.
+- [ ] Picking: drops carry the stars; bonus yield 50% at 100; seed return; auto-replant at 50 with a seed; scythe.
+- [ ] Starred crops stack apart, raise dish odds, starred carrots eaten give the bonus.
+- [ ] Windmill: 1★ and 3★ barley give 1★ and 3★ flour in separate stacks; breaking it returns starred barley.
+- [ ] Compost bin: builds from the cultivator, composts food, feeds crops in range, kitchen trash adds points.
+- [ ] Experience: tier, discovery once per crop kind, giant ×5, tending.
+- [ ] **Dedicated server with two clients:** A plants, B picks. Stars follow A's level, bonus and seed return follow
+      B's. The windmill and bin work when owned by the other player. Hovers agree on both clients.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
@@ -1444,6 +1677,12 @@ decisions above wait for the user's confirmation.
 3.10.0, before any in-game test; the build is clean. Built from HEAD plus Husbandry in a separate worktree while Fishing
 and Farming were being written in the main tree, so neither is in it. The Husbandry decisions above wait for the
 user's confirmation.
+
+0.8.0 (Farming) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.8.0), before any in-game test; the build
+is clean (0 warnings) and every Harmony target and parameter was checked offline against the game's assemblies. Written
+in a separate worktree, reviewed by an agent (five fixes), released from HEAD plus Farming while Fishing was being
+written in the main tree, so Fishing is not in it. It also moves Foraging onto the shared `Crops.IsCrop` and Husbandry
+and Foraging onto `Kitchen.AddStarItem`. The Farming decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

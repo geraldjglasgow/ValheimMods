@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.8.0
+
+- New: Farming, built on the game's own Farming skill, so existing levels count. The planter's level decides how crops
+  grow and ripen, the picker's level decides the harvest. Perks grow from nothing at level 0 to their full value at
+  level 100.
+- Stars on crops: crops ripen with 0 to 3 stars from the planter's level, with the same odds as dishes.
+  - Starred crops stand taller and show their stars. They count as starred ingredients in the kitchen and give more
+    when eaten raw.
+  - Seeds carry stars too: each star is worth 10 levels (heirloom seeds).
+  - Each other kind of crop growing within 2 m adds 5 levels (companion planting).
+  - Up to 2% of crops ripen into a giant: always 3★, six times the crop.
+- Growing:
+  - Everything you plant grows up to 40% faster, and half again as fast in the rain.
+  - Once a day the use key on a growing plant tends it and its neighbours: they gain a tenth of their growing time.
+  - Crops need up to 40% less room.
+  - From level 75 crops grow in the Ashlands without a shield, at level 100 in the Mountains and the Deep North.
+- Harvest:
+  - Up to 50% chance of a bonus crop (the game's own bonus stops at 25%) and up to 30% chance of the seed back.
+  - Row planting from level 25: three in a row, five from level 50. Shift plants one.
+  - Auto-replant from level 50: a picked crop's plant goes back in with a seed from your inventory, scythe included.
+- The almanac: a growing plant's hover shows when it will be ripe, and from level 20 the odds of its stars.
+- The windmill keeps stars: starred barley makes starred flour, starred oats starred oat flour.
+- Compost bin: a new barrel in the cultivator's menu.
+  - It turns food scraps, spare crops, entrails and bone fragments into compost.
+  - It feeds the growing crops within 12 m: they grow 25% faster and ripen with better stars.
+  - Dishes a kitchen's trash filter throws away nearby go in too.
+- Farming experience: more for richer crops, five times for a giant, triple for the first pick of each kind of crop,
+  and a little for tending. Every setting is in the new sections 29 to 32 of the .cfg.
+- Crops and flour now count toward a dish's ingredient stars, so 0★ vegetables pull the average down where they used
+  to be left out.
+
 ## 0.7.0
 
 - New: Husbandry, a skill of its own for taming, breeding and keeping animals (boars, wolves, lox, asksvin, moose and

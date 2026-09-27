@@ -30,6 +30,7 @@ namespace GrindstoneSkills
             for (int stars = Mathf.Max(1, minStars); stars <= Stars.Max; stars++)
                 Give(craft, stars, rolled[stars]);
             CraftStars.ReportTrashed(craft, rolled, minStars);
+            CompostTrash.AddTrashed(craft.Player.transform.position, rolled, minStars);
         }
 
         private static void Give(KitchenCraftContext craft, int stars, int count)

@@ -37,14 +37,14 @@ namespace GrindstoneSkills
             foreach (GameObject prefab in ObjectDB.instance.m_items)
             {
                 if (prefab != null && prefab.GetComponent<EggGrow>() != null)
-                    Kitchen.AddItem(prefab.GetComponent<ItemDrop>());
+                    Kitchen.AddStarItem(prefab.GetComponent<ItemDrop>());
             }
         }
 
         private static void RegisterMeat()
         {
             foreach (ItemDrop item in YieldCatalog.Meat)
-                Kitchen.AddItem(item);
+                Kitchen.AddStarItem(item);
         }
     }
 }

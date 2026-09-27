@@ -68,6 +68,7 @@ namespace GrindstoneSkills
             station.SetSlot(slot, "", 0f, CookingStation.Status.NotDone, cheated: false);
             station.m_nview.InvokeRPC(ZNetView.Everybody, "RPC_SetSlotVisual", slot, "");
             station.m_overcookedEffect.Create(station.m_slots[slot].position, Quaternion.identity);
+            CompostTrash.Add(station.m_slots[slot].position, 1);
             if (cookId != 0L)
                 CookCredit.Send(cookId, dish);
         }

@@ -71,6 +71,13 @@ namespace GrindstoneSkills
             shared.m_scaleWeightByQuality = 0f;
         }
 
+        /// <summary>
+        /// Lets another module's item carry stars the way dishes do (crops, seeds, forage, eggs): it joins the items every
+        /// star feature keys on (stacking apart, icons, tooltips, recipe counting, the ingredient bonus, eating). Same
+        /// rules and refusals as the kitchen's own items. Idempotent, so it can be called whenever the prefab exists.
+        /// </summary>
+        public static void AddStarItem(ItemDrop drop) => AddItem(drop);
+
         /// <summary>Records that <paramref name="from"/> becomes <paramref name="to"/>, for the food value of intermediates.</summary>
         internal static void AddConversion(ItemDrop from, ItemDrop to)
         {

@@ -4,9 +4,9 @@ using SyncedConfig;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Section 3: the odds of each star count by effective level (the cook's Cooking level plus the ingredient bonus).
-    /// One row per level; odds blend linearly between rows. Rows above 100 are reached only with starred ingredients.
-    /// Synced.
+    /// Section 3: the odds of each star count by effective level (the cook's Cooking level plus the ingredient bonus, or
+    /// the planter's Farming level plus the seed, companion and compost bonuses for a crop). One row per level; odds
+    /// blend linearly between rows. Rows above 100 are reached only with starred ingredients or seeds. Synced.
     /// </summary>
     public static class OddsSettings
     {
