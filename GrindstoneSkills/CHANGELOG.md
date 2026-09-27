@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.9.0
+
+- New: Fishing, built on the game's own Fishing skill, so existing levels count. In the game it only makes you reel
+  faster and tire less; here perks grow from nothing at level 0 to their full value at level 100, with milestones at
+  levels 25, 50 and 75.
+- The fight on the line:
+  - Reeling while a hooked fish thrashes strains the line. A bar under the crosshair shows the tension, and when it is
+    full the line snaps. Ease off while it thrashes, reel while it rests.
+  - Every thrash is shorter than the last. After four (eight for a legendary) the fish is spent and comes in faster.
+  - The strike window grows from the game's 0.5 seconds to 1 second. Start reeling the moment it nibbles for a perfect
+    strike: the fish skips its first thrash.
+  - From level 75, running out of stamina lets the fish take line for a few seconds instead of losing it, once per
+    fish.
+- Bites:
+  - Up to twice as many at level 100, and more at dawn, at dusk and in the rain.
+  - Bait crafted at the prep table carries Cooking stars like food. Starred bait bites more, hooks more big ones and
+    comes back with its stars.
+  - Entrails and blood bags dropped in the water are chum: fish bite twice as often near them until they dissolve a
+    minute later.
+- Big fish:
+  - A hooked fish can grow a level on the line ("It's a big one!"), up to level 5, and more often at night. Everyone
+    nearby sees it grow.
+  - One fish in two hundred is born legendary: level 6, three times the size, glowing. Only anglers of level 50 or more
+    can hook one, it always brings its bonus item, and the whole server hears when someone lands one.
+- The angler's senses: from level 25 a nibble names the fish and a cast tells you the fishing conditions, from 50 it
+  also tells the fish's size, and from 75 a cast tells you which fish in reach take your bait.
+- The angler's log: every catch is weighed, and every species and size you land and your records are kept. Fish
+  tooltips show them, and `/fishlog` in chat lists them.
+- Catches:
+  - A fish's bonus item comes up to twice as often at level 100, and from level 50 it can be two.
+  - Up to 30% of catches give the bait back.
+  - Casts go up to 30% further and the line is up to 50% longer.
+  - A cast left in the water can snag coins, trinkets and whatever sinks in that biome. What each biome holds is in the
+    new `GrindstoneSkills.Snags.yml`.
+- Fish for the kitchen: each level of a fish above 1 improves the Cooking stars of the raw fish it cleans into.
+- Fishing experience for every fish landed, more for later species and bigger fish, and a bonus for each new species
+  and size in your log. Reeling in an empty line no longer trains the skill. Every setting is in the new sections 50
+  to 54 of the .cfg.
+- Fishing has its own icon in the skills panel and in its level-up messages.
+
 ## 0.8.2
 
 - Cooking and Sailing have their own icons in the skills panel and in their level-up messages.

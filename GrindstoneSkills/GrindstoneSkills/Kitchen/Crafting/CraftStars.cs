@@ -4,15 +4,17 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// The stars of items crafted at a kitchen crafting station. Every unit rolls on its own (<see cref="StarOdds"/>)
-    /// at the crafter's Cooking level plus the ingredient bonus (<see cref="CookLevel.Effective"/>). What the
-    /// station's trash filter throws away is told to the crafter in one line, e.g. "Trashed: 2 x 1★ Deer stew".
+    /// at the crafter's Cooking level plus the ingredient bonus (<see cref="CookLevel.Effective"/>), plus the size of a
+    /// fish being cleaned (<see cref="Fillets"/>). What the station's trash filter throws away is told to the crafter in
+    /// one line, e.g. "Trashed: 2 x 1★ Deer stew".
     /// </summary>
     public static class CraftStars
     {
         /// <summary>How many of <paramref name="units"/> rolled each star count (index = stars).</summary>
         public static int[] Roll(int units, float averageIngredientStars)
         {
-            float level = CookLevel.Effective(CookLevel.Local(), averageIngredientStars);
+            float fish = HookGuard.Run("fillet stars", () => Fillets.Levels(CraftRecord.Lots), 0f);
+            float level = CookLevel.Effective(CookLevel.Local(), averageIngredientStars) + fish;
             int[] rolled = new int[Stars.Max + 1];
             for (int i = 0; i < units; i++)
                 rolled[StarOdds.Roll(level)]++;

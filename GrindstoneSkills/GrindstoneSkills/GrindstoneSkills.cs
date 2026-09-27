@@ -12,7 +12,7 @@ namespace GrindstoneSkills
     {
         public const string PluginGuid = "com.GrindstoneSkills";
         public const string PluginName = "GrindstoneSkills";
-        public const string PluginVersion = "0.8.2";
+        public const string PluginVersion = "0.9.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

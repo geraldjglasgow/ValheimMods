@@ -1,0 +1,81 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace GrindstoneSkills
+{
+    /// <summary>
+    /// What a fish is. A fish in the water is an item (ItemDrop with a Fish component), and its level is the item's
+    /// quality: the game rolls 1 to 5 when it spawns (SpawnSystem, 20% per step), a big one grows on the hook
+    /// (<see cref="BigOne"/>) and a legendary fish is 6 (<see cref="LegendarySpawn"/>). Quality already scales a fish's
+    /// size (+40% per level), weight, pull and thrashes, and how many raw fish cleaning gives, so it is never used for
+    /// Cooking stars; the fillets carry those.
+    /// </summary>
+    public static class FishInfo
+    {
+        /// <summary>The highest level the game rolls, and the highest a big one grows to.</summary>
+        public const int MaxNaturalLevel = 5;
+
+        /// <summary>A legendary fish's level (item quality).</summary>
+        public const int LegendaryLevel = 6;
+
+        /// <summary>A Perch's pull (Fish.m_staminaUse), the weakest in the game: the species scale's yardstick.</summary>
+        private const float PerchPull = 3f;
+
+        private static readonly List<GameObject> species = new List<GameObject>();
+        private static ObjectDB speciesFrom;
+
+        public static ItemDrop Item(Fish fish) =>
+            fish == null ? null : fish.m_itemDrop != null ? fish.m_itemDrop : fish.GetComponent<ItemDrop>();
+
+        /// <summary>The fish's level, 1 when it has no item.</summary>
+        public static int Level(Fish fish)
+        {
+            ItemDrop item = Item(fish);
+            return item == null ? 1 : Mathf.Max(1, item.m_itemData.m_quality);
+        }
+
+        public static bool IsLegendary(int level) => level >= LegendaryLevel;
+
+        /// <summary>The fish's prefab name ("Fish2"), the key of the angler's log.</summary>
+        public static string Prefab(Fish fish) => fish == null ? "" : Utils.GetPrefabName(fish.gameObject);
+
+        /// <summary>The fish's name in the player's language ("Pike").</summary>
+        public static string Name(Fish fish) => fish == null ? "" : Localize(fish.m_name);
+
+        /// <summary>
+        /// How much a species is worth in experience: the square root of its pull over a Perch's. Perch 1, Pike 1.3,
+        /// Tuna 1.5, Anglerfish 2.2, Magmafish 2.4, Northern salmon 2.6.
+        /// </summary>
+        public static float SpeciesScale(Fish fish) =>
+            fish == null ? 1f : Mathf.Sqrt(Mathf.Max(PerchPull, fish.m_staminaUse) / PerchPull);
+
+        /// <summary>The Fish component on an item's prefab, or null when the item is not a fish.</summary>
+        public static Fish OfItem(ItemDrop.ItemData item) =>
+            item == null || item.m_dropPrefab == null ? null : item.m_dropPrefab.GetComponent<Fish>();
+
+        public static bool IsFishItem(ItemDrop.ItemData item) => OfItem(item) != null;
+
+        /// <summary>Every item prefab that is a fish, the game's twelve and any a mod adds; read once per item database.</summary>
+        public static IReadOnlyList<GameObject> Species()
+        {
+            ObjectDB db = ObjectDB.instance;
+            if (db == null || db == speciesFrom)
+                return species;
+            speciesFrom = db;
+            species.Clear();
+            foreach (GameObject prefab in db.m_items)
+            {
+                if (prefab != null && prefab.GetComponent<Fish>() != null && prefab.GetComponent<ItemDrop>() != null)
+                    species.Add(prefab);
+            }
+            return species;
+        }
+
+        /// <summary>"a Pike", "an Anglerfish": the name with its English article.</summary>
+        public static string WithArticle(string name) =>
+            (name.Length > 0 && "AEIOUaeiou".IndexOf(name[0]) >= 0 ? "an " : "a ") + name;
+
+        public static string Localize(string token) =>
+            Localization.instance == null ? token : Localization.instance.Localize(token);
+    }
+}

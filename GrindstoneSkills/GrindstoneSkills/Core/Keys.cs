@@ -138,6 +138,24 @@ namespace GrindstoneSkills
         /// <summary>Player custom data: comma-separated name tokens ("$enemy_greydwarf") of every kind of creature the character has blocked.</summary>
         public const string BlockedFoes = "grindstone_blocked";
 
+        // Fishing. Float keys are written by the angler's client when the float lands (it owns the float).
+        /// <summary>float on a fishing float's ZDO: the angler's Fishing level at the cast. Fish owners read it for bites.</summary>
+        public const string AnglerLevel = "grindstone_angler_level";
+        /// <summary>int on a fishing float's ZDO: the stars of the bait on the hook (0 for bait without stars).</summary>
+        public const string BaitStars = "grindstone_bait_stars";
+        /// <summary>long on a chum item's ZDO: world time (ticks) it was first seen floating, written by its owner.</summary>
+        public const string ChumSince = "grindstone_chum_since";
+        /// <summary>Routed RPC to everybody: (Vector3 position, string text); each client near the spot shows the text there, if its Fishing callouts are on.</summary>
+        public const string RpcFishCallout = "grindstone_FishCallout";
+        /// <summary>Routed RPC to everybody: (string text); every client shows it top left (a legendary catch).</summary>
+        public const string RpcFishAnnounce = "grindstone_FishAnnounce";
+        /// <summary>Player custom data: the angler's log, comma-separated "prefab=mask", bit n-1 set for each level n landed.</summary>
+        public const string FishLog = "grindstone_fish_log";
+        /// <summary>Player custom data: personal records, comma-separated "prefab=weight:level" (weight in kg, invariant culture).</summary>
+        public const string FishRecords = "grindstone_fish_records";
+        /// <summary>Charter sync key of the Snags YAML files (GrindstoneSkills.Snags*.yml).</summary>
+        public const string SnagsSync = "grindstone_snags";
+
         // Farming. Plant keys are written by the planting client, which owns the new plant's ZDO.
         /// <summary>long on a plant's ZDO: player ID of the player who planted it (0 or absent: not planted by a player with Farming).</summary>
         public const string FarmPlanter = "grindstone_farm_planter";

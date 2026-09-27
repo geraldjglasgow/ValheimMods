@@ -1,14 +1,15 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging, Husbandry, Defense and Farming. A good
-cook makes better food: every dish comes out with 0 to 3 stars, stars make food stronger and last longer, and every
-kitchen can throw away dishes below the stars you want. Built on the game's own Cooking skill, so the levels you
-already have count. A good sailor builds tougher ships, sails them faster, sees more of the map at sea, and from level
-50 can send out a lookout pulse that marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree
-into the next, splits logs in one blow, finds what trees hide, and gets more wood from the giants of the forest. A
-good miner reads stone: strikes the seams that glint in the rock, knows a rich vein at a glance, hears where the next
-deposit lies, and turns up amber and rubies. A good forager picks starred berries, mushrooms and herbs for the
-kitchen, knows when each plant is at its best, and clears a whole patch in one sweep. A good keeper tames faster,
+Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging, Fishing, Husbandry, Defense and Farming. A good cook makes better food: every dish comes
+out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the
+stars you want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds
+tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that
+marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs
+in one blow, finds what trees hide, and gets more wood from the giants of the forest. A good miner reads stone: strikes
+the seams that glint in the rock, knows a rich vein at a glance, hears where the next deposit lies, and turns up amber
+and rubies. A good forager picks starred berries, mushrooms and herbs for the kitchen, knows when each plant is at its
+best, and clears a whole patch in one sweep. A good angler plays the line against a thrashing fish, feels what is
+nibbling, lands big ones and the odd glowing legendary, and keeps a log of every catch. A good keeper tames faster,
 walks among the animals being tamed without a fight, breeds stronger young, and gets more from the herd. A good
 defender takes a beating: more health, less damage, cheaper blocks and dodges, and from level 25 on a parry that
 powers the riposte, a shield wall for the friends behind, and one last stand against a killing blow. A good farmer
@@ -182,6 +183,50 @@ stronger; Defense makes you tougher. It trains when you block hits and when hits
 - **Multiplayer.** Everything happens on your own machine, where the game handles your damage; allies read your level
   for Shield Wall. Like the rest of the mod, it must be installed on the server and on every client.
 
+### Fishing
+
+Built on the game's own Fishing skill, so the levels you already have count. In the game it only makes you reel faster
+and tire less; here the fight on the line matters, big fish are worth chasing, and the angler and the cook help each
+other.
+
+- **A fight on the line.** Reeling while a hooked fish thrashes strains the line. A bar under the crosshair shows the
+  tension, and when it is full the line snaps. Ease off while it thrashes, reel while it rests. Every thrash is shorter
+  than the last, and after four (eight for a legendary) the fish is spent: "Spent!", and it comes in faster.
+- **Strikes.** You get longer to set the hook after a nibble as you level: the game's 0.5 seconds, 1 second at level
+  100. Start reeling the moment it nibbles and it is a perfect strike: the fish skips its first thrash.
+- **Catch your breath, from level 75.** Running out of stamina with a fish on the line no longer loses it at once: it
+  takes line for a few seconds while your stamina comes back. Once per fish.
+- **More bites.** Fish go for your float up to twice as often at level 100, and more at dawn, at dusk and in the rain.
+  Bait crafted at the prep table carries Cooking stars like food, and starred bait bites more and hooks more big ones.
+- **Chum.** Drop entrails or a blood bag in the water near your float and fish bite twice as often, until it
+  dissolves a minute later.
+- **It's a big one!** A hooked fish can grow a level on the line, up to level 5: up to a 25% chance at level 100, more
+  at night, rolled again for every level. Everyone nearby sees it grow.
+- **Legendary fish.** One fish in two hundred is born legendary: level 6, three times the size, glowing sea-green. It
+  only takes the bait of an angler of level 50 or more, thrashes twice as many times, always brings its bonus item,
+  cleans into at least sixteen raw fish, and the whole server hears when someone lands one.
+- **The angler's senses.** From level 25 a nibble names the fish ("A Pike nibbles!") and a cast tells you the fishing
+  conditions. From 50 it tells the fish's size ("A level 4 Pike nibbles!"), so you can let small ones go. From 75 a
+  cast tells you which fish in reach take your bait, and whether something big lurks.
+- **The angler's log.** Every catch is weighed: "Caught Pike (5.4 kg, new record!)". Your log keeps every species and
+  size you have landed and your record for each. A fish's tooltip shows what your log says about it, and `/fishlog`
+  in chat lists it all.
+- **Snags.** A cast left in the water for a while can snag something: coins, trinkets and whatever sinks in that
+  biome, richest at sea. It reels in heavy and lands in your inventory. Server admins set what each biome's water
+  holds in `GrindstoneSkills.Snags.yml`.
+- **Better catches.** A fish's bonus item (stone or amber from a Perch, coins from a Tetra...) comes up to twice as
+  often at level 100, and from level 50 it can be two. Up to 30% of your catches give the bait back, stars and all.
+  Casts go up to 30% further and the line is up to 50% longer.
+- **Fish for the kitchen.** A fish's size counts when it is cleaned at the prep table: each level above 1 improves the
+  Cooking stars of its raw fish like a starred ingredient does, so an angler's level 5 catch cooks better in anyone's
+  hands.
+- **Experience** for every fish landed, more for later species and bigger fish, and a bonus for every new species and
+  every new size in your log. Reeling in an empty line no longer trains the skill (the game's fastest way to train
+  it); reeling a fish trains it as before.
+- **Multiplayer.** The fight runs on your own machine, which the game hands the hooked fish to. Whether a fish bites
+  is decided by the machine that owns it, which reads your level from your float. Like the rest of the mod, it must be
+  installed on the server and on every client.
+
 ### Husbandry
 
 A new skill in the skills panel, for taming, breeding and keeping animals: boars, wolves, lox, asksvin, moose and hens.
@@ -312,6 +357,17 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
   the cooldown, the first-block bonus and whether PvP hits train.
 - **Defense Milestones:** each milestone's level (above 100 turns it off) and its values.
 - **Defense Guard:** reflex, shield bash, thorns, adrenaline, shield wear and knockback at level 100, and Desperation.
+- **Fishing:** a switch for the whole skill, the experience rates (empty reel, fight, catch, size bonus, discoveries),
+  and whether you see callouts (each player's own).
+- **Fishing Fight:** line tension on or off, how fast it builds at level 0 and 100 and how fast it eases, the strike
+  and perfect strike windows, how fast fish tire and after how many thrashes, the spent reel speed, and the grace's
+  level and length.
+- **Bites:** the bite chance at level 100, the dawn and dusk, rain and starred bait bonuses, chum (which items, the
+  bonus, the radius and how long it lasts), and the levels of the three senses.
+- **Big Fish:** the big-one chance at level 100 and its night and bait bonuses, and the legendary chance, level,
+  thrashes and announcement.
+- **Catch And Tackle:** the bonus item chance and double bonus level, the bait saver, the snag chance and wait, cast
+  distance and line length at level 100, and how much a fish's level helps its fillets.
 - **Husbandry:** a switch for the whole skill, the keeper range, the Animal lore level, and whether you see callouts
   (each player's own).
 - **Taming:** taming speed and fed time at level 100, the taming levels per creature, and Calm's level and how long a
@@ -322,7 +378,6 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Companions:** pack leader damage and toughness, and the feeder's level, range and recipe.
 - **Husbandry Experience:** the multiplier, taming, tamed, first-tame, feeding, birth, petting, butchering and honey
   experience.
-
 - **Farming:** a switch for the whole skill, crop stars, how many levels a seed's star and a companion are worth,
   giant crops, and each player's own callouts, row planting and auto-replant.
 - **Farming Perks:** growth speed, grow space, bonus yield and seed return at level 100; the levels of auto-replant,
@@ -339,11 +394,17 @@ server, reload while the game runs, and explain themselves in their comments. Ex
 `GrindstoneSkills.Forage.yml` lists what counts as foraging: each item, whether its picks roll stars, when its plant is
 at its best, and how much experience a pick gives. Items from other mods can be added by their prefab name.
 
+`GrindstoneSkills.Snags.yml` lists what a fishing line can snag in each biome's water, in the same format as the finds
+files. Extra files named `GrindstoneSkills.Snags<anything>.yml` are read as well.
+
 ### Console
 
 With `devcommands` on, `raiseskill sailing 50` and `resetskill sailing` work like they do for the game's skills, and
 `raiseskill all` includes Sailing. The same works for Foraging (`raiseskill foraging 50`), Defense
 (`raiseskill defense 100`) and Husbandry (`raiseskill husbandry 50`).
+
+`fishlog` in the console, or `/fishlog` in chat, lists your angler's log: every species you have landed, its sizes and
+your record, and how many species are still to find. It needs no `devcommands`.
 
 ### Server settings
 
@@ -379,6 +440,9 @@ lists where the server's values differ from your own file, and `charter versions
 - The Thunderblood Axe and Greataxe don't train Woodcutting in the game, so they get no Woodcutting perks here either.
 - Rocks from other mods count for Pickaxes too: any rock only a pickaxe can break, and it is an ore deposit when it
   drops anything but stone or grausten (the Plain Stone Items setting).
+- Fish keep the game's own levels 1 to 5 (bigger, heavier, more raw fish when cleaned); GrindstoneSkills adds level 6,
+  the legendary. A mod that shows item quality shows a legendary fish as quality 6.
+- A catch's weight is for your log and records; a fish in your inventory weighs what the game says, since fish stack.
 
 ### Building
 Requirements: .NET SDK 8, Valheim installed with BepInEx, and the `ValheimModLibs` repository checked out next to this

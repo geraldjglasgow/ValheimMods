@@ -290,6 +290,7 @@ Planned units, each within the size limits:
 - `Eating/`: custom data, total-value postfix, duration.
 - `Experience/`: tier multiplier, trash credit, fermenter XP, discovery.
 - `Sailing/`: skill registration and cheats, the three perks, experience; `Sailing/Lookout/` the milestone.
+- `Fishing/`: `Core` (angler, float scope, catch), `Fight`, `Bites`, `BigFish`, `Records`, `Rewards`, `Experience`.
 
 ## Later
 
@@ -320,8 +321,9 @@ Planned units, each within the size limits:
   n + (D - 1) dishes' worth, not n x D.
 - **Ingredient-save perk:** rolls once per batch, so a x5 multi-craft rolls five times.
 - **Raw fish carries stars.** Cleaning fish at the prep table (`Recipe_Fish1`) is a kitchen recipe, so cleaned fish
-  rolls stars, and those feed the cooking station as input stars. Fish caught directly is 0 stars. Undecided; ask
-  the user.
+  rolls stars, and those feed the cooking station as input stars. Settled with the Fishing module (user, 2026-09-27):
+  whole fish never carry stars, since their quality is their size (level); the fish's level adds effective levels to
+  its fillets' roll instead (see "Fishing").
 - **Feasts** (prefabs with a `Feast` or `Piece` component) never carry stars. Placing one would lose them anyway.
 - **Icon star position is fixed:** a column down the slot's left edge. There is no per-player corner setting, only
   on/off.
@@ -350,7 +352,7 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
 - **The game has no sailing skill** (`Skills.SkillType` stops at Ride 110), so Sailing is GrindstoneSkills' own. Its
   type number is the stable hash of `grindstone_sailing`, masked positive: far from the game's numbers and from
   small numbers other mods pick.
-- **Registration (shared by every skill of our own: `Skills/CustomSkill.cs`, `Skills/CustomSkills.cs`),
+- **Registration (shared by every skill of our own since Defense: `Skills/CustomSkill.cs`, `Skills/CustomSkills.cs`),
   read from the game code 2026-09-27:**
   - `Skills.GetSkill` creates a skill for any type, with the definition `GetSkillDef` finds in `m_skills`, or null.
     A null definition breaks the level-up message, so `Skills.Awake` adds Sailing's definition to every `Skills`.
@@ -1136,6 +1138,231 @@ Written in one session, after the shared `CustomSkills` registry was split out o
 Foraging and Husbandry use it too). Compiles clean; every Harmony target and parameter checked offline against the
 game's assemblies. Released as 0.6.0 before any in-game test; the test checklist above is next.
 
+## Fishing
+
+### The request (user, 2026-09-27)
+
+Ideas proposed from the game's fishing code, all accepted ("do it all"): a real fight on the line (line tension, strike
+timing, tiring fish, grace at 0 stamina), bigger fish (big ones on the hook, legendary fish, bite rate, the angler's
+senses), records and an angler's log, treasure (bonus items, snags), bait and tackle (bait saver, cast and line, chum),
+conditions (time of day and weather), a link to Cooking (a fish's level improves its fillets' stars) and honest
+experience (no experience for reeling an empty line).
+
+### What the game's Fishing already does
+
+Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
+
+- **Skill 104, Fishing**, increase step 0.25. Only `FishingFloat` reads it: reel speed 2 to 6 m/s (halved while the
+  fish thrashes); reeling costs the fish's pull times its level per second (Perch 3, Northern salmon 20, 3x while
+  thrashing), a fifth of that at 100; holding a fish costs 1 stamina per second, 0.2 at 100. Nothing else: not bites,
+  hooking, size, bait, drops or cast distance.
+- **Experience:** one raise per second of reeling, two with a fish on. An empty line trains too and costs no stamina
+  (the float prefab's pull cost is 0), so cast-and-reel is the game's fastest way to train.
+- **Casting:** the rod throws a projectile (15 m/s, drawn like a bow); where it lands its spawn on hit becomes the
+  float, and `FishingFloat.Setup` runs on the caster's client, which owns the float and runs its `FixedUpdate`. The line
+  snaps when the float is 10 m past the line's length or 30 m from the rod.
+- **Bites:** a fish that picks a new place to swim (on its owner) goes for each float in the water within 50 m with its
+  base hook chance (10% for every fish), swims to it and nibbles (an RPC to the float's owner). Each fish takes one bait
+  at 100%; the wrong bait says so and that fish ignores the float. Reeling within 0.5 s of a nibble sets the hook. The
+  bait is used up on the hook and given back when a cast is reeled in empty.
+- **The fight:** `Fish.OnHooked` claims the fish for the angler. `Fish.Escape` starts a thrash on the hook and then
+  after a pause of 1.5 to 5 s (1.25 to 4 s for later fish): 0.5 to 3 s (1 to 4 s for later fish) plus 1.5 s per level
+  (1 s for the Trollfish). Holding a fish drains stamina every
+  step, so stamina never comes back during a fight, and at 0 the fish is lost.
+- **Levels:** 1 to 5, rolled at spawn (SpawnSystem, 20% per step, 15% in the Deep North and Ashlands), stored in the
+  item's quality: +40% size and +2 kg per level, pull times the level, longer thrashes, and fish above level 2 never
+  jump (above 4 for Tuna and Coral cod). Cleaning (`Recipe_Fish1`, prep table, one fish of any kind) gives 1 raw fish plus 3 per level above 1, plus 1
+  (Tuna, Giant herring, Grouper, Coral cod) or 2 (Anglerfish, Northern salmon, Magmafish, Pufferfish).
+- **Bonus items:** every fish has an extra-drop table rolled into the inventory on 20% of catches, one item: Perch
+  stone or amber, Pike flint or an amber pearl, Tuna tin ore or a ruby, Tetra obsidian or 1 to 15 coins, Trollfish troll
+  hide or copper ore, Giant herring iron ore or chain, Grouper black metal scrap or barley, Coral cod chitin or onion
+  seeds, Anglerfish soft tissue or blue jute, Northern salmon carrot seeds or silver, Magmafish flametal ore, a Surtling
+  core or grausten, Pufferfish sap or ooze.
+- **Also:** the fishing hat gives +20 Fishing (+20 Swim); fish stack by ten; item stands take fish; the game's stats
+  count catches per level up to 6. Baits are crafted at the prep table, a kitchen, so they already rolled Cooking stars
+  before this module.
+
+### Foundation (`Fishing/Core`)
+
+- **The angler (`Angler`, `FloatSetup`):** the `Setup` postfix, on the caster's client, stamps the angler's level and
+  the bait's stars on the float's ZDO (`grindstone_angler_level`, `grindstone_bait_stars`) for the fish owners, adds the
+  cast's state (`FloatFight`, a component on the float, only on the angler's client) and lengthens the line.
+- **The float's step (`FloatScope`):** a prefix and finalizer on `FishingFloat.FixedUpdate` for the local player's
+  floats. Before the game's step: the senses when the float lands, snags without a fish, and with a fish the grace or
+  line tension, either of which can skip the game's step; reel speed changes for a spent fish or a snag, put back by the
+  finalizer, which also lands a snag. A prefix on `Skills.RaiseSkill` scales the game's reeling raise inside the step;
+  credits inside the step go through `RaiseUnscoped`.
+- **The catch (`CatchHook`, `CatchInfo`):** `FishingFloat.Catch`'s prefix captures the fish before the pickup destroys it
+  and raises its bonus-item odds for the one roll; the postfix credits experience, writes the log and records, may give
+  the bait back, announces a legendary fish and adds the weight to the game's message; the finalizer restores the table.
+- **Callouts (`FishCallout`):** local text, text for everyone within 40 m, and a top-left announcement for the server.
+- **Icon:** the user's art (2026-09-27), trimmed, centred on a square and scaled to 64x64 as
+  `assets/skill_fishing.png`, is Fishing's entry in `Skills/GameSkillIcons` (shared with Cooking and Farming), which
+  puts it on the game's Fishing skill definition when a player's Skills wake. The skills panel and the level-up message
+  show it; a machine without graphics skips it.
+
+### Features (defaults, synced and lockable)
+
+| Feature | Default | Whose level, where it runs |
+| --- | --- | --- |
+| Line tension | builds 60% of the line per second at 0 (30% at 100) while reeling a thrashing fish, eases 50%/s (10%/s while reeling a calm fish), snaps at 100% | the angler's, angler's client |
+| Strike window | 0.5 s at 0 to 1 s at 100; a perfect strike (reel within 0.2 s) skips the hook's thrash | the angler's, angler's client |
+| Tiring | each thrash 15% shorter per thrash before it (never below 20%); spent after 4 thrashes (legendary 8): no more, reel +50% | angler's client (it owns the fish) |
+| Grace (level 75) | 4 s at 0 stamina, once per fish; ends early at 25% stamina | the angler's |
+| Bite chance | +100% at 100; +50% at the height of dawn and dusk; +25% in rain; +20% per bait star; +100% near chum | the float's angler (from its ZDO), the fish's owner |
+| Big one | 25% at 100, per level, x1.5 at night, +5 points per bait star; up to level 5 | the angler's, angler's client |
+| Legendary fish | 0.5% of spawned fish; only anglers from level 50 hook them; announced | the spawner; the fish's owner |
+| Senses | species 25, size 50, water 75 | the angler's |
+| Bonus item | the fish's own 20% at 0 to 40% at 100; two items from 50; legendary always | the angler's |
+| Bait saver | 30% at 100 | the angler's |
+| Snags | 2% at 0 to 6% at 100, once per cast after 8 s in the water | the angler's |
+| Cast and line | +30% distance, +50% line at 100 | the angler's |
+| Fillets | +10 effective Cooking levels per level of the fish above 1 | the crafter's client |
+
+- **Line tension (`Fight/Tension`, `Fight/TensionBar`):** reeling while the fish thrashes (`Fish.IsEscaping`) builds it,
+  from 0.75 s after the hook (the hook starts a thrash while the angler still reels); at 1 the game's own line break
+  runs (message, fish released, float gone). A bar under the crosshair under the HUD root shows the tension and the
+  state ("Thrashing! Ease off", "Spent! Reel it in", the grace's countdown).
+- **Strikes (`Fight/Strike`):** `TryToHook` is replaced by the same code with the angler's window. A perfect strike
+  needs the angler reeling, not already reeling when the fish nibbled, within the window. `RPC_Nibble`'s postfix
+  records whether the angler was reeling and runs the nibble sense; a snagged hook takes no nibbles.
+- **Tiring (`Fight/Tiring`):** a postfix on `Fish.Escape` on the fish's owner; a cancelled thrash also sets the game's
+  next pause. The hook's own thrash counts as the first.
+- **Grace (`Fight/Grace`):** the game's step is skipped (so nothing drains and stamina comes back after the game's 1 s
+  pause) while the fish takes 1.5 m of line per second, up to the line's length.
+- **Bites (`Bites/BiteChance`, `FishingConditions`, `Chum`):** `Fish.FindFloat` is replaced by the same look with the
+  chance multiplied. Day time and weather are the same on every machine. Chum is any item of Chum Items floating in the
+  water (listed once a second from the game's list of dropped items); its owner stamps when it started floating
+  (`grindstone_chum_since`) and removes it after Chum Duration, checked in `ItemDrop.SlowUpdate` (every 10 s).
+- **Senses (`Bites/Sense`):** the nibble message (centre), the conditions and the reach readout when the cast lands
+  (top left), and a fish's level in its hover in the water from Size Sense Level. Legendary fish read "Legendary" to
+  everyone.
+- **Tackle (`Bites/Tackle`):** the rod attack's launch speeds times the square root of 1 + the share (a throw's range
+  grows with the square of its speed), put back afterwards; the float's `m_maxDistance` when it lands.
+- **Starred bait (`Bites/StarredBait`):** `ReturnBait` gives starred bait back with its stars; the bait saver uses the
+  same.
+- **Big ones (`BigFish/BigOne`):** after the hook, on the angler's client which now owns the fish: `SetQuality` and the
+  item data saved to the fish's ZDO. `FishMark` (every client with a screen) reloads hooked fish it does not own twice a
+  second, so the growth shows everywhere, and every fish once 2 s after it loads.
+- **Legendary fish (`BigFish/LegendarySpawn`, `LegendaryItems`, `LegendaryGlow`, `LegendaryCatch`):** a scope around
+  `SpawnSystem.Spawn` notes the fish it instantiates (`Fish.Awake`) and makes each legendary with Legendary Chance (level
+  6: three times the size). Dropped fish are never rolled. Every fish item's `m_maxQuality` is raised to 6 when the item
+  database wakes, so recipes count a legendary fish (the game counts ingredients only up to an item's maximum). The
+  glow is a local light and halo on every client with a screen.
+- **Records (`Records/`):** the weight is the game's weight for the level ±15%, in messages, the log and records only
+  (fish stack by ten, so per-fish data on items would be lost). The log (`grindstone_fish_log`: levels per species) and
+  records (`grindstone_fish_records`) are in player custom data. The fish tooltip, and `fishlog` (not a cheat, so
+  `/fishlog` works in chat) show them.
+- **Snags (`Rewards/Snags`, `SnagFile`, `SnagModel`, `SnagLoot`):** `GrindstoneSkills.Snags*.yml` per biome, read like the
+  finds files. A snagged line reels at half speed, costs 6 stamina per second of reeling and drags the float down. It
+  lands when the game's step destroys the empty float at 0.5 m of line; the find goes into the inventory (at the
+  angler's feet when full). No experience.
+- **Fillets (`Rewards/Fillets`):** `CraftStars.Roll` adds the levels of the biggest fish the craft used up
+  (`CraftRecord` notes it, with its quality).
+
+### Experience (section 50, synced)
+
+- **Reeling:** the game's raise, times Empty Reel Experience (0; the game's is 100) or Fight Experience (100).
+- **Catch:** Catch Experience (10) x the species (the square root of its pull over a Perch's: Pike 1.3, Northern salmon
+  2.6) x 1 + Size Experience Bonus (50%) per level above 1.
+- **Discovery:** Discovery Experience (30) x the species for a new species, New Size Experience (10) x the species for a
+  new level of a known one.
+- An Experience Multiplier over all of it. The game gives 0.25 of a point per raise: a 10 s Perch fight is about 20
+  raises plus 10 for the catch, about 7.5 points, against the game's 5 plus whatever empty reeling added.
+
+### Settings
+
+- **50 - Fishing:** Fishing Enabled, Show Callouts (each player's own), Experience Multiplier, Empty Reel Experience,
+  Fight Experience, Catch Experience, Size Experience Bonus, Discovery Experience, New Size Experience.
+- **51 - Fishing Fight:** Line Tension, Tension Build At 0, Tension Build At 100, Tension Ease, Strike Window At 0,
+  Strike Window At 100, Perfect Strike Window, Tiring Per Thrash, Thrashes To Tire, Spent Reel Speed, Grace Level,
+  Grace Seconds.
+- **52 - Bites:** Bite Chance At 100, Dawn And Dusk Bite Bonus, Rain Bite Bonus, Bait Bite Bonus Per Star, Chum Items,
+  Chum Bite Bonus, Chum Radius, Chum Duration, Species Sense Level, Size Sense Level, Water Sense Level.
+- **53 - Big Fish:** Big One Chance At 100, Night Big One Bonus, Bait Big One Bonus Per Star, Legendary Chance,
+  Legendary Level, Legendary Thrashes, Announce Legendary Catches.
+- **54 - Catch And Tackle:** Bonus Item Chance At 100, Double Bonus Level, Bait Saver At 100, Fillet Levels Per Fish
+  Level, Snag Chance At 0, Snag Chance At 100, Snag Wait, Cast Distance At 100, Line Length At 100.
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- **Sections 50 to 54:** the other modules written at the same time were sharing out 19 to 49.
+- **Tension** builds only while reeling a thrashing fish, and not in the first 0.75 s after the hook.
+- **Perfect strike:** reeling, started within 0.2 s of the nibble, and not already reeling when it nibbled; the game's
+  hook from a fast-moving float is never perfect.
+- **Tiring:** the hook's thrash counts as the first; a spent fish never thrashes again.
+- **Grace:** once per fish; the game's step is skipped during it, except when the angler attacks or draws a bow (the
+  game's step then lets the fish go and removes the float, as always).
+- **The Fishing icon** shows whatever Fishing Enabled says, as Cooking's and Farming's do: it is the mod's look, not
+  gameplay.
+- **Fishing Enabled off** turns every feature off, except that fish items keep a maximum quality of 6, so a legendary
+  fish caught earlier can still be cleaned.
+- **A catch counts only when the fish was taken:** the game lets a fish go when the inventory has no room for it, and
+  then no experience, log entry, record, bait saver or announcement follows.
+- **Big ones** grow on the hook, not at spawn, up to level 5, and change the fish's real level: size, pull and fillets.
+- **Legendary fish** are rolled only for fish the spawn system makes; the level 50 gate uses the angler's level at the
+  cast (a fishing hat put on afterwards counts from the next cast); the glow is sea-green.
+- **Starred bait:** +20% bites and +5 big-one points per star; it comes back with its stars.
+- **Weights and records are the character's own;** there are no server-wide records.
+- **The angler's log** is shown on fish tooltips and by `fishlog`; there is no panel.
+- **Snags** give no experience and block nibbles; one roll per cast.
+- **Chum** is the game's entrails and blood bags, no new item; one dropped stack is one piece of chum.
+- **Fillets:** the biggest fish among the used-up items counts, for any kitchen recipe (only cleaning uses fish today).
+- **Item stands** take fish as in the game; nothing is shown there.
+
+### Known gaps
+
+- Other clients see a big one grow up to half a second late (`FishMark` polls), and a fish whose data reached them after
+  it loaded is fixed 2 s later.
+- A snag is landed when the float is destroyed at 0.5 m of line or less; attacking at that very moment lands it too.
+- Credits reach the angler as one raise; the game gives at most one level per raise.
+- The tension bar's position, size and colours, the glow's light and halo, and every message are untested. All texts
+  are English.
+- With every bite bonus stacked the chance per fish caps at 100%.
+
+### Test checklist
+
+- [ ] Fishing Enabled off: reeling, bites, hooking, experience and messages exactly vanilla; no bar, no glow.
+- [ ] Icon: the skills panel and the "Fishing increased" message show the new fish-and-rod icon, sharp at 64x64.
+- [ ] Tension at level 0: keep reeling through a Perch's thrash and the bar fills red and the line snaps in about two
+      seconds; easing off during thrashes lands it; Line Tension off never snaps.
+- [ ] Strike: at level 100 the hook sets up to 1 s after the nibble; reeling right on the nibble floats "Perfect
+      strike!" and the fish does not thrash at once; holding block when it nibbles is never perfect.
+- [ ] Tiring: each thrash shorter; "Spent!" after the fourth and the line comes in faster; eight for a legendary.
+- [ ] Grace at 75: out of stamina, "It takes line - catch your breath!", the countdown, stamina returns and the fight
+      goes on; out of stamina again, the fish is lost; below 75 lost at once.
+- [ ] Bites: more at 100 than at 0, at dusk, in rain, near floating entrails; the entrails vanish after 60 to 70 s.
+- [ ] Big one: with Big One Chance At 100 at 100 a hooked fish grows, "It's a big one!", and a second client sees it
+      grow; level 5 fish never grow.
+- [ ] Legendary: with Legendary Chance 100 new fish spawn legendary, three times the size, glowing on both clients; a
+      level 0 float is ignored; landing one announces it to both; cleaning it gives at least 16 raw fish; the tooltip
+      says Legendary.
+- [ ] Senses at 25, 50 and 75: the nibble messages, the conditions line, the reach line and "Something big lurks".
+- [ ] Log: the first Perch says "New in your angler's log: Perch (1 of 12 species)" and credits; a new size says so; a
+      heavier catch says "new record!"; tooltips; `/fishlog` in chat; all of it after relog.
+- [ ] Snags: with Snag Chance At 0 at 100, 8 s in the water gives "Snagged something heavy!", a slow reel, and the
+      biome's items; no nibbles meanwhile; sea casts use the Ocean table; the YAML hot reloads.
+- [ ] Bonus items and bait saver at 100: more bonus items, sometimes two; "Bait saved"; starred bait comes back
+      starred, after an empty reel too.
+- [ ] Tackle: casts go further and the line snaps later at 100.
+- [ ] Fillets: at Cooking 0, cleaning level 5 fish gives better stars than cleaning level 1 fish.
+- [ ] Experience: an empty reel gives none; a catch and discoveries credit; Empty Reel 100, Fight 100 and the three
+      credits at 0 give the game's own.
+- [ ] **Dedicated server with two clients** (A fishes, B stands by, the fish owned by B or the server): A's level and
+      bait still decide bites; legendary fish spawn wherever spawning runs and glow for both; growth, callouts and
+      announcements reach B; nothing in the server log.
+
+### Status (2026-09-27)
+
+Written 2026-09-27 in the same tree as the Defense, Husbandry and Farming modules, while 0.5.0 to 0.8.2 were
+released without it. Released as 0.9.0 to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.9.0), before any in-game
+test. A review against the decompiled game fixed a calmed fish
+that kept swimming (the game's rest is an escape time below 0), the grace skipping the game's cleanup when the angler
+attacks, catches counted when the inventory had no room, snag loot doubled at a nearly full inventory, the snag biome
+read at the rod, a long strike window stealing a fish hooked elsewhere, and starred bait lost to a full inventory.
+The build is clean (0 warnings) and the offline patch check passes (225 patch classes). The Fishing decisions above
+wait for the user's confirmation.
+
 ## Husbandry
 
 ### The request (user, 2026-09-27)
@@ -1693,6 +1920,10 @@ written in the main tree, so Fishing is not in it. It also moves Foraging onto t
 and Foraging onto `Kitchen.AddStarItem`. The Farming decisions above wait for the user's confirmation. 0.8.1 (tag
 GrindstoneSkills-v0.8.1) adds the Farming skill icon the user supplied; 0.8.2 (tag GrindstoneSkills-v0.8.2) the
 Cooking and Sailing icons.
+
+0.9.0 (Fishing) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.9.0), before any in-game test: written as a
+foundation and features in one session, reviewed by an agent against the decompiled game (seven fixes), offline patch
+check clean, with the Fishing icon the user supplied. The Fishing decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

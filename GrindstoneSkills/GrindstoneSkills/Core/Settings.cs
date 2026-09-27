@@ -31,6 +31,7 @@ namespace GrindstoneSkills
             DefenseSettings.Initialize(config);
             HusbandrySettings.Initialize(config);
             ForagingSettings.Initialize(config);
+            FishingSettings.Initialize(config);
             FarmingSettings.Initialize(config);
         }
 
