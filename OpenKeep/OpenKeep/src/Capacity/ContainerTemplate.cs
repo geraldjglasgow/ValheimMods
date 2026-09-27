@@ -34,13 +34,13 @@ namespace OpenKeep.Capacity
             Plugin.Log.LogInfo($"OpenKeep: listed every container prefab in {path}.");
         }
 
-        private static string MainFilePath(SyncedConfiguration synced, YamlFileSet set)
+        internal static string MainFilePath(SyncedConfiguration synced, YamlFileSet set)
         {
             string known = set.Files.Keys.FirstOrDefault(k => string.Equals(Path.GetFileName(k), set.MainFileName, StringComparison.OrdinalIgnoreCase));
             return known ?? Path.Combine(Path.GetDirectoryName(synced.Config.ConfigFilePath) ?? "", set.MainFileName);
         }
 
-        private static string DefaultText(YamlFileSet set)
+        internal static string DefaultText(YamlFileSet set)
         {
             byte[] bytes = set.DefaultContent?.Invoke();
             return bytes != null ? new UTF8Encoding(false).GetString(bytes) : null;

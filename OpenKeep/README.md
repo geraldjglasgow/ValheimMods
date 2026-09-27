@@ -3,10 +3,11 @@
 Storage and inventory for Valheim in one mod: craft, build and feed stations straight from nearby chests, ship
 holds and carts; stow, top up, sort, junk and route from the inventory panel; a Salvage tab that gives
 materials back; stack sizes and weights; bigger chests with their contents on hover; carts that carry a
-workbench; a sign above every chest that names what is inside; and a few base tweaks: respawn at your nearest
-bed, campfires on wooden floors, honey per day, fires that refuel from nearby chests and torches lit only at night. Every gameplay setting is server synced and
-lockable, every hotkey is per player, and everything is tunable in the config file and six YAML files that hot
-reload. Convenience features are on by default; anything
+workbench; how much each smelter and kiln holds; a sign above every chest that names what is inside; and a few base
+tweaks: respawn at your nearest bed, campfires on wooden floors, honey per day, fires that refuel from nearby chests,
+smelters and kilns that feed themselves from the chests beside them, torches lit only at night (or kept lit),
+Rested sooner and area repair with the hammer. Every gameplay setting is server synced and lockable, every hotkey is
+per player, and everything is tunable in the config file and seven YAML files that hot reload. Convenience features are on by default; anything
 that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
 
 ### Reach: craft from storage
@@ -82,11 +83,18 @@ you drag a stack in. `Per Item Config Entries` generates one stack and one weigh
 file for Configuration Manager users. `Write Documentation` writes `OpenKeep.Items.txt` (every item, prefab name,
 vanilla and current values) and `OpenKeep.Containers.txt` (every container prefab and its size) next to the cfg.
 
-### Capacity: container sizes and hover contents
+### Capacity: container sizes, station capacity and hover contents
 `OpenKeep.Containers.yml` is filled with every container prefab of your game (modded ones included) and its
 vanilla size the first time a world loads, all commented out; uncomment a line and change the numbers to resize
 new and existing containers of that prefab. Hovering a container shows how full it is and up to `Hover Lines`
 lines of contents.
+
+`OpenKeep.Stations.yml` does the same for workstations: every smelter, blast furnace, charcoal kiln, eitr refinery,
+spinning wheel, windmill, hot tub and modded station built like them is listed with how many items it holds
+(`items:`) and how much fuel (`fuel:`); uncomment a line and change the numbers (1 to 1000). Lowering a cap loses
+nothing: a station holding more keeps working and takes more only once it is below the cap. A station only catches
+up an hour of work when you come back to it (the game's limit), so very large item caps fill up faster than an
+unattended station empties them.
 
 ### Carts as workbenches
 `Cart Workbench` (off by default) gives every cart a workbench: craft (Shift + E on the cart), repair and build
@@ -135,7 +143,7 @@ chest someone else is using is refused. Crafting, building and station feeding n
 another player is using, whatever the mode, so a requirement is never shown as covered by an item the other
 player may take first. Both players need the mod; a player without it gets the game's usual refusal.
 
-### Homestead: beds, campfires on wood, honey, fires and torches
+### Homestead: beds, campfires on wood, honey, fires, torches, stations, rest and repair
 Section `8. Homestead`, synced from the server like every gameplay setting.
 
 - Beds (`Nearest Bed Respawn`, on): every bed you own is a spawn bed. When you die you wake in your own bed
@@ -166,13 +174,39 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
   section 0 decide which chests give. Chests another player has open, private chests and wards you have no access to
   are skipped: the game of whoever is nearest runs the fire and uses that player's access. On a dedicated server the
   fires right around the world's centre are run by the server and do not feed themselves.
-- Torches at night (`Torches Night Only`, on; `Torch Pieces`): the standing torches (wood, iron, green, blue) and the
-  sconce light at nightfall and go out at daybreak (the game's own night), so they burn fuel only in the dark. A torch
-  out for the day gives no light, burns nothing, and its hover says `Lights at nightfall`. Other fires can be added
-  to `Torch Pieces` (braziers, the jack-o-turnip, the snow lantern, the resin candle); campfires, hearths and braziers
-  also give the warmth beds and resting need, which is gone while they are out. Each torch is switched once at
-  nightfall and once at daybreak, so a fire you can switch by hand (the resin candle) keeps your choice until the
-  next one; the game has no hand switch for the torches themselves.
+- Torches at night (`Torches Night Only`, on; `Torch Pieces`; `Torch Margin`, 1): the standing torches (wood, iron,
+  green, blue) and the sconce light before nightfall and go out after daybreak, so they burn fuel only around the
+  dark. `Torch Margin` is how many in-game hours early they light and late they go out (an in-game hour is 75
+  seconds of the game's 30 minute day; 0 follows the game's own night, at most 4). A torch out for the day gives no
+  light, burns nothing, and its hover says `Lights at nightfall`. To keep one torch lit day and night, look at it and
+  press `Torch Switch Key` (O): the hover shows `[O] Keep lit`, and on a torch kept lit `[O] Light at night only`,
+  which puts it back on the schedule (by day it goes out at once). The choice is stored in the torch, so every
+  player sees it and it survives restarts; inside a ward only players with access can switch it. Other fires can be
+  added to `Torch Pieces` (braziers, the jack-o-turnip, the snow lantern, the resin candle); campfires, hearths and
+  braziers also give the warmth beds and resting need, which is gone while they are out. Each torch is switched once
+  at nightfall and once at daybreak, so a fire you can switch by hand (the resin candle) keeps your choice until the
+  next one. With `Torches Night Only` off every torch simply burns and the key does nothing; torches kept lit stay
+  marked for when it is on again.
+- Stations that feed themselves (`Auto Feed Stations`, on; `Auto Feed Range`, 2 m; `Auto Feed Skip`): every smelter,
+  blast furnace, charcoal kiln, eitr refinery, spinning wheel, windmill and hot tub you built (modded stations of the
+  same kind too) takes what it works (ore, scrap, wood, soft tissue, flax, barley) and its fuel (coal, sap, wood) from
+  the containers beside it. The range runs from the station's outer edge to the middle of a container, so 2 m
+  reaches the chests standing next to even a big station. While there is room the station takes one item and one
+  fuel a second, as if someone fed it by hand, and then one of each as it works them off; with the chests stocked
+  it never stops. `Auto Feed Skip` names items it never takes (default `FineWood, RoundLog`, so the charcoal kiln
+  burns only plain wood; you can still put them in by hand). Cooking stations, ovens and fermenters are not fed. The
+  same rules as fires apply: `stations:` in `OpenKeep.Reach.yml` (`enabled: false` stops a station, `allow`/`deny`
+  narrow what it takes), `containers:`, the switches of section 0, and the access of whoever's game runs the station.
+- Rested sooner (`Rested Delay`, 5 s): the Rested buff comes after this many seconds of resting instead of the
+  game's 20. Resting is still the game's: near a fire, sitting or under a roof, dry, warm enough and with no enemy
+  aware of you; stepping away starts the wait over. How long Rested lasts still grows with comfort, and the Resting
+  icon still shows your comfort level. 20 keeps the game's wait, 0 gives Rested at once.
+- Area repair (`Area Repair`, on): repairing a piece with the hammer also repairs every damaged piece touching it:
+  the floor tiles, walls, beams and furniture right next to it, not the whole building, at most 64 per swing. Each
+  of them needs what a repair by hand needs: its crafting station within range of you (stone pieces the
+  stonecutter) and access to any ward it stands in; the others are skipped quietly. The swing costs the stamina and
+  hammer wear of one repair, the extra pieces are free, and a line under the game's own says how many were repaired
+  too. Hitting a piece that needs no repair repairs nothing around it. Ships and carts are never repaired this way.
 
 ### Hotkeys (per player, not synced)
 
@@ -199,9 +233,10 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
 | `2. Stow / Cycle Previous Key`, `Cycle Next Key` | LeftArrow, RightArrow | switch to the previous or next chest around you |
 | `2. Stow / Button Row Offset` | 0 | moves the button row up (positive) or down (negative) by that many pixels; applies at once |
 | `3. Salvage / Salvage Key` | Backspace | salvage the hovered stack |
+| `8. Homestead / Torch Switch Key` | O | outside the inventory, looking at a torch: keep it lit day and night, or put it back on the night schedule |
 
-Single keys only fire while the inventory is open and no Shift, Ctrl or Alt is held, so `F` and `Shift + F` never
-clash.
+Single keys fire only while no Shift, Ctrl or Alt is held, so `F` and `Shift + F` never clash; they work while the
+inventory is open, except `Torch Switch Key`, which works only outside it, looking at a torch.
 
 ### Config file
 `BepInEx/config/milkyteam.openkeep.cfg`, written on first start. Sections: `0. Containers` (`Ships`, `Carts`,
@@ -209,7 +244,8 @@ clash.
 Stacks` and `4b. Item Weights` when per item entries are on), `5. Capacity`, `6. Carts`, `7. Signs` (`Enabled`,
 `Show Counts`, `Max Items`, `Max Characters`, `Update Seconds`, `Height`, `Rotation`, `Empty Text`), `8. Homestead`
 (`Nearest Bed Respawn`, `Build On Wood`, `Honey Per Day`, `Honey Per Player Online`, `Auto Fuel`, `Auto Fuel Range`,
-`Torches Night Only`, `Torch Pieces`), `9. Shared`
+`Torches Night Only`, `Torch Pieces`, `Torch Margin`, `Auto Feed Stations`, `Auto Feed Range`, `Auto Feed Skip`, `Rested Delay`, `Area Repair`; per player `Torch Switch Key`),
+`9. Shared`
 (`Request Timeout`, `Touch Seconds`; per player `Show Touches`, `Touch Colour`), and `General / Lock Configuration`.
 Every entry has a description in the file. Gameplay settings are synced from the server and locked; keys,
 display formats, confirmations, sort orders and colours are yours.
@@ -279,6 +315,18 @@ items:
 containers:
   piece_chest_wood: { width: 8, height: 4 }
   VikingShip: { width: 8, height: 3 }
+```
+
+`OpenKeep.Stations.yml`: how much each station holds, `items:` (ore, wood, flax, barley waiting) and `fuel:`
+(coal, wood), from 1 to 1000. A station that takes no items (the hot tub) or no fuel (the charcoal kiln, spinning
+wheel, windmill) keeps it that way; such a key is ignored with a warning. `OpenKeep.Stations.txt` lists every
+station prefab with its vanilla values.
+```yaml
+stations:
+  smelter: { items: 30, fuel: 60 }
+  blastfurnace: { items: 30, fuel: 60 }
+  charcoal_kiln: { items: 100 }
+  windmill: { items: 100 }
 ```
 
 `OpenKeep.Signs.yml`: which containers get a contents sign and where it sits. `offset` moves the sign from the

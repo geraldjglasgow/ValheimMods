@@ -25,6 +25,7 @@ namespace OpenKeep.Capacity
                 EditorLabel = () => "Edit container sizes",
             });
             CapacitySettings.Enabled.SettingChanged += Guard.Wrap("capacity switch", (_, _) => ContainerSizes.ApplyAll());
+            StationsFile.Initialize(synced);
             Language.Add("ok_slots", "slots");
             Language.Add("ok_full", "full");
             Language.Add("ok_and", "and");

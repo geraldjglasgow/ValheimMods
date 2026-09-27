@@ -46,7 +46,7 @@ namespace OpenKeep.Core
         {
             args.Context.AddString("openkeep reload        reloads the cfg and every OpenKeep YAML file (admin or host on a server)");
             args.Context.AddString("openkeep containers    lists the reachable containers within 20 m");
-            args.Context.AddString("openkeep write docs    writes OpenKeep.Items.txt and OpenKeep.Containers.txt next to the cfg");
+            args.Context.AddString("openkeep write docs    writes OpenKeep.Items.txt, OpenKeep.Containers.txt and OpenKeep.Stations.txt next to the cfg");
             args.Context.AddString("openkeep signs         lists the loaded containers with their sign state");
             args.Context.AddString("openkeep signs reset   allows signs again on containers whose sign was removed with the hammer (admin or host)");
             args.Context.AddString("openkeep signs rewrite rewrites the sign of every loaded container this game owns");

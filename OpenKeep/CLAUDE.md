@@ -1,11 +1,13 @@
 # CLAUDE.md - OpenKeep
 
-Storage and inventory for Valheim, version 1.4.2: crafting, building and station feeding from nearby containers
+Storage and inventory for Valheim, version 1.7.0: crafting, building and station feeding from nearby containers
 (Reach), stow, top up, sort, junk, trash, routing, chest cycling and ground pickup (Stow), a Salvage tab, stack
-sizes and weights (Stacks), container sizes and hover contents (Capacity), carts as workbenches (Carts), several
+sizes and weights (Stacks), container sizes, station capacities and hover contents (Capacity), carts as
+workbenches (Carts), several
 players in one chest (Shared), a contents sign above every player-built container (Signs), and base tweaks outside
 storage: respawn at the nearest owned bed, pieces on wooden floors, honey per day, fires refuelling from nearby
-containers and torches lit only at night (Homestead). Written black-box
+containers, torches lit only at night and smelters and kilns feeding themselves from the containers beside them
+(Homestead). Written black-box
 from `SPEC.md` (deleted after the in-game verification) and the game code alone, by module agents following
 `PLAN.md`; the rules are under "Developing mods" in `../CLAUDE.md`.
 This file is the code map, the patched methods, the decisions the spec left open, and the in-game test checklist.
@@ -116,6 +118,13 @@ OpenKeep/OpenKeep/src/
     ContainerTemplate.cs    fills a still-default OpenKeep.Containers.yml with every container prefab
     SceneReady.cs           ZNetScene.Awake and Container.Awake postfixes
     HoverText.cs            Container.GetHoverText postfix
+    StationsFile.cs         the OpenKeep.Stations*.yml set (registered from CapacityModule) and its Enabled hook
+    StationsModel.cs, StationCaps.cs   prefab to items (m_maxOre) and fuel (m_maxFuel) caps, 1 to 1000
+    StationPrefabs.cs, VanillaCaps.cs, StationCapacities.cs   Smelter prefab discovery, vanilla caps, apply to the
+                            prefab and every loaded station, restore
+    StationTemplate.cs      fills a still-default OpenKeep.Stations.yml with every station prefab
+    StationSceneReady.cs    ZNetScene.Awake and Smelter.Awake postfixes
+    StationDocumentation.cs OpenKeep.Stations.txt (called from Stacks' Documentation.Write)
   Carts/                    section 6
     CartsModule.cs, CartsSettings.cs
     CartStation.cs          the CraftingStation component on every loaded cart (Vagon.Awake postfix)
@@ -138,8 +147,8 @@ OpenKeep/OpenKeep/src/
     SignOrphanCheck.cs      Sign.Awake postfix adds the component and switches wear off; a sign without its
                             container is destroyed
     SignsCommand.cs         openkeep signs, signs reset, signs rewrite (called from Core's Command by reflection)
-  Homestead/                section 8: five independent features, each with its own Feature and Settings class
-    HomesteadModule.cs      Section, and the five Feature.Initialize calls
+  Homestead/                section 8: independent features, each with its own Feature and Settings class
+    HomesteadModule.cs      Section, and the Feature.Initialize calls
     BedFeature.cs, BedSettings.cs   Nearest Bed Respawn
     BedPoints.cs            x:y:z text, same bed (1 m, the game's IsCurrent tolerance), map distance, nearest first
     BedStore.cs, BedList.cs   OpenKeep.beds.<world uid> in the character's custom data; changes without a local
@@ -161,16 +170,44 @@ OpenKeep/OpenKeep/src/
     FuelFeature.cs, FuelSettings.cs   Auto Fuel, Auto Fuel Range
     FuelFires.cs            the fires both fire features act on (ZDO owned here, a piece a player built); state on/off
     FuelRefill.cs           the refill rule on the fire's owner: whole units that fit, one Fireplace.AddFuel per refill
-    FuelTake.cs             the units out of the containers near the fire (ContainerScan.Nearby, Reach's stations: and
-                            containers: allow/deny), claim, remove, save
-    FuelRetry.cs            10 s wait for a fire that found nothing
+    NearbyTake.cs           Fuel and Feed: units out of the given containers (the caller's ContainerScan.Nearby) with
+                            the station's predicate, the container's allow/deny and the world level rule; claim,
+                            remove, save
+    TakeRetry.cs            Fuel and Feed: 10 s wait for a fire or station that found nothing
     FuelPatch.cs            Fireplace.UpdateFireplace postfix (after TorchPatch)
-    TorchFeature.cs, TorchSettings.cs   Torches Night Only, Torch Pieces, the $ok_torch_nightfall word
+    TorchFeature.cs, TorchSettings.cs   Torches Night Only, Torch Pieces, Torch Margin, Torch Switch Key (unsynced),
+                            the $ok_torch_ words
     TorchPrefabs.cs         Torch Pieces as prefab hashes, split again when the text or the scene changes
-    TorchNight.cs           EnvMan.IsNight once the game's day fraction has caught up with the clock
-    TorchSwitch.cs          ZDO OpenKeep.torchPhase, RPC_ToggleOn at nightfall and daybreak, relight when off
+    TorchNight.cs           the game's night thresholds (smoothed day fraction 0.25 / 0.75) widened by Torch Margin,
+                            once the game's day fraction has caught up with the clock
+    TorchSwitch.cs          ZDO OpenKeep.torchPhase, RPC_ToggleOn at nightfall and daybreak, relight when a torch
+                            leaves the schedule (setting off, unlisted, kept lit)
+    TorchKeep.cs            ZDO OpenKeep.torchKeepLit, RPC OpenKeep_TorchKeepLit: the request (ward check, claim an
+                            unowned fire) and the owner's write
     TorchPatch.cs           Fireplace.UpdateFireplace postfix (Priority.High)
-    TorchHoverPatch.cs      Fireplace.GetHoverText postfix: "Lights at nightfall"
+    TorchHoverPatch.cs      Fireplace.GetHoverText postfix: "Lights at nightfall", "[O] Keep lit" / "Light at night only"
+    TorchKeyPatch.cs        Player.Update postfix: Torch Switch Key on the hovered fire
+    TorchRpcPatch.cs        Fireplace.Awake postfix: registers OpenKeep_TorchKeepLit on every fire
+    FeedFeature.cs, FeedSettings.cs   Auto Feed Stations, Auto Feed Range, Auto Feed Skip
+    FeedStations.cs         the stations (Smelter, ZDO owned here, a piece a player built) and their outline (the
+                            box around their solid colliders)
+    FeedSkip.cs             Auto Feed Skip as an ItemMatchSet, parsed again when the text changes
+    FeedTick.cs             the feeding rule on the station's owner: one item (RPC_AddOre) and one fuel (RPC_AddFuel)
+                            per tick while there is room
+    FeedPatch.cs            Smelter.UpdateSmelter postfix
+    RestFeature.cs, RestSettings.cs   Rested Delay
+    RestDelay.cs            the setting at use time for the game's Resting only (name hash); the log line with the
+                            asset's own delay
+    RestPatch.cs            SE_Cozy.UpdateStatusEffect prefix: the SEMan's copy of Resting gets m_delay every tick
+    RepairFeature.cs, RepairSettings.cs   Area Repair, the $ok_repair_one and $ok_repair_many words
+    RepairPatch.cs          Player.Repair prefix/postfix: the hovered piece's WearNTear.m_lastRepair moved = the game
+                            repaired it
+    RepairNeighbours.cs     the touching pieces: the game's SetupColliders boxes (+0.3 m) over the active, enabled
+                            colliders, OverlapBox on piece, piece_nonsolid, Default, static_solid, Default_small;
+                            triggers and rigidbodies skipped; nearest first
+    RepairChecks.cs         the hand repair's checks per neighbour, silent: station in build range, ward access
+    RepairArea.cs, RepairOutcome.cs, RepairTally.cs   the run: checks, WearNTear.Repair, place effect, cap 64,
+                            message, log line
   Shared/                   section 9
     SharedModule.cs, SharedSettings.cs, SharedWords.cs   section 9. Shared, the $ok_shared_ words
     SharedState.cs          the viewed container, the mode, the user name (ZDO OpenKeep.user), the panel title
@@ -190,7 +227,8 @@ OpenKeep/OpenKeep/src/
     ItemPacket.cs           one item on the wire (prefab name + the game's ItemData.Save fields)
     Touches.cs              OpenKeep_Touch: InventoryGrid.OnLeftDown, InventoryGui.Update, InventoryGrid.UpdateGui
 OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, OpenKeep.Stow.yml,
-                            OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml
+                            OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml,
+                            OpenKeep.Stations.yml
 OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon (128 px, scaled down from the
                             author's 1254 px drawing, which is not in the repository)
 ```
@@ -199,17 +237,19 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` last (the spec's order; each binds its settings, registers its YAML set and its words), every patch class on its
-own, `Synced.Finish`, the `Loading [OpenKeep 1.6.0]` line, `Guard.Install` last.
+own, `Synced.Finish`, the `Loading [OpenKeep 1.7.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
-`Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt), Stow's
+`Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
+`Capacity.StationDocumentation` (OpenKeep.Stations.txt), Stow's
 `Finder` reads Reach's `Link Seconds` through `ConfigDefinition("1. Reach", "Link Seconds")`, Core's `Command`
 reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection. Stow's `ChestBatch`, `Routing`, `Trash`, `Sorting` and
 `StowTargets` and Stacks' `MergeIntoChests` call `Shared.ChestWriter`, `Shared.SharedState` and
 `Shared.SharedWords`; Shared's `PanelRouting` reads Stow's `Enabled` and `Route Modifier` through
-`ConfigDefinition("2. Stow", ...)`. Homestead's `FuelRefill` and `FuelTake` use Reach's `ReachRules.StationRuleFor`,
-`ReachRules.RuleFor`, `StationAccepts.Fuel`, `ReachCount.CountIn` and `ContainerRule`, so the Reach YAML's `stations:` and
-`containers:` rules apply to auto fuel; `TorchPrefabs` uses `FirePrefabs.Find`. Everything else goes through `Core`.
+`ConfigDefinition("2. Stow", ...)`. Homestead's `FuelRefill`, `FeedTick` and `NearbyTake` use Reach's
+`ReachRules.StationRuleFor`, `ReachRules.RuleFor`, `StationAccepts.Fuel`, `StationAccepts.SmelterOre`,
+`ReachCount.CountIn` and `ContainerRule`, so the Reach YAML's `stations:` and `containers:` rules apply to auto fuel
+and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Everything else goes through `Core`.
 
 ## Patched game methods
 
@@ -217,9 +257,13 @@ Postfix: `Bed.Awake` (remember own beds, forget others at a known point), `Bed.G
 bed), `Container.Awake` (Core tracking; Capacity sizes; Shared RPC registration), `Container.CheckForChanges`
 (ground pickup; the sign refresh tick), `Container.GetHoverText`, `Container.OnDestroyed` (the owner removes the
 container's sign), `Container.SetInUse(bool)` (the user name), `CookingStation.GetHoverText`,
-`CraftingStation.GetLevel(bool)`, `Fermenter.GetHoverText`, `Fireplace.GetHoverText` (Reach's From storage line;
-Homestead's Lights at nightfall), `Fireplace.UpdateFireplace()` (private, every 2 s on every client with the fire
+`CraftingStation.GetLevel(bool)`, `Fermenter.GetHoverText`, `Fireplace.Awake` (Homestead registers
+`OpenKeep_TorchKeepLit` on every fire's net view), `Fireplace.GetHoverText` (Reach's From storage line; Homestead's
+Lights at nightfall and the Torch Switch Key line), `Fireplace.UpdateFireplace()` (private, every 2 s on every client with the fire
 loaded; on the ZDO owner only: Homestead's torch switch with `Priority.High`, then auto fuel),
+`Smelter.Awake` (Capacity: a station made from another copy of its prefab gets the caps),
+`Smelter.UpdateSmelter()` (private, every second on every client with the station loaded; on the ZDO owner only:
+Homestead's auto feed),
 `Game.RemoveCustomSpawnPoint(Vector3)` (forget a destroyed bed),
 `InventoryGrid.OnLeftDown(UIInputHandler)` (touches), `InventoryGrid.UpdateGui(Player, ItemData)` (marks; touch
 tint), `InventoryGui.Awake` (Stow buttons; Salvage tab), `InventoryGui.CloseContainer` and `InventoryGui.Hide` (end
@@ -229,9 +273,9 @@ orphan check component on automatic signs; their `WearNTear` wear switched off),
 `ObjectDB.CopyOtherDB` (both `Priority.Low`), `Player.GetFirstRequiredItem`, `Player.HaveRequirementItems`,
 `Player.HaveRequirements(Piece, RequirementMode)`, `Player.OnDeath` (the nearest own bed becomes the spawn point),
 `Player.OnSpawned(bool)` (waiting bed changes written, the fallback dropped), `Player.PlacePiece`, `Player.Update` (Reach keys; Dump Key;
-request timeouts), `Switch.GetHoverText`, `Terminal.InitTerminal`, `Vagon.Awake`, `Vagon.GetHoverText`, `WearNTear.Remove(bool)`
+request timeouts; Torch Switch Key), `Switch.GetHoverText`, `Terminal.InitTerminal`, `Vagon.Awake`, `Vagon.GetHoverText`, `WearNTear.Remove(bool)`
 (the hammer opt-out on the removing player's client), `ZNetScene.Awake` (documentation; container list and sizes;
-Homestead's Build On Wood; all `Priority.Low`).
+station list and caps; Homestead's Build On Wood; all `Priority.Low`).
 Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Container.RPC_OpenResponse(long, bool)`
 (a refusal is silent while viewing), `InventoryGrid.DropItem(Inventory, ItemData, int, Vector2i)` (Shared,
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
@@ -240,13 +284,15 @@ modifier; Salvage tab), `InventoryGui.OnRightClickItem(InventoryGrid, ItemData)`
 `InventoryGui.OnTakeAll`, `InventoryGui.OnTabCraftPressed`, `InventoryGui.OnTabUpgradePressed`,
 `InventoryGui.UpdateContainer(Player)` (the viewer's panel), `InventoryGui.UpdateRecipeGamepadInput`,
 `Inventory.IsTeleportable(bool)`, `Inventory.RemoveItem(string, int, int, bool)` (the payment hook),
-`Vagon.Interact`.
+`SE_Cozy.UpdateStatusEffect(float)` (the Resting effect's tick on the player's own client: `Rested Delay` into the
+copy's `m_delay`), `Vagon.Interact`.
 Prefix and postfix: `Bed.Interact(Humanoid, bool, bool)` (an own bed becomes the spawn point, then the game's sleep
 path; remember), `Beehive.UpdateBees()` (honey rate and progress on the hive's ZDO owner),
 `CookingStation.OnAddFuelSwitch`, `CookingStation.OnInteract(Humanoid)`, `Fermenter.Interact`, `Fireplace.Interact`,
 `Game.FindSpawnPoint(out Vector3, out bool, float)` (a cleared point is forgotten and the next nearest bed set),
 `InventoryGui.Show(Container, int)` (auto sort),
-`InventoryGui.UpdateCraftingPanel(bool)`, `Smelter.OnAddFuel`, `Smelter.OnAddOre`.
+`InventoryGui.UpdateCraftingPanel(bool)`, `Player.Repair(ItemDrop.ItemData, Piece)` (private; area repair on the
+repairing player's client once the game's own repair went out), `Smelter.OnAddFuel`, `Smelter.OnAddOre`.
 Prefix and finalizer (the payment window): `InventoryGui.DoCrafting`, `Player.ConsumeResources`.
 
 ## Config sections and keys
@@ -268,7 +314,8 @@ Lines`, `Hover Fill`), `6. Carts` (`Cart Workbench`, `Cart Station Level`, `Cart
 `Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`; all synced), `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 2, `Auto Feed Skip` `FineWood, RoundLog`, `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true; all synced; unsynced `Torch Switch Key` O),
+`9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`).
 Keys, defaults and meanings are in `README.md`. Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), so every module has a master switch.
@@ -286,8 +333,12 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   hive's `product` was counted at, written by the hive's owner once the mod's rate has run; the game's `product` is
   written, `lastTime` and `level` only read. Beds write no ZDO key: the game's own `owner` is the only shared state. Fires: `OpenKeep.torchPhase` (int: 0 never
   switched, 1 put out for the day, 2 lit for the night), written by the fire's ZDO owner at nightfall and daybreak and
-  set to 0 when `Torches Night Only` is off or the prefab leaves `Torch Pieces`; the game's `fuel` is written only
-  through `Fireplace.AddFuel` (`RPC_AddFuelAmount`), `state` only through `RPC_ToggleOn`.
+  set to 0 when `Torches Night Only` is off, the prefab leaves `Torch Pieces` or the torch is kept lit;
+  `OpenKeep.torchKeepLit` (bool): a player keeps the torch lit day and night, written only by the fire's ZDO owner
+  when it handles `OpenKeep_TorchKeepLit`; written as false rather than removed, because `ZDO.RemoveInt` does not
+  raise the data revision and a removal would never reach the other clients; left alone when the setting is off or
+  the prefab unlisted. The game's `fuel` is written only through `Fireplace.AddFuel` (`RPC_AddFuelAmount`), `state`
+  only through `RPC_ToggleOn`.
 - RPCs, registered on every container's net view in a `Container.Awake` postfix (once per view), every payload one
   `ZPackage`. A request starts with a header: request id (long), the requester's player id (long) and name
   (string); it goes to the ZDO's owner at send time (`ZNetView.InvokeRPC(name, pkg)`).
@@ -299,6 +350,10 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   the accepted count, Move nothing, TakeAll count plus item packets, StackAll count plus (index, accepted) pairs.
   `OpenKeep_Touch` (slot, player name, on bool, forwarded bool): sent to the owner, which forwards it to everybody
   with `forwarded` set.
+- `OpenKeep_TorchKeepLit` (bool: keep lit, or back on the schedule), registered on every fire's net view in a
+  `Fireplace.Awake` postfix (once per view, guarded by `m_functions`), sent by the player's client to the fire's ZDO
+  owner with `ZNetView.InvokeRPC` after claiming an unowned fire as `Fireplace.Interact` does; the wanted state, not
+  a toggle. Area repair and Auto Feed send only the game's own RPCs (`RPC_Repair`, `RPC_AddOre`, `RPC_AddFuel`).
 - Item packet: the prefab name (empty when the item has no prefab; the reader then returns null), followed by the
   game's own `ItemDrop.ItemData.Save` fields: durability x100, grid x, grid y, world level, a flag byte (picked
   up, equipped, quality, stack, variant, crafter, prefab, custom data), then only the flagged ones: quality,
@@ -309,21 +364,23 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   bed spawn points `x:y:z`, invariant culture, two decimals; the world uid is `ZNet.GetWorldUID`, the key of the
   profile's own per-world spawn point).
 - Charter article names: `openkeep_reach`, `openkeep_stow`, `openkeep_salvage`, `openkeep_stacks`, `openkeep_containers`,
-  `openkeep_signs` (the YAML sets) plus the cfg sync of the shared libraries. Container ownership goes through the game's
+  `openkeep_signs`, `openkeep_stations` (the YAML sets) plus the cfg sync of the shared libraries. Container ownership goes through the game's
   `ZNetView.ClaimOwnership` and `ZDOMan.ForceSendZDO`; the game's own `RPC_RequestOpen` is re-sent by a viewer.
 - GameObjects created: `OpenKeep.ReachLink` (link lines), `OpenKeep_link` (Find marker), `OpenKeep_SalvageTab`,
   `OpenKeep_<word>` and `OpenKeep_trash` (panel buttons), `OpenKeep_border`, `OpenKeep_star`, `OpenKeep_cross`
   (slot marks), sprites named `OpenKeep_sprite`. The cart's station is a `CraftingStation` component on the cart
   instance, no new prefab. Shared creates none: touches recolour the grid's icons. Signs instantiates the game's
   own `sign` prefab (a normal piece, no new prefab) and adds a `SignOrphanCheck` component to loaded automatic signs.
-- Files next to the cfg: the six YAML files, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt`.
+- Files next to the cfg: the seven YAML files, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt`,
+  `OpenKeep.Stations.txt`.
 - Localization keys: `$ok_*` (Reach: `ok_fromstorage`, `ok_reach`, `ok_on`, `ok_off`, `ok_pulled`,
   `ok_nothingtopull`, `ok_nofit`; Stow: `ok_stow_*`, including `ok_stow_moved_to` and `ok_stow_toppedup_from` for
   a shared chest's reply; Salvage: `ok_salvage*`; Capacity: `ok_slots`, `ok_full`, `ok_and`, `ok_more`; Carts:
   `ok_cartcraft`; Shared: `ok_shared_inuse`, `ok_shared_moving`, `ok_shared_noanswer`, `ok_shared_denied`,
   `ok_shared_readonly`, `ok_shared_someone`, `ok_shared_nofit`, `ok_shared_chestfull`, `ok_shared_unavailable`;
   Signs: `ok_signs_sign`, `ok_signs_playertext`, `ok_signs_nosign`, `ok_signs_optedout`, `ok_signs_reset`,
-  `ok_signs_rewritten`, console output only; the sign text itself is plain text); Homestead: `ok_torch_nightfall`.
+  `ok_signs_rewritten`, console output only; the sign text itself is plain text); Homestead: `ok_torch_nightfall`, `ok_torch_keeplit`,
+  `ok_torch_nightonly`, `ok_torch_kept`, `ok_torch_scheduled`, `ok_repair_one`, `ok_repair_many`.
 - Console: `openkeep reload`, `openkeep containers`, `openkeep write docs`, `openkeep signs`, `openkeep signs reset`,
   `openkeep signs rewrite`.
 
@@ -571,6 +628,24 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `m_height` and on every loaded instance's `Container` and `Inventory` fields, then `Changed()`; shrinking below
   an occupied cell is refused with a warning; widths above 8 warn. The documentation files are written at scene
   load and after every Stacks YAML apply, tab separated.
+- Station capacities (1.7.0; the user asked for how much each workstation holds to be configurable per station):
+  stations are found by component, every ZNetScene prefab with the game's `Smelter` on it or a child; the name is the
+  net view object's prefab name (`m_nview`, own object or parent). `items` is `m_maxOre`, `fuel` is `m_maxFuel`. A key
+  for a cap the station does not use (vanilla 0: the hot tub and frost kiln take no items; the charcoal kiln,
+  spinning wheel, windmill and battering ram take no fuel) is warned about when applying and ignored, because
+  `UpdateSmelter` and `IsActive` read 0 as "runs without it". Caps are written to the prefab and to every loaded
+  station (`FindObjectsByType<Smelter>`) at `ZNetScene.Awake`, on every YAML apply and on every `Enabled` change; new
+  stations copy the prefab (`ZNetScene.CreateObject` and `Player.PlacePiece` instantiate it), and the `Smelter.Awake`
+  postfix only guards a station made from another copy of the prefab. Only listed caps are touched, per cap; a
+  removed cap and every cap with `Enabled` off go back to the value remembered when the prefab was first seen. The
+  caps are enforced only by the interacting client (`OnAddOre`, `OnAddFuel`, `CanUseItems`); the owner's `RPC_AddOre`
+  and `RPC_AddFuel` check no cap, so the synced file keeps every client on the same caps (Auto Feed checks them on
+  the station's owner before its RPC). Lowering a cap loses nothing: `UpdateSmelter` and `DropAllItems` work from the
+  ZDO's `queued`/`item<n>`/`fuel` without reading the caps, and the hover shows e.g. `(15/10)` until the station is
+  below. Hover texts and Reach's feeding read the instance fields live. Large caps cost: one ZDO string per queued
+  item, the whole queue rewritten per finished product (about 15 KB at 1000), and the game catches up at most 3600 s
+  of work when a station's area loads again. The template, validation and indentation rescue follow the container
+  file; unknown prefab names are accepted silently (a mod that is not loaded).
 
 ### Carts
 
@@ -691,9 +766,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 
 ### Homestead
 
-Section 8 (1.6.0) holds five requests from the user's server that are not storage; each feature is a set of
-`Bed*`, `Fire*`, `Hive*`, `Fuel*` or `Torch*` classes with its own settings class, and `HomesteadModule` only calls
-them.
+Section 8 (1.6.0, more in 1.7.0) holds requests from the user's server that are not storage; each feature is a set
+of classes with one prefix (`Bed*`, `Fire*`, `Hive*`, `Fuel*`, `Torch*`, `Feed*`, `Rest*`, `Repair*`) and its own settings class, and
+`HomesteadModule` only calls them. Fuel and Feed share `NearbyTake` and `TakeRetry`.
 
 Beds:
 - Every part runs on the player's own client: the list in the character's custom data, the choice, and the
@@ -770,8 +845,9 @@ Fires feeding themselves (Auto Fuel):
   per unit, most torches and braziers 20000 s, the wood torch 10000 s); a fire that burned out unloaded (the game
   burns the whole absence in its first tick) refills in one go. The fuel is compared before and after (warning).
 - Containers: `ContainerScan.Nearby(fire position, Auto Fuel Range, Reach)`, nearest first; `StationAccepts.Fuel`
-  (fuel item by shared name, the fire prefab's `stations:` allow/deny) and per stack the container prefab's
-  allow/deny; claim, `RemoveItem`, save. `stations:` `enabled: false` stops it. The containers' `range:` (metres from
+  (fuel item by shared name, the fire prefab's `stations:` allow/deny), the world level rule (1.7.0: an item's
+  `m_worldLevel` below `Game.m_worldLevel` is skipped, as `Inventory.HaveItem` does for a fire fed by hand) and per
+  stack the container prefab's allow/deny; claim, `RemoveItem`, save (`NearbyTake`). `stations:` `enabled: false` stops it. The containers' `range:` (metres from
   the player) is not used; Reach's `Enabled`, `Feed Stations` and the per-player toggle do not gate it.
 - Retry: a fire with room that found nothing, or whose station entry is disabled, looks again after 10 s (per
   machine). Range default 20 m, Reach's default; `Nearby` checks distance first, so the range does not cost more.
@@ -790,21 +866,129 @@ Torches at night:
   stays. `RPC_ToggleOn` is registered on every fire and does not check `m_canTurnOff` (only `Interact` does), so the
   owner switches vanilla torches with the game's own RPC and no prefab change. `m_canTurnOff` is deliberately not
   set: plain Use would toggle instead of adding fuel under a hover that says Use Resin, and fires with rain objects
-  (braziers) would go out in rain through `UpdateState`. Price: no hand switch for vanilla torches, and a torch left
-  out when the mod is removed stays dark (README warning). Torches have no toggle effects (silent).
-- Night: `EnvMan.IsNight()`, daybreak and nightfall at 15 % and 85 % of the clock's day, 9 of 30 minutes.
-  `IsDaylight` was rejected: its `m_alwaysDark` weathers are per biome where each owner stands, so owners at a biome
-  border would disagree and an owner change could flip a torch. The game's day fraction starts at midnight when a
-  world loads and trails the clock, so `TorchNight` answers only within 10 degrees of the clock (or with `tod` set):
-  no flicker after loading, nothing during a sleep's time skip.
-- Phase memory: `OpenKeep.torchPhase`. The owner switches only when the phase differs from the stored one, then
-  stores it, so an owner change, a reload and a hand switch in between stay. A torch never switched takes the current
-  phase on its first tick. Off, or removed from the list: a torch the mod put out is lit again and the key cleared;
-  one it lit is left as it is. Runs on the dedicated server too for the fires it owns (no local player needed).
-  `TorchPatch` runs before `FuelPatch`, so a torch put out this tick takes no fuel. The hover line shows on any
-  client from the replicated phase and state.
-- `piece_bathtub` is a `Smelter` with a wood switch, not a `Fireplace`: neither feature touches it (Reach feeds it
-  through `SmelterFuelPatch`).
+  (braziers) would go out in rain through `UpdateState`. Price: Use never switches a vanilla torch (Torch Switch Key
+  keeps one lit instead, 1.7.0), and a torch left out when the mod is removed stays dark (README warning). Torches
+  have no toggle effects (silent).
+- Night: the game's own thresholds widened by `Torch Margin`. `EnvMan.IsNight()` is the smoothed day fraction
+  (`GetDayFraction`, `m_smoothDayFraction`) at or below 0.25 or at or above 0.75; `RescaleDayFraction` maps the clock's
+  15 % (daybreak, also `SkipToMorning`'s target) and 85 % (nightfall) onto those values, so the game's night is 30 % of
+  the day, 9 of 30 minutes. The margin moves both clock points by hours / 24 and rescales them the same way, so 0 is
+  exactly `IsNight`; 1 (default) lights at 0.7202 and puts out at 0.2798 of the smoothed fraction (lit 11.5 minutes,
+  out 18.5); 4, the maximum, is lit 19 of 30 minutes. An in-game hour is a 24th of `m_dayLengthSec` (1800 s in the
+  game's scene): 75 s. `IsDaylight` was rejected: its `m_alwaysDark` weathers are per biome where each owner stands,
+  so owners at a biome border would disagree and an owner change could flip a torch. The game's day fraction starts
+  at midnight when a world loads and trails the clock, so `TorchNight` answers only within 10 degrees of the clock
+  (or with `tod` set): no flicker after loading, nothing during a sleep's time skip (torches go out Torch Margin
+  after waking).
+- Phase memory: `OpenKeep.torchPhase`. The owner switches a scheduled torch (listed, setting on, not kept lit) only
+  when the phase differs from the stored one, then stores it, so an owner change, a reload and a hand switch in
+  between stay. A torch never switched takes the current phase on its first tick. Off the schedule (setting off,
+  removed from the list, or kept lit): a torch the mod put out is lit again and the key cleared; one it lit is left as
+  it is. Runs on the dedicated server too for the fires it owns (no local player needed). `TorchPatch` runs before
+  `FuelPatch`, so a torch put out this tick takes no fuel. The hover line shows on any client from the replicated
+  phase and state.
+- Keep lit (1.7.0; the user asked for players to keep a torch on, and off again to return it to the schedule): per
+  torch `OpenKeep.torchKeepLit`, switched with `Torch Switch Key` (default O) while looking at the torch. Plain Use is
+  unchanged (E adds fuel; `m_canTurnOff` stays unset for the reasons above). O is in none of the game's default
+  bindings and no OpenKeep key; `L` was rejected because `debugmode` reads L as `removedrops` in `Player.Update`, and
+  `LeftAlt + L` is Reach's Link Key. Polled in a `Player.Update` postfix only when `Player.TakeInput()` is true and no
+  radial is open, on the game's hover object; it never calls `Interact`, so it cannot add fuel. The client claims an
+  unowned fire (as `Fireplace.Interact` does) and sends the wanted state to the owner (`OpenKeep_TorchKeepLit`); the
+  owner writes the flag and applies it at once: kept lit, the fire is lit (`RPC_ToggleOn` when off) and leaves the
+  schedule like an unlisted fire; back on the schedule, the phase is set to 0 and the tick runs at once, so by day it
+  goes out immediately and at night it is lit. A request reaching a client that is no longer the owner is dropped, as
+  the game's fire RPCs are. A resin candle kept lit and then put out by hand stays out (only a torch the mod put out
+  is relit).
+- The key and the hover act only on a player-built fire in `Torch Pieces` while `Torches Night Only` is on; otherwise
+  every torch burns anyway, the hover shows no switch line and the key does nothing. The flag is never cleared by the
+  setting or the list, so it counts again when either comes back.
+- Ward: the game's `Fireplace.Interact` has no ward check (anyone refuels a warded fire), so the switch follows
+  `Door` and `Sign`: the hover omits the line without access (`CheckAccess(pos, 0, false)`), the key flashes the ward
+  and sends nothing (`CheckAccess(pos)`). The owner does not re-check, as the game's RPCs don't.
+- Hover: `[O] Keep lit` on a scheduled torch, `[O] Light at night only` on one kept lit (modifiers first, as the README
+  writes keys); `Lights at nightfall` stays for a scheduled torch out for the day. The presser gets a centre message
+  (`<name>: kept lit day and night` / `<name>: lit at night only`); the owner logs `... kept lit day and night (asked
+  by peer N)` / `... back on the night schedule`.
+- `piece_bathtub` is a `Smelter` with a wood switch, not a `Fireplace`: neither fire feature touches it (Reach feeds
+  it through `SmelterFuelPatch`, Auto Feed through `RPC_AddFuel`).
+
+Stations feeding themselves (Auto Feed, 1.7.0; the user asked for smelters and kilns pulling ore, wood and coal from
+chests about 2 m away):
+- Hook: the private `Smelter.UpdateSmelter` (`InvokeRepeating` every 1 s from `Awake` on every client with the
+  station loaded; the ZDO owner works the queue for the time since `startTime`, capped at 3600 s). The postfix runs
+  on the owner after the work; every other machine returns after the ownership check.
+- Stations: every `Smelter` whose net view's `Piece` a player built, found by component. Vanilla, read from the
+  prefabs with UnityPy on 2026-09-27 (item cap / fuel cap, fuel): `smelter` 10/20 Coal, `blastfurnace` 10/20 Coal,
+  `charcoal_kiln` 25/0 (Wood, FineWood, RoundLog to Coal), `eitrrefinery` 20/20 Sap (Softtissue), `piece_spinningwheel`
+  40/0 (Flax, needs a roof), `windmill` 50/0 (Barley, OatSeeds, Oat), `piece_bathtub` 0/10 Wood, `piece_FrostKiln` 0/25
+  Ice (makes FrozenFuel from its fuel). `BatteringRam` 25/0 (Wood, FineWood, RoundLog, Blackwood, makes nothing) is
+  skipped: its `SiegeMachine.m_engine` is the `Smelter`, which rams while `IsActive` and burns a wood every 20 s, so a
+  ram parked by a chest would ram and eat its wood. Cooking stations, ovens and fermenters are other classes.
+- Rule per tick: room for an item is `queued < m_maxOre` (the `OnAddOre` cap), room for fuel is `fuel <= m_maxFuel - 1`
+  (the `OnAddFuel` cap). With room, one unit is taken (`NearbyTake`, predicate `StationAccepts.SmelterOre` or
+  `StationAccepts.Fuel` minus `Auto Feed Skip`) and handed to the game's `RPC_AddOre(prefab name, cheated)` or
+  `RPC_AddFuel`. `ZNetView.InvokeRPC` targets the ZDO owner, this machine, and `ZRoutedRpc` handles a call to itself at
+  once, so the queue or fuel is checked right after (warning if it did not go up by one; a debug line otherwise, as
+  a station takes a unit every 15 s or more in steady state). One unit of each per tick rather than all that fit:
+  each goes through the game's RPC with its own added effect, as by hand, and nothing is played ten times in one
+  frame. The fastest vanilla station works one item in 10 s, so a stocked station never waits.
+- `Auto Feed Skip`: the kiln turns FineWood and RoundLog (core wood) into coal like Wood, so the default skips them;
+  the setting uses the item vocabulary without groups (it lives in the cfg). A station fills its fuel whether or not
+  it has anything queued: the game burns fuel only while it works, so nothing is wasted.
+- Range: `ContainerScan.Nearby(Bounds, range)`: from the station's outline (the world box of its enabled non-trigger
+  colliders; the PlayerBase and warmth triggers are 5 to 20 m wide) to the container's position, 0 inside. A centre
+  measure would not reach a chest touching the kiln (its door switch alone sits 2.2 m from its centre). The box of a
+  rotated station is a little larger than the station; the windmill's includes its blades.
+- Retry, access, multiplayer and the dedicated server as for Auto Fuel: `TakeRetry` after a tick with room that fed
+  nothing or whose `stations:` entry is disabled; `ContainerScan.IsUsable` with the owner's local player; only the
+  owner acts, a dedicated server feeds nothing. Reach's `Enabled`, `Feed Stations` and the per-player toggle do not
+  gate it.
+
+Rested sooner (1.7.0; the user asked for the comfort buff after 5 s):
+- Vanilla (UnityPy, bundle c4210710, 2026-09-27): `Resting` is an `SE_Cozy` with `m_delay` 20 (the class default 10
+  is not what the game uses), `m_ttl` 0 and `m_statusEffect` `Rested`; `Rested` is an `SE_Rested` with `m_baseTTL`
+  480 and `m_TTLPerComfortLevel` 60. `Player.UpdateEnvStatusEffects` keeps Resting while the player is near a fire
+  (a Heat area within 0.25 s), sitting or in shelter, not sensed, not cold or freezing, not wet (unless in a warm
+  cozy area) and not burning, and removes it otherwise, so leaving restarts the wait. Past `m_delay` the effect adds
+  Rested with resetTime every tick, and `SE_Rested.ResetTime` renews it to 480 + 60 x (comfort - 1) s.
+- A prefix on `SE_Cozy.UpdateStatusEffect` writes the setting into `m_delay` of the SEMan's copy every tick (the SEMan
+  clones the item database's asset when Resting starts; the asset is never changed), so a new value applies to a
+  rest in progress. Only the effect with the name hash `SEMan.s_statusEffectResting` follows it; the game has no other
+  `SE_Cozy`, and a modded one keeps its delay. One value rather than a switch: 20 is the game's wait, 0 is at once.
+  Duration, comfort and the resting conditions are not touched.
+- Multiplayer: status effects run only on the player's ZDO owner, the player's own client (`Player.FixedUpdate` for
+  the local player; `SEMan.Update` only when the ZDO is owned), each with the server's synced value. A dedicated
+  server does nothing here; no RPC, no ZDO key, and neither effect sets `m_attributes`.
+- Display: the game shows no countdown. The Resting icon shows `Comfort N` (`SE_Cozy.GetIconText`), the Active
+  effects page a fixed tooltip and regen lines, and the messages name no time, so no text changes. Below about 2 s
+  the "You feel rested (Comfort: n)" message can show a comfort level up to 2 s old (the game recounts comfort every
+  2 s); the duration follows the current comfort through the renewal.
+
+Area repair (1.7.0; the user asked for the hammer to repair every piece touching the one repaired, on by default):
+- Hook: the private `Player.Repair` (the hammer's repair mode, local player only, after the game's stamina check).
+  `WearNTear.Repair` stamps `m_lastRepair` only when it sends the repair, so the prefix/postfix pair compares the
+  hovered piece's stamp: moved means the game repaired it and charged the swing (`GetBuildStamina`, `m_attackEitr`,
+  `m_useDurabilityDrain` x `Game.m_durabilityRate`; no materials, no skill). A piece that needs no repair spreads
+  nothing. The neighbours are free: a charge per piece would empty the stamina bar and the hammer in one swing, and a
+  repair costs no materials in the game.
+- Touching is the game's own connection rule (`SetupColliders` boxes grown by 0.3 m, 0.15 m a side, overlapped as in
+  `UpdateSupport`, which uses it to tell the pieces around a new one to clear their support cache), so no tolerance
+  setting. The cached support lists (`m_supportColliders`) were not used: they hold only the supporting pieces below
+  the centre of mass, and only on the owner. Deviations: boxes measured fresh from active, enabled colliders (a
+  disabled collider's bounds lie at the world origin, the cached boxes never follow a moved piece), `piece_nonsolid`
+  added (the repair ray reaches it), terrain dropped. Colliders on a rigidbody are skipped as in the game: ships and
+  carts are never neighbours and repairing one spreads nowhere. Direct neighbours only, nearest first, at most 64.
+- Checks per neighbour mirror `Player.Repair`, without its messages and ward flash: a `Piece` with a net view;
+  `CheckCanRemovePiece` (the piece's station within build range of the player, waived by no placement cost or the
+  `NoWorkbench` key); `PrivateArea.CheckAccess` at the piece (radius 0); then `WearNTear.Repair` itself (damaged, not
+  repaired in the last second, valid view). Like the hand repair, no creator, `m_canBeRemoved`, no-build or reach
+  check.
+- `WearNTear.Repair` sends `RPC_Repair` to the ZDO owner (at once when local, through the server otherwise); the
+  owner writes full health and sends `RPC_HealthChanged` to everybody, so every client sees the worn look go. No ZDO
+  key and no RPC of our own. A piece at full health plays no effect in the game (`SetHealthVisual` fires the switch
+  effect only on the way down), so each repaired neighbour plays its own `m_placeEffect` on the repairing client, as
+  the game does for the hovered piece. One top-left line with the count follows the game's `$msg_repaired`; one log
+  line per swing.
 
 ## Not yet implemented
 
@@ -817,7 +1001,7 @@ Torches at night:
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.6.0]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
+1. Log shows `Loading [OpenKeep 1.7.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -948,12 +1132,85 @@ from a script.
     `stations: { hearth: { enabled: false } }` in OpenKeep.Reach.yml: the hearth no longer refills;
     `containers: { piece_chest_wood: { deny: [Resin] } }`: torches take resin only from other chests. The resin candle
     is never refilled. `Auto Fuel = false`: nothing refills.
-32. Torches, single player: `tod 0.5`: every standing torch and sconce goes dark within 2 s, silently, the hover says
-    `Lights at nightfall`, its fuel stays; a campfire stays lit. A torch built now goes out within 2 s. `tod 0.9`: they
-    light within 2 s. `tod -1` and sleep: out a few seconds after daybreak, nothing flickers during the skip. Log out
-    and in at noon: torches stay out, no flash of light while loading. `Candle_resin` in Torch Pieces: at night E puts
-    it out and it stays out until daybreak. `Torches Night Only = false` by day: every torch lights within 2 s.
-33. Fires, dedicated server, clients A and B at one base: both see every torch go out at daybreak and light at
-    nightfall together; A walks away (B owns everything): no torch flips. B holds the resin chest open: A's torches
-    take no resin from it until B closes it. Lock Configuration keeps B from changing Auto Fuel. The server log shows
-    nothing from these features for a base far from the world centre.
+32. Torches, single player, `Torch Margin = 1`: `tod 0.5`: every standing torch and sconce goes dark within 2 s,
+    silently, the hover says `Lights at nightfall` and `[O] Keep lit`, its fuel stays; a campfire stays lit and shows
+    no O line. A torch built now goes out within 2 s. `tod 0.29`: still out; `tod 0.27`: lit (the margin after
+    daybreak); `tod 0.71`: out; `tod 0.73`: lit (the margin before nightfall); `tod 0.9`: lit. `Torch Margin = 0`:
+    `tod 0.27` and `tod 0.73` are out. `tod -1` and sleep: out about 75 s after waking, nothing flickers during the
+    skip. Log out and in at noon: torches stay out, no flash of light while loading. `Candle_resin` in Torch Pieces:
+    at night E puts it out and it stays out until daybreak. `Torches Night Only = false` by day: every torch lights
+    within 2 s.
+33. Fires, dedicated server, clients A and B at one base: both see every torch go out Torch Margin after daybreak and
+    light Torch Margin before nightfall together; A walks away (B owns everything): no torch flips. A comes back and
+    presses O on a torch B owns: it lights on both screens within a second, B's log shows `kept lit day and night
+    (asked by peer <A's id>)`; A leaves again and B logs out: when A returns alone the torch is still kept lit (the
+    flag lives in the ZDO); B presses O on it by day: it goes out for both. A and B press O on the same dark torch at
+    once: it ends up kept lit. B holds the resin chest open: A's torches take no resin from it until B closes it.
+    Lock Configuration keeps B from changing Auto Fuel and Torch Margin, while B can rebind Torch Switch Key.
+    The server log shows nothing from these features for a base far from the world centre.
+34. Auto Feed, single player: a new smelter with a chest touching its side holding 30 copper ore and 30 coal: within
+    about 10 s the hover shows 10/10 ore and 10 coal and rising to 20, one added sound per unit, copper comes out;
+    the chest's ore drops by one about every 30 s. A chest 3 m from the smelter's side gives nothing; `Auto Feed
+    Range = 4`: it does. A charcoal kiln beside a chest with wood, fine wood and core wood takes only the wood (the log
+    at debug level: `charcoal_kiln fed itself one Wood`); empty `Auto Feed Skip` and it takes the others too. A
+    spinning wheel with flax, a windmill with barley, an eitr refinery with soft tissue and sap, a hot tub with wood.
+    `stations: { smelter: { enabled: false } }`: the smelter stops taking; `containers: { piece_chest_wood: { deny:
+    [Coal] } }`: it takes coal only from other chests. `Auto Feed Stations = false`: nothing is fed.
+35. Auto Feed, dedicated server, clients A and B at one base: the station is fed once, by whoever's game owns it
+    (the other log shows nothing); B holds the ore chest open: nothing is taken from it until B closes it. Lock
+    Configuration keeps B from changing Auto Feed Range.
+36. Rested sooner, single player: a fresh cfg has `Rested Delay = 5`. Sit by a campfire (or stand by a fire under a
+    roof): `Resting...`, then about 5 s later `You feel rested (Comfort: n)`; the first rest logs `Rested comes after
+    5 s of resting (the game's own delay is 20 s)`. The Rested icon's time is the game's (8:00 at comfort 1, a minute
+    more per comfort level). `Rested Delay = 20`: about 20 s, as in the game; `0`: Rested together with Resting. Set 60,
+    rest 10 s (no Rested), set 5: Rested at once. Step away from the fire before the wait ends: no Rested, and the
+    wait starts over on return. Wet from rain outdoors: no Resting, as in the game.
+37. Rested sooner, dedicated server with clients A and B, server `Rested Delay = 5`, A's own cfg 20: A and B each rest
+    at a fire and get Rested about 5 s after Resting; both logs show the 5 s line. Change the server's value to 30:
+    the next rest of each takes about 30 s and both logs show the new line. Lock Configuration keeps B from changing
+    it. The server log shows nothing from this feature.
+38. Area repair, single player: hit a 3x3 wooden floor and the walls standing on it with a club until they look
+    worn. Repair the middle tile with the hammer: it and every touching damaged piece (the eight tiles around it, the
+    walls on it) turn new at once, each with the build puff; top-left shows the game's repaired line and `Also
+    repaired n pieces touching it`; the log `OpenKeep: area repair around wood_floor: n of m touching pieces
+    repaired, ...`. A worn tile two tiles away stays worn. Stamina drops by one swing, the hammer by one use. Hitting
+    a whole piece says the game's "does not need repair" and repairs nothing around it. `Area Repair = false`: only
+    the hit piece.
+39. Area repair checks: a damaged stone wall touching the repaired floor with no stonecutter near stays worn (log `1
+    without their station in range`); with a stonecutter it is repaired. A damaged dock piece next to a moored,
+    damaged Karve: the dock is repaired, the ship not. A damaged chest standing on the floor is repaired with it.
+40. Area repair, dedicated server, A and B: B reaches the base first (B's game owns the pieces), then A repairs a
+    floor tile: the touching pieces turn new on both screens. B places a ward A is not permitted on, reaching just
+    over one tile's edge; A repairs a tile just outside it: its damaged neighbour inside the ward stays worn (A's log:
+    `1 in a ward`), no ward flash. Lock Configuration keeps B from changing Area Repair; the server log shows nothing
+    from the feature.
+41. Keep lit, single player: at noon look at a dark torch and press O: it lights at once, message `Standing torch:
+    kept lit day and night`, hover `[O] Light at night only`, log `... kept lit day and night (asked by peer ...)`;
+    `tod 0.3` to `0.6`: it stays lit while the others stay out; it keeps refuelling from a chest (Auto Fuel). Press O
+    again by day: it goes out at once, message `... lit at night only`, hover `Lights at nightfall` and `[O] Keep lit`;
+    at night (`tod 0.9`) press O twice: it stays lit both times. Log out and in: a kept torch is still lit by day.
+    `Torches Night Only = false`: the hover shows no O line and O does nothing; on again: the kept torch stays lit,
+    the others go out. Take it out of `Torch Pieces` and back: still kept. Rebind `Torch Switch Key` to
+    `LeftAlt + O`: the hover shows `[LeftAlt + O]`. O with the inventory, chat or map open does nothing; O while
+    holding the hammer does nothing (no hover object).
+42. Keep lit and wards: A places a ward over a torch, B (not permitted) hovers it: no O line; B presses O: the ward
+    flashes and nothing changes (no log line on the owner). A permits B: the O line appears and works.
+43. Station capacity, single player: after a world loads the log shows `listed every station prefab in
+    ...OpenKeep.Stations.yml` and `station capacities applied, 0 prefabs`; the file lists `BatteringRam`,
+    `blastfurnace`, `charcoal_kiln`, `eitrrefinery`, `piece_bathtub`, `piece_FrostKiln`, `piece_spinningwheel`,
+    `smelter` and `windmill` commented out with only the caps each uses (kiln `{ items: 25 }`, hot tub `{ fuel: 10 }`);
+    `openkeep write docs` writes `OpenKeep.Stations.txt`. `smelter: { items: 30, fuel: 60 }`: within seconds `station
+    capacities applied, 1 prefabs`, an existing smelter's hover reads `(0/30)` and `Coal 0/60`, it takes 30 ore and 60
+    coal, a new smelter and a relog show the same; Shift + E with ore only in a chest fills to 30, and Auto Feed fills
+    it to 30 too. With 30 queued lower to `items: 10`: the hover shows `(30/10)`, adding is refused, all 30 are
+    smelted and it takes ore again below 10. Destroy a smelter holding 25: all 25 ore and the coal drop.
+44. Station capacity checks: `charcoal_kiln: { items: 50, fuel: 10 }` holds 50 wood and warns `charcoal_kiln takes no
+    fuel ... ignored`, still running without fuel; `piece_bathtub: { items: 5 }` warns and the tub runs on wood alone.
+    `items: 0` or `items: 2000` logs a YAML error and the previous caps stay. Removing the entry brings back 10/20 on
+    existing and new smelters. `5. Capacity / Enabled = false` restores every vanilla cap; true restores the file's.
+    "Edit station capacities" opens in the Configuration Manager.
+45. Station capacity, dedicated server with A and B: the server's log lists the stations on its first world load and
+    the clients' files are not rewritten. Server `smelter: { items: 30 }`, A's own file different: A and B both see
+    `/30` and add up to 30; the server edits it to 40 and both see `/40` within seconds. Lock Configuration keeps A
+    from changing it. B owns the smelter (standing there first), A adds ore to the cap: B's hover counts it. A station
+    over its cap after the server lowers it keeps working on both clients and loses nothing.

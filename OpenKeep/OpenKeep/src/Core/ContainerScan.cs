@@ -24,12 +24,23 @@ namespace OpenKeep.Core
         /// <summary>Every usable container within range of a position, nearest first. Never throws.</summary>
         public static List<Container> Nearby(Vector3 position, float range, ContainerUse use)
         {
+            return Nearby(point => Vector3.Distance(position, point), range, use);
+        }
+
+        /// <summary>Every usable container whose position lies within range of a box (0 inside it), nearest first. Never throws.</summary>
+        public static List<Container> Nearby(Bounds area, float range, ContainerUse use)
+        {
+            return Nearby(point => Mathf.Sqrt(area.SqrDistance(point)), range, use);
+        }
+
+        private static List<Container> Nearby(Func<Vector3, float> distanceTo, float range, ContainerUse use)
+        {
             List<KeyValuePair<float, Container>> found = new List<KeyValuePair<float, Container>>();
             foreach (Container container in All())
             {
                 try
                 {
-                    float distance = Vector3.Distance(position, container.transform.position);
+                    float distance = distanceTo(container.transform.position);
                     if (distance <= range && IsUsable(container, use))
                         found.Add(new KeyValuePair<float, Container>(distance, container));
                 }

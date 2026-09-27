@@ -16,7 +16,7 @@ namespace OpenKeep.Capacity
         public static void Bind(SyncedConfiguration synced)
         {
             Enabled = synced.Bind(Section, "Enabled", true,
-                "Master switch of the Capacity module: container sizes from OpenKeep.Containers.yml and the hover contents. Off restores the vanilla sizes where no item is in the way.");
+                "Master switch of the Capacity module: container sizes from OpenKeep.Containers.yml, station capacities from OpenKeep.Stations.yml and the hover contents. Off restores the vanilla sizes where no item is in the way and the vanilla station capacities.");
             HoverContents = synced.Bind(Section, "Hover Contents", true,
                 "Hovering a container adds its contents to the hover text: up to Hover Lines lines of 'name x count', then 'and n more'. Only for containers you could open.", synced: false);
             HoverLines = synced.Bind(Section, "Hover Lines", 8,

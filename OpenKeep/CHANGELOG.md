@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.7.0
+- Capacity: `OpenKeep.Stations.yml` sets how much each workstation holds: `items:` (ore, wood, flax, barley) and
+  `fuel:` (coal, wood) for the smelter, blast furnace, charcoal kiln, eitr refinery, spinning wheel, windmill, hot tub
+  and every modded station built like them, from 1 to 1000. The first world load lists every station with its
+  vanilla values, commented out. Synced from the server, hot reloaded, editable in game, and switched off with
+  Capacity's `Enabled`. Lowering a cap loses nothing: a fuller station keeps working and takes more once it is below
+  the cap. `openkeep write docs` also writes `OpenKeep.Stations.txt`.
+- Homestead: `Auto Feed Stations` (on): smelters, blast furnaces, charcoal kilns, eitr refineries, spinning wheels,
+  windmills and hot tubs you built take what they work (ore, scrap, wood, soft tissue, flax, barley) and their fuel
+  (coal, sap, wood) from the containers beside them, one item and one fuel a second while there is room.
+  `Auto Feed Range` (2 m) runs from the station's outer edge to the middle of a container. `Auto Feed Skip` names
+  items never taken (default `FineWood, RoundLog`, so the charcoal kiln burns only plain wood). The `stations:` and
+  `containers:` rules of the Reach YAML apply, as for fires.
+- Homestead: `Rested Delay` (5 s): the Rested buff comes after 5 seconds of resting by a fire instead of the game's
+  20. How long it lasts, the comfort level and what counts as resting are unchanged; 20 keeps the game's wait.
+- Homestead: `Area Repair` (on): repairing a piece with the hammer also repairs the damaged pieces touching it (only
+  its direct neighbours, at most 64 a swing), each with the checks of a repair by hand (its crafting station in
+  range, access to its ward). One swing's stamina and hammer wear pays for all of them.
+- Homestead: `Torch Switch Key` (O, per player): look at a torch and press it to keep that torch lit day and night;
+  press it again to put it back on the night schedule (by day it goes out at once). The hover shows the key and
+  what it does, the choice is stored in the torch for every player, and a ward keeps out players without access.
+- Homestead: `Torch Margin` (1 in-game hour, 0 to 4): torches light that long before nightfall and go out that long
+  after daybreak. An in-game hour is 75 seconds of the game's 30 minute day; 0 keeps the game's own night.
+- Homestead: `Auto Fuel` skips fuel from a lower world level (New Game+), which the game refuses by hand too.
+
 ## 1.6.0
 - Homestead: new section `8. Homestead`, synced from the server.
 - Homestead: `Nearest Bed Respawn` (on): every bed you own is a spawn bed. After death you wake in your own bed

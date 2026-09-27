@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using OpenKeep.Core;
 using OpenKeep.Reach;
 using UnityEngine;
 
@@ -20,24 +22,31 @@ namespace OpenKeep.Homestead
                 return;
             ZDO zdo = fire.m_nview.GetZDO();
             int room = Room(fire, zdo.GetFloat(ZDOVars.s_fuel));
-            if (room < 1 || !FuelFires.IsOn(zdo) || Player.m_localPlayer == null || !FuelRetry.Due(fire))
+            if (room < 1 || !FuelFires.IsOn(zdo) || Player.m_localPlayer == null || !TakeRetry.Due(fire))
                 return;
             if (!ReachRules.StationRuleFor(fire).Enabled)
             {
-                FuelRetry.Later(fire);
+                TakeRetry.Later(fire);
                 return;
             }
-            int taken = FuelTake.Take(fire, room);
+            int taken = Take(fire, room);
             if (taken > 0)
                 Add(fire, zdo, taken);
             else
-                FuelRetry.Later(fire);
+                TakeRetry.Later(fire);
         }
 
         /// <summary>The fire burns an item it may be refilled with (the game's own conditions for adding fuel).</summary>
         private static bool Refillable(Fireplace fire)
         {
             return fire.m_canRefill && !fire.m_infiniteFuel && fire.m_fuelItem != null && fire.m_maxFuel >= 1f;
+        }
+
+        /// <summary>Up to <paramref name="room"/> units of the fire's own fuel from the containers within Auto Fuel Range of the fire.</summary>
+        private static int Take(Fireplace fire, int room)
+        {
+            List<Container> near = ContainerScan.Nearby(fire.transform.position, FuelSettings.AutoFuelRange.Value, ContainerUse.Reach);
+            return NearbyTake.Take(near, StationAccepts.Fuel(fire, fire.m_fuelItem), room);
         }
 
         /// <summary>Whole units that fit: the cap less the fuel rounded up, the game's own refusal rule.</summary>

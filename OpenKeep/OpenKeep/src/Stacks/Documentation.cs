@@ -12,8 +12,9 @@ namespace OpenKeep.Stacks
 {
     /// <summary>
     /// OpenKeep.Items.txt and OpenKeep.Containers.txt next to the .cfg: every item with its prefab name, display
-    /// name, type, vanilla and current stack and weight, and every container prefab with its vanilla size. Written
-    /// on load when "Write Documentation" is on and by the console command "openkeep write docs" (by reflection).
+    /// name, type, vanilla and current stack and weight, and every container prefab with its vanilla size; the
+    /// Capacity module's OpenKeep.Stations.txt goes with them. Written on load when "Write Documentation" is on and
+    /// by the console command "openkeep write docs" (by reflection).
     /// </summary>
     public static class Documentation
     {
@@ -25,6 +26,7 @@ namespace OpenKeep.Stacks
             string folder = Path.GetDirectoryName(StacksModule.Synced.Config.ConfigFilePath);
             WriteItems(Path.Combine(folder, ItemsFile));
             WriteContainers(Path.Combine(folder, ContainersFile));
+            StationDocumentation.Write(folder);
         }
 
         /// <summary>Writes the files when the setting is on and the item database and the scene are there.</summary>
