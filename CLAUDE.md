@@ -18,6 +18,7 @@ ValheimMods/
   OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs; bed respawn, honey
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
+  GrindstoneSkills/  deeper skills on the game's own skills, Cooking first: starred dishes, trash filter, kitchen perks
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
 ```
 
@@ -53,6 +54,11 @@ the world map, click to teleport through the game's own teleport path. Public/Pr
 the acting player, a favourites panel, any mod's portal prefab discovered by component rather than a name list.
 Required on the server as well as every client. Design and the judgement calls the spec left open in
 `Wayfare/PLAN.md`.
+
+**GrindstoneSkills**: deeper versions of the game's own skills, Cooking first (Farming and Crafting later). Dishes get
+0 to 3 stars rolled from the cook's level (stored in the item's quality field), stars boost food, a per-kitchen trash
+filter keeps only the stars you want, and the cook's level speeds cooking and fermenting and gives extra food.
+Skill loss on death is configurable for every skill. Design in `GrindstoneSkills/PLAN.md`.
 
 ### The libraries (ValheimModLibs)
 

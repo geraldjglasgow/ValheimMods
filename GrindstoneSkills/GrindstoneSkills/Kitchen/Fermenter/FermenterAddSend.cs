@@ -1,0 +1,69 @@
+using HarmonyLib;
+
+namespace GrindstoneSkills
+{
+    /// <summary>
+    /// Adding a mead base, on the client that adds it. The game's Fermenter.AddItem checks that the barrel is empty and
+    /// the item allowed, removes one from the inventory, then sends "RPC_AddItem"(int nameHash, bool cheated) to the
+    /// barrel's owner through ZNetView.InvokeRPC. While AddItem runs, that one send is swapped for
+    /// <see cref="Keys.RpcAddBase"/>, which also carries the base's stars and the local Cooking level. Every check, the
+    /// removal and the return value stay the game's (and any other mod's changes to them). A send that does not look
+    /// like the game's (another name, view or payload) goes out untouched. The owner's side is
+    /// <see cref="FermenterAddReceive"/>.
+    /// </summary>
+    internal static class FermenterAddSend
+    {
+        private const string VanillaRpc = "RPC_AddItem";
+
+        /// <summary>The add in progress: the barrel's view, the base's stars and the cook's level.</summary>
+        private sealed class Adding
+        {
+            public ZNetView View;
+            public int StarCount;
+            public float Level;
+        }
+
+        private static Adding adding;
+
+        [HarmonyPatch(typeof(Fermenter), nameof(Fermenter.AddItem))]
+        private static class AddItemScope
+        {
+            [HarmonyPrefix]
+            private static void Prefix(Fermenter __instance, ItemDrop.ItemData item)
+            {
+                adding = new Adding { View = __instance.m_nview, StarCount = Stars.Get(item), Level = CookLevel.Local() };
+            }
+
+            [HarmonyFinalizer]
+            private static void Finalizer() => adding = null;
+        }
+
+        [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), typeof(string), typeof(object[]))]
+        private static class SendSwap
+        {
+            [HarmonyPrefix]
+            private static bool Prefix(ZNetView __instance, string method, object[] parameters)
+            {
+                Adding add = adding;
+                if (add == null || !ReferenceEquals(add.View, __instance) || method != VanillaRpc)
+                    return true;
+                if (parameters == null || parameters.Length != 2 || !(parameters[0] is int nameHash) || !(parameters[1] is bool cheated))
+                    return true;
+                adding = null;
+                __instance.InvokeRPC(Keys.RpcAddBase, Package(nameHash, cheated, add));
+                return false;
+            }
+        }
+
+        /// <summary>The payload in the order <see cref="Keys.RpcAddBase"/> documents.</summary>
+        private static ZPackage Package(int nameHash, bool cheated, Adding add)
+        {
+            ZPackage package = new ZPackage();
+            package.Write(nameHash);
+            package.Write(cheated);
+            package.Write(add.StarCount);
+            package.Write(add.Level);
+            return package;
+        }
+    }
+}

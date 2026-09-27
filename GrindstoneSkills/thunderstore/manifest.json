@@ -1,0 +1,9 @@
+{
+    "name": "GrindstoneSkills",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/GrindstoneSkills",
+    "description": "Deeper skills, starting with Cooking: dishes get 0 to 3 stars from the cook's level, stars boost the food, and every kitchen can trash dishes below the stars you want. Faster cooking, extra food, server synced.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}
