@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+- Woodcutting and Pickaxes have their own icons in the skills panel and in their level-up messages.
+
 ## 0.9.0
 
 - New: Fishing, built on the game's own Fishing skill, so existing levels count. In the game it only makes you reel

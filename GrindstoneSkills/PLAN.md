@@ -1925,5 +1925,8 @@ Cooking and Sailing icons.
 foundation and features in one session, reviewed by an agent against the decompiled game (seven fixes), offline patch
 check clean, with the Fishing icon the user supplied. The Fishing decisions above wait for the user's confirmation.
 
+0.9.1 (tag GrindstoneSkills-v0.9.1) adds the Woodcutting and Pickaxes skill icons the user supplied
+(`assets/skill_woodcutting.png`, `assets/skill_pickaxes.png`, 64x64, entries in `Skills/GameSkillIcons`).
+
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.
