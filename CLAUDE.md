@@ -61,6 +61,8 @@ Required on the server as well as every client. Design and the judgement calls t
 filter keeps only the stars you want, and the cook's level speeds cooking and fermenting and gives extra food.
 Sailing is a skill of the mod's own (the game has none): ship health from the builder's level, speed from the
 helmsman's, a wider map reveal aboard, and a level 50 lookout pulse that shows enemy name tags around the ship.
+Husbandry is another own skill: taming, calm creatures, breeding (better offspring and twins), animal yield and an
+Animal Feeder piece; its "star up" key on a pregnant parent is read by Elite Creatures Reborn (`Breeding/KeeperBonus.cs`).
 Skill loss on death is configurable for every skill. Design in `GrindstoneSkills/PLAN.md`.
 
 **EarthWright**: terraforming for the hoe and cultivator - brush size, shapes, edges and exact target heights,

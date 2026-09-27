@@ -96,6 +96,40 @@ namespace GrindstoneSkills
         /// <summary>Charter sync key of the Forage YAML files (GrindstoneSkills.Forage*.yml).</summary>
         public const string ForageSync = "grindstone_forage";
 
+        // Husbandry. Creature keys are written by the creature's owner.
+        /// <summary>The Husbandry skill's identity: its SkillType number is this name's stable hash.</summary>
+        public const string HusbandrySkillName = "grindstone_husbandry";
+        /// <summary>float on a player's own ZDO, written by that player's client: their Husbandry level (CustomSkills publishes it).</summary>
+        public const string HusbandryLevel = "grindstone_husbandry_level";
+        /// <summary>long on a creature being tamed: player ID of the last player who hurt it; that player's calm is broken.</summary>
+        public const string CalmBrokenBy = "grindstone_calm_broken_by";
+        /// <summary>long on a creature being tamed: world time (ticks) when <see cref="CalmBrokenBy"/> last hurt it.</summary>
+        public const string CalmBrokenAt = "grindstone_calm_broken_at";
+        /// <summary>int on a breeding creature: how many births it has had, so nearby keepers' clients can see each one.</summary>
+        public const string Births = "grindstone_births";
+        /// <summary>bool on a breeding creature: its current pregnancy is a twin's, so it cannot roll twins again.</summary>
+        public const string Twin = "grindstone_twin";
+        /// <summary>int on a creature about to give birth: 1 when the newborn gets one star more. Elite Creatures Reborn reads it.</summary>
+        public const string StarUp = "grindstone_star_up";
+        /// <summary>long on a tamed creature: world time (ticks) until which it is content from petting.</summary>
+        public const string ContentUntil = "grindstone_content_until";
+        /// <summary>long on a tamed creature: world time (ticks) of its last produce roll.</summary>
+        public const string ProduceLast = "grindstone_produce_last";
+        /// <summary>int on a tamed creature's ragdoll: the stars its meat drops carry (Prime Cuts), written by the creature's owner.</summary>
+        public const string PrimeStars = "grindstone_prime_stars";
+        /// <summary>On a tamed creature, to its owner: () - a player petted it; it becomes content.</summary>
+        public const string RpcPet = "grindstone_Pet";
+        /// <summary>On an animal feeder, to its owner: (string itemName) - a creature ate one of that item from it.</summary>
+        public const string RpcFeederTake = "grindstone_FeederTake";
+        /// <summary>Routed RPC to everybody: (long playerId, int kind, string creaturePrefab); only that player's client acts on it.</summary>
+        public const string RpcHusbandryCredit = "grindstone_HusbandryCredit";
+        /// <summary>Routed RPC to everybody: (Vector3 position, string text); each client near the spot shows it, if its Husbandry callouts are on.</summary>
+        public const string RpcHerdCallout = "grindstone_HerdCallout";
+        /// <summary>Player custom data: comma-separated prefab names of every kind of creature the character has tamed.</summary>
+        public const string TamedKinds = "grindstone_tamed";
+        /// <summary>The animal feeder piece's prefab name, cloned from the game's barrel.</summary>
+        public const string FeederPrefab = "grindstone_feeder";
+
         // Defense.
         /// <summary>The Defense skill's identity: its SkillType number is this name's stable hash.</summary>
         public const string DefenseSkillName = "grindstone_defense";
@@ -103,5 +137,6 @@ namespace GrindstoneSkills
         public const string DefenseLevel = "grindstone_defense_level";
         /// <summary>Player custom data: comma-separated name tokens ("$enemy_greydwarf") of every kind of creature the character has blocked.</summary>
         public const string BlockedFoes = "grindstone_blocked";
+
     }
 }

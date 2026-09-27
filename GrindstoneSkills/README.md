@@ -1,16 +1,17 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging and Defense. A good cook makes better food: every dish comes
-out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the
-stars you want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds
-tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that
-marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs
-in one blow, finds what trees hide, and gets more wood from the giants of the forest. A good miner reads stone: strikes
-the seams that glint in the rock, knows a rich vein at a glance, hears where the next deposit lies, and turns up amber
-and rubies. A good forager picks starred berries, mushrooms and herbs for the kitchen, knows when each plant is at its
-best, and clears a whole patch in one sweep. A good defender takes a beating: more health, less damage, cheaper
-blocks and dodges, and from level 25 on a parry that powers the riposte, a shield wall for the friends behind, and
-one last stand against a killing blow.
+Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging, Husbandry and Defense. A good cook makes
+better food: every dish comes out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can
+throw away dishes below the stars you want. Built on the game's own Cooking skill, so the levels you already have
+count. A good sailor builds tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send
+out a lookout pulse that marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree
+into the next, splits logs in one blow, finds what trees hide, and gets more wood from the giants of the forest. A
+good miner reads stone: strikes the seams that glint in the rock, knows a rich vein at a glance, hears where the next
+deposit lies, and turns up amber and rubies. A good forager picks starred berries, mushrooms and herbs for the
+kitchen, knows when each plant is at its best, and clears a whole patch in one sweep. A good keeper tames faster,
+walks among the animals being tamed without a fight, breeds stronger young, and gets more from the herd. A good
+defender takes a beating: more health, less damage, cheaper blocks and dodges, and from level 25 on a parry that
+powers the riposte, a shield wall for the friends behind, and one last stand against a killing blow.
 
 ### Cooking
 
@@ -179,6 +180,46 @@ stronger; Defense makes you tougher. It trains when you block hits and when hits
 - **Multiplayer.** Everything happens on your own machine, where the game handles your damage; allies read your level
   for Shield Wall. Like the rest of the mod, it must be installed on the server and on every client.
 
+### Husbandry
+
+A new skill in the skills panel, for taming, breeding and keeping animals: boars, wolves, lox, asksvin, moose and hens.
+Every perk grows from nothing at level 0 to its full value at level 100. Animals are tended by the best keeper within
+30 m, so everyone near a pen helps it.
+
+- **Faster taming.** Up to twice as fast, on top of the game's own taming boost.
+- **Calm, from level 50.** A creature you have started taming no longer runs from you or attacks you, and you no
+  longer frighten it, so taming goes on while you stand right beside it. Hit it and it defends itself against you for
+  two minutes. Players below 50 still scare it.
+- **Stay fed longer.** Animals stay fed up to twice as long after a meal (20 minutes instead of 10), so they tame,
+  breed and heal longer between feedings.
+- **Faster breeding and bigger herds.** Pregnancy is up to twice as fast, and up to 4 more animals of a kind may stand
+  in a pen before breeding stops.
+- **Stronger offspring.** Up to a 25% chance that a newborn, or an egg, is one star above its parent (the game passes
+  the parent's level on unchanged), up to two stars. With Elite Creatures Reborn, the newborn gets one star more than
+  it rolled there.
+- **Twins.** Up to a 25% chance of a second birth, or a second egg, half a minute after the first ("Twins!").
+- **Faster growing up.** Piglets, cubs, calves and chicks grow up, and warm eggs hatch, up to twice as fast.
+- **More at the butcher's.** A tamed animal you kill drops up to 50% more meat, hides and feathers (never more
+  trophies).
+- **Produce.** A fed tamed animal with a keeper near now and then drops its own materials without being killed:
+  feathers from hens, leather scraps from boars, pelts from wolves and lox, hides from moose.
+- **Extra honey.** Up to half your honey comes with one more when you harvest a beehive.
+- **Starred eggs.** Eggs from starred hens carry the hen's stars: they stack apart, show their star, and are starred
+  ingredients in the kitchen.
+- **Prime cuts** (off by default). Meat from a starred tamed animal carries its stars into Cooking.
+- **Petting.** Petting a tamed animal makes it content for 10 minutes: it breeds 50% faster.
+- **Pack leader.** A tamed wolf following you deals up to 50% more damage and takes up to a third less.
+- **Animal Feeder, from level 25.** A new piece in the hammer's Misc tab (a barrel, Wood 10 and Leather scraps 4 at a
+  workbench). Hungry tamed animals, and animals being tamed, within 10 m walk to it and eat the food you put in it.
+- **Animal lore, from level 20.** Look at an animal to see how long until it is tamed, how long it stays fed, its love
+  and pregnancy, how much room the herd has and how long it stays content; look at a young animal or a warm egg to see
+  when it grows up or hatches.
+- **Taming levels** (off by default). Servers can make lox, asksvin or moose need a keeper of some level to tame.
+- **Experience** from taming near you, each tame (triple for your first of each kind), feeding, births, petting,
+  butchering and honey. Bigger animals give more: a lox about four times a boar.
+- **Multiplayer.** Animals follow the keeper's level wherever their owner's machine is, so it all works on a dedicated
+  server. Like the rest of the mod, it must be installed on the server and on every client.
+
 ### Every skill
 
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
@@ -227,6 +268,16 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
   the cooldown, the first-block bonus and whether PvP hits train.
 - **Defense Milestones:** each milestone's level (above 100 turns it off) and its values.
 - **Defense Guard:** reflex, shield bash, thorns, adrenaline, shield wear and knockback at level 100, and Desperation.
+- **Husbandry:** a switch for the whole skill, the keeper range, the Animal lore level, and whether you see callouts
+  (each player's own).
+- **Taming:** taming speed and fed time at level 100, the taming levels per creature, and Calm's level and how long a
+  hurt creature stays wary.
+- **Breeding:** breeding speed, herd size, growth speed, better offspring, the highest offspring level and twins at
+  level 100, and how long and how much petting's contentment helps.
+- **Animal Yield:** butcher yield, produce chance and interval, extra honey, and the Prime Cuts switch.
+- **Companions:** pack leader damage and toughness, and the feeder's level, range and recipe.
+- **Husbandry Experience:** the multiplier, taming, tamed, first-tame, feeding, birth, petting, butchering and honey
+  experience.
 
 `GrindstoneSkills.Finds.yml` and `GrindstoneSkills.MineFinds.yml`, next to the .cfg, list what trees and broken rock
 can hide, per biome and per kind of tree or deposit: named finds with a weight and their items. They come from the
@@ -239,8 +290,8 @@ at its best, and how much experience a pick gives. Items from other mods can be 
 ### Console
 
 With `devcommands` on, `raiseskill sailing 50` and `resetskill sailing` work like they do for the game's skills, and
-`raiseskill all` includes Sailing. The same works for Foraging (`raiseskill foraging 50`) and Defense
-(`raiseskill defense 100`).
+`raiseskill all` includes Sailing. The same works for Foraging (`raiseskill foraging 50`), Defense
+(`raiseskill defense 100`) and Husbandry (`raiseskill husbandry 50`).
 
 ### Server settings
 
@@ -251,7 +302,11 @@ lists where the server's values differ from your own file, and `charter versions
 
 ### Works with
 - **FeastMaster:** FeastMaster sets each food's base values; GrindstoneSkills' stars add on top.
-- **OpenKeep:** starred food stacks and quick-stacks by star count.
+- **OpenKeep:** starred food stacks and quick-stacks by star count. OpenKeep's honey settings decide how much honey a
+  hive makes; Husbandry's extra honey adds on top.
+- **Elite Creatures Reborn:** its breeding decides a newborn's stars and mutation; Husbandry's stronger offspring adds
+  one star on top (Elite Creatures Reborn 3.10.0 or later). Prime cuts gives no stars there, since Elite
+  Creatures Reborn keeps its stars apart from the game's levels.
 - **ShipConfig:** ShipConfig sets each ship's base health and speed; Sailing adds on top. After ShipConfig's ship
   health setting changes in game, ships already loaded lose the Sailing health bonus until they load again.
 
@@ -261,7 +316,9 @@ lists where the server's values differ from your own file, and `charter versions
 - Jotun puffs, magecap, seed carrots, turnips and onions, and vineberries are the same plants you can grow, so they
   stay with Farming even where they grow wild.
 - Berries and mushrooms can carry stars now, so in a recipe a 0★ one counts toward the ingredients' average stars
-  where it used to be left out.
+  where it used to be left out. The same goes for eggs, and for raw meat while Prime cuts is on.
+- Husbandry is a skill of this mod's own too: removing GrindstoneSkills forgets it. Without the mod, Animal Feeders you
+  built no longer load, and neither does the food in them: empty them and take them down before you remove it.
 - Ships built before you installed GrindstoneSkills keep the game's health.
 - Logs felled before you installed GrindstoneSkills get no domino, log safety or old growth bonus.
 - The Thunderblood Axe and Greataxe don't train Woodcutting in the game, so they get no Woodcutting perks here either.

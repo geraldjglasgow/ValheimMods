@@ -12,7 +12,7 @@ namespace GrindstoneSkills
     {
         public const string PluginGuid = "com.GrindstoneSkills";
         public const string PluginName = "GrindstoneSkills";
-        public const string PluginVersion = "0.6.0";
+        public const string PluginVersion = "0.7.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -25,7 +25,8 @@ namespace GrindstoneSkills
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-            CustomSkills.Initialize(SailingSkill.Skill, ForagingSkill.Skill, DefenseSkill.Skill);
+            // The mod's own skills (not in the game's enum): one entry per skill.
+            CustomSkills.Initialize(SailingSkill.Skill, ForagingSkill.Skill, HusbandrySkill.Skill, DefenseSkill.Skill);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
             Synced.Finish(harmony);

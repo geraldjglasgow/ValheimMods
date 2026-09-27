@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.7.0
+
+- New: Husbandry, a skill of its own for taming, breeding and keeping animals (boars, wolves, lox, asksvin, moose and
+  hens). It trains from taming near you, each tame (triple for your first of each kind), feeding, births, petting,
+  butchering and honey, and bigger animals train it faster. Animals follow the best keeper within 30 m.
+- Taming up to twice as fast. From level 50 a creature you have started taming neither flees from you nor attacks you,
+  so taming goes on while you stand beside it. Animals stay fed up to twice as long.
+- Breeding up to twice as fast and up to 4 more animals per pen; up to a 25% chance that a newborn or egg is one star
+  above its parent (up to two stars) and up to a 25% chance of twins; young animals and warm eggs grow up to twice as
+  fast.
+- More from your animals: up to 50% more drops from a tamed animal you butcher (never trophies), produce from living
+  animals (feathers, leather scraps, pelts, hides), up to 50% extra honey, eggs from starred hens carry their stars
+  into the kitchen, and Prime cuts (starred meat from starred animals, off by default).
+- Petting makes an animal content for 10 minutes, and a content animal breeds 50% faster. A wolf following you deals
+  up to 50% more damage and takes up to a third less.
+- Animal Feeder, from level 25: a new piece in the hammer's Misc tab. Hungry tamed animals, and animals being tamed,
+  within 10 m walk to it and eat the food you put in it.
+- Animal lore, from level 20: an animal's or egg's hover shows how long until it is tamed, how long it stays fed, its
+  love and pregnancy, the herd's room, and when it grows up or hatches.
+- Optional taming levels let a server make lox, asksvin or moose need a keeper of some level to tame.
+- With Elite Creatures Reborn 3.10.0 or later, Better offspring gives its newborns one star more. `raiseskill` and
+  `resetskill` work for Husbandry. Every setting is in the new sections 23 to 28 of the .cfg.
+
 ## 0.6.0
 
 - New: Defense, a skill of its own for how much punishment you can take, trained by blocking hits from creatures

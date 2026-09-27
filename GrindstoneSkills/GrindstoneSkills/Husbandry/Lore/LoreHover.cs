@@ -1,0 +1,86 @@
+using HarmonyLib;
+using UnityEngine;
+
+namespace GrindstoneSkills
+{
+    /// <summary>
+    /// Animal lore, on each client for its own player: from Animal Lore Level (Husbandry), the crosshair text of an animal
+    /// or an egg gets timer lines under the game's text (<see cref="TameableLore"/>, <see cref="GrowthLore"/>).
+    /// <list type="bullet">
+    /// <item><b>Where:</b> Hud.UpdateCrosshair shows the hovered Hoverable's GetHoverText every frame. A tameable
+    /// creature's is <c>Tameable.GetHoverText</c> (<c>Character.GetHoverText</c> forwards to it). A young animal has no
+    /// Tameable, so the game shows nothing for it; with lore it gets its name and the growing line. An egg's is
+    /// <c>EggGrow.GetHoverText</c>.</item>
+    /// <item><b>Cost:</b> the lines are rebuilt at most every 0.25 s for the object looked at, as the vein hover does.</item>
+    /// <item><b>Never throws:</b> building runs inside <see cref="HookGuard"/>; a failure shows the game's text alone.</item>
+    /// </list>
+    /// </summary>
+    public static class LoreHover
+    {
+        private const float RefreshSeconds = 0.25f;
+
+        private static Component lastSource;
+        private static string lastLines = "";
+        private static float refreshAt;
+
+        [HarmonyPatch(typeof(Tameable), nameof(Tameable.GetHoverText))]
+        private static class TameableHover
+        {
+            [HarmonyPostfix]
+            private static void Postfix(Tameable __instance, ref string __result) => Append(__instance, ref __result);
+        }
+
+        [HarmonyPatch(typeof(Character), nameof(Character.GetHoverText))]
+        private static class YoungHover
+        {
+            [HarmonyPostfix]
+            private static void Postfix(Character __instance, ref string __result)
+            {
+                if (__instance.GetComponent<Tameable>() == null && __instance.GetComponent<Growup>() != null)
+                    Append(__instance, ref __result);
+            }
+        }
+
+        [HarmonyPatch(typeof(EggGrow), nameof(EggGrow.GetHoverText))]
+        private static class EggHover
+        {
+            [HarmonyPostfix]
+            private static void Postfix(EggGrow __instance, ref string __result) => Append(__instance, ref __result);
+        }
+
+        private static void Append(Component source, ref string text)
+        {
+            if (!HusbandrySkill.Active || source == null)
+                return;
+            string lines = Cached(source);
+            if (lines.Length == 0)
+                return;
+            if (string.IsNullOrEmpty(text) && source is Character young)
+                text = Localization.instance.Localize(young.m_name);
+            text = LoreText.Add(text, lines);
+        }
+
+        private static string Cached(Component source)
+        {
+            float now = Time.time;
+            if (ReferenceEquals(source, lastSource) && now < refreshAt)
+                return lastLines;
+            lastSource = source;
+            refreshAt = now + RefreshSeconds;
+            lastLines = HookGuard.Run("animal lore", () => Build(source), "") ?? "";
+            return lastLines;
+        }
+
+        private static string Build(Component source)
+        {
+            bool lore = LoreText.Visible;
+            if (source is Tameable tameable)
+                return tameable.m_nview != null && tameable.m_nview.IsValid() ? TameableLore.Lines(tameable, lore) : "";
+            if (!lore)
+                return "";
+            if (source is EggGrow egg)
+                return GrowthLore.EggLine(egg);
+            return source is Character young ? GrowthLore.YoungLine(young) : "";
+        }
+    }
+}

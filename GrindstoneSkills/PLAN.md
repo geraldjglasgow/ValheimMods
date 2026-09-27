@@ -1136,6 +1136,280 @@ Written in one session, after the shared `CustomSkills` registry was split out o
 Foraging and Husbandry use it too). Compiles clean; every Harmony target and parameter checked offline against the
 game's assemblies. Released as 0.6.0 before any in-game test; the test checklist above is next.
 
+## Husbandry
+
+### The request (user, 2026-09-27)
+
+A Husbandry skill: the higher the level, the more yield from tamed creatures; from some level, creatures that are being
+tamed no longer fear or attack you; a chance for offspring to be a higher level than their parents. The user then
+asked for every idea from the planning discussion to be built, with the best decision for anything vague: faster
+taming, longer fed time, faster breeding, bigger herds, twins, faster growing up, animal lore, produce from living
+animals, petting and contentment, pack leader, an animal feeder, optional taming level gates, extra honey, starred eggs
+for Cooking, prime cuts, and the hand-off to Elite Creatures Reborn's stars. The skill icon is the user's own art
+(`assets/skill_husbandry.png`, 64x64, from `Desktop/valheim_icons/husbendry_icon.png`).
+
+### What the game already does
+
+Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
+
+- **No such skill.** `Skills.SkillType` has Ride (110, "Riding": mount speed and stamina) but nothing for animals.
+- **Tameable creatures:** Boar, Wolf (the only commandable one: follow/stay), Lox, Asksvin, Moose (tameable, saddle,
+  breeds, calves), Hen (always tame, lays eggs), and the Mysterious Rock joke. The spirit-caller summons and friendly
+  skeletons start tamed and do not breed.
+- **Taming (`Tameable.TamingUpdate`, on the owner, every 3 s):** while fed (`m_fedDuration` 600 s after a meal) and not
+  alerted, 3 s come off `m_tamingTime` (1800 s), doubled per nearby player (60 m) with the taming boost. "Frightened"
+  in the hover is `MonsterAI.IsAlerted`, and it stops taming.
+- **Fear and aggression:** Boar and Hen flee their target until alerted (`m_fleeIfNotAlerted`) and fear fire; Wolf,
+  Lox, Asksvin and Moose attack. Every creature picks targets through `BaseAI.IsEnemy(a, b)`.
+- **Breeding (`Procreation.Procreate`, on the owner, every 30 s):** a fed, calm, tamed animal with a partner within
+  3 m (8 m lox) gains a love point on 67% of checks (`m_pregnancyChance` 0.33 is the chance to skip); 3 points (4 lox)
+  make it pregnant; it gives birth after `m_pregnancyDuration` (60 s, 120 s lox). No breeding while `m_maxCreatures`
+  (4 wolf and lox, 5 boar and moose, 10 hen and asksvin) of the kind, young included, stand within 10 m (20 m lox).
+  **The newborn takes exactly the pregnant parent's level** (the partner's is ignored), so a line never gains stars.
+  Hens and asksvin lay an egg instead, its quality set to the hen's level.
+- **Growing up:** eggs (`EggGrow`) hatch after 1800 s warm (fire near, roof for chicken eggs) at their quality's level;
+  young (`Growup`: piglet, cub, calf, chick, hatchling) grow up after 3000 s (6000 s lox calf), keeping their level.
+- **Drops double per level:** `CharacterDrop` multiplies level-scaled drops by 2^(level-1).
+- **Elite Creatures Reborn** keeps the game level at 1, stores stars in its own traits, and rolls a newborn's stars
+  evenly from 0 to the stronger parent's; an egg's quality is its stars + 1, the same convention as Cooking.
+
+### The skill: our own
+
+- Registered through `Skills/CustomSkills` (the Defense session's generic registration): identity
+  `grindstone_husbandry`, level published on the player's ZDO as `grindstone_husbandry_level` once a second,
+  `raiseskill husbandry 50` and `resetskill husbandry` with devcommands, "all" included. Removing the mod loses the
+  level at the next save, as for every mod skill.
+- **Whose level counts (`Keeper`):** creature code runs on the creature's owner, often not the keeper's client. The
+  owner reads the best published Husbandry level among living players within Keeper Range (30 m): fed time, breeding,
+  twins, better offspring, growth, produce. Taming speed uses the game's own taming range (60 m). Butchering uses the
+  killer's level, extra honey the harvester's, pack leader the followed player's, lore and the feeder gate the local
+  player's.
+
+### Taming
+
+- **Taming speed:** a prefix on `Tameable.DecreaseRemainingTime` (the 3 s step) multiplies the step by 1 + the Taming
+  Speed share (100% at 100: half the time), stacking with the game's boost.
+- **Taming Levels (off by default):** "Lox:30, Asksvin:50, Moose:60" makes a creature need a keeper of that level
+  within the taming range; otherwise the step is 0. The hover says so to everyone.
+- **Fed longer:** a postfix on `Tameable.OnConsumedItem` moves the feeding stamp into the future by m_fedDuration x the
+  Fed Duration share (100% at 100: 20 min instead of 10). Every reader of `IsHungry` (taming, breeding, healing, the
+  hover) agrees without patches of its own.
+- **Calm (level 50):** a postfix on the static `BaseAI.IsEnemy(a, b)` answers "not an enemy" when `a` is a creature
+  being tamed (tameness above 0%) and `b` a player at Calm Level. The creature never targets that player, so it neither
+  attacks nor flees from them and is not alerted by them, and taming goes on beside them. Only that direction changes:
+  the player can still hit it. Hurting it (`MonsterAI.OnDamaged`, on the owner) writes the player and the time to the
+  creature's ZDO, and it defends itself against that player for Calm Break Time (120 s). Other players still scare it.
+
+### Breeding (`Husbandry/Breeding`)
+
+Everything runs on the parent's (or young animal's, or egg's) ZDO owner, at the best keeper's level within Keeper Range.
+
+- **One breeding check (`BreedingCheck`):** a prefix on `Procreation.Procreate` with `Priority.First`, so Elite
+  Creatures Reborn's own prefix (which decides "birth now" with `IsDue`) sees the same shortened pregnancy and the
+  star-up key; a postfix books the birth; a finalizer puts the game's values back and closes the birth scope even if
+  the game's code threw. State travels in a `BreedingCall` (`__state`).
+- **Pace (`BreedingPace`):** for the one check the pregnancy duration and the skip chance are divided by
+  f = 1 + Breeding Speed's share + Content Breeding Bonus while the animal is content (never while Content Duration is
+  0), and Herd Size's share of the level, rounded half up, is added to the crowding limit. `SpeedFactor`,
+  `ExtraRoom` and `IsContent` are shared with the lore and petting.
+- **Births (`BirthRolls`):** a check is a birth when the game's own `IsPregnant` and `IsDue` say so after pacing.
+  Twins and Better offspring roll first; after the game's code, only if it really ended the pregnancy, the parent's
+  birth counter (`grindstone_births`) goes up, a twin's mark is cleared, and "Strong offspring!" / "Twins!" float
+  above the parent (`HerdCallout`, drawn by clients near it).
+- **Better offspring (`OffspringStar`, `OffspringLevel`):**
+  - Without ECR, a birth scope raises the value the game passes on (`Max(m_minOffspringLevel, parent level)`) in
+    `Character.SetLevel` (a newborn) or `ItemDrop.SetQuality` (a laid egg, whose quality becomes the chick's level) to
+    that level + 1, never above Max Offspring Level (3 = two stars). Only a value equal to the passed-on level is raised,
+    so the egg's own Awake call cannot compound it; a parent at the cap gets no star and no callout.
+  - With ECR (`Chainloader.PluginInfos` has `gglasgow.elitecreaturesreborn`), the parent carries `grindstone_star_up`
+    = 1 for the birth. ECR's `Breeding/KeeperBonus.cs` (added for this) gives the newborn one star more than its
+    inheritance roll, up to one above the stronger parent, and writes 0 when that cap leaves no room, so the callout
+    only shows for a real star. The finalizer sets the key back to 0. Max Offspring Level does not apply there.
+- **Twins (`TwinPregnancy`):** after the birth the parent is made pregnant again through the game's own
+  `MakePregnant` (ECR patches it to remember the partner), then `s_pregnant` is moved back past the game's own duration
+  and the pregnancy is marked a twin's (`grindstone_twin`). The next check, 30 s later, gives the second birth or egg
+  (a pregnant animal gives birth whether hungry, alerted or crowded). A twin never has twins; it rolls Better offspring
+  on its own and counts as a birth.
+- **Growing up (`GrowingUp`):** `Growup.GrowUpdate` (tamed young only) and `EggGrow.GrowUpdate` (every egg) divide
+  m_growTime by 1 + Growth Speed's share for the one call. The game grows by age, so a young left alone catches up as
+  soon as a keeper returns.
+
+### Animal yield (`Husbandry/Yield`)
+
+- **The death scope (`Butchering`):** tamed animals usually die through a ragdoll: inside `Character.OnDeath`,
+  `Ragdoll.Setup` generates the drop list, stores it on the ragdoll's ZDO and turns the creature's own drops off; the
+  ragdoll spawns the loot seconds later (`Ragdoll.SpawnLoot`, on its owner then). So the scope wraps
+  `Character.OnDeath` on the creature's owner, which covers both paths. The killer is the attacker of the game's last
+  hit (`m_lastHit`, recorded on the owner for every hit on a living creature). A player killer gets Butchering
+  experience through `HusbandryCredit` (routed RPC, only the killer's client acts).
+- **Butcher yield (`ButcherYield`):** a `CharacterDrop.GenerateDropList` postfix inside the scope with a player killer
+  multiplies every non-trophy entry by 1 + the killer's share; the fraction is a chance of one more; the game's cap of
+  100 per entry holds. Each list is scaled once (the ragdoll turns the creature's own drop path off).
+- **Prime Cuts (`PrimeCutDrops`, off by default):** meat is discovered (`YieldCatalog`): kitchen cooking-station inputs
+  that some Tameable prefab drops (raw, wolf, lox, chicken, moose meat). While Prime Cuts is on, every machine makes that
+  meat a star item (`YieldStarItems`, `Kitchen.AddItem`). Meat from a starred tamed animal gets stars = level - 1, at
+  most 3, when it spawns: in the death scope directly, or through `grindstone_prime_stars` on the ragdoll's ZDO, read
+  back in `Ragdoll.SpawnLoot` (an `ItemDrop.Awake` postfix sets the quality and saves). The killer does not matter.
+- **Produce (`Produce`, `ProduceTables`):** a `Tameable.TamingUpdate` postfix (every 3 s) on the owner of a fed tamed
+  animal keeps the world time of its last roll (`grindstone_produce_last`). The first tick starts the clock; once
+  Produce Interval has passed and a keeper is in range, it rolls the keeper's share of Produce Chance and drops one item
+  beside the animal, with the world's resource rate. The table is the creature's own drops minus trophies, food and
+  cooking inputs, weighted by drop chance: hens feathers, boars leather scraps, wolves pelts and fangs, lox pelts,
+  moose hides and sinew. A due roll waits for a keeper (an area loads 60 m out, beyond Keeper Range) and never stacks.
+- **Extra honey (`ExtraHoney`):** on the harvester's client, a prefix on `Beehive.Extract` (which the game calls only
+  after its own ward and honey checks) records the honey count; after `Beehive.Interact`, Husbandry rises by Honey
+  Experience per honey and each honey rolls the player's share for one more, spawned at the hive as a networked item.
+  OpenKeep's hive settings only change how much honey there is, so they add up.
+- **Starred eggs (`YieldStarItems`):** every item with `EggGrow` becomes a star item while Husbandry is on (the game
+  already stores the laying hen's level in the egg's quality): eggs from starred hens show their star, stack apart,
+  count in recipes (the game's own recipe count ignores quality-2 eggs) and raise a dish's odds.
+
+### Companions (`Husbandry/Companions`)
+
+- **Pack leader (`PackLeader`):** a tamed creature following a player (wolves: `MonsterAI.GetFollowTarget`, kept only
+  on the creature's owner) is stronger by the followed player's level. A `Character.Damage` prefix on the attacker's
+  owner multiplies its hit by 1 + Pack Damage's share before the RPC goes; a postfix hands the caller its HitData back,
+  so a hit reused for several targets is never scaled twice. A `Character.RPC_Damage` prefix on the victim's owner
+  multiplies a follower's incoming hit by 1 - Pack Toughness's share (at most 90%). Blood Magic summons (anything with
+  `m_levelUpOwnerSkill`, an unsummon distance or logout timer) are left out.
+- **Petting (`Petting`):** a use on a tamed animal the game does not let you command pets it (`Tameable.Interact`
+  stamps m_lastPetTime). On the petter's client: if it was not content yet, Petting Experience x tier; every pet sends
+  `grindstone_Pet` to the owner, who writes `grindstone_content_until` = now + Content Duration. Breeding and lore read
+  it. Content Duration 0: no contentment, no petting experience.
+- **Animal Feeder (`FeederPrefab`, `FeederRecipe`, `FeederGate`, `Feeders`, `FeederEating`):**
+  - A copy of the game's barrel (`piece_chest_barrel`) named Animal Feeder (`grindstone_feeder`): a 4 x 2 container
+    in the hammer's Misc tab, at a workbench, costing Feeder Recipe (Wood 10, Leather scraps 4; unknown items skipped,
+    fallback Wood 10; follows the setting live; everything returned when taken down). Made once per process on every
+    machine under an inactive DontDestroyOnLoad holder (no Awake, no ZDO), registered in `ZNetScene` after every
+    `ZNetScene.Awake`, added to the Hammer once the item database exists, whether Husbandry is on or not, so built
+    feeders always load.
+  - Building needs Feeder Level (25): `Player.HaveRequirements(Piece, mode)` says no for the feeder below it (the game
+    neither learns nor places it), and a `PieceTable.UpdateAvailable` postfix takes it out of the menu for a player who
+    learned it and then fell below. Built feeders work for everyone.
+  - Eating, on the creature's owner: when the game's `MonsterAI.UpdateConsumeItem` found no food on the ground at its
+    search moment, a hungry animal that is tamed or being tamed picks the nearest loaded feeder within Feeder Range
+    holding something it eats (its own food order) with a path to the feeder's near side, walks there (returning true
+    like the game), turns and eats one: the feeder's owner removes the item (directly or by `grindstone_FeederTake`),
+    `m_onConsumedItem` runs with that food's prefab (so fed time, Fed Duration and feeding experience follow), and the
+    consume effect and animation play. It gives up after 30 s or when the feeder empties. Loaded feeders are a list
+    filled in `Container.Awake`; non-owners read a feeder's inventory from its ZDO.
+
+### Animal lore (level 20)
+
+The crosshair text of an animal or egg gets timer lines, rebuilt at most every 0.25 s like the vein hover:
+"Tamed in about 12 min while fed and calm", "Fed for 14 min", "Content for 7 min", "Love 2 of 3" or "Pregnant, due in
+40 s", "Herd 5 of 8" or "Herd full (8 of 8 within 10 m)", a young animal's "Grows up in 20 min" (young have no
+Tameable, so the game shows nothing for them; lore adds the name) and a warm egg's "Hatches in 12 min". The timers use
+the best keeper near the animal now.
+
+### Experience (section 28)
+
+- **Watched, not sent (`HerdWatch`):** every 2 s each keeper's client snapshots the tameable creatures within Keeper
+  Range from their replicated ZDOs and credits what changed since the last look: taming progress (20 per whole taming),
+  becoming tame (10, x3 for the character's first of each kind, recorded in `grindstone_tamed`), eating (1), births (3,
+  from the parent's `grindstone_births` counter, so twins and eggs count). A creature seen for the first time earns
+  nothing. Everyone near earns.
+- **Credited:** butchering a tamed animal (5, routed RPC from the creature's owner to the killer), petting an animal
+  that is not content yet (1), each honey harvested (0.5, no tier).
+- **Tier:** every amount but honey is multiplied by 1 + half a step per doubling of the creature's health over 10,
+  1 to 5: boar and hen 1, wolf 2.5, asksvin 4.2, lox and moose 4.3.
+
+### Settings
+
+- **23 - Husbandry:** Husbandry Enabled, Keeper Range, Animal Lore Level (synced); Show Callouts (each player's own).
+- **24 - Taming:** Taming Speed At 100, Fed Duration At 100, Taming Levels, Calm Level, Calm Break Time.
+- **25 - Breeding:** Breeding Speed At 100, Herd Size At 100, Growth Speed At 100, Better Offspring At 100, Max Offspring
+  Level, Twins At 100, Content Duration, Content Breeding Bonus.
+- **26 - Animal Yield:** Butcher Yield At 100, Prime Cuts, Produce Chance At 100, Produce Interval, Extra Honey At 100.
+- **27 - Companions:** Pack Damage At 100, Pack Toughness At 100, Feeder Level, Feeder Range, Feeder Recipe.
+- **28 - Husbandry Experience:** Experience Multiplier, Taming, Tamed, Discovery Multiplier, Feeding, Birth, Petting,
+  Butchering and Honey Experience.
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+The user asked for every idea with the best decision for anything vague. These are the calls made:
+
+- **The keeper is the best level within 30 m**, not the tamer or the last feeder: animals only simulate while someone
+  is near, and it needs nothing stored per animal. A visiting friend's higher level helps your farm.
+- **Calm needs taming under way** (tameness above 0%), is per player, and only stops the creature treating you as an
+  enemy: you can still hit it, and then it defends itself against you for 120 s. Calm Level 50.
+- **Taming Levels is off by default**; the example in its description is Lox 30, Asksvin 50, Moose 60.
+- **Better offspring is one star over the parent, 25% at level 100, up to two stars** (the game's own maximum and the
+  last one it draws); drops double per level, so higher would multiply meat eightfold. Under ECR: one star over ECR's
+  roll, up to one above the stronger parent.
+- **Twins: 25% at level 100**, a second birth 30 s later, never chained.
+- **Yield means four things:** butchering (killer's level, +50%, never trophies), produce from the living animal
+  (feathers, scraps, pelts, hides: 50% per 20 minutes at 100), extra honey (beekeeping is husbandry too: +50% at 100)
+  and more animals (twins, herd size, better offspring).
+- **Prime Cuts is off by default:** raw meat becoming a star item changes Cooking's ingredient average even at 0
+  stars, and splits meat stacks by star. Starred eggs are on, because the game already gives eggs a quality.
+- **Petting refreshes contentment** on every pet but pays experience only when the animal was not content; contentment
+  adds +50% breeding speed for 10 minutes.
+- **Pack leader** covers followers only (wolves), not summons; its toughness also softens the leader's own hits.
+- **The feeder is a barrel copy** with the barrel's look and icon, 4 x 2, Wood 10 and Leather scraps 4 at a workbench,
+  buildable from level 25; animals eat ground food first; tamed animals and animals being tamed use it.
+- **Experience is watched, not sent:** everyone within Keeper Range earns from taming, tames, meals and births; the
+  creature's tier (from its health) scales it; the first tame of each kind is worth triple.
+- **Lore from level 20**, one level for every line. The Taming Levels hint shows to everyone.
+
+### Known gaps
+
+- Elite Creatures Reborn keeps the game level at 1, so Prime Cuts gives no stars there, and Better offspring needs
+  Elite Creatures Reborn 3.10.0 or later (`KeeperBonus`). Eggs above 3 stars under ECR show 3 in GrindstoneSkills' icons.
+- Prime Cuts meat and eggs stay star items until a restart after their switch is turned off.
+- Two animals eating a feeder's last item at once may both be fed; a feeder changing owner while the take RPC is in
+  flight keeps its item.
+- A pet whose contentment takes more than a second to come back from the owner may pay experience twice.
+- Calm remembers only the last player who hurt the creature.
+- Killing a tamed summon with the butcher knife gives Butchering experience (it has no drops).
+- Lore timers are estimates for the keeper near now; the game's taming boost is not in the taming estimate.
+- Credits reach the player as one raise; the game gives at most one level per raise.
+- The skill is the mod's own: removing GrindstoneSkills loses the level at the next save.
+
+### Test checklist
+
+- [ ] Skills panel: Husbandry with the fence-and-animals icon and its description; survives relog; `raiseskill
+      husbandry 50`, `resetskill husbandry`, `raiseskill all 10` include it; the death penalty lowers it.
+- [ ] Husbandry Enabled off: taming, breeding, drops, produce, honey, wolves and hovers exactly vanilla; no feeder in
+      the hammer; built feeders still load.
+- [ ] Taming speed at 100: a boar tames in about 15 minutes instead of 30 while you stay within 60 m; with the taming
+      boost as well, faster still. Taming Levels "Boar:50" at level 40: no progress, and the hover says why.
+- [ ] Calm at 50: a wild boar at 10% tameness no longer flees from you and keeps taming while you stand beside it; a
+      lox no longer attacks you; a second player below 50 still spooks it; hitting it makes it fight you for 120 s.
+- [ ] Fed longer at 100: after a meal the hover counts 20 minutes, and the animal stays calm and breeds that long.
+- [ ] Breeding at 100: pregnancy about 30 s instead of 60; a petted animal faster still; boars keep breeding up to 4
+      over the crowding limit. Better offspring 100: a 0-star piglet grows into a 1-star boar, "Strong offspring!"; a
+      2-star parent gives no star. Twins 100: "Twins!", a second piglet or egg 30 s later, never a third.
+- [ ] With ECR: the newborn gets ECR's traits plus a star; no callout when it is already one above the stronger parent.
+- [ ] Growth at 100: a tamed piglet grows up and a warm egg hatches in half the time; a wild calf does not.
+- [ ] Butchering at 100: a tamed boar killed with the butcher knife drops about 1.5x meat and scraps, never two trophies;
+      the killer gets experience, also on a dedicated server; a wolf's or a fall's kill gives plain drops.
+- [ ] Prime Cuts on: a two-star boar's meat has 1 star, also when you walk away before the body vanishes; off: none.
+- [ ] Produce (interval 60, chance 100, level 100): a fed hen drops feathers about once a minute; not when hungry; not
+      with no keeper near; a second client sees the item.
+- [ ] Extra honey at 100 (chance 100): a full hive gives twice the honey and 0.5 experience per honey; none in someone
+      else's ward.
+- [ ] Starred eggs: a one-star hen's egg shows 1 star, stacks apart, counts in a recipe and hatches a one-star chick.
+- [ ] Pack leader at 100: a following wolf deals 50% more and takes 33% less; told to stay, vanilla; skeletons vanilla.
+- [ ] Petting: experience once per 10 minutes per animal, the hover says "Content for ...", wolves get commands.
+- [ ] Feeder: hidden below level 25; at 25 under Misc for Wood 10 and Leather scraps 4; a hungry tamed boar within 10 m
+      walks to it and eats a carrot (one fewer, animation, hover fed); ground food first; an animal being tamed uses it
+      too; a feeder open by another player loses the item there.
+- [ ] Lore at 20: taming time, fed time, love or pregnancy, herd room, content time, grows up in, hatches in.
+- [ ] Experience: taming a boar near you pays about 20 over the taming plus 30 for the first tame; a lox about four
+      times that; a birth near you 3 x tier; loading into a farm pays nothing.
+- [ ] **Dedicated server with two clients**, the animals owned by the other client: keeper levels, calm, breeding
+      rolls, callouts on both clients, butchering credit, feeder takes and contentment all work.
+
+### Status (2026-09-27)
+
+0.7.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.7.0), together with Elite Creatures Reborn
+3.10.0 (its `Breeding/KeeperBonus.cs` reads the star-up key), before any in-game test. Written as a foundation (skill,
+keeper, settings, taming, calm, lore, experience, the ECR hand-off) in the main session, then Breeding, Yield and
+Companions by three agents in parallel, then a review. The build is clean (0 warnings) and the offline patch check
+passes every patch class of the mod, the 35 Husbandry ones included. The decisions above wait for the user's
+confirmation; the test checklist above is next.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
@@ -1165,6 +1439,11 @@ modules were being written in the same tree, so none of them is in it. Farming's
 is clean. Built from HEAD plus Defense in a separate worktree while Husbandry, Fishing and Farming were being written
 in the main tree, so none of them is in it. It also merges the PlateColumn library (the Defense plate). The Defense
 decisions above wait for the user's confirmation.
+
+0.7.0 (Husbandry) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.7.0) with Elite Creatures Reborn
+3.10.0, before any in-game test; the build is clean. Built from HEAD plus Husbandry in a separate worktree while Fishing
+and Farming were being written in the main tree, so neither is in it. The Husbandry decisions above wait for the
+user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.
