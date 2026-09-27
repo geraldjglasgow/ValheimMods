@@ -3,16 +3,15 @@ using UnityEngine;
 namespace PlateColumn
 {
     /// <summary>
-    /// A plate's tooltip is the game's own (<c>UITooltip</c>), using the tooltip prefab the inventory's craft button
-    /// already uses, so it looks and behaves like every other tooltip on the screen: it shows after a short hover over
-    /// the plate's wood and follows the pointer. Without a prefab to borrow no tooltip is added, since the game's would
-    /// fail on hover.
+    /// A plate's tooltip is a <see cref="PlateTip"/> showing the game's inventory item tooltip box (the one every item
+    /// slot uses), pinned beside the plate. Without a tooltip prefab to borrow no tooltip is added. Every mod merges its
+    /// own copy of this library, so another copy's tip is recognised by its type's name, not its type.
     /// </summary>
     internal static class PlateTips
     {
         public static void Set(InventoryGui gui, RectTransform plate, string topic, string text)
         {
-            UITooltip? tip = plate.GetComponent<UITooltip>();
+            PlateTip? tip = plate.GetComponent<PlateTip>();
             if (tip == null)
             {
                 GameObject? prefab = Prefab(gui);
@@ -20,28 +19,34 @@ namespace PlateColumn
                 {
                     return;
                 }
-                tip = plate.gameObject.AddComponent<UITooltip>();
-                tip.m_tooltipPrefab = prefab;
+                tip = plate.gameObject.AddComponent<PlateTip>();
+                tip.Prefab = prefab;
             }
-            tip.m_topic = topic;
-            tip.m_text = text;
+            tip.Topic = topic;
+            tip.Text = text;
         }
 
-        /// <summary>Tips a plate only when it has none: the game's plates, which every mod's copy of this reaches.</summary>
+        /// <summary>Tips a plate only when no copy of this library has: the game's plates, which every copy reaches.</summary>
         public static void SetIfMissing(InventoryGui gui, RectTransform plate, string topic, string text)
         {
-            if (plate.GetComponent<UITooltip>() == null)
+            foreach (MonoBehaviour behaviour in plate.GetComponents<MonoBehaviour>())
             {
-                Set(gui, plate, topic, text);
+                if (behaviour != null && behaviour.GetType().FullName == typeof(PlateTip).FullName)
+                {
+                    return;
+                }
             }
+            Set(gui, plate, topic, text);
         }
 
+        /// <summary>The item slots' tooltip prefab (a bordered box with topic and text), else any tooltip prefab the panel uses.</summary>
         private static GameObject? Prefab(InventoryGui gui)
         {
-            UITooltip? craft = gui.m_craftButton != null ? gui.m_craftButton.GetComponent<UITooltip>() : null;
-            if (craft != null && craft.m_tooltipPrefab != null)
+            GameObject? element = gui.m_playerGrid != null ? gui.m_playerGrid.m_elementPrefab : null;
+            UITooltip? item = element != null ? element.GetComponent<UITooltip>() : null;
+            if (item != null && item.m_tooltipPrefab != null)
             {
-                return craft.m_tooltipPrefab;
+                return item.m_tooltipPrefab;
             }
             foreach (UITooltip other in gui.GetComponentsInChildren<UITooltip>(true))
             {

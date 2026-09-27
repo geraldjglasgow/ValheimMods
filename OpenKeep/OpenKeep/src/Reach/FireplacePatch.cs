@@ -5,7 +5,7 @@ using UnityEngine;
 namespace OpenKeep.Reach
 {
     /// <summary>
-    /// Fires, torches and hot tubs refuel through <c>Fireplace.Interact</c>. The game's own toggle (a fire that can
+    /// Fires and torches refuel through <c>Fireplace.Interact</c> (the hot tub is a <c>Smelter</c>, see SmelterFuelPatch). The game's own toggle (a fire that can
     /// be turned off, plain Use while burning) and hold repeat rules are kept; when the inventory has no fuel and
     /// the fire is not full, one unit is borrowed before the game looks. Fill never repeats the toggle path: a
     /// fire that can be turned off is only filled through the game's alt use, where the game itself refuels it.

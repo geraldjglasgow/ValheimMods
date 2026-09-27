@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.6.0
+- Homestead: new section `8. Homestead`, synced from the server.
+- Homestead: `Nearest Bed Respawn` (on): every bed you own is a spawn bed. After death you wake in your own bed
+  nearest to where you died, or the next nearest when that one is gone or no longer yours. Any of your beds lets you
+  sleep (the hover says Sleep instead of Set spawn point). Beds claimed before this version count once you have
+  been near them.
+- Homestead: `Build On Wood` (default `fire_pit`): campfires can be built on wooden floors. The list takes the other
+  pieces the game keeps off wood too (`bonfire`, `smelter`, `charcoal_kiln` and more); empty keeps the game's rule.
+  In the Ashlands, or with the Fire world key, the campfire's embers can set the floor alight.
+- Homestead: `Honey Per Day` sets how much honey each beehive makes per in-game day (0, the default, keeps the
+  game's 1.5 a day); `Honey Per Player Online` makes it the number of players on the server. A hive still holds at
+  most 4.
+- Homestead: `Auto Fuel` (on): campfires, hearths, braziers, torches and every other fire you built refill themselves
+  with their own fuel (wood, resin, coal, guck, greydwarf eyes) from containers within `Auto Fuel Range` (20 m) of
+  the fire, a unit at a time as they burn; the `stations:` and `containers:` rules of the Reach YAML apply.
+- Homestead: `Torches Night Only` (on): the standing torches and the sconce light at nightfall and go out at
+  daybreak, saving their fuel; `Torch Pieces` lists which fires (braziers, lanterns and the resin candle can be
+  added). A torch out for the day says `Lights at nightfall`. Turn it off before removing OpenKeep: the game has no
+  switch to light them again.
+- Stow: the tooltips of the armour, trash and weight plates (and Elite Creatures Reborn's world tier plate, once
+  that mod is rebuilt with this version of the plate column) show in a dark box with a gold border, pinned just
+  right of the plate instead of following the mouse.
+- Stow: ground pickup's `Pickup Range` defaults to 2 m instead of 10. A config written by an earlier version keeps
+  the value it saved: set it to 2 there.
+
 ## 1.5.0
 - Stow: the armour, trash and weight plates on the right of the player panel each show a tooltip on hover saying
   what they are.

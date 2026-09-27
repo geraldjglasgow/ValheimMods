@@ -147,7 +147,7 @@ namespace OpenKeep.Stow
         {
             GroundPickup = synced.Bind(Section, "Ground Pickup", false,
                 "Containers whose prefab has pickup: true in OpenKeep.Stow.yml pull dropped items from the ground by rule.");
-            PickupRange = synced.Bind(Section, "Pickup Range", 10f,
+            PickupRange = synced.Bind(Section, "Pickup Range", 2f,
                 "Metres around the container.", acceptableValues: new AcceptableValueRange<float>(1f, 50f));
             PickupInterval = synced.Bind(Section, "Pickup Interval", 5f,
                 "Seconds between sweeps of one container.", acceptableValues: new AcceptableValueRange<float>(1f, 120f));

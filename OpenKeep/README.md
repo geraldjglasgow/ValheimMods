@@ -3,7 +3,8 @@
 Storage and inventory for Valheim in one mod: craft, build and feed stations straight from nearby chests, ship
 holds and carts; stow, top up, sort, junk and route from the inventory panel; a Salvage tab that gives
 materials back; stack sizes and weights; bigger chests with their contents on hover; carts that carry a
-workbench; and a sign above every chest that names what is inside. Every gameplay setting is server synced and
+workbench; a sign above every chest that names what is inside; and a few base tweaks: respawn at your nearest
+bed, campfires on wooden floors, honey per day, fires that refuel from nearby chests and torches lit only at night. Every gameplay setting is server synced and
 lockable, every hotkey is per player, and everything is tunable in the config file and six YAML files that hot
 reload. Convenience features are on by default; anything
 that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
@@ -56,7 +57,8 @@ through the chests around you.
 - Favourite item (`F`): the item is never quick stacked, stowed, dumped, trashed or salvaged. Favourite slot
   (Shift + F): the slot's content never moves. Top up still refills favourites.
 - Ground pickup (off by default): containers whose prefab has `pickup: true` in the YAML pull dropped items
-  from the ground after `Pickup Delay` seconds, only items they already hold unless the YAML says otherwise.
+  lying within `Pickup Range` (2 m) from the ground after `Pickup Delay` seconds, only items they already hold
+  unless the YAML says otherwise.
 
 Favourites and junk marks are saved with the character and follow it between worlds.
 
@@ -133,6 +135,45 @@ chest someone else is using is refused. Crafting, building and station feeding n
 another player is using, whatever the mode, so a requirement is never shown as covered by an item the other
 player may take first. Both players need the mod; a player without it gets the game's usual refusal.
 
+### Homestead: beds, campfires on wood, honey, fires and torches
+Section `8. Homestead`, synced from the server like every gameplay setting.
+
+- Beds (`Nearest Bed Respawn`, on): every bed you own is a spawn bed. When you die you wake in your own bed
+  nearest to where you died; if that bed is gone or no longer yours the next nearest is tried, and only when none
+  is left do you wake at the world's start. Any of your beds lets you sleep, with the game's usual checks (night,
+  no enemies, roof, fire, dry), and the bed you last claimed or slept in stays your spawn point for your first
+  spawn in a world. Your beds are remembered per character and per world when you claim one, use one or come near
+  one you own, so beds claimed before the mod count once you have been near them. Off: only your last bed counts,
+  as in the game.
+- Campfires on wooden floors (`Build On Wood`, default `fire_pit`): the game refuses a campfire on a wooden floor;
+  the pieces listed here may be built on wooden floors and other wooden pieces anyway. The game has the same rule
+  for `bonfire`, `smelter`, `charcoal_kiln`, `blastfurnace`, `eitrrefinery`, `piece_FrostKiln` and `windmill`: add
+  them comma separated, or leave the value empty for the game's rule. Every other placement rule stays (nearly
+  level, no clipping into walls, wards, no-build zones). The fire burns, smokes and warms as on the ground and rests
+  on the floor like any piece, so removing the floor breaks it. Fires already built stay when you take a name out.
+- Honey (`Honey Per Day`, default 0 = the game's 1.5 a day): how much honey each beehive makes per in-game day.
+  With `Honey Per Player Online` on, each hive makes as much honey per day as there are players on the server (1 in
+  single player), following players as they join and leave. A hive still holds at most 4 honey, so at high rates
+  empty it more often. Changing the rate keeps the progress a hive has made toward its next honey. Bird nests keep
+  the game's rate.
+- Fires that feed themselves (`Auto Fuel`, on; `Auto Fuel Range`, 20 m): every fire you built that burns an item
+  (campfires, hearths, bonfires, braziers, standing torches, sconces, the jack-o-turnip, the snow lantern and modded
+  fires) takes its own fuel (wood, resin, coal, guck or greydwarf eyes) from the nearest containers within range of
+  the fire, not of you. A burning fire stays full while a chest nearby has fuel, and one that burned out while you
+  were away fills up when you come back. Fires with endless fuel, the resin candle (it cannot be refilled) and torches
+  out for the day are left alone. Reach's rules apply: `enabled: false` for a fire in the `stations:` map of
+  `OpenKeep.Reach.yml` stops it, its `allow`/`deny` narrow the fuel, and the `containers:` map and the switches of
+  section 0 decide which chests give. Chests another player has open, private chests and wards you have no access to
+  are skipped: the game of whoever is nearest runs the fire and uses that player's access. On a dedicated server the
+  fires right around the world's centre are run by the server and do not feed themselves.
+- Torches at night (`Torches Night Only`, on; `Torch Pieces`): the standing torches (wood, iron, green, blue) and the
+  sconce light at nightfall and go out at daybreak (the game's own night), so they burn fuel only in the dark. A torch
+  out for the day gives no light, burns nothing, and its hover says `Lights at nightfall`. Other fires can be added
+  to `Torch Pieces` (braziers, the jack-o-turnip, the snow lantern, the resin candle); campfires, hearths and braziers
+  also give the warmth beds and resting need, which is gone while they are out. Each torch is switched once at
+  nightfall and once at daybreak, so a fire you can switch by hand (the resin candle) keeps your choice until the
+  next one; the game has no hand switch for the torches themselves.
+
 ### Hotkeys (per player, not synced)
 
 | Setting | Default | Does |
@@ -166,7 +207,9 @@ clash.
 `BepInEx/config/milkyteam.openkeep.cfg`, written on first start. Sections: `0. Containers` (`Ships`, `Carts`,
 `Player Chests`, `Honour Wards`, `Shared Chests`), `1. Reach`, `2. Stow`, `3. Salvage`, `4. Stacks` (plus `4a. Item
 Stacks` and `4b. Item Weights` when per item entries are on), `5. Capacity`, `6. Carts`, `7. Signs` (`Enabled`,
-`Show Counts`, `Max Items`, `Max Characters`, `Update Seconds`, `Height`, `Rotation`, `Empty Text`), `9. Shared`
+`Show Counts`, `Max Items`, `Max Characters`, `Update Seconds`, `Height`, `Rotation`, `Empty Text`), `8. Homestead`
+(`Nearest Bed Respawn`, `Build On Wood`, `Honey Per Day`, `Honey Per Player Online`, `Auto Fuel`, `Auto Fuel Range`,
+`Torches Night Only`, `Torch Pieces`), `9. Shared`
 (`Request Timeout`, `Touch Seconds`; per player `Show Touches`, `Touch Colour`), and `General / Lock Configuration`.
 Every entry has a description in the file. Gameplay settings are synced from the server and locked; keys,
 display formats, confirmations, sort orders and colours are yours.
@@ -279,6 +322,10 @@ the first run. A server pushes its gameplay settings and YAML files to every cli
   new maximum when the inventory that holds it loads. Split large stacks before lowering a limit.
 - Signs are real vanilla signs. They stay in the world when the mod is removed, and each one removed with the
   hammer returns one wood. Switch `7. Signs / Enabled` off before removing the mod to have them taken down.
+- In the Ashlands, and on worlds with the Fire world key, campfires and bonfires throw embers that set nearby wood
+  alight. A campfire built on a wooden floor there sets that floor on fire; put a stone floor under it.
+- A torch that `Torches Night Only` put out for the day stays dark without the mod, and the game has no switch to
+  light it. Before removing OpenKeep, turn the setting off and visit your bases by day (or rebuild the torches).
 
 ### Building
 Requirements: .NET SDK 8, Valheim installed with BepInEx, and the `ValheimModLibs` folder next to this one.

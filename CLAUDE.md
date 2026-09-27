@@ -15,7 +15,7 @@ ValheimMods/
   FeastMaster/       food and mead values
   ShipConfig/        ship health
   Lockstep/          boss progression gated on the whole group
-  OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs
+  OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs; bed respawn, honey
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
@@ -40,7 +40,9 @@ credit, a self-maintaining roster with ignore and inactivity rules, altar gate w
 commands, a YAML chain. Design and status in `Lockstep/PLAN.md`.
 
 **OpenKeep**: storage and inventory in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
-container sizes, carts as stations, contents signs and shared chests. Design in `OpenKeep/CLAUDE.md`.
+container sizes, carts as stations, contents signs and shared chests; plus a Homestead section outside storage
+(respawn at the nearest owned bed, campfires on wooden floors, honey per day, fires refuelling from nearby chests,
+torches lit only at night). Design in `OpenKeep/CLAUDE.md`.
 
 **Party**: shared parties - a server-owned roster with one leader, invites, party chat, a draggable health panel,
 colored floating names, always-on map pins, friendly-fire protection, a party-only map ping, and a public API for

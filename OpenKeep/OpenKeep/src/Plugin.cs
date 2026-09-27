@@ -7,6 +7,7 @@ using HarmonyLib;
 using OpenKeep.Capacity;
 using OpenKeep.Carts;
 using OpenKeep.Core;
+using OpenKeep.Homestead;
 using OpenKeep.Reach;
 using OpenKeep.Salvage;
 using OpenKeep.Shared;
@@ -27,7 +28,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "1.5.0";
+        public const string PluginVersion = "1.6.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -66,6 +67,7 @@ namespace OpenKeep
             CapacityModule.Initialize(Synced);
             CartsModule.Initialize(Synced);
             SignsModule.Initialize(Synced);
+            HomesteadModule.Initialize(Synced);
             SharedModule.Initialize(Synced);
         }
 
