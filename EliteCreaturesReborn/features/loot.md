@@ -24,7 +24,7 @@ How drops are decided, chosen server-wide:
 
 | Mode | Behaviour |
 | --- | --- |
-| Vanilla | Untouched, save a boss aspect's own multiplier (`boss-aspects.md`). The mod's other features still work |
+| Vanilla | Untouched, save a boss aspect's own multiplier (`boss-aspects.md`) and a wild Gilded creature's pay-out (section 3). The mod's other features still work |
 | Scaled | The creature's own drop table, with quantities raised by star level |
 | Rolled | The creature's own drop table, rolled once more per star, each roll independent |
 | Curated | The rule files decide entirely, ignoring the creature's own table |
@@ -57,7 +57,7 @@ about it yet - and the player who has thought about it will find the setting.
 
 ---
 
-# 3. Mutations and attunements do not change loot
+# 3. Mutations and attunements do not change loot - Gilded excepted
 
 Not by default. A mutation is a **change to the fight, not to the reward**: Cloaked makes a greydwarf harder to
 find and Plated makes it harder to hurt, and neither is a reason for it to carry more resin.
@@ -68,12 +68,32 @@ mutation that paid best rather than fighting whatever the world produced.
 
 A server can make them pay through the rule files if it wants to. The default is that they do not.
 
-**Thieving's pouch is the one exception, and it is not really an exception.** What it drops on death is the
-player's own property being handed back, never anything the creature's own loot table produced - so it is never
-multiplied by mode, by `drops`, by star count, or by a boss aspect. See `thieving.md` for the full rule; this is
-not a mutation "paying" in the sense the paragraph above is about.
+**Gilded is the one mutation that pays, and it pays on purpose.** It is the argument above turned round: Gilded
+changes nothing about the fight except that there is none - it never attacks a player and runs from any it sees -
+so the reward *is* the mutation, and the chase is the fight. It is also the rarest mutation. A wild Gilded
+creature's kill:
 
-Boss aspects are the deliberate exception, and `boss-aspects.md` explains why: an aspect is **visible and
+- **Its drops are multiplied by its `loot` field** (3 by default, enhanced on a large star), after the mode,
+  alongside the global multiplier and with it, on exactly the rows that multiplier touches: the creature's own
+  table and the rows the rule file names for it. Trophies only when trophy multiplication is on; rows another mod
+  added, never.
+- **In every loot mode**, Vanilla and Curated included. In Vanilla, where the engine otherwise stands aside, it
+  scales the creature's own table alone, the way a boss aspect pays there.
+- **Plus a purse**: `bonus amount` (20) times one more than its star count of `bonus item` (Coins), added after
+  every multiplier and multiplied by none of them, merged into a Coins row it already drops, and capped at 100 - the
+  most one drop row can hold.
+- **A tamed Gilded creature pays nothing extra**: ordinary loot, no multiplier and no purse. It never ran, so there
+  was no chase to reward, and Gilded passes to offspring - a paying tame one would turn a breeding pen into an
+  endless purse.
+
+The whole mutation is in `mutations.md`, "Gilded, in full".
+
+**Thieving's pouch is not an exception at all.** What it drops on death is the
+player's own property being handed back, never anything the creature's own loot table produced - so it is never
+multiplied by mode, by `drops`, by star count, by a boss aspect, or by a Gilded creature's `loot`. See `thieving.md`
+for the full rule; this is not a mutation "paying" in the sense the opening paragraphs are about.
+
+Boss aspects are the other deliberate exception, and `boss-aspects.md` explains why: an aspect is **visible and
 rerollable before you commit**, so without a loot difference a group would simply wait for the easiest one every
 time. That argument does not apply to a mutation, which you meet rather than choose.
 
@@ -116,8 +136,8 @@ changes gameplay, so it lives with the other synced, lockable rules:
 - **Per-tier loot quantity**, so a server can make a mature world pay differently (`world-tiers.md`).
 
 Order of application, so two settings never argue: the mode produces quantities, per-creature rules override and
-extend them, then the global (or boss) multiplier scales the result. Trophies step out of all of it unless trophy
-multiplication is on.
+extend them, then the global (or boss) multiplier - and a wild Gilded creature's `loot` - scales the result, and
+last comes Gilded's purse, scaled by nothing. Trophies step out of all of it unless trophy multiplication is on.
 
 **Another mod's drops pass through untouched.** A mod that injects rows into the same drop list (EpicLoot's
 materials, for instance) keeps them exactly as it rolled them: the engine only reworks rows it owns - the
@@ -159,6 +179,11 @@ creatures:
 A drop row can say everything the game's own drop entries can - item, min and max amount, chance, one per player -
 so nothing expressible in the game's tables is inexpressible here. Bosses use the same section; the boss-wide
 knobs (its `drops` line, the boss loot multiplier, aspects) stack on top as section 5 orders.
+
+**The same entries carry per-creature mutation rules** - `mutation chance`, `mutation chances` and
+`mutation power` - specified in `mutations.md` under "Rules for one creature". One entry may hold loot keys and
+mutation keys side by side. **Two entries with the same `match` merge** rather than the later replacing the
+earlier: named keys in the later one win, and drop rows are added together.
 
 ---
 
@@ -202,7 +227,8 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Vanilla, Scaled, Rolled and Curated all selectable
 - [~] Per-star quantity multiplier for Scaled - built and shipping
 - [ ] Trophies handled separately, off by default
-- [ ] Mutations and attunements do not change loot
+- [ ] Mutations and attunements do not change loot - except a wild Gilded creature's multiplier and purse, in
+  every mode
 - [ ] Rows another mod injects into the drop list pass through untouched, in every mode
 
 ## Multiplayer
@@ -233,3 +259,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-20 | Decided with the user: extra roll chance, max extra rolls, global and boss loot multipliers, the `creatures:` rule format (which is Curated's format - open decision resolved), and the generated creature reference file. Sections 5-7 rewritten; both former open decisions closed. Then built: modes, trophy separation, per-creature rules, `elite reference`; judgement calls in `DECISIONS.md`. | pending |
 | 2026-09-20 | Drop-mod compatibility: the engine now only reworks rows it owns (the creature's table plus rule-file rows), so drops another mod injects - EpicLoot was the prompt - survive every mode, strip and multiplier, whatever the Harmony patch order. | pending |
+| 2026-09-27 | 3.9.0: Gilded added as the one mutation that pays (section 3) - `loot` multiplier and coin purse in every mode, tamed ones excepted, purse capped at 100; `creatures:` entries also carry mutation keys, and duplicate entries merge (section 6). Built, not tested in game. | - |

@@ -20,26 +20,9 @@ namespace EliteCreaturesReborn.Loot
         /// <summary>Vanilla mode's whole treatment: scale the boss's own rows by its aspect, and nothing more.</summary>
         public static void ApplyAlone(CharacterDrop drop, EliteController controller, List<KeyValuePair<GameObject, int>> result)
         {
-            float factor = Factor(controller);
-            if (controller.Traits.Aspect == Aspect.None || Mathf.Approximately(factor, 1f))
+            if (controller.Traits.Aspect != Aspect.None)
             {
-                return;
-            }
-            HashSet<GameObject> own = new HashSet<GameObject>();
-            foreach (CharacterDrop.Drop row in drop.m_drops)
-            {
-                if (row.m_prefab != null)
-                {
-                    own.Add(row.m_prefab);
-                }
-            }
-            bool trophies = RuleState.Active.Loot.MultiplyTrophies;
-            for (int i = 0; i < result.Count; i++)
-            {
-                if (own.Contains(result[i].Key) && (trophies || !DropRoller.IsTrophy(result[i].Key)))
-                {
-                    result[i] = new KeyValuePair<GameObject, int>(result[i].Key, DropRoller.Scaled(result[i].Value, factor));
-                }
+                DropRoller.ScaleOwnRows(drop, result, Factor(controller), RuleState.Active.Loot.MultiplyTrophies);
             }
         }
     }

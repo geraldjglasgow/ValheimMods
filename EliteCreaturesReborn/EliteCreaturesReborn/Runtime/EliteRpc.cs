@@ -9,10 +9,12 @@ namespace EliteCreaturesReborn.Runtime
     /// (and its ZDO, and its ZNetView) is gone: a Bloated death has no per-creature channel left to scope to, so both go
     /// out over the game's routed-RPC bus to <c>Everybody</c>.
     /// <list type="bullet">
-    /// <item><b>Bloat</b> fires at death: every client spawns a warning that rides its own local corpse for the fuse.</item>
+    /// <item><b>Bloat</b> fires at death: every client spawns a warning that rides its own copy of the dying creature's
+    /// corpse, named by id, for the fuse.</item>
     /// <item><b>Blast</b> fires when the owner's fuse ends: every client draws the blast at the owner's corpse, and only
     /// the machine that sent it (the owner) deals the damage there - so what everyone sees and what actually hurts agree,
-    /// even though ragdoll physics settles the corpse in a slightly different spot on every machine.</item>
+    /// even though ragdoll physics settles the corpse in a slightly different spot on every machine. It names the corpse,
+    /// and whichever machine owns that corpse bursts it (see <see cref="CorpseBurst"/>).</item>
     /// </list>
     /// Per-creature effects that CAN be scoped (the Warding flash) go through <see cref="CreatureRpc"/> instead. Handlers
     /// are registered lazily once the network is up, keyed on the bus instance so a new world re-registers.
@@ -41,8 +43,11 @@ namespace EliteCreaturesReborn.Runtime
             bus.Register<ZPackage>(Blast, OnBlast);
         }
 
-        /// <summary>Owner-side, at death: announce the Bloated death so every client wears a warning on its own corpse.</summary>
-        public static void FireBloat(Vector3 pos, float delay, string warningEffect, BlastSpec blast)
+        /// <summary>
+        /// Owner-side, at death: announce the Bloated death so every client wears a warning on its own copy of the corpse,
+        /// named by id (<c>ZDOID.None</c> when the death left no ragdoll).
+        /// </summary>
+        public static void FireBloat(Vector3 pos, ZDOID corpse, float delay, string warningEffect, BlastSpec blast)
         {
             EnsureRegistered();
             if (ZRoutedRpc.instance == null)
@@ -51,13 +56,17 @@ namespace EliteCreaturesReborn.Runtime
             }
             ZPackage pkg = new ZPackage();
             pkg.Write(pos.x); pkg.Write(pos.y); pkg.Write(pos.z);
+            pkg.Write(corpse);
             pkg.Write(delay); pkg.Write(warningEffect ?? "");
             blast.Write(pkg);
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Bloat, pkg);
         }
 
-        /// <summary>Owner-side, at fuse end: announce the blast at the owner's corpse so all clients agree on its place.</summary>
-        public static void FireBlast(Vector3 pos, BlastSpec blast)
+        /// <summary>
+        /// Owner-side, at fuse end: announce the blast at the owner's corpse so all clients agree on its place, naming the
+        /// corpse (<c>ZDOID.None</c> when there is none) so the blast can burst it.
+        /// </summary>
+        public static void FireBlast(Vector3 pos, ZDOID corpse, BlastSpec blast)
         {
             EnsureRegistered();
             if (ZRoutedRpc.instance == null)
@@ -66,6 +75,7 @@ namespace EliteCreaturesReborn.Runtime
             }
             ZPackage pkg = new ZPackage();
             pkg.Write(pos.x); pkg.Write(pos.y); pkg.Write(pos.z);
+            pkg.Write(corpse);
             blast.Write(pkg);
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Blast, pkg);
         }
@@ -77,18 +87,22 @@ namespace EliteCreaturesReborn.Runtime
         private static void ReadBloat(long sender, ZPackage pkg)
         {
             Vector3 pos = new Vector3(pkg.ReadSingle(), pkg.ReadSingle(), pkg.ReadSingle());
+            ZDOID corpse = pkg.ReadZDOID();
             float delay = pkg.ReadSingle();
             string warning = pkg.ReadString();
-            BloatedCorpse.Spawn(pos, delay, warning, BlastSpec.Read(pkg), isOwner: sender == ZNet.GetUID());
+            BloatedCorpse.Spawn(pos, corpse, delay, warning, BlastSpec.Read(pkg), isOwner: sender == ZNet.GetUID());
         }
 
         private static void OnBlast(long sender, ZPackage pkg) => Guard.Run("EliteRpc.OnBlast", () => ReadBlast(sender, pkg));
 
-        // Runs on every client. Only the sender (the owner) lets the blast deal damage; the rest only draw it.
+        // Runs on every client. Only the sender (the owner) lets the blast deal damage; the rest only draw it. Only the
+        // corpse's owner - normally the sender too - bursts it, and its removal reaches everyone else from there.
         private static void ReadBlast(long sender, ZPackage pkg)
         {
             Vector3 pos = new Vector3(pkg.ReadSingle(), pkg.ReadSingle(), pkg.ReadSingle());
+            ZDOID corpse = pkg.ReadZDOID();
             BloatedBlast.Detonate(pos, BlastSpec.Read(pkg), damaging: sender == ZNet.GetUID());
+            CorpseBurst.Burst(corpse);
         }
     }
 }

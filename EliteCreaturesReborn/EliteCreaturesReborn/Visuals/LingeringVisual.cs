@@ -8,7 +8,8 @@ namespace EliteCreaturesReborn.Visuals
     /// Keeps a cloned effect visible for exactly as long as the hazard it marks, then thins it away in the last second
     /// so a player can time a move through. It loops the clone's particles rather than re-spawning them, so one cloud
     /// looks like one cloud however long it lives, and scales the clone so its visible size matches the hazard radius.
-    /// It rides on the hazard's own GameObject, so when the hazard is destroyed the effect goes with it, cleanly.
+    /// It rides on the hazard's own GameObject, so when the hazard is destroyed the effect goes with it, cleanly. A held
+    /// visual never thins: it is a warning that ends in something else, and lasts until its host is destroyed.
     /// </summary>
     public sealed class LingeringVisual : MonoBehaviour
     {
@@ -34,6 +35,13 @@ namespace EliteCreaturesReborn.Visuals
             visual._life = Mathf.Max(life, 0.01f);
             Guard.Run("LingeringVisual.Build", () => visual.Build(host, prefab, radius));
         }
+
+        /// <summary>
+        /// Attaches an effect that stays at full strength until its host is destroyed - for a warning that ends in
+        /// something else (the Bloated blast), which must not thin out beforehand as if the danger were passing.
+        /// </summary>
+        public static void Hold(GameObject host, GameObject? prefab, float radius) =>
+            Attach(host, prefab, float.PositiveInfinity, radius); // an endless life never reaches its fade
 
         private void Build(GameObject host, GameObject? prefab, float radius)
         {

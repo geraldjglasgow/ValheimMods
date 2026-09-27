@@ -40,7 +40,7 @@ namespace EliteCreaturesReborn.Commands
             BiomeRules r = controller.Rules;
             EliteCommands.Reply(args, $"elite inspect: {c.GetHoverName()}");
             EliteCommands.Reply(args, $"  stars {t.Stars} ({t.LargeGlyphs} large, {t.Stars % 5} small), biome {TraitStore.GetBiome(controller.View.GetZDO())}{(t.Tier > 0 ? $", rolled at world tier {t.Tier}" : "")}");
-            EliteCommands.Reply(args, $"  health x{StatMath.HealthMultiplier(r, t):0.00}, size x{StatMath.SizeMultiplier(r, t):0.00}, move x{StatMath.MoveMultiplier(r, t, 0f):0.00}, swing x{StatMath.SwingSpeedMultiplier(r, t):0.00}, attack x{DamageMath.OutgoingMultiplier(r, t, 1f):0.00}");
+            EliteCommands.Reply(args, $"  health x{StatMath.HealthMultiplier(r, t) * AspectMath.HealthFactor(t):0.00}, size x{StatMath.SizeMultiplier(r, t) * AspectMath.SizeFactor(t):0.00}, move x{StatMath.MoveMultiplier(r, t, 0f):0.00}, swing x{StatMath.SwingSpeedMultiplier(r, t):0.00}, attack x{DamageMath.OutgoingMultiplier(r, t, 1f):0.00}");
             EliteCommands.Reply(args, $"  max health {c.GetMaxHealth():0}");
             foreach (Mutation m in t.Active())
             {
@@ -48,7 +48,7 @@ namespace EliteCreaturesReborn.Commands
             }
             if (t.Has(Mutation.Thieving))
             {
-                EliteCommands.Reply(args, "  " + PouchLine(controller.View.GetZDO()));
+                EliteCommands.Reply(args, "  " + PouchLine(controller));
             }
             if (c.IsBoss())
             {
@@ -57,20 +57,22 @@ namespace EliteCreaturesReborn.Commands
         }
 
         // The only way to check the icon on the nameplate matches what the ZDO actually holds - the gap between the
-        // two is where this feature's bugs live, per the spec.
-        private static string PouchLine(ZDO zdo)
+        // two is where this feature's bugs live, per the spec. The count is against the same capacity the steal checks
+        // (one item per star, at least `max items`), so a full pouch reads as full here too.
+        private static string PouchLine(EliteController controller)
         {
-            List<PouchStore.Entry> pouch = PouchStore.Load(zdo);
+            List<PouchStore.Entry> pouch = PouchStore.Load(controller.View.GetZDO());
+            string held = $"carrying {pouch.Count} of {PouchStore.ResolvedMaxItems(controller.Rules, controller.Traits)}";
             if (pouch.Count == 0)
             {
-                return "carrying: nothing";
+                return held + ": nothing";
             }
             List<string> items = new List<string>();
             foreach (PouchStore.Entry entry in pouch)
             {
                 items.Add($"{entry.Item.m_shared.m_name} x{entry.Item.m_stack}");
             }
-            return "carrying: " + string.Join(", ", items);
+            return held + ": " + string.Join(", ", items);
         }
 
         // Reads from wherever the admin is looking: a ray straight down the camera, first collider that belongs to a

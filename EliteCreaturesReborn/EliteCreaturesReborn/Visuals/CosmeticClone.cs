@@ -6,9 +6,10 @@ namespace EliteCreaturesReborn.Visuals
 {
     /// <summary>
     /// Clones a resolved vanilla effect prefab as a purely local, cosmetic object: never networked, never a damage
-    /// source. Every gameplay component (its Aoe, its ZNetView, its transform sync) is stripped on spawn, so the clone
-    /// can only ever be seen, never felt - which is what lets a player turn effects down to nothing without changing a
-    /// single point of damage. Density from the per-player setting thins the particles; zero density spawns nothing.
+    /// source. Its network view is disabled before it wakes, so the clone never registers with the network at all, and
+    /// every gameplay component (its Aoe, its ZNetView, its transform sync) is stripped on spawn, so the clone can only
+    /// ever be seen, never felt - which is what lets a player turn effects down to nothing without changing a single
+    /// point of damage. Density from the per-player setting thins the particles; zero density spawns nothing.
     /// A sound clone is the same stripped, local copy, and plays whatever the density.
     /// </summary>
     public static class CosmeticClone
@@ -32,18 +33,47 @@ namespace EliteCreaturesReborn.Visuals
         private const float BaselineRadius = 4f;
 
         /// <summary>A free-standing one-shot effect, scaled to a radius, that cleans itself up; used for brief bursts.</summary>
-        public static void Flash(GameObject? prefab, Vector3 position, float radius)
+        public static void Flash(GameObject? prefab, Vector3 position, float radius) => OneShot(prefab, position, radius);
+
+        /// <summary>
+        /// A one-shot burst like <see cref="Flash"/>, drawn whole at <paramref name="scale"/> times its radius-matched
+        /// size. Most vanilla effects scale each particle system by its own transform alone ("Local" scaling), so scaling
+        /// the root - all Flash does - resizes only the root system and leaves the child systems at full size; here every
+        /// system follows the root, so the whole burst takes the size.
+        /// </summary>
+        public static void FlashWhole(GameObject? prefab, Vector3 position, float radius, float scale)
+        {
+            GameObject? clone = OneShot(prefab, position, radius);
+            if (clone == null)
+            {
+                return;
+            }
+            FollowRoot(clone);
+            clone.transform.localScale *= scale;
+        }
+
+        private static GameObject? OneShot(GameObject? prefab, Vector3 position, float radius)
         {
             float density = Density();
             if (prefab == null || density <= 0f)
             {
-                return;
+                return null;
             }
             GameObject clone = Instantiate(prefab, position);
             Strip(clone, endless: false);
             Thin(clone, density);
             clone.transform.localScale *= Mathf.Max(radius, 0.01f) / BaselineRadius;
             Object.Destroy(clone, Mathf.Max(radius, 3f));
+            return clone;
+        }
+
+        private static void FollowRoot(GameObject clone)
+        {
+            foreach (ParticleSystem system in clone.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                ParticleSystem.MainModule main = system.main;
+                main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+            }
         }
 
         /// <summary>The longest a one-shot sound clone may live, should its own timer be missing.</summary>
@@ -64,12 +94,23 @@ namespace EliteCreaturesReborn.Visuals
             Object.Destroy(clone, SoundLife);
         }
 
+        // Instantiated with network views disabled, the way the game makes its own local-only copies (the build ghost, an
+        // item picked up into the inventory): the view removes itself as it wakes and no ZDO is made. Not "ghost init" -
+        // a ghost view still registers a real ZDO (that is how the world generator makes objects nobody is near yet), and
+        // ZNetScene spawns every ZDO near a player that has no object yet as a full networked copy a frame later, here
+        // and on every peer: a second, unscaled copy of each effect, and of a looping one with no timer, a lasting cloud.
         private static GameObject Instantiate(GameObject prefab, Vector3 position)
         {
-            ZNetView.StartGhostInit();
-            GameObject clone = Object.Instantiate(prefab, position, Quaternion.identity);
-            ZNetView.FinishGhostInit();
-            return clone;
+            bool was = ZNetView.m_forceDisableInit;
+            ZNetView.m_forceDisableInit = true;
+            try
+            {
+                return Object.Instantiate(prefab, position, Quaternion.identity);
+            }
+            finally
+            {
+                ZNetView.m_forceDisableInit = was;
+            }
         }
 
         private static void Strip(GameObject clone, bool endless)

@@ -10,7 +10,9 @@ Numbers are defaults and all of them are configurable through `creature_rules.ym
 call it says so.
 
 **Status:** built and shipping in 3.0.0. Verified by build and by reading; not yet tested in a live multiplayer
-session against the checklist in "Testing it honestly" below.
+session against the checklist in "Testing it honestly" below. Gilded, Blinking and Relentless, per-creature
+mutation rules and the 3.9.0 changes to Bloated, Cloaked, Warding and Splintering are built and not yet tested in
+game.
 
 **Bosses never take mutations.** They take stars on their own separate table - see `SPEC-scaling.md`.
 
@@ -24,40 +26,45 @@ A mutation is a **named, visible character** a creature can carry. Where stars m
 bigger, a mutation makes it *different* - a fight you approach differently once you have learned to
 recognise it.
 
-**Not every mutation is a drawback-balanced trade.** Four of the ten below cost the creature
-something; six are pure gains with no downside. That is deliberate. The balancing lever for this
+**Not every mutation is a drawback-balanced trade.** Six of the thirteen below cost the creature
+something; six are pure gains with no downside; and one, Gilded, is good news for the player - it never
+fights back and pays several times over for the chase. That is deliberate. The balancing lever for this
 feature is **how often mutations appear**, not making each one internally fair. A player who meets
 a Miasmic Cloaked troll is supposed to be in trouble.
 
 Mutations are never elemental. Elemental behaviour belongs to a later slice and must not appear
 here.
 
-## The ten
+## The thirteen
 
 | Mutation | Gains | Costs |
 | --- | --- | --- |
 | Mad | Moves and attacks far faster - +60% movement, +50% attack speed | Half health |
-| Bloated | Double health. On death it pauses a second, then explodes | None |
-| Cloaked | Invisible at more than 6 metres, nameplate included | None |
+| Bloated | Double health. On death it smokes for two seconds, then explodes | None |
+| Cloaked | Invisible at more than 10 metres (15 for trolls and lox), nameplate included. Never rolled by a drake | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
-| Warding | Reflects 30% of damage taken back at the attacker, and knocks them back on any melee hit | None |
+| Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health, and knocks them back on any melee hit | None |
 | Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
 | Miasmic | Leaves a trail of poison clouds as it moves; each cloud lingers 6 seconds then fades | None |
 | Devouring | Eats other creatures and keeps what it takes. See below | Grows slower the more it has eaten |
-| Thieving | Takes one item from your inventory on each strike that lands, up to `max items`, and carries it. See `thieving.md` | None |
+| Thieving | Takes one item from your inventory on each strike that lands, until it holds one per star (never fewer than `max items`, never more than 8), and carries them. See `thieving.md` | None |
+| Gilded | Glitters gold; never attacks a player and runs from any it sees. Drops three times its loot plus a purse of coins. See below | None - it is the player's good luck |
+| Blinking | Every 30 seconds of combat it vanishes and reappears 4 metres behind its target, after a half-second tell at the spot. See below | 25% less health |
+| Relentless | Keeps the target it picked while that target is within 150 metres, seen or not; sneaking does not hide you from it. See below | Never faster than its base speed |
 
-Judgement calls in that table, all tunable: the Mad percentages; Bloated's one-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Splintering's 40% damage reduction; Leeching's regen
+Judgement calls in that table, all tunable: the Mad percentages; Bloated's two-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls and lox, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
 and lifesteal rates, its 5-second combat cooldown and its 20 hp/s regen cap - a high-health creature must be
-beatable on regen alone; Warding's 30% reflection; Plated running from a 40% damage cut at full health to none at
+beatable on regen alone; Warding's 30% reflection and its 7.5% ceiling; Plated running from a 40% damage cut at full health to none at
 zero, hard-capped at 55% so a large star cannot approach invulnerability, while its damage climbs from nothing to
 +60%; Miasmic's clouds doing poison damage on a par with a
-Blob's and appearing about one per second of movement; Thieving's no-theft-on-a-blocked-hit rule and its
-`max items: 1` default - see `thieving.md` for both.
+Blob's and appearing about one per second of movement; Thieving's no-theft-on-a-blocked-hit rule, its one item per
+star and its `max items: 1` floor - see `thieving.md`; Gilded's rarity, its x3 loot and 20 coins per star plus one,
+and its 30-metre flee distance; Blinking's 30-second rhythm, 4 metres and half-second tell; Relentless's 150 metres.
 
 ## Devouring, in full
 
-Devouring is the most involved of the nine and the one most worth getting right. It is meant to be a *situation*
+Devouring is one of the most involved of the thirteen and the one most worth getting right. It is meant to be a *situation*
 rather than an encounter: you come over a rise and find something in the middle of eating a camp, and you decide
 what to do about it.
 
@@ -142,19 +149,42 @@ knob is deliberately not enhancement-scaled: it is tuning, not power.
 
 ## Bloated, in full
 
+**The fuse is two seconds** (`delay: 2.0`; one second before 3.9.0) - the window a player has to see the smoke and
+get clear.
+
 **The blast goes off at the corpse, not at the place of death.** A creature that dies turns into a ragdoll, and
-in the second before it detonates that ragdoll can slide, tumble or roll down a hill. Exploding at the spot
+in the seconds before it detonates that ragdoll can slide, tumble or roll down a hill. Exploding at the spot
 where it died would leave the bang somewhere the corpse visibly is not, which reads as a bug even to a player
 who could not say why.
 
 So the fuse follows the body:
 
-- The warning tell **rides the corpse**, wherever it goes, for the whole fuse. The thing that is about to
-  explode is the thing that looks like it is about to explode.
+- The warning smoke **rides the corpse's body**, wherever it goes, for the whole fuse. It follows the body itself,
+  not the point the corpse was spawned at, which stays at the death spot while the limbs roll away. The thing that
+  is about to explode is the thing that looks like it is about to explode.
+- The smoke **stays at full strength until the blast.** It never thins in its last second the way a poison cloud
+  does, because a thinning warning says the danger is passing, and here it is about to arrive.
 - The blast happens at **wherever the corpse has come to rest** when the fuse ends, and the damage radius is
   measured from there.
 - If there is no ragdoll - a creature that simply vanishes, or one whose corpse is already gone - it falls back
   to the place of death. Better a blast in the right general area than none.
+
+### The corpse goes with the blast
+
+The explosion is the corpse's end. At the blast the corpse vanishes and **its loot drops there**, exactly the loot
+it would have dropped anyway, with no corpse smoke afterwards: no body lying on after the bang, and no white puff
+a moment later.
+
+- The game removes a corpse on its own timer - two seconds for most creatures, longer for the biggest - which would
+  race the fuse or outlive the blast. So each machine moves its own corpse's timer to **one second past the fuse**.
+- **If the blast never comes** - the machine that owned the creature left mid-fuse - that moved timer removes the
+  corpse the game's ordinary way, loot and smoke, a second after the fuse. A corpse is never left lying and its loot
+  is never lost.
+
+### How big it looks
+
+**The burst is drawn at 70% of its old size**, every part of it, not only its core. At full size it read as far
+bigger than the blast it stood for. The damage still reaches the whole `radius`; only the picture is smaller.
 
 ### Which corpse, in multiplayer
 
@@ -166,6 +196,10 @@ different spot on each, and on a slope that can be metres apart.
 - **The blast position is the owner's corpse**, sent when the fuse ends rather than when the creature died. Every
   client draws the blast there, and the owner deals the damage there, so what everyone sees and what actually
   hurts are the same place.
+- **The blast names the corpse.** The corpse itself is a shared object, and only the machine that owns it can
+  remove it for everyone - normally the same machine, but ownership can move. Every machine is told which corpse
+  it was; only its owner removes it, and the removal replicates.
+- **Each machine draws the blast once, locally**, and hears the bang once.
 
 This means the explosion is announced at detonation, not at death - the warning is what goes out at death.
 
@@ -243,6 +277,11 @@ damage come from ordinary star scaling rather than any special rule.
 **A Thieving parent drops its pouch at the moment it splits, exactly as any other death, and the copies are born
 carrying nothing.** A copy inheriting or sharing the pouch would duplicate stolen items; see `thieving.md`.
 
+**A tamed parent splits into tamed copies**, rather than into two wild creatures at its owner's feet. Both copies
+are tame, keep the name the player gave the parent (and who gave it), and fall in behind the player the parent was
+following. A wild parent still makes wild copies. What is not carried over: the
+feeding timer (the copies start hungry), a saddle, and any summon limit.
+
 In practice a 5-star Splintering kill produces about **nine** extra creatures over two or three
 short generations. The full unbroken chain still reaches 62, but a single lineage running 5 to 4 to
 3 to 2 to 1 is roughly a **1 in 2,000** event. That is the intent: the big cascade should happen to
@@ -287,6 +326,260 @@ code, so it cannot be read from the assembly - but it is shared by parent and co
 a copy-only symptom. Not fixed, because nothing here is broken; reopen only with a reproduction that names the
 exact species, single-player vs dedicated server, and whether the unsplit parent shows the same behaviour under
 the same conditions.
+
+## Gilded, in full
+
+Gilded is the loot goblin, and the one mutation that is good news for the player. It never fights a player: it
+runs, and a player who catches it is paid several times over. The chase is the fight.
+
+### Rare, and seen from far off
+
+- **It is the rarest mutation.** It has its own chance curve under `defaults`, `Gilded: [0.4, 0.5, 0.7, 0.9, 1.1,
+  1.4]` - fewer than one creature in two hundred at no stars, 1.4 in a hundred at five. A biome's `mutation chance`
+  line does not raise it, because it has a curve of its own; the world tier still does.
+- **It glitters gold.** Gold flakes, spark trails and a softly pulsing gold halo on its body - the stamina mead's
+  sparkle (`glitter effect`, `vfx_Potion_stamina_medium`), made steady and renewed every 2.5 seconds - and a warm
+  gold light around it, 8 metres across. Spotting it first is how a player gets a chance at it, so it reads well
+  beyond nameplate range: a distant sparkle stays a few pixels on screen instead of shrinking to nothing.
+- The glitter is sized to the creature's body and thinned by the player's `Effect density`; at 0 nothing is drawn,
+  the light included.
+- **A Gilded creature that is also Cloaked hides its glitter while it is hidden.** Otherwise the glitter would give
+  the cloak away.
+
+### It never attacks a player
+
+- **Players are never its enemies.** It never targets, chases or strikes one, and its swings and shots pass through
+  players the way they pass through its own kind. It is one-sided: players can still hit it, and its health bar
+  still reads as an enemy's. Nor are players its friends: a Gilded creature with a friend-helping ability, such as
+  a Greydwarf shaman's heal, never walks up to a hurt player to use it.
+- **It runs from any player it can see** within `flee distance` (30 metres). "Can see" is the game's own sight
+  check - line of sight, its view cone until it is alerted, the player's stealth, mist - so sneaking up on one works.
+  Crouch, come from behind, and it may not notice you until you are close.
+- When it sees one it gives the alert and bolts, using the game's own flee, the same one a creature uses to run from
+  fire: a reachable point about 25 metres away from the nearest player it can see, picked again every couple of
+  seconds.
+- **A hit from any range sends it running too**, away from whoever hit it, seen or not. An arrow out of the dark
+  startles it.
+- **It keeps running for 3 seconds** after it last saw a player or was hit, so a tree trunk between you does not
+  stop it dead. Then it goes back to what it was doing.
+- **It stays outrunnable.** It has no speed bonus of its own, and the movement clamp every creature has keeps it no
+  faster than an unburdened player.
+- While it runs it does not fight other creatures or eat. With no player in sight it behaves as its kind does,
+  except that it still never picks a player to fight.
+- **Only monsters run this way.** An animal - a deer, say - already runs from whatever threatens it and never
+  attacks, so it keeps its own behaviour. It still glitters and still pays.
+- `flee distance: 0` stops it running from what it sees; a hit still sends it running.
+
+### It pays
+
+- **Its drops are multiplied by `loot`** (3), after the loot mode, on exactly the rows the global loot multiplier
+  touches: its own drop table and any row the rule file names for it. Trophies only when the trophy switch is on;
+  rows another mod added, never.
+- **It pays in every loot mode**, Vanilla and Curated included. In Vanilla, where the loot rules otherwise stand
+  aside, the multiplier scales the creature's own table alone.
+- **Plus a purse**: `bonus amount` (20) times (1 + stars) of `bonus item` (Coins) - 20 at no stars, 60 at two, 100
+  at four. The purse comes after every multiplier and is never multiplied by any of them. It is capped at 100, the
+  most one drop row can hold; if the creature already drops Coins, the purse joins that row, which stays capped at
+  100.
+- **An unknown `bonus item`** logs one warning and pays no purse; the multiplier still applies.
+- `loot` and `bonus amount` are enhanced on a large star. `loot` is read as a stat, so `loot: 3` is a bonus of +2:
+  at `large star power: 2` a large-star Gilded creature drops five times over.
+- The numbers are read at its death from the rules in force then, so a rule edit re-tunes a Gilded creature already
+  walking about, the same as every other loot setting.
+- Why this mutation pays when no other does is in `loot.md`, section 3.
+
+### Tamed
+
+A Gilded creature can be bred and a newborn can inherit it. A tamed one flees no one - its owner and the other
+players are not its enemies - and it still glitters. It **drops ordinary loot, with no multiplier and no purse**: it
+never ran, so there was no chase to reward, and a paying one would turn a breeding pen into an endless purse.
+
+### Gilded in multiplayer
+
+- **The flee is decided on the creature's owner**, where its AI runs. The movement and the alert replicate through
+  the game's own sync, so every player sees it bolt, and a hand-over simply moves the decision.
+- **The glitter is drawn locally on every client.** A dedicated server draws nothing.
+- **The pay-out is decided once, on the dying creature's owner**, with the rest of its loot, and every player sees
+  the one pile.
+
+### Settings
+
+`loot`, `bonus item`, `bonus amount`, `flee distance`, `glitter effect`. There is no cost field, because there is no
+cost.
+
+## Blinking, in full
+
+Blinking makes a fight you have to watch. Every so often it vanishes and reappears behind its target, and a player
+paying attention gets half a second's warning to turn round.
+
+### When it blinks
+
+- **Only in combat**: while its AI holds a living enemy as its target and is alerted.
+- **The first blink of a fight comes after a random 25% to 75% of `every`** (30 seconds): somewhere between 7.5
+  and 22.5 seconds in. It lands inside an ordinary fight rather than after it, and a pack of blinkers never blinks
+  in unison.
+- **Then one every `every` seconds of combat.** Only combat counts: a lull - a target switch, a moment out of
+  sight - pauses the count. **Ten seconds out of combat end the fight**, and the next fight starts with a fresh first
+  draw.
+- **Never sooner than `every` after its last tell**, whichever machine sent it, so a creature that changes hands
+  mid-fight never blinks twice in a row.
+- **Only when it could**: not mid-attack, not staggered, not ridden, not latched on to anything, and only when it
+  can see or hear its target. Otherwise it tries again half a second later.
+- **A tell that fizzles (below) still counts as its blink**: the next one comes a full interval later.
+
+### Where it lands
+
+`distance` (4 metres) behind its target - opposite the way the target is facing - and if that spot will not do,
+the same distance behind-left or behind-right, 40 degrees round. A spot must be:
+
+- **Real ground**, solid and still, within 2 metres of the height of the target's feet. Never a roof over the
+  target, never off a ledge or down a drop, never the deck of a moving ship.
+- **Room for its body.** No wall, building piece, ship or other character where it would stand, and never on top
+  of its target: a short `distance` is stretched until it clears the target's body.
+- **In plain sight of the target.** Never the far side of a wall or a hill.
+- **Somewhere its own AI would go.** Not water it avoids, not lava, not a fire it fears; a wild one never lands in
+  an area the game keeps monsters out of.
+- **Reachable on foot**, joined by walkable ground to where it stands, so it never reaches a roof or a walled base
+  it could not have walked into.
+- **A flyer keeps its height** above the ground or the water, capped at 12 metres, so one circling high never lands
+  out of reach.
+
+If none of the three spots will do, it tries again 3 seconds later, when the fight has moved.
+
+### The tell
+
+- `tell time` (0.5 seconds) before it arrives, the destination is marked: the `tell effect` (a burst with cyan
+  trails and a cyan light, `vfx_WishbonePing`) and a chime at the same spot (`tell sound`,
+  `sfx_WishbonePing_near`). The spot is behind the target, which for a player is at or under their own camera, so
+  the marker alone is easy to miss. The chime tells them where to turn.
+- **The tell fizzles** - the marker shows and nothing arrives - if, during it, the target dies, the creature's AI
+  lets the target go, the target gets more than `distance` + 6 metres from the spot, or something steps onto the
+  spot. A creature changing hands mid-tell fizzles too.
+
+### The blink
+
+- A puff of `blink effect` (`vfx_ghost_spawn`) where it vanishes and another where it appears.
+- **It arrives standing still, facing its target** - not still running the way it was going, and not setting off
+  back to where it came from.
+- **It never visibly slides.** Other machines learn of the jump a moment after the puff, and a short jump would be
+  eased across rather than snapped, so every machine hides its body and nameplate from the moment it vanishes until
+  its position has landed at the destination: at least 0.15 seconds, so it reads as a vanishing, and never more
+  than 1.5, so a lost update can never leave it invisible.
+
+### Its cost
+
+25% less health (`health: 0.75`). A cost, so never enhanced.
+
+### Tamed ones and animals
+
+- **A tamed Blinking creature blinks behind its enemies** - what it fights for its owner - never behind a player,
+  and never while it is ridden.
+- An animal's AI never holds a target, so an animal never blinks. It still pays the health cost.
+
+### Blinking in multiplayer
+
+- **Decided on the owner**, which holds the AI and the position: the combat clock, the spot, the tell, the blink and
+  the move.
+- **Drawn on every machine that holds the creature**, from one message on the creature's own network view - the
+  tell, the two puffs and the hiding. A player three biomes away receives nothing.
+- **The time of the last tell is on the creature's ZDO** (`ecr_blink_at`), on the shared clock, which is what stops
+  a new owner blinking early.
+
+### Settings
+
+`health`, `every` (0 turns blinking off), `distance` (never less than 1 metre), `tell time`, `blink effect`,
+`tell effect`, `tell sound`. None is enhanced on a large star.
+
+## Relentless, in full
+
+Relentless does not give up. Once it has a target it keeps that target, and the only ways out are distance and
+killing it.
+
+### It keeps its quarry
+
+- **The first target the game gives it becomes its quarry.** It keeps it while the quarry is alive, still an enemy,
+  targetable at all, and within `chase distance` (150 metres) of it.
+- **It ignores everything else meanwhile.** The game normally re-picks a monster's target every few seconds, taking
+  the nearest enemy it senses, so a closer player or one who just hit it would pull it away. A Relentless creature
+  stays on its quarry: the friend who hits it to draw it off gets nothing.
+- **It heads for where the quarry is now**, even out of sight and out of earshot, instead of walking to where it
+  last saw the quarry and searching there. It still attacks only what it can see.
+- **It loses the quarry** only when the quarry gets beyond `chase distance`, dies, stops being an enemy (tamed,
+  befriended), becomes invisible to monsters (ghost or debug-fly mode), or leaves the world. The next target the
+  game gives it becomes its new quarry.
+- A hunted player's own stealth indicator shows that it has them.
+
+### Every way of giving up, switched off
+
+While it holds a quarry, none of the ways the game lets a hunter lose interest apply:
+
+- 30 seconds without sensing its target;
+- the leash that pulls it back once it has chased far from where it spawned;
+- 60 seconds without attacking;
+- running away when it is being hurt and cannot reach its target;
+- the periodic target re-pick;
+- a tame's leash to the player it follows or the spot it guards;
+- falling asleep.
+
+### What still works against it
+
+Relentless, not unstoppable. Each of these still works, and each only interrupts the hunt - none loses it the
+quarry, and it comes back for you afterwards:
+
+- a fire it fears;
+- pheromones;
+- fleeing at low health, as its kind does;
+- lava - a quarry standing in lava is waited out, for a creature that avoids lava;
+- areas the game keeps monsters out of;
+- the game's "cannot reach you, smash the building" switch: after 15 seconds unable to reach you, it breaks in.
+
+### Sneaking does not hide you
+
+While a Relentless creature's AI is thinking, every player counts as standing up: sneaking does not shorten how far
+it sees you or how close you get before it turns alert, crouching behind low cover does not hide you from its eyes,
+and moving while crouched is heard as walking is, at 15 metres. Running and fighting are as loud as they always
+are. Noise-dampening gear does not lower that 15 metres. Every other creature, and the player's own stealth display,
+see the real values.
+
+### Water
+
+- While it hunts, a creature that can swim and that water does not hurt **takes the swimming path of its own
+  size**, so it follows its quarry into the water instead of stopping at the shore.
+- One whose attacks do not work in water **keeps closing on its quarry** instead of wandering off.
+- A creature the game never lets swim keeps walking the bottom where the ground allows, or waits at the shore.
+
+### Despawning
+
+While it hunts it does not leave at dawn, does not walk off when a raid is over, and a summoned one is not
+unsummoned for being far from the player who summoned it. Once the hunt ends each of those applies again.
+Everything else is unchanged: its zone unloading, a summoner logging out, summon limits, growing up, admin
+commands.
+
+### Its cost
+
+**It is never faster than its base speed.** Its movement multiplier is capped at 1, so star speed and Mad's bonus
+are cancelled, and a player can always outrun it past 150 metres. Anything that slows it, such as Devouring's bulk,
+still does.
+
+### Tamed ones and animals
+
+- **A tamed Relentless creature** hunts its enemies - never a friend - wherever they run, up to 150 metres from
+  itself, and **cannot be called back mid-hunt**: its leash to the player or its guard spot is off while it hunts.
+- **Only a creature with the game's monster AI hunts.** An animal that only ever flees has no target to hold on to.
+  The speed cap still applies to it.
+
+### Relentless in multiplayer
+
+- **Decided on the owner**, where the AI runs.
+- **The quarry is on the creature's ZDO** (`ecr_quarry`). A creature that changes hands mid-chase has no target on
+  its new owner; the new owner reads the quarry back at its next target re-pick - within about 2 seconds, up to 6
+  when no player is within 50 metres - without the creature having to notice the player again.
+- **Sneaking is judged on the owner**, from each player's crouch, movement and noise, which the game already shares
+  with every machine.
+
+### Settings
+
+`chase distance` (150). `0` turns the hold off; the speed cap stays. Not enhanced.
 
 ## Console commands
 
@@ -360,11 +653,12 @@ So:
 
 ### Bloated needs a tell during its delay
 
-The spec calls the second between death and detonation "the window a player has to get clear". A window
+The spec calls the two seconds between death and detonation "the window a player has to get clear". A window
 nobody can see is not a window. The corpse must visibly and audibly announce what is about to happen for the
-whole delay - swelling, glowing, hissing, whatever the chosen effect supports - and the blast itself should
-reuse an existing explosion effect at the configured radius, and be heard: it plays the game's own explosion sound
-(added 2026-09-26 at the user's request).
+whole delay, at full strength to the end - swelling, glowing, hissing, whatever the chosen effect supports - and
+the blast itself should reuse an existing explosion effect sized to the configured radius (drawn at 70% of that
+size, see "Bloated, in full"), and be heard: it plays the game's own explosion sound (added 2026-09-26 at the
+user's request).
 
 A player who has seen one Bloated creature die should recognise the second one instantly. That is the entire
 purpose of the delay.
@@ -391,14 +685,25 @@ purpose of the delay.
   to be able to read "that thing is getting stronger right now" from a distance, because deciding whether to
   interrupt it is the whole encounter.
 - **Warding** should show something at the moment it reflects, at the attacker, so the damage that just came
-  back is attributable rather than mysterious.
-- **Mad**, **Plated**, **Leeching** and **Splintering** need no effect of their own. Their star colours and
-  names carry them, and adding more would clutter a creature that may be wearing four mutations at once.
+  back is attributable rather than mysterious. It is a small spark, drawn at a 0.4-metre radius (a fifth of
+  the original 2 metres; the Reflective aspect's is 0.3), and only when something was actually reflected.
+- **Gilded** glitters gold at all times and lights the ground around it, readable well beyond nameplate range -
+  see "Gilded, in full".
+- **Blinking** marks its destination with a flash and a chime before it arrives, puffs where it vanishes and where
+  it appears, and is hidden for the moment in between - see "Blinking, in full".
+- **Mad**, **Plated**, **Leeching**, **Splintering** and **Relentless** need no effect of their own. Their star
+  colours and names carry them, and adding more would clutter a creature that may be wearing four mutations at
+  once.
 
 ### Rules for all of them
 
 - Effects are **client-side and cosmetic**. They never decide damage, and a client with them turned off must
   take exactly the same damage as one with them on.
+- **Each effect is drawn once, on each machine, and never networked.** A cosmetic copy must not register with
+  the network in any way. Until 3.9.0 each one quietly did, and the game then built a second, full-size, networked
+  copy of every effect on every client: every blast and bang came twice, and Bloated's warning smoke was left
+  puffing at the death spot for good, once per machine. Effects drawn once can look lighter than those doubled
+  ones did; that is the correct look.
 - Effects must clean themselves up. A cloud that expires leaves nothing behind, and unloading an area destroys
   its effects with it.
 - Brightness and density follow the existing per-player display settings, down to off, for players who need a
@@ -409,8 +714,9 @@ purpose of the delay.
 ## How many a creature gets, and which
 
 **Every mutation rolls independently**, with its own chance, and that chance depends on the creature's star
-count and the biome it spawned in. There is no slot table and no fixed ceiling: a creature that fails every roll
-is plain, and one that passes several carries several.
+count and the biome it spawned in - and on the kind of creature it is, when the rule file gives that kind rules of
+its own (see "Rules for one creature" below). There is no slot table and no fixed ceiling: a creature that fails
+every roll is plain, and one that passes several carries several.
 
 Rolling each mutation separately rather than rolling "how many, then pick one" is what lets a server say
 "Miasmic is a Swamp thing, Plated is a Mountain thing" - which a count-then-pick model cannot express at all.
@@ -500,6 +806,12 @@ the mod being broken.
 - **Thieving's two-authority steal.** The robbed player's own client decides and removes the item (their
   Inventory is authoritative nowhere else); the creature's owner decides whether there is room and banks it. See
   `thieving.md` for the full split and the accepted risk window it documents.
+- **A Blinking creature changing hands mid-fight.** A tell in flight fizzles, and the new owner reads the last
+  tell's time from the ZDO, so it never blinks twice in a row.
+- **A Relentless creature changing hands mid-chase.** The new owner reads the quarry from the ZDO and carries on
+  the hunt, without the creature having to notice the player again.
+- **A Bloated corpse owned by another machine.** The blast names the corpse and only its owner removes it; if the
+  blast never comes, each machine's own corpse timer removes it a second after the fuse, loot and all.
 - **A rule file change mid-session.** Covered by `lock to server`: the server pushes its rules, clients adopt
   them. Creatures already rolled keep the mark they were born with; new creatures use the new rules.
 
@@ -518,7 +830,7 @@ An honest list of what has not been proven is worth more than a confident claim 
 ## Configuration
 
 Two files. The `.cfg` holds switches and per-player display preferences. **A YAML rule file holds everything
-that varies by biome**, because a flat config file cannot express a table of nine mutations across nine biomes
+that varies by biome**, because a flat config file cannot express a table of thirteen mutations across nine biomes
 without becoming unreadable.
 
 ### The rule file
@@ -540,6 +852,24 @@ lock to server: true
 # it is Cloaked, but not both. Raise it for stacked monsters; 0 means no cap at
 # all. Where more roll than the cap allows, the survivors are picked at random.
 max mutations: 1
+
+# Turn a mutation off everywhere, regardless of its chance curves below. No biome
+# block can turn it back on. Creatures already spawned keep whatever they rolled -
+# this only changes what the next one rolls.
+mutations enabled:
+  Mad: true
+  Bloated: true
+  Cloaked: true
+  Splintering: true
+  Leeching: true
+  Warding: true
+  Plated: true
+  Miasmic: true
+  Devouring: true
+  Thieving: true
+  Gilded: true
+  Blinking: true
+  Relentless: true
 
 # How much stronger a mutation is when it sits on a large star (worth 5 stars)
 # rather than a small one. Multiplies the mutation's BONUS, never its cost: a Mad
@@ -566,23 +896,47 @@ defaults:
 
   # Per-mutation overrides. Anything not listed here uses `mutation chance` above.
   # Devouring is deliberately rarer everywhere: one of them changes a whole area.
+  # Gilded is the rarest of all: the loot goblin is rare on purpose.
   mutation chances:
     Devouring:   [0.6, 0.9, 1.2, 1.5, 1.8, 2.4]
+    Gilded:      [0.4, 0.5, 0.7, 0.9, 1.1, 1.4]
 
   # How strong each mutation is. Named fields, not positional numbers - a row of
   # four bare decimals is exactly the thing server admins get wrong. Every field
   # is explained in the table below this code block.
   mutation power:
     Mad:         { move: 1.6, attack speed: 1.5, health: 0.5 }
-    Bloated:     { health: 2.0, delay: 1.0, damage: 40, radius: 4 }
-    Cloaked:     { reveal distance: 6, fade time: 0.5, fade margin: 1 }
+    Bloated:     { health: 2.0, delay: 2.0, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
+    Cloaked:     { reveal distance: 10, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
     Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }
-    Warding:     { reflect: 30, knockback: 4 }
+    Warding:     { reflect: 30, knockback: 4, max reflect: 7.5 }
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
-    Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4 }
+    Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
     Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60 }
     Thieving:    { max items: 1 }
+    Gilded:      { loot: 3, bonus item: Coins, bonus amount: 20, flee distance: 30, glitter effect: vfx_Potion_stamina_medium }
+    Blinking:    { health: 0.75, every: 30, distance: 4, tell time: 0.5, blink effect: vfx_ghost_spawn, tell effect: vfx_WishbonePing, tell sound: sfx_WishbonePing_near }
+    Relentless:  { chase distance: 150 }
+
+# Rules for one kind of creature, matched by prefab name. Besides the loot keys
+# (`loot.md`), an entry takes `mutation chance`, `mutation chances` and
+# `mutation power`, laid over the rules of whatever biome the creature is in.
+creatures:
+  # Big bodies are hard to hide: trolls and lox show themselves from further out.
+  - match: Troll
+    mutation power:
+      Cloaked:     { reveal distance: 15 }
+  - match: Lox
+    mutation power:
+      Cloaked:     { reveal distance: 15 }
+  # Drakes are never Cloaked: an invisible flyer spitting frost from above is no fight.
+  - match: Hatchling
+    mutation chances:
+      Cloaked:     [0]
+#  - match: Deathsquito
+#    mutation chances:
+#      Cloaked:     [0]
 
 # Every biome below overrides only what it names. Delete a line to fall back to
 # `defaults`; delete a whole biome to make it behave like the defaults entirely.
@@ -604,6 +958,8 @@ biomes:
   - match: BlackForest
     star chances:    [62, 15, 12, 6, 3, 2]
     mutation chance: [3.5,  4.5,  6,    8,    10,   12.5]
+    mutation chances:
+      Thieving:    [6,  8,  11, 14, 17, 21]   # greydwarves already take things that are not theirs
 
   - match: Swamp
     star chances:    [52, 18, 14, 8, 5, 3]
@@ -625,6 +981,7 @@ biomes:
     mutation chances:
       Mad:         [22, 30, 40, 50, 60, 72]
       Devouring:   [1.5, 2, 3, 4, 5, 6]
+      Thieving:    [8,  11, 14, 18, 22, 27]  # fulings, and a biome where you are carrying something worth taking
 
   - match: Mistlands
     star chances:    [22, 22, 22, 16, 11, 7]
@@ -632,6 +989,7 @@ biomes:
     mutation chances:
       Cloaked:     [30, 40, 52, 64, 76, 90]  # the mist hides things already
       Devouring:   [2, 3, 4, 5, 6, 8]
+      Thieving:    [7,  10, 13, 17, 21, 26]  # a thief you cannot see is the encounter this mutation is for
 
   - match: AshLands
     star chances:    [16, 22, 26, 21, 11, 4]
@@ -718,11 +1076,11 @@ The implementation must repeat this table as comments inside the generated file.
 | Mad | `attack speed` | Attack and animation speed multiplier. |
 | Mad | `health` | Max health multiplier. `0.5` = half health. This is its cost. |
 | Bloated | `health` | Max health multiplier. |
-| Bloated | `delay` | Seconds between death and the blast - the window a player has to get clear. |
+| Bloated | `delay` | Seconds between death and the blast - the window a player has to get clear. `2` by default. |
 | Bloated | `damage` | Blunt damage at 0 stars, multiplied by `(1 + stars)`. |
 | Bloated | `radius` | Blast radius in metres. |
 | Bloated | `blast sound` | The vanilla sound prefab the blast goes off with (added 2026-09-26). |
-| Cloaked | `reveal distance` | Metres at which it becomes visible. The nameplate hides in step. |
+| Cloaked | `reveal distance` | Metres at which it becomes visible. The nameplate hides in step. `10` by default; the default `creatures:` entries make it `15` for trolls and lox. |
 | Cloaked | `fade time` | Seconds to phase in or out. `0` snaps. |
 | Cloaked | `fade margin` | Extra metres before it fades back out, so it cannot strobe at the boundary. |
 | Splintering | `damage` | Damage multiplier for a splintering creature. `0.6` = 40% weaker. |
@@ -732,7 +1090,8 @@ The implementation must repeat this table as comments inside the generated file.
 | Leeching | `regen cap` | Hard HP/s ceiling on a single regen tick, regardless of max health. Its cost. |
 | Leeching | `combat cooldown` | Seconds since its last damage taken before regen resumes. |
 | Leeching | `lifesteal` | Percent of damage dealt returned to it as health. |
-| Warding | `reflect` | Percent of incoming damage returned to the attacker. |
+| Warding | `reflect` | Percent of each hit's base damage returned to the attacker as blunt damage. The base is the health the hit actually took, after the creature's resistances and armour, with the sneak-attack and stagger bonuses taken back out, and never more than the health it had left. A hit that took no health reflects nothing. |
+| Warding | `max reflect` | Ceiling on any one reflect, as a percent of the attacker's maximum health, applied before the attacker's own armour. `7.5` by default; `0` = no cap. Never enhanced: it is a ceiling. |
 | Warding | `knockback` | Force applied to whoever lands a melee hit on it. |
 | Plated | `armour` | Percent of incoming damage cut at full health, falling to zero as it is hurt. |
 | Plated | `max reduction` | Hard ceiling on that percent, so a large star's enhancement cannot approach invulnerability. |
@@ -751,25 +1110,44 @@ The implementation must repeat this table as comments inside the generated file.
 | Devouring | `slow per 100 health` | Percent movement speed lost per 100 absorbed health. Its cost. |
 | Devouring | `player threshold` | Fraction of a player's max health its per-hit damage must reach before it hunts players for good. `0.333` = a third. |
 | Devouring | `devour cooldown` | Seconds before it can devour again after a meal. `60` by default. |
-| Thieving | `max items` | The most items one creature may ever hold, hard-capped at 8. `1` by default. See `thieving.md`. |
+| Thieving | `max items` | The fewest items one creature holds, whatever its stars: it holds one per star, never fewer than this and never more than 8. `1` by default. See `thieving.md`. |
+| Gilded | `loot` | Multiplier on its drops, after the loot mode, in every mode. `3` by default. Read as a stat, so on a large star its bonus above 1 is enhanced. |
+| Gilded | `bonus item` | Item prefab of the purse it drops on top. `Coins` by default. An unknown name pays no purse and logs once. |
+| Gilded | `bonus amount` | How many of the bonus item per star plus one: `20` gives 20 at no stars and 100 at four. Never multiplied by anything else; capped at 100. |
+| Gilded | `flee distance` | Metres within which it runs from a player it can see. `30` by default. `0` stops it running from sight; a hit still sends it running. |
+| Gilded | `glitter effect` | Name of the vanilla sparkle it wears. `vfx_Potion_stamina_medium` by default. |
+| Blinking | `health` | Max health multiplier. `0.75` = 25% less. This is its cost. |
+| Blinking | `every` | Seconds of combat between blinks; the first of a fight comes after a random 25-75% of it. `30` by default; `0` turns blinking off. |
+| Blinking | `distance` | Metres behind its target it lands. `4` by default, never less than 1. |
+| Blinking | `tell time` | Seconds the destination is marked before it arrives. `0.5` by default. |
+| Blinking | `blink effect` | Name of the vanilla puff drawn where it vanishes and where it appears. |
+| Blinking | `tell effect` | Name of the vanilla effect that marks the destination. |
+| Blinking | `tell sound` | Name of the vanilla sound played at the destination with the tell. |
+| Relentless | `chase distance` | Metres within which it keeps its quarry. `150` by default; `0` turns the hold off (its speed cap stays). |
 
 ### What these defaults actually produce
 
-Two things decide whether a creature is mutated: its **star count**, and a per-mutation **chance** roll. The
-defaults are tuned so a quarter of Meadows creatures are something, rising to three quarters in the Ash Lands:
+Two things decide whether a creature is mutated: its **star count**, and a per-mutation **chance** roll. With
+thirteen mutations, about three Meadows creatures in ten are something, rising to about four in five in the Ash
+Lands, at world tier 0:
 
 | Biome | Mutated | Has a large star |
 | --- | --- | --- |
-| Meadows | 25% | 1% |
-| Black Forest | 34% | 2% |
-| Swamp | 42% | 3% |
-| Mountain | 50% | 4% |
-| Plains | 59% | 5% |
-| Mistlands | 67% | 7% |
-| Ash Lands | 75% | 4% |
-| Ocean | 29% | 1% |
+| Meadows | 30% | 1% |
+| Black Forest | 40% | 2% |
+| Swamp | 49% | 3% |
+| Mountain | 58% | 4% |
+| Plains | 66% | 5% |
+| Mistlands | 73% | 7% |
+| Ash Lands | 79% | 4% |
+| Ocean | 35% | 1% |
 
-**It tops out at three quarters on purpose.** An unmutated creature has to stay a real possibility even in the
+These count each biome's `mutation chance` curve for every mutation, with Devouring and Gilded on their own rarer
+curves. The per-mutation curves a biome adds on top - Miasmic in the Swamp, Bloated in the Ash Lands - raise its
+figure further. With ten mutations, before 3.9.0, the same count gave a quarter in the Meadows and about three
+quarters in the Ash Lands.
+
+**It stops short of everything on purpose.** An unmutated creature has to stay a real possibility even in the
 worst biome, or "mutated" stops meaning anything and the ordinary ones stop being a relief.
 
 **Large stars exist everywhere, barely.** One Meadows creature in a hundred has five stars, rising to four in a
@@ -799,6 +1177,37 @@ want big creatures commoner. The two dials are independent.
   `world-tiers.md` states for tier changes.
 - **The file is written on first run** with every value at its default and every comment in place, so a server
   owner always has a complete, documented file to edit rather than a blank one.
+- **An existing file keeps its own numbers.** A file written by an older version is never rewritten: one from
+  before 3.9.0 still says `delay: 1.0` and `reveal distance: 6` and has no `creatures:` entries for trolls, lox or
+  drakes until someone edits it or deletes it so a fresh one is written. A mutation the file does not mention at
+  all - Gilded, Blinking and Relentless in such a file - takes its built-in defaults, and Gilded stays rare because
+  its curve is part of the built-in `defaults`.
+
+### Rules for one creature
+
+A `creatures:` entry, matched by **prefab name** in any case, may carry the three mutation keys a biome block
+takes - `mutation chance`, `mutation chances` and `mutation power` - with the same syntax and the same validation.
+The same entries carry the per-creature loot rules (`loot.md`), and one entry may hold both.
+
+- **They change that kind of creature only, in whatever biome it is in.** They are laid over the rules of the biome
+  it spawned in, and everything the entry does not name still comes from that biome.
+- **`mutation power` merges field by field.** `Cloaked: { reveal distance: 15 }` changes the reveal distance and
+  keeps the biome's fade time and margin.
+- **`mutation chances` replaces each named mutation's curve**, and `[0]` stops that mutation for the creature.
+- **`mutation chance` replaces only the creature's default curve.** Any mutation with its own curve - in the biome
+  block, or in `defaults` like Devouring and Gilded - keeps that curve. To stop one mutation, name it under
+  `mutation chances`.
+- **`mutations enabled` still wins**, and the world tier's mutation boost still multiplies the creature's curves
+  (a `0` stays `0`).
+- **Bosses ignore these entries**; they roll on the boss table. **Breeding ignores them too**: a newborn inherits
+  by the breeding rules, not by its kind's chances.
+- **Two entries with the same `match` merge** rather than the later silently replacing the earlier: later keys win
+  and drop rows add up. Uncommenting an example for a creature that already has an entry never loses the one above
+  it.
+- **The shipped file has three**: Troll and Lox with `mutation power: Cloaked: { reveal distance: 15 }`, because
+  big bodies are hard to hide, and Hatchling (the drake) with `mutation chances: Cloaked: [0]`, because an invisible
+  flyer spitting frost from above is no fight. A commented Deathsquito example shows how to end Cloaked mosquitoes
+  in the Plains.
 
 ### Locking clients to the server
 
@@ -835,10 +1244,14 @@ plain:
 | Miasmic | Dark green |
 | Devouring | Dark red |
 | Thieving | Violet |
+| Gilded | Pale gold `#FFE066` |
+| Blinking | Cyan `#29E0E0` |
+| Relentless | Orange `#FF7F24` |
 
 **Cloaked is blue and Warding is dark blue**, so those two must be clearly separable on a small star: keep
 Cloaked a bright, light blue and Warding genuinely dark, near navy. Judge it at a small star's size against
-snow and against night, not on a colour swatch.
+snow and against night, not on a colour swatch. The same care holds for the three added in 3.9.0: Gilded's pale
+gold is lighter than Plated's deep yellow, and Blinking's cyan is greener than Cloaked's sky blue.
 
 Where a creature has more mutations than stars - an unstarred one with a mutation, or a 1-star that
 rolled two - the surplus shows in the name only. The name is always complete; the stars are as
@@ -960,11 +1373,12 @@ How many a row can show, for reference:
 | 5 | one large | 1 |
 | 6 | one large, one small | 2 |
 | 9 | one large, four small | 5 |
-| 29 | five large, four small | 9 - all of them |
+| 29 | five large, four small | 9 |
+| 49 | nine large, four small | 13 - all of them |
 
-Showing all nine on the stars needs 29 stars. That is far outside any sane configuration and does not matter: a
-server that sets a 29-star ceiling has asked for a screen-wide nameplate and can have one. At the defaults the
-cap is 1 and the question never arises.
+Showing all thirteen on the stars needs 49 stars - the widest row there is. That is far outside any sane
+configuration and does not matter: a server that sets a 49-star ceiling has asked for a screen-wide nameplate and
+can have one. At the defaults the cap is 1 and the question never arises.
 
 ### A mutation on a large star is enhanced
 
@@ -1003,11 +1417,14 @@ and "enhanced" should mean better at being itself, not worse.
 | Cloaked | `reveal distance` | `fade time`, `fade margin` |
 | Splintering | - | all of it; the split table already keys off stars |
 | Leeching | `lifesteal` | `regen` and `regen cap` (a cost-like ceiling) - a huge-health creature must stay beatable on regen alone; `combat cooldown` |
-| Warding | `reflect`, `knockback` | - |
+| Warding | `reflect`, `knockback` | `max reflect` - a ceiling, like Plated's, must not itself scale |
 | Plated | `armour`, `damage` | `max reduction` - the hard cap must not itself scale, or it stops being a cap |
 | Miasmic | `cloud damage`, `clouds per second` | `cloud life`, `cloud radius` |
 | Devouring | `absorb health`, `absorb damage` | `slow per 100 health` (a cost), `player threshold` |
-| Thieving | `max items` | - |
+| Thieving | `max items` | - (the one item per star is not enhanced; stars already count) |
+| Gilded | `loot`, `bonus amount` | `flee distance`, `bonus item`, `glitter effect` |
+| Blinking | - | all of it; `health` is a cost |
+| Relentless | - | `chase distance`, and its speed cap is a cost |
 
 **Movement is clamped regardless.** However the numbers land, a creature may not end up faster than an
 unburdened player - a fight you cannot disengage from is not a fight. Clamp and log rather than obey.
@@ -1036,12 +1453,16 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 ## The set
 
-- [ ] The nine, as specified
+- [ ] The thirteen, as specified
 - [ ] Devouring in full, including its multiplayer section
-- [ ] Bloated in full, including which corpse in multiplayer
+- [ ] Bloated in full, including which corpse in multiplayer and the corpse going with the blast
 - [ ] Miasmic in full - both poison paths, the trail, and harming players only
-- [ ] Splintering in full
+- [ ] Splintering in full, including tamed parents splitting into tamed copies
+- [ ] Gilded in full - the glitter, never attacking a player, the flee, the pay-out, tamed ones paying nothing extra
+- [ ] Blinking in full - the combat clock, the spot rules, the tell, the hidden landing, hand-over
+- [ ] Relentless in full - the quarry, the give-ups switched off, sneaking, water, despawning, hand-over
 - [ ] How many a creature gets, and which
+- [ ] Rules for one creature: per-creature mutation keys, merging entries, the three shipped entries
 
 ## Visuals
 
@@ -1069,3 +1490,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-17 | Thieving added as the tenth mutation: table, star colour, large-star enhancement, `mutation power` block, Splintering interaction, and a "cases that must work" line for its two-authority steal. See `thieving.md`. | - |
+| 2026-09-27 | 3.9.0: Gilded, Blinking and Relentless added with their "in full" sections, colours, fields and enhancement rows; per-creature mutation rules and the shipped Troll, Lox and Hatchling entries; Bloated's two-second fuse, full-strength smoke on the body, smaller blast and corpse bursting with it; Cloaked at 10 m; Warding's base hit and `max reflect`; tamed Splintering copies; effects drawn once, locally; the embedded rule file and the mutated-share table brought up to date. Built, not tested in game. | - |

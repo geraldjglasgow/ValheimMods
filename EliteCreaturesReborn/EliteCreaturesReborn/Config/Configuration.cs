@@ -59,8 +59,9 @@ namespace EliteCreaturesReborn.Config
         private static void BindBoardAndTier(ConfigFile config)
         {
             ShowBossBoard = config.Bind(Display, "Boss damage board", true,
-                "When a boss dies, show every player who hurt it and how much health they took off it, at the top of "
-                + "the screen. Client side; never locked.");
+                "When a boss dies, show every player who hurt it and how much health they took off it (its Phantom "
+                + "copies included), at the far left of the screen. /damage shows the latest board again. Client "
+                + "side; never locked.");
             BossBoardSeconds = config.Bind(Display, "Boss damage board seconds", 60f,
                 new ConfigDescription("How long the boss damage board stays on screen. Client side; never locked.",
                     new AcceptableValueRange<float>(5f, 600f)));

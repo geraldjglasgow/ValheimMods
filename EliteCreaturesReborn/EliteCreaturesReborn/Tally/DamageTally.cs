@@ -4,9 +4,9 @@ using EliteCreaturesReborn.Traits;
 namespace EliteCreaturesReborn.Tally
 {
     /// <summary>
-    /// A boss's damage tally: how much health each player has taken off it. It lives in the boss's ZDO, written by the
-    /// boss's owner at every hit, so an owner hand-over mid-fight keeps the count. One entry per player, keyed by player
-    /// ID, carrying the name as it was at the player's last hit.
+    /// A boss's damage tally: how much health each player has taken off it, the boss's own and its Phantom copies'
+    /// together. It lives in the boss's ZDO, written by the boss's owner at every hit, so an owner hand-over mid-fight
+    /// keeps the count. One entry per player, keyed by player ID, carrying the name as it was at the player's last hit.
     /// </summary>
     internal static class DamageTally
     {
@@ -29,10 +29,10 @@ namespace EliteCreaturesReborn.Tally
         }
 
         /// <summary>Owner side: credits one hit's health loss to the player who dealt it.</summary>
-        public static void Add(ZDO zdo, Player player, float amount)
+        public static void Add(ZDO zdo, long playerId, string playerName, float amount)
         {
             List<Entry> entries = Load(zdo);
-            Merge(entries, player.GetPlayerID(), player.GetPlayerName(), amount);
+            Merge(entries, playerId, playerName, amount);
             ZPackage pkg = new ZPackage();
             Write(pkg, entries);
             zdo.Set(TraitKeys.BossDamage, pkg.GetArray());

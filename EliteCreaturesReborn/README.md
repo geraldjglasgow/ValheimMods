@@ -17,20 +17,25 @@ returns over the next releases.
 
 ## Mutations
 
-Ten, one per creature by default, each with its own colour and its own name on the nameplate.
+Thirteen, one per creature by default, each with its own colour and its own name on the nameplate.
 
 | Mutation | What it does |
 | --- | --- |
 | Mad | Far faster, half health |
-| Bloated | Double health, explodes a second after it dies |
-| Cloaked | Invisible beyond 6 metres |
+| Bloated | Double health, explodes two seconds after it dies |
+| Cloaked | Invisible beyond 10 metres (15 for trolls and lox); drakes are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again |
 | Leeching | Regenerates, and heals from the damage it deals |
-| Warding | Reflects damage and knocks you back |
+| Warding | Reflects part of each hit back, never more than 7.5% of your maximum health, and knocks you back |
 | Plated | Armoured while healthy, hits harder as that armour goes |
 | Miasmic | Trails poison clouds; poisons players, never creatures |
 | Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you |
-| Thieving | Steals an item on its first landed hit and carries it on its nameplate; kill it to get everything back |
+| Thieving | Steals an item with each landed hit, up to one per star (at least one), and carries them on its nameplate; kill it to get everything back |
+| Gilded | Glitters gold, never attacks a player and runs from any it sees; drops three times its loot plus a purse of coins |
+| Blinking | Every 30 seconds of a fight it reappears behind its target, after a flash and a chime at the spot; 25% less health |
+| Relentless | Once it picks you it keeps coming, seen or not, until you are 150 m away; sneaking does not hide you; never faster than its base speed |
+
+Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
 
 ## Mutation power fields
 
@@ -39,19 +44,24 @@ numbers. A field marked (enhanced) is multiplied by `large star power` on a larg
 Any mutation can also be switched off entirely with `mutations enabled`, regardless of its chance curves.
 
 - **Mad** - `move`/`attack speed` multipliers (enhanced); `health` multiplier, its cost
-- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, which goes off at the
-  corpse's resting place; `damage` (enhanced) and `radius` (enhanced) of the blast; `blast effect`/`warning effect`
-  vanilla prefabs for the explosion and the pre-blast warning, `blast sound` the vanilla sound it goes off with
-  (`elite effects <text>` lists and plays the game's effect and sound prefabs)
-- **Cloaked** - `reveal distance` metres to become visible (enhanced); `fade time` seconds to phase, 0 snaps;
-  `fade margin` extra metres before fading back out, to stop strobing
+- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, 2 by default; the blast goes
+  off at the corpse's resting place and the corpse goes with it, dropping its loot there; `damage` (enhanced) and
+  `radius` (enhanced) of the blast; `blast effect`/`warning effect` vanilla prefabs for the explosion and the smoke
+  that rides the corpse until it blows, `blast sound` the vanilla sound it goes off with (`elite effects <text>`
+  lists and plays the game's effect and sound prefabs)
+- **Cloaked** - `reveal distance` metres to become visible (enhanced), 10 by default and 15 for trolls and lox
+  through their `creatures:` entries; `fade time` seconds to phase, 0 snaps; `fade margin` extra metres before
+  fading back out, to stop strobing
 - **Splintering** - `damage` multiplier per split; `max generations` cascade-depth cap, 0 = unlimited;
   `max descendants` live-descendant cap, 0 = unlimited
 - **Leeching** - `regen` percent max health per second, never enhanced; `regen cap` hard HP/s ceiling on a single
   tick, so a huge-health creature cannot out-heal a fight; `combat cooldown` seconds since its last damage taken
   before regen resumes; `lifesteal` percent of damage dealt returned as health (enhanced)
-- **Warding** - `reflect` percent of incoming damage returned (enhanced); `knockback` force on a melee attacker
-  (enhanced)
+- **Warding** - `reflect` percent of the base hit returned (enhanced). The base hit is the health the hit actually
+  took off the creature, after its resistances and armour, without the sneak-attack or stagger bonus; a hit that
+  took no health reflects nothing. `max reflect` caps any one reflect at that percent of the attacker's maximum
+  health, before the attacker's own armour (never enhanced; 0 removes the cap); `knockback` force on a melee
+  attacker (enhanced)
 - **Plated** - `armour` percent of incoming damage cut at full health, to 0 hurt (enhanced); `max reduction` hard
   ceiling on that percent, so enhancement cannot approach invulnerability; `damage` percent bonus at zero health,
   to 0 full (enhanced)
@@ -63,8 +73,18 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `move` base speed multiplier before the slow (`0.5` halves it; not enhanced);
   `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
   `devour cooldown` seconds after a meal before it can eat again
-- **Thieving** - `max items` the most it will ever hold (enhanced), hard-capped at 8; never takes equipped gear
-  or more than one item per landed hit, and gives back everything it holds when it is killed
+- **Thieving** - it holds one item per star; `max items` is the fewest it holds whatever its stars (enhanced),
+  and 8 is the most. It never takes equipped gear or more than one item per landed hit, and gives back everything
+  it holds when it is killed
+- **Gilded** - `loot` multiplier on its drops (enhanced), applied in every loot mode; `bonus item` the item prefab
+  of its purse and `bonus amount` how many per star plus one (enhanced), never multiplied and capped at 100;
+  `flee distance` metres within which it runs from a player it can see; `glitter effect` the vanilla prefab it
+  glitters with. A tamed Gilded creature flees no one and drops ordinary loot
+- **Blinking** - `health` multiplier, its cost; `every` seconds of combat between blinks, 0 turns them off;
+  `distance` metres behind its target it lands; `tell time` seconds of warning at the spot before it arrives;
+  `blink effect`/`tell effect` vanilla prefabs for the puff and the marker, `tell sound` the chime. None is enhanced
+- **Relentless** - `chase distance` metres within which it keeps its target, 0 turns the hold off (not enhanced).
+  Its cost is fixed: it is never faster than its base speed
 
 ## Stars
 
@@ -117,7 +137,7 @@ altar - the Queen, or a console spawn - rolls its aspect when it first appears.
 
 | Aspect | What it does | Loot |
 | --- | --- | --- |
-| none | The fight as the game ships it (one in five) | x1 |
+| none | The fight as the game ships it (about one fight in five) | x1 |
 | Reflective | 15% of each hit you land comes back to you as true damage | x1.4 |
 | Shielded | 30% less damage from arrows and bolts | x1.1 |
 | Mending | Regenerates 0.3% of its health every second, in combat too | x1.3 |
@@ -126,6 +146,15 @@ altar - the Queen, or a console spawn - rolls its aspect when it first appears.
 | Enraged | 20% more physical damage | x1.2 |
 | Twin | A second copy of the boss; the two share one health pool, 25% less health and damage each, and both drop full loot | x1 each |
 | Phantom | At 66% and again at 33% health it splits off one copy per player online, each with 25 health per world tier (tier 0 counts as 1) and half its damage; copies drop nothing, leave no body, and vanish when the boss dies. Their small health bars sit in a row under the boss's own | x1.3 |
+| Adaptive | Takes 50% less of whichever damage type hit it most in the last 15 seconds, and glows that type's colour. Swap weapons, or spread the group across damage types | x1.3 |
+| Fixated | Marks one player with a red eye over their head and a line in chat, hits them 50% harder and everyone else 30% softer. Every 30 seconds the mark moves to whoever hurt it most in those seconds; alone, you are always marked | x1.3 |
+| Stormbound | Every 20 seconds a glowing circle appears under each player within 40 m, and 2 seconds later lightning strikes it: 8% of your maximum health and a stagger if you are still inside. A roll through it is safe; a shield is not | x1.2 |
+| Gravitic | Every 20 seconds it roars and drags every player within 30 m toward it for 1.5 seconds, then slams: 10% of your maximum health and a stagger within 6 m of its body. A roll dodges the slam | x1.3 |
+| Colossal | 40% bigger, 15% more health, 15% slower. Its heavy blows send out a shockwave that knocks players within 8 m down, no damage; roll through it or jump it | x1.2 |
+
+The chances are weights: 30 for the plain fight and 10 for each of the thirteen aspects, so about one boss fight in
+five stays as the game ships it. Stormbound's lightning, Gravitic's slam and Colossal's shockwave are dodged, not
+blocked: a roll timed through them avoids them, and a raised shield does not.
 
 Everything is in the `aspects:` block under `bosses:` in the rule file: the off switch, the shift interval (0 fixes
 each altar), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
@@ -134,10 +163,15 @@ Summoner calls and, optionally, which aspects that boss may roll.
 ## Boss damage board
 
 When a boss dies, everyone on the server sees who fought it: the boss's name and every player who hurt it, with the
-health each one took off it, most first, at the top of the screen for a minute. It counts what the boss actually
-lost - after its resistances, without the overkill - and only players count, not tames or summons. Twin bosses are
-one fight and one board. Each player can turn it off (`Boss damage board`) or change how long it stays
+health each one took off it, most first, at the far left of the screen, halfway down, for a minute. It counts what
+the boss actually lost - after its resistances, without the overkill - and only players count, not tames or summons.
+Twin bosses are one fight and one board. On a Phantom boss's board, the health players took off its copies counts
+too, including copies killed early. Each player can turn it off (`Boss damage board`) or change how long it stays
 (`Boss damage board seconds`) in the .cfg.
+
+Type `/damage` in chat, or `damage` in the F5 console, to see the latest board again for the full time, even if it
+has faded or you turned the board off. Any player can. A player who joined after the kill gets the board from the
+server, which remembers the latest one until it restarts.
 
 ## Loot
 
@@ -146,8 +180,9 @@ What a kill drops is governed by a `loot:` block in the rule file. Four modes, c
 creature's own drop table rolled once more per star, each roll independent — the default, so a hard fight has a
 real chance at the rare thing), and **Curated** (per-creature rules decide everything). An `extra roll chance`
 line and a `max extra rolls` cap tune Rolled; a global multiplier and a separate boss multiplier scale everything
-after the mode, and a boss's aspect multiplies its drops on top - even in Vanilla mode, where it is the only thing
-that does. Trophies are never multiplied unless you switch that on — one kill, one trophy.
+after the mode, and a boss's aspect multiplies its drops on top - even in Vanilla mode. A wild Gilded creature is
+the one mutation that pays: its `loot` multiplier and coin purse apply in every mode, Vanilla included. Trophies are
+never multiplied unless you switch that on — one kill, one trophy.
 
 Per-creature rules in the same file, matched by prefab name, override any of it: a creature's own drops line,
 adjusted or removed rows of its drop table, extra drops with their own chance and amounts. `elite reference`
@@ -159,13 +194,34 @@ economy you want, and drop the rules it writes back into the file.
 
 Two files, both written and documented on first run, both hot-reloaded while you play:
 
-- `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` — the settings: star chances, mutation chances and mutation
-  strength per biome, colours, nameplate distance, and an off switch for everything.
-- `BepInEx/config/creature_rules.yml` — the rule file, for anything too structured for a flat settings file,
-  including a `mutations enabled` switch that turns any mutation off everywhere.
+- `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` — each player's display preferences: star colours and sizes,
+  whether trait names show, nameplate distance, effect density, stolen-item icons, the boss damage board, the world
+  tier plate, and a diagnostics switch.
+- `BepInEx/config/creature_rules.yml` — the rules: star chances, star power, mutation chances and strength per biome
+  and per creature, a `mutations enabled` switch that turns any mutation off everywhere, and the boss stars and
+  aspects, world tiers, breeding, loot and respawning blocks, each with its own off switch.
 
-A server binds connected players to its own rules. Display preferences — colours, tint strength, nameplate
-distance, whether trait names show at all — stay with each player and are never locked.
+A server binds connected players to its rule file. Display preferences stay with each player and are never locked.
+
+A creature can have mutation rules of its own. An entry under `creatures:` in the rule file, matched by prefab name,
+takes `mutation chance`, `mutation chances` and `mutation power` exactly as a biome block does. They change that
+creature only, in whatever biome it is in, and everything they do not name still comes from the biome. This ends
+Cloaked mosquitoes and leaves the rest of the Plains alone:
+
+```yaml
+creatures:
+  - match: Deathsquito
+    mutation chances:
+      Cloaked: [0]
+```
+
+`mutation power` changes only the fields it names. `mutation chances` replaces the named mutation's curve.
+`mutation chance` replaces the creature's default curve, but any mutation with its own curve in the biome (or in
+`defaults`, like Devouring and Gilded) keeps it, so set that mutation to `[0]` under `mutation chances` to stop it.
+`mutations enabled` still wins, the world tier still raises the chances, and bosses ignore these entries. Two
+entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with three: Troll
+and Lox raise Cloaked's `reveal distance` to 15, and Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
+never Cloaked.
 
 ## Console commands
 
@@ -176,7 +232,8 @@ distance, whether trait names show at all — stay with each player and are neve
 | `elite purge` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first) |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
-| `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the rest are admin only |
+| `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the other `elite` commands are admin only |
+| `damage` | Shows the latest boss damage board again. Open to every player, and typed as `/damage` in chat |
 
 ## Install
 
@@ -191,7 +248,7 @@ same traits. Install it on the dedicated server as well as the clients.
 ## Files
 
 - `plugins/EliteCreaturesReborn.dll` — the mod, a single merged assembly
-- `config/gglasgow.elitecreaturesreborn.cfg` — settings
+- `config/gglasgow.elitecreaturesreborn.cfg` — display preferences, per player
 - `config/creature_rules.yml` — creature rules
 
 ## Building

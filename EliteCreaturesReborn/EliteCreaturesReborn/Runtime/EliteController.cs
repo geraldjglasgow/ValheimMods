@@ -105,11 +105,16 @@ namespace EliteCreaturesReborn.Runtime
             return true;
         }
 
-        /// <summary>A boss scales on the boss table; every other creature on its biome's.</summary>
+        /// <summary>
+        /// A boss scales on the boss table; every other creature on its biome's, with its own `creatures:` entry's
+        /// mutation keys on top. Every machine resolves the same: the biome is in the ZDO, the prefab is the object's.
+        /// </summary>
         private BiomeRules ResolveRules(Heightmap.Biome biome)
         {
-            return _isBoss ? BossView.For(RuleState.Active.Boss) : RuleState.Active.For(biome);
+            return _isBoss ? BossView.For(RuleState.Active.Boss) : RuleState.Active.For(biome, PrefabName);
         }
+
+        private string PrefabName => Utils.GetPrefabName(gameObject);
 
         // OWNER ONLY: the single roll, written to the ZDO for everyone. Reached here only when this machine owns it. When
         // a console spawn has forced exact traits, those are written verbatim instead - bypassing every chance and cap.
@@ -134,10 +139,10 @@ namespace EliteCreaturesReborn.Runtime
                 BossRules boss = RuleState.Active.Boss;
                 int stars = boss.Enabled ? TraitRoller.RollStars(BossView.For(boss)) : 0;
                 Aspect aspect = boss.Aspects.Enabled
-                    ? _forcedAspect ?? AspectRoller.Roll(Utils.GetPrefabName(gameObject), null) : Aspect.None;
+                    ? _forcedAspect ?? AspectRoller.Roll(PrefabName, null) : Aspect.None;
                 return new CreatureTraits(stars, aspect);
             }
-            return TraitRoller.Roll(RuleState.Active.For(biome), RuleState.Active, WorldTier.Current());
+            return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current());
         }
 
         /// <summary>

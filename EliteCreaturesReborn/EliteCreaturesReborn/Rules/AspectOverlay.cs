@@ -149,7 +149,7 @@ namespace EliteCreaturesReborn.Rules
             Aspect? aspect = AspectCatalog.FromName(name);
             if (aspect == null)
             {
-                YamlRead.AddError(errors, key, $"'{name}' is not a boss aspect - use none or one of the eight");
+                YamlRead.AddError(errors, key, $"'{name}' is not a boss aspect - use none or an aspect's name");
             }
             return aspect;
         }

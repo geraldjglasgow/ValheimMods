@@ -14,6 +14,9 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal static class ReflectiveHit
     {
+        /// <summary>The tell's radius: a small spark on the attacker, a fifth of the original 1.5 m flash.</summary>
+        private const float FlashRadius = 0.3f;
+
         public static void Return(Character boss, Character attacker, float dealt)
         {
             EliteController controller = boss.GetComponent<EliteController>();
@@ -27,7 +30,7 @@ namespace EliteCreaturesReborn.Aspects
                 return;
             }
             attacker.Damage(TrueHit(boss, attacker, amount));
-            CreatureRpc.FireFlash(controller.View, attacker.GetCenterPoint(), 1.5f, "reflect");
+            CreatureRpc.FireFlash(controller.View, attacker.GetCenterPoint(), FlashRadius, "reflect");
         }
 
         private static HitData TrueHit(Character boss, Character attacker, float amount)

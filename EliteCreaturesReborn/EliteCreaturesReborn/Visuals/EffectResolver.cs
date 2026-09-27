@@ -86,7 +86,8 @@ namespace EliteCreaturesReborn.Visuals
 
         /// <summary>
         /// Every prefab the scene knows. The game ships its effects in the networked list - each carries a network view,
-        /// which the cosmetic clone strips - and leaves the non-networked list empty, though another mod may fill it.
+        /// which the cosmetic clone disables before it wakes, then strips - and leaves the non-networked list empty,
+        /// though another mod may fill it.
         /// </summary>
         public static IEnumerable<GameObject> Prefabs(ZNetScene scene)
         {

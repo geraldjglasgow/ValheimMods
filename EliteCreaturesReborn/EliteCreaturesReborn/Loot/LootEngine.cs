@@ -8,7 +8,7 @@ namespace EliteCreaturesReborn.Loot
 {
     /// <summary>
     /// Reworks a kill's drop list by the loot rules (`loot.md`): the mode decides quantities, the creature's own
-    /// `creatures:` rules override and extend them, and the global (or boss) multiplier scales the result. Runs
+    /// `creatures:` rules override and extend them, and the global (or boss, or Gilded) multiplier scales the result. Runs
     /// inside the GenerateDropList postfix, on the dying creature's owner, so every roll here happens exactly once
     /// and every player sees the one pile the game replicates. Trophies step outside all of it unless the trophy
     /// switch says otherwise - except a row the file names explicitly, which is the server's own words and honoured.
@@ -25,6 +25,7 @@ namespace EliteCreaturesReborn.Loot
             public int Stars;
             public bool IsBoss;
             public float AspectMultiplier = 1f;
+            public float GildedMultiplier = 1f;
             public float DropsMultiplier;
             public int ExtraRolls;
             public readonly HashSet<string> Overridden = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -43,6 +44,7 @@ namespace EliteCreaturesReborn.Loot
             if (loot.Mode == LootMode.Vanilla)
             {
                 AspectLoot.ApplyAlone(drop, controller, result); // a boss aspect pays even with the loot rules off
+                GildedLoot.ApplyAlone(drop, controller, result); // and so does Gilded, the one mutation that pays
                 return;
             }
             Context ctx = Build(loot, drop, controller);
@@ -58,6 +60,7 @@ namespace EliteCreaturesReborn.Loot
             }
             RollExtras(ctx, result);
             Multiply(ctx, result);
+            GildedLoot.AddBonus(controller, result); // Gilded's purse, after every multiplier and scaled by none
         }
 
         private static Context Build(LootRules loot, CharacterDrop drop, EliteController controller)
@@ -69,6 +72,7 @@ namespace EliteCreaturesReborn.Loot
                 Stars = controller.Traits.Stars,
                 IsBoss = controller.Creature != null && controller.Creature.IsBoss(),
                 AspectMultiplier = AspectLoot.Factor(controller),
+                GildedMultiplier = GildedLoot.Factor(controller),
             };
             ctx.TrophiesFollow = ctx.Rule?.MultiplyTrophies ?? loot.MultiplyTrophies;
             ctx.DropsMultiplier = ctx.Rule?.Drops != null
@@ -256,10 +260,12 @@ namespace EliteCreaturesReborn.Loot
             DropRoller.Add(result, prefab, amount);
         }
 
-        /// <summary>The world-wide multiplier, after everything else; a boss takes the boss and aspect factors on top.</summary>
+        /// <summary>The world-wide multiplier, after everything else; a boss takes the boss and aspect factors on top, a
+        /// Gilded creature its <c>loot</c> factor.</summary>
         private static void Multiply(Context ctx, List<KeyValuePair<GameObject, int>> result)
         {
-            float factor = ctx.Loot.GlobalMultiplier * (ctx.IsBoss ? ctx.Loot.BossMultiplier * ctx.AspectMultiplier : 1f);
+            float factor = ctx.Loot.GlobalMultiplier * ctx.GildedMultiplier
+                * (ctx.IsBoss ? ctx.Loot.BossMultiplier * ctx.AspectMultiplier : 1f);
             if (Mathf.Approximately(factor, 1f))
             {
                 return;

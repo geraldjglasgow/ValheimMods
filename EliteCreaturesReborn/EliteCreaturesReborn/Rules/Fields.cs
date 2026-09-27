@@ -45,6 +45,7 @@ namespace EliteCreaturesReborn.Rules
         // Warding
         public const string Reflect = "reflect";
         public const string Knockback = "knockback";
+        public const string MaxReflect = "max reflect";
 
         // Plated
         public const string Armour = "armour";
@@ -61,7 +62,8 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>The mutation-power fields that name a vanilla prefab (a string) rather than carrying a number.</summary>
         public static bool IsPrefabField(string field) =>
             field == CloudEffect || field == BodyEffect || field == BlastEffect || field == BlastSound
-            || field == WarningEffect;
+            || field == WarningEffect || field == BonusItem || field == GlitterEffect || field == BlinkEffect
+            || field == TellEffect || field == TellSound;
 
         // Devouring
         public const string AbsorbHealth = "absorb health";
@@ -72,6 +74,22 @@ namespace EliteCreaturesReborn.Rules
 
         // Thieving
         public const string MaxItems = "max items";
+
+        // Gilded (`loot` is shared with the aspects block below)
+        public const string BonusItem = "bonus item";
+        public const string BonusAmount = "bonus amount";
+        public const string FleeDistance = "flee distance";
+        public const string GlitterEffect = "glitter effect";
+
+        // Blinking (`every` and `health` are shared)
+        public const string Distance = "distance";
+        public const string TellTime = "tell time";
+        public const string BlinkEffect = "blink effect";
+        public const string TellEffect = "tell effect";
+        public const string TellSound = "tell sound";
+
+        // Relentless
+        public const string ChaseDistance = "chase distance";
 
         // boss aspects block (under `bosses:`)
         public const string Aspects = "aspects";
@@ -96,6 +114,27 @@ namespace EliteCreaturesReborn.Rules
         public const string SplitAt = "split at";
         public const string PerPlayer = "per player";
         public const string HealthPerTier = "health per tier";
+
+        // Adaptive
+        public const string Resist = "resist";
+        public const string Window = "window";
+
+        // Fixated (`every` is shared)
+        public const string MarkedBonus = "marked bonus";
+        public const string OthersLess = "others less";
+
+        // Stormbound (`every`, `tell time`, `radius` and `damage` are shared) and Gravitic
+        public const string Range = "range";
+        public const string PullTime = "pull time";
+        public const string PullSpeed = "pull speed";
+        public const string SlamRadius = "slam radius";
+        public const string SlamDamage = "slam damage";
+
+        // Colossal
+        public const string Bigger = "bigger";
+        public const string MoreHealth = "more health";
+        public const string Slower = "slower";
+        public const string ShockwaveRadius = "shockwave radius";
 
         /// <summary>Phantom's fixed copy count before copies came per player; read only to tell a rule file it is unused.</summary>
         public const string Copies = "copies";

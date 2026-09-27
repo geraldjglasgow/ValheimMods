@@ -90,5 +90,42 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Boss damage board: on a boss, the health each player has taken off it, written by its owner at each
         /// hit so a hand-over mid-fight keeps the count.</summary>
         public const string BossDamage = "ecr_boss_dmg";
+
+        /// <summary>Adaptive: the damage type the boss resists right now, by its <c>AdaptiveType</c> value (0 or absent for
+        /// none). Written by the boss's owner only when it changes, so every client glows the same colour and a new owner
+        /// carries on from it.</summary>
+        public const string Adapted = "ecr_adaptive";
+
+        /// <summary>Fixated: on the boss, the marked player's character as a ZDOID (stored under this name plus "_u" and
+        /// "_i"), written by the boss's owner so every machine sees the same mark and a new owner keeps it.</summary>
+        public const string Fixated = "ecr_fixated";
+
+        /// <summary>Fixated: when the mark last landed or moved (shared-clock ms), so a client says the chat line only for
+        /// a change that just happened, never for a mark it meets later.</summary>
+        public const string FixatedAt = "ecr_fixated_at";
+
+        /// <summary>Blinking: when the last tell went out (shared-clock ms), so a new owner never blinks twice.</summary>
+        public const string BlinkedAt = "ecr_blink_at";
+
+        /// <summary>Stormbound: when the latest storm's lightning falls (shared-clock ms), on the boss. Written by its
+        /// owner with the circles, so every client strikes at the same moment, a player arriving mid-storm still sees it,
+        /// and a new owner carries on the rhythm instead of calling a second storm at once.</summary>
+        public const string StormAt = "ecr_storm_at";
+
+        /// <summary>Stormbound: the latest storm, packed, on the boss - the radius and damage its owner called it with and
+        /// its circle centres, so every client draws and judges with the same numbers; read with <see cref="StormAt"/>.</summary>
+        public const string StormCircles = "ecr_storm";
+
+        /// <summary>Relentless: the ZDOID of the target it has picked, written by its owner and cleared when lost, so a
+        /// new owner takes up the same hunt.</summary>
+        public const string Quarry = "ecr_quarry";
+
+        /// <summary>Gravitic: when the boss last roared (shared-clock ms), written by its owner, so a new owner keeps the
+        /// rhythm and never roars twice.</summary>
+        public const string GravityAt = "ecr_gravity_at";
+
+        /// <summary>Colossal: on a boss's ragdoll, the size its corpse keeps, written by the ragdoll's owner so every machine
+        /// grows its copy to match the boss that fell.</summary>
+        public const string CorpseScale = "ecr_corpse_scale";
     }
 }

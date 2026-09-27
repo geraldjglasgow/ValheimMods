@@ -30,7 +30,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            ApplyOutgoing(hit);
+            ApplyOutgoing(victim, hit);
             ApplyIncoming(victim, hit);
             ApplyAttackerMutations(victim, hit);
         }
@@ -57,7 +57,7 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        private static void ApplyOutgoing(HitData hit)
+        private static void ApplyOutgoing(Character victim, HitData hit)
         {
             Character attacker = hit.GetAttacker();
             if (attacker == null || attacker.IsPlayer())
@@ -72,7 +72,7 @@ namespace EliteCreaturesReborn.Patches
             CreatureTraits traits = controller.Traits;
             hit.ApplyModifier(DamageMath.OutgoingMultiplier(controller.Rules, traits, attacker.GetHealthPercentage()));
             hit.m_damage.m_blunt += DamageMath.DevouredFlatDamage(traits, controller.View.GetZDO());
-            AspectDamage.Outgoing(controller, hit); // after the stars, so an aspect multiplies the starred hit
+            AspectDamage.Outgoing(controller, victim, hit); // after the stars, so an aspect multiplies the starred hit
         }
 
         private static void ApplyIncoming(Character victim, HitData hit)

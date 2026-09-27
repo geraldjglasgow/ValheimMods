@@ -11,6 +11,7 @@ namespace EliteCreaturesReborn.Traits
         {
             Mutation.Mad, Mutation.Bloated, Mutation.Cloaked, Mutation.Splintering, Mutation.Leeching,
             Mutation.Warding, Mutation.Plated, Mutation.Miasmic, Mutation.Devouring, Mutation.Thieving,
+            Mutation.Gilded, Mutation.Blinking, Mutation.Relentless,
         };
 
         /// <summary>The mutation a rule-file name (its display word) refers to, or null for an unknown word.</summary>
@@ -39,6 +40,9 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Miasmic => "Miasmic",
             Mutation.Devouring => "Devouring",
             Mutation.Thieving => "Thieving",
+            Mutation.Gilded => "Gilded",
+            Mutation.Blinking => "Blinking",
+            Mutation.Relentless => "Relentless",
             _ => "",
         };
 
@@ -55,6 +59,9 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Miasmic => "#1E6B2E",     // Dark green
             Mutation.Devouring => "#7A0F0F",   // Dark red
             Mutation.Thieving => "#A64BE0",    // Violet
+            Mutation.Gilded => "#FFE066",      // Pale gold - lighter than Plated's deep yellow
+            Mutation.Blinking => "#29E0E0",    // Cyan - greener than Cloaked's sky blue
+            Mutation.Relentless => "#FF7F24",  // Orange
             _ => "#FFFFFF",
         };
     }

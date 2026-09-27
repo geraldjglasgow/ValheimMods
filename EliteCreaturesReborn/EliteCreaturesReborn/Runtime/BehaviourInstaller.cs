@@ -32,6 +32,23 @@ namespace EliteCreaturesReborn.Runtime
             {
                 controller.gameObject.AddComponent<DevourBehaviour>();
             }
+            InstallLater(controller, traits);
+        }
+
+        private static void InstallLater(EliteController controller, CreatureTraits traits)
+        {
+            if (traits.Has(Mutation.Gilded))
+            {
+                controller.gameObject.AddComponent<GildedBehaviour>();
+            }
+            if (traits.Has(Mutation.Blinking))
+            {
+                controller.gameObject.AddComponent<BlinkBehaviour>();
+            }
+            if (traits.Has(Mutation.Relentless))
+            {
+                controller.gameObject.AddComponent<RelentlessBehaviour>();
+            }
         }
     }
 }

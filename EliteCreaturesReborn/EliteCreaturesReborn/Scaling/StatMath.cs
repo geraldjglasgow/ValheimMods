@@ -29,6 +29,10 @@ namespace EliteCreaturesReborn.Scaling
             {
                 bonus += Enhance.Stat(rules, traits, Mutation.Bloated, Fields.Health) - 1f;
             }
+            if (traits.Has(Mutation.Blinking))
+            {
+                bonus += rules.PowerOf(Mutation.Blinking, Fields.Health) - 1f; // a cost: never enhanced
+            }
             return Mathf.Max(HealthFloor, 1f + bonus);
         }
 
@@ -49,7 +53,8 @@ namespace EliteCreaturesReborn.Scaling
             {
                 bonus += rules.PowerOf(Mutation.Devouring, Fields.Move) - 1f; // a tuning knob, usually <= 1: never enhanced
             }
-            return Mathf.Max(MoveFloor, 1f + bonus);
+            float factor = Mathf.Max(MoveFloor, 1f + bonus) * AspectMath.SpeedFactor(traits); // Colossal, a layer apart
+            return traits.Has(Mutation.Relentless) ? Mathf.Min(1f, factor) : factor; // Relentless: never above its base
         }
 
         public static float SwingSpeedMultiplier(BiomeRules rules, CreatureTraits traits)

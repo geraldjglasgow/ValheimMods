@@ -8,6 +8,8 @@ namespace EliteCreaturesReborn.Rules
     /// The fully resolved rules for one biome: a straight star-count distribution, the star-power lines, the default
     /// mutation chance curve, the per-mutation chance overrides and the per-mutation power fields. A biome block in the
     /// file overrides only what it names, so by the time a creature holds one of these every field is already filled.
+    /// A creature whose `creatures:` entry names mutation keys holds a copy with those keys on top
+    /// (<see cref="CreatureMutationRule"/>).
     /// </summary>
     public sealed class BiomeRules
     {

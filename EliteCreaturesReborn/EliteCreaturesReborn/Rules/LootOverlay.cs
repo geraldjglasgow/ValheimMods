@@ -5,9 +5,9 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
-    /// Reads the rule file's `loot:` block and `creatures:` list, in the same shape as the other overlays: only the
-    /// keys a block names change, every problem is recorded against its line, and a value that will not parse keeps
-    /// its default rather than throwing.
+    /// Reads the rule file's `loot:` block and the loot keys of each `creatures:` entry, in the same shape as the other
+    /// overlays: only the keys a block names change, every problem is recorded against its line, and a value that will
+    /// not parse keeps its default rather than throwing.
     /// </summary>
     internal static class LootOverlay
     {
@@ -58,40 +58,17 @@ namespace EliteCreaturesReborn.Rules
             return fallback;
         }
 
-        public static void ApplyCreatures(RuleSet set, YamlNode node, List<string> errors)
+        /// <summary>
+        /// One `creatures:` entry's loot keys, read into the creature's rule. A key the entry names replaces what an
+        /// earlier entry for the same creature set, and its drop rows are appended, so two entries merge (see
+        /// <see cref="CreatureOverlay"/>); a key it leaves out, or `drops: []`, keeps the earlier value.
+        /// </summary>
+        public static void ReadRule(CreatureLootRule rule, YamlMappingNode block, List<string> errors)
         {
-            if (!(node is YamlSequenceNode seq))
+            if (YamlRead.Child(block, Fields.Drops) is YamlNode drops
+                && YamlRead.Floats(drops, errors, $"'{Fields.Drops}'") is float[] line)
             {
-                YamlRead.AddError(errors, node, "'creatures' should be a list of creature blocks");
-                return;
-            }
-            foreach (YamlNode item in seq.Children)
-            {
-                ReadCreature(set, item, errors);
-            }
-        }
-
-        private static void ReadCreature(RuleSet set, YamlNode item, List<string> errors)
-        {
-            if (!(YamlRead.Map(item, errors, "a creature entry") is YamlMappingNode block))
-            {
-                return;
-            }
-            string? name = YamlRead.Scalar(block, "match");
-            if (string.IsNullOrEmpty(name))
-            {
-                YamlRead.AddError(errors, block, "a creature entry has no 'match' prefab name");
-                return;
-            }
-            set.CreatureLoot[name!] = ReadRule(block, errors);
-        }
-
-        private static CreatureLootRule ReadRule(YamlMappingNode block, List<string> errors)
-        {
-            CreatureLootRule rule = new CreatureLootRule();
-            if (YamlRead.Child(block, Fields.Drops) is YamlNode drops)
-            {
-                rule.Drops = YamlRead.Floats(drops, errors, $"'{Fields.Drops}'");
+                rule.Drops = line;
             }
             if (YamlRead.Child(block, Fields.MultiplyTrophies) != null)
             {
@@ -99,7 +76,6 @@ namespace EliteCreaturesReborn.Rules
             }
             ReadRows(rule.Overrides, block, Fields.DropOverrides, errors);
             ReadRows(rule.Extras, block, Fields.ExtraDrops, errors);
-            return rule;
         }
 
         private static void ReadRows(List<DropRule> into, YamlMappingNode block, string key, List<string> errors)

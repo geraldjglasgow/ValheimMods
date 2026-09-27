@@ -46,6 +46,8 @@ must be the same for both belongs in the gameplay settings instead.
 | **Show stolen items** | Whether a Thieving creature's carried-item icons draw on its nameplate at all (`thieving.md`) |
 | **Stolen item icon size** | Size of those icons as a multiple of vanilla's own star size, **down to off** via the setting above |
 | **Show world tier** | Whether the inventory's globe plate shows the world tier under the weight (`world-tiers.md`) |
+| **Boss damage board** | Whether the board of who hurt a boss, and by how much, shows when a boss dies - at the far left of the screen, halfway down. `/damage` still shows the latest board on request with this off |
+| **Boss damage board seconds** | How long the board stays on screen, 5 to 600 seconds, 60 by default |
 
 Three of these go **all the way to off**, and that is intentional rather than generous. The visual language in
 this mod is deliberately loud - tints, coloured stars, flames - because difficulty should be legible. A player who
@@ -56,7 +58,7 @@ real way out and not a smaller version of the same thing.
 
 # 3. The default palettes
 
-The defaults are built from **the four mutation colours** in `mutations.md` and **the six elements** in
+The defaults are built from **the thirteen mutation colours** in `mutations.md` and **the six elements** in
 `attunements.md`.
 
 That is the point: they are **derived from the mod's own design rather than being an arbitrary table someone has
@@ -64,7 +66,8 @@ to justify.** A mutation's colour is the colour that mutation already means. Nob
 green for Miasmic, because green is what Miasmic is.
 
 **A player who dislikes them replaces them wholesale.** The palette is a full set of values in the settings file,
-not a theme name, so a player can hand the mod any twelve colours they like.
+not a theme name, so a player can hand the mod any colour they like for each entry - today one per mutation,
+thirteen in all, in the `9 - Palette (per player)` section.
 
 ---
 
@@ -132,6 +135,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Nameplate display distance
 - [ ] Whether trait names show at all
 - [ ] Show world tier
+- [ ] Boss damage board and its seconds
 
 ## Multiplayer
 
@@ -151,3 +155,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-09-27 | 3.9.0: palette counts brought to thirteen mutation colours; the two boss damage board settings added to the table. | - |

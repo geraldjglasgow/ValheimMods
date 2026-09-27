@@ -39,7 +39,7 @@ bosses:
     # Relative weights, not percentages. `none` is a plain vanilla fight. An
     # altar never shifts to the aspect it already shows.
     chances:
-      none: 20
+      none: 30
       Reflective: 10
       Shielded: 10
       Mending: 10
@@ -48,6 +48,11 @@ bosses:
       Enraged: 10
       Twin: 10
       Phantom: 10
+      Adaptive: 10
+      Fixated: 10
+      Stormbound: 10
+      Gravitic: 10
+      Colossal: 10
 
     # Multiplies everything the boss drops, on top of the star `drops` line and
     # `boss multiplier` - and even in Vanilla loot mode. Trophies follow the
@@ -63,6 +68,11 @@ bosses:
       Phantom: 1.3
       Reflective: 1.4
       Summoner: 1.5
+      Stormbound: 1.2
+      Colossal: 1.2
+      Adaptive: 1.3
+      Fixated: 1.3
+      Gravitic: 1.3
 
     # Percentages are of the boss as its stars left it.
     #   Reflective   reflect - % of each hit you land that comes back to you, as
@@ -80,6 +90,21 @@ bosses:
     #                online at each split; health per tier - each copy's max
     #                health per world tier (tier 0 counts as 1); less damage -
     #                % less than the boss deals
+    #   Adaptive     resist - % less of whichever damage type hit it most in
+    #                the last `window` seconds; its glow shows which type
+    #   Fixated      marked bonus - % harder it hits the marked player; others
+    #                less - % softer it hits everyone else; every - seconds
+    #                before the mark moves to whoever hurt it most
+    #   Stormbound   every - seconds between strikes; tell time - seconds the
+    #                glowing circle shows under each player within `range` m
+    #                before lightning hits it; radius - the circle's size in m;
+    #                damage - % of a struck player's max health, as lightning
+    #   Gravitic     every - seconds between pulls; range - m it pulls players
+    #                from; pull time - seconds; pull speed - m/s toward it;
+    #                slam radius, slam damage - the slam after the pull, damage
+    #                as % of each player's max health
+    #   Colossal     bigger, more health, slower - %; shockwave radius - m its
+    #                heavy attacks knock players down in
     power:
       Reflective:   { reflect: 15 }
       Shielded:     { arrow reduction: 30 }
@@ -89,6 +114,11 @@ bosses:
       Enraged:      { physical bonus: 20 }
       Twin:         { less health: 25, less damage: 25 }
       Phantom:      { split at: [66, 33], per player: 1, health per tier: 25, less damage: 50 }
+      Adaptive:     { resist: 50, window: 15 }
+      Fixated:      { marked bonus: 50, others less: 30, every: 30 }
+      Stormbound:   { every: 20, tell time: 2, radius: 2.5, damage: 8, range: 40 }
+      Gravitic:     { every: 20, range: 30, pull time: 1.5, pull speed: 6, slam radius: 6, slam damage: 10 }
+      Colossal:     { bigger: 40, more health: 15, slower: 15, shockwave radius: 8 }
 
     # Per boss, by prefab name. `summons` is what Summoner calls (a boss with no
     # list never rolls Summoner); `aspects: [none, Twin, ...]` narrows that boss's

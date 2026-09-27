@@ -6,7 +6,8 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
-    /// Rolls a fresh creature's traits from its biome's rules: a star count drawn from the biome's star-chance
+    /// Rolls a fresh creature's traits from its rules - its biome's, with its own `creatures:` entry's mutation keys on
+    /// top (<see cref="RuleSet.For(Heightmap.Biome, string)"/>): a star count drawn from the biome's star-chance
     /// distribution, then every enabled mutation rolled independently at its own biome-and-star chance. A creature
     /// that fails every roll is plain; one that passes several carries several. `max mutations` caps the set. The world
     /// tier leans both rolls: its star boost multiplies each star count's weight once per star, and its mutation boost

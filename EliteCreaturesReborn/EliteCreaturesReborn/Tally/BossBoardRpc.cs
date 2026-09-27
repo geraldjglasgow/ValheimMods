@@ -6,10 +6,11 @@ namespace EliteCreaturesReborn.Tally
 {
     /// <summary>
     /// The boss damage board's message. The boss's owner sends it as the boss dies, over the game's routed-RPC bus to
-    /// every player on the server, and each client shows it (<see cref="BossBoardView"/>). A Twin's tally is the pair's
-    /// together, since they share one health pool; the fight is named by the smaller of the pair's IDs, so the partner
-    /// that falls with it sends the same fight and does not replace the board. A Phantom copy is a decoy and sends
-    /// nothing.
+    /// every machine on the server, and each one keeps it as its latest board (<see cref="BossBoard"/>) and shows it
+    /// (<see cref="BossBoardView"/>). A Twin's tally is the pair's together, since they share one health pool; the fight
+    /// is named by the smaller of the pair's IDs, so the partner that falls with it sends the same fight and replaces
+    /// neither the board kept nor the one on screen. A Phantom copy is a decoy and sends nothing; the damage done to it
+    /// is already in its boss's tally.
     /// </summary>
     internal static class BossBoardRpc
     {
@@ -17,7 +18,10 @@ namespace EliteCreaturesReborn.Tally
 
         private static ZRoutedRpc? _registeredOn;
 
-        /// <summary>Registers the handler once per routed-RPC bus. Called at world start on every machine.</summary>
+        /// <summary>
+        /// Registers the handler once per routed-RPC bus. Called at world start on every machine. A new bus is a new
+        /// session, so the board kept from the last world or server is dropped with the old one.
+        /// </summary>
         public static void EnsureRegistered()
         {
             ZRoutedRpc bus = ZRoutedRpc.instance;
@@ -26,6 +30,7 @@ namespace EliteCreaturesReborn.Tally
                 return;
             }
             _registeredOn = bus;
+            BossBoard.Forget();
             bus.Register<ZPackage>(Rpc, OnBoard);
         }
 
@@ -41,7 +46,7 @@ namespace EliteCreaturesReborn.Tally
             AddPartner(entries, twin);
             if (entries.Count > 0)
             {
-                Send(FightOf(zdo.m_uid, twin), boss.m_name, entries);
+                Send(new BossBoard { Fight = FightOf(zdo.m_uid, twin), BossName = boss.m_name, Entries = entries });
             }
         }
 
@@ -66,25 +71,24 @@ namespace EliteCreaturesReborn.Tally
             return string.CompareOrdinal(a, b) <= 0 ? a : b;
         }
 
-        private static void Send(string fight, string bossName, List<DamageTally.Entry> entries)
+        // Everybody includes the sender itself: the routed-RPC bus hands a broadcast to its own handler as well.
+        private static void Send(BossBoard board)
         {
             ZPackage pkg = new ZPackage();
-            pkg.Write(fight);
-            pkg.Write(bossName);
-            DamageTally.Write(pkg, entries);
+            board.Write(pkg);
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Rpc, pkg);
         }
 
         private static void OnBoard(long sender, ZPackage pkg) => Guard.Run("BossBoardRpc.OnBoard", () => Read(pkg));
 
-        // A dedicated server has no HUD, and the view simply finds nothing to draw on.
+        // A dedicated server has no HUD: it keeps the board for players who ask later, and the view finds nothing to draw on.
         private static void Read(ZPackage pkg)
         {
-            string fight = pkg.ReadString();
-            string bossName = pkg.ReadString();
-            List<DamageTally.Entry> entries = new List<DamageTally.Entry>();
-            DamageTally.Read(pkg, entries);
-            BossBoardView.Show(fight, bossName, entries);
+            BossBoard board = BossBoard.Read(pkg);
+            if (BossBoard.Remember(board))
+            {
+                BossBoardView.Show(board);
+            }
         }
     }
 }

@@ -6,10 +6,10 @@ behaviour document they are all drawn from.
 This file covers the mod's console commands and who is allowed to run them. The settings they read and reload are
 `configuration.md`; the access levels are enforced through `server-enforcement.md`.
 
-**Status: partly built.** Four sub-commands exist: `spawn`, `inspect`, `purge` and `effects`. Three specified ones
-do not: `pressure`, `zones` and `reload` - each blocked on its own feature. **The built names and the specified
-names disagree**, which is the open decision at the end of this file and should be settled before anything else is
-added.
+**Status: partly built.** Six sub-commands exist: `spawn`, `inspect`, `purge`, `effects`, `reference` and `tier`,
+plus the top-level `damage` (3.9.0, section 1). Three specified ones do not: `pressure`, `zones` and `reload` -
+each blocked on its own feature. **The built names and the specified names disagree**, which is the open decision
+at the end of this file and should be settled before anything else is added.
 
 ---
 
@@ -24,8 +24,8 @@ sub-commands discoverable, and a `help` sub-command lists them.
 | Sub-command | Does |
 | --- | --- |
 | **Pressure** | Prints the pressure where you stand, and what contributed to it |
-| **Inspect** | Prints the resolved traits and values for the creature you are looking at, including a Thieving creature's pouch (`thieving.md`) and a boss's aspect, its loot multiplier, its twin or phantom link and Summoner's waves (`boss-aspects.md`) |
-| **Summon** | Spawns a creature with chosen stars, mutation and attunement, for testing. A boss takes one aspect word instead (`elite spawn Bonemass 2 Twin`), and brings its twin, or splits off its phantom copies, as it would from the altar |
+| **Inspect** | Prints the resolved traits and values for the creature you are looking at, including a Thieving creature's pouch (`thieving.md`) and a boss's aspect, its loot multiplier, its twin or phantom link, Summoner's waves, the damage type an Adaptive boss resists now ("resisting now: fire") and whom a Fixated boss has marked ("marked: Gerald (12 s ago)") (`boss-aspects.md`) |
+| **Summon** | Spawns a creature with chosen stars, mutation and attunement, for testing. A boss takes one aspect word instead (`elite spawn Bonemass 2 Twin`), any of the thirteen - Adaptive, Fixated, Stormbound, Gravitic and Colossal included - and brings its twin, or splits off its phantom copies, as it would from the altar |
 | **Purge** | Removes loaded modified creatures - dropping any stolen goods first, the one documented exception to "no drops" (`thieving.md`) |
 | **Zones** | Lists retaliation zones, their level and their decay |
 | **Tier** | Shows the world tier, what it does to the rolls right now, and which bosses count toward it. Read-only |
@@ -34,6 +34,21 @@ sub-commands discoverable, and a `help` sub-command lists them.
 
 The separate settings command is `charter`, provided by the workspace library of the same name, with `status`,
 `diff` and `versions` (`server-enforcement.md`). It is not redesigned here.
+
+## One top-level player command: `damage`
+
+**`damage` shows the latest boss damage board again**, for the full `Boss damage board seconds`, whether it is
+still on screen or has faded. It is typed as `/damage` in chat, or `damage` in the F5 console.
+
+- **It is its own word, not an `elite` sub-command**, and the one exception to the one-name rule above. It is for
+  players rather than admins, it is typed in chat mid-session, and `/damage` is what a player reaches for. The game
+  has no `damage` command of its own, so the name is free.
+- **It shows the board even for a player who turned the board off.** They asked for it by name.
+- **With the board already up, it starts the full time again.**
+- **Which board.** Every machine remembers the latest board it received, the server included. A player who joined
+  after the kill has none, so their machine asks the server, which answers that player alone. With no board
+  anywhere it says `damage: no boss has fallen since the world was loaded.` The server's memory lasts until it
+  restarts; nothing is saved with the world.
 
 ## Two of these are the mod explaining itself
 
@@ -72,6 +87,10 @@ The split follows one line: **read-only or world-changing.**
 - **Tier is read-only too.** It was once meant to set the tier under a Manual source; the tier is now always
   derived from the world's boss defeats (`world-tiers.md`), so it only reports, and it is open to every player.
 
+- **`damage` is read-only and open to everyone, always.** It only shows again what the server already sent to
+  every player. It is not a cheat, needs no `devcommands` and no admin rights, and is not one of the access levels
+  above.
+
 Zones is read-only. Reload re-reads files and so changes what everyone is playing, which puts it with the second
 group. Reference changes nothing in the world - it writes one fixed-name report next to the config files - so it
 sits with the read-only group; a server that dislikes even that can restrict it, since access is a setting.
@@ -92,6 +111,9 @@ sits with the read-only group; a server that dislikes even that can restrict it,
   wants to try a tier out uses the game's own `setkey` and `removekey`.
 - **Reload re-reads the server's files and re-sends them**, so one admin's reload reaches every connected player -
   which is the point of it, and also why it is not a read-only command.
+- **`damage` is answered locally** from the latest board this machine received. Only a machine with none - a
+  player who joined after the kill - asks the server, and the answer goes to that player alone. A board that
+  arrives from a new boss death while the question is out is not overwritten by the older answer.
 
 This must work on a dedicated server the first time it is built, not in a later pass.
 
@@ -118,6 +140,7 @@ This must work on a dedicated server the first time it is built, not in a later 
 | Tier | `tier` | Agrees; read-only, open to every player |
 | Reload | - | Not built |
 | - | `effects` | Built, unspecified |
+| - | `damage` | Built in 3.9.0 at the user's request; top level, not under `elite`, open to every player |
 
 Two things to settle:
 
@@ -149,6 +172,8 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 - [~] `spawn`, `inspect`, `purge` and `effects` exist
 - [~] `tier` exists and is open to every player - built in 3.6.0, not tested in game
+- [~] `damage` (and `/damage` in chat) shows the latest boss board again, for any player, even with the board off;
+  a late joiner gets it from the server - built in 3.9.0, not tested in game
 - [ ] The two specified but missing sub-commands (Pressure, Zones), and Reload
 - [ ] Inspect, Pressure and Tier are read-only; Summon and Purge change the world
 
@@ -174,3 +199,5 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-20 | `Reference` added as the eighth sub-command, read-only group (`loot.md` section 7). | pending |
 | 2026-09-26 | `tier` built: read-only, open to every player; the Manual source it was to set is dropped (`world-tiers.md`). | EliteCreaturesReborn-v3.6.0 |
+| 2026-09-27 | `damage` built as a top-level, player-facing command (`/damage` in chat): replays the latest boss board, open to everyone, late joiners served by the server. `elite inspect` lists a Thieving creature's whole pouch. | - |
+| 2026-09-27 | `elite spawn <boss> <stars> <aspect>` takes the five new aspect words (Adaptive, Fixated, Stormbound, Gravitic, Colossal); `elite inspect` shows an Adaptive boss's resisted type and a Fixated boss's mark. | - |

@@ -15,7 +15,7 @@ namespace EliteCreaturesReborn.Loot
     internal static class DropRoller
     {
         /// <summary>The game's own per-row quantity cap in GenerateDropList.</summary>
-        private const int AmountCap = 100;
+        public const int AmountCap = 100;
 
         private static readonly HashSet<string> _warnedMissing = new HashSet<string>();
 
@@ -80,6 +80,34 @@ namespace EliteCreaturesReborn.Loot
                 }
             }
             result.Add(new KeyValuePair<GameObject, int>(prefab, amount));
+        }
+
+        /// <summary>
+        /// Scales the creature's own table rows by a factor: a multiplier's whole treatment when the loot engine stands
+        /// aside (Vanilla mode). Trophies only when <paramref name="trophies"/> says so; another mod's rows never.
+        /// </summary>
+        public static void ScaleOwnRows(CharacterDrop drop, List<KeyValuePair<GameObject, int>> result, float factor,
+            bool trophies)
+        {
+            if (Mathf.Approximately(factor, 1f))
+            {
+                return;
+            }
+            HashSet<GameObject> own = new HashSet<GameObject>();
+            foreach (CharacterDrop.Drop row in drop.m_drops)
+            {
+                if (row.m_prefab != null)
+                {
+                    own.Add(row.m_prefab);
+                }
+            }
+            for (int i = 0; i < result.Count; i++)
+            {
+                if (own.Contains(result[i].Key) && (trophies || !IsTrophy(result[i].Key)))
+                {
+                    result[i] = new KeyValuePair<GameObject, int>(result[i].Key, Scaled(result[i].Value, factor));
+                }
+            }
         }
 
         /// <summary>A quantity scaled by a multiplier, never below one: to remove a drop, remove the row instead.</summary>

@@ -8,10 +8,11 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
-    /// The boss damage board's tally, on the boss's owner, where the game applies every hit. The health before the hit is
-    /// read in the prefix and the loss credited to the attacking player in the postfix, so the tally counts what the
-    /// boss actually lost: after its resistances, and never the overkill below zero. Only players are credited; a
-    /// Phantom copy is a decoy and counts nothing. The prefix never throws, so it can never stop a hit landing.
+    /// The boss damage board's tally, on the owner of the boss or of one of its Phantom copies, where the game applies
+    /// every hit. The health before the hit is read in the prefix and the loss credited to the attacking player in the
+    /// postfix, so the tally counts what was actually lost: after resistances, and never the overkill below zero. Only
+    /// players are credited. A hit on a copy counts on its boss's board, the same way (<see cref="BossCredit"/>). The
+    /// prefix never throws, so it can never stop a hit landing.
     /// </summary>
     [HarmonyPatch(typeof(Character), nameof(Character.ApplyDamage))]
     public static class BossDamagePatch
@@ -21,7 +22,7 @@ namespace EliteCreaturesReborn.Patches
             __state = 0f;
             try
             {
-                __state = __instance.IsBoss() ? __instance.GetHealth() : 0f;
+                __state = Tallied(__instance) ? __instance.GetHealth() : 0f;
             }
             catch (Exception e)
             {
@@ -29,21 +30,32 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
+        // A copy is its boss's own prefab, so it is a boss too; its mark is read as well in case that ever changes.
+        private static bool Tallied(Character character)
+        {
+            if (character.IsBoss())
+            {
+                return true;
+            }
+            ZNetView nview = character.m_nview;
+            return !character.IsPlayer() && nview != null && nview.IsValid()
+                && AspectStore.GetPhantomOf(nview.GetZDO()) != ZDOID.None;
+        }
+
         private static void Postfix(Character __instance, HitData hit, float __state) =>
             SafeCall.Run("Character.ApplyDamage boss tally", () => Credit(__instance, hit, __state));
 
-        private static void Credit(Character boss, HitData hit, float before)
+        private static void Credit(Character victim, HitData hit, float before)
         {
-            ZNetView nview = boss.m_nview;
+            ZNetView nview = victim.m_nview;
             if (before <= 0f || nview == null || !nview.IsValid() || !nview.IsOwner())
             {
                 return;
             }
-            float loss = before - Mathf.Max(0f, boss.GetHealth());
-            ZDO zdo = nview.GetZDO();
-            if (loss > 0f && hit.GetAttacker() is Player player && AspectStore.GetPhantomOf(zdo) == ZDOID.None)
+            float loss = before - Mathf.Max(0f, victim.GetHealth());
+            if (loss > 0f && hit.GetAttacker() is Player player)
             {
-                DamageTally.Add(zdo, player, loss);
+                BossCredit.Add(nview.GetZDO(), player, loss);
             }
         }
     }
@@ -68,10 +80,18 @@ namespace EliteCreaturesReborn.Patches
         }
     }
 
-    /// <summary>World start, on every machine: the board's message is registered before any boss can fall.</summary>
+    /// <summary>
+    /// World start, on every machine: the board's messages are registered before any boss can be hit or fall - the
+    /// board itself, a copy's hits credited to its boss's owner, and a late joiner asking the server for the latest.
+    /// </summary>
     [HarmonyPatch(typeof(ZoneSystem), "Start")]
     public static class BossBoardStartPatch
     {
-        private static void Postfix() => SafeCall.Run("ZoneSystem.Start boss board", BossBoardRpc.EnsureRegistered);
+        private static void Postfix()
+        {
+            SafeCall.Run("ZoneSystem.Start boss board", BossBoardRpc.EnsureRegistered);
+            SafeCall.Run("ZoneSystem.Start boss credit", BossCredit.EnsureRegistered);
+            SafeCall.Run("ZoneSystem.Start boss board recall", BossBoardRecall.EnsureRegistered);
+        }
     }
 }

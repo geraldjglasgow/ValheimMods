@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
@@ -9,11 +10,13 @@ namespace EliteCreaturesReborn.Scaling
     /// The aspects that change a hit as it lands, applied from the damage patch on the victim's owner after the star
     /// scaling, so they multiply the starred hit. Outgoing: Twin's and a Phantom copy's cut to the whole hit, Enraged's
     /// boost to its physical parts, Elementalist's to its elemental ones (poison and fire included, before the game
-    /// turns them into their ticking effects). Incoming: Shielded's cut to hits from bows and crossbows.
+    /// turns them into their ticking effects), and Fixated's boost or cut by whether the victim is its mark (see
+    /// <see cref="FixatedDamage"/>). Incoming: Shielded's cut to hits from bows and crossbows, and Adaptive's cut to
+    /// the damage type it resists (see <see cref="AdaptiveResist"/>).
     /// </summary>
     public static class AspectDamage
     {
-        public static void Outgoing(EliteController attacker, HitData hit)
+        public static void Outgoing(EliteController attacker, Character victim, HitData hit)
         {
             CreatureTraits traits = attacker.Traits;
             float factor = AspectMath.DamageFactor(traits);
@@ -29,6 +32,10 @@ namespace EliteCreaturesReborn.Scaling
             {
                 Elemental(hit, AspectMath.Boost(AspectMath.Power(Aspect.Elementalist, Fields.ElementalBonus)));
             }
+            if (traits.Aspect == Aspect.Fixated && !traits.PhantomCopy)
+            {
+                FixatedDamage.Apply(attacker, victim, hit);
+            }
         }
 
         public static void Incoming(EliteController victim, HitData hit)
@@ -36,6 +43,10 @@ namespace EliteCreaturesReborn.Scaling
             if (victim.Traits.Aspect == Aspect.Shielded && IsArrow(hit))
             {
                 hit.ApplyModifier(AspectMath.Cut(AspectMath.Power(Aspect.Shielded, Fields.ArrowReduction)));
+            }
+            if (victim.Traits.Aspect == Aspect.Adaptive)
+            {
+                AdaptiveResist.Apply(victim, hit);
             }
         }
 

@@ -33,8 +33,10 @@ namespace EliteCreaturesReborn.Rules
 
     /// <summary>
     /// The loot rules for one creature or boss, matched by prefab name from the file's `creatures:` list. Everything
-    /// here is optional: an absent field leaves that part of the creature's loot to the world-wide settings. In
-    /// Curated mode <see cref="Extras"/> is the creature's whole table (`loot.md` section 6).
+    /// here is optional: an absent field leaves that part of the creature's loot to the world-wide settings, so an
+    /// entry that names only mutation keys leaves an empty rule that drops exactly as no entry would. In Curated mode
+    /// <see cref="Extras"/> is the creature's whole table (`loot.md` section 6). Two entries for one creature fill
+    /// the same rule; the same entry's mutation keys live in <see cref="CreatureMutationRule"/>.
     /// </summary>
     public sealed class CreatureLootRule
     {

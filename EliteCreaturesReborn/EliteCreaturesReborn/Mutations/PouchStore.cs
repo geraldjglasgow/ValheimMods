@@ -8,9 +8,10 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// The Thieving pouch: up to <see cref="HardCap"/> stolen items, packed into one byte array on the creature's ZDO
-    /// under <see cref="TraitKeys.Pouch"/> - the same "serialise an ItemData into a ZDO field" idiom the game's own
-    /// ItemDrop already uses for a single item (ItemDrop.SaveToZDO), repeated here for a small list. A ZDO is
+    /// The Thieving pouch: one stolen item per star, never fewer than the rule file's `max items` (1 by default, so an
+    /// unstarred thief still takes one) and never more than <see cref="HardCap"/>, packed into one byte array on the
+    /// creature's ZDO under <see cref="TraitKeys.Pouch"/> - the same "serialise an ItemData into a ZDO field" idiom the
+    /// game's own ItemDrop already uses for a single item (ItemDrop.SaveToZDO), repeated here for a small list. A ZDO is
     /// replicated, so every machine can read the pouch; only the owner ever writes it, from Runtime.ThievingRpc.
     /// </summary>
     public static class PouchStore
@@ -130,10 +131,18 @@ namespace EliteCreaturesReborn.Mutations
             return true;
         }
 
-        /// <summary>The resolved `max items` for this creature: the configured value, large-star enhanced like any other
-        /// stat bonus (spec: "the bonus above the baseline... rounded to the nearest whole item, never below 1"), then
-        /// hard-clamped to <see cref="HardCap"/> with a once-only warning naming the setting.</summary>
-        public static int ResolvedMaxItems(BiomeRules rules, CreatureTraits traits)
+        /// <summary>How many items this creature's pouch holds: one per star, but never fewer than the resolved `max
+        /// items` - the floor, so a 0-star thief still takes one and a 3-star takes three - and never more than
+        /// <see cref="HardCap"/>. The hit-side room check, the owner's bank-time re-check and `elite inspect` all read
+        /// this one number, so they can never disagree about when the pouch is full.</summary>
+        public static int ResolvedMaxItems(BiomeRules rules, CreatureTraits traits) =>
+            Mathf.Min(Mathf.Max(ConfiguredMaxItems(rules, traits), traits.Stars), HardCap);
+
+        /// <summary>The rule file's `max items`, large-star enhanced like any other stat bonus (spec: "the bonus above
+        /// the baseline... rounded to the nearest whole item, never below 1"), then hard-clamped to <see cref="HardCap"/>
+        /// with a once-only warning naming the setting. A star count above the cap is clamped silently by the caller:
+        /// that is the pouch's own limit, not a misconfigured setting.</summary>
+        private static int ConfiguredMaxItems(BiomeRules rules, CreatureTraits traits)
         {
             float raw = Enhance.Stat(rules, traits, Mutation.Thieving, Fields.MaxItems);
             int rounded = Mathf.Max(1, Mathf.RoundToInt(raw));

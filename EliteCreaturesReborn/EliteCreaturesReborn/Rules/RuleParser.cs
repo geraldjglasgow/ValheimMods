@@ -40,6 +40,7 @@ namespace EliteCreaturesReborn.Rules
             ReadRespawning(set, root, result);
             ReadWorld(set, root, result);
             ReadLoot(set, root, result);
+            ReadCreatures(set, root, result);
             ReadBiomes(set, root, result);
             SeedStarFallback(set);
             result.Rules = set;
@@ -94,7 +95,7 @@ namespace EliteCreaturesReborn.Rules
                 Mutation? mutation = MutationCatalog.FromName(name);
                 if (mutation == null)
                 {
-                    YamlRead.AddError(result.Errors, pair.Key, $"'{name}' is not one of the nine mutations");
+                    YamlRead.AddError(result.Errors, pair.Key, $"'{name}' is not a mutation");
                 }
                 else if (YamlRead.TryBool(pair.Value, out bool value))
                 {
@@ -155,9 +156,14 @@ namespace EliteCreaturesReborn.Rules
             {
                 LootOverlay.Apply(set.Loot, block, result.Errors);
             }
+        }
+
+        /// <summary>Per-creature loot and mutation keys. Mutation keys are laid over a biome only at lookup time.</summary>
+        private static void ReadCreatures(RuleSet set, YamlMappingNode root, Result result)
+        {
             if (YamlRead.Child(root, "creatures") is YamlNode creatures)
             {
-                LootOverlay.ApplyCreatures(set, creatures, result.Errors);
+                CreatureOverlay.Apply(set, creatures, result.Errors);
             }
         }
 

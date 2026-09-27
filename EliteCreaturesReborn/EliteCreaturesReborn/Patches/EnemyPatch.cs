@@ -13,7 +13,8 @@ namespace EliteCreaturesReborn.Patches
     /// per-hit damage crossing the threat threshold, after which it hunts players for good. Both are tracked by the
     /// owner-side DevourBehaviour. Asymmetric on purpose: only the devourer's own enmity is overridden, so other
     /// creatures still treat it by their normal rules. Consulted on the owner of the querying AI; the Devouring flag is
-    /// read from synced traits, so this only forces enmity where the devourer is simulated.
+    /// read from synced traits, so this only forces enmity where the devourer is simulated. It stands aside while
+    /// <see cref="GildedEnemyPatch.GameOnly"/> asks for the game's own answer.
     /// </summary>
     [HarmonyPatch(typeof(BaseAI), "IsEnemy", new[] { typeof(Character), typeof(Character) })]
     public static class EnemyPatch
@@ -24,7 +25,7 @@ namespace EliteCreaturesReborn.Patches
         // pull it off the player it turned on. Asymmetric: only the devourer's own enmity is overridden.
         private static void Postfix(Character a, Character b, ref bool __result)
         {
-            if (a == null || b == null || a == b || b.IsBoss() || !HasDevouring(a))
+            if (GildedEnemyPatch.GameOnly || a == null || b == null || a == b || b.IsBoss() || !HasDevouring(a))
             {
                 return;
             }

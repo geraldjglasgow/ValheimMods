@@ -7,22 +7,40 @@ namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
     /// Lays one file block over a <see cref="BiomeRules"/>, changing only the keys the block names and leaving the rest
-    /// as the defaults it was cloned from. This one routine serves both the `defaults` block and every biome block, so
-    /// "a biome overrides only what it names" is true by construction rather than by a second code path.
+    /// as the defaults it was cloned from. This one routine serves the `defaults` block, every biome block and the
+    /// mutation keys of every `creatures:` entry, so "a block overrides only what it names" is true by construction
+    /// rather than by a second code path.
     /// </summary>
     internal static class RuleOverlay
     {
         /// <summary>The most star counts a distribution may list: index 0 (unstarred) through the 50-star ceiling.</summary>
         private const int MaxStarEntries = 51;
 
+        private const string ChanceKey = "mutation chance";
+        private const string ChancesKey = "mutation chances";
+        private const string PowerKey = "mutation power";
+
         public static void Apply(BiomeRules rules, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             StarChances(rules, block, errors, warnings);
             LargeStarPower(rules, block, errors);
             Star(rules, block, errors);
+            ApplyMutations(rules, block, errors);
+        }
+
+        /// <summary>Only the three mutation keys - all a `creatures:` entry may set - read exactly as a biome's are.</summary>
+        public static void ApplyMutations(BiomeRules rules, YamlMappingNode block, List<string> errors)
+        {
             MutationChance(rules, block, errors);
             MutationChances(rules, block, errors);
             MutationPower(rules, block, errors);
+        }
+
+        /// <summary>True when the block names at least one of the mutation keys.</summary>
+        public static bool NamesMutations(YamlMappingNode block)
+        {
+            return YamlRead.Child(block, ChanceKey) != null || YamlRead.Child(block, ChancesKey) != null
+                || YamlRead.Child(block, PowerKey) != null;
         }
 
         private static void StarChances(BiomeRules rules, YamlMappingNode block, List<string> e, List<string> w)
@@ -103,7 +121,7 @@ namespace EliteCreaturesReborn.Rules
 
         private static void MutationChance(BiomeRules rules, YamlMappingNode block, List<string> errors)
         {
-            float[]? values = ReadFloats(block, "mutation chance", errors);
+            float[]? values = ReadFloats(block, ChanceKey, errors);
             if (values != null)
             {
                 rules.MutationChance = values;
@@ -112,7 +130,7 @@ namespace EliteCreaturesReborn.Rules
 
         private static void MutationChances(BiomeRules rules, YamlMappingNode block, List<string> errors)
         {
-            if (!(YamlRead.Child(block, "mutation chances") is YamlMappingNode map))
+            if (!(YamlRead.Child(block, ChancesKey) is YamlMappingNode map))
             {
                 return;
             }
@@ -129,7 +147,7 @@ namespace EliteCreaturesReborn.Rules
 
         private static void MutationPower(BiomeRules rules, YamlMappingNode block, List<string> errors)
         {
-            if (!(YamlRead.Child(block, "mutation power") is YamlMappingNode map))
+            if (!(YamlRead.Child(block, PowerKey) is YamlMappingNode map))
             {
                 return;
             }
@@ -198,7 +216,7 @@ namespace EliteCreaturesReborn.Rules
             Mutation? mutation = MutationCatalog.FromName(name);
             if (mutation == null)
             {
-                YamlRead.AddError(errors, key, $"'{name}' is not one of the nine mutations");
+                YamlRead.AddError(errors, key, $"'{name}' is not a mutation");
             }
             return mutation;
         }

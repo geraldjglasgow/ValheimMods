@@ -10,6 +10,7 @@ namespace EliteCreaturesReborn.Runtime
     /// and returns before the behaviours, so it never brings a twin or splits of its own. A Phantom copy is hollowed here
     /// on every machine the moment it resolves.
     /// The hit-shaped aspects (Reflective, Shielded, Elementalist, Enraged) need no component - patches handle them.
+    /// Adaptive and Fixated have both: a component for their state and look, and a hook in <see cref="Scaling.AspectDamage"/>.
     /// </summary>
     public static class AspectInstaller
     {
@@ -36,6 +37,11 @@ namespace EliteCreaturesReborn.Runtime
                 case Aspect.Summoner: controller.gameObject.AddComponent<SummonerBehaviour>(); break;
                 case Aspect.Twin: controller.gameObject.AddComponent<TwinLink>(); break;
                 case Aspect.Phantom: controller.gameObject.AddComponent<PhantomBehaviour>(); break;
+                case Aspect.Adaptive: controller.gameObject.AddComponent<AdaptiveBehaviour>(); break;
+                case Aspect.Fixated: controller.gameObject.AddComponent<FixatedBehaviour>(); break;
+                case Aspect.Stormbound: controller.gameObject.AddComponent<StormboundBehaviour>(); break;
+                case Aspect.Gravitic: controller.gameObject.AddComponent<GraviticBehaviour>(); break;
+                case Aspect.Colossal: controller.gameObject.AddComponent<ColossalBehaviour>(); break;
             }
         }
 

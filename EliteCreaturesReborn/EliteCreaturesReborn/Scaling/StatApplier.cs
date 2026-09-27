@@ -14,7 +14,7 @@ namespace EliteCreaturesReborn.Scaling
     {
         public static void ApplySize(Character character, BiomeRules rules, CreatureTraits traits)
         {
-            float size = StatMath.SizeMultiplier(rules, traits);
+            float size = StatMath.SizeMultiplier(rules, traits) * AspectMath.SizeFactor(traits);
             if (!Mathf.Approximately(size, 1f))
             {
                 character.transform.localScale *= size;

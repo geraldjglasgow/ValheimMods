@@ -13,10 +13,16 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     public static class BloatedBlast
     {
+        /// <summary>
+        /// The burst is drawn, every part of it, at 70% of the size its radius alone would give it: at full size it looked
+        /// too big for the blast. Visual only - the damage still reaches the whole <see cref="BlastSpec.Radius"/>.
+        /// </summary>
+        private const float DrawScale = 0.7f;
+
         public static void Detonate(Vector3 pos, BlastSpec blast, bool damaging)
         {
             GameObject? prefab = EffectResolver.Resolve(blast.Effect, EffectResolver.Blast, "Bloated blast effect");
-            CosmeticClone.Flash(prefab, pos, blast.Radius); // every machine draws the blast
+            CosmeticClone.FlashWhole(prefab, pos, blast.Radius, DrawScale); // every machine draws the blast
             GameObject? sound = EffectResolver.ResolveSound(blast.Sound, EffectResolver.BlastSound, "Bloated blast sound");
             CosmeticClone.Sound(sound, pos); // and hears it
             if (!damaging) // only the owner's blast decides damage; remote copies are visual only

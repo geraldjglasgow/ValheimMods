@@ -6,8 +6,9 @@ behaviour document they are all drawn from.
 This file covers what happens to traits when a creature is tamed, bred, and raised. What the traits themselves do
 is `mutations.md` and `attunements.md`; what stars are worth is `scaling.md`.
 
-**Status: built, not tested in game.** Inheritance, eggs and growing up are in the mod as of 3.6.0.
-Per-trait rules under a `tamed` condition are not built (section 6).
+**Status: built, not tested in game.** Inheritance, eggs and growing up are in the mod as of 3.6.0; the tamed
+behaviour of Gilded, Blinking, Relentless and Splintering (section 1) as of 3.9.0. Configurable per-trait rules
+under a `tamed` condition are not built (section 6).
 
 ---
 
@@ -25,9 +26,24 @@ Three separate guarantees, and all three have to hold or the feature does not wo
   adult; the mod carries the traits across that replacement explicitly. A trait that vanished at adulthood would
   make every breeding project unverifiable until the moment it failed.
 
-**One per-trait exception, specified in `thieving.md`: a tamed Thieving creature never steals**, from its owner or
-from anyone. It keeps the mutation - it still shows on the nameplate, and it is bred and inherited by this feature's
-own rules - but the theft itself stops the moment it is tamed.
+**A handful of mutations behave differently once tamed**, each specified with its mutation. The creature keeps the
+mutation in every case - it still shows on the nameplate, and it is bred and inherited by this feature's own rules -
+only the listed behaviour changes:
+
+- **A tamed Thieving creature never steals** (`thieving.md`), from its owner or from anyone. A pouch it already
+  holds is kept and still drops on its death.
+- **A tamed Gilded creature flees no one and pays nothing extra** (`mutations.md`, "Gilded, in full"). Its owner and
+  the other players are not its enemies, so it never runs from them, and it drops ordinary loot with no multiplier
+  and no purse: it never ran, so there was no chase to reward, and a paying one would turn a breeding pen into an
+  endless purse. It still glitters.
+- **A tamed Blinking creature blinks behind its enemies only** - what it fights for its owner - never behind a
+  player, and never while it is ridden.
+- **A tamed Relentless creature hunts its enemies up to 150 m from itself and cannot be recalled mid-hunt**: its
+  leash to the player it follows or the spot it guards is off while it hunts. A friend is never its quarry.
+- **A tamed Splintering creature splits into tamed copies** (`mutations.md`, "Splintering, in full"), not two wild
+  ones at its owner's feet. Both keep the name the player gave it, and who gave it, and follow the player it was
+  following. Its feeding timer (the copies start hungry), a saddle and any summon limit are not carried over. A wild
+  parent still makes wild copies.
 
 ---
 
@@ -60,7 +76,8 @@ breeding a strong animal with a weak one is still worth doing) and equal odds be
 tended), over the lower parent as the cap and over "usually the cap".
 
 **Two plain parents have plain young.** A newborn never rolls anything new - no wild star roll, no mutation roll,
-no world tier (`world-tiers.md`).
+no world tier (`world-tiers.md`), and no per-creature mutation rules from the rule file's `creatures:` list: those
+change what a wild creature of that kind rolls, never what a newborn inherits.
 
 **The second parent** is the nearest tamed partner of the right species within the game's own partner range at the
 moment the pregnancy starts. The game only counts that a partner is close, it never names one, so the mod finds it
@@ -151,6 +168,9 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [~] Offspring inherit from both parents by the section 3 roll - built, not tested in game
 - [~] The partner is found at conception and remembered until the birth - built, not tested in game
 - [~] Growing up preserves what a young creature had - built, not tested in game
+- [~] Tamed Thieving never steals; tamed Gilded flees no one and pays nothing extra; tamed Blinking blinks behind
+  enemies only; tamed Relentless hunts enemies to 150 m and cannot be recalled mid-hunt; tamed Splintering splits
+  into tamed, named copies that follow the same player - built, not tested in game
 
 ## Eggs
 
@@ -184,3 +204,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-26 | User settled the roll: one parent mutation always, stars 0 to the stronger parent's at equal odds. Built conception, birth, eggs, hatching and growing up, and the `breeding:` block. Rule parser exercised outside the game. | EliteCreaturesReborn-v3.6.0 |
+| 2026-09-27 | 3.9.0: tamed behaviour of Gilded, Blinking, Relentless and Splintering added to section 1; per-creature mutation rules never apply to a newborn. Built, not tested in game. | - |

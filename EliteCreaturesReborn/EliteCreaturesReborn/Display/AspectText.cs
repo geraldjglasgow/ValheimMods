@@ -27,6 +27,26 @@ namespace EliteCreaturesReborn.Display
             Aspect.Phantom => $"at {Marks(rules)} health splits off phantom copies, "
                 + $"{N(rules, aspect, Fields.PerPlayer)} per player online, with {AspectMath.PhantomHealth(rules):0} "
                 + $"health and {N(rules, aspect, Fields.LessDamage)}% less damage",
+            _ => DescribeLater(aspect, rules),
+        };
+
+        /// <summary>The aspects added in 3.9.0, split out only to keep <see cref="Describe"/> short.</summary>
+        private static string DescribeLater(Aspect aspect, AspectRules rules) => aspect switch
+        {
+            Aspect.Adaptive => $"takes {N(rules, aspect, Fields.Resist)}% less of whichever damage type hit it most in "
+                + $"the last {N(rules, aspect, Fields.Window)} seconds",
+            Aspect.Fixated => $"marks one player and hits them {N(rules, aspect, Fields.MarkedBonus)}% harder, everyone "
+                + $"else {N(rules, aspect, Fields.OthersLess)}% softer; the mark moves every "
+                + $"{N(rules, aspect, Fields.Every)} seconds to whoever hurt it most",
+            Aspect.Stormbound => $"every {N(rules, aspect, Fields.Every)} seconds calls lightning down on a circle under "
+                + $"each player, {N(rules, aspect, Fields.TellTime)} seconds after it appears",
+            Aspect.Gravitic => $"every {N(rules, aspect, Fields.Every)} seconds pulls every player within "
+                + $"{N(rules, aspect, Fields.Range)} m toward it, then slams: {N(rules, aspect, Fields.SlamDamage)}% of "
+                + $"max health to players within {N(rules, aspect, Fields.SlamRadius)} m of it",
+            Aspect.Colossal => $"{N(rules, aspect, Fields.Bigger)}% bigger, {N(rules, aspect, Fields.MoreHealth)}% more "
+                + $"health, {N(rules, aspect, Fields.Slower)}% slower; its heavy attacks send a "
+                + $"{N(rules, aspect, Fields.ShockwaveRadius)} m shockwave that knocks players down (roll through it or "
+                + "jump it)",
             _ => "",
         };
 

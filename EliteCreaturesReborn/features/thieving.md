@@ -12,7 +12,8 @@ Numbers are defaults and all of them are configurable through `creature_rules.ym
 call it says so.
 
 **Status:** built; verified by build and by reading, not yet tested in a live multiplayer session against the
-checklist below - this clean room has no game to run.
+checklist below - this clean room has no game to run. The 3.9.0 changes - one item per star, the icon layout and
+the despawn duplication fix - are built and not tested in game.
 
 **Bosses never take mutations**, this one included.
 
@@ -30,10 +31,10 @@ takes is ever destroyed: the punishment for losing the fight is the errand of fi
 
 | Mutation | Gains | Costs |
 | --- | --- | --- |
-| Thieving | Takes one item from your inventory on each strike that lands, up to `max items`, and carries it | None |
+| Thieving | Takes one item from your inventory on each strike that lands, until it holds one per star (never fewer than `max items`, never more than 8), and carries them | None |
 
-Like four of the other nine it is a pure gain with no drawback, and for the same reason: the balancing lever for
-mutations is how often they appear, not making each one internally fair.
+Like Bloated, Cloaked, Leeching, Warding and Miasmic it is a pure gain with no drawback, and for the same reason:
+the balancing lever for mutations is how often they appear, not making each one internally fair.
 
 ---
 
@@ -41,19 +42,24 @@ mutations is how often they appear, not making each one internally fair.
 
 ## When it fires
 
-**On every strike it lands on a player that deals damage**, until it is carrying `max items`. At the default of
-one item, that is the first landed hit of the fight and nothing afterwards.
+**On every strike it lands on a player that deals damage**, until its pouch is full.
+
+**The pouch holds one item per star**, never fewer than `max items` (1 by default) and never more than 8. An
+unstarred or one-star thief robs you once, on the first landed hit of the fight, and nothing afterwards; a
+three-star thief robs you three times. The danger grows with the stars, the way everything else about a creature
+does. *Judgement call:* capacity is `max(max items, stars)`, then capped at 8, so `max items` is the floor for every
+thief rather than the limit for all of them.
 
 - A hit that deals **no damage to health** - fully blocked, fully parried, fully resisted - takes nothing. You
   stopped the blow; you stopped the hand that came with it. *Judgement call.* The alternative, stealing on
   contact regardless, makes blocking feel broken.
 - A hit that deals damage takes exactly **one item**, never two, whatever the damage was.
-- There is **no cooldown and no chance roll**. `max items` is the whole limit. A separate per-strike chance would
-  be a second dial doing the first one's job.
+- There is **no cooldown and no chance roll**. The pouch's size is the whole limit. A separate per-strike chance
+  would be a second dial doing the first one's job.
 - **Ranged and area hits count**, if they damage the player. A Thieving Fuling's spear takes something from
   across the clearing, and a player who has been robbed by a thrown rock understands the mutation immediately.
-- **A creature already at `max items` stops stealing entirely.** It never swaps, upgrades or drops what it holds
-  to make room. The first things it took are the things it keeps.
+- **A creature whose pouch is full stops stealing entirely.** It never swaps, upgrades or drops what it holds to
+  make room. The first things it took are the things it keeps.
 
 ## What it may take
 
@@ -123,7 +129,12 @@ first:
 | --- | --- |
 | Killed | Goods drop at the corpse, with its loot |
 | `elite purge` | Goods drop, **even though purge deliberately drops no loot at all** |
-| Despawned by the game | Goods drop where it stood |
+| Despawned by the game | Goods drop where it stood, once, at the moment it vanishes |
+
+**A despawn drops the goods once, when it happens.** At dawn the game walks a night creature away from the nearest
+player and only removes it once no player is within 40 metres; while anyone is closer it keeps walking. The goods
+drop at that removal, not on each step of the walk. Before 3.9.0 they dropped on every step while a player stood
+within 40 metres, and every drop was a fresh copy of the whole pouch - a duplication. That is fixed.
 
 Stolen goods are not loot - they are player property the mod is holding temporarily, and **nothing a player owned
 is ever destroyed by this mutation**. `elite purge` is documented as "without drops"; this is the one exception
@@ -176,7 +187,7 @@ through **that creature's own `ZNetView`**, never the global bus. Nobody who can
 - The packet carries a **steal id** - the taking player's id and a counter - so a packet delivered twice is banked
   once. A retried packet must never produce a second copy of the item.
 - The client reads the creature's carried count from the ZDO **before** taking anything, and takes nothing if the
-  creature is already at `max items`. The owner checks again when it banks, and **drops on the ground at the
+  creature's pouch is already full. The owner checks again when it banks, against the same pouch size, and **drops on the ground at the
   creature what it cannot fit** rather than discarding it. The two checks can disagree by a frame on a busy
   server; that disagreement must cost nobody an item.
 - If the creature's `ZNetView` is not valid at the moment of the hit, **no theft happens at all** and the item
@@ -196,8 +207,9 @@ item written with the game's own item serialisation.
 
 - **A hard cap of 8 items regardless of configuration.** ZDO data is replicated to everyone near the creature and
   a pouch is not a chest. A server setting `max items` above 8 is clamped, with a warning logged once naming the
-  setting. *Judgement call* - 8 is comfortably above any sane configuration and comfortably below anything that
-  would cost bandwidth.
+  setting. A creature with more than 8 stars simply holds 8, with no warning: that is the pouch's own limit, not a
+  misconfigured setting. *Judgement call* - 8 is comfortably above any sane configuration and comfortably below
+  anything that would cost bandwidth.
 - **Every client can read it**, which is what lets every client draw the same icons on the nameplate.
 
 ## Cases that must work
@@ -212,6 +224,8 @@ item written with the game's own item serialisation.
 - **A player arriving late** sees the icons for goods taken before they joined.
 - **`max items` lowered in the rule file** while a creature is already carrying more. It keeps what it has and
   steals no more - a rule change never touches a creature already spawned, and never destroys held property.
+- **A thief despawning at dawn with a player nearby.** It walks away holding its goods and drops them once, where
+  it vanishes.
 
 ---
 
@@ -219,8 +233,8 @@ item written with the game's own item serialisation.
 
 ## Name and stars
 
-Thieving joins the table in `mutations.md` as the tenth mutation, in **last position** - after Devouring, so no
-existing enum value, name order or star colour changes.
+Thieving joins the table in `mutations.md` as the tenth mutation, after Devouring, so no existing enum value, name
+order or star colour changes. (Gilded, Blinking and Relentless have since followed it, the same way.)
 
 | Mutation | Star colour |
 | --- | --- |
@@ -240,22 +254,41 @@ from across the clearing.** This is the mutation's real display: the star colour
 
 - **The item's own inventory icon**, the sprite the game already draws for it in a slot - including the right
   variant for an item that has several.
-- **Right-justified to the right edge of the health bar**, on the same line as the star row, growing **leftward**,
-  oldest item leftmost.
+- **Right-justified to the right edge of the health bar**, on the same line as the star row, in the room the star
+  row leaves, growing **leftward**, oldest item leftmost and newest nearest the edge.
 - **Nothing the mod adds may make a nameplate taller or wider than vanilla's** - that rule is in `mutations.md`
   and it holds here. The icons live inside the plate's existing width, which is why they take the right end of a
   line that already exists rather than a new one. "To the right of the nameplate" in the literal sense would
   widen the plate and start plates colliding in a crowd, which is exactly when you most need to read them.
-- **At most 4 icons are drawn.** Beyond that, and whenever the star row would reach them, icons are dropped from
-  the **left** - the oldest - until they fit. The star row is never clipped to make room: stars are the reading a
-  player needs mid-fight, icons are the reading they need afterwards.
+- **Every item it holds is drawn, while there is room.** When they do not all fit beside the star row, the icons
+  first **shrink**, but never below the size vanilla draws a star at - smaller than that an icon is a smudge - and
+  only then are the oldest dropped from the **left** until the rest fit. The star row is never clipped or covered
+  to make room: stars are the reading a player needs mid-fight, icons are the reading they need afterwards.
+  `elite inspect` always lists the whole pouch.
 - **Size: 1.6x the size vanilla draws a star at**, a shade larger than a small glyph so a small item icon is
-  recognisable rather than a smudge. A setting, like both star sizes.
+  recognisable rather than a smudge. That is the size they start at before any shrinking. A setting, like both
+  star sizes.
 - No stack counts, no numerals, no text. Fourteen silver and one silver look the same on the plate - the message
   when it was taken carried the number, and killing it returns the stack whatever it is.
 - **Every client draws the same icons**, from the ZDO, whether or not it owns the creature.
 - **A Cloaked Thieving creature's icons hide and fade with the rest of its plate.** Cloaked is the one that makes
   this mutation genuinely nasty and nothing here may undo it.
+
+How many icons show with a full pouch, at the default star and icon sizes:
+
+| Stars | Pouch | Icons shown |
+| --- | --- | --- |
+| 0 to 3 | 1 to 3 | all |
+| 4 | 4 | 3 of 4 |
+| 5 | 5 | all 5 |
+| 6 | 6 | 4 of 6 |
+| 7 | 7 | 3 of 7 |
+| 8 | 8 | 2 of 8 |
+| 9 | 8 | 1 of 8 |
+| 10 | 8 | 4 of 8 |
+
+The count is not monotonic because five small stars become one large one: a 5-star row is shorter than a 4-star
+row and leaves more room.
 
 ## The settings that control it
 
@@ -265,7 +298,7 @@ Per-player, in the `.cfg`'s display section, never locked by the server - they c
 | --- | --- | --- |
 | `Show stolen items` | `true` | Draw the icons at all |
 | `Stolen item icon size` | `1.6` | Icon size as a multiple of the size vanilla draws a star at |
-| `Thieving star colour` | `#A64BE0` | Its entry in the existing palette section, bound like the other nine |
+| `Thieving star colour` | `#A64BE0` | Its entry in the existing palette section, bound like every other mutation's |
 
 ---
 
@@ -277,21 +310,22 @@ specified in `mutations.md`.
 
 ```yaml
   mutation power:
-    # ... the nine existing entries, unchanged ...
+    # ... the other entries, unchanged ...
     Thieving:    { max items: 1 }
 ```
 
 | Mutation | Field | Meaning |
 | --- | --- | --- |
-| Thieving | `max items` | The most items one creature may ever hold. `1` by default: it robs you once, and the rest of the fight is ordinary. Hard-capped at 8 whatever is set here, because the pouch rides the creature's ZDO. `0` disables the theft while leaving the mutation rollable, which is not useful and is not an error. |
+| Thieving | `max items` | The fewest items one creature holds, whatever its stars. It holds one per star, never fewer than this and never more than 8. `1` by default: an unstarred thief robs you once and the rest of the fight is ordinary. Hard-capped at 8 whatever is set here, because the pouch rides the creature's ZDO. The pouch never goes below one item, so a `0` here acts as `1`. |
 
-**`max items: 1` is the shipped default and the one the mutation is designed around.** One item is a single, clear
-loss with a single, clear remedy. Raising it to three turns an ordinary Greydwarf fight into a real reversal, and
-a server that wants that can have it; raising it to eight means a creature that walks off with a working set of
-gear, which is a different game and is why the cap exists.
+**One item per star, at least one, is the shipped rule and the one the mutation is designed around.** An unstarred
+thief is a single, clear loss with a single, clear remedy; a three-star thief is a real reversal, and it looks like
+one before it lands a hit. Raising `max items` raises the floor for every thief: at three, an ordinary Greydwarf
+fight turns into a reversal too, and a server that wants that can have it; at eight, every thief walks off with a
+working set of gear, which is a different game and is why the cap exists.
 
 `max items` is an integer and the only field. Deliberately: a per-strike chance, a cooldown and a pool weighting
-were all considered and all left out, because `max items` and the mutation's own rarity already control how often
+were all considered and all left out, because the pouch size and the mutation's own rarity already control how often
 this happens to a player, and a second dial doing the same job is how a rule file becomes unreadable.
 
 ## Large stars
@@ -299,7 +333,8 @@ this happens to a player, and a second dial doing the same job is how a rule fil
 **`max items` is enhanced on a large star**, like any other bonus: the bonus above the baseline is multiplied by
 `large star power` and the result is **rounded to the nearest whole item, never below 1**. At the shipped
 `large star power: 1` this changes nothing at all, which is the intent - a large star is already a size-and-
-damage event.
+damage event. The stars themselves already count toward the pouch in full: a creature with one large star has
+five stars and holds five items, and that one-per-star part is never enhanced.
 
 Add the row to the enhancement table in `mutations.md`:
 
@@ -309,7 +344,7 @@ Add the row to the enhancement table in `mutations.md`:
 
 ## How often it appears
 
-It uses the biome's ordinary `mutation chance` with no global override, like most of the nine. Suggested biome
+It uses the biome's ordinary `mutation chance` with no global override, like most of the others. Suggested biome
 overrides, **suggestions with a reason rather than rules**, in the style of the existing ones:
 
 ```yaml
@@ -337,8 +372,8 @@ No new command. The existing ones must cover it, and one needs a line added:
 
 | Command | What must work |
 | --- | --- |
-| `elite spawn <prefab> <stars> Thieving` | Spawns one on demand, bypassing every chance roll - as it already must for the nine |
-| `elite inspect` | Prints the **resolved** `max items`, and **what the creature is currently carrying**: each item by name and stack size |
+| `elite spawn <prefab> <stars> Thieving` | Spawns one on demand, bypassing every chance roll - as it already must for every other mutation |
+| `elite inspect` | Prints the **resolved** pouch size and **everything the creature is currently carrying**, each item by name and stack size ("carrying 2 of 3: ..."), including any the nameplate has no room to show |
 | `elite purge` | Drops stolen goods before removing the creature - the documented exception to "without drops" |
 
 `elite inspect` listing the pouch is not optional. It is the only way to check that the item on the nameplate is
@@ -394,14 +429,15 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Pool order: backpack unequipped, then hotbar unequipped, then nothing
 - [ ] Never takes equipped gear, wherever it sits in the grid
 - [ ] Takes the whole stack, preserving quality, durability, variant, crafter and custom data
-- [ ] Stops at `max items` and never swaps what it holds
+- [ ] Holds one item per star, never fewer than `max items`, never more than 8; stops when full and never swaps
+  what it holds
 - [ ] Status message and the theft tell
 
 ## Giving it back
 
 - [ ] Everything drops at the corpse on death
 - [ ] Never multiplied by drops, stars, loot mode or a boss aspect
-- [ ] `elite purge` drops the goods; despawn drops the goods
+- [ ] `elite purge` drops the goods; despawn drops the goods once, where it vanishes, not on each step away
 - [ ] A Splintering parent drops its pouch; its copies are born empty
 - [ ] A tamed one does not steal, and still drops what it holds
 
@@ -416,7 +452,8 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 ## Display
 
 - [ ] Violet star colour, bound in the palette section
-- [ ] Icons right-justified on the star row's line, oldest leftmost, at most 4
+- [ ] Icons right-justified on the star row's line, oldest leftmost; every item shown while there is room,
+  shrinking to vanilla star size before the oldest drop off
 - [ ] Plate never grows taller or wider than vanilla's; the star row is never clipped for icons
 - [ ] Icons hide and fade with a Cloaked creature's plate
 - [ ] `Show stolen items` and `Stolen item icon size` honoured
@@ -426,7 +463,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] `Thieving: { max items: 1 }` written into the generated rule file, with its comment
 - [ ] `max items` enhanced on a large star, rounded, never below 1
 - [ ] `elite spawn Greydwarf 3 Thieving` produces one
-- [ ] `elite inspect` prints the resolved `max items` and the pouch contents
+- [ ] `elite inspect` prints the resolved pouch size and the whole pouch
 
 ## The other feature files
 
@@ -444,3 +481,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-17 | File written. Mutation specified end to end; name, equipped-gear rule, whole-stack rule and the always-drop rule decided with the author. Nothing built. | - |
 | 2026-09-17 | Built end to end: the steal (`Patches/ThievingHitPatch.cs`), the pouch (`Mutations/PouchStore.cs`, `PouchDrop.cs`), the two-authority RPC (`Runtime/ThievingRpc.cs`), the despawn path (`Patches/ThievingDespawnPatch.cs`), death/purge wiring, nameplate icons (`Display/PouchIcons.cs`), config, `elite inspect`/`elite spawn`/`elite purge`, and all six other feature files. Decisions in `../DECISIONS.md`. Builds clean, 0 warnings. Not yet tested live. | - |
+| 2026-09-27 | 3.9.0: the pouch holds one item per star, with `max items` as the floor and 8 the cap; the four-icon limit is gone - every item shows while there is room, shrinking to vanilla star size before the oldest drop off; `elite inspect` lists the whole pouch; a thief despawning at dawn with a player nearby no longer drops (and duplicates) its pouch on every step. Decisions in `../DECISIONS.md` under 3.9.0. Built, not tested in game. | - |

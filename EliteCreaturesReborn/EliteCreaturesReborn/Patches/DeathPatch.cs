@@ -15,8 +15,8 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// The death-triggered mutations, all on the dying creature's owner: Bloated leaves a fuse-and-blast behind,
-    /// Splintering breaks into copies, and a Devouring killer keeps its victim's health and damage. Boss aspects too: a
-    /// Twin's partner falls with it, and a Phantom boss's copies vanish with it.
+    /// Splintering breaks into copies (tamed ones when the parent was tamed), and a Devouring killer keeps its victim's
+    /// health and damage. Boss aspects too: a Twin's partner falls with it, and a Phantom boss's copies vanish with it.
     /// <para>
     /// The fault this fixes: vanilla <c>Character.OnDeath</c> ends with <c>ZNetScene.Destroy</c>, which calls
     /// <c>ResetZDO</c> and nulls the creature's ZDO. A postfix therefore sees <c>IsValid()</c>/<c>IsOwner()</c> false and
@@ -45,6 +45,7 @@ namespace EliteCreaturesReborn.Patches
             public ZDOID Devourer;
             public List<PouchStore.Entry> Pouch = new List<PouchStore.Entry>();
             public ZDOID Id;
+            public SplinterTame? Tame;
         }
 
         private static Snapshot? _pending;
@@ -91,6 +92,7 @@ namespace EliteCreaturesReborn.Patches
                 CascadeRoot = stored, ResolvedRoot = resolved, Biome = TraitStore.GetBiome(zdo),
                 MaxHealth = victim.GetMaxHealth(), Pos = victim.transform.position, Rot = victim.transform.rotation,
                 Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo), Id = zdo.m_uid,
+                Tame = SplinterTame.Read(victim, zdo), // a tamed splinterer's copies are tamed too
             };
         }
 
@@ -124,7 +126,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
                 Splitter.Split(snap.Pos, snap.Rot, snap.PrefabHash, snap.Traits, snap.Rules,
-                    snap.Generation, snap.ResolvedRoot, snap.Biome);
+                    snap.Generation, snap.ResolvedRoot, snap.Biome, snap.Tame);
             }
             if (snap.Traits.Has(Mutation.Thieving))
             {
@@ -134,8 +136,9 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        // Broadcasts the Bloated death so every client wears a warning that rides its own local corpse for the whole
-        // fuse; the owner, when its fuse ends, broadcasts the blast at its corpse's resting place (see EliteRpc).
+        // Broadcasts the Bloated death so every client wears a warning that rides its own copy of this creature's corpse -
+        // named by id, the ragdoll this very death made (see DeathRagdoll) - for the whole fuse; the owner, when its fuse
+        // ends, broadcasts the blast at that corpse's resting place (see EliteRpc).
         private static void Bloat(Snapshot snap)
         {
             BiomeRules rules = snap.Rules;
@@ -146,7 +149,7 @@ namespace EliteCreaturesReborn.Patches
                 Enhance.Magnitude(rules, traits, Mutation.Bloated, Fields.Radius), traits.Stars,
                 rules.PrefabOf(Mutation.Bloated, Fields.BlastEffect),
                 rules.PrefabOf(Mutation.Bloated, Fields.BlastSound));
-            EliteRpc.FireBloat(snap.Pos, rules.PowerOf(Mutation.Bloated, Fields.Delay),
+            EliteRpc.FireBloat(snap.Pos, DeathRagdoll.MadeAt(snap.Pos), rules.PowerOf(Mutation.Bloated, Fields.Delay),
                 rules.PrefabOf(Mutation.Bloated, Fields.WarningEffect), blast);
         }
 

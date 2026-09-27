@@ -13,7 +13,7 @@ namespace EliteCreaturesReborn.Rules
         public static AspectRules Build()
         {
             AspectRules rules = new AspectRules { Enabled = true, ShiftHours = 1f };
-            rules.Chances[Aspect.None] = 20f; // one fight in five is the boss as the game ships it
+            rules.Chances[Aspect.None] = 30f; // about one fight in five is the boss as the game ships it
             foreach (Aspect aspect in AspectCatalog.InOrder)
             {
                 rules.Chances[aspect] = 10f;
@@ -47,6 +47,8 @@ namespace EliteCreaturesReborn.Rules
             [Aspect.None] = 1f, [Aspect.Twin] = 1f, [Aspect.Shielded] = 1.1f, [Aspect.Enraged] = 1.2f,
             [Aspect.Elementalist] = 1.2f, [Aspect.Mending] = 1.3f, [Aspect.Phantom] = 1.3f,
             [Aspect.Reflective] = 1.4f, [Aspect.Summoner] = 1.5f,
+            [Aspect.Stormbound] = 1.2f, [Aspect.Colossal] = 1.2f, [Aspect.Adaptive] = 1.3f, [Aspect.Fixated] = 1.3f,
+            [Aspect.Gravitic] = 1.3f,
         };
 
         private static readonly Dictionary<Aspect, Dictionary<string, float>> PowerTable =
@@ -63,6 +65,18 @@ namespace EliteCreaturesReborn.Rules
                     { [Fields.LessHealth] = 25f, [Fields.LessDamage] = 25f },
                 [Aspect.Phantom] = new Dictionary<string, float>
                     { [Fields.PerPlayer] = 1f, [Fields.HealthPerTier] = 25f, [Fields.LessDamage] = 50f },
+                [Aspect.Adaptive] = new Dictionary<string, float> { [Fields.Resist] = 50f, [Fields.Window] = 15f },
+                [Aspect.Fixated] = new Dictionary<string, float>
+                    { [Fields.MarkedBonus] = 50f, [Fields.OthersLess] = 30f, [Fields.Every] = 30f },
+                [Aspect.Stormbound] = new Dictionary<string, float>
+                    { [Fields.Every] = 20f, [Fields.TellTime] = 2f, [Fields.Radius] = 2.5f, [Fields.Damage] = 8f,
+                      [Fields.Range] = 40f },
+                [Aspect.Gravitic] = new Dictionary<string, float>
+                    { [Fields.Every] = 20f, [Fields.Range] = 30f, [Fields.PullTime] = 1.5f, [Fields.PullSpeed] = 6f,
+                      [Fields.SlamRadius] = 6f, [Fields.SlamDamage] = 10f },
+                [Aspect.Colossal] = new Dictionary<string, float>
+                    { [Fields.Bigger] = 40f, [Fields.MoreHealth] = 15f, [Fields.Slower] = 15f,
+                      [Fields.ShockwaveRadius] = 8f },
             };
 
         // Phantom splits as its health falls past each mark, in percent of its maximum health left (decided 2026-09-26).

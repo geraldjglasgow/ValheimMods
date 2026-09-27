@@ -15,9 +15,11 @@ namespace EliteCreaturesReborn.Patches
     /// their own owner-side reactions, just for the opposite role (the victim here, not the attacker).
     /// <para>
     /// Check first, take second: the creature's ZNetView must be valid before anything is touched, and the pouch's
-    /// resolved room is read from the creature's ZDO (any client can read a ZDO) before an item is ever removed. A
-    /// hit that deals no damage, a creature already full, or a player carrying nothing unequipped are all ordinary
-    /// hits - nothing here ever discards an item; not-taking it is always safe.
+    /// resolved room (one item per star, at least `max items`) is read from the creature's ZDO (any client can read a
+    /// ZDO) before an item is ever removed. A landed hit takes at most one item however much room is left, so a 3-star
+    /// thief needs three hits to fill its pouch. A hit that deals no damage, a creature already full, or a player
+    /// carrying nothing unequipped are all ordinary hits - nothing here ever discards an item; not-taking it is always
+    /// safe.
     /// </para>
     /// </summary>
     [HarmonyPatch(typeof(Character), "RPC_Damage")]

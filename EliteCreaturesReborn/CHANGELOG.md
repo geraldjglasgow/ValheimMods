@@ -1,5 +1,85 @@
 # Changelog
 
+## 3.9.0
+
+**Three new mutations.**
+
+- **Gilded**, the loot goblin. It glitters gold from well beyond nameplate range, never attacks a player, and runs
+  from any player it can see within 30 m, so sneak up on it; a hit from any range sends it running too. Catch it and it
+  drops three times its loot plus 20 coins for each star plus one, in every loot mode. It is the rarest mutation by
+  design, and the only one with no downside. A tamed Gilded creature stays calm around its owner and drops ordinary loot.
+- **Blinking**. Every 30 seconds of a fight it vanishes and reappears 4 m behind its target, facing it. Half a second
+  before, the spot flashes and chimes, so you can turn in time. It never lands inside walls, off a ledge, in water it
+  avoids or anywhere it could not have walked to. It has 25% less health.
+- **Relentless**. Once it picks you, it keeps coming while you are within 150 m: it heads for where you are even out of
+  sight, sneaking does not hide you from it, it swims after you, and it neither despawns at dawn nor wanders off after
+  a raid while it hunts. It is never faster than its base speed, so outrun it past 150 m or it follows you home.
+
+**Five new boss aspects.**
+
+- **Adaptive** (loot x1.3). It takes 50% less of whichever damage type hurt it most in the last 15 seconds, and glows
+  that type's colour so you can see what it is shrugging off. Swap weapons, or spread the group across damage types.
+- **Fixated** (x1.3). It marks one player with a red eye over their head and a line in chat ("Bonemass fixes on
+  Gerald!"), hits them 50% harder and everyone else 30% softer, and every 30 seconds moves the mark to whoever hurt it
+  most in that time. Alone, you are always marked.
+- **Stormbound** (x1.2). Every 20 seconds a glowing blue circle appears under each player near it, and two seconds later
+  lightning strikes it: anyone still inside takes 8% of their maximum health as lightning damage and staggers. Step out
+  or roll through.
+- **Gravitic** (x1.3). Every 20 seconds it roars and drags every player within 30 m toward it for a second and a half,
+  then slams: anyone within 6 m loses 10% of their maximum health and staggers unless they roll through it.
+- **Colossal** (x1.2). 40% bigger, 15% more health, 15% slower, and its heavy attacks - stomps, slams, novas, spins,
+  crushing blows - send a shockwave across the ground that knocks down every player within 8 m, at most once every 5
+  seconds. Roll through it or jump it. Its corpse keeps its size.
+
+About one boss fight in five is still plain: `none` now weighs 30 against 10 for each aspect. A rule file written by
+an older version keeps its own `none: 20` and gives the new aspects 10 each.
+
+**Mutation rules per creature.** Entries under `creatures:` in the rule file now accept `mutation chance`,
+`mutation chances` and `mutation power`, laid over the rules of whatever biome the creature is in. `match: Deathsquito`
+with `mutation chances: { Cloaked: [0] }` ends Cloaked mosquitoes without changing the rest of the Plains. Two entries
+for the same creature now merge instead of the later one replacing the earlier.
+
+**Cloaked** creatures show themselves at 10 m by default (was 6), and trolls and lox at 15 m, through the new default
+`creatures:` entries. Drakes are never Cloaked.
+
+**Warding reflects the base hit, capped.** The reflect now comes from the damage the creature actually took, without
+sneak-attack or stagger bonuses and never more than the health it had left. A new `max reflect` field (default 7.5)
+caps any single reflect at that percent of the attacker's maximum health, so a Warding creature can no longer one-shot
+anyone. The Warding and Reflective flashes are 80% smaller.
+
+**Bloated.** The fuse is two seconds by default, and the warning smoke stays at full strength until the blast, riding
+the body wherever it rolls. The explosion is drawn 30% smaller (the damage radius is unchanged), and the corpse goes with
+it: it vanishes in the blast and drops its loot there instead of lying on and puffing away afterwards.
+
+**Thieving** creatures carry one stolen item per star, so a 3-star thief can rob you three times. A thief with no stars
+still takes one; `max items` sets the minimum, and 8 is still the most. Every stolen item shows on the nameplate while
+there is room beside the stars.
+
+**Tamed Splintering** creatures split into tamed copies that keep the parent's name and follow the same player.
+
+**Boss damage board.** It now sits at the far left of the screen, halfway down, out of the way. Type `/damage` in chat
+(or `damage` in the F5 console) to see the latest boss's board again; any player can, and one who joined after the kill
+gets it from the server. On a Phantom boss's board, damage dealt to its copies counts toward each player's total.
+
+**Fixed**
+
+- Small smoke clouds were left behind after a Bloated blast. Every effect the mod drew also made the game build a real,
+  networked copy of it on every player's screen: a second explosion and bang for each blast, and warning smoke that
+  never went away. Effects are now drawn once, locally, for every mutation and aspect, so some may look lighter than
+  before.
+- A Thieving creature despawning at dawn with a player nearby dropped its stolen goods again on every step it took
+  while walking away, duplicating them. It now drops them once, when it actually goes.
+
+**Upgrading**
+
+- **Update the server as well as every player**: the Bloated blast, the boss board, the new mutations and the new
+  aspects send new messages.
+- A `creature_rules.yml` written by an older version keeps its own numbers: Bloated `delay: 1.0`, Cloaked
+  `reveal distance: 6`, and no troll, lox or drake entries. Change those lines or delete the file to have the new defaults
+  written. The new mutations work from their built-in defaults either way, and Gilded stays rare.
+- Gilded has its own chance curve, like Devouring, so `mutation chance: [0]` in a biome does not silence it there. Use
+  `mutations enabled: Gilded: false` to turn it off, or `mutation chances: Gilded: [0]` in that biome.
+
 ## 3.8.0
 
 **Phantom reworked.** A Phantom boss no longer arrives with four copies. It splits off copies as it is hurt: at 66%

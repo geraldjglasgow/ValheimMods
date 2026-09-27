@@ -17,9 +17,22 @@ namespace EliteCreaturesReborn.Scaling
 
         public static float Power(Aspect aspect, string field) => RuleState.Active.Boss.Aspects.PowerOf(aspect, field);
 
-        /// <summary>Twin's cut to the starred maximum health; 1 for everything else (a Phantom copy's health is flat).</summary>
-        public static float HealthFactor(CreatureTraits traits) =>
-            traits.Aspect == Aspect.Twin ? Cut(Power(Aspect.Twin, Fields.LessHealth)) : 1f;
+        /// <summary>Twin's cut or Colossal's boost to the starred maximum health; 1 for everything else (a Phantom copy's
+        /// health is flat).</summary>
+        public static float HealthFactor(CreatureTraits traits) => traits.Aspect switch
+        {
+            Aspect.Twin => Cut(Power(Aspect.Twin, Fields.LessHealth)),
+            Aspect.Colossal => Boost(Power(Aspect.Colossal, Fields.MoreHealth)),
+            _ => 1f,
+        };
+
+        /// <summary>Colossal's growth on top of the boss's star growth; 1 for everything else.</summary>
+        public static float SizeFactor(CreatureTraits traits) =>
+            traits.Aspect == Aspect.Colossal ? Boost(Power(Aspect.Colossal, Fields.Bigger)) : 1f;
+
+        /// <summary>Colossal's slowness on top of the boss's star speed; 1 for everything else.</summary>
+        public static float SpeedFactor(CreatureTraits traits) =>
+            traits.Aspect == Aspect.Colossal ? Cut(Power(Aspect.Colossal, Fields.Slower)) : 1f;
 
         /// <summary>
         /// A Phantom copy's whole maximum health, whatever its stars: `health per tier` for each world tier, with tier 0

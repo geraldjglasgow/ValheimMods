@@ -23,6 +23,7 @@ namespace EliteCreaturesReborn.Rules
                 MutationChance = new[] { 2.5f, 3.5f, 5f, 6f, 7.5f, 10f },
             };
             rules.MutationChances[Mutation.Devouring] = new[] { 0.6f, 0.9f, 1.2f, 1.5f, 1.8f, 2.4f };
+            rules.MutationChances[Mutation.Gilded] = new[] { 0.4f, 0.5f, 0.7f, 0.9f, 1.1f, 1.4f };
             foreach (Mutation mutation in MutationCatalog.InOrder)
             {
                 rules.MutationPower[mutation] = new Dictionary<string, float>(Power(mutation));
@@ -99,6 +100,13 @@ namespace EliteCreaturesReborn.Rules
                 },
                 [Mutation.Miasmic] = new Dictionary<string, string>
                     { [Fields.CloudEffect] = "vfx_blob_death", [Fields.BodyEffect] = "vfx_blob_death" },
+                [Mutation.Gilded] = new Dictionary<string, string>
+                    { [Fields.BonusItem] = "Coins", [Fields.GlitterEffect] = "vfx_Potion_stamina_medium" },
+                [Mutation.Blinking] = new Dictionary<string, string>
+                    {
+                        [Fields.BlinkEffect] = "vfx_ghost_spawn", [Fields.TellEffect] = "vfx_WishbonePing",
+                        [Fields.TellSound] = "sfx_WishbonePing_near",
+                    },
             };
 
         private static Dictionary<string, float> Power(Mutation mutation)
@@ -109,31 +117,42 @@ namespace EliteCreaturesReborn.Rules
 
         private static Dictionary<Mutation, Dictionary<string, float>> BuildTable()
         {
-            return new Dictionary<Mutation, Dictionary<string, float>>
+            Dictionary<Mutation, Dictionary<string, float>> table = new Dictionary<Mutation, Dictionary<string, float>>
             {
                 [Mutation.Mad] = new Dictionary<string, float>
                     { [Fields.Move] = 1.6f, [Fields.AttackSpeed] = 1.5f, [Fields.Health] = 0.5f },
                 [Mutation.Bloated] = new Dictionary<string, float>
-                    { [Fields.Health] = 2.0f, [Fields.Delay] = 1.0f, [Fields.Damage] = 40f, [Fields.Radius] = 4f },
+                    { [Fields.Health] = 2.0f, [Fields.Delay] = 2.0f, [Fields.Damage] = 40f, [Fields.Radius] = 4f },
                 [Mutation.Cloaked] = new Dictionary<string, float>
-                    { [Fields.RevealDistance] = 6f, [Fields.FadeTime] = 0.5f, [Fields.FadeMargin] = 1f },
+                    { [Fields.RevealDistance] = 10f, [Fields.FadeTime] = 0.5f, [Fields.FadeMargin] = 1f },
                 [Mutation.Splintering] = new Dictionary<string, float>
                     { [Fields.Damage] = 0.6f, [Fields.MaxGenerations] = 0f, [Fields.MaxDescendants] = 0f },
                 [Mutation.Leeching] = new Dictionary<string, float>
                     { [Fields.Regen] = 0.5f, [Fields.Lifesteal] = 10f, [Fields.RegenCap] = 20f,
                       [Fields.CombatCooldown] = 5f },
-                [Mutation.Warding] = new Dictionary<string, float> { [Fields.Reflect] = 30f, [Fields.Knockback] = 4f },
-                [Mutation.Plated] = new Dictionary<string, float>
-                    { [Fields.Armour] = 40f, [Fields.Damage] = 60f, [Fields.MaxReduction] = 55f },
-                [Mutation.Miasmic] = new Dictionary<string, float>
-                    { [Fields.CloudLife] = 6f, [Fields.CloudDamage] = 5f, [Fields.CloudsPerSecond] = 1f,
-                      [Fields.CloudRadius] = 4f },
-                [Mutation.Devouring] = new Dictionary<string, float>
-                    { [Fields.Move] = 1f, [Fields.AbsorbHealth] = 50f, [Fields.AbsorbDamage] = 25f,
-                      [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f,
-                      [Fields.DevourCooldown] = 60f },
-                [Mutation.Thieving] = new Dictionary<string, float> { [Fields.MaxItems] = 1f },
+                [Mutation.Warding] = new Dictionary<string, float>
+                    { [Fields.Reflect] = 30f, [Fields.Knockback] = 4f, [Fields.MaxReflect] = 7.5f },
             };
+            AddLaterMutations(table);
+            return table;
+        }
+
+        private static void AddLaterMutations(Dictionary<Mutation, Dictionary<string, float>> table)
+        {
+            table[Mutation.Plated] = new Dictionary<string, float>
+                { [Fields.Armour] = 40f, [Fields.Damage] = 60f, [Fields.MaxReduction] = 55f };
+            table[Mutation.Miasmic] = new Dictionary<string, float>
+                { [Fields.CloudLife] = 6f, [Fields.CloudDamage] = 5f, [Fields.CloudsPerSecond] = 1f,
+                  [Fields.CloudRadius] = 4f };
+            table[Mutation.Devouring] = new Dictionary<string, float>
+                { [Fields.Move] = 1f, [Fields.AbsorbHealth] = 50f, [Fields.AbsorbDamage] = 25f,
+                  [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f, [Fields.DevourCooldown] = 60f };
+            table[Mutation.Thieving] = new Dictionary<string, float> { [Fields.MaxItems] = 1f };
+            table[Mutation.Gilded] = new Dictionary<string, float>
+                { [Fields.Loot] = 3f, [Fields.BonusAmount] = 20f, [Fields.FleeDistance] = 30f };
+            table[Mutation.Blinking] = new Dictionary<string, float>
+                { [Fields.Health] = 0.75f, [Fields.Every] = 30f, [Fields.Distance] = 4f, [Fields.TellTime] = 0.5f };
+            table[Mutation.Relentless] = new Dictionary<string, float> { [Fields.ChaseDistance] = 150f };
         }
     }
 }

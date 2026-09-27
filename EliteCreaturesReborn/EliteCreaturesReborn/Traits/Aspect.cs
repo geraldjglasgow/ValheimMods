@@ -16,5 +16,10 @@ namespace EliteCreaturesReborn.Traits
         Enraged = 6,
         Twin = 7,
         Phantom = 8,
+        Adaptive = 9,
+        Fixated = 10,
+        Stormbound = 11,
+        Gravitic = 12,
+        Colossal = 13,
     }
 }
