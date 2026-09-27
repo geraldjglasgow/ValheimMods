@@ -11,13 +11,13 @@ namespace EliteCreaturesReborn.Rules
     /// </summary>
     internal static class AspectOverlay
     {
-        public static void Apply(AspectRules rules, YamlMappingNode block, List<string> errors)
+        public static void Apply(AspectRules rules, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             rules.Enabled = YamlRead.Bool(block, Fields.Enabled, rules.Enabled, errors);
             rules.ShiftHours = NonNegative(block, Fields.ShiftHours, rules.ShiftHours, errors);
             ReadWeights(rules.Chances, block, Fields.Chances, errors);
             ReadWeights(rules.Loot, block, Fields.Loot, errors);
-            ReadPower(rules, block, errors);
+            ReadPower(rules, block, errors, warnings);
             PerBossOverlay.Apply(rules, YamlRead.Child(block, Fields.PerBoss), errors);
         }
 
@@ -57,7 +57,7 @@ namespace EliteCreaturesReborn.Rules
             }
         }
 
-        private static void ReadPower(AspectRules rules, YamlMappingNode block, List<string> errors)
+        private static void ReadPower(AspectRules rules, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             if (!(YamlRead.Child(block, Fields.Power) is YamlNode node) || !(YamlRead.Map(node, errors, "'power'") is YamlMappingNode map))
             {
@@ -68,30 +68,78 @@ namespace EliteCreaturesReborn.Rules
                 Aspect? aspect = Name(pair.Key, errors);
                 if (aspect != null && YamlRead.Map(pair.Value, errors, $"power for {aspect}") is YamlMappingNode fields)
                 {
-                    ReadFields(rules.Power, aspect.Value, fields, errors);
+                    ReadFields(rules, aspect.Value, fields, errors, warnings);
                 }
             }
         }
 
-        private static void ReadFields(Dictionary<Aspect, Dictionary<string, float>> power, Aspect aspect,
-            YamlMappingNode fields, List<string> errors)
+        /// <summary>One aspect's fields: a number, or a list like Phantom's `split at`. A retired field only warns.</summary>
+        private static void ReadFields(AspectRules rules, Aspect aspect, YamlMappingNode fields, List<string> errors,
+            List<string> warnings)
         {
-            if (!power.TryGetValue(aspect, out Dictionary<string, float> into))
-            {
-                power[aspect] = into = new Dictionary<string, float>();
-            }
             foreach (KeyValuePair<YamlNode, YamlNode> pair in fields.Children)
             {
                 string field = (pair.Key as YamlScalarNode)?.Value ?? "";
-                if (YamlRead.TryFloat(pair.Value, out float value))
+                if (Retired(aspect, field) is string note)
                 {
-                    into[field] = value;
+                    YamlRead.AddError(warnings, pair.Key, note);
+                }
+                else if (pair.Value is YamlSequenceNode)
+                {
+                    ReadList(rules, aspect, field, pair.Value, errors);
                 }
                 else
                 {
-                    YamlRead.AddError(errors, pair.Value, $"{aspect} '{field}' is not a number");
+                    ReadNumber(rules, aspect, field, pair.Value, errors);
                 }
             }
+        }
+
+        private static void ReadNumber(AspectRules rules, Aspect aspect, string field, YamlNode node, List<string> errors)
+        {
+            if (YamlRead.TryFloat(node, out float value))
+            {
+                Into(rules.Power, aspect)[field] = value;
+            }
+            else
+            {
+                YamlRead.AddError(errors, node, $"{aspect} '{field}' is not a number");
+            }
+        }
+
+        private static void ReadList(AspectRules rules, Aspect aspect, string field, YamlNode node, List<string> errors)
+        {
+            float[]? values = YamlRead.Floats(node, errors, $"{aspect} '{field}'");
+            Into(rules.Lists, aspect)[field] = values ?? new float[0]; // an empty list turns the field off
+        }
+
+        private static Dictionary<string, T> Into<T>(Dictionary<Aspect, Dictionary<string, T>> table, Aspect aspect)
+        {
+            if (!table.TryGetValue(aspect, out Dictionary<string, T> into))
+            {
+                table[aspect] = into = new Dictionary<string, T>();
+            }
+            return into;
+        }
+
+        /// <summary>
+        /// A field an older rule file still carries but that no longer does anything - Phantom's fixed copy count and flat
+        /// health, from before its copies came per player at each split. A warning, not an error: an error would reject
+        /// the whole file, and the line is merely out of date.
+        /// </summary>
+        private static string? Retired(Aspect aspect, string field)
+        {
+            if (aspect == Aspect.Phantom && field == Fields.Copies)
+            {
+                return $"Phantom '{field}' is no longer used: the boss splits off '{Fields.PerPlayer}' copies for each "
+                    + $"player online at every '{Fields.SplitAt}' mark";
+            }
+            if (aspect == Aspect.Phantom && field == Fields.Health)
+            {
+                return $"Phantom '{field}' is no longer used: each copy has '{Fields.HealthPerTier}' health for each "
+                    + "world tier (tier 0 counts as 1)";
+            }
+            return null;
         }
 
         /// <summary>The aspect a key names, `none` included; an unknown word is reported and skipped.</summary>

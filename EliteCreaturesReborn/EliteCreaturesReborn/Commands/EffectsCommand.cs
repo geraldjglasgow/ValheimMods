@@ -9,8 +9,8 @@ namespace EliteCreaturesReborn.Commands
     /// first renderable one in front of the player, so a look can be judged by eye. This exists because prefab names are
     /// Unity asset references and cannot be read out of the decompiled game code - the only way to choose a good cloud or
     /// explosion is to see what the loaded game actually has. Every mutation's effect field is otherwise a guess that
-    /// fails silently into a keyword fallback. It scans the non-networked cosmetic prefab list, which is exactly the pool
-    /// the effect resolver clones mutation visuals from.
+    /// fails silently into a keyword fallback. It scans the prefabs named as effects (<c>fx_</c>, <c>vfx_</c>, <c>sfx_</c>),
+    /// which is exactly the pool the effect resolver clones mutation visuals and sounds from.
     /// </summary>
     public static class EffectsCommand
     {
@@ -51,9 +51,9 @@ namespace EliteCreaturesReborn.Commands
         private static List<GameObject> Matches(string text)
         {
             List<GameObject> found = new List<GameObject>();
-            foreach (GameObject prefab in ZNetScene.instance.m_nonNetViewPrefabs)
+            foreach (GameObject prefab in EffectResolver.Prefabs(ZNetScene.instance))
             {
-                if (prefab != null && prefab.name.ToLowerInvariant().Contains(text))
+                if (EffectResolver.IsEffectName(prefab) && prefab.name.ToLowerInvariant().Contains(text))
                 {
                     found.Add(prefab);
                 }

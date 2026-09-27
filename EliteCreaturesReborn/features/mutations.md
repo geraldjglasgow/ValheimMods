@@ -363,7 +363,8 @@ So:
 The spec calls the second between death and detonation "the window a player has to get clear". A window
 nobody can see is not a window. The corpse must visibly and audibly announce what is about to happen for the
 whole delay - swelling, glowing, hissing, whatever the chosen effect supports - and the blast itself should
-reuse an existing explosion effect at the configured radius.
+reuse an existing explosion effect at the configured radius, and be heard: it plays the game's own explosion sound
+(added 2026-09-26 at the user's request).
 
 A player who has seen one Bloated creature die should recognise the second one instantly. That is the entire
 purpose of the delay.
@@ -720,6 +721,7 @@ The implementation must repeat this table as comments inside the generated file.
 | Bloated | `delay` | Seconds between death and the blast - the window a player has to get clear. |
 | Bloated | `damage` | Blunt damage at 0 stars, multiplied by `(1 + stars)`. |
 | Bloated | `radius` | Blast radius in metres. |
+| Bloated | `blast sound` | The vanilla sound prefab the blast goes off with (added 2026-09-26). |
 | Cloaked | `reveal distance` | Metres at which it becomes visible. The nameplate hides in step. |
 | Cloaked | `fade time` | Seconds to phase in or out. `0` snaps. |
 | Cloaked | `fade margin` | Extra metres before it fades back out, so it cannot strobe at the boundary. |

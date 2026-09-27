@@ -86,14 +86,17 @@ namespace EliteCreaturesReborn.Rules
 
         private static readonly Dictionary<Mutation, Dictionary<string, float>> Table = BuildTable();
 
-        // The vanilla effect prefabs each visible mutation clones. These are best-effort names; the resolver
-        // (EffectResolver) falls back to the nearest particle effect by keyword if a name is missing, so a wrong
-        // string self-heals rather than leaving an invisible hazard. Every one is a rule-file field a server can edit.
+        // The vanilla effect prefabs each visible mutation clones and plays, each checked against the game's own prefab
+        // list; the resolver (EffectResolver) falls back to the nearest effect by keyword if a name is missing, so a
+        // wrong string self-heals rather than leaving an invisible hazard. Every one is a rule-file field a server can edit.
         private static readonly Dictionary<Mutation, Dictionary<string, string>> PrefabTable =
             new Dictionary<Mutation, Dictionary<string, string>>
             {
                 [Mutation.Bloated] = new Dictionary<string, string>
-                    { [Fields.BlastEffect] = "fx_barrel_destroyed", [Fields.WarningEffect] = "fx_Smoke" },
+                {
+                    [Fields.BlastEffect] = "fx_dynamite_explosion", [Fields.BlastSound] = "sfx_bombdynamite_explosion",
+                    [Fields.WarningEffect] = "vfx_Smoked",
+                },
                 [Mutation.Miasmic] = new Dictionary<string, string>
                     { [Fields.CloudEffect] = "vfx_blob_death", [Fields.BodyEffect] = "vfx_blob_death" },
             };

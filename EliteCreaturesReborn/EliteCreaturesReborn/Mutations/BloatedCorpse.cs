@@ -24,26 +24,19 @@ namespace EliteCreaturesReborn.Mutations
 
         private float _fuse;
         private bool _isOwner;
-        private int _stars;
-        private float _damage;
-        private float _radius;
-        private string _blastEffect = "";
+        private BlastSpec _blast;
         private Vector3 _deathPos;
         private Ragdoll? _corpse;
         private float _searchTimer;
 
-        public static void Spawn(Vector3 deathPos, float damage, float radius, float delay, int stars,
-            string warningEffect, string blastEffect, bool isOwner)
+        public static void Spawn(Vector3 deathPos, float delay, string warningEffect, BlastSpec blast, bool isOwner)
         {
             GameObject holder = new GameObject("ecr_bloated_corpse");
             holder.transform.position = deathPos;
             BloatedCorpse corpse = holder.AddComponent<BloatedCorpse>();
             corpse._fuse = delay;
             corpse._isOwner = isOwner;
-            corpse._stars = stars;
-            corpse._damage = damage;
-            corpse._radius = radius;
-            corpse._blastEffect = blastEffect;
+            corpse._blast = blast;
             corpse._deathPos = deathPos;
             GameObject? warning = EffectResolver.Resolve(warningEffect, EffectResolver.Warning, "Bloated warning effect");
             LingeringVisual.Attach(holder, warning, Mathf.Max(delay, 0.01f), WarningRadius);
@@ -110,7 +103,7 @@ namespace EliteCreaturesReborn.Mutations
                 return;
             }
             Vector3 at = _corpse != null ? _corpse.transform.position : _deathPos;
-            EliteRpc.FireBlast(at, _damage, _radius, _stars, _blastEffect);
+            EliteRpc.FireBlast(at, _blast);
         }
     }
 }

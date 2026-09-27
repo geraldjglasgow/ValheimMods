@@ -47,7 +47,7 @@ Echoing, Draining, Sundering, Unbound), none of which was ever built.
 | Elementalist | Deals 20% more elemental damage |
 | Enraged | Deals 20% more physical damage |
 | Twin | Comes as two bosses sharing one health pool, each with 25% less health and damage |
-| Phantom | Comes with four weak copies of itself: half its damage, 100 health, no drops, no body |
+| Phantom | Splits off weak copies of itself at 66% and 33% health, one per player online: half its damage, 25 health per world tier, no drops, no body |
 
 ## How each aspect works
 
@@ -97,12 +97,22 @@ it was - a hit, a burn tick, lava. When the pool runs out both die together, and
 its own trophy included (decided 2026-09-26). Each shows its own boss health bar; the two bars always read the
 same. The twin never brings a twin of its own.
 
-**Phantom.** The moment the boss appears, **4** copies of it appear in a ring around it: same prefab, same stars,
-same size, same name. Each copy deals **50% less** damage and has **100 health**, however many stars the boss
-has. A copy drops nothing and leaves no body - it vanishes where it falls, with a puff of smoke. Its death never
-counts as the boss's: no boss-defeated key, no progression, no trophy. **When the boss dies its remaining copies
-vanish with it** (a judgement call: they are the boss's phantoms, not creatures of their own). The copies never
-bring copies of their own.
+**Phantom.** Each time the boss's health falls past a split mark - **66%** and then **33%** of its maximum by
+default - copies of it appear in a ring around it: same prefab, same stars, same size, same name, **one for each
+player online** (so a player alone faces one at each split, a group of four faces four). Each copy deals **50%
+less** damage and has **25 health for each world tier**, tier 0 counting as 1, however many stars the boss has. A
+hit that crosses both marks brings both splits at once, and healing back above a mark never re-arms it. A copy
+drops nothing and leaves no body - it vanishes where it falls, with a puff of smoke. Its death never counts as the
+boss's: no boss-defeated key, no progression, no trophy. **When the boss dies its remaining copies vanish with it**
+(a judgement call: they are the boss's phantoms, not creatures of their own). The copies never split themselves.
+
+The game draws every boss health bar in the same place, so the copies' bars would sit on top of the boss's and only
+one would show. **The boss keeps its full-size bar; each copy's bar is a quarter of its width and a sliver of its
+height, in a row under it** - four copies together are as long as the boss bar, a fifth starts a second row - each
+with its name in small type above it.
+
+Changed on 2026-09-26 at the user's request. Until then the four copies (100 health each) came the moment the boss
+appeared, and their bars covered the boss's.
 
 ---
 
@@ -216,7 +226,10 @@ in the mod that does not simply follow the owner-rolls-once rule.
   partner's own network view, which takes the same amount off. A twin's death tells its partner to fall. The two
   may have different owners; each only ever writes its own health.
 - **Phantom copies are marked in their own ZDO**, so every machine strips their drops, body and boss key the moment
-  it meets one. The boss's owner sends the vanish to each copy's owner when the boss dies.
+  it meets one, and draws its small health bar. The splits already made are counted in the boss's ZDO, like
+  Summoner's waves, and the copy count comes from the player list the server sends every client, so whichever
+  machine owns the boss spawns the same number. The boss's owner sends the vanish to each copy's owner when the
+  boss dies.
 - **Damage changes** (Enraged, Elementalist, Shielded, Twin's and Phantom's reduced damage) are applied where every
   hit is resolved - on the victim's owner - from the aspect in the attacker's or victim's ZDO.
 - **Loot is multiplied on the owner**, where the game builds the drop list, from the aspect in the boss's ZDO.
@@ -253,7 +266,7 @@ bosses:
       Elementalist: { elemental bonus: 20 }
       Enraged:      { physical bonus: 20 }
       Twin:         { less health: 25, less damage: 25 }
-      Phantom:      { copies: 4, health: 100, less damage: 50 }
+      Phantom:      { split at: [66, 33], per player: 1, health per tier: 25, less damage: 50 }
     per boss:                # matched by prefab name
       - match: Eikthyr
         summons: [Boar, Neck]
@@ -289,6 +302,9 @@ Judgement calls made while building, each a default in the rule file:
 - Aspect percentages multiply the starred boss rather than adding to the star line (section 1).
 - "Arrows" means bows and crossbows.
 - Phantom copies vanish when the boss dies; summoned creatures do not.
+- Phantom (changed with the user on 2026-09-26): splits at 66% and 33% (a list, so a server can add or remove
+  marks), one copy per player online at each split, 25 health per world tier with tier 0 counting as 1, and small
+  copy health bars under the boss's. An older rule file's `copies` and `health` lines are warned about and ignored.
 
 Still open:
 
@@ -312,7 +328,9 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Elementalist: fire, frost, lightning, poison, spirit
 - [ ] Enraged: blunt, slash, pierce
 - [ ] Twin: second boss, shared pool, both die together, both drop
-- [ ] Phantom: four copies, 100 health, half damage, no drops, no body, vanish with the boss
+- [ ] Phantom: splits at 66% and 33%, one copy per player online, 25 health per tier (1 at tier 0), half damage,
+  no drops, no body, vanish with the boss
+- [ ] Phantom copies' health bars in a small row under the boss's bar
 - [ ] The aspect is in the boss's name
 - [ ] Boss stars show on the boss health bar
 
@@ -332,7 +350,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] The reroll is performed by the altar's owner
 - [ ] On summoning, the locked-in aspect is written to the boss's own ZDO
 - [ ] Altar text drawn locally; no message sent for it
-- [ ] Summoner waves, Mending, Twin and Phantom spawns decided by the boss's owner
+- [ ] Summoner waves, Mending, Twin spawns and Phantom splits decided by the boss's owner
 - [ ] Twin pool holds with the two twins owned by different machines
 - [ ] Phantom copies stripped on every machine; vanish reaches each copy's owner
 - [ ] Loot multiplied on the owner
@@ -354,3 +372,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-26 | Set replaced with the user's eight; open decisions settled; whole feature built, untested; boss stars drawn on the boss health bar. | 61a0c3e |
+| 2026-09-26 | Phantom reworked with the user: splits at health marks, copies per player online, health per world tier, small copy bars under the boss bar. Untested. | EliteCreaturesReborn-v3.8.0 |

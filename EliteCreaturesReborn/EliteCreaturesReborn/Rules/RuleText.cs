@@ -69,7 +69,7 @@ defaults:
   # the mod's README, under Mutation power fields.
   mutation power:
     Mad:         { move: 1.6, attack speed: 1.5, health: 0.5 }
-    Bloated:     { health: 2.0, delay: 1.0, damage: 40, radius: 4, blast effect: fx_barrel_destroyed, warning effect: fx_Smoke }
+    Bloated:     { health: 2.0, delay: 1.0, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
     Cloaked:     { reveal distance: 6, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
     Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }

@@ -2,7 +2,7 @@ namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
     /// The boss-aspect state that is not part of the rolled traits: an altar's current aspect and shift time, a twin's
-    /// partner, a phantom copy's boss and a summoner's wave count. The single seam between that state and the ZDO, as
+    /// partner, a phantom copy's boss, a phantom boss's split count and a summoner's wave count. The single seam between that state and the ZDO, as
     /// <see cref="TraitStore"/> is for the traits. Reads work anywhere; every write is made by the object's owner.
     /// </summary>
     public static class AspectStore
@@ -37,5 +37,9 @@ namespace EliteCreaturesReborn.Traits
         public static int GetWaves(ZDO zdo) => zdo.GetInt(TraitKeys.SummonWaves);
 
         public static void SetWaves(ZDO zdo, int waves) => zdo.Set(TraitKeys.SummonWaves, waves);
+
+        public static int GetSplits(ZDO zdo) => zdo.GetInt(TraitKeys.PhantomSplits);
+
+        public static void SetSplits(ZDO zdo, int splits) => zdo.Set(TraitKeys.PhantomSplits, splits);
     }
 }

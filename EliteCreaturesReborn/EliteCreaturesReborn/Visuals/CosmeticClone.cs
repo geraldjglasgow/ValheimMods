@@ -9,6 +9,7 @@ namespace EliteCreaturesReborn.Visuals
     /// source. Every gameplay component (its Aoe, its ZNetView, its transform sync) is stripped on spawn, so the clone
     /// can only ever be seen, never felt - which is what lets a player turn effects down to nothing without changing a
     /// single point of damage. Density from the per-player setting thins the particles; zero density spawns nothing.
+    /// A sound clone is the same stripped, local copy, and plays whatever the density.
     /// </summary>
     public static class CosmeticClone
     {
@@ -43,6 +44,24 @@ namespace EliteCreaturesReborn.Visuals
             Thin(clone, density);
             clone.transform.localScale *= Mathf.Max(radius, 0.01f) / BaselineRadius;
             Object.Destroy(clone, Mathf.Max(radius, 3f));
+        }
+
+        /// <summary>The longest a one-shot sound clone may live, should its own timer be missing.</summary>
+        private const float SoundLife = 10f;
+
+        /// <summary>
+        /// A one-shot sound at a point: the prefab's own sound player plays it as it wakes, and its own timer removes it.
+        /// Not thinned by the effect density setting, which governs what is seen, not what is heard.
+        /// </summary>
+        public static void Sound(GameObject? prefab, Vector3 position)
+        {
+            if (prefab == null)
+            {
+                return;
+            }
+            GameObject clone = Instantiate(prefab, position);
+            Strip(clone, endless: false);
+            Object.Destroy(clone, SoundLife);
         }
 
         private static GameObject Instantiate(GameObject prefab, Vector3 position)

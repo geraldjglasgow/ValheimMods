@@ -5,9 +5,10 @@ namespace EliteCreaturesReborn.Runtime
 {
     /// <summary>
     /// A boss's counterpart to <see cref="BehaviourInstaller"/>: attaches the per-frame behaviour its aspect calls for on
-    /// EVERY machine, each self-gating its writes on live ownership, and - on the owner, on the boss's first roll only -
-    /// brings in its twin or its phantom copies. A copy is born already resolved, so it never reaches that branch and
-    /// never brings a twin or copies of its own. A Phantom copy is hollowed here on every machine the moment it resolves.
+    /// EVERY machine, each self-gating its writes on live ownership (Phantom's splits among them), and - on the owner, on
+    /// the boss's first roll only - brings in its twin. A copy is born already resolved, so it never reaches that branch,
+    /// and returns before the behaviours, so it never brings a twin or splits of its own. A Phantom copy is hollowed here
+    /// on every machine the moment it resolves.
     /// The hit-shaped aspects (Reflective, Shielded, Elementalist, Enraged) need no component - patches handle them.
     /// </summary>
     public static class AspectInstaller
@@ -34,6 +35,7 @@ namespace EliteCreaturesReborn.Runtime
                 case Aspect.Mending: controller.gameObject.AddComponent<MendingBehaviour>(); break;
                 case Aspect.Summoner: controller.gameObject.AddComponent<SummonerBehaviour>(); break;
                 case Aspect.Twin: controller.gameObject.AddComponent<TwinLink>(); break;
+                case Aspect.Phantom: controller.gameObject.AddComponent<PhantomBehaviour>(); break;
             }
         }
 
@@ -42,10 +44,6 @@ namespace EliteCreaturesReborn.Runtime
             if (aspect == Aspect.Twin)
             {
                 TwinSpawner.Spawn(controller);
-            }
-            else if (aspect == Aspect.Phantom)
-            {
-                PhantomSpawner.Spawn(controller);
             }
         }
     }

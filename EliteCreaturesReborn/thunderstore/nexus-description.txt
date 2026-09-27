@@ -28,7 +28,7 @@ Nine, one per creature by default, each with its own colour and its own word bef
 Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows. Bosses have their own star table, and a boss's stars are drawn under its health bar.
 
 [size=4][b]World tiers[/b][/size]
-The world starts at tier 0 and goes up one tier the first time each boss is defeated - by anyone, in any order - so the seven bosses take it to tier 7. Killing a boss again changes nothing, and every rise is announced to everyone on the server. Each tier makes stars and mutations more common in every biome while keeping each biome's character: by tier 7 the share of unstarred Meadows creatures falls from 73 in 100 to 44, five-star Plains creatures rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffected, and creatures already alive keep what they rolled. A world that killed bosses before the mod was installed starts at that tier. The off switch, which bosses count (modded ones too) and the boost per tier are in the rule file.
+The world starts at tier 0 and goes up one tier the first time each boss is defeated - by anyone, in any order - so the seven bosses take it to tier 7. Killing a boss again changes nothing, and every rise is announced to everyone on the server. Each tier makes stars and mutations more common in every biome while keeping each biome's character: by tier 7 the share of unstarred Meadows creatures falls from 73 in 100 to 44, five-star Plains creatures rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffected, and creatures already alive keep what they rolled. A world that killed bosses before the mod was installed starts at that tier. The inventory shows the tier on a globe plate under the weight, and every plate on that side names itself when hovered. The off switch, which bosses count (modded ones too) and the boost per tier are in the rule file.
 
 [size=4][b]Breeding[/b][/size]
 Tamed creatures keep their traits and pass them on. A newborn - a pup, a piglet, a calf, or an egg and the chick that hatches from it - takes one of its parents' mutations whenever either has one, and a star count from 0 up to its stronger parent's, every count equally likely. Two plain parents have plain young, so a strong line stays strong only if you keep the good ones. Young creatures keep their traits when they grow up, and eggs keep theirs when carried and say what they will hatch. A bred mutation behaves exactly as it does in the wild - a Miasmic pet still trails poison.
@@ -43,7 +43,7 @@ A boss never takes a mutation. It takes an [b]aspect[/b], named before the boss 
 [*][b]Elementalist[/b] - 20% more elemental damage.
 [*][b]Enraged[/b] - 20% more physical damage.
 [*][b]Twin[/b] - comes as two sharing one health pool, 25% less health and damage each; both drop full loot.
-[*][b]Phantom[/b] - brings four copies with 100 health and half its damage; they drop nothing and vanish when the boss dies.
+[*][b]Phantom[/b] - at 66% and 33% health splits off one copy per player online, with 25 health per world tier and half its damage; they drop nothing and vanish when the boss dies, and their small health bars sit under the boss's.
 [/list]
 Harder aspects pay more: each has its own loot multiplier. Every number, the chances, the shift interval and each boss's summons are in the rule file.
 

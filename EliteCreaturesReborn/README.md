@@ -41,7 +41,8 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
 - **Mad** - `move`/`attack speed` multipliers (enhanced); `health` multiplier, its cost
 - **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, which goes off at the
   corpse's resting place; `damage` (enhanced) and `radius` (enhanced) of the blast; `blast effect`/`warning effect`
-  vanilla prefabs for the explosion and the pre-blast warning
+  vanilla prefabs for the explosion and the pre-blast warning, `blast sound` the vanilla sound it goes off with
+  (`elite effects <text>` lists and plays the game's effect and sound prefabs)
 - **Cloaked** - `reveal distance` metres to become visible (enhanced); `fade time` seconds to phase, 0 snaps;
   `fade margin` extra metres before fading back out, to stop strobing
 - **Splintering** - `damage` multiplier per split; `max generations` cascade-depth cap, 0 = unlimited;
@@ -85,6 +86,10 @@ rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffect
 what they rolled - the tier decides what the next one rolls. A world that killed bosses before the mod was installed
 starts at that tier.
 
+The inventory shows the tier on a plate with a globe under the weight ("3/7"); the armor and weight plates move up
+to make room, and every plate on that side names itself when hovered. `Show world tier` in the .cfg hides the plate
+for one player. With OpenKeep installed its trash plate joins the same column.
+
 `elite tier` shows any player the current tier, what it is doing to the rolls, and which bosses count. The
 `world tiers:` block in the rule file has the off switch, the list of bosses that count (a modded boss counts once
 its defeat key is listed; `elite tier` shows every boss's key), and the star and mutation boost for each tier.
@@ -120,7 +125,7 @@ altar - the Queen, or a console spawn - rolls its aspect when it first appears.
 | Elementalist | 20% more fire, frost, lightning, poison and spirit damage | x1.2 |
 | Enraged | 20% more physical damage | x1.2 |
 | Twin | A second copy of the boss; the two share one health pool, 25% less health and damage each, and both drop full loot | x1 each |
-| Phantom | Four copies with 100 health and half its damage; they drop nothing, leave no body, and vanish when the boss dies | x1.3 |
+| Phantom | At 66% and again at 33% health it splits off one copy per player online, each with 25 health per world tier (tier 0 counts as 1) and half its damage; copies drop nothing, leave no body, and vanish when the boss dies. Their small health bars sit in a row under the boss's own | x1.3 |
 
 Everything is in the `aspects:` block under `bosses:` in the rule file: the off switch, the shift interval (0 fixes
 each altar), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures

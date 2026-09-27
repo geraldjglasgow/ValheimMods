@@ -91,6 +91,11 @@ lines are how the tier reaches the roll.
   and any boss the game knows that the list leaves out. It only reads, so it is open to every player, admin or not
   (`console-commands.md`).
 - **`elite inspect`** says which tier a wild creature was rolled at, when it was above 0.
+- **The inventory shows the tier** (added 2026-09-26 at the user's request): a plate with a globe and "3/7" at the
+  bottom of the column of stat plates on the player panel's right, under the weight. The armor and weight plates
+  move up to make room (OpenKeep's trash plate too, when it is installed), and every plate in the column names
+  itself in a tooltip on hover; the globe's says what the tier does. Hidden with tiers off, and per player with
+  `Show world tier` (`display-preferences.md`). The column is the shared `PlateColumn` library.
 
 ---
 
@@ -165,6 +170,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [~] A tier rise is announced to everyone - built, not tested in game
 - [~] `elite tier` reports tier, boosts and bosses, open to every player - built, not tested in game
 - [~] `elite inspect` shows the rolled tier - built, not tested in game
+- [~] The inventory's globe plate shows the tier under the weight, with tooltips on every plate - built, not tested in game
 
 ## Multiplayer
 
@@ -191,3 +197,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-26 | User settled the source: first defeat of each boss, server-wide; Personal, Elapsed and Manual dropped. Built the tier from the game's defeat keys, the two boost lines, the announcement, `elite tier` open to all, the rolled tier in `elite inspect`. Rule parser exercised outside the game. | EliteCreaturesReborn-v3.6.0 |
+| 2026-09-26 | The tier on a globe plate in the inventory's stat column, with tooltips on every plate; column shared with OpenKeep through the new `PlateColumn` library. Untested. | EliteCreaturesReborn-v3.8.0 |

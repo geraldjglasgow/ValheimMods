@@ -10,6 +10,7 @@ Small, focused libraries for Valheim BepInEx mods, extracted from Elite Creature
 | [SyncedConfig](SyncedConfig/) | Facade: Charter + ConfigReload + YamlConfig in one object with `Bind`, `BindLocking`, `AddYaml`, `Finish` | all of the above |
 | [PatchGuard](PatchGuard/) | Logs exceptions from the mod's own code under the mod's name (`Guard.Run` / `Guard.Wrap` around entry points), then rethrows; `Profiler` times patched methods | BepInEx, Harmony |
 | [ItemCopies](ItemCopies/) | Writes item values into the prefab and into every live copy of its shared data (world drops, inventory, eaten foods, the open container) and into new copies as they appear | BepInEx, Harmony, game, Unity |
+| [PlateColumn](PlateColumn/) | The stat plates on the inventory's player panel as one column any mod adds a plate to (rank, icon, optional number, tooltip), evenly spaced, with tooltips on the game's own plates too; loads a plate icon from an embedded PNG | game, Unity |
 | [Charter](Charter/) | Our own server-to-player binding: the server's config values bind every player, stewards (admins) may amend them, articles carry other values, one join-check screen for all our mods, `charter` console command | BepInEx, Harmony, game, Unity |
 
 ## Building

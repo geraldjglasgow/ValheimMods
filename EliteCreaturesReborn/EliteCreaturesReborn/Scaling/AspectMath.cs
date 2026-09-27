@@ -1,4 +1,5 @@
 using EliteCreaturesReborn.Rules;
+using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using UnityEngine;
 
@@ -20,8 +21,17 @@ namespace EliteCreaturesReborn.Scaling
         public static float HealthFactor(CreatureTraits traits) =>
             traits.Aspect == Aspect.Twin ? Cut(Power(Aspect.Twin, Fields.LessHealth)) : 1f;
 
-        /// <summary>A Phantom copy's whole maximum health, whatever its stars: a copy falls to about one blow.</summary>
-        public static float PhantomHealth() => Mathf.Max(1f, Power(Aspect.Phantom, Fields.Health));
+        /// <summary>
+        /// A Phantom copy's whole maximum health, whatever its stars: `health per tier` for each world tier, with tier 0
+        /// counting as 1, so a copy stays a few blows' work as the world hardens.
+        /// </summary>
+        public static float PhantomHealth(AspectRules rules) =>
+            Mathf.Max(1f, rules.PowerOf(Aspect.Phantom, Fields.HealthPerTier) * Mathf.Max(1, WorldTier.Current()));
+
+        public static float PhantomHealth() => PhantomHealth(RuleState.Active.Boss.Aspects);
+
+        /// <summary>The health marks, in percent of its maximum left, at which a Phantom boss splits off its copies.</summary>
+        public static float[] PhantomSplits() => RuleState.Active.Boss.Aspects.ListOf(Aspect.Phantom, Fields.SplitAt);
 
         /// <summary>The share of its starred damage a boss deals: Twin's and a Phantom copy's cut, 1 otherwise.</summary>
         public static float DamageFactor(CreatureTraits traits)

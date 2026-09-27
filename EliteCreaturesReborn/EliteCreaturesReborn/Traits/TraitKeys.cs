@@ -81,6 +81,9 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Phantom: on a copy, the ZDOID of the boss that brought it. Its presence is what makes a copy a copy.</summary>
         public const string PhantomOf = "ecr_phantom_of";
 
+        /// <summary>Phantom: on the boss, how many of its `split at` marks it has split at, so a hand-over repeats none.</summary>
+        public const string PhantomSplits = "ecr_phantom_splits";
+
         /// <summary>Summoner: how many waves the boss has called, so a hand-over neither repeats nor skips one.</summary>
         public const string SummonWaves = "ecr_waves";
 

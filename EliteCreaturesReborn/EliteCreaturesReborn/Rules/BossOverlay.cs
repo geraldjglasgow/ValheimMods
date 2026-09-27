@@ -9,7 +9,7 @@ namespace EliteCreaturesReborn.Rules
     /// </summary>
     internal static class BossOverlay
     {
-        public static void Apply(BossRules boss, YamlMappingNode block, List<string> errors)
+        public static void Apply(BossRules boss, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             boss.Enabled = YamlRead.Bool(block, "stars", boss.Enabled, errors);
             float[]? chances = YamlRead.Floats(YamlRead.Child(block, "star chances"), errors, "boss star chances");
@@ -21,7 +21,7 @@ namespace EliteCreaturesReborn.Rules
             if (YamlRead.Child(block, Fields.Aspects) is YamlNode aspects
                 && YamlRead.Map(aspects, errors, "'aspects'") is YamlMappingNode map)
             {
-                AspectOverlay.Apply(boss.Aspects, map, errors);
+                AspectOverlay.Apply(boss.Aspects, map, errors, warnings);
             }
         }
 

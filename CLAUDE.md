@@ -67,6 +67,7 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | TraitSets | enum sets in ZDOs, weighted rolls |
 | PatchGuard | attribute exceptions from the mod's own code to the mod in the log, then rethrow |
 | ItemCopies | write item values into the prefab and every live copy of its shared data, and into new copies |
+| PlateColumn | the inventory's stat plates as one column any mod adds a plate to, each with a tooltip; embedded PNG icons |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs

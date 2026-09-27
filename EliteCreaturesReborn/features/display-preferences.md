@@ -45,6 +45,7 @@ must be the same for both belongs in the gameplay settings instead.
 | **Whether trait names show at all** | Stars without the adjectives, for a player who wants them |
 | **Show stolen items** | Whether a Thieving creature's carried-item icons draw on its nameplate at all (`thieving.md`) |
 | **Stolen item icon size** | Size of those icons as a multiple of vanilla's own star size, **down to off** via the setting above |
+| **Show world tier** | Whether the inventory's globe plate shows the world tier under the weight (`world-tiers.md`) |
 
 Three of these go **all the way to off**, and that is intentional rather than generous. The visual language in
 this mod is deliberately loud - tints, coloured stars, flames - because difficulty should be legible. A player who
@@ -130,6 +131,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Attunement flame brightness, down to off
 - [ ] Nameplate display distance
 - [ ] Whether trait names show at all
+- [ ] Show world tier
 
 ## Multiplayer
 

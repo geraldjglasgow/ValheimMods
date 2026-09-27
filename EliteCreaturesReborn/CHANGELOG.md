@@ -1,5 +1,29 @@
 # Changelog
 
+## 3.8.0
+
+**Phantom reworked.** A Phantom boss no longer arrives with four copies. It splits off copies as it is hurt: at 66%
+of its health and again at 33%, one copy for each player online, so a player alone faces one at a time.
+
+- Each copy has 25 health for each world tier (tier 0 counts as 1) and still deals half the boss's damage.
+- The boss keeps its big health bar. The copies' bars are small, in a row under it, instead of covering it.
+- New Phantom keys in the rule file: `split at: [66, 33]` (the health marks; add or remove marks as you like),
+  `per player: 1` and `health per tier: 25`. An older rule file's `copies` and `health` lines are no longer used:
+  the log warns about them and the new defaults apply. Replace that Phantom line to tune the new ones.
+
+**Bloated explosions can be seen and heard.** The blast now goes off with the game's dynamite explosion sound (new
+`blast sound` field). The default blast and warning effects named prefabs the game does not have, and the search for
+a stand-in looked in a list the game leaves empty, so the blast and its warning drew nothing. Both are fixed; a rule
+file that still names the old effects gets a stand-in explosion and a note in the log. The same fix makes the
+Warding, Devouring, Thieving, Summoner and Phantom effects show at all.
+
+**World tier in the inventory.** A plate with a globe under the weight shows the tier ("3/7"). The armor and weight
+plates move up to make room, and hovering any plate on that side names it. `Show world tier` in the .cfg hides the
+plate for one player. With OpenKeep 1.5.0 its trash plate joins the same column, evenly spaced.
+
+- **Update the server as well as every player**: the Bloated blast message changed, and a player on an older
+  version sees no blast from a player on 3.8.0.
+
 ## 3.7.1
 
 **Creatures spawn at full health alongside mods that raise creature health.** With a mod that multiplies creature

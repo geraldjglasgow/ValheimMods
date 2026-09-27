@@ -42,8 +42,7 @@ namespace EliteCreaturesReborn.Runtime
         }
 
         /// <summary>Owner-side, at death: announce the Bloated death so every client wears a warning on its own corpse.</summary>
-        public static void FireBloat(Vector3 pos, float baseDamage, float radius, float delay, int stars,
-            string warningEffect, string blastEffect)
+        public static void FireBloat(Vector3 pos, float delay, string warningEffect, BlastSpec blast)
         {
             EnsureRegistered();
             if (ZRoutedRpc.instance == null)
@@ -52,13 +51,13 @@ namespace EliteCreaturesReborn.Runtime
             }
             ZPackage pkg = new ZPackage();
             pkg.Write(pos.x); pkg.Write(pos.y); pkg.Write(pos.z);
-            pkg.Write(baseDamage); pkg.Write(radius); pkg.Write(delay); pkg.Write(stars);
-            pkg.Write(warningEffect ?? ""); pkg.Write(blastEffect ?? "");
+            pkg.Write(delay); pkg.Write(warningEffect ?? "");
+            blast.Write(pkg);
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Bloat, pkg);
         }
 
         /// <summary>Owner-side, at fuse end: announce the blast at the owner's corpse so all clients agree on its place.</summary>
-        public static void FireBlast(Vector3 pos, float baseDamage, float radius, int stars, string blastEffect)
+        public static void FireBlast(Vector3 pos, BlastSpec blast)
         {
             EnsureRegistered();
             if (ZRoutedRpc.instance == null)
@@ -67,8 +66,7 @@ namespace EliteCreaturesReborn.Runtime
             }
             ZPackage pkg = new ZPackage();
             pkg.Write(pos.x); pkg.Write(pos.y); pkg.Write(pos.z);
-            pkg.Write(baseDamage); pkg.Write(radius); pkg.Write(stars);
-            pkg.Write(blastEffect ?? "");
+            blast.Write(pkg);
             ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Blast, pkg);
         }
 
@@ -79,10 +77,9 @@ namespace EliteCreaturesReborn.Runtime
         private static void ReadBloat(long sender, ZPackage pkg)
         {
             Vector3 pos = new Vector3(pkg.ReadSingle(), pkg.ReadSingle(), pkg.ReadSingle());
-            float baseDamage = pkg.ReadSingle(), radius = pkg.ReadSingle(), delay = pkg.ReadSingle();
-            int stars = pkg.ReadInt();
-            string warning = pkg.ReadString(), blast = pkg.ReadString();
-            BloatedCorpse.Spawn(pos, baseDamage, radius, delay, stars, warning, blast, isOwner: sender == ZNet.GetUID());
+            float delay = pkg.ReadSingle();
+            string warning = pkg.ReadString();
+            BloatedCorpse.Spawn(pos, delay, warning, BlastSpec.Read(pkg), isOwner: sender == ZNet.GetUID());
         }
 
         private static void OnBlast(long sender, ZPackage pkg) => Guard.Run("EliteRpc.OnBlast", () => ReadBlast(sender, pkg));
@@ -91,10 +88,7 @@ namespace EliteCreaturesReborn.Runtime
         private static void ReadBlast(long sender, ZPackage pkg)
         {
             Vector3 pos = new Vector3(pkg.ReadSingle(), pkg.ReadSingle(), pkg.ReadSingle());
-            float baseDamage = pkg.ReadSingle(), radius = pkg.ReadSingle();
-            int stars = pkg.ReadInt();
-            string blast = pkg.ReadString();
-            BloatedBlast.Detonate(pos, baseDamage, radius, stars, blast, damaging: sender == ZNet.GetUID());
+            BloatedBlast.Detonate(pos, BlastSpec.Read(pkg), damaging: sender == ZNet.GetUID());
         }
     }
 }

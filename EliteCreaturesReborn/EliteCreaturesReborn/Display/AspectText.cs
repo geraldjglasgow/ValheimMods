@@ -1,4 +1,5 @@
 using EliteCreaturesReborn.Rules;
+using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
 using UnityEngine;
 
@@ -23,10 +24,28 @@ namespace EliteCreaturesReborn.Display
             Aspect.Enraged => $"deals {N(rules, aspect, Fields.PhysicalBonus)}% more physical damage",
             Aspect.Twin => $"comes as two sharing one health pool, each with {N(rules, aspect, Fields.LessHealth)}% "
                 + $"less health and {N(rules, aspect, Fields.LessDamage)}% less damage",
-            Aspect.Phantom => $"brings {N(rules, aspect, Fields.Copies)} phantom copies: "
-                + $"{N(rules, aspect, Fields.Health)} health, {N(rules, aspect, Fields.LessDamage)}% less damage",
+            Aspect.Phantom => $"at {Marks(rules)} health splits off phantom copies, "
+                + $"{N(rules, aspect, Fields.PerPlayer)} per player online, with {AspectMath.PhantomHealth(rules):0} "
+                + $"health and {N(rules, aspect, Fields.LessDamage)}% less damage",
             _ => "",
         };
+
+        /// <summary>Phantom's split marks as "66% and 33%".</summary>
+        private static string Marks(AspectRules rules)
+        {
+            float[] marks = rules.ListOf(Aspect.Phantom, Fields.SplitAt);
+            if (marks.Length == 0)
+            {
+                return "no";
+            }
+            string[] words = new string[marks.Length];
+            for (int i = 0; i < marks.Length; i++)
+            {
+                words[i] = marks[i].ToString("0.##") + "%";
+            }
+            return words.Length == 1 ? words[0]
+                : string.Join(", ", words, 0, words.Length - 1) + " and " + words[words.Length - 1];
+        }
 
         /// <summary>The lines under the bowl's own hover text: the aspect, what it pays, and when it shifts.</summary>
         public static string AltarLines(Aspect aspect, AspectRules rules, double secondsToShift)

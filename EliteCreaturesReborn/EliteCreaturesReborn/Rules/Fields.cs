@@ -24,6 +24,7 @@ namespace EliteCreaturesReborn.Rules
         public const string Damage = "damage";
         public const string Radius = "radius";
         public const string BlastEffect = "blast effect";
+        public const string BlastSound = "blast sound";
         public const string WarningEffect = "warning effect";
 
         // Cloaked
@@ -59,7 +60,8 @@ namespace EliteCreaturesReborn.Rules
 
         /// <summary>The mutation-power fields that name a vanilla prefab (a string) rather than carrying a number.</summary>
         public static bool IsPrefabField(string field) =>
-            field == CloudEffect || field == BodyEffect || field == BlastEffect || field == WarningEffect;
+            field == CloudEffect || field == BodyEffect || field == BlastEffect || field == BlastSound
+            || field == WarningEffect;
 
         // Devouring
         public const string AbsorbHealth = "absorb health";
@@ -91,6 +93,11 @@ namespace EliteCreaturesReborn.Rules
         public const string PhysicalBonus = "physical bonus";
         public const string LessHealth = "less health";
         public const string LessDamage = "less damage";
+        public const string SplitAt = "split at";
+        public const string PerPlayer = "per player";
+        public const string HealthPerTier = "health per tier";
+
+        /// <summary>Phantom's fixed copy count before copies came per player; read only to tell a rule file it is unused.</summary>
         public const string Copies = "copies";
 
         // world tiers and breeding blocks (Enabled above is shared)

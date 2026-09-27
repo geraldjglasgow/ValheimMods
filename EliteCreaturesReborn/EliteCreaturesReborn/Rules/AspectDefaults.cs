@@ -36,6 +36,11 @@ namespace EliteCreaturesReborn.Rules
         private static Dictionary<string, float> FieldsOf(Aspect aspect) =>
             PowerTable.TryGetValue(aspect, out Dictionary<string, float> fields) ? fields : new Dictionary<string, float>();
 
+        /// <summary>A list field's default; shared, so callers read it and never change it.</summary>
+        public static float[] List(Aspect aspect, string field) =>
+            ListTable.TryGetValue(aspect, out Dictionary<string, float[]> fields)
+                && fields.TryGetValue(field, out float[] value) ? value : new float[0];
+
         // Gentlest first. Twin pays 1.0 per boss because both twins drop full loot: the fight already pays double.
         private static readonly Dictionary<Aspect, float> LootTable = new Dictionary<Aspect, float>
         {
@@ -57,7 +62,14 @@ namespace EliteCreaturesReborn.Rules
                 [Aspect.Twin] = new Dictionary<string, float>
                     { [Fields.LessHealth] = 25f, [Fields.LessDamage] = 25f },
                 [Aspect.Phantom] = new Dictionary<string, float>
-                    { [Fields.Copies] = 4f, [Fields.Health] = 100f, [Fields.LessDamage] = 50f },
+                    { [Fields.PerPlayer] = 1f, [Fields.HealthPerTier] = 25f, [Fields.LessDamage] = 50f },
+            };
+
+        // Phantom splits as its health falls past each mark, in percent of its maximum health left (decided 2026-09-26).
+        private static readonly Dictionary<Aspect, Dictionary<string, float[]>> ListTable =
+            new Dictionary<Aspect, Dictionary<string, float[]>>
+            {
+                [Aspect.Phantom] = new Dictionary<string, float[]> { [Fields.SplitAt] = new[] { 66f, 33f } },
             };
 
         // Each vanilla boss calls creatures of its own biome, by prefab name (checked against the game's prefabs).

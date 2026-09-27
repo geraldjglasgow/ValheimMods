@@ -22,6 +22,10 @@ namespace EliteCreaturesReborn.Rules
         public readonly Dictionary<Aspect, float> Chances = new Dictionary<Aspect, float>();
         public readonly Dictionary<Aspect, float> Loot = new Dictionary<Aspect, float>();
         public readonly Dictionary<Aspect, Dictionary<string, float>> Power = new Dictionary<Aspect, Dictionary<string, float>>();
+
+        /// <summary>The power fields that hold a list rather than one number - Phantom's `split at` marks.</summary>
+        public readonly Dictionary<Aspect, Dictionary<string, float[]>> Lists = new Dictionary<Aspect, Dictionary<string, float[]>>();
+
         public readonly Dictionary<string, BossAspectRule> Bosses =
             new Dictionary<string, BossAspectRule>(StringComparer.OrdinalIgnoreCase);
 
@@ -34,6 +38,13 @@ namespace EliteCreaturesReborn.Rules
         {
             return Power.TryGetValue(aspect, out Dictionary<string, float> fields)
                 && fields.TryGetValue(field, out float value) ? value : AspectDefaults.Power(aspect, field);
+        }
+
+        /// <summary>A named list of one aspect, falling back to the built-in default when the file leaves it out.</summary>
+        public float[] ListOf(Aspect aspect, string field)
+        {
+            return Lists.TryGetValue(aspect, out Dictionary<string, float[]> fields)
+                && fields.TryGetValue(field, out float[] value) ? value : AspectDefaults.List(aspect, field);
         }
 
         /// <summary>What Summoner calls for this boss prefab; empty when the file names nothing for it.</summary>
@@ -59,6 +70,10 @@ namespace EliteCreaturesReborn.Rules
             foreach (KeyValuePair<Aspect, Dictionary<string, float>> pair in Power)
             {
                 copy.Power[pair.Key] = new Dictionary<string, float>(pair.Value);
+            }
+            foreach (KeyValuePair<Aspect, Dictionary<string, float[]>> pair in Lists)
+            {
+                copy.Lists[pair.Key] = new Dictionary<string, float[]>(pair.Value);
             }
             foreach (KeyValuePair<string, BossAspectRule> pair in Bosses) { copy.Bosses[pair.Key] = pair.Value.Clone(); }
             return copy;

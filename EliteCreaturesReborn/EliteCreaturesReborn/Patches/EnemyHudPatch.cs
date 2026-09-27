@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using EliteCreaturesReborn.Display;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
@@ -13,11 +14,16 @@ namespace EliteCreaturesReborn.Patches
     /// Replaces the nameplate's stars with the mod's coloured row. Each frame, for every elite creature's nameplate it
     /// hides the vanilla two- and three-star badges (which only ever cover those two counts) and ensures the coloured
     /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count - on
-    /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite.
+    /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite. A
+    /// Phantom copy's boss bar gets no star row: it is gathered instead and laid out small under the boss's own bar by
+    /// <see cref="PhantomBars"/>.
     /// </summary>
     [HarmonyPatch(typeof(EnemyHud), "UpdateHuds")]
     public static class EnemyHudPatch
     {
+        /// <summary>This frame's Phantom copy bars, reused every frame.</summary>
+        private static readonly List<PhantomBars.Bar> Copies = new List<PhantomBars.Bar>();
+
         private static void Postfix(EnemyHud __instance) =>
             Guard.Run("EnemyHud.UpdateHuds stars", () => Decorate(__instance));
 
@@ -28,17 +34,28 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
+            Copies.Clear();
             foreach (object data in huds.Values)
             {
                 DecorateOne(Traverse.Create(data));
             }
+            PhantomBars.Layout(Copies);
         }
 
         private static void DecorateOne(Traverse data)
         {
             Character character = data.Field("m_character").GetValue<Character>();
             GameObject gui = data.Field("m_gui").GetValue<GameObject>();
-            if (character == null || gui == null || !IsElite(character))
+            if (character == null || gui == null)
+            {
+                return;
+            }
+            if (PhantomBars.IsCopy(character, out ZDOID id))
+            {
+                Copies.Add(new PhantomBars.Bar(id, gui));
+                return;
+            }
+            if (!IsElite(character))
             {
                 return;
             }

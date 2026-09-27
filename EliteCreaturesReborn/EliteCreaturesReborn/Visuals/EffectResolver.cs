@@ -7,13 +7,16 @@ namespace EliteCreaturesReborn.Visuals
     /// <summary>
     /// Turns a configured vanilla-prefab name into an actual effect prefab through ZNetScene, so a server retunes a
     /// look by editing a string. A name that resolves is used as-is; a name that does not falls back to the nearest
-    /// cosmetic effect - a non-networked prefab whose name matches the role's keywords - logged once, so a mistyped or
-    /// version-shifted name self-heals into a visible effect rather than an invisible hazard. Nothing here throws.
+    /// effect of the same kind - a visual effect (named <c>fx_</c> or <c>vfx_</c>) that renders, or a sound effect
+    /// (named <c>sfx_</c>) that plays - whose name matches the role's keywords, the first keyword first, logged once, so
+    /// a mistyped or version-shifted name self-heals into a visible effect rather than an invisible hazard. The name
+    /// prefix keeps a keyword from ever matching a creature or an item. Nothing here throws.
     /// </summary>
     public static class EffectResolver
     {
         public static readonly string[] Cloud = { "poison", "blob", "ooze", "puke", "gas", "spore", "smoke" };
         public static readonly string[] Blast = { "explos", "blast", "fire", "bomb", "death", "burst", "flame" };
+        public static readonly string[] BlastSound = { "explo", "bomb", "blast" };
         public static readonly string[] Warning = { "smoke", "fire", "burn", "charge", "glow", "spark" };
         // Warding and Devouring get no prefab field in the spec's power table, so they resolve by keyword only.
         public static readonly string[] Reflect = { "shield", "spark", "hit", "block", "staff" };
@@ -25,6 +28,9 @@ namespace EliteCreaturesReborn.Visuals
         public static readonly string[] Summon = { "spawn", "summon", "portal", "smoke", "puff" };
         public static readonly string[] Phantom = { "ghost", "wisp", "puff", "smoke", "vanish", "poof" };
 
+        /// <summary>Sounds are cached apart from visuals, so one name asked for as both never returns the wrong kind.</summary>
+        private const string SoundKey = "sound:";
+
         private static readonly Dictionary<string, GameObject?> Cache = new Dictionary<string, GameObject?>();
 
         /// <summary>
@@ -32,21 +38,12 @@ namespace EliteCreaturesReborn.Visuals
         /// <paramref name="setting"/> is the rule-file field the name came from (e.g. "Miasmic cloud effect"); it is named
         /// in the log when a name fails to resolve, so a silently substituted effect can be traced to the setting to fix.
         /// </summary>
-        public static GameObject? Resolve(string name, string[] keywords, string setting = "")
-        {
-            ZNetScene scene = ZNetScene.instance;
-            if (scene == null || string.IsNullOrEmpty(name))
-            {
-                return null;
-            }
-            if (Cache.TryGetValue(name, out GameObject? cached))
-            {
-                return cached;
-            }
-            GameObject? found = Find(scene, name, keywords, setting);
-            Cache[name] = found;
-            return found;
-        }
+        public static GameObject? Resolve(string name, string[] keywords, string setting = "") =>
+            Lookup(name, keywords, setting, sound: false);
+
+        /// <summary>The sound prefab for a configured name, the same way: a prefab that plays a sound, or the nearest one.</summary>
+        public static GameObject? ResolveSound(string name, string[] keywords, string setting = "") =>
+            Lookup(name, keywords, setting, sound: true);
 
         /// <summary>Resolves a role name (as it travels over the effect bus) to its keyword-only tell; null if unknown.</summary>
         public static GameObject? ForRole(string role)
@@ -78,7 +75,7 @@ namespace EliteCreaturesReborn.Visuals
             {
                 return cached;
             }
-            GameObject? found = Nearest(scene, keywords);
+            GameObject? found = Nearest(scene, keywords, sound: false);
             if (found == null)
             {
                 Log.Warn($"no vanilla effect matched the {role} tell; it will not be shown");
@@ -87,45 +84,81 @@ namespace EliteCreaturesReborn.Visuals
             return found;
         }
 
-        private static GameObject? Find(ZNetScene scene, string name, string[] keywords, string setting)
+        /// <summary>
+        /// Every prefab the scene knows. The game ships its effects in the networked list - each carries a network view,
+        /// which the cosmetic clone strips - and leaves the non-networked list empty, though another mod may fill it.
+        /// </summary>
+        public static IEnumerable<GameObject> Prefabs(ZNetScene scene)
         {
-            GameObject? direct = Usable(scene.GetPrefab(name));
+            foreach (GameObject prefab in scene.m_prefabs)
+            {
+                yield return prefab;
+            }
+            foreach (GameObject prefab in scene.m_nonNetViewPrefabs)
+            {
+                yield return prefab;
+            }
+        }
+
+        /// <summary>True for a prefab named as an effect - visual or sound - rather than a creature, item or piece.</summary>
+        public static bool IsEffectName(GameObject? prefab) => prefab != null && (Named(prefab, false) || Named(prefab, true));
+
+        private static GameObject? Lookup(string name, string[] keywords, string setting, bool sound)
+        {
+            ZNetScene scene = ZNetScene.instance;
+            if (scene == null || string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+            string key = sound ? SoundKey + name : name;
+            if (Cache.TryGetValue(key, out GameObject? cached))
+            {
+                return cached;
+            }
+            GameObject? found = Find(scene, name, keywords, setting, sound);
+            Cache[key] = found;
+            return found;
+        }
+
+        private static GameObject? Find(ZNetScene scene, string name, string[] keywords, string setting, bool sound)
+        {
+            GameObject? direct = Fits(scene.GetPrefab(name), sound);
             if (direct != null)
             {
                 return direct;
             }
             string from = string.IsNullOrEmpty(setting) ? "" : $" (from setting '{setting}')";
-            GameObject? nearest = Nearest(scene, keywords);
+            GameObject? nearest = Nearest(scene, keywords, sound);
             Log.Warn(nearest != null
                 ? $"effect prefab '{name}'{from} not found; falling back to '{nearest.name}'"
-                : $"effect prefab '{name}'{from} not found and no fallback effect exists - this hazard stays invisible");
+                : $"effect prefab '{name}'{from} not found and no fallback effect exists - it stays "
+                    + (sound ? "silent" : "invisible"));
             return nearest;
         }
 
-        private static GameObject? Nearest(ZNetScene scene, string[] keywords)
+        private static GameObject? Nearest(ZNetScene scene, string[] keywords, bool sound)
         {
-            foreach (GameObject prefab in scene.m_nonNetViewPrefabs)
+            foreach (string keyword in keywords)
             {
-                if (Usable(prefab) != null && MatchesAny(prefab.name, keywords))
+                foreach (GameObject prefab in Prefabs(scene))
                 {
-                    return prefab;
+                    if (prefab != null && Named(prefab, sound) && prefab.name.ToLowerInvariant().Contains(keyword)
+                        && Fits(prefab, sound) != null)
+                    {
+                        return prefab;
+                    }
                 }
             }
             return null;
         }
 
-        private static bool MatchesAny(string prefabName, string[] keywords)
+        private static bool Named(GameObject prefab, bool sound)
         {
-            string lower = prefabName.ToLowerInvariant();
-            foreach (string keyword in keywords)
-            {
-                if (lower.Contains(keyword))
-                {
-                    return true;
-                }
-            }
-            return false;
+            string lower = prefab.name.ToLowerInvariant();
+            return sound ? lower.StartsWith("sfx_") : lower.StartsWith("fx_") || lower.StartsWith("vfx_");
         }
+
+        private static GameObject? Fits(GameObject? prefab, bool sound) => sound ? Audible(prefab) : Usable(prefab);
 
         /// <summary>A prefab is usable as an effect only if it actually renders something.</summary>
         private static GameObject? Usable(GameObject? prefab)
@@ -138,5 +171,9 @@ namespace EliteCreaturesReborn.Visuals
                 || prefab.GetComponentInChildren<Renderer>(true) != null;
             return renders ? prefab : null;
         }
+
+        /// <summary>A prefab is usable as a sound only if the game's own sound player is on it.</summary>
+        private static GameObject? Audible(GameObject? prefab) =>
+            prefab != null && prefab.GetComponentInChildren<ZSFX>(true) != null ? prefab : null;
     }
 }

@@ -75,8 +75,11 @@ bosses:
     #   Enraged      physical bonus - % more blunt/slash/pierce
     #   Twin         less health, less damage - % less for each of the two; they
     #                share one health pool and die together
-    #   Phantom      copies - how many; health - each copy's max health;
-    #                less damage - % less than the boss deals
+    #   Phantom      split at - % of its health left at which the boss splits
+    #                off copies, [] for never; per player - copies per player
+    #                online at each split; health per tier - each copy's max
+    #                health per world tier (tier 0 counts as 1); less damage -
+    #                % less than the boss deals
     power:
       Reflective:   { reflect: 15 }
       Shielded:     { arrow reduction: 30 }
@@ -85,7 +88,7 @@ bosses:
       Elementalist: { elemental bonus: 20 }
       Enraged:      { physical bonus: 20 }
       Twin:         { less health: 25, less damage: 25 }
-      Phantom:      { copies: 4, health: 100, less damage: 50 }
+      Phantom:      { split at: [66, 33], per player: 1, health per tier: 25, less damage: 50 }
 
     # Per boss, by prefab name. `summons` is what Summoner calls (a boss with no
     # list never rolls Summoner); `aspects: [none, Twin, ...]` narrows that boss's

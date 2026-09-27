@@ -8,7 +8,8 @@ namespace EliteCreaturesReborn.Commands
 {
     /// <summary>
     /// The boss-aspect lines of `elite inspect`: the aspect, what it does with the live numbers, what it pays, and the
-    /// state a player cannot see - a Twin's partner, a Phantom copy's boss, the Summoner waves already called. Read from
+    /// state a player cannot see - a Twin's partner, a Phantom copy's boss, the Summoner waves already called, the
+    /// Phantom splits already made. Read from
     /// the ZDO on whichever machine the admin is looking from, so it is the replicated truth, not a local guess.
     /// </summary>
     internal static class AspectReport
@@ -33,6 +34,10 @@ namespace EliteCreaturesReborn.Commands
             if (traits.Aspect == Aspect.Summoner)
             {
                 lines.Add($"waves called: {AspectStore.GetWaves(zdo)}");
+            }
+            if (traits.Aspect == Aspect.Phantom)
+            {
+                lines.Add($"splits made: {AspectStore.GetSplits(zdo)}");
             }
             return lines;
         }

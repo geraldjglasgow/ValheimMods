@@ -141,12 +141,13 @@ namespace EliteCreaturesReborn.Patches
             BiomeRules rules = snap.Rules;
             CreatureTraits traits = snap.Traits;
             Log.Diag($"{snap.Victim.name}: bloated death, fuse={rules.PowerOf(Mutation.Bloated, Fields.Delay)}s");
-            EliteRpc.FireBloat(snap.Pos,
+            BlastSpec blast = new BlastSpec(
                 Enhance.Magnitude(rules, traits, Mutation.Bloated, Fields.Damage),
-                Enhance.Magnitude(rules, traits, Mutation.Bloated, Fields.Radius),
-                rules.PowerOf(Mutation.Bloated, Fields.Delay), traits.Stars,
-                rules.PrefabOf(Mutation.Bloated, Fields.WarningEffect),
-                rules.PrefabOf(Mutation.Bloated, Fields.BlastEffect));
+                Enhance.Magnitude(rules, traits, Mutation.Bloated, Fields.Radius), traits.Stars,
+                rules.PrefabOf(Mutation.Bloated, Fields.BlastEffect),
+                rules.PrefabOf(Mutation.Bloated, Fields.BlastSound));
+            EliteRpc.FireBloat(snap.Pos, rules.PowerOf(Mutation.Bloated, Fields.Delay),
+                rules.PrefabOf(Mutation.Bloated, Fields.WarningEffect), blast);
         }
 
         // Runs on the VICTIM's owner. The devourer is read from the prey's own ZDO marker (set at the bite, survives a

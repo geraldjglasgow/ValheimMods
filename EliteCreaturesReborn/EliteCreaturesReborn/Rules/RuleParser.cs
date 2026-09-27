@@ -121,7 +121,7 @@ namespace EliteCreaturesReborn.Rules
             set.Boss = RuleDefaults.BaselineBoss();
             if (YamlRead.Child(root, "bosses") is YamlMappingNode block)
             {
-                BossOverlay.Apply(set.Boss, block, result.Errors);
+                BossOverlay.Apply(set.Boss, block, result.Errors, result.Warnings);
             }
         }
 
