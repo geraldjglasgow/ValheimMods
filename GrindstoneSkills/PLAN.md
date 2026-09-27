@@ -1593,6 +1593,12 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - **Bonuses:** Discovery ×3 on the first pick of each crop kind (player custom data). Giant crops ×5. Tending 0.25
   per plant.
 
+### Icon
+
+The icon the user supplied (2026-09-27), trimmed, centred on a square and scaled to 64x64 as
+`assets/skill_farming.png`. It replaces the game's icon on the Farming skill definition when a player's Skills wake
+(`FarmingIcon`), so the skills panel and the level-up messages show it. Not loaded on a machine without graphics.
+
 ### Settings
 
 - **29 - Farming:** Farming Enabled, Crop Stars, Seed Levels Per Star, Companion Levels, Companion Radius, Companion
@@ -1682,7 +1688,8 @@ user's confirmation.
 is clean (0 warnings) and every Harmony target and parameter was checked offline against the game's assemblies. Written
 in a separate worktree, reviewed by an agent (five fixes), released from HEAD plus Farming while Fishing was being
 written in the main tree, so Fishing is not in it. It also moves Foraging onto the shared `Crops.IsCrop` and Husbandry
-and Foraging onto `Kitchen.AddStarItem`. The Farming decisions above wait for the user's confirmation.
+and Foraging onto `Kitchen.AddStarItem`. The Farming decisions above wait for the user's confirmation. 0.8.1 (tag
+GrindstoneSkills-v0.8.1) adds the Farming skill icon the user supplied.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

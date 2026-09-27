@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1
+
+- Farming has its own icon in the skills panel and in its level-up messages.
+
 ## 0.8.0
 
 - New: Farming, built on the game's own Farming skill, so existing levels count. The planter's level decides how crops
