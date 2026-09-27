@@ -1,6 +1,6 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes and Foraging. A good cook makes better food: every dish comes
+Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging and Defense. A good cook makes better food: every dish comes
 out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the
 stars you want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds
 tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that
@@ -8,7 +8,9 @@ marks every enemy around the ship. A good woodcutter aims where trees fall, knoc
 in one blow, finds what trees hide, and gets more wood from the giants of the forest. A good miner reads stone: strikes
 the seams that glint in the rock, knows a rich vein at a glance, hears where the next deposit lies, and turns up amber
 and rubies. A good forager picks starred berries, mushrooms and herbs for the kitchen, knows when each plant is at its
-best, and clears a whole patch in one sweep.
+best, and clears a whole patch in one sweep. A good defender takes a beating: more health, less damage, cheaper
+blocks and dodges, and from level 25 on a parry that powers the riposte, a shield wall for the friends behind, and
+one last stand against a killing blow.
 
 ### Cooking
 
@@ -140,6 +142,43 @@ train Foraging instead, while crops stay with Farming.
 - **Multiplayer.** Your level travels with each pick and the machine that owns the plant rolls the stars, so it works
   on a dedicated server. Like the rest of the mod, it must be installed on the server and on every client.
 
+### Defense
+
+A new skill in the skills panel, for how much punishment you can take. The game's Blocking skill makes your shield
+stronger; Defense makes you tougher. It trains when you block hits and when hits get through.
+
+- **Tougher body.** At level 100: +25 max health (food or no food), 10% more health from food (after cooking stars)
+  and 10% less damage from everything, after armour.
+- **Recovery.** After 10 seconds without attacking, blocking or getting hurt, you heal up to 1% of your max health
+  every 10 seconds. Resting and meads boost it as they boost food regeneration.
+- **Poise.** Up to 25% more stagger damage before you stagger or your guard breaks.
+- **Wider parry window.** The game's 0.25 seconds grows to 0.35 seconds at level 100.
+- **Cheaper blocks and dodges.** Up to 10% less stamina for each, on top of the game's own Dodge skill.
+- **Reflex.** Up to a 10% chance that your shield blocks a hit from the front although you weren't blocking
+  ("Reflex!").
+- **Shield bash.** Up to a 15% chance that an ordinary shield block staggers the attacker, like a parry ("Bash!").
+- **Thorns.** A melee hit you block sends up to 10% of the blocked damage back.
+- **Adrenaline.** Up to 25% more adrenaline from blocks and parries, and 25% less lost to hits you didn't block.
+- **Shield care and stand firm.** Blocking wears your shield or weapon up to 50% less, and pushes you back up to 50%
+  less.
+- **Desperation.** Below 25% health your damage reduction is doubled.
+- **Riposte, from level 25.** A parry powers up the attack you start within 2 seconds: its melee hits deal 25% more
+  and stagger what they hit (not bosses).
+- **Shield Wall, from level 50.** While you block with a shield, other players within 4 m behind you take 10% less
+  damage.
+- **Hardened, from level 75.** Each hit that gets through makes you take 3% less damage for 8 seconds, stacking up to
+  5 times.
+- **Last Stand, from level 100.** A blow that would kill you leaves you at 1 health and untouchable for 2 seconds.
+  Once every 10 minutes.
+- **See it all.** Your damage reduction is shown on a plate in the inventory, with every Defense bonus in its
+  tooltip, and Riposte, Shield Wall, Hardened, Last Stand and Desperation show as icons in the status column while
+  they last.
+- **Experience** for every hit from a creature you block (1 for a shield, half for a weapon, double for a parry,
+  triple the first time you block each kind of creature) and half that for a hit that hurts you. Bigger hits give
+  more: a troll's club gives more than twice what a greydwarf's slap does. Falls, fire and poison give nothing.
+- **Multiplayer.** Everything happens on your own machine, where the game handles your damage; allies read your level
+  for Shield Wall. Like the rest of the mod, it must be installed on the server and on every client.
+
 ### Every skill
 
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
@@ -181,6 +220,13 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Foraging:** a switch for the whole skill, the experience per pick, per biome step and for discoveries, and whether
   you see callouts and plant hints (each player's own).
 - **Forage Perks:** extra yield at level 100, the best-time bonus, and sweep picking's level and reach.
+- **Defense:** a switch for the whole skill, each core perk at level 100 (health, food health, damage reduction,
+  regeneration and its timing, poise, parry window, block and dodge stamina), and whether you see callouts and the
+  plate (each player's own).
+- **Defense Experience:** the multiplier, block, parry, weapon block and hit experience, how hit size is measured,
+  the cooldown, the first-block bonus and whether PvP hits train.
+- **Defense Milestones:** each milestone's level (above 100 turns it off) and its values.
+- **Defense Guard:** reflex, shield bash, thorns, adrenaline, shield wear and knockback at level 100, and Desperation.
 
 `GrindstoneSkills.Finds.yml` and `GrindstoneSkills.MineFinds.yml`, next to the .cfg, list what trees and broken rock
 can hide, per biome and per kind of tree or deposit: named finds with a weight and their items. They come from the
@@ -193,7 +239,8 @@ at its best, and how much experience a pick gives. Items from other mods can be 
 ### Console
 
 With `devcommands` on, `raiseskill sailing 50` and `resetskill sailing` work like they do for the game's skills, and
-`raiseskill all` includes Sailing. The same works for Foraging (`raiseskill foraging 50`).
+`raiseskill all` includes Sailing. The same works for Foraging (`raiseskill foraging 50`) and Defense
+(`raiseskill defense 100`).
 
 ### Server settings
 

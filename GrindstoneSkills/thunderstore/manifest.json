@@ -1,8 +1,8 @@
 {
     "name": "GrindstoneSkills",
-    "version_number": "0.5.0",
+    "version_number": "0.6.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/GrindstoneSkills",
-    "description": "Deeper skills. Cooking: 0-3 star dishes, trash filter. Sailing: tougher, faster ships. Woodcutting: aimed falls, domino felling. Pickaxes: seams, rich veins, ore echo. Foraging: starred berries, best times, sweep picking. Server synced.",
+    "description": "Deeper skills. Cooking: starred dishes, trash filter. Sailing: tougher, faster ships. Woodcutting: domino felling, finds. Pickaxes: seams, rich veins. Foraging: starred picks, sweep picking. Defense: tough body, riposte, last stand. Server synced.",
     "dependencies": [
         "denikson-BepInExPack_Valheim-5.4.2350"
     ]

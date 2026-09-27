@@ -95,5 +95,13 @@ namespace GrindstoneSkills
         public const string ForagedKinds = "grindstone_foraged";
         /// <summary>Charter sync key of the Forage YAML files (GrindstoneSkills.Forage*.yml).</summary>
         public const string ForageSync = "grindstone_forage";
+
+        // Defense.
+        /// <summary>The Defense skill's identity: its SkillType number is this name's stable hash.</summary>
+        public const string DefenseSkillName = "grindstone_defense";
+        /// <summary>float on a player's own ZDO, written by that player's client: their Defense level (Shield Wall reads a blocker's).</summary>
+        public const string DefenseLevel = "grindstone_defense_level";
+        /// <summary>Player custom data: comma-separated name tokens ("$enemy_greydwarf") of every kind of creature the character has blocked.</summary>
+        public const string BlockedFoes = "grindstone_blocked";
     }
 }

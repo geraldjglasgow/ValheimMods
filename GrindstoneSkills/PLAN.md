@@ -982,6 +982,160 @@ Read from the prefab bundles (UnityPy) and the decompiled assembly, 2026-09-27:
 - [ ] Dedicated server with two clients, the bushes owned by the other client: stars, extra yield, sweep and
       experience at the picker's level; nothing in the server log.
 
+## Defense
+
+### The request (user, 2026-09-27)
+
+A Defense skill: more max health (25 at most), a little out-of-combat regeneration, +1% health from food per 10
+levels (+10% at 100), 10% less damage taken at 100, better blocking and staggering, 10% cheaper dodges at 100; trained
+mostly by blocking with a shield and a little by every hit taken; plus more ideas. The user then asked for everything
+proposed, with the best decision wherever the request was vague.
+
+### The skill: our own
+
+- **The game has no Defense skill**, so it is a `CustomSkill` (`Defense/Core/DefenseSkill.cs`), type number the stable
+  hash of `grindstone_defense`, level published under `grindstone_defense_level`. The game's Blocking skill (+1
+  experience per block, +2 per parry, up to +50% block power) is untouched: Blocking is the shield, Defense the body.
+- **Icon:** the user's helmet-and-shield picture, `assets/skill_defense.png` (64x64), else the iron helmet's icon.
+- **Everything runs on the defending player's own client**, which owns their character. Read from the game code
+  2026-09-27: `Character.RPC_Damage` (difficulty, block, armour), `Humanoid.BlockAttack`, `Character.ApplyDamage`,
+  `Player.GetTotalFoodValue` (via `UpdateFood`), stamina use and stagger all run on the owner. Only Shield Wall reads
+  another player's state: their blocking flag and left-hand item (both in their ZDO) and their published level.
+
+### Core perks (defaults at level 100, linear from 0, synced and lockable)
+
+| Perk | Default at 100 | How |
+| --- | --- | --- |
+| Max health | +25 | added after the foods in a `GetTotalFoodValue` postfix (`Vitality`) |
+| Food health | +10% | of the food part of that total, after the cooking stars' postfix (lower priority) |
+| Damage reduction | -10% | every source, in an `ApplyDamage` prefix: after armour, before the world's damage-taken modifier |
+| Regeneration | 1% of max health per 10 s | after 10 s out of combat, scaled by `SEMan.ModifyHealthRegen` (`Recovery`) |
+| Poise | +25% | `Character.GetStaggerTreshold` for the local player; a stagger during a block breaks the guard |
+| Parry window | +0.1 s | the game's 0.25 s is a constant in `BlockAttack`; a timer inside the wider window is scaled into it for the call |
+| Block stamina | -10% | `SEMan.ModifyBlockStaminaUsage` only while `BlockAttack` runs (the equipment readout calls it too) |
+| Dodge stamina | -10% | `Player.GetDodgeStaminaUse`, after the game's Dodge skill (-50% at 100, so -55% with both) |
+
+- **Out of combat** means no attack started (`Humanoid.m_lastCombatTimer`), no hit with an attacker and no damage
+  taken for `Out Of Combat Delay` seconds.
+- **The hit scope (`IncomingHit`):** a prefix on `RPC_Damage` records the hit as it arrived (raw damage, attacker,
+  whether it trains); the block hooks (`BlockHooks`, `BlockState`) and `DamageIntake` record what happened; the
+  finalizer credits experience and Hardened. A dodged hit leaves `RPC_Damage` early and gives nothing.
+
+### Experience
+
+- **Only hits that train:** hit type `EnemyHit` from a non-player, or `PlayerHit` from another player while `Player
+  Hits Train` is on (off by default). Falls, drowning, fire, poison ticks, lava and anything without an attacker give
+  nothing.
+- **Amounts:** a shield block 1, a parry ×2, a block or parry with a weapon ×0.5, a hit that hurt without being
+  blocked 0.5; the first block against each kind of creature ×3 (name token such as `$enemy_troll`, kept in player
+  custom data `grindstone_blocked`, "First block: Troll" floats over it).
+- **Hit size:** √(raw damage ÷ 10), between 0.5 and 4: a hit of 10 is size 1, 40 is size 2, 160 or more size 4.
+  Raw damage is before difficulty, blocking and armour, so armour does not slow training.
+- **Cooldown:** 0.5 s between two credited hits. The step is 1 (the game's curve, as Sailing). An Experience
+  Multiplier applies over all of it; the world's skill-gain modifier applies as to every skill.
+
+### Milestones (synced; a level above 100 turns one off)
+
+- **Riposte (25):** a held parry arms it for 2 s; the first attack started in that time is the riposte; its melee hits
+  deal +25% and force a stagger through the game's own `m_staggerMultiplier >= 100` path in `RPC_Damage` (it travels
+  with the hit). Bosses and creatures with `m_staggerDamageFactor` 0 get the damage only. "Riposte!" floats at the
+  first hit.
+- **Shield Wall (50):** worked out on the sheltered player's client in `DamageIntake`: another player who is blocking,
+  shows a shield in the left hand (their `VisEquipment`), has Defense 50 (published level), and stands within 4 m in
+  front of the local player (the local player is behind them, flat, against their facing) takes 10% off. Blockers do
+  not add up.
+- **Hardened (75):** each training hit that hurts without being blocked adds a stack, up to 5; each takes 3% off for 8
+  s after the last stack. The hit that adds a stack is not reduced by it.
+- **Last Stand (100):** damage from anything that would take the last health is scaled to leave 1; then 2 s of no
+  damage at all (the `ApplyDamage` prefix skips it) and a 10-minute cooldown. "Last Stand!" in the middle of the screen.
+  Not in god mode.
+
+### Guard perks (defaults at level 100, linear from 0, synced)
+
+- **Reflex (10%):** a blockable hit from a character, from the front, while not blocking with a shield in the left
+  hand: on a roll `m_blocking` is set for that one `RPC_Damage`, so the game blocks it by all its own rules (not while
+  attacking, dodging or staggered; never a parry, since the block timer is not running). "Reflex!" when it held.
+- **Shield Bash (15%):** an ordinary (not parry) held shield block staggers a non-player attacker the game staggers on
+  a parry (`m_staggerWhenBlocked`), with the game's `Stagger`. "Bash!".
+- **Thorns (10%):** a held block of a melee hit sends that share of the blockable damage the block took off back as
+  pierce damage from the blocker: unblockable, undodgeable, PvP rules apply, trains nothing.
+- **Adrenaline (25%):** during a hit, adrenaline gains grow by it and the game's loss for an unblocked hit shrinks by it.
+- **Shield wear (50%):** that share of the durability a block took from the blocker (shield or weapon) is given back.
+- **Knockback (50%):** a blocked hit's push force shrinks by it, after the game's own reduction.
+- **Desperation:** below 25% health the core damage reduction is doubled (it follows that perk, so nothing at level 0).
+- All reductions multiply (`Reductions`), each capped at 90%, so nothing reaches immunity.
+
+### Display
+
+- **Status icons (`DefenseEffects`, `DefenseStatus`):** Riposte (seconds), Shield Wall, Hardened (stacks), Last Stand
+  (seconds), Last Stand recovering (cooldown style) and Desperation, as status effects added to the local player while
+  their state holds and gone when it ends; item icons (iron sword, wood shield, iron chest, drake helmet, blood bag).
+  Status effects stay on the owner's client, so nothing is sent.
+- **Plate (`DefensePlate`, `DefenseSummary`):** rank 150 in the PlateColumn stat column (under the armour plate),
+  showing the core damage reduction ("-10%"), tooltip with every bonus at the current level and the milestones. Hidden
+  with Defense off or `Show Plate` off. The PlateColumn library is now merged into GrindstoneSkills.
+- **Callouts:** "Riposte!", "Reflex!", "Bash!", "First block: ..." with the game's floating text, local, `Show
+  Callouts` (each player's own).
+
+### Settings
+
+- **19 - Defense:** Defense Enabled, Show Callouts and Show Plate (each player's own), Max Health, Food Health, Damage
+  Reduction, Regeneration At 100, Regeneration Interval, Out Of Combat Delay, Poise, Parry Window, Block Stamina
+  Reduction, Dodge Stamina Reduction.
+- **20 - Defense Experience:** Experience Multiplier, Block Experience, Parry Multiplier, Weapon Block Share, Hit Taken
+  Experience, Hit Size Damage, Min Hit Size, Max Hit Size, Experience Cooldown, First Block Bonus, Player Hits Train.
+- **21 - Defense Milestones:** each milestone's level and values.
+- **22 - Defense Guard:** Reflex, Shield Bash, Thorns, Adrenaline, Shield Wear, Knockback, Desperation Health and
+  Multiplier.
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- **Dodge stamina kept as asked** (-10%, on top of the game's Dodge skill), and block stamina -10% added.
+- **Damage reduction covers every source**, falls and poison included; Last Stand too.
+- **Food health counts the cooking stars** (and anything another mod added to food health before it).
+- **Regeneration is a share of max health**, so it keeps up late; resting and meads scale it.
+- **PvP hits do not train** unless the server turns it on; dodged hits give nothing.
+- **Shield Wall needs a shield** and works for any player behind the blocker, party or not.
+- **Last Stand's cooldown and Hardened's stacks live in memory:** a relog resets them.
+- **Riposte covers every melee hit of the one attack**, so a sweep that hits three creatures empowers all three.
+
+### Known gaps
+
+- Shield Wall judges "behind" by the blocker's facing only; a hit coming from behind the sheltered player is reduced
+  too.
+- The plate shows the core reduction (with Desperation); Hardened and Shield Wall show as icons instead.
+- A reflex block that broke the guard shows no "Reflex!".
+
+### Test checklist
+
+- [ ] Skills panel: Defense with the helmet-and-shield icon; `raiseskill defense 100`, `resetskill defense`,
+      `raiseskill all 10` includes it; survives relog; the death penalty lowers it. Sailing still listed and working.
+- [ ] Level 100: no food 50 health; with food the food part +10%; stars and FeastMaster still compose.
+- [ ] Damage: a known hit does 10% less; falls too; a second player sees the same health bar.
+- [ ] Regeneration: nothing for 10 s after attacking, blocking or getting hurt; then about 1% every 10 s; faster
+      rested.
+- [ ] Poise: more hits before staggering; guard breaks later. Parry: a block raised about 0.3 s before the hit parries.
+- [ ] Stamina: blocks and dodges cost about 10% less at 100; the inventory's equipment readout is unchanged.
+- [ ] Experience: shield block ~1 per greydwarf hit, more on a troll; parry double; weapon half; hits taken half;
+      "First block: Greydwarf" once, also after relog; nothing from falls, fire or poison ticks.
+- [ ] Riposte: at 25, the Riposte icon after a parry; the next swing staggers a greydwarf and says "Riposte!"; no
+      stagger on a boss.
+- [ ] Shield Wall with two clients: B behind A (blocking with a shield, Defense 50) takes 10% less and sees the icon;
+      not in front of A, not when A blocks with a weapon.
+- [ ] Hardened: stacks to 5x with unblocked hits, gone 8 s later. Last Stand: survive a killing blow at 1 health,
+      2 s untouchable, cooldown icon counts 10 minutes, the next killing blow within it kills.
+- [ ] Reflex, Bash, Thorns: callouts show; thorns damage numbers on the attacker; bash staggers.
+- [ ] Plate: "-10%" under the armour plate at 100, tooltip lists everything; Show Plate off hides it and closes the
+      gap; works with OpenKeep's and Elite Creatures Reborn's plates.
+- [ ] Defense Enabled off: vanilla health, damage, stamina, parry; no icons, no plate, no experience.
+- [ ] Dedicated server with two clients: all of the above at each player's own level; nothing in the server log.
+
+### Status (2026-09-27)
+
+Written in one session, after the shared `CustomSkills` registry was split out of Sailing's registration (Sailing,
+Foraging and Husbandry use it too). Compiles clean; every Harmony target and parameter checked offline against the
+game's assemblies. Released as 0.6.0 before any in-game test; the test checklist above is next.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
@@ -1006,6 +1160,11 @@ build is clean (0 warnings). It also moves Sailing onto the shared custom-skill 
 written by the Defense module). Built from HEAD plus Foraging while the Defense, Husbandry, Fishing and Farming
 modules were being written in the same tree, so none of them is in it. Farming's `Core/Crops.cs` is to replace
 `ForageCrops`. The Foraging decisions above wait for the user's confirmation.
+
+0.6.0 (Defense) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.6.0), before any in-game test; the build
+is clean. Built from HEAD plus Defense in a separate worktree while Husbandry, Fishing and Farming were being written
+in the main tree, so none of them is in it. It also merges the PlateColumn library (the Defense plate). The Defense
+decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

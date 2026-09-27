@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.0
+
+- New: Defense, a skill of its own for how much punishment you can take, trained by blocking hits from creatures
+  (a parry counts double, a block with a weapon half, the first block against each kind of creature triple) and by
+  the hits that get through. Bigger hits train it faster; falls, fire and poison don't train it.
+- At level 100: +25 max health, 10% more health from food, 10% less damage from every source, up to 1% of max health
+  back every 10 seconds out of combat, 25% more poise, a parry window of 0.35 instead of 0.25 seconds, and blocks and
+  dodges 10% cheaper in stamina.
+- Guard perks, growing with your level: Reflex (your shield sometimes blocks a hit you didn't block), Shield Bash (a
+  block sometimes staggers the attacker), Thorns, more adrenaline from blocks, less shield wear and knockback, and
+  Desperation (damage reduction doubled below 25% health).
+- Milestones: Riposte at 25 (a parry powers up your next attack and staggers), Shield Wall at 50 (players behind your
+  shield take 10% less damage), Hardened at 75 (each hit that gets through hardens you for 8 seconds, up to 5 times)
+  and Last Stand at 100 (a killing blow leaves you at 1 health, once every 10 minutes).
+- A Defense plate in the inventory's stat column shows your damage reduction, with every bonus in its tooltip; the
+  milestones show as status icons while they last.
+- `raiseskill` and `resetskill` work for Defense. Every setting is in the new sections 19 to 22 of the .cfg.
+
 ## 0.5.0
 
 - New: Foraging, a skill of its own for what you pick in the wild: berries, mushrooms, thistle, dandelions,

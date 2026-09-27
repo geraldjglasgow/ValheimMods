@@ -28,6 +28,7 @@ namespace GrindstoneSkills
             LookoutSettings.Initialize(config);
             WoodcuttingSettings.Initialize(config);
             PickaxeSettings.Initialize(config);
+            DefenseSettings.Initialize(config);
             ForagingSettings.Initialize(config);
         }
 
