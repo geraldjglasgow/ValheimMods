@@ -98,7 +98,7 @@ namespace GrindstoneSkills
             private static void Prefix(Character __instance, HitData hit)
             {
                 if (ImpactScope.Current != null)
-                    WoodGuard.Run("log safety", () => Soften(__instance, hit));
+                    HookGuard.Run("log safety", () => Soften(__instance, hit));
             }
         }
 

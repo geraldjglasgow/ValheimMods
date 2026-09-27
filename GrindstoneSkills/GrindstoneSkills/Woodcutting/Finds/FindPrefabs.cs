@@ -5,11 +5,11 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// The item prefabs GrindstoneSkills.Finds.yml names, looked up when a find drops (the file parses before the item
-    /// database exists, and on a dedicated server before any world is loaded). ObjectDB.GetItemPrefab looks a name up
-    /// by its stable hash, so the exact spelling; a miss is retried against ObjectDB.m_items ignoring case. A name that
-    /// matches no item is logged once (again after the file is reloaded) and skipped, so a typo loses one item, not the
-    /// find.
+    /// The item prefabs GrindstoneSkills.Finds.yml and GrindstoneSkills.MineFinds.yml name, looked up when a find drops
+    /// (the files parse before the item database exists, and on a dedicated server before any world is loaded).
+    /// ObjectDB.GetItemPrefab looks a name up by its stable hash, so the exact spelling; a miss is retried against
+    /// ObjectDB.m_items ignoring case. A name that matches no item is logged once (again after either file is reloaded)
+    /// and skipped, so a typo loses one item, not the find.
     /// </summary>
     public static class FindPrefabs
     {
@@ -26,7 +26,7 @@ namespace GrindstoneSkills
                 prefab = IgnoringCase(db, prefabName);
             ItemDrop item = prefab != null ? prefab.GetComponent<ItemDrop>() : null;
             if (item == null && warned.Add(prefabName))
-                GrindstoneSkills.Log.LogWarning($"Finds: there is no item named '{prefabName}' (GrindstoneSkills.Finds.yml); it is skipped.");
+                GrindstoneSkills.Log.LogWarning($"Finds: there is no item named '{prefabName}' (GrindstoneSkills.Finds.yml or GrindstoneSkills.MineFinds.yml); it is skipped.");
             return item;
         }
 

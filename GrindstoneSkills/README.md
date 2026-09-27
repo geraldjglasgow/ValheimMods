@@ -1,11 +1,13 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: Cooking, Sailing and Woodcutting. A good cook makes better food: every dish comes out with
-0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the stars you
-want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds tougher ships,
-sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that marks every enemy
-around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs in one blow,
-finds what trees hide, and gets more wood from the giants of the forest.
+Deeper skills for Valheim: Cooking, Sailing, Woodcutting and Pickaxes. A good cook makes better food: every dish comes
+out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the
+stars you want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds
+tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that
+marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs
+in one blow, finds what trees hide, and gets more wood from the giants of the forest. A good miner reads stone: strikes
+the seams that glint in the rock, knows a rich vein at a glance, hears where the next deposit lies, and turns up amber
+and rubies.
 
 ### Cooking
 
@@ -77,6 +79,44 @@ trees harder; here every perk grows from nothing at level 0 to its full value at
 - **Multiplayer.** Your level travels with every hit, and the machine that owns a tree or a log decides. Experience
   for a tree felled, a chain or a split log reaches you wherever the tree's physics runs.
 
+### Pickaxes
+
+The miner learns to read stone. Built on the game's own Pickaxes skill, so the levels you already have count. In the
+game it only makes pickaxes hit harder and cost less stamina; here the perks grow with your level to their full value
+at level 100, and milestones unlock at levels 25, 50 and 100.
+
+- **Seams.** Now and then a swing on a rock that breaks into chunks (copper and silver deposits, boulders, mud piles)
+  makes a chunk near where you hit glint gold, with a soft clink. From 10% of swings at level 0 to 40% at level 100;
+  the seam stays open 2 seconds at level 0, 5 at level 100. Only you see your seams.
+- **Clean strikes.** Hit the glinting chunk before it closes: ×2 damage, a little experience, "Clean strike!", and
+  on an ore deposit the chunk drops twice when it breaks. The next seam opens at once, so one clean strike leads to
+  the next ("Clean strike ×3!"); hitting the rock elsewhere or letting a seam close ends the chain. Plain stone gets
+  seams too, but no extra drops. A pickaxe too weak for the rock gets no seams.
+- **Unbroken, at level 100.** Each clean strike after the first in a chain hits harder: ×2.4, ×2.8 and so on up to ×4.
+- **Splash.** Your swing also hits the chunks touching the one you struck, shared between them, once per swing however
+  many chunks it touches. It grows every 10 levels: 1.5 damage from level 10, 7.5 from 50, 15 at level 100. Chunks it breaks drop as usual. Splash gives no experience.
+- **Rich veins.** Every ore deposit has 0 to 3 stars: 25% of them 1★, 11% 2★, 4% 3★. Each star gives 25% more drops
+  from every chunk, to everyone who mines it, whatever their level. A deposit's stars are the same for every player
+  and never change.
+- **Read the rock, from level 25.** Looking at an ore deposit shows "Rich vein ★★" or "Plain vein", and on a rock of
+  chunks how many are left.
+- **Extra ore.** Up to 30% of the ore deposit chunks you break drop twice. Chunks that fall when you mine away what
+  held them up count as yours, for rich veins, extra ore and finds.
+- **Easier mining.** A swing that hits rock wears your pickaxe up to 50% less.
+- **Echo, from level 50.** A swing that hits rock sounds the Wishbone's ping from the direction of the nearest ore
+  deposit within 40 m, with its name and distance ("Copper deposit, 32 m"). Once every 10 seconds, for you alone. It
+  skips anything the Wishbone rings for, so buried silver stays the Wishbone's job.
+- **Finds.** Broken rock sometimes hides one of the game's own valuables: a lump of amber, an amber pearl or a ruby,
+  with more pearls and rubies the further the biome is along the game. From 0.2% of chunks at level 0 to 1% at level
+  100; smaller chunks get less (a mud pile's a tenth), so they are no find farm. Everyone nearby sees "Found a ruby!".
+  Server admins set what each biome or deposit can hide in `GrindstoneSkills.MineFinds.yml`.
+- **Experience** as the game gives it per swing, 25% more for each biome further along the game (Black Forest ×1.25
+  up to Ashlands and Deep North ×2.5) and half again on ore deposits, plus a bonus for every clean strike and the
+  first time you mine each kind of ore deposit. Rock too hard for your pickaxe earns only the game's amount.
+- **Multiplayer.** Your level travels with every hit, and the machine that owns a rock decides its splash, extra drops
+  and finds, so all of it works on a dedicated server. Seams, Echo and Read the rock are yours alone; the drops and
+  finds everyone sees. Like the rest of the mod, it must be installed on the server and on every client.
+
 ### Every skill
 
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
@@ -107,9 +147,19 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Felling:** the fall push, log safety, domino strength and depth, clean fell and replanting.
 - **Chopping:** stamina refund, axe wear, clean split chance and bonus, and old growth.
 - **Finds:** the chance of a find at level 0 and at level 100.
+- **Pickaxes:** a switch for the whole skill, which items count as plain stone (a rock that drops anything else is an
+  ore deposit), the experience rates, and whether you see callouts (each player's own).
+- **Seams:** the seam chance and how long a seam stays open, at level 0 and at level 100, the clean strike damage,
+  and Unbroken's level, bonus per link and number of links.
+- **Veins:** the chance of 1, 2 and 3 stars, the bonus per star, the level of Read the rock, and Echo's level, radius
+  and cooldown.
+- **Pickaxe Perks:** extra ore, pickaxe wear and splash damage at level 100.
+- **Mine Finds:** the chance of a find at level 0 and at level 100.
 
-`GrindstoneSkills.Finds.yml`, next to the .cfg, lists what trees can hide per biome and per tree: named finds with a
-weight and their items. It comes from the server, reloads while the game runs, and explains itself in its comments.
+`GrindstoneSkills.Finds.yml` and `GrindstoneSkills.MineFinds.yml`, next to the .cfg, list what trees and broken rock
+can hide, per biome and per kind of tree or deposit: named finds with a weight and their items. They come from the
+server, reload while the game runs, and explain themselves in their comments. Extra files named
+`GrindstoneSkills.Finds<anything>.yml` or `GrindstoneSkills.MineFinds<anything>.yml` next to them are read as well.
 
 ### Console
 
@@ -135,6 +185,8 @@ lists where the server's values differ from your own file, and `charter versions
 - Ships built before you installed GrindstoneSkills keep the game's health.
 - Logs felled before you installed GrindstoneSkills get no domino, log safety or old growth bonus.
 - The Thunderblood Axe and Greataxe don't train Woodcutting in the game, so they get no Woodcutting perks here either.
+- Rocks from other mods count for Pickaxes too: any rock only a pickaxe can break, and it is an ore deposit when it
+  drops anything but stone or grausten (the Plain Stone Items setting).
 
 ### Building
 Requirements: .NET SDK 8, Valheim installed with BepInEx, and the `ValheimModLibs` repository checked out next to this

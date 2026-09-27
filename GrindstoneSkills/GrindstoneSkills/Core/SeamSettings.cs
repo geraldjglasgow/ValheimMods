@@ -1,0 +1,61 @@
+using BepInEx.Configuration;
+using SyncedConfig;
+
+namespace GrindstoneSkills
+{
+    /// <summary>
+    /// Section 15: seams and clean strikes on multi-chunk rocks, and the Unbroken milestone. A seam opens on the
+    /// swinging player's own client with a chance, and stays open for a window, both growing linearly from their value
+    /// at level 0 to their value at level 100 of the miner's own Pickaxes level. Synced.
+    /// </summary>
+    public static class SeamSettings
+    {
+        public const string Section = PickaxeSettings.SeamsSection;
+
+        public static ConfigEntry<float> ChanceAt0 { get; private set; }
+        public static ConfigEntry<float> ChanceAt100 { get; private set; }
+        public static ConfigEntry<float> WindowAt0 { get; private set; }
+        public static ConfigEntry<float> WindowAt100 { get; private set; }
+        public static ConfigEntry<float> CleanStrikeDamage { get; private set; }
+        public static ConfigEntry<float> UnbrokenLevel { get; private set; }
+        public static ConfigEntry<float> UnbrokenBonus { get; private set; }
+        public static ConfigEntry<int> UnbrokenMaxLinks { get; private set; }
+
+        public static void Initialize(SyncedConfiguration config)
+        {
+            BindSeams(config);
+            BindUnbroken(config);
+        }
+
+        private static void BindSeams(SyncedConfiguration config)
+        {
+            ChanceAt0 = config.Bind(Section, "Seam Chance At 0", 10f,
+                "Percent of swings on a multi-chunk rock that open a seam on another chunk, for a level 0 miner. 0 with the next setting at 0 turns seams off.",
+                acceptableValues: Settings.UpTo(100f));
+            ChanceAt100 = config.Bind(Section, "Seam Chance At 100", 40f,
+                "Percent chance of a seam for a level 100 miner; levels in between are in proportion.", acceptableValues: Settings.UpTo(100f));
+            WindowAt0 = config.Bind(Section, "Seam Window At 0", 2f,
+                "Seconds a seam stays open for a level 0 miner. Hit the glowing chunk before it closes for a clean strike.",
+                acceptableValues: new AcceptableValueRange<float>(0.5f, 30f));
+            WindowAt100 = config.Bind(Section, "Seam Window At 100", 5f,
+                "Seconds a seam stays open for a level 100 miner; levels in between are in proportion.",
+                acceptableValues: new AcceptableValueRange<float>(0.5f, 30f));
+            CleanStrikeDamage = config.Bind(Section, "Clean Strike Damage", 2f,
+                "Damage multiplier of a clean strike, the hit on an open seam. A clean strike on an ore deposit also rolls its chunk's drops once more.",
+                acceptableValues: new AcceptableValueRange<float>(1f, 10f));
+        }
+
+        private static void BindUnbroken(SyncedConfiguration config)
+        {
+            UnbrokenLevel = config.Bind(Section, "Unbroken Level", 100f,
+                "Pickaxes level that unlocks Unbroken: clean strikes in a row hit harder. 0 gives it to everyone; above 100 turns it off.",
+                acceptableValues: new AcceptableValueRange<float>(0f, 101f));
+            UnbrokenBonus = config.Bind(Section, "Unbroken Bonus Per Link", 20f,
+                "Percent added to the clean strike damage multiplier for each clean strike after the first in a chain.",
+                acceptableValues: Settings.UpTo(200f));
+            UnbrokenMaxLinks = config.Bind(Section, "Unbroken Max Links", 5,
+                "How many links of a chain add the bonus; further clean strikes keep the last multiplier.",
+                acceptableValues: new AcceptableValueRange<int>(1, 50));
+        }
+    }
+}

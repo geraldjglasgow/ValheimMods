@@ -34,7 +34,7 @@ namespace GrindstoneSkills
             {
                 Woodcutter woodcutter = WoodSkill.Active && IsOwned(__instance) ? Woodcutter.FromHit(hit) : null;
                 if (woodcutter != null)
-                    WoodGuard.Run("clean splits", () => CleanSplits.OnLogHit(__instance, hit, woodcutter));
+                    HookGuard.Run("clean splits", () => CleanSplits.OnLogHit(__instance, hit, woodcutter));
             }
         }
 
@@ -43,7 +43,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(TreeLog __instance, HitData hitData, out DropCount __state) =>
-                __state = WoodGuard.Run("log break", () => Begin(__instance, hitData), null);
+                __state = HookGuard.Run("log break", () => Begin(__instance, hitData), null);
 
             [HarmonyPostfix]
             private static void Postfix()
@@ -91,15 +91,15 @@ namespace GrindstoneSkills
 
         private static float Bonus(BreakContext broken)
         {
-            float oldGrowth = WoodGuard.Run("old growth", () => OldGrowth.Bonus(broken), 0f);
-            float clean = WoodGuard.Run("clean splits", () => CleanSplits.Bonus(broken), 0f);
+            float oldGrowth = HookGuard.Run("old growth", () => OldGrowth.Bonus(broken), 0f);
+            float clean = HookGuard.Run("clean splits", () => CleanSplits.Bonus(broken), 0f);
             return Mathf.Max(0f, oldGrowth) + Mathf.Max(0f, clean);
         }
 
         private static void Dispatch(BreakContext broken)
         {
-            WoodGuard.Run("clean splits", () => CleanSplits.OnLogBroken(broken));
-            WoodGuard.Run("split experience", () => WoodXp.OnLogBroken(broken));
+            HookGuard.Run("clean splits", () => CleanSplits.OnLogBroken(broken));
+            HookGuard.Run("split experience", () => WoodXp.OnLogBroken(broken));
         }
 
         private static bool IsOwned(TreeLog log) =>

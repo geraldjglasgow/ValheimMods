@@ -59,19 +59,13 @@ namespace GrindstoneSkills
             IsImpact(hit) ? Mathf.Max(1, Mathf.RoundToInt(hit.m_skillRaiseAmount)) : 0;
 
         /// <summary>The player ID behind a hit's attacker, read from the attacker's ZDO; 0 when unknown.</summary>
-        public static long PlayerId(HitData hit)
-        {
-            if (hit.m_attacker.IsNone() || ZDOMan.instance == null)
-                return 0L;
-            ZDO zdo = ZDOMan.instance.GetZDO(hit.m_attacker);
-            return zdo == null ? 0L : zdo.GetLong(ZDOVars.s_playerID);
-        }
+        public static long PlayerId(HitData hit) => PlayerIds.Of(hit.m_attacker);
 
         /// <summary>Hits that are neither a woodcutting hit nor inside an impact scope (fire, creatures) are left alone at once.</summary>
         private static void Tag(Component target, HitData hit)
         {
             if (hit != null && WoodSkill.Active && (ImpactScope.Current != null || hit.m_skill == WoodSkill.Skill))
-                WoodGuard.Run("wood hit", () => TagHit(target, hit));
+                HookGuard.Run("wood hit", () => TagHit(target, hit));
         }
 
         private static void TagHit(Component target, HitData hit)
@@ -100,7 +94,7 @@ namespace GrindstoneSkills
             hit.m_skillLevel = log.Level;
             hit.m_skillRaiseAmount = chain;
             hit.m_attacker = PlayerZdoid(log.PlayerId);
-            WoodGuard.Run("domino", () => Domino.OnImpact(hit, log, chain));
+            HookGuard.Run("domino", () => Domino.OnImpact(hit, log, chain));
         }
 
         private static bool IsLocalSwing(HitData hit)

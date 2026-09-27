@@ -4,11 +4,12 @@ using PatchGuard;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Runs one Woodcutting feature's hook from inside the game's own tree and log code, where an exception would abort
-    /// the rest of the game's method (a tree that never drops, a log that never breaks). A failing hook is logged under
-    /// GrindstoneSkills and swallowed, so the other features and the game carry on.
+    /// Runs one feature's hook from inside the game's own code (a tree falling, a log or a rock chunk breaking, a
+    /// swing), where an exception would abort the rest of the game's method: a tree that never drops, a chunk that
+    /// never spawns its ore. A failing hook is logged under GrindstoneSkills and swallowed, so the other features and
+    /// the game carry on. Shared by the Woodcutting and Pickaxes modules; it runs on whichever machine calls it.
     /// </summary>
-    public static class WoodGuard
+    public static class HookGuard
     {
         public static void Run(string context, Action action)
         {

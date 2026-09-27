@@ -17,7 +17,8 @@ namespace GrindstoneSkills
     /// the swing's first frame. The same cost, read again at the hit, is given back in part with Player.AddStamina,
     /// which stops at max stamina.</item>
     /// <item>Wear: DoMeleeAttack took m_useDurabilityDrain times Game.m_durabilityRate off the weapon, for players and
-    /// items that use durability. Part of it is put back, never above the item's max durability.</item>
+    /// items that use durability. Part of it is put back, never above the item's max durability (<see cref="ToolWear"/>,
+    /// shared with the Pickaxes wear perk).</item>
     /// </list>
     /// Stamina and the inventory both live on the player's own client (it owns the player's ZDO and saves the durability
     /// with the character), so nothing here needs the server; the settings reach the client by config sync.
@@ -35,15 +36,11 @@ namespace GrindstoneSkills
                 return;
             float level = WoodSkill.Local();
             RefundStamina(attack, character, WoodSkill.Share(SwingPerkSettings.StaminaRefund.Value, level));
-            ReduceWear(attack.m_weapon, WoodSkill.Share(SwingPerkSettings.WearReduction.Value, level));
+            ToolWear.GiveBack(attack.m_weapon, WoodSkill.Share(SwingPerkSettings.WearReduction.Value, level));
         }
 
         /// <summary>The stamina the game spent on this attack, as Player.UseStamina took it.</summary>
         private static float StaminaSpent(Attack attack) => Mathf.Max(0f, attack.GetAttackStamina()) * Game.m_staminaRate;
-
-        /// <summary>The durability the game drains from this weapon per swing that hits anything; 0 for items without wear.</summary>
-        private static float WearPerSwing(ItemDrop.ItemData weapon) =>
-            weapon != null && weapon.m_shared.m_useDurability ? weapon.m_shared.m_useDurabilityDrain * Game.m_durabilityRate : 0f;
 
         private static void RefundStamina(Attack attack, Humanoid character, float share)
         {
@@ -52,16 +49,6 @@ namespace GrindstoneSkills
             float refund = StaminaSpent(attack) * share;
             if (refund > 0f)
                 character.AddStamina(refund);
-        }
-
-        private static void ReduceWear(ItemDrop.ItemData weapon, float share)
-        {
-            float refund = WearPerSwing(weapon) * share;
-            if (refund <= 0f)
-                return;
-            float restored = Mathf.Min(weapon.GetMaxDurability(), weapon.m_durability + refund);
-            if (restored > weapon.m_durability)
-                weapon.m_durability = restored;
         }
     }
 }

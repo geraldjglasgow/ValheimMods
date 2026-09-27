@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.0
+
+- New: Pickaxes, built on the game's own skill, so existing levels count. A good miner learns to read stone.
+- Seams: now and then a chunk next to the one you are mining glints gold for a few seconds, more often and for longer
+  the better you are. Only you see your own seams.
+- Clean strikes: hit the glinting chunk in time for double damage, a little experience and, on an ore deposit, an
+  extra drop; the next seam opens at once. From level 100 (Unbroken) each clean strike in a chain hits harder, up to
+  ×4.
+- Splash: your swing also damages the chunks touching the one you hit, 15 at level 100 shared between them, growing
+  every 10 levels.
+- Rich veins: ore deposits have 0 to 3 stars, each worth 25% more drops, for everyone who mines them. From level 25
+  (Read the rock) the hover shows a deposit's stars and how many chunks are left.
+- Extra ore: up to a 30% chance of an extra drop from every chunk of an ore deposit. Pickaxes wear up to 50% less on
+  rock.
+- Echo, from level 50: a swing on rock pings the nearest ore deposit within 40 m and shows its name and distance.
+  Buried silver stays the Wishbone's job.
+- Finds: broken rock sometimes holds amber, an amber pearl or a ruby, richer further into the world. Server admins set
+  the finds per biome and deposit in `GrindstoneSkills.MineFinds.yml`.
+- More Pickaxes experience in later biomes and on ore deposits, plus experience for clean strikes and for the first
+  hit on each kind of deposit.
+
 ## 0.3.0
 
 - New: Woodcutting, built on the game's own skill, so existing levels count. Every perk grows from nothing at level

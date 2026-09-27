@@ -42,7 +42,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(TreeBase __instance, Vector3 hitDir) =>
-                Open = WoodSkill.Active ? WoodGuard.Run("fell", () => Begin(__instance, hitDir), null) : null;
+                Open = WoodSkill.Active ? HookGuard.Run("fell", () => Begin(__instance, hitDir), null) : null;
 
             [HarmonyPostfix]
             private static void Postfix()
@@ -76,12 +76,12 @@ namespace GrindstoneSkills
 
         private static void Dispatch(FellContext fell)
         {
-            WoodGuard.Run("old growth", () => OldGrowth.OnFelled(fell));
-            WoodGuard.Run("timber", () => Timber.OnFelled(fell));
-            WoodGuard.Run("clean fell", () => CleanFell.OnFelled(fell));
-            WoodGuard.Run("replanting", () => Replanting.OnFelled(fell));
-            WoodGuard.Run("finds", () => Finds.OnFelled(fell));
-            WoodGuard.Run("fell experience", () => WoodXp.OnFelled(fell));
+            HookGuard.Run("old growth", () => OldGrowth.OnFelled(fell));
+            HookGuard.Run("timber", () => Timber.OnFelled(fell));
+            HookGuard.Run("clean fell", () => CleanFell.OnFelled(fell));
+            HookGuard.Run("replanting", () => Replanting.OnFelled(fell));
+            HookGuard.Run("finds", () => Finds.OnFelled(fell));
+            HookGuard.Run("fell experience", () => WoodXp.OnFelled(fell));
         }
     }
 }

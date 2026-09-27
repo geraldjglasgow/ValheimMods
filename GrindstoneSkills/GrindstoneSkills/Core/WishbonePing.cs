@@ -3,16 +3,21 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// The lookout's sound: the Wishbone's ping (the effect list of its SE_Finder), played at the ship. Every client
-    /// handles the pulse itself, so each plays a local copy: instantiated with network views disabled, the way the game
-    /// makes its build ghost, so no ZDO is made and nobody gets a second, networked copy. A copy is removed after a few
-    /// seconds whatever its own timer does. Without a Wishbone in the game the pulse is silent.
+    /// The Wishbone's near ping (the effect list of its SE_Finder, m_pingEffectNear: vfx_WishbonePing and
+    /// sfx_WishbonePing_near), played at a spot as a local copy on this client only: instantiated with network views
+    /// disabled, the way the game makes its build ghost, so no ZDO is made and nobody gets a second, networked copy. A
+    /// copy is removed after a few seconds whatever its own timer does. Without a Wishbone in the game it is silent.
+    /// <para>The sound is 3D (read from the prefab 2026-09-27: spatial blend 1, full volume within 5 m, fading out to
+    /// 25 m), so it is heard from the spot's direction. Shared by the Sailing lookout (<see cref="LookoutPulse"/>: every
+    /// client plays it at the ship) and the Pickaxes Echo (<see cref="Echo"/>: the miner's client plays it 4 m towards
+    /// the deposit).</para>
     /// </summary>
-    internal static class LookoutSound
+    internal static class WishbonePing
     {
         private const float Life = 8f;
 
         private static EffectList ping;
+        private static ObjectDB readFrom;
 
         public static void Play(Vector3 position)
         {
@@ -40,11 +45,12 @@ namespace GrindstoneSkills
             }
         }
 
-        /// <summary>The Wishbone's near ping, found once the item database is up.</summary>
+        /// <summary>The Wishbone's near ping, read once per item database (a relog makes a new one).</summary>
         private static EffectList Ping()
         {
-            if (ping != null || ObjectDB.instance == null)
+            if (ObjectDB.instance == null || ObjectDB.instance == readFrom)
                 return ping;
+            readFrom = ObjectDB.instance;
             GameObject wishbone = ObjectDB.instance.GetItemPrefab("Wishbone");
             ItemDrop item = wishbone != null ? wishbone.GetComponent<ItemDrop>() : null;
             SE_Finder finder = item != null ? item.m_itemData.m_shared.m_equipStatusEffect as SE_Finder : null;

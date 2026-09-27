@@ -1,8 +1,8 @@
 {
     "name": "GrindstoneSkills",
-    "version_number": "0.3.0",
+    "version_number": "0.4.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/GrindstoneSkills",
-    "description": "Deeper skills. Cooking: 0-3 star dishes from the cook's level, kitchens trash low stars. Sailing: tougher, faster ships, wider map reveal, a lookout pulse. Woodcutting: aimed falls, domino felling, clean splits, finds. Server synced.",
+    "description": "Deeper skills. Cooking: 0-3 star dishes, kitchens trash low stars. Sailing: tougher, faster ships, lookout pulse. Woodcutting: aimed falls, domino felling, finds. Pickaxes: seams, splash, rich veins, ore echo, finds. Server synced.",
     "dependencies": [
         "denikson-BepInExPack_Valheim-5.4.2350"
     ]

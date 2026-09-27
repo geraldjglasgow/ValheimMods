@@ -57,8 +57,8 @@ namespace GrindstoneSkills
             Player player = Player.m_localPlayer;
             if (player == null || player.GetPlayerID() != playerId || !WoodSkill.Active)
                 return;
-            WoodGuard.Run("wood credit", () => WoodXp.OnCredit(player, kind, species, amount));
-            WoodGuard.Run("domino credit", () => Domino.OnCredit(player, kind, chain));
+            HookGuard.Run("wood credit", () => WoodXp.OnCredit(player, kind, species, amount));
+            HookGuard.Run("domino credit", () => Domino.OnCredit(player, kind, chain));
         }
     }
 }

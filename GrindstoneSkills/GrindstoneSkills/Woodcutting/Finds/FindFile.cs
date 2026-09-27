@@ -40,7 +40,11 @@ namespace GrindstoneSkills
             return model.ByBiome.TryGetValue(biome, out List<FindEntry> table) ? PickFrom(table) : null;
         }
 
-        private static FindEntry PickFrom(List<FindEntry> table)
+        /// <summary>
+        /// One find of a table, picked by weight (a find's share is weight / the table's total); null when every weight
+        /// is 0. Shared with the Pickaxes finds (<see cref="MineFindFile"/>).
+        /// </summary>
+        public static FindEntry PickFrom(List<FindEntry> table)
         {
             float total = 0f;
             foreach (FindEntry find in table)

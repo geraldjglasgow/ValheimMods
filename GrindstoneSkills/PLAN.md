@@ -502,7 +502,7 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   new log's ZDO (`Felling`, `LogSpawns`); halves inherit it and the clean mark (`LogBreaking`).
 - **Scopes:** `SwingScope` (the local player's melee swing; the Woodcutting raise in it is "this swing hit wood"),
   `ImpactScope` (a felled log's impact, on its owner), `Felling.Open` (SpawnLog), `LogBreaking.Open` (TreeLog.Destroy).
-- **Dispatch:** the foundation calls each feature's hook, each guarded (`WoodGuard`), so a failing feature never stops a
+- **Dispatch:** the foundation calls each feature's hook, each guarded (`HookGuard`), so a failing feature never stops a
   tree from falling. Fell order: Old growth (stores the tree's size on the log), Timber, Clean fell, Replanting,
   Finds, experience.
 - **Impacts:** a hit counts as a falling log's when its type is Tree or Impact (`WoodHit.IsImpact`) while the log's
@@ -609,6 +609,271 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - [ ] Experience: birch twice beech, saplings a quarter, the first fell of a kind triple, splits credited.
 - [ ] Dedicated server with two clients, the trees owned by the other client: every credit, callout and bonus above.
 
+## Pickaxes
+
+### The request (user, 2026-09-27)
+
+Deeper Pickaxes on the game's own skill, themed "the miner learns to read stone": Seams (active mining), Rich veins
+(deposit stars), splash damage to touching chunks, perks, milestones (Read the rock, Echo, Unbroken), finds and
+experience, all working on a dedicated server. The user decided: seams are personal to each miner; the vein bonus goes
+to everyone who mines the deposit; finds are the game's own valuables only; splash is 15 damage at level 100 **shared**
+across the touching chunks (not 15 each); Shatter (a level 75 milestone) is dropped because splash does its job.
+
+### What the game's Pickaxes already does
+
+Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
+
+- **Skill 12, Pickaxes.** A pickaxe swing rolls its damage factor from it (`GetRandomSkillFactor`: 25-55% of the
+  pickaxe's damage at level 0, 85-100% at 100), knockback included; swing stamina −33% at 100 (`GetAttackStamina`).
+- **Experience:** +1 per swing that hits rock (`Attack.m_raiseSkillAmount`, raised once per swing after the hits),
+  ×1.5 if the swing also hit a creature. Digging the ground (a Heightmap hit) gives nothing.
+- **Not affected:** tool tier (the pickaxe's), drops (fixed tables × the world's resource rate), wear, digging.
+- **Rocks take only pickaxe damage:** every rock's damage modifiers make it immune to blunt, slash, pierce, chop, fire,
+  frost, lightning, poison and spirit. Pickaxe damage: Antler 18, Bronze 25, Iron 33, Black metal 49 (Stone 15), before
+  upgrades.
+- **Chunk health:** copper and silver 50, boulders 30-50, mud piles 5; tin and obsidian are single pieces
+  (Destructible, 30). Ashlands flametal is `LeviathanLava`, a MineRock (pieces of 100, tool tier 3); the
+  `FlametalRockstand` formations (chunks of 70) drop only coal.
+- **Where things happen:**
+  - The hit is built on the miner's client (`Attack.DoMeleeAttack`), and `MineRock5.Damage`, `MineRock.Damage` and
+    `Destructible.Damage` run there. They find the chunk (area index) and send the hit to the rock's ZDO owner.
+  - **One swing, many hits:** a pickaxe attack (`m_pickaxeSpecial`) sends one full hit per chunk collider its swing
+    touches; the skill is raised once, after all of them.
+  - The owner applies the damage (`MineRock5.RPC_Damage` → `DamageArea`, `MineRock.RPC_Hit`, `Destructible.RPC_Damage`)
+    and spawns the drops (`m_dropItems.GetDropList()` per broken chunk; `DropOnDestroyed` for a Destructible).
+  - The hit already sends `m_skill` (Pickaxes), `m_skillLevel` (the weapon skill's level, so the miner's Pickaxes
+    level), `m_toolTier` and `m_attacker` (the miner's player). **Owner-side features read the miner from the hit; no
+    tagging is needed** (only the splash mark, below).
+- **Intact deposits:** `rock4_copper`, `silvervein`, `rock3_silver`, `FlametalRockstand`, `mudpile`, `mudpile2`,
+  `mudpile_beacon` and the big boulders are 1-health Destructibles without drops of their own. Their first hit replaces
+  them with their `_frac` MineRock5 (`m_spawnWhenDestroyed`), instantiated at the same position and rotation, and the
+  owner damages it at once with the same hit. Some share another prefab's fractured form: `mudpile_beacon` becomes
+  `mudpile_frac`, `rock1_mistlands` becomes `rock1_mountain_frac`, `BigRock` becomes `rock4_bigrock_frac`.
+- **Buried deposits:** `silvervein` carries a `Beacon` (the Wishbone's target) on a child object, `mudpile_beacon` on
+  itself. `rock3_silver`, `mudpile`, `mudpile2` and every fractured form carry none, so a vein is no longer buried once
+  its first hit breaks it open.
+
+### Foundation (`Pickaxes/Core`)
+
+- **Rock (`Rock`, `RockCatalog`, `RockPieces`):** a MineRock5, MineRock or Destructible whose damage modifiers make it
+  immune (or Ignore) to chop and blunt but not to pickaxe. That is discovered, not listed, so modded rocks count, and
+  dungeon gates, iron walls and bar stacks (MineRocks without such modifiers) do not.
+  - **Kind:** its prefab name without `_frac`; an intact deposit takes its fractured form's kind, so the two are one
+    kind (`mudpile_beacon` is `mudpile`).
+  - **Name:** the game's (`m_name`, a Destructible's HoverText, or its fractured form's). A rock without one (the ice
+    rocks, the flametal rockstand) goes by its first ore item's name ("Ice", "Coal"). Echo and every callout use it.
+  - **Ore deposit:** its drop table (a Destructible: its `DropOnDestroyed`, or its `m_spawnWhenDestroyed` prefab's table)
+    holds any item not in "Plain Stone Items" (default `Stone, Grausten`). Other rocks are plain stone.
+  - **Also known per rock:** biome at its position, tool tier, one chunk's health in the prefab, whether it carries a
+    `Beacon` (on itself or a child), whether it has chunks (MineRock5 or MineRock).
+- **The hit carries the miner (`Miner.FromHit`):** on the owner, a hit with `m_skill` Pickaxes gives the miner's player
+  ID (from the attacker's ZDO), level (`m_skillLevel`) and ZDOID. A hit without Pickaxes is left to the game.
+- **Swing scope (`MineSwing`):** the local player's melee swing with a Pickaxes weapon, like `SwingScope`. It records
+  the rocks the swing hit. The Pickaxes raise inside the scope is "this swing hit rock": experience scaling, wear
+  reduction and Echo run there, once per swing.
+- **Local hit (`MineHit`):** the local player's pickaxe hit on a rock, before the game sends it: recorded in the swing,
+  handed to discovery and to Seams (which may raise its damage), and marked for splash (`SplashOnce`): every hit on a
+  MineRock5 or an intact deposit after the swing's first carries `m_skillRaiseAmount` −1. HitData sends that field and
+  nothing on a rock's path reads it; the game raises skills from `Attack.m_raiseSkillAmount` on the attacker's client.
+- **Owner hit (`OwnerHit`):** after the owner applied a pickaxe hit to a MineRock5 chunk, splash runs, unless the hit
+  carries the mark, or another hit of the same handler already splashed (an intact deposit's owner re-sends its first
+  hit to every new chunk within 5 cm of the hit point).
+- **Break (`MineBreak`):** on the owner, when a pickaxe hit (or splash) breaks a chunk of a rock, or destroys a
+  single-piece rock (`ChunkBreaks`, `PieceBreaks`). The context (`RockBreak`) gives the rock, chunk centre, drop
+  table, miner and cheated flag. An intact deposit turning into its fractured form is no break.
+  - Features add **extra rolls** of the chunk's own drop table to the context (vein bonus, extra ore, clean strike).
+  - The foundation spawns them once, as the game spawns drops. The world's resource rate applies as usual.
+  - Finds spawn their own items.
+- **Clean strike marks (`CleanStrikeMarks`):** an RPC on the rock's ZNetView to its owner (`grindstone_CleanStrike`,
+  int area, ZDOID miner). It is sent before the hit, so it arrives first. The owner keeps the mark in memory for 30 s;
+  the break of that chunk by that miner takes it.
+- **Callouts (`MineCallout`):** floating text, as the Woodcutting callouts.
+  - Shown locally for the miner's own events.
+  - Broadcast to players within 40 m for finds.
+  - Each receiver's own Pickaxes "Show Callouts" decides.
+- **Dispatch:** every feature hook is called through the shared hook guard (`HookGuard`), so a failing feature never
+  stops a rock from breaking.
+- **Shared with the other modules (`Core`):** `HookGuard` (was Woodcutting's `WoodGuard`), `FloatingText` (the game's
+  floating damage text, both modules' callouts), `PlayerIds`, `ToolWear` (both wear perks) and `WishbonePing` (the
+  Wishbone's ping as a local copy, a 3D sound: the Sailing lookout and Echo).
+
+### Features (defaults, synced and lockable)
+
+| Feature | Default | Whose level, where it runs |
+| --- | --- | --- |
+| Seams | 10% of swings at level 0 to 40% at 100 open a seam; window 2 s to 5 s | your own, your client |
+| Clean strike | ×2 damage, +1 drop roll on ore deposits, +1 experience, next seam at once | your own; ore on the owner |
+| Unbroken (level 100) | each chained clean strike +20% damage, up to 5 links | your own, your client |
+| Splash | 15 damage per swing at 100, shared across the chunks touching its first chunk; grows every 10 levels (1.5 per step) | the miner's, rock owner |
+| Rich veins | 0★ 60%, 1★ 25%, 2★ 11%, 3★ 4% per ore deposit; +25% drop rolls per star | anyone's, rock owner |
+| Read the rock (level 25) | hover shows the vein's stars and chunks left | your own, your client |
+| Extra ore | 30% chance of +1 drop roll per broken chunk of an ore deposit | the miner's, rock owner |
+| Pickaxe wear | 50% less wear for swings that hit rock | your own, your client |
+| Echo (level 50) | a swing on rock pings the nearest ore deposit within 40 m, every 10 s | your own, your client |
+| Finds | 0.2% at level 0 to 1% at 100 per broken chunk or rock, × its health / 50 (at most 1) | the miner's, rock owner |
+
+- **Seams (multi-chunk rocks: MineRock5):**
+  - A seam is a chunk other than the ones the swing touched, intact, within 2 m of the hit point and visible from
+    the miner's eye, marked by a local-only glow (gold light, halo and the game's glint star) and a soft clink. Each
+    miner sees only their own seams.
+  - It opens once the swing is over, when the swing's one roll of the chance succeeds on a rock with no open seam.
+  - A hit on the seam chunk inside the window is a clean strike: the hit's damage is multiplied before it is sent,
+    "Clean strike!" floats up, and the next seam opens straight away with a full window (a chain). One per rock and
+    swing.
+  - A swing that hits the rock elsewhere, or a window running out, ends the chain.
+  - Plain stone rocks get seams too (damage and experience), but no extra roll.
+- **Unbroken:** from "Unbroken Level" (100), each clean strike after the first in a chain adds +20% of the base to
+  the multiplier, up to 5 links (×2, 2.4, 2.8, 3.2, 3.6, 4). The callout counts the links at any level ("Clean strike ×3!").
+- **Splash:**
+  - On the owner, after the swing's first hit on a MineRock5 chunk that passed the tool tier check. A swing sends one
+    hit per chunk it touches; the later ones carry the splash mark and do not splash (see the foundation).
+  - Touching chunks are the intact ones found by an overlap box around the hit chunk (the game's own support test).
+    They share the level's amount equally. The boxes are filled before the first hit, while its chunk is whole.
+  - The damage goes through the game's chunk damage with its chip sound, damage numbers and noise muted; the
+    crumble of a chunk it breaks stays.
+  - A chunk it breaks drops, counts for every break feature and triggers the game's support check.
+  - Splash never splashes again and gives no experience. Seams don't multiply it.
+- **Rich veins:**
+  - Stars come from a stable hash of the world seed and the deposit's position (to 0.5 m), so every machine agrees
+    with nothing stored, and the intact deposit and its fractured form agree.
+  - Ore deposits only.
+  - The bonus is extra drop rolls on every broken chunk: whole rolls, plus a chance for the fraction.
+- **Read the rock:** from "Read The Rock Level" (25), the hover of an ore deposit shows "Rich vein ★★" or "Plain
+  vein". A multi-chunk rock also shows "N of M chunks left". Below that level nothing shows, but the bonus still applies.
+- **Echo:**
+  - From "Echo Level" (50), a swing that hits rock finds the nearest loaded ore deposit within 40 m. The one just hit,
+    fully mined ones and any carrying a `Beacon` are skipped, so buried silver stays the Wishbone's job.
+  - It plays the Wishbone's ping 4 m towards the deposit (a 3D sound, so it comes from that direction) and floats
+    "<name>, 32 m" there, for the miner only.
+  - Per-player cooldown of 10 s. Silent when nothing is near.
+- **Finds:** GrindstoneSkills.MineFinds*.yml (synced, hot reloaded), per biome or per deposit kind, the same format as
+  the Woodcutting finds. Only the game's own valuables by default: Amber, Amber pearl, Ruby. The item drops at the
+  chunk and "Found <name>!" floats there for players near.
+  - The chance is scaled by the chunk's health in the prefab over 50, at most 1, so rocks of tiny chunks are no find
+    farm: copper and silver chunks and bigger 100%, tin, obsidian and small boulders (30) 60%, mud piles (5) 10%,
+    Ashlands floor pieces (1) 2%.
+
+### Experience (section 14, synced)
+
+- **Swings:** the game's +1 per swing that hits rock stays, scaled by the hardest rock the swing hit:
+  - +25% per biome step of the rock's biome: Meadows ×1, Black Forest ×1.25, Swamp ×1.5, Mountain ×1.75, Plains ×2,
+    Mistlands ×2.25, Ashlands and Deep North ×2.5;
+  - ×1.5 on ore deposits;
+  - no scaling when the rock is too hard for the pickaxe.
+- **Clean strike:** +1 × the rock's scale, credited at once on the miner's client.
+- **Discovery:** the first hit on each ore deposit gives +10 × its scale. Deposits are told apart by name, so kinds
+  that read the same count once (mudpile, mudpile2 and mudpile_old; both giant helmets; the ice rocks). It is recorded
+  in player custom data (`grindstone_mined`).
+- An Experience Multiplier applies over all of it.
+
+### Settings
+
+- **14 - Pickaxes:** Pickaxes Enabled, Show Callouts (each player's own), Plain Stone Items, Experience Multiplier,
+  Experience Per Biome Step, Ore Experience Bonus, Clean Strike Experience, Discovery Experience.
+- **15 - Seams:** Seam Chance At 0, Seam Chance At 100, Seam Window At 0, Seam Window At 100, Clean Strike Damage, Unbroken
+  Level, Unbroken Bonus Per Link, Unbroken Max Links.
+- **16 - Veins:** Vein Chance 1 Star, Vein Chance 2 Stars, Vein Chance 3 Stars, Vein Bonus Per Star, Read The Rock Level,
+  Echo Level, Echo Radius, Echo Cooldown.
+- **17 - Pickaxe Perks:** Extra Ore Chance At 100, Pickaxe Wear Reduction At 100, Splash Damage At 100.
+- **18 - Mine Finds:** Find Chance At 0, Find Chance At 100 (the tables are in GrindstoneSkills.MineFinds*.yml).
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- Seams and splash work on every multi-chunk rock, boulders included. Extra rolls from clean strikes, extra ore and
+  veins are for ore deposits only, so stone doesn't pile up.
+- Every drop bonus is an extra roll of the chunk's own table, not a count of one ore item.
+- Experience scales by biome rather than tool tier: the game's rock tiers are uneven (copper and flametal chunks need
+  tier 0, silver and obsidian 2). Ocean, no biome and modded biomes count as Meadows. "Too hard" is the game's own
+  tool check, the world-level tool lock included.
+- Discovery is on the first hit of a deposit, on the miner's own client, so it needs no credit RPC. A deposit too
+  hard for the pickaxe is not recorded yet, nor is one while its credit is 0.
+- The Experience Multiplier also scales Pickaxes raises from swings that hit only creatures.
+- Chunks that fall when the chunks under them are mined away (the game's support check) count as broken by the miner
+  whose hit or splash took their support: they get the vein bonus, extra ore and finds too.
+- **Seams:** a seam opens after the swing (the whole swing is known first); the chance is rolled once per swing, and
+  only for the first seam: each clean strike opens the next at once, at any level. Only chunks the miner can see. A
+  pickaxe too weak for the rock neither opens nor strikes seams, and does not end a chain.
+- **Clean strike roll:** a clean strike that does not break its chunk still pays when that miner breaks the chunk
+  within 30 s, however it breaks.
+- **Splash** is once per swing, around the swing's first chunk hit: a swing touching three chunks splashes 15, not 45.
+- **Clean strike balance (user, 2026-09-27):** Clean Strike Damage ×2, not ×2.5, so at level 100 a bronze pickaxe
+  (21-25 per hit) needs Unbroken's second link (×2.4) to break a 50-health copper or silver chunk in one hit, while
+  iron already does; Clean Strike Experience 1, not 2, so a kept chain earns about twice a swing's experience, not
+  three times.
+- **Splash grows in steps of 10 levels (user, 2026-09-27):** nothing below level 10, then a tenth of Splash Damage At
+  100 per step (1.5, 3, ... 15 at level 100), instead of growing smoothly.
+- **Rich veins:** a vein without stars reads "Plain vein", so a reader can tell it from no hover.
+- **Extra ore** has no callout.
+- **Pickaxe wear** is reduced on every swing that hits rock: plain stone and rock too hard for the pickaxe too.
+- **Echo:** the cooldown starts only on a ping (a silent swing leaves it ready). The text ignores Show Callouts: it is
+  the feature, not a callout. The radius is 3D. Ore is what the foundation counts as ore, so Leviathans, giant bones
+  and armour, ice rocks, flametal rockstands (coal) and mud piles without a beacon are pinged.
+- **Finds:** cheated breaks find nothing; the Ocean has a table; Deep North copies the Ashlands; the per-deposit
+  example is commented out; items pop out 0.4 m towards the miner. The health share uses the prefab's health, before
+  the world level, so the 50 stays one yardstick (confirmed by the user, 2026-09-27). The world's resource rate does not scale finds.
+- **Names:** deposits without a name of their own are called by their ore ("Ice", "Coal").
+
+### Known gaps
+
+- Clean strike marks live in the owner's memory: an owner change between the clean strike and the break loses the
+  extra roll.
+- Credits reach the miner as one raise; the game gives at most one level per raise. Discovery is credited before the
+  hit is sent.
+- Echo sees only loaded objects. Non-owners' chunk healths lag up to 10 s (the game reloads them), which Echo and
+  "chunks left" follow; broken chunks reach everybody at once.
+- When the miner owns the rock, chunks broken by splash count in their Mine Hits and Mines stats. Splash does not
+  trigger a Dvergr area (`m_triggerPrivateArea`) as a hit does.
+- A swing whose first rock hit does not land (its chunk already broken on the owner, lag) does not splash.
+- The intact flametal rockstand has no hover (the game gives it none); its fragments show the vein lines alone. All
+  texts are English.
+- Seams: the glow and sound constants (top of `SeamGlow`, `SeamSound`) are untested; the sight test aims at the
+  chunk's centre; lag can pick a chunk that then vanishes (the seam closes quietly); a seam opens one frame after its
+  swing.
+
+### Test checklist
+
+- [ ] Pickaxes Enabled off: rocks, drops, hover, sounds and experience exactly vanilla; no seams, no Echo.
+- [ ] Experience: neutral settings give vanilla; Meadows boulder ×1, Black Forest copper ×1.875, Mountain stone ×1.75,
+      Mountain silver ×2.625 with an iron pickaxe and ×1 with bronze.
+- [ ] Discovery: the first hit on copper floats "Discovered Copper deposit!" and gives 18.75 once, also after relog;
+      none on stone; it waits for the tool tier; mudpile and mudpile2 are one discovery; an ice rock reads "Ice";
+      Show Callouts off hides the text but credits; Discovery 0 records nothing.
+- [ ] Seams at level 0: about 1 swing in 10 on a multi-chunk rock opens a glint on a nearby visible chunk, never one
+      just hit, gone after 2 s; readable in daylight and at night; Seam Chance 0: none.
+- [ ] Clean strike: "Clean strike!", the ×2 damage number, 1.875 experience on Black Forest copper, a new seam at
+      once with a higher clink, "Clean strike ×2!"; a miss or expiry ends the chain.
+- [ ] Clean strike roll: an ore chunk it breaks drops a second roll, a boulder chunk does not.
+- [ ] Unbroken at 100: a chain goes ×2, 2.4 … 4 and stays; below Unbroken Level ×2 flat; 101 turns it off.
+- [ ] A pickaxe too weak for the rock opens no seams and does not end a chain.
+- [ ] Seams close without errors when Pickaxes is turned off, the rock unloads, its last chunk breaks, the player
+      dies or logs out.
+- [ ] Splash at 100 on copper: 15 in total per swing however many chunks it touches, shared by the chunks touching
+      the first; no numbers or chip sound on them; the first hit on a never-checked rock splashes too.
+- [ ] Splash breaks: the chunk crumbles and drops with vein bonus, extra ore and finds; unsupported chunks fall and
+      count; the last chunk by splash destroys the rock cleanly.
+- [ ] Splash: nothing below level 10, at setting 0 or below the tool tier; 1.5 at level 10 to 19, 7.5 at 50 to 59, 15
+      at 100; no experience; no re-splash; a clean strike does not raise it; boulders and mud piles work.
+- [ ] Rich veins: two players see the same stars on a deposit, intact and broken open, and after a restart; 3★ at
+      bonus 100 gives about 4× ore at any level, splash and collapsed chunks and the last chunk included.
+- [ ] Read the rock: nothing below 25; from 25 "Rich vein ★★" or "Plain vein" and "N of M chunks left" counting
+      down; tin and obsidian stars without the chunks line; boulders never; synced chance changes show within a second.
+- [ ] Extra ore at setting 100: a second roll on copper, tin and silver, none on stone, splash and collapses included.
+- [ ] Wear at 100: half the wear (none at setting 100), never above max; swings on creatures or the ground wear as
+      before.
+- [ ] Echo: nothing below Echo Level; at 50 the ping comes from the deposit's direction with "Copper deposit, N m";
+      the cooldown; buried silver and beacon mud piles never, opened veins and plain mud piles yes; fully mined never,
+      partly mined yes; Show Callouts off still shows; Echo Level 101 off, 0 everyone; no hitch near a large base.
+- [ ] Echo on the first hit of an intact copper deposit names another deposit, never the one hit.
+- [ ] Finds at chance 100/100: a copper chunk always drops a valuable towards the miner, "Found a lump of amber!" for
+      players within 40 m; a mud pile chunk about 1 in 10; the silvervein example works uncommented; the YAML hot
+      reloads, a bad biome is refused, a misspelled item is logged once; a cheated miner finds nothing.
+- [ ] Woodcutting and Sailing unchanged: axe wear refund as before; the lookout ping sounds as before.
+- [ ] **Dedicated server with two clients** (A mines, B stands by), rocks owned by the server, then by B:
+  - [ ] A's seams, Echo and discovery texts are invisible to B; B breaking A's seam chunk closes the seam.
+  - [ ] A's clean strike damage and roll, splash, veins, extra ore and finds work at A's level.
+  - [ ] Drops and "Found …!" show for both; no splash damage numbers anywhere; nothing in the server log.
+  - [ ] The first hit on an intact deposit splashes once, and names another deposit for Echo.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
@@ -622,6 +887,11 @@ build is clean (0 warnings). The Sailing decisions above wait for the user's con
 0.3.0 (Woodcutting) released to Thunderstore 2026-09-27 (commit e087c78, tag GrindstoneSkills-v0.3.0), with a new
 store icon, before any in-game test: written as a foundation, then eight features in parallel, then a review; the
 build is clean (0 warnings). The Woodcutting decisions above wait for the user's confirmation.
+
+0.4.0 (Pickaxes) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.4.0), before any in-game test: written
+as a foundation, then seven features in parallel, then a review and a docs pass; the build is clean (0 warnings). The
+user set splash in 10-level steps, Clean Strike Damage ×2 and Clean Strike Experience 1; the other Pickaxes decisions
+above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

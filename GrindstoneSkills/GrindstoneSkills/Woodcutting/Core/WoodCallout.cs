@@ -6,14 +6,14 @@ namespace GrindstoneSkills
     /// <summary>
     /// Short words floating above a tree or a log for everybody near it: "Timber!", "Clean split!", a find. The machine
     /// where it happened sends a routed RPC to everybody (<see cref="Keys.RpcWoodCallout"/>); every client with a camera
-    /// within <see cref="Range"/> of the spot, and "Show Callouts" on, draws it with the game's own floating damage text
-    /// (DamageText.AddInworldText, local only). A dedicated server draws nothing. Send the English text; it is shown as
-    /// given (GrindstoneSkills has no localization keys yet).
+    /// within <see cref="Range"/> of the spot, and its Woodcutting "Show Callouts" on, draws it with the game's own
+    /// floating damage text (<see cref="FloatingText"/>). A dedicated server draws nothing. Send the English text; it is
+    /// shown as given (GrindstoneSkills has no localization keys yet).
     /// </summary>
     public static class WoodCallout
     {
         /// <summary>How far away a callout can be seen, in metres.</summary>
-        public const float Range = 40f;
+        public const float Range = FloatingText.Range;
 
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
         private static class NetAwake
@@ -30,16 +30,12 @@ namespace GrindstoneSkills
         }
 
         private static void Receive(long sender, Vector3 position, string text) =>
-            WoodGuard.Run("wood callout", () => Show(position, text));
+            HookGuard.Run("wood callout", () => Show(position, text));
 
         private static void Show(Vector3 position, string text)
         {
-            Camera camera = Utils.GetMainCamera();
-            if (camera == null || DamageText.instance == null || Hud.IsUserHidden() || !WoodcuttingSettings.ShowCallouts.Value)
-                return;
-            float distance = Vector3.Distance(camera.transform.position, position);
-            if (distance <= Range)
-                DamageText.instance.AddInworldText(DamageText.TextType.Bonus, position, distance, text, false);
+            if (WoodcuttingSettings.ShowCallouts.Value)
+                FloatingText.Show(position, text);
         }
     }
 }

@@ -1,0 +1,82 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace GrindstoneSkills
+{
+    /// <summary>
+    /// The local miner's open seams, at most one per rock, keyed by the rock's ZDOID, on the miner's own client. A seam
+    /// leaves the book when its window runs out, its chunk breaks, its rock is destroyed or unloaded (<see cref="Tick"/>,
+    /// once a frame, and <see cref="Find"/>), when a chain moves on or ends (<see cref="SeamSwing"/>), and all at once when
+    /// Pickaxes is turned off or the game scene closes (<see cref="SeamDriver"/>); its glow goes with it.
+    /// </summary>
+    internal static class OpenSeams
+    {
+        private static readonly Dictionary<ZDOID, Seam> ByRock = new Dictionary<ZDOID, Seam>();
+        private static readonly List<ZDOID> Stale = new List<ZDOID>();
+
+        /// <summary>The rock's open seam; null when there is none or it has just closed (which removes it).</summary>
+        public static Seam Find(Rock rock)
+        {
+            ZDOID id = rock != null ? rock.Id : ZDOID.None;
+            if (id.IsNone() || !ByRock.TryGetValue(id, out Seam seam))
+                return null;
+            if (seam.IsOpen)
+                return seam;
+            Close(id);
+            return null;
+        }
+
+        /// <summary>
+        /// Opens a seam on <paramref name="rock"/> near <paramref name="near"/>, on a chunk not in
+        /// <paramref name="touched"/>, in place of the rock's current seam; <paramref name="links"/> is the chain so far.
+        /// The window follows the local miner's level. No chunk fits: the rock has no seam (a chain ends there).
+        /// </summary>
+        public static void Open(Rock rock, Vector3 near, ICollection<int> touched, int links)
+        {
+            ZDOID id = rock.Id;
+            Close(id);
+            int area = SeamPicker.Pick(rock, near, touched);
+            if (id.IsNone() || area < 0)
+                return;
+            float window = PickSkill.Between(SeamSettings.WindowAt0.Value, SeamSettings.WindowAt100.Value, PickSkill.Local());
+            float closes = Time.time + Mathf.Max(0.1f, window);
+            SeamGlow glow = SeamGlow.Show(rock, area, closes, SeamDriver.Holder);
+            ByRock[id] = new Seam(rock, id, area, closes, links, glow);
+            SeamSound.Play(RockChunks.Centre(rock, area), links);
+        }
+
+        public static void Close(ZDOID id)
+        {
+            if (!ByRock.TryGetValue(id, out Seam seam))
+                return;
+            ByRock.Remove(id);
+            if (seam.Glow != null)
+                seam.Glow.Remove();
+        }
+
+        public static void CloseAll()
+        {
+            foreach (Seam seam in ByRock.Values)
+            {
+                if (seam.Glow != null)
+                    seam.Glow.Remove();
+            }
+            ByRock.Clear();
+        }
+
+        /// <summary>Closes every seam whose window ran out or whose chunk or rock is gone.</summary>
+        public static void Tick()
+        {
+            if (ByRock.Count == 0)
+                return;
+            Stale.Clear();
+            foreach (KeyValuePair<ZDOID, Seam> pair in ByRock)
+            {
+                if (!pair.Value.IsOpen)
+                    Stale.Add(pair.Key);
+            }
+            foreach (ZDOID id in Stale)
+                Close(id);
+        }
+    }
+}

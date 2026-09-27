@@ -73,5 +73,15 @@ namespace GrindstoneSkills
         public const string Replanted = "grindstone_replanted";
         /// <summary>Charter sync key of the Finds YAML files (GrindstoneSkills.Finds*.yml).</summary>
         public const string FindsSync = "grindstone_finds";
+
+        // Pickaxes. Nothing is stored on rocks: vein stars are computed from the world seed and the position.
+        /// <summary>On a MineRock5, to its owner: (int area, ZDOID miner) - the miner's next hit on that chunk is a clean strike. Sent before the hit, kept in memory for 30 s.</summary>
+        public const string RpcCleanStrike = "grindstone_CleanStrike";
+        /// <summary>Routed RPC to everybody: (Vector3 position, string text); each client near the spot shows the text there, if its Pickaxes callouts are on.</summary>
+        public const string RpcMineCallout = "grindstone_MineCallout";
+        /// <summary>Player custom data: comma-separated identities of every ore deposit the character has hit: its name token ("$piece_deposit_copper"), else its kind (prefab name without "_frac").</summary>
+        public const string MinedDeposits = "grindstone_mined";
+        /// <summary>Charter sync key of the Mine Finds YAML files (GrindstoneSkills.MineFinds*.yml).</summary>
+        public const string MineFindsSync = "grindstone_mine_finds";
     }
 }

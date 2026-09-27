@@ -41,8 +41,8 @@ namespace GrindstoneSkills
                     return;
                 WoodTarget hardest = Hardest;
                 Attack attack = Attack;
-                factor *= WoodGuard.Run("swing experience", () => WoodXp.SwingScale(hardest), 1f);
-                WoodGuard.Run("swing perks", () => SwingPerks.OnSwingHitWood(attack));
+                factor *= HookGuard.Run("swing experience", () => WoodXp.SwingScale(hardest), 1f);
+                HookGuard.Run("swing perks", () => SwingPerks.OnSwingHitWood(attack));
             }
         }
 

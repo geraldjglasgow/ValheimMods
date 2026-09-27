@@ -33,7 +33,7 @@ namespace GrindstoneSkills
             Vector3 center = ship.transform.position;
             float radius = LookoutSettings.Radius.Value;
             LookoutRing.Draw(center, radius);
-            LookoutSound.Play(center);
+            WishbonePing.Play(center);
             if (Ship.GetLocalShip() != ship)
                 return;
             int found = LookoutReveal.Reveal(player, center, radius, LookoutSettings.Duration.Value);
