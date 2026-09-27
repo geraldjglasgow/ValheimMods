@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.10.0
+
+- **Works with GrindstoneSkills' Husbandry.** With GrindstoneSkills 0.7.0 or later installed, its Husbandry skill's
+  "Better offspring" chance gives a newborn (or the chick in an egg) one star more than it rolled here, up to one above
+  its stronger parent. Without GrindstoneSkills nothing changes, and neither mod needs the other.
+
 ## 3.9.1
 
 - **Starred creatures look like the game's starred creatures again.** A one-star creature wears the game's one-star

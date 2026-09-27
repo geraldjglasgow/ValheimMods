@@ -119,7 +119,8 @@ its defeat key is listed; `elite tier` shows every boss's key), and the star and
 Tamed creatures keep their traits and pass them on. A newborn - a pup, a piglet, a calf, or an egg and the chick
 that hatches from it - takes one of its parents' mutations whenever either has one, and a star count from 0 up to
 its stronger parent's, every count equally likely. Two plain parents have plain young and nothing new is ever
-rolled, so a strong line stays strong only if you keep the good ones.
+rolled, so a strong line stays strong only if you keep the good ones. With GrindstoneSkills installed, its Husbandry
+skill's "Better offspring" chance gives a newborn one star more than it rolled, up to one above its stronger parent.
 
 Young creatures keep their traits when they grow up. Eggs keep theirs when carried, and say what they will hatch
 ("Hatches with 2 stars, Leeching") on their hover text and tooltip; an egg's stars are its quality, so eggs of
