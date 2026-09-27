@@ -2,6 +2,7 @@ using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
+using EliteCreaturesReborn.Visuals;
 using PatchGuard;
 using UnityEngine;
 
@@ -167,6 +168,7 @@ namespace EliteCreaturesReborn.Runtime
             _baseSpeeds = BaseSpeeds.Capture(_character);
             SwingSpeedFactor = StatMath.SwingSpeedMultiplier(Rules, Traits);
             StatApplier.ApplySize(_character, Rules, Traits); // local, deterministic: every machine scales its own copy
+            StarLook.Apply(_character, Traits.Stars); // the game's tint for the stars, before any mutation reads materials
             RefreshMovement(0f);
             if (_nview.IsOwner())
             {

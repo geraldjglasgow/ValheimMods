@@ -10,7 +10,8 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Set once a creature's traits have been rolled, so it is never re-rolled on the owner.</summary>
         public const string Resolved = "ecr_resolved";
 
-        /// <summary>The rolled star count (0..ceiling). Vanilla level is kept at Stars+1 alongside it.</summary>
+        /// <summary>The rolled star count (0..ceiling). Vanilla level stays 1; the game's look for the stars is drawn
+        /// separately (see <c>Visuals.StarLook</c>).</summary>
         public const string Stars = "ecr_stars";
 
         /// <summary>The mutation set as a bitmask.</summary>
@@ -127,5 +128,9 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Colossal: on a boss's ragdoll, the size its corpse keeps, written by the ragdoll's owner so every machine
         /// grows its copy to match the boss that fell.</summary>
         public const string CorpseScale = "ecr_corpse_scale";
+
+        /// <summary>Star look: on a starred creature's ragdoll, its star count, written by the ragdoll's owner so every
+        /// machine dresses its copy in the same look as the creature that fell.</summary>
+        public const string CorpseStars = "ecr_corpse_stars";
     }
 }

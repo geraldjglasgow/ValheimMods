@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.9.1
+
+- **Starred creatures look like the game's starred creatures again.** A one-star creature wears the game's one-star
+  colour and parts, and two stars or more the game's two-star look, so a two-star Neck is purple again instead of the
+  plain green. The corpse keeps the look too. Size still comes from the `growth` line, so nothing grows twice.
+
 ## 3.9.0
 
 **Three new mutations.**

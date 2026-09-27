@@ -16,7 +16,9 @@ tested in game**. The checklist is at the end.
 # 1. What a star is worth
 
 A creature is kept at vanilla level 1 and scaled by this mod instead, so the game applies no level bonus of its
-own and the table below is the whole story. Six lines, one entry per star count, so index 0 is an unstarred
+own and the table below is the whole story. It still wears the game's look for its star count, alive and as a corpse:
+one star takes the game's one-star tint and parts, two or more take the game's two-star
+look, the last it ships. Only the look: the game's per-level size stays out, since `growth` sets the size. Six lines, one entry per star count, so index 0 is an unstarred
 creature and index 5 a five-star one. An index past the end of a line reuses its last entry, which is what lets a
 server raise the ceiling without rewriting every line.
 
@@ -217,6 +219,8 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 ## Stars
 
 - [ ] What a star is worth, as section 1 says
+- [ ] Starred creatures wear the game's look for their stars (a two-star Neck is purple), on every client and on
+      the corpse, with no extra size on top of `growth`
 - [ ] Health never falls below 5% of base
 - [ ] Movement never falls below 5%
 - [ ] Run speed clamped so no creature outruns an unburdened player, logged once when the clamp bites
