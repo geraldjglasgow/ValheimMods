@@ -1,0 +1,21 @@
+# EarthWright.Limits.yml - height limits per biome.
+#
+# How far the ground may be raised above, and dug below, the world's original height in each biome. A biome that is
+# not listed here, or a value that is left out, uses "Raise Limit" and "Dig Limit" from section "6. Height Limits" of
+# the .cfg (8 m each by default, as in the unmodded game). Values are metres from 0.5 to 512. Limits apply to new
+# edits: ground that is already higher or deeper stays as it is.
+#
+# Biomes: Meadows, BlackForest, Swamp, Mountain, Plains, Mistlands, AshLands, DeepNorth, Ocean.
+#
+# The file is synced from the server, reloaded a few seconds after it is saved and can be edited in game. Extra files
+# named EarthWright.Limits<anything>.yml next to this one are read as well. Remove the # of a line to use it.
+biomes:
+  # Meadows: { raise: 8, dig: 8 }
+  # BlackForest: { raise: 8, dig: 8 }
+  # Swamp: { raise: 4, dig: 2 }
+  # Mountain: { raise: 16, dig: 8 }
+  # Plains: { raise: 8, dig: 8 }
+  # Mistlands: { raise: 8, dig: 8 }
+  # AshLands: { raise: 8, dig: 4 }
+  # DeepNorth: { raise: 8, dig: 8 }
+  # Ocean: { raise: 8, dig: 8 }

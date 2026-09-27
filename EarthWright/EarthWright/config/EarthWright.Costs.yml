@@ -1,0 +1,38 @@
+# EarthWright - costs per menu entry
+#
+# This file changes what single terrain entries of the hoe, the cultivator and the shovel cost. Everything an entry
+# does not set here follows section "8. Costs" of the .cfg. The server's copy is sent to every player and replaces
+# theirs while they are connected; edits are picked up without a restart.
+#
+# Each key under "entries" is the prefab name of a build-menu entry. The game's own:
+#   mud_road_v2 (Level ground), raise_v2 (Raise ground), path_v2 (Pathen), paved_road_v2 (Paved road),
+#   cultivate_v2 (Cultivate), replant_v2 (Replant grass)
+# and EarthWright's own entries by their prefab names.
+#
+# Every value is optional:
+#   resources:        the items one swing costs, item prefab name: amount. Replaces the entry's own materials;
+#                     "resources: {}" makes the entry free. Still grows with the brush as the .cfg's
+#                     "Material Radius Exponent" says, and "Charge Materials = false" still switches it off.
+#   stamina:          stamina per swing, replacing "Stamina Mode" for this entry (the stamina skill still lowers it).
+#   durability:       multiplies the tool wear of this entry: 0 no wear, 0.5 half, 2 double.
+#   station:          prefab name of the crafting station the entry needs nearby instead of its own, for example
+#                     piece_workbench, piece_stonecutter, forge or blackforge.
+#   stationRequired:  true or false: whether the entry needs a station at all, whatever the per-tool switches say.
+#
+# Examples (remove the # in front of the lines to use them):
+#
+# entries:
+#   raise_v2:
+#     resources:
+#       Stone: 3
+#     stamina: 8
+#     station: piece_workbench
+#   paved_road_v2:
+#     stationRequired: false
+#   mud_road_v2:
+#     durability: 0.5
+#   cultivate_v2:
+#     resources:
+#       Wood: 1
+
+entries: {}

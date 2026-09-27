@@ -1,0 +1,40 @@
+# EarthWright custom menu entries: any console command as an entry in the hoe's, the cultivator's or the shovel's
+# build menu. On a server this file is pushed to every player; edits are picked up within five seconds.
+#
+# Each entry has these keys (only id and command are required):
+#   id:          letters, digits, _ and -, unique. The piece is named ew_custom_<id>.
+#   name:        the name in the build menu, as written (default: the id); the menu's search field finds it.
+#   description: the text under the name, as written. Both may use the game's own $words ($piece_levelground).
+#   icon:        the icon of any piece or item by prefab name (mud_road_v2, Stone, Hoe ...), or one of EarthWright's:
+#                lower, smooth, paint, reset, ramp, road, clear, groundbreaker, terraform, till, uproot, dig, custom.
+#   tool:        hoe, cultivator or shovel (default hoe).
+#   position:    the place in the tool's menu, 0 is the first (default: right after EarthWright's own entries).
+#   radius:      the brush radius the entry starts with (the size keys change it afterwards).
+#   height:      the brush amount in metres the entry starts with, for {height}.
+#   shape:       circle, square, rectangle, ring or frame: the brush shape the entry starts with.
+#   command:     the console command a click runs, as you would type it in the console (F5); put it in quotes when it
+#                starts with { or contains ": ". Placeholders:
+#                {x} {y} {z}  the brush centre         {radius} {radius2}  the brush radius and inner/second radius
+#                {height}     the brush amount         {target}            the target height of levelling
+#                {rotation}   the brush rotation       {shape}             circle, square, rectangle, ring or frame
+#                {player}     your character's name (may contain spaces)
+#   repeat:      true runs the command again while the button is held (see "Custom Entry Repeat Interval").
+#   admin:       true lists the entry only for admins and refuses it for everyone else.
+#
+# Remove the # in front of an example (and the [] after entries) to try it.
+entries: []
+#  - id: level_big
+#    name: Big level
+#    description: Levels a large square at the brush to the target height with the admin terrain command.
+#    icon: terraform
+#    tool: hoe
+#    radius: 12
+#    command: ew terrain level {radius} {target} at=brush shape=square
+#    admin: true
+#  - id: reset_here
+#    name: Reset around me
+#    description: Resets the ground around you to the world's original height and texture.
+#    icon: reset
+#    tool: hoe
+#    radius: 6
+#    command: ew reset {radius}

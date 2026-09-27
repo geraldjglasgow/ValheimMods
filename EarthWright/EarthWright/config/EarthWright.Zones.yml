@@ -1,0 +1,15 @@
+# EarthWright admin zones.
+# The server owns this file. Admins change it in game with 'ew zone add <name> <radius> [player]' (the zone is
+# centred on the admin) and 'ew zone remove <name>'; the server then rewrites this file. It may also be edited by
+# hand: it is reloaded within five seconds and pushed to every player.
+# Zones only matter while 'Admin Zone Mode' in section '11. Protection' is not Off:
+#   OnlyInsideZones:  terrain can only be changed inside a zone (a zone naming a player is for that player only).
+#   NeverInsideZones: terrain can never be changed inside a zone (except by the player a zone names).
+# Each zone: name (letters, digits, '-' and '_'), x and z (world position of the centre), radius (5 to 200 m),
+# player (optional character name). At most 100 zones. Example:
+#   zones:
+#     - name: spawn
+#       x: 0
+#       z: 0
+#       radius: 60
+zones: []

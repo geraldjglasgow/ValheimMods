@@ -18,7 +18,8 @@ ValheimMods/
   OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs; bed respawn, honey
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
-  GrindstoneSkills/  deeper skills on the game's own skills, Cooking first: starred dishes, trash filter, kitchen perks
+  EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, limits, shovel
+  GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
 ```
 
@@ -58,7 +59,15 @@ Required on the server as well as every client. Design and the judgement calls t
 **GrindstoneSkills**: deeper versions of the game's own skills, Cooking first (Farming and Crafting later). Dishes get
 0 to 3 stars rolled from the cook's level (stored in the item's quality field), stars boost food, a per-kitchen trash
 filter keeps only the stars you want, and the cook's level speeds cooking and fermenting and gives extra food.
+Sailing is a skill of the mod's own (the game has none): ship health from the builder's level, speed from the
+helmsman's, a wider map reveal aboard, and a level 50 lookout pulse that shows enemy name tags around the ship.
 Skill loss on death is configurable for every skill. Design in `GrindstoneSkills/PLAN.md`.
+
+**EarthWright**: terraforming for the hoe and cultivator - brush size, shapes, edges and exact target heights,
+level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits per biome, ward and zone
+protection, new menu entries and a shovel. Required on the server and every client: edits travel as EarthWright's
+own RPC to the owner of each terrain compiler. Design, module map and decisions in `EarthWright/PLAN.md`; code map
+in `EarthWright/CLAUDE.md`.
 
 ### The libraries (ValheimModLibs)
 

@@ -1,0 +1,51 @@
+# EarthWright.Brushes.yml - starting sizes and limits of the hoe, cultivator and shovel entries.
+#
+# Every key is optional. A value missing for an entry falls back to its tool family, then to the .cfg (section
+# "1. Brush": Minimum Radius, Maximum Radius, Default Level Style) and finally to the entry's own values (the game's
+# own sizes for the vanilla entries). What a player changes in game is remembered per entry until logout; editing this
+# file starts every entry from its new defaults.
+#
+# families:     hoe, cultivator, shovel, modded (terrain pieces other mods add)
+# entries:      by piece prefab name: mud_road_v2 (Level ground), raise_v2 (Raise ground), path_v2 (Pathen),
+#               paved_road_v2 (Paved road), cultivate_v2 (Cultivate), replant_v2 (Replant grass), EarthWright's own
+#               entries (ew_...) and any modded terrain piece.
+#
+# Keys of a family or an entry:
+#   radius:     starting radius in metres (circle radius, square half side). Without it the entry starts at its own
+#               size times the .cfg Size Multiplier.
+#   minRadius:  smallest radius (replaces the .cfg Minimum Radius for this entry)
+#   maxRadius:  largest radius (replaces the .cfg Maximum Radius; tool levels and the skill cap may still lower it)
+#   amount:     starting raise/lower amount per click, metres (the .cfg Minimum/Maximum Amount still clamp it)
+#   maxStep:    starting largest change per click when levelling in the Ease or Step style, metres
+#   strength:   starting smoothing strength, 0 to 1
+#   hardness:   starting edge hardness, 0 (soft, fades from the centre) to 1 (hard edge)
+#   style:      starting level style: Ease, Step or Instant
+#   shape:      starting shape: Circle, Square, Rectangle, Ring or Frame
+#   resizable:  false keeps the entry at its starting radius (the size keys do not change it)
+#
+# The file is synced from the server, reloaded a few seconds after it is saved and can be edited in game
+# (Configuration Manager, "Edit brush sizes"). Extra files named EarthWright.Brushes<anything>.yml next to this one
+# are read as well.
+
+families:
+  hoe:
+  cultivator:
+#    maxRadius: 12
+  shovel:
+  modded:
+
+entries:
+#  mud_road_v2:
+#    hardness: 0.5
+#    style: Step
+#  raise_v2:
+#    amount: 0.5
+#    hardness: 0
+#  paved_road_v2:
+#    radius: 2
+#    shape: Square
+#  cultivate_v2:
+#    shape: Square
+#    hardness: 1
+#  replant_v2:
+#    resizable: false

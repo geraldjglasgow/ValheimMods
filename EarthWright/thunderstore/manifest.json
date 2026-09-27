@@ -1,0 +1,9 @@
+{
+    "name": "EarthWright",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EarthWright",
+    "description": "Terraforming for the hoe and cultivator: brush size and shapes, exact heights, ramps and roads, undo, costs, height limits, wards, a shovel. Server synced. Required on the server too.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

@@ -16,7 +16,7 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
 
 ## Rules
 
-- Public API changes must keep every consuming mod compiling (EliteCreaturesReborn, FeastMaster, Lockstep, OpenKeep, ShipConfig). Build the mods after touching a library.
+- Public API changes must keep every consuming mod compiling (EliteCreaturesReborn, FeastMaster, Lockstep, OpenKeep, ShipConfig, EarthWright). Build the mods after touching a library.
 - Keep game coupling minimal and explicit. `YamlGameHooks` (behind `YamlFileHub.HookGame`), `TraitStore` and `ItemCopies` are the only places that touch game types on purpose; use reflection (`AccessTools.Field`) instead of publicized assemblies so consumers do not need a publicizer for the library's sake.
 - `YamlNode` readers are generic (scalars, lists, maps, enums): no mod vocabulary in the library, neither a consumer's domain nouns nor its setting names such as "world level"; that belongs in the consumer's `YamlModel`. Docs and examples use neutral words (rules, tags, tools).
 - `YamlModel` reports problems through `Errors` (files are rejected, the previous configuration stays) and `Warnings` (files are applied). Use the right one.
