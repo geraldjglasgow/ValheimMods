@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+- New icons for every EarthWright menu entry (Lower ground, Smooth, Paint, Reset, Ramp, Road, Groundbreaker,
+  Clear objects, Terraform, Till, Uproot, Dig) and for the Shovel.
+
 ## 0.1.0
 - First version. Brush size, shape (circle, square, rectangle, ring, frame), rotation, edge hardness, grid mode and
   aim at the edge for the hoe, the cultivator and a new shovel.

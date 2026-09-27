@@ -2,7 +2,7 @@
 
 Terraforming for Valheim's hoe and cultivator, plus a shovel: brush size, shapes and edges, exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits, protection, new menu
-entries. The log line `Loading [EarthWright 0.1.0]` confirms the version. Built on 2026-09-27 from the user's
+entries. The log line `Loading [EarthWright 0.1.1]` confirms the version. Built on 2026-09-27 from the user's
 feature list (`SPEC.md`, gitignored) and the game's own code, by a main session and ten module agents following
 `PLAN.md`, which holds the design, the feature map and the judgement calls. This file is the code map, the patched
 methods, the network names and the in-game test checklist.
@@ -125,7 +125,7 @@ names and types match): scratch harness `patchcheck`, reflection only.
 
 Single player first, then a dedicated server with an admin (A) and a player (B). Nothing below has been run in game.
 
-1. Load: `Loading [EarthWright 0.1.0]`, no failed patches, no exceptions; `ew help` lists the subcommands.
+1. Load: `Loading [EarthWright 0.1.1]`, no failed patches, no exceptions; `ew help` lists the subcommands.
 2. Hoe menu: the game's four entries, then Lower, Smooth, Paint, Reset, Ramp, Road, Groundbreaker (Clear only with
    Clearing Enabled; Terraform only for admins); icons; search finds "lower"; cultivator shows Till and Uproot.
 3. Brush: Alt+wheel and `[`/`]` resize without zooming; B cycles values; N shapes; arrows rotate; I grid; O edge;

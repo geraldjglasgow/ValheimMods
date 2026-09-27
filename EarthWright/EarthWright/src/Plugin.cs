@@ -31,7 +31,7 @@ namespace EarthWright
     {
         public const string PluginGuid = "milkyteam.earthwright";
         public const string PluginName = "EarthWright";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
