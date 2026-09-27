@@ -80,8 +80,8 @@ OpenKeep/OpenKeep/src/
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
     StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
     PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button
-    StatPlates.cs, TrashPlate.cs   the armour and weight plates pinned top-right with large centred icons; the
-                            trash can's own plate between them
+    TrashPlate.cs           the trash can's own plate in the stat column (PlateColumn library), between the
+                            armour and weight plates
     HoveredItem.cs          the slot under the pointer (or the gamepad selection)
     ClickRouting.cs         InventoryGui.OnSelectedItem prefix: Route Modifier + click
     DumpKeyPatch.cs         Player.Update postfix: Dump Key outside the inventory
@@ -164,7 +164,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `SharedModule.Initialize` last (the spec's order; each binds its settings, registers its YAML set and its words), every patch class on its
-own, `Synced.Finish`, the `Loading [OpenKeep 1.4.2]` line, `Guard.Install` last.
+own, `Synced.Finish`, the `Loading [OpenKeep 1.5.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt), Stow's
@@ -393,24 +393,23 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   overlaps the container panel and one above 4 overlaps the player panel. `PanelButtons` keeps the
   placed rects and `Reposition` (from `StowModule`, on `SettingChanged`) re-places them without a restart. The
   hovered item mirrors `InventoryGrid.UpdateGui`'s tooltip choice (gamepad selection, else the hovered element).
-- The stat plates (`StatPlates`, read from the game's scene with UnityPy on 2026-09-24) are the game's
-  `Player/Armor` and `Player/Weight`, the direct children of `m_player` holding `m_armor` and `m_weight`. Each is
-  80x64 with three children: the wood (`bkg`, sprite `woodpanel_flik`, the largest Image child), a 32 px icon
-  poking 14 px above the plate (`ac_bkg_large`, 64 px source; `weight_icon_32`, 32 px source) and the text. The
-  game only writes the texts (`UpdateCharacterStats`, `UpdateInventoryWeight`); nothing positions the plates. The
-  prefab anchors armour to the panel's right edge at mid-height and weight to its bottom-right corner, so rows
-  bought from the trader (`SetInventorySize`, up to 9) pulled them apart; both are re-anchored to the top-right
-  corner where they are (armour at 32, -71.5; weight at 32, -227). Each icon (the Image child that is neither the
-  wood nor the text) becomes 48 px, centred on its text and drawn before it, so the number sits on the icon; the
-  weight icon is upscaled from its 32 px source. The trash can (`TrashPlate`) is a copy of the restyled armour
-  plate keeping only the wood and the icon, which shows `StowSprites.Bin` in its own colours (`assets/trash.png`,
-  embedded in the DLL and decoded with mipmaps by the game's `ImageConversion.LoadImage`, called through
-  reflection because that module targets netstandard 2.1, which a net48 project cannot reference), set at
-  the midpoint (32, -149.25; 13.75 px between plates) and placed right after the armour plate among `m_player`'s
-  children, so the panel's background covers its inner 8 px as it covers the game's plates. It is not part of the
-  row and ignores `Button Row Offset`. When either plate is missing, or the two are closer than two plate heights,
-  the can joins the row instead. The container panel's own weight plate (`Container/Weight`) is left as the game
-  draws it.
+- The stat plates are the game's `Player/Armor` and `Player/Weight` (read from the game's scene with UnityPy on
+  2026-09-24), the direct children of `m_player` holding `m_armor` and `m_weight`. Each is 80x64 with three
+  children: the wood (`bkg`, sprite `woodpanel_flik`, the largest Image child), a 32 px icon poking 14 px above the
+  plate (`ac_bkg_large`, 64 px source; `weight_icon_32`, 32 px source) and the text. The game only writes the texts
+  (`UpdateCharacterStats`, `UpdateInventoryWeight`); nothing positions the plates. The prefab anchors armour to the
+  panel's right edge at mid-height and weight to its bottom-right corner, so rows bought from the trader
+  (`SetInventorySize`, up to 9) pulled them apart. Since 2026-09-26 the column is the shared `PlateColumn` library
+  (`ValheimModLibs/CLAUDE.md`), which Elite Creatures Reborn also merges for its world tier plate: it pins both game
+  plates to the top-right corner where they are (armour at 32, -71.5; weight at 32, -227), draws each icon 48 px
+  behind its number, gives each a tooltip, and spaces every plate evenly over that span, centred on its middle, at
+  least 8 px apart. The trash can (`TrashPlate`) is `Column.Add` with rank 200 (armour 100, weight 300): a copy of
+  the armour plate keeping only the wood and the icon, which shows `StowSprites.Bin` in its own colours
+  (`assets/trash.png`, embedded and decoded by the library's `EmbeddedSprite`), with the tooltip "Trash" / the drag
+  hint. Alone it sits at the midpoint (32, -149.25; 13.75 px between plates); with Elite Creatures' world tier plate
+  (rank 400) under the weight the four sit at -41.25, -113.25, -185.25 and -257.25, 8 px apart. When a game plate
+  is missing the can joins the row instead. The container panel's own weight plate (`Container/Weight`) is left as
+  the game draws it.
 - Shared chests (SPEC 9.3): every container write of Stow goes through `Shared.ChestWriter`, one `Put` or `Take`
   per stack, whether the chest answers at once (the local client owns it or may claim it: claim, the game's
   inventory methods, save, all inside the writer) or by request (`Full` mode, another player using it). Sorting
@@ -646,7 +645,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.4.2]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
+1. Log shows `Loading [OpenKeep 1.5.0]` without failed patches; `milkyteam.openkeep.cfg` and the six YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -674,10 +673,11 @@ from a script.
    and sorts the rest); on (default): it is sorted as before.
    Gamepad: the buttons are selectable, the popup confirms and cancels.
    Stat plates: on the player panel's right the armour plate is on top, the trash plate in the middle and the
-   weight plate at the bottom, evenly spaced; the shield and the weight fill most of their wood, centred, with the
+   weight plate at the bottom, evenly spaced (with Elite Creatures Reborn and world tiers on, its globe plate joins
+   under the weight and all four move up, evenly spaced); hovering each shows a tooltip naming it; the shield and the weight fill most of their wood, centred, with the
    number readable on top (the weight flashes red when over the limit); the grey metal bin sits on its own wood,
    turns red on hover, and a stack dragged onto it is destroyed; the button row is four buttons with no can. The log
-   shows `stat plates pinned to the player panel's top-right`, `OpenKeep.assets.trash.png: 128x128, 8 mip levels`
+   shows `OpenKeep.assets.trash.png: 128x128, 8 mip levels`
    (fewer levels means the game dropped the mipmaps: the bin may shimmer when small) and `trash can on its own
    plate`. With `devcommands`,
    `inventorysize 6` grows the panel downward and the three plates stay where they were (use a test character:

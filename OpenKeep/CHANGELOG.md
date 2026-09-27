@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+- Stow: the armour, trash and weight plates on the right of the player panel each show a tooltip on hover saying
+  what they are.
+- Stow: the plates are one column other mods can add to. With Elite Creatures Reborn 3.8.0 its world tier plate
+  sits under the weight, and all four move up and stay evenly spaced.
+
 ## 1.4.2
 - Stow: quick stack, store all and dump leave the hotbar alone, as the sort always has. Items on the hotbar stay
   there; Store one, Ctrl + click routing and the trash still act on a hotbar item you pick, and top up still

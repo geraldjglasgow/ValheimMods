@@ -32,7 +32,7 @@ that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
 ### Stow: stow, top up, sort, junk, route
 A row of buttons just below the player panel (`Quick stack`, `Store all`, `Top up`, `Sort`), a trash can on its
 own wood plate between the armour and weight readouts on the panel's right (those two show a larger icon behind
-their number and stay put when the inventory grows), and a `Sort` button below the open container's panel, under
+their number and stay put when the inventory grows; hover any of them for what it is), and a `Sort` button below the open container's panel, under
 its `Take all` line; `Button Row Offset` moves the rows up or down if your screen layout needs it. Every action also has a hotkey that works while the inventory is open. The module is
 one workflow for coming home with a full inventory. Open a chest and stow: quick stack (`Q`) moves every stack
 whose item the open container (or, with `Quick Stack Nearby`, any container within `Nearby Range`) already holds,

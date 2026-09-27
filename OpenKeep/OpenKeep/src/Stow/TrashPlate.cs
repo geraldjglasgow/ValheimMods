@@ -1,43 +1,38 @@
 using System;
 using PatchGuard;
-using TMPro;
+using PlateColumn;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace OpenKeep.Stow
 {
     /// <summary>
-    /// The trash can on its own wood plate between the armour and the weight readouts (<see cref="StatPlates"/>): a
-    /// copy of the armour plate that keeps only its wood and its icon, already enlarged and centred, which shows the
-    /// bin instead of the shield. Clicking it with a dragged stack trashes the stack. The copy sits right after the
-    /// armour plate among the panel's children, so the panel's background covers its inner edge as it covers the
-    /// game's plates. Returns false, with nothing created, when the two plates are too close for a third one between
-    /// them or the copy has no icon, so the button row keeps the can.
+    /// The trash can on its own plate in the column of stat plates on the player panel's right (the PlateColumn
+    /// library, which our other mods add to as well): between the armour and the weight readouts, showing the bin in
+    /// its own colours, with a tooltip saying how to use it. Clicking it with a dragged stack trashes the stack.
+    /// Returns false, with nothing created, when the game's plates are missing or the bin image cannot be read, so the
+    /// button row keeps the can.
     /// </summary>
     public static class TrashPlate
     {
-        public static bool TryCreate(StatPlates plates, Action onClick)
+        private const string Id = "openkeep_trash";
+
+        /// <summary>Between the game's armour and weight plates.</summary>
+        private const int Rank = (Column.ArmorRank + Column.WeightRank) / 2;
+
+        public static bool TryCreate(InventoryGui gui, Action onClick)
         {
-            float room = Mathf.Abs(plates.Armor.anchoredPosition.y - plates.Weight.anchoredPosition.y);
-            if (room < 2f * plates.Armor.rect.height)
+            Sprite bin = StowSprites.Bin;
+            Plate plate = bin != null
+                ? Column.Add(gui, new PlateSpec(Id, Rank, bin, false, StowWords.Trash, StowWords.DragHint))
+                : null;
+            if (plate == null)
             {
-                Plugin.Log.LogInfo($"trash can stays in the button row: the armour and weight plates are {room:0} px apart");
+                Plugin.Log.LogInfo("trash can stays in the button row: the armour or weight plate, or the bin image, is missing");
                 return false;
             }
-            GameObject go = UnityEngine.Object.Instantiate(plates.Armor.gameObject, plates.Armor.parent);
-            Image bin = Strip(go);
-            if (bin == null)
-            {
-                UnityEngine.Object.Destroy(go);
-                return false;
-            }
-            go.name = "OpenKeep_trash";
-            go.transform.SetSiblingIndex(plates.Armor.GetSiblingIndex() + 1);
-            ((RectTransform)go.transform).anchoredPosition = plates.Middle;
-            bin.sprite = StowSprites.Bin;
-            MakeButton(go, bin, onClick);
-            go.SetActive(true);
-            Plugin.Log.LogInfo($"trash can on its own plate at {plates.Middle} from the player panel's top-right");
+            MakeButton(plate.Rect.gameObject, plate.Icon, onClick);
+            Plugin.Log.LogInfo($"trash can on its own plate at {plate.Rect.anchoredPosition} from the player panel's top-right");
             return true;
         }
 
@@ -54,26 +49,6 @@ namespace OpenKeep.Stow
             colours.pressedColor = new Color(1f, 0.3f, 0.2f, 1f);
             button.colors = colours;
             button.onClick.AddListener(() => Guard.Run("trash can", onClick));
-        }
-
-        /// <summary>Keeps the copy's wood and icon and removes everything else: the text, any other child and every
-        /// behaviour on the root, so the copy carries nothing that updates it. Returns the icon.</summary>
-        private static Image Strip(GameObject go)
-        {
-            Transform plate = go.transform;
-            Transform textChild = StatPlates.ChildHolding(plate, go.GetComponentInChildren<TMP_Text>(true));
-            Image background = StatPlates.BackgroundOf(plate);
-            Image icon = StatPlates.IconOf(plate, textChild);
-            for (int i = plate.childCount - 1; i >= 0; i--)
-            {
-                Transform child = plate.GetChild(i);
-                bool keep = (background != null && child == background.transform) || (icon != null && child == icon.transform);
-                if (!keep)
-                    UnityEngine.Object.Destroy(child.gameObject);
-            }
-            foreach (Behaviour behaviour in go.GetComponents<Behaviour>())
-                UnityEngine.Object.Destroy(behaviour);
-            return icon;
         }
     }
 }
