@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2
+
+- Cooking and Sailing have their own icons in the skills panel and in their level-up messages.
+
 ## 0.8.1
 
 - Farming has its own icon in the skills panel and in its level-up messages.

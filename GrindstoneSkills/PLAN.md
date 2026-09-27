@@ -1597,7 +1597,9 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 
 The icon the user supplied (2026-09-27), trimmed, centred on a square and scaled to 64x64 as
 `assets/skill_farming.png`. It replaces the game's icon on the Farming skill definition when a player's Skills wake
-(`FarmingIcon`), so the skills panel and the level-up messages show it. Not loaded on a machine without graphics.
+(`Skills/GameSkillIcons.cs`, which does the same for Cooking with `assets/skill_cooking.png`), so the skills panel
+and the level-up messages show it. Not loaded on a machine without graphics (`Core/EmbeddedIcon.cs`). Sailing's icon
+is `assets/skill_sailing.png` since 0.8.2, the Karve's only as a fallback.
 
 ### Settings
 
@@ -1689,7 +1691,8 @@ is clean (0 warnings) and every Harmony target and parameter was checked offline
 in a separate worktree, reviewed by an agent (five fixes), released from HEAD plus Farming while Fishing was being
 written in the main tree, so Fishing is not in it. It also moves Foraging onto the shared `Crops.IsCrop` and Husbandry
 and Foraging onto `Kitchen.AddStarItem`. The Farming decisions above wait for the user's confirmation. 0.8.1 (tag
-GrindstoneSkills-v0.8.1) adds the Farming skill icon the user supplied.
+GrindstoneSkills-v0.8.1) adds the Farming skill icon the user supplied; 0.8.2 (tag GrindstoneSkills-v0.8.2) the
+Cooking and Sailing icons.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

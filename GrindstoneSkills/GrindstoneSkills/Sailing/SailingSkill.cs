@@ -6,7 +6,8 @@ namespace GrindstoneSkills
     /// Sailing, a skill of GrindstoneSkills' own (<see cref="CustomSkill"/>): the game has none. Its type number is the
     /// stable hash of <see cref="Keys.SailingSkillName"/>. Levels live with the character like every skill
     /// (client-side); each player's client also publishes its level to the player's own ZDO under
-    /// <see cref="Keys.SailingLevel"/>, so a ship's owner can read the helmsman's level. The icon is the Karve's.
+    /// <see cref="Keys.SailingLevel"/>, so a ship's owner can read the helmsman's level. The icon is
+    /// <c>assets/skill_sailing.png</c> (<see cref="EmbeddedIcon"/>), else the Karve's.
     /// </summary>
     public static class SailingSkill
     {
@@ -35,6 +36,9 @@ namespace GrindstoneSkills
 
         private static Sprite ShipIcon()
         {
+            Sprite embedded = EmbeddedIcon.Load("skill_sailing");
+            if (embedded != null)
+                return embedded;
             ZNetScene scene = ZNetScene.instance;
             if (scene == null)
                 return null;
