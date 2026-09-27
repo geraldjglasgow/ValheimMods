@@ -1,6 +1,7 @@
 # GrindstoneSkills - PLAN
 
-A skills mod. Cooking is the first skill; Farming and Crafting are the likely next ones. This document is the design
+A skills mod. Cooking (the game's own skill) came first and Sailing (a skill of the mod's own, see "Sailing" near the
+end) second; Farming and Crafting are the likely next ones. This document is the design
 and the roadmap while the mod is unfinished, written from the user's decisions (2026-09-27) and the game's decompiled
 assembly (`assembly_valheim.dll`, build 25527674, decompiled into the scratch folder, never into this repo).
 
@@ -21,8 +22,8 @@ assembly (`assembly_valheim.dll`, build 25527674, decompiled into the scratch fo
 
 ## The skill: the game's own Cooking
 
-GrindstoneSkills builds on the game's own Cooking skill (`Skills.SkillType.Cooking = 105`) and adds no skill of its own.
-The game already defines it and shows it in the skills panel, so a second "Cooking" would only confuse. Players'
+GrindstoneSkills builds on the game's own Cooking skill (`Skills.SkillType.Cooking = 105`) rather than adding a cooking
+skill of its own. The game already defines it and shows it in the skills panel, so a second "Cooking" would only confuse. Players'
 existing levels count from the first day. No registration, load patch, skill icon or localization is needed. The
 death penalty applies as for every skill.
 
@@ -269,14 +270,15 @@ These are in addition to what the game already gives (shorter craft time):
 - **OpenKeep:** quick stack, sort, top-up and craft-from-containers must keep star counts apart and follow the
   ingredient order. Quality-based stacking should give this for free; verify in game.
 - **Mods that change the game's Cooking skill** (XP rates, bonus yield) stack with GrindstoneSkills. Mods that add a
-  cooking skill of their own run beside it without clashing, since GrindstoneSkills adds no skill.
+  cooking skill of their own run beside it without clashing, since GrindstoneSkills adds no cooking skill.
 - **Mods that show item quality:** they may show a quality number on food. Acceptable; note it in the README if seen.
 
 ## Own names
 
 - Plugin GUID `com.GrindstoneSkills`.
 - ZDO keys, RPC names and custom-data keys prefixed `grindstone_`.
-- Localization keys `$grindstone_*`.
+- Localization keys `$grindstone_*`; the Sailing skill's name is the game's own pattern, `$skill_<type number>`.
+- Sailing's `SkillType` number is the stable hash of `grindstone_sailing`, masked positive.
 
 ## Layout (standard mod layout, copied from ShipConfig)
 
@@ -287,6 +289,7 @@ Planned units, each within the size limits:
 - `Filter/`: ZDO key, key handling, hover text.
 - `Eating/`: custom data, total-value postfix, duration.
 - `Experience/`: tier multiplier, trash credit, fermenter XP, discovery.
+- `Sailing/`: skill registration and cheats, the three perks, experience; `Sailing/Lookout/` the milestone.
 
 ## Later
 
@@ -333,12 +336,141 @@ Planned units, each within the size limits:
   - FeastMaster's "count food stamina only" regen option sums `food.m_stamina` directly, so it misses the star
     bonus (a FeastMaster change, off by default).
 
+## Sailing
+
+### The request (user, 2026-09-27)
+
+A Sailing skill that increases the health of ships built by you, the sailing speed of ships commanded by you and
+your exploration radius while on a ship. A milestone at level 50: a hotkey sends a pulse 100 m out from the ship in
+a circle and reveals the name tags of the enemies near. Installed on the server, it enforces the configuration
+(Charter already does that for every GrindstoneSkills setting).
+
+### The skill: our own
+
+- **The game has no sailing skill** (`Skills.SkillType` stops at Ride 110), so Sailing is GrindstoneSkills' own. Its
+  type number is the stable hash of `grindstone_sailing`, masked positive: far from the game's numbers and from
+  small numbers other mods pick.
+- **Registration (`Sailing/SkillRegistration.cs`), read from the game code 2026-09-27:**
+  - `Skills.GetSkill` creates a skill for any type, with the definition `GetSkillDef` finds in `m_skills`, or null.
+    A null definition breaks the level-up message, so `Skills.Awake` adds Sailing's definition to every `Skills`.
+  - `Skills.Load` keeps only types the enum defines (`IsSkillValid`), so without a patch a saved Sailing level is
+    dropped at load and lost at the next save.
+  - The skills panel and the level-up message name a skill `$skill_` + the type's name in lower case: the number
+    here. The word goes to the game's localization in `Localization.SetupLanguage`.
+  - The icon is the Karve's piece icon, read when `ZNetScene` wakes.
+  - The death penalty (`LowerAllSkills`), the skills panel and the world's skill-gain modifier work unchanged.
+- **Console:** `raiseskill` and `resetskill` match the enum's names, so "sailing" is handled by a patch and "all"
+  includes Sailing (`Sailing/SkillCheats.cs`).
+- **Removing GrindstoneSkills loses the Sailing level** at the next save, as for any mod-added skill: the game's
+  loader skips a type it does not know.
+
+### Perks (defaults at level 100, linear from 0, synced and lockable)
+
+| Perk | Whose level | Default at 100 |
+| --- | --- | --- |
+| Ship health | the builder's, fixed when the ship is placed | +50% |
+| Ship speed, sail and oars | the helmsman's | +20% top speed |
+| Map exploration radius | each player's own, while aboard | +100% (100 m to 200 m) |
+
+- **Health (`ShipwrightHealth`):**
+  - `Player.PlacePiece` instantiates the ship on the builder's client, which owns it, then calls `Piece.SetCreator`.
+    A postfix stores the builder's level on the ship's ZDO (`grindstone_shipwright`) and raises the new ship's max
+    health (its `Awake` ran before the level was stored).
+  - Every client that loads a ship raises `WearNTear.m_health` in a prefix on `WearNTear.Awake`, before the game
+    adds the world level bonus and computes the health share, so every machine agrees on the max.
+  - The current health in the ZDO is absolute and untouched; a new ship has none stored and reads as full.
+- **Speed (`HelmSpeed`):**
+  - The game moves a ship in `Ship.CustomFixedUpdate` on the ZDO owner only, and the owner is not always the
+    helmsman: `Ship.UpdateOwner` moves ownership only when the owner is no longer aboard.
+  - So every client publishes its own Sailing level on its player ZDO (`grindstone_sailing_level`, written when it
+    changes, checked once a second). The owner finds the helmsman (`ShipControlls.GetUser` among `Ship.m_players`)
+    and reads that level, or its own skill when it steers itself.
+  - For that one call `m_sailForceFactor` and `m_backwardForce` (the oars) are raised, then put back, so ShipConfig's
+    per-ship values stay the base.
+  - The forward drag is quadratic in speed (`v² * m_dampingForward` per step), so top speed grows with the square
+    root of the force: a +20% speed setting raises the force by 1.2² = 1.44.
+- **Exploration (`SeaExploration`):** `Minimap.UpdateExplore` uncovers the map around the local player every two
+  seconds with `m_exploreRadius`. For that call the radius grows with the local player's level while
+  `Ship.GetLocalShip()` is set (they are inside a ship's deck volume, standing or at the helm).
+
+### Experience
+
+- **At the helm:** once a second the distance the ship moved over the water (flat, so bobbing earns nothing) earns
+  40 per kilometre by default. A jump of more than 60 m in a second (a teleport, a ship that just loaded) earns
+  nothing.
+- **Crew:** everyone else aboard earns 25% of that while someone steers. A ship nobody steers earns nothing.
+- **Pacing at 40 per km** (the game's curve, `0.5 * (level + 1)^1.5 + 0.5` per level, step 1): level 10 after
+  about 2 km, level 50 after about 90 km (4 to 5 hours at the helm at 20 to 25 km/h), level 100 after about 510 km.
+  The world's skill-gain modifier scales it as for every skill.
+- **No experience for building ships:** deconstructing refunds every material, so building would be free experience.
+
+### Lookout (the level 50 milestone)
+
+- **Key:** O by default, each player's own (unbound in the game and in every mod in this workspace). It works while
+  the game takes the player's input (`Player.TakeInput`: no chat, console, text field, menu, inventory or map).
+- **Conditions:** Sailing on, the player's level at least `Lookout Level` (50), aboard a ship, and the player's own
+  cooldown (60 s) over. Each refusal says why. With Sailing off or `Lookout Level` above 100 the key does nothing.
+- **The pulse (`LookoutPulse`):** an RPC on the ship's `ZNetView` to everybody, registered in `Ship.Awake`, so every
+  machine that has the ship loaded handles it once, the sender included.
+  - Every client with a player draws a ring on the sea from the ship out to the radius (100 m) over 2 seconds, and
+    plays the Wishbone's ping there, both as local-only copies.
+  - The players aboard that ship also get the reveal and a message with the count.
+- **The reveal (`LookoutReveal`):** every enemy (`BaseAI.IsEnemy`, so tamed creatures are not) within the radius,
+  measured flat from the ship, keeps its name tag for 30 s.
+  - The game's `EnemyHud` shows a creature's tag only within 10 m (`TestShow`) and only for a minute after the player
+    looked at it (the hud's hover timer). For a revealed creature `TestShow` says yes at any distance and the hover
+    timer is held at 0; afterwards the game drops tags beyond 10 m on its own.
+  - A snapshot: a creature that was inside the radius keeps its tag wherever it goes. Bosses are left out, since
+    their tag is the boss bar at the top of the screen.
+
+### Settings
+
+- **8 - Sailing (synced):** Sailing Enabled, Ship Health At 100, Ship Speed At 100, Exploration Radius At 100, Helm
+  Experience Per Kilometre, Crew Experience Share.
+- **9 - Lookout:** Lookout Level, Lookout Radius, Lookout Duration, Lookout Cooldown (synced); Lookout Key (each
+  player's own).
+
+### Decisions made while building (2026-09-27), for the user to confirm
+
+- **Ship health is fixed by the builder's level when the ship is placed.** Ships built before GrindstoneSkills keep
+  the game's health; repairing does not refit a ship to the builder's current level.
+- **Speed covers the oars as well as the sail**, with one setting.
+- **The reveal goes to everyone aboard the pulsing ship**; players nearby who are not aboard see the ring and hear
+  the ping but get no tags.
+- **Experience from distance only**, crew at 25%, nothing for building.
+- **The lookout cooldown is per player and in memory**; a relog resets it.
+- **One switch turns all of Sailing off** (perks, experience, lookout); levels are kept.
+
+### Known gaps
+
+- ShipConfig writes a loaded ship's max health when its own settings hot reload, which drops the Sailing bonus on
+  ships already loaded until they load again (leave the area or relog).
+- A changed `Ship Health At 100` or `Sailing Enabled` applies to ships as they load, not to ships already loaded.
+
+### Test checklist
+
+- [ ] Skills panel: Sailing with the Karve icon and its description; the level survives relog; the death penalty
+      lowers it.
+- [ ] Console with devcommands: `raiseskill sailing 50`, `resetskill sailing`; `raiseskill all 10` includes Sailing.
+- [ ] Experience: about 40 per km at the helm, 25% of that for crew, none when nobody steers or the ship is beached.
+- [ ] Health: a Karve built at level 100 takes 50% more damage to break than one built at 0; a second client agrees
+      (worn and broken looks match); still so after relog.
+- [ ] Speed: at level 100 a ship is about 20% faster under sail and at the oars; still so when a passenger owns the
+      ship (the passenger boards first, the helmsman second).
+- [ ] Exploration: the uncovered circle on the map is wider aboard, normal ashore.
+- [ ] Lookout: refused below level 50, ashore and on cooldown, with a message; the ring shows on a second client near
+      the ship; the crew see tags on serpents or drakes up to 100 m away for 30 s; no tags on bosses or tamed
+      animals; nothing breaks on a dedicated server.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is
 written and the full build is clean (0 warnings). It is installed in the LocalTesting profile.
 Nothing has been tested in game yet; the test checklist above is the next step. The store icon is in and `pack.ps1`
 passes. Open: the raw-fish question.
+
+0.2.0 (Sailing) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.2.0), before any in-game test: the
+build is clean (0 warnings). The Sailing decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.

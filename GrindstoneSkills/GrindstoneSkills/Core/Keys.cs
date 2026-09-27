@@ -40,5 +40,16 @@ namespace GrindstoneSkills
         public const string ActiveFood = "grindstone_food_";
         /// <summary>Comma-separated prefab names of every dish the character has made.</summary>
         public const string MadeDishes = "grindstone_made";
+
+        // Sailing.
+        /// <summary>float on a player's own ZDO, written by that player's client: their Sailing level.</summary>
+        public const string SailingLevel = "grindstone_sailing_level";
+        /// <summary>float on a ship's ZDO: the Sailing level of the player who built it, written when it is placed.</summary>
+        public const string ShipwrightLevel = "grindstone_shipwright";
+        /// <summary>On a ship, to everybody who has it loaded: () - a lookout pulse goes out from the ship.</summary>
+        public const string RpcLookout = "grindstone_Lookout";
+
+        /// <summary>The Sailing skill's identity: its SkillType number is this name's stable hash.</summary>
+        public const string SailingSkillName = "grindstone_sailing";
     }
 }

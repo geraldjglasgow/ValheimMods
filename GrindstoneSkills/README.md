@@ -1,10 +1,12 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim, starting with Cooking. A good cook makes better food: every dish comes out with 0 to 3
+Deeper skills for Valheim: Cooking and Sailing. A good cook makes better food: every dish comes out with 0 to 3
 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the stars you want.
-Built on the game's own Cooking skill, so the levels you already have count.
+Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds tougher ships,
+sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that marks every enemy
+around the ship.
 
-### Features
+### Cooking
 
 - **Stars on dishes.** A dish's stars are rolled from the cook's Cooking level when it finishes: on a cooking station
   or the oven when it is done, at the cauldron, mead cauldron or prep table when it is crafted. 0 stars is the
@@ -26,10 +28,28 @@ Built on the game's own Cooking skill, so the levels you already have count.
 - **Cooking experience** as the game gives it, more for rich late-game dishes, and triple the first time you make
   each dish.
 - **Stars stay apart.** 1★ and 3★ stacks never merge, in inventories, chests or on the ground.
-- **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
-  the progress toward the next level. The defaults are the game's own.
 - **Multiplayer.** Stars are decided on the machine that owns the station, the cook's level travels with the food,
   and experience reaches the cook even when someone else's filter throws the dish away.
+
+### Sailing
+
+A new skill in the skills panel. Every perk grows from nothing at level 0 to its full value at level 100.
+
+- **Tougher ships.** A ship you build gets up to 50% more health, set by your Sailing level when you place it.
+- **Faster ships.** A ship you steer is up to 20% faster, under sail and at the oars, whoever else is aboard.
+- **Wider exploration at sea.** While you are aboard a ship you uncover the map up to twice as far around you.
+- **Lookout, from level 50.** Press O aboard a ship: a pulse races 100 m out over the water, and everyone aboard sees
+  the name tags of the enemies it reached (serpents, drakes, anything hostile, but not bosses) for 30 seconds. Once a
+  minute. Players nearby see the pulse too.
+- **Experience** comes from steering: about 40 per kilometre sailed at the helm, and a quarter of that for everyone
+  else aboard. Level 50 takes a few hours at the helm.
+- **Multiplayer.** A ship's health is the same on every machine, and the speed follows whoever is at the helm, even
+  when the ship's physics runs on another player's machine.
+
+### Every skill
+
+- **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
+  the progress toward the next level. The defaults are the game's own.
 
 ### How to Install
 1. Install [BepInEx for Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/).
@@ -49,6 +69,13 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Death:** how much of every skill's level dying costs (5% by default, as in the game; 0 keeps every level) and
   whether the progress toward the next level is lost (on by default, as in the game).
 - **Display** (each player's own): stars on icons, and which stars recipes use first.
+- **Sailing:** a switch for the whole skill, each perk's value at level 100, and the helm and crew experience.
+- **Lookout:** the level it unlocks at, its radius, how long tags stay and the cooldown; the key is each player's own.
+
+### Console
+
+With `devcommands` on, `raiseskill sailing 50` and `resetskill sailing` work like they do for the game's skills, and
+`raiseskill all` includes Sailing.
 
 ### Server settings
 
@@ -60,6 +87,13 @@ lists where the server's values differ from your own file, and `charter versions
 ### Works with
 - **FeastMaster:** FeastMaster sets each food's base values; GrindstoneSkills' stars add on top.
 - **OpenKeep:** starred food stacks and quick-stacks by star count.
+- **ShipConfig:** ShipConfig sets each ship's base health and speed; Sailing adds on top. After ShipConfig's ship
+  health setting changes in game, ships already loaded lose the Sailing health bonus until they load again.
+
+### Good to know
+- Sailing is a skill of this mod's own (the game has none). If you remove GrindstoneSkills, the game forgets your
+  Sailing level the next time it saves your character.
+- Ships built before you installed GrindstoneSkills keep the game's health.
 
 ### Building
 Requirements: .NET SDK 8, Valheim installed with BepInEx, and the `ValheimModLibs` repository checked out next to this

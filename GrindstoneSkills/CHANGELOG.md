@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0
+
+- New skill: Sailing, trained by steering a ship (the crew earn a share).
+- Ships you build get more health, up to 50% at level 100.
+- Ships you steer sail and row faster, up to 20% at level 100.
+- You uncover more of the map while aboard a ship, up to twice the radius at level 100.
+- Lookout, from Sailing 50: press O aboard a ship to send a pulse 100 m out; everyone aboard sees the name tags of the
+  enemies it reached for 30 seconds. 60 second cooldown.
+- The console's `raiseskill` and `resetskill` know Sailing.
+
 ## 0.1.0
 
 - First version: Cooking. Built on the game's own Cooking skill, so existing levels count.

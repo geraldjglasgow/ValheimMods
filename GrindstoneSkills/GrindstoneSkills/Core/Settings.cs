@@ -24,6 +24,8 @@ namespace GrindstoneSkills
             ExperienceSettings.Initialize(config);
             DeathSettings.Initialize(config);
             DisplaySettings.Initialize(config);
+            SailingSettings.Initialize(config);
+            LookoutSettings.Initialize(config);
         }
 
         /// <summary>A range from 0 to the given maximum, for percent and multiplier settings.</summary>
