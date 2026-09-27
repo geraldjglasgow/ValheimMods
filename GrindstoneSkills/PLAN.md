@@ -619,8 +619,9 @@ passes. Open: the raw-fish question.
 0.2.0 (Sailing) released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.2.0), before any in-game test: the
 build is clean (0 warnings). The Sailing decisions above wait for the user's confirmation.
 
-Woodcutting written 2026-09-27 (foundation, then eight features in parallel, then a review), not released and not
-tested in game. The build is clean (0 warnings). The Woodcutting decisions above wait for the user's confirmation.
+0.3.0 (Woodcutting) released to Thunderstore 2026-09-27 (commit e087c78, tag GrindstoneSkills-v0.3.0), with a new
+store icon, before any in-game test: written as a foundation, then eight features in parallel, then a review; the
+build is clean (0 warnings). The Woodcutting decisions above wait for the user's confirmation.
 
 Compile check without touching dist/ or the test profile, and safe to run several at once (libraries built first):
 `dotnet build GrindstoneSkills/GrindstoneSkills/GrindstoneSkills.csproj -c Release --no-restore --no-dependencies -p:SkipRepack=true -p:CheckDir=<name>`.
