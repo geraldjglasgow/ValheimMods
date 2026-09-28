@@ -6,7 +6,7 @@ namespace EarthWright.Costs
 {
     /// <summary>
     /// Section "8. Costs", the material side: the entries' own materials and how they grow with the radius, an extra
-    /// item per swing, crafting stations per tool and for paving, and stone for the volume raised and the area paved.
+    /// item per swing, crafting stations per tool, for paving and for Groundbreaker, and stone for the volume raised and the area paved.
     /// Every key changes gameplay, so every key is synced and lockable.
     /// </summary>
     public static class MaterialSettings
@@ -19,6 +19,7 @@ namespace EarthWright.Costs
         public static ConfigEntry<bool> CultivatorNeedsStations { get; private set; }
         public static ConfigEntry<bool> ModdedNeedsStations { get; private set; }
         public static ConfigEntry<bool> PavedNeedsStonecutter { get; private set; }
+        public static ConfigEntry<bool> GroundbreakerNeedsStonecutter { get; private set; }
         public static ConfigEntry<float> StonePerCubicMetre { get; private set; }
         public static ConfigEntry<float> StonePerSquareMetre { get; private set; }
         public static ConfigEntry<string> VolumeItem { get; private set; }
@@ -53,7 +54,9 @@ namespace EarthWright.Costs
             ModdedNeedsStations = synced.Bind(Sections.Costs, "Modded Entries Need Stations", true,
                 "Terrain entries added by other mods need their crafting station nearby, if they have one. Off: they work anywhere.");
             PavedNeedsStonecutter = synced.Bind(Sections.Costs, "Paved Road Needs Stonecutter", true,
-                "Paving needs a stonecutter nearby, as the game's Paved road does; this also applies when another entry is set to paint paved ground. Off: paving works anywhere.");
+                "Paving needs a stonecutter nearby, as the game's Paved road does; this also applies when another entry is set to paint paved ground. Off: paving works anywhere. The Groundbreaker entry has its own switch below.");
+            GroundbreakerNeedsStonecutter = synced.Bind(Sections.Costs, "Groundbreaker Needs Stonecutter", false,
+                "The Groundbreaker entry needs a stonecutter nearby when it paves. Off: Groundbreaker works without one, whatever \"Paved Road Needs Stonecutter\" says.");
         }
 
         private static void BindVolume(SyncedConfiguration synced)

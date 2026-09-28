@@ -79,9 +79,9 @@ The game's Level ground, Raise ground, Pathen, Paved road, Cultivate and Replant
 ### Costs
 Vanilla by default. The server can set stamina (off, fixed, scaled with the brush), tool wear, materials (scaled
 with the brush, per entry in `EarthWright.Costs.yml`, plus an item per swing), the stations needed (paving without
-a stonecutter), stone per cubic metre raised and per square metre paved, and a cooldown. Free build (`F7`) is for
-admins by default. The HUD shows what a stroke costs and what you have, in red when you are short. Resets and undo are
-always free; the admin Terraform entry pays stamina and wear but no stone.
+a stonecutter; Groundbreaker needs none unless the server asks for one), stone per cubic metre raised and per
+square metre paved, and a cooldown. Free build (`F7`) is for admins by default. The HUD shows what a stroke costs and
+what you have, in red when you are short. Resets and undo are always free; the admin Terraform entry pays stamina and wear but no stone.
 
 ### Height limits
 The game allows 8 m up and 8 m down from the world's ground. EarthWright makes both limits settings (0.5 to 512 m),

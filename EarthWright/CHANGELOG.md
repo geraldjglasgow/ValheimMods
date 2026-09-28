@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+- Groundbreaker no longer needs a stonecutter nearby. New setting "Groundbreaker Needs Stonecutter" in section 8
+  (off by default) brings the requirement back; "Paved Road Needs Stonecutter" no longer applies to Groundbreaker.
+
 ## 0.2.0
 - The shovel is gone: its item, recipe, upgrade levels, build menu and Dig entry, and its settings ("Shovel ..." in
   section 13, "Shovel Needs Stations" in section 8). Shovels made with 0.1.x disappear from inventories. EarthWright
