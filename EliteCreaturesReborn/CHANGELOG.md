@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.11.0
+
+- **`elite purge` takes a radius.** `elite purge 30` removes only the starred or mutated creatures within 30 m of
+  you. Without a number it still removes every one loaded around you, as before.
+
 ## 3.10.0
 
 - **Works with GrindstoneSkills' Husbandry.** With GrindstoneSkills 0.7.0 or later installed, its Husbandry skill's

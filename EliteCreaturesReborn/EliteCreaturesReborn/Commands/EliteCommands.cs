@@ -25,7 +25,7 @@ namespace EliteCreaturesReborn.Commands
             }
             _registered = true;
             new Terminal.ConsoleCommand(Root,
-                "elite spawn <prefab> <stars> [mutation... | aspect] | elite inspect | elite purge | elite effects <text> | elite reference | elite tier",
+                "elite spawn <prefab> <stars> [mutation... | aspect] | elite inspect | elite purge [radius] | elite effects <text> | elite reference | elite tier",
                 (Terminal.ConsoleEvent)OnElite);
         }
 

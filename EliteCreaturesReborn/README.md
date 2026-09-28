@@ -230,7 +230,7 @@ never Cloaked.
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin` |
 | `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair |
-| `elite purge` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first) |
+| `elite purge [radius]` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first). With a radius in metres, only those that close to you: `elite purge 30` |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
 | `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the other `elite` commands are admin only |

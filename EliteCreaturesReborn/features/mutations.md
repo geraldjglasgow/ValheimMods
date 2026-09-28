@@ -593,7 +593,7 @@ Three commands, all admin-gated on a server, all no-ops for a player without rig
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation...]` | Spawns that creature with exactly those stars and mutations, ignoring every chance roll. Named mutations are applied whether or not the rules would ever have given them. |
 | `elite inspect` | Prints the resolved mark of the creature under the crosshair: its stars, its mutations, the biome it was rolled in, and the values those produced after star power and any large-star enhancement. |
-| `elite purge` | Removes loaded creatures that this mod has marked, without drops. For clearing the mess after testing. |
+| `elite purge [radius]` | Removes loaded creatures that this mod has marked, without drops; with a radius in metres, only those within it. For clearing the mess after testing. |
 | `elite effects <text>` | Lists the names of loaded effect prefabs containing that text, and plays the one nearest the player so it can be judged by eye. |
 
 `elite spawn` is the important one and it must bypass **everything**: the star distribution, the mutation
