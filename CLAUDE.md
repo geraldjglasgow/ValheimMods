@@ -12,15 +12,19 @@ ValheimMods/
   CLAUDE.md          this file
   pack.ps1           packages one mod or all of them (calls each mod's own pack.ps1)
   EliteCreaturesReborn/ creature stars, mutations, attunements, boss aspects, loot rules, world tiers
+  EliteCreaturesPack/ new creatures: the crypt mimic, the Greydwarf Slinger, the Rime Giant
   FeastMaster/       food and mead values
   ShipConfig/        ship health
   Lockstep/          boss progression gated on the whole group
   OpenKeep/          storage: craft from chests, quick stack, salvage, stacks, container sizes, signs; bed respawn, honey
+  PackPanel/         the player's inventory: bigger grid, labelled armour/utility/food/ammo slots, key ring, backpacks, look
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
   EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, height limits
   GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
+  AssetWorkshop/     3D assets from scripts: Blender builds, bakes and previews a model, Unity builds the asset bundle
+  DevBridge/         dev-only plugin: drive the running game over localhost HTTP for testing, never shipped
 ```
 
 ### The mods
@@ -30,6 +34,14 @@ progression, retaliation zones and multiplayer scaling. Everything is tunable th
 and two YAML rule files, synced from the server and hot reloaded. It was written black-box (see "Developing mods"
 below) and is deliberately not compatible with any other mod's config, save keys or API. Its `CLAUDE.md` has the
 architecture and the test checklist.
+
+**Elite Creatures Pack** (EliteCreaturesPack): new creatures, each with its own fight - the crypt mimic (a crypt
+chest that bites its opener), the Greydwarf Slinger (shoots stones, keeps its distance) and the Rime Giant (a rare
+frost-plated troll asleep on the mountains, whose plates only fire breaks). Models from `AssetWorkshop`, embedded
+per platform through BundlePrefabs; a .cfg section per creature, synced. Split out of Elite Creatures Reborn on
+2026-09-28 before release: new creatures go here, not into ECR. Neither mod needs the other; with both, ECR rolls
+stars and mutations on them and holds back a dormant mimic's looks (key names only: `ecp_disguised`, `ecr_gen`).
+Design in `EliteCreaturesPack/CLAUDE.md` and `features/`.
 
 **FeastMaster**: configure every food and mead. Global multipliers, a section per food and per mead, and a switch
 that stops food from degrading. Foods and meads are discovered from the item database.
@@ -41,10 +53,18 @@ of the shared libraries.
 credit, a self-maintaining roster with ignore and inactivity rules, altar gate with a spawn guard, admin console
 commands, a YAML chain. Design and status in `Lockstep/PLAN.md`.
 
-**OpenKeep**: storage and inventory in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
+**OpenKeep**: storage in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
 container sizes, carts as stations, contents signs and shared chests; plus a Homestead section outside storage
 (respawn at the nearest owned bed, campfires on wooden floors, honey per day, fires refuelling from nearby chests,
 torches lit only at night). Design in `OpenKeep/CLAUDE.md`.
+
+**PackPanel**: the player's own inventory and its UI, kept separate from the storage mod: a bigger grid, labelled
+slots always on screen (armour, a backpack, worn utilities, food, meads, ammo, a coin purse), a key ring, eight
+craftable backpacks worn on the back, the stat boxes beside the grid and under the minimap, and the brown or timber
+look. Built as OpenKeep's section 10 and moved out before release (2026-09-28). New inventory and inventory UI work
+goes here, not into OpenKeep. Works alone; with OpenKeep the two cooperate through published data only (a custom data
+key, a GameObject name, config entries read through the chainloader), never a reference. Design in
+`PackPanel/CLAUDE.md`.
 
 **Party**: shared parties - a server-owned roster with one leader, invites, party chat, a draggable health panel,
 colored floating names, always-on map pins, friendly-fire protection, a party-only map ping, and a public API for
@@ -87,6 +107,10 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | PatchGuard | attribute exceptions from the mod's own code to the mod in the log, then rethrow |
 | ItemCopies | write item values into the prefab and every live copy of its shared data, and into new copies |
 | PlateColumn | the inventory's stat plates as one column any mod adds a plate to, each with a tooltip; embedded PNG icons |
+| BundlePrefabs | a mod's own models: embedded asset bundle per platform, prefab copies, ZNetScene/ObjectDB registration on every peer, game materials |
+| LocalEffects | local, cosmetic copies of the game's effect prefabs: never networked, never a damage source, thinned by a density |
+| PlayerGrid | PackPanel's published main grid (`PackPanel.mainGrid`): which player inventory cells are slots, written and read in one place |
+| Hotkeys | hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs
@@ -176,6 +200,13 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   launch or kill the game from a script.
 - Prefer prefix/postfix patches over transpilers. Verify game signatures by decompiling `assembly_valheim.dll` with
   `ilspycmd` into the scratch folder, never into a repository.
+- 3D models, textures and asset bundles come from `AssetWorkshop` (Blender and Unity 6000.0.75f1 in
+  `%USERPROFILE%\tools`, both run headless). Build with `AssetWorkshop\build.ps1` and check a model by reading its
+  `out\preview.png`. The workshop's `README.md` has the conventions and what is not built yet.
+- Test in the running game through `DevBridge` (installed in `LocalTesting` only): once the user has started the
+  profile, `curl -s http://127.0.0.1:7780/help` lists endpoints for screenshots, the UI tree, clicks, keys, mouse,
+  console commands, the log, reflection and ZDOs. `DevBridge/README.md` has the test loop and the limits. A rebuilt
+  mod loads only after the user restarts the game.
 
 ## Releasing
 

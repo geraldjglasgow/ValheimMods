@@ -45,3 +45,7 @@ DECISIONS.md
 
 # Kept local only, like .claude/ above - not in the repository
 CLEANROOM.md
+
+# Python bytecode
+__pycache__/
+*.pyc
