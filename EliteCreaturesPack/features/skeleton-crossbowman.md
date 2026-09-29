@@ -113,7 +113,7 @@ locked while `Lock Configuration` is on there:
 | `Range` | 25 | metres it shoots from (the archer: 20) |
 | `Craftable` | true | the Bone Crossbow can be made (section 7 of this file) |
 | `Recipe` | Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2 | its cost, item:amount:amount per upgrade; a placeholder |
-| `Workbench Level` | 1 | the workbench level it needs |
+| `Workbench Level` | 2 | the workbench level it needs, and its bolts (1 until 0.4.0; the user, 2026-09-29) |
 | `Damage` | 30 | its own blunt blow, before the bolt's |
 | `Damage Per Level` | 4 | blunt added by each upgrade |
 | `Reload Time` | 4 | seconds with no Crossbows skill; the skill halves it |

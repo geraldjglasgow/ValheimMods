@@ -7,7 +7,7 @@ namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
     /// The bone weapons' and bone arrows' recipes, in every ObjectDB the game builds or copies once the items exist: the
-    /// weapons at a level 3 workbench, costing <see cref="ArsenalWeapon.Recipe"/> (item:amount:amount per upgrade; the
+    /// weapons at a level 2 workbench, costing <see cref="ArsenalWeapon.Recipe"/> (item:amount:amount per upgrade; the
     /// vertebra by its prefab name, ECP_Vertebra), and 20 arrows for 8 bone fragments at a level 2 workbench. An item
     /// name the game does not know is logged and left out. Not made at all when no workbench is found: without a
     /// station the game would let them be made by hand anywhere.
@@ -15,7 +15,7 @@ namespace EliteCreaturesPack.Arsenal
     public static class ArsenalRecipes
     {
         private const string Workbench = "piece_workbench";
-        private const int WeaponLevel = 3;
+        private const int WeaponLevel = 2;        // as the bronze-age flint and bone kit
         private const int ArrowLevel = 2;        // as flint arrows; wood arrows need 1
         private const int ArrowsPerCraft = 20;   // as the game's wood and flint arrows
         private const string ArrowCost = "BoneFragments:8";

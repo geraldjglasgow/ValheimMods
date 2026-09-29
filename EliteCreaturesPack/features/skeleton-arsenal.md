@@ -93,7 +93,7 @@ table's ("Skeleton Cutthroat").
 **Bone weapons.** Each is a copy of the bronze-age weapon of its class, so it keeps that weapon's handling,
 animations, combos, skill, sounds, trail, durability, weight, block, quality levels and upgrades, wearing the bone
 model in place of the game's. Its damage, and what each upgrade adds, is that weapon's times **0.85** (like bronze,
-a little weaker). Made at the **workbench, level 3**.
+a little weaker). Made at the **workbench, level 2** (level 3 until 0.4.0; the user, 2026-09-29).
 
 | Item | Prefab | Made after | Damage (at 0.85) | Per upgrade | Default recipe |
 | --- | --- | --- | --- | --- | --- |
@@ -181,7 +181,7 @@ In the LocalTesting profile with DevBridge, `devcommands` on.
 - [ ] `spawn ECP_Vertebra`, `ECP_BoneDagger` ... `ECP_BoneBow`, `ECP_ArrowBone`: each shows its icon and name, lies on
       the ground on its collider, and each weapon sits in the hand like the bronze one (the spear point forward, the
       atgeir's blade out, the bow's string toward the player).
-- [ ] Workbench level 3 lists the six vertebra weapons and the dagger; level 2 the bone arrows; the costs as above.
+- [ ] Workbench level 2 lists the six vertebra weapons, the dagger and the bone arrows; the costs as above.
 - [ ] Damage in the tooltip is 0.85 of bronze's; upgrades add 0.85 of bronze's per level; the upgrade glow sits on
       the bone model.
 - [ ] Bone arrows: 24 pierce in the tooltip, fly from any bow, look like bone arrows in flight.

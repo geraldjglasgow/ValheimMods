@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.1
+
+Bone gear at the level 2 workbench, and a Kraken shield with one handle.
+
+- **The bone weapons need a level 2 workbench** (was 3): the Bone Dagger, Sword, Axe, Mace, Spear, Atgeir and Bow.
+- **The Bone Crossbow and its Blunted Bone Bolts need a level 2 workbench** (was 1): the default of `Workbench Level`
+  in `7 - Bone Crossbow` is now 2. A config file written by an earlier version keeps its 1; set it to 2 by hand, or
+  delete the line and it comes back as 2.
+- Bone Arrows stay at level 2 and the Executioner's Greataxe at level 3.
+- **The Kraken shield has one handle**, behind the middle of the board, and your hand holds that one. It had two, side
+  by side, and your hand held the shield by one of them, off its middle.
+
 ## 0.4.0
 
 One of each skeleton, a bolt for the Bone Crossbow, and the bone weapons made to look right in your hands.

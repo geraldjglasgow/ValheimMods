@@ -133,7 +133,7 @@ materials are the game's own; the crossbow, its bolts, the quiver and the animat
 
 ## Bone Crossbow
 
-The crossbowmen's weapon, for players: a **Bone Crossbow** made at the workbench. It handles like the game's own
+The crossbowmen's weapon, for players: a **Bone Crossbow** made at a level 2 workbench. It handles like the game's own
 crossbow (the same aim, reload and Crossbows skill, bolts as ammo, on your back when put away) and hits like a club:
 30 blunt of its own (+4 an upgrade, three levels), and whatever bolt it looses adds its damage on top. It reloads in 3
 seconds with no skill (the skill halves it), and it does not chop trees. Its cost is a placeholder for now (see
@@ -144,7 +144,7 @@ with your hand), take a bolt from your hip and drop it into the groove, and hold
 stock whenever you are not reloading. When it shoots, the string snaps back and shivers. Everyone near sees the same.
 
 Its ammo is the **Blunted Bone Bolt**: a bone shaft with a blunt knuckle of bone for a head and no feathers, as long as
-the game's bone bolt. 20 of them take 8 bone fragments at the workbench, and each adds 27 blunt, a flint arrow's damage
+the game's bone bolt. 20 of them take 8 bone fragments at a level 2 workbench, and each adds 27 blunt, a flint arrow's damage
 as blunt. Any crossbow shoots them, and the crossbowmen drop a few. (The game's own bone bolt, 32 pierce, still needs the Black Forge.)
 
 ## Skeleton Arsenal
@@ -170,7 +170,7 @@ shield. Every one drops what a skeleton drops, and one in ten drops a **Vertebra
 
 ## Bone Weapons
 
-The arsenal's weapons, for players, made at a **level 3 workbench** from bone fragments and a vertebra (the dagger
+The arsenal's weapons, for players, made at a **level 2 workbench** from bone fragments and a vertebra (the dagger
 needs only bone fragments). Each handles like the bronze-age weapon of its kind (the same attacks, combos, skill,
 durability and upgrades) and hits a little softer: 0.85 of its damage.
 
@@ -336,7 +336,7 @@ Only the Black Forest's archer skeletons come as crossbowmen.
 | --- | --- | --- |
 | `Craftable` | on | the Bone Crossbow can be made at the workbench |
 | `Recipe` | Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2 | the cost, as item:amount:amount per upgrade (a placeholder for now); item names are the game's prefab names |
-| `Workbench Level` | 1 | the workbench level it needs |
+| `Workbench Level` | 2 | the workbench level it needs (its bolts too) |
 | `Damage` | 30 | blunt damage of its own blow, before the bolt's (the Arbalest: 200 pierce) |
 | `Damage Per Level` | 4 | blunt damage each upgrade adds |
 | `Reload Time` | 3 | seconds to span and load it with no Crossbows skill; the skill halves it (the Arbalest: 3.5) |

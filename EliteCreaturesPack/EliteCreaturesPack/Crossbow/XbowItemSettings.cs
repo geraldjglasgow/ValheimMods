@@ -44,7 +44,7 @@ namespace EliteCreaturesPack.Crossbow
             recipe = config.Bind(Section, "Recipe", "Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2",
                 "What it costs, as item:amount:amount per upgrade, separated by commas (a placeholder for now). Item names are "
                 + "the game's prefab names, like BoneFragments, Wood, DeerHide, TrophySkeleton.");
-            workbenchLevel = config.Bind(Section, "Workbench Level", 1, "The workbench level it needs.",
+            workbenchLevel = config.Bind(Section, "Workbench Level", 2, "The workbench level it needs (its Blunted Bone Bolts too).",
                 acceptableValues: new AcceptableValueRange<int>(1, 5));
             damage = config.Bind(Section, "Damage", 30f,
                 "Blunt damage of its own blow, before the bolt's (a Blunted Bone Bolt adds 27 blunt, the game's bone bolt 32 pierce; the Arbalest: 200 pierce).",
