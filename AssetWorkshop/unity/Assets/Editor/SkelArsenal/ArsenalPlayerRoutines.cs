@@ -3,7 +3,7 @@ namespace Workshop.SkelArsenal
     /// <summary>One bone weapon in a player's hands: its prefab, its hand, the game's animation state for it, and what it does.</summary>
     public sealed class PlayerRoutine
     {
-        public string Label, Prefab, Spent, Bow, Secondary;
+        public string Label, Prefab, Spent, Bow, Secondary, Shield;   // Shield: a left-hand shield prefab
         public bool LeftHand, Crossbow;
         public int State;                      // ItemDrop.ItemData.AnimationState, as the game sets statei/statef
         public string[] Triggers = new string[0];
@@ -15,7 +15,9 @@ namespace Workshop.SkelArsenal
     /// animation state and its primary attack's trigger for every step of its combo (read from the game's items: the copper
     /// knife's knife_stab, the bronze sword's and mace's swing_longsword, the bronze axe's swing_axe, the bronze spear's
     /// spear_poke, the bronze atgeir's atgeir_attack, the fine bow's bow_aim and bow_fire), and the Bone Crossbow as the
-    /// Arbalest (crossbow_fire, then reload_crossbow), 1.25 times the crossbowmen's crossbow as the mod makes it.
+    /// Arbalest (crossbow_fire, then reload_crossbow), 1.25 times the crossbowmen's crossbow as the mod makes it. Last,
+    /// the Kraken shield with the Bone Sword: a shield in the left hand sets the game's Shield animation state (4) whatever
+    /// the right hand holds (Humanoid.SetupAnimationState), and the sword swings its own combo from it.
     /// </summary>
     public static class ArsenalPlayerRoutines
     {
@@ -33,6 +35,11 @@ namespace Workshop.SkelArsenal
             new PlayerRoutine
             {
                 Label = "Crossbow", Prefab = Xbow + "ecp_xbow_item_rig.prefab", Crossbow = true, LeftHand = true, State = 10, Scale = 1.25f,
+            },
+            new PlayerRoutine
+            {
+                Label = "Shield", Prefab = Weapon("ecp_skel_sword"), Shield = ArsenalShield.Prefab, State = 4,
+                Triggers = new[] { "swing_longsword0", "swing_longsword1", "swing_longsword2" }, Secondary = "sword_secondary",
             },
         };
 

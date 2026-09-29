@@ -9,7 +9,7 @@ namespace Workshop.SkelArsenal
     /// the stance; walking, jogging and running (forward_speed 2, 5 and 7.9, the movement blend's walk, jog and run);
     /// stopping; crouching, and sneaking crouched; blocking; a jump (take-off, in the air, landing); the fight (the
     /// primary combo, the bow drawn and loosed, the crossbow loaded then fired); the secondary attack where the weapon
-    /// has one; the stance again.
+    /// has one; the stance again. With a shield, after the block: a parry, walking behind it, a broken guard, a dodge.
     /// </summary>
     public static class ArsenalPlayerTour
     {
@@ -27,11 +27,37 @@ namespace Workshop.SkelArsenal
             animator.SetBool("crouching", false);
             Part(cache, "block", () => Held(steps, animator, "blocking", 1.6f));
             steps.Idle(0.6f);
+            if (routine.Shield != null)
+                Guard(steps, animator, cache);
             Part(cache, "jump", () => Jump(steps, animator));
             Part(cache, Fight(routine), () => Fight(routine, steps));
             if (routine.Secondary != null)
                 Part(cache, "secondary", () => steps.Swing(routine.Secondary));
             Part(cache, "stance", () => steps.Idle(1.2f));
+        }
+
+        /// <summary>
+        /// With a shield: a parry (the shield snapped up and down again: the game's parry is a block raised within a
+        /// quarter second of the blow, with no clip of its own), walking behind the raised shield, the guard broken (the
+        /// game's stagger, as when a block fails for want of stamina), and a dodge roll.
+        /// </summary>
+        private static void Guard(ArsenalPlayerSteps steps, Animator animator, XbowCache cache)
+        {
+            Part(cache, "parry", () => Held(steps, animator, "blocking", 0.4f));
+            steps.Idle(0.8f);
+            animator.SetBool("blocking", true);
+            Part(cache, "block walking", () => Move(steps, animator, 2f, 2.4f));
+            Move(steps, animator, 0f, 0.4f);
+            Part(cache, "guard broken", () => Triggered(steps, animator, "stagger", 1.6f));
+            animator.SetBool("blocking", false);
+            steps.Idle(0.6f);
+            Part(cache, "dodge", () => Triggered(steps, animator, "dodge", 1.4f));
+        }
+
+        private static void Triggered(ArsenalPlayerSteps steps, Animator animator, string trigger, float seconds)
+        {
+            animator.SetTrigger(trigger);
+            steps.Idle(seconds);
         }
 
         private static void Part(XbowCache cache, string name, System.Action play)

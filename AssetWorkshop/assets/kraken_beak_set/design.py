@@ -136,12 +136,12 @@ def shield():
             shapes.sphere('small rim nail',.006,a.lerp(b,t)+Vector((0,-.005,0)),material=silver,segments=8,rings=4)
     for z in (.37,.76):
         shapes.box('rear silver cross brace',(.55,.022,.036),(0,.095,z),material=silver,bevel=.004)
-    for x in (-.15,.15):
-        rod('silver grip anchor',(x,.08,.43),(x,.16,.45),.018,silver)
-        rod('silver grip anchor',(x,.08,.70),(x,.16,.68),.018,silver)
-        rod('finewood rear grip',(x,.16,.45),(x,.16,.68),.025,wood)
-        for z in (.46,.67):
-            shapes.cylinder('silver grip ferrule',.027,.018,(x,.16,z),material=silver,vertices=12)
+    # One grip, behind the middle of the board: the fist holds it there, as on the game's own shields (the user).
+    rod('silver grip anchor',(0,.08,.43),(0,.16,.45),.018,silver)
+    rod('silver grip anchor',(0,.08,.70),(0,.16,.68),.018,silver)
+    rod('finewood rear grip',(0,.16,.45),(0,.16,.68),.025,wood)
+    for z in (.46,.67):
+        shapes.cylinder('silver grip ferrule',.027,.018,(0,.16,z),material=silver,vertices=12)
     # Bow the shield furniture around the arm; keep the central beak identical
     # to the standalone loot model instead of distorting its shared geometry.
     bpy.context.view_layer.update()

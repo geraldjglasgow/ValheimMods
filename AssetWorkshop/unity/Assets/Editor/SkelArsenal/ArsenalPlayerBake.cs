@@ -13,7 +13,7 @@ namespace Workshop.SkelArsenal
     /// <summary>
     /// The players' bone weapons in a player's hands, for Blender (assets/ecp_skel_arsenal/blender_scene.py builds the
     /// .blend from the same format as the skeletons' showcase):
-    ///   Unity -batchmode -projectPath unity -executeMethod Workshop.SkelArsenal.ArsenalPlayerBake.Run -workshopOut &lt;folder&gt;
+    ///   Unity -batchmode -projectPath unity -executeMethod Workshop.SkelArsenal.ArsenalPlayerBake.Run -workshopOut &lt;folder&gt; [-only &lt;label&gt;]
     /// The game's player (reference, preview only, <see cref="GreataxePlayer"/>) stands in a row, one per weapon, each
     /// holding it as the game hangs a held item (under RightHand_Attach, the bow and crossbow under LeftHand_Attach) and
     /// played by the game's own player controller (Player_animator.controller with its clips, <see cref="ReferenceController"/>)
@@ -45,22 +45,33 @@ namespace Workshop.SkelArsenal
         {
             var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(ReferenceController.Import(Controller, "PlayerController"));
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            var groups = ArsenalPlayerRoutines.All.Select((routine, i) => Player(routine, i, controller, folder)).ToArray();
+            PlayerRoutine[] routines = Routines();
+            var groups = routines.Select((routine, i) => Player(routine, i, routines.Length, controller, folder)).ToArray();
             Directory.CreateDirectory(folder);
             var lineup = new ArsenalBake.Lineup { fps = ArsenalPlayerSteps.Fps, groups = groups };
             File.WriteAllText(Path.Combine(folder, "arsenal.json"), JsonUtility.ToJson(lineup, true));
             Log.Info($"bone weapons: {groups.Length} players baked into {folder}");
         }
 
+        /// <summary>Every routine, or only the one named after -only (its label, like Shield).</summary>
+        private static PlayerRoutine[] Routines()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            int at = Array.IndexOf(args, "-only");
+            return at < 0 || at + 1 >= args.Length ? ArsenalPlayerRoutines.All : ArsenalPlayerRoutines.All.Where(r => r.Label == args[at + 1]).ToArray();
+        }
+
         /// <summary>One player with one weapon, placed in the row, baked as one loop into its own folder.</summary>
-        private static ArsenalBake.Group Player(PlayerRoutine routine, int index, RuntimeAnimatorController controller, string folder)
+        private static ArsenalBake.Group Player(PlayerRoutine routine, int index, int count, RuntimeAnimatorController controller, string folder)
         {
             GameObject player = GreataxePlayer.Player();
             player.name = "Player_" + routine.Label;
-            float x = (index - (ArsenalPlayerRoutines.All.Length - 1) / 2f) * Spacing;
+            float x = (index - (count - 1) / 2f) * Spacing;
             player.transform.position = new Vector3(-x, 0f, 0f);   // Blender x = -Unity x
             Transform weapon = Mount(routine.Prefab, routine, player);
             Transform spent = routine.Spent != null ? Mount(routine.Spent, routine, player) : null;
+            if (routine.Shield != null)
+                ArsenalShield.Mount(Prefab(routine.Shield), player);
             ArsenalBow bow = routine.Bow == null ? null : new ArsenalBow(weapon.gameObject, GreataxePlayer.Bone(player, "RightHand_Attach"),
                 Prefab("Assets/Bundles/ecp_skel_arsenal/ecp_skel_arrow/ecp_skel_arrow.prefab"), ArsenalBow.PointsFile(routine.Bow), "bow aim", "bow fire");
             Animator animator = Animate(player, routine.Crossbow ? BoneCrossbow(controller) : routine.Label == "Atgeir" ? BoneAtgeir(controller) : controller, routine.State);

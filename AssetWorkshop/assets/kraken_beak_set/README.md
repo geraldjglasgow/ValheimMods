@@ -1,6 +1,6 @@
 # Kraken beak and beak shield
 
-Two original standalone assets. The beak uses dark aubergine horn with worn amber cutting edges, subtle crown growth ridges, and a smaller lower jaw. The standalone beak and mounted beak share identical geometry and scale. The shield has a gently bowed body of individual pale finewood planks, silver edging, rivets, diagonal mounts, small knot ornaments, inset border details, curved rear braces, and finewood grips with silver ferrules. The edges sweep back by about 8cm relative to the center. The beak itself is not bent with the shield.
+Two original standalone assets. The beak uses dark aubergine horn with worn amber cutting edges, subtle crown growth ridges, and a smaller lower jaw. The standalone beak and mounted beak share identical geometry and scale. The shield has a gently bowed body of individual pale finewood planks, silver edging, rivets, diagonal mounts, small knot ornaments, inset border details, curved rear braces, and one finewood grip with silver ferrules behind the middle of the board. The edges sweep back by about 8cm relative to the center. The beak itself is not bent with the shield.
 
 Intended shield recipe: **10 FineWood, 5 Silver, 1 kraken beak**. This is an art specification for later gameplay integration; the custom beak item's runtime prefab name has not been registered.
 
