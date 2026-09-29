@@ -1,0 +1,137 @@
+using EliteCreaturesPack.Core;
+using HarmonyLib;
+using UnityEngine;
+
+namespace EliteCreaturesPack.RimeGiant
+{
+    /// <summary>Each zone's spawn system takes the giant's spawn entry as it wakes (<see cref="RimeGiantSpawns"/>).</summary>
+    [HarmonyPatch(typeof(SpawnSystem), "Awake")]
+    public static class RimeGiantSpawnPatch
+    {
+        private static void Postfix(SpawnSystem __instance) =>
+            SafeCall.Run("SpawnSystem.Awake rime giant", () => RimeGiantSpawns.Join(__instance));
+    }
+
+    /// <summary>
+    /// A giant about to spawn from the wild spawn system: only on a mountain whose giant has not come yet, which the
+    /// spawn then claims (<see cref="RimeGiantSpawns.Allow"/>). Every other spawn passes untouched.
+    /// </summary>
+    [HarmonyPatch(typeof(SpawnSystem), "Spawn")]
+    public static class RimeGiantSpawnGatePatch
+    {
+        private static bool Prefix(SpawnSystem.SpawnData critter, Vector3 spawnPoint)
+        {
+            if (critter?.m_prefab == null || critter.m_prefab != RimeGiantPrefabs.Prefab || SpawnSystem.m_nospawn)
+            {
+                return true;   // not ours, or the game's no-spawn switch is on and it spawns nothing (nor claims)
+            }
+            bool allowed = false;
+            SafeCall.Run("SpawnSystem.Spawn rime giant", () => allowed = RimeGiantSpawns.Allow(spawnPoint));
+            return allowed;
+        }
+    }
+
+    /// <summary>
+    /// A hit landing on a giant, on its owner and before resistances: its plates turn the physical part aside
+    /// (<see cref="RimeArmour.Soften"/>). Runs for every hit on every creature, so it only looks the armour up.
+    /// </summary>
+    [HarmonyPatch(typeof(Character), "RPC_Damage")]
+    public static class RimeArmourHitPatch
+    {
+        private static void Prefix(Character __instance, HitData hit)
+        {
+            if (hit != null && __instance.TryGetComponent(out RimeArmour armour) && __instance.m_nview.IsOwner())
+            {
+                SafeCall.Run("Character.RPC_Damage rime armour", () => armour.Soften(hit));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fire reaching a giant: the game hands every hit's fire to burning, which applies it tick by tick here, on the
+    /// owner; each tick counts towards breaking a plate (<see cref="RimeArmour.Melt"/>).
+    /// </summary>
+    [HarmonyPatch(typeof(Character), nameof(Character.ApplyDamage))]
+    public static class RimeArmourFirePatch
+    {
+        private static void Prefix(Character __instance, HitData hit)
+        {
+            if (hit != null && hit.m_damage.m_fire > 0f && __instance.TryGetComponent(out RimeArmour armour))
+            {
+                SafeCall.Run("Character.ApplyDamage rime armour", () => armour.Melt(hit.m_damage.m_fire));
+            }
+        }
+    }
+
+    /// <summary>The slam landing (on the giant's owner, where attacks run) sends the avalanche (<see cref="RimeAvalanche"/>).</summary>
+    [HarmonyPatch(typeof(Attack), nameof(Attack.OnAttackTrigger))]
+    public static class RimeAvalanchePatch
+    {
+        private static void Postfix(Attack __instance)
+        {
+            if (__instance.m_weapon?.m_shared.m_name != RimeAttacks.SlamName || __instance.m_character == null
+                || __instance.m_character.IsStaggering() || !__instance.m_character.TryGetComponent(out RimeAvalanche avalanche))
+            {
+                return;
+            }
+            SafeCall.Run("Attack.OnAttackTrigger rime avalanche", avalanche.Roll);
+        }
+    }
+
+    /// <summary>A sleeping giant is a snowy outcrop: no name plate or health bar over it.</summary>
+    [HarmonyPatch(typeof(EnemyHud), "TestShow")]
+    public static class RimeGiantHudPatch
+    {
+        private static void Postfix(Character c, ref bool __result)
+        {
+            if (__result && c != null && c.TryGetComponent(out RimeSlumber slumber) && slumber.Asleep)
+            {
+                __result = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// A sleeping giant has no hover name or text, decided after every other decoration (Elite Creatures Reborn's star
+    /// words included, when it is installed). Awake, it is an ordinary creature again.
+    /// </summary>
+    [HarmonyPatch(typeof(Character))]
+    public static class RimeGiantHoverPatch
+    {
+        [HarmonyPatch("GetHoverText"), HarmonyPostfix, HarmonyPriority(Priority.Last)]
+        private static void HoverText(Character __instance, ref string __result) => Blank(__instance, ref __result);
+
+        [HarmonyPatch("GetHoverName"), HarmonyPostfix, HarmonyPriority(Priority.Last)]
+        private static void HoverName(Character __instance, ref string __result) => Blank(__instance, ref __result);
+
+        private static void Blank(Character character, ref string text)
+        {
+            if (character.TryGetComponent(out RimeSlumber slumber) && slumber.Asleep)
+            {
+                text = "";
+            }
+        }
+    }
+
+    /// <summary>
+    /// The colour the game hands a falling creature's ragdoll: an unstarred giant's is its frost (<see cref="RimeLook"/>),
+    /// not the troll's plain blue. Every star look the giant has already carries the frost (<see cref="RimeLook.StarLooks"/>),
+    /// whether the game picked it from the level or Elite Creatures Reborn from its stars, so only the plain look - no
+    /// shift at all - is replaced. Runs last, after any other mod's choice.
+    /// </summary>
+    [HarmonyPatch(typeof(LevelEffects), nameof(LevelEffects.GetColorChanges))]
+    public static class RimeGiantColorPatch
+    {
+        [HarmonyPriority(Priority.Last)]
+        private static void Postfix(LevelEffects __instance, ref float hue, ref float saturation, ref float value)
+        {
+            bool plain = hue == 0f && saturation == 0f && value == 0f;
+            if (plain && __instance.m_character != null && __instance.m_character.TryGetComponent(out RimeArmour _))
+            {
+                hue = RimeLook.Hue;
+                saturation = RimeLook.Saturation;
+                value = RimeLook.Value;
+            }
+        }
+    }
+}

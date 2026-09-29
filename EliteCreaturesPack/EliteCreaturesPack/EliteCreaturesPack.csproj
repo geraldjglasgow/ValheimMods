@@ -1,0 +1,115 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>EliteCreaturesPack</AssemblyName>
+    <RootNamespace>EliteCreaturesPack</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0</Version>
+    <Product>Elite Creatures Pack</Product>
+    <Authors>Gerald Glasgow</Authors>
+    <Company>Gerald Glasgow</Company>
+    <Copyright>Copyright (c) Gerald Glasgow. Licensed under the GNU General Public License v3.0.</Copyright>
+    <Description>Elite Creatures Pack: new creatures for Valheim - the crypt mimic, the Greydwarf Slinger and the Rime Giant</Description>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DebugType>none</DebugType>
+    <NoWarn>$(NoWarn);CS0649;CS0169;CS0414;CS8618;CS1591;CS0618</NoWarn>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <!-- Paths: override with -p:GamePath=..., -p:BepInExCore=... and -p:ModLibsPath=... if your layout differs -->
+  <PropertyGroup>
+    <GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Valheim</GamePath>
+    <ManagedPath>$(GamePath)\valheim_Data\Managed</ManagedPath>
+    <BepInExCore Condition="'$(BepInExCore)' == '' AND Exists('$(GamePath)\BepInEx\core\BepInEx.dll')">$(GamePath)\BepInEx\core</BepInExCore>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(MSBuildProjectDirectory)\..\lib\BepInEx\core</BepInExCore>
+    <!-- Shared libraries (ValheimModLibs), expected as a sibling checkout -->
+    <ModLibsPath Condition="'$(ModLibsPath)' == ''">$(MSBuildProjectDirectory)\..\..\ValheimModLibs</ModLibsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.46" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SyncedConfig transitively brings Charter, ConfigReload, YamlConfig and YamlDotNet -->
+    <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The crypt mimic's rig, parts and animations (AssetWorkshop assets/crypt_mimic), one asset bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecr_cryptmimic.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Greydwarf Slinger's slingshot, satchel, kit and shot clip (AssetWorkshop assets/ecr_slinger), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecr_slinger.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Rime Giant's plates of ice, sleeping crust and boulder (AssetWorkshop assets/ecr_rimegiant), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecr_rimegiant.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Kraken's head, long tentacle and screen ink splats (AssetWorkshop assets/ecp_kraken), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecp_kraken.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Kraken's loot: its beak, the beak shield, raw and cooked tentacle, with their icons (AssetWorkshop assets/ecp_kraken_beak,
+         ecp_kraken_beak_shield, ecp_kraken_meat, ecp_kraken_meat_cooked), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecp_kraken_loot.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExCore)\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_valheim" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_guiutils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_guiutils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedPath)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->
+
+</Project>

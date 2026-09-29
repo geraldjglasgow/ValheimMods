@@ -1,0 +1,9 @@
+{
+    "name": "EliteCreaturesPack",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteCreaturesPack",
+    "description": "New creatures: a crypt chest that bites, a greydwarf that shoots stones, a frost giant asleep on the mountains, a kraken that hunts ships and drops a shield that bites back. Server synced. Required on server and all clients.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

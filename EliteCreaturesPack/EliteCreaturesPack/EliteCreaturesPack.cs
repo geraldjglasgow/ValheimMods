@@ -1,0 +1,49 @@
+using System.Reflection;
+using BepInEx;
+using EliteCreaturesPack.Core;
+using EliteCreaturesPack.Kraken;
+using EliteCreaturesPack.Mimic;
+using EliteCreaturesPack.RimeGiant;
+using EliteCreaturesPack.Slinger;
+using HarmonyLib;
+using PatchGuard;
+using SyncedConfig;
+
+namespace EliteCreaturesPack
+{
+    /// <summary>
+    /// The plugin entry point. It binds the settings (synced from the server and lockable), applies every patch, has
+    /// each creature build its prefabs whenever the game's network scene wakes, and starts the .cfg hot reload. The
+    /// creatures live in their own folders: <c>Mimic</c>, <c>Slinger</c>, <c>RimeGiant</c>, <c>Kraken</c>.
+    /// </summary>
+    [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+    public class EliteCreaturesPack : BaseUnityPlugin
+    {
+        public const string PluginGuid = "com.EliteCreaturesPack";
+        public const string PluginName = "Elite Creatures Pack";
+        public const string PluginVersion = "0.1.0";
+
+        public static SyncedConfiguration Synced { get; private set; } = null!;
+
+        private void Awake()
+        {
+            Log.Bind(Logger);
+            Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
+            Settings.Initialize(Synced);
+
+            Harmony harmony = new Harmony(PluginGuid);
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            MimicPrefabs.Install(harmony);
+            SlingerPrefabs.Install(harmony);
+            RimeGiantPrefabs.Install(harmony);
+            KrakenPrefabs.Install(harmony);
+
+            // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
+            Synced.Finish(harmony);
+
+            // Exceptions thrown by this mod's patches are logged under this mod's log source, then rethrown.
+            Guard.Install(harmony, Logger, Assembly.GetExecutingAssembly());
+            Logger.LogInfo($"{PluginName} {PluginVersion} ready.");
+        }
+    }
+}
