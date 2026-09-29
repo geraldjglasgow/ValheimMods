@@ -1,0 +1,132 @@
+"""The tacklebox's inventory icon: out/icon.png, 128 x 128 with a transparent background, the box alone in a
+three-quarter view from the front and a little above (the lid, the handle with its wound line, the clasp and the
+float on the right end in sight), softly lit like the game's item icons. Preview output, never part of the bundle.
+Adapted from the Deerhide Satchel's icon.py. When final, copy out/icon.png to the asset folder (builds wipe out/).
+
+    blender --background --factory-startup --python assets/<tacklebox>/icon.py
+
+Loads out/<tacklebox>.blend (building it first when it is missing), renders at 512 with an orthographic camera fitted
+to the box's outline (small margin), then box-filters down to 128 in linear light with premultiplied alpha, so the
+edges stay clean. The 512 render is kept as out/icon_512.png.
+
+The same file sits in all four tacklebox folders (driftwood, finewood, carapace, flametal); change them together.
+"""
+import math
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.dont_write_bytecode = True
+sys.path[:0] = [HERE, os.path.join(HERE, "..", "..", "blender")]
+
+import bpy  # noqa: E402
+import numpy as np  # noqa: E402
+from mathutils import Vector  # noqa: E402
+
+from workshop import export, pipeline  # noqa: E402
+
+NAME = os.path.basename(HERE)
+OUT = os.path.join(HERE, "out")
+RENDER, SIZE, MARGIN = 512, 128, 0.04
+VIEW = Vector((0.85, -1.0, 0.75))     # towards the camera: in front, a little to the right (the float's end), above
+
+
+def main():
+    box = _box()
+    _stage()
+    _frame(_camera(), box)
+    big = os.path.join(OUT, "icon_512.png")
+    bpy.context.scene.render.filepath = big
+    bpy.ops.render.render(write_still=True)
+    _shrink(big, os.path.join(OUT, "icon.png"))
+    print("ICON wrote", os.path.join(OUT, "icon.png"))
+
+
+def _box():
+    blend = os.path.join(OUT, NAME + ".blend")
+    if not os.path.exists(blend):
+        pipeline.run(HERE, render_preview=False)
+    bpy.ops.wm.open_mainfile(filepath=blend)
+    box = bpy.data.objects[NAME]
+    for mat in box.data.materials:      # matte, as the game's icons are
+        next(n for n in mat.node_tree.nodes if n.bl_idname == 'ShaderNodeBsdfPrincipled').inputs[
+            'Roughness'].default_value = 0.8
+    return box
+
+
+def _stage():
+    s = bpy.context.scene
+    s.render.engine = 'BLENDER_EEVEE'
+    s.eevee.taa_render_samples = 64
+    s.render.resolution_x = s.render.resolution_y = RENDER
+    s.render.film_transparent = True
+    s.render.image_settings.color_mode = 'RGBA'
+    s.view_settings.view_transform = 'Standard'
+    s.world = bpy.data.worlds.new("icon")
+    background = next(n for n in s.world.node_tree.nodes if n.bl_idname == 'ShaderNodeBackground')
+    background.inputs['Color'].default_value = (0.55, 0.58, 0.62, 1.0)
+    background.inputs['Strength'].default_value = 0.5
+    _light("key", 4.2, 12, (math.radians(40), 0.0, math.radians(-25)))    # from above, over the camera's left
+    _light("fill", 1.1, 30, (math.radians(70), 0.0, math.radians(80)))    # from the right, low
+    _light("rim", 2.0, 8, (math.radians(-55), 0.0, math.radians(-20)))    # from behind the box, for its outline
+
+
+def _light(name, energy, spread, rotation):
+    light = bpy.data.lights.new(name, 'SUN')
+    light.energy = energy
+    light.angle = math.radians(spread)
+    obj = bpy.data.objects.new(name, light)
+    bpy.context.scene.collection.objects.link(obj)
+    obj.rotation_euler = rotation
+
+
+def _camera():
+    camera = bpy.data.objects.new("icon_camera", bpy.data.cameras.new("icon_camera"))
+    bpy.context.scene.collection.objects.link(camera)
+    bpy.context.scene.camera = camera
+    camera.data.type = 'ORTHO'
+    return camera
+
+
+def _frame(camera, box):
+    """Points the camera along VIEW and fits the box's outline into the frame with MARGIN on the longer side."""
+    direction = VIEW.normalized()
+    camera.rotation_euler = (-direction).to_track_quat('-Z', 'Y').to_euler()
+    turn = camera.rotation_euler.to_matrix()
+    right, up = turn.col[0], turn.col[1]
+    points = [box.matrix_world @ v.co for v in box.data.vertices]
+    across, rise = [p.dot(right) for p in points], [p.dot(up) for p in points]
+    middle = right * (max(across) + min(across)) / 2 + up * (max(rise) + min(rise)) / 2
+    depth = sum((p.dot(direction) for p in points)) / len(points)
+    camera.data.ortho_scale = max(max(across) - min(across), max(rise) - min(rise)) / (1 - 2 * MARGIN)
+    camera.location = middle + direction * (depth + 3.0)
+    camera.data.clip_start, camera.data.clip_end = 0.1, 10.0
+
+
+def _shrink(path, out):
+    """Box filter from RENDER to SIZE: colour to linear light and premultiplied by alpha, averaged, then back."""
+    image = bpy.data.images.load(path)
+    pixels = np.empty(RENDER * RENDER * 4, np.float32)
+    image.pixels.foreach_get(pixels)
+    pixels = pixels.reshape(RENDER, RENDER, 4)
+    alpha = pixels[..., 3:4]
+    colour = _linear(pixels[..., :3]) * alpha
+    step = RENDER // SIZE
+    colour = colour.reshape(SIZE, step, SIZE, step, 3).mean(axis=(1, 3))
+    alpha = alpha.reshape(SIZE, step, SIZE, step, 1).mean(axis=(1, 3))
+    colour = _encoded(np.where(alpha > 1e-4, colour / np.maximum(alpha, 1e-4), 0.0))
+    small = bpy.data.images.new("icon", SIZE, SIZE, alpha=True)
+    small.pixels.foreach_set(np.concatenate([colour, alpha], axis=2).astype(np.float32).ravel())
+    export.png(small, out)
+
+
+def _linear(srgb):
+    return np.where(srgb <= 0.04045, srgb / 12.92, ((srgb + 0.055) / 1.055) ** 2.4)
+
+
+def _encoded(linear):
+    linear = np.clip(linear, 0.0, 1.0)
+    return np.where(linear <= 0.0031308, linear * 12.92, 1.055 * linear ** (1 / 2.4) - 0.055)
+
+
+main()
