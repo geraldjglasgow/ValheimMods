@@ -2,6 +2,7 @@ using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
+using EliteCreaturesReborn.Util;
 using EliteCreaturesReborn.Visuals;
 using PatchGuard;
 using UnityEngine;
@@ -11,8 +12,9 @@ namespace EliteCreaturesReborn.Runtime
     /// <summary>
     /// The per-creature calls routed through a creature's own ZNetView, because that channel is the one the engine
     /// scopes to the clients that actually hold the creature. One is an owner-directed command - "you devoured this, take
-    /// it" (to the devourer's owner, where its ZDO and health live). The other is a scoped effect broadcast - the Warding
-    /// reflect flash - which every client holding the creature draws and no one else receives, unlike the world-wide bus
+    /// it" (to the devourer's owner, where its ZDO and health live, and where the meal joins its meal list). The other is
+    /// a scoped effect broadcast - the Warding reflect flash, the devour tell and the other one-shot tells - which every
+    /// client holding the creature draws and no one else receives, unlike the world-wide bus
     /// in <see cref="EliteRpc"/>. Two more owner-directed commands serve the boss aspects: a Twin's share of its
     /// partner's lost health, and a Phantom copy's dismissal when its boss dies. (The prey pin is not here: a bite pins
     /// the prey directly on the prey's own owner, which is the same machine the hit resolves on, so it needs no
@@ -26,12 +28,21 @@ namespace EliteCreaturesReborn.Runtime
         public const string TwinShare = "ecr_twin_share";
         public const string VanishCall = "ecr_vanish";
 
+        /// <summary>The flash role of the devour tell, as it travels over the effect bus.</summary>
+        public const string DevourRole = "devour";
+
+        /// <summary>
+        /// The devour tell is drawn at a fifth of the size the plain flash gives it, every part of it (the user found it
+        /// far too big). Visual only; every client draws its own copy the same way, so every client sees the small one.
+        /// </summary>
+        private const float DevourTellScale = 0.2f;
+
         /// <summary>Registers all handlers on a creature, capturing its own Character/controller. Called once per creature.</summary>
         public static void Register(ZNetView nview, Character character, EliteController controller)
         {
             // The command handler runs on THIS creature's owner - that is where a no-target routed call is delivered.
-            nview.Register<float, float>(Devour,
-                (sender, health, damage) => ApplyAbsorb(character, controller, health, damage));
+            nview.Register<float, float, int>(Devour,
+                (sender, health, damage, meal) => ApplyAbsorb(character, controller, health, damage, meal));
             // The flash handler runs on EVERY client holding the creature, drawing a pure cosmetic; nobody gates it.
             nview.Register<Vector3, float, string>(Flash, (sender, pos, radius, role) => DrawFlash(pos, radius, role));
             // Twin's share of a partner's lost health, and a Phantom copy's dismissal: both commands to this owner.
@@ -86,10 +97,24 @@ namespace EliteCreaturesReborn.Runtime
         }
 
         private static void DrawFlash(Vector3 pos, float radius, string role) =>
-            Guard.Run("CreatureRpc.Flash", () => CosmeticClone.Flash(EffectResolver.ForRole(role), pos, radius));
+            Guard.Run("CreatureRpc.Flash", () => DrawRole(pos, radius, role));
 
-        /// <summary>Devourer-owner-side: bank a kill's health and damage. Routed to the owner from wherever the kill resolved.</summary>
-        public static void Absorb(Character killer, float health, float damage)
+        private static void DrawRole(Vector3 pos, float radius, string role)
+        {
+            GameObject? prefab = EffectResolver.ForRole(role);
+            if (role == DevourRole)
+            {
+                CosmeticClone.FlashScaled(prefab, pos, radius, DevourTellScale);
+                return;
+            }
+            CosmeticClone.Flash(prefab, pos, radius);
+        }
+
+        /// <summary>
+        /// Devourer-owner-side: bank a kill's health and damage, and the eaten creature's prefab (<paramref name="meal"/>)
+        /// in its meal list. Routed to the owner from wherever the kill resolved.
+        /// </summary>
+        public static void Absorb(Character killer, float health, float damage, int meal)
         {
             ZNetView nview = killer.GetComponent<ZNetView>();
             if (nview == null || !nview.IsValid())
@@ -98,22 +123,30 @@ namespace EliteCreaturesReborn.Runtime
             }
             if (nview.IsOwner())
             {
-                ApplyAbsorb(killer, killer.GetComponent<EliteController>(), health, damage);
+                ApplyAbsorb(killer, killer.GetComponent<EliteController>(), health, damage, meal);
                 return;
             }
-            nview.InvokeRPC(Devour, health, damage); // targets the ZDO owner
+            nview.InvokeRPC(Devour, health, damage, meal); // targets the ZDO owner
         }
 
-        private static void ApplyAbsorb(Character killer, EliteController controller, float health, float damage) =>
-            Guard.Run("CreatureRpc.Absorb", () => Bank(killer, controller, health, damage));
+        private static void ApplyAbsorb(Character killer, EliteController controller, float health, float damage, int meal) =>
+            Guard.Run("CreatureRpc.Absorb", () => Bank(killer, controller, health, damage, meal));
 
-        private static void Bank(Character killer, EliteController controller, float health, float damage)
+        // The owner re-checks the allowance before banking: one swing can bite two creatures before the first meal is
+        // banked, and a meal past the allowance is not kept - the prey is gone, but the devourer gains nothing from it.
+        private static void Bank(Character killer, EliteController controller, float health, float damage, int meal)
         {
             if (killer == null || controller == null || !controller.IsOwner())
             {
                 return;
             }
             ZDO zdo = controller.View.GetZDO();
+            if (DevourLimits.Sated(controller))
+            {
+                Log.Diag($"{killer.name} has eaten its {MealStore.Count(zdo)}; this meal is not banked");
+                return;
+            }
+            MealStore.Add(zdo, meal);
             TraitStore.AddDevoured(zdo, health, damage);
             StartCooldown(controller, zdo);
             controller.RefreshHealth();

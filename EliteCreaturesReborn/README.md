@@ -22,14 +22,14 @@ Thirteen, one per creature by default, each with its own colour and its own name
 | Mutation | What it does |
 | --- | --- |
 | Mad | Far faster, half health |
-| Bloated | Double health, explodes two seconds after it dies |
+| Bloated | Double health, explodes 1.7 seconds after it dies |
 | Cloaked | Invisible beyond 10 metres (15 for trolls and lox); drakes are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
 | Plated | Armoured while healthy, hits harder as that armour goes |
 | Miasmic | Trails poison clouds; poisons players, never creatures |
-| Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you |
+| Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you. It eats only creatures with at most 125% of its own health, one per star in its life (at least one), and shows each one it ate on its nameplate |
 | Thieving | Steals an item with each melee hit that lands (not thrown stones, not a parried or dodged blow), up to one per star (at least one), and carries them on its nameplate; kill it to get everything back |
 | Gilded | Glitters gold, never attacks a player and runs from any it sees; drops three times its loot plus a purse of coins |
 | Blinking | Every 30 seconds of a fight it reappears behind its target, after a flash and a chime at the spot; 25% less health |
@@ -44,7 +44,7 @@ numbers. A field marked (enhanced) is multiplied by `large star power` on a larg
 Any mutation can also be switched off entirely with `mutations enabled`, regardless of its chance curves.
 
 - **Mad** - `move`/`attack speed` multipliers (enhanced); `health` multiplier, its cost
-- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, 2 by default; the blast goes
+- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, 1.7 by default; the blast goes
   off at the corpse's resting place and the corpse goes with it, dropping its loot there; `damage` (enhanced) and
   `radius` (enhanced) of the blast; `blast effect`/`warning effect` vanilla prefabs for the explosion and the smoke
   that rides the corpse until it blows, `blast sound` the vanilla sound it goes off with (`elite effects <text>`
@@ -73,7 +73,12 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   kill always lands the killing blow, so the full amount is kept); `slow per 100 health`, its cost;
   `move` base speed multiplier before the slow (`0.5` halves it; not enhanced);
   `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
-  `devour cooldown` seconds after a meal before it can eat again
+  `devour cooldown` seconds after a meal before it can eat again; `max prey health` the most current health a creature
+  may have for it to hunt and eat it, as a percent of its own current health, 125 by default (0 lifts the limit; not
+  enhanced); `min meals` the fewest creatures it eats in its life whatever its stars, 1 by default (not enhanced) - it
+  eats one per star, and once it has eaten them all it is sated: it eats nothing more and behaves like any creature of
+  its kind. Its nameplate shows each creature it ate, by that creature's trophy (a horned monster head for one with no
+  trophy)
 - **Thieving** - it holds one item per star; `max items` is the fewest it holds whatever its stars (enhanced),
   and 8 is the most. It never takes equipped gear or more than one item per landed melee hit, and gives back everything
   it holds when it is killed. With PackPanel it takes only from your main grid, never from PackPanel's slots (gear,
@@ -207,8 +212,8 @@ economy you want, and drop the rules it writes back into the file.
 Two files, both written and documented on first run, both hot-reloaded while you play:
 
 - `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` — each player's display preferences: star colours and sizes,
-  whether trait names show, nameplate distance, effect density, stolen-item icons, the boss damage board, the world
-  tier plate and the tier box under the minimap, and a diagnostics switch.
+  whether trait names show, nameplate distance, effect density, stolen-item and devoured-creature icons, the boss
+  damage board, the world tier plate and the tier box under the minimap, and a diagnostics switch.
 - `BepInEx/config/creature_rules.yml` — the rules: star chances, star power, mutation chances and strength per biome
   and per creature, a `mutations enabled` switch that turns any mutation off everywhere, and the boss stars and
   aspects, world tiers, breeding, loot and respawning blocks, each with its own off switch.
@@ -243,7 +248,7 @@ never Cloaked.
 | Command | Does |
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin` |
-| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair |
+| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair, with what a Thieving creature carries and what a Devouring creature has eaten ("devoured 1 of 2: Boar") |
 | `elite purge [radius]` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first). With a radius in metres, only those that close to you: `elite purge 30` |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |

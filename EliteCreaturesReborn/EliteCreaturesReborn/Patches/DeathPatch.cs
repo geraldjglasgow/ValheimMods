@@ -181,7 +181,7 @@ namespace EliteCreaturesReborn.Patches
             float damage = EstimateDamage(snap.Victim, snap.MaxHealth)
                 * Enhance.Magnitude(kc.Rules, kc.Traits, Mutation.Devouring, Fields.AbsorbDamage) / 100f;
             Log.Diag($"{devourer.name} devoured {snap.Victim.name}: +hp={health:0.#} +dmg={damage:0.#}");
-            CreatureRpc.Absorb(devourer, health, damage);
+            CreatureRpc.Absorb(devourer, health, damage, snap.PrefabHash); // the prefab is what its nameplate shows it ate
         }
 
         private static float EstimateDamage(Character victim, float maxHealth)

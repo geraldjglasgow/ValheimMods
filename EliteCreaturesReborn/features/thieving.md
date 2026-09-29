@@ -293,6 +293,9 @@ from across the clearing.** This is the mutation's real display: the star colour
 - **Every client draws the same icons**, from the ZDO, whether or not it owns the creature.
 - **A Cloaked Thieving creature's icons hide and fade with the rest of its plate.** Cloaked is the one that makes
   this mutation genuinely nasty and nothing here may undo it.
+- **A creature that is Devouring as well** keeps these at the right edge; the creatures it has eaten are drawn the
+  same way just left of them, in whatever room is left (`mutations.md`, "Devouring, in full"). Both rows share one
+  layout (`Display/IconRow.cs`).
 
 How many icons show with a full pouch, at the default star and icon sizes:
 

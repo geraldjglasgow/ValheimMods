@@ -27,13 +27,20 @@ namespace EliteCreaturesReborn.Commands
                 Mutation.Warding => $"Warding: reflect {Enhance.Magnitude(r, t, m, Fields.Reflect):0.0}%, at most {r.PowerOf(m, Fields.MaxReflect):0.0}% of the attacker's max hp per second, knockback {Enhance.Magnitude(r, t, m, Fields.Knockback):0.0}{tag}",
                 Mutation.Plated => $"Plated: {DamageMath.PlatedPercent(r, t):0}% damage cut at full hp (hard cap {r.PowerOf(m, Fields.MaxReduction):0}%), damage +{Enhance.Magnitude(r, t, m, Fields.Damage):0}% at empty{tag}",
                 Mutation.Miasmic => $"Miasmic: poison str {Enhance.Magnitude(r, t, m, Fields.CloudDamage):0.0}, {Enhance.Magnitude(r, t, m, Fields.CloudsPerSecond):0.00} clouds/s, life {r.PowerOf(m, Fields.CloudLife):0.0}s, r{r.PowerOf(m, Fields.CloudRadius):0.0}{tag}",
-                Mutation.Devouring => $"Devouring: absorb {Enhance.Magnitude(r, t, m, Fields.AbsorbHealth):0}% hp / {Enhance.Magnitude(r, t, m, Fields.AbsorbDamage):0}% dmg, slow {r.PowerOf(m, Fields.SlowPer100Health):0.0}%/100hp, hunts at {r.PowerOf(m, Fields.PlayerThreshold):0.00}x player hp, cooldown {r.PowerOf(m, Fields.DevourCooldown):0}s{tag}",
+                Mutation.Devouring => $"Devouring: absorb {Enhance.Magnitude(r, t, m, Fields.AbsorbHealth):0}% hp / {Enhance.Magnitude(r, t, m, Fields.AbsorbDamage):0}% dmg, slow {r.PowerOf(m, Fields.SlowPer100Health):0.0}%/100hp, hunts at {r.PowerOf(m, Fields.PlayerThreshold):0.00}x player hp, cooldown {r.PowerOf(m, Fields.DevourCooldown):0}s, eats {DevourLimits.Allowance(r, t)} (one per star, at least min meals {r.PowerOf(m, Fields.MinMeals):0}) {PreySize(r)}{tag}",
                 Mutation.Thieving => $"Thieving: holds {PouchStore.ResolvedMaxItems(r, t)} (one per star, at least max items {Enhance.Stat(r, t, m, Fields.MaxItems):0}; hard cap {PouchStore.HardCap}){tag}",
                 Mutation.Gilded => $"Gilded: loot x{Enhance.Stat(r, t, m, Fields.Loot):0.0} + {System.Math.Min(System.Math.Round(Enhance.Magnitude(r, t, m, Fields.BonusAmount) * (1 + t.Stars)), Loot.DropRoller.AmountCap):0} {r.PrefabOf(m, Fields.BonusItem)} (none when tamed), flees players within {r.PowerOf(m, Fields.FleeDistance):0}m{tag}",
                 Mutation.Blinking => $"Blinking: every {r.PowerOf(m, Fields.Every):0}s in combat, {r.PowerOf(m, Fields.Distance):0.0}m behind its target, {r.PowerOf(m, Fields.TellTime):0.0}s tell, health x{r.PowerOf(m, Fields.Health):0.00}",
                 Mutation.Relentless => $"Relentless: keeps its target to {r.PowerOf(m, Fields.ChaseDistance):0}m, never faster than its base speed",
                 _ => MutationCatalog.Word(m),
             };
+        }
+
+        // Devouring's `max prey health`, where 0 lifts the limit.
+        private static string PreySize(BiomeRules r)
+        {
+            float percent = r.PowerOf(Mutation.Devouring, Fields.MaxPreyHealth);
+            return percent > 0f ? $"no bigger than {percent:0}% of its health" : "of any size";
         }
     }
 }

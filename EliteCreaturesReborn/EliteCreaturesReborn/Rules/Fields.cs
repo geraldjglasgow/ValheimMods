@@ -71,6 +71,8 @@ namespace EliteCreaturesReborn.Rules
         public const string SlowPer100Health = "slow per 100 health";
         public const string PlayerThreshold = "player threshold";
         public const string DevourCooldown = "devour cooldown";
+        public const string MaxPreyHealth = "max prey health";
+        public const string MinMeals = "min meals";
 
         // Thieving
         public const string MaxItems = "max items";

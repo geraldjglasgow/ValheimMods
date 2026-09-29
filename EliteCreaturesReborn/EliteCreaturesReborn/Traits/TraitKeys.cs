@@ -63,6 +63,11 @@ namespace EliteCreaturesReborn.Traits
         /// it survives a handover. Set only on a genuine devour, so the prey's death path feeds that devourer and no other.</summary>
         public const string DevouredBy = "ecr_devoured_by";
 
+        /// <summary>Devouring: what this devourer has eaten, oldest first, as the eaten creatures' prefab hashes packed four
+        /// bytes each (see <c>Mutations.MealStore</c>). Its length is the meal count the one-per-star limit reads, and every
+        /// client draws the eaten creatures on the nameplate from it. Written only by the devourer's owner.</summary>
+        public const string DevouredMeals = "ecr_dev_meals";
+
         /// <summary>Thieving: the pouch of stolen items, as one packed byte array. Owner-written, everyone-read, so the
         /// nameplate icons and `elite inspect` agree with what the creature actually holds on every machine.</summary>
         public const string Pouch = "ecr_stolen";

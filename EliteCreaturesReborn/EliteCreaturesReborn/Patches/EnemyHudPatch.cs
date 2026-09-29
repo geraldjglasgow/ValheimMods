@@ -16,7 +16,8 @@ namespace EliteCreaturesReborn.Patches
     /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count - on
     /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite. A
     /// Phantom copy's boss bar gets no star row: it is gathered instead and laid out small under the boss's own bar by
-    /// <see cref="PhantomBars"/>.
+    /// <see cref="PhantomBars"/>. It also adds the icon rows on the star row's line: what a Thieving creature carries
+    /// (<see cref="PouchIcons"/>) and what a Devouring creature has eaten (<see cref="MealIcons"/>).
     /// </summary>
     [HarmonyPatch(typeof(EnemyHud), "UpdateHuds")]
     public static class EnemyHudPatch
@@ -64,7 +65,8 @@ namespace EliteCreaturesReborn.Patches
                 HideVanillaBadges(gui);
                 EnsureRow(gui, character);
             }
-            EnsurePouchIcons(gui, character);
+            EnsureIcons<PouchIcons>(gui, character, Config.Configuration.ShowStolenItems.Value, Mutation.Thieving);
+            EnsureIcons<MealIcons>(gui, character, Config.Configuration.ShowDevouredCreatures.Value, Mutation.Devouring);
         }
 
         private static bool IsElite(Character character)
@@ -102,20 +104,23 @@ namespace EliteCreaturesReborn.Patches
             gui.AddComponent<StarRow>().Init(character, sprite, bar);
         }
 
-        private static void EnsurePouchIcons(GameObject gui, Character character)
+        // A mutation's icon row on the nameplate - what a thief carries, what a devourer has eaten - added once, when the
+        // player shows it and the creature carries the mutation.
+        private static void EnsureIcons<T>(GameObject gui, Character character, bool shown, Mutation mutation)
+            where T : MonoBehaviour, IPlateIcons
         {
-            if (!Config.Configuration.ShowStolenItems.Value || gui.GetComponent<PouchIcons>() != null)
+            if (!shown || gui.GetComponent<T>() != null)
             {
                 return;
             }
             EliteController controller = character.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready || !controller.Traits.Has(Mutation.Thieving))
+            if (controller == null || !controller.Ready || !controller.Traits.Has(mutation))
             {
                 return;
             }
             if (gui.transform.Find("Health") is RectTransform bar)
             {
-                gui.AddComponent<PouchIcons>().Init(character, bar);
+                gui.AddComponent<T>().Init(character, bar);
             }
         }
 

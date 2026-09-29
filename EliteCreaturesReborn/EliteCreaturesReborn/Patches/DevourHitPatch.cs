@@ -11,7 +11,10 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// The Devouring bite, resolved on the VICTIM's owner - where RPC_Damage runs and whose ZDO writes stick. A landed
-    /// attack on a non-boss creature is an instant kill when the devourer is off its cooldown:
+    /// attack on a non-boss creature is an instant kill when the devourer is off its cooldown, has not yet eaten its one
+    /// creature per star, and the prey's current health is within `max prey health` percent of its own (see
+    /// <see cref="DevourLimits"/>; all three are read from the two creatures' replicated ZDOs, so no routing is needed).
+    /// Any other landed attack is an ordinary hit:
     /// <list type="bullet">
     /// <item>The <b>prefix</b> commits the kill before vanilla resolves the hit - it marks the prey with the devourer's id
     /// (so the prey's death path feeds that one devourer, see <see cref="DeathPatch"/>) and fires the sound-and-effect
@@ -44,15 +47,16 @@ namespace EliteCreaturesReborn.Patches
             {
                 return; // prey is other creatures only; a player is never devoured
             }
-            Character? devourer = ReadyDevourer(hit);
+            Character? devourer = ReadyDevourer(prey, hit);
             if (devourer != null)
             {
                 Devour(prey, nview, devourer);
             }
         }
 
-        // The attacker if it is a resolved Devouring creature that is off its cooldown; null otherwise.
-        private static Character? ReadyDevourer(HitData hit)
+        // The attacker if it is a resolved Devouring creature that is off its cooldown, still hungry, and big enough for
+        // this prey (its health read before this hit lands); null otherwise.
+        private static Character? ReadyDevourer(Character prey, HitData hit)
         {
             Character attacker = hit.GetAttacker();
             EliteController? dc = attacker != null ? attacker.GetComponent<EliteController>() : null;
@@ -60,7 +64,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 return null;
             }
-            return OffCooldown(attacker) ? attacker : null;
+            return OffCooldown(attacker) && DevourLimits.MayEat(dc, prey) ? attacker : null;
         }
 
         private static bool OffCooldown(Character devourer)
@@ -76,7 +80,7 @@ namespace EliteCreaturesReborn.Patches
             // The tell rides the DEVOURER's own ZNetView, so every client that can see the fight draws and hears it at the
             // prey - a distant player watches the creature cease. Scoped by the engine to clients holding the devourer.
             CreatureRpc.FireFlash(devourer.GetComponent<ZNetView>(), prey.GetCenterPoint(),
-                Mathf.Max(prey.GetRadius() * 2f, 2f), "devour");
+                Mathf.Max(prey.GetRadius() * 2f, 2f), CreatureRpc.DevourRole);
             Log.Diag($"{devourer.name} devours {prey.name} in one bite");
         }
 

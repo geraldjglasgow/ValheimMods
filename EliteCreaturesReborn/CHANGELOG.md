@@ -1,5 +1,29 @@
 # Changelog
 
+## 3.13.0
+
+- **Devouring eats only what it can swallow.** A Devouring creature eats a creature only when that creature has at
+  most 125% of its own current health. It does not hunt anything bigger, and a blow that lands on a bigger creature
+  is an ordinary hit; toward one it behaves as its kind would. Both healths are read at the moment of the bite, so a
+  wounded devourer's reach shrinks and a hurt creature comes within it. The new `max prey health` field sets the
+  percent, and `0` lifts the limit.
+- **Devouring eats one creature per star.** A 2-star devourer eats two creatures in its life, and an unstarred one
+  still eats one (the new `min meals` field, 1 by default). Once it has eaten them all it is sated: it eats nothing
+  more and behaves like any creature of its kind, and it keeps everything it absorbed. One that already hunts players
+  goes on hunting them. The count stays with the creature through a reload and a hand-over to another player. A
+  devourer already in your world counts only what it eats from now on.
+- **You can see what a devourer has eaten.** Its nameplate shows one icon per creature it ate: that creature's
+  trophy, or the game's horned monster head for one with no trophy, such as a greyling or a hen. A creature that is
+  Thieving too shows its stolen items at the right and its meals just left of them, and a Cloaked one hides them with
+  its nameplate. `Show devoured creatures` and `Devoured creature icon size` in the .cfg (on, 1.6, client side) govern
+  them, and `elite inspect` lists what it ate against how many it may ("devoured 1 of 2: Boar").
+- **The devour flash is a fifth of its size.** The burst when a creature is devoured covered the whole scene; now
+  every part of it is drawn at a fifth of the size, and the screen shake it carries is felt only close by, and
+  gently. The sound is unchanged.
+- **Bloated's fuse is 1.7 seconds**, down from two. A `creature_rules.yml` written by an older version keeps its own
+  `delay: 2.0`; change that line to have the shorter fuse. The two new Devouring fields work from their defaults
+  either way.
+
 ## 3.12.0
 
 - **The world tier shows under the minimap.** A small box with the globe and the tier sits right under the minimap,

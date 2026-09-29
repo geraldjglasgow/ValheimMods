@@ -46,14 +46,42 @@ namespace EliteCreaturesReborn.Commands
             {
                 EliteCommands.Reply(args, "  " + MutationReport.Line(r, t, m));
             }
-            if (t.Has(Mutation.Thieving))
-            {
-                EliteCommands.Reply(args, "  " + PouchLine(controller));
-            }
+            HoldingLines(args, controller);
             if (c.IsBoss())
             {
                 AspectReport.Lines(controller).ForEach(line => EliteCommands.Reply(args, "  " + line));
             }
+        }
+
+        // What it holds on its ZDO: a thief's pouch, a devourer's meals.
+        private static void HoldingLines(Terminal.ConsoleEventArgs args, EliteController controller)
+        {
+            if (controller.Traits.Has(Mutation.Thieving))
+            {
+                EliteCommands.Reply(args, "  " + PouchLine(controller));
+            }
+            if (controller.Traits.Has(Mutation.Devouring))
+            {
+                EliteCommands.Reply(args, "  " + MealLine(controller));
+            }
+        }
+
+        // The meal list the nameplate icons are drawn from, by prefab name, against the allowance the bite checks.
+        private static string MealLine(EliteController controller)
+        {
+            List<int> meals = MealStore.Load(controller.View.GetZDO());
+            string ate = $"devoured {meals.Count} of {DevourLimits.Allowance(controller.Rules, controller.Traits)}";
+            if (meals.Count == 0)
+            {
+                return ate + ": nothing yet";
+            }
+            List<string> names = new List<string>();
+            foreach (int prefabHash in meals)
+            {
+                GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(prefabHash) : null;
+                names.Add(prefab != null ? prefab.name : $"unknown ({prefabHash})");
+            }
+            return ate + ": " + string.Join(", ", names);
         }
 
         // The only way to check the icon on the nameplate matches what the ZDO actually holds - the gap between the

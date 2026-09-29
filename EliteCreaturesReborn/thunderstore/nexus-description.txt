@@ -14,14 +14,14 @@ This version is a rebuild from scratch and is not an update to earlier releases:
 Thirteen, one per creature by default, each with its own colour and its own word before the creature's name.
 [list]
 [*][b]Mad[/b] - far faster, half health.
-[*][b]Bloated[/b] - double health, explodes two seconds after it dies. Smoke rides the corpse until it blows, and the corpse goes with the blast, dropping its loot there.
+[*][b]Bloated[/b] - double health, explodes 1.7 seconds after it dies. Smoke rides the corpse until it blows, and the corpse goes with the blast, dropping its loot there.
 [*][b]Cloaked[/b] - invisible beyond 10 metres (15 for trolls and lox). Drakes are never Cloaked.
 [*][b]Splintering[/b] - splits into two weaker copies when killed, which can split again. A tamed one splits into two tamed copies that keep its name and follow the same player.
 [*][b]Leeching[/b] - regenerates, and heals from the damage it deals.
 [*][b]Warding[/b] - reflects part of each hit back and knocks you back. It reflects the health the hit actually took, without sneak-attack or stagger bonuses, and never more than 7.5% of your maximum health in any second, however many arrows or explosions land.
 [*][b]Plated[/b] - armoured while healthy, hits harder as that armour goes.
 [*][b]Miasmic[/b] - trails poison clouds; poisons players, never creatures.
-[*][b]Devouring[/b] - kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you.
+[*][b]Devouring[/b] - kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you. It eats only creatures with at most 125% of its own health, one per star in its life (at least one), and then is sated. Each creature it ate shows on its nameplate as that creature's trophy, or a horned monster head for one with no trophy.
 [*][b]Thieving[/b] - steals an item with each melee hit that lands (not thrown stones, not a parried or dodged blow), up to one per star (at least one, eight at most), never equipped gear, and with PackPanel never anything in its slots. Every stolen item shows on its nameplate; kill it and everything drops back out.
 [*][b]Gilded[/b] - the loot goblin, and the rarest. It glitters gold from well beyond nameplate range, never attacks a player, and runs from any player it can see within 30 metres, so sneak up on it. Catch it and it drops three times its loot plus 20 coins for each star plus one, in every loot mode. A tamed one stays calm and drops ordinary loot.
 [*][b]Blinking[/b] - every 30 seconds of a fight it vanishes and reappears 4 metres behind its target, facing it. Half a second before, the spot flashes and chimes, so you can turn in time. It never lands in a wall, off a ledge or anywhere it could not have walked to. 25% less health.
@@ -33,7 +33,7 @@ Every number is a field in the rule file, and any mutation can be switched off t
 Beyond vanilla's two, counted in fives on the nameplate: a small star is one, a large star is five. A mutation on a large star is stronger. Star chances and mutation chances are set per biome, so the Meadows stay the Meadows. Bosses have their own star table, and a boss's stars are drawn under its health bar.
 
 [size=4][b]World tiers[/b][/size]
-The world starts at tier 0 and goes up one tier the first time each boss is defeated - by anyone, in any order - so the seven bosses take it to tier 7. Killing a boss again changes nothing, and every rise is announced to everyone on the server. Each tier makes stars and mutations more common in every biome while keeping each biome's character: by tier 7 the share of unstarred Meadows creatures falls from 73 in 100 to 44, five-star Plains creatures rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffected, and creatures already alive keep what they rolled. A world that killed bosses before the mod was installed starts at that tier. The inventory shows the tier on a globe plate under the weight, and every plate on that side names itself when hovered. The off switch, which bosses count (modded ones too) and the boost per tier are in the rule file.
+The world starts at tier 0 and goes up one tier the first time each boss is defeated - by anyone, in any order - so the seven bosses take it to tier 7. Killing a boss again changes nothing, and every rise is announced to everyone on the server. Each tier makes stars and mutations more common in every biome while keeping each biome's character: by tier 7 the share of unstarred Meadows creatures falls from 73 in 100 to 44, five-star Plains creatures rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffected, and creatures already alive keep what they rolled. A world that killed bosses before the mod was installed starts at that tier. The inventory shows the tier in a small box with a globe under the armor and weight, every box in that column names itself when hovered, and a second box under the minimap keeps the tier in view. The off switch, which bosses count (modded ones too) and the boost per tier are in the rule file.
 
 [size=4][b]Breeding[/b][/size]
 Tamed creatures keep their traits and pass them on. A newborn - a pup, a piglet, a calf, or an egg and the chick that hatches from it - takes one of its parents' mutations whenever either has one, and a star count from 0 up to its stronger parent's, every count equally likely. Two plain parents have plain young, so a strong line stays strong only if you keep the good ones. Young creatures keep their traits when they grow up, and eggs keep theirs when carried and say what they will hatch. A bred mutation behaves exactly as it does in the wild - a Miasmic pet still trails poison.
@@ -70,7 +70,7 @@ When a boss dies, everyone on the server sees who fought it: the boss's name and
 For manual install, drop EliteCreaturesReborn.dll into BepInEx/plugins. The mod is standalone: it does not read the config files, save data or API of any other mod. If you used a different creature star mod before, remove it and its config files first.
 
 [size=4][b]Configuration[/b][/size]
-The config file holds each player's display preferences: star colours and sizes, whether trait names show, nameplate distance, effect density, stolen-item icons, the boss damage board and the world tier plate. The rule file holds the rules: star chances and star power, mutation chances and strength per biome and per creature, a switch for each mutation, boss stars and aspects, world tiers, breeding, loot and respawning. Both are written and documented on first run and both hot reload while you play.
+The config file holds each player's display preferences: star colours and sizes, whether trait names show, nameplate distance, effect density, stolen-item and devoured-creature icons, the boss damage board, and the world tier plate and the tier box under the minimap. The rule file holds the rules: star chances and star power, mutation chances and strength per biome and per creature, a switch for each mutation, boss stars and aspects, world tiers, breeding, loot and respawning. Both are written and documented on first run and both hot reload while you play.
 
 A creature can have mutation rules of its own: an entry under [b]creatures:[/b] in the rule file, matched by prefab name, takes [b]mutation chance[/b], [b]mutation chances[/b] and [b]mutation power[/b] just as a biome does, for that creature only, in whatever biome it is in. Everything the entry does not name still comes from the biome, and bosses ignore these entries. This ends Cloaked mosquitoes without changing the rest of the Plains:
 [code]creatures:
@@ -85,9 +85,11 @@ The server's rule file binds every connected player; display preferences stay wi
 Run from the in-game console (F5).
 [code]elite spawn <prefab> <stars> [mutation...]  a creature in front of you with chosen traits, bypassing every roll
                                             (a boss takes one aspect instead: elite spawn Bonemass 2 Twin)
-elite inspect                               the resolved stars, mutations or aspect, and numbers for the creature under your crosshair
-elite purge                                 remove the loaded creatures this mod has marked, with no drops
-                                            (a Thieving creature's stolen goods drop first)
+elite inspect                               the resolved stars, mutations or aspect, and numbers for the creature under your crosshair,
+                                            with what a Thieving creature carries and what a Devouring creature has eaten
+elite purge [radius]                        remove the loaded creatures this mod has marked, with no drops
+                                            (a Thieving creature's stolen goods drop first); with a radius in metres,
+                                            only those that close to you
 elite effects <text>                        list loaded effect prefabs matching the text and play one
 elite reference                             write creature_reference.yml: every creature the game knows, with its drop table
 elite tier                                  the world tier, what it does to the rolls, and which bosses count (any player)

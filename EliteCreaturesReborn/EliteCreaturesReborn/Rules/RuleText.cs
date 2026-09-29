@@ -73,14 +73,14 @@ defaults:
   # the mod's README, under Mutation power fields.
   mutation power:
     Mad:         { move: 1.6, attack speed: 1.5, health: 0.5 }
-    Bloated:     { health: 2.0, delay: 2.0, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
+    Bloated:     { health: 2.0, delay: 1.7, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
     Cloaked:     { reveal distance: 10, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
     Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }
     Warding:     { reflect: 30, knockback: 4, max reflect: 7.5 }
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
-    Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60 }
+    Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60, max prey health: 125, min meals: 1 }
     Thieving:    { max items: 1 }
     Gilded:      { loot: 3, bonus item: Coins, bonus amount: 20, flee distance: 30, glitter effect: vfx_Potion_stamina_medium }
     Blinking:    { health: 0.75, every: 30, distance: 4, tell time: 0.5, blink effect: vfx_ghost_spawn, tell effect: vfx_WishbonePing, tell sound: sfx_WishbonePing_near }

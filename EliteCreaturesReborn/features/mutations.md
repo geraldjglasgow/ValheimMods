@@ -12,7 +12,8 @@ call it says so.
 **Status:** built and shipping in 3.0.0. Verified by build and by reading; not yet tested in a live multiplayer
 session against the checklist in "Testing it honestly" below. Gilded, Blinking and Relentless, per-creature
 mutation rules and the 3.9.0 changes to Bloated, Cloaked, Warding and Splintering are built and not yet tested in
-game.
+game. So are Devouring's two limits (prey no bigger than 125% of its own health, one meal per star), the eaten
+creatures on its nameplate, its devour tell at a fifth of its old size and Bloated's 1.7-second fuse (2026-09-28).
 
 **Bosses never take mutations.** They take stars on their own separate table - see `SPEC-scaling.md`.
 
@@ -40,20 +41,21 @@ here.
 | Mutation | Gains | Costs |
 | --- | --- | --- |
 | Mad | Moves and attacks far faster - +60% movement, +50% attack speed | Half health |
-| Bloated | Double health. On death it smokes for two seconds, then explodes | None |
+| Bloated | Double health. On death it smokes for 1.7 seconds, then explodes | None |
 | Cloaked | Invisible at more than 10 metres (15 for trolls and lox), nameplate included. Never rolled by a drake | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
 | Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health in any one second, and knocks them back on any melee hit | None |
 | Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
 | Miasmic | Leaves a trail of poison clouds as it moves; each cloud lingers 6 seconds then fades | None |
-| Devouring | Eats other creatures and keeps what it takes. See below | Grows slower the more it has eaten |
+| Devouring | Eats other creatures and keeps what it takes - one per star, none with more than 125% of its own health - and wears what it ate on its nameplate. See below | Grows slower the more it has eaten |
 | Thieving | Takes one item from your inventory on each strike that lands, until it holds one per star (never fewer than `max items`, never more than 8), and carries them. See `thieving.md` | None |
 | Gilded | Glitters gold; never attacks a player and runs from any it sees. Drops three times its loot plus a purse of coins. See below | None - it is the player's good luck |
 | Blinking | Every 30 seconds of combat it vanishes and reappears 4 metres behind its target, after a half-second tell at the spot. See below | 25% less health |
 | Relentless | Keeps the target it picked while that target is within 150 metres, seen or not; sneaking does not hide you from it. See below | Never faster than its base speed |
 
-Judgement calls in that table, all tunable: the Mad percentages; Bloated's two-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls and lox, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
+Judgement calls in that table, all tunable: the Mad percentages; Devouring's one meal for an unstarred devourer
+(`min meals`); Bloated's 1.7-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls and lox, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
 and lifesteal rates, its 5-second combat cooldown and its 20 hp/s regen cap - a high-health creature must be
 beatable on regen alone; Warding's 30% reflection and its 7.5% ceiling; Plated running from a 40% damage cut at full health to none at
 zero, hard-capped at 55% so a large star cannot approach invulnerability, while its damage climbs from nothing to
@@ -70,8 +72,9 @@ what to do about it.
 
 ### It eats in one bite
 
-When a Devouring creature lands an attack on **another non-boss creature, that creature dies instantly.** No
-chewing, no health bar, no fight - it is simply gone, and the devourer takes what it was.
+When a Devouring creature lands an attack on **another non-boss creature, that creature dies instantly** - if it
+is small enough and the devourer still has appetite left (the two limits below). No chewing, no health bar, no
+fight - it is simply gone, and the devourer takes what it was.
 
 On that kill it gains, permanently:
 
@@ -84,7 +87,46 @@ a parry; damage is cut hardest because damage is what kills). These accumulate w
 in a busy area still becomes genuinely enormous - and visibly so, because it grows with what it has eaten.
 
 An instant kill needs an unmistakable tell: a sound and an effect at the moment it happens, so a player watching
-from a distance sees a creature simply cease rather than wondering what became of it.
+from a distance sees a creature simply cease rather than wondering what became of it. **The effect is drawn at a
+fifth of the size it had until 2026-09-28** - every part of it: each particle system's size, speed and spread, its
+light, the gaps between its parts and the camera shake it carries (felt within a fifth of the distance, a fifth as
+hard), not only the outer transform, which most of the game's effects ignore. At full size it swallowed the scene
+(the user asked for it 80% smaller): the tell resolves by keyword to the game's `fx_aspect_death`, a boss-sized burst
+of sixteen particle systems, all in `Local` scaling mode, so scaling the copy's root had only ever resized one of
+them. The sound is unchanged. Each client draws its own copy of the tell, so every client sees the small one.
+
+### Only what it can swallow
+
+It eats only a creature whose **current health is at most `max prey health` percent of its own current health** -
+125 by default. Anything bigger is not prey: it does not hunt it, and a blow that lands on one is an ordinary hit.
+Toward a bigger creature it keeps the game's own manners - it fights what its kind fights and fights back when
+attacked - rather than standing defenceless while its blows pass through. Both healths are read at the moment it
+matters, so a wounded devourer's reach shrinks and a creature already hurt comes within it. `0` lifts the limit.
+
+### One creature per star
+
+It eats **one creature per star in its whole life** - a 2-star devourer eats two - and never fewer than `min meals`,
+1 by default, so an unstarred one still eats once (the same floor Thieving's pouch has). The count lives in the
+creature's ZDO with what it ate, so a reload or a hand-over never gives it a fresh appetite.
+
+Once it has eaten them all it is **sated**: it devours nothing more, and it stops treating creatures as prey and
+players as beneath notice - the game's own rules of who fights whom take over, so it behaves like any creature of its
+kind. Whatever it has eaten, it keeps. If it has already grown big enough to hunt players, it hunts them as before.
+
+Judgement calls, made 2026-09-28 where the request was silent: the floor of one meal (a Devouring creature that can
+never eat would wear the name for nothing); what a sated one does (it has nothing left to feed on, so the feeding
+behaviour - ignoring players - ends with it); and that a creature too big to eat gets the game's own treatment
+rather than being ignored outright.
+
+### You can see what it ate
+
+Its nameplate shows **one icon per creature it has eaten**, the way a Thieving creature's shows what it carries: on
+the star row's line, right-justified, oldest leftmost, shrinking to vanilla star size and then dropping the oldest
+when they do not all fit. The icon is the eaten creature's **trophy**, the first trophy in its own drop table; a
+creature with no trophy (a greyling, a hen, many modded creatures) shows the **game's horned monster head**, the
+map's boss-pin sprite. Both come from the game at runtime; nothing is shipped. A creature that is Thieving as well
+shows its pouch at the right edge and its meals just left of it. The icons hide with a Cloaked creature's plate.
+`Show devoured creatures` and `Devoured creature icon size` (1.6) in the display settings govern them.
 
 ### Then it has to wait
 
@@ -128,6 +170,11 @@ for it:
   reload and a player logging out. A local bool resets and the creature goes back to ignoring everyone.
 - **So does everything it has absorbed.** Its accumulated health and damage are already ZDO state; keep them
   there.
+- **So does what it has eaten.** The meal list (`ecr_dev_meals`, the eaten creatures' prefab hashes) is written by
+  the devourer's owner as it banks a meal and read everywhere: the prey's owner checks the one-per-star limit against
+  it at the bite, and every client draws the nameplate icons from it. Both limits are checked where the bite
+  resolves, from the devourer's replicated ZDO, so they need no routing. Because one swing can bite two creatures
+  before the first meal is banked, the owner checks the limit again as it banks, and a meal past it is not kept.
 - **The kill tell is drawn by every nearby client**, not only the owner. A creature vanishing in silence on
   someone else's screen is the invisible-effect failure this spec keeps naming.
 
@@ -149,8 +196,8 @@ knob is deliberately not enhancement-scaled: it is tuning, not power.
 
 ## Bloated, in full
 
-**The fuse is two seconds** (`delay: 2.0`; one second before 3.9.0) - the window a player has to see the smoke and
-get clear.
+**The fuse is 1.7 seconds** (`delay: 1.7`, shortened by 0.3 seconds on 2026-09-28 at the user's request; two
+seconds from 3.9.0, one before that) - the window a player has to see the smoke and get clear.
 
 **The blast goes off at the corpse, not at the place of death.** A creature that dies turns into a ragdoll, and
 in the seconds before it detonates that ragdoll can slide, tumble or roll down a hill. Exploding at the spot
@@ -653,7 +700,7 @@ So:
 
 ### Bloated needs a tell during its delay
 
-The spec calls the two seconds between death and detonation "the window a player has to get clear". A window
+The spec calls the 1.7 seconds between death and detonation "the window a player has to get clear". A window
 nobody can see is not a window. The corpse must visibly and audibly announce what is about to happen for the
 whole delay, at full strength to the end - swelling, glowing, hissing, whatever the chosen effect supports - and
 the blast itself should reuse an existing explosion effect sized to the configured radius (drawn at 70% of that
@@ -683,7 +730,8 @@ purpose of the delay.
   Beyond the fade, Cloaked gets no shimmer, outline or marker - being unable to see it *is* the mutation.
 - **Devouring** should make a held creature obviously held, and should show that it is feeding. A player needs
   to be able to read "that thing is getting stronger right now" from a distance, because deciding whether to
-  interrupt it is the whole encounter.
+  interrupt it is the whole encounter. Its kill tell is drawn at a fifth of its old size, every part of it, and its
+  nameplate carries an icon for each creature it has eaten - see "Devouring, in full".
 - **Warding** should show something at the moment it reflects, at the attacker, so the damage that just came
   back is attributable rather than mysterious. It is a small spark, drawn at a 0.4-metre radius (a fifth of
   the original 2 metres; the Reflective aspect's is 0.3), and only when something was actually reflected.
@@ -802,7 +850,8 @@ the mod being broken.
   updates once, cleanly. It must not flicker, and it must not stay wrong.
 - **Devouring across owners.** A Devouring creature that kills something owned by another machine still absorbs
   it. Route the work to the owner rather than skipping it: skipping means the mutation quietly stops working on
-  a busy server, which is exactly where it matters most.
+  a busy server, which is exactly where it matters most. Its meal count and what it ate travel in its ZDO, so a new
+  owner never gives it a fresh appetite, and every player sees the same eaten-creature icons.
 - **Thieving's two-authority steal.** The robbed player's own client decides and removes the item (their
   Inventory is authoritative nowhere else); the creature's owner decides whether there is room and banks it. See
   `thieving.md` for the full split and the accepted risk window it documents.
@@ -906,14 +955,14 @@ defaults:
   # is explained in the table below this code block.
   mutation power:
     Mad:         { move: 1.6, attack speed: 1.5, health: 0.5 }
-    Bloated:     { health: 2.0, delay: 2.0, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
+    Bloated:     { health: 2.0, delay: 1.7, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
     Cloaked:     { reveal distance: 10, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
     Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }
     Warding:     { reflect: 30, knockback: 4, max reflect: 7.5 }
     Plated:      { armour: 40, damage: 60, max reduction: 55 }
     Miasmic:     { cloud life: 6, cloud damage: 5, clouds per second: 1, cloud radius: 4, cloud effect: vfx_blob_death, body effect: vfx_blob_death }
-    Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60 }
+    Devouring:   { move: 1, absorb health: 50, absorb damage: 25, slow per 100 health: 2, player threshold: 0.333, devour cooldown: 60, max prey health: 125, min meals: 1 }
     Thieving:    { max items: 1 }
     Gilded:      { loot: 3, bonus item: Coins, bonus amount: 20, flee distance: 30, glitter effect: vfx_Potion_stamina_medium }
     Blinking:    { health: 0.75, every: 30, distance: 4, tell time: 0.5, blink effect: vfx_ghost_spawn, tell effect: vfx_WishbonePing, tell sound: sfx_WishbonePing_near }
@@ -1076,7 +1125,7 @@ The implementation must repeat this table as comments inside the generated file.
 | Mad | `attack speed` | Attack and animation speed multiplier. |
 | Mad | `health` | Max health multiplier. `0.5` = half health. This is its cost. |
 | Bloated | `health` | Max health multiplier. |
-| Bloated | `delay` | Seconds between death and the blast - the window a player has to get clear. `2` by default. |
+| Bloated | `delay` | Seconds between death and the blast - the window a player has to get clear. `1.7` by default. |
 | Bloated | `damage` | Blunt damage at 0 stars, multiplied by `(1 + stars)`. |
 | Bloated | `radius` | Blast radius in metres. |
 | Bloated | `blast sound` | The vanilla sound prefab the blast goes off with (added 2026-09-26). |
@@ -1110,6 +1159,8 @@ The implementation must repeat this table as comments inside the generated file.
 | Devouring | `slow per 100 health` | Percent movement speed lost per 100 absorbed health. Its cost. |
 | Devouring | `player threshold` | Fraction of a player's max health its per-hit damage must reach before it hunts players for good. `0.333` = a third. |
 | Devouring | `devour cooldown` | Seconds before it can devour again after a meal. `60` by default. |
+| Devouring | `max prey health` | The most current health a creature may have for it to hunt and eat it, as a percent of its own current health. `125` by default; `0` lifts the limit. |
+| Devouring | `min meals` | The fewest creatures it eats in its life, whatever its stars: it eats one per star, never fewer than this, then is sated. `1` by default. |
 | Thieving | `max items` | The fewest items one creature holds, whatever its stars: it holds one per star, never fewer than this and never more than 8. `1` by default. See `thieving.md`. |
 | Gilded | `loot` | Multiplier on its drops, after the loot mode, in every mode. `3` by default. Read as a stat, so on a large star its bonus above 1 is enhanced. |
 | Gilded | `bonus item` | Item prefab of the purse it drops on top. `Coins` by default. An unknown name pays no purse and logs once. |
@@ -1179,9 +1230,10 @@ want big creatures commoner. The two dials are independent.
   owner always has a complete, documented file to edit rather than a blank one.
 - **An existing file keeps its own numbers.** A file written by an older version is never rewritten: one from
   before 3.9.0 still says `delay: 1.0` and `reveal distance: 6` and has no `creatures:` entries for trolls, lox or
-  drakes until someone edits it or deletes it so a fresh one is written. A mutation the file does not mention at
-  all - Gilded, Blinking and Relentless in such a file - takes its built-in defaults, and Gilded stays rare because
-  its curve is part of the built-in `defaults`.
+  drakes until someone edits it or deletes it so a fresh one is written; one from 3.9.0 to 3.12.0 still says
+  `delay: 2.0`. A mutation the file does not mention at all - Gilded, Blinking and Relentless in such a file - takes
+  its built-in defaults, and Gilded stays rare because its curve is part of the built-in `defaults`. A field the file
+  does not mention does the same: an older file with no `max prey health` or `min meals` gets 125 and 1.
 
 ### Rules for one creature
 
@@ -1420,7 +1472,7 @@ and "enhanced" should mean better at being itself, not worse.
 | Warding | `reflect`, `knockback` | `max reflect` - a ceiling, like Plated's, must not itself scale |
 | Plated | `armour`, `damage` | `max reduction` - the hard cap must not itself scale, or it stops being a cap |
 | Miasmic | `cloud damage`, `clouds per second` | `cloud life`, `cloud radius` |
-| Devouring | `absorb health`, `absorb damage` | `slow per 100 health` (a cost), `player threshold` |
+| Devouring | `absorb health`, `absorb damage` | `slow per 100 health` (a cost), `player threshold`, `max prey health`, `min meals` (limits; the one meal per star is not enhanced, stars already count) |
 | Thieving | `max items` | - (the one item per star is not enhanced; stars already count) |
 | Gilded | `loot`, `bonus amount` | `flee distance`, `bonus item`, `glitter effect` |
 | Blinking | - | all of it; `health` is a cost |
@@ -1455,7 +1507,15 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 - [ ] The thirteen, as specified
 - [ ] Devouring in full, including its multiplayer section
+- [ ] Devouring's size limit: it neither hunts as prey nor devours a creature with more than `max prey health`
+      (125%) of its own current health; a blow that lands on one is an ordinary hit; attacked by one, it fights back;
+      a wounded devourer's reach shrinks
+- [ ] Devouring's appetite: a 2-star devourer eats two and then no more, an unstarred one eats one; once sated it
+      fights like any creature of its kind (attacks players on sight) unless it already hunts players; the count
+      survives a reload, a relog and an ownership hand-over (`elite inspect` shows "devoured N of M")
+- [ ] One swing that catches two prey at once still banks no more meals than the allowance
 - [ ] Bloated in full, including which corpse in multiplayer and the corpse going with the blast
+- [ ] Bloated's fuse is 1.7 seconds on a fresh rule file (an older file keeps its own `delay`)
 - [ ] Miasmic in full - both poison paths, the trail, and harming players only
 - [ ] Splintering in full, including tamed parents splitting into tamed copies
 - [ ] Gilded in full - the glitter, never attacking a player, the flee, the pay-out, tamed ones paying nothing extra
@@ -1468,6 +1528,11 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 - [ ] Miasmic clouds visible for their whole life
 - [ ] Bloated has a tell during its delay
+- [ ] Devouring's kill tell is about a fifth of its old size - particles, spray and any light, not only the core - on
+      the host and on a second client watching
+- [ ] A Devouring creature's nameplate shows one icon per creature eaten: the trophy, or the horned monster head for
+      one with no trophy (greyling, hen); the same icons on every client; meals sit left of a Thieving pouch; hidden
+      with a Cloaked plate; `Show devoured creatures` and `Devoured creature icon size` honoured
 - [ ] The rules for all of them in section "Rules for all of them"
 
 ## Multiplayer
@@ -1491,3 +1556,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-17 | Thieving added as the tenth mutation: table, star colour, large-star enhancement, `mutation power` block, Splintering interaction, and a "cases that must work" line for its two-authority steal. See `thieving.md`. | - |
 | 2026-09-27 | 3.9.0: Gilded, Blinking and Relentless added with their "in full" sections, colours, fields and enhancement rows; per-creature mutation rules and the shipped Troll, Lox and Hatchling entries; Bloated's two-second fuse, full-strength smoke on the body, smaller blast and corpse bursting with it; Cloaked at 10 m; Warding's base hit and `max reflect`; tamed Splintering copies; effects drawn once, locally; the embedded rule file and the mutated-share table brought up to date. Built, not tested in game. | - |
+| 2026-09-28 | Devouring eats only prey with at most `max prey health` (125%) of its own current health and one creature per star (`min meals` 1 as the floor), then is sated; what it ate is kept on its ZDO (`ecr_dev_meals`) and drawn on its nameplate as trophies or the game's monster head, beside a Thieving pouch through a shared icon row; its kill tell is drawn at a fifth of the size, every part (LocalEffects `FlashScaled`); Bloated's fuse 1.7 s. Built, not tested in game. | - |

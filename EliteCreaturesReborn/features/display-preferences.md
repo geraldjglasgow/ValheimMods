@@ -45,6 +45,8 @@ must be the same for both belongs in the gameplay settings instead.
 | **Whether trait names show at all** | Stars without the adjectives, for a player who wants them |
 | **Show stolen items** | Whether a Thieving creature's carried-item icons draw on its nameplate at all (`thieving.md`) |
 | **Stolen item icon size** | Size of those icons as a multiple of vanilla's own star size, **down to off** via the setting above |
+| **Show devoured creatures** | Whether a Devouring creature's nameplate shows an icon for each creature it has eaten - that creature's trophy, or the game's horned monster head for one with no trophy (`mutations.md`) |
+| **Devoured creature icon size** | Size of those icons as a multiple of vanilla's own star size, 1.6 by default, **down to off** via the setting above |
 | **Show world tier** | Whether the inventory's globe plate shows the world tier under the weight (`world-tiers.md`) |
 | **Boss damage board** | Whether the board of who hurt a boss, and by how much, shows when a boss dies - at the far left of the screen, halfway down. `/damage` still shows the latest board on request with this off |
 | **Boss damage board seconds** | How long the board stays on screen, 5 to 600 seconds, 60 by default |

@@ -122,7 +122,7 @@ namespace EliteCreaturesReborn.Rules
                 [Mutation.Mad] = new Dictionary<string, float>
                     { [Fields.Move] = 1.6f, [Fields.AttackSpeed] = 1.5f, [Fields.Health] = 0.5f },
                 [Mutation.Bloated] = new Dictionary<string, float>
-                    { [Fields.Health] = 2.0f, [Fields.Delay] = 2.0f, [Fields.Damage] = 40f, [Fields.Radius] = 4f },
+                    { [Fields.Health] = 2.0f, [Fields.Delay] = 1.7f, [Fields.Damage] = 40f, [Fields.Radius] = 4f },
                 [Mutation.Cloaked] = new Dictionary<string, float>
                     { [Fields.RevealDistance] = 10f, [Fields.FadeTime] = 0.5f, [Fields.FadeMargin] = 1f },
                 [Mutation.Splintering] = new Dictionary<string, float>
@@ -146,7 +146,8 @@ namespace EliteCreaturesReborn.Rules
                   [Fields.CloudRadius] = 4f };
             table[Mutation.Devouring] = new Dictionary<string, float>
                 { [Fields.Move] = 1f, [Fields.AbsorbHealth] = 50f, [Fields.AbsorbDamage] = 25f,
-                  [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f, [Fields.DevourCooldown] = 60f };
+                  [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f, [Fields.DevourCooldown] = 60f,
+                  [Fields.MaxPreyHealth] = 125f, [Fields.MinMeals] = 1f };
             table[Mutation.Thieving] = new Dictionary<string, float> { [Fields.MaxItems] = 1f };
             table[Mutation.Gilded] = new Dictionary<string, float>
                 { [Fields.Loot] = 3f, [Fields.BonusAmount] = 20f, [Fields.FleeDistance] = 30f };

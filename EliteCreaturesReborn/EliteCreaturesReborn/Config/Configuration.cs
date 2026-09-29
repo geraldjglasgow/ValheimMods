@@ -22,6 +22,8 @@ namespace EliteCreaturesReborn.Config
         public static ConfigEntry<float> LargeStarSize = null!;
         public static ConfigEntry<bool> ShowStolenItems = null!;
         public static ConfigEntry<float> StolenIconSize = null!;
+        public static ConfigEntry<bool> ShowDevouredCreatures = null!;
+        public static ConfigEntry<float> DevouredIconSize = null!;
         public static ConfigEntry<bool> ShowBossBoard = null!;
         public static ConfigEntry<float> BossBoardSeconds = null!;
         public static ConfigEntry<bool> ShowWorldTier = null!;
@@ -42,6 +44,16 @@ namespace EliteCreaturesReborn.Config
                     + "turn the hazard off - the poison and the blast still hurt you exactly the same, you just cannot "
                     + "see them coming. Client side; never locked.",
                     new AcceptableValueRange<float>(0f, 1f)));
+            BindNameplate(config);
+            BindBoardAndTier(config);
+            PaletteSettings.Bind(config);
+            BindDiagnostics(config);
+        }
+
+        // What a creature's nameplate draws beside its name: the star glyphs, and the icons of what a Thieving creature
+        // carries and what a Devouring creature has eaten.
+        private static void BindNameplate(ConfigFile config)
+        {
             SmallStarSize = config.Bind(Display, "Small star size", 1.3f,
                 "Size of a small star glyph as a multiple of the size vanilla draws a star at. 1.3 = 30% larger, so a "
                 + "single star is not a speck. Client side; never locked.");
@@ -52,9 +64,12 @@ namespace EliteCreaturesReborn.Config
                 "Draw the icons of items a Thieving creature is carrying on its nameplate. Client side; never locked.");
             StolenIconSize = config.Bind(Display, "Stolen item icon size", 1.6f,
                 "Size of a stolen-item icon as a multiple of the size vanilla draws a star at. Client side; never locked.");
-            BindBoardAndTier(config);
-            PaletteSettings.Bind(config);
-            BindDiagnostics(config);
+            ShowDevouredCreatures = config.Bind(Display, "Show devoured creatures", true,
+                "Draw an icon on a Devouring creature's nameplate for each creature it has eaten: that creature's trophy, "
+                + "or a horned monster head for one that drops none. Client side; never locked.");
+            DevouredIconSize = config.Bind(Display, "Devoured creature icon size", 1.6f,
+                "Size of a devoured-creature icon as a multiple of the size vanilla draws a star at. Client side; never "
+                + "locked.");
         }
 
         private static void BindBoardAndTier(ConfigFile config)

@@ -24,6 +24,11 @@ namespace EliteCreaturesReborn.Visuals
         public static void FlashWhole(GameObject? prefab, Vector3 position, float radius, float scale) =>
             LocalEffect.FlashWhole(prefab, position, radius, scale, Density());
 
+        /// <summary>A one-shot burst drawn as <see cref="Flash"/> draws it, then every part of it - particle size, speed
+        /// and spread, lights, the gaps between its parts - resized to <paramref name="scale"/> times that.</summary>
+        public static void FlashScaled(GameObject? prefab, Vector3 position, float radius, float scale) =>
+            LocalEffect.FlashScaled(prefab, position, radius, scale, Density());
+
         /// <summary>A one-shot sound at a point; not thinned by the effect density setting.</summary>
         public static void Sound(GameObject? prefab, Vector3 position) => LocalEffect.Sound(prefab, position);
 
