@@ -1,0 +1,87 @@
+using UnityEngine;
+
+namespace LocalEffects
+{
+    /// <summary>
+    /// Copies of the game's effect prefabs (the ones in ZNetScene's prefab list) that exist on this machine only: seen
+    /// and heard, never networked, never a damage source. Each machine draws its own copy from state it already has, so
+    /// an effect costs no network traffic. A density from 0 to 1 thins the particles and dims the lights; 0 spawns
+    /// nothing, so a mod can let each player turn its effects down without changing a point of damage. Sounds are
+    /// never thinned: density governs what is seen, not what is heard.
+    /// </summary>
+    public static class LocalEffect
+    {
+        /// <summary>The authored radius of a typical game ground effect; one-shot flashes scale from this to match.</summary>
+        private const float BaselineRadius = 4f;
+
+        /// <summary>The longest a one-shot sound copy may live, should its own timer be missing.</summary>
+        private const float SoundLife = 10f;
+
+        /// <summary>
+        /// The effect under a parent (so it dies with it), stripped and thinned; null when the density is 0 or the
+        /// prefab is missing. <paramref name="endless"/> removes its own timer, for an effect that lasts as long as
+        /// the parent.
+        /// </summary>
+        public static GameObject? Attach(GameObject? prefab, Transform parent, Vector3 position, bool endless, float density = 1f)
+        {
+            if (prefab == null || density <= 0f)
+            {
+                return null;
+            }
+            GameObject clone = CloneParts.Instantiate(prefab, position);
+            clone.transform.SetParent(parent, worldPositionStays: true);
+            CloneParts.Strip(clone, endless);
+            CloneParts.Thin(clone, density);
+            return clone;
+        }
+
+        /// <summary>A free-standing one-shot burst, scaled to a radius, that cleans itself up.</summary>
+        public static void Flash(GameObject? prefab, Vector3 position, float radius, float density = 1f) =>
+            OneShot(prefab, position, radius, density);
+
+        /// <summary>
+        /// A one-shot burst like <see cref="Flash"/>, drawn whole at <paramref name="scale"/> times its radius-matched
+        /// size. Most game effects scale each particle system by its own transform alone ("Local" scaling), so scaling
+        /// the root - all Flash does - resizes only the root system and leaves the child systems at full size; here
+        /// every system follows the root, so the whole burst takes the size.
+        /// </summary>
+        public static void FlashWhole(GameObject? prefab, Vector3 position, float radius, float scale, float density = 1f)
+        {
+            GameObject? clone = OneShot(prefab, position, radius, density);
+            if (clone == null)
+            {
+                return;
+            }
+            CloneParts.FollowRoot(clone);
+            clone.transform.localScale *= scale;
+        }
+
+        /// <summary>
+        /// A one-shot sound at a point: the prefab's own sound player plays it as it wakes, and its own timer removes it.
+        /// </summary>
+        public static void Sound(GameObject? prefab, Vector3 position)
+        {
+            if (prefab == null)
+            {
+                return;
+            }
+            GameObject clone = CloneParts.Instantiate(prefab, position);
+            CloneParts.Strip(clone, endless: false);
+            Object.Destroy(clone, SoundLife);
+        }
+
+        private static GameObject? OneShot(GameObject? prefab, Vector3 position, float radius, float density)
+        {
+            if (prefab == null || density <= 0f)
+            {
+                return null;
+            }
+            GameObject clone = CloneParts.Instantiate(prefab, position);
+            CloneParts.Strip(clone, endless: false);
+            CloneParts.Thin(clone, density);
+            clone.transform.localScale *= Mathf.Max(radius, 0.01f) / BaselineRadius;
+            Object.Destroy(clone, Mathf.Max(radius, 3f));
+            return clone;
+        }
+    }
+}

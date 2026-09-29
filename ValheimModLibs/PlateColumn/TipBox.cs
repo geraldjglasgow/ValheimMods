@@ -5,20 +5,26 @@ using UnityEngine.UI;
 namespace PlateColumn
 {
     /// <summary>
-    /// The box a plate's tooltip shows: an instance of the game's tooltip prefab (the inventory item tooltip: a dark
-    /// panel, its first child, holding a Topic and a Text) with a thin gold border, placed once - its left edge a few
-    /// units right of the plate, centred on the plate's height - and left there. When that would leave the screen it
-    /// goes left of the plate instead, and it is shifted up or down to stay on screen. It never takes the pointer.
+    /// The panel a column box's tooltip shows: an instance of <see cref="TipTemplate"/> (the game's inventory item
+    /// tooltip with a thin gold border), placed once - its left edge a few units right of the box, centred on the box's
+    /// height - and left there. When that would leave the screen it goes left of the box instead, and it is shifted up
+    /// or down to stay on screen. It never takes the pointer. A word's tip (<see cref="LinkTips"/>) is placed the same
+    /// way beside the word.
     /// </summary>
     internal static class TipBox
     {
         private const float Gap = 6f;
-        private static readonly Color BorderColour = new Color(0.85f, 0.66f, 0.36f, 0.9f);
-        private static readonly Vector2 BorderWidth = new Vector2(2f, -2f);
 
         public static GameObject? Show(GameObject? prefab, RectTransform plate, string topic, string text)
         {
-            Canvas? canvas = plate.GetComponentInParent<Canvas>();
+            Vector3[] corners = new Vector3[4];
+            plate.GetWorldCorners(corners);
+            return Show(prefab, plate.GetComponentInParent<Canvas>(), corners, topic, text);
+        }
+
+        /// <summary>A tip beside any area, given by its world corners in Unity's order: bottom-left, top-left, top-right, bottom-right.</summary>
+        public static GameObject? Show(GameObject? prefab, Canvas? canvas, Vector3[] corners, string topic, string text)
+        {
             if (prefab == null || canvas == null)
             {
                 return null;
@@ -33,8 +39,7 @@ namespace PlateColumn
             box.SetActive(true);
             if (box.transform.childCount > 0 && box.transform.GetChild(0) is RectTransform panel)
             {
-                AddBorder(panel);
-                Place(panel, plate);
+                Place(panel, corners);
             }
             return box;
         }
@@ -50,23 +55,10 @@ namespace PlateColumn
             }
         }
 
-        private static void AddBorder(RectTransform panel)
-        {
-            if (panel.GetComponent<Graphic>() == null)
-            {
-                return;
-            }
-            Outline border = panel.gameObject.AddComponent<Outline>();
-            border.effectColor = BorderColour;
-            border.effectDistance = BorderWidth;
-        }
-
         /// <summary>Sizes the panel to its text first (its layout would otherwise run after this frame), then pins it.</summary>
-        private static void Place(RectTransform panel, RectTransform plate)
+        private static void Place(RectTransform panel, Vector3[] corners)
         {
             LayoutRebuilder.ForceRebuildLayoutImmediate(panel);
-            Vector3[] corners = new Vector3[4];
-            plate.GetWorldCorners(corners);
             float gap = Gap * panel.lossyScale.x;
             panel.pivot = new Vector2(0f, 0.5f);
             panel.position = (corners[2] + corners[3]) / 2f + Vector3.right * gap;

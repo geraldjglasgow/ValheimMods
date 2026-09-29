@@ -4,7 +4,11 @@ using UnityEngine.UI;
 
 namespace PlateColumn
 {
-    /// <summary>A plate a mod added: its rect on the panel, its icon, and its text when it keeps one.</summary>
+    /// <summary>
+    /// A box a mod added to the column: <see cref="Rect"/> is the box itself (a child of the column's container; hide it
+    /// with <c>SetActive(false)</c> and the column closes the gap), <see cref="Icon"/> the image at its top showing the
+    /// mod's sprite, and <see cref="Text"/> the number line along its bottom when the box keeps one.
+    /// </summary>
     public sealed class Plate
     {
         public Plate(RectTransform rect, Image icon, TMP_Text? text)

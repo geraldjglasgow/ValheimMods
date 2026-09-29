@@ -3,12 +3,16 @@ using UnityEngine;
 namespace PlateColumn
 {
     /// <summary>
-    /// The game's two readouts on the player panel's right, armour above weight: each is a direct child of the panel
-    /// (<c>InventoryGui.m_player</c>) holding a wood background, an icon and the text the game rewrites every frame
-    /// (<c>m_armor</c>, <c>m_weight</c>). Finding them also readies them, each step safe to repeat: both are pinned to
-    /// the panel's top-right corner where they stand (the game anchors armour to the right edge's middle and weight to
-    /// the bottom-right corner, so bought inventory rows would pull them apart), their positions are recorded for the
-    /// column before it first moves them, each icon is enlarged behind its number, and each gets a tooltip.
+    /// The game's two readouts, armour and weight: each an object holding a wood background, a small icon and the text
+    /// the game rewrites every frame (<c>InventoryGui.m_armor</c>, <c>m_weight</c>). The scene has them as direct
+    /// children of the player panel (<c>InventoryGui.m_player</c>) until the column adopts them into its container, so
+    /// each is found by walking up from its text until the parent is the panel or the container.
+    /// <para>
+    /// This lookup is also how older copies of the library stand down. An older copy walks up only until the parent is
+    /// the panel; once both plates are in the container it lands on the container for both, sees one object where it
+    /// expects two, and treats the game's plates as missing - its <c>Arrange</c> and <c>Add</c> then change nothing. So
+    /// the first current copy to arrange takes the column over and no older copy moves or restyles anything after it.
+    /// </para>
     /// </summary>
     internal sealed class GamePlates
     {
@@ -27,41 +31,41 @@ namespace PlateColumn
 
         public RectTransform Weight { get; }
 
+        /// <summary>Both plates, or null when either is missing or both texts lead to the same object.</summary>
         public static GamePlates? Find(InventoryGui gui)
         {
             if (gui == null || gui.m_player == null || gui.m_armor == null || gui.m_weight == null)
             {
                 return null;
             }
-            RectTransform? armor = PlateStyle.ChildHolding(gui.m_player, gui.m_armor.transform) as RectTransform;
-            RectTransform? weight = PlateStyle.ChildHolding(gui.m_player, gui.m_weight.transform) as RectTransform;
+            RectTransform? armor = PlateOf(gui.m_player, gui.m_armor.transform);
+            RectTransform? weight = PlateOf(gui.m_player, gui.m_weight.transform);
             if (armor == null || weight == null || armor == weight)
             {
                 return null;
             }
-            PinTopRight(armor, gui.m_player);
-            PinTopRight(weight, gui.m_player);
-            ColumnLayout.RecordOrigin(gui.m_player, armor, weight);
-            PlateStyle.CentreIcon(armor, gui.m_armor);
-            PlateStyle.CentreIcon(weight, gui.m_weight);
-            PlateTips.SetIfMissing(gui, armor, ArmorTopic, ArmorTip);
-            PlateTips.SetIfMissing(gui, weight, WeightTopic, WeightTip);
             return new GamePlates(armor, weight);
         }
 
-        /// <summary>Re-anchors a plate to the panel's top-right corner, leaving it where it is.</summary>
-        public static void PinTopRight(RectTransform plate, RectTransform panel)
+        /// <summary>
+        /// Gives each plate a tooltip unless a copy of this library already did (an older copy's tip keeps working: it
+        /// pins its box beside whatever object it sits on).
+        /// </summary>
+        public void Tip(InventoryGui gui)
         {
-            if (plate.anchorMin == Vector2.one && plate.anchorMax == Vector2.one)
+            PlateTips.SetIfMissing(gui, Armor, ArmorTopic, ArmorTip);
+            PlateTips.SetIfMissing(gui, Weight, WeightTopic, WeightTip);
+        }
+
+        /// <summary>The object holding <paramref name="text"/> whose parent is the panel or the column's container.</summary>
+        private static RectTransform? PlateOf(RectTransform panel, Transform text)
+        {
+            Transform? t = text;
+            while (t != null && t.parent != panel && !BoxContainer.Is(t.parent, panel))
             {
-                return;
+                t = t.parent;
             }
-            Vector2 size = plate.rect.size;
-            Vector2 pivot = plate.localPosition;
-            plate.anchorMin = Vector2.one;
-            plate.anchorMax = Vector2.one;
-            plate.sizeDelta = size;
-            plate.anchoredPosition = pivot - panel.rect.max;
+            return t as RectTransform;
         }
     }
 }

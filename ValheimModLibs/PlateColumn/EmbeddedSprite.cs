@@ -6,8 +6,9 @@ using UnityEngine;
 namespace PlateColumn
 {
     /// <summary>
-    /// A sprite from a PNG embedded in a mod's DLL, for a plate's icon: decoded with mipmaps so it stays smooth at any
-    /// interface scale, keeping its own colours. Null when the resource is missing or will not decode; the mod logs it.
+    /// A sprite from a PNG embedded in a mod's DLL, for a column box's icon or any other UI icon: decoded with mipmaps
+    /// so it stays smooth at any interface scale, keeping its own colours. Null when the resource is missing or will not
+    /// decode; the mod logs it.
     /// </summary>
     public static class EmbeddedSprite
     {

@@ -4,10 +4,11 @@ using UnityEngine.EventSystems;
 namespace PlateColumn
 {
     /// <summary>
-    /// A plate's tooltip. The game's <c>UITooltip</c> follows the mouse and cannot be pinned (its fixed position is only
-    /// used with a gamepad or touch), so the plates carry this instead: half a second after the pointer enters the plate
-    /// a <see cref="TipBox"/> appears right of it and stays put until the pointer leaves or the panel closes. A
-    /// <c>UITooltip</c> an older copy of this library left on the plate is removed on hover, so a plate never shows two.
+    /// A box's tooltip. The game's <c>UITooltip</c> follows the mouse and cannot be pinned (its fixed position is only
+    /// used with a gamepad or touch), so the boxes carry this instead: half a second after the pointer enters the box
+    /// (anywhere on its background) a <see cref="TipBox"/> appears right of it and stays put until the pointer leaves or
+    /// the panel closes. A <c>UITooltip</c> an older copy of this library left on the box is removed on hover, so a box
+    /// never shows two.
     /// </summary>
     internal sealed class PlateTip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
