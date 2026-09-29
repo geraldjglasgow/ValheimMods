@@ -20,6 +20,12 @@ namespace DevBridge.Routes
             LogRoute.Register(router);
             EvalRoute.Register(router);
             WorldRoute.Register(router);
+            BundleRoute.Register(router);
+            PrefabsRoute.Register(router);
+            PlaceRoute.Register(router);
+            AnimateRoute.Register(router);
+            EffectRoute.Register(router);
+            FrameRoute.Register(router);
             return router;
         }
     }

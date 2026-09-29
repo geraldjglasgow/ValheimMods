@@ -40,9 +40,14 @@
     <Reference Include="Unity.InputSystem" Private="false" HintPath="$(ManagedPath)\Unity.InputSystem.dll" />
     <Reference Include="Unity.TextMeshPro" Private="false" HintPath="$(ManagedPath)\Unity.TextMeshPro.dll" />
     <Reference Include="UnityEngine" Private="false" HintPath="$(ManagedPath)\UnityEngine.dll" />
+    <Reference Include="UnityEngine.AnimationModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.AnimationModule.dll" />
+    <Reference Include="UnityEngine.AssetBundleModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.AssetBundleModule.dll" />
+    <Reference Include="UnityEngine.AudioModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.AudioModule.dll" />
     <Reference Include="UnityEngine.CoreModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.CoreModule.dll" />
     <Reference Include="UnityEngine.HierarchyCoreModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.HierarchyCoreModule.dll" />
     <Reference Include="UnityEngine.ImageConversionModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ImageConversionModule.dll" />
+    <Reference Include="UnityEngine.ParticleSystemModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ParticleSystemModule.dll" />
+    <Reference Include="UnityEngine.PhysicsModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.PhysicsModule.dll" />
     <Reference Include="UnityEngine.ScreenCaptureModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ScreenCaptureModule.dll" />
     <Reference Include="UnityEngine.TextRenderingModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.TextRenderingModule.dll" />
     <Reference Include="UnityEngine.UI" Private="false" HintPath="$(ManagedPath)\UnityEngine.UI.dll" />
