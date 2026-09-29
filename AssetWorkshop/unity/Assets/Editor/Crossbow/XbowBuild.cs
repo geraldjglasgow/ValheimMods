@@ -99,6 +99,8 @@ namespace Workshop.Crossbow
             author.Write(XbowClips.AimName, XbowClips.AimKeys(), XbowClips.AimLength, new AnimationEvent[0], ClipPath(XbowClips.AimName));
             var shot = new AnimationEvent { time = XbowClips.Fire, functionName = "OnAttackTrigger" };
             author.Write(XbowClips.FireName, XbowClips.FireKeys(), XbowClips.FireLength, new[] { shot }, ClipPath(XbowClips.FireName));
+            author.Write(XbowClips.PlayerReloadName, XbowClips.PlayerReloadKeys(), XbowClips.PlayerReloadLength, new AnimationEvent[0], ClipPath(XbowClips.PlayerReloadName));
+            author.Write(XbowClips.PlayerDoneName, XbowClips.PlayerDoneKeys(), XbowClips.PlayerDoneLength, new AnimationEvent[0], ClipPath(XbowClips.PlayerDoneName));
         }
 
         /// <summary>The pinch as the played clip curls the fingers, at the lay (<see cref="XbowGrip.MeasurePinch"/>).</summary>
@@ -112,7 +114,8 @@ namespace Workshop.Crossbow
 
         /// <summary>Every clip the bundle carries: the two shot clips and the three carry clips.</summary>
         public static string[] ClipNames() =>
-            new[] { XbowClips.AimName, XbowClips.FireName }.Concat(XbowCarry.Clips.Select(c => c.name)).ToArray();
+            new[] { XbowClips.AimName, XbowClips.FireName, XbowClips.PlayerReloadName, XbowClips.PlayerDoneName }
+                .Concat(XbowCarry.Clips.Select(c => c.name)).ToArray();
 
         /// <summary>A poser with the authored clips as states, to see them as the game's Animator plays them.</summary>
         public static XbowPoser Played(GameObject skeleton) =>

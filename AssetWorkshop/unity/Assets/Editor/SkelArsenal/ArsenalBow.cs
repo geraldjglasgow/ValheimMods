@@ -24,6 +24,7 @@ namespace Workshop.SkelArsenal
         private readonly Transform bow, hand;
         private readonly Vector3 top, bottom, rest, stringRest;
         private readonly Transform upper, lower, arrow;
+        private readonly string aimState, fireState;
         private Vector3 flyFrom, flyDirection;
         private float flight = -1f;
         private bool nocked;
@@ -32,8 +33,12 @@ namespace Workshop.SkelArsenal
         public float Draw { get; private set; }
         public bool JustLoosed { get; private set; }
 
-        public ArsenalBow(GameObject bowWeapon, Transform drawingHand, GameObject arrowPrefab, string pointsFile)
+        /// <summary>`aimState` and `fireState` name the controller's aim and shot states (the Skeleton's by default; the
+        /// player's are "bow aim" and "bow fire").</summary>
+        public ArsenalBow(GameObject bowWeapon, Transform drawingHand, GameObject arrowPrefab, string pointsFile,
+                          string aimState = "bow_idle", string fireState = "attack_bow")
         {
+            (this.aimState, this.fireState) = (aimState, fireState);
             bow = bowWeapon.transform;
             hand = drawingHand;
             Points p = JsonUtility.FromJson<PointSet>(File.ReadAllText(pointsFile)).unity;
@@ -48,10 +53,12 @@ namespace Workshop.SkelArsenal
             new[] { upper.GetComponent<Renderer>(), lower.GetComponent<Renderer>() }.Concat(arrow.GetComponentsInChildren<Renderer>());
 
         /// <summary>Call after each Animator update.</summary>
-        public void Update(Animator animator, float dt)
+        public void Update(Animator animator, float dt) =>
+            Update(Is(animator, aimState) && !Is(animator, fireState, next: true), Is(animator, fireState) || Is(animator, fireState, next: true), dt);
+
+        /// <summary>Call after each Animator update, told whether the hand is drawing and whether it lets go now.</summary>
+        public void Update(bool aiming, bool loosing, float dt)
         {
-            bool aiming = Is(animator, "bow_idle") && !Is(animator, "attack_bow", next: true);
-            bool loosing = Is(animator, "attack_bow") || Is(animator, "attack_bow", next: true);
             Vector3 nock = Nock(aiming);
             Stretch(upper, bow.TransformPoint(top), nock);
             Stretch(lower, nock, bow.TransformPoint(bottom));
@@ -65,6 +72,7 @@ namespace Workshop.SkelArsenal
                 Fly(dt);
         }
 
+        /// <summary>The string's middle: at its rest, or at the drawing hand once it has drawn the string back.</summary>
         private Vector3 Nock(bool aiming)
         {
             Vector3 middle = bow.TransformPoint(stringRest);
@@ -73,13 +81,26 @@ namespace Workshop.SkelArsenal
             if (!aiming || draw <= 0f)
                 return middle;
             Draw = Mathf.Max(Draw, draw);
-            return hand.position;
+            return hand.position + Vector3.up * NockUp;   // on the drawing fingers, over the fist's middle
         }
 
+        private const float NockUp = 0.05f;
+
+        /// <summary>Where the arrow lies on the bow: on top of the bow fist (the grip raised by a fist's half-height).</summary>
+        private Vector3 Rest() => bow.TransformPoint(rest) + Vector3.up * Above;
+
+        private const float Above = 0.05f;
+
+        /// <summary>
+        /// The arrow from the nock on the string, level, straight ahead over the bow fist (where the fist is lower than the
+        /// drawing hand, as in the game's aim, it passes above it rather than dipping to it): the way it will fly.
+        /// </summary>
         private void Aim(Vector3 nock)
         {
+            Vector3 ahead = Rest() - nock;
+            ahead.y = 0f;
             arrow.gameObject.SetActive(true);
-            arrow.SetPositionAndRotation(nock, Quaternion.LookRotation(bow.TransformPoint(rest) - nock, bow.TransformDirection(Vector3.up)));
+            arrow.SetPositionAndRotation(nock, Quaternion.LookRotation(ahead.normalized, Vector3.up));
         }
 
         private void Loose()
@@ -123,7 +144,7 @@ namespace Workshop.SkelArsenal
 
         private static Vector3 V(float[] a) => new Vector3(a[0], a[1], a[2]);
 
-        public static string PointsFile() =>
-            Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "assets", "ecp_skel_bow", "out", "ecp_skel_bow_points.json"));
+        public static string PointsFile(string asset = "ecp_skel_bow") =>
+            Path.GetFullPath(Path.Combine(Application.dataPath, "..", "..", "assets", asset, "out", asset + "_points.json"));
     }
 }

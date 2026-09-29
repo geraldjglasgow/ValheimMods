@@ -8,7 +8,7 @@ namespace Workshop.Crossbow
     /// +Z points at the target and +Y is the groove side; the quiver's origin is the middle of its back at the mouth, +Z
     /// is the side it bulges out to and +Y its open mouth. The mod (EliteCreaturesPack Crossbow/XbowKit) finds the same
     /// points as empties in the kit. The left fist holds the crossbow round the fore-stock (<see cref="XbowGrip"/>). The
-    /// bolt (ecp_xbow_bolt) has its nock end at its origin and its head along +Z, 0.43 m away, as every bolt slot expects.
+    /// bolt (ecp_xbow_bolt) has its nock end at its origin and its head along +Z, 0.57 m away (the game bone bolt's length), as every bolt slot expects.
     /// </summary>
     public static class XbowParts
     {

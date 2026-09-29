@@ -41,13 +41,16 @@ namespace Workshop
             string[] folders = Directory.GetDirectories(root).Select(d => d.Replace('\\', '/')).ToArray();
             string[] prefabs = folders.Select(PrefabBuilder.Build).ToArray();
             string[] icons = folders.Select(PrefabBuilder.Icon).Where(icon => icon != null).ToArray();
-            var build = new AssetBundleBuild { assetBundleName = bundle, assetNames = prefabs.Concat(icons).ToArray() };
+            // Clips authored in Unity for this bundle (not staged from assets/, so a rebuild leaves them): Assets/BundleExtras/<bundle>.
+            string extras = "Assets/BundleExtras/" + bundle;
+            string[] extra = Directory.Exists(extras) ? Directory.GetFiles(extras, "*.anim").Select(p => p.Replace('\\', '/')).ToArray() : new string[0];
+            var build = new AssetBundleBuild { assetBundleName = bundle, assetNames = prefabs.Concat(icons).Concat(extra).ToArray() };
             foreach (var (target, suffix) in Targets)
             {
                 if (!BuildFor(target, suffix, build, outFolder))
                     return 1;
             }
-            Log.Info($"bundle {bundle}: {prefabs.Length} prefab(s), {icons.Length} icon(s)");
+            Log.Info($"bundle {bundle}: {prefabs.Length} prefab(s), {icons.Length} icon(s), {extra.Length} clip(s)");
             return 0;
         }
 

@@ -59,6 +59,34 @@ namespace Workshop.Crossbow
             Carried(Done), Carried(FireLength),
         };
 
+        /// <summary>
+        /// The players' reload with the Bone Crossbow (the mod plays it in place of the game's Arbalest reload, "Reload
+        /// Crossbow", while a Bone Crossbow is in hand; the user: "may need an animation just for this bow when players
+        /// use it"): the crossbowman's own reload from the shot's clip, from the carry: lower the crossbow, hook the
+        /// string and draw it into the nut, take a bolt from the right hip, lay it and pat it home, carry. The game's
+        /// reload state plays at 1.4x, so <see cref="PlayerReloadLength"/> fills the Bone Crossbow's 3 s reload; the
+        /// keys keep the crossbowman's pace (StringGrab to Done shifted by <see cref="PlayerShift"/>). Its done state
+        /// ("Reload done", 0.9 s) holds the carry (<see cref="PlayerDoneName"/>).
+        /// </summary>
+        public const string PlayerReloadName = "ecp_xbow_player_reload", PlayerDoneName = "ecp_xbow_player_reload_done";
+        public const float PlayerReloadLength = 3f * 1.4f, PlayerDoneLength = 0.9f;
+        private const float PlayerShift = 0.4f - 1.12f;
+
+        /// <summary>How much earlier the player reload's keys sit than the crossbowman's (EliteCreaturesPack XbowPlayerRig mirrors the times).</summary>
+        public const float PlayerShiftSeconds = PlayerShift;
+
+        public static XbowKey[] PlayerReloadKeys() => new[]
+        {
+            Carried(0f),
+            Low(1.12f + PlayerShift, Hand.Wrist, 18f, 0.8f), Low(StringGrab + PlayerShift, Hand.StringGrab, 26f, 0.6f),
+            Low(Spanned + PlayerShift, Hand.Spanned, 24f, 0.75f), Low(2.44f + PlayerShift, Hand.ToQuiver, 16f, 0.1f),
+            Low(BoltGrab + PlayerShift, Hand.InQuiver, 20f, 0.75f), Low(3.12f + PlayerShift, Hand.BoltOut, 22f, 0.75f),
+            Low(Lay + PlayerShift, Hand.Lay, 26f, 0.75f), Low(3.88f + PlayerShift, Hand.Pat, 22f, -0.2f),
+            Carried(Done + PlayerShift), Carried(PlayerReloadLength),
+        };
+
+        public static XbowKey[] PlayerDoneKeys() => new[] { Carried(0f), Carried(PlayerDoneLength) };
+
         /// <summary>The carry clips' own pose on the idle's first frame, so the shot starts and ends where they are.</summary>
         public static XbowKey Carried(float time) => new XbowKey(time) { Bow = Bow.Carry, Right = Hand.Wrist, Grip = 0.9f };
 

@@ -275,4 +275,5 @@ def _views():
                         space.region_3d.view_perspective = 'CAMERA'
 
 
-main()
+if __name__ == '__main__':
+    main()

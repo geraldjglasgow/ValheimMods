@@ -1,36 +1,32 @@
-"""The Skeleton Crossbowman's bolt (Elite Creatures Pack): a thin bone shaft grimed like the skeleton itself, a blunt
-knuckle of bone for a head (it does blunt damage; 2026-09-29, the user), bound on with sinew, and three short vanes of
-dark, ragged feathers. One model for every bolt the
-crossbowman shows: in the groove, in the fingers, in the quiver and in flight (the mod puts it on the bolt projectile).
+"""The Blunted Bone Bolt (Elite Creatures Pack): a thin bone shaft grimed like the skeleton itself and a blunt knuckle
+of bone for a head, bound on with sinew; no feathers (it does blunt damage; 2026-09-29, the user: "a blunt tip and no
+feathers", "the same length as the vanilla bone bolt", whose mesh is 0.573 m). One model for every bolt the mod shows:
+the players' Blunted Bone Bolts in the hand, on the ground and in flight, and the crossbowman's in the groove, the
+fingers and the quiver.
 
-The origin is the nock end on the shaft's line and the point is forward (-Y, Unity +Z), LENGTH away. The vanes stand
-at 120 degrees, one straight up, and reach VANE_RADIUS from the line: small enough to clear the stock under a laid bolt
-and to stand five in the quiver's mouth.
+The origin is the nock end on the shaft's line and the point is forward (-Y, Unity +Z), LENGTH away.
 """
 import math
 
 import bmesh
 import bpy
-from mathutils import Vector
 
 from workshop import materials, shapes
 
 TEXTURE_SIZE = 256
 AO_STRENGTH = 0.6
 
-LENGTH = 0.43
-VANE_RADIUS = 0.016
-SHAFT = [(0.000, 0.0048), (-0.030, 0.0056), (-0.160, 0.0052), (-0.300, 0.0050), (-0.360, 0.0060)]   # (y, radius)
+LENGTH = 0.57
+HEAD = LENGTH - 0.43       # the head's parts are placed as on the first, 0.43 m bolt, moved forward by this
+SHAFT = [(0.000, 0.0048), (-0.030, 0.0056), (-0.210, 0.0052), (-0.440, 0.0050), (-0.500, 0.0060)]   # (y, radius)
 
 
 def build():
-    bone, point, feather, sinew = _bone(), _point_bone(), _feather(), _sinew()
+    bone, point, sinew = _bone(), _point_bone(), _sinew()
     _shaft(bone)
     _knob("nock", (0.0, 0.002, 0.0), 0.0062, bone)
     _blunt(point)
-    for i in range(3):
-        _vane(f"vane_{i}", math.radians(90 + 120 * i), feather)
-    for name, y0, y1 in (("bind_point", -0.364, -0.350), ("bind_tail", -0.112, -0.100), ("bind_nock", -0.016, -0.008)):
+    for name, y0, y1 in (("bind_point", -0.364 - HEAD, -0.350 - HEAD), ("bind_nock", -0.016, -0.008)):
         _wrap(name, y0, y1, sinew)
 
 
@@ -51,29 +47,11 @@ def _shaft(material, sides=8):
 def _blunt(material):
     """A blunt head, for crushing rather than piercing: a knuckle of bone swelling out of a thick socket, rounded in front
     and a little flattened at the tip, like a hunter's blunt."""
-    shapes.cylinder("socket", 0.0078, 0.034, (0.0, -0.372, 0.0), (math.radians(90), 0.0, 0.0), material, vertices=8)
-    _knob("knuckle", (0.0, -0.405, 0.0), 0.0135, material, squash=(1.0, 1.25, 0.95))
-    _knob("knuckle_face", (0.0, -0.421, 0.0), 0.0105, material, squash=(1.05, 0.55, 1.0))
+    shapes.cylinder("socket", 0.0078, 0.034, (0.0, -0.372 - HEAD, 0.0), (math.radians(90), 0.0, 0.0), material, vertices=8)
+    _knob("knuckle", (0.0, -0.405 - HEAD, 0.0), 0.0135, material, squash=(1.0, 1.25, 0.95))
+    _knob("knuckle_face", (0.0, -0.421 - HEAD, 0.0), 0.0105, material, squash=(1.05, 0.55, 1.0))
     for side in (-1, 1):
-        _knob(f"knuckle_lobe_{side}", (side * 0.008, -0.408, 0.002), 0.008, material)
-
-
-def _vane(name, angle, material):
-    """A ragged feather vane standing out from the shaft at `angle` (from +X round the line), thin but not flat."""
-    out = Vector((math.cos(angle), 0.0, math.sin(angle)))
-    across = Vector((-math.sin(angle), 0.0, math.cos(angle))) * 0.0008
-    profile = [(-0.012, 0.004), (-0.020, VANE_RADIUS), (-0.060, VANE_RADIUS * 0.9), (-0.085, VANE_RADIUS * 0.65),
-               (-0.105, 0.005)]
-    mesh = bmesh.new()
-    front = [mesh.verts.new(Vector((0, y, 0)) + out * r + across) for y, r in profile]
-    back = [mesh.verts.new(Vector((0, y, 0)) + out * r - across) for y, r in profile]
-    root = [mesh.verts.new(Vector((0, y, 0)) + out * 0.0035 + side) for y in (-0.012, -0.105) for side in (across, -across)]
-    mesh.faces.new(front + [root[2], root[0]])
-    mesh.faces.new(list(reversed(back)) + [root[1], root[3]])
-    for i in range(len(profile) - 1):
-        mesh.faces.new((front[i], back[i], back[i + 1], front[i + 1]))
-    bmesh.ops.recalc_face_normals(mesh, faces=mesh.faces)
-    _object(name, mesh, material)
+        _knob(f"knuckle_lobe_{side}", (side * 0.008, -0.408 - HEAD, 0.002), 0.008, material)
 
 
 def _wrap(name, y0, y1, material):
@@ -137,11 +115,6 @@ def _bone():
 
 def _point_bone():
     return _mottled("bolt_point", (0.24, 0.18, 0.10), (0.58, 0.50, 0.36), 220.0, 0.6, bump=0.4)
-
-
-def _feather():
-    """Dark, dirty feathers, lighter towards the edges."""
-    return _mottled("bolt_feather", (0.025, 0.022, 0.02), (0.13, 0.11, 0.09), 400.0, 0.8, stretch=(1.0, 3.0, 1.0))
 
 
 def _sinew():
