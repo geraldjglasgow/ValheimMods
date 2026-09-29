@@ -57,6 +57,21 @@ namespace LocalEffects
         }
 
         /// <summary>
+        /// A one-shot burst drawn exactly as <see cref="Flash"/> draws it, then resized part by part to
+        /// <paramref name="scale"/> times that: every particle system's size, speed, forces and emitter shape, the
+        /// lights' reach and the distances between the parts. Unlike <see cref="FlashWhole"/> it leaves each system's
+        /// scaling mode alone, so every part ends at the same fraction of what the player saw before, in any mode.
+        /// </summary>
+        public static void FlashScaled(GameObject? prefab, Vector3 position, float radius, float scale, float density = 1f)
+        {
+            GameObject? clone = OneShot(prefab, position, radius, density);
+            if (clone != null)
+            {
+                ScaleParts.Apply(clone, scale);
+            }
+        }
+
+        /// <summary>
         /// A one-shot sound at a point: the prefab's own sound player plays it as it wakes, and its own timer removes it.
         /// </summary>
         public static void Sound(GameObject? prefab, Vector3 position)

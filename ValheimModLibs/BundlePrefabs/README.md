@@ -37,6 +37,36 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   (metal and gloss, glow, style variants).
 - `ModelBounds.In(model, space)` measures a model's meshes in another transform's axes (renderer bounds are empty on
   the inactive bench), for centring a bundle model in a copied game prefab.
+- `CreatureBody.Wear(creature, bundleBody, gloss)` puts a workshop body on a bench copy of a game creature: a body made
+  on an exact copy of the creature's own skeleton (AssetWorkshop, "A new body on a game skeleton"). The main body
+  renderer (the one `LevelEffects.m_mainRender` names, else `VisEquipment.m_bodyModel`) takes the bundle mesh, its bind
+  poses and bounds, and the creature's own bones by name in the mesh's order; sockets the creature lacks are added under
+  the bones of the same names; material 0 becomes the game body's material dressed in the bundle's baked textures
+  (`Dress`, then `Plain(gloss)`), and LevelEffects is pointed at the body so star tints still apply. The creature keeps
+  its avatar, controller, clips, attacks, AI, death effect and ragdoll. `CreatureBody.HideOthers(creature, body)`
+  switches off the game body's other meshes (the Skeleton's eyes); `MainRenderer`, `Rebind`, `AddSockets` and `Bones`
+  are the steps, public.
+
+  ```csharp
+  GameObject creature = PrefabBench.Copy(scene.GetPrefab("Skeleton"), "MyMod_Mossback");
+  SkinnedMeshRenderer body = CreatureBody.Wear(creature, EmbeddedBundle.Prefab(bundle, "workshop_gamerig_demo"), 0.18f);
+  CreatureBody.HideOthers(creature, body);
+  NetPrefabs.Register(scene, creature);
+  ```
+- `BundleEffects.Prepare(bundle, name, copyName)` loads an effect built in AssetWorkshop/vfx: an inactive copy under
+  the bench with its placeholder materials dressed in the game's own particle shaders (the placeholder's `VfxShader` tag
+  names one; `VfxFloats`, `VfxColours`, `VfxKeywords` hold its settings; `VfxBorrow` copies a game prefab's material
+  instead) and the game components its `<name>_parts` recipe lists (LightFlicker, LightLod, TimedDestruction,
+  CamShaker). Call it inside `NetPrefabs.OnSceneAwake`; pass the copy to LocalEffects (`Flash`, `FlashScaled`, `Attach`)
+  on every peer. An undressed placeholder still draws, in Unity's standard particle shader.
+- `BundleEffects.Networked(scene, effect)` is for an effect that goes into a game EffectList (a hit or death effect),
+  which only one peer runs: it adds a ZNetView and registers the prefab on every peer.
+- `EffectTint.Shift(copy, hue, saturation, value)` recolours a copy of any effect: particle start colours, colour over
+  lifetime, the gradient-mapped fire's custom colours, trails, lights and material tints (materials are copied first).
+  With `PrefabBench.Copy` it derives a new effect from a game one without a bundle. Particle systems are reached by
+  reflection (this library does not reference Unity's particle module).
+- Not yet run in the game: `CreatureBody`, `BundleEffects` and `EffectTint` (2026-09-29); their previews and checks ran
+  in the workshop's Unity project only.
 
 ## Rules
 

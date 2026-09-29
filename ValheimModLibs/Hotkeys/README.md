@@ -7,6 +7,8 @@ A mod's hotkeys, read the same way in every mod of the workspace.
   (BepInEx's own `KeyboardShortcut.IsDown` refuses a shortcut while any other key at all is held). A single key fires
   only with no Shift, Ctrl or Alt held, so `Z` never fires together with `LeftControl + Z`. `None` never fires.
 - `Hotkey.Held(entry)`: the main key and its modifiers are held (for modifier settings such as `LeftShift`).
+- `KeyNames.Short(shortcut)`: the shortcut's name for a key cap on the screen, modifiers first without their side:
+  `Z`, `Shift+Z`, `Ctrl+1`; empty for `None`.
 - `Typing.Active`: the player is typing, and neither of the above fires: the chat has focus, the console or the game's
   text input (signs, tame names) is open, a Unity `InputField` or `TMP_InputField` is selected, or a window the mod
   registered with `Typing.AddWindow(() => open)` is open (an IMGUI window such as the mod's YAML editor, which no input
@@ -24,4 +26,4 @@ if (Hotkey.Pressed(FoodKey) && player.TakeInput())
 ```
 
 Merged into the consuming mod with ILRepack like every library here, so the registered windows are the mod's own.
-Consumer: PackPanel (Food Key, Mead Key). OpenKeep's `Core/Keys` is the same rules and is to move onto it.
+Consumer: PackPanel (Food Key, Mead Key, and their caps on the Food and Mead bar). OpenKeep's `Core/Keys` is the same rules and is to move onto it.

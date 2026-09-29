@@ -13,11 +13,14 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   ObjectDB; `GameMaterials.Borrow` / `Apply` dress a model in the game's own materials, so no game texture ships in a
   bundle; `GameMaterials.Dress(game, placeholder)` is a copy of a game material wearing a placeholder's own baked
   albedo and normal map, and `GameMaterials.Plain` strips the game maps that fit only the game model's UVs;
-  `ModelBounds.In(model, space)` measures an inactive model's meshes. Bundles come from `../AssetWorkshop`.
+  `ModelBounds.In(model, space)` measures an inactive model's meshes; `CreatureBody.Wear` puts a workshop body made on
+  a game skeleton onto a copy of that creature; `BundleEffects` dresses a workshop particle effect in the game's
+  particle shaders and `EffectTint` recolours any effect copy. Bundles come from `../AssetWorkshop`.
   Consumers: EliteCreaturesPack (the crypt mimic, the greydwarf slinger, the rime giant, the kraken and its loot),
   PackPanel.
-- `LocalEffects/`: `LocalEffect.Attach(prefab, parent, position, endless, density)`, `Flash`, `FlashWhole` and `Sound`
-  make local copies of the game's effect prefabs: instantiated with `ZNetView.m_forceDisableInit` (never ghost init,
+- `LocalEffects/`: `LocalEffect.Attach(prefab, parent, position, endless, density)`, `Flash`, `FlashWhole`,
+  `FlashScaled` (every part resized by its own numbers, `ScaleParts`, whatever its scaling mode) and `Sound` make local
+  copies of the game's effect prefabs: instantiated with `ZNetView.m_forceDisableInit` (never ghost init,
   which registers a ZDO that ZNetScene then spawns as a networked copy on every peer), `Aoe`, `Projectile`,
   `ZSyncTransform` and `ZNetView` removed, colliders off; `density` 0 to 1 thins particles and dims lights, 0 spawns
   nothing, sounds are never thinned (`CloneParts` does the making and stripping). Consumers: EliteCreaturesReborn
@@ -33,7 +36,8 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
 - `Hotkeys/`: a mod's hotkeys read one way. `Hotkey.Pressed(entry)` (main key down this frame; with modifiers all of
   them held and no other Shift/Ctrl/Alt, other keys such as W allowed; a single key only with no Shift/Ctrl/Alt held),
   `Hotkey.Held(entry)`, `Typing.Active` (chat focus, console, the game's text input, a selected `InputField` or
-  `TMP_InputField`, or a window the mod registered with `Typing.AddWindow`, such as its YAML editor). Where a key works
+  `TMP_InputField`, or a window the mod registered with `Typing.AddWindow`, such as its YAML editor),
+  `KeyNames.Short(shortcut)` (a key cap's text: `Z`, `Shift+Z`, `Ctrl+1`). Where a key works
   stays the mod's call. Consumer: PackPanel (Food Key, Mead Key); OpenKeep's `Core/Keys` is the same rules and is to
   move onto it.
 - `ConfigReload/`: single file. `ConfigReloader.Setup(config, log)` saves the .cfg and polls it every five seconds for edits (no FileSystemWatcher: Mono on Linux fed it with the mod's own reads).
