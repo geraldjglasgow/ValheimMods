@@ -33,7 +33,7 @@ def mesh(asset, materials):
     key = f"{asset}|{'|'.join(m.name if m else '-' for m in materials)}"
     data = next((d for d in bpy.data.meshes if d.get("reference_mesh") == key), None)
     if data is None:
-        data = _decoded(asset).copy()
+        data = _copy(asset)
         data.name = os.path.splitext(os.path.basename(asset))[0]
         _submeshes(data, unity.read(asset), materials)
         data["reference_mesh"] = key
@@ -43,7 +43,7 @@ def mesh(asset, materials):
 def skinned(asset, materials, bones):
     """Mesh data for a skinned mesh, its vertices moved to where the bones put them. bones[i] maps bone i's bind-pose
     space to the renderer's local space (Blender axes), None for the bind pose. Never shared: the pose is its own."""
-    data = _decoded(asset).copy()
+    data = _copy(asset)
     data.name = os.path.splitext(os.path.basename(asset))[0]
     text = unity.read(asset)
     posed = _pose(data, text, bones)
@@ -104,6 +104,15 @@ def material(path):
     mat["reference_shader"] = info["shader"]
     mat.use_backface_culling = info["cull"] == 2
     return mat
+
+
+def _copy(asset):
+    """A copy of the decoded source to dress. Blender copies ID properties too, so the copy's "reference_source" goes:
+    left on, a later _decoded would find the dressed copy instead of the source (a rug in another rug's material)."""
+    data = _decoded(asset).copy()
+    if "reference_source" in data:
+        del data["reference_source"]
+    return data
 
 
 def _decoded(asset):
@@ -272,9 +281,11 @@ def _tint(tree, albedo, bsdf, color):
 
 
 def _cut_out(tree, albedo, bsdf, cutoff):
-    """Alpha test like the game's cutout shaders: opaque above the cutoff, gone below it."""
+    """Alpha test like the game's cutout shaders (clip(alpha - cutoff)): kept where alpha reaches the cutoff, gone
+    below it. Greater-or-equal matters: materials with a cutoff of 1.0 (ground cover, heath grass) keep their opaque
+    texels in the game and would vanish under a strict greater-than."""
     test = tree.nodes.new('ShaderNodeMath')
     test.operation = 'GREATER_THAN'
-    test.inputs[1].default_value = cutoff
+    test.inputs[1].default_value = cutoff - 0.001
     tree.links.new(albedo.outputs['Alpha'], test.inputs[0])
     tree.links.new(test.outputs['Value'], bsdf.inputs['Alpha'])

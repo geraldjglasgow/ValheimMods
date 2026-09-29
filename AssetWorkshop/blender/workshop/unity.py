@@ -1,5 +1,6 @@
 """Unity's YAML files in the reference export (prefabs, materials, mesh headers) and the GUID index that finds an
-asset's file from the GUID other files reference it by. No Blender here: prefab.py and prefab_parts.py build on it.
+asset's file from the GUID other files reference it by. No Blender here, so plain Python can import it too (the codex's
+measuring scripts do): prefab.py and prefab_parts.py build on it.
 
 Walking every .meta file of the export takes a few seconds, so the index is kept in out/reference_guids.json and
 rebuilt when it is missing or a GUID is not in it (once per Blender session: the export may have been ripped again).
@@ -9,7 +10,7 @@ import json
 import os
 import re
 
-from .reference import ROOT
+ROOT = os.path.join(os.environ.get("USERPROFILE", ""), "ValheimReference", "ExportedProject", "Assets")
 
 GUID_INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "out", "reference_guids.json")
 BUILTIN_MESHES = "0000000000000000e000000000000000"     # Unity's own meshes: 10202 cube, 10206 cylinder, 10208 capsule...

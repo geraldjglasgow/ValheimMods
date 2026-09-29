@@ -11,8 +11,8 @@ import struct
 import bpy
 
 from . import scene
+from .unity import ROOT  # noqa: F401  (kept importable as reference.ROOT)
 
-ROOT =os.path.join(os.environ.get("USERPROFILE", ""), "ValheimReference", "ExportedProject", "Assets")
 TAG = "workshop_reference"
 _FLOAT = {0: "f", 1: "e"}                                                                  # Unity VertexFormat Float32, Float16
 FORMAT_SIZES = {0: 4, 1: 2, 2: 1, 3: 1, 4: 2, 5: 2, 6: 1, 7: 1, 8: 2, 9: 2, 10: 4, 11: 4}   # Unity VertexFormat bytes

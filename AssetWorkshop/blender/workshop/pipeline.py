@@ -1,7 +1,11 @@
 """One asset from model.py to Unity-ready files: build, join, unwrap, bake, export, preview.
 
 A model.py may set TEXTURE_SIZE (atlas pixels, default 512), NORMAL_MAP (default True) and AO_STRENGTH
-(0 to 1, how much baked ambient occlusion darkens the albedo, default 0.6).
+(0 to 1, how much baked ambient occlusion darkens the albedo, default 0.6), and CATEGORY (a codex category key such
+as "weapon.axe_2h", written into the manifest for the style check). When a material names a paint region
+(regions.mark), the build also bakes <name>_regions.png and lists the regions in the manifest. NORMAL_FROM_ALBEDO (a
+strength, 2 to 4; 5 to 7 for bone, bark and stone) adds the albedo's own relief to the baked normal map, as the game's
+are made; the paint recipes (paint.py) want it, with AO_STRENGTH 0.2 since they paint their own hollows.
 """
 import importlib.util
 import os
@@ -9,9 +13,9 @@ import time
 
 import bpy
 
-from . import bake, export, materials, preview, scene
+from . import bake, export, materials, paint_normal, preview, regions, scene
 
-DEFAULTS = {"TEXTURE_SIZE": 512, "NORMAL_MAP": True, "AO_STRENGTH": 0.6}
+DEFAULTS = {"TEXTURE_SIZE": 512, "NORMAL_MAP": True, "AO_STRENGTH": 0.6, "CATEGORY": None, "NORMAL_FROM_ALBEDO": None}
 
 
 def run(asset_dir, render_preview=True):
@@ -73,11 +77,22 @@ def _textures(visual, name, settings):
         bake.occlusion(visual, ao)
         bake.multiply(albedo, ao, settings["AO_STRENGTH"])
         bpy.data.images.remove(ao)
-    normal = None
-    if settings["NORMAL_MAP"]:
-        normal = bake.new_image(name + "_normal", size, data=True)
-        bake.normal(visual, normal)
-    return {"albedo": albedo, "normal": normal}
+    images = {"albedo": albedo, "normal": _normal(visual, name, size, albedo, settings)}
+    if regions.present(visual):
+        images["regions"] = regions.bake_mask(visual, name + "_regions", size)
+    return images
+
+
+def _normal(visual, name, size, albedo, settings):
+    """The baked normal map, or None; with NORMAL_FROM_ALBEDO also the albedo's own relief on top, at that strength
+    (the game's normal maps are the albedo's relief: codex/paint.md, paint_normal)."""
+    if not settings["NORMAL_MAP"]:
+        return None
+    normal = bake.new_image(name + "_normal", size, data=True)
+    bake.normal(visual, normal)
+    if settings["NORMAL_FROM_ALBEDO"]:
+        paint_normal.image_from_albedo(albedo, normal, settings["NORMAL_FROM_ALBEDO"])
+    return normal
 
 
 def _final_material(visual, name, images):
@@ -107,10 +122,23 @@ def _write(name, out, visual, colliders, images, settings):
             "normal": files.get("normal", ""), "textureSize": settings["TEXTURE_SIZE"],
             "colliders": [c.name for c in colliders], "size": export.unity_size(low, high),
             "triangles": scene.triangles(visual)}
+    _codex(data, images, files, settings)
     export.manifest(os.path.join(out, name + ".json"), data)
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(out, name + ".blend"))
-    for key in ("size", "triangles", "colliders"):
-        _log(key, data[key])
+    for key in ("size", "triangles", "colliders", "category"):
+        if key in data:
+            _log(key, data[key])
+    if "regions" in data:
+        _log("regions", ", ".join(f"{r['name']} {r['share']:.0%} {r['albedo']}" for r in data["regions"]))
+
+
+def _codex(data, images, files, settings):
+    """The manifest's optional entries: the codex category and the paint regions, only when the model has them."""
+    if settings["CATEGORY"]:
+        data["category"] = settings["CATEGORY"]
+    if images.get("regions") is not None:
+        data["regionMask"] = files["regions"]
+        data["regions"] = regions.table(images["regions"], images["albedo"])
 
 
 def _log(key, value):
