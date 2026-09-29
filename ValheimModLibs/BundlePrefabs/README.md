@@ -65,8 +65,20 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   lifetime, the gradient-mapped fire's custom colours, trails, lights and material tints (materials are copied first).
   With `PrefabBench.Copy` it derives a new effect from a game one without a bundle. Particle systems are reached by
   reflection (this library does not reference Unity's particle module).
-- Not yet run in the game: `CreatureBody`, `BundleEffects` and `EffectTint` (2026-09-29); their previews and checks ran
-  in the workshop's Unity project only.
+- `SfxPrefabs.Copy(scene, "sfx_greydwarf_idle", "MyMod_beast_idle", bundle, clipNames, settings)` makes a mod's own
+  sound the game's way: a copy of a game sound prefab (its ZSFX random clip, pitch and volume, concurrency and
+  captions; its AudioSource reach, roll-off curve, mixer group and reverb; TimedDestruction and ZNetView) playing the
+  bundle's AudioClips, with its own concurrency hash, registered in ZNetScene. Sounds played through an EffectList are
+  networked objects, so every peer must register them (call it inside `NetPrefabs.OnSceneAwake`). A layered game sound
+  (`sfx_sword_swing` and its overlay) keeps only its first layer; `CopyLayers` takes one clip set per layer.
+  `SfxPrefabs.Variant(scene, gamePrefab, name, settings)` keeps the game's own clips and changes only the settings,
+  the way the game makes the Greyling from the Greydwarf (pitch 1.8 to 2.2). `SfxSettings` overrides MinPitch,
+  MaxPitch, MinVolume, MaxVolume, MaxConcurrent and Caption; set Caption for a creature's sounds, or the copy captions
+  it with the original creature's name. AudioClip lives in UnityEngine.AudioModule, which this library does not
+  reference: clips travel as an Array and are set by reflection (`SfxPrefabs.Load(bundle, names)`). The clips come
+  from `AssetWorkshop/sfx`; which prefab to copy: `AssetWorkshop/codex/sfx/catalogue.md`.
+- Not yet run in the game: `CreatureBody`, `BundleEffects`, `EffectTint` and `SfxPrefabs` (2026-09-29); their previews
+  and checks ran in the workshop's Unity project only.
 
 ## Rules
 

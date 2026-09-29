@@ -23,7 +23,7 @@ ValheimMods/
   EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, height limits
   GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
-  AssetWorkshop/     3D assets from scripts: Blender builds, bakes and previews a model, Unity builds the asset bundle
+  AssetWorkshop/     3D assets, effects and sounds from scripts, built to its codex (the game's art, measured)
   DevBridge/         dev-only plugin: drive the running game over localhost HTTP for testing, never shipped
 ```
 
@@ -200,9 +200,12 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   launch or kill the game from a script.
 - Prefer prefix/postfix patches over transpilers. Verify game signatures by decompiling `assembly_valheim.dll` with
   `ilspycmd` into the scratch folder, never into a repository.
-- 3D models, textures and asset bundles come from `AssetWorkshop` (Blender and Unity 6000.0.75f1 in
-  `%USERPROFILE%\tools`, both run headless). Build with `AssetWorkshop\build.ps1` and check a model by reading its
-  `out\preview.png`. The workshop's `README.md` has the conventions and what is not built yet.
+- 3D models, textures, particle effects, sounds and asset bundles come from `AssetWorkshop` (Blender and Unity
+  6000.0.75f1 in `%USERPROFILE%\tools`, both run headless). A new asset is built to `AssetWorkshop/codex/` (the game's
+  own art measured: budgets, paint, palettes, shaders, rigs, effects, sounds; `codex/look.md` first) from a filled-in
+  `codex/BRIEF.md`, then checked with the style check and a lineup beside the game's own. Build with
+  `AssetWorkshop\build.ps1` and check a model by reading its `out\preview.png` and `out\lineup\`. The workshop's
+  `README.md` has the conventions and what is not built yet.
 - Test in the running game through `DevBridge` (installed in `LocalTesting` only): once the user has started the
   profile, `curl -s http://127.0.0.1:7780/help` lists endpoints for screenshots, the UI tree, clicks, keys, mouse,
   console commands, the log, reflection and ZDOs. `DevBridge/README.md` has the test loop and the limits. A rebuilt
