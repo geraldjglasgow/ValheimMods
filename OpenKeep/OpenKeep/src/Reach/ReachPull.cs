@@ -71,7 +71,11 @@ namespace OpenKeep.Reach
             return inventory.FindFreeStackSpace(item.m_shared.m_name, item.m_worldLevel) + inventory.GetEmptySlots() * perSlot;
         }
 
-        /// <summary>Puts one unit that the inventory holds back into the nearest reachable container that accepts it.</summary>
+        /// <summary>
+        /// Puts one unit that the inventory holds back into a reachable container that accepts it: the nearest one that
+        /// already holds the item, else the nearest that accepts it; a full one is passed over for the next (the user's
+        /// rule for every automatic store, 2026-09-29).
+        /// </summary>
         public static bool ReturnOne(Inventory inventory, string name, int quality)
         {
             ItemDrop.ItemData item = FindStack(inventory, name, quality);
@@ -80,7 +84,7 @@ namespace OpenKeep.Reach
             ItemDrop.ItemData unit = item.Clone();
             unit.m_stack = 1;
             unit.m_equipped = false;
-            foreach (Container container in ReachCount.Containers())
+            foreach (Container container in HoldersFirst(ReachCount.Containers(), name))
             {
                 if (!ReachRules.RuleFor(container).Accepts(unit) || !container.GetInventory().CanAddItem(unit, 1) || !ContainerScan.Claim(container))
                     continue;
@@ -90,6 +94,17 @@ namespace OpenKeep.Reach
                 return true;
             }
             return false;
+        }
+
+        /// <summary>The containers holding the item first, then the others, each in the order given (nearest first).</summary>
+        private static List<Container> HoldersFirst(List<Container> containers, string name)
+        {
+            List<Container> ordered = new List<Container>(containers.Count);
+            List<Container> others = new List<Container>();
+            foreach (Container container in containers)
+                (container.GetInventory().ContainsItemByName(name) ? ordered : others).Add(container);
+            ordered.AddRange(others);
+            return ordered;
         }
 
         private static ItemDrop.ItemData FindStack(Inventory inventory, string name, int quality)

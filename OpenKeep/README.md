@@ -7,7 +7,7 @@ workbench; how much each smelter and kiln holds; a sign above every chest that n
 tweaks: respawn at your nearest bed, campfires on wooden floors, honey per day, fires that refuel from nearby chests,
 smelters and kilns that feed themselves from the chests beside them, tamed animals that eat from nearby chests,
 torches lit only at night (or kept lit),
-Rested sooner and area repair with the hammer. Every gameplay setting is server synced and lockable, every hotkey is
+Rested sooner, area repair with the hammer and gear repaired as you open a workbench or forge. Every gameplay setting is server synced and lockable, every hotkey is
 per player, and everything is tunable in the config file and seven YAML files that hot reload. Convenience features are on by default; anything
 that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
 
@@ -58,7 +58,9 @@ Shift + click on the trash can starts trash mode: the pointer becomes the trash 
 inventory or the open chest is destroyed, with no question asked (favourites and worn items are kept); let go of
 Shift to stop. What does not belong in
 the open chest is routed: Ctrl + click sends a stack to the nearest container that holds the item, an item of its
-group, or accepts it in `OpenKeep.Stow.yml`; Store one (`V`) sends a single item; Find (`Z`) marks every nearby
+group, or accepts it in `OpenKeep.Stow.yml`; Store one (`V`) sends a single item. When a chest fills up, the rest
+goes on to the next nearest container that holds the item, and the next, until the stack is gone or no such
+container is left in range; quick stack and Dump work the same way. Find (`Z`) marks every nearby
 container holding the hovered item with a line and a count; Dump (Alt + D) quick stacks to every nearby container
 without opening the inventory; the left and right arrows or the mouse wheel over the container grid cycle
 through the chests around you.
@@ -67,7 +69,9 @@ through the chests around you.
   (Shift + F): the slot's content never moves. Top up still refills favourites.
 - Ground pickup (off by default): containers whose prefab has `pickup: true` in the YAML pull dropped items
   lying within `Pickup Range` (2 m) from the ground after `Pickup Delay` seconds, only items they already hold
-  unless the YAML says otherwise.
+  unless the YAML says otherwise. When several chests could take a drop, the one already holding that item and
+  nearest to the drop takes it; when that chest is full, the next nearest. A kiln's coal or a smelter's bars drop at
+  the station's output and go into the nearest pickup chest holding them the same way.
 
 Favourites and junk marks are saved with the character and follow it between worlds.
 
@@ -163,7 +167,9 @@ in section `0. Containers` (default `Off`) changes that:
   counts as refused: `The chest did not answer`.
 
 OpenKeep's own quick stack, store all, top up, routing, store one, dump and trash work into a shared chest the
-same way; the message for such a chest arrives when its answer does (`Moved n stacks to Chest`). Sorting a
+same way; the message for such a chest arrives when its answer does (`Moved n stacks to Chest`), and what it had no
+room for goes on to the next nearest chest holding the item (after a quick stack or dump, a line in the top left
+says where). Sorting a
 chest someone else is using is refused. Crafting, building and station feeding never count or pay from a chest
 another player is using, whatever the mode, so a requirement is never shown as covered by an item the other
 player may take first. Both players need the mod; a player without it gets the game's usual refusal.
@@ -234,6 +240,13 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
   stonecutter) and access to any ward it stands in; the others are skipped quietly. The swing costs the stamina and
   hammer wear of one repair, the extra pieces are free, and a line under the game's own says how many were repaired
   too. Hitting a piece that needs no repair repairs nothing around it. Ships and carts are never repaired this way.
+- Repair at stations (`Auto Repair`, on): opening a workbench, forge, black forge, galdr table, artisan table or any
+  other station with the game's repair button repairs, at once, every item in your inventory that this station can
+  repair at its current level, what you wear included, exactly as if you pressed its repair button once for each: the
+  same items (a forge item waits for a forge, an item needing a higher station level waits for the extensions), the
+  same Crafting skill gain, no cost. One repair sound and one message, `Repaired 3 items`; nothing when nothing needed
+  repair. A cart with `Cart Workbench` on repairs like a workbench when you open it. Each player's own gear, on every
+  server.
 - Pets eat from chests (`Pets Eat From Chests`, on; `Pet Chest Range`, 10 m): a hungry tamed animal (wolf, boar, lox,
   hen, asksvin, any modded tame) walks to a container within range that holds food it eats and eats one item from
   it, just as it eats from the ground, so its fed timer starts again and tames in a pen stay fed from a stocked chest.
@@ -272,7 +285,7 @@ none of it, and PackPanel works without OpenKeep. With both installed they fit t
 | `2. Stow / Trash Key` | Delete | trash the hovered stack |
 | `2. Stow / Destroy Junk Key` | LeftShift + Delete | destroy every junk stack |
 | `2. Stow / Route Modifier` | LeftControl | with a left click: route the stack |
-| `2. Stow / Store One Key` | V | one item to the open or nearest holding container |
+| `2. Stow / Store One Key` | V | one item to the open or nearest holding container (the next holding one when it is full) |
 | `2. Stow / Find Key` | Z | mark every nearby container holding the hovered item |
 | `2. Stow / Dump Key` | LeftAlt + D | outside the inventory: quick stack to every nearby container |
 | `2. Stow / Cycle Previous Key`, `Cycle Next Key` | LeftArrow, RightArrow | switch to the previous or next chest around you |
@@ -291,7 +304,7 @@ Stacks` and `4b. Item Weights` when per item entries are on), `5. Capacity`, `6.
 `Show Counts`, `Max Items`, `Max Characters`, `Update Seconds`, `Height`, `Rotation`, `Empty Text`), `8. Homestead`
 (`Nearest Bed Respawn`, `Build On Wood`, `Honey Per Day`, `Honey Per Player Online`, `Auto Fuel`, `Auto Fuel Range`,
 `Torches Night Only`, `Torch Pieces`, `Torch Margin`, `Auto Feed Stations`, `Auto Feed Range`, `Auto Feed Skip`, `Auto Feed Leave`, `Rested Delay`, `Area Repair`,
-`Pets Eat From Chests`, `Pet Chest Range`; per player `Torch Switch Key`),
+`Auto Repair`, `Pets Eat From Chests`, `Pet Chest Range`; per player `Torch Switch Key`),
 `9. Shared`
 (`Request Timeout`, `Touch Seconds`; per player `Show Touches`, `Touch Colour`), `10. Batch Crafting` (`Enabled`,
 `Max Amount`), and `General / Lock Configuration`.

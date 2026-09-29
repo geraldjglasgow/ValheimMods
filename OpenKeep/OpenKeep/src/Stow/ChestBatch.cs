@@ -1,3 +1,4 @@
+using System;
 using OpenKeep.Core;
 using OpenKeep.Shared;
 
@@ -35,8 +36,11 @@ namespace OpenKeep.Stow
         /// <summary>After Finish: replies are still to come, the batch reports itself.</summary>
         public bool Waiting => pending > 0;
 
-        /// <summary>Puts <paramref name="amount"/> of a player inventory stack into the container; <paramref name="credit"/> counts on success.</summary>
-        public void Put(ItemDrop.ItemData item, int amount, int credit)
+        /// <summary>
+        /// Puts <paramref name="amount"/> of a player inventory stack into the container; <paramref name="credit"/> counts
+        /// on success. <paramref name="after"/>, when given, runs once the answer is in and the stack is free again.
+        /// </summary>
+        public void Put(ItemDrop.ItemData item, int amount, int credit, Action after = null)
         {
             pending++;
             StackMover.Reserve(item);
@@ -44,6 +48,7 @@ namespace OpenKeep.Stow
             {
                 StackMover.Release(item);
                 Reply(ok, credit);
+                after?.Invoke();
             });
         }
 

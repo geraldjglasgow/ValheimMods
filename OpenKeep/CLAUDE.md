@@ -7,9 +7,9 @@ workbenches (Carts), several
 players in one chest (Shared), a contents sign above every player-built container (Signs), a - amount + stepper
 beside the Craft button (Batch), and base tweaks outside
 storage: respawn at the nearest owned bed, pieces on wooden floors, honey per day, fires refuelling from nearby
-containers, torches lit only at night and smelters and kilns feeding themselves from the containers beside them
-(Homestead). The player's own inventory (a bigger grid, labelled slots, a key ring, backpacks and the look) is the
-separate mod PackPanel, which this one works with (see "PackPanel" under the decisions). Written black-box
+containers, torches lit only at night, smelters and kilns feeding themselves from the containers beside them and gear
+repaired when a crafting station opens (Homestead). The player's own inventory (a bigger grid, labelled slots, a key
+ring, backpacks and the look) is the separate mod PackPanel, which this one works with (see "PackPanel" under the decisions). Written black-box
 from `SPEC.md` (deleted after the in-game verification) and the game code alone, by module agents following
 `PLAN.md`; the rules are under "Developing mods" in `../CLAUDE.md`.
 This file is the code map, the patched methods, the decisions the spec left open, and the in-game test checklist.
@@ -83,7 +83,9 @@ OpenKeep/OpenKeep/src/
     StowTargets.cs          the open container and the nearby ones: usable now or shared (Full mode)
     ChestBatch.cs           one action's writes to one container through Shared.ChestWriter, with the summary
     StackMover.cs           stacks with a put under way (never moved twice), the end-of-action message
-    StowActions.cs          quick stack, store all, dump
+    StowActions.cs          quick stack, store all, dump; SpillOver: a shared chest's leftover goes on to later holders
+    Overflow.cs             one stack through a line of containers: the chosen one, then every later one holding the
+                            item, nearest first, until placed; one put per step, a shared chest's answer continues it
     TopUp.cs, Sorting.cs, Trash.cs, Routing.cs, Finder.cs, Cycling.cs
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
     StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
@@ -99,6 +101,8 @@ OpenKeep/OpenKeep/src/
                             icon from assets/trash.png
     LinkMarker.cs           Find Key: a line from the player and a floating count
     GroundPickup.cs         Container.CheckForChanges postfix
+    PickupOrder.cs          which pickup chest takes a drop: holders before acceptors, nearest to the drop first,
+                            a full one passed over
   Salvage/                  section 3
     SalvageModule.cs, SalvageSettings.cs, SalvageWords.cs, RoundingMode.cs
     SalvageModel.cs, FractionOverride.cs, SalvageRules.cs   OpenKeep.Salvage*.yml, recipe lookup, blockers
@@ -219,6 +223,11 @@ OpenKeep/OpenKeep/src/
     RepairChecks.cs         the hand repair's checks per neighbour, silent: station in build range, ward access
     RepairArea.cs, RepairOutcome.cs, RepairTally.cs   the run: checks, WearNTear.Repair, place effect, cap 64,
                             message, log line
+    StationRepairFeature.cs, StationRepairSettings.cs   Auto Repair, the $ok_autorepair_one and $ok_autorepair_many
+                            words
+    StationRepair.cs        the run: the game's HaveRepairableItems and m_canRepair rule, one RepairOneItem per item
+                            its CanRepair accepts, the repair effect once, one message
+    StationRepairPatch.cs   CraftingStation.Interact postfix: the station is the local player's current one
   Shared/                   section 9
     SharedModule.cs, SharedSettings.cs, SharedWords.cs   section 9. Shared, the $ok_shared_ words
     SharedState.cs          the viewed container, the mode, the user name (ZDO OpenKeep.user), the panel title
@@ -257,7 +266,7 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.8.0]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.9.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -281,7 +290,9 @@ Postfix: `Bed.Awake` (remember own beds, forget others at a known point), `Bed.G
 bed), `Container.Awake` (Core tracking; Capacity sizes; Shared RPC registration), `Container.CheckForChanges`
 (ground pickup; the sign refresh tick), `Container.GetHoverText`, `Container.OnDestroyed` (the owner removes the
 container's sign), `Container.SetInUse(bool)` (the user name), `CookingStation.GetHoverText`,
-`CraftingStation.GetLevel(bool)`, `Fermenter.GetHoverText`, `Fireplace.Awake` (Homestead registers
+`CraftingStation.GetLevel(bool)`, `CraftingStation.Interact(Humanoid, bool, bool)` (Homestead's auto repair on the
+local player's client once the game made the station current; carts with a workbench open theirs through it too),
+`Fermenter.GetHoverText`, `Fireplace.Awake` (Homestead registers
 `OpenKeep_TorchKeepLit` on every fire's net view), `Fireplace.GetHoverText` (Reach's From storage line; Homestead's
 Lights at nightfall and the Torch Switch Key line), `Fireplace.UpdateFireplace()` (private, every 2 s on every client with the fire
 loaded; on the ZDO owner only: Homestead's torch switch with `Priority.High`, then auto fuel),
@@ -341,7 +352,7 @@ Lines`, `Hover Fill`), `6. Carts` (`Cart Workbench`, `Cart Station Level`, `Cart
 `Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Torch Switch Key` O),
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Torch Switch Key` O),
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
 100 (1 to 1000); both synced).
@@ -381,7 +392,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - `OpenKeep_TorchKeepLit` (bool: keep lit, or back on the schedule), registered on every fire's net view in a
   `Fireplace.Awake` postfix (once per view, guarded by `m_functions`), sent by the player's client to the fire's ZDO
   owner with `ZNetView.InvokeRPC` after claiming an unowned fire as `Fireplace.Interact` does; the wanted state, not
-  a toggle. Area repair and Auto Feed send only the game's own RPCs (`RPC_Repair`, `RPC_AddOre`, `RPC_AddFuel`).
+  a toggle. Area repair and Auto Feed send only the game's own RPCs (`RPC_Repair`, `RPC_AddOre`, `RPC_AddFuel`);
+  Auto Repair sends nothing (durability and skills live in the player's own inventory and profile, as for the game's
+  repair button).
 - Item packet: the prefab name (empty when the item has no prefab; the reader then returns null), followed by the
   game's own `ItemDrop.ItemData.Save` fields: durability x100, grid x, grid y, world level, a flag byte (picked
   up, equipped, quality, stack, variant, crafter, prefab, custom data), then only the flagged ones: quality,
@@ -406,12 +419,13 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `OpenKeep.Stations.txt`.
 - Localization keys: `$ok_*` (Reach: `ok_fromstorage`, `ok_reach`, `ok_on`, `ok_off`, `ok_pulled`,
   `ok_nothingtopull`, `ok_nofit`; Stow: `ok_stow_*`, including `ok_stow_moved_to` and `ok_stow_toppedup_from` for
-  a shared chest's reply; Salvage: `ok_salvage*`; Capacity: `ok_slots`, `ok_full`, `ok_and`, `ok_more`; Carts:
+  a shared chest's reply and `ok_stow_routed_more` for a stack that went on to further containers; Salvage: `ok_salvage*`; Capacity: `ok_slots`, `ok_full`, `ok_and`, `ok_more`; Carts:
   `ok_cartcraft`; Shared: `ok_shared_inuse`, `ok_shared_moving`, `ok_shared_noanswer`, `ok_shared_denied`,
   `ok_shared_readonly`, `ok_shared_someone`, `ok_shared_nofit`, `ok_shared_chestfull`, `ok_shared_unavailable`;
   Signs: `ok_signs_sign`, `ok_signs_playertext`, `ok_signs_nosign`, `ok_signs_optedout`, `ok_signs_reset`,
   `ok_signs_rewritten`, console output only; the sign text itself is plain text); Homestead: `ok_torch_nightfall`, `ok_torch_keeplit`,
-  `ok_torch_nightonly`, `ok_torch_kept`, `ok_torch_scheduled`, `ok_repair_one`, `ok_repair_many`.
+  `ok_torch_nightonly`, `ok_torch_kept`, `ok_torch_scheduled`, `ok_repair_one`, `ok_repair_many`,
+  `ok_autorepair_one`, `ok_autorepair_many`.
 - Console: `openkeep reload`, `openkeep containers`, `openkeep write docs`, `openkeep signs`, `openkeep signs reset`,
   `openkeep signs rewrite`.
 
@@ -594,8 +608,55 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   what did not fit stays on the floor or in the chest, the player never loses more than the trashed stack. A viewed
   chest refuses with "Viewing only" before the confirmation. The trash can accepts a stack dragged from a shared
   chest the same way.
-- Route and Store one are one put each; a chest that answers at once and takes nothing says "Nothing to move", a
-  shared chest's answer is the message ("Sent x to chest" on yes, the writer's refusal on no).
+- Route and Store one start with one put into the chosen container; what it does not take goes on (see the next
+  point). The message comes when the last put is answered: "Sent x to chest" (the first container that took some),
+  "Sent x to chest and n more" when further containers took the rest, "Stored one x"; when nothing moved, "Nothing to
+  move", unless the last container asked was a shared chest whose refusal the writer has just said.
+- Overflow (asked for on 2026-09-28: "if a chest is full, then auto store looks for the next closest chest with the
+  item in it to fill up"; no setting, it is the obvious behaviour): a stack sent to a container that fills up goes on
+  to the next container holding the item, nearest first from the player, until it is placed or none is left.
+  `Overflow` runs one stack through a line: the chosen container first (Route's target, Store one's open or nearest
+  holding container, taken whether or not it holds the item, as before), then every later container of the same
+  `StowTargets.Nearby` list (the open one first, then by distance, within `Nearby Range`) that holds the item by name
+  when its turn comes. Each step re-checks what could have changed while a shared chest answered: still a target
+  (usable now or shared: section 0 switches, privacy, ward, in-use rule), not refusing the item, still holding it;
+  the stack still in the inventory and still movable (favourites, equipped, a put under way). Every step is one
+  `ChestWriter.Put` with the stack reserved in `StackMover` until its answer, so a chest the client can change at
+  once is claimed, changed and saved as before, and a shared chest gets its request and the line goes on when the
+  answer arrives. The paths:
+  - Quick stack (with `Quick Stack Nearby`, or no container open) and Dump already did this and are unchanged for
+    every chest the client changes at once: the targets are visited nearest first, each takes every movable stack it
+    holds as far as it fits, and what a full container left is still in the inventory when the next holder comes.
+    The gap was a shared chest: its stack is reserved until the answer and later containers skip it, so the leftover
+    stayed. Now `StowActions.SpillOver` runs after each of its answers and sends the leftover on to the later
+    containers of the same action that hold the item (`Overflow` without a chosen container); when anything moved a
+    top-left line says "Sent x to chest", so the chest's own centre summary ("Moved n stacks to chest") stays.
+  - Route: after the first container, only containers holding the exact item follow. When the target was chosen for
+    its group or its `accept` list, no nearby container held the item (the exact holder always wins), so a full group
+    or accept target keeps the rest in the inventory, as before; the next group or accept container is not tried.
+  - Store one: the open container when one is open (refusing it still says "No nearby container takes x"), else the
+    nearest holder (a refusing nearest holder too, as before); when it is full the item goes to the next nearest
+    holder instead of "Nothing to move".
+  - Unchanged because they never pick one container per item: Store all and quick stack without `Quick Stack Nearby`
+    (the open container only, by definition), the game's move click and Place stacks (the open chest), Merge Into
+    Chests (a drag onto the open chest).
+  - Ground pickup and Reach's `ReturnOne`: see "Closest first" below.
+- Closest first (the user's rule, 2026-09-29, for "any type of auto store": "if there are multiple chests with the items
+  in it, it should try to store in the chest closest to it. if that chest is full then the next closest"; their
+  examples: a chest full of stone beside one holding a single stone, ground pickup, quick stack, a kiln's coal). "It" is
+  where the item comes from: the player for quick stack, dump, route and store one (above: nearest first from the
+  player, the open container first as the player's own pick); the drop for ground pickup, which is also how a kiln's
+  or smelter's output reaches chests (the game drops it at the station's output point; OpenKeep has no station-to-chest
+  path). Ground pickup was each chest sweeping whatever lay in its range, so whichever swept first took the drop.
+  `PickupOrder.IsFirst` now leaves a drop to the pickup chest that ranks first among those whose `Pickup Range`
+  reaches it and could take it now (a pickup chest, not in use, `Wanted`, room for one): a chest holding the item
+  before one that only accepts it (YAML `accept`, or any chest with `Pickup Only Held Items` off), then the nearest to
+  the drop. A full chest has no room, so the next one takes the drop on its own sweep, and a chest that fills halfway
+  leaves the rest for the next. Every chest still sweeps on its own ZDO owner's client from replicated contents, so no
+  RPC is added; a drop a better chest will take waits for that chest's next sweep (`Pickup Interval`). Ranges stay:
+  a chest farther than `Pickup Range` from the drop never takes it. Reach's `ReturnOne` (a unit a station borrowed,
+  put back) now tries the containers holding the item first, nearest first, then the other accepting ones.
+
 - Cycling in View and Full modes includes chests another player is using when the Shared module would open them
   read-only: in use by another, the ward and privacy checks of `Container.Interact`, the prefab enabled and the
   section 0 switches (the rules are repeated in `Cycling.Viewable` because `ContainerScan` has no viewable query;
@@ -810,7 +871,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 ### Homestead
 
 Section 8 (1.6.0, more in 1.7.0 and 1.8.0) holds requests from the user's server that are not storage; each feature is a set
-of classes with one prefix (`Bed*`, `Fire*`, `Hive*`, `Fuel*`, `Torch*`, `Feed*`, `Rest*`, `Repair*`, `Pet*`) and its own settings class, and
+of classes with one prefix (`Bed*`, `Fire*`, `Hive*`, `Fuel*`, `Torch*`, `Feed*`, `Rest*`, `Repair*`, `StationRepair*`, `Pet*`) and its own settings class, and
 `HomesteadModule` only calls them. Fuel and Feed share `NearbyTake` and `TakeRetry`; Pet takes through `NearbyTake` too.
 
 Beds:
@@ -1057,6 +1118,39 @@ Area repair (1.7.0; the user asked for the hammer to repair every piece touching
   the game does for the hovered piece. One top-left line with the count follows the game's `$msg_repaired`; one log
   line per swing.
 
+Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto repair workbench"; on by default):
+- Hook: a `CraftingStation.Interact(Humanoid, bool, bool)` postfix. The game's `Interact` (not on `repeat`, only for
+  the local player, within `InUseDistance`, with `CheckUsable` passing its roof and fire rules) calls
+  `Player.SetCraftingStation(this)` and `InventoryGui.Show(null, 3)` and returns false; that is the only place the
+  game opens a station. The postfix acts when the station is the local player's current one afterwards, so a press
+  another mod's prefix took (GrindstoneSkills' alt press on a kitchen station cycles its filter and skips the game's)
+  or a refused open repairs nothing. OpenKeep's cart workbench opens through `station.Interact` too
+  (`CartInteractPatch`), so a cart repairs as a workbench of `Cart Station Level` (its `GetLevel` postfix) with the
+  workbench's `m_canRepair` and repair effect (copied in `CartStation`).
+- The decision is the game's repair button's: `InventoryGui.UpdateRepair` shows the button only at a station with
+  `m_canRepair` (checked here, since `RepairOneItem` itself does not), `HaveRepairableItems` (station usable here,
+  a worn item `CanRepair` accepts) must be true, and the items are the worn ones (`Inventory.GetWornItems`) that
+  `CanRepair` accepts: `m_canBeReparied`, a recipe whose crafting or repair station has this station's name or an item
+  from a lower world level, and `Mathf.Min(GetLevel(), 4)` at least the recipe's `m_minStationLevel`; everything under
+  `NoCostCheat`. The repair is `InventoryGui.RepairOneItem` called once per such item (the button's own method, each
+  call repairs the first item `CanRepair` accepts: Crafting skill raised by `1 - durability / max`, durability set to
+  the maximum), stopping at the first call that repairs nothing (a mod's patch refusing it), so whatever another mod
+  adds to the button applies per item too. Then `UpdateCraftingPanel()` as the button does, because the upgrade list's
+  durability bars are drawn when the list is built.
+- One effect, one message: `RepairOneItem` plays the station's `m_repairItemDoneEffects` and shows the centre
+  `$msg_repaired <item>` per call. The first call's effect plays; for the rest the station instance's field holds an
+  empty `EffectList` (put back in a `finally`; the cart's station shares the workbench prefab's list object, so the
+  field is swapped, never the list changed). The game's centre messages are not logged (`Player.Message` passes
+  `log: false`) and the last centre text wins, so the mod's "Repaired n items" / "Repaired 1 item", shown after the
+  calls in the same frame, is the one on screen; a mod's refusal message stays when nothing was repaired. Nothing is
+  said when nothing was due (the game's "No more item to repair" comes only from a call with nothing due, which is
+  never made). One log line per opening that repaired something.
+- Multiplayer: repair is the local player's own business in the game: `RepairOneItem` changes `m_durability` in the
+  player's inventory and raises a skill in the profile, sends no RPC and writes no ZDO, so every player on a dedicated
+  server gets it on their own client with the server's synced setting; the server does nothing. The effect is the
+  game's `EffectList.Create`, exactly as the button creates it.
+- Items only in the player's inventory, as the button: equipped gear is in it; containers are not touched.
+
 ### Batch
 
 - Asked for on 2026-09-28: "for workbenches, and any crafting in openkeep, - and + buttons with a number in the
@@ -1154,7 +1248,7 @@ Area repair (1.7.0; the user asked for the hammer to repair every piece touching
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.8.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 1.9.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1397,3 +1491,35 @@ from a script.
     crafts' experience. `10. Batch Crafting / Enabled = false`: no stepper, Shift + Craft makes 5 again. Gamepad: in
     the crafting panel the D-pad left and right step the amount, held they repeat. Dedicated server with A: the
     server's `Max Amount = 3` stops `+` at 3 on A; Lock Configuration keeps A from changing it.
+53. Overflow, single player: chest A 3 m away and chest B 8 m away both hold wood, A has room for only 10 more (fill
+    the rest with stone), chest C holds no wood. With 50 wood in the inventory and no chest open, Ctrl + click the
+    wood: 10 go to A, 40 to B, message `Sent Wood to Chest and 1 more`, C gets none. Empty B's room too: the wood
+    that fits nowhere stays in the inventory. V on wood with no chest open and A full: one wood lands in B, `Stored
+    one Wood`; open A (full) and press V: the wood goes to B as well. A and B full: `Nothing to move`. Quick stack (Q)
+    and Dump (Alt + D) with A full: the rest lands in B (as before). A chest holding wood beyond `Nearby Range`, one in
+    a stranger's ward and one with `refuse: [Wood]` in `OpenKeep.Stow.yml` get none; a favourite wood stack is not
+    routed. Ctrl + click copper ore when only a chest of tin (same group) is near: it goes there; with that chest full
+    it stays (no other group chest is tried).
+54. Overflow, two clients, `Shared Chests = Full`: A has chest X open (holds wood, room for 10), chest Y near B holds
+    wood too. B quick stacks (Q): B's centre message is `Moved n stacks to Chest` when X answers, X gains 10 wood, the
+    rest arrives in Y with a top-left `Sent Wood to Chest`, and B's inventory keeps nothing either chest took (log:
+    B's request to X, then no warning). B Ctrl + clicks a wood stack with X full: `No room in the chest`, then `Sent
+    Wood to Chest` as Y takes it. `Shared Chests = Off`: X is skipped and everything goes to Y at once.
+55. Auto Repair, single player: wear down an axe, a bronze sword (a forge recipe) and the armour you wear, then open a
+    workbench (E): the axe and the armour made at the workbench are full again at once, one repair sound, the centre
+    message `Repaired 2 items` (or the count), the Crafting skill rises as with the button; the sword stays worn. Open
+    a forge: `Repaired 1 item`. An item whose recipe needs workbench level 3 stays worn at a level 1 workbench (the
+    game's button refuses it too); add extensions and open again: repaired. Nothing worn: no message, no sound. A
+    workbench without a roof does not open and repairs nothing. The Upgrade tab's durability bars show full right
+    after opening. `Cart Workbench = On`: Shift + E on a cart repairs workbench items. With GrindstoneSkills, Shift + E
+    on a cauldron (its trash filter) repairs nothing. `Auto Repair = false`: opening repairs nothing and the game's
+    repair button works as before. The log shows `OpenKeep: opening Workbench repaired n items` once per opening.
+56. Auto Repair, dedicated server with A and B: each repairs their own worn gear on opening a station, on their own
+    screen only; the server log shows nothing. Server `Auto Repair = false` with A's own cfg true: A's opening repairs
+    nothing. Lock Configuration keeps B from changing it.
+57. Closest first, ground pickup: `Ground Pickup = true`, `Pickup Range = 4`, two chests with `pickup: true` 3 m apart,
+    chest A full of stone, chest B holding one stone. Drop 10 stone next to A: after `Pickup Delay` they go into B.
+    Empty some of A: stone dropped next to A goes into A, stone dropped next to B into B. A chest C with no stone nearer
+    to the drop than B: the stone still goes to B (holders first). A kiln with its output point between two pickup
+    chests holding coal: the coal goes into the nearer one, and into the other once that one is full. Dedicated server
+    with the chests owned by different players: the same.

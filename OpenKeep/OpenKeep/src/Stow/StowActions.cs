@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using OpenKeep.Core;
 
@@ -70,17 +71,23 @@ namespace OpenKeep.Stow
             StackInto(player, targets, false);
         }
 
-        /// <summary>Moves the movable stacks into the targets in order; with <paramref name="onlyHeld"/> only into
-        /// containers that already hold the item. Reports the stacks that moved at least partly.</summary>
+        /// <summary>
+        /// Moves the movable stacks into the targets in order; with <paramref name="onlyHeld"/> only into containers
+        /// that already hold the item. Reports the stacks that moved at least partly. The targets come nearest first,
+        /// so what a full container leaves of a stack is still in the inventory when the next container holding the
+        /// item comes, and goes there. A stack sent to a shared chest waits for its answer (later containers skip it
+        /// meanwhile), then what the chest did not take goes on to the later containers holding it (<see cref="SpillOver"/>).
+        /// </summary>
         private static void StackInto(Player player, List<Container> targets, bool onlyHeld)
         {
             int stacks = 0;
             bool waiting = false;
-            foreach (Container container in targets)
+            for (int i = 0; i < targets.Count; i++)
             {
-                ChestBatch batch = new ChestBatch(container, StowWords.MovedTo);
-                foreach (ItemDrop.ItemData item in Candidates(player, container, onlyHeld))
-                    batch.Put(item, item.m_stack, 1);
+                ChestBatch batch = new ChestBatch(targets[i], StowWords.MovedTo);
+                List<Container> later = batch.Shared ? targets.GetRange(i + 1, targets.Count - i - 1) : null;
+                foreach (ItemDrop.ItemData item in Candidates(player, targets[i], onlyHeld))
+                    batch.Put(item, item.m_stack, 1, later != null && later.Count > 0 ? () => SpillOver(player, item, later) : (Action)null);
                 batch.Finish();
                 if (batch.Waiting)
                     waiting = true;
@@ -88,6 +95,21 @@ namespace OpenKeep.Stow
                     stacks += batch.Moved;
             }
             StackMover.ReportAction(stacks, waiting);
+        }
+
+        /// <summary>
+        /// A stack a shared chest has answered for: what it did not take goes on to the later containers of the action
+        /// that hold the item, nearest first. The chest's own summary stays in the centre; this says in the top left
+        /// where the rest went, only when something moved.
+        /// </summary>
+        private static void SpillOver(Player player, ItemDrop.ItemData item, List<Container> later)
+        {
+            string name = ItemNames.DisplayName(item);
+            Overflow.Send(player, item, item.m_stack, null, later, sent =>
+            {
+                if (sent.Took.Count > 0)
+                    Messages.TopLeft(Routing.SentWords(sent, name));
+            });
         }
 
         private static List<ItemDrop.ItemData> Candidates(Player player, Container container, bool onlyHeld)

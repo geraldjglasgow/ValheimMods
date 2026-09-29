@@ -20,6 +20,7 @@ namespace OpenKeep.Stow
         public const string NearbyOff = "$ok_stow_nearby_off";
         public const string NoRoute = "$ok_stow_noroute";
         public const string Routed = "$ok_stow_routed";
+        public const string RoutedMore = "$ok_stow_routed_more";
         public const string StoredOne = "$ok_stow_storedone";
         public const string ToppedUp = "$ok_stow_toppedup";
         public const string ToppedUpFrom = "$ok_stow_toppedup_from";
@@ -59,6 +60,7 @@ namespace OpenKeep.Stow
             Language.Add("ok_stow_nearby_off", "Quick stacking to nearby containers is disabled");
             Language.Add("ok_stow_noroute", "No nearby container takes {0}");
             Language.Add("ok_stow_routed", "Sent {0} to {1}");
+            Language.Add("ok_stow_routed_more", "Sent {0} to {1} and {2} more");
             Language.Add("ok_stow_storedone", "Stored one {0}");
             Language.Add("ok_stow_toppedup", "Topped up {0} items");
             Language.Add("ok_stow_toppedup_from", "Topped up {0} items from {1}");

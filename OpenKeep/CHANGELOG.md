@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.9.0
+- Homestead: `Auto Repair` (on): opening a workbench, forge, black forge, galdr table, artisan table or any other
+  station with the game's repair button repairs every item in your inventory that this station can repair at its
+  current level, what you wear included, as if you pressed its repair button once for each: the same items (a forge
+  item waits for a forge, an item needing a higher level waits for the extensions), the same Crafting skill gain, no
+  cost. One repair sound and one message, `Repaired 3 items`; nothing when nothing needed repair. A cart with
+  `Cart Workbench` on repairs like a workbench. Synced; off leaves only the game's button.
+- Stow: a full chest no longer stops a stack. Ctrl + click and Store one (`V`) send what the chosen container has no
+  room for on to the next nearest container that holds the item, and the next, until the stack is gone or none is
+  left within `Nearby Range`: `Sent Wood to Chest and 1 more`. A stack routed to a chest only for its group or its
+  `accept` list still stays in your inventory when that chest is full.
+- Stow: with `Shared Chests = Full`, what a chest another player has open had no room for after a quick stack or dump
+  goes on to the next nearest chest holding the item, with a line in the top left saying where; before, it stayed in
+  your inventory.
+- Stow: ground pickup leaves each drop to one chest: a chest already holding the item before one that only accepts
+  it, then the one nearest to the drop, and the next when that one is full. Before, whichever chest swept first took
+  it. A kiln's coal or a smelter's bars dropped at the station's output go into the nearest pickup chest holding them.
+- Reach: a unit borrowed from a chest for a station that the station did not take goes back to the nearest chest
+  holding that item, before other chests that accept it.
+
 ## 1.8.0
 - Batch crafting: the Craft tab of every crafting station (and crafting by hand) has `-` and `+` buttons with the
   amount between them, left of the Craft button; Craft makes that many at once, in one bar, through the game's own

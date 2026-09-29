@@ -12,7 +12,9 @@ namespace OpenKeep.Stow
     /// container is in use, for prefabs with <c>pickup: true</c>. Dropped items within <c>Pickup Range</c> that have
     /// lain longer than <c>Pickup Delay</c> (the ZDO's spawn time), are wanted by the rule and are not inside a ward
     /// the local player may not use are claimed, added with the game's add method and destroyed through the scene,
-    /// or reduced by what fitted. Items that were placed as pieces are left alone.
+    /// or reduced by what fitted. Items that were placed as pieces are left alone. When several pickup chests reach a
+    /// drop, it is left to the one that ranks first (<see cref="PickupOrder"/>: a chest holding the item before one
+    /// that only accepts it, then the nearest to the drop), and to the next when that one is full.
     /// </summary>
     [HarmonyPatch(typeof(Container), nameof(Container.CheckForChanges))]
     public static class GroundPickup
@@ -91,7 +93,9 @@ namespace OpenKeep.Stow
                 return false;
             if (Age(view) < StowSettings.PickupDelay.Value || !Wanted(container, drop.m_itemData))
                 return false;
-            return !CoreSettings.HonourWards.Value || PrivateArea.CheckAccess(drop.transform.position, 0f, false);
+            if (CoreSettings.HonourWards.Value && !PrivateArea.CheckAccess(drop.transform.position, 0f, false))
+                return false;
+            return PickupOrder.IsFirst(container, drop);
         }
 
         /// <summary>Seconds since the drop's ZDO spawn time; negative when the time is unknown.</summary>
@@ -103,7 +107,8 @@ namespace OpenKeep.Stow
             return (ZNet.instance.GetTime() - new DateTime(ticks)).TotalSeconds;
         }
 
-        private static bool Wanted(Container container, ItemDrop.ItemData item)
+        /// <summary>The container's rules want the item from the ground: not refused, and accepted or (with Pickup Only Held Items) already held.</summary>
+        internal static bool Wanted(Container container, ItemDrop.ItemData item)
         {
             if (StowRules.Refuses(container, item))
                 return false;
