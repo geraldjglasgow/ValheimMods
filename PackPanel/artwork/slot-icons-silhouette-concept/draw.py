@@ -41,15 +41,31 @@ def draw(name):
         poly([(108,173),(148,173),(148,204),(108,204)],CUT)
         line([(127,173),(127,211)],6,INK)
         for x,y in [(57,157),(72,173),(178,177)]: d.ellipse((x-3,y-3,x+3,y+3),fill=CUT)
+    elif name=='trinket':
+        # A hanging amulet: broad cord, small bail, and a cut-out rune.
+        line([(80,31),(62,58),(69,88),(98,117),(117,129)],10,INK)
+        line([(176,31),(194,58),(187,88),(158,117),(139,129)],10,INK)
+        ring((112,111,144,151),9)
+        poly([(128,140),(172,166),(166,207),(128,233),(90,207),(84,166)])
+        line([(128,158),(128,214)],7)
+        line([(128,160),(146,174),(128,188),(111,176)],7)
     elif name=='food':
         poly([(59,185),(113,119),(133,139),(76,204)])
         d.ellipse((36,178,66,210),fill=INK); d.ellipse((58,198,91,230),fill=INK)
         poly([(109,146),(91,123),(94,100),(110,68),(133,43),(161,32),(187,40),(207,61),(215,92),(203,121),(182,142),(153,155),(127,151)])
         line([(115,93),(126,78),(141,70)],4)
     elif name=='mead':
-        # Simple hollow horn, with an uneven natural taper.
-        poly([(64,222),(68,200),(63,171),(55,143),(54,112),(65,78),(91,55),(128,42),(169,43),(201,53),(194,78),(167,79),(140,85),(117,98),(99,117),(89,143),(84,179),(74,205)])
-        line([(71,87),(97,102)],5); line([(147,49),(144,79)],4)
+        # Reference vial: sloping shoulders, low broad belly, and a short flat foot.
+        poly([(117,29),(139,29),(137,44),(119,44)])
+        d.rounded_rectangle((110,49,146,61),radius=3,fill=INK)
+        poly([(115,59),(141,59),(141,78),(154,92),(172,112),
+              (190,143),(201,174),(198,198),(186,218),(163,229),
+              (93,229),(70,218),(58,198),(55,174),(66,143),
+              (84,112),(102,92),(115,78)])
+        # Hollow glass above the liquid; keep the lower body a solid silhouette.
+        poly([(123,62),(133,62),(133,83),(146,99),(163,118),
+              (174,138),(82,138),(93,118),(110,99),(123,83)],CUT)
+        line([(76,158),(71,177),(74,194),(80,204)],6)
     elif name=='ammo':
         poly([(64,201),(176,79),(187,88),(75,211)])
         poly([(223,30),(202,106),(188,88),(168,88),(154,73)])
@@ -86,7 +102,7 @@ def draw(name):
         ring((147,22,197,72),10)
     return im
 
-order='head chest legs back backpack utility food mead ammo purse key tacklebox tackle'.split()
+order='head chest legs back backpack utility food mead ammo purse key tacklebox tackle trinket'.split()
 sheet=Image.new('RGB',(1200,800),(65,46,32)); d=ImageDraw.Draw(sheet)
 try:
     title=ImageFont.truetype('C:/Windows/Fonts/segoeui.ttf',25); font=ImageFont.truetype('C:/Windows/Fonts/segoeui.ttf',16)

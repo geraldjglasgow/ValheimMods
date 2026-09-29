@@ -12,7 +12,7 @@ namespace PackPanel.Layout
     /// The layout the settings ask for. The main grid is Inventory Width wide and Inventory Rows tall plus the rows the
     /// player bought from the trader (the game's <c>invrows</c> key above its 4), plus the rows a worn backpack's slots
     /// need at the bottom (<see cref="Backpack.SlotsFor"/>; a partly used last row keeps its spare cells blocked). The slots follow in a fixed order:
-    /// Head, Chest, Legs, Back, Backpack, Utility, Food, Mead, Ammo, Purse, each group as many as <see cref="SlotCounts"/> says,
+    /// Head, Chest, Legs, Back, Backpack, Utility, Trinket, Food, Mead, Ammo, Purse, each group as many as <see cref="SlotCounts"/> says,
     /// then with Key Ring on one ring cell per key in Key Items (<see cref="KeyRing"/>), then with Tacklebox on the Tacklebox
     /// slot and as many cells as the box in it gives (<see cref="Tacklebox.CellsFor"/>), last because their count changes
     /// with the box, so no other slot moves when it does. With the module off the layout is
@@ -49,6 +49,8 @@ namespace PackPanel.Layout
             if (InventorySettings.BackpackSlot.Value)
                 Add(slots, 1, SlotKind.Backpack);
             Add(slots, SlotCounts.Utility, SlotKind.Utility);
+            if (InventorySettings.TrinketSlot.Value)
+                Add(slots, 1, SlotKind.Trinket);
             Add(slots, SlotCounts.Food, SlotKind.Food);
             Add(slots, SlotCounts.Mead, SlotKind.Mead);
             Add(slots, SlotCounts.Ammo, SlotKind.Ammo);

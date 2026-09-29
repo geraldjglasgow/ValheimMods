@@ -44,21 +44,17 @@ namespace PackPanel.Layout
             if (stack <= 0)
                 stack = item.m_stack;
             int room = inventory.FindFreeStackSpace(item.m_shared.m_name, item.m_worldLevel) + PurseRoom(inventory, layout, item)
-                + KeyRoom(inventory, layout, item) + TackleRoom(inventory, layout, item);
+                + KeyRoom(inventory, layout, item) + TackleRoom(inventory, layout, item) + AmmoRoom(inventory, layout, item);
             return room + CountEmpty(inventory, layout) * item.m_shared.m_maxStackSize >= stack;
         }
 
         /// <summary>Bait also fits into the tacklebox's empty cells, so a full grid still picks it up.</summary>
-        private static int TackleRoom(Inventory inventory, InventoryLayout layout, ItemDrop.ItemData item)
-        {
-            IReadOnlyList<Vector2i> cells = layout.CellsOf(SlotKind.Tackle);
-            if (cells.Count == 0 || !TackleRules.IsTackle(item))
-                return 0;
-            int empty = 0;
-            foreach (Vector2i cell in cells)
-                empty += inventory.GetItemAt(cell.x, cell.y) == null ? 1 : 0;
-            return empty * item.m_shared.m_maxStackSize;
-        }
+        private static int TackleRoom(Inventory inventory, InventoryLayout layout, ItemDrop.ItemData item) =>
+            TackleRules.IsTackle(item) ? SlotFill.EmptyRoom(inventory, layout.CellsOf(SlotKind.Tackle), item) : 0;
+
+        /// <summary>Arrows and bolts also fit into the empty Ammo slots (<see cref="AmmoRouting"/>), so a full grid still picks them up and crafts them.</summary>
+        private static int AmmoRoom(Inventory inventory, InventoryLayout layout, ItemDrop.ItemData item) =>
+            AmmoRouting.IsAmmo(item) ? SlotFill.EmptyRoom(inventory, layout.CellsOf(SlotKind.Ammo), item) : 0;
 
         /// <summary>A key also fits into its empty ring cell, so a full grid still picks it up.</summary>
         private static int KeyRoom(Inventory inventory, InventoryLayout layout, ItemDrop.ItemData item)

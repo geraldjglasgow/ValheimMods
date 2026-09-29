@@ -13,6 +13,7 @@ namespace PackPanel.Core
         public static string Back { get; private set; }
         public static string Backpack { get; private set; }
         public static string Utility { get; private set; }
+        public static string Trinket { get; private set; }
         public static string Food { get; private set; }
         public static string Mead { get; private set; }
         public static string Ammo { get; private set; }
@@ -45,6 +46,7 @@ namespace PackPanel.Core
             Back = Language.Add("packpanel_back", "Back");
             Backpack = Language.Add("packpanel_backpack", "Backpack");
             Utility = Language.Add("packpanel_utility", "Utility");
+            Trinket = Language.Add("packpanel_trinket", "Trinket");
             Food = Language.Add("packpanel_food", "Food");
             Mead = Language.Add("packpanel_mead", "Mead");
             Ammo = Language.Add("packpanel_ammo", "Ammo");
@@ -87,6 +89,7 @@ namespace PackPanel.Core
                 case SlotKind.Back: return Back;
                 case SlotKind.Backpack: return Backpack;
                 case SlotKind.Utility: return Utility;
+                case SlotKind.Trinket: return Trinket;
                 case SlotKind.Food: return Food;
                 case SlotKind.Mead: return Mead;
                 case SlotKind.Ammo: return Ammo;

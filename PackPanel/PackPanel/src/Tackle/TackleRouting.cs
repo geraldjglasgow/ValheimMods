@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using HarmonyLib;
 using PackPanel.Core;
 using PackPanel.Slots;
@@ -28,49 +26,10 @@ namespace PackPanel.Tackle
         }
 
         /// <summary>
-        /// Moves what fits of an item into the box; true when none is left outside it. The item is either not in the
-        /// inventory yet (an add) or in a main cell (a take all): an empty cell takes it whole, as the same item.
+        /// Moves what fits of an item into the box's cells (<see cref="SlotFill"/>); true when none is left outside it. The
+        /// item is either not in the inventory yet (an add) or in a main cell (a take all).
         /// </summary>
-        public static bool TakeIn(Inventory inventory, ItemDrop.ItemData item)
-        {
-            IReadOnlyList<Vector2i> cells = InventoryState.CellsOf(SlotKind.Tackle);
-            foreach (Vector2i cell in cells)
-            {
-                if (Stack(inventory, item, cell))
-                    return true;
-            }
-            foreach (Vector2i cell in cells)
-            {
-                if (inventory.GetItemAt(cell.x, cell.y) == null)
-                {
-                    Place(inventory, item, cell);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>Onto the stack in a cell when it is the same bait (quality, so stars, included); true when all of it went.</summary>
-        private static bool Stack(Inventory inventory, ItemDrop.ItemData item, Vector2i cell)
-        {
-            ItemDrop.ItemData there = inventory.GetItemAt(cell.x, cell.y);
-            if (there == null || there == item || !there.IsSameType(item) || there.m_quality != item.m_quality)
-                return false;
-            int moved = Math.Min(there.m_shared.m_maxStackSize - there.m_stack, item.m_stack);
-            if (moved <= 0)
-                return false;
-            there.m_stack += moved;
-            item.m_stack -= moved;
-            inventory.Changed();
-            return item.m_stack <= 0;
-        }
-
-        private static void Place(Inventory inventory, ItemDrop.ItemData item, Vector2i cell)
-        {
-            item.m_gridPos = cell;
-            if (!inventory.ContainsItem(item))
-                inventory.m_inventory.Add(item);
-            inventory.Changed();
-        }
+        public static bool TakeIn(Inventory inventory, ItemDrop.ItemData item) =>
+            SlotFill.TakeIn(inventory, item, InventoryState.CellsOf(SlotKind.Tackle));
     }
 }

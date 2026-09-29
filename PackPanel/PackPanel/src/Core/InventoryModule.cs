@@ -62,6 +62,7 @@ namespace PackPanel.Core
             Watch(InventorySettings.EquipmentSlots);
             Watch(InventorySettings.SlotsPerGroup);
             Watch(InventorySettings.UtilitySlots);
+            Watch(InventorySettings.TrinketSlot);
             Watch(InventorySettings.BackpackSlot);
             Watch(InventorySettings.FoodSlots);
             Watch(InventorySettings.FoodSlotsFollowEating);

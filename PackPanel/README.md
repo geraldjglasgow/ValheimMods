@@ -1,7 +1,7 @@
 # PackPanel
 
 A bigger, better organised player inventory for Valheim: a wider and taller grid (8 x 5 by default), labelled slots for
-your armour, a backpack, three worn utilities, food, meads and ammo on two tabs (Gear, with a sheet of your stats, and
+your armour, a backpack, three worn utilities, a trinket, food, meads and ammo on two tabs (Gear, with a sheet of your stats, and
 Consumables), Epic Loot's magic effects in that sheet when it is installed, a coin purse, a key ring, a tacklebox
 slot whose four craftable boxes hold your fishing bait, eight craftable backpacks (one per biome) that you wear on your
 back, your stats in their own boxes and under the minimap, and a plain brown or timber look for the inventory and the
@@ -14,24 +14,24 @@ Section `1. Inventory`. `Enabled` is the master switch: off, you get the game's 
 plus bought rows, no slots, no purse, no key ring, no backpacks, the game's wood look), every other PackPanel setting is
 ignored, and the slots' items move into the grid or drop at your feet.
 
-On the first start an existing character keeps every item where it was and gets the new rows; the armour and utility
-you wear move into their slots. Items another inventory mod kept below the game's rows are moved into the new grid (see
+On the first start an existing character keeps every item where it was and gets the new rows; the armour, utility and
+trinket you wear move into their slots. Items another inventory mod kept below the game's rows are moved into the new grid (see
 Warnings).
 
 - A bigger grid: `Inventory Width` (8, up to 12) columns and `Inventory Rows` (5, from 4 up to 10) rows. Rows bought
   from the trader come on top. The hotbar stays the first 8 cells of the top row, keys 1 to 8.
 - Carry weight (`Base Carry Weight`, 300): how much you carry before you are over-encumbered. Megingjord and meads
   still add to it, and the world's carry weight modifier still scales it. 300 is the game's.
-- Keep Slots On Death (`Keep Slots On Death`, off): what is in the gear, backpack, utility, food, mead and ammo slots
-  stays with you when you die instead of going into your grave, and the armour and utilities you wore are worn again
-  when you wake. The coin purse, the key ring and the grid follow the game's rules: keys go to your grave.
+- Keep Slots On Death (`Keep Slots On Death`, off): what is in the gear, backpack, utility, trinket, food, mead and ammo
+  slots stays with you when you die instead of going into your grave, and the armour, utilities and trinket you wore
+  are worn again when you wake. The coin purse, the key ring and the grid follow the game's rules: keys go to your grave.
 
 ### Slots
 Section `2. Slots`. The slots sit in a panel right of the stat boxes, on two tabs you pick with the buttons across its
-top. **Gear**: Head, Chest, Legs, Back and Backpack down the left, the utilities down the right, and a sheet of your
-stats between them. **Consumables**: a row each of food, mead and ammo. The coin purse and the key ring's button stay at
-the bottom under both tabs. An empty slot shows its name in large letters, an item in it covers the name. With a
-gamepad, moving onto a slot of the other tab turns to that tab.
+top. **Gear**: Head, Chest, Legs, Back and Backpack down the left, the utilities and under them the trinket down the
+right, and a sheet of your stats between them. **Consumables**: a row each of food, mead and ammo. The coin purse and
+the key ring's button stay at the bottom under both tabs. An empty slot shows its name in large letters, an item in it
+covers the name. With a gamepad, moving onto a slot of the other tab turns to that tab.
 
 - Ammo: with no arrows equipped, drawing the bow takes the arrows in the Ammo slots, leftmost first; when they run out
   the next slot's are equipped, and arrows loose in the grid only once the slots are empty. Arrows you equip yourself
@@ -40,6 +40,11 @@ gamepad, moving onto a slot of the other tab turns to that tab.
   eat right now, or drink every mead in your Mead slots that you can drink (one of each kind: a health mead and a
   stamina mead, not two health meads), left to right. The game's own rules decide, as for a hotbar key; when nothing
   can be taken the centre message says so.
+- Food and Mead bar (`5. Look / Food And Mead Bar`, on, per player): in the bottom-left corner of the screen, under
+  your health, the Food Key in yellow followed by what is in your Food slots, then the Mead Key followed by your meads,
+  each with its count. What the key would not eat or drink right now (a food you already ate, a mead whose effect is
+  running) is dimmed; an empty slot shows its faint slot icon. A group without slots or without a key is left out, and
+  the bar hides with the HUD and while you are dead.
 
 - Stat sheet (Gear tab), your totals in the game's own words: max health, stamina and eitr (once you have any),
   armour, weight carried out of what you can carry (red when over), movement speed, and the lowest durability of
@@ -63,6 +68,9 @@ gamepad, moving onto a slot of the other tab turns to that tab.
 - Utility x 3 (`Utility Slots`, 0 to 5): every utility item in a slot is worn at the same time (a belt, the wishbone
   and the wisplight together), with its effects, set bonus, eitr regen and movement changes. Two of the same item do
   not stack. Only the first shows on your character.
+- Trinket (`Trinket Slot`, on): under the utilities. The game wears one trinket at a time, and this is it: drop a
+  trinket on the slot to wear it, drag it out (or right click it) to take it off; equipping another trinket from the
+  grid puts it in the slot and the old one where the new one was.
 - Food (`Food Slots Follow Eating`, on: as many as the foods you can eat at once, FeastMaster's `Food Slots` when it is
   installed, 3 otherwise; off: `Food Slots`), Mead (`Mead Slots`, 3) and Ammo (`Ammo Slots`, 3, arrows, bolts, missiles
   and bait), each from 0 to 5. A slot takes only its kind of item.
@@ -71,12 +79,13 @@ gamepad, moving onto a slot of the other tab turns to that tab.
 - Coins (`Coin Purse`, on): the purse, at the bottom of the slot panel under both tabs. Coins you pick up, get from a
   trader or take from a chest go into it first. Traders take your coins from it like from anywhere in the inventory.
 
-Picked up items, crafted items and purchases go into the grid, coins into the purse and keys onto the ring first;
-arrows, food and coins stack onto what a slot already holds. The game's own Place stacks at a chest works on the grid
+Picked up items, crafted items and purchases go into the grid, coins into the purse, keys onto the ring and arrows and
+bolts into the Ammo slots first (onto a stack of the same arrows, then an empty Ammo slot, so a full grid still takes
+them); food and coins stack onto what a slot already holds. The game's own Place stacks at a chest works on the grid
 only, never the slots or the ring. Death: your armour stays in its slots in the grave. Taking all from your own grave
 puts everything back where it was and your armour back on, keys back on the ring. Taking all from a chest fills the
-grid, never the slots; its keys go onto the ring. A grave keeps items from columns beyond 8 when it loads again, and a
-chest wider than 8 columns widens the chest panel to match. Changing a setting lays the inventory out again at once:
+grid, never the other slots; its keys go onto the ring and its arrows into the Ammo slots. A grave keeps items from
+columns beyond 8 when it loads again, and a chest wider than 8 columns widens the chest panel to match. Changing a setting lays the inventory out again at once:
 items keep their slot, and whatever no longer has a place moves into a free cell of the grid, or drops at your feet
 when the grid is full.
 
@@ -99,10 +108,12 @@ world level goes to the grid.
 ### Backpacks
 Section `4. Backpacks`. `Backpacks` (on): eight packs, one per biome. Put one in the Backpack slot, by dragging it there
 or right clicking it: it hangs on your back, seen by every player, adds its slots to the bottom of your grid and adds
-its carry weight. Slots fill the bottom row from the left; a half row keeps its other cells closed. Right click it in
-the slot, or drag it out, to take it off: what its slots hold moves into free cells of the grid, and what does not fit
-drops at your feet. If you die wearing one, taking all from your grave puts it back on first, so everything goes back
-where it was. Needs `2. Slots / Backpack Slot`.
+its carry weight. Worn over a cape, the pack holds the cape's top against your back, so running no longer flaps it out
+through the pack; the cape is held a little way below the pack too, and its lower part still swings. Slots fill the
+bottom row from the left; a half row keeps its other cells closed. Right click it in the slot, or drag it out, to take
+it off: what its slots hold moves into free cells of the grid, and what does not fit drops at your feet. If you die
+wearing one, taking all from your grave puts it back on first, so everything goes back where it was. Needs
+`2. Slots / Backpack Slot`.
 
 Slots and carry weight take turns, and each pack's recipe takes the one before it, so you upgrade rather than collect:
 
@@ -159,6 +170,8 @@ Section `5. Look`, each player's own.
   over.
 - Under the minimap (`Weight Under Minimap`, on): your armour and weight in small boxes under the minimap, beside Elite
   Creatures Reborn's world tier when it is installed, so you see them without opening the inventory.
+- Food and Mead bar (`Food And Mead Bar`, on): the Food Key and Mead Key with what is in your Food and Mead slots, in
+  the bottom-left corner under your health (see Slots above).
 - Brown look (`Brown Style`, on): the inventory, chest and slot panels in plain dark brown with a bronze frame, dark
   recessed cells and bronze icons with the slot's name in every empty slot. Off: the game's wood. `Slot Labels` (on)
   shows the slot names.
@@ -205,16 +218,17 @@ the game's four rows (plus bought ones), so they leave the slots alone but also 
 
 They work where the hotbar keys do: never with the inventory, chat, the console, the map or the YAML editor open. A key
 with a modifier (`LeftShift + Z`) fires while you walk; other modifiers held stop it. The game uses neither key
-outside its debug mode, and OpenKeep's Find Key (also Z) works only inside the inventory, so the two never clash.
+outside its debug mode, and OpenKeep's Find Key (also Z) works only inside the inventory, so the two never clash. The
+Food and Mead bar (`5. Look / Food And Mead Bar`) shows both keys on screen, as you set them.
 
 ### Config file
 `BepInEx/config/milkyteam.packpanel.cfg`, written on first start. Sections: `1. Inventory` (`Enabled`, `Inventory
 Width`, `Inventory Rows`, `Base Carry Weight`, `Keep Slots On Death`), `2. Slots` (`Equipment Slots`, `Backpack Slot`,
-`Backpack Items`, `Slots Per Group`, `Utility Slots`, `Food Slots`, `Food Slots Follow Eating`, `Mead Slots`, `Ammo
-Slots`, `Coin Purse`; per player `Food Key`, `Mead Key`), `3. Key Ring` (`Key Ring`, `Key Items`, `Key Stack`),
-`4. Backpacks` (`Backpacks`, `Backpack Portal Pass`; per player `Show Worn Backpack`), `5. Look` (per player: `Slot
-Labels`, `Brown Style`, `Weight Under Minimap`, `Panel Theme`, `Timber Border Width`, `Timber Border Jaggedness`),
-`6. Tacklebox` (`Tacklebox`, `Tackle Items`), and `General / Lock Configuration`. Every entry has a description in the
+`Backpack Items`, `Slots Per Group`, `Utility Slots`, `Trinket Slot`, `Food Slots`, `Food Slots Follow Eating`, `Mead
+Slots`, `Ammo Slots`, `Coin Purse`; per player `Food Key`, `Mead Key`), `3. Key Ring` (`Key Ring`, `Key Items`, `Key
+Stack`), `4. Backpacks` (`Backpacks`, `Backpack Portal Pass`; per player `Show Worn Backpack`), `5. Look` (per player:
+`Slot Labels`, `Brown Style`, `Weight Under Minimap`, `Food And Mead Bar`, `Panel Theme`, `Timber Border Width`,
+`Timber Border Jaggedness`), `6. Tacklebox` (`Tacklebox`, `Tackle Items`), and `General / Lock Configuration`. Every entry has a description in the
 file. Gameplay settings are synced from the server and locked; the look, the two keys and `Show Worn Backpack` are
 yours.
 

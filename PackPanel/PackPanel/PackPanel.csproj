@@ -6,7 +6,7 @@
     <RootNamespace>PackPanel</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Product>PackPanel</Product>
     <Description>PackPanel: a bigger inventory, labelled slots, backpacks and a new look for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -66,6 +66,11 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- The game's cloth (capes); Backpacks/CapeHold only. -->
+    <Reference Include="MagicaClothV2">
+      <HintPath>$(ManagedPath)\MagicaClothV2.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">

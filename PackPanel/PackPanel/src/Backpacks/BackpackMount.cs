@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -9,8 +10,9 @@ namespace PackPanel.Backpacks
     /// taken down. It hangs on the Spine2 bone, the upper back, the way the game hangs a sheathed shield on the spine: kept
     /// at its own world size, turned upright in the player's frame (every pack's model is built with Spine2's rest
     /// position as its origin, AssetWorkshop's <c>packpanel_*</c> assets). Runs after the game's own equipment update, every
-    /// frame for every player in view; unless something changed it only looks up one child by name. The main menu's
-    /// character has no ZDO and wears none.
+    /// frame for every player in view; unless something changed it only looks up one child by name and whether the cape
+    /// changed (<see cref="CapeHold"/> keeps a cape from flapping through the pack). The main menu's character has no ZDO
+    /// and wears none.
     /// </summary>
     [HarmonyPatch(typeof(VisEquipment), nameof(VisEquipment.UpdateEquipmentVisuals))]
     public static class BackpackMount
@@ -34,11 +36,14 @@ namespace PackPanel.Backpacks
                 return;
             Transform hung = spine.Find(Name);
             if (Wears(hung) == wanted?.Id)
+            {
+                CapeHold.Follow(hung, __instance.m_shoulderItemInstances);
                 return;
+            }
             if (hung != null)
                 TakeDown(hung);
             if (wanted != null)
-                Hang(spine, wanted);
+                Hang(spine, wanted, __instance.m_shoulderItemInstances);
             __instance.UpdateLodgroup();   // collects the renderers under the character's visual again
         }
 
@@ -47,20 +52,22 @@ namespace PackPanel.Backpacks
 
         /// <summary>
         /// A mount made in the world and parented keeping its world size (as the game attaches its own items), placed on the
-        /// bone and turned upright; the model goes under it as the prefab has it.
+        /// bone and turned upright; the model goes under it as the prefab has it, and the cape worn is held under it.
         /// </summary>
-        private static void Hang(Transform spine, BackpackKind kind)
+        private static void Hang(Transform spine, BackpackKind kind, List<GameObject> capes)
         {
             GameObject mount = new GameObject(Name);
             mount.transform.SetParent(spine, true);
             mount.transform.localPosition = Vector3.zero;
             mount.transform.localRotation = Upright;
             Object.Instantiate(kind.Worn, mount.transform, false).name = kind.Id;
+            CapeHold.Attach(mount, capes);
         }
 
         /// <summary>Off the character at once, so the LOD group update right after leaves it out; destroyed at the frame's end.</summary>
         private static void TakeDown(Transform mount)
         {
+            CapeHold.Let(mount);
             mount.SetParent(null, false);
             Object.Destroy(mount.gameObject);
         }

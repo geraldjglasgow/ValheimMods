@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.2.0
+
+- **A Trinket slot.** `2. Slots / Trinket Slot` (on): a slot under the utilities in the Gear tab for the one trinket
+  the game lets you wear (the adrenaline trinkets). Drop a trinket on it to wear it, drag it out or right click it to
+  take it off; equipping a trinket from the grid puts it in the slot and the old one where the new one was. A trinket
+  you already wear moves into the slot on the first start, and an existing character's food, mead and ammo slots keep
+  their items. `Keep Slots On Death` keeps it too, and taking all from your grave puts it back on. With five utilities
+  both tabs are one row taller.
+- **A Food and Mead bar.** `5. Look / Food And Mead Bar` (on, per player): in the bottom-left corner of the screen,
+  under your health, the Food Key in yellow followed by what is in your Food slots, then the Mead Key followed by your
+  meads, each with its count, in the look of the game's own food squares. What a press would not eat or drink right
+  now (a food you already ate, a mead whose effect is running) is dimmed, and an empty slot shows its faint icon. A
+  group without slots or without a key is left out; the bar hides with the HUD and while you are dead.
+- **Arrows go into the Ammo slots first.** Arrows and bolts you craft, pick up, buy or take from a chest go onto a stack
+  of the same arrows in an Ammo slot, then into an empty Ammo slot, and only then into the grid; a full grid still
+  crafts and picks them up while an Ammo slot is free. Bait still goes into the tacklebox. With `Ammo Slots` at 0
+  nothing changes.
+- **Capes stay under the pack.** A backpack worn over a cape now holds the cape's top against your back and a little
+  way below the pack, so running, turning and jumping no longer flap the cape out through the pack; its lower part
+  still swings. The cape moves freely again as soon as the pack comes off or `Show Worn Backpack` is off, and every
+  player sees the same.
+- **A new Mead slot icon**: a mead bottle instead of a drinking horn.
+
 ## 0.1.0
 
 - **First release: the player's own inventory, in a mod of its own.** A bigger grid, labelled slots for worn gear,

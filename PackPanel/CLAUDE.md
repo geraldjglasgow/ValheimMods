@@ -1,7 +1,7 @@
 # CLAUDE.md - PackPanel
 
 The player's own inventory for Valheim, version 0.1.0: a bigger grid, labelled slots for worn gear, a backpack slot (and
-PackPanel's eight backpacks, one per biome, worn on the back, adding slots and carry weight), up to five worn utilities,
+PackPanel's eight backpacks, one per biome, worn on the back, adding slots and carry weight), up to five worn utilities, a trinket,
 food, mead and ammo, a coin purse, a key ring, a tacklebox slot (and four crafted boxes whose cells hold bait), the stat
 boxes (in their own panel and under the minimap) and the brown or timber look. Built on 2026-09-28 as OpenKeep's section
 `10. Inventory` (`src/Pack/`, never released, never committed there) and moved into its own mod the same day at the
@@ -88,27 +88,34 @@ PackPanel/PackPanel/src/
                             an empty purse, ring cell or box cell for what goes there);
                             GetBoundItems and GetHotbar stop at x 8
     CarryWeight.cs          Base Carry Weight and the worn pack's carry: Player.GetMaxCarryWeight postfix
-  Consume/                  the Food Key and the Mead Key (section 2. Slots, per player)
+  Consume/                  the Food Key and the Mead Key (section 2. Slots, per player) and the Food and Mead bar
+                            (5. Look, per player)
     ConsumeSettings.cs, ConsumeWords.cs   the two keys (Z, B; the YAML editor registered with the Hotkeys library's
                             Typing), the "nothing to eat / drink" words
     ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) eats or drinks from its slots
+    ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, each key's cap
+                            (Hotkeys' KeyNames.Short) and its slots' cells, copies of the HUD's food square; dimmed
+                            what SlotMeals.CanTakeNow refuses
     SlotMeals.cs            left to right, every item that can be taken now: the game's checks without messages,
                             then Humanoid.UseItem(inventory, item, fromInventoryGui: true)
   Slots/
     SlotKind.cs, Slot.cs, SlotRules.cs   the slot kinds (Head..Back, Utility worn; Backpack, Food, Mead, Ammo, Purse
                             carried; Retired for an old record's quick slots; Key, the ring cells; Tacklebox and
-                            Tackle, the box and its cells, last), ids like food2, which item each takes (a ring cell:
+                            Tackle, the box and its cells; Trinket, worn, last), ids like food2, which item each takes (a ring cell:
                             its own key, Accepts(Slot, item))
     SlotCounts.cs           every group's count (Slots Per Group over the group keys)
     AmmoSearch.cs           Inventory.GetAmmoItem prefix: the tacklebox's bait, then the Ammo slots left to right,
                             then the game's own search
     FoodCount.cs            foods a player can eat: FeastMaster's Food Slots entry through BepInEx's Chainloader, else 3
     CoinPurse.cs            Inventory.AddItem(ItemData) prefix: coins into the purse first
+    AmmoRouting.cs          Inventory.AddItem(ItemData) prefix: arrows and bolts (equipable ammo) into the Ammo slots
+                            first, crafted or picked up
+    SlotFill.cs             an item into a group of slot cells: onto a same stack, then an empty cell (ammo, bait)
     SlotDrop.cs, SlotAddPatches.cs   the slot rules on InventoryGrid.DropItem and the positional adds
     DragSettle.cs           InventoryGui.OnSelectedItem: refuse a bad drop first, settle worn slots after; stands down
                             when an earlier prefix already refused the click (__runOriginal)
-    TakeAllRouting.cs       Inventory.MoveAll prefix/postfix: keys and bait a take all put in main cells move to their
-                            ring cell and into the tacklebox
+    TakeAllRouting.cs       Inventory.MoveAll prefix/postfix: keys, bait and arrows a take all put in main cells move to
+                            their ring cell, into the tacklebox and into the Ammo slots
     StackAllGuard.cs        the game's Place stacks (Inventory.StackAll) leaves the slot cells alone
     KeptOnDeath.cs          Keep Slots On Death: slot items out of the inventory while the tombstone is made
     GravePatches.cs, GraveWidth.cs   CreateTombStone suspends worn moves; MoveAll from the own grave re-equips, from
@@ -154,6 +161,8 @@ PackPanel/PackPanel/src/
     BackpackGrave.cs        TombStone.EasyFitInInventory counts its slots; before a take all from a grave the worn pack
                             (found at the grave's Backpack slot cell) goes on first; the rows a waiting pack adds
     BackpackMount.cs        VisEquipment.UpdateEquipmentVisuals postfix: hangs, swaps or takes down the model on Spine2
+    CapeHold.cs             on the mount: the worn cape's MagicaCloth gets a max distance that holds its top under the
+                            pack; the cape's own settings back when the pack comes down or the cape changes
     BackpackPortal.cs       Inventory.IsTeleportable prefix: Backpack Portal Pass for the worn pack's slots
   Crafting/                 what the backpacks and the tackleboxes share
     CraftedKind.cs, CraftStats.cs   a crafted item: prefab id, group and word (its words, icon, bundle asset), English
@@ -199,7 +208,7 @@ PackPanel/PackPanel/src/
     HudStats.cs             matching minimap squares at 65% scale, 2 units below the map; armor, weight, world tier by rank
     HudWeight.cs            Weight Under Minimap: Hud.Update postfix writing a box in PlateColumn's HUD row
     SlotPanel.cs, SlotPanelLayout.cs   PackPanel_slots right of the stats panel: the tab buttons across the top, the
-                            shown tab's cells (Gear: gear column left, utilities right; Consumables: a row each of
+                            shown tab's cells (Gear: gear column left, utilities and the trinket right; Consumables: a row each of
                             food, mead, ammo), the purse, the key ring's button and the Tacklebox slot last under both
     SlotTab.cs, SlotTabs.cs the tabs; the shown one (session only), which kind goes where, the gamepad turning tabs
     TabButtons.cs           the two tab buttons, copies of the game's take-all button, stripped of its gamepad key,
@@ -252,7 +261,7 @@ PackPanel/artwork/          background studies for the timber theme (not embedde
 All on the local player's own inventory only unless said: prefix `Player.Load` (and postfix and finalizer),
 `Player.SetInventorySize` (replaced), `InventoryGui.SetInventorySize` (replaced), `Inventory.FindEmptySlot`,
 `Inventory.GetEmptySlots`, `Inventory.HaveEmptySlot`, `Inventory.CanAddItem(ItemData, int)`, `Inventory.AddItem(ItemData)`
-(the purse, and the key ring's own prefix), `Inventory.AddItem(ItemData, int, int, int, bool)` and
+(the purse, and the key ring's, the tacklebox's and the Ammo slots' own prefixes), `Inventory.AddItem(ItemData, int, int, int, bool)` and
 `Inventory.AddItem(ItemData, Vector2i)` (slot rules), `InventoryGrid.DropItem` (`Priority.High`),
 `InventoryGui.OnSelectedItem` (prefix, postfix, finalizer), `Humanoid.EquipItem` (prefix, postfix, finalizer),
 `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
@@ -265,7 +274,7 @@ postfix `Inventory.GetBoundItems`, `Inventory.GetHotbar`, `Humanoid.UnequipItem`
 `Humanoid.UpdateEquipmentStatusEffects`, `Humanoid.GetSetCount`, `Player.GetEquipmentEitrRegenModifier`,
 `Player.UpdateModifiers`, `Humanoid.GetEquipmentWeight`, `Humanoid.UpdateEquipment`, `InventoryGrid.UpdateGui`,
 `InventoryGui.UpdateContainer`, `Player.Update`, `Player.GetMaxCarryWeight` (Base Carry Weight; any player, only the
-local one's matters), `Hud.Update` (private; Weight Under Minimap), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
+local one's matters), `Hud.Update` (private; Weight Under Minimap, and a second postfix for the Food and Mead bar), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
 text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words),
 `UnityEngine.UI.Image.OnEnable` (Panel Theme: a newly shown wood panel is themed on the next frame). The backpacks:
 prefix `Humanoid.UseItem` (local player, from the inventory screen), `Inventory.IsTeleportable` (the local player's
@@ -283,12 +292,12 @@ inventory, Backpack Portal Pass only), `TombStone.EasyFitInInventory` (private; 
 
 `General` (`Lock Configuration`), `1. Inventory` (`Enabled` true, `Inventory Width` 8 (8-12), `Inventory Rows` 5 (4-10),
 `Base Carry Weight` 300 (50-10000), `Keep Slots On Death` false), `2. Slots` (`Equipment Slots` true, `Utility Slots` 3
-(0-5), `Backpack Slot` true, `Backpack Items` empty, `Slots Per Group` 0 (0-5), `Food Slots` 3, `Food Slots Follow
+(0-5), `Trinket Slot` true, `Backpack Slot` true, `Backpack Items` empty, `Slots Per Group` 0 (0-5), `Food Slots` 3, `Food Slots Follow
 Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Key` B), `3. Key Ring` (`Key Ring` true, `Key Items`
 `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,HildirKey_plainsfortress,DvergrKey,BloodGoldKey`, `Key Stack` 10
 (1-100)), `4. Backpacks` (`Backpacks` true, `Backpack Portal Pass` false, and `Show Worn Backpack` true, the one key there not
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
-Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Brown Style` true, `Weight Under Minimap` true,
+Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Brown Style` true, `Weight Under Minimap` true, `Food And Mead Bar` true,
 `Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5)). The keys
 kept the names they had in OpenKeep's section 10 (never released); only the sections are new. Keys, defaults and
 meanings are in `README.md`.
@@ -311,7 +320,7 @@ meanings are in `README.md`.
   `packpanel_driftwood_tacklebox` ...), icons `assets/tacklebox_<word>.png`.
 - GameObjects created: `PackPanel_slots` (the slot panel, a child of the player panel), `PackPanel_stats` (the stat
   boxes' panel, a child of the player panel), `PackPanel_buttonstrip` (OpenKeep's strip mark), `PackPanel_keyring` (the
-  key ring's pop-up, a child of the player panel, with `wire`, `hub` and `caption`), `PackPanel_keynotice` (the new-key note under the ring button), `PackPanel_keyring_button` (in the
+  key ring's pop-up, a child of the player panel, with `wire`, `hub` and `caption`), `PackPanel_keynotice` (the new-key note under the ring button), `PackPanel_consumebar` (the Food and Mead bar, a child of the HUD's `hudroot` after `healthpanel`, with `PackPanel_key` caps and `PackPanel_food1`... `PackPanel_mead1`... cells), `PackPanel_keyring_button` (in the
   slot panel), `PackPanel_tacklebox` (the tacklebox's pop-up, a child of the player panel), `PackPanel_tab_gear` and
   `PackPanel_tab_consumables` (the tab buttons, in the slot panel), `PackPanel_gearstats` (the Gear tab's sheet, in the
   slot panel, with `viewport/content/row/label` and `value`, and `scrollbar/handle`), `PackPanel_blocked` (the cross on
@@ -323,7 +332,7 @@ meanings are in `README.md`.
 - Files next to the cfg: `PackPanel.Backpacks.yml`, `PackPanel.Tackleboxes.yml`; the art test folder
   `PackPanel.ArtTest/`.
 - Charter articles: `packpanel_backpacks`, `packpanel_tackleboxes`, plus the cfg sync of the shared libraries.
-- Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_back`, `_backpack`, `_utility`, `_food`, `_mead`, `_ammo`,
+- Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
   `_coins`, `_wrongslot`, `_dropped`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
   `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
   `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
@@ -381,6 +390,16 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   crafting, purchases and the tombstone's easy-fit check never land in a slot (the bottom-first search would fill the
   slot rows first). `FindFreeStackItem` is left alone: arrows, food and coins stack onto a slot's stack, as with any
   partial stack. Coins go into the purse first (`CoinPurse`), and an empty purse counts as room for coins.
+- Ammo first (the user's request, 2026-09-28: "when crafting arrows, or picking them up the arrow slots should be
+  prioritized"): `AmmoRouting`, a prefix on `Inventory.AddItem(ItemData)` like the purse's, sends equipable ammo
+  (`ItemType.Ammo`: arrows, bolts, missiles) onto a same stack in the Ammo slots left to right, then into an empty Ammo
+  slot, before the game's add (which would stack onto whichever stack it finds first, often one in the grid). The
+  game's crafting reaches it (`InventoryGui.DoCrafting` adds by name with no cell, which ends in `AddItem(ItemData)`), as
+  do pickups, traders and click moves; `CanAddItem` counts empty Ammo slots as room (`MainCells.AmmoRoom`), so a full
+  grid still crafts and picks up arrows. A take all moves arrows that landed in main cells into the Ammo slots after it
+  (`TakeAllRouting`), a take all from the own grave too (arrows that lay in the grid top up the Ammo slots). Bait
+  (`AmmoNonEquipable`) is left to the tacklebox. The stacking is shared with the tacklebox (`SlotFill`). No setting:
+  0 Ammo slots routes nothing.
 - Slot rules: the dropped item must suit its cell, and in a swap the displaced item must suit the cell the dropped one
   came from. Checked in the `OnSelectedItem` prefix before the game starts, because after a refused `DropItem` the game
   would equip whatever lies under the pointer (it re-equips assuming the drop happened), and again in `DropItem`
@@ -405,6 +424,17 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   them. Only the game's utility shows on the character (`SetupVisEquipment`). A utility deleted without an unequip
   (trash, salvage) is pruned every frame. The list is rebuilt on every load from the saved `m_equipped` flags: the load
   prefix sets a provisional layout so the game's `EquipInventoryItems` already wears up to three.
+- Trinket slot (the user's request, 2026-09-28: "a trinket slot under utility"): the game has one worn trinket
+  (`Humanoid.m_trinketItem`, `ItemType.Trinket`, the adrenaline trinkets such as `TrinketBronzeHealth`) and equips,
+  replaces, saves, entombs and shows it like its utility, so the slot is a worn kind like Head (`SlotKind.Trinket`,
+  `Trinket Slot` on by default) and needs no patch of its own: `WornPlacement`, `DragSettle`, the graves and Keep Slots
+  On Death handle it through `SlotRules.IsWorn`/`WornKindOf`. One slot, not a group: wearing several would need an
+  `ExtraUtilities` for trinkets (the adrenaline bar reads the one field). In the layout it follows the utilities, so an
+  existing record's food, mead and ammo cells move one cell on (by slot id, `LayoutMigration`); the enum value is
+  appended last, as the record stores ids. Drawn under the utilities in the Gear tab's right column; with five
+  utilities that column is six rows, and both tabs grow to six (`SlotPanelLayout.ContentRows`), the sheet with them.
+  Its empty-slot icon (`assets/icon_trinket.png`, a rune pendant) is drawn by
+  `artwork/slot-icons-silhouette-concept/draw.py` with the approved set.
 - Graves: `MoveInventoryToGrave` copies the width, but a grave loading again (another client, the area reloading) gets
   the tombstone prefab's width and its load drops items beyond it, so `Container.Load` of a tombstone widens the
   inventory to 32 and then to its widest item, on every client. A take all from anything that is not a grave keeps
@@ -483,7 +513,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   column on the left, the utilities in a column on the right (the request said "3 utility on left" for both columns;
   read as right, since the stats were to be in the centre) and a stat sheet between them; Consumables has a row each of
   food, mead and ammo. The purse's row with the ring button stays at the bottom under both (coins and keys are
-  neither), and the panel is the same size in both tabs (5 rows above the purse's, the Gear tab's), so nothing jumps
+  neither), and the panel is the same size in both tabs (5 rows above the purse's, 6 with five utilities and the
+  trinket), so nothing jumps
   when turning. Only elements are hidden: the hidden tab's slots are still cells of the inventory, so their items
   weigh, stay worn and go to the grave as before. The tab is static for the session (Gear first) and a change is
   applied through `SlotElements.Invalidate`, the same re-placing a settings change uses. Consumables is not clickable
@@ -596,6 +627,24 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   (`BackpackPanelHeight`, the user's call). Backpack Portal Pass replaces `Inventory.IsTeleportable` for the local
   player's inventory while the worn pack says `portal: true`: its cells may hold what portals refuse, everything else
   follows the game's rule, and items of tool tier 1000 or more never pass.
+- Capes under the pack (the user's request, 2026-09-28: "if player has backpacks showing, make it so capes do not
+  glitch through the backpack when running"). The game's capes are MagicaCloth 2 mesh cloths (`VisEquipment.SetupCloth`)
+  hanging from the shoulders to the ankles (their meshes: tops 1.69-1.72, hems 0.0-0.21 in the player's frame); at rest
+  their top lies inside the pack's volume, and running swings it backwards out through the pack. A pack is worn over the
+  cape, so the pack holds the cape's top (`CapeHold`): while a pack hangs, every `MagicaCloth` of the shoulder item's
+  instances gets MagicaCloth's max distance (`motionConstraint.useMaxDistance`, solved after collisions): 5 cm from the
+  body's skinned pose where the pack covers the cape and 35 cm of cape below the pack's bottom (`Below`; the user asked
+  for the hold lower down after the first build, which held only what the pack covers), then 1.5 m more per metre of
+  cape further down (room for a swing of about 95 degrees), so the hem still swings (0.9 to 1.2 m). How much the pack covers comes from the pack model's lowest
+  point (`ModelBounds`, 0.20 m below Spine2 for the Deerhide Satchel to 0.445 m for the Trollhide Backpack) over a
+  nominal cape (top 1.70, 1.58 m long), as a fraction of MagicaCloth's depth (0 at the fixed top row, 1 at the hem),
+  written as 16 keys at the steps where the solver reads the curve (at depth squared). The cape's own `useMaxDistance`
+  and `maxDistance` (none of the game's capes use it) come back when the pack comes down (taken off, `Show Worn
+  Backpack` off) or the cape changes (`m_shoulderItemInstances` is a new list per cape). A cloth still building reads the
+  values when its build syncs its parameters. Rejected: a collider shaped like the pack (the cape would drape over it
+  and hide the pack; a collider between the cape and the pack squeezes the cloth against the body's colliders, since
+  the cape's particles are 8.5 cm in radius) and hiding the cape. Hair and the Hildir dresses (also MagicaCloth) are
+  not held.
 - Key ring (the user's request, 2026-09-28; the round pop-up was their idea): one ring cell per `Key Items` entry,
   ordinary slot cells after the purse with ids `key1`.. in list order; `SlotKind.Key` is last in the enum, and the
   record stores ids, so older records read and an older build reads `keyN` as retired. A cell takes only its own key,
@@ -726,6 +775,17 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   or category), through `Humanoid.UseItem(inventory, item, fromInventoryGui: true)`: the hotbar's path (animation,
   sound, effect, food) minus feeding what the player looks at. Each check sees what the earlier items gave, so two of
   the same food eat one, and meads of one category (health, stamina) drink one. Nothing taken: a centre message.
+- Food and Mead bar (the user's request, 2026-09-28: "the hotkeys for food displayed in the bottom left of the screen for
+  the food and meads"): one row in the empty strip under the game's health panel (`hudroot/healthpanel` is anchored to
+  the bottom-left corner at x 49.5, its bottom at y 58, read offline from the main scene; the Forsaken power sits right
+  of it at y 86-150), from (50, 6) in HUD units: the Food Key's cap, the Food slots, 14 units, the Mead Key's cap, the
+  Mead slots, 42-unit cells 4 apart. Each cell is a copy of the game's own `food0` square (dark square, icon, corner
+  text), so it matches the food squares above it; the corner shows the stack. Bright: the key would take it now
+  (`SlotMeals.CanTakeNow`, the same check the press uses); dimmed: it would skip it; an empty slot shows its slot icon
+  faintly. A group with no slots or no key (None) is left out. Written ten times a second, rebuilt only when a slot
+  count or a key changes; hidden while dead, with `Enabled` off or with the HUD hidden (a child of `hudroot`). Per
+  player, `5. Look / Food And Mead Bar`. With five foods and five meads the row reaches x ~616, where the key hints
+  of a long build-mode list could start; not seen yet.
   Eating is the local player's own action, as a hotbar key's is; nothing is sent.
 
 ## Not yet implemented
@@ -743,7 +803,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.1.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.2.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -954,6 +1014,20 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
 48. Keys and settings: `Food Key = LeftShift + Z`: Z alone does nothing, Shift + Z eats while walking with W; with the
     YAML editor open the keys do nothing. Dedicated server with A and B: each eats from their own slots, the other sees
     the food effects and the eat animation.
+53. Food and Mead bar: with the inventory shut, the bottom-left corner under the health bar shows a yellow "Z", three
+    food squares, a gap, a yellow "B" and three mead squares, matching the game's food squares above in look. Put cooked
+    meat (5) and a honey (1) in Food: their icons show, the meat with "5" in the corner. Press Z: both are eaten, the
+    meat reads 4 and both go dim; when the meat's timer is nearly out (its HUD icon pulses) it brightens again. A health
+    mead in Mead is bright; drink it: dim until the effect ends. Empty slots show the faint food and mead icons.
+    `Food Key = LeftShift + Z`: the cap reads "Shift+Z" and is wider; `Mead Key = None`: the mead group goes. `Mead
+    Slots = 0`: only the food group. `Food And Mead Bar = false`: gone. Hide the HUD (Ctrl+F3): gone with it. Die: gone
+    until the respawn. Build mode with the hammer: the bar does not cover the key hints.
+54. Ammo first: 20 Wood arrows in the first Ammo slot and 30 more in the grid. Craft 20 Wood arrows at the workbench:
+    the slot's stack reads 40, the grid's stays 30. Craft Flint arrows: they go into the second Ammo slot, not the
+    grid. `spawn ArrowFire 20` and pick them up: third Ammo slot. With all three Ammo slots holding other arrows, pick up
+    bone arrows: they go to the grid. Fill the grid completely with the Ammo slots empty: crafting Wood arrows still
+    works (no "inventory full") and they land in the first Ammo slot. Take all from a chest holding bronze arrows: they
+    end up in an Ammo slot. Bait picked up still goes into the tacklebox, not the Ammo slots.
 
 49. New key notice: a character that carries a Swamp Key (first load with this build): nothing glows. `spawn
     HildirKey_forestcrypt` and pick it up with the inventory shut; open the inventory: the ring button's key breathes
@@ -978,3 +1052,19 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     appear in its breakdown, the draw's stamina shows per second; switch to fire arrows: Fire appears. A frost staff: Eitr
     use. Drink a mead or eat food that raises damage for the skill: its line in the breakdown and the range grows. Bare
     hands or a hammer: no section. The Resistances breakdown no longer names the shield.
+52. Trinket slot: the Gear tab's right column reads Utility x 3, then an empty cell captioned "Trinket" with the
+    pendant icon. `spawn TrinketBronzeHealth` and `spawn TrinketBronzeStamina`: both land in the grid. Drop the health
+    trinket on Trinket: it is worn (the cell shows it equipped, the adrenaline bar appears); drop the stamina trinket on it:
+    that one is worn and the health trinket lands where the stamina one was. Right click the worn one: it comes off into
+    the grid. Right click one in the grid: it moves into Trinket. A belt dropped on Trinket, or a trinket on Utility, is
+    refused with `That does not go in that slot`. Relog: still worn, still in the slot. Die with Keep Slots On Death
+    off: the grave holds it in its slot; take all: it is worn again. `Utility Slots = 5`: the right column is six cells,
+    the trinket last, and both tabs are one row taller; `Trinket Slot = false`: it moves into the grid and stays worn.
+54. Capes under the pack: wear the Trollhide Backpack and the troll hide cape, third person. Standing: the cape comes out
+    below the pack as before. Run and sprint forward, turn sharply, jump, stop: the cape's top never shows through the
+    pack's back, top or sides, the cape stays against the legs for about 35 cm below the pack, and the rest still trails
+    and swings. Sit, crouch
+    and swim: no cape stuck out or jittering around the pack. The same with the Deerhide Satchel (the shortest, more cape
+    swings) and the Lox Hauler, and with the wolf, lox, feather, linen, Asksvin and Deep North capes. Take the pack off
+    (or `Show Worn Backpack = false`) while running: the cape flaps freely again at once. Change capes with the pack on:
+    the new cape is held too. A second player watching sees the same.

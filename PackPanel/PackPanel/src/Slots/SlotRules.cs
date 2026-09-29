@@ -10,7 +10,7 @@ namespace PackPanel.Slots
 {
     /// <summary>
     /// Which items each slot takes. Worn slots take the game's item types for them (helmet, chest, legs, shoulder,
-    /// utility); food is a consumable that fills a food bar, a mead any other consumable; ammo includes the game's
+    /// utility, trinket); food is a consumable that fills a food bar, a mead any other consumable; ammo includes the game's
     /// non-equipable ammo (bait); the purse takes coins only; a ring cell only its own key (<see cref="KeyRing"/>); the
     /// Tacklebox slot PackPanel's tackleboxes and a box's cell bait (<see cref="TackleRules"/>). The backpack slot takes
     /// PackPanel's backpacks (<see cref="BackpackCatalog"/>), an item whose prefab name contains "backpack", or one listed
@@ -20,7 +20,7 @@ namespace PackPanel.Slots
     {
         public const string CoinsName = "$item_coins";
 
-        public static bool IsWorn(SlotKind kind) => kind <= SlotKind.Back || kind == SlotKind.Utility;
+        public static bool IsWorn(SlotKind kind) => kind <= SlotKind.Back || kind == SlotKind.Utility || kind == SlotKind.Trinket;
 
         /// <summary>Whether a slot takes an item: its kind's rule, and for a ring cell the one key of that cell.</summary>
         public static bool Accepts(Slot slot, ItemDrop.ItemData item) =>
@@ -55,6 +55,7 @@ namespace PackPanel.Slots
                 case ItemType.Legs: return SlotKind.Legs;
                 case ItemType.Shoulder: return SlotKind.Back;
                 case ItemType.Utility: return SlotKind.Utility;
+                case ItemType.Trinket: return SlotKind.Trinket;
                 default: return null;
             }
         }

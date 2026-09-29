@@ -32,6 +32,7 @@ namespace PackPanel.Core
         public static ConfigEntry<bool> EquipmentSlots { get; private set; }
         public static ConfigEntry<int> SlotsPerGroup { get; private set; }
         public static ConfigEntry<int> UtilitySlots { get; private set; }
+        public static ConfigEntry<bool> TrinketSlot { get; private set; }
         public static ConfigEntry<bool> BackpackSlot { get; private set; }
         public static ConfigEntry<string> BackpackItems { get; private set; }
         public static ConfigEntry<int> FoodSlots { get; private set; }
@@ -76,7 +77,7 @@ namespace PackPanel.Core
                 "How much a player carries before being over-encumbered, before Megingjord and other effects add to it. The game has 300. The world's carry weight modifier still scales it.",
                 acceptableValues: new AcceptableValueRange<float>(50f, 10000f));
             KeepSlotsOnDeath = synced.Bind(Section, "Keep Slots On Death", false,
-                "Items in the gear, backpack, utility, food, mead and ammo slots stay with you when you die instead of going into your grave; the armour and utilities you wore are worn again when you wake. The coin purse, the key ring and the grid follow the game's rules.");
+                "Items in the gear, backpack, utility, trinket, food, mead and ammo slots stay with you when you die instead of going into your grave; the armour, utilities and trinket you wore are worn again when you wake. The coin purse, the key ring and the grid follow the game's rules.");
         }
 
         private static void BindWorn(SyncedConfiguration synced)
@@ -86,6 +87,8 @@ namespace PackPanel.Core
             UtilitySlots = synced.Bind(SlotsSection, "Utility Slots", 3,
                 "Utility slots (belts, the wishbone, the wisplight...) when Slots Per Group is 0. Every utility item in a slot is worn at once, so up to this many work together. 0: none, the game's single utility item.",
                 acceptableValues: new AcceptableValueRange<int>(0, MaxGroup));
+            TrinketSlot = synced.Bind(SlotsSection, "Trinket Slot", true,
+                "A Trinket slot under the utilities. The trinket in it is the one you wear (the game wears one at a time); drop a trinket on it to wear it, drag it out to take it off.");
             BackpackSlot = synced.Bind(SlotsSection, "Backpack Slot", true,
                 "A Backpack slot. PackPanel's backpacks are worn in it (see 4. Backpacks); it also holds a backpack from another mod (any item whose prefab name contains \"backpack\", or one listed in Backpack Items), but does not equip those.");
             BackpackItems = synced.Bind(SlotsSection, "Backpack Items", "",

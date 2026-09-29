@@ -32,9 +32,10 @@ namespace PackPanel.Consume
         /// <summary>
         /// The game's <c>Player.CanConsumeItem(item, checkWorldLevel: true)</c> without its messages: a consumable, not below
         /// the world's level, a food the player can eat now (<c>CanEat</c>: a free food place, or the same food about to run
-        /// out), and no effect of the same kind or category already running.
+        /// out), and no effect of the same kind or category already running. The Food and Mead bar dims what fails it
+        /// (<see cref="ConsumeBar"/>).
         /// </summary>
-        private static bool CanTakeNow(Player player, ItemDrop.ItemData item)
+        public static bool CanTakeNow(Player player, ItemDrop.ItemData item)
         {
             if (item.m_shared.m_itemType != ItemDrop.ItemData.ItemType.Consumable)
                 return false;
