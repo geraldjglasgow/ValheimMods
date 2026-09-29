@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -57,6 +57,23 @@
     <!-- The Kraken's loot: its beak, the beak shield, raw and cooked tentacle, with their icons (AssetWorkshop assets/ecp_kraken_beak,
          ecp_kraken_beak_shield, ecp_kraken_meat, ecp_kraken_meat_cooked), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecp_kraken_loot.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Skeleton Crossbowman's crossbow, string, quiver and its five clips (AssetWorkshop assets/ecp_crossbowman), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecp_crossbowman.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The skeleton arsenal: seven bone weapons (the bow twice: as a skeleton and as a player holds it), the arrow, the
+         vertebra and their icons (AssetWorkshop assets/ecp_skel_arsenal), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecp_skel_arsenal.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="assets\bundles\ecp_mountain_set.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="assets\bundles\ecp_swamp.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The swamp five, one bundle each per platform (AssetWorkshop assets/ecp_haugbui, ecp_draugrhound, ecp_rootling,
+         ecp_leechmatron, ecp_irrbloss): each creature's gear, kit and clips on top of the game's own rig. -->
+    <EmbeddedResource Include="assets\bundles\ecp_haugbui.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="assets\bundles\ecp_draugrhound.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="assets\bundles\ecp_rootling.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="assets\bundles\ecp_leechmatron.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="assets\bundles\ecp_irrbloss.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Crypt Executioner's greataxe in 29 pieces, its kit and clips, and the players' greataxe and axehead with their
+         icons (AssetWorkshop assets/ecp_headsman: build.ps1 -Bundle -Install), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecp_headsman.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,6 +123,14 @@
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

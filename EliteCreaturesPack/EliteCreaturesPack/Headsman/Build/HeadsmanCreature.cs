@@ -1,0 +1,96 @@
+using System.Collections.Generic;
+using System.Linq;
+using BundlePrefabs;
+using UnityEngine;
+
+namespace EliteCreaturesPack.Headsman
+{
+    /// <summary>
+    /// The Crypt Executioner: a copy of the game's Skeleton, so it keeps the Skeleton's rig, hit shapes, senses, faction,
+    /// resistances (weak to blunt and fire) and death, grown to <see cref="Size"/> times the Skeleton, carrying the bone
+    /// greataxe (<see cref="HeadsmanKit"/>) and playing the bundle's clips through its own animator. It fights with its
+    /// six attacks (<see cref="HeadsmanAttacks"/>) and nothing of the Skeleton's; it drops coins, bone fragments and,
+    /// by the settings' chance, its axehead. On every peer <see cref="HeadsmanRig"/> draws what its clips cannot do; on
+    /// its owner <see cref="HeadsmanBrain"/> turns it in the rear strike and sends the scrape's shockwave.
+    /// </summary>
+    public static class HeadsmanCreature
+    {
+        public const float Size = 1.25f;
+
+        public static GameObject Build(GameObject skeleton, GameObject[] attacks, GameObject corpse, GameObject? axehead, ZNetScene scene)
+        {
+            GameObject boss = PrefabBench.Copy(skeleton, HeadsmanPrefabs.Creature);
+            boss.transform.localScale = Vector3.one * Size;
+            var humanoid = boss.GetComponent<Humanoid>();
+            Arm(humanoid, attacks);
+            Die(humanoid, corpse);
+            Loot(boss.GetComponent<CharacterDrop>(), axehead, scene);
+            Transform visual = boss.transform.Find("Visual");
+            HeadsmanKit.Wear(visual);
+            HeadsmanKit.Animate(visual.GetComponentInChildren<Animator>(true));
+            boss.AddComponent<HeadsmanRig>();
+            boss.AddComponent<HeadsmanBrain>();
+            return boss;
+        }
+
+        private static void Arm(Humanoid humanoid, GameObject[] attacks)
+        {
+            humanoid.m_name = "$enemy_ecp_headsman";
+            humanoid.m_health = HeadsmanSettings.Health;
+            humanoid.m_defaultItems = attacks;
+            humanoid.m_randomWeapon = new GameObject[0];
+            humanoid.m_randomShield = new GameObject[0];
+            humanoid.m_randomArmor = new GameObject[0];
+            humanoid.m_randomSets = new Humanoid.ItemSet[0];
+            humanoid.m_randomItems = new Humanoid.RandomItem[0];
+        }
+
+        /// <summary>The Skeleton's death with its ragdoll swapped for one at the Executioner's size.</summary>
+        private static void Die(Humanoid humanoid, GameObject corpse)
+        {
+            List<EffectList.EffectData> effects = humanoid.m_deathEffects.m_effectPrefabs
+                .Where(effect => effect.m_prefab != null && effect.m_prefab.GetComponent<Ragdoll>() == null).ToList();
+            effects.Add(new EffectList.EffectData { m_prefab = corpse });
+            humanoid.m_deathEffects.m_effectPrefabs = effects.ToArray();
+        }
+
+        /// <summary>A copy of the Skeleton's ragdoll at the Executioner's size, or null when the Skeleton has none.</summary>
+        public static GameObject? Corpse(Humanoid skeleton)
+        {
+            GameObject? ragdoll = skeleton.m_deathEffects.m_effectPrefabs.Select(e => e.m_prefab).FirstOrDefault(p => p != null && p.GetComponent<Ragdoll>() != null);
+            if (ragdoll == null)
+            {
+                return null;
+            }
+            GameObject corpse = PrefabBench.Copy(ragdoll, HeadsmanPrefabs.Corpse);
+            corpse.transform.localScale = ragdoll.transform.localScale * Size;
+            return corpse;
+        }
+
+        /// <summary>Coins and bones, and the axehead by the settings' chance (<see cref="Reloot"/> keeps that current).</summary>
+        private static void Loot(CharacterDrop drops, GameObject? axehead, ZNetScene scene)
+        {
+            drops.m_drops = new List<CharacterDrop.Drop>();
+            Add(drops, scene.GetPrefab("Coins"), 20, 40, 1f);
+            Add(drops, scene.GetPrefab("BoneFragments"), 4, 8, 1f);
+            Add(drops, axehead, 1, 1, HeadsmanSettings.AxeheadChance);
+        }
+
+        private static void Add(CharacterDrop drops, GameObject? item, int min, int max, float chance)
+        {
+            if (item != null)
+            {
+                drops.m_drops.Add(new CharacterDrop.Drop { m_prefab = item, m_amountMin = min, m_amountMax = max, m_chance = chance, m_levelMultiplier = false });
+            }
+        }
+
+        /// <summary>After a settings change: the axehead's chance on the prefab (a creature takes its drops from it as it dies).</summary>
+        public static void Reloot(GameObject boss, GameObject? axehead)
+        {
+            foreach (CharacterDrop.Drop drop in boss.GetComponent<CharacterDrop>().m_drops.Where(d => d.m_prefab == axehead))
+            {
+                drop.m_chance = HeadsmanSettings.AxeheadChance;
+            }
+        }
+    }
+}

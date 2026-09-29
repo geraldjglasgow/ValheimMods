@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.2.0
+
+Skeletons armed with crossbows and weapons of bone, and those weapons for you to make; a Crypt Executioner in the
+burial chambers; five new creatures in the Swamps and five on the Mountains. The crypt mimic, the slinger, the Rime
+Giant and the kraken are unchanged, and an existing `com.EliteCreaturesPack.cfg` keeps every value: the new sections
+are added to it on the first run.
+
+- **The Skeleton Crossbowman: a skeleton that has to reload.** About one spawn in seven of the game's four archer
+  skeletons (Black Forest, Meadows, Swamps, Mountains) is a crossbowman instead, with that skeleton's health, looks
+  and loot. It shoots a straight, fast bolt as hard as that skeleton's arrow (blunt) from up to 25 metres, then takes
+  about three and a half seconds to span and load: that's the moment to close in. It drops a few bone bolts now and
+  then. Section `6 - Skeleton Crossbowman`.
+- **The Bone Crossbow, for players.** Made at the workbench, it handles like the game's crossbow and adds 30 blunt of
+  its own (+4 an upgrade) to whatever bolt it looses, with a 4 second reload before skill. Its recipe is a placeholder
+  for now and can be set in `7 - Bone Crossbow`.
+- **The skeleton arsenal: seven skeletons with weapons of bone.** One skeleton spawn in four is now a Cutthroat
+  (dagger), Swordsman, Axeman, Bonebreaker (mace), Spearman, Halberdier (atgeir) or Bowman, in each of the four
+  skeleton kinds, striking one blow at a time, never a combo. They drop what a skeleton drops, and one in ten a
+  **Vertebra** as well. `8 - Skeleton Arsenal` switches them all, or each one, on or off; their numbers are fixed.
+- **Bone weapons and bone arrows.** At a level 3 workbench, bone fragments and a vertebra make the arsenal's seven
+  weapons (the dagger takes bone fragments only). Each handles like the bronze-age weapon of its kind at 0.85 of its
+  damage and upgrades with bone fragments. Bone arrows, 20 for 8 bone fragments at a level 2 workbench, hit for 24
+  pierce: better than wood, not as good as flint.
+- **The Crypt Executioner: a mini boss in the burial chambers.** About one Black Forest burial chamber in four, older
+  ones included, holds a skeleton headsman a head taller than the rest, with 900 health and a bone greataxe: a slam,
+  a ground scrape whose shockwave hits, a spin, a strike behind it when you surround it, and, if you keep your
+  distance, a thrown axe that shatters into a skeleton rising where it lands (two at most) while a new axe forms in
+  its hands. It returns three days after it dies. Section `25 - Crypt Executioner`.
+- **The Executioner's Greataxe.** Half the time the Executioner drops its axehead; with 8 vertebrae and 10 bone
+  fragments at a level 3 workbench it makes a two-handed axe that hits like a fully upgraded bronze axe (55 slash, 49
+  chop), with a combo of its own: a slash, a spin, a heavy overhead blow. It cannot be upgraded. Section
+  `26 - Executioner's Greataxe`.
+- **Five swamp creatures.** The **Mire Jarl**, a rare crowned draugr elite (900 health, slow heavy blows); the **Reed
+  Stalker**, a fast draugr spearman; the **Bog Maw**, a tusked blob asleep until you come close; the **Fen Crawler**,
+  an armoured crawler with quick bites that shrugs off arrows but not clubs; and the **Drowned Shade**, a wraith with
+  a drowned bell that comes only at night. They spawn in the swamp's interior beside its own creatures. Sections
+  `10 - Mire Jarl` to `14 - Drowned Shade`.
+- **Five mountain creatures.** **Frostfang**, a rare giant wolf with a frost bite that turns pale and faster at half
+  health; the **Rimeback**, a slate-backed grazer whose blows shove you back; the **Scree Wing**, a horned drake whose
+  hail is part stone; the **Cairn Wight**, a bone-masked fenring that leaps out of the night; and the **Ice Crawler**,
+  a shale-crested crawler with a frost bite. All are immune to frost and weak to fire. Sections `15 - Frostfang` to
+  `19 - Ice Crawler`.
+- **The same five settings for each of those ten:** `Enabled`, `Health`, `Damage Factor`, `Spawn Chance` and
+  `Spawn Interval`, synced from the server like the rest.
+- With Elite Creatures Reborn, every new creature rolls stars and mutations like any other.
+
 ## 0.1.0
 
 First release: four new creatures, each with its own fight.

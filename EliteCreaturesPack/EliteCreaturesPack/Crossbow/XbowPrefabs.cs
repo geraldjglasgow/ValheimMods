@@ -1,0 +1,106 @@
+using System.Linq;
+using BundlePrefabs;
+using EliteCreaturesPack.Core;
+using HarmonyLib;
+using PatchGuard;
+using UnityEngine;
+
+namespace EliteCreaturesPack.Crossbow
+{
+    /// <summary>
+    /// Builds the Skeleton Crossbowmen once and registers them whenever ZNetScene wakes, identically on the server and
+    /// every client: for each of the game's archer skeletons (<see cref="XbowKind"/>) a crossbowman (a copy of that
+    /// skeleton wearing the crossbow and quiver from the embedded bundle and playing the bundle's clips in place of the
+    /// archer's) and its shot (a copy of that skeleton's bow); and the one bolt they all fire (a copy of the game's bone
+    /// bolt projectile wearing the bundle's bone bolt); and the players' Bone Crossbow (<see cref="XbowItem"/>). The bundle
+    /// comes from AssetWorkshop (assets/ecp_crossbowman);
+    /// every material is the game's own Skeleton material wearing the bundle's textures.
+    /// </summary>
+    public static class XbowPrefabs
+    {
+        public const string Bolt = "ECP_SkeletonCrossbowman_bolt";
+        public const string Bundle = "ecp_crossbowman";
+        private const string Kit = "ecp_xbow_kit";
+        private const string BoltLook = "ecp_xbow_bolt";
+        private const string GameBolt = "arbalest_projectile_bone";
+
+        private static GameObject? bolt;
+
+        public static void Install(Harmony harmony)
+        {
+            NetPrefabs.OnSceneAwake(harmony, scene => Guard.Run("XbowPrefabs.Build", () => Build(scene, harmony)));
+            Settings.Changed += () => SafeCall.Run("crossbowman settings", XbowShot.ApplyToAll);
+            Settings.Changed += () => SafeCall.Run("bone crossbow settings", Reprice);
+        }
+
+        private static void Build(ZNetScene scene, Harmony harmony)
+        {
+            if (bolt == null && !Create(scene, harmony))
+            {
+                return;
+            }
+            NetPrefabs.Register(scene, bolt!);
+            foreach (XbowKind kind in XbowKind.All.Where(k => k.Prefab != null))
+            {
+                NetPrefabs.Register(scene, XbowShot.Of(kind)!);
+                NetPrefabs.Register(scene, kind.Prefab!);
+            }
+            if (XbowItem.Prefab != null)
+            {
+                NetPrefabs.Register(scene, XbowItem.Prefab);
+            }
+            XbowWords.Add(Localization.instance);
+            Log.Info($"Skeleton crossbowmen ready: {string.Join(", ", XbowKind.All.Where(k => k.Prefab != null).Select(k => k.Creature))}.");
+        }
+
+        /// <summary>
+        /// The bolt, then a crossbowman for every archer skeleton the game has; a missing one is logged and left out,
+        /// and nothing is built without the bolt (nothing else is held up either way).
+        /// </summary>
+        private static bool Create(ZNetScene scene, Harmony harmony)
+        {
+            GameObject? gameBolt = scene.GetPrefab(GameBolt), skeleton = scene.GetPrefab(XbowKind.All[0].Skeleton);
+            if (gameBolt == null || skeleton == null)
+            {
+                Log.Error($"Skeleton crossbowmen not built: the game has no {(gameBolt == null ? GameBolt : XbowKind.All[0].Skeleton)}.");
+                return false;
+            }
+            AssetBundle bundle = EmbeddedBundle.Load(typeof(XbowPrefabs).Assembly, Bundle);
+            Material skin = XbowKit.Skin(skeleton.transform.Find("Visual"));
+            bolt = XbowBolt.Build(gameBolt, EmbeddedBundle.Prefab(bundle, BoltLook), skin);
+            XbowRig.Click = scene.GetPrefab("sfx_reload_done");
+            foreach (XbowKind kind in XbowKind.All)
+            {
+                Create(kind, scene, harmony, bundle);
+            }
+            XbowItem.Build(scene, bundle);
+            if (XbowItem.Prefab != null)
+            {
+                ItemPrefabs.Register(harmony, XbowItem.Prefab);
+                XbowRecipe.Install(ObjectDB.instance);
+            }
+            return true;
+        }
+
+        /// <summary>After a settings change: the Bone Crossbow's numbers and its recipe.</summary>
+        private static void Reprice()
+        {
+            XbowItemSettings.Apply(XbowItem.Prefab != null ? XbowItem.Prefab.GetComponent<ItemDrop>() : null);
+            XbowRecipe.Install(ObjectDB.instance);
+        }
+
+        private static void Create(XbowKind kind, ZNetScene scene, Harmony harmony, AssetBundle bundle)
+        {
+            GameObject? skeleton = scene.GetPrefab(kind.Skeleton);
+            GameObject? bow = skeleton?.GetComponent<Humanoid>()?.m_randomWeapon.FirstOrDefault(item => item != null && item.name == kind.Bow);
+            if (skeleton == null || bow == null)
+            {
+                Log.Warn($"Skeleton crossbowman {kind.Creature} not built: the game has no {(skeleton == null ? kind.Skeleton : kind.Bow)}.");
+                return;
+            }
+            GameObject shot = XbowShot.Build(kind, bow, bolt!, scene.GetPrefab("sfx_arbalest_fire"));
+            ItemPrefabs.Register(harmony, shot);
+            kind.Prefab = XbowCreature.Build(kind, skeleton, shot, bundle, EmbeddedBundle.Prefab(bundle, Kit), scene.GetPrefab("BoltBone"));
+        }
+    }
+}

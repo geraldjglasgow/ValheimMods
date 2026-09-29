@@ -1,0 +1,73 @@
+using BepInEx.Configuration;
+using SyncedConfig;
+
+namespace EliteCreaturesPack.Headsman
+{
+    /// <summary>
+    /// Section 25: the Crypt Executioner. Whether it may appear and how rarely (the share of the Black Forest's burial
+    /// chambers that hold one, fixed per chamber by its seed, and how long it takes to come back after it dies), its
+    /// health, the damage of each attack, how many skeletons it may have raised at once, and the chance it drops its
+    /// axehead. Synced; read where they apply, so a reload takes effect.
+    /// </summary>
+    public static class HeadsmanSettings
+    {
+        public const string Section = "25 - Crypt Executioner";
+
+        private static ConfigEntry<bool> enabled = null!;
+        private static ConfigEntry<float> chambers = null!, respawnDays = null!, health = null!;
+        private static ConfigEntry<float> slam = null!, wave = null!, spin = null!, thrown = null!, rear = null!;
+        private static ConfigEntry<int> summons = null!;
+        private static ConfigEntry<float> axehead = null!;
+
+        /// <summary>Whether chambers generated from now on may hold one. Ones already placed stay.</summary>
+        public static bool On => enabled.Value;
+
+        /// <summary>The share of burial chambers that hold one, 0 to 1.</summary>
+        public static float Chambers => chambers.Value / 100f;
+
+        /// <summary>Minutes before it comes back after it died (a game day is 30 minutes).</summary>
+        public static float RespawnMinutes => respawnDays.Value * 30f;
+
+        public static float Health => health.Value;
+        public static float SlamDamage => slam.Value;
+        public static float WaveDamage => wave.Value;
+        public static float SpinDamage => spin.Value;
+        public static float ThrowDamage => thrown.Value;
+        public static float RearDamage => rear.Value;
+        public static int Summons => summons.Value;
+        public static float AxeheadChance => axehead.Value / 100f;
+
+        public static void Initialize(SyncedConfiguration config)
+        {
+            BindSpawn(config);
+            BindFight(config);
+        }
+
+        private static void BindSpawn(SyncedConfiguration config)
+        {
+            enabled = config.Bind(Section, "Enabled", true,
+                "The Crypt Executioner: a skeleton headsman with a bone greataxe, a mini boss waiting in some of the Black Forest's "
+                + "burial chambers. Off: no chamber gets one, and the ones already placed raise none.");
+            chambers = config.Bind(Section, "Chambers", 25f,
+                "Percent of burial chambers that hold one, decided once per chamber: when it is generated, or for chambers from before the mod when first loaded.", acceptableValues: Settings.Range(0f, 100f));
+            respawnDays = config.Bind(Section, "Respawn Days", 3f,
+                "Game days before it comes back to its chamber after it died.", acceptableValues: Settings.Range(0.1f, 100f));
+            health = config.Bind(Section, "Health", 900f, "Its health before stars (a troll: 600).", acceptableValues: Settings.Range(1f, 100000f));
+            axehead = config.Bind(Section, "Axehead Chance", 50f,
+                "Percent chance it drops its axehead, from which the Executioner's Greataxe is made.", acceptableValues: Settings.Range(0f, 100f));
+        }
+
+        private static void BindFight(SyncedConfiguration config)
+        {
+            slam = config.Bind(Section, "Slam Damage", 60f, "Slash damage of the overhead slam.", acceptableValues: Settings.Range(0f, 1000f));
+            wave = config.Bind(Section, "Shockwave Damage", 35f,
+                "Blunt damage of the shockwave the ground scrape sends out (the scrape itself does not hit).", acceptableValues: Settings.Range(0f, 1000f));
+            spin = config.Bind(Section, "Spin Damage", 50f, "Slash damage of the spin, all round it.", acceptableValues: Settings.Range(0f, 1000f));
+            thrown = config.Bind(Section, "Throw Damage", 55f, "Slash damage of the thrown axe.", acceptableValues: Settings.Range(0f, 1000f));
+            rear = config.Bind(Section, "Rear Strike Damage", 55f,
+                "Slash damage of the strike behind it, used when two or more foes are near and one is behind.", acceptableValues: Settings.Range(0f, 1000f));
+            summons = config.Bind(Section, "Summons", 2,
+                "Skeletons it may have raised at once from its thrown axe's bones; 0 raises none.", acceptableValues: new AcceptableValueRange<int>(0, 10));
+        }
+    }
+}

@@ -1,0 +1,101 @@
+using System.Collections.Generic;
+using EliteCreaturesPack.Core;
+using HarmonyLib;
+using UnityEngine;
+
+namespace EliteCreaturesPack.Arsenal
+{
+    /// <summary>
+    /// The bone weapons' and bone arrows' recipes, in every ObjectDB the game builds or copies once the items exist: the
+    /// weapons at a level 3 workbench, costing <see cref="ArsenalWeapon.Recipe"/> (item:amount:amount per upgrade; the
+    /// vertebra by its prefab name, ECP_Vertebra), and 20 arrows for 8 bone fragments at a level 2 workbench. An item
+    /// name the game does not know is logged and left out. Not made at all when no workbench is found: without a
+    /// station the game would let them be made by hand anywhere.
+    /// </summary>
+    public static class ArsenalRecipes
+    {
+        private const string Workbench = "piece_workbench";
+        private const int WeaponLevel = 3;
+        private const int ArrowLevel = 2;        // as flint arrows; wood arrows need 1
+        private const int ArrowsPerCraft = 20;   // as the game's wood and flint arrows
+        private const string ArrowCost = "BoneFragments:8";
+
+        private static readonly Dictionary<GameObject, Recipe> recipes = new Dictionary<GameObject, Recipe>();
+
+        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
+        public static class Built
+        {
+            private static void Postfix(ObjectDB __instance) => SafeCall.Run("bone weapon recipes", () => Install(__instance));
+        }
+
+        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
+        public static class Copied
+        {
+            private static void Postfix(ObjectDB __instance) => SafeCall.Run("bone weapon recipes", () => Install(__instance));
+        }
+
+        public static void Install(ObjectDB? db)
+        {
+            if (db == null)
+            {
+                return;
+            }
+            foreach (var pair in ArsenalItems.Weapons)
+            {
+                Add(db, pair.Value, 1, WeaponLevel, pair.Key.Recipe);
+            }
+            if (ArsenalArrow.Item != null)
+            {
+                Add(db, ArsenalArrow.Item, ArrowsPerCraft, ArrowLevel, ArrowCost);
+            }
+        }
+
+        private static void Add(ObjectDB db, GameObject item, int amount, int level, string cost)
+        {
+            if (!recipes.TryGetValue(item, out Recipe recipe))
+            {
+                recipe = ScriptableObject.CreateInstance<Recipe>();
+                (recipe.name, recipe.m_item, recipe.m_amount) = ("Recipe_" + item.name, item.GetComponent<ItemDrop>(), amount);
+                recipes[item] = recipe;
+            }
+            GameObject? bench = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(Workbench) : null;
+            recipe.m_craftingStation = bench != null ? bench.GetComponent<CraftingStation>() : null;
+            recipe.m_minStationLevel = level;
+            recipe.m_resources = Cost(db, item.name, cost);
+            recipe.m_enabled = recipe.m_craftingStation != null && recipe.m_resources.Length > 0;
+            if (!db.m_recipes.Contains(recipe))
+            {
+                db.m_recipes.Add(recipe);
+            }
+        }
+
+        /// <summary>"ECP_Vertebra:1, BoneFragments:10:5" into requirements; unknown items and bad entries are logged and skipped.</summary>
+        private static Piece.Requirement[] Cost(ObjectDB db, string made, string text)
+        {
+            var cost = new List<Piece.Requirement>();
+            foreach (string entry in text.Split(','))
+            {
+                string[] parts = entry.Trim().Split(':');
+                ItemDrop? item = parts.Length >= 2 ? Find(db, parts[0].Trim()) : null;
+                if (item == null || !int.TryParse(parts[1], out int amount))
+                {
+                    if (entry.Trim().Length > 0)
+                    {
+                        Log.Warn($"{made} recipe: \"{entry.Trim()}\" is not item:amount[:per upgrade] with an item the game knows; left out.");
+                    }
+                    continue;
+                }
+                int perLevel = parts.Length >= 3 && int.TryParse(parts[2], out int per) ? per : 0;
+                cost.Add(new Piece.Requirement { m_resItem = item, m_amount = amount, m_amountPerLevel = perLevel, m_recover = true });
+            }
+            return cost.ToArray();
+        }
+
+        /// <summary>The vertebra by name even before this database lists it (the item registration may run after this).</summary>
+        private static ItemDrop? Find(ObjectDB db, string name)
+        {
+            GameObject? prefab = name == ArsenalItems.VertebraName ? ArsenalItems.Vertebra : db.GetItemPrefab(name);
+            return prefab != null ? prefab.GetComponent<ItemDrop>() : null;
+        }
+    }
+}

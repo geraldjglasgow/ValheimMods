@@ -2,13 +2,17 @@
 
 New creatures for Valheim, each with its own way to fight. A crypt chest that bites whoever opens it. A greydwarf
 with a slingshot that shoots stones. A giant crusted in ice, asleep on the mountainside until night falls. A kraken
-that hunts ships on the open sea, and the shield you make from its beak.
+that hunts ships on the open sea, and the shield you make from its beak. A skeleton with a crossbow, who has to
+reload after every shot, and a crossbow of bones like its own for you to make. Seven skeletons armed with weapons
+of bone and vertebrae, and the same weapons for you to make from the vertebrae they drop. And in some burial chambers, a
+skeleton executioner with a greataxe of bone, whose axehead you can take to make the greataxe yourself. Out in the
+wild, five new creatures haunt the Swamps and five roam the Mountains.
 
 It works on its own. With **Elite Creatures Reborn** installed as well, every creature here rolls stars and mutations
 like any other (the kraken, a boss, rolls stars and a boss aspect), and the mimic keeps its disguise until it wakes.
 
-**0.1.0 is the first release.** The numbers will be tuned in play, and settings may still change before 1.0.0;
-reports of anything that feels off are welcome (see "Bugs and feature requests" below).
+**The mod is young.** The numbers will be tuned in play, and settings may still change before 1.0.0; reports of
+anything that feels off are welcome (see "Bugs and feature requests" below).
 
 ## Crypt Mimic
 
@@ -109,6 +113,138 @@ Its body is the game's sea serpent, hidden, wearing the kraken; the kraken's mod
 embedded in the plugin, and everything it does is played by the mod, not by animations, so the tentacles strike
 wherever the crew stands and lie on whatever deck your ship has: a raft, a karve, a longship, the Ashlands drakkar, or
 a modded ship.
+
+## Skeleton Crossbowman
+
+Some of the dead kept their crossbows. The **Skeleton Crossbowman** is a new kind of skeleton unit: wherever the game
+spawns one of its archer skeletons, about one spawn in seven is a crossbowman instead - in burial chambers, graves,
+stone tower ruins, mountain cabins, the Meadows' ruins, from bone piles, and out in the night once Bonemass is dead.
+Each is its own skeleton's kind: the Black Forest's, the Meadows', the Swamps' and the Mountains' crossbowmen have
+that skeleton's health (40, 30, 60, 75), resistances, looks and loot, and hit as hard as that skeleton's archer (20,
+15, 55 and 60), with blunt bolts.
+
+It carries a crossbow made of bones in its fists (a femur for the stock, a gently bowed row of vertebrae threaded on a
+bone along it, two ribs for the prod, a jawbone for the stirrup) and a quiver of grimy bone bolts on its hip. It fights
+like the skeleton archer, standing its ground and shooting from up to 25 metres down to point blank, but every shot is
+a crossbow's: it brings the stock up to its shoulder, lays its skull on it, holds the aim a moment and looses a bolt
+with a blunt knuckle of bone for a head, flying straight and fast. Then it has to reload: it lowers the crossbow, bends
+over it, hooks the string and draws it back into the nut, pulls a bolt from its quiver and lays it in the groove,
+taking its time over it (about three and a half seconds). That's your moment to close in. It carries the crossbow at
+the low ready in both hands wherever it walks or runs, and drops a few bone bolts now and then. The skeletons and their
+materials are the game's own; the crossbow, its bolts, the quiver and the animations are embedded in the plugin.
+
+## Bone Crossbow
+
+The crossbowmen's weapon, for players: a **Bone Crossbow** made at the workbench. It handles like the game's own
+crossbow (the same aim, reload and Crossbows skill, bolts as ammo, on your back when put away) and hits like a club:
+30 blunt of its own (+4 an upgrade, three levels), and whatever bolt it looses adds its damage on top. A bone bolt,
+which the crossbowmen drop, adds 32 pierce. It reloads in 4 seconds with no skill (the skill halves it), and it does
+not chop trees. Its cost is a placeholder for now (see `Recipe` below).
+
+## Skeleton Arsenal
+
+The dead make their own weapons now, out of what they have: bone. Seven new skeleton units, each carrying one weapon
+of bone with vertebrae worked into it:
+
+| Skeleton | Weapon | Its blow |
+| --- | --- | --- |
+| Skeleton Cutthroat | bone dagger | a quick slash, slash and pierce, more often than the others |
+| Skeleton Swordsman | bone sword | the skeleton's own sword swing |
+| Skeleton Axeman | bone axe | a wide axe swing, a little harder |
+| Skeleton Bonebreaker | bone mace | a heavy blunt blow |
+| Skeleton Spearman | bone spear | a fast stab from further out |
+| Skeleton Halberdier | bone atgeir | a two-handed blow from furthest out, the hardest and slowest |
+| Skeleton Bowman | bone bow | shoots like the skeleton archer, bone arrows |
+
+They are skeleton units like the game's own: wherever the game spawns a skeleton, about one spawn in four is an
+arsenal skeleton instead - in burial chambers, graves, stone tower ruins, mountain cabins, the Meadows' ruins, from
+bone piles, and out in the night once Bonemass is dead. Each has its own skeleton's health (40 in the Black Forest,
+30 in the Meadows, 60 in the Swamps, 75 in the Mountains), resistances, looks and loot, and hits about as hard as that
+skeleton's sword or bow. They strike one blow at a time, never a combo. The one-handed fighters keep the skeleton's
+shield. Every one drops what a skeleton drops, and one in ten drops a **Vertebra** as well.
+
+## Bone Weapons
+
+The arsenal's weapons, for players, made at a **level 3 workbench** from bone fragments and a vertebra (the dagger
+needs only bone fragments). Each handles like the bronze-age weapon of its kind (the same attacks, combos, skill,
+durability and upgrades) and hits a little softer: 0.85 of its damage.
+
+| Weapon | Handles like | Damage | Made from |
+| --- | --- | --- | --- |
+| Bone Dagger | copper knife | 10.2 slash, 10.2 pierce | 8 bone fragments |
+| Bone Sword | bronze sword | 29.75 slash | a vertebra, 10 bone fragments |
+| Bone Axe | bronze axe | 34 slash, 34 chop | a vertebra, 10 bone fragments |
+| Bone Mace | bronze mace | 29.75 blunt | a vertebra, 12 bone fragments |
+| Bone Spear | bronze spear | 29.75 pierce | a vertebra, 10 bone fragments |
+| Bone Atgeir | bronze atgeir | 38.25 pierce | two vertebrae, 16 bone fragments |
+| Bone Bow | fine bow | 27.2 pierce | a vertebra, 12 bone fragments |
+
+Upgrades cost bone fragments only. **Bone Arrows**, 20 for 8 bone fragments at a level 2 workbench, hit for 24 pierce:
+better than wood (22), not as good as flint (27).
+
+## Crypt Executioner
+
+A mini boss of the Black Forest: a skeleton headsman, a head taller than the others, with a greataxe whose haft is
+strung from vertebrae. About one burial chamber in four has one waiting in its largest room. It has 900 health and
+six moves:
+
+- **Slam**: the axe raised high and brought down on you, stones flying where it lands.
+- **Ground scrape**: the edge dragged through the ground in an arc; the shockwave that runs out from it is what hits.
+- **Spin**: a full turn with the axe held out flat, hitting all round.
+- **Overhead throw** and **spin throw**, when you keep your distance: the axe shatters where it hits, and its pieces
+  gather into a skeleton that rises there, bone by bone from the feet up, while a new axe forms in the Executioner's
+  hands. No more than two of its skeletons stand at a time.
+- **Rear strike**, when two or more of you are near and one is behind it: its skull turns all the way round, and the
+  axe comes down behind it.
+
+It drops coins and bones, and its **axehead** half the time. Once killed, it returns to its chamber after three
+days. Burial chambers from before you installed the mod can hold one too.
+
+## Executioner's Greataxe
+
+The Executioner's weapon, for players: made at a **level 3 workbench** from its axehead, 8 vertebrae and 10 bone
+fragments. It is a two-handed axe that handles like the Battleaxe (the same stance, block and Axes skill) and hits
+like a fully upgraded Bronze Axe: 55 slash, 49 chop. It cannot be upgraded. Its combo is its own: a slash in front, a
+whirling spin that hits all round, then a heavy overhead blow that takes a moment to recover from.
+
+## Swamp creatures
+
+Five new creatures of the Swamps. They fight on the draugr's side, come one at a time in the swamp's interior (away
+from its edges) beside its own creatures, and never replace them:
+
+| Creature | Built on | | Health |
+| --- | --- | --- | --- |
+| **Mire Jarl** | Draugr Elite | a rare mini boss, a third bigger, in a corroded crown and burial armour: slower, heavier blows that knock you further, and hard to stagger. Only one in a wide area | 900 |
+| **Reed Stalker** | Draugr | a draugr in a reed mantle with a spear, quicker than the rest: it circles you and stabs from 2.7 metres (pierce) | 160 |
+| **Bog Maw** | Blob | a bigger blob crusted with roots and tusks, asleep in the mire until you come within 7 metres or make a noise | 200 |
+| **Fen Crawler** | Neck | a neck half again as big, grown over with swamp: quick bites, resists pierce, weak to blunt, immune to poison | 100 |
+| **Drowned Shade** | Wraith | a drowned revenant with a bell and a chain harness, flying at you only at night; its blows knock you back hard | 220 |
+
+They drop what their swamp would give: the Jarl entrails and chains, the Stalker entrails and wood, the Maw ooze and
+bone fragments, the Crawler neck tails and bone fragments, the Shade chains and coal. The Mire Jarl never comes
+starred from the wild; the others can come with a star. It is a mini boss, not a boss: no altar, no boss bar, no
+Forsaken power.
+
+## Mountain creatures
+
+Five new creatures of the Mountains. They come one at a time, away from the biome's edges; all are immune to frost and
+weak to fire, and none can be tamed:
+
+| Creature | Built on | | Health |
+| --- | --- | --- | --- |
+| **Frostfang** | Wolf | a rare wolf mini boss, two thirds bigger, with a mane; its bite carries frost and reaches further. At half health it rages for good: its coat pales, it runs a quarter faster and stops circling. Only one in a wide area | 1400 |
+| **Rimeback** | Lox | a smaller lox under a slate carapace that comes straight at you; its blows shove you back | 650 |
+| **Scree Wing** | Drake | a horned drake whose hail is more stone than ice | 240 |
+| **Cairn Wight** | Fenring | a bone-masked fenring that comes only at night, leaping like any fenring | 450 |
+| **Ice Crawler** | Neck | a neck twice the size with a crest of shale and a long frost bite | 180 |
+
+Frostfang drops wolf fangs and pelts and sometimes a wolf trophy; the Rimeback stone, crystal and lox meat; the Scree
+Wing freeze glands and stone; the Cairn Wight bone fragments and crystal; the Ice Crawler neck tails and sometimes a
+freeze gland. Frostfang never comes starred from the wild and grants no Forsaken power; the others can come with a
+star.
+
+The swamp and mountain creatures' bodies, animations and sounds are the game's own; their gear (crowns, mantles,
+crusts, plates, masks) is embedded in the plugin. For now the gear vanishes when they die.
 
 ## With Elite Creatures Reborn
 
@@ -212,6 +348,94 @@ ones. Switching a creature off stops new ones from appearing; the ones already i
 
 The kraken's meat and the Kraken shield's stats are fixed; a food mod such as FeastMaster can tune the meat.
 
+### 6 - Skeleton Crossbowman
+
+| Setting | Default | |
+| --- | --- | --- |
+| `Enabled` | on | the archer skeletons can come as crossbowmen |
+| `Share` | 15 | percent of those skeletons' spawns that come as crossbowmen, wherever and whenever they spawn |
+| `Damage Factor` | 1 | a bolt's blunt damage against the bow of the skeleton it replaces (Black Forest 20, Meadows 15, Swamps 55, Mountains 60) |
+| `Shot Interval` | 6 | seconds between its shots, at the least (the archer: 4); the whole shot, spanning and loading included, takes about 5.5 of them |
+| `Bolt Speed` | 40 | metres a second the bolt flies, straight (the archer's arrow: 30) |
+| `Range` | 25 | metres it shoots from (the archer: 20) |
+
+The game's four archer skeletons come as crossbowmen; the no-archer, poison, Hildir and summoned skeletons never do.
+
+### 7 - Bone Crossbow
+
+| Setting | Default | |
+| --- | --- | --- |
+| `Craftable` | on | the Bone Crossbow can be made at the workbench |
+| `Recipe` | Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2 | the cost, as item:amount:amount per upgrade (a placeholder for now); item names are the game's prefab names |
+| `Workbench Level` | 1 | the workbench level it needs |
+| `Damage` | 30 | blunt damage of its own blow, before the bolt's (the Arbalest: 200 pierce) |
+| `Damage Per Level` | 4 | blunt damage each upgrade adds |
+| `Reload Time` | 4 | seconds to span and load it with no Crossbows skill; the skill halves it (the Arbalest: 3.5) |
+
+### 8 - Skeleton Arsenal
+
+`Enabled` (on) switches all of them on or off at once. Below it, one switch per skeleton, all on: `Skeleton Cutthroat`,
+`Skeleton Swordsman`, `Skeleton Axeman`, `Skeleton Bonebreaker`, `Skeleton Spearman`, `Skeleton Halberdier`,
+`Skeleton Bowman`. Off: that skeleton no longer spawns (ones already in the world stay), and the others come no more
+often than before. Everything else about the arsenal and the bone
+weapons is fixed as described above.
+
+### 10 to 19 - the swamp and mountain creatures
+
+A section per creature: `10 - Mire Jarl`, `11 - Reed Stalker`, `12 - Bog Maw`, `13 - Fen Crawler`,
+`14 - Drowned Shade`, `15 - Frostfang`, `16 - Rimeback`, `17 - Scree Wing`, `18 - Cairn Wight`, `19 - Ice Crawler`.
+Each has the same five settings:
+
+| Setting | |
+| --- | --- |
+| `Enabled` | it spawns in the wild; off, no new ones come and the ones already in the world stay |
+| `Health` | its health before stars; applies to new ones |
+| `Damage Factor` | times the damage of the attacks it takes from the creature it is built on |
+| `Spawn Chance` | percent chance of one at each spawn attempt, in a swamp or mountain zone where someone is |
+| `Spawn Interval` | seconds between those attempts |
+
+Their defaults:
+
+| Creature | `Health` | `Damage Factor` | `Spawn Chance` | `Spawn Interval` |
+| --- | --- | --- | --- | --- |
+| Mire Jarl | 900 | 1.35 | 4 | 900 |
+| Reed Stalker | 160 | 1 | 12 | 360 |
+| Bog Maw | 200 | 1.2 | 10 | 420 |
+| Fen Crawler | 100 | 3 | 18 | 300 |
+| Drowned Shade | 220 | 1.15 | 10 | 480 |
+| Frostfang | 1400 | 1.4 | 3 | 1200 |
+| Rimeback | 650 | 0.65 | 7 | 600 |
+| Scree Wing | 240 | 1 | 10 | 480 |
+| Cairn Wight | 450 | 1.1 | 8 | 600 |
+| Ice Crawler | 180 | 5 | 15 | 360 |
+
+### 25 - Crypt Executioner
+
+| Setting | Default | |
+| --- | --- | --- |
+| `Enabled` | on | off: no chamber gets one, and the ones already placed raise none |
+| `Chambers` | 25 | percent of burial chambers that hold one, decided once per chamber |
+| `Respawn Days` | 3 | game days before it returns to its chamber after it died |
+| `Health` | 900 | its health before stars (a troll: 600) |
+| `Axehead Chance` | 50 | percent chance it drops its axehead |
+| `Slam Damage` | 60 | slash damage of the slam |
+| `Shockwave Damage` | 35 | blunt damage of the ground scrape's shockwave |
+| `Spin Damage` | 50 | slash damage of the spin |
+| `Throw Damage` | 55 | slash damage of a thrown axe |
+| `Rear Strike Damage` | 55 | slash damage of the strike behind it |
+| `Summons` | 2 | skeletons it may have raised at once; 0 raises none |
+
+### 26 - Executioner's Greataxe
+
+| Setting | Default | |
+| --- | --- | --- |
+| `Recipe` | on | the greataxe can be made at the workbench |
+| `Slash` | 55 | slash damage (a fully upgraded Bronze Axe: 55) |
+| `Chop` | 49 | chop damage, for trees (a fully upgraded Bronze Axe: 49) |
+| `Vertebrae` | 8 | vertebrae the recipe takes |
+| `Bone Fragments` | 10 | bone fragments the recipe takes |
+| `Workbench Level` | 3 | the workbench level it needs |
+
 ## Server settings
 
 Gameplay settings come from the server. With `Lock Configuration` on (the default), every player uses the server's
@@ -224,8 +448,14 @@ refusal code that is also written to the server's and your own log.
 ## Trying them
 
 With `devcommands` on, the game's `spawn` command makes any of them: `spawn ECP_CryptMimic`,
-`spawn ECP_GreydwarfSlinger`, `spawn ECP_RimeGiant`, `spawn ECP_Kraken` (at sea, near a ship with a crew). A mimic
-comes dormant and a giant asleep. The kraken's loot: `spawn ECP_KrakenBeak`, `spawn ECP_KrakenMeat`,
+`spawn ECP_GreydwarfSlinger`, `spawn ECP_RimeGiant`, `spawn ECP_Kraken` (at sea, near a ship with a crew),
+`spawn ECP_SkeletonCrossbowman` (and `_Meadows`, `_Swamps`, `_Mountains`), `spawn ECP_BoneCrossbow`,
+`spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman; each also `_Meadows`,
+`_Swamps`, `_Mountains`), `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Vertebra`,
+`spawn ECP_ArrowBone 20`, `spawn ECP_Headsman` (the Crypt Executioner), `spawn ECP_ExecutionerAxehead`,
+`spawn ECP_ExecutionerGreataxe`, `spawn ECP_MireJarl` (ReedStalker, BogMaw, FenCrawler, DrownedShade),
+`spawn ECP_Frostfang` (Rimeback, ScreeWing, CairnWight, IceCrawler). A mimic comes dormant, a giant and a Bog Maw
+asleep. The kraken's loot: `spawn ECP_KrakenBeak`, `spawn ECP_KrakenMeat`,
 `spawn ECP_KrakenMeatCooked`, `spawn ECP_ShieldKraken`.
 
 ## Install
@@ -250,10 +480,12 @@ against what they see: a dodge that looks clear is clear. The held ship stays pu
 
 ## Warnings
 
-- Removing the mod removes its creatures from the world, and the kraken's beak, meat and shield from every inventory
-  and chest as it loads: the game drops items it does not know. A crypt chest that became a mimic stays gone.
+- Removing the mod removes its creatures from the world, and the kraken's beak, meat and shield, the Bone Crossbow,
+  the bone weapons, bone arrows, vertebrae and the Executioner's axehead and greataxe from every inventory and chest as
+  it loads: the game drops items it does not know. A crypt chest that became a mimic stays gone.
 - The models are built for Windows and Linux. On macOS the mod tries the Windows build, and its own
-  parts (the mimic's teeth, the slingshot, the giant's plates, the kraken) may not show.
+  parts (the mimic's teeth, the slingshot, the giant's plates, the kraken, the crossbow, the bone weapons, the
+  Executioner's axe, the swamp and mountain creatures' gear) may not show.
 - Names and texts are English in every language for now.
 
 ## Files
