@@ -4,20 +4,17 @@ using UnityEngine;
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// One of the game's skeletons that can come as an archer, and the crossbowman that may come in its place: a copy of
-    /// that skeleton (its health, resistances, looks, sounds and drops) whose crossbow hits as hard as that skeleton's
-    /// bow, as blunt. The game's four: the Black Forest's Skeleton (40 health, a 20-damage bow), the Meadows' (30, 15),
-    /// the Swamps' (60, 55) and the Mountains' (75, 60). The no-archer, poison, Hildir and summoned skeletons never
-    /// carry a bow and are left alone.
+    /// The game's skeleton that can come as an archer, and the crossbowman that may come in its place: a copy of that
+    /// skeleton (its health, resistances, looks, sounds and drops) whose crossbow hits as hard as its bow, as blunt.
+    /// Only the Black Forest's Skeleton (40 health, a 20-damage bow): the user wants one version of each skeleton, so
+    /// the Meadows', Swamps' and Mountains' archers are left alone, as are the no-archer, poison, Hildir and summoned
+    /// skeletons.
     /// </summary>
     public sealed class XbowKind
     {
         public static readonly XbowKind[] All =
         {
             new XbowKind("Skeleton", "skeleton_bow", "ECP_SkeletonCrossbowman"),
-            new XbowKind("Skeleton_Meadows", "skeleton_bow_meadows", "ECP_SkeletonCrossbowman_Meadows"),
-            new XbowKind("Skeleton_Swamps", "skeleton_bow_swamps", "ECP_SkeletonCrossbowman_Swamps"),
-            new XbowKind("Skeleton_Mountains", "skeleton_bow_mountains", "ECP_SkeletonCrossbowman_Mountains"),
         };
 
         /// <summary>The game's skeleton prefab.</summary>

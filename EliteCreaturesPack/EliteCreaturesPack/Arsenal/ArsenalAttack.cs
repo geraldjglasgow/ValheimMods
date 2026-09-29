@@ -9,8 +9,7 @@ namespace EliteCreaturesPack.Arsenal
     /// <summary>
     /// An arsenal skeleton's weapon, an item only it carries. A melee weapon is a copy of the sword of the skeleton it
     /// replaces, so the game's AI picks and times it as it does the sword, and it hits with that sword's damage turned
-    /// into the weapon's blow (<see cref="Swing"/>): its kind, times the weapon's factor; the sword's chop stays (the
-    /// Swamps' and Mountains' skeletons hack at buildings). The bow is a copy of that skeleton's bow, its damage too, and
+    /// into the weapon's blow (<see cref="Swing"/>): its kind, times the weapon's factor; the sword's chop stays. The bow is a copy of that skeleton's bow, its damage too, and
     /// shoots its arrow as the archer does, the arrow wearing the bone arrow. The game's model is taken off the "attach"
     /// and the bone one put in.
     /// </summary>

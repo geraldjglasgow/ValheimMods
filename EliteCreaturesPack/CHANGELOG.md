@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.4.0
+
+One of each skeleton, a bolt for the Bone Crossbow, and the bone weapons made to look right in your hands.
+
+- **One version of each skeleton.** The Skeleton Crossbowman and the seven arsenal skeletons now come only in place of
+  the Black Forest's skeletons; their Meadows, Swamps and Mountains versions are gone (any already in a world no longer
+  appear). The Meadows', Swamps' and Mountains' skeletons are the game's again.
+- **Blunted Bone Bolts**, crossbow ammo for the Bone Crossbow (any crossbow shoots them): a bone shaft with a blunt
+  head and no feathers, the game bone bolt's length. 20 for 8 bone fragments at the workbench; each adds 27 blunt, a
+  flint arrow's damage as blunt. The crossbowmen now drop these. New settings in `7 - Bone Crossbow`: `Bolt Recipe`,
+  `Bolts Per Craft`, `Bolt Damage`.
+- **The Bone Crossbow reloads in 3 seconds** (was 4), with a reload of its own: the string is drawn back into the nut
+  with your hand, a bolt is taken from your hip and dropped into the groove, and it is held ready. Your right hand now
+  holds its stock, and the string snaps back and shivers on the shot. The crossbowmen's bolts look the same: blunt, no
+  feathers.
+- **The Bone Atgeir has attacks of its own**: the atgeir's thrust, second thrust and sweep, timed as the game's, with
+  both hands on the haft, and your left hand stays on its haft in every stance.
+- The Executioner's Greataxe keeps your left hand on its haft the same way, and lets it go where its swing does.
+
 ## 0.3.0
 
 The swamp and mountain creatures are gone again. 0.2.0 shipped ten creatures that were never meant for this mod: the

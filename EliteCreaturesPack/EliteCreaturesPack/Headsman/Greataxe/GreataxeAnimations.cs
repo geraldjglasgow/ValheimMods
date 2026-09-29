@@ -63,44 +63,7 @@ namespace EliteCreaturesPack.Headsman
             return copy;
         }
 
-        /// <summary>The animator onto `controller`, each layer in the state and at the time it was, every parameter as it was.</summary>
-        public static void Swap(Animator animator, RuntimeAnimatorController controller)
-        {
-            AnimatorStateInfo[] states = Enumerable.Range(0, animator.layerCount).Select(animator.GetCurrentAnimatorStateInfo).ToArray();
-            (AnimatorControllerParameter, float)[] values = animator.parameters.Select(p => (p, Read(animator, p))).ToArray();
-            animator.runtimeAnimatorController = controller;
-            foreach (var (parameter, value) in values)
-            {
-                Write(animator, parameter, value);
-            }
-            for (int layer = 0; layer < states.Length && layer < animator.layerCount; layer++)
-            {
-                animator.Play(states[layer].fullPathHash, layer, states[layer].normalizedTime);
-            }
-        }
-
-        private static float Read(Animator animator, AnimatorControllerParameter p) => p.type switch
-        {
-            AnimatorControllerParameterType.Float => animator.GetFloat(p.nameHash),
-            AnimatorControllerParameterType.Int => animator.GetInteger(p.nameHash),
-            AnimatorControllerParameterType.Bool => animator.GetBool(p.nameHash) ? 1f : 0f,
-            _ => 0f,
-        };
-
-        private static void Write(Animator animator, AnimatorControllerParameter p, float value)
-        {
-            switch (p.type)
-            {
-                case AnimatorControllerParameterType.Float:
-                    animator.SetFloat(p.nameHash, value);
-                    break;
-                case AnimatorControllerParameterType.Int:
-                    animator.SetInteger(p.nameHash, (int)value);
-                    break;
-                case AnimatorControllerParameterType.Bool:
-                    animator.SetBool(p.nameHash, value > 0.5f);
-                    break;
-            }
-        }
+        /// <summary>The animator onto `controller`, keeping each layer's state and every parameter (<see cref="AnimatorSwap"/>).</summary>
+        public static void Swap(Animator animator, RuntimeAnimatorController controller) => AnimatorSwap.Swap(animator, controller);
     }
 }

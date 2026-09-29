@@ -22,7 +22,7 @@ namespace EliteCreaturesPack.Crossbow
         public const string PrefabName = "ECP_BoneCrossbow";
         public const string Word = "ecp_bonecrossbow";
         private const string GameCrossbow = "CrossbowArbalest";
-        private const string Icon = "ecp_xbow_crossbow_icon";
+        private const string Icon = "ecp_xbow_crossbow_icon", RigModel = "ecp_xbow_item_rig";
         private const float Scale = 1.25f;   // the skeletons' crossbow is sized for them; in a player's hands a little bigger
         private static readonly Vector3 BoxCentre = new Vector3(0f, 0.005f, 0.03f) * Scale, BoxSize = new Vector3(0.73f, 0.11f, 0.81f) * Scale;
 
@@ -40,8 +40,7 @@ namespace EliteCreaturesPack.Crossbow
             }
             GameObject item = PrefabBench.Copy(attach.parent.gameObject, PrefabName);
             Transform holder = item.transform.Find("attach");
-            Wear(holder.Find("Unloaded"), EmbeddedBundle.Prefab(bundle, "ecp_xbow_item_unloaded"), look.sharedMaterial);
-            Wear(holder.Find("Loaded"), EmbeddedBundle.Prefab(bundle, "ecp_xbow_item_loaded"), look.sharedMaterial);
+            Rig(holder, EmbeddedBundle.Prefab(bundle, RigModel), look.sharedMaterial);
             Collide(holder.Find("Collider"));
             Object.DestroyImmediate(holder.Find("UpgraderGlow")?.gameObject);
             Describe(item.GetComponent<ItemDrop>(), bundle);
@@ -49,8 +48,29 @@ namespace EliteCreaturesPack.Crossbow
             XbowItemSettings.Apply(item.GetComponent<ItemDrop>());
         }
 
-        /// <summary>The game's model out of the slot (and what hangs under it), ours in at the slot's origin, dressed.</summary>
-        private static void Wear(Transform slot, GameObject model, Material look)
+        /// <summary>
+        /// The Arbalest's "Unloaded" and "Loaded" emptied (the game's WeaponLoadState still toggles them, to no effect) and
+        /// our rigged crossbow in a slot of its own beside them, always shown: its string and bolts are moved by
+        /// <see cref="XbowPlayerRig"/> as the player shoots and reloads. Its groove bolt is the game bone bolt's length
+        /// (the crossbow is at 1.25, the bolt at 1) and hidden until the crossbow is loaded.
+        /// </summary>
+        private static void Rig(Transform holder, GameObject model, Material look)
+        {
+            Clear(holder.Find("Unloaded"));
+            Clear(holder.Find("Loaded"));
+            var slot = new GameObject(XbowPlayerRig.Slot).transform;
+            slot.SetParent(holder, false);
+            slot.gameObject.layer = holder.gameObject.layer;
+            Wear(slot, model, look);
+            Transform? bolt = GameMaterials.Find(slot, XbowPlayerRig.GrooveBolt);
+            if (bolt != null)
+            {
+                bolt.localScale = Vector3.one / Scale;
+                bolt.gameObject.SetActive(false);
+            }
+        }
+
+        private static void Clear(Transform slot)
         {
             Object.DestroyImmediate(slot.GetComponent<MeshRenderer>());
             Object.DestroyImmediate(slot.GetComponent<MeshFilter>());
@@ -59,6 +79,11 @@ namespace EliteCreaturesPack.Crossbow
                 Object.DestroyImmediate(child.gameObject);
             }
             (slot.localPosition, slot.localRotation, slot.localScale) = (Vector3.zero, Quaternion.identity, Vector3.one);
+        }
+
+        /// <summary>Our model in at the slot's origin, dressed.</summary>
+        private static void Wear(Transform slot, GameObject model, Material look)
+        {
             GameObject copy = Object.Instantiate(model, slot, false);
             copy.name = "model";
             copy.transform.localScale = Vector3.one * Scale;

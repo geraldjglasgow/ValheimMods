@@ -6,17 +6,17 @@ using UnityEngine;
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// The Bone Crossbow's recipe, in every ObjectDB the game builds or copies once the item exists: at the workbench, at
-    /// the settings' level, costing what the settings' `Recipe` lists (item:amount:amount per upgrade). An item name the
-    /// game does not know is logged and left out. Off (and not made at all) while `Craftable` is off, or when no
-    /// workbench is found: without a station the game would let it be made by hand anywhere. Rebuilt when the settings
-    /// change.
+    /// The Bone Crossbow's recipe and its Blunted Bone Bolts' (`Bolt Recipe`, `Bolts Per Craft` at a time), in every
+    /// ObjectDB the game builds or copies once the items exist: at the workbench, at the settings' level, costing what
+    /// the settings list (item:amount:amount per upgrade). An item name the game does not know is logged and left out.
+    /// Off (and not made at all) while `Craftable` is off, or when no workbench is found: without a station the game
+    /// would let them be made by hand anywhere. Rebuilt when the settings change.
     /// </summary>
     public static class XbowRecipe
     {
         private const string Workbench = "piece_workbench";
 
-        private static Recipe? recipe;
+        private static readonly Dictionary<GameObject, Recipe> recipes = new Dictionary<GameObject, Recipe>();
 
         [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
         public static class Built
@@ -30,36 +30,49 @@ namespace EliteCreaturesPack.Crossbow
             private static void Postfix(ObjectDB __instance) => SafeCall.Run("bone crossbow recipe", () => Install(__instance));
         }
 
+        /// <summary>The Bone Crossbow's recipe and its Blunted Bone Bolts', once each exists.</summary>
         public static void Install(ObjectDB? db)
         {
-            if (db == null || XbowItem.Prefab == null)
+            if (db == null)
             {
                 return;
             }
-            if (recipe == null)
+            if (XbowItem.Prefab != null)
             {
-                recipe = ScriptableObject.CreateInstance<Recipe>();
-                recipe.name = "Recipe_" + XbowItem.PrefabName;
-                recipe.m_item = XbowItem.Prefab.GetComponent<ItemDrop>();
-                recipe.m_amount = 1;
+                Put(db, XbowItem.Prefab, 1, XbowItemSettings.Recipe);
             }
-            Fill(db, recipe);
-            if (!db.m_recipes.Contains(recipe))
+            if (XbowBolts.Item != null)
             {
-                db.m_recipes.Add(recipe);
+                Put(db, XbowBolts.Item, XbowItemSettings.BoltsPerCraft, XbowItemSettings.BoltRecipe);
             }
         }
 
-        private static void Fill(ObjectDB db, Recipe made)
+        private static void Put(ObjectDB db, GameObject item, int amount, string cost)
+        {
+            if (!recipes.TryGetValue(item, out Recipe made))
+            {
+                made = recipes[item] = ScriptableObject.CreateInstance<Recipe>();
+                made.name = "Recipe_" + item.name;
+                made.m_item = item.GetComponent<ItemDrop>();
+            }
+            made.m_amount = amount;
+            Fill(db, made, cost);
+            if (!db.m_recipes.Contains(made))
+            {
+                db.m_recipes.Add(made);
+            }
+        }
+
+        private static void Fill(ObjectDB db, Recipe made, string cost)
         {
             GameObject? bench = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(Workbench) : null;
             made.m_craftingStation = bench != null ? bench.GetComponent<CraftingStation>() : null;
             made.m_minStationLevel = XbowItemSettings.WorkbenchLevel;
-            made.m_resources = Cost(db, XbowItemSettings.Recipe);
+            made.m_resources = Cost(db, cost);
             made.m_enabled = XbowItemSettings.Craftable && made.m_craftingStation != null && made.m_resources.Length > 0;
             if (XbowItemSettings.Craftable && made.m_craftingStation == null)
             {
-                Log.Warn($"Bone crossbow: no {Workbench} found; it cannot be made.");
+                Log.Warn($"Bone crossbow: no {Workbench} found; {made.m_item.name} cannot be made.");
             }
         }
 

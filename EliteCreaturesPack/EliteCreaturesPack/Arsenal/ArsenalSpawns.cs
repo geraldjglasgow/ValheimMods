@@ -5,9 +5,9 @@ namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
     /// Where arsenal skeletons come from: wherever and whenever the game spawns one of the skeletons they are made from
-    /// (<see cref="ArsenalKind"/>), one spawn in four is an arsenal skeleton instead, like any skeleton unit: the wild
-    /// spawns (the Black Forest's skeletons at night once Bonemass is dead, the Swamps'), the fixed spawners of burial
-    /// chambers, graves, tower ruins, cabins and the Meadows' ruins, and bone piles. Its weapon is drawn evenly; the bow
+    /// (<see cref="ArsenalKind"/>: the Black Forest's Skeleton only), one spawn in four is an arsenal skeleton instead,
+    /// like any skeleton unit: the wild spawns (at night once Bonemass is dead), the fixed spawners of burial chambers
+    /// and the like, and bone piles. Its weapon is drawn evenly; the bow
     /// only in place of a skeleton that could have been an archer. A weapon switched off in the settings leaves that
     /// spawn a plain skeleton, so the others come no more often. Decided by whoever runs the spawner, the only machine
     /// that spawns anything. The spawn keeps its levels.

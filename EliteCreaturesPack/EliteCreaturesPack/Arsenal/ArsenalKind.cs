@@ -4,20 +4,17 @@ using UnityEngine;
 namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
-    /// One of the game's skeletons whose spawns the arsenal skeletons may take: the Black Forest's Skeleton (40 health,
-    /// a 25-slash sword), the Meadows' (30, 15), the Swamps' (60, 48 slash and 10 chop) and the Mountains' (75, 60 and
-    /// 15). Each arsenal skeleton is a copy of the kind's archer skeleton (its health, resistances, faction, looks,
-    /// sounds, senses, AI and drops), and the kind's no-archer skeleton's spawns are taken too, by every weapon but the
-    /// bow. The poison, Hildir, Deep North and summoned skeletons are left alone.
+    /// The game's skeleton whose spawns the arsenal skeletons may take: the Black Forest's Skeleton (40 health, a
+    /// 25-slash sword), and only it (the user: one version of each skeleton; the Meadows', Swamps' and Mountains'
+    /// skeletons are left alone). Each arsenal skeleton is a copy of its archer skeleton (its health, resistances,
+    /// faction, looks, sounds, senses, AI and drops), and the no-archer skeleton's spawns are taken too, by every weapon
+    /// but the bow. The poison, Hildir, Deep North and summoned skeletons are left alone.
     /// </summary>
     public sealed class ArsenalKind
     {
         public static readonly ArsenalKind[] All =
         {
             new ArsenalKind("Skeleton", "Skeleton_NoArcher", "skeleton_sword", "skeleton_bow", ""),
-            new ArsenalKind("Skeleton_Meadows", "Skeleton_Meadows_noarcher", "skeleton_sword_meadows", "skeleton_bow_meadows", "_Meadows"),
-            new ArsenalKind("Skeleton_Swamps", "Skeleton_Swamps_noarcher", "skeleton_sword_swamps", "skeleton_bow_swamps", "_Swamps"),
-            new ArsenalKind("Skeleton_Mountains", "Skeleton_Mountains_noarcher", "skeleton_sword_mountains", "skeleton_bow_mountains", "_Mountains"),
         };
 
         private static readonly Dictionary<string, (ArsenalKind, ArsenalWeapon)> byName = new Dictionary<string, (ArsenalKind, ArsenalWeapon)>();
@@ -25,7 +22,7 @@ namespace EliteCreaturesPack.Arsenal
         /// <summary>The game's skeletons (with and without archers), and their sword and bow (random weapons, not network prefabs).</summary>
         public readonly string Skeleton, NoArcher, Sword, Bow;
 
-        /// <summary>Added to every name made from this kind ("_Swamps"); the Black Forest's has none.</summary>
+        /// <summary>Added to every name made from this kind; the Black Forest's, the only one, has none.</summary>
         public readonly string Suffix;
 
         /// <summary>The arsenal skeletons built for this kind, by weapon; a weapon whose build failed is missing.</summary>
@@ -36,7 +33,7 @@ namespace EliteCreaturesPack.Arsenal
             (Skeleton, NoArcher, Sword, Bow, Suffix) = (skeleton, noArcher, sword, bow, suffix);
         }
 
-        /// <summary>The creature's prefab name ("ECP_SkeletonCutthroat_Swamps"), hashed into worlds: never renamed.</summary>
+        /// <summary>The creature's prefab name ("ECP_SkeletonCutthroat"), hashed into worlds: never renamed.</summary>
         public string Creature(ArsenalWeapon weapon) => "ECP_Skeleton" + weapon.Title + Suffix;
 
         /// <summary>The creature's weapon, an item only it carries.</summary>

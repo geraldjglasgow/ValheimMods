@@ -116,11 +116,10 @@ a modded ship.
 ## Skeleton Crossbowman
 
 Some of the dead kept their crossbows. The **Skeleton Crossbowman** is a new kind of skeleton unit: wherever the game
-spawns one of its archer skeletons, about one spawn in seven is a crossbowman instead - in burial chambers, graves,
-stone tower ruins, mountain cabins, the Meadows' ruins, from bone piles, and out in the night once Bonemass is dead.
-Each is its own skeleton's kind: the Black Forest's, the Meadows', the Swamps' and the Mountains' crossbowmen have
-that skeleton's health (40, 30, 60, 75), resistances, looks and loot, and hit as hard as that skeleton's archer (20,
-15, 55 and 60), with blunt bolts.
+spawns its Black Forest archer skeleton, about one spawn in seven is a crossbowman instead - in burial chambers, from
+bone piles, and out in the night once Bonemass is dead. It has that skeleton's health (40), resistances, looks and
+loot, and hits as hard as its archer (20), with blunt bolts. The Meadows', Swamps' and Mountains' skeletons are left as
+they are.
 
 It carries a crossbow made of bones in its fists (a femur for the stock, a gently bowed row of vertebrae threaded on a
 bone along it, two ribs for the prod, a jawbone for the stirrup) and a quiver of grimy bone bolts on its hip. It fights
@@ -129,16 +128,24 @@ a crossbow's: it brings the stock up to its shoulder, lays its skull on it, hold
 with a blunt knuckle of bone for a head, flying straight and fast. Then it has to reload: it lowers the crossbow, bends
 over it, hooks the string and draws it back into the nut, pulls a bolt from its quiver and lays it in the groove,
 taking its time over it (about three and a half seconds). That's your moment to close in. It carries the crossbow at
-the low ready in both hands wherever it walks or runs, and drops a few bone bolts now and then. The skeletons and their
+the low ready in both hands wherever it walks or runs, and drops a few Blunted Bone Bolts now and then. The skeletons and their
 materials are the game's own; the crossbow, its bolts, the quiver and the animations are embedded in the plugin.
 
 ## Bone Crossbow
 
 The crossbowmen's weapon, for players: a **Bone Crossbow** made at the workbench. It handles like the game's own
 crossbow (the same aim, reload and Crossbows skill, bolts as ammo, on your back when put away) and hits like a club:
-30 blunt of its own (+4 an upgrade, three levels), and whatever bolt it looses adds its damage on top. A bone bolt,
-which the crossbowmen drop, adds 32 pierce. It reloads in 4 seconds with no skill (the skill halves it), and it does
-not chop trees. Its cost is a placeholder for now (see `Recipe` below).
+30 blunt of its own (+4 an upgrade, three levels), and whatever bolt it looses adds its damage on top. It reloads in 3
+seconds with no skill (the skill halves it), and it does not chop trees. Its cost is a placeholder for now (see
+`Recipe` below).
+
+It has a reload of its own: you bend over it, hook the string and draw it back into the nut (the string comes back
+with your hand), take a bolt from your hip and drop it into the groove, and hold it ready. Your right hand holds its
+stock whenever you are not reloading. When it shoots, the string snaps back and shivers. Everyone near sees the same.
+
+Its ammo is the **Blunted Bone Bolt**: a bone shaft with a blunt knuckle of bone for a head and no feathers, as long as
+the game's bone bolt. 20 of them take 8 bone fragments at the workbench, and each adds 27 blunt, a flint arrow's damage
+as blunt. Any crossbow shoots them, and the crossbowmen drop a few. (The game's own bone bolt, 32 pierce, still needs the Black Forge.)
 
 ## Skeleton Arsenal
 
@@ -155,11 +162,10 @@ of bone with vertebrae worked into it:
 | Skeleton Halberdier | bone atgeir | a two-handed blow from furthest out, the hardest and slowest |
 | Skeleton Bowman | bone bow | shoots like the skeleton archer, bone arrows |
 
-They are skeleton units like the game's own: wherever the game spawns a skeleton, about one spawn in four is an
-arsenal skeleton instead - in burial chambers, graves, stone tower ruins, mountain cabins, the Meadows' ruins, from
-bone piles, and out in the night once Bonemass is dead. Each has its own skeleton's health (40 in the Black Forest,
-30 in the Meadows, 60 in the Swamps, 75 in the Mountains), resistances, looks and loot, and hits about as hard as that
-skeleton's sword or bow. They strike one blow at a time, never a combo. The one-handed fighters keep the skeleton's
+They are skeleton units like the game's own: wherever the game spawns its Black Forest skeleton, about one spawn in four is an
+arsenal skeleton instead - in burial chambers, from bone piles, and out in the night once Bonemass is dead. Each has
+that skeleton's health (40), resistances, looks and loot, and hits about as hard as its sword or bow. The Meadows',
+Swamps' and Mountains' skeletons are left as they are. They strike one blow at a time, never a combo. The one-handed fighters keep the skeleton's
 shield. Every one drops what a skeleton drops, and one in ten drops a **Vertebra** as well.
 
 ## Bone Weapons
@@ -177,6 +183,9 @@ durability and upgrades) and hits a little softer: 0.85 of its damage.
 | Bone Spear | bronze spear | 29.75 pierce | a vertebra, 10 bone fragments |
 | Bone Atgeir | bronze atgeir | 38.25 pierce | two vertebrae, 16 bone fragments |
 | Bone Bow | fine bow | 27.2 pierce | a vertebra, 12 bone fragments |
+
+The Bone Atgeir has attacks of its own: the atgeir's thrust, second thrust and sweep, timed as the game's, with both
+hands on the haft throughout, and your left hand stays on its haft whatever you do with it in hand.
 
 Upgrades cost bone fragments only. **Bone Arrows**, 20 for 8 bone fragments at a level 2 workbench, hit for 24 pierce:
 better than wood (22), not as good as flint (27).
@@ -314,12 +323,12 @@ The kraken's meat and the Kraken shield's stats are fixed; a food mod such as Fe
 | --- | --- | --- |
 | `Enabled` | on | the archer skeletons can come as crossbowmen |
 | `Share` | 15 | percent of those skeletons' spawns that come as crossbowmen, wherever and whenever they spawn |
-| `Damage Factor` | 1 | a bolt's blunt damage against the bow of the skeleton it replaces (Black Forest 20, Meadows 15, Swamps 55, Mountains 60) |
+| `Damage Factor` | 1 | a bolt's blunt damage against the bow of the skeleton archer it replaces (20) |
 | `Shot Interval` | 6 | seconds between its shots, at the least (the archer: 4); the whole shot, spanning and loading included, takes about 5.5 of them |
 | `Bolt Speed` | 40 | metres a second the bolt flies, straight (the archer's arrow: 30) |
 | `Range` | 25 | metres it shoots from (the archer: 20) |
 
-The game's four archer skeletons come as crossbowmen; the no-archer, poison, Hildir and summoned skeletons never do.
+Only the Black Forest's archer skeletons come as crossbowmen.
 
 ### 7 - Bone Crossbow
 
@@ -330,7 +339,10 @@ The game's four archer skeletons come as crossbowmen; the no-archer, poison, Hil
 | `Workbench Level` | 1 | the workbench level it needs |
 | `Damage` | 30 | blunt damage of its own blow, before the bolt's (the Arbalest: 200 pierce) |
 | `Damage Per Level` | 4 | blunt damage each upgrade adds |
-| `Reload Time` | 4 | seconds to span and load it with no Crossbows skill; the skill halves it (the Arbalest: 3.5) |
+| `Reload Time` | 3 | seconds to span and load it with no Crossbows skill; the skill halves it (the Arbalest: 3.5) |
+| `Bolt Recipe` | BoneFragments:8 | what a batch of Blunted Bone Bolts costs, as item:amount; made at the same workbench level |
+| `Bolts Per Craft` | 20 | Blunted Bone Bolts made at once |
+| `Bolt Damage` | 27 | blunt damage a Blunted Bone Bolt adds to the crossbow's own (a flint arrow's 27, as blunt) |
 
 ### 8 - Skeleton Arsenal
 
@@ -380,9 +392,8 @@ refusal code that is also written to the server's and your own log.
 
 With `devcommands` on, the game's `spawn` command makes any of them: `spawn ECP_CryptMimic`,
 `spawn ECP_GreydwarfSlinger`, `spawn ECP_RimeGiant`, `spawn ECP_Kraken` (at sea, near a ship with a crew),
-`spawn ECP_SkeletonCrossbowman` (and `_Meadows`, `_Swamps`, `_Mountains`), `spawn ECP_BoneCrossbow`,
-`spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman; each also `_Meadows`,
-`_Swamps`, `_Mountains`), `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Vertebra`,
+`spawn ECP_SkeletonCrossbowman`, `spawn ECP_BoneCrossbow`, `spawn ECP_BoltBoneBlunt 20`,
+`spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman), `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Vertebra`,
 `spawn ECP_ArrowBone 20`, `spawn ECP_Headsman` (the Crypt Executioner), `spawn ECP_ExecutionerAxehead`,
 `spawn ECP_ExecutionerGreataxe`. A mimic comes dormant and a giant asleep. The kraken's loot: `spawn ECP_KrakenBeak`, `spawn ECP_KrakenMeat`,
 `spawn ECP_KrakenMeatCooked`, `spawn ECP_ShieldKraken`.

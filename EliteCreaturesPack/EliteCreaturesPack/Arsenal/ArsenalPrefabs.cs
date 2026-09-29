@@ -56,6 +56,7 @@ namespace EliteCreaturesPack.Arsenal
             ArsenalLook.StringMaterial = BowString(skeleton);
             ArsenalClips.Load(scene);
             ArsenalArrow.Build(scene, bundle, skin);
+            ArsenalAtgeirHold.Use(bundle);
             ArsenalItems.Build(scene, bundle, skin);
             foreach (ArsenalKind kind in ArsenalKind.All)
             {

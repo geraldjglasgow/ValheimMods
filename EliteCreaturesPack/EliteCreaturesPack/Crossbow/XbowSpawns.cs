@@ -3,10 +3,10 @@ using UnityEngine;
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// Where crossbowmen come from: wherever and whenever the game spawns one of its archer skeletons
-    /// (<see cref="XbowKind"/>), that spawn is its crossbowman instead at the settings' `Share`, like any skeleton unit:
-    /// the wild spawns (the Black Forest's skeletons at night once Bonemass is dead, the Swamps'), the fixed spawners of
-    /// burial chambers, graves, tower ruins, cabins and the Meadows' ruins, and bone piles. Decided by whoever runs the
+    /// Where crossbowmen come from: wherever and whenever the game spawns its Black Forest archer skeleton
+    /// (<see cref="XbowKind"/>), that spawn is a crossbowman instead at the settings' `Share`, like any skeleton unit:
+    /// the wild spawns (at night once Bonemass is dead), the fixed spawners of burial chambers and the like, and bone
+    /// piles. Decided by whoever runs the
     /// spawner, the only machine that spawns anything. The spawn keeps its levels; only which creature comes changes.
     /// </summary>
     public static class XbowSpawns

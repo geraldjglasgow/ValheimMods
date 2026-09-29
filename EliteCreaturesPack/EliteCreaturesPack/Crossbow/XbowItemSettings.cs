@@ -20,12 +20,24 @@ namespace EliteCreaturesPack.Crossbow
         private static ConfigEntry<float> damage = null!;
         private static ConfigEntry<float> damagePerLevel = null!;
         private static ConfigEntry<float> reloadTime = null!;
+        private static ConfigEntry<string> boltRecipe = null!;
+        private static ConfigEntry<int> boltsPerCraft = null!;
+        private static ConfigEntry<float> boltDamage = null!;
 
         public static bool Craftable => craftable.Value;
         public static string Recipe => recipe.Value;
         public static int WorkbenchLevel => workbenchLevel.Value;
+        public static string BoltRecipe => boltRecipe.Value;
+        public static int BoltsPerCraft => boltsPerCraft.Value;
+        public static float BoltDamage => boltDamage.Value;
 
         public static void Initialize(SyncedConfiguration config)
+        {
+            BindCrossbow(config);
+            BindBolts(config);
+        }
+
+        private static void BindCrossbow(SyncedConfiguration config)
         {
             craftable = config.Bind(Section, "Craftable", true,
                 "The Bone Crossbow, the crossbowmen's crossbow of bones, can be made at the workbench.");
@@ -35,13 +47,25 @@ namespace EliteCreaturesPack.Crossbow
             workbenchLevel = config.Bind(Section, "Workbench Level", 1, "The workbench level it needs.",
                 acceptableValues: new AcceptableValueRange<int>(1, 5));
             damage = config.Bind(Section, "Damage", 30f,
-                "Blunt damage of its own blow, before the bolt's (a bone bolt adds 32 pierce, an iron one 42; the Arbalest: 200 pierce).",
+                "Blunt damage of its own blow, before the bolt's (a Blunted Bone Bolt adds 27 blunt, the game's bone bolt 32 pierce; the Arbalest: 200 pierce).",
                 acceptableValues: Settings.Range(0f, 500f));
             damagePerLevel = config.Bind(Section, "Damage Per Level", 4f, "Blunt damage added by each upgrade.",
                 acceptableValues: Settings.Range(0f, 100f));
-            reloadTime = config.Bind(Section, "Reload Time", 4f,
+            reloadTime = config.Bind(Section, "Reload Time", 3f,
                 "Seconds to span and load it with no Crossbows skill; the skill halves it (the Arbalest: 3.5).",
                 acceptableValues: Settings.Range(0.5f, 20f));
+        }
+
+        /// <summary>The Blunted Bone Bolts: its ammo, made at the same workbench level.</summary>
+        private static void BindBolts(SyncedConfiguration config)
+        {
+            boltRecipe = config.Bind(Section, "Bolt Recipe", "BoneFragments:8",
+                "What a batch of Blunted Bone Bolts costs, as item:amount, separated by commas; made at the crossbow's workbench level.");
+            boltsPerCraft = config.Bind(Section, "Bolts Per Craft", 20, "Blunted Bone Bolts made at once.",
+                acceptableValues: new AcceptableValueRange<int>(1, 100));
+            boltDamage = config.Bind(Section, "Bolt Damage", 27f,
+                "Blunt damage a Blunted Bone Bolt adds to the crossbow's own: a flint arrow's, as blunt (flint arrows 27 pierce; the game's bone bolt 32 pierce).",
+                acceptableValues: Settings.Range(0f, 500f));
         }
 
         /// <summary>The numbers onto the item's shared data, which every Bone Crossbow in the world shares.</summary>

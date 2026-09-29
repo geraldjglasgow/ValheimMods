@@ -1,0 +1,67 @@
+using BundlePrefabs;
+using EliteCreaturesPack.Core;
+using UnityEngine;
+
+namespace EliteCreaturesPack.Crossbow
+{
+    /// <summary>
+    /// The players' Blunted Bone Bolts: crossbow ammo made from bone fragments at the workbench (<see cref="XbowRecipe"/>),
+    /// for the Bone Crossbow above all, though any crossbow shoots them. A copy of the game's bone bolts (the same ammo
+    /// type, stack and weight) wearing the bundle's blunted bone bolt, in the hand and in flight; they add
+    /// <see cref="XbowItemSettings.BoltDamage"/> blunt to the crossbow's own blow, as ammo does. The crossbowmen drop them.
+    /// The icon is still the game's bone bolt's.
+    /// </summary>
+    public static class XbowBolts
+    {
+        public const string ItemName = "ECP_BoltBoneBlunt";
+        public const string Word = "ecp_boltboneblunt";
+        private const string GameItem = "BoltBone", GameLook = "default";
+
+        public static GameObject? Item { get; private set; }
+        public static GameObject? Shot { get; private set; }
+
+        public static void Build(ZNetScene scene, GameObject gameBolt, GameObject look, Material skin)
+        {
+            GameObject? game = scene.GetPrefab(GameItem);
+            if (game == null || game.transform.Find(GameLook) == null)
+            {
+                Log.Warn($"Blunted Bone Bolts not built: the game has no {GameItem} with a model.");
+                return;
+            }
+            Shot = XbowBolt.Build(gameBolt, ItemName + "_projectile", false, look, skin);
+            Item = PrefabBench.Copy(game, ItemName);
+            Wear(Item.transform.Find(GameLook), look, skin);
+            ItemDrop drop = Item.GetComponent<ItemDrop>();
+            drop.m_itemData.m_dropPrefab = Item;
+            ItemDrop.ItemData.SharedData shared = drop.m_itemData.m_shared;
+            (shared.m_name, shared.m_description) = ("$item_" + Word, "$item_" + Word + "_description");
+            shared.m_attack.m_attackProjectile = Shot;
+            Apply();
+        }
+
+        /// <summary>
+        /// The game's bolt model off (its collider stays, for lying on the ground), ours on along the same line: the game's
+        /// mesh runs along its own +Y, turned into the item by the slot, and ours along +Z from its nock.
+        /// </summary>
+        private static void Wear(Transform slot, GameObject look, Material skin)
+        {
+            Mesh? mesh = slot.GetComponent<MeshFilter>()?.sharedMesh;
+            Vector3 along = slot.localRotation * Vector3.up;
+            Vector3 middle = slot.localPosition + slot.localRotation * (mesh != null ? mesh.bounds.center : Vector3.zero);
+            Object.DestroyImmediate(slot.GetComponent<MeshRenderer>());
+            Object.DestroyImmediate(slot.GetComponent<MeshFilter>());
+            GameObject ours = XbowBolt.Wear(slot.parent, look, skin, slot.gameObject.layer);
+            ours.transform.localRotation = Quaternion.FromToRotation(Vector3.forward, along);
+            ours.transform.localPosition = middle - along * (XbowBolt.Size / 2f);
+        }
+
+        /// <summary>The damage from the settings onto the shared data every stack of these bolts shares.</summary>
+        public static void Apply()
+        {
+            if (Item != null)
+            {
+                Item.GetComponent<ItemDrop>().m_itemData.m_shared.m_damages = new HitData.DamageTypes { m_blunt = XbowItemSettings.BoltDamage };
+            }
+        }
+    }
+}

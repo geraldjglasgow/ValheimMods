@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EliteCreaturesPack.Headsman
+namespace EliteCreaturesPack.Core
 {
     /// <summary>
     /// Bends a two-bone limb so its end reaches a target (the law of cosines at the elbow, then the whole limb turned

@@ -45,9 +45,9 @@ namespace EliteCreaturesPack.Crossbow
                 NetPrefabs.Register(scene, XbowShot.Of(kind)!);
                 NetPrefabs.Register(scene, kind.Prefab!);
             }
-            if (XbowItem.Prefab != null)
+            foreach (GameObject item in new[] { XbowItem.Prefab, XbowBolts.Item, XbowBolts.Shot }.OfType<GameObject>())
             {
-                NetPrefabs.Register(scene, XbowItem.Prefab);
+                NetPrefabs.Register(scene, item);
             }
             XbowWords.Add(Localization.instance);
             Log.Info($"Skeleton crossbowmen ready: {string.Join(", ", XbowKind.All.Where(k => k.Prefab != null).Select(k => k.Creature))}.");
@@ -67,25 +67,35 @@ namespace EliteCreaturesPack.Crossbow
             }
             AssetBundle bundle = EmbeddedBundle.Load(typeof(XbowPrefabs).Assembly, Bundle);
             Material skin = XbowKit.Skin(skeleton.transform.Find("Visual"));
-            bolt = XbowBolt.Build(gameBolt, EmbeddedBundle.Prefab(bundle, BoltLook), skin);
+            bolt = XbowBolt.Build(gameBolt, Bolt, true, EmbeddedBundle.Prefab(bundle, BoltLook), skin);
+            XbowBolts.Build(scene, gameBolt, EmbeddedBundle.Prefab(bundle, BoltLook), skin);
             XbowRig.Click = scene.GetPrefab("sfx_reload_done");
             foreach (XbowKind kind in XbowKind.All)
             {
                 Create(kind, scene, harmony, bundle);
             }
-            XbowItem.Build(scene, bundle);
-            if (XbowItem.Prefab != null)
-            {
-                ItemPrefabs.Register(harmony, XbowItem.Prefab);
-                XbowRecipe.Install(ObjectDB.instance);
-            }
+            Players(scene, harmony, bundle, skin);
             return true;
         }
 
-        /// <summary>After a settings change: the Bone Crossbow's numbers and its recipe.</summary>
+        /// <summary>The players' side: the Bone Crossbow and its bolts, their reload clips and rig, the recipes.</summary>
+        private static void Players(ZNetScene scene, Harmony harmony, AssetBundle bundle, Material skin)
+        {
+            XbowItem.Build(scene, bundle);
+            XbowHold.Use(bundle);
+            XbowPlayerRig.Use(EmbeddedBundle.Prefab(bundle, BoltLook), skin);
+            foreach (GameObject item in new[] { XbowItem.Prefab, XbowBolts.Item }.OfType<GameObject>())
+            {
+                ItemPrefabs.Register(harmony, item);
+            }
+            XbowRecipe.Install(ObjectDB.instance);
+        }
+
+        /// <summary>After a settings change: the Bone Crossbow's and its bolts' numbers and their recipes.</summary>
         private static void Reprice()
         {
             XbowItemSettings.Apply(XbowItem.Prefab != null ? XbowItem.Prefab.GetComponent<ItemDrop>() : null);
+            XbowBolts.Apply();
             XbowRecipe.Install(ObjectDB.instance);
         }
 
@@ -100,7 +110,7 @@ namespace EliteCreaturesPack.Crossbow
             }
             GameObject shot = XbowShot.Build(kind, bow, bolt!, scene.GetPrefab("sfx_arbalest_fire"));
             ItemPrefabs.Register(harmony, shot);
-            kind.Prefab = XbowCreature.Build(kind, skeleton, shot, bundle, EmbeddedBundle.Prefab(bundle, Kit), scene.GetPrefab("BoltBone"));
+            kind.Prefab = XbowCreature.Build(kind, skeleton, shot, bundle, EmbeddedBundle.Prefab(bundle, Kit), XbowBolts.Item ?? scene.GetPrefab("BoltBone"));
         }
     }
 }
