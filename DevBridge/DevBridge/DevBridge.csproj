@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Dev-only test bridge: never packed or uploaded. The build copies it into the LocalTesting profile only. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>DevBridge</AssemblyName>
+    <RootNamespace>DevBridge</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Version>0.1.0</Version>
+    <Product>DevBridge</Product>
+    <Description>DevBridge: local HTTP control of the running game for automated testing</Description>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <DebugType>none</DebugType>
+    <NoWarn>$(NoWarn);CS0649;CS0169;CS0414;CS1591</NoWarn>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!-- Paths: override with -p:GamePath=..., -p:BepInExCore=... and -p:TestPluginsPath=... if your layout differs -->
+  <PropertyGroup>
+    <GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Valheim</GamePath>
+    <ManagedPath>$(GamePath)\valheim_Data\Managed</ManagedPath>
+    <BepInExCore Condition="'$(BepInExCore)' == '' AND Exists('$(GamePath)\BepInEx\core\BepInEx.dll')">$(GamePath)\BepInEx\core</BepInExCore>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(MSBuildProjectDirectory)\..\lib\BepInEx\core</BepInExCore>
+    <TestPluginsPath Condition="'$(TestPluginsPath)' == ''">$(APPDATA)\r2modmanPlus-local\Valheim\profiles\LocalTesting\BepInEx\plugins</TestPluginsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx" Private="false" HintPath="$(BepInExCore)\BepInEx.dll" />
+    <Reference Include="0Harmony" Private="false" HintPath="$(BepInExCore)\0Harmony.dll" />
+    <Reference Include="Mono.Cecil" Private="false" HintPath="$(BepInExCore)\Mono.Cecil.dll" />
+    <Reference Include="assembly_valheim" Publicize="true" Private="false" HintPath="$(ManagedPath)\assembly_valheim.dll" />
+    <Reference Include="assembly_utils" Publicize="true" Private="false" HintPath="$(ManagedPath)\assembly_utils.dll" />
+    <Reference Include="assembly_guiutils" Private="false" HintPath="$(ManagedPath)\assembly_guiutils.dll" />
+    <Reference Include="Newtonsoft.Json" Private="false" HintPath="$(ManagedPath)\Newtonsoft.Json.dll" />
+    <Reference Include="Unity.InputSystem" Private="false" HintPath="$(ManagedPath)\Unity.InputSystem.dll" />
+    <Reference Include="Unity.TextMeshPro" Private="false" HintPath="$(ManagedPath)\Unity.TextMeshPro.dll" />
+    <Reference Include="UnityEngine" Private="false" HintPath="$(ManagedPath)\UnityEngine.dll" />
+    <Reference Include="UnityEngine.CoreModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.CoreModule.dll" />
+    <Reference Include="UnityEngine.HierarchyCoreModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.HierarchyCoreModule.dll" />
+    <Reference Include="UnityEngine.ImageConversionModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ImageConversionModule.dll" />
+    <Reference Include="UnityEngine.ScreenCaptureModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ScreenCaptureModule.dll" />
+    <Reference Include="UnityEngine.TextRenderingModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.TextRenderingModule.dll" />
+    <Reference Include="UnityEngine.UI" Private="false" HintPath="$(ManagedPath)\UnityEngine.UI.dll" />
+    <Reference Include="UnityEngine.UIModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.UIModule.dll" />
+  </ItemGroup>
+
+  <Target Name="CopyToTestProfile" AfterTargets="Build">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildProjectDirectory)\..\dist" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(TestPluginsPath)" Condition="Exists('$(TestPluginsPath)')" />
+    <Message Importance="high" Text="DevBridge build finished: $(TargetPath) (copied to $(TestPluginsPath))" />
+  </Target>
+
+</Project>
