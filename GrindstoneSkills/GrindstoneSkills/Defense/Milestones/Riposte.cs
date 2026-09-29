@@ -6,20 +6,18 @@ namespace GrindstoneSkills
     /// <summary>
     /// Riposte, the level 25 milestone, on the local player's own client. A parry whose guard held arms it for Riposte
     /// Window seconds; the first attack the player starts in that time (Humanoid.StartAttack) is the riposte, and every
-    /// melee hit that attack lands deals Riposte Damage percent more and staggers the creature it hits.
+    /// melee hit that attack lands deals Riposte Damage percent more.
     /// <list type="bullet">
     /// <item>Hits are built on the attacker's client and sent through Character.Damage, so the prefix there changes the
     /// hit before it leaves. Ranged hits (arrows, bolts, thrown spears) are left alone.</item>
-    /// <item>The stagger is the game's own forced stagger: Character.RPC_Damage staggers the target when the hit's
-    /// m_staggerMultiplier is 100 or more (the multiplier travels with the hit). Bosses and creatures the game never
-    /// staggers (m_staggerDamageFactor 0) keep the damage bonus without the stagger.</item>
+    /// <item>No stagger of its own: the hit's m_staggerMultiplier stays as the attack set it, so the target's owner
+    /// (Character.RPC_Damage, which forces a stagger at 100 or more) staggers it only as it would any hit of that
+    /// size.</item>
     /// <item>The riposte ends with its attack: a new attack or the next parry replaces it.</item>
     /// </list>
     /// </summary>
     public static class Riposte
     {
-        private const float ForcedStagger = 100f;
-
         private static float armedUntil = float.NegativeInfinity;
         private static Attack riposte;
         private static bool calledOut;
@@ -56,18 +54,16 @@ namespace GrindstoneSkills
             private static void Prefix(Character __instance, HitData hit)
             {
                 if (riposte != null && hit != null && !hit.m_ranged && !DefenseSkill.IsLocal(__instance))
-                    HookGuard.Run("riposte", () => Empower(__instance, hit));
+                    HookGuard.Run("riposte", () => Empower(hit));
             }
         }
 
-        private static void Empower(Character target, HitData hit)
+        private static void Empower(HitData hit)
         {
             Player player = Player.m_localPlayer;
             if (player == null || player.m_currentAttack != riposte || hit.GetAttacker() != player)
                 return;
             hit.ApplyModifier(1f + Mathf.Max(0f, DefenseMilestoneSettings.RiposteDamage.Value) / 100f);
-            if (target.m_staggerDamageFactor > 0f && !target.IsBoss())
-                hit.m_staggerMultiplier = Mathf.Max(hit.m_staggerMultiplier, ForcedStagger);
             if (!calledOut)
                 DefenseCallout.Show(hit.m_point, "Riposte!");
             calledOut = true;

@@ -167,8 +167,7 @@ stronger; Defense makes you tougher. It trains when you block hits and when hits
 - **Shield care and stand firm.** Blocking wears your shield or weapon up to 50% less, and pushes you back up to 50%
   less.
 - **Desperation.** Below 25% health your damage reduction is doubled.
-- **Riposte, from level 25.** A parry powers up the attack you start within 2 seconds: its melee hits deal 25% more
-  and stagger what they hit (not bosses).
+- **Riposte, from level 25.** A parry powers up the attack you start within 2 seconds: its melee hits deal 25% more.
 - **Shield Wall, from level 50.** While you block with a shield, other players within 4 m behind you take 10% less
   damage.
 - **Hardened, from level 75.** Each hit that gets through makes you take 3% less damage for 8 seconds, stacking up to

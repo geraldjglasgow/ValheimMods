@@ -42,7 +42,7 @@ namespace GrindstoneSkills
             RiposteWindow = config.Bind(Section, "Riposte Window", 2f,
                 "Seconds after a parry in which an attack you start is a riposte.", acceptableValues: new AcceptableValueRange<float>(0.5f, 10f));
             RiposteDamage = config.Bind(Section, "Riposte Damage", 25f,
-                "Percent more damage for a riposte's melee hits, which also stagger the creatures they hit (not bosses, nor creatures the game never staggers).",
+                "Percent more damage for a riposte's melee hits.",
                 acceptableValues: Settings.UpTo(300f));
         }
 

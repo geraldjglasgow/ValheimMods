@@ -1041,9 +1041,10 @@ proposed, with the best decision wherever the request was vague.
 ### Milestones (synced; a level above 100 turns one off)
 
 - **Riposte (25):** a held parry arms it for 2 s; the first attack started in that time is the riposte; its melee hits
-  deal +25% and force a stagger through the game's own `m_staggerMultiplier >= 100` path in `RPC_Damage` (it travels
-  with the hit). Bosses and creatures with `m_staggerDamageFactor` 0 get the damage only. "Riposte!" floats at the
-  first hit.
+  deal +25%. "Riposte!" floats at the first hit. No stagger of its own (the user's call, 2026-09-28): it used to set
+  the hit's `m_staggerMultiplier` to 100, which makes the target's owner force a stagger in `RPC_Damage`; now the
+  multiplier stays as the attack set it, so a riposte staggers only through the stagger damage of its (bigger) hit,
+  like any hit.
 - **Shield Wall (50):** worked out on the sheltered player's client in `DamageIntake`: another player who is blocking,
   shows a shield in the left hand (their `VisEquipment`), has Defense 50 (published level), and stands within 4 m in
   front of the local player (the local player is behind them, flat, against their facing) takes 10% off. Blockers do
@@ -1125,8 +1126,9 @@ proposed, with the best decision wherever the request was vague.
 - [ ] Stamina: blocks and dodges cost about 10% less at 100; the inventory's equipment readout is unchanged.
 - [ ] Experience: shield block ~1 per greydwarf hit, more on a troll; parry double; weapon half; hits taken half;
       "First block: Greydwarf" once, also after relog; nothing from falls, fire or poison ticks.
-- [ ] Riposte: at 25, the Riposte icon after a parry; the next swing staggers a greydwarf and says "Riposte!"; no
-      stagger on a boss.
+- [ ] Riposte: at 25, the Riposte icon after a parry; the next swing does 25% more to a greydwarf and says
+      "Riposte!" without staggering it (a light weapon's first hit on a fresh greydwarf); the same on a dedicated
+      server with the greydwarf owned by the server or by another player.
 - [ ] Shield Wall with two clients: B behind A (blocking with a shield, Defense 50) takes 10% less and sees the icon;
       not in front of A, not when A blocks with a weapon.
 - [ ] Hardened: stacks to 5x with unblocked hits, gone 8 s later. Last Stand: survive a killing blow at 1 health,

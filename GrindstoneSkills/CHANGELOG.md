@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.0
+
+- Changed: Riposte no longer staggers what it hits. A parry still powers up the attack you start within 2 seconds,
+  and its melee hits still deal 25% more (`Riposte Damage`); the bigger hit staggers a creature only as any hit that
+  size would. No setting was added or renamed.
+
 ## 0.10.0
 
 - New: a skill book. The skills panel is wider and taller, and a page beside the list shows the skill you click: its

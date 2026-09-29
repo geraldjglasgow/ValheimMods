@@ -55,7 +55,7 @@ namespace GrindstoneSkills
         private static void Milestones(SkillPage page)
         {
             page.Perk("Riposte", DefenseMilestoneSettings.RiposteLevel.Value,
-                $"For {SkillPage.Duration(DefenseMilestoneSettings.RiposteWindow.Value)} after a parry, your next melee attack deals {DefenseMilestoneSettings.RiposteDamage.Value:0}% more damage and staggers what it hits (not bosses).");
+                $"For {SkillPage.Duration(DefenseMilestoneSettings.RiposteWindow.Value)} after a parry, your next melee attack deals {DefenseMilestoneSettings.RiposteDamage.Value:0}% more damage.");
             page.Perk("Shield Wall", DefenseMilestoneSettings.ShieldWallLevel.Value,
                 $"While you block with a shield, players within {SkillPage.Number(DefenseMilestoneSettings.ShieldWallRadius.Value)} m behind you take {DefenseMilestoneSettings.ShieldWallReduction.Value:0}% less damage. Several blockers do not add up.");
             page.Perk("Hardened", DefenseMilestoneSettings.HardenedLevel.Value, HardenedTip());
