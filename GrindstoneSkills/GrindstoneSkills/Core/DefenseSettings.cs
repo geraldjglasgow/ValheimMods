@@ -19,7 +19,6 @@ namespace GrindstoneSkills
 
         public static ConfigEntry<bool> Enabled { get; private set; }
         public static ConfigEntry<bool> ShowCallouts { get; private set; }
-        public static ConfigEntry<bool> ShowPlate { get; private set; }
         public static ConfigEntry<float> MaxHealth { get; private set; }
         public static ConfigEntry<float> FoodHealth { get; private set; }
         public static ConfigEntry<float> DamageReduction { get; private set; }
@@ -37,8 +36,6 @@ namespace GrindstoneSkills
                 "Turns every Defense perk, milestone, guard perk and Defense experience on or off. Off, fights play exactly as in the game. Levels are kept either way.");
             ShowCallouts = config.Bind(Section, "Show Callouts", true,
                 "Shows words like Riposte!, Reflex! and Bash! floating where they happen. Each player's own.", synced: false);
-            ShowPlate = config.Bind(Section, "Show Plate", true,
-                "Shows your damage reduction on a plate in the inventory's stat column, with every Defense bonus in its tooltip. Each player's own.", synced: false);
             BindVitality(config);
             BindCombat(config);
             DefenseExperienceSettings.Initialize(config);

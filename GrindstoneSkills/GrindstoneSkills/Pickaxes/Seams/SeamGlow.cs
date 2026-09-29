@@ -66,7 +66,7 @@ namespace GrindstoneSkills
         private void Build()
         {
             Collider collider = RockChunks.ColliderOf(rock, area);
-            size = collider != null ? Mathf.Clamp(collider.bounds.extents.magnitude * 0.7f, 0.5f, 1.1f) : 0.7f;
+            size = collider != null ? Mathf.Clamp(collider.bounds.extents.magnitude * 0.55f, 0.4f, 0.9f) : 0.55f;
             block = new MaterialPropertyBlock();
             shine = AddLight(transform);
             halo = SeamLook.Sprite(transform, SeamLook.Halo, "halo");
@@ -102,10 +102,10 @@ namespace GrindstoneSkills
             shine.intensity = LightIntensity * fade * (0.55f + 0.45f * pulse);
             Vector3 front = face + outward * SpriteOffFace;
             Quaternion facing = camera.transform.rotation;
-            Color haloColour = Alpha(Gold, 0.5f * fade * (0.65f + 0.35f * pulse));
+            Color haloColour = Alpha(Gold, 0.38f * fade * (0.65f + 0.35f * pulse));
             Place(halo, front, facing, size * (0.9f + 0.2f * pulse), haloColour);
             Quaternion turned = facing * Quaternion.Euler(0f, 0f, age * TurnPerSecond);
-            Place(star, front + outward * 0.02f, turned, size * 1.4f * (0.8f + 0.35f * pulse), Alpha(PaleGold, 0.95f * fade));
+            Place(star, front + outward * 0.02f, turned, size * 1.4f * (0.8f + 0.35f * pulse), Alpha(PaleGold, 0.75f * fade));
         }
 
         /// <summary>Where the line from the camera to the chunk's centre enters the chunk; the centre when it misses.</summary>

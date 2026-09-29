@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -48,6 +49,25 @@ namespace GrindstoneSkills
                 default:
                     return 0f;
             }
+        }
+
+        /// <summary>
+        /// A MineRock5 chunk's health as the rock's owner last saved it in the ZDO (the package MineRock5.LoadHealth
+        /// reads), which reaches a machine that is not the owner long before it reloads its own healths;
+        /// <see cref="Health"/> for any other rock and while nothing is saved yet.
+        /// </summary>
+        public static float SavedHealth(Rock rock, int area)
+        {
+            bool saves = rock?.Target is MineRock5 && rock.IsValid && area >= 0;
+            string saved = saves ? rock.View.GetZDO().GetString(ZDOVars.s_health) : "";
+            if (saved.Length == 0)
+                return Health(rock, area);
+            ZPackage package = new ZPackage(Convert.FromBase64String(saved));
+            if (area >= package.ReadInt())
+                return Health(rock, area);
+            for (int skipped = 0; skipped < area; skipped++)
+                package.ReadSingle();
+            return package.ReadSingle();
         }
 
         /// <summary>A rock's full health at the world's level, as MineRock5, MineRock and Destructible all compute it.</summary>

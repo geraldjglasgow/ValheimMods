@@ -5,8 +5,8 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// The Defense icon: <c>assets/skill_defense.png</c> (a helmet and shield, 64x64 like the game's skill icons)
-    /// embedded in the DLL, else the iron helmet's item icon. The skills panel (<see cref="DefenseSkill"/>) and the
-    /// inventory plate (<see cref="DefensePlate"/>) use it. The embedded file is decoded once.
+    /// embedded in the DLL, else the iron helmet's item icon. The skills panel (<see cref="DefenseSkill"/>) uses it. The
+    /// embedded file is decoded once.
     /// </summary>
     public static class DefenseIcon
     {

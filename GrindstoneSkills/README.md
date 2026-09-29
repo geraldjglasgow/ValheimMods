@@ -93,8 +93,9 @@ game it only makes pickaxes hit harder and cost less stamina; here the perks gro
 at level 100, and milestones unlock at levels 25, 50 and 100.
 
 - **Seams.** Now and then a swing on a rock that breaks into chunks (copper and silver deposits, boulders, mud piles)
-  makes a chunk near where you hit glint gold, with a soft clink. From 10% of swings at level 0 to 40% at level 100;
-  the seam stays open 2 seconds at level 0, 5 at level 100. Only you see your seams.
+  makes a chunk glint gold, with a soft clink: the chunk you are mining or one next to it, always within your
+  pickaxe's reach. From 10% of swings at level 0 to 40% at level 100; the seam stays open 2.6 seconds at level 0,
+  5.6 at level 100. Only you see your seams.
 - **Clean strikes.** Hit the glinting chunk before it closes: ×2 damage, a little experience, "Clean strike!", and
   on an ore deposit the chunk drops twice when it breaks. The next seam opens at once, so one clean strike leads to
   the next ("Clean strike ×3!"); hitting the rock elsewhere or letting a seam close ends the chain. Plain stone gets
@@ -174,9 +175,9 @@ stronger; Defense makes you tougher. It trains when you block hits and when hits
   5 times.
 - **Last Stand, from level 100.** A blow that would kill you leaves you at 1 health and untouchable for 2 seconds.
   Once every 10 minutes.
-- **See it all.** Your damage reduction is shown on a plate in the inventory, with every Defense bonus in its
-  tooltip, and Riposte, Shield Wall, Hardened, Last Stand and Desperation show as icons in the status column while
-  they last.
+- **See it all.** Click Defense in the skills panel to see every Defense bonus at your level and each milestone
+  with the level it needs (hover a milestone's name for what it does), and Riposte, Shield Wall, Hardened, Last Stand
+  and Desperation show as icons in the status column while they last.
 - **Experience** for every hit from a creature you block (1 for a shield, half for a weapon, double for a parry,
   triple the first time you block each kind of creature) and half that for a hit that hurts you. Bigger hits give
   more: a troll's club gives more than twice what a greydwarf's slap does. Falls, fire and poison give nothing.
@@ -311,6 +312,11 @@ and the picker's level decides the harvest. Perks grow from nothing at level 0 t
 
 ### Every skill
 
+- **A skill book.** The skills panel is wider and taller, with a page beside the list: click a skill to see, in a
+  few short lines, what it does for you at your level, with the numbers, the game's own effects as well as this
+  mod's. Named perks and milestones (Riposte, Shield Wall, Lookout...) are listed with the level they need; hover a
+  name, or any gold word such as Poise or Timber!, for what it does, in the same bordered box as the inventory's stat
+  boxes. The page you looked at last opens again next time; with a gamepad the page follows the selected skill.
 - **Gentler deaths, if you want them.** Choose how much of every skill's level dying costs and whether you keep
   the progress toward the next level. The defaults are the game's own.
 
@@ -351,8 +357,8 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
   you see callouts and plant hints (each player's own).
 - **Forage Perks:** extra yield at level 100, the best-time bonus, and sweep picking's level and reach.
 - **Defense:** a switch for the whole skill, each core perk at level 100 (health, food health, damage reduction,
-  regeneration and its timing, poise, parry window, block and dodge stamina), and whether you see callouts and the
-  plate (each player's own).
+  regeneration and its timing, poise, parry window, block and dodge stamina), and whether you see callouts (each
+  player's own).
 - **Defense Experience:** the multiplier, block, parry, weapon block and hit experience, how hit size is measured,
   the cooldown, the first-block bonus and whether PvP hits train.
 - **Defense Milestones:** each milestone's level (above 100 turns it off) and its values.

@@ -27,15 +27,16 @@ namespace GrindstoneSkills
         }
 
         /// <summary>
-        /// Opens a seam on <paramref name="rock"/> near <paramref name="near"/>, on a chunk not in
-        /// <paramref name="touched"/>, in place of the rock's current seam; <paramref name="links"/> is the chain so far.
-        /// The window follows the local miner's level. No chunk fits: the rock has no seam (a chain ends there).
+        /// Opens a seam on the rock of <paramref name="swing"/>, the swing that just ended, on a chunk
+        /// <see cref="SeamPicker"/> chooses, in place of the rock's current seam; <paramref name="links"/> is the chain so
+        /// far. The window follows the local miner's level. No chunk fits: the rock has no seam (a chain ends there).
         /// </summary>
-        public static void Open(Rock rock, Vector3 near, ICollection<int> touched, int links)
+        public static void Open(SeamNote swing, int links)
         {
+            Rock rock = swing.Rock;
             ZDOID id = rock.Id;
             Close(id);
-            int area = SeamPicker.Pick(rock, near, touched);
+            int area = SeamPicker.Pick(swing);
             if (id.IsNone() || area < 0)
                 return;
             float window = PickSkill.Between(SeamSettings.WindowAt0.Value, SeamSettings.WindowAt100.Value, PickSkill.Local());

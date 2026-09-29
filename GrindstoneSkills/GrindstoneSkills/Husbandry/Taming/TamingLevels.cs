@@ -25,7 +25,8 @@ namespace GrindstoneSkills
             return prefabName != null && levels.TryGetValue(prefabName, out float level) ? level : 0f;
         }
 
-        private static Dictionary<string, float> Parse(string value)
+        /// <summary>A Taming Levels value as name to level; also read by the skill book's Husbandry page.</summary>
+        internal static Dictionary<string, float> Parse(string value)
         {
             Dictionary<string, float> parsed = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
             foreach (string part in value.Split(','))

@@ -15,7 +15,7 @@ namespace GrindstoneSkills
     /// <item>an open seam the swing did not strike: the chain ends and the seam closes;</item>
     /// <item>no seam: the swing's one roll of the seam chance (only the first such rock rolls).</item>
     /// </list>
-    /// A new seam avoids every chunk the swing touched, so it never lands on a chunk the same swing just broke.
+    /// A new seam may land on a chunk the swing touched, as long as the swing did not break it (<see cref="SeamPicker"/>).
     /// </summary>
     internal static class SeamSwing
     {
@@ -26,7 +26,7 @@ namespace GrindstoneSkills
         public static bool Finished => Notes.Count > 0 && !(MineSwing.Active && MineSwing.Serial == serial);
 
         /// <summary>Notes a hit of the running swing; returns the swing's note for that rock.</summary>
-        public static SeamNote Record(Rock rock, Vector3 point, int area)
+        public static SeamNote Record(Rock rock, int area)
         {
             if (serial != MineSwing.Serial)
             {
@@ -37,7 +37,7 @@ namespace GrindstoneSkills
             SeamNote note = Notes.Find(known => known.Id == id);
             if (note == null)
             {
-                note = new SeamNote(rock, id, point);
+                note = new SeamNote(rock, id);
                 Notes.Add(note);
             }
             if (!note.Areas.Contains(area))
@@ -65,7 +65,7 @@ namespace GrindstoneSkills
                 return false;
             if (note.Link > 0)
             {
-                OpenSeams.Open(note.Rock, note.StrikePoint, note.Areas, note.Link);
+                OpenSeams.Open(note, note.Link);
                 return false;
             }
             if (OpenSeams.Find(note.Rock) != null)
@@ -76,7 +76,7 @@ namespace GrindstoneSkills
             if (rolled)
                 return false;
             if (Random.value * 100f < Chance())
-                OpenSeams.Open(note.Rock, note.FirstPoint, note.Areas, 0);
+                OpenSeams.Open(note, 0);
             return true;
         }
 

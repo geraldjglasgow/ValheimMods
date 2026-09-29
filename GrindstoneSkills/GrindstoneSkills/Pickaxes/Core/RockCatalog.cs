@@ -25,6 +25,9 @@ namespace GrindstoneSkills
     {
         private const string FracSuffix = "_frac";
 
+        /// <summary>What Utils.GetPrefabName reads from a live MineRock5, whatever its prefab (<see cref="PrefabName"/>).</summary>
+        private const string RenamedChunks = "___MineRock5";
+
         private static readonly Dictionary<string, RockInfo> Cache = new Dictionary<string, RockInfo>();
         private static HashSet<string> plainStone = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private static string cachedFor;
@@ -35,13 +38,32 @@ namespace GrindstoneSkills
             if (target == null || !(target is MineRock5 || target is MineRock || target is Destructible))
                 return null;
             Refresh();
-            string prefab = Utils.GetPrefabName(target.gameObject);
+            string prefab = PrefabName(target);
+            if (prefab == null)
+                return null;
             if (!Cache.TryGetValue(prefab, out RockInfo info))
             {
                 info = Classify(target, prefab);
                 Cache[prefab] = info;
             }
             return info;
+        }
+
+        /// <summary>
+        /// A rock's prefab name, from its ZDO's prefab hash when it has one: a live MineRock5 renames its own object in
+        /// Awake (it names the MeshFilter it adds, and a component's name is its object's), so every one reads
+        /// "___MineRock5 m_meshFilter" and would share one cache entry, the first one classified. Else the object's own
+        /// name (a prefab, an object without a ZDO); null for a renamed MineRock5 without a ZDO, which cannot tell.
+        /// </summary>
+        private static string PrefabName(Component target)
+        {
+            ZNetView view = target.GetComponent<ZNetView>();
+            ZDO zdo = view != null ? view.GetZDO() : null;
+            GameObject prefab = zdo != null && ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(zdo.GetPrefab()) : null;
+            if (prefab != null)
+                return prefab.name;
+            string name = Utils.GetPrefabName(target.gameObject);
+            return name == RenamedChunks ? null : name;
         }
 
         /// <summary>Whether an item prefab name is in "Plain Stone Items".</summary>

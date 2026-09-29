@@ -706,7 +706,7 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 
 | Feature | Default | Whose level, where it runs |
 | --- | --- | --- |
-| Seams | 10% of swings at level 0 to 40% at 100 open a seam; window 2 s to 5 s | your own, your client |
+| Seams | 10% of swings at level 0 to 40% at 100 open a seam; window 2.6 s to 5.6 s | your own, your client |
 | Clean strike | ×2 damage, +1 drop roll on ore deposits, +1 experience, next seam at once | your own; ore on the owner |
 | Unbroken (level 100) | each chained clean strike +20% damage, up to 5 links | your own, your client |
 | Splash | 15 damage per swing at 100, shared across the chunks touching its first chunk; grows every 10 levels (1.5 per step) | the miner's, rock owner |
@@ -718,9 +718,11 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 | Finds | 0.2% at level 0 to 1% at 100 per broken chunk or rock, × its health / 50 (at most 1) | the miner's, rock owner |
 
 - **Seams (multi-chunk rocks: MineRock5):**
-  - A seam is a chunk other than the ones the swing touched, intact, within 2 m of the hit point and visible from
-    the miner's eye, marked by a local-only glow (gold light, halo and the game's glint star) and a soft clink. Each
-    miner sees only their own seams.
+  - A seam is a chunk that stands after the swing (the chunk being mined included, unless the swing broke it),
+    within the pickaxe's reach (+0.3 m) of where the miner stands, and visible from the miner's eye (a chunk the
+    swing touched counts as visible). A machine that does not own the rock subtracts the swing's damage from the
+    health the owner last saved in the ZDO to know whether the chunk survives. Marked by a local-only glow (gold
+    light, halo and the game's glint star) and a soft clink. Each miner sees only their own seams.
   - It opens once the swing is over, when the swing's one roll of the chance succeeds on a rock with no open seam.
   - A hit on the seam chunk inside the window is a clean strike: the hit's damage is multiplied before it is sent,
     "Clean strike!" floats up, and the next seam opens straight away with a full window (a chain). One per rock and
@@ -832,8 +834,8 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - The intact flametal rockstand has no hover (the game gives it none); its fragments show the vein lines alone. All
   texts are English.
 - Seams: the glow and sound constants (top of `SeamGlow`, `SeamSound`) are untested; the sight test aims at the
-  chunk's centre; lag can pick a chunk that then vanishes (the seam closes quietly); a seam opens one frame after its
-  swing.
+  chunk's centre; lag can still pick a chunk that then vanishes (the seam closes quietly), since the survival
+  estimate ignores other mods' damage changes; a seam opens one frame after its swing.
 
 ### Test checklist
 
@@ -843,8 +845,8 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - [ ] Discovery: the first hit on copper floats "Discovered Copper deposit!" and gives 18.75 once, also after relog;
       none on stone; it waits for the tool tier; mudpile and mudpile2 are one discovery; an ice rock reads "Ice";
       Show Callouts off hides the text but credits; Discovery 0 records nothing.
-- [ ] Seams at level 0: about 1 swing in 10 on a multi-chunk rock opens a glint on a nearby visible chunk, never one
-      just hit, gone after 2 s; readable in daylight and at night; Seam Chance 0: none.
+- [ ] Seams at level 0: about 1 swing in 10 on a multi-chunk rock opens a glint on the chunk being mined or one
+      within pickaxe reach, gone after 2.6 s; readable in daylight and at night; Seam Chance 0: none.
 - [ ] Clean strike: "Clean strike!", the ×2 damage number, 1.875 experience on Black Forest copper, a new seam at
       once with a higher clink, "Clean strike ×2!"; a miss or expiry ends the chain.
 - [ ] Clean strike roll: an ore chunk it breaks drops a second roll, a boulder chunk does not.
@@ -1073,15 +1075,18 @@ proposed, with the best decision wherever the request was vague.
   (seconds), Last Stand recovering (cooldown style) and Desperation, as status effects added to the local player while
   their state holds and gone when it ends; item icons (iron sword, wood shield, iron chest, drake helmet, blood bag).
   Status effects stay on the owner's client, so nothing is sent.
-- **Plate (`DefensePlate`, `DefenseSummary`):** rank 150 in the PlateColumn stat column (under the armour plate),
-  showing the core damage reduction ("-10%"), tooltip with every bonus at the current level and the milestones. Hidden
-  with Defense off or `Show Plate` off. The PlateColumn library is now merged into GrindstoneSkills.
+- **Skills panel page (`Skills/Pages/DefensePage`):** clicking Defense in the skills panel's info pane (see "## Skill
+  book") shows every bonus at the current level, the guard perks and the milestones with the level each needs; hovering
+  a milestone's name, or a gold word such as Poise or Reflex, shows what it does. It replaced, on 2026-09-28, a hover
+  tooltip on the Defense entry (`SkillTooltips`, `DefenseSkillTip`, `DefenseSummary`), which itself had replaced the
+  Defense plate in the inventory's stat column. PlateColumn stays merged for `EmbeddedSprite` (the skill icon) and the
+  word tips (`LinkTips`).
 - **Callouts:** "Riposte!", "Reflex!", "Bash!", "First block: ..." with the game's floating text, local, `Show
   Callouts` (each player's own).
 
 ### Settings
 
-- **19 - Defense:** Defense Enabled, Show Callouts and Show Plate (each player's own), Max Health, Food Health, Damage
+- **19 - Defense:** Defense Enabled, Show Callouts (each player's own), Max Health, Food Health, Damage
   Reduction, Regeneration At 100, Regeneration Interval, Out Of Combat Delay, Poise, Parry Window, Block Stamina
   Reduction, Dodge Stamina Reduction.
 - **20 - Defense Experience:** Experience Multiplier, Block Experience, Parry Multiplier, Weapon Block Share, Hit Taken
@@ -1127,12 +1132,61 @@ proposed, with the best decision wherever the request was vague.
 - [ ] Hardened: stacks to 5x with unblocked hits, gone 8 s later. Last Stand: survive a killing blow at 1 health,
       2 s untouchable, cooldown icon counts 10 minutes, the next killing blow within it kills.
 - [ ] Reflex, Bash, Thorns: callouts show; thorns damage numbers on the attacker; bash staggers.
-- [ ] Plate: "-10%" under the armour plate at 100, tooltip lists everything; Show Plate off hides it and closes the
-      gap; works with OpenKeep's and Elite Creatures Reborn's plates.
-- [ ] Defense Enabled off: vanilla health, damage, stamina, parry; no icons, no plate, no experience.
+- [ ] Skills panel: hovering Defense shows its description, then every bonus at the current level and the
+      milestones; no Defense box in the inventory's stat column.
+- [ ] Defense Enabled off: vanilla health, damage, stamina, parry; no icons, no bonuses in the tooltip, no experience.
 - [ ] Dedicated server with two clients: all of the above at each player's own level; nothing in the server log.
 
-### Status (2026-09-27)
+### Skill book
+
+### The request (user, 2026-09-28)
+
+"Make the Skills larger, where it houses them. When you click a skill it shows that info next to the list of skills.
+Then if you hover certain words, like in Defense Riposte, Shield Wall, Hardened, Last Stand, it will describe each of
+those." Earlier the same day: hovering a skill should give very short and concise information on that skill, with
+numbers for what it does for you, in the same box as the inventory's world tier, weight and armour tips.
+
+### Design (`Skills/Book`, `Skills/Pages`)
+
+- **Room (`BookLayout`):** once per skills window, the frame (458 x 657) grows by the pane's width plus a gap (420 +
+  24) and by 140 in height; the list moves left by half the added width and grows by the added height, so it shows
+  about four more skills. The frame stays centred; the title and Close button follow its edges.
+- **Pane (`PaneBuilder`, `PaneScrollbar`, `BookPane`):** a dark box like the list's on its right, as tall as the list:
+  the skill's icon, its name in the entries' gold font, a level line (level, a food or mead bonus in green, progress to
+  the next level), a rule, then the page text in a scroll view with its own scrollbar (built new, not copied, so it
+  carries none of the list bar's wiring). The shown skill's entry is tinted gold.
+- **Choosing (`SkillBook`):** postfixes on `SkillsDialog.Setup` (every opening: empties the entries' own tooltips and
+  shows the skill shown last, else the first), `SkillClicked` (the entry's Button) and `Update` (with a gamepad the page
+  follows `m_selectionIndex`).
+- **Pages (`SkillPage`, `SkillPages`, `PageText`):** a writer per skill fills a `SkillPage` for the local player at
+  the moment it is shown: `About` (one sentence), `Line`s with the numbers at the player's level (bonuses included,
+  as the game floors them), optional `Heading`s, and `Perk`s (name, level that unlocks it, hover text; a level above
+  100 means turned off and it is not listed). `Line(text, term, tip)` explains one word of a line. Every game skill has
+  a writer (the game's own effects, read from the game code, plus what this mod adds); a skill with no writer
+  (another mod's) shows its description. A writer that throws is logged and its page keeps what it wrote.
+- **Word tips (PlateColumn `LinkTips`):** perk names and explained words are TMP `<link>`s in gold; hovering one for
+  0.3 s shows PlateColumn's tip box (the stat boxes' box: the game's item tooltip with the gold border) beside the
+  word, until the pointer leaves it. Pointer events only, so no gamepad access to word tips.
+
+### Decisions made while building (2026-09-28), for the user to confirm
+
+- The entries' hover tooltips are gone: the pane shows the same and more on a click.
+- 420 wide and 140 taller; the pane is as tall as the list.
+- Level-gated perks say "at level N" or "unlocked"; perks that are always on have no label.
+- The last skill shown is remembered for the session (not saved).
+
+### Test checklist
+
+- Open the skills panel: wider and taller, list on the left, pane on the right, the timber/brown background still
+  covers the whole frame, Close button under both.
+- Click several skills: icon, name, level line and page change; the clicked entry is tinted; a long page scrolls with
+  the wheel and shows a scrollbar, a short one none.
+- Hover a gold word (Riposte on Defense): the bordered box shows beside it after a moment and goes when the pointer
+  leaves; it is not clipped by the pane.
+- Close and reopen: the same skill's page shows. With a gamepad: moving the selection changes the page.
+- A mead or food skill bonus shows in green on the level line.
+
+## Status (2026-09-27)
 
 Written in one session, after the shared `CustomSkills` registry was split out of Sailing's registration (Sailing,
 Foraging and Husbandry use it too). Compiles clean; every Harmony target and parameter checked offline against the

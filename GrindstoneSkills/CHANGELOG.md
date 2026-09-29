@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.10.0
+
+- New: a skill book. The skills panel is wider and taller, and a page beside the list shows the skill you click: its
+  icon, your level (a food or mead bonus in green) and how far you are to the next, then in a few short lines what the
+  skill does for you at your level, with the numbers. Every skill has a page, the game's own (Swords, Run, Crafting...)
+  as well as this mod's; a skill from another mod shows its description.
+- Perks and milestones (Riposte, Shield Wall, Lookout...) are listed on the page with the level they need, or
+  "unlocked". Hover a name, or any gold word such as Poise or Timber!, for what it does, in a bordered box beside it.
+- The list shows about four more skills, the page you looked at last opens again next time, and with a gamepad the
+  page follows the selected skill. The entries' own hover tooltips are gone: the page shows the same and more.
+- Removed: the Defense plate in the inventory's stat column, with its `Show Plate` setting. Defense's page in the
+  skills panel shows every bonus and each milestone instead. An old `Show Plate` line in the .cfg does nothing.
+- Seams open where you can strike them: on the chunk you are mining, unless your swing broke it, or on another chunk
+  within your pickaxe's reach of where you stand. They used to skip every chunk the swing touched and could open a
+  step out of reach.
+- Seams stay open longer: 2.6 seconds at level 0 and 5.6 at level 100 by default, instead of 2 and 5. A config written
+  by an earlier version keeps the values it saved: set `Seam Window At 0` and `Seam Window At 100` there (on a
+  server, in the server's config). The glint is smaller and softer, so it marks the chunk without hiding it.
+- Fixed: rocks that break into chunks (copper and silver deposits, boulders, mud piles) were all taken for whichever of
+  them the mod met first in a session. After a boulder, a copper deposit counted as plain stone: no "Rich vein" line,
+  no extra ore, no discovery, and Echo passed it by; after a deposit, a boulder could count as ore. Each rock is now
+  read for what it is.
+- Every skill of the mod has a new icon in the skills panel and in its level-up messages, closer to the game's own:
+  one plain object each, without the gold wreaths and the scenery.
+
 ## 0.9.1
 
 - Woodcutting and Pickaxes have their own icons in the skills panel and in their level-up messages.

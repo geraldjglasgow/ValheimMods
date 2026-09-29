@@ -34,10 +34,10 @@ namespace GrindstoneSkills
                 acceptableValues: Settings.UpTo(100f));
             ChanceAt100 = config.Bind(Section, "Seam Chance At 100", 40f,
                 "Percent chance of a seam for a level 100 miner; levels in between are in proportion.", acceptableValues: Settings.UpTo(100f));
-            WindowAt0 = config.Bind(Section, "Seam Window At 0", 2f,
+            WindowAt0 = config.Bind(Section, "Seam Window At 0", 2.6f,
                 "Seconds a seam stays open for a level 0 miner. Hit the glowing chunk before it closes for a clean strike.",
                 acceptableValues: new AcceptableValueRange<float>(0.5f, 30f));
-            WindowAt100 = config.Bind(Section, "Seam Window At 100", 5f,
+            WindowAt100 = config.Bind(Section, "Seam Window At 100", 5.6f,
                 "Seconds a seam stays open for a level 100 miner; levels in between are in proportion.",
                 acceptableValues: new AcceptableValueRange<float>(0.5f, 30f));
             CleanStrikeDamage = config.Bind(Section, "Clean Strike Damage", 2f,
