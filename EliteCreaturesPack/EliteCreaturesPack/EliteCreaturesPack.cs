@@ -3,18 +3,11 @@ using BepInEx;
 using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Core;
 using EliteCreaturesPack.Crossbow;
-using EliteCreaturesPack.DraugrHound;
-using EliteCreaturesPack.Haugbui;
 using EliteCreaturesPack.Headsman;
-using EliteCreaturesPack.Irrbloss;
 using EliteCreaturesPack.Kraken;
-using EliteCreaturesPack.LeechMatron;
 using EliteCreaturesPack.Mimic;
-using EliteCreaturesPack.Mountains;
 using EliteCreaturesPack.RimeGiant;
-using EliteCreaturesPack.Rootling;
 using EliteCreaturesPack.Slinger;
-using EliteCreaturesPack.Swamp;
 using HarmonyLib;
 using PatchGuard;
 using SyncedConfig;
@@ -32,7 +25,7 @@ namespace EliteCreaturesPack
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.3.0";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 
@@ -50,13 +43,6 @@ namespace EliteCreaturesPack
             KrakenPrefabs.Install(harmony);
             XbowPrefabs.Install(harmony);
             ArsenalPrefabs.Install(harmony);
-            MountainPrefabs.Install(harmony);
-            SwampPrefabs.Install(harmony);
-            HaugbuiPrefabs.Install(harmony);
-            DraugrHoundPrefabs.Install(harmony);
-            RootlingPrefabs.Install(harmony);
-            LeechMatronPrefabs.Install(harmony);
-            IrrblossPrefabs.Install(harmony);
             HeadsmanPrefabs.Install(harmony);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+The swamp and mountain creatures are gone again. 0.2.0 shipped ten creatures that were never meant for this mod: the
+Mire Jarl, Reed Stalker, Bog Maw, Fen Crawler and Drowned Shade of the Swamps, and Frostfang, the Rimeback, Scree
+Wing, Cairn Wight and Ice Crawler of the Mountains. Everything else from 0.2.0 stays: the Skeleton Crossbowmen and
+the Bone Crossbow, the skeleton arsenal and the bone weapons, the Crypt Executioner and its greataxe.
+
+- Those ten no longer spawn, and any already in a world no longer appear. They dropped only the game's own items, so
+  nothing in an inventory or chest is lost.
+- Their config sections, `10 - Mire Jarl` to `19 - Ice Crawler`, do nothing now and can be deleted from
+  `com.EliteCreaturesPack.cfg`.
+
 ## 0.2.0
 
 Skeletons armed with crossbows and weapons of bone, and those weapons for you to make; a Crypt Executioner in the

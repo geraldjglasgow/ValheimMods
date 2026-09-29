@@ -109,12 +109,6 @@ Optional, both ways. Only key names, a prefab name and a version cross (`Mimic/E
 
 ## Assets
 
-Mountain additions: `Mountains/` registers Frostfang, Rimeback, Scree Wing, Cairn Wight and Ice
-Crawler (`features/mountain-creatures.md`), with settings 15–19 and bundle `ecp_mountain_set`.
-Build art with `AssetWorkshop/assets/ecp_mountain_set/build.ps1 -Install`. Frostfang's owner
-stores its half-health rage in `ecp_frostfang_rage`; all peers apply the phase locally.
-Bundle dimensions and Release build pass; in-game validation remains outstanding.
-
 Built in `../AssetWorkshop`: `assets/crypt_mimic` (the mimic's rig and clips), `assets/ecr_slinger`,
 `assets/ecr_rimegiant`, `assets/ecp_kraken` and `assets/ecp_crossbowman` (`build.ps1 [-Preview] [-Install]`; `-Install` copies the bundles into this mod's
 `assets/bundles`). The arsenal: `assets/ecp_skel_arsenal/build.ps1 -Install -SkipBake` (models, icons, bundle, install;

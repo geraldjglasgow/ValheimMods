@@ -3,18 +3,11 @@ using BepInEx.Configuration;
 using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Core;
 using EliteCreaturesPack.Crossbow;
-using EliteCreaturesPack.DraugrHound;
-using EliteCreaturesPack.Haugbui;
 using EliteCreaturesPack.Headsman;
-using EliteCreaturesPack.Irrbloss;
 using EliteCreaturesPack.Kraken;
-using EliteCreaturesPack.LeechMatron;
 using EliteCreaturesPack.Mimic;
-using EliteCreaturesPack.Mountains;
 using EliteCreaturesPack.RimeGiant;
-using EliteCreaturesPack.Rootling;
 using EliteCreaturesPack.Slinger;
-using EliteCreaturesPack.Swamp;
 using SyncedConfig;
 
 namespace EliteCreaturesPack
@@ -47,13 +40,6 @@ namespace EliteCreaturesPack
             XbowSettings.Initialize(config);
             XbowItemSettings.Initialize(config);
             ArsenalSettings.Initialize(config);
-            MountainSettings.Initialize(config);
-            SwampSettings.Initialize(config);
-            HaugbuiSettings.Initialize(config);
-            DraugrHoundSettings.Initialize(config);
-            RootlingSettings.Initialize(config);
-            LeechMatronSettings.Initialize(config);
-            IrrblossSettings.Initialize(config);
             HeadsmanSettings.Initialize(config);
             GreataxeSettings.Initialize(config);
             config.Config.SettingChanged += (sender, args) => SafeCall.Run("settings changed", () => Changed?.Invoke());

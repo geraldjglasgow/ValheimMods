@@ -5,8 +5,7 @@ with a slingshot that shoots stones. A giant crusted in ice, asleep on the mount
 that hunts ships on the open sea, and the shield you make from its beak. A skeleton with a crossbow, who has to
 reload after every shot, and a crossbow of bones like its own for you to make. Seven skeletons armed with weapons
 of bone and vertebrae, and the same weapons for you to make from the vertebrae they drop. And in some burial chambers, a
-skeleton executioner with a greataxe of bone, whose axehead you can take to make the greataxe yourself. Out in the
-wild, five new creatures haunt the Swamps and five roam the Mountains.
+skeleton executioner with a greataxe of bone, whose axehead you can take to make the greataxe yourself.
 
 It works on its own. With **Elite Creatures Reborn** installed as well, every creature here rolls stars and mutations
 like any other (the kraken, a boss, rolls stars and a boss aspect), and the mimic keeps its disguise until it wakes.
@@ -207,45 +206,6 @@ fragments. It is a two-handed axe that handles like the Battleaxe (the same stan
 like a fully upgraded Bronze Axe: 55 slash, 49 chop. It cannot be upgraded. Its combo is its own: a slash in front, a
 whirling spin that hits all round, then a heavy overhead blow that takes a moment to recover from.
 
-## Swamp creatures
-
-Five new creatures of the Swamps. They fight on the draugr's side, come one at a time in the swamp's interior (away
-from its edges) beside its own creatures, and never replace them:
-
-| Creature | Built on | | Health |
-| --- | --- | --- | --- |
-| **Mire Jarl** | Draugr Elite | a rare mini boss, a third bigger, in a corroded crown and burial armour: slower, heavier blows that knock you further, and hard to stagger. Only one in a wide area | 900 |
-| **Reed Stalker** | Draugr | a draugr in a reed mantle with a spear, quicker than the rest: it circles you and stabs from 2.7 metres (pierce) | 160 |
-| **Bog Maw** | Blob | a bigger blob crusted with roots and tusks, asleep in the mire until you come within 7 metres or make a noise | 200 |
-| **Fen Crawler** | Neck | a neck half again as big, grown over with swamp: quick bites, resists pierce, weak to blunt, immune to poison | 100 |
-| **Drowned Shade** | Wraith | a drowned revenant with a bell and a chain harness, flying at you only at night; its blows knock you back hard | 220 |
-
-They drop what their swamp would give: the Jarl entrails and chains, the Stalker entrails and wood, the Maw ooze and
-bone fragments, the Crawler neck tails and bone fragments, the Shade chains and coal. The Mire Jarl never comes
-starred from the wild; the others can come with a star. It is a mini boss, not a boss: no altar, no boss bar, no
-Forsaken power.
-
-## Mountain creatures
-
-Five new creatures of the Mountains. They come one at a time, away from the biome's edges; all are immune to frost and
-weak to fire, and none can be tamed:
-
-| Creature | Built on | | Health |
-| --- | --- | --- | --- |
-| **Frostfang** | Wolf | a rare wolf mini boss, two thirds bigger, with a mane; its bite carries frost and reaches further. At half health it rages for good: its coat pales, it runs a quarter faster and stops circling. Only one in a wide area | 1400 |
-| **Rimeback** | Lox | a smaller lox under a slate carapace that comes straight at you; its blows shove you back | 650 |
-| **Scree Wing** | Drake | a horned drake whose hail is more stone than ice | 240 |
-| **Cairn Wight** | Fenring | a bone-masked fenring that comes only at night, leaping like any fenring | 450 |
-| **Ice Crawler** | Neck | a neck twice the size with a crest of shale and a long frost bite | 180 |
-
-Frostfang drops wolf fangs and pelts and sometimes a wolf trophy; the Rimeback stone, crystal and lox meat; the Scree
-Wing freeze glands and stone; the Cairn Wight bone fragments and crystal; the Ice Crawler neck tails and sometimes a
-freeze gland. Frostfang never comes starred from the wild and grants no Forsaken power; the others can come with a
-star.
-
-The swamp and mountain creatures' bodies, animations and sounds are the game's own; their gear (crowns, mantles,
-crusts, plates, masks) is embedded in the plugin. For now the gear vanishes when they die.
-
 ## With Elite Creatures Reborn
 
 Neither mod needs the other. With both installed:
@@ -380,35 +340,6 @@ The game's four archer skeletons come as crossbowmen; the no-archer, poison, Hil
 often than before. Everything else about the arsenal and the bone
 weapons is fixed as described above.
 
-### 10 to 19 - the swamp and mountain creatures
-
-A section per creature: `10 - Mire Jarl`, `11 - Reed Stalker`, `12 - Bog Maw`, `13 - Fen Crawler`,
-`14 - Drowned Shade`, `15 - Frostfang`, `16 - Rimeback`, `17 - Scree Wing`, `18 - Cairn Wight`, `19 - Ice Crawler`.
-Each has the same five settings:
-
-| Setting | |
-| --- | --- |
-| `Enabled` | it spawns in the wild; off, no new ones come and the ones already in the world stay |
-| `Health` | its health before stars; applies to new ones |
-| `Damage Factor` | times the damage of the attacks it takes from the creature it is built on |
-| `Spawn Chance` | percent chance of one at each spawn attempt, in a swamp or mountain zone where someone is |
-| `Spawn Interval` | seconds between those attempts |
-
-Their defaults:
-
-| Creature | `Health` | `Damage Factor` | `Spawn Chance` | `Spawn Interval` |
-| --- | --- | --- | --- | --- |
-| Mire Jarl | 900 | 1.35 | 4 | 900 |
-| Reed Stalker | 160 | 1 | 12 | 360 |
-| Bog Maw | 200 | 1.2 | 10 | 420 |
-| Fen Crawler | 100 | 3 | 18 | 300 |
-| Drowned Shade | 220 | 1.15 | 10 | 480 |
-| Frostfang | 1400 | 1.4 | 3 | 1200 |
-| Rimeback | 650 | 0.65 | 7 | 600 |
-| Scree Wing | 240 | 1 | 10 | 480 |
-| Cairn Wight | 450 | 1.1 | 8 | 600 |
-| Ice Crawler | 180 | 5 | 15 | 360 |
-
 ### 25 - Crypt Executioner
 
 | Setting | Default | |
@@ -453,9 +384,7 @@ With `devcommands` on, the game's `spawn` command makes any of them: `spawn ECP_
 `spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman; each also `_Meadows`,
 `_Swamps`, `_Mountains`), `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Vertebra`,
 `spawn ECP_ArrowBone 20`, `spawn ECP_Headsman` (the Crypt Executioner), `spawn ECP_ExecutionerAxehead`,
-`spawn ECP_ExecutionerGreataxe`, `spawn ECP_MireJarl` (ReedStalker, BogMaw, FenCrawler, DrownedShade),
-`spawn ECP_Frostfang` (Rimeback, ScreeWing, CairnWight, IceCrawler). A mimic comes dormant, a giant and a Bog Maw
-asleep. The kraken's loot: `spawn ECP_KrakenBeak`, `spawn ECP_KrakenMeat`,
+`spawn ECP_ExecutionerGreataxe`. A mimic comes dormant and a giant asleep. The kraken's loot: `spawn ECP_KrakenBeak`, `spawn ECP_KrakenMeat`,
 `spawn ECP_KrakenMeatCooked`, `spawn ECP_ShieldKraken`.
 
 ## Install
@@ -485,7 +414,7 @@ against what they see: a dodge that looks clear is clear. The held ship stays pu
   it loads: the game drops items it does not know. A crypt chest that became a mimic stays gone.
 - The models are built for Windows and Linux. On macOS the mod tries the Windows build, and its own
   parts (the mimic's teeth, the slingshot, the giant's plates, the kraken, the crossbow, the bone weapons, the
-  Executioner's axe, the swamp and mountain creatures' gear) may not show.
+  Executioner's axe) may not show.
 - Names and texts are English in every language for now.
 
 ## Files
