@@ -9,10 +9,10 @@ namespace OpenKeep.Core
 {
     /// <summary>
     /// Hotkey helpers. Nothing counts as pressed while text is being typed (chat, console, the sign text input, a
-    /// selected Unity input field, the YAML editor). A shortcut with modifiers uses BepInEx's own
-    /// <c>KeyboardShortcut.IsDown</c> (modifiers held, no other key held); a single key is the key going down this
-    /// frame with no Shift, Ctrl or Alt held, so it works while the player is moving and does not fire together
-    /// with a modified shortcut on the same key (F next to LeftShift + F).
+    /// selected Unity input field, the YAML editor). A shortcut with modifiers is its main key going down this frame
+    /// with all its modifiers held and no other Shift, Ctrl or Alt (other keys such as W may be held, so it works while
+    /// walking); a single key is the key going down this frame with no Shift, Ctrl or Alt held, so it does not fire
+    /// together with a modified shortcut on the same key (F next to LeftShift + F).
     /// </summary>
     public static class Keys
     {
@@ -25,8 +25,22 @@ namespace OpenKeep.Core
             if (shortcut.MainKey == KeyCode.None)
                 return false;
             if (HasModifiers(shortcut))
-                return shortcut.IsDown();
+                return Input.GetKeyDown(shortcut.MainKey) && shortcut.Modifiers.All(Input.GetKey) && !OtherModifierHeld(shortcut);
             return Input.GetKeyDown(shortcut.MainKey) && !ModifierHeld(shortcut.MainKey);
+        }
+
+        /// <summary>
+        /// A Shift, Ctrl or Alt key that is not part of the shortcut is held. BepInEx's own IsDown refuses a shortcut
+        /// while any other key at all is held, so LeftAlt + D would never fire while walking with W; only modifiers block here.
+        /// </summary>
+        private static bool OtherModifierHeld(KeyboardShortcut shortcut)
+        {
+            foreach (KeyCode modifier in ModifierKeys)
+            {
+                if (modifier != shortcut.MainKey && !shortcut.Modifiers.Contains(modifier) && Input.GetKey(modifier))
+                    return true;
+            }
+            return false;
         }
 
         /// <summary>The main key held with its modifiers (for modifier settings such as LeftShift).</summary>

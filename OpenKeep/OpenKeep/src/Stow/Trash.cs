@@ -8,7 +8,8 @@ namespace OpenKeep.Stow
 {
     /// <summary>
     /// Destroys stacks: the hovered one (<c>Trash Key</c>), the dragged one (a click on the trash can while
-    /// dragging) and every junk stack of the inventory (<c>Destroy Junk Key</c>). With <c>Confirm Trash</c>
+    /// dragging), a clicked one in trash mode (<see cref="TrashMode"/>, no confirmation) and every junk stack of the
+    /// inventory (<c>Destroy Junk Key</c>). With <c>Confirm Trash</c>
     /// the game's yes/no popup asks first, so gamepad confirm and cancel work. With <c>Trash Uses Salvage</c> a
     /// whole stack of the player inventory that can be salvaged is salvaged instead. A stack of the open chest is
     /// destroyed in the chest when the client can change it now; in a chest another player is using (Full mode)
@@ -48,6 +49,14 @@ namespace OpenKeep.Stow
                 gui.SetupDragItem(null, null, 1);
                 Destroy(gui, inventory, item, amount);
             });
+        }
+
+        /// <summary>A click in trash mode (<see cref="TrashMode"/>): the whole stack, with the trash's rules, no confirmation.</summary>
+        public static void TrashClicked(InventoryGui gui, Inventory inventory, ItemDrop.ItemData item)
+        {
+            if (!StowActions.Ready(out Player player) || item == null || Refused(gui, player, inventory, item))
+                return;
+            Destroy(gui, inventory, item, item.m_stack);
         }
 
         public static void DestroyJunk(InventoryGui gui)

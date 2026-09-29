@@ -4,10 +4,12 @@ Storage and inventory for Valheim, version 1.7.0: crafting, building and station
 (Reach), stow, top up, sort, junk, trash, routing, chest cycling and ground pickup (Stow), a Salvage tab, stack
 sizes and weights (Stacks), container sizes, station capacities and hover contents (Capacity), carts as
 workbenches (Carts), several
-players in one chest (Shared), a contents sign above every player-built container (Signs), and base tweaks outside
+players in one chest (Shared), a contents sign above every player-built container (Signs), a - amount + stepper
+beside the Craft button (Batch), and base tweaks outside
 storage: respawn at the nearest owned bed, pieces on wooden floors, honey per day, fires refuelling from nearby
 containers, torches lit only at night and smelters and kilns feeding themselves from the containers beside them
-(Homestead). Written black-box
+(Homestead). The player's own inventory (a bigger grid, labelled slots, a key ring, backpacks and the look) is the
+separate mod PackPanel, which this one works with (see "PackPanel" under the decisions). Written black-box
 from `SPEC.md` (deleted after the in-game verification) and the game code alone, by module agents following
 `PLAN.md`; the rules are under "Developing mods" in `../CLAUDE.md`.
 This file is the code map, the patched methods, the decisions the spec left open, and the in-game test checklist.
@@ -57,6 +59,8 @@ OpenKeep/OpenKeep/src/
     RenamedKeys.cs          Carry: a renamed cfg key takes the old line's value from BepInEx's orphaned entries
     Messages.cs, Language.cs   centre and top-left messages; $ok_ words (Localization.SetupLanguage postfix)
     Command.cs              the openkeep console command (Terminal.InitTerminal postfix)
+    PackPanelLink.cs        PackPanel present (GUID in the chainloader), its config entries, LaysOutInventory
+    PackPanelGrid.cs        PackPanel.mainGrid from the character's custom data: rows, blocked cells, InSlot
   Reach/                    section 1
     ReachModule.cs, ReachSettings.cs, ReachMode.cs, RequirementDisplay.cs
     ReachModel.cs, ContainerRule.cs, StationRule.cs, ReachRules.cs   OpenKeep.Reach*.yml, per prefab container
@@ -83,7 +87,8 @@ OpenKeep/OpenKeep/src/
     TopUp.cs, Sorting.cs, Trash.cs, Routing.cs, Finder.cs, Cycling.cs
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
     StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
-    PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button
+    PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button; Follow puts
+                            the row into PackPanel's strip while it is shown
     TrashPlate.cs           the trash can's own plate in the stat column (PlateColumn library), between the
                             armour and weight plates
     HoveredItem.cs          the slot under the pointer (or the gamepad selection)
@@ -109,6 +114,7 @@ OpenKeep/OpenKeep/src/
                             drops, inventory and open container, and new copies via Copies.HookSpawns)
     VanillaValues.cs, LiveItems.cs (the other loaded containers), PerItemEntries.cs
     DatabaseReady.cs        ObjectDB.Awake / CopyOtherDB postfixes
+    PackPanelKeys.cs        PackPanel's Key Stack for the prefabs in its Key Items, as their starting stack
     MergeIntoChests.cs      InventoryGrid.DropItem prefix (skips a viewed or shared chest)
     TeleportPatch.cs        Inventory.IsTeleportable prefix
     Documentation.cs        OpenKeep.Items.txt and OpenKeep.Containers.txt (ZNetScene.Awake postfix)
@@ -188,13 +194,18 @@ OpenKeep/OpenKeep/src/
     TorchHoverPatch.cs      Fireplace.GetHoverText postfix: "Lights at nightfall", "[O] Keep lit" / "Light at night only"
     TorchKeyPatch.cs        Player.Update postfix: Torch Switch Key on the hovered fire
     TorchRpcPatch.cs        Fireplace.Awake postfix: registers OpenKeep_TorchKeepLit on every fire
-    FeedFeature.cs, FeedSettings.cs   Auto Feed Stations, Auto Feed Range, Auto Feed Skip
+    FeedFeature.cs, FeedSettings.cs   Auto Feed Stations, Auto Feed Range, Auto Feed Skip, Auto Feed Leave
     FeedStations.cs         the stations (Smelter, ZDO owned here, a piece a player built) and their outline (the
                             box around their solid colliders)
     FeedSkip.cs             Auto Feed Skip as an ItemMatchSet, parsed again when the text changes
     FeedTick.cs             the feeding rule on the station's owner: one item (RPC_AddOre) and one fuel (RPC_AddFuel)
                             per tick while there is room
     FeedPatch.cs            Smelter.UpdateSmelter postfix
+    PetFeature.cs, PetSettings.cs   Pets Eat From Chests, Pet Chest Range
+    PetEating.cs            MonsterAI.UpdateConsumeItem postfix on the creature's owner: at the game's search moment a
+                            hungry tame picks the nearest container holding its food, walks there and eats one
+    PetFood.cs              what a container offers a creature (its m_consumeItems by shared name, the world level
+                            rule, the containers: rule) and the spot beside the container where it stands to eat
     RestFeature.cs, RestSettings.cs   Rested Delay
     RestDelay.cs            the setting at use time for the game's Resting only (name hash); the log line with the
                             asset's own delay
@@ -226,22 +237,32 @@ OpenKeep/OpenKeep/src/
     ChestOwnerHandler.cs    the referee: validates, applies with the game's methods, saves, replies
     ItemPacket.cs           one item on the wire (prefab name + the game's ItemData.Save fields)
     Touches.cs              OpenKeep_Touch: InventoryGrid.OnLeftDown, InventoryGui.Update, InventoryGrid.UpdateGui
+  Batch/                    section 10
+    BatchModule.cs, BatchSettings.cs   section 10. Batch Crafting (no words of its own)
+    BatchAmount.cs          the amount: where it applies, back to 1 on another recipe, CanMake, Limit (binary
+                            search), the - and + steps with Shift and Ctrl, a typed amount, NextCraft for Reach's
+                            Pull modifier
+    BatchDrive.cs           writes the amount into the game's multi-craft fields, puts the game's back, keeps a
+                            started craft's amount for DoCrafting
+    BatchStepper.cs         the UI: - amount + left of the Craft button, which gives up the width
+    BatchField.cs           the amount as a TMP_InputField: digits typed, set on Enter or a click elsewhere
+    BatchPatches.cs         InventoryGui.Awake, UpdateRecipe, OnCraftPressed, DoCrafting
 OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, OpenKeep.Stow.yml,
                             OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml,
                             OpenKeep.Stations.yml
 OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon (128 px, scaled down from the
-                            author's 1254 px drawing, which is not in the repository)
+                            author's 1254 px drawing, which is not in the repository); every PNG here is embedded
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` last (the spec's order; each binds its settings, registers its YAML set and its words), every patch class on its
-own, `Synced.Finish`, the `Loading [OpenKeep 1.7.0]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.8.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
 `Capacity.StationDocumentation` (OpenKeep.Stations.txt), Stow's
+Reach's `CraftPullPatch` asks `Batch.BatchAmount.NextCraft` how many crafts to pull materials for, Stow's
 `Finder` reads Reach's `Link Seconds` through `ConfigDefinition("1. Reach", "Link Seconds")`, Core's `Command`
 reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection. Stow's `ChestBatch`, `Routing`, `Trash`, `Sorting` and
 `StowTargets` and Stacks' `MergeIntoChests` call `Shared.ChestWriter`, `Shared.SharedState` and
@@ -249,7 +270,10 @@ reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection.
 `ConfigDefinition("2. Stow", ...)`. Homestead's `FuelRefill`, `FeedTick` and `NearbyTake` use Reach's
 `ReachRules.StationRuleFor`, `ReachRules.RuleFor`, `StationAccepts.Fuel`, `StationAccepts.SmelterOre`,
 `ReachCount.CountIn` and `ContainerRule`, so the Reach YAML's `stations:` and `containers:` rules apply to auto fuel
-and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Everything else goes through `Core`.
+and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Stow's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
+PackPanel's main grid through `Core.PackPanelGrid`, Stacks' `PackPanelKeys` its Key Stack through `Core.PackPanelLink`,
+and Stow's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Everything else goes
+through `Core`.
 
 ## Patched game methods
 
@@ -266,9 +290,10 @@ loaded; on the ZDO owner only: Homestead's torch switch with `Priority.High`, th
 Homestead's auto feed),
 `Game.RemoveCustomSpawnPoint(Vector3)` (forget a destroyed bed),
 `InventoryGrid.OnLeftDown(UIInputHandler)` (touches), `InventoryGrid.UpdateGui(Player, ItemData)` (marks; touch
-tint), `InventoryGui.Awake` (Stow buttons; Salvage tab), `InventoryGui.CloseContainer` and `InventoryGui.Hide` (end
+tint), `InventoryGui.Awake` (Stow buttons; Salvage tab; Batch stepper), `InventoryGui.CloseContainer` and `InventoryGui.Hide` (end
 of viewing), `InventoryGui.SetupRequirement` (static, six parameters), `InventoryGui.Update` (Stow hotkeys; Salvage
-Key; touch end), `InventoryGui.UpdateRecipe(Player, float)`, `Localization.SetupLanguage`, `ObjectDB.Awake`, `Sign.Awake` (the
+Key; touch end), `InventoryGui.UpdateRecipe(Player, float)` (Salvage panel; Batch stepper layout), `Localization.SetupLanguage`, `MonsterAI.UpdateConsumeItem(Humanoid,
+float)` (private, in the AI update on the creature's owner: Homestead's pets eat from containers), `ObjectDB.Awake`, `Sign.Awake` (the
 orphan check component on automatic signs; their `WearNTear` wear switched off),
 `ObjectDB.CopyOtherDB` (both `Priority.Low`), `Player.GetFirstRequiredItem`, `Player.HaveRequirementItems`,
 `Player.HaveRequirements(Piece, RequirementMode)`, `Player.OnDeath` (the nearest own bed becomes the spawn point),
@@ -279,7 +304,8 @@ station list and caps; Homestead's Build On Wood; all `Priority.Low`).
 Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Container.RPC_OpenResponse(long, bool)`
 (a refusal is silent while viewing), `InventoryGrid.DropItem(Inventory, ItemData, int, Vector2i)` (Shared,
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
-modifier; Salvage tab), `InventoryGui.OnRightClickItem(InventoryGrid, ItemData)` (refused on a viewed chest),
+modifier; Salvage tab; Batch, with a postfix too), `InventoryGui.UpdateRecipe(Player, float)` (Batch drives the
+game's multi-craft fields), `InventoryGui.OnRightClickItem(InventoryGrid, ItemData)` (refused on a viewed chest),
 `InventoryGui.OnSelectedItem` (Shared, `Priority.First`; Stow's Route Modifier), `InventoryGui.OnStackAll`,
 `InventoryGui.OnTakeAll`, `InventoryGui.OnTabCraftPressed`, `InventoryGui.OnTabUpgradePressed`,
 `InventoryGui.UpdateContainer(Player)` (the viewer's panel), `InventoryGui.UpdateRecipeGamepadInput`,
@@ -293,7 +319,8 @@ path; remember), `Beehive.UpdateBees()` (honey rate and progress on the hive's Z
 `InventoryGui.Show(Container, int)` (auto sort),
 `InventoryGui.UpdateCraftingPanel(bool)`, `Player.Repair(ItemDrop.ItemData, Piece)` (private; area repair on the
 repairing player's client once the game's own repair went out), `Smelter.OnAddFuel`, `Smelter.OnAddOre`.
-Prefix and finalizer (the payment window): `InventoryGui.DoCrafting`, `Player.ConsumeResources`.
+Prefix and finalizer (the payment window): `InventoryGui.DoCrafting`, `Player.ConsumeResources`. Batch has its own
+prefix (`Priority.First`, the started craft's amount) and finalizer on `InventoryGui.DoCrafting`.
 
 ## Config sections and keys
 
@@ -314,9 +341,10 @@ Lines`, `Hover Fill`), `6. Carts` (`Cart Workbench`, `Cart Station Level`, `Cart
 `Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 2, `Auto Feed Skip` `FineWood, RoundLog`, `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true; all synced; unsynced `Torch Switch Key` O),
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Torch Switch Key` O),
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
-synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`).
+synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
+100 (1 to 1000); both synced).
 Keys, defaults and meanings are in `README.md`. Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), so every module has a master switch.
 
@@ -362,13 +390,16 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Player custom data: `OpenKeep.reachOff` (flag), `OpenKeep.favouriteItems`, `OpenKeep.favouriteSlots` (`x:y`),
   `OpenKeep.junk` (comma separated sets, keyed by prefab name), `OpenKeep.beds.<world uid>` (comma separated set of
   bed spawn points `x:y:z`, invariant culture, two decimals; the world uid is `ZNet.GetWorldUID`, the key of the
-  profile's own per-world spawn point).
+  profile's own per-world spawn point). Read only: PackPanel's `PackPanel.mainGrid` (see "PackPanel").
 - Charter article names: `openkeep_reach`, `openkeep_stow`, `openkeep_salvage`, `openkeep_stacks`, `openkeep_containers`,
   `openkeep_signs`, `openkeep_stations` (the YAML sets) plus the cfg sync of the shared libraries. Container ownership goes through the game's
   `ZNetView.ClaimOwnership` and `ZDOMan.ForceSendZDO`; the game's own `RPC_RequestOpen` is re-sent by a viewer.
 - GameObjects created: `OpenKeep.ReachLink` (link lines), `OpenKeep_link` (Find marker), `OpenKeep_SalvageTab`,
   `OpenKeep_<word>` and `OpenKeep_trash` (panel buttons), `OpenKeep_border`, `OpenKeep_star`, `OpenKeep_cross`
-  (slot marks), sprites named `OpenKeep_sprite`. The cart's station is a `CraftingStation` component on the cart
+  (slot marks), sprites named `OpenKeep_sprite`, `OpenKeep_trashcan` (the trash can in the button row, with
+  PackPanel), `OpenKeep_trashcursor` (trash mode's pointer), and through PlateColumn the box
+  `PlateColumn_plate_0120_openkeep_trash` (without PackPanel). Read only: PackPanel's `PackPanel_buttonstrip`. Batch: `OpenKeep_BatchStepper` with `OpenKeep_BatchLess`,
+  `OpenKeep_BatchAmount` and `OpenKeep_BatchMore` beside the Craft button. The cart's station is a `CraftingStation` component on the cart
   instance, no new prefab. Shared creates none: touches recolour the grid's icons. Signs instantiates the game's
   own `sign` prefab (a normal piece, no new prefab) and adds a `SignOrphanCheck` component to loaded automatic signs.
 - Files next to the cfg: the seven YAML files, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt`,
@@ -420,6 +451,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   any selected input field and the YAML editor. `CharacterData` strips commas from set members.
 - `openkeep reload` is allowed with no `ZNet` or when the local player is admin or host; it runs
   `Config.Reload`, `Yaml.LoadAll`, `Yaml.ApplyAll`. `openkeep containers` lists within 20 m.
+- Keys (Core, 1.8.0): a shortcut with modifiers is now its main key down with all its modifiers held and no other
+  Shift, Ctrl or Alt, as EarthWright does; BepInEx's `IsDown` refused it while any other key (W) was held.
 
 ### Reach
 
@@ -480,6 +513,16 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   its equipped helmet, chest and legs sit in cells (0,6), (1,6) and (2,6) of the player `Inventory`, read from the
   character save's inventory block (the game's own format), not from the mod.
 - Dump Key requires `Quick Stack Nearby`; with it off the centre message says so.
+- Trash mode (1.8.0, the user's idea): Shift + click on the trash can (with nothing dragged) turns the pointer into
+  the can; each click on a stack of either grid destroys the whole stack through `Trash.Destroy` with the trash's
+  refusals (favourites, worn items, a viewed chest; `Trash Uses Salvage` salvages) and no confirmation, the held Shift
+  being the confirmation. An `InventoryGui.OnSelectedItem` prefix at `Priority.First + 1` takes the click (with Shift
+  held the game would open its split dialog); Shared's and Stow's other click prefixes leave split clicks alone.
+  Letting go of Shift, closing the inventory, a popup or a drag ends it (`StowHotkeys` ticks it first every frame).
+  The pointer: the game never sets a cursor image, it only shows the system arrow every frame (`ZCursor.SetVisible`),
+  so hiding the arrow does not stick; the arrow is swapped for an 8x8 transparent cursor (`Cursor.SetCursor`) and
+  restored with `SetCursor(null)`, and the can is a 56 unit image child of the inventory screen placed at
+  `ZInput.pointerPosition` every frame, as the game places a dragged item.
 - Favourite items are refused by Store one and Route; Top up still refills them.
 - Trash from the container grid is allowed (the container is claimed and saved). `Trash Uses Salvage` applies only
   to a whole stack of the player inventory.
@@ -766,9 +809,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 
 ### Homestead
 
-Section 8 (1.6.0, more in 1.7.0) holds requests from the user's server that are not storage; each feature is a set
-of classes with one prefix (`Bed*`, `Fire*`, `Hive*`, `Fuel*`, `Torch*`, `Feed*`, `Rest*`, `Repair*`) and its own settings class, and
-`HomesteadModule` only calls them. Fuel and Feed share `NearbyTake` and `TakeRetry`.
+Section 8 (1.6.0, more in 1.7.0 and 1.8.0) holds requests from the user's server that are not storage; each feature is a set
+of classes with one prefix (`Bed*`, `Fire*`, `Hive*`, `Fuel*`, `Torch*`, `Feed*`, `Rest*`, `Repair*`, `Pet*`) and its own settings class, and
+`HomesteadModule` only calls them. Fuel and Feed share `NearbyTake` and `TakeRetry`; Pet takes through `NearbyTake` too.
 
 Beds:
 - Every part runs on the player's own client: the list in the character's custom data, the choice, and the
@@ -935,14 +978,38 @@ chests about 2 m away):
 - `Auto Feed Skip`: the kiln turns FineWood and RoundLog (core wood) into coal like Wood, so the default skips them;
   the setting uses the item vocabulary without groups (it lives in the cfg). A station fills its fuel whether or not
   it has anything queued: the game burns fuel only while it works, so nothing is wasted.
+- `Auto Feed Leave` (1.8.0; the user asked for stations to leave one ore or wood in the chest): `NearbyTake` keeps
+  that many units of each shared name in every container, counted over the stacks it may take (world level and
+  `containers:` rules applied), so a chest keeps its last unit and quick stack, which sends an item only to a chest
+  that holds it, still stocks it. Ore and fuel alike. Auto Fuel and pets pass 0; hand feeding (Reach) is not limited.
 - Range: `ContainerScan.Nearby(Bounds, range)`: from the station's outline (the world box of its enabled non-trigger
   colliders; the PlayerBase and warmth triggers are 5 to 20 m wide) to the container's position, 0 inside. A centre
   measure would not reach a chest touching the kiln (its door switch alone sits 2.2 m from its centre). The box of a
-  rotated station is a little larger than the station; the windmill's includes its blades.
+  rotated station is a little larger than the station; the windmill's includes its blades. 4 m by default since 1.8.0 (2 m
+  before; the user asked for 4).
 - Retry, access, multiplayer and the dedicated server as for Auto Fuel: `TakeRetry` after a tick with room that fed
   nothing or whose `stations:` entry is disabled; `ContainerScan.IsUsable` with the owner's local player; only the
   owner acts, a dedicated server feeds nothing. Reach's `Enabled`, `Feed Stations` and the per-player toggle do not
   gate it.
+
+Pets eating from containers (1.8.0; the user asked for tamed animals eating from chests within 10 m):
+- Hook: the private `MonsterAI.UpdateConsumeItem(Humanoid, float)`, called from the AI update on the creature's owner
+  only. The game's own search comes first (every `m_consumeSearchInterval`, 10 s: food on the ground within
+  `m_consumeSearchRange`, 5 m). When it found nothing (`__result` false) at the search moment (`m_consumeSearchTimer`
+  just set to 0), the postfix picks the nearest usable container within `Pet Chest Range`
+  (`ContainerScan.Nearby(position)`) holding one of the creature's `m_consumeItems` (shared name, the world level
+  rule, the `containers:` rule) that the creature has a path to (`HavePath` to the spot beside it; at most 3
+  containers tried), then walks it there, returning true while it walks as the game does for ground food.
+- Eating: one unit through `NearbyTake` (claim, remove, save), then `m_onConsumedItem` with the food's prefab
+  `ItemDrop` (Tameable plays its soothe effect and resets `TameLastFeeding` in the creature's ZDO), the creature's
+  `m_consumeItemEffects` and the `consume` trigger on its synced animator. Tamed creatures only (`IsTamed`); ones still
+  being tamed eat from the ground as in the game. A target is dropped after 30 s, when the container empties, unloads
+  or is refused at the take, or when the creature is fed or finds ground food.
+- Access, multiplayer and the dedicated server as for Auto Fuel: the owner's local player's ward and privacy access
+  and the section 0 switches; a dedicated server running a creature (no player near it) feeds nothing.
+  GrindstoneSkills' Animal Feeder has the same walk for its feeder piece under Husbandry. The feeder is a container,
+  so with both mods the first postfix to find food takes the creature and the other sees `__result` true and stands
+  down.
 
 Rested sooner (1.7.0; the user asked for the comfort buff after 5 s):
 - Vanilla (UnityPy, bundle c4210710, 2026-09-27): `Resting` is an `SE_Cozy` with `m_delay` 20 (the class default 10
@@ -990,18 +1057,104 @@ Area repair (1.7.0; the user asked for the hammer to repair every piece touching
   the game does for the hovered piece. One top-left line with the count follows the game's `$msg_repaired`; one log
   line per swing.
 
+### Batch
+
+- Asked for on 2026-09-28: "for workbenches, and any crafting in openkeep, - and + buttons with a number in the
+  center, which is the amount to craft, then a crafting button". It is its own module and section (10) because it
+  belongs to no storage module; it works with Reach off and without any container.
+- The stepper crafts nothing itself: it drives the game's multi-craft (Shift + Craft makes `m_multiCraftAmount`, 5).
+  `m_multiCraftAmount` is set to the amount and `m_touchMultiCrafting`, the flag a touch long press sets, to amount
+  > 1, before the game's `UpdateRecipe` and `OnCraftPressed` read them. So the requirement rows (x amount, flashing
+  red when short), the recipe name (`x<total>`), `HaveRequirements`, the room check, `ConsumeResources` with the
+  multiplier (Reach's payment window pays the shortfall from containers as for one craft), the bonus rolls per craft,
+  `RaiseSkill` and the statistics are the game's. GrindstoneSkills reads `m_multiCrafting ? m_multiCraftAmount : 1`
+  in its DoCrafting prefixes and sees the amount.
+- The amount counts crafts, not items: a recipe making 20 arrows makes 20 per step. Items that do not stack (weapons,
+  armour) come out as separate items; the game's `Inventory.AddItem` splits by the max stack and `CanAddItem` checks
+  the free slots first.
+- Where: the Craft tab of every station and of crafting by hand (`InventoryGui.InCraftTab()`), never on the Upgrade
+  tab (the game has no multi-upgrade), the Salvage tab or an upgrader station. Hidden while the craft bar fills; the
+  Craft button gets its full width back whenever the stepper hides.
+- The amount goes back to 1 when another recipe is selected and drops, every frame, to the most that can be made
+  when the current amount no longer can (so after a batch that used the last materials it reads 1 or what is left).
+  `+` greys out at the limit; `-` at 1. The limit is `Max Amount`, the materials (`Player.HaveRequirements(recipe,
+  false, 1, n)`, so the station level and, with Reach, the containers count; skipped under `NoCostCheat` or the
+  `NoCraftCost` world key) and room for `recipe.m_amount * n` items (`Inventory.CanAddItem`; single-ingredient
+  recipes' quality bonus is not counted, the game still refuses a batch that does not fit). The largest n is a
+  binary search, run on a click and when the amount must drop; a frame costs at most two checks (n and n + 1).
+- Typing: click the amount (the whole number is selected) and type; `TMP_InputField` with `Digit` validation and
+  4 characters, so nothing but digits goes in. `onEndEdit` (Enter, a click elsewhere, or Escape, which restores the
+  old text) sets the amount through `BatchAmount.Set`, clamped to 1 and the limit, and shows what was kept; an empty
+  field keeps the old amount. The field is not overwritten while focused. After Enter the field would stay the
+  EventSystem's selection, and `Core/Keys.TextInputActive` silences every OpenKeep hotkey while an input field is
+  selected, so `onEndEdit` deselects it (skipped while `EventSystem.alreadySelecting`, when a click is already moving
+  the selection; the field has already stopped taking input, so the deselect does not end the edit twice). Typing
+  is safe with the inventory open: `Player.TakeInput` is false there, so digits never use the hotbar, and `Chat`
+  opens on Enter only while `InventoryGui` is hidden. The caret is white (TMP's default is dark grey), the text a
+  fixed 26 (the caret sits wrong on auto-sized text), no colour transition, navigation off.
+- No tooltips on the stepper (the user asked for none, 2026-09-28).
+- Clicks: +/- 1; Shift to the next multiple of ten (1, 10, 20 ...; down from 25 is 20, from 10 is 1); Ctrl to 1 or
+  to the limit. Keys are read with `Input.GetKey`, both Shift and both Ctrl, not configurable. Gamepad: the D-pad's
+  left and right (`JoyDPadLeft`/`Right`, which the game repeats after 0.3 s held) through the clones' `UIGamePad`,
+  only while the crafting panel is the active group; the clones' stick hint is removed (a `$KEY_` text needs the
+  game's `Localize` component, which does not see clones), so there is no gamepad glyph.
+- Time: the game's. One craft takes `m_craftDuration` (2 s), any batch `m_multiCraftDuration` (6 s), both shortened
+  by the crafting skill, as for the game's Shift + Craft. A held Shift no longer turns a single craft into a 6 s
+  "x 1" multi-craft: the `OnCraftPressed` postfix sets `m_multiCrafting` from the amount alone, and Craft's label is
+  plain `Craft` (the game appends ` x 5` while Shift is held).
+- A started craft's amount is kept apart (`BatchDrive.Started`) and written back in a `Priority.First` DoCrafting
+  prefix, since selecting another recipe or tab while the bar fills resets or releases the fields.
+- `Enabled = false` (or the stepper not applying) writes the game's own `m_multiCraftAmount` back (read at
+  `InventoryGui.Awake`) and clears the touch flag, so Shift + Craft makes 5 again.
+- Reach's Pull modifier + Craft pulls materials for the stepper's amount (`BatchAmount.NextCraft`), else for the
+  game's Shift rule as before.
+- Layout (checked on the live panel and the offline UI dump): the Craft button's row `craft_button_panel` is 334 x 70,
+  the button fills it less 5 above and below (offsets (0, 5) and (0, -5)). The stepper is 158 wide at its left end
+  (44 button, 4, 62 field, 4, 44 button), full button height; the Craft button's left offset grows by 164. The
+  buttons are clones of `m_qualityLevelDown` / `m_qualityLevelUp` (`Decription/UpgradePanel/LevelDown`, `LevelUp`, 40
+  x 40, sprite `button`, inactive in the game), their label in the Craft label's font at 32; the field is the
+  requirement slot's `item_background` image with a copy of the Craft label, white, inside a `RectMask2D` text area
+  inset by 4.
+- Multiplayer: crafting is the crafting player's client alone (the game's `InventoryGui`); the containers it pays
+  from go through Reach's claim and save path as for one craft. Both settings are synced from the server.
+
+### PackPanel
+
+- The player's own inventory (a bigger grid, labelled slots, a key ring, backpacks, the stat panels and the brown or
+  timber look) was built as this mod's section `10. Inventory` (`src/Pack/`) on 2026-09-28 and moved into its own mod,
+  PackPanel (`../PackPanel/`), the same day, before any release: the user was told the UI and inventory work had to be
+  separate from the storage mod. Storage and its own UI stayed here (the button row, the trash can and trash mode, the
+  Salvage tab, marks, touches, hover texts). Its design, decisions and checklist are in `../PackPanel/CLAUDE.md`.
+- Neither mod references the other. `Core/PackPanelLink` finds PackPanel by its GUID `milkyteam.packpanel` in BepInEx's
+  chainloader on first use and reads its config entries through its plugin's `Config` (`1. Inventory / Enabled`,
+  `3. Key Ring / Key Items` and `Key Stack`; the server's values while connected). What PackPanel publishes:
+  - `PackPanel.mainGrid` in the character's custom data, `width|rows|blocked` (`Core/PackPanelGrid`, trusted only
+    while PackPanel is loaded and enabled, since the key is saved with the character): Stow's `MainGrid` takes its
+    rows, `Sorting` its blocked cells (a backpack's partly used last row), Shared's `ChestAsk` skips items below its
+    rows for a shared chest's stack all.
+  - `PackPanel_buttonstrip`, an empty child of the player panel, active while PackPanel keeps a 30 unit strip at the
+    panel's bottom for the button row: `PanelButtons.Follow` (every frame, from `StowHotkeys`' `InventoryGui.Update`
+    postfix) moves the row inside it, 2 units above the edge, and back below the panel when it goes. At
+    `InventoryGui.Awake` the trash can is a box in PlateColumn's column unless PackPanel is enabled, when it is a button
+    right of Sort (PackPanel's stats panel holds the column).
+  - Key Stack: one mod writes stack sizes. With OpenKeep present PackPanel leaves the keys to `Stacks/PackPanelKeys`,
+    which raises every prefab in Key Items to at least Key Stack as its starting value (so per item entries and the
+    YAML still win), also with the Stacks module off, and applies the values again when either entry changes (watched
+    from the first database ready, when every plugin has loaded).
+- PackPanel counts OpenKeep only from 1.8.0 (older versions know nothing of it): below that it keeps no strip and
+  writes Key Stack itself.
+
 ## Not yet implemented
 
 - Capacity: the read-only container grid on hover (SPEC section 5's stretch goal); no setting is bound for it.
 - Carts: the cart extension piece parented to a cart (SPEC section 6's stretch goal); no setting is bound for it,
   `OpenKeep.cartOffset` stays reserved.
-
 ## Test checklist (LocalTesting profile)
 
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.7.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 1.8.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1150,8 +1303,8 @@ from a script.
     The server log shows nothing from these features for a base far from the world centre.
 34. Auto Feed, single player: a new smelter with a chest touching its side holding 30 copper ore and 30 coal: within
     about 10 s the hover shows 10/10 ore and 10 coal and rising to 20, one added sound per unit, copper comes out;
-    the chest's ore drops by one about every 30 s. A chest 3 m from the smelter's side gives nothing; `Auto Feed
-    Range = 4`: it does. A charcoal kiln beside a chest with wood, fine wood and core wood takes only the wood (the log
+    the chest's ore drops by one about every 30 s until one copper ore and one coal are left, which stay (`Auto Feed
+    Leave = 0`: the chest empties). A chest 5 m from the smelter's side gives nothing; `Auto Feed Range = 6`: it does. A charcoal kiln beside a chest with wood, fine wood and core wood takes only the wood (the log
     at debug level: `charcoal_kiln fed itself one Wood`); empty `Auto Feed Skip` and it takes the others too. A
     spinning wheel with flax, a windmill with barley, an eitr refinery with soft tissue and sap, a hot tub with wood.
     `stations: { smelter: { enabled: false } }`: the smelter stops taking; `containers: { piece_chest_wood: { deny:
@@ -1214,3 +1367,33 @@ from a script.
     `/30` and add up to 30; the server edits it to 40 and both see `/40` within seconds. Lock Configuration keeps A
     from changing it. B owns the smelter (standing there first), A adds ore to the cap: B's hover counts it. A station
     over its cap after the server lowers it keeps working on both clients and loses nothing.
+46. Hotkeys with modifiers: holding W, `LeftAlt + D` (Dump Key) and `LeftAlt + R` (Reach toggle) fire.
+47. Pets, single player: a hungry tamed wolf, no meat on the ground, a chest 8 m away with raw meat: within 10 s the
+    wolf walks to the chest and eats one (the chest has one fewer; the debug log line `Wolf ate one RawMeat from
+    piece_chest_wood`); it eats again only when hungry. Meat on the ground 3 m away is eaten first. A chest 12 m away
+    is left alone, and so is everything with `Pets Eat From Chests = false`. A wolf still being tamed does not eat
+    from the chest.
+48. Pets, dedicated server, A and B: B reached the base first (B's game runs the wolf): the chest loses one meat on
+    both clients and A sees the wolf eat. A opens the chest while the wolf walks to it: the wolf gives up and tries
+    again at a later search.
+49. With PackPanel installed (see `../PackPanel/CLAUDE.md`, its items 2 and 3): the button row and the trash can sit
+    inside the inventory panel and follow PackPanel's `Enabled` at once; sort keeps out of a backpack's closed cells;
+    quick stack takes nothing from the slots; PackPanel's Key Stack holds unless `OpenKeep.Stacks.yml` names the key.
+    Without PackPanel: the row hangs below the panel, the trash can is a box in the stat column.
+50. Batch crafting, single player, at a workbench with 30 wood and 10 resin in the inventory: the Craft tab shows
+    `- 1 +` left of a narrower Craft button; select Torch (1 wood, 1 resin), `+` five times:
+    the field reads 6, the requirement rows read x6, Craft makes 6 torches in one bar (about 6 s) and uses 6 of each.
+    Ctrl + `+` jumps to the most the materials allow and `+` greys out there; Shift + `+` goes 1, 10, 20; Ctrl + `-`
+    is 1. Click the number, type 12, Enter: 12 (or the most the materials allow); type 0: 1; Escape: the old amount;
+    after Enter the Stow hotkeys (Q, R, T) work at once. No tooltip over -, the number or +. Select another
+    recipe: 1. Craft the whole batch: the field drops by itself to what is left (or 1). The Upgrade and Salvage
+    tabs show the full-width button and no stepper; so does the bar while it fills. Shift +
+    Craft at 1 makes one torch in about 2 s. Wood arrows at 5: the name reads `x100` and 100 arrows arrive. Five
+    swords: five separate swords. A full inventory: `+` stops at what fits.
+51. Batch with Reach: wood only in a chest in range: the stepper goes as high as the chest allows, Craft takes the
+    wood from the chest; LeftAlt + Craft at 4 pulls exactly 4 crafts' materials into the inventory first. Reach off
+    (LeftAlt + R): the limit is the inventory alone.
+52. Batch with GrindstoneSkills at a cauldron: 3 of a dish give 3 dishes, each rolling stars, and Cooking gains 3
+    crafts' experience. `10. Batch Crafting / Enabled = false`: no stepper, Shift + Craft makes 5 again. Gamepad: in
+    the crafting panel the D-pad left and right step the amount, held they repeat. Dedicated server with A: the
+    server's `Max Amount = 3` stops `+` at 3 on A; Lock Configuration keeps A from changing it.

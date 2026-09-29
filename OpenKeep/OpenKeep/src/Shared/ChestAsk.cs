@@ -149,13 +149,17 @@ namespace OpenKeep.Shared
                 reason => done(false));
         }
 
-        /// <summary>The game's stack-all candidates: unequipped inventory stacks whose kind the chest already holds.</summary>
+        /// <summary>
+        /// The game's stack-all candidates: unequipped inventory stacks whose kind the chest already holds, from the grid
+        /// only (PackPanel's slots keep theirs, as with the game's own Place stacks: <see cref="PackPanelGrid"/>).
+        /// </summary>
         private static List<ItemDrop.ItemData> StackCandidates(Inventory chest, Player player)
         {
             List<ItemDrop.ItemData> candidates = new List<ItemDrop.ItemData>();
-            foreach (ItemDrop.ItemData item in player.GetInventory().GetAllItems())
+            Inventory own = player.GetInventory();
+            foreach (ItemDrop.ItemData item in own.GetAllItems())
             {
-                if (item.m_equipped || player.IsItemEquiped(item) || item.m_dropPrefab == null)
+                if (item.m_equipped || player.IsItemEquiped(item) || item.m_dropPrefab == null || PackPanelGrid.InSlot(player, own, item))
                     continue;
                 if (chest.ContainsItemByName(item.m_shared.m_name))
                     candidates.Add(item);

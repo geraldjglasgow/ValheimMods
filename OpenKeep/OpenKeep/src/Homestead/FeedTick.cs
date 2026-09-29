@@ -8,7 +8,8 @@ namespace OpenKeep.Homestead
     /// <summary>
     /// The feeding rule, run by the station's ZDO owner after the game's own one-second tick. With room for an item
     /// (the queue below <c>m_maxOre</c>, the game's <c>OnAddOre</c> cap) one acceptable item is taken from the
-    /// containers within range of the station's outline and handed to the game's <c>RPC_AddOre</c> with its prefab
+    /// containers within range of the station's outline (each keeps Auto Feed Leave units of every item) and handed
+    /// to the game's <c>RPC_AddOre</c> with its prefab
     /// name and cheated flag; with room for fuel (the fuel at most <c>m_maxFuel</c> - 1, the game's <c>OnAddFuel</c>
     /// cap) one fuel unit goes to <c>RPC_AddFuel</c>. The RPCs go to the owner, this machine, and are handled at once:
     /// the game's allowed-item check, the ZDO write and one added effect per unit, as for a player feeding by hand.
@@ -43,7 +44,7 @@ namespace OpenKeep.Homestead
         private static bool AddOre(Smelter station, List<Container> near)
         {
             ItemDrop.ItemData taken = null;
-            if (NearbyTake.Take(near, FeedSkip.Without(StationAccepts.SmelterOre(station)), 1, (item, count) => taken = item) < 1)
+            if (NearbyTake.Take(near, FeedSkip.Without(StationAccepts.SmelterOre(station)), 1, (item, count) => taken = item, FeedSettings.AutoFeedLeave.Value) < 1)
                 return false;
             int before = station.GetQueueSize();
             string name = ItemNames.PrefabName(taken);
@@ -55,7 +56,7 @@ namespace OpenKeep.Homestead
         private static bool AddFuel(Smelter station, List<Container> near)
         {
             Func<ItemDrop.ItemData, bool> accepts = FeedSkip.Without(StationAccepts.Fuel(station, station.m_fuelItem));
-            if (NearbyTake.Take(near, accepts, 1) < 1)
+            if (NearbyTake.Take(near, accepts, 1, keep: FeedSettings.AutoFeedLeave.Value) < 1)
                 return false;
             float before = station.GetFuel();
             station.m_nview.InvokeRPC("RPC_AddFuel");

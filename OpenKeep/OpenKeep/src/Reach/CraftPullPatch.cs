@@ -5,7 +5,8 @@ namespace OpenKeep.Reach
 {
     /// <summary>
     /// The Pull modifier held while Craft is pressed: the missing materials of the selected recipe move from
-    /// storage into the inventory first, so the craft pays from the inventory alone. When they do not all fit
+    /// storage into the inventory first, so the craft pays from the inventory alone, for as many crafts as the next
+    /// press makes (the Batch stepper's amount, or the game's Shift + Craft without it). When they do not all fit
     /// (or storage lacks them) nothing is crafted and the centre message says so; what was moved stays.
     /// </summary>
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnCraftPressed))]
@@ -22,8 +23,8 @@ namespace OpenKeep.Reach
             int quality = upgrade == null ? 1 : upgrade.m_quality + 1;
             if (!ReachRules.Active(ReachRules.FromQuality(quality)))
                 return true;
-            bool multi = upgrade == null && (ZInput.GetButton("AltPlace") || ZInput.GetButton("JoyLStick"));
-            if (PullAll(player, recipe, quality, multi ? __instance.m_multiCraftAmount : 1))
+            int crafts = upgrade == null ? Batch.BatchAmount.NextCraft(__instance, player) : 1;
+            if (PullAll(player, recipe, quality, crafts))
                 return true;
             Messages.Center("$ok_nofit");
             return false;

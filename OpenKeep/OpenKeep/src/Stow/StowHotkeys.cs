@@ -14,11 +14,13 @@ namespace OpenKeep.Stow
         [HarmonyPostfix]
         public static void Postfix(InventoryGui __instance)
         {
+            PanelButtons.Follow(__instance);
             Poll(__instance);
         }
 
         public static void Poll(InventoryGui gui)
         {
+            TrashMode.Tick(gui);
             if (!StowSettings.Enabled.Value || !Keys.InventoryOpen || Player.m_localPlayer == null || UnifiedPopup.IsVisible())
                 return;
             if (gui.m_splitDialog != null && gui.m_splitDialog.IsActive)

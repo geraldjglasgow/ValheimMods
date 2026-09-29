@@ -20,7 +20,8 @@ namespace OpenKeep.Stow
             if (player == null || !StowSettings.Enabled.Value)
                 return;
             Inventory inventory = player.GetInventory();
-            int stacks = Sort(inventory, item => Pinned(player, item), MainGrid.FirstRow(player, inventory), MainGrid.Rows(player, inventory));
+            int stacks = Sort(inventory, item => Pinned(player, item), MainGrid.FirstRow(player, inventory), MainGrid.Rows(player, inventory),
+                PackPanelGrid.BlockedCells(player, inventory));
             if (!quiet)
                 Messages.Center(StowWords.Format(StowWords.Sorted, stacks));
         }
@@ -68,13 +69,16 @@ namespace OpenKeep.Stow
         }
 
         /// <summary>Sorts the loose items into the cells of the rows from <paramref name="firstRow"/> up to
-        /// <paramref name="rows"/>; items outside those rows stay. Returns the number of loose items.</summary>
-        public static int Sort(Inventory inventory, Func<ItemDrop.ItemData, bool> pinned, int firstRow, int rows)
+        /// <paramref name="rows"/>, never into a <paramref name="reserved"/> cell (a backpack's blocked cells); items
+        /// outside those rows stay. Returns the number of loose items.</summary>
+        public static int Sort(Inventory inventory, Func<ItemDrop.ItemData, bool> pinned, int firstRow, int rows, IEnumerable<Vector2i> reserved = null)
         {
             List<ItemDrop.ItemData> all = inventory.GetAllItems();
             List<ItemDrop.ItemData> loose = new List<ItemDrop.ItemData>();
-            HashSet<int> taken = new HashSet<int>();
             int width = inventory.GetWidth();
+            HashSet<int> taken = new HashSet<int>();
+            foreach (Vector2i cell in reserved ?? new Vector2i[0])
+                taken.Add(cell.y * width + cell.x);
             foreach (ItemDrop.ItemData item in all)
             {
                 if (pinned(item) || item.m_gridPos.y < firstRow || item.m_gridPos.y >= rows)

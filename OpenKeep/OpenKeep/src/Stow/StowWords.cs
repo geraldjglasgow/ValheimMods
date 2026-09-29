@@ -41,6 +41,7 @@ namespace OpenKeep.Stow
         public const string NotFound = "$ok_stow_notfound";
         public const string NoCycle = "$ok_stow_nocycle";
         public const string Salvaged = "$ok_stow_salvaged";
+        public const string TrashModeOn = "$ok_stow_trash_mode";
 
         public static void Register()
         {
@@ -87,8 +88,9 @@ namespace OpenKeep.Stow
             Language.Add("ok_stow_destroy_junk_ask", "Destroy {0} junk stacks?");
             Language.Add("ok_stow_trashed", "Destroyed {0}");
             Language.Add("ok_stow_nojunk", "Nothing in the inventory is marked as junk");
-            Language.Add("ok_stow_drag_hint", "Drag a stack onto the trash can to destroy it");
+            Language.Add("ok_stow_drag_hint", "Drag a stack onto the trash can to destroy it, or Shift + click the can to click stacks away");
             Language.Add("ok_stow_salvaged", "Salvaged {0}");
+            Language.Add("ok_stow_trash_mode", "Trash mode: click a stack to destroy it, let go of Shift to stop");
         }
 
         /// <summary>Localizes a word and fills its {0}, {1} placeholders.</summary>

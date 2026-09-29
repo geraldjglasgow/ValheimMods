@@ -8,9 +8,10 @@ namespace OpenKeep.Stacks
 {
     /// <summary>
     /// Writes the configured stack and weight of every item into the prefabs' shared data and into every live
-    /// item: vanilla times the multipliers, then the per item .cfg entries, then the YAML rules (patterns in file
-    /// order, plain names last). Runs when the item database loads, on every setting change and on every YAML
-    /// apply; with the module off it restores vanilla. Live items are reached through ItemCopies (world drops, the
+    /// item: vanilla times the multipliers (a key raised to PackPanel's Key Stack, <see cref="PackPanelKeys"/>),
+    /// then the per item .cfg entries, then the YAML rules (patterns in file order, plain names last). Runs when the item
+    /// database loads, on every setting change and on every YAML apply; with the module off it restores vanilla, keys
+    /// still at Key Stack. Live items are reached through ItemCopies (world drops, the
     /// local inventory, the open container, and new copies through <see cref="ApplyCopy"/>) and, for the other
     /// loaded containers, through <see cref="LiveItems"/>.
     /// </summary>
@@ -94,7 +95,8 @@ namespace OpenKeep.Stacks
             string name = prefab.name;
             ItemDrop.ItemData.SharedData shared = prefab.m_itemData.m_shared;
             ItemValue vanilla = VanillaValues.Remember(name, shared);
-            ItemValue value = StacksSettings.Enabled.Value ? Compute(name, shared, vanilla, model) : vanilla;
+            ItemValue value = StacksSettings.Enabled.Value ? Compute(name, shared, vanilla, model)
+                : new ItemValue(PackPanelKeys.Over(name, vanilla.Stack), vanilla.Weight);   // Key Stack holds with the module off too
             shared.m_maxStackSize = value.Stack;
             shared.m_weight = value.Weight;
             current[name] = value;
@@ -106,7 +108,7 @@ namespace OpenKeep.Stacks
         {
             float stackMultiplier = model?.StackMultiplier ?? StacksSettings.StackMultiplier.Value;
             float weightMultiplier = model?.WeightMultiplier ?? StacksSettings.WeightMultiplier.Value;
-            int stack = MultiplyStack(vanilla.Stack, stackMultiplier);
+            int stack = PackPanelKeys.Over(name, MultiplyStack(vanilla.Stack, stackMultiplier));
             float weight = vanilla.Weight * weightMultiplier;
             PerItemEntries.Override(name, vanilla, ref stack, ref weight);
             if (model != null)

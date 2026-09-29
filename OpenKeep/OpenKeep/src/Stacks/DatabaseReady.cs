@@ -11,6 +11,7 @@ namespace OpenKeep.Stacks
     {
         public static void OnDatabase()
         {
+            PackPanelKeys.Watch();
             StackValues.ApplyAll();
             Documentation.WriteIfReady();
         }

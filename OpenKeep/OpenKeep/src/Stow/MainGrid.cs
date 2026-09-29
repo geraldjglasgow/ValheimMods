@@ -1,4 +1,5 @@
 using System;
+using OpenKeep.Core;
 
 namespace OpenKeep.Stow
 {
@@ -28,8 +29,11 @@ namespace OpenKeep.Stow
             return Math.Min(height, rows > 0 ? rows : GameRows(player));
         }
 
+        /// <summary>The player's main grid: PackPanel's rows while it lays the inventory out, else the game's.</summary>
         private static int GameRows(Player player)
         {
+            if (PackPanelGrid.TryRead(player, out _, out int mainRows, out _))
+                return mainRows;
             if (player.TryGetUniqueKeyValue(Player.InventoryRowsKey, out string value) && int.TryParse(value, out int rows))
                 return rows;
             return GameDefaultRows;

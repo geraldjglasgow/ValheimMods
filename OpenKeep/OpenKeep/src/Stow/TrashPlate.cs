@@ -17,8 +17,8 @@ namespace OpenKeep.Stow
     {
         private const string Id = "openkeep_trash";
 
-        /// <summary>Between the game's armour and weight plates.</summary>
-        private const int Rank = (Column.ArmorRank + Column.WeightRank) / 2;
+        /// <summary>Right under the game's armour box, above GrindstoneSkills' Defense (150) and the weight (300).</summary>
+        private const int Rank = Column.ArmorRank + 20;
 
         public static bool TryCreate(InventoryGui gui, Action onClick)
         {

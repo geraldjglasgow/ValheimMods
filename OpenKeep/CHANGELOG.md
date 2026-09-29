@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.8.0
+- Batch crafting: the Craft tab of every crafting station (and crafting by hand) has `-` and `+` buttons with the
+  amount between them, left of the Craft button; Craft makes that many at once, in one bar, through the game's own
+  multi-craft, so each item costs, earns skill and rolls the crafting bonus as if crafted alone. Click the number to
+  type an amount. Shift steps by tens, Ctrl jumps to 1 or to as many as you can make, the D-pad steps on a gamepad.
+  The amount stops at your materials (nearby chests count with Reach), your free space and `Max Amount` (100), and
+  goes back to 1 when you pick another recipe. Not on the Upgrade or Salvage tab. It takes the place of the game's
+  Shift + Craft (5 at once), which `Enabled = false` brings back. New section `10. Batch Crafting` (`Enabled`, on;
+  `Max Amount`), both synced. Reach's Pull modifier + Craft pulls materials for the whole batch.
+- Works with PackPanel, the new inventory mod (a bigger grid, labelled armour, utility, food, mead and ammo slots, a
+  coin purse, a key ring and backpacks): with both installed, the button row and the trash can sit inside the
+  inventory panel, quick stack, store all, dump, sort and a shared chest's stack all use PackPanel's whole grid and
+  never touch its slots or key ring, and PackPanel's Key Stack is written with OpenKeep's stack sizes, so an
+  `OpenKeep.Stacks.yml` entry for a key still wins. Neither mod needs the other.
+- Stow: Shift + click on the trash can starts trash mode: the pointer becomes the trash can and every stack you click
+  in the inventory or the open chest is destroyed at once, with no popup even with `Confirm Trash` on (favourites
+  and worn items are kept); let go of Shift to stop. A click without Shift still destroys a dragged stack.
+- Stow: the trash can's plate sits right under the armour plate, so a plate another mod adds to the column goes
+  below it.
+- Hotkeys with a modifier (`LeftAlt + D` and the like) now fire while you walk; before, holding any other key
+  (such as W) blocked them.
+- Homestead: tamed animals eat from chests (`Pets Eat From Chests`, on; `Pet Chest Range`, 10 m): a hungry tame
+  walks to a container within range that holds food it eats and eats one item, as it would from the ground. Food on
+  the ground still comes first, and animals still being tamed eat only from the ground. The `containers:` rules of
+  the Reach YAML apply, as for fires.
+- Homestead: `Auto Feed Leave` (1): stations that feed themselves leave that many of each item in every chest, so a
+  chest keeps its last ore, wood or coal and quick stack still sends that item to it. 0 takes everything, as before;
+  feeding a station by hand is not limited.
+- Homestead: `Auto Feed Range` is 4 m by default (was 2 m), so chests a step away from a station feed it too. An
+  existing .cfg keeps the value it has.
+
 ## 1.7.0
 - Capacity: `OpenKeep.Stations.yml` sets how much each workstation holds: `items:` (ore, wood, flax, barley) and
   `fuel:` (coal, wood) for the smelter, blast furnace, charcoal kiln, eitr refinery, spinning wheel, windmill, hot tub

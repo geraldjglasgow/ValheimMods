@@ -2,13 +2,17 @@
 
 Storage and inventory for Valheim in one mod: craft, build and feed stations straight from nearby chests, ship
 holds and carts; stow, top up, sort, junk and route from the inventory panel; a Salvage tab that gives
-materials back; stack sizes and weights; bigger chests with their contents on hover; carts that carry a
+materials back; a `- amount +` stepper to craft many at once; stack sizes and weights; bigger chests with their contents on hover; carts that carry a
 workbench; how much each smelter and kiln holds; a sign above every chest that names what is inside; and a few base
 tweaks: respawn at your nearest bed, campfires on wooden floors, honey per day, fires that refuel from nearby chests,
-smelters and kilns that feed themselves from the chests beside them, torches lit only at night (or kept lit),
+smelters and kilns that feed themselves from the chests beside them, tamed animals that eat from nearby chests,
+torches lit only at night (or kept lit),
 Rested sooner and area repair with the hammer. Every gameplay setting is server synced and lockable, every hotkey is
 per player, and everything is tunable in the config file and seven YAML files that hot reload. Convenience features are on by default; anything
 that changes balance (stack sizes, weights, chest sizes) defaults to vanilla.
+
+Looking for a bigger inventory, labelled armour, utility, food and ammo slots, a key ring or backpacks? They are in
+the companion mod PackPanel, which works with OpenKeep or on its own (see "With PackPanel" below).
 
 ### Reach: craft from storage
 - Wherever the game counts what you carry (crafting rows, the craft and upgrade buttons, the hammer's piece list
@@ -46,9 +50,13 @@ turn it off when another mod keeps items in extra slots the sort would pull out,
 stack, store all, dump and sort work only on the rows the game gives you (four, more once you buy them from the
 trader). Mods that add equipment, food or ammo slots keep them in rows below those, so these actions leave the
 slots alone, and top up still refills the food and ammo there. If a mod adds ordinary inventory rows you want
-stowed and sorted too, set `Main Inventory Rows` to the number of rows to use. What you never want to keep is junk: mark an item with `J`, and
+stowed and sorted too, set `Main Inventory Rows` to the number of rows to use; with PackPanel they use its whole
+grid by themselves. What you never want to keep is junk: mark an item with `J`, and
 `Destroy Junk` (Shift + Delete) destroys every junk stack in one go; `Trash Key` (Delete) destroys the hovered
-stack and the trash can takes a dragged one, at once (turn on `Confirm Trash` for the game's popup first). What does not belong in
+stack and the trash can takes a dragged one, at once (turn on `Confirm Trash` for the game's popup first).
+Shift + click on the trash can starts trash mode: the pointer becomes the trash can and every stack you click in the
+inventory or the open chest is destroyed, with no question asked (favourites and worn items are kept); let go of
+Shift to stop. What does not belong in
 the open chest is routed: Ctrl + click sends a stack to the nearest container that holds the item, an item of its
 group, or accepts it in `OpenKeep.Stow.yml`; Store one (`V`) sends a single item; Find (`Z`) marks every nearby
 container holding the hovered item with a line and a count; Dump (Alt + D) quick stacks to every nearby container
@@ -74,6 +82,23 @@ hovered stack after confirmation. If the materials do not fit, nothing happens.
 
 With EliteCrafting installed: OpenKeep salvages ordinary crafted items into materials and leaves EliteCrafting's
 magic items alone; those are ground into shards by EliteCrafting's own Salvage key.
+
+### Batch crafting: craft many at once
+The Craft tab of every workbench, forge, cauldron and other crafting station, and crafting by hand, gets `-` and `+`
+buttons with the amount between them, left of the Craft button. Set the amount and press Craft once: that many are
+made in one bar. The requirement rows show the materials for the whole batch, and a recipe that makes several (20
+arrows) makes that many per step; the name above shows the total.
+- Click `-` or `+` to change the amount by one. Hold Shift to go by tens (1, 10, 20 ...), hold Ctrl for 1 or for
+  as many as you can make. Or click the number, type an amount and press Enter. On a gamepad the D-pad's left and
+  right step the amount.
+- `+` and a typed amount stop at what you can make: your materials (with Reach, the chests around you too), room in your inventory,
+  and `Max Amount` (100). The amount goes back to 1 when you pick another recipe and drops by itself once the
+  materials run out.
+- It is the game's own multi-craft (Shift + Craft makes 5 in vanilla) with a chosen amount: every item costs, earns
+  skill and rolls the crafting bonus as if crafted alone; one bar takes the game's multi-craft time. Hold Reach's
+  `Pull Modifier` (Alt) as you press Craft and the materials for the whole batch move into your inventory first.
+- Not on the Upgrade tab (the game has no multi-upgrade) or the Salvage tab. `Enabled = false` brings back the
+  game's panel and Shift + Craft.
 
 ### Stacks: stack sizes and weights
 `Stack Multiplier` and `Weight Multiplier` (both 1 by default) scale every item; `OpenKeep.Stacks.yml` sets
@@ -143,7 +168,7 @@ chest someone else is using is refused. Crafting, building and station feeding n
 another player is using, whatever the mode, so a requirement is never shown as covered by an item the other
 player may take first. Both players need the mod; a player without it gets the game's usual refusal.
 
-### Homestead: beds, campfires on wood, honey, fires, torches, stations, rest and repair
+### Homestead: beds, campfires on wood, honey, fires, torches, stations, rest, repair and pets
 Section `8. Homestead`, synced from the server like every gameplay setting.
 
 - Beds (`Nearest Bed Respawn`, on): every bed you own is a spawn bed. When you die you wake in your own bed
@@ -187,14 +212,16 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
   at nightfall and once at daybreak, so a fire you can switch by hand (the resin candle) keeps your choice until the
   next one. With `Torches Night Only` off every torch simply burns and the key does nothing; torches kept lit stay
   marked for when it is on again.
-- Stations that feed themselves (`Auto Feed Stations`, on; `Auto Feed Range`, 2 m; `Auto Feed Skip`): every smelter,
+- Stations that feed themselves (`Auto Feed Stations`, on; `Auto Feed Range`, 4 m; `Auto Feed Skip`; `Auto Feed Leave`, 1): every smelter,
   blast furnace, charcoal kiln, eitr refinery, spinning wheel, windmill and hot tub you built (modded stations of the
   same kind too) takes what it works (ore, scrap, wood, soft tissue, flax, barley) and its fuel (coal, sap, wood) from
-  the containers beside it. The range runs from the station's outer edge to the middle of a container, so 2 m
-  reaches the chests standing next to even a big station. While there is room the station takes one item and one
+  the containers beside it. The range runs from the station's outer edge to the middle of a container, so 4 m
+  reaches the chests standing around even a big station, a step away too. While there is room the station takes one item and one
   fuel a second, as if someone fed it by hand, and then one of each as it works them off; with the chests stocked
   it never stops. `Auto Feed Skip` names items it never takes (default `FineWood, RoundLog`, so the charcoal kiln
-  burns only plain wood; you can still put them in by hand). Cooking stations, ovens and fermenters are not fed. The
+  burns only plain wood; you can still put them in by hand). `Auto Feed Leave` is how many of each item stay in every
+  chest (1: the chest keeps its last ore, wood or coal, so quick stack still sends that item to it; 0: it empties;
+  feeding by hand is not limited). Cooking stations, ovens and fermenters are not fed. The
   same rules as fires apply: `stations:` in `OpenKeep.Reach.yml` (`enabled: false` stops a station, `allow`/`deny`
   narrow what it takes), `containers:`, the switches of section 0, and the access of whoever's game runs the station.
 - Rested sooner (`Rested Delay`, 5 s): the Rested buff comes after this many seconds of resting instead of the
@@ -207,6 +234,24 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
   stonecutter) and access to any ward it stands in; the others are skipped quietly. The swing costs the stamina and
   hammer wear of one repair, the extra pieces are free, and a line under the game's own says how many were repaired
   too. Hitting a piece that needs no repair repairs nothing around it. Ships and carts are never repaired this way.
+- Pets eat from chests (`Pets Eat From Chests`, on; `Pet Chest Range`, 10 m): a hungry tamed animal (wolf, boar, lox,
+  hen, asksvin, any modded tame) walks to a container within range that holds food it eats and eats one item from
+  it, just as it eats from the ground, so its fed timer starts again and tames in a pen stay fed from a stocked chest.
+  Food on the ground near it still comes first, and animals still being tamed eat only from the ground. The same
+  rules as fires apply: `containers:` in `OpenKeep.Reach.yml`, the switches of section 0, and the wards and chest
+  access of whoever's game runs the animal.
+
+### With PackPanel
+PackPanel is a separate mod for the player's own inventory: a bigger grid, labelled slots for armour, a backpack,
+worn utilities, food, meads and ammo, a coin purse, a key ring, craftable backpacks and a new look. OpenKeep needs
+none of it, and PackPanel works without OpenKeep. With both installed they fit together by themselves:
+
+- The button row (`Quick stack`, `Store all`, `Top up`, `Sort`) sits inside the inventory panel, under the grid, and
+  the trash can joins it right of `Sort`.
+- Quick stack, store all, dump and sort work on PackPanel's whole grid, a backpack's rows included, and never touch
+  its slots or its key ring; so does a shared chest's stack all. Top up still refills the food and ammo in the slots.
+- PackPanel's `Key Stack` is written by OpenKeep's `4. Stacks` like any stack size, so an `OpenKeep.Stacks.yml` entry
+  for a key still wins.
 
 ### Hotkeys (per player, not synced)
 
@@ -236,7 +281,8 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
 | `8. Homestead / Torch Switch Key` | O | outside the inventory, looking at a torch: keep it lit day and night, or put it back on the night schedule |
 
 Single keys fire only while no Shift, Ctrl or Alt is held, so `F` and `Shift + F` never clash; they work while the
-inventory is open, except `Torch Switch Key`, which works only outside it, looking at a torch.
+inventory is open, except `Torch Switch Key`, which works only outside it, looking at a torch. A key with modifiers
+(`LeftAlt + D`) fires while you walk: other keys may be held, other modifiers may not.
 
 ### Config file
 `BepInEx/config/milkyteam.openkeep.cfg`, written on first start. Sections: `0. Containers` (`Ships`, `Carts`,
@@ -244,9 +290,11 @@ inventory is open, except `Torch Switch Key`, which works only outside it, looki
 Stacks` and `4b. Item Weights` when per item entries are on), `5. Capacity`, `6. Carts`, `7. Signs` (`Enabled`,
 `Show Counts`, `Max Items`, `Max Characters`, `Update Seconds`, `Height`, `Rotation`, `Empty Text`), `8. Homestead`
 (`Nearest Bed Respawn`, `Build On Wood`, `Honey Per Day`, `Honey Per Player Online`, `Auto Fuel`, `Auto Fuel Range`,
-`Torches Night Only`, `Torch Pieces`, `Torch Margin`, `Auto Feed Stations`, `Auto Feed Range`, `Auto Feed Skip`, `Rested Delay`, `Area Repair`; per player `Torch Switch Key`),
+`Torches Night Only`, `Torch Pieces`, `Torch Margin`, `Auto Feed Stations`, `Auto Feed Range`, `Auto Feed Skip`, `Auto Feed Leave`, `Rested Delay`, `Area Repair`,
+`Pets Eat From Chests`, `Pet Chest Range`; per player `Torch Switch Key`),
 `9. Shared`
-(`Request Timeout`, `Touch Seconds`; per player `Show Touches`, `Touch Colour`), and `General / Lock Configuration`.
+(`Request Timeout`, `Touch Seconds`; per player `Show Touches`, `Touch Colour`), `10. Batch Crafting` (`Enabled`,
+`Max Amount`), and `General / Lock Configuration`.
 Every entry has a description in the file. Gameplay settings are synced from the server and locked; keys,
 display formats, confirmations, sort orders and colours are yours.
 
