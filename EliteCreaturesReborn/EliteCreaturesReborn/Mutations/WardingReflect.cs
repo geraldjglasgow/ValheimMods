@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Mutations
     /// the base hit: what the hit actually took from the creature's health after its resistances and armour, with the
     /// game's sneak-attack and staggered-target bonuses divided back out and nothing counted past the health it had
     /// left, times the reflect percentage. That is then capped at <c>max reflect</c> percent of the ATTACKER's maximum
-    /// health, never enhanced, so no sneak attack, big weapon or large star can turn a reflect into a one-shot.
+    /// health per second, across every hit and every Warding creature together (<see cref="ReflectBudget"/>), never
+    /// enhanced, so no sneak attack, big weapon, large star or many-projectile volley can turn reflects into a one-shot.
     /// <para>
     /// Both bonuses are applied inside <c>Character.RPC_Damage</c> through <c>HitData.ApplyModifier</c>, on the same
     /// hit object the postfix sees: the backstab bonus (<c>hit.m_backstabBonus</c>) in the one branch that also
@@ -68,7 +69,7 @@ namespace EliteCreaturesReborn.Mutations
             {
                 return;
             }
-            float amount = Capped(controller, attacker, BaseHit(victim, hit, before));
+            float amount = Capped(controller, attacker, hit.m_attacker, BaseHit(victim, hit, before));
             if (amount <= 0f)
             {
                 return;
@@ -118,13 +119,16 @@ namespace EliteCreaturesReborn.Mutations
             return hit.GetTotalDamage() - boosted + boosted / Mathf.Max(bonus, 1f);
         }
 
-        /// <summary>The reflect share of the base hit, at most max reflect percent of the attacker's health.</summary>
-        private static float Capped(EliteController controller, Character attacker, float baseHit)
+        /// <summary>
+        /// The reflect share of the base hit, cut to what is left of the attacker's budget: max reflect percent of its
+        /// health in any one second, however many hits landed in it.
+        /// </summary>
+        private static float Capped(EliteController controller, Character attacker, ZDOID attackerId, float baseHit)
         {
             float reflect = Enhance.Magnitude(controller.Rules, controller.Traits, Mutation.Warding, Fields.Reflect);
             float ceiling = controller.Rules.PowerOf(Mutation.Warding, Fields.MaxReflect); // never enhanced: a ceiling
             float amount = baseHit * reflect / 100f;
-            return ceiling > 0f ? Mathf.Min(amount, attacker.GetMaxHealth() * ceiling / 100f) : amount;
+            return ceiling > 0f ? ReflectBudget.Take(attackerId, amount, attacker.GetMaxHealth() * ceiling / 100f) : amount;
         }
 
         private static HitData Reflected(Character victim, Character attacker, float amount)

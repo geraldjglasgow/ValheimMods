@@ -42,7 +42,7 @@ the balancing lever for mutations is how often they appear, not making each one 
 
 ## When it fires
 
-**On every strike it lands on a player that deals damage**, until its pouch is full.
+**On every melee strike it lands on a player that deals damage**, until its pouch is full.
 
 **The pouch holds one item per star**, never fewer than `max items` (1 by default) and never more than 8. An
 unstarred or one-star thief robs you once, on the first landed hit of the fight, and nothing afterwards; a
@@ -50,14 +50,20 @@ three-star thief robs you three times. The danger grows with the stars, the way 
 does. *Judgement call:* capacity is `max(max items, stars)`, then capped at 8, so `max items` is the floor for every
 thief rather than the limit for all of them.
 
-- A hit that deals **no damage to health** - fully blocked, fully parried, fully resisted - takes nothing. You
-  stopped the blow; you stopped the hand that came with it. *Judgement call.* The alternative, stealing on
-  contact regardless, makes blocking feel broken.
+- A hit that deals **no damage to health** - fully resisted - takes nothing, and neither does a hit you **parry**
+  or **dodge through**. You stopped the blow; you stopped the hand that came with it. *Judgement call.* The
+  alternative, stealing on contact regardless, makes blocking feel broken. The game's block works like armour and
+  never takes a hit to zero, so a parry still lets a sliver of damage through; it is ruled out as a parry, not by
+  the damage left over. An ordinary block that lets damage through still steals. A parry counts whenever the game
+  counts it, including a window another mod has widened.
 - A hit that deals damage takes exactly **one item**, never two, whatever the damage was.
 - There is **no cooldown and no chance roll**. The pouch's size is the whole limit. A separate per-strike chance
   would be a second dial doing the first one's job.
-- **Ranged and area hits count**, if they damage the player. A Thieving Fuling's spear takes something from
-  across the clearing, and a player who has been robbed by a thrown rock understands the mutation immediately.
+- **Only melee hits count.** A thrown stone, a spear, an arrow or an area blast takes nothing, however much it
+  hurts: the thief has to reach you. *Decided with the author 2026-09-28*, reversing the first version, where a
+  Greydwarf's thrown rock robbed players from across the clearing. The test is the game's own `HitData.m_ranged`,
+  which every projectile and area-of-effect hit carries; a creature's area swing (a troll's slam) is not ranged
+  and counts as melee.
 - **A creature whose pouch is full stops stealing entirely.** It never swaps, upgrades or drops what it holds to
   make room. The first things it took are the things it keeps.
 
@@ -68,9 +74,23 @@ is chosen **uniformly at random**.
 
 | Order | Pool |
 | --- | --- |
-| 1 | Every **unequipped** item in the inventory grid **below the hotbar row** |
-| 2 | Every **unequipped** item in the **hotbar row** |
+| 1 | Every **unequipped** item in the player's own grid **outside the hotbar** |
+| 2 | Every **unequipped** item in the **hotbar** (row 0's first eight cells, the ones the 1-8 keys use) |
 | - | If both pools are empty, **nothing is taken** and the hit is otherwise ordinary |
+
+A grid wider than eight (PackPanel's) has ordinary cells right of the hotbar on the top row; they are in the first
+pool, robbed before the hotbar like any other cell.
+
+**With PackPanel, only the main grid.** PackPanel keeps its slots - worn armour and utilities, the Backpack slot,
+food, mead, ammo, the coin purse, the key ring and the tacklebox - as cells of the same inventory, in the rows under
+the main grid, and publishes where the main grid ends (the character's custom data `PackPanel.mainGrid`, read through
+the `PlayerGrid` library, trusted only while PackPanel is loaded and its `1. Inventory / Enabled` is on). Nothing
+below the main rows is in either pool. *Decided with the author 2026-09-28*: the slot panel is the arranged kit, like
+the hotbar but more so, and several of its slots hold items the game does not mark equipped - a worn backpack lies in
+its slot unequipped, and taking it would shrink the grid and throw the pack's contents on the ground. A worn backpack's
+own rows are part of the main grid, so what is inside a pack can be taken; the pack itself never. **Check first,
+take second** holds here too: while PackPanel lays the inventory out but its grid cannot be read, the hit takes
+nothing rather than risk a slot.
 
 **It never takes equipped gear.** Not the weapon in your hands, not your shield, not armour, not a utility item,
 not an equipped tool - wherever that item physically sits in the grid. Being disarmed mid-fight by a Greyling is
@@ -425,9 +445,12 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 ## The theft
 
-- [ ] Steals on a landed hit that deals damage; takes nothing on a fully blocked hit
+- [ ] Steals on a landed melee hit that deals damage; takes nothing on a ranged, parried or dodged hit
 - [ ] Pool order: backpack unequipped, then hotbar unequipped, then nothing
 - [ ] Never takes equipped gear, wherever it sits in the grid
+- [ ] With PackPanel: never takes from a slot (gear, Backpack, food, mead, ammo, purse, key ring, tacklebox); a worn
+  pack's rows can be robbed, the pack never; a 10-wide grid's (9,0) goes before the hotbar; PackPanel disabled in
+  r2modman steals as before
 - [ ] Takes the whole stack, preserving quality, durability, variant, crafter and custom data
 - [ ] Holds one item per star, never fewer than `max items`, never more than 8; stops when full and never swaps
   what it holds
@@ -482,3 +505,5 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-17 | File written. Mutation specified end to end; name, equipped-gear rule, whole-stack rule and the always-drop rule decided with the author. Nothing built. | - |
 | 2026-09-17 | Built end to end: the steal (`Patches/ThievingHitPatch.cs`), the pouch (`Mutations/PouchStore.cs`, `PouchDrop.cs`), the two-authority RPC (`Runtime/ThievingRpc.cs`), the despawn path (`Patches/ThievingDespawnPatch.cs`), death/purge wiring, nameplate icons (`Display/PouchIcons.cs`), config, `elite inspect`/`elite spawn`/`elite purge`, and all six other feature files. Decisions in `../DECISIONS.md`. Builds clean, 0 warnings. Not yet tested live. | - |
 | 2026-09-27 | 3.9.0: the pouch holds one item per star, with `max items` as the floor and 8 the cap; the four-icon limit is gone - every item shows while there is room, shrinking to vanilla star size before the oldest drop off; `elite inspect` lists the whole pouch; a thief despawning at dawn with a player nearby no longer drops (and duplicates) its pouch on every step. Decisions in `../DECISIONS.md` under 3.9.0. Built, not tested in game. | - |
+| 2026-09-28 | A parry no longer steals (player complaint): the game's block never reaches zero damage, so the "no damage" test never fired; the parry is now read inside `Humanoid.BlockAttack` (`Patches/ThievingParryPatch.cs`). A dodge roll's i-frames no longer steal either: the postfix ran after `RPC_Damage`'s early return with the damage untouched. Only melee hits steal now (`!hit.m_ranged`), so a Greydwarf's thrown stone takes nothing. Built, not tested in game. | - |
+| 2026-09-28 | Never robs PackPanel's slots (the author's call): the pools stop at PackPanel's main rows, read from `PackPanel.mainGrid` through the new `ValheimModLibs/PlayerGrid` library (`PackPanelGrid.TryMainRows`, nothing taken when PackPanel is on and the key unreadable); the hotbar is row 0's first eight cells, so a wider grid's top-row cells right of it go first. Built (0 warnings, from a copy without the untracked creature leftovers), not tested in game. | - |

@@ -138,6 +138,10 @@ bosses:
         summons: [SeekerBrute, Seeker]
       - match: Fader
         summons: [Charred_Melee, Charred_Archer]
+      # Elite Creatures Pack's kraken holds one ship with one health bar, so it
+      # never comes as a Twin and never splits off Phantom copies.
+      - match: ECP_Kraken
+        aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal]
 
 ";
     }

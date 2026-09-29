@@ -4,6 +4,7 @@ using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using HarmonyLib;
 using PatchGuard;
+using PlayerGrid;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Patches
@@ -16,25 +17,32 @@ namespace EliteCreaturesReborn.Patches
     /// <para>
     /// Check first, take second: the creature's ZNetView must be valid before anything is touched, and the pouch's
     /// resolved room (one item per star, at least `max items`) is read from the creature's ZDO (any client can read a
-    /// ZDO) before an item is ever removed. A landed hit takes at most one item however much room is left, so a 3-star
-    /// thief needs three hits to fill its pouch. A hit that deals no damage, a creature already full, or a player
-    /// carrying nothing unequipped are all ordinary hits - nothing here ever discards an item; not-taking it is always
-    /// safe.
+    /// ZDO) before an item is ever removed. A landed melee hit takes at most one item however much room is left, so a
+    /// 3-star thief needs three hits to fill its pouch. A ranged or area hit, a hit that deals no damage, a hit dodged or
+    /// parried, a creature already full, or a player carrying nothing unequipped in their own grid (PackPanel's slots
+    /// never count) are all ordinary hits - nothing here ever discards an item; not-taking it is always safe.
     /// </para>
     /// </summary>
     [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class ThievingHitPatch
     {
+        private const int HotbarWidth = 8;
+
         private static int _counter;
 
-        private static void Postfix(Character __instance, HitData hit) =>
-            Guard.Run("Character.RPC_Damage thieving", () => TrySteal(__instance, hit));
+        // Read before the game touches the hit: RPC_Damage drops a dodgeable hit that meets a dodge roll's i-frames
+        // without applying anything, but this postfix still runs after that early return, with the damage untouched.
+        private static void Prefix(Character __instance, HitData hit, out bool __state) =>
+            __state = Guard.Run("Character.RPC_Damage thieving dodge",
+                () => hit != null && hit.m_dodgeable && __instance.IsDodgeInvincible());
 
-        private static void TrySteal(Character victim, HitData hit)
+        private static void Postfix(Character __instance, HitData hit, bool __state) =>
+            Guard.Run("Character.RPC_Damage thieving", () => TrySteal(__instance, hit, __state));
+
+        private static void TrySteal(Character victim, HitData hit, bool dodged)
         {
             ZNetView victimView = victim.GetComponent<ZNetView>();
-            if (hit == null || hit.GetTotalDamage() <= 0f || !victim.IsPlayer()
-                || victimView == null || !victimView.IsValid() || !victimView.IsOwner())
+            if (!Landed(hit, dodged) || !victim.IsPlayer() || victimView == null || !victimView.IsValid() || !victimView.IsOwner())
             {
                 return; // only the robbed player's own client decides this, and only on a landed, damaging hit
             }
@@ -45,6 +53,12 @@ namespace EliteCreaturesReborn.Patches
             }
             Steal(victim, thief);
         }
+
+        // Only a melee strike steals: the game marks every projectile and area-of-effect hit m_ranged (a Greydwarf's
+        // thrown stone included) and sends the flag with the hit. A parry still lets a sliver of damage through (see
+        // ThievingParryPatch), so it is ruled out by name, not by the damage left over.
+        private static bool Landed(HitData hit, bool dodged) =>
+            hit != null && !hit.m_ranged && !dodged && !ThievingParryPatch.Parried(hit) && hit.GetTotalDamage() > 0f;
 
         // A resolved, Thieving, un-tamed creature; null otherwise. Tamed is checked here because vanilla taming is
         // live today independent of this mod's own (unbuilt) taming feature - the spec's "never steals, from its
@@ -84,37 +98,45 @@ namespace EliteCreaturesReborn.Patches
             Take(victim, thief, creatureView, item);
         }
 
-        // Pool order: every unequipped item below the hotbar row (grid y != 0), then the hotbar row (y == 0) only if
-        // the first pool is empty. Row 0 is confirmed as the hotbar row by Inventory.GetHotbar/GetBoundItems, both of
-        // which key off m_gridPos.y == 0.
+        // Pool order: every unequipped item of the player's own grid outside the hotbar, then the hotbar's only if the
+        // first pool is empty. PackPanel's slots (worn gear, the backpack, food, mead, ammo, the purse, the key ring, the
+        // tacklebox) are cells of the same inventory below its main rows and are in neither pool; while PackPanel lays
+        // the inventory out but its grid cannot be read, nothing is taken at all rather than a slot risked.
         private static ItemDrop.ItemData? PickItem(Character victim)
         {
-            Humanoid? humanoid = victim as Humanoid;
-            List<ItemDrop.ItemData>? all = humanoid != null ? humanoid.GetInventory()?.GetAllItems() : null;
+            if (!(victim is Player player) || !PackPanelGrid.TryMainRows(player, out int mainRows))
+            {
+                return null;
+            }
+            List<ItemDrop.ItemData>? all = player.GetInventory()?.GetAllItems();
             if (all == null)
             {
                 return null;
             }
-            List<ItemDrop.ItemData> pool = Filter(all, hotbar: false);
+            List<ItemDrop.ItemData> pool = Filter(all, mainRows, hotbar: false);
             if (pool.Count == 0)
             {
-                pool = Filter(all, hotbar: true);
+                pool = Filter(all, mainRows, hotbar: true);
             }
             return pool.Count > 0 ? pool[Random.Range(0, pool.Count)] : null;
         }
 
-        private static List<ItemDrop.ItemData> Filter(List<ItemDrop.ItemData> all, bool hotbar)
+        private static List<ItemDrop.ItemData> Filter(List<ItemDrop.ItemData> all, int mainRows, bool hotbar)
         {
             List<ItemDrop.ItemData> pool = new List<ItemDrop.ItemData>();
             foreach (ItemDrop.ItemData item in all)
             {
-                if (!item.m_equipped && (item.m_gridPos.y == 0) == hotbar)
+                if (!item.m_equipped && item.m_gridPos.y < mainRows && InHotbar(item.m_gridPos) == hotbar)
                 {
                     pool.Add(item);
                 }
             }
             return pool;
         }
+
+        // The hotbar is row 0's first eight cells, the ones the 1-8 keys use (Inventory.GetHotbar counts to 8); a grid
+        // wider than 8 (PackPanel's) has ordinary cells right of it, robbed before the hotbar like any other.
+        private static bool InHotbar(Vector2i cell) => cell.y == 0 && cell.x < HotbarWidth;
 
         private static void Take(Character victim, EliteController thief, ZNetView creatureView, ItemDrop.ItemData item)
         {

@@ -26,11 +26,11 @@ Thirteen, one per creature by default, each with its own colour and its own name
 | Cloaked | Invisible beyond 10 metres (15 for trolls and lox); drakes are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again |
 | Leeching | Regenerates, and heals from the damage it deals |
-| Warding | Reflects part of each hit back, never more than 7.5% of your maximum health, and knocks you back |
+| Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
 | Plated | Armoured while healthy, hits harder as that armour goes |
 | Miasmic | Trails poison clouds; poisons players, never creatures |
 | Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you |
-| Thieving | Steals an item with each landed hit, up to one per star (at least one), and carries them on its nameplate; kill it to get everything back |
+| Thieving | Steals an item with each melee hit that lands (not thrown stones, not a parried or dodged blow), up to one per star (at least one), and carries them on its nameplate; kill it to get everything back |
 | Gilded | Glitters gold, never attacks a player and runs from any it sees; drops three times its loot plus a purse of coins |
 | Blinking | Every 30 seconds of a fight it reappears behind its target, after a flash and a chime at the spot; 25% less health |
 | Relentless | Once it picks you it keeps coming, seen or not, until you are 150 m away; sneaking does not hide you; never faster than its base speed |
@@ -59,8 +59,9 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   before regen resumes; `lifesteal` percent of damage dealt returned as health (enhanced)
 - **Warding** - `reflect` percent of the base hit returned (enhanced). The base hit is the health the hit actually
   took off the creature, after its resistances and armour, without the sneak-attack or stagger bonus; a hit that
-  took no health reflects nothing. `max reflect` caps any one reflect at that percent of the attacker's maximum
-  health, before the attacker's own armour (never enhanced; 0 removes the cap); `knockback` force on a melee
+  took no health reflects nothing. `max reflect` caps everything reflected to one attacker in any one second at
+  that percent of the attacker's maximum health, however many hits land and however many Warding creatures they land
+  on, before the attacker's own armour (never enhanced; 0 removes the cap); `knockback` force on a melee
   attacker (enhanced)
 - **Plated** - `armour` percent of incoming damage cut at full health, to 0 hurt (enhanced); `max reduction` hard
   ceiling on that percent, so enhancement cannot approach invulnerability; `damage` percent bonus at zero health,
@@ -74,8 +75,9 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
   `devour cooldown` seconds after a meal before it can eat again
 - **Thieving** - it holds one item per star; `max items` is the fewest it holds whatever its stars (enhanced),
-  and 8 is the most. It never takes equipped gear or more than one item per landed hit, and gives back everything
-  it holds when it is killed
+  and 8 is the most. It never takes equipped gear or more than one item per landed melee hit, and gives back everything
+  it holds when it is killed. With PackPanel it takes only from your main grid, never from PackPanel's slots (gear,
+  backpack, food, mead, ammo, coin purse, key ring, tacklebox)
 - **Gilded** - `loot` multiplier on its drops (enhanced), applied in every loot mode; `bonus item` the item prefab
   of its purse and `bonus amount` how many per star plus one (enhanced), never multiplied and capped at 100;
   `flee distance` metres within which it runs from a player it can see; `glitter effect` the vanilla prefab it
@@ -106,9 +108,11 @@ rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffect
 what they rolled - the tier decides what the next one rolls. A world that killed bosses before the mod was installed
 starts at that tier.
 
-The inventory shows the tier on a plate with a globe under the weight ("3/7"); the armor and weight plates move up
-to make room, and every plate on that side names itself when hovered. `Show world tier` in the .cfg hides the plate
-for one player. With OpenKeep installed its trash plate joins the same column.
+The inventory shows the tier in a box with a globe ("3"), under the armor and weight in a column of small boxes down
+the outside of the inventory panel's right edge. Every box in the column names itself when hovered, and the tier's
+says how many tiers there are in total. With OpenKeep installed its trash plate joins the same column. The tier also
+shows in a small box under the minimap, so it is in view without opening the inventory. `Show world tier` and
+`Show world tier under minimap` in the .cfg hide the one or the other for one player.
 
 `elite tier` shows any player the current tier, what it is doing to the rolls, and which bosses count. The
 `world tiers:` block in the rule file has the off switch, the list of bosses that count (a modded boss counts once
@@ -174,6 +178,13 @@ Type `/damage` in chat, or `damage` in the F5 console, to see the latest board a
 has faded or you turned the board off. Any player can. A player who joined after the kill gets the board from the
 server, which remembers the latest one until it restarts.
 
+## New creatures
+
+The crypt mimic, the Greydwarf Slinger, the Rime Giant and the Kraken are a separate mod, **Elite Creatures Pack**.
+Neither needs the other; with both installed they roll stars and mutations like any creature, and a mimic shows none
+of it until it wakes. The Kraken is a boss here, with boss stars and an aspect, but never Twin or Phantom: it holds
+one ship with one health bar.
+
 ## Loot
 
 What a kill drops is governed by a `loot:` block in the rule file. Four modes, chosen for the whole world:
@@ -197,10 +208,13 @@ Two files, both written and documented on first run, both hot-reloaded while you
 
 - `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` — each player's display preferences: star colours and sizes,
   whether trait names show, nameplate distance, effect density, stolen-item icons, the boss damage board, the world
-  tier plate, and a diagnostics switch.
+  tier plate and the tier box under the minimap, and a diagnostics switch.
 - `BepInEx/config/creature_rules.yml` — the rules: star chances, star power, mutation chances and strength per biome
   and per creature, a `mutations enabled` switch that turns any mutation off everywhere, and the boss stars and
   aspects, world tiers, breeding, loot and respawning blocks, each with its own off switch.
+
+A saved rule change reaches creatures already in the world as they act (a mutation's strength, Warding's cap); their
+stars, mutations, health, size and speed stay as they were until they next load.
 
 A server binds connected players to its rule file. Display preferences stay with each player and are never locked.
 

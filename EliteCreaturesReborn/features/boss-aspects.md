@@ -452,6 +452,11 @@ bosses:
   take it out of the rotation. So an older rule file still rolls the five new aspects at 10 each, and keeps its own
   `none: 20`.
 - `per boss` narrows one boss's rotation (`none` stays in unless its weight is 0) and sets what Summoner calls.
+- **Elite Creatures Pack's kraken** (`ECP_Kraken`) never rolls Twin or Phantom (decided with the user, 2026-09-28: it
+  holds one ship with one health bar, a Twin put two on one Karve in the first test, and Phantom copies would swarm the
+  deck). It is a built-in `per boss` entry, so a rule file written before it still has it, and a new rule file lists
+  it; an entry of the server's own for `ECP_Kraken` with `aspects:` replaces it. Only the prefab name crosses: without
+  that mod the entry is never matched.
 - `elite inspect` reports a boss's aspect, what it does with the live numbers, its loot multiplier, for a Twin or a
   Phantom copy whom it is tied to, for an Adaptive boss the type it resists now ("resisting now: fire"), and for a
   Fixated boss whom it has marked and how long ago ("marked: Gerald (12 s ago)"). `elite spawn <boss> <stars>

@@ -23,7 +23,8 @@ namespace EliteCreaturesReborn.Patches
         private static string Decorate(Character character, string name)
         {
             EliteController controller = character.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready || !Config.Configuration.ShowTraitNames.Value || !Within(character))
+            if (controller == null || !controller.Ready || !Config.Configuration.ShowTraitNames.Value || !Within(character)
+                || Disguise.Holds(character)) // a dormant mimic keeps the chest's name, undecorated
             {
                 return name;
             }

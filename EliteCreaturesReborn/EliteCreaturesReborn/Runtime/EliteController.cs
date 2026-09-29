@@ -23,6 +23,7 @@ namespace EliteCreaturesReborn.Runtime
         private BaseSpeeds _baseSpeeds;
         private bool _ready;
         private bool _pending;
+        private bool _dressPending;
         private bool _movementClamped;
         private CreatureTraits? _forced;
         private Aspect? _forcedAspect;
@@ -57,6 +58,7 @@ namespace EliteCreaturesReborn.Runtime
             EliteRpc.EnsureRegistered();
             CreatureRpc.Register(_nview, _character, this); // on every machine, so a routed command reaches the owner
             ThievingRpc.Register(_nview, this); // same shape: the robbed player's client routes a steal to the owner
+            RuleState.Changed += OnRulesChanged;
             if (!TryResolve())
             {
                 _pending = true; // a non-owner meeting an unrolled creature: wait, then apply exactly once
@@ -67,13 +69,34 @@ namespace EliteCreaturesReborn.Runtime
 
         // Runs only while pending: it polls the ZDO until the owner's roll arrives (or until this machine becomes the
         // owner and rolls it itself), then applies once and stops. No flicker: the creature is plain until this fires.
+        // It also runs while a disguised creature (a dormant Elite Creatures Pack mimic) waits to be dressed, and dresses it once it wakes.
         private void Update()
         {
             if (_pending)
             {
                 Guard.Run("EliteController.Resolve", PollResolve);
             }
+            else if (_dressPending && !Disguise.Holds(_character))
+            {
+                _dressPending = false;
+                Guard.Run("EliteController.Dress", Dress);
+                enabled = false;
+            }
         }
+
+        private void OnDestroy() => RuleState.Changed -= OnRulesChanged;
+
+        // An edited or newly synced rule file reaches creatures already loaded: every power read from Rules as it acts
+        // (Warding's reflect and its ceiling, Leeching, knockback...) takes the new value at once. What was applied
+        // from the rules when it loaded (health, size, speed) stays until the creature next loads.
+        private void OnRulesChanged() => Guard.Run("EliteController.Rules", () =>
+        {
+            ZDO? zdo = _ready && _nview != null && _nview.IsValid() ? _nview.GetZDO() : null;
+            if (zdo != null)
+            {
+                Rules = ResolveRules(TraitStore.GetBiome(zdo));
+            }
+        });
 
         private void PollResolve()
         {
@@ -163,17 +186,32 @@ namespace EliteCreaturesReborn.Runtime
         /// </summary>
         public void ForceAspect(Aspect aspect) => _forcedAspect = aspect;
 
+        // The numbers apply at once, so a hit that wakes a disguised creature is already scaled and its health is not
+        // refilled on waking. What can be seen - size, the star look, the mutation and aspect behaviours - waits while a
+        // disguise holds (Update dresses it on waking): a dormant mimic must look exactly like the chest it copies.
         private void Apply()
         {
             _baseSpeeds = BaseSpeeds.Capture(_character);
             SwingSpeedFactor = StatMath.SwingSpeedMultiplier(Rules, Traits);
-            StatApplier.ApplySize(_character, Rules, Traits); // local, deterministic: every machine scales its own copy
-            StarLook.Apply(_character, Traits.Stars); // the game's tint for the stars, before any mutation reads materials
             RefreshMovement(0f);
             if (_nview.IsOwner())
             {
                 StatApplier.ApplyHealth(_character, Rules, Traits, FreshlyResolved); // owner writes s_maxHealth; others read it
             }
+            _ready = true;
+            if (Disguise.Holds(_character))
+            {
+                _dressPending = true; // keep polling in Update until it wakes
+                return;
+            }
+            Dress();
+            enabled = false; // resolution is done; stop the poll. Other components still read this via GetComponent.
+        }
+
+        private void Dress()
+        {
+            StatApplier.ApplySize(_character, Rules, Traits); // local, deterministic: every machine scales its own copy
+            StarLook.Apply(_character, Traits.Stars); // the game's tint for the stars, before any mutation reads materials
             if (!_isBoss)
             {
                 BehaviourInstaller.Install(this); // mutation behaviours; a boss has no mutations to install
@@ -182,8 +220,6 @@ namespace EliteCreaturesReborn.Runtime
             {
                 AspectInstaller.Install(this); // a boss's aspect behaviours, and on its first roll the twin or phantoms
             }
-            _ready = true;
-            enabled = false; // resolution is done; stop the poll. Other components still read this via GetComponent.
         }
 
         /// <summary>Re-derives the creature's speeds from its captured base plus a live additive bonus (Devouring's slow).</summary>

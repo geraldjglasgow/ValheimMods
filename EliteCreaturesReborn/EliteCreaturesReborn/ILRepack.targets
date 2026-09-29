@@ -11,6 +11,8 @@
       <InputAssemblies Include="$(OutDir)ConfigReload.dll" />
       <InputAssemblies Include="$(OutDir)PatchGuard.dll" />
       <InputAssemblies Include="$(OutDir)PlateColumn.dll" />
+      <InputAssemblies Include="$(OutDir)LocalEffects.dll" />
+      <InputAssemblies Include="$(OutDir)PlayerGrid.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

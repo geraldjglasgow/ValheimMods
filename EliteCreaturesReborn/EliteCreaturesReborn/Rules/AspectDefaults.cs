@@ -23,11 +23,23 @@ namespace EliteCreaturesReborn.Rules
             {
                 rules.Loot[pair.Key] = pair.Value;
             }
+            SeedBosses(rules);
+            return rules;
+        }
+
+        // The per-boss entries: what each vanilla boss summons, and the rotations narrowed for other mods' bosses.
+        private static void SeedBosses(AspectRules rules)
+        {
             foreach (KeyValuePair<string, string[]> pair in SummonTable)
             {
                 rules.Bosses[pair.Key] = new BossAspectRule { Summons = new List<string>(pair.Value) };
             }
-            return rules;
+            foreach (KeyValuePair<string, Aspect[]> pair in LeftOutTable)
+            {
+                List<Aspect> rotation = new List<Aspect>(AspectCatalog.InOrder);
+                rotation.RemoveAll(aspect => System.Array.IndexOf(pair.Value, aspect) >= 0);
+                rules.Bosses[pair.Key] = new BossAspectRule { Rotation = rotation };
+            }
         }
 
         public static float Power(Aspect aspect, string field) =>
@@ -96,6 +108,14 @@ namespace EliteCreaturesReborn.Rules
             ["GoblinKing"] = new[] { "GoblinBrute", "GoblinShaman" },
             ["SeekerQueen"] = new[] { "SeekerBrute", "Seeker" },
             ["Fader"] = new[] { "Charred_Melee", "Charred_Archer" },
+        };
+
+        // Bosses from other mods whose fight an aspect would break, by prefab name (only the name crosses; without that
+        // mod the entry is never matched). Elite Creatures Pack's kraken holds one ship with one health bar: a Twin puts
+        // two of it on the same hull, and Phantom copies would swarm the deck. Decided with the user, 2026-09-28.
+        private static readonly Dictionary<string, Aspect[]> LeftOutTable = new Dictionary<string, Aspect[]>
+        {
+            ["ECP_Kraken"] = new[] { Aspect.Twin, Aspect.Phantom },
         };
     }
 }

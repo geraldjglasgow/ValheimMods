@@ -18,11 +18,11 @@ Thirteen, one per creature by default, each with its own colour and its own word
 [*][b]Cloaked[/b] - invisible beyond 10 metres (15 for trolls and lox). Drakes are never Cloaked.
 [*][b]Splintering[/b] - splits into two weaker copies when killed, which can split again. A tamed one splits into two tamed copies that keep its name and follow the same player.
 [*][b]Leeching[/b] - regenerates, and heals from the damage it deals.
-[*][b]Warding[/b] - reflects part of each hit back and knocks you back. It reflects the health the hit actually took, without sneak-attack or stagger bonuses, and never more than 7.5% of your maximum health.
+[*][b]Warding[/b] - reflects part of each hit back and knocks you back. It reflects the health the hit actually took, without sneak-attack or stagger bonuses, and never more than 7.5% of your maximum health in any second, however many arrows or explosions land.
 [*][b]Plated[/b] - armoured while healthy, hits harder as that armour goes.
 [*][b]Miasmic[/b] - trails poison clouds; poisons players, never creatures.
 [*][b]Devouring[/b] - kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you.
-[*][b]Thieving[/b] - steals an item with each landed hit, up to one per star (at least one, eight at most), never equipped gear. Every stolen item shows on its nameplate; kill it and everything drops back out.
+[*][b]Thieving[/b] - steals an item with each melee hit that lands (not thrown stones, not a parried or dodged blow), up to one per star (at least one, eight at most), never equipped gear, and with PackPanel never anything in its slots. Every stolen item shows on its nameplate; kill it and everything drops back out.
 [*][b]Gilded[/b] - the loot goblin, and the rarest. It glitters gold from well beyond nameplate range, never attacks a player, and runs from any player it can see within 30 metres, so sneak up on it. Catch it and it drops three times its loot plus 20 coins for each star plus one, in every loot mode. A tamed one stays calm and drops ordinary loot.
 [*][b]Blinking[/b] - every 30 seconds of a fight it vanishes and reappears 4 metres behind its target, facing it. Half a second before, the spot flashes and chimes, so you can turn in time. It never lands in a wall, off a ledge or anywhere it could not have walked to. 25% less health.
 [*][b]Relentless[/b] - once it picks you it keeps coming while you are within 150 metres: it heads for where you are even out of sight, sneaking does not hide you, it swims after you, and it does not despawn at dawn while it hunts. It is never faster than its base speed, so outrun it past 150 metres or it follows you home.

@@ -1,5 +1,45 @@
 # Changelog
 
+## 3.12.0
+
+- **The world tier shows under the minimap.** A small box with the globe and the tier sits right under the minimap,
+  so the tier is in view without opening the inventory. It hides with the minimap and while world tiers are off, and
+  the new `Show world tier under minimap` setting in the .cfg (on by default, client side) hides it for one player.
+- **The world tier reads as one number.** The globe plate in the inventory and the box under the minimap show the
+  tier alone ("3" instead of "3/7"); hovering the plate says how many tiers there are in total.
+- **The inventory's stat plates are square boxes.** Armor, weight and the world tier stand in a column of small brown
+  boxes, icon above number, down the outside of the inventory panel's right edge from its top, in place of the wooden
+  plates. Each still names itself when hovered, and OpenKeep's trash plate still joins the column.
+- **Thieving steals only with melee hits.** A thrown stone or spear, an arrow or a blast takes nothing, however much
+  it hurts: the thief has to reach you. Before, a Greydwarf could rob you with a rock from across the clearing.
+- **A parried or dodged blow steals nothing.** A parry still lets a sliver of damage through, and that sliver used to
+  be enough for a thief to take something; so was a hit you rolled through. Now a parry, even in a parry window
+  another mod has widened, or a dodge roll through the blow keeps your items. An ordinary block that lets damage
+  through still steals.
+- **Thieving leaves PackPanel's slots alone.** With PackPanel installed, a thief takes only from your main grid, never
+  from PackPanel's slots: worn gear, the backpack, food, mead, ammo, the coin purse, the key ring and the tacklebox.
+  What is inside a worn pack can be taken, the pack itself never. Should PackPanel be running but its grid unreadable,
+  the thief takes nothing rather than risk a slot. Without PackPanel, or with it switched off, nothing changes.
+- **The hotbar is the eight cells the 1-8 keys use.** A thief still takes from the hotbar only when nothing else is
+  left. On a grid wider than eight, the top-row cells right of the hotbar are no longer spared with it: they go first,
+  with the rest of the grid.
+- **A sleeping crypt mimic gives nothing away.** With Elite Creatures Pack installed, a mimic rolls stars and
+  mutations like any creature, but while it sleeps as a chest it keeps the chest's size, look and name: no star
+  colour, no mutation name, glow or effect. It puts them all on the moment it wakes. Its health already counts its
+  stars and mutations, so the hit that wakes it does not refill it.
+- **The kraken never comes as a Twin or a Phantom.** With Elite Creatures Pack installed, its kraken rolls boss stars
+  and an aspect like any boss, except those two: it holds one ship with one health bar, and a Twin put two krakens on
+  one ship. The default rules list it under `per boss`, and a rule file written by an older version leaves those two
+  out for it as well.
+- **Warding's cap covers all your hits together.** `max reflect` (7.5% by default) is now the most Warding sends back
+  to you in any one second, however many hits land and however many Warding creatures they land on. Before, each hit
+  was capped on its own, so a bow with extra shots, split, chain and pierce, or a staff whose cast explodes, could add
+  a dozen capped reflects together and still kill you. One sword swing a second reflects exactly what it did before.
+- **A rule change reaches creatures already out in the world.** Editing `creature_rules.yml`, or a server pushing
+  its rules, now changes how a loaded creature's mutations act at once, so lowering `max reflect` takes effect on
+  the Warding creature in front of you. Before, only creatures that loaded after the change used it. A creature's
+  stars and mutations, and the health, size and speed they gave it, stay as they were until it next loads.
+
 ## 3.11.0
 
 - **`elite purge` takes a radius.** `elite purge 30` removes only the starred or mutated creatures within 30 m of

@@ -44,7 +44,7 @@ here.
 | Cloaked | Invisible at more than 10 metres (15 for trolls and lox), nameplate included. Never rolled by a drake | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
-| Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health, and knocks them back on any melee hit | None |
+| Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health in any one second, and knocks them back on any melee hit | None |
 | Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
 | Miasmic | Leaves a trail of poison clouds as it moves; each cloud lingers 6 seconds then fades | None |
 | Devouring | Eats other creatures and keeps what it takes. See below | Grows slower the more it has eaten |
@@ -1091,7 +1091,7 @@ The implementation must repeat this table as comments inside the generated file.
 | Leeching | `combat cooldown` | Seconds since its last damage taken before regen resumes. |
 | Leeching | `lifesteal` | Percent of damage dealt returned to it as health. |
 | Warding | `reflect` | Percent of each hit's base damage returned to the attacker as blunt damage. The base is the health the hit actually took, after the creature's resistances and armour, with the sneak-attack and stagger bonuses taken back out, and never more than the health it had left. A hit that took no health reflects nothing. |
-| Warding | `max reflect` | Ceiling on any one reflect, as a percent of the attacker's maximum health, applied before the attacker's own armour. `7.5` by default; `0` = no cap. Never enhanced: it is a ceiling. |
+| Warding | `max reflect` | Ceiling on everything Warding reflects to one attacker in any one second (a sliding window), as a percent of the attacker's maximum health, applied before the attacker's own armour. It covers every hit and every Warding creature together, so many projectiles, chains or an explosion cost no more than one sword swing. Kept on each creature's owner, so creatures owned by different players each keep their own count. `7.5` by default; `0` = no cap. Never enhanced: it is a ceiling. |
 | Warding | `knockback` | Force applied to whoever lands a melee hit on it. |
 | Plated | `armour` | Percent of incoming damage cut at full health, falling to zero as it is hurt. |
 | Plated | `max reduction` | Hard ceiling on that percent, so a large star's enhancement cannot approach invulnerability. |

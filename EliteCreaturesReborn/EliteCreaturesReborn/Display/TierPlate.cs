@@ -8,7 +8,8 @@ namespace EliteCreaturesReborn.Display
 {
     /// <summary>
     /// The world tier on the inventory screen: a plate at the bottom of the player panel's stat column, under the
-    /// weight, showing a globe and "3/7", with a tooltip saying what the tier does. The column (the PlateColumn library,
+    /// weight, showing a globe and the tier alone ("3"), with a tooltip naming how many tiers there are and saying what
+    /// the tier does. The column (the PlateColumn library,
     /// shared with our other mods) moves the game's plates up to make room, spaces them evenly, and closes the gap again
     /// when the plate is hidden - with world tiers off, or by the player's display setting. The plate is made the first
     /// time the inventory is open with a tier to show. Read from the world's boss keys, which the server already sends
@@ -19,8 +20,8 @@ namespace EliteCreaturesReborn.Display
         private const string Id = "elitecreaturesreborn_world_tier";
         private const int Rank = Column.WeightRank + 100;
         private const string Topic = "World tier";
-        private const string Tip = "Rises the first time each boss is defeated. Each tier makes stars and mutations "
-            + "more common in every biome.";
+        private const string Tip = "The tier rises the first time each boss is defeated, and each tier makes stars and "
+            + "mutations more common in every biome.";
         private const string GlobeResource = "EliteCreaturesReborn.assets.globe.png";
 
         private static Plate? _plate;
@@ -47,7 +48,7 @@ namespace EliteCreaturesReborn.Display
             }
             if (show)
             {
-                Write();
+                Write(gui);
             }
         }
 
@@ -71,7 +72,7 @@ namespace EliteCreaturesReborn.Display
             {
                 return false;
             }
-            _plate = Column.Add(gui, new PlateSpec(Id, Rank, _globe, withText: true, Topic, Tip));
+            _plate = Column.Add(gui, Spec(WorldTier.Ceiling()));
             _shownTier = _shownCeiling = -1;
             if (_plate?.Text == null)
             {
@@ -98,7 +99,15 @@ namespace EliteCreaturesReborn.Display
             return _globe;
         }
 
-        private static void Write()
+        /// <summary>The plate's spec; its tooltip names the number of tiers, which the rule file sets.</summary>
+        private static PlateSpec Spec(int ceiling)
+        {
+            string total = $"There are {ceiling} world tiers in total. ";
+            return new PlateSpec(Id, Rank, _globe, withText: true, Topic, total + Tip);
+        }
+
+        /// <summary>The tier when it changes; when the number of tiers changes, adding the plate again rewrites its tooltip.</summary>
+        private static void Write(InventoryGui gui)
         {
             int tier = WorldTier.Current();
             int ceiling = WorldTier.Ceiling();
@@ -106,7 +115,11 @@ namespace EliteCreaturesReborn.Display
             {
                 return;
             }
-            _plate.Text.text = $"{tier}/{ceiling}";
+            if (_shownCeiling >= 0 && ceiling != _shownCeiling)
+            {
+                Column.Add(gui, Spec(ceiling));
+            }
+            _plate.Text.text = tier.ToString();
             _shownTier = tier;
             _shownCeiling = ceiling;
         }

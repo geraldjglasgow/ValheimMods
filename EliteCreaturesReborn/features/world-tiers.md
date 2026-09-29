@@ -91,10 +91,11 @@ lines are how the tier reaches the roll.
   and any boss the game knows that the list leaves out. It only reads, so it is open to every player, admin or not
   (`console-commands.md`).
 - **`elite inspect`** says which tier a wild creature was rolled at, when it was above 0.
-- **The inventory shows the tier** (added 2026-09-26 at the user's request): a plate with a globe and "3/7" at the
-  bottom of the column of stat plates on the player panel's right, under the weight. The armor and weight plates
+- **The inventory shows the tier** (added 2026-09-26 at the user's request): a plate with a globe and the tier alone ("3"; "3/7"
+  until 2026-09-28, when the user asked for a single number) at the bottom of the column of stat plates on the player panel's right, under the weight. The armor and weight plates
   move up to make room (OpenKeep's trash plate too, when it is installed), and every plate in the column names
-  itself in a tooltip on hover; the globe's says what the tier does. Hidden with tiers off, and per player with
+  itself in a tooltip on hover; the globe's names how many tiers there are in total
+  and says what the tier does. The box under the minimap shows the same single number and takes no pointer. Hidden with tiers off, and per player with
   `Show world tier` (`display-preferences.md`). The column is the shared `PlateColumn` library.
 
 ---

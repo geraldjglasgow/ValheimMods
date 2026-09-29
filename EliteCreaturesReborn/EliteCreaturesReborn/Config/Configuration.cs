@@ -25,6 +25,7 @@ namespace EliteCreaturesReborn.Config
         public static ConfigEntry<bool> ShowBossBoard = null!;
         public static ConfigEntry<float> BossBoardSeconds = null!;
         public static ConfigEntry<bool> ShowWorldTier = null!;
+        public static ConfigEntry<bool> ShowWorldTierOnHud = null!;
 
         public static void BindAll(ConfigFile config)
         {
@@ -68,6 +69,9 @@ namespace EliteCreaturesReborn.Config
             ShowWorldTier = config.Bind(Display, "Show world tier", true,
                 "Show the world tier on the inventory screen, on a plate under the weight. Hidden anyway while world "
                 + "tiers are off. Client side; never locked.");
+            ShowWorldTierOnHud = config.Bind(Display, "Show world tier under minimap", true,
+                "Show the world tier in a small box under the minimap as well, so it is in view without opening the "
+                + "inventory. Hidden anyway while world tiers are off. Client side; never locked.");
         }
 
         // Not a display preference and never locked: a switch that makes the death/split/absorb chain log every step, so
