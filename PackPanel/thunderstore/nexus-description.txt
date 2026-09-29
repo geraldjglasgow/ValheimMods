@@ -1,0 +1,54 @@
+Nexus Mods page text for PackPanel (the page is created by hand; mod_id and file_id go into nexus.json afterwards).
+Paste each block into the matching field on the page's edit form. Category: User Interface (or Items and Objects).
+
+===== SUMMARY (plain text, one paragraph) =====
+A bigger, better organised inventory: an 8 x 5 grid by default, labelled slots for your armour, a backpack, three worn utilities, food, meads and ammo on two tabs (Gear, with a sheet of your stats, and Consumables), Epic Loot's magic effects in that sheet when it is installed, a coin purse, a key ring, a tacklebox slot for your fishing bait, eight craftable backpacks worn on your back (one per biome), your stats in their own boxes and under the minimap, and a brown or timber look. Server synced and lockable; works on its own or with OpenKeep.
+
+===== DESCRIPTION (BBCode) =====
+[size=4][b]Description[/b][/size]
+PackPanel is the inventory mod of the MilkyTeam workspace. It makes the grid wider and taller, puts every piece of worn gear, your utilities, food, meads, ammo and coins in labelled slots on two tabs, with a sheet of all your stats beside your gear, hangs your keys on a key ring, keeps your fishing bait in a tacklebox, and adds eight backpacks you craft biome by biome and wear on your back for more slots and carry weight. Your armour, weight and world tier sit in small boxes beside the grid and under the minimap, and the inventory gets a plain brown or timber look. Everything is kept in the game's own inventory, so saves, weight and graves work as in the game. It fits together with OpenKeep (craft from chests, quick stack, sort, trash, salvage) when both are installed, and needs nothing else.
+
+[size=4][b]Installation[/b][/size]
+[list=1]
+[*]Install BepInExPack for Valheim.
+[*]Install PackPanel. On a server, install it on the server and on every client: the backpacks and tackleboxes are items every player's game must know.
+[*]Start the game once. BepInEx/config/milkyteam.packpanel.cfg, PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml are written.
+[/list]
+For manual install, drop PackPanel.dll into BepInEx/plugins. Jotunn is not required.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*]Inventory: an 8 x 5 inventory by default (Inventory Width up to 12, Inventory Rows up to 10, trader rows on top). Base Carry Weight sets how much you carry (300, the game's). Keep Slots On Death (off) keeps your gear, utility, food, mead and ammo slots through death. Its Enabled setting is a master switch that brings back the game's own inventory and look.
+[*]Slots in a panel beside the grid, on two tabs. Gear: Head, Chest, Legs and Back hold the armour you wear (drop a piece on its slot to wear it) and a Backpack slot for PackPanel's backpacks (or other mods') down the left, Utility slots worn at once down the right (3 by default, up to 5: belt, wishbone and wisplight together), and between them a sheet of all your stats: max health, stamina and eitr, armour, weight, movement speed, the lowest durability of your gear, every damage type you resist or are weak to (Frost: Resistant), every other gear modifier such as stamina use and heat resistance, each weapon or shield in your hands (damage per type at your skill, attack costs, knockback, backstab, block armour, block force, parry bonus), and with Epic Loot every magic effect you wear, totalled and grouped, in a list that scrolls. Consumables: Food, Mead and Ammo slots, up to 5 each; Slots Per Group sets all four to one number. Food slots follow how many foods you can eat (FeastMaster's Food Slots, or 3). Picked up coins go into a coin purse slot, shown under both tabs. Arrows are taken from the Ammo slots left to right (unless you equip others yourself), and two keys, Z and B, eat every food and drink every mead in your slots that you can take right now.
+[*]Key ring: a button beside the purse shows how many different keys you carry (hover it for the list), glows with a note under it when a key you never had goes on the ring, and opens a small round pop-up with the keys you carry hung on a ring; keys you pick up or take from a chest go there first, doors still find them, and Key Stack (10) lets keys stack, on the ring and in chests.
+[*]Tacklebox: a Tacklebox slot beside the key ring holds one of four craftable boxes, Driftwood (1 cell), Finewood (2), Carapace (6) and Flametal (8), each recipe taking the box before it. Right click the box for a small pop-up of its cells under the slot panel. Bait you pick up, buy or take from a chest goes into the box first, the fishing rod takes its bait from the box first, and right clicking a bait in the box makes the rod use that one. Tackle Items adds other items a box takes (chum, lures); stations, costs and cells are set per box in PackPanel.Tackleboxes.yml.
+[*]Backpacks: eight craftable packs, one per biome from the Deerhide Satchel (Meadows) to the Moosehide Pack (Deep North), each with its own model. Wear one in the Backpack slot (or right click it): it hangs on your back for everyone to see, adds slots to the bottom of your grid and adds carry weight. Slots and carry weight take turns, from +4 slots up to +16 slots and +200 carry weight, and each recipe takes the pack before it. Taking a pack off moves its slots' items into free cells and drops what does not fit; from your grave it goes back on first. Stations, costs, slots and carry weight are set per pack in PackPanel.Backpacks.yml; Backpack Portal Pass (off) lets the Moosehide Pack carry ores through portals.
+[*]Stats and look: armour, weight and Elite Creatures Reborn's world tier are small boxes in a panel of their own between the inventory and the slots, armour and weight also show under the minimap, and the panels have a framed brown look or a timber theme that also dresses the game's other wood panels (per player).
+[*]With OpenKeep: its buttons sit inside the inventory panel, and quick stack, store all, dump and sort work on the whole grid and never touch the slots, the key ring or the tacklebox.
+[*]Every gameplay setting is server synced and lockable; the look is per player. Config and YAML edits apply within seconds without a restart, in the file, with ConfigurationManager, or in the in-game YAML editor.
+[/list]
+
+[size=4][b]Warnings[/b][/size]
+[list]
+[*]The slots and the extra rows are part of your inventory: without PackPanel the game drops everything outside its own rows at your feet when you log in, items in columns beyond 8 are lost, and backpacks are gone. Empty those columns before removing the mod or lowering Inventory Width.
+[*]Other inventory mods that add rows or equipment slots do not work together with PackPanel; turn one of them off.
+[*]Lowering Key Stack, or removing the mod, loses the part of a stack of keys above the new limit when the inventory holding it loads.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInExPack for Valheim.
+[*]Optional: ConfigurationManager to change values and open the YAML editor in game.
+[/list]
+
+[size=4][b]Source, bugs and feature requests[/b][/size]
+GPL-3.0 licensed. The source lives at [url=https://github.com/geraldjglasgow/ValheimMods]github.com/geraldjglasgow/ValheimMods[/url]. Found a bug or want a feature? Open an issue at [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] and name the mod, its version and what happened. Also on Thunderstore as MilkyTeam/PackPanel.
+
+[size=4][b]Tips[/b][/size]
+[url=https://ko-fi.com/milkeyman]ko-fi.com/milkeyman[/url]
+
+[size=4][b]Server settings[/b][/size]
+Gameplay settings come from the server. With Lock Configuration on (the default), every player uses the server's values and cannot change them locally; server admins can still edit them in game. With it off, each player uses their own file. In the console (F5), [b]charter status[/b] shows whether the server binds your settings, [b]charter diff[/b] lists where the server's values differ from your own file, and [b]charter versions[/b] lists the mods on both sides. Joining with a missing or mismatched version of the mod shows one screen naming the mod and both versions, with a refusal code that is also written to the server's and your own log.
+
+[size=4][b]Shout outs[/b][/size]
+The BepInEx and Harmony teams, Iron Gate Studio for Valheim, and Nexus Mods for hosting this page. The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game, and every modder who keeps their mods open source so others can collaborate, learn and build on them.
