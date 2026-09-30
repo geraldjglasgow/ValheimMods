@@ -26,6 +26,7 @@ namespace DevBridge.Routes
             AnimateRoute.Register(router);
             EffectRoute.Register(router);
             FrameRoute.Register(router);
+            HitboxRoute.Register(router);
             return router;
         }
     }

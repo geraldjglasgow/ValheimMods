@@ -53,6 +53,7 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/effect`, `/sound` | a bundle or game particle effect at the row; a game sound, or a bundle clip played through a game sound |
 | `/frame` | the game's free camera framing the row (or one placed object, or a point) from a set angle; HUD off |
 | `/light` | fixed time of day, weather environment and wind, on this machine only |
+| `/hitbox` | `on=1`/`off=1`: flash each melee swing's hit shape and mark each hit on the player; replies with their distances |
 
 Screen coordinates are always pixels of the game window from the top-left, the same as in a full-size screenshot. When
 a screenshot is shrunk (`maxWidth`), scale by `screen / image` from its reply before clicking.
@@ -65,6 +66,21 @@ a screenshot is shrunk (`maxWidth`), scale by `screen / image` from its reply be
 4. Set up the scene with `console` (`devcommands`, `god`, `spawn`, `pos`) and `eval`.
 5. Act with `key`, `mouse`, `click`; look with `screenshot`, `ui`, `nearby`, `zdo`; read errors with
    `log?level=warning&since=N`.
+
+### Hit shapes
+
+`/hitbox?on=1` shows how far attacks reach while a creature is fought. Each melee swing flashes its hit shape for
+`seconds=` (default 1.5), worked out the way `Attack.DoMeleeAttack` casts it: red at the swing's height, orange on the
+ground under it. A body that crosses the edge is hit (the sweep is spheres of the attack's ray width out to its range, so
+the edge is the reach). Every hit on the local player, whatever made it (swing, projectile, a mod's own area damage),
+draws a yellow line from the attacker's centre to the player with the player's body outlined. The reply, and the log
+(`/log?grep=hitbox`), list the recent swings and hits: the attack's item name, shape, range and ray width, the damage,
+and the distance centre to centre and the gap body to body (`you_distance`/`you_gap` on a swing, `distance`/`gap` on a
+hit). `players=1` adds the players' own swings; `clear=1` empties the list; `off=1` stops it.
+
+The lines are drawn over everything (no depth test) and only on this machine, and a swing is drawn only where the game
+works it out, on the attacker's owner (single player or the host). Hits on the player are seen wherever the player is.
+Area and custom damage have no shape to draw; their hits still get the yellow line and the distances.
 
 ## A stage for new assets
 
