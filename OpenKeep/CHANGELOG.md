@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.12.0
+- Homestead: choose your bed after death (`Bed Choice Seconds`, 30). With two beds or more, dying opens the map with
+  all your beds on it, the nearest pulsing, and a countdown in the map's upper right corner. Click a bed to wake
+  there; when the countdown ends you wake in the bed nearest to where you died. The map key or Escape takes the
+  nearest at once. 0 turns the map off (always the nearest).
+- Every bed you own shows on your map with the game's bed icon, not only the last one you slept in (`Beds On Map`,
+  on, your own choice).
+- Quick respawn (`Quick Respawn`, on): the closer to where you died you wake, the sooner you wake. The game's 18
+  seconds (10 of waiting, 8 of loading) shrink with the distance to the bed, or to the world start without one:
+  about a second right beside it (`Quick Respawn Seconds`), the full wait at `Quick Respawn Range` (1000 m) and beyond.
+  Clicking a near bed on the map wakes you at once.
+- Stand up on respawn (`Stand Up On Respawn`, on): after a death you wake standing and can move at once, instead of
+  the game's getting-up animation. Logging in keeps the game's.
+- Quick portals (`Quick Portals`, on): the closer together two portals are, the quicker the jump, from half a
+  second for portals side by side (`Quick Portal Seconds`) to the game's 8 seconds at `Quick Portal Range` (10000 m):
+  about 0.7 s for 250 m, 1.2 s for 1 km. Every long jump counts (the game's portals, Wayfare, the console's `goto`);
+  dungeon doors are left alone. On a server you never land before the server has sent what is around the far portal,
+  and never wait longer than the game's 8 seconds.
+- A jump to a place already loaded around you keeps the screen clear, no black screen and no teleport swirl; farther
+  jumps show the game's screen while the area loads (`Portal Screen Only When Loading`, on, your own choice).
+- Quick area loading (`Quick Area Loading`, on, your own choice): after a long jump and while you wait to respawn,
+  the land and everything on it load as fast as your PC allows instead of the game's slow steady pace. With a high
+  simulation distance a 1 km jump went from about 11 seconds to about 2.
+
 ## 1.11.0
 - OpenKeep leaves the inventory's look alone: the game's armour and weight readouts stay exactly as the game draws
   them (the brown boxes are PackPanel's), and the trash can is a plate in the game's own style under the armour,

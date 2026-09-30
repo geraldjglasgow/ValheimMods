@@ -159,11 +159,31 @@ OpenKeep/OpenKeep/src/
     SignsCommand.cs         openkeep signs, signs reset, signs rewrite (called from Core's Command by reflection)
   Homestead/                section 8: independent features, each with its own Feature and Settings class
     HomesteadModule.cs      Section, and the Feature.Initialize calls
-    BedFeature.cs, BedSettings.cs   Nearest Bed Respawn
+    BedFeature.cs, BedSettings.cs   Nearest Bed Respawn, Bed Choice Seconds, Quick Respawn (Range, Seconds),
+                            Beds On Map; the two words of the choice
     BedPoints.cs            x:y:z text, same bed (1 m, the game's IsCurrent tolerance), map distance, nearest first
     BedStore.cs, BedList.cs   OpenKeep.beds.<world uid> in the character's custom data; changes without a local
                             player wait with their scope (player id @ world uid) until Player.OnSpawned
-    BedRespawn.cs           the choice at death, the fallback list, TryNext
+    BedRespawn.cs           the nearest bed at death, Prefer (a clicked bed), the fallback list, TryNext
+    BedWait.cs              Quick Respawn: the death delay (a new RequestRespawn) and the load speed from the distance
+    BedLoadPatch.cs         Game.FindSpawnPoint prefix: m_respawnWait runs LoadSpeed times as fast after a death
+    BedChoice.cs            the choice of bed after death: open, click, time out, confirm, close
+    BedChoiceMap.cs         the large map while dead: the game's map update, the pulsing pick, zoom to fit, map
+                            key/Escape one frame late
+    BedChoiceLabel.cs       the countdown in the large map's upper right corner (seconds in large figures)
+    BedChoiceMapPatch.cs, BedChoiceClickPatch.cs, BedChoiceDoubleClickPatch.cs, BedChoiceScreenPatch.cs,
+    BedChoiceEndPatch.cs    Minimap.Update, OnMapLeftClick, OnMapDblClick, Hud.UpdateBlackScreen, Game._RequestRespawn
+    BedPins.cs, BedPinsPatch.cs   the other known beds as unsaved bed pins (Minimap.UpdateProfilePins postfix)
+    BedStandPatch.cs        Player.OnSpawned postfix: after a death, the game's getting-up animation is skipped
+    QuickWait.cs            the distance-to-wait line shared by Quick Respawn and Quick Portals
+    PortalFeature.cs, PortalSettings.cs   Quick Portals, Quick Portal Range, Quick Portal Seconds
+    PortalQuick.cs, PortalQuickPatch.cs   Player.UpdateTeleport prefix: m_teleportTimer runs faster up to 8 s
+    PortalScreen.cs, PortalStartPatch.cs, PortalScreenPatch.cs   no teleport screen for a jump into an area already
+                            loaded: decided in the Player.TeleportTo postfix, applied in Hud.UpdateBlackScreen
+    PortalLoad.cs, PortalLoadPatch.cs   ZoneSystem.Update postfix: while a jump or respawn waits, more zones per frame
+    PortalObjects.cs, PortalObjectsPatch.cs   ZNetScene.CreateDestroyObjects postfix: more objects per run, only in
+                            zones whose land is loaded
+    AreaSettle.cs           on a server's client: the objects around a point have stopped arriving (0.5 s quiet)
     BedChecks.cs            IsLive, IsUnclaimed, IsLocal (ZDO owner vs profile id), IsSpawnPoint
     BedDeathPatch.cs, BedRespawnPatch.cs, BedSpawnedPatch.cs, BedSeenPatch.cs, BedUsePatch.cs, BedHoverPatch.cs,
     BedGonePatch.cs         one patch class per game method
@@ -266,7 +286,7 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.11.0]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.12.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -299,7 +319,8 @@ loaded; on the ZDO owner only: Homestead's torch switch with `Priority.High`, th
 `Smelter.Awake` (Capacity: a station made from another copy of its prefab gets the caps),
 `Smelter.UpdateSmelter()` (private, every second on every client with the station loaded; on the ZDO owner only:
 Homestead's auto feed),
-`Game.RemoveCustomSpawnPoint(Vector3)` (forget a destroyed bed),
+`Game.RemoveCustomSpawnPoint(Vector3)` (forget a destroyed bed), `Minimap.UpdateProfilePins()` (private: the other
+known beds as bed pins),
 `InventoryGrid.OnLeftDown(UIInputHandler)` (touches), `InventoryGrid.UpdateGui(Player, ItemData)` (marks; touch
 tint), `InventoryGui.Awake` (Stow buttons; Salvage tab; Batch stepper), `InventoryGui.CloseContainer` and `InventoryGui.Hide` (end
 of viewing), `InventoryGui.SetupRequirement` (static, six parameters), `InventoryGui.Update` (Stow hotkeys; Salvage
@@ -307,12 +328,22 @@ Key; touch end), `InventoryGui.UpdateRecipe(Player, float)` (Salvage panel; Batc
 float)` (private, in the AI update on the creature's owner: Homestead's pets eat from containers), `ObjectDB.Awake`, `Sign.Awake` (the
 orphan check component on automatic signs; their `WearNTear` wear switched off),
 `ObjectDB.CopyOtherDB` (both `Priority.Low`), `Player.GetFirstRequiredItem`, `Player.HaveRequirementItems`,
-`Player.HaveRequirements(Piece, RequirementMode)`, `Player.OnDeath` (the nearest own bed becomes the spawn point),
-`Player.OnSpawned(bool)` (waiting bed changes written, the fallback dropped), `Player.PlacePiece`, `Player.Update` (Reach keys; Dump Key;
+`Player.HaveRequirements(Piece, RequirementMode)`, `Player.OnDeath` (the nearest own bed becomes the spawn point;
+the choice of bed opens, or Quick Respawn moves the respawn request),
+`Player.TeleportTo(Vector3, Quaternion, bool)` (a long jump of the local player: is its target already loaded),
+`ZoneSystem.Update()` (private: Quick Area Loading, land), `ZNetScene.CreateDestroyObjects()` (private: Quick Area
+Loading, objects),
+`Player.OnSpawned(bool)` (waiting bed changes written, the fallback dropped; after a death, no getting-up
+animation, a class of its own), `Player.PlacePiece`, `Player.Update` (Reach keys; Dump Key;
 request timeouts; Torch Switch Key), `Switch.GetHoverText`, `Terminal.InitTerminal`, `Vagon.Awake`, `Vagon.GetHoverText`, `WearNTear.Remove(bool)`
 (the hammer opt-out on the removing player's client), `ZNetScene.Awake` (documentation; container list and sizes;
 station list and caps; Homestead's Build On Wood; all `Priority.Low`).
-Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Container.RPC_OpenResponse(long, bool)`
+Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Game._RequestRespawn()` (private: the
+choice of bed ends), `Game.FindSpawnPoint(out Vector3, out bool, float)` (Quick Respawn's load speed, a class of its
+own beside the prefix and postfix below), `Hud.UpdateBlackScreen(Player, float)` (private: no black screen during
+the choice of bed; none during a jump into an area already loaded, a class of its own), `Minimap.OnMapDblClick()` and `Minimap.OnMapLeftClick()` (during the choice of bed: no new pin,
+a click picks a bed), `Minimap.Update()` (private: the map during the choice of bed, skipping the game's update),
+`Player.UpdateTeleport(float)` (private: Quick Portals), `Container.RPC_OpenResponse(long, bool)`
 (a refusal is silent while viewing), `InventoryGrid.DropItem(Inventory, ItemData, int, Vector2i)` (Shared,
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
 modifier; Salvage tab; Batch, with a postfix too), `InventoryGui.UpdateRecipe(Player, float)` (Batch drives the
@@ -349,10 +380,14 @@ Config Entries`, `Write Documentation`), `4a. Item Stacks` and `4b. Item Weights
 `<prefab>.Weight`, only with Per Item Config Entries), `5. Capacity` (`Enabled`; unsynced `Hover Contents`, `Hover
 Lines`, `Hover Fill`), `6. Carts` (`Cart Workbench`, `Cart Station Level`, `Cart Station Range`), `7. Signs`
 (`Enabled` false, `Show Counts` false, `Max Items` 4, `Max Characters` 50, `Update Seconds` 2, `Height` 0.1,
-`Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Build On Wood`
+`Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Bed Choice Seconds` 30 (0 to 60), `Quick
+Respawn` true, `Quick Respawn Range` 1000 (10 to 20000), `Quick Respawn Seconds` 1 (0 to 18), `Stand Up On
+Respawn` true, `Quick Portals` true,
+`Quick Portal Range` 10000 (10 to 20000), `Quick Portal Seconds` 0.5 (0 to 8), `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Torch Switch Key` O),
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Beds On Map` true, `Portal Screen Only When Loading` true, `Quick Area Loading` true,
+`Torch Switch Key` O),
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
 100 (1 to 1000); both synced).
@@ -423,7 +458,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `ok_cartcraft`; Shared: `ok_shared_inuse`, `ok_shared_moving`, `ok_shared_noanswer`, `ok_shared_denied`,
   `ok_shared_readonly`, `ok_shared_someone`, `ok_shared_nofit`, `ok_shared_chestfull`, `ok_shared_unavailable`;
   Signs: `ok_signs_sign`, `ok_signs_playertext`, `ok_signs_nosign`, `ok_signs_optedout`, `ok_signs_reset`,
-  `ok_signs_rewritten`, console output only; the sign text itself is plain text); Homestead: `ok_torch_nightfall`, `ok_torch_keeplit`,
+  `ok_signs_rewritten`, console output only; the sign text itself is plain text); Homestead: `ok_bedchoice_nearest`, `ok_bedchoice_click`, `ok_bedchoice_keys`, `ok_torch_nightfall`, `ok_torch_keeplit`,
   `ok_torch_nightonly`, `ok_torch_kept`, `ok_torch_scheduled`, `ok_repair_one`, `ok_repair_many`,
   `ok_autorepair_one`, `ok_autorepair_many`.
 - Console: `openkeep reload`, `openkeep containers`, `openkeep write docs`, `openkeep signs`, `openkeep signs reset`,
@@ -901,6 +936,77 @@ Beds:
   woken in. `Bed.IsCurrent` is not patched, so `FindBedNearby` stays exact; `BedChecks.IsSpawnPoint` also requires
   `HaveCustomSpawnPoint`, because `IsCurrent` matches the stale point the game leaves after clearing one. The hover
   swaps the localized "Set spawn point" for the game's "Sleep" inside the game's string.
+- Choice of bed (1.12.0, the user's request of 2026-09-30): at death, with two candidates or more, the large map opens
+  for `Bed Choice Seconds`; the nearest is already the spawn point, so doing nothing is the old behaviour. A click
+  within the game's pin click radius (`PinInteractRadius`, it grows with zoom) of a candidate makes it the spawn point
+  (`BedRespawn.Prefer`; the rest stay the fallback, nearest first) and ends the choice; the map key or Escape ends it
+  with the nearest. The game's `Minimap.Update` sets the map to None for a dead player, so its prefix runs the game's
+  own pieces instead (`UpdateMap`, `UpdateDynamicPins`, `UpdatePins`, `UpdateBiome`) and skips the original; the
+  cursor follows `Minimap.IsOpen` as usual. Closing sets `m_hiddenFrames` to 3: the game's counter stops while the
+  player is dead, and `IsOpen` would stay true (cursor shown, Escape menu blocked) until the next spawn. Escape and the
+  map key close one frame after the press, so the menu (`Menu.Update` checks `IsOpen`) never sees that press with the
+  map already shut. The black screen (`Hud.UpdateBlackScreen`) is held off during the choice: it would cover the map
+  and its clicks. The respawn the game asked for (10 s) is moved to the end of the choice as a backstop, so a broken
+  map (no generated texture, a mod closing it) still wakes the player at the nearest bed; `Game._RequestRespawn` ends
+  a choice still open. Not in `nomap` worlds (`Game.m_noMap`). The choice is "active" only while the same `Game`
+  and the same dead local player exist, so quitting or being revived needs no clean-up call. The bed filter of the
+  map is forced on during the choice and restored after. The countdown (30 s by default, the user's call of
+  2026-09-30) sits in the upper right corner of the map image, a child of `m_mapImageLarge` anchored top right and
+  drawn after its other children, in the biome name's font, material and colour, right aligned: the seconds in
+  large figures, then "seconds until you wake in the nearest bed", how to choose, and the keys.
+- Quick Respawn (1.12.0): the game's wait is `RequestRespawn(10f)` from `Player.OnDeath` plus `m_respawnLoadDuration`
+  (8 s) in `FindSpawnPoint` before it looks for the bed. Both shrink by one share: `Quick Respawn Seconds` at 0 m,
+  the full 18 s at `Quick Respawn Range`, linear between, from the map distance between the death point and the
+  profile's spawn point (or the `StartTemple` location icon without one). The death part is a new `RequestRespawn`
+  counted from the death (the time spent choosing counts); the load part is `m_respawnWait` advanced faster in a
+  `FindSpawnPoint` prefix, only after a death and only with a custom spawn point (the world start path has no timer).
+  The game's own `IsAreaReady` check stays, so a far bed still waits for its area. Works with `Nearest Bed Respawn`
+  off too (then the game's one bed). A fallback bed after a gone one is timed from its own distance.
+- Beds On Map (1.12.0, per player): the other known beds as `PinType.Bed` pins with `m_save` false, added to
+  `m_pins` directly (`AddPin` would turn the bed filter back on each time) and never saved; the game draws the spawn
+  point's own pin, so that bed is left out. Checked once a second and at once when the spawn point moves. During the
+  choice the candidates are drawn even with the setting off; the chosen bed is the game's spawn pin with `m_animate`.
+
+Portals:
+- Quick Portals (1.12.0, the user's request of 2026-09-30): `Player.UpdateTeleport` moves the player once
+  `m_teleportTimer` passes 2 s and lands a long jump (`m_distantTeleport`) once it passes 8 s and the area is ready.
+  A prefix on the local player's client advances the timer faster (map distance between `m_teleportFromPos` and
+  `m_teleportTargetPos`: `Quick Portal Seconds` at 0 m, 8 s at `Quick Portal Range`), never past 8 s, so the 15 s
+  no-floor fallback and the area check stay the game's. Every long jump counts (the game's portals, Wayfare and other
+  mods that call `TeleportTo` with `distantTeleport`, the console's `goto`); dungeon doors are short jumps and are
+  left alone.
+- Portal Screen Only When Loading (1.12.0, the user's request of 2026-09-30, per player): the game fades to its
+  loading screen with the teleport swirl for every long jump, even a 0.6 s one. In the `TeleportTo` postfix the
+  local client asks `ZNetScene.IsAreaReady(target)`: true only when the target zone is loaded and every object the
+  client knows there exists, i.e. the target lies inside the area loaded around the player (about 100-150 m with the
+  default simulation distance). Then `UpdateBlackScreen` fades out as when nothing holds the screen; otherwise the
+  game's screen runs as usual. Decided once per jump so it never flickers mid-jump; dead or sleeping players keep
+  the game's screen. On a dedicated server the same holds: the client has the near area loaded.
+- Quick Area Loading (1.12.0, measured 2026-09-30, per player): a 983 m jump took 10.6-11.8 s with the timer done
+  at 4.3-4.7 s. Cause: `ZoneSystem.Update` spawns one zone per 0.1 s (`CreateLocalZones` returns after one), and
+  `ZNetScene.CreateObjectsSorted` creates no near object until `IsActiveAreaLoaded` (every zone of the near
+  simulation circle; 57 zones at the world's near distance 4, 21 at the classic 2), so `IsAreaReady` waits about
+  6 s after the move. A `ZoneSystem.Update` postfix calls `CreateLocalZones` repeatedly within 20 ms per frame while
+  the local player teleports (or waits to respawn with no player) and the area is not loaded; same order as the
+  game, terrain from the game's builder thread (`IsTerrainReady` only queues). Skipped on a dedicated server and on
+  a server before `LocationsGenerated`, like the game's own step. Logs `loaded the area around you in N s`.
+- Faster still (2026-09-30, the user's go-ahead): (1) the move comes after at most 0.25 s, not a quarter of the
+  wait, because the target only loads once the player is there; a loading jump's screen goes black in 0.2 s so the
+  move is never seen. (2) `ZNetScene.CreateObjectsSorted` creates nothing until the whole simulation circle is loaded
+  and then 100 objects per 1/30 s run; a `CreateDestroyObjects` postfix creates more of the listed objects within
+  15 ms per run, in the game's order (`ZDOCompare`, `m_tempSortValue` as the game sets it, which also encodes
+  `Created`), with `IsZoneReadyForType`, but only in zones that are loaded (the whole-circle gate is what keeps
+  objects off missing ground). (3) `Quick Portal Range` default 10000. (4) The server's clients: `IsAreaReady` is
+  vacuous right after arriving (nothing received yet), and the old 8 s floor was what covered that; `AreaSettle`
+  counts the ZDOs in the target's 3x3 sectors and calls the point settled after 0.5 s with no change. Portal jumps
+  and the respawn's bed search hold until settled, never past the game's own 8 s; on the server (host, single
+  player) everything is local and settled at once. Without the hold, a quick respawn could look for the bed before
+  its ZDO arrived, and the game would clear the bed and wake the player elsewhere.
+- Stand Up On Respawn (1.12.0, the user's request of 2026-09-30): `Player.Awake` reads the player ZDO's `wakeup`
+  flag (true when unset) and plays the getting-up animation, a state tagged `cutscene` (no movement until it ends).
+  `Game.SpawnPlayer` runs `Awake` and `OnSpawned` in one frame, before the animator updates, so the `OnSpawned`
+  postfix clears the ZDO flag, the animator bool and `m_wakeupTimer`; the ZDO flag goes out with the first sync, so
+  other clients' copies stand as well. Only after a death (`Game.m_respawnAfterDeath`); logging in keeps it.
 
 Fires:
 - `Piece.m_notOnWood` is the only thing keeping the campfire off wood: `Player.UpdatePlacementGhost` reads it from
@@ -1250,7 +1356,7 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.11.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 1.12.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1525,3 +1631,32 @@ from a script.
     to the drop than B: the stone still goes to B (holders first). A kiln with its output point between two pickup
     chests holding coal: the coal goes into the nearer one, and into the other once that one is full. Dedicated server
     with the chests owned by different players: the same.
+58. Bed choice, single player, beds A (near) and B (a few hundred metres away): `die` near A. The map opens centred
+    on the death point, zoomed out to show both, A pulsing, the countdown in the map's upper right corner counting
+    down from 30. Wait: at 0 you wake in A. Die again and click B: the map closes, you wake in B after B's share of the wait (log
+    `chose the bed at ...`, `waking in ... s after death`). Die and press M (and once Escape): the map closes at once,
+    you wake in A, the game menu does not open, and the cursor hides again. A double click beside the beds adds no pin.
+    Hide the bed icons in the map filter first: they show during the choice and are hidden again after.
+59. Bed choice, edge cases: one bed only, no map (wake at once with Quick Respawn); `Bed Choice Seconds = 0`: no map;
+    a `nomap` world: no map; log out during the choice and back in: you are at the nearest bed; destroy B while
+    choosing it (second client): the log says `no bed of yours at ...; trying the bed at ...` and you wake in A.
+60. Quick Respawn: `die` right beside a bed: awake in about a second. 500 m away with the defaults: about 9.5 s. 2 km
+    away: the game's 18 s. No bed: the same by the distance to the start stones. `Quick Respawn = false`: 18 s again,
+    with the bed choice too (the choice then only picks the bed).
+61. Beds On Map: all own beds show with the bed icon, the spawn bed once (the game's icon, no second one on top);
+    sleeping in another bed swaps them within a second; a destroyed bed's icon goes. `Beds On Map = false`: only the
+    game's icon. Dedicated server with A and B: each sees only their own beds.
+62. Quick Portals: two portals 20 m apart: through in about half a second (log `portal jump of 20 m takes 0.6 s`).
+    1 km apart: about 4 s. 3 km: the game's 8 s, longer while the area loads. A dungeon door: unchanged. With Wayfare:
+    a map jump to a near portal is quick too. `Quick Portals = false`: 8 s. Dedicated server: the same for each client.
+63. Portal screen: two portals 20 m apart: no black screen and no swirl (log `portal target ... is loaded already, no
+    teleport screen`); portals 500 m apart: the game's teleport screen while the area loads. `Portal Screen Only When
+    Loading = false`: the screen for every jump.
+64. Stand Up On Respawn: `die` beside a bed: you appear standing and can walk at once; log out and in: the game's
+    getting-up animation. Dedicated server, B watching A die and respawn: B sees A standing, not lying.
+65. Quick Area Loading (world with simulation distance 4): the 1 km portal pair lands in about 1.5 s (log `loaded
+    the land around you in ...`), not 11-12 s; the far edge of the view fills in after landing. `Quick Area Loading = false`: 11-12 s again. Dying far
+    from a bed: the respawn waits only for the timer, not ~6 s of land loading.
+66. Server settle, dedicated server with a big base 1 km from a portal: the jump lands with the base's floors under
+    you (never on the ground below them), taking longer than in single player but at most about 8 s; dying far from
+    your bed wakes you in that bed, not the next one (log has no `no bed of yours at`).

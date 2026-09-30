@@ -7,29 +7,41 @@ namespace OpenKeep.Homestead
     /// The bed a player wakes in. At death, on the dying player's own client while its player still exists, the
     /// known beds plus the profile's own spawn point (a bed claimed before the mod that has not loaded since) are
     /// ordered by map distance from the death point. The nearest becomes the profile's custom spawn point, which the
-    /// game reads twice: <c>Game.FindSpawnPoint</c> after the ten second wait, and <c>SaveLogoutPoint</c> when the
-    /// player logs out while dead. The others wait as the fallback, nearest first: when the game finds no bed of
-    /// this player at the point and clears it, <see cref="TryNext"/> hands out the next one. Cleared at every spawn.
+    /// game reads twice: <c>Game.FindSpawnPoint</c> once the wait is over, and <c>SaveLogoutPoint</c> when the player
+    /// logs out while dead. <see cref="Prefer"/> puts another of them there instead (the bed clicked on the map). The
+    /// others wait as the fallback, nearest first: when the game finds no bed of this player at the point and clears
+    /// it, <see cref="TryNext"/> hands out the next one. Cleared at every spawn.
     /// </summary>
     public static class BedRespawn
     {
+        private static readonly List<Vector3> ordered = new List<Vector3>();
         private static readonly List<Vector3> fallback = new List<Vector3>();
         private static string fallbackScope;
 
-        public static void Choose(Vector3 deathPoint)
+        /// <summary>Sets the nearest bed and returns every candidate, nearest first; empty when there is none.</summary>
+        public static List<Vector3> Choose(Vector3 deathPoint)
         {
-            fallback.Clear();
+            Clear();
             string scope = BedStore.Scope();
             if (!BedStore.Writable(scope))
-                return;
-            List<Vector3> beds = Candidates(deathPoint);
-            if (beds.Count == 0)
-                return;
-            Game.instance.GetPlayerProfile().SetCustomSpawnPoint(beds[0]);
-            fallback.AddRange(beds.GetRange(1, beds.Count - 1));
+                return new List<Vector3>();
+            ordered.AddRange(Candidates(deathPoint));
+            if (ordered.Count == 0)
+                return new List<Vector3>();
             fallbackScope = scope;
-            float metres = BedPoints.MapDistance(beds[0], deathPoint);
-            Plugin.Log.LogInfo($"OpenKeep: died at {BedPoints.Format(deathPoint)}; waking in the bed at {BedPoints.Format(beds[0])}, {metres:F0} m away ({beds.Count} beds known)");
+            Use(ordered[0]);
+            float metres = BedPoints.MapDistance(ordered[0], deathPoint);
+            Plugin.Log.LogInfo($"OpenKeep: died at {BedPoints.Format(deathPoint)}; waking in the bed at {BedPoints.Format(ordered[0])}, {metres:F0} m away ({ordered.Count} beds known)");
+            return new List<Vector3>(ordered);
+        }
+
+        /// <summary>One of the candidates becomes the spawn point; the rest stay the fallback, nearest first.</summary>
+        public static void Prefer(Vector3 bed)
+        {
+            if (!BedPoints.Contains(ordered, bed))
+                return;
+            Use(bed);
+            Plugin.Log.LogInfo($"OpenKeep: chose the bed at {BedPoints.Format(bed)}");
         }
 
         /// <summary>The next nearest bed after <paramref name="gone"/>, for the same character and world.</summary>
@@ -48,8 +60,16 @@ namespace OpenKeep.Homestead
 
         public static void Clear()
         {
+            ordered.Clear();
             fallback.Clear();
             fallbackScope = null;
+        }
+
+        private static void Use(Vector3 bed)
+        {
+            Game.instance.GetPlayerProfile().SetCustomSpawnPoint(bed);
+            fallback.Clear();
+            fallback.AddRange(ordered.FindAll(p => !BedPoints.Same(p, bed)));
         }
 
         private static List<Vector3> Candidates(Vector3 from)

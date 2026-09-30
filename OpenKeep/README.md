@@ -4,7 +4,7 @@ Storage and inventory for Valheim in one mod: craft, build and feed stations str
 holds and carts; stow, top up, sort, junk and route from the inventory panel; a Salvage tab that gives
 materials back; a `- amount +` stepper to craft many at once; stack sizes and weights; bigger chests with their contents on hover; carts that carry a
 workbench; how much each smelter and kiln holds; a sign above every chest that names what is inside; and a few base
-tweaks: respawn at your nearest bed, campfires on wooden floors, honey per day, fires that refuel from nearby chests,
+tweaks: respawn at the bed you pick on the map (sooner the nearer), quicker jumps between near portals, campfires on wooden floors, honey per day, fires that refuel from nearby chests,
 smelters and kilns that feed themselves from the chests beside them, tamed animals that eat from nearby chests,
 torches lit only at night (or kept lit),
 Rested sooner, area repair with the hammer and gear repaired as you open a workbench or forge. Every gameplay setting is server synced and lockable, every hotkey is
@@ -175,7 +175,7 @@ chest someone else is using is refused. Crafting, building and station feeding n
 another player is using, whatever the mode, so a requirement is never shown as covered by an item the other
 player may take first. Both players need the mod; a player without it gets the game's usual refusal.
 
-### Homestead: beds, campfires on wood, honey, fires, torches, stations, rest, repair and pets
+### Homestead: beds, portals, campfires on wood, honey, fires, torches, stations, rest, repair and pets
 Section `8. Homestead`, synced from the server like every gameplay setting.
 
 - Beds (`Nearest Bed Respawn`, on): every bed you own is a spawn bed. When you die you wake in your own bed
@@ -183,8 +183,33 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
   is left do you wake at the world's start. Any of your beds lets you sleep, with the game's usual checks (night,
   no enemies, roof, fire, dry), and the bed you last claimed or slept in stays your spawn point for your first
   spawn in a world. Your beds are remembered per character and per world when you claim one, use one or come near
-  one you own, so beds claimed before the mod count once you have been near them. Off: only your last bed counts,
-  as in the game.
+  one you own, so beds claimed before the mod count once you have been near them. Every one of them shows on your
+  map with the game's bed icon (`Beds On Map`, on, your own choice). Off: only your last bed counts, as in the game.
+- Choose your bed after death (`Bed Choice Seconds`, 30): with two beds or more, dying opens the map with your beds
+  on it, the nearest pulsing, and a countdown in the map's upper right corner. Click a bed to wake there; with no
+  click, you wake in the bed nearest to where you died when the countdown ends. The map key or Escape takes the nearest at once. The map zooms out far enough to show every bed. 0: no map,
+  always the nearest. Not in worlds without a map.
+- Quick respawn (`Quick Respawn`, on): the closer to where you died you wake, the sooner you wake. The game waits
+  10 seconds after a death and then 8 seconds of loading; that wait shrinks in proportion to the distance between
+  where you died and the bed (the world start without one), from `Quick Respawn Seconds` (1) right beside it to the
+  game's full wait at `Quick Respawn Range` (1000 m) and beyond. Die next to your bed and you are back in a second.
+  With the bed choice, the time you spend choosing counts towards the wait, so clicking a near bed wakes you at
+  once. A far area still takes as long as it needs to load. After a death you also wake standing, ready to move,
+  instead of the game's getting-up animation (`Stand Up On Respawn`, on); logging in keeps the game's.
+- Quick portals (`Quick Portals`, on): the closer together two portals are, the quicker the jump. The game's
+  8 seconds shrink in proportion to the distance, from `Quick Portal Seconds` (0.5) for portals side by side to the
+  full 8 seconds at `Quick Portal Range` (10000 m) and beyond: about 0.7 s for 250 m, 1.2 s for 1 km, 4 s for 5 km.
+  Lower the range (4000 to 5000) for a bigger difference between near and far portals. On a server you also wait
+  until the server has sent everything around the far portal, so you never land before your base is there, and
+  never longer than the game's 8 seconds. Every long jump counts: the game's portals, portal
+  mods that jump the game's way (Wayfare's map portals too) and the console's `goto`; dungeon doors are left alone.
+  The game still waits for a far area to load. A jump to a place already loaded around you (roughly 100-150 m)
+  keeps the screen clear, with no black screen and no teleport swirl; farther jumps show the game's teleport screen
+  while the area loads (`Portal Screen Only When Loading`, on, your own choice). Behind that screen, and while you
+  wait to respawn, the land and everything on it load as fast as your PC allows instead of the game's one 64 m square
+  every 0.1 s and 100 objects 30 times a second (`Quick Area Loading`, on, your own choice): the ground and buildings
+  near the far portal come first, the far edge of your view finishes after you land. With a high simulation
+  distance the game otherwise spends several seconds per long jump loading land before anything appears.
 - Campfires on wooden floors (`Build On Wood`, default `fire_pit`): the game refuses a campfire on a wooden floor;
   the pieces listed here may be built on wooden floors and other wooden pieces anyway. The game has the same rule
   for `bonfire`, `smelter`, `charcoal_kiln`, `blastfurnace`, `eitrrefinery`, `piece_FrostKiln` and `windmill`: add
@@ -304,9 +329,11 @@ inventory is open, except `Torch Switch Key`, which works only outside it, looki
 `Player Chests`, `Honour Wards`, `Shared Chests`), `1. Reach`, `2. Stow`, `3. Salvage`, `4. Stacks` (plus `4a. Item
 Stacks` and `4b. Item Weights` when per item entries are on), `5. Capacity`, `6. Carts`, `7. Signs` (`Enabled`,
 `Show Counts`, `Max Items`, `Max Characters`, `Update Seconds`, `Height`, `Rotation`, `Empty Text`), `8. Homestead`
-(`Nearest Bed Respawn`, `Build On Wood`, `Honey Per Day`, `Honey Per Player Online`, `Auto Fuel`, `Auto Fuel Range`,
-`Torches Night Only`, `Torch Pieces`, `Torch Margin`, `Auto Feed Stations`, `Auto Feed Range`, `Auto Feed Skip`, `Auto Feed Leave`, `Rested Delay`, `Area Repair`,
-`Auto Repair`, `Pets Eat From Chests`, `Pet Chest Range`; per player `Torch Switch Key`),
+(`Nearest Bed Respawn`, `Bed Choice Seconds`, `Quick Respawn`, `Quick Respawn Range`, `Quick Respawn Seconds`,
+`Stand Up On Respawn`, `Quick Portals`, `Quick Portal Range`, `Quick Portal Seconds`, `Build On Wood`, `Honey Per Day`, `Honey Per Player
+Online`, `Auto Fuel`, `Auto Fuel Range`, `Torches Night Only`, `Torch Pieces`, `Torch Margin`, `Auto Feed Stations`,
+`Auto Feed Range`, `Auto Feed Skip`, `Auto Feed Leave`, `Rested Delay`, `Area Repair`, `Auto Repair`, `Pets Eat From
+Chests`, `Pet Chest Range`; per player `Beds On Map`, `Portal Screen Only When Loading`, `Quick Area Loading`, `Torch Switch Key`),
 `9. Shared`
 (`Request Timeout`, `Touch Seconds`; per player `Show Touches`, `Touch Colour`), `10. Batch Crafting` (`Enabled`,
 `Max Amount`), and `General / Lock Configuration`.
