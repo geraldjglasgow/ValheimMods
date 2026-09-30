@@ -43,9 +43,11 @@ its `Take all` line; `Button Row Offset` moves the rows up or down if your scree
 `Trash Can On Stat Column` off puts the trash can at the end of the button row instead. Every action also has a hotkey that works while the inventory is open. The module is
 one workflow for coming home with a full inventory. Open a chest and stow: quick stack (`Q`) moves every stack
 whose item the open container (or, with `Quick Stack Nearby`, any container within `Nearby Range`) already holds,
-and `Store all` (`G`) moves everything that may move into the open container; neither touches your hotbar. Then top up (`R`): every stack you
+and `Store all` (`G`) moves everything that may move into the open container; neither touches your hotbar. The
+game's `Take all` has a key too (`Shift + G`). Then top up (`R`): every stack you
 carry that is not full is refilled from the chests, so you leave with what you came with. Sort (`T` for the
-inventory, `Y` for the container) orders by `Category`, `Name`, `Weight` or `Value`; the hotbar, favourite slots
+inventory, `Y` for the container) orders by `Category`, `Name`, `Weight`, `Value` or `Amount` (what you have the
+most of first, all its stacks counted together); the hotbar, favourite slots
 and equipped items stay put and stacks merge; with `Sort Favourite Items` off, favourite items stay put too —
 turn it off when another mod keeps items in extra slots the sort would pull out, and favourite those items. Quick
 stack, store all, dump and sort work only on the rows the game gives you (four, more once you buy them from the
@@ -184,9 +186,9 @@ Section `8. Homestead`, synced from the server like every gameplay setting.
   no enemies, roof, fire, dry), and the bed you last claimed or slept in stays your spawn point for your first
   spawn in a world. Your beds are remembered per character and per world when you claim one, use one or come near
   one you own, so beds claimed before the mod count once you have been near them. Every one of them shows on your
-  map with the game's bed icon (`Beds On Map`, on, your own choice). Off: only your last bed counts, as in the game.
+  map with the game's bed icon in yellow (`Beds On Map`, on, your own choice). Off: only your last bed counts, as in the game.
 - Choose your bed after death (`Bed Choice Seconds`, 30): with two beds or more, dying opens the map with your beds
-  on it, the nearest pulsing, and a countdown in the map's upper right corner. Click a bed to wake there; with no
+  on it, every bed icon twice the size and pulsing, and a countdown in the map's upper left corner. Click a bed to wake there; with no
   click, you wake in the bed nearest to where you died when the countdown ends. The map key or Escape takes the nearest at once. The map zooms out far enough to show every bed. 0: no map,
   always the nearest. Not in worlds without a map.
 - Quick respawn (`Quick Respawn`, on): the closer to where you died you wake, the sooner you wake. The game waits
@@ -302,6 +304,7 @@ none of it, and PackPanel works without OpenKeep. With both installed they fit t
 | `1. Reach / Link Key` | LeftAlt + L | draws the container to station lines for `Link Seconds` |
 | `2. Stow / Quick Stack Key` | Q | quick stack |
 | `2. Stow / Store All Key` | G | store all into the open container |
+| `2. Stow / Take All Key` | LeftShift + G | the game's Take all from the open container |
 | `2. Stow / Top Up Key` | R | top up from containers |
 | `2. Stow / Sort Inventory Key` | T | sort the player inventory |
 | `2. Stow / Sort Container Key` | Y | sort the open container |

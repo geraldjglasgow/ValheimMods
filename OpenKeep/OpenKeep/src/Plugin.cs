@@ -29,7 +29,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "1.12.0";
+        public const string PluginVersion = "1.13.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

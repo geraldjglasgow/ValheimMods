@@ -71,6 +71,20 @@ namespace OpenKeep.Stow
             StackInto(player, targets, false);
         }
 
+        /// <summary>The game's Take all on the open container, through the button's own action, so a shared chest
+        /// gets its request and View mode refuses exactly as the button does.</summary>
+        public static void TakeAll(InventoryGui gui)
+        {
+            if (!Ready(out Player _))
+                return;
+            if (StowTargets.Open == null)
+            {
+                Messages.Center(StowWords.NoContainer);
+                return;
+            }
+            gui.OnTakeAll();
+        }
+
         /// <summary>
         /// Moves the movable stacks into the targets in order; with <paramref name="onlyHeld"/> only into containers
         /// that already hold the item. Reports the stacks that moved at least partly. The targets come nearest first,

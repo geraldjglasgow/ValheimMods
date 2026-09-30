@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.13.0
+- Stow: a key for the game's Take all (`Take All Key`, Shift + G): with a chest open, everything in it moves into
+  your inventory as far as it fits, exactly as the button does, shared chests included.
+- Stow: a fifth `Sort Order`, `Amount`: the item you have the most of comes first, all its stacks counted together.
+- Homestead: your bed icons are yellow on the minimap and the large map whenever OpenKeep shows your beds, so they
+  stand out from the other pins.
+- Homestead: while you choose a bed after death, every bed icon is twice the size and pulsing (the nearest is no
+  longer singled out), and the countdown sits in the map's upper left corner instead of the upper right. After the
+  choice the icons are back to their normal size.
+
 ## 1.12.0
 - Homestead: choose your bed after death (`Bed Choice Seconds`, 30). With two beds or more, dying opens the map with
   all your beds on it, the nearest pulsing, and a countdown in the map's upper right corner. Click a bed to wake

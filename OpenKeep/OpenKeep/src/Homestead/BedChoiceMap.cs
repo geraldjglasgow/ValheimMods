@@ -5,10 +5,11 @@ namespace OpenKeep.Homestead
     /// <summary>
     /// The large map during the choice of bed. The game's <c>Minimap.Update</c> closes the map while the local player
     /// is dead, so <see cref="BedChoiceMapPatch"/> runs this instead then: the game's own map update (drag, zoom, pins,
-    /// the biome under the cursor), the chosen bed's icon pulsing, the countdown in the map's upper right corner
-    /// (<see cref="BedChoiceLabel"/>), and the end of the choice on the map key or Escape one frame after the press, so
-    /// the same press does not also open the game's menu. While open the bed icons show even when the player's map
-    /// filter hides them, and the map zooms out (never in) until every bed fits around the death point.
+    /// the biome under the cursor), every bed icon twice the size and pulsing (<see cref="BedPinLook"/>), the countdown
+    /// in the map's upper left corner (<see cref="BedChoiceLabel"/>), and the end of the choice on the map key or Escape
+    /// one frame after the press, so the same press does not also open the game's menu. While open the bed icons show
+    /// even when the player's map filter hides them, and the map zooms out (never in) until every bed fits around the
+    /// death point.
     /// </summary>
     public static class BedChoiceMap
     {
@@ -18,7 +19,6 @@ namespace OpenKeep.Homestead
         private const int HiddenFrames = 3;
 
         private static Minimap owner;
-        private static Minimap.PinData marked;
         private static bool closeNextFrame;
         private static bool bedsWereHidden;
 
@@ -48,7 +48,7 @@ namespace OpenKeep.Homestead
             closeNextFrame = input && map.m_shownFrames > 1 && CloseKey();
             map.UpdateMap(player, dt, input);
             map.UpdateDynamicPins(dt);
-            Mark(map);
+            BedPinLook.Enlarge(map);
             map.m_pinUpdateRequired = false;
             map.UpdatePins();
             map.UpdateBiome(player);
@@ -59,9 +59,7 @@ namespace OpenKeep.Homestead
         public static void Closed()
         {
             BedChoiceLabel.Hide();
-            if (marked != null)
-                marked.m_animate = false;
-            marked = null;
+            BedPinLook.Restore(owner);
             if (owner == null)
                 return;
             if (bedsWereHidden)
@@ -82,16 +80,6 @@ namespace OpenKeep.Homestead
         {
             return ZInput.GetButtonDown("Map") || ZInput.GetKeyDown(KeyCode.Escape) || ZInput.GetButtonDown("JoyMap")
                 || ZInput.GetButtonDown("JoyButtonB");
-        }
-
-        /// <summary>The chosen bed is the game's own spawn point icon; it pulses (the game's <c>m_animate</c>) while choosing.</summary>
-        private static void Mark(Minimap map)
-        {
-            if (marked != map.m_spawnPointPin && marked != null)
-                marked.m_animate = false;
-            marked = map.m_spawnPointPin;
-            if (marked != null)
-                marked.m_animate = true;
         }
 
         /// <summary>Zooms out, never in, until every bed lies inside the map's height around the death point.</summary>

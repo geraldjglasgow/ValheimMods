@@ -17,6 +17,7 @@ namespace OpenKeep.Stow
         public static ConfigEntry<KeyboardShortcut> QuickStackKey { get; private set; }
         public static ConfigEntry<bool> QuickStackNearby { get; private set; }
         public static ConfigEntry<KeyboardShortcut> StoreAllKey { get; private set; }
+        public static ConfigEntry<KeyboardShortcut> TakeAllKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> TopUpKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SortInventoryKey { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SortContainerKey { get; private set; }
@@ -70,6 +71,8 @@ namespace OpenKeep.Stow
                 "Quick stack also reaches every nearby container, not only the open one. Off also disables the Dump key.");
             StoreAllKey = synced.Bind(Section, "Store All Key", RenamedKeys.Carry(synced.Config, Section, "Stow All Key", "Store All Key", new KeyboardShortcut(KeyCode.G)),
                 "Inventory open with a container: every non-favourite item moves into the open container as far as it fits.", synced: false);
+            TakeAllKey = synced.Bind(Section, "Take All Key", new KeyboardShortcut(KeyCode.G, KeyCode.LeftShift),
+                "Inventory open with a container: the game's Take all - every stack in the open container moves into your inventory as far as it fits.", synced: false);
             TopUpKey = synced.Bind(Section, "Top Up Key", RenamedKeys.Carry(synced.Config, Section, "Restock Key", "Top Up Key", new KeyboardShortcut(KeyCode.R)),
                 "Inventory open: every stack in the inventory that is not full is topped up from the open container or nearby containers. Favourite items included.", synced: false);
             NearbyRange = synced.Bind(Section, "Nearby Range", 20f,
@@ -88,7 +91,7 @@ namespace OpenKeep.Stow
             SortContainerKey = synced.Bind(Section, "Sort Container Key", new KeyboardShortcut(KeyCode.Y),
                 "Inventory open with a container: sorts the open container by Sort Order.", synced: false);
             SortOrder = synced.Bind(Section, "Sort Order", Stow.SortOrder.Category,
-                "Category (item type, then name), Name, Weight (heaviest first) or Value (most valuable first). Stacks of the same item merge while sorting.", synced: false);
+                "Category (item type, then name), Name, Weight (heaviest first), Value (most valuable first) or Amount (the item you have the most of first, all its stacks counted together). Stacks of the same item merge while sorting.", synced: false);
             SortFavouriteItems = synced.Bind(Section, "Sort Favourite Items", true,
                 "Off: the sort leaves favourite items where they are. Turn off when another mod keeps items in extra slots the sort would pull out - favourite those items and they stay put.", synced: false);
             MainInventoryRows = synced.Bind(Section, "Main Inventory Rows", 0,

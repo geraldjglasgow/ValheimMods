@@ -87,7 +87,8 @@ namespace OpenKeep.Stow
                     loose.Add(item);
             }
             Merge(loose, all);
-            loose.Sort(Compare);
+            Dictionary<string, int> totals = Totals(loose);
+            loose.Sort((a, b) => Compare(a, b, totals));
             Place(inventory, loose, taken, firstRow * width, rows * width);
             inventory.Changed();
             return loose.Count;
@@ -138,7 +139,19 @@ namespace OpenKeep.Stow
             return ItemNames.SameItem(a, b) && a.m_quality == b.m_quality && a.m_worldLevel == b.m_worldLevel;
         }
 
-        private static int Compare(ItemDrop.ItemData a, ItemDrop.ItemData b)
+        /// <summary>How many of each item the loose stacks hold together, by shared name, for the Amount order.</summary>
+        private static Dictionary<string, int> Totals(List<ItemDrop.ItemData> loose)
+        {
+            Dictionary<string, int> totals = new Dictionary<string, int>();
+            foreach (ItemDrop.ItemData item in loose)
+            {
+                totals.TryGetValue(item.m_shared.m_name, out int count);
+                totals[item.m_shared.m_name] = count + item.m_stack;
+            }
+            return totals;
+        }
+
+        private static int Compare(ItemDrop.ItemData a, ItemDrop.ItemData b, Dictionary<string, int> totals)
         {
             int result = 0;
             switch (StowSettings.SortOrder.Value)
@@ -146,6 +159,7 @@ namespace OpenKeep.Stow
                 case SortOrder.Category: result = ((int)a.m_shared.m_itemType).CompareTo((int)b.m_shared.m_itemType); break;
                 case SortOrder.Weight: result = b.m_shared.m_weight.CompareTo(a.m_shared.m_weight); break;
                 case SortOrder.Value: result = b.m_shared.m_value.CompareTo(a.m_shared.m_value); break;
+                case SortOrder.Amount: result = totals[b.m_shared.m_name].CompareTo(totals[a.m_shared.m_name]); break;
             }
             if (result == 0)
                 result = string.Compare(ItemNames.DisplayName(a), ItemNames.DisplayName(b), StringComparison.OrdinalIgnoreCase);

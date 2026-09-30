@@ -20,6 +20,12 @@ namespace OpenKeep.Homestead
         private static float nextCheck;
         private static Vector3? shownSpawn;
 
+        /// <summary>Whether OpenKeep shows the beds: during the choice, or with Nearest Bed Respawn and Beds On Map.</summary>
+        public static bool Showing => BedChoice.Active || BedSettings.NearestBedRespawn.Value && BedSettings.BedsOnMap.Value;
+
+        /// <summary>The bed icons drawn here; the game's own spawn point icon is not among them.</summary>
+        public static List<Minimap.PinData> Drawn => pins;
+
         public static void Refresh(Minimap map)
         {
             if (map != owner)
@@ -50,7 +56,7 @@ namespace OpenKeep.Homestead
             List<Vector3> beds;
             if (BedChoice.Active)
                 beds = new List<Vector3>(BedChoice.Beds);
-            else if (BedSettings.NearestBedRespawn.Value && BedSettings.BedsOnMap.Value)
+            else if (Showing)
                 beds = BedList.Known();
             else
                 beds = new List<Vector3>();

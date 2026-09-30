@@ -5,11 +5,11 @@ using UnityEngine;
 namespace OpenKeep.Homestead
 {
     /// <summary>
-    /// The countdown of the choice of bed, in the upper right corner of the large map (the user's call, 2026-09-30):
-    /// the seconds left in large figures, then what happens when they run out, how to choose, and the keys. A child of
-    /// the map image, anchored to its top right corner and drawn after the map's own children; right aligned, in the
-    /// font, material and colour of the game's biome name, so it reads as the game's. Only the seconds change, and the
-    /// text is rebuilt only when they do.
+    /// The countdown of the choice of bed, in the upper left corner of the large map (the user's call, 2026-09-30, moved
+    /// from the upper right the same day): the seconds left in large figures, then what happens when they run out, how
+    /// to choose, and the keys. A child of the map image, anchored to its top left corner and drawn after the map's own
+    /// children; left aligned, in the font, material and colour of the game's biome name, so it reads as the game's.
+    /// Only the seconds change, and the text is rebuilt only when they do.
     /// </summary>
     public static class BedChoiceLabel
     {
@@ -48,8 +48,8 @@ namespace OpenKeep.Homestead
             RectTransform rect = (RectTransform)new GameObject("OpenKeep_BedChoice", typeof(RectTransform)).transform;
             rect.SetParent(parent, worldPositionStays: false);
             rect.SetAsLastSibling();
-            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.one;
-            rect.anchoredPosition = new Vector2(-Inset, -Inset);
+            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.up;
+            rect.anchoredPosition = new Vector2(Inset, -Inset);
             rect.sizeDelta = new Vector2(Width, Height);
             label = Style(rect.gameObject.AddComponent<TextMeshProUGUI>(), map.m_biomeNameLarge);
             shownSeconds = -1;
@@ -62,7 +62,7 @@ namespace OpenKeep.Homestead
             text.fontSharedMaterial = like.fontSharedMaterial;
             text.color = like.color;
             text.fontSize = like.fontSize * FontShare;
-            text.alignment = TextAlignmentOptions.TopRight;
+            text.alignment = TextAlignmentOptions.TopLeft;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.raycastTarget = false;
             return text;

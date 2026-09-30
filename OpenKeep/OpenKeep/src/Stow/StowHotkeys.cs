@@ -6,7 +6,7 @@ namespace OpenKeep.Stow
     /// <summary>
     /// Polls the inventory hotkeys once per frame after the game's own inventory update, only while the panel is
     /// visible and no popup or split dialog is up. Combined shortcuts are checked before the single key they share
-    /// (Shift+F before F, Shift+Delete before Delete); the core's single-key rule keeps them apart anyway.
+    /// (Shift+G before G, Shift+F before F, Shift+Delete before Delete); the core's single-key rule keeps them apart anyway.
     /// </summary>
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
     public static class StowHotkeys
@@ -34,6 +34,8 @@ namespace OpenKeep.Stow
         {
             if (Keys.Pressed(StowSettings.QuickStackKey))
                 StowActions.QuickStack();
+            else if (Keys.Pressed(StowSettings.TakeAllKey))
+                StowActions.TakeAll(gui);
             else if (Keys.Pressed(StowSettings.StoreAllKey))
                 StowActions.StoreAll();
             else if (Keys.Pressed(StowSettings.TopUpKey))

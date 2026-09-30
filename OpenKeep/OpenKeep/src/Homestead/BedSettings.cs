@@ -24,11 +24,11 @@ namespace OpenKeep.Homestead
             NearestBedRespawn = synced.Bind(Section, "Nearest Bed Respawn", true,
                 "Every bed you own is a spawn bed: after death you wake in your bed nearest to where you died (the next nearest when that one is gone or no longer yours), and any of your beds lets you sleep. Off: only the last bed you claimed or set counts, as in the game.");
             BedChoiceSeconds = synced.Bind(Section, "Bed Choice Seconds", 30f,
-                "With Nearest Bed Respawn and two or more beds, death opens the map with your beds on it and a countdown in its upper right corner: click a bed to wake there. With no click before the countdown ends you wake in the bed nearest to where you died. 0: no map, always the nearest.",
+                "With Nearest Bed Respawn and two or more beds, death opens the map with your beds on it and a countdown in its upper left corner: click a bed to wake there. With no click before the countdown ends you wake in the bed nearest to where you died. 0: no map, always the nearest.",
                 acceptableValues: new AcceptableValueRange<float>(0f, 60f));
             BindQuick(synced);
             BedsOnMap = synced.Bind(Section, "Beds On Map", true,
-                "With Nearest Bed Respawn, every bed you own shows on your map with the game's bed icon, not only the last one you slept in.", false);
+                "With Nearest Bed Respawn, every bed you own shows on your map with the game's bed icon in yellow, not only the last one you slept in.", false);
         }
 
         private static void BindQuick(SyncedConfiguration synced)

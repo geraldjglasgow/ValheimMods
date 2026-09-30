@@ -83,7 +83,7 @@ OpenKeep/OpenKeep/src/
     StowTargets.cs          the open container and the nearby ones: usable now or shared (Full mode)
     ChestBatch.cs           one action's writes to one container through Shared.ChestWriter, with the summary
     StackMover.cs           stacks with a put under way (never moved twice), the end-of-action message
-    StowActions.cs          quick stack, store all, dump; SpillOver: a shared chest's leftover goes on to later holders
+    StowActions.cs          quick stack, store all, dump, the Take all key (the game's OnTakeAll, so Shared routes it); SpillOver: a shared chest's leftover goes on to later holders
     Overflow.cs             one stack through a line of containers: the chosen one, then every later one holding the
                             item, nearest first, until placed; one put per step, a shared chest's answer continues it
     TopUp.cs, Sorting.cs, Trash.cs, Routing.cs, Finder.cs, Cycling.cs
@@ -168,12 +168,14 @@ OpenKeep/OpenKeep/src/
     BedWait.cs              Quick Respawn: the death delay (a new RequestRespawn) and the load speed from the distance
     BedLoadPatch.cs         Game.FindSpawnPoint prefix: m_respawnWait runs LoadSpeed times as fast after a death
     BedChoice.cs            the choice of bed after death: open, click, time out, confirm, close
-    BedChoiceMap.cs         the large map while dead: the game's map update, the pulsing pick, zoom to fit, map
-                            key/Escape one frame late
-    BedChoiceLabel.cs       the countdown in the large map's upper right corner (seconds in large figures)
+    BedChoiceMap.cs         the large map while dead: the game's map update, zoom to fit, map key/Escape one frame
+                            late
+    BedChoiceLabel.cs       the countdown in the large map's upper left corner (seconds in large figures)
     BedChoiceMapPatch.cs, BedChoiceClickPatch.cs, BedChoiceDoubleClickPatch.cs, BedChoiceScreenPatch.cs,
     BedChoiceEndPatch.cs    Minimap.Update, OnMapLeftClick, OnMapDblClick, Hud.UpdateBlackScreen, Game._RequestRespawn
     BedPins.cs, BedPinsPatch.cs   the other known beds as unsaved bed pins (Minimap.UpdateProfilePins postfix)
+    BedPinLook.cs, BedPinLookPatch.cs   bed icons yellow (Minimap.UpdatePins postfix); twice the size and pulsing
+                            while choosing
     BedStandPatch.cs        Player.OnSpawned postfix: after a death, the game's getting-up animation is skipped
     QuickWait.cs            the distance-to-wait line shared by Quick Respawn and Quick Portals
     PortalFeature.cs, PortalSettings.cs   Quick Portals, Quick Portal Range, Quick Portal Seconds
@@ -286,7 +288,7 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.12.0]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.13.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -951,9 +953,14 @@ Beds:
   a choice still open. Not in `nomap` worlds (`Game.m_noMap`). The choice is "active" only while the same `Game`
   and the same dead local player exist, so quitting or being revived needs no clean-up call. The bed filter of the
   map is forced on during the choice and restored after. The countdown (30 s by default, the user's call of
-  2026-09-30) sits in the upper right corner of the map image, a child of `m_mapImageLarge` anchored top right and
-  drawn after its other children, in the biome name's font, material and colour, right aligned: the seconds in
-  large figures, then "seconds until you wake in the nearest bed", how to choose, and the keys.
+  2026-09-30) sits in the upper left corner of the map image (moved from the upper right at the user's request the
+  same day), a child of `m_mapImageLarge` anchored top left and drawn after its other children, in the biome name's
+  font, material and colour, left aligned: the seconds in large figures, then "seconds until you wake in the nearest
+  bed", how to choose, and the keys. During the choice every bed icon (OpenKeep's and the game's spawn pin) has the
+  game's `m_doubleSize` and `m_animate`, as its event pins: 1.2 to 2 times the normal size, pulsing (the user asked
+  for twice the size and pulsing, 2026-09-30). The game sizes an icon only when it makes it and while it pulses, so
+  at the end the icons are destroyed (`DestroyPinMarker`) and made again at the normal size. The chosen (nearest)
+  bed no longer stands out from the others.
 - Quick Respawn (1.12.0): the game's wait is `RequestRespawn(10f)` from `Player.OnDeath` plus `m_respawnLoadDuration`
   (8 s) in `FindSpawnPoint` before it looks for the bed. Both shrink by one share: `Quick Respawn Seconds` at 0 m,
   the full 18 s at `Quick Respawn Range`, linear between, from the map distance between the death point and the
@@ -965,7 +972,10 @@ Beds:
 - Beds On Map (1.12.0, per player): the other known beds as `PinType.Bed` pins with `m_save` false, added to
   `m_pins` directly (`AddPin` would turn the bed filter back on each time) and never saved; the game draws the spawn
   point's own pin, so that bed is left out. Checked once a second and at once when the spawn point moves. During the
-  choice the candidates are drawn even with the setting off; the chosen bed is the game's spawn pin with `m_animate`.
+  choice the candidates are drawn even with the setting off. The bed icons are yellow (1, 0.85, 0.1; the user's call
+  of 2026-09-30, to stand out), OpenKeep's and the game's spawn pin alike, on both maps, whenever OpenKeep shows the
+  beds (`BedPins.Showing`: the choice, or Nearest Bed Respawn with Beds On Map); the game sets every icon white in
+  `UpdatePins`, so a postfix tints them after it. Otherwise the game's white icon.
 
 Portals:
 - Quick Portals (1.12.0, the user's request of 2026-09-30): `Player.UpdateTeleport` moves the player once
@@ -1356,7 +1366,7 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.12.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 1.13.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1376,7 +1386,8 @@ from a script.
    were written from memory, not the assets).
 4. Stow: check the button row below the player panel and the Sort button below the container panel's Take all
    line overlap no item slot and no game text (with and without a chest open; note what `Button Row Offset` a
-   clean layout needs, and that a changed offset moves the buttons at once); quick stack, store all, top up, sort by each order,
+   clean layout needs, and that a changed offset moves the buttons at once); quick stack, store all, take all with
+   Shift+G (and in a shared chest in Full and View mode), top up, sort by each order (Amount: most held first),
    favourite item and slot (star, border, cross drawn), trash with confirmation, destroy junk, route with
    Ctrl click (with and without a chest open), store one with V, find (line and floating count), dump
    outside the inventory, cycle with arrows and wheel between three chests within 4 m. Favourites survive a relog.
@@ -1632,18 +1643,20 @@ from a script.
     chests holding coal: the coal goes into the nearer one, and into the other once that one is full. Dedicated server
     with the chests owned by different players: the same.
 58. Bed choice, single player, beds A (near) and B (a few hundred metres away): `die` near A. The map opens centred
-    on the death point, zoomed out to show both, A pulsing, the countdown in the map's upper right corner counting
+    on the death point, zoomed out to show both, both bed icons yellow, twice the size and pulsing, the countdown in
+    the map's upper left corner counting
     down from 30. Wait: at 0 you wake in A. Die again and click B: the map closes, you wake in B after B's share of the wait (log
     `chose the bed at ...`, `waking in ... s after death`). Die and press M (and once Escape): the map closes at once,
     you wake in A, the game menu does not open, and the cursor hides again. A double click beside the beds adds no pin.
-    Hide the bed icons in the map filter first: they show during the choice and are hidden again after.
+    Hide the bed icons in the map filter first: they show during the choice and are hidden again after. After the
+    choice, open the map: the bed icons are back to the normal size and still.
 59. Bed choice, edge cases: one bed only, no map (wake at once with Quick Respawn); `Bed Choice Seconds = 0`: no map;
     a `nomap` world: no map; log out during the choice and back in: you are at the nearest bed; destroy B while
     choosing it (second client): the log says `no bed of yours at ...; trying the bed at ...` and you wake in A.
 60. Quick Respawn: `die` right beside a bed: awake in about a second. 500 m away with the defaults: about 9.5 s. 2 km
     away: the game's 18 s. No bed: the same by the distance to the start stones. `Quick Respawn = false`: 18 s again,
     with the bed choice too (the choice then only picks the bed).
-61. Beds On Map: all own beds show with the bed icon, the spawn bed once (the game's icon, no second one on top);
+61. Beds On Map: all own beds show with the bed icon in yellow on the minimap and the large map, the spawn bed once (the game's icon, no second one on top);
     sleeping in another bed swaps them within a second; a destroyed bed's icon goes. `Beds On Map = false`: only the
     game's icon. Dedicated server with A and B: each sees only their own beds.
 62. Quick Portals: two portals 20 m apart: through in about half a second (log `portal jump of 20 m takes 0.6 s`).
