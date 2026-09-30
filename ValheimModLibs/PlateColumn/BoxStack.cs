@@ -27,10 +27,13 @@ namespace PlateColumn
 
         public GamePlates Game { get; }
 
-        /// <summary>The readied column, or null (with nothing changed) when the game's plates are missing.</summary>
+        /// <summary>
+        /// The readied column, or null (with nothing changed) without PackPanel laying out the inventory
+        /// (<see cref="PackPanelOwner"/>) or when the game's plates are missing.
+        /// </summary>
         public static BoxStack? Ready(InventoryGui gui)
         {
-            GamePlates? game = GamePlates.Find(gui);
+            GamePlates? game = PackPanelOwner.LaysOutInventory ? GamePlates.Find(gui) : null;
             if (game == null)
             {
                 return null;

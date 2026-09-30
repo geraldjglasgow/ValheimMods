@@ -23,10 +23,16 @@ namespace PlateColumn
 
         /// <summary>
         /// The mod's HUD box for this spec (its tooltip words are unused), found when the row already has it, made
-        /// otherwise, with the row put in rank order. Null while there is no minimap or the inventory's plates are missing.
+        /// otherwise, with the row put in rank order. Null without PackPanel laying out the inventory (the row is PackPanel's
+        /// look, as the column is: <see cref="Column.Active"/>), while there is no minimap, or when the inventory's plates
+        /// are missing.
         /// </summary>
         public static Plate? Add(InventoryGui gui, PlateSpec spec)
         {
+            if (!Column.Active)
+            {
+                return null;
+            }
             RectTransform? row = HudContainer.Get();
             BoxStack? stack = row != null ? BoxStack.Ready(gui) : null;
             if (row == null || stack == null)

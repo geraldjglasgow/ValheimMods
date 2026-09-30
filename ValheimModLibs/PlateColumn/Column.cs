@@ -16,11 +16,19 @@ namespace PlateColumn
     /// left on the panel are adopted into the container as boxes (the same objects, so references to them keep working).
     /// The game's armour and weight plates are never moved into it: other mods find them on the panel by name, so they
     /// stay there and are pinned over seats in the container (<see cref="Seats"/>), as are the known boxes other mods copy
-    /// from the armour plate (<see cref="Guests"/>).
+    /// from the armour plate (<see cref="Guests"/>). The column is PackPanel's look and exists only while PackPanel lays
+    /// out the inventory (<see cref="Active"/>); without it no copy of this library touches the game's plates.
     /// </para>
     /// </summary>
     public static class Column
     {
+        /// <summary>
+        /// Whether the column exists at all: only while PackPanel lays out the inventory (<see cref="PackPanelOwner"/>).
+        /// Without it <see cref="Arrange"/>, <see cref="Boxes"/> and <see cref="Add"/> change nothing and return false or
+        /// null, and the game's plates stay as the game draws them; check this first rather than treat that as a failure.
+        /// </summary>
+        public static bool Active => PackPanelOwner.LaysOutInventory;
+
         public const int ArmorRank = 100;
         public const int WeightRank = 300;
 

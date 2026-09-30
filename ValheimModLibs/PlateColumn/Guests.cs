@@ -9,7 +9,8 @@ namespace PlateColumn
     /// game's armour and weight boxes: Jewelcrafting's synergy box, the coin pocket of CurrencyPocket and OttoPay, the
     /// trash can of TrashItems. That is why the column leaves the game's boxes on the panel (<see cref="Seats"/>). Once
     /// one of these shows up it gets a seat at its rank, so it sits in the column rather than on one of its boxes: the
-    /// synergy box right under the armour, where Jewelcrafting puts it; the trash can beside OpenKeep's; the coin pocket
+    /// synergy box right under the armour, where Jewelcrafting puts it; a trash can (TrashItems', Quick Stack Store Sort
+    /// Trash Restock's, or OpenKeep's own since 1.11.0, all named <c>Trash</c>) under it; the coin pocket
     /// between the armour and the weight, where those mods put it. Only a copy of a box is seated (it has the armour box's
     /// <c>armor_icon</c>). It is moved, never restyled: its mod may add parts of its own later (TrashItems puts a clickable
     /// canvas bigger than the box on its can a frame after making it, which a restyle would take for the background). It
