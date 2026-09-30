@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.13.2
+
+- The world tier boxes (in the inventory under the weight, and under the minimap) show only with PackPanel installed,
+  in PackPanel's column of stat boxes. Without PackPanel, Elite Creatures Reborn adds nothing to the inventory or the
+  HUD, and the game's armour and weight readouts stay exactly as the game draws them. Tier rises are still announced,
+  and `elite tier` still shows the tier.
+
 ## 3.13.1
 
 - Fixed: with Jewelcrafting, CurrencyPocket, OttoPay, TrashItems or Quick Stack Store Sort Trash Restock installed,

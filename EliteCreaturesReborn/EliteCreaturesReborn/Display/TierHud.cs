@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Display
     /// OpenKeep puts the weight beside it) showing the globe and the tier alone ("3") as the inventory's plate does
     /// (<see cref="TierPlate"/>, whose tooltip names the number of tiers; this box takes no pointer), so the tier is in view without opening the inventory. Made the first time there is a
     /// tier to show, written every frame the HUD updates but only when the tier changes, hidden while world tiers are off
-    /// or by the player's display setting. Read from the world's boss keys, which the server already sends every player;
+    /// or by the player's display setting, and never made without PackPanel (the user's call, 2026-09-29: Elite Creatures
+    /// Reborn adds no UI of its own; <see cref="Column.Active"/>). Read from the world's boss keys, which the server already sends every player;
     /// nothing is sent.
     /// </summary>
     internal static class TierHud
@@ -32,7 +33,7 @@ namespace EliteCreaturesReborn.Display
 
         public static void Refresh()
         {
-            bool show = Configuration.ShowWorldTierOnHud.Value && Player.m_localPlayer != null && WorldTier.Ceiling() > 0;
+            bool show = Configuration.ShowWorldTierOnHud.Value && Player.m_localPlayer != null && WorldTier.Ceiling() > 0 && Column.Active;
             Plate? box = Current(show);
             if (box == null)
             {

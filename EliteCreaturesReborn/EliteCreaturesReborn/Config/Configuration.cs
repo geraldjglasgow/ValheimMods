@@ -82,11 +82,12 @@ namespace EliteCreaturesReborn.Config
                 new ConfigDescription("How long the boss damage board stays on screen. Client side; never locked.",
                     new AcceptableValueRange<float>(5f, 600f)));
             ShowWorldTier = config.Bind(Display, "Show world tier", true,
-                "Show the world tier on the inventory screen, on a plate under the weight. Hidden anyway while world "
+                "With PackPanel installed: show the world tier on the inventory screen, in PackPanel's column of stat boxes "
+                + "under the weight. Without PackPanel the inventory stays as the game draws it. Hidden anyway while world "
                 + "tiers are off. Client side; never locked.");
             ShowWorldTierOnHud = config.Bind(Display, "Show world tier under minimap", true,
-                "Show the world tier in a small box under the minimap as well, so it is in view without opening the "
-                + "inventory. Hidden anyway while world tiers are off. Client side; never locked.");
+                "With PackPanel installed: show the world tier in a small box under the minimap as well, so it is in view "
+                + "without opening the inventory. Hidden anyway while world tiers are off. Client side; never locked.");
         }
 
         // Not a display preference and never locked: a switch that makes the death/split/absorb chain log every step, so

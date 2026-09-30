@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Display
     /// weight, showing a globe and the tier alone ("3"), with a tooltip naming how many tiers there are and saying what
     /// the tier does. The column (the PlateColumn library,
     /// shared with our other mods) moves the game's plates up to make room, spaces them evenly, and closes the gap again
-    /// when the plate is hidden - with world tiers off, or by the player's display setting. The plate is made the first
+    /// when the plate is hidden - with world tiers off, or by the player's display setting. Only with PackPanel, whose
+    /// look the column is (<see cref="Column.Active"/>); without it the inventory stays as the game draws it. The plate is made the first
     /// time the inventory is open with a tier to show. Read from the world's boss keys, which the server already sends
     /// every player; nothing is sent.
     /// </summary>
@@ -34,7 +35,7 @@ namespace EliteCreaturesReborn.Display
         /// <summary>Each frame the inventory is open, after the game has written the weight.</summary>
         public static void Refresh(InventoryGui gui)
         {
-            bool show = Configuration.ShowWorldTier.Value && WorldTier.Ceiling() > 0;
+            bool show = Configuration.ShowWorldTier.Value && WorldTier.Ceiling() > 0 && Column.Active;
             Plate? plate = Current(gui, show);
             if (plate == null)
             {

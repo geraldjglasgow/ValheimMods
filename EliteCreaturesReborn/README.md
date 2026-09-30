@@ -113,11 +113,12 @@ rise from 5 in 100 to 22, and every mutation chance doubles. Bosses are unaffect
 what they rolled - the tier decides what the next one rolls. A world that killed bosses before the mod was installed
 starts at that tier.
 
-The inventory shows the tier in a box with a globe ("3"), under the armor and weight in a column of small boxes down
-the outside of the inventory panel's right edge. Every box in the column names itself when hovered, and the tier's
-says how many tiers there are in total. With OpenKeep installed its trash plate joins the same column. The tier also
-shows in a small box under the minimap, so it is in view without opening the inventory. `Show world tier` and
-`Show world tier under minimap` in the .cfg hide the one or the other for one player.
+The `elite tier` command shows the tier at any time. With
+PackPanel installed the tier also shows in a box with a globe ("3") under the armor and weight in PackPanel's column of
+stat boxes (hover it: it says how many tiers there are in total) and in a small box under the minimap, so it is in view
+without opening the inventory; `Show world tier` and `Show world tier under minimap` in the .cfg hide the one or the
+other for one player. Without PackPanel, Elite Creatures Reborn adds nothing to the inventory or the HUD: both stay as
+the game draws them.
 
 `elite tier` shows any player the current tier, what it is doing to the rolls, and which bosses count. The
 `world tiers:` block in the rule file has the off switch, the list of bosses that count (a modded boss counts once
