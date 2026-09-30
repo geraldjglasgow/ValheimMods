@@ -1,5 +1,5 @@
-using BepInEx.Configuration;
 using HarmonyLib;
+using Hotkeys;
 using PatchGuard;
 using UnityEngine;
 
@@ -29,11 +29,7 @@ namespace GrindstoneSkills
 
         public static bool Unlockable => SailingSkill.Active && LookoutSettings.Level.Value <= SailingSkill.MaxLevel;
 
-        private static bool Pressed(Player player)
-        {
-            KeyboardShortcut key = LookoutSettings.Key.Value;
-            return key.MainKey != KeyCode.None && key.IsDown() && player.TakeInput();
-        }
+        private static bool Pressed(Player player) => Hotkey.Pressed(LookoutSettings.Key) && player.TakeInput();
 
         private static void TrySend(Player player)
         {

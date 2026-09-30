@@ -5,7 +5,7 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Sailing's page in the info pane: ship health, helm speed and the map reveal at the player's level, how the skill
-    /// trains, and the lookout milestone. The numbers are the synced settings scaled by the level exactly as the
+    /// trains, and the Wind Call and lookout milestones. The numbers are the synced settings scaled by the level exactly as the
     /// features scale them (<see cref="ShipwrightHealth.Factor"/>, <see cref="SailingSkill.Share"/>).
     /// </summary>
     public static class SailingPage
@@ -23,6 +23,7 @@ namespace GrindstoneSkills
             }
             Ships(page);
             Training(page);
+            WindCall(page);
             Lookout(page);
         }
 
@@ -50,18 +51,24 @@ namespace GrindstoneSkills
                 $"For the distance a ship moves while you steer it. {crewText}; a ship nobody steers earns nothing.");
         }
 
-        private static void Lookout(SkillPage page)
+        private static void WindCall(SkillPage page)
         {
-            float cooldown = LookoutSettings.Cooldown.Value;
-            string again = cooldown > 0f ? $" Once every {SkillPage.Duration(cooldown)}." : "";
-            page.Perk("Lookout", LookoutSettings.Level.Value,
-                $"Press {KeyText()} aboard a ship: everyone aboard sees the name tags of enemies (not bosses) within {LookoutSettings.Radius.Value:0} m for {SkillPage.Duration(LookoutSettings.Duration.Value)}.{again}");
+            page.Perk("Wind Call", WindCallSettings.Level.Value,
+                $"Press {KeyText(WindCallSettings.Key, "Wind Call Key")} aboard a ship: the wind turns to blow the way you look, for everyone aboard, for {SkillPage.Duration(WindCallSettings.Duration.Value)}.{Again(WindCallSettings.Cooldown.Value)}");
         }
 
-        private static string KeyText()
+        private static void Lookout(SkillPage page)
         {
-            KeyboardShortcut key = LookoutSettings.Key.Value;
-            return key.MainKey == KeyCode.None ? "the Lookout Key (not set)" : key.ToString();
+            page.Perk("Lookout", LookoutSettings.Level.Value,
+                $"Press {KeyText(LookoutSettings.Key, "Lookout Key")} aboard a ship: everyone aboard sees the name tags of enemies (not bosses) within {LookoutSettings.Radius.Value:0} m for {SkillPage.Duration(LookoutSettings.Duration.Value)}.{Again(LookoutSettings.Cooldown.Value)}");
+        }
+
+        private static string Again(float cooldown) => cooldown > 0f ? $" Once every {SkillPage.Duration(cooldown)}." : "";
+
+        private static string KeyText(ConfigEntry<KeyboardShortcut> entry, string setting)
+        {
+            KeyboardShortcut key = entry.Value;
+            return key.MainKey == KeyCode.None ? $"the {setting} (not set)" : key.ToString();
         }
 
         private static float ExploreRadius() => Minimap.instance != null ? Minimap.instance.m_exploreRadius : GameExploreRadius;

@@ -26,6 +26,7 @@ namespace GrindstoneSkills
             DisplaySettings.Initialize(config);
             SailingSettings.Initialize(config);
             LookoutSettings.Initialize(config);
+            WindCallSettings.Initialize(config);
             WoodcuttingSettings.Initialize(config);
             PickaxeSettings.Initialize(config);
             DefenseSettings.Initialize(config);

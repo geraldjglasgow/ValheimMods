@@ -21,7 +21,7 @@ namespace GrindstoneSkills
         public static void Initialize(SyncedConfiguration config)
         {
             Enabled = config.Bind(Section, "Sailing Enabled", true,
-                "Turns every Sailing perk, the lookout and Sailing experience on or off. Levels are kept either way.");
+                "Turns every Sailing perk, Wind Call, the lookout and Sailing experience on or off. Levels are kept either way.");
             ShipHealth = config.Bind(Section, "Ship Health At 100", 50f,
                 "Percent more health for a ship built by a level 100 sailor. Fixed by the builder's level when the ship is placed.",
                 acceptableValues: Settings.UpTo(500f));

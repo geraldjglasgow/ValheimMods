@@ -289,7 +289,7 @@ Planned units, each within the size limits:
 - `Filter/`: ZDO key, key handling, hover text.
 - `Eating/`: custom data, total-value postfix, duration.
 - `Experience/`: tier multiplier, trash credit, fermenter XP, discovery.
-- `Sailing/`: skill registration and cheats, the three perks, experience; `Sailing/Lookout/` the milestone.
+- `Sailing/`: skill registration and cheats, the three perks, experience; `Sailing/Lookout/` and `Sailing/WindCall/` the two actives.
 - `Fishing/`: `Core` (angler, float scope, catch), `Fight`, `Bites`, `BigFish`, `Records`, `Rewards`, `Experience`.
 
 ## Later
@@ -428,12 +428,36 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
   - A snapshot: a creature that was inside the radius keeps its tag wherever it goes. Bosses are left out, since
     their tag is the boss bar at the top of the screen.
 
+### Wind Call (the level 25 active, requested by the user 2026-09-30)
+
+The request: "active ability for sailing: changes the wind direction level 25. 3 minute cooldown".
+
+- **What the game does with wind:** every machine works the wind out on its own from the world time
+  (`EnvMan.UpdateWind`, each physics step) and eases into a new target over 5 s (`SetTargetWind`). A ship's sail force
+  uses the wind on the machine that owns the ship (`Ship.GetSailForce`), and the game hands a ship to a player aboard
+  (`Ship.UpdateOwner`). Moder's power is the precedent: every client whose player is aboard (`Ship.GetLocalShip`)
+  turns its wind to the ship's bow while anyone aboard has the power.
+- **Key:** K by default, each player's own (unbound in the game and in every mod in this workspace), read through the
+  Hotkeys library (it fires while W is held). The lookout key moved onto Hotkeys with it.
+- **Conditions:** Sailing on, the player's level at least `Wind Call Level` (25), aboard a ship, and the player's own
+  cooldown (180 s) over. Each refusal says why. With Sailing off or the level above 100 the key does nothing.
+- **The call (`WindCallInput`, `WindCallReceive`):** an RPC on the ship's `ZNetView` to everybody with the flat
+  direction the caller's camera looks and the caller's player ID. The ship's owner writes the direction and the end
+  time (world ticks) into the ship's ZDO (`grindstone_wind_dir`, `grindstone_wind_until`); every client aboard gets
+  "You turn the wind toward the north-east for 60 s" (or the caller's name).
+- **The wind (`WindCallWind`):** a prefix on `EnvMan.SetTargetWind` replaces the target direction with the ship's
+  called wind on every client aboard while it blows; the game's intensity and its 5 s easing stay. The debug wind
+  (`wind` command) and the world-edge push-back wind are left alone. Players ashore or on other ships keep the
+  weather's wind, as with Moder.
+
 ### Settings
 
 - **8 - Sailing (synced):** Sailing Enabled, Ship Health At 100, Ship Speed At 100, Exploration Radius At 100, Helm
   Experience Per Kilometre, Crew Experience Share.
 - **9 - Lookout:** Lookout Level, Lookout Radius, Lookout Duration, Lookout Cooldown (synced); Lookout Key (each
   player's own).
+- **35 - Wind Call:** Wind Call Level (25), Wind Call Duration (60 s), Wind Call Cooldown (180 s) (synced); Wind Call
+  Key (each player's own). Section 35 because 10 to 34 were taken when it came.
 
 ### Decisions made while building (2026-09-27), for the user to confirm
 
@@ -445,6 +469,18 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
 - **Experience from distance only**, crew at 25%, nothing for building.
 - **The lookout cooldown is per player and in memory**; a relog resets it.
 - **One switch turns all of Sailing off** (perks, experience, lookout); levels are kept.
+
+### Decisions made while building Wind Call (2026-09-30), for the user to confirm
+
+- **The wind blows the way the caller looks** (the camera's heading), fixed in the world while it blows: looking
+  ahead gives a wind at the back, and any other point can be picked. It does not follow the bow as Moder's does.
+- **It lasts 60 s** (the request gave only the cooldown), then the weather's wind returns over the game's 5 s easing.
+- **Only the direction changes**; the weather keeps deciding how strong the wind is.
+- **It is the ship's wind, not the world's:** everyone aboard that ship gets it, nobody else, as with Moder. A
+  world-wide change would let one sailor turn every other ship's wind.
+- **It wins over Moder's tailwind** while it blows, since it is the more recent choice of someone aboard.
+- **The cooldown is per player and in memory**, like the lookout's; several sailors aboard can call one after another,
+  and a new call replaces the one blowing.
 
 ### Known gaps
 
@@ -466,6 +502,13 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
 - [ ] Lookout: refused below level 50, ashore and on cooldown, with a message; the ring shows on a second client near
       the ship; the crew see tags on serpents or drakes up to 100 m away for 30 s; no tags on bosses or tamed
       animals; nothing breaks on a dedicated server.
+- [ ] Wind Call: refused below level 25, ashore and on cooldown, with a message; K aboard turns the sail and the
+      ship HUD's wind arrow to the way you looked within a few seconds (up to 10 s: a running 5 s easing finishes
+      first), the message names the compass point; after 60 s
+      the weather's wind returns; K fires while W is held and not while typing in chat.
+- [ ] Wind Call in multiplayer: when a passenger calls it and the helmsman owns the ship (and the other way round),
+      the ship sails with the called wind and both see the same HUD arrow; a player boarding mid-call gets it; a
+      player on the shore nearby keeps the weather's wind; a dedicated server shows nothing wrong in its log.
 
 ## Woodcutting
 

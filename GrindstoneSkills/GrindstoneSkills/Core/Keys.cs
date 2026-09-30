@@ -48,6 +48,12 @@ namespace GrindstoneSkills
         public const string ShipwrightLevel = "grindstone_shipwright";
         /// <summary>On a ship, to everybody who has it loaded: () - a lookout pulse goes out from the ship.</summary>
         public const string RpcLookout = "grindstone_Lookout";
+        /// <summary>On a ship, to everybody who has it loaded: (Vector3 direction, long callerPlayerId) - a player aboard called the wind; the owner stores it, the crew are told.</summary>
+        public const string RpcWindCall = "grindstone_WindCall";
+        /// <summary>Vector3 on a ship's ZDO, written by its owner: the flat direction the called wind blows toward.</summary>
+        public const string WindCallDirection = "grindstone_wind_dir";
+        /// <summary>long on a ship's ZDO, written by its owner: world time (ticks) when the called wind ends.</summary>
+        public const string WindCallUntil = "grindstone_wind_until";
 
         /// <summary>The Sailing skill's identity: its SkillType number is this name's stable hash.</summary>
         public const string SailingSkillName = "grindstone_sailing";

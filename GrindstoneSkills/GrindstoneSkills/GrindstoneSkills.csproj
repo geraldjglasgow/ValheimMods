@@ -5,7 +5,7 @@
     <AssemblyName>GrindstoneSkills</AssemblyName>
     <RootNamespace>GrindstoneSkills</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.11.0</Version>
+    <Version>0.12.0</Version>
     <Product>GrindstoneSkills</Product>
     <Description>GrindstoneSkills: deeper skills for Valheim, cooking and sailing</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -44,6 +44,7 @@
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
   </ItemGroup>
 
   <ItemGroup>

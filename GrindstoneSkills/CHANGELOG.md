@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.12.0
+
+- **Wind Call, Sailing's level 25 active.** Press K aboard a ship: the wind turns to blow the way you look, for
+  everyone aboard, for 60 seconds, then the weather's own wind returns. Look ahead for a wind at your back, or
+  anywhere else. Only the direction changes; the weather still decides how strong it blows. Once every 3 minutes per
+  player. While it blows it takes the place of Moder's tailwind; players ashore and on other ships keep the weather's
+  wind. New section `35 - Wind Call`: `Wind Call Level` (25), `Wind Call Duration` (60), `Wind Call Cooldown` (180),
+  synced, and `Wind Call Key` (K), each player's own.
+- The Lookout key now fires while you hold W, and never while you type in chat.
+
 ## 0.11.0
 
 - Changed: Riposte no longer staggers what it hits. A parry still powers up the attack you start within 2 seconds,

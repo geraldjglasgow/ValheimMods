@@ -3,8 +3,8 @@
 Deeper skills for Valheim: Cooking, Sailing, Woodcutting, Pickaxes, Foraging, Fishing, Husbandry, Defense and Farming. A good cook makes better food: every dish comes
 out with 0 to 3 stars, stars make food stronger and last longer, and every kitchen can throw away dishes below the
 stars you want. Built on the game's own Cooking skill, so the levels you already have count. A good sailor builds
-tougher ships, sails them faster, sees more of the map at sea, and from level 50 can send out a lookout pulse that
-marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs
+tougher ships, sails them faster, sees more of the map at sea, from level 25 can turn the wind, and from level 50 can
+send out a lookout pulse that marks every enemy around the ship. A good woodcutter aims where trees fall, knocks one tree into the next, splits logs
 in one blow, finds what trees hide, and gets more wood from the giants of the forest. A good miner reads stone: strikes
 the seams that glint in the rock, knows a rich vein at a glance, hears where the next deposit lies, and turns up amber
 and rubies. A good forager picks starred berries, mushrooms and herbs for the kitchen, knows when each plant is at its
@@ -48,6 +48,10 @@ A new skill in the skills panel. Every perk grows from nothing at level 0 to its
 - **Tougher ships.** A ship you build gets up to 50% more health, set by your Sailing level when you place it.
 - **Faster ships.** A ship you steer is up to 20% faster, under sail and at the oars, whoever else is aboard.
 - **Wider exploration at sea.** While you are aboard a ship you uncover the map up to twice as far around you.
+- **Wind Call, from level 25.** Press K aboard a ship: the wind turns to blow the way you look, for everyone aboard,
+  for 60 seconds, then the weather's own wind returns. Look ahead for a wind at your back, or anywhere else. Once every
+  3 minutes. While it blows it takes the place of Moder's tailwind; players ashore and on other ships keep the
+  weather's wind.
 - **Lookout, from level 50.** Press O aboard a ship: a pulse races 100 m out over the water, and everyone aboard sees
   the name tags of the enemies it reached (serpents, drakes, anything hostile, but not bosses) for 30 seconds. Once a
   minute. Players nearby see the pulse too.
@@ -339,6 +343,8 @@ All in `BepInEx/config/com.GrindstoneSkills.cfg`, reloaded while the game runs.
 - **Display** (each player's own): stars on icons, and which stars recipes use first.
 - **Sailing:** a switch for the whole skill, each perk's value at level 100, and the helm and crew experience.
 - **Lookout:** the level it unlocks at, its radius, how long tags stay and the cooldown; the key is each player's own.
+- **Wind Call:** the level it unlocks at, how long the called wind blows and the cooldown; the key is each player's
+  own.
 - **Woodcutting:** a switch for the whole skill, the experience rates, and whether you see callouts (each player's
   own).
 - **Felling:** the fall push, log safety, domino strength and depth, clean fell and replanting.
