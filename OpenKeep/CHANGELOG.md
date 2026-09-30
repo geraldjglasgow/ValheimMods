@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.0
+- OpenKeep leaves the inventory's look alone: the game's armour and weight readouts stay exactly as the game draws
+  them (the brown boxes are PackPanel's), and the trash can is a plate in the game's own style under the armour,
+  showing a bin and "Trash". It sits where trash can mods put theirs, so Jewelcrafting shows it while you drag a stack
+  (its synergy box takes the spot otherwise), CurrencyPocket and OttoPay move it along with the armour, and TrashItems
+  makes no second can. `Trash Can On Stat Column` off still puts the can in the button row.
+- The trash can no longer stays red after a click.
+
 ## 1.10.0
 - Fixed: since 1.8.0 OpenKeep broke Jewelcrafting and every other mod that adds a box beside the game's armour box
   (CurrencyPocket, OttoPay, TrashItems, Quick Stack Store Sort Trash Restock). The stat column moved the game's armour

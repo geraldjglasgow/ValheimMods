@@ -91,8 +91,8 @@ OpenKeep/OpenKeep/src/
     StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
     PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button; Follow puts
                             the row into PackPanel's strip while it is shown
-    TrashPlate.cs           the trash can's own plate in the stat column (PlateColumn library), between the
-                            armour and weight plates
+    TrashPlate.cs           the trash can's own plate in the game's style, a copy of the game's armour plate
+                            named Trash, 78 under it (the spot trash can mods use); the game's plates only read
     HoveredItem.cs          the slot under the pointer (or the gamepad selection)
     ClickRouting.cs         InventoryGui.OnSelectedItem prefix: Route Modifier + click
     DumpKeyPatch.cs         Player.Update postfix: Dump Key outside the inventory
@@ -266,7 +266,7 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.10.0]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.11.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -410,8 +410,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - GameObjects created: `OpenKeep.ReachLink` (link lines), `OpenKeep_link` (Find marker), `OpenKeep_SalvageTab`,
   `OpenKeep_<word>` and `OpenKeep_trash` (panel buttons), `OpenKeep_border`, `OpenKeep_star`, `OpenKeep_cross`
   (slot marks), sprites named `OpenKeep_sprite`, `OpenKeep_trashcan` (the trash can in the button row, with
-  PackPanel), `OpenKeep_trashcursor` (trash mode's pointer), and through PlateColumn the box
-  `PlateColumn_plate_0120_openkeep_trash` (without PackPanel). Read only: PackPanel's `PackPanel_buttonstrip`. Batch: `OpenKeep_BatchStepper` with `OpenKeep_BatchLess`,
+  PackPanel), `OpenKeep_trashcursor` (trash mode's pointer), and `Trash` (the trash can's
+  plate, a direct child of the player panel, without PackPanel). Read only: PackPanel's `PackPanel_buttonstrip`. Batch: `OpenKeep_BatchStepper` with `OpenKeep_BatchLess`,
   `OpenKeep_BatchAmount` and `OpenKeep_BatchMore` beside the Craft button. The cart's station is a `CraftingStation` component on the cart
   instance, no new prefab. Shared creates none: touches recolour the grid's icons. Signs instantiates the game's
   own `sign` prefab (a normal piece, no new prefab) and adds a `SignOrphanCheck` component to loaded automatic signs.
@@ -1229,8 +1229,10 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   - `PackPanel_buttonstrip`, an empty child of the player panel, active while PackPanel keeps a 30 unit strip at the
     panel's bottom for the button row: `PanelButtons.Follow` (every frame, from `StowHotkeys`' `InventoryGui.Update`
     postfix) moves the row inside it, 2 units above the edge, and back below the panel when it goes. At
-    `InventoryGui.Awake` the trash can is a box in PlateColumn's column unless PackPanel is enabled, when it is a button
-    right of Sort (PackPanel's stats panel holds the column).
+    `InventoryGui.Awake` the trash can is its own plate in the game's style under the armour unless PackPanel is
+    enabled, when it is a button right of Sort (PackPanel's stats panel holds the column). OpenKeep builds no
+    PlateColumn column of its own (the user's call, 2026-09-29: the brown boxes are PackPanel's, OpenKeep leaves the
+    inventory's look alone).
   - Key Stack: one mod writes stack sizes. With OpenKeep present PackPanel leaves the keys to `Stacks/PackPanelKeys`,
     which raises every prefab in Key Items to at least Key Stack as its starting value (so per item entries and the
     YAML still win), also with the Stacks module off, and applies the values again when either entry changes (watched
@@ -1248,7 +1250,7 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.10.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 1.11.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1473,7 +1475,7 @@ from a script.
 49. With PackPanel installed (see `../PackPanel/CLAUDE.md`, its items 2 and 3): the button row and the trash can sit
     inside the inventory panel and follow PackPanel's `Enabled` at once; sort keeps out of a backpack's closed cells;
     quick stack takes nothing from the slots; PackPanel's Key Stack holds unless `OpenKeep.Stacks.yml` names the key.
-    Without PackPanel: the row hangs below the panel, the trash can is a box in the stat column.
+    Without PackPanel: the row hangs below the panel, the trash can is a plate in the game's style under the armour.
 50. Batch crafting, single player, at a workbench with 30 wood and 10 resin in the inventory: the Craft tab shows
     `- 1 +` left of a narrower Craft button; select Torch (1 wood, 1 resin), `+` five times:
     the field reads 6, the requirement rows read x6, Craft makes 6 torches in one bar (about 6 s) and uses 6 of each.

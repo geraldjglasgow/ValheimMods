@@ -37,8 +37,8 @@ the companion mod PackPanel, which works with OpenKeep or on its own (see "With 
 
 ### Stow: stow, top up, sort, junk, route
 A row of buttons just below the player panel (`Quick stack`, `Store all`, `Top up`, `Sort`), a trash can on its
-own wood plate between the armour and weight readouts on the panel's right (those two show a larger icon behind
-their number and stay put when the inventory grows; hover any of them for what it is), and a `Sort` button below the open container's panel, under
+own plate in the game's style under the armour readout on the panel's right (hover it for what it is; OpenKeep
+leaves the game's armour and weight readouts as they are), and a `Sort` button below the open container's panel, under
 its `Take all` line; `Button Row Offset` moves the rows up or down if your screen layout needs it, and
 `Trash Can On Stat Column` off puts the trash can at the end of the button row instead. Every action also has a hotkey that works while the inventory is open. The module is
 one workflow for coming home with a full inventory. Open a chest and stow: quick stack (`Q`) moves every stack
@@ -291,7 +291,7 @@ none of it, and PackPanel works without OpenKeep. With both installed they fit t
 | `2. Stow / Dump Key` | LeftAlt + D | outside the inventory: quick stack to every nearby container |
 | `2. Stow / Cycle Previous Key`, `Cycle Next Key` | LeftArrow, RightArrow | switch to the previous or next chest around you |
 | `2. Stow / Button Row Offset` | 0 | moves the button row up (positive) or down (negative) by that many pixels; applies at once |
-| `2. Stow / Trash Can On Stat Column` | on | the trash can on its own box between armour and weight; off puts it in the button row and leaves the game's armour and weight boxes as the game has them; next time you enter a world |
+| `2. Stow / Trash Can On Stat Column` | on | the trash can on its own plate in the game's style under the armour; off puts it in the button row; next time you enter a world |
 | `3. Salvage / Salvage Key` | Backspace | salvage the hovered stack |
 | `8. Homestead / Torch Switch Key` | O | outside the inventory, looking at a torch: keep it lit day and night, or put it back on the night schedule |
 
