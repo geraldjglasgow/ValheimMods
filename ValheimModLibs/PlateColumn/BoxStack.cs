@@ -1,21 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace PlateColumn
 {
     /// <summary>
     /// The column as it stands in the scene, readied on every <see cref="Column.Arrange"/> and <see cref="Column.Add"/>;
     /// each step is safe to repeat and to run from any copy of this library. Readying finds the game's plates, finds or
-    /// makes the container, adopts every member still sitting on the panel itself (the game's plates, plates an older
-    /// copy made, OpenKeep's pre-library trash plate) by moving the very same objects into the container, gives the
-    /// game's plates their tooltips, styles every member as a box, puts the members in rank order and lays the column out
-    /// at once.
+    /// makes the container, adopts every mod's box still sitting on the panel itself (plates an older copy made,
+    /// OpenKeep's pre-library trash plate) by moving the very same objects into the container, seats the game's two plates
+    /// and any known box of another mod, which stay on the panel (<see cref="Seats"/>), gives the game's plates their
+    /// tooltips, styles every box, puts the members in rank order and lays the column out at once.
     /// </summary>
     internal sealed class BoxStack
     {
-        private BoxStack(RectTransform boxes, GamePlates game)
+        private readonly RectTransform panel;
+
+        private BoxStack(RectTransform panel, RectTransform boxes, GamePlates game)
         {
+            this.panel = panel;
             Boxes = boxes;
             Game = game;
         }
@@ -33,40 +35,32 @@ namespace PlateColumn
             {
                 return null;
             }
-            BoxStack stack = new BoxStack(BoxContainer.Get(gui.m_player), game);
-            stack.Adopt(gui.m_player);
+            BoxStack stack = new BoxStack(gui.m_player, BoxContainer.Get(gui.m_player), game);
+            stack.Adopt();
+            BoxStyle.Apply(game.Armor);
+            BoxStyle.Apply(game.Weight);
+            Seats.Seat(stack.panel, stack.Boxes, game.Armor, Column.ArmorRank);
+            Seats.Seat(stack.panel, stack.Boxes, game.Weight, Column.WeightRank);
+            Seats.SeatGuests(stack.panel, stack.Boxes);
             game.Tip(gui);
             stack.Order();
             return stack;
         }
 
         /// <summary>
-        /// Styles every member as a box, moves the members to the top of the container in rank order (anything else a
-        /// mod put in the container goes after them), and lays the column out now rather than at the end of the frame,
-        /// so positions read right away are true. Does nothing visible while the inventory is closed; the layout group
-        /// lays out when it is shown.
+        /// Styles every box, moves the members to the top of the container in rank order (anything else a mod put in the
+        /// container goes after them), and lays the column out and pins the seated boxes now rather than at the end of the
+        /// frame, so positions read right away are true.
         /// </summary>
-        public void Order()
-        {
-            List<RectTransform> members = ColumnLayout.Sorted(Boxes, Game);
-            for (int i = 0; i < members.Count; i++)
-            {
-                BoxStyle.Apply(members[i]);
-                if (members[i].GetSiblingIndex() != i)
-                {
-                    members[i].SetSiblingIndex(i);
-                }
-            }
-            LayoutRebuilder.ForceRebuildLayoutImmediate(Boxes);
-        }
+        public void Order() => Seats.Arrange(panel, Boxes);
 
-        /// <summary>Moves members that are direct children of the panel into the container, active or not.</summary>
-        private void Adopt(RectTransform panel)
+        /// <summary>Moves mods' boxes that are direct children of the panel into the container, active or not.</summary>
+        private void Adopt()
         {
             List<Transform> strays = new List<Transform>();
             foreach (Transform child in panel)
             {
-                if (ColumnLayout.IsMember(child, Game))
+                if (ColumnLayout.IsMember(child))
                 {
                     strays.Add(child);
                 }

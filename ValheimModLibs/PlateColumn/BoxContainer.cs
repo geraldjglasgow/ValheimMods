@@ -10,7 +10,7 @@ namespace PlateColumn
     /// <c>ContentSizeFitter</c> makes it as tall as they are, so any copy of this library only has to put the boxes in
     /// rank order: Unity places them and closes the gap a hidden one leaves. Found by name, so every copy uses the same
     /// one. It sits right after the panel's background (<c>Bkg</c>), drawn above it and below everything else on the
-    /// panel, and carries a <see cref="ColumnWatch"/>.
+    /// panel (the game's boxes pinned over their seats among them), and carries a <see cref="SeatWatch"/>.
     /// </summary>
     internal static class BoxContainer
     {
@@ -31,9 +31,9 @@ namespace PlateColumn
                 boxes = Make(panel);
             }
             PlaceAfterBackground(panel, boxes);
-            if (!PlateParts.Carries(boxes.gameObject, typeof(ColumnWatch)))
+            if (!PlateParts.Carries(boxes.gameObject, typeof(SeatWatch)))
             {
-                boxes.gameObject.AddComponent<ColumnWatch>();
+                boxes.gameObject.AddComponent<SeatWatch>();
             }
             return boxes;
         }

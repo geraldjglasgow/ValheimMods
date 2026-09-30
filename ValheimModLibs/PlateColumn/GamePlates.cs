@@ -5,14 +5,11 @@ namespace PlateColumn
     /// <summary>
     /// The game's two readouts, armour and weight: each an object holding a wood background, a small icon and the text
     /// the game rewrites every frame (<c>InventoryGui.m_armor</c>, <c>m_weight</c>). The scene has them as direct
-    /// children of the player panel (<c>InventoryGui.m_player</c>) until the column adopts them into its container, so
-    /// each is found by walking up from its text until the parent is the panel or the container.
-    /// <para>
-    /// This lookup is also how older copies of the library stand down. An older copy walks up only until the parent is
-    /// the panel; once both plates are in the container it lands on the container for both, sees one object where it
-    /// expects two, and treats the game's plates as missing - its <c>Arrange</c> and <c>Add</c> then change nothing. So
-    /// the first current copy to arrange takes the column over and no older copy moves or restyles anything after it.
-    /// </para>
+    /// children of the player panel (<c>InventoryGui.m_player</c>), named <c>Armor</c> and <c>Weight</c>, and there they
+    /// stay: other mods look them up there by name (<see cref="Seats"/>). Copies of this library in OpenKeep 1.8.0 to
+    /// 1.9.0, Elite Creatures Reborn 3.12.0 to 3.13.0 and PackPanel 0.1.0 to 0.2.0 moved them into the column's
+    /// container, so each is found by walking up from its text until the parent is the panel or the container, and moved
+    /// back out from there.
     /// </summary>
     internal sealed class GamePlates
     {

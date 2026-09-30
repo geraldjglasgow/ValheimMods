@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlateColumn
@@ -12,8 +13,10 @@ namespace PlateColumn
     /// one container object on the panel, <c>PlateColumn_boxes</c>, whose Unity layout group stacks its active children
     /// in sibling order; a mod's box is a child named with its rank, so every copy of this code sorts the same column from
     /// what it finds, whichever mod arranges last, and a hidden box leaves no gap. Plates an older copy of the library
-    /// left on the panel are adopted into the container as boxes (the same objects, so references to them keep working),
-    /// and once the game's plates are in the container older copies find no plates and change nothing.
+    /// left on the panel are adopted into the container as boxes (the same objects, so references to them keep working).
+    /// The game's armour and weight plates are never moved into it: other mods find them on the panel by name, so they
+    /// stay there and are pinned over seats in the container (<see cref="Seats"/>), as are the known boxes other mods copy
+    /// from the armour plate (<see cref="Guests"/>).
     /// </para>
     /// </summary>
     public static class Column
@@ -64,13 +67,33 @@ namespace PlateColumn
             string name = ColumnLayout.NameOf(spec);
             Plate? plate = stack.Boxes.Find(name) is RectTransform existing
                 ? PlateCopy.Wrap(existing)
-                : PlateCopy.Make(stack.Game.Armor, spec, name);
+                : PlateCopy.Make(stack.Game.Armor, spec, name, stack.Boxes);
             if (plate != null)
             {
                 PlateTips.Set(gui, plate.Rect, spec.Topic, spec.Tip);
                 stack.Order();
             }
             return plate;
+        }
+
+        /// <summary>
+        /// Every box in the column whose container is <paramref name="boxes"/>, in the container's sibling order: its
+        /// children, each seat replaced by the box it holds the place of (the game's armour and weight plates, which stay
+        /// on the player panel, and seated boxes of other mods); a seat whose box is gone is left out. For a mod that
+        /// dresses the boxes itself. <paramref name="into"/> is cleared first.
+        /// </summary>
+        public static void BoxesIn(RectTransform boxes, List<RectTransform> into)
+        {
+            into.Clear();
+            RectTransform? panel = boxes.parent as RectTransform;
+            foreach (Transform child in boxes)
+            {
+                RectTransform? box = panel != null && child is RectTransform member ? Seats.BoxOf(panel, member) : child as RectTransform;
+                if (box != null)
+                {
+                    into.Add(box);
+                }
+            }
         }
 
         /// <summary>

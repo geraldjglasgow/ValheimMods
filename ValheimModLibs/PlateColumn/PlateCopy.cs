@@ -14,7 +14,7 @@ namespace PlateColumn
     /// </summary>
     internal static class PlateCopy
     {
-        /// <summary>The copy, inside <paramref name="parent"/> (the HUD row), else beside the source in the column.</summary>
+        /// <summary>The copy, inside <paramref name="parent"/> (the column's container or the HUD row), else beside the source.</summary>
         public static Plate? Make(RectTransform source, PlateSpec spec, string name, Transform? parent = null)
         {
             GameObject go = Object.Instantiate(source.gameObject, parent != null ? parent : source.parent, false);

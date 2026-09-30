@@ -37,7 +37,7 @@ namespace PlateColumn
             Plate? plate = row.Find(name) is RectTransform existing ? PlateCopy.Wrap(existing) : Make(stack, spec, name, row);
             if (plate != null)
             {
-                Order(row, stack.Game);
+                Order(row);
             }
             return plate;
         }
@@ -63,9 +63,9 @@ namespace PlateColumn
             return plate;
         }
 
-        private static void Order(RectTransform row, GamePlates game)
+        private static void Order(RectTransform row)
         {
-            List<RectTransform> members = ColumnLayout.Sorted(row, game);
+            List<RectTransform> members = ColumnLayout.Sorted(row);
             for (int i = 0; i < members.Count; i++)
             {
                 if (members[i].GetSiblingIndex() != i)
