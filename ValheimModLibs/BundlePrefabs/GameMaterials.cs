@@ -56,7 +56,8 @@ public static class GameMaterials
 
 	/// <summary>
 	/// A dressed material (<see cref="Dress"/>) without the game maps it kept that are laid out for the game model's
-	/// UVs, not the workshop model's: metal and gloss, glow, style variants. No metal, the given gloss, no glow. The
+	/// UVs, not the workshop model's: metal and gloss, glow, style variants. No metal, the given gloss, no glow, no
+	/// styles (a material with styles on, such as a painted shield's, draws its emptied style map as plain white). The
 	/// game's creature and item shader (<c>Custom/Creature</c>) has all of these; any it lacks are skipped.
 	/// </summary>
 	public static Material Plain(Material material, float gloss)
@@ -68,6 +69,8 @@ public static class GameMaterials
 				material.SetTexture(map, null);
 			}
 		}
+		SetFloat(material, "_UseStyles", 0f);
+		material.DisableKeyword("_USESTYLES_ON");
 		SetFloat(material, "_Metallic", 0f);
 		SetFloat(material, "_MetalGloss", 0f);
 		SetFloat(material, "_Glossiness", gloss);
