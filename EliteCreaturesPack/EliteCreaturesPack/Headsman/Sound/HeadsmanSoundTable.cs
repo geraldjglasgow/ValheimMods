@@ -57,25 +57,6 @@ namespace EliteCreaturesPack.Headsman
                 new[] { L("Player_Movement_SpearThrow_M_02", 0.138f, 0f, 1f, 120f, 0f, 1f, 1f, true) },
                 new[] { L("Player_Movement_SpearThrow_M_03", 0.135f, 0f, 1f, 120f, 0f, 1f, 1f, true) },
             },
-            ["g_swing"] = new[]
-            {
-                new[] { L("Player_Movement_BattleAxe_Swing_01", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-                new[] { L("Player_Movement_BattleAxe_Swing_02", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-                new[] { L("Player_Movement_BattleAxe_Swing_03", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-                new[] { L("Player_Movement_BattleAxe_Swing_04", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-            },
-            ["g_spin"] = new[]
-            {
-                new[] { L("Enemy_Skeleton_DeepNorth_Attack_Melee_01", 0.098f, 0f, 0.357f, 110f, 0f, 1f, 0.28f, true) },
-                new[] { L("Enemy_Skeleton_DeepNorth_Attack_Melee_02", 0f, 0.012f, 0.578f, 110f, 0f, 1f, 0.28f, false) },
-                new[] { L("Enemy_Skeleton_DeepNorth_Attack_Melee_03", 0.12f, 0f, 0.361f, 110f, 0f, 1f, 0.28f, true) },
-            },
-            ["g_overhead"] = new[]
-            {
-                new[] { L("Player_Movement_SledgeSwing_M_01", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-                new[] { L("Player_Movement_SledgeSwing_M_02", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-                new[] { L("Player_Movement_SledgeSwing_M_03", 0f, 0f, 1f, 240f, 0f, 1f, 0.8f, false) },
-            },
             ["impact_ground"] = new[]
             {
                 new[] { L("Player_Movement_Axe_Hit_M_01", 0.052f, 0f, 0.924f, 130f, 0f, 1f, 1f, true), L("UI_Hoe_04", 0.058f, 0f, 0.692f, 120f, 0f, 1f, 0.35f, true) },
@@ -93,12 +74,6 @@ namespace EliteCreaturesPack.Headsman
                 new[] { L("UI_Hoe_01", 0.059f, 0f, 0.61f, 150f, 0f, 1f, 1f, true), L("UI_Cultivator_01", 0f, 0.03f, 1f, 150f, 4500f, 0.85f, 0.5f, false) },
                 new[] { L("UI_Hoe_03", 0.056f, 0f, 0.481f, 150f, 0f, 1f, 1f, true), L("UI_Cultivator_02", 0f, 0.03f, 1f, 150f, 4500f, 0.85f, 0.5f, false) },
                 new[] { L("UI_Hoe_02", 0.03f, 0f, 0.65f, 150f, 0f, 1f, 1f, true), L("UI_Cultivator_03", 0f, 0.03f, 1f, 150f, 4500f, 0.85f, 0.5f, false) },
-            },
-            ["rumble"] = new[]
-            {
-                new[] { L("Enemy_Father_Fissure_Pillar_04", 0.112f, 0f, 0.625f, 150f, 0f, 1f, 0.8f, true), L("Enemy_Father_Fissure_Pillar_05", 0f, 0.3f, 0.341f, 170f, 0f, 1f, 0.7f, false), L("Amb_WindingTunnel_OneShots_RockCrumble_04", 0f, 0.11f, 1f, 100f, 0f, 1f, 1f, false) },
-                new[] { L("Enemy_Father_Fissure_Pillar_05", 0f, 0.075f, 0.43f, 150f, 0f, 1f, 0.8f, false), L("Enemy_Father_Fissure_Pillar_03", 0f, 0.3f, 0.233f, 170f, 0f, 1f, 0.7f, false), L("Amb_WindingTunnel_OneShots_RockCrumble_02", 0.352f, 0f, 1f, 100f, 0f, 1f, 1f, true) },
-                new[] { L("Enemy_Father_Fissure_Pillar_03", 0f, 0.023f, 0.476f, 150f, 0f, 1f, 0.8f, false), L("Enemy_Father_Fissure_Pillar_04", 0f, 0.3f, 0.268f, 170f, 0f, 1f, 0.7f, false), L("Amb_WindingTunnel_OneShots_RockCrumble_03", 0.844f, 0f, 1f, 100f, 0f, 1f, 1f, true) },
             },
             ["shatter"] = new[]
             {

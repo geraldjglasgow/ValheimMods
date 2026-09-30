@@ -3,9 +3,9 @@
 One feature of the mod, specified on its own. The other feature files sit beside it.
 
 This file covers the skeleton arsenal: seven new skeleton units, each carrying one weapon of bone with vertebrae worked
-in (a dagger, sword, axe, mace, spear, atgeir or bow), the vertebra they drop, the players' bone weapons made from it,
-and bone arrows. The skeletons' bodies, AI and sounds are the game's own; the weapons, the arrow and the vertebra come
-from the workspace's `AssetWorkshop` (`assets/ecp_skel_arsenal`, v2: the vertebra set; v1 is archived in
+in (a dagger, sword, axe, mace, spear, atgeir or bow), the spine they drop, the players' bone weapons made from it,
+and bone arrows. The skeletons' bodies, AI and sounds are the game's own; the weapons, the arrow and the spine come
+from the workspace's `AssetWorkshop` (`assets/ecp_skel_arsenal` and `assets/ecp_spine`, v2: the vertebra set; v1 is archived in
 `assets/skeleton_weapons_v1`) and ship in the plugin as an embedded asset bundle.
 
 Asked for by the user on 2026-09-29: "all these will now be new mobs in the game. they will not do any combo swings,
@@ -85,7 +85,7 @@ chambers, graves, tower ruins, cabins and the Meadows' ruins, and bone piles.
 A copy of its kind's archer skeleton: its health, resistances, faction (the undead), sounds, senses, AI, star looks
 and drops (a bone fragment, a 10% skeleton trophy). It carries the arsenal weapon in place of the Skeleton's random
 sword or bow, and keeps the Skeleton's random shield (wood or bronze buckler) beside a one-handed weapon. On top of
-the skeleton's drops, **one vertebra at 10%**, whatever its stars. Its name is the
+the skeleton's drops, **one spine at 10%**, whatever its stars. Its name is the
 table's ("Skeleton Cutthroat").
 
 # 4. The players' items
@@ -98,19 +98,21 @@ a little weaker). Made at the **workbench, level 2** (level 3 until 0.4.0; the u
 | Item | Prefab | Made after | Damage (at 0.85) | Per upgrade | Default recipe |
 | --- | --- | --- | --- | --- | --- |
 | Bone Dagger | `ECP_BoneDagger` | copper knife (`KnifeCopper`; the game has no bronze knife) | 10.2 slash, 10.2 pierce | 0.85 each | BoneFragments 8 (+4 an upgrade) |
-| Bone Sword | `ECP_BoneSword` | `SwordBronze` | 29.75 slash | 5.1 | ECP_Vertebra 1, BoneFragments 10 (+5) |
-| Bone Axe | `ECP_BoneAxe` | `AxeBronze` | 34 slash, 34 chop | 4.25, 2.55 | ECP_Vertebra 1, BoneFragments 10 (+5) |
-| Bone Mace | `ECP_BoneMace` | `MaceBronze` | 29.75 blunt | 5.1 | ECP_Vertebra 1, BoneFragments 12 (+6) |
-| Bone Spear | `ECP_BoneSpear` | `SpearBronze` | 29.75 pierce | 5.1 | ECP_Vertebra 1, BoneFragments 10 (+5) |
-| Bone Atgeir | `ECP_BoneAtgeir` | `AtgeirBronze` | 38.25 pierce | 5.1 | ECP_Vertebra 2, BoneFragments 16 (+8) |
-| Bone Bow | `ECP_BoneBow` | fine bow (`BowFineWood`) | 27.2 pierce | 2.55 | ECP_Vertebra 1, BoneFragments 12 (+6) |
+| Bone Sword | `ECP_BoneSword` | `SwordBronze` | 29.75 slash | 5.1 | ECP_Spine 1, BoneFragments 10 (+5) |
+| Bone Axe | `ECP_BoneAxe` | `AxeBronze` | 34 slash, 34 chop | 4.25, 2.55 | ECP_Spine 1, BoneFragments 10 (+5) |
+| Bone Mace | `ECP_BoneMace` | `MaceBronze` | 29.75 blunt | 5.1 | ECP_Spine 1, BoneFragments 12 (+6) |
+| Bone Spear | `ECP_BoneSpear` | `SpearBronze` | 29.75 pierce | 5.1 | ECP_Spine 1, BoneFragments 10 (+5) |
+| Bone Atgeir | `ECP_BoneAtgeir` | `AtgeirBronze` | 38.25 pierce | 5.1 | ECP_Spine 2, BoneFragments 16 (+8) |
+| Bone Bow | `ECP_BoneBow` | fine bow (`BowFineWood`) | 27.2 pierce | 2.55 | ECP_Spine 1, BoneFragments 12 (+6) |
 
 The dropped item lies with a box collider fitted to the bone model; the game's upgrade glow (brighter with each
 quality) is reshaped to a box round it. The bow sits in the hand as the game's bows do (`ecp_skel_bow_player`, the
 same bow turned into the player's hold) with a string between its tips.
 
-**Vertebra** (`ECP_Vertebra`): a copy of the game's bone fragments (a material: weight, stack of 50, sounds) wearing
-the bundle's lumbar vertebra. Only the arsenal skeletons drop it.
+**Spine** (`ECP_Spine`): a copy of the game's bone fragments (a material: weight, stack of 50, sounds) wearing
+the bundle's spine: eight vertebrae still joined, 0.88 m long. Only the arsenal skeletons drop it. It replaced the
+single vertebra (`ECP_Vertebra`) on 2026-09-29, at the user's request ("I kinda actually want a spine item instead, it
+makes more sense"); uses, drop and counts are the vertebra's.
 
 **Bone Arrow** (`ECP_ArrowBone`): a copy of the game's wood arrows with a bone shaft and a vertebra head. **24 pierce**
 (wood 22, flint 27), otherwise a wood arrow (its flight, the bow's draw). 20 for **8 bone fragments** at
@@ -140,12 +142,12 @@ config"): the share, the drop chance, damage, recipes, levels and the arrows are
 Not in the request; decided here, change freely:
 
 1. **Names**: Cutthroat, Swordsman, Axeman, Bonebreaker, Spearman, Halberdier, Bowman; items "Bone <weapon>",
-   "Vertebra", "Bone Arrow". Prefab names are hashed into worlds: settle them before a release.
+   "Spine", "Bone Arrow". Prefab names are hashed into worlds: settle them before a release.
 2. **Share 25%, drawn evenly.** Together about one skeleton in four; each weapon about one in 28 (one in 24 among
    no-archer spawns).
 3. **Creature damage** from the replaced skeleton's sword by the factors above; the dagger strikes more often, the
    mace and atgeir less.
-4. **The vertebra is paid once**: upgrades cost bones only (the atgeir needs two vertebrae). One vertebra per kill at
+4. **The spine is paid once**: upgrades cost bones only (the atgeir needs two spines). One spine per kill at
    10%, never more with stars.
 5. **Bone arrows at workbench level 2**, 8 bone fragments for 20, 24 pierce.
 6. **Only damage is weaker** than bronze. Durability, weight, block, speed and the axe's tool tier (it chops what the
@@ -175,20 +177,20 @@ In the LocalTesting profile with DevBridge, `devcommands` on.
 - [ ] One-handed skeletons carry a shield; the halberdier and bowman do not.
 
 ## Death and loot
-- [ ] Bone fragments and the 10% trophy as a skeleton; a vertebra about one kill in ten.
+- [ ] Bone fragments and the 10% trophy as a skeleton; a spine about one kill in ten.
 
 ## Items
-- [ ] `spawn ECP_Vertebra`, `ECP_BoneDagger` ... `ECP_BoneBow`, `ECP_ArrowBone`: each shows its icon and name, lies on
+- [ ] `spawn ECP_Spine`, `ECP_BoneDagger` ... `ECP_BoneBow`, `ECP_ArrowBone`: each shows its icon and name, lies on
       the ground on its collider, and each weapon sits in the hand like the bronze one (the spear point forward, the
       atgeir's blade out, the bow's string toward the player).
-- [ ] Workbench level 2 lists the six vertebra weapons, the dagger and the bone arrows; the costs as above.
+- [ ] Workbench level 2 lists the six spine weapons, the dagger and the bone arrows; the costs as above.
 - [ ] Damage in the tooltip is 0.85 of bronze's; upgrades add 0.85 of bronze's per level; the upgrade glow sits on
       the bone model.
 - [ ] Bone arrows: 24 pierce in the tooltip, fly from any bow, look like bone arrows in flight.
 
 ## Multiplayer
 - [ ] On a dedicated server with two clients: both see the same skeleton with the same weapon and the same blows;
-      a vertebra dropped by one is picked up by the other; recipes follow the server's settings.
+      a spine dropped by one is picked up by the other; recipes follow the server's settings.
 
 ## Work log
 
@@ -200,3 +202,5 @@ In the LocalTesting profile with DevBridge, `devcommands` on.
 - 2026-09-29: config cut to seven spawn switches (section 8) at the user's request; section 9 removed, its values
   fixed in code. Then a master `Enabled` switch over them (user: "a master 'skeleton config' to turn them all on or
   off. default on").
+- 2026-09-29: the vertebra item became the spine (`ECP_Spine`, `item_ecp_spine`, AssetWorkshop `assets/ecp_spine`),
+  a visual and name change only: same drop, recipes and counts. The greataxe's `Vertebrae` setting is `Spines`.

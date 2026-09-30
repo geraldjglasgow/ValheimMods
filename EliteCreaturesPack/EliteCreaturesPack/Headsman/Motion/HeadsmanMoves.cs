@@ -7,14 +7,19 @@ namespace EliteCreaturesPack.Headsman
     /// One of the Crypt Executioner's six attacks as its clip plays it: the clip (also the animator trigger its attack
     /// item sets), the clip's length, when it hits (the clip's OnAttackTrigger event), and the moments the code draws by
     /// the clip's own time on every peer - the axe let go (<see cref="Release"/>), a new one forming from
-    /// <see cref="Ghost"/> to <see cref="Solid"/>, the ground scraped, the sound cues. The numbers are the clips' own
+    /// <see cref="Ghost"/> to <see cref="Solid"/>, the sound cues - and on the owner the axe head
+    /// cutting (<see cref="Cut"/>) and the wind-up played faster (<see cref="WindUp"/>). The numbers are the clips' own
     /// (AssetWorkshop unity/Assets/Editor/Headsman: HeadsmanMelee and HeadsmanRanged); change both together.
     /// </summary>
     public sealed class HeadsmanMove
     {
         public string Clip = "";
         public float Length, Hit = -1f, Release = -1f, Ghost = -1f, Solid = -1f;
-        public Vector2 Scrape = new Vector2(-1f, -1f);
+        /// <summary>Clip seconds in which the axe head hits what it touches (<see cref="HeadsmanCut"/>); none by default.</summary>
+        public Vector2 Cut = new Vector2(-1f, -1f);
+
+        /// <summary>Clip seconds before which the clip plays at the wind-up speed (<see cref="HeadsmanSettings.SlamWindup"/>).</summary>
+        public float WindUp = -1f;
         public (float time, string cue)[] Sounds = new (float, string)[0];
 
         public bool Throws => Release >= 0f;
@@ -24,6 +29,9 @@ namespace EliteCreaturesPack.Headsman
 
         /// <summary>Whether the new axe is forming in the raised hands at `time`.</summary>
         public bool Forming(float time) => Throws && time >= Ghost && time < Solid;
+
+        /// <summary>Whether the axe head hits at `time`.</summary>
+        public bool Cutting(float time) => time >= Cut.x && time < Cut.y;
     }
 
     /// <summary>The six attacks, and the rear strike's turns done in code (a skeleton turns further than its muscles go).</summary>
@@ -37,19 +45,20 @@ namespace EliteCreaturesPack.Headsman
 
         public static readonly HeadsmanMove Slam = new HeadsmanMove
         {
-            Clip = "ecp_headsman_slam", Length = 2.75f, Hit = 1.36f,
+            Clip = "ecp_headsman_slam", Length = 2.75f, Hit = 1.36f, Cut = new Vector2(1.32f, 1.42f), WindUp = 1.05f,
             Sounds = new[] { (0.15f, "vocal"), (1.12f, "whoosh_short"), (1.36f, "impact_ground") },
         };
 
         public static readonly HeadsmanMove Scrape = new HeadsmanMove
         {
-            Clip = "ecp_headsman_scrape", Length = 1.85f, Hit = 0.48f, Scrape = new Vector2(0.48f, 0.95f),
-            Sounds = new[] { (0.05f, "vocal"), (0.3f, "whoosh_heavy"), (0.46f, "grind"), (0.5f, "rumble") },
+            Clip = "ecp_headsman_scrape", Length = 1.85f, Hit = 0.48f, Cut = new Vector2(0.46f, 1.0f),
+            Sounds = new[] { (0.05f, "vocal"), (0.3f, "whoosh_heavy"), (0.46f, "grind") },
         };
 
         public static readonly HeadsmanMove Spin = new HeadsmanMove
         {
-            Clip = "ecp_headsman_spin", Length = 3.6f, Hit = 1.2f, Sounds = new[] { (0.2f, "vocal"), (0.85f, "whoosh_spin") },
+            Clip = "ecp_headsman_spin", Length = 3.6f, Hit = 1.2f, Cut = new Vector2(0.85f, 1.55f),
+            Sounds = new[] { (0.2f, "vocal"), (0.85f, "whoosh_spin") },
         };
 
         public static readonly HeadsmanMove Hurl = new HeadsmanMove

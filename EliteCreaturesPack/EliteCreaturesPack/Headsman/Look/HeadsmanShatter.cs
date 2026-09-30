@@ -45,7 +45,7 @@ namespace EliteCreaturesPack.Headsman
             }
             hit = HeadsmanTime.Read(nview.GetZDO(), HitKey);
             hit = hit == 0d ? HeadsmanTime.Now : hit;
-            shards = new HeadsmanShards(transform, HeadsmanWave.Floor(transform.position), nview.GetZDO().m_uid.GetHashCode());
+            shards = new HeadsmanShards(transform, HeadsmanGround.Floor(transform.position), nview.GetZDO().m_uid.GetHashCode());
             if (HeadsmanTime.Now - hit < 0.5d)
             {
                 HeadsmanSounds.Play("shatter", transform.position);
@@ -74,7 +74,7 @@ namespace EliteCreaturesPack.Headsman
             if (since >= FormAfter && !nview.GetZDO().GetBool(RaisedKey))
             {
                 nview.GetZDO().Set(RaisedKey, true);
-                ZDOID raised = HeadsmanSummon.Raise(HeadsmanWave.Floor(transform.position), transform.rotation, hit + FormAfter);
+                ZDOID raised = HeadsmanSummon.Raise(HeadsmanGround.Floor(transform.position), transform.rotation, hit + FormAfter);
                 nview.GetZDO().Set(SummonKey, raised);
             }
             if (since >= FormAfter + HeadsmanMoves.Forming + 1.5f)

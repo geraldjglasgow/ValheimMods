@@ -4,7 +4,7 @@ New creatures for Valheim, each with its own way to fight. A crypt chest that bi
 with a slingshot that shoots stones. A giant crusted in ice, asleep on the mountainside until night falls. A kraken
 that hunts ships on the open sea, and the shield you make from its beak. A skeleton with a crossbow, who has to
 reload after every shot, and a crossbow of bones like its own for you to make. Seven skeletons armed with weapons
-of bone and vertebrae, and the same weapons for you to make from the vertebrae they drop. And in some burial chambers, a
+of bone and vertebrae, and the same weapons for you to make from the spines they drop. And in some burial chambers, a
 skeleton executioner with a greataxe of bone, whose axehead you can take to make the greataxe yourself.
 
 It works on its own. With **Elite Creatures Reborn** installed as well, every creature here rolls stars and mutations
@@ -166,23 +166,23 @@ They are skeleton units like the game's own: wherever the game spawns its Black 
 arsenal skeleton instead - in burial chambers, from bone piles, and out in the night once Bonemass is dead. Each has
 that skeleton's health (40), resistances, looks and loot, and hits about as hard as its sword or bow. The Meadows',
 Swamps' and Mountains' skeletons are left as they are. They strike one blow at a time, never a combo. The one-handed fighters keep the skeleton's
-shield. Every one drops what a skeleton drops, and one in ten drops a **Vertebra** as well.
+shield. Every one drops what a skeleton drops, and one in ten drops a **Spine** as well.
 
 ## Bone Weapons
 
-The arsenal's weapons, for players, made at a **level 2 workbench** from bone fragments and a vertebra (the dagger
+The arsenal's weapons, for players, made at a **level 2 workbench** from bone fragments and a spine (the dagger
 needs only bone fragments). Each handles like the bronze-age weapon of its kind (the same attacks, combos, skill,
 durability and upgrades) and hits a little softer: 0.85 of its damage.
 
 | Weapon | Handles like | Damage | Made from |
 | --- | --- | --- | --- |
 | Bone Dagger | copper knife | 10.2 slash, 10.2 pierce | 8 bone fragments |
-| Bone Sword | bronze sword | 29.75 slash | a vertebra, 10 bone fragments |
-| Bone Axe | bronze axe | 34 slash, 34 chop | a vertebra, 10 bone fragments |
-| Bone Mace | bronze mace | 29.75 blunt | a vertebra, 12 bone fragments |
-| Bone Spear | bronze spear | 29.75 pierce | a vertebra, 10 bone fragments |
-| Bone Atgeir | bronze atgeir | 38.25 pierce | two vertebrae, 16 bone fragments |
-| Bone Bow | fine bow | 27.2 pierce | a vertebra, 12 bone fragments |
+| Bone Sword | bronze sword | 29.75 slash | a spine, 10 bone fragments |
+| Bone Axe | bronze axe | 34 slash, 34 chop | a spine, 10 bone fragments |
+| Bone Mace | bronze mace | 29.75 blunt | a spine, 12 bone fragments |
+| Bone Spear | bronze spear | 29.75 pierce | a spine, 10 bone fragments |
+| Bone Atgeir | bronze atgeir | 38.25 pierce | two spines, 16 bone fragments |
+| Bone Bow | fine bow | 27.2 pierce | a spine, 12 bone fragments |
 
 The Bone Atgeir has attacks of its own: the atgeir's thrust, second thrust and sweep, timed as the game's, with both
 hands on the haft throughout, and your left hand stays on its haft whatever you do with it in hand.
@@ -196,9 +196,11 @@ A mini boss of the Black Forest: a skeleton headsman, a head taller than the oth
 strung from vertebrae. About one burial chamber in four has one waiting in its largest room. It has 900 health and
 six moves:
 
-- **Slam**: the axe raised high and brought down on you, stones flying where it lands.
-- **Ground scrape**: the edge dragged through the ground in an arc; the shockwave that runs out from it is what hits.
-- **Spin**: a full turn with the axe held out flat, hitting all round.
+- **Slam**: the axe raised high and brought down on you, stones flying where it lands. Only where the axe lands hits.
+- **Sweep**: the edge dragged low across its front in an arc; what the axe head passes through is hit.
+- **Spin**: a full turn with the axe held out flat; the ring the axe head draws hits, and close in to its body is safe.
+
+The axe head is what hits in these three, not a sweep from its body: step inside its reach, or out of it.
 - **Overhead throw** and **spin throw**, when you keep your distance: the axe shatters where it hits, and its pieces
   gather into a skeleton that rises there, bone by bone from the feet up, while a new axe forms in the Executioner's
   hands. No more than two of its skeletons stand at a time.
@@ -210,7 +212,7 @@ days. Burial chambers from before you installed the mod can hold one too.
 
 ## Executioner's Greataxe
 
-The Executioner's weapon, for players: made at a **level 3 workbench** from its axehead, 8 vertebrae and 10 bone
+The Executioner's weapon, for players: made at a **level 3 workbench** from its axehead, 8 spines and 10 bone
 fragments. It is a two-handed axe that handles like the Battleaxe (the same stance, block and Axes skill) and hits
 like a fully upgraded Bronze Axe: 55 slash, 49 chop. It cannot be upgraded. Its combo is its own: a slash in front, a
 whirling spin that hits all round, then a heavy overhead blow that takes a moment to recover from.
@@ -361,9 +363,11 @@ weapons is fixed as described above.
 | `Respawn Days` | 3 | game days before it returns to its chamber after it died |
 | `Health` | 900 | its health before stars (a troll: 600) |
 | `Axehead Chance` | 50 | percent chance it drops its axehead |
-| `Slam Damage` | 60 | slash damage of the slam |
-| `Shockwave Damage` | 35 | blunt damage of the ground scrape's shockwave |
-| `Spin Damage` | 50 | slash damage of the spin |
+| `Slam Damage` | 60 | slash damage of the slam, where the axe lands |
+| `Sweep Damage` | 35 | slash damage of the low sweep across its front |
+| `Spin Damage` | 50 | slash damage of the spin, where its axe head passes |
+| `Axe Head Radius` | 0.5 | metres round the blade's edge that the slam, the sweep and the spin hit |
+| `Slam Windup Speed` | 1.35 | how much faster than its animation the slam is raised and cocked (1 = as animated) |
 | `Throw Damage` | 55 | slash damage of a thrown axe |
 | `Rear Strike Damage` | 55 | slash damage of the strike behind it |
 | `Summons` | 2 | skeletons it may have raised at once; 0 raises none |
@@ -375,7 +379,7 @@ weapons is fixed as described above.
 | `Recipe` | on | the greataxe can be made at the workbench |
 | `Slash` | 55 | slash damage (a fully upgraded Bronze Axe: 55) |
 | `Chop` | 49 | chop damage, for trees (a fully upgraded Bronze Axe: 49) |
-| `Vertebrae` | 8 | vertebrae the recipe takes |
+| `Spines` | 8 | spines the recipe takes |
 | `Bone Fragments` | 10 | bone fragments the recipe takes |
 | `Workbench Level` | 3 | the workbench level it needs |
 
@@ -393,7 +397,7 @@ refusal code that is also written to the server's and your own log.
 With `devcommands` on, the game's `spawn` command makes any of them: `spawn ECP_CryptMimic`,
 `spawn ECP_GreydwarfSlinger`, `spawn ECP_RimeGiant`, `spawn ECP_Kraken` (at sea, near a ship with a crew),
 `spawn ECP_SkeletonCrossbowman`, `spawn ECP_BoneCrossbow`, `spawn ECP_BoltBoneBlunt 20`,
-`spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman), `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Vertebra`,
+`spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman), `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Spine`,
 `spawn ECP_ArrowBone 20`, `spawn ECP_Headsman` (the Crypt Executioner), `spawn ECP_ExecutionerAxehead`,
 `spawn ECP_ExecutionerGreataxe`. A mimic comes dormant and a giant asleep. The kraken's loot: `spawn ECP_KrakenBeak`, `spawn ECP_KrakenMeat`,
 `spawn ECP_KrakenMeatCooked`, `spawn ECP_ShieldKraken`.
@@ -421,7 +425,7 @@ against what they see: a dodge that looks clear is clear. The held ship stays pu
 ## Warnings
 
 - Removing the mod removes its creatures from the world, and the kraken's beak, meat and shield, the Bone Crossbow,
-  the bone weapons, bone arrows, vertebrae and the Executioner's axehead and greataxe from every inventory and chest as
+  the bone weapons, bone arrows, spines and the Executioner's axehead and greataxe from every inventory and chest as
   it loads: the game drops items it does not know. A crypt chest that became a mimic stays gone.
 - The models are built for Windows and Linux. On macOS the mod tries the Windows build, and its own
   parts (the mimic's teeth, the slingshot, the giant's plates, the kraken, the crossbow, the bone weapons, the

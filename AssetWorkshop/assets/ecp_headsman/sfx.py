@@ -68,33 +68,31 @@ RECIPES = {
     'grind': [Layer('Audio/sfx/inventory_gui/wav/build/UI_Hoe_0%d.ogg', (1, 3, 2), peak=0.0, gain=0.5, low=150),
               Layer('Audio/sfx/inventory_gui/wav/build/UI_Cultivator_0%d.ogg', (1, 2, 3), delay=0.03, low=150,
                     high=4500, pitch=(0.85,), longest=0.5)],
-    # The shockwave: stone pillars pushing up out of the ground (Fader's fissure), a second one further out, and rock
-    # crumbling after them. Not the Stone Golem's spike wall: its crystal spikes ring at 4 kHz, a metal ting.
-    'rumble': [Layer('Characters/Fader/sfx/Fissure/Enemy_Father_Fissure_Pillar_0%d.ogg', (4, 5, 3), peak=0.08, low=150,
-                     longest=0.8),
-               Layer('Characters/Fader/sfx/Fissure/Enemy_Father_Fissure_Pillar_0%d.ogg', (5, 3, 4), delay=0.3, gain=0.55,
-                     low=170, longest=0.7),
-               Layer('Audio/Ambients/Winding Tunnel/OneShots/Amb_WindingTunnel_OneShots_RockCrumble_0%d.ogg', (4, 2, 3),
-                     peak=0.35, gain=0.6, low=100, longest=1.0)],
     # The thrown axe breaking: the Skeleton's bone shatter, then bones clattering down and settling.
     'shatter': [Layer(_WAV + 'Skeleton_Hit_Shatter%d.ogg', (1, 2, 1), peak=0.0, low=150),
                 Layer(_WAV + 'Skeleton_Death_BoneHit%d.ogg', (1, 2, 3), delay=0.12, gain=0.55, low=150),
                 Layer(_WAV + 'Skeleton_BonesRattle.ogg', (0,), delay=0.22, gain=0.4, low=150, longest=0.7)],
-    # The Executioner's Greataxe in a player's hands (the player preview, Workshop.Greataxe): each combo step's swing
-    # starts at the clip's trail, as the game plays a weapon's trail sound. The slash is the game's own Battleaxe swing,
-    # the spin the boss's flat sweep (the atgeir's own spin sound is a spear thrust), the overhead the sledge's swing;
-    # their sub-bass off harder than the rest (these two are 70-80 % below 80 Hz as the game has them); the spin's cut
-    # before its sword ring. The hit is impact_hit (the Battleaxe's).
-    'g_swing': [Layer('GameElements/Items/weapons/_res/battleaxe/sfx/Player_Movement_BattleAxe_Swing_0%d.ogg', (1, 2, 3, 4),
-                      low=240, longest=0.8)],
-    'g_spin': [Layer(_NEW + 'DeepNorth/Enemy_Skeleton_DeepNorth_Attack_Melee_0%d.ogg', (1, 2, 3), peak=0.12, low=110,
-                     longest=0.28)],
-    'g_overhead': [Layer('Characters/Player/audio/wav/weapons/sledge/Player_Movement_SledgeSwing_M_0%d.ogg', (1, 2, 3),
-                         low=240, longest=0.8)],
     # The voices, as they are, their low end off.
     'vocal': [Layer(_NEW + 'Basic/Enemy_Skeleton_Basic_Verse_Attack_0%d.ogg', (1, 3, 5, 7, 2, 4, 6), low=120)],
     'vocal_raise': [Layer(_NEW + 'Hildir/Enemy_Skeleton_Hildir_Attack_Skill_0%d.ogg', (1, 2), low=220)],
     'creak': [Layer(_NEW + 'Basic/Enemy_Skeleton_Basic_Verse_Idle_0%d.ogg', (2, 5), low=150)],
+}
+
+# The Executioner's Greataxe in a player's hands (the player preview, Workshop.Greataxe): the game's own Battleaxe
+# sounds, which the mod leaves on the item, mixed as the game plays them - their clips as they are (no filter, no
+# normalising), their sound prefab's volume, and pitches spread over its range, one variant after another as the game
+# picks at random. The swing (sfx_battleaxe_swing_wosh: pitch 1.0-1.2, volume 0.8-0.9) plays at every combo step's
+# trail, as the game plays it for all three Battleaxe swings and for the wooden greatsword's whirl; the hit
+# (sfx_battleaxe_hit: pitch 0.9-1.0, volume 0.4-0.5) at each hit. Both play at full volume within 5 m, so these are
+# their levels at the camera. An earlier set high-passed the swing at 240 Hz and borrowed a skeleton's sword swing and
+# the sledge's for the spin and overhead: thin hiss with its body gone (centroid 0.7-2 kHz, where every game swing
+# sits at 70-200 Hz), and the user said they did not belong in Valheim.
+_AXE = 'GameElements/Items/weapons/_res/battleaxe/sfx/'
+PLAYER = {
+    'g_swing': [Layer(_AXE + 'Player_Movement_BattleAxe_Swing_0%d.ogg', (1, 2, 3, 4), gain=0.85, low=0.0,
+                      pitch=(1.04, 1.17, 1.0, 1.1, 1.2, 1.07))],
+    'g_hit': [Layer(_AXE + 'Player_Movement_Axe_Hit_M_0%d.ogg', (1, 2, 3, 4, 5), gain=0.45, low=0.0,
+                    pitch=(0.95, 0.9, 0.98, 0.93, 1.0))],
 }
 
 
@@ -113,8 +111,8 @@ def band(x, low, high=0.0, order=2):
     return np.fft.irfft(np.fft.rfft(x, size) * gain, size)[:len(x)]
 
 
-def game(rel):
-    """A sound from the local reference export, mono at SR, peak 1."""
+def game(rel, raw=False):
+    """A sound from the local reference export, mono at SR, peak 1 (`raw`: at its own level)."""
     import aud
     sound = aud.Sound(os.path.join(REFERENCE, rel))
     rate = sound.specs[0]
@@ -122,14 +120,14 @@ def game(rel):
     x = data.mean(axis=1) if data.ndim > 1 else data
     if rate != SR:
         x = np.interp(np.arange(int(len(x) * SR / rate)) * rate / SR, np.arange(len(x)), x)
-    return x / (np.abs(x).max() + 1e-9)
+    return x if raw else x / (np.abs(x).max() + 1e-9)
 
 
-def clip(layer, n):
+def clip(layer, n, raw=False):
     """Variant `n` of a layer: the clip pitched (played faster or slower, as AudioSource.pitch does), high-passed,
     and where it starts after the cue, its start cut when its peak must land sooner than it comes."""
     rel = layer.files % layer.numbers[n % len(layer.numbers)] if '%d' in layer.files else layer.files
-    x = game(rel)
+    x = game(rel, raw)
     pitch = layer.pitch[n % len(layer.pitch)]
     if pitch != 1.0:
         x = np.interp(np.arange(0, len(x) - 1, pitch), np.arange(len(x)), x)
@@ -142,8 +140,8 @@ def clip(layer, n):
     return x, max(0.0, layer.peak - np.argmax(np.abs(x)) / SR) if cut == 0 else 0.0
 
 
-def mix(layers, n):
-    parts = [(clip(layer, n), layer.gain) for layer in layers]
+def mix(layers, n, raw=False):
+    parts = [(clip(layer, n, raw), layer.gain) for layer in layers]
     out = np.zeros(max(samples(at) + len(x) for (x, at), _ in parts))
     for (x, at), gain in parts:
         out[samples(at):samples(at) + len(x)] += gain * x
@@ -199,12 +197,31 @@ def main(base):
     for old in builds[:-KEEP] + [f for f in os.listdir(base) if not f.startswith('build_')]:
         shutil.rmtree(os.path.join(base, old), ignore_errors=True) if os.path.isdir(os.path.join(base, old)) else             _remove(os.path.join(base, old))
     for cue, layers in RECIPES.items():
-        variants = max(max(len(layer.numbers), len(layer.pitch)) for layer in layers)
-        for n in range(variants):
-            x = finish(mix(layers, n))
-            write(os.path.join(out, '%s_%d.wav' % (cue, n + 1)), x)
-            report('%s_%d' % (cue, n + 1), x)
-    print('WORKSHOP sfx: %d files in %s' % (len(os.listdir(out)), out))
+        for n in range(variants(layers)):
+            _save(out, cue, n, finish(mix(layers, n)))
+    player = {cue: [trim(mix(layers, n, raw=True)) for n in range(variants(layers))] for cue, layers in PLAYER.items()}
+    gain = played(player)
+    for cue, sounds in player.items():
+        for n, x in enumerate(sounds):
+            _save(out, cue, n, x * gain)
+    print('WORKSHOP sfx: %d files in %s (the player\'s at %.2f)' % (len(os.listdir(out)), out, gain))
+
+
+def variants(layers):
+    return max(max(len(layer.numbers), len(layer.pitch)) for layer in layers)
+
+
+def played(player):
+    """One gain for all the player's sounds, so they keep the game's balance (the swing as far under the hit as the
+    game plays it): the hits' loudest 0.1 s, on average, at LOUDNESS, unless a peak would pass PEAK."""
+    hits = [loudness(x) for x in player['g_hit']]
+    top = max(np.abs(x).max() for sounds in player.values() for x in sounds)
+    return min(float(np.median(hits)), PEAK / (top + 1e-9))
+
+
+def _save(out, cue, n, x):
+    write(os.path.join(out, '%s_%d.wav' % (cue, n + 1)), x)
+    report('%s_%d' % (cue, n + 1), x)
 
 
 def _remove(path):

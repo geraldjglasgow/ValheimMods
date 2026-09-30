@@ -10,7 +10,7 @@ namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
     /// Builds the skeleton arsenal once and registers it whenever ZNetScene wakes, identically on the server and every
-    /// client: the bone arrows (<see cref="ArsenalArrow"/>), the players' bone weapons and the vertebra
+    /// client: the bone arrows (<see cref="ArsenalArrow"/>), the players' bone weapons and the spine
     /// (<see cref="ArsenalItems"/>), and for each of the game's skeletons (<see cref="ArsenalKind"/>) seven arsenal
     /// skeletons, one per weapon (<see cref="ArsenalCreature"/>), each with its own weapon (<see cref="ArsenalAttack"/>).
     /// The models and icons come from the embedded bundle, built by AssetWorkshop (assets/ecp_skel_arsenal); every
@@ -82,7 +82,7 @@ namespace EliteCreaturesPack.Arsenal
                 if (attack != null)
                 {
                     ItemPrefabs.Register(harmony, attack);
-                    kind.Add(weapon, ArsenalCreature.Build(kind, weapon, skeleton!, attack, ArsenalItems.Vertebra));
+                    kind.Add(weapon, ArsenalCreature.Build(kind, weapon, skeleton!, attack, ArsenalItems.Spine));
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace EliteCreaturesPack.Arsenal
         }
 
         private static IEnumerable<GameObject> Items() =>
-            ArsenalItems.Weapons.Values.Concat(new[] { ArsenalItems.Vertebra, ArsenalArrow.Item }.OfType<GameObject>());
+            ArsenalItems.Weapons.Values.Concat(new[] { ArsenalItems.Spine, ArsenalArrow.Item }.OfType<GameObject>());
 
         private static IEnumerable<GameObject> Shots() => new[] { ArsenalArrow.Shot, ArsenalArrow.SkeletonShot }.OfType<GameObject>();
 

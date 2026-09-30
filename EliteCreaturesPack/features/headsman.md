@@ -15,9 +15,18 @@ stands, walks and runs with the axe at a ready hold across the front, head by th
 
 1. **Slam.** Raises the axe over its head, cocks it far back, and comes down heavy on the target and into the
    ground in front; chunks thrown up where it lands.
-2. **Ground scrape.** Winds round to the right, puts the edge to the ground and drags it fast in an arc across the
-   front, right to left. A rubble shockwave runs a short way out from the arc (slabs jutting up in a line, 8 m/s,
-   about 3.2 m at preview size). **The shockwave is what hits a player**, not the axe (user, 2026-09-29).
+2. **Ground scrape (the sweep).** Winds round to the right, puts the edge to the ground and drags it fast in an arc
+   across the front, right to left. What the axe head passes through is hit. (Until 2026-09-29 night a rubble
+   shockwave ran out from the arc and did the hitting; the user had it removed after the first fight: "remove the
+   ground particles and just have it as a front sweep attack".)
+
+**Only the axe head hits** in the slam, the sweep and the spin (user, 2026-09-29 night, from the first fight with the
+hit shapes drawn): the game's sweep from the body reached nearly 3 m of empty air. A sphere of `Axe Head Radius`
+(0.5 m) round the blade's edge, swept frame to frame through each move's cut window, hits once per swing: in the slam
+only where the axe lands ("I only want the little circle as the hitbox"), in the spin the ring the head draws
+("only the axehead circle should be doing damage"), so standing close in to its body is safe. The slam's wind-up
+(raise and cock, clip 0 to 1.05 s) plays 1.35 times faster ("needs to be a bit faster"); knockback halved (slam 45,
+the rest 30).
 3. **Spin.** Winds up to the right and spins a full turn with the axe held out flat; the weight carries it past,
    it staggers to catch its balance and straightens.
 4. **Overhead throw** (target out of melee range). Axe up over the head, cocked back, thrown overhand straight at the
@@ -70,10 +79,10 @@ stands, walks and runs with the axe at a ready hold across the front, head by th
 - A mini boss of the Black Forest burial chambers: about 1 chamber in 4 gets one (rolled once when the chamber is
   generated, from its seed), placed by a spawner in one of its rooms. After it dies it **returns after a while** (the
   spawner's respawn time; the game's CreatureSpawner keeps and syncs it).
-- About 900 health; hits about 50-60, the shockwave about 35; at most 2 summoned skeletons alive at a time.
+- About 900 health; hits about 50-60, the sweep about 35; at most 2 summoned skeletons alive at a time.
 - Drops coins and bones, and **its axehead at 50 %** (`ECP_ExecutionerAxehead`).
-- Players craft the **Executioner's Greataxe** (`ECP_ExecutionerGreataxe`) from the axehead, vertebrae
-  (`ECP_Vertebra`, the arsenal's) and bone fragments. As strong as a fully upgraded Bronze Axe (slash 55, chop 49).
+- Players craft the **Executioner's Greataxe** (`ECP_ExecutionerGreataxe`) from the axehead, spines
+  (`ECP_Spine`, the arsenal's) and bone fragments. As strong as a fully upgraded Bronze Axe (slash 55, chop 49).
   A Battleaxe-type two-handed weapon: the game's Battleaxe stance, movement and block; its combo is the Battleaxe's
   first swing (a slash in front), the greatsword's whirling second swing (three quarters round, both fists together;
   the atgeir's 360 spin was tried first but holds a spear's shaft at arm's length, where the left fist cannot reach
@@ -84,11 +93,14 @@ stands, walks and runs with the axe at a ready hold across the front, head by th
   S-curved haft aimed through the clips' left fist; and the left fist is kept on the haft on every peer after each
   pose (user: "the left hand isn't really holding the axe"): it takes the haft point nearest where the clip has it
   among those the arm reaches, the arm following by two-bone IK (workshop `Greataxe/GreataxeGrip`, to port as is). Sounds: the Battleaxe's
-  swing, the boss's flat sweep for the spin, the sledge's swing for the overhead, the Battleaxe's hit, high-passed.
+  own, as the game plays them - its swing (`sfx_battleaxe_swing_wosh`) on all three steps, as the game plays it on the
+  Battleaxe's three and on the wooden greatsword's whirl, and its hit. A first set (the Battleaxe's swing high-passed at
+  240 Hz, a skeleton's sword swing for the spin, the sledge's swing for the overhead) was thin hiss with the body gone;
+  user: "they don't sound like they belong in valheim" (2026-09-29).
 - Preview before anything ships (user: "show me the player character in its states with the axe, and attacking"):
   `AssetWorkshop/assets/ecp_headsman/build.ps1 -Player -Open` - every stance (idle, walk, jog, run, crouch, sneak,
-  block, jump) and the combo with both overhead candidates (the sledge's smash, the Battleaxe's third swing), from the
-  front and the side, with sounds. The overhead is the user's pick.
+  block, jump) and the combo from over the shoulder, the front and the side, with sounds; `-Player -Combo -Open` only
+  the combo. The overhead is the user's pick, the Battleaxe's third swing (the sledge's smash was the other candidate).
 
 ## In the mod
 
@@ -102,7 +114,7 @@ stands, walks and runs with the axe at a ready hold across the front, head by th
 - `Build/`: the creature (a copy of the Skeleton at 1.25, `HeadsmanCreature`), its kit and animator (`HeadsmanKit`),
   its six attacks (copies of the skeleton's sword, `HeadsmanAttacks`), the two thrown axes (copies of the archer's
   arrow, `HeadsmanThrow`).
-- `Fight/`: the owner's brain (the rear strike's turn, the scrape's shockwave `HeadsmanWave`), the AI patches (the
+- `Fight/`: the owner's brain (the rear strike's turn, the axe head's hits `HeadsmanCut`, the slam's wind-up speed), the AI patches (the
   AI waits through the rear strike and a raised skeleton's forming; the rear strike only with two foes within 8 m).
 - `Look/`: on every peer, the rig (`HeadsmanRig`: head and waist wrung round, the axe forming `HeadsmanForming`,
   rocks `HeadsmanRocks`, sound cues), the shatter (a networked, unsaved object the thrown axe spawns where it breaks;
@@ -110,16 +122,16 @@ stands, walks and runs with the axe at a ready hold across the front, head by th
   `Skeleton_NoArcher` with no drops) and its forming (`HeadsmanRising`, bones split per mesh by `HeadsmanBones`).
 - `Sound/`: the cues played from the game's clips (`HeadsmanSounds`, `HeadsmanVoice`) by the table
   `HeadsmanSoundTable.cs`, which `AssetWorkshop/assets/ecp_headsman/sfx_table.py` writes from the preview's recipes
-  (build.ps1 runs it; do not edit the table by hand); networked cues for the player's swings (`HeadsmanSoundCue`).
-- `Greataxe/`: the axehead and greataxe items (`GreataxeItems`, `GreataxeLook`), the recipe, the swing sounds per
-  combo step (`GreataxeSwings`), the player's override and left-hand grip (`GreataxeAnimations`, `GreataxeGrip`,
+  (build.ps1 runs it; do not edit the table by hand).
+- `Greataxe/`: the axehead and greataxe items (`GreataxeItems`, `GreataxeLook`), the recipe, the player's override
+  and left-hand grip (`GreataxeAnimations`, `GreataxeGrip`,
   `GreataxeHold` on every player), the patches (`GreataxePatches`: Player.Awake, Attack.Start).
 
 Multiplayer: the creature's animator is synced by the game, so every peer reads the move and its time from it and
 draws the rest itself; damage, the rear strike's turn, the shockwave and summoning are the owner's. The moment an axe
 broke and the moment a skeleton began to form are kept in ZDOs on the world clock (`ecp_hs_hit`, `ecp_hs_rise`), so a
 peer arriving late sees the forming where it is and hears nothing. The player's greataxe swings on every peer from the
-game's synced triggers and equipment; its swing sounds are networked cues spawned on the attacker's machine.
+game's synced triggers and equipment; its swing and hit sounds are the Battleaxe's, which the game networks itself.
 
 ## Decisions made without the user, in the mod (overturn freely)
 
@@ -132,10 +144,10 @@ game's synced triggers and equipment; its swing sounds are networked cues spawne
   40 m of a new one. It faces back the way the axe flew. It plays the re-forming's own two sounds (charge-up as it
   begins, the thud when whole), which the preview only played at the boss; its eyes, smoke and weapon show once whole.
 - Sound level: one factor for all cues, so the boss's voice is as loud as the game plays the skeleton's (0.8); the
-  preview's relative levels are kept, capped at full volume (the throw, the player's swings and the re-forming's).
+  preview's relative levels are kept, capped at full volume (the throw and the re-forming's).
 - The greataxe: tool tier 2 (a Bronze Axe's), the Battleaxe's durability, weight, stamina and block; not upgradable;
-  recipe at workbench level 3: the axehead, 8 vertebrae (bone fragments when the arsenal's `ECP_Vertebra` is not in
-  the game) and 10 bone fragments. Its secondary attack is the Battleaxe's, with the slash's swing sound.
+  recipe at workbench level 3: the axehead, 8 spines (bone fragments when the arsenal's `ECP_Spine` is not in
+  the game) and 10 bone fragments. Its secondary attack is the Battleaxe's.
 
 ## Test checklist
 
@@ -152,8 +164,8 @@ Build, the user restarts LocalTesting; `devcommands`, then:
 - Burial chambers: find one with the spawner (log line "Crypt Executioner waits in ..."); it spawns when you come in;
   after its death it returns after the configured days.
 - `spawn ECP_ExecutionerGreataxe` or craft it at the workbench: held with both hands in every stance; slash, spin
-  (hits all round), overhead with the 0.75 s recovery; the left hand stays on the haft; the three swing sounds; the
-  other player sees the same.
+  (hits all round), overhead with the 0.75 s recovery; the left hand stays on the haft; each swing and hit sounds as a
+  Battleaxe's; the other player sees and hears the same.
 - `Enabled` off: no new spawners, the existing ones stop spawning. `Recipe` off: the greataxe is not craftable.
 
 ## Notes from before the mod

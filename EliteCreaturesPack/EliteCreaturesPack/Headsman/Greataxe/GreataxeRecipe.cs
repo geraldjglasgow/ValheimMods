@@ -7,13 +7,13 @@ namespace EliteCreaturesPack.Headsman
 {
     /// <summary>
     /// The Executioner's Greataxe's recipe, in every ObjectDB the game builds or copies once the item exists: at the
-    /// workbench at the settings' level, from the Executioner's axehead, vertebrae (the skeleton arsenal's ECP_Vertebra;
+    /// workbench at the settings' level, from the Executioner's axehead, spines (the skeleton arsenal's ECP_Spine;
     /// bone fragments in their place when that item is not in the game) and bone fragments, as many as the settings say.
     /// Off while `Recipe` is off, or when no workbench is found. Rebuilt when the settings change.
     /// </summary>
     public static class GreataxeRecipe
     {
-        private const string Workbench = "piece_workbench", Vertebra = "ECP_Vertebra", Bones = "BoneFragments";
+        private const string Workbench = "piece_workbench", Spine = "ECP_Spine", Bones = "BoneFragments";
 
         private static Recipe? recipe;
 
@@ -63,8 +63,8 @@ namespace EliteCreaturesPack.Headsman
             var cost = new List<Piece.Requirement>();
             Add(cost, GreataxeItems.Axehead!.GetComponent<ItemDrop>(), 1);
             ItemDrop? bones = db.GetItemPrefab(Bones)?.GetComponent<ItemDrop>();
-            ItemDrop? vertebra = db.GetItemPrefab(Vertebra)?.GetComponent<ItemDrop>();
-            Add(cost, vertebra ?? bones, GreataxeSettings.Vertebrae);
+            ItemDrop? spine = db.GetItemPrefab(Spine)?.GetComponent<ItemDrop>();
+            Add(cost, spine ?? bones, GreataxeSettings.Spines);
             Add(cost, bones, GreataxeSettings.Bones);
             return cost.ToArray();
         }

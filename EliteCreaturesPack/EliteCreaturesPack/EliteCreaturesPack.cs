@@ -25,7 +25,7 @@ namespace EliteCreaturesPack
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.4.2";
+        public const string PluginVersion = "0.5.0";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 

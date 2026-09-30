@@ -1,13 +1,12 @@
-"""Inventory icons for the skeleton arsenal's player items and the vertebra drop (build.ps1 runs it after the Blender
-builds):
+"""Inventory icons for the skeleton arsenal's player items (build.ps1 runs it after the Blender builds; the spine the
+skeletons drop has its own, assets/ecp_spine/icon.py):
 
     blender --background --factory-startup --python assets/ecp_skel_arsenal/icons.py
 
 Opens each built piece (assets/<name>/out/<name>.blend) and writes out/<name>_icon.png beside it: 256 x 256, transparent,
 lit softly from the top left like the game's icons. Weapons lie diagonally across the square with the business end to
-the top right and the broad side to the viewer, as the game shows its weapons; the vertebra is seen mostly from above
-(its best-known view), tipped towards the viewer. The workshop's Unity side packs each into the bundle as a sprite of
-the same name.
+the top right and the broad side to the viewer, as the game shows its weapons. The workshop's Unity side packs each
+into the bundle as a sprite of the same name.
 """
 import math
 import os
@@ -36,11 +35,10 @@ WEAPONS = {
 
 def main():
     for name, (head, face) in WEAPONS.items():
-        _icon(name, lambda obj, h=head, f=face: _diagonal(obj, h, f), top_down=False)
-    _icon('ecp_vertebra', _tipped, top_down=True)
+        _icon(name, lambda obj, h=head, f=face: _diagonal(obj, h, f))
 
 
-def _icon(name, pose, top_down):
+def _icon(name, pose):
     folder = os.path.join(HERE, '..', name, 'out')
     bpy.ops.wm.open_mainfile(filepath=os.path.join(folder, name + '.blend'))
     item = bpy.data.objects[name]
@@ -49,7 +47,7 @@ def _icon(name, pose, top_down):
     pose(item)
     bpy.context.view_layer.update()
     _light()
-    _camera(item, top_down)
+    _camera(item)
     _render(os.path.join(folder, name + '_icon.png'))
 
 
@@ -62,10 +60,6 @@ def _diagonal(obj, head, face):
     toward = Vector((0.0, -1.0, 0.0))
     target = Matrix((diagonal, toward, diagonal.cross(toward))).transposed()
     obj.matrix_world = (target @ source.transposed()).to_4x4() @ obj.matrix_world
-
-
-def _tipped(obj):
-    obj.rotation_euler = (math.radians(-35), 0.0, math.radians(-20))
 
 
 def _light():
@@ -82,21 +76,17 @@ def _light():
     bpy.context.scene.collection.objects.link(sun)
 
 
-def _camera(item, top_down):
-    """Orthographic, framing the item with a small margin: from above for the vertebra, from the front (-Y) else."""
+def _camera(item):
+    """Orthographic from the front (-Y), framing the item with a small margin."""
     points = [item.matrix_world @ Vector(c) for c in item.bound_box]
     low = Vector([min(p[i] for p in points) for i in range(3)])
     high = Vector([max(p[i] for p in points) for i in range(3)])
     centre = (low + high) / 2
     cam = bpy.data.objects.new('icon_camera', bpy.data.cameras.new('icon_camera'))
     cam.data.type = 'ORTHO'
-    if top_down:
-        cam.data.ortho_scale = max(high.x - low.x, high.y - low.y) * 1.1
-        cam.location = (centre.x, centre.y, high.z + 1.0)
-    else:
-        cam.data.ortho_scale = max(high.x - low.x, high.z - low.z) * 1.06
-        cam.location = (centre.x, low.y - 2.0, centre.z)
-        cam.rotation_euler = (math.radians(90), 0.0, 0.0)
+    cam.data.ortho_scale = max(high.x - low.x, high.z - low.z) * 1.06
+    cam.location = (centre.x, low.y - 2.0, centre.z)
+    cam.rotation_euler = (math.radians(90), 0.0, 0.0)
     bpy.context.scene.collection.objects.link(cam)
     bpy.context.scene.camera = cam
 

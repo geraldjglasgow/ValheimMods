@@ -11,9 +11,9 @@ namespace EliteCreaturesPack.Headsman
     /// The players' part of the Executioner: its axehead, which it drops by the settings' chance, and the Executioner's
     /// Greataxe made from it at the workbench (<see cref="GreataxeRecipe"/>). The greataxe is a copy of the game's
     /// Battleaxe, so it keeps the Battleaxe's handling (two hands, its stance, its three-swing combo and secondary, the
-    /// Axes skill, its place on the back) with the bundle's bone greataxe in its hands (AssetWorkshop Greataxe/
-    /// GreataxeModel: held near the butt, its haft aimed through the left fist) and on the ground; its swings are the
-    /// Executioner's own (<see cref="GreataxeHold"/>, <see cref="GreataxePatches"/>). It hits and chops like a fully
+    /// Axes skill, its place on the back, its swing and hit sounds) with the bundle's bone greataxe in its hands
+    /// (AssetWorkshop Greataxe/GreataxeModel: held near the butt, its haft aimed through the left fist) and on the ground;
+    /// its swings are the Executioner's own (<see cref="GreataxeHold"/>, <see cref="GreataxePatches"/>). It hits and chops like a fully
     /// upgraded Bronze Axe and is not upgraded. The axehead is a copy of the game's bone fragments wearing the bundle's
     /// axehead. Both wear the Skeleton's bone material with the axe's texture, as the Executioner's axe does.
     /// </summary>
@@ -30,9 +30,8 @@ namespace EliteCreaturesPack.Headsman
         /// <summary>The greataxe's name hash, as the players' equipment shows what is in a hand.</summary>
         public static int Hash { get; } = AxeName.GetStableHashCode();
 
-        /// <summary>The greataxe, the axehead and the greataxe's swing sounds, for ZNetScene.</summary>
-        public static IEnumerable<GameObject> NetPrefabs =>
-            new[] { Axe, Axehead }.Where(p => p != null).Select(p => p!).Concat(GreataxeSwings.Prefabs);
+        /// <summary>The greataxe and the axehead, for ZNetScene.</summary>
+        public static IEnumerable<GameObject> NetPrefabs => new[] { Axe, Axehead }.Where(p => p != null).Select(p => p!);
 
         public static void Build(ZNetScene scene, Harmony harmony, AssetBundle bundle, Humanoid skeleton)
         {
@@ -45,7 +44,6 @@ namespace EliteCreaturesPack.Headsman
             }
             Axehead = Make(bones, HeadName, HeadWord, EmbeddedBundle.Prefab(bundle, Head).transform, bundle.LoadAsset<Sprite>(HeadIcon), skin);
             Axe = Make(axe, AxeName, AxeWord, EmbeddedBundle.Prefab(bundle, Held).transform.Find(ModelName), bundle.LoadAsset<Sprite>(AxeIcon), skin);
-            GreataxeSwings.Build();
             Arm(Axe.GetComponent<ItemDrop>().m_itemData.m_shared, Axe.transform.Find("attach"));
             ItemPrefabs.Register(harmony, Axehead);
             ItemPrefabs.Register(harmony, Axe);
@@ -73,12 +71,11 @@ namespace EliteCreaturesPack.Headsman
             return item;
         }
 
-        /// <summary>The greataxe's own numbers (<see cref="Reapply"/>); its swing sounds are its combo's (no Battleaxe swing).</summary>
+        /// <summary>The greataxe's own numbers (<see cref="Reapply"/>) and its swing trail along our blade.</summary>
         private static void Arm(ItemDrop.ItemData.SharedData shared, Transform attach)
         {
             shared.m_maxQuality = 1;
             shared.m_toolTier = 2;
-            shared.m_trailStartEffect = new EffectList();
             GreataxeLook.Trail(attach);
             Apply(shared);
         }

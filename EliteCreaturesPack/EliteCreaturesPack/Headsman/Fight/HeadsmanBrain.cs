@@ -5,9 +5,11 @@ namespace EliteCreaturesPack.Headsman
     /// <summary>
     /// The Executioner's owner's part in its attacks, by the clip's own time: in the rear strike it turns the creature
     /// itself half round as the legs come round under it (0.95 to 1.35 s), the game's AI held off meanwhile so it does
-    /// not turn it back towards its target (<see cref="Turning"/>, <see cref="HeadsmanAiPatch"/>); in the ground scrape it
-    /// sends the shockwave (<see cref="HeadsmanWave"/>). The turn reaches the other peers as any turn does, through the
-    /// creature's synced transform.
+    /// not turn it back towards its target (<see cref="Turning"/>, <see cref="HeadsmanAiPatch"/>); in the slam, the low
+    /// sweep and the spin the axe head hits (<see cref="HeadsmanCut"/>); and it plays the slam's wind-up faster
+    /// (<see cref="Pace"/>). The turn reaches the other peers as any turn does, through the creature's synced transform,
+    /// and the speed through the game's own animation sync (the owner's animator speed is kept in the ZDO and every peer
+    /// plays at it).
     /// </summary>
     public sealed class HeadsmanBrain : MonoBehaviour
     {
@@ -15,9 +17,10 @@ namespace EliteCreaturesPack.Headsman
         private Character character = null!;
         private Animator animator = null!;
         private HeadsmanRig rig = null!;
-        private HeadsmanWave wave = null!;
+        private HeadsmanCut cut = null!;
         private HeadsmanMove? current;
         private float turned;
+        private float? paced;
 
         /// <summary>Whether the rear strike is playing: the AI waits it out.</summary>
         public bool Turning => current == HeadsmanMoves.Rear;
@@ -26,7 +29,7 @@ namespace EliteCreaturesPack.Headsman
         {
             (nview, character, rig) = (GetComponent<ZNetView>(), GetComponent<Character>(), GetComponent<HeadsmanRig>());
             animator = GetComponentInChildren<Animator>();
-            wave = new HeadsmanWave(character);
+            cut = new HeadsmanCut(GetComponent<Humanoid>());
             HeadsmanAiPatch.Watch(GetComponent<MonsterAI>(), () => Turning);
         }
 
@@ -47,7 +50,28 @@ namespace EliteCreaturesPack.Headsman
             {
                 Turn(time);
             }
-            wave.Step(move, time, rig.Edge);
+            cut.Step(move, time, rig.Edge);
+            Pace(move, time);
+        }
+
+        /// <summary>
+        /// The wind-up at its own speed, on top of the speed the creature had as it began (star scaling's, given back
+        /// after it). Set every frame while it lasts: the game puts a creature's speed back to 1 each fixed step while it
+        /// is not yet in its attack state, which the blend into the attack is.
+        /// </summary>
+        private void Pace(HeadsmanMove? move, float time)
+        {
+            bool winding = move != null && time < move.WindUp;
+            if (winding)
+            {
+                paced ??= animator.speed;
+                animator.speed = paced.Value * HeadsmanSettings.SlamWindup;
+            }
+            else if (paced != null)
+            {
+                animator.speed = paced.Value;
+                paced = null;
+            }
         }
 
         /// <summary>By what the rear strike's own turn has grown since the last frame, and the creature looks that way.</summary>

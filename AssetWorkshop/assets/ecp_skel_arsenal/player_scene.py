@@ -17,7 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import blender_scene as bs  # noqa: E402
 
-LINEUP_SECONDS, VERTEBRA_SECONDS = 6.0, 3.0
+LINEUP_SECONDS, SPINE_SECONDS = 6.0, 3.0
 
 
 def main():
@@ -39,13 +39,13 @@ def main():
 
 
 def _slots(lineup, fps):
-    """The row, then each player's whole tour once, then the vertebra."""
+    """The row, then each player's whole tour once, then the spine."""
     slots, frame = {'Lineup': 1}, 1 + round(LINEUP_SECONDS * fps)
     for group in lineup['groups']:
         slots[group['label']] = frame
         frame += group['frames']
-    slots['Vertebra'] = frame
-    slots['end'] = frame + round(VERTEBRA_SECONDS * fps)
+    slots['Spine'] = frame
+    slots['end'] = frame + round(SPINE_SECONDS * fps)
     return slots
 
 
@@ -64,7 +64,7 @@ def _alone(groups, slots):
     for group in groups:
         own = bpy.data.collections[group['label']]
         for obj in [o for o in own.all_objects if o is not None]:
-            for frame, hidden in [(1, False)] + [(slots[g['label']], g is not group) for g in groups] + [(slots['Vertebra'], True)]:
+            for frame, hidden in [(1, False)] + [(slots[g['label']], g is not group) for g in groups] + [(slots['Spine'], True)]:
                 obj.hide_viewport = obj.hide_render = hidden
                 obj.keyframe_insert('hide_viewport', frame=frame)
                 obj.keyframe_insert('hide_render', frame=frame)

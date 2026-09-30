@@ -14,6 +14,9 @@
     .\assets\ecp_headsman\build.ps1 -Player -Open
     The Executioner's Greataxe in a player's hands instead: every stance, a jump and the combo, in Blender.
 .EXAMPLE
+    .\assets\ecp_headsman\build.ps1 -Player -Combo -Open
+    Only the greataxe's combo, from over the shoulder, the front and the side, with the game's Battleaxe sounds.
+.EXAMPLE
     .\assets\ecp_headsman\build.ps1 -Probe
     Only logs the Skeleton's bones, the game clips' settings, the avatar's limits and the axe's grips.
 .NOTES
@@ -26,6 +29,7 @@ param(
     [switch]$Open,
     [switch]$SkipUnity,
     [switch]$Player,
+    [switch]$Combo,
     [switch]$Bundle,
     [switch]$Install,
     [string]$Blender = $(if ($env:WORKSHOP_BLENDER) { $env:WORKSHOP_BLENDER } else { "$env:USERPROFILE\tools\blender\blender.exe" }),
@@ -82,7 +86,8 @@ if (-not $SkipUnity) {
     }
     if (Test-Path $bake) { Remove-Item $bake -Recurse -Force }
     $method = if ($Player) { 'Workshop.Greataxe.GreataxePreview.Run' } else { 'Workshop.Headsman.HeadsmanBuild.Run' }
-    Invoke-Unity $method @('-workshopOut', $bake)
+    $more = @('-workshopOut', $bake) + $(if ($Player -and $Combo) { @('-workshopCombo') } else { @() })
+    Invoke-Unity $method $more
 }
 
 # Blender writes warnings to stderr, which 'Stop' would turn into a failure.

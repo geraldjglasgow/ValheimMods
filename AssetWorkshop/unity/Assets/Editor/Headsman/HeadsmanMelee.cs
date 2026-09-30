@@ -75,7 +75,7 @@ namespace Workshop.Headsman
                 .Step(false, 1.3f, 1.65f, Vector3.zero)
                 .Done();
             var move = new HeadsmanMove { Name = "scrape", Title = "2 ground scrape", Length = 1.85f, Keys = keys, Scrape = new Vector2(0.48f, 0.95f) };
-            move.Sounds.AddRange(new[] { (0.05f, "vocal"), (0.3f, "whoosh_heavy"), (0.46f, "grind"), (0.5f, "rumble") });
+            move.Sounds.AddRange(new[] { (0.05f, "vocal"), (0.3f, "whoosh_heavy"), (0.46f, "grind") });   // no rumble: the mod's scrape is a plain sweep since 2026-09-29
             return move;
         }
 

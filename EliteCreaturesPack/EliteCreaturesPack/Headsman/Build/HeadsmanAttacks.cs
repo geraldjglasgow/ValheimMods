@@ -11,7 +11,8 @@ namespace EliteCreaturesPack.Headsman
     /// setting its own clip's trigger. The game's AI picks among them by their ranges and intervals: the slam, the ground
     /// scrape and the spin within reach; the two throws only from further off (their least range); the rear strike only
     /// when its target is behind (an inverted angle check) and two or more foes are near (<see cref="HeadsmanRear"/>).
-    /// The scrape does not hit: its shockwave does (<see cref="HeadsmanWave"/>). Damage follows the settings.
+    /// The slam, the low sweep (the scrape) and the spin do not hit through the game's sweep from the body: the axe head
+    /// does (<see cref="HeadsmanCut"/>), with these items' damage and push. Damage follows the settings.
     /// </summary>
     public static class HeadsmanAttacks
     {
@@ -28,9 +29,9 @@ namespace EliteCreaturesPack.Headsman
 
         private static readonly Shape[] Shapes =
         {
-            new Shape { Move = HeadsmanMoves.Slam, Key = "slam", Type = Attack.AttackType.Horizontal, Range = 3.2f, Angle = 50f, AiRange = 3f, Interval = 4f },
+            new Shape { Move = HeadsmanMoves.Slam, Key = "slam", Type = Attack.AttackType.None, AiRange = 3f, Interval = 4f },
             new Shape { Move = HeadsmanMoves.Scrape, Key = "scrape", Type = Attack.AttackType.None, AiRange = 4f, Interval = 8f, MaxAngle = 30f },
-            new Shape { Move = HeadsmanMoves.Spin, Key = "spin", Type = Attack.AttackType.Horizontal, Range = 3.6f, Angle = 360f, AiRange = 3f, Interval = 10f, MaxAngle = 180f },
+            new Shape { Move = HeadsmanMoves.Spin, Key = "spin", Type = Attack.AttackType.None, AiRange = 3f, Interval = 10f, MaxAngle = 180f },
             new Shape { Move = HeadsmanMoves.Hurl, Key = "hurl", Type = Attack.AttackType.Projectile, AiRange = 22f, AiRangeMin = 7f, Interval = 14f, MaxAngle = 12f },
             new Shape { Move = HeadsmanMoves.SpinThrow, Key = "spinthrow", Type = Attack.AttackType.Projectile, AiRange = 22f, AiRangeMin = 7f, Interval = 14f, MaxAngle = 12f },
             new Shape { Move = HeadsmanMoves.Rear, Key = "rear", Type = Attack.AttackType.Horizontal, Range = 3.2f, Angle = 360f, AiRange = 3.2f, Interval = 8f, MaxAngle = 120f, Behind = true },
@@ -96,6 +97,7 @@ namespace EliteCreaturesPack.Headsman
             float slash = shared.m_name switch
             {
                 "$item_ecp_headsman_slam" => HeadsmanSettings.SlamDamage,
+                "$item_ecp_headsman_scrape" => HeadsmanSettings.SweepDamage,
                 "$item_ecp_headsman_spin" => HeadsmanSettings.SpinDamage,
                 "$item_ecp_headsman_hurl" => HeadsmanSettings.ThrowDamage,
                 "$item_ecp_headsman_spinthrow" => HeadsmanSettings.ThrowDamage,
@@ -103,7 +105,7 @@ namespace EliteCreaturesPack.Headsman
                 _ => 0f,
             };
             shared.m_damages = new HitData.DamageTypes { m_slash = slash };
-            shared.m_attackForce = shared.m_name == "$item_ecp_headsman_slam" ? 90f : 60f;
+            shared.m_attackForce = shared.m_name == "$item_ecp_headsman_slam" ? 45f : 30f;
         }
 
         /// <summary>After a settings change: the prefabs' attacks and every loaded Executioner's own copies of them.</summary>

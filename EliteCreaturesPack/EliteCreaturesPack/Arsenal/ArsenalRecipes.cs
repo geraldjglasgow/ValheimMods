@@ -8,7 +8,7 @@ namespace EliteCreaturesPack.Arsenal
     /// <summary>
     /// The bone weapons' and bone arrows' recipes, in every ObjectDB the game builds or copies once the items exist: the
     /// weapons at a level 2 workbench, costing <see cref="ArsenalWeapon.Recipe"/> (item:amount:amount per upgrade; the
-    /// vertebra by its prefab name, ECP_Vertebra), and 20 arrows for 8 bone fragments at a level 2 workbench. An item
+    /// spine by its prefab name, ECP_Spine), and 20 arrows for 8 bone fragments at a level 2 workbench. An item
     /// name the game does not know is logged and left out. Not made at all when no workbench is found: without a
     /// station the game would let them be made by hand anywhere.
     /// </summary>
@@ -69,7 +69,7 @@ namespace EliteCreaturesPack.Arsenal
             }
         }
 
-        /// <summary>"ECP_Vertebra:1, BoneFragments:10:5" into requirements; unknown items and bad entries are logged and skipped.</summary>
+        /// <summary>"ECP_Spine:1, BoneFragments:10:5" into requirements; unknown items and bad entries are logged and skipped.</summary>
         private static Piece.Requirement[] Cost(ObjectDB db, string made, string text)
         {
             var cost = new List<Piece.Requirement>();
@@ -91,10 +91,10 @@ namespace EliteCreaturesPack.Arsenal
             return cost.ToArray();
         }
 
-        /// <summary>The vertebra by name even before this database lists it (the item registration may run after this).</summary>
+        /// <summary>The spine by name even before this database lists it (the item registration may run after this).</summary>
         private static ItemDrop? Find(ObjectDB db, string name)
         {
-            GameObject? prefab = name == ArsenalItems.VertebraName ? ArsenalItems.Vertebra : db.GetItemPrefab(name);
+            GameObject? prefab = name == ArsenalItems.SpineName ? ArsenalItems.Spine : db.GetItemPrefab(name);
             return prefab != null ? prefab.GetComponent<ItemDrop>() : null;
         }
     }

@@ -6,8 +6,9 @@ namespace EliteCreaturesPack.Headsman
     /// <summary>
     /// Section 25: the Crypt Executioner. Whether it may appear and how rarely (the share of the Black Forest's burial
     /// chambers that hold one, fixed per chamber by its seed, and how long it takes to come back after it dies), its
-    /// health, the damage of each attack, how many skeletons it may have raised at once, and the chance it drops its
-    /// axehead. Synced; read where they apply, so a reload takes effect.
+    /// health, the damage of each attack, the reach of its axe head and the speed of its slam's wind-up, how many
+    /// skeletons it may have raised at once, and the chance it drops its axehead. Synced; read where they apply, so a
+    /// reload takes effect.
     /// </summary>
     public static class HeadsmanSettings
     {
@@ -15,9 +16,9 @@ namespace EliteCreaturesPack.Headsman
 
         private static ConfigEntry<bool> enabled = null!;
         private static ConfigEntry<float> chambers = null!, respawnDays = null!, health = null!;
-        private static ConfigEntry<float> slam = null!, wave = null!, spin = null!, thrown = null!, rear = null!;
+        private static ConfigEntry<float> slam = null!, sweep = null!, spin = null!, thrown = null!, rear = null!;
         private static ConfigEntry<int> summons = null!;
-        private static ConfigEntry<float> axehead = null!;
+        private static ConfigEntry<float> axehead = null!, axeRadius = null!, windup = null!;
 
         /// <summary>Whether chambers generated from now on may hold one. Ones already placed stay.</summary>
         public static bool On => enabled.Value;
@@ -30,11 +31,17 @@ namespace EliteCreaturesPack.Headsman
 
         public static float Health => health.Value;
         public static float SlamDamage => slam.Value;
-        public static float WaveDamage => wave.Value;
+        public static float SweepDamage => sweep.Value;
         public static float SpinDamage => spin.Value;
         public static float ThrowDamage => thrown.Value;
         public static float RearDamage => rear.Value;
         public static int Summons => summons.Value;
+
+        /// <summary>Metres round the blade's edge that the slam and the spin hit.</summary>
+        public static float AxeRadius => axeRadius.Value;
+
+        /// <summary>How many times faster than its clip the slam's wind-up plays.</summary>
+        public static float SlamWindup => windup.Value;
         public static float AxeheadChance => axehead.Value / 100f;
 
         public static void Initialize(SyncedConfiguration config)
@@ -59,10 +66,16 @@ namespace EliteCreaturesPack.Headsman
 
         private static void BindFight(SyncedConfiguration config)
         {
-            slam = config.Bind(Section, "Slam Damage", 60f, "Slash damage of the overhead slam.", acceptableValues: Settings.Range(0f, 1000f));
-            wave = config.Bind(Section, "Shockwave Damage", 35f,
-                "Blunt damage of the shockwave the ground scrape sends out (the scrape itself does not hit).", acceptableValues: Settings.Range(0f, 1000f));
-            spin = config.Bind(Section, "Spin Damage", 50f, "Slash damage of the spin, all round it.", acceptableValues: Settings.Range(0f, 1000f));
+            slam = config.Bind(Section, "Slam Damage", 60f, "Slash damage of the overhead slam, where the axe lands.", acceptableValues: Settings.Range(0f, 1000f));
+            sweep = config.Bind(Section, "Sweep Damage", 35f,
+                "Slash damage of the low sweep across its front, where the axe head passes.", acceptableValues: Settings.Range(0f, 1000f));
+            spin = config.Bind(Section, "Spin Damage", 50f, "Slash damage of the spin, where its axe head passes.", acceptableValues: Settings.Range(0f, 1000f));
+            axeRadius = config.Bind(Section, "Axe Head Radius", 0.5f,
+                "Metres round the blade's edge that hit in the slam (where the axe lands) and the spin (the ring the head draws; inside it is safe).",
+                acceptableValues: Settings.Range(0.1f, 2f));
+            windup = config.Bind(Section, "Slam Windup Speed", 1.35f,
+                "How much faster than its animation the slam is raised and cocked before it comes down (1 = as animated).",
+                acceptableValues: Settings.Range(0.5f, 3f));
             thrown = config.Bind(Section, "Throw Damage", 55f, "Slash damage of the thrown axe.", acceptableValues: Settings.Range(0f, 1000f));
             rear = config.Bind(Section, "Rear Strike Damage", 55f,
                 "Slash damage of the strike behind it, used when two or more foes are near and one is behind.", acceptableValues: Settings.Range(0f, 1000f));

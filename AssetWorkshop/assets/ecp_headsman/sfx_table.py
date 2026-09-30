@@ -6,7 +6,8 @@ than it comes is cut at the start, and fades in over 10 ms), how long after the 
 and low-pass, its pitch, and how long it plays (the layer's own longest, within the preview strip's). The volume folds
 together what the preview did to the mix: the clip brought to peak 1, the layer's gain, the mix brought to a common
 loudness (sfx.loudness), the strip's volume; then one factor for all, so the boss's voice is as loud as the game's own
-skeleton voice (its sfx plays it at 0.8). Only the re-forming's two cues are the game's clips as they are.
+skeleton voice (its sfx plays it at 0.8). Only the re-forming's two cues are the game's clips as they are. The player's
+greataxe has no row: it plays the game's own Battleaxe swing and hit, through the game's sound prefabs.
 
 Run in Blender (its sound library decodes the game's .ogg files; build.ps1 does, after sfx.py):
     blender --background --factory-startup --python sfx_table.py -- <table.cs>
@@ -76,8 +77,12 @@ def game_cue(files, strip_volume, strip_longest):
 
 
 def cues():
+    """Every cue of the preview but the player's greataxe (sfx.PLAYER: the game's Battleaxe sounds, which the mod leaves
+    on the item and the game plays itself)."""
     table = {}
     for cue, strips in blender_fx.SOUNDS.items():
+        if cue in sfx.PLAYER:
+            continue
         variants, volume, longest = strips[0]
         table[cue] = own(cue, sfx.RECIPES[cue], volume, longest) if variants is blender_fx.OWN \
             else game_cue(variants, volume, longest)

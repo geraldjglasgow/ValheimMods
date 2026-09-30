@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.5.0
+
+The Crypt Executioner hits with its axe head, and the skeletons drop a spine instead of a vertebra.
+
+- **Only the Executioner's axe head hits** in its slam, its sweep and its spin, not a wide sweep from its body. The
+  slam hits where the axe lands; the spin hits the ring its axe head draws round it, so standing close in to its body
+  is safe; the sweep hits what the blade passes through as it drags across its front.
+- **The ground scrape is a plain sweep**: no stones jutting up and no shockwave running out from it. The slam still
+  throws up stones where it lands.
+- **The slam comes faster**: the axe is raised and cocked back 1.35 times as fast before it comes down.
+- **Half the knockback** from all its attacks.
+- **New settings** in `25 - Crypt Executioner`: `Axe Head Radius` (0.5 m round the blade's edge) and
+  `Slam Windup Speed` (1.35). **`Shockwave Damage` is now `Sweep Damage`** (still 35, now slash); if you changed it,
+  set it again under the new name.
+- **The Executioner's Greataxe sounds like the game's battleaxe**: its swings and hits play the battleaxe's own sounds.
+- **The Vertebra is now a Spine**: a length of a skeleton's backbone, eight vertebrae still joined, with its own
+  model and icon. It drops as the vertebra did (one arsenal skeleton in ten), and every recipe that took vertebrae
+  takes spines in the same numbers: one for each bone weapon, two for the Bone Atgeir, 8 for the Executioner's
+  Greataxe.
+- **Vertebrae you already have are gone**: the item has a new name, and the game drops items it does not know when it
+  loads.
+- **The greataxe's `Vertebrae` setting is now `Spines`** (still 8, in `26 - Executioner Greataxe`). If you changed it,
+  set it again under the new name.
+
 ## 0.4.2
 
 The mod loads again.

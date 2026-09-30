@@ -24,7 +24,7 @@ namespace EliteCreaturesPack.Headsman
                 + "falls from overhead; the last blow is slow to recover from.");
             localization.AddWord("item_" + GreataxeItems.HeadWord, "Executioner's axehead");
             localization.AddWord("item_" + GreataxeItems.HeadWord + "_description",
-                "The bone head of the Crypt Executioner's axe. Strung on a haft of vertebrae at the workbench, it swings again.");
+                "The bone head of the Crypt Executioner's axe. Set on a haft of spines at the workbench, it swings again.");
         }
 
         private static void Postfix(Localization __instance) =>

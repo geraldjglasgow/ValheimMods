@@ -5,7 +5,7 @@ using HarmonyLib;
 namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
-    /// The arsenal's words for the game's translation table: the skeletons' names, the bone weapons', the vertebra's and
+    /// The arsenal's words for the game's translation table: the skeletons' names, the bone weapons', the spine's and
     /// the bone arrows'. English for every language until translations exist. Added again after each language setup,
     /// which rebuilds the table.
     /// </summary>
@@ -31,9 +31,9 @@ namespace EliteCreaturesPack.Arsenal
                 localization.AddWord("item_" + weapon.Word, "Bone " + weapon.Key);
                 localization.AddWord("item_" + weapon.Word + "_description", Descriptions[weapon.Key]);
             }
-            localization.AddWord("item_" + ArsenalItems.VertebraWord, "Vertebra");
-            localization.AddWord("item_" + ArsenalItems.VertebraWord + "_description",
-                "A piece of an old spine, still hard as stone. The skeletons build their weapons around them.");
+            localization.AddWord("item_" + ArsenalItems.SpineWord, "Spine");
+            localization.AddWord("item_" + ArsenalItems.SpineWord + "_description",
+                "A length of an old spine, still hard as stone. The skeletons build their weapons around it.");
             localization.AddWord("item_" + ArsenalArrow.Word, "Bone Arrow");
             localization.AddWord("item_" + ArsenalArrow.Word + "_description",
                 "A shaft of bone tipped with a sharpened vertebra. Better than wood, not as good as flint.");

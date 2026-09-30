@@ -39,22 +39,22 @@ namespace EliteCreaturesPack.Arsenal
     public sealed class ArsenalWeapon
     {
         public static readonly ArsenalWeapon Bow = new ArsenalWeapon("Bow", "Bowman", "BowFineWood", null,
-            "ECP_Vertebra:1, BoneFragments:12:6");
+            "ECP_Spine:1, BoneFragments:12:6");
 
         public static readonly ArsenalWeapon[] All =
         {
             new ArsenalWeapon("Dagger", "Cutthroat", "KnifeCopper",
                 new Swing("attack", "knife_slash0", Blow.SlashPierce, 0.8f, 1.5f, 60f, 2f), "BoneFragments:8:4"),
             new ArsenalWeapon("Sword", "Swordsman", "SwordBronze",
-                new Swing("attack", null, Blow.Slash, 1f, 1.8f, 90f, 3f), "ECP_Vertebra:1, BoneFragments:10:5"),
+                new Swing("attack", null, Blow.Slash, 1f, 1.8f, 90f, 3f), "ECP_Spine:1, BoneFragments:10:5"),
             new ArsenalWeapon("Axe", "Axeman", "AxeBronze",
-                new Swing("attack", "axe_swing", Blow.Slash, 1.1f, 1.9f, 90f, 3f), "ECP_Vertebra:1, BoneFragments:10:5"),
+                new Swing("attack", "axe_swing", Blow.Slash, 1.1f, 1.9f, 90f, 3f), "ECP_Spine:1, BoneFragments:10:5"),
             new ArsenalWeapon("Mace", "Bonebreaker", "MaceBronze",
-                new Swing("attack_mace", null, Blow.Blunt, 1.15f, 2.2f, 70f, 3.5f), "ECP_Vertebra:1, BoneFragments:12:6"),
+                new Swing("attack_mace", null, Blow.Blunt, 1.15f, 2.2f, 70f, 3.5f), "ECP_Spine:1, BoneFragments:12:6"),
             new ArsenalWeapon("Spear", "Spearman", "SpearBronze",
-                new Swing("attack", "Javelin Stab", Blow.Pierce, 1f, 2.3f, 40f, 3f), "ECP_Vertebra:1, BoneFragments:10:5"),
+                new Swing("attack", "Javelin Stab", Blow.Pierce, 1f, 2.3f, 40f, 3f), "ECP_Spine:1, BoneFragments:10:5"),
             new ArsenalWeapon("Atgeir", "Halberdier", "AtgeirBronze",
-                new Swing("attack", "2Hand-Spear-Attack1", Blow.Pierce, 1.2f, 2.8f, 60f, 4f), "ECP_Vertebra:2, BoneFragments:16:8"),
+                new Swing("attack", "2Hand-Spear-Attack1", Blow.Pierce, 1.2f, 2.8f, 60f, 4f), "ECP_Spine:2, BoneFragments:16:8"),
             Bow,
         };
 

@@ -11,7 +11,7 @@ namespace EliteCreaturesPack.Headsman
     /// greataxe (<see cref="HeadsmanKit"/>) and playing the bundle's clips through its own animator. It fights with its
     /// six attacks (<see cref="HeadsmanAttacks"/>) and nothing of the Skeleton's; it drops coins, bone fragments and,
     /// by the settings' chance, its axehead. On every peer <see cref="HeadsmanRig"/> draws what its clips cannot do; on
-    /// its owner <see cref="HeadsmanBrain"/> turns it in the rear strike and sends the scrape's shockwave.
+    /// its owner <see cref="HeadsmanBrain"/> turns it in the rear strike and makes the axe head's hits.
     /// </summary>
     public static class HeadsmanCreature
     {

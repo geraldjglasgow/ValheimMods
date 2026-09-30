@@ -4,7 +4,8 @@ Sounds: the bake lists sound cues by frame (sequence.json soundFrames/soundCues)
 sounds, picked in turn from the layer's variants and trimmed to the layer's longest length, as sound strips in the
 video sequencer, so they play with the timeline (the scene syncs to audio). The sounds are our own, made by sfx.py
 into out/sfx (the game's swings, impacts and rumbles are nearly all bass); only the re-forming axe's two are the game's
-own, from the local reference export (never shipped). Lights: a baked part named light_* gets a green point light on it
+own, from the local reference export (never shipped), and the player's greataxe plays the game's Battleaxe sounds as
+the game mixes them. Lights: a baked part named light_* gets a green point light on it
 whose strength follows the part's size frame by frame (the glow at the grip while the new axe forms, the glow where a
 skeleton rises).
 """
@@ -30,13 +31,12 @@ SOUNDS = {
     'whoosh_short': [(OWN, 0.35, 0.5)],
     'whoosh_spin': [(OWN, 0.35, 1.0)],
     'throw': [(OWN, 0.3, 1.0)],
-    'g_swing': [(OWN, 0.4, 1.0)],
-    'g_spin': [(OWN, 0.4, 1.0)],
-    'g_overhead': [(OWN, 0.4, 1.0)],
+    # The player's greataxe: the game's Battleaxe swing and hit, mixed by sfx.py (PLAYER) at the game's own balance.
+    'g_swing': [(OWN, 1.0, 1.5)],
+    'g_hit': [(OWN, 1.0, 1.0)],
     'impact_ground': [(OWN, 0.55, 1.0)],
     'impact_hit': [(OWN, 0.45, 1.0)],
     'grind': [(OWN, 0.4, 1.0)],
-    'rumble': [(OWN, 0.45, 1.5)],
     'shatter': [(OWN, 0.5, 1.5)],
     'regen': [(['Characters/Dverger/sfx/Attacks/Enemy_Dverger_ChargeUp_Big_01.ogg'], 0.7, 2.0)],
     'solid': [(['Characters/Fader/sfx/CharredSummon/Enemy_Father_CharredSummon_Impact_0%d.ogg' % n for n in (1, 2)],

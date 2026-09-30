@@ -17,8 +17,8 @@ namespace EliteCreaturesPack.Headsman
     }
 
     /// <summary>
-    /// A greataxe swing, on the attacker's machine as the game starts it: the combo step's own swing sound
-    /// (<see cref="GreataxeSwings"/>, the secondary the slash's), and the second step, the spin, hits all round.
+    /// A greataxe swing, on the attacker's machine as the game starts it: the second step of the combo, the spin, hits
+    /// all round. Every swing sounds as the Battleaxe's do (the item's own trail and hit sounds, the game's).
     /// </summary>
     [HarmonyPatch(typeof(Attack), nameof(Attack.Start))]
     public static class GreataxeSwing
@@ -27,14 +27,8 @@ namespace EliteCreaturesPack.Headsman
 
         private static void Postfix(Attack __instance, ItemDrop.ItemData weapon, bool __result)
         {
-            if (!__result || weapon?.m_shared.m_name != "$item_" + GreataxeItems.AxeWord)
-            {
-                return;
-            }
-            bool primary = __instance.m_attackAnimation == Primary;
-            int step = primary ? __instance.m_currentAttackCainLevel : 0;
-            __instance.m_trailStartEffect = GreataxeSwings.For(step);
-            if (primary && step == 1)
+            if (__result && weapon?.m_shared.m_name == "$item_" + GreataxeItems.AxeWord
+                && __instance.m_attackAnimation == Primary && __instance.m_currentAttackCainLevel == 1)
             {
                 __instance.m_attackAngle = 360f;
             }

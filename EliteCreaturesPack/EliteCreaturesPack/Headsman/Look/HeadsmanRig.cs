@@ -7,8 +7,8 @@ namespace EliteCreaturesPack.Headsman
     /// What the Executioner's clips cannot do, drawn on every peer after the animator by the clip's own time
     /// (<see cref="HeadsmanClock"/>): in the rear strike the skull snaps all the way round and the upper body wrings round
     /// at the waist to follow it (a skeleton turns further than its muscles go); the axe is gone from a throw's release
-    /// and forms again in the raised hands (<see cref="HeadsmanForming"/>); chunks fly where the slam lands and slabs
-    /// jut up along the scrape's shockwave (<see cref="HeadsmanRocks"/>); and the sound cues play
+    /// and forms again in the raised hands (<see cref="HeadsmanForming"/>); chunks fly where the slam lands
+    /// (<see cref="HeadsmanRocks"/>); and the sound cues play
     /// (<see cref="HeadsmanSounds"/>). Local only: the network carries the animator, and that is enough.
     /// </summary>
     public sealed class HeadsmanRig : MonoBehaviour
@@ -17,7 +17,7 @@ namespace EliteCreaturesPack.Headsman
         private Transform head = null!, neck = null!, spine = null!, chest = null!, axe = null!;
         private HeadsmanForming forming = null!;
         private HeadsmanMove? current;
-        private float last = -1f, lastRow = -1f;
+        private float last = -1f;
 
         private void Awake()
         {
@@ -80,13 +80,7 @@ namespace EliteCreaturesPack.Headsman
             }
             if (move == HeadsmanMoves.Slam && HeadsmanClock.Crossed(last, time, move.Hit))
             {
-                HeadsmanRocks.Burst(HeadsmanWave.Floor(Edge));
-            }
-            if (move == HeadsmanMoves.Scrape && time >= move.Scrape.x && time < move.Scrape.y && Time.time - lastRow >= HeadsmanWave.Every)
-            {
-                var (from, outward) = HeadsmanWave.RowAt(Edge, transform.position);
-                HeadsmanRocks.Row(from, outward);
-                lastRow = Time.time;
+                HeadsmanRocks.Burst(HeadsmanGround.Floor(Edge));
             }
         }
     }

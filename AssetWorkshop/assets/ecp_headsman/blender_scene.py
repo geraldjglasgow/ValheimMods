@@ -37,8 +37,10 @@ CAMERAS = {
     'wide': ((Vector((-3.0, 3.6, 2.7)), Vector((0.2, -5.0, 1.0))), 32),
     'rear': ((Vector((-5.8, -0.4, 2.2)), Vector((0.0, 0.0, 1.2))), 40),
     # The player preview (build.ps1 -Player): close on the stances, then the combo, which carries the player about
-    # 1.8 m forward (-Y) towards the dummy at 2.8 m, from the front right and from the side.
+    # 1.8 m forward (-Y) towards the dummy at 2.8 m, from behind over the right shoulder (as the game's camera sees a
+    # player), from the front right and from the side.
     'p_close': ((Vector((-2.3, -3.1, 1.6)), Vector((0.0, -0.2, 1.0))), 40),
+    'p_game': ((Vector((-0.9, 3.6, 2.3)), Vector((0.0, -1.6, 1.1))), 30),
     'p_front': ((Vector((-3.0, -5.6, 1.9)), Vector((0.0, -1.3, 1.0))), 35),
     'p_side': ((Vector((-5.2, -1.4, 1.6)), Vector((0.0, -1.4, 1.0))), 35),
 }

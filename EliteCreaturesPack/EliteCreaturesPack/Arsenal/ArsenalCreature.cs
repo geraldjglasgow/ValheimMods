@@ -8,17 +8,17 @@ namespace EliteCreaturesPack.Arsenal
     /// skeleton's health, resistances, faction (the undead), sounds, senses, AI, star looks and drops, with these changes:
     /// its only weapon is one of the arsenal's (<see cref="ArsenalAttack"/>), it keeps the Skeleton's random shield
     /// beside a one-handed weapon (none with the atgeir or the bow), it strikes one blow at a time
-    /// (<see cref="ArsenalClips"/>), and it may drop a vertebra on top of the skeleton's own drops.
+    /// (<see cref="ArsenalClips"/>), and it may drop a spine on top of the skeleton's own drops.
     /// </summary>
     public static class ArsenalCreature
     {
-        private const float VertebraChance = 0.1f;
+        private const float SpineChance = 0.1f;
 
-        public static GameObject Build(ArsenalKind kind, ArsenalWeapon weapon, GameObject skeleton, GameObject attack, GameObject? vertebra)
+        public static GameObject Build(ArsenalKind kind, ArsenalWeapon weapon, GameObject skeleton, GameObject attack, GameObject? spine)
         {
             GameObject creature = PrefabBench.Copy(skeleton, kind.Creature(weapon));
             Arm(creature.GetComponent<Humanoid>(), weapon, attack);
-            AddVertebra(creature.GetComponent<CharacterDrop>(), vertebra);
+            AddSpine(creature.GetComponent<CharacterDrop>(), spine);
             Animator? animator = creature.transform.Find("Visual")?.GetComponentInChildren<Animator>(true);
             if (animator != null)
             {
@@ -39,16 +39,16 @@ namespace EliteCreaturesPack.Arsenal
             }
         }
 
-        /// <summary>One vertebra one time in ten, whatever its stars.</summary>
-        private static void AddVertebra(CharacterDrop? drops, GameObject? vertebra)
+        /// <summary>One spine one time in ten, whatever its stars.</summary>
+        private static void AddSpine(CharacterDrop? drops, GameObject? spine)
         {
-            if (drops == null || vertebra == null)
+            if (drops == null || spine == null)
             {
                 return;
             }
             drops.m_drops.Add(new CharacterDrop.Drop
             {
-                m_prefab = vertebra, m_amountMin = 1, m_amountMax = 1, m_chance = VertebraChance, m_levelMultiplier = false,
+                m_prefab = spine, m_amountMin = 1, m_amountMax = 1, m_chance = SpineChance, m_levelMultiplier = false,
             });
         }
     }

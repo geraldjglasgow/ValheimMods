@@ -6,29 +6,29 @@ using UnityEngine;
 namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
-    /// The players' bone weapons and the vertebra. Each weapon is a copy of the bronze-age weapon of its class
+    /// The players' bone weapons and the spine. Each weapon is a copy of the bronze-age weapon of its class
     /// (<see cref="ArsenalWeapon.GameItem"/>), so it keeps that weapon's handling, animations, skill, sounds, trail,
     /// durability, weight and upgrades; the game's model comes off its "attach" and the bone one goes in, with a box
     /// collider round it for the ground and the upgrade glow reshaped to it. Its damage, and what each upgrade adds, is
     /// that weapon's times <see cref="DamageFactor"/>: like bronze, a little weaker. The
-    /// vertebra is a copy of the game's bone fragments (a material: its weight, stack and sounds) wearing the bundle's
-    /// vertebra. Every item shows the bundle's icon.
+    /// spine is a copy of the game's bone fragments (a material: its weight, stack and sounds) wearing the bundle's
+    /// spine. Every item shows the bundle's icon.
     /// </summary>
     public static class ArsenalItems
     {
-        public const string VertebraName = "ECP_Vertebra";
-        public const string VertebraWord = "ecp_vertebra";
-        private const string GameVertebra = "BoneFragments";
+        public const string SpineName = "ECP_Spine";
+        public const string SpineWord = "ecp_spine";
+        private const string GameSpine = "BoneFragments";
         private const float DamageFactor = 0.85f;
 
         /// <summary>The weapons built, by weapon; one the game lacks the model for is missing.</summary>
         public static readonly Dictionary<ArsenalWeapon, GameObject> Weapons = new Dictionary<ArsenalWeapon, GameObject>();
 
-        public static GameObject? Vertebra { get; private set; }
+        public static GameObject? Spine { get; private set; }
 
         public static void Build(ZNetScene scene, AssetBundle bundle, Material skin)
         {
-            Vertebra = BuildVertebra(scene.GetPrefab(GameVertebra), bundle, skin);
+            Spine = BuildSpine(scene.GetPrefab(GameSpine), bundle, skin);
             foreach (ArsenalWeapon weapon in ArsenalWeapon.All)
             {
                 GameObject? item = BuildWeapon(scene.GetPrefab(weapon.GameItem), weapon, bundle, skin);
@@ -62,18 +62,18 @@ namespace EliteCreaturesPack.Arsenal
             return item;
         }
 
-        private static GameObject? BuildVertebra(GameObject? game, AssetBundle bundle, Material skin)
+        private static GameObject? BuildSpine(GameObject? game, AssetBundle bundle, Material skin)
         {
             if (game == null || game.transform.Find("attach") == null)
             {
-                Log.Error($"Vertebra not built: the game has no {GameVertebra} with an attach; nothing needs one to be made.");
+                Log.Error($"Spine not built: the game has no {GameSpine} with an attach; nothing needs one to be made.");
                 return null;
             }
-            GameObject item = PrefabBench.Copy(game, VertebraName);
+            GameObject item = PrefabBench.Copy(game, SpineName);
             Transform slot = item.transform.Find("attach");
             ArsenalLook.Strip(slot);
-            ArsenalLook.Collide(slot, ArsenalLook.Wear(slot, EmbeddedBundle.Prefab(bundle, "ecp_vertebra"), skin));
-            Describe(item.GetComponent<ItemDrop>(), VertebraWord, bundle.LoadAsset<Sprite>("ecp_vertebra_icon"));
+            ArsenalLook.Collide(slot, ArsenalLook.Wear(slot, EmbeddedBundle.Prefab(bundle, "ecp_spine"), skin));
+            Describe(item.GetComponent<ItemDrop>(), SpineWord, bundle.LoadAsset<Sprite>("ecp_spine_icon"));
             return item;
         }
 

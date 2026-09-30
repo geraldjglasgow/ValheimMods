@@ -16,7 +16,7 @@ FBX, albedo/normal textures and manifests in each `out` directory.
 Run the command from this folder.
 Space pauses/resumes. The 50-second timeline tracks along the lineup, then cuts to
 Dagger, Sword, Axe, Mace, Spear, Atgeir and Bow close-ups. Each attacks repeatedly.
-The final shot shows the existing vertebra drop. Named cameras are in the Outliner.
+The final shot shows the spine the skeletons drop. Named cameras are in the Outliner.
 
 The characters are the original game's Skeleton visual and skin, baked in Unity
 through its humanoid Animator. Sword, mace and bow use the creature's game clips;

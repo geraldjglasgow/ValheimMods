@@ -6,7 +6,7 @@ Reads <bake>/arsenal.json (default assets/ecp_skel_arsenal/out/blender) and each
 builds one object per baked renderer - the game's Skeleton (reference, preview only), its weapon, the bow's string and
 arrow - on its texture, played by a Mesh Cache modifier. Each skeleton loops its own bake (idle, attack, idle) on and
 on: the cache's frame is keyed as a sawtooth with a Cycles modifier, no scripts. The timeline cuts between cameras:
-the whole row, then each weapon close up while its skeleton attacks, then the vertebra the skeletons drop, turning on
+the whole row, then each weapon close up while its skeleton attacks, then the spine the skeletons drop, turning on
 the ground. Labels name each weapon. Saves <bake>/skeleton_arsenal.blend; blender_play.py opens it playing.
 """
 import json
@@ -24,8 +24,8 @@ from workshop import materials, scene  # noqa: E402
 LINEUP_SECONDS, CLOSE_SECONDS = 10.0, 5.0
 LONG = ("Spear", "Atgeir")                      # close-ups stand further back for the long weapons
 FONT = os.path.join(HERE, '..', '..', 'unity', 'Assets', 'Reference', 'Norsebold.otf')
-VERTEBRA = os.path.join(HERE, '..', 'ecp_vertebra', 'out', 'ecp_vertebra.blend')
-HERO = Vector((0.0, -2.6, 0.0))                  # the vertebra on show, in front of the row
+SPINE = os.path.join(HERE, '..', 'ecp_spine', 'out', 'ecp_spine.blend')
+HERO = Vector((0.0, -2.6, 0.0))                  # the spine on show, in front of the row
 
 
 def main():
@@ -59,9 +59,9 @@ def _argument(name, default):
 
 
 def _slots(lineup, fps):
-    """The first frame of each shot: the row, each weapon in turn, the vertebra; and 'end' after the last."""
+    """The first frame of each shot: the row, each weapon in turn, the spine; and 'end' after the last."""
     slots, frame = {'Lineup': 1}, 1 + round(LINEUP_SECONDS * fps)
-    for label in [g['label'] for g in lineup['groups']] + ['Vertebra']:
+    for label in [g['label'] for g in lineup['groups']] + ['Spine']:
         slots[label] = frame
         frame += round(CLOSE_SECONDS * fps)
     slots['end'] = frame
@@ -185,15 +185,15 @@ def _stage():
 
 
 def _drops(groups):
-    """The vertebra item (ecp_vertebra) as the skeletons drop it: one turning in front of the row, a few in the grass."""
-    with bpy.data.libraries.load(VERTEBRA) as (source, target):
-        target.objects = [name for name in source.objects if name == 'ecp_vertebra']
+    """The spine item (ecp_spine) as the skeletons drop it: one turning in front of the row, a few in the grass."""
+    with bpy.data.libraries.load(SPINE) as (source, target):
+        target.objects = [name for name in source.objects if name == 'ecp_spine']
     item = target.objects[0]
-    collection = bpy.data.collections.new('Vertebra drops')
+    collection = bpy.data.collections.new('Spine drops')
     bpy.context.scene.collection.children.link(collection)
     hero = _drop(item, collection, HERO, 0.0)
     for i, group in enumerate(groups[::2]):
-        _drop(item, collection, Vector((group['x'] + 0.55, -0.9 - 0.2 * (i % 2), 0.0)), 40.0 + 70.0 * i, lying=True)
+        _drop(item, collection, Vector((group['x'] + 0.55, -1.0 - 0.2 * (i % 2), 0.0)), 40.0 + 70.0 * i)
     for frame, turn in ((1, 0.0), (241, 2 * math.pi)):
         hero.rotation_euler.z = turn
         hero.keyframe_insert('rotation_euler', index=2, frame=frame)
@@ -201,14 +201,14 @@ def _drops(groups):
         for key in curve.keyframe_points:
             key.interpolation = 'LINEAR'
         curve.modifiers.new('CYCLES')
-    _label('Vertebra', HERO + Vector((0.0, 0.25, 0.28)), collection, size=0.09)
+    _label('Spine', HERO + Vector((0.0, 0.3, 0.55)), collection, size=0.12)
 
 
-def _drop(item, collection, location, yaw, lying=False):
+def _drop(item, collection, location, yaw):
     obj = item.copy()
     collection.objects.link(obj)
-    obj.location = location + (Vector((0.0, 0.0, 0.03)) if lying else Vector())
-    obj.rotation_euler = (math.radians(80) if lying else 0.0, 0.0, math.radians(yaw))
+    obj.location = location
+    obj.rotation_euler = (0.0, 0.0, math.radians(yaw))
     for slot in obj.material_slots:
         for node in slot.material.node_tree.nodes if slot.material else []:
             if node.bl_idname == 'ShaderNodeTexImage':
@@ -225,8 +225,8 @@ def _cameras(groups, slots):
         eye = Vector((x + 3.0, -4.8, 1.7)) if far else Vector((x + 1.9, -3.2, 1.55))
         cam = _camera('cam_' + group['label'].lower(), eye, Vector((x, 0.1 if far else 0.0, 1.15)), 30 if far else 35)
         marker.new(group['label'], frame=slots[group['label']]).camera = cam
-    cam = _camera('cam_vertebra', HERO + Vector((0.28, -0.42, 0.24)), HERO + Vector((0.0, 0.0, 0.05)), 50)
-    marker.new('Vertebra', frame=slots['Vertebra']).camera = cam
+    cam = _camera('cam_spine', HERO + Vector((0.9, -1.35, 0.8)), HERO + Vector((0.0, 0.0, 0.15)), 50)
+    marker.new('Spine', frame=slots['Spine']).camera = cam
     bpy.context.scene.camera = row
 
 

@@ -4,7 +4,7 @@
 
 Appends each built piece (assets/<name>/out/<name>.blend, from build.ps1) and renders it on its own tile, laid
 diagonally across the square as the game shows its weapons (business end to the top right, broad side to the camera),
-with close-ups of the long weapons' heads, and the vertebra drop from above and from the side. Tiles them into
+with close-ups of the long weapons' heads, and the spine the skeletons drop. Tiles them into
 out/arsenal_sheet.png, four across.
 """
 import math
@@ -23,7 +23,7 @@ TILE = 640
 # (piece, part of its length shown from the business end: 1 is all of it)
 SHOTS = [('ecp_skel_dagger', 1.0), ('ecp_skel_sword', 1.0), ('ecp_skel_axe', 1.0), ('ecp_skel_mace', 1.0),
          ('ecp_skel_spear', 1.0), ('ecp_skel_spear', 0.2), ('ecp_skel_atgeir', 1.0), ('ecp_skel_atgeir', 0.3),
-         ('ecp_skel_bow', 1.0), ('ecp_skel_arrow', 1.0), ('ecp_skel_arrow', 0.16), ('ecp_vertebra', 1.0)]
+         ('ecp_skel_bow', 1.0), ('ecp_skel_arrow', 1.0), ('ecp_skel_arrow', 0.16), ('ecp_spine', 1.0)]
 
 
 def main():
