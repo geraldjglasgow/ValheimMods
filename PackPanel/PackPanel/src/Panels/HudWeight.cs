@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PackPanel.Panels
 {
     /// <summary>
-    /// The weight under the minimap (the user's request): a small box in PlateColumn's HUD row showing what the local
+    /// The weight beside the minimap (the user's request): a box in PlateColumn's HUD column showing what the local
     /// player carries out of the most they can carry, with the weight icon, written as the inventory's weight box writes
     /// it (red flashing while over). The game writes its own only while the inventory is open, so a <c>Hud.Update</c>
     /// postfix writes this one every frame, touching the text only when it changes. At the game's weight rank, so

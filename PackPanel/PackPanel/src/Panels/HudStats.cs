@@ -1,12 +1,17 @@
 using PlateColumn;
-using PackPanel.Core;
 using UnityEngine;
 
 namespace PackPanel.Panels
 {
-    /// <summary>Armor, weight and world level in inventory order, with matching smaller squares under the minimap.</summary>
+    /// <summary>
+    /// Armor, weight and world level in inventory order, with matching squares in a column right of the minimap: full
+    /// size (48 units, the user found them tiny at 65%), the map moved over to make room (<see cref="HudRoom"/>).
+    /// </summary>
     public static class HudStats
     {
+        /// <summary>The HUD column's scale: its squares as big as the stats panel's.</summary>
+        private const float Scale = 1f;
+
         private static Plate armor;
         private static float nextTry;
 
@@ -15,18 +20,17 @@ namespace PackPanel.Panels
             InventoryGui gui = InventoryGui.instance;
             if (gui == null || gui.m_takeAllButton == null) return;
             Armor(gui, show);
-            GameObject smallRoot = Minimap.instance != null ? Minimap.instance.m_smallRoot : null;
-            Transform small = smallRoot != null ? smallRoot.transform : null;
-            RectTransform row = small != null ? small.Find("PlateColumn_hudboxes") as RectTransform : null;
-            if (row == null) return;
-            bool styled = InventorySettings.Enabled.Value;
-            row.anchoredPosition = new Vector2(0f, styled ? -2f : -HudRow.Gap);
-            row.localScale = Vector3.one * (styled ? 0.65f : HudRow.Scale);
-            foreach (Transform child in row)
+            RectTransform column = HudRow.Container();
+            if (column != null)
             {
-                bool target = child.name.EndsWith("_packpanel_armor") || child.name.EndsWith("_packpanel_weight") || child.name.EndsWith("_world_tier");
-                if (target) StatIconFrames.Dress(gui, (RectTransform)child, styled);
+                if (column.localScale.x != Scale) column.localScale = Vector3.one * Scale;
+                foreach (Transform child in column)
+                {
+                    bool target = child.name.EndsWith("_packpanel_armor") || child.name.EndsWith("_packpanel_weight") || child.name.EndsWith("_world_tier");
+                    if (target) StatIconFrames.Dress(gui, (RectTransform)child, true);
+                }
             }
+            HudRoom.Fit(column);
         }
 
         private static void Armor(InventoryGui gui, bool show)

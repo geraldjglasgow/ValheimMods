@@ -122,7 +122,7 @@ namespace PackPanel.Core
             BrownStyle = synced.Bind(LookSection, "Brown Style", true,
                 "The brown framed look of the inventory panels, their cells and the slot panel. Off: the game's wood.", synced: false);
             WeightUnderMinimap = synced.Bind(LookSection, "Weight Under Minimap", true,
-                "Armor and carry weight in small boxes under the minimap, followed by Elite Creatures Reborn's world tier when it is installed.", synced: false);
+                "Armor and carry weight in boxes in a column right of the minimap, followed by Elite Creatures Reborn's world tier when it is installed. The minimap and the status effects move a little left to make room.", synced: false);
         }
 
         private static void BindTheme(SyncedConfiguration synced)

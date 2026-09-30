@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- **The stat boxes beside the minimap.** With the inventory closed, your armour, weight and Elite Creatures Reborn's
+  world tier sit in a column right of the minimap, top to bottom, each as big as a box in the stats panel (they were
+  small boxes under the map). The minimap and the status effect icons move a little to the left to make room, and go
+  back where the game has them when no box shows. The setting keeps its name, `Weight Under Minimap`.
+
 ## 0.3.0
 
 - **The Food and Mead bar is two squares.** In the bottom-left corner: a food icon with the Food Key over it and a mead

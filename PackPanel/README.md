@@ -4,7 +4,7 @@ A bigger, better organised player inventory for Valheim: a wider and taller grid
 your armour, a backpack, three worn utilities, a trinket, food, meads and ammo on two tabs (Gear, with a sheet of your stats, and
 Consumables), Epic Loot's magic effects in that sheet when it is installed, a coin purse, a key ring, a tacklebox
 slot whose four craftable boxes hold your fishing bait, eight craftable backpacks (one per biome) that you wear on your
-back, your stats in their own boxes and under the minimap, and a plain brown or timber look for the inventory and the
+back, your stats in their own boxes and beside the minimap, and a plain brown or timber look for the inventory and the
 game's other wood panels. Every gameplay setting is server synced and lockable; the look is each player's own. Works on
 its own, and fits together with OpenKeep (storage: craft from chests, quick stack, sort, trash, salvage) when both are
 installed.
@@ -165,10 +165,11 @@ Section `5. Look`, each player's own.
 
 - Stat boxes: armour, weight and Elite Creatures Reborn's world tier (and any other mod's box in the game's stat
   column) sit as small boxes in a narrow panel of their own between the inventory and the slot panel, each with its
-  tooltip. Weight reads what you carry over what you can carry, here and under the minimap, flashing red when you are
+  tooltip. Weight reads what you carry over what you can carry, here and beside the minimap, flashing red when you are
   over.
-- Under the minimap (`Weight Under Minimap`, on): your armour and weight in small boxes under the minimap, beside Elite
-  Creatures Reborn's world tier when it is installed, so you see them without opening the inventory.
+- Beside the minimap (`Weight Under Minimap`, on): your armour and weight in boxes in a column right of the minimap,
+  above Elite Creatures Reborn's world tier when it is installed, so you see them without opening the inventory. The
+  minimap and the status effect icons move a little to the left to make room.
 - Food and Mead bar (`Food And Mead Bar`, on): a food square with the Food Key over it and a mead square with the Mead
   Key over it, in the bottom-left corner under your health (see Slots above).
 - Brown look (`Brown Style`, on): the inventory, chest and slot panels in plain dark brown with a bronze frame, dark
@@ -195,7 +196,7 @@ An older OpenKeep knows nothing of PackPanel: its buttons stay under the panel, 
 the game's four rows (plus bought ones), so they leave the slots alone but also skip PackPanel's extra rows.
 
 ### With other mods
-- **Elite Creatures Reborn**: its world tier box joins the stats panel and the row under the minimap. From version 3.12.0
+- **Elite Creatures Reborn**: its world tier box joins the stats panel and the column beside the minimap. From version 3.12.0
   on, its Thieving mutation takes only from your grid, never from PackPanel's slots, key ring or tacklebox.
 - **FeastMaster**: with `Food Slots Follow Eating` on, the food slots follow FeastMaster's `Food Slots` and change with
   it.

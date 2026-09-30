@@ -3,7 +3,7 @@
 The player's own inventory for Valheim, version 0.1.0: a bigger grid, labelled slots for worn gear, a backpack slot (and
 PackPanel's eight backpacks, one per biome, worn on the back, adding slots and carry weight), up to five worn utilities, a trinket,
 food, mead and ammo, a coin purse, a key ring, a tacklebox slot (and four crafted boxes whose cells hold bait), the stat
-boxes (in their own panel and under the minimap) and the brown or timber look. Built on 2026-09-28 as OpenKeep's section
+boxes (in their own panel and beside the minimap) and the brown or timber look. Built on 2026-09-28 as OpenKeep's section
 `10. Inventory` (`src/Pack/`, never released, never committed there) and moved into its own mod the same day at the
 user's request: they were told the UI and inventory work had to be separate from the storage mod. OpenKeep keeps
 storage; the two work alone and fit together when both are installed (below). This file is the code map, the patched
@@ -205,8 +205,9 @@ PackPanel/PackPanel/src/
     StatIconFrames.cs       vanilla gray backplates for armor, weight and world-tier icons; original strip layout
     StatIconLayout.cs       48-unit squares, centered icons and inset 8-11 point number overlays; restores on disable
     WeightDisplay.cs        current weight / dash / capacity on three lines in the inventory and HUD; overload still flashes
-    HudStats.cs             matching minimap squares at 65% scale, 2 units below the map; armor, weight, world tier by rank
-    HudWeight.cs            Weight Under Minimap: Hud.Update postfix writing a box in PlateColumn's HUD row
+    HudStats.cs             matching full-size squares in a column right of the minimap; armor, weight, world tier by rank
+    HudRoom.cs              moves the minimap and the status effects left while that column shows a box
+    HudWeight.cs            Weight Under Minimap: Hud.Update postfix writing a box in PlateColumn's HUD column
     SlotPanel.cs, SlotPanelLayout.cs   PackPanel_slots right of the stats panel: the tab buttons across the top, the
                             shown tab's cells (Gear: gear column left, utilities and the trinket right; Consumables: a row each of
                             food, mead, ammo), the purse, the key ring's button and the Tacklebox slot last under both
@@ -569,11 +570,16 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   interaction states in every panel theme; PackPanel does not skin them. The purse's row sits 12 units lower under a
   bronze divider.
 - Weight Under Minimap (per player, on; the user asked for the world tier and weight under the minimap as well,
-  2026-09-28): PlateColumn's `HudRow` holds small copies of the column's box under the minimap's small root (they hide
-  with it: big map open, no-map worlds, HUD off); `HudWeight` writes the weight there from a `Hud.Update` postfix (the
-  game writes its own weight only while the inventory is open), in the game's format, at the weight rank so it reads
-  weight then world tier like the column; `HudStats` adds the armour box; Elite Creatures Reborn adds its world tier box
-  the same way. Off with the master switch, like every key.
+  2026-09-28): PlateColumn's `HudRow` holds copies of the column's box in a column right of the minimap's small root
+  (they hide with it: big map open, no-map worlds, HUD off); `HudWeight` writes the weight there from a `Hud.Update`
+  postfix (the game writes its own weight only while the inventory is open), in the game's format, at the weight rank
+  so it reads armour, weight, world tier top to bottom like the column; `HudStats` adds the armour box and shows the
+  column at full size (the stats panel's 48 unit squares; at 65% under the map they were too small, the user said
+  2026-09-30, and asked for them right of the map, top to bottom). The game leaves the map 40 units from the screen's
+  right edge, so `HudRoom` moves the map left by what the column needs (gap 6, box 48, 10 to the screen edge: 24
+  units) and the game's status effect row with it (its first icon sits 26 units left of the map), both remembered and
+  put back when no box shows, the map is off or PackPanel is off. Elite Creatures Reborn adds its world tier box the
+  same way. Off with the master switch, like every key. The key keeps its old name (`Weight Under Minimap`).
 - Keep Slots On Death (off; the user asked for it): the `Player.CreateTombStone` prefix takes the items of every slot
   but the purse out of the inventory list (so neither the grave nor a world modifier that deletes items at death sees
   them) with whether each was worn, and the finalizer puts them back, worn ones marked `m_equipped`. The game saves the
@@ -802,7 +808,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.3.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.4.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -904,10 +910,14 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     the first grid row, then the slot panel with the purse alone in its last row. Hover each box: its tooltip. Drop a
     dragged item on the stats panel: nothing falls on the ground. Without Elite Creatures Reborn the armour and weight
     are still boxes in the panel. `Enabled = false`: no stats panel, the column stands right of the grid.
-24. Under the minimap: closed inventory, small boxes under the minimap's bottom-right edge: armour, weight ("26/300",
-    red flashing over the limit) and, with Elite Creatures Reborn, the world tier ("0/7"). Pick up stones: the weight
-    changes at once. Open the big map: the boxes go with the minimap. `Weight Under Minimap = false`: the armour and
-    weight boxes go, the world tier moves to the right edge.
+24. Beside the minimap: closed inventory, a column of boxes right of the minimap, its top level with the map's:
+    armour, weight ("26/300", red flashing over the limit) and, with Elite Creatures Reborn, the world tier ("0/7"),
+    each as big as a stats panel box, the column's right edge a little in from the screen's; the map sits a little
+    further left than without PackPanel, and a status effect (get wet) shows left of the map, not under it. Pick up
+    stones: the weight changes at once. Open the big map: the boxes go with the minimap; close it: nothing jumps.
+    `Weight Under Minimap = false`: the armour and weight boxes go, the world tier moves to the top. Without Elite
+    Creatures Reborn and with the setting off, or with `Enabled = false`: the map and the status effects are back where
+    the game has them.
 25. Key ring, single player: `devcommands`, then `spawn CryptKey`, `spawn HildirKey_forestcrypt`, `spawn BloodGoldKey 2`
     and pick them up. The ring button right of the purse reads 3; hovering it lists the three keys, the Intricate Key
     at 2. Click it: a small round pop-up under the slot panel, below the ring button, three small cells on a bronze
