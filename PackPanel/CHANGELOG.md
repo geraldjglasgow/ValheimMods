@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0
+
+- **The Food and Mead bar is two squares.** In the bottom-left corner: a food icon with the Food Key over it and a mead
+  icon with the Mead Key over it, and nothing else. The key caps, the slot contents, the counts and the dimming are
+  gone.
+- Fixed: with Jewelcrafting, CurrencyPocket, OttoPay, TrashItems or Quick Stack Store Sort Trash Restock installed,
+  the inventory broke (Jewelcrafting threw an error on every item picked up and every inventory close). The shared
+  stat column moved the game's armour and weight boxes into a container of its own, and those mods look for them on
+  the inventory panel by name. The game's boxes now stay where the game has them and are placed in the column from
+  there, and the boxes those mods add join the column instead of covering one of its boxes; TrashItems' trash can
+  takes dragged stacks there. OpenKeep 1.8.0 to 1.9.0 and Elite Creatures Reborn 3.12.0 to 3.13.0 carry the same
+  column: update them too.
+
 ## 0.2.0
 
 - **A Trinket slot.** `2. Slots / Trinket Slot` (on): a slot under the utilities in the Gear tab for the one trinket

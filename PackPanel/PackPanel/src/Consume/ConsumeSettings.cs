@@ -25,7 +25,7 @@ namespace PackPanel.Consume
             MeadKey = synced.Bind(InventorySettings.SlotsSection, "Mead Key", new KeyboardShortcut(KeyCode.B),
                 "Outside the inventory: drinks every mead in the Mead slots that can be drunk now (one of each kind of effect), left to right. Per player.", synced: false);
             Bar = synced.Bind(InventorySettings.LookSection, "Food And Mead Bar", true,
-                "In the bottom-left corner of the screen, under your health: the Food Key with what is in your Food slots, then the Mead Key with what is in your Mead slots. Dimmed: what a press would not eat or drink right now.", synced: false);
+                "In the bottom-left corner of the screen, under your health: a food square with the Food Key over it and a mead square with the Mead Key over it.", synced: false);
             Typing.AddWindow(() => synced.YamlEditor.IsOpen);
         }
     }

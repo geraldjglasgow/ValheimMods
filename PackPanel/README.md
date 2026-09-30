@@ -41,10 +41,9 @@ covers the name. With a gamepad, moving onto a slot of the other tab turns to th
   stamina mead, not two health meads), left to right. The game's own rules decide, as for a hotbar key; when nothing
   can be taken the centre message says so.
 - Food and Mead bar (`5. Look / Food And Mead Bar`, on, per player): in the bottom-left corner of the screen, under
-  your health, the Food Key in yellow followed by what is in your Food slots, then the Mead Key followed by your meads,
-  each with its count. What the key would not eat or drink right now (a food you already ate, a mead whose effect is
-  running) is dimmed; an empty slot shows its faint slot icon. A group without slots or without a key is left out, and
-  the bar hides with the HUD and while you are dead.
+  your health, two squares: a food icon with the Food Key over it and a mead icon with the Mead Key over it, in the
+  yellow of the game's key hints. A group without slots or without a key is left out, and the bar hides with the HUD
+  and while you are dead.
 
 - Stat sheet (Gear tab), your totals in the game's own words: max health, stamina and eitr (once you have any),
   armour, weight carried out of what you can carry (red when over), movement speed, and the lowest durability of
@@ -170,8 +169,8 @@ Section `5. Look`, each player's own.
   over.
 - Under the minimap (`Weight Under Minimap`, on): your armour and weight in small boxes under the minimap, beside Elite
   Creatures Reborn's world tier when it is installed, so you see them without opening the inventory.
-- Food and Mead bar (`Food And Mead Bar`, on): the Food Key and Mead Key with what is in your Food and Mead slots, in
-  the bottom-left corner under your health (see Slots above).
+- Food and Mead bar (`Food And Mead Bar`, on): a food square with the Food Key over it and a mead square with the Mead
+  Key over it, in the bottom-left corner under your health (see Slots above).
 - Brown look (`Brown Style`, on): the inventory, chest and slot panels in plain dark brown with a bronze frame, dark
   recessed cells and bronze icons with the slot's name in every empty slot. Off: the game's wood. `Slot Labels` (on)
   shows the slot names.

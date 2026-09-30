@@ -6,7 +6,7 @@
     <RootNamespace>PackPanel</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Product>PackPanel</Product>
     <Description>PackPanel: a bigger inventory, labelled slots, backpacks and a new look for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

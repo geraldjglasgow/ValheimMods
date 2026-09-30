@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -11,26 +10,24 @@ namespace PackPanel.Consume
 {
     /// <summary>
     /// The Food and Mead bar (the user's request, 2026-09-28: the food and mead hotkeys shown in the bottom left of the
-    /// screen). In the empty strip under the game's health panel, level with its left edge: the Food Key's cap, the Food
-    /// slots' cells, a gap, then the Mead Key's cap and the Mead slots' cells (<see cref="ConsumeBarCell"/>), so the player
-    /// sees what a press would eat or drink. A group without slots or without a key is left out; nothing shows without
-    /// either, while dead, or with the module off. A child of the HUD's root, so it hides with the HUD. Written from a
-    /// <c>Hud.Update</c> postfix ten times a second, built again only when the slot counts or the keys change. Per
+    /// screen; two squares and nothing else since 2026-09-29). In the empty strip under the game's health panel, level with
+    /// its left edge: a food square with the Food Key over it, then a mead square with the Mead Key over it
+    /// (<see cref="ConsumeBarCell"/>). A group without slots or without a key is left out; nothing shows without either,
+    /// while dead, or with the module off. A child of the HUD's root, so it hides with the HUD. Checked from a
+    /// <c>Hud.Update</c> postfix ten times a second, built again only when a group comes or goes or a key changes. Per
     /// player (<c>5. Look / Food And Mead Bar</c>); local only, nothing is sent.
     /// </summary>
     [HarmonyPatch(typeof(Hud), nameof(Hud.Update))]
     public static class ConsumeBar
     {
         public const string Name = "PackPanel_consumebar";
-        private const float Gap = 4f;
-        private const float GroupGap = 14f;
+        private const float Gap = 6f;
         private const float Every = 0.1f;
 
         /// <summary>The bar's bottom-left corner in HUD units: the health panel's left edge, under its bottom (58).</summary>
         private static readonly Vector2 Corner = new Vector2(50f, 6f);
 
         private static readonly SlotKind[] Groups = { SlotKind.Food, SlotKind.Mead };
-        private static readonly List<ConsumeBarCell> cells = new List<ConsumeBarCell>();
         private static RectTransform bar;
         private static string built;
         private static float next;
@@ -50,8 +47,6 @@ namespace PackPanel.Consume
             bool show = plan.Length > 0;
             if (bar.gameObject.activeSelf != show)
                 bar.gameObject.SetActive(show);
-            for (int i = 0; show && i < cells.Count; i++)
-                cells[i].Fill(player);
         }
 
         private static bool Shown(Player player) =>
@@ -61,7 +56,7 @@ namespace PackPanel.Consume
 
         private static bool Drawn(SlotKind kind) => InventoryState.CellsOf(kind).Count > 0 && KeyNames.Short(KeyOf(kind).Value).Length > 0;
 
-        /// <summary>What the bar is built from: each drawn group's slot count and key; empty when nothing is drawn.</summary>
+        /// <summary>What the bar is built from: each drawn group and its key; empty when nothing is drawn.</summary>
         private static string Plan()
         {
             StringBuilder plan = new StringBuilder();
@@ -69,8 +64,7 @@ namespace PackPanel.Consume
             {
                 if (!Drawn(kind))
                     continue;
-                plan.Append(kind).Append(' ').Append(InventoryState.CellsOf(kind).Count);
-                plan.Append(' ').Append(KeyNames.Short(KeyOf(kind).Value)).Append('|');
+                plan.Append(kind).Append(' ').Append(KeyNames.Short(KeyOf(kind).Value)).Append('|');
             }
             return plan.ToString();
         }
@@ -80,7 +74,6 @@ namespace PackPanel.Consume
             if (bar != null)
                 Object.Destroy(bar.gameObject);
             bar = null;
-            cells.Clear();
             GameObject template = Template(hud);
             if (template == null)
                 return;
@@ -88,23 +81,12 @@ namespace PackPanel.Consume
             float x = 0f;
             foreach (SlotKind kind in Groups)
             {
-                if (Drawn(kind))
-                    x = AddGroup(template, kind, x) + GroupGap;
-            }
-            built = plan;
-        }
-
-        /// <summary>The key's cap and the group's cells from <paramref name="x"/>; the right edge of the last.</summary>
-        private static float AddGroup(GameObject template, SlotKind kind, float x)
-        {
-            x += ConsumeBarCell.KeyCap(bar, template, KeyNames.Short(KeyOf(kind).Value), x) + Gap;
-            int count = InventoryState.CellsOf(kind).Count;
-            for (int number = 1; number <= count; number++)
-            {
-                cells.Add(ConsumeBarCell.Slot(bar, template, kind, number, x));
+                if (!Drawn(kind))
+                    continue;
+                ConsumeBarCell.Group(bar, template, kind, KeyNames.Short(KeyOf(kind).Value), x);
                 x += ConsumeBarCell.Size + Gap;
             }
-            return x - Gap;
+            built = plan;
         }
 
         /// <summary>The game's first food square (<c>hudroot/healthpanel/food0</c>, the parent of <c>m_foodIcons[0]</c>); null before the HUD is up.</summary>

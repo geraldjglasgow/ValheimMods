@@ -93,9 +93,9 @@ PackPanel/PackPanel/src/
     ConsumeSettings.cs, ConsumeWords.cs   the two keys (Z, B; the YAML editor registered with the Hotkeys library's
                             Typing), the "nothing to eat / drink" words
     ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) eats or drinks from its slots
-    ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, each key's cap
-                            (Hotkeys' KeyNames.Short) and its slots' cells, copies of the HUD's food square; dimmed
-                            what SlotMeals.CanTakeNow refuses
+    ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, a food square
+                            and a mead square (copies of the HUD's food square) with each key (Hotkeys'
+                            KeyNames.Short) over its top-left corner
     SlotMeals.cs            left to right, every item that can be taken now: the game's checks without messages,
                             then Humanoid.UseItem(inventory, item, fromInventoryGui: true)
   Slots/
@@ -320,7 +320,7 @@ meanings are in `README.md`.
   `packpanel_driftwood_tacklebox` ...), icons `assets/tacklebox_<word>.png`.
 - GameObjects created: `PackPanel_slots` (the slot panel, a child of the player panel), `PackPanel_stats` (the stat
   boxes' panel, a child of the player panel), `PackPanel_buttonstrip` (OpenKeep's strip mark), `PackPanel_keyring` (the
-  key ring's pop-up, a child of the player panel, with `wire`, `hub` and `caption`), `PackPanel_keynotice` (the new-key note under the ring button), `PackPanel_consumebar` (the Food and Mead bar, a child of the HUD's `hudroot` after `healthpanel`, with `PackPanel_key` caps and `PackPanel_food1`... `PackPanel_mead1`... cells), `PackPanel_keyring_button` (in the
+  key ring's pop-up, a child of the player panel, with `wire`, `hub` and `caption`), `PackPanel_keynotice` (the new-key note under the ring button), `PackPanel_consumebar` (the Food and Mead bar, a child of the HUD's `hudroot` after `healthpanel`, with the squares `PackPanel_food` and `PackPanel_mead`), `PackPanel_keyring_button` (in the
   slot panel), `PackPanel_tacklebox` (the tacklebox's pop-up, a child of the player panel), `PackPanel_tab_gear` and
   `PackPanel_tab_consumables` (the tab buttons, in the slot panel), `PackPanel_gearstats` (the Gear tab's sheet, in the
   slot panel, with `viewport/content/row/label` and `value`, and `scrollbar/handle`), `PackPanel_blocked` (the cross on
@@ -778,14 +778,13 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 - Food and Mead bar (the user's request, 2026-09-28: "the hotkeys for food displayed in the bottom left of the screen for
   the food and meads"): one row in the empty strip under the game's health panel (`hudroot/healthpanel` is anchored to
   the bottom-left corner at x 49.5, its bottom at y 58, read offline from the main scene; the Forsaken power sits right
-  of it at y 86-150), from (50, 6) in HUD units: the Food Key's cap, the Food slots, 14 units, the Mead Key's cap, the
-  Mead slots, 42-unit cells 4 apart. Each cell is a copy of the game's own `food0` square (dark square, icon, corner
-  text), so it matches the food squares above it; the corner shows the stack. Bright: the key would take it now
-  (`SlotMeals.CanTakeNow`, the same check the press uses); dimmed: it would skip it; an empty slot shows its slot icon
-  faintly. A group with no slots or no key (None) is left out. Written ten times a second, rebuilt only when a slot
-  count or a key changes; hidden while dead, with `Enabled` off or with the HUD hidden (a child of `hudroot`). Per
-  player, `5. Look / Food And Mead Bar`. With five foods and five meads the row reaches x ~616, where the key hints
-  of a long build-mode list could start; not seen yet.
+  of it at y 86-150), from (50, 6) in HUD units. Since 2026-09-29 two squares and nothing else (the user: "I don't
+  want 8 squares down there, I want 2"): a food square with the Food Key over it, 6 units, a mead square with the Mead
+  Key over it, 42-unit copies of the game's own `food0` square (dark square, icon, corner text) showing the slot
+  kind's own icon (`SlotIcons.For`) at full strength, the key in the key-hint yellow at the top-left corner where the
+  hotbar shows its numbers. No items, counts or dimming. A group with no slots or no key (None) is left out. Checked
+  ten times a second, rebuilt only when a group or a key changes; hidden while dead, with `Enabled` off or with the HUD
+  hidden (a child of `hudroot`). Per player, `5. Look / Food And Mead Bar`.
   Eating is the local player's own action, as a hotbar key's is; nothing is sent.
 
 ## Not yet implemented
@@ -803,7 +802,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.2.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.3.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1014,12 +1013,10 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
 48. Keys and settings: `Food Key = LeftShift + Z`: Z alone does nothing, Shift + Z eats while walking with W; with the
     YAML editor open the keys do nothing. Dedicated server with A and B: each eats from their own slots, the other sees
     the food effects and the eat animation.
-53. Food and Mead bar: with the inventory shut, the bottom-left corner under the health bar shows a yellow "Z", three
-    food squares, a gap, a yellow "B" and three mead squares, matching the game's food squares above in look. Put cooked
-    meat (5) and a honey (1) in Food: their icons show, the meat with "5" in the corner. Press Z: both are eaten, the
-    meat reads 4 and both go dim; when the meat's timer is nearly out (its HUD icon pulses) it brightens again. A health
-    mead in Mead is bright; drink it: dim until the effect ends. Empty slots show the faint food and mead icons.
-    `Food Key = LeftShift + Z`: the cap reads "Shift+Z" and is wider; `Mead Key = None`: the mead group goes. `Mead
+53. Food and Mead bar: with the inventory shut, the bottom-left corner under the health bar shows two squares and
+    nothing else, matching the game's food squares above in look: the food icon with a yellow "Z" over its top-left
+    corner, then the mead icon with a yellow "B". Putting food or meads in the slots changes nothing on the bar.
+    `Food Key = LeftShift + Z`: the label reads "Shift+Z"; `Mead Key = None`: the mead square goes. `Mead
     Slots = 0`: only the food group. `Food And Mead Bar = false`: gone. Hide the HUD (Ctrl+F3): gone with it. Die: gone
     until the respawn. Build mode with the hammer: the bar does not cover the key hints.
 54. Ammo first: 20 Wood arrows in the first Ammo slot and 30 more in the grid. Craft 20 Wood arrows at the workbench:

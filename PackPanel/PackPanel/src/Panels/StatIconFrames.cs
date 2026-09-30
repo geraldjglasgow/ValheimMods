@@ -11,17 +11,23 @@ namespace PackPanel.Panels
     {
         private const string Name = "PackPanel_stat_icon_frame";
         private static readonly Dictionary<Image, Color> colours = new Dictionary<Image, Color>();
+        private static readonly List<RectTransform> column = new List<RectTransform>();
         private static Transform owner;
 
+        /// <summary>
+        /// Every box of the column, the game's armour and weight among them: those stay on the player panel, pinned over
+        /// seats in the container, so the boxes come from the library rather than from the container's children.
+        /// </summary>
         public static void Apply(InventoryGui gui, RectTransform boxes, bool on)
         {
             if (owner != boxes) { colours.Clear(); StatIconLayout.Restore(); owner = boxes; }
             if (!on) StatIconLayout.Restore();
-            foreach (Transform box in boxes)
+            Column.BoxesIn(boxes, column);
+            foreach (RectTransform box in column)
             {
                 TMP_Text value = box.GetComponentInChildren<TMP_Text>(true);
                 bool target = value == gui.m_armor || value == gui.m_weight || box.name.EndsWith("_world_tier");
-                Dress(gui, (RectTransform)box, on && target);
+                Dress(gui, box, on && target);
             }
         }
 
