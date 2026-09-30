@@ -9,7 +9,8 @@ namespace EliteCreaturesPack.Headsman
     /// </summary>
     public static class GreataxeSettings
     {
-        public const string Section = "26 - Executioner's Greataxe";
+        // No apostrophe: BepInEx refuses = \n \t \ " ' [ ] in section and key names, and the throw stops the whole Awake.
+        public const string Section = "26 - Executioner Greataxe";
 
         private static ConfigEntry<bool> enabled = null!;
         private static ConfigEntry<float> slash = null!, chop = null!;

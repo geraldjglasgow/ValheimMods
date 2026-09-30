@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.2
+
+The mod loads again.
+
+- **Fixed: since 0.2.0 the mod did nothing at all.** The greataxe's settings section had an apostrophe in its name,
+  which BepInEx does not allow, so loading stopped there: no creatures, no items, no recipes, and the config file ended
+  after `25 - Crypt Executioner`. The section is now `26 - Executioner Greataxe`. It could never be written before, so
+  no settings are lost.
+- **Fixed: the Crypt Executioner, its axehead and the Executioner's Greataxe were never made.** They waited for a
+  skeleton ragdoll the game does not have. The Executioner now bursts into bones when it dies, as skeletons do.
+- **Fixed: the Kraken shield was plain white.** It borrowed the silver shield's paint variants and drew them empty.
+
 ## 0.4.1
 
 Bone gear at the level 2 workbench, and a Kraken shield with one handle.

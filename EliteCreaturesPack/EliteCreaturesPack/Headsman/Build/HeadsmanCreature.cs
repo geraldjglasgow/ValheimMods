@@ -7,7 +7,7 @@ namespace EliteCreaturesPack.Headsman
 {
     /// <summary>
     /// The Crypt Executioner: a copy of the game's Skeleton, so it keeps the Skeleton's rig, hit shapes, senses, faction,
-    /// resistances (weak to blunt and fire) and death, grown to <see cref="Size"/> times the Skeleton, carrying the bone
+    /// resistances (weak to blunt and fire) and death (the game's skeletons have no ragdoll: they burst into bones), grown to <see cref="Size"/> times the Skeleton, carrying the bone
     /// greataxe (<see cref="HeadsmanKit"/>) and playing the bundle's clips through its own animator. It fights with its
     /// six attacks (<see cref="HeadsmanAttacks"/>) and nothing of the Skeleton's; it drops coins, bone fragments and,
     /// by the settings' chance, its axehead. On every peer <see cref="HeadsmanRig"/> draws what its clips cannot do; on
@@ -17,13 +17,12 @@ namespace EliteCreaturesPack.Headsman
     {
         public const float Size = 1.25f;
 
-        public static GameObject Build(GameObject skeleton, GameObject[] attacks, GameObject corpse, GameObject? axehead, ZNetScene scene)
+        public static GameObject Build(GameObject skeleton, GameObject[] attacks, GameObject? axehead, ZNetScene scene)
         {
             GameObject boss = PrefabBench.Copy(skeleton, HeadsmanPrefabs.Creature);
             boss.transform.localScale = Vector3.one * Size;
             var humanoid = boss.GetComponent<Humanoid>();
             Arm(humanoid, attacks);
-            Die(humanoid, corpse);
             Loot(boss.GetComponent<CharacterDrop>(), axehead, scene);
             Transform visual = boss.transform.Find("Visual");
             HeadsmanKit.Wear(visual);
@@ -43,28 +42,6 @@ namespace EliteCreaturesPack.Headsman
             humanoid.m_randomArmor = new GameObject[0];
             humanoid.m_randomSets = new Humanoid.ItemSet[0];
             humanoid.m_randomItems = new Humanoid.RandomItem[0];
-        }
-
-        /// <summary>The Skeleton's death with its ragdoll swapped for one at the Executioner's size.</summary>
-        private static void Die(Humanoid humanoid, GameObject corpse)
-        {
-            List<EffectList.EffectData> effects = humanoid.m_deathEffects.m_effectPrefabs
-                .Where(effect => effect.m_prefab != null && effect.m_prefab.GetComponent<Ragdoll>() == null).ToList();
-            effects.Add(new EffectList.EffectData { m_prefab = corpse });
-            humanoid.m_deathEffects.m_effectPrefabs = effects.ToArray();
-        }
-
-        /// <summary>A copy of the Skeleton's ragdoll at the Executioner's size, or null when the Skeleton has none.</summary>
-        public static GameObject? Corpse(Humanoid skeleton)
-        {
-            GameObject? ragdoll = skeleton.m_deathEffects.m_effectPrefabs.Select(e => e.m_prefab).FirstOrDefault(p => p != null && p.GetComponent<Ragdoll>() != null);
-            if (ragdoll == null)
-            {
-                return null;
-            }
-            GameObject corpse = PrefabBench.Copy(ragdoll, HeadsmanPrefabs.Corpse);
-            corpse.transform.localScale = ragdoll.transform.localScale * Size;
-            return corpse;
         }
 
         /// <summary>Coins and bones, and the axehead by the settings' chance (<see cref="Reloot"/> keeps that current).</summary>

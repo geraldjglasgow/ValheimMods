@@ -2,7 +2,7 @@
 
 Status: **in the mod, untested in game** (2026-09-29): the Crypt Executioner (`ECP_Headsman`), its spawner in
 burial chambers, the raised skeleton, the axehead and the players' Executioner's Greataxe, sections `25 - Crypt
-Executioner` and `26 - Executioner's Greataxe`. Code in `EliteCreaturesPack/Headsman`; workshop:
+Executioner` and `26 - Executioner Greataxe`. Code in `EliteCreaturesPack/Headsman`; workshop:
 `AssetWorkshop/assets/ecp_headsman` (`build.ps1 [-Open] [-Stills] [-SkipUnity] [-Player] [-Bundle] [-Install]`) and
 `AssetWorkshop/unity/Assets/Editor/Headsman`, `.../Greataxe`; the Blender previews are
 `out/blender/headsman_moves.blend` and the player's `out/player/greataxe_player.blend`.

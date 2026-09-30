@@ -11,15 +11,14 @@ namespace EliteCreaturesPack.Headsman
     /// <summary>
     /// Builds the Crypt Executioner's prefabs once and registers them whenever ZNetScene wakes, identically on the server
     /// and every client: the creature (a copy of the game's Skeleton carrying the bundle's greataxe,
-    /// <see cref="HeadsmanCreature"/>), its six attacks (copies of the Skeleton's sword), its corpse (the Skeleton's
-    /// ragdoll at its size), its two thrown axes (copies of the skeleton archer's arrow) and the shatter where they break,
+    /// <see cref="HeadsmanCreature"/>), its six attacks (copies of the Skeleton's sword), its two thrown axes (copies of the skeleton archer's arrow) and the shatter where they break,
     /// the skeleton it raises there, the spawner a burial chamber gets (<see cref="HeadsmanChambers"/>), and the players'
     /// Executioner's Greataxe and its axehead (<see cref="GreataxeItems"/>). The bundle comes from AssetWorkshop
     /// (assets/ecp_headsman: build.ps1 -Bundle -Install); every material is the Skeleton's own wearing the axe's texture.
     /// </summary>
     public static class HeadsmanPrefabs
     {
-        public const string Creature = "ECP_Headsman", Corpse = "ECP_Headsman_ragdoll";
+        public const string Creature = "ECP_Headsman";
         private const string Bundle = "ecp_headsman", Skeleton = "Skeleton", Rock = "rock4_forest";
 
         /// <summary>The creature prefab, once built; null until the first ZNetScene wakes.</summary>
@@ -55,10 +54,9 @@ namespace EliteCreaturesPack.Headsman
             GameObject? sword = Weapon(skeleton, "skeleton_sword"), bow = Weapon(skeleton, "skeleton_bow");
             GameObject? arrow = bow?.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_attack.m_attackProjectile;
             GameObject? raised = scene.GetPrefab(HeadsmanSummon.Base);
-            GameObject? corpse = skeleton == null ? null : HeadsmanCreature.Corpse(skeleton);
-            if (skeleton == null || sword == null || arrow == null || raised == null || corpse == null)
+            if (skeleton == null || sword == null || arrow == null || raised == null)
             {
-                Log.Error($"Crypt Executioner not built: the game lacks the {Skeleton}, its sword, its archer's arrow, {HeadsmanSummon.Base} or its ragdoll.");
+                Log.Error($"Crypt Executioner not built: the game lacks the {Skeleton}, its sword, its archer's arrow or {HeadsmanSummon.Base}.");
                 return false;
             }
             AssetBundle bundle = EmbeddedBundle.Load(typeof(HeadsmanPrefabs).Assembly, Bundle);
@@ -69,8 +67,8 @@ namespace EliteCreaturesPack.Headsman
             GameObject hurl = HeadsmanThrow.Build(arrow, HeadsmanThrow.Hurled, false, shatter), disc = HeadsmanThrow.Build(arrow, HeadsmanThrow.Disc, true, shatter);
             GameObject[] attacks = HeadsmanAttacks.Build(sword, hurl, disc);
             attacks.ToList().ForEach(attack => ItemPrefabs.Register(harmony, attack));
-            Prefab = HeadsmanCreature.Build(skeleton.gameObject, attacks, corpse, GreataxeItems.Axehead, scene);
-            net.AddRange(new[] { shatter, hurl, disc, corpse, HeadsmanSummon.Build(raised), Prefab, HeadsmanChambers.BuildSpawner(Prefab) });
+            Prefab = HeadsmanCreature.Build(skeleton.gameObject, attacks, GreataxeItems.Axehead, scene);
+            net.AddRange(new[] { shatter, hurl, disc, HeadsmanSummon.Build(raised), Prefab, HeadsmanChambers.BuildSpawner(Prefab) });
             net.AddRange(GreataxeItems.NetPrefabs);
             return true;
         }

@@ -368,7 +368,7 @@ weapons is fixed as described above.
 | `Rear Strike Damage` | 55 | slash damage of the strike behind it |
 | `Summons` | 2 | skeletons it may have raised at once; 0 raises none |
 
-### 26 - Executioner's Greataxe
+### 26 - Executioner Greataxe
 
 | Setting | Default | |
 | --- | --- | --- |
