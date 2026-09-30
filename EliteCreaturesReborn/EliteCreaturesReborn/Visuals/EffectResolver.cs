@@ -18,10 +18,13 @@ namespace EliteCreaturesReborn.Visuals
         public static readonly string[] Blast = { "explos", "blast", "fire", "bomb", "death", "burst", "flame" };
         public static readonly string[] BlastSound = { "explo", "bomb", "blast" };
         public static readonly string[] Warning = { "smoke", "fire", "burn", "charge", "glow", "spark" };
-        // Warding and Devouring get no prefab field in the spec's power table, so they resolve by keyword only.
-        public static readonly string[] Reflect = { "shield", "spark", "hit", "block", "staff" };
-        // The instant-kill tell: a death/gore burst that carries its own sound, so a distant player sees and hears a creature cease.
-        public static readonly string[] Devour = { "death", "gore", "corpse", "destr", "blood", "hit" };
+        // Warding and Devouring get no prefab field in the spec's power table, so they resolve by keyword only. The
+        // reflect tell is only heard (see CreatureRpc), so its first keyword pins one effect with a sound of its own: the
+        // Staff of Protection's bubble taking a blow. Plain "shield" alone left it to whichever the game lists first.
+        public static readonly string[] Reflect = { "staffshield_hit", "shield", "spark", "hit", "block", "staff" };
+        // The instant-kill tell: a death burst's own sound, so a distant player hears a creature cease. Only heard now (see
+        // CreatureRpc); the first keyword pins the one it has always resolved to, the game's fx_aspect_death.
+        public static readonly string[] Devour = { "aspect_death", "death", "gore", "corpse", "destr", "blood", "hit" };
         // Thieving gets no prefab field in the spec's power table either; the steal tell resolves by keyword only.
         public static readonly string[] Steal = { "steal", "pickpocket", "pocket", "grab", "loot", "coin" };
         // Boss aspects: Summoner's arrival tell and a Phantom copy's vanishing puff, keyword-only like the rest.
@@ -48,13 +51,9 @@ namespace EliteCreaturesReborn.Visuals
         /// <summary>Resolves a role name (as it travels over the effect bus) to its keyword-only tell; null if unknown.</summary>
         public static GameObject? ForRole(string role)
         {
-            if (role == "reflect")
+            if (role == "reflect" || role == "devour")
             {
-                return ByKeyword(role, Reflect);
-            }
-            if (role == "devour")
-            {
-                return ByKeyword(role, Devour);
+                return ByKeyword(role, role == "reflect" ? Reflect : Devour);
             }
             if (role == "summon" || role == "phantom")
             {
@@ -79,6 +78,10 @@ namespace EliteCreaturesReborn.Visuals
             if (found == null)
             {
                 Log.Warn($"no vanilla effect matched the {role} tell; it will not be shown");
+            }
+            else
+            {
+                Log.Diag($"the {role} tell is {found.name}");
             }
             Cache[role] = found;
             return found;

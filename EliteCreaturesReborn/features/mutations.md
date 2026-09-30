@@ -13,7 +13,8 @@ call it says so.
 session against the checklist in "Testing it honestly" below. Gilded, Blinking and Relentless, per-creature
 mutation rules and the 3.9.0 changes to Bloated, Cloaked, Warding and Splintering are built and not yet tested in
 game. So are Devouring's two limits (prey no bigger than 125% of its own health, one meal per star), the eaten
-creatures on its nameplate, its devour tell at a fifth of its old size and Bloated's 1.7-second fuse (2026-09-28).
+creatures on its nameplate, its devour tell at a fifth of its old size and Bloated's 1.7-second fuse (2026-09-28),
+and the devour and Warding tells heard with nothing drawn (2026-09-30).
 
 **Bosses never take mutations.** They take stars on their own separate table - see `SPEC-scaling.md`.
 
@@ -86,14 +87,12 @@ unattended feast makes it lethal (100/100 shipped originally and a camp-fed grey
 a parry; damage is cut hardest because damage is what kills). These accumulate with every meal, so one left alone
 in a busy area still becomes genuinely enormous - and visibly so, because it grows with what it has eaten.
 
-An instant kill needs an unmistakable tell: a sound and an effect at the moment it happens, so a player watching
-from a distance sees a creature simply cease rather than wondering what became of it. **The effect is drawn at a
-fifth of the size it had until 2026-09-28** - every part of it: each particle system's size, speed and spread, its
-light, the gaps between its parts and the camera shake it carries (felt within a fifth of the distance, a fifth as
-hard), not only the outer transform, which most of the game's effects ignore. At full size it swallowed the scene
-(the user asked for it 80% smaller): the tell resolves by keyword to the game's `fx_aspect_death`, a boss-sized burst
-of sixteen particle systems, all in `Local` scaling mode, so scaling the copy's root had only ever resized one of
-them. The sound is unchanged. Each client draws its own copy of the tell, so every client sees the small one.
+An instant kill needs an unmistakable tell at the moment it happens, so a player nearby knows a creature was
+eaten rather than wondering what became of it. **The tell is a sound only, since 2026-09-30:** the sound of the
+game's `fx_aspect_death` (a boss-sized burst of sixteen particle systems and a light), at the game's own volume,
+with nothing of it drawn - no particles, no light, no camera shake. The user asked for the particles to go: first
+they swallowed the scene, and cut to a fifth of their size on 2026-09-28 they still cost frames. The prey vanishing
+is what the player sees. Each client plays its own copy of the tell, so every client nearby hears it.
 
 ### Only what it can swallow
 
@@ -175,7 +174,7 @@ for it:
   it at the bite, and every client draws the nameplate icons from it. Both limits are checked where the bite
   resolves, from the devourer's replicated ZDO, so they need no routing. Because one swing can bite two creatures
   before the first meal is banked, the owner checks the limit again as it banks, and a meal past it is not kept.
-- **The kill tell is drawn by every nearby client**, not only the owner. A creature vanishing in silence on
+- **The kill tell is heard by every nearby client**, not only the owner. A creature vanishing in silence on
   someone else's screen is the invisible-effect failure this spec keeps naming.
 
 **Which player's health does `player threshold` measure against?** On a server they differ. The rule: compare
@@ -730,11 +729,13 @@ purpose of the delay.
   Beyond the fade, Cloaked gets no shimmer, outline or marker - being unable to see it *is* the mutation.
 - **Devouring** should make a held creature obviously held, and should show that it is feeding. A player needs
   to be able to read "that thing is getting stronger right now" from a distance, because deciding whether to
-  interrupt it is the whole encounter. Its kill tell is drawn at a fifth of its old size, every part of it, and its
+  interrupt it is the whole encounter. Its kill tell is a sound with nothing drawn, and its
   nameplate carries an icon for each creature it has eaten - see "Devouring, in full".
-- **Warding** should show something at the moment it reflects, at the attacker, so the damage that just came
-  back is attributable rather than mysterious. It is a small spark, drawn at a 0.4-metre radius (a fifth of
-  the original 2 metres; the Reflective aspect's is 0.3), and only when something was actually reflected.
+- **Warding** should mark the moment it reflects, at the attacker, so the damage that just came back is
+  attributable rather than mysterious. It is a sound only, and only when something was actually reflected: the
+  Staff of Protection's bubble taking a blow, at 30% of the game's loudness, with nothing drawn (the Reflective
+  aspect's tell is the same). It used to be a spark as well, but on every hit of a long fight the particles cost
+  frames and the sound was too loud (2026-09-30, at the user's request).
 - **Gilded** glitters gold at all times and lights the ground around it, readable well beyond nameplate range -
   see "Gilded, in full".
 - **Blinking** marks its destination with a flash and a chime before it arrives, puffs where it vanishes and where
@@ -797,7 +798,8 @@ Nothing in this slice may be deferred to "a later multiplayer pass".
 ## Keeping the wire quiet
 
 Creature state rides the ZDO. A handful of things cannot - a blast, a reflect flash, a cloud appearing - because
-they happen in an instant rather than being a property of the creature. Those go over the game's own RPC bus,
+they happen in an instant rather than being a property of the creature (the reflect tell is only heard now, but it
+travels the same way). Those go over the game's own RPC bus,
 under two rules.
 
 **Send to the people who could see it, not to everyone.** A per-creature effect goes through *that creature's
@@ -1528,8 +1530,8 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 - [ ] Miasmic clouds visible for their whole life
 - [ ] Bloated has a tell during its delay
-- [ ] Devouring's kill tell is about a fifth of its old size - particles, spray and any light, not only the core - on
-      the host and on a second client watching
+- [ ] Devouring's kill tell and Warding's reflect tell are heard with nothing drawn (no particles, light or camera
+      shake), on the host and on a second client watching; the reflect tell clearly quieter than before
 - [ ] A Devouring creature's nameplate shows one icon per creature eaten: the trophy, or the horned monster head for
       one with no trophy (greyling, hen); the same icons on every client; meals sit left of a Thieving pouch; hidden
       with a Cloaked plate; `Show devoured creatures` and `Devoured creature icon size` honoured
@@ -1557,3 +1559,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-17 | Thieving added as the tenth mutation: table, star colour, large-star enhancement, `mutation power` block, Splintering interaction, and a "cases that must work" line for its two-authority steal. See `thieving.md`. | - |
 | 2026-09-27 | 3.9.0: Gilded, Blinking and Relentless added with their "in full" sections, colours, fields and enhancement rows; per-creature mutation rules and the shipped Troll, Lox and Hatchling entries; Bloated's two-second fuse, full-strength smoke on the body, smaller blast and corpse bursting with it; Cloaked at 10 m; Warding's base hit and `max reflect`; tamed Splintering copies; effects drawn once, locally; the embedded rule file and the mutated-share table brought up to date. Built, not tested in game. | - |
 | 2026-09-28 | Devouring eats only prey with at most `max prey health` (125%) of its own current health and one creature per star (`min meals` 1 as the floor), then is sated; what it ate is kept on its ZDO (`ecr_dev_meals`) and drawn on its nameplate as trophies or the game's monster head, beside a Thieving pouch through a shared icon row; its kill tell is drawn at a fifth of the size, every part (LocalEffects `FlashScaled`); Bloated's fuse 1.7 s. Built, not tested in game. | - |
+| 2026-09-30 | The Warding and Reflective reflect tell and Devouring's kill tell are only heard, nothing drawn (LocalEffects `SoundOnly`): the reflect tell pinned to `fx_StaffShield_Hit` at 30% volume, the kill tell `fx_aspect_death`'s sound at full volume. At the user's request: the particles cost frames and the reflect sound was too loud. Built, not tested in game. | - |

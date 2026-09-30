@@ -17,7 +17,7 @@ namespace EliteCreaturesReborn.Patches
     /// Any other landed attack is an ordinary hit:
     /// <list type="bullet">
     /// <item>The <b>prefix</b> commits the kill before vanilla resolves the hit - it marks the prey with the devourer's id
-    /// (so the prey's death path feeds that one devourer, see <see cref="DeathPatch"/>) and fires the sound-and-effect
+    /// (so the prey's death path feeds that one devourer, see <see cref="DeathPatch"/>) and fires the sound
     /// tell, once. Marking here, not in the postfix, means a well-fed devourer whose ordinary damage would have finished
     /// the prey outright still routes its death as a devour.</item>
     /// <item>The <b>postfix</b> forces the kill if the prey survived the hit's own damage, by draining it and running the
@@ -77,10 +77,9 @@ namespace EliteCreaturesReborn.Patches
         private static void Devour(Character prey, ZNetView nview, Character devourer)
         {
             TraitStore.MarkDevouredBy(nview.GetZDO(), devourer.GetZDOID());
-            // The tell rides the DEVOURER's own ZNetView, so every client that can see the fight draws and hears it at the
-            // prey - a distant player watches the creature cease. Scoped by the engine to clients holding the devourer.
-            CreatureRpc.FireFlash(devourer.GetComponent<ZNetView>(), prey.GetCenterPoint(),
-                Mathf.Max(prey.GetRadius() * 2f, 2f), CreatureRpc.DevourRole);
+            // The tell rides the DEVOURER's own ZNetView, so every client that can see the fight hears it at the prey - a
+            // distant player hears the creature eaten. Scoped by the engine to clients holding the devourer.
+            CreatureRpc.FireDevour(devourer.GetComponent<ZNetView>(), prey.GetCenterPoint());
             Log.Diag($"{devourer.name} devours {prey.name} in one bite");
         }
 

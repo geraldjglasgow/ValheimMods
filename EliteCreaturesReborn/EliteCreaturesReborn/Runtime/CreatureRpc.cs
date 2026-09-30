@@ -13,7 +13,7 @@ namespace EliteCreaturesReborn.Runtime
     /// The per-creature calls routed through a creature's own ZNetView, because that channel is the one the engine
     /// scopes to the clients that actually hold the creature. One is an owner-directed command - "you devoured this, take
     /// it" (to the devourer's owner, where its ZDO and health live, and where the meal joins its meal list). The other is
-    /// a scoped effect broadcast - the Warding reflect flash, the devour tell and the other one-shot tells - which every
+    /// a scoped effect broadcast - the Warding reflect sound, the devour tell and the other one-shot tells - which every
     /// client holding the creature draws and no one else receives, unlike the world-wide bus
     /// in <see cref="EliteRpc"/>. Two more owner-directed commands serve the boss aspects: a Twin's share of its
     /// partner's lost health, and a Phantom copy's dismissal when its boss dies. (The prey pin is not here: a bite pins
@@ -31,11 +31,15 @@ namespace EliteCreaturesReborn.Runtime
         /// <summary>The flash role of the devour tell, as it travels over the effect bus.</summary>
         public const string DevourRole = "devour";
 
+        /// <summary>The flash role of the reflect tell (Warding, and the Reflective boss aspect).</summary>
+        public const string ReflectRole = "reflect";
+
         /// <summary>
-        /// The devour tell is drawn at a fifth of the size the plain flash gives it, every part of it (the user found it
-        /// far too big). Visual only; every client draws its own copy the same way, so every client sees the small one.
+        /// The reflect tell is only heard, at this share of its effect's own loudness: it plays on every hit a Warding
+        /// creature or a Reflective boss takes, and drawn it cost frames in a long fight while its sound drowned the
+        /// fight's own (the user asked for no particles and a quieter sound).
         /// </summary>
-        private const float DevourTellScale = 0.2f;
+        private const float ReflectVolume = 0.3f;
 
         /// <summary>Registers all handlers on a creature, capturing its own Character/controller. Called once per creature.</summary>
         public static void Register(ZNetView nview, Character character, EliteController controller)
@@ -96,15 +100,24 @@ namespace EliteCreaturesReborn.Runtime
             }
         }
 
+        /// <summary>The reflect tell at the attacker, the same scoped way; it carries no size, since nothing is drawn.</summary>
+        public static void FireReflect(ZNetView creatureView, Vector3 pos) => FireFlash(creatureView, pos, 0f, ReflectRole);
+
+        /// <summary>
+        /// The devour tell at the prey, through the DEVOURER's view, so every client that can see the fight hears the
+        /// creature eaten. Only heard (the user asked for no particles), so it carries no size either.
+        /// </summary>
+        public static void FireDevour(ZNetView devourerView, Vector3 pos) => FireFlash(devourerView, pos, 0f, DevourRole);
+
         private static void DrawFlash(Vector3 pos, float radius, string role) =>
             Guard.Run("CreatureRpc.Flash", () => DrawRole(pos, radius, role));
 
         private static void DrawRole(Vector3 pos, float radius, string role)
         {
             GameObject? prefab = EffectResolver.ForRole(role);
-            if (role == DevourRole)
+            if (role == ReflectRole || role == DevourRole)
             {
-                CosmeticClone.FlashScaled(prefab, pos, radius, DevourTellScale);
+                CosmeticClone.SoundOnly(prefab, pos, role == ReflectRole ? ReflectVolume : 1f);
                 return;
             }
             CosmeticClone.Flash(prefab, pos, radius);

@@ -85,6 +85,24 @@ namespace LocalEffects
             Object.Destroy(clone, SoundLife);
         }
 
+        /// <summary>
+        /// Only the sound of an effect prefab, at <paramref name="volume"/> times its own loudness (1 is as the game
+        /// plays it): nothing of the copy is drawn, so an effect wanted for its sound costs no particles or lights. Its
+        /// own timer removes it, or <see cref="SoundLife"/> should that be missing. A volume of 0 makes nothing.
+        /// </summary>
+        public static void SoundOnly(GameObject? prefab, Vector3 position, float volume = 1f)
+        {
+            if (prefab == null || volume <= 0f)
+            {
+                return;
+            }
+            GameObject clone = CloneParts.Instantiate(prefab, position);
+            CloneParts.Strip(clone, endless: false);
+            CloneParts.Unseen(clone);
+            CloneParts.Quieten(clone, volume);
+            Object.Destroy(clone, SoundLife);
+        }
+
         private static GameObject? OneShot(GameObject? prefab, Vector3 position, float radius, float density)
         {
             if (prefab == null || density <= 0f)

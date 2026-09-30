@@ -12,6 +12,7 @@ LocalEffect.Flash(burst, position, radius: 2f);                  // one-shot, cl
 LocalEffect.FlashWhole(burst, position, radius: 3f, scale: 1f);  // one-shot, every child system scaled too
 LocalEffect.FlashScaled(burst, position, radius: 2f, scale: 0.2f); // one-shot, every part at a fifth of Flash's size
 LocalEffect.Sound(ZNetScene.instance.GetPrefab("sfx_ice_destroyed"), position);
+LocalEffect.SoundOnly(burst, position, volume: 0.3f);            // the burst's own sound, quieter, nothing drawn
 GameObject? aura = LocalEffect.Attach(prefab, creature.transform, position, endless: true, density: 0.5f);
 ```
 
@@ -21,6 +22,11 @@ GameObject? aura = LocalEffect.Attach(prefab, creature.transform, position, endl
 - Area damage (`Aoe`), `Projectile`, `ZSyncTransform` and `ZNetView` are removed and colliders switched off.
 - `density` (0 to 1, default 1) thins particle emission and dims lights; 0 spawns nothing. Sounds are never thinned.
   A mod with a per-player effect setting passes it here.
+- `SoundOnly(prefab, position, volume)` plays an effect prefab's own sound with nothing of it drawn: particle
+  systems emptied and stopped, renderers and lights off, and the game's `LightLod`, `LightFlicker` and `CamShaker`
+  disabled before they can light it again or shake the camera. `volume` multiplies each `ZSFX`'s volume modifier
+  (the game recomputes the source volume every frame, so a source's own volume would not last), or a bare
+  `AudioSource`'s volume.
 - `Attach(..., endless: true)` removes the effect's own timer, so it lasts as long as its parent.
 - Scaling a copy's transform does not resize most game effects: a particle system in `Local` scaling mode ignores
   its parents' scale. `FlashWhole` switches every system to `Hierarchy` and scales the root. `FlashScaled` leaves the

@@ -59,6 +59,51 @@ namespace LocalEffects
             }
         }
 
+        /// <summary>
+        /// Nothing of the copy is drawn, from its first frame: its particle systems emptied and stopped, its renderers
+        /// and lights off, and first the game's scripts that would light it again (LightLod turns a light back on,
+        /// LightFlicker sets its brightness) or shake the camera (CamShaker, which has not started yet). Its sound
+        /// players are left alone.
+        /// </summary>
+        public static void Unseen(GameObject clone)
+        {
+            foreach (ParticleSystem system in clone.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                ParticleSystem.EmissionModule emission = system.emission;
+                emission.enabled = false;
+                system.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+            foreach (Renderer renderer in clone.GetComponentsInChildren<Renderer>(true))
+            {
+                renderer.enabled = false;
+            }
+            Disable(clone.GetComponentsInChildren<LightLod>(true));
+            Disable(clone.GetComponentsInChildren<LightFlicker>(true));
+            Disable(clone.GetComponentsInChildren<CamShaker>(true));
+            Disable(clone.GetComponentsInChildren<Light>(true));
+        }
+
+        /// <summary>
+        /// Every sound on the copy at <paramref name="volume"/> times its own loudness. The game's sound player sets
+        /// its source's volume each frame from its own roll times a modifier, so the modifier is what lasts; a bare
+        /// audio source with no sound player is turned down directly.
+        /// </summary>
+        public static void Quieten(GameObject clone, float volume)
+        {
+            foreach (AudioSource source in clone.GetComponentsInChildren<AudioSource>(true))
+            {
+                ZSFX sfx = source.GetComponent<ZSFX>();
+                if (sfx != null)
+                {
+                    sfx.SetVolumeModifier(sfx.GetVolumeModifier() * volume);
+                }
+                else
+                {
+                    source.volume *= volume;
+                }
+            }
+        }
+
         /// <summary>Every particle system scales with the root, not with its own transform alone.</summary>
         public static void FollowRoot(GameObject clone)
         {
@@ -66,6 +111,14 @@ namespace LocalEffects
             {
                 ParticleSystem.MainModule main = system.main;
                 main.scalingMode = ParticleSystemScalingMode.Hierarchy;
+            }
+        }
+
+        private static void Disable(Behaviour[] behaviours)
+        {
+            foreach (Behaviour behaviour in behaviours)
+            {
+                behaviour.enabled = false;
             }
         }
 

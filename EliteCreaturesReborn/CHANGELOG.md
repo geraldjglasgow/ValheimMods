@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.13.3
+
+- **Warding no longer draws particles.** The spark on the attacker at every reflected hit could cost frames in a long
+  fight, so it is gone. The moment of a reflect is now marked by sound alone, and that sound is much quieter: the
+  Staff of Protection's shield taking a blow, at 30% of the game's own volume. The Reflective boss aspect's tell
+  changes the same way. Nothing else about the reflect changes.
+- **Devouring no longer draws particles.** When a Devouring creature eats another, the burst at the prey is gone
+  (no particles, light or camera shake); you hear the same sound as before, at the same volume, and see the prey
+  vanish.
+
 ## 3.13.2
 
 - The world tier boxes (in the inventory under the weight, and under the minimap) show only with PackPanel installed,

@@ -20,7 +20,8 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   Consumers: EliteCreaturesPack (the crypt mimic, the greydwarf slinger, the rime giant, the kraken and its loot),
   PackPanel.
 - `LocalEffects/`: `LocalEffect.Attach(prefab, parent, position, endless, density)`, `Flash`, `FlashWhole`,
-  `FlashScaled` (every part resized by its own numbers, `ScaleParts`, whatever its scaling mode) and `Sound` make local
+  `FlashScaled` (every part resized by its own numbers, `ScaleParts`, whatever its scaling mode), `Sound` and
+  `SoundOnly` (an effect's own sound at a volume, nothing of it drawn) make local
   copies of the game's effect prefabs: instantiated with `ZNetView.m_forceDisableInit` (never ghost init,
   which registers a ZDO that ZNetScene then spawns as a networked copy on every peer), `Aoe`, `Projectile`,
   `ZSyncTransform` and `ZNetView` removed, colliders off; `density` 0 to 1 thins particles and dims lights, 0 spawns

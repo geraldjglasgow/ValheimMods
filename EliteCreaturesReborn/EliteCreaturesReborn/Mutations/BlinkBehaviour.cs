@@ -174,7 +174,7 @@ namespace EliteCreaturesReborn.Mutations
 
         /// <summary>
         /// To every client holding the creature: <c>Everybody</c> through its own ZNetView is delivered here at once
-        /// and dropped by any peer that does not hold it - the same scoping as the Warding flash.
+        /// and dropped by any peer that does not hold it - the same scoping as the Warding tell.
         /// </summary>
         private void Send(int phase, Vector3 dest) =>
             _controller.View.InvokeRPC(ZRoutedRpc.Everybody, Rpc, phase, dest);

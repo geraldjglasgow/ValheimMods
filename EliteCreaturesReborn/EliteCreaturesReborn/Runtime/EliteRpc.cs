@@ -16,7 +16,7 @@ namespace EliteCreaturesReborn.Runtime
     /// even though ragdoll physics settles the corpse in a slightly different spot on every machine. It names the corpse,
     /// and whichever machine owns that corpse bursts it (see <see cref="CorpseBurst"/>).</item>
     /// </list>
-    /// Per-creature effects that CAN be scoped (the Warding flash) go through <see cref="CreatureRpc"/> instead. Handlers
+    /// Per-creature effects that CAN be scoped (the Warding tell) go through <see cref="CreatureRpc"/> instead. Handlers
     /// are registered lazily once the network is up, keyed on the bus instance so a new world re-registers.
     /// </summary>
     public static class EliteRpc

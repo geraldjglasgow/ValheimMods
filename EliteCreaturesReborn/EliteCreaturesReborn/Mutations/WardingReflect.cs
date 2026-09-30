@@ -28,9 +28,6 @@ namespace EliteCreaturesReborn.Mutations
         /// <summary>The game's fixed multiplier on a hit against a staggering creature.</summary>
         private const float StaggerBonus = 2f;
 
-        /// <summary>The tell's radius: a small spark on the attacker, a fifth of the original 2 m flash.</summary>
-        private const float FlashRadius = 0.4f;
-
         /// <summary>The creature as the hit found it; <c>Active</c> only for a Warding creature, on its owner.</summary>
         public readonly struct Before
         {
@@ -75,9 +72,9 @@ namespace EliteCreaturesReborn.Mutations
                 return;
             }
             attacker.Damage(Reflected(victim, attacker, amount));
-            // Route the flash through THIS creature's own ZNetView, not the world-wide bus: Warding fires on every
+            // Route the tell through THIS creature's own ZNetView, not the world-wide bus: Warding fires on every
             // melee hit, so scoping it to the clients holding the creature (the attacker included) keeps it quiet.
-            CreatureRpc.FireFlash(controller.View, attacker.GetCenterPoint(), FlashRadius, "reflect");
+            CreatureRpc.FireReflect(controller.View, attacker.GetCenterPoint());
         }
 
         private static bool IsWarding(Character character)
