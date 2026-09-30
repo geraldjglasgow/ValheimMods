@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.13.1
+
+- Fixed: with Jewelcrafting, CurrencyPocket, OttoPay, TrashItems or Quick Stack Store Sort Trash Restock installed,
+  the inventory broke (Jewelcrafting threw an error on every item picked up and every inventory close). The shared
+  stat column moved the game's armour and weight boxes into a container of its own, and those mods look for them on
+  the inventory panel by name. The game's boxes now stay where the game has them and are placed in the column from
+  there, and the boxes those mods add join the column instead of covering one of its boxes; TrashItems' trash can
+  takes dragged stacks there. OpenKeep 1.8.0 to 1.9.0 and PackPanel 0.1.0 to 0.2.0 carry the same column: update them
+  too.
+
 ## 3.13.0
 
 - **Devouring eats only what it can swallow.** A Devouring creature eats a creature only when that creature has at
