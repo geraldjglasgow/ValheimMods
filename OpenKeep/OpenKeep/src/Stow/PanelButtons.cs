@@ -14,7 +14,8 @@ namespace OpenKeep.Stow
     /// below the bottom edge of the player panel, centred, and <c>Sort</c> centred below the bottom edge of the
     /// container panel, under the game's take-all line. The trash can gets its own plate in the column of stat plates
     /// on the panel's right, between the armour and the weight readouts (<see cref="TrashPlate"/>), and only when that
-    /// fails, or while PackPanel lays the inventory out (its stat panel has no room for it), does it join the row.
+    /// fails, while PackPanel lays the inventory out (its stat panel has no room for it), or with
+    /// <c>Trash Can On Stat Column</c> off, does it join the row.
     /// Nothing inside either panel is free: the player panel grows exactly one grid row per inventory row
     /// (<c>InventoryGui.SetInventorySize</c>), so its last item row sits on its bottom edge, and the container panel ends
     /// with the take-all buttons. PackPanel keeps a strip free at the player panel's bottom instead and marks it with an
@@ -92,8 +93,10 @@ namespace OpenKeep.Stow
         {
             if (gui == null || gui.m_takeAllButton == null || gui.m_player == null || gui.m_container == null)
                 return;
-            // While PackPanel lays the inventory out, the stat boxes sit in its stats panel and the trash can joins this row.
-            bool onPlate = !PackPanelLink.LaysOutInventory && TrashPlate.TryCreate(gui, () => TrashMode.CanClicked(gui));
+            // While PackPanel lays the inventory out, the stat boxes sit in its stats panel and the trash can joins this row;
+            // with Trash Can On Stat Column off it joins the row too, and OpenKeep never touches the column.
+            bool onPlate = !PackPanelLink.LaysOutInventory && StowSettings.TrashOnStatColumn.Value
+                && TrashPlate.TryCreate(gui, () => TrashMode.CanClicked(gui));
             float x = -(1.5f * Width + 1.5f * Gap) - (onPlate ? 0f : (Height + Gap) / 2f);
             Add(gui, gui.m_player, StowWords.QuickStack, x, StowActions.QuickStack);
             x += Width + Gap;

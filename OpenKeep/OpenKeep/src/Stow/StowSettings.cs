@@ -47,6 +47,7 @@ namespace OpenKeep.Stow
         public static ConfigEntry<float> PickupDelay { get; private set; }
         public static ConfigEntry<bool> PickupOnlyHeldItems { get; private set; }
         public static ConfigEntry<int> ButtonRowOffset { get; private set; }
+        public static ConfigEntry<bool> TrashOnStatColumn { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
         {
@@ -76,6 +77,8 @@ namespace OpenKeep.Stow
                 acceptableValues: new AcceptableValueRange<float>(1f, 100f));
             ButtonRowOffset = synced.Bind(Section, "Button Row Offset", 0,
                 "Moves the Stow button row up (positive) or down (negative) by this many pixels from its default place under the container panel.", synced: false);
+            TrashOnStatColumn = synced.Bind(Section, "Trash Can On Stat Column", true,
+                "The trash can on its own box in the column of stat boxes right of the inventory, between armour and weight. Off puts it in the button row instead, and OpenKeep then leaves the game's armour and weight boxes as the game has them, for other mods that place their own boxes there. Takes effect the next time you enter a world.", synced: false);
         }
 
         private static void BindSorting(SyncedConfiguration synced)

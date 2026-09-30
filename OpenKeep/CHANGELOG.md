@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.0
+- Fixed: since 1.8.0 OpenKeep broke Jewelcrafting and every other mod that adds a box beside the game's armour box
+  (CurrencyPocket, OttoPay, TrashItems, Quick Stack Store Sort Trash Restock). The stat column moved the game's armour
+  and weight boxes into a container of its own, and those mods look for them on the inventory panel by name.
+  Jewelcrafting then threw an error on every item picked up, every inventory close and every input device change,
+  and a chest closed that way stayed in use. The game's boxes now stay where the game has them and are placed in the
+  column from there (GitHub #4, #5).
+- The boxes those mods add join the column instead of covering one of its boxes: Jewelcrafting's synergy box right
+  under the armour, a trash can next to OpenKeep's (TrashItems' takes dragged stacks there), the coin pocket between
+  the armour and the weight.
+- Stow: `Trash Can On Stat Column` (on, per player). Off puts the trash can at the end of the button row, and OpenKeep
+  then leaves the game's armour and weight boxes exactly as the game has them, for inventory mods that place their own
+  boxes there. Takes effect the next time you enter a world.
+
 ## 1.9.0
 - Homestead: `Auto Repair` (on): opening a workbench, forge, black forge, galdr table, artisan table or any other
   station with the game's repair button repairs every item in your inventory that this station can repair at its
