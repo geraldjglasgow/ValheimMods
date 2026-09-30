@@ -188,6 +188,13 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
 - **Small units.** A method is at most 24 lines from brace to brace and does one thing; lambdas and local functions
   count too. A class is at most 300 lines and has one responsibility; split by feature before it gets there. This
   applies to the mods and to `ValheimModLibs`.
+- **New assets live outside the mods until they ship.** Every model, creature, effect, sound, texture and bundle is
+  made and kept in `AssetWorkshop` (its source in `assets/<name>/`, `vfx/effects/`, `sfx/sounds/`; its builds in
+  gitignored `out/` folders), never in a mod's folder. It goes into a mod (the bundle copied into
+  `<Mod>/.../assets/bundles`, the mod code that uses it) only when the user decides to release it in that mod, and in
+  the same change as that release. Concepts, trials, demos and rejected versions never enter a mod, so nothing
+  unreleased is pushed with one or left in it as dead code or dead assets; a mod that stops using an asset or its code
+  has both removed. Build and install flags (`-Install`, `--install`) are for that release step only.
 
 ## Building
 
