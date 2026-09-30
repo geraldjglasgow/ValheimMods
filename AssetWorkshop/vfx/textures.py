@@ -9,126 +9,18 @@ a texture is the same every build.
 The game's rules, which these follow: the shape is in the alpha channel over white RGB (the particle system's colour
 tints it); sizes are small (8 to 128 px, flipbooks 8 x 8 frames of 32 or 64 px); edges are soft and gaussian, bodies
 lumpy and mottled; the pixel pieces (8 px chunks, flipbooks) are drawn point-filtered so their pixels show.
+
+The building blocks are in textures_base.py, the soft shapes in textures_soft.py, the flipbooks in textures_flipbook.py;
+every generator is importable from here and listed in GENERATORS.
 """
 import math
 
 import numpy as np
 from PIL import Image, ImageDraw
 
-
-# ---------------------------------------------------------------- building blocks
-
-def grid(px):
-    """(x, y) in -1..1 over a px square, pixel centres, y up."""
-    c = (np.arange(px) + 0.5) / px * 2 - 1
-    return np.meshgrid(c, -c)
-
-
-def value_noise(px, cells, rng):
-    """Smooth tileable value noise, 0..1, with `cells` lattice cells across."""
-    lattice = rng.random((cells, cells))
-    x = np.arange(px) / px * cells
-    i0 = np.floor(x).astype(int) % cells
-    i1 = (i0 + 1) % cells
-    f = x - np.floor(x)
-    f = f * f * (3 - 2 * f)
-    rows = lattice[i0][:, i0] * (1 - f)[None, :] + lattice[i0][:, i1] * f[None, :]
-    rows1 = lattice[i1][:, i0] * (1 - f)[None, :] + lattice[i1][:, i1] * f[None, :]
-    return rows * (1 - f)[:, None] + rows1 * f[:, None]
-
-
-def fbm(px, rng, cells=4, octaves=4, persistence=0.5):
-    """Fractal value noise, 0..1."""
-    total, weight, amplitude = np.zeros((px, px)), 0.0, 1.0
-    for octave in range(octaves):
-        total += amplitude * value_noise(px, cells * 2 ** octave, rng)
-        weight += amplitude
-        amplitude *= persistence
-    return total / weight
-
-
-def blur(image, sigma):
-    """Separable gaussian blur (edges clamped), for 2D or 3D arrays."""
-    if sigma <= 0:
-        return image
-    radius = max(1, int(3 * sigma))
-    kernel = np.exp(-0.5 * (np.arange(-radius, radius + 1) / sigma) ** 2)
-    kernel /= kernel.sum()
-    out = image
-    for axis in (0, 1):
-        padded = np.pad(out, [(radius, radius) if a == axis else (0, 0) for a in range(out.ndim)], mode="edge")
-        out = sum(k * np.take(padded, range(i, i + out.shape[axis]), axis=axis) for i, k in enumerate(kernel))
-    return out
-
-
-def smoothstep(a, b, x):
-    t = np.clip((x - a) / (b - a), 0, 1)
-    return t * t * (3 - 2 * t)
-
-
-def white(alpha, grey=None):
-    """RGBA from an alpha mask: white RGB (or a grey level array), the game's way for tinted particles."""
-    rgb = np.ones(alpha.shape + (3,)) if grey is None else np.repeat(grey[..., None], 3, axis=2)
-    return np.concatenate([rgb, np.clip(alpha, 0, 1)[..., None]], axis=2)
-
-
-def save(rgba, path):
-    """Writes an RGBA float array as an 8-bit PNG."""
-    Image.fromarray((np.clip(rgba, 0, 1) * 255 + 0.5).astype(np.uint8), "RGBA").save(path)
-    return path
-
-
-# ---------------------------------------------------------------- soft shapes
-
-def point(px=128, sigma=0.36):
-    """A soft round dot (the game's point.png: gaussian, sigma 0.36 of the radius, nearly 1 in the middle)."""
-    x, y = grid(px)
-    r = np.hypot(x, y)
-    return white(np.exp(-0.5 * (r / sigma) ** 2) * smoothstep(1.0, 0.9, r))
-
-
-def glow(px=128, seed=0, sigma=0.42, peak=0.85, swirl=0.4):
-    """A soft glow with faint smeared streaks (glow.png): a wide gaussian, peak below 1, streaked by noise stretched
-    along a slow spiral."""
-    rng = np.random.default_rng(seed)
-    x, y = grid(px)
-    r = np.hypot(x, y)
-    turn = (np.arctan2(y, x) / (2 * math.pi) + 0.5 + 0.25 * r) % 1.0
-    band = value_noise(px, 12, rng)
-    streaks = band[(turn * (px - 1)).astype(int), (np.clip(r, 0, 0.999) * 3).astype(int)]
-    alpha = peak * np.exp(-0.5 * (r / sigma) ** 2) * (1 - swirl + swirl * streaks)
-    return white(blur(alpha, px / 96) * smoothstep(1.0, 0.85, r))
-
-
-def puff(px=128, seed=0, lumps=16, spread=0.48, size=(0.05, 0.16), density=0.85):
-    """A clumpy smoke or dust puff (wildfire01.png): separate soft lumps of mixed sizes with bright cores and thin gaps
-    between them, inside a soft circle. With a lit shader for dust and smoke, additive for magic mist."""
-    rng = np.random.default_rng(seed)
-    x, y = grid(px)
-    top, total = np.zeros((px, px)), np.zeros((px, px))
-    for _ in range(lumps):
-        angle, dist = rng.random() * 2 * math.pi, spread * math.sqrt(rng.random())
-        radius = rng.uniform(*size)
-        cx, cy = dist * math.cos(angle), dist * math.sin(angle)
-        lump = np.exp(-0.5 * ((x - cx) ** 2 + (y - cy) ** 2) / radius ** 2) * rng.uniform(0.55, 1.0)
-        top, total = np.maximum(top, lump), total + lump
-    haze = 0.2 * np.exp(-0.5 * (np.hypot(x, y) / 0.4) ** 2)
-    alpha = density * (0.75 * top + 0.25 * np.tanh(total)) + haze
-    return white(np.clip(alpha, 0, 1) * smoothstep(1.0, 0.8, np.hypot(x, y)))
-
-
-def cloud(px=256, seed=0, radius=0.8, contrast=0.8, creases=0.45, level=0.45, grey=None):
-    """A mottled round cloud with dark creases (dirt.png, dust01_bw.png): fractal noise with ridges, in a soft
-    circle. grey (0..1) makes the RGB that grey instead of white, as dust01_bw does."""
-    rng = np.random.default_rng(seed)
-    x, y = grid(px)
-    body = fbm(px, rng, cells=4, octaves=5)
-    ridges = 1 - np.abs(fbm(px, rng, cells=3, octaves=4) * 2 - 1)
-    grain = fbm(px, rng, cells=16, octaves=3)
-    alpha = np.clip((body - 0.5) * contrast + 0.5 + 0.25 * (grain - 0.5), 0, 1) * (1 - creases * blur(ridges, px / 256) ** 3)
-    alpha *= smoothstep(radius + 0.2, radius - 0.3, np.hypot(x, y) + 0.15 * (body - 0.5))
-    tone = None if grey is None else np.full((px, px), grey) * (0.85 + 0.3 * body)
-    return white(2 * level * alpha, tone)
+from textures_base import blur, fbm, grid, save, smoothstep, value_noise, white  # noqa: F401  (the public toolbox)
+from textures_flipbook import flame_flipbook, sheet_of, smoke_flipbook  # noqa: F401
+from textures_soft import cloud, glow, point, puff  # noqa: F401
 
 
 # ---------------------------------------------------------------- sparks, rings, splats
@@ -228,76 +120,6 @@ def shard(px=32, seed=0, length=0.9, width=0.28):
     inside = np.abs(u) / width + np.abs(v) / length < 1
     grey = np.where(u < 0, 0.95, 0.7) - 0.15 * np.abs(v)
     return white(blur(inside.astype(float), 0.5), grey)
-
-
-# ---------------------------------------------------------------- flipbooks
-
-def flame_flipbook(frames=64, columns=8, cell=32, seed=0, lobes=6, size=0.92):
-    """Boiling fireball frames (flameball_flipbook.png): a lobed blob about two thirds of its cell, bright with dark
-    creases, turning over through a seamless loop. Greyscale in RGB, alpha 1: the game's gradient-mapped shader
-    turns the grey into colour (bright = its first custom colour, dark = its second) and uses it as alpha."""
-    rng = np.random.default_rng(seed)
-    phases, speeds = rng.uniform(0, 2 * math.pi, lobes), rng.integers(1, 3, lobes)
-    detail = [fbm(cell * 4, rng, cells=10, octaves=3), fbm(cell * 4, rng, cells=4, octaves=2)]
-    sheet = np.zeros((cell * (frames // columns), cell * columns))
-    for i in range(frames):
-        t = 2 * math.pi * i / frames
-        row, column = divmod(i, columns)
-        sheet[row * cell:(row + 1) * cell, column * cell:(column + 1) * cell] = _flame_frame(cell, t, phases, speeds, detail, size)
-    return np.concatenate([np.repeat(sheet[..., None], 3, axis=2), np.ones(sheet.shape + (1,))], axis=2)
-
-
-def _flame_frame(cell, t, phases, speeds, detail, size):
-    """One frame: a lobed, ragged-edged blob whose inner wisps and dark creases turn with t (one turn per loop)."""
-    x, y = grid(cell)
-    angle, r = np.arctan2(y, x), np.hypot(x, y)
-    ragged = _turned(detail[1], x, y, t, 0.35)
-    lobes = sum(0.18 / k * np.cos(k * angle + p + s * t) for k, (p, s) in enumerate(zip(phases, speeds), 2))
-    edge = size * (0.78 + lobes + 0.3 * (ragged - 0.5))
-    body = smoothstep(edge, edge * 0.55, r)
-    inner = _turned(detail[0], x, y, t, 0.5)
-    creases = 1 - smoothstep(0.04, 0.2, np.abs(inner * 2 - 1))
-    return np.clip(body * (0.6 + 1.0 * inner) * (1 - 0.5 * creases), 0, 1)
-
-
-def _turned(noise, x, y, turn, zoom):
-    """A tileable noise image read at (x, y) turned by `turn` radians and scaled by `zoom`, wrapping at its edges."""
-    size = noise.shape[0]
-    u = (x * math.cos(turn) - y * math.sin(turn)) * zoom
-    v = (x * math.sin(turn) + y * math.cos(turn)) * zoom
-    return noise[((v * 0.5 + 0.5) * size).astype(int) % size, ((u * 0.5 + 0.5) * size).astype(int) % size]
-
-
-def smoke_flipbook(frames=64, columns=8, cell=64, seed=0):
-    """Lit smoke frames packed the way the game's lit smoke flipbooks are (slowwispysmokeloop.png): normal X and Y in
-    red and green, depth in blue, coverage in alpha; a puff billowing out and thinning over the frames. For the
-    game's lit particle shader, which reads the normal from red and green."""
-    rng = np.random.default_rng(seed)
-    base = [puff(cell, seed=seed * 97 + k, lumps=9)[..., 3] for k in range(4)]
-    sheet = np.zeros((cell * (frames // columns), cell * columns, 4))
-    for i in range(frames):
-        f = i / (frames - 1)
-        k = min(3, int(f * 3))
-        mix = f * 3 - k
-        height = base[k] * (1 - mix) + base[min(3, k + 1)] * mix
-        height = blur(height, 1 + 2 * f) * (1 - 0.6 * f ** 2) + 0.05 * rng.random((cell, cell)) * height
-        row, column = divmod(i, columns)
-        sheet[row * cell:(row + 1) * cell, column * cell:(column + 1) * cell] = _normal_pack(height)
-    return sheet
-
-
-def _normal_pack(height):
-    """Normal (red, green), depth (blue) and alpha of a height field."""
-    gy, gx = np.gradient(height * 6)
-    n = np.stack([-gx, gy, np.ones_like(height)], axis=2)
-    n /= np.linalg.norm(n, axis=2, keepdims=True)
-    return np.concatenate([n[..., :2] * 0.5 + 0.5, height[..., None], np.clip(height, 0, 1)[..., None]], axis=2)
-
-
-def sheet_of(images, columns):
-    """Frames (same size) into a flipbook, row by row from the top left, as Unity's texture sheet animation reads."""
-    rows = [np.concatenate(images[i:i + columns], axis=1) for i in range(0, len(images), columns)]
-    return np.concatenate(rows, axis=0)
 
 
 GENERATORS = {"point": point, "glow": glow, "puff": puff, "cloud": cloud, "star": star, "spark_bolt": spark_bolt,

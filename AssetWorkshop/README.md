@@ -24,6 +24,7 @@ AssetWorkshop/
   assets/ecp_spine_greataxe/ a giant all-bone greataxe, shown in the game's Skeleton's hands (see its section)
   assets/ecp_battleaxe_bone/ a bone battleaxe sized and budgeted like the game's own (see its section)
   assets/workshop_gamerig_demo/ a new creature body on an exact copy of a game skeleton, the Mossback (see its section)
+  assets/ecp_deathsquito_queen/ a flyer rigged whole-part on a game skeleton, her fight keyed in Blender (see its section)
   codex/               what the game's own assets measure: the rules every new asset is built to (see "The codex")
   vfx/                 particle effects: spec, game-style textures, build, preview (see "Effects")
   sfx/                 sounds: synthesis, recipes, comparison with the game's, bundle (see "Sounds")
@@ -60,6 +61,10 @@ environment variables.
 
 ### Live editors over MCP
 
+Whatever is made through them follows the workshop's rule: it is saved in this workshop (`assets/<name>/`, the Unity
+project here), never inside a mod's folder, until the user decides to release it in a mod (see "Assets stay here until
+they ship").
+
 Claude Code can also drive an open Blender or Unity window through MCP servers registered in the workspace root's
 `.mcp.json` (untracked, local to this machine), both run by `uvx` with `DISABLE_TELEMETRY=true`. They are for looking
 around, measuring and trying poses quickly; what ships is still built by the scripts here, so anything worked out
@@ -76,6 +81,15 @@ live goes back into `model.py` or the editor scripts.
 - The Unity server's `generate_model`, `generate_image` and `generate_audio` tools, and the Blender add-on's Sketchfab,
   Hyper3D and similar downloads, are cloud AI generators or third-party stores: their output's licence is unclear or
   varies per item, so none of it goes into a released mod. Poly Haven and ambientCG (CC0) are fine.
+
+## Assets stay here until they ship
+
+Every asset is made and kept in this workshop, never in a mod's folder: its source in `assets/<name>/` (effects in
+`vfx/effects/`, sounds in `sfx/sounds/`), its builds and bundles in gitignored `out/` folders. It goes into a mod (the
+bundle copied into the mod's `assets/bundles`, the code that uses it) only when the user decides to release it in that
+mod, in the same change as the release. Concepts, trials, demos and rejected versions never enter a mod, so nothing
+unreleased is pushed with a mod or left in it as dead code or dead assets. The `-Install` / `--install` flags of the
+build scripts are for that release step only. (Workspace rule: `CLAUDE.md`, "Always".)
 
 ## The codex: building to the game's look
 
@@ -492,6 +506,44 @@ def build():
   route, not the look.
 - Not done: not seen in game, no mod code, no death effect or ragdoll of its own, no `attach_skin` gear tried on it.
 
+## A fight keyed in Blender: the Deathsquito Queen
+
+The game's Deathsquito grown 2.5 times, crowned and gravid, with seven moves of the user's (her `MOVES.md`), her eggs
+and needle (`ecp_queen_egg`, `ecp_queen_egg_burst`, `ecp_queen_needle`), and the whole fight previewed in Blender with
+the game's own sounds. Workshop preview only (user, 2026-09-29): no mod code yet.
+
+```
+.\assets\ecp_deathsquito_queen\build.ps1 [-SkipModels] [-SkipSounds] [-Stills] [-Render] [-Open]
+```
+
+- **Rigid parts on a game skeleton, no weight painting.** Her parts are rigid, so `model.py` writes each part's bone of
+  the Deathsquito's skeleton onto its faces (an integer face attribute, `queen_bones.py`); it survives the pipeline's
+  join and bake, and `queen_rig.py` turns it into vertex groups of weight 1 on a `gamerig` copy of the skeleton scaled
+  2.5 and applied. Parts that must bend with the game's chains are laid out on its joints (her legs on the Deathsquito's
+  one leg chain a side).
+- **Moves as maths.** Each move is a class giving her state at any moment (place, turn, pitch, bank and a few pose
+  numbers) and its events (sounds, hits, needles, eggs, waves); `queen_pose.py` turns a state into the root's place and
+  the game bones' rotations about her own axes (`rest⁻¹ · turn · rest`), so the same numbers can drive the bones in a
+  mod. Every frame is keyed and the curves filled in bulk (`queen_keys.py`).
+- **Swinging legs from springs.** Each leg (three a side: the game Deathsquito's one chain carries the middle legs; the
+  front and hind get chains of their own, copies of its bones moved along her body, which `CreatureBody` adds to the game
+  creature by name) is a few damped springs driven by her acceleration and speed in her own frame (`queen_sway.py`), each
+  leg with its own stiffness and idle sway. Cap what braking and backwards flight do: a hard turn at speed read as flying
+  backwards and threw the legs up over her back.
+- **Effects the user judged** (on an air-pulse attack since removed): a flat curved sheet of air was "basic"; bright
+  white rings read as solid donuts (the game's air is faint and dusty); grass bits as flat colour cards read as "green
+  square block things".
+- **Moves say what the body means, springs do the rest.** A move sets intents (`brace`, `reach`, `spread`, `tuck`)
+  and the springs carry the legs there and swing them round it; the abdomen and her posture are springs too, so a
+  lunge that jerks the body swings the abdomen and jolts the braced legs without keying either. Legs that only
+  dangled read "like a child dangling its feet off a cliff" to the user.
+- **Wings buzz by aliasing.** One stroke a frame at 30 frames (15 a second) with EEVEE's motion blur on draws the blurred
+  fan of an insect's wings; a stroke meant to be seen needs about four frames.
+- **Cameras fit what the shot holds**: her path with her wingspan round it, her target and whatever else (eggs, the other
+  player), seen from the side of her line of attack, her front three-quarters, over the target's shoulder or from high.
+- **Gotcha:** piping Blender's output into PowerShell's `Select-Object -First` stops Blender once enough lines have come:
+  a render quits early without an error.
+
 ## A weapon posed on a game creature: the spine greataxe
 
 A two-handed greataxe for a skeleton, all bone, 2.13 m long with a head a metre across: the haft is a whole spine
@@ -538,12 +590,13 @@ blender assets/ecp_spine_greataxe/out/showcase/greataxe_showcase.blend --python 
 ## Weapons for the game's Skeleton: the skeleton arsenal
 
 A dagger, sword, axe, mace, spear, atgeir, bow and arrow for the game's Skeleton, all made of bone with a vertebra
-worked into each, and the vertebra the skeletons drop (`ecp_vertebra`, with its icon); then a showcase: the game's
+worked into each, and the spine the skeletons drop (`ecp_spine`, with its icon; it replaced the single vertebra
+`ecp_vertebra` on 2026-09-29, kept in the workshop); then a showcase: the game's
 Skeletons holding each weapon and doing that weapon's attack, baked in Unity and played in Blender.
 
 | Piece | Made by |
 | --- | --- |
-| `assets/ecp_skel_dagger` .. `ecp_skel_arrow`, `ecp_vertebra` | `model.py` each, on the shared code in `assets/ecp_skel_arsenal`: `grave_shapes` (lofts, bands, wraps), `grave_vertebra` (the vertebra, in kinds), `grave_bones` (long bones, jointed hafts, ribs, fangs, pores), `grave_blade` (ground bone blades, the edge marked for the paint), `grave_paint` (bone, vertebra, ground edge, teeth, sinew, hide) |
+| `assets/ecp_skel_dagger` .. `ecp_skel_arrow`, `ecp_spine` | `model.py` each (the spine's `icon.py` too), on the shared code in `assets/ecp_skel_arsenal`: `grave_shapes` (lofts, bands, wraps), `grave_vertebra` (the vertebra, in kinds), `grave_bones` (long bones, jointed hafts, ribs, fangs, pores), `grave_blade` (ground bone blades, the edge marked for the paint), `grave_paint` (bone, vertebra, ground edge, teeth, sinew, hide) |
 | the attacks | `unity/Assets/Editor/SkelArsenal`: `ArsenalRoutines` (which game clips, speeds and transition times), `ArsenalAnimator` (a controller per weapon), `ArsenalBow` (string and arrow), `ArsenalBake` (the bake) |
 | the showcase | `assets/ecp_skel_arsenal/blender_scene.py` (the .blend), `blender_play.py` (opens it playing), `blender_stills.py`, `present.py` (a sheet of every piece), `review.py` (a piece beside the game's own) |
 
@@ -551,10 +604,10 @@ Skeletons holding each weapon and doing that weapon's attack, baked in Unity and
 .\assets\ecp_skel_arsenal\build.ps1 [-Open] [-SkipBlender] [-SkipBundle] [-SkipBake] [-Install]
 ```
 
-- **Into the mod.** `-Install` copies the bundle `ecp_skel_arsenal` (ten prefabs, nine icons from `icons.py`) into
+- **Into the mod.** `-Install` copies the bundle `ecp_skel_arsenal` (ten prefabs, eight icons from `icons.py` and the spine's from its `icon.py`) into
   `EliteCreaturesPack/EliteCreaturesPack/assets/bundles`; `-SkipBake` stops after that, without the showcase
   (`-SkipBlender -Install -SkipBake` rebuilds only the bundle). The mod's `Arsenal/` code (see its CLAUDE.md) puts the
-  models on the skeletons, the players' weapons, the arrows and the vertebra. `ecp_skel_bow_player` is the same bow
+  models on the skeletons, the players' weapons, the arrows and the spine. `ecp_skel_bow_player` is the same bow
   turned into the player's bow hold (measured from the game's Bow), since players hold bows differently from the
   skeleton archer; its tips go to `out/ecp_skel_bow_player_points.json`, copied into the mod's `ArsenalLook`.
 
@@ -572,7 +625,7 @@ Skeletons holding each weapon and doing that weapon's attack, baked in Unity and
   the game's GUID and reused, never copied twice.
 - **One loop per skeleton.** Each Skeleton is baked on its own (idle, attack, idle) by the crossbowman's `XbowCache`;
   in Blender its cache frame is keyed as a sawtooth with a Cycles modifier, so every skeleton repeats its attack
-  forever with no scripts. The timeline tracks along the row, then cuts to each weapon, then to the dropped vertebra.
+  forever with no scripts. The timeline tracks along the row, then cuts to each weapon, then to the dropped spine.
 - **Look (v2).** Every weapon is built round a vertebra, not merely carrying one: a vertebra lying flat in the
   blade's plane (`grave_vertebra.flat`), canal showing through, whose spine is drawn out into the blade and whose
   wings become quillons, lugs, barbs, horns or a hook (dagger, sword guard, axe head, spear head, atgeir head, arrow

@@ -140,7 +140,9 @@ paint, the rig and the mod code are built from, and the checks at the end are ho
 ## 12. Into the mod
 
 > How it reaches the game (the workshop README, "In a mod: BundlePrefabs"; `shaders.md` for the material). Nothing of
-> the game's goes into the bundle: game prefabs, materials and effects are borrowed at runtime by name.
+> the game's goes into the bundle: game prefabs, materials and effects are borrowed at runtime by name. This is the
+> plan only: the asset stays in AssetWorkshop, and nothing is copied into the mod or written in its code until the
+> user decides to release it there (workspace rule, `CLAUDE.md` "Always").
 
 - Bundle name (lower case) and the mod folder it is copied to:
 - Game prefab to copy and build on (an item's ItemDrop prefab, a piece, a creature):

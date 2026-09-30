@@ -138,6 +138,11 @@ def role(s):
     m = r.get("material") or {}
     texture = (m.get("texture") or "").rsplit("/", 1)[-1]
     names = f"{m.get('name', '')} {texture}".lower().replace("wildfire", "puff")
+    return _by_kind(s, r, m, names) or _by_name(s, m, names) or _by_numbers(s, names, m)
+
+
+def _by_kind(s, r, m, names):
+    """Roles the renderer decides: lights, bare carriers, decals, meshes, trails; None for the rest."""
     if s.get("light_module"):
         return "light"
     if not m:
@@ -148,6 +153,11 @@ def role(s):
         return "blood" if re.search(_T["blood"], names) else "debris"
     if r.get("mode") == "none" and s.get("trail"):
         return "trail"
+    return None
+
+
+def _by_name(s, m, names):
+    """Roles the material's and texture's names decide; None for the rest."""
     if re.search(r"flame|fire(?!work)|candle", (m.get("name") or "").lower()) and not re.search(r"smoke|dust", names):
         return "flame"   # the game's burning flames are often 8 px pixel chunks (leaf_low) drawn additive
     if re.search(r"pixel|leaf_low|heart_low", names) and not re.search(r"wildfire01_pixel|drop_pixel|drops_pixel|water_foam_pix", names):
@@ -157,7 +167,7 @@ def role(s):
             return "pixel" if key == "blood" and not _reddish(s) else key
     if not m.get("texture") and not (m.get("blend") or "").startswith("additive"):
         return "pixel"
-    return _by_numbers(s, names, m)
+    return None
 
 
 def _by_numbers(s, names, m):

@@ -11,7 +11,9 @@ a game effect cloned and recoloured is often the better answer.
 vfx/
   build.py              textures, spec, style check, Unity (prefab, bundle, preview), grading, sheet and MP4
   spec.py               the effect spec: short forms in, the complete JSON the Unity build reads out
-  textures.py           particle texture generators (numpy, Pillow)
+  spec_materials.py     the game shaders a material dresses into, their settings, blends, keywords and streams
+  textures.py           particle texture generators (numpy, Pillow); textures_base.py, textures_soft.py and
+                        textures_flipbook.py hold the building blocks, soft shapes and flipbooks it re-exports
   texture_check.py      the generators beside the game's textures, with radial profiles (out/texture_check.png)
   check.py              the style check: each system against its role's numbers, the effect against its category
   grade.py              the game camera for preview frames: bloom, exposure, ACES, contrast, sRGB
@@ -38,13 +40,17 @@ unity/Assets/Editor/Vfx/
    ```
    python vfx/build.py <effect> --preview --wait                   prefab, style report, preview
    python vfx/build.py <effect> <effect> --bundle <bundle> --wait  also the bundle, out/bundles/<bundle>.windows/.linux
-   python vfx/build.py <effect> --bundle <bundle> --install <mod>/assets/bundles --wait
+   python vfx/build.py <effect> --bundle <bundle> --install <mod>/assets/bundles --wait   release step only (below)
    python vfx/build.py --reference Effects/vfx_HitSparks.prefab --preview --seconds 2   a game effect alone
    ```
 
    Read `effects/<name>/out/style_report.txt` (every line PASS, or a reason), then `out/sheet.png` (eight frames over
    the preview, ours on the left, the stand-in player, the game's reference on the right) and `out/<name>.mp4`.
    Adjust and build again; a build with a preview takes about 30 s once Unity has the project imported.
+
+`--install` copies the bundle into a mod: use it only when the user has decided to release the effect in that mod, in
+the same change as the release. Until then effects stay here (source in `vfx/effects/`, bundles in `out/`) and are
+seen in game through DevBridge's stage, never by copying them into a mod (workspace rule, `CLAUDE.md` "Always").
 
 `--wait` waits for `out/unity.lock` (other sessions share the Unity project) and retries when the project is open
 elsewhere. Unity runs in batch mode with a GPU (previews need it); the log is `out/vfx_unity.log`.

@@ -1,0 +1,37 @@
+{
+  "asset": "ecp_crypt_rat",
+  "status": "workshop specification; no runtime mod implementation",
+  "displayName": "Crypt Rat",
+  "spawning": {
+    "outdoorBiomes": ["Swamp"],
+    "dungeons": ["Sunken Crypt"],
+    "excludeOtherBiomesAndDungeons": true
+  },
+  "baseHealth": 60,
+  "healthReference": "Greydwarf_Shaman.m_health from local game reference",
+  "bite": {
+    "trigger": "attack_bite",
+    "baseDamage": 14,
+    "damageType": "Pierce",
+    "damageReference": "Greydwarf Shaman default melee weapon Greydwarf_attack has 14 slash; same magnitude, adapted to bite",
+    "durationSeconds": 1.8,
+    "hitTimeSeconds": 0.666667,
+    "proposedLungeDistanceMetres": 0.95,
+    "bleed": {
+      "stacksPerLandedBite": 5,
+      "tickSeconds": 1.5,
+      "firstTickDelaySeconds": 1.5,
+      "damagePerTick": "current number of stacks before removing one",
+      "stacksRemovedAfterTick": 1,
+      "singleBiteTickDamage": [5, 4, 3, 2, 1],
+      "singleBiteTotalDamage": 15,
+      "singleBiteDurationSeconds": 7.5,
+      "proposedRepeatedHitPolicy": "add five stacks; preserve next tick time; no stack cap specified",
+      "proposedHitQualification": "positive bite damage after block/dodge processing"
+    }
+  },
+  "drops": [
+    {"prefab": "BoneFragments", "min": 1, "max": 2, "note": "proposed quantity; user requested bones without count"},
+    {"prefab": "IronOre", "min": 0, "max": 1, "note": "literal requested iron ore; probability not specified"}
+  ]
+}

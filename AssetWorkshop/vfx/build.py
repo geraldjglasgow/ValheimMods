@@ -78,14 +78,7 @@ def run_unity(folders, bundle, preview, lights, wait):
     """Unity in batch mode under the workshop's lock; when another session has the project open, waits and tries again
     (with --wait). Prints the log's WORKSHOP lines."""
     log = os.path.join(WORKSHOP, "out", "vfx_unity.log")
-    args = [UNITY, "-batchmode", "-projectPath", os.path.join(WORKSHOP, "unity"), "-executeMethod",
-            "Workshop.Vfx.VfxBuild.Run", "-workshopVfx", ";".join(folders), "-logFile", log]
-    if bundle:
-        args += ["-workshopBundle", bundle, "-workshopOut", os.path.join(WORKSHOP, "out", "bundles")]
-    if preview:
-        args += ["-workshopPreview", "-workshopReferenceLights", lights]
-    else:
-        args.insert(2, "-nographics")
+    args = _unity_args(folders, bundle, preview, lights, log)
     for attempt in range(60 if wait else 1):
         _lock(wait)
         try:
@@ -102,6 +95,19 @@ def run_unity(folders, bundle, preview, lights, wait):
             print(line)
     if result.returncode != 0:
         raise SystemExit(f"Unity failed ({result.returncode}); log: {log}")
+
+
+def _unity_args(folders, bundle, preview, lights, log):
+    """The batch command line: build the effects, the bundle when asked, and previews (which need the GPU)."""
+    args = [UNITY, "-batchmode", "-projectPath", os.path.join(WORKSHOP, "unity"), "-executeMethod",
+            "Workshop.Vfx.VfxBuild.Run", "-workshopVfx", ";".join(folders), "-logFile", log]
+    if bundle:
+        args += ["-workshopBundle", bundle, "-workshopOut", os.path.join(WORKSHOP, "out", "bundles")]
+    if preview:
+        args += ["-workshopPreview", "-workshopReferenceLights", lights]
+    else:
+        args.insert(2, "-nographics")
+    return args
 
 
 def _lock(wait):

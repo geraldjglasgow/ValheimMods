@@ -13,7 +13,7 @@ namespace Workshop.Greataxe
     /// Steps the player preview frame by frame the way the game plays a player: in an attack the clips' own Speed events
     /// set the animator's speed (the game's CharacterAnimEvent.Speed), out of one it is 1 again; root motion moves the
     /// player through the swings; the left fist is kept on the haft (<see cref="GreataxeGrip"/>, as the mod does); a
-    /// sound cue at each swing's trail (by combo step) and at each hit. Marks the timeline,
+    /// sound cue at each swing's trail and at each hit. Marks the timeline,
     /// names the camera for each part and records every frame (<see cref="XbowCache"/>, <see cref="HeadsmanRigid"/>).
     /// </summary>
     public sealed class GreataxeSteps
@@ -26,8 +26,11 @@ namespace Workshop.Greataxe
             public float[] summonSpot = new float[0], summonTargets = new float[0];
         }
 
-        /// <summary>The sound at each combo step's swing.</summary>
-        public static readonly string[] Swings = { "g_swing", "g_spin", "g_overhead" };
+        /// <summary>
+        /// The sounds: the Battleaxe's own swing at every step's trail (the game plays that one sound for all three of its
+        /// swings, and for the wooden greatsword's whirl) and its hit at each hit (sfx.py PLAYER).
+        /// </summary>
+        public const string SwingCue = "g_swing", HitCue = "g_hit";
 
         private const float Dt = 1f / GreataxePreview.Fps;
         private readonly GameObject player;
@@ -170,9 +173,9 @@ namespace Workshop.Greataxe
                 if (e.functionName == "Speed")
                     animator.speed = e.floatParameter;
                 else if (e.functionName == "TrailOn")
-                    sounds.Add((frame, Swings[level]));
+                    sounds.Add((frame, SwingCue));
                 else if (GreataxeCombo.IsHit(e))
-                    sounds.Add((frame, "impact_hit"));
+                    sounds.Add((frame, HitCue));
             }
         }
 

@@ -15,9 +15,9 @@ namespace Workshop.Greataxe
     ///   Unity -batchmode -projectPath unity -executeMethod Workshop.Greataxe.GreataxePreview.Run -workshopOut &lt;folder&gt;
     /// (assets/ecp_headsman/build.ps1 -Player). The game's player (reference, preview only) holds the greataxe on
     /// RightHand_Attach (<see cref="GreataxeModel"/>), a training dummy in front: each stance and movement the game
-    /// plays for a Battleaxe-type weapon, a jump, then the combo (<see cref="GreataxeCombo"/>) with each overhead, from the
-    /// front and then from the side. Baked as the headsman's is: the body as a point cache, the axe and dummy rigid,
-    /// sequence.json with the cameras and sound cues.
+    /// plays for a Battleaxe-type weapon, a jump, then the combo (<see cref="GreataxeCombo"/>) from over the shoulder (as
+    /// the game's camera sees it), from the front and from the side; with -workshopCombo only the combo. Baked as the
+    /// headsman's is: the body as a point cache, the axe and dummy rigid, sequence.json with the cameras and sound cues.
     /// </summary>
     public static class GreataxePreview
     {
@@ -48,10 +48,9 @@ namespace Workshop.Greataxe
             GameObject axe = GreataxeModel.Hang(player);
             GameObject dummy = HeadsmanProps.Dummy("dummy_front", DummyAt, 180f);
             Animator animator = GreataxePlayer.Animator(player);
-            AnimatorController[] combos = GreataxeCombo.Overheads
-                .Select(o => GreataxeCombo.Controller($"{ReferenceAssets.Folder}/{GreataxePlayer.Subfolder}/greataxe_{o.name}.controller", GreataxeCombo.Clips(o.path)))
-                .ToArray();
-            Prepare(animator, combos[0]);
+            AnimatorController combo = GreataxeCombo.Controller($"{ReferenceAssets.Folder}/{GreataxePlayer.Subfolder}/greataxe.controller",
+                GreataxeCombo.Clips(GreataxeCombo.Overhead));
+            Prepare(animator, combo);
             var cache = new XbowCache(player.GetComponentsInChildren<SkinnedMeshRenderer>(true));
             var rigid = new HeadsmanRigid();
             foreach (Renderer renderer in axe.GetComponentsInChildren<Renderer>())
@@ -59,7 +58,7 @@ namespace Workshop.Greataxe
             foreach (Renderer renderer in dummy.GetComponentsInChildren<Renderer>())
                 rigid.Add(renderer, renderer.name);
             var steps = new GreataxeSteps(player, animator, new GreataxeGrip(player, axe.transform.GetChild(0)), cache, rigid);
-            Play(steps, combos);
+            Play(steps, combo, Environment.GetCommandLineArgs().Contains("-workshopCombo"));
             cache.Write(folder, Fps);
             rigid.Write(folder);
             steps.Write(folder);
@@ -76,17 +75,19 @@ namespace Workshop.Greataxe
             animator.Update(0f);
         }
 
-        private static void Play(GreataxeSteps steps, AnimatorController[] combos)
+        private static void Play(GreataxeSteps steps, AnimatorController combo, bool comboOnly)
         {
-            steps.Stance("idle", 2.5f, "p_close");
-            foreach (string state in Moving)
-                steps.Stance(state, 2f, "p_close");
-            steps.Stance("idle", 0.8f, "p_close");
-            steps.Jump("p_close");
-            foreach (string camera in new[] { "p_front", "p_side" })
-                for (int i = 0; i < combos.Length; i++)
-                    steps.Combo(combos[i], $"combo: slash, spin, {GreataxeCombo.Overheads[i].name} overhead", camera);
-            steps.Stance("idle", 1f, "p_front");
+            if (!comboOnly)
+            {
+                steps.Stance("idle", 2.5f, "p_close");
+                foreach (string state in Moving)
+                    steps.Stance(state, 2f, "p_close");
+                steps.Stance("idle", 0.8f, "p_close");
+                steps.Jump("p_close");
+            }
+            foreach (string camera in new[] { "p_game", "p_front", "p_side" })
+                steps.Combo(combo, "combo: slash, spin, overhead", camera);
+            steps.Stance("idle", 1f, "p_game");
         }
     }
 }

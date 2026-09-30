@@ -40,6 +40,8 @@ The pipelines that build to the codex live beside it: `blender/workshop/paint.py
 
 ## Rules
 
+- **New assets stay out of the mods.** What is built to the codex is kept in AssetWorkshop and goes into a mod only
+  when the user decides to release it there (workspace rule, `CLAUDE.md` "Always").
 - **Measurements and words only.** A page may quote a game asset's path, name, size, triangle count, texture size,
   shader property, particle value, sound length, loudness or a colour sampled from it. It never embeds or copies the
   game's pixels, meshes or audio. Renders and contact sheets of game assets go to `codex/out/` (gitignored).

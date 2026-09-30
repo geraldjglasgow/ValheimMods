@@ -8,8 +8,8 @@ namespace Workshop.Greataxe
     /// <summary>
     /// How a player swings the Executioner's Greataxe: the game's own player clips put into the Battleaxe's three combo
     /// states (the mod does the same with an override while the greataxe is in hand): the Battleaxe's first swing, a
-    /// slash in front; the greatsword's whirling second swing; then an overhead - the sledge's smash or the Battleaxe's own third swing,
-    /// both previewed - slowed after its hit so the player recovers for <see cref="Recovery"/> seconds. The states and
+    /// slash in front; the greatsword's whirling second swing; then the Battleaxe's own third swing, an overhead (the
+    /// user's pick over the sledge's smash), slowed after its hit so the player recovers for <see cref="Recovery"/> seconds. The states and
     /// their blends are the game's (Player_animator.controller): entered from any state on the trigger
     /// battleaxe_attack0..2 over 0.1, 0.3 and 0.3 s, left for the movement at 90, 80 and 100 % of the clip over 0.4, 0.3
     /// and 0.3 s. The stance and movement are the game's Battleaxe clips (the item is a Battleaxe-type weapon).
@@ -29,12 +29,8 @@ namespace Workshop.Greataxe
         /// </summary>
         public const string Spin = "Characters/Player/model/Greatsword_anim/Greatsword BaseAttack (2).anim";
 
-        /// <summary>The overheads the preview shows, by name.</summary>
-        public static readonly (string name, string path)[] Overheads =
-        {
-            ("sledge", Old + "Sledge-Attack1.anim"),
-            ("battleaxe", "3rd party/RPG Character Animation Pack/Animations/2Hand-Axe/BattleAxe_Combo3.anim"),
-        };
+        /// <summary>The overhead, the combo's third swing.</summary>
+        public const string Overhead = "3rd party/RPG Character Animation Pack/Animations/2Hand-Axe/BattleAxe_Combo3.anim";
 
         /// <summary>The Battleaxe stance and movement: state name, clip.</summary>
         public static readonly (string state, string path)[] Stances =

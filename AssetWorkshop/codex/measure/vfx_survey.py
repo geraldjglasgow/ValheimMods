@@ -164,36 +164,46 @@ def role_entry(role, items):
     """Numbers over every system of one role; items are (effect name, system)."""
     systems = [s for _, s in items]
     total = len(systems)
+    return {"label": vfx_classify.ROLES[role], "systems": total, "stats": _role_stats(systems),
+            "shares": _role_shares(systems), "colour": _role_colour(systems),
+            "examples": [f"{name}: {s['node']}" for name, s in items[:: max(1, total // 8)][:8]]}
+
+
+def _role_stats(systems):
+    stretched = [s["renderer"] for s in systems if (s.get("renderer") or {}).get("mode") == "stretched"]
+    return {"lifetime_s": five(lifetime(s) for s in systems),
+            "size_m": five(vfx_read.mean(s["size"]) for s in systems),
+            "speed_ms": five(vfx_read.mean(s["speed"]) for s in systems),
+            "gravity": five(vfx_read.mean(s["gravity"]) for s in systems),
+            "burst_particles": five(vfx_classify.particles(s)[0] for s in systems if vfx_classify.particles(s)[0]),
+            "rate": five(vfx_classify.particles(s)[1] for s in systems if vfx_classify.particles(s)[1]),
+            "max_particles": five(s["max_particles"] for s in systems),
+            "duration_s": five(vfx_read.number(s["duration"]) for s in systems),
+            "rotation_speed_deg": five(vfx_read.mean(s.get("rotation_life")) for s in systems if s.get("rotation_life")),
+            "noise_strength": five(vfx_read.mean(s["noise"]["strength"]) for s in systems if s.get("noise")),
+            "noise_frequency": five(s["noise"]["frequency"] for s in systems if s.get("noise")),
+            "drag": five(vfx_read.mean(s["limit"]["drag"]) for s in systems if s.get("limit")),
+            "length_scale": five(r.get("length_scale") for r in stretched),
+            "speed_scale": five(r.get("speed_scale") for r in stretched)}
+
+
+def _role_shares(systems):
+    total = len(systems)
     textures = collections.Counter((material(s).get("texture") or "none").rsplit("/", 1)[-1] for s in systems)
     tiles = collections.Counter(tuple(s["sheet"]["tiles"]) for s in systems if s.get("sheet"))
+    shapes = collections.Counter((s.get("shape") or {}).get("type", "none") for s in systems)
+    return {**system_shares(systems), "texture": shares(textures, total, 10),
+            "sheet_tiles": {f"{a}x{b}": round(v / total, 3) for (a, b), v in tiles.most_common(6)},
+            "loop": round(sum(1 for s in systems if s["loop"]) / total, 3), "shape": shares(shapes, total, 8)}
+
+
+def _role_colour(systems):
     additive = [s for s in systems if material(s).get("blend", "").startswith("additive")]
-    return {"label": vfx_classify.ROLES[role], "systems": total,
-            "stats": {"lifetime_s": five(lifetime(s) for s in systems),
-                      "size_m": five(vfx_read.mean(s["size"]) for s in systems),
-                      "speed_ms": five(vfx_read.mean(s["speed"]) for s in systems),
-                      "gravity": five(vfx_read.mean(s["gravity"]) for s in systems),
-                      "burst_particles": five(vfx_classify.particles(s)[0] for s in systems if vfx_classify.particles(s)[0]),
-                      "rate": five(vfx_classify.particles(s)[1] for s in systems if vfx_classify.particles(s)[1]),
-                      "max_particles": five(s["max_particles"] for s in systems),
-                      "duration_s": five(vfx_read.number(s["duration"]) for s in systems),
-                      "rotation_speed_deg": five(vfx_read.mean(s.get("rotation_life")) for s in systems if s.get("rotation_life")),
-                      "noise_strength": five(vfx_read.mean(s["noise"]["strength"]) for s in systems if s.get("noise")),
-                      "noise_frequency": five(s["noise"]["frequency"] for s in systems if s.get("noise")),
-                      "drag": five(vfx_read.mean(s["limit"]["drag"]) for s in systems if s.get("limit")),
-                      "length_scale": five((s.get("renderer") or {}).get("length_scale") for s in systems
-                                           if (s.get("renderer") or {}).get("mode") == "stretched"),
-                      "speed_scale": five((s.get("renderer") or {}).get("speed_scale") for s in systems
-                                          if (s.get("renderer") or {}).get("mode") == "stretched")},
-            "shares": {**system_shares(systems), "texture": shares(textures, total, 10),
-                       "sheet_tiles": {f"{a}x{b}": round(v / total, 3) for (a, b), v in tiles.most_common(6)},
-                       "loop": round(sum(1 for s in systems if s["loop"]) / total, 3),
-                       "shape": shares(collections.Counter((s.get("shape") or {}).get("type", "none") for s in systems), total, 8)},
-            "colour": {"start_rgba_median": median_rows(colour_of(s) for s in systems),
-                       "start_rgba_additive_median": median_rows(colour_of(s) for s in additive),
-                       "alpha_over_life_median": median_rows(alpha_curve(s) for s in systems),
-                       "size_over_life_median": median_rows(size_curve(s) for s in systems),
-                       "curve_times": [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]},
-            "examples": [f"{name}: {s['node']}" for name, s in items[:: max(1, total // 8)][:8]]}
+    return {"start_rgba_median": median_rows(colour_of(s) for s in systems),
+            "start_rgba_additive_median": median_rows(colour_of(s) for s in additive),
+            "alpha_over_life_median": median_rows(alpha_curve(s) for s in systems),
+            "size_over_life_median": median_rows(size_curve(s) for s in systems),
+            "curve_times": [0, 0.1, 0.25, 0.5, 0.75, 0.9, 1]}
 
 
 # ---------------------------------------------------------------- lights, scripts, shaders
