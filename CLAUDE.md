@@ -25,6 +25,7 @@ ValheimMods/
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   AssetWorkshop/     3D assets, effects and sounds from scripts, built to its codex (the game's art, measured)
   DevBridge/         dev-only plugin: drive the running game over localhost HTTP for testing, never shipped
+  AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
 ```
 
 ### The mods
@@ -32,8 +33,8 @@ ValheimMods/
 **Elite Creatures Reborn** (EliteCreaturesReborn): creature stars, mutations, elemental attunements, boss aspects, loot rules, world tier
 progression, retaliation zones and multiplayer scaling. Everything is tunable through the .cfg
 and two YAML rule files, synced from the server and hot reloaded. It was written black-box (see "Developing mods"
-below) and is deliberately not compatible with any other mod's config, save keys or API. Its `CLAUDE.md` has the
-architecture and the test checklist.
+below) and is deliberately not compatible with any other mod's config, save keys or API. Its `CLAUDE.md` is the
+player reference the README links to: mutations, boss aspects, rule file fields and console commands.
 
 **Elite Creatures Pack** (EliteCreaturesPack): new creatures, each with its own fight - the crypt mimic (a crypt
 chest that bites its opener), the Greydwarf Slinger (shoots stones, keeps its distance) and the Rime Giant (a rare
@@ -41,7 +42,9 @@ frost-plated troll asleep on the mountains, whose plates only fire breaks). Mode
 per platform through BundlePrefabs; a .cfg section per creature, synced. Split out of Elite Creatures Reborn on
 2026-09-28 before release: new creatures go here, not into ECR. Neither mod needs the other; with both, ECR rolls
 stars and mutations on them and holds back a dormant mimic's looks (key names only: `ecp_disguised`, `ecr_gen`).
-Design in `EliteCreaturesPack/CLAUDE.md` and `features/`.
+"The skeleton arsenal" is every bone weapon in it: the bone dagger, sword, axe, mace, spear, atgeir, both bows, the
+arrow, the spine, the Bone Crossbow and its blunted bolt, and the Executioner's Greataxe (three bundles; one build,
+`AssetWorkshop/assets/ecp_skel_arsenal/build.ps1`). Design in `EliteCreaturesPack/CLAUDE.md` and `features/`.
 
 **FeastMaster**: configure every food and mead. Global multipliers, a section per food and per mead, and a switch
 that stops food from degrading. Foods and meads are discovered from the item database.
@@ -134,8 +137,9 @@ Every mod has the same shape. New mods copy it from ShipConfig (the smallest) an
     <Mod>-X.Y.Z.zip     the release package, written by pack.ps1 (gitignored)
     thunderstore.toml   tcli publish settings: team, community, categories (no secrets)
   dist/                 build output, the merged <Mod>.dll (gitignored)
-  README.md             the store page: features, install, console commands, files, building
-  CHANGELOG.md          the store changelog: one "## X.Y.Z" section per release, newest first
+  README.md             the store page (Thunderstore Details tab), very short: what it does, features, install,
+                        configuration, links, shout outs; no Building section
+  CHANGELOG.md          the store changelog: one "## X.Y.Z" section per release, newest first, one short line per change
   PLAN.md               design and roadmap while the mod is unfinished
   pack.ps1              the standard packaging script, identical in every mod (source of truth: any mod's copy)
 ```
@@ -144,6 +148,10 @@ Rules that keep the layout standard:
 
 - The mod name is the folder name, the project folder name, the csproj name, the DLL name and the manifest name.
 - Release notes go in `CHANGELOG.md`, never in the README.
+- The README and the changelog are very short and concise: a README of about 250 words besides the standard shout
+  outs (one line per feature, no setting-by-setting lists, no Building section; the .cfg describes every setting), a
+  changelog section of about 100 words (one line per change, what changed and not how). The `valheim-release` skill
+  has the README shape and checks both.
 - Store assets go in `thunderstore/`, nothing store-related at the mod root.
 - Client-only display preferences are bound unsynced so every player decides for themselves; everything that
   changes gameplay is synced and lockable.
@@ -164,7 +172,7 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   another mod, write a behaviour specification: what the player sees, every
   setting and what it does, edge cases. The spec is written from playing, from the other mod's public store page
   and documentation, and from the user's requirements. It is a working document; it is deleted once the mod is
-  verified against it (the README and the mod's `CLAUDE.md` then carry the behaviour).
+  verified against it (the mod's `CLAUDE.md` then carries the behaviour; the README only summarises it).
 - **Never read the other implementation.** No source, decompiled DLL, config file, YAML, save data or API of any
   other mod is read, grepped, quoted or copied. The only code that may be decompiled is the game's own
   `assembly_valheim.dll`, into the scratch folder, to verify signatures. One exception: an integration API a
@@ -194,7 +202,10 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   `<Mod>/.../assets/bundles`, the mod code that uses it) only when the user decides to release it in that mod, and in
   the same change as that release. Concepts, trials, demos and rejected versions never enter a mod, so nothing
   unreleased is pushed with one or left in it as dead code or dead assets; a mod that stops using an asset or its code
-  has both removed. Build and install flags (`-Install`, `--install`) are for that release step only.
+  has both removed. Build and install flags (`-Install`, `--install`) are for that release step only. Until then an
+  asset is tried and balanced in the game through `AssetLab`, a gitignored dev-only mod installed into `LocalTesting`
+  only: its bench embeds the bundle straight from the workshop's `out/` folders and is written like the mod code it
+  will become, so it moves over unchanged when it ships (`AssetLab/README.md`, "Graduating a bench").
 
 ## Building
 
@@ -221,7 +232,8 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
 ## Releasing
 
 The standard process, the same for every mod. Thunderstore rejects a version that already exists, so every upload
-needs a new version, and the number must match everywhere the mod records it. `pack.ps1` enforces that.
+needs a new version, and the number must match everywhere the mod records it. `pack.ps1` enforces that. The
+`valheim-release` skill walks these steps; its `release_status.py` shows which mods have changes since their upload.
 
 1. **Write the release notes.** Add a `## X.Y.Z` section at the top of the mod's `CHANGELOG.md`. Versions follow
    semantic versioning (https://semver.org/): `MAJOR.MINOR.PATCH`, three numbers, no prefix or suffix. Bump PATCH
@@ -301,7 +313,7 @@ variable `NEXUS_API_KEY`; never in a file or the chat. Confirm with the user bef
 
 The page text (summary and BBCode description) cannot be set through the API. Each mod keeps the current text in
 `<Mod>/thunderstore/nexus-description.txt`; when the README changes, update that file too and the user pastes it into
-the page's edit form.
+the page's edit form. Nexus accepts a summary of at most 350 characters.
 
 The raw API behind tcli is documented at `https://thunderstore.io/api/docs/` (initiate-upload, finish-upload,
 submit under `/api/experimental/`), only needed if tcli stops working.

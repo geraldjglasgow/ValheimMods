@@ -12,6 +12,9 @@
 # Game and BepInEx assemblies copied in for building
 **/lib/
 
+# Asset Lab: the dev-only mod that tests and balances unreleased workshop assets in game, kept local (AssetLab/README.md)
+AssetLab/
+
 # Third-party mods patched locally for the test profile
 patched-plugins/
 .quarantine/
