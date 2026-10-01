@@ -17,6 +17,11 @@ namespace EliteCreaturesReborn.Rules
 # last entry repeats. Biome names: Meadows, BlackForest, Swamp, Mountain, Plains,
 # Mistlands, AshLands, DeepNorth, Ocean.
 
+# How hard creatures get as the world's bosses fall: Easy, Medium, Hard, Very Hard
+# or Extreme. Custom uses the biomes' star and mutation rows below with the world
+# tier boosts instead; a file without this line is Custom.
+difficulty: Medium
+
 # Connected players use the server's copy of this file.
 lock to server: true
 
@@ -44,15 +49,17 @@ defaults:
   large star power: 1
 
   # Multipliers by star count: size, health, damage, attack speed, move speed, loot.
+  # 6 to 8 stars happen only on Extreme.
   star power:
-    growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30]
-    hp:          [1,    1.4,  1.95, 2.6,  3.3,  4.0]
-    attack:      [1,    1.2,  1.45, 1.75, 2.1,  2.5]
-    swing speed: [1,    1.02, 1.05, 1.08, 1.12, 1.16]
-    speed:       [1,    1,    1.03, 1.06, 1.1,  1.15]
-    drops:       [1,    1,    1.5,  2,    2.5,  3]
+    growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45]
+    hp:          [1,    1.4,  1.95, 2.6,  3.3,  4.0,  4.7,  5.4,  6.1]
+    attack:      [1,    1.2,  1.45, 1.75, 2.1,  2.5,  2.9,  3.3,  3.7]
+    swing speed: [1,    1.02, 1.05, 1.08, 1.12, 1.16, 1.19, 1.22, 1.25]
+    speed:       [1,    1,    1.03, 1.06, 1.1,  1.15, 1.18, 1.21, 1.24]
+    drops:       [1,    1,    1.5,  2,    2.5,  3,    3.5,  4,    4.5]
 
-  # Chance of each mutation by star count. Every mutation rolls separately.
+  # Chance of each mutation by star count. On Custom every mutation rolls separately;
+  # on a difficulty these only decide which one a mutated creature gets.
   mutation chance: [2.5, 3.5, 5, 6, 7.5, 10]
 
   # Mutations with a curve of their own instead of the one above.
@@ -126,8 +133,9 @@ creatures:
 #        amount: [1, 1]
 #        per star: true
 
-# A biome overrides only what it names; the rest comes from defaults. star chances:
-# the chance of each star count, summing to 100; six entries allow up to five stars.
+# A biome overrides only what it names; the rest comes from defaults. star chances
+# (Custom only): the chance of each star count, summing to 100; six entries allow
+# up to five stars.
 # An unlisted or modded biome takes the Meadows row.
 biomes:
   - match: Meadows

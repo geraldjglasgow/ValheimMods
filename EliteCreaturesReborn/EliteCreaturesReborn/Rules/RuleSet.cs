@@ -13,6 +13,9 @@ namespace EliteCreaturesReborn.Rules
     /// </summary>
     public sealed class RuleSet
     {
+        /// <summary>The <c>difficulty:</c> line; Custom (the file's own rows) when the file has none.</summary>
+        public Difficulty Difficulty = Difficulty.Custom;
+
         public bool LockToServer = true;
         public int MaxMutations = 1;
         public BiomeRules Defaults = new BiomeRules();

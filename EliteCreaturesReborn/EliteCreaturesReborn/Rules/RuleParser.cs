@@ -31,6 +31,7 @@ namespace EliteCreaturesReborn.Rules
             }
             RuleSet set = new RuleSet
             {
+                Difficulty = ReadDifficulty(root, result),
                 LockToServer = YamlRead.Bool(root, "lock to server", true, result.Errors),
                 MaxMutations = Math.Max(0, YamlRead.Int(root, "max mutations", 1, result.Errors)),
             };
@@ -42,9 +43,48 @@ namespace EliteCreaturesReborn.Rules
             ReadLoot(set, root, result);
             ReadCreatures(set, root, result);
             ReadBiomes(set, root, result);
+            return Finish(set, result);
+        }
+
+        // The steps that need the whole file read: the star fallback for unlisted biomes, Extreme's longer star lines.
+        private static Result Finish(RuleSet set, Result result)
+        {
             SeedStarFallback(set);
+            PadStarPower(set);
             result.Rules = set;
             return result;
+        }
+
+        // features/difficulty.md: the `difficulty:` line at the top; none = Custom, so a file from before 3.14 plays as before.
+        private static Difficulty ReadDifficulty(YamlMappingNode root, Result result)
+        {
+            YamlNode? node = YamlRead.Child(root, "difficulty");
+            if (node == null)
+            {
+                return Difficulty.Custom;
+            }
+            string? text = YamlRead.Scalar(root, "difficulty");
+            if (DifficultyNames.TryParse(text, out Difficulty difficulty))
+            {
+                return difficulty;
+            }
+            YamlRead.AddError(result.Errors, node, $"'{text}' is not a difficulty: {DifficultyNames.Choices}");
+            return Difficulty.Custom;
+        }
+
+        // Extreme rolls up to 8 stars: star power lines written for five continue by the built-in steps.
+        private static void PadStarPower(RuleSet set)
+        {
+            if (set.Difficulty != Difficulty.Extreme)
+            {
+                return;
+            }
+            StarPower reference = RuleDefaults.BaselineStarPower();
+            set.Defaults.Star.PadFrom(reference);
+            foreach (BiomeRules biome in set.Biomes.Values)
+            {
+                biome.Star.PadFrom(reference);
+            }
         }
 
         /// <summary>An unlisted biome takes the Meadows row for stars; copy it onto the defaults so the fallback uses it.</summary>

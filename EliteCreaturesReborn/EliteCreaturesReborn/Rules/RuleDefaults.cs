@@ -72,16 +72,18 @@ namespace EliteCreaturesReborn.Rules
                 && fields.TryGetValue(field, out string value) ? value : "";
         }
 
-        private static StarPower BaselineStarPower()
+        internal static StarPower BaselineStarPower()
         {
             return new StarPower
             {
-                Growth = new[] { 0.06f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f },
-                Hp = new[] { 1f, 1.4f, 1.95f, 2.6f, 3.3f, 4.0f },
-                Attack = new[] { 1f, 1.2f, 1.45f, 1.75f, 2.1f, 2.5f },
-                SwingSpeed = new[] { 1f, 1.02f, 1.05f, 1.08f, 1.12f, 1.16f },
-                Speed = new[] { 1f, 1f, 1.03f, 1.06f, 1.1f, 1.15f },
-                Drops = new[] { 1f, 1f, 1.5f, 2f, 2.5f, 3f },
+                // 6-8 stars (Extreme only) continue each line by its 5th star's step; the speeds by +0.03 so
+                // nothing outruns a player (features/difficulty.md section 6).
+                Growth = new[] { 0.06f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f },
+                Hp = new[] { 1f, 1.4f, 1.95f, 2.6f, 3.3f, 4.0f, 4.7f, 5.4f, 6.1f },
+                Attack = new[] { 1f, 1.2f, 1.45f, 1.75f, 2.1f, 2.5f, 2.9f, 3.3f, 3.7f },
+                SwingSpeed = new[] { 1f, 1.02f, 1.05f, 1.08f, 1.12f, 1.16f, 1.19f, 1.22f, 1.25f },
+                Speed = new[] { 1f, 1f, 1.03f, 1.06f, 1.1f, 1.15f, 1.18f, 1.21f, 1.24f },
+                Drops = new[] { 1f, 1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f, 4.5f },
             };
         }
 

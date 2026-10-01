@@ -4,6 +4,51 @@ The store page (`README.md`) keeps one line per feature and links here. The sect
 unchanged on 2026-09-30: what each mutation and boss aspect does, the fields of the rule file `creature_rules.yml`,
 respawning, and the console commands with their arguments. Design notes are in `features/`.
 
+## Difficulty
+
+The first setting in `creature_rules.yml`, `difficulty:`, picks how many stars and mutations creatures get as the
+world's bosses fall: `Easy`, `Medium`, `Hard`, `Very Hard` or `Extreme`. A new rule file starts on Medium. A file
+without the line (any file written before 3.14.0) is `Custom`: the biomes' own `star chances` and `mutation chance`
+rows with the world tier's `star boost` and `mutation boost`, exactly as before. `elite tier` shows the difficulty
+and what it gives the biome you stand in.
+
+On every difficulty the biome you're entering is the gentlest. A biome you've cleared gets harder with every boss
+killed after it, so by the end of the game the Meadows is the hardest place, not the Deep North. Biomes you haven't
+reached match the one you're entering. Each difficulty is harder than the one below it in every biome at every
+world tier.
+
+**Stars.** The most stars a creature can have:
+
+| Difficulty | Biome you're entering | Each boss killed after a biome | Ocean |
+|---|---|---|---|
+| Easy | 1 | +1, up to 4 | 2 |
+| Medium | 2 | +1, up to 5 | 2, then 3 once Moder is dead |
+| Hard | 3 | +1, up to 5 | 3, then 4 once Moder is dead |
+| Very Hard | 4 | +1, up to 5 | 4, then 5 once Moder is dead |
+| Extreme | 5 at world tiers 0-1, 6 at 2-3, 7 at 4-5, 8 at 6-7, in every biome you've reached | | one lower than that, never below 5 (also biomes not reached yet) |
+
+Under that cap most creatures are plain and each extra star is rarer than the one before it (at cap 3: 75 in 100
+plain, 15 one star, 7 two, 3 three). Harder difficulties lean toward more stars, every boss killed after a biome
+leans it 5% further, and Very Hard and Extreme lean further with every boss killed anywhere.
+
+**Mutations.** The share of creatures with no stars that carry a mutation; each star adds a quarter of it, never above
+100%. Every boss killed after a biome closes a fifth of the gap from the start to the ceiling.
+
+| Difficulty | Biome you're entering | Ceiling | Ocean |
+|---|---|---|---|
+| Easy | 10% | 35% | 10% |
+| Medium | 25% | 55% | 25%, then 30% once Moder is dead |
+| Hard | 30% | 65% | 30%, then 35% once Moder is dead |
+| Very Hard | halfway between Hard and Extreme everywhere: 37.5%, +3.5 per boss killed | 81.5% | halfway too |
+| Extreme | 45%, +7 per boss killed | 98% | the biome you're entering |
+
+A mutated creature carries one mutation, picked by its biome's leanings: the biome's `mutation chance` and
+`mutation chances` rows (and the creature's own entry under `creatures:`), so the Swamp still breeds Miasmic and the
+Ashlands Bloated, and `mutations enabled` still wins. `max mutations` and the world tier boosts apply to Custom only.
+
+**6 to 8 stars** happen only on Extreme. The `star power` lines have nine entries; a file whose lines stop at five
+stars continues them by the built-in steps (an 8-star creature has about 1.5 times a 5-star's health and damage).
+
 ## Mutations
 
 Thirteen, one per creature by default, each with its own colour and its own name on the nameplate.
@@ -168,7 +213,7 @@ creatures:
 `mutation power` changes only the fields it names. `mutation chances` replaces the named mutation's curve.
 `mutation chance` replaces the creature's default curve, but any mutation with its own curve in the biome (or in
 `defaults`, like Devouring and Gilded) keeps it, so set that mutation to `[0]` under `mutation chances` to stop it.
-`mutations enabled` still wins, the world tier still raises the chances, and bosses ignore these entries. Two
+`mutations enabled` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
 entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with three: Troll
 and Lox raise Cloaked's `reveal distance` to 15, and Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
 never Cloaked.

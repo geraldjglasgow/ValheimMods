@@ -166,7 +166,7 @@ namespace EliteCreaturesReborn.Runtime
                     ? _forcedAspect ?? AspectRoller.Roll(PrefabName, null) : Aspect.None;
                 return new CreatureTraits(stars, aspect);
             }
-            return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current());
+            return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current(), biome);
         }
 
         /// <summary>

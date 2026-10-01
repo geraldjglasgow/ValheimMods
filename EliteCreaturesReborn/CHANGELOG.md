@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.14.0
+
+- New `difficulty:` line at the top of the rule file: Easy, Medium, Hard, Very Hard or Extreme.
+- On a difficulty, the biome you enter starts gentle and cleared biomes harden with every later boss.
+- Extreme allows up to 8 stars; `star power` lines have nine entries.
+- New rule files start on Medium; existing files keep today's rules (Custom).
+- `elite tier` shows the difficulty and what it gives the biome you stand in.
+
 ## 3.13.4
 
 - A new install's rule file has short comments; the full reference is linked at its top.

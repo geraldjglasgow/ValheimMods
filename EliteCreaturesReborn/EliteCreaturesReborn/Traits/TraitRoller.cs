@@ -11,12 +11,17 @@ namespace EliteCreaturesReborn.Traits
     /// distribution, then every enabled mutation rolled independently at its own biome-and-star chance. A creature
     /// that fails every roll is plain; one that passes several carries several. `max mutations` caps the set. The world
     /// tier leans both rolls: its star boost multiplies each star count's weight once per star, and its mutation boost
-    /// multiplies every mutation chance, so a hardened world keeps each biome's character but pushes it upward.
+    /// multiplies every mutation chance, so a hardened world keeps each biome's character but pushes it upward. That is
+    /// the Custom difficulty; under a preset the roll is <see cref="PresetRoller"/>'s instead.
     /// </summary>
     public static class TraitRoller
     {
-        public static CreatureTraits Roll(BiomeRules rules, RuleSet ruleSet, int tier)
+        public static CreatureTraits Roll(BiomeRules rules, RuleSet ruleSet, int tier, Heightmap.Biome biome)
         {
+            if (ruleSet.Difficulty != Difficulty.Custom)
+            {
+                return PresetRoller.Roll(rules, ruleSet, tier, biome);
+            }
             int stars = RollStars(rules.StarChances, ruleSet.Tiers.StarBoostAt(tier));
             int mask = RollMutations(rules, stars, ruleSet, ruleSet.Tiers.MutationBoostAt(tier));
             return new CreatureTraits(stars, mask) { Tier = tier };
@@ -25,9 +30,11 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>A plain draw from the distribution, no tier - the boss table's roll.</summary>
         public static int RollStars(BiomeRules rules) => RollStars(rules.StarChances, 1f);
 
-        private static int RollStars(float[] chances, float boost)
+        private static int RollStars(float[] chances, float boost) => PickWeighted(Boosted(chances, boost));
+
+        /// <summary>An index drawn in proportion to its weight (weights at or below 0 never win); 0 when all are 0.</summary>
+        internal static int PickWeighted(float[] weights)
         {
-            float[] weights = Boosted(chances, boost);
             float total = 0f;
             foreach (float weight in weights)
             {

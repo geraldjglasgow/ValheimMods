@@ -33,6 +33,36 @@ namespace EliteCreaturesReborn.Rules
             return line[index];
         }
 
+        /// <summary>
+        /// Lengthens every line shorter than <paramref name="reference"/>'s, continuing it by the reference's own steps:
+        /// an Extreme world's 6-8 stars on a file written for five get the built-in increments on top of the file's own
+        /// 5-star values (features/difficulty.md section 6). Longer lines are left alone.
+        /// </summary>
+        public void PadFrom(StarPower reference)
+        {
+            Growth = Pad(Growth, reference.Growth);
+            Hp = Pad(Hp, reference.Hp);
+            Attack = Pad(Attack, reference.Attack);
+            SwingSpeed = Pad(SwingSpeed, reference.SwingSpeed);
+            Speed = Pad(Speed, reference.Speed);
+            Drops = Pad(Drops, reference.Drops);
+        }
+
+        private static float[] Pad(float[] line, float[] reference)
+        {
+            if (line == null || line.Length == 0 || line.Length >= reference.Length)
+            {
+                return line!;
+            }
+            float[] longer = new float[reference.Length];
+            line.CopyTo(longer, 0);
+            for (int i = line.Length; i < longer.Length; i++)
+            {
+                longer[i] = longer[i - 1] + (reference[i] - reference[i - 1]);
+            }
+            return longer;
+        }
+
         public StarPower Clone()
         {
             return new StarPower

@@ -13,8 +13,8 @@ world tiers:
   enabled: true
   # The world key each boss sets when it dies. `elite tier` lists every boss's key.
   bosses: [defeated_eikthyr, defeated_gdking, defeated_bonemass, defeated_dragon, defeated_goblinking, defeated_queen, defeated_fader]
-  # By tier, from tier 0. star boost multiplies each star count's weight once per
-  # star; mutation boost multiplies every mutation chance.
+  # Custom only (a difficulty has its own): by tier, from tier 0. star boost multiplies
+  # each star count's weight once per star; mutation boost multiplies every mutation chance.
   star boost:     [1, 1.1,  1.2, 1.3,  1.4, 1.5,  1.6, 1.7]
   mutation boost: [1, 1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2]
 
