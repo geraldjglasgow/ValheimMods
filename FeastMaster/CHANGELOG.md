@@ -1,62 +1,59 @@
 # Changelog
 
+## 4.6.1
+
+- Shorter store page and changelog; nothing changes in game.
+
 ## 4.6.0
 
-- Food Slots: how many foods a player can have active at once, 1 to 5 (the game's 3 by default). The HUD shows
-  exactly that many slots. Lowering it keeps extra foods, and their slots, until they run out.
+- New `Food Slots`: 1 to 5 foods active at once (the game's 3 by default); the HUD shows that many slots.
+- Lowering it keeps extra foods until they run out.
 
 ## 4.5.0
 
-- Auto Eat: a food that runs out is replaced by another of the same from the inventory. The server allows it
-  (`Allow Auto Eat`, off by default); each player can turn it off (`Auto Eat` in `8. Display`).
-- Rested: `Rested Duration`, `Rested Duration Per Comfort` and the rested stamina, health and eitr regeneration, in
-  `2. Stamina Regeneration`. Defaults are the game's values.
+- Auto Eat: a food that runs out is replaced by another of the same from the inventory.
+- The server allows it (`Allow Auto Eat`, off by default); each player can turn it off (`Auto Eat` in `8. Display`).
+- Rested: `Rested Duration`, `Rested Duration Per Comfort` and the rested regeneration, in `2. Stamina Regeneration`.
 - A mead's `Duration` is also its cooldown; its description now says so.
 
 ## 4.4.0
 
-- Feasts: `Feast Servings` in `9. Kitchen` sets how many servings a placed feast holds. A feast already eaten from
-  keeps the servings it has left.
-- Every feast's food gets a food section, even when the game does not list it as a consumable.
-- Faster world loading: the cooking station sections no longer re-apply every food value once per entry.
+- `Feast Servings` in `9. Kitchen`: how many servings a placed feast holds; started feasts keep what they have left.
+- Every feast's food gets a food section.
+- Faster world loading.
 
 ## 4.3.0
 
-- Cooking: every cooking station and oven gets its own section with the cook time of each recipe, and `9. Kitchen`
-  gets `Cook Time Multiplier` for all of them and `Food Can Burn`. Defaults are the game's values; edits reach food
-  already on the fire.
-- Section `9. Fermenter` is now `9. Kitchen`. Its values carry over.
+- Cooking: a section per cooking station and oven with each recipe's cook time; edits reach food already on the fire.
+- New `Cook Time Multiplier` and `Food Can Burn` in `9. Kitchen`.
+- Section `9. Fermenter` is now `9. Kitchen`; its values carry over.
 
 ## 4.2.0
 
-- New `9. Fermenter`: `Fermentation Time` and `Batch Yield`. Both default to the game's values, sync from the server
-  and apply to barrels already brewing.
+- New `9. Fermenter`: `Fermentation Time` and `Batch Yield`, applying to barrels already brewing.
 
 ## 4.1.0
 
-- Config edits now reach items already picked up, foods already eaten and a mead currently running.
-- Server sync moved to Charter, our own library. Existing config files work unchanged.
-- Version mismatch refuses the join with a named reason and a code in both logs.
-- New console command `charter`: `status`, `diff`, `versions`.
-- Renamed: `Steady Regeneration` → `Continuous Food Healing`, `Extra Stamina From Food Only` → `Count Food
-  Stamina Only`, `Regen Per 10 Extra Stamina` → `Regen Per Extra Stamina Point` (a former 1 becomes 0.1). Old
-  values carry over automatically.
+- Config edits reach items already picked up, foods already eaten and a running mead.
+- Server sync moved to Charter, our own library; config files work unchanged.
+- A version mismatch refuses the join with a named reason.
+- New console command `charter` (`status`, `diff`, `versions`).
+- Renamed `Steady Regeneration` to `Continuous Food Healing` and `Extra Stamina From Food Only` to `Count Food
+  Stamina Only`.
+- Renamed `Regen Per 10 Extra Stamina` to `Regen Per Extra Stamina Point` (a former 1 becomes 0.1). Old values carry
+  over.
 
 ## 4.0.0
 
-- Configured values apply at load and on every change, so tooltips show them before the food is eaten.
-- Config reorganised into numbered global sections above per-item sections. Old values carry over.
+- Config reorganised into numbered sections above the per-item ones; old values carry over.
+- Configured values show on tooltips before eating and apply on every change.
 - New `Degradation Curve` and `Eat Again At`.
-- New `1. Health Regeneration` — continuous food healing.
-- Vigor: every food gives a stamina regen bonus, shown on the tooltip. Defaults to vanilla.
-- New `2. Stamina Regeneration` — multipliers, delay, bar-level curve, extra-stamina regen, sneak bonus,
-  encumbered and swimming regen.
-- New `3. Eitr Regeneration` — Eitr Vigor, multiplier, delay, curve, blocking factor.
-- New `4. Stamina Costs` — a multiplier per drain, out-of-combat multipliers, skill discount, drowning damage.
-- New `5. Base Values`, `6. Skills`, `7. World Rates`.
-- New `8. Display`, per player: hide health/stamina/eitr numbers, food timers.
-- Per mead: health, stamina and eitr regen multipliers, run and jump stamina modifiers.
-- Every new setting defaults to vanilla, syncs from the server, locks and hot reloads.
+- Vigor: every food gives a stamina regen bonus, shown on the tooltip.
+- New `1. Health Regeneration` (continuous food healing), `2. Stamina Regeneration`, `3. Eitr Regeneration` (Eitr
+  Vigor).
+- New `4. Stamina Costs`, `5. Base Values`, `6. Skills`, `7. World Rates` and per-player `8. Display`.
+- Per mead: regen multipliers and run and jump stamina modifiers.
+- Every new setting defaults to vanilla, is synced and hot reloads.
 
 ## 3.3.5
 
@@ -68,38 +65,38 @@
 
 ## 3.3.3
 
-- Rebuilt on the rewritten shared configuration libraries. No behaviour change.
+- Rebuilt on the rewritten shared configuration libraries; no behaviour change.
 - MIT licence added.
 
 ## 3.3.2
 
-- Fixed a frame rate loss from the shared library's exception-tagging finalizer.
+- Fixed: a frame rate loss.
 
 ## 3.3.1
 
-- Fixed a dedicated server hanging in an endless config-reload loop.
-- Config entries written once instead of once per entry, removing a long menu freeze with many modded consumables.
+- Fixed: a dedicated server hung in an endless config reload.
+- Fixed: a long menu freeze with many modded consumables.
 
 ## 3.3.0
 
 - Updated for the current Valheim version.
 - Jotunn no longer required.
-- `Lock Configuration` now actually locks clients.
+- Fixed: `Lock Configuration` now locks clients.
 - Meads detected automatically and matched by status effect.
 - Disable Food Degradation no longer rewrites game code.
 
 ## 3.2.0
 
-- Fixed disable food degradation.
+- Fixed: disable food degradation.
 
 ## 3.1.1
 
-- Fixed icon.
+- Fixed: the icon.
 
 ## 3.1.0
 
 - Config changes apply without a restart.
-- Values applied at consumption time, for multiplayer.
+- Values applied when consumed, for multiplayer.
 
 ## 3.0.0
 
@@ -119,7 +116,7 @@
 
 ## 2.1.0
 
-- Fixed incompatibility with a new Valheim version.
+- Fixed: incompatibility with a new Valheim version.
 
 ## 2.0.0
 

@@ -110,7 +110,9 @@ against the game assemblies and checks the injected parameter names; run it afte
 food prefab (seven entries), one per mead prefab (nine entries) and one per cooking station prefab (one entry per
 recipe, keyed by the raw item's prefab name). BepInEx writes sections sorted by name; digits
 sort before letters, so the numbered sections come first and the items follow alphabetically. Keys and defaults
-are listed in `README.md`. Renames from 3.3.x with migration: `General/Lock Configuration` to `0. Global Settings`,
+are described in the .cfg itself (each entry's description) and bound in the settings classes (`FeastMasterData`,
+`MeadEffectConfig`, `Settings`, `SettingsMore`, `SettingsKitchen`, `SettingsEating`, `Rested`, `CookTimes`); the README
+names features only. Renames from 3.3.x with migration: `General/Lock Configuration` to `0. Global Settings`,
 `0Meads_<prefab>` to `<prefab>`. Renames from 4.0.0 with migration (same section, new key; the three settings named
 in the 4.1.0 changelog): `Continuous Food Healing`, `Count Food Stamina Only` and `Regen Per Extra Stamina Point`,
 whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migration: section `9. Fermenter` to
