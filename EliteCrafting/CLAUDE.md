@@ -182,3 +182,136 @@ id field by field; maps merge by key; other lists and scalars are replaced; a ke
 the family and keep the previous rules; at startup the author falls back to the built-in defaults alone and publishes
 that. Sync: each family is one Charter article (the file texts); a bound player builds from the built-in defaults plus
 the server's files.
+
+## Player reference
+
+The store README links here for the full reference. Moved unchanged from the README on 2026-09-30, when the README
+was cut to the store's short shape; keep it in step with the code and the default YAML.
+
+### Stones
+
+Pick up a stack of stones in the inventory and click it onto an item in your own inventory (not in an open chest).
+One stone is used per success. A stone dropped on another stone stacks or swaps as usual. The Stone of Unmaking and the
+Serpent Stone cannot be undone and ask first: hold Shift while you click (or switch `Confirm destructive stones` to a
+dialog).
+
+| Stone | Works on | Does | Drops from |
+|---|---|---|---|
+| Stone of Awakening | Common | Makes the item Uncommon with one affix | everywhere; Eikthyr |
+| Stone of Ascension | Uncommon | Makes it Rare, keeps its affixes and adds to Rare's minimum | Black Forest and later; the Elder |
+| Stone of Exaltation | Rare | Makes it Epic, keeping its affixes | Mountain and later; Moder, Yagluth |
+| Stone of Transcendence | Epic | Makes it Legendary, keeping its affixes | Mistlands and later; the Queen, the Fader |
+| Stone of Apotheosis | Legendary | Makes it Mythic, keeping its affixes | Ashlands, very rare; sometimes the Fader |
+| Lesser / Greater Stone of Growth | Uncommon, Rare / Epic and up | Adds one affix, if the rarity has room | Black Forest / Mountain and later |
+| Lesser / Greater Stone of Turmoil | Uncommon, Rare / Epic and up | Removes one random affix and rolls a new, different one | everywhere / Mountain and later |
+| Lesser / Greater Stone of Upheaval | Uncommon, Rare / Epic and up | Rerolls every affix, keeping the rarity | Black Forest / Mountain and later |
+| Lesser / Greater Stone of Perfection | Uncommon, Rare / Epic and up | Rerolls the numbers, keeping the affixes | Swamp / Plains and later |
+| Lesser / Greater Stone of Severing | Uncommon, Rare / Epic and up | Removes one random affix (not below the rarity's minimum) | Black Forest / Mountain and later |
+| Stone of Unmaking | any magic item | Strips it back to Common; Honing, Tempering and a pending sigil stay | everywhere |
+| Serpent Stone | any magic item | Corrupts it and **seals** it for good, with one of five outcomes: nothing more, an extra affix past the cap, a chaotic reroll that ignores tier limits, one rarity up (a 7th affix on a Mythic) or one rarity down | Swamp and later; Bonemass |
+| Stone of Binding | any magic item | Locks one random affix: it survives Turmoil, Upheaval, Perfection and Severing. One at a time | Plains and later; Yagluth |
+| Stone of Chance | Common | Turns it into a random rarity: 50% Uncommon, 30% Rare, 15% Epic, 5% Legendary, never Mythic | everywhere |
+| Stone of Reflection | any magic item | Makes a copy, affixes and bonuses included; the copy is sealed | astronomically rare, Mistlands and later |
+| Honing Stone | weapons | +1% damage per use, up to +10% | everywhere |
+| Tempering Stone | armor, capes, shields | +1% armor (block on a shield) per use, up to +10% | everywhere |
+| Sigil of Preservation | any item | The next reroll-type stone leaves the highest-tier affix untouched | Mountain and later |
+| Sigils of War, Warding, Fortune | any item | The next added affix comes from offense, defense or utility | Swamp and later |
+| Sigil of Culling | any item | The next removal takes the lowest-tier affix instead of a random one | Swamp and later |
+
+A sigil sits on the item as "Pending" until a stone it steers uses it; one at a time. A sealed item takes no stone,
+essence or sigil again. Every stone's odds, costs and the rarities it accepts are in `EliteCrafting_economy.yml`.
+
+A refusal says why, for example "The Stone of Ascension does not work on Rare items", "This item cannot hold another
+affix", "No affix can roll on this item", or "Unequip this item first" when the server does not allow changing
+equipped items.
+
+### Essences
+
+Sixteen essences, a Lesser and a Greater for each of eight families. An essence rerolls a magic item like a Stone of
+Upheaval (a bound affix stays), and **one of the new affixes always comes from its family**. A Lesser essence works on
+Uncommon and Rare items; a Greater one works on every magic rarity and rolls its family affix at the highest tier the
+item allows. The essence's tooltip lists the affixes it can guarantee.
+
+| Family | Biome | Drops from | Its affixes lean toward |
+|---|---|---|---|
+| Storm | Meadows | Meadows creatures, Eikthyr | lightning, speed, jumping, parries |
+| Grove | Black Forest | Black Forest creatures, the Elder | blunt damage, woodcutting, regeneration, thorns, standing firm |
+| Venom | Swamp | Swamp creatures, Bonemass | poison, leeching, cleansing, wading |
+| Frost | Mountain | Mountain creatures, Moder | frost, cold, climbing, falling, stamina |
+| Battle | Plains | Plains creatures, Yagluth | raw damage, armor, blocking, carrying |
+| Seidr | Mistlands | Mistlands creatures, the Queen | eitr, magic, runes, the mist |
+| Ember | Ashlands | Ashlands creatures, the Fader | fire, heat, light |
+| Tide | Ocean | serpents | the sea: sailing, swimming, fishing, sea creatures |
+
+Each boss always drops a Lesser essence of its family and sometimes a Greater one. Families are configurable in
+`essence_families`.
+
+### Salvage
+
+Hover a magic item in your own inventory and press **Shift + End** (`8 - Salvage / Salvage key`; without Shift it only
+asks, or it follows your `Confirm destructive stones` mode). The item is ground into **two shards** of the ascension
+stone that made its rarity: an Uncommon into Shards of Awakening, a Rare into Shards of Ascension, up to Mythic and the
+Shards of Apotheosis. **Right-click** five shards to fuse a stone (ten for Apotheosis); **Shift + right-click** fuses
+every full set. The loop always loses: a ground item returns at most 40% of one stone.
+
+Equipped items and items with a pending sigil are refused; a sealed item grinds like any other. A server can switch
+grinding off (`Salvage`, synced), require a crafting station nearby and change every number in the `salvage` section.
+
+### Affixes
+
+| Where | Affixes |
+|---|---|
+| Weapons (damage) | Honed Might, Primal Fury, Nightstalker; the brands Emberbrand, Rimebrand, Stormbrand, Venombrand, Spiritbrand, Bonebreaker, Keen Edge, Needlepoint; Undead, Beast and Sea Slayer, Godslayer; Ambusher, Cruel Opening, Press the Advantage, Deathblow; Berserkergang (while health-critical) |
+| Weapons (on hit and kill) | Reaper, Soul Reaper, Blood Drinker, Cornered Thirst, Seidr Siphon, Evader's Fury, Hamstring, Staggering Blows, Dazing Blows, Fafnir's Greed |
+| Melee weapons | Balanced Grip, Long Reach, Sweeping Arc, Blood Price, Rune-Edged, Lone Blade, Steel Rhythm, Heartwood; Blade, Axe, Club, Knife, Spear, Polearm, Fist and Woodcutter's Mastery |
+| Bows and crossbows | Easy Draw, Quick Windlass, Swift String, True Flight, Volley, Thrifty Quiver, Skirmisher; Bow and Crossbow Mastery |
+| Staves | Seidr Thrift, Blood Thrift, Twincast, Grave-Lord's Command, Grave Vigor; Elemental and Blood Mastery |
+| Shields | Stalwart, Perfect Guard, Repelling Guard, Tireless Guard, Keen Guard, Anchored Guard, Seidr Riposte, Shield Mastery |
+| Armor: health and regeneration | Vigor, Endurance, Wellspring, Troll Blood, Second Wind, Seidr Flow, Mending, Stout Heart, Restless Mind, Purity, Resolute, Quick Recovery, Valhalla's Edge |
+| Armor: protection | Hardened, Padded, Mailed, Riveted, Ironclad, Arrowward, Flameward, Frostward, Stormward, Venomward, Elemental Ward, the Fire, Frost, Lightning and Poison Bulwarks, Mist Veil, Bramblehide, Runic Ward, Ironroot, Coldblood, Ashen Skin; the Cornered Blood, Hide and Veil variants |
+| Movement | Fleetfoot, Stride, Momentum, Pathfinder, Mountain Goat, Marshstrider, Spring-Heeled, Light Leap, Nimble, Soft Landing, Long Wind, Strong Swimmer, Raven's Glide, Ghostwalk, Soft Tread, Pack Mule, Cornered Flight, Wanderer's Mastery |
+| Weather and world | Emberheart, Winterborn, Oilskin, Sealegs, Shadowmeld, Hearthlight (a light everyone sees), Mistbane, Fair Winds, Beast Whisperer, Hearthbound |
+| Utility items and helmets | Broad Back, Magpie, Huginn's Eye, Mimir's Insight, Artisan's Mastery, Gourmand, Soulbound, Brewer's Haste, Forsaken Favour, Reflex Draught, Swift Draught, Harvester; loot find: Norns' Favour, Fateweaver, Trophy Taker, Hoardfinder |
+| Tools | Builder's Reach, Tireless Hands, Green Thumb, Miner's Mastery, Angler's Mastery, Deep Vein |
+| Most gear | Well-Forged and Everlasting (durability), Lightened and Gossamer (weight), Supple Fit (no movement penalty) |
+
+`ecraft list affixes` in the console prints the full list with slots and tiers. Evader's Fury, Steel Rhythm and a
+charged Runic Ward show an icon on the HUD while they are active.
+
+### Console commands
+
+Open the console with F5. Everything is under one command, `ecraft`. Output is English.
+
+| Command | Who | Does |
+|---|---|---|
+| `ecraft help` | everyone | Lists the sub-commands you may run |
+| `ecraft inspect [cursor\|hover\|ground\|<slot>]` | everyone* | An item's EliteCrafting data and what it means |
+| `ecraft stats` | everyone* | Your summed affix totals and the effects active right now |
+| `ecraft list affixes\|stones\|rarities [<filter>]` | everyone* | The configuration in force, filtered by slot, category, rarity or id; `stones` also lists the essence families and the shards |
+| `ecraft give <stone>\|<shard>\|all [count]` | admin | Stones, essences or shards into your inventory |
+| `ecraft roll <rarity> <prefab\|slot> [tier]` | admin | A rolled magic item into your inventory |
+| `ecraft reroll [cursor\|hover\|<slot>]` | admin | Rerolls an item's affixes, keeping its rarity |
+| `ecraft affix <affix> [tier] [value] [cursor\|hover\|<slot>]` | admin | Adds or replaces one affix, for testing |
+| `ecraft reload` | admin, on the machine whose files are in force | Re-reads the YAML, the translations and the `.cfg` now |
+| `ecraft dump affixes\|economy\|items` | admin | Writes the merged configuration in force, or a survey of every item, to the config folder |
+| `ecraft tiers` | admin | Writes `EliteCrafting_item_tiers_reference.yml`: every magic base with its tier and why |
+| `ecraft ecr` | everyone* | The Elite Creatures Reborn synergy: installed or not, the switch, and what the creature you look at would pay |
+
+\* unless the server turns `Read-only commands for everyone` off. `<slot>` is an equipment slot: `right`, `left`,
+`head`, `chest`, `legs`, `cape`, `utility`.
+
+### Files
+
+| File | What |
+|---|---|
+| `BepInEx/config/com.EliteCrafting.cfg` | Switches and preferences. Gameplay keys (affix effects, modifying equipped items, stone and gear drops, command access, salvage, the Elite Creatures Reborn synergy) follow the server; display, ground glow, the confirm mode, the Salvage key and diagnostics are per player |
+| `BepInEx/config/EliteCrafting_affixes.yml` | Every affix: effect, slots, category, tiers, weights, caps |
+| `BepInEx/config/EliteCrafting_economy.yml` | Rarities and colors, rolling rules, stones, sigils, essence families, salvage, item tiers, biomes and drop tables (creatures, bosses, chests, Elite Creatures Reborn) |
+| `EliteCrafting_affixes_<anything>.yml`, `EliteCrafting_economy_<anything>.yml` | Your own additions, read after the main file in name order; they change only what they name |
+| `EliteCrafting.translations.<Language>.yml` | Your own words for a language, key to text, over the built-in English |
+
+The main YAML files are written once with the full defaults and never rewritten. The built-in defaults always sit
+underneath, so a later release's new affixes reach your server without editing anything; `use_defaults: false` in a
+main file makes the files the whole configuration. A file with an error is reported in the log with file and line,
+and the previous rules stay in force. Turn an affix off with `enabled: false` (items that have it keep it, greyed and
+inert, and get it back when you turn it on) or stop it rolling with `weight: 0`.

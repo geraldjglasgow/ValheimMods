@@ -130,7 +130,7 @@ delivers them to existing servers. The economy defaults were complete from 0.1.0
 (verified with the loader, 2026-09-24): that file names the 19 Phase 2 stones with `enabled: false` and the bosses with
 their 0.1.0 `bonus` lists, so those stones stay disabled and the bosses' essence rows are replaced; new ids (the
 essences, new `drops.stones` keys, new affixes) still arrive. The fix is the one above: delete or rename the main file
-(README and CHANGELOG 0.2.0 say so).
+(CHANGELOG 0.2.0 says so).
 
 ## Merging entries
 

@@ -1,131 +1,38 @@
 # Party
 
-Shared parties for Valheim: membership, chat, health bars, always-on map visibility, friendly-fire protection,
-and a public API other mods can build on.
+Shared parties for Valheim: party chat, health bars, map pins and friendly-fire protection for your group.
+
+## Features
+- Parties with one leader and a server-set size cap. Invites are accepted or declined, and parties survive logging out
+  and server restarts.
+- Commands: `/party create`, `invite`, `leave`, `remove`, `promote`, `name`, `p`, `panel edit` and `status` (admin),
+  with short forms `/invite`, `/leave`, `/remove`, `/promote` and `/p` unless another mod took the word.
+  [All commands](https://github.com/geraldjglasgow/ValheimMods/blob/main/Party/PLAN.md#commands).
+- Party chat: `/p <text>` speaks to the party, `/p` alone toggles party-chat mode.
+- Health panel: each member's health, distance and ailments, draggable with `/party panel edit`; arrows point to
+  members off screen.
+- Floating names and map pins in your party color, even with position sharing off.
+- Death notices: a chat line and a temporary map pin.
+- Friendly fire: party members cannot hurt each other, even with PvP on.
+- Party ping: hold Left Alt while pinging the map to ping only your party.
+- [An API for other mods](https://github.com/geraldjglasgow/ValheimMods/blob/main/Party/PLAN.md#api-for-other-mods),
+  without a hard dependency.
 
 ## Install
-
-Client and server. Install on a dedicated server to have it enforce the gameplay rules (party size, friendly
-fire, invite timeout) for everyone; without a modded server, Party still works peer-to-peer for whoever has it,
-using the hosting player as the party's server.
-
-## Commands
-
-`/party invite|leave|remove|promote|p` always works. The short forms below are registered too, unless another
-installed mod already owns that word - if a short form doesn't respond, use the `/party` form instead.
-
-| Command | Short form | What it does |
-| --- | --- | --- |
-| `/party create [name]` | - | Creates a party with just you as leader, optionally named. For solo testing, or to set up before inviting anyone. |
-| `/party invite <name>` | `/invite <name>` | Invites an online player. If you have no party yet, this creates one and makes you its leader. Any member can invite, not just the leader. |
-| `/party leave` | `/leave` | Leaves your current party. |
-| `/party remove <name>` | `/remove <name>` | Leader only. Removes that member. |
-| `/party promote <name>` | `/promote <name>` | Leader only. Hands leadership to that member. |
-| `/party p [text]` | `/p [text]` | With text, sends a party-only chat message. With no text, toggles party-chat mode: everything you type goes to the party until you toggle it off again (a `[Party Chat]` indicator shows while it's on). |
-| `/party panel edit` / `/party panel done` | - | Frees your mouse so you can drag the health panel; `done` (or Escape) returns to normal play. |
-| `/party name [text]` | - | Leader only. Names your party (shown on the health panel); no text clears it. |
-| `/party status` | - | Admin only. Lists every party on the server. |
-
-`/invite` tab-completes against everyone online; `/remove` and `/promote` tab-complete against your own party.
-
-Every command answers you in chat, success or failure: no such player, you're not the leader, the party is full,
-and so on. An invite is a prompt the other player can accept or decline; either way you find out what happened.
-
-## Party membership
-
-- One leader, size capped by a server setting (default 8). A player is in at most one party at a time.
-- The server owns the roster. Members are tracked by their persistent player ID, never by name, so two players
-  with the same name are never confused for one another.
-- Logging out doesn't remove you - your party is still yours when you return, and parties survive a server
-  restart. While you're offline you simply show as offline to your party.
-- If the leader leaves, leadership passes to whoever has been in the party longest and is currently online.
-- When the last member leaves, the party dissolves.
-
-## Health panel
-
-A panel on the left of the screen lists your party: name, distance, and a live health bar, offline members
-greyed out. Under each member's bars, small icons show their current ailments - burning, spirit fire, poison,
-frost, lightning, smoked, tarred, freezing, cold and wet - using the game's own status icons. Drag the panel
-anywhere with `/party panel edit` (Escape or `/party panel done` to finish) - it remembers where you put it.
-Position, scale, opacity, bar size, row spacing, font size, whether your own row shows, whether stamina and
-eitr show alongside health, and whether the ailment icons show are all yours to set; none of it is pushed by
-the server. Members outside your view get a small arrow at the edge of the screen pointing toward them.
-
-## Colored names and map pins
-
-A party member's floating name is drawn in your party color (the leader marked distinctly) instead of the usual
-one when you're near them. Party members are always visible on your map and minimap in that color, even when
-their own public-position sharing is off - this only applies within your party; everyone else is still subject
-to the normal sharing rules.
-
-## Death notices
-
-When a party member dies, everyone online in the party gets a chat line and a temporary map pin at the spot.
-
-## Friendly fire
-
-On by default, a server setting: party members can't hurt each other even with PvP on, covering melee,
-projectiles and area damage alike. It only protects against each other - creatures, falls, fire and drowning
-are unaffected.
-
-## Party ping
-
-Hold a modifier key (Left Alt by default, rebindable in the config) while pinging the map to send a party-only
-ping, drawn in your party color and marked private, instead of the normal server-wide shout ping.
+Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `Party.dll` in
+`BepInEx/plugins`.
 
 ## Configuration
+`BepInEx/config/com.Party.cfg`. Every setting is described in the file and applies without a restart; the server's
+gameplay values bind every player (`Lock Configuration`), the display stays your own. The server keeps the parties in
+`BepInEx/config/Party.<world>.parties.yml`.
 
-Gameplay settings - `Max Party Size`, `Friendly Fire Protection`, `Invite Timeout Seconds`, `Vitals Updates Per
-Second` (default 3, how often health/stamina/eitr refresh) - are pushed from the
-server and can be locked with `Lock Configuration` so clients can't override them. Display settings - colors,
-the ping key, everything under `Health Panel` - are always personal to each player and never pushed.
+## Links
+Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
-## API for other mods
-
-Other mods can check whether a player is in a party, fetch the members, ask whether two players share a party,
-find the leader, and subscribe to change notifications, without hard-depending on Party - if it isn't installed,
-your mod simply sees everyone as party-less.
-
-```csharp
-// 1. Compile-time reference to Party.dll (players don't need it referenced at runtime, only if they have Party).
-// 2. Soft dependency: your mod loads fine whether or not Party is installed.
-[BepInDependency(Party.PluginInfo.PluginGuid, BepInDependency.DependencyFlags.SoftDependency)]
-public class MyPlugin : BaseUnityPlugin
-{
-    private bool partyLoaded;
-
-    private void Awake()
-    {
-        partyLoaded = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(Party.PluginInfo.PluginGuid);
-    }
-
-    private bool SameParty(long playerIdA, long playerIdB) =>
-        partyLoaded && Party.Api.PartyApi.AreInSameParty(playerIdA, playerIdB);
-}
-```
-
-`Party.Api.PartyApi` is accurate for any player when queried on a dedicated server or the host; on a bare client
-it only knows about the local player's own party, since the server never tells a client about anyone else's.
-
-```csharp
-bool inParty = PartyApi.IsInParty(playerId);
-IReadOnlyList<PartyMemberInfo> members = PartyApi.GetMembers(playerId);
-long? leaderId = PartyApi.GetLeader(playerId);
-PartyApi.PartyChanged += playerId => { /* a party this player is in changed */ };
-PartyApi.MemberJoined += (anchorId, joinedId) => { /* ... */ };
-PartyApi.MemberLeft += (anchorId, leftId) => { /* ... */ };
-PartyApi.LeaderChanged += (anchorId, newLeaderId) => { /* ... */ };
-```
-
-A player's persistent ID is `Player.GetPlayerID()` on their own character, or `PlayerProfile.GetPlayerID()`.
-
-## Files
-
-`BepInEx/config/Party.<world>.parties.yml` on the server: the roster, one entry per party. Written by the mod;
-edit by hand only to fix a stuck state.
-
-## Building
-
-This mod lives in the `ValheimMods` workspace and follows its standard layout; see the workspace `CLAUDE.md` and
-`Party/PLAN.md` (design notes and the judgement calls the specification left open) for how it's built and why it's
-shaped the way it is.
+## Shout outs
+- The BepInEx and Harmony teams, for the tools every Valheim mod stands on.
+- Iron Gate Studio, for Valheim.
+- Thunderstore, for hosting this page.
+- The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game.
+- Every modder who keeps their mods open source so others can collaborate, learn and build on them.

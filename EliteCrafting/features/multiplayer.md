@@ -101,7 +101,8 @@ same odds; it is not anti-cheat.
 - Why: stone prefabs must exist on every peer (an unknown prefab in an inventory is dropped on load, and a server
   or host **destroys** a world ZDO whose prefab it does not know, verified in `ZNetScene.CreateObjectsSorted`), and
   rolls on client-owned creatures must use the server's rules.
-- The manifest description and README say "Required on the server and on every client" in the first paragraph.
+- The manifest description says "Required on server and all clients"; the README says "Needed on the server and every
+  client" under Install.
 
 ---
 

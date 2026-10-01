@@ -162,7 +162,7 @@ Judgement calls made while debugging the first Canvas version, written down so t
 Soft dependency is the standard BepInEx shape, not reflection: a consumer adds a compile-time reference to
 `Party.dll`, declares `[BepInDependency(Party.PartyPlugin.PluginGuid, BepInDependency.DependencyFlags.SoftDependency)]`,
 and guards every call with a `Chainloader.PluginInfos.ContainsKey(...)` check so a server without Party is simply
-seen as party-less. The README carries the copy-paste version of this.
+seen as party-less. The copy-paste version is in "API for other mods" at the end of this file.
 
 ## Later additions
 
@@ -182,4 +182,70 @@ seen as party-less. The README carries the copy-paste version of this.
 Design pass complete; implementation follows the order: config -> server roster/RPCs -> commands -> chat ->
 client state -> health panel -> nameplates -> map pins -> friendly fire -> ping -> API -> docs. Nothing tested
 in game yet; this file gets deleted once the mod is verified against the spec, per the workspace's black-box
-process, and the README/CHANGELOG carry the behaviour after that.
+process; before that, the Commands and API for other mods sections below move to a CLAUDE.md, since the
+README links to them.
+
+## Commands
+
+Moved unchanged from the README on 2026-09-30 (the README links here), like the API section below.
+
+`/party invite|leave|remove|promote|p` always works. The short forms below are registered too, unless another
+installed mod already owns that word - if a short form doesn't respond, use the `/party` form instead.
+
+| Command | Short form | What it does |
+| --- | --- | --- |
+| `/party create [name]` | - | Creates a party with just you as leader, optionally named. For solo testing, or to set up before inviting anyone. |
+| `/party invite <name>` | `/invite <name>` | Invites an online player. If you have no party yet, this creates one and makes you its leader. Any member can invite, not just the leader. |
+| `/party leave` | `/leave` | Leaves your current party. |
+| `/party remove <name>` | `/remove <name>` | Leader only. Removes that member. |
+| `/party promote <name>` | `/promote <name>` | Leader only. Hands leadership to that member. |
+| `/party p [text]` | `/p [text]` | With text, sends a party-only chat message. With no text, toggles party-chat mode: everything you type goes to the party until you toggle it off again (a `[Party Chat]` indicator shows while it's on). |
+| `/party panel edit` / `/party panel done` | - | Frees your mouse so you can drag the health panel; `done` (or Escape) returns to normal play. |
+| `/party name [text]` | - | Leader only. Names your party (shown on the health panel); no text clears it. |
+| `/party status` | - | Admin only. Lists every party on the server. |
+
+`/invite` tab-completes against everyone online; `/remove` and `/promote` tab-complete against your own party.
+
+Every command answers you in chat, success or failure: no such player, you're not the leader, the party is full,
+and so on. An invite is a prompt the other player can accept or decline; either way you find out what happened.
+
+## API for other mods
+
+Moved unchanged from the README on 2026-09-30; the README links here.
+
+Other mods can check whether a player is in a party, fetch the members, ask whether two players share a party,
+find the leader, and subscribe to change notifications, without hard-depending on Party - if it isn't installed,
+your mod simply sees everyone as party-less.
+
+```csharp
+// 1. Compile-time reference to Party.dll (players don't need it referenced at runtime, only if they have Party).
+// 2. Soft dependency: your mod loads fine whether or not Party is installed.
+[BepInDependency(Party.PluginInfo.PluginGuid, BepInDependency.DependencyFlags.SoftDependency)]
+public class MyPlugin : BaseUnityPlugin
+{
+    private bool partyLoaded;
+
+    private void Awake()
+    {
+        partyLoaded = BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey(Party.PluginInfo.PluginGuid);
+    }
+
+    private bool SameParty(long playerIdA, long playerIdB) =>
+        partyLoaded && Party.Api.PartyApi.AreInSameParty(playerIdA, playerIdB);
+}
+```
+
+`Party.Api.PartyApi` is accurate for any player when queried on a dedicated server or the host; on a bare client
+it only knows about the local player's own party, since the server never tells a client about anyone else's.
+
+```csharp
+bool inParty = PartyApi.IsInParty(playerId);
+IReadOnlyList<PartyMemberInfo> members = PartyApi.GetMembers(playerId);
+long? leaderId = PartyApi.GetLeader(playerId);
+PartyApi.PartyChanged += playerId => { /* a party this player is in changed */ };
+PartyApi.MemberJoined += (anchorId, joinedId) => { /* ... */ };
+PartyApi.MemberLeft += (anchorId, leftId) => { /* ... */ };
+PartyApi.LeaderChanged += (anchorId, newLeaderId) => { /* ... */ };
+```
+
+A player's persistent ID is `Player.GetPlayerID()` on their own character, or `PlayerProfile.GetPlayerID()`.

@@ -2,13 +2,11 @@
 
 ## 0.1.0
 
-- Initial release. Walking into a portal opens the world map in a targeting mode showing every portal you may
-  target; click one to teleport there through the game's own teleport path (carry rules, fade effect, cooldown).
-- Portal tags are a label only, shown next to the icon; they no longer decide the destination.
-- Three access modes, cycled with Alt+Use on a portal: Public, Private, Admin. Cycling makes the acting player the
-  owner. Enforced by the server for targeting, by the portal's own ZDO owner for mode changes.
-- Configurable hotkey (default `P`) toggles portal icons on the ordinary (non-targeting) large map.
-- Right-click a portal icon to favourite it; favourites show in a left-side panel on the map and persist with the
-  character across sessions.
-- Works with any mod's portal prefab: discovered by its `TeleportWorld` component, not a hardcoded name list.
-- Required on the server as well as every client.
+- Initial release: walk into a portal and pick its destination on the world map; carry rules, fade and cooldown apply.
+- Portal tags are only a label next to the icon.
+- Access modes Public, Private and Admin, cycled with Alt+Use; cycling makes you the owner. The server checks every
+  teleport.
+- `Toggle Icons Key` (P) shows portal icons on the ordinary map.
+- Right-click a portal icon to favourite it; favourites show in a panel on the map and stay with the character.
+- Works with any mod's portals.
+- Needed on the server and every client.
