@@ -1,254 +1,125 @@
 # Changelog
 
 ## 1.13.0
-- Stow: a key for the game's Take all (`Take All Key`, Shift + G): with a chest open, everything in it moves into
-  your inventory as far as it fits, exactly as the button does, shared chests included.
-- Stow: a fifth `Sort Order`, `Amount`: the item you have the most of comes first, all its stacks counted together.
-- Homestead: your bed icons are yellow on the minimap and the large map whenever OpenKeep shows your beds, so they
-  stand out from the other pins.
-- Homestead: while you choose a bed after death, every bed icon is twice the size and pulsing (the nearest is no
-  longer singled out), and the countdown sits in the map's upper left corner instead of the upper right. After the
-  choice the icons are back to their normal size.
+- Stow: `Take All Key` (Shift+G) takes everything from the open chest, shared chests included.
+- Stow: new `Sort Order` `Amount`: the item you have the most of comes first.
+- Homestead: your bed icons are yellow on the minimap and the large map.
+- Homestead: while you choose a bed after death, bed icons are twice the size and pulsing; the countdown sits upper
+  left.
 
 ## 1.12.0
-- Homestead: choose your bed after death (`Bed Choice Seconds`, 30). With two beds or more, dying opens the map with
-  all your beds on it, the nearest pulsing, and a countdown in the map's upper right corner. Click a bed to wake
-  there; when the countdown ends you wake in the bed nearest to where you died. The map key or Escape takes the
-  nearest at once. 0 turns the map off (always the nearest).
-- Every bed you own shows on your map with the game's bed icon, not only the last one you slept in (`Beds On Map`,
-  on, your own choice).
-- Quick respawn (`Quick Respawn`, on): the closer to where you died you wake, the sooner you wake. The game's 18
-  seconds (10 of waiting, 8 of loading) shrink with the distance to the bed, or to the world start without one:
-  about a second right beside it (`Quick Respawn Seconds`), the full wait at `Quick Respawn Range` (1000 m) and beyond.
-  Clicking a near bed on the map wakes you at once.
-- Stand up on respawn (`Stand Up On Respawn`, on): after a death you wake standing and can move at once, instead of
-  the game's getting-up animation. Logging in keeps the game's.
-- Quick portals (`Quick Portals`, on): the closer together two portals are, the quicker the jump, from half a
-  second for portals side by side (`Quick Portal Seconds`) to the game's 8 seconds at `Quick Portal Range` (10000 m):
-  about 0.7 s for 250 m, 1.2 s for 1 km. Every long jump counts (the game's portals, Wayfare, the console's `goto`);
-  dungeon doors are left alone. On a server you never land before the server has sent what is around the far portal,
-  and never wait longer than the game's 8 seconds.
-- A jump to a place already loaded around you keeps the screen clear, no black screen and no teleport swirl; farther
-  jumps show the game's screen while the area loads (`Portal Screen Only When Loading`, on, your own choice).
-- Quick area loading (`Quick Area Loading`, on, your own choice): after a long jump and while you wait to respawn,
-  the land and everything on it load as fast as your PC allows instead of the game's slow steady pace. With a high
-  simulation distance a 1 km jump went from about 11 seconds to about 2.
+- Homestead: `Bed Choice Seconds`: dying opens the map to pick a bed; otherwise you wake in the nearest.
+- Homestead: every bed you own shows on your map (`Beds On Map`).
+- Homestead: `Quick Respawn`: the nearer your bed to where you died, the sooner you wake.
+- Homestead: `Stand Up On Respawn`: you wake standing after a death.
+- Homestead: `Quick Portals`: the nearer two portals are, the quicker the jump.
+- Homestead: a jump within the loaded area skips the black screen (`Portal Screen Only When Loading`).
+- Homestead: `Quick Area Loading`: land loads much faster after a long jump and while you respawn.
 
 ## 1.11.0
-- OpenKeep leaves the inventory's look alone: the game's armour and weight readouts stay exactly as the game draws
-  them (the brown boxes are PackPanel's), and the trash can is a plate in the game's own style under the armour,
-  showing a bin and "Trash". It sits where trash can mods put theirs, so Jewelcrafting shows it while you drag a stack
-  (its synergy box takes the spot otherwise), CurrencyPocket and OttoPay move it along with the armour, and TrashItems
-  makes no second can. `Trash Can On Stat Column` off still puts the can in the button row.
-- The trash can no longer stays red after a click.
+- The game's armour and weight readouts stay as the game draws them; the trash can is a plate in the game's style.
+- The trash can sits where trash can mods expect one, so Jewelcrafting, CurrencyPocket, OttoPay and TrashItems fit
+  around it.
+- Fixed: the trash can stayed red after a click.
 
 ## 1.10.0
-- Fixed: since 1.8.0 OpenKeep broke Jewelcrafting and every other mod that adds a box beside the game's armour box
-  (CurrencyPocket, OttoPay, TrashItems, Quick Stack Store Sort Trash Restock). The stat column moved the game's armour
-  and weight boxes into a container of its own, and those mods look for them on the inventory panel by name.
-  Jewelcrafting then threw an error on every item picked up, every inventory close and every input device change,
-  and a chest closed that way stayed in use. The game's boxes now stay where the game has them and are placed in the
-  column from there (GitHub #4, #5).
-- The boxes those mods add join the column instead of covering one of its boxes: Jewelcrafting's synergy box right
-  under the armour, a trash can next to OpenKeep's (TrashItems' takes dragged stacks there), the coin pocket between
-  the armour and the weight.
-- Stow: `Trash Can On Stat Column` (on, per player). Off puts the trash can at the end of the button row, and OpenKeep
-  then leaves the game's armour and weight boxes exactly as the game has them, for inventory mods that place their own
-  boxes there. Takes effect the next time you enter a world.
+- Fixed: Jewelcrafting threw errors on every pickup and inventory close, and chests closed that way stayed in use
+  (GitHub #4, #5).
+- Fixed: mods that add a box beside the armour (CurrencyPocket, OttoPay, TrashItems and others) were broken since 1.8.0.
+- Boxes other mods add join the stat column instead of covering one of its boxes.
+- Stow: `Trash Can On Stat Column` (per player): off puts the trash can in the button row.
 
 ## 1.9.0
-- Homestead: `Auto Repair` (on): opening a workbench, forge, black forge, galdr table, artisan table or any other
-  station with the game's repair button repairs every item in your inventory that this station can repair at its
-  current level, what you wear included, as if you pressed its repair button once for each: the same items (a forge
-  item waits for a forge, an item needing a higher level waits for the extensions), the same Crafting skill gain, no
-  cost. One repair sound and one message, `Repaired 3 items`; nothing when nothing needed repair. A cart with
-  `Cart Workbench` on repairs like a workbench. Synced; off leaves only the game's button.
-- Stow: a full chest no longer stops a stack. Ctrl + click and Store one (`V`) send what the chosen container has no
-  room for on to the next nearest container that holds the item, and the next, until the stack is gone or none is
-  left within `Nearby Range`: `Sent Wood to Chest and 1 more`. A stack routed to a chest only for its group or its
-  `accept` list still stays in your inventory when that chest is full.
-- Stow: with `Shared Chests = Full`, what a chest another player has open had no room for after a quick stack or dump
-  goes on to the next nearest chest holding the item, with a line in the top left saying where; before, it stayed in
-  your inventory.
-- Stow: ground pickup leaves each drop to one chest: a chest already holding the item before one that only accepts
-  it, then the one nearest to the drop, and the next when that one is full. Before, whichever chest swept first took
-  it. A kiln's coal or a smelter's bars dropped at the station's output go into the nearest pickup chest holding them.
-- Reach: a unit borrowed from a chest for a station that the station did not take goes back to the nearest chest
-  holding that item, before other chests that accept it.
+- Homestead: `Auto Repair`: opening a crafting station repairs every item it can, worn gear included, for free.
+- Stow: Ctrl + click and Store one (`V`) go on to the next chest holding the item when one is full.
+- Stow: with `Shared Chests = Full`, quick stack and dump send what a shared chest cannot take to the next chest.
+- Stow: ground pickup gives each drop to one chest, one holding the item first, then the nearest.
+- Reach: a unit a station did not take goes back to the nearest chest holding that item.
 
 ## 1.8.0
-- Batch crafting: the Craft tab of every crafting station (and crafting by hand) has `-` and `+` buttons with the
-  amount between them, left of the Craft button; Craft makes that many at once, in one bar, through the game's own
-  multi-craft, so each item costs, earns skill and rolls the crafting bonus as if crafted alone. Click the number to
-  type an amount. Shift steps by tens, Ctrl jumps to 1 or to as many as you can make, the D-pad steps on a gamepad.
-  The amount stops at your materials (nearby chests count with Reach), your free space and `Max Amount` (100), and
-  goes back to 1 when you pick another recipe. Not on the Upgrade or Salvage tab. It takes the place of the game's
-  Shift + Craft (5 at once), which `Enabled = false` brings back. New section `10. Batch Crafting` (`Enabled`, on;
-  `Max Amount`), both synced. Reach's Pull modifier + Craft pulls materials for the whole batch.
-- Works with PackPanel, the new inventory mod (a bigger grid, labelled armour, utility, food, mead and ammo slots, a
-  coin purse, a key ring and backpacks): with both installed, the button row and the trash can sit inside the
-  inventory panel, quick stack, store all, dump, sort and a shared chest's stack all use PackPanel's whole grid and
-  never touch its slots or key ring, and PackPanel's Key Stack is written with OpenKeep's stack sizes, so an
-  `OpenKeep.Stacks.yml` entry for a key still wins. Neither mod needs the other.
-- Stow: Shift + click on the trash can starts trash mode: the pointer becomes the trash can and every stack you click
-  in the inventory or the open chest is destroyed at once, with no popup even with `Confirm Trash` on (favourites
-  and worn items are kept); let go of Shift to stop. A click without Shift still destroys a dragged stack.
-- Stow: the trash can's plate sits right under the armour plate, so a plate another mod adds to the column goes
-  below it.
-- Hotkeys with a modifier (`LeftAlt + D` and the like) now fire while you walk; before, holding any other key
-  (such as W) blocked them.
-- Homestead: tamed animals eat from chests (`Pets Eat From Chests`, on; `Pet Chest Range`, 10 m): a hungry tame
-  walks to a container within range that holds food it eats and eats one item, as it would from the ground. Food on
-  the ground still comes first, and animals still being tamed eat only from the ground. The `containers:` rules of
-  the Reach YAML apply, as for fires.
-- Homestead: `Auto Feed Leave` (1): stations that feed themselves leave that many of each item in every chest, so a
-  chest keeps its last ore, wood or coal and quick stack still sends that item to it. 0 takes everything, as before;
-  feeding a station by hand is not limited.
-- Homestead: `Auto Feed Range` is 4 m by default (was 2 m), so chests a step away from a station feed it too. An
-  existing .cfg keeps the value it has.
+- Batch crafting: `-` and `+` beside the Craft button make many at once, in place of Shift + Craft.
+- Batch crafting: Reach's Pull modifier + Craft pulls the materials for the whole batch.
+- Works with PackPanel: stowing and sorting use its grid but never its slots.
+- Stow: trash mode (Shift + click the trash can) destroys each stack you click; the can sits under the armour.
+- Fixed: hotkeys with a modifier (`LeftAlt + D`) did not fire while W was held.
+- Homestead: `Pets Eat From Chests`: hungry tamed animals eat from nearby chests.
+- Homestead: `Auto Feed Leave` (1): self-feeding stations leave that many of each item in every chest.
+- Homestead: `Auto Feed Range` defaults to 4 m (was 2 m); existing configs keep theirs.
 
 ## 1.7.0
-- Capacity: `OpenKeep.Stations.yml` sets how much each workstation holds: `items:` (ore, wood, flax, barley) and
-  `fuel:` (coal, wood) for the smelter, blast furnace, charcoal kiln, eitr refinery, spinning wheel, windmill, hot tub
-  and every modded station built like them, from 1 to 1000. The first world load lists every station with its
-  vanilla values, commented out. Synced from the server, hot reloaded, editable in game, and switched off with
-  Capacity's `Enabled`. Lowering a cap loses nothing: a fuller station keeps working and takes more once it is below
-  the cap. `openkeep write docs` also writes `OpenKeep.Stations.txt`.
-- Homestead: `Auto Feed Stations` (on): smelters, blast furnaces, charcoal kilns, eitr refineries, spinning wheels,
-  windmills and hot tubs you built take what they work (ore, scrap, wood, soft tissue, flax, barley) and their fuel
-  (coal, sap, wood) from the containers beside them, one item and one fuel a second while there is room.
-  `Auto Feed Range` (2 m) runs from the station's outer edge to the middle of a container. `Auto Feed Skip` names
-  items never taken (default `FineWood, RoundLog`, so the charcoal kiln burns only plain wood). The `stations:` and
-  `containers:` rules of the Reach YAML apply, as for fires.
-- Homestead: `Rested Delay` (5 s): the Rested buff comes after 5 seconds of resting by a fire instead of the game's
-  20. How long it lasts, the comfort level and what counts as resting are unchanged; 20 keeps the game's wait.
-- Homestead: `Area Repair` (on): repairing a piece with the hammer also repairs the damaged pieces touching it (only
-  its direct neighbours, at most 64 a swing), each with the checks of a repair by hand (its crafting station in
-  range, access to its ward). One swing's stamina and hammer wear pays for all of them.
-- Homestead: `Torch Switch Key` (O, per player): look at a torch and press it to keep that torch lit day and night;
-  press it again to put it back on the night schedule (by day it goes out at once). The hover shows the key and
-  what it does, the choice is stored in the torch for every player, and a ward keeps out players without access.
-- Homestead: `Torch Margin` (1 in-game hour, 0 to 4): torches light that long before nightfall and go out that long
-  after daybreak. An in-game hour is 75 seconds of the game's 30 minute day; 0 keeps the game's own night.
-- Homestead: `Auto Fuel` skips fuel from a lower world level (New Game+), which the game refuses by hand too.
+- Capacity: `OpenKeep.Stations.yml` sets how many items and how much fuel each workstation holds.
+- Homestead: `Auto Feed Stations`: smelters, kilns and other workstations take items and fuel from chests beside them.
+- Homestead: `Rested Delay`: Rested comes after 5 seconds of resting instead of 20.
+- Homestead: `Area Repair`: the hammer also repairs the damaged pieces touching the one you repair.
+- Homestead: `Torch Switch Key` (O) keeps a torch lit day and night, or puts it back on schedule.
+- Homestead: `Torch Margin`: torches light before nightfall and go out after daybreak by this many hours.
+- Homestead: `Auto Fuel` skips fuel from a lower world level (New Game+).
 
 ## 1.6.0
-- Homestead: new section `8. Homestead`, synced from the server.
-- Homestead: `Nearest Bed Respawn` (on): every bed you own is a spawn bed. After death you wake in your own bed
-  nearest to where you died, or the next nearest when that one is gone or no longer yours. Any of your beds lets you
-  sleep (the hover says Sleep instead of Set spawn point). Beds claimed before this version count once you have
-  been near them.
-- Homestead: `Build On Wood` (default `fire_pit`): campfires can be built on wooden floors. The list takes the other
-  pieces the game keeps off wood too (`bonfire`, `smelter`, `charcoal_kiln` and more); empty keeps the game's rule.
-  In the Ashlands, or with the Fire world key, the campfire's embers can set the floor alight.
-- Homestead: `Honey Per Day` sets how much honey each beehive makes per in-game day (0, the default, keeps the
-  game's 1.5 a day); `Honey Per Player Online` makes it the number of players on the server. A hive still holds at
-  most 4.
-- Homestead: `Auto Fuel` (on): campfires, hearths, braziers, torches and every other fire you built refill themselves
-  with their own fuel (wood, resin, coal, guck, greydwarf eyes) from containers within `Auto Fuel Range` (20 m) of
-  the fire, a unit at a time as they burn; the `stations:` and `containers:` rules of the Reach YAML apply.
-- Homestead: `Torches Night Only` (on): the standing torches and the sconce light at nightfall and go out at
-  daybreak, saving their fuel; `Torch Pieces` lists which fires (braziers, lanterns and the resin candle can be
-  added). A torch out for the day says `Lights at nightfall`. Turn it off before removing OpenKeep: the game has no
-  switch to light them again.
-- Stow: the tooltips of the armour, trash and weight plates (and Elite Creatures Reborn's world tier plate, once
-  that mod is rebuilt with this version of the plate column) show in a dark box with a gold border, pinned just
-  right of the plate instead of following the mouse.
-- Stow: ground pickup's `Pickup Range` defaults to 2 m instead of 10. A config written by an earlier version keeps
-  the value it saved: set it to 2 there.
+- Homestead: new section `8. Homestead`, synced.
+- Homestead: `Nearest Bed Respawn`: you wake in your own bed nearest to where you died.
+- Homestead: `Build On Wood`: campfires and other listed pieces build on wooden floors.
+- Homestead: `Honey Per Day` and `Honey Per Player Online` set each beehive's honey rate.
+- Homestead: `Auto Fuel`: fires you built refill from nearby chests.
+- Homestead: `Torches Night Only`: torches burn only at night; turn it off before removing OpenKeep.
+- Stow: plate tooltips show in a gold-bordered box beside the plate.
+- Stow: `Pickup Range` defaults to 2 m (was 10); existing configs keep theirs.
 
 ## 1.5.0
-- Stow: the armour, trash and weight plates on the right of the player panel each show a tooltip on hover saying
-  what they are.
-- Stow: the plates are one column other mods can add to. With Elite Creatures Reborn 3.8.0 its world tier plate
-  sits under the weight, and all four move up and stay evenly spaced.
+- Stow: the armour, trash and weight plates show a tooltip on hover.
+- Stow: other mods can add plates to the column; Elite Creatures Reborn 3.8.0 adds its world tier plate.
 
 ## 1.4.2
-- Stow: quick stack, store all and dump leave the hotbar alone, as the sort always has. Items on the hotbar stay
-  there; Store one, Ctrl + click routing and the trash still act on a hotbar item you pick, and top up still
-  refills stacks there.
+- Stow: quick stack, store all and dump leave the hotbar alone; top up still refills it.
 
 ## 1.4.1
-- The `openkeep signs` and `openkeep write docs` console commands call the Signs and Stacks code directly instead
-  of looking it up by name through reflection. No change in behaviour.
+- Internal cleanup of the console commands; no behaviour change.
 
 ## 1.4.0
-- Stow: quick stack, store all, dump and sort only work on the rows of the player inventory that the game gives you
-  (four, more once bought from the trader). Mods such as ExtraSlots keep their equipment, food and ammo slots in rows
-  below those: these actions no longer empty them into chests, and the sort no longer pulls items out of them or
-  fills them. Top up still refills the stacks there.
-- Stow: new per-player setting `Main Inventory Rows` (0: the game's rows). Set a number when a mod adds ordinary
-  inventory rows that should be stowed and sorted too.
-- Stow: the trash can moved off the button row onto its own wood plate, with a new icon, between the armour and
-  weight readouts on the right of the player panel. The row below the panel is now four buttons and re-centred.
-- Stow: the armour and weight readouts show their icon larger and centred on the plate, with the number on top,
-  and both stay where they are when the inventory grows with rows bought from the trader.
-- Stow: `Confirm Trash` now defaults to off, so the Trash Key, the trash can and Destroy Junk act at once. A config
-  written by an earlier version keeps the value it saved: set it to false there to lose the popup. Turn it on to
-  get the game's popup back.
-- Stow: the `Stow all` button is `Store all` again, next to `Store one`; `Stow All Key` is `Store All Key` and a
-  cfg from 1.1.0 or 1.2.0 keeps its binding. The section `2. Stow` and `OpenKeep.Stow.yml` keep their names.
-- Salvage: new synced settings `Skip Items With Mod Data` (on) and `Mod Data Prefixes` (`ecf_`). An item carrying
-  custom item data under one of the prefixes — data another mod keeps on it, such as EliteCrafting's magic affixes —
-  is no longer listed in the Salvage tab and the Salvage Key refuses it with a reason, so salvaging cannot destroy
-  what that mod added. With EliteCrafting installed, OpenKeep salvages ordinary items into materials and
-  EliteCrafting grinds its magic items into shards.
+- Stow: quick stack, store all, dump and sort use only the game's own rows, leaving other mods' slots alone.
+- Stow: new per-player `Main Inventory Rows` for mods that add ordinary rows.
+- Stow: the trash can moved onto its own plate between the armour and weight readouts.
+- Stow: armour and weight readouts show a larger icon and stay put as the inventory grows.
+- Stow: `Confirm Trash` defaults to off; existing configs keep theirs.
+- Stow: `Stow all` is `Store all` again; bindings carry over.
+- Salvage: `Skip Items With Mod Data` keeps items with another mod's data, such as EliteCrafting's, out of salvage.
 
 ## 1.2.0
-
-- Reach: new `stations:` map in `OpenKeep.Reach.yml` — per station prefab `enabled` and `allow` / `deny` item
-  lists for station feeding (interact, Fill, Pull and the `From storage` hover line). Deny a meat and it is never
-  pulled onto the cooking station; crafting and building still see it. Unlisted stations behave as before.
-- Stow: new per-player setting `Sort Favourite Items` (on, the old behaviour). Off: the sort leaves favourite
-  items where they are — for items kept in extra slots other mods add, which the sort used to pull into the main
-  inventory.
+- Reach: new `stations:` map in `OpenKeep.Reach.yml`: per station `enabled` and `allow` / `deny` lists for feeding.
+- Stow: new per-player `Sort Favourite Items` (on): off leaves favourite items where they are when sorting.
 
 ## 1.1.1
-
-- Multiplayer: joining a busy server no longer fails with "you have no copy" when every player runs the same
-  version. The join check raced the config push over the same connection and gave up after a single 5 s deadline;
-  it now greets first, retries every 5 s and only refuses after 20 s without any answer.
-- Capacity: a container entry uncommented without its indentation (at the top of the file instead of inside
-  `containers:`) is now applied anyway, with a warning explaining the indentation. Generated files comment
-  entries as `  # piece_chest_wood: ...` so removing the `#` keeps the indentation.
+- Fixed: joining a busy server failed with "you have no copy" when everyone ran the same version.
+- Capacity: a container entry uncommented without its indentation is applied anyway, with a warning.
 
 ## 1.1.0
-
-- Stacks: config and YAML edits now reach items already picked up, items lying in the world and an open chest.
-- Server sync moved to Charter, our own library. Existing config files work unchanged.
-- Version mismatch refuses the join with a named reason and a code in both logs.
-- New console command `charter`: `status`, `diff`, `versions`.
-- Salvage: YAML key `exclude` renamed `deny`. A file still using `exclude:` warns once and its list is ignored.
-- Stow: keys renamed — `Store All Key` → `Stow All Key` (`G`), `Restock Key` → `Top Up Key` (`R`),
-  `Trash Flag Key` → `Junk Key` (`J`), `Trash Flagged Key` → `Destroy Junk Key` (`LeftShift + Delete`).
-  `Store One Key` now `V`. Existing bindings carry over.
-- Stow: junk marks move to `OpenKeep.junk` in character data. Marks from 1.0.0 are not read.
-- Stow: buttons moved below their panels so they never cover the last item row; new `Button Row Offset`.
+- Stacks: edits reach items already picked up, lying in the world or in an open chest.
+- Server sync moved to Charter, our own library; config files work unchanged.
+- A version mismatch refuses the join with a named reason.
+- New console command `charter` (`status`, `diff`, `versions`).
+- Salvage: YAML key `exclude` renamed `deny`; old `exclude:` lists are ignored.
+- Stow: keys renamed (`Stow All Key`, `Top Up Key`, `Junk Key`, `Destroy Junk Key`), `Store One Key` is `V`;
+  bindings carry over.
+- Stow: junk marks from 1.0.0 are not read.
+- Stow: buttons moved below their panels; new `Button Row Offset`.
 - Removed the unused `Hover Preview` and `Cart Upgrade Piece` settings.
 
 ## 1.0.0
-
-- First full release: the 0.2.0 build under its final version number, no code changes.
+- First full release: the 0.2.0 build under its final version number.
 
 ## 0.2.0
-
-- Signs: a vanilla sign above every player-built container naming its contents, most numerous first. Per-prefab
-  switch, offset and rotation in `OpenKeep.Signs.yml`. Off by default. Edited signs keep your words; a sign
-  removed with the hammer stays gone until reset. None on ships, carts, dungeon chests or spawned treasure.
+- Signs: a vanilla sign above every player-built container names its contents (off by default; rules in
+  `OpenKeep.Signs.yml`).
 - Console: `openkeep signs`, `signs reset`, `signs rewrite`.
 
 ## 0.1.0
-
 - First release.
-- Reach: crafting, upgrading, building and station feeding count and pay from nearby containers, ship holds and
-  carts. Fill and Pull modifiers, per-character toggle, link lines, per-container rules.
-- Stow: quick stack, stow all, top up and sort with hotkeys, favourites, junk marks and a trash can, routing by
-  click, store one, find, dump, chest cycling, ground pickup by rule.
-- Salvage: a Salvage tab and hotkey; return fraction, rounding, upgrade materials, recipe and station
-  requirements, per-item fractions.
-- Stacks: stack and weight multipliers, absolute values, ignore teleport restriction, merge into chests.
-- Capacity: container sizes per prefab, fill and contents in the hover text.
-- Carts: a workbench on every cart, with its own level and range.
-- Shared chests: `View` shows a chest another player has open, read-only; `Full` lets two players work the same
-  chest, every change sent to the owner's game to apply or refuse.
-- Console command `openkeep`. Every gameplay setting synced and lockable, every YAML file synced and hot reloaded.
+- Reach: crafting, building and station feeding count and pay from nearby containers, ship holds and carts.
+- Stow: quick stack, stow all, top up, sort, favourites, junk, trash can, routing, find, dump, chest cycling, ground
+  pickup.
+- Salvage: a Salvage tab and hotkey, with per-item fractions.
+- Stacks: stack and weight multipliers and per item values.
+- Capacity: container sizes per prefab, fill and contents on hover.
+- Carts: a workbench on every cart.
+- Shared chests: `View` and `Full` modes for a chest another player has open.
+- Console command `openkeep`; every gameplay setting synced and lockable, YAML files synced and hot reloaded.

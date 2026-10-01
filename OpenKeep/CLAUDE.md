@@ -393,7 +393,8 @@ piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations`
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
 100 (1 to 1000); both synced).
-Keys, defaults and meanings are in `README.md`. Every setting of the spec is bound with the spec's section, key,
+Keys, defaults and meanings are in each entry's description in the .cfg (bound in the modules' `*Settings.cs`; the
+README only names the features). Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), so every module has a master switch.
 
 ## Network and file names
@@ -1125,8 +1126,7 @@ Torches at night:
 - Ward: the game's `Fireplace.Interact` has no ward check (anyone refuels a warded fire), so the switch follows
   `Door` and `Sign`: the hover omits the line without access (`CheckAccess(pos, 0, false)`), the key flashes the ward
   and sends nothing (`CheckAccess(pos)`). The owner does not re-check, as the game's RPCs don't.
-- Hover: `[O] Keep lit` on a scheduled torch, `[O] Light at night only` on one kept lit (modifiers first, as the README
-  writes keys); `Lights at nightfall` stays for a scheduled torch out for the day. The presser gets a centre message
+- Hover: `[O] Keep lit` on a scheduled torch, `[O] Light at night only` on one kept lit (modifiers first); `Lights at nightfall` stays for a scheduled torch out for the day. The presser gets a centre message
   (`<name>: kept lit day and night` / `<name>: lit at night only`); the owner logs `... kept lit day and night (asked
   by peer N)` / `... back on the night schedule`.
 - `piece_bathtub` is a `Smelter` with a wood switch, not a `Fireplace`: neither fire feature touches it (Reach feeds
