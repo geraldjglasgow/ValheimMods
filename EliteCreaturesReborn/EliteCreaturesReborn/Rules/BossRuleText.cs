@@ -2,19 +2,13 @@ namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
     /// The `bosses:` section of the default rule file - the boss star table and the boss aspects - exactly as it is
-    /// written on first run, comments and all. Kept apart from <see cref="RuleText"/> only for length; the two are
-    /// joined into one file at compile time. This is data, not logic.
+    /// written on first run. Kept apart from <see cref="RuleText"/> only for length; the two are joined into one file
+    /// at compile time. This is data, not logic.
     /// </summary>
     internal static class BossRuleText
     {
         public const string Block =
-@"# Bosses scale on their own table, never the creature lines above, and never take
-# mutations - they take an aspect instead. `stars: false` turns boss stars off;
-# with aspects off as well, every boss is exactly as the game ships it.
-# `star chances` are weights per star count (index 0 = no stars); 90 in 100 stay
-# plain by default. `star power` climbs harder than a creature's on health and
-# damage but less on growth, and leaves swing speed/speed at 1 so a boss fight
-# stays readable.
+@"# Bosses roll on their own table and take an aspect instead of mutations.
 bosses:
   stars: true
   star chances: [90, 6, 3, 1]
@@ -26,18 +20,12 @@ bosses:
     speed:       [1]
     drops:       [1,   1.5,  2,    2.5,  3,    3.5]
 
-  # An aspect is one modifier that changes what kind of fight a boss is. The
-  # altar shows the current one before you summon, and shifts it every
-  # `shift hours` in-game hours (one hour is 1/24 of the game's day - 75 real
-  # seconds by default); 0 fixes each altar's aspect for good. The aspect on the
-  # bowl when you make the offering is the one you fight. A boss with no altar
-  # (the Queen, a console spawn) rolls its aspect when it first appears.
   aspects:
     enabled: true
+    # In-game hours between altar shifts (one hour = 75 real seconds). 0 fixes each altar.
     shift hours: 1
 
-    # Relative weights, not percentages. `none` is a plain vanilla fight. An
-    # altar never shifts to the aspect it already shows.
+    # Weights, not percentages. none is the fight as the game ships it.
     chances:
       none: 30
       Reflective: 10
@@ -54,10 +42,7 @@ bosses:
       Gravitic: 10
       Colossal: 10
 
-    # Multiplies everything the boss drops, on top of the star `drops` line and
-    # `boss multiplier` - and even in Vanilla loot mode. Trophies follow the
-    # `multiply trophies` switch. Both Twins drop full loot, so Twin pays double
-    # at 1. Phantom copies never drop anything.
+    # Multiplies everything the boss drops, even in Vanilla loot mode.
     loot:
       none: 1
       Twin: 1
@@ -74,37 +59,7 @@ bosses:
       Fixated: 1.3
       Gravitic: 1.3
 
-    # Percentages are of the boss as its stars left it.
-    #   Reflective   reflect - % of each hit you land that comes back to you, as
-    #                true damage armour does not reduce (burn/poison ticks never)
-    #   Shielded     arrow reduction - % less damage from bows and crossbows
-    #   Mending      regen - % of max health healed every second, in combat too
-    #   Summoner     every - % of max health lost per wave; count - creatures per
-    #                wave; stars - stars each summoned creature has
-    #   Elementalist elemental bonus - % more fire/frost/lightning/poison/spirit
-    #   Enraged      physical bonus - % more blunt/slash/pierce
-    #   Twin         less health, less damage - % less for each of the two; they
-    #                share one health pool and die together
-    #   Phantom      split at - % of its health left at which the boss splits
-    #                off copies, [] for never; per player - copies per player
-    #                online at each split; health per tier - each copy's max
-    #                health per world tier (tier 0 counts as 1); less damage -
-    #                % less than the boss deals
-    #   Adaptive     resist - % less of whichever damage type hit it most in
-    #                the last `window` seconds; its glow shows which type
-    #   Fixated      marked bonus - % harder it hits the marked player; others
-    #                less - % softer it hits everyone else; every - seconds
-    #                before the mark moves to whoever hurt it most
-    #   Stormbound   every - seconds between strikes; tell time - seconds the
-    #                glowing circle shows under each player within `range` m
-    #                before lightning hits it; radius - the circle's size in m;
-    #                damage - % of a struck player's max health, as lightning
-    #   Gravitic     every - seconds between pulls; range - m it pulls players
-    #                from; pull time - seconds; pull speed - m/s toward it;
-    #                slam radius, slam damage - the slam after the pull, damage
-    #                as % of each player's max health
-    #   Colossal     bigger, more health, slower - %; shockwave radius - m its
-    #                heavy attacks knock players down in
+    # Field meanings: reference, Boss aspect power fields.
     power:
       Reflective:   { reflect: 15 }
       Shielded:     { arrow reduction: 30 }
@@ -120,9 +75,8 @@ bosses:
       Gravitic:     { every: 20, range: 30, pull time: 1.5, pull speed: 6, slam radius: 6, slam damage: 10 }
       Colossal:     { bigger: 40, more health: 15, slower: 15, shockwave radius: 8 }
 
-    # Per boss, by prefab name. `summons` is what Summoner calls (a boss with no
-    # list never rolls Summoner); `aspects: [none, Twin, ...]` narrows that boss's
-    # rotation. `elite reference` lists every boss's exact prefab name.
+    # Per boss, by prefab name: summons is what Summoner calls (no list, no Summoner);
+    # aspects, if set, limits which aspects it rolls.
     per boss:
       - match: Eikthyr
         summons: [Boar, Neck]
@@ -138,8 +92,7 @@ bosses:
         summons: [SeekerBrute, Seeker]
       - match: Fader
         summons: [Charred_Melee, Charred_Archer]
-      # Elite Creatures Pack's kraken holds one ship with one health bar, so it
-      # never comes as a Twin and never splits off Phantom copies.
+      # Elite Creatures Pack's kraken holds one ship: never Twin or Phantom.
       - match: ECP_Kraken
         aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal]
 
