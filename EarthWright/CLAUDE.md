@@ -2,7 +2,7 @@
 
 Terraforming for Valheim's hoe and cultivator: brush size, shapes and edges, exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits, protection, new menu
-entries. The log line `Loading [EarthWright 0.3.0]` confirms the version. Built on 2026-09-27 from the user's
+entries. The log line `Loading [EarthWright 0.3.1]` confirms the version. Built on 2026-09-27 from the user's
 feature list (`SPEC.md`, gitignored) and the game's own code, by a main session and ten module agents following
 `PLAN.md`, which holds the design, the feature map and the judgement calls. This file is the code map, the patched
 methods, the network names and the in-game test checklist.
@@ -69,6 +69,21 @@ Seams between modules: `BrushCaps` (level radius, unlocks, entry refusal), `Undo
 - Prefabs: menu pieces `ew_*`, custom entries `ew_custom_<id>` (no items of its own). Words `ew_*`.
 - No ZDO keys of its own: terrain lives in the game's compiler ZDO (`s_TCData`).
 
+## Console commands
+
+Player documentation, moved here from the README on 2026-09-30; the README links to this section. The default keys
+are in `PLAN.md`, "Default controls".
+
+`ew help` lists them. `ew on` / `ew off` switch EarthWright for you (also typed in chat as `/ew off`). `ew reset
+[radius]`, `ew undo`, `ew redo`, `ew history`, `ew snapshot save|restore|list|delete <name> [radius]`, `ew limits`,
+`ew zone ...`, `ew language write|reload`, `ew reload` (admin). Clearing: `ew forestry [radius]`, `ew debris
+[radius]`, and for admins `ew pieces [radius]` and `ew terrain <op> ...` (level, raise, lower, min, max, band,
+offset, slope, remove, reset, paint; filters for a share of the points, skipping ground under buildings, and
+including or ignoring objects). `ew terrain help` lists the options.
+
+Admin zones (limit terraforming to them): `ew zone add <name> <radius> [player]`, `ew zone list`,
+`ew zone remove <name>`.
+
 ## Patched game methods
 
 | Module | Method | Kind |
@@ -129,7 +144,7 @@ names and types match): scratch harness `patchcheck`, reflection only.
 
 Single player first, then a dedicated server with an admin (A) and a player (B). Nothing below has been run in game.
 
-1. Load: `Loading [EarthWright 0.3.0]`, no failed patches, no exceptions; `ew help` lists the subcommands.
+1. Load: `Loading [EarthWright 0.3.1]`, no failed patches, no exceptions; `ew help` lists the subcommands.
 2. Hoe menu: the game's four entries, then Lower, Smooth, Paint, Reset, Ramp, Road, Groundbreaker (Clear only with
    Clearing Enabled; Terraform only for admins); icons; search finds "lower"; cultivator shows Till and Uproot.
 3. Brush: Alt+wheel and `[`/`]` resize without zooming; B cycles values; N shapes; arrows rotate; I grid; O edge;
