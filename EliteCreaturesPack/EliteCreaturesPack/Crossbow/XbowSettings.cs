@@ -4,28 +4,20 @@ using SyncedConfig;
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// Section 6: the Skeleton Crossbowmen. Whether the game's archer skeletons can come as crossbowmen and what share of
-    /// them (they spawn wherever and whenever those skeletons do, like any skeleton unit), and the numbers of the shot
-    /// that are not the skeleton's own: how hard it hits against that skeleton's bow, how often it shoots, how fast a
-    /// bolt flies and how far it shoots from. Everything else (health, resistances, faction, loot) is its skeleton's.
+    /// Section 6: the Skeleton Crossbowmen's shot, the numbers that are not its skeleton's own: how hard it hits against
+    /// that skeleton's bow, how often it shoots, how fast a bolt flies and how far it shoots from. Everything else
+    /// (health, resistances, faction, loot) is its skeleton's. Whether it spawns is an arsenal skeleton's switch
+    /// (<see cref="Arsenal.ArsenalSettings.CrossbowmanSpawns"/>; the draw is <see cref="Skeletons.SkeletonDraw"/>).
     /// Synced; read where they apply, so a reload takes effect.
     /// </summary>
     public static class XbowSettings
     {
         public const string Section = "6 - Skeleton Crossbowman";
 
-        private static ConfigEntry<bool> enabled = null!;
-        private static ConfigEntry<float> share = null!;
         private static ConfigEntry<float> damageFactor = null!;
         private static ConfigEntry<float> shotInterval = null!;
         private static ConfigEntry<float> boltSpeed = null!;
         private static ConfigEntry<float> range = null!;
-
-        /// <summary>Whether new crossbowmen may appear. Ones already in the world stay.</summary>
-        public static bool On => enabled.Value;
-
-        /// <summary>The share of the archer skeletons' spawns that are crossbowmen, 0 to 1.</summary>
-        public static float Share => share.Value / 100f;
 
         public static float DamageFactor => damageFactor.Value;
         public static float ShotInterval => shotInterval.Value;
@@ -33,18 +25,6 @@ namespace EliteCreaturesPack.Crossbow
         public static float Range => range.Value;
 
         public static void Initialize(SyncedConfiguration config)
-        {
-            enabled = config.Bind(Section, "Enabled", true,
-                "Skeleton crossbowmen: skeletons with a crossbow of bones and a quiver of blunt bone bolts that fight like the "
-                + "skeleton archer: they raise the crossbow, aim, shoot, then span it and load a bolt. They come in place of "
-                + "the game's Black Forest archer skeletons, wherever and whenever those spawn. Off: no new crossbowmen; ones already in the world stay.");
-            share = config.Bind(Section, "Share", 15f,
-                "Percent of the spawns of those skeletons that come as crossbowmen instead.",
-                acceptableValues: Settings.Range(0f, 100f));
-            BindShot(config);
-        }
-
-        private static void BindShot(SyncedConfiguration config)
         {
             damageFactor = config.Bind(Section, "Damage Factor", 1f,
                 "A bolt's damage, as blunt, against the bow of the skeleton archer it replaces (20), before stars. 1: the "

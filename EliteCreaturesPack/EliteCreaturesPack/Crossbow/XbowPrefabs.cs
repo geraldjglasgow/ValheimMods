@@ -68,7 +68,7 @@ namespace EliteCreaturesPack.Crossbow
             AssetBundle bundle = EmbeddedBundle.Load(typeof(XbowPrefabs).Assembly, Bundle);
             Material skin = XbowKit.Skin(skeleton.transform.Find("Visual"));
             bolt = XbowBolt.Build(gameBolt, Bolt, true, EmbeddedBundle.Prefab(bundle, BoltLook), skin);
-            XbowBolts.Build(scene, gameBolt, EmbeddedBundle.Prefab(bundle, BoltLook), skin);
+            XbowBolts.Build(scene, gameBolt, EmbeddedBundle.Prefab(bundle, BoltLook), skin, bundle);
             XbowRig.Click = scene.GetPrefab("sfx_reload_done");
             foreach (XbowKind kind in XbowKind.All)
             {

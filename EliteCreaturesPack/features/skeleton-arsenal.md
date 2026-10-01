@@ -2,7 +2,14 @@
 
 One feature of the mod, specified on its own. The other feature files sit beside it.
 
-This file covers the skeleton arsenal: seven new skeleton units, each carrying one weapon of bone with vertebrae worked
+**The skeleton arsenal is every bone weapon of the mod** (the user, 2026-09-30): the bone dagger, sword, axe, mace,
+spear, atgeir, the players' bow and the skeletons' bow, the bone arrow, the spine, the Bone Crossbow and its Blunted
+Bone Bolts, and the Executioner's Greataxe, in three bundles (`ecp_skel_arsenal`, `ecp_crossbowman`,
+`ecp_headsman`). The Bone Crossbow and its bolts are specified in `skeleton-crossbowman.md` (section 6a), the
+greataxe in `headsman.md`, beside the creatures that carry them; the rest, and the skeletons that carry them (the
+arsenal skeletons), are specified here.
+
+This file covers the skeleton arsenal's own part: seven new skeleton units, each carrying one weapon of bone with vertebrae worked
 in (a dagger, sword, axe, mace, spear, atgeir or bow), the spine they drop, the players' bone weapons made from it,
 and bone arrows. The skeletons' bodies, AI and sounds are the game's own; the weapons, the arrow and the spine come
 from the workspace's `AssetWorkshop` (`assets/ecp_skel_arsenal` and `assets/ecp_spine`, v2: the vertebra set; v1 is archived in
@@ -72,8 +79,8 @@ chambers, graves, tower ruins, cabins and the Meadows' ruins, and bone piles.
 
 - Which weapon it carries is drawn evenly. The bow comes only in place of a skeleton that could have been an
   archer; a no-archer skeleton's spawn draws among the six melee weapons.
-- Each skeleton has its own on/off switch (section 6). One switched off leaves its share of spawns as plain
-  skeletons, so the others come no more often than before.
+- Each skeleton has its own on/off switch (section 8). One switched off drops out of the draw; the rest, the plain
+  skeleton among them, stay equally likely.
 - The spawn keeps its levels (stars). The spawner itself never changes: a fixed spawner's creature is swapped for one
   spawn and put back.
 - With the Skeleton Crossbowman on too, an archer skeleton's spawn goes to whichever swap wins first; both never
@@ -143,8 +150,9 @@ Not in the request; decided here, change freely:
 
 1. **Names**: Cutthroat, Swordsman, Axeman, Bonebreaker, Spearman, Halberdier, Bowman; items "Bone <weapon>",
    "Spine", "Bone Arrow". Prefab names are hashed into worlds: settle them before a release.
-2. **Share 25%, drawn evenly.** Together about one skeleton in four; each weapon about one in 28 (one in 24 among
-   no-archer spawns).
+2. **One even draw** (the user, 2026-09-30; was 25% for the arsenal together): the plain skeleton, the seven arsenal
+   skeletons and the Skeleton Crossbowman are equally likely, one in nine each (one in seven among no-archer spawns:
+   no bowman, no crossbowman).
 3. **Creature damage** from the replaced skeleton's sword by the factors above; the dagger strikes more often, the
    mace and atgeir less.
 4. **The spine is paid once**: upgrades cost bones only (the atgeir needs two spines). One spine per kill at
@@ -202,5 +210,12 @@ In the LocalTesting profile with DevBridge, `devcommands` on.
 - 2026-09-29: config cut to seven spawn switches (section 8) at the user's request; section 9 removed, its values
   fixed in code. Then a master `Enabled` switch over them (user: "a master 'skeleton config' to turn them all on or
   off. default on").
+- 2026-09-30: the Skeleton Crossbowman counts as an arsenal skeleton (the user): its switch `Skeleton Crossbowman`
+  in section 8 under the master `Enabled` (section 6's `Enabled` removed), and the spine drop.
+- 2026-09-30: at the user's request ("all the non-executioner skeletons ... an equal chance to be the mob spawned"),
+  the arsenal's 25% and the crossbowman's `Share` became one even draw with the plain skeleton (`Skeletons/`); a
+  switched-off skeleton now drops out of the draw instead of leaving its spawns plain. The greataxe's recipe finds the
+  spine before the database lists it (it had fallen back to bone fragments) and takes 1 (was 8); the Bone Crossbow's
+  takes 1 too. Built, not run in game.
 - 2026-09-29: the vertebra item became the spine (`ECP_Spine`, `item_ecp_spine`, AssetWorkshop `assets/ecp_spine`),
   a visual and name change only: same drop, recipes and counts. The greataxe's `Vertebrae` setting is `Spines`.

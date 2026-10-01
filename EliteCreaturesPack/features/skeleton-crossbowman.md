@@ -20,8 +20,9 @@ carry, the shot and the reload; nothing has been seen in a running game yet.
 # 1. Where crossbowmen come from
 
 The crossbowman is a skeleton unit like the game's others (decided with the user on 2026-09-29): it comes wherever and
-whenever the game spawns one of its **archer skeletons**, in their place at `Share` percent (default **15%**, about one
-in seven), and each is that skeleton's kind:
+whenever the game spawns one of its **archer skeletons**, in their place as often as the plain skeleton and each arsenal
+skeleton (one even draw, about one spawn in nine; the user, 2026-09-30; until then `Share` percent, 15% by default),
+and each is that skeleton's kind:
 
 | The game's skeleton | Health | Its archer's bow | Where it spawns | Its crossbowman |
 | --- | --- | --- | --- | --- |
@@ -105,21 +106,20 @@ locked while `Lock Configuration` is on there:
 
 | Setting | Default | |
 | --- | --- | --- |
-| `Enabled` | true | off: no new crossbowmen; ones already in the world stay |
-| `Share` | 15 | percent of the archer skeletons' spawns that are crossbowmen |
 | `Damage Factor` | 1 | a bolt's blunt damage against the bow of the skeleton it replaces (20, 15, 55, 60) |
 | `Shot Interval` | 6 | seconds between shots at the least (the archer: 4) |
 | `Bolt Speed` | 40 | metres a second, straight (the archer's arrow: 30) |
 | `Range` | 25 | metres it shoots from (the archer: 20) |
 | `Craftable` | true | the Bone Crossbow can be made (section 7 of this file) |
-| `Recipe` | Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2 | its cost, item:amount:amount per upgrade; a placeholder |
+| `Recipe` | ECP_Spine:1, Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2 | its cost, item:amount:amount per upgrade; a placeholder (the spine added after 0.5.0; the user, 2026-09-30) |
 | `Workbench Level` | 2 | the workbench level it needs, and its bolts (1 until 0.4.0; the user, 2026-09-29) |
 | `Damage` | 30 | its own blunt blow, before the bolt's |
 | `Damage Per Level` | 4 | blunt added by each upgrade |
-| `Reload Time` | 4 | seconds with no Crossbows skill; the skill halves it |
+| `Reload Time` | 2.3 | seconds with no Crossbows skill; the skill halves it (3 up to 0.5.0) |
 
 # 6a. The Bone Crossbow
 
+Part of the skeleton arsenal (every bone weapon of the mod, `skeleton-arsenal.md`), with its Blunted Bone Bolts.
 The players' version of the crossbowmen's crossbow, made at the workbench (asked for by the user on 2026-09-29; "don't
 worry about the recipe yet", so its cost is a placeholder in the `Recipe` setting). Prefab `ECP_BoneCrossbow`, words
 `item_ecp_bonecrossbow` and `_description`, icon rendered from the model (AssetWorkshop `assets/ecp_xbow_crossbow/icon.py`).
@@ -133,7 +133,7 @@ worry about the recipe yet", so its cost is a placeholder in the `Recipe` settin
   point, so its prod lands where the Arbalest's is and its grip where the Arbalest's trigger is. The collider is a box
   round it; the Arbalest's upgrade glow (laid along its own 1.7 m) is gone.
 - **Numbers**: 30 blunt of its own (+4 a level), three quality levels, 100 durability (+50 a level), weight 2, bolts at
-  90 m/s (the Arbalest: 200), reload 4 s (the Arbalest: 3.5), no chop (the Arbalest chops at 140). A bolt adds its own
+  60 m/s (90 until 2026-09-30; the best bows at full draw: 60; the Arbalest: 200), reload 2.3 s (`Reload Time`; the Arbalest: 3.5), no chop (the Arbalest chops at 140). A bolt adds its own
   damage: a bone bolt 32 pierce, an iron one 42.
 - **Recipe**: at the workbench (`piece_workbench`), at `Workbench Level`, the `Recipe` cost; an unknown item name is
   logged and left out; off when `Craftable` is off or no workbench exists.
@@ -148,9 +148,9 @@ These were decided while building it, not by the user; each is easy to change:
 - The reload (span, fetch a bolt, lay it) is part of every attack; the request named only raise, aim and fire.
 - The crossbow rides the left fist (as the archer's bow does) and the right hand spans and loads from a quiver on the
   right hip; the carry is a two-handed low ready instead of the archer's one-handed carry.
-- Spawns: every archer skeleton kind has its crossbowman at one share (15%); their damage is the archer's
+- Spawns: one even draw with the plain skeleton and the arsenal skeletons (15% until 2026-09-30); their damage is the archer's
   (`Damage Factor` 1), shot every 6 s instead of 4, so about two thirds of the archer's damage over time.
-- The Bone Crossbow's numbers (30 blunt, 3 levels, 4 s reload, 90 m/s) and its placeholder recipe; ammo is the
+- The Bone Crossbow's numbers (30 blunt, 3 levels, 2.3 s reload, 60 m/s, no recoil) and its placeholder recipe; ammo is the
   game's bolts (the bone bolt is Mistlands-made, but the crossbowmen drop them); no craftable blunt bolt yet.
 - Loot: bone bolts, usable only with a crossbow (Mistlands).
 - Translations: the name and the crossbow's are English in every language for now.
@@ -199,6 +199,12 @@ These were decided while building it, not by the user; each is easy to change:
 
 | Date | What changed | Commit |
 | --- | --- | --- |
+| 2026-09-30 | At the user's request ("make the crossbow reload time 1 second longer. also bolt should fly at 60m/s"): `Reload Time` 2.3 s, bolts 60 m/s. The player reload clip is now paced by formula (`XbowClips.PlayerReload` 2.3, `ReloadEnds` 3.64: the reload ends just after the pat, where the user lined the bar up at 1.3 s), pace 0.8846, clip 3.715 s; keys string hooked 0.708, spanned 1.238, bolt taken 1.805, laid 2.548, pat 2.795, carry 3.503, mirrored in `XbowPlayerRig`/`XbowPlayerHand` and the previews. | |
+| 2026-09-30 | At the user's request ("the loading bar needs to be shorter by like .2 seconds"; "its not quite lining up with animation"): `Reload Time` 1.3 s, the clip left as it is (timed for 1.5 s: the bolt is laid and patted by 1.13 s, the cut end is only the hand's return, which the game's 0.25 s blend into the carry covers). Then ("make the bolt travel 25% slower"): the Bone Crossbow's bolts fly at 67.5 m/s (was 90). Then ("after the reload animation i stand there for a little bit"): the player's done clip `ecp_xbow_player_reload_done` 0.1 s (was 0.9 s, the game's own length): the game's "Reload done" state is tagged minoraction_fast, which blocks shooting and blocking until it ends, so the wait after a reload is about 0.35 s (the clip and the 0.25 s blend out) instead of 1.15 s. | |
+| 2026-09-30 | At the user's request ("shorted crossbow reload by .5 seconds"): `Reload Time` 1.5 s (a saved 3 or 2 moves to it); the player reload clip at half the crossbowman's pace, 2.1 s at the game's 1.4x (string hooked 0.40, spanned 0.70, bolt taken 1.02, laid 1.44, pat 1.58, carry 1.98; `XbowClips.PlayerPace` 0.5), mirrored in `XbowPlayerRig`/`XbowPlayerHand` and the workshop previews. | |
+| 2026-09-30 | At the user's request ("yes fix the crossbow reload"): the players' reload clip `ecp_xbow_player_reload` re-timed for the 2 s reload: the same motion in 2/3 of the time (AssetWorkshop `XbowClips.PlayerPace`, `PlayerTime`), so the game's reload state at 1.4x fills 2 s (clip 2.8 s, was 4.2 s for 3 s). Keys: lowered 0.27, string hooked 0.53, spanned 0.93, to the hip 1.15, bolt taken 1.36, bolt out 1.60, laid 1.92, pat 2.11, carry 2.64 (were 0.40, 0.80, 1.40, 1.72, 2.04, 2.40, 2.88, 3.16, 3.96); mirrored in `XbowPlayerRig` (its string hook 0.067, was 0.1) and `XbowPlayerHand` (reach 0.30, was 0.45) and the workshop's player preview (its reload held 2 s). The Crossbows skill still shortens the reload down to half and then cuts the clip's end. The crossbowman's own clips are unchanged. Bundle rebuilt and installed (clip length read back from the bundle: 2.800 s), built, not run in game. | |
+| 2026-09-30 | At the user's request ("can we consider the crossbow skeleton an arsenal skeleton?"): its spawn switch moved from section 6's `Enabled` to section 8's `Skeleton Crossbowman`, under the arsenal's master switch; it drops a spine one time in ten as the arsenal skeletons do. Section 6 keeps the shot's numbers. Built, not run in game. | |
+| 2026-09-30 | At the user's request ("way more default vanilla skeletons spawn"; "all the non-executioner skeletons ... an equal chance"): the crossbowman's own `Share` roll and the arsenal's 25% gave way to one even draw (`Skeletons/SkeletonDraw`); `Share` removed. The Bone Crossbow: a spine in its recipe (`ECP_Spine:1` first), a 2 s reload (was 3; the reload clip, timed for 3 s, now ends just before the bolt is laid) and no recoil (`m_recoilPushback` 0; the Arbalest's shoves the shooter back). A saved `Recipe` or `Reload Time` still at the old default moves to the new one (`Settings.Renew`). Built, not run in game. | |
 | 2026-09-29 | At the user's request ("a new valheim skeleton unit ... treated as other skeleton units ... similar damage numbers and hp"; "that crossbow needs to be a craftable item ... a workbench item"): four crossbowmen, one per archer skeleton (`XbowKind`: base, Meadows, Swamps, Mountains; a copy of each, its bow's damage as blunt), spawning in place of those skeletons from every spawner at `Share`; the `Biomes`, `Crypts` and `Bone Piles` settings and `Bolt Damage` gave way to `Damage Factor`. The players' Bone Crossbow (`XbowItem`, a copy of the Arbalest with our models in its Unloaded/Loaded slots, 1.25x), section `7 - Bone Crossbow` with a placeholder workbench recipe (`XbowRecipe`), its icon. Patches verified (38 classes, 0 problems). | |
 | 2026-09-29 | At the user's request: the stock half as long behind the grip (the butt 15 cm back instead of 30; the aim re-authored so the butt still meets the shoulder), the spine's bow deepened to 2.2 cm (the left fist 1 cm lower with it), and blunt bolts: a knuckle of bone for a head, `Bolt Damage` now blunt instead of pierce. | |
 | 2026-09-29 | At the user's request (chose this crossbow over the ChatGPT-made Gravebranch, "it fits the game better"): the vertebrae bow 1.3 cm down in the middle, each leaning with the bow, threaded on a center bone with knobbed ends; the long groove strip became a notch on each vertebra (a straight bolt spans the bow). Same points; checks unchanged. | |

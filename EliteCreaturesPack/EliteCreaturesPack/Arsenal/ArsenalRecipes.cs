@@ -76,7 +76,7 @@ namespace EliteCreaturesPack.Arsenal
             foreach (string entry in text.Split(','))
             {
                 string[] parts = entry.Trim().Split(':');
-                ItemDrop? item = parts.Length >= 2 ? Find(db, parts[0].Trim()) : null;
+                ItemDrop? item = parts.Length >= 2 ? ArsenalItems.Find(db, parts[0].Trim()) : null;
                 if (item == null || !int.TryParse(parts[1], out int amount))
                 {
                     if (entry.Trim().Length > 0)
@@ -89,13 +89,6 @@ namespace EliteCreaturesPack.Arsenal
                 cost.Add(new Piece.Requirement { m_resItem = item, m_amount = amount, m_amountPerLevel = perLevel, m_recover = true });
             }
             return cost.ToArray();
-        }
-
-        /// <summary>The spine by name even before this database lists it (the item registration may run after this).</summary>
-        private static ItemDrop? Find(ObjectDB db, string name)
-        {
-            GameObject? prefab = name == ArsenalItems.SpineName ? ArsenalItems.Spine : db.GetItemPrefab(name);
-            return prefab != null ? prefab.GetComponent<ItemDrop>() : null;
         }
     }
 }

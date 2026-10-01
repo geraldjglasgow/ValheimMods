@@ -10,8 +10,10 @@ namespace EliteCreaturesPack.Crossbow
     /// On every player, on every peer: while the Bone Crossbow is in the left hand (as the player's equipment shows it,
     /// which the game syncs), the player's animator plays the Bone Crossbow's own reload in place of the game's Arbalest
     /// reload (AssetWorkshop Crossbow/XbowClips: the crossbowman's reload, lowering the crossbow, drawing the string into
-    /// the nut, laying a bolt; timed so the game's reload state, at 1.4x, fills the 3 s reload), and a held carry in
-    /// place of its "Reload done". The game's reload sounds come along: the game clips' events are copied onto ours.
+    /// the nut, laying a bolt; timed so the game's reload state, at 1.4x, paced so the 2.3 s default ends it as the hand
+    /// goes back to the carry, which the game's blend finishes; the Crossbows skill shortens the reload down to half,
+    /// cutting more of the end), and a held carry in place of its "Reload done", 0.1 s instead of the game's 0.9 s
+    /// (that state blocks shooting). The game's reload sounds come along: the game clips' events are copied onto ours.
     /// The game's controller comes back when the crossbow leaves the hand, unless another mod has put its own in.
     /// </summary>
     public sealed class XbowHold : MonoBehaviour

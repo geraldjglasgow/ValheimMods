@@ -28,9 +28,10 @@ namespace EliteCreaturesPack.Headsman
             enabled = config.Bind(Section, "Recipe", true, "Whether the greataxe can be made at the workbench.");
             slash = config.Bind(Section, "Slash", 55f, "Slash damage (a fully upgraded Bronze Axe: 55).", acceptableValues: Settings.Range(0f, 1000f));
             chop = config.Bind(Section, "Chop", 49f, "Chop damage, for trees (a fully upgraded Bronze Axe: 49).", acceptableValues: Settings.Range(0f, 1000f));
-            spines = config.Bind(Section, "Spines", 8,
+            spines = config.Bind(Section, "Spines", 1,
                 "Spines (the bone weapons' drop from skeletons) the recipe takes besides the axehead; without the skeleton arsenal, "
                 + "bone fragments take their place.", acceptableValues: new AcceptableValueRange<int>(0, 100));
+            Settings.Renew(spines, 8);
             bones = config.Bind(Section, "Bone Fragments", 10, "Bone fragments the recipe takes.", acceptableValues: new AcceptableValueRange<int>(0, 100));
             station = config.Bind(Section, "Workbench Level", 3, "Workbench level needed.", acceptableValues: new AcceptableValueRange<int>(1, 5));
         }

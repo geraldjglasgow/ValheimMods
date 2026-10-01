@@ -19,8 +19,9 @@ namespace EliteCreaturesPack.Crossbow
     {
         public const string Slot = "ecp_xbow_rig", GrooveBolt = "ecp_xbow_groove_bolt";
         private const string ReloadClip = "ecp_xbow_player_reload";
-        // The player reload clip's own seconds (XbowClips: the crossbowman's reload moved 0.72 s earlier).
-        private const float StringGrab = 0.80f, Spanned = 1.40f, BoltGrab = 2.04f, Lay = 2.88f, Hook = 0.1f;
+        // The player reload clip's own seconds (XbowClips PlayerTime: the crossbowman's reload moved 0.72 s earlier and
+        // paced by XbowClips.PlayerPace for the 2.3 s reload).
+        private const float StringGrab = 0.7077f, Spanned = 1.2385f, BoltGrab = 1.8046f, Lay = 2.5477f, Hook = 0.0885f;
 
         private static GameObject? boltLook;
         private static Material? skin;

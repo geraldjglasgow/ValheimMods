@@ -47,5 +47,17 @@ namespace EliteCreaturesPack
 
         /// <summary>A range from <paramref name="min"/> to <paramref name="max"/>, for a number setting.</summary>
         public static AcceptableValueRange<float> Range(float min, float max) => new AcceptableValueRange<float>(min, max);
+
+        /// <summary>
+        /// An entry whose default changed: a saved value still at the old default moves to the new one, so the change
+        /// reaches .cfg files written before it; any other value stays.
+        /// </summary>
+        public static void Renew<T>(ConfigEntry<T> entry, T oldDefault)
+        {
+            if (Equals(entry.Value, oldDefault))
+            {
+                entry.Value = (T)entry.DefaultValue;
+            }
+        }
     }
 }

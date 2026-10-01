@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Core;
 using HarmonyLib;
 using UnityEngine;
@@ -7,13 +8,14 @@ namespace EliteCreaturesPack.Headsman
 {
     /// <summary>
     /// The Executioner's Greataxe's recipe, in every ObjectDB the game builds or copies once the item exists: at the
-    /// workbench at the settings' level, from the Executioner's axehead, spines (the skeleton arsenal's ECP_Spine;
-    /// bone fragments in their place when that item is not in the game) and bone fragments, as many as the settings say.
+    /// workbench at the settings' level, from the Executioner's axehead, spines (the skeleton arsenal's ECP_Spine, found
+    /// even before the database lists it; bone fragments in their place when the arsenal is not built) and bone
+    /// fragments, as many as the settings say.
     /// Off while `Recipe` is off, or when no workbench is found. Rebuilt when the settings change.
     /// </summary>
     public static class GreataxeRecipe
     {
-        private const string Workbench = "piece_workbench", Spine = "ECP_Spine", Bones = "BoneFragments";
+        private const string Workbench = "piece_workbench", Bones = "BoneFragments";
 
         private static Recipe? recipe;
 
@@ -63,7 +65,7 @@ namespace EliteCreaturesPack.Headsman
             var cost = new List<Piece.Requirement>();
             Add(cost, GreataxeItems.Axehead!.GetComponent<ItemDrop>(), 1);
             ItemDrop? bones = db.GetItemPrefab(Bones)?.GetComponent<ItemDrop>();
-            ItemDrop? spine = db.GetItemPrefab(Spine)?.GetComponent<ItemDrop>();
+            ItemDrop? spine = ArsenalItems.Find(db, ArsenalItems.SpineName);
             Add(cost, spine ?? bones, GreataxeSettings.Spines);
             Add(cost, bones, GreataxeSettings.Bones);
             return cost.ToArray();

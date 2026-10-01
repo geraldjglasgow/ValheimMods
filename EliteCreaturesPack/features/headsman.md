@@ -81,7 +81,8 @@ the rest 30).
   spawner's respawn time; the game's CreatureSpawner keeps and syncs it).
 - About 900 health; hits about 50-60, the sweep about 35; at most 2 summoned skeletons alive at a time.
 - Drops coins and bones, and **its axehead at 50 %** (`ECP_ExecutionerAxehead`).
-- Players craft the **Executioner's Greataxe** (`ECP_ExecutionerGreataxe`) from the axehead, spines
+- Players craft the **Executioner's Greataxe** (`ECP_ExecutionerGreataxe`), part of the skeleton arsenal (every bone
+  weapon of the mod, `skeleton-arsenal.md`), from the axehead, spines
   (`ECP_Spine`, the arsenal's) and bone fragments. As strong as a fully upgraded Bronze Axe (slash 55, chop 49).
   A Battleaxe-type two-handed weapon: the game's Battleaxe stance, movement and block; its combo is the Battleaxe's
   first swing (a slash in front), the greatsword's whirling second swing (three quarters round, both fists together;
@@ -146,7 +147,7 @@ game's synced triggers and equipment; its swing and hit sounds are the Battleaxe
 - Sound level: one factor for all cues, so the boss's voice is as loud as the game plays the skeleton's (0.8); the
   preview's relative levels are kept, capped at full volume (the throw and the re-forming's).
 - The greataxe: tool tier 2 (a Bronze Axe's), the Battleaxe's durability, weight, stamina and block; not upgradable;
-  recipe at workbench level 3: the axehead, 8 spines (bone fragments when the arsenal's `ECP_Spine` is not in
+  recipe at workbench level 3: the axehead, 1 spine (8 up to 0.5.0; bone fragments when the arsenal's `ECP_Spine` is not in
   the game) and 10 bone fragments. Its secondary attack is the Battleaxe's.
 
 ## Test checklist

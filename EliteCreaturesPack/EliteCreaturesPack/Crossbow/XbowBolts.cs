@@ -5,22 +5,23 @@ using UnityEngine;
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// The players' Blunted Bone Bolts: crossbow ammo made from bone fragments at the workbench (<see cref="XbowRecipe"/>),
+    /// The players' Blunted Bone Bolts, one of the skeleton arsenal (<see cref="Arsenal.ArsenalItems"/>): crossbow ammo
+    /// made from bone fragments at the workbench (<see cref="XbowRecipe"/>),
     /// for the Bone Crossbow above all, though any crossbow shoots them. A copy of the game's bone bolts (the same ammo
     /// type, stack and weight) wearing the bundle's blunted bone bolt, in the hand and in flight; they add
     /// <see cref="XbowItemSettings.BoltDamage"/> blunt to the crossbow's own blow, as ammo does. The crossbowmen drop them.
-    /// The icon is still the game's bone bolt's.
+    /// Its own inventory icon shows the blunt knuckle head and featherless bone shaft.
     /// </summary>
     public static class XbowBolts
     {
         public const string ItemName = "ECP_BoltBoneBlunt";
         public const string Word = "ecp_boltboneblunt";
-        private const string GameItem = "BoltBone", GameLook = "default";
+        private const string GameItem = "BoltBone", GameLook = "default", Icon = "ecp_xbow_bolt_icon";
 
         public static GameObject? Item { get; private set; }
         public static GameObject? Shot { get; private set; }
 
-        public static void Build(ZNetScene scene, GameObject gameBolt, GameObject look, Material skin)
+        public static void Build(ZNetScene scene, GameObject gameBolt, GameObject look, Material skin, AssetBundle bundle)
         {
             GameObject? game = scene.GetPrefab(GameItem);
             if (game == null || game.transform.Find(GameLook) == null)
@@ -36,6 +37,15 @@ namespace EliteCreaturesPack.Crossbow
             ItemDrop.ItemData.SharedData shared = drop.m_itemData.m_shared;
             (shared.m_name, shared.m_description) = ("$item_" + Word, "$item_" + Word + "_description");
             shared.m_attack.m_attackProjectile = Shot;
+            Sprite? icon = bundle.LoadAsset<Sprite>(Icon);
+            if (icon != null)
+            {
+                shared.m_icons = new[] { icon };
+            }
+            else
+            {
+                Log.Warn($"Blunted Bone Bolts: the bundle has no {Icon}; using the game's bone bolt icon.");
+            }
             Apply();
         }
 

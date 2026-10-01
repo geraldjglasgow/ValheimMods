@@ -6,16 +6,18 @@ using UnityEngine;
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// The players' Bone Crossbow: the crossbowmen's crossbow of bones, made at the workbench (<see cref="XbowRecipe"/>).
+    /// The players' Bone Crossbow, one of the skeleton arsenal (<see cref="Arsenal.ArsenalItems"/>): the crossbowmen's
+    /// crossbow of bones, made at the workbench (<see cref="XbowRecipe"/>).
     /// A copy of the game's Arbalest, so it keeps the game's crossbow handling: held in the left hand, the crossbow
     /// animations, the reload (a minor action, its loaded state in the player's ZDO for everyone to see), the Crossbows
     /// skill, bolts as ammo (their damage and projectile added to its own), its place on the back. The Arbalest's
     /// "attach" holds an "Unloaded" and a "Loaded" model that the game's WeaponLoadState swaps; ours go in their place
     /// (AssetWorkshop Crossbow/XbowItemModels: string let go; spanned with a blunt bolt laid), the collider is fitted to
-    /// our size and the Arbalest's upgrade glow, laid along its own 1.7 m, comes off. It is the crossbowmen's crossbow at
-    /// 1.25 times their size (1.04 m, a 0.9 m prod), so the left hand holds the fore-stock and the right the grip where
-    /// the game's crossbow animations put the hands on the Arbalest's. Its own blow is blunt, it is a
-    /// workbench weapon (<see cref="XbowItemSettings"/>) and it chops no trees (the Arbalest does).
+    /// our size and the Arbalest's upgrade glow, laid along its own 1.7 m, comes off, as does the ring of smoke it fires
+    /// with. It is the crossbowmen's crossbow at 1.25 times their size (1.04 m, a 0.9 m prod), so the left hand holds
+    /// the fore-stock and the right the grip where the game's crossbow animations put the hands on the Arbalest's. Its
+    /// own blow is blunt, it is a workbench weapon (<see cref="XbowItemSettings"/>) and it chops no trees (the Arbalest
+    /// does).
     /// </summary>
     public static class XbowItem
     {
@@ -23,6 +25,7 @@ namespace EliteCreaturesPack.Crossbow
         public const string Word = "ecp_bonecrossbow";
         private const string GameCrossbow = "CrossbowArbalest";
         private const string Icon = "ecp_xbow_crossbow_icon", RigModel = "ecp_xbow_item_rig";
+        private const string FireSmoke = "vfx_arbalest_fire";
         private const float Scale = 1.25f;   // the skeletons' crossbow is sized for them; in a player's hands a little bigger
         private static readonly Vector3 BoxCentre = new Vector3(0f, 0.005f, 0.03f) * Scale, BoxSize = new Vector3(0.73f, 0.11f, 0.81f) * Scale;
 
@@ -44,6 +47,7 @@ namespace EliteCreaturesPack.Crossbow
             Collide(holder.Find("Collider"));
             Object.DestroyImmediate(holder.Find("UpgraderGlow")?.gameObject);
             Describe(item.GetComponent<ItemDrop>(), bundle);
+            DropFireSmoke(item.GetComponent<ItemDrop>());
             Prefab = item;
             XbowItemSettings.Apply(item.GetComponent<ItemDrop>());
         }
@@ -105,6 +109,13 @@ namespace EliteCreaturesPack.Crossbow
             (holder.localPosition, holder.localRotation, holder.localScale) = (Vector3.zero, Quaternion.identity, Vector3.one);
             var box = holder.gameObject.AddComponent<BoxCollider>();
             (box.center, box.size) = (BoxCentre, BoxSize);
+        }
+
+        /// <summary>The Arbalest's ring of smoke at the shot comes off; its camera shake and its sound stay.</summary>
+        private static void DropFireSmoke(ItemDrop drop)
+        {
+            EffectList fire = drop.m_itemData.m_shared.m_triggerEffect;
+            fire.m_effectPrefabs = fire.m_effectPrefabs.Where(e => e.m_prefab == null || e.m_prefab.name != FireSmoke).ToArray();
         }
 
         private static void Describe(ItemDrop drop, AssetBundle bundle)

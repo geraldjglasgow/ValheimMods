@@ -6,9 +6,9 @@ namespace EliteCreaturesPack.Crossbow
     /// <summary>
     /// Section 7: the players' Bone Crossbow. Whether it can be made, what it costs at the workbench (a placeholder
     /// until the recipe is settled), and its own blow and reload. Its other numbers are fixed: a workbench weapon, three
-    /// quality levels, 100 durability (+50 a level), 2 weight, bolts flying at 90 m/s (the Arbalest's: 200). The bolt
-    /// it looses adds its own damage and projectile, as with any crossbow. Synced; a change reaches the crossbows
-    /// already made and the recipe at once.
+    /// quality levels, 100 durability (+50 a level), 2 weight, bolts flying at 60 m/s (the Arbalest's: 200), and no
+    /// recoil pushing the shooter back (the Arbalest's does). The bolt it looses adds its own damage and projectile, as
+    /// with any crossbow. Synced; a change reaches the crossbows already made and the recipe at once.
     /// </summary>
     public static class XbowItemSettings
     {
@@ -41,9 +41,10 @@ namespace EliteCreaturesPack.Crossbow
         {
             craftable = config.Bind(Section, "Craftable", true,
                 "The Bone Crossbow, the crossbowmen's crossbow of bones, can be made at the workbench.");
-            recipe = config.Bind(Section, "Recipe", "Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2",
+            recipe = config.Bind(Section, "Recipe", "ECP_Spine:1, Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2",
                 "What it costs, as item:amount:amount per upgrade, separated by commas (a placeholder for now). Item names are "
-                + "the game's prefab names, like BoneFragments, Wood, DeerHide, TrophySkeleton.");
+                + "the game's prefab names, like BoneFragments, Wood, DeerHide, TrophySkeleton; the spine is ECP_Spine.");
+            Settings.Renew(recipe, "Wood:10:5, BoneFragments:12:6, LeatherScraps:4:2");
             workbenchLevel = config.Bind(Section, "Workbench Level", 2, "The workbench level it needs (its Blunted Bone Bolts too).",
                 acceptableValues: new AcceptableValueRange<int>(1, 5));
             damage = config.Bind(Section, "Damage", 30f,
@@ -51,9 +52,10 @@ namespace EliteCreaturesPack.Crossbow
                 acceptableValues: Settings.Range(0f, 500f));
             damagePerLevel = config.Bind(Section, "Damage Per Level", 4f, "Blunt damage added by each upgrade.",
                 acceptableValues: Settings.Range(0f, 100f));
-            reloadTime = config.Bind(Section, "Reload Time", 3f,
+            reloadTime = config.Bind(Section, "Reload Time", 2.3f,
                 "Seconds to span and load it with no Crossbows skill; the skill halves it (the Arbalest: 3.5).",
                 acceptableValues: Settings.Range(0.5f, 20f));
+            Settings.Renew(reloadTime, 3f);
         }
 
         /// <summary>The Blunted Bone Bolts: its ammo, made at the same workbench level.</summary>
@@ -79,7 +81,8 @@ namespace EliteCreaturesPack.Crossbow
             shared.m_damages = new HitData.DamageTypes { m_blunt = damage.Value };
             shared.m_damagesPerLevel = new HitData.DamageTypes { m_blunt = damagePerLevel.Value };
             shared.m_attack.m_reloadTime = reloadTime.Value;
-            shared.m_attack.m_projectileVel = 90f;
+            shared.m_attack.m_projectileVel = 60f;   // the best bows' full draw (the user, 2026-09-30; was 90)
+            shared.m_attack.m_recoilPushback = 0f;   // the Arbalest shoves its shooter back; this one does not
             shared.m_toolTier = 0;
             shared.m_maxQuality = 3;
             shared.m_maxDurability = 100f;

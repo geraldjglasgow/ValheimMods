@@ -16,8 +16,8 @@ namespace EliteCreaturesPack.Crossbow
     /// </summary>
     public sealed class XbowPlayerHand
     {
-        // The player reload clip's own seconds (AssetWorkshop XbowClips PlayerReloadKeys).
-        private const float Reach = 0.45f, StringGrab = 0.80f, Spanned = 1.40f, Leave = 1.72f, Back = 2.40f, Lay = 2.88f, Pat = 3.16f, Done = 3.96f;
+        // The player reload clip's own seconds (AssetWorkshop XbowClips PlayerReloadKeys, paced by XbowClips.PlayerPace for the 2.3 s reload).
+        private const float Reach = 0.3981f, StringGrab = 0.7077f, Spanned = 1.2385f, Leave = 1.5215f, Back = 2.1231f, Lay = 2.5477f, Pat = 2.7954f, Done = 3.5031f;
         private static readonly Vector3 Grip = new Vector3(0.018f, -0.012f, -0.01f);   // the fist's middle off the stock's grip
         private static readonly Vector3 OnString = new Vector3(0f, 0.012f, -0.012f);
         private const float OverGroove = 0.3f, Above = 0.07f;   // the fist over the laid bolt's middle, a hand's height up

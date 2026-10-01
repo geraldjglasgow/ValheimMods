@@ -9,7 +9,8 @@ namespace EliteCreaturesPack.Headsman
 {
     /// <summary>
     /// The players' part of the Executioner: its axehead, which it drops by the settings' chance, and the Executioner's
-    /// Greataxe made from it at the workbench (<see cref="GreataxeRecipe"/>). The greataxe is a copy of the game's
+    /// Greataxe made from it at the workbench (<see cref="GreataxeRecipe"/>), one of the skeleton arsenal
+    /// (<see cref="Arsenal.ArsenalItems"/>). The greataxe is a copy of the game's
     /// Battleaxe, so it keeps the Battleaxe's handling (two hands, its stance, its three-swing combo and secondary, the
     /// Axes skill, its place on the back, its swing and hit sounds) with the bundle's bone greataxe in its hands
     /// (AssetWorkshop Greataxe/GreataxeModel: held near the butt, its haft aimed through the left fist) and on the ground;

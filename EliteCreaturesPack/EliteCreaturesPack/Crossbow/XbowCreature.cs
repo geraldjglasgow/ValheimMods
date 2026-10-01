@@ -1,5 +1,6 @@
 using System.Linq;
 using BundlePrefabs;
+using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -13,7 +14,8 @@ namespace EliteCreaturesPack.Crossbow
     /// bow, restrung; no sword, no shield), it wears the kit (the bone crossbow in the left fist, the quiver of bone
     /// bolts on the right hip)
     /// and plays the bundle's clips in place of the Skeleton's idle, walk, run and bow shot, and it drops a few bone bolts
-    /// too. Its string and bolts follow the clips (<see cref="XbowRig"/>).
+    /// too, and a spine one time in ten as every arsenal skeleton does (<see cref="ArsenalCreature.AddSpine"/>; the
+    /// arsenal builds first). Its string and bolts follow the clips (<see cref="XbowRig"/>).
     /// </summary>
     public static class XbowCreature
     {
@@ -29,6 +31,7 @@ namespace EliteCreaturesPack.Crossbow
             GameObject creature = PrefabBench.Copy(skeleton, kind.Creature);
             Arm(creature.GetComponent<Humanoid>(), shot);
             MoreBolts(creature.GetComponent<CharacterDrop>(), boltItem);
+            ArsenalCreature.AddSpine(creature.GetComponent<CharacterDrop>(), ArsenalItems.Spine);
             Transform visual = creature.transform.Find("Visual");
             XbowKit.Wear(visual, kit, XbowKit.Skin(visual));
             Animate(visual.GetComponentInChildren<Animator>(true), bundle);

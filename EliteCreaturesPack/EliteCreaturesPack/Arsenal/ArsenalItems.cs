@@ -6,7 +6,14 @@ using UnityEngine;
 namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
-    /// The players' bone weapons and the spine. Each weapon is a copy of the bronze-age weapon of its class
+    /// The skeleton arsenal is every bone weapon of the mod (the user, 2026-09-30): the bone dagger, sword, axe, mace,
+    /// spear, atgeir and bow (the players' and the Skeleton Bowman's), the bone arrow, the spine, the Bone Crossbow with
+    /// its Blunted Bone Bolts, and the Executioner's Greataxe. It ships in three bundles: <c>ecp_skel_arsenal</c> (built
+    /// in this folder), <c>ecp_crossbowman</c> (the Bone Crossbow and its bolts, built beside the crossbowman:
+    /// <see cref="Crossbow.XbowItem"/>, <see cref="Crossbow.XbowBolts"/>) and <c>ecp_headsman</c> (the greataxe, built
+    /// beside the Executioner: <see cref="Headsman.GreataxeItems"/>), which those creatures share.
+    ///
+    /// This class builds the players' bone weapons and the spine. Each weapon is a copy of the bronze-age weapon of its class
     /// (<see cref="ArsenalWeapon.GameItem"/>), so it keeps that weapon's handling, animations, skill, sounds, trail,
     /// durability, weight and upgrades; the game's model comes off its "attach" and the bone one goes in, with a box
     /// collider round it for the ground and the upgrade glow reshaped to it. Its damage, and what each upgrade adds, is
@@ -25,6 +32,16 @@ namespace EliteCreaturesPack.Arsenal
         public static readonly Dictionary<ArsenalWeapon, GameObject> Weapons = new Dictionary<ArsenalWeapon, GameObject>();
 
         public static GameObject? Spine { get; private set; }
+
+        /// <summary>
+        /// A recipe's item by prefab name; the spine even before `db` lists it (the item registration may run after the
+        /// recipe), null while it is not built.
+        /// </summary>
+        public static ItemDrop? Find(ObjectDB db, string name)
+        {
+            GameObject? prefab = name == SpineName ? Spine : db.GetItemPrefab(name);
+            return prefab != null ? prefab.GetComponent<ItemDrop>() : null;
+        }
 
         public static void Build(ZNetScene scene, AssetBundle bundle, Material skin)
         {
@@ -66,7 +83,7 @@ namespace EliteCreaturesPack.Arsenal
         {
             if (game == null || game.transform.Find("attach") == null)
             {
-                Log.Error($"Spine not built: the game has no {GameSpine} with an attach; nothing needs one to be made.");
+                Log.Error($"Spine not built: the game has no {GameSpine} with an attach; the recipes go without it.");
                 return null;
             }
             GameObject item = PrefabBench.Copy(game, SpineName);

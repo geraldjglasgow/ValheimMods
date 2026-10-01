@@ -39,8 +39,8 @@ namespace EliteCreaturesPack.Arsenal
             }
         }
 
-        /// <summary>One spine one time in ten, whatever its stars.</summary>
-        private static void AddSpine(CharacterDrop? drops, GameObject? spine)
+        /// <summary>One spine one time in ten, whatever its stars (every arsenal skeleton, the crossbowman too).</summary>
+        public static void AddSpine(CharacterDrop? drops, GameObject? spine)
         {
             if (drops == null || spine == null)
             {

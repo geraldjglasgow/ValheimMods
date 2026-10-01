@@ -18,14 +18,16 @@ namespace EliteCreaturesPack
     /// The plugin entry point. It binds the settings (synced from the server and lockable), applies every patch, has
     /// each creature build its prefabs whenever the game's network scene wakes, and starts the .cfg hot reload. The
     /// creatures live in their own folders: <c>Mimic</c>, <c>Slinger</c>, <c>RimeGiant</c>, <c>Kraken</c>,
-    /// <c>Crossbow</c>, <c>Arsenal</c>.
+    /// <c>Crossbow</c>, <c>Arsenal</c>, <c>Headsman</c>. The skeleton arsenal, every bone weapon, is built in
+    /// <c>Arsenal</c> and, for the Bone Crossbow and the Executioner's Greataxe, beside their creatures (see
+    /// <see cref="Arsenal.ArsenalItems"/>).
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class EliteCreaturesPack : BaseUnityPlugin
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.5.0";
+        public const string PluginVersion = "0.6.0";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 
@@ -41,8 +43,9 @@ namespace EliteCreaturesPack
             SlingerPrefabs.Install(harmony);
             RimeGiantPrefabs.Install(harmony);
             KrakenPrefabs.Install(harmony);
-            XbowPrefabs.Install(harmony);
+            // The arsenal builds first on each scene wake: the Bone Crossbow's and the greataxe's recipes take its spine.
             ArsenalPrefabs.Install(harmony);
+            XbowPrefabs.Install(harmony);
             HeadsmanPrefabs.Install(harmony);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.

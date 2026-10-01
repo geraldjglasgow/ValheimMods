@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Core;
 using HarmonyLib;
 using UnityEngine;
@@ -8,7 +9,8 @@ namespace EliteCreaturesPack.Crossbow
     /// <summary>
     /// The Bone Crossbow's recipe and its Blunted Bone Bolts' (`Bolt Recipe`, `Bolts Per Craft` at a time), in every
     /// ObjectDB the game builds or copies once the items exist: at the workbench, at the settings' level, costing what
-    /// the settings list (item:amount:amount per upgrade). An item name the game does not know is logged and left out.
+    /// the settings list (item:amount:amount per upgrade; the skeleton arsenal's spine by its prefab name, ECP_Spine). An
+    /// item name the game does not know is logged and left out.
     /// Off (and not made at all) while `Craftable` is off, or when no workbench is found: without a station the game
     /// would let them be made by hand anywhere. Rebuilt when the settings change.
     /// </summary>
@@ -83,7 +85,7 @@ namespace EliteCreaturesPack.Crossbow
             foreach (string entry in text.Split(','))
             {
                 string[] parts = entry.Trim().Split(':');
-                ItemDrop? item = parts.Length >= 2 ? db.GetItemPrefab(parts[0].Trim())?.GetComponent<ItemDrop>() : null;
+                ItemDrop? item = parts.Length >= 2 ? ArsenalItems.Find(db, parts[0].Trim()) : null;
                 if (item == null || !int.TryParse(parts[1], out int amount))
                 {
                     if (entry.Trim().Length > 0)
