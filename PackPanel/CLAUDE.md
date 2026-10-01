@@ -229,6 +229,7 @@ PackPanel/PackPanel/src/
     BlockedCell.cs          a worn pack's unopened cells: dimmed, a grey cross, deaf to the pointer
     SlotElements.cs, ElementPlacer.cs   InventoryGrid.UpdateGui postfix: slot elements into the panel, unused cells
                             hidden, hotbar numbers stop at 8, root kept to the main rows, skins, the purse's count
+    HoveredCell.cs          InventoryGrid.GetHoveredElement postfix: a hidden cell is never the hovered one
     SlotLabels.cs, SlotIcons.cs   the captions (PackPanel_hint), shown while a slot is empty; the icon each shows
     Divider.cs              the bronze line over the purse's row
     ContainerDrop.cs        the container panel lowered to keep the gap
@@ -300,8 +301,59 @@ Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per 
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
 Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Brown Style` true, `Weight Under Minimap` true, `Food And Mead Bar` true,
 `Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5)). The keys
-kept the names they had in OpenKeep's section 10 (never released); only the sections are new. Keys, defaults and
-meanings are in `README.md`.
+kept the names they had in OpenKeep's section 10 (never released); only the sections are new. Each key's meaning is
+its description in the .cfg (bound in `src/Core/InventorySettings.cs`, `InventoryModule.cs`, `Consume/ConsumeSettings.cs`,
+`Ring/KeyRingSettings.cs`, `Backpacks/BackpackSettings.cs` and `Tackle/TackleboxSettings.cs`); the README is only a
+short store page. The YAML files and the default recipes are below.
+
+## Backpack and tacklebox YAML files
+
+The reference for players and server admins (moved unchanged from the README, which links here).
+
+Slots and carry weight take turns, and each pack's recipe takes the one before it, so you upgrade rather than collect:
+
+| Biome | Backpack | Crafted at | Cost | Slots | Carry weight |
+| --- | --- | --- | --- | --- | --- |
+| Meadows | Deerhide Satchel | Workbench, level 2 | 10 Deer hide, 8 Leather scraps | +4 | |
+| Black Forest | Trollhide Backpack | Forge, level 1 | Deerhide Satchel, 20 Troll hide, 2 Bronze | +4 | +50 |
+| Swamp | Rootbound Pack | Forge, level 2 | Trollhide Backpack, 5 Iron, 10 Root, 4 Guck | +8 | +50 |
+| Mountains | Wolfpelt Pack | Forge, level 3 | Rootbound Pack, 12 Wolf pelt, 6 Silver | +8 | +100 |
+| Plains | Lox Hauler | Forge, level 4 | Wolfpelt Pack, 8 Lox pelt, 8 Black metal, 12 Linen thread | +12 | +100 |
+| Mistlands | Carapace Pack | Black forge, level 1 | Lox Hauler, 12 Carapace, 8 Scale hide, 6 Blue jute | +12 | +150 |
+| Ashlands | Asksvin Pack | Black forge, level 2 | Carapace Pack, 10 Asksvin hide, 6 Flametal, 4 Morgen sinew | +16 | +150 |
+| Deep North | Moosehide Pack | Black forge, level 4 | Asksvin Pack, 10 Moose hide, 4 Moose sinew, 5 Gold | +16 | +200 |
+
+Every pack's station, level, cost, slots and carry weight can be changed in `PackPanel.Backpacks.yml` (below).
+
+| Biome | Tacklebox | Crafted at | Cost | Cells |
+| --- | --- | --- | --- | --- |
+| Meadows | Driftwood Tacklebox | Workbench, level 2 | 10 Wood, 10 Leather scraps, 5 Deer hide | 1 |
+| Black Forest | Finewood Tacklebox | Workbench, level 3 | Driftwood Tacklebox, 10 Fine wood, 10 Troll hide, 2 Bronze | 2 |
+| Mistlands | Carapace Tacklebox | Black forge, level 1 | Finewood Tacklebox, 10 Carapace, 10 Yggdrasil wood | 6 |
+| Ashlands | Flametal Tacklebox | Black forge, level 3 | Carapace Tacklebox, 5 Flametal, 10 Asksvin hide | 8 |
+
+Every box's station, level, cost and cells can be changed in `PackPanel.Tackleboxes.yml` (below).
+
+`PackPanel.Backpacks.yml`, next to the cfg, created on first start, hot reloaded a few seconds after a save, synced
+from the server, and editable in game through the Configuration Manager entry `Edit backpacks`. Extra files named
+`PackPanel.Backpacks<anything>.yml` are merged in. Every key is optional; one left out keeps the default (the table
+above). `station` is a crafting station's prefab name (`piece_workbench`, `forge`, `blackforge`, ...), `level` 1 to 10,
+`cost` prefab:amount pairs, `slots` 0 to 40, `carry` 0 to 1000, `portal` true or false (only with `Backpack Portal
+Pass` on).
+```yaml
+backpacks:
+  PackPanel_DeerhideSatchel: { slots: 8 }
+  PackPanel_TrollhideBackpack: { station: forge, level: 1, cost: "PackPanel_DeerhideSatchel:1, TrollHide:20, Bronze:2" }
+  PackPanel_MoosehidePack: { carry: 250, portal: true }
+```
+
+`PackPanel.Tackleboxes.yml` works the same way for the tackleboxes (`Edit tackleboxes`, extra files
+`PackPanel.Tackleboxes<anything>.yml`): `station`, `level` and `cost` as above, and `cells` 0 to 20.
+```yaml
+tackleboxes:
+  PackPanel_DriftwoodTacklebox: { cells: 2 }
+  PackPanel_FlametalTacklebox: { cells: 12 }
+```
 
 ## Network and file names
 
@@ -517,7 +569,10 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   neither), and the panel is the same size in both tabs (5 rows above the purse's, 6 with five utilities and the
   trinket), so nothing jumps
   when turning. Only elements are hidden: the hidden tab's slots are still cells of the inventory, so their items
-  weigh, stay worn and go to the grave as before. The tab is static for the session (Gear first) and a change is
+  weigh, stay worn and go to the grave as before. The two tabs' cells lie on the same spots and the game's
+  `GetHoveredElement` takes the first element under the pointer, hidden or not (the Gear cells come first), so
+  `HoveredCell` skips hidden ones; without it the Consumables tab's tooltips went to the hidden Gear cells (an arrow
+  in an Ammo slot showed none; food showed text left from before), as did equip-hovered and the touch drop. The tab is static for the session (Gear first) and a change is
   applied through `SlotElements.Invalidate`, the same re-placing a settings change uses. Consumables is not clickable
   without consumable slots. The buttons copy the game's take-all button like OpenKeep's row, so they keep the vanilla
   look in every theme; the copy loses its `UIGamePad` (it would answer the take-all key), and `ButtonTextColor`,
