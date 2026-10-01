@@ -1,11 +1,47 @@
 # Skeleton arsenal
 
-Eight custom weapon assets: dagger, mace, spear, atgeir, sword, axe, bow and arrow.
-All blades, heads, shafts and bow limbs are bone, with hide grips and sinew bindings.
+The skeleton arsenal is every bone weapon of Elite Creatures Pack (the user, 2026-09-30): the dagger, sword, axe,
+mace, spear, atgeir, the player's bow and the skeletons' bow, the arrow and the spine (this folder's shared code and
+the `ecp_skel_*` and `ecp_spine` folders, bundle `ecp_skel_arsenal`); the Bone Crossbow and its blunted bolt
+(`ecp_xbow_crossbow`, `ecp_xbow_bolt`, bundle `ecp_crossbowman`, built by `assets/ecp_crossbowman/build.ps1`); and
+the Executioner's Greataxe (`ecp_bone_greataxe`, bundle `ecp_headsman`, built by `assets/ecp_headsman/build.ps1`).
+The crossbow and the greataxe share their bundles with the creatures that carry them. This folder's `build.ps1`
+builds all three bundles; `-SkipBlender -SkipBake -Install` rebuilds them from the models already built and installs
+them into the mod.
+
+The rest of this file covers the eight weapon assets built here: dagger, mace, spear, atgeir, sword, axe, bow and arrow.
+All blades, heads, shafts and bow limbs are bone, with bone grips and coarse bone collars. The bowstrings and arrow feathers remain functional non-bone parts.
 Every weapon incorporates anatomical vertebra geometry: dagger guard, sword grip,
 mace head, axe and spear collars, atgeir spine, bow arrow shelf, and arrow bead.
 Models are in the sibling `ecp_skel_<weapon>` folders, with editable Blender files,
 FBX, albedo/normal textures and manifests in each `out` directory.
+
+
+## Low-poly remake (2026-09-30)
+
+The active arsenal now uses the same coarse, faceted bone treatment as the approved
+Executioner's Greataxe. `low_vertebra.py`, `low_shapes.py`, `low_bones.py` and
+`low_paint.py` rebuild the parts directly; this is not an automatic decimation pass.
+Large guards retain their open canals, while small shaft vertebrae use solid
+crests and wings. Hand positions and runtime string/socket points are preserved.
+Textures are 32?128 px, point filtered. Sources and outputs remain in AssetWorkshop.
+
+The current coloured model review is `out/remake/bone_arsenal_review.blend`;
+open it with `--python open_remake.py`. It includes the greataxe, all eight
+arsenal weapons, crossbow and blunt bolt, with each weapon scaled to fit its panel.
+Select a weapon in the Outliner and press Numpad . to frame it for inspection.
+The triangle labels count exported models; runtime bowstrings appear for preview only.
+`remake_review.py` rebuilds the review and icon references. `check_remake.py`
+checks geometry, dimensions in manifests, texture budgets and attachment contracts.
+`out/remake/validation.json` and `report.md` record the result.
+The rebuilt set totals 11,446 triangles (48,338 before), including both bow holds.
+Inventory icons are transparent 128 px PNGs beside each model.py; generated masters
+and 64 px copies are in out. `out/remake/icons-review.png` shows the full set, and
+`remake-icon-prompts.json` records the built-in image_gen prompts.
+
+The animated showcase below predates this remake; rebuild its Unity caches before
+using it to judge the new geometry. The remade bundles (arsenal, crossbow set, Executioner) were
+installed into Elite Creatures Pack on 2026-09-30 at the user's request; unreleased, not yet seen in game.
 
 ## Watch in Blender
 

@@ -73,6 +73,8 @@ if (-not $SkipUnity) {
             ForEach-Object { "$_" } | Where-Object { $_ -match 'WORKSHOP|Error|Traceback' } | ForEach-Object { Write-Host "  $_" }
         if ($LASTEXITCODE -ne 0) { throw 'Blender failed rendering the greataxe icons' }
         $ErrorActionPreference = 'Stop'
+        # The whole weapon uses its authored icon; retain the rendered axehead loot icon.
+        Copy-Item "$workshop\assets\$axe\ecp_greataxe_icon.png" -Destination "$PSScriptRoot\out\icons\ecp_greataxe_icon.png"
         New-Item -ItemType Directory -Force $icons | Out-Null
         Copy-Item "$PSScriptRoot\out\icons\*.png" -Destination $icons
         $bundles = Join-Path $workshop 'out\bundles\ecp_headsman'

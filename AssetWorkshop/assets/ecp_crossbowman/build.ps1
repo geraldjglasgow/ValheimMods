@@ -25,13 +25,8 @@ $previewOut = Join-Path $PSScriptRoot 'out\preview'
 $modBundles = Join-Path $workshop '..\EliteCreaturesPack\EliteCreaturesPack\assets\bundles'
 
 if (-not $SkipBlender) { & "$workshop\build.ps1" -Asset $parts }
-# The Bone Crossbow's inventory icon, rendered from the built crossbow (assets\ecp_xbow_crossbow\icon.py). Blender writes
-# warnings to stderr, which 'Stop' would turn into a failure.
-$ErrorActionPreference = 'Continue'
-& $Blender --background "$workshop\assets\ecp_xbow_crossbow\out\ecp_xbow_crossbow.blend" --python-exit-code 1 --python "$workshop\assets\ecp_xbow_crossbow\icon.py" 2>&1 |
-    ForEach-Object { "$_" } | Where-Object { $_ -match 'Error|Traceback' } | ForEach-Object { Write-Host "  $_" }
-if ($LASTEXITCODE -ne 0) { throw 'Blender failed rendering the Bone Crossbow icon' }
-$ErrorActionPreference = 'Stop'
+# Keep the authored inventory icon with its source; rebuilding the models must not replace it.
+Copy-Item "$workshop\assets\ecp_xbow_crossbow\ecp_xbow_crossbow_icon.png" -Destination "$workshop\assets\ecp_xbow_crossbow\out\ecp_xbow_crossbow_icon.png"
 
 $stage = Join-Path $workshop 'unity\Assets\Bundles\ecp_crossbowman'
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
@@ -39,6 +34,8 @@ foreach ($part in $parts) {
     $dest = New-Item -ItemType Directory -Force (Join-Path $stage $part)
     Copy-Item "$workshop\assets\$part\out\$part.fbx", "$workshop\assets\$part\out\$part.json", "$workshop\assets\$part\out\${part}_*.png" -Destination $dest
 }
+
+Copy-Item "$workshop\assets\ecp_xbow_bolt\ecp_xbow_bolt_icon.png" -Destination "$stage\ecp_xbow_bolt"
 
 if (Get-Process Unity -ErrorAction SilentlyContinue) { throw 'Unity is running; close it first (batch mode cannot share the project)' }
 if (Test-Path $previewOut) { Remove-Item $previewOut -Recurse -Force }

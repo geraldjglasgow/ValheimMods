@@ -1,5 +1,5 @@
 """The Blunted Bone Bolt (Elite Creatures Pack): a thin bone shaft grimed like the skeleton itself and a blunt knuckle
-of bone for a head, bound on with sinew; no feathers (it does blunt damage; 2026-09-29, the user: "a blunt tip and no
+of bone for a head, seated on bone; no feathers (it does blunt damage; 2026-09-29, the user: "a blunt tip and no
 feathers", "the same length as the vanilla bone bolt", whose mesh is 0.573 m). One model for every bolt the mod shows:
 the players' Blunted Bone Bolts in the hand, on the ground and in flight, and the crossbowman's in the groove, the
 fingers and the quiver.
@@ -7,14 +7,20 @@ fingers and the quiver.
 The origin is the nock end on the shaft's line and the point is forward (-Y, Unity +Z), LENGTH away.
 """
 import math
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ecp_skel_arsenal"))
+import low_paint as gp
 
 import bmesh
 import bpy
 
 from workshop import materials, shapes
 
-TEXTURE_SIZE = 256
-AO_STRENGTH = 0.6
+TEXTURE_SIZE = 32
+CATEGORY = "ammo.bolt"
+NORMAL_MAP = False
+AO_STRENGTH = 0.2
 
 LENGTH = 0.57
 HEAD = LENGTH - 0.43       # the head's parts are placed as on the first, 0.43 m bolt, moved forward by this
@@ -30,7 +36,7 @@ def build():
         _wrap(name, y0, y1, sinew)
 
 
-def _shaft(material, sides=8):
+def _shaft(material, sides=6):
     mesh = bmesh.new()
     rings = [[mesh.verts.new((r * math.cos(a), y, r * math.sin(a)))
               for a in (2 * math.pi * k / sides for k in range(sides))] for y, r in SHAFT]
@@ -47,7 +53,7 @@ def _shaft(material, sides=8):
 def _blunt(material):
     """A blunt head, for crushing rather than piercing: a knuckle of bone swelling out of a thick socket, rounded in front
     and a little flattened at the tip, like a hunter's blunt."""
-    shapes.cylinder("socket", 0.0078, 0.034, (0.0, -0.372 - HEAD, 0.0), (math.radians(90), 0.0, 0.0), material, vertices=8)
+    shapes.cylinder("socket", 0.0078, 0.034, (0.0, -0.372 - HEAD, 0.0), (math.radians(90), 0.0, 0.0), material, vertices=6)
     _knob("knuckle", (0.0, -0.405 - HEAD, 0.0), 0.0135, material, squash=(1.0, 1.25, 0.95))
     _knob("knuckle_face", (0.0, -0.421 - HEAD, 0.0), 0.0105, material, squash=(1.05, 0.55, 1.0))
     for side in (-1, 1):
@@ -55,7 +61,7 @@ def _blunt(material):
 
 
 def _wrap(name, y0, y1, material):
-    bpy.ops.mesh.primitive_cylinder_add(vertices=8, radius=0.0068, depth=y1 - y0, location=(0.0, (y0 + y1) / 2, 0.0),
+    bpy.ops.mesh.primitive_cylinder_add(vertices=6, radius=0.0068, depth=y1 - y0, location=(0.0, (y0 + y1) / 2, 0.0),
                                         rotation=(math.radians(90), 0.0, 0.0))
     obj = bpy.context.active_object
     obj.name = name
@@ -63,7 +69,7 @@ def _wrap(name, y0, y1, material):
 
 
 def _knob(name, location, radius, material, squash=(1.0, 0.7, 1.0)):
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=8, ring_count=5, radius=radius, location=location)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=6, ring_count=3, radius=radius, location=location)
     obj = bpy.context.active_object
     obj.name = name
     obj.scale = squash
@@ -79,43 +85,13 @@ def _object(name, mesh, material):
     data.materials.append(material)
 
 
-def _mottled(name, dark, light, scale, roughness, bump=0.0, stretch=(1.0, 1.0, 1.0)):
-    """Old bone, grimed: a pale base mottled with brown, as the game paints its skeletons."""
-    mat = bpy.data.materials.new(name)
-    nodes, links = mat.node_tree.nodes, mat.node_tree.links
-    bsdf = materials.principled(mat)
-    bsdf.inputs['Roughness'].default_value = roughness
-    coords = nodes.new('ShaderNodeTexCoord')
-    mapping = nodes.new('ShaderNodeMapping')
-    mapping.inputs['Scale'].default_value = stretch
-    links.new(coords.outputs['Object'], mapping.inputs['Vector'])
-    noise = nodes.new('ShaderNodeTexNoise')
-    noise.inputs['Scale'].default_value = scale
-    noise.inputs['Detail'].default_value = 7.0
-    links.new(mapping.outputs['Vector'], noise.inputs['Vector'])
-    ramp = nodes.new('ShaderNodeValToRGB')
-    ramp.color_ramp.elements[0].position, ramp.color_ramp.elements[1].position = 0.32, 0.68
-    ramp.color_ramp.elements[0].color = (*dark, 1.0)
-    ramp.color_ramp.elements[1].color = (*light, 1.0)
-    links.new(noise.outputs['Fac'], ramp.inputs['Fac'])
-    links.new(ramp.outputs['Color'], bsdf.inputs['Base Color'])
-    if bump > 0:
-        node = nodes.new('ShaderNodeBump')
-        node.inputs['Strength'].default_value = bump
-        node.inputs['Distance'].default_value = 0.002
-        links.new(noise.outputs['Fac'], node.inputs['Height'])
-        links.new(node.outputs['Normal'], bsdf.inputs['Normal'])
-    return mat
-
-
 def _bone():
-    """The crossbow's bone, grimed a little more: the skeleton's own beige with brown in it."""
-    return _mottled("bolt_bone", (0.19, 0.135, 0.075), (0.50, 0.42, 0.29), 140.0, 0.75, bump=0.3, stretch=(1.0, 0.3, 1.0))
+    return gp.bone('bolt_bone')
 
 
 def _point_bone():
-    return _mottled("bolt_point", (0.24, 0.18, 0.10), (0.58, 0.50, 0.36), 220.0, 0.6, bump=0.4)
+    return gp.teeth('bolt_point')
 
 
 def _sinew():
-    return _mottled("bolt_sinew", (0.10, 0.075, 0.05), (0.27, 0.21, 0.14), 300.0, 0.7)
+    return gp.sinew('bolt_joint_bone')

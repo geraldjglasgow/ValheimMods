@@ -16,6 +16,8 @@ _spec.loader.exec_module(bow)
 
 TEXTURE_SIZE = bow.TEXTURE_SIZE
 AO_STRENGTH = bow.AO_STRENGTH
+CATEGORY = bow.CATEGORY
+NORMAL_MAP = bow.NORMAL_MAP
 
 bow.STRING = Vector((0.995, 0.041, -0.092))       # Bow.prefab: from the grip towards the string
 bow.LIMBS = Vector((-0.026, 0.987, 0.158))        # Bow.prefab: along the stave

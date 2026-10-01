@@ -1,7 +1,7 @@
 """The skeleton arsenal's bow (Elite Creatures Pack), v2: limbs of backbone. Each limb is a column of vertebrae,
 biggest at the grip and smaller towards the tip, threaded on a rib that gives the bow its bend (angular like the
 skeleton's own, Characters/Skeleton/weapons/skeleton_bow), their spines standing out on the bow's back and their wings
-to the sides, like the game's Spinesnap; the grip is bound in dark hide between the two biggest, the arrow riding over
+to the sides, like the game's Spinesnap; the grip is three short bone vertebrae between the two limbs, the arrow riding over
 the upper one; finger bones cap both tips for nocks. The string is not part of the model: the bow's wielder draws it
 (the showcase stretches it from the tips to the drawing fingers).
 
@@ -21,12 +21,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import bpy  # noqa: E402
 from mathutils import Matrix, Vector  # noqa: E402
 
-import grave_paint as gp  # noqa: E402
-import grave_shapes as gs  # noqa: E402
-import grave_vertebra as gv  # noqa: E402
+import low_paint as gp  # noqa: E402
+import low_shapes as gs  # noqa: E402
+import low_vertebra as gv  # noqa: E402
 
-TEXTURE_SIZE = 512
-AO_STRENGTH = 0.6
+TEXTURE_SIZE = 128
+AO_STRENGTH = 0.2
+CATEGORY = 'weapon.bow'
+NORMAL_MAP = False
 
 STRING = Vector((0.751, -0.006, 0.659))         # from the grip towards the string's middle
 LIMBS = Vector((0.492, -0.704, -0.512))         # along the stave
@@ -38,7 +40,7 @@ LIMB = [(0.0, 0.0, 0.017, 0.015), (0.11, -0.004, 0.012, 0.011), (0.33, 0.09, 0.0
         (0.645, 0.325, 0.0075, 0.0065)]
 TIP_S, TIP_X = 0.66, 0.34                       # the nock, where the string is tied
 REST = (0.088, -0.02)                           # (s, x): the arrow passes over the upper grip vertebra here
-COLUMN = (0.105, 0.52, 7, 0.03, 0.019)          # a limb's vertebrae: first and last s, how many, first and last r
+COLUMN = (0.105, 0.52, 5, 0.033, 0.020)          # a limb's vertebrae: first and last s, how many, first and last r
 
 
 def build():
@@ -50,7 +52,7 @@ def build():
         gs.cone(f"nock_hook_{side}", (TIP_X - 0.004, -side * (TIP_S + 0.012), 0.0), (TIP_X + 0.018, -side * (TIP_S + 0.026), 0.0),
                 0.006, bone, vertices=5)
     gs.loft("grip_core", [(-0.075, 0.019, 0.017), (0.075, 0.019, 0.017)], bone, sides=8)
-    gs.wrap("grip", -0.07, 0.07, 0.0215, 0.012, 0.0038, gp.leather(), squash=0.9)
+    gv.column("grip", -.075, .075, .019, .019, spine, disc=sinew, kind="grip", count=3)
     gs.rings("grip_sinew", [0.074, -0.074], 0.021, 0.0034, sinew)
     _points(_turn())
 
@@ -63,7 +65,7 @@ def _column(side, spine):
         s = first + (last - first) * t
         ahead = Vector((_limb_x(s + 0.01) - _limb_x(s - 0.01), -side * 0.02, 0.0))   # along the limb, towards its tip
         place = gv.frame((_limb_x(s), -side * s, 0.0), ahead, (-1, 0, 0))
-        gv.build(f"limb_{side}_{i}", place, r0 + (r1 - r0) * t, spine, kind='tail', pegs=False)
+        gv.build(f"limb_{side}_{i}", place, r0 + (r1 - r0) * t, spine, kind='tail', pegs=False, low=True, height=3.1)
 
 
 def _limb_x(s):

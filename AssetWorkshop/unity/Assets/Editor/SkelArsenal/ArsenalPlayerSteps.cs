@@ -16,7 +16,7 @@ namespace Workshop.SkelArsenal
     /// </summary>
     public sealed class ArsenalPlayerSteps
     {
-        public const float Fps = 30f, Reload = 3f, Draw = 2.5f;   // the Bone Crossbow's reload; the bow's draw at no skill (BowFineWood)
+        public const float Fps = 30f, Reload = 2.3f, Draw = 2.5f;   // the Bone Crossbow's reload; the bow's draw at no skill (BowFineWood)
         private const float Dt = 1f / Fps;
 
         private readonly Animator animator;

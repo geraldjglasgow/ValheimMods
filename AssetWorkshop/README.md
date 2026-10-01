@@ -89,7 +89,9 @@ Every asset is made and kept in this workshop, never in a mod's folder: its sour
 bundle copied into the mod's `assets/bundles`, the code that uses it) only when the user decides to release it in that
 mod, in the same change as the release. Concepts, trials, demos and rejected versions never enter a mod, so nothing
 unreleased is pushed with a mod or left in it as dead code or dead assets. The `-Install` / `--install` flags of the
-build scripts are for that release step only. (Workspace rule: `CLAUDE.md`, "Always".)
+build scripts are for that release step only. (Workspace rule: `CLAUDE.md`, "Always".) Before that, an asset is
+seen, fought and balanced in the game through `AssetLab` at the workspace root: a gitignored, dev-only mod whose
+benches embed bundles straight from these `out/` folders (`AssetLab/README.md`).
 
 ## The codex: building to the game's look
 
@@ -589,6 +591,12 @@ blender assets/ecp_spine_greataxe/out/showcase/greataxe_showcase.blend --python 
 
 ## Weapons for the game's Skeleton: the skeleton arsenal
 
+The skeleton arsenal is every bone weapon of Elite Creatures Pack: the eight pieces below and the spine (bundle
+`ecp_skel_arsenal`), the Bone Crossbow and its blunted bolt (`assets/ecp_xbow_crossbow`, `ecp_xbow_bolt`, bundle
+`ecp_crossbowman`), and the Executioner's Greataxe (`assets/ecp_bone_greataxe`, bundle `ecp_headsman`). The last two
+share their bundles with the crossbowman and the Executioner, so their own builds make them; the arsenal's
+`build.ps1` runs those too, and with `-Install` puts all three bundles into the mod.
+
 A dagger, sword, axe, mace, spear, atgeir, bow and arrow for the game's Skeleton, all made of bone with a vertebra
 worked into each, and the spine the skeletons drop (`ecp_spine`, with its icon; it replaced the single vertebra
 `ecp_vertebra` on 2026-09-29, kept in the workshop); then a showcase: the game's
@@ -604,9 +612,10 @@ Skeletons holding each weapon and doing that weapon's attack, baked in Unity and
 .\assets\ecp_skel_arsenal\build.ps1 [-Open] [-SkipBlender] [-SkipBundle] [-SkipBake] [-Install]
 ```
 
-- **Into the mod.** `-Install` copies the bundle `ecp_skel_arsenal` (ten prefabs, eight icons from `icons.py` and the spine's from its `icon.py`) into
-  `EliteCreaturesPack/EliteCreaturesPack/assets/bundles`; `-SkipBake` stops after that, without the showcase
-  (`-SkipBlender -Install -SkipBake` rebuilds only the bundle). The mod's `Arsenal/` code (see its CLAUDE.md) puts the
+- **Into the mod.** `-Install` copies the bundle `ecp_skel_arsenal` (ten prefabs, eight authored icons beside their
+  `model.py` and the spine's from its `icon.py`), then the crossbow's `ecp_crossbowman` and the greataxe's
+  `ecp_headsman`, into `EliteCreaturesPack/EliteCreaturesPack/assets/bundles`; `-SkipBake` stops after that, without
+  the showcase (`-SkipBlender -Install -SkipBake` rebuilds only the three bundles, from the models already built). The mod's `Arsenal/` code (see its CLAUDE.md) puts the
   models on the skeletons, the players' weapons, the arrows and the spine. `ecp_skel_bow_player` is the same bow
   turned into the player's bow hold (measured from the game's Bow), since players hold bows differently from the
   skeleton archer; its tips go to `out/ecp_skel_bow_player_points.json`, copied into the mod's `ArsenalLook`.

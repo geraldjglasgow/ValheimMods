@@ -1,8 +1,8 @@
-﻿"""The skeleton arsenal's sword (Elite Creatures Pack), v2: a blade with a backbone. The guard is a big vertebra lying
+"""The skeleton arsenal's sword (Elite Creatures Pack), v2: a blade with a backbone. The guard is a big vertebra lying
 flat in the blade's plane, its wings the quillons and the canal showing through, and the blade is its spine drawn out
 into a broad double edge; down the middle of the blade, from the guard nearly to the point, runs a backbone of smaller and
 smaller vertebrae grown into it, their arches and spinous processes a knobbled ridge on the front; the grip is a
-spine too, four short vertebrae with cartilage between, and the pommel one more vertebra, its spine pointing down: one
+spine too, three short vertebrae with recessed bone between, and the pommel one more vertebra, its spine pointing down: one
 spine through the whole sword.
 
 Weapon axes (see ecp_skel_arsenal): the fist round the grip's middle at the origin, the blade up -Y (Unity +Z), its flats
@@ -18,13 +18,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from mathutils import Vector  # noqa: E402
 
 import grave_blade as gb  # noqa: E402
-import grave_bones as bones  # noqa: E402
-import grave_paint as gp  # noqa: E402
-import grave_shapes as gs  # noqa: E402
-import grave_vertebra as gv  # noqa: E402
+import low_bones as bones  # noqa: E402
+import low_paint as gp  # noqa: E402
+import low_shapes as gs  # noqa: E402
+import low_vertebra as gv  # noqa: E402
 
-TEXTURE_SIZE = 512
-AO_STRENGTH = 0.75
+TEXTURE_SIZE = 64
+AO_STRENGTH = 0.2
+CATEGORY = 'weapon.sword'
+NORMAL_MAP = False
 
 GRIP = (-0.056, 0.054)                          # the grip's ends
 POMMEL_R, GUARD_R = 0.024, 0.045
@@ -44,7 +46,7 @@ def build():
     _, root = gv.flat("guard", GRIP[1], GUARD_R, spine)
     sections = [(max(s, root), -w, w, t, bevel, ridge) for s, w, t, bevel, ridge in BLADE]
     gb.blade("blade", gb.notch(gb.notch(sections, 0.46, 0.007, side=1), 0.7, 0.006, side=-1), blade, tip=(TIP, 0.0))
-    backbone = gv.column("backbone", root + 0.004, BACKBONE_END, 0.03, 0.013, spine, disc=sinew, kind='shaft', count=14,
+    backbone = gv.column("backbone", root + 0.004, BACKBONE_END, 0.03, 0.013, spine, disc=sinew, kind='shaft', count=8,
                          back=(0, 0, 1), wings=False)
     start = root + 0.004
     gs.bend(backbone, lambda s: Vector((SNAKE * math.sin(2 * math.pi * (s - start) / (BACKBONE_END - start)), 0.0, 0.0)))

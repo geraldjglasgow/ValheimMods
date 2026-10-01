@@ -56,7 +56,10 @@ namespace Workshop.Crossbow
             string icon = PrefabBuilder.Icon(Folder + "/ecp_xbow_crossbow");
             if (icon == null)
                 throw new InvalidOperationException("no ecp_xbow_crossbow_icon.png staged; run assets/ecp_xbow_crossbow/icon.py");
-            return new[] { Prefab(XbowBolt.Asset), Prefab("ecp_xbow_crossbow"), Prefab("ecp_xbow_string"), icon };
+            string boltIcon = PrefabBuilder.Icon(Folder + "/" + XbowBolt.Asset);
+            if (boltIcon == null)
+                throw new InvalidOperationException("no ecp_xbow_bolt_icon.png staged; run assets/ecp_crossbowman/build.ps1");
+            return new[] { Prefab(XbowBolt.Asset), Prefab("ecp_xbow_crossbow"), Prefab("ecp_xbow_string"), icon, boltIcon };
         }
 
         private static string[] Build()

@@ -1,9 +1,9 @@
-﻿"""The skeleton arsenal's atgeir (Elite Creatures Pack), v2: the head is a great vertebra lying flat in the blade's
+"""The skeleton arsenal's atgeir (Elite Creatures Pack), v2: the head is a great vertebra lying flat in the blade's
 plane on the end of the shaft, the canal showing through; its spine is drawn out into a long single-edged blade whose
 back sweeps round like a rib, one wing is a short spike on the edge side and the other a long fang of a hook curving
-up off the back. The shaft's upper half is a spine: thirteen big tail vertebrae stacked end to end with discs of cartilage
-between, curving like a real spine, thickening under the head into five bigger ones whose spines lie down its back;
-its lower half, where the fist holds, is two long bones laid end to end and bound in sinew; a fang for a foot.
+up off the back. The shaft's upper half is a spine: six big tail vertebrae stacked end to end with recessed bone joints
+between, curving like a real spine, thickening under the head into two bigger ones whose spines lie down its back;
+its lower half, where the fist holds, is two long bones laid end to end and seated in bone collars; a fang for a foot.
 
 Built along the weapon (-Y) and then turned into the game's hold: the game's atgeirs (AtgeirIron) lie in the fist at a
 slant, their haft through the fist but 21 degrees off the attach frame's axis, so the two-handed clips put the other
@@ -20,13 +20,15 @@ import bpy  # noqa: E402
 from mathutils import Matrix, Vector  # noqa: E402
 
 import grave_blade as gb  # noqa: E402
-import grave_bones as bones  # noqa: E402
-import grave_paint as gp  # noqa: E402
-import grave_shapes as gs  # noqa: E402
-import grave_vertebra as gv  # noqa: E402
+import low_bones as bones  # noqa: E402
+import low_paint as gp  # noqa: E402
+import low_shapes as gs  # noqa: E402
+import low_vertebra as gv  # noqa: E402
 
-TEXTURE_SIZE = 512
-AO_STRENGTH = 0.8
+TEXTURE_SIZE = 128
+AO_STRENGTH = 0.2
+CATEGORY = 'weapon.atgeir'
+NORMAL_MAP = False
 
 HOLD = Vector((-0.355, -0.924, -0.14))          # up the haft, towards the blade
 BLADE_SIDE = Vector((-0.925, 0.325, 0.198))     # across the blade, towards its edge
@@ -42,9 +44,9 @@ TIP = (2.28, 0.052)
 def build():
     bone, spine, blade, sinew = gp.bone("atgeir_bone"), gp.vertebra("atgeir_vertebra"), gp.bone_blade("atgeir_blade"), gp.sinew()
     bones.jointed_haft("bones", FOOT, HALF, (-0.25,), 0.0195, bone, sinew)
-    gv.column("shaft", HALF, NECK, 0.022, 0.025, spine, disc=sinew, count=13)
+    gv.column("shaft", HALF, NECK, 0.022, 0.025, spine, disc=sinew, count=6)
     gs.wrap("half_sinew", HALF - 0.035, HALF + 0.02, 0.0242, 0.008, 0.003, sinew)
-    gv.column("neck", NECK, SHAFT_END, 0.028, 0.034, spine, disc=sinew, kind='thoracic', count=5)
+    gv.column("neck", NECK, SHAFT_END, 0.028, 0.034, spine, disc=sinew, kind='thoracic', count=2)
     place, root = _head(spine)
     sections = [(root + ds, xb, xe, t, bevel) for ds, xb, xe, t, bevel in BLADE]
     gb.single("blade", gb.notch(sections, root + 0.25, 0.006, side=1, width=0.012), blade, tip=TIP)

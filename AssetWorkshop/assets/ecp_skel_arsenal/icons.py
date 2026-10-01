@@ -1,5 +1,6 @@
-"""Inventory icons for the skeleton arsenal's player items (build.ps1 runs it after the Blender builds; the spine the
-skeletons drop has its own, assets/ecp_spine/icon.py):
+"""Optional model reference renders for the skeleton arsenal's player items. Production inventory icons are authored
+PNGs beside each model.py, copied by build.ps1; it no longer invokes this reference renderer. The spine the skeletons
+drop still has its own renderer, assets/ecp_spine/icon.py:
 
     blender --background --factory-startup --python assets/ecp_skel_arsenal/icons.py
 
@@ -25,9 +26,7 @@ WEAPONS = {
     'ecp_skel_dagger': (Vector((0, -1, 0)), Vector((0, 0, 1))),
     'ecp_skel_sword': (Vector((0, -1, 0)), Vector((0, 0, 1))),
     'ecp_skel_axe': (Vector((0, -1, 0)), Vector((0, 0, 1))),
-    'ecp_skel_mace': (Vector((0, -1, 0)), Vector((0, 0, 1))),
     'ecp_skel_spear': (Vector((0, 1, 0)), Vector((0, 0, 1))),
-    'ecp_skel_arrow': (Vector((0, -1, 0)), Vector((0, 0, 1))),
     'ecp_skel_atgeir': (HOLD, BLADE_SIDE.cross(HOLD)),
     'ecp_skel_bow_player': (BOW_LIMBS, BOW_STRING.cross(BOW_LIMBS)),
 }
@@ -104,4 +103,5 @@ def _render(path):
     print('WORKSHOP icon', path)
 
 
-main()
+if __name__ == '__main__':
+    main()

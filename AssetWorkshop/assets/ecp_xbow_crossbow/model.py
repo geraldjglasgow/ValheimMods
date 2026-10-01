@@ -1,10 +1,10 @@
 """The Skeleton Crossbowman's crossbow (Elite Creatures Pack), made of bones like the game's Spinesnap bow and bone tower
 shield: a femur for the stock, its knee knuckles the butt and its ball the seat of the nut; a row of vertebrae for the
 fore-stock, bowed a little like a real back and threaded on a long bone through their middles, the bolt riding their
-tops (a notch carved in each) and spanning the bow; two ribs lashed on with sinew for the prod; a vertebra for the nut; a long
+tops (a notch carved in each) and spanning the bow; two ribs seated in a bone collar for the prod; a vertebra for the nut; a long
 finger bone for the trigger lever; a jawbone, teeth and all, for the stirrup. The string is its own asset
 (ecp_xbow_string), because the mod stretches it from each prod tip to the nut, the drawing fingers or straight across;
-the bolts are the game's own bone bolt, placed by the mod.
+the blunt bone bolts are placed by the mod.
 
 The origin is the middle of the grip, where the right fist closes round the stock's wrist; the stock points forward
 (-Y, Unity +Z) and its groove faces up (+Z). The points the mod and the workshop's Unity side use (Blender axes; Unity:
@@ -13,6 +13,11 @@ Look: the game's bone items (Characters/Skeleton textures, GameElements/Items/mi
 shields/ShieldBoneTower) - muted beige, darker brown in the hollows, big soft shapes.
 """
 import math
+import os
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "ecp_skel_arsenal"))
+import low_shapes as gs
+import low_paint as gp
 
 import bmesh
 import bpy
@@ -20,8 +25,10 @@ from mathutils import Matrix, Vector
 
 from workshop import materials, shapes
 
-TEXTURE_SIZE = 512
-AO_STRENGTH = 0.7
+TEXTURE_SIZE = 64
+CATEGORY = "weapon.crossbow"
+NORMAL_MAP = False
+AO_STRENGTH = 0.2
 
 TIPS = ((-0.352, -0.398, 0.024), (0.352, -0.398, 0.024))   # where the string is tied, at the ribs' knobbed ends
 NUT = (0.0, -0.100, 0.036)                                   # the string's notch when spanned; the bolt's nock end
@@ -34,7 +41,7 @@ SUPPORT = (0.0, -0.220, -0.010)                              # the fore-stock's 
 FEMUR = [(0.134, 0.052, 0.060, -0.030), (0.117, 0.036, 0.044, -0.026), (0.080, 0.029, 0.034, -0.017),
          (0.040, 0.027, 0.031, -0.009), (0.000, 0.027, 0.031, -0.004), (-0.060, 0.030, 0.033, -0.001),
          (-0.100, 0.026, 0.028, 0.002)]
-VERTEBRAE = [-0.145 - 0.040 * i for i in range(11)]         # centres of the fore-stock's vertebrae, back to front
+VERTEBRAE = [-0.145 - (0.4 / 7) * i for i in range(8)]         # centres of the fore-stock's vertebrae, back to front
 SAG = 0.022                                                  # how far the spine bows down in its middle
 CORE = (-0.110, -0.580)                                      # the bone threaded through the vertebrae, back to front
 RIB = [((0.018, -0.472, 0.011), 0.013, 0.0065), ((0.12, -0.462, 0.012), 0.012, 0.006), ((0.25, -0.437, 0.017), 0.010, 0.005),
@@ -110,23 +117,23 @@ def _core(material):
 
 def _nut(material, notch):
     """The nut: a vertebra sitting crosswise on the femur's ball, its notch on top holding the string."""
-    shapes.cylinder("nut", 0.019, 0.036, (0.0, -0.100, 0.019), (0.0, math.radians(90), 0.0), material, vertices=10)
+    shapes.cylinder("nut", 0.019, 0.036, (0.0, -0.100, 0.019), (0.0, math.radians(90), 0.0), material, vertices=6)
     _cone("nut_spine", (0.0, -0.094, 0.030), (0.0, -0.060, 0.046), 0.008, material)
     shapes.box("nut_notch", (0.038, 0.007, 0.008), (0.0, -0.097, 0.036), material=notch)
 
 
 def _teeth_row(material):
     """Teeth along the jawbone's top, smaller towards the back."""
-    for i in range(9):
-        t = (i - 4) / 4.0
+    for i in range(5):
+        t = (i - 2) / 2.0
         angle = t * math.radians(80)
         x, y = 0.050 * math.sin(angle), -0.600 - 0.046 * math.cos(angle) + 0.012 * abs(t)
         size = 0.0075 - 0.002 * abs(t)
-        shapes.box(f"tooth_{i}", (size, size * 0.9, size * 1.5), (x, y, -0.0005), (0.0, 0.0, -angle), material, bevel=0.0015)
+        shapes.box(f"tooth_{i}", (size, size * 0.9, size * 1.5), (x, y, -0.0005), (0.0, 0.0, -angle), material, bevel=0.0)
 
 
 def _knob(name, location, radius, material, squash=(1.0, 1.0, 1.0)):
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=8, ring_count=5, radius=radius, location=location)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=6, ring_count=3, radius=radius, location=location)
     obj = bpy.context.active_object
     obj.name = name
     obj.scale = squash
@@ -147,7 +154,7 @@ def _cone(name, base, tip, radius, material):
     return obj
 
 
-def _loft(name, stations, material, sides=12):
+def _loft(name, stations, material, sides=6):
     """A solid through rounded sections along Y, capped at both ends."""
     mesh = bmesh.new()
     rings = []
@@ -162,7 +169,7 @@ def _loft(name, stations, material, sides=12):
     return _object(name, mesh, material)
 
 
-def _band(name, points, material, sides=8):
+def _band(name, points, material, sides=4):
     """A flattened bone swept along the points: each (point, half height, half thickness), height kept upright."""
     mesh = bmesh.new()
     rings = []
@@ -204,102 +211,50 @@ def _round(v):
 
 
 def _tube(name, points, material, resolution=2):
-    curve = bpy.data.curves.new(name, 'CURVE')
-    curve.dimensions = '3D'
-    curve.bevel_depth = 1.0
-    curve.bevel_resolution = 1
-    curve.use_fill_caps = True
-    curve.resolution_u = resolution
-    spline = curve.splines.new('NURBS')
-    spline.points.add(len(points) - 1)
-    for point, (co, radius) in zip(spline.points, points):
-        point.co = (*co, 1.0)
-        point.radius = radius
-    spline.use_endpoint_u = True
-    spline.order_u = 3
-    obj = bpy.data.objects.new(name, curve)
-    bpy.context.collection.objects.link(obj)
-    curve.materials.append(material)
-    return obj
+    return gs.band(name, [(Vector(co), r, r) for co, r in points], material, sides=4)
 
 
 def _wrap(name, y0, y1, radii, centre, pitch, thickness, material):
     """Turns of sinew or rawhide round the stock (along Y) from y0 to y1, `pitch` metres per turn, on an ellipse of
     `radii` (across, up) round the stock's centre height."""
-    steps = max(10, int((y1 - y0) / pitch * 6))
-    points = []
-    for i in range(steps + 1):
-        y = y0 + (y1 - y0) * i / steps
-        angle = 2 * math.pi * (y - y0) / pitch
-        points.append(((radii[0] * math.cos(angle), y, centre + radii[1] * math.sin(angle)), thickness))
-    return _tube(name, points, material, resolution=1)
+    # A broad bone collar replaces many fine cord turns.
+    return _loft(name, [(y0, radii[0]*2, radii[1]*2, centre),
+                        (y1, radii[0]*2, radii[1]*2, centre)], material, sides=6)
 
 
 def _to_meshes():
     curves = [o for o in bpy.context.scene.objects if o.type == 'CURVE']
+    if not curves:
+        return
     for obj in bpy.context.scene.objects:
         obj.select_set(obj in curves)
     bpy.context.view_layer.objects.active = curves[0]
     bpy.ops.object.convert(target='MESH')
 
 
-def _mottled(name, dark, light, scale, roughness, bump=0.0, stretch=None):
-    """Old bone: a pale base mottled darker, as the game paints its skeletons and bone items."""
-    mat = bpy.data.materials.new(name)
-    nodes, links = mat.node_tree.nodes, mat.node_tree.links
-    bsdf = materials.principled(mat)
-    bsdf.inputs['Roughness'].default_value = roughness
-    coords = nodes.new('ShaderNodeTexCoord')
-    noise = nodes.new('ShaderNodeTexNoise')
-    noise.inputs['Scale'].default_value = scale
-    noise.inputs['Detail'].default_value = 6.0
-    if stretch:
-        mapping = nodes.new('ShaderNodeMapping')
-        mapping.inputs['Scale'].default_value = stretch
-        links.new(coords.outputs['Object'], mapping.inputs['Vector'])
-        links.new(mapping.outputs['Vector'], noise.inputs['Vector'])
-    else:
-        links.new(coords.outputs['Object'], noise.inputs['Vector'])
-    ramp = nodes.new('ShaderNodeValToRGB')
-    ramp.color_ramp.elements[0].position, ramp.color_ramp.elements[1].position = 0.3, 0.7
-    ramp.color_ramp.elements[0].color = (*dark, 1.0)
-    ramp.color_ramp.elements[1].color = (*light, 1.0)
-    links.new(noise.outputs['Fac'], ramp.inputs['Fac'])
-    links.new(ramp.outputs['Color'], bsdf.inputs['Base Color'])
-    if bump > 0:
-        node = nodes.new('ShaderNodeBump')
-        node.inputs['Strength'].default_value = bump
-        node.inputs['Distance'].default_value = 0.003
-        links.new(noise.outputs['Fac'], node.inputs['Height'])
-        links.new(node.outputs['Normal'], bsdf.inputs['Normal'])
-    return mat
-
-
 def _bone():
-    """Femur, lever and jaw: beige, brown in the hollows, grain along the length."""
-    return _mottled("xbow_bone", (0.20, 0.145, 0.085), (0.53, 0.45, 0.32), 55.0, 0.75, bump=0.35, stretch=(1.0, 0.25, 1.0))
+    return gp.bone('xbow_bone')
 
 
 def _spine():
-    """The vertebrae, a little yellower, like the Spinesnap bow's."""
-    return _mottled("xbow_spine", (0.22, 0.16, 0.07), (0.56, 0.47, 0.28), 90.0, 0.7, bump=0.45)
+    return gp.vertebra('xbow_spine')
 
 
 def _rib():
-    return _mottled("xbow_rib", (0.26, 0.20, 0.12), (0.60, 0.53, 0.40), 70.0, 0.7, bump=0.3, stretch=(0.3, 1.0, 1.0))
+    return gp.bone('xbow_rib')
 
 
 def _teeth():
-    return _mottled("xbow_teeth", (0.40, 0.34, 0.22), (0.72, 0.66, 0.52), 120.0, 0.55)
+    return gp.teeth('xbow_teeth')
 
 
 def _sinew():
-    return _mottled("xbow_sinew", (0.10, 0.075, 0.05), (0.27, 0.21, 0.14), 300.0, 0.7)
+    return gp.sinew('xbow_joint_bone')
 
 
 def _leather():
-    return _mottled("xbow_leather", (0.06, 0.03, 0.013), (0.17, 0.09, 0.04), 200.0, 0.65)
+    return gp.bone('xbow_grip_bone')
 
 
 def _groove():
-    return materials.flat("xbow_groove", (0.03, 0.02, 0.012), roughness=0.9)
+    return gp.dark('xbow_groove')

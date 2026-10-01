@@ -176,6 +176,18 @@ def arc(depth, reach, toward=Vector((-1.0, 0.0, 0.0))):
     return lambda s: Vector(toward) * depth * (s / reach) ** 2
 
 
+def handle_s(depth, start, end, toward=Vector((-1.0, 0.0, 0.0))):
+    """One S over the entire handle, without a straight grip zone. Keep the fist at its origin.
+
+    Smooth endpoint tangents let the head translate rigidly after the handle ends.
+    """
+    def displacement(s):
+        t = _smooth((s - start) / (end - start))
+        return depth * math.sin(2.0 * math.pi * t)
+    grip = displacement(0.0)
+    return lambda s: Vector(toward) * (displacement(s) - grip)
+
+
 def wave(depth, length, end, calm=0.15, rise=0.2, start=None, toward=Vector((-1.0, 0.0, 0.0))):
     """Several gentle curves one after another, like a real spine's: a sine `depth` metres to either side, one full
     S every `length` metres, held dead straight within `calm` of the fist and rising to full over `rise`, and faded out

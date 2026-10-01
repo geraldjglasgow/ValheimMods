@@ -64,25 +64,36 @@ namespace Workshop.Crossbow
         /// Crossbow", while a Bone Crossbow is in hand; the user: "may need an animation just for this bow when players
         /// use it"): the crossbowman's own reload from the shot's clip, from the carry: lower the crossbow, hook the
         /// string and draw it into the nut, take a bolt from the right hip, lay it and pat it home, carry. The game's
-        /// reload state plays at 1.4x, so <see cref="PlayerReloadLength"/> fills the Bone Crossbow's 3 s reload; the
-        /// keys keep the crossbowman's pace (StringGrab to Done shifted by <see cref="PlayerShift"/>). Its done state
-        /// ("Reload done", 0.9 s) holds the carry (<see cref="PlayerDoneName"/>).
+        /// reload state plays at 1.4x and ends when the reload time is up. The keys are the crossbowman's (StringGrab to
+        /// Done shifted by <see cref="PlayerShift"/>), paced (<see cref="PlayerPace"/>) so the Bone Crossbow's reload
+        /// (<see cref="PlayerReload"/>, its `Reload Time` default) ends <see cref="ReloadEnds"/> into them at full pace:
+        /// just after the pat, as the hand goes back to the carry, where the user lined the reload bar up in game (1.3 s
+        /// at half pace); the game's blend finishes the carry. On 2026-09-30 the reload went 3, 2, 1.5, 1.3, then 2.3 s.
+        /// The Crossbows skill shortens the reload down to half, and the game then cuts more of the clip's end. Its
+        /// done state ("Reload done") holds the carry (<see cref="PlayerDoneName"/>) for 0.1 s only: the game's own is 0.9 s,
+        /// and while that state plays (tagged minoraction_fast) the player can neither shoot nor block (the user: "after
+        /// the reload animation i stand there for a little bit"). Its one event, the reload click, is at 0 s.
         /// </summary>
         public const string PlayerReloadName = "ecp_xbow_player_reload", PlayerDoneName = "ecp_xbow_player_reload_done";
-        public const float PlayerReloadLength = 3f * 1.4f, PlayerDoneLength = 0.9f;
+        public const float PlayerReload = 2.3f, ReloadEnds = 3.64f;
+        public const float PlayerPace = PlayerReload * 1.4f / ReloadEnds;
+        public const float PlayerReloadLength = 3f * 1.4f * PlayerPace, PlayerDoneLength = 0.1f;
         private const float PlayerShift = 0.4f - 1.12f;
 
-        /// <summary>How much earlier the player reload's keys sit than the crossbowman's (EliteCreaturesPack XbowPlayerRig mirrors the times).</summary>
-        public const float PlayerShiftSeconds = PlayerShift;
+        /// <summary>
+        /// A crossbowman's reload time (seconds into its fire clip) as the player reload's own seconds: moved 0.72 s
+        /// earlier, then paced (EliteCreaturesPack XbowPlayerRig and XbowPlayerHand mirror the results).
+        /// </summary>
+        public static float PlayerTime(float crossbowman) => (crossbowman + PlayerShift) * PlayerPace;
 
         public static XbowKey[] PlayerReloadKeys() => new[]
         {
             Carried(0f),
-            Low(1.12f + PlayerShift, Hand.Wrist, 18f, 0.8f), Low(StringGrab + PlayerShift, Hand.StringGrab, 26f, 0.6f),
-            Low(Spanned + PlayerShift, Hand.Spanned, 24f, 0.75f), Low(2.44f + PlayerShift, Hand.ToQuiver, 16f, 0.1f),
-            Low(BoltGrab + PlayerShift, Hand.InQuiver, 20f, 0.75f), Low(3.12f + PlayerShift, Hand.BoltOut, 22f, 0.75f),
-            Low(Lay + PlayerShift, Hand.Lay, 26f, 0.75f), Low(3.88f + PlayerShift, Hand.Pat, 22f, -0.2f),
-            Carried(Done + PlayerShift), Carried(PlayerReloadLength),
+            Low(PlayerTime(1.12f), Hand.Wrist, 18f, 0.8f), Low(PlayerTime(StringGrab), Hand.StringGrab, 26f, 0.6f),
+            Low(PlayerTime(Spanned), Hand.Spanned, 24f, 0.75f), Low(PlayerTime(2.44f), Hand.ToQuiver, 16f, 0.1f),
+            Low(PlayerTime(BoltGrab), Hand.InQuiver, 20f, 0.75f), Low(PlayerTime(3.12f), Hand.BoltOut, 22f, 0.75f),
+            Low(PlayerTime(Lay), Hand.Lay, 26f, 0.75f), Low(PlayerTime(3.88f), Hand.Pat, 22f, -0.2f),
+            Carried(PlayerTime(Done)), Carried(PlayerReloadLength),
         };
 
         public static XbowKey[] PlayerDoneKeys() => new[] { Carried(0f), Carried(PlayerDoneLength) };

@@ -16,9 +16,9 @@ namespace Workshop.SkelArsenal
     /// </summary>
     public sealed class XbowPlayerRigPreview
     {
-        private const float Hook = 0.1f;
-        private static readonly float StringGrab = XbowClips.StringGrab + XbowClips.PlayerShiftSeconds, Spanned = XbowClips.Spanned + XbowClips.PlayerShiftSeconds;
-        private static readonly float BoltGrab = XbowClips.BoltGrab + XbowClips.PlayerShiftSeconds, Lay = XbowClips.Lay + XbowClips.PlayerShiftSeconds;
+        private const float Hook = 0.1f * XbowClips.PlayerPace;
+        private static readonly float StringGrab = XbowClips.PlayerTime(XbowClips.StringGrab), Spanned = XbowClips.PlayerTime(XbowClips.Spanned);
+        private static readonly float BoltGrab = XbowClips.PlayerTime(XbowClips.BoltGrab), Lay = XbowClips.PlayerTime(XbowClips.Lay);
 
         private readonly Transform tipA, tipB, rest, nut, halfA, halfB, hand;
         private readonly GameObject groove, handBolt, flying;

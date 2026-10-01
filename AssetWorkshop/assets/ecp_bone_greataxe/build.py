@@ -20,6 +20,9 @@ for image in bpy.data.images:
     if image.name.startswith('ecp_bone_greataxe'):
         image.pack()
 bpy.context.scene.unit_settings.system = 'METRIC'
+sys.path.insert(0, HERE)
+from open_model import configure
+configure()
 bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, 'ecp_bone_greataxe.blend'))
 preview.render_sheet(axe, OUT)
 # Remove the generic scale dummy and stage meshes before the reference comparison.
