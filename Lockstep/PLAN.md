@@ -143,6 +143,24 @@ conveniences over the same file. This replaces the separate JSON credit table de
 - Portals and Vegvisir are not gated. A group can find the next altar early, they just cannot use it.
 - Mods that add bosses register more `OfferingBowl` prefabs; add them to the YAML chain.
 
+## Console commands
+
+The reference for players and admins (moved from the README, which links here).
+
+Run from the in-game console (F5). The changes are made on the server and answered there.
+
+```
+lockstep status                    every stage: open or waiting for whom, and the roster
+lockstep grant <player> <stage>    credit a player with a boss           (admin)
+lockstep revoke <player> <stage>   take that credit away                 (admin)
+lockstep ignore <player>           the player never holds the group back (admin)
+lockstep unignore <player>         count the player again                (admin)
+lockstep forget <player>           remove the player from the roster     (admin)
+```
+
+`<player>` is a name or a player ID, `<stage>` is a stage name from the chain (Eikthyr, TheElder, Bonemass,
+Moder, Yagluth, TheQueen, Fader) or its global key.
+
 ## Status (2026-09-12)
 
 Milestones 0.1 to 0.5 are implemented in one pass and compile; nothing has been tested in game yet. The roster
