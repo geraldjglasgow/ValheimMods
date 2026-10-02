@@ -19,17 +19,21 @@ namespace PackPanel.Layout
 
         private Dictionary<SlotKind, List<Vector2i>> cellsByKind;
 
-        public InventoryLayout(int width, int mainRows, IReadOnlyList<Slot> slots, int backpackSlots = 0)
+        /// <param name="baseCells">The main cells that stay without the backpack, counted from the top left; left out,
+        /// every row above the backpack's.</param>
+        public InventoryLayout(int width, int mainRows, IReadOnlyList<Slot> slots, int backpackSlots = 0, int baseCells = -1)
         {
             Width = Math.Max(1, width);
             MainRows = Math.Max(0, mainRows);
             Slots = slots ?? new List<Slot>();
             BackpackSlots = Math.Max(0, Math.Min(backpackSlots, MainRows * Width));
+            int fullRows = MainRows - (BackpackSlots + Width - 1) / Width;
+            BaseCells = baseCells >= 0 ? Math.Min(baseCells, MainRows * Width - BackpackSlots) : fullRows * Width;
         }
 
         public int Width { get; }
 
-        /// <summary>The main grid's rows, the worn backpack's rows (the bottom ones) included.</summary>
+        /// <summary>The main grid's rows, the worn backpack's included.</summary>
         public int MainRows { get; }
 
         /// <summary>
@@ -38,11 +42,20 @@ namespace PackPanel.Layout
         /// </summary>
         public int BackpackSlots { get; }
 
-        /// <summary>The bottom rows the backpack's slots take, the last one perhaps only partly.</summary>
-        public int BackpackRows => (BackpackSlots + Width - 1) / Width;
+        /// <summary>
+        /// The main cells that stay without the backpack, from the top left: whole rows, or with Inventory Rows at 0 the
+        /// two hands. The backpack's cells follow them in reading order, so they fill the rest of a hands row first.
+        /// </summary>
+        public int BaseCells { get; }
 
-        /// <summary>The cells of a partly used last backpack row that no item may use: the right end of the bottom row.</summary>
-        public int BlockedCells => BackpackRows * Width - BackpackSlots;
+        /// <summary>The rows the base cells take, the last one perhaps only partly (the hands).</summary>
+        public int BaseRows => (BaseCells + Width - 1) / Width;
+
+        /// <summary>The main cells no item may use, the right end of the bottom row: what the hands or a backpack leave of it.</summary>
+        public int BlockedCells => MainRows * Width - BaseCells - BackpackSlots;
+
+        /// <summary>A main cell the worn backpack adds (it leaves with the backpack).</summary>
+        public bool IsPackCell(Vector2i pos) => IsMain(pos) && pos.y * Width + pos.x >= BaseCells;
 
         public IReadOnlyList<Slot> Slots { get; }
 

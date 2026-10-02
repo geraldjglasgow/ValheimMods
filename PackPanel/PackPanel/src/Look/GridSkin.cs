@@ -75,6 +75,7 @@ namespace PackPanel.Look
             image.type = Image.Type.Sliced;
             image.color = Color.white;
             TimberBackground.Apply(image, SkinArt.Timber && wood != null);
+            NightShade.Track(image);
         }
 
         public static void Cell(InventoryElement element)

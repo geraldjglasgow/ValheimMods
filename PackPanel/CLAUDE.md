@@ -14,7 +14,7 @@ Rules that apply to every change:
 - Clean room as in `../CLAUDE.md`. Own names everywhere: GUID `milkyteam.packpanel`, config `milkyteam.packpanel.cfg`,
   YAML `PackPanel.Backpacks.yml` and `PackPanel.Tackleboxes.yml`, words `$packpanel_*`, custom data and ZDO keys
   `PackPanel.<name>`, prefabs and GameObjects `PackPanel_<Name>`, Charter articles `packpanel_backpacks` and
-  `packpanel_tackleboxes`, the model bundles `packpanel_backpacks` and `packpanel_tackleboxes` with the AssetWorkshop
+  `packpanel_tackleboxes`, the model bundles `packpanel_backpacks` and `packpanel_tackleboxes` with the ValheimAssets
   assets `packpanel_<pack>` and `packpanel_<box>_tacklebox`.
 - Verify every patched signature against a fresh `ilspycmd` decompile of the game's own assemblies in the scratchpad,
   never in a repository, and read the method body so the patch fits ownership, RPCs and save paths.
@@ -239,6 +239,7 @@ PackPanel/PackPanel/src/
     RoundedFill.cs, CrossMark.cs   sprites painted in code: a rounded rectangle (the stat sheet), a cross (blocked cells)
     SkinArt.cs              the embedded pictures as sprites (panel 9-sliced, button states, icons, timber)
     GridSkin.cs             Brown Style panels (default material, 12 unit reach) and cells
+    NightShade.cs           the panels darker with the light around you (Night Shade), grey only; never the cells
     GamePanelTheme.cs       Panel Theme over the game's wood panels (a rescan per scene, Image.OnEnable postfix)
     TimberBackground.cs, TimberFrame.cs, TimberCoordinates.cs   the timber wallpaper aligned to the screen and the rim
     BackgroundPreview.cs, PreviewPng.cs   art test: BepInEx/config/PackPanel.ArtTest/background.png replaces the
@@ -249,9 +250,9 @@ PackPanel/PackPanel/assets/ embedded images: panel.png, cell.png, button*.png, i
                             skin_art.py next to them: `python skin_art.py <out folder>`, then copy the PNGs here; never
                             write preview.png into this folder since every PNG here is embedded), timber_*.png
                             (timber-art.md), backpack_<word>.png and tacklebox_<word>.png (rendered from the models);
-                            bundles/ the models, packpanel_backpacks.windows and .linux (AssetWorkshop packpanel_*;
-                            rebuilt with `AssetWorkshop/build.ps1 -Asset <the eight packpanel_* pack folders> -Bundle
-                            packpanel_backpacks`, then both files copied here from AssetWorkshop/out/bundles) and
+                            bundles/ the models, packpanel_backpacks.windows and .linux (ValheimAssets packpanel_*;
+                            rebuilt with `../ValheimAssets/build.ps1 -Asset <the eight packpanel_* pack folders> -Bundle
+                            packpanel_backpacks`, then both files copied here from ../ValheimAssets/out/bundles) and
                             packpanel_tackleboxes.windows and .linux (the four packpanel_*_tacklebox folders, the same
                             way)
 PackPanel/tests/            TimberCoordinates.Check: `dotnet run` checks the wallpaper's screen mapping
@@ -292,7 +293,7 @@ inventory, Backpack Portal Pass only), `TombStone.EasyFitInInventory` (private; 
 
 ## Config sections and keys
 
-`General` (`Lock Configuration`), `1. Inventory` (`Enabled` true, `Inventory Width` 8 (8-12), `Inventory Rows` 5 (4-10),
+`General` (`Lock Configuration`), `1. Inventory` (`Enabled` true, `Inventory Width` 8 (8-12), `Inventory Rows` 5 (0-10; 0 = the two hand cells),
 `Base Carry Weight` 300 (50-10000), `Keep Slots On Death` false), `2. Slots` (`Equipment Slots` true, `Utility Slots` 3
 (0-5), `Trinket Slot` true, `Backpack Slot` true, `Backpack Items` empty, `Slots Per Group` 0 (0-5), `Food Slots` 3, `Food Slots Follow
 Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Key` B), `3. Key Ring` (`Key Ring` true, `Key Items`
@@ -300,7 +301,7 @@ Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per 
 (1-100)), `4. Backpacks` (`Backpacks` true, `Backpack Portal Pass` false, and `Show Worn Backpack` true, the one key there not
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
 Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Brown Style` true, `Weight Under Minimap` true, `Food And Mead Bar` true,
-`Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5)). The keys
+`Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5), `Night Shade` 0.65 (0.3-1)). The keys
 kept the names they had in OpenKeep's section 10 (never released); only the sections are new. Each key's meaning is
 its description in the .cfg (bound in `src/Core/InventorySettings.cs`, `InventoryModule.cs`, `Consume/ConsumeSettings.cs`,
 `Ring/KeyRingSettings.cs`, `Backpacks/BackpackSettings.cs` and `Tackle/TackleboxSettings.cs`); the README is only a
@@ -439,6 +440,19 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   PackPanel is on or a record exists: the game's version drops every item outside its rows (`DropInvalidItems`), which
   would throw the slots on the ground. With `Enabled` off and no record nothing is patched in behaviour, so another
   inventory mod keeps its rows. Bought rows (`invrows` above 4) add to `Inventory Rows`.
+- Fewer rows than the game's (2026-10-02, a player who keeps a one-row inventory, then the user's call): `Inventory
+  Rows` goes down to 0. 0 leaves two main cells, the hands, at the top left (`InventorySettings.HandCells`; hotbar
+  keys 1 and 2), the rest of row 0 blocked. The layout counts the main cells that stay without a backpack
+  (`InventoryLayout.BaseCells`: whole rows, or the hands) and a worn backpack's cells follow them in reading order, so
+  a pack first fills the rest of the hands row (keys 3 to 8), then rows below; the spare right end of the bottom row
+  is blocked as before, so the published grid (`width|rows|blocked`) keeps its format and OpenKeep and Elite
+  Creatures Reborn need no change. A pack's cells are `IsPackCell` (reading order from `BaseCells`), not its rows;
+  for whole rows that is the same set as before. The main grid always has at least the hands row, so the slots
+  never reach row 0 and no hotbar key uses a slot. The player panel follows its rows however few (the user's call,
+  2026-10-02: OpenKeep's buttons right under the hand cells), and a chest's panel moves up under it; the stats and
+  slot panels hang from its top at the height a 4-row grid gives (`BackpackPanelHeight`), so they keep their size. A
+  chest wider than 8 columns may then reach under the side panels. The game's HUD hotbar still draws 8 frames; keys
+  3 to 8 find nothing in blocked cells. Lowering the setting drops what no longer fits.
 - Room: `FindEmptySlot`, `GetEmptySlots`, `HaveEmptySlot` and `CanAddItem` count the main grid only, so pickups,
   crafting, purchases and the tombstone's easy-fit check never land in a slot (the bottom-first search would fill the
   slot rows first). `FindFreeStackItem` is left alone: arrows, food and coins stack onto a slot's stack, as with any
@@ -505,7 +519,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   panel). The game's panel background (`Bkg`) reaches 10 units past the panel's rect on every side, so the side
   panels sit 4 units past that edge, 4 apart (`PanelDress.SideGap`; 12 until the user asked for them
   closer, 2026-09-28; the pop-ups under the slot panel keep 12, `Gap`). The stat boxes have their own panel (`PackPanel_stats`, `StatsPanel`)
-  between the inventory panel and the slot panel, as tall as the inventory panel's background and one box wide with 10
+  between the inventory panel and the slot panel, as tall as its boxes (the inventory panel's margin above the first and
+  below the last; it was as tall as the inventory panel's background until 2026-10-02) and one box wide with 10
   units each side (the inventory panel's 18 until the user asked for a narrower column, 2026-09-28; the top keeps 18 so
   the first box stays level with the grid's first row); the library's column of boxes (armour, weight, world tier and any other mod's box, by rank) is
   moved into it (`PanelDress`). History: the user first had the boxes as a row in the slot panel's last row beside the
@@ -611,6 +626,20 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   Epic Loot finds equipped items through `Inventory.GetEquippedItems`, so PackPanel's extra utilities (marked
   `m_equipped`) count without its `RegisterEquipmentProvider`. Without Epic Loot, or with an API missing a method, the
   sheet shows the game's stats only and one warning is logged.
+- Night shade (the user's request, 2026-10-02: the game's UI darkens when it gets dark outside; implement that for
+  PackPanel). The game's wooden panels draw with the `litpanel` material (shader `Custom/LitGui`), which reads the sun
+  and ambient colours `EnvMan` sets every frame (`_SunColor` = the sun light's colour x intensity, `_AmbientColor`).
+  PackPanel's skins clear that material (it took the brown near black, and it tints with the weather: purple around
+  the Elder, Moder and Yagluth), so they never darkened. `NightShade` reads the same two colours each frame, takes
+  their luminance (ambient + 0.25 x sun) and maps a clear Meadows noon (0.90, from the game's weather data) to 1 and a
+  clear Meadows midnight (0.42, read in game at day fraction 0.78: ambient 0.357/0.368/0.485, sun 0.191/0.202/0.255)
+  to `Night Shade` (0.65), clamped, moving at most 0.5 a second. Dark weather lands in between or at the floor (a
+  Swamp rain noon about 0.47 reads as night). Grey only. Applied as each graphic's `CanvasRenderer` colour, which
+  multiplies its own colour without touching it, to every panel `GridSkin.Panel` skins and every Timber wallpaper (`TimberBackground`, the game menus Panel Theme covers included), and only while the
+  graphic uses the default UI material, so one still drawn with the game's lit material is not shaded twice. 1 with
+  Brown Style off (the game's panels shade themselves), outside a world (no `EnvMan`) and with `Night Shade = 1`.
+  Icons, numbers, captions and inventory cells are not shaded (cells: the user's request, 2026-10-02; the cell's
+  Button hover tint writes the same `CanvasRenderer` colour, so a shaded cell went light on hover and could stay so).
 - Captions (the user asked for them to be much easier to see, and said an item may cover them): bold, bright
   (#FAE6B8), auto-sized 10 to 20 over the whole cell (3 unit inset), drawn under the icon and shown only while the slot
   is empty (`InventoryElement.m_used`, which the game sets every frame). No outline: with the game's font material a
@@ -665,7 +694,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   the record, and the frame check in `BackpackWear` compares the layout in use with the worn pack's slots and applies
   the layout again with dropping, as a settings change does. Pickups fill the pack's cells first (they are the bottom
   rows, and the game places bottom first). Taken off, its cells' items go to free cells and the rest drops (the user's
-  choice); right click takes it off only into a cell above its own rows, else says there is no room. Carry weight is
+  choice); right click takes it off only into a main cell that is not one of its own, else says there is no room. Carry weight is
   added in the `GetMaxCarryWeight` postfix with Base Carry Weight, scaled by the world modifier. Keep Slots On Death
   takes the pack out only inside `CreateTombStone`, which no frame sees, and the frame check skips a dead player, so
   death never shrinks the grid mid-way. A grave made while a pack was worn has its cells as main cells and the slots
@@ -679,7 +708,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   PackPanel's packs from the catalog so the chain holds before ObjectDB has them, unknown names skipped with a
   warning, nothing usable falls back to the default). Each item is a copy of the game's `TrollHide` (net view, sync,
   rigidbody, ground sparkle) with its model swapped in and its collider fitted to the mesh, one per stack. The models
-  (AssetWorkshop `packpanel_*`, procedural textures of our own at 256 px to keep the DLL small; the pivot is the Spine2
+  (ValheimAssets `packpanel_*`, procedural textures of our own at 256 px to keep the DLL small; the pivot is the Spine2
   bone's rest position in the player's frame) are dressed in a copy of the game's troll hide cape material
   (`GameMaterials.Dress`), so the game's lighting and rain apply; worn, a model hangs on Spine2 under a mount turned
   upright (Spine2 rests about 5.7 degrees back), made in the world and parented keeping its world size as the game
@@ -863,7 +892,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.4.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.5.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1130,3 +1159,15 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     swings) and the Lox Hauler, and with the wolf, lox, feather, linen, Asksvin and Deep North capes. Take the pack off
     (or `Show Worn Backpack = false`) while running: the cape flaps freely again at once. Change capes with the pack on:
     the new cape is held too. A second player watching sees the same.
+55. Small inventory: `Inventory Rows = 1`: one row, the hotbar, the inventory panel one row tall with OpenKeep's
+    buttons right under it, the stats and slot panels beside it at their usual height, a chest's panel just under it; what was in other rows moves to free cells or drops (`No room for n items`). `0`:
+    two cells in row 0 (keys 1 and 2), the other six crossed out; wood picked up with both hands full says
+    inventory full; keys 3 to 8 do nothing. Wear the Deerhide Satchel (+4): row 0's cells 3 to 6 open (keys 3 to 6
+    work), 7 and 8 still crossed out; the Rootbound Pack (+8): all of row 0 and two cells of a second row, the rest
+    of that row crossed out; take it off: its cells go and their items drop or move to the hands. With OpenKeep, sort and quick stack never put anything in a crossed cell.
+    Dedicated server: server `Inventory Rows = 0`, client file 5: the client gets the two hand cells.
+56. Night shade: at noon in clear Meadows the panels look as before. `tod 0` (midnight): within about a second the
+    inventory, stats and slot panels, their cells and the Timber wallpaper of the crafting panel go darker (about two
+    thirds), the item icons, numbers and captions stay bright, no purple or blue tint. `tod 0.27`: they lighten again
+    as the sun comes up. `Night Shade = 1`: no change at night; `0.4`: much darker. Brown Style off: the game's own
+    panels darken as the game does and PackPanel adds nothing. Swamp in rain at noon: about as dark as night.

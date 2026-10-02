@@ -25,13 +25,12 @@ namespace PackPanel.Backpacks
 
         private static bool Allowed(Inventory inventory, InventoryLayout layout)
         {
-            int firstPackRow = layout.MainRows - layout.BackpackRows;
             bool all = ZoneSystem.instance != null && ZoneSystem.instance.GetGlobalKey(GlobalKeys.TeleportAll);
             foreach (ItemDrop.ItemData item in inventory.GetAllItems())
             {
                 if (item.m_shared.m_toolTier >= 1000)
                     return false;
-                bool inPack = layout.IsMain(item.m_gridPos) && item.m_gridPos.y >= firstPackRow;
+                bool inPack = layout.IsPackCell(item.m_gridPos);
                 if (!item.m_shared.m_teleportable && !inPack && !all)
                     return false;
             }

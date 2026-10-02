@@ -8,8 +8,9 @@ namespace PackPanel.Panels
 {
     /// <summary>
     /// The player panel's size. The game grows it by one grid row per inventory row (<c>InventoryGui.SetInventorySize</c>)
-    /// and never widens it; here it gets the main grid's rows (the slot rows are drawn in the slot panel, not the grid)
-    /// and one column step per column beyond 8, plus a few pixels at the top with the brown frame so the first row
+    /// and never widens it; here it gets the main grid's rows (the slot rows are drawn in the slot panel, not the grid),
+    /// however few (with fewer than the game's 4 OpenKeep's buttons sit right under the grid; the side panels keep their
+    /// height, <see cref="BackpackPanelHeight"/>), and one column step per column beyond 8, plus a few pixels at the top with the brown frame so the first row
     /// clears it, plus, with OpenKeep installed, a strip at the bottom that holds OpenKeep's button row inside the panel
     /// (the user asked for the panel to hold the buttons rather than have them hang below it; <see cref="ButtonStrip"/>).
     /// The grid centres itself in the panel, so the cells follow. A container whose inventory is wider than 8 (a wide

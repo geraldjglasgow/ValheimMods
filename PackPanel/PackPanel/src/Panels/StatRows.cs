@@ -110,9 +110,12 @@ namespace PackPanel.Panels
 
         private static void Text(RectTransform row, string name, TMP_FontAsset font)
         {
-            TextMeshProUGUI text = Child(row, name).gameObject.AddComponent<TextMeshProUGUI>();
+            GameObject go = Child(row, name).gameObject;
+            go.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
+            TextMeshProUGUI text = go.AddComponent<TextMeshProUGUI>();
             if (font != null)
                 text.font = font;
+            go.SetActive(true);
             text.fontSize = Size;   // set before TextMeshPro's own set-up, which then keeps ours
         }
 

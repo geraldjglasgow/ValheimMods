@@ -2,7 +2,7 @@
 
 Thirteen original item-hint illustrations replace the flat bronze slot art: helmet, leather tunic, trousers, trollhide cape, trollhide backpack, utility belt, roasted food, drinking horn, arrows, coins, keys, tacklebox and fishing tackle.
 
-`../slot_icons.py` builds native Blender geometry and renders transparent RGBA PNGs with consistent lighting and safe margins. The backpack and tacklebox append the existing AssetWorkshop trollhide backpack and driftwood tacklebox models. All other icon geometry and material colors are original. Vanilla cooked deer-meat art and the original trollhide model informed the material/shading direction; no vanilla bitmap is copied into the exports.
+`../slot_icons.py` builds native Blender geometry and renders transparent RGBA PNGs with consistent lighting and safe margins. The backpack and tacklebox append the existing ValheimAssets trollhide backpack and driftwood tacklebox models. All other icon geometry and material colors are original. Vanilla cooked deer-meat art and the original trollhide model informed the material/shading direction; no vanilla bitmap is copied into the exports.
 
 - `icon_*.png` here: 256px source renders.
 - `../../PackPanel/assets/icon_*.png`: 64px runtime images embedded by the project.

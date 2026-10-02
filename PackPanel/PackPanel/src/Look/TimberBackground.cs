@@ -90,6 +90,7 @@ namespace PackPanel.Look
             wood.gameObject.SetActive(true);
             wood.Inset();
             wood.SetAllDirty();
+            NightShade.Track(wood);
         }
 
         private RectTransform Root => canvas != null ? canvas.rootCanvas.transform as RectTransform : null;

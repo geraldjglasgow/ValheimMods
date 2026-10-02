@@ -7,8 +7,8 @@ import bpy
 from mathutils import Vector
 HERE=os.path.dirname(os.path.abspath(__file__))
 ROOT=os.path.abspath(os.path.join(HERE,'..','..'))
-sys.path.insert(0,os.path.join(ROOT,'AssetWorkshop','blender'))
-from workshop import shapes,materials,scene
+sys.path.insert(0,os.path.join(ROOT,'..','ValheimAssets','Tools','Blender'))   # the asset workshop beside this repo
+from workshop import shapes,materials,scene,paths
 OUT=os.path.join(HERE,'slot-icons'); os.makedirs(OUT,exist_ok=True)
 DEST=os.path.join(HERE,'..','PackPanel','assets')
 NAMES=('head','chest','legs','back','backpack','utility','food','mead','ammo','purse','key','tacklebox','tackle')
@@ -50,7 +50,7 @@ def buckle(x,y,z,m):
     rod('pin',(x,y-.006,z-.05),(x,y-.006,z+.032),.007,m)
 
 def append_asset(asset):
-    file=os.path.join(ROOT,'AssetWorkshop','assets',asset,'out',asset+'.blend')
+    file=os.path.join(paths.asset_dir(asset),'out',asset+'.blend')
     with bpy.data.libraries.load(file,link=False) as (src,dst): dst.objects=[asset]
     obj=dst.objects[0]; bpy.context.collection.objects.link(obj)
     # PackPanel wearable models display toward +Y; icon camera looks from -Y.

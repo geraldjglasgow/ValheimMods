@@ -40,17 +40,18 @@ namespace PackPanel.Backpacks
             inventory.Changed();
         }
 
-        /// <summary>Bottom row first, as the game places what it picks up, skipping the rows that leave with the backpack.</summary>
+        /// <summary>Bottom row first, as the game places what it picks up, skipping the cells that leave with the backpack.</summary>
         private static void TakeOff(Inventory inventory, ItemDrop.ItemData item)
         {
             InventoryLayout layout = InventoryState.Layout;
-            for (int y = layout.MainRows - layout.BackpackRows - 1; y >= 0; y--)
+            for (int y = layout.MainRows - 1; y >= 0; y--)
             {
                 for (int x = 0; x < layout.Width; x++)
                 {
-                    if (inventory.GetItemAt(x, y) != null)
+                    Vector2i cell = new Vector2i(x, y);
+                    if (!layout.IsMain(cell) || layout.IsPackCell(cell) || inventory.GetItemAt(x, y) != null)
                         continue;
-                    item.m_gridPos = new Vector2i(x, y);
+                    item.m_gridPos = cell;
                     inventory.Changed();
                     return;
                 }

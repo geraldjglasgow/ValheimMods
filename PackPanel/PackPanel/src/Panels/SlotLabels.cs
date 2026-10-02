@@ -93,8 +93,10 @@ namespace PackPanel.Panels
             rect.pivot = new Vector2(0.5f, 0f);
             rect.sizeDelta = new Vector2(-4f, 17f);
             rect.anchoredPosition = new Vector2(0f, 3f);
+            rect.gameObject.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
             TextMeshProUGUI label = rect.gameObject.AddComponent<TextMeshProUGUI>();
             label.font = font;
+            rect.gameObject.SetActive(true);
             label.enableAutoSizing = true;
             label.fontSizeMin = 9f;
             label.fontSizeMax = 14f;

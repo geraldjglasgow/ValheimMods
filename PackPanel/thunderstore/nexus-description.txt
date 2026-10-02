@@ -9,7 +9,7 @@ A bigger, better organised inventory, with labelled slots always on screen.
 
 [size=4][b]Features[/b][/size]
 [list]
-[*]A bigger grid (up to 12 x 10), with Base Carry Weight and Keep Slots On Death.
+[*]A grid from your two hands up to 12 x 10, with Base Carry Weight and Keep Slots On Death.
 [*]Gear tab: armour, a backpack, worn utilities, a trinket and a stat sheet.
 [*]Consumables tab: food, mead and ammo, with keys to eat and drink (Z, B).
 [*]A coin purse, a key ring and four craftable tackleboxes for bait.

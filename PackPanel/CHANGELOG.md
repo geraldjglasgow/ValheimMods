@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0
+
+- `Inventory Rows` goes down to 0: just two cells for your hands (keys 1 and 2); a backpack's cells continue after them.
+- The inventory panel follows its rows, so OpenKeep's buttons sit right under a small grid; the side panels keep their size.
+- New `Night Shade`: the inventory panels darken at night and in dark weather, as the game's own do.
+- Fixed: no more "LiberationSans SDF Font Asset was not found" warnings in the log when the inventory opens.
+
 ## 0.4.0
 
 - Armour, weight and Elite Creatures Reborn's world tier now sit in full-size boxes in a column right of the minimap.

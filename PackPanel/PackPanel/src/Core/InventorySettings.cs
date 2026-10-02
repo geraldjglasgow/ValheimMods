@@ -21,6 +21,9 @@ namespace PackPanel.Core
         public const string LookSection = "5. Look";
         public const int GameWidth = 8;
         public const int GameRows = 4;
+
+        /// <summary>The main cells left with Inventory Rows at 0: the two hands, hotbar keys 1 and 2.</summary>
+        public const int HandCells = 2;
         public const float GameCarryWeight = 300f;
         public const int MaxWidth = 12;
         public const int MaxRows = 10;
@@ -47,6 +50,7 @@ namespace PackPanel.Core
         public static ConfigEntry<InventoryTheme> PanelTheme { get; private set; }
         public static ConfigEntry<float> FrameWidth { get; private set; }
         public static ConfigEntry<float> FrameJaggedness { get; private set; }
+        public static ConfigEntry<float> NightShade { get; private set; }
         public static ConfigEntry<bool> WeightUnderMinimap { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
@@ -71,8 +75,8 @@ namespace PackPanel.Core
                 "Columns of the inventory grid. The game has 8; the hotbar keys stay 1 to 8. Warning: items in columns beyond 8 are lost if PackPanel is removed, so empty them first.",
                 acceptableValues: new AcceptableValueRange<int>(GameWidth, MaxWidth));
             InventoryRows = synced.Bind(Section, "Inventory Rows", 5,
-                "Rows of the inventory grid. The game has 4; rows bought from the trader come on top of this. Items in rows beyond the game's are dropped at your feet if PackPanel is removed.",
-                acceptableValues: new AcceptableValueRange<int>(GameRows, MaxRows));
+                "Rows of the inventory grid. The game has 4; rows bought from the trader come on top of this. 0 leaves only two cells, your hands (hotbar keys 1 and 2); a worn backpack's cells continue after them. Lowering it drops what no longer fits at your feet. Items in rows beyond the game's are dropped at your feet if PackPanel is removed.",
+                acceptableValues: new AcceptableValueRange<int>(0, MaxRows));
             BaseCarryWeight = synced.Bind(Section, "Base Carry Weight", GameCarryWeight,
                 "How much a player carries before being over-encumbered, before Megingjord and other effects add to it. The game has 300. The world's carry weight modifier still scales it.",
                 acceptableValues: new AcceptableValueRange<float>(50f, 10000f));
@@ -135,6 +139,9 @@ namespace PackPanel.Core
             FrameJaggedness = synced.Bind(LookSection, "Timber Border Jaggedness", 1.5f,
                 "Depth of broad irregular cuts along the wood silhouette, in UI units. Updates live.",
                 acceptableValues: new AcceptableValueRange<float>(0f, 2.5f), synced: false);
+            NightShade = synced.Bind(LookSection, "Night Shade", 0.65f,
+                "How dark PackPanel's panels get at night, as the game's own wooden panels darken with the light around you (dark weather shades them too). 1 keeps them as bright as day; 0.65 at midnight in clear weather. Grey only, never the weather's colour. Inventory cells never change.",
+                acceptableValues: new AcceptableValueRange<float>(0.3f, 1f), synced: false);
         }
     }
 }

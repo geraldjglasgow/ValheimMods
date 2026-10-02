@@ -103,15 +103,17 @@ namespace PackPanel.Ring
 
         private static void Label(InventoryElement button, RectTransform box)
         {
-            GameObject go = new GameObject("text", typeof(RectTransform), typeof(TextMeshProUGUI));
+            GameObject go = new GameObject("text", typeof(RectTransform));
+            go.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
             go.layer = box.gameObject.layer;
             go.transform.SetParent(box, false);
             RectTransform rect = (RectTransform)go.transform;
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = rect.offsetMax = Vector2.zero;
-            TMP_Text text = go.GetComponent<TMP_Text>();
+            TMP_Text text = go.AddComponent<TextMeshProUGUI>();
             text.font = button.m_amount.font;
+            go.SetActive(true);
             text.fontSize = 14f;
             text.color = Skin.LabelColour;
             text.alignment = TextAlignmentOptions.Center;
