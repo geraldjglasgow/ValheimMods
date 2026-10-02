@@ -51,7 +51,11 @@ namespace OpenKeep.Homestead
             rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.up;
             rect.anchoredPosition = new Vector2(Inset, -Inset);
             rect.sizeDelta = new Vector2(Width, Height);
-            label = Style(rect.gameObject.AddComponent<TextMeshProUGUI>(), map.m_biomeNameLarge);
+            rect.gameObject.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
+            TextMeshProUGUI text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+            text.font = map.m_biomeNameLarge.font;
+            rect.gameObject.SetActive(true);
+            label = Style(text, map.m_biomeNameLarge);
             shownSeconds = -1;
             return label;
         }

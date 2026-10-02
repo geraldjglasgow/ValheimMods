@@ -67,11 +67,13 @@ namespace OpenKeep.Stow
         private static TextMeshPro BuildLabel(GameObject parent, string text)
         {
             GameObject go = new GameObject("label");
+            go.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
             go.transform.SetParent(parent.transform, false);
             TextMeshPro label = go.AddComponent<TextMeshPro>();
             TMP_FontAsset font = LabelFont();
             if (font != null)
                 label.font = font;
+            go.SetActive(true);
             label.text = text;
             label.fontSize = 3.5f;
             label.color = LinkColour;

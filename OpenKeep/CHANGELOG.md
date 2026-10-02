@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.13.1
+- Fixed: no more "LiberationSans SDF Font Asset was not found" warnings from chest link labels and the bed countdown.
+
 ## 1.13.0
 - Stow: `Take All Key` (Shift+G) takes everything from the open chest, shared chests included.
 - Stow: new `Sort Order` `Amount`: the item you have the most of comes first.
