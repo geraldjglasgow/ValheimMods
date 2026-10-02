@@ -24,7 +24,7 @@ section 12 is part of the essence's item description (DECISIONS.md IMP-102).
 A Swamp draugr drops a **Lesser Venom Essence**, a small yellow-green shard. Clicked onto a Rare sword, it reshapes
 the sword like a Stone of Upheaval - every affix but a bound one is rolled again - except that one of the new affixes
 is **always** of the Venom family: on a sword, Venombrand or Blood Drinker. A **Greater** essence does the same and
-rolls that guaranteed affix at the highest tier the item allows.
+rolls that guaranteed affix at the best tier the item allows.
 
 There is one family per biome, named for what the biome does to a player: the Meadows' storm (Eikthyr), the Black
 Forest's grove, the Swamp's venom, the Mountain's frost, the Plains' battle, the Mistlands' seidr, the Ashlands'
@@ -214,7 +214,7 @@ reserved pool.
 | | Lesser | Greater |
 |---|---|---|
 | `applies_to` | uncommon, rare | uncommon, rare, epic, legendary, mythic |
-| `tier_floor` | none | 7 |
+| `tier_floor` | none | 1 |
 | Guaranteed affix tier | anywhere in the item's normal window | **the item's ceiling tier** |
 | Cost | 1 | 1 |
 | Scale (world model) | x0.85 | x1.15 |
@@ -224,13 +224,14 @@ reserved pool.
   "reroll an Uncommon+ item ... Greater essences carry a `tier_floor`" - so a Greater essence is strictly the better
   stone and works wherever a Lesser one does. The Lesser grade still stops at Rare, so a cheap, farmable essence is
   not a Greater Stone of Upheaval for Legendaries (ESS-3).
-- **`tier_floor: 7` means "at the ceiling".** The floor is clamped down to the item's ceiling (`item-tier.md` section
-  6, `RollMath.EffectiveFloor`), so 7 rolls the guaranteed affix at exactly the highest tier the item allows, on
-  every item: a Greater essence on a Swamp sword rolls it at tier 3, on an Ashlands sword at tier 7. This is why the
-  biome of the essence does not limit its strength (ESS-4).
+- **`tier_floor: 1` means "at the ceiling".** Affix tiers count down in the YAML (1 = the strongest); the parser
+  turns the floor into strength grade 7, which is clamped down to the item's ceiling (`item-tier.md` section 6,
+  `RollMath.EffectiveFloor`), so it rolls the guaranteed affix at exactly the best tier the item allows, on every
+  item: a Greater essence on a Swamp sword rolls it at tier 5 (grade 3), on an Ashlands sword at tier 1 (grade 7).
+  This is why the biome of the essence does not limit its strength (ESS-4).
 - **The floor applies to the guaranteed affix only.** For verb `imbue`, `tier_floor` is read for the family draw; the
   other rerolled affixes use the ordinary window with no floor. Every other verb keeps the field's meaning in
-  `economy-yaml.md` ("lowest affix tier this stone rolls").
+  `economy-yaml.md` ("weakest affix tier this stone rolls").
 - A family member that stopped scaling below the ceiling (an affix whose top tier is lower than the item's ceiling)
   is eligible for a Lesser essence at its highest tier (`rarity.md` section 4), but **not** for a Greater one, because
   that tier is below the clamped floor. No default family member stops early, so this matters only for owners'
@@ -263,7 +264,7 @@ is "Upheaval with one guaranteed affix".
       happens when every member for the slot is gated above the item's ceiling (Mistbane on a Plains belt), or when a
       kept affix already holds every member's id or group (a bound Venombrand on a sword leaves Blood Drinker; a bound
       Blood Drinker leaves Venombrand; both kept leaves nothing).
-   4. **Mythic**: if the item's rarity has `mythic_affixes > 0` and no kept affix fills the Mythic-only slot, draw it
+   4. **Mythic**: if the item's rarity has `mythic_inscriptions > 0` and no kept affix fills the Mythic-only slot, draw it
       next from the Mythic-only pool (regular pool until Phase 3, `rarity.md` section 5).
    5. **Fill** to the count from the regular pool with the ordinary window and **no floor**. Family members are not
       excluded from the fill: an item can end with two family affixes if their groups allow (ESS-15).
@@ -382,7 +383,7 @@ Localization: `$ecf_stone_essence_<family>_<grade>` and `..._desc` (the stone ke
 `$ecf_family_<id>` for the family's own name ("Storm", "Grove", "Venom", "Frost", "Battle", "Seidr", "Ember", "Tide").
 English descriptions, for example `$ecf_stone_essence_venom_lesser_desc`: "Rerolls an Uncommon or Rare item. One of
 its new affixes is always of the Venom family." and for Greater: "Rerolls a magic item. One of its new affixes is
-always of the Venom family, at the highest tier the item allows." The names are adopted defaults (ESS-14), like the
+always of the Venom family, at the best tier the item allows." The names are adopted defaults (ESS-14), like the
 stone names before the user blessed them.
 
 ---
@@ -489,16 +490,16 @@ section `essence_families`. Essences are ordinary entries in `stones:`; every co
 | Field | Type | Required | Default | Meaning |
 | --- | --- | --- | --- | --- |
 | `family` | family id | yes (for `imbue`) | - | the `essence_families` entry whose members the guaranteed draw uses |
-| `tier_floor` | int 1-7 | no | none | for `imbue`: the lowest tier of the **guaranteed** affix only, clamped to the ceiling (section 3) |
+| `tier_floor` | int 1-7 | no | none | for `imbue`: the weakest tier of the **guaranteed** affix only, counted down (1 = the best the item allows), clamped to the ceiling (section 3) |
 
 ## `essence_families`
 
 A map, family id -> entry. Merges by key like the other economy maps (`economy-yaml.md` section 1); an entry's
-`affixes` list is replaced whole.
+`inscriptions` list is replaced whole.
 
 | Field | Type | Required | Default | Meaning |
 | --- | --- | --- | --- | --- |
-| `affixes` | affix ids | yes | - | the members, from `EliteCrafting_affixes*.yml` |
+| `inscriptions` | affix ids | yes | - | the members, from `EliteCrafting_inscriptions*.yml` |
 | `name` | loc key or literal text | no | `$ecf_family_<id>` | the family's name in tooltips and `ecraft list` |
 
 ## Validation (additions to `economy-yaml.md` section 9)
@@ -507,7 +508,7 @@ A map, family id -> entry. Merges by key like the other economy maps (`economy-y
 | --- | --- |
 | `imbue` stone without `family`, or `family` naming no `essence_families` entry | error |
 | `family` on a stone whose verb is not `imbue` | warning (ignored) |
-| Family id not snake_case; empty `affixes` list | error |
+| Family id not snake_case; empty `inscriptions` list | error |
 | A member id not defined in the **affix** family's rules in force | warning (skipped at runtime). A warning, not an error, because the two YAML families load, sync and reload separately; an error would let an edit to one family reject the other |
 | A member with `mythic_only: true` | warning (skipped) |
 | A member of weight 30 or less that is the only member of its family for one of its slots | warning (design rule 3) |
@@ -519,33 +520,33 @@ The cross-family checks run whenever either family applies, against the other fa
 
 ```yaml
 essence_families:
-  storm:  { affixes: [stormbrand, stormward, bulwark_lightning, fleetfoot, stride, spring_heeled, light_leap, nimble, perfect_guard, keen_guard] }
-  grove:  { affixes: [bonebreaker, heartwood, woodcutting_mastery, troll_blood, mending, bramblehide, ironroot, repelling_guard, anchored_guard, harvester, farming_mastery] }
-  venom:  { affixes: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin] }
-  frost:  { affixes: [rimebrand, frostward, bulwark_frost, coldblood, winterborn, mountain_goat, long_wind, endurance, soft_landing, ravens_glide] }
-  battle: { affixes: [honed_might, keen_edge, needlepoint, berserkergang, padded, mailed, riveted, ironclad, arrowward, valhallas_edge, stalwart, tireless_guard, broad_back, trophy_taker] }
-  seidr:  { affixes: [primal_fury, seidr_siphon, rune_edge, seidr_thrift, soul_reaper, elemental_mastery, wellspring, seidr_flow, restless_mind, runic_ward, mist_veil, mistbane, seidr_riposte] }
-  ember:  { affixes: [emberbrand, flameward, bulwark_fire, ashen_skin, emberheart, hearthlight] }
-  tide:   { affixes: [slayer_sea, sealegs, strong_swimmer, fair_winds, huginns_eye, fishing_mastery] }
+  storm:  { inscriptions: [stormbrand, stormward, bulwark_lightning, fleetfoot, stride, spring_heeled, light_leap, nimble, perfect_guard, keen_guard] }
+  grove:  { inscriptions: [bonebreaker, heartwood, woodcutting_mastery, troll_blood, mending, bramblehide, ironroot, repelling_guard, anchored_guard, harvester, farming_mastery] }
+  venom:  { inscriptions: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin] }
+  frost:  { inscriptions: [rimebrand, frostward, bulwark_frost, coldblood, winterborn, mountain_goat, long_wind, endurance, soft_landing, ravens_glide] }
+  battle: { inscriptions: [honed_might, keen_edge, needlepoint, berserkergang, padded, mailed, riveted, ironclad, arrowward, valhallas_edge, stalwart, tireless_guard, broad_back, trophy_taker] }
+  seidr:  { inscriptions: [primal_fury, seidr_siphon, rune_edge, seidr_thrift, soul_reaper, elemental_mastery, wellspring, seidr_flow, restless_mind, runic_ward, mist_veil, mistbane, seidr_riposte] }
+  ember:  { inscriptions: [emberbrand, flameward, bulwark_fire, ashen_skin, emberheart, hearthlight] }
+  tide:   { inscriptions: [slayer_sea, sealegs, strong_swimmer, fair_winds, huginns_eye, fishing_mastery] }
 
 stones:
   # --- essences (Phase 2) ---
   - { id: essence_storm_lesser,   verb: imbue, family: storm,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_storm_greater,  verb: imbue, family: storm,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_storm_greater,  verb: imbue, family: storm,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_grove_lesser,   verb: imbue, family: grove,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_grove_greater,  verb: imbue, family: grove,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_grove_greater,  verb: imbue, family: grove,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_venom_lesser,   verb: imbue, family: venom,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_venom_greater,  verb: imbue, family: venom,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_venom_greater,  verb: imbue, family: venom,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_frost_lesser,   verb: imbue, family: frost,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_frost_greater,  verb: imbue, family: frost,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_frost_greater,  verb: imbue, family: frost,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_battle_lesser,  verb: imbue, family: battle, grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_battle_greater, verb: imbue, family: battle, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_battle_greater, verb: imbue, family: battle, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_seidr_lesser,   verb: imbue, family: seidr,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_seidr_greater,  verb: imbue, family: seidr,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_seidr_greater,  verb: imbue, family: seidr,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_ember_lesser,   verb: imbue, family: ember,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_ember_greater,  verb: imbue, family: ember,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_ember_greater,  verb: imbue, family: ember,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_tide_lesser,    verb: imbue, family: tide,   grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_tide_greater,   verb: imbue, family: tide,   grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_tide_greater,   verb: imbue, family: tide,   grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
 
 drops:
   stones:                 # T1  T2  T3  T4  T5  T6  T7
@@ -576,7 +577,7 @@ A server with a modded biome adds a family and one essence bound to a reserved p
 essence_families:
   hunt:
     name: "Hunt"
-    affixes: [slayer_beasts, ambusher, ghostwalk, shadowmeld, soft_tread, bow_mastery]
+    inscriptions: [slayer_beasts, ambusher, ghostwalk, shadowmeld, soft_tread, bow_mastery]
 
 stones:
   - id: essence_hunt
@@ -586,7 +587,7 @@ stones:
     verb: imbue
     family: hunt
     applies_to: [uncommon, rare, epic, legendary]
-    tier_floor: 7
+    tier_floor: 1
     tint: "#8B5A2B"
 
 drops:
@@ -595,12 +596,12 @@ drops:
 ```
 
 And an owner who thinks Venom should also cover shields adds one member without restating the others' fields - but
-`affixes` is a list, so it is replaced whole and restated:
+`inscriptions` is a list, so it is replaced whole and restated:
 
 ```yaml
 essence_families:
   venom:
-    affixes: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin, tireless_guard]
+    inscriptions: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin, tireless_guard]
 ```
 
 ---

@@ -21,7 +21,7 @@ ecf_ui_newer_format: "Changed by a newer version of EliteCrafting"
 ecf_ui_sealed: "Sealed: $1"
 ecf_ui_sealed_serpent: "Corrupted"
 ecf_ui_sealed_reflection: "Mirrored"
-ecf_ui_tier_ceiling: "Tier ceiling $1"
+ecf_ui_tier_ceiling: "Rolls up to T$1"
 
 # categories and slots
 ecf_ui_category_offense: "Offense"

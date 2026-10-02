@@ -90,7 +90,8 @@ namespace EliteCrafting.Rules
                 return new GearDropRules();
             }
             MapReader r = sub.Value;
-            r.Unknown("require_recipe", "tiers_below", "same_tier_weight", "lower_tier_weight", "slot_weights", "exclude", "include");
+            r.Unknown("require_recipe", "tiers_below", "same_tier_weight", "lower_tier_weight", "slot_weights", "exclude", "include",
+                "sockets");
             return new GearDropRules
             {
                 RequireRecipe = r.Bool("require_recipe", true),
@@ -100,7 +101,20 @@ namespace EliteCrafting.Rules
                 SlotWeights = ReadSlotWeights(r),
                 Exclude = r.Strings("exclude") ?? new List<string>(),
                 Include = YamlLists.IntMap(r, "include", 1, 7),
+                SocketWeights = ReadSocketWeights(r),
             };
+        }
+
+        // sockets.md section 2: [weight of 0 sockets, of 1, ...], at most SocketLimit + 1 entries.
+        private static float[] ReadSocketWeights(MapReader r)
+        {
+            float[]? weights = r.Floats("sockets");
+            if (weights != null && weights.Length > StoneDef.SocketLimit + 1)
+            {
+                r.Error("sockets", $"lists the weight of 0 to {StoneDef.SocketLimit} sockets: at most {StoneDef.SocketLimit + 1} entries");
+                return System.Array.Empty<float>();
+            }
+            return weights ?? System.Array.Empty<float>();
         }
 
         private static Dictionary<ItemSlot, float> ReadSlotWeights(MapReader r)

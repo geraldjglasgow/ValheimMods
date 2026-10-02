@@ -17,13 +17,13 @@ namespace EliteCrafting.Commands
     /// </summary>
     internal static class DumpCommand
     {
-        public const string Grammar = "ecraft dump affixes|economy|items";
+        public const string Grammar = "ecraft dump inscriptions|economy|items";
 
         public static void Run(CommandCall call)
         {
             switch (call.Lower(0))
             {
-                case "affixes": Effective(call, FamilySpec.Affixes, "affixes"); break;
+                case "inscriptions": Effective(call, FamilySpec.Affixes, "inscriptions"); break;
                 case "economy": Effective(call, FamilySpec.Economy, "economy"); break;
                 case "items": ItemSurvey.Write(call); break;
                 default: call.Fail(call.Arg(0).Length == 0 ? "dump what?" : $"cannot dump '{call.Arg(0)}'.", Grammar); break;

@@ -40,8 +40,8 @@ namespace EliteCrafting.Rules
                 }
                 live.Add(def!);
             }
-            Warn(family, unknown, "not defined affixes");
-            Warn(family, mythic, "Mythic-only affixes, never guaranteed");
+            Warn(family, unknown, "not defined inscriptions");
+            Warn(family, mythic, "Mythic-only inscriptions, never guaranteed");
             return live;
         }
 

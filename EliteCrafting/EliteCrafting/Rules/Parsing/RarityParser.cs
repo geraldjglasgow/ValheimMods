@@ -8,7 +8,7 @@ namespace EliteCrafting.Rules
     /// <summary>Reads <c>rarities:</c> (ladder order = list order) and <c>rolling:</c>, with the rarity.md section 7 checks.</summary>
     internal static class RarityParser
     {
-        private static readonly string[] Keys = { "id", "name", "color", "glow", "affixes", "mythic_affixes", "drop_weight" };
+        private static readonly string[] Keys = { "id", "name", "color", "glow", "inscriptions", "mythic_inscriptions", "drop_weight" };
 
         public static List<RarityDef> Parse(MapReader root)
         {
@@ -39,7 +39,7 @@ namespace EliteCrafting.Rules
             RarityDef rarity = new RarityDef
             {
                 Id = id, Index = index, Name = r.Str("name") ?? "$ecf_rarity_" + id,
-                Glow = r.Bool("glow", index > 0), MythicAffixes = r.Int("mythic_affixes", 0, 0),
+                Glow = r.Bool("glow", index > 0), MythicAffixes = r.Int("mythic_inscriptions", 0, 0),
                 DropWeight = r.Float("drop_weight", 1f, 0f),
             };
             ReadColor(r, rarity);
@@ -66,10 +66,10 @@ namespace EliteCrafting.Rules
 
         private static void ReadCounts(MapReader r, RarityDef rarity)
         {
-            MapReader? counts = r.Sub("affixes");
+            MapReader? counts = r.Sub("inscriptions");
             if (counts == null)
             {
-                r.Issues.Error(r.At("affixes"), r.Map, "is required: { min: N, max: N }");
+                r.Issues.Error(r.At("inscriptions"), r.Map, "is required: { min: N, max: N }");
                 return;
             }
             counts.Value.Unknown("min", "max");
@@ -81,7 +81,7 @@ namespace EliteCrafting.Rules
             }
             if (rarity.MythicAffixes > rarity.MinAffixes)
             {
-                r.Error("mythic_affixes", "cannot be above affixes.min");
+                r.Error("mythic_inscriptions", "cannot be above inscriptions.min");
             }
         }
 
@@ -94,7 +94,7 @@ namespace EliteCrafting.Rules
             }
             if (rarities[0].MaxAffixes != 0)
             {
-                root.Error("rarities", $"the first rarity ('{rarities[0].Id}') is the base rarity: its affixes.max must be 0");
+                root.Error("rarities", $"the first rarity ('{rarities[0].Id}') is the base rarity: its inscriptions.max must be 0");
             }
             if (rarities[0].Glow)
             {
@@ -103,7 +103,7 @@ namespace EliteCrafting.Rules
             }
             if (rarities.FindAll(r => r.MythicAffixes > 0).Count > 1)
             {
-                root.Error("rarities", "at most one rarity may set mythic_affixes");
+                root.Error("rarities", "at most one rarity may set mythic_inscriptions");
             }
         }
 
@@ -150,7 +150,7 @@ namespace EliteCrafting.Rules
                 }
                 else
                 {
-                    sub.Issues.Error($"{sub.At(rarityId)}.{w.Key}", sub.Node(rarityId), "keys are affix counts (whole numbers)");
+                    sub.Issues.Error($"{sub.At(rarityId)}.{w.Key}", sub.Node(rarityId), "keys are inscription counts (whole numbers)");
                 }
             }
             return weights;

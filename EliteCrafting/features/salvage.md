@@ -133,7 +133,7 @@ Per rarity, a list of `{fragment, amount, chance}` rows. Each row is rolled on i
 - **Tier is not an input** (SAL-5). The ascension stones work on items of every tier, so a tier-7 Rare and a tier-1
   Rare were made with the same stone and return the same shards. Tier already makes a high-tier item more valuable
   to *keep*; grinding is the floor, not the reward.
-- **Affixes are not an input.** Their count, tiers, a bound affix, dormant affixes: none change the yield. Grinding is
+- **Affixes are not an input.** Their count, tiers, a bound affix, dormant inscriptions: none change the yield. Grinding is
   not appraisal.
 - **Quality is lost** (SAL-9). A honed or tempered item's Honing or Tempering is not refunded; the tooltip already
   shows it, and the player chose to grind.

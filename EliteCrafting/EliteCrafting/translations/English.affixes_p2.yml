@@ -1,4 +1,4 @@
-# English names and tooltip sentences of the Phase 2 affixes (Effects, 0.2.0). Key without the $ -> text.
+# English names and tooltip sentences of the Phase 2 inscriptions (Effects, 0.2.0). Key without the $ -> text.
 # Sentences follow features/localization.md: $1 is the stored value; flags have no value.
 ecf_affix_berserkergang: "Berserkergang"
 ecf_affix_berserkergang_line: "While health-critical, +$1% damage"

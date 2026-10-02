@@ -11,7 +11,7 @@
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
     <Copyright>Copyright (c) Gerald Glasgow. Licensed under the GNU General Public License v3.0.</Copyright>
-    <Description>EliteCrafting: crafting stones and magic item affixes across six rarities</Description>
+    <Description>EliteCrafting: crafting stones and magic item inscriptions across six rarities</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DebugType>none</DebugType>

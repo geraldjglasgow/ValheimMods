@@ -62,7 +62,8 @@ namespace EliteCrafting.Effects
             return Touched.Count > 0;
         }
 
-        // Sums this item's active item-local affixes per channel (two affixes on one channel sum, then clamp once).
+        // Sums this item's active item-local affixes and gems per channel, catalyst applied (two on one channel sum, then
+        // clamp once).
         private static void SumChannels(ItemState state, ChannelPlan plan)
         {
             if (_channelSums.Length < plan.Count)
@@ -70,9 +71,10 @@ namespace EliteCrafting.Effects
                 _channelSums = new float[plan.Count];
             }
             Touched.Clear();
-            for (int i = 0; i < state.AffixCount; i++)
+            IReadOnlyList<EffectRoll> rolls = state.EffectRolls;
+            for (int i = 0; i < rolls.Count; i++)
             {
-                int c = state.IsActiveAt(i) ? state.DefinitionAt(i)!.ChannelIndex : -1;
+                int c = rolls[i].Def.ChannelIndex;
                 if (c >= 0 && c < plan.Count && EffectKinds.IsItemLocal(plan.Kinds[c]))
                 {
                     if (!Touched.Contains(c))
@@ -80,7 +82,7 @@ namespace EliteCrafting.Effects
                         Touched.Add(c);
                         _channelSums[c] = 0f;
                     }
-                    _channelSums[c] += state.Affixes[i].Value;
+                    _channelSums[c] += rolls[i].Roll.Value;
                 }
             }
         }

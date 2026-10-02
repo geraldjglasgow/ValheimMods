@@ -73,21 +73,21 @@ namespace EliteCrafting.Effects
             }
         }
 
-        /// <summary>Adds the active affixes of one item (for item-local hooks, use <see cref="ItemState.Read"/> directly).</summary>
+        /// <summary>
+        /// Adds what counts on one item: its active affixes and its socketed gems, values with the catalyst applied
+        /// (<see cref="ItemState.EffectRolls"/>, sockets.md section 6). For item-local hooks use <see cref="ItemState.Read"/>.
+        /// </summary>
         public static void CollectItem(ItemDrop.ItemData item, List<ActiveAffix> into)
         {
-            ItemState state = ItemState.Read(item);
-            if (!state.HasAffixes)
+            IReadOnlyList<EffectRoll> rolls = ItemState.Read(item).EffectRolls;
+            if (rolls.Count == 0)
             {
                 return;
             }
             ItemSlot slot = ItemSlots.SlotOf(item);
-            for (int i = 0; i < state.AffixCount; i++)
+            for (int i = 0; i < rolls.Count; i++)
             {
-                if (state.IsActiveAt(i))
-                {
-                    into.Add(new ActiveAffix(item, state.Affixes[i], state.DefinitionAt(i)!, slot));
-                }
+                into.Add(new ActiveAffix(item, rolls[i].Roll, rolls[i].Def, slot));
             }
         }
 

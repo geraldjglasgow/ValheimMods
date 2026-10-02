@@ -32,7 +32,7 @@ Grammar notation: `<required>`, `[optional]`, `a|b` alternatives. Sub-commands a
 | `reroll` | `ecraft reroll [cursor|hover|<slot>]` | admin | Rerolls every affix of an item in own inventory, keeping rarity |
 | `affix` | `ecraft affix <affix_id> [tier] [value] [cursor|hover|<slot>]` | admin | Adds, or replaces, one specific affix on an item, for testing an effect |
 | `reload` | `ecraft reload` | admin, author side | Re-reads both YAML families, the translation files and the `.cfg` now, instead of on the next poll (`configuration.md` section 5) |
-| `dump` | `ecraft dump affixes|economy|items` | admin | `affixes`/`economy`: writes the effective merged configuration to `EliteCrafting_effective_<family>.yml.txt` in the config folder. `items`: the item survey, section 3 |
+| `dump` | `ecraft dump affixes|economy|items` | admin | `inscriptions`/`economy`: writes the effective merged configuration to `EliteCrafting_effective_<family>.yml.txt` in the config folder. `items`: the item survey, section 3 |
 | `tiers` | `ecraft tiers` | admin | Writes `EliteCrafting_item_tiers_reference.yml` as `item-tier.md` specifies (every magic base with slot, tier and the rule that decided it, plus unmapped materials) |
 | `ecr` | `ecraft ecr` | read-only | The Elite Creatures Reborn synergy (Phase 2): whether ECR is installed here, the `Synergy` switch, the hovered creature's ECR keys and the drop terms they give (`ecr-integration.md` section 11) |
 
@@ -81,7 +81,7 @@ but never write an item whose format is newer (`item-data.md` section 8).
 
 ```
 ecraft inspect: Bronze sword [2] (SwordBronze), slot melee_weapon, tier ceiling 2, magic base
-  raw: ecf_v=1 | ecf_rarity=rare | ecf_affixes=balanced_grip:2:7;long_reach:2:5;old_affix:1:3 | ecf_refine=3
+  raw: ecf_v=1 | ecf_rarity=rare | ecf_inscriptions=balanced_grip:2:7;long_reach:2:5;old_affix:1:3 | ecf_refine=3
   rarity rare (#0070DD), format v1
   affix balanced_grip T2 7 -> effect attack_stamina_cost, active
   affix long_reach T2 5 -> effect attack_reach, active
@@ -129,7 +129,7 @@ of that slot. `tier` (1-7) overrides the item's tier ceiling for this roll; with
 item's `inspect` output is printed. `roll mythic` is allowed (admin tool), which is the only way besides the Stone of
 Apotheosis.
 
-**`affix`**: `tier` defaults to the highest tier the affix defines; `value` defaults to a normal roll in that tier's
+**`affix`**: `tier` counts down like the tooltip (1 = the strongest) and defaults to the strongest tier the affix defines; `value` defaults to a normal roll in that tier's
 range and may be outside the range (a test value). An existing affix of the same id is replaced in place; otherwise
 it is appended, even past the rarity's maximum. Exclusion groups are ignored, with a warning line.
 

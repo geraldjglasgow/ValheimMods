@@ -9,7 +9,7 @@ namespace EliteCrafting.Rules
     /// </summary>
     internal static class AffixFamilyParser
     {
-        private static readonly string[] RootKeys = { FamilyBuilder.UseDefaultsKey, "health_critical", "caps", "affixes" };
+        private static readonly string[] RootKeys = { FamilyBuilder.UseDefaultsKey, "health_critical", "caps", "inscriptions" };
 
         public static AffixRules? Parse(YamlMappingNode root, RuleIssues issues)
         {
@@ -59,7 +59,7 @@ namespace EliteCrafting.Rules
         private static List<AffixDef> ReadAffixes(MapReader r)
         {
             List<AffixDef> affixes = new List<AffixDef>();
-            YamlSequenceNode? seq = r.Seq("affixes");
+            YamlSequenceNode? seq = r.Seq("inscriptions");
             if (seq == null)
             {
                 return affixes;

@@ -3,7 +3,7 @@ namespace EliteCrafting.Rules
     /// <summary>The fixed facts of one YAML family: file pattern, main file, embedded default, sync key, id lists.</summary>
     internal sealed class FamilySpec
     {
-        public static readonly FamilySpec Affixes = new FamilySpec("EliteCrafting_affixes", "ecf_affixes", new[] { "affixes" });
+        public static readonly FamilySpec Affixes = new FamilySpec("EliteCrafting_inscriptions", "ecf_inscriptions", new[] { "inscriptions" });
         public static readonly FamilySpec Economy = new FamilySpec("EliteCrafting_economy", "ecf_economy", new[] { "rarities", "stones", "salvage.fragments" });
 
         private FamilySpec(string prefix, string syncKey, string[] idLists)

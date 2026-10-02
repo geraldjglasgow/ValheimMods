@@ -4,8 +4,9 @@ using EliteCrafting.Text;
 namespace EliteCrafting.Stones
 {
     /// <summary>
-    /// Pipeline step 13 (applying-stones.md section 4): stones with <c>confirm: true</c> (synced, per stone) ask
-    /// first, in the way this player chose (<c>Confirm destructive stones</c>, local and unsynced). Last on purpose:
+    /// Pipeline step 13 (applying-stones.md section 4): stones with <c>confirm: true</c> (synced, per stone), and any
+    /// use whose result destroys something (a gem breaking, a catalyst reset: sockets.md), ask first, in the way this
+    /// player chose (<c>Confirm destructive stones</c>, local and unsynced). Last on purpose:
     /// only a use that would succeed is ever confirmed. Local player only.
     /// <list type="bullet">
     /// <item><c>HoldShift</c>: applies only while Shift / the gamepad left trigger is held - the grid reports that as
@@ -20,7 +21,8 @@ namespace EliteCrafting.Stones
         public static void Pass(StoneJob job, StoneResult result, bool shiftHeld)
         {
             ConfirmMode mode = ModSettings.ConfirmDestructiveStones?.Value ?? ConfirmMode.HoldShift;
-            if (!job.Def!.Confirm || mode == ConfirmMode.Off || (mode == ConfirmMode.HoldShift && shiftHeld))
+            bool asks = job.Def!.Confirm || result.Destructive;
+            if (!asks || mode == ConfirmMode.Off || (mode == ConfirmMode.HoldShift && shiftHeld))
             {
                 StoneCommit.Commit(job, result);
                 return;

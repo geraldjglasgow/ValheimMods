@@ -1,6 +1,7 @@
 using System.Text;
 using EliteCrafting.Affixes;
 using EliteCrafting.Config;
+using EliteCrafting.Core;
 using EliteCrafting.Items;
 using EliteCrafting.Rules;
 using EliteCrafting.Text;
@@ -27,6 +28,7 @@ namespace EliteCrafting.Display
                 Sb.Append('\n').Append(RarityPalette.Grey).Append(Words.Localize("$ecf_ui_newer_format")).Append(RarityPalette.Close);
             }
             AffixLines.Append(Sb, state, detail, showDormant);
+            AffixLines.AppendSockets(Sb, state, detail);
             AppendRefine(Sb, state, item);
             AppendSealed(Sb, state);
             SigilLine.Append(Sb, state, detail);
@@ -52,7 +54,8 @@ namespace EliteCrafting.Display
             }
             if (detail == TooltipDetail.Full)
             {
-                string ceiling = Words.Localize("$ecf_ui_tier_ceiling", ItemTier.Of(item).ToString());
+                // The ceiling as the best affix tier the item rolls (tiers count down: an Ashlands item rolls up to T1).
+                string ceiling = Words.Localize("$ecf_ui_tier_ceiling", AffixTierNumbers.Shown(ItemTier.Of(item)).ToString());
                 sb.Append("  ").Append(RarityPalette.Grey).Append(ceiling).Append(RarityPalette.Close);
             }
         }

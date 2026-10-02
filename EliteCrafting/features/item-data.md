@@ -101,14 +101,14 @@ dictionary: other mods' keys on the same item are left exactly as they were.
 |---|---|---|---|
 | `ecf_v` | any other `ecf_` key is present | format version, integer | `1` |
 | `ecf_rarity` | the item is Uncommon or better | rarity id | `rare` |
-| `ecf_affixes` | the item has at least one affix | affix list (section 4) | `fleetfoot:3:4;broad_back:4:35` |
+| `ecf_inscriptions` | the item has at least one affix | affix list (section 4) | `fleetfoot:3:4;broad_back:4:35` |
 | `ecf_bound` | an affix is locked by the Stone of Binding | affix id of the locked affix | `broad_back` |
 | `ecf_refine` | a Honing or Tempering Stone was used | the honed/tempered bonus in percent points, number (`quality.md`) | `7` |
 | `ecf_sealed` | the item is sealed (no further stones) | reason id: `serpent` or `reflection` | `serpent` |
 | `ecf_sigil` | a sigil is pending on the item | the sigil's stone id | `sigil_war` |
 
 There is **no tier key**: the item's tier ceiling is computed from its base and never stored (user decision,
-`../DECISIONS.md` U-13; `item-tier.md` section 1). Each affix stores its own tier inside `ecf_affixes`.
+`../DECISIONS.md` U-13; `item-tier.md` section 1). Each affix stores its own tier inside `ecf_inscriptions`.
 
 Rules that keep the set tight:
 
@@ -119,14 +119,14 @@ Rules that keep the set tight:
 - `ecf_v` is written whenever any other key is written, and removed when the last other key goes.
 - `ecf_sealed` is a reason rather than a flag so the tooltip can say *why* ("Corrupted" / "Mirrored"). Any
   non-empty value means sealed; an unknown reason id displays as the generic sealed text.
-- `ecf_bound` names an affix that must also be in `ecf_affixes`. If it is not (the affix was removed by a path that
+- `ecf_bound` names an affix that must also be in `ecf_inscriptions`. If it is not (the affix was removed by a path that
   forgot to clear it), the key is ignored on read and dropped on the next write.
 
 ---
 
 # 4. Encodings
 
-**The affix list** (`ecf_affixes`): entries separated by `;`, fields by `:`, in display order (the order they were
+**The affix list** (`ecf_inscriptions`): entries separated by `;`, fields by `:`, in display order (the order they were
 rolled; a reroll that replaces an affix puts the new one at the end).
 
 ```
@@ -135,7 +135,9 @@ rolled; a reroll that replaces an affix puts the new one at the end).
 
 - **Affix id**: the YAML id, matching `^[a-z][a-z0-9_]{1,47}$` (enforced at YAML load, `configuration.md`), so it
   can never contain a separator.
-- **Tier**: integer 1..7, decimal digits.
+- **Tier**: integer 1..7, decimal digits: the affix's **strength grade** (1 = Meadows strength, 7 = Ashlands), not
+  the tier the tooltip shows, which counts down (shown = 8 - grade, `affixes.md` "Tiers and biome gates"). Showing
+  tiers the other way round (2026-10-01) therefore changed no stored item.
 - **Value**: the rolled value, already rounded at roll time (to the decimals of the tier's bounds,
   `configuration.md` section 6), so what is stored is exactly what is displayed and applied. Written with `CultureInfo.InvariantCulture` and the format `0.##`: no exponent, no
   group separator, `.` as decimal point, leading `-` for negatives, no `+`. Read with
@@ -151,7 +153,7 @@ rolled; a reroll that replaces an affix puts the new one at the end).
 **Other values:** rarity id, sealed reason, sigil id: the lowercase snake_case ids from `rarity.md`, `stones.md`,
 `sigils.md`. Refine percent: the same number format as affix values. Version: an invariant integer.
 
-**Unreadable data is never destroyed.** A segment of `ecf_affixes` that does not parse (wrong field count, bad
+**Unreadable data is never destroyed.** A segment of `ecf_inscriptions` that does not parse (wrong field count, bad
 number, duplicate) is kept verbatim in the parse record and written back unchanged, in its original position,
 whenever the item is written. It has no effect and does not show in the tooltip except at the Full detail level
 (`display.md`). An `ecf_rarity` value that is not a known rarity id is handled like an orphaned affix (section 6).
@@ -181,7 +183,7 @@ Every reader (tooltip, effects, stones, glow, loot, commands) goes through one c
   pickup merge (game notes, pitfall 3), so cache misses are normal and nothing may hold a long-lived reference to an
   `ItemData` (the aggregate rebuilds from the equipped slots each time). A miss costs one parse of a short string.
   Allowed optimization: because `Clone` copies the dictionary but not the value strings, a second small cache keyed
-  by the `ecf_affixes` string instance lets a clone reuse its original's parsed affix list.
+  by the `ecf_inscriptions` string instance lets a clone reuse its original's parsed affix list.
 - Reading **never writes**. Migration (section 8) and orphan handling happen in the record, and reach the
   dictionary only when something writes the item for its own reasons.
 
@@ -266,7 +268,7 @@ An Uncommon bronze sword, one affix:
 {
   "ecf_v":       "1",
   "ecf_rarity":  "uncommon",
-  "ecf_affixes": "balanced_grip:2:7"
+  "ecf_inscriptions": "balanced_grip:2:7"
 }
 ```
 
@@ -276,7 +278,7 @@ A Legendary chest piece: four affixes, one bound, tempered, a sigil pending; ano
 {
   "ecf_v":       "1",
   "ecf_rarity":  "legendary",
-  "ecf_affixes": "broad_back:6:52;troll_blood:5:12.5;well_forged:6:18;lightened:4:30",
+  "ecf_inscriptions": "broad_back:6:52;troll_blood:5:12.5;well_forged:6:18;lightened:4:30",
   "ecf_bound":   "troll_blood",
   "ecf_refine": "6",
   "ecf_sigil":   "sigil_warding",
@@ -291,7 +293,7 @@ dormant (`storm_ward`, an affix the server's YAML no longer has):
 {
   "ecf_v":       "1",
   "ecf_rarity":  "mythic",
-  "ecf_affixes": "ravens_glide:7:1;well_forged:7:40;storm_ward:6:20;lightened:7:45;everlasting:7:1;broad_back:7:70;gossamer:7:1",
+  "ecf_inscriptions": "ravens_glide:7:1;well_forged:7:40;storm_ward:6:20;lightened:7:45;everlasting:7:1;broad_back:7:70;gossamer:7:1",
   "ecf_sealed":  "serpent"
 }
 ```
@@ -311,7 +313,7 @@ A mirrored copy from the Stone of Reflection (the original is unchanged and unse
 {
   "ecf_v":       "1",
   "ecf_rarity":  "rare",
-  "ecf_affixes": "long_reach:5:8;staggering_blows:5:11;balanced_grip:3:9",
+  "ecf_inscriptions": "long_reach:5:8;staggering_blows:5:11;balanced_grip:3:9",
   "ecf_sealed":  "reflection"
 }
 ```

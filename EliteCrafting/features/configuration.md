@@ -17,7 +17,7 @@ U-11); section 1 says which parts carry over and what changes for two families o
 | File | Holds | Synced |
 |---|---|---|
 | `BepInEx/config/com.EliteCrafting.cfg` | global switches, confirm gate, display and glow preferences, diagnostics | gameplay keys yes and lockable; display, glow, confirm, diagnostics never |
-| `EliteCrafting_affixes*.yml` | every affix, the effect caps, the health-critical threshold | yes |
+| `EliteCrafting_inscriptions*.yml` | every affix, the effect caps, the health-critical threshold | yes |
 | `EliteCrafting_economy*.yml` | rarities (palette, glow, affix counts), rolling rules, stones, sigils, item tiers, biomes, drop tables (`economy-yaml.md`) | yes |
 
 **Libraries.** `Charter` (server binding, version check, the pushed file texts), `ConfigReload` (the `.cfg`: save and
@@ -91,16 +91,16 @@ Charter, and never leave the machine.
 
 ## Files
 
-- Two families: `EliteCrafting_affixes*.yml` and `EliteCrafting_economy*.yml`. The patterns do not overlap, and the
+- Two families: `EliteCrafting_inscriptions*.yml` and `EliteCrafting_economy*.yml`. The patterns do not overlap, and the
   translation files (`EliteCrafting.translations.<Language>.yml`, `localization.md`) match neither.
-- Searched in the BepInEx config folder only. Within a family: **the main file** (`EliteCrafting_affixes.yml` /
+- Searched in the BepInEx config folder only. Within a family: **the main file** (`EliteCrafting_inscriptions.yml` /
   `EliteCrafting_economy.yml`) **first, then every other matching file in file-name order** (ordinal,
   case-insensitive).
 - **On first run** (the family's main file does not exist) the mod writes the main file from the embedded default
   text: a full, commented copy of the built-in defaults, every value at its default and every comment in place, so an
   owner always edits a complete, documented file rather than a blank one (`../DECISIONS.md` CFG-2). A write failure
   is logged and changes nothing else; the defaults still apply.
-- Extra files are the owner's: `EliteCrafting_affixes_custom.yml`, `EliteCrafting_economy_zz_testing.yml`. They
+- Extra files are the owner's: `EliteCrafting_inscriptions_custom.yml`, `EliteCrafting_economy_zz_testing.yml`. They
   survive every update because the mod never writes them.
 
 ## Layers
@@ -144,7 +144,7 @@ merges **by id, field by field** (`../DECISIONS.md` CFG-3):
   valid override:
 
   ```yaml
-  affixes:
+  inscriptions:
     - id: fleetfoot
       enabled: false
   ```
@@ -153,7 +153,7 @@ merges **by id, field by field** (`../DECISIONS.md` CFG-3):
 - **Map-valued fields** (`caps`, `health_critical`, a stone's `cost` and `weights`) merge by key.
 - The **same id twice in one file** is an error (almost always a copy-paste mistake).
 - An override in a later file is logged at info level ("affix `fleetfoot` overridden by
-  `EliteCrafting_affixes_custom.yml`: enabled"), so an owner can see what their files did.
+  `EliteCrafting_inscriptions_custom.yml`: enabled"), so an owner can see what their files did.
 - **Removing** an entry: `enabled: false`. Deleting an entry from a file removes only that layer's contribution;
   the built-in default is still there unless `use_defaults: false`.
 - The economy family's map sections (item tiers, biomes, drop tables) merge as `economy-yaml.md` section 1 says.
@@ -162,7 +162,7 @@ merges **by id, field by field** (`../DECISIONS.md` CFG-3):
 
 # 4. Validation, errors and the fallback
 
-Reading never throws: every problem is collected with its file name and line (`EliteCrafting_affixes_custom.yml:
+Reading never throws: every problem is collected with its file name and line (`EliteCrafting_inscriptions_custom.yml:
 line 42: 'ten' is not a number`), as ECR's reader does.
 
 - **Errors reject the whole family**: the previous configuration stays in force, every error is logged, and nothing
@@ -189,7 +189,7 @@ line 42: 'ten' is not a number`), as ECR's reader does.
 
 ## Sync (server lock)
 
-- **One Charter article per family**, `ecf_affixes` and `ecf_economy`, an ordinary (not standing) `List<string>`
+- **One Charter article per family**, `ecf_inscriptions` and `ecf_economy`, an ordinary (not standing) `List<string>`
   article whose value is the family's files **as text**, name and verbatim content in load order. The author sends the
   texts it built its own model from, comments and all, never a parsed model, so every peer runs the same reader.
 - **The author** (dedicated server, host, single player, or any player while unbound) builds from its own files and
@@ -253,14 +253,14 @@ supplies every default value; this section is the format and its validation. Wha
 (`effects-runtime.md` section 1). An affix's tooltip sentence is the localization key `$ecf_affix_<id>_line`
 (`localization.md` section 1), not a YAML field.
 
-## Root keys of an `EliteCrafting_affixes*.yml` file
+## Root keys of an `EliteCrafting_inscriptions*.yml` file
 
 | Key | Type | Required | Meaning |
 |---|---|---|---|
 | `use_defaults` | bool | no, default `true` | Main file only (section 3) |
 | `health_critical` | map `{threshold, max_threshold}` | no, defaults 30 / 50 | Percent of max health at or below which `condition: health_critical` affixes apply; the threshold affix raises it up to `max_threshold`. `0 < threshold <= max_threshold <= 100` or error. Merges by key |
 | `caps` | map: channel key → number | no | Cap on a channel's sum (`effects-runtime.md` section 5). A channel is `(effect, param, condition)`, so the keys are `effect`, `effect:param`, `effect@health_critical`, `effect:param@health_critical`. Merges by key across layers; a key naming no registered effect, or a cap `<= 0`, is an error; `null` removes a default cap |
-| `affixes` | list of affix entries | no | Merged by `id` (section 3) |
+| `inscriptions` | list of affix entries | no | Merged by `id` (section 3) |
 
 ## Affix entry
 
@@ -297,7 +297,8 @@ typo); a `caps` key for a channel no enabled affix feeds.
 
 ## Worked examples
 
-Shapes from the catalog (`affixes.md` section 4); the YAML defaults are generated from it.
+Shapes from the catalog (`affixes.md` section 4); the YAML defaults are generated from it. Tier rows count down,
+as in the tooltip: tier 1 is the strongest (Ashlands) row, tier 7 the weakest (`affixes.md`, "Tiers and biome gates").
 
 A **percent** affix, capped through `caps`:
 
@@ -305,7 +306,7 @@ A **percent** affix, capped through `caps`:
 caps:
   move_speed: 25
 
-affixes:
+inscriptions:
   - id: fleetfoot
     effect: move_speed
     value: percent
@@ -314,13 +315,13 @@ affixes:
     exclusion_group: move_speed
     hook: easy
     tiers:
-      - { tier: 1, min: 1, max: 2 }
-      - { tier: 2, min: 2, max: 3 }
-      - { tier: 3, min: 3, max: 4 }
+      - { tier: 1, min: 7, max: 8 }
+      - { tier: 2, min: 6, max: 7 }
+      - { tier: 3, min: 5, max: 6 }
       - { tier: 4, min: 4, max: 5 }
-      - { tier: 5, min: 5, max: 6 }
-      - { tier: 6, min: 6, max: 7 }
-      - { tier: 7, min: 7, max: 8 }
+      - { tier: 5, min: 3, max: 4 }
+      - { tier: 6, min: 2, max: 3 }
+      - { tier: 7, min: 1, max: 2 }
 ```
 
 A **flat** affix:
@@ -333,16 +334,16 @@ A **flat** affix:
     category: utility
     hook: easy
     tiers:
-      - { tier: 1, min: 10, max: 15 }
-      - { tier: 2, min: 15, max: 20 }
-      - { tier: 3, min: 20, max: 30 }
+      - { tier: 1, min: 60, max: 75 }
+      - { tier: 2, min: 50, max: 60 }
+      - { tier: 3, min: 40, max: 50 }
       - { tier: 4, min: 30, max: 40 }
-      - { tier: 5, min: 40, max: 50 }
-      - { tier: 6, min: 50, max: 60 }
-      - { tier: 7, min: 60, max: 75 }
+      - { tier: 5, min: 20, max: 30 }
+      - { tier: 6, min: 15, max: 20 }
+      - { tier: 7, min: 10, max: 15 }
 ```
 
-A **flag** affix, from tier 4, rarer by design:
+A **flag** affix, Mountain items and up (tiers 4 to 1), rarer by design:
 
 ```yaml
   - id: ravens_glide
@@ -354,10 +355,10 @@ A **flag** affix, from tier 4, rarer by design:
     weight: 30
     hook: easy
     tiers:
+      - { tier: 1 }
+      - { tier: 2 }
+      - { tier: 3 }
       - { tier: 4 }
-      - { tier: 5 }
-      - { tier: 6 }
-      - { tier: 7 }
 ```
 
 A **skill** affix: the `param` picks the skill, `requires` keeps it on items that skill governs:
@@ -373,23 +374,23 @@ A **skill** affix: the `param` picks the skill, `requires` keeps it on items tha
     exclusion_group: skill_level
     hook: easy
     tiers:
-      - { tier: 1, min: 2, max: 3 }
-      - { tier: 2, min: 3, max: 5 }
-      - { tier: 3, min: 5, max: 7 }
+      - { tier: 1, min: 13, max: 15 }
+      - { tier: 2, min: 11, max: 13 }
+      - { tier: 3, min: 9, max: 11 }
       - { tier: 4, min: 7, max: 9 }
-      - { tier: 5, min: 9, max: 11 }
-      - { tier: 6, min: 11, max: 13 }
-      - { tier: 7, min: 13, max: 15 }
+      - { tier: 5, min: 5, max: 7 }
+      - { tier: 6, min: 3, max: 5 }
+      - { tier: 7, min: 2, max: 3 }
 ```
 
-An owner's **override file**, `EliteCrafting_affixes_custom.yml`, changing two fields and adding one affix with a
+An owner's **override file**, `EliteCrafting_inscriptions_custom.yml`, changing two fields and adding one affix with a
 literal name:
 
 ```yaml
 caps:
   move_speed: 15
 
-affixes:
+inscriptions:
   - id: fleetfoot
     weight: 50
   - id: myserver_trailblazer
@@ -399,8 +400,8 @@ affixes:
     slots: [legs]
     category: utility
     tiers:
-      - { tier: 5, min: 4, max: 6 }
-      - { tier: 7, min: 6, max: 9 }
+      - { tier: 1, min: 6, max: 9 }
+      - { tier: 3, min: 4, max: 6 }
 ```
 
 ---

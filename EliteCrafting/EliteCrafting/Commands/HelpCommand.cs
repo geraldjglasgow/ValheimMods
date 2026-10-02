@@ -15,7 +15,7 @@ namespace EliteCrafting.Commands
             }
             if (!CommandAccess.IsAdmin)
             {
-                call.Detail("give, roll, reroll, affix, reload, dump and tiers need admin rights on this server.");
+                call.Detail("give, roll, reroll, inscribe, reload, dump and tiers need admin rights on this server.");
             }
         }
     }

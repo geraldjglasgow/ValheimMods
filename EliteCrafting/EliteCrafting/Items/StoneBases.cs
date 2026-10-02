@@ -15,6 +15,9 @@ namespace EliteCrafting.Items
         Honing,
         Tempering,
         Essence,
+        Gem,
+        Catalyst,
+        Chisel,
     }
 
     /// <summary>
@@ -35,7 +38,13 @@ namespace EliteCrafting.Items
         // ESS-13: believed vanilla, verify with `ecraft dump items` in game like PRF-1.
         private static readonly string[] Essence = { "Thunderstone", "DragonTear", "AmberPearl" };
 
-        private static readonly string[][] AllGroups = { Ascension, Manipulation, Risk, Sigil, Honing, Tempering, Essence };
+        // sockets.md section 8: cut gems, a flask, nails for the chisel; believed vanilla, verify like PRF-1.
+        private static readonly string[] Gem = { "GemstoneBlue", "GemstoneGreen", "GemstoneRed", "Iolite", "Ruby" };
+        private static readonly string[] Catalyst = { "MeadTasty", "MeadHealthMinor", "MeadStaminaMinor", "Ooze" };
+        private static readonly string[] Chisel = { "BronzeNails", "IronNails", "Flint" };
+
+        // Indexed by StoneGroup: keep in the enum's order.
+        private static readonly string[][] AllGroups = { Ascension, Manipulation, Risk, Sigil, Honing, Tempering, Essence, Gem, Catalyst, Chisel };
 
         private static readonly string[] AscensionIds = { "awakening", "ascension", "exaltation", "transcendence", "apotheosis" };
         private static readonly string[] RiskIds = { "serpent", "binding", "chance", "reflection" };
@@ -44,6 +53,9 @@ namespace EliteCrafting.Items
         public static StoneGroup GroupOf(string builtInId)
         {
             if (builtInId.StartsWith("essence_", StringComparison.Ordinal)) return StoneGroup.Essence;
+            if (builtInId.StartsWith("gem_", StringComparison.Ordinal)) return StoneGroup.Gem;
+            if (builtInId.StartsWith("catalyst_", StringComparison.Ordinal)) return StoneGroup.Catalyst;
+            if (builtInId == "chisel") return StoneGroup.Chisel;
             if (builtInId.StartsWith("shard_", StringComparison.Ordinal)) return StoneGroup.Ascension;
             if (Array.IndexOf(AscensionIds, builtInId) >= 0) return StoneGroup.Ascension;
             if (Array.IndexOf(RiskIds, builtInId) >= 0) return StoneGroup.Risk;

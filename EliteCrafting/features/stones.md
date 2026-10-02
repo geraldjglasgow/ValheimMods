@@ -185,8 +185,8 @@ differs or needs stating.
 | `growth_greater` | Greater Stone of Growth | add | greater | epic, legendary, mythic | 1 | - | no | 2 |
 | `turmoil_lesser` | Lesser Stone of Turmoil | swap | lesser | uncommon, rare | 1 | - | no | 1 |
 | `turmoil_greater` | Greater Stone of Turmoil | swap | greater | epic, legendary, mythic | 1 | - | no | 2 |
-| `upheaval_lesser` | Lesser Stone of Upheaval | reroll_affixes | lesser | uncommon, rare | 1 | - | no | 2 |
-| `upheaval_greater` | Greater Stone of Upheaval | reroll_affixes | greater | epic, legendary, mythic | 1 | - | no | 2 |
+| `upheaval_lesser` | Lesser Stone of Upheaval | reroll_inscriptions | lesser | uncommon, rare | 1 | - | no | 2 |
+| `upheaval_greater` | Greater Stone of Upheaval | reroll_inscriptions | greater | epic, legendary, mythic | 1 | - | no | 2 |
 | `perfection_lesser` | Lesser Stone of Perfection | reroll_values | lesser | uncommon, rare | 1 | - | no | 1 |
 | `perfection_greater` | Greater Stone of Perfection | reroll_values | greater | epic, legendary, mythic | 1 | - | no | 2 |
 | `severing_lesser` | Lesser Stone of Severing | remove | lesser | uncommon, rare | 1 | - | no | 2 |
@@ -326,7 +326,7 @@ Removes one random affix and adds one new one. The count never changes.
 
 ---
 
-# 10. Stone of Upheaval (verb `reroll_affixes`) - Phase 2
+# 10. Stone of Upheaval (verb `reroll_inscriptions`) - Phase 2
 
 Rerolls every affix, keeping the rarity.
 
@@ -455,7 +455,7 @@ works on it again.
 | Outcome id | Weight | What happens | If it cannot be carried out |
 | --- | --- | --- | --- |
 | `seal_only` | 25 | Nothing but the seal | - |
-| `add_affix` | 25 | Add one affix (normal roll, ceiling and window); may exceed the rarity's maximum by `overflow` (default 1) | falls back to `seal_only` |
+| `add_inscription` | 25 | Add one affix (normal roll, ceiling and window); may exceed the rarity's maximum by `overflow` (default 1) | falls back to `seal_only` |
 | `chaotic_reroll` | 20 | Remove **every** affix (bound and dormant included; binding cleared); draw the count in the rarity's range; roll each with **any tier the affix defines, uniformly**, ignoring ceiling, window and floor (`item-tier.md` section 6) | if the pool cannot reach the rarity's minimum: fill what it can; if it can fill none, `seal_only` |
 | `promote` | 15 | One rarity up (`rarity.md` section 3). On the top rarity (Mythic): add one regular affix beyond the cap (a 7th) | falls back to `seal_only` |
 | `demote` | 15 | One rarity down and lose an affix (`rarity.md` section 3; bound affix eligible) | always possible within `applies_to` |
@@ -476,14 +476,14 @@ Weights are relative; any outcome can be given weight 0.
 | --- | --- | --- |
 | Common | not in `applies_to` (nothing to corrupt) | `wrong_rarity` |
 | Already sealed | refused | `sealed` |
-| Item full + `add_affix` | may exceed by one (e.g. a Legendary with 6) | `corrupt_add` |
-| Mythic + `add_affix` or `promote` | both give a 7th affix (regular pool) | `corrupt_add` / `corrupt_promote` |
+| Item full + `add_inscription` | may exceed by one (e.g. a Legendary with 6) | `corrupt_add` |
+| Mythic + `add_inscription` or `promote` | both give a 7th affix (regular pool) | `corrupt_add` / `corrupt_promote` |
 | Legendary + `promote` | becomes a sealed Mythic (one Mythic-only affix added, filled to 6) | `corrupt_promote` |
 | Uncommon + `demote` | becomes a sealed Common with no affixes | `corrupt_demote` |
 | Mythic + `demote` | Mythic-only affix removed, becomes a Legendary of 5 | `corrupt_demote` |
 | Bound affix + `chaotic_reroll` | rerolled away; binding cleared | - |
 | Bound affix + `demote` | may be the one removed | - |
-| Bound affix + `seal_only`/`add_affix`/`promote` | stays | - |
+| Bound affix + `seal_only`/`add_inscription`/`promote` | stays | - |
 | Dormant affixes | removed by `chaotic_reroll`; may be removed by `demote`; untouched otherwise | - |
 | Pending sigil | refused | `sigil_would_strand` |
 | Equipped | allowed; rebuild | - |
@@ -652,9 +652,9 @@ Summary; the full rules are `sigils.md`.
 # 21. Owner-defined stones
 
 An owner can add a stone in YAML with a new id and one of the fixed verbs (`promote`, `add`, `swap`,
-`reroll_affixes`, `reroll_values`, `remove`, `strip`, `corrupt`, `lock`, `duplicate`, `gamble`, `quality`,
+`reroll_inscriptions`, `reroll_values`, `remove`, `strip`, `corrupt`, `lock`, `duplicate`, `gamble`, `quality`,
 `sigil`), its own `applies_to`, costs, `tier_floor`, verb keys and drop weights. Examples: a "Stone of Deep Growth"
-(`add`, `tier_floor: 6`) or a second corruption stone with gentler outcomes. Prefabs are never created from YAML:
+(`add`, `tier_floor: 2`, tier 2 or better) or a second corruption stone with gentler outcomes. Prefabs are never created from YAML:
 an owner-defined stone binds to one of the **reserved custom prefabs** `ECF_Custom01`-`ECF_Custom16` the mod
 registers in code (`prefabs.md` section 5, `../DECISIONS.md` RC-4) through its `prefab` field. Its `name` and
 `description` may be literal text; with neither, localization falls back to the id. An example entry is in
@@ -698,7 +698,7 @@ registers in code (`prefabs.md` section 5, `../DECISIONS.md` RC-4) through its `
 | --- | --- | --- |
 | 2026-09-23 | Specified in Phase 0. | pending |
 | 2026-09-23 | Reconciled: `item_weight`, reserved pool, open questions moved to `../DECISIONS.md`. | pending |
-| 2026-09-23 | Phase 2 verbs built (`reroll_affixes`, `remove`, `strip`, `corrupt`, `lock`, `duplicate`, `gamble`, `quality`, `sigil`); all 19 remaining stones enabled in the defaults. Not tested in game. | pending |
+| 2026-09-23 | Phase 2 verbs built (`reroll_inscriptions`, `remove`, `strip`, `corrupt`, `lock`, `duplicate`, `gamble`, `quality`, `sigil`); all 19 remaining stones enabled in the defaults. Not tested in game. | pending |
 
 ---
 

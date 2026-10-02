@@ -29,7 +29,7 @@ namespace EliteCrafting.Items
                 {
                     Log.Warn($"{prefab.name} ({drop.m_itemData.m_shared.m_name}) is gear but stacks to "
                         + $"{drop.m_itemData.m_shared.m_maxStackSize}: it cannot become magic, and magic copies of it "
-                        + "can lose their affixes when the game merges them into a stack");
+                        + "can lose their inscriptions when the game merges them into a stack");
                 }
             }
         }

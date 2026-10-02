@@ -29,6 +29,8 @@ namespace EliteCrafting.Items
             ["essence_storm"] = "#FFE45C", ["essence_grove"] = "#6B8E23", ["essence_venom"] = "#9ACD32",
             ["essence_frost"] = "#9FE7FF", ["essence_battle"] = "#B0413E", ["essence_seidr"] = "#6A5ACD",
             ["essence_ember"] = "#FF5A1F", ["essence_tide"] = "#1F8FA8",
+            // sockets.md section 8: gems and catalysts take their family's essence tint (see Family)
+            ["chisel"] = "#C9A25A",
         };
 
         private static Dictionary<string, Color?> _byId = new Dictionary<string, Color?>(StringComparer.Ordinal);
@@ -110,9 +112,11 @@ namespace EliteCrafting.Items
             return next != null ? next.Color32 : (Color?)null;
         }
 
-        /// <summary><c>growth_lesser</c> → <c>growth</c>; other ids unchanged.</summary>
+        /// <summary><c>growth_lesser</c> → <c>growth</c>; <c>gem_frost</c> and <c>catalyst_frost</c> → <c>essence_frost</c>; other ids unchanged.</summary>
         public static string Family(string id)
         {
+            if (id.StartsWith("gem_", StringComparison.Ordinal)) return "essence_" + id.Substring(4);
+            if (id.StartsWith("catalyst_", StringComparison.Ordinal)) return "essence_" + id.Substring(9);
             if (id.EndsWith("_lesser", StringComparison.Ordinal)) return id.Substring(0, id.Length - 7);
             if (id.EndsWith("_greater", StringComparison.Ordinal)) return id.Substring(0, id.Length - 8);
             return id;

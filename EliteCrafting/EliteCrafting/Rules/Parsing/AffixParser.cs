@@ -22,16 +22,16 @@ namespace EliteCrafting.Rules
         {
             if (!(node is YamlMappingNode map))
             {
-                issues.Error("affixes", node, "an affix entry should be a block of keyed values");
+                issues.Error("inscriptions", node, "an inscription entry should be a block of keyed values");
                 return null;
             }
-            string? id = new MapReader(map, "affixes[?]", issues).Id("id");
+            string? id = new MapReader(map, "inscriptions[?]", issues).Id("id");
             if (id == null)
             {
-                issues.Error("affixes[?]", map, "an affix entry has no valid 'id'");
+                issues.Error("inscriptions[?]", map, "an inscription entry has no valid 'id'");
                 return null;
             }
-            MapReader r = new MapReader(map, $"affixes[{id}]", issues);
+            MapReader r = new MapReader(map, $"inscriptions[{id}]", issues);
             r.Unknown(Keys);
             AffixDef def = new AffixDef { Id = id, Name = r.Str("name") ?? "$ecf_affix_" + id };
             ReadEffect(r, def);

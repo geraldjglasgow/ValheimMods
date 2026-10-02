@@ -52,7 +52,7 @@ namespace EliteCrafting.Commands
             }
             if (rarity.IsBase)
             {
-                call.Fail($"{id} carries no affixes; roll a higher rarity.", Grammar);
+                call.Fail($"{id} carries no inscriptions; roll a higher rarity.", Grammar);
                 return null;
             }
             return rarity;
@@ -77,7 +77,7 @@ namespace EliteCrafting.Commands
             context.Random = random;
             context.Ceiling = tier > 0 ? tier : context.Ceiling;
             ItemState? state = RollerCall.Roll(call, () => ItemRoller.RollFresh(ItemState.Empty, rarity, context));
-            if (state == null || !RollerCall.Commit(call, item, state))
+            if (state == null || !RollerCall.Commit(call, item, Loot.DropSockets.Add(state, random, context.Rules)))
             {
                 return;
             }

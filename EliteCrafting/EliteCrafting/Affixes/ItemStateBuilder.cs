@@ -49,7 +49,7 @@ namespace EliteCrafting.Affixes
         {
             if (HasAffix(roll.Id))
             {
-                throw new InvalidOperationException($"affix '{roll.Id}' is already on the item");
+                throw new InvalidOperationException($"inscription '{roll.Id}' is already on the item");
             }
             _segments.Add(new ItemSegment(roll));
             return this;
@@ -123,6 +123,47 @@ namespace EliteCrafting.Affixes
         public ItemStateBuilder SetSigil(string? stoneId)
         {
             _data.SigilId = string.IsNullOrEmpty(stoneId) ? null : stoneId;
+            return this;
+        }
+
+        // ---- sockets and catalyst (sockets.md)
+
+        public int SocketCount => _data.Sockets.Count;
+        public IReadOnlyList<SocketGem> Gems => _data.Sockets.Gems;
+
+        /// <summary>Sets the socket count; gems beyond it stay stored but no stone adds more until a socket is free.</summary>
+        public ItemStateBuilder SetSockets(int count)
+        {
+            _data.Sockets = _data.Sockets.WithCount(count);
+            return this;
+        }
+
+        /// <summary>
+        /// Sets a gem into the first empty socket. With every socket full the oldest gem breaks and the others move up
+        /// one (sockets.md section 4); the broken gem is returned. Throws when the item has no socket.
+        /// </summary>
+        public SocketGem? SetGem(SocketGem gem)
+        {
+            if (SocketCount <= 0)
+            {
+                throw new InvalidOperationException("the item has no socket");
+            }
+            List<SocketGem> gems = new List<SocketGem>(_data.Sockets.Gems);
+            SocketGem? broken = null;
+            while (gems.Count >= SocketCount)
+            {
+                broken = gems[0];
+                gems.RemoveAt(0);
+            }
+            gems.Add(gem);
+            _data.Sockets = _data.Sockets.WithGems(gems);
+            return broken;
+        }
+
+        /// <summary>Sets the catalyst (null family removes it).</summary>
+        public ItemStateBuilder SetCatalyst(string? family, float quality)
+        {
+            _data.Sockets = _data.Sockets.WithCatalyst(family, quality);
             return this;
         }
 

@@ -68,7 +68,7 @@ namespace EliteCrafting.Loot
                 }
                 if (outcome.Success || outcome.Failure != RollFailure.NoEligibleAffix)
                 {
-                    return outcome.Success ? Commit(item, outcome.State!, rarity) : null;
+                    return outcome.Success ? Commit(item, DropSockets.Add(outcome.State!, random, rules), rarity) : null;
                 }
             }
             return null;
@@ -92,7 +92,7 @@ namespace EliteCrafting.Loot
                 if (!_rollerFailureLogged)
                 {
                     _rollerFailureLogged = true;
-                    Log.Error($"gear drops: the affix roller failed, magic drops fall back to plain items: {e.Message}");
+                    Log.Error($"gear drops: the inscription roller failed, magic drops fall back to plain items: {e.Message}");
                 }
                 return false;
             }

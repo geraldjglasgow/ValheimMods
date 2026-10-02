@@ -44,6 +44,9 @@ namespace EliteCrafting.Stones
         /// <summary>The verb could be steered but did not use the pending sigil (a Chance fizzle): it stays pending.</summary>
         public bool SigilUnused { get; private set; }
 
+        /// <summary>This use destroys something (a gem breaking, a catalyst reset): it asks first like a confirm stone.</summary>
+        public bool Destructive { get; private set; }
+
         public bool Refused => Refusal != null;
 
         public static StoneResult Refuse(string id, params string[] words) =>
@@ -61,8 +64,15 @@ namespace EliteCrafting.Stones
         public static StoneResult Unsteered(Affixes.ItemState state, string feedbackId, params string[] words) =>
             new StoneResult(null, state, new StoneMessage(feedbackId, words)) { SigilUnused = true };
 
+        /// <summary>A success that destroys something on the item (sockets.md section 4): the confirm gate asks first.</summary>
+        public static StoneResult Breaking(Affixes.ItemState state, string feedbackId, params string[] words) =>
+            new StoneResult(null, state, new StoneMessage(feedbackId, words)) { Destructive = true };
+
         /// <summary>The same success with the pending sigil cleared from the state (a copy is untouched: it never has one).</summary>
         public StoneResult WithSigilSpent(Affixes.ItemState state, string sigilName) =>
-            new StoneResult(null, state, Feedback) { SpentSigilName = sigilName, CopyState = CopyState, SigilUnused = SigilUnused };
+            new StoneResult(null, state, Feedback)
+            {
+                SpentSigilName = sigilName, CopyState = CopyState, SigilUnused = SigilUnused, Destructive = Destructive,
+            };
     }
 }

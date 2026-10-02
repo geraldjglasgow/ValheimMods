@@ -19,7 +19,7 @@ namespace EliteCrafting.Commands
     /// </summary>
     internal static class AffixCommand
     {
-        public const string Grammar = "ecraft affix <affix_id> [tier] [value] [" + ItemTargets.InventoryWords + "]";
+        public const string Grammar = "ecraft inscribe <inscription_id> [tier] [value] [" + ItemTargets.InventoryWords + "]";
 
         public static void Run(CommandCall call)
         {
@@ -49,7 +49,7 @@ namespace EliteCrafting.Commands
             AffixDef? def = ActiveRules.Current.Affix(id);
             if (def == null)
             {
-                string problem = id.Length == 0 ? "which affix?" : $"unknown affix '{id}'. Closest: {Closest.To(id, ActiveRules.Current.Affixes.ById.Keys)}";
+                string problem = id.Length == 0 ? "which inscription?" : $"unknown inscription '{id}'. Closest: {Closest.To(id, ActiveRules.Current.Affixes.ById.Keys)}";
                 call.Fail(problem, Grammar);
             }
             return def;
@@ -79,7 +79,7 @@ namespace EliteCrafting.Commands
             if (!def.Enabled) warnings.Add($"{def.Id} is disabled: it stays dormant.");
             if (!def.RollsOn(slot.Slot)) warnings.Add($"{def.Id} does not roll on {ItemSlots.Id(slot.Slot)} items.");
             if (!ItemSlots.Satisfies(slot, def.Requires)) warnings.Add($"the item does not meet {def.Id}'s requires block.");
-            if (args.OutsideRange) warnings.Add($"value {Numbers.Format(args.Value)} is outside T{args.Tier}'s range (test value).");
+            if (args.OutsideRange) warnings.Add($"value {Numbers.Format(args.Value)} is outside T{AffixTierNumbers.Shown(args.Tier)}'s range (test value).");
             string? clash = ExclusionClash(def, state);
             if (clash != null) warnings.Add($"shares exclusion group '{def.ExclusionGroup}' with {clash} on the item (ignored).");
             return warnings;
@@ -143,8 +143,12 @@ namespace EliteCrafting.Commands
         private static bool Build(CommandCall call, AffixDef def, List<string> numbers, string target, string grammar, out AffixArgs args)
         {
             args = default;
-            int tier = def.MaxTier;
-            if (numbers.Count > 0 && (!Numbers.TryInt(numbers[0], out tier) || def.TierRow(tier) == null))
+            int tier = def.MaxTier;   // a strength grade: the strongest row unless a tier is given (1 = strongest)
+            if (numbers.Count > 0)
+            {
+                tier = Numbers.TryInt(numbers[0], out int shown) ? AffixTierNumbers.Grade(shown) : 0;
+            }
+            if (def.TierRow(tier) == null)
             {
                 call.Fail($"{def.Id} defines tiers {DefinedTiers(def)}; '{numbers[0]}' is not one of them.", grammar);
                 return false;
@@ -160,9 +164,9 @@ namespace EliteCrafting.Commands
         private static string DefinedTiers(AffixDef def)
         {
             List<string> tiers = new List<string>();
-            foreach (AffixTierDef row in def.Tiers)
+            for (int i = def.Tiers.Count - 1; i >= 0; i--)
             {
-                tiers.Add(Numbers.Format(row.Tier));
+                tiers.Add(Numbers.Format(AffixTierNumbers.Shown(def.Tiers[i].Tier)));
             }
             return string.Join(",", tiers);
         }

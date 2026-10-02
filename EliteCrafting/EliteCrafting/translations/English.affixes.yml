@@ -1,5 +1,5 @@
-# English names of the affixes in the built-in defaults. Key without the $ -> text.
-# Owned by whoever adds affixes; tooltip lines ($ecf_affix_<id>_line) belong to Display.
+# English names of the inscriptions in the built-in defaults. Key without the $ -> text.
+# Owned by whoever adds inscriptions; tooltip lines ($ecf_affix_<id>_line) belong to Display.
 ecf_affix_honed_might: "Honed Might"
 ecf_affix_primal_fury: "Primal Fury"
 ecf_affix_nightstalker: "Nightstalker"

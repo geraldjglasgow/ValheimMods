@@ -7,14 +7,18 @@ lines, one responsibility; multiplayer first; display preferences unsynced). The
 and the full decompile `~/scratch/decomp/full/assembly_valheim.decompiled.cs` (grep it; never copy from it).
 
 Identity: GUID `com.EliteCrafting`, name `EliteCrafting`, version in `EliteCrafting.cs` (`PluginVersion`), custom-data and
-ZDO key prefix `ecf_`, console command `ecraft`, YAML families `EliteCrafting_affixes*.yml` / `EliteCrafting_economy*.yml`.
+ZDO key prefix `ecf_`, console command `ecraft`, YAML families `EliteCrafting_inscriptions*.yml` / `EliteCrafting_economy*.yml`.
+**Vocabulary (user decision 2026-10-01):** players, the console, the .cfg, the YAML and item data say **inscription**;
+the code and the `features/` specs keep the internal word **affix** (`AffixDef`, `AffixRoll`, `features/affixes.md`). Item
+data key `ecf_inscriptions` (the old `ecf_affixes` is read when the new key is absent and removed on the next write).
 Libraries merged: Charter, ConfigReload, PatchGuard, YamlDotNet (ECR's pattern). **No YamlConfig, no SyncedConfig, no
 ItemCopies** (DECISIONS.md IMP-1: live stones share their prefab's `SharedData` instead).
 
 **Status (2026-09-24): Phase 1 (0.1.0) and Phase 2 (0.2.0) code complete, integrated and reviewed, builds clean; nothing
 tested in game yet.** The judgement calls made while building are DECISIONS.md "Settled during Phase 1 implementation"
 (IMP-1 to IMP-124, Phase 2 from IMP-65). Next: the in-game test plan in `features/multiplayer.md` section 6 (steps 1-21
-Phase 1, 22-38 Phase 2), then packaging. Phase 3 waits on AFX-8.
+Phase 1, 22-38 Phase 2), then packaging. Phase 3 waits on AFX-8. **2026-10-01:** affix tiers count down (T1 strongest)
+and sockets, gems and catalysts (`features/sockets.md`) built, builds clean, not tested in game.
 
 ## Build
 
@@ -64,6 +68,12 @@ the way to split later phases; a single agent working alone may cross folders bu
 
 ## Contracts
 
+**Sockets** (`features/sockets.md`): `ItemState.SocketCount`, `Gems` (`SocketGem`: gem stone id + `AffixRoll`),
+`EmptySockets`, `GemDefinitionAt(i)`, `CatalystFamily`/`CatalystQuality`, `CatalystFactor(affixId)` and `EffectRolls`
+(active affixes + defined gems, catalyst applied: what Effects read). Builder: `SetSockets`, `SetGem` (FIFO, returns the
+broken gem), `SetCatalyst`. Keys `ecf_sockets`, `ecf_gems`, `ecf_catalyst` (`SocketCodec`). Verbs `socket`, `gem`,
+`catalyse` (`Stones/SocketVerbs`); `StoneResult.Breaking` makes a use ask first. Drops: `Loot/DropSockets`.
+
 **Item state** (`Affixes/`, item-data.md). `ItemState.Read(ItemData)` → immutable `ItemState` (cached; plain items
 return `ItemState.Empty` without a lookup). `IsMagic`, `RarityId`, `Rarity` (resolved `RarityDef`, null for Common or
 unknown), `IsUnknownRarity`, `Affixes` (`AffixRoll` id/tier/value), `DefinitionAt(i)` (null = orphaned),
@@ -78,7 +88,8 @@ unknown), `IsUnknownRarity`, `Affixes` (`AffixRoll` id/tier/value), `DefinitionA
 `Pool(slot, mythicOnly)`, health-critical thresholds) and `RuleSet.Economy` (`EconomyRules`: `Rarities` in ladder order,
 `Rarity(id)`, `Next`/`Previous`, `BaseRarity`, `MythicRarity`, `Rolling`, `Stones`, `Stone(id)`, `StoneForPrefab`,
 `Sigils`, `ItemTiers`, `Biomes`/`BiomeTier`, `Drops`, `StoneDraw(tier)`, `GearRarityDraw(tier, boss)`).
-`StoneCatalog` lists the 43 built-in stone ids (27 stones + 16 essences, `IsEssence`, `EssenceFamilies`), their prefab
+`StoneCatalog` lists the 60 built-in stone ids (27 stones + 16 essences + the chisel, 8 gems and 8 catalysts of
+sockets.md, `IsEssence`, `IsGem`, `IsCatalyst`, `EssenceFamilies`), their prefab
 names, the 16 reserved `ECF_CustomNN` and the 5 salvage `ShardIds` (`IsShard`).
 Phase 2 model: `StoneVerb.Imbue` and `StoneDef.Family`; `EconomyRules.EssenceFamilies` / `Family(id)`;
 `EconomyRules.Salvage` (`SalvageRules`: `Confirm`, `Stations`, `Yields`/`YieldOf(rarity)`, `Fragments`/`Fragment(id)`/
@@ -144,7 +155,7 @@ owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: 
 `ecr_asp_worthless`, `ecr_tier` (`Loot/EcrKeys`; `ecr_tier` is not written by ECR yet, ECR-6).
 
 **Stones** (`Stones/`). `InventoryGui.OnSelectedItem` prefix (local player), `StonePipeline.Evaluate(job)` (read-only,
-14 steps, dry run), `ConfirmGate.Pass`, then `StoneCommit` (one `ItemState.Write`, then the cost). All 14 verbs
+14 steps, dry run), `ConfirmGate.Pass`, then `StoneCommit` (one `ItemState.Write`, then the cost). All 17 verbs
 (`StoneVerbs`), sigils pending in `ecf_sigil` (`PendingSigil`), quality in `ecf_refine`.
 
 **Salvage** (`Salvage/`). `SalvageInput` reads the `Salvage key` (local, default End; Shift confirms in the player's
@@ -168,10 +179,14 @@ colored through the label color) and item / armor stand hovers (`StandHover`, th
 
 ## YAML defaults
 
-`config/EliteCrafting_affixes.yml` is generated from `features/affixes.md` (section 4 catalog) by scripts kept outside
+`config/EliteCrafting_inscriptions.yml` is generated from `features/affixes.md` (section 4 catalog) by scripts kept outside
 the repo; `config/EliteCrafting_economy.yml` is written from `features/economy-yaml.md` plus the Phase 2 sections
 (`essence_families`, `salvage`, `drops.chests`, `drops.ecr`). Both load with 0 errors and 0 warnings.
-**Decision: the default affix file lists only affixes whose effect is registered** (0.2.0: 162 affixes on 115 effects;
+**Affix tiers count down** (user decision 2026-10-01): in the YAML, the tooltip and the console, tier 1 is the
+strongest row. The code, the tier window and stored item data use the strength grade instead (grade = 8 - tier, so it
+lines up with item and biome tiers); `Core/AffixTierNumbers` is the only conversion, called by `AffixTierParser`,
+`StoneParser` (`tier_floor`), `AffixLines` and the commands. The catalog in `features/affixes.md` writes `T7–T1`,
+weakest first. **Decision: the default affix file lists only affixes whose effect is registered** (0.2.0: 162 affixes on 115 effects;
 0.1.0 had 59 on 34; the 13 Mythic-only affixes wait for Phase 3). An affix naming an unregistered effect is an error even when `enabled: false`, so typos never hide behind a
 disabled flag. Later phases add their affixes to the defaults as their effects are registered; because the built-in
 defaults are a layer under the owner's files, new affixes reach existing servers without anyone editing a file.
@@ -197,42 +212,42 @@ dialog).
 
 | Stone | Works on | Does | Drops from |
 |---|---|---|---|
-| Stone of Awakening | Common | Makes the item Uncommon with one affix | everywhere; Eikthyr |
-| Stone of Ascension | Uncommon | Makes it Rare, keeps its affixes and adds to Rare's minimum | Black Forest and later; the Elder |
-| Stone of Exaltation | Rare | Makes it Epic, keeping its affixes | Mountain and later; Moder, Yagluth |
-| Stone of Transcendence | Epic | Makes it Legendary, keeping its affixes | Mistlands and later; the Queen, the Fader |
-| Stone of Apotheosis | Legendary | Makes it Mythic, keeping its affixes | Ashlands, very rare; sometimes the Fader |
-| Lesser / Greater Stone of Growth | Uncommon, Rare / Epic and up | Adds one affix, if the rarity has room | Black Forest / Mountain and later |
-| Lesser / Greater Stone of Turmoil | Uncommon, Rare / Epic and up | Removes one random affix and rolls a new, different one | everywhere / Mountain and later |
-| Lesser / Greater Stone of Upheaval | Uncommon, Rare / Epic and up | Rerolls every affix, keeping the rarity | Black Forest / Mountain and later |
-| Lesser / Greater Stone of Perfection | Uncommon, Rare / Epic and up | Rerolls the numbers, keeping the affixes | Swamp / Plains and later |
-| Lesser / Greater Stone of Severing | Uncommon, Rare / Epic and up | Removes one random affix (not below the rarity's minimum) | Black Forest / Mountain and later |
+| Stone of Awakening | Common | Makes the item Uncommon with one inscription | everywhere; Eikthyr |
+| Stone of Ascension | Uncommon | Makes it Rare, keeps its inscriptions and adds to Rare's minimum | Black Forest and later; the Elder |
+| Stone of Exaltation | Rare | Makes it Epic, keeping its inscriptions | Mountain and later; Moder, Yagluth |
+| Stone of Transcendence | Epic | Makes it Legendary, keeping its inscriptions | Mistlands and later; the Queen, the Fader |
+| Stone of Apotheosis | Legendary | Makes it Mythic, keeping its inscriptions | Ashlands, very rare; sometimes the Fader |
+| Lesser / Greater Stone of Growth | Uncommon, Rare / Epic and up | Adds one inscription, if the rarity has room | Black Forest / Mountain and later |
+| Lesser / Greater Stone of Turmoil | Uncommon, Rare / Epic and up | Removes one random inscription and rolls a new, different one | everywhere / Mountain and later |
+| Lesser / Greater Stone of Upheaval | Uncommon, Rare / Epic and up | Rerolls every inscription, keeping the rarity | Black Forest / Mountain and later |
+| Lesser / Greater Stone of Perfection | Uncommon, Rare / Epic and up | Rerolls the numbers, keeping the inscriptions | Swamp / Plains and later |
+| Lesser / Greater Stone of Severing | Uncommon, Rare / Epic and up | Removes one random inscription (not below the rarity's minimum) | Black Forest / Mountain and later |
 | Stone of Unmaking | any magic item | Strips it back to Common; Honing, Tempering and a pending sigil stay | everywhere |
-| Serpent Stone | any magic item | Corrupts it and **seals** it for good, with one of five outcomes: nothing more, an extra affix past the cap, a chaotic reroll that ignores tier limits, one rarity up (a 7th affix on a Mythic) or one rarity down | Swamp and later; Bonemass |
-| Stone of Binding | any magic item | Locks one random affix: it survives Turmoil, Upheaval, Perfection and Severing. One at a time | Plains and later; Yagluth |
+| Serpent Stone | any magic item | Corrupts it and **seals** it for good, with one of five outcomes: nothing more, an extra inscription past the cap, a chaotic reroll that ignores tier limits, one rarity up (a 7th inscription on a Mythic) or one rarity down | Swamp and later; Bonemass |
+| Stone of Binding | any magic item | Locks one random inscription: it survives Turmoil, Upheaval, Perfection and Severing. One at a time | Plains and later; Yagluth |
 | Stone of Chance | Common | Turns it into a random rarity: 50% Uncommon, 30% Rare, 15% Epic, 5% Legendary, never Mythic | everywhere |
-| Stone of Reflection | any magic item | Makes a copy, affixes and bonuses included; the copy is sealed | astronomically rare, Mistlands and later |
+| Stone of Reflection | any magic item | Makes a copy, inscriptions and bonuses included; the copy is sealed | astronomically rare, Mistlands and later |
 | Honing Stone | weapons | +1% damage per use, up to +10% | everywhere |
 | Tempering Stone | armor, capes, shields | +1% armor (block on a shield) per use, up to +10% | everywhere |
-| Sigil of Preservation | any item | The next reroll-type stone leaves the highest-tier affix untouched | Mountain and later |
-| Sigils of War, Warding, Fortune | any item | The next added affix comes from offense, defense or utility | Swamp and later |
-| Sigil of Culling | any item | The next removal takes the lowest-tier affix instead of a random one | Swamp and later |
+| Sigil of Preservation | any item | The next reroll-type stone leaves the strongest inscription untouched | Mountain and later |
+| Sigils of War, Warding, Fortune | any item | The next added inscription comes from offense, defense or utility | Swamp and later |
+| Sigil of Culling | any item | The next removal takes the weakest inscription instead of a random one | Swamp and later |
 
 A sigil sits on the item as "Pending" until a stone it steers uses it; one at a time. A sealed item takes no stone,
 essence or sigil again. Every stone's odds, costs and the rarities it accepts are in `EliteCrafting_economy.yml`.
 
 A refusal says why, for example "The Stone of Ascension does not work on Rare items", "This item cannot hold another
-affix", "No affix can roll on this item", or "Unequip this item first" when the server does not allow changing
+inscription", "No inscription can roll on this item", or "Unequip this item first" when the server does not allow changing
 equipped items.
 
 ### Essences
 
 Sixteen essences, a Lesser and a Greater for each of eight families. An essence rerolls a magic item like a Stone of
-Upheaval (a bound affix stays), and **one of the new affixes always comes from its family**. A Lesser essence works on
-Uncommon and Rare items; a Greater one works on every magic rarity and rolls its family affix at the highest tier the
-item allows. The essence's tooltip lists the affixes it can guarantee.
+Upheaval (a bound inscription stays), and **one of the new inscriptions always comes from its family**. A Lesser essence works on
+Uncommon and Rare items; a Greater one works on every magic rarity and rolls its family inscription at the best tier the
+item allows. The essence's tooltip lists the inscriptions it can guarantee.
 
-| Family | Biome | Drops from | Its affixes lean toward |
+| Family | Biome | Drops from | Its inscriptions lean toward |
 |---|---|---|---|
 | Storm | Meadows | Meadows creatures, Eikthyr | lightning, speed, jumping, parries |
 | Grove | Black Forest | Black Forest creatures, the Elder | blunt damage, woodcutting, regeneration, thorns, standing firm |
@@ -246,6 +261,26 @@ item allows. The essence's tooltip lists the affixes it can guarantee.
 Each boss always drops a Lesser essence of its family and sometimes a Greater one. Families are configurable in
 `essence_families`.
 
+### Sockets, gems and catalysts
+
+A dropped magic item can have **sockets** (0 to 4; most have none). A **Jeweller's Chisel** cuts one more into any gear,
+up to two. Sockets don't count toward the rarity's inscription limit, and no inscription stone touches them.
+
+A **gem** clicked onto a socketed item fills a socket with one inscription of its family, chosen by the item's slot (a Frost
+Gem gives Rimebrand on a weapon, Frostward on a helmet or cape, Endurance on a chest) and rolled for the item's own
+tier. The gem's description lists what it gives where. When every socket is full, the next gem breaks the oldest one;
+that asks first. There is no way to take a gem out.
+
+A **catalyst** strengthens every inscription and gem of its family on the item by 1% per use, up to +20% (shown on the
+tooltip and in the boosted values). A catalyst of another family replaces it and starts over at 1% (it asks first).
+
+| Item | Drops from |
+|---|---|
+| Jeweller's Chisel | everywhere |
+| Storm, Grove, Venom, Frost, Battle, Seidr, Ember Gem | its biome (Meadows ... Ashlands); its biome's boss half the time |
+| Tide Gem | sea serpents |
+| the eight catalysts | like the gems, without the bosses |
+
 ### Salvage
 
 Hover a magic item in your own inventory and press **Shift + End** (`8 - Salvage / Salvage key`; without Shift it only
@@ -257,9 +292,13 @@ every full set. The loop always loses: a ground item returns at most 40% of one 
 Equipped items and items with a pending sigil are refused; a sealed item grinds like any other. A server can switch
 grinding off (`Salvage`, synced), require a crafting station nearby and change every number in the `salvage` section.
 
-### Affixes
+### Inscriptions
 
-| Where | Affixes |
+Each inscription has seven tiers, and they count down: **T1 is the strongest roll, T7 the weakest**. How strong an item can
+roll depends on the item, not on where it dropped: a Meadows item rolls only T7, a Swamp item T5 to T7, an Ashlands
+item T1 to T3. The tooltip shows each inscription's tier next to it.
+
+| Where | Inscriptions |
 |---|---|
 | Weapons (damage) | Honed Might, Primal Fury, Nightstalker; the brands Emberbrand, Rimebrand, Stormbrand, Venombrand, Spiritbrand, Bonebreaker, Keen Edge, Needlepoint; Undead, Beast and Sea Slayer, Godslayer; Ambusher, Cruel Opening, Press the Advantage, Deathblow; Berserkergang (while health-critical) |
 | Weapons (on hit and kill) | Reaper, Soul Reaper, Blood Drinker, Cornered Thirst, Seidr Siphon, Evader's Fury, Hamstring, Staggering Blows, Dazing Blows, Fafnir's Greed |
@@ -275,7 +314,7 @@ grinding off (`Salvage`, synced), require a crafting station nearby and change e
 | Tools | Builder's Reach, Tireless Hands, Green Thumb, Miner's Mastery, Angler's Mastery, Deep Vein |
 | Most gear | Well-Forged and Everlasting (durability), Lightened and Gossamer (weight), Supple Fit (no movement penalty) |
 
-`ecraft list affixes` in the console prints the full list with slots and tiers. Evader's Fury, Steel Rhythm and a
+`ecraft list inscriptions` in the console prints the full list with slots and tiers. Evader's Fury, Steel Rhythm and a
 charged Runic Ward show an icon on the HUD while they are active.
 
 ### Console commands
@@ -286,14 +325,14 @@ Open the console with F5. Everything is under one command, `ecraft`. Output is E
 |---|---|---|
 | `ecraft help` | everyone | Lists the sub-commands you may run |
 | `ecraft inspect [cursor\|hover\|ground\|<slot>]` | everyone* | An item's EliteCrafting data and what it means |
-| `ecraft stats` | everyone* | Your summed affix totals and the effects active right now |
-| `ecraft list affixes\|stones\|rarities [<filter>]` | everyone* | The configuration in force, filtered by slot, category, rarity or id; `stones` also lists the essence families and the shards |
+| `ecraft stats` | everyone* | Your summed inscription totals and the effects active right now |
+| `ecraft list inscriptions\|stones\|rarities [<filter>]` | everyone* | The configuration in force, filtered by slot, category, rarity or id; `stones` also lists the essence families and the shards |
 | `ecraft give <stone>\|<shard>\|all [count]` | admin | Stones, essences or shards into your inventory |
 | `ecraft roll <rarity> <prefab\|slot> [tier]` | admin | A rolled magic item into your inventory |
-| `ecraft reroll [cursor\|hover\|<slot>]` | admin | Rerolls an item's affixes, keeping its rarity |
-| `ecraft affix <affix> [tier] [value] [cursor\|hover\|<slot>]` | admin | Adds or replaces one affix, for testing |
+| `ecraft reroll [cursor\|hover\|<slot>]` | admin | Rerolls an item's inscriptions, keeping its rarity |
+| `ecraft inscribe <inscription> [tier] [value] [cursor\|hover\|<slot>]` | admin | Adds or replaces one inscription, for testing |
 | `ecraft reload` | admin, on the machine whose files are in force | Re-reads the YAML, the translations and the `.cfg` now |
-| `ecraft dump affixes\|economy\|items` | admin | Writes the merged configuration in force, or a survey of every item, to the config folder |
+| `ecraft dump inscriptions\|economy\|items` | admin | Writes the merged configuration in force, or a survey of every item, to the config folder |
 | `ecraft tiers` | admin | Writes `EliteCrafting_item_tiers_reference.yml`: every magic base with its tier and why |
 | `ecraft ecr` | everyone* | The Elite Creatures Reborn synergy: installed or not, the switch, and what the creature you look at would pay |
 
@@ -304,14 +343,14 @@ Open the console with F5. Everything is under one command, `ecraft`. Output is E
 
 | File | What |
 |---|---|
-| `BepInEx/config/com.EliteCrafting.cfg` | Switches and preferences. Gameplay keys (affix effects, modifying equipped items, stone and gear drops, command access, salvage, the Elite Creatures Reborn synergy) follow the server; display, ground glow, the confirm mode, the Salvage key and diagnostics are per player |
-| `BepInEx/config/EliteCrafting_affixes.yml` | Every affix: effect, slots, category, tiers, weights, caps |
+| `BepInEx/config/com.EliteCrafting.cfg` | Switches and preferences. Gameplay keys (inscription effects, modifying equipped items, stone and gear drops, command access, salvage, the Elite Creatures Reborn synergy) follow the server; display, ground glow, the confirm mode, the Salvage key and diagnostics are per player |
+| `BepInEx/config/EliteCrafting_inscriptions.yml` | Every inscription: effect, slots, category, tiers, weights, caps |
 | `BepInEx/config/EliteCrafting_economy.yml` | Rarities and colors, rolling rules, stones, sigils, essence families, salvage, item tiers, biomes and drop tables (creatures, bosses, chests, Elite Creatures Reborn) |
-| `EliteCrafting_affixes_<anything>.yml`, `EliteCrafting_economy_<anything>.yml` | Your own additions, read after the main file in name order; they change only what they name |
+| `EliteCrafting_inscriptions_<anything>.yml`, `EliteCrafting_economy_<anything>.yml` | Your own additions, read after the main file in name order; they change only what they name |
 | `EliteCrafting.translations.<Language>.yml` | Your own words for a language, key to text, over the built-in English |
 
 The main YAML files are written once with the full defaults and never rewritten. The built-in defaults always sit
-underneath, so a later release's new affixes reach your server without editing anything; `use_defaults: false` in a
+underneath, so a later release's new inscriptions reach your server without editing anything; `use_defaults: false` in a
 main file makes the files the whole configuration. A file with an error is reported in the log with file and line,
-and the previous rules stay in force. Turn an affix off with `enabled: false` (items that have it keep it, greyed and
+and the previous rules stay in force. Turn an inscription off with `enabled: false` (items that have it keep it, greyed and
 inert, and get it back when you turn it on) or stop it rolling with `weight: 0`.

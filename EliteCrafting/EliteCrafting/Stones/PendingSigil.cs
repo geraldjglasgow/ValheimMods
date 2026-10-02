@@ -36,11 +36,11 @@ namespace EliteCrafting.Stones
             switch (Def?.Steer ?? SigilSteer.None)
             {
                 case SigilSteer.Preserve:
-                    return verb == StoneVerb.Swap || verb == StoneVerb.RerollAffixes || verb == StoneVerb.RerollValues
+                    return verb == StoneVerb.Swap || verb == StoneVerb.RerollInscriptions || verb == StoneVerb.RerollValues
                         || verb == StoneVerb.Imbue;
                 case SigilSteer.Category:
                     return verb == StoneVerb.Promote || verb == StoneVerb.Add || verb == StoneVerb.Swap
-                        || verb == StoneVerb.RerollAffixes || verb == StoneVerb.Gamble;
+                        || verb == StoneVerb.RerollInscriptions || verb == StoneVerb.Gamble;
                 case SigilSteer.Cull:
                     return verb == StoneVerb.Remove || verb == StoneVerb.Swap;
                 default:

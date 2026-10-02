@@ -29,13 +29,14 @@ namespace EliteCrafting.Affixes
                 Format = format,
                 Newer = format > ItemKeys.CurrentFormat,
                 RarityId = NonEmpty(data, ItemKeys.Rarity),
-                Segments = Segments(NonEmpty(data, ItemKeys.Affixes)),
+                Segments = Segments(NonEmpty(data, ItemKeys.Affixes) ?? NonEmpty(data, ItemKeys.LegacyAffixes)),
                 SealedReason = NonEmpty(data, ItemKeys.Sealed),
                 SigilId = NonEmpty(data, ItemKeys.Sigil),
                 ReservedTier = NonEmpty(data, ItemKeys.Tier),
             };
             ReadRefine(state, NonEmpty(data, ItemKeys.Refine));
             state.BoundId = BoundIfPresent(state, NonEmpty(data, ItemKeys.Bound));
+            state.Sockets = SocketCodec.Read(data);
             return ItemMigrations.Upgrade(state);
         }
 

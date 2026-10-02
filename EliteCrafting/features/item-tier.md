@@ -4,7 +4,10 @@ One feature of the mod, specified on its own. The other feature files sit beside
 behaviour document they are all drawn from.
 
 This file covers **how strong an affix an item may carry**: every magic base has a *tier ceiling* from 1 to 7, and
-no ordinary roll on that item produces an affix tier above it. How the ceiling combines with a stone's floor and
+no ordinary roll on that item produces an affix stronger than its ceiling. Item tiers count up (Meadows 1 ...
+Ashlands 7); affix tiers count down for players and the YAML (tier 1 = Ashlands strength) and are compared with the
+ceiling as strength grades (grade = 8 - tier, `affixes.md` "Tiers and biome gates"), so "above the ceiling" here
+means a grade above it. How the ceiling combines with a stone's floor and
 the tier window is `rarity.md` section 4; the affix tiers themselves are `affixes.md`.
 
 **The model is decided** (user, 2026-09-23, `../DECISIONS.md` U-13): explicit item map, then highest recipe-material
@@ -166,8 +169,8 @@ appear; the base decides *how strong*.
 - For each new affix, the eligible tiers are **every tier the affix defines**, ignoring the item's ceiling, the tier
   window and any `tier_floor`.
 - The tier is drawn **uniformly** among those tiers - the per-tier weights are ignored too, which is what makes it
-  chaotic: a Meadows club is as likely to get a tier-7 affix as a tier-1 one, and an Ashlands blade is as likely to
-  get a tier-1 one. (Judgement call, `../DECISIONS.md` TIR-4 - "ignores biome tier floors, any tiers" in PLAN.md
+  chaotic: a Meadows club is as likely to get a tier-1 affix (the strongest) as a tier-7 one, and an Ashlands blade
+  is as likely to get a tier-7 one. (Judgement call, `../DECISIONS.md` TIR-4 - "ignores biome tier floors, any tiers" in PLAN.md
   could also be read as "weighted as usual, just uncapped".)
 - The item is sealed afterwards, so nothing can later "fix" an out-of-ceiling affix.
 

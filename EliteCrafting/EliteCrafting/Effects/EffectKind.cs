@@ -160,7 +160,7 @@ namespace EliteCrafting.Effects
             {
                 if (Of(id) == EffectKind.Unknown)
                 {
-                    Core.Log.Error($"effect '{id}' is registered but has no implementation; affixes using it do nothing");
+                    Core.Log.Error($"effect '{id}' is registered but has no implementation; inscriptions using it do nothing");
                 }
             }
         }

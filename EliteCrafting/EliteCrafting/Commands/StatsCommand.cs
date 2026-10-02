@@ -23,10 +23,10 @@ namespace EliteCrafting.Commands
             }
             EffectSnapshot snapshot = EffectTotals.Snapshot();
             string rebuilt = snapshot.SecondsSinceRebuild < 0f ? "not rebuilt yet" : $"rebuilt {Numbers.Format(snapshot.SecondsSinceRebuild)} s ago";
-            call.Reply($"{snapshot.MagicItemsEquipped} magic items equipped, {snapshot.ActiveAffixes} active affixes, {rebuilt}");
+            call.Reply($"{snapshot.MagicItemsEquipped} magic items equipped, {snapshot.ActiveAffixes} active inscriptions, {rebuilt}");
             if (!snapshot.Enabled)
             {
-                call.Detail("'Affix effects' is off: items keep their affixes, nothing applies.");
+                call.Detail("'Inscription effects' is off: items keep their inscriptions, nothing applies.");
                 return;
             }
             WriteChannels(call, snapshot, itemLocal: false);

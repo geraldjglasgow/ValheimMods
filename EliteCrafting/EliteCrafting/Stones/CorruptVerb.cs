@@ -54,7 +54,7 @@ namespace EliteCrafting.Stones
         {
             switch (outcome)
             {
-                case CorruptOutcome.AddAffix:
+                case CorruptOutcome.AddInscription:
                     return AddAffix(job, context, job.Def!.Overflow);
                 case CorruptOutcome.ChaoticReroll:
                     return Chaotic(job, context);

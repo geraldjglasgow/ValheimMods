@@ -40,15 +40,15 @@ namespace EliteCrafting.Rules
             }
             if (!(node is YamlMappingNode map))
             {
-                parent.Issues.Error(path, node, "a family looks like { affixes: [venombrand, blood_drinker] }");
+                parent.Issues.Error(path, node, "a family looks like { inscriptions: [venombrand, blood_drinker] }");
                 return null;
             }
             MapReader r = new MapReader(map, path, parent.Issues);
-            r.Unknown("affixes", "name");
-            List<string> affixes = r.Strings("affixes") ?? new List<string>();
+            r.Unknown("inscriptions", "name");
+            List<string> affixes = r.Strings("inscriptions") ?? new List<string>();
             if (affixes.Count == 0)
             {
-                r.Error("affixes", "a family needs at least one affix");
+                r.Error("inscriptions", "a family needs at least one inscription");
             }
             return new EssenceFamilyDef { Id = id, Name = r.Str("name") ?? "$ecf_family_" + id, Affixes = affixes };
         }

@@ -6,8 +6,9 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Reads an affix's <c>tiers</c> list: tier 1-7 at most once each (8 is reserved), <c>min</c>/<c>max</c> required
-    /// for percent and flat values and refused on flags, weight at least 0. Sorted by tier.
+    /// Reads an affix's <c>tiers</c> list: tier 1-7 at most once each, <c>min</c>/<c>max</c> required for percent and
+    /// flat values and refused on flags, weight at least 0. The YAML counts down (tier 1 is the strongest row); each
+    /// row is stored by its strength grade (<see cref="AffixTierNumbers"/>) and the list is sorted weakest first.
     /// </summary>
     internal static class AffixTierParser
     {
@@ -46,12 +47,12 @@ namespace EliteCrafting.Rules
             row.Unknown("tier", "min", "max", "weight");
             AffixTierDef tier = new AffixTierDef
             {
-                Tier = row.Int("tier", 0, 1, MaxShippedTier),
+                Tier = AffixTierNumbers.Grade(row.Int("tier", AffixTierNumbers.Count + 1, 1, MaxShippedTier)),
                 Weight = row.Float("weight", 100f, 0f),
             };
             if (!row.Has("tier"))
             {
-                row.Error("tier", "is required (1 meadows ... 7 ashlands)");
+                row.Error("tier", "is required (1 strongest ... 7 weakest)");
             }
             return ReadBounds(row, tier, valueType) ? tier : null;
         }
@@ -62,7 +63,7 @@ namespace EliteCrafting.Rules
             {
                 if (row.Has("min") || row.Has("max"))
                 {
-                    row.Error("min", "a flag affix has no min or max");
+                    row.Error("min", "a flag inscription has no min or max");
                 }
                 return true;
             }
@@ -85,7 +86,7 @@ namespace EliteCrafting.Rules
         {
             if (tiers.Exists(t => t.Tier == tier.Tier))
             {
-                r.Issues.Error(r.At("tiers"), node, $"tier {tier.Tier} is listed twice");
+                r.Issues.Error(r.At("tiers"), node, $"tier {AffixTierNumbers.Shown(tier.Tier)} is listed twice");
                 return;
             }
             tiers.Add(tier);
@@ -97,7 +98,8 @@ namespace EliteCrafting.Rules
             {
                 if (tiers[i].Max < tiers[i - 1].Max)
                 {
-                    r.Warn("tiers", $"tier {tiers[i].Tier} rolls lower than tier {tiers[i - 1].Tier} (a typo?)");
+                    int stronger = AffixTierNumbers.Shown(tiers[i].Tier), weaker = AffixTierNumbers.Shown(tiers[i - 1].Tier);
+                    r.Warn("tiers", $"tier {stronger} rolls lower than the weaker tier {weaker} (a typo? tier 1 is the strongest)");
                     return;
                 }
             }

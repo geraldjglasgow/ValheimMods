@@ -209,7 +209,7 @@ each stone, compare A's and B's `ecraft inspect` raw lines once the item has pas
     and Greater Severing remove one (refused at the rarity's minimum). Unmaking without Shift: "Hold Shift", nothing
     used; with Shift: Common, no affixes, Honed/Tempered bonus and a pending sigil kept. Each result identical on B.
 24. **Serpent Stone.** Test file forcing one outcome at a time (`outcomes` with every other weight 0): `seal_only`,
-    `add_affix` (a Legendary ends with 6), `chaotic_reroll` (tiers above the ceiling possible), `promote` (a Mythic
+    `add_inscription` (a Legendary ends with 6), `chaotic_reroll` (tiers above the ceiling possible), `promote` (a Mythic
     gets a 7th), `demote` (an Uncommon ends a sealed Common). Every result shows "Sealed: Corrupted" on A and B, and
     every stone, essence and sigil then refuses with "sealed" on both. With a sigil pending: `sigil_would_strand`.
 25. **Binding, Chance, Reflection.** Binding marks one affix `[Bound]`; a second Binding refuses; the bound affix

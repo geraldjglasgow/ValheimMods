@@ -6,7 +6,7 @@ behaviour document they are all drawn from.
 This file is the **field-by-field reference** for the `EliteCrafting_economy*.yml` family: rarities, rolling rules,
 stones (with the Serpent outcomes and Chance weights inside their stone entries), sigil knobs, item-tier maps, biome
 tiers and drop tables. What the fields *do* is in the feature files each section names; this file is the shape.
-The affix definitions live in the other family, `EliteCrafting_affixes*.yml` (`affixes.md`).
+The affix definitions live in the other family, `EliteCrafting_inscriptions*.yml` (`affixes.md`).
 
 This is the **canonical economy schema**: the conventions' baseline field names plus every field the economy
 features need. The affix schema is `configuration.md` section 6.
@@ -63,8 +63,8 @@ A list, **in ladder order** (lowest first).
 | `name` | loc key | no | `$ecf_rarity_<id>` | display name |
 | `color` | `#RRGGBB` | yes | - | the single source for every rarity-colored surface |
 | `glow` | bool | no | true (false on the first entry) | ground glow; ignored (warning) on the base rarity |
-| `affixes` | `{min, max}` | yes | - | affix count range; first entry must be `{0, 0}` |
-| `mythic_affixes` | int | no | 0 | how many of the count come from the `mythic_only` pool; at most one rarity may set it |
+| `inscriptions` | `{min, max}` | yes | - | affix count range; first entry must be `{0, 0}` |
+| `mythic_inscriptions` | int | no | 0 | how many of the count come from the `mythic_only` pool; at most one rarity may set it |
 | `drop_weight` | number | no | 1 | multiplier on this rarity's weight in every drop table; **0 blocks world drops entirely** |
 
 ```yaml
@@ -72,24 +72,24 @@ rarities:
   - id: common
     color: "#FFFFFF"
     glow: false
-    affixes: { min: 0, max: 0 }
+    inscriptions: { min: 0, max: 0 }
     drop_weight: 0          # Common is never a "magic drop"; vanilla items stay vanilla
   - id: uncommon
     color: "#1EFF00"
-    affixes: { min: 1, max: 2 }
+    inscriptions: { min: 1, max: 2 }
   - id: rare
     color: "#0070DD"
-    affixes: { min: 2, max: 3 }
+    inscriptions: { min: 2, max: 3 }
   - id: epic
     color: "#A335EE"
-    affixes: { min: 3, max: 4 }
+    inscriptions: { min: 3, max: 4 }
   - id: legendary
     color: "#FF8000"
-    affixes: { min: 4, max: 5 }
+    inscriptions: { min: 4, max: 5 }
   - id: mythic
     color: "#E6262E"
-    affixes: { min: 6, max: 6 }
-    mythic_affixes: 1
+    inscriptions: { min: 6, max: 6 }
+    mythic_inscriptions: 1
     drop_weight: 0          # craft-only (user decision); raise it AND give Mythic drop weights to open drops
 ```
 
@@ -123,11 +123,11 @@ A list. Common fields for every stone:
 | `name` | loc key or literal text | no | `$ecf_stone_<id>` | the item name (`localization.md` section 4); literal text shows as written in every language |
 | `description` | loc key or literal text | no | `$ecf_stone_<id>_desc` | the item description in the vanilla tooltip |
 | `prefab` | name | shipped stones: fixed | `ECF_` + PascalCase id | the code-registered prefab this entry defines. A built-in stone must name its own prefab; an owner-defined stone must name one of the reserved `ECF_Custom01`-`ECF_Custom16` (`prefabs.md` section 5); two entries may not share one |
-| `verb` | enum | yes | - | `promote`, `add`, `swap`, `reroll_affixes`, `reroll_values`, `remove`, `strip`, `corrupt`, `lock`, `duplicate`, `gamble`, `quality`, `sigil`, `imbue` |
+| `verb` | enum | yes | - | `promote`, `add`, `swap`, `reroll_inscriptions`, `reroll_values`, `remove`, `strip`, `corrupt`, `lock`, `duplicate`, `gamble`, `quality`, `sigil`, `imbue` |
 | `grade` | `lesser` / `greater` / none | no | none | informational: display, sorting, the `ecraft` listing |
 | `applies_to` | rarity ids | yes | - | rarities the stone accepts |
 | `cost` | map rarity -> int | no | 1 for every rarity | stones consumed per use, from the held stack |
-| `tier_floor` | int 1-7 | no | none | lowest affix tier this stone rolls (clamped to the ceiling); for `imbue`, of the guaranteed affix only (`essences.md` section 3) |
+| `tier_floor` | int 1-7 | no | none | weakest affix tier this stone rolls, counted down like the tooltip (1 = the best tier the item allows; clamped to the ceiling); for `imbue`, of the guaranteed affix only (`essences.md` section 3) |
 | `enabled` | bool | no | true | false: never drops, refuses with `stone_disabled`; the prefab still exists (prefabs come from code) |
 | `confirm` | bool | no | false | requires the client's confirm gate (Serpent, Unmaking) |
 | `stack` | int | no | 50 | max stack size of the stone item |
@@ -138,8 +138,8 @@ Verb-specific fields:
 
 | Verb | Field | Type | Default | Meaning |
 | --- | --- | --- | --- | --- |
-| `corrupt` | `outcomes` | list of `{outcome, weight}` | Serpent table | `outcome` in `seal_only`, `add_affix`, `chaotic_reroll`, `promote`, `demote` |
-| `corrupt` | `overflow` | int | 1 | how far `add_affix` may exceed the rarity maximum |
+| `corrupt` | `outcomes` | list of `{outcome, weight}` | Serpent table | `outcome` in `seal_only`, `add_inscription`, `chaotic_reroll`, `promote`, `demote` |
+| `corrupt` | `overflow` | int | 1 | how far `add_inscription` may exceed the rarity maximum |
 | `gamble` | `weights` | map rarity -> weight | Chance table | a `common` weight is a fizzle |
 | `duplicate` | `seal_copy` | bool | true | whether the copy is sealed |
 | `lock` | `max_bound` | int | 1 | bound affixes allowed at a time |
@@ -171,8 +171,8 @@ stones:
   - { id: growth_greater,     verb: add,            grade: greater, applies_to: [epic, legendary, mythic] }        # P2
   - { id: turmoil_lesser,     verb: swap,           grade: lesser,  applies_to: [uncommon, rare] }
   - { id: turmoil_greater,    verb: swap,           grade: greater, applies_to: [epic, legendary, mythic] }        # P2
-  - { id: upheaval_lesser,    verb: reroll_affixes, grade: lesser,  applies_to: [uncommon, rare] }                 # P2
-  - { id: upheaval_greater,   verb: reroll_affixes, grade: greater, applies_to: [epic, legendary, mythic] }        # P2
+  - { id: upheaval_lesser,    verb: reroll_inscriptions, grade: lesser,  applies_to: [uncommon, rare] }                 # P2
+  - { id: upheaval_greater,   verb: reroll_inscriptions, grade: greater, applies_to: [epic, legendary, mythic] }        # P2
   - { id: perfection_lesser,  verb: reroll_values,  grade: lesser,  applies_to: [uncommon, rare] }
   - { id: perfection_greater, verb: reroll_values,  grade: greater, applies_to: [epic, legendary, mythic] }        # P2
   - { id: severing_lesser,    verb: remove,         grade: lesser,  applies_to: [uncommon, rare] }                 # P2
@@ -190,7 +190,7 @@ stones:
     overflow: 1
     outcomes:
       - { outcome: seal_only,      weight: 25 }
-      - { outcome: add_affix,      weight: 25 }
+      - { outcome: add_inscription,      weight: 25 }
       - { outcome: chaotic_reroll, weight: 20 }
       - { outcome: promote,        weight: 15 }
       - { outcome: demote,         weight: 15 }
@@ -230,7 +230,7 @@ stones:
 
   # --- essences (Phase 2, essences.md section 11): one pair per family ---
   - { id: essence_venom_lesser,  verb: imbue, family: venom, grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_venom_greater, verb: imbue, family: venom, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_venom_greater, verb: imbue, family: venom, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   # ... storm, grove, frost, battle, seidr, ember, tide likewise (16 entries)
 ```
 
@@ -247,7 +247,7 @@ Every entry above takes the common defaults: `name: $ecf_stone_<id>`, `descripti
     grade: lesser
     applies_to: [uncommon, rare]
     cost: { uncommon: 1, rare: 1 }
-    # tier_floor: 4          # e.g. an owner's "deep growth" variant
+    # tier_floor: 4          # e.g. an owner's "deep growth" variant: tier 4 or better
     enabled: true
     confirm: false
     stack: 50
@@ -260,11 +260,11 @@ An owner-defined stone, bound to a reserved prefab (`stones.md` section 21):
 ```yaml
   - id: deep_growth
     name: "Stone of Deep Growth"
-    description: "Adds one affix of at least tier 6."
+    description: "Adds one affix of tier 2 or better."
     prefab: ECF_Custom06
     verb: add
     applies_to: [epic, legendary]
-    tier_floor: 6
+    tier_floor: 2
     tint: "#0B6E4F"
 ```
 
@@ -637,7 +637,7 @@ Errors reject the family; warnings apply it.
 | An `imbue` stone without `family`, or a `family` naming no `essence_families` entry | error |
 | `family` on a stone whose verb is not `imbue` | warning (ignored) |
 | An `imbue` stone whose `applies_to` includes the base rarity | error |
-| An `essence_families` id not snake_case; an empty `affixes` list | error |
+| An `essence_families` id not snake_case; an empty `inscriptions` list | error |
 | A family member not defined in the affix family in force; a Mythic-only member | warning at every apply of either family, one line per family (skipped at roll time) |
 | A member of weight 30 or less that is a slot's only member in its family | warning (design rule 3) |
 | A `salvage.fragments` id that is not one of the five shards; a `stone` naming no defined stone | error |
@@ -652,7 +652,7 @@ Errors reject the family; warnings apply it.
 
 # 10. `essence_families`
 
-Family id → `{ affixes, name }`, merged by key; an entry's `affixes` list is replaced whole. The field table, the
+Family id → `{ affixes, name }`, merged by key; an entry's `inscriptions` list is replaced whole. The field table, the
 default lists and the design rules are `essences.md` sections 2 and 11. `name` defaults to `$ecf_family_<id>`.
 
 # 11. `salvage`

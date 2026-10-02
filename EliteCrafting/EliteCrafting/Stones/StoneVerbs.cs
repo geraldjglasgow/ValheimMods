@@ -28,7 +28,7 @@ namespace EliteCrafting.Stones
             { StoneVerb.Add, new AddVerb() },
             { StoneVerb.Swap, new SwapVerb() },
             { StoneVerb.RerollValues, new RerollValuesVerb() },
-            { StoneVerb.RerollAffixes, new RerollAffixesVerb() },
+            { StoneVerb.RerollInscriptions, new RerollAffixesVerb() },
             { StoneVerb.Remove, new RemoveVerb() },
             { StoneVerb.Strip, new StripVerb() },
             { StoneVerb.Corrupt, new CorruptVerb() },
@@ -38,6 +38,9 @@ namespace EliteCrafting.Stones
             { StoneVerb.Quality, new QualityVerb() },
             { StoneVerb.Sigil, new SigilVerb() },
             { StoneVerb.Imbue, new ImbueVerb() },
+            { StoneVerb.Socket, new SocketVerb() },
+            { StoneVerb.Gem, new GemVerb() },
+            { StoneVerb.Catalyse, new CatalyseVerb() },
         };
 
         private static readonly HashSet<string> Warned = new HashSet<string>();

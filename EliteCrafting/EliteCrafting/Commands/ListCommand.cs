@@ -15,7 +15,7 @@ namespace EliteCrafting.Commands
     /// </summary>
     internal static class ListCommand
     {
-        public const string Grammar = "ecraft list affixes|stones|rarities [<filter>]";
+        public const string Grammar = "ecraft list inscriptions|stones|rarities [<filter>]";
 
         public static void Run(CommandCall call)
         {
@@ -23,7 +23,7 @@ namespace EliteCrafting.Commands
             string filter = call.Lower(1);
             switch (what)
             {
-                case "affixes": Affixes(call, filter); break;
+                case "inscriptions": Affixes(call, filter); break;
                 case "stones": Stones(call, filter); break;
                 case "rarities": Rarities(call, filter); break;
                 default: call.Fail(what.Length == 0 ? "list what?" : $"cannot list '{what}'.", Grammar); break;
@@ -41,8 +41,8 @@ namespace EliteCrafting.Commands
                     shown.Add(def);
                 }
             }
-            call.Reply($"{shown.Count} of {all.Count} affixes" + (filter.Length > 0 ? $" matching '{filter}'" : ""));
-            RuleOrigins origins = RuleOrigins.For(FamilySpec.Affixes, "affixes");
+            call.Reply($"{shown.Count} of {all.Count} inscriptions" + (filter.Length > 0 ? $" matching '{filter}'" : ""));
+            RuleOrigins origins = RuleOrigins.For(FamilySpec.Affixes, "inscriptions");
             shown.ForEach(def => call.Detail(AffixLine(def, origins.Of(def.Id))));
         }
 
@@ -72,7 +72,7 @@ namespace EliteCrafting.Commands
             }
             string mythic = def.MythicOnly ? " mythic_only" : "";
             return $"{def.Id} \"{Words.Localize(def.Name)}\" {EnumIds<AffixValueType>.Id(def.Value)} "
-                + $"[{string.Join(",", slots)}] {EnumIds<AffixCategory>.Id(def.Category)}{mythic} T{def.MinTier}-T{def.MaxTier} "
+                + $"[{string.Join(",", slots)}] {EnumIds<AffixCategory>.Id(def.Category)}{mythic} T{AffixTierNumbers.Shown(def.MaxTier)}-T{AffixTierNumbers.Shown(def.MinTier)} "
                 + $"weight {Numbers.Format(def.Weight)} {(def.Enabled ? "enabled" : "disabled")} ({origin})";
         }
 
@@ -111,10 +111,23 @@ namespace EliteCrafting.Commands
             return stone.Id.StartsWith(filter, System.StringComparison.Ordinal);
         }
 
+        // sockets.md: the chisel's limit, a gem's slot count, a catalyst's step and cap.
+        private static string SocketTerms(StoneDef stone)
+        {
+            switch (stone.Verb)
+            {
+                case StoneVerb.Socket: return $" max {stone.MaxSockets} sockets";
+                case StoneVerb.Gem: return $" fits {stone.GemAffixes.Count} slots";
+                case StoneVerb.Catalyse: return $" +{stone.Step}% up to {stone.Cap}%";
+                default: return "";
+            }
+        }
+
         private static string StoneLine(StoneDef stone, string origin)
         {
             string grade = stone.Grade == StoneGrade.None ? "" : "/" + EnumIds<StoneGrade>.Id(stone.Grade);
-            string floor = (stone.TierFloor > 0 ? $" floor T{stone.TierFloor}" : "") + (stone.Family != null ? $" family {stone.Family}" : "");
+            string floor = (stone.TierFloor > 0 ? $" floor T{AffixTierNumbers.Shown(stone.TierFloor)}" : "") + (stone.Family != null ? $" family {stone.Family}" : "")
+                + SocketTerms(stone);
             return $"{stone.Id} \"{Words.Localize(stone.Name)}\" {EnumIds<StoneVerb>.Id(stone.Verb)}{grade} "
                 + $"on [{string.Join(",", stone.AppliesTo)}]{floor} prefab {stone.Prefab} "
                 + $"{(stone.Enabled ? "enabled" : "disabled")} ({origin})";
@@ -139,7 +152,7 @@ namespace EliteCrafting.Commands
         private static string RarityLine(RarityDef rarity, string origin)
         {
             string mythic = rarity.MythicAffixes > 0 ? $" ({rarity.MythicAffixes} mythic-only)" : "";
-            return $"{rarity.Id} \"{Words.Localize(rarity.Name)}\" {rarity.Color} affixes {rarity.MinAffixes}-{rarity.MaxAffixes}{mythic} "
+            return $"{rarity.Id} \"{Words.Localize(rarity.Name)}\" {rarity.Color} inscriptions {rarity.MinAffixes}-{rarity.MaxAffixes}{mythic} "
                 + $"glow {(rarity.Glow ? "yes" : "no")} drop_weight {Numbers.Format(rarity.DropWeight)} ({origin})";
         }
     }

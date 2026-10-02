@@ -50,8 +50,8 @@ Awakening's or Chance's affix.
 
 | Sigil | Steers these verbs | What "steer" means |
 | --- | --- | --- |
-| Sigil of Preservation | `swap` (Turmoil), `reroll_affixes` (Upheaval), `reroll_values` (Perfection), `imbue` (essences) | The **protected affix** (section 3) is left untouched: Turmoil cannot remove it, Upheaval and an essence keep it, Perfection does not reroll its value |
-| Sigil of War | every verb that adds an affix: `promote`, `add`, `swap`, `reroll_affixes`, `gamble` | **Exactly one** affix the stone adds is drawn from the `offense` category |
+| Sigil of Preservation | `swap` (Turmoil), `reroll_inscriptions` (Upheaval), `reroll_values` (Perfection), `imbue` (essences) | The **protected affix** (section 3) is left untouched: Turmoil cannot remove it, Upheaval and an essence keep it, Perfection does not reroll its value |
+| Sigil of War | every verb that adds an affix: `promote`, `add`, `swap`, `reroll_inscriptions`, `gamble` | **Exactly one** affix the stone adds is drawn from the `offense` category |
 | Sigil of Warding | same as War | ... from `defense` |
 | Sigil of Fortune | same as War | ... from `utility` |
 | Sigil of Culling | every verb that removes one chosen affix: `remove` (Severing), `swap` (Turmoil) | The removed affix is the **culled affix** (section 3) instead of a random one |
@@ -68,7 +68,7 @@ pending.
 | Ascension family (`promote`) | - | S | - |
 | Growth (`add`) | - | S | - |
 | Turmoil (`swap`) | S | S | S |
-| Upheaval (`reroll_affixes`) | S | S | - |
+| Upheaval (`reroll_inscriptions`) | S | S | - |
 | Perfection (`reroll_values`) | S | - | - |
 | Severing (`remove`) | - | - | S |
 | Unmaking (`strip`) | - | - | - |
@@ -107,7 +107,7 @@ affix, Preservation finds nothing to protect and the stone is refused (`$ecf_msg
 
 ## The culled affix (Culling)
 
-Among the item's **unbound** affixes:
+Among the item's **unbound** inscriptions:
 
 1. any **dormant** affix first (it does nothing; removing it is always what the player wants), earliest first;
 2. otherwise the lowest tier;

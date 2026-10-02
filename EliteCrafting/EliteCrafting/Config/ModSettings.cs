@@ -75,8 +75,8 @@ namespace EliteCrafting.Config
 
         private static void BindGameplay(ConfigFile config)
         {
-            AffixEffects = Synced(config.Bind(General, "Affix effects", true,
-                "Master switch for every affix effect. Off: items keep and show their affixes, nothing applies."));
+            AffixEffects = Synced(config.Bind(General, "Inscription effects", true,
+                "Master switch for every inscription effect. Off: items keep and show their inscriptions, nothing applies."));
             ModifyEquippedItems = Synced(config.Bind(Stones, "Modify equipped items", true,
                 "Stones may be used on items that are equipped."));
             StoneDrops = Synced(config.Bind(Drops, "Stone drops", true,
@@ -94,9 +94,9 @@ namespace EliteCrafting.Config
             ColoredItemNames = Local(config.Bind(Display, "Colored item names", true,
                 "Draw magic item names in their rarity color. Per player."));
             TooltipDetailLevel = Local(config.Bind(Display, "Tooltip detail", TooltipDetail.Standard,
-                "Compact: affix lines only. Standard: with tiers. Full: with tier ranges and unreadable data. Per player."));
-            ShowDormantAffixes = Local(config.Bind(Display, "Show dormant affixes", true,
-                "List affixes the server no longer defines, greyed. Per player."));
+                "Compact: inscription lines only. Standard: with tiers. Full: with tier ranges and unreadable data. Per player."));
+            ShowDormantAffixes = Local(config.Bind(Display, "Show dormant inscriptions", true,
+                "List inscriptions the server no longer defines, greyed. Per player."));
         }
 
         private static void BindGlow(ConfigFile config)
@@ -131,7 +131,7 @@ namespace EliteCrafting.Config
             LogRolls = Local(config.Bind(Diagnostics, "Log rolls", false,
                 "Log every roll (stone, drop, command) with its inputs and result. Per player."));
             LogEffectRebuilds = Local(config.Bind(Diagnostics, "Log effect rebuilds", false,
-                "Log each rebuild of the affix effects with the channel totals. Per player."));
+                "Log each rebuild of the inscription effects with the channel totals. Per player."));
         }
 
         // Gameplay, so a Charter clause: every creature owner rolls with the server's choice (ecr-integration.md 9).

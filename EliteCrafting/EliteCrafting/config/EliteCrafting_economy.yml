@@ -15,37 +15,39 @@
 # Chances are percent numbers (4 means 4%). Weights are relative. Lists indexed by
 # tier have exactly seven entries: tier 1 (meadows) first, tier 7 (ashlands) last.
 
-# The ladder, lowest first. The first entry is the base rarity (no affixes, never
-# glows). `mythic_affixes` marks the rarity whose items draw that many affixes from
+# The ladder, lowest first. The first entry is the base rarity (no inscriptions, never
+# glows). `mythic_inscriptions` marks the rarity whose items draw that many inscriptions from
 # the Mythic-only pool. `drop_weight` multiplies the rarity's weight in every drop
 # table; 0 means it never drops.
 rarities:
   - id: common
     color: "#FFFFFF"
     glow: false
-    affixes: { min: 0, max: 0 }
+    inscriptions: { min: 0, max: 0 }
     drop_weight: 0
   - id: uncommon
     color: "#1EFF00"
-    affixes: { min: 1, max: 2 }
+    inscriptions: { min: 1, max: 2 }
   - id: rare
     color: "#0070DD"
-    affixes: { min: 2, max: 3 }
+    inscriptions: { min: 2, max: 3 }
   - id: epic
     color: "#A335EE"
-    affixes: { min: 3, max: 4 }
+    inscriptions: { min: 3, max: 4 }
   - id: legendary
     color: "#FF8000"
-    affixes: { min: 4, max: 5 }
+    inscriptions: { min: 4, max: 5 }
   - id: mythic
     color: "#E6262E"
-    affixes: { min: 6, max: 6 }
-    mythic_affixes: 1
+    inscriptions: { min: 6, max: 6 }
+    mythic_inscriptions: 1
     drop_weight: 0            # craft-only: raise it AND give Mythic drop weights to open drops
 
-# How affixes are drawn. An item rolls affix tiers from `ceiling - tier_window + 1`
-# up to its tier ceiling. A promotion always adds at least `promote_adds_at_least`
-# affixes. `count_weights` biases how many affixes a fresh roll gets.
+# How inscriptions are drawn. Inscription tiers count down (1 = the strongest row, see the
+# inscriptions file). An item rolls `tier_window` inscription tiers: an Ashlands item (item
+# tier 7) rolls inscription tiers 1-3, a Swamp item (item tier 3) tiers 5-7, a Meadows
+# item tier 7. A promotion always adds at least `promote_adds_at_least`
+# inscriptions. `count_weights` biases how many inscriptions a fresh roll gets.
 rolling:
   tier_window: 3
   promote_adds_at_least: 1
@@ -57,10 +59,11 @@ rolling:
 # cost (per rarity, default 1), tier_floor, enabled, confirm (hold Shift / dialog),
 # stack (default 50), item_weight (the item weight of one stone, default 0.2),
 # name, description (loc key or text), tint.
-# Verbs: promote, add, swap, reroll_affixes, reroll_values, remove, strip, corrupt,
+# Verbs: promote, add, swap, reroll_inscriptions, reroll_values, remove, strip, corrupt,
 # lock, duplicate, gamble, quality, sigil, imbue (essences: `family` names an
-# essence_families entry; `tier_floor` binds the guaranteed affix only; 7 = the
-# item's top tier). enabled: false keeps a stone from
+# essence_families entry; `tier_floor` binds the guaranteed inscription only). `tier_floor`
+# is the weakest inscription tier the stone rolls, counted like the tooltip: 1 = the best
+# tier the item allows. enabled: false keeps a stone from
 # dropping and from being used; its prefab (and every stack of it) stays.
 stones:
   # --- ascension ---
@@ -75,8 +78,8 @@ stones:
   - { id: growth_greater,     verb: add,            grade: greater, applies_to: [epic, legendary, mythic] }
   - { id: turmoil_lesser,     verb: swap,           grade: lesser,  applies_to: [uncommon, rare] }
   - { id: turmoil_greater,    verb: swap,           grade: greater, applies_to: [epic, legendary, mythic] }
-  - { id: upheaval_lesser,    verb: reroll_affixes, grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: upheaval_greater,   verb: reroll_affixes, grade: greater, applies_to: [epic, legendary, mythic] }
+  - { id: upheaval_lesser,    verb: reroll_inscriptions, grade: lesser,  applies_to: [uncommon, rare] }
+  - { id: upheaval_greater,   verb: reroll_inscriptions, grade: greater, applies_to: [epic, legendary, mythic] }
   - { id: perfection_lesser,  verb: reroll_values,  grade: lesser,  applies_to: [uncommon, rare] }
   - { id: perfection_greater, verb: reroll_values,  grade: greater, applies_to: [epic, legendary, mythic] }
   - { id: severing_lesser,    verb: remove,         grade: lesser,  applies_to: [uncommon, rare] }
@@ -94,7 +97,7 @@ stones:
     overflow: 1
     outcomes:
       - { outcome: seal_only,      weight: 25 }
-      - { outcome: add_affix,      weight: 25 }
+      - { outcome: add_inscription,     weight: 25 }
       - { outcome: chaotic_reroll, weight: 20 }
       - { outcome: promote,        weight: 15 }
       - { outcome: demote,         weight: 15 }
@@ -132,40 +135,92 @@ stones:
   - { id: sigil_fortune,      verb: sigil, steer: category, category: utility, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
   - { id: sigil_culling,      verb: sigil, steer: cull,     applies_to: [common, uncommon, rare, epic, legendary, mythic] }
 
-  # --- essences: reroll like Upheaval, one new affix always from the family ---
+  # --- essences: reroll like Upheaval, one new inscription always from the family ---
   - { id: essence_storm_lesser,   verb: imbue, family: storm,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_storm_greater,  verb: imbue, family: storm,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_storm_greater,  verb: imbue, family: storm,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_grove_lesser,   verb: imbue, family: grove,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_grove_greater,  verb: imbue, family: grove,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_grove_greater,  verb: imbue, family: grove,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_venom_lesser,   verb: imbue, family: venom,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_venom_greater,  verb: imbue, family: venom,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_venom_greater,  verb: imbue, family: venom,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_frost_lesser,   verb: imbue, family: frost,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_frost_greater,  verb: imbue, family: frost,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_frost_greater,  verb: imbue, family: frost,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_battle_lesser,  verb: imbue, family: battle, grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_battle_greater, verb: imbue, family: battle, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_battle_greater, verb: imbue, family: battle, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_seidr_lesser,   verb: imbue, family: seidr,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_seidr_greater,  verb: imbue, family: seidr,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_seidr_greater,  verb: imbue, family: seidr,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_ember_lesser,   verb: imbue, family: ember,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_ember_greater,  verb: imbue, family: ember,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_ember_greater,  verb: imbue, family: ember,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
   - { id: essence_tide_lesser,    verb: imbue, family: tide,   grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_tide_greater,   verb: imbue, family: tide,   grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 7 }
+  - { id: essence_tide_greater,   verb: imbue, family: tide,   grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
+
+  # --- sockets (sockets.md): the chisel opens a socket, a gem fills one with its family's inscription for the
+  # item's slot (rolled in the item's own tier window), a catalyst strengthens one family's inscriptions and gems ---
+  - { id: chisel, verb: socket, applies_to: [common, uncommon, rare, epic, legendary, mythic], max_sockets: 2 }
+  - id: gem_storm
+    verb: gem
+    family: storm
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: stormbrand, ranged_weapon: stormbrand, shield: perfect_guard, head: stormward, legs: fleetfoot, cape: stormward }
+  - id: gem_grove
+    verb: gem
+    family: grove
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: bonebreaker, ranged_weapon: bonebreaker, shield: repelling_guard, head: mending, chest: troll_blood, legs: ironroot, utility_item: harvester }
+  - id: gem_venom
+    verb: gem
+    family: venom
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: venombrand, ranged_weapon: venombrand, head: purity, chest: purity, legs: venomward, cape: venomward }
+  - id: gem_frost
+    verb: gem
+    family: frost
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: rimebrand, ranged_weapon: rimebrand, head: frostward, chest: endurance, legs: long_wind, cape: frostward }
+  - id: gem_battle
+    verb: gem
+    family: battle
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: honed_might, ranged_weapon: honed_might, magic_weapon: berserkergang, shield: stalwart, head: valhallas_edge, chest: ironclad, legs: mailed, utility_item: broad_back }
+  - id: gem_seidr
+    verb: gem
+    family: seidr
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: primal_fury, ranged_weapon: primal_fury, magic_weapon: primal_fury, head: seidr_flow, chest: runic_ward, legs: mist_veil, cape: mist_veil }
+  - id: gem_ember
+    verb: gem
+    family: ember
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: emberbrand, ranged_weapon: emberbrand, head: hearthlight, chest: flameward, cape: flameward }
+  - id: gem_tide
+    verb: gem
+    family: tide
+    applies_to: [common, uncommon, rare, epic, legendary, mythic]
+    inscriptions: { melee_weapon: slayer_sea, ranged_weapon: slayer_sea, magic_weapon: slayer_sea, head: huginns_eye, chest: sealegs, cape: strong_swimmer, utility_item: fair_winds }
+  - { id: catalyst_storm, verb: catalyse, family: storm, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_grove, verb: catalyse, family: grove, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_venom, verb: catalyse, family: venom, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_frost, verb: catalyse, family: frost, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_battle, verb: catalyse, family: battle, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_seidr, verb: catalyse, family: seidr, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_ember, verb: catalyse, family: ember, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
+  - { id: catalyst_tide, verb: catalyse, family: tide, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
 
 # A pending sigil is consumed only by a stone it steers, unless this is true.
 sigils:
   consume_on_unsteered: false
 
-# The affixes each essence family guarantees one of (family id -> { affixes, name }).
-# Members are affix ids from EliteCrafting_affixes*.yml; one that is not defined
-# there, disabled or Mythic-only is skipped with a warning. `affixes` is replaced whole.
+# The inscriptions each essence family guarantees one of (family id -> { inscriptions, name }).
+# Members are inscription ids from EliteCrafting_inscriptions*.yml; one that is not defined
+# there, disabled or Mythic-only is skipped with a warning. `inscriptions` is replaced whole.
 essence_families:
-  storm:  { affixes: [stormbrand, stormward, bulwark_lightning, fleetfoot, stride, spring_heeled, light_leap, nimble, perfect_guard, keen_guard] }
-  grove:  { affixes: [bonebreaker, heartwood, woodcutting_mastery, troll_blood, mending, bramblehide, ironroot, repelling_guard, anchored_guard, harvester, farming_mastery] }
-  venom:  { affixes: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin] }
-  frost:  { affixes: [rimebrand, frostward, bulwark_frost, coldblood, winterborn, mountain_goat, long_wind, endurance, soft_landing, ravens_glide] }
-  battle: { affixes: [honed_might, keen_edge, needlepoint, berserkergang, padded, mailed, riveted, ironclad, arrowward, valhallas_edge, stalwart, tireless_guard, broad_back, trophy_taker] }
-  seidr:  { affixes: [primal_fury, seidr_siphon, rune_edge, seidr_thrift, soul_reaper, elemental_mastery, wellspring, seidr_flow, restless_mind, runic_ward, mist_veil, mistbane, seidr_riposte] }
-  ember:  { affixes: [emberbrand, flameward, bulwark_fire, ashen_skin, emberheart, hearthlight] }
-  tide:   { affixes: [slayer_sea, sealegs, strong_swimmer, fair_winds, huginns_eye, fishing_mastery] }
+  storm:  { inscriptions: [stormbrand, stormward, bulwark_lightning, fleetfoot, stride, spring_heeled, light_leap, nimble, perfect_guard, keen_guard] }
+  grove:  { inscriptions: [bonebreaker, heartwood, woodcutting_mastery, troll_blood, mending, bramblehide, ironroot, repelling_guard, anchored_guard, harvester, farming_mastery] }
+  venom:  { inscriptions: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin] }
+  frost:  { inscriptions: [rimebrand, frostward, bulwark_frost, coldblood, winterborn, mountain_goat, long_wind, endurance, soft_landing, ravens_glide] }
+  battle: { inscriptions: [honed_might, keen_edge, needlepoint, berserkergang, padded, mailed, riveted, ironclad, arrowward, valhallas_edge, stalwart, tireless_guard, broad_back, trophy_taker] }
+  seidr:  { inscriptions: [primal_fury, seidr_siphon, rune_edge, seidr_thrift, soul_reaper, elemental_mastery, wellspring, seidr_flow, restless_mind, runic_ward, mist_veil, mistbane, seidr_riposte] }
+  ember:  { inscriptions: [emberbrand, flameward, bulwark_fire, ashen_skin, emberheart, hearthlight] }
+  tide:   { inscriptions: [slayer_sea, sealegs, strong_swimmer, fair_winds, huginns_eye, fishing_mastery] }
 
 # Grinding a magic item into shards (the Salvage key, default End, over an item
 # in your own inventory) and fusing shards into stones (right-click the shards;
@@ -394,6 +449,22 @@ drops:
     essence_seidr_greater:  [  0,   0,   0,   0,   0,  20,    0]
     essence_ember_lesser:   [  0,   0,   0,   0,   0,   0,   80]
     essence_ember_greater:  [  0,   0,   0,   0,   0,   0,   20]
+    # sockets: the chisel everywhere, a family's gem and catalyst in its home tier (tide: serpents)
+    chisel:                 [ 40,  40,  40,  40,  40,  40,   40]
+    gem_storm:              [ 40,   0,   0,   0,   0,   0,    0]
+    gem_grove:              [  0,  40,   0,   0,   0,   0,    0]
+    gem_venom:              [  0,   0,  40,   0,   0,   0,    0]
+    gem_frost:              [  0,   0,   0,  40,   0,   0,    0]
+    gem_battle:             [  0,   0,   0,   0,  40,   0,    0]
+    gem_seidr:              [  0,   0,   0,   0,   0,  40,    0]
+    gem_ember:              [  0,   0,   0,   0,   0,   0,   40]
+    catalyst_storm:         [ 30,   0,   0,   0,   0,   0,    0]
+    catalyst_grove:         [  0,  30,   0,   0,   0,   0,    0]
+    catalyst_venom:         [  0,   0,  30,   0,   0,   0,    0]
+    catalyst_frost:         [  0,   0,   0,  30,   0,   0,    0]
+    catalyst_battle:        [  0,   0,   0,   0,  30,   0,    0]
+    catalyst_seidr:         [  0,   0,   0,   0,   0,  30,    0]
+    catalyst_ember:         [  0,   0,   0,   0,   0,   0,   30]
 
   rarity_weights:              # the rarity of dropped gear, by tier
     #                    T1  T2  T3  T4  T5  T6  T7
@@ -426,6 +497,7 @@ drops:
       cape: 1
       utility_item: 1
       tool: 0.5
+    sockets: [60, 20, 12, 6, 2]   # weights of 0, 1, 2, 3, 4 sockets on a dropped magic item (sockets.md)
     exclude: []                # item prefabs that never drop
     include: {}                # item prefab -> tier, always in the pool at that tier
 
@@ -438,6 +510,7 @@ drops:
         - { stone: awakening, chance: 100, amount: 2 }
         - { stone: essence_storm_lesser, chance: 100, amount: 1 }
         - { stone: essence_storm_greater, chance: 15, amount: 1 }
+        - { stone: gem_storm, chance: 50, amount: 1 }
     gd_king:
       tier: 2
       stone_rolls: 2
@@ -446,6 +519,7 @@ drops:
         - { stone: ascension, chance: 100, amount: 1 }
         - { stone: essence_grove_lesser, chance: 100, amount: 1 }
         - { stone: essence_grove_greater, chance: 15, amount: 1 }
+        - { stone: gem_grove, chance: 50, amount: 1 }
     Bonemass:
       tier: 3
       stone_rolls: 3
@@ -454,6 +528,7 @@ drops:
         - { stone: serpent, chance: 50, amount: 1 }
         - { stone: essence_venom_lesser, chance: 100, amount: 1 }
         - { stone: essence_venom_greater, chance: 15, amount: 1 }
+        - { stone: gem_venom, chance: 50, amount: 1 }
     Dragon:
       tier: 4
       stone_rolls: 3
@@ -462,6 +537,7 @@ drops:
         - { stone: exaltation, chance: 100, amount: 1 }
         - { stone: essence_frost_lesser, chance: 100, amount: 1 }
         - { stone: essence_frost_greater, chance: 15, amount: 1 }
+        - { stone: gem_frost, chance: 50, amount: 1 }
     GoblinKing:
       tier: 5
       stone_rolls: 4
@@ -471,6 +547,7 @@ drops:
         - { stone: binding, chance: 25, amount: 1 }
         - { stone: essence_battle_lesser, chance: 100, amount: 1 }
         - { stone: essence_battle_greater, chance: 15, amount: 1 }
+        - { stone: gem_battle, chance: 50, amount: 1 }
     SeekerQueen:
       tier: 6
       stone_rolls: 4
@@ -479,6 +556,7 @@ drops:
         - { stone: transcendence, chance: 100, amount: 1 }
         - { stone: essence_seidr_lesser, chance: 100, amount: 1 }
         - { stone: essence_seidr_greater, chance: 15, amount: 1 }
+        - { stone: gem_seidr, chance: 50, amount: 1 }
     Fader:                     # verify prefab name
       tier: 7
       stone_rolls: 5
@@ -488,11 +566,12 @@ drops:
         - { stone: apotheosis, chance: 10, amount: 1 }
         - { stone: essence_ember_lesser, chance: 100, amount: 1 }
         - { stone: essence_ember_greater, chance: 15, amount: 1 }
+        - { stone: gem_ember, chance: 50, amount: 1 }
 
   creatures:
     # the Ocean has no tier of its own: tide essences come from serpents
-    Serpent:        { bonus: [ { stone: essence_tide_lesser, chance: 25, amount: 1 }, { stone: essence_tide_greater, chance: 5, amount: 1 } ] }
-    BonemawSerpent: { bonus: [ { stone: essence_tide_lesser, chance: 25, amount: 1 }, { stone: essence_tide_greater, chance: 5, amount: 1 } ] }   # verify name
+    Serpent:        { bonus: [ { stone: essence_tide_lesser, chance: 25, amount: 1 }, { stone: essence_tide_greater, chance: 5, amount: 1 }, { stone: gem_tide, chance: 10, amount: 1 }, { stone: catalyst_tide, chance: 10, amount: 1 } ] }
+    BonemawSerpent: { bonus: [ { stone: essence_tide_lesser, chance: 25, amount: 1 }, { stone: essence_tide_greater, chance: 5, amount: 1 }, { stone: gem_tide, chance: 10, amount: 1 }, { stone: catalyst_tide, chance: 10, amount: 1 } ] }   # verify name
   # more examples:
   #   Troll:   { stone_multiplier: 2 }                                  # trolls pay double stones
   #   Hen:     { multiplier: 0 }                                        # never drops our loot

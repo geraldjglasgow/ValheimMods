@@ -4,8 +4,9 @@ using EliteCrafting.Core;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// The code-side list of stone prefabs (prefabs.md sections 3 and 5): the 43 built-in stone ids (27 stones and
-    /// sigils plus the 16 essences, essences.md section 8), whose prefab is <c>ECF_</c> + PascalCase id, the 16
+    /// The code-side list of stone prefabs (prefabs.md sections 3 and 5): the 60 built-in stone ids (27 stones and
+    /// sigils, the 16 essences of essences.md section 8, and sockets.md's Jeweller's Chisel, 8 gems and 8 catalysts),
+    /// whose prefab is <c>ECF_</c> + PascalCase id, the 16
     /// reserved prefabs owner-defined stones bind to, and the 5 shard prefabs of salvage (salvage.md section 5), which
     /// are items but not stones. Prefabs come from code only and exist on every peer whatever the YAML says; the YAML
     /// binds definitions to them.
@@ -26,7 +27,7 @@ namespace EliteCrafting.Rules
             "upheaval_greater", "perfection_lesser", "perfection_greater", "severing_lesser", "severing_greater",
             "unmaking", "serpent", "binding", "chance", "reflection", "honing", "tempering",
             "sigil_preservation", "sigil_war", "sigil_warding", "sigil_fortune", "sigil_culling",
-        }, EssenceIds());
+        }, Concat(EssenceIds(), SocketIds()));
 
         /// <summary>The five built-in shards (SAL-4): a fixed list, no reserved shard pool.</summary>
         public static readonly string[] ShardIds =
@@ -39,6 +40,10 @@ namespace EliteCrafting.Rules
         public static bool IsShard(string? id) => id != null && Array.IndexOf(ShardIds, id) >= 0;
 
         public static bool IsEssence(string id) => id.StartsWith("essence_", StringComparison.Ordinal);
+
+        public static bool IsGem(string id) => id.StartsWith("gem_", StringComparison.Ordinal);
+
+        public static bool IsCatalyst(string id) => id.StartsWith("catalyst_", StringComparison.Ordinal);
 
         /// <summary><c>growth_lesser</c> → <c>ECF_GrowthLesser</c>; <c>shard_ascension</c> → <c>ECF_ShardAscension</c>.</summary>
         public static string PrefabFor(string builtInId) => PrefabPrefix + Ids.Pascal(builtInId);
@@ -66,6 +71,19 @@ namespace EliteCrafting.Rules
             {
                 ids[2 * i] = "essence_" + EssenceFamilies[i] + "_lesser";
                 ids[2 * i + 1] = "essence_" + EssenceFamilies[i] + "_greater";
+            }
+            return ids;
+        }
+
+        // sockets.md section 8: the chisel, then gem_<family> and catalyst_<family> for every family, in family order.
+        private static string[] SocketIds()
+        {
+            string[] ids = new string[1 + EssenceFamilies.Length * 2];
+            ids[0] = "chisel";
+            for (int i = 0; i < EssenceFamilies.Length; i++)
+            {
+                ids[1 + i] = "gem_" + EssenceFamilies[i];
+                ids[1 + EssenceFamilies.Length + i] = "catalyst_" + EssenceFamilies[i];
             }
             return ids;
         }

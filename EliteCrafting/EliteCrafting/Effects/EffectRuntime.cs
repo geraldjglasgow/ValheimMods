@@ -158,7 +158,7 @@ namespace EliteCrafting.Effects
             {
                 return;
             }
-            StringBuilder text = new StringBuilder($"effects rebuilt: {AggregateBuilder.ActiveAffixCount} active affixes");
+            StringBuilder text = new StringBuilder($"effects rebuilt: {AggregateBuilder.ActiveAffixCount} active inscriptions");
             foreach (EffectChannelTotal total in EffectTotals.Snapshot().Channels)
             {
                 text.Append($"; {total.Key} {Numbers.Format(total.Applied)}");

@@ -32,7 +32,7 @@ namespace EliteCrafting.Rules
         {
             if (def.Enabled && (def.Weight <= 0f || NoTierWeight(def)))
             {
-                issues.Warn($"affixes[{def.Id}]", null, "weight 0 (or every tier weight 0): it never rolls; existing copies keep working");
+                issues.Warn($"inscriptions[{def.Id}]", null, "weight 0 (or every tier weight 0): it never rolls; existing copies keep working");
             }
         }
 

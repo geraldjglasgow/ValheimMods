@@ -28,9 +28,12 @@ namespace EliteCrafting.Affixes
         /// <summary>The reserved <c>ecf_tier</c> value, preserved verbatim.</summary>
         public string? ReservedTier { get; set; }
 
+        /// <summary>Sockets, gems and catalyst (sockets.md); <see cref="SocketData.None"/> when the item has none.</summary>
+        public SocketData Sockets { get; set; } = SocketData.None;
+
         public bool IsEmpty =>
             RarityId == null && Segments.Length == 0 && BoundId == null && Refine == 0f && RefineRaw == null && SealedReason == null
-            && SigilId == null && ReservedTier == null && !Newer;
+            && SigilId == null && ReservedTier == null && Sockets.IsEmpty && !Newer;
 
         public StateData Copy() => (StateData)MemberwiseClone();
     }

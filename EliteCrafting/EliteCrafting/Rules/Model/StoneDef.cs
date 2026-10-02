@@ -25,7 +25,10 @@ namespace EliteCrafting.Rules
         /// <summary>Stones consumed per use by rarity; a rarity absent here costs 1 (see <see cref="CostFor"/>).</summary>
         public IReadOnlyDictionary<string, int> Cost { get; internal set; } = new Dictionary<string, int>();
 
-        /// <summary>Lowest affix tier this stone rolls, or 0 for none.</summary>
+        /// <summary>
+        /// The weakest affix strength grade this stone rolls, or 0 for none. The YAML's <c>tier_floor</c> counts down
+        /// (1 = the strongest tier); this is its grade (<see cref="Core.AffixTierNumbers"/>).
+        /// </summary>
         public int TierFloor { get; internal set; }
 
         public bool Enabled { get; internal set; } = true;
@@ -62,8 +65,20 @@ namespace EliteCrafting.Rules
         public SigilSteer Steer { get; internal set; }
         public AffixCategory? SteerCategory { get; internal set; }
 
-        // imbue (essences.md section 11): the essence_families entry the guaranteed affix is drawn from
+        // imbue (essences.md section 11): the essence_families entry the guaranteed affix is drawn from; gem and catalyse
+        // (sockets.md): the family the gem belongs to, the family a catalyst strengthens
         public string? Family { get; internal set; }
+
+        /// <summary>The most sockets any item can have, from a drop or a stone (sockets.md section 2).</summary>
+        public const int SocketLimit = 6;
+
+        // socket (sockets.md section 3): the most sockets this stone makes on an item (a drop may carry more)
+        public int MaxSockets { get; internal set; } = 2;
+
+        // gem (sockets.md section 4): the affix id the gem gives, by item slot; a slot not listed refuses the gem
+        public IReadOnlyDictionary<ItemSlot, string> GemAffixes { get; internal set; } = new Dictionary<ItemSlot, string>();
+
+        public string? GemAffix(ItemSlot slot) => GemAffixes.TryGetValue(slot, out string id) ? id : null;
 
         public bool AppliesToRarity(string rarityId)
         {

@@ -30,7 +30,29 @@ namespace EliteCrafting.Commands
             {
                 call.Detail($"unreadable segment '{raw}' (kept as it is)");
             }
+            WriteSockets(call, state);
             call.Detail(FlagsLine(state));
+        }
+
+        // sockets.md: the socket count, each gem with its affix and status, the catalyst.
+        private static void WriteSockets(CommandCall call, ItemState state)
+        {
+            if (state.SocketCount == 0 && state.Gems.Count == 0 && state.CatalystFamily == null)
+            {
+                return;
+            }
+            call.Detail($"sockets {state.SocketCount} ({state.EmptySockets} empty)");
+            for (int i = 0; i < state.Gems.Count; i++)
+            {
+                SocketGem gem = state.Gems[i];
+                AffixDef? def = state.GemDefinitionAt(i);
+                string status = def == null ? "dormant (inscription not in configuration)" : def.Enabled ? "active" : "dormant (disabled)";
+                call.Detail($"gem {gem.GemId}: {gem.Roll.Id} T{AffixTierNumbers.Shown(gem.Roll.Tier)} {Numbers.Format(gem.Roll.Value)} -> {status}");
+            }
+            if (state.CatalystFamily != null)
+            {
+                call.Detail($"catalyst {state.CatalystFamily} +{Numbers.Format(state.CatalystQuality)}%");
+            }
         }
 
         private static string Headline(ItemDrop.ItemData item)
@@ -90,7 +112,7 @@ namespace EliteCrafting.Commands
         {
             string rarity = !state.IsMagic ? "rarity common"
                 : state.Rarity == null ? $"rarity {state.RarityId} (unknown: not in the configuration)"
-                : $"rarity {state.RarityId} ({state.Rarity.Color}), {state.Rarity.MinAffixes}-{state.Rarity.MaxAffixes} affixes";
+                : $"rarity {state.RarityId} ({state.Rarity.Color}), {state.Rarity.MinAffixes}-{state.Rarity.MaxAffixes} inscriptions";
             string format = state.IsEmpty ? "no format key" : $"format v{state.Format}";
             return state.IsNewerFormat ? $"{rarity}, {format} (newer than this version: stones refuse)" : $"{rarity}, {format}";
         }
@@ -99,7 +121,7 @@ namespace EliteCrafting.Commands
         {
             AffixRoll roll = state.Affixes[index];
             AffixDef? def = state.DefinitionAt(index);
-            string head = $"affix {roll.Id} T{roll.Tier} {Numbers.Format(roll.Value)} -> ";
+            string head = $"inscription {roll.Id} T{AffixTierNumbers.Shown(roll.Tier)} {Numbers.Format(roll.Value)} -> ";
             string bound = state.IsBoundAt(index) ? ", bound" : "";
             if (def == null)
             {

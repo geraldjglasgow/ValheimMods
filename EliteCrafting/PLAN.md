@@ -11,7 +11,7 @@ affixes across six rarities. Everything data-driven, server-synced, hot-reloaded
   progress · ☐ not started. Where this file and `SPEC.md`/`features/` differ, the spec wins.
 - **First release target:** 0.1.0 (Phase 1 below).
 - **Identity:** folder/project/DLL `EliteCrafting`, GUID `com.EliteCrafting`, item/custom-data key
-  prefix `ecf_`, console command `ecraft`, YAML families `EliteCrafting_affixes*.yml` and
+  prefix `ecf_`, console command `ecraft`, YAML families `EliteCrafting_inscriptions*.yml` and
   `EliteCrafting_economy*.yml`. Own names everywhere, per CLEANROOM.md.
 
 ## Read first (implementing agents)
@@ -88,7 +88,7 @@ All stones: stackable (default 50), light (default 0.2), tradeable, drop as worl
 in `EliteCrafting_economy*.yml`. Every stone declares `applies_to` (rarities), per-rarity cost
 (default 1), optional `tier_floor` for what it rolls, enable flag, and drop-table entries.
 Server owners can add new stones in YAML without code (behaviors compose from a fixed verb set:
-promote / add / swap / reroll_affixes / reroll_values / remove / strip / corrupt / lock / duplicate
+promote / add / swap / reroll_inscriptions / reroll_values / remove / strip / corrupt / lock / duplicate
 / gamble / quality).
 
 ### Ascension stones — the ladder backbone
@@ -432,6 +432,13 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   crafting-station fallback → tier 1 (features/item-tier.md).
 - 2026-09-23 — Remaining Phase 0 tuning questions (user): build on the proposed defaults; every
   question and its default is collected in DECISIONS.md for later override.
+- 2026-10-01 — Affix tiers count down (user): T1 is the strongest roll, T7 the weakest, in the YAML, tooltips and
+  console. Item and biome tiers keep Meadows 1 ... Ashlands 7. Code and stored item data keep the strength grade
+  (grade = 8 - tier); `Core/AffixTierNumbers` converts.
+- 2026-10-01 — Sockets, gems and catalysts (user): gems fill sockets (one gem per essence family, not trophies or
+  runes), a gem into a full item breaks the oldest (no removal), catalysts strengthen one essence family. Drops carry
+  up to 4 sockets, the Jeweller's Chisel cuts up to 2. Built the same day from `features/sockets.md`, not tested in
+  game.
 
 ## Open questions
 

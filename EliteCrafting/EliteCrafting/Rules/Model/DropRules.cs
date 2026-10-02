@@ -54,6 +54,9 @@ namespace EliteCrafting.Rules
         public IReadOnlyDictionary<string, int> Include { get; internal set; } = new Dictionary<string, int>();
 
         public float SlotWeight(ItemSlot slot) => SlotWeights.TryGetValue(slot, out float w) ? w : 1f;
+
+        /// <summary>Weights of a dropped item's socket count, index = sockets (sockets.md section 2); empty = never any.</summary>
+        public IReadOnlyList<float> SocketWeights { get; internal set; } = Array.Empty<float>();
     }
 
     public sealed class BossDrop

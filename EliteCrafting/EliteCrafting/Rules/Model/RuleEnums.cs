@@ -14,11 +14,11 @@ namespace EliteCrafting.Rules
 
     public enum HookDifficulty { None, Easy, Medium, Hard }
 
-    public enum StoneVerb { Promote, Add, Swap, RerollAffixes, RerollValues, Remove, Strip, Corrupt, Lock, Duplicate, Gamble, Quality, Sigil, Imbue }
+    public enum StoneVerb { Promote, Add, Swap, RerollInscriptions, RerollValues, Remove, Strip, Corrupt, Lock, Duplicate, Gamble, Quality, Sigil, Imbue, Socket, Gem, Catalyse }
 
     public enum StoneGrade { None, Lesser, Greater }
 
-    public enum CorruptOutcome { SealOnly, AddAffix, ChaoticReroll, Promote, Demote }
+    public enum CorruptOutcome { SealOnly, AddInscription, ChaoticReroll, Promote, Demote }
 
     public enum SigilSteer { None, Preserve, Category, Cull }
 

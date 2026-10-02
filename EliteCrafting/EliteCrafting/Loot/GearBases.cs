@@ -64,7 +64,7 @@ namespace EliteCrafting.Loot
             }
             if (thin.Count > 0)
             {
-                Log.Warn($"gear drops: {thin.Count} bases cannot fill {minimum} affixes at their tier and never drop: {string.Join(", ", thin)}");
+                Log.Warn($"gear drops: {thin.Count} bases cannot fill {minimum} inscriptions at their tier and never drop: {string.Join(", ", thin)}");
             }
             return bases;
         }

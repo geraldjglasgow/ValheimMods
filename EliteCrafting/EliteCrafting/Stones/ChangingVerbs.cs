@@ -67,7 +67,7 @@ namespace EliteCrafting.Stones
                 return StoneResult.Refuse("nothing_to_change", job.StoneName);
             }
             string? keep = null;
-            if (job.Sigil.Preserves(StoneVerb.RerollAffixes) && !Preservation.TryPick(job.State, out keep))
+            if (job.Sigil.Preserves(StoneVerb.RerollInscriptions) && !Preservation.TryPick(job.State, out keep))
             {
                 return StoneResult.Refuse("sigil_no_match", job.Sigil.Name);
             }
@@ -80,7 +80,7 @@ namespace EliteCrafting.Stones
 
         private static StoneResult Roll(StoneJob job, string? keep)
         {
-            AffixCategory? steer = job.Sigil.CategoryFor(StoneVerb.RerollAffixes);
+            AffixCategory? steer = job.Sigil.CategoryFor(StoneVerb.RerollInscriptions);
             RollOutcome outcome = ItemRoller.Reroll(job.State, job.Rarity!, job.RollContext(steer), keep);
             if (!outcome.Success)
             {

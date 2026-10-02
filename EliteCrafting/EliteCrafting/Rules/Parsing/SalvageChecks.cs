@@ -11,26 +11,22 @@ namespace EliteCrafting.Rules
     {
         public static void Check(EconomyRules rules, RuleIssues issues)
         {
-            CheckImbueStones(rules, issues);
+            CheckFamilyStones(rules, issues);
             CheckFragments(rules, issues);
             rules.Salvage.Yields = CheckYields(rules, issues);
         }
 
-        private static void CheckImbueStones(EconomyRules rules, RuleIssues issues)
+        private static void CheckFamilyStones(EconomyRules rules, RuleIssues issues)
         {
             RarityDef? baseRarity = rules.BaseRarity;
             foreach (StoneDef stone in rules.Stones)
             {
-                if (stone.Verb != StoneVerb.Imbue)
-                {
-                    continue;
-                }
                 string path = $"stones[{stone.Id}]";
                 if (stone.Family != null && rules.Family(stone.Family) == null)
                 {
                     issues.Error(path + ".family", null, $"'{stone.Family}' is not an essence_families entry");
                 }
-                if (baseRarity != null && stone.AppliesToRarity(baseRarity.Id))
+                if (stone.Verb == StoneVerb.Imbue && baseRarity != null && stone.AppliesToRarity(baseRarity.Id))
                 {
                     issues.Error(path + ".applies_to", null, $"an imbue stone cannot apply to '{baseRarity.Id}': there is nothing to reroll (ESS-8)");
                 }

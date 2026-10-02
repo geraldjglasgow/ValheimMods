@@ -16,7 +16,7 @@ namespace EliteCrafting.Rules
         {
             "id", "prefab", "name", "description", "verb", "grade", "applies_to", "cost", "tier_floor", "enabled", "confirm", "stack",
             "item_weight", "tint", "slots", "outcomes", "overflow", "weights", "seal_copy", "max_bound", "step", "cap",
-            "steer", "category", "family",
+            "steer", "category", "family", "max_sockets", "inscriptions",
         };
 
         public static List<StoneDef> Parse(MapReader root)
@@ -71,9 +71,16 @@ namespace EliteCrafting.Rules
                 r.Issues.Error(r.At("applies_to"), r.Map, "is required: the rarities the stone accepts");
             }
             stone.Cost = YamlLists.IntMap(r, "cost", 0, 999);   // 0 = a free stone (applying-stones.md 3)
-            stone.TierFloor = r.Int("tier_floor", 0, 1, 7);
+            stone.TierFloor = ReadTierFloor(r);
             stone.Enabled = r.Bool("enabled", true);
             stone.Confirm = r.Bool("confirm", false);
+        }
+
+        // The YAML counts affix tiers down (1 = the strongest); the floor is kept as a strength grade, 0 = none.
+        private static int ReadTierFloor(MapReader r)
+        {
+            int shown = r.Int("tier_floor", 0, 1, AffixTierNumbers.Count);
+            return shown == 0 ? 0 : AffixTierNumbers.Grade(shown);
         }
 
         private static void ReadItem(MapReader r, StoneDef stone)

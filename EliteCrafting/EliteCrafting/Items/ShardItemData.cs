@@ -53,14 +53,25 @@ namespace EliteCrafting.Items
             return description.Length == 0 ? line : Words.Localize(description) + "\n\n" + line;
         }
 
-        /// <summary>"Always adds one of: Venombrand, Blood Drinker" (essences.md section 12): the family's live members.</summary>
+        /// <summary>
+        /// "Always adds one of: Venombrand, Blood Drinker" (essences.md section 12): the family's live members; a gem's
+        /// or catalyst's lines (sockets.md section 7) for those verbs.
+        /// </summary>
         public static string FamilyLine(StoneDef def, RuleSet rules)
         {
-            EssenceFamilyDef? family = def.Verb == StoneVerb.Imbue ? rules.Economy.Family(def.Family) : null;
-            if (family == null)
+            switch (def.Verb)
             {
-                return "";
+                case StoneVerb.Gem: return SocketDescriptions.GemLine(def, rules);
+                case StoneVerb.Catalyse: return SocketDescriptions.CatalystLine(def, rules);
             }
+            EssenceFamilyDef? family = def.Verb == StoneVerb.Imbue ? rules.Economy.Family(def.Family) : null;
+            System.Collections.Generic.List<string> names = family == null ? new System.Collections.Generic.List<string>() : MemberNames(family, rules);
+            return names.Count == 0 ? "" : Words.Localize("$ecf_ui_essence_family", string.Join(", ", names));
+        }
+
+        /// <summary>The localized names of a family's enabled, regular members, in family order.</summary>
+        public static System.Collections.Generic.List<string> MemberNames(EssenceFamilyDef family, RuleSet rules)
+        {
             System.Collections.Generic.List<string> names = new System.Collections.Generic.List<string>();
             foreach (string id in family.Affixes)
             {
@@ -70,7 +81,7 @@ namespace EliteCrafting.Items
                     names.Add(Words.Localize(affix.Name));
                 }
             }
-            return names.Count == 0 ? "" : Words.Localize("$ecf_ui_essence_family", string.Join(", ", names));
+            return names;
         }
     }
 }

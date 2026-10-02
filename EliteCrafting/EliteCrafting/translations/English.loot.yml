@@ -1,4 +1,4 @@
-# English words of the Loot area: the loot-find affixes (Norns' Favour, Fateweaver, Trophy Taker, Hoardfinder).
+# English words of the Loot area: the loot-find inscriptions (Norns' Favour, Fateweaver, Trophy Taker, Hoardfinder).
 # Key without the $ -> text. Names and tooltip sentences follow features/localization.md ($1 = the value).
 ecf_affix_norns_favour: "Norns' Favour"
 ecf_affix_norns_favour_line: "Magic gear dropped by enemies you kill rolls a higher rarity $1% more often"

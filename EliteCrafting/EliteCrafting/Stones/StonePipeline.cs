@@ -53,9 +53,17 @@ namespace EliteCrafting.Stones
             return job.IsEquipped && !ModSettings.ModifyEquippedItems.Value ? StoneResult.Refuse("equipped") : null;
         }
 
-        // 5, the stone's base precondition: a quality stone needs the number its bonus multiplies (quality.md 5).
-        private static bool HasWhatItImproves(StoneJob job) =>
-            job.Def!.Verb != Rules.StoneVerb.Quality || QualityTargets.CanImprove(job.Target, job.Slot.Slot);
+        // 5, the stone's base precondition: a quality stone needs the number its bonus multiplies (quality.md 5); a gem
+        // needs an affix for the item's slot (sockets.md 4).
+        private static bool HasWhatItImproves(StoneJob job)
+        {
+            switch (job.Def!.Verb)
+            {
+                case Rules.StoneVerb.Quality: return QualityTargets.CanImprove(job.Target, job.Slot.Slot);
+                case Rules.StoneVerb.Gem: return job.Def.GemAffix(job.Slot.Slot) != null;
+                default: return true;
+            }
+        }
 
         // 8-10: known rarity, in applies_to, enough stones in the carried stack.
         private static StoneResult? RarityChecks(StoneJob job)

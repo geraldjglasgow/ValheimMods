@@ -5,8 +5,8 @@ using System.Text;
 namespace EliteCrafting.Core
 {
     /// <summary>
-    /// Maps our PascalCase enums to the snake_case ids the YAML and item data use (<c>RerollAffixes</c> ↔
-    /// <c>reroll_affixes</c>, <c>UtilityItem</c> ↔ <c>utility_item</c>). The table is built once per enum type.
+    /// Maps our PascalCase enums to the snake_case ids the YAML and item data use (<c>RerollInscriptions</c> ↔
+    /// <c>reroll_inscriptions</c>, <c>UtilityItem</c> ↔ <c>utility_item</c>). The table is built once per enum type.
     /// </summary>
     public static class EnumIds<T> where T : struct, Enum
     {

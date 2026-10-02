@@ -14,10 +14,12 @@ namespace EliteCrafting.Affixes
         {
             Set(target, ItemKeys.Rarity, data.RarityId);
             Set(target, ItemKeys.Affixes, ItemCodec.EncodeList(data.Segments));
+            target.Remove(ItemKeys.LegacyAffixes);
             Set(target, ItemKeys.Bound, BoundOnItem(data));
             Set(target, ItemKeys.Refine, data.Refine != 0f ? Numbers.Format(data.Refine) : data.RefineRaw);
             Set(target, ItemKeys.Sealed, data.SealedReason);
             Set(target, ItemKeys.Sigil, data.SigilId);
+            SocketCodec.Write(data.Sockets, target);
             Set(target, ItemKeys.Version, AnyStateKey(target) ? Numbers.Format(ItemKeys.CurrentFormat) : null);
         }
 
@@ -45,7 +47,8 @@ namespace EliteCrafting.Affixes
             return false;
         }
 
-        private static void Set(Dictionary<string, string> target, string key, string? value)
+        /// <summary>Sets a key, or removes it when the value is empty.</summary>
+        internal static void Set(Dictionary<string, string> target, string key, string? value)
         {
             if (string.IsNullOrEmpty(value))
             {

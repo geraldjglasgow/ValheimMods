@@ -18,7 +18,7 @@ Numbers are defaults and judgement calls; display names are adopted defaults (`.
 - The pool is **build-defining behaviours**: things that change how a character plays, not bigger numbers.
 - Slot sanity applies exactly as in the regular pool (`affixes.md` section 2).
 - **Tiers still apply.** A Mythic item keeps its tier ceiling, so a Meadows Mythic's Undying recharges slowly and an
-  Ashlands Mythic's quickly. Flags gate at tier 1, so every Mythic can roll them.
+  Ashlands Mythic's quickly. Flags gate at tier 7 (the weakest), so every Mythic can roll them.
 - **Weights are relative inside this pool.** Default 100; the four Elementalist's Pacts are 25 each so together they
   weigh as one entry.
 - Two behaviours the pool marked as Mythic candidates join here: building without a station (`master_builder`) and
@@ -50,43 +50,43 @@ Numbers are defaults and judgement calls; display names are adopted defaults (`.
 
 - **`bifrost_blessing`** Bifrost Blessing — While worn, portals let you through with ores, metals and every other item the game forbids.  
   `portal_any_item` · flag · utility, cape · utility · **mythic_only** · no group · easy · P3 · w 100  
-  gate T1 (rolls at T1–T7, no value)
+  gate T7 (rolls at T7–T1, no value)
 - **`undying`** Undying — A killing blow leaves you at 1 health instead. Recharges in X minutes.  
   `undying` · flat (min) · chest, head · defense · **mythic_only** · no group · medium · P3 · w 100 · lower is better  
-  T1–T7: 18–20 / 16–18 / 14–16 / 12–14 / 11–12 / 10–11 / 9–10
+  T7–T1: 18–20 / 16–18 / 14–16 / 12–14 / 11–12 / 10–11 / 9–10
 - **`thunderclap`** Thunderclap — A perfect block staggers every enemy within X m.  
   `parry_shockwave` · flat (m) · shield · defense · **mythic_only** · no group · medium · P3 · w 100  
-  T1–T7: 3–4 / 3.5–4.5 / 4–5 / 4.5–5.5 / 5–6 / 5.5–6.5 / 6–7 · requires traits can_parry
+  T7–T1: 3–4 / 3.5–4.5 / 4–5 / 4.5–5.5 / 5–6 / 5.5–6.5 / 6–7 · requires traits can_parry
 - **`warbanner`** Warbanner — Party members within 20 m deal +X% damage (you included).  
   `party_aura` `damage_dealt` · percent · melee, ranged, magic · offense · **mythic_only** · group `party_aura` · medium · P3 · w 100  
-  T1–T7: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
+  T7–T1: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
 - **`aegis`** Aegis — Party members within 20 m take X% less damage (you included).  
   `party_aura` `damage_taken` · percent · shield, chest · defense · **mythic_only** · group `party_aura` · medium · P3 · w 100  
-  T1–T7: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
+  T7–T1: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
 - **`blink`** Blink — Your dodge roll becomes a short teleport in the dodge direction.  
   `blink_dodge` · flag · legs, cape · utility · **mythic_only** · no group · hard · P3 · w 100  
-  gate T1 (rolls at T1–T7, no value)
+  gate T7 (rolls at T7–T1, no value)
 - **`allfathers_bulwark`** Allfather's Bulwark — No single hit can take more than X% of your maximum health.  
   `hit_cap` · percent · chest, shield · defense · **mythic_only** · no group · medium · P3 · w 100 · lower is better  
-  T1–T7: 55–60 / 50–55 / 45–50 / 42–45 / 38–42 / 35–38 / 30–35
+  T7–T1: 55–60 / 50–55 / 45–50 / 42–45 / 38–42 / 35–38 / 30–35
 - **`pact_fire`** Elementalist's Pact: Fire — Fire damage no longer harms you; X% of it heals you instead.  
   `element_absorb` `fire` · percent · cape, chest · defense · **mythic_only** · group `element_pact` · medium · P3 · w 25  
-  T1–T7: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
+  T7–T1: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
 - **`pact_frost`** Elementalist's Pact: Frost — Frost damage no longer harms you; X% of it heals you instead.  
   `element_absorb` `frost` · percent · cape, chest · defense · **mythic_only** · group `element_pact` · medium · P3 · w 25  
-  T1–T7: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
+  T7–T1: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
 - **`pact_lightning`** Elementalist's Pact: Lightning — Lightning damage no longer harms you; X% of it heals you instead.  
   `element_absorb` `lightning` · percent · cape, chest · defense · **mythic_only** · group `element_pact` · medium · P3 · w 25  
-  T1–T7: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
+  T7–T1: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
 - **`pact_poison`** Elementalist's Pact: Poison — Poison damage no longer harms you; X% of it heals you instead.  
   `element_absorb` `poison` · percent · cape, chest · defense · **mythic_only** · group `element_pact` · medium · P3 · w 25  
-  T1–T7: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
+  T7–T1: 20–25 / 25–30 / 30–35 / 35–40 / 40–45 / 45–50 / 50–60
 - **`master_builder`** Master Builder — While this tool is in hand you can build without a crafting station nearby.  
   `stationless_build` · flag · tool · utility · **mythic_only** · no group · easy · P3 · w 100  
-  gate T1 (rolls at T1–T7, no value) · requires traits builds
+  gate T7 (rolls at T7–T1, no value) · requires traits builds
 - **`valkyrie_leap`** Valkyrie's Leap — You can jump once more while in the air.  
   `extra_jump` · flag · legs, cape · utility · **mythic_only** · no group · medium · P3 · w 100  
-  gate T1 (rolls at T1–T7, no value)
+  gate T7 (rolls at T7–T1, no value)
 
 # 4. Notes per entry
 

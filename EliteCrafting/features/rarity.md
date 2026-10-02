@@ -39,7 +39,7 @@ Rarity is **affix count**. Strength is a separate axis - an affix's tier - cappe
   are indistinguishable. A Common item may still carry its honing/tempering bonus.
 - **Ladder order is the order of the entries in `rarities:`.** "One rarity up" and "one rarity down" mean the next
   and previous entry. Code never hard-codes the six ids except in two places: the first entry is the base rarity
-  (see validation, section 7), and the rarity whose entry has `mythic_affixes > 0` gets the special-pool behaviour
+  (see validation, section 7), and the rarity whose entry has `mythic_inscriptions > 0` gets the special-pool behaviour
   of section 5. Everything else - names, colors, counts, even the number of rarities - is data.
 
 ---
@@ -82,7 +82,7 @@ Two ladder moves, used by the ascension stones, the Stone of Chance and the Serp
 2. New affixes are rolled (section 4) until the item holds **the new rarity's minimum, and at least one more than
    before** - capped at the new rarity's maximum.
    - `added = clamp(max(new.min - count, 1), 0, new.max - count)`
-3. Promoting into a rarity with `mythic_affixes > 0` first adds the special affix(es) from the Mythic-only pool
+3. Promoting into a rarity with `mythic_inscriptions > 0` first adds the special affix(es) from the Mythic-only pool
    (section 5), then fills with regular affixes to the count above.
 
 | From (affixes) | To | Added | Result |
@@ -111,7 +111,7 @@ minimum.
 1. One affix is removed at random. **Bound affixes are eligible** - the Serpent is one of the two things that can
    remove a bound affix (`stones.md`, Binding).
 2. The rarity becomes the previous one on the ladder.
-3. Leaving a rarity with `mythic_affixes > 0`: every affix drawn from the Mythic-only pool is removed (a Legendary
+3. Leaving a rarity with `mythic_inscriptions > 0`: every affix drawn from the Mythic-only pool is removed (a Legendary
    cannot carry Mythic-only effects), before the random removal of step 1 is counted - so a Mythic losing its
    Mythic-only affix has already "lost an affix" and step 1 is skipped.
 4. If the item still holds more affixes than the new rarity's maximum, random affixes are removed until it fits.
@@ -157,11 +157,13 @@ rules, so every peer rolls under the same odds.
 
 ## The tier window
 
-An item rolls affix tiers from a window just below its ceiling, not from tier 1 upward:
+An item rolls affix tiers from a window just below its ceiling, not from the weakest tier upward. This section
+counts in strength grades, the code's numbering (grade 1 = Meadows strength ... 7 = Ashlands strength); players and
+the YAML see tier = 8 - grade, so grades 5-7 are tooltip tiers 3-1 (`affixes.md`, "Tiers and biome gates"):
 
-- `low = max(ceiling - rolling.tier_window + 1, tier_floor, 1)`, `high = ceiling`.
-- Default `tier_window: 3`. An Ashlands item (ceiling 7) rolls tiers 5-7; a Swamp item (ceiling 3) rolls 1-3; a
-  Meadows item rolls only tier 1.
+- `low = max(ceiling - rolling.tier_window + 1, tier_floor, 1)`, `high = ceiling` (grades; `tier_floor` converted).
+- Default `tier_window: 3`. An Ashlands item (ceiling 7) rolls grades 5-7, shown as tiers 3-1; a Swamp item
+  (ceiling 3) rolls grades 1-3, shown as tiers 7-5; a Meadows item rolls only grade 1, shown as tier 7.
 - **Judgement call.** Without a window, an Ashlands weapon could roll Meadows-strength affixes, which reads as a
   bug to a player. Window 7 (off) gives PoE-style "item level only gates the top"; window 1 makes every roll
   exactly the ceiling tier (RAR-2).
@@ -220,7 +222,7 @@ If fewer candidates exist than the roll needs:
 
 # 5. Mythic
 
-- **Six affixes exactly** (`affixes: {min: 6, max: 6}`), of which `mythic_affixes: 1` comes from the Mythic-only
+- **Six affixes exactly** (`inscriptions: {min: 6, max: 6}`), of which `mythic_inscriptions: 1` comes from the Mythic-only
   pool (affixes with `mythic_only: true`) and the rest from the regular pool.
 - **Craft-only by default.** `drop_weight: 0` on the Mythic rarity is the master switch: at 0, no drop table and no
   Stone of Chance weight can ever produce a Mythic, whatever the per-biome rows say. An owner who wants Mythic drops
@@ -253,7 +255,7 @@ Errors reject the files (previous configuration stays); warnings are logged and 
 
 - Error: fewer than two rarities; duplicate id; the first entry's `affixes.max` is not 0.
 - Error: `min > max`, negative counts, `color` not `#RRGGBB`.
-- Error: more than one rarity with `mythic_affixes > 0`, or `mythic_affixes > affixes.min`.
+- Error: more than one rarity with `mythic_inscriptions > 0`, or `mythic_inscriptions > affixes.min`.
 - Error: a rarity id referenced by a stone's `applies_to`/`cost`/`weights` or by a drop table does not exist.
 - Warning: `glow: true` on the base rarity (ignored - Common never glows, user decision).
 - Warning: a rarity's minimum exceeds what the regular pool can supply for some slot (listed per slot).

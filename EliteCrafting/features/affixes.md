@@ -31,7 +31,7 @@ Contents:
 # 1. What an affix is
 
 An **affix** is one rollable line on a magic item: "+14 maximum health", "attacks cost 9% less stamina". It is a YAML
-entry in the `EliteCrafting_affixes*.yml` family with its own id, name, slots, tiers and weights.
+entry in the `EliteCrafting_inscriptions*.yml` family with its own id, name, slots, tiers and weights.
 
 An **effect** is the code that makes an affix do something. It is registered in code under its own id and may take
 a **parameter**. Many affixes share one effect: `blade_mastery` and `axe_mastery` are two affixes on effect
@@ -76,20 +76,29 @@ The complete schema, with types and validation, is `configuration.md` section 6.
 
 ## Tiers and biome gates
 
-An affix tier is its strength step, gated by biome. Tier 1 is the Meadows, tier 7 the Ashlands.
+An affix tier is its strength step, gated by biome. **Tiers count down** (user decision 2026-10-01, the Path of
+Exile way): tier 1 is an affix's strongest row, rolled on Ashlands items, and tier 7 its weakest, rolled on Meadows
+items. The YAML, the tooltip and the console commands all count this way.
 
-| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| Tier | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
 |---|---|---|---|---|---|---|---|
-| Biome | meadows | black_forest | swamp | mountain | plains | mistlands | ashlands |
+| Strength of | meadows | black_forest | swamp | mountain | plains | mistlands | ashlands |
+| Grade (code) | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 
-(Tier 8, deep_north, is reserved and not shipped.) Every item has a **tier ceiling** (`item-tier.md`) and rolls its
-affix tiers from a window just below it (`rarity.md`: default window 3, so an Ashlands item rolls tiers 5-7).
+**Inside the code a tier is its strength grade**, which runs the other way so that it lines up with the item and biome
+tiers it is compared against: the tier window, a parsed `tier_floor` and the tier stored in item data
+(`item-data.md`) are grades. `Core/AffixTierNumbers` is the one conversion (tier = 8 - grade); the YAML parsers, the
+tooltip and the console commands call it, nothing else does. `rarity.md` and `item-tier.md` write their formulas in
+grades. (Grade 8, deep_north, is reserved and not shipped; shipping it would renumber the shown tiers, never a stored
+item.) Every item has a **tier ceiling** (`item-tier.md`; item tiers do not count down, Meadows 1 ... Ashlands 7) and
+rolls its affix tiers from a window at it (`rarity.md`: default window 3, so an Ashlands item rolls tiers 1-3 and a
+Meadows item tier 7).
 
-**Notation in the catalog.** `T1–T7: 3–5 / 5–8 / 8–11 / ...` lists `min–max` for each tier, left to right. A single
-number means `min = max`. An affix that skips early tiers starts later (`T5–T7: ...`) and cannot roll on an item
-whose ceiling is below its first tier. A **flag** has a single **gate tier**: `gate T4` means the affix exists at
-tiers 4-7 with no value, so it is eligible on any item of ceiling 4 or more and its recorded tier still counts for
-the sigils that care about tier.
+**Notation in the catalog.** `T7–T1: 3–5 / 5–8 / 8–11 / ...` lists `min–max` for each tier, weakest (T7) first. A
+single number means `min = max`. An affix that skips the weak tiers starts later (`T3–T1: ...`) and cannot roll on an
+item whose ceiling is below its weakest tier's biome. A **flag** has a single **gate tier**: `gate T6` means the affix
+exists at tiers 6 to 1 with no value, so it is eligible on any item of ceiling 2 (Black Forest) or more and its
+recorded tier still counts for the sigils that care about tier.
 
 **Tier weights are flat.** Every tier row carries `weight: 100` unless an entry says otherwise, so inside the window
 each tier is equally likely. Rarity lives in the affix `weight` instead (below), which is easier to reason about.
@@ -98,7 +107,7 @@ per-tier weights in YAML if they want it.
 
 **Why most affixes span all seven tiers.** Rarity is affix count and tier is strength, so a Meadows Mythic should
 still find six affixes. Affixes start late only when an early roll would be dead: eitr affixes (no eitr before
-Mistlands food, so tiers 5-7), staff affixes (staves are Mistlands items), heat (Ashlands only), mist (Mistlands
+Mistlands food, so tiers 3-1), staff affixes (staves are Mistlands items), heat (Ashlands only), mist (Mistlands
 only), bosses (Godslayer from tier 3).
 
 ## Weights and rarity by design
@@ -686,56 +695,56 @@ Offense that follows the player, not the item, lives on weapons only (PLAN.md sl
 
 - **`honed_might`** Honed Might — The blunt, slash and pierce parts of your hits are +X%, including parts added by other affixes.  
   `damage_dealt` `physical` · percent · melee, ranged · offense · group `damage_physical` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
 - **`primal_fury`** Primal Fury — The fire, frost, lightning and poison parts of your hits are +X%, including parts added by other affixes.  
   `damage_dealt` `elemental` · percent · melee, ranged, magic · offense · group `damage_elemental` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
 - **`berserkergang`** Berserkergang — While health-critical, all damage you deal is +X%.  
   `damage_dealt` `all` · percent · melee, ranged, magic · offense · **health-critical** · group `damage_critical` · easy · P2 · w 60  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`slayer_undead`** Undead Slayer — +X% damage against the undead family.  
   `slayer` `undead` · percent · melee, ranged, magic · offense · group `slayer` · easy · P2 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`slayer_beasts`** Beast Slayer — +X% damage against the beasts family.  
   `slayer` `beasts` · percent · melee, ranged, magic · offense · group `slayer` · easy · P2 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`slayer_sea`** Sea Slayer — +X% damage against the sea family.  
   `slayer` `sea` · percent · melee, ranged, magic · offense · group `slayer` · easy · P2 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`godslayer`** Godslayer — +X% damage against bosses.  
   `slayer` `boss` · percent · melee, ranged, magic · offense · no group · easy · P2 · w 50  
-  T3–T7: 9–12 / 12–15 / 15–18 / 18–22 / 22–26  
+  T5–T1: 9–12 / 12–15 / 15–18 / 18–22 / 22–26  
   *Note:* Tiers 3-7 only: there is one boss per biome, so an early roll is nearly dead.
 - **`nightstalker`** Nightstalker — +X% damage while it is night.  
   `night_damage` · percent · melee, ranged, magic · offense · no group · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
 - **`ambusher`** Ambusher — Your sneak-attack multiplier (hits on unaware enemies) is +X%.  
   `surprise_bonus` · percent · melee, ranged · offense · no group · easy · P2 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`deathblow`** Deathblow — Your first hit on an enemy below 20% health deals +X%.  
   `low_health_opener` · percent · melee, ranged, magic · offense · no group · medium · P2 · w 100  
-  T1–T7: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–75
+  T7–T1: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–75
 - **`cruel_opening`** Cruel Opening — X% chance that a hit on a staggered enemy counts as a sneak attack.  
   `exploit_stagger` · percent · melee, ranged · offense · no group · medium · P2 · w 60  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`press_the_advantage`** Press the Advantage — +X% damage against staggered enemies.  
   `staggered_target_damage` · percent · melee, ranged · offense · no group · easy · P2 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`reaper`** Reaper — Killing an enemy restores X stamina.  
   `on_kill_restore` `stamina` · flat · melee, ranged · offense · group `on_kill` · medium · P2 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`blood_drinker`** Blood Drinker — Heal X% of the damage your hits deal.  
   `leech` `health` · percent · melee, ranged · offense · group `leech_health` · medium · P2 · w 60  
-  T1–T7: 1–1.5 / 1.5–2 / 2–2.5 / 2.5–3 / 3–3.5 / 3.5–4 / 4–5
+  T7–T1: 1–1.5 / 1.5–2 / 2–2.5 / 2.5–3 / 3–3.5 / 3.5–4 / 4–5
 - **`blood_drinker_hc`** Cornered Thirst — While health-critical, heal X% of the damage your hits deal.  
   `leech` `health` · percent · melee, ranged · offense · **health-critical** · group `leech_health` · medium · P2 · w 50  
-  T1–T7: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
+  T7–T1: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
 - **`evaders_fury`** Evader's Fury — Dodging through a melee attack grants +X% damage for 10 s; does not refresh while active.  
   `dodge_fury` · percent · melee, ranged · offense · no group · medium · P2 · w 60  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`fafnirs_greed`** Fafnir's Greed — +X% damage per full 999 coins carried; each stack past the second counts half.  
   `coin_damage` · percent · melee · offense · no group · easy · P2 · w 40  
-  T1–T7: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8  
+  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8  
   *Note:* Stack formula and a cap of 5 stacks are judgement calls (`../DECISIONS.md` AFX-15).
 
 ## Melee weapons (brands also roll on ranged weapons)
@@ -744,80 +753,80 @@ Brands add a share of the weapon's own base damage as a new type. One elemental 
 
 - **`emberbrand`** Emberbrand — Adds X% of this weapon's own base damage again, as fire. **[Phase 1 pick]**  
   `brand_damage` `fire` · percent · melee, ranged · offense · group `brand_elemental` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`rimebrand`** Rimebrand — Adds X% of this weapon's own base damage again, as frost.  
   `brand_damage` `frost` · percent · melee, ranged · offense · group `brand_elemental` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`stormbrand`** Stormbrand — Adds X% of this weapon's own base damage again, as lightning.  
   `brand_damage` `lightning` · percent · melee, ranged · offense · group `brand_elemental` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`venombrand`** Venombrand — Adds X% of this weapon's own base damage again, as poison.  
   `brand_damage` `poison` · percent · melee, ranged · offense · group `brand_elemental` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`spiritbrand`** Spiritbrand — Adds X% of this weapon's own base damage again, as spirit. Spirit only hurts the undead family; the roll is still useful.  
   `brand_damage` `spirit` · percent · melee, ranged · offense · group `brand_elemental` · easy · P1 · w 70  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`bonebreaker`** Bonebreaker — Adds X% of this weapon's own base damage again, as blunt.  
   `brand_damage` `blunt` · percent · melee, ranged · offense · group `brand_physical` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`keen_edge`** Keen Edge — Adds X% of this weapon's own base damage again, as slash. Axes also gain the same share as chop.  
   `brand_damage` `slash` · percent · melee, ranged · offense · group `brand_physical` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`needlepoint`** Needlepoint — Adds X% of this weapon's own base damage again, as pierce. (Pickaxes are tools and do not roll brands.)  
   `brand_damage` `pierce` · percent · melee, ranged · offense · group `brand_physical` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`staggering_blows`** Staggering Blows — Hits with this weapon build +X% stagger on the target.  
   `stagger_power` · percent · melee · offense · no group · easy · P2 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`dazing_blows`** Dazing Blows — Enemies you stagger stay staggered X% longer.  
   `stagger_duration_dealt` · percent · melee · offense · no group · medium · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`hamstring`** Hamstring — Hit enemies move and attack X% slower for 2 s. Bosses are immune.  
   `on_hit_slow` · percent · melee, ranged · offense · no group · medium · P2 · w 70  
-  T1–T7: 5–8 / 8–10 / 10–12 / 12–15 / 15–18 / 18–21 / 21–25
+  T7–T1: 5–8 / 8–10 / 10–12 / 12–15 / 15–18 / 18–21 / 21–25
 - **`thors_arc`** Thor's Arc — X% chance on hit to arc lightning to up to 3 nearby enemies for half the hit's damage.  
   `chain_arc` · percent · melee, magic · offense · no group · hard · P3 · w 30  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18  
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18  
   *Note:* Arc count and the half-damage share are judgement calls.
 - **`quickened_blows`** Quickened Blows — This weapon attacks X% faster.  
   `swing_speed` · percent · melee · offense · group `swing_speed` · hard · P3 · w 50  
-  T1–T7: 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–10
+  T7–T1: 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–10
 - **`long_reach`** Long Reach — This weapon's melee range is +X%.  
   `attack_reach` · percent · melee · offense · no group · easy · P2 · w 100  
-  T1–T7: 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–10  
+  T7–T1: 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–10  
   *Note:* Arguable: reach is strong in Valheim; the curve stops at 10%.
 - **`sweeping_arc`** Sweeping Arc — This weapon's swing arc is X degrees wider.  
   `attack_arc` · flat (deg) · melee · offense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`balanced_grip`** Balanced Grip — Attacks with this weapon cost X% less stamina. **[Phase 1 pick]**  
   `attack_stamina_cost` · percent · melee · offense · group `attack_cost` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`blood_price`** Blood Price — Attacks cost health instead of stamina, one for one. Refused when the cost would kill you.  
   `blood_price` · flag · melee · offense · group `attack_cost` · medium · P2 · w 30  
-  gate T4 (rolls at T4–T7, no value)
+  gate T4 (rolls at T4–T1, no value)
 - **`rune_edge`** Rune-Edged — Half of each attack's stamina cost is paid in eitr instead; while it is, the attack deals +X%.  
   `rune_edge` · percent · melee · offense · group `attack_cost` · medium · P2 · w 30  
-  T5–T7: 9–11 / 11–13 / 13–15  
+  T3–T1: 9–11 / 11–13 / 13–15  
   *Note:* Tiers 5-7: needs an eitr pool.
 - **`lone_blade`** Lone Blade — With the off-hand empty: block armor +X% of this weapon's attack power, parry force +X/2 %.  
   `lone_blade` · percent · melee · offense · no group · medium · P2 · w 40  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35 · requires one-handed
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35 · requires one-handed
 - **`steel_rhythm`** Steel Rhythm — Landing the third hit of a combo in rhythm makes you stagger-immune and take X% less damage for 2 s.  
   `combo_finisher` · percent · melee · defense · no group · medium · P2 · w 40  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35  
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35  
   *Note:* Window length (2 s) is a judgement call.
 - **`hurler`** Hurler — This weapon's secondary attack becomes a throw.  
   `throw_secondary` · flag · melee · utility · no group · hard · P3 · w 25  
-  gate T2 (rolls at T2–T7, no value) · requires skill Knives/Axes/Clubs; one-handed
+  gate T6 (rolls at T6–T1, no value) · requires skill Knives/Axes/Clubs; one-handed
 - **`faithful_throw`** Faithful Throw — A thrown spear returns to your inventory after it lands or hits.  
   `throw_return` · flag · melee · utility · group `throw_follow` · hard · P3 · w 20  
-  gate T2 (rolls at T2–T7, no value) · requires skill Spears
+  gate T6 (rolls at T6–T1, no value) · requires skill Spears
 - **`gungnir_path`** Gungnir's Path — When your thrown spear hits a creature you are carried to it.  
   `throw_teleport` · flag · melee · utility · group `throw_follow` · hard · P3 · w 15  
-  gate T5 (rolls at T5–T7, no value) · requires skill Spears
+  gate T3 (rolls at T3–T1, no value) · requires skill Spears
 - **`heartwood`** Heartwood — Trees and logs you fell drop X extra wood.  
   `yield_lumber` · flat · melee · utility · no group · medium · P2 · w 70  
-  T1–T7: 1 / 1 / 1–2 / 1–2 / 1–2 / 2 / 2–3 · requires skill WoodCutting
+  T7–T1: 1 / 1 / 1–2 / 1–2 / 1–2 / 2 / 2–3 · requires skill WoodCutting
 
 ## Ranged weapons
 
@@ -825,28 +834,28 @@ Bows and crossbows. Draw affixes carry `requires.skill: [Bows]`, the reload affi
 
 - **`easy_draw`** Easy Draw — Holding this bow drawn drains X% less stamina. **[Phase 1 pick]**  
   `draw_stamina_cost` · percent · ranged · offense · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18 · requires skill Bows
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18 · requires skill Bows
 - **`swift_string`** Swift String — This bow draws X% faster.  
   `draw_speed` · percent · ranged · offense · no group · medium · P2 · w 60  
-  T1–T7: 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–10 · requires skill Bows
+  T7–T1: 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–10 · requires skill Bows
 - **`quick_windlass`** Quick Windlass — This crossbow reloads X% faster.  
   `reload_speed` · percent · ranged · offense · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18 · requires skill Crossbows
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18 · requires skill Crossbows
 - **`true_flight`** True Flight — Projectiles from this weapon fly X% faster.  
   `projectile_velocity` · percent · ranged, magic · offense · no group · easy · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50 · requires traits projectile
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50 · requires traits projectile
 - **`thrifty_quiver`** Thrifty Quiver — X% chance that a shot does not use up its ammunition.  
   `ammo_save` · percent · ranged · utility · no group · medium · P2 · w 70  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`volley`** Volley — This bow looses three arrows in a spread and uses three.  
   `multishot` · flag · ranged · offense · no group · medium · P2 · w 20  
-  gate T4 (rolls at T4–T7, no value) · requires skill Bows
+  gate T4 (rolls at T4–T1, no value) · requires skill Bows
 - **`shatterhead`** Shatterhead — Projectiles burst on impact, dealing X% of the hit to enemies within 2 m.  
   `impact_burst` · percent · ranged · offense · no group · hard · P3 · w 25  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
 - **`skirmisher`** Skirmisher — Drawing or aiming this weapon slows you X% less.  
   `draw_move_penalty` · percent · ranged · utility · no group · medium · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50  
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50  
   *Note:* Movement-flavoured but weapon-local: it only matters with this weapon drawn, so it lives on the weapon, not the legs.
 
 ## Magic weapons
@@ -855,28 +864,28 @@ Staves. Most scale from tier 5: staves arrive with the Mistlands, and an eitr po
 
 - **`seidr_thrift`** Seidr Thrift — Attacks with this staff cost X% less eitr. **[Phase 1 pick]**  
   `attack_eitr_cost` · percent · magic · offense · group `attack_cost` · easy · P1 · w 100  
-  T5–T7: 11–13 / 13–15 / 15–18
+  T3–T1: 11–13 / 13–15 / 15–18
 - **`blood_thrift`** Blood Thrift — Attacks with this staff cost X% less health.  
   `attack_health_cost` · percent · magic · offense · group `attack_cost_health` · easy · P2 · w 100  
-  T5–T7: 11–13 / 13–15 / 15–18 · requires skill BloodMagic
+  T3–T1: 11–13 / 13–15 / 15–18 · requires skill BloodMagic
 - **`twincast`** Twincast — This staff casts every projectile twice, for twice the eitr.  
   `twincast` · flag · magic · offense · no group · medium · P2 · w 20  
-  gate T6 (rolls at T6–T7, no value) · requires skill ElementalMagic
+  gate T2 (rolls at T2–T1, no value) · requires skill ElementalMagic
 - **`flowing_seidr`** Flowing Seidr — This staff fires X% faster.  
   `cast_rate` · percent · magic · offense · group `swing_speed` · hard · P3 · w 50  
-  T5–T7: 6–7 / 7–8 / 8–10 · requires skill ElementalMagic
+  T3–T1: 6–7 / 7–8 / 8–10 · requires skill ElementalMagic
 - **`soul_reaper`** Soul Reaper — Killing an enemy restores X eitr.  
   `on_kill_restore` `eitr` · flat · magic · offense · group `on_kill` · medium · P2 · w 100  
-  T5–T7: 11–13 / 13–15 / 15–18
+  T3–T1: 11–13 / 13–15 / 15–18
 - **`seidr_siphon`** Seidr Siphon — Restore eitr equal to X% of the damage your hits deal.  
   `leech` `eitr` · percent · melee, magic · offense · no group · medium · P2 · w 60  
-  T5–T7: 3–3.5 / 3.5–4 / 4–5
+  T3–T1: 3–3.5 / 3.5–4 / 4–5
 - **`grave_command`** Grave-Lord's Command — Creatures summoned with this staff deal +X% damage.  
   `summon_damage` · percent · magic · offense · no group · medium · P2 · w 100  
-  T5–T7: 15–18 / 18–22 / 22–26 · requires skill BloodMagic
+  T3–T1: 15–18 / 18–22 / 22–26 · requires skill BloodMagic
 - **`grave_vigor`** Grave Vigor — Creatures summoned with this staff have +X% health.  
   `summon_health` · percent · magic · defense · no group · medium · P2 · w 100  
-  T5–T7: 15–18 / 18–22 / 22–26 · requires skill BloodMagic
+  T3–T1: 15–18 / 18–22 / 22–26 · requires skill BloodMagic
 
 ## Skill affixes
 
@@ -884,58 +893,58 @@ One affix per skill, all on effect `skill_level`, all in group `skill_level` (on
 
 - **`blade_mastery`** Blade Mastery — +X skill levels in Swords while equipped.  
   `skill_level` `Swords` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Swords
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Swords
 - **`axe_mastery`** Axe Mastery — +X skill levels in Axes while equipped.  
   `skill_level` `Axes` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Axes
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Axes
 - **`club_mastery`** Club Mastery — +X skill levels in Clubs while equipped.  
   `skill_level` `Clubs` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Clubs
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Clubs
 - **`knife_mastery`** Knife Mastery — +X skill levels in Knives while equipped.  
   `skill_level` `Knives` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Knives
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Knives
 - **`spear_mastery`** Spear Mastery — +X skill levels in Spears while equipped.  
   `skill_level` `Spears` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Spears
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Spears
 - **`polearm_mastery`** Polearm Mastery — +X skill levels in Polearms while equipped.  
   `skill_level` `Polearms` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Polearms
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Polearms
 - **`fist_mastery`** Fist Mastery — +X skill levels in Unarmed while equipped.  
   `skill_level` `Unarmed` · flat · melee · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Unarmed
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Unarmed
 - **`bow_mastery`** Bow Mastery — +X skill levels in Bows while equipped.  
   `skill_level` `Bows` · flat · ranged · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Bows
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Bows
 - **`crossbow_mastery`** Crossbow Mastery — +X skill levels in Crossbows while equipped.  
   `skill_level` `Crossbows` · flat · ranged · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Crossbows
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Crossbows
 - **`elemental_mastery`** Elemental Mastery — +X skill levels in Elemental Magic while equipped.  
   `skill_level` `ElementalMagic` · flat · magic · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill ElementalMagic
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill ElementalMagic
 - **`blood_mastery`** Blood Mastery — +X skill levels in Blood Magic while equipped.  
   `skill_level` `BloodMagic` · flat · magic · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill BloodMagic
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill BloodMagic
 - **`woodcutting_mastery`** Woodcutter's Mastery — +X skill levels in Woodcutting while equipped.  
   `skill_level` `WoodCutting` · flat · melee · utility · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill WoodCutting
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill WoodCutting
 - **`pick_mastery`** Miner's Mastery — +X skill levels in Pickaxes while equipped.  
   `skill_level` `Pickaxes` · flat · tool · utility · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Pickaxes
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Pickaxes
 - **`fishing_mastery`** Angler's Mastery — +X skill levels in Fishing while equipped.  
   `skill_level` `Fishing` · flat · tool · utility · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Fishing
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Fishing
 - **`shield_mastery`** Shield Mastery — +X skill levels in Blocking while equipped.  
   `skill_level` `Blocking` · flat · shield · offense · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Blocking
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Blocking
 - **`wanderer_mastery`** Wanderer's Mastery — +X skill levels in Run, Jump, Swim and Sneak while equipped.  
   `skill_level` `Run,Jump,Swim,Sneak` · flat · legs, cape · utility · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
 - **`artisan_mastery`** Artisan's Mastery — +X skill levels in Crafting and Cooking while equipped.  
   `skill_level` `Crafting,Cooking` · flat · head, utility · utility · group `skill_level` · easy · P1 · w 100  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
 - **`farming_mastery`** Green Thumb — +X skill levels in Farming while equipped.  
   `skill_level` `Farming` · flat · tool · utility · group `skill_level` · easy · P1 · w 60  
-  T1–T7: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Farming  
+  T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 · requires skill Farming  
   *Note:* Ours, not in the pool: added so the cultivator has a governed skill. Assumes the cultivator's own skill is Farming; verify.
 
 ## Item-local, any equipment
@@ -944,19 +953,19 @@ Stats that describe the item itself. They roll on any slot whose items have the 
 
 - **`well_forged`** Well-Forged — This item's maximum durability is +X%.  
   `item_durability` · percent · melee, ranged, magic, shield, head, chest, legs, cape, tool · utility · group `item_wear` · easy · P1 · w 100  
-  T1–T7: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–65 / 65–80 · requires traits wears_out
+  T7–T1: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–65 / 65–80 · requires traits wears_out
 - **`everlasting`** Everlasting — This item never loses durability.  
   `item_unbreakable` · flag · melee, ranged, magic, shield, head, chest, legs, cape, tool · utility · group `item_wear` · medium · P2 · w 25  
-  gate T4 (rolls at T4–T7, no value) · requires traits wears_out
+  gate T4 (rolls at T4–T1, no value) · requires traits wears_out
 - **`lightened`** Lightened — This item weighs X% less.  
   `item_lighten` · percent · melee, ranged, magic, shield, head, chest, legs, cape, tool, utility · utility · group `item_lighten` · easy · P1 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`gossamer`** Gossamer — This item weighs nothing.  
   `item_zero_weight` · flag · melee, ranged, magic, shield, head, chest, legs, cape, tool, utility · utility · group `item_lighten` · easy · P2 · w 20  
-  gate T4 (rolls at T4–T7, no value)
+  gate T4 (rolls at T4–T1, no value)
 - **`supple_fit`** Supple Fit — This item no longer slows your movement.  
   `item_no_move_penalty` · flag · melee, shield, head, chest, legs, cape · utility · no group · easy · P2 · w 40  
-  gate T2 (rolls at T2–T7, no value) · requires traits movement_penalty
+  gate T6 (rolls at T6–T1, no value) · requires traits movement_penalty
 
 ## Shields
 
@@ -964,65 +973,65 @@ Block and parry stats stay on shields in v1 (`../DECISIONS.md` AFX-3). Parry aff
 
 - **`stalwart`** Stalwart — This shield's block armor is +X%. **[Phase 1 pick]**  
   `item_block` · percent · shield · defense · no group · easy · P1 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–16 / 16–20 / 20–25 / 25–30
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–16 / 16–20 / 20–25 / 25–30
 - **`perfect_guard`** Perfect Guard — This shield's perfect-block bonus is +X%.  
   `parry_bonus` · percent · shield · defense · no group · easy · P1 · w 100  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35 · requires traits can_parry
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35 · requires traits can_parry
 - **`keen_guard`** Keen Guard — The perfect-block timing window is X ms longer.  
   `perfect_block_window` · flat (ms) · shield · defense · no group · medium · P2 · w 60  
-  T1–T7: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–55 / 55–60 · requires traits can_parry  
+  T7–T1: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–55 / 55–60 · requires traits can_parry  
   *Note:* Arguable: the vanilla window is about a quarter second, so +60 ms is a large change.
 - **`repelling_guard`** Repelling Guard — This shield's block knockback force is +X%.  
   `item_deflection` · percent · shield · defense · no group · easy · P1 · w 100  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`tireless_guard`** Tireless Guard — Blocking costs X% less stamina.  
   `block_stamina_cost` · percent · shield · defense · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`anchored_guard`** Anchored Guard — While blocking with this shield you are never knocked back or staggered by a blocked hit.  
   `block_steadfast` · flag · shield · defense · no group · medium · P2 · w 30  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`seidr_riposte`** Seidr Riposte — A perfect block restores X eitr.  
   `parry_restore` `eitr` · flat · shield · defense · no group · medium · P2 · w 60  
-  T5–T7: 11–13 / 13–15 / 15–18 · requires traits can_parry
+  T3–T1: 11–13 / 13–15 / 15–18 · requires traits can_parry
 
 ## Armor: health, stamina, eitr and recovery
 
 - **`vigor`** Vigor — +X maximum health. **[Phase 1 pick]**  
   `max_health` · flat · head, chest · defense · group `max_health` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–8 / 8–11 / 11–14 / 14–18 / 18–22 / 22–26
+  T7–T1: 3–5 / 5–8 / 8–11 / 11–14 / 14–18 / 18–22 / 22–26
 - **`endurance`** Endurance — +X maximum stamina.  
   `max_stamina` · flat · chest, legs · defense · no group · easy · P1 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–15 / 15–19 / 19–23 / 23–28
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–19 / 19–23 / 23–28
 - **`wellspring`** Wellspring — +X maximum eitr.  
   `max_eitr` · flat · head, cape · defense · group `max_eitr` · easy · P1 · w 100  
-  T5–T7: 8–12 / 12–18 / 18–25  
+  T3–T1: 8–12 / 12–18 / 18–25  
   *Note:* Tiers 5-7: there is no eitr before Mistlands food.
 - **`troll_blood`** Troll Blood — Health regenerates X% faster.  
   `health_recovery` · percent · chest, legs · defense · group `health_recovery` · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25
+  T7–T1: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25
 - **`troll_blood_hc`** Cornered Blood — While health-critical, health regenerates X% faster.  
   `health_recovery` · percent · chest · defense · **health-critical** · group `health_recovery` · easy · P2 · w 60  
-  T1–T7: 10–15 / 15–20 / 20–28 / 28–36 / 36–44 / 44–52 / 52–60
+  T7–T1: 10–15 / 15–20 / 20–28 / 28–36 / 36–44 / 44–52 / 52–60
 - **`mending`** Mending — Heal X every 10 seconds, with or without food.  
   `health_recovery_flat` · flat · head, chest · defense · no group · easy · P2 · w 100  
-  T1–T7: 1 / 1–2 / 2 / 2–3 / 3 / 3–4 / 4–5  
+  T7–T1: 1 / 1–2 / 2 / 2–3 / 3 / 3–4 / 4–5  
   *Note:* The 10 s interval is a judgement call.
 - **`stout_heart`** Stout Heart — +X maximum health, but health regenerates X% slower.  
   `health_for_regen` · flat · chest · defense · group `max_health` · easy · P2 · w 60  
-  T1–T7: 6–10 / 10–16 / 16–22 / 22–28 / 28–36 / 36–44 / 44–52  
+  T7–T1: 6–10 / 10–16 / 16–22 / 22–28 / 28–36 / 36–44 / 44–52  
   *Note:* Trade ratio (health doubled vs the Vigor curve, regen loss equal to the health gained) is a judgement call.
 - **`second_wind`** Second Wind — Stamina regenerates X% faster. **[Phase 1 pick]**  
   `stamina_recovery` · percent · head, legs · defense · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25
+  T7–T1: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25
 - **`seidr_flow`** Seidr Flow — Eitr regenerates X% faster.  
   `eitr_recovery` · percent · head, cape · defense · group `eitr_recovery` · easy · P1 · w 100  
-  T5–T7: 14–17 / 17–20 / 20–25
+  T3–T1: 14–17 / 17–20 / 20–25
 - **`restless_mind`** Restless Mind — Eitr regenerates X% faster, but maximum eitr is X/2 % lower.  
   `eitr_for_regen` · percent · head · defense · group `eitr_recovery` · easy · P2 · w 60  
-  T5–T7: 28–34 / 34–40 / 40–50
+  T3–T1: 28–34 / 34–40 / 40–50
 - **`valhallas_edge`** Valhalla's Edge — Health-critical starts X percentage points higher (adds to the 30% default).  
   `hc_threshold` · percent · head · defense · no group · easy · P2 · w 50  
-  T1–T7: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
+  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
 
 ## Armor: protection
 
@@ -1030,79 +1039,79 @@ Resistances are spread so that covering every element takes several pieces. Spir
 
 - **`hardened`** Hardened — This piece's armor is +X%. **[Phase 1 pick]**  
   `item_armor` · percent · head, chest, legs, cape · defense · group `item_armor` · easy · P1 · w 100  
-  T1–T7: 4–6 / 6–9 / 9–12 / 12–16 / 16–20 / 20–25 / 25–30
+  T7–T1: 4–6 / 6–9 / 9–12 / 12–16 / 16–20 / 20–25 / 25–30
 - **`hardened_hc`** Cornered Hide — While health-critical, this piece's armor is +X%.  
   `item_armor` · percent · chest, legs · defense · **health-critical** · group `item_armor` · easy · P2 · w 60  
-  T1–T7: 10–15 / 15–22 / 22–30 / 30–38 / 38–46 / 46–54 / 54–62
+  T7–T1: 10–15 / 15–22 / 22–30 / 30–38 / 38–46 / 46–54 / 54–62
 - **`padded`** Padded — Reduces the blunt part of every hit you take by X%.  
   `damage_taken` `blunt` · percent · chest, legs · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`mailed`** Mailed — Reduces the slash part of every hit you take by X%.  
   `damage_taken` `slash` · percent · chest, legs · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`riveted`** Riveted — Reduces the pierce part of every hit you take by X%.  
   `damage_taken` `pierce` · percent · chest, legs · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`ironclad`** Ironclad — Reduces the blunt, slash and pierce parts of every hit you take by X%.  
   `damage_taken` `physical` · percent · chest · defense · no group · easy · P2 · w 60  
-  T1–T7: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–8 / 8–10
+  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–8 / 8–10
 - **`flameward`** Flameward — Reduces the fire part of every hit you take by X%.  
   `damage_taken` `fire` · percent · chest, cape · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`frostward`** Frostward — Reduces the frost part of every hit you take by X%.  
   `damage_taken` `frost` · percent · head, cape · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`stormward`** Stormward — Reduces the lightning part of every hit you take by X%.  
   `damage_taken` `lightning` · percent · head, cape · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`venomward`** Venomward — Reduces the poison part of every hit you take by X%.  
   `damage_taken` `poison` · percent · legs, cape · defense · no group · easy · P2 · w 100  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`elemental_ward`** Elemental Ward — Reduces the fire, frost, lightning and poison parts of every hit you take by X%.  
   `damage_taken` `elemental` · percent · cape · defense · no group · easy · P2 · w 60  
-  T1–T7: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–8 / 8–10
+  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–8 / 8–10
 - **`bulwark_fire`** Fire Bulwark — You are Resistant to fire damage, the game's own modifier. Does not stack with other sources of the same resistance.  
   `resist_modifier` `fire` · flag · cape · defense · group `elemental_bulwark` · easy · P2 · w 30  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`bulwark_frost`** Frost Bulwark — You are Resistant to frost damage, the game's own modifier. Does not stack with other sources of the same resistance.  
   `resist_modifier` `frost` · flag · cape · defense · group `elemental_bulwark` · easy · P2 · w 30  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`bulwark_lightning`** Lightning Bulwark — You are Resistant to lightning damage, the game's own modifier. Does not stack with other sources of the same resistance.  
   `resist_modifier` `lightning` · flag · cape · defense · group `elemental_bulwark` · easy · P2 · w 30  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`bulwark_poison`** Poison Bulwark — You are Resistant to poison damage, the game's own modifier. Does not stack with other sources of the same resistance.  
   `resist_modifier` `poison` · flag · cape · defense · group `elemental_bulwark` · easy · P2 · w 30  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`arrowward`** Arrowward — Damage from projectiles is X% lower, whatever its type.  
   `ranged_damage_taken` · percent · chest · defense · no group · easy · P2 · w 70  
-  T1–T7: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
+  T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
 - **`mist_veil`** Mist Veil — X% chance to avoid all damage from a hit.  
   `avoid_hit` · percent · legs, cape · defense · group `avoid_hit` · easy · P2 · w 60  
-  T1–T7: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
+  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
 - **`mist_veil_hc`** Cornered Veil — While health-critical, X% chance to avoid all damage from a hit.  
   `avoid_hit` · percent · cape · defense · **health-critical** · group `avoid_hit` · easy · P2 · w 50  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`bramblehide`** Bramblehide — Melee attackers take X% of the damage they deal to you.  
   `thorns` · percent · chest · defense · no group · medium · P2 · w 70  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`runic_ward`** Runic Ward — After 10 s without taking damage, a ward absorbs the next X damage.  
   `calm_ward` · flat · chest · defense · no group · medium · P2 · w 70  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–22 / 22–28 / 28–35 / 35–45
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–22 / 22–28 / 28–35 / 35–45
 - **`resolute`** Resolute — You build up X% less stagger when hit.  
   `stagger_taken` · percent · chest, legs · defense · no group · easy · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`ironroot`** Ironroot — You are knocked back X% less by any hit.  
   `knockback_taken` · percent · legs · defense · no group · easy · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`quick_recovery`** Quick Recovery — When you are staggered you recover X% sooner.  
   `stagger_recovery` · percent · head · defense · no group · medium · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`purity`** Purity — Burning, poison and frost effects on you wear off X% faster.  
   `debuff_decay` · percent · head, chest · defense · no group · medium · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`coldblood`** Coldblood — The frost effect slows you X% less.  
   `frost_slow_taken` · percent · legs, cape · defense · no group · medium · P2 · w 70  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
 
 ## Armor: movement
 
@@ -1110,81 +1119,81 @@ Legs are the movement slot; capes take the situational ones so the legs do not h
 
 - **`fleetfoot`** Fleetfoot — You move X% faster. **[Phase 1 pick]**  
   `move_speed` · percent · legs · utility · group `move_speed` · easy · P1 · w 100  
-  T1–T7: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
+  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
 - **`fleetfoot_hc`** Cornered Flight — While health-critical, you move X% faster.  
   `move_speed` · percent · legs · utility · **health-critical** · group `move_speed` · easy · P2 · w 60  
-  T1–T7: 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16 / 16–20
+  T7–T1: 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16 / 16–20
 - **`stride`** Stride — You sprint X% faster (sprinting only).  
   `move_speed_sprint` · percent · legs · utility · group `move_speed` · easy · P2 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`ghostwalk`** Ghostwalk — You move X% faster while sneaking.  
   `move_speed_sneak` · percent · cape · utility · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`pack_mule`** Pack Mule — You move X% faster while encumbered.  
   `move_speed_encumbered` · percent · legs, cape · utility · no group · easy · P2 · w 70  
-  T1–T7: 6–10 / 10–14 / 14–18 / 18–22 / 22–26 / 26–30 / 30–36
+  T7–T1: 6–10 / 10–14 / 14–18 / 18–22 / 22–26 / 26–30 / 30–36
 - **`momentum`** Momentum — For 5 s after a dodge roll you move X% faster.  
   `move_speed_after_dodge` · percent · legs · utility · no group · easy · P2 · w 70  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`pathfinder`** Pathfinder — You move X% faster on paved roads and paths.  
   `move_speed_paved` · percent · legs · utility · no group · medium · P2 · w 60  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`mountain_goat`** Mountain Goat — Steep slopes slow you X% less.  
   `slope_penalty` · percent · legs · utility · no group · medium · P2 · w 60  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
 - **`marshstrider`** Marshstrider — Tar and shallow water slow you X% less.  
   `terrain_slow` · percent · legs · utility · no group · medium · P2 · w 60  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
 - **`strong_swimmer`** Strong Swimmer — You swim X% faster and swimming costs X% less stamina.  
   `swimmer` · percent · cape · utility · no group · easy · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`spring_heeled`** Spring-Heeled — You jump X% higher.  
   `jump_height` · percent · legs · utility · no group · easy · P1 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`soft_landing`** Soft Landing — Fall damage you take is X% lower. **[Phase 1 pick]**  
   `fall_damage_taken` · percent · legs, cape · defense · group `fall` · easy · P1 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–35 / 35–40
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–35 / 35–40
 - **`ravens_glide`** Raven's Glide — You fall slowly and take no fall damage.  
   `slow_fall` · flag · cape · utility · group `fall` · easy · P2 · w 30  
-  gate T4 (rolls at T4–T7, no value)
+  gate T4 (rolls at T4–T1, no value)
 - **`long_wind`** Long Wind — Sprinting costs X% less stamina.  
   `run_stamina_cost` · percent · legs · utility · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`light_leap`** Light Leap — Jumping costs X% less stamina.  
   `jump_stamina_cost` · percent · legs · utility · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`nimble`** Nimble — Dodge rolls cost X% less stamina.  
   `dodge_stamina_cost` · percent · legs, cape · defense · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
+  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 
 ## Armor: stealth and environment
 
 - **`soft_tread`** Soft Tread — The noise you make is X% quieter.  
   `noise_made` · percent · legs, cape · utility · no group · easy · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`shadowmeld`** Shadowmeld — While sneaking you are X% harder to see.  
   `stealth` · percent · head, cape · utility · no group · easy · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`ashen_skin`** Ashen Skin — Heat builds up on you X% slower (Ashlands heat).  
   `heat_resist` · percent · chest, cape · defense · no group · easy · P2 · w 100  
-  T5–T7: 20–25 / 25–30 / 30–35  
-  *Note:* Tiers 5-7: heat only matters in the Ashlands; the tier-7 top is the point of it.
+  T3–T1: 20–25 / 25–30 / 30–35  
+  *Note:* Tiers 3-1: heat only matters in the Ashlands; the tier-1 top is the point of it.
 - **`emberheart`** Emberheart — You never become Cold. Freezing still applies.  
   `cold_immunity` · flag · chest, cape · defense · no group · medium · P2 · w 40  
-  gate T2 (rolls at T2–T7, no value)
+  gate T6 (rolls at T6–T1, no value)
 - **`winterborn`** Winterborn — You never become Freezing, as if a frost resistance mead were always active.  
   `freeze_immunity` · flag · chest, cape · defense · no group · easy · P2 · w 25  
-  gate T5 (rolls at T5–T7, no value)  
-  *Note:* Regular pool, tiers 5-7 (Plains onward, after the Mountain is done). The pool also floated it as a Mythic candidate; it stays regular (`../DECISIONS.md` AFX-6).
+  gate T3 (rolls at T3–T1, no value)  
+  *Note:* Regular pool, tiers 3-1 (Plains onward, after the Mountain is done). The pool also floated it as a Mythic candidate; it stays regular (`../DECISIONS.md` AFX-6).
 - **`oilskin`** Oilskin — Rain never makes you Wet. Going into water still does.  
   `rain_shield` · flag · head, cape · utility · group `wet` · medium · P2 · w 40  
-  gate T2 (rolls at T2–T7, no value)
+  gate T6 (rolls at T6–T1, no value)
 - **`sealegs`** Sealegs — Being Wet does not slow your regeneration.  
   `ignore_wet` · flag · chest · utility · group `wet` · medium · P2 · w 40  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`hearthlight`** Hearthlight — You give off a soft light that others can see.  
   `light_aura` · flag · head · utility · no group · medium · P2 · w 40  
-  gate T1 (rolls at T1–T7, no value)
+  gate T7 (rolls at T7–T1, no value)
 
 ## Utility: armor and utility items
 
@@ -1192,62 +1201,62 @@ Carry, pickup, discovery, comfort and the economy affixes. Utility items (belts 
 
 - **`broad_back`** Broad Back — +X carrying capacity. **[Phase 1 pick]**  
   `carry_capacity` · flat · chest, utility · utility · no group · easy · P1 · w 100  
-  T1–T7: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–75
+  T7–T1: 10–15 / 15–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–75
 - **`magpie`** Magpie — Items are picked up from X% farther away.  
   `pickup_radius` · percent · cape, utility · utility · no group · easy · P1 · w 100  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
 - **`huginns_eye`** Huginn's Eye — The map reveals X% farther around you.  
   `explore_radius` · percent · head, utility · utility · no group · easy · P1 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`mistbane`** Mistbane — Your mist-clearing light clears X% farther.  
   `demist_radius` · percent · head, utility · utility · no group · medium · P2 · w 70  
-  T6–T7: 30–40 / 40–50  
+  T2–T1: 30–40 / 40–50  
   *Note:* Tiers 6-7: the mist exists only in the Mistlands.
 - **`hearthbound`** Hearthbound — +X comfort while you rest.  
   `rest_comfort` · flat · chest, cape, utility · utility · no group · easy · P2 · w 60  
-  T3–T7: 1 / 1 / 1–2 / 1–2 / 2
+  T5–T1: 1 / 1 / 1–2 / 1–2 / 2
 - **`gourmand`** Gourmand — Food you eat lasts X% longer.  
   `food_duration` · percent · chest, utility · utility · no group · easy · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`soulbound`** Soulbound — Skills lose X% less on death.  
   `skill_loss` · percent · head, utility · utility · no group · easy · P2 · w 70  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
 - **`mimirs_insight`** Mimir's Insight — All skills level up X% faster.  
   `skill_gain` `All` · percent · head, utility · utility · no group · easy · P1 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`brewers_haste`** Brewer's Haste — The cooldown after drinking a mead is X% shorter.  
   `mead_cooldown` · percent · head, utility · utility · no group · medium · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`forsaken_favour`** Forsaken Favour — Your forsaken power recharges X% faster.  
   `forsaken_cooldown` · percent · head, utility · utility · no group · easy · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`reflex_draught`** Reflex Draught — When you become health-critical you drink your best healing mead automatically.  
   `auto_mead` · flag · chest, utility · defense · **health-critical** · group `mead_critical` · medium · P2 · w 30  
-  gate T2 (rolls at T2–T7, no value)
+  gate T6 (rolls at T6–T1, no value)
 - **`swift_draught`** Swift Draught — While health-critical, healing meads heal all at once instead of over time.  
   `mead_burst` · flag · utility · defense · **health-critical** · group `mead_critical` · medium · P2 · w 30  
-  gate T3 (rolls at T3–T7, no value)
+  gate T5 (rolls at T5–T1, no value)
 - **`norns_favour`** Norns' Favour — Magic gear dropped by enemies you kill rolls a higher rarity X% more often.  
   `find_rarity` · percent · head, utility · utility · no group · medium · P2 · w 50  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`fateweaver`** Fateweaver — Enemies you kill are X% more likely to drop an extra stone.  
   `find_stones` · percent · head, utility · utility · no group · medium · P2 · w 50  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`trophy_taker`** Trophy Taker — Enemies you kill drop their trophy X% more often.  
   `find_trophy` · percent · utility · utility · no group · medium · P2 · w 70  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`hoardfinder`** Hoardfinder — Enemies you kill drop coins and treasure X% more often.  
   `find_coins` · percent · utility · utility · no group · medium · P2 · w 70  
-  T1–T7: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`harvester`** Harvester — X% chance for plants you pick to yield double.  
   `yield_pickable` · percent · utility · utility · no group · medium · P2 · w 100  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 - **`beast_whisperer`** Beast Whisperer — Creatures you are taming tame X% faster.  
   `taming_speed` · percent · cape, utility · utility · no group · medium · P2 · w 70  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100
 - **`fair_winds`** Fair Winds — A ship you steer sails X% faster.  
   `sail_speed` · percent · cape, utility · utility · no group · medium · P2 · w 70  
-  T1–T7: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
+  T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
 
 ## Tools
 
@@ -1255,14 +1264,14 @@ Build, repair and gathering. The tool skill affixes (Miner's, Angler's Mastery, 
 
 - **`builders_reach`** Builder's Reach — While this tool is in hand you can build and repair X% farther away. **[Phase 1 pick]**  
   `build_range` · percent · tool · utility · no group · easy · P1 · w 100  
-  T1–T7: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100 · requires traits builds
+  T7–T1: 10–20 / 20–30 / 30–40 / 40–50 / 50–60 / 60–80 / 80–100 · requires traits builds
 - **`tireless_hands`** Tireless Hands — Building, repairing, tilling and planting cost X% less stamina.  
   `home_item_stamina_cost` · percent · tool · utility · no group · easy · P1 · w 100  
-  T1–T7: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25 · requires traits builds  
+  T7–T1: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25 · requires traits builds  
   *Note:* Ours, not in the pool: added because tools otherwise have too few sane affixes to fill a Rare.
 - **`deep_vein`** Deep Vein — Rock and ore you break drop X extra of their resource.  
   `yield_mining` · flat · tool · utility · no group · medium · P2 · w 70  
-  T1–T7: 1 / 1 / 1–2 / 1–2 / 1–2 / 2 / 2–3 · requires skill Pickaxes
+  T7–T1: 1 / 1 / 1–2 / 1–2 / 1–2 / 2 / 2–3 · requires skill Pickaxes
 
 ---
 
@@ -1296,7 +1305,7 @@ family and chosen so each is a single postfix or a single aggregate override:
 the twelve picks, every item class has one to three candidates, so nothing past Rare could be made and a Legendary
 drop could never roll. Phase 1 therefore also enables a **fill-out**: affixes whose effect rides a patch point the
 picks already need (the same postfix or the same aggregate override with another channel), so they cost channel
-entries rather than new hooks. Effects in the fill-out, with their affixes:
+entries rather than new hooks. Effects in the fill-out, with their inscriptions:
 
 - `brand_damage`: `rimebrand`, `stormbrand`, `venombrand`, `spiritbrand`, `bonebreaker`, `keen_edge`, `needlepoint`
 - `item_durability`: `well_forged`

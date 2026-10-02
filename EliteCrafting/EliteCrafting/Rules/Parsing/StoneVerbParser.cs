@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using EliteCrafting.Items;
 using YamlDotNet.RepresentationModel;
 
 namespace EliteCrafting.Rules
 {
-    /// <summary>The verb-specific stone fields: corrupt outcomes, gamble weights, duplicate, lock, quality, sigil, imbue.</summary>
+    /// <summary>
+    /// The verb-specific stone fields: corrupt outcomes, gamble weights, duplicate, lock, quality, sigil, imbue, and the
+    /// socket, gem and catalyse verbs of sockets.md.
+    /// </summary>
     internal static class StoneVerbParser
     {
         public static void Read(MapReader r, StoneDef stone)
@@ -18,22 +22,64 @@ namespace EliteCrafting.Rules
             stone.Steer = r.Enum("steer", SigilSteer.None);
             stone.SteerCategory = r.Has("category") ? r.Enum("category", AffixCategory.Utility) : (AffixCategory?)null;
             stone.Family = r.Id("family");
+            stone.MaxSockets = r.Int("max_sockets", 2, 1, StoneDef.SocketLimit);
+            stone.GemAffixes = ReadGemAffixes(r);
             Check(r, stone);
+            CheckSockets(r, stone);
             CheckFamily(r, stone);
         }
 
-        // essences.md section 11: imbue needs a family (whether it exists is checked once every section is read).
+        // essences.md section 11, sockets.md section 8: imbue and catalyse need a family, a gem may name one (whether
+        // it exists is checked once every section is read).
         private static void CheckFamily(MapReader r, StoneDef stone)
         {
-            if (stone.Verb == StoneVerb.Imbue && stone.Family == null && !r.Has("family"))
+            bool needs = stone.Verb == StoneVerb.Imbue || stone.Verb == StoneVerb.Catalyse;
+            if (needs && stone.Family == null && !r.Has("family"))
             {
-                r.Issues.Error(r.At("family"), r.Map, "an imbue stone needs family: an essence_families id");
+                r.Issues.Error(r.At("family"), r.Map, "an imbue or catalyse stone needs family: an essence_families id");
             }
-            if (stone.Verb != StoneVerb.Imbue && stone.Family != null)
+            if (!needs && stone.Verb != StoneVerb.Gem && stone.Family != null)
             {
-                r.Warn("family", "only an imbue stone has a family; ignored");
+                r.Warn("family", "only imbue, gem and catalyse stones have a family; ignored");
                 stone.Family = null;
             }
+        }
+
+        private static void CheckSockets(MapReader r, StoneDef stone)
+        {
+            if (stone.Verb == StoneVerb.Gem && stone.GemAffixes.Count == 0)
+            {
+                r.Issues.Error(r.At("inscriptions"), r.Map, "a gem needs inscriptions: a map of item slot to inscription id");
+            }
+            if (stone.Verb == StoneVerb.Catalyse && stone.Cap < stone.Step)
+            {
+                r.Issues.Error(r.Path, r.Map, "a catalyst needs cap at least step");
+            }
+        }
+
+        // gem (sockets.md section 4): item slot -> the affix id the gem gives there.
+        private static Dictionary<ItemSlot, string> ReadGemAffixes(MapReader r)
+        {
+            Dictionary<ItemSlot, string> affixes = new Dictionary<ItemSlot, string>();
+            MapReader? sub = r.Sub("inscriptions");
+            if (sub == null)
+            {
+                return affixes;
+            }
+            MapReader map = sub.Value;
+            foreach (KeyValuePair<string, YamlNode> pair in YamlLists.Pairs(map.Map))
+            {
+                string? id = map.Id(pair.Key);
+                if (!ItemSlots.TryParse(pair.Key, out ItemSlot slot))
+                {
+                    map.Error(pair.Key, "is not a slot");
+                }
+                else if (id != null)
+                {
+                    affixes[slot] = id;
+                }
+            }
+            return affixes;
         }
 
         private static void Check(MapReader r, StoneDef stone)
