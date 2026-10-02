@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.1
+
+- Fixed: no more "LiberationSans SDF Font Asset was not found" warnings from the skill book and the fishing tension bar.
+
 ## 0.12.0
 
 - Sailing: Wind Call (level 25): K aboard turns the ship's wind to blow where you look, for 60 s.

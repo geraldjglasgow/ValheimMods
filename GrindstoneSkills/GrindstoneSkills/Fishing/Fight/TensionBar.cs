@@ -90,9 +90,12 @@ namespace GrindstoneSkills
 
         private static TMP_Text Label(RectTransform root, Hud hud)
         {
-            TextMeshProUGUI text = Rect("label", root, Vector2.zero, new Vector2(Width, LabelHeight)).gameObject.AddComponent<TextMeshProUGUI>();
+            GameObject go = Rect("label", root, Vector2.zero, new Vector2(Width, LabelHeight)).gameObject;
+            go.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
+            TextMeshProUGUI text = go.AddComponent<TextMeshProUGUI>();
             if (hud.m_hoverName != null)
                 text.font = hud.m_hoverName.font;
+            go.SetActive(true);
             text.fontSize = 16f;
             text.alignment = TextAlignmentOptions.Bottom;
             text.color = Color.white;

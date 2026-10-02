@@ -31,7 +31,7 @@ namespace GrindstoneSkills
             TMP_Text bodyFont = Utils.FindChild(entry, "leveltext").GetComponent<TMP_Text>();
             book.Level = LevelLine(pane, bodyFont);
             Rule(pane);
-            book.Scroll = Scroll(pane, dialog.skillListScrollRect, out TMP_Text body);
+            book.Scroll = Scroll(pane, dialog.skillListScrollRect, bodyFont.font, out TMP_Text body);
             book.Body = Body(body, bodyFont);
             book.Scroll.verticalScrollbar = PaneScrollbar.Build(pane, dialog.scrollbar, BarWidth, Padding, HeaderHeight);
             book.Tips = InventoryGui.instance != null ? LinkTips.On(InventoryGui.instance, book.Body) : null;
@@ -99,7 +99,7 @@ namespace GrindstoneSkills
             line.raycastTarget = false;
         }
 
-        private static ScrollRect Scroll(RectTransform pane, ScrollRect like, out TMP_Text body)
+        private static ScrollRect Scroll(RectTransform pane, ScrollRect like, TMP_FontAsset font, out TMP_Text body)
         {
             RectTransform area = Part("scroll", pane);
             area.anchorMin = Vector2.zero;
@@ -113,7 +113,7 @@ namespace GrindstoneSkills
             viewport.gameObject.AddComponent<RectMask2D>();
             viewport.gameObject.AddComponent<Image>().color = Color.clear;
             RectTransform content = Part("text", viewport);
-            body = content.gameObject.AddComponent<TextMeshProUGUI>();
+            body = NewText(content, font);
             ScrollRect scroll = area.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = viewport;
             scroll.content = content;
@@ -143,9 +143,19 @@ namespace GrindstoneSkills
 
         private static TMP_Text TextLike(TMP_Text source, RectTransform part)
         {
-            TMP_Text text = part.gameObject.AddComponent<TextMeshProUGUI>();
+            TMP_Text text = NewText(part, source.font);
             Copy(source, text);
             text.raycastTarget = false;
+            return text;
+        }
+
+        /// <summary>A text on the part that wakes with its font already set, so it never looks for TextMeshPro's missing default.</summary>
+        private static TMP_Text NewText(RectTransform part, TMP_FontAsset font)
+        {
+            part.gameObject.SetActive(false);
+            TMP_Text text = part.gameObject.AddComponent<TextMeshProUGUI>();
+            text.font = font;
+            part.gameObject.SetActive(true);
             return text;
         }
 
