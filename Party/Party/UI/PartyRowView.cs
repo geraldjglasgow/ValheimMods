@@ -132,8 +132,10 @@ namespace Party.UI
             // Twice the font size, not NameHeight(): TMP's Ellipsis mode drops the whole line when the
             // font's line height exceeds the rect, which made names vanish in a FontSize + 6 box.
             rect.sizeDelta = new Vector2(width, PartyConfig.FontSize.Value * 2f);
+            go.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
             TextMeshProUGUI text = go.AddComponent<TextMeshProUGUI>();
             text.font = PartyFont.Get();
+            go.SetActive(true);
             text.fontSize = PartyConfig.FontSize.Value;
             text.color = Color.white;
             text.textWrappingMode = TextWrappingModes.NoWrap;

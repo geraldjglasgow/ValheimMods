@@ -114,8 +114,10 @@ namespace Party.UI
             titleGo.transform.SetParent(parent, false);
             RectTransform rect = titleGo.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+            titleGo.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
             titleText = titleGo.AddComponent<TextMeshProUGUI>();
             titleText.font = PartyFont.Get();
+            titleGo.SetActive(true);
             titleText.color = Color.white;
             titleText.fontStyle = FontStyles.Bold;
             titleText.textWrappingMode = TextWrappingModes.NoWrap;
