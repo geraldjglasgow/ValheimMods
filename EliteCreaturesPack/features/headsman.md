@@ -3,11 +3,11 @@
 Status: **in the mod, untested in game** (2026-09-29): the Crypt Executioner (`ECP_Headsman`), its spawner in
 burial chambers, the raised skeleton, the axehead and the players' Executioner's Greataxe, sections `25 - Crypt
 Executioner` and `26 - Executioner Greataxe`. Code in `EliteCreaturesPack/Headsman`; workshop:
-`AssetWorkshop/assets/ecp_headsman` (`build.ps1 [-Open] [-Stills] [-SkipUnity] [-Player] [-Bundle] [-Install]`) and
-`AssetWorkshop/unity/Assets/Editor/Headsman`, `.../Greataxe`; the Blender previews are
+`../ValheimAssets/Assets/Creatures/Executioner/ecp_headsman` (`build.ps1 [-Open] [-Stills] [-SkipUnity] [-Player] [-Bundle] [-Install]`) and
+`../ValheimAssets/Tools/Unity/Assets/Editor/Headsman`, `.../Greataxe`; the Blender previews are
 `out/blender/headsman_moves.blend` and the player's `out/player/greataxe_player.blend`.
 
-The game's Skeleton, 1.25 times its size, carrying the bone greataxe (`AssetWorkshop/assets/ecp_bone_greataxe`, made
+The game's Skeleton, 1.25 times its size, carrying the bone greataxe (`../ValheimAssets/Assets/Weapons/SkeletonArsenal/ecp_bone_greataxe`, made
 with ChatGPT; the user's favourite) in both fists: the right fist on the upper grip seat, the left on the lower. It
 stands, walks and runs with the axe at a ready hold across the front, head by the right shoulder, edge to the enemy.
 
@@ -47,7 +47,7 @@ the rest 30).
 - Re-forming axe (user, 2026-09-29): no swirling rocks. It starts small and ghostly - pale, whitish, greenish,
   bluish, half see-through - and stays so for 0.5 s (`HeadsmanGhost.Hold`); then, as it grows to full size, its pieces
   turn to their own colour one at a time and quickly, from the bottom vertebra of the haft up to the top of the head
-  (`AssetWorkshop/assets/ecp_headsman/blender_reveal.py`). A light at the grip and a ring on the ground stay.
+  (`../ValheimAssets/Assets/Creatures/Executioner/ecp_headsman/blender_reveal.py`). A light at the grip and a ring on the ground stay.
 - The thrown axe flies straight at 16 m/s (preview), the overhand throw tumbling forward (head over the top), the
   spin throw turning flat the way the boss spun.
 - Summon (user, 2026-09-29): the axe breaks into its own pieces (22 vertebrae, blade shards, the hooked back piece in
@@ -63,7 +63,7 @@ the rest 30).
 - Sounds (user: overdone, "lobster too buttery"; then "way too much bass for what is going on"; then, of sounds
   synthesized from scratch, "comically bad ... cartoon noises, they don't fit Valheim at all"): few, quiet, and real
   Valheim recordings chosen for the event's size, never synthesized. The game's troll/sledge swings and impacts are
-  70-93 % of their energy below 80 Hz, so each cue is a recipe (`AssetWorkshop/assets/ecp_headsman/sfx.py`): the
+  70-93 % of their energy below 80 Hz, so each cue is a recipe (`../ValheimAssets/Assets/Creatures/Executioner/ecp_headsman/sfx.py`): the
   Skeleton's own melee swing for the swings (cut short on the slam, ending as the blow lands), the player's spear
   throw for the throw, the game's axe hit with the hoe biting into dirt for the slam (no rubble: the user), the
   player's battleaxe hit for the rear strike, the hoe and cultivator in soil for the scrape, Fader's fissure pillars (two, the second further out) with rock
@@ -99,7 +99,7 @@ the rest 30).
   240 Hz, a skeleton's sword swing for the spin, the sledge's swing for the overhead) was thin hiss with the body gone;
   user: "they don't sound like they belong in valheim" (2026-09-29).
 - Preview before anything ships (user: "show me the player character in its states with the axe, and attacking"):
-  `AssetWorkshop/assets/ecp_headsman/build.ps1 -Player -Open` - every stance (idle, walk, jog, run, crouch, sneak,
+  `../ValheimAssets/Assets/Creatures/Executioner/ecp_headsman/build.ps1 -Player -Open` - every stance (idle, walk, jog, run, crouch, sneak,
   block, jump) and the combo from over the shoulder, the front and the side, with sounds; `-Player -Combo -Open` only
   the combo. The overhead is the user's pick, the Battleaxe's third swing (the sledge's smash was the other candidate).
 
@@ -122,7 +122,7 @@ the rest 30).
   its pieces `HeadsmanShards`), the raised skeleton (`HeadsmanSummon`, `ECP_HeadsmanSkeleton`, a copy of
   `Skeleton_NoArcher` with no drops) and its forming (`HeadsmanRising`, bones split per mesh by `HeadsmanBones`).
 - `Sound/`: the cues played from the game's clips (`HeadsmanSounds`, `HeadsmanVoice`) by the table
-  `HeadsmanSoundTable.cs`, which `AssetWorkshop/assets/ecp_headsman/sfx_table.py` writes from the preview's recipes
+  `HeadsmanSoundTable.cs`, which `../ValheimAssets/Assets/Creatures/Executioner/ecp_headsman/sfx_table.py` writes from the preview's recipes
   (build.ps1 runs it; do not edit the table by hand).
 - `Greataxe/`: the axehead and greataxe items (`GreataxeItems`, `GreataxeLook`), the recipe, the player's override
   and left-hand grip (`GreataxeAnimations`, `GreataxeGrip`,

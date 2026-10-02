@@ -3,7 +3,7 @@
 A dev-only BepInEx plugin that lets an agent (or a script) see and drive the running game over HTTP on localhost:
 screenshots, the live UI tree, clicks, key presses, mouse, console commands, the log, reflection on any object, and
 the ZDOs of nearby objects. It exists to test the mods in this workspace in the real game, and to look at new assets
-from `AssetWorkshop` there: load a freshly built bundle, stand its models beside the game's own under the game's
+from `ValheimAssets` there: load a freshly built bundle, stand its models beside the game's own under the game's
 lighting and shaders, play its effects and sounds, frame it all for a screenshot, then rebuild and reload without
 restarting the game (see "A stage for new assets").
 
@@ -84,7 +84,7 @@ Area and custom damage have no shape to draw; their hits still get the yellow li
 
 ## A stage for new assets
 
-The stage shows an asset from `AssetWorkshop` in the running game, next to the game's comparable assets, lit and
+The stage shows an asset from `ValheimAssets` in the running game, next to the game's comparable assets, lit and
 shaded the way the game does it, with no mod code and no restart for each change. Everything on it is local to this
 machine: nothing is networked, saved or seen by other players, and logging out removes it. It lives under one
 `DevBridge_Stage` object in the world scene (`/ui?path=DevBridge_Stage&depth=3` shows it).
@@ -155,9 +155,9 @@ moves the world's clock for everyone, so it is not used here.
 
 ```
 B=http://127.0.0.1:7780
-W=C:/Users/gglasgow/projects/ValheimMods/AssetWorkshop
+W=C:/Users/gglasgow/projects/ValheimAssets
 S=<session scratchpad>
-.\build.ps1 -Asset ecp_battleaxe_bone -Bundle ecp_preview          # in AssetWorkshop: model, bake, bundle
+.\build.ps1 -Asset ecp_battleaxe_bone -Bundle ecp_preview          # in ValheimAssets: model, bake, bundle
 curl -s "$B/wait?for=player&timeout=300"                           # the user has the LocalTesting profile in a world
 curl -s "$B/bundle?load=$W/out/bundles/ecp_preview.windows"        # its assets by type: triangles, textures, clips
 curl -s "$B/place?asset=ecp_battleaxe_bone&dress=Creature"         # 4 m ahead, facing the player, in the game's shader

@@ -3,7 +3,7 @@
 One feature of the mod, specified on its own. The other feature files sit beside it.
 
 This file covers the crypt mimic: a new creature that poses as a crypt chest, bites whoever opens it, then hops after
-them and lunges. Its model, rig and animations come from the workspace's `AssetWorkshop` (Blender, then Unity) and
+them and lunges. Its model, rig and animations come from the asset workshop `../ValheimAssets` (Blender, then Unity) and
 ship in the plugin as an embedded asset bundle; the chest itself and every texture are the game's own, borrowed at
 runtime. The design was settled with the user on 2026-09-27; the animations were reviewed in Blender and Unity first.
 

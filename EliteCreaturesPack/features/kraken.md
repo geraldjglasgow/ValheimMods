@@ -7,7 +7,7 @@ catch you and it grabs the ship from below, holds it still, and fights the crew 
 across the deck one at a time, then its head beside the ship biting at the rail and squirting ink. Its body is the
 game's sea serpent (for swimming, sync, sounds, hit effects) wearing the kraken's own model; everything it does is
 drawn by the mod's code, not by animation clips. The head, the long tentacle and the screen's ink splats come from the
-workspace's `AssetWorkshop` (`assets/ecp_kraken`) and ship in the plugin as an embedded asset bundle.
+asset workshop `../ValheimAssets` (`Assets/Creatures/Kraken/ecp_kraken`) and ship in the plugin as an embedded asset bundle.
 
 Asked for on 2026-09-28: "players need to be able to escape it on their ship; if they fight it, the kraken goes under
 the ship, stops it, then does tentacle attacks across the ship. The tentacles shouldn't be too thick on the ends so
@@ -164,7 +164,7 @@ Asked for by the user, 2026-09-28: "the kraken beak and raw tentacle. The beak s
 a little larger in game. It should also drop 5 to 7 raw tentacle meat. The tentacle meat can be cooked into the cooked
 version, and the beak can be crafted into a kraken shield, which does a fair amount of damage to any creature you
 parry. The meat should give better stats than cooked serpent meat, and the shield better stats than the serpent
-shield." The models and icons were made outside the workshop's own scripts (AssetWorkshop `assets/kraken_beak_set`,
+shield." The models and icons were made outside the workshop's own scripts (ValheimAssets `Assets/Creatures/Kraken/kraken_beak_set`,
 `assets/kraken_food`) and bundled as `ecp_kraken_loot`.
 
 - **Kraken beak** (`ECP_KrakenBeak`): a crafting material, stack 10, weight 3. The dropped beak is drawn 1.3 times the
@@ -330,5 +330,5 @@ there:
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-28 | At the user's request: the kraken's own loot (section 7a): beak (1, drawn 1.3x), raw tentacle (5-7, cooks where serpent meat cooks), cooked tentacle (80/28/4/30 min), the Kraken shield (forge 3: 10 fine wood, 5 silver, beak) whose parry bites (`Shield Parry Damage` 60 +10 a level); serpent meat drop removed. Bundle `ecp_kraken_loot` (four models, four icons) built with the workshop's `build.ps1 -SkipBlender`; bundles now carry `<asset>_icon.png` as sprites. Build clean, 33 patch classes verified offline. Not yet seen in game. | |
-| 2026-09-28 | At the user's request: the head comes up 1.8 m from the hull (was 2.8) so the crew can melee it, grips move to either side of it; ink spat from the mouth; livelier tentacles (per-tentacle shape, breathing curl, tip flick, rise straight then curl, whip-like strikes, writhing on deck); any ship (hull measure falls back to all solid colliders, capped by the float box). Blender preview `AssetWorkshop/assets/ecp_kraken/fight.py` (the mod's motion ported) with the game's own ships via the new `workshop.prefab`. | |
-| 2026-09-28 | Built: the creature on the sea serpent, the hunt, the grip, both phases, the ink with its screen splats, the corpse, the spawn entry and the `5 - Kraken` section; the model in AssetWorkshop (`assets/ecp_kraken`). Build clean, 29 patch classes verified offline. | |
+| 2026-09-28 | At the user's request: the head comes up 1.8 m from the hull (was 2.8) so the crew can melee it, grips move to either side of it; ink spat from the mouth; livelier tentacles (per-tentacle shape, breathing curl, tip flick, rise straight then curl, whip-like strikes, writhing on deck); any ship (hull measure falls back to all solid colliders, capped by the float box). Blender preview `../ValheimAssets/Assets/Creatures/Kraken/ecp_kraken/fight.py` (the mod's motion ported) with the game's own ships via the new `workshop.prefab`. | |
+| 2026-09-28 | Built: the creature on the sea serpent, the hunt, the grip, both phases, the ink with its screen splats, the corpse, the spawn entry and the `5 - Kraken` section; the model in ValheimAssets (`Assets/Creatures/Kraken/ecp_kraken`). Build clean, 29 patch classes verified offline. | |

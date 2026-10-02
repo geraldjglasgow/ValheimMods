@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "pale": {"primary": "tint:#6e7a80", "secondary": "tint:#8a94a0", "glow": "tint:#5ab4e0", "eyes": "tint:#9ad8ff"},
-    "ember": {"primary": "tint:#2e2622", "secondary": "tint:#7a3a1c", "glow": "tint:#ff8a1e", "trim": "tint:#c8762a"},
-    "venom": {"primary": "tint:#3a3a1e", "secondary": "tint:#4e5a26", "glow": "tint:#9ad02a", "eyes": "tint:#e0d040"}
-  }
-}

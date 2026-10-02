@@ -1,8 +1,0 @@
-# The workshop's sound tools (AssetWorkshop/sfx and AssetWorkshop/codex/measure/sfx*.py), installed into
-# AssetWorkshop/out/venv:
-#   python -m venv AssetWorkshop/out/venv
-#   AssetWorkshop/out/venv/Scripts/python -m pip install -r AssetWorkshop/sfx/requirements.txt
-# scipy is deliberately absent: Windows Application Control blocks its compiled modules on this machine.
-numpy>=2.0
-Pillow>=10.0
-soundfile>=0.12

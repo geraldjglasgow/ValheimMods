@@ -25,7 +25,7 @@ the user's wish; its numbers are fixed in code), `25 - Crypt Executioner`, `26 -
 | Status effects | `ECP_KrakenInk` (the ink's screen splats; kept in every ObjectDB by `Kraken/Ink/InkStatus`) |
 | ZDO / RPC / global keys | `ecp_mimic_swap`, `ecp_mimic_chest`, `ecp_mimic_open`, `ecp_disguised`, `ecp_rime_plates`, `ecp_rime_wave`, global `ecp_rimegiant_<region>`; kraken ZDO `ecp_kraken_phase`, `ecp_kraken_ship`, `ecp_kraken_anchor`, `ecp_kraken_side`, `ecp_kraken_along`, RPCs `ecp_kraken_slam`, `ecp_kraken_bite`, `ecp_kraken_ink`, `ecp_kraken_flinch`; the Executioner's `ecp_hs_hit`, `ecp_hs_summon`, `ecp_hs_raised` (the shatter), `ecp_hs_rise` (the raised skeleton), `ecp_hs_chamber` (a burial chamber rolled), `ecp_hs_cue` (a swing sound's moment), global key `ecp_headsman_off` (never set: blocks the spawners while it is off) |
 | Words | `enemy_ecp_*`, `item_ecp_*` (the kraken's loot: `item_ecp_krakenbeak`, `_krakenmeat`, `_krakenmeatcooked`, `_shieldkraken`; the crossbowman's `item_ecp_skeletoncrossbow`; the players' `item_ecp_bonecrossbow` and `_description`; the arsenal's `enemy_ecp_skeleton<title>`, `item_ecp_bone<weapon>`, `item_ecp_spine`, `item_ecp_arrowbone`, each item with `_description`; the Executioner's `enemy_ecp_headsman`, `item_ecp_headsman_<attack>`, `item_ecp_executionergreataxe`, `item_ecp_executioneraxehead` and their `_description`), `se_ecp_*`, added in each creature's `*Words` |
-| Asset bundles | `ecr_cryptmimic`, `ecr_slinger`, `ecr_rimegiant`, `ecp_kraken`, `ecp_kraken_loot` (four item models and their icon sprites), `ecp_crossbowman` (the crossbowman's kit, its bolt and five clips; the Bone Crossbow's unloaded, loaded and rigged models (`ecp_xbow_item_rig`: string halves and markers, moved by `XbowPlayerRig`), its players' reload clips `ecp_xbow_player_reload` and `_done`, and icon sprite), `ecp_skel_arsenal` (the seven bone weapons, the bow a second time in the player's hold, the arrow, the spine, nine icon sprites, and the Bone Atgeir's player attacks `ecp_atgeir_player_attack0`..`2` from AssetWorkshop `Assets/BundleExtras`), `ecp_headsman` (the Executioner's kit and animator, the axe in 29 pieces, the players' held greataxe and axehead, two icon sprites) in `EliteCreaturesPack/assets/bundles`, one per platform. The older bundle and asset names (`ecr_sling_*`, `ecr_rime_plate_N`, ...) keep the `ecr_` prefix they were built with: nobody sees them and renaming means rebuilding in AssetWorkshop |
+| Asset bundles | `ecr_cryptmimic`, `ecr_slinger`, `ecr_rimegiant`, `ecp_kraken`, `ecp_kraken_loot` (four item models and their icon sprites), `ecp_crossbowman` (the crossbowman's kit, its bolt and five clips; the Bone Crossbow's unloaded, loaded and rigged models (`ecp_xbow_item_rig`: string halves and markers, moved by `XbowPlayerRig`), its players' reload clips `ecp_xbow_player_reload` and `_done`, and icon sprite), `ecp_skel_arsenal` (the seven bone weapons, the bow a second time in the player's hold, the arrow, the spine, nine icon sprites, and the Bone Atgeir's player attacks `ecp_atgeir_player_attack0`..`2` from ValheimAssets `Assets/BundleExtras`), `ecp_headsman` (the Executioner's kit and animator, the axe in 29 pieces, the players' held greataxe and axehead, two icon sprites) in `EliteCreaturesPack/assets/bundles`, one per platform. The older bundle and asset names (`ecr_sling_*`, `ecr_rime_plate_N`, ...) keep the `ecr_` prefix they were built with: nobody sees them and renaming means rebuilding in ValheimAssets |
 
 Prefab names are hashed into saved worlds: never rename one after a release.
 
@@ -66,7 +66,7 @@ EliteCreaturesPack/
 ```
 
 The kraken has no animation clips: everything it does is posed in code each frame. `Kraken/Motion` depends on nothing
-but UnityEngine, so it can be dropped into the AssetWorkshop Unity project to preview poses. Its AI is the serpent's
+but UnityEngine, so it can be dropped into the ValheimAssets Unity project to preview poses. Its AI is the serpent's
 MonsterAI with `UpdateAI` replaced by `KrakenBrain.Think` (a prefix returning false); while it holds a ship its body is
 kinematic and placed by the owner, and `Character.UpdateMotion` is skipped. The head's and tentacles' hit boxes are on
 the game's `hitbox` layer (hit by attacks, collide with nothing) under a kinematic body of their own.
@@ -78,7 +78,7 @@ Since 2026-09-30 it counts as an arsenal skeleton (the user): switched in sectio
 (`Crossbow/XbowCreature` names them): its idle, walk and run carry the crossbow at the low ready, and the archer's two
 bow states (`bow_idle`, then `attack_bow`) play the raise-and-aim and the fire-and-reload clips. `XbowRig` times the
 string and the bolts by the `attack_bow` state's normalized time against the fire clip's seconds (the constants mirror
-AssetWorkshop `Crossbow/XbowClips`; change both together). The Bone Crossbow (`XbowItem`) is a copy of the game's
+ValheimAssets `Crossbow/XbowClips`; change both together). The Bone Crossbow (`XbowItem`) is a copy of the game's
 Arbalest with the bundle's two models in its `attach/Unloaded` and `attach/Loaded` slots (the game's WeaponLoadState
 swaps them), 1.25 times the crossbowmen's size; `XbowRecipe` puts it on the workbench with the cost from the config.
 
@@ -94,7 +94,7 @@ Bone Bolts, and the Executioner's Greataxe. "The arsenal" means all of them. It 
 `ecp_skel_arsenal` (built in `Arsenal/`), `ecp_crossbowman` (the Bone Crossbow and its bolts, built beside the
 crossbowman in `Crossbow/XbowItem`, `XbowBolts`, `XbowRecipe`) and `ecp_headsman` (the greataxe, built beside the
 Executioner in `Headsman/Greataxe/`); the crossbow and the greataxe share their bundles with the creatures that carry
-them, which is why their code lives beside those creatures. In AssetWorkshop, `assets/ecp_skel_arsenal/build.ps1`
+them, which is why their code lives beside those creatures. In ValheimAssets, `Assets/Weapons/SkeletonArsenal/ecp_skel_arsenal/build.ps1`
 builds all three bundles. The **arsenal skeletons** are the eight skeleton units that carry its weapons (Cutthroat,
 Swordsman, Axeman, Bonebreaker, Spearman, Halberdier, Bowman, Crossbowman), switched in section 8, which keeps the
 config name `8 - Skeleton Arsenal`; the Executioner carries the greataxe but is a boss of its own (section 25).
@@ -117,7 +117,7 @@ the haft), `Arsenal/ArsenalAtgeirHold` (the Bone Atgeir's own attacks, left hand
 `XbowPlayerRig`/`XbowPlayerHand` (the Bone Crossbow's reload clip, right hand on the stock and string, the string and
 bolts moved by the reload clip's time and the game's synced loaded flag). The override swap and the haft grip are
 shared: `Core/AnimatorSwap`, `Core/HaftGrip`, `Core/TwoBoneIk`. The workshop's player preview
-(`AssetWorkshop/unity/Assets/Editor/SkelArsenal/ArsenalPlayerBake` + `assets/ecp_skel_arsenal/player_scene.py`) plays
+(`../ValheimAssets/Tools/Unity/Assets/Editor/SkelArsenal/ArsenalPlayerBake` + `Assets/Weapons/SkeletonArsenal/ecp_skel_arsenal/player_scene.py`) plays
 the same with copies of that code.
 
 ## Elite Creatures Reborn
@@ -138,7 +138,7 @@ Optional, both ways. Only key names, a prefab name and a version cross (`Mimic/E
 
 ## Assets
 
-Built in `../AssetWorkshop`: `assets/crypt_mimic` (the mimic's rig and clips), `assets/ecr_slinger`,
+Built in `../../ValheimAssets`: `Assets/Creatures/CryptMimic/crypt_mimic` (the mimic's rig and clips), `Assets/Creatures/Slinger/ecr_slinger`,
 `assets/ecr_rimegiant`, `assets/ecp_kraken` and `assets/ecp_crossbowman` (`build.ps1 [-Preview] [-Install]`; `-Install` copies the bundles into this mod's
 `assets/bundles`). The skeleton arsenal: `assets/ecp_skel_arsenal/build.ps1 -Install -SkipBake` (models, icons, its
 bundle, then the crossbow's `ecp_crossbowman` and the greataxe's `ecp_headsman` through their own builds, install;

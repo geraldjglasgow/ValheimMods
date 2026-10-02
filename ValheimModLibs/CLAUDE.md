@@ -16,7 +16,7 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   `ModelBounds.In(model, space)` measures an inactive model's meshes; `CreatureBody.Wear` puts a workshop body made on
   a game skeleton onto a copy of that creature; `BundleEffects` dresses a workshop particle effect in the game's
   particle shaders and `EffectTint` recolours any effect copy; `SfxPrefabs` makes a mod's sound prefab from a game
-  one with the bundle's clips (or the game's own clips at other settings). Bundles come from `../AssetWorkshop`.
+  one with the bundle's clips (or the game's own clips at other settings). Bundles come from `../../ValheimAssets`.
   Consumers: EliteCreaturesPack (the crypt mimic, the greydwarf slinger, the rime giant, the kraken and its loot),
   PackPanel.
 - `LocalEffects/`: `LocalEffect.Attach(prefab, parent, position, endless, density)`, `Flash`, `FlashWhole`,

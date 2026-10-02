@@ -2,7 +2,7 @@
 
 Brings a mod's own models into the game: loads the asset bundle the mod embeds, copies game prefabs to build on,
 registers new prefabs with the game on every peer, and dresses a model in the game's own materials. The bundles come
-from the workspace's `AssetWorkshop` (Blender, then Unity); see its README.
+from the asset workshop `../ValheimAssets` (Blender, then Unity); see its README.
 
 ## Use
 
@@ -38,7 +38,7 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
 - `ModelBounds.In(model, space)` measures a model's meshes in another transform's axes (renderer bounds are empty on
   the inactive bench), for centring a bundle model in a copied game prefab.
 - `CreatureBody.Wear(creature, bundleBody, gloss)` puts a workshop body on a bench copy of a game creature: a body made
-  on an exact copy of the creature's own skeleton (AssetWorkshop, "A new body on a game skeleton"). The main body
+  on an exact copy of the creature's own skeleton (ValheimAssets, "A new body on a game skeleton"). The main body
   renderer (the one `LevelEffects.m_mainRender` names, else `VisEquipment.m_bodyModel`) takes the bundle mesh, its bind
   poses and bounds, and the creature's own bones by name in the mesh's order; sockets the creature lacks are added under
   the bones of the same names; material 0 becomes the game body's material dressed in the bundle's baked textures
@@ -53,7 +53,7 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   CreatureBody.HideOthers(creature, body);
   NetPrefabs.Register(scene, creature);
   ```
-- `BundleEffects.Prepare(bundle, name, copyName)` loads an effect built in AssetWorkshop/vfx: an inactive copy under
+- `BundleEffects.Prepare(bundle, name, copyName)` loads an effect built in ../ValheimAssets/Tools/Vfx: an inactive copy under
   the bench with its placeholder materials dressed in the game's own particle shaders (the placeholder's `VfxShader` tag
   names one; `VfxFloats`, `VfxColours`, `VfxKeywords` hold its settings; `VfxBorrow` copies a game prefab's material
   instead) and the game components its `<name>_parts` recipe lists (LightFlicker, LightLod, TimedDestruction,
@@ -76,7 +76,7 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   MaxPitch, MinVolume, MaxVolume, MaxConcurrent and Caption; set Caption for a creature's sounds, or the copy captions
   it with the original creature's name. AudioClip lives in UnityEngine.AudioModule, which this library does not
   reference: clips travel as an Array and are set by reflection (`SfxPrefabs.Load(bundle, names)`). The clips come
-  from `AssetWorkshop/sfx`; which prefab to copy: `AssetWorkshop/codex/sfx/catalogue.md`.
+  from `../ValheimAssets/Tools/Sfx`; which prefab to copy: `../ValheimAssets/Reference/Codex/sfx/catalogue.md`.
 - Not yet run in the game: `CreatureBody`, `BundleEffects`, `EffectTint` and `SfxPrefabs` (2026-09-29); their previews
   and checks ran in the workshop's Unity project only.
 

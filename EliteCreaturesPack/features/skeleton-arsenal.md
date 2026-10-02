@@ -12,7 +12,7 @@ arsenal skeletons), are specified here.
 This file covers the skeleton arsenal's own part: seven new skeleton units, each carrying one weapon of bone with vertebrae worked
 in (a dagger, sword, axe, mace, spear, atgeir or bow), the spine they drop, the players' bone weapons made from it,
 and bone arrows. The skeletons' bodies, AI and sounds are the game's own; the weapons, the arrow and the spine come
-from the workspace's `AssetWorkshop` (`assets/ecp_skel_arsenal` and `assets/ecp_spine`, v2: the vertebra set; v1 is archived in
+from the asset workshop `../ValheimAssets` (`Assets/Weapons/SkeletonArsenal/ecp_skel_arsenal` and `Assets/Weapons/SkeletonArsenal/ecp_spine`, v2: the vertebra set; v1 is archived in
 `assets/skeleton_weapons_v1`) and ship in the plugin as an embedded asset bundle.
 
 Asked for by the user on 2026-09-29: "all these will now be new mobs in the game. they will not do any combo swings,
@@ -217,5 +217,5 @@ In the LocalTesting profile with DevBridge, `devcommands` on.
   switched-off skeleton now drops out of the draw instead of leaving its spawns plain. The greataxe's recipe finds the
   spine before the database lists it (it had fallen back to bone fragments) and takes 1 (was 8); the Bone Crossbow's
   takes 1 too. Built, not run in game.
-- 2026-09-29: the vertebra item became the spine (`ECP_Spine`, `item_ecp_spine`, AssetWorkshop `assets/ecp_spine`),
+- 2026-09-29: the vertebra item became the spine (`ECP_Spine`, `item_ecp_spine`, ValheimAssets `Assets/Weapons/SkeletonArsenal/ecp_spine`),
   a visual and name change only: same drop, recipes and counts. The greataxe's `Vertebrae` setting is `Spines`.

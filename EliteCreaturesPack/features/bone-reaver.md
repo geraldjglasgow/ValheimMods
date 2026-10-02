@@ -9,7 +9,7 @@ sit in a soft leather roll suspended from two visible belt loops. The axe's vert
 with varied bodies, neural arches and overlapping joints; the two hand-grip seats remain unchanged.
 
 The model, editable Blender scene, side-by-side vanilla reference scene, original gear FBX and 16 animations
-are in `../../AssetWorkshop/assets/ecp_bone_reaver/`. That directory's README describes the files and event contract.
+are in `../../../ValheimAssets/Assets/Creatures/BoneReaver/ecp_bone_reaver/`. That directory's README describes the files and event contract.
 
 Requested fight:
 

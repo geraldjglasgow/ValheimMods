@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "blue": {"primary": "hue:+0.6,sat:0.85"},
-    "bronze": {"primary": "tint:#c9b48c,keep:0.4", "metal": "tint:#9a6a34"},
-    "raider": {"primary": "tint:#34302c", "leather": "tint:#6a3a1e", "wood": "val:0.8"}
-  }
-}

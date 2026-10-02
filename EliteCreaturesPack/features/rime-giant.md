@@ -6,7 +6,7 @@ This file covers the Rime Giant (the Hrímþurs of the old stories): a very rare
 crusted in plates of ice that sleeps through the day looking like a snowy outcrop, shrugs off weapons until fire
 breaks its plates, and sends avalanches down the slope at you. Its body is the game's own forest Troll, grown and
 frosted; the plates of rime, the snow crust it wears asleep and the ice boulder it throws come from the workspace's
-`AssetWorkshop` (`assets/ecr_rimegiant`) and ship in the plugin as an embedded asset bundle. The idea was pitched and
+`ValheimAssets` (`Assets/Creatures/RimeGiant/ecr_rimegiant`) and ship in the plugin as an embedded asset bundle. The idea was pitched and
 accepted on 2026-09-28 ("make it, it should be a very rare spawn"); the numbers below are judgement calls made then,
 to be tuned in play.
 
@@ -203,7 +203,7 @@ is on there:
 
 | Date | What changed | Commit |
 | --- | --- | --- |
-| 2026-09-28 | Built: the creature on the forest troll, the rime armour, sleep, avalanche, ice boulder, corpse, spawn entry and `rime giants:` rules; the plates, crust and boulder in AssetWorkshop (`assets/ecr_rimegiant`). Shared `YamlRead.Number`/`Biomes` for the added-creature blocks. Patches verified offline (77 classes). | |
+| 2026-09-28 | Built: the creature on the forest troll, the rime armour, sleep, avalanche, ice boulder, corpse, spawn entry and `rime giants:` rules; the plates, crust and boulder in ValheimAssets (`Assets/Creatures/RimeGiant/ecr_rimegiant`). Shared `YamlRead.Number`/`Biomes` for the added-creature blocks. Patches verified offline (77 classes). | |
 | 2026-09-28 | Assets: 8 plates (Spine2 chest/back, Left/RightArm shoulders, Left/RightForeArm, Left/RightUpLeg), 7 crust pieces fitted to the troll's Sleeping pose, the boulder (1.2 x 1.1 x 1.4 m), measured on the game's Troll at its armature scale 130; muted cyan-grey hand-painted ice after the game's own textures; 256 px per part; bundles 2.1 MB (Windows) and 2.3 MB (Linux). Known clipping (clearance check): the sleeping jaw into the chest plate, the sleeping left forearm into the left thigh plate, the thumb into the right thigh plate at the end of Wakeup, shoulder skin into the shoulder plates in the punch; the forearm plates go below ground in the slam, as the troll's fists do. | |
 | 2026-09-28 | At the user's request: plates never regrow in a fight (only after it gives up and goes 12 s unhurt, and not below `shatter at`); whatever is left shatters at 40% health (`shatter at`, new); the cut scales with the plates left; no troll hide in the loot. | |
 | 2026-09-28 | At the user's request: at most one giant per mountain, on 3 mountains in 5 (`mountains`, new; the game's biome sectors, 40+ edge cells, seed-hashed; claimed by global key), `chance` 0.2 -> 25; a sleeping giant's body is fixed in place (`m_disableWhileSleeping`) and set down on the ground by its owner. Verified on the live world through DevBridge: 75 mountains, 45 hold a giant. 78 patch classes verified. | |

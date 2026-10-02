@@ -4,7 +4,7 @@ One feature of the mod, specified on its own. The other feature files sit beside
 
 This file covers the Greydwarf Slinger: a greydwarf with a slingshot that stands and shoots stones like the game's
 skeleton archer. Its body is the game's own Greydwarf; the slingshot, its bands and pouch, the satchel of stones and
-the shot animation come from the workspace's `AssetWorkshop` (`assets/ecr_slinger`: Blender for the parts, Unity for
+the shot animation come from the asset workshop `../ValheimAssets` (`Assets/Creatures/Slinger/ecr_slinger`: Blender for the parts, Unity for
 the clip, which is authored on the game's Greydwarf skeleton) and ship in the plugin as an embedded asset bundle. The
 design was settled with the user on 2026-09-28.
 
@@ -131,5 +131,5 @@ Section `3 - Greydwarf Slinger` of `com.EliteCreaturesPack.cfg`, synced from the
 | 2026-09-28 | At the user's request: `Share` default 20 -> 10 percent. | |
 | 2026-09-28 | At the user's request ("act more like the skeleton archer; I don't like that it runs around and melees"): the claw and the keep-away (and its `Keep Away` setting) are gone, the slingshot has no minimum range (was 4 m; the skeleton's bow has 0) and the AI no longer circles its target (`m_circleTargetInterval` 6 -> 0, the skeleton's value). Values read from the live `Skeleton` prefab and `skeleton_bow` through DevBridge. | |
 | 2026-09-28 | At the user's request: slingshot 1.25 -> 1.8 times its model, satchel 1.6 -> 2.4, stone 0.7 -> 0.5 of the thrown rock (the preview had shown a 3 cm stand-in; now the game's rock mesh), stone 30 -> 16 m/s (`stone speed`, new) with gravity 2 -> 5 and a per-shot arc (`SlingerAim`, Attack.FireProjectileBurst prefix). 68 patch classes verified. | |
-| 2026-09-28 | Built: the four parts (Blender), the shot clip authored on the game's Greydwarf skeleton with two-bone IK and read back as muscles, the kit measured on the same skeleton at game scale, bundles for Windows and Linux (AssetWorkshop `assets/ecr_slinger`); the creature, shot, stone, keep-away, spawns and `slingers:` rules. Patches verified offline (67 classes). | |
+| 2026-09-28 | Built: the four parts (Blender), the shot clip authored on the game's Greydwarf skeleton with two-bone IK and read back as muscles, the kit measured on the same skeleton at game scale, bundles for Windows and Linux (ValheimAssets `Assets/Creatures/Slinger/ecr_slinger`); the creature, shot, stone, keep-away, spawns and `slingers:` rules. Patches verified offline (67 classes). | |
 | 2026-09-28 | Moved from Elite Creatures Reborn into its own mod, Elite Creatures Pack, at the user's request: prefabs `ECR_` -> `ECP_`, ZDO/RPC/global keys `ecr_` -> `ecp_`, the rule-file block became a section of the mod's .cfg (shares in percent, biomes as a flag list); Elite Creatures Reborn is optional and linked by key names only. Asset bundle and asset names kept (`ecr_*`). | |

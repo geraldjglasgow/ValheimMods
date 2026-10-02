@@ -23,10 +23,14 @@ ValheimMods/
   EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, height limits
   GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
-  AssetWorkshop/     3D assets, effects and sounds from scripts, built to its codex (the game's art, measured)
   DevBridge/         dev-only plugin: drive the running game over localhost HTTP for testing, never shipped
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
 ```
+
+Beside this repository, in `..\ValheimAssets` (its own git repository, moved out of here on 2026-10-02 when it was
+`AssetWorkshop`): the asset workshop - 3D assets, effects and sounds from scripts, built to its codex (the game's art,
+measured). Its assets sit in `Assets\<category>\<family>\<name>` (Creatures, Weapons, Gear, ...), its tools in `Tools\`,
+the codex in `Reference\Codex`; its `README.md` has the layout.
 
 ### The mods
 
@@ -38,13 +42,13 @@ player reference the README links to: mutations, boss aspects, rule file fields 
 
 **Elite Creatures Pack** (EliteCreaturesPack): new creatures, each with its own fight - the crypt mimic (a crypt
 chest that bites its opener), the Greydwarf Slinger (shoots stones, keeps its distance) and the Rime Giant (a rare
-frost-plated troll asleep on the mountains, whose plates only fire breaks). Models from `AssetWorkshop`, embedded
+frost-plated troll asleep on the mountains, whose plates only fire breaks). Models from `ValheimAssets`, embedded
 per platform through BundlePrefabs; a .cfg section per creature, synced. Split out of Elite Creatures Reborn on
 2026-09-28 before release: new creatures go here, not into ECR. Neither mod needs the other; with both, ECR rolls
 stars and mutations on them and holds back a dormant mimic's looks (key names only: `ecp_disguised`, `ecr_gen`).
 "The skeleton arsenal" is every bone weapon in it: the bone dagger, sword, axe, mace, spear, atgeir, both bows, the
 arrow, the spine, the Bone Crossbow and its blunted bolt, and the Executioner's Greataxe (three bundles; one build,
-`AssetWorkshop/assets/ecp_skel_arsenal/build.ps1`). Design in `EliteCreaturesPack/CLAUDE.md` and `features/`.
+`../ValheimAssets/Assets/Weapons/SkeletonArsenal/ecp_skel_arsenal/build.ps1`). Design in `EliteCreaturesPack/CLAUDE.md` and `features/`.
 
 **FeastMaster**: configure every food and mead. Global multipliers, a section per food and per mead, and a switch
 that stops food from degrading. Foods and meads are discovered from the item database.
@@ -197,8 +201,8 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   count too. A class is at most 300 lines and has one responsibility; split by feature before it gets there. This
   applies to the mods and to `ValheimModLibs`.
 - **New assets live outside the mods until they ship.** Every model, creature, effect, sound, texture and bundle is
-  made and kept in `AssetWorkshop` (its source in `assets/<name>/`, `vfx/effects/`, `sfx/sounds/`; its builds in
-  gitignored `out/` folders), never in a mod's folder. It goes into a mod (the bundle copied into
+  made and kept in `../ValheimAssets` (its source in `Assets/<category>/<family>/<name>/`, `Assets/Effects/`,
+  `Assets/Sounds/`; its builds in gitignored `out/` folders), never in a mod's folder. It goes into a mod (the bundle copied into
   `<Mod>/.../assets/bundles`, the mod code that uses it) only when the user decides to release it in that mod, and in
   the same change as that release. Concepts, trials, demos and rejected versions never enter a mod, so nothing
   unreleased is pushed with one or left in it as dead code or dead assets; a mod that stops using an asset or its code
@@ -209,6 +213,10 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
 
 ## Building
 
+- **Blender viewing preference:** whenever the user asks to open, show or preview something in Blender, show the
+  model with its colours and textures visible. Set the viewport to Material Preview (or Rendered with suitable
+  lighting), ensure its textures load, and frame the model. Apply this to the window being opened, not just a PNG
+  render; use the detailed viewing instructions in `.claude/skills/valheim-asset/SKILL.md`.
 - .NET SDK 8. In Git Bash `dotnet` may not be on PATH: use `"/c/Program Files/dotnet/dotnet"`.
 - `dotnet build <Mod>/<Mod>/<Mod>.csproj -c Release`. Override `-p:GamePath=...`, `-p:BepInExCore=...`,
   `-p:ModLibsPath=...` when the layout differs.
@@ -218,11 +226,12 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   launch or kill the game from a script.
 - Prefer prefix/postfix patches over transpilers. Verify game signatures by decompiling `assembly_valheim.dll` with
   `ilspycmd` into the scratch folder, never into a repository.
-- 3D models, textures, particle effects, sounds and asset bundles come from `AssetWorkshop` (Blender and Unity
-  6000.0.75f1 in `%USERPROFILE%\tools`, both run headless). A new asset is built to `AssetWorkshop/codex/` (the game's
-  own art measured: budgets, paint, palettes, shaders, rigs, effects, sounds; `codex/look.md` first) from a filled-in
-  `codex/BRIEF.md`, then checked with the style check and a lineup beside the game's own. Build with
-  `AssetWorkshop\build.ps1` and check a model by reading its `out\preview.png` and `out\lineup\`. The workshop's
+- 3D models, textures, particle effects, sounds and asset bundles come from `../ValheimAssets` (Blender and Unity
+  6000.0.75f1 in `%USERPROFILE%\tools`, both run headless). A new asset is built to its codex,
+  `Reference/Codex/` there (the game's own art measured: budgets, paint, palettes, shaders, rigs, effects, sounds;
+  `look.md` first) from a filled-in `Reference/Codex/BRIEF.md`, then checked with the style check and a lineup beside
+  the game's own. Build with `..\ValheimAssets\build.ps1 -Asset <name>` (an asset is found by its folder name wherever
+  it sits under `Assets`) and check a model by reading its `out\preview.png` and `out\lineup\`. The workshop's
   `README.md` has the conventions and what is not built yet.
 - Test in the running game through `DevBridge` (installed in `LocalTesting` only): once the user has started the
   profile, `curl -s http://127.0.0.1:7780/help` lists endpoints for screenshots, the UI tree, clicks, keys, mouse,
