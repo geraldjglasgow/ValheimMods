@@ -9,9 +9,9 @@ namespace EliteCrafting.Commands
     /// items</c> and the rarity's affix count, but never writes an item of a newer format.
     /// <para>
     /// Spec gap, decided here: "ignores the rarity's affix count" is read as <b>keep the item's affix count</b>. Every
-    /// unbound affix (dormant ones included) is removed and the same number is drawn again with
-    /// <see cref="ItemRoller.AddAffixes"/>; the bound affix and unreadable segments stay. An item with no rerollable
-    /// affix is rolled fresh at its rarity instead (<see cref="ItemRoller.RollFresh"/>).
+    /// inscription (dormant ones included) is removed and the same number is drawn again with
+    /// <see cref="ItemRoller.AddAffixes"/>; unreadable segments stay. An item with no inscription is rolled fresh at
+    /// its rarity instead (<see cref="ItemRoller.RollFresh"/>).
     /// </para>
     /// </summary>
     internal static class RerollCommand
@@ -32,7 +32,8 @@ namespace EliteCrafting.Commands
             {
                 return;
             }
-            ItemState stripped = WithoutUnbound(state, out int count);
+            int count = state.AffixCount;
+            ItemState stripped = state.ToBuilder().ClearAffixes().Build();
             RollContext context = RollContext.For(item);
             context.Random = RollRandom.Create();
             ItemState? rolled = count > 0
@@ -46,7 +47,7 @@ namespace EliteCrafting.Commands
 
         private static bool Rerollable(CommandCall call, ItemState state)
         {
-            string? problem = !state.IsMagic ? "the item is Common: it has no rarity to keep."
+            string? problem = !state.IsMagic ? "the item is Normal: it has no rarity to keep."
                 : state.Rarity == null ? $"the item's rarity '{state.RarityId}' is not in the configuration."
                 : null;
             if (problem != null)
@@ -54,20 +55,6 @@ namespace EliteCrafting.Commands
                 call.Reply(problem);
             }
             return problem == null && !ItemTargets.IsNewer(call, state);
-        }
-
-        private static ItemState WithoutUnbound(ItemState state, out int removed)
-        {
-            ItemStateBuilder builder = state.ToBuilder();
-            removed = 0;
-            for (int i = 0; i < state.AffixCount; i++)
-            {
-                if (!state.IsBoundAt(i) && builder.RemoveAffix(state.Affixes[i].Id))
-                {
-                    removed++;
-                }
-            }
-            return builder.Build();
         }
     }
 }

@@ -124,8 +124,7 @@ namespace EliteCrafting.Rules
 
         private static void BuildPools(AffixRules rules)
         {
-            Dictionary<ItemSlot, List<AffixDef>> regular = new Dictionary<ItemSlot, List<AffixDef>>();
-            Dictionary<ItemSlot, List<AffixDef>> mythic = new Dictionary<ItemSlot, List<AffixDef>>();
+            Dictionary<ItemSlot, List<AffixDef>> pools = new Dictionary<ItemSlot, List<AffixDef>>();
             foreach (AffixDef def in rules.Affixes)
             {
                 if (!def.Enabled || def.Weight <= 0f)
@@ -134,11 +133,10 @@ namespace EliteCrafting.Rules
                 }
                 foreach (ItemSlot slot in def.Slots)
                 {
-                    Add(def.MythicOnly ? mythic : regular, slot, def);
+                    Add(pools, slot, def);
                 }
             }
-            rules.RegularPools = Freeze(regular);
-            rules.MythicPools = Freeze(mythic);
+            rules.Pools = Freeze(pools);
         }
 
         private static void Add(Dictionary<ItemSlot, List<AffixDef>> pools, ItemSlot slot, AffixDef def)

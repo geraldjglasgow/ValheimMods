@@ -13,7 +13,7 @@
 #
 # Fields: id, name, effect, param, value (percent | flat | flag), unit (ms | deg | m |
 # min, flat only), slots, requires { skill, hands, traits }, category (offense |
-# defense | utility), mythic_only, condition (none | health_critical),
+# defense | utility), condition (none | health_critical),
 # exclusion_group, weight (default 100), enabled, hook (easy | medium | hard),
 # tiers [{ tier 1-7, min, max, weight (default 100) }]. A flag inscription lists only
 # `tier` (and optionally `weight`) per row. Tiers count down, as in the tooltip:

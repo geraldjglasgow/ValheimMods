@@ -76,7 +76,7 @@ namespace EliteCrafting.Commands
             TierResult tier = magicBase ? ItemTier.Explain(prefab) : default;
             IReadOnlyDictionary<string, int> materials = ActiveRules.Current.Economy.ItemTiers.Materials;
             cells.Add(slot == ItemSlot.None ? "-" : ItemSlots.Id(slot));
-            cells.Add(magicBase ? "yes" : ItemSlots.IsStone(item) ? (Salvage.Fuser.IsShard(item) ? "shard" : "stone") : "no");
+            cells.Add(magicBase ? "yes" : ItemSlots.IsStone(item) ? "rune" : "no");
             cells.Add(magicBase ? Numbers.Format(tier.Tier) : "-");
             cells.Add(magicBase ? tier.Source : "-");
             cells.Add(materials.TryGetValue(prefab, out int materialTier) ? Numbers.Format(materialTier) : "-");

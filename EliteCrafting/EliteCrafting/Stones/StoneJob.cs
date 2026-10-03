@@ -7,9 +7,9 @@ using EliteCrafting.Text;
 namespace EliteCrafting.Stones
 {
     /// <summary>
-    /// Everything one stone use reads, gathered once per click on the local client: the player, the stone stack and
-    /// the target, the rules snapshot (the server's synced rules while it binds), the stone's definition, the target's
-    /// state, slot, current rarity and pending sigil. Read-only; the pipeline and the verbs decide from it.
+    /// Everything one rune use reads, gathered once per click on the local client: the player, the rune stack and
+    /// the target, the rules snapshot (the server's synced rules while it binds), the rune's definition, the target's
+    /// state, slot and current rarity. Read-only; the pipeline and the verbs decide from it.
     /// </summary>
     internal sealed class StoneJob
     {
@@ -24,7 +24,6 @@ namespace EliteCrafting.Stones
             State = ItemState.Read(target);
             Slot = ItemSlots.Classify(target);
             Rarity = State.IsMagic ? State.Rarity : Rules.Economy.BaseRarity;
-            Sigil = PendingSigil.Resolve(State, Rules);
         }
 
         public Player Player { get; }
@@ -39,10 +38,8 @@ namespace EliteCrafting.Stones
         public ItemState State { get; }
         public SlotInfo Slot { get; }
 
-        /// <summary>The target's rarity before the stone acts (the base rarity for Common); null when unknown.</summary>
+        /// <summary>The target's rarity before the rune acts (the base rarity for Normal); null when unknown.</summary>
         public RarityDef? Rarity { get; }
-
-        public PendingSigil Sigil { get; }
 
         /// <summary>Stones this use costs, paid for the rarity before the stone acts (default 1; 0 is free).</summary>
         public int Cost => Def != null && Rarity != null ? System.Math.Max(Def.CostFor(Rarity.Id), 0) : 1;
@@ -56,15 +53,14 @@ namespace EliteCrafting.Stones
         public static StoneJob Create(Player player, ItemDrop.ItemData stone, ItemDrop.ItemData target) =>
             new StoneJob(player, stone, target);
 
-        /// <summary>A roll context for this target under this job's rules, with the stone's floor and an optional steer.</summary>
-        public RollContext RollContext(AffixCategory? category)
+        /// <summary>A roll context for this target under this job's rules, with the rune's floor.</summary>
+        public RollContext RollContext()
         {
             return new RollContext
             {
                 Slot = Slot,
                 Ceiling = ItemTier.Of(Target),
                 TierFloor = Def?.TierFloor ?? 0,
-                Category = category,
                 Random = RollRandom.Create(),
                 Rules = Rules,
             };

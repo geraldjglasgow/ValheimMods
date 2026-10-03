@@ -10,7 +10,7 @@ namespace EliteCrafting.Display
 {
     /// <summary>
     /// Builds the tooltip affix block (display.md section 3), localized, top to bottom: rarity line (with the tier
-    /// ceiling at Full), newer-format notice, affix lines, honed/tempered, sealed, pending sigil. Lines that do not
+    /// ceiling at Full), newer-format notice, affix lines, sealed. Lines that do not
     /// apply are left out; an item with nothing to show gets an empty block. Called once per item state and detail
     /// level by <see cref="DisplayCache"/>, never per frame. Runs on the viewing client only.
     /// </summary>
@@ -28,10 +28,7 @@ namespace EliteCrafting.Display
                 Sb.Append('\n').Append(RarityPalette.Grey).Append(Words.Localize("$ecf_ui_newer_format")).Append(RarityPalette.Close);
             }
             AffixLines.Append(Sb, state, detail, showDormant);
-            AffixLines.AppendSockets(Sb, state, detail);
-            AppendRefine(Sb, state, item);
             AppendSealed(Sb, state);
-            SigilLine.Append(Sb, state, detail);
             // The block follows the vanilla tooltip after one blank line.
             return Sb.Length == 0 ? "" : "\n" + Sb.ToString();
         }
@@ -58,23 +55,6 @@ namespace EliteCrafting.Display
                 string ceiling = Words.Localize("$ecf_ui_tier_ceiling", AffixTierNumbers.Shown(ItemTier.Of(item)).ToString());
                 sb.Append("  ").Append(RarityPalette.Grey).Append(ceiling).Append(RarityPalette.Close);
             }
-        }
-
-        /// <summary>Honed on weapons and tools (damage), tempered on armor and shields (quality.md section 6).</summary>
-        private static void AppendRefine(StringBuilder sb, ItemState state, ItemDrop.ItemData item)
-        {
-            if (state.Refine <= 0f)
-            {
-                return;
-            }
-            string key = IsHoned(ItemSlots.SlotOf(item)) ? "$ecf_ui_honed" : "$ecf_ui_tempered";
-            sb.Append('\n').Append(Words.Localize(key, DisplayWords.Plain(state.Refine)));
-        }
-
-        private static bool IsHoned(ItemSlot slot)
-        {
-            return slot == ItemSlot.MeleeWeapon || slot == ItemSlot.RangedWeapon || slot == ItemSlot.MagicWeapon
-                || slot == ItemSlot.Tool;
         }
 
         /// <summary>"Sealed: Corrupted" in dark red; an unknown reason id shows the generic sealed text.</summary>

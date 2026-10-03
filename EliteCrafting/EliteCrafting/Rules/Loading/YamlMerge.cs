@@ -5,7 +5,7 @@ namespace EliteCrafting.Rules
 {
     /// <summary>
     /// Merges the layers of a family into one document (configuration.md section 3): maps merge by key, recursively;
-    /// the id lists (<c>affixes</c>, <c>rarities</c>, <c>stones</c>, <c>salvage.fragments</c>) merge by <c>id</c>, field by field; every other list and every scalar is replaced whole by the
+    /// the id lists (<c>inscriptions</c>, <c>rarities</c>, <c>runes</c>) merge by <c>id</c>, field by field; every other list and every scalar is replaced whole by the
     /// later layer; a key set to null in a later layer is removed. Inputs are never modified: merged maps are new
     /// nodes, adopted values keep their original nodes (and so their file and line for error messages).
     /// </summary>
@@ -24,7 +24,7 @@ namespace EliteCrafting.Rules
         private static YamlMappingNode MergeRoot(YamlMappingNode a, SourceLayer layer, string[] idLists, RuleIssues issues) =>
             MergeAt(a, layer.Root, "", new MergeScope(layer, idLists, issues));
 
-        // Maps at `path` merge key by key; an id list named by its dotted path (`stones`, `salvage.fragments`) merges by
+        // Maps at `path` merge key by key; an id list named by its dotted path (`runes`, `rarities`) merges by
         // id; a map holding such a list further down keeps descending; everything else is MergeValue.
         private static YamlMappingNode MergeAt(YamlMappingNode a, YamlMappingNode b, string path, MergeScope scope)
         {

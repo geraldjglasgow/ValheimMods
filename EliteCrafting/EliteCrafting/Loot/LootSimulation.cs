@@ -51,8 +51,8 @@ namespace EliteCrafting.Loot
         {
             StringBuilder text = new StringBuilder();
             text.Append($"{Kills} kills, tier {Tier}, stars {Stars}{(Creature != null ? ", as " + Creature : "")}: ");
-            text.Append($"{StoneCount} stones ({PerKill(StoneCount)}/kill), {GearCount} gear ({PerKill(GearCount)}/kill)\n");
-            AppendCounts(text, "stones", _stones, StoneCount);
+            text.Append($"{StoneCount} runes ({PerKill(StoneCount)}/kill), {GearCount} gear ({PerKill(GearCount)}/kill)\n");
+            AppendCounts(text, "runes", _stones, StoneCount);
             AppendCounts(text, "gear", _rarities, GearCount);
             return text.ToString();
         }

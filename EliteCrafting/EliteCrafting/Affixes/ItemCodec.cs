@@ -31,12 +31,8 @@ namespace EliteCrafting.Affixes
                 RarityId = NonEmpty(data, ItemKeys.Rarity),
                 Segments = Segments(NonEmpty(data, ItemKeys.Affixes) ?? NonEmpty(data, ItemKeys.LegacyAffixes)),
                 SealedReason = NonEmpty(data, ItemKeys.Sealed),
-                SigilId = NonEmpty(data, ItemKeys.Sigil),
                 ReservedTier = NonEmpty(data, ItemKeys.Tier),
             };
-            ReadRefine(state, NonEmpty(data, ItemKeys.Refine));
-            state.BoundId = BoundIfPresent(state, NonEmpty(data, ItemKeys.Bound));
-            state.Sockets = SocketCodec.Read(data);
             return ItemMigrations.Upgrade(state);
         }
 
@@ -90,36 +86,6 @@ namespace EliteCrafting.Affixes
 
         private static string? NonEmpty(Dictionary<string, string> data, string key) =>
             data.TryGetValue(key, out string value) && !string.IsNullOrEmpty(value) ? value : null;
-
-        // A refine value that does not parse applies nothing but is kept for the next write, like an unreadable segment.
-        private static void ReadRefine(StateData state, string? text)
-        {
-            if (Numbers.TryFloat(text, out float refine))
-            {
-                state.Refine = refine;
-            }
-            else
-            {
-                state.RefineRaw = text;
-            }
-        }
-
-        // ecf_bound naming an affix that is not on the item is ignored on read and dropped on the next write.
-        private static string? BoundIfPresent(StateData state, string? bound)
-        {
-            if (bound == null)
-            {
-                return null;
-            }
-            foreach (ItemSegment segment in state.Segments)
-            {
-                if (segment.IsRoll && segment.Roll.Id == bound)
-                {
-                    return bound;
-                }
-            }
-            return null;
-        }
 
         private static ItemSegment[] Segments(string? text)
         {

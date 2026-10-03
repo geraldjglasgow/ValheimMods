@@ -5,23 +5,16 @@ using UnityEngine;
 
 namespace EliteCrafting.Items
 {
-    /// <summary>The look family a stone prefab is cloned from (prefabs.md section 4a).</summary>
+    /// <summary>The look family a rune prefab is cloned from (prefabs.md section 4a).</summary>
     internal enum StoneGroup
     {
         Ascension,
         Manipulation,
         Risk,
-        Sigil,
-        Honing,
-        Tempering,
-        Essence,
-        Gem,
-        Catalyst,
-        Chisel,
     }
 
     /// <summary>
-    /// Which vanilla item each stone prefab is cloned from (prefabs.md section 4a, DECISIONS.md PRF-1). The base names
+    /// Which vanilla item each rune prefab is cloned from (prefabs.md section 4a, DECISIONS.md PRF-1). The base names
     /// live in the game's asset bundles, not in code, so none is verified here: each group tries its proposed base,
     /// then its alternates, then any candidate of any group (with a warning), and a missing base never throws.
     /// Runs on every peer, identically.
@@ -31,49 +24,22 @@ namespace EliteCrafting.Items
         private static readonly string[] Ascension = { "Ruby", "Amber", "AmberPearl" };
         private static readonly string[] Manipulation = { "Crystal", "DragonTear", "Thunderstone" };
         private static readonly string[] Risk = { "SurtlingCore", "BlackCore" };
-        private static readonly string[] Sigil = { "Flint", "BlackMarble" };
-        private static readonly string[] Honing = { "Stone", "IronNails", "CopperScrap" };
-        private static readonly string[] Tempering = { "IronScrap", "IronNails", "CopperScrap" };
-
-        // ESS-13: believed vanilla, verify with `ecraft dump items` in game like PRF-1.
-        private static readonly string[] Essence = { "Thunderstone", "DragonTear", "AmberPearl" };
-
-        // sockets.md section 8: cut gems, a flask, nails for the chisel; believed vanilla, verify like PRF-1.
-        private static readonly string[] Gem = { "GemstoneBlue", "GemstoneGreen", "GemstoneRed", "Iolite", "Ruby" };
-        private static readonly string[] Catalyst = { "MeadTasty", "MeadHealthMinor", "MeadStaminaMinor", "Ooze" };
-        private static readonly string[] Chisel = { "BronzeNails", "IronNails", "Flint" };
 
         // Indexed by StoneGroup: keep in the enum's order.
-        private static readonly string[][] AllGroups = { Ascension, Manipulation, Risk, Sigil, Honing, Tempering, Essence, Gem, Catalyst, Chisel };
+        private static readonly string[][] AllGroups = { Ascension, Manipulation, Risk };
 
-        private static readonly string[] AscensionIds = { "awakening", "ascension", "exaltation", "transcendence", "apotheosis" };
-        private static readonly string[] RiskIds = { "serpent", "binding", "chance", "reflection" };
-
-        /// <summary>The group of a built-in stone id; a shard takes its ascension stone's look (SAL-15).</summary>
-        public static StoneGroup GroupOf(string builtInId)
+        /// <summary>The look of a rune: the two that change the rarity a gem, the Serpent a core, the rest a crystal.</summary>
+        public static StoneGroup GroupOf(string runeId)
         {
-            if (builtInId.StartsWith("essence_", StringComparison.Ordinal)) return StoneGroup.Essence;
-            if (builtInId.StartsWith("gem_", StringComparison.Ordinal)) return StoneGroup.Gem;
-            if (builtInId.StartsWith("catalyst_", StringComparison.Ordinal)) return StoneGroup.Catalyst;
-            if (builtInId == "chisel") return StoneGroup.Chisel;
-            if (builtInId.StartsWith("shard_", StringComparison.Ordinal)) return StoneGroup.Ascension;
-            if (Array.IndexOf(AscensionIds, builtInId) >= 0) return StoneGroup.Ascension;
-            if (Array.IndexOf(RiskIds, builtInId) >= 0) return StoneGroup.Risk;
-            if (builtInId == "honing") return StoneGroup.Honing;
-            if (builtInId == "tempering") return StoneGroup.Tempering;
-            if (builtInId.StartsWith("sigil_", StringComparison.Ordinal)) return StoneGroup.Sigil;
-            return StoneGroup.Manipulation;
-        }
-
-        /// <summary>The reserved pool: 01-04 ascension, 05-08 manipulation, 09-12 risk, 13-16 sigil (prefabs.md section 5).</summary>
-        public static StoneGroup GroupOfCustom(int number)
-        {
-            switch ((number - 1) / 4)
+            switch (runeId)
             {
-                case 0: return StoneGroup.Ascension;
-                case 1: return StoneGroup.Manipulation;
-                case 2: return StoneGroup.Risk;
-                default: return StoneGroup.Sigil;
+                case "awakening":
+                case "ascension":
+                    return StoneGroup.Ascension;
+                case "serpent":
+                    return StoneGroup.Risk;
+                default:
+                    return StoneGroup.Manipulation;
             }
         }
 
@@ -102,7 +68,7 @@ namespace EliteCrafting.Items
             {
                 if (found.name != own[0])
                 {
-                    Log.Warn($"stone base {own[0]} not found for the {group} stones; using {found.name}");
+                    Log.Warn($"rune base {own[0]} not found for the {group} runes; using {found.name}");
                 }
                 return found;
             }

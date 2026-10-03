@@ -36,9 +36,7 @@ namespace EliteCrafting.Stones
                 && !player.IsTeleporting() && WouldBeAUse(player, item);
         }
 
-        // A stone prefab (built-in or reserved; a disabled or unbound one still refuses as stone_disabled). A shard is an
-        // ECF_ item too (ItemSlots.IsStone, so it never carries affixes) but no stone: it has no definition and no verb,
-        // so a shard clicked onto an item is the vanilla swap and a shard onto a shard the vanilla merge (salvage.md 5, IMP-103).
+        // A rune prefab (a disabled one, or one the YAML no longer defines, still refuses as stone_disabled).
         private static bool IsStone(ItemDrop.ItemData carried) => StonePrefabs.IsStonePrefab(ItemTier.PrefabName(carried));
 
         // IMP-55: a click is a stone use (applied or refused) when the target is gear a stone could change, wherever

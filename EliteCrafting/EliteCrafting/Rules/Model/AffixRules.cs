@@ -27,20 +27,16 @@ namespace EliteCrafting.Rules
         /// <summary>One channel per distinct (effect, param, condition) of the enabled affixes; index = AffixDef.ChannelIndex.</summary>
         public IReadOnlyList<ChannelDef> Channels { get; internal set; } = Array.Empty<ChannelDef>();
 
-        internal Dictionary<ItemSlot, AffixDef[]> RegularPools { get; set; } = new Dictionary<ItemSlot, AffixDef[]>();
-        internal Dictionary<ItemSlot, AffixDef[]> MythicPools { get; set; } = new Dictionary<ItemSlot, AffixDef[]>();
+        internal Dictionary<ItemSlot, AffixDef[]> Pools { get; set; } = new Dictionary<ItemSlot, AffixDef[]>();
 
         public AffixDef? Get(string? id) => id != null && ById.TryGetValue(id, out AffixDef def) ? def : null;
 
         /// <summary>
-        /// Enabled affixes with weight above 0 that list the slot, from the regular or the Mythic-only pool. Tier,
-        /// requires, exclusion and category filters are the roller's job.
+        /// Enabled affixes with weight above 0 that list the slot. Tier, requires and exclusion filters are the
+        /// roller's job.
         /// </summary>
-        public IReadOnlyList<AffixDef> Pool(ItemSlot slot, bool mythicOnly)
-        {
-            Dictionary<ItemSlot, AffixDef[]> pools = mythicOnly ? MythicPools : RegularPools;
-            return pools.TryGetValue(slot, out AffixDef[] pool) ? pool : Array.Empty<AffixDef>();
-        }
+        public IReadOnlyList<AffixDef> Pool(ItemSlot slot) =>
+            Pools.TryGetValue(slot, out AffixDef[] pool) ? pool : Array.Empty<AffixDef>();
     }
 
     /// <summary>

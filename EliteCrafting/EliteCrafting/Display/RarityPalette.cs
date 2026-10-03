@@ -15,10 +15,7 @@ namespace EliteCrafting.Display
         /// <summary>Grey for dormant, unknown and secondary lines.</summary>
         public const string Grey = "<color=#808080>";
 
-        /// <summary>The game's own orange, for the bound marker.</summary>
-        public const string Orange = "<color=orange>";
-
-        /// <summary>Dark red for the sealed marker, kept apart from the Mythic red (DSP-5).</summary>
+        /// <summary>Dark red for the sealed marker (DSP-5).</summary>
         public const string SealedRed = "<color=#B22222>";
 
         public const string Close = "</color>";

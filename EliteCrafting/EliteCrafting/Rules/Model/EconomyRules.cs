@@ -16,7 +16,6 @@ namespace EliteCrafting.Rules
 
         public RollingSettings Rolling { get; internal set; } = new RollingSettings();
         public IReadOnlyList<StoneDef> Stones { get; internal set; } = Array.Empty<StoneDef>();
-        public SigilSettings Sigils { get; internal set; } = new SigilSettings();
         public ItemTierMaps ItemTiers { get; internal set; } = new ItemTierMaps();
 
         /// <summary>biome id (<c>meadows</c>, <c>black_forest</c>, ..., <c>ocean</c>, <c>deep_north</c>) → tier.</summary>
@@ -24,20 +23,10 @@ namespace EliteCrafting.Rules
 
         public DropRules Drops { get; internal set; } = new DropRules();
 
-        /// <summary>family id → the affixes an <c>imbue</c> stone of that family guarantees one of (essences.md 11).</summary>
-        public IReadOnlyDictionary<string, EssenceFamilyDef> EssenceFamilies { get; internal set; } =
-            new Dictionary<string, EssenceFamilyDef>();
-
-        /// <summary>Grinding and fusing (salvage.md section 7).</summary>
-        public SalvageRules Salvage { get; internal set; } = new SalvageRules();
-
         // lookups, precomputed at load
         public IReadOnlyDictionary<string, RarityDef> RarityById { get; internal set; } = new Dictionary<string, RarityDef>();
         public IReadOnlyDictionary<string, StoneDef> StoneById { get; internal set; } = new Dictionary<string, StoneDef>();
         public IReadOnlyDictionary<string, StoneDef> StoneByPrefab { get; internal set; } = new Dictionary<string, StoneDef>();
-
-        /// <summary>The rarity with <c>mythic_affixes &gt; 0</c>, if any.</summary>
-        public RarityDef? MythicRarity { get; internal set; }
 
         internal WeightedTable<StoneDef>[] StoneTables { get; set; } = Array.Empty<WeightedTable<StoneDef>>();
         internal WeightedTable<RarityDef>[] GearTables { get; set; } = Array.Empty<WeightedTable<RarityDef>>();
@@ -51,9 +40,6 @@ namespace EliteCrafting.Rules
 
         public StoneDef? StoneForPrefab(string? prefab) =>
             prefab != null && StoneByPrefab.TryGetValue(prefab, out StoneDef s) ? s : null;
-
-        public EssenceFamilyDef? Family(string? id) =>
-            id != null && EssenceFamilies.TryGetValue(id, out EssenceFamilyDef f) ? f : null;
 
         public RarityDef? Next(RarityDef rarity) => rarity.Index + 1 < Rarities.Count ? Rarities[rarity.Index + 1] : null;
 

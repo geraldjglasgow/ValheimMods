@@ -18,10 +18,10 @@ namespace EliteCrafting.Items
         private static readonly ConditionalWeakTable<ItemDrop.ItemData.SharedData, SlotInfo> Cache =
             new ConditionalWeakTable<ItemDrop.ItemData.SharedData, SlotInfo>();
 
-        /// <summary>Prefix of every stone prefab name (<c>ECF_Awakening</c>, <c>ECF_Custom01</c>).</summary>
+        /// <summary>Prefix of every rune prefab name (<c>ECF_Awakening</c>).</summary>
         public const string StonePrefabPrefix = "ECF_";
 
-        /// <summary>Prefix of every stone's shared name token (<c>$ecf_stone_awakening</c>).</summary>
+        /// <summary>Prefix of every rune's shared name token (<c>$ecf_stone_awakening</c>).</summary>
         public const string StoneNamePrefix = "$ecf_stone_";
 
         public static SlotInfo Classify(ItemDrop.ItemData? item)

@@ -116,8 +116,8 @@ namespace EliteCrafting.Loot
         {
             if (ModSettings.LogRolls.Value)
             {
-                Log.Info($"chest roll (container owner): {prefab} tier {plan.Tier} p(stone) {plan.StoneChance:0.###} "
-                    + $"p(gear) {plan.GearChance:0.###} -> {result.Stones}/{plan.Stones.Count} stones, "
+                Log.Info($"chest roll (container owner): {prefab} tier {plan.Tier} p(rune) {plan.StoneChance:0.###} "
+                    + $"p(gear) {plan.GearChance:0.###} -> {result.Stones}/{plan.Stones.Count} runes, "
                     + $"{result.Gear}/{plan.Gear.Count} gear added{(result.Full ? " (container full, the rest is lost)" : "")}");
             }
         }

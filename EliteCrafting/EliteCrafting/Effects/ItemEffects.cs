@@ -74,8 +74,8 @@ namespace EliteCrafting.Effects
         }
 
         /// <summary>
-        /// Adds what counts on one item: its active affixes and its socketed gems, values with the catalyst applied
-        /// (<see cref="ItemState.EffectRolls"/>, sockets.md section 6). For item-local hooks use <see cref="ItemState.Read"/>.
+        /// Adds what counts on one item: its active affixes (<see cref="ItemState.EffectRolls"/>). For item-local hooks use
+        /// <see cref="ItemState.Read"/>.
         /// </summary>
         public static void CollectItem(ItemDrop.ItemData item, List<ActiveAffix> into)
         {

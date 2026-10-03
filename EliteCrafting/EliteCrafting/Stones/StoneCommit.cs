@@ -7,8 +7,7 @@ namespace EliteCrafting.Stones
 {
     /// <summary>
     /// Pipeline step 14 (applying-stones.md section 3), in one frame on the owning client: write the dry-run state
-    /// (one write; it already carries a spent sigil's clearing), place a Reflection copy, take the cost from the
-    /// carried stack, keep the rest of the stack on the cursor, then the feedback. An equipped target needs nothing more here: the write raises
+    /// (one write), take the cost from the carried stack, keep the rest of the stack on the cursor, then the feedback. An equipped target needs nothing more here: the write raises
     /// <see cref="ItemStateCache.Written"/>, which the effects area listens to for its rebuild.
     /// <para>
     /// Multiplayer: nothing is sent anywhere. The new state lives in the item's <c>m_customData</c>, which the game
@@ -20,18 +19,9 @@ namespace EliteCrafting.Stones
     {
         public static void Commit(StoneJob job, StoneResult result)
         {
-            ItemDrop.ItemData? copy = result.CopyState == null ? null : ReflectionCopy.Make(job.Target, result.CopyState);
-            if (result.CopyState != null && copy == null)
-            {
-                return;
-            }
             if (!ItemState.Write(job.Target, result.State!))
             {
-                Log.Error($"stone '{job.Def?.Id}' passed every check but the item state write was refused; nothing consumed");
-                return;
-            }
-            if (copy != null && !ReflectionCopy.Place(job.Inventory, copy))
-            {
+                Log.Error($"rune '{job.Def?.Id}' passed every check but the item state write was refused; nothing consumed");
                 return;
             }
             Pay(job);
@@ -39,8 +29,7 @@ namespace EliteCrafting.Stones
             StoneFeedback.Success(job.Player, result);
         }
 
-        // The cost leaves the carried stack in the same frame as the write (and a Reflection copy's placement), so no
-        // use can ever land without being paid for.
+        // The cost leaves the carried stack in the same frame as the write, so no use can ever land without being paid for.
         private static void Pay(StoneJob job)
         {
             if (job.Cost > 0)
@@ -69,9 +58,8 @@ namespace EliteCrafting.Stones
     }
 
     /// <summary>
-    /// What the player sees (applying-stones.md section 6, Phase 1): the message in the center of the screen, the
-    /// vanilla item-move sound on success, and a top-left line when a pending sigil was spent. Local player only.
-    /// A distinct refusal sound, slot flash and stone-family sounds are Phase 3.
+    /// What the player sees (applying-stones.md section 6): the message in the center of the screen and the vanilla
+    /// item-move sound on success. Local player only.
     /// </summary>
     internal static class StoneFeedback
     {
@@ -85,11 +73,6 @@ namespace EliteCrafting.Stones
             if (result.Feedback != null)
             {
                 Show(player, result.Feedback);
-            }
-            if (result.SpentSigilName != null)
-            {
-                string text = Words.Localize("$ecf_msg_sigil_spent", "", result.SpentSigilName);
-                player.Message(MessageHud.MessageType.TopLeft, text);
             }
             InventoryGui gui = InventoryGui.instance;
             if (gui != null)

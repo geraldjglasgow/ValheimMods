@@ -21,7 +21,7 @@ namespace EliteCrafting.Commands
             RuleSet now = ActiveRules.Current;
             call.Reply($"rules generation {now.Generation}");
             call.Detail("inscriptions: " + Describe(affixes, $"reloaded, {now.Affixes.Affixes.Count} inscriptions"));
-            call.Detail("economy: " + Describe(economy, $"reloaded, {now.Economy.Rarities.Count} rarities, {now.Economy.Stones.Count} stones"));
+            call.Detail("economy: " + Describe(economy, $"reloaded, {now.Economy.Rarities.Count} rarities, {now.Economy.Stones.Count} runes"));
             call.Detail("translations and com.EliteCrafting.cfg: re-read");
         }
 

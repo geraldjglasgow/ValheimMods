@@ -8,7 +8,7 @@ namespace EliteCrafting.Rules
     /// <summary>Reads <c>rarities:</c> (ladder order = list order) and <c>rolling:</c>, with the rarity.md section 7 checks.</summary>
     internal static class RarityParser
     {
-        private static readonly string[] Keys = { "id", "name", "color", "glow", "inscriptions", "mythic_inscriptions", "drop_weight" };
+        private static readonly string[] Keys = { "id", "name", "color", "glow", "inscriptions", "drop_weight" };
 
         public static List<RarityDef> Parse(MapReader root)
         {
@@ -39,7 +39,7 @@ namespace EliteCrafting.Rules
             RarityDef rarity = new RarityDef
             {
                 Id = id, Index = index, Name = r.Str("name") ?? "$ecf_rarity_" + id,
-                Glow = r.Bool("glow", index > 0), MythicAffixes = r.Int("mythic_inscriptions", 0, 0),
+                Glow = r.Bool("glow", index > 0),
                 DropWeight = r.Float("drop_weight", 1f, 0f),
             };
             ReadColor(r, rarity);
@@ -79,10 +79,6 @@ namespace EliteCrafting.Rules
             {
                 counts.Value.Error("min", "min is above max");
             }
-            if (rarity.MythicAffixes > rarity.MinAffixes)
-            {
-                r.Error("mythic_inscriptions", "cannot be above inscriptions.min");
-            }
         }
 
         private static void CheckLadder(MapReader root, List<RarityDef> rarities)
@@ -100,10 +96,6 @@ namespace EliteCrafting.Rules
             {
                 root.Warn("rarities", $"glow on the base rarity '{rarities[0].Id}' is ignored: it never glows");
                 rarities[0].Glow = false;
-            }
-            if (rarities.FindAll(r => r.MythicAffixes > 0).Count > 1)
-            {
-                root.Error("rarities", "at most one rarity may set mythic_inscriptions");
             }
         }
 

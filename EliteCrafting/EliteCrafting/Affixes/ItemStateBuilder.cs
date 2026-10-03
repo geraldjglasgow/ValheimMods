@@ -5,8 +5,8 @@ using EliteCrafting.Rules;
 namespace EliteCrafting.Affixes
 {
     /// <summary>
-    /// A mutable working copy of an item's state, for stones, drops and commands. Nothing reaches the item until
-    /// <see cref="Build"/> is handed to <see cref="ItemState.Write"/>, so a stone can try an operation and walk away on
+    /// A mutable working copy of an item's state, for runes, drops and commands. Nothing reaches the item until
+    /// <see cref="Build"/> is handed to <see cref="ItemState.Write"/>, so a rune can try an operation and walk away on
     /// failure. Unreadable segments stay in their positions unless explicitly cleared.
     /// </summary>
     public sealed class ItemStateBuilder
@@ -24,10 +24,7 @@ namespace EliteCrafting.Affixes
         public static ItemStateBuilder New() => new ItemStateBuilder(StateData.Empty);
 
         public string? RarityId => _data.RarityId;
-        public string? BoundId => _data.BoundId;
-        public float Refine => _data.Refine;
         public string? SealedReason => _data.SealedReason;
-        public string? SigilId => _data.SigilId;
 
         /// <summary>The parsed affixes, in order (unreadable segments left out).</summary>
         public List<AffixRoll> Affixes => _segments.FindAll(s => s.IsRoll).ConvertAll(s => s.Roll);
@@ -36,7 +33,7 @@ namespace EliteCrafting.Affixes
 
         public bool HasAffix(string id) => IndexOf(id) >= 0;
 
-        /// <summary>Sets the rarity; null or the base rarity's id makes the item Common (the key is removed).</summary>
+        /// <summary>Sets the rarity; null or the base rarity's id makes the item Normal (the key is removed).</summary>
         public ItemStateBuilder SetRarity(string? rarityId)
         {
             RarityDef? rarity = ActiveRules.Current.Rarity(rarityId);
@@ -55,7 +52,7 @@ namespace EliteCrafting.Affixes
             return this;
         }
 
-        /// <summary>Removes an affix (and the binding, if it was the bound one). False when absent.</summary>
+        /// <summary>Removes an affix. False when absent.</summary>
         public bool RemoveAffix(string id)
         {
             int index = IndexOf(id);
@@ -64,10 +61,6 @@ namespace EliteCrafting.Affixes
                 return false;
             }
             _segments.RemoveAt(index);
-            if (_data.BoundId == id)
-            {
-                _data.BoundId = null;
-            }
             return true;
         }
 
@@ -80,90 +73,20 @@ namespace EliteCrafting.Affixes
                 return false;
             }
             _segments[index] = new ItemSegment(roll);
-            if (_data.BoundId == id && roll.Id != id)
-            {
-                _data.BoundId = null;
-            }
             return true;
         }
 
-        /// <summary>Removes every parsed affix and the binding; unreadable segments stay unless <paramref name="unreadableToo"/>.</summary>
+        /// <summary>Removes every parsed affix; unreadable segments stay unless <paramref name="unreadableToo"/>.</summary>
         public ItemStateBuilder ClearAffixes(bool unreadableToo = false)
         {
             _segments.RemoveAll(s => s.IsRoll || unreadableToo);
-            _data.BoundId = null;
             return this;
         }
 
-        /// <summary>Binds an affix on the item (null unbinds). Throws when the id is not on the item.</summary>
-        public ItemStateBuilder SetBound(string? id)
-        {
-            if (id != null && !HasAffix(id))
-            {
-                throw new InvalidOperationException($"cannot bind '{id}': not on the item");
-            }
-            _data.BoundId = id;
-            return this;
-        }
-
-        public ItemStateBuilder SetRefine(float percent)
-        {
-            _data.Refine = percent;
-            _data.RefineRaw = null;
-            return this;
-        }
-
-        /// <summary>Seals with a reason id (<see cref="ItemKeys.SealedSerpent"/>...); null unseals (no stone does).</summary>
+        /// <summary>Seals with a reason id (<see cref="ItemKeys.SealedSerpent"/>); null unseals (no rune does).</summary>
         public ItemStateBuilder Seal(string? reason)
         {
             _data.SealedReason = string.IsNullOrEmpty(reason) ? null : reason;
-            return this;
-        }
-
-        public ItemStateBuilder SetSigil(string? stoneId)
-        {
-            _data.SigilId = string.IsNullOrEmpty(stoneId) ? null : stoneId;
-            return this;
-        }
-
-        // ---- sockets and catalyst (sockets.md)
-
-        public int SocketCount => _data.Sockets.Count;
-        public IReadOnlyList<SocketGem> Gems => _data.Sockets.Gems;
-
-        /// <summary>Sets the socket count; gems beyond it stay stored but no stone adds more until a socket is free.</summary>
-        public ItemStateBuilder SetSockets(int count)
-        {
-            _data.Sockets = _data.Sockets.WithCount(count);
-            return this;
-        }
-
-        /// <summary>
-        /// Sets a gem into the first empty socket. With every socket full the oldest gem breaks and the others move up
-        /// one (sockets.md section 4); the broken gem is returned. Throws when the item has no socket.
-        /// </summary>
-        public SocketGem? SetGem(SocketGem gem)
-        {
-            if (SocketCount <= 0)
-            {
-                throw new InvalidOperationException("the item has no socket");
-            }
-            List<SocketGem> gems = new List<SocketGem>(_data.Sockets.Gems);
-            SocketGem? broken = null;
-            while (gems.Count >= SocketCount)
-            {
-                broken = gems[0];
-                gems.RemoveAt(0);
-            }
-            gems.Add(gem);
-            _data.Sockets = _data.Sockets.WithGems(gems);
-            return broken;
-        }
-
-        /// <summary>Sets the catalyst (null family removes it).</summary>
-        public ItemStateBuilder SetCatalyst(string? family, float quality)
-        {
-            _data.Sockets = _data.Sockets.WithCatalyst(family, quality);
             return this;
         }
 

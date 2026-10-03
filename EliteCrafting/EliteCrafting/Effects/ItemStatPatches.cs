@@ -8,7 +8,7 @@ namespace EliteCrafting.Effects
     // They run on whichever peer asks (the owner for combat, anyone for a tooltip) and read only the item's own
     // replicated data, so every peer gets the same answer. Hot: one cache lookup, then float arithmetic.
 
-    /// <summary><c>item_armor</c> (+Tempering on armor): the piece's armor. Read per incoming hit on the victim's client.</summary>
+    /// <summary><c>item_armor</c>: the piece's armor. Read per incoming hit on the victim's client.</summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetArmor), new[] { typeof(int), typeof(float) })]
     internal static class ItemArmorPatch
     {
@@ -17,13 +17,13 @@ namespace EliteCrafting.Effects
             ItemLocalSums? sums = ItemLocalCache.Get(__instance);
             if (sums != null)
             {
-                __result *= sums.RefineArmor * (1f + sums.Get(EffectKind.ItemArmor));
+                __result *= 1f + sums.Get(EffectKind.ItemArmor);
             }
         }
     }
 
     /// <summary>
-    /// <c>item_block</c> (+Tempering on shields): base block power. The game derives the blocking value and the
+    /// <c>item_block</c>: base block power. The game derives the blocking value and the
     /// tooltip's block line from it, on the blocker's own client.
     /// </summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetBaseBlockPower), new[] { typeof(int) })]
@@ -34,7 +34,7 @@ namespace EliteCrafting.Effects
             ItemLocalSums? sums = ItemLocalCache.Get(__instance);
             if (sums != null)
             {
-                __result *= sums.RefineBlock * (1f + sums.Get(EffectKind.ItemBlock));
+                __result *= 1f + sums.Get(EffectKind.ItemBlock);
             }
         }
     }

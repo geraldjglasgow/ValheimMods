@@ -11,8 +11,7 @@ namespace EliteCrafting.Rules
     {
         private static readonly string[] RootKeys =
         {
-            FamilyBuilder.UseDefaultsKey, "rarities", "rolling", "stones", "sigils", "item_tiers", "biomes", "drops",
-            "essence_families", "salvage",
+            FamilyBuilder.UseDefaultsKey, "rarities", "rolling", "runes", "item_tiers", "biomes", "drops",
         };
 
         public static EconomyRules? Parse(YamlMappingNode root, RuleIssues issues)
@@ -24,12 +23,9 @@ namespace EliteCrafting.Rules
                 Rarities = RarityParser.Parse(r),
                 Rolling = RarityParser.ParseRolling(r),
                 Stones = StoneParser.Parse(r),
-                Sigils = new SigilSettings { ConsumeOnUnsteered = SigilFlag(r) },
                 ItemTiers = TierMapParser.ParseItemTiers(r),
                 Biomes = TierMapParser.ParseBiomes(r),
                 Drops = DropParser.Parse(r),
-                EssenceFamilies = EssenceFamilyParser.Parse(r),
-                Salvage = SalvageParser.Parse(r),
             };
             if (issues.HasErrors)
             {
@@ -37,17 +33,6 @@ namespace EliteCrafting.Rules
             }
             EconomyIndex.Build(rules, issues);
             return issues.HasErrors ? null : rules;
-        }
-
-        private static bool SigilFlag(MapReader r)
-        {
-            MapReader? sigils = r.Sub("sigils");
-            if (sigils == null)
-            {
-                return false;
-            }
-            sigils.Value.Unknown("consume_on_unsteered");
-            return sigils.Value.Bool("consume_on_unsteered", false);
         }
     }
 }

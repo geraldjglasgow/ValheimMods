@@ -68,8 +68,7 @@ namespace EliteCrafting.Rules
             }
             Current = new RuleSet(_affixes.Active, _economy.Active, ++_generation);
             Log.Info($"rules applied (generation {_generation}): {Current.Affixes.Affixes.Count} inscriptions, "
-                + $"{Current.Economy.Rarities.Count} rarities, {Current.Economy.Stones.Count} stones");
-            EssenceMemberChecks.Run(Current);
+                + $"{Current.Economy.Rarities.Count} rarities, {Current.Economy.Stones.Count} runes");
             Raise();
         }
 

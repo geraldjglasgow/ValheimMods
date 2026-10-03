@@ -6,7 +6,7 @@ namespace EliteCrafting.Affixes
     /// <summary>
     /// Writes <see cref="StateData"/> into a custom-data dictionary (item-data.md section 3): only our keys, a key
     /// whose value would be empty is removed, <c>ecf_v</c> present exactly when another of our keys is, the reserved
-    /// <c>ecf_tier</c> left as it was, and every other mod's key untouched.
+    /// <c>ecf_tier</c> left as it was, the retired keys removed, and every other mod's key untouched.
     /// </summary>
     internal static class ItemWriter
     {
@@ -15,24 +15,12 @@ namespace EliteCrafting.Affixes
             Set(target, ItemKeys.Rarity, data.RarityId);
             Set(target, ItemKeys.Affixes, ItemCodec.EncodeList(data.Segments));
             target.Remove(ItemKeys.LegacyAffixes);
-            Set(target, ItemKeys.Bound, BoundOnItem(data));
-            Set(target, ItemKeys.Refine, data.Refine != 0f ? Numbers.Format(data.Refine) : data.RefineRaw);
             Set(target, ItemKeys.Sealed, data.SealedReason);
-            Set(target, ItemKeys.Sigil, data.SigilId);
-            SocketCodec.Write(data.Sockets, target);
-            Set(target, ItemKeys.Version, AnyStateKey(target) ? Numbers.Format(ItemKeys.CurrentFormat) : null);
-        }
-
-        private static string? BoundOnItem(StateData data)
-        {
-            foreach (ItemSegment segment in data.Segments)
+            foreach (string key in ItemKeys.RetiredKeys)
             {
-                if (segment.IsRoll && segment.Roll.Id == data.BoundId)
-                {
-                    return data.BoundId;
-                }
+                target.Remove(key);
             }
-            return null;
+            Set(target, ItemKeys.Version, AnyStateKey(target) ? Numbers.Format(ItemKeys.CurrentFormat) : null);
         }
 
         private static bool AnyStateKey(Dictionary<string, string> target)

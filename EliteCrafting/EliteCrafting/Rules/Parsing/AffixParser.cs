@@ -14,7 +14,7 @@ namespace EliteCrafting.Rules
     {
         private static readonly string[] Keys =
         {
-            "id", "name", "effect", "param", "value", "unit", "slots", "requires", "category", "mythic_only",
+            "id", "name", "effect", "param", "value", "unit", "slots", "requires", "category",
             "condition", "exclusion_group", "weight", "enabled", "hook", "tiers",
         };
 
@@ -84,7 +84,6 @@ namespace EliteCrafting.Rules
             def.Requires = RequirementsParser.Parse(r);
             def.Category = r.Enum("category", AffixCategory.Utility);
             Required(r, "category");
-            def.MythicOnly = r.Bool("mythic_only", false);
             def.Condition = r.Enum("condition", AffixCondition.None);
         }
 

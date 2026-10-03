@@ -11,11 +11,11 @@ namespace EliteCrafting.Rules
             Dictionary<string, BossDrop> bosses = new Dictionary<string, BossDrop>(System.StringComparer.Ordinal);
             foreach (MapReader r in Entries(drops, "bosses"))
             {
-                r.Unknown("tier", "stone_rolls", "gear_rolls", "bonus");
+                r.Unknown("tier", "rune_rolls", "gear_rolls", "bonus");
                 bosses[Name(r)] = new BossDrop
                 {
                     Tier = r.Int("tier", 1, 1, 7),
-                    StoneRolls = r.Int("stone_rolls", 0, 0),
+                    StoneRolls = r.Int("rune_rolls", 0, 0),
                     GearRolls = r.Int("gear_rolls", 0, 0),
                     Bonus = ReadBonus(r),
                 };
@@ -31,12 +31,12 @@ namespace EliteCrafting.Rules
             Dictionary<string, CreatureDrop> creatures = new Dictionary<string, CreatureDrop>(System.StringComparer.Ordinal);
             foreach (MapReader r in Entries(parent, key))
             {
-                r.Unknown("tier", "multiplier", "stone_multiplier", "gear_multiplier", "bonus");
+                r.Unknown("tier", "multiplier", "rune_multiplier", "gear_multiplier", "bonus");
                 creatures[Name(r)] = new CreatureDrop
                 {
                     Tier = r.Int("tier", 0, 1, 7),
                     Multiplier = r.Float("multiplier", 1f, 0f),
-                    StoneMultiplier = r.Float("stone_multiplier", 1f, 0f),
+                    StoneMultiplier = r.Float("rune_multiplier", 1f, 0f),
                     GearMultiplier = r.Float("gear_multiplier", 1f, 0f),
                     Bonus = ReadBonus(r),
                 };
@@ -74,14 +74,14 @@ namespace EliteCrafting.Rules
             {
                 if (!(seq.Children[i] is YamlMappingNode map))
                 {
-                    r.Issues.Error(r.At("bonus"), seq.Children[i], "a bonus row looks like { stone: awakening, chance: 100, amount: 1 }");
+                    r.Issues.Error(r.At("bonus"), seq.Children[i], "a bonus row looks like { rune: awakening, chance: 100, amount: 1 }");
                     continue;
                 }
                 MapReader row = new MapReader(map, $"{r.At("bonus")}[{i}]", r.Issues);
-                row.Unknown("stone", "chance", "amount");
+                row.Unknown("rune", "chance", "amount");
                 bonus.Add(new DropBonus
                 {
-                    Stone = row.Id("stone") ?? "",
+                    Stone = row.Id("rune") ?? "",
                     Chance = row.Float("chance", 100f, 0f, 100f),
                     Amount = row.Int("amount", 1, 1),
                 });

@@ -20,7 +20,6 @@ namespace EliteCrafting.Rolling
                 return outcome;
             }
             string inputs = $"slot {context.Slot.Slot}, ceiling {context.Ceiling}, floor {context.TierFloor}"
-                + (context.Category != null ? $", category {context.Category}" : "")
                 + (context.Chaotic ? ", chaotic" : "");
             string result = outcome.Success ? Describe(outcome.State!) : "failed: " + outcome.Failure;
             Log.Info($"roll {what} ({inputs}): {Describe(before)} -> {result}");
@@ -29,7 +28,7 @@ namespace EliteCrafting.Rolling
 
         private static string Describe(ItemState state)
         {
-            StringBuilder text = new StringBuilder(state.RarityId ?? "common");
+            StringBuilder text = new StringBuilder(state.RarityId ?? "normal");
             text.Append(" [");
             for (int i = 0; i < state.AffixCount; i++)
             {

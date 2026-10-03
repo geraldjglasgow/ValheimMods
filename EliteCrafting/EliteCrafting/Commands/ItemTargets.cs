@@ -127,7 +127,7 @@ namespace EliteCrafting.Commands
             }
             if (!ItemSlots.IsMagicBase(item))
             {
-                call.Reply($"{ItemText.Name(item)} is not a magic base (stackable, no slot, or a stone).");
+                call.Reply($"{ItemText.Name(item)} is not a magic base (stackable, no slot, or a rune).");
                 return null;
             }
             return item;

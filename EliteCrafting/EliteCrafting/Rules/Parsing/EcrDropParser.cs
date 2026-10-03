@@ -20,7 +20,7 @@ namespace EliteCrafting.Rules
                 return new EcrDrops();
             }
             MapReader r = sub.Value;
-            r.Unknown("star_multipliers", "star_step", "star_rarity_bonus", "tier_stone_multipliers", "tier_rarity_bonus", "skip_worthless");
+            r.Unknown("star_multipliers", "star_step", "star_rarity_bonus", "tier_rune_multipliers", "tier_rarity_bonus", "skip_worthless");
             EcrDrops ecr = new EcrDrops
             {
                 StarStep = r.Float("star_step", 0.5f, 0f),
@@ -28,7 +28,7 @@ namespace EliteCrafting.Rules
                 SkipWorthless = r.Bool("skip_worthless", true),
             };
             ecr.StarMultipliers = List(r, "star_multipliers", ecr.StarMultipliers, 0);
-            ecr.TierStoneMultipliers = List(r, "tier_stone_multipliers", ecr.TierStoneMultipliers, EcrTiers);
+            ecr.TierStoneMultipliers = List(r, "tier_rune_multipliers", ecr.TierStoneMultipliers, EcrTiers);
             ecr.TierRarityBonus = List(r, "tier_rarity_bonus", ecr.TierRarityBonus, EcrTiers);
             return ecr;
         }

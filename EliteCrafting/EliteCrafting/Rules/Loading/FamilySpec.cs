@@ -4,7 +4,7 @@ namespace EliteCrafting.Rules
     internal sealed class FamilySpec
     {
         public static readonly FamilySpec Affixes = new FamilySpec("EliteCrafting_inscriptions", "ecf_inscriptions", new[] { "inscriptions" });
-        public static readonly FamilySpec Economy = new FamilySpec("EliteCrafting_economy", "ecf_economy", new[] { "rarities", "stones", "salvage.fragments" });
+        public static readonly FamilySpec Economy = new FamilySpec("EliteCrafting_economy", "ecf_economy", new[] { "rarities", "runes" });
 
         private FamilySpec(string prefix, string syncKey, string[] idLists)
         {
@@ -19,7 +19,7 @@ namespace EliteCrafting.Rules
         /// <summary>The Charter article name.</summary>
         public string SyncKey { get; }
 
-        /// <summary>Dotted paths of the lists that merge by <c>id</c>, field by field (root keys, or <c>salvage.fragments</c>).</summary>
+        /// <summary>Dotted paths of the lists that merge by <c>id</c>, field by field.</summary>
         public string[] IdLists { get; }
 
         public string MainFile => Prefix + ".yml";

@@ -15,8 +15,7 @@ namespace EliteCrafting.Loot
         public static int Of(SlotInfo slot, int ceiling, AffixRules affixes)
         {
             HashSet<string> groups = new HashSet<string>(System.StringComparer.Ordinal);
-            int count = CountPool(affixes.Pool(slot.Slot, false), slot, ceiling, groups);
-            return count + CountPool(affixes.Pool(slot.Slot, true), slot, ceiling, groups);
+            return CountPool(affixes.Pool(slot.Slot), slot, ceiling, groups);
         }
 
         private static int CountPool(IReadOnlyList<AffixDef> pool, SlotInfo slot, int ceiling, HashSet<string> groups)

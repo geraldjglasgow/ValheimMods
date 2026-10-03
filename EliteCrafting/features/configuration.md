@@ -4,8 +4,8 @@ One feature of the mod, specified on its own. `../SPEC.md` is the whole-mod docu
 
 This file covers **the settings file and the two YAML families**: every `.cfg` key, the files of a family and how they
 combine over the built-in defaults, validation and error reporting, server sync, hot reload, write-back of the
-defaults, and the **complete affix YAML schema**. The economy family's schema and content (rarities, rolling, stones,
-sigils, item tiers, biomes, drop tables) are `economy-yaml.md`; its file mechanics are here.
+defaults, and the **complete affix YAML schema**. The economy family's schema and content (rarities, rolling, runes,
+item tiers, biomes, drop tables) are `economy-yaml.md`; its file mechanics are here.
 
 **Status: Phase 1 built, not tested in game** (2026-09-23). The plumbing follows Elite Creatures Reborn's (user decision, `../DECISIONS.md`
 U-11); section 1 says which parts carry over and what changes for two families of several files.
@@ -18,7 +18,7 @@ U-11); section 1 says which parts carry over and what changes for two families o
 |---|---|---|
 | `BepInEx/config/com.EliteCrafting.cfg` | global switches, confirm gate, display and glow preferences, diagnostics | gameplay keys yes and lockable; display, glow, confirm, diagnostics never |
 | `EliteCrafting_inscriptions*.yml` | every affix, the effect caps, the health-critical threshold | yes |
-| `EliteCrafting_economy*.yml` | rarities (palette, glow, affix counts), rolling rules, stones, sigils, item tiers, biomes, drop tables (`economy-yaml.md`) | yes |
+| `EliteCrafting_economy*.yml` | rarities (palette, glow, affix counts), rolling rules, runes, item tiers, biomes, drop tables (`economy-yaml.md`) | yes |
 
 **Libraries.** `Charter` (server binding, version check, the pushed file texts), `ConfigReload` (the `.cfg`: save and
 five-second poll), `PatchGuard` (every entry point guarded) and `YamlDotNet` (its representation model only, no
@@ -59,27 +59,27 @@ Charter, and never leave the machine.
 | Section | Key | Type | Default | Synced | Meaning |
 |---|---|---|---|---|---|
 | `1 - General` | `Lock Configuration` | bool | `true` | binding | Charter's binding switch; the server's value governs. When on, every player uses the server's gameplay values and YAML and their own are ignored until they disconnect |
-| `1 - General` | `Affix effects` | bool | `true` | synced | Master switch for all affix effects. Off: items keep and show their affixes, nothing applies (`effects-runtime.md`) |
-| `2 - Stones` | `Modify equipped items` | bool | `true` | synced | Stones may be used on equipped items (`applying-stones.md` section 5) |
-| `2 - Stones` | `Confirm destructive stones` | enum `HoldShift` / `Dialog` / `Off` | `HoldShift` | local | How stones marked `confirm: true` ask first (`applying-stones.md` section 4) |
-| `3 - Drops` | `Stone drops` | bool | `true` | synced | Creatures drop stones per the economy drop tables |
+| `1 - General` | `Inscription effects` | bool | `true` | synced | Master switch for all affix effects. Off: items keep and show their inscriptions, nothing applies (`effects-runtime.md`) |
+| `2 - Runes` | `Modify equipped items` | bool | `true` | synced | Runes may be used on equipped items (`applying-stones.md` section 5) |
+| `2 - Runes` | `Confirm destructive runes` | enum `HoldShift` / `Dialog` / `Off` | `HoldShift` | local | How runes marked `confirm: true` (Cleansing, Serpent) ask first (`applying-stones.md` section 4) |
+| `3 - Drops` | `Rune drops` | bool | `true` | synced | Creatures drop runes per the economy drop tables |
 | `3 - Drops` | `Magic item drops` | bool | `true` | synced | Creatures drop pre-rolled magic gear per the economy drop tables |
 | `4 - Commands` | `Read-only commands for everyone` | bool | `true` | synced | `ecraft inspect`, `stats`, `list`, `help` for every player; off makes them admin-only too (`console-commands.md`) |
 | `5 - Display (per player)` | `Colored item names` | bool | `true` | local | `display.md` section 2 |
 | `5 - Display (per player)` | `Tooltip detail` | enum `Compact` / `Standard` / `Full` | `Standard` | local | `display.md` section 3 |
-| `5 - Display (per player)` | `Show dormant affixes` | bool | `true` | local | `display.md` section 4 |
+| `5 - Display (per player)` | `Show dormant inscriptions` | bool | `true` | local | `display.md` section 4 |
 | `6 - Ground glow (per player)` | `Ground glow` | bool | `true` | local | `display.md` section 5 |
 | `6 - Ground glow (per player)` | `Glow intensity` | float 0-3 | `1.0` | local | |
 | `6 - Ground glow (per player)` | `Glow range` | float 0.5-6 | `2.0` | local | metres |
 | `6 - Ground glow (per player)` | `Glow max lights` | int 0-100 | `25` | local | nearest-N cap |
 | `6 - Ground glow (per player)` | `Glow refresh seconds` | float 0.25-5 | `1.0` | local | |
-| `6 - Ground glow (per player)` | `Glow stones` | bool | `false` | local | |
-| `7 - Diagnostics` | `Log rolls` | bool | `false` | local | Log every roll (stone, drop, command) with its inputs and result |
+| `6 - Ground glow (per player)` | `Glow runes` | bool | `false` | local | Runes lying in the world glow in their tint too |
+| `7 - Diagnostics` | `Log rolls` | bool | `false` | local | Log every roll (rune, drop, command) with its inputs and result |
 | `7 - Diagnostics` | `Log effect rebuilds` | bool | `false` | local | Log each aggregate rebuild with the channel totals |
-| `9 - Elite Creatures Reborn` | `Synergy` | bool | `false` | synced | With Elite Creatures Reborn installed: its elite stars (and later its world tier) raise EliteCrafting's drops. No effect without it (`ecr-integration.md`; its numbers are `drops.ecr`) |
+| `8 - Elite Creatures Reborn` | `Synergy` | bool | `false` | synced | With Elite Creatures Reborn installed: its elite stars (and later its world tier) raise EliteCrafting's drops. No effect without it (`ecr-integration.md`; its numbers are `drops.ecr`) |
 
 - Every value is hot-reloaded (ConfigReload's five-second poll) and takes effect without a restart: the display keys
-  on the next tooltip and glow tick, `Affix effects` on the next rebuild, the drop switches on the next kill.
+  on the next tooltip and glow tick, `Inscription effects` on the next rebuild, the drop switches on the next kill.
 - Numeric ranges are `AcceptableValueRange`; configuration UIs show them as sliders.
 - Everything that decides *what* rolls (rarities, affixes, tiers, weights, costs, drop tables and their multipliers)
   is YAML, not `.cfg`. The `.cfg` has only switches a server owner wants without opening a YAML file (`../DECISIONS.md`
@@ -115,31 +115,28 @@ The model for a family is built from layers, in this order:
 The main file may set the root key `use_defaults: false`; then layer 1 is skipped and the files alone are the whole
 configuration. (`use_defaults` in any other file is a warning and ignored.) Default `true` (`../DECISIONS.md` CFG-1).
 
-Why layered: a release that adds a new affix or stone reaches servers whose main file was written by an older
+Why layered: a release that adds a new affix or a rune setting reaches servers whose main file was written by an older
 release, without the owner merging anything. The flip side, accepted: a main file that is a full copy of an older
 release's defaults keeps that release's numbers for every entry it names, so a later **re-balance** of an existing
 entry does not reach it. An owner who wants the new numbers deletes or renames the main file; the next start writes
 the current one.
 
-**What the built-in defaults contain, per release**: only the affixes whose effects that release implements (0.1.0:
-the Phase 1 set, `affixes.md` section 6), because a later-phase effect in YAML is a validation error
-(`effects-runtime.md` section 1). Later affixes join the defaults in the release that builds them, and layering
-delivers them to existing servers. The economy defaults were complete from 0.1.0, with the Phase 2 stones present and
-`enabled: false`; 0.2.0 enables them and adds the essences, `essence_families`, `salvage`, `drops.chests` and
-`drops.ecr` (`economy-yaml.md` section 4). **Consequence for a server whose main economy file was written by 0.1.0**
-(verified with the loader, 2026-09-24): that file names the 19 Phase 2 stones with `enabled: false` and the bosses with
-their 0.1.0 `bonus` lists, so those stones stay disabled and the bosses' essence rows are replaced; new ids (the
-essences, new `drops.stones` keys, new affixes) still arrive. The fix is the one above: delete or rename the main file
-(CHANGELOG 0.2.0 says so).
+**What the built-in defaults contain, per release**: only the affixes whose effects that release implements (the
+Phase 1 set, `affixes.md` section 6, then each later phase's), because a later-phase effect in YAML is a validation
+error (`effects-runtime.md` section 1). Later affixes join the defaults in the release that builds them, and layering
+delivers them to existing servers. The economy defaults hold the three rarities, the six runes, `drops.chests` and
+`drops.ecr` (`economy-yaml.md`). The mod has never been released; a main economy file written by a development build
+before the runes (2026-10-02) still holds the old rarities and crafting items, and is fixed the way above: delete or
+rename it, and the next start writes the current one.
 
 ## Merging entries
 
 The overlay changes only what a file names, and leaves everything else as the earlier layers made it (the same rule
-as ECR's per-biome overlay). Every list of entries with an `id` (affixes; rarities and stones in the economy family)
+as ECR's per-biome overlay). Every list of entries with an `id` (affixes; rarities and runes in the economy family)
 merges **by id, field by field** (`../DECISIONS.md` CFG-3):
 
 - An entry whose id is **new** is added. After all layers it must be complete (every required field present) or it
-  is an error.
+  is an error. (In `runes:` a new id is always an error: only the six runes exist, `stones.md` section 5.)
 - An entry whose id **already exists** from an earlier layer changes only the fields it names. A two-line entry is a
   valid override:
 
@@ -150,7 +147,7 @@ merges **by id, field by field** (`../DECISIONS.md` CFG-3):
   ```
 
 - **List-valued fields** (`slots`, `tiers`, `applies_to`, `outcomes`) are replaced whole, never merged item by item.
-- **Map-valued fields** (`caps`, `health_critical`, a stone's `cost` and `weights`) merge by key.
+- **Map-valued fields** (`caps`, `health_critical`, a rune's `cost`) merge by key.
 - The **same id twice in one file** is an error (almost always a copy-paste mistake).
 - An override in a later file is logged at info level ("affix `fleetfoot` overridden by
   `EliteCrafting_inscriptions_custom.yml`: enabled"), so an owner can see what their files did.
@@ -172,8 +169,7 @@ line 42: 'ten' is not a number`), as ECR's reader does.
 - **Post-merge checks** (completeness, cross-references to rarities, slots and effects) run once on the finished
   model and name the id and every file that touched it, because a merged entry has no single line.
 - The affix family checks every effect reference against the effect registry (`effects-runtime.md` section 1). The
-  economy family checks references into the affix family (affix ids named by drop tables or essences) only as
-  warnings, because the two families reload independently.
+  economy family names no affix id, so the two families, which reload independently, never cross-check.
 - **Fallback at startup**: if a family fails validation before any configuration was ever loaded, there is no
   "previous" to keep. The author (server, host, single player) then logs the errors, runs on the **built-in defaults
   alone** and publishes an **empty file list** for that family (section 5), so every peer builds the same defaults.
@@ -222,17 +218,17 @@ line 42: 'ten' is not a number`), as ECR's reader does.
 - A successful build replaces the family's active model in one assignment and raises its `Changed` event. It also
   bumps the configuration generation the item parse cache checks (`item-data.md` section 5), marks the aggregate
   dirty (`effects-runtime.md` section 3), and rebuilds the precomputed tables (tier table, drop tables, colour strings).
-- **Stone prefabs are never created at apply time**: they come from code only (`prefabs.md` section 2), and an
-  owner-defined stone binds to one of the reserved custom prefabs. The economy family's stone name, description, stack
-  size, item weight and tint need `ObjectDB`; they are written to the prefabs once they are built, and again on every
-  later apply. Every live stone shares its prefab's `SharedData` (linked when it wakes), so that reaches every
-  existing stack (`prefabs.md` section 2; ItemCopies is not used, `../DECISIONS.md` IMP-1).
+- **Rune prefabs are never created at apply time**: they come from code only (`prefabs.md` section 2), six of them,
+  whatever the YAML says. The economy family's rune name, description, stack size, item weight and tint need
+  `ObjectDB`; they are written to the prefabs once they are built, and again on every later apply. Every live rune
+  shares its prefab's `SharedData` (linked when it wakes), so that reaches every existing stack (`prefabs.md` section
+  2; ItemCopies is not used, `../DECISIONS.md` IMP-1).
 
 ## Write-back
 
 - The only file the mod writes into a family is **the default main file on first run** (section 3). It never
   rewrites, reformats or "repairs" an owner's file.
-- `ecraft dump affixes|economy` writes the effective merged model to `EliteCrafting_effective_<family>.yml.txt` in
+- `ecraft dump inscriptions|economy` writes the effective merged model to `EliteCrafting_effective_<family>.yml.txt` in
   the config folder, outside both family patterns (`console-commands.md`), so an owner can see what the layers add up
   to.
 
@@ -274,8 +270,7 @@ supplies every default value; this section is the format and its validation. Wha
 | `unit` | enum `ms` / `deg` / `m` / `min` | no | none | Display unit for `flat` values only; error on `percent` or `flag` |
 | `slots` | list of slot ids (one id accepted) | yes | | Non-empty; each one of `melee_weapon`, `ranged_weapon`, `magic_weapon`, `shield`, `head`, `chest`, `legs`, `cape`, `utility_item`, `tool` |
 | `requires` | map | no | none | Narrower item filter, every key must hold: `skill: [SkillType...]` (any of, against the item's governing skills), `hands: one|two`, `traits: [wears_out|movement_penalty|builds|projectile|ammo|can_parry...]` (all of). Unknown names are errors; an affix no item in its slots can satisfy is a warning |
-| `category` | enum `offense` / `defense` / `utility` | yes | | What the War / Warding / Fortune sigils steer by |
-| `mythic_only` | bool | no | `false` | Only in the Mythic pool (`rarity.md`, `affixes-mythic.md`) |
+| `category` | enum `offense` / `defense` / `utility` | yes | | A grouping for the catalog and the `ecraft list inscriptions <category>` filter |
 | `condition` | enum `none` / `health_critical` | no | `none` | `health_critical`: applies only at or below the threshold; its channel sums and caps apart from the unconditional one |
 | `exclusion_group` | string | no | none | snake_case. At most one affix of a group per item; an affix is always exclusive with itself |
 | `weight` | number | no | `100` | `>= 0`. The affix's share of the first-stage draw (`rarity.md`). 0 stops new rolls; existing copies keep working |
@@ -411,7 +406,7 @@ inscriptions:
 - Gameplay `.cfg` keys and both YAML families are server-owned while `Lock Configuration` is on and reach clients on
   join and on every change (Charter clauses and articles).
 - The display, glow, confirm and diagnostics keys never sync, on any server, in any lock state.
-- Rolls happen on different machines (drops on the creature's ZDO owner, stones on the item owner's client), so they
+- Rolls happen on different machines (drops on the creature's ZDO owner, runes on the item owner's client), so they
   must all use the same rules: that is what the lock guarantees, why every peer builds from the same texts with the
   same reader, and why the startup fallback publishes an empty file list rather than letting each peer fall back on
   its own.

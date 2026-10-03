@@ -18,12 +18,9 @@ conventions, so a key can be derived from data without a lookup table.
 |---|---|---|
 | `$ecf_affix_<affix id>` | affix name | `$ecf_affix_fleetfoot` = "Fleetfoot" |
 | `$ecf_affix_<affix id>_line` | the affix's tooltip sentence, `$1` the value, `$2` a composite second half (optional; `display.md`) | `$ecf_affix_fleetfoot_line` = "You move $1% faster" |
-| `$ecf_stone_<stone id>` | stone (and sigil) item name | `$ecf_stone_growth_lesser` = "Lesser Stone of Growth" |
-| `$ecf_stone_<stone id>_desc` | stone item description (vanilla tooltip body) | |
-| `$ecf_rarity_<rarity id>` | rarity word | `$ecf_rarity_legendary` = "Legendary" |
-| `$ecf_family_<family id>` | essence family name (`essences.md` section 8) | `$ecf_family_venom` = "Venom" |
-| `$ecf_fragment_<shard id>` | salvage shard item name (`salvage.md` section 5) | `$ecf_fragment_shard_ascension` = "Shard of Ascension" |
-| `$ecf_fragment_<shard id>_desc` | shard item description | |
+| `$ecf_stone_<rune id>` | rune item name (the code's word for a rune is stone) | `$ecf_stone_awakening` = "Awakening Rune" |
+| `$ecf_stone_<rune id>_desc` | rune item description (vanilla tooltip body) | |
+| `$ecf_rarity_<rarity id>` | rarity word | `$ecf_rarity_magic` = "Magic" |
 | `$ecf_msg_<id>` | refusals and feedback messages | `$ecf_msg_sealed` |
 | `$ecf_ui_<id>` | tooltip labels, console-facing words, category and slot names | `$ecf_ui_dormant` |
 
@@ -31,11 +28,10 @@ Sub-schemes inside `$ecf_ui_`, so that data ids map to words mechanically:
 
 - `$ecf_ui_category_<offense|defense|utility>`
 - `$ecf_ui_slot_<slot id>`
-- `$ecf_ui_sealed_<reason id>`: `serpent`, `reflection`
+- `$ecf_ui_sealed_<reason id>`: `serpent`
 
-Essences are stones, so their names are stone keys: `$ecf_stone_essence_<family>_<grade>` and `..._desc`. The English
-words of essences and salvage ship in their own files, `English.essences.yml` and `English.salvage.yml` (the
-translations folder holds one file per area; the loader reads every `English.*.yml`).
+The English words ship in one file per area in the translations folder (`English.core.yml`, `English.stones.yml` for
+the rune names, `English.stones_ui.yml` for the rune messages, ...); the loader reads every `English.*.yml`.
 
 Rules:
 
@@ -69,24 +65,22 @@ The general keys this file owns (the other feature files list their own `$ecf_ms
 | `ecf_ui_affix_line` | `$1 $2` (value, name) |
 | `ecf_ui_tier` | `T$1` |
 | `ecf_ui_range` | `[$1-$2]` |
-| `ecf_ui_bound` | `[Bound]` |
 | `ecf_ui_dormant` | `(dormant)` |
 | `ecf_ui_unreadable` | `Unreadable: $1` |
 | `ecf_ui_newer_format` | `Changed by a newer version of EliteCrafting` |
 | `ecf_ui_sealed` | `Sealed: $1` |
 | `ecf_ui_sealed_serpent` | `Corrupted` |
-| `ecf_ui_sealed_reflection` | `Mirrored` |
 | `ecf_ui_tier_ceiling` | `Tier ceiling $1` |
 | `ecf_ui_category_offense` / `_defense` / `_utility` | `Offense` / `Defense` / `Utility` |
 | `ecf_ui_slot_melee_weapon` ... `ecf_ui_slot_tool` | `Melee weapon`, `Ranged weapon`, `Magic weapon`, `Shield`, `Head`, `Chest`, `Legs`, `Cape`, `Utility item`, `Tool` |
-| `ecf_rarity_common` ... `ecf_rarity_mythic` | `Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`, `Mythic` |
+| `ecf_rarity_normal`, `ecf_rarity_magic`, `ecf_rarity_rare` | `Normal`, `Magic`, `Rare` |
 | `ecf_msg_newer_format` | `This item was changed by a newer version of EliteCrafting.` |
 | `ecf_msg_unknown_rarity` | `This item's rarity is not known on this server.` |
 
 The other refusal and feedback texts (`not_own_inventory`, `not_magic_base`, `stone_disabled`, `sealed`,
-`equipped`, `wrong_rarity`, `not_enough_stones`, `confirm_required`, `$ecf_ui_confirm_title` / `_body`, the per-stone
-ones) are listed with their English in `stones.md` sections 2-3, `sigils.md` and `quality.md`, already in the
-game's `$1`, `$2` placeholder form (`applying-stones.md` section 2).
+`equipped`, `wrong_rarity`, `not_enough_stones`, `confirm_required`, `$ecf_ui_confirm_title` / `_body`, the per-rune
+ones) are listed with their English in `stones.md` sections 2-3, already in the game's `$1`, `$2` placeholder form
+(`applying-stones.md` section 2).
 
 Console output (`console-commands.md`) is **not** localized: it is a diagnostic tool, its output is pasted into bug
 reports and YAML, and it must read the same for everyone (`../DECISIONS.md` LOC-3).
@@ -111,9 +105,9 @@ reports and YAML, and it must read the same for everyone (`../DECISIONS.md` LOC-
 
 # 4. Names server owners add
 
-An owner who adds an affix or a stone in YAML has no translation file on every player's machine. So:
+An owner who adds an affix, or renames a rune, in YAML has no translation file on every player's machine. So:
 
-- An affix's `name` (and a stone's `name`, `economy-yaml.md`) is either a `$key` or **literal text**. Literal text is
+- An affix's `name` (and a rune's `name`, `economy-yaml.md`) is either a `$key` or **literal text**. Literal text is
   shown as written, in every language, and arrives with the synced YAML.
 - With no `name`, the key `$ecf_affix_<id>` is used; if no translation provides it, the tooltip shows the id itself,
   so an unnamed custom affix is still identifiable.

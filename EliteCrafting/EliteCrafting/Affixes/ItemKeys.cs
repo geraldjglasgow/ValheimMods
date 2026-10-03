@@ -11,7 +11,7 @@ namespace EliteCrafting.Affixes
         /// <summary>Format version, integer; present whenever any other key is.</summary>
         public const string Version = "ecf_v";
 
-        /// <summary>Rarity id; absent = Common. Never written as the base rarity.</summary>
+        /// <summary>Rarity id; absent = Normal. Never written as the base rarity.</summary>
         public const string Rarity = "ecf_rarity";
 
         /// <summary><c>id:tier:value;id:tier:value</c>, the item's inscriptions in display order.</summary>
@@ -20,29 +20,11 @@ namespace EliteCrafting.Affixes
         /// <summary>The same list under its name before 2026-10-01: read when the new key is absent, removed on write.</summary>
         public const string LegacyAffixes = "ecf_affixes";
 
-        /// <summary>Id of the affix locked by the Stone of Binding.</summary>
-        public const string Bound = "ecf_bound";
-
-        /// <summary>Honed/tempered bonus in percent points (survives Unmaking).</summary>
-        public const string Refine = "ecf_refine";
-
-        /// <summary>Sealed reason id (<see cref="SealedSerpent"/>, <see cref="SealedReflection"/>); any value = sealed.</summary>
+        /// <summary>Sealed reason id (<see cref="SealedSerpent"/>); any value = sealed.</summary>
         public const string Sealed = "ecf_sealed";
-
-        /// <summary>Stone id of the pending sigil.</summary>
-        public const string Sigil = "ecf_sigil";
 
         /// <summary>Reserved, never written (item-tier.md computes the ceiling); preserved when present.</summary>
         public const string Tier = "ecf_tier";
-
-        /// <summary>Socket count, integer (sockets.md section 2); absent = none.</summary>
-        public const string Sockets = "ecf_sockets";
-
-        /// <summary><c>gem:affix:grade:value;...</c>, the filled sockets oldest first (sockets.md section 2).</summary>
-        public const string Gems = "ecf_gems";
-
-        /// <summary><c>family:quality</c>, the catalyst on the item (sockets.md section 5).</summary>
-        public const string Catalyst = "ecf_catalyst";
 
         public const int CurrentFormat = 1;
 
@@ -50,9 +32,14 @@ namespace EliteCrafting.Affixes
         public const char FieldSeparator = ':';
 
         public const string SealedSerpent = "serpent";
-        public const string SealedReflection = "reflection";
 
         /// <summary>The keys that make an item carry state (all but the version itself).</summary>
-        public static readonly string[] StateKeys = { Rarity, Affixes, LegacyAffixes, Bound, Refine, Sealed, Sigil, Tier, Sockets, Gems, Catalyst };
+        public static readonly string[] StateKeys = { Rarity, Affixes, LegacyAffixes, Sealed, Tier };
+
+        /// <summary>
+        /// Keys of the systems the runes replaced on 2026-10-02 (binding, honing and tempering, sigils, sockets, gems,
+        /// catalysts): never read, removed from an item the next time it is written.
+        /// </summary>
+        public static readonly string[] RetiredKeys = { "ecf_bound", "ecf_refine", "ecf_sigil", "ecf_sockets", "ecf_gems", "ecf_catalyst" };
     }
 }

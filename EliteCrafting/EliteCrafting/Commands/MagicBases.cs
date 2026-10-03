@@ -25,7 +25,7 @@ namespace EliteCrafting.Commands
             GameObject? prefab = arg.Length == 0 ? null : FindPrefab(arg);
             problem = arg.Length == 0 ? "which prefab or slot?"
                 : prefab == null ? $"'{arg}' is neither an item prefab nor a slot ({SlotIds()})."
-                : !ItemSlots.IsMagicBase(prefab.GetComponent<ItemDrop>().m_itemData) ? $"{prefab.name} is not a magic base (stackable, no slot, or a stone)."
+                : !ItemSlots.IsMagicBase(prefab.GetComponent<ItemDrop>().m_itemData) ? $"{prefab.name} is not a magic base (stackable, no slot, or a rune)."
                 : null;
             return problem == null ? prefab : null;
         }

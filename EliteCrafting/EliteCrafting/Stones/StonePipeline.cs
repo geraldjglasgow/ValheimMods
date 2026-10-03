@@ -4,7 +4,7 @@ using EliteCrafting.Items;
 namespace EliteCrafting.Stones
 {
     /// <summary>
-    /// The check pipeline of applying-stones.md section 2, steps 1-12, in order; the first failure refuses. Every step
+    /// The check pipeline of applying-stones.md section 2, steps 1-12, in order, for one rune click; the first failure refuses. Every step
     /// only reads: the verb's dry run (steps 11-12) works on a copy, and its result is what <see cref="StoneCommit"/>
     /// writes. The confirm gate (13) and the commit (14) follow in <see cref="ConfirmGate"/>.
     /// <para>
@@ -34,18 +34,14 @@ namespace EliteCrafting.Stones
             return job.State.IsNewerFormat ? StoneResult.Refuse("newer_format") : null;
         }
 
-        // 4-7: live and enabled stone this build can perform, slot filter and base precondition, not sealed, equipped rule.
+        // 4-7: live and enabled rune this build can perform, not sealed, equipped rule.
         private static StoneResult? StoneChecks(StoneJob job)
         {
             if (!StoneVerbs.IsUsable(job.Def))
             {
                 return StoneResult.Refuse("stone_disabled", job.StoneName);
             }
-            if (!job.Def!.AcceptsSlot(job.Slot.Slot) || !HasWhatItImproves(job))
-            {
-                return StoneResult.Refuse("wrong_item_type", job.StoneName);
-            }
-            // STN-1: sealed refuses every stone, the quality stones and sigils included.
+            // STN-1: a sealed item refuses every rune.
             if (job.State.IsSealed)
             {
                 return StoneResult.Refuse("sealed");
@@ -53,19 +49,7 @@ namespace EliteCrafting.Stones
             return job.IsEquipped && !ModSettings.ModifyEquippedItems.Value ? StoneResult.Refuse("equipped") : null;
         }
 
-        // 5, the stone's base precondition: a quality stone needs the number its bonus multiplies (quality.md 5); a gem
-        // needs an affix for the item's slot (sockets.md 4).
-        private static bool HasWhatItImproves(StoneJob job)
-        {
-            switch (job.Def!.Verb)
-            {
-                case Rules.StoneVerb.Quality: return QualityTargets.CanImprove(job.Target, job.Slot.Slot);
-                case Rules.StoneVerb.Gem: return job.Def.GemAffix(job.Slot.Slot) != null;
-                default: return true;
-            }
-        }
-
-        // 8-10: known rarity, in applies_to, enough stones in the carried stack.
+        // 8-10: known rarity, in applies_to, enough runes in the carried stack.
         private static StoneResult? RarityChecks(StoneJob job)
         {
             if (job.Rarity == null)

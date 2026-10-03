@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace EliteCrafting.Items
 {
-    /// <summary>One registered stone (or shard) prefab and what the mod keeps about it. Built once per process.</summary>
+    /// <summary>One registered rune prefab and what the mod keeps about it. Built once per process.</summary>
     internal sealed class StoneEntry
     {
-        public StoneEntry(string prefabName, string? builtInId, StoneGroup group)
+        public StoneEntry(string prefabName, string builtInId, StoneGroup group)
         {
             PrefabName = prefabName;
             BuiltInId = builtInId;
@@ -15,13 +15,8 @@ namespace EliteCrafting.Items
 
         public string PrefabName { get; }
 
-        /// <summary>The built-in stone id, or null for a reserved <c>ECF_CustomNN</c> prefab and for a shard.</summary>
-        public string? BuiltInId { get; }
-
-        /// <summary>The shard id (salvage.md section 5) when this prefab is a shard, not a stone; else null.</summary>
-        public string? ShardId { get; set; }
-
-        public bool IsShard => ShardId != null;
+        /// <summary>The rune id.</summary>
+        public string BuiltInId { get; }
 
         public StoneGroup Group { get; }
         public GameObject Prefab { get; set; } = null!;

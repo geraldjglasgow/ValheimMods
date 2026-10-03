@@ -1,28 +1,25 @@
 using System.Collections.Generic;
 using EliteCrafting.Core;
-using EliteCrafting.Items;
 using YamlDotNet.RepresentationModel;
 
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Reads <c>stones:</c> (economy-yaml.md section 4): the common fields here, the verb-specific ones in
-    /// <see cref="StoneVerbParser"/>. Prefab binding is checked here: a built-in id uses its own prefab, an
-    /// owner-defined id one of the reserved <c>ECF_CustomNN</c>.
+    /// Reads <c>runes:</c> (economy-yaml.md section 4), the six runes: the common fields here, the Serpent Rune's in
+    /// <see cref="StoneVerbParser"/>. Only the six built-in ids exist; each uses its own prefab.
     /// </summary>
     internal static class StoneParser
     {
         private static readonly string[] Keys =
         {
-            "id", "prefab", "name", "description", "verb", "grade", "applies_to", "cost", "tier_floor", "enabled", "confirm", "stack",
-            "item_weight", "tint", "slots", "outcomes", "overflow", "weights", "seal_copy", "max_bound", "step", "cap",
-            "steer", "category", "family", "max_sockets", "inscriptions",
+            "id", "prefab", "name", "description", "verb", "applies_to", "cost", "tier_floor", "enabled", "confirm", "stack",
+            "item_weight", "tint", "outcomes", "overflow",
         };
 
         public static List<StoneDef> Parse(MapReader root)
         {
             List<StoneDef> stones = new List<StoneDef>();
-            YamlSequenceNode? seq = root.Seq("stones");
+            YamlSequenceNode? seq = root.Seq("runes");
             foreach (YamlNode node in seq?.Children ?? new List<YamlNode>())
             {
                 StoneDef? stone = ParseOne(node, root.Issues);
@@ -36,13 +33,13 @@ namespace EliteCrafting.Rules
 
         private static StoneDef? ParseOne(YamlNode node, RuleIssues issues)
         {
-            string? id = node is YamlMappingNode m ? new MapReader(m, "stones[?]", issues).Id("id") : null;
+            string? id = node is YamlMappingNode m ? new MapReader(m, "runes[?]", issues).Id("id") : null;
             if (id == null)
             {
-                issues.Error("stones[?]", node, "a stone entry needs a valid 'id'");
+                issues.Error("runes[?]", node, "a rune entry needs a valid 'id'");
                 return null;
             }
-            MapReader r = new MapReader((YamlMappingNode)node, $"stones[{id}]", issues);
+            MapReader r = new MapReader((YamlMappingNode)node, $"runes[{id}]", issues);
             r.Unknown(Keys);
             StoneDef stone = new StoneDef
             {
@@ -64,11 +61,10 @@ namespace EliteCrafting.Rules
             {
                 r.Issues.Error(r.At("verb"), r.Map, $"is required ({EnumIds<StoneVerb>.Joined})");
             }
-            stone.Grade = r.Enum("grade", StoneGrade.None);
             stone.AppliesTo = r.Strings("applies_to") ?? new List<string>();
             if (stone.AppliesTo.Count == 0)
             {
-                r.Issues.Error(r.At("applies_to"), r.Map, "is required: the rarities the stone accepts");
+                r.Issues.Error(r.At("applies_to"), r.Map, "is required: the rarities the rune accepts");
             }
             stone.Cost = YamlLists.IntMap(r, "cost", 0, 999);   // 0 = a free stone (applying-stones.md 3)
             stone.TierFloor = ReadTierFloor(r);
@@ -92,46 +88,22 @@ namespace EliteCrafting.Rules
             {
                 r.Error("tint", $"'{stone.Tint}' is not a #RRGGBB color");
             }
-            stone.Slots = ReadSlots(r);
         }
 
         private static string ReadPrefab(MapReader r, string id)
         {
-            bool builtIn = StoneCatalog.IsBuiltIn(id);
             string? prefab = r.Str("prefab");
-            if (builtIn)
+            if (!StoneCatalog.IsBuiltIn(id))
             {
-                string own = StoneCatalog.PrefabFor(id);
-                if (prefab != null && prefab != own)
-                {
-                    r.Error("prefab", $"a built-in stone uses its own prefab {own}");
-                }
-                return own;
-            }
-            if (prefab == null || !StoneCatalog.IsCustomPrefab(prefab))
-            {
-                r.Issues.Error(r.At("prefab"), r.Node("prefab") ?? r.Map,
-                    "a stone of your own must name one of the reserved prefabs ECF_Custom01 ... ECF_Custom16");
+                r.Error("id", $"'{id}' is not a rune: the runes are {string.Join(", ", StoneCatalog.BuiltInIds)}");
                 return prefab ?? "";
             }
-            return prefab;
-        }
-
-        private static List<ItemSlot> ReadSlots(MapReader r)
-        {
-            List<ItemSlot> slots = new List<ItemSlot>();
-            foreach (string id in r.Strings("slots") ?? new List<string>())
+            string own = StoneCatalog.PrefabFor(id);
+            if (prefab != null && prefab != own)
             {
-                if (ItemSlots.TryParse(id, out ItemSlot slot))
-                {
-                    slots.Add(slot);
-                }
-                else
-                {
-                    r.Error("slots", $"'{id}' is not a slot");
-                }
+                r.Error("prefab", $"a rune uses its own prefab {own}");
             }
-            return slots;
+            return own;
         }
     }
 }

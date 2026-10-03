@@ -11,8 +11,8 @@ namespace EliteCrafting.Rules
 
         private static readonly string[] Keys =
         {
-            "tamed", "require_player", "max_stones_per_kill", "max_gear_per_kill", "star_multipliers", "star_step",
-            "chances", "stones", "rarity_weights", "boss_rarity_weights", "gear", "bosses", "creatures", "chests", "ecr",
+            "tamed", "require_player", "max_runes_per_kill", "max_gear_per_kill", "star_multipliers", "star_step",
+            "chances", "runes", "rarity_weights", "boss_rarity_weights", "gear", "bosses", "creatures", "chests", "ecr",
         };
 
         public static DropRules Parse(MapReader root)
@@ -26,7 +26,7 @@ namespace EliteCrafting.Rules
             r.Unknown(Keys);
             DropRules drops = ReadGlobals(r);
             ReadChances(r, drops);
-            drops.Stones = TierRows(r, "stones");
+            drops.Stones = TierRows(r, "runes");
             drops.RarityWeights = TierRows(r, "rarity_weights");
             drops.BossRarityWeights = TierRows(r, "boss_rarity_weights");
             drops.Gear = ReadGear(r);
@@ -43,7 +43,7 @@ namespace EliteCrafting.Rules
             {
                 Tamed = r.Bool("tamed", false),
                 RequirePlayer = r.Bool("require_player", true),
-                MaxStonesPerKill = r.Int("max_stones_per_kill", 5, 0),
+                MaxStonesPerKill = r.Int("max_runes_per_kill", 5, 0),
                 MaxGearPerKill = r.Int("max_gear_per_kill", 2, 0),
                 StarMultipliers = r.Floats("star_multipliers") ?? new[] { 1f, 2f, 3f },
                 StarStep = r.Float("star_step", 1f, 0f),
@@ -57,8 +57,8 @@ namespace EliteCrafting.Rules
             {
                 return;
             }
-            chances.Value.Unknown("stone", "gear");
-            drops.StoneChance = chances.Value.Floats("stone", Tiers) ?? new float[Tiers];
+            chances.Value.Unknown("rune", "gear");
+            drops.StoneChance = chances.Value.Floats("rune", Tiers) ?? new float[Tiers];
             drops.GearChance = chances.Value.Floats("gear", Tiers) ?? new float[Tiers];
         }
 
@@ -90,8 +90,7 @@ namespace EliteCrafting.Rules
                 return new GearDropRules();
             }
             MapReader r = sub.Value;
-            r.Unknown("require_recipe", "tiers_below", "same_tier_weight", "lower_tier_weight", "slot_weights", "exclude", "include",
-                "sockets");
+            r.Unknown("require_recipe", "tiers_below", "same_tier_weight", "lower_tier_weight", "slot_weights", "exclude", "include");
             return new GearDropRules
             {
                 RequireRecipe = r.Bool("require_recipe", true),
@@ -101,20 +100,7 @@ namespace EliteCrafting.Rules
                 SlotWeights = ReadSlotWeights(r),
                 Exclude = r.Strings("exclude") ?? new List<string>(),
                 Include = YamlLists.IntMap(r, "include", 1, 7),
-                SocketWeights = ReadSocketWeights(r),
             };
-        }
-
-        // sockets.md section 2: [weight of 0 sockets, of 1, ...], at most SocketLimit + 1 entries.
-        private static float[] ReadSocketWeights(MapReader r)
-        {
-            float[]? weights = r.Floats("sockets");
-            if (weights != null && weights.Length > StoneDef.SocketLimit + 1)
-            {
-                r.Error("sockets", $"lists the weight of 0 to {StoneDef.SocketLimit} sockets: at most {StoneDef.SocketLimit + 1} entries");
-                return System.Array.Empty<float>();
-            }
-            return weights ?? System.Array.Empty<float>();
         }
 
         private static Dictionary<ItemSlot, float> ReadSlotWeights(MapReader r)
@@ -141,10 +127,10 @@ namespace EliteCrafting.Rules
             {
                 return new ChestDrops();
             }
-            sub.Value.Unknown("stone_chance", "gear_chance", "containers");
+            sub.Value.Unknown("rune_chance", "gear_chance", "containers");
             return new ChestDrops
             {
-                StoneChance = sub.Value.Float("stone_chance", 30f, 0f, 100f),
+                StoneChance = sub.Value.Float("rune_chance", 30f, 0f, 100f),
                 GearChance = sub.Value.Float("gear_chance", 10f, 0f, 100f),
                 Containers = BossDropParser.ParseCreatures(sub.Value, "containers"),
             };

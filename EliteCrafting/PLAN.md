@@ -1,12 +1,13 @@
 # EliteCrafting — PLAN.md
 
-Path-of-Exile-2-style currency crafting and ARPG item affixes for Valheim. Creatures drop
-crafting stones; stones are clicked onto gear to grant, reroll, corrupt, and perfect magical
-affixes across six rarities. Everything data-driven, server-synced, hot-reloaded.
+Rune crafting and ARPG item affixes for Valheim. Creatures and chests drop runes; runes are clicked onto gear to
+awaken, shape, raise, cleanse or seal its magical affixes (inscriptions) across three rarities: Normal, Magic and Rare.
+Everything data-driven, server-synced, hot-reloaded.
 
-- **Status (2026-09-24):** Phase 0 ✅ done. Phase 1 (0.1.0) and Phase 2 (0.2.0) 🔧 **code complete, integrated and
-  reviewed, not yet tested in game** — what remains is in-game verification and packaging (👤, listed under each
-  phase). Phase 3 ☐ not started, blocked on AFX-8.
+- **Status (2026-10-02):** never released. The crafting was cut to six runes and three rarities on 2026-10-02 (see
+  the Decisions log); the stone catalog, rarity ladder and Phase 2 economy below are the history that led there and
+  are superseded where they disagree. Code complete, builds clean, **not yet tested in game** — what remains is
+  in-game verification and packaging (👤). Phase 3 ☐ not started, blocked on AFX-8.
   The **Phases** section below is the live checklist: ✅ done · 🔧 code done, needs in-game test · ⏳ in
   progress · ☐ not started. Where this file and `SPEC.md`/`features/` differ, the spec wins.
 - **First release target:** 0.1.0 (Phase 1 below).
@@ -39,6 +40,8 @@ affixes across six rarities. Everything data-driven, server-synced, hot-reloaded
    stats on armor (user directive 2026-09-23).
 
 ## Rarity ladder (user decision 2026-09-23: six tiers)
+
+> Superseded 2026-10-02: three rarities, Normal (0), Magic (1-2) and Rare (3-6). See the Decisions log.
 
 | Rarity | Affixes | Color (canonical, user 2026-09-23) | Acquisition (default) |
 |---|---|---|---|
@@ -83,6 +86,9 @@ affixes across six rarities. Everything data-driven, server-synced, hot-reloaded
   groups block near-duplicates (e.g. the three movement-speed variants).
 
 ## Currency catalog — stones (PoE2-informed; "stone" concept locked 2026-09-23)
+
+> Superseded 2026-10-02: six runes only (Awakening, Shaping, Ascension, Consecrated, Cleansing, Serpent); sigils,
+> quality stones and essences are gone. `features/stones.md` is the current spec. See the Decisions log.
 
 All stones: stackable (default 50), light (default 0.2), tradeable, drop as world items, defined
 in `EliteCrafting_economy*.yml`. Every stone declares `applies_to` (rarities), per-rarity cost
@@ -439,6 +445,15 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   runes), a gem into a full item breaks the oldest (no removal), catalysts strengthen one essence family. Drops carry
   up to 4 sockets, the Jeweller's Chisel cuts up to 2. Built the same day from `features/sockets.md`, not tested in
   game.
+- 2026-10-02 — Six runes only (user): "these are the only runes I want implemented". Players see **rune**; the code
+  keeps **stone**. Awakening (Normal → Magic, one inscription), Shaping (one more on Magic), Ascension (Magic → Rare,
+  one more), Consecrated (one more on Rare), Cleansing (back to Normal) and the Serpent Rune (the user's rename of a
+  "Chaos Rune": seals the item for good after one of three outcomes: no change, one inscription past the cap, or a
+  chaotic reroll). Rarities cut to Normal, Magic (1-2) and Rare (3-6); old item rarities migrate on read (uncommon →
+  magic, epic/legendary/mythic → rare). Runes only: essences, sockets, gems, catalysts, the chisel, salvage and
+  shards, sigils, binding, Honing/Tempering and the other stones are removed from the code, the YAML and the words;
+  their item keys are dropped on the next write. Supersedes the 2026-09-23 six-rarity, stone-catalog and Mythic
+  decisions and the 2026-10-01 sockets decision. Never released, so no compatibility is kept.
 
 ## Open questions
 

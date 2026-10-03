@@ -10,14 +10,27 @@ namespace EliteCrafting.Affixes
     {
         public static StateData Upgrade(StateData state)
         {
-            if (state.Newer || state.Format >= ItemKeys.CurrentFormat)
+            string? rarity = RenamedRarity(state.RarityId);
+            if (state.Newer || (state.Format >= ItemKeys.CurrentFormat && rarity == state.RarityId))
             {
                 return state;
             }
-            // v1 -> v2 -> ... steps go here, in order.
             StateData upgraded = state.Copy();
             upgraded.Format = ItemKeys.CurrentFormat;
+            upgraded.RarityId = rarity;
             return upgraded;
         }
+
+        /// <summary>
+        /// The six built-in rarities before the runes (2026-10-02) in today's three: Uncommon is Magic, Epic,
+        /// Legendary and Mythic are Rare, Common is Normal (never stored). Any other id is kept as it is.
+        /// </summary>
+        private static string? RenamedRarity(string? id) => id switch
+        {
+            "common" => null,
+            "uncommon" => "magic",
+            "epic" or "legendary" or "mythic" => "rare",
+            _ => id,
+        };
     }
 }

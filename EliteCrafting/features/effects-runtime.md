@@ -8,7 +8,7 @@ capped, the performance rules, and which machine computes what. The affix catalo
 slots, tiers and which effect each uses) is `affixes.md`; the data it reads is `item-data.md`.
 
 **Status: Phase 1 and Phase 2 built, not tested in game** (2026-09-24): the 34 Phase 1 effects, the aggregate and the item hooks;
-Phase 2 added 77 effects (every easy and medium non-Mythic effect), kill attribution, two routed RPCs and the
+Phase 2 added 77 effects (every easy and medium effect of the catalog), kill attribution, two routed RPCs and the
 per-player ZDO values in section 7 (`../DECISIONS.md` IMP-85-101, IMP-116-119).
 
 ---
@@ -31,9 +31,9 @@ One static table in code, built at plugin Awake, one entry per effect:
 | `id` | snake_case effect id, what YAML's `effect:` names |
 | `route` | `aggregate` (summed into the status effect, section 3) or `hook` (a targeted patch, section 4) |
 | `values` | which affix value types it accepts: any of `percent`, `flat`, `flag` |
-| `param` | what the parameter is: `none`, `skill` (a `Skills.SkillType` name, a comma list, or `All`), `damage_type` (a type or the groups `physical`, `elemental`, `all`), `element`, `creature_family`, `resource`, `aura` (kinds and members defined in `affixes.md` section 3) |
+| `param` | what the parameter is: `none`, `skill` (a `Skills.SkillType` name, a comma list, or `All`), `damage_type` (a type or the groups `physical`, `elemental`, `all`), `element`, `creature_family`, `resource` (kinds and members defined in `affixes.md` section 3) |
 | `polarity` | `raise` or `lower`: which way a positive stored value moves the stat; drives the sign in the tooltip (`display.md`) |
-| `better` | `higher` (default) or `lower`: for the two effects where a low roll is the good one (`undying`, `hit_cap`), so display never marks it as weak |
+| `better` | `higher` (default) or `lower`: for an effect where a low roll is the good one, so display never marks it as weak (no effect in the current catalog needs `lower`) |
 | `cap` | default cap on the summed channel (section 5), or none |
 | `phase` | 1, 2 or 3: effects of a later phase are registered but refuse to load in YAML until built (they are a validation error with the message "not implemented in this version") |
 
@@ -60,7 +60,7 @@ corrected.
   entries are skipped.
 - **Only the local player.** The aggregate is built for `Player.m_localPlayer` and nobody else. Other players'
   `Player` objects on this machine never get one: their stats run on their own machine (section 7).
-- The `.cfg` master switch `Affix effects` (`configuration.md`) off means nothing counts: no aggregate status effect
+- The `.cfg` master switch `Inscription effects` (`configuration.md`) off means nothing counts: no aggregate status effect
   is added and every hook returns immediately. Display is unaffected.
 
 ---
@@ -102,9 +102,9 @@ The flag is set by:
   does `HideHandItems` (swimming, eating), so weapon affixes correctly switch off while the hands are hidden.
 - The local player's inventory `m_onChanged` (the game skips its own handler while the player is loading). Covers
   an equipped item leaving the inventory by any path (drop, death, another mod).
-- `ItemRecord` writes to an item the local player has equipped (a stone applied to worn gear).
+- `ItemRecord` writes to an item the local player has equipped (a rune applied to worn gear).
 - `Player.OnSpawned` (first spawn, respawn after death).
-- A successful apply of either YAML family, and a change of the `Affix effects` switch.
+- A successful apply of either YAML family, and a change of the `Inscription effects` switch.
 
 ## Channels routed through the aggregate (Phase 1 core)
 
@@ -160,16 +160,13 @@ fit a status effect and goes through a prefix or postfix on the game method that
 | Concern | Patch point (verified signature) | Notes |
 |---|---|---|
 | Max health / stamina / eitr (flat) | postfix `Player.GetTotalFoodValue(out hp, out stamina, out eitr)` | Aggregate totals; the game calls it every food tick |
-| Item damage % and imbues, Honing | postfix `ItemData.GetDamage(int quality, float worldLevel)` | Also makes the vanilla tooltip numbers show the boost |
-| Item armor %, Tempering | postfix `ItemData.GetArmor(int quality, float worldLevel)` | Also every frame while the inventory is open (character stats panel) |
-| Block power %, Tempering on shields | postfix `ItemData.GetBaseBlockPower(int quality)` | |
+| Item damage % and brands | postfix `ItemData.GetDamage(int quality, float worldLevel)` | Also makes the vanilla tooltip numbers show the boost |
+| Item armor % | postfix `ItemData.GetArmor(int quality, float worldLevel)` | Also every frame while the inventory is open (character stats panel) |
+| Block power % | postfix `ItemData.GetBaseBlockPower(int quality)` | |
 | Durability % | postfix `ItemData.GetMaxDurability(int quality)` | **Hot**: the grid calls it every frame for every visible item |
 | Item weight % | postfix `ItemData.GetWeight(int stackOverride)` | Hot-ish (encumbrance); CWT lookup only |
 | Percent damage resist by type | prefix `Character.RPC_Damage(long sender, HitData hit)` for the local player, scaling `hit.m_damage` per type before the game's resist step | The game's own resists are categorical steps ("best wins"), so a percentage needs this; runs on the victim's own client |
 | Attack fields (reach, arc), projectile, on-hit, on-kill, loot | `Attack` and drop-roll methods | Phase 2+, per `affixes.md` hook tags |
-
-Honing and Tempering are not affixes but read the same record (`ecf_refine`, `quality.md`) through the same
-patches, so there is one damage postfix and one armor postfix, not two of each.
 
 ---
 
@@ -220,8 +217,8 @@ release.
 | What | Runs on | Why it is correct |
 |---|---|---|
 | Aggregate stats (speed, regen, carry, stamina, skills) | the item holder's own client | The game computes a player's movement, regen and stamina on the machine that owns that player |
-| Damage dealt (weapon affixes, Honing) | the attacker's client | The game builds `HitData` on the attacker and sends it; the boosted numbers travel inside it |
-| Damage taken (armor, resists, Tempering) | the victim player's own client | Player damage is resolved on the player's owner |
+| Damage dealt (weapon affixes) | the attacker's client | The game builds `HitData` on the attacker and sends it; the boosted numbers travel inside it |
+| Damage taken (armor, resists) | the victim player's own client | Player damage is resolved on the player's owner |
 | Loot-find effects (Phase 2) | the dying creature's ZDO owner (often a nearby client on a dedicated server) | Reads the killer's totals from a small per-player ZDO value the killer publishes (`drops.md`); the owner cannot inspect a remote inventory |
 | Kill restore (Reaper, Soul Reaper, Phase 2) | seen on the dying creature's owner, applied on the killer's client | one routed RPC, `ECF_KillRestore`, to the killer's peer only (IMP-85) |
 | Leech (Blood Drinker, Seidr Siphon, Cornered Thirst, Phase 2) | the attacker's client | computed from the outgoing hit, capped by the target's current health (IMP-86) |

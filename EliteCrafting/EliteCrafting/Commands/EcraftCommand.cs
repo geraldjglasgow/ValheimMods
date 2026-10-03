@@ -23,7 +23,7 @@ namespace EliteCrafting.Commands
             new SubCommand("inspect", InspectCommand.Grammar, Access.ReadOnly, "an item's ecf_ data and its parse", InspectCommand.Run),
             new SubCommand("stats", "ecraft stats", Access.ReadOnly, "your aggregated inscription totals", StatsCommand.Run),
             new SubCommand("list", ListCommand.Grammar, Access.ReadOnly, "the running configuration", ListCommand.Run),
-            new SubCommand("give", GiveCommand.Grammar, Access.Admin, "stones, essences and shards into your inventory", GiveCommand.Run),
+            new SubCommand("give", GiveCommand.Grammar, Access.Admin, "runes into your inventory", GiveCommand.Run),
             new SubCommand("roll", RollCommand.Grammar, Access.Admin, "a rolled magic item into your inventory", RollCommand.Run),
             new SubCommand("reroll", RerollCommand.Grammar, Access.Admin, "rerolls every inscription of an item, keeping rarity", RerollCommand.Run),
             new SubCommand("inscribe", AffixCommand.Grammar, Access.Admin, "adds or replaces one inscription on an item", AffixCommand.Run),

@@ -1,7 +1,6 @@
 # EliteCrafting - specification: Affixes
 
-One feature of the mod, specified on its own. `../SPEC.md` is the whole-mod document and index. The Mythic-only
-pool is in `affixes-mythic.md`, which uses everything defined here.
+One feature of the mod, specified on its own. `../SPEC.md` is the whole-mod document and index.
 
 This file is the **affix catalog**: what an affix is, which slots each one rolls on, the effect registry the code
 implements, and one entry per affix with its tiers and weights. How an affix becomes a change in the game is
@@ -13,8 +12,8 @@ written so the YAML defaults can be generated from them, and so they can be argu
 especially arguable carry a *Judgement* line. The display names are adopted defaults (`../DECISIONS.md` AFX-13); any
 of them can be renamed in the English file without touching an id.
 
-**Status: specified; the Phase 1 set (section 6) built, not tested in game** (2026-09-23). 169 regular affixes, 13 Mythic-only affixes (`affixes-mythic.md`),
-131 effects. Phase 1 builds the set in section 6.
+**Status: specified; the Phase 1 set (section 6) built, not tested in game** (2026-09-23). 169 regular affixes,
+131 effects (the 13 Mythic-only affixes went with the Mythic rarity on 2026-10-02). Phase 1 builds the set in section 6.
 
 Contents:
 
@@ -22,7 +21,7 @@ Contents:
 2. Slot sanity matrix
 3. The effect registry
 4. The catalog
-5. The Mythic-only pool (pointer)
+5. Removed: the Mythic-only pool
 6. Phase 1 set
 7. Decisions
 
@@ -50,8 +49,7 @@ The complete schema, with types and validation, is `configuration.md` section 6.
 | `value` | `percent`, `flat` or `flag` |
 | `slots` | slot ids it may roll on (section 2) |
 | `requires` | narrower item filter: governing skill, hands, item traits (below) |
-| `category` | `offense`, `defense` or `utility`: what the War, Warding and Fortune sigils steer by |
-| `mythic_only` | `true` only in the Mythic pool |
+| `category` | `offense`, `defense` or `utility`: a grouping `ecraft list` shows and filters by |
 | `condition` | `none` or `health_critical` |
 | `exclusion_group` | near-duplicates share a group; one per item |
 | `weight` | how likely the affix is to be picked (the first stage of `rarity.md`'s two-stage draw) |
@@ -72,7 +70,7 @@ The complete schema, with types and validation, is `configuration.md` section 6.
 - **Rounding.** A value is drawn uniformly in the tier's `[min, max]` and rounded to the decimals of the tier's
   bounds: integer bounds give integers, `1.5` gives one decimal. A value is never outside its tier's bounds.
 - **Composite values.** Three affixes use their value twice (`stout_heart`, `restless_mind`, `lone_blade`): "+X, and
-  -X/2 %". One stored number drives both halves, so Perfection rerolls them together.
+  -X/2 %". One stored number drives both halves, so a reroll changes them together.
 
 ## Tiers and biome gates
 
@@ -98,14 +96,14 @@ Meadows item tier 7).
 single number means `min = max`. An affix that skips the weak tiers starts later (`T3–T1: ...`) and cannot roll on an
 item whose ceiling is below its weakest tier's biome. A **flag** has a single **gate tier**: `gate T6` means the affix
 exists at tiers 6 to 1 with no value, so it is eligible on any item of ceiling 2 (Black Forest) or more and its
-recorded tier still counts for the sigils that care about tier.
+recorded tier still shows on the tooltip.
 
 **Tier weights are flat.** Every tier row carries `weight: 100` unless an entry says otherwise, so inside the window
 each tier is equally likely. Rarity lives in the affix `weight` instead (below), which is easier to reason about.
 Judgement call: a descending profile (higher tiers rarer) would slow progression inside a window; the owner can set
 per-tier weights in YAML if they want it.
 
-**Why most affixes span all seven tiers.** Rarity is affix count and tier is strength, so a Meadows Mythic should
+**Why most affixes span all seven tiers.** Rarity is affix count and tier is strength, so a Meadows Rare should
 still find six affixes. Affixes start late only when an early roll would be dead: eitr affixes (no eitr before
 Mistlands food, so tiers 3-1), staff affixes (staves are Mistlands items), heat (Ashlands only), mist (Mistlands
 only), bosses (Godslayer from tier 3).
@@ -126,8 +124,6 @@ effects and the health-critical variants, 70 situational ones.
 - **50**: `blood_drinker_hc`, `fateweaver`, `flowing_seidr`, `godslayer`, `mist_veil_hc`, `norns_favour`, `quickened_blows`, `valhallas_edge`
 - **60**: `berserkergang`, `blood_drinker`, `cruel_opening`, `elemental_ward`, `evaders_fury`, `farming_mastery`, `fleetfoot_hc`, `hardened_hc`, `hearthbound`, `ironclad`, `keen_guard`, `marshstrider`, `mist_veil`, `mountain_goat`, `pathfinder`, `restless_mind`, `seidr_riposte`, `seidr_siphon`, `stout_heart`, `swift_string`, `troll_blood_hc`
 - **70**: `arrowward`, `beast_whisperer`, `bramblehide`, `brewers_haste`, `coldblood`, `dazing_blows`, `deep_vein`, `fair_winds`, `forsaken_favour`, `hamstring`, `heartwood`, `hoardfinder`, `mistbane`, `momentum`, `pack_mule`, `purity`, `quick_recovery`, `runic_ward`, `skirmisher`, `soulbound`, `spiritbrand`, `strong_swimmer`, `thrifty_quiver`, `trophy_taker`
-
-Mythic-only weights are relative inside the Mythic pool (`affixes-mythic.md`).
 
 ## Exclusion
 
@@ -461,29 +457,27 @@ utility = `utility_item`.
 
 </div>
 
-The Mythic-only rows are in `affixes-mythic.md`.
-
 ## Pool size per slot
 
-| slot | regular affixes | of which Phase 1 | mythic_only |
-|---|---|---|---|
-| melee (`melee_weapon`) | 55 | 22 | 1 |
-| ranged (`ranged_weapon`) | 39 | 17 | 1 |
-| magic (`magic_weapon`) | 24 | 7 | 1 |
-| shield (`shield`) | 13 | 7 | 3 |
-| head (`head`) | 29 | 10 | 1 |
-| chest (`chest`) | 31 | 7 | 7 |
-| legs (`legs`) | 33 | 13 | 2 |
-| cape (`cape`) | 37 | 10 | 7 |
-| utility (`utility_item`) | 22 | 6 | 1 |
-| tool (`tool`) | 10 | 7 | 1 |
+| slot | regular affixes | of which Phase 1 |
+|---|---|---|
+| melee (`melee_weapon`) | 55 | 22 |
+| ranged (`ranged_weapon`) | 39 | 17 |
+| magic (`magic_weapon`) | 24 | 7 |
+| shield (`shield`) | 13 | 7 |
+| head (`head`) | 29 | 10 |
+| chest (`chest`) | 31 | 7 |
+| legs (`legs`) | 33 | 13 |
+| cape (`cape`) | 37 | 10 |
+| utility (`utility_item`) | 22 | 6 |
+| tool (`tool`) | 10 | 7 |
 
 ## How many affixes an item can carry
 
 The most affixes one item can hold (distinct groups plus ungrouped affixes, after `requires`), with only Phase 1
 affixes enabled and with the full catalog, for an item whose ceiling is tier 1 and tier 7. A rarity whose minimum is
-above this number cannot be reached on that item: stones refuse and pre-rolled drops fall back (`rarity.md`).
-Legendary needs 4-5 and Mythic 6.
+above this number cannot be reached on that item: runes refuse and pre-rolled drops fall back (`rarity.md`).
+Rare needs 3 to 6.
 
 | item | Phase 1, Meadows item | Phase 1, Ashlands item | full catalog, Meadows | full catalog, Ashlands |
 |---|---|---|---|---|
@@ -687,7 +681,7 @@ One entry per affix:
   tier table · requirements
 
 `P1`, `P2`, `P3` is the phase that builds the affix: P1 is section 6; P2 is every other easy or medium effect;
-P3 is hard hooks and the Mythic pool.
+P3 is hard hooks.
 
 ## Weapons: player-global offense
 
@@ -1239,7 +1233,7 @@ Carry, pickup, discovery, comfort and the economy affixes. Utility items (belts 
 - **`norns_favour`** Norns' Favour — Magic gear dropped by enemies you kill rolls a higher rarity X% more often.  
   `find_rarity` · percent · head, utility · utility · no group · medium · P2 · w 50  
   T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
-- **`fateweaver`** Fateweaver — Enemies you kill are X% more likely to drop an extra stone.  
+- **`fateweaver`** Fateweaver — Enemies you kill are X% more likely to drop an extra rune.  
   `find_stones` · percent · head, utility · utility · no group · medium · P2 · w 50  
   T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
 - **`trophy_taker`** Trophy Taker — Enemies you kill drop their trophy X% more often.  
@@ -1277,7 +1271,7 @@ Build, repair and gathering. The tool skill affixes (Miner's, Angler's Mastery, 
 
 # 5. The Mythic-only pool
 
-`affixes-mythic.md`: 13 affixes, Phase 3. A Mythic item draws one of them (`rarity.md` section 5).
+Removed on 2026-10-02 with the Mythic rarity (PLAN.md Decisions log). Its 13 affixes were never built.
 
 ---
 
@@ -1302,8 +1296,7 @@ family and chosen so each is a single postfix or a single aggregate override:
 | `builders_reach` | tool | `build_range` | Tool. A field write on rebuild while the hammer is in hand; no patch at all. |
 
 **Twelve are not enough to make items.** `rarity.md` fills a rarity's affix count from the eligible pool; with only
-the twelve picks, every item class has one to three candidates, so nothing past Rare could be made and a Legendary
-drop could never roll. Phase 1 therefore also enables a **fill-out**: affixes whose effect rides a patch point the
+the twelve picks, every item class has one to three candidates, so a Rare's three to six could not be filled. Phase 1 therefore also enables a **fill-out**: affixes whose effect rides a patch point the
 picks already need (the same postfix or the same aggregate override with another channel), so they cost channel
 entries rather than new hooks. Effects in the fill-out, with their inscriptions:
 
@@ -1337,7 +1330,7 @@ effect (its `ModifyAttack`, `ModifySpeed`, `ModifySkillLevel`, `ModifyRaiseSkill
 (`GetDamage`, `GetArmor`, `GetBaseBlockPower`, `GetDeflectionForce`, `GetMaxDurability`, `GetWeight`,
 `GetDrawStaminaDrain`, `GetWeaponLoadingTime`), `Player.GetTotalFoodValue`, `Attack.GetAttackEitr`, and three field
 writes on rebuild (build range, pickup radius, explore radius). The coverage table in section 2 shows every weapon,
-shield and armor class reaching Mythic's six in Phase 1; tools stay short (`../DECISIONS.md` AFX-4).
+shield and armor class reaching Rare's six in Phase 1; tools stay short (`../DECISIONS.md` AFX-4).
 
 No Phase 1 affix is health-critical: the condition evaluator arrives with Phase 2.
 
@@ -1365,3 +1358,4 @@ without the Party mod, is **BLOCKING for Phase 3**. The schema additions this ca
 | --- | --- | --- |
 | 2026-09-23 | Specified in Phase 0: 169 regular affixes, 13 Mythic, 131 effects, Phase 1 set. | pending |
 | 2026-09-23 | Reconciled: open questions moved to `../DECISIONS.md`; schema additions folded into `configuration.md`. | pending |
+| 2026-10-02 | Six runes and three rarities: the Mythic-only pool, sigil steering and `mythic_only` removed. | pending |

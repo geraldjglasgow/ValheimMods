@@ -56,13 +56,13 @@ namespace EliteCrafting.Loot
             if (input.Boss != null)
             {
                 float star = EcrTerms.StarMultiplier(economy.Drops, input);
-                text.Append("  boss guarantees: ").Append(Num(input.Boss.StoneRolls * star)).Append(" stones, ")
+                text.Append("  boss guarantees: ").Append(Num(input.Boss.StoneRolls * star)).Append(" runes, ")
                     .Append(Num(input.Boss.GearRolls * star)).Append(" gear, ").Append(input.Boss.Bonus.Count).Append(" bonus rows\n");
                 return;
             }
             LootPlan plan = new LootPlan();
             LootPlanner.Plan(economy, input, new System.Random(0), plan);
-            text.Append("  expected per kill: stones ").Append(Num(plan.StoneChance)).Append(" (max ")
+            text.Append("  expected per kill: runes ").Append(Num(plan.StoneChance)).Append(" (max ")
                 .Append(economy.Drops.MaxStonesPerKill).Append("), gear ").Append(Num(plan.GearChance))
                 .Append(" (max ").Append(economy.Drops.MaxGearPerKill).Append(")\n");
         }
@@ -71,7 +71,7 @@ namespace EliteCrafting.Loot
         private static void AppendStones(StringBuilder text, EconomyRules economy, int tier)
         {
             WeightedTable<StoneDef> table = economy.StoneDraw(tier);
-            text.Append("  stone table:");
+            text.Append("  rune table:");
             foreach (StoneDef stone in table.Items)
             {
                 float weight = economy.Drops.Stones.TryGetValue(stone.Id, out float[] row) ? row[tier - 1] : 0f;

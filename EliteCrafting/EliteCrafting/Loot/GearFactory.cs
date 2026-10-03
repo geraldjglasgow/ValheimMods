@@ -68,7 +68,7 @@ namespace EliteCrafting.Loot
                 }
                 if (outcome.Success || outcome.Failure != RollFailure.NoEligibleAffix)
                 {
-                    return outcome.Success ? Commit(item, DropSockets.Add(outcome.State!, random, rules), rarity) : null;
+                    return outcome.Success ? Commit(item, outcome.State!, rarity) : null;
                 }
             }
             return null;

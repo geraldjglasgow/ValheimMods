@@ -3,24 +3,19 @@
 # Each feature area keeps its own words in its own English.<area>.yml next to this file.
 
 # rarities
-ecf_rarity_common: "Common"
-ecf_rarity_uncommon: "Uncommon"
+ecf_rarity_normal: "Normal"
+ecf_rarity_magic: "Magic"
 ecf_rarity_rare: "Rare"
-ecf_rarity_epic: "Epic"
-ecf_rarity_legendary: "Legendary"
-ecf_rarity_mythic: "Mythic"
 
 # tooltip vocabulary
 ecf_ui_affix_line: "$1 $2"
 ecf_ui_tier: "T$1"
 ecf_ui_range: "[$1-$2]"
-ecf_ui_bound: "[Bound]"
 ecf_ui_dormant: "(dormant)"
 ecf_ui_unreadable: "Unreadable: $1"
 ecf_ui_newer_format: "Changed by a newer version of EliteCrafting"
 ecf_ui_sealed: "Sealed: $1"
 ecf_ui_sealed_serpent: "Corrupted"
-ecf_ui_sealed_reflection: "Mirrored"
 ecf_ui_tier_ceiling: "Rolls up to T$1"
 
 # categories and slots

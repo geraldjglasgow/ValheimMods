@@ -7,9 +7,7 @@ using UnityEngine;
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The stone prefabs: the 43 built-in ones (27 stones and sigils, 16 essences), the 16 reserved <c>ECF_CustomNN</c>
-    /// (prefabs.md sections 1-3, 5) and the 5 salvage shards (salvage.md section 5, items that are not stones).
-    /// Built once per process from code alone, whatever the YAML says, so every peer (server, host, clients, main
+    /// The six rune prefabs (prefabs.md sections 1-3). Built once per process from code alone, whatever the YAML says, so every peer (server, host, clients, main
     /// menu) has the same prefab names and hashes before any inventory or ZDO arrives. Registration into the game's
     /// databases is done by <see cref="StoneRegistrationPatches"/>; this class is the registry other areas read.
     /// </summary>
@@ -29,8 +27,7 @@ namespace EliteCrafting.Items
         public static bool IsRegistered(string? prefabName) => prefabName != null && ByName.ContainsKey(prefabName);
 
         /// <summary>
-        /// The prefab of a stone id: the running definition's prefab (built-in or reserved), else the built-in
-        /// prefab for a built-in id. Null for an unknown id or before the prefabs exist.
+        /// The prefab of a rune id, or null for an unknown id or before the prefabs exist.
         /// </summary>
         public static GameObject? Get(string? stoneId)
         {
@@ -46,18 +43,10 @@ namespace EliteCrafting.Items
             return prefab != null && ByName.TryGetValue(prefab, out StoneEntry entry) ? entry.Prefab : null;
         }
 
-        /// <summary>The prefab of a shard id (<c>shard_ascension</c> → <c>ECF_ShardAscension</c>), or null.</summary>
-        public static GameObject? GetShard(string? shardId) =>
-            StoneCatalog.IsShard(shardId) ? GetByPrefabName(StoneCatalog.PrefabFor(shardId!)) : null;
+        /// <summary>Whether the prefab is one of the rune prefabs (the rune click take-over keys on it).</summary>
+        public static bool IsStonePrefab(string? prefabName) => prefabName != null && ByName.ContainsKey(prefabName);
 
-        /// <summary>
-        /// Whether the prefab is one of the stone prefabs (built-in or reserved) - a shard is registered here too but
-        /// is no stone: it has no definition and no verb, and the stone click take-over leaves it to the game.
-        /// </summary>
-        public static bool IsStonePrefab(string? prefabName) =>
-            prefabName != null && ByName.TryGetValue(prefabName, out StoneEntry entry) && !entry.IsShard;
-
-        /// <summary>The prefab by its name (<c>ECF_Awakening</c>, <c>ECF_Custom03</c>, <c>ECF_ShardAscension</c>), or null.</summary>
+        /// <summary>The prefab by its name (<c>ECF_Awakening</c>), or null.</summary>
         public static GameObject? GetByPrefabName(string? prefabName) =>
             prefabName != null && ByName.TryGetValue(prefabName, out StoneEntry entry) ? entry.Prefab : null;
 
@@ -81,7 +70,7 @@ namespace EliteCrafting.Items
                 return false;
             }
             BuildAll(first, second);
-            Log.Info($"{Entries.Count} stone prefabs built");
+            Log.Info($"{Entries.Count} rune prefabs built");
             Built?.Invoke();
             return true;
         }
@@ -96,17 +85,9 @@ namespace EliteCrafting.Items
             {
                 Add(new StoneEntry(StoneCatalog.PrefabFor(id), id, StoneBases.GroupOf(id)), bases);
             }
-            for (int n = 1; n <= StoneCatalog.CustomPrefabCount; n++)
-            {
-                Add(new StoneEntry(StoneCatalog.CustomPrefab(n), null, StoneBases.GroupOfCustom(n)), bases);
-            }
-            foreach (string id in StoneCatalog.ShardIds)
-            {
-                Add(new StoneEntry(StoneCatalog.PrefabFor(id), null, StoneBases.GroupOf(id)) { ShardId = id }, bases);
-            }
         }
 
-        // One lookup (and at most one warning) per group, not per stone.
+        // One lookup (and at most one warning) per group, not per rune.
         private static GameObject?[] ResolveBases(IList<GameObject>? first, IList<GameObject>? second)
         {
             StoneGroup[] groups = (StoneGroup[])Enum.GetValues(typeof(StoneGroup));
@@ -123,7 +104,7 @@ namespace EliteCrafting.Items
             GameObject? basePrefab = bases[(int)entry.Group];
             if (basePrefab == null)
             {
-                Log.Error($"no base item for stone prefab {entry.PrefabName}; it is not registered");
+                Log.Error($"no base item for rune prefab {entry.PrefabName}; it is not registered");
                 return;
             }
             StoneCloner.Build(entry, basePrefab, _holder!.transform);

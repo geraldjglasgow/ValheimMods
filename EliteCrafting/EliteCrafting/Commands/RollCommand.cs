@@ -10,7 +10,7 @@ namespace EliteCrafting.Commands
     /// item in the caller's own inventory (dropped at the feet when full). The item is built as a gear drop builds it
     /// (drops.md section 8: upgrade level 1, full durability, the world's world level, no crafter, a random variant)
     /// and rolled with <see cref="ItemRoller.RollFresh"/>, the drop's own procedure, so it is a true sample.
-    /// <c>tier</c> (1-7) overrides the base's tier ceiling for this roll. <c>roll mythic</c> is allowed (CMD-3).
+    /// <c>tier</c> (1-7) overrides the base's tier ceiling for this roll.
     /// Runs on the caller's machine; the item is client-owned like any other.
     /// </summary>
     internal static class RollCommand
@@ -77,7 +77,7 @@ namespace EliteCrafting.Commands
             context.Random = random;
             context.Ceiling = tier > 0 ? tier : context.Ceiling;
             ItemState? state = RollerCall.Roll(call, () => ItemRoller.RollFresh(ItemState.Empty, rarity, context));
-            if (state == null || !RollerCall.Commit(call, item, Loot.DropSockets.Add(state, random, context.Rules)))
+            if (state == null || !RollerCall.Commit(call, item, state))
             {
                 return;
             }

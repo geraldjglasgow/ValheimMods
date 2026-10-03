@@ -46,67 +46,20 @@ namespace EliteCrafting.Display
             {
                 sb.Append(RarityPalette.Grey);
             }
-            sb.Append(Text(Catalysed(state, roll, def), def));
+            sb.Append(Text(roll, def));
             if (detail == TooltipDetail.Full)
             {
                 AppendRange(sb, roll, def);
             }
-            AppendMarkers(sb, state.IsBoundAt(index), roll.Tier, detail, dormant);
+            AppendMarkers(sb, roll.Tier, detail, dormant);
         }
 
-        /// <summary>
-        /// The sockets (sockets.md section 7): each gem as "Frost Gem: its affix line  T5", oldest first, greyed while its
-        /// affix is unknown or disabled; then one "Empty socket" line per free socket; then the catalyst line.
-        /// </summary>
-        public static void AppendSockets(StringBuilder sb, ItemState state, TooltipDetail detail)
-        {
-            for (int i = 0; i < state.Gems.Count; i++)
-            {
-                AppendGem(sb, state, i, detail);
-            }
-            for (int i = 0; i < state.EmptySockets; i++)
-            {
-                sb.Append('\n').Append(RarityPalette.Grey).Append(Words.Localize("$ecf_ui_socket_empty")).Append(RarityPalette.Close);
-            }
-            if (state.CatalystFamily != null)
-            {
-                string family = DisplayWords.Name("$ecf_family_" + state.CatalystFamily, state.CatalystFamily);
-                sb.Append('\n').Append(Words.Localize("$ecf_ui_catalyst", family, DisplayWords.Plain(state.CatalystQuality)));
-            }
-        }
-
-        private static void AppendGem(StringBuilder sb, ItemState state, int index, TooltipDetail detail)
-        {
-            SocketGem gem = state.Gems[index];
-            AffixDef? def = state.GemDefinitionAt(index);
-            bool dormant = def == null || !def.Enabled;
-            string gemName = DisplayWords.Name(ActiveRules.Current.Stone(gem.GemId)?.Name ?? "$ecf_stone_" + gem.GemId, gem.GemId);
-            string text = Words.Localize("$ecf_ui_socket_gem", gemName, Text(Catalysed(state, gem.Roll, def), def));
-            sb.Append('\n').Append(dormant ? RarityPalette.Grey : "").Append(text);
-            AppendMarkers(sb, false, gem.Roll.Tier, detail, dormant);
-        }
-
-        // The value the effects use: a catalyst of the affix's family multiplies it (flags stay 1).
-        private static AffixRoll Catalysed(ItemState state, AffixRoll roll, AffixDef? def)
-        {
-            if (def == null || def.Value == AffixValueType.Flag)
-            {
-                return roll;
-            }
-            float factor = state.CatalystFactor(roll.Id);
-            return factor == 1f ? roll : roll.WithValue((float)System.Math.Round(roll.Value * factor, 2));
-        }
-
-        /// <summary>Tier (not at Compact), the bound marker in the game's orange, and the dormant word (closing the grey).</summary>
-        private static void AppendMarkers(StringBuilder sb, bool bound, int tier, TooltipDetail detail, bool dormant)
+        /// <summary>Tier (not at Compact) and the dormant word (closing the grey).</summary>
+        private static void AppendMarkers(StringBuilder sb, int tier, TooltipDetail detail, bool dormant)
         {
             if (detail != TooltipDetail.Compact)
             {
                 sb.Append("  ").Append(Words.Localize("$ecf_ui_tier", AffixTierNumbers.Shown(tier).ToString()));
-            }
-            if (bound)
-            {
-                sb.Append("  ").Append(RarityPalette.Orange).Append(Words.Localize("$ecf_ui_bound")).Append(RarityPalette.Close);
             }
             if (dormant)
             {

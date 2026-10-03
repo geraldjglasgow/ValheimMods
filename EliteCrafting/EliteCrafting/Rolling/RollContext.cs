@@ -14,29 +14,14 @@ namespace EliteCrafting.Rolling
         NotMagicBase,
         /// <summary>The item already holds its rarity's maximum.</summary>
         Full,
-        /// <summary>The item holds its rarity's minimum (or nothing removable).</summary>
-        AtMinimum,
-        /// <summary>No affix whose value can be rerolled (all dormant or bound).</summary>
-        NothingToReroll,
         /// <summary>The state was written by a newer version of the mod.</summary>
         NewerFormat,
-        /// <summary>An essence's family has no eligible member for this item (<c>$ecf_msg_essence_no_match</c>).</summary>
-        NoFamilyMatch,
-    }
-
-    /// <summary>How a removal picks its affix.</summary>
-    public enum RemovePick
-    {
-        /// <summary>Uniformly among removable affixes.</summary>
-        Random,
-        /// <summary>Dormant affixes first, then the lowest tier (Sigil of Culling).</summary>
-        LowestTier,
     }
 
     /// <summary>
-    /// The inputs every roll shares (rarity.md section 4): the item's slot info and tier ceiling, the stone's tier
-    /// floor, an optional category steer, the chaotic flag (Serpent: every tier the affix defines, uniformly, ceiling
-    /// ignored), an id the roll must not pick (Turmoil's just-removed affix), and the random source. Build one with
+    /// The inputs every roll shares (rarity.md section 4): the item's slot info and tier ceiling, the rune's tier
+    /// floor, the chaotic flag (Serpent: every tier the affix defines, uniformly, ceiling ignored), and the random
+    /// source. Build one with
     /// <see cref="For"/>; the drop code passes its own ceiling for a base's tier.
     /// </summary>
     public sealed class RollContext
@@ -49,13 +34,7 @@ namespace EliteCrafting.Rolling
         /// <summary>The lowest tier to roll, 0 = none; clamped to the ceiling.</summary>
         public int TierFloor { get; set; }
 
-        /// <summary>Only affixes of this category (War / Warding / Fortune sigils); null = any.</summary>
-        public AffixCategory? Category { get; set; }
-
         public bool Chaotic { get; set; }
-
-        /// <summary>Never pick this id in this roll.</summary>
-        public string? ExcludeId { get; set; }
 
         public Random Random { get; set; } = RollRandom.Create();
 

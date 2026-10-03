@@ -1,11 +1,8 @@
 # EliteCrafting - English words of the Display area (display.md, localization.md). Key without the $ -> text.
-# $1, $2 are the game's placeholders. The shared tooltip vocabulary (tier, range, bound, dormant, sealed...) is in
+# $1, $2 are the game's placeholders. The shared tooltip vocabulary (tier, range, dormant, sealed...) is in
 # English.core.yml; this file has the Display-only labels and the inscription tooltip sentences.
 
 # tooltip labels
-ecf_ui_honed: "Honed +$1%"
-ecf_ui_tempered: "Tempered +$1%"
-ecf_ui_pending_sigil: "Pending: $1"
 ecf_ui_sealed_generic: "Sealed"
 
 # inscription tooltip sentences ($ecf_affix_<id>_line): $1 is the stored value, the sentence carries its own sign and unit

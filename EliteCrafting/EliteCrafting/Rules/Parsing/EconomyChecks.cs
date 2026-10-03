@@ -13,19 +13,17 @@ namespace EliteCrafting.Rules
                 CheckStone(rules, stone, issues);
             }
             CheckStoneNames(rules, issues);
-            CheckRows(rules, rules.Drops.Stones.Keys, "drops.stones", issues, stone: true);
+            CheckRows(rules, rules.Drops.Stones.Keys, "drops.runes", issues, stone: true);
             CheckRows(rules, rules.Drops.RarityWeights.Keys, "drops.rarity_weights", issues, stone: false);
             CheckRows(rules, rules.Drops.BossRarityWeights.Keys, "drops.boss_rarity_weights", issues, stone: false);
             CheckBonuses(rules, issues);
-            WarnClosedMythic(rules, issues);
         }
 
         private static void CheckStone(EconomyRules rules, StoneDef stone, RuleIssues issues)
         {
-            string path = $"stones[{stone.Id}]";
+            string path = $"runes[{stone.Id}]";
             RaritiesExist(rules, stone.AppliesTo, path + ".applies_to", issues);
             RaritiesExist(rules, stone.Cost.Keys, path + ".cost", issues);
-            RaritiesExist(rules, stone.GambleWeights.Keys, path + ".weights", issues);
             if (!stone.Enabled)
             {
                 return;
@@ -33,15 +31,13 @@ namespace EliteCrafting.Rules
             if (!Stones.StoneVerbs.IsImplemented(stone.Verb))
             {
                 // economy-yaml.md section 9: treated as disabled, so it never drops and refuses as stone_disabled
-                issues.Warn(path, null, $"verb '{EnumIds<StoneVerb>.Id(stone.Verb)}' is not in this version: the stone is treated as disabled");
+                issues.Warn(path, null, $"verb '{EnumIds<StoneVerb>.Id(stone.Verb)}' is not in this version: the rune is treated as disabled");
                 stone.Enabled = false;
                 return;
             }
-            bool deadCorrupt = stone.Verb == StoneVerb.Corrupt && AllZero(stone.Outcomes);
-            bool deadGamble = stone.Verb == StoneVerb.Gamble && AllZero(stone.GambleWeights.Values);
-            if (deadCorrupt || deadGamble)
+            if (stone.Verb == StoneVerb.Corrupt && AllZero(stone.Outcomes))
             {
-                issues.Warn(path, null, "every weight is 0: the stone is treated as disabled");
+                issues.Warn(path, null, "every weight is 0: the rune is treated as disabled");
                 stone.Enabled = false;
             }
         }
@@ -59,13 +55,13 @@ namespace EliteCrafting.Rules
                 }
                 if (seen.TryGetValue(stone.Name, out string other))
                 {
-                    issues.Error($"stones[{stone.Id}].name", null, $"'{stone.Name}' is already the name of '{other}': stones with one name merge into one stack");
+                    issues.Error($"runes[{stone.Id}].name", null, $"'{stone.Name}' is already the name of '{other}': runes with one name merge into one stack");
                     continue;
                 }
                 seen[stone.Name] = stone.Id;
                 if (stone.Name.StartsWith("$item_", System.StringComparison.Ordinal))
                 {
-                    issues.Warn($"stones[{stone.Id}].name", null, $"'{stone.Name}' is a game item's name: the stone would stack with that item");
+                    issues.Warn($"runes[{stone.Id}].name", null, $"'{stone.Name}' is a game item's name: the rune would stack with that item");
                 }
             }
         }
@@ -88,7 +84,7 @@ namespace EliteCrafting.Rules
                 bool known = stone ? rules.Stone(id) != null : rules.Rarity(id) != null;
                 if (!known)
                 {
-                    issues.Error($"{path}.{id}", null, stone ? "is not a defined stone" : "is not a rarity");
+                    issues.Error($"{path}.{id}", null, stone ? "is not a defined rune" : "is not a rarity");
                 }
             }
         }
@@ -108,7 +104,7 @@ namespace EliteCrafting.Rules
                 {
                     if (rules.Stone(bonus.Stone) == null)
                     {
-                        issues.Error(entry.Key + ".bonus", null, $"'{bonus.Stone}' is not a defined stone");
+                        issues.Error(entry.Key + ".bonus", null, $"'{bonus.Stone}' is not a defined rune");
                     }
                 }
             }
@@ -121,33 +117,6 @@ namespace EliteCrafting.Rules
             {
                 all.Add(new KeyValuePair<string, IReadOnlyList<DropBonus>>(prefix + entry.Key, entry.Value.Bonus));
             }
-        }
-
-        private static void WarnClosedMythic(EconomyRules rules, RuleIssues issues)
-        {
-            RarityDef? mythic = rules.MythicRarity;
-            if (mythic == null || mythic.DropWeight > 0f)
-            {
-                return;
-            }
-            bool weighted = rules.Drops.RarityWeights.TryGetValue(mythic.Id, out float[] row) && !AllZero(row);
-            weighted |= rules.Drops.BossRarityWeights.TryGetValue(mythic.Id, out float[] boss) && !AllZero(boss);
-            if (weighted)
-            {
-                issues.Warn("drops", null, $"'{mythic.Id}' has drop weights but drop_weight 0: it still never drops");
-            }
-        }
-
-        private static bool AllZero(IEnumerable<float> values)
-        {
-            foreach (float v in values)
-            {
-                if (v > 0f)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         private static bool AllZero(IEnumerable<CorruptWeight> rows)

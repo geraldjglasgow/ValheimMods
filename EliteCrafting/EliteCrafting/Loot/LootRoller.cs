@@ -154,9 +154,9 @@ namespace EliteCrafting.Loot
                 string ecr = input.Ecr.StarsFromEcr ? " (ECR)" : "";
                 ecr += input.Ecr.HasTier ? $" ECR world tier {input.Ecr.Tier}" : "";
                 Log.Info($"drop roll (creature owner): {prefab} stars {input.Stars}{ecr} tier {plan.Tier}{(plan.IsBoss ? " boss" : "")} "
-                    + $"p(stone) {plan.StoneChance:0.###} p(gear) {plan.GearChance:0.###} -> {plan.Stones.Count} stones, "
+                    + $"p(rune) {plan.StoneChance:0.###} p(gear) {plan.GearChance:0.###} -> {plan.Stones.Count} runes, "
                     + $"{gear}/{plan.Gear.Count} gear; killer find: rarity +{find.RarityBonusPercent:0.#}%, "
-                    + $"stones +{find.StonesPercent:0.#}%, trophy +{find.TrophyPercent:0.#}%, coins +{find.CoinsPercent:0.#}%");
+                    + $"runes +{find.StonesPercent:0.#}%, trophy +{find.TrophyPercent:0.#}%, coins +{find.CoinsPercent:0.#}%");
             }
         }
     }

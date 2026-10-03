@@ -7,7 +7,7 @@ using static EliteCrafting.Effects.EffectScope;
 namespace EliteCrafting.Effects
 {
     /// <summary>
-    /// The Phase 2 effects of affixes.md section 3: every easy and medium effect that is not Mythic-only and not a
+    /// The Phase 2 effects of affixes.md section 3: every easy and medium effect that is not a
     /// loot-find effect (those are Loot's, registered in <see cref="EffectCatalog"/>). Fields as the registry table;
     /// scope is ours: "this weapon / this shield / this item" is item-local, everything else sums per player.
     /// </summary>

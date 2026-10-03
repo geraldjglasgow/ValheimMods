@@ -5,8 +5,8 @@ One feature of the mod, specified on its own. `../SPEC.md` is the whole-mod docu
 This file covers **where a magic item's state lives and exactly how it is written**: the keys in the game's own
 per-item custom data, how each value is encoded, which items may carry it, the parse cache every other feature
 reads through, what happens to data the running configuration no longer knows, and how later versions migrate old
-items. What the values *mean* belongs to other files: rarities `rarity.md`, affixes `affixes.md`, quality
-`quality.md`, sealing and binding `stones.md`, pending sigils `sigils.md`, the tier ceiling `item-tier.md`.
+items. What the values *mean* belongs to other files: rarities `rarity.md`, affixes `affixes.md`, sealing
+`stones.md` (the runes), the tier ceiling `item-tier.md`.
 
 **Status: Phase 1 built, not tested in game** (2026-09-23).
 
@@ -33,7 +33,7 @@ the game does with an item, the state goes along.
 
 `InventoryGui.DoCrafting`, on an upgrade, **removes the old item and adds a brand-new one** from the prefab
 (`Inventory.AddItem(name, stack, quality, variant, crafterID, crafterName, position, cheated)`), which copies no
-custom data. Unpatched, **upgrading a magic item at a workbench silently turns it Common.**
+custom data. Unpatched, **upgrading a magic item at a workbench silently turns it Normal.**
 
 The mod therefore carries its keys across an upgrade (hook points from `~/scratch/specs/ec-game-notes.md` Q2):
 
@@ -62,7 +62,7 @@ An item is a **magic base** (the term `rarity.md` and `stones.md` use) when all 
 
 1. `m_shared.m_maxStackSize == 1`. This is also what makes magic items non-stackable (section 7).
 2. It maps to one slot id of the taxonomy (table below).
-3. It is not one of our own stones.
+3. It is not one of our own runes.
 
 The slot map is owned here (`rarity.md` section 2 defers to it). Slot classification from the item's shared data
 (`../DECISIONS.md` ITD-1, ITD-2; `affixes.md` assigns affixes to these slot ids):
@@ -81,7 +81,7 @@ The slot map is owned here (`rarity.md` section 2 defers to it). Slot classifica
 | `tool` | `Tool`, and weapons whose skill is Pickaxes; fishing rods (skill Fishing) | hammer, hoe, cultivator, pickaxes, fishing rod |
 
 Items outside the table (materials, food, ammo, trophies, torches, `Trinket`, `Hands`, `Customization`, `Misc`)
-are never magic bases. A stone clicked onto one is refused with `$ecf_msg_not_magic_base` (`applying-stones.md`).
+are never magic bases. A rune clicked onto one is refused with `$ecf_msg_not_magic_base` (`applying-stones.md`).
 The game-notes survey suggested torches as `tool` and `Trinket` as `utility_item`; both stay excluded (ITD-2).
 Hildir's cosmetic clothing follows its item type like any other armor (tier 1 by fallback, never in the drop pool,
 since it has no recipe). Which prefabs actually fall where is checked in game with `ecraft dump items`
@@ -100,27 +100,24 @@ dictionary: other mods' keys on the same item are left exactly as they were.
 | Key | Present when | Value | Example |
 |---|---|---|---|
 | `ecf_v` | any other `ecf_` key is present | format version, integer | `1` |
-| `ecf_rarity` | the item is Uncommon or better | rarity id | `rare` |
+| `ecf_rarity` | the item is Magic or better | rarity id | `rare` |
 | `ecf_inscriptions` | the item has at least one affix | affix list (section 4) | `fleetfoot:3:4;broad_back:4:35` |
-| `ecf_bound` | an affix is locked by the Stone of Binding | affix id of the locked affix | `broad_back` |
-| `ecf_refine` | a Honing or Tempering Stone was used | the honed/tempered bonus in percent points, number (`quality.md`) | `7` |
-| `ecf_sealed` | the item is sealed (no further stones) | reason id: `serpent` or `reflection` | `serpent` |
-| `ecf_sigil` | a sigil is pending on the item | the sigil's stone id | `sigil_war` |
+| `ecf_sealed` | the item is sealed (no further runes) | reason id: `serpent` | `serpent` |
 
 There is **no tier key**: the item's tier ceiling is computed from its base and never stored (user decision,
 `../DECISIONS.md` U-13; `item-tier.md` section 1). Each affix stores its own tier inside `ecf_inscriptions`.
 
 Rules that keep the set tight:
 
-- **Common is the absence of `ecf_rarity`.** The mod never writes `ecf_rarity=common`. A Common item can still carry
-  `ecf_v` and `ecf_refine` (the honed/tempered bonus survives Unmaking, `quality.md`).
+- **Normal is the absence of `ecf_rarity`.** The mod never writes `ecf_rarity=normal`.
 - **A key whose value would be empty is removed**, not written empty. An item with no `ecf_` keys at all is a plain
   vanilla item and costs nothing anywhere.
 - `ecf_v` is written whenever any other key is written, and removed when the last other key goes.
-- `ecf_sealed` is a reason rather than a flag so the tooltip can say *why* ("Corrupted" / "Mirrored"). Any
+- `ecf_sealed` is a reason rather than a flag so the tooltip can say *why* ("Corrupted" for `serpent`). Any
   non-empty value means sealed; an unknown reason id displays as the generic sealed text.
-- `ecf_bound` names an affix that must also be in `ecf_inscriptions`. If it is not (the affix was removed by a path that
-  forgot to clear it), the key is ignored on read and dropped on the next write.
+- **Retired keys.** `ecf_bound`, `ecf_refine`, `ecf_sigil`, `ecf_sockets`, `ecf_gems` and `ecf_catalyst` belonged to
+  crafting systems removed on 2026-10-02 (user decision; the runes replaced them). They are never read, and the
+  writer removes them from an item the next time it writes that item for its own reasons (section 8).
 
 ---
 
@@ -150,8 +147,8 @@ rolled; a reroll that replaces an affix puts the new one at the end).
 - Duplicate ids in one list are invalid (PLAN.md: never two copies of one affix); on read the first is kept and the
   rest are treated as unreadable segments (below).
 
-**Other values:** rarity id, sealed reason, sigil id: the lowercase snake_case ids from `rarity.md`, `stones.md`,
-`sigils.md`. Refine percent: the same number format as affix values. Version: an invariant integer.
+**Other values:** rarity id, sealed reason: the lowercase snake_case ids from `rarity.md` and `stones.md`. Version: an
+invariant integer.
 
 **Unreadable data is never destroyed.** A segment of `ecf_inscriptions` that does not parse (wrong field count, bad
 number, duplicate) is kept verbatim in the parse record and written back unchanged, in its original position,
@@ -162,13 +159,13 @@ whenever the item is written. It has no effect and does not show in the tooltip 
 
 # 5. The parse cache
 
-Every reader (tooltip, effects, stones, glow, loot, commands) goes through one cache; nothing parses
+Every reader (tooltip, effects, runes, glow, loot, commands) goes through one cache; nothing parses
 `m_customData` on its own.
 
 - **`ItemRecord Read(ItemData item)`**: returns the parsed record, from a
   `ConditionalWeakTable<ItemData, ItemRecord>` cache. A record holds: format version, rarity (definition or
-  orphaned id), the affix entries (id, tier, value, resolved definition or orphaned), unreadable segments, bound
-  id, refine percent, sealed reason, sigil id.
+  orphaned id), the affix entries (id, tier, value, resolved definition or orphaned), unreadable segments, sealed
+  reason.
 - **Validity check on every hit**: the record remembers the dictionary instance it was parsed from. If
   `item.m_customData` is a different instance (the game's `Load` replaced it, or a clone), the record is rebuilt.
   One reference compare; no string work on a hit.
@@ -178,7 +175,7 @@ Every reader (tooltip, effects, stones, glow, loot, commands) goes through one c
   an older generation re-resolves its definitions (orphaned or live) on its next read, without re-parsing strings.
 - **Non-magic-base and plain items** get a shared empty record, so hot paths (a `GetDamage` postfix) can call `Read`
   on every item without allocating.
-- **Records are immutable** to readers. Stones build a new record and hand it to `Write`.
+- **Records are immutable** to readers. Runes build a new record and hand it to `Write`.
 - **ItemData identity is not stable**: the game clones an item on every slot move, container move, drop and
   pickup merge (game notes, pitfall 3), so cache misses are normal and nothing may hold a long-lived reference to an
   `ItemData` (the aggregate rebuilds from the equipped slots each time). A miss costs one parse of a short string.
@@ -201,20 +198,21 @@ An affix whose **id is not in the running affix configuration**, or whose defini
 - The tooltip shows it **dormant**: greyed, with its stored tier and value (`display.md`). Its name comes from
   `$ecf_affix_<id>` if a translation exists, otherwise the raw id.
 - Its **effect is inert**: the effects layer skips it (`effects-runtime.md`).
-- It **still counts** toward the item's affix count, so Growth cannot fill the item past its rarity maximum by
-  ignoring dormant affixes. Stones treat it as an ordinary affix (Severing may remove it, Upheaval replaces it).
+- It **still counts** toward the item's affix count, so Shaping and Consecrated cannot fill the item past its rarity
+  maximum by ignoring dormant affixes. Runes treat it as an ordinary affix (Cleansing removes it, the Serpent's chaotic
+  reroll replaces it).
 - **Restoring the id in YAML revives it** with its stored tier and value. No migration, no reroll.
 
 `enabled: false` makes an affix dormant everywhere; an owner who only wants it to **stop rolling** sets its `weight` to 0
 instead and existing copies keep working (`configuration.md`). That split is a judgement call (ITD-4).
 
 A **tier that no longer exists** in the affix's definition is not an orphan: the value is stored, so the effect
-applies as stored and the tooltip shows the stored tier. Only value rerolls need a range; `stones.md` defines which
-tier they fall back to.
+applies as stored and the tooltip shows the stored tier.
 
 An **unknown rarity id** (an owner removed a rarity): the item keeps it, its name draws in the default text color,
-the tooltip shows the raw id greyed, its affixes stay active, and every stone refuses it (`$ecf_msg_unknown_rarity`)
-until the rarity returns.
+the tooltip shows the raw id greyed, its affixes stay active, and every rune refuses it (`$ecf_msg_unknown_rarity`)
+until the rarity returns. The ids of the rarities before 2026-10-02 are not unknown: they are renamed on read
+(section 8).
 
 ---
 
@@ -228,13 +226,13 @@ Two guards keep it that way:
 
 - `Write` refuses (logs an error, writes nothing) an item with `m_maxStackSize > 1`. This catches another mod
   raising gear stack sizes after the fact.
-- **Stones never carry `ecf_` data**; a stone's identity is its prefab. Stones stack by prefab only.
+- **Runes never carry `ecf_` data**; a rune's identity is its prefab. Runes stack by prefab only.
 
 **Removing the mod** leaves every `ecf_` key on gear untouched (the game round-trips unknown pairs), so reinstalling
-restores everything; stones, being our prefabs, are deleted by the game on the next load (game notes, pitfall 6).
+restores everything; runes, being our prefabs, are deleted by the game on the next load (game notes, pitfall 6).
 
 If a server raises stack sizes of weapons or armor (OpenKeep's stack rules can), those items stop being magic bases:
-the ones already magic stay magic (the data is kept and read) but no stone applies to them. Stated in the README.
+the ones already magic stay magic (the data is kept and read) but no rune applies to them. Stated in the README.
 
 ---
 
@@ -248,8 +246,12 @@ the ones already magic stay magic (the data is kept and read) but no stone appli
   causes no writes and no ZDO traffic.
 - **Newer version on read** (a client with an older mod saw an item from a newer one; normally prevented by the
   version check, but save files travel): the record parses what it can, the effects of parseable affixes apply,
-  the tooltip adds `$ecf_ui_newer_format`, and **every stone refuses** (`$ecf_msg_newer_format`), because writing it
+  the tooltip adds `$ecf_ui_newer_format`, and **every rune refuses** (`$ecf_msg_newer_format`), because writing it
   back would lose whatever the newer format added.
+- **Rarities before the runes (2026-10-02)** are renamed on read, in memory, like a migration step and without a
+  version bump: `uncommon` reads as `magic`; `epic`, `legendary` and `mythic` read as `rare`; `common` reads as Normal
+  (no rarity). The item keeps its affixes as they are, even more than its new rarity's maximum or fewer than its
+  minimum (`rarity.md` section 5). The next write stores the new id and removes the retired keys (section 3).
 - **When a new version is needed**: any change to the meaning or encoding of an existing key. Adding a new optional
   key is **not** a version bump (older readers ignore keys they do not know and never delete them).
 - A version bump is a MAJOR release per workspace CLAUDE.md only if old items can no longer be read; a migration
@@ -262,61 +264,52 @@ the ones already magic stay magic (the data is kept and read) but no stone appli
 
 A plain vanilla item: `m_customData = {}`. Nothing of ours, zero cost.
 
-An Uncommon bronze sword, one affix:
+A Magic bronze sword, one affix:
 
 ```
 {
   "ecf_v":       "1",
-  "ecf_rarity":  "uncommon",
+  "ecf_rarity":  "magic",
   "ecf_inscriptions": "balanced_grip:2:7"
 }
 ```
 
-A Legendary chest piece: four affixes, one bound, tempered, a sigil pending; another mod's key alongside:
-
-```
-{
-  "ecf_v":       "1",
-  "ecf_rarity":  "legendary",
-  "ecf_inscriptions": "broad_back:6:52;troll_blood:5:12.5;well_forged:6:18;lightened:4:30",
-  "ecf_bound":   "troll_blood",
-  "ecf_refine": "6",
-  "ecf_sigil":   "sigil_warding",
-  "othermod_x":  "left alone"
-}
-```
-
-A Mythic sealed by the Serpent Stone, seven affixes (the Serpent's "add one on Mythic" outcome), one flag affix, one
-dormant (`storm_ward`, an affix the server's YAML no longer has):
-
-```
-{
-  "ecf_v":       "1",
-  "ecf_rarity":  "mythic",
-  "ecf_inscriptions": "ravens_glide:7:1;well_forged:7:40;storm_ward:6:20;lightened:7:45;everlasting:7:1;broad_back:7:70;gossamer:7:1",
-  "ecf_sealed":  "serpent"
-}
-```
-
-A Common hammer after Unmaking, its refine bonus kept:
-
-```
-{
-  "ecf_v":       "1",
-  "ecf_refine": "4"
-}
-```
-
-A mirrored copy from the Stone of Reflection (the original is unchanged and unsealed):
+A Rare chest piece: four affixes; another mod's key alongside:
 
 ```
 {
   "ecf_v":       "1",
   "ecf_rarity":  "rare",
-  "ecf_inscriptions": "long_reach:5:8;staggering_blows:5:11;balanced_grip:3:9",
-  "ecf_sealed":  "reflection"
+  "ecf_inscriptions": "broad_back:6:52;troll_blood:5:12.5;well_forged:6:18;lightened:4:30",
+  "othermod_x":  "left alone"
 }
 ```
+
+A Rare sealed by the Serpent Rune, seven affixes (its `add_inscription` outcome on a full Rare), one flag affix, one
+dormant (`storm_ward`, an affix the server's YAML no longer has):
+
+```
+{
+  "ecf_v":       "1",
+  "ecf_rarity":  "rare",
+  "ecf_inscriptions": "ravens_glide:7:1;well_forged:7:40;storm_ward:6:20;lightened:7:45;everlasting:7:1;broad_back:7:70;gossamer:7:1",
+  "ecf_sealed":  "serpent"
+}
+```
+
+An item written before 2026-10-02, with a retired key:
+
+```
+{
+  "ecf_v":       "1",
+  "ecf_rarity":  "legendary",
+  "ecf_inscriptions": "long_reach:5:8;staggering_blows:5:11;balanced_grip:3:9",
+  "ecf_bound":   "long_reach"
+}
+```
+
+It reads as a Rare with three affixes; `ecf_bound` is ignored. After a rune is used on it, its data is
+`ecf_v=1`, `ecf_rarity=rare` and the new `ecf_inscriptions`, with `ecf_bound` gone.
 
 A damaged list (hand-edited save): `"fleetfoot:3:4;garbage;broad_back:4:35"` parses to two affixes plus one
 unreadable segment `garbage`, which is written back in place on the next write.
@@ -332,7 +325,7 @@ Affix ids are catalog ids (`affixes.md`) used to show the shape; the combination
 - **Items equipped by another player are not visible to this client.** Their data lives in that player's
   inventory, which the game does not replicate; `VisEquipment` carries prefab hashes only. Nothing in Phases 1-2
   needs it. Phase 3's per-rarity glow on equipped gear will need a small per-player ZDO summary, specified then.
-- Writes happen only where the item is owned: the local player's inventory (stones, upgrades), or the ZDO owner of a
+- Writes happen only where the item is owned: the local player's inventory (runes, upgrades), or the ZDO owner of a
   freshly spawned world drop (pre-rolled loot, `drops.md`). No peer ever writes an item it does not own.
 
 ---
@@ -340,5 +333,5 @@ Affix ids are catalog ids (`affixes.md`) used to show the shape; the combination
 # 11. Decisions
 
 Every question this file raised is answered in `../DECISIONS.md` (Item data: ITD-1 to ITD-5; the tier model and the
-dropped `ecf_tier` key are U-13). Binding "once per item" means one bound affix at a time, so no lifetime marker key
-exists (ITD-3).
+dropped `ecf_tier` key are U-13). The retired keys and the rarity renames are the 2026-10-02 entry of `../PLAN.md`'s
+Decisions log.

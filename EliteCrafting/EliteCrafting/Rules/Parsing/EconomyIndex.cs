@@ -14,15 +14,10 @@ namespace EliteCrafting.Rules
             foreach (RarityDef rarity in rules.Rarities)
             {
                 rarities[rarity.Id] = rarity;
-                if (rarity.MythicAffixes > 0)
-                {
-                    rules.MythicRarity = rarity;
-                }
             }
             rules.RarityById = rarities;
             IndexStones(rules, issues);
             EconomyChecks.Check(rules, issues);
-            SalvageChecks.Check(rules, issues);
             if (!issues.HasErrors)
             {
                 BuildTables(rules);
@@ -38,7 +33,7 @@ namespace EliteCrafting.Rules
                 byId[stone.Id] = stone;
                 if (byPrefab.TryGetValue(stone.Prefab, out StoneDef other))
                 {
-                    issues.Error($"stones[{stone.Id}].prefab", null, $"{stone.Prefab} is already used by '{other.Id}'");
+                    issues.Error($"runes[{stone.Id}].prefab", null, $"{stone.Prefab} is already used by '{other.Id}'");
                     continue;
                 }
                 byPrefab[stone.Prefab] = stone;

@@ -1,251 +1,76 @@
 # EliteCrafting - economy
 #
-# Rarities, rolling rules, stones, sigils, item tiers, biome tiers and drop tables.
+# Rarities, rolling rules, runes, item tiers, biome tiers and drop tables.
 # Written once, on first run, as a full copy of the built-in defaults; the mod never
 # rewrites it. The built-in defaults stay underneath this file (set
 # `use_defaults: false` to make the files the whole configuration).
 #
 # Extra files named EliteCrafting_economy_<anything>.yml are read after this one, in
 # file-name order, and change only what they name:
-#   - rarities and stones merge by `id`, field by field;
-#   - maps (cost, weights, item_tiers.*, biomes, drops.stones, drops.bosses, ...)
+#   - rarities and runes merge by `id`, field by field;
+#   - maps (cost, weights, item_tiers.*, biomes, drops.runes, drops.bosses, ...)
 #     merge by key; a key set to null is removed;
-#   - lists (applies_to, slots, outcomes, a stone's seven drop weights) are replaced whole.
+#   - lists (applies_to, slots, outcomes, a rune's seven drop weights) are replaced whole.
 #
 # Chances are percent numbers (4 means 4%). Weights are relative. Lists indexed by
 # tier have exactly seven entries: tier 1 (meadows) first, tier 7 (ashlands) last.
 
 # The ladder, lowest first. The first entry is the base rarity (no inscriptions, never
-# glows). `mythic_inscriptions` marks the rarity whose items draw that many inscriptions from
-# the Mythic-only pool. `drop_weight` multiplies the rarity's weight in every drop
-# table; 0 means it never drops.
+# glows). `drop_weight` multiplies the rarity's weight in every drop table; 0 means it
+# never drops.
 rarities:
-  - id: common
+  - id: normal
     color: "#FFFFFF"
     glow: false
     inscriptions: { min: 0, max: 0 }
     drop_weight: 0
-  - id: uncommon
+  - id: magic
     color: "#1EFF00"
     inscriptions: { min: 1, max: 2 }
   - id: rare
     color: "#0070DD"
-    inscriptions: { min: 2, max: 3 }
-  - id: epic
-    color: "#A335EE"
-    inscriptions: { min: 3, max: 4 }
-  - id: legendary
-    color: "#FF8000"
-    inscriptions: { min: 4, max: 5 }
-  - id: mythic
-    color: "#E6262E"
-    inscriptions: { min: 6, max: 6 }
-    mythic_inscriptions: 1
-    drop_weight: 0            # craft-only: raise it AND give Mythic drop weights to open drops
+    inscriptions: { min: 3, max: 6 }
 
 # How inscriptions are drawn. Inscription tiers count down (1 = the strongest row, see the
 # inscriptions file). An item rolls `tier_window` inscription tiers: an Ashlands item (item
 # tier 7) rolls inscription tiers 1-3, a Swamp item (item tier 3) tiers 5-7, a Meadows
-# item tier 7. A promotion always adds at least `promote_adds_at_least`
-# inscriptions. `count_weights` biases how many inscriptions a fresh roll gets.
+# item tier 7. A promotion (Awakening, Ascension) adds what the new rarity's minimum needs,
+# and at least `promote_adds_at_least`. `count_weights` biases how many inscriptions a fresh
+# roll (a dropped item) gets.
 rolling:
   tier_window: 3
   promote_adds_at_least: 1
   # count_weights:
-  #   legendary: { 4: 3, 5: 1 }
+  #   rare: { 3: 4, 4: 3, 5: 2, 6: 1 }
 
-# Every stone. Common fields: id, prefab (ECF_ + PascalCase id for the built-in
-# stones; ECF_Custom01..16 for your own), verb, grade, applies_to (rarities),
-# cost (per rarity, default 1), tier_floor, enabled, confirm (hold Shift / dialog),
-# stack (default 50), item_weight (the item weight of one stone, default 0.2),
-# name, description (loc key or text), tint.
-# Verbs: promote, add, swap, reroll_inscriptions, reroll_values, remove, strip, corrupt,
-# lock, duplicate, gamble, quality, sigil, imbue (essences: `family` names an
-# essence_families entry; `tier_floor` binds the guaranteed inscription only). `tier_floor`
-# is the weakest inscription tier the stone rolls, counted like the tooltip: 1 = the best
-# tier the item allows. enabled: false keeps a stone from
-# dropping and from being used; its prefab (and every stack of it) stays.
-stones:
-  # --- ascension ---
-  - { id: awakening,     verb: promote, applies_to: [common] }
-  - { id: ascension,     verb: promote, applies_to: [uncommon] }
-  - { id: exaltation,    verb: promote, applies_to: [rare] }
-  - { id: transcendence, verb: promote, applies_to: [epic] }
-  - { id: apotheosis,    verb: promote, applies_to: [legendary] }
-
-  # --- manipulation ---
-  - { id: growth_lesser,      verb: add,            grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: growth_greater,     verb: add,            grade: greater, applies_to: [epic, legendary, mythic] }
-  - { id: turmoil_lesser,     verb: swap,           grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: turmoil_greater,    verb: swap,           grade: greater, applies_to: [epic, legendary, mythic] }
-  - { id: upheaval_lesser,    verb: reroll_inscriptions, grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: upheaval_greater,   verb: reroll_inscriptions, grade: greater, applies_to: [epic, legendary, mythic] }
-  - { id: perfection_lesser,  verb: reroll_values,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: perfection_greater, verb: reroll_values,  grade: greater, applies_to: [epic, legendary, mythic] }
-  - { id: severing_lesser,    verb: remove,         grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: severing_greater,   verb: remove,         grade: greater, applies_to: [epic, legendary, mythic] }
-  - id: unmaking
+# The six runes. Click a rune onto an item in your own inventory. Fields: id (one of the six),
+# verb, applies_to (rarities), cost (per rarity, default 1), tier_floor, enabled,
+# confirm (hold Shift / dialog first), stack (default 50), item_weight (the item weight of
+# one rune, default 0.2), name, description (loc key or text), tint.
+# Verbs: promote (one rarity up), add (one inscription, not past the rarity's maximum),
+# strip (back to the base rarity, every inscription gone), corrupt (one outcome, then the
+# item is sealed for good: no rune works on it again). `tier_floor` is the weakest
+# inscription tier the rune rolls, counted like the tooltip: 1 = the best tier the item
+# allows. enabled: false keeps a rune from dropping and from being used; its prefab (and
+# every stack of it) stays.
+runes:
+  - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, one inscription
+  - { id: shaping,     verb: add,     applies_to: [magic] }        # one more on a Magic item (up to 2)
+  - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, one more (to Rare's 3 at least)
+  - { id: consecrated, verb: add,     applies_to: [rare] }         # one more on a Rare item (up to 6)
+  - id: cleansing                                                  # back to Normal
     verb: strip
-    applies_to: [uncommon, rare, epic, legendary, mythic]
+    applies_to: [magic, rare]
     confirm: true
-
-  # --- risk and endgame ---
-  - id: serpent
+  - id: serpent                                                    # sealed for good, one of three outcomes
     verb: corrupt
-    applies_to: [uncommon, rare, epic, legendary, mythic]
+    applies_to: [magic, rare]
     confirm: true
-    overflow: 1
+    overflow: 1                # add_inscription may go this many past the rarity's maximum
     outcomes:
-      - { outcome: seal_only,      weight: 25 }
-      - { outcome: add_inscription,     weight: 25 }
-      - { outcome: chaotic_reroll, weight: 20 }
-      - { outcome: promote,        weight: 15 }
-      - { outcome: demote,         weight: 15 }
-  - id: binding
-    verb: lock
-    applies_to: [uncommon, rare, epic, legendary, mythic]
-    max_bound: 1
-  - id: chance
-    verb: gamble
-    applies_to: [common]
-    weights: { common: 0, uncommon: 50, rare: 30, epic: 15, legendary: 5, mythic: 0 }
-  - id: reflection
-    verb: duplicate
-    applies_to: [uncommon, rare, epic, legendary, mythic]
-    seal_copy: true
-
-  # --- quality ---
-  - id: honing
-    verb: quality
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    slots: [melee_weapon, ranged_weapon, magic_weapon]
-    step: 1
-    cap: 10
-  - id: tempering
-    verb: quality
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    slots: [head, chest, legs, cape, shield]
-    step: 1
-    cap: 10
-
-  # --- sigils ---
-  - { id: sigil_preservation, verb: sigil, steer: preserve, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: sigil_war,          verb: sigil, steer: category, category: offense, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: sigil_warding,      verb: sigil, steer: category, category: defense, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: sigil_fortune,      verb: sigil, steer: category, category: utility, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: sigil_culling,      verb: sigil, steer: cull,     applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-
-  # --- essences: reroll like Upheaval, one new inscription always from the family ---
-  - { id: essence_storm_lesser,   verb: imbue, family: storm,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_storm_greater,  verb: imbue, family: storm,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_grove_lesser,   verb: imbue, family: grove,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_grove_greater,  verb: imbue, family: grove,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_venom_lesser,   verb: imbue, family: venom,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_venom_greater,  verb: imbue, family: venom,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_frost_lesser,   verb: imbue, family: frost,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_frost_greater,  verb: imbue, family: frost,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_battle_lesser,  verb: imbue, family: battle, grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_battle_greater, verb: imbue, family: battle, grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_seidr_lesser,   verb: imbue, family: seidr,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_seidr_greater,  verb: imbue, family: seidr,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_ember_lesser,   verb: imbue, family: ember,  grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_ember_greater,  verb: imbue, family: ember,  grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-  - { id: essence_tide_lesser,    verb: imbue, family: tide,   grade: lesser,  applies_to: [uncommon, rare] }
-  - { id: essence_tide_greater,   verb: imbue, family: tide,   grade: greater, applies_to: [uncommon, rare, epic, legendary, mythic], tier_floor: 1 }
-
-  # --- sockets (sockets.md): the chisel opens a socket, a gem fills one with its family's inscription for the
-  # item's slot (rolled in the item's own tier window), a catalyst strengthens one family's inscriptions and gems ---
-  - { id: chisel, verb: socket, applies_to: [common, uncommon, rare, epic, legendary, mythic], max_sockets: 2 }
-  - id: gem_storm
-    verb: gem
-    family: storm
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: stormbrand, ranged_weapon: stormbrand, shield: perfect_guard, head: stormward, legs: fleetfoot, cape: stormward }
-  - id: gem_grove
-    verb: gem
-    family: grove
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: bonebreaker, ranged_weapon: bonebreaker, shield: repelling_guard, head: mending, chest: troll_blood, legs: ironroot, utility_item: harvester }
-  - id: gem_venom
-    verb: gem
-    family: venom
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: venombrand, ranged_weapon: venombrand, head: purity, chest: purity, legs: venomward, cape: venomward }
-  - id: gem_frost
-    verb: gem
-    family: frost
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: rimebrand, ranged_weapon: rimebrand, head: frostward, chest: endurance, legs: long_wind, cape: frostward }
-  - id: gem_battle
-    verb: gem
-    family: battle
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: honed_might, ranged_weapon: honed_might, magic_weapon: berserkergang, shield: stalwart, head: valhallas_edge, chest: ironclad, legs: mailed, utility_item: broad_back }
-  - id: gem_seidr
-    verb: gem
-    family: seidr
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: primal_fury, ranged_weapon: primal_fury, magic_weapon: primal_fury, head: seidr_flow, chest: runic_ward, legs: mist_veil, cape: mist_veil }
-  - id: gem_ember
-    verb: gem
-    family: ember
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: emberbrand, ranged_weapon: emberbrand, head: hearthlight, chest: flameward, cape: flameward }
-  - id: gem_tide
-    verb: gem
-    family: tide
-    applies_to: [common, uncommon, rare, epic, legendary, mythic]
-    inscriptions: { melee_weapon: slayer_sea, ranged_weapon: slayer_sea, magic_weapon: slayer_sea, head: huginns_eye, chest: sealegs, cape: strong_swimmer, utility_item: fair_winds }
-  - { id: catalyst_storm, verb: catalyse, family: storm, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_grove, verb: catalyse, family: grove, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_venom, verb: catalyse, family: venom, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_frost, verb: catalyse, family: frost, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_battle, verb: catalyse, family: battle, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_seidr, verb: catalyse, family: seidr, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_ember, verb: catalyse, family: ember, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-  - { id: catalyst_tide, verb: catalyse, family: tide, step: 1, cap: 20, applies_to: [common, uncommon, rare, epic, legendary, mythic] }
-
-# A pending sigil is consumed only by a stone it steers, unless this is true.
-sigils:
-  consume_on_unsteered: false
-
-# The inscriptions each essence family guarantees one of (family id -> { inscriptions, name }).
-# Members are inscription ids from EliteCrafting_inscriptions*.yml; one that is not defined
-# there, disabled or Mythic-only is skipped with a warning. `inscriptions` is replaced whole.
-essence_families:
-  storm:  { inscriptions: [stormbrand, stormward, bulwark_lightning, fleetfoot, stride, spring_heeled, light_leap, nimble, perfect_guard, keen_guard] }
-  grove:  { inscriptions: [bonebreaker, heartwood, woodcutting_mastery, troll_blood, mending, bramblehide, ironroot, repelling_guard, anchored_guard, harvester, farming_mastery] }
-  venom:  { inscriptions: [venombrand, blood_drinker, blood_thrift, venomward, bulwark_poison, purity, marshstrider, oilskin] }
-  frost:  { inscriptions: [rimebrand, frostward, bulwark_frost, coldblood, winterborn, mountain_goat, long_wind, endurance, soft_landing, ravens_glide] }
-  battle: { inscriptions: [honed_might, keen_edge, needlepoint, berserkergang, padded, mailed, riveted, ironclad, arrowward, valhallas_edge, stalwart, tireless_guard, broad_back, trophy_taker] }
-  seidr:  { inscriptions: [primal_fury, seidr_siphon, rune_edge, seidr_thrift, soul_reaper, elemental_mastery, wellspring, seidr_flow, restless_mind, runic_ward, mist_veil, mistbane, seidr_riposte] }
-  ember:  { inscriptions: [emberbrand, flameward, bulwark_fire, ashen_skin, emberheart, hearthlight] }
-  tide:   { inscriptions: [slayer_sea, sealegs, strong_swimmer, fair_winds, huginns_eye, fishing_mastery] }
-
-# Grinding a magic item into shards (the Salvage key, default End, over an item
-# in your own inventory) and fusing shards into stones (right-click the shards;
-# Shift + right-click fuses every full set). The on/off switch is `Salvage` in
-# com.EliteCrafting.cfg. `confirm` asks first in the player's confirm mode.
-# `stations`: empty = anywhere, else one of these station prefabs must be in range.
-# `yields`: rarity -> rows { fragment, amount, chance (percent) }; a rarity's list is
-# replaced whole. `fragments` merge by `id` (the five built-in shards only):
-# stone (what they fuse into), fuse (shards per stone), name, description, stack,
-# item_weight, tint.
-salvage:
-  confirm: true
-  stations: []
-  yields:
-    uncommon:  [ { fragment: shard_awakening,     amount: 2 } ]
-    rare:      [ { fragment: shard_ascension,     amount: 2 } ]
-    epic:      [ { fragment: shard_exaltation,    amount: 2 } ]
-    legendary: [ { fragment: shard_transcendence, amount: 2 } ]
-    mythic:    [ { fragment: shard_apotheosis,    amount: 2 } ]
-  fragments:
-    - { id: shard_awakening,     stone: awakening,     fuse: 5 }
-    - { id: shard_ascension,     stone: ascension,     fuse: 5 }
-    - { id: shard_exaltation,    stone: exaltation,    fuse: 5 }
-    - { id: shard_transcendence, stone: transcendence, fuse: 5 }
-    - { id: shard_apotheosis,    stone: apotheosis,    fuse: 10 }
+      - { outcome: seal_only,       weight: 35 }   # sealed as it is
+      - { outcome: add_inscription, weight: 35 }   # one more inscription, past the cap
+      - { outcome: chaotic_reroll,  weight: 30 }   # every inscription rerolled at any tier
 
 # The tier ceiling of each item (1 meadows ... 7 ashlands): an explicit entry in
 # `items` wins; otherwise the highest tier among its recipe's materials (crafted
@@ -391,95 +216,37 @@ biomes:
   ocean: 4                     # judgement call
   deep_north: 7                # reserved; clamped until tier 8 exists
 
-# What creatures drop. The on/off switches are `Stone drops` and `Magic item drops`
+# What creatures drop. The on/off switches are `Rune drops` and `Magic item drops`
 # in com.EliteCrafting.cfg.
 drops:
   tamed: false                 # tamed creatures drop our loot
   require_player: true         # a player (or a player's tamed creature) must have hit it
-  max_stones_per_kill: 5
+  max_runes_per_kill: 5
   max_gear_per_kill: 2
   star_multipliers: [1, 2, 3]  # by stars; index 0 = no stars
   star_step: 1                 # added per star beyond the list
 
   chances:                     # base chance per kill, by tier
-    stone: [4, 5, 6, 7, 8, 9, 10]
-    gear:  [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5]
+    rune: [4, 5, 6, 7, 8, 9, 10]
+    gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5]
 
-  stones:                      # which stone drops, by tier; a disabled stone never drops
-    #                     T1   T2   T3   T4   T5   T6    T7
-    awakening:          [400, 300, 220, 160, 120, 100,   80]
-    ascension:          [  0, 120, 120, 110, 100,  90,   80]
-    exaltation:         [  0,   0,   0,  60,  70,  70,   70]
-    transcendence:      [  0,   0,   0,   0,   0,  30,   40]
-    apotheosis:         [  0,   0,   0,   0,   0,   0,    1]
-    growth_lesser:      [  0,  80,  90,  90,  80,  70,   60]
-    growth_greater:     [  0,   0,   0,  20,  30,  40,   50]
-    turmoil_lesser:     [150, 150, 140, 120, 100,  90,   80]
-    turmoil_greater:    [  0,   0,   0,  30,  40,  50,   60]
-    upheaval_lesser:    [  0,  40,  50,  50,  50,  45,   40]
-    upheaval_greater:   [  0,   0,   0,  15,  20,  25,   30]
-    perfection_lesser:  [  0,   0,  30,  40,  40,  40,   40]
-    perfection_greater: [  0,   0,   0,   0,  10,  15,   20]
-    severing_lesser:    [  0,  50,  60,  60,  55,  50,   45]
-    severing_greater:   [  0,   0,   0,  15,  20,  25,   30]
-    unmaking:           [ 30,  30,  30,  30,  30,  30,   30]
-    serpent:            [  0,   0,  20,  25,  30,  35,   40]
-    binding:            [  0,   0,   0,   0,   5,   8,   10]
-    chance:             [ 80,  80,  70,  60,  50,  40,   30]
-    reflection:         [  0,   0,   0,   0,   0, 0.02, 0.05]
-    honing:             [ 60,  60,  60,  50,  50,  40,   40]
-    tempering:          [ 60,  60,  60,  50,  50,  40,   40]
-    sigil_preservation: [  0,   0,   0,  10,  12,  15,   18]
-    sigil_war:          [  0,   0,  15,  20,  20,  20,   20]
-    sigil_warding:      [  0,   0,  15,  20,  20,  20,   20]
-    sigil_fortune:      [  0,   0,  15,  20,  20,  20,   20]
-    sigil_culling:      [  0,   0,  10,  15,  18,  20,   22]
-    # essences: home tier only (tide comes from serpents, see creatures)
-    essence_storm_lesser:   [ 80,   0,   0,   0,   0,   0,    0]
-    essence_storm_greater:  [ 20,   0,   0,   0,   0,   0,    0]
-    essence_grove_lesser:   [  0,  80,   0,   0,   0,   0,    0]
-    essence_grove_greater:  [  0,  20,   0,   0,   0,   0,    0]
-    essence_venom_lesser:   [  0,   0,  80,   0,   0,   0,    0]
-    essence_venom_greater:  [  0,   0,  20,   0,   0,   0,    0]
-    essence_frost_lesser:   [  0,   0,   0,  80,   0,   0,    0]
-    essence_frost_greater:  [  0,   0,   0,  20,   0,   0,    0]
-    essence_battle_lesser:  [  0,   0,   0,   0,  80,   0,    0]
-    essence_battle_greater: [  0,   0,   0,   0,  20,   0,    0]
-    essence_seidr_lesser:   [  0,   0,   0,   0,   0,  80,    0]
-    essence_seidr_greater:  [  0,   0,   0,   0,   0,  20,    0]
-    essence_ember_lesser:   [  0,   0,   0,   0,   0,   0,   80]
-    essence_ember_greater:  [  0,   0,   0,   0,   0,   0,   20]
-    # sockets: the chisel everywhere, a family's gem and catalyst in its home tier (tide: serpents)
-    chisel:                 [ 40,  40,  40,  40,  40,  40,   40]
-    gem_storm:              [ 40,   0,   0,   0,   0,   0,    0]
-    gem_grove:              [  0,  40,   0,   0,   0,   0,    0]
-    gem_venom:              [  0,   0,  40,   0,   0,   0,    0]
-    gem_frost:              [  0,   0,   0,  40,   0,   0,    0]
-    gem_battle:             [  0,   0,   0,   0,  40,   0,    0]
-    gem_seidr:              [  0,   0,   0,   0,   0,  40,    0]
-    gem_ember:              [  0,   0,   0,   0,   0,   0,   40]
-    catalyst_storm:         [ 30,   0,   0,   0,   0,   0,    0]
-    catalyst_grove:         [  0,  30,   0,   0,   0,   0,    0]
-    catalyst_venom:         [  0,   0,  30,   0,   0,   0,    0]
-    catalyst_frost:         [  0,   0,   0,  30,   0,   0,    0]
-    catalyst_battle:        [  0,   0,   0,   0,  30,   0,    0]
-    catalyst_seidr:         [  0,   0,   0,   0,   0,  30,    0]
-    catalyst_ember:         [  0,   0,   0,   0,   0,   0,   30]
+  runes:                       # which rune drops, by tier; a disabled rune never drops
+    #              T1   T2   T3   T4   T5   T6   T7
+    awakening:   [400, 300, 220, 160, 120, 100,  80]
+    shaping:     [150, 150, 140, 120, 100,  90,  80]
+    ascension:   [  0, 120, 120, 110, 100,  90,  80]
+    consecrated: [  0,   0,  20,  40,  50,  60,  70]
+    cleansing:   [ 30,  30,  30,  30,  30,  30,  30]
+    serpent:     [  0,   0,  20,  25,  30,  35,  40]
 
   rarity_weights:              # the rarity of dropped gear, by tier
-    #                    T1  T2  T3  T4  T5  T6  T7
-    uncommon:           [ 80, 70, 60, 50, 45, 40, 35]
-    rare:               [ 18, 24, 28, 32, 33, 34, 35]
-    epic:               [  2,  5, 10, 14, 17, 20, 22]
-    legendary:          [  0,  1,  2,  4,  5,  6,  8]
-    mythic:             [  0,  0,  0,  0,  0,  0,  0]
+    #          T1  T2  T3  T4  T5  T6  T7
+    magic:   [ 80, 70, 60, 50, 45, 40, 35]
+    rare:    [ 20, 30, 40, 50, 55, 60, 65]
 
   boss_rarity_weights:
-    uncommon:           [ 40, 30, 20, 15, 10,  5,  0]
-    rare:               [ 40, 42, 42, 40, 38, 35, 30]
-    epic:               [ 17, 22, 30, 35, 40, 45, 50]
-    legendary:          [  3,  6,  8, 10, 12, 15, 20]
-    mythic:             [  0,  0,  0,  0,  0,  0,  0]
+    magic:   [ 40, 30, 20, 15, 10,  5,  0]
+    rare:    [ 60, 70, 80, 85, 90, 95, 100]
 
   gear:
     require_recipe: true       # only bases a player could craft
@@ -497,102 +264,79 @@ drops:
       cape: 1
       utility_item: 1
       tool: 0.5
-    sockets: [60, 20, 12, 6, 2]   # weights of 0, 1, 2, 3, 4 sockets on a dropped magic item (sockets.md)
     exclude: []                # item prefabs that never drop
     include: {}                # item prefab -> tier, always in the pool at that tier
 
   bosses:
     Eikthyr:
       tier: 1
-      stone_rolls: 2
+      rune_rolls: 2
       gear_rolls: 1
       bonus:
-        - { stone: awakening, chance: 100, amount: 2 }
-        - { stone: essence_storm_lesser, chance: 100, amount: 1 }
-        - { stone: essence_storm_greater, chance: 15, amount: 1 }
-        - { stone: gem_storm, chance: 50, amount: 1 }
+        - { rune: awakening, chance: 100, amount: 2 }
+        - { rune: shaping, chance: 100, amount: 1 }
     gd_king:
       tier: 2
-      stone_rolls: 2
+      rune_rolls: 2
       gear_rolls: 1
       bonus:
-        - { stone: ascension, chance: 100, amount: 1 }
-        - { stone: essence_grove_lesser, chance: 100, amount: 1 }
-        - { stone: essence_grove_greater, chance: 15, amount: 1 }
-        - { stone: gem_grove, chance: 50, amount: 1 }
+        - { rune: ascension, chance: 100, amount: 1 }
     Bonemass:
       tier: 3
-      stone_rolls: 3
+      rune_rolls: 3
       gear_rolls: 1
       bonus:
-        - { stone: serpent, chance: 50, amount: 1 }
-        - { stone: essence_venom_lesser, chance: 100, amount: 1 }
-        - { stone: essence_venom_greater, chance: 15, amount: 1 }
-        - { stone: gem_venom, chance: 50, amount: 1 }
+        - { rune: serpent, chance: 50, amount: 1 }
+        - { rune: consecrated, chance: 50, amount: 1 }
     Dragon:
       tier: 4
-      stone_rolls: 3
+      rune_rolls: 3
       gear_rolls: 1
       bonus:
-        - { stone: exaltation, chance: 100, amount: 1 }
-        - { stone: essence_frost_lesser, chance: 100, amount: 1 }
-        - { stone: essence_frost_greater, chance: 15, amount: 1 }
-        - { stone: gem_frost, chance: 50, amount: 1 }
+        - { rune: consecrated, chance: 100, amount: 1 }
     GoblinKing:
       tier: 5
-      stone_rolls: 4
+      rune_rolls: 4
       gear_rolls: 1
       bonus:
-        - { stone: exaltation, chance: 100, amount: 1 }
-        - { stone: binding, chance: 25, amount: 1 }
-        - { stone: essence_battle_lesser, chance: 100, amount: 1 }
-        - { stone: essence_battle_greater, chance: 15, amount: 1 }
-        - { stone: gem_battle, chance: 50, amount: 1 }
+        - { rune: consecrated, chance: 100, amount: 1 }
+        - { rune: serpent, chance: 25, amount: 1 }
     SeekerQueen:
       tier: 6
-      stone_rolls: 4
+      rune_rolls: 4
       gear_rolls: 1
       bonus:
-        - { stone: transcendence, chance: 100, amount: 1 }
-        - { stone: essence_seidr_lesser, chance: 100, amount: 1 }
-        - { stone: essence_seidr_greater, chance: 15, amount: 1 }
-        - { stone: gem_seidr, chance: 50, amount: 1 }
+        - { rune: consecrated, chance: 100, amount: 2 }
     Fader:                     # verify prefab name
       tier: 7
-      stone_rolls: 5
+      rune_rolls: 5
       gear_rolls: 1
       bonus:
-        - { stone: transcendence, chance: 100, amount: 1 }
-        - { stone: apotheosis, chance: 10, amount: 1 }
-        - { stone: essence_ember_lesser, chance: 100, amount: 1 }
-        - { stone: essence_ember_greater, chance: 15, amount: 1 }
-        - { stone: gem_ember, chance: 50, amount: 1 }
+        - { rune: consecrated, chance: 100, amount: 2 }
+        - { rune: serpent, chance: 50, amount: 1 }
 
-  creatures:
-    # the Ocean has no tier of its own: tide essences come from serpents
-    Serpent:        { bonus: [ { stone: essence_tide_lesser, chance: 25, amount: 1 }, { stone: essence_tide_greater, chance: 5, amount: 1 }, { stone: gem_tide, chance: 10, amount: 1 }, { stone: catalyst_tide, chance: 10, amount: 1 } ] }
-    BonemawSerpent: { bonus: [ { stone: essence_tide_lesser, chance: 25, amount: 1 }, { stone: essence_tide_greater, chance: 5, amount: 1 }, { stone: gem_tide, chance: 10, amount: 1 }, { stone: catalyst_tide, chance: 10, amount: 1 } ] }   # verify name
-  # more examples:
-  #   Troll:   { stone_multiplier: 2 }                                  # trolls pay double stones
+  # Per creature prefab: tier override, multipliers and bonus runes. Examples:
+  #   Troll:   { rune_multiplier: 2 }                                   # trolls pay double runes
   #   Hen:     { multiplier: 0 }                                        # never drops our loot
-  #   Wolf:    { tier: 4, bonus: [ { stone: serpent, chance: 20, amount: 1 } ] }
+  #   Wolf:    { tier: 4, bonus: [ { rune: serpent, chance: 20, amount: 1 } ] }
+  creatures: {}
 
   # World containers the game fills with default loot (dungeon and ruin chests, buried treasure) roll once, when the
   # game fills them: chances in percent per container, the tier of the biome at the container (dungeons: the surface
-  # biome), the same stone and rarity tables and per-kill caps as creatures. Player-built chests never roll; containers
+  # biome), the same rune and rarity tables and per-kill caps as creatures. Player-built chests never roll; containers
   # generated before the mod was installed were filled then and do not roll.
   chests:
-    stone_chance: 30
+    rune_chance: 30
     gear_chance: 10
 
   # Elite Creatures Reborn (read only where ECR is installed; ecr-integration.md). With the .cfg switch
-  # "9 - Elite Creatures Reborn / Synergy" on, ECR's elite stars replace the game level on their own table below.
+  # "8 - Elite Creatures Reborn / Synergy" on, ECR's elite stars replace the game level on their own table below.
   # The tier lists are indexed by ECR's world tier (0-7); ECR does not record one yet, so they do nothing until it does.
   # skip_worthless applies whenever ECR is installed, switch or not: its Cloven twin and Phantom husks drop nothing here.
   ecr:
     star_multipliers: [1, 1, 1.5, 2, 2.5, 3]   # by ECR stars; index 0 = no stars
     star_step: 0.5                             # added per star beyond the list
-    star_rarity_bonus: 0                       # percent per ECR star on gear rarities above Uncommon
-    tier_stone_multipliers: [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
+    star_rarity_bonus: 0                       # percent per ECR star on gear rarities above Magic
+    tier_rune_multipliers: [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
     tier_rarity_bonus:      [0, 5, 10, 15, 20, 25, 30, 35]
     skip_worthless: true

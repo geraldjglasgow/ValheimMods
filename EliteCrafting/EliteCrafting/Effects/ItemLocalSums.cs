@@ -9,8 +9,7 @@ namespace EliteCrafting.Effects
     /// The item-local numbers of one item, precomputed from its state so the hot getters (GetDamage, GetWeight,
     /// GetArmor, GetMaxDurability) only read floats. Values are fractions (12% → 0.12). Per effect: the unconditional
     /// sum and the health-critical sum, each clamped to its channel cap on this item (item-local effects are never
-    /// summed across items). Brands are kept per damage type. The item's refine bonus (Honing on weapons, Tempering on
-    /// armor and shields, quality.md section 3) rides the same getters as a multiplier.
+    /// summed across items). Brands are kept per damage type.
     /// </summary>
     internal sealed class ItemLocalSums
     {
@@ -23,10 +22,6 @@ namespace EliteCrafting.Effects
         public readonly float[] Brand = new float[DamageSlots.Count];
         public readonly float[] BrandCritical = new float[DamageSlots.Count];
         public bool HasBrand;
-
-        public float RefineDamage = 1f;
-        public float RefineArmor = 1f;
-        public float RefineBlock = 1f;
 
         /// <summary>The fraction for an item-local kind, with the health-critical part while the local player is critical.</summary>
         public float Get(EffectKind kind)
@@ -46,9 +41,7 @@ namespace EliteCrafting.Effects
         public static ItemLocalSums? Build(ItemDrop.ItemData item, ItemState state)
         {
             ItemLocalSums sums = new ItemLocalSums();
-            bool any = sums.AddAffixes(state, ChannelPlan.Current);
-            any |= sums.AddRefine(item, state.Refine);
-            return any ? sums : null;
+            return sums.AddAffixes(state, ChannelPlan.Current) ? sums : null;
         }
 
         private bool AddAffixes(ItemState state, ChannelPlan plan)
@@ -62,8 +55,7 @@ namespace EliteCrafting.Effects
             return Touched.Count > 0;
         }
 
-        // Sums this item's active item-local affixes and gems per channel, catalyst applied (two on one channel sum, then
-        // clamp once).
+        // Sums this item's active item-local affixes per channel (two on one channel sum, then clamp once).
         private static void SumChannels(ItemState state, ChannelPlan plan)
         {
             if (_channelSums.Length < plan.Count)
@@ -105,31 +97,6 @@ namespace EliteCrafting.Effects
                     into[t] += amount / count;
                     HasBrand = true;
                 }
-            }
-        }
-
-        // Honing is a weapon's, Tempering an armor piece's or a shield's; the stones decide who may carry which, the
-        // getter each applies to follows the slot.
-        private bool AddRefine(ItemDrop.ItemData item, float refine)
-        {
-            if (refine == 0f)
-            {
-                return false;
-            }
-            float factor = 1f + refine / 100f;
-            switch (ItemSlots.SlotOf(item))
-            {
-                case ItemSlot.MeleeWeapon: case ItemSlot.RangedWeapon: case ItemSlot.MagicWeapon:
-                    RefineDamage = factor;
-                    return true;
-                case ItemSlot.Head: case ItemSlot.Chest: case ItemSlot.Legs: case ItemSlot.Cape:
-                    RefineArmor = factor;
-                    return true;
-                case ItemSlot.Shield:
-                    RefineBlock = factor;
-                    return true;
-                default:
-                    return false;
             }
         }
     }

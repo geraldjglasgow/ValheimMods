@@ -4,9 +4,8 @@ using HarmonyLib;
 namespace EliteCrafting.Effects
 {
     /// <summary>
-    /// <c>brand_damage</c> and Honing: the weapon's damage block. Honing multiplies the whole block (quality.md 3);
-    /// each brand then adds its share of the item's own combat damage (every type except chop and pickaxe, measured
-    /// once, after Honing, so brands never compound on each other) as its type. A slash brand also adds the same share
+    /// <c>brand_damage</c>: the weapon's damage block. Each brand adds its share of the item's own combat damage
+    /// (every type except chop and pickaxe, measured once, so brands never compound on each other) as its type. A slash brand also adds the same share
     /// as chop when the item chops (keen_edge on axes). A brand on a group param splits its share evenly over the
     /// group's types (judgement call: the total added stays X% of the base).
     /// <para>
@@ -28,10 +27,6 @@ namespace EliteCrafting.Effects
 
         private static void Apply(ref HitData.DamageTypes damage, ItemLocalSums sums)
         {
-            if (sums.RefineDamage != 1f)
-            {
-                damage.Modify(sums.RefineDamage);
-            }
             if (!sums.HasBrand)
             {
                 return;

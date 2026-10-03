@@ -74,7 +74,7 @@ namespace EliteCrafting.Items
             }
             catch (Exception e)
             {
-                Log.Warn($"icon {source.name} is not readable, stones on it keep the untinted icon: {e.Message}");
+                Log.Warn($"icon {source.name} is not readable, runes on it keep the untinted icon: {e.Message}");
                 return null;
             }
             finally

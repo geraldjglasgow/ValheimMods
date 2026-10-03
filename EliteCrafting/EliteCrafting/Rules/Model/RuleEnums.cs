@@ -14,13 +14,12 @@ namespace EliteCrafting.Rules
 
     public enum HookDifficulty { None, Easy, Medium, Hard }
 
-    public enum StoneVerb { Promote, Add, Swap, RerollInscriptions, RerollValues, Remove, Strip, Corrupt, Lock, Duplicate, Gamble, Quality, Sigil, Imbue, Socket, Gem, Catalyse }
+    /// <summary>What a rune does: Awakening and Ascension promote, Shaping and Consecrated add, Cleansing strips, the
+    /// Serpent Rune corrupts.</summary>
+    public enum StoneVerb { Promote, Add, Strip, Corrupt }
 
-    public enum StoneGrade { None, Lesser, Greater }
-
-    public enum CorruptOutcome { SealOnly, AddInscription, ChaoticReroll, Promote, Demote }
-
-    public enum SigilSteer { None, Preserve, Category, Cull }
+    /// <summary>The Serpent Rune's outcomes; every one seals the item.</summary>
+    public enum CorruptOutcome { SealOnly, AddInscription, ChaoticReroll }
 
     /// <summary>Damage types a <c>damage_type</c> or <c>element</c> param names; groups are unions.</summary>
     [Flags]

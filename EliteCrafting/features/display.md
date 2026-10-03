@@ -17,7 +17,7 @@ over the network. Two players looking at one item may correctly see different am
 same rarity, affixes and values, because those come from the item and the synced YAML.
 
 The **palette** (rarity colors, `glow` flags) is gameplay-adjacent data in the synced rarity definitions, so every
-player agrees what "orange" means on a server. How much detail a player wants, and whether their screen glows, is
+player agrees what "blue" means on a server. How much detail a player wants, and whether their screen glows, is
 theirs (section 4).
 
 ---
@@ -26,7 +26,7 @@ theirs (section 4).
 
 The game's item name (`m_shared.m_name`) is shared by every copy of an item and cannot carry per-item color, so the
 mod colors it **at each place the name is drawn**, wrapping it in `<color=#RRGGBB>...</color>` with the rarity's
-color. Common and non-magic items are left exactly as vanilla draws them.
+color. Normal and non-magic items are left exactly as vanilla draws them.
 
 | Where | Hook (verified 2026-09-23) | Phase |
 |---|---|---|
@@ -47,8 +47,8 @@ color. Common and non-magic items are left exactly as vanilla draws them.
 - Every per-frame surface (grid tooltip, ground hover, crafting panel, stand hovers) remembers its last input and
   output, so a repeated frame is a content compare and no allocation; work is redone only when the vanilla text, the
   item, the rules, the words or a display setting change.
-- Stones and shards carry no `ecf_` data and get no block. Their extra lines (the essence family line, the shard fuse
-  line) are part of their item description, written by the Items area (IMP-102, kept by IMP-124).
+- Runes carry no `ecf_` data and get no block; what a rune does is its item description (`$ecf_stone_<id>_desc`),
+  written by the Items area.
 
 ---
 
@@ -72,14 +72,11 @@ Layout, top to bottom (lines that do not apply are omitted):
 
 Rare                                          ← rarity line, rarity color, bold
 You move 6% faster              T3            ← affix lines, one per active affix, in stored order
-+35 carrying capacity           T4  [Bound]   ← bound marker on the bound affix (ecf_bound)
++35 carrying capacity           T4
 You fall slowly and take no fall damage  T7   ← flag affix: no value
 Attacks with this weapon cost 9% less stamina  T3
 20 storm_ward                   T6  (dormant) ← dormant: grey (#808080), after the active ones
-Honed +7%                                     ← $ecf_ui_honed / $ecf_ui_tempered (quality.md)
-Sealed: Corrupted                             ← sealed marker, red, reason word from ecf_sealed
-Pending: Sigil of War                         ← $ecf_ui_pending_sigil (sigils.md), in the sigil's stone tint
-  <the sigil's $ecf_stone_<id>_desc>           ← its description, grey; omitted at Compact detail
+Sealed: Corrupted                             ← sealed marker, dark red, reason word from ecf_sealed
 ```
 
 Details:
@@ -99,14 +96,13 @@ Details:
   only at `Full` detail, as `$ecf_ui_unreadable` with the raw text.
 - **Newer format**: one grey line `$ecf_ui_newer_format` under the rarity line.
 - Colors in the block are the rarity color for the rarity line only; affix lines use the game's default tooltip text
-  color so the block is readable on every rarity. Bound marker: the game's orange. Sealed: red `#E6262E` is the
-  Mythic red, so sealed uses dark red `#B22222` instead to keep them apart. Judgement calls (DSP-5).
+  color so the block is readable on every rarity. Sealed: dark red `#B22222`. Judgement calls (DSP-5).
 
 Detail levels (preference `Tooltip detail`):
 
 | Level | Shows |
 |---|---|
-| `Compact` | rarity line; affix lines without tier; honed/tempered, sealed, sigil lines |
+| `Compact` | rarity line; affix lines without tier; sealed line |
 | `Standard` (default) | Compact + tier on each affix |
 | `Full` | Standard + the tier's roll range `[4-7]` after each value + unreadable segments + the item's tier ceiling (`item-tier.md`) on the rarity line |
 
@@ -121,7 +117,7 @@ All in the `.cfg` section `5 - Display (per player)`, **unsynced and never locke
 |---|---|---|
 | `Colored item names` | `true` | Section 2 on or off. Off leaves names vanilla everywhere |
 | `Tooltip detail` | `Standard` | `Compact`, `Standard`, `Full` (section 3) |
-| `Show dormant affixes` | `true` | Off hides dormant lines (the effect is inert either way) |
+| `Show dormant inscriptions` | `true` | Off hides dormant lines (the effect is inert either way) |
 
 Ground glow preferences are in section 5's own table.
 
@@ -134,12 +130,12 @@ Ground glow preferences are in section 5's own table.
 
 What glows:
 
-- Any `ItemDrop` world object whose item has a rarity whose definition says `glow: true`. Defaults: every rarity
-  except Common; **Common never glows**, whatever the YAML says (`glow: true` on the base rarity is ignored with
+- Any `ItemDrop` world object whose item has a rarity whose definition says `glow: true`. Defaults: Magic and Rare;
+  **Normal never glows**, whatever the YAML says (`glow: true` on the base rarity is ignored with
   a warning, `economy-yaml.md`). Creature drops, player-dropped items and items flung from a destroyed chest all
   count: the source does not matter, only the item on the ground.
-- **Stones do not glow by default**; their tinted models carry them (`prefabs.md`). The preference `Glow stones`
-  opts them into the same system, in their stone tint.
+- **Runes do not glow by default**; their tinted models carry them (`prefabs.md`). The preference `Glow runes`
+  opts them into the same system, in their tint (white for a rune without one).
 - Items on item stands, armor stands and in containers never glow: they are not `ItemDrop` world objects.
 
 How:
@@ -169,7 +165,7 @@ How:
 | `Glow range` | `2.0` m | 0.5-6 | Light radius. Small on purpose: it marks the item, not the area |
 | `Glow max lights` | `25` | 0-100 | Nearest-N cap. 0 is the same as off |
 | `Glow refresh seconds` | `1.0` | 0.25-5 | Timer for the nearest-N re-evaluation |
-| `Glow stones` | `false` | on/off | Stones glow in their tint too |
+| `Glow runes` | `false` | on/off | Runes glow in their tint too |
 
 All numbers are judgement calls, to be tuned in play (DSP-4; every rarity glows the same size). Phase 3 adds an
 optional soft loot-beam variant under the same cap.

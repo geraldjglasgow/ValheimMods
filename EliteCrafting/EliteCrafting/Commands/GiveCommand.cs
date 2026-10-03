@@ -7,15 +7,14 @@ using UnityEngine;
 namespace EliteCrafting.Commands
 {
     /// <summary>
-    /// <c>ecraft give &lt;stone_id&gt;|&lt;shard_id&gt;|all [count]</c> (console-commands.md section 3): stones, essences
-    /// and salvage shards into the caller's own
+    /// <c>ecraft give &lt;rune_id&gt;|all [count]</c> (console-commands.md section 3): runes into the caller's own
     /// inventory, the rest dropped at their feet. <c>count</c> 1-9999, default 1. <c>all</c> gives <c>count</c> of every
-    /// enabled stone. A single id may name a disabled stone or a built-in stone missing from the YAML (its prefab is
-    /// still registered, RC-3); the reply says so. The prefab comes from the Items area's registry. Local player only.
+    /// enabled rune. A single id may name a disabled rune or a rune missing from the YAML (its prefab is still
+    /// registered, RC-3); the reply says so. The prefab comes from the Items area's registry. Local player only.
     /// </summary>
     internal static class GiveCommand
     {
-        public const string Grammar = "ecraft give <stone_id>|<shard_id>|all [count]";
+        public const string Grammar = "ecraft give <rune_id>|all [count]";
 
         public static void Run(CommandCall call)
         {
@@ -23,7 +22,7 @@ namespace EliteCrafting.Commands
             string id = call.Lower(0);
             if (player == null || id.Length == 0)
             {
-                call.Fail(player == null ? "needs a player in the world." : "which stone?", Grammar);
+                call.Fail(player == null ? "needs a player in the world." : "which rune?", Grammar);
                 return;
             }
             if (!Counts.TryParse(call, 1, 1, 9999, 1, out int count, Grammar))
@@ -50,11 +49,7 @@ namespace EliteCrafting.Commands
             }
             StoneDef? def = ActiveRules.Current.Stone(id);
             call.Reply(Placed(prefab, count, InventorySpawn.GiveStack(player, prefab, count)));
-            if (StoneCatalog.IsShard(id))
-            {
-                ShardNote(call, id);
-            }
-            else if (def == null || !def.Enabled)
+            if (def == null || !def.Enabled)
             {
                 call.Detail($"{id} is {(def == null ? "not in the configuration" : "disabled")}: applying it refuses with stone_disabled.");
             }
@@ -74,7 +69,7 @@ namespace EliteCrafting.Commands
                 lines.Add(prefab == null ? problem! : Placed(prefab, count, InventorySpawn.GiveStack(player, prefab, count)));
                 given += prefab == null ? 0 : 1;
             }
-            call.Reply($"{count} of each of {given} enabled stones");
+            call.Reply($"{count} of each of {given} enabled runes");
             lines.ForEach(call.Detail);
         }
 
@@ -86,46 +81,19 @@ namespace EliteCrafting.Commands
         }
 
         /// <summary>
-        /// The prefab of a stone id from the Items area's registry (<see cref="StonePrefabs.Get"/>: the configured
-        /// entry's prefab, else a built-in id's own). It must also be in the object database, or the stones would be
-        /// dropped from the inventory on the next load (game notes pitfall 6).
+        /// The prefab of a rune id from the Items area's registry (<see cref="StonePrefabs.Get"/>). It must also be in
+        /// the object database, or the runes would be dropped from the inventory on the next load (game notes pitfall 6).
         /// </summary>
         public static GameObject? StonePrefab(string id, out string? problem)
         {
-            bool shard = StoneCatalog.IsShard(id);
-            GameObject? prefab = shard ? StonePrefabs.GetShard(id) : StonePrefabs.Get(id);
-            bool known = shard || ActiveRules.Current.Stone(id) != null || StoneCatalog.IsBuiltIn(id);
+            GameObject? prefab = StonePrefabs.Get(id);
+            bool known = ActiveRules.Current.Stone(id) != null || StoneCatalog.IsBuiltIn(id);
             bool inDatabase = prefab != null && ObjectDB.instance != null && ObjectDB.instance.GetItemPrefab(prefab.name) == prefab;
-            problem = !known ? $"unknown stone '{id}'. Closest: {Closest.To(id, StoneIds())}"
-                : prefab == null ? $"{id}: its stone prefab has not been built (see the log)."
+            problem = !known ? $"unknown rune '{id}'. Closest: {Closest.To(id, StoneCatalog.BuiltInIds)}"
+                : prefab == null ? $"{id}: its rune prefab has not been built (see the log)."
                 : !inDatabase ? $"{id}: its prefab {prefab.name} is not registered in the object database."
                 : null;
             return problem == null ? prefab : null;
-        }
-
-        private static IEnumerable<string> StoneIds()
-        {
-            foreach (StoneDef stone in ActiveRules.Current.Economy.Stones)
-            {
-                yield return stone.Id;
-            }
-            foreach (string id in StoneCatalog.BuiltInIds)
-            {
-                yield return id;
-            }
-            foreach (string id in StoneCatalog.ShardIds)
-            {
-                yield return id;
-            }
-        }
-
-        // What the shards fuse into under the running rules (salvage.md section 6), or why they do not.
-        private static void ShardNote(CommandCall call, string id)
-        {
-            FragmentDef? fragment = ActiveRules.Current.Economy.Salvage.Fragment(id);
-            StoneDef? stone = fragment == null ? null : ActiveRules.Current.Stone(fragment.Stone);
-            call.Detail(fragment == null ? $"{id} is not in the configuration (salvage.fragments): right-clicking it refuses."
-                : $"{fragment.Fuse} fuse into {fragment.Stone}" + (stone == null || !stone.Enabled ? " (disabled: fusing refuses)" : ""));
         }
     }
 

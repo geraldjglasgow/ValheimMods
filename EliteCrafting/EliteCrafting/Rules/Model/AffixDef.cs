@@ -33,7 +33,6 @@ namespace EliteCrafting.Rules
         public IReadOnlyList<ItemSlot> Slots { get; internal set; } = Array.Empty<ItemSlot>();
         public AffixRequirements Requires { get; internal set; } = AffixRequirements.Any;
         public AffixCategory Category { get; internal set; }
-        public bool MythicOnly { get; internal set; }
         public AffixCondition Condition { get; internal set; }
         public string? ExclusionGroup { get; internal set; }
         public float Weight { get; internal set; } = 100f;

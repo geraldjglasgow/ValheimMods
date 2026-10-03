@@ -77,7 +77,7 @@ namespace EliteCrafting.Loot
             {
                 if (MissingPrefabs.Add(stone.Prefab))
                 {
-                    Log.Warn($"stone drops: prefab {stone.Prefab} of stone '{stone.Id}' is not registered; it cannot drop");
+                    Log.Warn($"rune drops: prefab {stone.Prefab} of rune '{stone.Id}' is not registered; it cannot drop");
                 }
                 return null;
             }

@@ -50,7 +50,6 @@ namespace EliteCrafting
             InitArea("DisplayFeature.Init", Display.DisplayFeature.Init);
             InitArea("LootFeature.Init", Loot.LootFeature.Init);
             InitArea("CommandsFeature.Init", Commands.CommandsFeature.Init);
-            InitArea("SalvageFeature.Init", Salvage.SalvageFeature.Init);
         }
 
         // One area failing to start must not stop the rest of Awake: without the patches the stone prefabs are never

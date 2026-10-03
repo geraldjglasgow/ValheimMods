@@ -4,26 +4,31 @@ get its real mod_id/file_id and nexus-upload.py become usable for later versions
 Keep in step with README.md.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Crafting stones and magic gear across six rarities. Creatures and chests drop stones and rarity-colored gear; click a stone onto an item to raise its rarity or add, swap, reroll, lock or corrupt its inscriptions. 27 stones, 16 biome essences, 162 inscriptions, salvage into shards. Server synced. Required on the server and every client.
+Runes and magic gear across three rarities: Normal, Magic and Rare. Creatures and chests drop runes and rarity-colored gear; click a rune onto an item to awaken, shape, raise or cleanse it, or seal it for good with the Serpent Rune. Six runes, 162 inscriptions. Server synced. Required on the server and every client.
 
 ===== DESCRIPTION (BBCode) =====
-Crafting stones and magic gear: creatures and chests drop both, and a stone clicked onto an item changes its rarity or inscriptions.
+Runes and magic gear: creatures and chests drop both, and a rune clicked onto an item changes its rarity or inscriptions.
 
 [size=4][b]Features[/b][/size]
 [list]
-[*]Six rarities, Common to Mythic, by inscription count; magic gear glows on the ground.
+[*]Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6); magic gear glows on the ground.
 [*]162 inscriptions for every kind of gear, stronger the later the item's biome.
-[*]27 stones: click one onto an item to promote, reroll, add, remove, lock, corrupt or copy it; a refused stone is kept.
-[*]16 biome essences reroll an item around their family; sigils steer the next stone.
-[*]Salvage: Shift + End grinds a magic item into shards; five shards fuse a stone.
+[*]Six runes, clicked onto an item; a refused rune is kept:
+[list]
+[*]Awakening: Normal to Magic, one inscription.
+[*]Shaping: one more inscription on a Magic item.
+[*]Ascension: Magic to Rare, one more inscription.
+[*]Consecrated: one more inscription on a Rare item.
+[*]Cleansing: back to Normal, every inscription gone.
+[*]Serpent: seals the item for good, unchanged, with one inscription past its limit, or rerolled.
+[/list]
 [*]Drops from kills (more with stars, sure from bosses) and world chests.
 [*]Elite Creatures Reborn: Synergy (off by default) lets elite stars raise drops.
-[*]OpenKeep's Salvage tab leaves magic items to this mod's Salvage.
-[*]Every stone, essence, inscription, command and file: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCrafting/CLAUDE.md#player-reference]CLAUDE.md on GitHub[/url].
+[*]Every rune, inscription, command and file: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCrafting/CLAUDE.md#player-reference]CLAUDE.md on GitHub[/url].
 [/list]
 
 [size=4][b]Install[/b][/size]
-Needed on the server and every client, same version. Install BepInExPack for Valheim, then put EliteCrafting.dll in BepInEx/plugins (or use a mod manager). Uninstalling deletes every stone, essence and shard; magic gear turns plain until reinstalled. Mods that make weapons or armor stackable can merge magic items and lose inscriptions.
+Needed on the server and every client, same version. Install BepInExPack for Valheim, then put EliteCrafting.dll in BepInEx/plugins (or use a mod manager). Uninstalling deletes every rune; magic gear turns plain until reinstalled. Mods that make weapons or armor stackable can merge magic items and lose inscriptions.
 
 [size=4][b]Configuration[/b][/size]
 BepInEx/config/com.EliteCrafting.cfg and the EliteCrafting_*.yml files. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]ecraft help[/b].

@@ -26,14 +26,13 @@ namespace EliteCrafting.Config
     public static class ModSettings
     {
         public const string General = "1 - General";
-        public const string Stones = "2 - Stones";
+        public const string Stones = "2 - Runes";
         public const string Drops = "3 - Drops";
         public const string Commands = "4 - Commands";
         public const string Display = "5 - Display (per player)";
         public const string Glow = "6 - Ground glow (per player)";
         public const string Diagnostics = "7 - Diagnostics";
-        public const string Salvage = "8 - Salvage";
-        public const string EliteCreatures = "9 - Elite Creatures Reborn";
+        public const string EliteCreatures = "8 - Elite Creatures Reborn";
 
         // gameplay, synced and lockable
         public static ConfigEntry<bool> AffixEffects { get; private set; } = null!;
@@ -59,17 +58,12 @@ namespace EliteCrafting.Config
         /// <summary>Synced: Elite Creatures Reborn's stars (and later its world tier) raise our drops (ecr-integration.md).</summary>
         public static ConfigEntry<bool> EcrSynergy { get; private set; } = null!;
 
-        // salvage (8): the switch synced, the key per player
-        public static ConfigEntry<bool> SalvageEnabled { get; private set; } = null!;
-        public static ConfigEntry<KeyboardShortcut> SalvageKey { get; private set; } = null!;
-
         internal static void Bind(ConfigFile config)
         {
             BindGameplay(config);
             BindDisplay(config);
             BindGlow(config);
             BindDiagnostics(config);
-            BindSalvage(config);
             BindSynergy(config);
         }
 
@@ -78,9 +72,9 @@ namespace EliteCrafting.Config
             AffixEffects = Synced(config.Bind(General, "Inscription effects", true,
                 "Master switch for every inscription effect. Off: items keep and show their inscriptions, nothing applies."));
             ModifyEquippedItems = Synced(config.Bind(Stones, "Modify equipped items", true,
-                "Stones may be used on items that are equipped."));
-            StoneDrops = Synced(config.Bind(Drops, "Stone drops", true,
-                "Creatures drop stones per the economy drop tables."));
+                "Runes may be used on items that are equipped."));
+            StoneDrops = Synced(config.Bind(Drops, "Rune drops", true,
+                "Creatures drop runes per the economy drop tables."));
             MagicItemDrops = Synced(config.Bind(Drops, "Magic item drops", true,
                 "Creatures drop pre-rolled magic gear per the economy drop tables."));
             ReadOnlyCommandsForEveryone = Synced(config.Bind(Commands, "Read-only commands for everyone", true,
@@ -89,8 +83,8 @@ namespace EliteCrafting.Config
 
         private static void BindDisplay(ConfigFile config)
         {
-            ConfirmDestructiveStones = Local(config.Bind(Stones, "Confirm destructive stones", ConfirmMode.HoldShift,
-                "How stones that cannot be undone ask first: hold Shift while clicking, a yes/no dialog, or not at all. Per player."));
+            ConfirmDestructiveStones = Local(config.Bind(Stones, "Confirm destructive runes", ConfirmMode.HoldShift,
+                "How the runes that cannot be undone (Cleansing, Serpent) ask first: hold Shift while clicking, a yes/no dialog, or not at all. Per player."));
             ColoredItemNames = Local(config.Bind(Display, "Colored item names", true,
                 "Draw magic item names in their rarity color. Per player."));
             TooltipDetailLevel = Local(config.Bind(Display, "Tooltip detail", TooltipDetail.Standard,
@@ -113,23 +107,14 @@ namespace EliteCrafting.Config
             GlowRefreshSeconds = Local(config.Bind(Glow, "Glow refresh seconds", 1f,
                 new ConfigDescription("How often the nearest lights are re-chosen. Per player.",
                     new AcceptableValueRange<float>(0.25f, 5f))));
-            GlowStones = Local(config.Bind(Glow, "Glow stones", false,
-                "Stones lying in the world glow in their tint too. Per player."));
-        }
-
-        // salvage.md section 8: the switch is synced (grinding is gameplay); the key is each player's own.
-        private static void BindSalvage(ConfigFile config)
-        {
-            SalvageEnabled = Synced(config.Bind(Salvage, "Salvage", true,
-                "Grinding magic items into shards with the Salvage key. Fusing shards into stones works either way."));
-            SalvageKey = Local(config.Bind(Salvage, "Salvage key", new KeyboardShortcut(UnityEngine.KeyCode.End),
-                "The key that grinds the magic item under the pointer in your inventory (Shift + key when confirm is HoldShift). Per player."));
+            GlowStones = Local(config.Bind(Glow, "Glow runes", false,
+                "Runes lying in the world glow in their tint too. Per player."));
         }
 
         private static void BindDiagnostics(ConfigFile config)
         {
             LogRolls = Local(config.Bind(Diagnostics, "Log rolls", false,
-                "Log every roll (stone, drop, command) with its inputs and result. Per player."));
+                "Log every roll (rune, drop, command) with its inputs and result. Per player."));
             LogEffectRebuilds = Local(config.Bind(Diagnostics, "Log effect rebuilds", false,
                 "Log each rebuild of the inscription effects with the channel totals. Per player."));
         }

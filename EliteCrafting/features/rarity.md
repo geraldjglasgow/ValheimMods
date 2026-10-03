@@ -3,56 +3,54 @@
 One feature of the mod, specified on its own. The other feature files sit beside it; `../SPEC.md` is the whole-mod
 behaviour document they are all drawn from.
 
-This file covers the six rarities: what each one is, how many affixes it carries, what it means to move an item up
-or down the ladder, and how a rarity's affixes are rolled. **Which tier an affix may reach** on a given item is
-`item-tier.md`. **The stones that move items along the ladder** are `stones.md`. **What each affix does** is
-`affixes.md`. **Where the rarity is stored on the item** is the core item-data file (`item-data.md`).
+This file covers the three rarities: what each one is, how many inscriptions (affixes, in the code's word) it
+carries, what it means to move an item up the ladder, and how a rarity's affixes are rolled. **Which tier an affix
+may reach** on a given item is `item-tier.md`. **The runes that move items along the ladder** are `stones.md`. **What
+each affix does** is `affixes.md`. **Where the rarity is stored on the item** is the core item-data file
+(`item-data.md`).
 
 Numbers are defaults and all of them are configurable in the `rarities:` and `rolling:` sections of
 `EliteCrafting_economy*.yml` (`economy-yaml.md`).
 
-**Status: Phase 1 built, not tested in game** (2026-09-23). Ships in **Phase 1** (0.1.0), except the Mythic-only affix pool, which
-is Phase 3 - until then a Mythic's special affix is drawn from the regular pool (section 5).
+**Status: built, not tested in game.** Cut to three rarities on 2026-10-02 (user decision, `../PLAN.md` Decisions
+log).
 
 ---
 
 # 1. The ladder
 
 Rarity is **affix count**. Strength is a separate axis - an affix's tier - capped by the item's tier
-(`item-tier.md`). A Meadows Mythic rolls many weak affixes; an Ashlands Uncommon rolls few strong ones.
+(`item-tier.md`). A Meadows Rare rolls many weak affixes; an Ashlands Magic item rolls few strong ones.
 
 | Order | id | Name (English) | Affixes | Color | Glows on the ground | Default acquisition |
 | --- | --- | --- | --- | --- | --- | --- |
-| 0 | `common` | Common | 0 | `#FFFFFF` | never | vanilla items |
-| 1 | `uncommon` | Uncommon | 1-2 | `#1EFF00` | yes | drops + crafting |
-| 2 | `rare` | Rare | 2-3 | `#0070DD` | yes | drops + crafting |
-| 3 | `epic` | Epic | 3-4 | `#A335EE` | yes | drops + crafting |
-| 4 | `legendary` | Legendary | 4-5 | `#FF8000` | yes | rare drops + crafting |
-| 5 | `mythic` | Mythic | 6, of which 1 from the Mythic-only pool | `#E6262E` | yes | **craft-only** (Stone of Apotheosis) |
+| 0 | `normal` | Normal | 0 | `#FFFFFF` | never | vanilla items; never drops as magic gear |
+| 1 | `magic` | Magic | 1-2 | `#1EFF00` | yes | drops + the Awakening Rune |
+| 2 | `rare` | Rare | 3-6 | `#0070DD` | yes | drops + the Ascension Rune |
 
-- The colors are canonical (user decision 2026-09-23) and are the single source for every rarity-colored surface:
-  item names, tooltip accents, ground glow. They live in the rarity entries of the economy YAML so an owner
-  rethemes in one place.
-- Localization keys: `$ecf_rarity_common` ... `$ecf_rarity_mythic`.
-- **Common is the vanilla state.** An item with no EliteCrafting data at all *is* Common; so is an item that was
-  stripped by the Stone of Unmaking. Common is the *absence* of the rarity key (`item-data.md` section 3), so the two
-  are indistinguishable. A Common item may still carry its honing/tempering bonus.
-- **Ladder order is the order of the entries in `rarities:`.** "One rarity up" and "one rarity down" mean the next
-  and previous entry. Code never hard-codes the six ids except in two places: the first entry is the base rarity
-  (see validation, section 7), and the rarity whose entry has `mythic_inscriptions > 0` gets the special-pool behaviour
-  of section 5. Everything else - names, colors, counts, even the number of rarities - is data.
+- The colors are the single source for every rarity-colored surface: item names, tooltip accents, ground glow. They
+  live in the rarity entries of the economy YAML so an owner rethemes in one place.
+- Localization keys: `$ecf_rarity_normal`, `$ecf_rarity_magic`, `$ecf_rarity_rare`.
+- **Normal is the vanilla state.** An item with no EliteCrafting data at all *is* Normal; so is an item that was
+  stripped by the Cleansing Rune. Normal is the *absence* of the rarity key (`item-data.md` section 3), so the two are
+  indistinguishable.
+- **Ladder order is the order of the entries in `rarities:`.** "One rarity up" means the next entry. Code never
+  hard-codes the three ids except in one place: the first entry is the base rarity (see validation, section 7).
+  Everything else - names, colors, counts, even the number of rarities - is data.
+- **Old item data** written before 2026-10-02 carries rarity ids that no longer exist; they are renamed on read
+  (`item-data.md` section 8): `uncommon` is Magic, `epic`, `legendary` and `mythic` are Rare, `common` is Normal.
 
 ---
 
 # 2. Which items can have a rarity at all
 
-An item can carry a rarity above Common only if it is a **magic base** (defined in `item-data.md` section 2, which
+An item can carry a rarity above Normal only if it is a **magic base** (defined in `item-data.md` section 2, which
 owns the item-type-to-slot map; restated here):
 
 1. Its item type resolves to one of the ten slots (`melee_weapon`, `ranged_weapon`, `magic_weapon`, `shield`,
    `head`, `chest`, `legs`, `cape`, `utility_item`, `tool`). The item-type-to-slot map is `item-data.md`'s.
 2. **It is not stackable**: its shared data's max stack size is exactly 1.
-3. It is not one of our own stones or sigils.
+3. It is not one of our own runes.
 
 **Why magic items must be non-stackable** - verified in the decompile: the game merges a picked-up item into an
 existing stack when the *name, upgrade level and world level* match, and never looks at custom data. Two magic
@@ -61,7 +59,7 @@ a stackable item to carry per-copy state, so the rule is absolute.
 
 How it is enforced:
 
-- Every stone checks rule 2 at application time and refuses with `$ecf_msg_not_magic_base` (`stones.md`).
+- Every rune checks rule 2 at application time and refuses with `$ecf_msg_not_magic_base` (`stones.md`).
 - The item-data writer refuses to write to a stackable item at all (`item-data.md` section 7).
 - The pre-rolled drop pool never contains a stackable base (`drops.md`), and `ecraft roll` refuses one.
 - **At load, a warning is logged for every slot-resolving item whose max stack size is above 1** - this is what
@@ -71,89 +69,46 @@ How it is enforced:
 
 ---
 
-# 3. Promote and demote
+# 3. Promotion
 
-Two ladder moves, used by the ascension stones, the Stone of Chance and the Serpent Stone.
+The one move up the ladder, used by the Awakening and Ascension Runes.
 
-## Promote (one rarity up)
+1. The item's rarity becomes the next rarity on the ladder. Every existing affix is kept, dormant ones included,
+   with its tier and value unchanged.
+2. New affixes are rolled (section 4) until the item holds **the new rarity's minimum, and at least
+   `rolling.promote_adds_at_least` (default 1) more than before** - capped at the new rarity's maximum.
+   - `added = clamp(max(new.min - count, promote_adds_at_least), 0, new.max - count)`
 
-1. The item's rarity becomes the next rarity on the ladder. Every existing affix is kept, bound and dormant ones
-   included, with its tier and value unchanged.
-2. New affixes are rolled (section 4) until the item holds **the new rarity's minimum, and at least one more than
-   before** - capped at the new rarity's maximum.
-   - `added = clamp(max(new.min - count, 1), 0, new.max - count)`
-3. Promoting into a rarity with `mythic_inscriptions > 0` first adds the special affix(es) from the Mythic-only pool
-   (section 5), then fills with regular affixes to the count above.
+| From (affixes) | Rune | To | Added | Result |
+| --- | --- | --- | --- | --- |
+| Normal (0) | Awakening | Magic | 1 | 1 |
+| Magic (1) | Ascension | Rare | 2 | 3 |
+| Magic (2) | Ascension | Rare | 1 | 3 |
 
-| From (affixes) | To | Added | Result |
-| --- | --- | --- | --- |
-| Common (0) | Uncommon | 1 | 1 |
-| Uncommon (1) | Rare | 1 | 2 |
-| Uncommon (2) | Rare | 1 | 3 |
-| Rare (2) | Epic | 1 | 3 |
-| Rare (3) | Epic | 1 | 4 |
-| Epic (3) | Legendary | 1 | 4 |
-| Epic (4) | Legendary | 1 | 5 |
-| Legendary (4) | Mythic | 2 (1 Mythic-only + 1 regular) | 6 |
-| Legendary (5) | Mythic | 1 (Mythic-only) | 6 |
-
-**The "at least one" rule is a clarification of PLAN.md** ("rolls new ones up to the new tier's minimum"). Read
-literally, a two-affix Uncommon promoted to Rare (minimum 2) would gain nothing but a color - a stone spent on a
-visual change. With the rule, every promotion visibly adds power (RAR-1); the knob is
-`rolling.promote_adds_at_least` (default 1; 0 restores the literal reading).
+**The "at least one" rule** makes every promotion visibly add power even when the item already meets the new
+minimum (RAR-1); with the default ladder it never has to, since Rare's minimum is above Magic's maximum. The knob is
+`rolling.promote_adds_at_least` (0 adds only what the minimum needs).
 
 If the pool cannot supply the affixes promotion needs (section 4, "the pool is exhausted"), **the promotion is
-refused, not partially applied** (`$ecf_msg_no_eligible_affix`). A stone never leaves an item below its rarity's
+refused, not partially applied** (`$ecf_msg_no_eligible_affix`). A rune never leaves an item below its rarity's
 minimum.
 
-## Demote (one rarity down) - Serpent Stone only by default
-
-1. One affix is removed at random. **Bound affixes are eligible** - the Serpent is one of the two things that can
-   remove a bound affix (`stones.md`, Binding).
-2. The rarity becomes the previous one on the ladder.
-3. Leaving a rarity with `mythic_inscriptions > 0`: every affix drawn from the Mythic-only pool is removed (a Legendary
-   cannot carry Mythic-only effects), before the random removal of step 1 is counted - so a Mythic losing its
-   Mythic-only affix has already "lost an affix" and step 1 is skipped.
-4. If the item still holds more affixes than the new rarity's maximum, random affixes are removed until it fits.
-5. If the new rarity is the base rarity (Common, 0 affixes), every affix is removed.
-
-| From (affixes) | To | Result |
-| --- | --- | --- |
-| Uncommon (1 or 2) | Common | 0 |
-| Rare (3) | Uncommon | 2 |
-| Rare (2) | Uncommon | 1 |
-| Epic (4) | Rare | 3 |
-| Epic (3) | Rare | 2 |
-| Legendary (5) | Epic | 4 |
-| Legendary (4) | Epic | 3 |
-| Mythic (6) | Legendary | 5 (the Mythic-only affix is removed) |
-
-With the default ladder every demotion lands inside the lower rarity's range. With a custom ladder a demotion can
-land **below** the new minimum; the item is then simply under-filled, which is legal - counts are checked when a
-stone acts, not continuously.
-
-## Items outside their rarity's range
-
-An owner who edits the counts can leave existing items with more or fewer affixes than their rarity now allows.
-Nothing corrects them automatically - values on items are fixed (user decision). The stones read the *current*
-ranges: Growth is refused at or above the maximum, Severing at or below the minimum, and Upheaval rolls the new
-count from the current range.
+There is **no demotion**. Nothing moves an item one rarity down; the Cleansing Rune takes it all the way back to
+Normal (section 5).
 
 ---
 
 # 4. How affixes are rolled
 
-Every stone that adds affixes, the Stone of Chance and every pre-rolled drop use this one procedure. It runs on the
-peer that owns the item (the client, for a stone; the creature's owner, for a drop) against the server-synced
+Every rune that adds affixes, the Serpent Rune's outcomes and every pre-rolled drop use this one procedure. It runs on
+the peer that owns the item (the client, for a rune; the creature's owner, for a drop) against the server-synced
 rules, so every peer rolls under the same odds.
 
 ## Inputs
 
 - The item's **slot** (from its type) and **tier ceiling** (`item-tier.md`).
-- The **tier floor** of the stone, if any (`tier_floor` on the stone; drops have none).
+- The **tier floor** of the rune, if any (`tier_floor` on the rune; drops have none).
 - The affixes already on the item.
-- A **category filter**, only when a War/Warding/Fortune sigil is steering this roll (`sigils.md`).
-- Which **pool**: regular, or Mythic-only (section 5).
 
 ## The tier window
 
@@ -169,25 +124,21 @@ the YAML see tier = 8 - grade, so grades 5-7 are tooltip tiers 3-1 (`affixes.md`
   exactly the ceiling tier (RAR-2).
 - An affix that defines **no tier inside the window** but does define tiers below it (an affix that stops scaling
   early, e.g. a flat bonus that exists only at tiers 1-2) is eligible at **its highest tier at or below the
-  ceiling**, provided that tier is at least the stone's `tier_floor`. It never becomes ineligible just because the
+  ceiling**, provided that tier is at least the rune's `tier_floor`. It never becomes ineligible just because the
   item outgrew it.
-- The window and the ceiling are ignored by exactly one roll in the mod: the Serpent Stone's chaotic reroll
+- The window and the ceiling are ignored by exactly one roll in the mod: the Serpent Rune's chaotic reroll
   (`stones.md`, `item-tier.md` section 6).
 
 ## Eligibility of an affix
 
 An affix is a candidate when **all** hold:
 
-1. `enabled: true`, and its effect id is registered in this build.
-2. The item's slot is in its `slots`.
-3. It belongs to the pool being drawn from (`mythic_only: true` only when drawing the Mythic-only pool, `false`
-   otherwise).
-4. No affix with the same id is on the item (dormant ones included - a dormant copy still occupies the id).
-5. No affix of the same `exclusion_group` is on the item (dormant affixes whose definition is gone have no known
+1. `enabled: true`, a `weight` above 0, and its effect id is registered in this build.
+2. The item's slot is in its `slots`, and the item satisfies its `requires`.
+3. No affix with the same id is on the item (dormant ones included - a dormant copy still occupies the id).
+4. No affix of the same `exclusion_group` is on the item (dormant affixes whose definition is gone have no known
    group and block nothing).
-6. It has at least one eligible tier (the window rules above).
-7. It passes the category filter, when one applies.
-8. It is not the id the current Turmoil swap just removed (`stones.md`).
+5. It has at least one eligible tier (the window rules above).
 
 ## The two-stage draw
 
@@ -202,39 +153,36 @@ likelier than one with a single tier. **Judgement call** (RAR-3).
 
 ## How many affixes
 
-- A **promotion** adds the count in section 3.
-- A **fresh roll** - a pre-rolled drop, the Stone of Chance, the Stone of Upheaval's count - draws the count
-  **uniformly** in `[min, max]` of the rarity. Kept affixes (bound, preserved by a sigil) count toward it; if they
-  already exceed the drawn count, nothing more is added.
-- `rolling.count_weights` (optional, per rarity) can bias the draw, e.g. `legendary: {4: 3, 5: 1}`. Absent means
+- A **promotion** adds the count in section 3; **Shaping**, **Consecrated** and the Serpent's `add_inscription` add
+  exactly one.
+- A **fresh roll** - a pre-rolled drop, `ecraft roll`, the Serpent's `chaotic_reroll` - draws the count
+  **uniformly** in `[min, max]` of the rarity.
+- `rolling.count_weights` (optional, per rarity) can bias the draw, e.g. `rare: {3: 4, 4: 3, 5: 2, 6: 1}`. Absent means
   uniform.
 
 ## The pool is exhausted
 
 If fewer candidates exist than the roll needs:
 
-- **Stones** detect it before anything happens (every stone works on a copy and commits only on success -
-  `stones.md` section 1) and refuse with `$ecf_msg_no_eligible_affix`. The stone is kept.
-- **Pre-rolled drops** fall back to the highest rarity whose minimum the pool can fill; a base whose pool cannot
-  fill even the lowest magic rarity is left out of the drop pool at load (`drops.md`).
+- **Runes** detect it before anything happens (every rune works on a copy and commits only on success -
+  `stones.md` section 1) and refuse with `$ecf_msg_no_eligible_affix`. The rune is kept. The Serpent never refuses:
+  it fills what it can, or only seals (`stones.md` section 10).
+- **Pre-rolled drops** fall back to the next lower rarity that may drop and whose minimum the pool can fill; a base
+  whose pool cannot fill even the lowest magic rarity is left out of the drop pool at load (`drops.md` section 8).
 
 ---
 
-# 5. Mythic
+# 5. Down the ladder, and items outside their range
 
-- **Six affixes exactly** (`inscriptions: {min: 6, max: 6}`), of which `mythic_inscriptions: 1` comes from the Mythic-only
-  pool (affixes with `mythic_only: true`) and the rest from the regular pool.
-- **Craft-only by default.** `drop_weight: 0` on the Mythic rarity is the master switch: at 0, no drop table and no
-  Stone of Chance weight can ever produce a Mythic, whatever the per-biome rows say. An owner who wants Mythic drops
-  sets it above 0 *and* gives Mythic a weight in the drop tables (`drops.md`).
-- **Ways in:** the Stone of Apotheosis (Legendary -> Mythic), and the Serpent Stone's promote outcome on a Legendary
-  (which also seals the item).
-- **Until the Mythic-only pool exists (Phase 3)**, or whenever it has no eligible candidate for the item's slot,
-  the special affix is drawn from the regular pool instead and the item is still a full Mythic of six. The
-  alternative - refusing Apotheosis until Phase 3 - would make the chase stone dead weight for two releases
-  (RAR-5).
-- Stone behaviour on a Mythic (always full, always at minimum, swaps keep the pool class, 7th affix from the
-  Serpent) is in `stones.md`.
+- **Cleansing** is the only way down: every affix goes and the item becomes the base rarity (Normal), whatever rarity
+  it had (`stones.md` section 9).
+- **The Serpent Rune never changes the rarity.** Its `add_inscription` outcome may leave an item `overflow` (default
+  1) past its rarity's maximum - a Magic item with three, a Rare with seven. The item is sealed, so nothing reads it
+  as full or tries to fill it again.
+- **An owner who edits the counts** can leave existing items with more or fewer affixes than their rarity now allows.
+  Nothing corrects them automatically - values on items are fixed (user decision). The runes read the *current*
+  ranges: Shaping and Consecrated are refused at or above the maximum, and a promotion fills to the new rarity's
+  current minimum.
 
 ---
 
@@ -253,12 +201,12 @@ If fewer candidates exist than the roll needs:
 
 Errors reject the files (previous configuration stays); warnings are logged and the files apply.
 
-- Error: fewer than two rarities; duplicate id; the first entry's `affixes.max` is not 0.
-- Error: `min > max`, negative counts, `color` not `#RRGGBB`.
-- Error: more than one rarity with `mythic_inscriptions > 0`, or `mythic_inscriptions > affixes.min`.
-- Error: a rarity id referenced by a stone's `applies_to`/`cost`/`weights` or by a drop table does not exist.
-- Warning: `glow: true` on the base rarity (ignored - Common never glows, user decision).
-- Warning: a rarity's minimum exceeds what the regular pool can supply for some slot (listed per slot).
+- Error: fewer than two rarities; the same id twice in one file; the first entry's `inscriptions.max` is not 0.
+- Error: `inscriptions` or `color` missing; `min > max`; negative counts; `color` not `#RRGGBB`.
+- Error: a rarity id referenced by a rune's `applies_to` or `cost`, or by a drop table, does not exist.
+- Warning: `glow: true` on the base rarity (ignored - Normal never glows, user decision).
+- Warning (when the gear pool is built): bases whose slot pool cannot fill the lowest magic rarity's minimum at their
+  tier, listed by name; they never drop (`drops.md` section 8).
 
 ---
 
@@ -266,14 +214,13 @@ Errors reject the files (previous configuration stays); warnings are logged and 
 
 `[ ]` not started, `[~]` partly, `[x]` built and seen working on a dedicated server.
 
-- [ ] Six rarities from YAML, ladder order from entry order
-- [ ] Magic-base rule: slot resolves, max stack 1, not a stone; load warning for stackable slot items
-- [ ] Promote adds to the new minimum, at least one; refused when the pool cannot fill
-- [ ] Demote removes one (bound eligible), Mythic-only affixes stripped on leaving Mythic
+- [ ] Three rarities from YAML, ladder order from entry order
+- [ ] Old rarity ids read as their new rarity (`item-data.md` section 8)
+- [ ] Magic-base rule: slot resolves, max stack 1, not a rune; load warning for stackable slot items
+- [ ] Promotion adds to the new minimum, at least one; refused when the pool cannot fill
 - [ ] Tier window, highest-tier fallback for early-stopping affixes
 - [ ] Two-stage draw: affix by weight, tier by tier weight, value uniform
-- [ ] Mythic: six, one special, regular-pool fallback until Phase 3
-- [ ] `drop_weight: 0` on Mythic blocks every drop and Chance path
+- [ ] `drop_weight: 0` on Normal keeps it out of every drop table
 
 ## Work log
 
@@ -281,9 +228,11 @@ Errors reject the files (previous configuration stays); warnings are logged and 
 | --- | --- | --- |
 | 2026-09-23 | Specified in Phase 0. | pending |
 | 2026-09-23 | Reconciled: open questions moved to `../DECISIONS.md`. | pending |
+| 2026-10-02 | Three rarities, promotion only (user decision); old ids renamed on read. | pending |
 
 ---
 
 # Decisions
 
-Every question this file raised is answered in `../DECISIONS.md` (Rarity: RAR-1 to RAR-6).
+Every question this file raised is answered in `../DECISIONS.md` (Rarity: RAR-1 to RAR-6) and the 2026-10-02 entry
+of `../PLAN.md`'s Decisions log.

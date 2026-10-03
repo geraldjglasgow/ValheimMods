@@ -6,7 +6,7 @@ namespace EliteCrafting.Loot
     /// <summary>
     /// Norns' Favour on the gear rarity draw (drops.md section 10): every weight above the lowest magic rarity (ladder
     /// index 2 and up; index 0 is the base rarity, which never drops) is multiplied by <c>1 + L/100</c> before the pick.
-    /// A weight of 0 stays 0, so a blocked Mythic stays blocked. Without a bonus the precomputed table is used as is.
+    /// A weight of 0 stays 0, so a blocked rarity stays blocked. Without a bonus the precomputed table is used as is.
     /// The re-weighted pick walks the table's few entries twice and allocates nothing (drops.md section 13).
     /// </summary>
     public static class RarityFind

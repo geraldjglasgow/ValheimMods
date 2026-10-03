@@ -17,23 +17,12 @@ namespace EliteCrafting.Affixes
 
         public string? RarityId { get; set; }
         public ItemSegment[] Segments { get; set; } = Array.Empty<ItemSegment>();
-        public string? BoundId { get; set; }
-        public float Refine { get; set; }
-
-        /// <summary>An <c>ecf_refine</c> value that did not parse, kept verbatim and written back (never destroyed).</summary>
-        public string? RefineRaw { get; set; }
         public string? SealedReason { get; set; }
-        public string? SigilId { get; set; }
 
         /// <summary>The reserved <c>ecf_tier</c> value, preserved verbatim.</summary>
         public string? ReservedTier { get; set; }
 
-        /// <summary>Sockets, gems and catalyst (sockets.md); <see cref="SocketData.None"/> when the item has none.</summary>
-        public SocketData Sockets { get; set; } = SocketData.None;
-
-        public bool IsEmpty =>
-            RarityId == null && Segments.Length == 0 && BoundId == null && Refine == 0f && RefineRaw == null && SealedReason == null
-            && SigilId == null && ReservedTier == null && Sockets.IsEmpty && !Newer;
+        public bool IsEmpty => RarityId == null && Segments.Length == 0 && SealedReason == null && ReservedTier == null && !Newer;
 
         public StateData Copy() => (StateData)MemberwiseClone();
     }

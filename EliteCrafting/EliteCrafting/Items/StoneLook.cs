@@ -4,10 +4,10 @@ using UnityEngine;
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The visual state of one stone prefab on a client (prefabs.md section 4b-4c): its own material instances (so the
-    /// vanilla base never changes), the base's lights, and its visual children for the grade scale. Tint and scale are
-    /// written into the prefab; spawned stones copy them, and because world instances share the prefab's material
-    /// instances, a tint change reaches stones already on the ground too. Never built on a dedicated server.
+    /// The visual state of one rune prefab on a client (prefabs.md section 4b-4c): its own material instances (so the
+    /// vanilla base never changes) and the base's lights. The tint is written into the prefab; spawned runes copy it,
+    /// and because world instances share the prefab's material instances, a tint change reaches runes already on the
+    /// ground too. Never built on a dedicated server.
     /// </summary>
     internal sealed class StoneLook
     {
@@ -20,7 +20,6 @@ namespace EliteCrafting.Items
 
         private readonly List<TintedMaterial> _materials = new List<TintedMaterial>();
         private readonly List<KeyValuePair<Light, Color>> _lights = new List<KeyValuePair<Light, Color>>();
-        private readonly List<ChildPose> _children = new List<ChildPose>();
 
         public StoneLook(GameObject prefab)
         {
@@ -31,10 +30,6 @@ namespace EliteCrafting.Items
             foreach (Light light in prefab.GetComponentsInChildren<Light>(true))
             {
                 _lights.Add(new KeyValuePair<Light, Color>(light, light.color));
-            }
-            foreach (Transform child in prefab.transform)
-            {
-                _children.Add(new ChildPose(child));
             }
         }
 
@@ -67,41 +62,9 @@ namespace EliteCrafting.Items
                 }
             }
         }
-
-        /// <summary>
-        /// Scales the visual children, not the root: the game resets the root's scale from the item quality whenever
-        /// an item wakes up (ItemDrop.SetQuality), so a root scale would never survive a spawn.
-        /// </summary>
-        public void Scale(float factor)
-        {
-            foreach (ChildPose child in _children)
-            {
-                child.Apply(factor);
-            }
-        }
-
-        private sealed class ChildPose
-        {
-            private readonly Transform _transform;
-            private readonly Vector3 _scale;
-            private readonly Vector3 _position;
-
-            public ChildPose(Transform transform)
-            {
-                _transform = transform;
-                _scale = transform.localScale;
-                _position = transform.localPosition;
-            }
-
-            public void Apply(float factor)
-            {
-                _transform.localScale = _scale * factor;
-                _transform.localPosition = _position * factor;
-            }
-        }
     }
 
-    /// <summary>One material instance of a stone prefab, with the values it had before any tint.</summary>
+    /// <summary>One material instance of a rune prefab, with the values it had before any tint.</summary>
     internal sealed class TintedMaterial
     {
         private readonly Material _material;

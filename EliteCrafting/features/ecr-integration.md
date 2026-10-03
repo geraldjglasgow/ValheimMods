@@ -31,9 +31,9 @@ the game level, sees **0 stars on every ECR elite** and pays a five-star troll l
 With the synergy switched on and ECR present:
 
 1. **ECR's star count replaces the game level** as the star input of EliteCrafting's chance model, on its own
-   multiplier table (section 4). Both the stone roll and the gear roll use it, exactly where the vanilla star
+   multiplier table (section 4). Both the rune roll and the gear roll use it, exactly where the vanilla star
    multiplier sits today; bosses' guaranteed counts use it too.
-2. **ECR's world tier** multiplies the stone chance and shifts gear rarity (section 5) - **inert until ECR records a
+2. **ECR's world tier** multiplies the rune chance and shifts gear rarity (section 5) - **inert until ECR records a
    tier**, which it does not yet: ECR's world tiers are specified but not built (ECR `world-tiers.md`, "Status:
    specified, not built").
 3. Optionally, stars shift gear **rarity** too (`star_rarity_bonus`, default 0).
@@ -93,7 +93,7 @@ cache needed.
 ```
 stars = synergy on and ECR present and ecr_resolved ? ecr_stars : (game level - 1)     (as today)
 S     = synergy on and ECR data used ? drops.ecr.star_multipliers[stars] : drops.star_multipliers[stars]
-p     = base_chance[tier] * S * creature_multiplier (* Fateweaver, stones) (* T_stone, stones - section 5)
+p     = base_chance[tier] * S * creature_multiplier (* Fateweaver, runes) (* T_rune, runes - section 5)
 ```
 
 - **Our own table for ECR stars**, not the vanilla one: ECR elites are far commoner than vanilla stars (ECR's fallback
@@ -107,14 +107,14 @@ p     = base_chance[tier] * S * creature_multiplier (* Fateweaver, stones) (* T_
 
   Averaged over ECR's fallback star chances that is about **x1.14** - a nudge toward fighting elites, not a second
   economy (ECR-4).
-- **Both rolls** - stones and gear chance - take `S`, as the vanilla star multiplier does (`drops.md` section 4). The
-  per-kill caps (`max_stones_per_kill`, `max_gear_per_kill`) still apply, so a twenty-star creature on a server with
+- **Both rolls** - runes and gear chance - take `S`, as the vanilla star multiplier does (`drops.md` section 4). The
+  per-kill caps (`max_runes_per_kill`, `max_gear_per_kill`) still apply, so a twenty-star creature on a server with
   no star ceiling pays at most the caps.
 - **Bosses**: ECR rolls boss stars on its own boss table (90/6/3/1). The boss's `ecr_stars` feeds the same `S`, which
   multiplies the boss's guaranteed counts as stars already do (`drops.md` section 9). Bonus rows stay unscaled
   (IMP-44).
 - **Star rarity bonus** (`star_rarity_bonus`, percent per ECR star, **default 0**): when above 0, every gear rarity
-  weight above Uncommon is multiplied by `1 + (bonus x stars)/100`, added to Norns' Favour's percentage before the
+  weight above Magic is multiplied by `1 + (bonus x stars)/100`, added to Norns' Favour's percentage before the
   multiply (`drops.md` section 10), so the two bonuses sum rather than compound. Default 0 because ECR's design pays
   stars in quantity, not quality; it is here because PLAN.md names gear rarity as a possible synergy (ECR-5).
 - **ECR data missing** on a creature (`ecr_resolved` false - it died in the frame it spawned, or it is a creature ECR
@@ -142,16 +142,16 @@ Why on the creature rather than a world-wide value:
 With `ecr_tier` present and the synergy on:
 
 ```
-T_stone = drops.ecr.tier_stone_multipliers[tier]          multiplies the stone chance only
+T_rune  = drops.ecr.tier_rune_multipliers[tier]           multiplies the rune chance only
 R_tier  = drops.ecr.tier_rarity_bonus[tier]               percent, added to Norns' Favour and the star bonus
 ```
 
 | ECR world tier | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
 |---|---|---|---|---|---|---|---|---|
-| `tier_stone_multipliers` | 1 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5 | 1.6 | 1.7 |
+| `tier_rune_multipliers` | 1 | 1.1 | 1.2 | 1.3 | 1.4 | 1.5 | 1.6 | 1.7 |
 | `tier_rarity_bonus` (%) | 0 | 5 | 10 | 15 | 20 | 25 | 30 | 35 |
 
-- PLAN.md: "ECR elites/world tiers multiply stone drop chance". The gear chance is left alone - a mature world pays
+- PLAN.md: ECR elites and world tiers multiply the rune drop chance. The gear chance is left alone - a mature world pays
   more currency and better gear, not more gear (ECR-6).
 - Lists may be shorter than 8; an index past the end reuses the last entry (ECR's own convention for its lines).
 - **Until ECR writes the key**, `ecr_tier` reads as absent and both terms are 1 and 0. Nothing to switch on later: the
@@ -168,7 +168,7 @@ ECR marks some creatures as worth nothing: the second half of a **Cloven** boss 
 (`Patches/LootPatch.cs`); our drops are spawned by our own death hook (RC-12), so ECR's clear does not reach them.
 
 - **Whenever ECR is present, a creature whose ZDO has `ecr_asp_worthless` true drops nothing from EliteCrafting** -
-  no stones, no gear, no bonus rows, no boss guarantees - **whether or not the synergy is switched on** (ECR-7). This
+  no runes, no gear, no bonus rows, no boss guarantees - **whether or not the synergy is switched on** (ECR-7). This
   is not a bonus; it prevents a Cloven Moder from paying our boss guarantees twice. The check sits with the other
   "which deaths drop" rules (`drops.md` section 2) as a fifth rule.
 - `drops.ecr.skip_worthless` (default true) turns it off for an owner who wants the twin to pay.
@@ -235,7 +235,7 @@ ECR marks some creatures as worth nothing: the second half of a **Cloven** boss 
 
 | Section | Key | Type | Default | Synced | Meaning |
 |---|---|---|---|---|---|
-| `9 - Elite Creatures Reborn` | `Synergy` | bool | `false` | synced | With Elite Creatures Reborn installed: its elite stars (and later its world tier) raise EliteCrafting's drops. No effect without it |
+| `8 - Elite Creatures Reborn` | `Synergy` | bool | `false` | synced | With Elite Creatures Reborn installed: its elite stars (and later its world tier) raise EliteCrafting's drops. No effect without it |
 
 The switch is the gate PLAN.md asks for; the numbers are YAML (CFG-6).
 
@@ -246,7 +246,7 @@ The switch is the gate PLAN.md asks for; the numbers are YAML (CFG-6).
 | `star_multipliers` | list of numbers, index = ECR stars | `[1, 1, 1.5, 2, 2.5, 3]` | replaces `drops.star_multipliers` for ECR-resolved creatures |
 | `star_step` | number | 0.5 | added per star beyond the list |
 | `star_rarity_bonus` | percent per star | 0 | gear rarity shift per ECR star (section 4) |
-| `tier_stone_multipliers` | list, index = ECR world tier 0-7 | `[1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]` | stone chance multiplier (section 5) |
+| `tier_rune_multipliers` | list, index = ECR world tier 0-7 | `[1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]` | rune chance multiplier (section 5) |
 | `tier_rarity_bonus` | list of percents, index = world tier | `[0, 5, 10, 15, 20, 25, 30, 35]` | gear rarity shift (section 5) |
 | `skip_worthless` | bool | true | ECR's worthless creatures drop nothing from us (section 6); applies whenever ECR is present |
 
@@ -259,8 +259,8 @@ drops:
     star_multipliers: [1, 1, 1.5, 2, 2.5, 3]
     star_step: 0.5
     star_rarity_bonus: 0
-    tier_stone_multipliers: [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
-    tier_rarity_bonus:      [0, 5, 10, 15, 20, 25, 30, 35]
+    tier_rune_multipliers: [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
+    tier_rarity_bonus:     [0, 5, 10, 15, 20, 25, 30, 35]
     skip_worthless: true
 ```
 
@@ -271,7 +271,7 @@ drops:
   ecr:
     star_multipliers: [1, 2, 3]
     star_step: 1
-    star_rarity_bonus: 5          # a five-star elite: +25% on every rarity above Uncommon
+    star_rarity_bonus: 5          # a five-star elite: +25% on every rarity above Magic
 ```
 
 ---
@@ -313,7 +313,7 @@ table index. The multiplier tables are precomputed at each economy apply with th
 - 🔧 Star rarity bonus summed with Norns' Favour
 - 🔧 `ecr_tier` reader and the two tier terms, inert while the key is absent (the key name waits on ECR-6)
 - 🔧 Missing-data warning after 20 deaths; `ecraft ecr`
-- 🔧 `.cfg` `9 - Elite Creatures Reborn / Synergy`; `drops.ecr` read, merged, validated
+- 🔧 `.cfg` `8 - Elite Creatures Reborn / Synergy`; `drops.ecr` read, merged, validated
 - [ ] A comment on ECR's `Traits/TraitKeys.cs` (and `AspectStore`'s worthless key) naming EliteCrafting as a reader -
       an ECR-side edit, left for a session that works on ECR
 - [ ] Seen on a dedicated server with both mods: a 3-star ECR troll pays x2 with the synergy on, x1 off; a Cloven twin
@@ -325,6 +325,7 @@ table index. The multiplier tables are precomputed at each economy apply with th
 | --- | --- | --- |
 | 2026-09-23 | Specified (Phase 2 spec pass); key names read from ECR 3.4.0 source. | pending |
 | 2026-09-23 | Built: detection, worthless rule, ECR star table, rarity bonus, inert tier terms, missing-data warning, `ecraft ecr`, `.cfg` switch, `drops.ecr`. `ecr_asp_worthless` re-checked in ECR's working tree (`AspectStore`, still uncommitted). | pending |
+| 2026-10-02 | Runes instead of stones: `tier_rune_multipliers`, `.cfg` section `8 - Elite Creatures Reborn` (user decision). | pending |
 
 ---
 

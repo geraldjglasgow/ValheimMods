@@ -7,7 +7,7 @@ This file covers **how strong an affix an item may carry**: every magic base has
 no ordinary roll on that item produces an affix stronger than its ceiling. Item tiers count up (Meadows 1 ...
 Ashlands 7); affix tiers count down for players and the YAML (tier 1 = Ashlands strength) and are compared with the
 ceiling as strength grades (grade = 8 - tier, `affixes.md` "Tiers and biome gates"), so "above the ceiling" here
-means a grade above it. How the ceiling combines with a stone's floor and
+means a grade above it. How the ceiling combines with a rune's floor and
 the tier window is `rarity.md` section 4; the affix tiers themselves are `affixes.md`.
 
 **The model is decided** (user, 2026-09-23, `../DECISIONS.md` U-13): explicit item map, then highest recipe-material
@@ -45,7 +45,7 @@ the biome it fell in, because its base already says how strong it may be.
 | --- | --- | --- |
 | (a) **Recipe materials** - a YAML map of material prefab -> tier; item tier = the highest tier among its recipe's materials | Tracks the game's own progression exactly (bronze = Black Forest, black metal = Plains, flametal = Ashlands); works for modded items that use vanilla materials with no configuration; one short map covers hundreds of items | Items with no recipe need a fallback; modded materials need a map entry or a derivation |
 | (b) **Crafting station + level** | Tiny map | Cannot separate Mistlands from Ashlands (Ashlands adds no new station, it upgrades existing ones); station levels span several biomes (the forge covers Black Forest to Plains); upgrade level is not the same thing as biome |
-| (c) **World progression** (boss keys) | Zero per-item data | Tier would belong to the world, not the item: a Meadows club crafted after Yagluth would roll Plains-strength affixes, and the same item would change strength over time. Contradicts PLAN ("a Meadows Mythic rolls many weak affixes") |
+| (c) **World progression** (boss keys) | Zero per-item data | Tier would belong to the world, not the item: a Meadows club crafted after Yagluth would roll Plains-strength affixes, and the same item would change strength over time. Contradicts the rule that rarity is count and the item sets strength (a Meadows Rare rolls many weak affixes) |
 | (d) **Explicit item -> tier map** with a fallback | Exact where written | Hundreds of lines to write and maintain by hand; rots with every game update |
 
 **Decision: (d) as an override layer over (a), with (b) and a fixed default as the last two fallbacks.**
@@ -155,17 +155,17 @@ as strong as the world is far".
 
 # 6. Where the ceiling applies, and the one place it does not
 
-**Every ordinary roll is capped by the ceiling**: promotions, Growth, Turmoil's added affix, Upheaval, the Stone of
-Chance, and pre-rolled drops. A stone's `tier_floor` raises the bottom of the window but never the top: a floor
-above the ceiling is clamped down to the ceiling (`rarity.md` section 4).
+**Every ordinary roll is capped by the ceiling**: promotions (Awakening, Ascension), the one affix that Shaping,
+Consecrated and the Serpent's `add_inscription` add, and pre-rolled drops. A rune's `tier_floor` raises the bottom of
+the window but never the top: a floor above the ceiling is clamped down to the ceiling (`rarity.md` section 4).
 
 **Drops use the base's own tier**, not the biome's. A bronze sword that drops from a Plains creature (the drop pool
 allows one tier below the biome - `drops.md`) rolls with ceiling 2, not 5. A drop's biome decides *which bases* can
 appear; the base decides *how strong*.
 
-**The only roll that can exceed the ceiling is the Serpent Stone's chaotic reroll.** Exactly:
+**The only roll that can exceed the ceiling is the Serpent Rune's chaotic reroll.** Exactly:
 
-- Every affix is rerolled (count within the rarity's range, bound affixes included and unbound - `stones.md`).
+- Every affix is rerolled (count within the rarity's range, dormant affixes included - `stones.md` section 10).
 - For each new affix, the eligible tiers are **every tier the affix defines**, ignoring the item's ceiling, the tier
   window and any `tier_floor`.
 - The tier is drawn **uniformly** among those tiers - the per-tier weights are ignored too, which is what makes it
@@ -174,12 +174,9 @@ appear; the base decides *how strong*.
   could also be read as "weighted as usual, just uncapped".)
 - The item is sealed afterwards, so nothing can later "fix" an out-of-ceiling affix.
 
-Everything else that leaves an item holding a tier above its ceiling is **not a roll**:
-
-- The Stone of Reflection copies affixes as they are.
-- An owner lowering an item's tier in YAML leaves existing affixes untouched (values are fixed on items; TIR-6). Perfection
-  on such an affix rerolls its value **within its stored tier**, so it stays above the new ceiling; Turmoil and
-  Upheaval replace affixes under the new ceiling.
+The only other way an item holds a tier above its ceiling is **not a roll**: an owner lowering an item's tier in YAML
+leaves existing affixes untouched (values are fixed on items; TIR-6). Affixes a rune adds afterwards roll under the new
+ceiling.
 
 ---
 
