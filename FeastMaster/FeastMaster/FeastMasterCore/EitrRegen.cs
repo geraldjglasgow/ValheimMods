@@ -10,6 +10,13 @@ namespace FeastMaster
     [HarmonyPatch(typeof(SEMan), nameof(SEMan.ModifyEitrRegen))]
     public static class EitrRegenMultiplierPatch
     {
+        public static bool Prepare()
+        {
+            return Customized.AnyFood(FeastMasterData.EitrVigor)
+                || Customized.Any(Settings.EitrVigorPerEitrPoint, Settings.EitrVigorMultiplier, Settings.EitrRegenCurveStrength,
+                    Settings.EitrRegenCurvePivot, Settings.BlockingEitrRegenFactor);
+        }
+
         [HarmonyPostfix]
         public static void Postfix(SEMan __instance, ref float eitrMultiplier)
         {

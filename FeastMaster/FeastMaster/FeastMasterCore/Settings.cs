@@ -126,11 +126,11 @@ namespace FeastMaster
         private static void BindRegenBasics(SyncedConfiguration config)
         {
             StaminaRegenMultiplier = config.Bind(StaminaRegenSection, "Stamina Regen Multiplier", 1f,
-                "Scales the base stamina regeneration. The curve, Vigor and extra stamina rules apply on top. Multiplies with the world Stamina Regen Rate in section 7 and with Low Stamina Regen Bonus.");
+                "Scales the base stamina regeneration. 1 = untouched. The curve, Vigor and extra stamina rules apply on top. Multiplies with the world Stamina Regen Rate in section 7 and with Low Stamina Regen Bonus.");
             LowStaminaRegenBonus = config.Bind(StaminaRegenSection, "Low Stamina Regen Bonus", 1f,
-                "Scales the game's own bonus for a low bar (regeneration rises as the bar empties). 0 removes it. Stacks with Regen Curve Strength and Stamina Regen Multiplier.");
+                "Scales the game's own bonus for a low bar (regeneration rises as the bar empties). 1 = untouched, 0 removes it. Stacks with Regen Curve Strength and Stamina Regen Multiplier.");
             StaminaRegenDelay = config.Bind(StaminaRegenSection, "Stamina Regen Delay", 1f,
-                "Seconds after any stamina use before regeneration resumes. The game uses 1.");
+                "Seconds after any stamina use before regeneration resumes. The game uses 1; at 1 FeastMaster leaves it alone.");
             BlockingRegenFactor = config.Bind(StaminaRegenSection, "Blocking Regen Factor", GameBlockingRegenFactor,
                 "Stamina regeneration factor while holding block. The game uses 0.8; 1 means no slowdown.");
         }
@@ -142,9 +142,9 @@ namespace FeastMaster
             EitrVigorMultiplier = config.Bind(EitrRegenSection, "Eitr Vigor Multiplier", 1f,
                 "Scales the Eitr Vigor of every food.");
             EitrRegenMultiplier = config.Bind(EitrRegenSection, "Eitr Regen Multiplier", 1f,
-                "Scales the base eitr regeneration. Eitr Vigor and the eitr curve apply on top.");
+                "Scales the base eitr regeneration. 1 = untouched. Eitr Vigor and the eitr curve apply on top.");
             EitrRegenDelay = config.Bind(EitrRegenSection, "Eitr Regen Delay", 1f,
-                "Seconds after any eitr use before regeneration resumes. The game uses 1.");
+                "Seconds after any eitr use before regeneration resumes. The game uses 1; at 1 FeastMaster leaves it alone.");
             EitrRegenCurveStrength = config.Bind(EitrRegenSection, "Eitr Regen Curve Strength", 1f,
                 "1 = off. Above 1 eitr regenerates faster when the bar is low and slower when it is high, like the stamina curve. Below 1 does the opposite. Stacks with the game's own low-bar eitr bonus.");
             EitrRegenCurvePivot = config.Bind(EitrRegenSection, "Eitr Regen Curve Pivot", 0.5f,

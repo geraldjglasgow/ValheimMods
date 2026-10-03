@@ -14,8 +14,15 @@ Rules that still apply to every change:
   mods. Migrating FeastMaster's own renamed entries is allowed (`ConfigMigration`).
 - Verify every patched signature against a fresh `ilspycmd` decompile of the game's own assemblies
   (`assembly_valheim.dll`; `Localization` lives in `assembly_guiutils.dll`) in the scratchpad, never in a repository.
+- **A default means untouched.** Every patch class except the config-binding hooks and the tooltip words has a
+  static `Prepare()` that is true only while a setting it reads differs from its default (`Customized.Any`);
+  `PatchSwitch` installs the class only then and removes it when the setting goes back, so FeastMaster at its
+  defaults changes nothing in the game or in other mods. A new patch class gets a `Prepare()` in the same change.
+  Inside an installed patch, each field is still left alone while its own setting is at its default
+  (`CostRules.Scale` skips a multiplier of 1). Whatever a patch changes beyond one call is put back in its
+  `Removed()`. Foods, meads and Rested are written only once one of their values is changed.
 - Functions 5 to 20 lines, one responsibility per class, classes under 300 lines. Prefix, postfix and finalizer
-  patches only; no transpilers. Every patch class is applied on its own in `PatchEverything`, so one failure is
+  patches only; no transpilers. Every patch class is applied on its own by `PatchSwitch`, so one failure is
   logged and the others still apply.
 - Settings are read at use time (`ConfigEntry.Value`), never cached, so edits, file reloads and server pushes apply
   at once. Every gameplay setting is bound synced; only section `8. Display` is bound with `synced: false`.
@@ -29,7 +36,12 @@ Rules that still apply to every change:
 
 ```
 FeastMaster/FeastMaster/FeastMasterCore/
-  FeastMaster.cs          plugin entry: settings, config hooks, patches per class, Synced.Finish, Guard.Install last
+  FeastMaster.cs          plugin entry: settings, config hooks, PatchSwitch, Synced.Finish, Guard.Install last
+  PatchSwitch.cs          installs each patch class while its Prepare() is true, removes it when false (re-checked
+                          once per frame after any setting change, from a hidden SwitchTicker), runs the class's
+                          optional Installed() / Removed(), logs the installed rule-driven patches
+  Customized.cs           whether entries differ from their defaults (floats with a small tolerance); any food's
+                          Vigor, a food's or mead's values
   FeastMasterData.cs      section 0 (multipliers, Disable Food Degradation, Degradation Curve, Eat Again At, Lock
                           Configuration), one section per food (Health, Stamina, Duration, HealthRegen, Eitr, Vigor,
                           EitrVigor) and per mead (nine entries), bound from the item database on
@@ -60,7 +72,8 @@ FeastMaster/FeastMaster/FeastMasterCore/
                           Vigor per item
   Patches.cs              ObjectDB load hooks, consume-time safety nets (Player.EatFood, SEMan.AddStatusEffect)
   FoodDegradation.cs      Degradation Curve and Disable Food Degradation (Player.GetTotalFoodValue prefix)
-  BaseValues.cs           Base Health / Base Stamina (GetTotalFoodValue prefix) and stamina from skills (postfix)
+  BaseValues.cs           Base Health / Base Stamina (GetTotalFoodValue prefix, only the changed one; the player's
+                          own value kept in BaseOriginals and put back) and stamina from skills (postfix)
   HealthRegen.cs          Continuous Food Healing (Player.UpdateFood prefix, heals per frame, holds the tick timer at 0)
   StaminaRegen.cs         SEMan.ModifyStaminaRegen postfix (Vigor, extra stamina, sneak bonus, curve, blocking
                           factor), RegenCurve (shared with eitr), Player.UpdateStats postfix (encumbered and
@@ -78,10 +91,14 @@ FeastMaster/FeastMaster/FeastMasterCore/
 ```
 
 Startup order in `Awake`: `FeastMasterData.Initialize`, `Settings.Initialize`, `ItemValues.HookConfig`,
-`WorldRates.HookConfig`, every patch class on its own, `Synced.Finish`, the `Loading [FeastMaster x.y.z]` line,
-`Guard.Install` last.
+`WorldRates.HookConfig`, the `PatchSwitch` hooks on `SettingChanged` / `ConfigReloaded`, `PatchSwitch.Initialize`
+(the patch classes wanted now), `Synced.Finish`, the `Loading [FeastMaster x.y.z]` line, `Guard.Install` last.
 
 ## Patched game methods
+
+Every method below is patched only while a setting its patch class reads is changed (see `PatchSwitch`), except
+`ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `ZNetScene.Awake` (config binding) and `Localization.SetupLanguage` (own
+words only), which are always patched.
 
 Postfix: `Attack.GetAttackStamina`, `Hud.Awake` (food slots), `Feast.GetStackPercentige` (capped at 1), `ZNetScene.Awake` (`Priority.Last`, binds the station and feast food sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
 `Hud.UpdateStamina`, `Hud.UpdateEitr`, `Hud.UpdateFood`, `ItemDrop.ItemData.GetTooltip` (static, six
@@ -121,6 +138,18 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
 
 ## Decisions where the spec was silent
 
+- Defaults leave the game untouched (4.7.0, after a player's fishing mod lost its stamina costs and XP to
+  FeastMaster at defaults). A patch is installed only while a setting it reads differs from its default, rather
+  than per-section switches: no new settings, no migration, and only the patches for what changed. The trade: a
+  value equal to the default can't be forced over another mod's (Base Stamina 75 when another mod sets 90 does
+  nothing). Patch classes go in and out from the next frame on the main thread; the hooks for changes that outlive
+  a call: `WorldRatesPatch` recomputes the world rates both ways, `BaseValuesPatch.Removed` puts the players' own
+  base values back, the hide-number patches show the number again, `FoodSlotsHud.Installed` extends a HUD already
+  up (an extended HUD keeps `FoodSlotFrames` installed until it is rebuilt). Foods, meads and Rested are written
+  only once changed; one set back to its defaults is still written, with those defaults, for the rest of the
+  session, so it returns to the values it had when bound. Extra stamina for `Regen Per Extra Stamina Point` is
+  measured above the player's `m_baseStamina`, so another mod's base counts when Base Stamina is at its default.
+
 - Jump cost is scaled around `Character.Jump` rather than `Player.OnJump`: `Jump` first checks
   `HaveStamina(m_jumpStaminaUsage)` and then calls `OnJump`, which drains the same field, so a discounted jump is
   never refused for lack of stamina.
@@ -138,8 +167,8 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
 - Encumbered and swimming regen keep the game's other zero conditions (attacking, dodging, wall running) and the
   blocking factor; when both states apply the encumbered fraction is used.
 - Vigor and `Regen Per Extra Stamina Point` both reward food stamina; with both on it counts twice. Allowed, the
-  README recommends one of the two. Extra stamina is measured above the configured `Base Stamina` and excludes the
-  skill stamina.
+  README recommends one of the two. Extra stamina is measured above the player's base (`Base Stamina` when
+  changed, else the game's or another mod's) and excludes the skill stamina.
 - `Stamina Regen Delay` and `Eitr Regen Delay` are applied around `Player.RPC_UseStamina` / `Player.RPC_UseEitr`,
   where the game sets the regen timers (the public `UseStamina` / `UseEitr` only route to them).
 - `Food Timers`: the game always shows the timer under an active food, so `Vanilla` and `Always` behave the same
@@ -213,7 +242,9 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Fresh config: only the new sections and the per-food `Vigor` and `EitrVigor` lines are new; no vanilla behaviour changes.
+1. Fresh config: the log says `Every setting is at its default: no gameplay patches installed.`; no vanilla behaviour
+   changes. Change one setting (e.g. `Dodge Cost` 0.5) and save: within a few seconds the log names `DodgeCostPatch`;
+   set it back to 1: the patch is gone from the log line and dodging costs the game's stamina again.
 2. Tooltip of an uneaten food shows configured Health/Stamina/Duration after editing its section and saving.
 3. `Degradation Curve` 1: food strength falls linearly (HUD max health drops steadily); 0 keeps full strength.
 4. `Continuous Food Healing` on: health rises smoothly at the tick's rate; no floating numbers; off restores ticks.
@@ -284,3 +315,10 @@ from a script.
     new food until fewer than three remain (or one can be eaten again).
 43. `Food Slots` 1: a second food is refused as full; once the first can be eaten again, a different food replaces it.
 44. A feast and Auto Eat with `Food Slots` 4: eating from a feast fills the fourth slot; Auto Eat refills it.
+45. Default means untouched, with another mod in the profile that changes fishing stamina or skill XP: with every
+    FeastMaster fishing and skill setting at its default, the other mod's values hold (fishing drains what it says).
+46. `Base Stamina` 100, then back to 75: max stamina with no food returns to 75 (or to what another mod set).
+47. Client with a default config joins a server that sets `Fishing Pull Cost` 0: the log names `FishingCostPatch`
+    after the server's values arrive; reeling costs nothing. Disconnect: the patch is removed again.
+48. `Food Slots` 4 set while in game: the fourth slot appears at once; back to 3: the fourth frame hides again.
+49. `Food Rate` 2 set while in game: food timers speed up at once; back to 0: the world's rate returns at once.

@@ -18,6 +18,8 @@ namespace FeastMaster
         public static ConfigEntry<float> HealthRegen { get; private set; }
         public static ConfigEntry<float> EitrRegen { get; private set; }
 
+        private static bool written;
+
         /// <summary>Binds the entries once the effect asset is known; returns whether they were bound now.</summary>
         public static bool Bind(ObjectDB db)
         {
@@ -38,10 +40,16 @@ namespace FeastMaster
             return true;
         }
 
-        /// <summary>Writes the configured values into the asset and the local player's running effect.</summary>
+        /// <summary>
+        /// Writes the configured values into the asset and the local player's running effect, like a food's values:
+        /// only once one is changed, and with the defaults (the asset's own) once set back.
+        /// </summary>
         public static void ApplyAll()
         {
             if (Duration == null || ObjectDB.instance == null)
+                return;
+            written |= Customized.Any(Duration, DurationPerComfort, StaminaRegen, HealthRegen, EitrRegen);
+            if (!written)
                 return;
             Apply(ObjectDB.instance.GetStatusEffect(SEMan.s_statusEffectRested) as SE_Rested);
             Player player = Player.m_localPlayer;

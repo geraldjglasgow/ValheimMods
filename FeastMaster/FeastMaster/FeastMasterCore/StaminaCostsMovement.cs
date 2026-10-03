@@ -11,6 +11,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.CheckRun))]
     public static class RunCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.RunCost, Settings.OutOfCombatRunCost);
+
         [HarmonyPrefix]
         public static void Prefix(Player __instance, out ScaledFields __state)
         {
@@ -29,6 +31,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Character), nameof(Character.Jump))]
     public static class JumpCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.JumpCost, Settings.OutOfCombatJumpCost, Settings.SkillDiscount);
+
         [HarmonyPrefix]
         public static void Prefix(Character __instance, out ScaledFields __state)
         {
@@ -49,6 +53,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.GetDodgeStaminaUse))]
     public static class DodgeCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.DodgeCost, Settings.OutOfCombatDodgeCost, Settings.SkillDiscount);
+
         [HarmonyPostfix]
         public static void Postfix(Player __instance, ref float __result)
         {
@@ -61,6 +67,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.OnSneaking))]
     public static class SneakCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.SneakCost, Settings.OutOfCombatSneakCost, Settings.FreeSneakingWithoutEnemies);
+
         [HarmonyPrefix]
         public static void Prefix(Player __instance, out ScaledFields __state)
         {
@@ -78,6 +86,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.OnSwimming))]
     public static class SwimCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.SwimCost);
+
         [HarmonyPrefix]
         public static void Prefix(Player __instance, out ScaledFields __state)
         {
@@ -95,6 +105,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
     public static class EncumberedCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.EncumberedCost);
+
         [HarmonyPrefix]
         public static void Prefix(Player __instance, out ScaledFields __state)
         {

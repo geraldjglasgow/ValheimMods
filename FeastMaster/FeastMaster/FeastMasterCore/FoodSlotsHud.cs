@@ -9,30 +9,48 @@ namespace FeastMaster
     /// <summary>
     /// The HUD's food slots. Hud.UpdateFood draws one food per entry of m_foodBars, m_foodIcons and m_foodTime and
     /// hides the entries beyond the foods held, so the three lists are extended to <see cref="FoodSlots.MaxSlots"/>
-    /// once, when the HUD is created, whatever Food Slots is. A new slot copies the last
-    /// one and moves it by the distance between the last two. The copied object is each element's slot root, the
-    /// highest ancestor that does not also hold the previous slot's element, so a slot built as one object with
-    /// its bar, icon and timer inside is copied once and its parts found in the copy by their path. Only Food Slots
-    /// of them are shown, see <see cref="FoodSlotFrames"/>.
+    /// once per HUD while Food Slots is changed: when the HUD is created, or at once when the setting changes with a
+    /// HUD already up. A new slot copies the last one and moves it by the distance between the last two. The copied
+    /// object is each element's slot root, the highest ancestor that does not also hold the previous slot's element,
+    /// so a slot built as one object with its bar, icon and timer inside is copied once and its parts found in the
+    /// copy by their path. Only Food Slots of them are shown, see <see cref="FoodSlotFrames"/>. An extended HUD stays
+    /// extended until it is rebuilt (the next login).
     /// </summary>
     [HarmonyPatch(typeof(Hud), nameof(Hud.Awake))]
     public static class FoodSlotsHud
     {
-        [HarmonyPostfix]
-        public static void Postfix(Hud __instance)
+        private static Hud extended;
+
+        public static bool Prepare() => Customized.Any(Settings.FoodSlots);
+
+        public static void Installed()
         {
-            int count = __instance.m_foodBars?.Length ?? 0;
-            if (count < 2 || count >= FoodSlots.MaxSlots || __instance.m_foodIcons?.Length != count || __instance.m_foodTime?.Length != count)
+            if (Hud.instance != null)
+                Extend(Hud.instance);
+        }
+
+        /// <summary>Whether the current HUD carries the extra slots, whose frames then still need hiding.</summary>
+        public static bool CurrentHudExtended => Hud.instance != null && extended == Hud.instance;
+
+        [HarmonyPostfix]
+        public static void Postfix(Hud __instance) => Extend(__instance);
+
+        private static void Extend(Hud hud)
+        {
+            int count = hud.m_foodBars?.Length ?? 0;
+            if (count < 2 || count >= FoodSlots.MaxSlots || hud.m_foodIcons?.Length != count || hud.m_foodTime?.Length != count)
                 return;
-            List<Image> bars = new List<Image>(__instance.m_foodBars);
-            List<Image> icons = new List<Image>(__instance.m_foodIcons);
-            List<TMP_Text> times = new List<TMP_Text>(__instance.m_foodTime);
+            List<Image> bars = new List<Image>(hud.m_foodBars);
+            List<Image> icons = new List<Image>(hud.m_foodIcons);
+            List<TMP_Text> times = new List<TMP_Text>(hud.m_foodTime);
             while (bars.Count < FoodSlots.MaxSlots)
                 AddSlot(bars, icons, times);
-            __instance.m_foodBars = bars.ToArray();
-            __instance.m_foodIcons = icons.ToArray();
-            __instance.m_foodTime = times.ToArray();
-            FoodSlotFrames.Capture(__instance);
+            hud.m_foodBars = bars.ToArray();
+            hud.m_foodIcons = icons.ToArray();
+            hud.m_foodTime = times.ToArray();
+            FoodSlotFrames.Capture(hud);
+            extended = hud;
+            PatchSwitch.MarkDirty();
         }
 
         private static void AddSlot(List<Image> bars, List<Image> icons, List<TMP_Text> times)

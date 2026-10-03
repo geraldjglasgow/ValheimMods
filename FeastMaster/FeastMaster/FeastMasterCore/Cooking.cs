@@ -20,6 +20,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(CookingStation), nameof(CookingStation.UpdateCooking))]
     public static class CookingPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.CookTimeMultiplier, Settings.FoodCanBurn) || CookTimes.AnyChanged();
+
         [HarmonyPrefix]
         public static void Prefix(CookingStation __instance, out CookingSwap __state) => __state = CookingRules.Swap(__instance);
 

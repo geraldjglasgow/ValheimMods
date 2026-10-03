@@ -14,6 +14,9 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Hud), nameof(Hud.UpdateFood))]
     public static class FoodSlotFrames
     {
+        /// <summary>Needed while Food Slots is changed, and afterwards as long as the HUD still has the extra slots.</summary>
+        public static bool Prepare() => Customized.Any(Settings.FoodSlots) || FoodSlotsHud.CurrentHudExtended;
+
         private static Transform[][] frames = new Transform[0][];
 
         /// <summary>Finds each slot's frames once the HUD's slot lists are complete.</summary>

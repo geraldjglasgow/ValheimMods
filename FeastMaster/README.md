@@ -1,7 +1,7 @@
 # FeastMaster
 
-Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain. Vanilla until you change a
-setting.
+Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain. Untouched until you change
+a setting: only what you change is patched, so it sits beside other mods that tune stamina, fishing or skills.
 
 ## Features
 - Foods and meads, modded ones too: global multipliers and a section per item, shown on tooltips.

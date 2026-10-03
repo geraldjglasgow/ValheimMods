@@ -26,6 +26,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.EatFood))]
     public static class PlayerEatFoodPatch
     {
+        public static bool Prepare() => Customized.AnyFoodValues();
+
         [HarmonyPrefix]
         public static void Prefix(ItemDrop.ItemData item)
         {
@@ -42,6 +44,8 @@ namespace FeastMaster
     [HarmonyPatch]
     public static class SEManAddStatusEffectPatch
     {
+        public static bool Prepare() => Customized.AnyMead();
+
         public static MethodBase TargetMethod()
         {
             return AccessTools.GetDeclaredMethods(typeof(SEMan)).First(m =>

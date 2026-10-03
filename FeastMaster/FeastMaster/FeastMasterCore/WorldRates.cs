@@ -44,9 +44,16 @@ namespace FeastMaster
         }
     }
 
+    /// <summary>Installed while an override is set; installing or removing it recomputes the rates at once.</summary>
     [HarmonyPatch(typeof(Game), nameof(Game.UpdateWorldRates))]
     public static class WorldRatesPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FoodRate, Settings.StaminaRate, Settings.MoveStaminaRate, Settings.StaminaRegenRate);
+
+        public static void Installed() => WorldRates.Refresh();
+
+        public static void Removed() => WorldRates.Refresh();
+
         [HarmonyPostfix]
         public static void Postfix() => WorldRates.ApplyOverrides();
     }

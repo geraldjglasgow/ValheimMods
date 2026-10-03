@@ -23,6 +23,7 @@ namespace FeastMaster
             if (file.SaveOnConfigSet)
                 file.Save();
             ItemValues.ApplyAll();
+            PatchSwitch.MarkDirty();
         }
 
         /// <summary>Binds with file writes and item value updates held back; returns whether sections were added.</summary>

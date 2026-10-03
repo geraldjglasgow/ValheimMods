@@ -2,10 +2,10 @@ Nexus Mods page text for FeastMaster (https://www.nexusmods.com/valheim/mods/210
 Paste each block into the matching field on the page's edit form. Category: Utilities.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain: global and per-item values, a fade curve, food slots, auto eat, Vigor, every stamina cost, cook and brew times, feast servings and HUD options. Vanilla until you change a setting. Server synced, hot reloaded.
+Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain: global and per-item values, a fade curve, food slots, auto eat, Vigor, every stamina cost, cook and brew times, feast servings and HUD options. Untouched until you change a setting. Server synced, hot reloaded.
 
 ===== DESCRIPTION (BBCode) =====
-Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain. Vanilla until you change a setting.
+Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain. Untouched until you change a setting: only what you change is patched, so it sits beside other mods that tune stamina, fishing or skills.
 
 [size=4][b]Features[/b][/size]
 [list]

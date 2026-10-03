@@ -7,6 +7,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player.Food), nameof(Player.Food.CanEatAgain))]
     public static class EatAgainPatch
     {
+        public static bool Prepare() => Customized.Any(FeastMasterData.EatAgainAt);
+
         private const float GameFraction = 0.5f;
 
         [HarmonyPostfix]
@@ -23,6 +25,12 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Skills), nameof(Skills.RaiseSkill))]
     public static class SkillGainPatch
     {
+        public static bool Prepare()
+        {
+            return Customized.Any(Settings.RunSkillGain, Settings.JumpSkillGain, Settings.SneakSkillGain, Settings.SwimSkillGain,
+                Settings.FishingSkillGain);
+        }
+
         [HarmonyPrefix]
         public static void Prefix(Skills.SkillType skillType, ref float factor)
         {
@@ -50,6 +58,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Character), nameof(Character.Damage))]
     public static class DrowningDamagePatch
     {
+        public static bool Prepare() => Customized.Any(Settings.DrowningDamage);
+
         [HarmonyPrefix]
         public static void Prefix(Character __instance, HitData hit)
         {

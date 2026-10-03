@@ -16,6 +16,9 @@ namespace FeastMaster
     {
         private static readonly HashSet<string> foods = new HashSet<string>();
         private static readonly Dictionary<string, SE_Stats> meads = new Dictionary<string, SE_Stats>();
+        // Foods and meads written at least once this session; see ShouldWrite.
+        private static readonly HashSet<Dictionary<string, ConfigEntry<float>>> writtenFoods = new HashSet<Dictionary<string, ConfigEntry<float>>>();
+        private static readonly HashSet<MeadEffectConfig> writtenMeads = new HashSet<MeadEffectConfig>();
         private static bool suspended;
 
         /// <summary>
@@ -81,9 +84,15 @@ namespace FeastMaster
                 Apply(item.m_shared, configs);
         }
 
-        /// <summary>Writes the configured values of one food into its shared data.</summary>
+        /// <summary>
+        /// Writes the configured values of one food into its shared data, once any of them (or a global multiplier) is
+        /// changed: a food at its defaults keeps whatever the game or another mod gave it. A food set back to its
+        /// defaults is still written, with those defaults (the values it had when it was bound), so it returns to them.
+        /// </summary>
         public static void Apply(ItemDrop.ItemData.SharedData shared, Dictionary<string, ConfigEntry<float>> configs)
         {
+            if (!ShouldWrite(writtenFoods, configs, Customized.FoodValues(configs)))
+                return;
             shared.m_food = configs[FeastMasterData.Health].Value * FeastMasterData.HealthModifier.Value;
             shared.m_foodStamina = configs[FeastMasterData.Stamina].Value * FeastMasterData.StaminaModifier.Value;
             shared.m_foodBurnTime = configs[FeastMasterData.Duration].Value * FeastMasterData.DurationModifier.Value;
@@ -139,9 +148,11 @@ namespace FeastMaster
             stats.m_time = elapsedFraction * stats.m_ttl;
         }
 
-        /// <summary>Writes the configured values of one mead into its status effect (the asset or a clone).</summary>
+        /// <summary>Writes the configured values of one mead into its status effect (the asset or a clone), like a food's.</summary>
         public static void Apply(SE_Stats effect, MeadEffectConfig config)
         {
+            if (!ShouldWrite(writtenMeads, config, Customized.Mead(config)))
+                return;
             effect.m_ttl = config.Duration.Value;
             effect.m_healthOverTime = config.HealthOverTime.Value;
             effect.m_staminaOverTime = config.StaminaOverTime.Value;
@@ -151,6 +162,13 @@ namespace FeastMaster
             effect.m_eitrRegenMultiplier = config.EitrRegenMultiplier.Value;
             effect.m_runStaminaDrainModifier = config.RunStaminaModifier.Value;
             effect.m_jumpStaminaUseModifier = config.JumpStaminaModifier.Value;
+        }
+
+        private static bool ShouldWrite<T>(HashSet<T> written, T item, bool customized)
+        {
+            if (customized)
+                written.Add(item);
+            return customized || written.Contains(item);
         }
 
         /// <summary>

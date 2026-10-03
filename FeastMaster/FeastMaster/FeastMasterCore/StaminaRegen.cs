@@ -11,6 +11,14 @@ namespace FeastMaster
     [HarmonyPatch(typeof(SEMan), nameof(SEMan.ModifyStaminaRegen))]
     public static class StaminaRegenMultiplierPatch
     {
+        public static bool Prepare()
+        {
+            return Customized.AnyFood(FeastMasterData.Vigor)
+                || Customized.Any(Settings.VigorPerStaminaPoint, Settings.VigorMultiplier, Settings.RegenCurveStrength,
+                    Settings.RegenCurvePivot, Settings.RegenPerExtraStaminaPoint, Settings.CountFoodStaminaOnly,
+                    Settings.SneakSkillRegenBonus, Settings.BlockingRegenFactor);
+        }
+
         [HarmonyPostfix]
         public static void Postfix(SEMan __instance, ref float staminaMultiplier)
         {
@@ -42,11 +50,14 @@ namespace FeastMaster
             return Mathf.Max(0f, ExtraStamina(player)) * perPoint;
         }
 
-        /// <summary>Max stamina above the base and the skill bonus, or the active foods' current stamina.</summary>
+        /// <summary>
+        /// Max stamina above the player's base (Base Stamina when changed, else the game's or another mod's) and the
+        /// skill bonus, or the active foods' current stamina.
+        /// </summary>
         private static float ExtraStamina(Player player)
         {
             if (!Settings.CountFoodStaminaOnly.Value)
-                return player.GetMaxStamina() - Settings.BaseStamina.Value - BaseValuesPatch.SkillBonus(player);
+                return player.GetMaxStamina() - player.m_baseStamina - BaseValuesPatch.SkillBonus(player);
 
             float total = 0f;
             foreach (Player.Food food in player.m_foods)
@@ -99,6 +110,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
     public static class RestrictedStaminaRegenPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.EncumberedRegenFraction, Settings.SwimmingRegenFraction, Settings.SwimmingRegenDelay);
+
         [HarmonyPostfix]
         public static void Postfix(Player __instance, float dt)
         {
@@ -143,6 +156,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.OnSwimming))]
     public static class SwimmingRegenDelayPatch
     {
+        public static bool Prepare() => RestrictedStaminaRegenPatch.Prepare();
+
         private static float lastStrokeTime = -1000f;
 
         [HarmonyPostfix]

@@ -16,11 +16,22 @@ namespace FeastMaster
             if (go.activeSelf != show)
                 go.SetActive(show);
         }
+
+        /// <summary>A hide patch was removed: the game never hides the number itself, so it is shown once here.</summary>
+        public static void ShowAgain(Func<Hud, TMP_Text> text)
+        {
+            if (Hud.instance != null)
+                Show(text(Hud.instance), true);
+        }
     }
 
     [HarmonyPatch(typeof(Hud), nameof(Hud.UpdateHealth))]
     public static class HideHealthNumberPatch
     {
+        public static bool Prepare() => Settings.HideHealthNumber.Value;
+
+        public static void Removed() => HudNumbers.ShowAgain(hud => hud.m_healthText);
+
         [HarmonyPostfix]
         public static void Postfix(Hud __instance) => HudNumbers.Show(__instance.m_healthText, !Settings.HideHealthNumber.Value);
     }
@@ -28,6 +39,10 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Hud), nameof(Hud.UpdateStamina))]
     public static class HideStaminaNumberPatch
     {
+        public static bool Prepare() => Settings.HideStaminaNumber.Value;
+
+        public static void Removed() => HudNumbers.ShowAgain(hud => hud.m_staminaText);
+
         [HarmonyPostfix]
         public static void Postfix(Hud __instance) => HudNumbers.Show(__instance.m_staminaText, !Settings.HideStaminaNumber.Value);
     }
@@ -35,6 +50,10 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Hud), nameof(Hud.UpdateEitr))]
     public static class HideEitrNumberPatch
     {
+        public static bool Prepare() => Settings.HideEitrNumber.Value;
+
+        public static void Removed() => HudNumbers.ShowAgain(hud => hud.m_eitrText);
+
         [HarmonyPostfix]
         public static void Postfix(Hud __instance) => HudNumbers.Show(__instance.m_eitrText, !Settings.HideEitrNumber.Value);
     }
@@ -46,6 +65,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Hud), nameof(Hud.UpdateFood))]
     public static class FoodTimersPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FoodTimersMode);
+
         [HarmonyPostfix]
         public static void Postfix(Hud __instance, Player player)
         {
@@ -66,6 +87,12 @@ namespace FeastMaster
         typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float), typeof(int), typeof(bool))]
     public static class VigorTooltipPatch
     {
+        public static bool Prepare()
+        {
+            return Customized.Any(Settings.VigorPerStaminaPoint, Settings.EitrVigorPerEitrPoint)
+                || Customized.AnyFood(FeastMasterData.Vigor) || Customized.AnyFood(FeastMasterData.EitrVigor);
+        }
+
         public const string VigorKey = "fm_vigor";
         public const string VigorUnitKey = "fm_vigor_regen";
         public const string EitrVigorKey = "fm_eitr_vigor";

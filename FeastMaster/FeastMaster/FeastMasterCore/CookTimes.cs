@@ -22,6 +22,20 @@ namespace FeastMaster
             return byStation.TryGetValue(prefabHash, out entries);
         }
 
+        /// <summary>Whether any station's recipe time differs from the game's.</summary>
+        public static bool AnyChanged()
+        {
+            foreach (Dictionary<ItemDrop, ConfigEntry<float>> entries in byStation.Values)
+            {
+                foreach (ConfigEntry<float> entry in entries.Values)
+                {
+                    if (Customized.Any(entry))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>Binds one station's section unless it has one already. Returns whether a section was added.</summary>
         public static bool Bind(string prefabName, CookingStation station)
         {

@@ -6,6 +6,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.BlockAttack))]
     public static class BlockCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.BlockCost, Settings.SkillDiscount);
+
         [HarmonyPrefix]
         public static void Prefix(Humanoid __instance, out ScaledFields __state)
         {
@@ -30,6 +32,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Attack), nameof(Attack.GetAttackStamina))]
     public static class AttackCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.AttackCost, Settings.ToolCost);
+
         [HarmonyPostfix]
         public static void Postfix(Attack __instance, ref float __result)
         {
@@ -43,6 +47,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.GetBuildStamina))]
     public static class ToolCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.ToolCost);
+
         [HarmonyPostfix]
         public static void Postfix(ref float __result) => __result *= Settings.ToolCost.Value;
     }
@@ -55,29 +61,23 @@ namespace FeastMaster
     [HarmonyPatch(typeof(FishingFloat), nameof(FishingFloat.FixedUpdate))]
     public static class FishingCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FishingHookedCost, Settings.FishingPullCost);
+
         [HarmonyPrefix]
-        public static void Prefix(FishingFloat __instance, out ScaledFields __state)
+        public static void Prefix(FishingFloat __instance, out ScaledGroup __state)
         {
-            __state = new ScaledFields
+            __state = new ScaledGroup
             {
-                Set = true,
-                First = __instance.m_hookedStaminaPerSec,
-                Second = __instance.m_hookedStaminaPerSecMaxSkill,
-                Third = __instance.m_pullStaminaUse,
+                First = CostRules.Scale(ref __instance.m_hookedStaminaPerSec, ref __instance.m_hookedStaminaPerSecMaxSkill, Settings.FishingHookedCost.Value),
+                Second = CostRules.Scale(ref __instance.m_pullStaminaUse, Settings.FishingPullCost.Value),
             };
-            __instance.m_hookedStaminaPerSec *= Settings.FishingHookedCost.Value;
-            __instance.m_hookedStaminaPerSecMaxSkill *= Settings.FishingHookedCost.Value;
-            __instance.m_pullStaminaUse *= Settings.FishingPullCost.Value;
         }
 
         [HarmonyFinalizer]
-        public static void Finalizer(FishingFloat __instance, ScaledFields __state)
+        public static void Finalizer(FishingFloat __instance, ScaledGroup __state)
         {
-            if (!__state.Set)
-                return;
-            __instance.m_hookedStaminaPerSec = __state.First;
-            __instance.m_hookedStaminaPerSecMaxSkill = __state.Second;
-            __instance.m_pullStaminaUse = __state.Third;
+            CostRules.Restore(ref __instance.m_hookedStaminaPerSec, ref __instance.m_hookedStaminaPerSecMaxSkill, __state.First);
+            CostRules.Restore(ref __instance.m_pullStaminaUse, __state.Second);
         }
     }
 
@@ -85,6 +85,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Fish), nameof(Fish.GetStaminaUse))]
     public static class FishStaminaUsePatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FishingPullCost);
+
         [HarmonyPostfix]
         public static void Postfix(ref float __result) => __result *= Settings.FishingPullCost.Value;
     }
@@ -93,6 +95,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(SE_Harpooned), nameof(SE_Harpooned.UpdateStatusEffect))]
     public static class HarpoonCostPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.HarpoonCost);
+
         [HarmonyPrefix]
         public static void Prefix(SE_Harpooned __instance, out ScaledFields __state)
         {

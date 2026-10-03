@@ -11,6 +11,14 @@ namespace FeastMaster
         public float Third;
     }
 
+    /// <summary>Up to three independently scaled sites of one call; each is left alone while its multiplier is 1.</summary>
+    public struct ScaledGroup
+    {
+        public ScaledFields First;
+        public ScaledFields Second;
+        public ScaledFields Third;
+    }
+
     /// <summary>The rules shared by the stamina cost patches: out of combat, free sneaking and the skill discount.</summary>
     public static class CostRules
     {

@@ -13,6 +13,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateFood))]
     public static class AutoEatPatch
     {
+        public static bool Prepare() => Settings.AllowAutoEat.Value && Settings.AutoEat.Value;
+
         // Eating calls UpdateFood again (forced); that nested call must not start a second auto-eat.
         private static bool eating;
 

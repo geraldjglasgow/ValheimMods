@@ -11,6 +11,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateFood))]
     public static class ContinuousFoodHealingPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.ContinuousFoodHealing);
+
         private const float TickSeconds = 10f;
 
         [HarmonyPrefix]

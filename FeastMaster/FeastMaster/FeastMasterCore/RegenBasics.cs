@@ -11,29 +11,25 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
     public static class RegenBasicsPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.StaminaRegenMultiplier, Settings.LowStaminaRegenBonus, Settings.EitrRegenMultiplier);
+
         [HarmonyPrefix]
-        public static void Prefix(Player __instance, out ScaledFields __state)
+        public static void Prefix(Player __instance, out ScaledGroup __state)
         {
-            __state = new ScaledFields
+            __state = new ScaledGroup
             {
-                Set = true,
-                First = __instance.m_staminaRegen,
-                Second = __instance.m_staminaRegenTimeMultiplier,
-                Third = __instance.m_eiterRegen,
+                First = CostRules.Scale(ref __instance.m_staminaRegen, Mathf.Max(0f, Settings.StaminaRegenMultiplier.Value)),
+                Second = CostRules.Scale(ref __instance.m_staminaRegenTimeMultiplier, Mathf.Max(0f, Settings.LowStaminaRegenBonus.Value)),
+                Third = CostRules.Scale(ref __instance.m_eiterRegen, Mathf.Max(0f, Settings.EitrRegenMultiplier.Value)),
             };
-            __instance.m_staminaRegen *= Mathf.Max(0f, Settings.StaminaRegenMultiplier.Value);
-            __instance.m_staminaRegenTimeMultiplier *= Mathf.Max(0f, Settings.LowStaminaRegenBonus.Value);
-            __instance.m_eiterRegen *= Mathf.Max(0f, Settings.EitrRegenMultiplier.Value);
         }
 
         [HarmonyFinalizer]
-        public static void Finalizer(Player __instance, ScaledFields __state)
+        public static void Finalizer(Player __instance, ScaledGroup __state)
         {
-            if (!__state.Set)
-                return;
-            __instance.m_staminaRegen = __state.First;
-            __instance.m_staminaRegenTimeMultiplier = __state.Second;
-            __instance.m_eiterRegen = __state.Third;
+            CostRules.Restore(ref __instance.m_staminaRegen, __state.First);
+            CostRules.Restore(ref __instance.m_staminaRegenTimeMultiplier, __state.Second);
+            CostRules.Restore(ref __instance.m_eiterRegen, __state.Third);
         }
     }
 
@@ -41,6 +37,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.RPC_UseStamina))]
     public static class StaminaRegenDelayPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.StaminaRegenDelay);
+
         [HarmonyPrefix]
         public static void Prefix(Player __instance, out ScaledFields __state)
         {
@@ -55,6 +53,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.RPC_UseEitr))]
     public static class EitrRegenDelayPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.EitrRegenDelay);
+
         [HarmonyPrefix]
         public static void Prefix(Player __instance, out ScaledFields __state)
         {

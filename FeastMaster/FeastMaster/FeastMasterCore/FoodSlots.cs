@@ -76,6 +76,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.CanEat))]
     public static class FoodSlotsCanEatPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FoodSlots);
+
         [HarmonyPrefix]
         public static bool Prefix(Player __instance, ItemDrop.ItemData item, bool showMessages, ref bool __result)
         {
@@ -107,6 +109,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.EatFood))]
     public static class FoodSlotsEatPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FoodSlots);
+
         [HarmonyPrefix]
         [HarmonyPriority(Priority.Low)]
         public static bool Prefix(Player __instance, ItemDrop.ItemData item, ref bool __result)

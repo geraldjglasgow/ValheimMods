@@ -12,6 +12,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Fermenter), nameof(Fermenter.GetStatus))]
     public static class FermentationTimePatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FermentationTime);
+
         [HarmonyPrefix]
         public static void Prefix(Fermenter __instance, out ScaledFields __state)
         {
@@ -63,6 +65,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Fermenter), nameof(Fermenter.DelayedTap))]
     public static class TapYieldPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.BatchYield);
+
         [HarmonyPrefix]
         public static void Prefix(Fermenter __instance, out int[] __state) => __state = FermenterYield.Swap(__instance);
 

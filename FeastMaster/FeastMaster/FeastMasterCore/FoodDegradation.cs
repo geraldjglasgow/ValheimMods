@@ -12,6 +12,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.GetTotalFoodValue))]
     public static class PlayerFoodDegradationPatch
     {
+        public static bool Prepare() => Customized.Any(FeastMasterData.DisableFoodDegradation, FeastMasterData.DegradationCurve);
+
         private const float GameCurve = 0.3f;
 
         [HarmonyPrefix]

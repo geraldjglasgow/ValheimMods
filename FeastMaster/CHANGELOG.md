@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.7.0
+
+- Settings at their defaults no longer touch the game: FeastMaster only patches what a changed setting needs, so
+  other mods' fishing, movement, skill, base value and regeneration changes keep working alongside it.
+- Setting a value back to its default removes its patch and gives the game (or the other mod) its value back.
+- Fixed: fishing costs, the regen multipliers and base health and stamina were rewritten even at their defaults.
+- Foods, meads and Rested keep their own (or another mod's) values until one of theirs is changed.
+- The log names the patches that changed settings installed.
+
 ## 4.6.1
 
 - Shorter store page and changelog; nothing changes in game.

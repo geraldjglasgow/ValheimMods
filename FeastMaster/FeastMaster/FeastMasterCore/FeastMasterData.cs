@@ -89,6 +89,7 @@ namespace FeastMaster
             if (BindAll(db))
                 FeastMaster.Log.LogInfo($"Loaded {FoodConfigs.Count} food and {MeadConfigs.Count} mead configurations in {stopwatch.ElapsedMilliseconds} ms.");
             ItemValues.ApplyAll();
+            PatchSwitch.MarkDirty();
         }
 
         /// <summary>

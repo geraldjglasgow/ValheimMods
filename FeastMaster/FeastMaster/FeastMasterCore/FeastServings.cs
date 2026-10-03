@@ -33,6 +33,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Feast), nameof(Feast.GetStack))]
     public static class FeastStackPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FeastServings);
+
         [HarmonyPrefix]
         public static void Prefix(Feast __instance, out int __state) => __state = FeastServings.Swap(__instance);
 
@@ -47,6 +49,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Feast), nameof(Feast.GetStackPercentige))]
     public static class FeastShareLeftPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FeastServings);
+
         [HarmonyPrefix]
         public static void Prefix(Feast __instance, out int __state) => __state = FeastServings.Swap(__instance);
 
@@ -60,6 +64,8 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Feast), nameof(Feast.GetHoverText))]
     public static class FeastHoverPatch
     {
+        public static bool Prepare() => Customized.Any(Settings.FeastServings);
+
         [HarmonyPrefix]
         public static void Prefix(Feast __instance, out int __state) => __state = FeastServings.Swap(__instance);
 

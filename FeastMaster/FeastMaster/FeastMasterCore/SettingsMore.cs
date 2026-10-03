@@ -78,13 +78,13 @@ namespace FeastMaster
             FishingHookedCost = BindCost(config, "Fishing Hooked Cost", "holding a hooked fish on the line", "the world Stamina Rate in section 7");
             HarpoonCost = BindCost(config, "Harpoon Cost", "pulling a harpooned creature", "the world Stamina Rate in section 7");
             DrowningDamage = config.Bind(StaminaCostsSection, "Drowning Damage", 1f,
-                "Multiplier on the damage taken each second while swimming without stamina. 1 = vanilla, 0 = harmless.");
+                "Multiplier on the damage taken each second while swimming without stamina. 1 = untouched, 0 = harmless.");
         }
 
         private static ConfigEntry<float> BindCost(SyncedConfiguration config, string key, string action, string stacks)
         {
             return config.Bind(StaminaCostsSection, key, 1f,
-                $"Multiplier on the stamina drained by {action}. 1 = vanilla, 0 = free, 2 = double. Multiplies with {stacks}.");
+                $"Multiplier on the stamina drained by {action}. 1 = untouched, 0 = free, 2 = double. Multiplies with {stacks}.");
         }
 
         private static void BindOutOfCombat(SyncedConfiguration config)
@@ -103,9 +103,9 @@ namespace FeastMaster
         private static void BindBaseValues(SyncedConfiguration config)
         {
             BaseHealth = config.Bind(BaseValuesSection, "Base Health", 25f,
-                "Health a player has with no food. The game uses 25.");
+                "Health a player has with no food. The game uses 25; at 25 FeastMaster leaves it alone, so another mod's value stands.");
             BaseStamina = config.Bind(BaseValuesSection, "Base Stamina", 75f,
-                "Stamina a player has with no food. The game uses 75. Regen Per Extra Stamina Point counts stamina above this value, so raising it lowers that bonus.");
+                "Stamina a player has with no food. The game uses 75; at 75 FeastMaster leaves it alone, so another mod's value stands. Regen Per Extra Stamina Point counts stamina above this value, so raising it lowers that bonus.");
             RunSkillStamina = BindSkillStamina(config, "Run Skill Stamina", "Run");
             JumpSkillStamina = BindSkillStamina(config, "Jump Skill Stamina", "Jump");
             SneakSkillStamina = BindSkillStamina(config, "Sneak Skill Stamina", "Sneak");
@@ -131,7 +131,7 @@ namespace FeastMaster
         private static ConfigEntry<float> BindSkillGain(SyncedConfiguration config, string key, string skill)
         {
             return config.Bind(SkillsSection, key, 1f,
-                $"Multiplier on the experience the {skill} skill earns. The world's skill gain rate still applies on top.");
+                $"Multiplier on the experience the {skill} skill earns. 1 = untouched. The world's skill gain rate still applies on top.");
         }
 
         private static void BindWorldRates(SyncedConfiguration config)
