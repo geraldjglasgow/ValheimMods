@@ -9,8 +9,7 @@ after killing boss once you can click to randomize maybe slayer skill
 deer should have fewer mutations
 gilded should be more rare and many elite creatures can't be gilded
 make miasmic more annoying
-phasing - it goes in and out of visibility
-relentless - large creatures should be, isnce they can be way easier to kill
+relentless - large creatures shouldn't be, isnce they can be way easier to kill
 devoucing - large creatures can't be devoured. a creature can only devour creatures that have less than or equal hp as them. bosses cannot be devoured
 shorten bloated explode wait time to 1.5s
 Bosses should drop more heads per star level, 4 stars so it will drop 5 heads + the number of players in combat 
@@ -21,7 +20,7 @@ more mutations
 * Corrodent — Attacks shatter target player armor durability at three times the normal rate.
 * Juggernaut — Cannot be staggered, knocked back, or stunned by any attack or parry.
 * Mimicry — Disguises its nameplate and appearance as a harmless creature or resource node until within 5 meters.
-* Phase-Shifting — Becomes completely intangible and invulnerable for 2 seconds after taking a critical hit or backstab.
+* Phasing — it goes in and out of visibility
 * Decoy — Spawns two low-health illusions upon first being damaged; illusions deal no damage but draw agro.
 * Repelling — Emits a continuous kinetic aura that deflects incoming arrows and throwables.
 * Temporal — Reverts its health and position back to what it was 5 seconds prior once per fight when dropping below 20% health.s
@@ -34,12 +33,20 @@ Elder: if hit by the ranged attack the vines bind around you and player must hel
 Elder: hurls boulder that rolls across lansscape for a short distance
 
 boss aspects: 
-* Portapolbound: certain attacks have a portal show up on the boss atatcking feature (liek hand) and another portal shows up somewhere randomly. The attack now comes from there.
+* Portalbound: certain attacks have a portal show up on the boss atatcking feature (liek hand) and another portal shows up somewhere randomly. The attack now comes from there.
 * Bountiful	periodically phases out, teleports behind a player, then phases back in, Drops 100% bonus loot and double trophies, but gains 25% extra maximum health
 * Nightfall	Forces the environment into permanent storming midnight for the duration of the fight, triggering Cold debuffs.
 * Corrupted the area grows corrupted over time causing you to have to move aroudn with the boss to avoid being in corruption
-* Teathered - two bosses spawn. the further away their  health is from eachother, the faster they attack
+* Teathered - two bosses spawn with a like subtle teather between them. the further away their current health is from eachother, the faster they attack and the more armor the less hp one has.
 * Brutal - certain attacks knock players back very far. they take damage from the attack, but not from a fall/collision while being knocked back.
+
+look in /Users/gglasgow/projects/ValheimMods/EliteCreaturesReborn, I have some enhancements I want done. boss aspects: * Teathered - two
+  bosses spawn with a like subtle teather between them. the further away their current health is from eachother,
+  the faster they attack and the more armor the less hp one has.,
+  
+  
+   also do star loot modifiers apply to bosses? bosses should drop N+1 trophies, where N is the number of
+  stars a creatures has.
 
 
 EliteCreaturesPack
@@ -88,20 +95,6 @@ crafting shield stands for ShipConfig
 shipwrite workbench for crafting ship things
 
 EliteCrafting
-should we have different bases? like finewood bow is a low base, so you can get and make mythic, but the stats won't be extremely crazy.  
-The extremely crazy stats are for late game mythics. so like starter bow T1 = +5% damage to staggered enemies. but the best bow in late game may be T1 +25% damage to staggered enemies
-Allow socketing some kind of upgrades into items with sockets + need item to add socket, but only like up to 2. RNG drop can have 3 or maybe 4
-implement vaal orb
-catalysts
-Essencess
-Omens
-Boots, 2 rings, amulet
-table that you can do liek 'i want to keep this modifier, and these re the modifiers i want, then it tells you what to do or you click a button and it uses the currency
-See if there is a way to know what player has crafted what items. You only get monster drops for items you've already crafted.
-
-FeastMaster
-remove stars o
-
 can we make a branch for elite crafting purposes? I want to remove everying so far and start fresh. branch name should be like simple-elite-crafting. 
 in poe that path I described above is 
 
@@ -115,19 +108,13 @@ Chaos Rune - irreversibly modifies an item, sealing it so it can no longer be mo
 I need this simple version of the mod made. reuse the rock assset and color it different colors for each of the 6 currency items. 
 We also need to name these
 
+Grindstone skills
+- remove stars o
 
-make the model
-make the skeleton
-
-tripo for the model
-seedance 2.5 
-
-
-
-
+Feastmaster
+- github issue
 
 
 [Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property '_ChestTex'
 [Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property '_ChestBumpMap'
-[Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property '_ChestMetal'
-[Info   : Unity Log] 10/03/2026 01:13:15: Spawned Greydwarf_Shaman x 1
+[Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property
