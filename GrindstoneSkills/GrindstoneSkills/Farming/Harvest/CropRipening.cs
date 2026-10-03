@@ -39,8 +39,6 @@ namespace GrindstoneSkills
             bool rolls = CropRoll.Rolls(crop);
             int stars = rolls ? StarOdds.Roll(CropRoll.Effective(grower, Companions.Count(grown.transform.position, crop))) : 0;
             bool giant = CropRoll.RollGiant(grower.Level);
-            if (giant && rolls)
-                stars = Stars.Max;
             CropKeys.Write(nview.GetZDO(), stars, giant, crop.PrefabHash);
             float size = CropLook.Size(stars, giant);
             if (size > 1f)

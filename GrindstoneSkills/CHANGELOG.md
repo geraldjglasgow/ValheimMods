@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0
+
+- Removed: stars on dishes, wild picks, crops and seeds. Nothing rolls a star any more, so items stack like vanilla.
+- Giant crops are no longer 3-star. The star settings stay in the config but do nothing.
+- Items that are already starred keep their stars.
+
 ## 0.12.1
 
 - Fixed: no more "LiberationSans SDF Font Asset was not found" warnings from the skill book and the fishing tension bar.
