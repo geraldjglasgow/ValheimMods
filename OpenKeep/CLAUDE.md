@@ -5,10 +5,12 @@ Storage and inventory for Valheim, version 1.7.0: crafting, building and station
 sizes and weights (Stacks), container sizes, station capacities and hover contents (Capacity), carts as
 workbenches (Carts), several
 players in one chest (Shared), a contents sign above every player-built container (Signs), a - amount + stepper
-beside the Craft button (Batch), and base tweaks outside
+beside the Craft button and a craft speed (Batch), a recipe search, favourite recipes and list or grid views in the
+crafting panel (Recipe List), recipes pinned to the HUD with their materials (Recipe Tracker), and base tweaks outside
 storage: respawn at the nearest owned bed, pieces on wooden floors, honey per day, fires refuelling from nearby
 containers, torches lit only at night, smelters and kilns feeding themselves from the containers beside them and gear
-repaired when a crafting station opens (Homestead). The player's own inventory (a bigger grid, labelled slots, a key
+repaired when a crafting station opens (Homestead), and a build camera detached from the player near a crafting
+station (Build Camera). The player's own inventory (a bigger grid, labelled slots, a key
 ring, backpacks and the look) is the separate mod PackPanel, which this one works with (see "PackPanel" under the decisions). Written black-box
 from `SPEC.md` (deleted after the in-game verification) and the game code alone, by module agents following
 `PLAN.md`; the rules are under "Developing mods" in `../CLAUDE.md`.
@@ -178,15 +180,8 @@ OpenKeep/OpenKeep/src/
     BedPinLook.cs, BedPinLookPatch.cs   bed icons yellow (Minimap.UpdatePins postfix); twice the size and pulsing
                             while choosing
     BedStandPatch.cs        Player.OnSpawned postfix: after a death, the game's getting-up animation is skipped
-    QuickWait.cs            the distance-to-wait line shared by Quick Respawn and Quick Portals
-    PortalFeature.cs, PortalSettings.cs   Quick Portals, Quick Portal Range, Quick Portal Seconds
-    PortalQuick.cs, PortalQuickPatch.cs   Player.UpdateTeleport prefix: m_teleportTimer runs faster up to 8 s
-    PortalScreen.cs, PortalStartPatch.cs, PortalScreenPatch.cs   no teleport screen for a jump into an area already
-                            loaded: decided in the Player.TeleportTo postfix, applied in Hud.UpdateBlackScreen
-    PortalLoad.cs, PortalLoadPatch.cs   ZoneSystem.Update postfix: while a jump or respawn waits, more zones per frame
-    PortalObjects.cs, PortalObjectsPatch.cs   ZNetScene.CreateDestroyObjects postfix: more objects per run, only in
-                            zones whose land is loaded
-    AreaSettle.cs           on a server's client: the objects around a point have stopped arriving (0.5 s quiet)
+    (AreaLoading library)   the distance-to-wait line (QuickWait), the server settle (AreaSettle) and Quick Area
+                            Loading for the respawn (AreaLoader.When(BedWait.LoadingLand)); portal speed is Wayfare's
     BedChecks.cs            IsLive, IsUnclaimed, IsLocal (ZDO owner vs profile id), IsSpawnPoint
     BedDeathPatch.cs, BedRespawnPatch.cs, BedSpawnedPatch.cs, BedSeenPatch.cs, BedUsePatch.cs, BedHoverPatch.cs,
     BedGonePatch.cs         one patch class per game method
@@ -272,13 +267,74 @@ OpenKeep/OpenKeep/src/
   Batch/                    section 10
     BatchModule.cs, BatchSettings.cs   section 10. Batch Crafting (no words of its own)
     BatchAmount.cs          the amount: where it applies, back to 1 on another recipe, CanMake, Limit (binary
-                            search), the - and + steps with Shift and Ctrl, a typed amount, NextCraft for Reach's
-                            Pull modifier
+                            search), the - and + steps with Shift and Ctrl, the gamepad's fast repeat, a typed
+                            amount, NextCraft for Reach's Pull modifier, Current (its recipe, for the tracker)
     BatchDrive.cs           writes the amount into the game's multi-craft fields, puts the game's back, keeps a
                             started craft's amount for DoCrafting
     BatchStepper.cs         the UI: - amount + left of the Craft button, which gives up the width
-    BatchField.cs           the amount as a TMP_InputField: digits typed, set on Enter or a click elsewhere
+    BatchField.cs           the amount as the game's GuiInputField: digits typed, set on Enter or a click
+                            elsewhere; Steam's keyboard in Big Picture
+    BatchWheel.cs           the mouse wheel on the buttons and the amount
+    CraftSpeed.cs           Craft Speed: the game's craft durations remembered at Awake, divided before UpdateRecipe
     BatchPatches.cs         InventoryGui.Awake, UpdateRecipe, OnCraftPressed, DoCrafting
+  Recipes/                  section 12, the local player's client only (no ZDO key, RPC or file)
+    RecipeListModule.cs, RecipeListSettings.cs, RecipeWords.cs   section 12. Recipe List (all unsynced), ok_recipe_*
+    RecipeView.cs           List, CompactList, SmallGrid, MediumGrid, LargeGrid
+    RecipeKeys.cs           a recipe's key in saved lists (the recipe asset's name) and the lookup back
+    RecipeFavourites.cs     favourite recipes and favourites only in the character's custom data; Rebuild (the
+                            game's own UpdateCraftingPanel)
+    RecipeQuery.cs          the search text as a filter: words, @material, -not
+    RecipeNeeds.cs          which materials count: the game's upgrader rule (also the tracker's rows)
+    RecipeFilter.cs         after UpdateRecipeList: drops hidden rows, favourites first, lays out, decorates
+    RecipeLayout.cs, RecipeTile.cs   row and tile places for the view; a row reshaped into a tile or a compact row
+    RecipeRows.cs           per row: the star, middle click (favourite), right click (track), the hover for F
+    RecipeStar.cs           the build menu's favourite star (sprite and colour), OpenKeep's drawn star before it
+    RecipeTips.cs           the game's tooltips (the inventory slots' prefab) on OpenKeep's parts and on tiles
+    RecipeSprites.cs        the view button's drawn icons
+    PanelButton.cs          copies of the crafting panel's buttons without their gamepad key and hint
+    SearchBar.cs            the row above the list: a copy of the build menu's search field; the list gives up
+                            the row's height; debounced rebuild; cleared on close
+    SearchButtons.cs        favourites only star (Shift: clear all) and view button at the row's end
+    RecipeActions.cs        Track and favourite buttons beside the Style button under the recipe's name
+    RecipeInput.cs          Search Key, Stow's Favourite Item Key over a row, the search's debounce tick
+    RecipeGamepad.cs        right stick shortcuts (once per push) and grid stepping, from UpdateRecipeGamepadInput
+    TypingGuard.cs, TypingWatch.cs   E, Tab and Escape do not close the inventory while a panel field is focused
+    RecipeListPatches.cs    InventoryGui.Awake, UpdateCraftingPanel (prefix first, postfix), UpdateRecipeList,
+                            UpdateRecipeGamepadInput, Update (prefix first, postfix), Hide, UpdateRecipe
+  Tracker/                  section 13, the local player's client only (no ZDO key, RPC or file)
+    TrackerModule.cs, TrackerSettings.cs, TrackerWords.cs, TrackerFont.cs   section 13. Recipe Tracker (all
+                            unsynced), ok_tracker_*
+    TrackedRecipe.cs        key, quality, amount, upgrader; saved as key|quality|amount (|u at an upgrader)
+    TrackerList.cs          the tracked list in the character's custom data, toggle, remove, step, crafted
+    TrackerCounts.cs        need (requirement x amount) and have (inventory, and Reach's containers)
+    TrackerHud.cs           on the HUD's object: build, show or hide, rebuild on change, count twice a second
+    TrackerPanel.cs         the column under hudroot, its own canvas above the inventory's, background, title
+    TrackerEntry.cs         one recipe: header (icon, name, - x+ X), station line, material rows
+    TrackerUi.cs, TrackerStyle.cs   texts, icons, rows, text buttons; fonts and colours from the settings
+    TrackerDrag.cs, TrackerWheel.cs   drag by the title (Position written), the wheel on a header
+    TrackerVisibility.cs    on, something tracked, alive, no large map, no threat for 5 s; the free cursor
+    CraftWatch.cs, TrackerPatches.cs   Hud.Awake (adds TrackerHud), DoCrafting prefix (Priority.Low) and postfix
+  BuildCamera/              section 11, the local player's client only (no ZDO key, RPC or file)
+    CameraModule.cs, CameraSettings.cs, CameraPrefs.cs   section 11. Build Camera (synced gameplay keys; unsynced
+                            keys, speed, head light, panel) and the ok_cam_* words
+    CameraState.cs          out or not, position, yaw and pitch; out only while its player is the local player
+    CameraToggle.cs         Player.Update postfix: Toggle Key / Gamepad Toggle in and out, every end condition
+    PadToggle.cs            Gamepad Toggle: ZInput button names joined with +
+    CameraArea.cs           where the camera may be: station build range x Range Multiplier, flat and as high
+    CameraNeeds.cs          Resting and comfort conditions, read where the player stands
+    CameraMotion.cs         one frame of flying: movement keys and left stick flat, Jump/Crouch and the triggers up
+                            and down, Run faster; held in the area, then swept
+    CameraCollision.cs      sphere sweep and slide against terrain and static_solid
+    CameraViewPatches.cs    GameCamera.GetCameraPosition (the pose), UpdateListner (sound on the camera),
+                            LightLod.GetLightReferencePoint (light fading from the camera), GameCamera.LateUpdate
+                            (head light, panel)
+    CameraInputPatches.cs   Player.SetMouseLook (look turns the camera), Player.SetControls (the body at rest)
+    CameraReach.cs, CameraReachPatches.cs   the game's four build rays measured from the camera: PieceRayTest,
+                            RemovePiece, CopyPiece, UpdateWearNTearHover (prefix + finalizer around
+                            m_maxPlaceDistance)
+    CameraPickup.cs         Player.FixedUpdate postfix: the game's auto pickup around the camera
+    PickupPanel.cs, PickupPanelLook.cs   the HUD panel saying why camera pickup holds back, in the build menu's look
+    CircletSource.cs, CircletLight.cs   the light worn on the head, copied onto the camera
 OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, OpenKeep.Stow.yml,
                             OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml,
                             OpenKeep.Stations.yml
@@ -289,7 +345,8 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.14.0]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.0.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -333,9 +390,8 @@ orphan check component on automatic signs; their `WearNTear` wear switched off),
 `ObjectDB.CopyOtherDB` (both `Priority.Low`), `Player.GetFirstRequiredItem`, `Player.HaveRequirementItems`,
 `Player.HaveRequirements(Piece, RequirementMode)`, `Player.OnDeath` (the nearest own bed becomes the spawn point;
 the choice of bed opens, or Quick Respawn moves the respawn request),
-`Player.TeleportTo(Vector3, Quaternion, bool)` (a long jump of the local player: is its target already loaded),
-`ZoneSystem.Update()` (private: Quick Area Loading, land), `ZNetScene.CreateDestroyObjects()` (private: Quick Area
-Loading, objects),
+`ZoneSystem.Update()` and `ZNetScene.CreateDestroyObjects()` (private: Quick Area Loading for the respawn, installed
+by name by the AreaLoading library, `AreaLoader.Install` in `Plugin.Awake`),
 `Player.OnSpawned(bool)` (waiting bed changes written, the fallback dropped; after a death, no getting-up
 animation, a class of its own), `Player.PlacePiece`, `Player.Update` (Reach keys; Dump Key;
 request timeouts; Torch Switch Key), `Switch.GetHoverText`, `Terminal.InitTerminal`, `Vagon.Awake`, `Vagon.GetHoverText`, `WearNTear.Remove(bool)`
@@ -344,9 +400,9 @@ station list and caps; Homestead's Build On Wood; all `Priority.Low`).
 Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Game._RequestRespawn()` (private: the
 choice of bed ends), `Game.FindSpawnPoint(out Vector3, out bool, float)` (Quick Respawn's load speed, a class of its
 own beside the prefix and postfix below), `Hud.UpdateBlackScreen(Player, float)` (private: no black screen during
-the choice of bed; none during a jump into an area already loaded, a class of its own), `Minimap.OnMapDblClick()` and `Minimap.OnMapLeftClick()` (during the choice of bed: no new pin,
-a click picks a bed), `Minimap.Update()` (private: the map during the choice of bed, skipping the game's update),
-`Player.UpdateTeleport(float)` (private: Quick Portals), `Container.RPC_OpenResponse(long, bool)`
+the choice of bed), `Minimap.OnMapDblClick()` and `Minimap.OnMapLeftClick()` (during the choice of bed: no new pin,
+a click picks a bed; the click one `Priority.First`), `Minimap.Update()` (private: the map during the choice of bed, skipping the game's update),
+`Container.RPC_OpenResponse(long, bool)`
 (a refusal is silent while viewing), `InventoryGrid.DropItem(Inventory, ItemData, int, Vector2i)` (Shared,
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
 modifier; Salvage tab; Batch, with a postfix too), `InventoryGui.UpdateRecipe(Player, float)` (Batch drives the
@@ -364,6 +420,22 @@ path; remember), `Beehive.UpdateBees()` (honey rate and progress on the hive's Z
 `InventoryGui.Show(Container, int)` (auto sort),
 `InventoryGui.UpdateCraftingPanel(bool)`, `Player.Repair(ItemDrop.ItemData, Piece)` (private; area repair on the
 repairing player's client once the game's own repair went out), `Smelter.OnAddFuel`, `Smelter.OnAddOre`.
+Build Camera: postfix `Player.Update` (toggle, end conditions), `Player.FixedUpdate` (private: camera pickup),
+`GameCamera.LateUpdate` (private: head light, panel), `GameCamera.UpdateListner` (private: the listener stays on the
+camera); prefix `GameCamera.GetCameraPosition(float, out Vector3, out Quaternion)` (private: skipped while the camera
+is out), `LightLod.GetLightReferencePoint()` (private static: the camera while out), `Player.SetMouseLook(Vector2)`,
+`Player.SetControls(...)` (twelve parameters); prefix and finalizer `Player.PieceRayTest(out Vector3, out Vector3, out
+Piece, out Heightmap, out Collider, bool)`, `Player.RemovePiece()`, `Player.CopyPiece()`,
+`Player.UpdateWearNTearHover()` (all private: `m_maxPlaceDistance` swapped for the one call, put back in the finalizer).
+Recipe List: postfix `InventoryGui.Awake` (the typing watch; Track and favourite buttons), `InventoryGui.UpdateRecipeList(List<Recipe>)`
+(private: filter, favourites first, layout, row hooks), `InventoryGui.Update` (Search Key, F over a row, the search's
+debounce), `InventoryGui.Hide` (Clear Search On Close), `InventoryGui.UpdateRecipe(Player, float)` (the Track and
+favourite buttons); prefix `InventoryGui.UpdateCraftingPanel(bool)` (`Priority.First`, and a postfix: the search row
+and the list's height), `InventoryGui.UpdateRecipeGamepadInput()` (private: right stick shortcuts; grid stepping,
+skipping the game's), `InventoryGui.Update()` (`Priority.First`: while a panel field is focused, the Use and Inventory
+presses dropped and a frame with Escape skipped). Batch's `UpdateRecipe` prefix also sets the craft durations (Craft
+Speed). Recipe Tracker: postfix `Hud.Awake()` (private: adds the tracker's driver); prefix (`Priority.Low`, after
+Batch has put the started amount back) and postfix `InventoryGui.DoCrafting(Player)` (a tracked recipe made).
 Prefix and finalizer (the payment window): `InventoryGui.DoCrafting`, `Player.ConsumeResources`. Batch has its own
 prefix (`Priority.First`, the started craft's amount) and finalizer on `InventoryGui.DoCrafting`.
 
@@ -385,15 +457,24 @@ Lines`, `Hover Fill`), `6. Carts` (`Cart Workbench`, `Cart Station Level`, `Cart
 (`Enabled` false, `Show Counts` false, `Max Items` 4, `Max Characters` 50, `Update Seconds` 2, `Height` 0.1,
 `Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Bed Choice Seconds` 30 (0 to 60), `Quick
 Respawn` true, `Quick Respawn Range` 1000 (10 to 20000), `Quick Respawn Seconds` 1 (0 to 18), `Stand Up On
-Respawn` true, `Quick Portals` true,
-`Quick Portal Range` 10000 (10 to 20000), `Quick Portal Seconds` 0.5 (0 to 8), `Build On Wood`
+Respawn` true, `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Beds On Map` true, `Portal Screen Only When Loading` true, `Quick Area Loading` true,
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Beds On Map` true, `Quick Area Loading` true (the respawn only),
 `Torch Switch Key` O),
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
-100 (1 to 1000); both synced).
+100 (1 to 1000), `Craft Speed` 1 (0.1 to 10); all synced), `11. Build Camera` (`Enabled` true, `Range Multiplier` 1 (0.25 to 5), `Extra Reach` 5 m
+(0 to 45), `Camera Pickup` true, `Entry Needs Resting` false, `Entry Min Comfort` 0, `Pickup Needs Resting` false,
+`Pickup Min Comfort` 0 (comfort 0 to 50); all synced; unsynced `Toggle Key` B, `Gamepad Toggle` `JoyAltKeys +
+JoyRStick`, `Speed` 10, `Run Multiplier` 3, `Circlet Light` true, `Circlet Intensity`, `Circlet Range`, `Circlet Spot
+Angle` (0: the circlet's own), `Pickup Panel` true, `Pickup Panel Position` (0, -120)), `12. Recipe List` (`Search`
+true, `Search Key` LeftControl + F, `Clear Search On Close` true, `Favourites` true, `Favourites First` true, `Recipe
+View` `List` (`List`, `CompactList`, `SmallGrid`, `MediumGrid`, `LargeGrid`), `Gamepad Controls` true; all unsynced),
+`13. Recipe Tracker` (`Enabled` true, `Max Tracked` 6 (1 to 12), `Count Nearby Chests` true, `Untrack When Crafted`
+true, `Hide In Combat` true, `Hide With Map` true, `Scale` 1 (0.5 to 2), `Font` `Sans` (`Sans`, `Serif`, `Norse`),
+`Font Size` 16 (10 to 28), `Have Colour` `#FFFFFF`, `Missing Colour` `#FF6A5A`, `Ready Colour` `#FFB65C`, `Background
+Opacity` 0.56, `Position` empty; all unsynced).
 Keys, defaults and meanings are in each entry's description in the .cfg (bound in the modules' `*Settings.cs`; the
 README only names the features). Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), so every module has a master switch.
@@ -442,7 +523,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Player custom data: `OpenKeep.reachOff` (flag), `OpenKeep.favouriteItems`, `OpenKeep.favouriteSlots` (`x:y`),
   `OpenKeep.junk` (comma separated sets, keyed by prefab name), `OpenKeep.beds.<world uid>` (comma separated set of
   bed spawn points `x:y:z`, invariant culture, two decimals; the world uid is `ZNet.GetWorldUID`, the key of the
-  profile's own per-world spawn point). Read only: PackPanel's `PackPanel.mainGrid` (see "PackPanel").
+  profile's own per-world spawn point), `OpenKeep.favouriteRecipes` (recipe keys: the recipe asset's name, else its
+  item's prefab name), `OpenKeep.favouriteRecipesOnly` (flag), `OpenKeep.trackedRecipes` (entries `key|quality|amount`,
+  `|u` added for one tracked at an upgrader station, in tracking order). Read only: PackPanel's `PackPanel.mainGrid` (see "PackPanel").
 - Charter article names: `openkeep_reach`, `openkeep_stow`, `openkeep_salvage`, `openkeep_stacks`, `openkeep_containers`,
   `openkeep_signs`, `openkeep_stations` (the YAML sets) plus the cfg sync of the shared libraries. Container ownership goes through the game's
   `ZNetView.ClaimOwnership` and `ZDOMan.ForceSendZDO`; the game's own `RPC_RequestOpen` is re-sent by a viewer.
@@ -451,7 +534,13 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   (slot marks), sprites named `OpenKeep_sprite`, `OpenKeep_trashcan` (the trash can in the button row, with
   PackPanel), `OpenKeep_trashcursor` (trash mode's pointer), and `Trash` (the trash can's
   plate, a direct child of the player panel, without PackPanel). Read only: PackPanel's `PackPanel_buttonstrip`. Batch: `OpenKeep_BatchStepper` with `OpenKeep_BatchLess`,
-  `OpenKeep_BatchAmount` and `OpenKeep_BatchMore` beside the Craft button. The cart's station is a `CraftingStation` component on the cart
+  `OpenKeep_BatchAmount` and `OpenKeep_BatchMore` beside the Craft button. Build Camera: `OpenKeep_CameraCirclet` (a
+  Light under the game camera), `OpenKeep_CameraPickup` with `OpenKeep_CameraPickupText` (under the HUD root). Recipe
+  List: `OpenKeep_RecipeSearch` (beside `RecipeList` in the crafting panel) with `OpenKeep_RecipeSearchField`,
+  `OpenKeep_RecipeOnly` and `OpenKeep_RecipeView`; `OpenKeep_TrackButton` and `OpenKeep_FavouriteButton` beside the
+  Style button; `OpenKeep_star` on favourite rows; `OpenKeep_icon` on its buttons; a `TypingWatch` component on the
+  inventory's object. Recipe Tracker: `OpenKeep_Tracker` under the HUD root with `OpenKeep_TrackerTitle` and one
+  `OpenKeep_TrackerEntry` per recipe; a `TrackerHud` component on the HUD's object. The cart's station is a `CraftingStation` component on the cart
   instance, no new prefab. Shared creates none: touches recolour the grid's icons. Signs instantiates the game's
   own `sign` prefab (a normal piece, no new prefab) and adds a `SignOrphanCheck` component to loaded automatic signs.
 - Files next to the cfg: the seven YAML files, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt`,
@@ -464,7 +553,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   Signs: `ok_signs_sign`, `ok_signs_playertext`, `ok_signs_nosign`, `ok_signs_optedout`, `ok_signs_reset`,
   `ok_signs_rewritten`, console output only; the sign text itself is plain text); Homestead: `ok_bedchoice_nearest`, `ok_bedchoice_click`, `ok_bedchoice_keys`, `ok_torch_nightfall`, `ok_torch_keeplit`,
   `ok_torch_nightonly`, `ok_torch_kept`, `ok_torch_scheduled`, `ok_repair_one`, `ok_repair_many`,
-  `ok_autorepair_one`, `ok_autorepair_many`.
+  `ok_autorepair_one`, `ok_autorepair_many`; Build Camera: `ok_cam_nostation`, `ok_cam_needs`, `ok_cam_pickupneeds`,
+  `ok_cam_resting`, `ok_cam_comfort`; Recipe List: `ok_recipe_*`; Recipe Tracker: `ok_tracker_*`.
 - Console: `openkeep reload`, `openkeep containers`, `openkeep write docs`, `openkeep signs`, `openkeep signs reset`,
   `openkeep signs rewrite`.
 
@@ -978,43 +1068,33 @@ Beds:
   choice the candidates are drawn even with the setting off. The bed icons are yellow (1, 0.85, 0.1; the user's call
   of 2026-09-30, to stand out), OpenKeep's and the game's spawn pin alike, on both maps, whenever OpenKeep shows the
   beds (`BedPins.Showing`: the choice, or Nearest Bed Respawn with Beds On Map); the game sets every icon white in
-  `UpdatePins`, so a postfix tints them after it. Otherwise the game's white icon.
+  `UpdatePins`, so a postfix tints them after it. Otherwise the game's white icon. During the choice every bed icon
+  is also drawn on top of every other icon (asked 2026-10-04, "so it's easier to click"): the game remakes an icon
+  that leaves its pin root and Wayfare keeps its portal layer last under the map, so instead each bed icon gets its
+  own override-sorting canvas at the HUD canvas's order + 1 (401; the inventory is 600), gone when the icons are
+  made again at the end. The click prefix runs `Priority.First`, so a portal icon lying over a bed (Wayfare's prefix
+  takes clicks on its icons) never takes the click. Each bed icon carries a click area (`BedBubble`, asked the same
+  day; first a visible 140 unit disc, then, at the user's word, invisible and no larger than the icon at its largest:
+  an empty rect of twice `m_pinSizeLarge`, the doubled icon at the top of its pulse); a click inside one picks that bed
+  (the nearest when areas overlap; the radius is the area's screen size turned into map metres at the current zoom;
+  the game's pin radius only before the first area exists). The nearest bed is pinged when the map opens (`BedPing`, asked the
+  same day: the game's ping marker as a local unsaved pin, built directly like the bed pins, twice the size, pulsing,
+  tinted gold after every pin update), under the bed's icon and bubble; it goes when the choice ends.
 
-Portals:
-- Quick Portals (1.12.0, the user's request of 2026-09-30): `Player.UpdateTeleport` moves the player once
-  `m_teleportTimer` passes 2 s and lands a long jump (`m_distantTeleport`) once it passes 8 s and the area is ready.
-  A prefix on the local player's client advances the timer faster (map distance between `m_teleportFromPos` and
-  `m_teleportTargetPos`: `Quick Portal Seconds` at 0 m, 8 s at `Quick Portal Range`), never past 8 s, so the 15 s
-  no-floor fallback and the area check stay the game's. Every long jump counts (the game's portals, Wayfare and other
-  mods that call `TeleportTo` with `distantTeleport`, the console's `goto`); dungeon doors are short jumps and are
-  left alone.
-- Portal Screen Only When Loading (1.12.0, the user's request of 2026-09-30, per player): the game fades to its
-  loading screen with the teleport swirl for every long jump, even a 0.6 s one. In the `TeleportTo` postfix the
-  local client asks `ZNetScene.IsAreaReady(target)`: true only when the target zone is loaded and every object the
-  client knows there exists, i.e. the target lies inside the area loaded around the player (about 100-150 m with the
-  default simulation distance). Then `UpdateBlackScreen` fades out as when nothing holds the screen; otherwise the
-  game's screen runs as usual. Decided once per jump so it never flickers mid-jump; dead or sleeping players keep
-  the game's screen. On a dedicated server the same holds: the client has the near area loaded.
-- Quick Area Loading (1.12.0, measured 2026-09-30, per player): a 983 m jump took 10.6-11.8 s with the timer done
-  at 4.3-4.7 s. Cause: `ZoneSystem.Update` spawns one zone per 0.1 s (`CreateLocalZones` returns after one), and
-  `ZNetScene.CreateObjectsSorted` creates no near object until `IsActiveAreaLoaded` (every zone of the near
-  simulation circle; 57 zones at the world's near distance 4, 21 at the classic 2), so `IsAreaReady` waits about
-  6 s after the move. A `ZoneSystem.Update` postfix calls `CreateLocalZones` repeatedly within 20 ms per frame while
-  the local player teleports (or waits to respawn with no player) and the area is not loaded; same order as the
-  game, terrain from the game's builder thread (`IsTerrainReady` only queues). Skipped on a dedicated server and on
-  a server before `LocationsGenerated`, like the game's own step. Logs `loaded the area around you in N s`.
-- Faster still (2026-09-30, the user's go-ahead): (1) the move comes after at most 0.25 s, not a quarter of the
-  wait, because the target only loads once the player is there; a loading jump's screen goes black in 0.2 s so the
-  move is never seen. (2) `ZNetScene.CreateObjectsSorted` creates nothing until the whole simulation circle is loaded
-  and then 100 objects per 1/30 s run; a `CreateDestroyObjects` postfix creates more of the listed objects within
-  15 ms per run, in the game's order (`ZDOCompare`, `m_tempSortValue` as the game sets it, which also encodes
-  `Created`), with `IsZoneReadyForType`, but only in zones that are loaded (the whole-circle gate is what keeps
-  objects off missing ground). (3) `Quick Portal Range` default 10000. (4) The server's clients: `IsAreaReady` is
-  vacuous right after arriving (nothing received yet), and the old 8 s floor was what covered that; `AreaSettle`
-  counts the ZDOs in the target's 3x3 sectors and calls the point settled after 0.5 s with no change. Portal jumps
-  and the respawn's bed search hold until settled, never past the game's own 8 s; on the server (host, single
-  player) everything is local and settled at once. Without the hold, a quick respawn could look for the bed before
-  its ZDO arrived, and the game would clear the bed and wake the player elsewhere.
+Portals (moved out 2026-10-04):
+- Quick Portals, Quick Portal Range, Quick Portal Seconds, Portal Screen Only When Loading and the jump half of Quick
+  Area Loading went to Wayfare on 2026-10-04 (the user: "Wayfare is the teleportation mod"), with their key names, in
+  its section `Jump Speed`; the decisions and measurements made here (1.12.0, 2026-09-30) are in `../Wayfare/PLAN.md`
+  under "Jump speed". The cfg keys of section 8 that went are left as orphans in old cfgs (BepInEx keeps them unused),
+  a MAJOR change by the workspace's version rules. Old OpenKeep and new Wayfare together would hurry a jump twice;
+  release both together.
+- What stayed is the respawn: the distance-scaled wait (`QuickWait`), the bed search held on a server's client until
+  the bed's objects arrived (`AreaSettle`: the ZDOs in the bed's 3x3 sectors unchanged for 0.5 s, never past the
+  game's 8 s; without it a quick respawn could look for the bed before its ZDO arrived, and the game would clear the
+  bed and wake the player elsewhere) and `Quick Area Loading` (per player, now the respawn only: the land loads at 20
+  ms of `CreateLocalZones` per frame and the listed objects at 15 ms per `CreateDestroyObjects` run, zone by zone,
+  while the dead player waits to respawn). All three are the AreaLoading library's (`../ValheimModLibs/AreaLoading`),
+  which Wayfare uses for jumps; each mod's merged copy hurries only for its own registered reason.
 - Stand Up On Respawn (1.12.0, the user's request of 2026-09-30): `Player.Awake` reads the player ZDO's `wakeup`
   flag (true when unset) and plays the getting-up animation, a state tagged `cutscene` (no movement until it ends).
   `Game.SpawnPlayer` runs `Awake` and `OnSpawned` in one frame, before the animator updates, so the `OnSpawned`
@@ -1294,8 +1374,12 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   `NoCraftCost` world key) and room for `recipe.m_amount * n` items (`Inventory.CanAddItem`; single-ingredient
   recipes' quality bonus is not counted, the game still refuses a batch that does not fit). The largest n is a
   binary search, run on a click and when the amount must drop; a frame costs at most two checks (n and n + 1).
-- Typing: click the amount (the whole number is selected) and type; `TMP_InputField` with `Digit` validation and
-  4 characters, so nothing but digits goes in. `onEndEdit` (Enter, a click elsewhere, or Escape, which restores the
+- Typing: click the amount (the whole number is selected) and type; the game's own `GuiInputField` (a
+  `TMP_InputField`; in Steam's Big Picture and on the Steam Deck a click opens Steam's keyboard, whose text arrives
+  through the field's `OnInputSubmit`, taken only while the field is not focused, since Enter raises it too) with
+  4 characters. The game's field adds a validator of its own when it starts, and a validator replaces TMP's `Digit`
+  rule, so the stepper puts a digits-only validator back every frame it shows. Escape in the field does not close the
+  inventory (Recipe List's `TypingGuard`). `onEndEdit` (Enter, a click elsewhere, or Escape, which restores the
   old text) sets the amount through `BatchAmount.Set`, clamped to 1 and the limit, and shows what was kept; an empty
   field keeps the old amount. The field is not overwritten while focused. After Enter the field would stay the
   EventSystem's selection, and `Core/Keys.TextInputActive` silences every OpenKeep hotkey while an input field is
@@ -1309,8 +1393,16 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   to the limit. Keys are read with `Input.GetKey`, both Shift and both Ctrl, not configurable. Gamepad: the D-pad's
   left and right (`JoyDPadLeft`/`Right`, which the game repeats after 0.3 s held) through the clones' `UIGamePad`,
   only while the crafting panel is the active group; the clones' stick hint is removed (a `$KEY_` text needs the
-  game's `Localize` component, which does not see clones), so there is no gamepad glyph.
-- Time: the game's. One craft takes `m_craftDuration` (2 s), any batch `m_multiCraftDuration` (6 s), both shortened
+  game's `Localize` component, which does not see clones), so there is no gamepad glyph. A held D-pad steps by tens
+  (the Shift rule) after 8 repeats less than 0.35 s apart, only while the gamepad is the active input.
+- Mouse wheel (asked for 2026-10-04, "scrolling"): over either button or the amount, up is +, down is -, with the
+  clicks' Shift and Ctrl rules. `BatchWheel` sits on each part, not on the row: a single-line TMP field passes the
+  wheel to a handler on its parent, which would then step twice.
+- Time: the game's, times `Craft Speed` (2026-10-04, synced, 1 = the game's): the game's `m_craftDuration` (2 s),
+  `m_multiCraftDuration` (6 s), `m_upgraderDuration` and `m_upgraderDurationPerLevel` are read at `InventoryGui.Awake`
+  and divided by the speed in the `UpdateRecipe` prefix, the only place the game reads them; the crafting skill
+  shortens them as usual, and GrindstoneSkills' skill book, which reads the fields, shows the sped-up times. It
+  applies with `Enabled` off too. One craft takes `m_craftDuration`, any batch `m_multiCraftDuration`, both shortened
   by the crafting skill, as for the game's Shift + Craft. A held Shift no longer turns a single craft into a 6 s
   "x 1" multi-craft: the `OnCraftPressed` postfix sets `m_multiCrafting` from the amount alone, and Craft's label is
   plain `Craft` (the game appends ` x 5` while Shift is held).
@@ -1328,7 +1420,126 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   requirement slot's `item_background` image with a copy of the Craft label, white, inside a `RectMask2D` text area
   inset by 4.
 - Multiplayer: crafting is the crafting player's client alone (the game's `InventoryGui`); the containers it pays
-  from go through Reach's claim and save path as for one craft. Both settings are synced from the server.
+  from go through Reach's claim and save path as for one craft. All three settings are synced from the server and
+  locked with `Lock Configuration`, so a server decides the batch size and the craft speed for everyone.
+
+### Recipe List
+
+- Asked for on 2026-10-04 with the tracker below, as a list of features: a text search over the recipes, prefixes to
+  search by material, favourites with a favourites only view and a way to clear them all, grid views of several sizes
+  beside the classic list, configurable sizing, type and colours, the on-screen keyboard and gamepad navigation. The
+  crafting panel keeps the game's look (the user's rule since 2026-09-29: custom looks belong to PackPanel, every
+  other mod uses the game's own UI): every new part is a copy of a game element (the build menu's search field, the quality and Style buttons, the build menu's favourite
+  star, the inventory's tooltip). The "sizing, type and colours" part went to the tracker (Scale, Font, Font Size,
+  colours, background) and to the grid sizes; the crafting panel itself is not restyled.
+- Section 12 is all unsynced: it changes how the player's own panel shows and reacts, never what a craft does.
+  Hidden recipes cannot be crafted while hidden (the game only crafts the selected row), so nothing needs a server.
+- Where the search goes: a 30 unit row on top of the recipe list (the list's panel moves down and shrinks by 34;
+  `m_recipeListBaseSize` with it), holding the field (stretched across the row, less two 30 unit buttons and gaps
+  anchored at its right end) and the favourites only and view buttons. Nothing about the list is remembered: each
+  panel update takes the list's current size as its full size, unless it is still exactly what this left it at, so
+  PackPanel's larger crafting panel (Crafting Panel Width/Height, set at `InventoryGui.Show`) widens the row and the
+  field with it. It shows on the Craft and Upgrade tabs while `Search` is on; on the Salvage tab
+  the list is the game's height again (Salvage builds its own list in the same place). `Search = false` hides the row
+  and with it the two buttons; the gamepad and the cfg still reach favourites only and the view.
+- The field is a copy of the game's build menu search field (`BuildUi.m_searchField`, a `GuiInputField`): the same
+  sprite, fonts, Ctrl + Backspace, and Steam's keyboard in Big Picture and on the Steam Deck. The copy gets fresh
+  events (the build menu's own listeners are runtime ones and stay behind), loses its layout element and its key hint
+  (F and the left stick are the build menu's keys), a smaller text (16) and a wider text area for the lower row, and
+  OpenKeep's placeholder. It is copied at the first panel update after the HUD exists (the HUD's build menu is the
+  source); when the field cannot be found the row stays off with a warning and everything else works.
+- Search rules: case-insensitive substrings, against the item's name in the game's language and its prefab name (so
+  `sword` and `SwordIron` both work in any language). `@word` matches a material the crafting panel lists for
+  the recipe (at the listed quality, so an upgrade's materials, not the craft's; and by the game's upgrader rule,
+  `RecipeNeeds`: at an upgrader station only upgrader materials, elsewhere only the others); `-` before either kind excludes. All words must hold. Spaces
+  separate words; there is no quoting. The list rebuilds 0.12 s after the last key (the game's own
+  `UpdateCraftingPanel`, so every other hook on it runs), scrolled to the top. Escape in the field clears it (TMP's
+  cancel), Enter keeps the text; both let go of the field so the hotkeys work again. `Clear Search On Close` (on)
+  empties it when the inventory closes. `Search Key` LeftControl + F (F alone is Stow's Favourite Item Key) puts the
+  cursor in; the build menu uses F for its search, which would collide here.
+- Typing guard: the game closes the inventory on Use (E), Inventory (Tab) and Escape with no regard for a focused
+  field. While the search or the batch amount is focused, or was at the end of the last frame (TMP may have handled
+  Escape and let go earlier in this frame), a `Priority.First` prefix on `InventoryGui.Update` resets the Use and
+  Inventory button states and skips the game's update for a frame with Escape, so Escape only leaves the field.
+  Skipping (rather than refusing `Hide`) keeps the inventory open without any Hide postfix (Shared's end of viewing)
+  running for a close that never happened. The game opens no menu on Escape while the inventory shows. A gamepad's B
+  or Y likewise leaves the field (presses dropped, the frame skipped): a pad without Steam's keyboard cannot type, and
+  right stick up would otherwise strand it in the field.
+- Copies of the game's buttons made at `InventoryGui.Awake` get their texts emptied at once: the scene's `Localize`
+  starts later and caches every text it changes (`$inventory_style` on the Style button), writing it back on every
+  language or input device change; an empty text is never cached. The Track label is also rewritten whenever it
+  differs from what OpenKeep last set.
+- Filtering: after the game's `UpdateRecipeList` (Craft and Upgrade tabs; it already sorted with the `sortcraft`
+  setting) the hidden rows are destroyed and dropped from `m_availableRecipes`; the game then selects from what is
+  left (`GetSelectedRecipeIndex` gives the first row when the selected recipe went), so only listed recipes can be
+  crafted. Favourites first is a stable sort, so each group keeps the game's order.
+- Favourites: per character in its custom data (like Stow's favourite items), keyed by the recipe asset's name, which
+  is stable across sessions and languages; a recipe of a missing mod keeps its key. Middle click is the game's own
+  favourite click in the build menu; Stow's Favourite Item Key (F) over a recipe row toggles too (over a slot it
+  keeps its Stow meaning: Stow acts only on a hovered slot), and so does the star button under the recipe's name.
+  The mark is the build menu's own favourite star (`BuildUiPieceButton.m_favoriteStar`: sprite `craft_icon_32`, the
+  game's orange) on the icon's corner; OpenKeep's drawn star stands in until the HUD exists. Favourites only with no
+  favourite is refused with a hint; removing the last favourite turns it off. Clear all is Shift + click on the
+  favourites only star, behind the game's yes/no popup.
+- Views: `List` is the game's (30 apart); `CompactList` packs rows 22 apart, the icon and marks scaled with the row;
+  the grids use the list's width (187) split into 5, 4 or 3 square tiles (37, 46, 62). A tile hides the name and
+  shows it in the game's tooltip (with x amount when a craft makes more than one), puts the quality level in the top
+  left corner and scales the durability bar (the game's bar keeps the width it woke with). The game hides an
+  uncraftable recipe's icon in its list (alpha 0; the grey name says it); a tile shows it greyed. The view button
+  cycles forward (Shift: back) and writes the cfg; a change of `Recipe View`, `Search`, `Favourites` or `Favourites
+  First` rebuilds an open panel at once.
+- Track and favourite buttons: copies of the game's Style button (`m_variantButton`) under the recipe's name, from
+  where the Style button starts (right of it while the game shows it). Hidden on the Salvage tab and with no recipe.
+- Gamepad (`Gamepad Controls`): read in a prefix of `UpdateRecipeGamepadInput`, which the game calls only while the
+  crafting panel is the active group. The game's free inputs there are the right stick's four directions (the game
+  uses them only to scroll chat) and the left stick's left and right (only the hidden quality buttons have them);
+  the face buttons, triggers, bumpers, D-pad and both stick clicks are taken (X craft, A style, B/Y close, LT/RT tabs,
+  LB/RB groups, D-pad list and stepper, R3 repair, L3 the game's multi-craft). Right stick up searches (the field's
+  `OpenKeyboard`: Steam's keyboard where available, else the caret), down tracks, left favourites, right favourites
+  only; each acts once per push (the right stick directions repeat in ZInput). There is no glyph: the game's
+  `$KEY_` lookup throws for stick directions (`rightStick_up` is not in its sprite map). In a grid the stick and D-pad
+  up and down step a row and the left stick a tile; the D-pad's left and right step a tile only while the batch
+  stepper (which owns them) is hidden.
+- Multiplayer: nothing leaves the client; favourites and the view are the player's own.
+
+### Recipe Tracker
+
+- Asked for on 2026-10-04: pin recipes and their material lists on screen to watch them while gathering, the needs
+  multiplied by the wanted amount, a draggable window with one-click removal, hidden in combat and with the full map.
+- Section 13 is all unsynced: it shows what the player has and changes nothing in the world.
+- Tracking: right click a recipe row (the game uses only left and middle there), its Track button, or right stick
+  down. An entry is the recipe key, the quality it makes (1, or the next level from the Upgrade tab) and an amount
+  in crafts, plus whether it was tracked at an upgrader station (the game lists other materials there, so that
+  is an entry of its own); a new entry starts at the batch stepper's amount when that recipe is the selected one, else 1. The batch
+  stepper cannot stand for the target (it stops at what can be made now, and a tracked recipe usually cannot be), so
+  each entry has its own amount: - and + (Shift: to the next ten) and the mouse wheel over its header. `Max Tracked` 6.
+- Counting, twice a second while shown: need = the game's requirement amount at that quality x amount; have = what
+  the player carries (the game's `CountItems`, any quality, current world level) plus, with `Count Nearby Chests` and
+  Reach's matching switch on, Reach's own count of the containers within reach. Rows and the recipe's name colour by
+  Have / Missing / Ready. A recipe that takes any one material says so and is ready once one row is. The station and
+  level the recipe needs show under the name.
+- `Untrack When Crafted`: a DoCrafting prefix (`Priority.Low`, after Batch put the started amount back) notes how
+  many of the item at that quality the player holds; the postfix compares: more means the craft happened (refusals,
+  an upgrader's failure or break leave it as it was). The crafts (the multi-craft amount, 1 for an upgrade) count the
+  entry down; at zero it leaves with a top-left message.
+- Place: a column under `Hud.m_rootObject` (`hudroot`, full screen), so it hides with the HUD (the game moves the
+  root off screen); top left anchored, 20 right and 330 down from the screen's top left by default, left of
+  everything the HUD draws there. `Position` holds x right and y down (written at a drag's end); a place off the
+  screen (another resolution, a hand edit) is pulled back on when applied, and the tracker is kept on screen after
+  every rebuild. The title, the drag handle, is built once, so a rebuild (a tracked craft finishing) never ends a
+  drag. It has a canvas
+  of its own sorted at the inventory screen's order + 50 (600 + 50; the HUD canvas is 400, the store, chat, centre
+  messages, menu and popups 700 and up), so it shows above the open inventory and its buttons get the pointer before
+  the inventory's full-screen drop area. Only the title (the drag handle), the headers and their buttons catch the
+  pointer, and only while the game has freed the cursor (`ZCursor`), so clicks on material rows reach the inventory
+  below and an attack with a locked cursor never clicks it. Dragging keeps it on screen and writes `Position`.
+- Look: the game's materials only: the crafting panel's dark item background at `Background Opacity`, the game's
+  three fonts by name (`Font`), its orange for hover and Ready. `Scale`, `Font Size` (the width follows, 16 per
+  point) and the colours are the "sizing, type and colours" the request asked for.
+- Hidden when: off, nothing tracked, dead, the large map open (`Hide With Map`), or a creature targeted the player
+  in the last 5 s (`Hide In Combat`; the game's `Player.IsTargeted`, true for 1 s after a creature has the player as
+  its target). The inventory being open does not hide it: that is when it can be dragged and edited.
+- Multiplayer: the list lives in the character's custom data and the panel on the player's own HUD; nothing is sent.
 
 ### PackPanel
 
@@ -1358,6 +1569,67 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
 - PackPanel counts OpenKeep only from 1.8.0 (older versions know nothing of it): below that it keeps no strip and
   writes Key Stack itself.
 
+### Build Camera
+
+Section 11 (the user's request of 2026-10-04, from a feature list for a build camera; built from that list and the
+game code alone). Everything runs on the player's own client: no ZDO key, RPC or file; pieces are placed, removed and
+repaired through the game's own paths, so a dedicated server and the other players need nothing new.
+
+- Entry: Toggle Key (B) or Gamepad Toggle while the game takes input and no build or radial menu is open, with the
+  game's place mode on (`Player.InPlaceMode`: the hammer, hoe, cultivator or any modded build tool), standing inside a
+  station's camera area. The camera starts where the game camera is (pulled into the area if it sits outside).
+  Gamepad: the list named no gamepad toggle; the default, hold the left trigger and click the right stick, is free in
+  the game's default layout (with `JoyAltKeys` held the click hides nothing). Pressed without a build tool: nothing.
+- End: the key again, or at once when place mode ends (Hide, R, unequips the tool; so does the inventory), the player
+  dies, teleports, sits at a seat with its own camera (a ship's helm), the game's free fly starts, `Enabled` goes
+  off, or no station's area holds the player any more (the station was destroyed). The comfort conditions are checked
+  on entry only, not while the camera is out.
+- The area: every loaded crafting station with a build range (`m_allStations`; placement ghosts never register),
+  `GetStationBuildRange` (with extensions) times `Range Multiplier`, measured flat as `HaveBuildStationInRange` does,
+  and as far above and below the station (the game's build area is an endless column; the camera's is capped). The
+  union of all stations counts. A move that leaves it is pulled back to the nearest point of the nearest area. Nothing
+  of the station is changed: `m_rangeBuild`, the area marker and the `PlayerBase` effect area stay the game's, so raids,
+  comfort and where pieces may be placed (`NoBuildStation` at the ghost) keep the real range.
+- Flying: the movement keys and left stick pan flat along the view (not along the pitch, so W never dives), Jump and
+  the right trigger raise, Crouch and the left trigger lower, Run (and the gamepad's run) multiplies `Speed` by `Run
+  Multiplier`. The list asked for the triggers; in the game's default gamepad layout they are also place (RT) and
+  rotate (LT), so a gamepad player moves the camera a little while placing. Look is the game's own look input
+  (`SetMouseLook`, sensitivity and inversion applied), consumed so the player's body does not turn; the body's
+  movement, jump, crouch, run, autorun, dodge and block are zeroed in `SetControls` (attack stays: place mode turns it
+  into building; a seated player stays seated). No input while the game takes none (inventory, chat, map, menus).
+- Collision: one sphere sweep (0.3 m, a little under the game camera's 0.35 m probe) with one slide, against
+  `terrain` and `static_solid` only. Building pieces, trees and creatures do not block, so the camera enters houses
+  through walls. Cave floors, walls and ceilings built as terrain (the list named the HearthBelow mod's caves) block the
+  same way; there is no height clamp to the world's ground, which would break caves. Water does not block.
+- Reach: the game's four build rays start at the game camera but compare the hit with the player's eyes. While the
+  camera is out a prefix casts the same ray (origin, direction, 50 m, mask) and lets the game's check pass only when
+  the hit lies within the player's own `m_maxPlaceDistance` (5 m, or what another mod sets) plus `Extra Reach` of the
+  camera (plus the piece's `m_extraPlacementDistance` for placing), by setting `m_maxPlaceDistance` to +100000 or
+  -100000 for that one call; the finalizer puts the original back, so EarthWright's and EliteCrafting's own writes to
+  the field are untouched. `CheckCanRemovePiece` still asks for the piece's station at the player's position, and the
+  hoe's level ground still levels to the ground height where the player stands (`UpdatePlacementGhost`): both the
+  game's rules. EarthWright measures its brush aim from the eyes (`GhostAim.InReach`), so with EarthWright terrain
+  edits reach only the game's distance from the player, not from the camera.
+- View: `GetCameraPosition` is replaced while out (the near clip plane at the game's minimum, as the game uses beside
+  walls); the sound listener stays on the camera (the game puts it on the eyes), so you hear what you see; light
+  fading (`LightLod`) counts from the camera as in the game's own free fly, so torches by the camera stay lit.
+- Camera Pickup (the list's "camera item pickup"): items within the player's auto pickup range of the camera fly to
+  it and land in the inventory by `Player.AutoPickup`'s rules (the auto pickup key, the item's flag, not a piece, not a
+  unique item already had, not in tar, room, carry weight, ownership first) and `Humanoid.Pickup`. The body's own auto
+  pickup goes on as usual. With `Pickup Needs Resting` or `Pickup Min Comfort` unmet the items stay and the panel shows.
+- Comfort conditions: "coziness" is the game's Resting effect (`SE_Cozy`, `s_statusEffectResting`: a fire, a roof, no
+  enemy near), comfort is `Player.GetComfortLevel` (recounted every 2 s); both read where the player stands, not at
+  the camera. Entry refused: a centre message naming what is missing.
+- Pickup panel: under `Hud.m_rootObject` (hidden with the HUD), top centre plus `Pickup Panel Position`, the largest
+  sprite image of the piece selection window as background and `m_buildSelection`'s font, material and colour at 80 %
+  size; shown while blocked items lie by the camera, gone 1 s after or when the camera goes back.
+- Head light: any light under the head bone (the `Head` transform above `VisEquipment.m_helmet`, else its parent),
+  so the Dvergr circlet in the helmet slot and a circlet another mod (CircletExtended, RaziCirclet) hangs on the head
+  from an extra slot are found without knowing those mods; torches in hand or on the back are not. The strongest
+  lit one wins (looked up twice a second). The copy is a Light under the game camera, pointing where it looks, given
+  every setting each frame (the range from `LightLod.m_baseRange` while the game fades it), so a recolour or switch
+  by another mod follows; `Circlet Intensity`, `Range` and `Spot Angle` above 0 replace the worn light's own.
+
 ## Not yet implemented
 
 - Capacity: the read-only container grid on hover (SPEC section 5's stretch goal); no setting is bound for it.
@@ -1368,7 +1640,7 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.14.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.0.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1652,7 +1924,9 @@ from a script.
     `chose the bed at ...`, `waking in ... s after death`). Die and press M (and once Escape): the map closes at once,
     you wake in A, the game menu does not open, and the cursor hides again. A double click beside the beds adds no pin.
     Hide the bed icons in the map filter first: they show during the choice and are hidden again after. After the
-    choice, open the map: the bed icons are back to the normal size and still.
+    choice, open the map: the bed icons are back to the normal size and still. With a portal, a map pin and the death
+    marker beside a bed (and Wayfare's portal icons shown): the bed icon is drawn over all of them during the choice,
+    and a click on it wakes you there, not at the portal; after the choice the icons stack as the game draws them.
 59. Bed choice, edge cases: one bed only, no map (wake at once with Quick Respawn); `Bed Choice Seconds = 0`: no map;
     a `nomap` world: no map; log out during the choice and back in: you are at the nearest bed; destroy B while
     choosing it (second client): the log says `no bed of yours at ...; trying the bed at ...` and you wake in A.
@@ -1662,23 +1936,76 @@ from a script.
 61. Beds On Map: all own beds show with the bed icon in yellow on the minimap and the large map, the spawn bed once (the game's icon, no second one on top);
     sleeping in another bed swaps them within a second; a destroyed bed's icon goes. `Beds On Map = false`: only the
     game's icon. Dedicated server with A and B: each sees only their own beds.
-62. Quick Portals: two portals 20 m apart: through in about half a second (log `portal jump of 20 m takes 0.6 s`).
-    1 km apart: about 4 s. 3 km: the game's 8 s, longer while the area loads. A dungeon door: unchanged. With Wayfare:
-    a map jump to a near portal is quick too. `Quick Portals = false`: 8 s. Dedicated server: the same for each client.
-63. Portal screen: two portals 20 m apart: no black screen and no swirl (log `portal target ... is loaded already, no
-    teleport screen`); portals 500 m apart: the game's teleport screen while the area loads. `Portal Screen Only When
-    Loading = false`: the screen for every jump.
+62. (Quick Portals moved to Wayfare, 2026-10-04: its PLAN.md checklist.) With OpenKeep alone, two portals 20 m
+    apart take the game's 8 s again and the log has no `portal jump` line.
+63. (Portal screen moved to Wayfare.) With OpenKeep alone every jump shows the game's teleport screen.
 64. Stand Up On Respawn: `die` beside a bed: you appear standing and can walk at once; log out and in: the game's
     getting-up animation. Dedicated server, B watching A die and respawn: B sees A standing, not lying.
-65. Quick Area Loading (world with simulation distance 4): the 1 km portal pair lands in about 1.5 s (log `loaded
-    the land around you in ...`), not 11-12 s; the far edge of the view fills in after landing. `Quick Area Loading = false`: 11-12 s again. Dying far
-    from a bed: the respawn waits only for the timer, not ~6 s of land loading.
-66. Server settle, dedicated server with a big base 1 km from a portal: the jump lands with the base's floors under
-    you (never on the ground below them), taking longer than in single player but at most about 8 s; dying far from
-    your bed wakes you in that bed, not the next one (log has no `no bed of yours at`).
+65. Quick Area Loading (world with simulation distance 4), now the respawn only: dying far from a bed, the respawn
+    waits only for the timer, not ~6 s of land loading (log `OpenKeep: loaded the land around you in ...`).
+    `Quick Area Loading = false`: the game's pace. A portal jump with OpenKeep alone: the game's pace (Wayfare's now).
+66. Server settle, dedicated server with a big base 1 km from where you die: dying far from your bed wakes you in
+    that bed, not the next one (log has no `no bed of yours at`).
 67. Epic Loot link, with Epic Loot installed: the log says `Epic Loot's enchanting table pays materials from nearby
     containers`. Put the dust and runestones an enchant needs in a chest beside the enchanting table, none in the
     inventory: the enchant tab shows them as available, enchanting takes them from the chest. Half in the inventory:
     the inventory pays first. Gear in the chest never shows in the enchant or sacrifice lists. `Crafting = false`:
     chest materials no longer count. Dedicated server, chest open by another player: it is skipped. Without Epic
     Loot: no log line, no warning.
+68. Build Camera: hammer in hand by a workbench, B: the camera detaches where it was; WASD pans flat, mouse turns it,
+    Space up, Ctrl down, Shift faster; the body stands still (not walking, jumping or crouching). Place a wall 10 m
+    from the camera and 25 m from the player: it builds, the wood leaves the inventory; middle click removes it, the
+    resources fly to the camera and into the inventory; repair works. Fly down: the camera stops on the ground and
+    slides along it; it passes through a wall into the house. Fly away: it stops at the workbench's 20 m edge
+    (`Range Multiplier = 2`: 40 m; a piece placed beyond 20 m still says it needs the workbench). B or R brings it
+    back; so does unequipping the hammer. Away from any station B says "The build camera works only near a crafting
+    station". Hoe and cultivator: the same. `Entry Min Comfort = 5` in an empty hut: refused with "comfort 5 (you
+    have 1)"; `Pickup Needs Resting` outside: removing a piece shows the panel at the top, in the build menu's look,
+    and the items stay. Dvergr circlet on: the camera carries its light; `Circlet Intensity = 3` brightens only the
+    copy. Gamepad: hold LT, click R3; sticks pan and turn, triggers up and down. Torches by the camera 50 m from the
+    player stay lit. Dedicated server, B watching A: A stands still while pieces appear; A's pickups land in A's
+    inventory.
+69. Recipe search: open a workbench. A search row sits on top of the recipe list, in the build menu's field look,
+    with a star and a view button at its end; the list starts below it. Type `club`: only clubs stay, 0.1 s after the
+    last key, scrolled to the top. `@resin`: only recipes needing resin (torch, ...). `@wood -@stone`: wood but no
+    stone. A Polish or German game language: the local name and `SwordIron` both find the sword. Escape: the text goes,
+    the inventory stays open; Escape again closes it. While typing, E and Tab type letters (the inventory stays), and
+    OpenKeep's Q/G/T hotkeys do nothing. Enter keeps the text; reopening the inventory clears it (`Clear Search On
+    Close = false`: it stays). Ctrl + F puts the cursor in. Upgrade tab: the search filters the upgradable items too.
+    Salvage tab: no row, the list is the game's height. `Search = false`: no row. Steam Deck / Big Picture: clicking
+    the field opens Steam's keyboard and the list follows what was typed.
+70. Favourite recipes: middle click a recipe: a small orange star on its icon, centre message, it moves to the top
+    (`Favourites First = false`: it stays in place). F over a recipe row toggles it; F over an inventory slot still
+    favourites the item. The star button under the recipe's name toggles it and shows orange while a favourite. The
+    star above the list: only favourites (message), again: all. With none: refused with a hint. Shift + click that
+    star: the game's yes/no popup, yes clears them all. Log out and in: favourites are still there; another character
+    has its own.
+71. Views: the view button cycles List, Compact list, Small grid (5 a row), Medium grid (4), Large grid (3), Shift +
+    click goes back; the cfg's `Recipe View` follows. In a grid: icons fill the tiles, uncraftable ones greyed, the
+    selected tile orange, quality levels small top left on the Upgrade tab, worn items show a durability bar; hover a
+    tile: the game's tooltip with the name (arrows: x20). Scrolling works; the selected recipe stays selected across a
+    view change. Compact list: lower rows, icons and texts still fit.
+72. Gamepad in the crafting panel: right stick up opens the search (Big Picture: Steam's keyboard), down tracks the
+    selected recipe, left favourites it, right switches favourites only; holding a direction acts once. In a grid:
+    D-pad up and down move a row, left stick left and right a tile; D-pad left and right still change the batch
+    amount. Holding D-pad right: +1 steps, then tens after about a second.
+73. Batch extras: the mouse wheel over -, the amount or + changes it by one (Shift: tens, Ctrl: 1 or the most).
+    `Craft Speed = 2`: a single craft's bar fills in half the time, a batch too, and an upgrade; `0.5`: twice as long.
+    Dedicated server with `Craft Speed = 3` and Lock Configuration on: a client's own value is ignored, the server's
+    applies at once on a cfg edit (hot reload).
+74. Tracker: right click a recipe you cannot make yet: "Tracking ...", a panel at the left edge shows its icon, name,
+    the station and level it needs, and one row per material with have/need (red while short, white once enough; the
+    name turns orange when all are there). Set the stepper to 5 first and track the selected recipe: x5 and every
+    need times 5. Pick up materials: the counts follow within half a second. Stand by a chest with Reach on: its
+    materials count too (`Count Nearby Chests = false`: only the inventory). The Upgrade tab tracks the next level
+    ("..., level 3") with the upgrade's materials.
+75. Tracker editing, inventory open: - and + change the amount (Shift: tens), the mouse wheel over a header too; X
+    removes it. Drag the "Tracked recipes" title: it moves, stays on screen, and is there again after a restart
+    (`Position` written). Clicking a material row clicks what is under it (an inventory slot). Inventory closed:
+    attacking never clicks the tracker. More than `Max Tracked`: refused with a message.
+76. Tracker visibility: open the large map: it hides (`Hide With Map = false`: stays). A greyling attacks: it hides
+    and comes back 5 s after the fight. Hide the HUD (the game's key): it goes with it. Dead: hidden.
+77. Untrack When Crafted: track a recipe x3, craft 2 (stepper 2): x1 left; craft 1 more: it leaves with "... made,
+    off the tracker". A refused craft (no room) changes nothing. `Untrack When Crafted = false`: it stays.
+78. Tracker look: `Scale = 1.5`, `Font = Norse`, `Font Size = 20`, the colours and `Background Opacity = 0` apply
+    within half a second of saving the cfg; the panel widens with the font.

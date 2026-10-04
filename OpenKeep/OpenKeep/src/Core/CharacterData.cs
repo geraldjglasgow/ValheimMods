@@ -12,19 +12,31 @@ namespace OpenKeep.Core
     {
         private const string Prefix = "OpenKeep.";
 
-        public static HashSet<string> GetSet(string key)
+        public static HashSet<string> GetSet(string key) => new HashSet<string>(Parts(key), StringComparer.Ordinal);
+
+        /// <summary>A set in the order it was written (<see cref="SetSet"/> keeps the order it is given).</summary>
+        public static List<string> GetList(string key)
         {
-            HashSet<string> result = new HashSet<string>(StringComparer.Ordinal);
+            List<string> result = new List<string>();
+            foreach (string item in Parts(key))
+            {
+                if (!result.Contains(item))
+                    result.Add(item);
+            }
+            return result;
+        }
+
+        private static IEnumerable<string> Parts(string key)
+        {
             string value = Get(key);
             if (string.IsNullOrEmpty(value))
-                return result;
+                yield break;
             foreach (string part in value.Split(','))
             {
                 string item = part.Trim();
                 if (item.Length > 0)
-                    result.Add(item);
+                    yield return item;
             }
-            return result;
         }
 
         public static void SetSet(string key, IEnumerable<string> values)

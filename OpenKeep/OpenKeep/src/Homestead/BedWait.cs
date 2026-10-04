@@ -1,3 +1,4 @@
+using AreaLoading;
 using UnityEngine;
 
 namespace OpenKeep.Homestead
@@ -67,6 +68,16 @@ namespace OpenKeep.Homestead
         }
 
         private static float Full() => GameDeathDelay + Game.instance.m_respawnLoadDuration;
+
+        /// <summary>
+        /// Quick Area Loading's reason (registered with <see cref="AreaLoader"/>): the local player is dead and the game
+        /// waits for the respawn, loading the land around the bed.
+        /// </summary>
+        public static bool LoadingLand()
+        {
+            return BedSettings.QuickAreaLoading.Value && Player.m_localPlayer == null && Game.instance != null
+                && Game.instance.WaitingForRespawn();
+        }
 
         /// <summary>The whole wait from death to waking for the current target; the game's <paramref name="full"/> when off or unknown.</summary>
         private static float Seconds(float full)

@@ -30,6 +30,9 @@ namespace OpenKeep.Batch
         private static Vector2 craftOffsetMin;
         private static bool shown;
 
+        /// <summary>The stepper is on screen now (Craft tab, no craft running), so the D-pad's left and right are its.</summary>
+        public static bool Shown => root != null && shown;
+
         /// <summary>Called from InventoryGui.Awake. Builds nothing when the game's buttons are missing, and the panel stays the game's.</summary>
         public static void Create(InventoryGui gui)
         {
@@ -123,6 +126,7 @@ namespace OpenKeep.Batch
             Button button = go.GetComponent<Button>();
             button.onClick = new Button.ButtonClickedEvent();
             button.onClick.AddListener(() => Guard.Run("batch step", () => BatchAmount.Step(direction)));
+            go.AddComponent<BatchWheel>();
             Gamepad(go, up ? "JoyDPadRight" : "JoyDPadLeft");
             Label(go.transform, up ? "+" : "-");
             return button;

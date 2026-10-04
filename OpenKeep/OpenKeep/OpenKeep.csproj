@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>1.14.0</Version>
+    <Version>2.0.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -39,6 +39,7 @@
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\ItemCopies\ItemCopies.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\AreaLoading\AreaLoading.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +63,10 @@
       <HintPath>$(ManagedPath)\assembly_guiutils.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="gui_framework">
+      <HintPath>$(ManagedPath)\gui_framework.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
@@ -76,6 +81,10 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">

@@ -6,8 +6,8 @@ namespace OpenKeep.Batch
     /// <summary>
     /// The crafting panel hooks. Signatures verified against the decompiled InventoryGui: Awake(), UpdateRecipe(Player
     /// player, float dt), OnCraftPressed(), DoCrafting(Player player). UpdateRecipe runs every frame the panel is open:
-    /// the prefix drives the game's multi-craft before the game reads it, the postfix lays the stepper out after the
-    /// game has set the Craft button.
+    /// the prefix sets the craft durations (Craft Speed) and drives the game's multi-craft before the game reads them,
+    /// the postfix lays the stepper out after the game has set the Craft button.
     /// </summary>
     [HarmonyPatch]
     public static class BatchPatches
@@ -17,6 +17,7 @@ namespace OpenKeep.Batch
         public static void AfterAwake(InventoryGui __instance)
         {
             BatchDrive.Remember(__instance);
+            CraftSpeed.Remember(__instance);
             Guard.Run("batch stepper", () => BatchStepper.Create(__instance));
         }
 
@@ -24,6 +25,7 @@ namespace OpenKeep.Batch
         [HarmonyPrefix]
         public static void BeforeUpdateRecipe(InventoryGui __instance, Player player)
         {
+            CraftSpeed.Apply(__instance);
             if (!BatchAmount.Applies(__instance, player))
             {
                 BatchDrive.Release(__instance);

@@ -9,9 +9,18 @@ namespace OpenKeep.Batch
     /// </summary>
     public static class BatchAmount
     {
+        private const float RepeatWindow = 0.35f;
+        private const int FastAfter = 8;
+
         private static Recipe recipe;
+        private static int streak;
+        private static int streakDirection;
+        private static float lastStep = -10f;
 
         public static int Value { get; private set; } = 1;
+
+        /// <summary>The recipe the amount belongs to (the one selected on the Craft tab when the stepper last showed).</summary>
+        public static Recipe Current => recipe;
 
         /// <summary>The stepper belongs to the Craft tab (not Upgrade, not Salvage) of every station and of crafting by hand, except an upgrader.</summary>
         public static bool Applies(InventoryGui gui, Player player)
@@ -45,14 +54,29 @@ namespace OpenKeep.Batch
             return multi ? gui.m_multiCraftAmount : 1;
         }
 
-        /// <summary>A click on - (direction -1) or + (1): one step; with Shift to the next ten; with Ctrl to 1 or to the most that can be made.</summary>
+        /// <summary>
+        /// A click on - (direction -1) or + (1), or the wheel: one step; with Shift to the next ten; with Ctrl to 1 or
+        /// to the most that can be made. A gamepad's held D-pad, which the game repeats, steps by tens after 8 repeats.
+        /// </summary>
         public static void Step(int direction)
         {
             Player player = Player.m_localPlayer;
             if (player == null || recipe == null)
                 return;
+            bool fast = FastRepeat(direction);
             int limit = Limit(player, recipe);
-            Value = Mathf.Clamp(Target(direction, limit), 1, limit);
+            Value = Mathf.Clamp(Target(direction, limit, fast), 1, limit);
+        }
+
+        /// <summary>Counts the gamepad's quick repeats in one direction; true once there have been enough.</summary>
+        private static bool FastRepeat(int direction)
+        {
+            float now = Time.unscaledTime;
+            bool repeat = ZInput.IsGamepadActive() && direction == streakDirection && now - lastStep < RepeatWindow;
+            streak = repeat ? streak + 1 : 0;
+            streakDirection = direction;
+            lastStep = now;
+            return streak >= FastAfter;
         }
 
         /// <summary>An amount typed into the field, kept within 1 and the most that can be made.</summary>
@@ -64,11 +88,11 @@ namespace OpenKeep.Batch
             Value = Mathf.Clamp(typed, 1, Limit(player, recipe));
         }
 
-        private static int Target(int direction, int limit)
+        private static int Target(int direction, int limit, bool fast)
         {
             if (Held(KeyCode.LeftControl, KeyCode.RightControl))
                 return direction > 0 ? limit : 1;
-            if (!Held(KeyCode.LeftShift, KeyCode.RightShift))
+            if (!fast && !Held(KeyCode.LeftShift, KeyCode.RightShift))
                 return Value + direction;
             return direction > 0 ? (Value / 10 + 1) * 10 : (Value - 1) / 10 * 10;
         }

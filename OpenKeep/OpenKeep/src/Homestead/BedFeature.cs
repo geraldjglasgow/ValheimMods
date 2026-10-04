@@ -1,3 +1,4 @@
+using AreaLoading;
 using OpenKeep.Core;
 using SyncedConfig;
 
@@ -23,6 +24,7 @@ namespace OpenKeep.Homestead
         public static void Initialize(SyncedConfiguration synced)
         {
             BedSettings.Bind(synced);
+            AreaLoader.When(BedWait.LoadingLand);
             Language.Add("ok_bedchoice_nearest", "seconds until you wake in the nearest bed");
             Language.Add("ok_bedchoice_click", "Click a bed to wake there instead");
             Language.Add("ok_bedchoice_keys", "Map key or Esc: the nearest bed now");

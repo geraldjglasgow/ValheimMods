@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+- Quick portals moved to Wayfare: install it for quick jumps. `Quick Area Loading` now speeds respawns only.
+- Build Camera: build from a free camera near a crafting station (B with a build tool).
+- Recipe List: search (Ctrl+F, `@material`), favourite recipes, grid views.
+- Recipe Tracker: right click a recipe to pin its materials on screen.
+- Batch crafting: `Craft Speed` makes crafting faster or slower; the mouse wheel changes the amount.
+- Homestead: on the bed choice map, beds sit above other icons; the nearest is pinged.
+- Fixed: Ctrl + click stopped at a full chest instead of filling the open chest.
+
 ## 1.14.0
 - Stow: Ctrl + click on an item no nearby chest holds puts it in the chest you have open.
 - Reach: Epic Loot's enchanting table uses materials from nearby chests (the `Crafting` switch).

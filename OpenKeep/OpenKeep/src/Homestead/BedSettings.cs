@@ -5,7 +5,8 @@ namespace OpenKeep.Homestead
 {
     /// <summary>
     /// The bed settings of section "8. Homestead", read at use time. Where players wake and how long they wait change
-    /// the game, so those are synced and locked; showing the beds on the map is each player's own choice.
+    /// the game, so those are synced and locked; showing the beds on the map and how fast the own machine loads the
+    /// land around a respawn are each player's own choice.
     /// </summary>
     public static class BedSettings
     {
@@ -18,6 +19,7 @@ namespace OpenKeep.Homestead
         public static ConfigEntry<float> QuickRespawnSeconds { get; private set; }
         public static ConfigEntry<bool> StandUpOnRespawn { get; private set; }
         public static ConfigEntry<bool> BedsOnMap { get; private set; }
+        public static ConfigEntry<bool> QuickAreaLoading { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
         {
@@ -43,6 +45,8 @@ namespace OpenKeep.Homestead
                 acceptableValues: new AcceptableValueRange<float>(0f, 18f));
             StandUpOnRespawn = synced.Bind(Section, "Stand Up On Respawn", true,
                 "After a death you wake standing and can move at once, instead of the game's getting-up animation. Logging in keeps the game's.");
+            QuickAreaLoading = synced.Bind(Section, "Quick Area Loading", true,
+                "While you wait to respawn, the land around your bed loads as fast as your PC allows instead of the game's one piece (64 m square) every 0.1 s. With a high simulation distance this saves several seconds. Off: the game's pace. (Portal jumps: Wayfare.)", false);
         }
     }
 }

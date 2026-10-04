@@ -1,20 +1,24 @@
 using System;
 using System.Reflection;
+using AreaLoading;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using OpenKeep.Batch;
+using OpenKeep.BuildCamera;
 using OpenKeep.Capacity;
 using OpenKeep.Carts;
 using OpenKeep.Core;
 using OpenKeep.Homestead;
 using OpenKeep.Reach;
+using OpenKeep.Recipes;
 using OpenKeep.Salvage;
 using OpenKeep.Shared;
 using OpenKeep.Signs;
 using OpenKeep.Stacks;
 using OpenKeep.Stow;
+using OpenKeep.Tracker;
 using PatchGuard;
 using SyncedConfig;
 
@@ -29,7 +33,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "1.14.0";
+        public const string PluginVersion = "2.0.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -48,6 +52,7 @@ namespace OpenKeep
             Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);
             StacksModule.HookSpawns(harmony);
+            AreaLoader.Install(harmony, text => Log.LogInfo("OpenKeep: " + text));
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
             Synced.Finish(harmony);
@@ -71,6 +76,9 @@ namespace OpenKeep
             HomesteadModule.Initialize(Synced);
             SharedModule.Initialize(Synced);
             BatchModule.Initialize(Synced);
+            CameraModule.Initialize(Synced);
+            RecipeListModule.Initialize(Synced);
+            TrackerModule.Initialize(Synced);
         }
 
         /// <summary>Links that need every other plugin loaded first.</summary>

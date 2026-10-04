@@ -4,10 +4,10 @@ using OpenKeep.Core;
 namespace OpenKeep.Stow
 {
     /// <summary>
-    /// Route (modifier + click): the stack goes to the nearest nearby container that holds the exact item; when none
-    /// does, to the container the player has open; then one holding an item of the same group, then one whose
-    /// <c>accept</c> list matches. The open container leads the candidates, so the game's own modifier click target
-    /// wins a tie. Store one (its key):
+    /// Route (modifier + click): the stack goes to the nearest nearby container that holds the exact item and has room;
+    /// when none does, to the container the player has open; then one holding an item of the same group, then one whose
+    /// <c>accept</c> list matches. Full containers are passed over. The open container leads the candidates, so the
+    /// game's own modifier click target wins a tie; what the holders cannot take ends in the open container. Store one (its key):
     /// one item goes to the open container, else to the nearest container holding it. When the chosen container
     /// fills up, the rest goes on to the next nearby container holding the item, nearest first (<see cref="Overflow"/>).
     /// Both go through the writer: a shared target answers later, and the message waits for the last answer.
@@ -27,7 +27,7 @@ namespace OpenKeep.Stow
                 Messages.Center(StowWords.Format(StowWords.NoRoute, name));
                 return;
             }
-            Overflow.Send(player, item, item.m_stack, target, nearby, sent => Report(sent, SentWords(sent, name)));
+            Overflow.Send(player, item, item.m_stack, target, nearby, sent => Report(sent, SentWords(sent, name)), StowTargets.OpenTarget);
         }
 
         public static void StoreOne(ItemDrop.ItemData item)
@@ -87,19 +87,26 @@ namespace OpenKeep.Stow
             return nearby.Find(container => container.GetInventory().ContainsItemByName(item.m_shared.m_name));
         }
 
-        /// <summary>From the nearby targets without refusing ones (the open one first, then nearest first): a holder of the item, the open container, a holder of its group, or an accepting one.</summary>
+        /// <summary>
+        /// From the nearby targets without refusing ones (the open one first, then nearest first) that have room for one
+        /// unit: a holder of the item, the open container, a holder of its group, or an accepting one. A full holder
+        /// (a chest, an animal feeder) is passed over, so the item still finds the open chest.
+        /// </summary>
         private static Container FindTarget(List<Container> nearby, ItemDrop.ItemData item)
         {
-            Container exact = Holder(nearby, item);
+            List<Container> roomy = nearby.FindAll(container => HasRoom(container, item));
+            Container exact = Holder(roomy, item);
             if (exact != null)
                 return exact;
             Container open = StowTargets.OpenTarget;
-            if (open != null && !StowRules.Refuses(open, item))
+            if (open != null && HasRoom(open, item) && !StowRules.Refuses(open, item))
                 return open;
             List<string> groups = StowRules.GroupsOf(item);
-            Container grouped = groups.Count > 0 ? nearby.Find(container => HoldsGroup(container, groups)) : null;
-            return grouped ?? nearby.Find(container => StowRules.Accepts(container, item));
+            Container grouped = groups.Count > 0 ? roomy.Find(container => HoldsGroup(container, groups)) : null;
+            return grouped ?? roomy.Find(container => StowRules.Accepts(container, item));
         }
+
+        private static bool HasRoom(Container container, ItemDrop.ItemData item) => container.GetInventory().CanAddItem(item, 1);
 
         private static bool HoldsGroup(Container container, List<string> groups)
         {

@@ -20,11 +20,13 @@ namespace OpenKeep.Stow
         private readonly ItemDrop.ItemData item;
         private readonly List<Container> line = new List<Container>();
         private readonly int chosen;
+        private readonly int fallback = -1;
         private readonly Action<Overflow> done;
         private int left;
         private int next;
 
-        private Overflow(Player player, ItemDrop.ItemData item, int amount, Container first, List<Container> rest, Action<Overflow> done)
+        private Overflow(Player player, ItemDrop.ItemData item, int amount, Container first, List<Container> rest, Container last,
+            Action<Overflow> done)
         {
             this.player = player;
             this.item = item;
@@ -35,8 +37,13 @@ namespace OpenKeep.Stow
             chosen = line.Count;
             foreach (Container container in rest)
             {
-                if (container != first)
+                if (container != first && container != last)
                     line.Add(container);
+            }
+            if (last != null && last != first)
+            {
+                fallback = line.Count;
+                line.Add(last);
             }
         }
 
@@ -48,12 +55,14 @@ namespace OpenKeep.Stow
 
         /// <summary>
         /// Sends up to <paramref name="amount"/> units of a player inventory stack: into <paramref name="first"/> (when
-        /// given) whatever it holds, then into each container of <paramref name="rest"/> that holds the item, in order.
+        /// given) whatever it holds, then into each container of <paramref name="rest"/> that holds the item, in order,
+        /// and last into <paramref name="last"/> (when given) whatever it holds.
         /// <paramref name="done"/> runs once, when the amount is placed or the line has ended, at once or after the last answer.
         /// </summary>
-        public static void Send(Player player, ItemDrop.ItemData item, int amount, Container first, List<Container> rest, Action<Overflow> done)
+        public static void Send(Player player, ItemDrop.ItemData item, int amount, Container first, List<Container> rest, Action<Overflow> done,
+            Container last = null)
         {
-            new Overflow(player, item, amount, first, rest, done).Step();
+            new Overflow(player, item, amount, first, rest, last, done).Step();
         }
 
         private void Step()
@@ -90,7 +99,7 @@ namespace OpenKeep.Stow
             while (next < line.Count && left > 0 && Units() > 0 && Movable.CanMove(player, player.GetInventory(), item))
             {
                 Container candidate = line[next];
-                bool mustHold = next >= chosen;
+                bool mustHold = next >= chosen && next != fallback;
                 next++;
                 if (Takes(candidate, mustHold))
                     return candidate;
@@ -100,7 +109,8 @@ namespace OpenKeep.Stow
 
         private bool Takes(Container container, bool mustHold)
         {
-            if (container == null || !StowTargets.IsTarget(container) || StowRules.Refuses(container, item))
+            if (container == null || !StowTargets.IsTarget(container) || StowRules.Refuses(container, item)
+                || !container.GetInventory().CanAddItem(item, 1))
                 return false;
             return !mustHold || container.GetInventory().ContainsItemByName(item.m_shared.m_name);
         }

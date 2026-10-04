@@ -5,20 +5,21 @@ Storage for Valheim, plus a few base tweaks.
 ## Features
 - Reach: craft, build and feed stations from nearby chests, ships and carts.
 - Stow: quick stack, store all, top up, sort, route and trash, by button or hotkey.
-- Crafting: a Salvage tab returns materials; craft many at once.
+- Crafting: Salvage tab, batches, craft speed, recipe search, favourites, grid views, recipe tracker.
 - Stacks and Capacity: stack sizes, weights, chest and station sizes, contents on hover.
-- Off by default: cart workbenches, contents signs on chests, two players in one chest.
-- Homestead: pick your bed after death, faster respawns and portals, campfires on wood, honey per day, fires,
-  smelters and pets fed from chests, night-only torches, quicker Rested, area and auto repair.
-- Works with PackPanel, the inventory mod; neither needs the other.
+- Build Camera: build from a free camera near a crafting station (B with the hammer).
+- Off by default: cart workbenches, chest contents signs, shared chests.
+- Homestead: choose your bed after death, quick respawns, campfires on wood, honey rate, fires, smelters and pets
+  fed from chests, night-only torches, quicker Rested, auto repair.
+- Works with PackPanel (inventory) and Wayfare (portals, quick jumps); neither is required.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `OpenKeep.dll` in
 `BepInEx/plugins`.
-- Lowering a stack size, or removing the mod, loses items above the new limit.
-- Items in an enlarged chest's extra rows are hidden without the mod.
-- Before removing the mod, switch off Signs and `Torches Night Only`, then visit your bases by day.
-- In the Ashlands (or with the Fire world key) a campfire sets its wooden floor alight.
+- Lowering a stack size loses items above the new limit.
+- Before removing the mod: split oversized stacks, empty enlarged chests' extra rows, switch off Signs and
+  `Torches Night Only`, and visit your bases by day.
+- Ashlands or the Fire world key: a campfire on wood sets the floor alight.
 
 ## Configuration
 `BepInEx/config/milkyteam.openkeep.cfg` and seven `OpenKeep.*.yml` files. Every setting is described in the file and

@@ -1,3 +1,4 @@
+using GUIFramework;
 using PatchGuard;
 using TMPro;
 using UnityEngine;
@@ -12,13 +13,18 @@ namespace OpenKeep.Batch
     /// A click selects the whole number and digits replace it (four at most, nothing else is accepted); Enter or a click
     /// elsewhere sets the amount, kept within 1 and the most that can be made; Escape keeps the old one. Then the field
     /// lets go of the selection, because OpenKeep's hotkeys stay quiet while an input field is selected. While the
-    /// inventory is open the game reads no hotbar keys and opens no chat, so digits and Enter do nothing else.
+    /// inventory is open the game reads no hotbar keys and opens no chat, so digits and Enter do nothing else. It is the
+    /// game's own input field type, so in Steam's Big Picture and on the Steam Deck a click opens Steam's keyboard.
     /// </summary>
     public static class BatchField
     {
         private const float FontSize = 26f;
 
-        private static TMP_InputField field;
+        private static readonly TMP_InputField.OnValidateInput Digits = DigitOnly;
+
+        private static GuiInputField field;
+
+        public static bool Focused => field != null && field.isFocused;
 
         /// <summary>Builds the field on an inactive, placed object and activates it once the input field is wired.</summary>
         public static void Create(InventoryGui gui, TMP_Text craftLabel, GameObject go)
@@ -26,11 +32,12 @@ namespace OpenKeep.Batch
             Image background = go.AddComponent<Image>();
             Background(gui, background);
             RectTransform area = TextArea(go.transform);
-            field = go.AddComponent<TMP_InputField>();
+            field = go.AddComponent<GuiInputField>();
             field.textViewport = area;
             field.textComponent = Text(craftLabel, area);
             field.targetGraphic = background;
             Configure(field);
+            go.AddComponent<BatchWheel>();
             go.SetActive(true);
         }
 
@@ -40,6 +47,9 @@ namespace OpenKeep.Batch
             if (field == null)
                 return;
             field.interactable = selected;
+            // The game's field adds its own validator when it starts, which would let letters past the digit rule.
+            if (field.onValidateInput != Digits)
+                field.onValidateInput = Digits;
             if (field.isFocused)
                 return;
             string amount = BatchAmount.Value.ToString();
@@ -47,7 +57,9 @@ namespace OpenKeep.Batch
                 field.SetTextWithoutNotify(amount);
         }
 
-        private static void Configure(TMP_InputField input)
+        private static char DigitOnly(string text, int index, char added) => added >= '0' && added <= '9' ? added : '\0';
+
+        private static void Configure(GuiInputField input)
         {
             input.lineType = TMP_InputField.LineType.SingleLine;
             input.characterValidation = TMP_InputField.CharacterValidation.Digit;
@@ -60,7 +72,18 @@ namespace OpenKeep.Batch
             input.transition = Selectable.Transition.None;
             input.navigation = new Navigation { mode = Navigation.Mode.None };
             input.text = "1";
+            input.VirtualKeyboardTitle = "$inventory_craftbutton";
             input.onEndEdit.AddListener(text => Guard.Run("batch amount", () => Typed(input, text)));
+            // Steam's keyboard hands its text over through the game's own submit event, not end-edit; Enter in the
+            // focused field raises that event too, and end-edit follows, so only an unfocused field takes it here.
+            input.OnInputSubmit = new OnInputSubmitEvent();
+            input.OnInputSubmit.AddListener(_ => Guard.Run("batch amount", () => FromKeyboard(input)));
+        }
+
+        private static void FromKeyboard(GuiInputField input)
+        {
+            if (!input.isFocused)
+                Typed(input, input.text);
         }
 
         /// <summary>The end of an edit: the typed amount (an empty field keeps the old one), shown as it was kept.</summary>

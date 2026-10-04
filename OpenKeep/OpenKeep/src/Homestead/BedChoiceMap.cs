@@ -32,6 +32,8 @@ namespace OpenKeep.Homestead
             map.SetMapMode(Minimap.MapMode.Large);
             map.m_mapOffset = Vector3.zero;
             FitZoom(map, deathPoint);
+            if (BedChoice.Beds.Count > 0)
+                BedPing.Show(map, BedChoice.Beds[0]);
         }
 
         public static void Update(Minimap map, Player player, float dt)
@@ -60,6 +62,7 @@ namespace OpenKeep.Homestead
         {
             BedChoiceLabel.Hide();
             BedPinLook.Restore(owner);
+            BedPing.Hide(owner);
             if (owner == null)
                 return;
             if (bedsWereHidden)
