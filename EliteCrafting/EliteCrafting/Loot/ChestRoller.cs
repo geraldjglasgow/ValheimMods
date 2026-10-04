@@ -89,7 +89,7 @@ namespace EliteCrafting.Loot
                 Tier = tier,
                 Creature = entry,
                 StonesOn = ModSettings.StoneDrops.Value,
-                GearOn = ModSettings.MagicItemDrops.Value,
+                GearOn = GearDrops.On,
                 Modifiers = LootModifiers.None,
             };
         }

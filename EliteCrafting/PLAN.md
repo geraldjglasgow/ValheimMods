@@ -454,6 +454,14 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   shards, sigils, binding, Honing/Tempering and the other stones are removed from the code, the YAML and the words;
   their item keys are dropped on the next write. Supersedes the 2026-09-23 six-rarity, stone-catalog and Mythic
   decisions and the 2026-10-01 sockets decision. Never released, so no compatibility is kept.
+- 2026-10-03 — Epic Loot (user): while Epic Loot is installed the runes work on Epic Loot's own magic items and
+  EliteCrafting drops no magic gear of its own (runes still drop). Through Epic Loot's published API by reflection
+  (`Epic/`), no reference. Awakening = Epic Loot's own Magic roll; Shaping/Consecrated add one effect rolled as Epic
+  Loot rolls one, up to its maximum count for the rarity; Ascension Magic → Rare plus effects, renamed by Epic Loot;
+  Serpent seals (our `ecf_sealed`) with seal only / one effect past Epic Loot's maximum / every effect rerolled,
+  sockets kept. Cleansing is **not** hooked up for Epic Loot items (user: "just dont hookup cleanse"); it refuses
+  them. Epic and higher Epic Loot rarities have no rung on our ladder and are refused. Effect counts and names come
+  from two public Epic Loot classes outside its API, with fallbacks. Existing EliteCrafting inscriptions keep working.
 
 ## Open questions
 

@@ -119,7 +119,7 @@ namespace EliteCrafting.Loot
                 Boss = boss,
                 Creature = creature,
                 StonesOn = ModSettings.StoneDrops.Value,
-                GearOn = ModSettings.MagicItemDrops.Value,
+                GearOn = GearDrops.On,
                 Modifiers = modifiers,
             };
         }

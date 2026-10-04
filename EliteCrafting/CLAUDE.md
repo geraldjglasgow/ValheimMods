@@ -16,7 +16,7 @@ is read when the new key is absent and removed on the next write).
 Libraries merged: Charter, ConfigReload, PatchGuard, YamlDotNet (ECR's pattern). **No YamlConfig, no SyncedConfig, no
 ItemCopies** (live runes share their prefab's `SharedData` instead).
 
-**Status (2026-10-02): never released.** The crafting was cut to six runes (user decision 2026-10-02, PLAN.md
+**Status (2026-10-03): 0.1.0 on Thunderstore, a work in progress, never tested in game.** The crafting was cut to six runes (user decision 2026-10-02, PLAN.md
 Decisions log): Normal, Magic and Rare only; Awakening, Shaping, Ascension, Consecrated, Cleansing and the Serpent Rune.
 Essences, sockets, gems, catalysts, the chisel, salvage and shards, sigils, binding, quality and the other stones are
 gone, from the code, the YAML and the words. Builds clean, both default YAML families parse with no issue; nothing
@@ -148,6 +148,23 @@ owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: 
 `CorruptVerb`. The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing
 only, and every outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
 
+**Epic Loot** (`Epic/`, user decision 2026-10-03). While Epic Loot (`randyknapp.mods.epicloot`) is loaded
+(`EpicApi.Installed`) the runes work on Epic Loot's own magic and `Loot/GearDrops.On` is false: no magic gear of
+ours drops, runes still do. `EpicApi` binds Epic Loot's published `EpicLoot.API` by reflection on first use (no
+reference; `Ready` when every method was found, else the runes refuse with `epic_unavailable`). `EpicItem` is Epic
+Loot's magic item JSON (`Newtonsoft.Json` from the game's Managed folder, not merged) as a working copy; `EpicRarity`
+maps it onto our ladder (plain = base rung, Epic Loot Magic = rung 1, Rare = rung 2; Epic and up have no rung and are
+refused); `EpicEffects` rolls a new effect as Epic Loot does (allowed types, `SelectionWeight`, `ValuesPerRarity`
+steps); `EpicExtras` reads two public Epic Loot classes outside the API: `LootRoller.GetEffectCountsPerRarity` (the
+effect count range per rarity, fallback Magic 1-3, Rare 2-4) and `MagicItemNames.GetNameForItem` (fallback: the name
+stays). In `Stones/`, `EpicChecks` replaces pipeline step 2 and `StoneVerbs.Run` hands every verb to `EpicVerbs`:
+Awakening = Epic Loot's own Magic roll, Ascension = Magic to Rare plus effects up to Epic Loot's Rare minimum (at least
+`promote_adds_at_least`), renamed; Shaping/Consecrated = one effect up to Epic Loot's maximum; the Serpent
+(`EpicSerpent`) seals with our `ecf_sealed` (Epic Loot's own table does not read it) after seal only, one effect past
+the maximum by `overflow`, or every effect replaced by a fresh roll (sockets kept, augment marks cleared); Cleansing
+refuses (`epic_no_strip`, the user chose not to hook it up). `StoneResult.EpicJson` is written through
+`ApplyMagicItemJson` before our state. Items with our own inscriptions keep them and their effects.
+
 **Settings** (`Config/ModSettings`): gameplay entries are Charter clauses (synced, locked while the server binds);
 display, glow, confirm and diagnostics are local. Sections `1 - General`, `2 - Runes`, `3 - Drops`, `4 - Commands`,
 `5 - Display (per player)`, `6 - Ground glow (per player)`, `7 - Diagnostics`, `8 - Elite Creatures Reborn` (`Synergy`,
@@ -214,6 +231,13 @@ Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you
 
 A sealed item takes no rune again. Every rune's odds, costs and the rarities it accepts are in
 `EliteCrafting_economy.yml`.
+
+**With Epic Loot installed** the runes work on Epic Loot's own magic items instead, and only Epic Loot drops magic
+gear (runes still drop). Awakening makes a plain item an Epic Loot Magic item, rolled as Epic Loot rolls one;
+Shaping and Consecrated add one Epic Loot effect, up to Epic Loot's most for that rarity; Ascension makes a Magic item
+Rare and adds effects; the Serpent Rune seals it after nothing more, one effect past the limit, or every effect
+rerolled (sockets and shards stay). The Cleansing Rune does not work on Epic Loot items, nor does any rune on Epic or
+higher items or on unidentified ones. Epic Loot's own enchanting table still works on a sealed item.
 
 A refusal says why, for example "The Ascension Rune does not work on Rare items", "This item cannot hold another
 inscription", "No inscription can roll on this item", or "Unequip this item first" when the server does not allow

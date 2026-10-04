@@ -1,4 +1,5 @@
 using EliteCrafting.Config;
+using EliteCrafting.Epic;
 using EliteCrafting.Items;
 
 namespace EliteCrafting.Stones
@@ -20,19 +21,23 @@ namespace EliteCrafting.Stones
             return ItemChecks(job) ?? StoneChecks(job) ?? RarityChecks(job) ?? StoneVerbs.Run(job);
         }
 
-        // 1-3: own inventory, magic base, not a newer format.
+        // 1-3: own inventory, magic base (with Epic Loot: an item Epic Loot can enchant, EpicChecks), not a newer format.
         private static StoneResult? ItemChecks(StoneJob job)
         {
             if (!job.Inventory.ContainsItem(job.Stone) || !job.Inventory.ContainsItem(job.Target))
             {
                 return StoneResult.Refuse("not_own_inventory");
             }
-            if (!ItemSlots.IsMagicBase(job.Target))
+            StoneResult? kind = EpicApi.Installed ? EpicChecks.Check(job) : BaseCheck(job);
+            if (kind != null)
             {
-                return StoneResult.Refuse("not_magic_base");
+                return kind;
             }
             return job.State.IsNewerFormat ? StoneResult.Refuse("newer_format") : null;
         }
+
+        private static StoneResult? BaseCheck(StoneJob job) =>
+            ItemSlots.IsMagicBase(job.Target) ? null : StoneResult.Refuse("not_magic_base");
 
         // 4-7: live and enabled rune this build can perform, not sealed, equipped rule.
         private static StoneResult? StoneChecks(StoneJob job)

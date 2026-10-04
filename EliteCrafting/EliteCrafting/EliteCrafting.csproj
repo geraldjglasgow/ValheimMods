@@ -101,6 +101,11 @@
       <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <!-- The game's own copy: Epic Loot's item data is JSON (Epic/EpicItem), never merged -->
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <!-- Built-in YAML defaults and the English words, compiled into the DLL -->

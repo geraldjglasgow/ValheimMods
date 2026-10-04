@@ -2,12 +2,11 @@
 
 ## 0.1.0
 
-- First release: three rarities, Normal, Magic (1-2 inscriptions) and Rare (3-6).
-- 162 inscriptions for every kind of gear; tiers follow the biomes, T1 the strongest.
-- Six runes: Awakening, Shaping, Ascension, Consecrated, Cleansing and the sealing Serpent.
-- Click a rune onto an item; a refused rune is not used up, Cleansing and Serpent ask first.
-- Kills and world chests drop runes and magic gear, by biome, stars and boss.
-- Rarity-colored names, an inscription tooltip in three detail levels, a ground glow on magic items.
-- Optional Elite Creatures Reborn `Synergy`: elite stars raise drops.
-- Two YAML files over built-in defaults, server synced and reloaded live; errors keep the previous rules.
-- Console command `ecraft`; your own `EliteCrafting.translations.<Language>.yml` replaces the English text.
+- First release, a work in progress: significant changes will come.
+- Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6); 162 inscriptions, tiers by biome.
+- Six runes clicked onto items: Awakening, Shaping, Ascension, Consecrated, Cleansing and the sealing Serpent.
+- Kills and world chests drop runes and magic gear.
+- Rarity-colored names, inscription tooltips and a ground glow on magic items.
+- Elite Creatures Reborn `Synergy`: elite stars raise drops.
+- Epic Loot: runes work on its magic items, and EliteCrafting drops no magic gear of its own.
+- YAML rules over built-in defaults, server synced and reloaded live; console command `ecraft`.

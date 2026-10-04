@@ -76,7 +76,7 @@ namespace EliteCrafting.Config
             StoneDrops = Synced(config.Bind(Drops, "Rune drops", true,
                 "Creatures drop runes per the economy drop tables."));
             MagicItemDrops = Synced(config.Bind(Drops, "Magic item drops", true,
-                "Creatures drop pre-rolled magic gear per the economy drop tables."));
+                "Creatures drop pre-rolled magic gear per the economy drop tables. Always off while Epic Loot is installed: its own magic items take their place and the runes work on them."));
             ReadOnlyCommandsForEveryone = Synced(config.Bind(Commands, "Read-only commands for everyone", true,
                 "ecraft inspect, stats, list and help work for every player; off makes them admin-only too."));
         }

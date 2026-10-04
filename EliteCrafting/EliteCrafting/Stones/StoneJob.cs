@@ -1,4 +1,5 @@
 using EliteCrafting.Affixes;
+using EliteCrafting.Epic;
 using EliteCrafting.Items;
 using EliteCrafting.Rolling;
 using EliteCrafting.Rules;
@@ -9,7 +10,8 @@ namespace EliteCrafting.Stones
     /// <summary>
     /// Everything one rune use reads, gathered once per click on the local client: the player, the rune stack and
     /// the target, the rules snapshot (the server's synced rules while it binds), the rune's definition, the target's
-    /// state, slot and current rarity. Read-only; the pipeline and the verbs decide from it.
+    /// state, slot and current rarity. Read-only; the pipeline and the verbs decide from it. While Epic Loot is installed
+    /// the rarity is the target's Epic Loot rarity (<see cref="EpicRarity"/>) and <see cref="Epic"/> its Epic Loot magic.
     /// </summary>
     internal sealed class StoneJob
     {
@@ -23,7 +25,8 @@ namespace EliteCrafting.Stones
             Def = Rules.Economy.StoneForPrefab(ItemTier.PrefabName(stone));
             State = ItemState.Read(target);
             Slot = ItemSlots.Classify(target);
-            Rarity = State.IsMagic ? State.Rarity : Rules.Economy.BaseRarity;
+            Epic = EpicApi.Ready ? EpicItem.Parse(EpicApi.MagicJson(target)) : null;
+            Rarity = EpicApi.Installed ? EpicRarity.Of(Epic, Rules.Economy) : State.IsMagic ? State.Rarity : Rules.Economy.BaseRarity;
         }
 
         public Player Player { get; }
@@ -37,6 +40,9 @@ namespace EliteCrafting.Stones
 
         public ItemState State { get; }
         public SlotInfo Slot { get; }
+
+        /// <summary>The target's Epic Loot magic (a working copy); null without Epic Loot or on a plain item.</summary>
+        public EpicItem? Epic { get; }
 
         /// <summary>The target's rarity before the rune acts (the base rarity for Normal); null when unknown.</summary>
         public RarityDef? Rarity { get; }

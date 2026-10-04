@@ -26,7 +26,7 @@ namespace EliteCrafting.Stones
         }
 
         // Weights are relative; a table with nothing above 0 is disabled at load, and falls back to seal_only here.
-        private static CorruptOutcome Draw(IReadOnlyList<CorruptWeight> table, RollContext context)
+        internal static CorruptOutcome Draw(IReadOnlyList<CorruptWeight> table, RollContext context)
         {
             List<float> weights = new List<float>(table.Count);
             for (int i = 0; i < table.Count; i++)

@@ -1,20 +1,20 @@
 # EliteCrafting
 
+**Work in progress:** significant changes will come, including to the config, the YAML files and item data.
+
 Runes and magic gear: creatures and chests drop both, and a rune clicked onto an item changes its rarity or
 inscriptions.
 
 ## Features
-- Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6); magic gear glows on the ground.
+- Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6).
 - 162 inscriptions for every kind of gear, stronger the later the item's biome.
-- Six runes, clicked onto an item; a refused rune is kept:
-  - Awakening: Normal to Magic, one inscription.
-  - Shaping: one more inscription on a Magic item.
-  - Ascension: Magic to Rare, one more inscription.
-  - Consecrated: one more inscription on a Rare item.
-  - Cleansing: back to Normal, every inscription gone.
-  - Serpent: seals the item for good, unchanged, with one inscription past its limit, or rerolled.
-- Drops from kills (more with stars, sure from bosses) and world chests.
+- Six runes, clicked onto an item: Awakening (Normal to Magic), Shaping (one more on
+  Magic), Ascension (Magic to Rare), Consecrated (one more on Rare), Cleansing (back to Normal) and the Serpent
+  (seals the item after a gamble).
+- Drops from kills, bosses and world chests.
 - Elite Creatures Reborn: `Synergy` (off by default) lets elite stars raise drops.
+- Epic Loot: when installed, the runes work on Epic Loot's own magic items (not Cleansing) and only Epic Loot drops
+  magic gear.
 - Every rune, inscription, command and file:
   [CLAUDE.md](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCrafting/CLAUDE.md#player-reference).
 
