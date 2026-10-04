@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- Less work every frame keeping the server's settings in sync.
+
 ## 0.3.1
 
 - Shorter store page; the store description no longer lists the removed shovel. Nothing changes in game.
