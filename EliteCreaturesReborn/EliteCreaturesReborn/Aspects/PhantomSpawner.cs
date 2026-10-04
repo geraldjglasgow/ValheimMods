@@ -9,8 +9,8 @@ namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
     /// One Phantom split, on the boss's owner, each time its health falls past a `split at` mark
-    /// (<see cref="PhantomBehaviour"/>): its copies appear in an even ring around it - same prefab, stars, size and name
-    /// - `per player` for each player online, so a player alone faces one and a group of four faces four. Each is marked
+    /// (<see cref="PhantomBehaviour"/>): its copies appear in an even ring around it - same prefab, stars, size and name,
+    /// and a Bountiful boss's other aspects - `per player` for each player online, so a player alone faces one and a group of four faces four. Each is marked
     /// in its own ZDO with the boss it belongs to. The mark is what makes a copy a copy on every machine
     /// (<see cref="PhantomBody"/>), and what lets the boss's death find and dismiss them (<see cref="PhantomReaper"/>).
     /// </summary>
@@ -28,13 +28,49 @@ namespace EliteCreaturesReborn.Aspects
                 Mathf.RoundToInt(players * AspectMath.Power(Aspect.Phantom, Fields.PerPlayer)), 0, MaxCopies);
             ZDOID bossId = boss.View.GetZDO().m_uid;
             float start = Random.Range(0f, 360f);
-            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, Aspect.Phantom);
+            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, Aspect.Phantom) { ExtraAspects = Worn(boss.Traits) };
             for (int i = 0; i < copies; i++)
             {
                 Vector3 pos = SpawnPlace.Around(boss.transform.position, start + 360f * i / copies, Radius);
-                BossCopy.Make(boss, pos, traits, copy => AspectStore.SetPhantomOf(copy, bossId));
+                Rouse(BossCopy.Make(boss, pos, traits, copy => AspectStore.SetPhantomOf(copy, bossId)));
             }
             Log.Diag($"{boss.name}: split off {copies} phantom copies for {players} players online");
+        }
+
+        /// <summary>
+        /// A copy splits off mid-fight, so it is born awake: a boss prefab that starts asleep (the Elder rising from the
+        /// ground) would otherwise lie down and play its whole stand-up before fighting. Cleared in the frame it is made,
+        /// before its animator first runs and before its ZDO first leaves this machine, so no machine ever sees it asleep;
+        /// no wake-up effect plays.
+        /// </summary>
+        private static void Rouse(Character? copy)
+        {
+            MonsterAI ai = copy != null ? copy.GetComponent<MonsterAI>() : null!;
+            if (ai == null || !ai.IsSleeping() || ai.m_nview == null || !ai.m_nview.IsValid())
+            {
+                return;
+            }
+            ai.m_sleeping = false;
+            ai.m_nview.GetZDO().Set(ZDOVars.s_sleeping, false);
+            ai.m_animator.SetBool(ZSyncAnimation.GetHash("sleeping"), false);
+        }
+
+        /// <summary>
+        /// What a copy carries beside Phantom: a Bountiful boss's other aspects, so its copies fight the way it does -
+        /// Summoner and Fixated included, each copy calling its own waves and marking its own player (the user's call).
+        /// Never Bountiful, since a copy drops nothing; Twin and Tethered never come with Phantom.
+        /// </summary>
+        private static int Worn(CreatureTraits boss)
+        {
+            int mask = 0;
+            foreach (Aspect aspect in boss.Aspects())
+            {
+                if (aspect != Aspect.Phantom && aspect != Aspect.Bountiful)
+                {
+                    mask |= 1 << (int)aspect;
+                }
+            }
+            return mask;
         }
 
         /// <summary>

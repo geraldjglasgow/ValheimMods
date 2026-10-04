@@ -16,6 +16,7 @@ namespace EliteCreaturesReborn.Traits
             return new CreatureTraits(stars, mask)
             {
                 Aspect = (Aspect)zdo.GetInt(TraitKeys.Aspect),
+                ExtraAspects = zdo.GetInt(TraitKeys.AspectExtra),
                 PhantomCopy = zdo.GetZDOID(TraitKeys.PhantomOf) != ZDOID.None,
                 Tier = zdo.GetInt(TraitKeys.Tier),
             };
@@ -28,6 +29,10 @@ namespace EliteCreaturesReborn.Traits
             if (traits.Aspect != Aspect.None)
             {
                 zdo.Set(TraitKeys.Aspect, (int)traits.Aspect); // only bosses carry one; creatures send no extra key
+            }
+            if (traits.ExtraAspects != 0)
+            {
+                zdo.Set(TraitKeys.AspectExtra, traits.ExtraAspects); // only a Bountiful boss carries more than one
             }
             if (traits.Tier > 0)
             {

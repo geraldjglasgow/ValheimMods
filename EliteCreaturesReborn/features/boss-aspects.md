@@ -518,6 +518,32 @@ each a default in the rule file or a fixed rule in the code:
 - Stormbound and Gravitic share one rhythm rule: only seconds of fight count, a lull pauses, 10 s out of the fight
   resets, and the last storm's or roar's time is in the boss's ZDO so a hand-over never doubles it.
 
+Added with the user on 2026-10-03: **Tethered, Bountiful and Portalbound**, from the user's words ("two bosses with a
+subtle force tether; the further apart their health, the faster they attack and the more armour the one with less
+health has"; "100% bonus loot, two random aspects"; "the Elder's vines come out of a portal that opens at least 5 m
+up and 2 m from anything, a second portal on its hand"). Judgement calls made while building them:
+
+- **A boss can carry more than one aspect** (`CreatureTraits.ExtraAspects`, ZDO `ecr_aspect_extra`; the altar's in
+  `ecr_altar_extra`). Bountiful's extras are drawn by the chances from that boss's rotation, never none or Bountiful,
+  never two of Twin, Tethered and Phantom. They are rolled when the altar shifts, shown on the bowl and locked in at
+  the offering. Loot is every aspect's multiplier together (x2 times each extra's). A Bountiful boss's twin or tethered
+  partner carries the same aspects, and so do its Phantom copies - all but Phantom and Bountiful, so each copy calls its own
+  Summoner waves and marks its own Fixated player - at the user's request after the first try in game. Phantom copies
+  are born awake, so an Elder's copies skip the stand-up the altar's Elder plays (same evening).
+- **Tethered**: 25% less health and damage each, like Twin, but separate health and separate deaths. Only the last of
+  the pair to fall drops loot (x1), trophies included, and both boss bars show, stacked (both changed with the user
+  after the first try in game, 2026-10-03). Both attack up to 50% faster and the one with less health left takes up to 50% less damage, scaling
+  evenly up to a 50-point gap (`full gap`). A dead or unloaded partner counts as empty, so killing one first leaves the
+  other at full speed. The partner spawns 6 m away. The tether is a local line from slack pale blue to taut red.
+- **Portalbound** is gated in code to the Elder (`PortalAttacks`), its vine throw `gd_king_shoot`: the far portal is
+  4-20 m from the target, 5-8 m above whatever is under it, 2 m clear of anything including creatures, in sight of
+  the target, 24 tries or the throw is ordinary. The portals are the wooden portal's own swirl, cloned locally, and
+  close 1.2 s after the throw. Loot x1.2.
+- **`none` raised from 30 to 38**, so a plain fight is still about one in five with sixteen aspects (Portalbound only
+  counts for the Elder).
+- **Boss trophies**: a boss with N stars drops N+1 of its trophy in every loot mode, untouched by every multiplier
+  and the trophy switch (the user's rule); a `drop overrides` row naming it is honoured instead (`loot.md` section 2).
+
 Still open:
 
 - **Translation.** `creature-naming.md` asks for every on-screen string to come from a replaceable file. The mod has
@@ -610,3 +636,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-26 | Set replaced with the user's eight; open decisions settled; whole feature built, untested; boss stars drawn on the boss health bar. | 61a0c3e |
 | 2026-09-26 | Phantom reworked with the user: splits at health marks, copies per player online, health per world tier, small copy bars under the boss bar. Untested. | EliteCreaturesReborn-v3.8.0 |
 | 2026-09-27 | 3.9.0: Adaptive, Fixated, Stormbound, Gravitic and Colossal added at the user's request, with their loot, chances (`none` 20 -> 30), rule-file fields and judgement calls; `elite inspect` shows Adaptive's type and Fixated's mark. Built, not tested in game. | - |
+| 2026-10-03 | Tethered, Bountiful (bosses carry several aspects) and Portalbound (Elder only) added at the user's request; `none` 30 -> 38; boss trophies one per star plus one. Built by parallel agents, not tested in game. | - |

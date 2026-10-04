@@ -17,22 +17,33 @@ namespace EliteCreaturesReborn.Scaling
 
         public static float Power(Aspect aspect, string field) => RuleState.Active.Boss.Aspects.PowerOf(aspect, field);
 
-        /// <summary>Twin's cut or Colossal's boost to the starred maximum health; 1 for everything else (a Phantom copy's
-        /// health is flat).</summary>
-        public static float HealthFactor(CreatureTraits traits) => traits.Aspect switch
+        /// <summary>Twin's and Tethered's cut and Colossal's boost to the starred maximum health, multiplied when a boss
+        /// carries more than one; 1 for everything else (a Phantom copy's health is flat).</summary>
+        public static float HealthFactor(CreatureTraits traits)
         {
-            Aspect.Twin => Cut(Power(Aspect.Twin, Fields.LessHealth)),
-            Aspect.Colossal => Boost(Power(Aspect.Colossal, Fields.MoreHealth)),
-            _ => 1f,
-        };
+            float factor = 1f;
+            if (traits.HasAspect(Aspect.Twin))
+            {
+                factor *= Cut(Power(Aspect.Twin, Fields.LessHealth));
+            }
+            if (traits.HasAspect(Aspect.Tethered))
+            {
+                factor *= Cut(Power(Aspect.Tethered, Fields.LessHealth));
+            }
+            if (traits.HasAspect(Aspect.Colossal))
+            {
+                factor *= Boost(Power(Aspect.Colossal, Fields.MoreHealth));
+            }
+            return factor;
+        }
 
         /// <summary>Colossal's growth on top of the boss's star growth; 1 for everything else.</summary>
         public static float SizeFactor(CreatureTraits traits) =>
-            traits.Aspect == Aspect.Colossal ? Boost(Power(Aspect.Colossal, Fields.Bigger)) : 1f;
+            traits.HasAspect(Aspect.Colossal) ? Boost(Power(Aspect.Colossal, Fields.Bigger)) : 1f;
 
         /// <summary>Colossal's slowness on top of the boss's star speed; 1 for everything else.</summary>
         public static float SpeedFactor(CreatureTraits traits) =>
-            traits.Aspect == Aspect.Colossal ? Cut(Power(Aspect.Colossal, Fields.Slower)) : 1f;
+            traits.HasAspect(Aspect.Colossal) ? Cut(Power(Aspect.Colossal, Fields.Slower)) : 1f;
 
         /// <summary>
         /// A Phantom copy's whole maximum health, whatever its stars: `health per tier` for each world tier, with tier 0
@@ -46,14 +57,15 @@ namespace EliteCreaturesReborn.Scaling
         /// <summary>The health marks, in percent of its maximum left, at which a Phantom boss splits off its copies.</summary>
         public static float[] PhantomSplits() => RuleState.Active.Boss.Aspects.ListOf(Aspect.Phantom, Fields.SplitAt);
 
-        /// <summary>The share of its starred damage a boss deals: Twin's and a Phantom copy's cut, 1 otherwise.</summary>
+        /// <summary>The share of its starred damage a boss deals: Twin's, Tethered's and a Phantom copy's cut, 1 otherwise.</summary>
         public static float DamageFactor(CreatureTraits traits)
         {
             if (traits.PhantomCopy)
             {
                 return Cut(Power(Aspect.Phantom, Fields.LessDamage));
             }
-            return traits.Aspect == Aspect.Twin ? Cut(Power(Aspect.Twin, Fields.LessDamage)) : 1f;
+            float factor = traits.HasAspect(Aspect.Twin) ? Cut(Power(Aspect.Twin, Fields.LessDamage)) : 1f;
+            return traits.HasAspect(Aspect.Tethered) ? factor * Cut(Power(Aspect.Tethered, Fields.LessDamage)) : factor;
         }
 
         /// <summary>A "percent less" number as the multiplier it leaves: 25 becomes 0.75.</summary>

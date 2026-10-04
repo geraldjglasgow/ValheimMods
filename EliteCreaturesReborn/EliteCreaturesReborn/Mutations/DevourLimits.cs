@@ -6,12 +6,15 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// What a Devouring creature may eat. Two limits, both read from state every machine has, so the machine that runs a
-    /// check - the devourer's owner choosing a target, the prey's owner resolving a bite - needs no one else:
+    /// What a Devouring creature may eat. Three limits, all read from state every machine has, so the machine that runs
+    /// a check - the devourer's owner choosing a target, the prey's owner resolving a bite - needs no one else:
     /// <list type="bullet">
-    /// <item><b>Its size.</b> It eats only a creature whose current health is at most `max prey health` percent of its
-    /// own current health (125 by default); bigger ones it neither hunts as prey nor devours. Both healths are read live, from
-    /// each creature's ZDO, so a wounded devourer's reach shrinks and a hurt creature comes within it.</item>
+    /// <item><b>What it is.</b> Never a player, a boss or a large creature (a troll, a bear, a lox: see
+    /// <see cref="BodySize"/>): it never hunts one as prey, and a bite on one is an ordinary hit.</item>
+    /// <item><b>Its health.</b> It eats only a creature whose current health is at most `max prey health` percent of its
+    /// own current health (100 by default: no more than its own); healthier ones it neither hunts as prey nor devours.
+    /// Both healths are read live, from each creature's ZDO, so a wounded devourer's reach shrinks and a hurt creature
+    /// comes within it.</item>
     /// <item><b>Its appetite.</b> It eats one creature per star in its life, never fewer than `min meals` (1 by default,
     /// so an unstarred devourer still eats once), counted in its ZDO (<see cref="MealStore"/>). Once it has eaten
     /// them all it is sated: it devours nothing more and the game's own enmity rules it again.</item>
@@ -30,17 +33,21 @@ namespace EliteCreaturesReborn.Mutations
         public static bool Sated(EliteController devourer) =>
             MealStore.Count(devourer.View.GetZDO()) >= Allowance(devourer.Rules, devourer.Traits);
 
+        /// <summary>True when the creature can be prey at all: not a player, not a boss, not large.</summary>
+        public static bool IsPrey(Character creature) =>
+            !creature.IsPlayer() && !creature.IsBoss() && !BodySize.IsLarge(creature);
+
         /// <summary>
-        /// True when the prey is small enough: its current health at most `max prey health` percent of the devourer's
-        /// own current health. `0` lifts the limit.
+        /// True when it is prey and within reach: its current health at most `max prey health` percent of the devourer's
+        /// own current health (100: no more than its own). `0` lifts the health limit, never the first one.
         /// </summary>
         public static bool FitsInMaw(EliteController devourer, Character prey)
         {
             float percent = devourer.Rules.PowerOf(Mutation.Devouring, Fields.MaxPreyHealth);
-            return percent <= 0f || prey.GetHealth() <= percent / 100f * devourer.Creature.GetHealth();
+            return IsPrey(prey) && (percent <= 0f || prey.GetHealth() <= percent / 100f * devourer.Creature.GetHealth());
         }
 
-        /// <summary>Both limits at once: it may devour this prey right now, its cooldown aside.</summary>
+        /// <summary>All three limits at once: it may devour this prey right now, its cooldown aside.</summary>
         public static bool MayEat(EliteController devourer, Character prey) =>
             !Sated(devourer) && FitsInMaw(devourer, prey);
     }

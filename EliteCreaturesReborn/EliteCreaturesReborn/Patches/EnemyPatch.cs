@@ -7,8 +7,8 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// Switches a Devouring creature's enmity between two mutually exclusive modes. While feeding it treats other
-    /// non-boss creatures small enough to eat (their current health at most `max prey health` percent of its own, see
-    /// <see cref="DevourLimits"/>) as prey and ignores players, so the game's own targeting sends it after what it can
+    /// creatures it can eat (never a boss or a large creature, and their current health at most `max prey health` percent
+    /// of its own, see <see cref="DevourLimits"/>) as prey and ignores players, so the game's own targeting sends it after what it can
     /// eat and it eats with its ordinary attacks; toward a creature too big to eat it keeps the game's own answer, as its
     /// kind would, so it is never left unable to hit back. Two things flip it to hunting players - and, while
     /// hunting, it ignores creatures so a closer one cannot pull it off the player: a player attacking it (a short-lived

@@ -23,7 +23,7 @@ namespace EliteCreaturesReborn.Aspects
         {
             EliteController controller = boss.GetComponent<EliteController>();
             ZNetView nview = ragdoll.GetComponent<ZNetView>();
-            if (controller == null || !controller.Ready || controller.Traits.Aspect != Aspect.Colossal
+            if (controller == null || !controller.Ready || !controller.Traits.HasAspect(Aspect.Colossal)
                 || nview == null || !nview.IsValid())
             {
                 return;

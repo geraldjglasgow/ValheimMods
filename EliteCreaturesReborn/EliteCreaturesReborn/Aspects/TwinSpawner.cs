@@ -7,9 +7,10 @@ namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
     /// Twin's arrival: on the boss's owner, the moment the boss is first rolled, a second copy of it appears beside it
-    /// with the same stars and aspect, and each is written into the other's ZDO as its partner. The link is what
-    /// <see cref="TwinLink"/> shares health through, and what stops the twin - born already linked - bringing a twin of
-    /// its own.
+    /// with the same stars and every aspect it carries - a Bountiful boss's twin is Bountiful with the same extras, so the
+    /// two are the same fight and each pays the same loot - and each is written into the other's ZDO as its partner. The
+    /// link is what <see cref="TwinLink"/> shares health through, and what stops the twin - born already linked - bringing
+    /// a twin of its own.
     /// </summary>
     internal static class TwinSpawner
     {
@@ -24,7 +25,10 @@ namespace EliteCreaturesReborn.Aspects
             }
             ZDOID bossId = zdo.m_uid;
             Vector3 pos = SpawnPlace.Around(boss.transform.position, Random.Range(0f, 360f), Distance);
-            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, Aspect.Twin);
+            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, boss.Traits.Aspect)
+            {
+                ExtraAspects = boss.Traits.ExtraAspects,
+            };
             Character? twin = BossCopy.Make(boss, pos, traits, copy => AspectStore.SetTwin(copy, bossId));
             if (twin != null)
             {

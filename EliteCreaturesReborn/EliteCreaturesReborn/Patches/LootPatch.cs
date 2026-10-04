@@ -27,7 +27,10 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            LootEngine.Rework(drop, controller, result);
+            if (!TetherLoot.Withhold(drop, controller, result)) // the first of a Tethered pair to fall drops nothing
+            {
+                LootEngine.Rework(drop, controller, result);
+            }
         }
     }
 }

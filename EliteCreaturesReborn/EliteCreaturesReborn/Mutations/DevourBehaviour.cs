@@ -10,13 +10,14 @@ namespace EliteCreaturesReborn.Mutations
     /// <summary>
     /// Devouring's owner-side AI shaping. It slows itself as its accumulated health grows, and once its accumulated
     /// per-hit damage passes a share of a player's health it hunts players from then on, permanently. Until then it
-    /// ignores players and eats creatures, one per star, each no bigger than `max prey health` of its own health (see
-    /// <see cref="DevourLimits"/>; once sated the game's own enmity rules it) - the instant kill, its cooldown and its
-    /// limits live in the hit path (<see cref="Patches.DevourHitPatch"/>) and the enmity patch, not here. The one exception to ignoring players is provocation: when a
-    /// player attacks it, the hit path calls <see cref="Provoke"/>, which turns it on that player for a short memory;
-    /// while that memory is live <see cref="Patches.EnemyPatch"/> treats the player as an enemy so vanilla keeps the
-    /// target, and when it lapses vanilla drops the player and it goes back to feeding. Attached on every machine, it
-    /// acts only while it owns the creature, so a hand-over just moves which machine drives it.
+    /// ignores players and eats creatures, one per star, each with no more current health than its own (`max prey
+    /// health`, 100 by default) and never a boss or a large creature (see <see cref="DevourLimits"/>; once sated the
+    /// game's own enmity rules it) - the instant kill, its cooldown and its limits live in the hit path
+    /// (<see cref="Patches.DevourHitPatch"/>) and the enmity patch, not here. The one exception to ignoring players is
+    /// provocation: when a player attacks it, the hit path calls <see cref="Provoke"/>, which turns it on that player
+    /// for a short memory; while that memory is live <see cref="Patches.EnemyPatch"/> treats the player as an enemy so
+    /// vanilla keeps the target, and when it lapses vanilla drops the player and it goes back to feeding. Attached on
+    /// every machine, it acts only while it owns the creature, so a hand-over just moves which machine drives it.
     /// </summary>
     public sealed class DevourBehaviour : MonoBehaviour
     {

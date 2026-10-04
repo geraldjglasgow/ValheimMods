@@ -17,7 +17,7 @@ namespace EliteCreaturesReborn.Aspects
         public static void Return(Character boss, Character attacker, float dealt)
         {
             EliteController controller = boss.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready || controller.Traits.Aspect != Aspect.Reflective || attacker == boss)
+            if (controller == null || !controller.Ready || !controller.Traits.HasAspect(Aspect.Reflective) || attacker == boss)
             {
                 return;
             }

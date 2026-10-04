@@ -12,9 +12,11 @@ namespace EliteCreaturesReborn.Loot
     /// inside the GenerateDropList postfix, on the dying creature's owner, so every roll here happens exactly once
     /// and every player sees the one pile the game replicates. Trophies step outside all of it unless the trophy
     /// switch says otherwise - except a row the file names explicitly, which is the server's own words and honoured.
-    /// The engine only touches rows it owns: the creature's own table and rows the rule file names. A row another
-    /// mod injected into the same list (EpicLoot's materials, say) passes through untouched by mode, strip and
-    /// multiplier alike, whatever order Harmony happens to run the postfixes in.
+    /// A boss's own trophies stand outside it whatever the switch, in every mode: held out first, paid back last as
+    /// one per star plus one (<see cref="BossTrophies"/>). The engine only touches rows it owns: the creature's own
+    /// table and rows the rule file names. A row another mod injected into the same list (EpicLoot's materials, say)
+    /// passes through untouched by mode, strip and multiplier alike, whatever order Harmony happens to run the
+    /// postfixes in.
     /// </summary>
     internal static class LootEngine
     {
@@ -36,6 +38,9 @@ namespace EliteCreaturesReborn.Loot
 
             /// <summary>True when trophies follow the mode; false keeps them exactly as the game rolled them.</summary>
             public bool TrophiesFollow;
+
+            /// <summary>A boss's own trophies, out of the list while the rules run and paid back last.</summary>
+            public BossTrophies Held = BossTrophies.None;
         }
 
         public static void Rework(CharacterDrop drop, EliteController controller, List<KeyValuePair<GameObject, int>> result)
@@ -43,11 +48,11 @@ namespace EliteCreaturesReborn.Loot
             LootRules loot = RuleState.Active.Loot;
             if (loot.Mode == LootMode.Vanilla)
             {
-                AspectLoot.ApplyAlone(drop, controller, result); // a boss aspect pays even with the loot rules off
-                GildedLoot.ApplyAlone(drop, controller, result); // and so does Gilded, the one mutation that pays
+                ReworkVanilla(drop, controller, result);
                 return;
             }
             Context ctx = Build(loot, drop, controller);
+            ctx.Held = BossTrophies.Hold(drop, controller, result, ctx.Overridden);
             StripOverridden(ctx, result);
             if (loot.Mode == LootMode.Curated)
             {
@@ -61,6 +66,18 @@ namespace EliteCreaturesReborn.Loot
             RollExtras(ctx, result);
             Multiply(ctx, result);
             GildedLoot.AddBonus(controller, result); // Gilded's purse, after every multiplier and scaled by none
+            ctx.Held.Pay(result); // a boss's heads, likewise
+        }
+
+        /// <summary>Vanilla: the rules stand aside, and only what pays with them off touches the list - a boss aspect,
+        /// Gilded, and a boss's trophies. No `creatures:` entry applies here, so none can claim a trophy.</summary>
+        private static void ReworkVanilla(CharacterDrop drop, EliteController controller,
+            List<KeyValuePair<GameObject, int>> result)
+        {
+            BossTrophies held = BossTrophies.Hold(drop, controller, result, overridden: null);
+            AspectLoot.ApplyAlone(drop, controller, result); // a boss aspect pays even with the loot rules off
+            GildedLoot.ApplyAlone(drop, controller, result); // and so does Gilded, the one mutation that pays
+            held.Pay(result);
         }
 
         private static Context Build(LootRules loot, CharacterDrop drop, EliteController controller)
@@ -77,7 +94,7 @@ namespace EliteCreaturesReborn.Loot
             ctx.TrophiesFollow = ctx.Rule?.MultiplyTrophies ?? loot.MultiplyTrophies;
             ctx.DropsMultiplier = ctx.Rule?.Drops != null
                 ? LineAt(ctx.Rule.Drops, ctx.Stars) : LiveDropsLine(controller, ctx.IsBoss, ctx.Stars);
-            ctx.ExtraRolls = CountExtraRolls(loot, ctx.Stars);
+            ctx.ExtraRolls = DropRoller.ExtraRolls(loot, ctx.Stars);
             if (ctx.Rule != null)
             {
                 foreach (DropRule row in ctx.Rule.Overrides)
@@ -125,24 +142,6 @@ namespace EliteCreaturesReborn.Loot
         {
             string name = Utils.GetPrefabName(controller.gameObject);
             return RuleState.Active.CreatureLoot.TryGetValue(name, out CreatureLootRule rule) ? rule : null;
-        }
-
-        /// <summary>One gate per star, in order, so `max extra rolls` caps the successes and not the attempts.</summary>
-        private static int CountExtraRolls(LootRules loot, int stars)
-        {
-            int rolls = 0;
-            for (int star = 1; star <= stars; star++)
-            {
-                if (loot.MaxExtraRolls > 0 && rolls >= loot.MaxExtraRolls)
-                {
-                    break;
-                }
-                if (UnityEngine.Random.value * 100f <= loot.ExtraRollChanceAt(star))
-                {
-                    rolls++;
-                }
-            }
-            return rolls;
         }
 
         /// <summary>Rows the file overrides lose their game-rolled contribution; the file's version replaces it.</summary>
@@ -199,7 +198,7 @@ namespace EliteCreaturesReborn.Loot
                 foreach (CharacterDrop.Drop row in drop.m_drops)
                 {
                     if (row.m_prefab == null || ctx.Overridden.Contains(row.m_prefab.name)
-                        || (!ctx.TrophiesFollow && DropRoller.IsTrophy(row.m_prefab)))
+                        || ctx.Held.Holds(row.m_prefab) || (!ctx.TrophiesFollow && DropRoller.IsTrophy(row.m_prefab)))
                     {
                         continue;
                     }

@@ -9,7 +9,9 @@ namespace EliteCreaturesReborn.Commands
     /// <c>elite spawn &lt;prefab&gt; &lt;stars&gt; [mutation...]</c>: makes exactly that creature and bypasses EVERYTHING -
     /// the star distribution, the mutation chances, <c>max mutations</c> and the glyph limit - so a rule can be checked
     /// in ten seconds. A boss takes one aspect word instead of mutations (<c>elite spawn Bonemass 2 Twin</c>), and its
-    /// twin or phantom copies arrive with it exactly as they would from the altar. It instantiates the prefab (the machine that runs this owns it), then hands the exact traits to
+    /// twin or phantom copies arrive with it exactly as they would from the altar. Bountiful also takes the aspect words
+    /// after it as its extras (<c>elite spawn gd_king 2 Bountiful Enraged Mending</c>), or rolls them from the boss's
+    /// rotation as the altar would when none follow. It instantiates the prefab (the machine that runs this owns it), then hands the exact traits to
     /// its controller before the controller resolves, which writes them to the ZDO as a fresh roll. A typo suggests near
     /// matches rather than failing silently.
     /// </summary>
@@ -19,7 +21,7 @@ namespace EliteCreaturesReborn.Commands
         {
             if (args.Length < 4)
             {
-                EliteCommands.Reply(args, "usage: elite spawn <prefab> <stars> [mutation... | boss aspect]");
+                EliteCommands.Reply(args, "usage: elite spawn <prefab> <stars> [mutation... | boss aspect | Bountiful [aspect...]]");
                 return;
             }
             GameObject? prefab = Lookup(args[2]);
@@ -34,15 +36,16 @@ namespace EliteCreaturesReborn.Commands
                 return;
             }
             CreatureTraits? traits = prefab.GetComponent<Character>().IsBoss()
-                ? BossTraits(args, stars) : CreatureTraitsFrom(args, stars);
+                ? BossTraits(args, prefab.name, stars) : CreatureTraitsFrom(args, stars);
             if (traits != null)
             {
                 Place(args, prefab, traits);
             }
         }
 
-        // A boss takes one aspect word, `none` for the plain fight; leaving it out is the plain fight too.
-        private static CreatureTraits? BossTraits(Terminal.ConsoleEventArgs args, int stars)
+        // A boss takes one aspect word, `none` for the plain fight; leaving it out is the plain fight too. Only Bountiful
+        // takes more: the words after it are its extras, and with none it rolls them from the boss's rotation.
+        private static CreatureTraits? BossTraits(Terminal.ConsoleEventArgs args, string bossPrefab, int stars)
         {
             Aspect? aspect = args.Length > 4 ? AspectCatalog.FromName(args[4]) : Aspect.None;
             if (aspect == null)
@@ -51,8 +54,45 @@ namespace EliteCreaturesReborn.Commands
                     + string.Join(", ", System.Array.ConvertAll(AspectCatalog.InOrder, AspectCatalog.Word)) + ".");
                 return null;
             }
-            return new CreatureTraits(stars, aspect.Value);
+            CreatureTraits traits = new CreatureTraits(stars, aspect.Value);
+            if (aspect == Aspect.Bountiful)
+            {
+                traits.ExtraAspects = args.Length > 5 ? NamedExtras(args) : AspectRoller.RollExtras(bossPrefab);
+            }
+            else if (args.Length > 5)
+            {
+                EliteCommands.Reply(args, "elite spawn: only Bountiful carries more than one aspect; the rest are ignored.");
+            }
+            return traits;
         }
+
+        // Named extras ride beside Bountiful whatever the rules say; a word that cannot be one is warned and skipped.
+        private static int NamedExtras(Terminal.ConsoleEventArgs args)
+        {
+            int mask = 0;
+            for (int i = 5; i < args.Length; i++)
+            {
+                Aspect? extra = AspectCatalog.FromName(args[i]);
+                string? refusal = Refusal(extra, mask);
+                if (refusal != null)
+                {
+                    EliteCommands.Reply(args, $"elite spawn: '{args[i]}' skipped - {refusal}.");
+                    continue;
+                }
+                mask |= 1 << (int)extra!.Value;
+            }
+            return mask;
+        }
+
+        // Why a named word cannot ride beside Bountiful; null when it can.
+        private static string? Refusal(Aspect? extra, int mask) => extra switch
+        {
+            null => "not a boss aspect",
+            Aspect.None or Aspect.Bountiful => "not an aspect Bountiful can carry",
+            Aspect named when AspectRoller.BringsBodies(named) && AspectRoller.HoldsBodies(mask)
+                => "a boss carries at most one of Twin, Tethered and Phantom",
+            _ => null,
+        };
 
         private static CreatureTraits CreatureTraitsFrom(Terminal.ConsoleEventArgs args, int stars)
         {
@@ -119,9 +159,9 @@ namespace EliteCreaturesReborn.Commands
         private static string Words(CreatureTraits traits)
         {
             List<string> words = new List<string>();
-            if (traits.Aspect != Aspect.None)
+            foreach (Aspect aspect in traits.Aspects())
             {
-                words.Add(AspectCatalog.Word(traits.Aspect));
+                words.Add(AspectCatalog.Word(aspect));
             }
             foreach (Mutation m in traits.Active())
             {

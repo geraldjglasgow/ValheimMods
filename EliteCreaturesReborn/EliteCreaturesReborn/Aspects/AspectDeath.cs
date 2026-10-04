@@ -31,7 +31,7 @@ namespace EliteCreaturesReborn.Aspects
             {
                 CreatureRpc.FireFlash(nview, victim.GetCenterPoint(), 2f, "phantom");
             }
-            else if (traits.Aspect == Aspect.Twin)
+            else if (traits.HasAspect(Aspect.Twin))
             {
                 TwinLink.SendFall(nview.GetZDO());
             }

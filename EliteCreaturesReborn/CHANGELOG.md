@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.15.0
+
+- New mutations: Juggernaut (never staggers) and Screecher (a heavy hit makes it shriek and deafen nearby players).
+- New boss aspects: Tethered (two linked bosses), Bountiful (two extra aspects) and Portalbound (the Elder's vines come through a portal).
+- Bosses drop one trophy per star plus one, whatever the loot settings.
+- Gilded is half as common; Gilded and Relentless never roll on large creatures.
+- Devouring eats only creatures with no more health than its own, never bosses or large creatures.
+- Bloated explodes 1.5 seconds after death.
+
 ## 3.14.0
 
 - New `difficulty:` line at the top of the rule file: Easy, Medium, Hard, Very Hard or Extreme.

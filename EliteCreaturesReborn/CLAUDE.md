@@ -51,25 +51,30 @@ stars continues them by the built-in steps (an 8-star creature has about 1.5 tim
 
 ## Mutations
 
-Thirteen, one per creature by default, each with its own colour and its own name on the nameplate.
+Fifteen, one per creature by default, each with its own colour and its own name on the nameplate.
 
 | Mutation | What it does |
 | --- | --- |
 | Mad | Far faster, half health |
-| Bloated | Double health, explodes 1.7 seconds after it dies |
+| Bloated | Double health, explodes 1.5 seconds after it dies |
 | Cloaked | Invisible beyond 10 metres (15 for trolls and lox); drakes are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
 | Plated | Armoured while healthy, hits harder as that armour goes |
 | Miasmic | Trails poison clouds; poisons players, never creatures |
-| Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you. It eats only creatures with at most 125% of its own health, one per star in its life (at least one), and shows each one it ate on its nameplate |
+| Devouring | Kills creatures in one bite and keeps their health and damage, until it is big enough to hunt you. It eats only creatures with no more health than it has at that moment, never a boss or a large creature (trolls, bears, lox and the like), one per star in its life (at least one), and shows each one it ate on its nameplate |
 | Thieving | Steals an item with each melee hit that lands (not thrown stones, not a parried or dodged blow), up to one per star (at least one), and carries them on its nameplate; kill it to get everything back |
-| Gilded | Glitters gold, never attacks a player and runs from any it sees; drops three times its loot plus a purse of coins |
+| Gilded | Glitters gold, never attacks a player and runs from any it sees; drops three times its loot plus a purse of coins. Never on large creatures (trolls, bears, lox and the like) |
 | Blinking | Every 30 seconds of a fight it reappears behind its target, after a flash and a chime at the spot; 25% less health |
-| Relentless | Once it picks you it keeps coming, seen or not, until you are 150 m away; sneaking does not hide you; never faster than its base speed |
+| Relentless | Once it picks you it keeps coming, seen or not, until you are 150 m away; sneaking does not hide you; never faster than its base speed. Never on large creatures |
+| Juggernaut | Never staggers or is knocked back: hits, parries, blasts and traps don't stop it; where it would have staggered, "Unstoppable" shows over it instead |
+| Screecher | When one hit takes 15% of its health it shrieks: players within 20 m are deafened for 4 seconds - the world goes near-silent under a ringing, and Elemental and Blood Magic weapons will not cast. At most once every 15 seconds; a killing blow makes no shriek |
 
 Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
+
+Large creatures are measured, not listed: a body a metre or more wide or 3.5 m or more long, with 300 or more health -
+trolls, bears, lox, golems, Fuling berserkers, Seeker soldiers, Morgen, Gjall and the like, modded ones included.
 
 ## Mutation power fields
 
@@ -78,7 +83,7 @@ numbers. A field marked (enhanced) is multiplied by `large star power` on a larg
 Any mutation can also be switched off entirely with `mutations enabled`, regardless of its chance curves.
 
 - **Mad** - `move`/`attack speed` multipliers (enhanced); `health` multiplier, its cost
-- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, 1.7 by default; the blast goes
+- **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, 1.5 by default; the blast goes
   off at the corpse's resting place and the corpse goes with it, dropping its loot there; `damage` (enhanced) and
   `radius` (enhanced) of the blast; `blast effect`/`warning effect` vanilla prefabs for the explosion and the smoke
   that rides the corpse until it blows, `blast sound` the vanilla sound it goes off with (`elite effects <text>`
@@ -108,8 +113,8 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `move` base speed multiplier before the slow (`0.5` halves it; not enhanced);
   `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
   `devour cooldown` seconds after a meal before it can eat again; `max prey health` the most current health a creature
-  may have for it to hunt and eat it, as a percent of its own current health, 125 by default (0 lifts the limit; not
-  enhanced); `min meals` the fewest creatures it eats in its life whatever its stars, 1 by default (not enhanced) - it
+  may have for it to hunt and eat it, as a percent of its own current health, 100 by default, so no more than its own
+  (0 lifts the limit; not enhanced). A boss or a large creature is never prey, whatever this says; `min meals` the fewest creatures it eats in its life whatever its stars, 1 by default (not enhanced) - it
   eats one per star, and once it has eaten them all it is sated: it eats nothing more and behaves like any creature of
   its kind. Its nameplate shows each creature it ate, by that creature's trophy (a horned monster head for one with no
   trophy)
@@ -126,6 +131,12 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `blink effect`/`tell effect` vanilla prefabs for the puff and the marker, `tell sound` the chime. None is enhanced
 - **Relentless** - `chase distance` metres within which it keeps its target, 0 turns the hold off (not enhanced).
   Its cost is fixed: it is never faster than its base speed
+- **Juggernaut** - no fields: it never staggers and is never knocked back
+- **Screecher** - `threshold` percent of its max health one hit must take (health actually lost) to make it shriek;
+  `radius` metres the shriek reaches (enhanced); `mute time` seconds a player stays deafened and unable to cast
+  Elemental or Blood Magic (enhanced) - a second shriek extends it, never stacks; `cooldown` seconds between shrieks;
+  `shriek sound` the vanilla sound it shrieks with. Only players it is hostile to are deafened, so a tamed Screecher
+  deafens no one
 
 ## Boss aspects
 
@@ -151,14 +162,23 @@ altar - the Queen, or a console spawn - rolls its aspect when it first appears.
 | Stormbound | Every 20 seconds a glowing circle appears under each player within 40 m, and 2 seconds later lightning strikes it: 8% of your maximum health and a stagger if you are still inside. A roll through it is safe; a shield is not | x1.2 |
 | Gravitic | Every 20 seconds it roars and drags every player within 30 m toward it for 1.5 seconds, then slams: 10% of your maximum health and a stagger within 6 m of its body. A roll dodges the slam | x1.3 |
 | Colossal | 40% bigger, 15% more health, 15% slower. Its heavy blows send out a shockwave that knocks players within 8 m down, no damage; roll through it or jump it | x1.2 |
+| Tethered | Comes as two bosses joined by a faint tether, each with 25% less health and damage; they keep their own health and die apart. The further apart their health, the tauter and redder the tether, the faster both attack (up to 50%) and the less damage the one with less health left takes (up to 50%), both at their most once the gap reaches 50 points. Kill one first and the other fights on at full speed. Both health bars show, one under the other; only the last to fall drops loot | x1 |
+| Bountiful | Carries two more aspects at once, drawn from that boss's own rotation (never two of Twin, Tethered and Phantom). The altar shows all of them before you offer, and the name carries every word: "Bountiful Enraged Mending Eikthyr". Its twin, tethered partner or Phantom copies carry its other aspects too (each copy calls its own Summoner waves and marks its own Fixated player). Pays every aspect's loot multiplied together | x2 (times each extra's) |
+| Portalbound | Elder only. As it winds up its vine throw a portal opens 5 to 8 m up within 20 m of its target, in sight of them; as it throws, a second portal opens on its hand and the vines fly out of the far portal at you. No clear spot: it throws as usual | x1.2 |
 
-The chances are weights: 30 for the plain fight and 10 for each of the thirteen aspects, so about one boss fight in
+The chances are weights: 38 for the plain fight and 10 for each of the sixteen aspects (Portalbound only for the Elder), so about one boss fight in
 five stays as the game ships it. Stormbound's lightning, Gravitic's slam and Colossal's shockwave are dodged, not
 blocked: a roll timed through them avoids them, and a raised shield does not.
 
 Everything is in the `aspects:` block under `bosses:` in the rule file: the off switch, the shift interval (0 fixes
 each altar), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
 Summoner calls and, optionally, which aspects that boss may roll.
+
+**Boss trophies.** A boss drops one trophy per star plus one (five heads from a four-star boss) in every loot mode,
+Vanilla included. Nothing else changes that count: not the `drops` line, extra rolls, the global or boss multiplier,
+an aspect's loot or `multiply trophies`. Each Twin drops its own; of a Tethered pair only the last to fall drops anything; Phantom copies drop nothing.
+Only a `drop overrides` row naming the trophy in the boss's `creatures:` entry replaces it, and an `extra drops` row
+adds on top.
 
 ## Boss aspect power fields
 
@@ -184,6 +204,14 @@ Summoner calls and, optionally, which aspects that boss may roll.
   m/s toward it; `slam radius` m and `slam damage` % of each player's max health for the slam after the pull
 - **Colossal** - `bigger`, `more health` and `slower` in %; `shockwave radius` m its heavy attacks knock players
   down in
+- **Tethered** - `less health` and `less damage` % less for each of the two (separate health, they die apart);
+  `attack speed` % faster both attack and `armour` % less damage the one with less health left takes, each reached once
+  their health is `full gap` percentage points apart and scaled down evenly below that; a dead or unloaded partner
+  counts as empty
+- **Bountiful** - `extra aspects` how many more aspects it carries, drawn by the chances from that boss's rotation
+- **Portalbound** - `min height` m the far portal hangs at least above whatever is under it (ground, building,
+  treetop or water); `clearance` m it keeps from anything solid and any creature; `range` m from the boss's target it
+  opens within, with a clear line to it (0: never). Only the Elder rolls it
 
 ## Per-creature rules
 
@@ -191,7 +219,7 @@ Each entry under `creatures:` in the rule file is matched by prefab name (`elite
 set any of these keys:
 
 - `drops` - replaces the star `drops` line for this creature
-- `multiply trophies` - this creature's own trophy switch
+- `multiply trophies` - this creature's own trophy switch (a boss's own trophies ignore it: always one per star plus one)
 - `drop overrides` - changes rows of its own drop table: `item`, then `amount: [min, max]` (inclusive), `chance`
   0-100, or `remove: true` to delete the row
 - `extra drops` - adds rows with `item`, `amount` and `chance`; `per star: true` makes a row follow the loot mode
@@ -229,7 +257,7 @@ once it has been fully emptied.
 
 | Command | Does |
 | --- | --- |
-| `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin` |
+| `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin`; Bountiful takes its extras after it, or rolls them when none follow: `elite spawn gd_king 2 Bountiful Enraged Mending` |
 | `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair, with what a Thieving creature carries and what a Devouring creature has eaten ("devoured 1 of 2: Boar") |
 | `elite purge [radius]` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first). With a radius in metres, only those that close to you: `elite purge 30` |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |

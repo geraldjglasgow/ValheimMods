@@ -8,11 +8,12 @@ namespace EliteCreaturesReborn.Scaling
 {
     /// <summary>
     /// The aspects that change a hit as it lands, applied from the damage patch on the victim's owner after the star
-    /// scaling, so they multiply the starred hit. Outgoing: Twin's and a Phantom copy's cut to the whole hit, Enraged's
-    /// boost to its physical parts, Elementalist's to its elemental ones (poison and fire included, before the game
-    /// turns them into their ticking effects), and Fixated's boost or cut by whether the victim is its mark (see
-    /// <see cref="FixatedDamage"/>). Incoming: Shielded's cut to hits from bows and crossbows, and Adaptive's cut to
-    /// the damage type it resists (see <see cref="AdaptiveResist"/>).
+    /// scaling, so they multiply the starred hit. Outgoing: Twin's, Tethered's and a Phantom copy's cut to the whole hit,
+    /// Enraged's boost to its physical parts, Elementalist's to its elemental ones (poison and fire included, before the
+    /// game turns them into their ticking effects), and Fixated's boost or cut by whether the victim is its mark (see
+    /// <see cref="FixatedDamage"/>). Incoming: Shielded's cut to hits from bows and crossbows, Adaptive's cut to the
+    /// damage type it resists (see <see cref="AdaptiveResist"/>), and Tethered's cut to the weaker of the pair (see
+    /// <see cref="TetherLink.Brace"/>).
     /// </summary>
     public static class AspectDamage
     {
@@ -24,15 +25,15 @@ namespace EliteCreaturesReborn.Scaling
             {
                 hit.ApplyModifier(factor);
             }
-            if (traits.Aspect == Aspect.Enraged && !traits.PhantomCopy)
+            if (traits.HasAspect(Aspect.Enraged))
             {
                 Physical(hit, AspectMath.Boost(AspectMath.Power(Aspect.Enraged, Fields.PhysicalBonus)));
             }
-            if (traits.Aspect == Aspect.Elementalist && !traits.PhantomCopy)
+            if (traits.HasAspect(Aspect.Elementalist))
             {
                 Elemental(hit, AspectMath.Boost(AspectMath.Power(Aspect.Elementalist, Fields.ElementalBonus)));
             }
-            if (traits.Aspect == Aspect.Fixated && !traits.PhantomCopy)
+            if (traits.HasAspect(Aspect.Fixated))
             {
                 FixatedDamage.Apply(attacker, victim, hit);
             }
@@ -40,13 +41,17 @@ namespace EliteCreaturesReborn.Scaling
 
         public static void Incoming(EliteController victim, HitData hit)
         {
-            if (victim.Traits.Aspect == Aspect.Shielded && IsArrow(hit))
+            if (victim.Traits.HasAspect(Aspect.Shielded) && IsArrow(hit))
             {
                 hit.ApplyModifier(AspectMath.Cut(AspectMath.Power(Aspect.Shielded, Fields.ArrowReduction)));
             }
-            if (victim.Traits.Aspect == Aspect.Adaptive)
+            if (victim.Traits.HasAspect(Aspect.Adaptive))
             {
                 AdaptiveResist.Apply(victim, hit);
+            }
+            if (victim.Traits.HasAspect(Aspect.Tethered))
+            {
+                TetherLink.Brace(victim, hit);
             }
         }
 

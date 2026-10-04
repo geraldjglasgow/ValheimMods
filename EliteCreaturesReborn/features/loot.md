@@ -55,6 +55,11 @@ A server that disagrees can switch trophy multiplication on, and then trophies f
 else. It is a **single setting, off by default**, because the default should suit the player who has not thought
 about it yet - and the player who has thought about it will find the setting.
 
+**Bosses are the exception** (2026-10-03, at the user's request). A boss drops N+1 of each trophy in its own table for
+N stars, in every mode including Vanilla, untouched by every multiplier and the switch, because the head count is the
+stars' visible reward for the fight. A `drop overrides` row naming the trophy is the server's own words and is
+honoured instead.
+
 ---
 
 # 3. Mutations and attunements do not change loot - Gilded excepted

@@ -21,5 +21,8 @@ namespace EliteCreaturesReborn.Traits
         Stormbound = 11,
         Gravitic = 12,
         Colossal = 13,
+        Tethered = 14,
+        Bountiful = 15,
+        Portalbound = 16,
     }
 }

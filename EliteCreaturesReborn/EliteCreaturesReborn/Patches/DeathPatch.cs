@@ -108,7 +108,7 @@ namespace EliteCreaturesReborn.Patches
                 return; // no valid snapshot for this creature (not owner, not resolved, or capture failed)
             }
             RunTraitDeaths(snap);
-            if (snap.Traits.Aspect == Aspect.Phantom && !snap.Traits.PhantomCopy)
+            if (snap.Traits.HasAspect(Aspect.Phantom) && !snap.Traits.PhantomCopy)
             {
                 PhantomReaper.Release(snap.Id); // the boss is gone, so are its phantoms
             }

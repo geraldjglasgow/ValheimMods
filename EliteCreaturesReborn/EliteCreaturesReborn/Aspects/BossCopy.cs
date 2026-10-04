@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
-    /// Makes another of a boss's own prefab for Twin and Phantom, on the boss's owner at its first roll. The copy is born
+    /// Makes another of a boss's own prefab for Twin, Tethered and Phantom, on the boss's owner. The copy is born
     /// already resolved - its traits, biome and aspect link are written to its ZDO in the frame it is instantiated, before
     /// its own controller wakes - so its owner never rolls it, it never brings a twin or copies of its own, and every
     /// client reads the same thing. It wakes the way the altar wakes the boss: patrolling where it stands, alerted if the
@@ -22,7 +22,7 @@ namespace EliteCreaturesReborn.Aspects
             GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(bossZdo.GetPrefab()) : null;
             if (prefab == null)
             {
-                Log.Warn($"{boss.name}: no prefab to copy for its {traits.Aspect} aspect");
+                Log.Warn($"{boss.name}: no prefab to make its copy from ({string.Join(" ", traits.Aspects())})");
                 return null;
             }
             GameObject copy = Object.Instantiate(prefab, pos, boss.transform.rotation);

@@ -16,6 +16,10 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>A boss's aspect; always None for a creature. Rolled once with the stars and stored beside them.</summary>
         public Aspect Aspect;
 
+        /// <summary>The aspects a boss carries beside its headline <see cref="Aspect"/>, packed one bit per aspect value -
+        /// Bountiful's two. 0 for every creature and for a boss with one aspect.</summary>
+        public int ExtraAspects;
+
         /// <summary>True on the copies a Phantom boss brings - never on the boss itself. Read from the copy's ZDO.</summary>
         public bool PhantomCopy;
 
@@ -41,6 +45,26 @@ namespace EliteCreaturesReborn.Traits
         public void Remove(Mutation mutation) => Mask &= ~(1 << (int)mutation);
 
         public bool Any => Mask != 0;
+
+        /// <summary>True when the boss carries this aspect, as its headline or beside it. Never true for None.</summary>
+        public bool HasAspect(Aspect aspect) =>
+            aspect != Aspect.None && (Aspect == aspect || (ExtraAspects & (1 << (int)aspect)) != 0);
+
+        /// <summary>Every aspect the boss carries, headline first, then the extras in catalog order; empty for None.</summary>
+        public IEnumerable<Aspect> Aspects()
+        {
+            if (Aspect != Aspect.None)
+            {
+                yield return Aspect;
+            }
+            foreach (Aspect extra in AspectCatalog.InOrder)
+            {
+                if (extra != Aspect && (ExtraAspects & (1 << (int)extra)) != 0)
+                {
+                    yield return extra;
+                }
+            }
+        }
 
         /// <summary>Glyphs are drawn in fives: this many large stars (worth five each) precede the small ones.</summary>
         public int LargeGlyphs => Stars / 5;

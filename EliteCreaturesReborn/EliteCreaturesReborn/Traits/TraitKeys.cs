@@ -75,6 +75,14 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Boss aspects: the boss's rolled aspect, by its enum value. Written only when it is not None.</summary>
         public const string Aspect = "ecr_aspect";
 
+        /// <summary>Boss aspects: the aspects a boss carries beside its headline one (Bountiful's), one bit per aspect value.
+        /// Written only when there are any.</summary>
+        public const string AspectExtra = "ecr_aspect_extra";
+
+        /// <summary>Boss aspects: the extra aspects an altar showing Bountiful will give, beside <see cref="AltarAspect"/>,
+        /// one bit per aspect value; 0 or absent for none.</summary>
+        public const string AltarExtra = "ecr_altar_extra";
+
         /// <summary>Boss aspects: the aspect currently on an altar, on the altar's own ZDO; -1 (absent) until first rolled.</summary>
         public const string AltarAspect = "ecr_altar_aspect";
 
@@ -137,5 +145,19 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Star look: on a starred creature's ragdoll, its star count, written by the ragdoll's owner so every
         /// machine dresses its copy in the same look as the creature that fell.</summary>
         public const string CorpseStars = "ecr_corpse_stars";
+
+        /// <summary>Tethered: the partner boss's ZDOID, on each of the two, so either can read the other's health and draw
+        /// the tether.</summary>
+        public const string TetherPartner = "ecr_tether";
+
+        /// <summary>Portalbound: when the far portal of the current attack opened (shared-clock ms), on the boss, written by
+        /// its owner with <see cref="PortalSpot"/> so every client draws the same portal.</summary>
+        public const string PortalAt = "ecr_portal_at";
+
+        /// <summary>Portalbound: where the far portal of the current attack hangs, on the boss.</summary>
+        public const string PortalSpot = "ecr_portal_spot";
+
+        /// <summary>Screecher: when it last shrieked (shared-clock ms), written by its owner, so a new owner keeps the cooldown.</summary>
+        public const string ShriekAt = "ecr_shriek_at";
     }
 }

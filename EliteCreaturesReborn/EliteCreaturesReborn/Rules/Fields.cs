@@ -63,7 +63,7 @@ namespace EliteCreaturesReborn.Rules
         public static bool IsPrefabField(string field) =>
             field == CloudEffect || field == BodyEffect || field == BlastEffect || field == BlastSound
             || field == WarningEffect || field == BonusItem || field == GlitterEffect || field == BlinkEffect
-            || field == TellEffect || field == TellSound;
+            || field == TellEffect || field == TellSound || field == ShriekSound;
 
         // Devouring
         public const string AbsorbHealth = "absorb health";
@@ -92,6 +92,12 @@ namespace EliteCreaturesReborn.Rules
 
         // Relentless
         public const string ChaseDistance = "chase distance";
+
+        // Screecher (`radius` is shared)
+        public const string Cooldown = "cooldown";
+        public const string Threshold = "threshold";
+        public const string MuteTime = "mute time";
+        public const string ShriekSound = "shriek sound";
 
         // boss aspects block (under `bosses:`)
         public const string Aspects = "aspects";
@@ -137,6 +143,16 @@ namespace EliteCreaturesReborn.Rules
         public const string MoreHealth = "more health";
         public const string Slower = "slower";
         public const string ShockwaveRadius = "shockwave radius";
+
+        // Tethered (`less health`, `less damage`, `attack speed` and `armour` are shared)
+        public const string FullGap = "full gap";
+
+        // Bountiful
+        public const string ExtraAspects = "extra aspects";
+
+        // Portalbound (`range` is shared)
+        public const string MinHeight = "min height";
+        public const string Clearance = "clearance";
 
         /// <summary>Phantom's fixed copy count before copies came per player; read only to tell a rule file it is unused.</summary>
         public const string Copies = "copies";

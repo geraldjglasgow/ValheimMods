@@ -61,7 +61,7 @@ namespace EliteCreaturesReborn.Display
             {
                 return;
             }
-            bars.Sort((a, b) => a.Id.UserID != b.Id.UserID ? a.Id.UserID.CompareTo(b.Id.UserID) : a.Id.ID.CompareTo(b.Id.ID));
+            bars.Sort(ById);
             float slot = BossBarWidth(template) / PerRow;
             for (int i = 0; i < bars.Count; i++)
             {
@@ -72,6 +72,10 @@ namespace EliteCreaturesReborn.Display
                 }
             }
         }
+
+        /// <summary>Bars in ZDO id order, so each keeps its place on every client while the ones before it stand.</summary>
+        public static int ById(Bar a, Bar b) =>
+            a.Id.UserID != b.Id.UserID ? a.Id.UserID.CompareTo(b.Id.UserID) : a.Id.ID.CompareTo(b.Id.ID);
 
         private static float BossBarWidth(RectTransform template)
         {

@@ -4,10 +4,10 @@ Creatures spawn with more stars and with mutations, named traits that change how
 aspect instead.
 
 ## Features
-- Mutations: thirteen, shown on the nameplate, such as Mad, Bloated, Devouring and Thieving.
+- Mutations: fifteen, shown on the nameplate, such as Mad, Bloated, Devouring and Thieving.
 - Difficulty: Easy to Extreme in one line; new biomes start gentle and cleared ones keep hardening.
 - Stars: beyond vanilla's two, counted in fives; up to eight on Extreme.
-- Boss aspects: one modifier per fight (Twin, Phantom and eleven more), shown at the altar; harder ones pay more.
+- Boss aspects: one modifier per fight (Twin, Tethered, Bountiful and thirteen more), shown at the altar; harder ones pay more.
 - World tiers: each boss's first defeat makes stars and mutations more common everywhere.
 - Breeding: tamed creatures pass a mutation and stars on to their young.
 - Loot: Vanilla, Scaled, Rolled or Curated drops, and drop rules per creature.

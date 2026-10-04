@@ -11,21 +11,28 @@ namespace EliteCreaturesReborn.Traits
     /// distribution, then every enabled mutation rolled independently at its own biome-and-star chance. A creature
     /// that fails every roll is plain; one that passes several carries several. `max mutations` caps the set. The world
     /// tier leans both rolls: its star boost multiplies each star count's weight once per star, and its mutation boost
-    /// multiplies every mutation chance, so a hardened world keeps each biome's character but pushes it upward. That is
-    /// the Custom difficulty; under a preset the roll is <see cref="PresetRoller"/>'s instead.
+    /// multiplies every mutation chance, so a hardened world keeps each biome's character but pushes it upward. A large
+    /// creature never rolls Gilded or Relentless (<see cref="BodySize.Barred"/>): they are left out before the dice, so
+    /// its chance at every other mutation is unchanged. That is the Custom difficulty; under a preset the roll is
+    /// <see cref="PresetRoller"/>'s instead.
     /// </summary>
     public static class TraitRoller
     {
-        public static CreatureTraits Roll(BiomeRules rules, RuleSet ruleSet, int tier, Heightmap.Biome biome)
+        /// <summary>A fresh creature's roll; <paramref name="barred"/> is the trait mask its body rules out.</summary>
+        public static CreatureTraits Roll(BiomeRules rules, RuleSet ruleSet, int tier, Heightmap.Biome biome, int barred)
         {
             if (ruleSet.Difficulty != Difficulty.Custom)
             {
-                return PresetRoller.Roll(rules, ruleSet, tier, biome);
+                return PresetRoller.Roll(rules, ruleSet, tier, biome, barred);
             }
             int stars = RollStars(rules.StarChances, ruleSet.Tiers.StarBoostAt(tier));
-            int mask = RollMutations(rules, stars, ruleSet, ruleSet.Tiers.MutationBoostAt(tier));
+            int mask = RollMutations(rules, stars, ruleSet, ruleSet.Tiers.MutationBoostAt(tier), barred);
             return new CreatureTraits(stars, mask) { Tier = tier };
         }
+
+        /// <summary>True when a creature may roll it: on in `mutations enabled` and not barred by its body.</summary>
+        internal static bool MayRoll(Mutation mutation, RuleSet ruleSet, int barred) =>
+            ruleSet.IsEnabled(mutation) && (barred & (1 << (int)mutation)) == 0;
 
         /// <summary>A plain draw from the distribution, no tier - the boss table's roll.</summary>
         public static int RollStars(BiomeRules rules) => RollStars(rules.StarChances, 1f);
@@ -75,12 +82,13 @@ namespace EliteCreaturesReborn.Traits
             return chances.Length - 1;
         }
 
-        private static int RollMutations(BiomeRules rules, int stars, RuleSet ruleSet, float boost)
+        private static int RollMutations(BiomeRules rules, int stars, RuleSet ruleSet, float boost, int barred)
         {
             List<Mutation> hits = new List<Mutation>();
             foreach (Mutation mutation in MutationCatalog.InOrder)
             {
-                if (ruleSet.IsEnabled(mutation) && Dice.Percent(Mathf.Min(100f, rules.ChanceOf(mutation, stars) * boost)))
+                float chance = Mathf.Min(100f, rules.ChanceOf(mutation, stars) * boost);
+                if (MayRoll(mutation, ruleSet, barred) && Dice.Percent(chance))
                 {
                     hits.Add(mutation);
                 }

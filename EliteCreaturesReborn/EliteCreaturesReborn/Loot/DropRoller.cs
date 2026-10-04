@@ -6,11 +6,11 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Loot
 {
     /// <summary>
-    /// Rolls single drop rows and answers the small questions the engine asks per row. A game row is rolled exactly
-    /// the way GenerateDropList rolls it at vanilla level 1 (chance 0-1, the world's resource rate through
-    /// Game.ScaleDrops, one-per-player, the game's own 100 cap) minus its pseudo-random counter, which balances
-    /// repeated kills and would skew if extra rolls also advanced it. A file row uses the file's conventions
-    /// instead: chance 0-100 and an inclusive [min, max] amount.
+    /// Rolls single drop rows and a kill's extra rolls, and answers the small questions the engine asks per row. A
+    /// game row is rolled exactly the way GenerateDropList rolls it at vanilla level 1 (chance 0-1, the world's
+    /// resource rate through Game.ScaleDrops, one-per-player, the game's own 100 cap) minus its pseudo-random counter,
+    /// which balances repeated kills and would skew if extra rolls also advanced it. A file row uses the file's
+    /// conventions instead: chance 0-100 and an inclusive [min, max] amount.
     /// </summary>
     internal static class DropRoller
     {
@@ -34,6 +34,25 @@ namespace EliteCreaturesReborn.Loot
                 amount = ZNet.instance.GetNrOfPlayers();
             }
             return Mathf.Clamp(amount, 0, AmountCap);
+        }
+
+        /// <summary>The extra rolls a kill earns under Rolled: one gate per star, in order, so `max extra rolls` caps
+        /// the successes and not the attempts.</summary>
+        public static int ExtraRolls(LootRules loot, int stars)
+        {
+            int rolls = 0;
+            for (int star = 1; star <= stars; star++)
+            {
+                if (loot.MaxExtraRolls > 0 && rolls >= loot.MaxExtraRolls)
+                {
+                    break;
+                }
+                if (Random.value * 100f <= loot.ExtraRollChanceAt(star))
+                {
+                    rolls++;
+                }
+            }
+            return rolls;
         }
 
         /// <summary>One fresh roll of a rule-file row; 0 when the chance fails.</summary>

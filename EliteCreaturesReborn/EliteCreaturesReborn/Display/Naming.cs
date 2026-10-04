@@ -5,21 +5,23 @@ namespace EliteCreaturesReborn.Display
 {
     /// <summary>
     /// Builds the authoritative tell: a creature's mutations as words before its own name, in specification order.
-    /// "Mad Greydwarf"; "Bloated Warding Miasmic Troll". A boss's aspect is its word the same way: "Twin Bonemass". The name is always complete even when there are more
+    /// "Mad Greydwarf"; "Bloated Warding Miasmic Troll". A boss's aspects are its words the same way, headline first:
+    /// "Twin Bonemass"; "Bountiful Enraged Mending Eikthyr". The name is always complete even when there are more
     /// mutations than stars, so it, not the colour, is what a player reads.
     /// </summary>
     public static class Naming
     {
         public static string Decorate(CreatureTraits traits, string baseName)
         {
-            if (traits == null || (!traits.Any && traits.Aspect == Aspect.None) || string.IsNullOrEmpty(baseName))
+            if (traits == null || string.IsNullOrEmpty(baseName)
+                || (!traits.Any && traits.Aspect == Aspect.None && traits.ExtraAspects == 0))
             {
                 return baseName;
             }
             StringBuilder builder = new StringBuilder();
-            if (traits.Aspect != Aspect.None)
+            foreach (Aspect aspect in traits.Aspects())
             {
-                builder.Append(AspectCatalog.Word(traits.Aspect)).Append(' '); // a boss: "Enraged Eikthyr"
+                builder.Append(AspectCatalog.Word(aspect)).Append(' '); // a boss: "Bountiful Enraged Mending Eikthyr"
             }
             foreach (Mutation mutation in traits.Active())
             {

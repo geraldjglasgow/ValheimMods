@@ -10,9 +10,10 @@ namespace EliteCreaturesReborn.Aspects
     /// The aspect on one boss altar. It lives in the altar's own ZDO - the aspect and the world time of its next shift -
     /// so every player at the bowl reads the same thing and a restart does not shuffle it. The altar's owner rolls it the
     /// first time and shifts it when the world clock passes the stored time, never to the aspect it already shows; every
-    /// machine draws the hover line from the ZDO, so no message is ever sent for it. At the offering the current aspect
-    /// is locked on this machine - the one that will instantiate the boss - so a shift during the few seconds before
-    /// the boss appears cannot change the fight that was offered for.
+    /// machine draws the hover line from the ZDO, so no message is ever sent for it. A shift to Bountiful rolls its extras
+    /// in the same moment and keeps them beside it in the ZDO, so the group reads exactly which aspects it will fight. At
+    /// the offering the current aspects are locked on this machine - the one that will instantiate the boss - so a shift
+    /// during the few seconds before the boss appears cannot change the fight that was offered for.
     /// </summary>
     public sealed class AltarAspect : MonoBehaviour
     {
@@ -24,7 +25,7 @@ namespace EliteCreaturesReborn.Aspects
         private OfferingBowl _bowl = null!;
         private string _boss = "";
         private float _timer;
-        private Aspect? _locked;
+        private BossAspects? _locked;
 
         /// <summary>Added to an altar that summons a boss, on every machine, as the bowl starts.</summary>
         public static void Attach(OfferingBowl bowl)
@@ -72,12 +73,12 @@ namespace EliteCreaturesReborn.Aspects
         private void Shift(ZDO zdo)
         {
             Aspect? current = AspectStore.AltarRolled(zdo) ? AspectStore.GetAltarAspect(zdo) : (Aspect?)null;
-            Aspect next = AspectRoller.Roll(_boss, current);
+            BossAspects next = AspectRoller.RollBoss(_boss, current);
             double hours = RuleState.Active.Boss.Aspects.ShiftHours;
             AspectStore.SetAltar(zdo, next, NowMs() + (long)(hours * HourSeconds() * 1000.0));
         }
 
-        /// <summary>At the offering, on the machine that will spawn the boss: fix the aspect on the bowl right now.</summary>
+        /// <summary>At the offering, on the machine that will spawn the boss: fix the aspects on the bowl right now.</summary>
         public void Lock()
         {
             ZDO? zdo = OwnedZdo();
@@ -90,12 +91,12 @@ namespace EliteCreaturesReborn.Aspects
             {
                 Shift(zdo); // offered before the first roll landed: roll it now, so the bowl and the fight agree
             }
-            _locked = AspectStore.GetAltarAspect(zdo);
+            _locked = AspectStore.GetAltarAspects(zdo);
         }
 
-        public Aspect? TakeLocked()
+        public BossAspects? TakeLocked()
         {
-            Aspect? locked = _locked;
+            BossAspects? locked = _locked;
             _locked = null;
             return locked;
         }
@@ -109,7 +110,7 @@ namespace EliteCreaturesReborn.Aspects
             {
                 return "";
             }
-            return AspectText.AltarLines(AspectStore.GetAltarAspect(zdo), rules, SecondsToShift(zdo, rules));
+            return AspectText.AltarLines(AspectStore.GetAltarAspects(zdo), rules, SecondsToShift(zdo, rules));
         }
 
         /// <summary>Seconds until the next shift; negative when shifting is off and the aspect is fixed.</summary>

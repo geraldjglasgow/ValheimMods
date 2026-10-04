@@ -42,21 +42,21 @@ here.
 | Mutation | Gains | Costs |
 | --- | --- | --- |
 | Mad | Moves and attacks far faster - +60% movement, +50% attack speed | Half health |
-| Bloated | Double health. On death it smokes for 1.7 seconds, then explodes | None |
+| Bloated | Double health. On death it smokes for 1.5 seconds, then explodes | None |
 | Cloaked | Invisible at more than 10 metres (15 for trolls and lox), nameplate included. Never rolled by a drake | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
 | Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health in any one second, and knocks them back on any melee hit | None |
 | Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
 | Miasmic | Leaves a trail of poison clouds as it moves; each cloud lingers 6 seconds then fades | None |
-| Devouring | Eats other creatures and keeps what it takes - one per star, none with more than 125% of its own health - and wears what it ate on its nameplate. See below | Grows slower the more it has eaten |
+| Devouring | Eats other creatures and keeps what it takes - one per star, none with more health than it has, never a boss or a large creature - and wears what it ate on its nameplate. See below | Grows slower the more it has eaten |
 | Thieving | Takes one item from your inventory on each strike that lands, until it holds one per star (never fewer than `max items`, never more than 8), and carries them. See `thieving.md` | None |
 | Gilded | Glitters gold; never attacks a player and runs from any it sees. Drops three times its loot plus a purse of coins. See below | None - it is the player's good luck |
 | Blinking | Every 30 seconds of combat it vanishes and reappears 4 metres behind its target, after a half-second tell at the spot. See below | 25% less health |
 | Relentless | Keeps the target it picked while that target is within 150 metres, seen or not; sneaking does not hide you from it. See below | Never faster than its base speed |
 
 Judgement calls in that table, all tunable: the Mad percentages; Devouring's one meal for an unstarred devourer
-(`min meals`); Bloated's 1.7-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls and lox, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
+(`min meals`); Bloated's 1.5-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls and lox, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
 and lifesteal rates, its 5-second combat cooldown and its 20 hp/s regen cap - a high-health creature must be
 beatable on regen alone; Warding's 30% reflection and its 7.5% ceiling; Plated running from a 40% damage cut at full health to none at
 zero, hard-capped at 55% so a large star cannot approach invulnerability, while its damage climbs from nothing to
@@ -97,7 +97,8 @@ is what the player sees. Each client plays its own copy of the tell, so every cl
 ### Only what it can swallow
 
 It eats only a creature whose **current health is at most `max prey health` percent of its own current health** -
-125 by default. Anything bigger is not prey: it does not hunt it, and a blow that lands on one is an ordinary hit.
+100 by default since 2026-10-03 (125 before), so no more than its own, at the user's request - and never a boss or a
+large creature (a body a metre or more wide or 3.5 m or more long, with 300 or more health; `Traits/BodySize.cs`). Anything bigger is not prey: it does not hunt it, and a blow that lands on one is an ordinary hit.
 Toward a bigger creature it keeps the game's own manners - it fights what its kind fights and fights back when
 attacked - rather than standing defenceless while its blows pass through. Both healths are read at the moment it
 matters, so a wounded devourer's reach shrinks and a creature already hurt comes within it. `0` lifts the limit.
@@ -195,8 +196,8 @@ knob is deliberately not enhancement-scaled: it is tuning, not power.
 
 ## Bloated, in full
 
-**The fuse is 1.7 seconds** (`delay: 1.7`, shortened by 0.3 seconds on 2026-09-28 at the user's request; two
-seconds from 3.9.0, one before that) - the window a player has to see the smoke and get clear.
+**The fuse is 1.5 seconds** (`delay: 1.5`, shortened to 1.7 on 2026-09-28 and to 1.5 on 2026-10-03, both at the
+user's request; two seconds from 3.9.0, one before that) - the window a player has to see the smoke and get clear.
 
 **The blast goes off at the corpse, not at the place of death.** A creature that dies turns into a ragdoll, and
 in the seconds before it detonates that ragdoll can slide, tumble or roll down a hill. Exploding at the spot
@@ -380,9 +381,12 @@ runs, and a player who catches it is paid several times over. The chase is the f
 
 ### Rare, and seen from far off
 
-- **It is the rarest mutation.** It has its own chance curve under `defaults`, `Gilded: [0.4, 0.5, 0.7, 0.9, 1.1,
-  1.4]` - fewer than one creature in two hundred at no stars, 1.4 in a hundred at five. A biome's `mutation chance`
-  line does not raise it, because it has a curve of its own; the world tier still does.
+- **It is the rarest mutation.** It has its own chance curve under `defaults`, `Gilded: [0.2, 0.25, 0.35, 0.45,
+  0.55, 0.7]` (halved on 2026-10-03 at the user's request) - one creature in five hundred at no stars, 0.7 in a hundred
+  at five. A biome's `mutation chance` line does not raise it, because it has a curve of its own; the world tier still
+  does.
+- **Never on a large creature** (2026-10-03, at the user's request): a troll, bear, lox or anything else
+  `Traits/BodySize.cs` measures as large never rolls Gilded - or Relentless - and never inherits either.
 - **It glitters gold.** Gold flakes, spark trails and a softly pulsing gold halo on its body - the stamina mead's
   sparkle (`glitter effect`, `vfx_Potion_stamina_medium`), made steady and renewed every 2.5 seconds - and a warm
   gold light around it, 8 metres across. Spotting it first is how a player gets a chance at it, so it reads well
@@ -699,7 +703,7 @@ So:
 
 ### Bloated needs a tell during its delay
 
-The spec calls the 1.7 seconds between death and detonation "the window a player has to get clear". A window
+The spec calls the 1.5 seconds between death and detonation "the window a player has to get clear". A window
 nobody can see is not a window. The corpse must visibly and audibly announce what is about to happen for the
 whole delay, at full strength to the end - swelling, glowing, hissing, whatever the chosen effect supports - and
 the blast itself should reuse an existing explosion effect sized to the configured radius (drawn at 70% of that
@@ -957,7 +961,7 @@ defaults:
   # is explained in the table below this code block.
   mutation power:
     Mad:         { move: 1.6, attack speed: 1.5, health: 0.5 }
-    Bloated:     { health: 2.0, delay: 1.7, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
+    Bloated:     { health: 2.0, delay: 1.5, damage: 40, radius: 4, blast effect: fx_dynamite_explosion, blast sound: sfx_bombdynamite_explosion, warning effect: vfx_Smoked }
     Cloaked:     { reveal distance: 10, fade time: 0.5, fade margin: 1 }
     Splintering: { damage: 0.6, max generations: 0, max descendants: 0 }
     Leeching:    { regen: 0.5, lifesteal: 10, regen cap: 20, combat cooldown: 5 }
@@ -1560,3 +1564,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-27 | 3.9.0: Gilded, Blinking and Relentless added with their "in full" sections, colours, fields and enhancement rows; per-creature mutation rules and the shipped Troll, Lox and Hatchling entries; Bloated's two-second fuse, full-strength smoke on the body, smaller blast and corpse bursting with it; Cloaked at 10 m; Warding's base hit and `max reflect`; tamed Splintering copies; effects drawn once, locally; the embedded rule file and the mutated-share table brought up to date. Built, not tested in game. | - |
 | 2026-09-28 | Devouring eats only prey with at most `max prey health` (125%) of its own current health and one creature per star (`min meals` 1 as the floor), then is sated; what it ate is kept on its ZDO (`ecr_dev_meals`) and drawn on its nameplate as trophies or the game's monster head, beside a Thieving pouch through a shared icon row; its kill tell is drawn at a fifth of the size, every part (LocalEffects `FlashScaled`); Bloated's fuse 1.7 s. Built, not tested in game. | - |
 | 2026-09-30 | The Warding and Reflective reflect tell and Devouring's kill tell are only heard, nothing drawn (LocalEffects `SoundOnly`): the reflect tell pinned to `fx_StaffShield_Hit` at 30% volume, the kill tell `fx_aspect_death`'s sound at full volume. At the user's request: the particles cost frames and the reflect sound was too loud. Built, not tested in game. | - |
+| 2026-10-03 | Juggernaut and Screecher added at the user's request (13-14; colours iron grey, pink); Howling was built too and removed the same evening after a try in game ("way too crazy"); Gilded's curve halved; large creatures (`Traits/BodySize.cs`: capsule radius >= 1 m or length >= 3.5 m, and 300+ base health) never roll or inherit Gilded or Relentless and are never prey; bosses never prey; `max prey health` 125 -> 100; Bloated's fuse 1.5 s. Judgement calls: Juggernaut shows "Unstoppable" where it would have staggered and keeps its own attack recoil; Screecher triggers on one hit taking 15% of its max health from any source, deafens only players it is hostile to (AudioListener at 4%, a faint ringing, a "Ringing ears" status), blocks Elemental and Blood Magic weapons. Built by parallel agents, not tested in game. | - |

@@ -8,7 +8,7 @@ namespace EliteCreaturesReborn.Runtime
     /// these owner-only vs everywhere; the multiplayer rule is instead "decide on the owner, draw on every client", so
     /// each behaviour is attached everywhere and self-gates its authoritative writes on live ownership. That makes
     /// ownership changing hands free: the machine that owns the creature at any moment is the one whose gates open.
-    /// The event-shaped mutations (Warding, Plated, Bloated, Splintering, Mad) need no component - patches handle them.
+    /// The event-shaped mutations (Warding, Plated, Bloated, Splintering, Mad, Juggernaut) need no component - patches handle them.
     /// </summary>
     public static class BehaviourInstaller
     {
@@ -48,6 +48,10 @@ namespace EliteCreaturesReborn.Runtime
             if (traits.Has(Mutation.Relentless))
             {
                 controller.gameObject.AddComponent<RelentlessBehaviour>();
+            }
+            if (traits.Has(Mutation.Screecher))
+            {
+                controller.gameObject.AddComponent<ScreecherBehaviour>();
             }
         }
     }

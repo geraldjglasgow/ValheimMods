@@ -4,13 +4,15 @@ using EliteCreaturesReborn.Traits;
 namespace EliteCreaturesReborn.Runtime
 {
     /// <summary>
-    /// A boss's counterpart to <see cref="BehaviourInstaller"/>: attaches the per-frame behaviour its aspect calls for on
+    /// A boss's counterpart to <see cref="BehaviourInstaller"/>: attaches the per-frame behaviour each of its aspects calls for on
     /// EVERY machine, each self-gating its writes on live ownership (Phantom's splits among them), and - on the owner, on
-    /// the boss's first roll only - brings in its twin. A copy is born already resolved, so it never reaches that branch,
-    /// and returns before the behaviours, so it never brings a twin or splits of its own. A Phantom copy is hollowed here
-    /// on every machine the moment it resolves.
+    /// the boss's first roll only - brings in its twin or tethered partner. A copy is born already resolved, so it never
+    /// reaches that branch, and never brings a twin, a partner or splits of its own. A Phantom copy is hollowed here on every machine the
+    /// moment it resolves, then takes the behaviours of the other aspects it carries (a Bountiful boss's, see
+    /// <see cref="Aspects.PhantomSpawner"/>).
     /// The hit-shaped aspects (Reflective, Shielded, Elementalist, Enraged) need no component - patches handle them.
-    /// Adaptive and Fixated have both: a component for their state and look, and a hook in <see cref="Scaling.AspectDamage"/>.
+    /// Adaptive, Fixated and Tethered have both: a component for their state and look, and a hook in
+    /// <see cref="Scaling.AspectDamage"/>.
     /// </summary>
     public static class AspectInstaller
     {
@@ -20,12 +22,18 @@ namespace EliteCreaturesReborn.Runtime
             if (traits.PhantomCopy)
             {
                 PhantomBody.Hollow(controller.Creature);
-                return;
             }
-            Attach(controller, traits.Aspect);
-            if (controller.FreshlyResolved && controller.IsOwner())
+            foreach (Aspect aspect in traits.Aspects())
             {
-                Arrive(controller, traits.Aspect);
+                if (traits.PhantomCopy && aspect == Aspect.Phantom)
+                {
+                    continue; // a copy wears a Bountiful boss's other aspects, never Phantom's own splits
+                }
+                Attach(controller, aspect);
+                if (controller.FreshlyResolved && controller.IsOwner())
+                {
+                    Arrive(controller, aspect);
+                }
             }
         }
 
@@ -42,6 +50,8 @@ namespace EliteCreaturesReborn.Runtime
                 case Aspect.Stormbound: controller.gameObject.AddComponent<StormboundBehaviour>(); break;
                 case Aspect.Gravitic: controller.gameObject.AddComponent<GraviticBehaviour>(); break;
                 case Aspect.Colossal: controller.gameObject.AddComponent<ColossalBehaviour>(); break;
+                case Aspect.Tethered: controller.gameObject.AddComponent<TetherLink>(); break;
+                case Aspect.Portalbound: controller.gameObject.AddComponent<PortalboundBehaviour>(); break;
             }
         }
 
@@ -50,6 +60,10 @@ namespace EliteCreaturesReborn.Runtime
             if (aspect == Aspect.Twin)
             {
                 TwinSpawner.Spawn(controller);
+            }
+            else if (aspect == Aspect.Tethered)
+            {
+                TetherSpawner.Spawn(controller);
             }
         }
     }

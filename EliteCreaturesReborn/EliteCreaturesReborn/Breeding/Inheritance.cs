@@ -10,15 +10,18 @@ namespace EliteCreaturesReborn.Breeding
     /// The inheritance roll, and nothing else - no ZDO, no game objects. Stars are drawn with equal odds from 0 up to
     /// the stronger parent's, so a line only holds its strength if the player keeps the good ones. The mutation is one
     /// of the parents' own, picked at random from both, whenever either has one (at the rule file's chance, 100 by
-    /// default); a mutation switched off in `mutations enabled` is never passed on. A newborn never rolls anything new.
+    /// default); a mutation switched off in `mutations enabled` is never passed on, and neither is one the species' body
+    /// rules out (Gilded and Relentless for a large kind, <see cref="BodySize.Barred"/>), which a parent rolled before
+    /// that rule may still carry. A newborn never rolls anything new.
     /// </summary>
     internal static class Inheritance
     {
-        public static CreatureTraits Offspring(CreatureTraits mother, CreatureTraits? sire, RuleSet rules)
+        /// <summary>The newborn's traits; <paramref name="barred"/> is what its species' body rules out.</summary>
+        public static CreatureTraits Offspring(CreatureTraits mother, CreatureTraits? sire, RuleSet rules, int barred = 0)
         {
             int cap = Mathf.Max(mother.Stars, sire?.Stars ?? 0);
             int stars = Random.Range(0, cap + 1);
-            int mask = PickMutation(mother.Mask | (sire?.Mask ?? 0), rules);
+            int mask = PickMutation((mother.Mask | (sire?.Mask ?? 0)) & ~barred, rules);
             return new CreatureTraits(stars, mask);
         }
 

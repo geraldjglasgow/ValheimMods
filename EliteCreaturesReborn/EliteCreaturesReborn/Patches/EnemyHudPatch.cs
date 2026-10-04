@@ -16,7 +16,7 @@ namespace EliteCreaturesReborn.Patches
     /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count - on
     /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite. A
     /// Phantom copy's boss bar gets no star row: it is gathered instead and laid out small under the boss's own bar by
-    /// <see cref="PhantomBars"/>. It also adds the icon rows on the star row's line: what a Thieving creature carries
+    /// <see cref="PhantomBars"/>; a Tethered pair's two bars are stacked by <see cref="TetherBars"/>. It also adds the icon rows on the star row's line: what a Thieving creature carries
     /// (<see cref="PouchIcons"/>) and what a Devouring creature has eaten (<see cref="MealIcons"/>).
     /// </summary>
     [HarmonyPatch(typeof(EnemyHud), "UpdateHuds")]
@@ -24,6 +24,9 @@ namespace EliteCreaturesReborn.Patches
     {
         /// <summary>This frame's Phantom copy bars, reused every frame.</summary>
         private static readonly List<PhantomBars.Bar> Copies = new List<PhantomBars.Bar>();
+
+        /// <summary>This frame's Tethered pair bars, reused every frame.</summary>
+        private static readonly List<PhantomBars.Bar> Pairs = new List<PhantomBars.Bar>();
 
         private static void Postfix(EnemyHud __instance) =>
             Guard.Run("EnemyHud.UpdateHuds stars", () => Decorate(__instance));
@@ -36,11 +39,13 @@ namespace EliteCreaturesReborn.Patches
                 return;
             }
             Copies.Clear();
+            Pairs.Clear();
             foreach (object data in huds.Values)
             {
                 DecorateOne(Traverse.Create(data));
             }
             PhantomBars.Layout(Copies);
+            TetherBars.Layout(Pairs);
         }
 
         private static void DecorateOne(Traverse data)
@@ -51,12 +56,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            if (PhantomBars.IsCopy(character, out ZDOID id))
-            {
-                Copies.Add(new PhantomBars.Bar(id, gui));
-                return;
-            }
-            if (!IsElite(character))
+            if (Gather(character, gui) || !IsElite(character))
             {
                 return;
             }
@@ -67,6 +67,22 @@ namespace EliteCreaturesReborn.Patches
             }
             EnsureIcons<PouchIcons>(gui, character, Config.Configuration.ShowStolenItems.Value, Mutation.Thieving);
             EnsureIcons<MealIcons>(gui, character, Config.Configuration.ShowDevouredCreatures.Value, Mutation.Devouring);
+        }
+
+        /// <summary>Collects the boss bars laid out after the loop: a Phantom copy's (true: it takes no star row) and a
+        /// Tethered pair's (false: decorated like any boss bar, then stacked).</summary>
+        private static bool Gather(Character character, GameObject gui)
+        {
+            if (PhantomBars.IsCopy(character, out ZDOID id))
+            {
+                Copies.Add(new PhantomBars.Bar(id, gui));
+                return true;
+            }
+            if (TetherBars.IsTethered(character, out ZDOID pairId))
+            {
+                Pairs.Add(new PhantomBars.Bar(pairId, gui));
+            }
+            return false;
         }
 
         private static bool IsElite(Character character)

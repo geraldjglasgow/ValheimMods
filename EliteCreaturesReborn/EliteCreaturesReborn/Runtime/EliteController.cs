@@ -26,7 +26,7 @@ namespace EliteCreaturesReborn.Runtime
         private bool _dressPending;
         private bool _movementClamped;
         private CreatureTraits? _forced;
-        private Aspect? _forcedAspect;
+        private BossAspects? _forcedAspect;
         private Heightmap.Biome _forcedBiome;
         private bool _isBoss;
 
@@ -162,11 +162,12 @@ namespace EliteCreaturesReborn.Runtime
             {
                 BossRules boss = RuleState.Active.Boss;
                 int stars = boss.Enabled ? TraitRoller.RollStars(BossView.For(boss)) : 0;
-                Aspect aspect = boss.Aspects.Enabled
-                    ? _forcedAspect ?? AspectRoller.Roll(PrefabName, null) : Aspect.None;
-                return new CreatureTraits(stars, aspect);
+                BossAspects aspects = boss.Aspects.Enabled
+                    ? _forcedAspect ?? AspectRoller.RollBoss(PrefabName, null) : BossAspects.None;
+                return aspects.ToTraits(stars); // a Bountiful roll brings its extras with it
             }
-            return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current(), biome);
+            return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current(), biome,
+                BodySize.Barred(_character)); // a large body never rolls Gilded or Relentless
         }
 
         /// <summary>
@@ -181,10 +182,11 @@ namespace EliteCreaturesReborn.Runtime
         }
 
         /// <summary>
-        /// Altar hook: the aspect locked in at the offering, handed over in the same frame the altar instantiates the
-        /// boss. The stars still roll; only the aspect is fixed. Ignored once the boss has been rolled.
+        /// Altar hook: the aspects locked in at the offering (a Bountiful one's extras with it), handed over in the same
+        /// frame the altar instantiates the boss. The stars still roll; only the aspects are fixed. Ignored once the boss
+        /// has been rolled.
         /// </summary>
-        public void ForceAspect(Aspect aspect) => _forcedAspect = aspect;
+        public void ForceAspect(BossAspects aspects) => _forcedAspect = aspects;
 
         // The numbers apply at once, so a hit that wakes a disguised creature is already scaled and its health is not
         // refilled on waking. What can be seen - size, the star look, the mutation and aspect behaviours - waits while a

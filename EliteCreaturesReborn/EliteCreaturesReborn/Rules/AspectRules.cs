@@ -59,6 +59,10 @@ namespace EliteCreaturesReborn.Rules
             {
                 return false; // a boss with nothing to call never rolls Summoner rather than rolling it and doing nothing
             }
+            if (aspect == Aspect.Portalbound && !Aspects.PortalAttacks.Supports(bossPrefab))
+            {
+                return false; // only a boss with an attack the portals know how to carry (the Elder, for now)
+            }
             return aspect == Aspect.None || rule?.Rotation == null || rule.Rotation.Contains(aspect);
         }
 

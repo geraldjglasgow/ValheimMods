@@ -11,10 +11,11 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// The Devouring bite, resolved on the VICTIM's owner - where RPC_Damage runs and whose ZDO writes stick. A landed
-    /// attack on a non-boss creature is an instant kill when the devourer is off its cooldown, has not yet eaten its one
-    /// creature per star, and the prey's current health is within `max prey health` percent of its own (see
-    /// <see cref="DevourLimits"/>; all three are read from the two creatures' replicated ZDOs, so no routing is needed).
-    /// Any other landed attack is an ordinary hit:
+    /// attack on a creature that can be prey - never a player, a boss or a large creature - is an instant kill when the
+    /// devourer is off its cooldown, has not yet eaten its one creature per star, and the prey's current health is within
+    /// `max prey health` percent of its own (100 by default: no more than its own; see <see cref="DevourLimits"/>; all of
+    /// it is read from the two creatures' prefabs and replicated ZDOs, so no routing is needed). Any other landed attack
+    /// is an ordinary hit:
     /// <list type="bullet">
     /// <item>The <b>prefix</b> commits the kill before vanilla resolves the hit - it marks the prey with the devourer's id
     /// (so the prey's death path feeds that one devourer, see <see cref="DeathPatch"/>) and fires the sound
@@ -43,9 +44,9 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            if (prey.IsPlayer() || prey.IsBoss())
+            if (!DevourLimits.IsPrey(prey))
             {
-                return; // prey is other creatures only; a player is never devoured
+                return; // a player, a boss or a large creature is never devoured: this is an ordinary hit
             }
             Character? devourer = ReadyDevourer(prey, hit);
             if (devourer != null)

@@ -27,7 +27,7 @@ bosses:
 
     # Weights, not percentages. none is the fight as the game ships it.
     chances:
-      none: 30
+      none: 38
       Reflective: 10
       Shielded: 10
       Mending: 10
@@ -41,6 +41,9 @@ bosses:
       Stormbound: 10
       Gravitic: 10
       Colossal: 10
+      Tethered: 10
+      Bountiful: 10
+      Portalbound: 10
 
     # Multiplies everything the boss drops, even in Vanilla loot mode.
     loot:
@@ -58,6 +61,9 @@ bosses:
       Adaptive: 1.3
       Fixated: 1.3
       Gravitic: 1.3
+      Tethered: 1
+      Bountiful: 2
+      Portalbound: 1.2
 
     # Field meanings: reference, Boss aspect power fields.
     power:
@@ -74,6 +80,9 @@ bosses:
       Stormbound:   { every: 20, tell time: 2, radius: 2.5, damage: 8, range: 40 }
       Gravitic:     { every: 20, range: 30, pull time: 1.5, pull speed: 6, slam radius: 6, slam damage: 10 }
       Colossal:     { bigger: 40, more health: 15, slower: 15, shockwave radius: 8 }
+      Tethered:     { less health: 25, less damage: 25, attack speed: 50, armour: 50, full gap: 50 }
+      Bountiful:    { extra aspects: 2 }
+      Portalbound:  { min height: 5, clearance: 2, range: 20 }
 
     # Per boss, by prefab name: summons is what Summoner calls (no list, no Summoner);
     # aspects, if set, limits which aspects it rolls.
@@ -92,9 +101,9 @@ bosses:
         summons: [SeekerBrute, Seeker]
       - match: Fader
         summons: [Charred_Melee, Charred_Archer]
-      # Elite Creatures Pack's kraken holds one ship: never Twin or Phantom.
+      # Elite Creatures Pack's kraken holds one ship: never Twin, Phantom or Tethered.
       - match: ECP_Kraken
-        aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal]
+        aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal, Bountiful]
 
 ";
     }

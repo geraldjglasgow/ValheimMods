@@ -32,6 +32,8 @@ namespace EliteCreaturesReborn.Commands
                 Mutation.Gilded => $"Gilded: loot x{Enhance.Stat(r, t, m, Fields.Loot):0.0} + {System.Math.Min(System.Math.Round(Enhance.Magnitude(r, t, m, Fields.BonusAmount) * (1 + t.Stars)), Loot.DropRoller.AmountCap):0} {r.PrefabOf(m, Fields.BonusItem)} (none when tamed), flees players within {r.PowerOf(m, Fields.FleeDistance):0}m{tag}",
                 Mutation.Blinking => $"Blinking: every {r.PowerOf(m, Fields.Every):0}s in combat, {r.PowerOf(m, Fields.Distance):0.0}m behind its target, {r.PowerOf(m, Fields.TellTime):0.0}s tell, health x{r.PowerOf(m, Fields.Health):0.00}",
                 Mutation.Relentless => $"Relentless: keeps its target to {r.PowerOf(m, Fields.ChaseDistance):0}m, never faster than its base speed",
+                Mutation.Juggernaut => "Juggernaut: never staggered (hits, parries, traps) or knocked back; keeps its own attack recoil; no power fields",
+                Mutation.Screecher => $"Screecher: shrieks when one hit takes {r.PowerOf(m, Fields.Threshold):0}% of its max hp, at most every {r.PowerOf(m, Fields.Cooldown):0}s; enemy players within {Enhance.Magnitude(r, t, m, Fields.Radius):0}m deafened and unable to cast for {Enhance.Magnitude(r, t, m, Fields.MuteTime):0.0}s; shriek {r.PrefabOf(m, Fields.ShriekSound)}{tag}",
                 _ => MutationCatalog.Word(m),
             };
         }
@@ -40,7 +42,7 @@ namespace EliteCreaturesReborn.Commands
         private static string PreySize(BiomeRules r)
         {
             float percent = r.PowerOf(Mutation.Devouring, Fields.MaxPreyHealth);
-            return percent > 0f ? $"no bigger than {percent:0}% of its health" : "of any size";
+            return percent > 0f ? $"no bigger than {percent:0}% of its health, never large or a boss" : "of any size, never large or a boss";
         }
     }
 }

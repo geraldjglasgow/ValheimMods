@@ -13,7 +13,7 @@ namespace EliteCreaturesReborn.Rules
         public static AspectRules Build()
         {
             AspectRules rules = new AspectRules { Enabled = true, ShiftHours = 1f };
-            rules.Chances[Aspect.None] = 30f; // about one fight in five is the boss as the game ships it
+            rules.Chances[Aspect.None] = 38f; // about one fight in five is the boss as the game ships it
             foreach (Aspect aspect in AspectCatalog.InOrder)
             {
                 rules.Chances[aspect] = 10f;
@@ -60,7 +60,7 @@ namespace EliteCreaturesReborn.Rules
             [Aspect.Elementalist] = 1.2f, [Aspect.Mending] = 1.3f, [Aspect.Phantom] = 1.3f,
             [Aspect.Reflective] = 1.4f, [Aspect.Summoner] = 1.5f,
             [Aspect.Stormbound] = 1.2f, [Aspect.Colossal] = 1.2f, [Aspect.Adaptive] = 1.3f, [Aspect.Fixated] = 1.3f,
-            [Aspect.Gravitic] = 1.3f,
+            [Aspect.Gravitic] = 1.3f, [Aspect.Tethered] = 1f, [Aspect.Bountiful] = 2f, [Aspect.Portalbound] = 1.2f,
         };
 
         private static readonly Dictionary<Aspect, Dictionary<string, float>> PowerTable =
@@ -89,6 +89,12 @@ namespace EliteCreaturesReborn.Rules
                 [Aspect.Colossal] = new Dictionary<string, float>
                     { [Fields.Bigger] = 40f, [Fields.MoreHealth] = 15f, [Fields.Slower] = 15f,
                       [Fields.ShockwaveRadius] = 8f },
+                [Aspect.Tethered] = new Dictionary<string, float>
+                    { [Fields.LessHealth] = 25f, [Fields.LessDamage] = 25f, [Fields.AttackSpeed] = 50f,
+                      [Fields.Armour] = 50f, [Fields.FullGap] = 50f },
+                [Aspect.Bountiful] = new Dictionary<string, float> { [Fields.ExtraAspects] = 2f },
+                [Aspect.Portalbound] = new Dictionary<string, float>
+                    { [Fields.MinHeight] = 5f, [Fields.Clearance] = 2f, [Fields.Range] = 20f },
             };
 
         // Phantom splits as its health falls past each mark, in percent of its maximum health left (decided 2026-09-26).
@@ -111,11 +117,11 @@ namespace EliteCreaturesReborn.Rules
         };
 
         // Bosses from other mods whose fight an aspect would break, by prefab name (only the name crosses; without that
-        // mod the entry is never matched). Elite Creatures Pack's kraken holds one ship with one health bar: a Twin puts
+        // mod the entry is never matched). Elite Creatures Pack's kraken holds one ship with one health bar: a Twin or a Tethered pair puts
         // two of it on the same hull, and Phantom copies would swarm the deck. Decided with the user, 2026-09-28.
         private static readonly Dictionary<string, Aspect[]> LeftOutTable = new Dictionary<string, Aspect[]>
         {
-            ["ECP_Kraken"] = new[] { Aspect.Twin, Aspect.Phantom },
+            ["ECP_Kraken"] = new[] { Aspect.Twin, Aspect.Phantom, Aspect.Tethered },
         };
     }
 }

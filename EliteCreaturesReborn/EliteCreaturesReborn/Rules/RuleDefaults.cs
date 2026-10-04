@@ -23,7 +23,7 @@ namespace EliteCreaturesReborn.Rules
                 MutationChance = new[] { 2.5f, 3.5f, 5f, 6f, 7.5f, 10f },
             };
             rules.MutationChances[Mutation.Devouring] = new[] { 0.6f, 0.9f, 1.2f, 1.5f, 1.8f, 2.4f };
-            rules.MutationChances[Mutation.Gilded] = new[] { 0.4f, 0.5f, 0.7f, 0.9f, 1.1f, 1.4f };
+            rules.MutationChances[Mutation.Gilded] = new[] { 0.2f, 0.25f, 0.35f, 0.45f, 0.55f, 0.7f };
             foreach (Mutation mutation in MutationCatalog.InOrder)
             {
                 rules.MutationPower[mutation] = new Dictionary<string, float>(Power(mutation));
@@ -109,6 +109,7 @@ namespace EliteCreaturesReborn.Rules
                         [Fields.BlinkEffect] = "vfx_ghost_spawn", [Fields.TellEffect] = "vfx_WishbonePing",
                         [Fields.TellSound] = "sfx_WishbonePing_near",
                     },
+                [Mutation.Screecher] = new Dictionary<string, string> { [Fields.ShriekSound] = "sfx_fallenvalkyrie_screech" },
             };
 
         private static Dictionary<string, float> Power(Mutation mutation)
@@ -124,7 +125,7 @@ namespace EliteCreaturesReborn.Rules
                 [Mutation.Mad] = new Dictionary<string, float>
                     { [Fields.Move] = 1.6f, [Fields.AttackSpeed] = 1.5f, [Fields.Health] = 0.5f },
                 [Mutation.Bloated] = new Dictionary<string, float>
-                    { [Fields.Health] = 2.0f, [Fields.Delay] = 1.7f, [Fields.Damage] = 40f, [Fields.Radius] = 4f },
+                    { [Fields.Health] = 2.0f, [Fields.Delay] = 1.5f, [Fields.Damage] = 40f, [Fields.Radius] = 4f },
                 [Mutation.Cloaked] = new Dictionary<string, float>
                     { [Fields.RevealDistance] = 10f, [Fields.FadeTime] = 0.5f, [Fields.FadeMargin] = 1f },
                 [Mutation.Splintering] = new Dictionary<string, float>
@@ -149,13 +150,15 @@ namespace EliteCreaturesReborn.Rules
             table[Mutation.Devouring] = new Dictionary<string, float>
                 { [Fields.Move] = 1f, [Fields.AbsorbHealth] = 50f, [Fields.AbsorbDamage] = 25f,
                   [Fields.SlowPer100Health] = 2f, [Fields.PlayerThreshold] = 0.333f, [Fields.DevourCooldown] = 60f,
-                  [Fields.MaxPreyHealth] = 125f, [Fields.MinMeals] = 1f };
+                  [Fields.MaxPreyHealth] = 100f, [Fields.MinMeals] = 1f };
             table[Mutation.Thieving] = new Dictionary<string, float> { [Fields.MaxItems] = 1f };
             table[Mutation.Gilded] = new Dictionary<string, float>
                 { [Fields.Loot] = 3f, [Fields.BonusAmount] = 20f, [Fields.FleeDistance] = 30f };
             table[Mutation.Blinking] = new Dictionary<string, float>
                 { [Fields.Health] = 0.75f, [Fields.Every] = 30f, [Fields.Distance] = 4f, [Fields.TellTime] = 0.5f };
             table[Mutation.Relentless] = new Dictionary<string, float> { [Fields.ChaseDistance] = 150f };
+            table[Mutation.Screecher] = new Dictionary<string, float>
+                { [Fields.Threshold] = 15f, [Fields.Radius] = 20f, [Fields.MuteTime] = 4f, [Fields.Cooldown] = 15f };
         }
     }
 }
