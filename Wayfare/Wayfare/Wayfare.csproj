@@ -36,6 +36,7 @@
     <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\AreaLoading\AreaLoading.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -85,6 +86,10 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">

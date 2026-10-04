@@ -6,6 +6,8 @@ using PatchGuard;
 using SyncedConfig;
 using Wayfare.Core;
 using Wayfare.Portals;
+using Wayfare.QuickJumps;
+using Wayfare.SeaGates;
 using Wayfare.Targeting;
 
 namespace Wayfare
@@ -26,12 +28,15 @@ namespace Wayfare
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             WayfareConfig.Initialize(Synced);
             Words.Touch();
+            SeaGateWords.Touch();
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            JumpSpeed.Install(harmony);
             PortalDiscovery.EnsureRunning();
             PortalRegistry.EnsureRunning();
             MapOverlay.EnsureRunning();
+            SeaGateDriver.EnsureRunning();
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
             Synced.Finish(harmony);

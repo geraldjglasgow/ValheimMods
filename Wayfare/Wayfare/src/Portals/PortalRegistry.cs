@@ -20,6 +20,9 @@ namespace Wayfare.Portals
 
         public static IReadOnlyList<PortalInfo> Portals => snapshot;
 
+        /// <summary>Changes whenever the snapshot is replaced, so a cache built from it knows when to rebuild.</summary>
+        public static int Version { get; private set; }
+
         public static void EnsureRunning()
         {
             if (driver != null)
@@ -63,6 +66,7 @@ namespace Wayfare.Portals
         {
             snapshot.Clear();
             snapshot.AddRange(portals);
+            Version++;
         }
 
         private sealed class PortalRegistryTicker : MonoBehaviour

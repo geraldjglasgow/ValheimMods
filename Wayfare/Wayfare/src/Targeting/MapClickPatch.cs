@@ -13,6 +13,10 @@ namespace Wayfare.Targeting
         [HarmonyPrefix]
         public static bool Prefix()
         {
+            // The sea gate picker owns the map while open: a click on one of its icons never reaches portal
+            // targeting or the game's pin toggle; anywhere else the game's own click runs.
+            if (SeaGates.SeaGatePicker.Active)
+                return !SeaGates.SeaGatePicker.TryClick(ZInput.pointerPosition);
             if (!WayfareConfig.Enabled.Value || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
                 return true;
             if (TargetingSession.Active)

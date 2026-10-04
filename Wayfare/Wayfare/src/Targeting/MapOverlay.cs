@@ -6,8 +6,8 @@ using Wayfare.Portals;
 
 namespace Wayfare.Targeting
 {
-    /// <summary>Draws Wayfare's own portal icons on the large map - a plain <c>UnityEngine.UI</c> overlay parented
-    /// under Minimap's own pin root, kept deliberately separate from Minimap's <c>PinData</c>/<c>AddPin</c> system
+    /// <summary>Draws Wayfare's own portal icons on the large map - a plain <c>UnityEngine.UI</c> overlay on Wayfare's
+    /// own map layer (<see cref="MapIconLayer"/>, above every pin and marker), kept deliberately separate from Minimap's <c>PinData</c>/<c>AddPin</c> system
     /// (see PLAN.md: that system's own click-to-toggle and save behaviour would otherwise run on a portal icon
     /// too). Visible whenever a targeting session is active, or the player toggled icons on with the hotkey while
     /// the large map is open; every frame it runs is guarded by <see cref="ShouldShow"/>, which is false for the
@@ -50,7 +50,8 @@ namespace Wayfare.Targeting
         private static bool ShouldShow()
         {
             return WayfareConfig.Enabled.Value && Player.m_localPlayer != null && Minimap.instance != null &&
-                   Minimap.instance.m_mode == Minimap.MapMode.Large && (TargetingSession.Active || HotkeyToggle.IconsOn);
+                   Minimap.instance.m_mode == Minimap.MapMode.Large && (TargetingSession.Active || HotkeyToggle.IconsOn) &&
+                   !SeaGates.SeaGatePicker.Active; // the sea gate picker shows sea gates only
         }
 
         private static void Tick()
@@ -67,6 +68,8 @@ namespace Wayfare.Targeting
 
         private static void Rebuild()
         {
+            if (MapIconLayer.Root == null)
+                return;
             long playerId = Player.m_localPlayer.GetPlayerID();
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
             HashSet<ZDOID> seen = new HashSet<ZDOID>();
@@ -88,7 +91,7 @@ namespace Wayfare.Targeting
                 icons[info.Id] = icon = BuildIcon();
             Minimap.instance.WorldToMapPoint(info.Position, out float mx, out float my);
             icon.Root.anchoredPosition = Minimap.instance.MapPointToLocalGuiPos(mx, my, Minimap.instance.m_mapImageLarge);
-            float size = 24f * Mathf.Max(0.25f, WayfareConfig.IconScale.Value);
+            float size = MapIconLayer.IconSize();
             icon.Root.sizeDelta = new Vector2(size, size);
             icon.Image.sprite = PlayerFavourites.IsFavourite(info.Id) ? IconFactory.Favourite : IconFactory.Portal;
             bool showTag = WayfareConfig.ShowTags.Value && !string.IsNullOrEmpty(info.Tag);
@@ -128,8 +131,9 @@ namespace Wayfare.Targeting
         {
             GameObject go = new GameObject("Wayfare.PortalIcon", typeof(RectTransform), typeof(Image));
             RectTransform root = (RectTransform)go.transform;
-            root.SetParent(Minimap.instance.m_pinRootLarge, worldPositionStays: false);
-            root.anchorMin = root.anchorMax = root.pivot = new Vector2(0.5f, 0.5f);
+            root.SetParent(MapIconLayer.Root, worldPositionStays: false);
+            root.anchorMin = root.anchorMax = Vector2.zero; // the map's lower-left corner, where pin positions start
+            root.pivot = new Vector2(0.5f, 0.5f);
             Image image = go.GetComponent<Image>();
             image.raycastTarget = false;
             return new Icon { Root = root, Image = image, Label = BuildLabel(root) };

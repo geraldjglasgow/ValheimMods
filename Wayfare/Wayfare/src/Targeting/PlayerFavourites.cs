@@ -1,25 +1,33 @@
 using System.Collections.Generic;
+using UnityEngine;
+using Wayfare.Portals;
 
 namespace Wayfare.Targeting
 {
     /// <summary>Per-player favourite portals, persisted client-side in the character save
-    /// (<c>Player.m_customData["Wayfare.favourites"]</c>, a comma-separated set of <c>ZDOID</c> strings) so they
-    /// travel with the character rather than the installation, and keyed by id rather than tag so a rename does
-    /// not un-favourite a portal.</summary>
+    /// (<c>Player.m_customData["Wayfare.favourites"]</c>, a comma-separated set) so they travel with the character
+    /// rather than the installation. A favourite is keyed by the portal's position rounded to the metre, not by its
+    /// <c>ZDOID</c>: the game renumbers every ZDOID on each world load (<c>ZDO.Load</c>), so an id key would point at
+    /// another portal, or none, after a server restart. Portals never move and two cannot stand within a metre of
+    /// each other, and a rename keeps the key. Callers still pass the session's ZDOIDs; the key is looked up in the
+    /// current portal snapshot.</summary>
     public static class PlayerFavourites
     {
         private const string Key = "Wayfare.favourites";
 
         private static Player cachedFor;
         private static HashSet<string> cache;
+        private static readonly Dictionary<ZDOID, string> keys = new Dictionary<ZDOID, string>();
+        private static int keysVersion = -1;
 
-        public static bool IsFavourite(ZDOID id) => Set().Contains(id.ToString());
+        public static bool IsFavourite(ZDOID id) => TryKey(id, out string key) && Set().Contains(key);
 
-        /// <summary>Adds or removes the id; returns whether it is a favourite afterwards.</summary>
+        /// <summary>Adds or removes the portal; returns whether it is a favourite afterwards.</summary>
         public static bool Toggle(ZDOID id)
         {
+            if (!TryKey(id, out string key))
+                return false;
             HashSet<string> set = Set();
-            string key = id.ToString();
             bool on = !set.Remove(key);
             if (on)
                 set.Add(key);
@@ -27,13 +35,34 @@ namespace Wayfare.Targeting
             return on;
         }
 
+        /// <summary>The favourite portals present in the current snapshot.</summary>
         public static IEnumerable<ZDOID> All()
         {
-            foreach (string raw in Set())
+            HashSet<string> set = Set();
+            foreach (PortalInfo info in PortalRegistry.Portals)
             {
-                if (TryParse(raw, out ZDOID id))
-                    yield return id;
+                if (TryKey(info.Id, out string key) && set.Contains(key))
+                    yield return info.Id;
             }
+        }
+
+        /// <summary>The key of a portal in the current snapshot, from a lookup rebuilt only when the snapshot changes
+        /// (the map asks for every icon every frame).</summary>
+        private static bool TryKey(ZDOID id, out string key)
+        {
+            if (keysVersion != PortalRegistry.Version)
+            {
+                keysVersion = PortalRegistry.Version;
+                keys.Clear();
+                foreach (PortalInfo info in PortalRegistry.Portals)
+                    keys[info.Id] = KeyOf(info.Position);
+            }
+            return keys.TryGetValue(id, out key);
+        }
+
+        private static string KeyOf(Vector3 position)
+        {
+            return Mathf.RoundToInt(position.x) + "/" + Mathf.RoundToInt(position.y) + "/" + Mathf.RoundToInt(position.z);
         }
 
         private static HashSet<string> Set()
@@ -46,11 +75,18 @@ namespace Wayfare.Targeting
             return cache ?? (cache = new HashSet<string>());
         }
 
+        /// <summary>Entries from before position keys (ZDOID strings, "user:id") are dropped: they no longer name a portal.</summary>
         private static HashSet<string> Load()
         {
+            HashSet<string> set = new HashSet<string>();
             if (Player.m_localPlayer == null || !Player.m_localPlayer.m_customData.TryGetValue(Key, out string raw) || string.IsNullOrEmpty(raw))
-                return new HashSet<string>();
-            return new HashSet<string>(raw.Split(','));
+                return set;
+            foreach (string entry in raw.Split(','))
+            {
+                if (entry.Split('/').Length == 3)
+                    set.Add(entry);
+            }
+            return set;
         }
 
         private static void Save(HashSet<string> set)
@@ -58,18 +94,6 @@ namespace Wayfare.Targeting
             if (Player.m_localPlayer == null)
                 return;
             Player.m_localPlayer.m_customData[Key] = string.Join(",", set);
-        }
-
-        private static bool TryParse(string raw, out ZDOID id)
-        {
-            id = ZDOID.None;
-            int sep = raw.IndexOf(':');
-            if (sep <= 0)
-                return false;
-            if (!long.TryParse(raw.Substring(0, sep), out long userId) || !uint.TryParse(raw.Substring(sep + 1), out uint objectId))
-                return false;
-            id = new ZDOID(userId, objectId);
-            return true;
         }
     }
 }

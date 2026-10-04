@@ -1,26 +1,27 @@
 # Wayfare
 
-Pick a portal's destination on the world map instead of matching tags. Any portal can reach any other portal you are
-allowed to use.
+Walk into a portal and the world map opens on every portal you may use; click one and you travel there. No more
+matching tags: any portal can reach any other, and each tag is shown as a name beside its icon.
 
 ## Features
-- Walk into a portal and the map opens with every portal you may target; click one to go there. The game's carry
-  rules, fade and cooldown still apply.
-- A portal's tag is only a label next to its icon; it no longer decides where the portal leads.
-- Access modes, cycled with Alt+Use on a portal: Public, Private (owner only) or Admin. Cycling makes you the owner;
-  only the owner or an admin can change an owned portal's mode.
-- Favourites: right-click a portal icon to add it to a panel on the map; saved with your character.
+- Map targeting: walk in, click a portal on the map, go. The game's carry rules, fade and cooldown still apply.
+- Access modes: Public, Private (owner only) or Admin, cycled with Alt+Use on a portal.
+- Favourites: right-click a portal icon to pin it to a panel on the map.
 - `Toggle Icons Key` (P) shows portal icons on the ordinary map.
-- Works with any mod's portals. A new or renamed portal can take a few seconds to appear.
+- Works with any mod's portals.
+- Sea gates: two pillars on the shore or in shallow water, 10 to 15 m apart, open a portal for ships. A ship sailing
+  through arrives at the gate picked on the map with its crew aboard. Experimental.
+- Quick jumps: near portals are quicker, no loading screen into an area already loaded, faster land loading after a
+  long jump.
 
 ## Install
-Needed on the server and every client; a client-only install does not work. Install with r2modman or the Thunderstore
-app, or put `Wayfare.dll` in `BepInEx/plugins`.
+Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `Wayfare.dll` in
+`BepInEx/plugins`.
 
 ## Configuration
 `BepInEx/config/com.Wayfare.cfg`. Every setting is described in the file and applies without a restart; the server's
-values bind every player (`Lock Configuration`), except the map key, icon size and tag labels, which each player sets.
-Console: `charter status` shows whether the server binds your settings.
+values bind every player, display settings stay your own. Console: `charter status` shows whether the server binds
+your settings.
 
 ## Links
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.

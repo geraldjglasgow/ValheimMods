@@ -71,7 +71,7 @@ namespace Wayfare.Targeting
             return null;
         }
 
-        private static bool Blocked(out string reason)
+        internal static bool Blocked(out string reason)
         {
             reason = Words.DeniedBlocked;
             ZoneSystem zones = ZoneSystem.instance;
@@ -122,6 +122,10 @@ namespace Wayfare.Targeting
         {
             TeleportGate.EnsureRegistered();
             PortalSync.EnsureRegistered();
+            ModeCycle.EnsureRegistered();
+            SeaGates.SeaGateIndex.EnsureRegistered();
+            SeaGates.SeaGateGrant.EnsureRegistered();
+            SeaGates.CrewJump.EnsureRegistered();
         }
     }
 }

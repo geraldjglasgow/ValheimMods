@@ -1,9 +1,10 @@
 namespace Wayfare.Core
 {
     /// <summary>Resolves the <c>sender</c> peer uid a routed RPC handler receives to a persistent player id and an
-    /// admin flag. <c>ZNet.GetPeer</c> has no entry for the local machine itself (only for other connected peers),
-    /// so a sender that resolves to no peer is the local player - the only way a routed RPC target-self call
-    /// reaches a handler without going through the peer list at all.</summary>
+    /// admin flag. <c>ZNet.GetPeer</c> has no entry for the local machine itself (only for other connected peers), so
+    /// a sender equal to this machine's own routed id is the local player. Any other unknown sender resolves to no
+    /// player (0): on a client, every machine but the server is unknown, so an owner-side check there fails closed
+    /// instead of crediting the local player with someone else's request.</summary>
     public static class SenderIdentity
     {
         public static long PlayerId(long sender)
@@ -11,7 +12,8 @@ namespace Wayfare.Core
             ZNetPeer peer = ZNet.instance != null ? ZNet.instance.GetPeer(sender) : null;
             if (peer != null)
                 return peer.m_playerID;
-            return Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerID() : 0L;
+            bool self = ZRoutedRpc.instance != null && sender == ZRoutedRpc.instance.m_id;
+            return self && Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerID() : 0L;
         }
 
         /// <summary>True when a routed RPC came from the server: the server peer's uid on a client, this
@@ -34,7 +36,8 @@ namespace Wayfare.Core
             ZNetPeer peer = ZNet.instance.GetPeer(sender);
             if (peer != null)
                 return ZNet.instance.IsAdmin(peer.m_socket.GetHostName());
-            return ZNet.instance.LocalPlayerIsAdminOrHost();
+            bool self = ZRoutedRpc.instance != null && sender == ZRoutedRpc.instance.m_id;
+            return self && ZNet.instance.LocalPlayerIsAdminOrHost();
         }
     }
 }
