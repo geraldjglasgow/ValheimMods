@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Dev-only test bridge: never packed or uploaded. The build copies it into the LocalTesting profile only. -->
+  <!-- Test bridge for development profiles, published on Thunderstore. The build copies it into the LocalTesting profile. -->
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>DevBridge</AssemblyName>

@@ -24,6 +24,7 @@ namespace DevBridge.Hitbox
             entry["kind"] = kind;
             entry["time"] = Fmt.R(Time.time);
             events.Add(entry);
+            Events.EventLog.Add("hitbox", entry);
             if (events.Count > Keep) events.RemoveAt(0);
             Debug.Log($"[DevBridge] hitbox {kind}: " + string.Join(", ", entry.Where(e => e.Key != "kind").Select(e => $"{e.Key}={e.Value}")));
         }

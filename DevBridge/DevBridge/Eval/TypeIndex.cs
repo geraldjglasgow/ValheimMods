@@ -2,21 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using DevBridge.Reload;
 
 namespace DevBridge.Eval
 {
     /// <summary>
     /// Types by full name and by short name. Short names prefer the game, then Unity, then plugins, then the rest,
-    /// so Player, Console and Object mean the game's and Unity's types.
+    /// so Player, Console and Object mean the game's and Unity's types. Assemblies a /reload replaced are left out, so
+    /// a name means the reloaded plugin's newest copy.
     /// </summary>
     internal static class TypeIndex
     {
         private static Dictionary<string, Type> byName;
         private static int assembliesIndexed;
+        private static int reloadsIndexed;
 
         internal static Type Find(string name)
         {
-            if (byName == null) Build();
+            if (byName == null || reloadsIndexed != ReloadHistory.Version) Build();
             if (byName.TryGetValue(name, out Type type)) return type;
             if (AppDomain.CurrentDomain.GetAssemblies().Length == assembliesIndexed) return null;
             Build();
@@ -27,11 +30,12 @@ namespace DevBridge.Eval
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             var map = new Dictionary<string, Type>(StringComparer.Ordinal);
-            foreach (Assembly assembly in assemblies.OrderBy(Rank))
+            foreach (Assembly assembly in assemblies.Where(a => !ReloadHistory.IsSuperseded(a)).OrderBy(Rank))
                 foreach (Type type in TypesOf(assembly))
                     Add(map, type);
             byName = map;
             assembliesIndexed = assemblies.Length;
+            reloadsIndexed = ReloadHistory.Version;
         }
 
         private static void Add(Dictionary<string, Type> map, Type type)

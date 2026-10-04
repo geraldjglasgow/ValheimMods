@@ -1,0 +1,9 @@
+{
+    "name": "DevBridge",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/DevBridge",
+    "description": "A test bridge for modders and their AI agents: see and drive the running game over HTTP on 127.0.0.1. Screenshots, UI, input, console, eval, traces, hot reload. Dev profiles only.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

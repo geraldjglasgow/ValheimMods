@@ -24,7 +24,7 @@ ValheimMods/
   GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
-  DevBridge/         dev-only plugin: drive the running game over localhost HTTP for testing, never shipped
+  DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), on Thunderstore for dev profiles
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
 ```
 
@@ -244,9 +244,9 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   the game's own. Build with `..\ValheimAssets\build.ps1 -Asset <name>` (an asset is found by its folder name wherever
   it sits under `Assets`) and check a model by reading its `out\preview.png` and `out\lineup\`. The workshop's
   `README.md` has the conventions and what is not built yet.
-- Test in the running game through `DevBridge` (installed in `LocalTesting` only): once the user has started the
+- Test in the running game through `DevBridge` (here installed in `LocalTesting` only): once the user has started the
   profile, `curl -s http://127.0.0.1:7780/help` lists endpoints for screenshots, the UI tree, clicks, keys, mouse,
-  console commands, the log, reflection and ZDOs. `DevBridge/README.md` has the test loop and the limits. A rebuilt
+  console commands, the log, reflection and ZDOs. `DevBridge/REFERENCE.md` has the test loop and the limits. A rebuilt
   mod loads only after the user restarts the game.
 
 ## Releasing

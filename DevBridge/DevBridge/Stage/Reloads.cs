@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevBridge.Swap;
 using UnityEngine;
 
 namespace DevBridge.Stage
@@ -8,7 +9,8 @@ namespace DevBridge.Stage
     /// <summary>
     /// Reloading and unloading a bundle with things placed from it. Everything made from the bundle is destroyed before
     /// it unloads (with all its loaded objects); after a reload each asset is made again at the same place with the same
-    /// id and dresses, and clip swaps that used it are put back. Effects and sounds from it are not replayed.
+    /// id and dresses, and clip swaps that used it are put back. Effects and sounds from it are not replayed. Prefab
+    /// swaps from it (/swap) come off before it unloads and go back on from the new load in the same frame.
     /// </summary>
     internal static class Reloads
     {
@@ -21,17 +23,18 @@ namespace DevBridge.Stage
             Placements.Clear(p => dropped.Contains(p.Id)); // before the assets go, so the row is not reset as the list empties
             foreach (var asset in assets) asset.Placement.Destroy(now: true);
             foreach (Placement placement in swapped) Poses.Unswap(placement, keepSpec: true);
+            Swaps.Release(loaded);
             Bundles.Refresh(loaded);
             var lost = new List<string>();
             foreach (var asset in assets) Try(() => Stager.Rebuild(asset.Placement, asset.position, asset.rotation), asset.Placement, lost);
             foreach (Placement placement in swapped.Where(p => p.Alive)) Try(() => Reswap(placement), placement, lost);
-            return new Dictionary<string, object>
+            return Swaps.Restore(loaded, new Dictionary<string, object>
             {
                 ["replaced"] = assets.Select(a => a.Placement).Where(p => p.Alive).Select(p => p.Id).ToList(),
                 ["reswapped"] = swapped.Where(p => p.Alive && p.SwapSpec != null).Select(p => p.Id).ToList(),
                 ["dropped effects and sounds"] = dropped,
                 ["lost"] = lost,
-            };
+            });
         }
 
         internal static Dictionary<string, object> Unload(LoadedBundle loaded)
@@ -39,8 +42,9 @@ namespace DevBridge.Stage
             foreach (Placement placement in Placements.All.Where(p => p.SwapBundles.Contains(loaded.Name)).ToList())
                 Poses.Unswap(placement, keepSpec: false);
             int removed = Placements.Clear(p => From(p, loaded));
+            int reverted = Swaps.Forget(loaded);
             Bundles.Drop(loaded);
-            return new Dictionary<string, object> { ["unloaded"] = loaded.Name, ["removed"] = removed };
+            return new Dictionary<string, object> { ["unloaded"] = loaded.Name, ["removed"] = removed, ["swaps reverted"] = reverted };
         }
 
         private static bool From(Placement placement, LoadedBundle loaded) =>

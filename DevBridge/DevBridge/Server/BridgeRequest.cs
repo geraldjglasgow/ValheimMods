@@ -16,6 +16,9 @@ namespace DevBridge.Server
 
         internal string Path { get; }
         internal Reply Result { get; private set; }
+
+        /// <summary>When the call came in: the HTTP wait (Patience) runs from here, not from when the main thread picks it up.</summary>
+        internal readonly DateTime Arrived = DateTime.UtcNow;
         internal bool Answered => Result != null;
 
         private BridgeRequest(string path, Dictionary<string, string> args)
@@ -31,6 +34,14 @@ namespace DevBridge.Server
             Form.Parse(request.Url.Query.TrimStart('?'), args);
             if (request.HasEntityBody) ReadBody(request, args);
             return new BridgeRequest(request.Url.AbsolutePath.TrimEnd('/').ToLowerInvariant(), args);
+        }
+
+        /// <summary>A call made inside the bridge (a scenario step), read with the same path and argument rules as an HTTP call.</summary>
+        internal static BridgeRequest Make(string path, IDictionary<string, string> args)
+        {
+            var copy = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (KeyValuePair<string, string> pair in args) copy[pair.Key] = pair.Value ?? "";
+            return new BridgeRequest(("/" + path.Trim().TrimStart('/')).TrimEnd('/').ToLowerInvariant(), copy);
         }
 
         private static void ReadBody(HttpListenerRequest request, Dictionary<string, string> args)
@@ -63,9 +74,17 @@ namespace DevBridge.Server
         internal string Require(string name) =>
             Get(name) ?? throw new BridgeException($"missing argument {name}=");
 
-        /// <summary>How long the HTTP thread waits for the main thread: timeout= or seconds=, plus a margin.</summary>
-        internal TimeSpan Patience =>
-            TimeSpan.FromSeconds(Math.Min(600f, Math.Max(Float("timeout", 30f), Float("seconds", 0f)) + 5f));
+        /// <summary>How long the HTTP thread waits for the main thread: timeout= or seconds= (a scenario 300 s by default; /perf both), plus a margin.</summary>
+        internal TimeSpan Patience
+        {
+            get
+            {
+                // /perf probes every mod before it samples seconds=, so its wait is both
+                float wait = Path == "/perf" ? Float("seconds", 5f) + Float("timeout", 30f)
+                    : Math.Max(Float("timeout", Path == "/scenario" ? 300f : 30f), Float("seconds", 0f));
+                return TimeSpan.FromSeconds(Math.Min(600f, wait + 5f));
+            }
+        }
 
         internal void Json(object value) =>
             Finish(new Reply(200, "application/json", JsonConvert.SerializeObject(value, Formatting.Indented)));

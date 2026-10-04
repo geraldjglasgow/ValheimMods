@@ -11,7 +11,7 @@ namespace DevBridge.Routes
     internal static class StatusRoute
     {
         internal static void Register(Router router) => router.Add("/status",
-            "/status                game state (starting/menu/loading/ingame), world, network role, player, open screens, time, plugins",
+            "/status                game state (starting/menu/loading/ingame/server), world, network role, player, open screens, time, plugins",
             request => request.Json(Build()));
 
         private static Dictionary<string, object> Build() => new Dictionary<string, object>
@@ -31,7 +31,7 @@ namespace DevBridge.Routes
         internal static string State()
         {
             if (Player.m_localPlayer) return "ingame";
-            if (Game.instance) return "loading";
+            if (Game.instance) return ZNet.instance && ZNet.instance.IsDedicated() ? "server" : "loading";
             return FejdStartup.instance ? "menu" : "starting";
         }
 
@@ -42,6 +42,7 @@ namespace DevBridge.Routes
             return new Dictionary<string, object>
             {
                 ["world"] = ZNet.World?.m_name,
+                ["role"] = Role(net),
                 ["server"] = net.IsServer(),
                 ["dedicated"] = net.IsDedicated(),
                 ["peers"] = net.GetPeers().Count,
@@ -66,6 +67,13 @@ namespace DevBridge.Routes
                 ["ghost"] = player.InGhostMode(),
                 ["devcommands"] = Terminal.m_cheat,
             };
+        }
+
+        private static string Role(ZNet net)
+        {
+            if (net.IsDedicated()) return "dedicated server";
+            if (!net.IsServer()) return "client";
+            return ZNet.IsSinglePlayer ? "single player" : "host";
         }
 
         private static List<string> Screens()

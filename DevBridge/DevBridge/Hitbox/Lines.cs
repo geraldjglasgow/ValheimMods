@@ -39,6 +39,9 @@ namespace DevBridge.Hitbox
             return points;
         }
 
+        /// <summary>The same over-everything line material, for lines kept and updated elsewhere (/overlay's pool).</summary>
+        internal static Material Shared => Material();
+
         private static Transform Root()
         {
             if (!root) root = new GameObject("DevBridge_Hitbox");

@@ -15,8 +15,9 @@ namespace DevBridge.Routes
                 "                       container and piece details and the ZDO id",
                 Nearby);
             router.Add("/zdo",
-                "/zdo?id=<user:id>|hover=1|nearest=<prefab text>&keys=name1,name2\n" +
-                "                       every value a ZDO stores, keys named where known (add runtime-built key names with keys=)",
+                "/zdo?id=<user:id>|hover=1|nearest=<prefab text>&keys=name1,name2&full=1\n" +
+                "                       every value a ZDO stores, keys named where known (add runtime-built key names with keys=);\n" +
+                "                       full=1 leaves long strings uncut and fingerprints byte arrays",
                 Zdo);
         }
 
@@ -29,12 +30,13 @@ namespace DevBridge.Routes
         private static void Zdo(BridgeRequest request)
         {
             ZdoNames.Add(request.Get("keys"));
-            request.Json(WorldDump.Zdo(Pick(request)));
+            request.Json(WorldDump.Zdo(Pick(request), request.Flag("full")));
         }
 
-        private static ZDO Pick(BridgeRequest request)
+        /// <summary>The ZDO named by id=, hover=1 or nearest= (within radius=, around at=); /sync finds its target here too.</summary>
+        internal static ZDO Pick(BridgeRequest request)
         {
-            if (request.Has("id")) return ZdoLookup.ById(request.Get("id"));
+            if (request.Has("id")) return ZdoLookup.ById(request.Require("id"));
             if (request.Flag("hover")) return ZdoLookup.OfHover();
             string filter = request.Get("nearest") ?? throw new BridgeException("give id=, hover=1 or nearest=<prefab text>");
             var near = ZdoLookup.Near(ZdoLookup.Centre(request.Get("at")), request.Float("radius", 100f), filter);

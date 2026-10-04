@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DevBridge.Server;
 using DevBridge.Stage;
+using DevBridge.Swap;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -17,6 +18,7 @@ namespace DevBridge.Routes
             "                       without .windows finds the Windows build); loading a file already loaded reloads it\n" +
             "/bundle?reload=<name>   after a rebuild: destroy what was placed from it, unload it with everything loaded from it,\n" +
             "                       read the file again and put each placed asset back (same place, id and dress)\n" +
+            "                       and apply its /swap swaps again\n" +
             "/bundle?unload=<name>|all   remove what was placed from it, then unload it\n" +
             "/bundle?assets=<name>&type=GameObject&filter=text   its assets by type: triangles, textures, clip lengths",
             Handle);
@@ -38,7 +40,7 @@ namespace DevBridge.Routes
             LoadedBundle loaded = Bundles.Load(file);
             Dictionary<string, object> summary = Summary(loaded);
             summary["assets"] = Assets(loaded, null, null);
-            return summary;
+            return Swaps.Restore(loaded, summary); // swaps left waiting by a reload whose build failed go back on
         }
 
         private static Dictionary<string, object> Reload(LoadedBundle loaded)

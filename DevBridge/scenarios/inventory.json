@@ -1,0 +1,24 @@
+{
+  "name": "inventory",
+  "description": "The inventory opens with Tab, its grids are drawn, and Tab closes it again, with no new warnings or errors on the way: a regression test for mods that draw on the inventory (PackPanel, OpenKeep). The screenshot of it open goes to the temp folder; its path is in saved.shot.",
+  "setup": [
+    { "name": "the player is in the world", "do": "/wait", "for": "player", "timeout": 20, "json": "met", "expect": "true" },
+    { "name": "the inventory starts closed", "eval": "InventoryGui.IsVisible()", "expect": "false" },
+    { "name": "no key is held", "do": "/key", "up": "all" }
+  ],
+  "steps": [
+    { "name": "press Tab", "do": "/key", "tap": "Tab" },
+    { "name": "let it open", "wait": 0.5 },
+    { "name": "the inventory is open", "do": "/status", "json": "screens", "expect_contains": "inventory" },
+    { "name": "its grids are drawn", "do": "/find", "component": "InventoryGrid", "expect_not_contains": "nothing matched" },
+    { "name": "screenshot", "do": "/screenshot", "maxWidth": 1280, "json": "path", "save": "shot" },
+    { "name": "press Tab again", "do": "/key", "tap": "Tab" },
+    { "name": "let it close", "wait": 0.5 },
+    { "name": "the inventory is closed", "eval": "InventoryGui.IsVisible()", "expect": "false" },
+    { "name": "no new warnings or errors", "log_clean": "warning" }
+  ],
+  "cleanup": [
+    { "name": "close the inventory if it is still open", "eval": "InventoryGui.instance.Hide()" },
+    { "name": "release every key", "do": "/key", "up": "all" }
+  ]
+}

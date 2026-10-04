@@ -11,7 +11,7 @@ namespace DevBridge
 {
     /// <summary>
     /// Dev-only plugin: a localhost HTTP endpoint that lets a test agent see and drive the running game
-    /// (screenshots, UI tree, clicks, keys, console, log, reflection, ZDOs). Never shipped to players.
+    /// (screenshots, UI tree, clicks, keys, console, log, reflection, ZDOs). For development profiles only, never a play profile.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class DevBridgePlugin : BaseUnityPlugin

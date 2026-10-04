@@ -1,0 +1,28 @@
+{
+  "name": "smoke",
+  "description": "Single player or host, with a character that has used cheats before: spawn a Greyling, find it, kill it, see its death event, no new errors in the log. God mode and devcommands are put back as they were.",
+  "setup": [
+    { "name": "the player is in the world", "do": "/wait", "for": "player", "timeout": 20, "json": "met", "expect": "true" },
+    { "name": "state is ingame", "do": "/status", "json": "state", "expect": "ingame" },
+    { "name": "this game owns the world (cheats run only there)", "do": "/status", "json": "network.server", "expect": "true" },
+    { "name": "remember devcommands", "eval": "Terminal.m_cheat", "save": "cheat_before" },
+    { "name": "devcommands on", "eval": "Terminal.m_cheat = true", "expect": "true" },
+    { "name": "cheats confirmed for this character (else type confirmcheats once)", "eval": "Achievements.IsCheatedAtAll()", "expect": "true" },
+    { "name": "remember god mode", "eval": "Player.m_localPlayer.InGodMode()", "save": "god_before" },
+    { "name": "god mode on", "do": "/console", "cmd": "god on", "expect_contains": "God mode:True" }
+  ],
+  "steps": [
+    { "name": "spawn a Greyling", "do": "/console", "cmd": "spawn Greyling 1" },
+    { "name": "the nearest match is a live Greyling", "do": "/nearby", "filter": "Greyling", "radius": 15, "json": "[0].prefab", "expect": "Greyling" },
+    { "name": "remember its ZDO id", "do": "/nearby", "filter": "Greyling", "radius": 15, "json": "[0].id", "save": "greyling" },
+    { "name": "kill it", "eval": "ZNetScene.instance.FindInstance($zdo(\"${greyling}\")).Humanoid.SetHealth(0)" },
+    { "name": "its death is an event", "wait_event": "death", "grep": "Greyling", "timeout": 10 },
+    { "name": "it is gone", "do": "/nearby", "filter": "Greyling", "radius": 30, "json": "[?(@.id == '${greyling}')]", "expect_count": "0" },
+    { "name": "no new errors in the log", "log_clean": "error" }
+  ],
+  "cleanup": [
+    { "name": "kill the Greyling if it still lives", "eval": "ZNetScene.instance.FindInstance($zdo(\"${greyling}\")).Humanoid.SetHealth(0)", "optional": true },
+    { "name": "god mode as it was", "eval": "Player.m_localPlayer.SetGodMode(${god_before})", "optional": true },
+    { "name": "devcommands as they were", "eval": "Terminal.m_cheat = ${cheat_before}", "optional": true }
+  ]
+}
