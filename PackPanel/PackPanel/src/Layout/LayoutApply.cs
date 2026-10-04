@@ -29,6 +29,7 @@ namespace PackPanel.Layout
         public static void BeforeLoad(Player player)
         {
             ExtraUtilities.Reset();
+            BiomeLordsLink.Reset();
             InventoryState.Set(player, LayoutBuilder.Wanted(player));
             player.GetInventory().m_width = LoadWidth;
             WornPlacement.Suspend();
@@ -88,9 +89,11 @@ namespace PackPanel.Layout
                 ExtraUtilities.TakeOffAll(player);
         }
 
-        /// <summary>What found no cell goes to the ground through the game's own drop, with one message.</summary>
+        /// <summary>What found no cell goes to the ground through the game's own drop, with one message (into BiomeLords' crate when it took its rows away).</summary>
         private static int Drop(Player player, List<ItemDrop.ItemData> overflow)
         {
+            if (BiomeLordsLink.Spill(player, overflow))
+                return overflow.Count;
             foreach (ItemDrop.ItemData item in overflow)
                 player.DropItem(player.GetInventory(), item, item.m_stack);
             if (overflow.Count > 0)

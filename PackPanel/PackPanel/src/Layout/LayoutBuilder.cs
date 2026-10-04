@@ -10,7 +10,8 @@ namespace PackPanel.Layout
 {
     /// <summary>
     /// The layout the settings ask for. The main grid is Inventory Width wide and Inventory Rows tall plus the rows the
-    /// player bought from the trader (the game's <c>invrows</c> key above its 4); with no rows at all it is the two hand
+    /// player bought from the trader (the game's <c>invrows</c> key above its 4) and BiomeLords' Featherweight rows while
+    /// that blessing is active (<see cref="BiomeLordsLink"/>); with no rows at all it is the two hand
     /// cells at the top left (<see cref="InventorySettings.HandCells"/>, hotbar keys 1 and 2). A worn backpack's slots
     /// follow those cells in reading order (<see cref="Backpack.SlotsFor"/>), filling the rest of a hands row first; the
     /// spare cells of a partly used last row stay blocked. The slots follow in a fixed order:
@@ -26,7 +27,8 @@ namespace PackPanel.Layout
         {
             if (!InventorySettings.Enabled.Value)
                 return GameLayout(player);
-            int rows = InventorySettings.InventoryRows.Value + Math.Max(0, GameRows(player) - InventorySettings.GameRows);
+            int rows = InventorySettings.InventoryRows.Value + Math.Max(0, GameRows(player) - InventorySettings.GameRows)
+                + BiomeLordsLink.BlessingRows(player);
             int width = InventorySettings.InventoryWidth.Value;
             int backpack = Backpack.SlotsFor(player);
             int baseCells = rows > 0 ? rows * width : InventorySettings.HandCells;

@@ -19,11 +19,12 @@ namespace PackPanel
     /// ZNetScene, Guard.Install goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+    [BepInDependency(Layout.BiomeLordsLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "milkyteam.packpanel";
         public const string PluginName = "PackPanel";
-        public const string PluginVersion = "0.5.0";
+        public const string PluginVersion = "0.6.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

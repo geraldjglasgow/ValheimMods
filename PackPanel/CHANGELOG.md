@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- Works with BiomeLords: its Featherweight blessing's rows join your main grid and leave without touching your slots.
+
 ## 0.5.0
 
 - `Inventory Rows` goes down to 0: just two cells for your hands (keys 1 and 2); a backpack's cells continue after them.

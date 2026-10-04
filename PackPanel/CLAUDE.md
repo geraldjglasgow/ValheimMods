@@ -54,6 +54,21 @@ nothing of PackPanel and counts as absent). What they share is data, documented 
   Elite Creatures Reborn's world tier box. PackPanel moves the column into its stats panel; OpenKeep alone keeps its
   trash plate in the column.
 
+## With BiomeLords
+
+BiomeLords' Featherweight blessing (Faller Valkyrie lord, setting `FallerValkyrieExtraRows`, default 2) adds inventory
+rows while active; it has no duration, survives death (BiomeLords re-adds it at spawn) and ends only when the player
+switches blessing. BiomeLords sizes the inventory itself (`FeatherweightInventory.SetHeight`, writing `m_height`) to
+max(4, `invrows`) plus its rows at every spawn, grant, switch and before `DropInvalidItems`, and moves everything below
+into CargoCrates; it only stands back for ExtraSlots and AzuExtendedPlayerInventory. Found in game 2026-10-03: every
+PackPanel slot item landed in crates at login. `Layout/BiomeLordsLink` + `BiomeLordsPatches` (by reflection, patched
+only with BiomeLords present, soft dependency so it loads first): while PackPanel lays out the inventory, `SetHeight`
+becomes `LayoutApply.Apply`, the blessing's rows are main rows (`LayoutBuilder` adds them after Inventory Rows and
+bought rows, before a backpack's cells), and when the blessing goes their items move to free main cells, the rest into
+BiomeLords' own crate (`SpillToCrate`). `EnsureExpanded` and `FindExtraRowSlot` (free cells under its base: PackPanel's
+slots) do nothing. At switch time BiomeLords still has the buff on, so the requested height decides: at or under its
+base takes the rows away until the next grant.
+
 ## Layout
 
 ```
@@ -79,6 +94,7 @@ PackPanel/PackPanel/src/
                             GameLayout = 8 x invrows, no slots
     LayoutRecord.cs         Player.m_customData["PackPanel.inventoryLayout"]
     GridContract.cs         Player.m_customData["PackPanel.mainGrid"] for OpenKeep
+    BiomeLordsLink.cs, BiomeLordsPatches.cs   Featherweight's rows as main rows; BiomeLords never resizes (see With BiomeLords)
     LayoutMigration.cs      where every item goes: slots by id, main cells kept, keys and bait into ring and box cells
                             a layout adds, the rest to free ring, box, then main cells, overflow
     LayoutApply.cs          BeforeLoad (width 32, provisional state), AfterLoad, Apply: move, size, record, contract,
@@ -892,7 +908,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.5.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.6.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1171,3 +1187,9 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     thirds), the item icons, numbers and captions stay bright, no purple or blue tint. `tod 0.27`: they lighten again
     as the sun comes up. `Night Shade = 1`: no change at night; `0.4`: much darker. Brown Style off: the game's own
     panels darken as the game does and PackPanel adds nothing. Swamp in rain at noon: about as dark as night.
+57. BiomeLords: with BiomeLords installed and slots filled (food, mead, ammo, armour), log out and in: no CargoCrate
+    appears, every slot keeps its item, the log has `inventory laid out` with the usual rows. Take the Faller Valkyrie
+    blessing: the main grid grows by two rows (8 x 7 with Inventory Rows 5), the slots stay. Fill those rows, then switch
+    to another blessing: their items move to free main cells, what does not fit lands in a CargoCrate at your feet with
+    BiomeLords' message, the slots keep theirs. Die with Featherweight on: after respawn the two rows are still there.
+    With the grid full and Featherweight on, pick up an item: it never lands in a slot it does not belong in.
