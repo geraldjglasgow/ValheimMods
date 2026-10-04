@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.7.1
+
+- Less work every frame keeping the server's settings in sync.
+
 ## 4.7.0
 
 - Settings at their defaults no longer touch the game: FeastMaster only patches what a changed setting needs, so

@@ -1,7 +1,7 @@
 # FeastMaster
 
-Configure every food and mead in Valheim, and how stamina and eitr regenerate and drain. Untouched until you change
-a setting: only what you change is patched, so it sits beside other mods that tune stamina, fishing or skills.
+Configure every food and mead, and how stamina and eitr regenerate and drain. Only what you change is patched, so it
+sits beside other mods that tune stamina, fishing or skills.
 
 ## Features
 - Foods and meads, modded ones too: global multipliers and a section per item, shown on tooltips.
@@ -12,11 +12,11 @@ a setting: only what you change is patched, so it sits beside other mods that tu
 - Vigor and `Regen Per Extra Stamina Point` both reward food stamina; use one, not both.
 - Stamina costs: a multiplier per drain, cheaper out of combat, free sneaking, skill discounts.
 - Base health and stamina, stamina and gain from skills, drowning damage, world rates.
-- HUD: hide the health, stamina or eitr number and food timers, per player.
+- HUD: hide the health, stamina or eitr numbers and food timers.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `FeastMaster.dll` in
-`BepInEx/plugins`. A mod that also changes the number of food slots conflicts with `Food Slots`; use one of them.
+`BepInEx/plugins`. Another mod that changes food slots conflicts with `Food Slots`; use one.
 
 ## Configuration
 `BepInEx/config/com.FeastMaster.cfg`. Every setting is described in the file and applies without a restart; the
