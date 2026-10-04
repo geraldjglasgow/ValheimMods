@@ -7,9 +7,8 @@
 | Vanilla Warm | [background-vanilla-warm.png](background-vanilla-warm.png) | Same painted pattern recolored to the user's warm brown screenshot |
 
 The companion Markdown files record the imagegen prompts. These are test artwork options, not new in-game theme settings.
-Minimal Plus and Vanilla Inspired are also saved in the LocalTesting profile's `BepInEx/config/PackPanel.ArtTest/options/`.
-To preview an option, copy it to `BepInEx/config/PackPanel.ArtTest/background.png`. The running mod reloads it while
-a Timber inventory panel is visible. Delete the active `background.png` to return to the embedded background.
+The in-game preview file (`PackPanel.ArtTest/background.png`) was removed in 0.6.1: try an option by embedding it as
+`timber_background.png` in a local build.
 
 # Slot icons
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using PlateColumn;
 using TMPro;
@@ -6,12 +7,18 @@ using UnityEngine.UI;
 
 namespace PackPanel.Panels
 {
-    /// <summary>Vanilla gray squares behind compact status icons, with small centered value overlays.</summary>
+    /// <summary>
+    /// Vanilla gray squares behind compact status icons, with small centered value overlays. Dressed every frame (the
+    /// inventory panel's restore resets the HUD copies too), so each box's parts are looked up once and kept
+    /// (<see cref="BoxParts"/>): no names read, no searches and no garbage per frame.
+    /// </summary>
     public static class StatIconFrames
     {
         private const string Name = "PackPanel_stat_icon_frame";
         private static readonly Dictionary<Image, Color> colours = new Dictionary<Image, Color>();
+        private static readonly Dictionary<RectTransform, BoxParts> parts = new Dictionary<RectTransform, BoxParts>();
         private static readonly List<RectTransform> column = new List<RectTransform>();
+        private static readonly List<RectTransform> gone = new List<RectTransform>();
         private static Transform owner;
 
         /// <summary>
@@ -20,40 +27,62 @@ namespace PackPanel.Panels
         /// </summary>
         public static void Apply(InventoryGui gui, RectTransform boxes, bool on)
         {
-            if (owner != boxes) { colours.Clear(); StatIconLayout.Restore(); owner = boxes; }
+            if (owner != boxes) { colours.Clear(); StatIconLayout.Restore(); owner = boxes; Prune(); }
             if (!on) StatIconLayout.Restore();
             Column.BoxesIn(boxes, column);
             foreach (RectTransform box in column)
             {
-                TMP_Text value = box.GetComponentInChildren<TMP_Text>(true);
-                bool target = value == gui.m_armor || value == gui.m_weight || box.name.EndsWith("_world_tier");
+                BoxParts bits = PartsOf(box);
+                bool target = bits.Value == gui.m_armor || bits.Value == gui.m_weight || bits.WorldTier;
                 Dress(gui, box, on && target);
             }
         }
 
+        /// <summary>A HUD column box this dresses: the armour and weight copies and the world tier.</summary>
+        public static bool IsHudStat(RectTransform box) => PartsOf(box).HudStat;
+
         /// <summary>The same frame and centered value are used by the smaller minimap copies.</summary>
         public static void Dress(InventoryGui gui, RectTransform box, bool on)
         {
-            Image background = Background(box);
+            BoxParts bits = PartsOf(box);
+            Image background = bits.Background != null ? bits.Background : bits.Background = Background(box);
             if (background == null) return;
-            Transform frame = background.transform.Find(Name);
-            if (on && frame == null) frame = Create(background.transform, gui);
-            if (frame == null) return;
+            if (bits.Frame == null) bits.Frame = background.transform.Find(Name);
+            if (on && bits.Frame == null) bits.Frame = Create(background.transform, gui);
+            if (bits.Frame == null) return;
             // A new plate can be copied from the already styled armor plate.
-            if (!colours.ContainsKey(background))
-                colours[background] = background.color.a == 0f ? Color.white : background.color;
-            background.color = on ? Color.clear : colours[background];
-            frame.gameObject.SetActive(on);
-            TMP_Text value = box.GetComponentInChildren<TMP_Text>(true);
-            bool weight = value == gui.m_weight || box.name.EndsWith("_packpanel_weight");
-            if (on) StatIconLayout.Apply(box, background, value, weight);
+            if (!colours.TryGetValue(background, out Color colour))
+                colours[background] = colour = background.color.a == 0f ? Color.white : background.color;
+            background.color = on ? Color.clear : colour;
+            if (bits.Frame.gameObject.activeSelf != on) bits.Frame.gameObject.SetActive(on);
+            if (bits.Value == null) bits.Value = box.GetComponentInChildren<TMP_Text>(true);
+            if (on) StatIconLayout.Apply(box, background, bits.Value, bits.Value == gui.m_weight || bits.Weight);
+        }
+
+        private static BoxParts PartsOf(RectTransform box)
+        {
+            if (!parts.TryGetValue(box, out BoxParts found))
+            {
+                found = new BoxParts(box.name) { Value = box.GetComponentInChildren<TMP_Text>(true) };
+                parts[box] = found;
+            }
+            return found;
+        }
+
+        // Boxes go with their HUD or inventory (a new world builds new ones): their parts are dropped with them.
+        private static void Prune()
+        {
+            gone.Clear();
+            foreach (RectTransform box in parts.Keys)
+                if (box == null) gone.Add(box);
+            foreach (RectTransform box in gone) parts.Remove(box);
         }
 
         private static Image Background(Transform box)
         {
-            foreach (Transform child in box)
+            for (int i = 0; i < box.childCount; i++)
             {
-                Image image = child.GetComponent<Image>();
+                Image image = box.GetChild(i).GetComponent<Image>();
                 if (image != null && image.sprite != null && image.sprite.name == Skin.Box.name) return image;
             }
             return null;
@@ -76,6 +105,24 @@ namespace PackPanel.Panels
             image.type = Image.Type.Sliced;
             image.raycastTarget = false;
             return rect;
+        }
+
+        /// <summary>One box's pieces, found once: its name's kind, the gray square, our frame on it and its value text.</summary>
+        private sealed class BoxParts
+        {
+            public BoxParts(string name)
+            {
+                Weight = name.EndsWith("_packpanel_weight", StringComparison.Ordinal);
+                WorldTier = name.EndsWith("_world_tier", StringComparison.Ordinal);
+                HudStat = Weight || WorldTier || name.EndsWith("_packpanel_armor", StringComparison.Ordinal);
+            }
+
+            public bool Weight { get; }
+            public bool WorldTier { get; }
+            public bool HudStat { get; }
+            public Image Background;
+            public Transform Frame;
+            public TMP_Text Value;
         }
     }
 }

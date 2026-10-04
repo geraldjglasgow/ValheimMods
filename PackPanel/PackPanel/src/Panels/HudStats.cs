@@ -1,4 +1,5 @@
 using PlateColumn;
+using TMPro;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -14,6 +15,8 @@ namespace PackPanel.Panels
 
         private static Plate armor;
         private static float nextTry;
+        private static int armorShown;
+        private static TMP_Text armorText;
 
         public static void Refresh(bool show)
         {
@@ -24,10 +27,10 @@ namespace PackPanel.Panels
             if (column != null)
             {
                 if (column.localScale.x != Scale) column.localScale = Vector3.one * Scale;
-                foreach (Transform child in column)
+                for (int i = 0; i < column.childCount; i++)
                 {
-                    bool target = child.name.EndsWith("_packpanel_armor") || child.name.EndsWith("_packpanel_weight") || child.name.EndsWith("_world_tier");
-                    if (target) StatIconFrames.Dress(gui, (RectTransform)child, true);
+                    RectTransform box = column.GetChild(i) as RectTransform;
+                    if (box != null && StatIconFrames.IsHudStat(box)) StatIconFrames.Dress(gui, box, true);
                 }
             }
             HudRoom.Fit(column);
@@ -45,8 +48,12 @@ namespace PackPanel.Panels
             if (armor.Rect.gameObject.activeSelf != show) armor.Rect.gameObject.SetActive(show);
             if (show && armor.Text != null)
             {
-                string value = Mathf.CeilToInt(Player.m_localPlayer.GetBodyArmor()).ToString();
-                if (armor.Text.text != value) armor.Text.text = value;
+                // The number is turned into text only when it or the box changes.
+                int value = Mathf.CeilToInt(Player.m_localPlayer.GetBodyArmor());
+                if (value == armorShown && armor.Text == armorText) return;
+                armor.Text.text = value.ToString();
+                armorShown = value;
+                armorText = armor.Text;
             }
         }
     }

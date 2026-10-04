@@ -14,9 +14,12 @@ namespace PackPanel.Slots
     [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData) })]
     public static class CoinPurse
     {
+        /// <summary>An add another mod's prefix already made is left alone, or the same item would also land in the purse.</summary>
         [HarmonyPrefix]
-        public static bool Prefix(Inventory __instance, ItemDrop.ItemData item, ref bool __result)
+        public static bool Prefix(Inventory __instance, ItemDrop.ItemData item, ref bool __result, bool __runOriginal)
         {
+            if (!__runOriginal)
+                return false;
             if (item == null || !InventoryState.Manages(__instance) || !SlotRules.IsCoins(item) || !TakeIn(__instance, item))
                 return true;
             __result = true;

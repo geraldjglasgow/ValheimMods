@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+- Fixed: the coin purse and key ring no longer take a copy of an item another mod already stored.
+- Less work every frame for the key ring and the stat boxes beside the minimap.
+- Removed the leftover art-test wallpaper file check.
+
 ## 0.6.0
 
 - Works with BiomeLords: its Featherweight blessing's rows join your main grid and leave without touching your slots.

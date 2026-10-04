@@ -27,15 +27,13 @@ namespace PackPanel.Look
         private readonly List<int> triangles = new List<int>();
         private Matrix4x4 lastMatrix;
         private Rect lastCanvas;
-        private int previewVersion = -1;
         private int frameVersion = -1;
         private Rect geometryRect;
         private bool geometryRound;
         private int geometryVersion = -1;
         private float geometryWidth;
 
-        public override Texture mainTexture => BackgroundPreview.Texture != null ? BackgroundPreview.Texture
-            : source != null ? source.texture : base.mainTexture;
+        public override Texture mainTexture => source != null ? source.texture : base.mainTexture;
 
         public static void Apply(Image image, bool on)
         {
@@ -114,12 +112,6 @@ namespace PackPanel.Look
                 Inset();
                 SetAllDirty();
             }
-            BackgroundPreview.Poll();
-            if (previewVersion != BackgroundPreview.Version)
-            {
-                previewVersion = BackgroundPreview.Version;
-                SetAllDirty();
-            }
             RectTransform root = Root;
             if (root == null || frame == null)
                 return;
@@ -144,9 +136,6 @@ namespace PackPanel.Look
             Rect area = source.rect;
             Rect wood = Rect.MinMaxRect(area.xMin + border.x, area.yMin + border.y,
                 area.xMax - border.z, area.yMax - border.w);
-            Texture2D preview = BackgroundPreview.Texture;
-            if (preview != null)
-                wood = new Rect(0f, 0f, preview.width, preview.height);
             Texture texture = mainTexture;
             Vector2 textureSize = new Vector2(texture.width, texture.height);
             WoodPanel(mesh, rect, wood, textureSize);

@@ -258,9 +258,6 @@ PackPanel/PackPanel/src/
     NightShade.cs           the panels darker with the light around you (Night Shade), grey only; never the cells
     GamePanelTheme.cs       Panel Theme over the game's wood panels (a rescan per scene, Image.OnEnable postfix)
     TimberBackground.cs, TimberFrame.cs, TimberCoordinates.cs   the timber wallpaper aligned to the screen and the rim
-    BackgroundPreview.cs, PreviewPng.cs   art test: BepInEx/config/PackPanel.ArtTest/background.png replaces the
-                            wallpaper while present (reads the PNG through ImageConversion by reflection, as the
-                            project targets net48)
 PackPanel/PackPanel/config/ the embedded default PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml
 PackPanel/PackPanel/assets/ embedded images: panel.png, cell.png, button*.png, icon_<slot>.png, ring_*.png (painted by
                             skin_art.py next to them: `python skin_art.py <out folder>`, then copy the PNGs here; never
@@ -399,8 +396,7 @@ tackleboxes:
   `PackPanel_backpack` (the mount on a wearer's Spine2 bone, with the model under it, named after the pack's prefab),
   `PackPanel_worn_<word>` (each worn model's template on BundlePrefabs' inactive bench); sprites `PackPanel_<picture>`;
   PlateColumn boxes `..._packpanel_armor` (the HUD copy of the armour box) and `..._packpanel_weight`.
-- Files next to the cfg: `PackPanel.Backpacks.yml`, `PackPanel.Tackleboxes.yml`; the art test folder
-  `PackPanel.ArtTest/`.
+- Files next to the cfg: `PackPanel.Backpacks.yml`, `PackPanel.Tackleboxes.yml`.
 - Charter articles: `packpanel_backpacks`, `packpanel_tackleboxes`, plus the cfg sync of the shared libraries.
 - Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
   `_coins`, `_wrongslot`, `_dropped`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
@@ -908,7 +904,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.6.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.6.1]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;

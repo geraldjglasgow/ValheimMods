@@ -22,9 +22,8 @@ The warm wallpaper falls back directly to the original Brown panel if unavailabl
 
 ## Live testing
 
-`BepInEx/config/PackPanel.ArtTest/background.png` overrides the wallpaper while Timber is visible.
-Replacing it reloads the texture; removing it restores the embedded warm background.
-Invalid or incomplete writes retain the last working texture. This file does not change the contour.
+The `PackPanel.ArtTest/background.png` override was removed in 0.6.1 (it polled the disk while a panel showed);
+a new wallpaper is tried by embedding it in a local build.
 
 `Timber Border Width` and `Timber Border Jaggedness` update the contour live through config reload.
 New contour code still requires a restart. Brown and vanilla remain selectable.

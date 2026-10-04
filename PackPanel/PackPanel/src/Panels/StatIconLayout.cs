@@ -17,9 +17,9 @@ namespace PackPanel.Panels
         {
             Remember(box);
             box.sizeDelta = new Vector2(Size, Size);
-            foreach (Transform child in box)
+            for (int i = 0; i < box.childCount; i++)
             {
-                Image icon = child.GetComponent<Image>();
+                Image icon = box.GetChild(i).GetComponent<Image>();
                 if (icon != null && icon != background) Center(icon.rectTransform, new Vector2(32f, 32f));
             }
             if (value == null) return;

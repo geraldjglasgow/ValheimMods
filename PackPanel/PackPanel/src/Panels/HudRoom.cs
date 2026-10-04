@@ -36,8 +36,8 @@ namespace PackPanel.Panels
 
         private static bool Shows(Transform column)
         {
-            foreach (Transform box in column)
-                if (box.gameObject.activeSelf) return true;
+            for (int i = 0; i < column.childCount; i++)
+                if (column.GetChild(i).gameObject.activeSelf) return true;
             return false;
         }
 
