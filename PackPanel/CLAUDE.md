@@ -111,7 +111,8 @@ PackPanel/PackPanel/src/
                             (5. Look, per player)
     ConsumeSettings.cs, ConsumeWords.cs   the two keys (Z, B; the YAML editor registered with the Hotkeys library's
                             Typing), the "nothing to eat / drink" words
-    ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) eats or drinks from its slots
+    ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) and build mode
+                            (Player.InPlaceMode) eats or drinks from its slots
     ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, a food square
                             and a mead square (copies of the HUD's food square) with each key (Hotkeys'
                             KeyNames.Short) over its top-left corner
@@ -139,6 +140,8 @@ PackPanel/PackPanel/src/
     KeptOnDeath.cs          Keep Slots On Death: slot items out of the inventory while the tombstone is made
     GravePatches.cs, GraveWidth.cs   CreateTombStone suspends worn moves; MoveAll from the own grave re-equips, from
                             anything else keeps out of the slots; a grave loads as wide as its items
+    GraveFit.cs             TombStone.EasyFitInInventory for the own grave: Use takes all when the take all would fit
+                            (the waiting pack's slots and carry, slot items back in their own slots)
   Worn/
     WornPlacement.cs        worn item into its slot on equip (swap with the old piece), out on unequip; suspended in
                             drags, loads and the tombstone
@@ -177,8 +180,8 @@ PackPanel/PackPanel/src/
                             (Crafting/CraftedItem) and the worn copy; registered in ZNetScene and ObjectDB (ItemPrefabs)
     BackpackWear.cs         the local player's frame: re-layout when the worn pack or its slots changed, the ZDO key
     BackpackUse.cs          Humanoid.UseItem prefix: right click wears a pack or takes it off
-    BackpackGrave.cs        TombStone.EasyFitInInventory counts its slots; before a take all from a grave the worn pack
-                            (found at the grave's Backpack slot cell) goes on first; the rows a waiting pack adds
+    BackpackGrave.cs        before a take all from a grave the worn pack (found at the grave's Backpack slot cell) goes
+                            on first; the rows a waiting pack adds (RowsAdded: the layout's own rule)
     BackpackMount.cs        VisEquipment.UpdateEquipmentVisuals postfix: hangs, swaps or takes down the model on Spine2
     CapeHold.cs             on the mount: the worn cape's MagicaCloth gets a max distance that holds its top under the
                             pack; the cape's own settings back when the pack comes down or the cape changes
@@ -192,6 +195,8 @@ PackPanel/PackPanel/src/
     CraftedItem.cs, CraftedModels.cs   the item as a copy of TrollHide (model, collider, LOD, shared data, icon); a
                             model from an embedded bundle dressed in the troll hide cape's material
     RecipeYaml.cs           station, level, cost and range checks for the item files
+    InPlaceUpgrade.cs       a recipe that takes the pack in the Backpack slot (the box in the Tacklebox slot) crafts the
+                            new one into that slot: the old one set aside for the game's craft, the slot its free cell
   Tackle/
     TackleboxKind.cs, TackleboxStats.cs, TackleboxCatalog.cs   the four boxes: default and current stats (cells);
                             lookups by shared name and id
@@ -213,11 +218,16 @@ PackPanel/PackPanel/src/
     TacklePopup.cs, TackleCells.cs   PackPanel_tacklebox: the pop-up under the slot panel, its cells (reparented,
                             scaled 0.8, rows of 4, captions, counts)
     TackleboxSlot.cs        the slot's corner: cells used of cells
-    TackleboxGrave.cs       TombStone.EasyFitInInventory counts its cells; before a take all from a grave the box that
-                            was carried goes back into its slot first
+    TackleboxGrave.cs       before a take all from a grave the box that was carried goes back into its slot first
   Panels/
     PanelSize.cs            InventoryGui.SetInventorySize replaced (width, main rows, frame pad, OpenKeep's strip);
                             UpdateContainer postfix widens the container panel for inventories wider than 8
+    CraftingPanel.cs, CraftingParts.cs, CraftingPanelPatch.cs, RectMemo.cs   the larger crafting panel: InventoryGui.Show
+                            prefix sets the panel, list, row template, description, name and text from the game's
+                            remembered values plus Crafting Panel Width/Height, clamped to the free screen; the
+                            name/skills/trophies/PvP panel above (m_infoPanel) gets the same width
+    (Look) ArtWarmup.cs     FejdStartup.Start postfix: SkinArt.Prewarm decodes every panel image at the main menu
+                            (the 1254 px wallpaper and 1983 x 793 button stalled the first inventory open)
     ButtonStrip.cs          PackPanel_buttonstrip, the mark OpenKeep's button row follows
     PanelDress.cs           where the side panels go, and the library's box column moved into the stats panel (every frame)
     StatsPanel.cs           PackPanel_stats between the inventory and the slot panel, behind the box column
@@ -278,7 +288,7 @@ PackPanel/artwork/          background studies for the timber theme (not embedde
 ## Patched game methods
 
 All on the local player's own inventory only unless said: prefix `Player.Load` (and postfix and finalizer),
-`Player.SetInventorySize` (replaced), `InventoryGui.SetInventorySize` (replaced), `Inventory.FindEmptySlot`,
+`Player.SetInventorySize` (replaced), `InventoryGui.SetInventorySize` (replaced), `InventoryGui.Show` (prefix: the crafting panel's size), `Inventory.FindEmptySlot`,
 `Inventory.GetEmptySlots`, `Inventory.HaveEmptySlot`, `Inventory.CanAddItem(ItemData, int)`, `Inventory.AddItem(ItemData)`
 (the purse, and the key ring's, the tacklebox's and the Ammo slots' own prefixes), `Inventory.AddItem(ItemData, int, int, int, bool)` and
 `Inventory.AddItem(ItemData, Vector2i)` (slot rules), `InventoryGrid.DropItem` (`Priority.High`),
@@ -297,14 +307,16 @@ local one's matters), `Hud.Update` (private; Weight Under Minimap, and a second 
 text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words),
 `UnityEngine.UI.Image.OnEnable` (Panel Theme: a newly shown wood panel is themed on the next frame). The backpacks:
 prefix `Humanoid.UseItem` (local player, from the inventory screen), `Inventory.IsTeleportable` (the local player's
-inventory, Backpack Portal Pass only), `TombStone.EasyFitInInventory` (private; prefix and finalizer); postfix
+inventory, Backpack Portal Pass only); postfix
 `VisEquipment.UpdateEquipmentVisuals` (private, every player's character on every client), `ObjectDB.Awake` and
 `ObjectDB.CopyOtherDB` (the recipes; `Priority.Low` for Key Stack without OpenKeep), and through BundlePrefabs
 `ZNetScene.Awake` (the prefabs) and again `ObjectDB.Awake`/`CopyOtherDB` (the items). The tacklebox: prefix
 `Inventory.AddItem(ItemData)` (bait into the box, its own prefix), `Inventory.GetAmmoItem` (the box's bait first, then the Ammo slots left to right; `Slots/AmmoSearch`),
 `Humanoid.UseItem` (a second prefix: boxes and bait in the box), `InventoryGui.OnSelectedItem` (a third prefix,
-`Priority.First`: bait let go on the slot), `TombStone.EasyFitInInventory` (a second prefix and finalizer), postfix
+`Priority.First`: bait let go on the slot), postfix
 `InventoryGui.Show` and `InventoryGui.Hide`; the recipes and prefabs through the same patches as the backpacks'.
+Both, upgraded in their slot (`Crafting/InPlaceUpgrade`): prefix and finalizer `InventoryGui.OnCraftPressed` and
+`InventoryGui.DoCrafting` (both private), read by the `Inventory.FindEmptySlot` and `Inventory.CanAddItem` prefixes.
 `Inventory.MoveAll`'s key ring prefix and postfix became `TakeAllRouting`, for keys and bait.
 
 ## Config sections and keys
@@ -317,7 +329,9 @@ Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per 
 (1-100)), `4. Backpacks` (`Backpacks` true, `Backpack Portal Pass` false, and `Show Worn Backpack` true, the one key there not
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
 Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Brown Style` true, `Weight Under Minimap` true, `Food And Mead Bar` true,
-`Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5), `Night Shade` 0.65 (0.3-1)). The keys
+`Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5), `Night Shade` 0.65 (0.3-1),
+`Crafting Panel Width` 100 (0-600), `Crafting Panel Height` 90 (0-400); first 160 and 120, slimmed the same day at the
+user's word). The keys
 kept the names they had in OpenKeep's section 10 (never released); only the sections are new. Each key's meaning is
 its description in the .cfg (bound in `src/Core/InventorySettings.cs`, `InventoryModule.cs`, `Consume/ConsumeSettings.cs`,
 `Ring/KeyRingSettings.cs`, `Backpacks/BackpackSettings.cs` and `Tackle/TackleboxSettings.cs`); the README is only a
@@ -327,7 +341,9 @@ short store page. The YAML files and the default recipes are below.
 
 The reference for players and server admins (moved unchanged from the README, which links here).
 
-Slots and carry weight take turns, and each pack's recipe takes the one before it, so you upgrade rather than collect:
+Slots and carry weight take turns, and each pack's recipe takes the one before it, so you upgrade rather than collect.
+Crafting the next pack while the one it takes is in the Backpack slot upgrades it there: no free cell needed, the pack's
+rows and what they hold stay (the tackleboxes the same in the Tacklebox slot):
 
 | Biome | Backpack | Crafted at | Cost | Slots | Carry weight |
 | --- | --- | --- | --- | --- | --- |
@@ -715,8 +731,22 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   death never shrinks the grid mid-way. A grave made while a pack was worn has its cells as main cells and the slots
   lower down; the take all from a grave (`Inventory.MoveAll`, after the game's take-all reply made this client the
   grave's owner) first moves the pack that lay in the grave's Backpack slot cell (a spare pack in the grid is not taken
-  for it) into the empty slot and applies the layout, so every cell lines up again, and the grave's easy fit check
-  counts its slots. Stats come from `BackpackCatalog` (the defaults) and `PackPanel.Backpacks.yml` (any key of any
+  for it) into the empty slot and applies the layout, so every cell lines up again. The rows a pack adds are the
+  layout's own (`BackpackGrave.RowsAdded`: its cells continue after the base cells), not its slots over the width:
+  with the two hand cells of Inventory Rows 0 a 4 slot pack shares their row and a 12 slot pack adds one, which the
+  old rounding missed, so the pack was not found in the grave (fixed 2026-10-04).
+- Use on the own grave (asked 2026-10-04: "if you die with a backpack and your whole inventory full ... it needs to
+  allow pickup all ... the backpack first, then all other items"): the game takes all on Use only when
+  `TombStone.EasyFitInInventory` says yes, else it opens the grave, and it counted every grave item against the free
+  grid cells and the grave's weight against the carry of a player who woke with no pack; with Inventory Rows 0 the
+  pack is nearly the whole grid, so a full one never fit (seen in game: 20 items against 18 cells, 498 kg against
+  300). `Slots/GraveFit` answers for the local player's own grave as the take all will run: the waiting pack goes to
+  its slot and brings its slots and carry weight (`Carry x Game.m_carryWeightRate`), an item from a slot row of the
+  grave goes back into its own slot when that cell is free, one that stacks onto what the player carries needs no
+  cell, the rest need free grid cells. The weight test stays the game's, with the pack's carry added. The take all
+  itself was already right (seen in game the same day: pack on first, then all 20 items, armour worn again); it
+  replaced the backpack's and the tacklebox's partial count prefixes (`ExtraRoom`). Another player's grave keeps
+  the game's check. Stats come from `BackpackCatalog` (the defaults) and `PackPanel.Backpacks.yml` (any key of any
   pack; unknown packs warned, out of range values rejected); the recipe objects are shared by every ObjectDB and
   refreshed on every change (station by prefab name through the game's recipes, falling back to the pack's default,
   no station found means no recipe since the game would let it be made by hand; cost as `prefab:amount` pairs,
@@ -828,6 +858,17 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   count of cells comes from the box in the recorded layout's slot, as a backpack's slots do, so the two kinds are last
   in the layout: a box change moves no other slot. `TackleboxWear` re-applies the layout when the box or its cells
   change: taking the box out moves its bait into free cells and drops what does not fit (the backpacks' rule).
+- Upgrade in place (the user's request, 2026-10-04: "when you upgrade a backpack, have it upgrade in place if it's
+  equipped in the PackPanel slot, so you don't have to empty the inventory"). The game asks for a free main cell before
+  a craft (at the button press, "Inventory full", and again when the craft finishes), puts the new item there and then
+  consumes the cost, so the old pack left its slot, its rows closed and what lay in them moved or dropped. Now, when the
+  recipe of a PackPanel backpack takes the item in the Backpack slot (a tacklebox's: the Tacklebox slot), the craft fits
+  without a free cell and the new item goes into the slot: for the length of `DoCrafting` the old one lies off the grid
+  at (-1, -1) (still counted for the cost, which the game then consumes), the emptied slot is the cell `FindEmptySlot`
+  answers. A new pack with the same slots changes nothing else; more slots open more cells (a YAML pack with fewer
+  closes some as a swap does). If the old one is still there afterwards (the craft stopped early, or the game consumed
+  a spare copy from the grid first), it goes back into the slot, or into the freed cell when the new one is there.
+  Left to the game: multi-crafting (several packs, several old ones) and crafting without cost (nothing consumed).
 - The slot is a real cell, so a left click picks the box up, as on any slot: a right click (the game's use; X on a
   gamepad) opens and shuts the pop-up instead of a button, and a right click on a box in the grid puts it in the slot.
   A bait dragged onto the slot goes into the box (`TackleClicks`, like a key let go on the ring's button); with the box
@@ -848,7 +889,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 - Death: the box follows the backpack (Keep Slots On Death keeps it, and its cells then still exist for the bait that
   went to the grave), its bait the ring cells (always to the grave). Before a take all from the own grave the box
   that was carried goes back into its slot first (`TackleboxGrave`, after `BackpackGrave`, whose waiting pack pushes the
-  grave's slot rows down), and the easy fit check counts its cells.
+  grave's slot rows down); Use on the grave counts the box and its bait as going back to their own cells (`GraveFit`).
 - Crafting shared with the backpacks (2026-09-28, with the tackleboxes): recipes, the cost text, the item prefab and
   the bundle models moved from `Backpacks/` into `Crafting/` (`CraftedKind`, `CraftStats`, `CraftRecipes`, `CostText`,
   `CraftedItem`, `CraftedModels`, `RecipeYaml`) instead of being copied; behaviour unchanged, except the backpacks'
@@ -873,7 +914,10 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   false. No setting.
 - Keys: `2. Slots / Food Key` (Z) and `Mead Key` (B), per player. The game binds neither (Z flies and B builds for free
   only in its `debugmode`); the only other Z in the workspace is OpenKeep's Find Key, inventory only. They work where
-  the hotbar keys do (`Player.TakeInput`), so never inside the inventory, and are read with the `Hotkeys` library
+  the hotbar keys do (`Player.TakeInput`), so never inside the inventory, and never with a hammer, hoe or cultivator in
+  hand (`Player.InPlaceMode`; the user's request, 2026-10-04: "with the hammer equipped for building B shouldn't drink
+  meads"; there B is OpenKeep's build camera and EarthWright's Select Value Key, Z EarthWright's Snap Hold Key, so both
+  keys stand down), and are read with the `Hotkeys` library
   (`../ValheimModLibs/Hotkeys`, made for this from OpenKeep's `Core/Keys` rules). A press goes through the Food (or
   Mead) slots left to right and uses every item that passes the game's `CanConsumeItem(item, checkWorldLevel: true)`
   rules checked without messages (consumable, world level, `CanEat(item, false)`, no running effect of the same name
@@ -907,7 +951,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.6.2]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.7.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1120,7 +1164,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     the inventory eats nothing (OpenKeep's Find Key works there); in chat, the console or the map nothing happens.
     Looking at a tame wolf while pressing Z: you eat, the wolf is not fed.
 48. Keys and settings: `Food Key = LeftShift + Z`: Z alone does nothing, Shift + Z eats while walking with W; with the
-    YAML editor open the keys do nothing. Dedicated server with A and B: each eats from their own slots, the other sees
+    YAML editor open the keys do nothing. With the hammer, hoe or cultivator in hand, B and Z eat and drink nothing (B
+    toggles OpenKeep's build camera only); put it away and they work again. Dedicated server with A and B: each eats from their own slots, the other sees
     the food effects and the eat animation.
 53. Food and Mead bar: with the inventory shut, the bottom-left corner under the health bar shows two squares and
     nothing else, matching the game's food squares above in look: the food icon with a yellow "Z" over its top-left
@@ -1192,3 +1237,22 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     to another blessing: their items move to free main cells, what does not fit lands in a CargoCrate at your feet with
     BiomeLords' message, the slots keep theirs. Die with Featherweight on: after respawn the two rows are still there.
     With the grid full and Featherweight on, pick up an item: it never lands in a slot it does not belong in.
+58. Upgrade in place: wear the Trollhide Backpack, the whole grid and its 4 cells full (the Rootbound Pack's materials
+    among them), at the forge level 2: Craft is not refused ("Inventory full" before); the
+    Rootbound Pack is in the Backpack slot, the Trollhide is gone, its 4 cells keep their items and 4 more open, nothing
+    dropped, the new pack on your back. The same with a spare Trollhide in the grid: one Trollhide is left, in the grid.
+    Not wearing a pack: the game's own craft (needs a free cell). The tacklebox: the Finewood box over the Driftwood box
+    in the Tacklebox slot, its bait kept and a second cell added. Multi-craft (hold the alt place key): the game's way.
+59. Grave with a full backpack (Inventory Rows 0, the Moosehide Pack worn, every cell full, near the carry limit,
+    armour worn): die, wake, press Use on the grave: everything comes back at once (no grave window), the pack on
+    your back first, the armour worn again, the grave gone. The same with the Deerhide Satchel and the Lox Hauler (4
+    and 12 slots, whose rows Rows 0 rounds differently). Something picked up into a slot's cell since waking: Use still
+    takes all when the grid has room, else opens the grave. Another player's grave: the game's rule.
+60. Crafting panel (Crafting Panel Width 160, Height 120, 16:9 screen): open a workbench: the panel reaches further
+    left, stopping clear of the slot panel (about 140 more at 3840x2160 with the default inventory, the log-free clamp)
+    and lower, clear of the key hints; the tabs sit above the list's left edge, their line spans the panel; the list
+    and its rows are wider (names longer before they shrink, quality numbers and durability bars still on the icons,
+    grid tiles bigger); the description wider and taller, its text starting below OpenKeep's Track and star buttons;
+    requirements centred and the Craft row (with OpenKeep's stepper) full width. Both at 0, or PackPanel's Enabled off:
+    the game's panel exactly. Change either in the cfg with the inventory open: the panel follows within seconds.
+    A 16:10 window: the width shrinks to what fits.

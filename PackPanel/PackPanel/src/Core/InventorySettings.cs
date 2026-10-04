@@ -52,6 +52,8 @@ namespace PackPanel.Core
         public static ConfigEntry<float> FrameJaggedness { get; private set; }
         public static ConfigEntry<float> NightShade { get; private set; }
         public static ConfigEntry<bool> WeightUnderMinimap { get; private set; }
+        public static ConfigEntry<float> CraftingWidth { get; private set; }
+        public static ConfigEntry<float> CraftingHeight { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
         {
@@ -127,6 +129,12 @@ namespace PackPanel.Core
                 "The brown framed look of the inventory panels, their cells and the slot panel. Off: the game's wood.", synced: false);
             WeightUnderMinimap = synced.Bind(LookSection, "Weight Under Minimap", true,
                 "Armor and carry weight in boxes in a column right of the minimap, followed by Elite Creatures Reborn's world tier when it is installed. The minimap and the status effects move a little left to make room.", synced: false);
+            CraftingWidth = synced.Bind(LookSection, "Crafting Panel Width", 100f,
+                "Extra width for the crafting panel and the panel above it (your name, skills, trophies, PvP), in interface units (the game's panels are 570): a wider recipe list and description. They grow to the left, never into the inventory's panels (so on a narrow screen they get what fits). 0: the game's width.",
+                acceptableValues: new AcceptableValueRange<float>(0f, 600f), synced: false);
+            CraftingHeight = synced.Bind(LookSection, "Crafting Panel Height", 90f,
+                "Extra height for the crafting panel, in interface units (the game's panel is 650): a longer recipe list and more room for the description. It grows downward, never past the bottom of the screen. 0: the game's height.",
+                acceptableValues: new AcceptableValueRange<float>(0f, 400f), synced: false);
         }
 
         private static void BindTheme(SyncedConfiguration synced)

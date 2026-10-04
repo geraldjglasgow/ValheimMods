@@ -24,7 +24,7 @@ namespace PackPanel
     {
         public const string PluginGuid = "milkyteam.packpanel";
         public const string PluginName = "PackPanel";
-        public const string PluginVersion = "0.6.2";
+        public const string PluginVersion = "0.7.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

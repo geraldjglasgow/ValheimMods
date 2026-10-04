@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using HarmonyLib;
 using PackPanel.Backpacks;
 using PackPanel.Core;
 using PackPanel.Layout;
@@ -11,29 +10,13 @@ namespace PackPanel.Tackle
     /// A tacklebox and the grave, as for a backpack (<see cref="BackpackGrave"/>). A grave made while a box lay in its slot
     /// holds the box at the Tacklebox slot's cell and its bait at the cells after it; the player who wakes has no cells, so
     /// the game's take all (which puts each item back at its old cell) would miss them. So before a take all from the
-    /// player's own grave the box that was carried goes back into its slot first and the layout grows to match, and the
-    /// grave's easy fit check counts its cells. A spare box carried in the grid is not mistaken for it. With Keep Slots On
-    /// Death the box stays with the player and only its bait goes to the grave, into cells that are still there.
+    /// player's own grave the box that was carried goes back into its slot first and the layout grows to match; the
+    /// grave's easy fit check (<see cref="GraveFit"/>) sends the box and its bait to their own cells. A spare box carried
+    /// in the grid is not mistaken for it. With Keep Slots On Death the box stays with the player and only its bait goes
+    /// to the grave, into cells that are still there.
     /// </summary>
     public static class TackleboxGrave
     {
-        /// <summary>Free cells <see cref="FreeCellPatches"/> adds to the count while the easy fit check runs.</summary>
-        public static int ExtraRoom { get; private set; }
-
-        [HarmonyPatch(typeof(TombStone), nameof(TombStone.EasyFitInInventory))]
-        public static class EasyFit
-        {
-            [HarmonyPrefix]
-            public static void Prefix(TombStone __instance, Player player)
-            {
-                Container container = __instance.GetComponent<Container>();
-                ItemDrop.ItemData box = InventoryState.IsLocal(player) && container != null ? Waiting(container.GetInventory()) : null;
-                ExtraRoom = TackleboxSettings.Cells(TackleboxCatalog.Of(box));
-            }
-
-            [HarmonyFinalizer]
-            public static void Finalizer() => ExtraRoom = 0;
-        }
 
         /// <summary>
         /// Called by <see cref="GravePatches"/> before a take all from a grave, after the backpack went back on (so the

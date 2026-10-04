@@ -7,8 +7,10 @@ namespace PackPanel.Consume
     /// <summary>
     /// The Food Key and the Mead Key, read in the local player's frame (<see cref="PlayerTick"/>). They work where the game's
     /// hotbar keys work (<c>Player.TakeInput</c>: no inventory, map, menu, chat, console or text input open, not dead or
-    /// teleporting) and nowhere else, so inside the inventory Z stays OpenKeep's Find Key. A press eats or drinks everything
-    /// it can from its slots (<see cref="SlotMeals"/>); when nothing could be taken the centre message says so.
+    /// teleporting) and nowhere else, so inside the inventory Z stays OpenKeep's Find Key. Not with a hammer, hoe or
+    /// cultivator in hand either (<c>Player.InPlaceMode</c>; the user's request, 2026-10-04): there B is OpenKeep's build
+    /// camera and EarthWright's Select Value Key, Z EarthWright's Snap Hold Key. A press eats or drinks everything it can
+    /// from its slots (<see cref="SlotMeals"/>); when nothing could be taken the centre message says so.
     /// </summary>
     public static class ConsumeKeys
     {
@@ -18,7 +20,7 @@ namespace PackPanel.Consume
                 return;
             bool food = Hotkey.Pressed(ConsumeSettings.FoodKey);
             bool mead = Hotkey.Pressed(ConsumeSettings.MeadKey);
-            if ((!food && !mead) || !player.TakeInput())
+            if ((!food && !mead) || !player.TakeInput() || player.InPlaceMode())
                 return;
             if (food && SlotMeals.TakeAll(player, SlotKind.Food) == 0)
                 Messages.Center(ConsumeWords.NothingToEat);

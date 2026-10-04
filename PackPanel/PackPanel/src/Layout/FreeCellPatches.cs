@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using HarmonyLib;
 using PackPanel.Backpacks;
 using PackPanel.Core;
+using PackPanel.Crafting;
 
 namespace PackPanel.Layout
 {
@@ -21,7 +22,8 @@ namespace PackPanel.Layout
             {
                 if (!InventoryState.Manages(__instance))
                     return true;
-                __result = MainCells.FindEmpty(__instance, InventoryState.Layout, topFirst);
+                if (!InPlaceUpgrade.FreeSlot(__instance, out __result))
+                    __result = MainCells.FindEmpty(__instance, InventoryState.Layout, topFirst);
                 return false;
             }
         }
@@ -34,7 +36,7 @@ namespace PackPanel.Layout
             {
                 if (!InventoryState.Manages(__instance))
                     return true;
-                __result = MainCells.CountEmpty(__instance, InventoryState.Layout) + BackpackGrave.ExtraRoom + Tackle.TackleboxGrave.ExtraRoom;
+                __result = MainCells.CountEmpty(__instance, InventoryState.Layout);
                 return false;
             }
         }
@@ -60,7 +62,7 @@ namespace PackPanel.Layout
             {
                 if (!InventoryState.Manages(__instance))
                     return true;
-                __result = MainCells.CanAdd(__instance, InventoryState.Layout, item, stack);
+                __result = InPlaceUpgrade.Fits(__instance, item) || MainCells.CanAdd(__instance, InventoryState.Layout, item, stack);
                 return false;
             }
         }

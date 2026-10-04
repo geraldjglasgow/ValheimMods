@@ -4,17 +4,17 @@ A bigger, better organised inventory, with labelled slots always on screen.
 
 ## Features
 - A grid from your two hands up to 12 x 10, with `Base Carry Weight` and `Keep Slots On Death`.
-- Gear tab: armour, a backpack, worn utilities, a trinket and a stat sheet.
+- Gear tab: armour, backpack, utilities, trinket and a stat sheet.
 - Consumables tab: food, mead and ammo, with keys to eat and drink (Z, B).
 - A coin purse, a key ring and four craftable tackleboxes for bait.
 - Eight craftable backpacks for more slots and carry weight.
-- Armour and weight beside the minimap; a brown or timber look that darkens at night.
+- Armour and weight beside the minimap, a bigger crafting panel, a brown or timber look that darkens at night.
 - With OpenKeep 1.8.0+, its buttons join the inventory and its quick stack and sort skip the slots.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `PackPanel.dll` in
 `BepInEx/plugins`.
-- Not compatible with mods that resize the inventory or add equipment slots, such as ExtraSlots.
+- Not compatible with mods that resize the inventory or add equipment slots, like ExtraSlots.
 - Removing the mod loses what lies outside the game's grid, every backpack and tacklebox, and keys above
   one per stack: empty them first.
 - Lowering `Inventory Width` or `Key Stack` can lose items; fewer slots or taking off a pack drops what no longer fits.

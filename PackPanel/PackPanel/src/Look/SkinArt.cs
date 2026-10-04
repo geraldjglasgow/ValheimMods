@@ -47,6 +47,23 @@ namespace PackPanel.Look
         public static bool IsPanel(Sprite sprite) => sprite != null &&
             (sprite.name == "PackPanel_panel" || sprite.name == "PackPanel_timber_panel" || TimberFrame.Owns(sprite));
 
+        /// <summary>
+        /// Every image the panels use, decoded now (at the main menu) rather than the first time the inventory opens:
+        /// the Timber wallpaper (1254 px square) and button (1983 x 793) decode with their mipmaps on the main thread,
+        /// which stalled the panels' first slide-in (reported 2026-10-04). Decoded images are kept, so later reads are free.
+        /// </summary>
+        public static void Prewarm()
+        {
+            Sprite[] all = { Wallpaper, BrownPanel, Cell, Button, BrownButton, ButtonHover, ButtonPressed, RingPanel, RingLine };
+            int count = all.Length;
+            foreach (Slots.SlotKind kind in System.Enum.GetValues(typeof(Slots.SlotKind)))
+            {
+                if (kind != Slots.SlotKind.Retired && Icon(kind.ToString().ToLowerInvariant()) != null)
+                    count++;
+            }
+            Plugin.Log.LogInfo($"PackPanel: {count} panel images ready");
+        }
+
         private static Sprite Read(string name, float pixelsPerUnit, float border)
         {
             if (sprites.TryGetValue(name, out Sprite sprite))

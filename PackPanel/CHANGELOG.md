@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0
+
+- New `Crafting Panel Width` and `Crafting Panel Height` (per player): a bigger crafting panel and recipe list.
+- Crafting the next backpack or tacklebox upgrades the one in its slot: no free cell needed, contents kept.
+- `Food Key` and `Mead Key` do nothing with a hammer, hoe or cultivator in hand.
+- Fixed: Use on your grave with a full backpack takes everything instead of opening it.
+- Fixed: with `Inventory Rows` 0, a backpack or tacklebox taken from your grave could miss its slot.
+- Fixed: a stutter the first time the inventory opens.
+- Less work every frame for the settings sync.
+
 ## 0.6.2
 
 - Less work when any window or map pin appears (the Timber panel theme).
