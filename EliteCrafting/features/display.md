@@ -76,7 +76,7 @@ You move 6% faster              T3            ← affix lines, one per active af
 You fall slowly and take no fall damage  T7   ← flag affix: no value
 Attacks with this weapon cost 9% less stamina  T3
 20 storm_ward                   T6  (dormant) ← dormant: grey (#808080), after the active ones
-Sealed: Corrupted                             ← sealed marker, dark red, reason word from ecf_sealed
+Sealed                                        ← sealed marker, dark red, the same word whatever sealed it
 ```
 
 Details:

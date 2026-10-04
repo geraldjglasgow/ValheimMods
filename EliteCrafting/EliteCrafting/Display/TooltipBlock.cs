@@ -57,17 +57,14 @@ namespace EliteCrafting.Display
             }
         }
 
-        /// <summary>"Sealed: Corrupted" in dark red; an unknown reason id shows the generic sealed text.</summary>
+        /// <summary>"Sealed" in dark red, whatever sealed the item.</summary>
         private static void AppendSealed(StringBuilder sb, ItemState state)
         {
             if (!state.IsSealed)
             {
                 return;
             }
-            string reasonKey = "ecf_ui_sealed_" + state.SealedReason;
-            string text = DisplayWords.Has(reasonKey)
-                ? Words.Localize("$ecf_ui_sealed", Words.Localize("$" + reasonKey))
-                : Words.Localize("$ecf_ui_sealed_generic");
+            string text = Words.Localize("$ecf_ui_sealed_generic");
             sb.Append('\n').Append(RarityPalette.SealedRed).Append(text).Append(RarityPalette.Close);
         }
     }

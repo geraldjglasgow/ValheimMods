@@ -124,7 +124,7 @@ the current one.
 **What the built-in defaults contain, per release**: only the affixes whose effects that release implements (the
 Phase 1 set, `affixes.md` section 6, then each later phase's), because a later-phase effect in YAML is a validation
 error (`effects-runtime.md` section 1). Later affixes join the defaults in the release that builds them, and layering
-delivers them to existing servers. The economy defaults hold the three rarities, the six runes, `drops.chests` and
+delivers them to existing servers. The economy defaults hold the three rarities, the seven runes, `drops.chests` and
 `drops.ecr` (`economy-yaml.md`). The mod has never been released; a main economy file written by a development build
 before the runes (2026-10-02) still holds the old rarities and crafting items, and is fixed the way above: delete or
 rename it, and the next start writes the current one.
@@ -136,7 +136,7 @@ as ECR's per-biome overlay). Every list of entries with an `id` (affixes; rariti
 merges **by id, field by field** (`../DECISIONS.md` CFG-3):
 
 - An entry whose id is **new** is added. After all layers it must be complete (every required field present) or it
-  is an error. (In `runes:` a new id is always an error: only the six runes exist, `stones.md` section 5.)
+  is an error. (In `runes:` a new id is always an error: only the seven runes exist, `stones.md` section 5.)
 - An entry whose id **already exists** from an earlier layer changes only the fields it names. A two-line entry is a
   valid override:
 
@@ -218,7 +218,7 @@ line 42: 'ten' is not a number`), as ECR's reader does.
 - A successful build replaces the family's active model in one assignment and raises its `Changed` event. It also
   bumps the configuration generation the item parse cache checks (`item-data.md` section 5), marks the aggregate
   dirty (`effects-runtime.md` section 3), and rebuilds the precomputed tables (tier table, drop tables, colour strings).
-- **Rune prefabs are never created at apply time**: they come from code only (`prefabs.md` section 2), six of them,
+- **Rune prefabs are never created at apply time**: they come from code only (`prefabs.md` section 2), seven of them,
   whatever the YAML says. The economy family's rune name, description, stack size, item weight and tint need
   `ObjectDB`; they are written to the prefabs once they are built, and again on every later apply. Every live rune
   shares its prefab's `SharedData` (linked when it wakes), so that reaches every existing stack (`prefabs.md` section

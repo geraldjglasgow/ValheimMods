@@ -8,8 +8,8 @@ inscriptions.
 ## Features
 - Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6).
 - 162 inscriptions for every kind of gear, stronger the later the item's biome.
-- Six runes, clicked onto an item: Awakening (Normal to Magic), Shaping (one more on
-  Magic), Ascension (Magic to Rare), Consecrated (one more on Rare), Cleansing (back to Normal) and the Serpent
+- Seven runes, clicked onto items: Awakening (Normal to Magic), Shaping (one more on Magic), Recasting (rerolls a
+  Magic item), Ascension (Magic to Rare), Consecrated (one more on Rare), Cleansing (back to Normal) and the Serpent
   (seals the item after a gamble).
 - Drops from kills, bosses and world chests.
 - Elite Creatures Reborn: `Synergy` (off by default) lets elite stars raise drops.

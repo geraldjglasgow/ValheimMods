@@ -462,6 +462,13 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   sockets kept. Cleansing is **not** hooked up for Epic Loot items (user: "just dont hookup cleanse"); it refuses
   them. Epic and higher Epic Loot rarities have no rung on our ladder and are refused. Effect counts and names come
   from two public Epic Loot classes outside its API, with fallbacks. Existing EliteCrafting inscriptions keep working.
+- 2026-10-04 — Recasting Rune (user: "alteration", renamed; the name is the user's pick): a seventh rune, verb
+  `reroll`, on Magic items. Every inscription goes and the item is rolled fresh at its own rarity (`RollFresh`: 1-2
+  on Magic, the item's own tiers, the rune's floor); the rarity stays. Judgement calls: not confirm-gated (the rune a
+  player spends again and again; the YAML can set `confirm`), refused on the base rarity, drop weights about Shaping's
+  (`[120, 130, 120, 110, 100, 90, 80]`), no boss bonus, violet tint, crystal look. With Epic Loot: every effect
+  replaced by a fresh Epic Loot roll of the item's rarity, renamed, sockets kept (the Serpent's chaotic reroll
+  without the seal). Amends the 2026-10-02 "six runes only" decision.
 
 ## Open questions
 

@@ -15,10 +15,10 @@ namespace EliteCrafting.Stones
     }
 
     /// <summary>
-    /// The fixed verb set of the six runes, dispatched by the rune's <c>verb</c>: <c>promote</c> (Awakening, Ascension),
-    /// <c>add</c> (Shaping, Consecrated), <c>strip</c> (Cleansing), <c>corrupt</c> (Serpent). A new verb is one class and
-    /// one line in <see cref="Implemented"/>. A stone whose verb this build cannot perform refuses as
-    /// disabled (<c>stone_disabled</c>), with one log warning for the server owner, rather than failing (IMP-60).
+    /// The fixed verb set of the seven runes, dispatched by the rune's <c>verb</c>: <c>promote</c> (Awakening, Ascension),
+    /// <c>add</c> (Shaping, Consecrated), <c>reroll</c> (Recasting), <c>strip</c> (Cleansing), <c>corrupt</c> (Serpent).
+    /// A new verb is one class and one line in <see cref="Implemented"/>. A stone whose verb this build cannot perform
+    /// refuses as disabled (<c>stone_disabled</c>), with one log warning for the server owner, rather than failing (IMP-60).
     /// </summary>
     internal static class StoneVerbs
     {
@@ -28,6 +28,7 @@ namespace EliteCrafting.Stones
             { StoneVerb.Add, new AddVerb() },
             { StoneVerb.Strip, new StripVerb() },
             { StoneVerb.Corrupt, new CorruptVerb() },
+            { StoneVerb.Reroll, new RerollVerb() },
         };
 
         private static readonly HashSet<string> Warned = new HashSet<string>();

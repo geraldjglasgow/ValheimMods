@@ -4,7 +4,7 @@ using EliteCrafting.Core;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// The code-side list of rune prefabs (prefabs.md): the six runes, whose prefab is <c>ECF_</c> + PascalCase id.
+    /// The code-side list of rune prefabs (prefabs.md): the seven runes, whose prefab is <c>ECF_</c> + PascalCase id.
     /// Prefabs come from code only and exist on every peer whatever the YAML says; the YAML binds definitions to them
     /// (and can disable a rune, never add one).
     /// </summary>
@@ -12,9 +12,12 @@ namespace EliteCrafting.Rules
     {
         public const string PrefabPrefix = "ECF_";
 
-        /// <summary>In the order a player meets them: Normal to Magic, more on Magic, Magic to Rare, more on Rare, back
-        /// to Normal, sealed.</summary>
-        public static readonly string[] BuiltInIds = { "awakening", "shaping", "ascension", "consecrated", "cleansing", "serpent" };
+        /// <summary>In the order a player meets them: Normal to Magic, more on Magic, Magic rerolled, Magic to Rare,
+        /// more on Rare, back to Normal, sealed.</summary>
+        public static readonly string[] BuiltInIds =
+        {
+            "awakening", "shaping", "recasting", "ascension", "consecrated", "cleansing", "serpent",
+        };
 
         public static bool IsBuiltIn(string id) => Array.IndexOf(BuiltInIds, id) >= 0;
 

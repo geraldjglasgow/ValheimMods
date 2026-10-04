@@ -43,11 +43,12 @@ rolling:
   # count_weights:
   #   rare: { 3: 4, 4: 3, 5: 2, 6: 1 }
 
-# The six runes. Click a rune onto an item in your own inventory. Fields: id (one of the six),
+# The seven runes. Click a rune onto an item in your own inventory. Fields: id (one of the seven),
 # verb, applies_to (rarities), cost (per rarity, default 1), tier_floor, enabled,
 # confirm (hold Shift / dialog first), stack (default 50), item_weight (the item weight of
 # one rune, default 0.2), name, description (loc key or text), tint.
 # Verbs: promote (one rarity up), add (one inscription, not past the rarity's maximum),
+# reroll (every inscription rolled again at the item's own rarity, the count drawn anew),
 # strip (back to the base rarity, every inscription gone), corrupt (one outcome, then the
 # item is sealed for good: no rune works on it again). `tier_floor` is the weakest
 # inscription tier the rune rolls, counted like the tooltip: 1 = the best tier the item
@@ -56,6 +57,7 @@ rolling:
 runes:
   - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, one inscription
   - { id: shaping,     verb: add,     applies_to: [magic] }        # one more on a Magic item (up to 2)
+  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # every inscription rolled again (1-2)
   - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, one more (to Rare's 3 at least)
   - { id: consecrated, verb: add,     applies_to: [rare] }         # one more on a Rare item (up to 6)
   - id: cleansing                                                  # back to Normal
@@ -234,6 +236,7 @@ drops:
     #              T1   T2   T3   T4   T5   T6   T7
     awakening:   [400, 300, 220, 160, 120, 100,  80]
     shaping:     [150, 150, 140, 120, 100,  90,  80]
+    recasting:   [120, 130, 120, 110, 100,  90,  80]
     ascension:   [  0, 120, 120, 110, 100,  90,  80]
     consecrated: [  0,   0,  20,  40,  50,  60,  70]
     cleansing:   [ 30,  30,  30,  30,  30,  30,  30]

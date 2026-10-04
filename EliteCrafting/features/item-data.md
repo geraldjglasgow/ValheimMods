@@ -113,8 +113,8 @@ Rules that keep the set tight:
 - **A key whose value would be empty is removed**, not written empty. An item with no `ecf_` keys at all is a plain
   vanilla item and costs nothing anywhere.
 - `ecf_v` is written whenever any other key is written, and removed when the last other key goes.
-- `ecf_sealed` is a reason rather than a flag so the tooltip can say *why* ("Corrupted" for `serpent`). Any
-  non-empty value means sealed; an unknown reason id displays as the generic sealed text.
+- `ecf_sealed` is a reason rather than a flag (`serpent` today), kept for the `ecraft` item report; the tooltip shows "Sealed" whatever the reason. Any
+  non-empty value means sealed.
 - **Retired keys.** `ecf_bound`, `ecf_refine`, `ecf_sigil`, `ecf_sockets`, `ecf_gems` and `ecf_catalyst` belonged to
   crafting systems removed on 2026-10-02 (user decision; the runes replaced them). They are never read, and the
   writer removes them from an item the next time it writes that item for its own reasons (section 8).

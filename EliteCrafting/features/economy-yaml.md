@@ -102,16 +102,16 @@ rolling:
 
 # 4. `runes`
 
-A list of the six runes (`stones.md`). The ids are fixed in code: an entry tunes or disables a rune, it never adds
+A list of the seven runes (`stones.md`). The ids are fixed in code: an entry tunes or disables a rune, it never adds
 one. Fields:
 
 | Field | Type | Required | Default | Meaning |
 | --- | --- | --- | --- | --- |
-| `id` | id | yes | - | one of `awakening`, `shaping`, `ascension`, `consecrated`, `cleansing`, `serpent`; any other id is an error |
+| `id` | id | yes | - | one of `awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent`; any other id is an error |
 | `name` | loc key or literal text | no | `$ecf_stone_<id>` | the item name (`localization.md` section 4); literal text shows as written in every language |
 | `description` | loc key or literal text | no | `$ecf_stone_<id>_desc` | the item description in the vanilla tooltip |
 | `prefab` | name | no | `ECF_` + PascalCase id | the code-registered prefab this entry defines; if given it must be the rune's own |
-| `verb` | enum | yes | - | `promote`, `add`, `strip`, `corrupt` |
+| `verb` | enum | yes | - | `promote`, `add`, `reroll`, `strip`, `corrupt` |
 | `applies_to` | rarity ids | yes | - | rarities the rune accepts |
 | `cost` | map rarity -> int 0-999 | no | 1 for every rarity | runes consumed per use, from the held stack; 0 = free |
 | `tier_floor` | int 1-7 | no | none | weakest affix tier this rune rolls, counted down like the tooltip (1 = the best tier the item allows; clamped to the ceiling) |
@@ -130,12 +130,13 @@ Verb-specific fields:
 
 ---
 
-# 5. The six runes: defaults
+# 5. The seven runes: defaults
 
 ```yaml
 runes:
   - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, one inscription
   - { id: shaping,     verb: add,     applies_to: [magic] }        # one more on a Magic item (up to 2)
+  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # every inscription rolled again (1-2)
   - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, one more (to Rare's 3 at least)
   - { id: consecrated, verb: add,     applies_to: [rare] }         # one more on a Rare item (up to 6)
   - id: cleansing                                                  # back to Normal
@@ -403,6 +404,7 @@ drops:                    # on/off: the .cfg switches `Rune drops` and `Magic it
   runes:                  #  T1   T2   T3   T4   T5   T6   T7
     awakening:          [400, 300, 220, 160, 120, 100,  80]
     shaping:            [150, 150, 140, 120, 100,  90,  80]
+    recasting:          [120, 130, 120, 110, 100,  90,  80]
     ascension:          [  0, 120, 120, 110, 100,  90,  80]
     consecrated:        [  0,   0,  20,  40,  50,  60,  70]
     cleansing:          [ 30,  30,  30,  30,  30,  30,  30]
@@ -500,7 +502,7 @@ Errors reject the family; warnings apply it.
 | --- | --- |
 | Rarity rules (`rarity.md` section 7) | error / warning as listed there |
 | The same rune id twice in one file; two runes on one prefab | error |
-| A rune id that is not one of the six; a `prefab` other than the rune's own | error |
+| A rune id that is not one of the seven; a `prefab` other than the rune's own | error |
 | A rune without `verb` or `applies_to`; a `corrupt` rune without `outcomes` | error |
 | `tint` or a rarity `color` not `#RRGGBB`; `item_weight` below 0; `stack` outside 1-9999 | error |
 | Unknown verb, unknown `outcome` | error |
@@ -535,6 +537,7 @@ Errors reject the family; warnings apply it.
 | --- | --- | --- |
 | 2026-09-23 | Specified in Phase 0. | pending |
 | 2026-10-02 | Three rarities, the six runes, `stone` keys renamed to `rune` (user decision). | pending |
+| 2026-10-04 | The Recasting Rune (`recasting`, verb `reroll`) and its drop row (user decision). | pending |
 
 ---
 

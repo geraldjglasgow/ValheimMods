@@ -1,8 +1,8 @@
 {
     "name": "EliteCrafting",
-    "version_number": "0.1.0",
+    "version_number": "0.2.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteCrafting",
-    "description": "Work in progress, big changes ahead. Runes and magic gear: creatures and chests drop runes that awaken, shape, raise and seal items across three rarities. Works with Epic Loot. Required on server and all clients.",
+    "description": "Work in progress, big changes ahead. Runes and magic gear: creatures and chests drop runes that awaken, shape, raise, reroll and seal items across three rarities. Works with Epic Loot. Required on server and all clients.",
     "dependencies": [
         "denikson-BepInExPack_Valheim-5.4.2350"
     ]

@@ -18,6 +18,7 @@ ItemCopies** (live runes share their prefab's `SharedData` instead).
 
 **Status (2026-10-03): 0.1.0 on Thunderstore, a work in progress, never tested in game.** The crafting was cut to six runes (user decision 2026-10-02, PLAN.md
 Decisions log): Normal, Magic and Rare only; Awakening, Shaping, Ascension, Consecrated, Cleansing and the Serpent Rune.
+The Recasting Rune (rerolls a Magic item) was added as the seventh on 2026-10-04 (user decision), untested.
 Essences, sockets, gems, catalysts, the chisel, salvage and shards, sigils, binding, quality and the other stones are
 gone, from the code, the YAML and the words. Builds clean, both default YAML families parse with no issue; nothing
 tested in game yet. Next: the in-game test plan in `features/multiplayer.md` section 6, then packaging (no icon yet).
@@ -84,10 +85,10 @@ memory: `common` → Normal, `uncommon` → `magic`, `epic`/`legendary`/`mythic`
 `RuleSet.Affixes` (`AffixRules`: `Get(id)`, `Affixes`, `Channels` (`ChannelDef`, index = `AffixDef.ChannelIndex`, `Cap`),
 `Pool(slot)`, health-critical thresholds) and `RuleSet.Economy` (`EconomyRules`: `Rarities` in ladder order,
 `Rarity(id)`, `Next`/`Previous`, `BaseRarity`, `Rolling`, `Stones`, `Stone(id)`, `StoneForPrefab`, `ItemTiers`,
-`Biomes`/`BiomeTier`, `Drops`, `StoneDraw(tier)`, `GearRarityDraw(tier, boss)`). `StoneCatalog.BuiltInIds` are the six
-rune ids (`awakening`, `shaping`, `ascension`, `consecrated`, `cleansing`, `serpent`); `PrefabFor(id)` gives
+`Biomes`/`BiomeTier`, `Drops`, `StoneDraw(tier)`, `GearRarityDraw(tier, boss)`). `StoneCatalog.BuiltInIds` are the seven
+rune ids (`awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent`); `PrefabFor(id)` gives
 `ECF_` + PascalCase id. The YAML tunes or disables them but cannot add a rune. `StoneVerb`: `Promote`, `Add`, `Strip`,
-`Corrupt`; `CorruptOutcome`: `SealOnly`, `AddInscription`, `ChaoticReroll`. `Drops.Chests` (`StoneChance`,
+`Corrupt`, `Reroll`; `CorruptOutcome`: `SealOnly`, `AddInscription`, `ChaoticReroll`. `Drops.Chests` (`StoneChance`,
 `GearChance`, `Containers`: prefab → `CreatureDrop`); `Drops.Ecr` (`EcrDrops`). `FamilySpec` id lists `rarities` and
 `runes` merge by id. `ActiveRules.ReloadLocal()` re-reads this machine's files (`ecraft reload`) and returns a
 `FamilyReload` per family (`Applied`, `Rejected`, `Bound`, `NoFiles`). `ActiveRules.SourcesInForce(FamilySpec.Affixes|Economy)`
@@ -100,7 +101,7 @@ SharedData), `SlotOf`, `IsMagicBase`, `IsStone`, `Satisfies(slotInfo, affix.Requ
 `ItemTier.Of(item | prefabName)`, `ItemTier.Explain(prefab)` (tier + source, for `ecraft tiers`), `ItemTier.PrefabName(item)`,
 `ItemTier.RefreshRecipes()` (recipe index up to date, tier cache dropped when rebuilt), `ItemTier.HasRecipe(prefab)`
 (never call the internal `RecipeIndex.Refresh` from outside Items). Rune prefabs: `StonePrefabs.Get(runeId)`,
-`GetByPrefabName`, `IsRegistered`, `IsBuilt`, `IsStonePrefab(prefab)` (the six runes, built from code on every peer,
+`GetByPrefabName`, `IsRegistered`, `IsBuilt`, `IsStonePrefab(prefab)` (the seven runes, built from code on every peer,
 registered in ObjectDB and ZNetScene before any inventory or ZDO; every live rune is linked to its prefab's
 `SharedData` in an `ItemDrop.Awake` postfix, so the economy YAML's name, description, stack and weight reach every
 stack). A rune is recognised by its drop prefab name (`ECF_...`, `ItemSlots.IsStone`; never a magic base); spawned
@@ -144,9 +145,10 @@ owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: 
 
 **Stones** (`Stones/`, the runes). `InventoryGui.OnSelectedItem` prefix (local player), `StonePipeline.Evaluate(job)`
 (read-only, 10 checks then the verb as a dry run), `ConfirmGate.Pass` (Cleansing and Serpent: `confirm: true`), then
-`StoneCommit` (one `ItemState.Write`, then the cost). Four verbs (`StoneVerbs`): `PromoteVerb`, `AddVerb`, `StripVerb`,
-`CorruptVerb`. The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing
-only, and every outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
+`StoneCommit` (one `ItemState.Write`, then the cost). Five verbs (`StoneVerbs`): `PromoteVerb`, `AddVerb`, `StripVerb`,
+`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.RollFresh` at the item's own rarity, refused on the base rarity).
+The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
+outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
 
 **Epic Loot** (`Epic/`, user decision 2026-10-03). While Epic Loot (`randyknapp.mods.epicloot`) is loaded
 (`EpicApi.Installed`) the runes work on Epic Loot's own magic and `Loot/GearDrops.On` is false: no magic gear of
@@ -159,7 +161,8 @@ steps); `EpicExtras` reads two public Epic Loot classes outside the API: `LootRo
 effect count range per rarity, fallback Magic 1-3, Rare 2-4) and `MagicItemNames.GetNameForItem` (fallback: the name
 stays). In `Stones/`, `EpicChecks` replaces pipeline step 2 and `StoneVerbs.Run` hands every verb to `EpicVerbs`:
 Awakening = Epic Loot's own Magic roll, Ascension = Magic to Rare plus effects up to Epic Loot's Rare minimum (at least
-`promote_adds_at_least`), renamed; Shaping/Consecrated = one effect up to Epic Loot's maximum; the Serpent
+`promote_adds_at_least`), renamed; Shaping/Consecrated = one effect up to Epic Loot's maximum; Recasting = every
+effect replaced by a fresh Epic Loot roll of the same rarity (`EpicVerbs.Rerolled`, shared with the Serpent); the Serpent
 (`EpicSerpent`) seals with our `ecf_sealed` (Epic Loot's own table does not read it) after seal only, one effect past
 the maximum by `overflow`, or every effect replaced by a fresh roll (sockets kept, augment marks cleared); Cleansing
 refuses (`epic_no_strip`, the user chose not to hook it up). `StoneResult.EpicJson` is written through
@@ -224,6 +227,7 @@ Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you
 |---|---|---|---|
 | Awakening Rune | Normal | Makes the item Magic with one inscription | everywhere, most of all in the Meadows; Eikthyr |
 | Shaping Rune | Magic | Adds one inscription, up to two | everywhere; Eikthyr |
+| Recasting Rune | Magic | Rerolls every inscription: the item stays Magic with one or two new ones | everywhere |
 | Ascension Rune | Magic | Makes it Rare, keeps its inscriptions and adds one (two on a one-inscription item, Rare's minimum is three) | Black Forest and later; the Elder |
 | Consecrated Rune | Rare | Adds one inscription, up to six | Swamp and later, more the later the biome; Moder, Yagluth, the Queen, the Fader, half the time Bonemass |
 | Cleansing Rune | Magic, Rare | Strips it back to Normal: every inscription is lost | everywhere |
@@ -234,7 +238,8 @@ A sealed item takes no rune again. Every rune's odds, costs and the rarities it 
 
 **With Epic Loot installed** the runes work on Epic Loot's own magic items instead, and only Epic Loot drops magic
 gear (runes still drop). Awakening makes a plain item an Epic Loot Magic item, rolled as Epic Loot rolls one;
-Shaping and Consecrated add one Epic Loot effect, up to Epic Loot's most for that rarity; Ascension makes a Magic item
+Shaping and Consecrated add one Epic Loot effect, up to Epic Loot's most for that rarity; Recasting replaces every
+effect of a Magic item with a fresh Epic Loot roll (sockets stay); Ascension makes a Magic item
 Rare and adds effects; the Serpent Rune seals it after nothing more, one effect past the limit, or every effect
 rerolled (sockets and shards stay). The Cleansing Rune does not work on Epic Loot items, nor does any rune on Epic or
 higher items or on unidentified ones. Epic Loot's own enchanting table still works on a sealed item.

@@ -195,7 +195,7 @@ item; after each rune, compare A's and B's `ecraft inspect` raw lines once the i
 23. **Serpent Rune.** Test file forcing one outcome at a time (`outcomes` with every other weight 0): `seal_only`,
     `add_inscription` (a Rare with six ends with seven, a Magic with two ends with three), `chaotic_reroll` (tiers
     above the ceiling possible, the count in the rarity's range). The rarity never changes. Every result shows
-    "Sealed: Corrupted" on A and B, and every rune then refuses with "sealed" on both.
+    "Sealed" on A and B, and every rune then refuses with "sealed" on both.
 24. **Sealed round trips.** A sealed item through step 6's round trips (chest, ground, tombstone, portal, relog,
     server restart, workbench upgrade): every `ecf_` key survives (`inspect` raw lines equal on A and B).
 25. **Kill restore (Reaper, Soul Reaper).** A wears Reaper; B stands so B's peer owns a creature (step 7), A kills it:

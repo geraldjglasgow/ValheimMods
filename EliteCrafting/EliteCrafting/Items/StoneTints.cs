@@ -14,10 +14,11 @@ namespace EliteCrafting.Items
     /// </summary>
     internal static class StoneTints
     {
-        // Judgement calls: Shaping keeps the old Stone of Growth's teal, Consecrated is gold, Cleansing pale silver.
+        // Judgement calls: Shaping keeps the old Stone of Growth's teal, Recasting is violet, Consecrated gold, Cleansing
+        // pale silver.
         private static readonly Dictionary<string, string> Defaults = new Dictionary<string, string>(StringComparer.Ordinal)
         {
-            ["awakening"] = "#1EFF00", ["shaping"] = "#2EC4B6", ["ascension"] = "#0070DD",
+            ["awakening"] = "#1EFF00", ["shaping"] = "#2EC4B6", ["recasting"] = "#9B6BD6", ["ascension"] = "#0070DD",
             ["consecrated"] = "#E6C35C", ["cleansing"] = "#D8E4EE", ["serpent"] = "#3F7F2A",
         };
 

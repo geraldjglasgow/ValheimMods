@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- Recasting Rune, the seventh rune: rerolls every inscription on a Magic item, which stays Magic. Drops everywhere.
+- Epic Loot: Recasting rerolls every effect of an Epic Loot Magic item; sockets stay.
+- Existing `EliteCrafting_economy.yml` files get the new rune and its drops without editing.
+- Sealed items show just "Sealed" in the tooltip (was "Sealed: Corrupted").
+- Less work every frame keeping the config in sync.
+
 ## 0.1.0
 
 - First release, a work in progress: significant changes will come.

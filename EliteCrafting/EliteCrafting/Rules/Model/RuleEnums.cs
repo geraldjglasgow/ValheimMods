@@ -15,8 +15,8 @@ namespace EliteCrafting.Rules
     public enum HookDifficulty { None, Easy, Medium, Hard }
 
     /// <summary>What a rune does: Awakening and Ascension promote, Shaping and Consecrated add, Cleansing strips, the
-    /// Serpent Rune corrupts.</summary>
-    public enum StoneVerb { Promote, Add, Strip, Corrupt }
+    /// Serpent Rune corrupts, Recasting rerolls.</summary>
+    public enum StoneVerb { Promote, Add, Strip, Corrupt, Reroll }
 
     /// <summary>The Serpent Rune's outcomes; every one seals the item.</summary>
     public enum CorruptOutcome { SealOnly, AddInscription, ChaoticReroll }

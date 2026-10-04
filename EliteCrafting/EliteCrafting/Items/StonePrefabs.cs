@@ -7,7 +7,7 @@ using UnityEngine;
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The six rune prefabs (prefabs.md sections 1-3). Built once per process from code alone, whatever the YAML says, so every peer (server, host, clients, main
+    /// The seven rune prefabs (prefabs.md sections 1-3). Built once per process from code alone, whatever the YAML says, so every peer (server, host, clients, main
     /// menu) has the same prefab names and hashes before any inventory or ZDO arrives. Registration into the game's
     /// databases is done by <see cref="StoneRegistrationPatches"/>; this class is the registry other areas read.
     /// </summary>

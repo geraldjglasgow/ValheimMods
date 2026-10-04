@@ -6,7 +6,7 @@ This file covers **the `ecraft` console command**: its sub-commands, grammar, wh
 and output format.
 
 **Status: Phase 1 and Phase 2 built, not tested in game** (2026-09-24): Phase 2 added `ecr` and the active states in
-`stats`. `list` and `give` work on the six runes since 2026-10-02.
+`stats`. `list` and `give` work on the runes since 2026-10-02 (seven since 2026-10-04).
 
 ---
 

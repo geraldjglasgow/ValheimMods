@@ -75,7 +75,7 @@ namespace EliteCrafting.Epic
         }
 
         /// <summary>
-        /// Every effect replaced by another item's (the Serpent's reroll). The augment and temper marks pointed at the old
+        /// Every effect replaced by another item's (the Recasting Rune, the Serpent's reroll). The augment and temper marks pointed at the old
         /// effects, so they go; sockets and their shards stay.
         /// </summary>
         public void TakeEffects(EpicItem other)

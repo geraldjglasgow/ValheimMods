@@ -3,7 +3,7 @@
 One feature of the mod, specified on its own. The other feature files sit beside it; `../SPEC.md` is the whole-mod
 behaviour document they are all drawn from.
 
-This file covers the six runes: how a rune is applied, every refusal, and what each rune does, step by step, with its
+This file covers the seven runes: how a rune is applied, every refusal, and what each rune does, step by step, with its
 edge cases. Players see **rune**; the code keeps the internal word **stone** (`StoneDef`, `StoneVerb`, the `Stones/`
 folder, this file's name, the localization keys `$ecf_stone_<id>`, the message ids `stone_disabled` and
 `not_enough_stones`), as it keeps **affix** where players see **inscription**. **Rarity counts, promotion and the
@@ -13,7 +13,8 @@ YAML fields** are `economy-yaml.md`.
 Numbers are defaults and all of them are configurable in the `runes:` section of `EliteCrafting_economy*.yml`. The
 YAML can tune or disable a rune; it cannot add one.
 
-**Status: the six runes built 2026-10-02 (user decision), not tested in game.**
+**Status: the six runes built 2026-10-02 (user decision), the Recasting Rune added 2026-10-04 (user decision); not
+tested in game.**
 
 ---
 
@@ -89,7 +90,7 @@ section 2).
 | `$ecf_msg_wrong_rarity` | The $1 does not work on $2 items. | all |
 | `$ecf_msg_not_enough_stones` | You need $1 $2 for this. | all with cost above 1 |
 | `$ecf_msg_affixes_full` | This item cannot hold another inscription. | Shaping, Consecrated |
-| `$ecf_msg_no_eligible_affix` | No inscription can roll on this item. | Awakening, Shaping, Ascension, Consecrated (dry run) |
+| `$ecf_msg_no_eligible_affix` | No inscription can roll on this item. | Awakening, Shaping, Recasting, Ascension, Consecrated (dry run) |
 | `$ecf_msg_confirm_required` | Hold Shift to use the $1. | Cleansing, Serpent (hold-Shift mode) |
 
 The confirm dialog (dialog mode) uses `$ecf_ui_confirm_title` ("Use the $1?") and `$ecf_ui_confirm_body` ("$2
@@ -105,6 +106,8 @@ Shown on success. Owned here so every rune has one; styling is the display file'
 | --- | --- | --- |
 | `$ecf_msg_promoted` | $1 rises to $2. | Awakening, Ascension |
 | `$ecf_msg_affix_added` | $1 gains $2. | Shaping, Consecrated |
+| `$ecf_msg_rerolled` | $1 is recast with new inscriptions. | Recasting |
+| `$ecf_msg_epic_rerolled` | $1 is recast with new enchantments. | Recasting, on an Epic Loot item |
 | `$ecf_msg_stripped` | $1 is cleansed. | Cleansing |
 | `$ecf_msg_corrupt_seal` | The Serpent seals $1. Nothing else changes. | Serpent, `seal_only` |
 | `$ecf_msg_corrupt_add` | The Serpent seals $1 and grants $2. | Serpent, `add_inscription` |
@@ -129,7 +132,7 @@ or needs stating.
   - they **count** toward the rarity's minimum and maximum (they occupy space until removed), so they can make an
     item full for Shaping and Consecrated;
   - promotion, Shaping and Consecrated keep them;
-  - Cleansing and the Serpent's `chaotic_reroll` remove them - that is how a player clears them.
+  - Recasting, Cleansing and the Serpent's `chaotic_reroll` remove them - that is how a player clears them.
 - The item's **vanilla upgrade level**, durability, crafter name and variant are untouched by every rune.
 - **Tier ceiling and window** apply to every roll except the Serpent's `chaotic_reroll` (`item-tier.md` section 6).
 - **The Serpent never changes the rarity.** Promotion (Awakening, Ascension) and Cleansing are the only ways an item
@@ -146,17 +149,19 @@ or needs stating.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `awakening` | Awakening Rune | `ECF_Awakening` | promote | normal | 1 | no | Normal -> Magic, one inscription |
 | `shaping` | Shaping Rune | `ECF_Shaping` | add | magic | 1 | no | one more inscription on a Magic item (up to 2) |
+| `recasting` | Recasting Rune | `ECF_Recasting` | reroll | magic | 1 | no | every inscription rolled again, 1-2, still Magic |
 | `ascension` | Ascension Rune | `ECF_Ascension` | promote | magic | 1 | no | Magic -> Rare, inscriptions kept, filled to at least three |
 | `consecrated` | Consecrated Rune | `ECF_Consecrated` | add | rare | 1 | no | one more inscription on a Rare item (up to 6) |
 | `cleansing` | Cleansing Rune | `ECF_Cleansing` | strip | magic, rare | 1 | **yes** | back to Normal, every inscription gone |
 | `serpent` | Serpent Rune | `ECF_Serpent` | corrupt | magic, rare | 1 | **yes** | one of three outcomes, then sealed for good |
 
-**Only these six ids exist.** The list is fixed in code (`StoneCatalog`); a `runes:` entry with any other id is an
+**Only these seven ids exist.** The list is fixed in code (`StoneCatalog`); a `runes:` entry with any other id is an
 error, and an entry may name no prefab but its own. Display-name localization: `$ecf_stone_<id>`, description
 `$ecf_stone_<id>_desc`.
 
 **The path of an item:** Normal -> Awakening -> Magic (1) -> Shaping -> Magic (2) -> Ascension -> Rare (3) ->
 Consecrated, three times -> Rare (6). Shaping is optional: Ascension on a one-inscription Magic item adds two.
+Recasting rerolls a Magic item the player does not like, as often as they have runes, before it goes on.
 Cleansing returns any unsealed Magic or Rare item to Normal; the Serpent ends the path.
 
 ---
@@ -234,6 +239,36 @@ to 6).
 
 ---
 
+# 8a. Recasting Rune (verb `reroll`)
+
+Rerolls a Magic item (user decision 2026-10-04: the "alteration" currency, renamed). Every inscription goes and the
+item is rolled fresh at its own rarity, as a dropped item is (`rarity.md` section 4): the count drawn again in the
+rarity's range (1-2 on Magic; `rolling.count_weights` if set), each inscription under the item's ceiling and window
+and the rune's `tier_floor`. The rarity never changes.
+
+## Behaviour
+
+1. Checks (section 1). No precondition of its own beyond the rarity: a Magic item with one inscription or two.
+2. Roll fresh at the item's rarity on a copy. The same inscriptions may come back: it is a new draw, not an exclusion.
+3. Success: the new set replaces the old one.
+
+Judgement calls: **no confirm gate** by default (it is the rune a player spends again and again; an owner can set
+`confirm: true`); about as common as Shaping in the drop tables (`drops.md` section 5).
+
+## Edge cases
+
+| Situation | Result | Message |
+| --- | --- | --- |
+| Dormant inscriptions present | removed with the rest; they no longer count | `rerolled` |
+| The pool cannot reach the rarity's minimum (every candidate excluded) | refused, nothing changes | `no_eligible_affix` |
+| An owner put the base rarity (Normal) in its `applies_to` | refused: a Normal item holds no inscriptions | `wrong_rarity` |
+| An owner put `rare` in its `applies_to` | works: 3-6 rolled fresh on the Rare item | `rerolled` |
+| Sealed | refused | `sealed` |
+| Equipped | allowed; rebuild | - |
+| Epic Loot installed | every effect replaced by a fresh Epic Loot roll of the item's rarity, renamed, sockets kept | `epic_rerolled` |
+
+---
+
 # 9. Cleansing Rune (verb `strip`), confirm gate
 
 Strips an item back to Normal.
@@ -304,7 +339,7 @@ so draws afresh; the player never saw the first draw.
 
 - Stackable (default 50), light (default 0.2), tradeable, teleportable, no trade value, drop as world items. `stack`
   and `item_weight` in each rune entry (`economy-yaml.md` section 4).
-- **Prefabs come from code, not from the YAML** (`configuration.md` section 5, `prefabs.md`): all six are registered
+- **Prefabs come from code, not from the YAML** (`configuration.md` section 5, `prefabs.md`): all seven are registered
   on every peer, identically, whatever the YAML says. A rune the YAML disables must still exist as a prefab, or the
   game would delete stacks of it from chests and inventories on load.
 - `enabled: false` (or no live definition at all) means: never drops, cannot be applied (`stone_disabled`), still
@@ -335,6 +370,7 @@ so draws afresh; the player never saw the first draw.
 - [ ] Every refusal and feedback message id localized
 - [ ] Awakening and Ascension: one rarity up, the counts of section 7
 - [ ] Shaping and Consecrated: one more inscription, refused when full
+- [ ] Recasting: every inscription rerolled, 1-2, still Magic; refused on Normal and Rare
 - [ ] Cleansing: back to Normal, confirm gate
 - [ ] Serpent: three outcomes and their fallbacks, seal, rarity unchanged
 - [ ] Confirm gate: hold-Shift / dialog / off, client preference
@@ -346,6 +382,7 @@ so draws afresh; the player never saw the first draw.
 | --- | --- | --- |
 | 2026-09-23 | Specified in Phase 0 (the earlier stone catalog). | pending |
 | 2026-10-02 | Rewritten for the six runes and three rarities (user decision); built. Not tested in game. | pending |
+| 2026-10-04 | The Recasting Rune, verb `reroll` (user decision); built. Not tested in game. | pending |
 
 ---
 

@@ -5,8 +5,8 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Reads <c>runes:</c> (economy-yaml.md section 4), the six runes: the common fields here, the Serpent Rune's in
-    /// <see cref="StoneVerbParser"/>. Only the six built-in ids exist; each uses its own prefab.
+    /// Reads <c>runes:</c> (economy-yaml.md section 4), the seven runes: the common fields here, the Serpent Rune's in
+    /// <see cref="StoneVerbParser"/>. Only the seven built-in ids exist; each uses its own prefab.
     /// </summary>
     internal static class StoneParser
     {

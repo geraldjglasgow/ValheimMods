@@ -28,7 +28,6 @@ Sub-schemes inside `$ecf_ui_`, so that data ids map to words mechanically:
 
 - `$ecf_ui_category_<offense|defense|utility>`
 - `$ecf_ui_slot_<slot id>`
-- `$ecf_ui_sealed_<reason id>`: `serpent`
 
 The English words ship in one file per area in the translations folder (`English.core.yml`, `English.stones.yml` for
 the rune names, `English.stones_ui.yml` for the rune messages, ...); the loader reads every `English.*.yml`.
@@ -68,8 +67,7 @@ The general keys this file owns (the other feature files list their own `$ecf_ms
 | `ecf_ui_dormant` | `(dormant)` |
 | `ecf_ui_unreadable` | `Unreadable: $1` |
 | `ecf_ui_newer_format` | `Changed by a newer version of EliteCrafting` |
-| `ecf_ui_sealed` | `Sealed: $1` |
-| `ecf_ui_sealed_serpent` | `Corrupted` |
+| `ecf_ui_sealed_generic` | `Sealed` |
 | `ecf_ui_tier_ceiling` | `Tier ceiling $1` |
 | `ecf_ui_category_offense` / `_defense` / `_utility` | `Offense` / `Defense` / `Utility` |
 | `ecf_ui_slot_melee_weapon` ... `ecf_ui_slot_tool` | `Melee weapon`, `Ranged weapon`, `Magic weapon`, `Shield`, `Head`, `Chest`, `Legs`, `Cape`, `Utility item`, `Tool` |

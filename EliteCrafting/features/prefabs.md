@@ -13,7 +13,7 @@ its YAML entry is `economy-yaml.md`.
 
 # 1. What exists
 
-- **Six rune prefabs**, one per rune id (table in section 3).
+- **Seven rune prefabs**, one per rune id (table in section 3).
 - Nothing else: no prefab for magic items (they are vanilla items with data, `item-data.md`), none for effects.
 
 All of them exist on every peer, always, whatever the YAML says. A disabled or undefined rune still has its
@@ -67,12 +67,13 @@ and icon generation (no graphics device).
 |---|---|---|
 | `awakening` | `ECF_Awakening` | ascension |
 | `shaping` | `ECF_Shaping` | manipulation |
+| `recasting` | `ECF_Recasting` | manipulation |
 | `ascension` | `ECF_Ascension` | ascension |
 | `consecrated` | `ECF_Consecrated` | manipulation |
 | `cleansing` | `ECF_Cleansing` | manipulation |
 | `serpent` | `ECF_Serpent` | risk |
 
-Six in total: `ECF_` + the PascalCase id (`StoneCatalog.PrefabFor`).
+Seven in total: `ECF_` + the PascalCase id (`StoneCatalog.PrefabFor`).
 
 ---
 
@@ -88,7 +89,7 @@ its type, weight, stack, value and whether it has light or particle children; `.
 | Group | Runes | Base (verify in game) | Alternates | Why |
 |---|---|---|---|---|
 | ascension | Awakening, Ascension | `Ruby` | `Amber`, `AmberPearl` | precious-looking: the two runes that raise the rarity |
-| manipulation | Shaping, Consecrated, Cleansing | `Crystal` | `DragonTear`, `Thunderstone` | crystal: the everyday crafting currency |
+| manipulation | Shaping, Recasting, Consecrated, Cleansing | `Crystal` | `DragonTear`, `Thunderstone` | crystal: the everyday crafting currency |
 | risk | Serpent | `SurtlingCore` | `BlackCore` | glowing core: visibly dangerous |
 
 A group whose base and alternates are all missing uses any other group's base, with a warning; a missing base never
@@ -102,6 +103,7 @@ Defaults (judgement calls, PRF-3, overridable by the rune entry's `tint`, `econo
 |---|---|
 | Awakening, Ascension | the color of the rarity each one **produces**, read from the rarity palette at apply time: Awakening green `#1EFF00` (Magic), Ascension blue `#0070DD` (Rare) |
 | Shaping | teal `#2EC4B6` |
+| Recasting | violet `#9B6BD6` |
 | Consecrated | gold `#E6C35C` |
 | Cleansing | pale silver `#D8E4EE` |
 | Serpent | venom green `#3F7F2A` |
@@ -120,11 +122,11 @@ per-player preference `Glow runes` opts them in, in their tint (`display.md` sec
 
 # 5. A fixed set: no runes from YAML
 
-The six runes are the whole set. The YAML tunes or disables them; it cannot add one (`stones.md` section 5):
+The seven runes are the whole set. The YAML tunes or disables them; it cannot add one (`stones.md` section 5):
 
 - A prefab cannot come from YAML: prefabs must exist on every peer **before** any world data arrives, and the
   server's YAML reaches a joining client only after its scene (and `ZNetScene`) is already up.
-- Validation (economy family): a `runes:` entry whose id is not one of the six is an error; an entry may name no
+- Validation (economy family): a `runes:` entry whose id is not one of the seven is an error; an entry may name no
   `prefab` but its own.
 - A stack of a rune whose definition was disabled or removed survives (the prefab still exists) and is refused with
   `stone_disabled` until the definition returns.

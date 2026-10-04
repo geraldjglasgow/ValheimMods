@@ -4,7 +4,7 @@ namespace EliteCrafting.Items
 {
     /// <summary>
     /// Entry point of the Items area, called once from plugin Awake after the rules, settings and words are loaded.
-    /// Owns: prefab registration (the six runes, ObjectDB/ZNetScene: <see cref="StoneRegistrationPatches"/>),
+    /// Owns: prefab registration (the seven runes, ObjectDB/ZNetScene: <see cref="StoneRegistrationPatches"/>),
     /// economy values pushed into the rune prefabs (<see cref="StoneItemData"/>), their look on clients
     /// (<see cref="StoneVisuals"/>), workbench-upgrade carry-over of ecf_ keys (<see cref="UpgradeCarryOver"/>) and the
     /// load warning for stackable slot items (<see cref="StackableGearWarning"/>) and whole rune stacks on inventory

@@ -156,7 +156,7 @@ hours. Starred creatures pay double or triple. Bosses pay far more (section 9).
 Relative weights per tier. 0 means the rune never drops at that tier. **A disabled rune is removed from every
 table**, so the per-kill rune chance is unchanged and the draw is shared among the enabled runes.
 
-The rows follow the path of an item: Awakening everywhere and most of all early; Shaping everywhere; Ascension from
+The rows follow the path of an item: Awakening everywhere and most of all early; Shaping and Recasting everywhere; Ascension from
 the Black Forest on; Consecrated from the Swamp on, more the later the biome; Cleansing flat everywhere; the Serpent
 from the Swamp on, where corruption is at home. Adopted defaults (DRP-13).
 
@@ -164,6 +164,7 @@ from the Swamp on, where corruption is at home. Adopted defaults (DRP-13).
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | awakening | 400 | 300 | 220 | 160 | 120 | 100 | 80 |
 | shaping | 150 | 150 | 140 | 120 | 100 | 90 | 80 |
+| recasting | 120 | 130 | 120 | 110 | 100 | 90 | 80 |
 | ascension | 0 | 120 | 120 | 110 | 100 | 90 | 80 |
 | consecrated | 0 | 0 | 20 | 40 | 50 | 60 | 70 |
 | cleansing | 30 | 30 | 30 | 30 | 30 | 30 | 30 |
@@ -171,9 +172,9 @@ from the Swamp on, where corruption is at home. Adopted defaults (DRP-13).
 
 What the numbers mean in play (unstarred, non-boss), as shares of the runes that drop:
 
-- **Meadows**: Awakening 69%, Shaping 26%, Cleansing 5%.
-- **Black Forest**: Awakening 50%, Shaping 25%, Ascension 20%, Cleansing 5%.
-- **Ashlands**: Awakening, Shaping and Ascension 21% each, Consecrated 18%, Serpent 11%, Cleansing 8%.
+- **Meadows**: Awakening 57%, Shaping 21%, Recasting 17%, Cleansing 4%.
+- **Black Forest**: Awakening 41%, Shaping 21%, Recasting 18%, Ascension 16%, Cleansing 4%.
+- **Ashlands**: Awakening, Shaping, Recasting and Ascension 17% each, Consecrated 15%, Serpent 9%, Cleansing 7%.
 
 ---
 
@@ -406,6 +407,7 @@ each gear item. Nothing reflective, nothing that allocates per kill beyond the s
 | 2026-09-23 | Reconciled: owner wording, `ecf_ally_hit` key, open questions moved to `../DECISIONS.md`. | pending |
 | 2026-09-23 | Phase 2: sections 10 (all four find affixes, owner-side clamp) and 11 (chest hook verified, `ecf_filled`, `containers` schema) specified and built. | pending |
 | 2026-10-02 | The six runes' tables, two gear rarities, the new boss bonus rows; `stone` keys renamed to `rune` (user decision). | pending |
+| 2026-10-04 | The Recasting Rune's row (user decision): about as common as Shaping; the other shares shrink. | pending |
 
 ---
 
