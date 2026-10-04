@@ -151,7 +151,7 @@ public sealed class Charter
 	{
 		bool bound = IsBound;
 		bool steward = IsSteward;
-		Tags.Update(bound && !steward, Ledger.Pushable);
+		Tags.Update(bound && !steward, Ledger);
 		if (bound != lastBound)
 		{
 			lastBound = bound;

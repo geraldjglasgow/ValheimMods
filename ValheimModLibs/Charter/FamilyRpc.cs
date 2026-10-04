@@ -27,6 +27,8 @@ internal static class FamilyRpc
 
 	private static readonly Dictionary<ZNetPeer, Waiting> awaiting = new();
 	private static readonly Dictionary<ZNetPeer, float> leaving = new();
+	private static readonly List<ZNetPeer> due = new();
+	private static readonly List<ZNetPeer> gone = new();
 	private static float now;
 
 	public static Journal? Journal { get; set; }
@@ -67,9 +69,26 @@ internal static class FamilyRpc
 		TickLeaving();
 	}
 
+	/// <summary>
+	/// Runs every frame on every machine (in the lead copy), and both lists are nearly always empty: nothing is made
+	/// unless a peer is due, and the due peers go into a list kept for the purpose (a peer may leave the dictionary while
+	/// the loop runs).
+	/// </summary>
 	private static void TickAwaiting()
 	{
-		foreach (ZNetPeer peer in awaiting.Where(p => p.Value.NextRetry <= now).Select(p => p.Key).ToList())
+		if (awaiting.Count == 0)
+		{
+			return;
+		}
+		due.Clear();
+		foreach (KeyValuePair<ZNetPeer, Waiting> pair in awaiting)
+		{
+			if (pair.Value.NextRetry <= now)
+			{
+				due.Add(pair.Key);
+			}
+		}
+		foreach (ZNetPeer peer in due)
 		{
 			TickPeer(peer, awaiting[peer]);
 		}
@@ -98,7 +117,19 @@ internal static class FamilyRpc
 
 	private static void TickLeaving()
 	{
-		foreach (ZNetPeer peer in leaving.Where(p => p.Value <= now).Select(p => p.Key).ToList())
+		if (leaving.Count == 0)
+		{
+			return;
+		}
+		gone.Clear();
+		foreach (KeyValuePair<ZNetPeer, float> pair in leaving)
+		{
+			if (pair.Value <= now)
+			{
+				gone.Add(pair.Key);
+			}
+		}
+		foreach (ZNetPeer peer in gone)
 		{
 			leaving.Remove(peer);
 			if (Side.IsPresent(peer))

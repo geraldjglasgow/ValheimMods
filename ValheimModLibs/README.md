@@ -15,6 +15,8 @@ Small, focused libraries for Valheim BepInEx mods, extracted from Elite Creature
 | [BundlePrefabs](BundlePrefabs/) | A mod's own models in the game: loads its embedded asset bundle for the running platform, copies game prefabs to build on, registers prefabs with ZNetScene and ObjectDB on every peer, dresses models in the game's own materials | BepInEx, Harmony, game, Unity |
 | [LocalEffects](LocalEffects/) | Local, cosmetic copies of the game's effect prefabs (bursts, sounds, lasting glows): seen on one machine only, never networked, never a damage source, thinned by a density | game, Unity |
 | [PlayerGrid](PlayerGrid/) | Which cells of the local player's inventory are the main grid and which are PackPanel's slots, as PackPanel publishes it in the character's custom data; the writer and the readers in one place, trusted only while PackPanel is loaded and on | BepInEx, game |
+| [Hotkeys](Hotkeys/) | A mod's hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types | BepInEx, game, Unity |
+| [WindowInput](WindowInput/) | A mod's own window treated like the game's while open: free cursor, no attacks or mouse look or zoom, Esc closes it | Harmony, game, Unity |
 
 ## Building
 

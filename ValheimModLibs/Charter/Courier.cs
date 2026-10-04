@@ -20,6 +20,7 @@ internal sealed class Courier
 	}
 
 	private readonly Dictionary<ZNetPeer, Lane> lanes = new();
+	private readonly List<ZNetPeer> peers = new();
 	private readonly string guid;
 	private readonly string rpcName;
 	private readonly Journal journal;
@@ -58,27 +59,40 @@ internal sealed class Courier
 			$"{wireBytes} bytes{(compressed ? " compressed" : "")}, {fragments.Count} fragment(s)");
 	}
 
-	/// <summary>Sends one fragment per peer and forgets peers that left.</summary>
+	/// <summary>
+	/// Sends one fragment per peer and forgets peers that left. Every frame on the server, and a lane stays while its peer
+	/// is connected, so the peers are copied into a list kept for the purpose (a peer that left is removed in the loop).
+	/// </summary>
 	public void Tick()
 	{
 		if (lanes.Count == 0)
 		{
 			return;
 		}
-		foreach (ZNetPeer peer in lanes.Keys.ToList())
+		peers.Clear();
+		foreach (ZNetPeer peer in lanes.Keys)
 		{
-			if (!Side.IsPresent(peer))
-			{
-				lanes.Remove(peer);
-				continue;
-			}
-			Lane lane = lanes[peer];
-			if (lane.Fragments.Count == 0 || peer.m_socket.GetSendQueueSize() > HoldAboveQueued)
-			{
-				continue;
-			}
-			peer.m_rpc.Invoke(rpcName, lane.Fragments.Dequeue());
-			journal.Trace($"fragment sent to {Side.NameOf(peer)}, {lane.Fragments.Count} left in the queue");
+			peers.Add(peer);
 		}
+		foreach (ZNetPeer peer in peers)
+		{
+			SendNext(peer);
+		}
+	}
+
+	private void SendNext(ZNetPeer peer)
+	{
+		if (!Side.IsPresent(peer))
+		{
+			lanes.Remove(peer);
+			return;
+		}
+		Lane lane = lanes[peer];
+		if (lane.Fragments.Count == 0 || peer.m_socket.GetSendQueueSize() > HoldAboveQueued)
+		{
+			return;
+		}
+		peer.m_rpc.Invoke(rpcName, lane.Fragments.Dequeue());
+		journal.Trace($"fragment sent to {Side.NameOf(peer)}, {lane.Fragments.Count} left in the queue");
 	}
 }

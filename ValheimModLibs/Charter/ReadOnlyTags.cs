@@ -24,14 +24,18 @@ internal sealed class ReadOnlyTags
 	private readonly ReadOnlyTag tag = new();
 	private bool applied;
 
-	public void Update(bool readOnly, IEnumerable<IClause> clauses)
+	/// <summary>
+	/// Called every frame by each charter: the ledger's clauses are only read (a LINQ sequence, made anew on each read)
+	/// when the tags change.
+	/// </summary>
+	public void Update(bool readOnly, Ledger ledger)
 	{
 		if (readOnly == applied || TagsField == null)
 		{
 			return;
 		}
 		applied = readOnly;
-		foreach (IClause clause in clauses)
+		foreach (IClause clause in ledger.Pushable)
 		{
 			ConfigDescription description = clause.Entry.Description;
 			if (description == null || ReferenceEquals(description, ConfigDescription.Empty))

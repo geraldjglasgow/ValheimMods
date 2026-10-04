@@ -22,6 +22,7 @@ ValheimMods/
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
   EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, height limits
   GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
+  PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         dev-only plugin: drive the running game over localhost HTTP for testing, never shipped
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
@@ -63,7 +64,7 @@ commands, a YAML chain. Design and status in `Lockstep/PLAN.md`.
 **OpenKeep**: storage in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
 container sizes, carts as stations, contents signs and shared chests; plus a Homestead section outside storage
 (respawn at the nearest owned bed, campfires on wooden floors, honey per day, fires refuelling from nearby chests,
-torches lit only at night). Design in `OpenKeep/CLAUDE.md`.
+torches lit only at night) and a build camera that flies free near a crafting station. Design in `OpenKeep/CLAUDE.md`.
 
 **PackPanel**: the player's own inventory and its UI, kept separate from the storage mod: a bigger grid, labelled
 slots always on screen (armour, a backpack, worn utilities, food, meads, ammo, a coin purse), a key ring, eight
@@ -79,7 +80,8 @@ other mods. Design and the judgement calls the spec left open in `Party/PLAN.md`
 
 **Wayfare**: replaces portal tag-pairing with map-based targeting - walk into a portal, pick the destination from
 the world map, click to teleport through the game's own teleport path. Public/Private/Admin access modes owned by
-the acting player, a favourites panel, any mod's portal prefab discovered by component rather than a name list.
+the acting player, a favourites panel, any mod's portal prefab discovered by component rather than a name list,
+and quick jumps (near portals quicker, no loading screen into a loaded area; moved from OpenKeep on 2026-10-04).
 Required on the server as well as every client. Design and the judgement calls the spec left open in
 `Wayfare/PLAN.md`.
 
@@ -97,6 +99,12 @@ level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, heigh
 protection and new menu entries. Required on the server and every client: edits travel as EarthWright's
 own RPC to the owner of each terrain compiler. Design, module map and decisions in `EarthWright/PLAN.md`; code map
 in `EarthWright/CLAUDE.md`.
+
+**PrestigeWorldwide**: entertainment, two features and nothing else (the user's scope): proximity voice chat (talk,
+shout, whisper, party radio with Party; Opus through the merged Concentus library, relayed by the server to players in
+range) and TV pieces (a slim white rectangle for now, three sizes) that play a direct video link (.webm/.mp4, no
+YouTube) for everyone nearby in sync on the mod's own server clock, with a remote copied from the game's text input
+window. Required on the server and every client. Design and status in `PrestigeWorldwide/PLAN.md`.
 
 ### The libraries (ValheimModLibs)
 
@@ -118,6 +126,8 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | LocalEffects | local, cosmetic copies of the game's effect prefabs: never networked, never a damage source, thinned by a density |
 | PlayerGrid | PackPanel's published main grid (`PackPanel.mainGrid`): which player inventory cells are slots, written and read in one place |
 | Hotkeys | hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types |
+| AreaLoading | arriving somewhere far: land and objects loaded fast during a jump or respawn, the server-objects settle check, distance-scaled waits |
+| WindowInput | a mod's own window treated like the game's while open: free cursor, no attacks, mouse look or zoom, Esc closes it |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs
@@ -140,6 +150,7 @@ Every mod has the same shape. New mods copy it from ShipConfig (the smallest) an
     *.png               header and gallery images for the store page
     <Mod>-X.Y.Z.zip     the release package, written by pack.ps1 (gitignored)
     thunderstore.toml   tcli publish settings: team, community, categories (no secrets)
+    wiki/               the store's Wiki tab, one NN-title.md per page (see "Thunderstore wiki")
   dist/                 build output, the merged <Mod>.dll (gitignored)
   README.md             the store page (Thunderstore Details tab), very short: what it does, features, install,
                         configuration, links, shout outs; no Building section
@@ -326,3 +337,21 @@ the page's edit form. Nexus accepts a summary of at most 350 characters.
 
 The raw API behind tcli is documented at `https://thunderstore.io/api/docs/` (initiate-upload, finish-upload,
 submit under `/api/experimental/`), only needed if tcli stops working.
+
+### Thunderstore wiki
+
+Each released mod has a player wiki (the store page's Wiki tab) kept in `<Mod>/thunderstore/wiki/`: one Markdown file
+per page, `NN-title.md` (NN orders them, `01-` is the home page), first line `# Page Title`, links to another page of
+the same wiki written `[text](wiki:Page Title)`. It describes the released version only, for players and server admins.
+When a release changes what a page says, update the page in the same release. `wiki-upload.py` posts them:
+
+```
+python wiki-upload.py --mod <Mod> --dry-run   check the pages and links, show what would be created or updated
+python wiki-upload.py --mod <Mod>             create and update the pages (matched by title), rewrite the links
+python wiki-upload.py --all                   every mod with a wiki folder; --prune deletes store pages with no file
+```
+
+Thunderstore lets only a team member's own login edit a wiki: the `TCLI_AUTH_TOKEN` service account is refused (403).
+The script uses the user's browser session instead, from the user environment variable `THUNDERSTORE_SESSION` (the
+`sessionid` cookie of thunderstore.io, set with `setx`); never in a file or the chat. It stops working when the user
+logs out. Confirm with the user before uploading.
