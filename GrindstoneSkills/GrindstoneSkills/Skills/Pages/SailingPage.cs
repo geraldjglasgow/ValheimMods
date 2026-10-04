@@ -54,7 +54,7 @@ namespace GrindstoneSkills
         private static void WindCall(SkillPage page)
         {
             page.Perk("Wind Call", WindCallSettings.Level.Value,
-                $"Press {KeyText(WindCallSettings.Key, "Wind Call Key")} aboard a ship: the wind turns to blow the way you look, for everyone aboard, for {SkillPage.Duration(WindCallSettings.Duration.Value)}.{Again(WindCallSettings.Cooldown.Value)}");
+                $"Press {KeyText(WindCallSettings.Key, "Wind Call Key")} while steering a ship: the wind turns to blow the way you look, for everyone aboard, for {SkillPage.Duration(WindCallSettings.Duration.Value)}.{Again(WindCallSettings.Cooldown.Value)}");
         }
 
         private static void Lookout(SkillPage page)

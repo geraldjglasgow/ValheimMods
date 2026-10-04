@@ -5,7 +5,7 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Section 35: Wind Call, Sailing's level 25 active. A key pressed aboard a ship turns the wind to blow the way the
+    /// Section 35: Wind Call, Sailing's level 25 active. A key pressed while steering a ship turns the wind to blow the way the
     /// player looks, for everyone aboard that ship, for a while. Synced, except the key, which is each player's own.
     /// </summary>
     public static class WindCallSettings
@@ -28,7 +28,7 @@ namespace GrindstoneSkills
             Cooldown = config.Bind(Section, "Wind Call Cooldown", 180f,
                 "Seconds before a player can call the wind again.", acceptableValues: Settings.UpTo(3600f));
             Key = config.Bind(Section, "Wind Call Key", new KeyboardShortcut(KeyCode.K),
-                "Turns the wind to blow the way you look while you are aboard a ship. Each player's own.", synced: false);
+                "Turns the wind to blow the way you look while you steer a ship. Each player's own.", synced: false);
         }
     }
 }

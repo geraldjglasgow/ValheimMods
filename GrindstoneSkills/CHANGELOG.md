@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.2
+
+- Sailing: Wind Call (K) works only while you steer a ship; elsewhere the key does nothing.
+- Less work every frame keeping the config in sync with the server.
+
 ## 0.13.1
 
 - Less work every frame reading the hotkeys.

@@ -6,11 +6,12 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// The Wind Call key, on the local player's client. Pressed while the game takes the player's input, it checks the
-    /// player may call the wind and sends the call on the ship they are aboard: the ship's own RPC to everybody who has
-    /// the ship loaded (<see cref="WindCallReceive"/>), with the flat direction the camera looks and the caller's player
-    /// ID. The cooldown is the caller's own. With Sailing off or Wind Call turned off (level above 100) the key does
-    /// nothing, since it may belong to something else then; otherwise a refusal says why.
+    /// The Wind Call key, on the local player's client. Pressed while the game takes the player's input and the player
+    /// steers a ship, it checks the player may call the wind and sends the call on that ship: the ship's own RPC to
+    /// everybody who has the ship loaded (<see cref="WindCallReceive"/>), with the flat direction the camera looks and
+    /// the caller's player ID. The cooldown is the caller's own. Away from a helm, with Sailing off or with Wind Call
+    /// turned off (level above 100) the key does nothing, since it may belong to something else then; otherwise a
+    /// refusal says why.
     /// </summary>
     public static class WindCallInput
     {
@@ -31,10 +32,10 @@ namespace GrindstoneSkills
 
         private static void TrySend(Player player)
         {
-            if (!Unlockable)
+            Ship ship = player.GetControlledShip();
+            if (!Unlockable || ship == null || ship.m_nview == null || !ship.m_nview.IsValid())
                 return;
-            Ship ship = Ship.GetLocalShip();
-            string refusal = Refusal(ship);
+            string refusal = Refusal();
             if (refusal != null)
             {
                 player.Message(MessageHud.MessageType.Center, refusal);
@@ -45,13 +46,11 @@ namespace GrindstoneSkills
         }
 
         /// <summary>Why the local player cannot call the wind now, or null when they can.</summary>
-        private static string Refusal(Ship ship)
+        private static string Refusal()
         {
             float level = WindCallSettings.Level.Value;
             if (SailingSkill.Local() < level)
                 return $"Wind Call needs Sailing {level:0}";
-            if (ship == null || ship.m_nview == null || !ship.m_nview.IsValid())
-                return "Wind Call works aboard a ship";
             float wait = readyAt - Time.time;
             return wait > 0f ? $"Wind Call ready in {Mathf.CeilToInt(wait)} s" : null;
         }

@@ -3,15 +3,15 @@
 Deeper skills for Valheim: five of the game's skills do more, and four new skills join them.
 
 ## Features
-- Cooking: stronger starred dishes, faster kitchens and a trash filter (Shift+E).
+- Cooking: faster cooking and fermenting, extra dishes and saved ingredients.
 - Sailing (new): tougher, faster ships, wider map reveal, Wind Call (K) and Lookout (O).
 - Woodcutting: aimed falls, domino felling, clean splits, old growth, finds and replanting.
 - Pickaxes: clean strikes on seams, rich veins, extra ore, an ore echo and finds.
-- Foraging (new): starred wild picks, best picking times, extra yield and sweep picking.
+- Foraging (new): extra yield, sweep picking and best-time hints.
 - Fishing: a fight on the line, legendary fish, snags and a catch log.
 - Husbandry (new): faster taming, stronger young, twins, produce and an Animal Feeder.
 - Defense (new): more health, less damage, cheaper blocks, Riposte, Shield Wall and Last Stand.
-- Farming: starred crops and seeds, giant crops, row planting and a compost bin.
+- Farming: faster growth, giant crops, row planting, auto replant and a compost bin.
 - Every skill: a skill book page shows it at your level; configurable skill loss on death.
 
 ## Install

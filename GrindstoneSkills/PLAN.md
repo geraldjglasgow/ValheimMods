@@ -439,8 +439,9 @@ The request: "active ability for sailing: changes the wind direction level 25. 3
   turns its wind to the ship's bow while anyone aboard has the power.
 - **Key:** K by default, each player's own (unbound in the game and in every mod in this workspace), read through the
   Hotkeys library (it fires while W is held). The lookout key moved onto Hotkeys with it.
-- **Conditions:** Sailing on, the player's level at least `Wind Call Level` (25), aboard a ship, and the player's own
-  cooldown (180 s) over. Each refusal says why. With Sailing off or the level above 100 the key does nothing.
+- **Conditions:** Sailing on, the player's level at least `Wind Call Level` (25), steering a ship, and the player's own
+  cooldown (180 s) over. Each refusal says why. Away from a helm, with Sailing off or the level above 100 the key does
+  nothing.
 - **The call (`WindCallInput`, `WindCallReceive`):** an RPC on the ship's `ZNetView` to everybody with the flat
   direction the caller's camera looks and the caller's player ID. The ship's owner writes the direction and the end
   time (world ticks) into the ship's ZDO (`grindstone_wind_dir`, `grindstone_wind_until`); every client aboard gets
