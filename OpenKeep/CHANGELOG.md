@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.14.0
+- Stow: Ctrl + click on an item no nearby chest holds puts it in the chest you have open.
+- Reach: Epic Loot's enchanting table uses materials from nearby chests (the `Crafting` switch).
+
 ## 1.13.1
 - Fixed: no more "LiberationSans SDF Font Asset was not found" warnings from chest link labels and the bed countdown.
 

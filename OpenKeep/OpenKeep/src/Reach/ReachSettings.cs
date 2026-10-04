@@ -42,7 +42,7 @@ namespace OpenKeep.Reach
             Range = synced.Bind(Section, "Range", 20f,
                 "Metres from the player within which containers are reachable for crafting, building and station feeding. OpenKeep.Reach.yml may override it per container prefab.");
             Crafting = synced.Bind(Section, "Crafting", true,
-                "Recipes in the crafting panel may consume from containers.");
+                "Recipes in the crafting panel, and Epic Loot's enchanting table when it is installed, may consume from containers.");
             Building = synced.Bind(Section, "Building", true,
                 "Pieces placed with the hammer, hoe and cultivator may consume from containers.");
             Upgrading = synced.Bind(Section, "Upgrading", true,

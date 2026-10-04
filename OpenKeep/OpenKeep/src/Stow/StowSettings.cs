@@ -130,7 +130,7 @@ namespace OpenKeep.Stow
         private static void BindClicks(SyncedConfiguration synced)
         {
             RouteModifier = synced.Bind(Section, "Route Modifier", new KeyboardShortcut(KeyCode.LeftControl),
-                "Held with a left click on an inventory item: the stack is sent to the nearest nearby container that already holds the item, an item of its group, or accepts it in OpenKeep.Stow.yml. What does not fit there goes on to the next nearest container holding the item.", synced: false);
+                "Held with a left click on an inventory item: the stack is sent to the nearest nearby container that already holds the item; when none does, to the open container; else to one holding an item of its group or accepting it in OpenKeep.Stow.yml. What does not fit there goes on to the next nearest container holding the item.", synced: false);
             StoreOneKey = synced.Bind(Section, "Store One Key", new KeyboardShortcut(KeyCode.V),
                 "On a hovered inventory item: one item of the stack goes to the open container, or to the nearest container holding it; when that one is full, to the next nearest container holding it.", synced: false);
             FindKey = synced.Bind(Section, "Find Key", new KeyboardShortcut(KeyCode.Z),

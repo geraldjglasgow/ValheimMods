@@ -4,9 +4,10 @@ using OpenKeep.Core;
 namespace OpenKeep.Stow
 {
     /// <summary>
-    /// Route (modifier + click): the stack goes to the nearest nearby container that holds the exact item, then one
-    /// holding an item of the same group, then one whose <c>accept</c> list matches. The container the player has
-    /// open leads the candidates, so the game's own modifier click target wins a tie. Store one (its key):
+    /// Route (modifier + click): the stack goes to the nearest nearby container that holds the exact item; when none
+    /// does, to the container the player has open; then one holding an item of the same group, then one whose
+    /// <c>accept</c> list matches. The open container leads the candidates, so the game's own modifier click target
+    /// wins a tie. Store one (its key):
     /// one item goes to the open container, else to the nearest container holding it. When the chosen container
     /// fills up, the rest goes on to the next nearby container holding the item, nearest first (<see cref="Overflow"/>).
     /// Both go through the writer: a shared target answers later, and the message waits for the last answer.
@@ -86,12 +87,15 @@ namespace OpenKeep.Stow
             return nearby.Find(container => container.GetInventory().ContainsItemByName(item.m_shared.m_name));
         }
 
-        /// <summary>From the nearby targets without refusing ones (the open one first, then nearest first): a holder of the item, of its group, or an accepting one.</summary>
+        /// <summary>From the nearby targets without refusing ones (the open one first, then nearest first): a holder of the item, the open container, a holder of its group, or an accepting one.</summary>
         private static Container FindTarget(List<Container> nearby, ItemDrop.ItemData item)
         {
             Container exact = Holder(nearby, item);
             if (exact != null)
                 return exact;
+            Container open = StowTargets.OpenTarget;
+            if (open != null && !StowRules.Refuses(open, item))
+                return open;
             List<string> groups = StowRules.GroupsOf(item);
             Container grouped = groups.Count > 0 ? nearby.Find(container => HoldsGroup(container, groups)) : null;
             return grouped ?? nearby.Find(container => StowRules.Accepts(container, item));

@@ -67,6 +67,7 @@ OpenKeep/OpenKeep/src/
                             and station rules, gate and ranges
     ReachCount.cs           reachable containers (one list per frame), counting per stack with allow/deny
     ReachPayment.cs         the payment window (ConsumeResources, DoCrafting) and the RemoveItem prefix
+    EpicLootLink.cs         Epic Loot's RegisterInventoryProvider (reflection, from Plugin.Start): its table pays from chests
     ReachPull.cs            moving items from containers into the inventory, never in two places
     Requirements.cs         the game's requirement filter (upgrader resources, missing items)
     RecipeRequirementPatch.cs, PieceRequirementPatch.cs, FirstRequiredItemPatch.cs   counting
@@ -288,7 +289,7 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
-`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.13.1]` line, `Guard.Install` last.
+`HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 1.14.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -579,7 +580,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Trash from the container grid is allowed (the container is claimed and saved). `Trash Uses Salvage` applies only
   to a whole stack of the player inventory.
 - Route Modifier + click on the player grid replaces the game's own modifier click (which moves the stack to the
-  open container); the open container leads the candidates, so when it holds the item the stack still goes there.
+  open container); the open container leads the candidates, so when it holds the item the stack still goes there,
+  and when no nearby container holds the item it takes the stack before any group or `accept` match.
   Clicks with a dragged item, on the container grid, or with the game's drop modifier stay the game's.
 - Cycling is limited to `min(Nearby Range, InventoryGui.m_autoCloseDistance)` (4 m) because the panel closes any
   container farther away; the ring is sorted by `atan2` around the player; the wheel has a 0.25 s cooldown and
@@ -1366,7 +1368,7 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 1.13.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 1.14.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1618,7 +1620,8 @@ from a script.
     and Dump (Alt + D) with A full: the rest lands in B (as before). A chest holding wood beyond `Nearby Range`, one in
     a stranger's ward and one with `refuse: [Wood]` in `OpenKeep.Stow.yml` get none; a favourite wood stack is not
     routed. Ctrl + click copper ore when only a chest of tin (same group) is near: it goes there; with that chest full
-    it stays (no other group chest is tried).
+    it stays (no other group chest is tried). Open chest C (no wood) while A holds wood: Ctrl + click wood goes to A.
+    Open C with no chest holding the item (a stack of resin): Ctrl + click sends it to C, even with a group chest near.
 54. Overflow, two clients, `Shared Chests = Full`: A has chest X open (holds wood, room for 10), chest Y near B holds
     wood too. B quick stacks (Q): B's centre message is `Moved n stacks to Chest` when X answers, X gains 10 wood, the
     rest arrives in Y with a top-left `Sent Wood to Chest`, and B's inventory keeps nothing either chest took (log:
@@ -1673,3 +1676,9 @@ from a script.
 66. Server settle, dedicated server with a big base 1 km from a portal: the jump lands with the base's floors under
     you (never on the ground below them), taking longer than in single player but at most about 8 s; dying far from
     your bed wakes you in that bed, not the next one (log has no `no bed of yours at`).
+67. Epic Loot link, with Epic Loot installed: the log says `Epic Loot's enchanting table pays materials from nearby
+    containers`. Put the dust and runestones an enchant needs in a chest beside the enchanting table, none in the
+    inventory: the enchant tab shows them as available, enchanting takes them from the chest. Half in the inventory:
+    the inventory pays first. Gear in the chest never shows in the enchant or sacrifice lists. `Crafting = false`:
+    chest materials no longer count. Dedicated server, chest open by another player: it is skipped. Without Epic
+    Loot: no log line, no warning.
