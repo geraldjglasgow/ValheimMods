@@ -6,8 +6,8 @@ namespace EliteCreaturesPack.RimeGiant
 {
     /// <summary>
     /// The ice boulder the giant hurls: a copy of the forest troll's thrown rock wearing the bundle's boulder instead of
-    /// the rock, bursting where it lands so everyone within <see cref="Burst"/> metres takes the throw's blunt and
-    /// frost (the game's frost, which chills and slows), with the game's ice shattering on top of the rock's own hit.
+    /// the rock, bursting where it lands so everyone within <see cref="Burst"/> metres takes the throw's frost and
+    /// half as much blunt (the game's frost chills and slows), with the game's ice shattering on top of the rock's own hit.
     /// </summary>
     public static class RimeBoulder
     {

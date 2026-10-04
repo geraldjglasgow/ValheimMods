@@ -96,7 +96,7 @@ the body.
   once per wave, and is knocked on in the direction it rolls - downhill. It can be dodged and blocked like any hit.
   Flank it along the ridge or get above it.
 - **Ice boulder** (the troll's rock throw): from 11 to 22 metres, every 10 seconds at most, it hurls a boulder of ice
-  that bursts where it lands: everyone within 3.5 metres takes `Boulder Damage` (40) blunt and as much frost (the
+  that bursts where it lands: everyone within 3.5 metres takes `Boulder Damage` (40) frost and half as much blunt (the
   game's frost, which chills and slows).
 
 # 5. Stats, look and loot
@@ -152,7 +152,7 @@ is on there:
 | `Slam Damage` | 60 | blunt, where the fists land |
 | `Avalanche Damage` | 45 | blunt, plus half as much frost, where the wave rolls over you |
 | `Avalanche Length` | 24 | metres the wave rolls on flat ground; 0 turns it off |
-| `Boulder Damage` | 40 | blunt, plus as much frost in the burst around it |
+| `Boulder Damage` | 40 | frost in the burst where it lands, plus half as much blunt |
 
 # 8. Decisions
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- Rime Giant: the ice boulder's blunt damage is halved (20 blunt + 40 frost by default).
+- Less work every frame keeping the server's settings in sync.
+
 ## 0.6.0
 
 - Skeletons: the plain skeleton, each arsenal skeleton and the crossbowman are equally likely; one switched off drops out.

@@ -111,7 +111,7 @@ namespace EliteCreaturesPack.RimeGiant
                 "Metres the wave rolls on flat ground; far further downhill, a few metres uphill. 0 turns the avalanche off.",
                 acceptableValues: Settings.Range(0f, 60f));
             boulderDamage = config.Bind(Section, "Boulder Damage", 40f,
-                "Blunt damage of its ice boulder, plus as much frost in the burst around it.", acceptableValues: Settings.Range(0f, 1000f));
+                "Frost damage of its ice boulder in the burst where it lands, plus half as much blunt.", acceptableValues: Settings.Range(0f, 1000f));
         }
     }
 }

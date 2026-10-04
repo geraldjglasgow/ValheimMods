@@ -78,7 +78,7 @@ namespace EliteCreaturesPack.RimeGiant
             }
             else if (shared.m_name == ThrowName)
             {
-                shared.m_damages = new HitData.DamageTypes { m_blunt = RimeGiantSettings.BoulderDamage, m_frost = RimeGiantSettings.BoulderDamage };
+                shared.m_damages = new HitData.DamageTypes { m_blunt = RimeGiantSettings.BoulderDamage / 2f, m_frost = RimeGiantSettings.BoulderDamage };
             }
         }
 
