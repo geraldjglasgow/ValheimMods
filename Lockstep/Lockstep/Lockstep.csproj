@@ -5,7 +5,7 @@
     <AssemblyName>Lockstep</AssemblyName>
     <RootNamespace>Lockstep</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <Product>Lockstep</Product>
     <Description>Lockstep: boss progression gated on the whole group</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

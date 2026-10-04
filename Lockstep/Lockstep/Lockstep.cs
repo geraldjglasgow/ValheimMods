@@ -12,7 +12,7 @@ namespace Lockstep
     {
         public const string PluginGuid = "com.Lockstep";
         public const string PluginName = "Lockstep";
-        public const string PluginVersion = "0.3.1";
+        public const string PluginVersion = "0.3.2";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

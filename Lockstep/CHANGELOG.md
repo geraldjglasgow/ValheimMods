@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- Less work every frame keeping the server's settings in sync.
+
 ## 0.3.1
 
 - Fixed: joining a busy server no longer refuses a correct client.
