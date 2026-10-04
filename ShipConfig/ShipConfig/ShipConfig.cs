@@ -12,7 +12,7 @@ namespace ShipConfig
     {
         public const string PluginGuid = "com.ShipConfig";
         public const string PluginName = "ShipConfig";
-        public const string PluginVersion = "1.3.1";
+        public const string PluginVersion = "1.3.2";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

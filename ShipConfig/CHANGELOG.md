@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- Less work every frame keeping the server's settings in sync.
+
 ## 1.3.1
 
 - Shorter store page and changelog; nothing changes in game.
