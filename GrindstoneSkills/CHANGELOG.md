@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.1
+
+- Less work every frame reading the hotkeys.
+
 ## 0.13.0
 
 - Removed: stars on dishes, wild picks, crops and seeds. Nothing rolls a star any more, so items stack like vanilla.

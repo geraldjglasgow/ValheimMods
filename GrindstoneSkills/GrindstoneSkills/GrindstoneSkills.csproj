@@ -5,7 +5,7 @@
     <AssemblyName>GrindstoneSkills</AssemblyName>
     <RootNamespace>GrindstoneSkills</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.13.0</Version>
+    <Version>0.13.1</Version>
     <Product>GrindstoneSkills</Product>
     <Description>GrindstoneSkills: deeper skills for Valheim, cooking and sailing</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
