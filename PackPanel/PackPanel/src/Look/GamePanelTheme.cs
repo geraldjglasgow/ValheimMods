@@ -13,6 +13,7 @@ namespace PackPanel.Look
     {
         private static bool pending = true;
         private static readonly HashSet<Image> newlyEnabled = new HashSet<Image>();
+        private static readonly Dictionary<Sprite, bool> woodSprites = new Dictionary<Sprite, bool>();
 
         public static void Initialize()
         {
@@ -52,15 +53,26 @@ namespace PackPanel.Look
                 return false;
             if (image.transform.Find("PackPanel_timberwood") != null)
                 return true;
-            Sprite sprite = image.sprite;
-            if (sprite == null || (image.type != Image.Type.Sliced && image.type != Image.Type.Tiled))
+            return (image.type == Image.Type.Sliced || image.type == Image.Type.Tiled) && image.fillCenter && WoodSprite(image.sprite);
+        }
+
+        /// <summary>
+        /// One of the game's wood panel sprites, decided once per sprite (reading a sprite's name makes a new string).
+        /// Selection masks, little projecting tabs and repair buttons are not panel backgrounds.
+        /// </summary>
+        private static bool WoodSprite(Sprite sprite)
+        {
+            if (sprite == null)
                 return false;
-            string name = sprite.name;
-            // Selection masks, little projecting tabs and repair buttons are not panel backgrounds.
-            return name.StartsWith("woodpanel_", StringComparison.Ordinal)
-                && !name.EndsWith("_mask", StringComparison.Ordinal)
-                && !name.StartsWith("woodpanel_flik", StringComparison.Ordinal)
-                && (image.fillCenter || image.transform.Find("PackPanel_timberwood") != null);
+            if (!woodSprites.TryGetValue(sprite, out bool wood))
+            {
+                string name = sprite.name;
+                wood = name.StartsWith("woodpanel_", StringComparison.Ordinal)
+                    && !name.EndsWith("_mask", StringComparison.Ordinal)
+                    && !name.StartsWith("woodpanel_flik", StringComparison.Ordinal);
+                woodSprites[sprite] = wood;
+            }
+            return wood;
         }
 
         [HarmonyPatch(typeof(Image), "OnEnable")]
@@ -68,8 +80,12 @@ namespace PackPanel.Look
         {
             private static void Postfix(Image __instance)
             {
-                // Existing panels retain their theme and geometry while hidden. Opening one must
-                // not rescan every Image in the game or dirty unrelated menus.
+                // Runs for every image shown anywhere (other mods' UI, map pins): the cheap reads come first, so almost
+                // every one stops before a name is read or a child looked up. With Timber off nothing new is themed; a
+                // theme change rescans every image anyway. Existing panels retain their theme and geometry while
+                // hidden: opening one must not rescan every Image in the game or dirty unrelated menus.
+                if (!SkinArt.Timber || !__instance.fillCenter || !WoodSprite(__instance.sprite))
+                    return;
                 if (__instance.transform.Find("PackPanel_timberwood") == null && IsPanel(__instance))
                     newlyEnabled.Add(__instance);
             }

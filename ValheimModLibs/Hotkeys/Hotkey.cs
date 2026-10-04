@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
 using UnityEngine;
@@ -18,6 +20,15 @@ namespace Hotkeys
             KeyCode.LeftShift, KeyCode.RightShift, KeyCode.LeftControl, KeyCode.RightControl, KeyCode.LeftAlt, KeyCode.RightAlt,
         };
 
+        /// <summary>
+        /// Each setting's modifiers as an array, read once: BepInEx hands them out as a LINQ sequence, which makes garbage
+        /// on every read, and the keys are read every frame. Dropped when the setting changes.
+        /// </summary>
+        private static readonly Dictionary<ConfigEntry<KeyboardShortcut>, KeyCode[]> Modifiers =
+            new Dictionary<ConfigEntry<KeyboardShortcut>, KeyCode[]>();
+
+        private static readonly HashSet<ConfigEntry<KeyboardShortcut>> Watched = new HashSet<ConfigEntry<KeyboardShortcut>>();
+
         /// <summary>Down this frame, modifiers honoured, nothing being typed.</summary>
         public static bool Pressed(ConfigEntry<KeyboardShortcut>? key)
         {
@@ -25,16 +36,17 @@ namespace Hotkeys
             {
                 return false;
             }
-            KeyboardShortcut shortcut = key.Value;
-            if (shortcut.MainKey == KeyCode.None)
+            KeyCode main = key.Value.MainKey;
+            if (main == KeyCode.None)
             {
                 return false;
             }
-            if (shortcut.Modifiers.Any())
+            KeyCode[] modifiers = ModifiersOf(key);
+            if (modifiers.Length > 0)
             {
-                return Input.GetKeyDown(shortcut.MainKey) && shortcut.Modifiers.All(Input.GetKey) && !OtherModifierHeld(shortcut);
+                return Input.GetKeyDown(main) && AllHeld(modifiers) && !OtherModifierHeld(main, modifiers);
             }
-            return Input.GetKeyDown(shortcut.MainKey) && !ModifierHeld(shortcut.MainKey);
+            return Input.GetKeyDown(main) && !ModifierHeld(main);
         }
 
         /// <summary>The main key held with its modifiers (for modifier settings such as LeftShift), nothing being typed.</summary>
@@ -44,16 +56,43 @@ namespace Hotkeys
             {
                 return false;
             }
-            KeyboardShortcut shortcut = key.Value;
-            return shortcut.MainKey != KeyCode.None && Input.GetKey(shortcut.MainKey) && shortcut.Modifiers.All(Input.GetKey);
+            KeyCode main = key.Value.MainKey;
+            return main != KeyCode.None && Input.GetKey(main) && AllHeld(ModifiersOf(key));
+        }
+
+        private static KeyCode[] ModifiersOf(ConfigEntry<KeyboardShortcut> key)
+        {
+            if (Modifiers.TryGetValue(key, out KeyCode[] modifiers))
+            {
+                return modifiers;
+            }
+            if (Watched.Add(key))
+            {
+                key.SettingChanged += (sender, args) => Modifiers.Remove(key);
+            }
+            modifiers = key.Value.Modifiers.ToArray();
+            Modifiers[key] = modifiers;
+            return modifiers;
+        }
+
+        private static bool AllHeld(KeyCode[] keys)
+        {
+            foreach (KeyCode held in keys)
+            {
+                if (!Input.GetKey(held))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>A Shift, Ctrl or Alt key that is not part of the shortcut is held.</summary>
-        private static bool OtherModifierHeld(KeyboardShortcut shortcut)
+        private static bool OtherModifierHeld(KeyCode main, KeyCode[] modifiers)
         {
             foreach (KeyCode modifier in ModifierKeys)
             {
-                if (modifier != shortcut.MainKey && !shortcut.Modifiers.Contains(modifier) && Input.GetKey(modifier))
+                if (modifier != main && Array.IndexOf(modifiers, modifier) < 0 && Input.GetKey(modifier))
                 {
                     return true;
                 }

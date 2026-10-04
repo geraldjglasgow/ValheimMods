@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.2
+
+- Less work when any window or map pin appears (the Timber panel theme).
+- Less work every frame for backpacks worn by other players, the hotkeys and the closed YAML editor.
+
 ## 0.6.1
 
 - Fixed: the coin purse and key ring no longer take a copy of an item another mod already stored.

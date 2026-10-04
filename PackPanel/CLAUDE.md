@@ -86,7 +86,10 @@ PackPanel/PackPanel/src/
                             tacklebox's cells, pruning extra utilities
     OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader)
     EpicLootLink.cs         Epic Loot's active effects, totals and display texts through its public API, by reflection
-    Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names
+    Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names (read
+                            once per drop prefab)
+    EditorHost.cs           the YAML editor's window drawn by a component of its own, enabled only while the window is
+                            open, so the plugin has no OnGUI
   Layout/
     InventoryLayout.cs      width, main rows (a worn pack's included), backpack slots and blocked cells, the ordered
                             slots; slot k is cell (k % width, mainRows + k / width); the record 1|W|R|ids
@@ -904,7 +907,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.6.1]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.6.2]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
