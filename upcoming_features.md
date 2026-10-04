@@ -7,46 +7,25 @@ reloading yaml config files without server restart. integration with configurati
 EliteCreaturesReborn
 after killing boss once you can click to randomize maybe slayer skill
 deer should have fewer mutations
-gilded should be more rare and many elite creatures can't be gilded
-make miasmic more annoying
-relentless - large creatures shouldn't be, isnce they can be way easier to kill
-devoucing - large creatures can't be devoured. a creature can only devour creatures that have less than or equal hp as them. bosses cannot be devoured
-shorten bloated explode wait time to 1.5s
-Bosses should drop more heads per star level, 4 stars so it will drop 5 heads + the number of players in combat 
-more mutations
 * Frostbound — Emits a freezing aura that slows player stamina recovery; leaves a trail of slowing ice on the ground.
 * Thunderclap — Parrying or blocking its heavy attacks triggers a sonic shockwave that drains player stamina.
 * Mudbound — Leaves a thick mud trail behind it that turns terrain into deep ground, slowing player movement speed by 40%.
 * Corrodent — Attacks shatter target player armor durability at three times the normal rate.
-* Juggernaut — Cannot be staggered, knocked back, or stunned by any attack or parry.
 * Mimicry — Disguises its nameplate and appearance as a harmless creature or resource node until within 5 meters.
 * Phasing — it goes in and out of visibility
 * Decoy — Spawns two low-health illusions upon first being damaged; illusions deal no damage but draw agro.
 * Repelling — Emits a continuous kinetic aura that deflects incoming arrows and throwables.
 * Temporal — Reverts its health and position back to what it was 5 seconds prior once per fight when dropping below 20% health.s
-* Howling — Emits a loud roar upon spotting a player that immediately alerts every enemy within a 100-meter radius.
-* Screecher — Releases an intense sonic shriek on taking high damage, muting player audio and disrupting spellcasting.
 * Soul-Linked — Any damage taken by this creature drains 5% stamina from all nearby players.
 
-New boss moves
+new boss moves
 Elder: if hit by the ranged attack the vines bind around you and player must help you. ( if there are more than 1 player in range for fight and there is more than 1 player not bound)
 Elder: hurls boulder that rolls across lansscape for a short distance
 
 boss aspects: 
-* Portalbound: certain attacks have a portal show up on the boss atatcking feature (liek hand) and another portal shows up somewhere randomly. The attack now comes from there.
-* Bountiful	periodically phases out, teleports behind a player, then phases back in, Drops 100% bonus loot and double trophies, but gains 25% extra maximum health
 * Nightfall	Forces the environment into permanent storming midnight for the duration of the fight, triggering Cold debuffs.
 * Corrupted the area grows corrupted over time causing you to have to move aroudn with the boss to avoid being in corruption
-* Teathered - two bosses spawn with a like subtle teather between them. the further away their current health is from eachother, the faster they attack and the more armor the less hp one has.
 * Brutal - certain attacks knock players back very far. they take damage from the attack, but not from a fall/collision while being knocked back.
-
-look in /Users/gglasgow/projects/ValheimMods/EliteCreaturesReborn, I have some enhancements I want done. boss aspects: * Teathered - two
-  bosses spawn with a like subtle teather between them. the further away their current health is from eachother,
-  the faster they attack and the more armor the less hp one has.,
-  
-  
-   also do star loot modifiers apply to bosses? bosses should drop N+1 trophies, where N is the number of
-  stars a creatures has.
 
 
 EliteCreaturesPack
@@ -63,7 +42,6 @@ The elder new attack: fires tons of shards of wood spikes out. its completely bl
 Openkeep
 config file decluttering
 remove fast portals
-CTRL + click on item while chest is open; if that item is not in any chest, then it should just go in the chest you have open
 check if possible to comatible with epic loot to use crafting table from chests
 add speedy paths
 if you take all from chest and you don't have weight capcaity for it, it says 0/200 (arrows for exmaple)
@@ -75,13 +53,11 @@ portals for ships
 
 PackPanel
 when opening inventory for first time lag spike
-First slot consumable doesn't show a tooltip for each type
 valheim like metal/decor on panels
 remake backpack assets
 remake tacklebox assets
 arrows should auto equip the left most slot if none are already equipped
 remove settings we don't need
-middle inventory panel height equal to number of info panels
 create belt item
 create shoes
 create ring slot
@@ -94,27 +70,11 @@ cargoship, allow players to place shields on shield stands
 crafting shield stands for ShipConfig
 shipwrite workbench for crafting ship things
 
-EliteCrafting
-can we make a branch for elite crafting purposes? I want to remove everying so far and start fresh. branch name should be like simple-elite-crafting. 
-in poe that path I described above is 
-
-awakening rune- makes normal item magic
-Shaping rune - adds 1 mod to a magic item (used when step above adds 1 mod to bring total to 2)
-ascension rune - makes magic item rare and adds 1 mods
-consecrated rune - adds a random mod to a rare item
-cleansing rune - item sucks, reset it to normal
-Chaos Rune - irreversibly modifies an item, sealing it so it can no longer be modified.
-
-I need this simple version of the mod made. reuse the rock assset and color it different colors for each of the 6 currency items. 
-We also need to name these
-
 Grindstone skills
-- remove stars o
 
 Feastmaster
-- github issue
 
-
+fix this error
 [Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property '_ChestTex'
 [Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property '_ChestBumpMap'
 [Error  : Unity Log] Material 'LoxChest' with Shader 'Custom/Creature' doesn't have a texture property
