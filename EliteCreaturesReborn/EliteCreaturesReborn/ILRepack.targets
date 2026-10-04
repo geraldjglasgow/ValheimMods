@@ -13,6 +13,8 @@
       <InputAssemblies Include="$(OutDir)PlateColumn.dll" />
       <InputAssemblies Include="$(OutDir)LocalEffects.dll" />
       <InputAssemblies Include="$(OutDir)PlayerGrid.dll" />
+      <InputAssemblies Include="$(OutDir)Hotkeys.dll" />
+      <InputAssemblies Include="$(OutDir)WindowInput.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

@@ -16,8 +16,15 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>Off: no altar shows an aspect and no boss rolls one. Boss stars do not depend on it.</summary>
         public bool Enabled = true;
 
-        /// <summary>In-game hours between altar shifts; 0 fixes every altar's aspect once it is first rolled.</summary>
-        public float ShiftHours = 1f;
+        /// <summary>Real seconds between altar shifts; 0 fixes every altar's stars and aspect once they are first rolled.</summary>
+        public float ShiftSeconds = 15f;
+
+        /// <summary>An older file's `shift hours`, in in-game hours: set only when the file names it and not `shift seconds`,
+        /// and then the interval in place of <see cref="ShiftSeconds"/>. Null otherwise.</summary>
+        public float? ShiftHours;
+
+        /// <summary>Real seconds between altar shifts, from whichever field the file named; 0 when every altar is fixed.</summary>
+        public double ShiftInterval(double hourSeconds) => ShiftHours is float hours ? hours * hourSeconds : ShiftSeconds;
 
         public readonly Dictionary<Aspect, float> Chances = new Dictionary<Aspect, float>();
         public readonly Dictionary<Aspect, float> Loot = new Dictionary<Aspect, float>();
@@ -68,7 +75,7 @@ namespace EliteCreaturesReborn.Rules
 
         public AspectRules Clone()
         {
-            AspectRules copy = new AspectRules { Enabled = Enabled, ShiftHours = ShiftHours };
+            AspectRules copy = new AspectRules { Enabled = Enabled, ShiftSeconds = ShiftSeconds, ShiftHours = ShiftHours };
             foreach (KeyValuePair<Aspect, float> pair in Chances) { copy.Chances[pair.Key] = pair.Value; }
             foreach (KeyValuePair<Aspect, float> pair in Loot) { copy.Loot[pair.Key] = pair.Value; }
             foreach (KeyValuePair<Aspect, Dictionary<string, float>> pair in Power)

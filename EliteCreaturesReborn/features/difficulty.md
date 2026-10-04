@@ -67,7 +67,7 @@ cell by cell against it (5 presets x 8 tiers x 9 biomes, 0 mismatches) with an o
 ## 6. Star power for 6-8 stars (Extreme only)
 
 The built-in lines have nine entries; 6-8 continue each line by its 5th star's step, the speeds by +0.03: growth
-0.35, 0.40, 0.45; hp 4.7, 5.4, 6.1; attack 2.9, 3.3, 3.7; swing speed 1.19, 1.22, 1.25; speed 1.18, 1.21, 1.24; drops
+0.35, 0.40, 0.45; hp 4.7, 5.4, 6.1; attack 2.25, 2.5, 2.75; swing speed 1.19, 1.22, 1.25; speed 1.18, 1.21, 1.24; drops
 3.5, 4, 4.5. On Extreme a file's shorter line is padded by the built-in steps on top of its own last value
 (`StarPower.PadFrom`); other difficulties never roll above 5 and keep "past the end the last entry repeats".
 

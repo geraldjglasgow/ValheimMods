@@ -26,7 +26,7 @@ namespace EliteCreaturesReborn.Runtime
         private bool _dressPending;
         private bool _movementClamped;
         private CreatureTraits? _forced;
-        private BossAspects? _forcedAspect;
+        private BossDraw? _forcedDraw;
         private Heightmap.Biome _forcedBiome;
         private bool _isBoss;
 
@@ -151,20 +151,17 @@ namespace EliteCreaturesReborn.Runtime
             _character.SetLevel(1);
             FreshlyResolved = true;
             _forced = null;
-            _forcedAspect = null;
+            _forcedDraw = null;
         }
 
-        // A boss draws a star count from the boss distribution and an aspect - the altar's, when it was summoned at one,
-        // else its own roll - and never a mutation, so the roll cannot be shared with the creature path.
+        // A boss draws its stars from the boss distribution and an aspect - both the altar's, locked at the offering,
+        // when it was summoned at one, else its own roll - and never a mutation, so the roll cannot be shared with the
+        // creature path.
         private CreatureTraits RollFor(Heightmap.Biome biome)
         {
             if (_isBoss)
             {
-                BossRules boss = RuleState.Active.Boss;
-                int stars = boss.Enabled ? TraitRoller.RollStars(BossView.For(boss)) : 0;
-                BossAspects aspects = boss.Aspects.Enabled
-                    ? _forcedAspect ?? AspectRoller.RollBoss(PrefabName, null) : BossAspects.None;
-                return aspects.ToTraits(stars); // a Bountiful roll brings its extras with it
+                return (_forcedDraw ?? BossDraw.Roll(PrefabName)).ToTraits(); // a Bountiful roll brings its extras with it
             }
             return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current(), biome,
                 BodySize.Barred(_character)); // a large body never rolls Gilded or Relentless
@@ -182,11 +179,11 @@ namespace EliteCreaturesReborn.Runtime
         }
 
         /// <summary>
-        /// Altar hook: the aspects locked in at the offering (a Bountiful one's extras with it), handed over in the same
-        /// frame the altar instantiates the boss. The stars still roll; only the aspects are fixed. Ignored once the boss
-        /// has been rolled.
+        /// Altar hook: the stars and aspects locked in at the offering (a Bountiful one's extras with them), handed over in
+        /// the same frame the altar instantiates the boss, so the boss is exactly what the bowl showed. Ignored once the
+        /// boss has been rolled.
         /// </summary>
-        public void ForceAspect(BossAspects aspects) => _forcedAspect = aspects;
+        public void ForceDraw(BossDraw draw) => _forcedDraw = draw;
 
         // The numbers apply at once, so a hit that wakes a disguised creature is already scaled and its health is not
         // refilled on waking. What can be seen - size, the star look, the mutation and aspect behaviours - waits while a

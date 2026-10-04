@@ -18,6 +18,7 @@ namespace EliteCreaturesReborn.Traits
                 Aspect = (Aspect)zdo.GetInt(TraitKeys.Aspect),
                 ExtraAspects = zdo.GetInt(TraitKeys.AspectExtra),
                 PhantomCopy = zdo.GetZDOID(TraitKeys.PhantomOf) != ZDOID.None,
+                Decoy = zdo.GetZDOID(TraitKeys.CloneOf) != ZDOID.None,
                 Tier = zdo.GetInt(TraitKeys.Tier),
             };
         }

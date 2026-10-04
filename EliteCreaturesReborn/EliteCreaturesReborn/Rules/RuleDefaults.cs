@@ -80,7 +80,7 @@ namespace EliteCreaturesReborn.Rules
                 // nothing outruns a player (features/difficulty.md section 6).
                 Growth = new[] { 0.06f, 0.10f, 0.15f, 0.20f, 0.25f, 0.30f, 0.35f, 0.40f, 0.45f },
                 Hp = new[] { 1f, 1.4f, 1.95f, 2.6f, 3.3f, 4.0f, 4.7f, 5.4f, 6.1f },
-                Attack = new[] { 1f, 1.2f, 1.45f, 1.75f, 2.1f, 2.5f, 2.9f, 3.3f, 3.7f },
+                Attack = new[] { 1f, 1.15f, 1.3f, 1.5f, 1.75f, 2f, 2.25f, 2.5f, 2.75f },
                 SwingSpeed = new[] { 1f, 1.02f, 1.05f, 1.08f, 1.12f, 1.16f, 1.19f, 1.22f, 1.25f },
                 Speed = new[] { 1f, 1f, 1.03f, 1.06f, 1.1f, 1.15f, 1.18f, 1.21f, 1.24f },
                 Drops = new[] { 1f, 1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f, 4.5f },
@@ -110,6 +110,14 @@ namespace EliteCreaturesReborn.Rules
                         [Fields.TellSound] = "sfx_WishbonePing_near",
                     },
                 [Mutation.Screecher] = new Dictionary<string, string> { [Fields.ShriekSound] = "sfx_fallenvalkyrie_screech" },
+                [Mutation.Frostbound] = new Dictionary<string, string>
+                    { [Fields.AuraEffect] = "vfx_Frost", [Fields.TrailEffect] = "vfx_blob_frost_death" },
+                [Mutation.Mudbound] = new Dictionary<string, string> { [Fields.TrailEffect] = "vfx_blobtar_death" },
+                [Mutation.Cloning] = new Dictionary<string, string>
+                    {
+                        [Fields.RevealEffect] = "vfx_spawn_small", [Fields.RevealSound] = "sfx_spawn",
+                        [Fields.VanishEffect] = "vfx_odin_despawn",
+                    },
             };
 
         private static Dictionary<string, float> Power(Mutation mutation)
@@ -159,6 +167,19 @@ namespace EliteCreaturesReborn.Rules
             table[Mutation.Relentless] = new Dictionary<string, float> { [Fields.ChaseDistance] = 150f };
             table[Mutation.Screecher] = new Dictionary<string, float>
                 { [Fields.Threshold] = 15f, [Fields.Radius] = 20f, [Fields.MuteTime] = 4f, [Fields.Cooldown] = 15f };
+            AddWinterMutations(table);
+        }
+
+        private static void AddWinterMutations(Dictionary<Mutation, Dictionary<string, float>> table)
+        {
+            table[Mutation.Frostbound] = new Dictionary<string, float>
+                { [Fields.AuraRadius] = 6f, [Fields.StaminaRegen] = 50f, [Fields.FrostHeal] = 100f, [Fields.TrailLife] = 10f,
+                  [Fields.PatchRadius] = 1.5f, [Fields.PatchSpacing] = 1.5f, [Fields.Grip] = 5f, [Fields.Slow] = 15f };
+            table[Mutation.Mudbound] = new Dictionary<string, float>
+                { [Fields.TrailLife] = 10f, [Fields.PatchRadius] = 1.5f, [Fields.PatchSpacing] = 1.5f, [Fields.Slow] = 40f };
+            table[Mutation.Corrodent] = new Dictionary<string, float> { [Fields.Durability] = 3f };
+            table[Mutation.Cloning] = new Dictionary<string, float>
+                { [Fields.Times] = 1f, [Fields.Range] = 12f, [Fields.DecoyLife] = 20f, [Fields.Cooldown] = 30f };
         }
     }
 }

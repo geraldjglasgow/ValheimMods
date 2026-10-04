@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Traits;
 using PatchGuard;
 
@@ -9,8 +10,10 @@ namespace EliteCreaturesReborn.Tally
     /// every machine on the server, and each one keeps it as its latest board (<see cref="BossBoard"/>) and shows it
     /// (<see cref="BossBoardView"/>). A Twin's tally is the pair's together, since they share one health pool; the fight
     /// is named by the smaller of the pair's IDs, so the partner that falls with it sends the same fight and replaces
-    /// neither the board kept nor the one on screen. A Phantom copy is a decoy and sends nothing; the damage done to it
-    /// is already in its boss's tally.
+    /// neither the board kept nor the one on screen. A Tethered pair shows one board, when the last of the two falls: the
+    /// first to fall sends nothing and hands its tally on to its partner (<see cref="BossCredit.HandOver"/>), so the
+    /// last board counts the damage to both. A Phantom copy is a decoy and sends nothing; the damage done to it is
+    /// already in its boss's tally.
     /// </summary>
     internal static class BossBoardRpc
     {
@@ -41,16 +44,23 @@ namespace EliteCreaturesReborn.Tally
             {
                 return;
             }
+            ZDOID tether = AspectStore.GetTether(zdo);
+            if (TetherPair.Standing(tether))
+            {
+                BossCredit.HandOver(zdo, tether);
+                return;
+            }
             List<DamageTally.Entry> entries = DamageTally.Load(zdo);
-            ZDOID twin = AspectStore.GetTwin(zdo);
-            AddPartner(entries, twin);
+            ZDOID partner = tether != ZDOID.None ? tether : AspectStore.GetTwin(zdo);
+            AddPartner(entries, partner);
             if (entries.Count > 0)
             {
-                Send(new BossBoard { Fight = FightOf(zdo.m_uid, twin), BossName = boss.m_name, Entries = entries });
+                Send(new BossBoard { Fight = FightOf(zdo.m_uid, partner), BossName = boss.m_name, Entries = entries });
             }
         }
 
-        // A Twin's partner is still alive at this point (it falls a moment later), so its ZDO still has its half.
+        // A Twin's partner is still alive at this point (it falls a moment later), so its ZDO still has its half. So may
+        // a Tethered partner that fell in the same moment, before it could hand its tally on; one that did has an empty one.
         private static void AddPartner(List<DamageTally.Entry> entries, ZDOID twin)
         {
             ZDO? partner = twin != ZDOID.None && ZDOMan.instance != null ? ZDOMan.instance.GetZDO(twin) : null;

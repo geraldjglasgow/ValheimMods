@@ -14,11 +14,35 @@ namespace EliteCreaturesReborn.Rules
         public static void Apply(AspectRules rules, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             rules.Enabled = YamlRead.Bool(block, Fields.Enabled, rules.Enabled, errors);
-            rules.ShiftHours = NonNegative(block, Fields.ShiftHours, rules.ShiftHours, errors);
+            ReadShift(rules, block, errors, warnings);
             ReadWeights(rules.Chances, block, Fields.Chances, errors);
             ReadWeights(rules.Loot, block, Fields.Loot, errors);
             ReadPower(rules, block, errors, warnings);
             PerBossOverlay.Apply(rules, YamlRead.Child(block, Fields.PerBoss), errors);
+        }
+
+        /// <summary>
+        /// The altar shift interval: `shift seconds`, or an older file's `shift hours` when it names only that, so a file
+        /// written before the seconds came keeps its interval. When both are named, `shift seconds` wins and the hours
+        /// only warn.
+        /// </summary>
+        private static void ReadShift(AspectRules rules, YamlMappingNode block, List<string> errors, List<string> warnings)
+        {
+            YamlNode? hours = YamlRead.Child(block, Fields.ShiftHours);
+            if (YamlRead.Child(block, Fields.ShiftSeconds) != null)
+            {
+                rules.ShiftSeconds = NonNegative(block, Fields.ShiftSeconds, rules.ShiftSeconds, errors);
+                rules.ShiftHours = null;
+                if (hours != null)
+                {
+                    YamlRead.AddError(warnings, hours, $"'{Fields.ShiftHours}' is ignored: '{Fields.ShiftSeconds}' is set");
+                }
+            }
+            else if (hours != null)
+            {
+                float value = NonNegative(block, Fields.ShiftHours, -1f, errors); // -1: it did not parse, already reported
+                rules.ShiftHours = value >= 0f ? value : rules.ShiftHours;
+            }
         }
 
         private static float NonNegative(YamlMappingNode block, string key, float fallback, List<string> errors)

@@ -22,12 +22,12 @@ bosses:
 
   aspects:
     enabled: true
-    # In-game hours between altar shifts (one hour = 75 real seconds). 0 fixes each altar.
-    shift hours: 1
+    # Real seconds between altar shifts, each rolling the boss's stars and aspect again. 0 fixes each altar.
+    shift seconds: 15
 
     # Weights, not percentages. none is the fight as the game ships it.
     chances:
-      none: 38
+      none: 42
       Reflective: 10
       Shielded: 10
       Mending: 10
@@ -44,6 +44,8 @@ bosses:
       Tethered: 10
       Bountiful: 10
       Portalbound: 10
+      Nightfall: 10
+      Brutal: 10
 
     # Multiplies everything the boss drops, even in Vanilla loot mode.
     loot:
@@ -64,6 +66,8 @@ bosses:
       Tethered: 1
       Bountiful: 2
       Portalbound: 1.2
+      Nightfall: 1.3
+      Brutal: 1.2
 
     # Field meanings: reference, Boss aspect power fields.
     power:
@@ -83,6 +87,8 @@ bosses:
       Tethered:     { less health: 25, less damage: 25, attack speed: 50, armour: 50, full gap: 50 }
       Bountiful:    { extra aspects: 2 }
       Portalbound:  { min height: 5, clearance: 2, range: 20 }
+      Nightfall:    { range: 60, every: 10, every max: 20, life: 10, form time: 1.5, tornado speed: 40, damage: 25, top width: 9, base width: 1.5, height: 14, toss distance: 10 }
+      Brutal:       { launch: 20, lift: 3 }
 
     # Per boss, by prefab name: summons is what Summoner calls (no list, no Summoner);
     # aspects, if set, limits which aspects it rolls.
@@ -101,9 +107,9 @@ bosses:
         summons: [SeekerBrute, Seeker]
       - match: Fader
         summons: [Charred_Melee, Charred_Archer]
-      # Elite Creatures Pack's kraken holds one ship: never Twin, Phantom or Tethered.
+      # Elite Creatures Pack's kraken holds one ship: never Twin, Phantom, Tethered or Brutal.
       - match: ECP_Kraken
-        aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal, Bountiful]
+        aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal, Bountiful, Nightfall]
 
 ";
     }

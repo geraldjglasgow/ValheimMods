@@ -29,13 +29,37 @@ namespace EliteCreaturesReborn.Commands
                 Mutation.Miasmic => $"Miasmic: poison str {Enhance.Magnitude(r, t, m, Fields.CloudDamage):0.0}, {Enhance.Magnitude(r, t, m, Fields.CloudsPerSecond):0.00} clouds/s, life {r.PowerOf(m, Fields.CloudLife):0.0}s, r{r.PowerOf(m, Fields.CloudRadius):0.0}{tag}",
                 Mutation.Devouring => $"Devouring: absorb {Enhance.Magnitude(r, t, m, Fields.AbsorbHealth):0}% hp / {Enhance.Magnitude(r, t, m, Fields.AbsorbDamage):0}% dmg, slow {r.PowerOf(m, Fields.SlowPer100Health):0.0}%/100hp, hunts at {r.PowerOf(m, Fields.PlayerThreshold):0.00}x player hp, cooldown {r.PowerOf(m, Fields.DevourCooldown):0}s, eats {DevourLimits.Allowance(r, t)} (one per star, at least min meals {r.PowerOf(m, Fields.MinMeals):0}) {PreySize(r)}{tag}",
                 Mutation.Thieving => $"Thieving: holds {PouchStore.ResolvedMaxItems(r, t)} (one per star, at least max items {Enhance.Stat(r, t, m, Fields.MaxItems):0}; hard cap {PouchStore.HardCap}){tag}",
+                _ => LineLater(r, t, m, tag),
+            };
+        }
+
+        /// <summary>The mutations from Gilded on, split out only to keep <see cref="Line"/> short.</summary>
+        private static string LineLater(BiomeRules r, CreatureTraits t, Mutation m, string tag)
+        {
+            return m switch
+            {
                 Mutation.Gilded => $"Gilded: loot x{Enhance.Stat(r, t, m, Fields.Loot):0.0} + {System.Math.Min(System.Math.Round(Enhance.Magnitude(r, t, m, Fields.BonusAmount) * (1 + t.Stars)), Loot.DropRoller.AmountCap):0} {r.PrefabOf(m, Fields.BonusItem)} (none when tamed), flees players within {r.PowerOf(m, Fields.FleeDistance):0}m{tag}",
                 Mutation.Blinking => $"Blinking: every {r.PowerOf(m, Fields.Every):0}s in combat, {r.PowerOf(m, Fields.Distance):0.0}m behind its target, {r.PowerOf(m, Fields.TellTime):0.0}s tell, health x{r.PowerOf(m, Fields.Health):0.00}",
                 Mutation.Relentless => $"Relentless: keeps its target to {r.PowerOf(m, Fields.ChaseDistance):0}m, never faster than its base speed",
                 Mutation.Juggernaut => "Juggernaut: never staggered (hits, parries, traps) or knocked back; keeps its own attack recoil; no power fields",
                 Mutation.Screecher => $"Screecher: shrieks when one hit takes {r.PowerOf(m, Fields.Threshold):0}% of its max hp, at most every {r.PowerOf(m, Fields.Cooldown):0}s; enemy players within {Enhance.Magnitude(r, t, m, Fields.Radius):0}m deafened and unable to cast for {Enhance.Magnitude(r, t, m, Fields.MuteTime):0.0}s; shriek {r.PrefabOf(m, Fields.ShriekSound)}{tag}",
+                Mutation.Frostbound => $"Frostbound: {FrostboundAura(r, t)}; {TrailSpec.Describe(r, t, m)}{tag}",
+                Mutation.Mudbound => $"Mudbound: {TrailSpec.Describe(r, t, m)}{tag}",
+                Mutation.Corrodent => $"Corrodent: a player's armour wears x{Enhance.Stat(r, t, m, Fields.Durability):0.0} as fast under its hits (shields as usual){tag}",
+                Mutation.Cloning => $"Cloning: hides behind a harmless decoy {System.Math.Round(Enhance.Magnitude(r, t, m, Fields.Times)):0} time(s) when it fights a player within {r.PowerOf(m, Fields.Range):0}m, {r.PowerOf(m, Fields.Cooldown):0}s apart; a decoy lasts at most {r.PowerOf(m, Fields.DecoyLife):0}s (0: until a hit or its death){Decoy(t)}{tag}",
                 _ => MutationCatalog.Word(m),
             };
+        }
+
+        // Cloning: a decoy wears its creature's mutations, so `elite inspect` says which one it is looking at.
+        private static string Decoy(CreatureTraits t) => t.Decoy ? "; THIS is a decoy: no damage, no drops, no powers" : "";
+
+        // Frostbound's aura and frost heal; the ground trail's numbers follow them on the same line.
+        private static string FrostboundAura(BiomeRules r, CreatureTraits t)
+        {
+            Mutation m = Mutation.Frostbound;
+            float cut = System.Math.Min(Enhance.Magnitude(r, t, m, Fields.StaminaRegen), 100f);
+            return $"aura {Enhance.Magnitude(r, t, m, Fields.AuraRadius):0.0}m cuts enemy players' stamina regen {cut:0}% ({r.PrefabOf(m, Fields.AuraEffect)}); frost heals it {Enhance.Magnitude(r, t, m, Fields.FrostHeal):0}% of the frost, never hurts or slows it";
         }
 
         // Devouring's `max prey health`, where 0 lifts the limit.

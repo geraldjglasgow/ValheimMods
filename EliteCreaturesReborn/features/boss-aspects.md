@@ -49,7 +49,7 @@ at the user's request, for 3.9.0; the words in their rows are the user's.
 | Elementalist | Deals 20% more elemental damage |
 | Enraged | Deals 20% more physical damage |
 | Twin | Comes as two bosses sharing one health pool, each with 25% less health and damage |
-| Phantom | Splits off weak copies of itself at 66% and 33% health, one per player online: half its damage, 25 health per world tier, no drops, no body |
+| Phantom | Splits off weak copies of itself at 66% and 33% health, one per player online, and hides among them: half its damage, 25 health per world tier, no drops, no body |
 | Adaptive | Takes 50% less of whichever damage type hit it most in the last 15 seconds, and its glow changes colour to show which one. You have to swap weapons, or the group has to spread across damage types |
 | Fixated | Marks one player, with an icon over their head and a chat line. Hits the marked player 50% harder and everyone else 30% softer. Every 30 seconds the mark moves to whoever hurt it most. Solo, you are always marked |
 | Stormbound | Every 20 seconds a glowing circle appears under each player, and 2 seconds later lightning strikes it, lightly staggers you and does a little damage |
@@ -113,10 +113,18 @@ drops nothing and leaves no body - it vanishes where it falls, with a puff of sm
 boss's: no boss-defeated key, no progression, no trophy. **When the boss dies its remaining copies vanish with it**
 (a judgement call: they are the boss's phantoms, not creatures of their own). The copies never split themselves.
 
-The game draws every boss health bar in the same place, so the copies' bars would sit on top of the boss's and only
-one would show. **The boss keeps its full-size bar; each copy's bar is a quarter of its width and a sliver of its
-height, in a row under it** - four copies together are as long as the boss bar, a fifth starts a second row - each
-with its name in small type above it.
+**The boss hides among its copies** (the user, 2026-10-04: players must not know which one is the boss, they have to
+fight them all). At each split the boss and its copies take the places of one even ring around the spot it stood on,
+the boss's place drawn at random, with the same puff at every place, and the boss's body is hidden on every client until
+its move has landed, so nobody sees it slide. Each copy wears the boss's aspects exactly (its name is the boss's,
+"Bountiful" included) and starts at the boss's own share of health left, so every bar reads the same when they appear;
+a copy only gives itself away by how fast its bar falls once it is hit.
+
+The game draws every boss health bar in the same place, so the bars would sit on top of each other and only one would
+show. **While any copy stands, every bar of the fight, the boss's included, is a quarter of the boss bar's width and a
+sliver of its height, in one row where the boss bar was** - four together are as long as the boss bar, a fifth starts a
+second row - each with its name in small type above it and no stars. The row is ordered by a random number each one
+drew at its split, so the boss's place in it says nothing. When the last copy falls the boss's bar is full size again.
 
 Changed on 2026-09-26 at the user's request. Until then the four copies (100 health each) came the moment the boss
 appeared, and their bars covered the boss's.
@@ -268,8 +276,10 @@ This is not a convenience. An aspect changes what gear you should bring, and an 
 committed is simply unfair. Shielded tells an archer to bring a sword. Reflective tells you to bring healing.
 Neither is any use discovered thirty seconds into the fight.
 
-**And it shifts.** The aspect on an altar rerolls every **in-game hour** - one twenty-fourth of the game's day, 75
-real seconds on the default 30-minute day. Confirmed on 2026-09-26 knowing it is short: a group that does not like
+**And it shifts.** The aspect on an altar rerolls every **15 real seconds** (`shift seconds`, since 2026-10-04 at the
+user's request; it was every in-game hour, 75 real seconds, which an older rule file's `shift hours` still gives). The
+boss's **stars** roll at the altar with it, show on the bowl ("Stars: ★★" or "none") and are locked in at the
+offering too. Confirmed on 2026-09-26 knowing it is short: a group that does not like
 what is on the bowl can wait a minute or two, and a group hunting one aspect can camp the altar until it comes
 up. The loot table in section 3 is what keeps that from being a free pass. The altar also shows **how long is
 left** before the next shift, so waiting is an informed decision rather than standing around hoping.
@@ -407,7 +417,7 @@ bosses:
   ...
   aspects:
     enabled: true            # off: no aspects anywhere; boss stars keep working
-    shift hours: 1           # in-game hours between altar shifts; 0 fixes each altar for good
+    shift seconds: 15        # real seconds between altar shifts; 0 fixes each altar for good
     chances:                 # relative weights; `none` is a plain fight
       none: 30
       Reflective: 10
@@ -473,7 +483,8 @@ Settled on 2026-09-26 with the user:
 1. **The set** is the eight in section 1 (thirteen since 3.9.0, below). The earlier ten candidate names are retired,
    which also frees the word `Shifting` that `attunements.md` had stepped around.
 2. **Twin: both bosses drop full loot**, trophy included. Twin's multiplier is therefore 1.0 per boss.
-3. **Altars shift every in-game hour** (75 real seconds by default), as first specified.
+3. **Altars shift every in-game hour** (75 real seconds by default), as first specified; every 15 real seconds since
+   2026-10-04, with the boss's stars rolled and shown at the altar too.
 4. **Bosses without an altar roll their aspect when they first appear.**
 
 Judgement calls made while building, each a default in the rule file:
@@ -527,7 +538,8 @@ up and 2 m from anything, a second portal on its hand"). Judgement calls made wh
   `ecr_altar_extra`). Bountiful's extras are drawn by the chances from that boss's rotation, never none or Bountiful,
   never two of Twin, Tethered and Phantom. They are rolled when the altar shifts, shown on the bowl and locked in at
   the offering. Loot is every aspect's multiplier together (x2 times each extra's). A Bountiful boss's twin or tethered
-  partner carries the same aspects, and so do its Phantom copies - all but Phantom and Bountiful, so each copy calls its own
+  partner carries the same aspects, and so do its Phantom copies (since 2026-10-04 exactly, so the names match; a copy's
+  own Phantom splits stay off), so each copy calls its own
   Summoner waves and marks its own Fixated player - at the user's request after the first try in game. Phantom copies
   are born awake, so an Elder's copies skip the stand-up the altar's Elder plays (same evening).
 - **Tethered**: 25% less health and damage each, like Twin, but separate health and separate deaths. Only the last of
@@ -543,6 +555,74 @@ up and 2 m from anything, a second portal on its hand"). Judgement calls made wh
   counts for the Elder).
 - **Boss trophies**: a boss with N stars drops N+1 of its trophy in every loot mode, untouched by every multiplier
   and the trophy switch (the user's rule); a `drop overrides` row naming it is honoured instead (`loot.md` section 2).
+  Bountiful alone scales the count, by its own `loot` (x2: N+1 doubled), rounded (the user, 2026-10-04: Bountiful
+  pays more of all loot, heads included).
+- **Tethered damage board** (the user, 2026-10-04): one board per pair, when the last falls. The first to fall sends
+  none and hands its tally on to its partner's (the route a Phantom copy's hits take), so the last board counts both.
+
+Added with the user on 2026-10-04: **altar stars and a 15 s shift**, and **Nightfall and Brutal**. Judgement calls:
+
+- **Altar stars.** The boss's star count is rolled at the altar with the aspect (the boss table's roll, 0 with boss
+  stars off), kept in the altar ZDO (`ecr_altar_stars`), shown above the aspect line and locked with the aspects at
+  the offering as one `BossDraw`, so the boss gets exactly the stars shown. Stars may repeat on a shift; the aspect
+  never does. Stars and aspects each show, shift and lock on their own switch; a part that is on but missing (an altar
+  from before this) rolls alone at once. The star glyph comes from the game fonts' Noto fallback (checked offline).
+- **`shift seconds: 15`** replaces `shift hours: 1` in a new rule file; a file naming only `shift hours` keeps it (in
+  in-game hours), and with both named `shift seconds` wins with a warning. Existing rule files are never rewritten, so
+  an existing world keeps shifting every 75 s until its file says `shift seconds`.
+- **`none` raised from 38 to 42**, so a plain fight stays about one in five with seventeen aspects in most bosses'
+  rotations.
+- **Brutal** ("certain attacks knock players back very far; they take damage from the attack, but not from a
+  fall/collision"): the certain attacks are the heavy ones Colossal uses (`HeavyAttack`). Every heavy hit that lands
+  throws the player `launch` (20) m across flat ground, peaking `lift` (3) m up - metres, not speeds; the speeds come
+  from the game's gravity (20 m/s²), about 18 m/s across and 11 m/s up, a little over a second in the air. The game's
+  fall hit is dropped from the throw until 1 s after the first landing, cliffs included; nothing else is forgiven (the
+  game deals no wall-impact damage to players). A block that holds or a parry stops the throw, a broken guard or a blow
+  from behind does not; a dodge means no hit. No juggling: a player still in the air is hit but not thrown again.
+  Swimming, attached, ship-deck, teleporting and ghost players are never thrown, so the Kraken never rolls Brutal.
+  Armour does not shorten the throw. Marked on the boss's owner inside the hit (`HitData.m_skillRaiseAmount` = -18,
+  which the game sends and nothing on a player's side reads); thrown on the player's own client with the game's
+  `ForceJump`, its velocity held against air control until landing; a whoosh (`sfx_frozenking_charge_whoosh`) through
+  the boss's network view (`ecr_brutal_throw`) for everyone near. Loot x1.2.
+
+- **Nightfall** ("forces the environment into storming midnight for the duration of the fight, with tornados that
+  whirl into existence for 1.5 seconds, then hunt players; one per player, every 10 to 20 seconds, lasting 10 seconds,
+  3 m wide at the top and 1 m at the ground, 70% of a player's speed, 25 damage a second"; after the first try in game: 40% speed, 1.5 m at the ground and wider at the top (9 m), spinning 50% faster, three quarters opaque so it reads through rain, streaks rather than smoke):
+  - *The sky* is changed only where it is drawn: a prefix on `EnvMan.SetEnv` blends the weather the game is about to
+    draw toward `ThunderStorm` (a code constant: aspect rules hold numbers only) and lends the sun a time swung the
+    short way to midnight for that one call; the game's own day/night and weather state never change, so spawns,
+    sleeping, the day count, rain wear, fires and ship wind read the real world. 6 s in and out, eased. A player is in
+    the fight while alive-and-in-`range` (60 m, along the ground) of a living Nightfall boss, kept until 10 m past it;
+    the boss need not be alerted. It steps aside while anything else forces the weather (dungeons, arena zones, other
+    mods, the console's `env`/`tod`, a zone's own weather) and never shows inside a dungeon; over a raid's or event's
+    weather it wins. One shared sky for every Nightfall boss, so two at once never break the restore.
+  - *Wet and Cold* (the user's earlier note said "triggering Cold debuffs"; the request above did not repeat it): while
+    the storm is at least half drawn the player's own status-effect check reads the storm's flags at midnight, so they
+    turn Wet and Cold as under a real night storm; roofs, fires, shelter and frost resistance still protect. Drop the
+    `s_isWet` line in `NightfallChill.Begin` for Cold alone.
+  - *The tornadoes* follow Stormbound's rhythm (only seconds of fight count; a lull pauses; 10 s out resets). Each wave
+    raises one per player in range, 6-9 m in front of them within 60 degrees of their facing; harmless while forming;
+    then it hunts that player, turning at most half a turn a second, and goes straight on if its player is gone. One
+    tornado per player at a time across every Nightfall boss (a Bountiful twin, partner or Phantom copy). `every` is
+    never shorter than `life`. Damage is lightning like Stormbound's (armour no, resistance and a bubble yes, scaled by
+    the world's combat difficulty), no stagger, four ticks a second, to any player its funnel touches, measured at the
+    player's middle; a dodge roll passes through. The owner writes the wave (`ecr_tornado_at`, `ecr_tornado`) and the
+    tornadoes' places and velocities four times a second (`ecr_tornado_track`); every client carries them forward on
+    its own ground and judges only its own player against what it draws. Built in code: four particle systems per
+    tornado's surroundings (a debris cloud round its lower third, grit, dust skirt) with a sheet of wisps made in code; the
+    funnel itself is two meshes, a dense core inside a paler veil, wearing a seamless cloud made in code that slides
+    round them (fastest at the foot) and climbs, twisted so its bands spiral, its edges softened where the surface turns
+    from the camera, so it reads as one churning column (the user, after streaks); then, "between the two", the cones thinner with puffs
+    of cloud whirling on the funnel's surface over them (the game's own
+    wispy-smoke sheet came out green unlit: it packs light for a lit shader), dense and unlit so it reads at stormy
+    midnight, drawn at effect density 0; the sound is the world's own wind loop
+    (`AudioMan.m_windAudio`) on a 3D source per tornado, through the ambient volume (the Frozen King's tornado sounds
+    were tried first and sounded wrong). Loot x1.3.
+  - *Roots tossed* (the user, after the first try in game): a hunting tornado that passes over one of the Elder's roots
+    (`TentaRoot`, its body within the funnel's foot plus 0.6 m) picks it up and throws it in a random direction, landing
+    between 60% of `toss distance` (10 m) and all of it away on flat ground, peaking 4 m up; once a wave per root.
+    Decided on the boss's owner, which moves the tornadoes; it takes the root over if another machine owns it (the
+    Elder raises its roots on its own owner, so rarely). The root's flight reaches everyone through its position.
 
 Still open:
 
@@ -568,7 +648,10 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Twin: second boss, shared pool, both die together, both drop
 - [ ] Phantom: splits at 66% and 33%, one copy per player online, 25 health per tier (1 at tier 0), half damage,
   no drops, no body, vanish with the boss
-- [ ] Phantom copies' health bars in a small row under the boss's bar
+- [ ] Phantom copies' health bars and the boss's in one small row in random order, the boss's back to full size when
+  the last copy falls
+- [ ] Phantom split: boss moves to a random place in the ring behind a puff at every place, no slide seen on a client;
+  copies carry the boss's name and start at its health share
 - [ ] Adaptive: resists the type players and tames dealt most in the last 15 s, counted after its resistances; ties
   keep the type; a change applies from the next hit; dark and resisting nothing with an empty window
 - [ ] Adaptive: the glow in the type's colour on every client, blending on a change; nothing at effect density 0;
@@ -588,12 +671,25 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Colossal: 40% bigger, 15% more health, 15% slower, on every machine; its corpse keeps its size
 - [ ] Colossal: heavy blows only, at most one shockwave per 5 s, none from a boss in the air; knocked down within
   8 m with no damage; a roll or a jump avoids it
+- [ ] Nightfall: storming midnight for players within 60 m (along the ground) of a living boss; night falls over 6 s
+  and lifts over 6 s after its death, its unloading or 70 m; Wet and Cold under it; nothing inside dungeons or forced
+  weather; two at once share one sky
+- [ ] Nightfall: one tornado per player within 60 m every 10-20 s of fight; forms 1.5 s harmless; hunts at 40% run
+  speed until 10 s; 25 lightning damage a second inside the funnel, no stagger, a roll passes; drawn at effect
+  density 0; boss death breaks every tornado up; a late arrival sees them where they are; a hand-over keeps rhythm and
+  positions; never two tornadoes on one player
+- [ ] Brutal: heavy hits throw the player 20 m (3 m peak) away from the boss after the damage; no fall damage on
+  landing, off a cliff too; a roll or a holding block/parry prevents it, a broken guard does not; no throw when
+  swimming, seated, riding, on a ship's deck; not thrown again mid-flight; the whoosh heard near the boss; works with
+  the boss owned by another client
 - [ ] The aspect is in the boss's name
 - [ ] Boss stars show on the boss health bar
 
 ## The altar
 
-- [ ] Hover text shows the aspect, what it does, and the time to the next shift
+- [ ] Hover text shows the boss's stars, the aspect, what it does, and the time to the next shift (every 15 s)
+- [ ] The stars locked at the offering match the boss's nameplate; an altar from before this change shows stars within a
+  second; boss stars and aspects both off shows nothing
 - [ ] One outcome is "no aspect" - a plain vanilla boss fight
 - [ ] A reroll never repeats the current aspect
 - [ ] Summoning locks the aspect in
@@ -621,7 +717,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 ## Configuration
 
 - [ ] `enabled`, independent of `stars`
-- [ ] `shift hours`, including zero to fix every altar
+- [ ] `shift seconds`, including zero to fix every altar; a `shift hours`-only file still shifts on in-game hours
 - [ ] `chances`, `none` included
 - [ ] `per boss` rotation and summon lists
 - [ ] `loot` multiplier per aspect, and each aspect's `power` numbers, hot-reloaded
@@ -637,3 +733,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-26 | Phantom reworked with the user: splits at health marks, copies per player online, health per world tier, small copy bars under the boss bar. Untested. | EliteCreaturesReborn-v3.8.0 |
 | 2026-09-27 | 3.9.0: Adaptive, Fixated, Stormbound, Gravitic and Colossal added at the user's request, with their loot, chances (`none` 20 -> 30), rule-file fields and judgement calls; `elite inspect` shows Adaptive's type and Fixated's mark. Built, not tested in game. | - |
 | 2026-10-03 | Tethered, Bountiful (bosses carry several aspects) and Portalbound (Elder only) added at the user's request; `none` 30 -> 38; boss trophies one per star plus one. Built by parallel agents, not tested in game. | - |
+| 2026-10-04 | Altar stars and a 15 s shift (`shift seconds`); Nightfall and Brutal added at the user's request; `none` 38 -> 42. Built by parallel agents, untested in game. | - |

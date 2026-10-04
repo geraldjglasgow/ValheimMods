@@ -47,17 +47,17 @@ A mutated creature carries one mutation, picked by its biome's leanings: the bio
 Ashlands Bloated, and `mutations enabled` still wins. `max mutations` and the world tier boosts apply to Custom only.
 
 **6 to 8 stars** happen only on Extreme. The `star power` lines have nine entries; a file whose lines stop at five
-stars continues them by the built-in steps (an 8-star creature has about 1.5 times a 5-star's health and damage).
+stars continues them by the built-in steps (an 8-star creature has about 1.5 times a 5-star's health and 1.4 times its damage).
 
 ## Mutations
 
-Fifteen, one per creature by default, each with its own colour and its own name on the nameplate.
+Nineteen, one per creature by default, each with its own colour and its own name on the nameplate.
 
 | Mutation | What it does |
 | --- | --- |
-| Mad | Far faster, half health |
+| Mad | Far faster, half health; never on bats |
 | Bloated | Double health, explodes 1.5 seconds after it dies |
-| Cloaked | Invisible beyond 10 metres (15 for trolls and lox); drakes are never Cloaked |
+| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes and bats are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
@@ -70,6 +70,10 @@ Fifteen, one per creature by default, each with its own colour and its own name 
 | Relentless | Once it picks you it keeps coming, seen or not, until you are 150 m away; sneaking does not hide you; never faster than its base speed. Never on large creatures |
 | Juggernaut | Never staggers or is knocked back: hits, parries, blasts and traps don't stop it; where it would have staggered, "Unstoppable" shows over it instead |
 | Screecher | When one hit takes 15% of its health it shrieks: players within 20 m are deafened for 4 seconds - the world goes near-silent under a ringing, and Elemental and Blood Magic weapons will not cast. At most once every 15 seconds; a killing blow makes no shriek |
+| Frostbound | A freezing aura: players within 6 m recover stamina half as fast ("Chilled"). Leaves slick ice where it walks: on it you slide - slow to start, turn and stop - and move 15% slower; each patch lasts 10 seconds. Frost heals it instead of hurting it and never slows it (a green "+N frost") |
+| Mudbound | Leaves thick mud where it walks: in it you move 40% slower ("Deep mud"), and for a second after stepping out. Each patch lasts 10 seconds |
+| Corrodent | Your armour loses durability three times as fast under its hits, melee, thrown or shot; a line names the piece that corroded and how much is left. Shields wear as usual |
+| Cloning | When it squares up to you it leaves a decoy in its place and fights on unseen. The decoy looks exactly like it but its blows do nothing; the first blow of the unseen one that lands on you shows it, and the decoy vanishes in a puff. Kill the decoy first and it shows itself too; after 20 seconds it shows itself anyway. Once in its life |
 
 Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
 
@@ -88,7 +92,7 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   `radius` (enhanced) of the blast; `blast effect`/`warning effect` vanilla prefabs for the explosion and the smoke
   that rides the corpse until it blows, `blast sound` the vanilla sound it goes off with (`elite effects <text>`
   lists and plays the game's effect and sound prefabs)
-- **Cloaked** - `reveal distance` metres to become visible (enhanced), 10 by default and 15 for trolls and lox
+- **Cloaked** - `reveal distance` metres to become visible (enhanced), 10 by default and 15 for trolls, lox and the Rime Giant
   through their `creatures:` entries; `fade time` seconds to phase, 0 snaps; `fade margin` extra metres before
   fading back out, to stop strobing
 - **Splintering** - `damage` multiplier per split; `max generations` cascade-depth cap, 0 = unlimited;
@@ -137,14 +141,39 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   Elemental or Blood Magic (enhanced) - a second shriek extends it, never stacks; `cooldown` seconds between shrieks;
   `shriek sound` the vanilla sound it shrieks with. Only players it is hostile to are deafened, so a tamed Screecher
   deafens no one
+- **Frostbound** - the aura: `aura radius` metres it reaches (enhanced); `stamina regen` percent less stamina
+  regeneration for a player inside it that it counts as an enemy (enhanced, at most 100), so a tamed one chills no
+  friend; two auras never stack; `aura effect` the vanilla prefab it wears (cosmetic). `frost heal` percent of a hit's
+  frost it heals instead of taking (enhanced; 0 makes frost do nothing to it) - the frost as the attacker sent it,
+  before its own frost resistance; frost never slows it. The trail: `trail life` seconds an ice patch lasts, 0 for no
+  trail; `patch radius` metres it reaches; `patch spacing` metres it walks between patches; `grip` percent of their
+  footing a player keeps on the ice (100 is normal ground; at 5 a running player slides about 3 m before stopping);
+  `slow` percent slower on the ice (enhanced, at most 90); `trail effect` the vanilla effect whose ground decal draws
+  the patches. Life, radius, spacing and grip are never enhanced. A tamed one lays no trail
+- **Mudbound** - `trail life` seconds a mud patch lasts, 0 for no trail; `patch radius` metres it reaches;
+  `patch spacing` metres it walks between patches; `slow` percent slower in the mud, and for a second after stepping
+  out (enhanced, at most 90); `trail effect` the vanilla effect whose ground decal draws the patches. A tamed one lays
+  no trail
+- **Corrodent** - `durability` how many times as fast a player's armour wears under its hits (enhanced, as a
+  `1 + bonus` multiplier); 1 is the game's own rate, 0 stops its hits wearing armour. Durability never goes below 0;
+  shields wear as usual
+- **Cloning** - `times` how many times in its life it hides behind a decoy (enhanced; 0 turns it off); `range` metres
+  from the player it is fighting at which it does it; `decoy life` seconds before it shows itself anyway when no blow
+  has landed, 0 for no limit; `cooldown` seconds after it shows itself before it can do it again (only with `times`
+  above 1); `reveal effect`/`reveal sound` the vanilla effect and sound it shows itself with, `vanish effect` the puff
+  the decoy goes in. The decoy has its name, stars, gear, size, speed and current health but none of its mutations'
+  powers: its blows do no damage, push, stagger or poison to anything, it drops nothing, leaves no body and is never a
+  Devouring creature's prey. A blocked blow from the unseen one shows it, a dodged one does not. A tamed Cloning
+  creature never does it
 
 ## Boss aspects
 
 A boss never takes a mutation. It takes an **aspect**, which is in its name - "Enraged Eikthyr" - and on its altar
-before you commit: hover the offering bowl to see the current aspect, what it does, what it pays, and how long
-until it shifts. Every altar shifts to a different aspect each in-game hour (75 real seconds), so a group can wait
-for the fight it wants. The aspect on the bowl when you make the offering is the one you fight. A boss with no
-altar - the Queen, or a console spawn - rolls its aspect when it first appears.
+before you commit: hover the offering bowl to see the boss's stars ("Stars: ★★", or none), the current aspect, what
+it does, what it pays, and how long until it shifts. Every 15 seconds the altar shifts: the stars roll again and the
+aspect changes to a different one, so a group can wait for the fight it wants. The stars and aspect on the bowl when
+you make the offering are the ones you fight. A boss with no altar - the Queen, or a console spawn - rolls its stars
+and aspect when it first appears.
 
 | Aspect | What it does | Loot |
 | --- | --- | --- |
@@ -156,31 +185,40 @@ altar - the Queen, or a console spawn - rolls its aspect when it first appears.
 | Elementalist | 20% more fire, frost, lightning, poison and spirit damage | x1.2 |
 | Enraged | 20% more physical damage | x1.2 |
 | Twin | A second copy of the boss; the two share one health pool, 25% less health and damage each, and both drop full loot | x1 each |
-| Phantom | At 66% and again at 33% health it splits off one copy per player online, each with 25 health per world tier (tier 0 counts as 1) and half its damage; copies drop nothing, leave no body, and vanish when the boss dies. Their small health bars sit in a row under the boss's own | x1.3 |
+| Phantom | At 66% and again at 33% health it splits off one copy per player online, each with 25 health per world tier (tier 0 counts as 1) and half its damage; copies drop nothing, leave no body, and vanish when the boss dies. At each split the boss hides among them: in a puff it takes a random place in a ring with its copies, which carry its name and its share of health left, and all their bars, the boss's too, sit small in one row in random order. Hit them to find the boss | x1.3 |
 | Adaptive | Takes 50% less of whichever damage type hit it most in the last 15 seconds, and glows that type's colour. Swap weapons, or spread the group across damage types | x1.3 |
 | Fixated | Marks one player with a red eye over their head and a line in chat, hits them 50% harder and everyone else 30% softer. Every 30 seconds the mark moves to whoever hurt it most in those seconds; alone, you are always marked | x1.3 |
 | Stormbound | Every 20 seconds a glowing circle appears under each player within 40 m, and 2 seconds later lightning strikes it: 8% of your maximum health and a stagger if you are still inside. A roll through it is safe; a shield is not | x1.2 |
 | Gravitic | Every 20 seconds it roars and drags every player within 30 m toward it for 1.5 seconds, then slams: 10% of your maximum health and a stagger within 6 m of its body. A roll dodges the slam | x1.3 |
 | Colossal | 40% bigger, 15% more health, 15% slower. Its heavy blows send out a shockwave that knocks players within 8 m down, no damage; roll through it or jump it | x1.2 |
-| Tethered | Comes as two bosses joined by a faint tether, each with 25% less health and damage; they keep their own health and die apart. The further apart their health, the tauter and redder the tether, the faster both attack (up to 50%) and the less damage the one with less health left takes (up to 50%), both at their most once the gap reaches 50 points. Kill one first and the other fights on at full speed. Both health bars show, one under the other; only the last to fall drops loot | x1 |
-| Bountiful | Carries two more aspects at once, drawn from that boss's own rotation (never two of Twin, Tethered and Phantom). The altar shows all of them before you offer, and the name carries every word: "Bountiful Enraged Mending Eikthyr". Its twin, tethered partner or Phantom copies carry its other aspects too (each copy calls its own Summoner waves and marks its own Fixated player). Pays every aspect's loot multiplied together | x2 (times each extra's) |
+| Tethered | Comes as two bosses joined by a faint tether, each with 25% less health and damage; they keep their own health and die apart. The further apart their health, the tauter and redder the tether, the faster both attack (up to 50%) and the less damage the one with less health left takes (up to 50%), both at their most once the gap reaches 50 points. Kill one first and the other fights on at full speed. Both health bars show, one under the other; only the last to fall drops loot, and the damage board shows once, when the last falls, counting both | x1 |
+| Bountiful | Carries two more aspects at once, drawn from that boss's own rotation (never two of Twin, Tethered and Phantom). The altar shows all of them before you offer, and the name carries every word: "Bountiful Enraged Mending Eikthyr". Its twin, tethered partner or Phantom copies carry its other aspects too (each copy calls its own Summoner waves and marks its own Fixated player). Pays every aspect's loot multiplied together, and twice the boss trophies | x2 (times each extra's) |
 | Portalbound | Elder only. As it winds up its vine throw a portal opens 5 to 8 m up within 20 m of its target, in sight of them; as it throws, a second portal opens on its hand and the vines fly out of the far portal at you. No clear spot: it throws as usual | x1.2 |
+| Nightfall | Night falls on the fight: every player within 60 m of it sees a storming midnight - rain, lightning and thunder - and turns Wet and Cold as under a real storm at night (a roof, a fire or frost resistance still help); the day comes back over a few seconds once it dies or you go 10 m past that range. Every 10 to 20 seconds of fight a tornado whirls up 6 to 9 m in front of each player: for 1.5 seconds it forms, harmless, then hunts that player at 40% of a player's run speed until 10 seconds after it rose, and anyone its funnel touches (1.5 m wide at the ground, 9 m at its 14 m top) takes 25 lightning damage a second; armour does not help. One tornado per player at a time. A tornado that passes over one of the Elder's roots picks it up and throws it in a random direction, 6 to 10 m away. Only what each player sees and feels changes: the world's time and weather never do | x1.3 |
+| Brutal | Its heavy blows throw every player they hit 20 m away, 3 m up at the peak; the hit deals its damage as usual, the landing none. A roll through the blow, or a block that holds (a parry included), keeps you on your feet; a broken guard or a blow from behind throws you. Never while swimming, seated, riding or on a ship's deck | x1.2 |
 
-The chances are weights: 38 for the plain fight and 10 for each of the sixteen aspects (Portalbound only for the Elder), so about one boss fight in
-five stays as the game ships it. Stormbound's lightning, Gravitic's slam and Colossal's shockwave are dodged, not
-blocked: a roll timed through them avoids them, and a raised shield does not.
+The chances are weights: 42 for the plain fight and 10 for each of the eighteen aspects (Portalbound only for the Elder), so about one boss fight in
+five stays as the game ships it. Stormbound's lightning, Gravitic's slam, Colossal's shockwave and Nightfall's tornadoes
+are dodged, not blocked: a roll timed through them avoids them, and a raised shield does not. Brutal's throw is the one
+a shield stops.
 
-Everything is in the `aspects:` block under `bosses:` in the rule file: the off switch, the shift interval (0 fixes
-each altar), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
+Everything is in the `aspects:` block under `bosses:` in the rule file: the off switch, the shift interval in real
+seconds (`shift seconds`; 0 fixes each altar; an older file's `shift hours` still works), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
 Summoner calls and, optionally, which aspects that boss may roll.
 
 **Boss trophies.** A boss drops one trophy per star plus one (five heads from a four-star boss) in every loot mode,
-Vanilla included. Nothing else changes that count: not the `drops` line, extra rolls, the global or boss multiplier,
-an aspect's loot or `multiply trophies`. Each Twin drops its own; of a Tethered pair only the last to fall drops anything; Phantom copies drop nothing.
+Vanilla included. Only Bountiful changes that count, times its own loot (ten heads from a four-star Bountiful boss);
+nothing else does: not the `drops` line, extra rolls, the global or boss multiplier, another aspect's loot or
+`multiply trophies`. Each Twin drops its own; of a Tethered pair only the last to fall drops anything; Phantom copies drop nothing.
 Only a `drop overrides` row naming the trophy in the boss's `creatures:` entry replaces it, and an `extra drops` row
 adds on top.
 
 ## Boss aspect power fields
+
+`shift seconds` (15) under `aspects:` is the real seconds between altar shifts. Each shift rolls the boss's stars and
+its aspect again (never the same aspect twice in a row; the stars may repeat); 0 fixes each altar once it is first
+rolled. It applies to the stars even with `enabled: false`. An older file's `shift hours` (in-game hours, 75 s each on
+the default day) still works when the file names only that; if both are named, `shift seconds` wins.
 
 `power` under `aspects:` sets each aspect's numbers. Percentages are of the boss as its stars left it.
 
@@ -212,6 +250,17 @@ adds on top.
 - **Portalbound** - `min height` m the far portal hangs at least above whatever is under it (ground, building,
   treetop or water); `clearance` m it keeps from anything solid and any creature; `range` m from the boss's target it
   opens within, with a clear line to it (0: never). Only the Elder rolls it
+- **Nightfall** - `range` m from the boss, along the ground, within which a player's sky turns to a storming
+  midnight (kept until 10 m past it) and each player gets a tornado; `every` and `every max` the least and most seconds
+  of fight between waves, drawn each time (never shorter than `life`; `every` 0 turns them off); `life` seconds from a
+  tornado's rising to its breaking up; `form time` seconds it whirls into existence, harmless; `tornado speed` % of a
+  player's run speed it hunts at; `damage` a second, as lightning, to a player its funnel touches (armour does not
+  reduce it, lightning resistance does); `base width` and `top width` m across at the ground and at its top; `height`
+  m tall; `toss distance` m at most that a tornado throws one of the Elder's roots it passes over (at least 60% of that;
+  0: never)
+- **Brutal** - `launch` m a thrown player flies across flat ground, away from the boss (0: never throws; at most
+  40); `lift` m the throw peaks above where they left the ground (kept between 1 and 15). A throw never crosses the
+  ground faster than 30 m/s, so a long `launch` with a low `lift` falls short
 
 ## Per-creature rules
 
@@ -219,7 +268,7 @@ Each entry under `creatures:` in the rule file is matched by prefab name (`elite
 set any of these keys:
 
 - `drops` - replaces the star `drops` line for this creature
-- `multiply trophies` - this creature's own trophy switch (a boss's own trophies ignore it: always one per star plus one)
+- `multiply trophies` - this creature's own trophy switch (a boss's own trophies ignore it: always one per star plus one, times Bountiful's loot)
 - `drop overrides` - changes rows of its own drop table: `item`, then `amount: [min, max]` (inclusive), `chance`
   0-100, or `remove: true` to delete the row
 - `extra drops` - adds rows with `item`, `amount` and `chance`; `per star: true` makes a row follow the loot mode
@@ -242,9 +291,9 @@ creatures:
 `mutation chance` replaces the creature's default curve, but any mutation with its own curve in the biome (or in
 `defaults`, like Devouring and Gilded) keeps it, so set that mutation to `[0]` under `mutation chances` to stop it.
 `mutations enabled` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
-entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with three: Troll
-and Lox raise Cloaked's `reveal distance` to 15, and Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
-never Cloaked.
+entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with five: Troll,
+Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
+never Cloaked, and Bat sets Mad and Cloaked to `[0]`, so bats are never either.
 
 ## Respawning
 
@@ -252,6 +301,18 @@ Cleared camps and dungeons can fill up again, and emptied dungeon chests can ref
 days (a world day is 30 real minutes at the game's default speed). All three are off by default, so clearing a camp
 or a dungeon stays worth doing. A spawner the game already times on its own is left alone, and a chest refills only
 once it has been fully emptied.
+
+## Death recap
+
+Every death can be watched again. While you play, the mod keeps a small video of the last seconds of your own
+screen in memory, and logs every hit you take. When you die, nothing changes about dying or respawning; two seconds
+later a line at the top left names the killer and the key. `F10` (or `/deaths`) opens the recap window: your deaths
+since the game started (five by default), each with the video of the last 15 seconds and two after, playable at
+0.25×, 0.5×, 1× or 2× with a timeline you can drag (hover it for a preview, marks at every hit and at the death),
+the killer with its mutations and stars, and every hit with its damage by type and the health left. Space plays or
+pauses, the arrow keys step a frame, clicking a hit plays from just before it. The video is recorded and kept only
+on your machine; turning `Record deaths` off keeps the hit list without video. Settings are in
+`10 - Death Recap (per player)`. Design notes in `features/death-recap.md`.
 
 ## Console commands
 
@@ -264,3 +325,4 @@ once it has been fully emptied.
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
 | `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the other `elite` commands are admin only |
 | `damage` | Shows the latest boss damage board again. Open to every player, and typed as `/damage` in chat |
+| `deaths` | Opens the death recap window, like its key. Open to every player, and typed as `/deaths` in chat |

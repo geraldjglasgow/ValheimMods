@@ -36,6 +36,16 @@ namespace EliteCreaturesReborn.Aspects
             return Mathf.Clamp01(Mathf.Abs(a - b) / full);
         }
 
+        /// <summary>
+        /// The partner is still standing, as its ZDO says on this machine: present, with health left (no health key means
+        /// full). A partner whose ZDO is gone has fallen. Read where a boss dies, which may not have the partner loaded.
+        /// </summary>
+        public static bool Standing(ZDOID partner)
+        {
+            ZDO? other = partner != ZDOID.None && ZDOMan.instance != null ? ZDOMan.instance.GetZDO(partner) : null;
+            return other != null && other.IsValid() && other.GetFloat(ZDOVars.s_health, 1f) > 0f;
+        }
+
         /// <summary>Still in the fight on this machine: loaded, its ZDO live, not dying.</summary>
         public static bool Alive(Character? boss) =>
             boss != null && boss.m_nview != null && boss.m_nview.IsValid() && !boss.IsDead();

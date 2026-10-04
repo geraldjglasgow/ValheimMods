@@ -23,6 +23,12 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>True on the copies a Phantom boss brings - never on the boss itself. Read from the copy's ZDO.</summary>
         public bool PhantomCopy;
 
+        /// <summary>True on a Cloning creature's decoy - never on the creature itself. Read from the decoy's ZDO. A decoy
+        /// wears its creature's mutations (<see cref="Wears"/>: its name, its stars' colours, its health and speed) but has
+        /// none of their powers: <see cref="Has"/> is false for every one, so no behaviour, hit or death of any mutation
+        /// ever runs on it.</summary>
+        public bool Decoy;
+
         /// <summary>The world tier a wild creature was rolled at; 0 for tier 0, and for a newborn, boss or console spawn.</summary>
         public int Tier;
 
@@ -38,7 +44,12 @@ namespace EliteCreaturesReborn.Traits
             Aspect = aspect;
         }
 
-        public bool Has(Mutation mutation) => (Mask & (1 << (int)mutation)) != 0;
+        /// <summary>True when the mutation is in the set and works: false for every mutation on a <see cref="Decoy"/>.</summary>
+        public bool Has(Mutation mutation) => !Decoy && Wears(mutation);
+
+        /// <summary>True when the mutation is in the set, working or not: what the name and the stars show, and what sets
+        /// the body's health and speed, on a decoy as on its creature.</summary>
+        public bool Wears(Mutation mutation) => (Mask & (1 << (int)mutation)) != 0;
 
         public void Add(Mutation mutation) => Mask |= 1 << (int)mutation;
 
@@ -75,7 +86,7 @@ namespace EliteCreaturesReborn.Traits
         /// </summary>
         public bool OnLargeStar(Mutation mutation)
         {
-            if (!Has(mutation))
+            if (!Wears(mutation))
             {
                 return false;
             }
@@ -96,7 +107,7 @@ namespace EliteCreaturesReborn.Traits
         {
             foreach (Mutation mutation in MutationCatalog.InOrder)
             {
-                if (Has(mutation))
+                if (Wears(mutation))
                 {
                     yield return mutation;
                 }

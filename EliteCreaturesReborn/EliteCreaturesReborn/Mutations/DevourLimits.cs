@@ -33,9 +33,9 @@ namespace EliteCreaturesReborn.Mutations
         public static bool Sated(EliteController devourer) =>
             MealStore.Count(devourer.View.GetZDO()) >= Allowance(devourer.Rules, devourer.Traits);
 
-        /// <summary>True when the creature can be prey at all: not a player, not a boss, not large.</summary>
+        /// <summary>True when the creature can be prey at all: not a player, not a boss, not large, not a Cloning decoy.</summary>
         public static bool IsPrey(Character creature) =>
-            !creature.IsPlayer() && !creature.IsBoss() && !BodySize.IsLarge(creature);
+            !creature.IsPlayer() && !creature.IsBoss() && !BodySize.IsLarge(creature) && !CloneStore.IsDecoy(creature);
 
         /// <summary>
         /// True when it is prey and within reach: its current health at most `max prey health` percent of the devourer's

@@ -47,6 +47,7 @@ namespace EliteCreaturesReborn.Config
             BindNameplate(config);
             BindBoardAndTier(config);
             PaletteSettings.Bind(config);
+            Recap.RecapSettings.Bind(config);
             BindDiagnostics(config);
         }
 

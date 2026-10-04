@@ -63,7 +63,9 @@ namespace EliteCreaturesReborn.Rules
         public static bool IsPrefabField(string field) =>
             field == CloudEffect || field == BodyEffect || field == BlastEffect || field == BlastSound
             || field == WarningEffect || field == BonusItem || field == GlitterEffect || field == BlinkEffect
-            || field == TellEffect || field == TellSound || field == ShriekSound;
+            || field == TellEffect || field == TellSound || field == ShriekSound
+            || field == AuraEffect || field == TrailEffect
+            || field == RevealEffect || field == RevealSound || field == VanishEffect;
 
         // Devouring
         public const string AbsorbHealth = "absorb health";
@@ -99,10 +101,35 @@ namespace EliteCreaturesReborn.Rules
         public const string MuteTime = "mute time";
         public const string ShriekSound = "shriek sound";
 
+        // Frostbound (`trail life`, `patch radius`, `patch spacing`, `slow`, `trail effect` shared with Mudbound)
+        public const string AuraRadius = "aura radius";
+        public const string StaminaRegen = "stamina regen";
+        public const string FrostHeal = "frost heal";
+        public const string AuraEffect = "aura effect";
+        public const string TrailLife = "trail life";
+        public const string PatchRadius = "patch radius";
+        public const string PatchSpacing = "patch spacing";
+        public const string Grip = "grip";
+        public const string TrailEffect = "trail effect";
+
+        // Mudbound
+        public const string Slow = "slow";
+
+        // Corrodent
+        public const string Durability = "durability";
+
+        // Cloning (`range` and `cooldown` are shared)
+        public const string Times = "times";
+        public const string DecoyLife = "decoy life";
+        public const string RevealEffect = "reveal effect";
+        public const string RevealSound = "reveal sound";
+        public const string VanishEffect = "vanish effect";
+
         // boss aspects block (under `bosses:`)
         public const string Aspects = "aspects";
         public const string Enabled = "enabled";
         public const string ShiftHours = "shift hours";
+        public const string ShiftSeconds = "shift seconds";
         public const string Chances = "chances";
         public const string Loot = "loot";
         public const string Power = "power";
@@ -153,6 +180,20 @@ namespace EliteCreaturesReborn.Rules
         // Portalbound (`range` is shared)
         public const string MinHeight = "min height";
         public const string Clearance = "clearance";
+
+        // Nightfall (`range`, `every`, `damage` shared)
+        public const string EveryMax = "every max";
+        public const string Life = "life";
+        public const string FormTime = "form time";
+        public const string TornadoSpeed = "tornado speed";
+        public const string TopWidth = "top width";
+        public const string BaseWidth = "base width";
+        public const string Height = "height";
+        public const string TossDistance = "toss distance";
+
+        // Brutal
+        public const string Launch = "launch";
+        public const string Lift = "lift";
 
         /// <summary>Phantom's fixed copy count before copies came per player; read only to tell a rule file it is unused.</summary>
         public const string Copies = "copies";

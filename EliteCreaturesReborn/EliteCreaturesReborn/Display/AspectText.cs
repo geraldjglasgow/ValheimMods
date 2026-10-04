@@ -14,6 +14,9 @@ namespace EliteCreaturesReborn.Display
     /// </summary>
     public static class AspectText
     {
+        /// <summary>U+2605, the black star, written as an escape so the file stays plain ASCII.</summary>
+        private const char StarGlyph = '\u2605';
+
         public static string Describe(Aspect aspect, AspectRules rules) => aspect switch
         {
             Aspect.None => "the fight as the game ships it",
@@ -49,11 +52,23 @@ namespace EliteCreaturesReborn.Display
                 + $"health, {N(rules, aspect, Fields.Slower)}% slower; its heavy attacks send a "
                 + $"{N(rules, aspect, Fields.ShockwaveRadius)} m shockwave that knocks players down (roll through it or "
                 + "jump it)",
+            _ => DescribeNewest(aspect, rules),
+        };
+
+        /// <summary>The aspects added in 3.15.0 and after, split out only to keep <see cref="DescribeLater"/> short.</summary>
+        private static string DescribeNewest(Aspect aspect, AspectRules rules) => aspect switch
+        {
             Aspect.Tethered => $"comes as two bound by a tether, each with {N(rules, aspect, Fields.LessHealth)}% less health; "
                 + $"the further apart their health, the faster both attack (up to {N(rules, aspect, Fields.AttackSpeed)}%) "
                 + $"and the less damage the weaker one takes (up to {N(rules, aspect, Fields.Armour)}%)",
             Aspect.Bountiful => $"carries {N(rules, aspect, Fields.ExtraAspects)} more aspects at once",
             Aspect.Portalbound => "throws its vines through portals: one opens at its hand, the other somewhere above you",
+            Aspect.Nightfall => $"turns the sky to a storming midnight within {N(rules, aspect, Fields.Range)} m of it; "
+                + $"every {N(rules, aspect, Fields.Every)}-{N(rules, aspect, Fields.EveryMax)} seconds a tornado rises by "
+                + $"each player there and hunts them for {N(rules, aspect, Fields.Life)} seconds: "
+                + $"{N(rules, aspect, Fields.Damage)} damage a second inside it",
+            Aspect.Brutal => $"its heavy blows throw the players they hit {N(rules, aspect, Fields.Launch)} m away; a block "
+                + "that holds or a parry keeps you on your feet, and the landing never hurts",
             _ => "",
         };
 
@@ -74,16 +89,27 @@ namespace EliteCreaturesReborn.Display
                 : string.Join(", ", words, 0, words.Length - 1) + " and " + words[words.Length - 1];
         }
 
-        /// <summary>The lines under the bowl's own hover text: the aspect, a Bountiful one's extras each with what it does,
-        /// what the whole fight pays, and when it shifts.</summary>
-        public static string AltarLines(BossAspects aspects, AspectRules rules, double secondsToShift)
+        /// <summary>The lines under the bowl's own hover text: the boss's stars, the aspect, a Bountiful one's extras each
+        /// with what it does, what the whole fight pays, and when it shifts. A part that is off (null) is left out.</summary>
+        public static string AltarLines(int? stars, BossAspects? aspects, AspectRules rules, double secondsToShift)
+        {
+            string starLine = stars is int count ? StarLine(count) : "";
+            string aspectLines = aspects is BossAspects drawn ? AspectLines(drawn, rules) : "";
+            return starLine + aspectLines + Shift(secondsToShift);
+        }
+
+        /// <summary>"Stars: " and one star glyph per star, or "Stars: none". The game's fonts draw the glyph from their
+        /// Noto JP fallback, as they draw every Japanese character.</summary>
+        private static string StarLine(int stars) =>
+            $"\n<color=orange>Stars: {(stars > 0 ? new string(StarGlyph, stars) : "none")}</color>";
+
+        private static string AspectLines(BossAspects aspects, AspectRules rules)
         {
             Aspect aspect = aspects.Headline;
             string name = aspect == Aspect.None ? "none" : AspectCatalog.Word(aspect);
             float loot = AspectLoot.FactorOf(aspects, rules);
             string pays = Mathf.Approximately(loot, 1f) ? "" : $" <color=#A0A0A0>(loot x{loot:0.##})</color>";
-            return $"\n<color=orange>Aspect: {name}</color>{pays}\n{Describe(aspect, rules)}"
-                + ExtraLines(aspects, rules) + Shift(secondsToShift);
+            return $"\n<color=orange>Aspect: {name}</color>{pays}\n{Describe(aspect, rules)}" + ExtraLines(aspects, rules);
         }
 
         /// <summary>One line per extra aspect a Bountiful altar will add: "+ Enraged: deals 20% more physical damage".</summary>
@@ -101,7 +127,7 @@ namespace EliteCreaturesReborn.Display
         {
             if (seconds < 0)
             {
-                return ""; // shifting is off: the aspect is fixed
+                return ""; // shifting is off: the altar is fixed
             }
             int whole = Mathf.Max(0, Mathf.CeilToInt((float)seconds));
             return whole == 0 ? "\n<color=#A0A0A0>Shifting...</color>" : $"\n<color=#A0A0A0>Shifts in {whole / 60}:{whole % 60:00}</color>";

@@ -20,6 +20,7 @@ namespace EliteCreaturesReborn.Patches
         {
             EliteCommands.Register();
             DamageCommand.Register();
+            DeathsCommand.Register();
         }
     }
 }

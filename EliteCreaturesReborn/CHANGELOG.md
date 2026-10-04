@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.16.0
+
+- New mutations: Frostbound (ice trail, chilling aura), Mudbound (mud trail), Corrodent (ruins armour) and Cloning (hides behind a decoy).
+- New boss aspects: Nightfall (storming midnight, hunting tornadoes) and Brutal (heavy blows throw players far).
+- Death recap: `Recap key` (F10) or `/deaths` replays your last seconds and every hit.
+- Altars show the boss's stars before the offering.
+- Phantom's boss hides among its copies; Bountiful doubles boss trophies; Tethered pairs share one damage board.
+- New rule files: altars shift every 15 s (`shift seconds`); stars hit softer; bats are never Mad or Cloaked.
+- Fixed: Stormbound no longer strikes players in nearby dungeons.
+
 ## 3.15.0
 
 - New mutations: Juggernaut (never staggers) and Screecher (a heavy hit makes it shriek and deafen nearby players).

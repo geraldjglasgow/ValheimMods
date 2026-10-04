@@ -26,7 +26,7 @@ server raise the ceiling without rewriting every line.
 | --- | --- | --- |
 | `growth` | Size bonus, added to 1 | 0.06, 0.10, 0.15, 0.20, 0.25, 0.30 |
 | `hp` | Maximum health | 1, 1.4, 1.95, 2.6, 3.3, 4.0 |
-| `attack` | Everything it deals | 1, 1.2, 1.45, 1.75, 2.1, 2.5 |
+| `attack` | Everything it deals | 1, 1.15, 1.3, 1.5, 1.75, 2 |
 | `swing speed` | Attack and animation speed | 1, 1.02, 1.05, 1.08, 1.12, 1.16 |
 | `speed` | Movement speed | 1, 1, 1.03, 1.06, 1.1, 1.15 |
 | `drops` | Loot quantity | 1, 1, 1.5, 2, 2.5, 3 |

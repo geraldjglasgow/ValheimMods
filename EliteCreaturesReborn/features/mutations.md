@@ -14,7 +14,8 @@ session against the checklist in "Testing it honestly" below. Gilded, Blinking a
 mutation rules and the 3.9.0 changes to Bloated, Cloaked, Warding and Splintering are built and not yet tested in
 game. So are Devouring's two limits (prey no bigger than 125% of its own health, one meal per star), the eaten
 creatures on its nameplate, its devour tell at a fifth of its old size and Bloated's 1.7-second fuse (2026-09-28),
-and the devour and Warding tells heard with nothing drawn (2026-09-30).
+and the devour and Warding tells heard with nothing drawn (2026-09-30). Frostbound, Mudbound, Corrodent and Cloning
+(2026-10-04) are built and not yet tested in game.
 
 **Bosses never take mutations.** They take stars on their own separate table - see `SPEC-scaling.md`.
 
@@ -43,7 +44,7 @@ here.
 | --- | --- | --- |
 | Mad | Moves and attacks far faster - +60% movement, +50% attack speed | Half health |
 | Bloated | Double health. On death it smokes for 1.5 seconds, then explodes | None |
-| Cloaked | Invisible at more than 10 metres (15 for trolls and lox), nameplate included. Never rolled by a drake | None |
+| Cloaked | Invisible at more than 10 metres (15 for trolls, lox and the Rime Giant), nameplate included. Never rolled by a drake | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
 | Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health in any one second, and knocks them back on any melee hit | None |
@@ -56,7 +57,7 @@ here.
 | Relentless | Keeps the target it picked while that target is within 150 metres, seen or not; sneaking does not hide you from it. See below | Never faster than its base speed |
 
 Judgement calls in that table, all tunable: the Mad percentages; Devouring's one meal for an unstarred devourer
-(`min meals`); Bloated's 1.5-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls and lox, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
+(`min meals`); Bloated's 1.5-second fuse and its explosion doing 40 damage in a 4 metre radius, scaled by its star count; Cloaked's 10 metres, 15 for trolls, lox and the Rime Giant, and none at all for drakes - an invisible flyer spitting frost from above is no fight; Splintering's 40% damage reduction; Leeching's regen
 and lifesteal rates, its 5-second combat cooldown and its 20 hp/s regen cap - a high-health creature must be
 beatable on regen alone; Warding's 30% reflection and its 7.5% ceiling; Plated running from a 40% damage cut at full health to none at
 zero, hard-capped at 55% so a large star cannot approach invulnerability, while its damage climbs from nothing to
@@ -631,6 +632,144 @@ still does.
 
 `chase distance` (150). `0` turns the hold off; the speed cap stays. Not enhanced.
 
+## Frostbound, in full
+
+Added with the user on 2026-10-04: "a freezing aura that slows player stamina recovery; leaves a trail of slowing ice
+on the ground that causes players to slide, lasts for 10 seconds; frost damage to this creature should heal it
+instead".
+
+### The aura
+- A player within `aura radius` (6 m) of a living Frostbound creature that counts them as an enemy is **Chilled**:
+  stamina regenerates `stamina regen` (50) percent slower while they stay. The HUD shows it with the game's frost
+  icon, no countdown; it ends about a second after they leave, or when the creature dies or unloads.
+- Two auras never stack: the strongest cut in reach wins. A tamed Frostbound creature chills no friend; an admin's
+  ghost is never chilled.
+- It wears `aura effect` (`vfx_Frost`) at body size and a pale ice-blue light whose reach is the aura's. It hides with
+  a Cloaked creature.
+
+### Frost heals it
+- The frost in a hit never hurts it; it heals `frost heal` (100) percent of that frost once the rest of the hit has
+  landed, and a green "+N frost" shows over it, even at full health. A killing blow heals nothing.
+- The heal is the frost the attacker sent, before its frost resistance and this mod's scaling, so a frost-immune host
+  heals as much as one weak to frost (judgement call).
+- The game's Frost slow never takes hold on it: neither from frost damage nor from a frost weapon's status effect.
+
+### Multiplayer
+- The aura is decided on each player's own machine, for that player only, from what every machine already has (the
+  creature's position, traits and the synced rules): nothing is sent. A dedicated server runs none of it.
+- The heal is decided on the creature's owner, where the game resolves hits (prefix on `Character.RPC_Damage`, first
+  of all prefixes; heal in a last postfix); health travels in the ZDO and the "+N frost" goes to every client near it
+  the way a damage number does.
+
+## Frostbound and Mudbound trails, in full
+
+Mudbound added with the user on 2026-10-04: "a thick mud trail behind it that turns terrain into deep ground, slowing
+player movement speed by 40%; it lasts for 10 seconds". One mechanism, two trails (`GroundTrailField`). Neither
+changes the terrain.
+
+### Where the patches fall
+- One patch each time the creature has walked `patch spacing` (1.5) metres on the ground, at its feet. Standing still
+  lays nothing; nor does flying, falling, swimming or wading, nor a jump further than any stride (a blink).
+- At most one patch every quarter second, and never more than 40 of one creature's on the ground at once.
+- A tamed one lays no trail: a patch slows every player alike, so it would turn its keepers' base to ice or mud
+  (judgement call).
+
+### What a patch does
+- Only players, decided on each player's own machine, from the patches that machine has drawn - never a creature,
+  never a player who cannot see it. Only on the ground: not in the air, swimming, riding, sitting, in ghost mode, or
+  more than 1.5 m above or below the patch.
+- Mud: "Deep mud" (the game's tar icon), `slow` (40%) slower while in it and for 1 second after stepping out.
+- Ice: "Slick ice", `slow` (15%) slower, and only `grip` (5%) of the player's footing: each physics step only that
+  share of the game's push on their body lands (`Character.ApplySlippery` postfix), and their feet's friction falls
+  by the same share (`UpdateBodyFriction` postfix). They keep sliding the way they were going, start, turn and stop
+  slowly, and drift downhill; their legs still run the way they mean to go. Jumps, dodges, lunges and knockback are
+  untouched. The slide ends 0.3 s after they step off.
+- Overlapping patches: the strongest slow and the least grip count.
+- Judgement calls: `grip` 5 (15 barely slid: a running player stopped in under a metre); the ice slow 15%; only
+  `slow` enhanced on a large star, capped at 90; patches at the feet, not behind; patch radius not scaled with body
+  size; `trail life: 0` turns the trail off.
+
+### How it looks
+- Each patch is the game's own ground decal (the splat a blob leaves, taken from `trail effect`: `vfx_blob_frost_death`
+  for ice, `vfx_blobtar_death` for mud), copied locally and laid on the surface it fell on, wearing a pool shape made
+  at runtime (mud lumpy, ice smooth with a sheen), tinted dark brown or pale blue. It swells in, lasts `trail life`
+  seconds and fades over the last tenth. Drawn whatever the effect density: it is the only warning.
+- A patch outlives the creature that laid it and fades out normally after it dies or leaves.
+
+### Multiplayer
+- The owner decides: drops go into the creature's ZDO (`ecr_frost_trail`/`ecr_mud_trail`, with a monotonic counter
+  `..._seq`), newest 12 only, stamped on the shared clock. Every client lays each new drop once and keeps it itself;
+  a client arriving later sees only the drops still in the blob, and is affected only by what it draws.
+- Known minor issue: a client that unloads and reloads a creature within 10 s can lay its newest drops twice
+  (darker, same effect).
+
+## Corrodent, in full
+
+Added with the user on 2026-10-04: "attacks shatter target player armor durability at three times the normal rate".
+
+- Armour a player wears loses durability `durability` (3) times as fast under its hits: the game wears one worn piece
+  by what got through the armour (`Player.DamageArmorDurability`), and Corrodent multiplies what was lost. Never
+  below 0.
+- Only its own hits: melee, projectiles it throws or shoots, area attacks. Poison and burning ticks never wear armour
+  in the game, and still don't. Shields are not armour: their block wear is the game's.
+- The player sees it: at most every 8 seconds a line with the piece's icon - "Your Bronze helmet corrodes (42% left)".
+- Decided on the hit player's own machine, where their gear lives: the attacker is the creature the hit carries, its
+  traits read from its ZDO. No component, nothing sent.
+
+## Cloning, in full
+
+Added with the user on 2026-10-04: "when fighting, the creature stops actually dealing damage to the player and an
+exact copy of the creature is created, but invisible. Once the invisible creature attacks a player, it becomes visible
+and the clone dies. If the player kills the clone, the real creature becomes visible." Read as: the one you see becomes
+a harmless decoy, the real one fights on unseen.
+
+### When it does it
+- When its AI is alerted on a player it counts as an enemy and can see or hear, within `range` (12 m, so ranged
+  creatures do it too). An animal's AI never holds a target, so an animal never does it; a tamed one never does.
+- Only in its ordinary stride: not mid-swing, staggered or latched on, so the swap shows nothing.
+- `times` (1) times in its life, counted in its ZDO; with more, never sooner than `cooldown` (30 s) after the last one
+  ended.
+
+### The decoy
+- A new object of its prefab at its exact place and facing; the original stays the real creature (ZDO, traits,
+  health, loot). The decoy has the same name and stars, size, speed, current health and random gear; it wakes already
+  fighting the same player with no alert cry, and the two bodies pass through each other.
+- Its blows land but do nothing - no damage, push, stagger or status effect - to players, tames, creatures, and (at
+  the swing) buildings and trees. A shield blocks it (0) and a parry staggers it.
+- None of its creature's mutation powers (`CreatureTraits.Has` is false for every mutation on a decoy; `Wears` keeps
+  its looks and body). With `max mutations` above 1 it lacks their worn looks (Miasmic body, Gilded glitter, pouch
+  icons), and a Juggernaut decoy staggers. A Devouring creature never eats it.
+- No loot, trophies or body (`PhantomBody.Hollow`). It goes in the `vanish effect` (`vfx_odin_despawn`) however it
+  goes, and is never saved (non-persistent). One a player kills still counts in the game's own kill statistics, as a
+  Phantom copy does.
+
+### The creature, unseen
+- Body, gear, shadow and worn effects off, lights culled, nameplate and health bar hidden, on every screen. Its sounds
+  still play and blood still shows where a lucky blow strikes it; striking it does not show it.
+- It fights on at full strength with all its own mutations.
+- A Frostbound or Mudbound one lays no trail while it hides (fresh ice under unseen feet would lead straight to it);
+  a Frostbound one's decoy wears its frost mist and light, so the body the player watches does not lose them at the
+  swap. A Cloaked one never swaps while its cloak hides it (a decoy would appear out of nothing).
+
+### How it ends
+- Its blow lands on a player (blocked or parried counts; a dodge roll's invulnerable frames do not): it shows itself,
+  and that blow does full damage. A hit on a tame does not count.
+- The decoy dies first: it shows itself.
+- `decoy life` (20 s) passes with neither: it shows itself (0: no limit).
+- It dies unseen (an area hit): the decoy goes in its puff.
+- Showing itself plays `reveal effect` (`vfx_spawn_small`) and `reveal sound` (`sfx_spawn`) on every machine.
+- A zone unload, relog or hand-over mid-trick: the decoy is gone with its owner or zone, and the creature shows itself
+  on its next owner's first frame.
+
+### Multiplayer
+- Decided on the creature's owner: it makes the decoy and writes `ecr_clone_decoy` (the decoy's id while it hides),
+  `ecr_clones` and `ecr_clone_at` to the creature's ZDO; the decoy carries `ecr_clone_of`.
+- Every machine hides or shows the body from the ZDO alone and plays the reveal as it shows.
+- The struck player's own machine judges the revealing blow and sends one routed message (`ecr_clone_hit`) to the
+  creature's owner. A decoy's blow is emptied where it lands and at the swing.
+- The decoy is non-persistent, so its maker owns it for good; it removes itself the moment the creature no longer
+  hides behind it.
+
 ## Console commands
 
 **Nothing in this mod can be tested without these.** Mutations are rare by design - Splintering is about one
@@ -939,7 +1078,7 @@ defaults:
   star power:
     growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30]
     hp:          [1,    1.4,  1.95, 2.6,  3.3,  4.0]
-    attack:      [1,    1.2,  1.45, 1.75, 2.1,  2.5]
+    attack:      [1,    1.15, 1.3,  1.5,  1.75, 2]
     swing speed: [1,    1.02, 1.05, 1.08, 1.12, 1.16]
     speed:       [1,    1,    1.03, 1.06, 1.1,  1.15]
     drops:       [1,    1,    1.5,  2,    2.5,  3]
@@ -978,11 +1117,14 @@ defaults:
 # (`loot.md`), an entry takes `mutation chance`, `mutation chances` and
 # `mutation power`, laid over the rules of whatever biome the creature is in.
 creatures:
-  # Big bodies are hard to hide: trolls and lox show themselves from further out.
+  # Big bodies are hard to hide: trolls, lox and the Rime Giant show themselves from further out.
   - match: Troll
     mutation power:
       Cloaked:     { reveal distance: 15 }
   - match: Lox
+    mutation power:
+      Cloaked:     { reveal distance: 15 }
+  - match: ECP_RimeGiant
     mutation power:
       Cloaked:     { reveal distance: 15 }
   # Drakes are never Cloaked: an invisible flyer spitting frost from above is no fight.
@@ -1135,7 +1277,7 @@ The implementation must repeat this table as comments inside the generated file.
 | Bloated | `damage` | Blunt damage at 0 stars, multiplied by `(1 + stars)`. |
 | Bloated | `radius` | Blast radius in metres. |
 | Bloated | `blast sound` | The vanilla sound prefab the blast goes off with (added 2026-09-26). |
-| Cloaked | `reveal distance` | Metres at which it becomes visible. The nameplate hides in step. `10` by default; the default `creatures:` entries make it `15` for trolls and lox. |
+| Cloaked | `reveal distance` | Metres at which it becomes visible. The nameplate hides in step. `10` by default; the default `creatures:` entries make it `15` for trolls, lox and the Rime Giant (ECP_RimeGiant). |
 | Cloaked | `fade time` | Seconds to phase in or out. `0` snaps. |
 | Cloaked | `fade margin` | Extra metres before it fades back out, so it cannot strobe at the boundary. |
 | Splintering | `damage` | Damage multiplier for a splintering creature. `0.6` = 40% weaker. |
@@ -1262,7 +1404,7 @@ The same entries carry the per-creature loot rules (`loot.md`), and one entry ma
 - **Two entries with the same `match` merge** rather than the later silently replacing the earlier: later keys win
   and drop rows add up. Uncommenting an example for a creature that already has an entry never loses the one above
   it.
-- **The shipped file has three**: Troll and Lox with `mutation power: Cloaked: { reveal distance: 15 }`, because
+- **The shipped file has four**: Troll, Lox and ECP_RimeGiant with `mutation power: Cloaked: { reveal distance: 15 }`, because
   big bodies are hard to hide, and Hatchling (the drake) with `mutation chances: Cloaked: [0]`, because an invisible
   flyer spitting frost from above is no fight. A commented Deathsquito example shows how to end Cloaked mosquitoes
   in the Plains.
@@ -1529,6 +1671,14 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Relentless in full - the quarry, the give-ups switched off, sneaking, water, despawning, hand-over
 - [ ] How many a creature gets, and which
 - [ ] Rules for one creature: per-creature mutation keys, merging entries, the three shipped entries
+- [ ] Frostbound: Chilled within 6 m (half stamina regen, never stacked, none from a tame); frost heals it with a
+      green "+N frost", never slows it; a killing frost blow heals nothing
+- [ ] Frostbound and Mudbound trails: patches every 1.5 m walked, 10 s each, the same on every client, outliving the
+      creature; ice slides (grip 5) and slows 15%, mud slows 40% and lingers 1 s; none from a tame; nothing airborne
+- [ ] Corrodent: armour wears three times as fast under its hits, the throttled corrosion line; shields as usual
+- [ ] Cloning: decoy swap at 12 m unseen; decoy blows do nothing; the real one's landed blow (or the decoy's death, or
+      20 s) shows it and the decoy vanishes; a hand-over or unload mid-trick shows it; never from a tame
+- [ ] Bats are never Mad or Cloaked on a fresh rule file
 
 ## Visuals
 
@@ -1565,3 +1715,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-28 | Devouring eats only prey with at most `max prey health` (125%) of its own current health and one creature per star (`min meals` 1 as the floor), then is sated; what it ate is kept on its ZDO (`ecr_dev_meals`) and drawn on its nameplate as trophies or the game's monster head, beside a Thieving pouch through a shared icon row; its kill tell is drawn at a fifth of the size, every part (LocalEffects `FlashScaled`); Bloated's fuse 1.7 s. Built, not tested in game. | - |
 | 2026-09-30 | The Warding and Reflective reflect tell and Devouring's kill tell are only heard, nothing drawn (LocalEffects `SoundOnly`): the reflect tell pinned to `fx_StaffShield_Hit` at 30% volume, the kill tell `fx_aspect_death`'s sound at full volume. At the user's request: the particles cost frames and the reflect sound was too loud. Built, not tested in game. | - |
 | 2026-10-03 | Juggernaut and Screecher added at the user's request (13-14; colours iron grey, pink); Howling was built too and removed the same evening after a try in game ("way too crazy"); Gilded's curve halved; large creatures (`Traits/BodySize.cs`: capsule radius >= 1 m or length >= 3.5 m, and 300+ base health) never roll or inherit Gilded or Relentless and are never prey; bosses never prey; `max prey health` 125 -> 100; Bloated's fuse 1.5 s. Judgement calls: Juggernaut shows "Unstoppable" where it would have staggered and keeps its own attack recoil; Screecher triggers on one hit taking 15% of its max health from any source, deafens only players it is hostile to (AudioListener at 4%, a faint ringing, a "Ringing ears" status), blocks Elemental and Blood Magic weapons. Built by parallel agents, not tested in game. | - |
+| 2026-10-04 | Frostbound, Mudbound, Corrodent and Cloning added at the user's request (15-18; colours pale ice, mud, rust, lavender), with their "in full" sections; the shipped Bat entry (never Mad or Cloaked). Built by parallel agents, untested in game. | - |

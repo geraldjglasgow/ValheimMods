@@ -8,7 +8,8 @@ namespace EliteCreaturesReborn.Scaling
     /// Combines a creature's star power and its mutations into the fixed multipliers - health, size, movement, swing
     /// speed - the way the specification demands: additively, never multiplicatively. Every multiplier is read as a
     /// bonus above 1, the bonuses are summed, and the total is applied once, so two mutations pulling opposite ways
-    /// cancel in proportion rather than compounding into an absurd number.
+    /// cancel in proportion rather than compounding into an absurd number. They read the mutations a creature wears, not
+    /// only those that work, so a Cloning decoy's body (<see cref="CreatureTraits.Decoy"/>) matches its creature's exactly.
     /// </summary>
     public static class StatMath
     {
@@ -21,15 +22,15 @@ namespace EliteCreaturesReborn.Scaling
         public static float HealthMultiplier(BiomeRules rules, CreatureTraits traits)
         {
             float bonus = rules.Star.HpAt(traits.Stars) - 1f;
-            if (traits.Has(Mutation.Mad))
+            if (traits.Wears(Mutation.Mad))
             {
                 bonus += rules.PowerOf(Mutation.Mad, Fields.Health) - 1f; // a cost: never enhanced
             }
-            if (traits.Has(Mutation.Bloated))
+            if (traits.Wears(Mutation.Bloated))
             {
                 bonus += Enhance.Stat(rules, traits, Mutation.Bloated, Fields.Health) - 1f;
             }
-            if (traits.Has(Mutation.Blinking))
+            if (traits.Wears(Mutation.Blinking))
             {
                 bonus += rules.PowerOf(Mutation.Blinking, Fields.Health) - 1f; // a cost: never enhanced
             }
@@ -45,22 +46,22 @@ namespace EliteCreaturesReborn.Scaling
         public static float MoveMultiplier(BiomeRules rules, CreatureTraits traits, float devourBonus)
         {
             float bonus = rules.Star.SpeedAt(traits.Stars) - 1f + devourBonus;
-            if (traits.Has(Mutation.Mad))
+            if (traits.Wears(Mutation.Mad))
             {
                 bonus += Enhance.Stat(rules, traits, Mutation.Mad, Fields.Move) - 1f;
             }
-            if (traits.Has(Mutation.Devouring))
+            if (traits.Wears(Mutation.Devouring))
             {
                 bonus += rules.PowerOf(Mutation.Devouring, Fields.Move) - 1f; // a tuning knob, usually <= 1: never enhanced
             }
             float factor = Mathf.Max(MoveFloor, 1f + bonus) * AspectMath.SpeedFactor(traits); // Colossal, a layer apart
-            return traits.Has(Mutation.Relentless) ? Mathf.Min(1f, factor) : factor; // Relentless: never above its base
+            return traits.Wears(Mutation.Relentless) ? Mathf.Min(1f, factor) : factor; // Relentless: never above its base
         }
 
         public static float SwingSpeedMultiplier(BiomeRules rules, CreatureTraits traits)
         {
             float bonus = rules.Star.SwingSpeedAt(traits.Stars) - 1f;
-            if (traits.Has(Mutation.Mad))
+            if (traits.Wears(Mutation.Mad))
             {
                 bonus += Enhance.Stat(rules, traits, Mutation.Mad, Fields.AttackSpeed) - 1f;
             }

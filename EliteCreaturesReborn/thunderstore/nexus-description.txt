@@ -2,32 +2,34 @@ Nexus Mods page text for Elite Creatures Reborn (https://www.nexusmods.com/valhe
 Paste each block into the matching field on the page's edit form. Category: Gameplay.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Creatures spawn with mutations that change the fight: Mad ones are twice as fast on half the health, Bloated ones explode when killed, Splintering ones split in two, and a Devouring one eats the pack around it. Stars beyond vanilla's two, a world tier that climbs with each boss, and traits tamed creatures pass on. Tunable per biome, server synced.
+Creatures spawn with more stars and mutations that change the fight: Mad ones are twice as fast on half the health, Bloated ones explode, Frostbound ones leave slippery ice, Cloning ones hide behind a decoy. Bosses take an aspect, shown at the altar. Difficulty from Easy to Extreme, a death recap, traits tamed creatures pass on. Server synced.
 
 ===== DESCRIPTION (BBCode) =====
-Creatures spawn with more stars and with mutations, named traits that change how a fight goes. Bosses take an aspect instead.
+Creatures spawn with more stars and mutations, traits that change how a fight goes; bosses take an aspect instead.
 
 [size=4][b]Features[/b][/size]
 [list]
-[*]Mutations: fifteen, shown on the nameplate, such as Mad, Bloated, Devouring and Thieving.
-[*]Stars: beyond vanilla's two, counted in fives; chances are set per biome.
-[*]Boss aspects: one modifier per fight (Twin, Tethered, Bountiful and thirteen more), shown at the altar; harder ones pay more.
-[*]World tiers: each boss's first defeat makes stars and mutations more common everywhere.
-[*]Breeding: tamed creatures pass a mutation and stars on to their young.
-[*]Loot: Vanilla, Scaled, Rolled or Curated drops, and drop rules per creature.
-[*]Boss damage board: who hurt the boss and how much; [b]/damage[/b] shows it again.
+[*]Mutations: nineteen, shown on the nameplate, such as Mad, Bloated, Frostbound and Cloning.
+[*]Difficulty: Easy to Extreme; new biomes start gentle, cleared ones keep hardening.
+[*]Stars: beyond vanilla's two, up to eight on Extreme.
+[*]Boss aspects: one per fight (Twin, Nightfall, Brutal and fifteen more), shown at the altar with the boss's stars.
+[*]World tiers: each boss's first defeat makes stars and mutations more common.
+[*]Breeding: tamed creatures pass a mutation and stars to their young.
+[*]Loot: four drop modes and drop rules per creature.
+[*]Boss damage board: who hurt the boss and how much.
+[*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
 [*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 [/list]
 
 [size=4][b]Install[/b][/size]
-Needed on the server and every client. Install BepInExPack for Valheim, then put EliteCreaturesReborn.dll in BepInEx/plugins (or use a mod manager). Remove any other creature star mod and its configs first: this mod reads neither.
+Needed on the server and every client. Install BepInExPack for Valheim, then put EliteCreaturesReborn.dll in BepInEx/plugins (or use a mod manager). Remove other creature star mods first; their configs are not read.
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/gglasgow.elitecreaturesreborn.cfg (each player's display) and BepInEx/config/creature_rules.yml (the rules, an off switch per feature). Both apply without a restart; the server's rules bind every player. Console: [b]elite tier[/b] and [b]damage[/b] for everyone, the other [b]elite[/b] commands for admins. Every mutation, aspect, rule field and command in detail: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md]the reference on GitHub[/url].
+BepInEx/config/gglasgow.elitecreaturesreborn.cfg (each player's own settings) and BepInEx/config/creature_rules.yml (the rules). Both apply without a restart; the server's rules bind every player. Console: [b]elite tier[/b], [b]damage[/b] and [b]deaths[/b] for everyone, the other [b]elite[/b] commands for admins. In detail: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md]the reference on GitHub[/url].
 
 [size=4][b]Links[/b][/size]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/EliteCreaturesReborn. Licence: GPL-3.0.
 
 [size=4][b]Shout outs[/b][/size]
-Thanks to the BepInEx and Harmony teams for the tools every Valheim mod stands on.
+The BepInEx and Harmony teams, Iron Gate Studio for Valheim, and Nexus Mods for hosting this page. The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game, and every modder who keeps their mods open source so others can collaborate, learn and build on them.

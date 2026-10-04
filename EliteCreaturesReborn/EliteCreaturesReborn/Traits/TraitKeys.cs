@@ -89,6 +89,10 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Boss aspects: the world time (whole milliseconds) of an altar's next shift, on the altar's ZDO.</summary>
         public const string AltarShiftAt = "ecr_altar_shift";
 
+        /// <summary>Boss altars: the star count the boss summoned at an altar will have, on the altar's own ZDO, rolled
+        /// again at every shift; -1 (absent) until first rolled - as on an altar rolled before stars came to altars.</summary>
+        public const string AltarStars = "ecr_altar_stars";
+
         /// <summary>Twin: the partner boss's ZDOID, on each of the two, so either can find the other to share its health.</summary>
         public const string TwinPartner = "ecr_twin";
 
@@ -97,6 +101,12 @@ namespace EliteCreaturesReborn.Traits
 
         /// <summary>Phantom: on the boss, how many of its `split at` marks it has split at, so a hand-over repeats none.</summary>
         public const string PhantomSplits = "ecr_phantom_splits";
+
+        /// <summary>
+        /// Phantom: on the boss and on each copy, a random number drawn at each split that orders their health bars in
+        /// one row, so the boss's place in the row says nothing about which one it is.
+        /// </summary>
+        public const string PhantomOrder = "ecr_phantom_order";
 
         /// <summary>Summoner: how many waves the boss has called, so a hand-over neither repeats nor skips one.</summary>
         public const string SummonWaves = "ecr_waves";
@@ -159,5 +169,45 @@ namespace EliteCreaturesReborn.Traits
 
         /// <summary>Screecher: when it last shrieked (shared-clock ms), written by its owner, so a new owner keeps the cooldown.</summary>
         public const string ShriekAt = "ecr_shriek_at";
+
+        /// <summary>Frostbound: the owner's newest ice-patch drops, packed, so every client lays the same trail.</summary>
+        public const string FrostTrail = "ecr_frost_trail";
+
+        /// <summary>Frostbound: a monotonic ice-patch counter, so every patch has a unique id no trim can reissue.</summary>
+        public const string FrostTrailSeq = "ecr_frost_trail_seq";
+
+        /// <summary>Mudbound: the owner's newest mud-patch drops, packed, so every client lays the same trail.</summary>
+        public const string MudTrail = "ecr_mud_trail";
+
+        /// <summary>Mudbound: a monotonic mud-patch counter, so every patch has a unique id no trim can reissue.</summary>
+        public const string MudTrailSeq = "ecr_mud_trail_seq";
+
+        /// <summary>Cloning: on the creature, its decoy's ZDOID while it hides behind one; absent once it shows again. Written
+        /// by its owner; every machine hides or shows the body from it.</summary>
+        public const string CloneDecoy = "ecr_clone_decoy";
+
+        /// <summary>Cloning: on a decoy, the ZDOID of the creature it stands in for. Its presence is what makes a decoy a decoy.</summary>
+        public const string CloneOf = "ecr_clone_of";
+
+        /// <summary>Cloning: on the creature, how many times it has hidden behind a decoy, against its `times`.</summary>
+        public const string Clones = "ecr_clones";
+
+        /// <summary>Cloning: on the creature, when its current trick began (shared-clock ms) while it hides, and when the last
+        /// one ended once it shows again: the decoy's life and the cooldown both count from it, whoever owns it.</summary>
+        public const string CloneAt = "ecr_clone_at";
+
+        /// <summary>Nightfall: when the latest wave of tornadoes rose (shared-clock ms), on the boss. Written by its owner
+        /// with the wave, so every client raises the same tornadoes at the same moment, a player arriving mid-wave still
+        /// sees them, and a new owner keeps the rhythm and carries the hunt on.</summary>
+        public const string TornadoAt = "ecr_tornado_at";
+
+        /// <summary>Nightfall: the latest wave, packed, on the boss - the numbers its owner raised it with, the delay to the
+        /// next wave, and each tornado's player and the point it rose at; read with <see cref="TornadoAt"/>.</summary>
+        public const string TornadoWave = "ecr_tornado";
+
+        /// <summary>Nightfall: where the latest wave's tornadoes are and where they are heading, packed, on the boss;
+        /// written by its owner a few times a second while they hunt, so every client draws them where the owner moves
+        /// them.</summary>
+        public const string TornadoTrack = "ecr_tornado_track";
     }
 }

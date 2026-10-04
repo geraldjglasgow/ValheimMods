@@ -38,6 +38,9 @@ namespace EliteCreaturesReborn.Tally
             zdo.Set(TraitKeys.BossDamage, pkg.GetArray());
         }
 
+        /// <summary>Owner side: empties the tally, once it has been handed on to a Tethered partner.</summary>
+        public static void Clear(ZDO zdo) => zdo.Set(TraitKeys.BossDamage, new byte[0]);
+
         public static void Merge(List<Entry> entries, long id, string name, float amount)
         {
             Entry? entry = entries.Find(e => e.Id == id);

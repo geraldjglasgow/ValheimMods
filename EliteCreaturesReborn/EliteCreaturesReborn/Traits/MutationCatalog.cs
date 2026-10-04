@@ -12,6 +12,7 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Mad, Mutation.Bloated, Mutation.Cloaked, Mutation.Splintering, Mutation.Leeching,
             Mutation.Warding, Mutation.Plated, Mutation.Miasmic, Mutation.Devouring, Mutation.Thieving,
             Mutation.Gilded, Mutation.Blinking, Mutation.Relentless, Mutation.Juggernaut, Mutation.Screecher,
+            Mutation.Frostbound, Mutation.Mudbound, Mutation.Corrodent, Mutation.Cloning,
         };
 
         /// <summary>The mutation a rule-file name (its display word) refers to, or null for an unknown word.</summary>
@@ -45,6 +46,10 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Relentless => "Relentless",
             Mutation.Juggernaut => "Juggernaut",
             Mutation.Screecher => "Screecher",
+            Mutation.Frostbound => "Frostbound",
+            Mutation.Mudbound => "Mudbound",
+            Mutation.Corrodent => "Corrodent",
+            Mutation.Cloning => "Cloning",
             _ => "",
         };
 
@@ -66,6 +71,10 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Relentless => "#FF7F24",  // Orange
             Mutation.Juggernaut => "#6E6E6E",  // Iron grey
             Mutation.Screecher => "#FF5CC8",   // Pink
+            Mutation.Frostbound => "#BFEFFF",  // Pale ice - whiter than Cloaked's sky blue
+            Mutation.Mudbound => "#5E4A1E",    // Mud - darker and greener than Bloated's brown
+            Mutation.Corrodent => "#B7410E",   // Rust - darker and redder than Relentless's orange
+            Mutation.Cloning => "#B4A8FF",     // Lavender - paler than Thieving's violet
             _ => "#FFFFFF",
         };
     }

@@ -41,6 +41,19 @@ namespace EliteCreaturesReborn.Tally
             Route(boss, player.GetPlayerID(), player.GetPlayerName(), amount);
         }
 
+        /// <summary>
+        /// On the owner of a Tethered boss as it falls first: its whole tally goes on to its partner's board, the same way
+        /// a copy's hits reach their boss, and its own is emptied so nothing counts twice.
+        /// </summary>
+        public static void HandOver(ZDO fallen, ZDOID partner)
+        {
+            foreach (DamageTally.Entry entry in DamageTally.Load(fallen))
+            {
+                Route(partner, entry.Id, entry.Name, entry.Damage);
+            }
+            DamageTally.Clear(fallen);
+        }
+
         private static void Route(ZDOID boss, long playerId, string playerName, float amount)
         {
             ZDO? zdo = ZDOMan.instance?.GetZDO(boss);

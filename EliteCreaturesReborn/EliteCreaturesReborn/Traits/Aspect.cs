@@ -24,5 +24,7 @@ namespace EliteCreaturesReborn.Traits
         Tethered = 14,
         Bountiful = 15,
         Portalbound = 16,
+        Nightfall = 17,
+        Brutal = 18,
     }
 }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
+using EliteCreaturesReborn.Traits;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Loot
@@ -9,8 +11,10 @@ namespace EliteCreaturesReborn.Loot
     /// trophy in its own drop table - one head for the plain fight, five for a four-star one - in every loot mode,
     /// Vanilla included. A head per star is a count the group can read off the nameplate before the fight, not a
     /// quantity to roll or multiply, so it is the whole rule: no `drops` line, extra roll, global or boss
-    /// multiplier, aspect factor or trophy switch changes it, and like an aspect's pay it stays when the loot rules
-    /// are off. The table decides, not the game's roll: a trophy row in the boss's table pays N+1 even if its
+    /// multiplier, other aspect's factor or trophy switch changes it, and like an aspect's pay it stays when the loot
+    /// rules are off. Bountiful alone scales it, since it pays more of everything: N+1 times its own `loot` (x2 by
+    /// default, so a four-star Bountiful boss drops ten heads), rounded. The table decides, not the game's roll: a
+    /// trophy row in the boss's table pays N+1 even if its
     /// chance (1 on every vanilla boss) came up empty. The engine holds these rows out of the list before any rule
     /// runs and pays them back last, so nothing in between can scale or reroll them; a row the rule file adds for
     /// the same item still adds on top. The exception is a trophy the boss's `creatures:` entry names under `drop
@@ -49,7 +53,18 @@ namespace EliteCreaturesReborn.Loot
                 return None;
             }
             result.RemoveAll(pair => heads.Contains(pair.Key));
-            return new BossTrophies(heads, Mathf.Clamp(controller.Traits.Stars + 1, 1, DropRoller.AmountCap));
+            return new BossTrophies(heads, Count(controller.Traits));
+        }
+
+        /// <summary>N+1 heads, times Bountiful's own loot multiplier when the boss carries it.</summary>
+        private static int Count(CreatureTraits traits)
+        {
+            float heads = traits.Stars + 1;
+            if (traits.HasAspect(Aspect.Bountiful))
+            {
+                heads *= RuleState.Active.Boss.Aspects.LootOf(Aspect.Bountiful);
+            }
+            return Mathf.Clamp(Mathf.RoundToInt(heads), 1, DropRoller.AmountCap);
         }
 
         /// <summary>True for a trophy held here, which the engine's rerolls pass by.</summary>

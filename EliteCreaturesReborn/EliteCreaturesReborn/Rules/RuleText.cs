@@ -45,6 +45,10 @@ mutations enabled:
   Relentless: true
   Juggernaut: true
   Screecher: true
+  Frostbound: true
+  Mudbound: true
+  Corrodent: true
+  Cloning: true
 
 defaults:
   # How much stronger a mutation is on a large star (worth 5).
@@ -55,7 +59,7 @@ defaults:
   star power:
     growth:      [0.06, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45]
     hp:          [1,    1.4,  1.95, 2.6,  3.3,  4.0,  4.7,  5.4,  6.1]
-    attack:      [1,    1.2,  1.45, 1.75, 2.1,  2.5,  2.9,  3.3,  3.7]
+    attack:      [1,    1.15, 1.3,  1.5,  1.75, 2,    2.25, 2.5,  2.75]
     swing speed: [1,    1.02, 1.05, 1.08, 1.12, 1.16, 1.19, 1.22, 1.25]
     speed:       [1,    1,    1.03, 1.06, 1.1,  1.15, 1.18, 1.21, 1.24]
     drops:       [1,    1,    1.5,  2,    2.5,  3,    3.5,  4,    4.5]
@@ -85,6 +89,10 @@ defaults:
     Blinking:    { health: 0.75, every: 30, distance: 4, tell time: 0.5, blink effect: vfx_ghost_spawn, tell effect: vfx_WishbonePing, tell sound: sfx_WishbonePing_near }
     Relentless:  { chase distance: 150 }
     Screecher:   { threshold: 15, radius: 20, mute time: 4, cooldown: 15, shriek sound: sfx_fallenvalkyrie_screech }
+    Frostbound:  { aura radius: 6, stamina regen: 50, frost heal: 100, aura effect: vfx_Frost, trail life: 10, patch radius: 1.5, patch spacing: 1.5, grip: 5, slow: 15, trail effect: vfx_blob_frost_death }
+    Mudbound:    { trail life: 10, patch radius: 1.5, patch spacing: 1.5, slow: 40, trail effect: vfx_blobtar_death }
+    Corrodent:   { durability: 3 }
+    Cloning:     { times: 1, range: 12, decoy life: 20, cooldown: 30, reveal effect: vfx_spawn_small, reveal sound: sfx_spawn, vanish effect: vfx_odin_despawn }
 
 # Refilling cleared camps, dungeons and dungeon chests. Days are world days (30 real minutes).
 respawning:
@@ -117,9 +125,18 @@ creatures:
   - match: Lox
     mutation power:
       Cloaked:     { reveal distance: 15 }
+  # The Rime Giant, from Elite Creatures Pack.
+  - match: ECP_RimeGiant
+    mutation power:
+      Cloaked:     { reveal distance: 15 }
   # Drakes are never Cloaked.
   - match: Hatchling
     mutation chances:
+      Cloaked:     [0]
+  # Bats are never Mad or Cloaked.
+  - match: Bat
+    mutation chances:
+      Mad:         [0]
       Cloaked:     [0]
 #  - match: Troll
 #    drops: [1, 1.5, 2, 3, 4, 5]

@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesReborn</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>3.15.0</Version>
+    <Version>3.16.0</Version>
     <Product>Elite Creatures Reborn</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -45,6 +45,8 @@
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
     <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PlayerGrid\PlayerGrid.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -111,6 +113,11 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- The death recap's end-of-frame screen capture. -->
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ScreenCaptureModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

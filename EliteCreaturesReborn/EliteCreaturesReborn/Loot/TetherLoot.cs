@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using UnityEngine;
@@ -36,9 +37,7 @@ namespace EliteCreaturesReborn.Loot
         private static bool PartnerStanding(EliteController controller)
         {
             ZDO? zdo = controller.View != null && controller.View.IsValid() ? controller.View.GetZDO() : null;
-            ZDOID partner = zdo != null ? AspectStore.GetTether(zdo) : ZDOID.None;
-            ZDO? other = partner != ZDOID.None && ZDOMan.instance != null ? ZDOMan.instance.GetZDO(partner) : null;
-            return other != null && other.IsValid() && other.GetFloat(ZDOVars.s_health, 1f) > 0f;
+            return zdo != null && TetherPair.Standing(AspectStore.GetTether(zdo));
         }
     }
 }

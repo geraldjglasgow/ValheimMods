@@ -16,8 +16,8 @@ namespace EliteCreaturesReborn.Patches
             Guard.Run("OfferingBowl.Start aspect", () => AltarAspect.Attach(__instance));
     }
 
-    /// <summary>Appends the altar's current aspect (a Bountiful one's extras with it), what the fight pays and when it
-    /// shifts, below the bowl's own hover text.</summary>
+    /// <summary>Appends the boss's stars and the altar's current aspect (a Bountiful one's extras with it), what the
+    /// fight pays and when it shifts, below the bowl's own hover text.</summary>
     [HarmonyPatch(typeof(OfferingBowl), nameof(OfferingBowl.GetHoverText))]
     public static class AltarHoverPatch
     {
@@ -35,8 +35,8 @@ namespace EliteCreaturesReborn.Patches
     }
 
     /// <summary>
-    /// The offering: the game has accepted it and is about to count down to the boss, on the bowl's owner. The aspects on
-    /// the bowl right now are the fight - locked here, before the countdown gives the altar a chance to shift.
+    /// The offering: the game has accepted it and is about to count down to the boss, on the bowl's owner. The stars and
+    /// aspects on the bowl right now are the fight - locked here, before the countdown gives the altar a chance to shift.
     /// </summary>
     [HarmonyPatch(typeof(OfferingBowl), "SpawnBoss")]
     public static class AltarLockPatch
@@ -55,8 +55,8 @@ namespace EliteCreaturesReborn.Patches
     }
 
     /// <summary>
-    /// The countdown's end, where the game instantiates the boss: the locked aspects are held for exactly this one call,
-    /// and the finalizer lets them go whatever happens, so no later spawn can inherit them.
+    /// The countdown's end, where the game instantiates the boss: the locked draw is held for exactly this one call, and
+    /// the finalizer lets it go whatever happens, so no later spawn can inherit it.
     /// </summary>
     [HarmonyPatch(typeof(OfferingBowl), "DelayedSpawnBoss")]
     public static class AltarSpawnPatch

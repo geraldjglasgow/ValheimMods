@@ -24,13 +24,19 @@ namespace EliteCreaturesReborn.Aspects
             foreach (Player player in Player.GetAllPlayers())
             {
                 if (player != null && !player.IsDead() && !player.InGhostMode() && !player.IsDebugFlying()
-                    && !player.IsTeleporting() && FlatDistance(player.transform.position, boss) <= range)
+                    && !player.IsTeleporting() && FlatDistance(player.transform.position, boss) <= range
+                    && SameSide(player.transform.position, boss))
                 {
                     into.Add(player);
                 }
             }
             return into;
         }
+
+        // A dungeon's rooms sit far above its entrance at the same ground position: a player inside one is never in range
+        // of a boss outside, nor the other way round.
+        private static bool SameSide(Vector3 player, Vector3 boss) =>
+            Character.InInterior(player) == Character.InInterior(boss);
 
         /// <summary>A circle's centre under a player: their feet dropped onto what they stand on.</summary>
         public static Vector3 Under(Vector3 feet) => new Vector3(feet.x, FloorY(feet, feet.y, 1f, FeetSearch), feet.z);

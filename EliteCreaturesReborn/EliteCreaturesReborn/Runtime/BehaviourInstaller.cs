@@ -8,7 +8,7 @@ namespace EliteCreaturesReborn.Runtime
     /// these owner-only vs everywhere; the multiplayer rule is instead "decide on the owner, draw on every client", so
     /// each behaviour is attached everywhere and self-gates its authoritative writes on live ownership. That makes
     /// ownership changing hands free: the machine that owns the creature at any moment is the one whose gates open.
-    /// The event-shaped mutations (Warding, Plated, Bloated, Splintering, Mad, Juggernaut) need no component - patches handle them.
+    /// The event-shaped mutations (Warding, Plated, Bloated, Splintering, Mad, Juggernaut, Corrodent) need no component - patches handle them.
     /// </summary>
     public static class BehaviourInstaller
     {
@@ -52,6 +52,39 @@ namespace EliteCreaturesReborn.Runtime
             if (traits.Has(Mutation.Screecher))
             {
                 controller.gameObject.AddComponent<ScreecherBehaviour>();
+            }
+            InstallWinter(controller, traits);
+        }
+
+        private static void InstallWinter(EliteController controller, CreatureTraits traits)
+        {
+            if (traits.Has(Mutation.Frostbound))
+            {
+                controller.gameObject.AddComponent<FrostAura>();
+                controller.gameObject.AddComponent<FrostTrail>();
+            }
+            if (traits.Has(Mutation.Mudbound))
+            {
+                controller.gameObject.AddComponent<MudTrail>();
+            }
+            InstallCloning(controller, traits);
+        }
+
+        // A decoy Has no mutation, so this is all it gets: its own leaving, and the frost look its creature wore before
+        // the swap, so the body the player watches does not lose its mist and light in that frame.
+        private static void InstallCloning(EliteController controller, CreatureTraits traits)
+        {
+            if (traits.Has(Mutation.Cloning))
+            {
+                controller.gameObject.AddComponent<CloneBehaviour>();
+            }
+            else if (traits.Decoy)
+            {
+                controller.gameObject.AddComponent<CloneDecoy>();
+                if (traits.Wears(Mutation.Frostbound))
+                {
+                    controller.gameObject.AddComponent<FrostAuraLook>();
+                }
             }
         }
     }

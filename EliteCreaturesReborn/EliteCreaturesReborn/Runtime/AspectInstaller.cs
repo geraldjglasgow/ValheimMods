@@ -1,5 +1,6 @@
 using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Traits;
+using UnityEngine;
 
 namespace EliteCreaturesReborn.Runtime
 {
@@ -44,7 +45,7 @@ namespace EliteCreaturesReborn.Runtime
                 case Aspect.Mending: controller.gameObject.AddComponent<MendingBehaviour>(); break;
                 case Aspect.Summoner: controller.gameObject.AddComponent<SummonerBehaviour>(); break;
                 case Aspect.Twin: controller.gameObject.AddComponent<TwinLink>(); break;
-                case Aspect.Phantom: controller.gameObject.AddComponent<PhantomBehaviour>(); break;
+                case Aspect.Phantom: AttachPhantom(controller.gameObject); break;
                 case Aspect.Adaptive: controller.gameObject.AddComponent<AdaptiveBehaviour>(); break;
                 case Aspect.Fixated: controller.gameObject.AddComponent<FixatedBehaviour>(); break;
                 case Aspect.Stormbound: controller.gameObject.AddComponent<StormboundBehaviour>(); break;
@@ -52,7 +53,21 @@ namespace EliteCreaturesReborn.Runtime
                 case Aspect.Colossal: controller.gameObject.AddComponent<ColossalBehaviour>(); break;
                 case Aspect.Tethered: controller.gameObject.AddComponent<TetherLink>(); break;
                 case Aspect.Portalbound: controller.gameObject.AddComponent<PortalboundBehaviour>(); break;
+                case Aspect.Nightfall: AttachNightfall(controller.gameObject); break;
+                case Aspect.Brutal: controller.gameObject.AddComponent<BrutalBehaviour>(); break;
             }
+        }
+
+        private static void AttachNightfall(GameObject boss)
+        {
+            boss.AddComponent<NightfallSky>();
+            boss.AddComponent<NightfallStorm>();
+        }
+
+        private static void AttachPhantom(GameObject boss)
+        {
+            boss.AddComponent<PhantomBehaviour>();
+            boss.AddComponent<PhantomShuffle>();
         }
 
         private static void Arrive(EliteController controller, Aspect aspect)

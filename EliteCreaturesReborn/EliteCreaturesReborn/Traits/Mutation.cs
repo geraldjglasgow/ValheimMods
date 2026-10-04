@@ -1,7 +1,7 @@
 namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
-    /// The fifteen mutations, declared in the order the specification lists them. That order is authoritative:
+    /// The nineteen mutations, declared in the order the specification lists them. That order is authoritative:
     /// it is the order names are assembled in and the order stars take their colours. The numeric value doubles
     /// as the bit index used when a creature's mutation set is packed into a single int for the ZDO.
     /// </summary>
@@ -22,5 +22,9 @@ namespace EliteCreaturesReborn.Traits
         Relentless = 12,
         Juggernaut = 13,
         Screecher = 14,
+        Frostbound = 15,
+        Mudbound = 16,
+        Corrodent = 17,
+        Cloning = 18,
     }
 }
