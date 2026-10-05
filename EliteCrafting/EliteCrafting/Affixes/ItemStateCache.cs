@@ -27,7 +27,8 @@ namespace EliteCrafting.Affixes
 
         /// <summary>
         /// Raised after every successful <see cref="Write"/>, with the item written. The effects area listens to
-        /// rebuild the aggregate when the item is equipped by the local player.
+        /// rebuild the aggregate when the item is equipped by the local player. The API's item-changed listeners
+        /// (<see cref="ItemChanges"/>) run right after it, with the write's reason.
         /// </summary>
         public static event Action<ItemDrop.ItemData>? Written;
 
@@ -73,7 +74,7 @@ namespace EliteCrafting.Affixes
         private static bool MayWrite(ItemDrop.ItemData? item, ItemState state)
         {
             string name = item?.m_shared?.m_name ?? "(null)";
-            if (item?.m_shared == null || item.m_shared.m_maxStackSize > 1 || ItemSlots.IsStone(item))
+            if (item?.m_shared == null || item.m_shared.m_maxStackSize > 1 || ItemClasses.IsStone(item))
             {
                 Log.Error($"refused to write item state to {name}: stackable items and stones never carry it");
                 return false;
@@ -96,6 +97,7 @@ namespace EliteCrafting.Affixes
             {
                 Log.Error($"an ItemStateCache.Written handler threw: {e}");
             }
+            ItemChanges.Raise(item);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace EliteCrafting.Rules
 {
     /// <summary>
     /// Merges the layers of a family into one document (configuration.md section 3): maps merge by key, recursively;
-    /// the id lists (<c>inscriptions</c>, <c>rarities</c>, <c>runes</c>) merge by <c>id</c>, field by field; every other list and every scalar is replaced whole by the
+    /// the id lists (<c>inscriptions</c>, <c>rarities</c>, <c>runes</c>, <c>classes</c>) merge by <c>id</c>, field by field; every other list and every scalar is replaced whole by the
     /// later layer; a key set to null in a later layer is removed. Inputs are never modified: merged maps are new
     /// nodes, adopted values keep their original nodes (and so their file and line for error messages).
     /// </summary>

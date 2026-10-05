@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EliteCrafting.Items;
 
 namespace EliteCrafting.Rules
 {
@@ -16,6 +17,10 @@ namespace EliteCrafting.Rules
 
         public RollingSettings Rolling { get; internal set; } = new RollingSettings();
         public IReadOnlyList<StoneDef> Stones { get; internal set; } = Array.Empty<StoneDef>();
+
+        /// <summary>The YAML's item classes in classification order (read through <c>Items.ItemClasses</c>, which adds registered ones).</summary>
+        public IReadOnlyList<ItemClass> Classes { get; internal set; } = Array.Empty<ItemClass>();
+
         public ItemTierMaps ItemTiers { get; internal set; } = new ItemTierMaps();
 
         /// <summary>biome id (<c>meadows</c>, <c>black_forest</c>, ..., <c>ocean</c>, <c>deep_north</c>) → tier.</summary>
@@ -45,7 +50,7 @@ namespace EliteCrafting.Rules
 
         public RarityDef? Previous(RarityDef rarity) => rarity.Index > 0 ? Rarities[rarity.Index - 1] : null;
 
-        /// <summary>Which stone drops at a tier (1-7): enabled stones only, weights from <c>drops.stones</c>.</summary>
+        /// <summary>Which stone drops at a tier (1-8): enabled stones only, weights from <c>drops.runes</c>.</summary>
         public WeightedTable<StoneDef> StoneDraw(int tier) => ByTier(StoneTables, tier);
 
         /// <summary>The rarity of dropped gear at a tier, <c>drop_weight</c> applied; the boss table when asked.</summary>

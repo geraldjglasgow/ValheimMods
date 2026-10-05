@@ -19,6 +19,8 @@ tier, then crafting-station fallback, then tier 1. Section 2 keeps the alternati
 
 # 1. Tiers
 
+> **Superseded in part 2026-10-05 by `classes-and-tiers.md` section 2:** the item level runs 1-8 (Deep North 8 is shipped); the derivation below still applies.
+
 One tier per biome gate, fixed ids (conventions):
 
 | Tier | Biome |
@@ -154,6 +156,8 @@ as strong as the world is far".
 ---
 
 # 6. Where the ceiling applies, and the one place it does not
+
+> **Superseded 2026-10-05 by `classes-and-tiers.md` section 5:** no tier window; an item rolls every tier its level has unlocked (allowed classes keep the top closed), the rune floor counts from the best eligible tier.
 
 **Every ordinary roll is capped by the ceiling**: promotions (Awakening, Ascension), the one affix that Shaping,
 Consecrated and the Serpent's `add_inscription` add, and pre-rolled drops. A rune's `tier_floor` raises the bottom of

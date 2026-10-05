@@ -4,7 +4,7 @@ namespace EliteCrafting.Rules
     internal sealed class FamilySpec
     {
         public static readonly FamilySpec Affixes = new FamilySpec("EliteCrafting_inscriptions", "ecf_inscriptions", new[] { "inscriptions" });
-        public static readonly FamilySpec Economy = new FamilySpec("EliteCrafting_economy", "ecf_economy", new[] { "rarities", "runes" });
+        public static readonly FamilySpec Economy = new FamilySpec("EliteCrafting_economy", "ecf_economy", new[] { "rarities", "runes", "classes" });
 
         private FamilySpec(string prefix, string syncKey, string[] idLists)
         {

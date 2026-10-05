@@ -6,7 +6,7 @@ using UnityEngine;
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The load warning of rarity.md section 2 (DECISIONS.md RAR-6): every item that resolves to a slot but stacks
+    /// The load warning of rarity.md section 2 (DECISIONS.md RAR-6): every item of a class that rolls but stacks
     /// (another mod raised its max stack size) is named in the log once per prefab. Stack sizes are not forced back;
     /// such an item is simply no magic base, and the item-state writer refuses it. Scanned when an object database is
     /// set up (every peer) and again when the local player spawns (a client), after other mods' synced settings apply.
@@ -36,7 +36,7 @@ namespace EliteCrafting.Items
 
         private static bool IsStackableGear(ItemDrop.ItemData item) =>
             item.m_shared != null && item.m_shared.m_maxStackSize > 1
-            && ItemSlots.Classify(item).Slot != ItemSlot.None && !ItemSlots.IsStone(item);
+            && ItemClasses.Classify(item).Rolls && !ItemClasses.IsStone(item);
 
         // Local player's client only.
         [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]

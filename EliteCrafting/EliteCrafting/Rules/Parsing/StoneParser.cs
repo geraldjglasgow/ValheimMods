@@ -67,16 +67,9 @@ namespace EliteCrafting.Rules
                 r.Issues.Error(r.At("applies_to"), r.Map, "is required: the rarities the rune accepts");
             }
             stone.Cost = YamlLists.IntMap(r, "cost", 0, 999);   // 0 = a free stone (applying-stones.md 3)
-            stone.TierFloor = ReadTierFloor(r);
+            stone.TierFloor = r.Int("tier_floor", 0, 1, TierLadder.MaxCount);   // 0 = none
             stone.Enabled = r.Bool("enabled", true);
             stone.Confirm = r.Bool("confirm", false);
-        }
-
-        // The YAML counts affix tiers down (1 = the strongest); the floor is kept as a strength grade, 0 = none.
-        private static int ReadTierFloor(MapReader r)
-        {
-            int shown = r.Int("tier_floor", 0, 1, AffixTierNumbers.Count);
-            return shown == 0 ? 0 : AffixTierNumbers.Grade(shown);
         }
 
         private static void ReadItem(MapReader r, StoneDef stone)

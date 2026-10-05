@@ -26,7 +26,7 @@ namespace EliteCrafting.Stones
         }
 
         // Weights are relative; a table with nothing above 0 is disabled at load, and falls back to seal_only here.
-        internal static CorruptOutcome Draw(IReadOnlyList<CorruptWeight> table, RollContext context)
+        private static CorruptOutcome Draw(IReadOnlyList<CorruptWeight> table, RollContext context)
         {
             List<float> weights = new List<float>(table.Count);
             for (int i = 0; i < table.Count; i++)
@@ -60,14 +60,16 @@ namespace EliteCrafting.Stones
         public static StoneResult SealOnly(StoneJob job) =>
             StoneResult.Success(Sealed(job.State), "corrupt_seal", job.ItemName);
 
-        // One affix by the normal roll; it may take the item past its rarity's maximum by `overflow` (default 1). Never
-        // on the base rarity (an owner's applies_to): a Normal item holds no affixes, so that falls back to seal_only.
+        // One affix by the normal roll; it may take the item past its rarity's maximum, and past its prefix or suffix
+        // limit, by `overflow` (default 1; classes-and-tiers.md section 6). Never on the base rarity (an owner's
+        // applies_to): a Normal item holds no affixes, so that falls back to seal_only.
         private static StoneResult? AddAffix(StoneJob job, RollContext context, int overflow)
         {
             if (job.Rarity!.IsBase || job.State.AffixCount >= job.Rarity.MaxAffixes + overflow)
             {
                 return null;
             }
+            context.LimitOverflow = overflow;
             RollOutcome rolled = ItemRoller.AddAffixes(job.State, 1, context);
             if (!rolled.Success)
             {

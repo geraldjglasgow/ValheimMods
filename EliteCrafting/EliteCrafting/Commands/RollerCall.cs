@@ -38,7 +38,12 @@ namespace EliteCrafting.Commands
         /// <summary>Writes the state and logs it when <c>Log rolls</c> is on; false after replying when refused.</summary>
         public static bool Commit(CommandCall call, ItemDrop.ItemData item, ItemState state)
         {
-            if (!ItemState.Write(item, state))
+            bool written;
+            using (ItemChanges.Because(ItemChanges.Command))
+            {
+                written = ItemState.Write(item, state);
+            }
+            if (!written)
             {
                 call.Reply("the item refused the new state (see the log).");
                 return false;

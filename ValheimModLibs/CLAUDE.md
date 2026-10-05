@@ -35,6 +35,19 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   for callers that must hold back rather than touch a slot). Consumer: EliteCreaturesReborn (Thieving). PackPanel's
   `Layout/GridContract` and OpenKeep's `Core/PackPanelGrid` and `Core/PackPanelLink` are the same code and are to move
   onto it.
+- `EliteCraftingLink/`: EliteCrafting's public API (`EliteCrafting.Api.EliteCraftingApi`, spec in
+  `EliteCrafting/features/api.md`) bound by reflection, so a mod never references EliteCrafting. `ApiBinding` finds the
+  plugin by GUID (`com.EliteCrafting`) in the chainloader, the type by name in its assembly and checks
+  `GetApiVersion()` against `Required` (1); until EliteCrafting is in the chainloader it looks again on every call, once
+  found (or found too old) the answer is kept. `Endpoint<T>` binds one endpoint as a typed delegate
+  (`Delegate.CreateDelegate`, by name, parameter types and return type; a missing one is logged once and stays null) and
+  `Safe.Call` answers false, null or 0 when it is unbound or throws. The wrappers, by api.md section: `CraftingLink`
+  (`Guid`, `Present`, `ApiVersion`, `PluginVersion`, `HasEndpoint`, `EndpointNames`), `CraftingClasses`,
+  `CraftingInscriptions`, `CraftingItems`, `CraftingHooks`. Delegates handed in (classifiers, providers, filters,
+  listeners) use game and BCL types only and pass through unchanged. Game types appear only in signatures
+  (`ItemDrop.ItemData`, `Player`). A consumer loads after EliteCrafting (soft `BepInDependency` on `CraftingLink.Guid`)
+  and registers the same things on every peer. Consumers: PackPanel (backpack class, Deep Pockets, worn
+  pack provider) and EliteCreaturesPack (item levels, creature loot).
 - `Hotkeys/`: a mod's hotkeys read one way. `Hotkey.Pressed(entry)` (main key down this frame; with modifiers all of
   them held and no other Shift/Ctrl/Alt, other keys such as W allowed; a single key only with no Shift/Ctrl/Alt held),
   `Hotkey.Held(entry)`, `Typing.Active` (chat focus, console, the game's text input, a selected `InputField` or

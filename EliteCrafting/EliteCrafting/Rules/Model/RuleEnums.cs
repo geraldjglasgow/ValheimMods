@@ -12,6 +12,12 @@ namespace EliteCrafting.Rules
 
     public enum AffixCondition { None, HealthCritical }
 
+    /// <summary>An inscription's <c>affix</c>: prefixes are an item's core power, suffixes everything else.</summary>
+    public enum AffixKind { Prefix, Suffix }
+
+    /// <summary>How an inscription fits an item class: not at all, <c>allowed</c> (top tiers closed) or <c>best</c>.</summary>
+    public enum ClassFit { None, Allowed, Best }
+
     public enum HookDifficulty { None, Easy, Medium, Hard }
 
     /// <summary>What a rune does: Awakening and Ascension promote, Shaping and Consecrated add, Cleansing strips, the

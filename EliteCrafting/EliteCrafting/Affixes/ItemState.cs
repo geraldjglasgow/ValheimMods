@@ -17,6 +17,7 @@ namespace EliteCrafting.Affixes
     {
         public static readonly ItemState Empty = new ItemState(StateData.Empty, RuleSet.Empty);
 
+        private readonly StateData _source;
         private readonly AffixRoll[] _rolls;
         private readonly AffixDef?[] _defs;
         private readonly string[] _unreadable;
@@ -24,6 +25,9 @@ namespace EliteCrafting.Affixes
 
         internal ItemState(StateData data, RuleSet rules)
         {
+            // Format-1 grades need each inscription's ladder: converted here, against these rules, from the source.
+            _source = data;
+            data = ItemMigrations.ResolveGrades(data, rules.Affixes);
             Data = data;
             Generation = rules.Generation;
             _rolls = Rolls(data.Segments, out _unreadable);
@@ -49,7 +53,7 @@ namespace EliteCrafting.Affixes
         /// <summary>Rarity id; null = Normal (the base rarity is never stored).</summary>
         public string? RarityId { get; }
 
-        /// <summary>The parsed affixes in display order (unreadable segments left out).</summary>
+        /// <summary>The parsed affixes in stored order (unreadable segments left out); <see cref="AffixRoll.Tier"/> is the grade.</summary>
         public IReadOnlyList<AffixRoll> Affixes => _rolls;
 
         /// <summary>Segments of <c>ecf_inscriptions</c> that did not parse, kept verbatim and written back in place.</summary>
@@ -100,7 +104,7 @@ namespace EliteCrafting.Affixes
         public static ItemState Parse(Dictionary<string, string> data) => new ItemState(ItemCodec.Parse(data), ActiveRules.Current);
 
         /// <summary>The same data resolved against another rules snapshot (no string work).</summary>
-        internal ItemState Resolve(RuleSet rules) => Data.IsEmpty ? Empty : new ItemState(Data, rules);
+        internal ItemState Resolve(RuleSet rules) => _source.IsEmpty ? Empty : new ItemState(_source, rules);
 
         private static AffixRoll[] Rolls(ItemSegment[] segments, out string[] unreadable)
         {

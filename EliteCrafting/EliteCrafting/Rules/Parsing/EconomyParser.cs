@@ -11,7 +11,7 @@ namespace EliteCrafting.Rules
     {
         private static readonly string[] RootKeys =
         {
-            FamilyBuilder.UseDefaultsKey, "rarities", "rolling", "runes", "item_tiers", "biomes", "drops",
+            RuleFormat.Key, FamilyBuilder.UseDefaultsKey, "rarities", "rolling", "runes", "classes", "item_tiers", "biomes", "drops",
         };
 
         public static EconomyRules? Parse(YamlMappingNode root, RuleIssues issues)
@@ -23,6 +23,7 @@ namespace EliteCrafting.Rules
                 Rarities = RarityParser.Parse(r),
                 Rolling = RarityParser.ParseRolling(r),
                 Stones = StoneParser.Parse(r),
+                Classes = ClassParser.Parse(r),
                 ItemTiers = TierMapParser.ParseItemTiers(r),
                 Biomes = TierMapParser.ParseBiomes(r),
                 Drops = DropParser.Parse(r),

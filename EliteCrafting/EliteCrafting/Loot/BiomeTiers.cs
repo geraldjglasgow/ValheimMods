@@ -7,7 +7,7 @@ namespace EliteCrafting.Loot
 {
     /// <summary>
     /// The game's biome flags mapped to the economy's biome ids and tiers (<c>biomes:</c>, drops.md section 3). Tiers
-    /// are clamped to 1..7: <c>deep_north</c> is reserved and never reaches tier 8.
+    /// are clamped to 1..8 (8 = Deep North, classes-and-tiers.md section 2).
     /// </summary>
     public static class BiomeTiers
     {
@@ -62,6 +62,6 @@ namespace EliteCrafting.Loot
             return tier > 0 ? Clamp(tier) : 1;
         }
 
-        public static int Clamp(int tier) => Math.Max(1, Math.Min(7, tier));
+        public static int Clamp(int tier) => Math.Max(1, Math.Min(DropParser.Tiers, tier));
     }
 }

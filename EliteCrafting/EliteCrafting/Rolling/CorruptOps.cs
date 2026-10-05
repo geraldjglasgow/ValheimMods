@@ -11,7 +11,8 @@ namespace EliteCrafting.Rolling
     {
         /// <summary>
         /// Removes every affix (dormant ones included), draws the count in the rarity's range and rolls each affix at
-        /// any tier it defines, uniformly, ignoring ceiling, window and floor. Fills what the pool can; fails only when
+        /// any tier it defines, uniformly, ignoring the item level, the closed tiers and the floor (the class pool and the
+        /// prefix and suffix limits still apply). Fills what the pool can; fails only when
         /// it can fill none of a count above 0. Unreadable segments stay.
         /// </summary>
         public static RollOutcome Chaotic(ItemState current, RarityDef rarity, RollContext context)

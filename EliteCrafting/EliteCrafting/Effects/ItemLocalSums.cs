@@ -23,6 +23,11 @@ namespace EliteCrafting.Effects
         public readonly float[] BrandCritical = new float[DamageSlots.Count];
         public bool HasBrand;
 
+        /// <summary>Per damage type: the flat damage <c>added_damage</c> adds to the item's hits (Combat3/AddedDamage).</summary>
+        public readonly float[] Added = new float[DamageSlots.Count];
+        public readonly float[] AddedCritical = new float[DamageSlots.Count];
+        public bool HasAdded;
+
         /// <summary>The fraction for an item-local kind, with the health-critical part while the local player is critical.</summary>
         public float Get(EffectKind kind)
         {
@@ -31,6 +36,8 @@ namespace EliteCrafting.Effects
         }
 
         public float BrandShare(int type) => HealthCritical.Active ? Brand[type] + BrandCritical[type] : Brand[type];
+
+        public float AddedFlat(int type) => HealthCritical.Active ? Added[type] + AddedCritical[type] : Added[type];
 
         // ---- building (on a cache miss: a new item object, a write, a rules reload; never per frame)
 
@@ -82,22 +89,33 @@ namespace EliteCrafting.Effects
         private void Add(EffectKind kind, ChannelDef channel, float amount)
         {
             bool critical = channel.Condition == AffixCondition.HealthCritical;
-            if (kind != EffectKind.BrandDamage)
+            if (kind == EffectKind.BrandDamage)
+            {
+                HasBrand |= Split(channel, amount, critical ? BrandCritical : Brand);
+            }
+            else if (kind == EffectKind.AddedDamage)
+            {
+                HasAdded |= Split(channel, amount, critical ? AddedCritical : Added);
+            }
+            else
             {
                 (critical ? _critical : _normal)[kind - EffectKind.ItemArmor] += amount;
-                return;
             }
+        }
+
+        // A param naming a group splits the amount evenly over its types (the total added stays the rolled value).
+        private static bool Split(ChannelDef channel, float amount, float[] into)
+        {
             DamageMask mask = channel.Sample.ParamDamage;
             int count = DamageSlots.CountIn(mask);
-            float[] into = critical ? BrandCritical : Brand;
             for (int t = 0; t < DamageSlots.Count && count > 0; t++)
             {
                 if ((mask & DamageSlots.Masks[t]) != 0)
                 {
                     into[t] += amount / count;
-                    HasBrand = true;
                 }
             }
+            return count > 0;
         }
     }
 }

@@ -100,6 +100,8 @@ Normal (section 5).
 
 # 4. How affixes are rolled
 
+> **Superseded 2026-10-05 by `classes-and-tiers.md` sections 5 and 6:** class pools with best/allowed fit, per-inscription tier ladders unlocked by item level (no `tier_window`), prefix/suffix limits per rarity.
+
 Every rune that adds affixes, the Serpent Rune's outcomes and every pre-rolled drop use this one procedure. It runs on
 the peer that owns the item (the client, for a rune; the creature's owner, for a drop) against the server-synced
 rules, so every peer rolls under the same odds.

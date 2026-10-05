@@ -454,25 +454,33 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   shards, sigils, binding, Honing/Tempering and the other stones are removed from the code, the YAML and the words;
   their item keys are dropped on the next write. Supersedes the 2026-09-23 six-rarity, stone-catalog and Mythic
   decisions and the 2026-10-01 sockets decision. Never released, so no compatibility is kept.
-- 2026-10-03 — Epic Loot (user): while Epic Loot is installed the runes work on Epic Loot's own magic items and
-  EliteCrafting drops no magic gear of its own (runes still drop). Through Epic Loot's published API by reflection
-  (`Epic/`), no reference. Awakening = Epic Loot's own Magic roll; Shaping/Consecrated add one effect rolled as Epic
-  Loot rolls one, up to its maximum count for the rarity; Ascension Magic → Rare plus effects, renamed by Epic Loot;
-  Serpent seals (our `ecf_sealed`) with seal only / one effect past Epic Loot's maximum / every effect rerolled,
-  sockets kept. Cleansing is **not** hooked up for Epic Loot items (user: "just dont hookup cleanse"); it refuses
-  them. Epic and higher Epic Loot rarities have no rung on our ladder and are refused. Effect counts and names come
-  from two public Epic Loot classes outside its API, with fallbacks. Existing EliteCrafting inscriptions keep working.
+- 2026-10-03 — Epic Loot (user), **superseded 2026-10-05** (integration removed, see below): while Epic Loot is
+  installed the runes work on Epic Loot's own magic items and EliteCrafting drops no magic gear of its own (runes
+  still drop). Through Epic Loot's published API by reflection (`Epic/`), no reference. Awakening = Epic Loot's own
+  Magic roll; Shaping/Consecrated add one effect rolled as Epic Loot rolls one, up to its maximum count for the
+  rarity; Ascension Magic → Rare plus effects, renamed by Epic Loot; Serpent seals (our `ecf_sealed`) with seal only
+  / one effect past Epic Loot's maximum / every effect rerolled, sockets kept. Cleansing is **not** hooked up for
+  Epic Loot items (user: "just dont hookup cleanse"); it refuses them. Epic and higher Epic Loot rarities have no
+  rung on our ladder and are refused. Effect counts and names come from two public Epic Loot classes outside its
+  API, with fallbacks. Existing EliteCrafting inscriptions keep working.
 - 2026-10-04 — Recasting Rune (user: "alteration", renamed; the name is the user's pick): a seventh rune, verb
   `reroll`, on Magic items. Every inscription goes and the item is rolled fresh at its own rarity (`RollFresh`: 1-2
   on Magic, the item's own tiers, the rune's floor); the rarity stays. Judgement calls: not confirm-gated (the rune a
   player spends again and again; the YAML can set `confirm`), refused on the base rarity, drop weights about Shaping's
   (`[120, 130, 120, 110, 100, 90, 80]`), no boss bonus, violet tint, crystal look. With Epic Loot: every effect
   replaced by a fresh Epic Loot roll of the item's rarity, renamed, sockets kept (the Serpent's chaotic reroll
-  without the seal). Amends the 2026-10-02 "six runes only" decision.
+  without the seal; superseded 2026-10-05). Amends the 2026-10-02 "six runes only" decision.
 - 2026-10-04 — Recasting never removes an inscription (user: "it should never remove stats from item. it should
   reroll 1 to the max number of effects for the item"): it rerolls between one and all of the item's inscriptions, how
   many uniform in 1..count, each new one in the old one's place, the rest kept; all or nothing when the pool runs
-  short. Same on Epic Loot items (kept effects keep their augment marks). Replaces the fresh 1-2 roll above.
+  short. Same on Epic Loot items (kept effects keep their augment marks; superseded 2026-10-05). Replaces the fresh
+  1-2 roll above.
+- 2026-10-05 — Epic Loot integration removed (user: "We need to not integrate with Epic Loot on elite crafting").
+  EliteCrafting ignores Epic Loot entirely and behaves exactly as without it, installed or not: no detection, no
+  compatibility shim, no refusal of Epic Loot items. Our magic gear drops per `Magic item drops`, and the runes work on
+  our own inscriptions only. `Epic/`, `Stones/EpicChecks` and `Stones/EpicVerbs` deleted, with the `Newtonsoft.Json`
+  reference and the `epic_*` words. Supersedes the 2026-10-03 Epic Loot decision and the Epic Loot parts of both
+  2026-10-04 Recasting entries.
 
 ## Open questions
 

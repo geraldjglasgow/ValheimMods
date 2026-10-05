@@ -247,6 +247,11 @@ not listed here; `item-data.md`):
 | `ecf_yield_mining`, `ecf_yield_lumber` | player | float | the player's own client: Deep Vein, Heartwood | the owner of the rock or tree hit |
 | `ecf_harvest` | player | float | the player's own client: Harvester | the owner of the picked pickable |
 | `ecf_summon_damage`, `ecf_summon_health` | summoned creature | float | the summoner's client, at spawn | the summon's owner (its own damage and health) |
+| `ecf_dot` | player | float | the player's own client: Lingering Wounds total (Phase 3) | the hit target's owner, when burning, poison or frost is applied |
+| `ecf_pen` | player | float | the player's own client, at its swing start: the swinging weapon's Sundering share (Phase 3) | the hit target's owner, in `RPC_Damage` |
+| `ecf_butcher` | player | float | the player's own client: Butcher's Cut total (Phase 3) | the dying animal's owner |
+| `ecf_ship_ward` | player | float | the player's own client: Sea Ward total (Phase 3) | the ship's owner, for its helmsman |
+| `ecf_para_immune` | creature | long | the creature's owner, when a paralysis ends: network time (ticks) until which it cannot be paralysed again (Phase 3) | the creature's owner |
 
 Player values are written by the player's own client (it owns its player ZDO) at the end of a rebuild, only when a
 value changed, so normal play sends nothing. They are unconditional totals; each reader clamps to the running rules'
@@ -264,7 +269,13 @@ Neither carries data or is validated beyond "the local player is alive" (IMP-119
 **Status effects**: `ECF_Aggregate` (hidden, the local player only, never in ObjectDB); `ECF_Hamstring` (registered in
 ObjectDB on every peer so a hit can carry its hash; the target's owner adds it, IMP-95); the HUD indicators
 `ECF_Indicator_Fury`, `ECF_Indicator_Rhythm`, `ECF_Indicator_Ward` (local player only, never in ObjectDB, never sent;
-IMP-88).
+IMP-88). Phase 3 adds `ECF_Paralyze` (in ObjectDB on every peer; the hit carries its hash and seconds, the target's owner
+adds it, bosses and players never, 6 s immunity after one ends).
+
+**Networked prefabs** (Phase 3): `ECF_ThrownWeapon`, the projectile a Throwing Grip weapon flies as, registered in
+ZNetScene on every peer at `ZNetScene.Awake`; the thrower writes the item's prefab name into the game's own `visual`
+key so every client shows the weapon. Chain lightning arcs and Bursting Shot blasts spawn the game's own networked
+hit effects at their targets.
 
 ---
 

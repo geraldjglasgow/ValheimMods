@@ -9,8 +9,9 @@ namespace EliteCrafting.Loot
     /// <summary>
     /// Builds a pre-rolled gear item (drops.md section 8): a clone of the base prefab's item data with its drop prefab,
     /// upgrade level 1, full durability, the world's world level, a random style variant, no crafter, then a fresh roll
-    /// at the drawn rarity through <see cref="ItemRoller.RollFresh"/> under the base's own ceiling, written with
-    /// <see cref="ItemState.Write"/>. If the pool cannot fill the rarity, the next lower rarity that may drop is tried.
+    /// at the drawn rarity through <see cref="ItemRoller.RollFresh"/> under the base's own class and level, written with
+    /// <see cref="ItemState.Write"/> (reason <c>drop</c>), then the API's <see cref="LootGenerated"/> listeners. If the
+    /// pool cannot fill the rarity, the next lower rarity that may drop is tried.
     /// Runs on the peer that spawns the drop (the creature's owner). Nothing here touches the world.
     /// </summary>
     public static class GearFactory
@@ -27,6 +28,10 @@ namespace EliteCrafting.Loot
                 return null;
             }
             item.m_durability = item.GetMaxDurability();   // after the write, so durability affixes count
+            if (rolled != null)
+            {
+                LootGenerated.Raise(item);
+            }
             return item;
         }
 
@@ -76,11 +81,11 @@ namespace EliteCrafting.Loot
 
         // A lower fallback rarity must be able to drop at all, and no rarity is tried that the pool cannot fill.
         private static bool Worth(RarityDef rarity, RarityDef drawn, GearBase gear) =>
-            (rarity == drawn || rarity.DropWeight > 0f) && rarity.MinAffixes <= gear.Capacity;
+            (rarity == drawn || rarity.DropWeight > 0f) && rarity.MinAffixes <= gear.CapacityFor(rarity);
 
         private static bool TryRoll(GearBase gear, RarityDef rarity, Random random, RuleSet rules, out RollOutcome outcome)
         {
-            RollContext context = new RollContext { Slot = gear.Slot, Ceiling = gear.Ceiling, Random = random, Rules = rules };
+            RollContext context = new RollContext { Class = gear.Class, Level = gear.Level, Random = random, Rules = rules };
             try
             {
                 outcome = ItemRoller.RollFresh(ItemState.Empty, rarity, context);
@@ -100,7 +105,12 @@ namespace EliteCrafting.Loot
 
         private static RarityDef? Commit(ItemDrop.ItemData item, ItemState state, RarityDef rarity)
         {
-            if (ItemState.Write(item, state))
+            bool written;
+            using (ItemChanges.Because(ItemChanges.Drop))
+            {
+                written = ItemState.Write(item, state);
+            }
+            if (written)
             {
                 return rarity;
             }

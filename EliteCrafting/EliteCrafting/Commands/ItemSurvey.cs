@@ -11,7 +11,7 @@ namespace EliteCrafting.Commands
 {
     /// <summary>
     /// <c>ecraft dump items</c> (console-commands.md section 3, DECISIONS.md RC-10): the in-game survey that base
-    /// prefabs, item classification, the slot map and the material map are verified with. One tab-separated line per
+    /// prefabs, item classes (classes-and-tiers.md section 9), item levels and the material map are verified with. One tab-separated line per
     /// <c>ObjectDB</c> item, sorted by prefab name (ordinal), with a header row and nothing else, so two dumps diff
     /// cleanly and the file pastes into a spreadsheet. Written to <c>EliteCrafting_items.txt</c> in the config folder.
     /// Reads this machine's object database and rules; any peer can run it (the server's console included).
@@ -23,7 +23,7 @@ namespace EliteCrafting.Commands
         private static readonly string[] Columns =
         {
             "prefab", "display_name", "name_token", "item_type", "skill", "max_stack", "weight", "teleportable", "value",
-            "recipes", "stations", "slot", "magic_base", "tier", "tier_source", "material_tier", "visuals",
+            "recipes", "stations", "class", "magic_base", "level", "level_source", "material_tier", "visuals",
         };
 
         public static void Write(CommandCall call)
@@ -71,14 +71,14 @@ namespace EliteCrafting.Commands
 
         private static void AddClassification(List<string> cells, string prefab, ItemDrop.ItemData item)
         {
-            ItemSlot slot = ItemSlots.SlotOf(item);
-            bool magicBase = ItemSlots.IsMagicBase(item);
-            TierResult tier = magicBase ? ItemTier.Explain(prefab) : default;
+            string? itemClass = ItemClasses.Classify(item).ClassId;
+            bool magicBase = ItemClasses.IsMagicBase(item);
+            TierResult level = itemClass != null ? ItemTier.Explain(prefab) : default;
             IReadOnlyDictionary<string, int> materials = ActiveRules.Current.Economy.ItemTiers.Materials;
-            cells.Add(slot == ItemSlot.None ? "-" : ItemSlots.Id(slot));
-            cells.Add(magicBase ? "yes" : ItemSlots.IsStone(item) ? "rune" : "no");
-            cells.Add(magicBase ? Numbers.Format(tier.Tier) : "-");
-            cells.Add(magicBase ? tier.Source : "-");
+            cells.Add(itemClass ?? "-");
+            cells.Add(magicBase ? "yes" : ItemClasses.IsStone(item) ? "rune" : "no");
+            cells.Add(itemClass != null ? Numbers.Format(level.Tier) : "-");
+            cells.Add(itemClass != null ? level.Source : "-");
             cells.Add(materials.TryGetValue(prefab, out int materialTier) ? Numbers.Format(materialTier) : "-");
         }
 

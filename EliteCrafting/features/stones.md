@@ -107,7 +107,6 @@ Shown on success. Owned here so every rune has one; styling is the display file'
 | `$ecf_msg_promoted` | $1 rises to $2. | Awakening, Ascension |
 | `$ecf_msg_affix_added` | $1 gains $2. | Shaping, Consecrated |
 | `$ecf_msg_rerolled` | $1 is recast with new inscriptions. | Recasting |
-| `$ecf_msg_epic_rerolled` | $1 is recast with new enchantments. | Recasting, on an Epic Loot item |
 | `$ecf_msg_stripped` | $1 is cleansed. | Cleansing |
 | `$ecf_msg_corrupt_seal` | The Serpent seals $1. Nothing else changes. | Serpent, `seal_only` |
 | `$ecf_msg_corrupt_add` | The Serpent seals $1 and grants $2. | Serpent, `add_inscription` |
@@ -269,7 +268,6 @@ Judgement calls: **no confirm gate** by default (it is the rune a player spends 
 | An owner put `rare` in its `applies_to` | works: one to all of the Rare item's inscriptions rerolled | `rerolled` |
 | Sealed | refused | `sealed` |
 | Equipped | allowed; rebuild | - |
-| Epic Loot installed | one to all of the effects replaced in place by new Epic Loot rolls (drawn as Epic Loot allows beside the kept ones), renamed; sockets and the kept effects' augment marks stay; refused when Epic Loot cannot roll every replacement | `epic_rerolled` |
 
 ---
 

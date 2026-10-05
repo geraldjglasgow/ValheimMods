@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
-using EliteCrafting.Items;
 
 namespace EliteCrafting.Rules
 {
-    /// <summary>The <c>drops:</c> section (drops.md, economy-yaml.md section 8). Tier-indexed arrays have 7 entries, tier 1 first.</summary>
+    /// <summary>
+    /// The <c>drops:</c> section (drops.md, economy-yaml.md section 8). Tier-indexed arrays have 8 entries, tier 1 first
+    /// (a YAML list of 7 is read with its last value repeated for tier 8; classes-and-tiers.md section 2).
+    /// </summary>
     public sealed class DropRules
     {
         public bool Tamed { get; internal set; }
@@ -13,13 +15,13 @@ namespace EliteCrafting.Rules
         public int MaxGearPerKill { get; internal set; } = 2;
         public IReadOnlyList<float> StarMultipliers { get; internal set; } = new[] { 1f, 2f, 3f };
         public float StarStep { get; internal set; } = 1f;
-        public IReadOnlyList<float> StoneChance { get; internal set; } = new float[7];
-        public IReadOnlyList<float> GearChance { get; internal set; } = new float[7];
+        public IReadOnlyList<float> StoneChance { get; internal set; } = new float[8];
+        public IReadOnlyList<float> GearChance { get; internal set; } = new float[8];
 
-        /// <summary>stone id → 7 weights.</summary>
+        /// <summary>stone id → 8 weights.</summary>
         public IReadOnlyDictionary<string, float[]> Stones { get; internal set; } = new Dictionary<string, float[]>();
 
-        /// <summary>rarity id → 7 weights.</summary>
+        /// <summary>rarity id → 8 weights.</summary>
         public IReadOnlyDictionary<string, float[]> RarityWeights { get; internal set; } = new Dictionary<string, float[]>();
         public IReadOnlyDictionary<string, float[]> BossRarityWeights { get; internal set; } = new Dictionary<string, float[]>();
 
@@ -49,11 +51,8 @@ namespace EliteCrafting.Rules
         public int TiersBelow { get; internal set; } = 1;
         public float SameTierWeight { get; internal set; } = 3f;
         public float LowerTierWeight { get; internal set; } = 1f;
-        public IReadOnlyDictionary<ItemSlot, float> SlotWeights { get; internal set; } = new Dictionary<ItemSlot, float>();
         public IReadOnlyList<string> Exclude { get; internal set; } = Array.Empty<string>();
         public IReadOnlyDictionary<string, int> Include { get; internal set; } = new Dictionary<string, int>();
-
-        public float SlotWeight(ItemSlot slot) => SlotWeights.TryGetValue(slot, out float w) ? w : 1f;
     }
 
     public sealed class BossDrop

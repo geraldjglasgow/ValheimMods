@@ -30,6 +30,9 @@ namespace EliteCrafting.Effects
         public readonly float[] ParryRestore = new float[3];
         public readonly float[] Leech = new float[3];
 
+        /// <summary>Per resource: flat amount restored by any block that holds (Shield Mend).</summary>
+        public readonly float[] BlockRestore = new float[3];
+
         /// <summary>Elements (fire, frost, lightning, poison) with the game's Resistant step from a bulwark flag.</summary>
         public DamageMask Resist;
 
@@ -43,6 +46,7 @@ namespace EliteCrafting.Effects
             Array.Clear(KillRestore, 0, KillRestore.Length);
             Array.Clear(ParryRestore, 0, ParryRestore.Length);
             Array.Clear(Leech, 0, Leech.Length);
+            Array.Clear(BlockRestore, 0, BlockRestore.Length);
             AnyDamageTaken = false;
             Resist = DamageMask.None;
         }
@@ -58,8 +62,10 @@ namespace EliteCrafting.Effects
                 case EffectKind.OnKillRestore: AddAt(KillRestore, ResourceIds, channel, amount); return true;
                 case EffectKind.ParryRestore: AddAt(ParryRestore, ResourceIds, channel, amount); return true;
                 case EffectKind.Leech: AddAt(Leech, ResourceIds, channel, amount); return true;
+                case EffectKind.BlockRestore: AddAt(BlockRestore, ResourceIds, channel, amount); return true;
                 case EffectKind.HealthForRegen: AddHealthForRegen(amount); return true;
                 case EffectKind.EitrForRegen: AddEitrForRegen(amount); return true;
+                case EffectKind.GlassCannon: AddGlassCannon(amount); return true;
                 default: return false;
             }
         }
@@ -99,6 +105,18 @@ namespace EliteCrafting.Effects
         {
             _byKind[(int)EffectKind.EitrRecovery] += fraction;
             _byKind[(int)EffectKind.EitrForRegen] += fraction / 2f;
+        }
+
+        // Glass Cannon: every damage type of your hits +X% (as damage_dealt:all); the kind's own slot holds the armour
+        // loss, X% (Combat3/GlassCannon).
+        private void AddGlassCannon(float fraction)
+        {
+            for (int i = 0; i < DamageSlots.Count; i++)
+            {
+                DamageDealt[i] += fraction;
+            }
+            AnyDamage = true;
+            _byKind[(int)EffectKind.GlassCannon] += fraction;
         }
 
         private static List<HitData.DamageModPair> ResistList(DamageMask mask)

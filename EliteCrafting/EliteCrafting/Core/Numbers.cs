@@ -22,6 +22,14 @@ namespace EliteCrafting.Core
                 && !float.IsNaN(value) && !float.IsInfinity(value);
         }
 
+        /// <summary>A double, for arithmetic that must match another implementation digit for digit (tier ladders).</summary>
+        public static bool TryDouble(string? text, out double value)
+        {
+            value = 0d;
+            return text != null && double.TryParse(text, NumberStyles.Float, Invariant, out value)
+                && !double.IsNaN(value) && !double.IsInfinity(value);
+        }
+
         public static bool TryInt(string? text, out int value)
         {
             value = 0;

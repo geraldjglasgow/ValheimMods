@@ -19,7 +19,7 @@ namespace EliteCrafting.Loot
 
         public string Prefab { get; }
 
-        /// <summary>1..7, or 0 when the biome at the death position decides (no open-world spawn entry).</summary>
+        /// <summary>1..8, or 0 when the biome at the death position decides (no open-world spawn entry).</summary>
         public int Tier { get; }
 
         /// <summary><c>boss map</c>, <c>override</c>, <c>spawn: black_forest</c> or <c>death position</c>.</summary>
@@ -37,7 +37,8 @@ namespace EliteCrafting.Loot
 
     /// <summary>
     /// Creature profiles by prefab hash, derived once per prefab and rules generation (drops.md sections 3 and 13), so
-    /// a kill costs one dictionary lookup. Tier order: boss map, creature override, home biome from the spawn lists,
+    /// a kill costs one dictionary lookup. The boss and creature entries are the YAML's, else what a mod set through the
+    /// API (<see cref="CodeLoot"/>). Tier order: boss map, creature override, home biome from the spawn lists,
     /// then the death position (resolved per kill by the caller when <see cref="CreatureProfile.Tier"/> is 0).
     /// </summary>
     public static class CreatureProfiles
@@ -71,8 +72,8 @@ namespace EliteCrafting.Loot
         public static CreatureProfile Build(string prefab, EconomyRules economy)
         {
             DropRules drops = economy.Drops;
-            drops.Bosses.TryGetValue(prefab, out BossDrop boss);
-            drops.Creatures.TryGetValue(prefab, out CreatureDrop creature);
+            BossDrop? boss = CodeLoot.Boss(drops, prefab);
+            CreatureDrop? creature = CodeLoot.Creature(drops, prefab);
             if (boss != null)
             {
                 return new CreatureProfile(prefab, BiomeTiers.Clamp(boss.Tier), "boss map", boss, creature);

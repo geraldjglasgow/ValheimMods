@@ -16,7 +16,7 @@ namespace EliteCrafting.Loot
         /// <summary>Creature (default) or chest: picks the base chances (<c>drops.chances</c> or <c>drops.chests</c>).</summary>
         public LootSource Source;
 
-        /// <summary>1..7.</summary>
+        /// <summary>1..8.</summary>
         public int Tier;
 
         public int Stars;

@@ -26,6 +26,7 @@ namespace EliteCrafting.Effects
             RegisterFieldWrites();
             RegisterLootFind();
             RegisterPhase2();
+            RegisterPhase3();
         }
 
         private static void Add(string id, EffectRoute route, EffectScope scope, ValueTypes values, EffectParamKind param,

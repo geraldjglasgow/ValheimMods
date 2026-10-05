@@ -4,7 +4,7 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Merges a list of entries with an <c>id</c> (affixes, rarities, stones): a new id is appended, an existing id
+    /// Merges a list of entries with an <c>id</c> (affixes, rarities, stones, item classes): a new id is appended, an existing id
     /// changes only the fields the later entry names (logged as a note, so an owner can see what their files did), and
     /// the same id twice in one file is an error. Entries without an id pass through for the parser to report.
     /// </summary>

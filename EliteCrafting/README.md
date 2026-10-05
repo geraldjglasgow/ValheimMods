@@ -6,15 +6,14 @@ Runes and magic gear: creatures and chests drop both, and a rune clicked onto an
 inscriptions.
 
 ## Features
-- Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6).
-- 162 inscriptions for every kind of gear, stronger the later the item's biome.
+- Three rarities: Normal, Magic (1-2 inscriptions, at most one prefix and one suffix) and Rare (3-6, three of each).
+- 209 inscriptions over 33 item classes: each kind of item rolls its own, and later biomes unlock stronger tiers.
 - Seven runes, clicked onto items: Awakening (Normal to Magic), Shaping (one more on Magic), Recasting (rerolls a
   Magic item), Ascension (Magic to Rare), Consecrated (one more on Rare), Cleansing (back to Normal) and the Serpent
   (seals the item after a gamble).
 - Drops from kills, bosses and world chests.
 - Elite Creatures Reborn: `Synergy` (off by default) lets elite stars raise drops.
-- Epic Loot: when installed, the runes work on Epic Loot's own magic items (not Cleansing) and only Epic Loot drops
-  magic gear.
+- An API for other mods: PackPanel's backpacks and Elite Creatures Pack's creatures and bone weapons join in.
 - Every rune, inscription, command and file:
   [CLAUDE.md](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCrafting/CLAUDE.md#player-reference).
 

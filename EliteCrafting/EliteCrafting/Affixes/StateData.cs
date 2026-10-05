@@ -22,6 +22,12 @@ namespace EliteCrafting.Affixes
         /// <summary>The reserved <c>ecf_tier</c> value, preserved verbatim.</summary>
         public string? ReservedTier { get; set; }
 
+        /// <summary>
+        /// The segments' grades are format 1's (1-7 over seven tiers) and still need each inscription's ladder to convert
+        /// (<see cref="ItemMigrations.ResolveGrades"/>, run when the state is resolved against rules).
+        /// </summary>
+        public bool LegacyGrades { get; set; }
+
         public bool IsEmpty => RarityId == null && Segments.Length == 0 && SealedReason == null && ReservedTier == null && !Newer;
 
         public StateData Copy() => (StateData)MemberwiseClone();

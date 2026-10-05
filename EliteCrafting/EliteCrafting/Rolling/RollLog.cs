@@ -19,8 +19,8 @@ namespace EliteCrafting.Rolling
             {
                 return outcome;
             }
-            string inputs = $"slot {context.Slot.Slot}, ceiling {context.Ceiling}, floor {context.TierFloor}"
-                + (context.Chaotic ? ", chaotic" : "");
+            string inputs = $"class {context.Class.ClassId ?? "none"}, level {context.Level}, floor {context.TierFloor}"
+                + (context.Chaotic ? ", chaotic" : "") + (context.LimitOverflow > 0 ? $", overflow {context.LimitOverflow}" : "");
             string result = outcome.Success ? Describe(outcome.State!) : "failed: " + outcome.Failure;
             Log.Info($"roll {what} ({inputs}): {Describe(before)} -> {result}");
             return outcome;

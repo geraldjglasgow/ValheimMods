@@ -96,6 +96,34 @@ namespace EliteCrafting.Effects
         ColdImmunity,
         FreezeImmunity,
 
+        // player-global hooks, Phase 3 survival (effects-phase3.md): the local player's own client
+        MeadDuration,
+        MeadPotency,
+        MeadSave,
+        FoodValues,
+        FoodRegen,
+        RestedDuration,
+        TrinketDuration,
+        AdrenalineGain,
+        BlockRestore,
+        BossDamageTaken,
+        BurningTaken,
+        BurningDecay,
+        AirJump,
+
+        // player-global, Phase 3 combat (Effects/Combat3): crits on the attacker's client
+        CritChance,
+        CritDamage,
+        GlassCannon,
+
+        // player-global hooks, Phase 3 gathering and crafting (effects-phase3.md): the local player's own client
+        BaitSave,
+        FishSize,
+        ReelStamina,
+        CraftSave,
+        CraftExtra,
+        TraderDiscount,
+
         // player-global, published on the player's own ZDO for other peers (PlayerStats): the creature's, ship's,
         // pickable's, rock's owner or every client reads them
         StaggerDurationDealt,
@@ -106,12 +134,19 @@ namespace EliteCrafting.Effects
         YieldMining,
         YieldLumber,
         YieldPickable,
+        DotDuration,
+        ButcherYield,
+        ShipDamageTaken,
 
         // loot-kind: applied by Loot (killer-stat ZDO plumbing, Loot/FindPublisher + KillerStats), no-op here
         FindRarity,
         FindStones,
         FindTrophy,
         FindCoins,
+
+        // external (api.md section 3): registered by another mod through the API, rolled, shown and summed here but
+        // applied by that mod (it reads the totals); a no-op in the aggregate, like the loot-find kinds
+        ExternalGlobal,
 
         // item-local hooks (never summed across items); keep ItemArmor first and SummonHealth last
         ItemArmor,
@@ -140,6 +175,22 @@ namespace EliteCrafting.Effects
         LoneBlade,
         BlockSteadfast,
         PerfectBlockWindow,
+        AddedDamage,
+        AttackSpeed,
+        CastSpeed,
+        ChainLightning,
+        ExplosiveShot,
+        Paralyze,
+        KnockbackDealt,
+        Penetration,
+        HeavyHand,
+        ChopDamage,
+        PickaxeDamage,
+        FreeBuild,
+        Throwable,
+        Recall,
+        Apportation,
+        ExternalItem,
         SummonDamage,
         SummonHealth,
     }
@@ -147,13 +198,27 @@ namespace EliteCrafting.Effects
     /// <summary>Effect id → <see cref="EffectKind"/>. Every id in <see cref="EffectCatalog"/> names a kind (checked at Awake).</summary>
     internal static class EffectKinds
     {
-        /// <summary>The kind of an effect id: the id in PascalCase (<c>move_speed</c> → <see cref="EffectKind.MoveSpeed"/>).</summary>
-        public static EffectKind Of(string id) => EnumIds<EffectKind>.TryParse(id, out EffectKind kind) ? kind : EffectKind.Unknown;
+        /// <summary>
+        /// The kind of an effect id: an external effect's (<see cref="EffectKind.ExternalGlobal"/> or
+        /// <see cref="EffectKind.ExternalItem"/> by its scope), else the id in PascalCase (<c>move_speed</c> →
+        /// <see cref="EffectKind.MoveSpeed"/>).
+        /// </summary>
+        public static EffectKind Of(string id)
+        {
+            if (EffectRegistry.IsExternal(id, out EffectScope scope))
+            {
+                return scope == EffectScope.ItemLocal ? EffectKind.ExternalItem : EffectKind.ExternalGlobal;
+            }
+            return EnumIds<EffectKind>.TryParse(id, out EffectKind kind) ? kind : EffectKind.Unknown;
+        }
 
         /// <summary>Item-local kinds are applied by the item hooks and never summed across items.</summary>
         public static bool IsItemLocal(EffectKind kind) => kind >= EffectKind.ItemArmor;
 
-        /// <summary>Plugin Awake: every registered effect must have a kind, or it would be registered but inert.</summary>
+        /// <summary>
+        /// Plugin Awake: every registered effect must have a kind, or it would be registered but inert. External effects
+        /// always have one (their scope's), whenever they were registered.
+        /// </summary>
         public static void VerifyCatalog()
         {
             foreach (string id in EffectRegistry.AllIds)

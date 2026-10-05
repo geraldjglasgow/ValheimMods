@@ -25,8 +25,8 @@ namespace EliteCrafting.Rules
         public IReadOnlyDictionary<string, int> Cost { get; internal set; } = new Dictionary<string, int>();
 
         /// <summary>
-        /// The weakest affix strength grade this stone rolls, or 0 for none. The YAML's <c>tier_floor</c> counts down
-        /// (1 = the strongest tier); this is its grade (<see cref="Core.AffixTierNumbers"/>).
+        /// YAML <c>tier_floor</c>, 0 for none: the rune rolls only the best this-many tiers an inscription has open on
+        /// the item, counted from its best eligible tier (1 = only the best; classes-and-tiers.md section 5).
         /// </summary>
         public int TierFloor { get; internal set; }
 

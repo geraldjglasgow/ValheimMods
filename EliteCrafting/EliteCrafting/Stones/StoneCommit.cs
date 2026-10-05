@@ -1,6 +1,5 @@
 using EliteCrafting.Affixes;
 using EliteCrafting.Core;
-using EliteCrafting.Epic;
 using EliteCrafting.Text;
 using UnityEngine;
 
@@ -20,24 +19,19 @@ namespace EliteCrafting.Stones
     {
         public static void Commit(StoneJob job, StoneResult result)
         {
-            if (!Write(job, result))
+            bool written;
+            using (ItemChanges.Because(ItemChanges.Rune(job.Def?.Id)))
             {
-                Log.Error($"rune '{job.Def?.Id}' passed every check but the item write was refused; nothing consumed");
+                written = ItemState.Write(job.Target, result.State!);
+            }
+            if (!written)
+            {
+                Log.Error($"rune '{job.Def?.Id}' passed every check but the item state write was refused; nothing consumed");
                 return;
             }
             Pay(job);
             KeepCarrying(job);
             StoneFeedback.Success(job.Player, result);
-        }
-
-        // Epic Loot's magic first (through its API), then our state; an Epic Loot item's state is only the Serpent's seal.
-        private static bool Write(StoneJob job, StoneResult result)
-        {
-            if (result.EpicJson != null && !EpicApi.Apply(job.Target, result.EpicJson))
-            {
-                return false;
-            }
-            return result.State == null || ItemState.Write(job.Target, result.State);
         }
 
         // The cost leaves the carried stack in the same frame as the write, so no use can ever land without being paid for.

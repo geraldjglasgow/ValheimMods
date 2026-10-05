@@ -14,7 +14,10 @@ namespace EliteCrafting.Affixes
         /// <summary>Rarity id; absent = Normal. Never written as the base rarity.</summary>
         public const string Rarity = "ecf_rarity";
 
-        /// <summary><c>id:tier:value;id:tier:value</c>, the item's inscriptions in display order.</summary>
+        /// <summary>
+        /// <c>id:grade:value;id:grade:value</c>, the item's inscriptions in display order. The middle field is the strength
+        /// grade (1 = the inscription's weakest tier, T<c>k</c>), shown as T(k + 1 - grade) with that inscription's own k.
+        /// </summary>
         public const string Affixes = "ecf_inscriptions";
 
         /// <summary>The same list under its name before 2026-10-01: read when the new key is absent, removed on write.</summary>
@@ -23,10 +26,14 @@ namespace EliteCrafting.Affixes
         /// <summary>Sealed reason id (<see cref="SealedSerpent"/>); any value = sealed.</summary>
         public const string Sealed = "ecf_sealed";
 
-        /// <summary>Reserved, never written (item-tier.md computes the ceiling); preserved when present.</summary>
+        /// <summary>Reserved, never written (the item level is computed, classes-and-tiers.md section 2); preserved when present.</summary>
         public const string Tier = "ecf_tier";
 
-        public const int CurrentFormat = 1;
+        /// <summary>
+        /// 2 since item classes and tier ladders (classes-and-tiers.md section 7): grades are per inscription ladder.
+        /// Format 1 stored grades 1-7 over seven tiers and is migrated on read (<see cref="ItemMigrations"/>).
+        /// </summary>
+        public const int CurrentFormat = 2;
 
         public const char EntrySeparator = ';';
         public const char FieldSeparator = ':';

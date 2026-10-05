@@ -19,9 +19,16 @@ ItemCopies** (live runes share their prefab's `SharedData` instead).
 **Status (2026-10-03): 0.1.0 on Thunderstore, a work in progress, never tested in game.** The crafting was cut to six runes (user decision 2026-10-02, PLAN.md
 Decisions log): Normal, Magic and Rare only; Awakening, Shaping, Ascension, Consecrated, Cleansing and the Serpent Rune.
 The Recasting Rune (rerolls a Magic item) was added as the seventh on 2026-10-04 (user decision), untested.
+The Epic Loot integration was removed on 2026-10-05 (user decision): EliteCrafting ignores Epic Loot entirely and
+behaves the same with or without it.
 Essences, sockets, gems, catalysts, the chisel, salvage and shards, sigils, binding, quality and the other stones are
 gone, from the code, the YAML and the words. Builds clean, both default YAML families parse with no issue; nothing
 tested in game yet. Next: the in-game test plan in `features/multiplayer.md` section 6, then packaging (no icon yet).
+**Item classes, item levels and tier ladders (user decisions 2026-10-05, `features/classes-and-tiers.md`, which wins
+over the older specs):** data-driven item classes replace the slot taxonomy, item levels run 1-8 (Deep North), every
+inscription has its own tier ladder (1-16 tiers, generated exactly as the planning page does), rarities limit prefixes
+and suffixes, and both YAML families and item data are format 2. The 38 Phase 3 effects the default YAML names
+(`features/effects-phase3.md`) are merged and registered (2026-10-05); all of it untested in game.
 
 ## Build
 
@@ -36,12 +43,13 @@ It must end with 0 errors before you hand back. Output: `dist/EliteCrafting.dll`
 | Folder | Owner | Responsibility |
 |---|---|---|
 | `EliteCrafting.cs` | spine | plugin entry; calls every `*Feature.Init`. Nobody else edits it |
-| `Core/` | spine | `Log`, `Embedded` (resources), `EnumIds<T>` (snake_case ↔ enum), `Numbers` (invariant), `Ids`, `Colors` |
+| `Core/` | spine | `Log`, `Embedded` (resources), `EnumIds<T>` (snake_case ↔ enum), `Numbers` (invariant), `Ids`, `Colors`, `Callbacks<T>` (other mods' callbacks, guarded) |
 | `Affixes/` | spine | item state in `m_customData`: `ItemKeys`, `AffixRoll`, `ItemState`, `ItemStateBuilder`, `ItemStateCache`, codec, writer, migrations |
 | `Rules/` | spine | YAML models, loading, merge, validation, Charter sync, hot reload, `ActiveRules` |
 | `Config/` | spine | `ServerBinding` (the one Charter), `ModSettings` (the .cfg) |
+| `Api/` | spine | the public API (`features/api.md`): `EliteCraftingApi` (the facade other mods bind to) and its helpers; see "API" below |
 | `Rolling/` | contract spine, **implementation: Stones** | `ItemRoller`, `RollContext`, `RollOutcome` |
-| `Items/` | Items | `ItemSlots` and `ItemTier` are spine (implemented); rune prefabs, upgrade carry-over, stack warning go in `ItemsFeature` + new files |
+| `Items/` | Items | `ItemClasses` (with `ItemClass`, `ClassInfo`, `ClassRegistry`, `ClassClassifier`) and `ItemTier` are spine (implemented); rune prefabs, upgrade carry-over, stack warning go in `ItemsFeature` + new files |
 | `Stones/` | Stones | the runes: click gesture, pipeline, refusals, verbs |
 | `Effects/` | Effects | `EffectRegistry`/`EffectDef`/`ItemEffects` are contract; `EffectCatalog` (the registered ids) and everything else is Effects' |
 | `Display/` | Display | names, tooltip block, ground glow, crafting panel upgrade tab, item / armor stand hovers |
@@ -71,7 +79,8 @@ the way to split later phases; a single agent working alone may cross folders bu
 
 **Item state** (`Affixes/`, item-data.md). `ItemState.Read(ItemData)` → immutable `ItemState` (cached; plain items
 return `ItemState.Empty` without a lookup). `IsMagic`, `RarityId`, `Rarity` (resolved `RarityDef`, null for Normal or
-unknown), `IsUnknownRarity`, `Affixes` (`AffixRoll` id/tier/value), `AffixCount`, `DefinitionAt(i)` (null = orphaned),
+unknown), `IsUnknownRarity`, `Affixes` (`AffixRoll` id/tier/value; `Tier` is the strength grade on the inscription's own
+ladder, 1 = its weakest tier T`k`, shown as `AffixDef.ShownTier(grade)` = T(k + 1 - grade)), `AffixCount`, `DefinitionAt(i)` (null = orphaned),
 `IsActiveAt(i)` (defined and enabled; otherwise dormant), `EffectRolls` (the active affixes: what Effects read),
 `IsSealed`/`SealedReason`, `Unreadable`, `IsNewerFormat` (runes refuse). To change an item: `state.ToBuilder()`
 (`SetRarity`, `AddAffix` (appends), `RemoveAffix`, `ReplaceAffix` (in place), `ClearAffixes`, `Seal`) → `Build()` →
@@ -79,13 +88,30 @@ unknown), `IsUnknownRarity`, `Affixes` (`AffixRoll` id/tier/value), `AffixCount`
 `ItemStateCache.Written` fires after every write. Keys kept: `ecf_v`, `ecf_rarity`, `ecf_inscriptions`, `ecf_sealed`,
 `ecf_tier`. `ItemKeys.RetiredKeys` (`ecf_bound`, `ecf_refine`, `ecf_sigil`, `ecf_sockets`, `ecf_gems`, `ecf_catalyst`,
 from the removed systems) are never read and are removed on the next write. `ItemMigrations` maps old rarity ids in
-memory: `common` → Normal, `uncommon` → `magic`, `epic`/`legendary`/`mythic` → `rare`.
+memory: `common` → Normal, `uncommon` → `magic`, `epic`/`legendary`/`mythic` → `rare`. `ItemKeys.CurrentFormat` is 2
+(classes-and-tiers.md section 7): a format-1 item (grades 1-7 over seven tiers) is marked by `ItemMigrations.Upgrade`
+(`StateData.LegacyGrades`) and converted each time it is resolved against rules (`ItemMigrations.ResolveGrades`,
+`grade' = clamp(round(grade * k / 7), 1, k)` per defined id, values kept, orphans keep their grade); `ItemState`
+keeps the unconverted source so a rules change re-converts, and the next write stores format 2.
 
 **Rules** (`Rules/`). `ActiveRules.Current` (immutable `RuleSet`, swapped atomically) and `ActiveRules.RulesChanged`.
 `RuleSet.Affixes` (`AffixRules`: `Get(id)`, `Affixes`, `Channels` (`ChannelDef`, index = `AffixDef.ChannelIndex`, `Cap`),
-`Pool(slot)`, health-critical thresholds) and `RuleSet.Economy` (`EconomyRules`: `Rarities` in ladder order,
-`Rarity(id)`, `Next`/`Previous`, `BaseRarity`, `Rolling`, `Stones`, `Stone(id)`, `StoneForPrefab`, `ItemTiers`,
-`Biomes`/`BiomeTier`, `Drops`, `StoneDraw(tier)`, `GearRarityDraw(tier, boss)`). `StoneCatalog.BuiltInIds` are the seven
+`Pool(classId)` → `PoolEntry` (def + `ClassFit` Best/Allowed, file order), health-critical thresholds) and
+`RuleSet.Economy` (`EconomyRules`: `Rarities` in ladder order (`MaxPrefixes`/`MaxSuffixes`, `Limit(kind)`),
+`Rarity(id)`, `Next`/`Previous`, `BaseRarity`, `Rolling` (`AllowedClosedFraction`, `PromoteAddsAtLeast`,
+`CountWeights`), `Stones`, `Stone(id)`, `StoneForPrefab`, `Classes` (the YAML's `ItemClass`es in order; read them
+through `Items.ItemClasses`), `ItemTiers`, `Biomes`/`BiomeTier`, `Drops` (tier lists of 8), `StoneDraw(tier)`,
+`GearRarityDraw(tier, boss)`, tiers 1-8). **Format 2** (classes-and-tiers.md): `AffixDef` has `Kind` (YAML `affix`:
+prefix/suffix), `Family`, `BestClasses`/`AllowedClasses` (`FitFor(classId)`), `Scaled`, `TierCount` (k) and `Tiers`
+(`AffixTierDef`: `Grade` (1 weakest), `Shown` (1 strongest), `Level` (unlocking item level 1-8), `Min`, `Max`,
+`Weight` (default the tier number), `Decimals`), `TierRow(grade)`, `ShownTier(grade)`, `GradeOf(shown)`. `tiers` is a
+ladder map `{ count, from, min, max }` generated by `TierLadder` (planning-page arithmetic, verified row for row) or
+explicit rows `{ tier, level, min, max, weight }`. Caps resolve per channel, most specific key first
+(`effect:param@health_critical`, `effect@health_critical`, `effect:param`, `effect`, then the registry default), each
+channel capped on its own. Removed keys (`slots`, `rolling.tier_window`, `drops.gear.slot_weights`) are warnings, never
+read. Unknown class ids in an inscription are a warning logged at compose (`ClassChecks`, both families and the class
+registry in). `RuleFormat`: both families carry `format: 2`; a format-1 main file on disk is renamed to
+`<name>.v1.bak` and the default written in its place, an old extra file or server text is skipped with a warning. `StoneCatalog.BuiltInIds` are the seven
 rune ids (`awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent`); `PrefabFor(id)` gives
 `ECF_` + PascalCase id. The YAML tunes or disables them but cannot add a rune. `StoneVerb`: `Promote`, `Add`, `Strip`,
 `Corrupt`, `Reroll`; `CorruptOutcome`: `SealOnly`, `AddInscription`, `ChaoticReroll`. `Drops.Chests` (`StoneChance`,
@@ -94,12 +120,20 @@ rune ids (`awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `clea
 `FamilyReload` per family (`Applied`, `Rejected`, `Bound`, `NoFiles`). `ActiveRules.SourcesInForce(FamilySpec.Affixes|Economy)`
 → `RuleSources` (internal): the file texts the running model was built from, in layer order, `DefaultsLayered`,
 `FromServer` (a bound player gets the server's texts). `StoneDef.Description` and `StoneDef.ItemWeight` (YAML
-`description`, `item_weight`).
+`description`, `item_weight`). `StoneDef.TierFloor` (YAML `tier_floor`, 0 = none): only the best that-many open tiers.
 
-**Items** (`Items/`). `ItemSlots.Classify(item)` → `SlotInfo` (slot, hands, traits, governing skills; cached per
-SharedData; PackPanel's backpacks, Utility items worn outside the game's utility field, are never eligible), `SlotOf`,
-`IsMagicBase`, `IsStone`, `Satisfies(slotInfo, affix.Requires)`, `Id(slot)`/`TryParse`.
-`ItemTier.Of(item | prefabName)`, `ItemTier.Explain(prefab)` (tier + source, for `ecraft tiers`), `ItemTier.PrefabName(item)`,
+**Items** (`Items/`). Item classes are data (classes-and-tiers.md section 1): `ItemClasses.Classify(item)` →
+`ClassInfo` (`Class` (`ItemClass`: id, group, name, rolls, damage_scale, drop_weight, match, items), `ClassId`,
+`Rolls`, `DamageScale`, hands, traits, governing skills; cached per SharedData and recomputed after a rules change or a
+registration), `ClassOf`, `Get(id)`, `All` (effective classes in order), `Version`, `IsMagicBase` (a class that rolls,
+max stack 1, not a rune), `IsStone`, `Satisfies(classInfo, affix.Requires)`. Classification order: a class whose
+`items` (or a claim) names the prefab, then classifier callbacks, then the first class with a `match` rule the item
+meets, else none; a rune is never classified and PackPanel's backpacks (`$packpanel_backpack_`) never meet a match rule.
+Internal registration API behind the public facade (`Api/`, api.md section 2), each bumping `ItemClasses.Version`:
+`RegisterClass(ItemClass)` (registered classes sit under the YAML: a YAML class with the same id overrides only the
+fields it names), `ClaimItems(classId, prefabs)`, `AddClassifier(id, Func<ItemData, string?>)` / `RemoveClassifier`
+(guarded: a throw or an unknown class id is logged once and counts as no answer).
+`ItemTier.Of(item | prefabName)` is the item level 1-8 (8 = Deep North), `ItemTier.Explain(prefab)` (level + source, for `ecraft tiers`), `ItemTier.PrefabName(item)`,
 `ItemTier.RefreshRecipes()` (recipe index up to date, tier cache dropped when rebuilt), `ItemTier.HasRecipe(prefab)`
 (never call the internal `RecipeIndex.Refresh` from outside Items). Rune prefabs: `StonePrefabs.Get(runeId)`,
 `GetByPrefabName`, `IsRegistered`, `IsBuilt`, `IsStonePrefab(prefab)` (the seven runes, built from code on every peer,
@@ -111,8 +145,8 @@ current max stack. `StoneVisuals.Tint(runeId)`, `HasTint(runeId)`, `TintOfPrefab
 reads them; a rune without a tint glows white). A promote rune takes the colour of the rarity it produces.
 
 **Effects** (`Effects/`). `EffectRegistry.TryGet/Get/IsRegistered/All`; a new effect is a line in `EffectCatalog`
-(registration closes when the rules load). `ItemEffects.CollectLocal(list, scratch)` fills the local player's active
-affixes on counted equipment (`ActiveAffix`: item, roll, def, slot, channel); `EquippedItems`, `CollectItem`,
+(registration closes when the rules load; external effects from the API are the one exception, see "API"). `ItemEffects.CollectLocal(list, scratch)` fills the local player's active
+affixes on counted equipment, the trinket included (`ActiveAffix`: item, roll, def, item class, channel); `EquippedItems`, `CollectItem`,
 `IsEquippedByLocalPlayer`, `Enabled` (the `Affix effects` switch). `EffectTotals.Snapshot()` → `EffectSnapshot`
 (per channel sum, applied value after caps, sources; health-critical state; `States`: the Phase 2 runtime states in
 force, e.g. `ward 12 left`, `evader's fury`, `momentum`) for `ecraft stats`. The aggregate is
@@ -126,21 +160,30 @@ peer); player-ZDO floats written by the player's own client when they change: `e
 floats `ecf_summon_damage`, `ecf_summon_health` (the caster, at spawn). The four loot-find effects (`find_*`) are
 registered here but applied by Loot.
 
-**Rolling** (`Rolling/`, implemented by Stones). `ItemRoller.RollFresh(state, rarity, ctx)` (a dropped item),
+**Rolling** (`Rolling/`, implemented by Stones; classes-and-tiers.md sections 5 and 6). Candidates come from the item
+class's pool (`best` or `allowed`), pass `requires`, are not on the item, share no exclusion group and keep the item
+within its rarity's prefix or suffix limit for their kind (`AffixLimits`; the builder's rarity, so a promotion or fresh
+roll uses the new one). Eligible tiers (`TierEligibility`): unlocked at the item level or below, weight above 0, on an
+allowed class below the closed top (`tier >= 1 + floor(k * rolling.allowed_closed_fraction)`), then the rune floor keeps
+the best that-many; chaotic rolls take any tier the inscription defines, uniformly (class pool and limits still apply).
+Values are uniform in the tier's range at its decimals; `scaled` inscriptions are multiplied by the class's
+`damage_scale` and rounded again (`RollMath.Scale`, decimal arithmetic). `ItemRoller.RollFresh(state, rarity, ctx)` (a dropped item),
 `AddAffixes(state, count, ctx)` (Shaping, Consecrated, the Serpent's extra inscription), `Promote(state, toRarity, ctx)`
 (Awakening, Ascension: adds `max(new.min - count, promote_adds_at_least)`, not past the new maximum), `Recast(state, ctx)`
 (Recasting: one to all of the affixes, how many uniformly then which, replaced in place; the count never drops; all
-or nothing; `RecastOps.Pick` is shared with the Epic Loot path) and
+or nothing) and
 `RollChaotic(state, rarity, ctx)` (the Serpent: every affix out, the count drawn in the rarity's range, any tier the
 affix defines) → `RollOutcome` (new state or `RollFailure`: `NoEligibleAffix`, `NotMagicBase`, `Full`, `NewerFormat`);
-pure, never write. `RollContext.For(item, tierFloor)`; `RollContext.Random` defaults to `RollRandom.Create()`
-(independently seeded; never `new Random()` per roll).
+pure, never write. `RollContext.For(item, tierFloor)` (`Class` = `ClassInfo`, `Level` 1-8, `TierFloor`, `Chaotic`,
+`LimitOverflow`: how far the Serpent's add may pass the prefix and suffix limits); `RollContext.Random` defaults to
+`RollRandom.Create()` (independently seeded; never `new Random()` per roll).
 
 **Loot** (`Loot/`). Runs on the dying creature's ZDO owner only (`DeathPatch`, prefix on `Character.OnDeath`).
 Debug surface: `LootRoller.Simulate(tier, stars, kills, creaturePrefab?)` → `LootSimulation` (`ToString` prints totals),
 `LootRoller.SpawnAt(position, tier, stars, creaturePrefab?)`, `LootPreview.Explain(Character)`, `GearPool.Bases` and
-`GearPool.ForTier(tier)` (the drop-eligible bases), `GearFactory.Build(...)` (a pre-rolled item, written through
-`ItemState.Write`). The drops are held during the death and stored on the creature's ragdoll, spawned when it
+`GearPool.ForTier(tier)` (the drop-eligible bases at drop tiers 1-8, weighted by their class's `drop_weight`;
+`GearBase`: `Class`, `Level`, `PoolTier`, `CapacityFor(rarity)` per kind and limit), `GearFactory.Build(...)` (a
+pre-rolled item, written through `ItemState.Write`). The drops are held during the death and stored on the creature's ragdoll, spawned when it
 dissolves with the vanilla loot, or dropped at once with no ragdoll (`Loot/CorpseLoot`, Ragdoll.Setup postfix and
 Ragdoll.SpawnLoot prefix). ZDO keys (effects-runtime.md section 7): `ecf_corpse_loot` (ragdoll: the held items' saved
 data), `ecf_ally_hit` (creature), `ecf_filled` (a world container
@@ -155,25 +198,6 @@ owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: 
 `CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.Recast`, or `RollFresh` on a Magic item with no affix; refused on the base rarity).
 The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
 outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
-
-**Epic Loot** (`Epic/`, user decision 2026-10-03). While Epic Loot (`randyknapp.mods.epicloot`) is loaded
-(`EpicApi.Installed`) the runes work on Epic Loot's own magic and `Loot/GearDrops.On` is false: no magic gear of
-ours drops, runes still do. `EpicApi` binds Epic Loot's published `EpicLoot.API` by reflection on first use (no
-reference; `Ready` when every method was found, else the runes refuse with `epic_unavailable`). `EpicItem` is Epic
-Loot's magic item JSON (`Newtonsoft.Json` from the game's Managed folder, not merged) as a working copy; `EpicRarity`
-maps it onto our ladder (plain = base rung, Epic Loot Magic = rung 1, Rare = rung 2; Epic and up have no rung and are
-refused); `EpicEffects` rolls a new effect as Epic Loot does (allowed types, `SelectionWeight`, `ValuesPerRarity`
-steps); `EpicExtras` reads two public Epic Loot classes outside the API: `LootRoller.GetEffectCountsPerRarity` (the
-effect count range per rarity, fallback Magic 1-3, Rare 2-4) and `MagicItemNames.GetNameForItem` (fallback: the name
-stays). In `Stones/`, `EpicChecks` replaces pipeline step 2 and `StoneVerbs.Run` hands every verb to `EpicVerbs`:
-Awakening = Epic Loot's own Magic roll, Ascension = Magic to Rare plus effects up to Epic Loot's Rare minimum (at least
-`promote_adds_at_least`), renamed; Shaping/Consecrated = one effect up to Epic Loot's maximum; Recasting = one to
-all effects replaced in place by new `EpicEffects` rolls drawn beside the kept ones (`EpicItem.RemoveEffects` and
-`ReplaceEffects`; kept effects keep their augment marks; `EpicVerbs.Rerolled` only for an item with none); the Serpent
-(`EpicSerpent`) seals with our `ecf_sealed` (Epic Loot's own table does not read it) after seal only, one effect past
-the maximum by `overflow`, or every effect replaced by a fresh roll (sockets kept, augment marks cleared); Cleansing
-refuses (`epic_no_strip`, the user chose not to hook it up). `StoneResult.EpicJson` is written through
-`ApplyMagicItemJson` before our state. Items with our own inscriptions keep them and their effects.
 
 **Settings** (`Config/ModSettings`): gameplay entries are Charter clauses (synced, locked while the server binds);
 display, glow, confirm and diagnostics are local. Sections `1 - General`, `2 - Runes`, `3 - Drops`, `4 - Commands`,
@@ -190,19 +214,76 @@ the crafting panel's upgrade tab (`CraftingPanel`: the upgrade target's block un
 the label color) and item / armor stand hovers (`StandHover`, the item decoded from the stand ZDO by `StandItems` once
 per ZDO revision). Every per-frame surface memoises its last input and output.
 
+## API
+
+The public API for other mods (`features/api.md` has the endpoints and the JSON fields). `Api/EliteCraftingApi` is a
+public static class (ILRepack internalizes only the merged libraries), `ApiVersion = 1`; `HasEndpoint` /
+`GetEndpointNames` read its public static methods. Other mods bind by reflection through `ValheimModLibs/EliteCraftingLink`
+(typed delegates, nothing when EliteCrafting is absent or older) and load after us (soft `BepInDependency` on
+`com.EliteCrafting`). An endpoint is added, never changed; a removed one stays as a no-op. The contract:
+
+- **Never throws.** Every endpoint runs through `ApiGuard.Run` (an internal failure is logged once per endpoint and
+  answers false, null or 0). Foreign callbacks live in `Core/Callbacks<T>` lists (by id: providers, filters; by
+  delegate: listeners, whose source is the declaring assembly); `ForeignFailures` logs a throw once per kind and source
+  and it counts as no answer. Classifiers keep their own guard in `ClassRegistry`.
+- **JSON is YAML.** `ApiJson.Map` reads a definition with the merged YamlDotNet and the rule parsers build the models:
+  `ClassParser.ParseOne` (classes), `AffixParser.Parse` (an inscription, complete and valid on its own, its effect
+  registered), `BossDropParser` (loot; bonus runes must be built-in ids), `ExternalEffectParser`. An error refuses the
+  call, logged under the endpoint's name.
+- **Under the YAML.** Classes in `ClassRegistry` (a YAML class with the id overrides only the fields it names).
+  Registered inscriptions are `Rules/Loading/CodeLayer`, the bottom layer of every build of the inscription family
+  (`FamilyBuilder.Merge`, under the built-in defaults and the files; `withCode: false` only in `RuleFamily.AdoptLocal`'s
+  last-resort fallback), so a file entry with the id changes only the fields it names. Pool additions are applied to the
+  parsed entries after the merge (`CodeLayer.ApplyPools`, called by `AffixFamilyParser`; best wins over allowed; an
+  unknown inscription id is a warning). Levels in `Items/CodeLevels` (read by `TierDerivation` right after
+  `item_tiers.items`; source `api` in `ecraft tiers`). Loot in `Loot/CodeLoot` (`CreatureProfiles.Build` takes the YAML's
+  boss and creature entries first, else the code's, each whole).
+- **Rebuild.** A registration after the rules loaded calls `Api/RuleRebuild.Request` (inscriptions, pools and external
+  effects ask for the inscription family); its driver's `LateUpdate` runs `ActiveRules.RebuildForApi` at most once per
+  frame: `RuleFamily.Rebuild` (the family from the texts it was last given: this machine's files on the author, the
+  server's on a bound player, so a file rejected before the registration builds now), else `Compose()` again, so every
+  cache keyed on the generation (item levels, gear pool, creature profiles, tooltips, the unknown-class check) refreshes.
+  Before the first load nothing is scheduled: that load reads every registration.
+- **External effects.** `EffectRegistry.RegisterExternal` adds an id (or replaces an external one) at any time, also
+  after `Freeze`; one of our own ids is refused. `EffectKinds.Of` maps it to `ExternalGlobal` (player scope) or
+  `ExternalItem` (item scope, inside the item-local range): no-ops in the aggregate and the item hooks, like the
+  loot-find kinds, and `VerifyCatalog` accepts them. They roll, show (polarity, unit) and sum into channels like any
+  effect; the registering mod applies them by reading the totals.
+- **Totals** (`ApiTotals`, inscription units): the local player from the last rebuild (`AggregateBuilder.LastPlan` and
+  `Sums`: the channels of the effect and param, capped, health-critical ones only while critical, item-local ones never);
+  another player only what it publishes (loot find, `FindKeys`; shared stats, `PlayerStats.StatOf`), param-less; an item
+  its own active rolls of the effect and param, summed per channel and capped. 0 while `Affix effects` is off.
+- **Hooks.** `ItemEffects.EquippedItems` adds the equipment providers' items for a `Player` (deduplicated) and
+  `IsEquippedByLocalPlayer` counts them, so they feed the aggregate, the loot-find publisher and the write-triggered
+  rebuilds (local player only; providers are asked on every rebuild and every item-state write, so they must be cheap).
+  `InvalidatePlayer` marks the effects dirty (rebuilt next frame) and republishes loot find. Magic-base filters are asked
+  last by `ItemClasses.IsMagicBase` (drops, runes, commands, the API); a filter change refreshes the rules (the gear pool
+  asks them). Item-changed listeners run right after `ItemStateCache.Written`, with the reason of the innermost
+  `ItemChanges.Because` scope: `rune:<id>` (`StoneCommit`), `drop` (`GearFactory`), `command` (`RollerCall`), `api`
+  (`ApiItems`), `other` outside every scope; `migration` is reserved (migrations are stored by the next write of another
+  reason) and the upgrade carry-over copies the data onto the new item without a write. Loot-generated listeners run in
+  `GearFactory.Build` after a pre-rolled item (creature or world container) was written.
+- **Items.** `RollMagic` (`ItemRoller.RollFresh`) and `Cleanse` write through `ItemState.Write` on the caller's peer and
+  refuse sealed and newer-format items.
+- **Multiplayer.** Registrations are code: every peer must make the same ones. Nothing is sent; the server's synced YAML
+  still overrides what code registered.
+
 ## YAML defaults
 
-`config/EliteCrafting_inscriptions.yml` is generated from `features/affixes.md` (section 4 catalog) by scripts kept outside
-the repo; `config/EliteCrafting_economy.yml` is written from `features/economy-yaml.md` (rarities, rolling, runes,
-item tiers, biomes, drops with chests and ecr). Both load with 0 errors and 0 warnings.
-**Affix tiers count down** (user decision 2026-10-01): in the YAML, the tooltip and the console, tier 1 is the
-strongest row. The code, the tier window and stored item data use the strength grade instead (grade = 8 - tier, so it
-lines up with item and biome tiers); `Core/AffixTierNumbers` is the only conversion, called by `AffixTierParser`,
-`StoneParser` (`tier_floor`), `AffixLines` and the commands. The catalog in `features/affixes.md` writes `T7–T1`,
-weakest first. **Decision: the default affix file lists only affixes whose effect is registered** (162 affixes on 115
-effects). An affix naming an unregistered effect is an error even when `enabled: false`, so typos never hide behind a
-disabled flag. New affixes are added to the defaults as their effects are registered; because the built-in defaults
-are a layer under the owner's files, new affixes reach existing servers without anyone editing a file.
+Both default files are **format 2** (`format: 2`, classes-and-tiers.md, 2026-10-05), written from the planning page
+(https://claude.ai/artifact/VmVJDaDhHFrCP6dhKt1LoM): `config/EliteCrafting_inscriptions.yml` has 207 inscriptions, each
+with `affix` (prefix/suffix), `family`, `classes { best, allowed }`, optional `scaled`, and a tier ladder
+`{ count, from, min, max }`; `config/EliteCrafting_economy.yml` has the rarities with `prefixes`/`suffixes`, `rolling`
+(`allowed_closed_fraction`), the runes, the 33 item `classes` with their match rules, item levels 1-8 (Deep North
+materials at 8), biomes and drops with eight-entry tier lists. With the real effect catalog (153 ids), both load with
+0 errors and 0 warnings and every generated ladder matches the planning page's `tierRows` row for row (checked by a
+scratch harness, 2026-10-05). **Tiers count down** (user decision 2026-10-01): in the YAML, the tooltip and the
+console, T1 is the strongest row; each inscription has its own count k (1-16). Stored item data and the code use the
+strength grade (1 = T`k`); the conversion lives on the definition (`AffixDef.ShownTier`/`GradeOf`), never global.
+**Decision (kept): the default file lists only inscriptions whose effect is registered** in the build it ships with. An
+inscription naming an unregistered effect is an error even when `enabled: false`, so typos never hide behind a
+disabled flag. Because the built-in defaults are a layer under the owner's files, new inscriptions reach existing
+servers without anyone editing a file.
 
 Merge rules (configuration.md section 3): layers = built-in defaults (unless the main file says
 `use_defaults: false`), the main file, then other files by name. Id lists (`affixes`, `rarities`, `runes`) merge by
@@ -243,23 +324,18 @@ Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you
 A sealed item takes no rune again. Every rune's odds, costs and the rarities it accepts are in
 `EliteCrafting_economy.yml`.
 
-**With Epic Loot installed** the runes work on Epic Loot's own magic items instead, and only Epic Loot drops magic
-gear (runes still drop). Awakening makes a plain item an Epic Loot Magic item, rolled as Epic Loot rolls one;
-Shaping and Consecrated add one Epic Loot effect, up to Epic Loot's most for that rarity; Recasting rerolls one or more
-effects of a Magic item in place, never fewer (sockets stay); Ascension makes a Magic item
-Rare and adds effects; the Serpent Rune seals it after nothing more, one effect past the limit, or every effect
-rerolled (sockets and shards stay). The Cleansing Rune does not work on Epic Loot items, nor does any rune on Epic or
-higher items or on unidentified ones. Epic Loot's own enchanting table still works on a sealed item.
-
 A refusal says why, for example "The Ascension Rune does not work on Rare items", "This item cannot hold another
 inscription", "No inscription can roll on this item", or "Unequip this item first" when the server does not allow
 changing equipped items.
 
 ### Inscriptions
 
-Each inscription has seven tiers, and they count down: **T1 is the strongest roll, T7 the weakest**. How strong an item can
-roll depends on the item, not on where it dropped: a Meadows item rolls only T7, a Swamp item T5 to T7, an Ashlands
-item T1 to T3. The tooltip shows each inscription's tier next to it.
+Each inscription has its own ladder of tiers (1 to 16), and they count down: **T1 is the strongest roll**. An item rolls
+every tier its item level has unlocked (the item level is the biome of its materials, 1 Meadows to 8 Deep North),
+weaker tiers more often; on an item class where an inscription is only allowed, its top third stays closed. A Magic
+item holds at most one prefix and one suffix, a Rare item three of each. The tooltip shows prefixes first, then
+suffixes, each with its tier; `ecraft inscription <id>` shows a whole ladder. (The table below still lists the
+inscriptions of the format-1 catalog by slot; `ecraft list inscriptions <class>` lists the current ones.)
 
 | Where | Inscriptions |
 |---|---|
@@ -277,7 +353,7 @@ item T1 to T3. The tooltip shows each inscription's tier next to it.
 | Tools | Builder's Reach, Tireless Hands, Green Thumb, Miner's Mastery, Angler's Mastery, Deep Vein |
 | Most gear | Well-Forged and Everlasting (durability), Lightened and Gossamer (weight), Supple Fit (no movement penalty) |
 
-`ecraft list inscriptions` in the console prints the full list with slots and tiers. Evader's Fury, Steel Rhythm and a
+`ecraft list inscriptions` in the console prints the full list with their classes and tier counts. Evader's Fury, Steel Rhythm and a
 charged Runic Ward show an icon on the HUD while they are active.
 
 ### Console commands
@@ -289,14 +365,16 @@ Open the console with F5. Everything is under one command, `ecraft`. Output is E
 | `ecraft help` | everyone | Lists the sub-commands you may run |
 | `ecraft inspect [cursor\|hover\|ground\|<slot>]` | everyone* | An item's EliteCrafting data and what it means |
 | `ecraft stats` | everyone* | Your summed inscription totals and the effects active right now |
-| `ecraft list inscriptions\|runes\|rarities [<filter>]` | everyone* | The configuration in force, filtered by slot, category, rarity or id |
+| `ecraft list inscriptions\|runes\|rarities [<filter>]` | everyone* | The configuration in force, filtered by item class, category, prefix/suffix, rarity or id |
+| `ecraft inscription <id>` | everyone* | One inscription: its classes and every tier row with its range and unlock level |
+| `ecraft classes` | everyone* | Every item class: its items, their item levels and its pool size |
 | `ecraft give <rune>\|all [count]` | admin | Runes into your inventory |
-| `ecraft roll <rarity> <prefab\|slot> [tier]` | admin | A rolled magic item into your inventory |
+| `ecraft roll <rarity> <prefab\|class> [level]` | admin | A rolled magic item into your inventory (a class picks a random base of it) |
 | `ecraft reroll [cursor\|hover\|<slot>]` | admin | Rerolls an item's inscriptions, keeping its rarity |
 | `ecraft inscribe <inscription> [tier] [value] [cursor\|hover\|<slot>]` | admin | Adds or replaces one inscription, for testing |
 | `ecraft reload` | admin, on the machine whose files are in force | Re-reads the YAML, the translations and the `.cfg` now |
-| `ecraft dump inscriptions\|economy\|items` | admin | Writes the merged configuration in force, or a survey of every item, to the config folder |
-| `ecraft tiers` | admin | Writes `EliteCrafting_item_tiers_reference.yml`: every magic base with its tier and why |
+| `ecraft dump inscriptions\|economy\|items` | admin | Writes the merged configuration in force, or a survey of every item (with its class and level), to the config folder |
+| `ecraft tiers` | admin | Writes `EliteCrafting_item_tiers_reference.yml`: every magic base with its class, item level (1-8) and why |
 | `ecraft ecr` | everyone* | The Elite Creatures Reborn synergy: installed or not, the switch, and what the creature you look at would pay |
 
 \* unless the server turns `Read-only commands for everyone` off. `<slot>` is an equipment slot: `right`, `left`,
@@ -307,12 +385,13 @@ Open the console with F5. Everything is under one command, `ecraft`. Output is E
 | File | What |
 |---|---|
 | `BepInEx/config/com.EliteCrafting.cfg` | Switches and preferences. Gameplay keys (inscription effects, modifying equipped items, rune and gear drops, command access, the Elite Creatures Reborn synergy) follow the server; display, ground glow, the confirm mode and diagnostics are per player |
-| `BepInEx/config/EliteCrafting_inscriptions.yml` | Every inscription: effect, slots, category, tiers, weights, caps |
-| `BepInEx/config/EliteCrafting_economy.yml` | Rarities and colors, rolling rules, runes, item tiers, biomes and drop tables (creatures, bosses, chests, Elite Creatures Reborn) |
+| `BepInEx/config/EliteCrafting_inscriptions.yml` | Every inscription: effect, prefix or suffix, item classes, category, tier ladder, weights, caps |
+| `BepInEx/config/EliteCrafting_economy.yml` | Rarities, colors and prefix/suffix limits, rolling rules, runes, item classes, item levels, biomes and drop tables (creatures, bosses, chests, Elite Creatures Reborn) |
 | `EliteCrafting_inscriptions_<anything>.yml`, `EliteCrafting_economy_<anything>.yml` | Your own additions, read after the main file in name order; they change only what they name |
 | `EliteCrafting.translations.<Language>.yml` | Your own words for a language, key to text, over the built-in English |
 
-The main YAML files are written once with the full defaults and never rewritten. The built-in defaults always sit
+The main YAML files are written once with the full defaults and never rewritten, except that a main file from before
+format 2 is renamed to `<name>.v1.bak` and written fresh (extra files without `format: 2` are skipped with a warning). The built-in defaults always sit
 underneath, so a later release's new inscriptions reach your server without editing anything; `use_defaults: false` in a
 main file makes the files the whole configuration. A file with an error is reported in the log with file and line,
 and the previous rules stay in force. Turn an inscription off with `enabled: false` (items that have it keep it, greyed and

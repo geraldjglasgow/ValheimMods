@@ -125,7 +125,7 @@ namespace EliteCrafting.Commands
                 call.Reply("that item is not in your own inventory.");
                 return null;
             }
-            if (!ItemSlots.IsMagicBase(item))
+            if (!ItemClasses.IsMagicBase(item))
             {
                 call.Reply($"{ItemText.Name(item)} is not a magic base (stackable, no slot, or a rune).");
                 return null;

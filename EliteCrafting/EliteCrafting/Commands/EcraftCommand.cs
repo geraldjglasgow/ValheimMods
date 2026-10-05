@@ -23,13 +23,15 @@ namespace EliteCrafting.Commands
             new SubCommand("inspect", InspectCommand.Grammar, Access.ReadOnly, "an item's ecf_ data and its parse", InspectCommand.Run),
             new SubCommand("stats", "ecraft stats", Access.ReadOnly, "your aggregated inscription totals", StatsCommand.Run),
             new SubCommand("list", ListCommand.Grammar, Access.ReadOnly, "the running configuration", ListCommand.Run),
+            new SubCommand("inscription", InscriptionCommand.Grammar, Access.ReadOnly, "one inscription with its tier rows and unlock levels", InscriptionCommand.Run),
+            new SubCommand("classes", ClassesCommand.Grammar, Access.ReadOnly, "every item class: items, levels, pool size", ClassesCommand.Run),
             new SubCommand("give", GiveCommand.Grammar, Access.Admin, "runes into your inventory", GiveCommand.Run),
             new SubCommand("roll", RollCommand.Grammar, Access.Admin, "a rolled magic item into your inventory", RollCommand.Run),
             new SubCommand("reroll", RerollCommand.Grammar, Access.Admin, "rerolls every inscription of an item, keeping rarity", RerollCommand.Run),
             new SubCommand("inscribe", AffixCommand.Grammar, Access.Admin, "adds or replaces one inscription on an item", AffixCommand.Run),
             new SubCommand("reload", "ecraft reload", Access.Author, "re-reads the YAML, translations and .cfg now", ReloadCommand.Run),
             new SubCommand("dump", DumpCommand.Grammar, Access.Admin, "writes the merged configuration or the item survey", DumpCommand.Run),
-            new SubCommand("tiers", "ecraft tiers", Access.Admin, "writes the item tier reference file", TiersCommand.Run),
+            new SubCommand("tiers", "ecraft tiers", Access.Admin, "writes the item level reference file (levels 1-8)", TiersCommand.Run),
             new SubCommand("ecr", EcrCommand.Grammar, Access.ReadOnly, "the Elite Creatures Reborn synergy and the hovered creature", EcrCommand.Run),
         };
 
@@ -42,7 +44,7 @@ namespace EliteCrafting.Commands
                 return;
             }
             _registered = true;
-            new Terminal.ConsoleCommand(Name, "[help|inspect|stats|list|give|roll|reroll|inscribe|reload|dump|tiers|ecr] - EliteCrafting",
+            new Terminal.ConsoleCommand(Name, "[help|inspect|stats|list|inscription|classes|give|roll|reroll|inscribe|reload|dump|tiers|ecr] - EliteCrafting",
                 (Terminal.ConsoleEvent)OnCommand, optionsFetcher: Names);
         }
 

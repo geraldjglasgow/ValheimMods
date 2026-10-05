@@ -97,7 +97,7 @@ namespace EliteCrafting.Display
             {
                 return false;
             }
-            if (ItemSlots.IsStone(data))
+            if (ItemClasses.IsStone(data))
             {
                 // Tint from the Items area; a rune without one glows white.
                 color = stones ? (Color32)StoneVisuals.TintOfPrefab(ItemTier.PrefabName(data)) : default;

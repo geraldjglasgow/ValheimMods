@@ -6,21 +6,23 @@ using EliteCrafting.Rules;
 
 namespace EliteCrafting.Effects
 {
-    /// <summary>One active affix on an equipped item: the item, its roll, the live definition and the item's slot.</summary>
+    /// <summary>One active affix on an equipped item: the item, its roll, the live definition and the item's class.</summary>
     public readonly struct ActiveAffix
     {
-        public ActiveAffix(ItemDrop.ItemData item, AffixRoll roll, AffixDef def, ItemSlot slot)
+        public ActiveAffix(ItemDrop.ItemData item, AffixRoll roll, AffixDef def, ItemClass? itemClass)
         {
             Item = item;
             Roll = roll;
             Def = def;
-            Slot = slot;
+            Class = itemClass;
         }
 
         public ItemDrop.ItemData Item { get; }
         public AffixRoll Roll { get; }
         public AffixDef Def { get; }
-        public ItemSlot Slot { get; }
+
+        /// <summary>The item's class (classes-and-tiers.md section 1); null when it has none any more.</summary>
+        public ItemClass? Class { get; }
 
         /// <summary>Shortcut to <see cref="AffixDef.ChannelIndex"/>.</summary>
         public int Channel => Def.ChannelIndex;
@@ -28,7 +30,8 @@ namespace EliteCrafting.Effects
 
     /// <summary>
     /// Enumerates what counts for effects (effects-runtime.md section 2): only equipped items (weapons and tools in
-    /// hand, shield, armor, cape, utility item; hidden hand items and trinkets never), only active affixes (defined and
+    /// hand, shield, armor, cape, utility item, and the trinket since trinkets became an item class that rolls;
+    /// hidden hand items never; plus the items an API equipment provider names), only active affixes (defined and
     /// enabled; dormant and unreadable ones are skipped), only when the <c>Affix effects</c> switch is on. For event
     /// handlers (equip change, inventory change), never per frame: it walks the equipment slots and reads each item's
     /// cached state, filling caller-owned lists so a rebuild allocates nothing.
@@ -38,7 +41,10 @@ namespace EliteCrafting.Effects
         /// <summary>The <c>Affix effects</c> master switch (synced).</summary>
         public static bool Enabled => ModSettings.AffixEffects == null || ModSettings.AffixEffects.Value;
 
-        /// <summary>Fills <paramref name="into"/> with the equipped items of <paramref name="humanoid"/> that count.</summary>
+        /// <summary>
+        /// Fills <paramref name="into"/> with the equipped items of <paramref name="humanoid"/> that count: the game's
+        /// slots, then for a player what the API's equipment providers add (<see cref="EquipmentProviders"/>).
+        /// </summary>
         public static void EquippedItems(Humanoid? humanoid, List<ItemDrop.ItemData> into)
         {
             into.Clear();
@@ -53,6 +59,11 @@ namespace EliteCrafting.Effects
             AddIfPresent(into, humanoid.m_legItem);
             AddIfPresent(into, humanoid.m_shoulderItem);
             AddIfPresent(into, humanoid.m_utilityItem);
+            AddIfPresent(into, humanoid.m_trinketItem);
+            if (humanoid is Player player)
+            {
+                EquipmentProviders.AddTo(player, into);
+            }
         }
 
         /// <summary>
@@ -84,18 +95,21 @@ namespace EliteCrafting.Effects
             {
                 return;
             }
-            ItemSlot slot = ItemSlots.SlotOf(item);
+            ItemClass? itemClass = ItemClasses.ClassOf(item);
             for (int i = 0; i < rolls.Count; i++)
             {
-                into.Add(new ActiveAffix(item, rolls[i].Roll, rolls[i].Def, slot));
+                into.Add(new ActiveAffix(item, rolls[i].Roll, rolls[i].Def, itemClass));
             }
         }
 
-        /// <summary>Whether the item is one the local player has equipped (for <see cref="ItemStateCache.Written"/>).</summary>
+        /// <summary>
+        /// Whether the item is one the local player has equipped, or one an equipment provider names for it (for
+        /// <see cref="ItemStateCache.Written"/>).
+        /// </summary>
         public static bool IsEquippedByLocalPlayer(ItemDrop.ItemData item)
         {
             Player? player = Player.m_localPlayer;
-            return player != null && player.IsItemEquiped(item);
+            return player != null && (player.IsItemEquiped(item) || EquipmentProviders.Provides(player, item));
         }
 
         private static void AddIfPresent(List<ItemDrop.ItemData> into, ItemDrop.ItemData? item)

@@ -6,7 +6,7 @@
     <RootNamespace>EliteCrafting</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Product>EliteCrafting</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -99,11 +99,6 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <!-- The game's own copy: Epic Loot's item data is JSON (Epic/EpicItem), never merged -->
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(ManagedPath)\Newtonsoft.Json.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

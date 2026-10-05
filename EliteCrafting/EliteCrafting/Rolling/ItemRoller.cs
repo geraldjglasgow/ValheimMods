@@ -4,18 +4,19 @@ using EliteCrafting.Rules;
 namespace EliteCrafting.Rolling
 {
     /// <summary>
-    /// The one affix-drawing procedure of the mod (rarity.md section 4): every rune that adds affixes, pre-rolled
-    /// drops and <c>ecraft roll</c> call these. Every method is pure: it takes a state, returns a new state or a
-    /// failure, and never writes the item; the caller commits with <see cref="ItemState.Write"/>. Rolls run on the peer
-    /// that owns the item, under the synced rules.
+    /// The one affix-drawing procedure of the mod (classes-and-tiers.md sections 5 and 6): every rune that adds affixes,
+    /// pre-rolled drops and <c>ecraft roll</c> call these. Every method is pure: it takes a state, returns a new state or
+    /// a failure, and never writes the item; the caller commits with <see cref="ItemState.Write"/>. Rolls run on the
+    /// peer that owns the item, under the synced rules.
     /// <para>
-    /// Shared rules for every method: candidates are enabled affixes with weight above 0 whose slots contain the
-    /// item's slot, that pass <c>requires</c> (<c>Items.ItemSlots.Satisfies</c>), are not on the item (dormant copies
-    /// included), share no exclusion group with an affix on the item, and have an eligible tier. Tier window:
-    /// <c>low = max(ceiling - rolling.tier_window + 1, tier_floor, 1)</c>, <c>high = ceiling</c>; an affix with no
-    /// tier in the window but tiers below it is eligible at its highest tier at or below the ceiling (if at least the
-    /// floor). Draw: affix by <c>weight</c>, then tier by tier <c>weight</c>, then value uniformly in [min, max]
-    /// rounded to the tier's decimals (flags store 1). Chaotic rolls use every tier the affix defines, uniformly.
+    /// Shared rules for every method: candidates are enabled affixes with weight above 0 that list the item's class in
+    /// <c>classes.best</c> or <c>classes.allowed</c>, pass <c>requires</c> (<c>Items.ItemClasses.Satisfies</c>), are not
+    /// on the item (dormant copies included), share no exclusion group with an affix on the item, keep the item within
+    /// its rarity's prefix or suffix limit for their kind, and have an eligible tier: unlocked at the item level or
+    /// below, below the closed top on an allowed class, among the rune floor's best (<see cref="TierEligibility"/>).
+    /// Draw: affix by <c>weight</c>, then tier by tier <c>weight</c>, then value uniformly in [min, max] rounded to the
+    /// tier's decimals, times the class's <c>damage_scale</c> when <c>scaled</c> (flags store 1). Chaotic rolls use
+    /// every tier the affix defines, uniformly.
     /// </para>
     /// </summary>
     public static class ItemRoller
@@ -43,8 +44,8 @@ namespace EliteCrafting.Rolling
 
         /// <summary>
         /// Adds exactly <paramref name="count"/> affixes at the end of the list (Shaping, Consecrated, the Serpent's
-        /// add). Does not change the rarity and does not check the rarity's maximum (the caller decides whether the
-        /// item has room). All or nothing: fails with <see cref="RollFailure.NoEligibleAffix"/> when fewer candidates
+        /// add). Does not change the rarity and does not check the rarity's maximum count (the caller decides whether
+        /// the item has room); the prefix and suffix limits apply, passed by <see cref="RollContext.LimitOverflow"/>. All or nothing: fails with <see cref="RollFailure.NoEligibleAffix"/> when fewer candidates
         /// exist than needed.
         /// </summary>
         public static RollOutcome AddAffixes(ItemState current, int count, RollContext context)
@@ -65,8 +66,8 @@ namespace EliteCrafting.Rolling
 
         /// <summary>
         /// The Serpent Rune's chaotic reroll: every affix goes; the count is drawn in the rarity's range and every
-        /// affix rolls at any tier it defines, uniformly, ignoring ceiling, window and floor (item-tier.md section 6).
-        /// Fills what the pool can; fails only when it can fill nothing.
+        /// affix rolls at any tier it defines, uniformly, ignoring the item level, the closed tiers and the floor.
+        /// The class pool and the prefix and suffix limits still apply. Fills what the pool can; fails only when it can fill nothing.
         /// </summary>
         public static RollOutcome RollChaotic(ItemState current, RarityDef rarity, RollContext context)
         {

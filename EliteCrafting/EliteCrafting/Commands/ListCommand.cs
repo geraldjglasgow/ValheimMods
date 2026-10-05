@@ -8,9 +8,10 @@ namespace EliteCrafting.Commands
 {
     /// <summary>
     /// <c>ecraft list inscriptions|runes|rarities [&lt;filter&gt;]</c>: the running configuration, one line per entry
-    /// (console-commands.md section 3). The filter matches, in this order: a slot id, a category id (inscriptions), a
-    /// rarity id (runes: <c>applies_to</c>), a verb id (runes), else an id prefix. The last column is the last file that
-    /// touched the entry (<see cref="RuleOrigins"/>).
+    /// (console-commands.md section 3). The filter matches, in this order: an item class id (inscriptions that roll on
+    /// it), a category id, <c>prefix</c> or <c>suffix</c> (inscriptions), a rarity id (runes: <c>applies_to</c>), a verb id
+    /// (runes), else an id prefix or an effect. The last column is the last file that touched the entry
+    /// (<see cref="RuleOrigins"/>).
     /// </summary>
     internal static class ListCommand
     {
@@ -47,26 +48,26 @@ namespace EliteCrafting.Commands
 
         private static bool AffixMatches(AffixDef def, string filter)
         {
-            if (ItemSlots.TryParse(filter, out ItemSlot slot))
+            if (ItemClasses.Get(filter) != null)
             {
-                return def.RollsOn(slot);
+                return def.FitFor(filter) != ClassFit.None;
             }
             if (EnumIds<AffixCategory>.TryParse(filter, out AffixCategory category))
             {
                 return def.Category == category;
+            }
+            if (EnumIds<AffixKind>.TryParse(filter, out AffixKind kind))
+            {
+                return def.Kind == kind;
             }
             return def.Id.StartsWith(filter, System.StringComparison.Ordinal) || def.Effect == filter;
         }
 
         private static string AffixLine(AffixDef def, string origin)
         {
-            List<string> slots = new List<string>();
-            foreach (ItemSlot slot in def.Slots)
-            {
-                slots.Add(ItemSlots.Id(slot));
-            }
-            return $"{def.Id} \"{Words.Localize(def.Name)}\" {EnumIds<AffixValueType>.Id(def.Value)} "
-                + $"[{string.Join(",", slots)}] {EnumIds<AffixCategory>.Id(def.Category)} T{AffixTierNumbers.Shown(def.MaxTier)}-T{AffixTierNumbers.Shown(def.MinTier)} "
+            return $"{def.Id} \"{Words.Localize(def.Name)}\" {EnumIds<AffixValueType>.Id(def.Value)} {EnumIds<AffixKind>.Id(def.Kind)} "
+                + $"best [{string.Join(",", def.BestClasses)}] allowed [{string.Join(",", def.AllowedClasses)}] "
+                + $"{EnumIds<AffixCategory>.Id(def.Category)} T1-T{def.TierCount} "
                 + $"weight {Numbers.Format(def.Weight)} {(def.Enabled ? "enabled" : "disabled")} ({origin})";
         }
 
@@ -101,7 +102,7 @@ namespace EliteCrafting.Commands
 
         private static string StoneLine(StoneDef stone, string origin)
         {
-            string floor = stone.TierFloor > 0 ? $" floor T{AffixTierNumbers.Shown(stone.TierFloor)}" : "";
+            string floor = stone.TierFloor > 0 ? $" floor: the best {stone.TierFloor} open tier(s)" : "";
             return $"{stone.Id} \"{Words.Localize(stone.Name)}\" {EnumIds<StoneVerb>.Id(stone.Verb)} "
                 + $"on [{string.Join(",", stone.AppliesTo)}]{floor} prefab {stone.Prefab} "
                 + $"{(stone.Enabled ? "enabled" : "disabled")} ({origin})";
@@ -126,6 +127,7 @@ namespace EliteCrafting.Commands
         private static string RarityLine(RarityDef rarity, string origin)
         {
             return $"{rarity.Id} \"{Words.Localize(rarity.Name)}\" {rarity.Color} inscriptions {rarity.MinAffixes}-{rarity.MaxAffixes} "
+                + $"(at most {rarity.MaxPrefixes} prefixes, {rarity.MaxSuffixes} suffixes) "
                 + $"glow {(rarity.Glow ? "yes" : "no")} drop_weight {Numbers.Format(rarity.DropWeight)} ({origin})";
         }
     }

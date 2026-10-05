@@ -1,8 +1,10 @@
 # EliteCrafting - economy
 #
-# Rarities, rolling rules, runes, item tiers, biome tiers and drop tables.
+# Rarities, rolling rules, runes, item classes, item tiers, biome tiers and drop tables.
+format: 2
 # Written once, on first run, as a full copy of the built-in defaults; the mod never
-# rewrites it. The built-in defaults stay underneath this file (set
+# rewrites it (a file from before format 2 is renamed to .v1.bak and written fresh). The
+# built-in defaults stay underneath this file (set
 # `use_defaults: false` to make the files the whole configuration).
 #
 # Extra files named EliteCrafting_economy_<anything>.yml are read after this one, in
@@ -10,10 +12,12 @@
 #   - rarities and runes merge by `id`, field by field;
 #   - maps (cost, weights, item_tiers.*, biomes, drops.runes, drops.bosses, ...)
 #     merge by key; a key set to null is removed;
-#   - lists (applies_to, slots, outcomes, a rune's seven drop weights) are replaced whole.
+#   - classes merge by `id`, field by field;
+#   - lists (applies_to, items, outcomes, a rune's drop weights) are replaced whole.
 #
 # Chances are percent numbers (4 means 4%). Weights are relative. Lists indexed by
-# tier have exactly seven entries: tier 1 (meadows) first, tier 7 (ashlands) last.
+# tier have eight entries: tier 1 (meadows) first, tier 8 (deep north) last. A list of
+# seven still loads; its last value then counts for tier 8 too.
 
 # The ladder, lowest first. The first entry is the base rarity (no inscriptions, never
 # glows). `drop_weight` multiplies the rarity's weight in every drop table; 0 means it
@@ -27,18 +31,23 @@ rarities:
   - id: magic
     color: "#1EFF00"
     inscriptions: { min: 1, max: 2 }
+    prefixes: 1                # at most this many prefix inscriptions
+    suffixes: 1
   - id: rare
     color: "#0070DD"
     inscriptions: { min: 3, max: 6 }
+    prefixes: 3
+    suffixes: 3
 
-# How inscriptions are drawn. Inscription tiers count down (1 = the strongest row, see the
-# inscriptions file). An item rolls `tier_window` inscription tiers: an Ashlands item (item
-# tier 7) rolls inscription tiers 1-3, a Swamp item (item tier 3) tiers 5-7, a Meadows
-# item tier 7. A promotion (Awakening, Ascension) adds what the new rarity's minimum needs,
-# and at least `promote_adds_at_least`. `count_weights` biases how many inscriptions a fresh
-# roll (a dropped item) gets.
+# How inscriptions are drawn. Each item has an item level (1 meadows ... 8 deep north, see
+# item_tiers) and an item class (see classes). An inscription rolls on the classes it lists,
+# at any tier the item level has unlocked, weaker tiers more often; on a class where it is
+# only `allowed`, the top `allowed_closed_fraction` of its tiers stays closed (0.334: health
+# on a helmet stops at T5 of 13). A promotion (Awakening, Ascension) adds what the new
+# rarity's minimum needs, and at least `promote_adds_at_least`. `count_weights` biases how
+# many inscriptions a fresh roll (a dropped item) gets.
 rolling:
-  tier_window: 3
+  allowed_closed_fraction: 0.334
   promote_adds_at_least: 1
   # count_weights:
   #   rare: { 3: 4, 4: 3, 5: 2, 6: 1 }
@@ -74,7 +83,168 @@ runes:
       - { outcome: add_inscription, weight: 35 }   # one more inscription, past the cap
       - { outcome: chaotic_reroll,  weight: 30 }   # every inscription rerolled at any tier
 
-# The tier ceiling of each item (1 meadows ... 7 ashlands): an explicit entry in
+# Item classes: what an item is, for inscriptions (each inscription lists the classes it rolls
+# on) and gear drops. An item belongs to the first class that names it in `items`; otherwise
+# to the first class, in this order, with a `match` rule it meets. A rule meets when every key
+# it has holds: types (the game's item types), skills, two_handed, stackable, prefixes (of the
+# prefab name), name_contains. PackPanel's backpacks match no rule; a class must list them, or
+# a mod must claim them through the API. `rolls: false` classes never become magic.
+# Fields: id, group, name, rolls, damage_scale (multiplies scaled inscriptions such as
+# +X fire damage), drop_weight (gear drops), match (a list of rules, any of them), items.
+classes:
+  - id: unused
+    group: none
+    rolls: false
+    match:
+      - { prefixes: [FW_, SP_, DvergerArbalest_] }
+    items: [PlayerUnarmed, SwordCheat, SledgeCheat, ShieldKnight, CapeTest, IceShoes, IceSkates, SwordIronFire, DvergerArbalest]
+  - id: throwable
+    group: none
+    rolls: false
+    match:
+      - { stackable: true }
+      - { prefixes: [Bomb, Snowball] }
+  - id: tankard
+    group: none
+    rolls: false
+    match:
+      - { prefixes: [Tankard] }
+  - id: practice
+    group: none
+    rolls: false
+    items: [AtgeirWood, AxeWood, BattleaxeWood, KnifeWood, MaceWood, SledgeWood, SpearWood, SwordWood, THSwordWood]
+  - id: cosmetic
+    group: none
+    rolls: false
+    items: [ArmorDress1, ArmorDress10, ArmorDress2, ArmorDress3, ArmorDress4, ArmorDress5, ArmorDress6, ArmorDress7, ArmorDress8, ArmorDress9, ArmorHarvester1, ArmorHarvester2, ArmorTunic1, ArmorTunic10, ArmorTunic2, ArmorTunic3, ArmorTunic4, ArmorTunic5, ArmorTunic6, ArmorTunic7, ArmorTunic8, ArmorTunic9, CapeOdin, HelmetCelebration, HelmetHat1, HelmetHat10, HelmetHat2, HelmetHat3, HelmetHat4, HelmetHat5, HelmetHat6, HelmetHat7, HelmetHat8, HelmetHat9, HelmetMidsummerCrown, HelmetOdin, HelmetPointyHat, HelmetRootCrown, HelmetStrawHat, HelmetSweatBand, HelmetYule]
+  - id: helmet
+    group: armour
+    match:
+      - { types: [Helmet] }
+  - id: chest
+    group: armour
+    match:
+      - { types: [Chest] }
+  - id: legs
+    group: armour
+    match:
+      - { types: [Legs] }
+  - id: cape
+    group: armour
+    match:
+      - { types: [Shoulder] }
+  - id: trinket
+    group: jewel
+    match:
+      - { types: [Trinket] }
+  - id: utility
+    group: jewel
+    drop_weight: 0.5
+    match:
+      - { types: [Utility] }
+  - id: buckler
+    group: offhand
+    match:
+      - { types: [Shield], name_contains: [Buckler] }
+  - id: tower
+    group: offhand
+    match:
+      - { types: [Shield], name_contains: [Tower] }
+  - id: shield
+    group: offhand
+    match:
+      - { types: [Shield] }
+  - id: light
+    group: offhand
+    damage_scale: 0.5
+    drop_weight: 0.25
+    match:
+      - { types: [Torch] }
+  - id: tool
+    group: tools
+    drop_weight: 0.5
+    match:
+      - { types: [Tool] }
+    items: [Scythe, Shovel, KnifeButcher, GrapplingHook]
+  - id: fishing
+    group: tools
+    drop_weight: 0.25
+    items: [FishingRod]
+  - id: pickaxe
+    group: tools
+    match:
+      - { skills: [Pickaxes] }
+  - id: crossbow
+    group: ranged
+    damage_scale: 1.4
+    match:
+      - { skills: [Crossbows] }
+  - id: bow
+    group: ranged
+    damage_scale: 0.6
+    match:
+      - { skills: [Bows] }
+  - id: staff_elemental
+    group: magic
+    match:
+      - { skills: [ElementalMagic] }
+  - id: staff_blood
+    group: magic
+    match:
+      - { skills: [BloodMagic] }
+  - id: knife
+    group: onehand
+    damage_scale: 0.7
+    match:
+      - { skills: [Knives] }
+  - id: spear
+    group: onehand
+    match:
+      - { skills: [Spears] }
+  - id: atgeir
+    group: twohand
+    damage_scale: 1.3
+    match:
+      - { skills: [Polearms] }
+  - id: fist
+    group: twohand
+    damage_scale: 0.7
+    match:
+      - { skills: [Unarmed] }
+  - id: greatsword
+    group: twohand
+    damage_scale: 1.3
+    match:
+      - { skills: [Swords], two_handed: true }
+  - id: sword_1h
+    group: onehand
+    match:
+      - { skills: [Swords] }
+  - id: dual_axe
+    group: twohand
+    damage_scale: 0.8
+    match:
+      - { skills: [Axes], prefixes: [AxeBerzerkr, AxeEarly] }
+  - id: battleaxe
+    group: twohand
+    damage_scale: 1.3
+    match:
+      - { skills: [Axes], two_handed: true }
+  - id: axe_1h
+    group: onehand
+    match:
+      - { skills: [Axes] }
+  - id: sledge
+    group: twohand
+    damage_scale: 1.3
+    match:
+      - { skills: [Clubs], two_handed: true }
+  - id: mace_1h
+    group: onehand
+    match:
+      - { skills: [Clubs] }
+
+# The item level of each item (1 meadows ... 8 deep north): an explicit entry in
 # `items` wins; otherwise the highest tier among its recipe's materials (crafted
 # intermediates followed `material_depth` deep; the lowest of several recipes);
 # otherwise its crafting station; otherwise `fallback_tier`. Names that match no
@@ -84,11 +254,32 @@ item_tiers:
   fallback_tier: 1
   material_depth: 3
 
-  items:                       # no-recipe vanilla items (verify names in game)
+  items:                       # no recipe, or a recipe whose materials mislead
     BeltStrength: 3
-    HelmetDverger: 3
+    HelmetDverger: 6
     FishingRod: 1
     Wishbone: 3
+    ArmorLeatherChest: 1
+    ArmorLeatherLegs: 1
+    HelmetLeather: 1
+    CapeDeerHide: 1
+    Club: 1
+    CrossbowArbalest: 6
+    SledgeIron: 3
+    Shovel: 7
+    ShieldRoots: 3
+    HelmetLox: 5
+    HelmetFishingHat: 1
+    Lantern: 6
+    TorchMist: 6
+    Lantern_hooded: 6
+    Lantern_DN: 8
+    AxeEarly: 2
+    HelmetBerserkerHood: 2
+    SledgeStagbreaker: 1
+    Demister: 6
+    HelmetCrownofValheim: 8
+    KnifeVoid: 8
 
   materials:
     # 1 meadows
@@ -196,6 +387,24 @@ item_tiers:
     SulfurStone: 7
     BellFragment: 7
     FaderDrop: 7               # verify
+    FaderEmber: 7
+    # 8 deep north
+    Gold: 8
+    Frostwood: 8
+    MooseHide: 8
+    MooseSinew: 8
+    NornThread: 8
+    ElakingHairBundle: 8
+    SealHide: 8
+    SealBlubber: 8
+    OrbThunderBlood: 8
+    OrbFrostFire: 8
+    BarkaBranch: 8
+    TrophyMoose: 8
+    TrophyJotunWitch: 8
+    MoleClaws: 8
+    Leatherstraps: 8
+    CrownJewel: 8
 
   stations:                    # fallback only; all names verify in game
     piece_workbench: 1
@@ -216,7 +425,7 @@ biomes:
   mistlands: 6
   ashlands: 7
   ocean: 4                     # judgement call
-  deep_north: 7                # reserved; clamped until tier 8 exists
+  deep_north: 8
 
 # What creatures drop. The on/off switches are `Rune drops` and `Magic item drops`
 # in com.EliteCrafting.cfg.
@@ -229,44 +438,33 @@ drops:
   star_step: 1                 # added per star beyond the list
 
   chances:                     # base chance per kill, by tier
-    rune: [4, 5, 6, 7, 8, 9, 10]
-    gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5]
+    rune: [4, 5, 6, 7, 8, 9, 10, 11]
+    gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75]
 
   runes:                       # which rune drops, by tier; a disabled rune never drops
-    #              T1   T2   T3   T4   T5   T6   T7
-    awakening:   [400, 300, 220, 160, 120, 100,  80]
-    shaping:     [150, 150, 140, 120, 100,  90,  80]
-    recasting:   [120, 130, 120, 110, 100,  90,  80]
-    ascension:   [  0, 120, 120, 110, 100,  90,  80]
-    consecrated: [  0,   0,  20,  40,  50,  60,  70]
-    cleansing:   [ 30,  30,  30,  30,  30,  30,  30]
-    serpent:     [  0,   0,  20,  25,  30,  35,  40]
+    #              T1   T2   T3   T4   T5   T6   T7   T8
+    awakening:   [400, 300, 220, 160, 120, 100,  80,  70]
+    shaping:     [150, 150, 140, 120, 100,  90,  80,  75]
+    recasting:   [120, 130, 120, 110, 100,  90,  80,  75]
+    ascension:   [  0, 120, 120, 110, 100,  90,  80,  75]
+    consecrated: [  0,   0,  20,  40,  50,  60,  70,  80]
+    cleansing:   [ 30,  30,  30,  30,  30,  30,  30,  30]
+    serpent:     [  0,   0,  20,  25,  30,  35,  40,  45]
 
   rarity_weights:              # the rarity of dropped gear, by tier
-    #          T1  T2  T3  T4  T5  T6  T7
-    magic:   [ 80, 70, 60, 50, 45, 40, 35]
-    rare:    [ 20, 30, 40, 50, 55, 60, 65]
+    #          T1  T2  T3  T4  T5  T6  T7  T8
+    magic:   [ 80, 70, 60, 50, 45, 40, 35, 30]
+    rare:    [ 20, 30, 40, 50, 55, 60, 65, 70]
 
   boss_rarity_weights:
-    magic:   [ 40, 30, 20, 15, 10,  5,  0]
-    rare:    [ 60, 70, 80, 85, 90, 95, 100]
+    magic:   [ 40, 30, 20, 15, 10,  5,  0,  0]
+    rare:    [ 60, 70, 80, 85, 90, 95, 100, 100]
 
   gear:
     require_recipe: true       # only bases a player could craft
     tiers_below: 1             # bases this many tiers below the drop tier may drop too
     same_tier_weight: 3
     lower_tier_weight: 1
-    slot_weights:
-      melee_weapon: 1
-      ranged_weapon: 1
-      magic_weapon: 1
-      shield: 1
-      head: 1
-      chest: 1
-      legs: 1
-      cape: 1
-      utility_item: 1
-      tool: 0.5
     exclude: []                # item prefabs that never drop
     include: {}                # item prefab -> tier, always in the pool at that tier
 

@@ -15,25 +15,14 @@ ecf_msg_affixes_full: "This item cannot hold another inscription."
 ecf_msg_no_eligible_affix: "No inscription can roll on this item."
 ecf_msg_confirm_required: "Hold Shift to use the $1."
 
-# refusals on Epic Loot items (while Epic Loot is installed the runes work its magic)
-ecf_msg_epic_unavailable: "Runes cannot work with this Epic Loot version."
-ecf_msg_epic_cannot: "Epic Loot cannot enchant this item."
-ecf_msg_epic_unidentified: "Identify this item first."
-ecf_msg_epic_rarity: "Runes work only on plain, Magic and Rare items."
-ecf_msg_epic_no_strip: "The $1 does not work on Epic Loot items."
-ecf_msg_epic_full: "This item cannot hold another enchantment."
-ecf_msg_epic_no_effect: "No enchantment can roll on this item."
-
 # feedback on success
 ecf_msg_promoted: "$1 rises to $2."
 ecf_msg_affix_added: "$1 gains $2."
 ecf_msg_stripped: "$1 is cleansed."
 ecf_msg_rerolled: "$1 is recast with new inscriptions."
-ecf_msg_epic_rerolled: "$1 is recast with new enchantments."
 ecf_msg_corrupt_seal: "The Serpent seals $1. Nothing else changes."
 ecf_msg_corrupt_add: "The Serpent seals $1 and grants $2."
 ecf_msg_corrupt_chaos: "The Serpent seals $1 and twists every inscription."
-ecf_msg_epic_corrupt_chaos: "The Serpent seals $1 and twists every enchantment."
 
 # confirm dialog (Dialog mode): $1 the rune in the title; $1 the item, $2 the rune in the body
 ecf_ui_confirm_title: "Use the $1?"

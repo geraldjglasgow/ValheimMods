@@ -12,10 +12,16 @@ namespace EliteCrafting.Effects
     /// with a Harmony patch or an aggregate channel. <see cref="Register"/> after the rules have loaded throws: an id
     /// the YAML could not see at validation time would make the same file valid or invalid depending on timing.
     /// </para>
+    /// <para>
+    /// External effects (api.md section 3) are the one exception, through <see cref="RegisterExternal"/>: another mod
+    /// registers them whenever it loads, and the API rebuilds the inscription rules afterwards, so the YAML is validated
+    /// again with them in.
+    /// </para>
     /// </summary>
     public static class EffectRegistry
     {
         private static readonly Dictionary<string, EffectDef> Table = new Dictionary<string, EffectDef>(StringComparer.Ordinal);
+        private static readonly Dictionary<string, EffectScope> External = new Dictionary<string, EffectScope>(StringComparer.Ordinal);
         private static bool _frozen;
 
         static EffectRegistry()
@@ -56,5 +62,34 @@ namespace EliteCrafting.Effects
 
         /// <summary>Called by the rules loader; later registrations throw.</summary>
         internal static void Freeze() => _frozen = true;
+
+        /// <summary>
+        /// Adds or replaces an external effect: one another mod applies itself, which EliteCrafting rolls, displays and
+        /// sums. Allowed at any time, also after <see cref="Freeze"/>: the id must be new or already external (one of
+        /// our own ids is refused), the table is only touched on the main thread, and the caller rebuilds the
+        /// inscription rules so every family is validated again with it in. Its kind (<see cref="EffectKinds.Of"/>) is
+        /// external, a no-op wherever the game is changed. The reason it was refused, or null.
+        /// </summary>
+        internal static string? RegisterExternal(EffectDef def)
+        {
+            if (!Core.Ids.IsValid(def.Id))
+            {
+                return $"'{def.Id}' is not a valid effect id (lowercase letters, digits and _, 2-48 long)";
+            }
+            if (Table.ContainsKey(def.Id) && !External.ContainsKey(def.Id))
+            {
+                return $"'{def.Id}' is one of EliteCrafting's own effects";
+            }
+            Table[def.Id] = def;
+            External[def.Id] = def.Scope;
+            return null;
+        }
+
+        /// <summary>Whether the id is an external effect, and its scope.</summary>
+        public static bool IsExternal(string? id, out EffectScope scope)
+        {
+            scope = EffectScope.PlayerGlobal;
+            return id != null && External.TryGetValue(id, out scope);
+        }
     }
 }

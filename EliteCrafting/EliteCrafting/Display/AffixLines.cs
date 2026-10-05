@@ -1,32 +1,29 @@
 using System.Text;
 using EliteCrafting.Affixes;
 using EliteCrafting.Config;
-using EliteCrafting.Core;
 using EliteCrafting.Rules;
 using EliteCrafting.Text;
 
 namespace EliteCrafting.Display
 {
     /// <summary>
-    /// The affix lines of the tooltip block (display.md section 3): active affixes first in stored order, then the
-    /// dormant ones greyed, then (Full only) unreadable segments. Built once per item state and detail level.
+    /// The affix lines of the tooltip block (display.md section 3, classes-and-tiers.md section 9): the active prefixes,
+    /// then the active suffixes, each group in stored order, then the dormant ones greyed, then (Full only) unreadable
+    /// segments. Each line's tier is counted down within its own inscription's ladder. Built once per item state and
+    /// detail level.
     /// </summary>
     internal static class AffixLines
     {
-        public static void Append(StringBuilder sb, ItemState state, TooltipDetail detail, bool showDormant)
+        /// <summary><paramref name="scale"/>: the item class's <c>damage_scale</c>, for the ranges of scaled inscriptions.</summary>
+        public static void Append(StringBuilder sb, ItemState state, TooltipDetail detail, bool showDormant, float scale)
         {
-            for (int i = 0; i < state.AffixCount; i++)
-            {
-                if (state.IsActiveAt(i))
-                {
-                    AppendLine(sb, state, i, detail, dormant: false);
-                }
-            }
+            AppendActive(sb, state, detail, AffixKind.Prefix, scale);
+            AppendActive(sb, state, detail, AffixKind.Suffix, scale);
             for (int i = 0; showDormant && i < state.AffixCount; i++)
             {
                 if (!state.IsActiveAt(i))
                 {
-                    AppendLine(sb, state, i, detail, dormant: true);
+                    AppendLine(sb, state, i, detail, dormant: true, scale);
                 }
             }
             for (int i = 0; detail == TooltipDetail.Full && i < state.Unreadable.Count; i++)
@@ -37,7 +34,18 @@ namespace EliteCrafting.Display
             }
         }
 
-        private static void AppendLine(StringBuilder sb, ItemState state, int index, TooltipDetail detail, bool dormant)
+        private static void AppendActive(StringBuilder sb, ItemState state, TooltipDetail detail, AffixKind kind, float scale)
+        {
+            for (int i = 0; i < state.AffixCount; i++)
+            {
+                if (state.IsActiveAt(i) && state.DefinitionAt(i)!.Kind == kind)
+                {
+                    AppendLine(sb, state, i, detail, dormant: false, scale);
+                }
+            }
+        }
+
+        private static void AppendLine(StringBuilder sb, ItemState state, int index, TooltipDetail detail, bool dormant, float scale)
         {
             AffixRoll roll = state.Affixes[index];
             AffixDef? def = state.DefinitionAt(index);
@@ -49,17 +57,18 @@ namespace EliteCrafting.Display
             sb.Append(Text(roll, def));
             if (detail == TooltipDetail.Full)
             {
-                AppendRange(sb, roll, def);
+                AppendRange(sb, roll, def, scale);
             }
-            AppendMarkers(sb, roll.Tier, detail, dormant);
+            AppendMarkers(sb, roll, def, detail, dormant);
         }
 
-        /// <summary>Tier (not at Compact) and the dormant word (closing the grey).</summary>
-        private static void AppendMarkers(StringBuilder sb, int tier, TooltipDetail detail, bool dormant)
+        /// <summary>Tier (not at Compact; "?" for an orphan, whose ladder is unknown) and the dormant word (closing the grey).</summary>
+        private static void AppendMarkers(StringBuilder sb, AffixRoll roll, AffixDef? def, TooltipDetail detail, bool dormant)
         {
             if (detail != TooltipDetail.Compact)
             {
-                sb.Append("  ").Append(Words.Localize("$ecf_ui_tier", AffixTierNumbers.Shown(tier).ToString()));
+                string tier = def != null ? def.ShownTier(roll.Tier).ToString() : "?";
+                sb.Append("  ").Append(Words.Localize("$ecf_ui_tier", tier));
             }
             if (dormant)
             {
@@ -89,15 +98,20 @@ namespace EliteCrafting.Display
             return Words.Localize("$ecf_ui_affix_line", value, name);
         }
 
-        /// <summary>Full detail: the stored tier's roll range, when the definition still has that tier.</summary>
-        private static void AppendRange(StringBuilder sb, AffixRoll roll, AffixDef? def)
+        /// <summary>
+        /// Full detail: the stored tier's roll range, when the definition still has that tier; a scaled inscription's
+        /// range times the class's <c>damage_scale</c>, as its value was rolled.
+        /// </summary>
+        private static void AppendRange(StringBuilder sb, AffixRoll roll, AffixDef? def, float scale)
         {
             AffixTierDef? row = def?.TierRow(roll.Tier);
             if (row == null || def!.Value == AffixValueType.Flag)
             {
                 return;
             }
-            sb.Append(' ').Append(Words.Localize("$ecf_ui_range", DisplayWords.Plain(row.Min), DisplayWords.Plain(row.Max)));
+            float min = def.Scaled ? Rolling.RollMath.Scale(row.Min, scale, row.Decimals) : row.Min;
+            float max = def.Scaled ? Rolling.RollMath.Scale(row.Max, scale, row.Decimals) : row.Max;
+            sb.Append(' ').Append(Words.Localize("$ecf_ui_range", DisplayWords.Plain(min), DisplayWords.Plain(max)));
         }
     }
 }

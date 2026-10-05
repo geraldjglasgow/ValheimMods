@@ -1,7 +1,6 @@
 using System.Text;
 using EliteCrafting.Affixes;
 using EliteCrafting.Config;
-using EliteCrafting.Core;
 using EliteCrafting.Items;
 using EliteCrafting.Rules;
 using EliteCrafting.Text;
@@ -9,8 +8,8 @@ using EliteCrafting.Text;
 namespace EliteCrafting.Display
 {
     /// <summary>
-    /// Builds the tooltip affix block (display.md section 3), localized, top to bottom: rarity line (with the tier
-    /// ceiling at Full), newer-format notice, affix lines, sealed. Lines that do not
+    /// Builds the tooltip affix block (display.md section 3), localized, top to bottom: rarity line, at Full the item's
+    /// class and level (classes-and-tiers.md section 9), newer-format notice, affix lines, sealed. Lines that do not
     /// apply are left out; an item with nothing to show gets an empty block. Called once per item state and detail
     /// level by <see cref="DisplayCache"/>, never per frame. Runs on the viewing client only.
     /// </summary>
@@ -27,7 +26,7 @@ namespace EliteCrafting.Display
             {
                 Sb.Append('\n').Append(RarityPalette.Grey).Append(Words.Localize("$ecf_ui_newer_format")).Append(RarityPalette.Close);
             }
-            AffixLines.Append(Sb, state, detail, showDormant);
+            AffixLines.Append(Sb, state, detail, showDormant, ItemClasses.Classify(item).DamageScale);
             AppendSealed(Sb, state);
             // The block follows the vanilla tooltip after one blank line.
             return Sb.Length == 0 ? "" : "\n" + Sb.ToString();
@@ -51,10 +50,18 @@ namespace EliteCrafting.Display
             }
             if (detail == TooltipDetail.Full)
             {
-                // The ceiling as the best affix tier the item rolls (tiers count down: an Ashlands item rolls up to T1).
-                string ceiling = Words.Localize("$ecf_ui_tier_ceiling", AffixTierNumbers.Shown(ItemTier.Of(item)).ToString());
-                sb.Append("  ").Append(RarityPalette.Grey).Append(ceiling).Append(RarityPalette.Close);
+                sb.Append('\n').Append(RarityPalette.Grey).Append(ClassLine(item)).Append(RarityPalette.Close);
             }
+        }
+
+        /// <summary>"Swords · item level 4"; "item level 4" alone for an item without a class.</summary>
+        private static string ClassLine(ItemDrop.ItemData item)
+        {
+            ItemClass? itemClass = ItemClasses.ClassOf(item);
+            string level = ItemTier.Of(item).ToString();
+            return itemClass == null
+                ? Words.Localize("$ecf_ui_item_level", level)
+                : Words.Localize("$ecf_ui_class_level", DisplayWords.Name(itemClass.Name, itemClass.Id), level);
         }
 
         /// <summary>"Sealed" in dark red, whatever sealed the item.</summary>

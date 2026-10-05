@@ -24,16 +24,30 @@ namespace EliteCrafting.Rules
         public int MinAffixes { get; internal set; }
         public int MaxAffixes { get; internal set; }
 
+        /// <summary>At most this many prefix inscriptions (YAML <c>prefixes</c>; default: the maximum count).</summary>
+        public int MaxPrefixes { get; internal set; }
+
+        /// <summary>At most this many suffix inscriptions (YAML <c>suffixes</c>; default: the maximum count).</summary>
+        public int MaxSuffixes { get; internal set; }
+
+        /// <summary>The limit for one kind of inscription.</summary>
+        public int Limit(AffixKind kind) => kind == AffixKind.Prefix ? MaxPrefixes : MaxSuffixes;
+
         /// <summary>Multiplier on this rarity's drop weights; 0 = never drops.</summary>
         public float DropWeight { get; internal set; } = 1f;
 
         public bool IsBase => Index == 0;
     }
 
-    /// <summary>The <c>rolling:</c> section (rarity.md section 4).</summary>
+    /// <summary>The <c>rolling:</c> section (rarity.md section 4, classes-and-tiers.md section 5).</summary>
     public sealed class RollingSettings
     {
-        public int TierWindow { get; internal set; } = 3;
+        /// <summary>
+        /// On a class where an inscription is only <c>allowed</c>, its top <c>floor(k * fraction)</c> tiers stay closed
+        /// (default 0.334: 13 tiers stop at T5, 8 at T3).
+        /// </summary>
+        public float AllowedClosedFraction { get; internal set; } = 0.334f;
+
         public int PromoteAddsAtLeast { get; internal set; } = 1;
 
         /// <summary>rarity id → (affix count → weight). A rarity absent here draws its count uniformly.</summary>

@@ -6,8 +6,9 @@ using EliteCrafting.Items;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// One affix of the running configuration, fully merged and validated (configuration.md section 6). Built by the
-    /// rules loader and never changed afterwards: treat every setter as loader-only.
+    /// One affix of the running configuration, fully merged and validated (configuration.md section 6, format 2 in
+    /// classes-and-tiers.md section 3). Built by the rules loader and never changed afterwards: treat every setter as
+    /// loader-only.
     /// </summary>
     public sealed class AffixDef
     {
@@ -30,7 +31,22 @@ namespace EliteCrafting.Rules
 
         public AffixValueType Value { get; internal set; }
         public AffixUnit Unit { get; internal set; }
-        public IReadOnlyList<ItemSlot> Slots { get; internal set; } = Array.Empty<ItemSlot>();
+
+        /// <summary>YAML <c>affix</c>: prefix or suffix, counted against the rarity's limits.</summary>
+        public AffixKind Kind { get; internal set; }
+
+        /// <summary>Display grouping (snake_case), e.g. <c>weapon_damage</c>.</summary>
+        public string Family { get; internal set; } = "";
+
+        /// <summary>Item class ids it rolls on with every tier open (<c>classes.best</c>).</summary>
+        public IReadOnlyList<string> BestClasses { get; internal set; } = Array.Empty<string>();
+
+        /// <summary>Item class ids it rolls on with its top tiers closed (<c>classes.allowed</c>).</summary>
+        public IReadOnlyList<string> AllowedClasses { get; internal set; } = Array.Empty<string>();
+
+        /// <summary><c>scaled: true</c>: a rolled value is multiplied by the item class's <c>damage_scale</c>.</summary>
+        public bool Scaled { get; internal set; }
+
         public AffixRequirements Requires { get; internal set; } = AffixRequirements.Any;
         public AffixCategory Category { get; internal set; }
         public AffixCondition Condition { get; internal set; }
@@ -39,30 +55,35 @@ namespace EliteCrafting.Rules
         public bool Enabled { get; internal set; } = true;
         public HookDifficulty Hook { get; internal set; }
 
-        /// <summary>Sorted by tier, one row per tier.</summary>
+        /// <summary>One row per tier, sorted by grade: the weakest tier first, the strongest last.</summary>
         public IReadOnlyList<AffixTierDef> Tiers { get; internal set; } = Array.Empty<AffixTierDef>();
+
+        /// <summary>k, the number of the ladder's weakest tier (T<c>k</c>): shown tier = k + 1 - grade.</summary>
+        public int TierCount { get; internal set; }
 
         /// <summary>Index into <see cref="AffixRules.Channels"/>; -1 when the affix is disabled.</summary>
         public int ChannelIndex { get; internal set; } = -1;
 
-        public bool RollsOn(ItemSlot slot)
+        /// <summary>How it fits an item class: best, allowed, or not at all.</summary>
+        public ClassFit FitFor(string? classId)
         {
-            for (int i = 0; i < Slots.Count; i++)
+            if (classId == null)
             {
-                if (Slots[i] == slot)
-                {
-                    return true;
-                }
+                return ClassFit.None;
             }
-            return false;
+            if (Contains(BestClasses, classId))
+            {
+                return ClassFit.Best;
+            }
+            return Contains(AllowedClasses, classId) ? ClassFit.Allowed : ClassFit.None;
         }
 
-        /// <summary>The row for a tier, or null when the affix does not define it.</summary>
-        public AffixTierDef? TierRow(int tier)
+        /// <summary>The row of a strength grade (1 = the weakest tier), or null when the affix does not define it.</summary>
+        public AffixTierDef? TierRow(int grade)
         {
             for (int i = 0; i < Tiers.Count; i++)
             {
-                if (Tiers[i].Tier == tier)
+                if (Tiers[i].Grade == grade)
                 {
                     return Tiers[i];
                 }
@@ -70,14 +91,45 @@ namespace EliteCrafting.Rules
             return null;
         }
 
-        public int MinTier => Tiers.Count > 0 ? Tiers[0].Tier : 0;
-        public int MaxTier => Tiers.Count > 0 ? Tiers[Tiers.Count - 1].Tier : 0;
+        /// <summary>The tier players see for a stored grade, counted down within this ladder (T1 strongest), at least 1.</summary>
+        public int ShownTier(int grade) => Math.Max(1, TierCount + 1 - grade);
+
+        /// <summary>The grade of a tier as players and the YAML write it (1 = strongest).</summary>
+        public int GradeOf(int shown) => TierCount + 1 - shown;
+
+        /// <summary>The grade of the weakest row, 0 without rows.</summary>
+        public int WeakestGrade => Tiers.Count > 0 ? Tiers[0].Grade : 0;
+
+        /// <summary>The grade of the strongest row, 0 without rows.</summary>
+        public int StrongestGrade => Tiers.Count > 0 ? Tiers[Tiers.Count - 1].Grade : 0;
+
+        private static bool Contains(IReadOnlyList<string> list, string id)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i] == id)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
-    /// <summary>One tier row: bounds, draw weight, and the decimals a rolled value is rounded to.</summary>
+    /// <summary>
+    /// One tier row: the strength grade it is stored under, the tier players see, the item level that unlocks it,
+    /// bounds, draw weight, and the decimals a rolled value is rounded to.
+    /// </summary>
     public sealed class AffixTierDef
     {
-        public int Tier { get; internal set; }
+        /// <summary>Strength grade, 1 = the weakest tier (T<c>k</c>). What item data stores.</summary>
+        public int Grade { get; internal set; }
+
+        /// <summary>The tier as shown and written in the YAML, 1 = the strongest.</summary>
+        public int Shown { get; internal set; }
+
+        /// <summary>The item level (1-8) that unlocks the tier.</summary>
+        public int Level { get; internal set; } = 1;
 
         /// <summary>0 for flags.</summary>
         public float Min { get; internal set; }
@@ -85,9 +137,10 @@ namespace EliteCrafting.Rules
         /// <summary>0 for flags.</summary>
         public float Max { get; internal set; }
 
-        public float Weight { get; internal set; } = 100f;
+        /// <summary>Draw weight; the tier number by default (weaker tiers roll more often).</summary>
+        public float Weight { get; internal set; } = 1f;
 
-        /// <summary>The most decimals either bound is written with, at most 2.</summary>
+        /// <summary>Decimals of a rolled value, at most 2.</summary>
         public int Decimals { get; internal set; }
     }
 

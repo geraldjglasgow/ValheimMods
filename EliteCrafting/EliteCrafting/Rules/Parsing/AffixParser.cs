@@ -1,22 +1,25 @@
 using System.Collections.Generic;
 using EliteCrafting.Core;
 using EliteCrafting.Effects;
-using EliteCrafting.Items;
 using YamlDotNet.RepresentationModel;
 
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Reads and checks one merged affix entry. Completeness is checked here, after all layers merged, so a two-line
-    /// override of a built-in affix is valid while a new id missing a required field is an error.
+    /// Reads and checks one merged affix entry (format 2, classes-and-tiers.md section 3). Completeness is checked here,
+    /// after all layers merged, so a two-line override of a built-in affix is valid while a new id missing a required
+    /// field is an error. Whether the class ids exist is checked when both families are in (<see cref="ClassChecks"/>).
     /// </summary>
     internal static class AffixParser
     {
         private static readonly string[] Keys =
         {
-            "id", "name", "effect", "param", "value", "unit", "slots", "requires", "category",
-            "condition", "exclusion_group", "weight", "enabled", "hook", "tiers",
+            "id", "name", "effect", "param", "value", "unit", "affix", "family", "classes", "scaled", "requires", "category",
+            "condition", "exclusion_group", "weight", "enabled", "hook", "tiers", RemovedSlots,
         };
+
+        /// <summary>The format-1 key <c>classes</c> replaced: read nowhere, a warning where a user file still has it.</summary>
+        private const string RemovedSlots = "slots";
 
         public static AffixDef? Parse(YamlNode node, RuleIssues issues)
         {
@@ -37,7 +40,7 @@ namespace EliteCrafting.Rules
             ReadEffect(r, def);
             ReadPlacement(r, def);
             ReadDrawing(r, def);
-            def.Tiers = AffixTierParser.Parse(r, def.Value);
+            def.Tiers = AffixTierParser.Parse(r, def);
             return def;
         }
 
@@ -80,11 +83,54 @@ namespace EliteCrafting.Rules
 
         private static void ReadPlacement(MapReader r, AffixDef def)
         {
-            def.Slots = ReadSlots(r);
+            def.Kind = r.Enum("affix", AffixKind.Suffix);
+            Required(r, "affix");
+            def.Family = r.Id("family") ?? "";
+            ReadClasses(r, def);
             def.Requires = RequirementsParser.Parse(r);
             def.Category = r.Enum("category", AffixCategory.Utility);
             Required(r, "category");
             def.Condition = r.Enum("condition", AffixCondition.None);
+            if (r.Has(RemovedSlots))
+            {
+                r.Warn(RemovedSlots, "is no longer read: item classes replaced slots (classes: { best: [...], allowed: [...] })");
+            }
+        }
+
+        // classes: { best: [...], allowed: [...] }; a class in both lists counts as best.
+        private static void ReadClasses(MapReader r, AffixDef def)
+        {
+            MapReader? classes = r.Sub("classes");
+            if (classes == null)
+            {
+                return;
+            }
+            classes.Value.Unknown("best", "allowed");
+            List<string> best = ClassIds(classes.Value, "best");
+            List<string> allowed = ClassIds(classes.Value, "allowed");
+            if (allowed.RemoveAll(best.Contains) > 0)
+            {
+                classes.Value.Warn("allowed", "lists a class that is also in best; best wins");
+            }
+            def.BestClasses = best;
+            def.AllowedClasses = allowed;
+        }
+
+        private static List<string> ClassIds(MapReader r, string key)
+        {
+            List<string> ids = new List<string>();
+            foreach (string id in r.Strings(key) ?? new List<string>())
+            {
+                if (!Ids.IsValid(id))
+                {
+                    r.Error(key, $"'{id}' is not a valid class id");
+                }
+                else if (!ids.Contains(id))
+                {
+                    ids.Add(id);
+                }
+            }
+            return ids;
         }
 
         private static void ReadDrawing(MapReader r, AffixDef def)
@@ -93,33 +139,13 @@ namespace EliteCrafting.Rules
             def.Weight = r.Float("weight", 100f, 0f);
             def.Enabled = r.Bool("enabled", true);
             def.Hook = r.Enum("hook", HookDifficulty.None);
-        }
-
-        private static List<ItemSlot> ReadSlots(MapReader r)
-        {
-            List<ItemSlot> slots = new List<ItemSlot>();
-            List<string>? ids = r.Strings("slots");
-            if (ids == null || ids.Count == 0)
+            def.Scaled = r.Bool("scaled", false);
+            if (def.Scaled && def.Value == AffixValueType.Flag)
             {
-                r.Error("slots", "is required: at least one slot");
-                return slots;
+                r.Warn("scaled", "a flag has no value to scale; ignored");
+                def.Scaled = false;
             }
-            foreach (string id in ids)
-            {
-                if (ItemSlots.TryParse(id, out ItemSlot slot))
-                {
-                    slots.Add(slot);
-                }
-                else
-                {
-                    r.Error("slots", $"'{id}' is not a slot ({SlotList})");
-                }
-            }
-            return slots;
         }
-
-        private static string SlotList =>
-            "melee_weapon, ranged_weapon, magic_weapon, shield, head, chest, legs, cape, utility_item, tool";
 
         private static string? Required(MapReader r, string key)
         {

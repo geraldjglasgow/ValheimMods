@@ -14,7 +14,7 @@ namespace EliteCrafting.Rules
                 r.Unknown("tier", "rune_rolls", "gear_rolls", "bonus");
                 bosses[Name(r)] = new BossDrop
                 {
-                    Tier = r.Int("tier", 1, 1, 7),
+                    Tier = r.Int("tier", 1, 1, DropParser.Tiers),
                     StoneRolls = r.Int("rune_rolls", 0, 0),
                     GearRolls = r.Int("gear_rolls", 0, 0),
                     Bonus = ReadBonus(r),
@@ -34,7 +34,7 @@ namespace EliteCrafting.Rules
                 r.Unknown("tier", "multiplier", "rune_multiplier", "gear_multiplier", "bonus");
                 creatures[Name(r)] = new CreatureDrop
                 {
-                    Tier = r.Int("tier", 0, 1, 7),
+                    Tier = r.Int("tier", 0, 1, DropParser.Tiers),
                     Multiplier = r.Float("multiplier", 1f, 0f),
                     StoneMultiplier = r.Float("rune_multiplier", 1f, 0f),
                     GearMultiplier = r.Float("gear_multiplier", 1f, 0f),

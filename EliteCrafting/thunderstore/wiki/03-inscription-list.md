@@ -1,246 +1,332 @@
 # Inscription List
 
-All 162 inscriptions with their default values. A server can change any of them; `ecraft list inscriptions` prints the ones in force, and `ecraft list inscriptions <slot>` (for example `legs`) filters them.
+All 209 inscriptions with their default values. A server can change any of them: `ecraft list inscriptions` prints the ones in force, `ecraft list inscriptions <class>` (for example `legs` or `sword_1h`) those that roll on one item class, and `ecraft inscription <id>` one inscription with every tier.
 
-- **Effect**: the tooltip line; `x` is the rolled value.
-- **Rolls on**: melee, ranged (bows and crossbows), staff, shield, head, chest, legs, cape, utility (belts and other utility items), tool. "Weapons" means melee, ranged and staff. A condition in brackets limits it further.
-- **Values**: the weakest tier's range → the T1 range. Most start at T7 and roll from Meadows on. A tier in front (T6 Black Forest, T5 Swamp, T4 Mountain, T3 Plains, T2 Mistlands) means it first rolls on items of that biome. "on/off" has no number.
-- **Wt**: how often it is picked against the others that could roll on the item. Most are 100; lower is rarer.
+- **Effect**: the tooltip line; X is the rolled value.
+- **P/S**: prefix or suffix. A Magic item holds 1 of each, a Rare item 3 of each.
+- **Best on**: item classes that roll all its tiers. **Also on**: classes where its top third of tiers stays closed. "weapons" means every melee class plus bows and crossbows, "melee" the eleven melee classes, "one-handed" swords, axes, maces, knives and spears, "staffs" both staffs, "shields" bucklers, round and tower shields, "armour" helmets, chests, legs and capes; "other" means the rest of that group. The classes are listed on [Runes and Magic Gear](wiki:Runes and Magic Gear).
+- **Tiers**: how many, then the weakest tier's range → T1's range. "on" has no number and one tier. ×scale: flat added damage, multiplied by the weapon's damage scale when it rolls.
+- **From**: the biome whose gear first rolls it (its item level). The strongest tier of a longer ladder needs Deep North gear.
+- **Cap**: the most the total from everything you wear can reach; blank means no cap.
 - **Health-critical** means at or below 30% of maximum health.
+- Some inscriptions roll less often than others; `ecraft inscription <id>` shows the weight.
 
 ## Groups
 
 One item never holds the same inscription twice, nor two of one group:
 
-- the elemental brands (Emberbrand ... Spiritbrand); the physical brands (Bonebreaker, Keen Edge, Needlepoint)
-- the skill masteries; Undead / Beast / Sea Slayer; the four bulwarks
-- Balanced Grip, Seidr Thrift, Blood Price, Rune-Edged
-- Fleetfoot, Cornered Flight, Stride
-- pairs: Well-Forged / Everlasting, Lightened / Gossamer, Vigor / Stout Heart, Troll Blood / Cornered Blood, Seidr Flow / Restless Mind, Hardened / Cornered Hide, Soft Landing / Raven's Glide, Reaper / Soul Reaper, Blood Drinker / Cornered Thirst, Mist Veil / Cornered Veil, Oilskin / Sealegs, Reflex Draught / Swift Draught
+- Fleetfoot, Cornered Flight, Stride; Raven's Glide, Soft Landing; Undead, Beast and Sea Slayer; the four bulwarks
+- Seidr Thrift, Balanced Grip, Blood Price, Rune-Edged; Blood Drinker, Cornered Thirst; Reaper, Soul Reaper
+- pairs: Vigor / Stout Heart, Troll Blood / Cornered Blood, Seidr Flow / Restless Mind, Hardened / Cornered Hide, Mist Veil / Cornered Veil, Well-Forged / Everlasting, Lightened / Gossamer, Oilskin / Sealegs, Swift Draught / Reflex Draught
+- the eighteen skill masteries
 
-## Weapons: damage
+## Weapon damage
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Honed Might | +x% blunt, slash and pierce damage | melee, ranged | 2-3 → 13-15 | 100 |
-| Primal Fury | +x% fire, frost, lightning and poison damage | weapons | 2-3 → 13-15 | 100 |
-| Nightstalker | +x% damage at night | weapons | 2-3 → 13-15 | 100 |
-| Emberbrand, Rimebrand, Stormbrand, Venombrand, Spiritbrand | Adds x% of this weapon's damage as fire / frost / lightning / poison / spirit | melee, ranged | 3-5 → 15-18 | 100 (Spiritbrand 70) |
-| Bonebreaker, Keen Edge, Needlepoint | Adds x% of this weapon's damage as blunt / slash / pierce | melee, ranged | 3-5 → 15-18 | 100 |
-| Undead Slayer, Beast Slayer, Sea Slayer | +x% damage against the undead / beasts / sea creatures | weapons | 4-6 → 22-26 | 100 |
-| Godslayer | +x% damage against bosses | weapons | T5: 9-12 → 22-26 | 50 |
-| Ambusher | +x% sneak attack multiplier | melee, ranged | 4-6 → 22-26 | 100 |
-| Cruel Opening | x% chance that a hit on a staggered enemy is a sneak attack | melee, ranged | 3-5 → 15-18 | 60 |
-| Press the Advantage | +x% damage against staggered enemies | melee, ranged | 4-6 → 22-26 | 100 |
-| Deathblow | +x% damage on your first hit on an enemy below 20% health | weapons | 10-15 → 60-75 | 100 |
-| Berserkergang | While health-critical, +x% damage | weapons | 5-8 → 30-35 | 60 |
-| Fafnir's Greed | +x% damage per full 999 coins carried | melee | 1-2 → 7-8 | 40 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Wrath `wrath` | +X% damage | P | - | weapons, staffs | 13: 0.5-0.7 → 5.6-6 | Meadows |  |
+| Honed Might `honed_might` | +X% blunt, slash and pierce damage | P | weapons | - | 13: 2-3 → 19-20 | Meadows |  |
+| Primal Fury `primal_fury` | +X% fire, frost, lightning and poison damage | P | staffs | weapons | 13: 2-3 → 24-25 | Meadows |  |
+| Bonebreaker `bonebreaker` | +X blunt damage | P | Maces, Sledges | Fists | 13: 1 → 22 ×scale | Meadows |  |
+| Keen Edge `keen_edge` | +X slash damage | P | Swords, Axes, Greatswords, Battleaxes, Dual axes | Knives, Fists | 13: 1 → 22 ×scale | Meadows |  |
+| Needlepoint `needlepoint` | +X pierce damage | P | Spears, Atgeirs, Bows, Crossbows | Knives | 13: 1 → 22 ×scale | Meadows |  |
+| Fafnir's Greed `fafnirs_greed` | +X% damage per full 999 coins carried | P | Trinkets | Utility | 8: 4-5 → 12 | Plains |  |
+| Berserkergang `berserkergang` | While health-critical, +X% damage | S | - | weapons, staffs | 8: 4-5 → 22-24 | Meadows |  |
+| Deathblow `deathblow` | +X% damage on your first hit on an enemy below 20% health | P | Greatswords, Battleaxes, Sledges | other weapons | 8: 50-65 → 220-250 | Plains |  |
+| Godslayer `godslayer` | +X% damage against bosses | P | - | weapons, staffs | 8: 2-3 → 14-15 | Meadows |  |
+| Undead Slayer `slayer_undead` | +X% damage against the undead | P | Maces, Sledges | other weapons, staffs | 8: 3-5 → 23-25 | Meadows |  |
+| Sundering `sundering` | Hits ignore X% of the target's resistance | P | Knives, Spears, Crossbows | other weapons, staffs | 8: 2-3 → 14-15 | Swamp | 50 |
+| Keen Eye `keen_eye` | +X% critical hit chance | S | Knives, Bows, Crossbows | other weapons, staffs | 8: 1-2 → 10 | Meadows | 25 |
+| Brutal Strikes `brutal_strikes` | +X% critical hit damage | S | Greatswords, Battleaxes, Sledges, Crossbows | other weapons, staffs | 8: 10-14 → 53-60 | Meadows | 100 |
+| Glass Cannon `glass_cannon` | +X% damage, but armour is X% lower | P | Greatswords, Battleaxes, Dual axes, Sledges, Fists | other weapons, Elemental staffs | 8: 3-4 → 18-20 | Swamp | 25 |
+| Nightstalker `nightstalker` | +X% damage at night | P | - | weapons, staffs | 8: 2-3 → 14-15 | Meadows |  |
+| Beast Slayer `slayer_beasts` | +X% damage against beasts | P | - | weapons, staffs | 8: 4-6 → 24-26 | Meadows |  |
+| Sea Slayer `slayer_sea` | +X% damage against sea creatures | P | Spears, Bows | other weapons, staffs | 8: 4-6 → 24-26 | Meadows |  |
 
-## Weapons: on hit and on kill
+## Elemental damage
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Reaper | Killing an enemy restores x stamina | melee, ranged | 3-5 → 15-18 | 100 |
-| Soul Reaper | Killing an enemy restores x eitr | staff | T3: 11-13 → 15-18 | 100 |
-| Blood Drinker | Heal x% of the damage your hits deal | melee, ranged | 1-1.5 → 4-5 | 60 |
-| Cornered Thirst | While health-critical, heal x% of the damage your hits deal | melee, ranged | 3-4 → 9-10 | 50 |
-| Seidr Siphon | Restore eitr equal to x% of the damage your hits deal | melee, staff | T3: 3-3.5 → 4-5 | 60 |
-| Evader's Fury | Dodging through a melee attack grants +x% damage for 10 s | melee, ranged | 5-8 → 30-35 | 60 |
-| Hamstring | Hit enemies move and attack x% slower for 2 s | melee, ranged | 5-8 → 21-25 | 70 |
-| Staggering Blows | +x% stagger on the target | melee | 4-6 → 22-26 | 100 |
-| Dazing Blows | Enemies you stagger stay staggered x% longer | melee | 5-10 → 40-50 | 70 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Emberbrand `emberbrand` | +X fire damage | P | weapons | Lights | 13: 1 → 22 ×scale | Meadows |  |
+| Rimebrand `rimebrand` | +X frost damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
+| Stormbrand `stormbrand` | +X lightning damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
+| Venombrand `venombrand` | +X poison damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
+| Spiritbrand `spiritbrand` | +X spirit damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
+| Lingering Wounds `lingering_wounds` | Burning, poison and frost you inflict last X% longer | S | Elemental staffs | weapons, Blood staffs | 8: 5-8 → 36-40 | Meadows | 100 |
 
-## Melee weapons
+## On hit
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Balanced Grip | Attacks with this weapon cost x% less stamina | melee | 3-5 → 15-18 | 100 |
-| Long Reach | +x% melee range | melee | 2-3 → 8-10 | 100 |
-| Sweeping Arc | Swing arc x° wider | melee | 2-4 → 14-16 | 100 |
-| Blood Price | Attacks cost health instead of stamina | melee | on/off, T4 | 30 |
-| Rune-Edged | Half the stamina cost is paid in eitr; then +x% damage | melee | T3: 9-11 → 13-15 | 30 |
-| Lone Blade | Off-hand empty: blocks with +x% of its attack power | melee (one-handed) | 5-8 → 30-35 | 40 |
-| Steel Rhythm | A combo finisher gives 2 s of stagger immunity and x% less damage taken | melee | 5-8 → 30-35 | 40 |
-| Heartwood | Trees and logs you fell drop x extra wood | melee (chops wood) | 1 → 2-3 | 70 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Thor's Chain `thors_chain` | Hits may call chain lightning for X% of the damage | P | Elemental staffs | weapons | 8: 5-9 → 57-65 | Meadows | 100 |
+| Ambusher `ambusher` | +X% sneak attack multiplier | S | Knives | Bows, Crossbows | 8: 1-2 → 15-16 | Meadows |  |
+| Numbing Blow `numbing_blow` | Hits paralyse for X s (not bosses) | S | Maces, Sledges | Fists, Crossbows | 8: 0.5-0.9 → 5.3-6 | Swamp | 3 |
+| Dazing Blows `dazing_blows` | Enemies you stagger stay staggered X% longer | S | Maces, Sledges | other melee, shields | 8: 1-2 → 16-18 | Meadows |  |
+| Staggering Blows `staggering_blows` | +X% stagger on the target | S | Maces, Sledges | other melee, shields | 8: 1-2 → 11-12 | Meadows |  |
+| Cruel Opening `cruel_opening` | X% chance that a hit on a staggered enemy is a sneak attack | S | Knives | Fists | 8: 4-5 → 22-24 | Swamp |  |
+| Press the Advantage `press_the_advantage` | +X% damage against staggered enemies | S | Maces, Sledges, Fists | other weapons | 8: 2-3 → 19-21 | Meadows |  |
+| Hamstring `hamstring` | Hit enemies move and attack X% slower for 2 s | S | Spears, Atgeirs | other weapons | 8: 4-5 → 22-24 | Meadows |  |
+| Mighty Blows `mighty_blows` | +X% knockback with this weapon | S | Maces, Sledges | other melee, Crossbows | 8: 5-8 → 36-40 | Meadows | 100 |
+| Heavy Hand `heavy_hand` | +X% stagger with this weapon, but it swings a third as much slower | S | Maces, Sledges | Axes, Greatswords, Battleaxes, Atgeirs, Fists | 8: 10-13 → 41-45 | Black Forest | 60 |
 
-## Bows and crossbows
+## Attack speed and cost
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Easy Draw | Drawing this bow drains x% less stamina | ranged (bows) | 3-5 → 15-18 | 100 |
-| Quick Windlass | This crossbow reloads x% faster | ranged (crossbows) | 3-5 → 15-18 | 100 |
-| Swift String | This bow draws x% faster | ranged (bows) | 2-3 → 8-10 | 60 |
-| True Flight | Projectiles fly x% faster | ranged, staff (shoots projectiles) | 5-10 → 40-50 | 100 |
-| Volley | Looses three arrows in a spread, using three | ranged (bows) | on/off, T4 | 20 |
-| Thrifty Quiver | x% chance that a shot uses no ammunition | ranged | 3-5 → 15-18 | 70 |
-| Skirmisher | Attacking with this weapon slows you x% less | ranged | 5-10 → 40-50 | 70 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Seidr Thrift `seidr_thrift` | Attacks with this staff cost X% less eitr | S | staffs | - | 8: 1-2 → 16-18 | Meadows | 30 |
+| Blood Thrift `blood_thrift` | Attacks with this staff cost X% less health | S | Blood staffs | - | 8: 1-2 → 16-18 | Meadows | 30 |
+| Balanced Grip `balanced_grip` | Attacks with this weapon cost X% less stamina | S | melee | Pickaxes | 8: 2-4 → 22-24 | Meadows | 30 |
+| Blood Price `blood_price` | Attacks cost health instead of stamina | S | - | melee | on | Meadows |  |
+| Quickened `quickened` | +X% attack speed with this weapon | S | melee | Pickaxes | 8: 1-2 → 11-12 | Meadows | 15 |
+| Steel Rhythm `steel_rhythm` | A combo finisher gives 2 s of stagger immunity and X% less damage taken | S | - | melee | 8: 15-17 → 41-45 | Meadows |  |
+| Desperate Haste `quickened_hc` | +X% attack speed with this weapon while health is critical | S | - | melee | 8: 4-5 → 22-24 | Meadows | 15 |
+| Rune-Edged `rune_edge` | Half the stamina cost is paid in eitr; then +X% damage | P | - | melee | 8: 4-6 → 27-30 | Swamp |  |
+| Long Reach `long_reach` | +X% melee range | S | Spears, Atgeirs | other melee | 8: 2-3 → 10 | Meadows |  |
+| Sweeping Arc `sweeping_arc` | Swing arc X° wider | S | Greatswords, Battleaxes, Sledges, Atgeirs | Swords, Axes, Maces | 8: 2-3 → 15-16 | Meadows |  |
 
-## Staves
+## Leech
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Seidr Thrift | Attacks with this staff cost x% less eitr | staff | T3: 11-13 → 15-18 | 100 |
-| Blood Thrift | Attacks with this staff cost x% less health | staff (Blood Magic) | T3: 11-13 → 15-18 | 100 |
-| Twincast | Casts every projectile twice, for twice the eitr | staff (Elemental Magic) | on/off, T2 | 20 |
-| Grave-Lord's Command | Creatures summoned with this staff deal +x% damage | staff (Blood Magic) | T3: 15-18 → 22-26 | 100 |
-| Grave Vigor | Creatures summoned with this staff have +x% health | staff (Blood Magic) | T3: 15-18 → 22-26 | 100 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Blood Drinker `blood_drinker` | Heal X% of the damage your hits deal | P | melee | - | 8: 0.5-0.8 → 3.6-4 | Swamp | 5 |
+| Seidr Siphon `seidr_siphon` | Restore eitr equal to X% of the damage your hits deal | P | - | melee | 8: 0.5-0.8 → 3.6-4 | Swamp | 5 |
+| Cornered Thirst `blood_drinker_hc` | While health-critical, heal X% of the damage your hits deal | S | - | melee | 8: 1-1.3 → 4.5-5 | Swamp | 5 |
+| Wind Siphon `wind_siphon` | Hits restore X% of their damage as stamina | P | melee | - | 8: 0.5-0.8 → 3.6-4 | Meadows | 5 |
+| Reaper `reaper` | Killing an enemy restores X stamina | S | - | weapons | 8: 3 → 18 | Meadows |  |
+| Soul Reaper `soul_reaper` | Killing an enemy restores X eitr | S | staffs | - | 8: 11 → 18 | Meadows |  |
 
-## Skill masteries
+## Ranged and magic
 
-Each gives +x levels to its skill: 2-3 → 13-15, weight 100 (Green Thumb 60).
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Thrifty Quiver `thrifty_quiver` | X% chance that a shot uses no ammunition | S | Bows, Crossbows | - | 8: 5-8 → 44-50 | Meadows | 50 |
+| Quick Windlass `quick_windlass` | This crossbow reloads X% faster | S | Crossbows | - | 8: 1-2 → 17-19 | Meadows | 50 |
+| Swift Casting `swift_casting` | +X% casting speed with this staff | S | Elemental staffs | Blood staffs | 8: 1-3 → 27-30 | Meadows | 25 |
+| True Flight `true_flight` | Projectiles fly X% faster (only items that shoot) | S | Bows, Crossbows | Spears, Elemental staffs | 8: 5-8 → 36-40 | Meadows |  |
+| Easy Draw `easy_draw` | Drawing this bow drains X% less stamina | S | Bows | - | 8: 2-3 → 17-18 | Meadows | 30 |
+| Bursting Shot `bursting_shot` | Shots burst for X% of their damage around the impact | P | Bows, Crossbows | - | 8: 2-3 → 17-18 | Meadows | 100 |
+| Swift String `swift_string` | This bow draws X% faster | S | Bows | - | 8: 2-4 → 22-24 | Meadows | 50 |
+| Grave Vigor `grave_vigor` | Creatures summoned with this staff have +X% health | P | Blood staffs | - | 8: 1-3 → 27-30 | Meadows |  |
+| Grave-Lord's Command `grave_command` | Creatures summoned with this staff deal +X% damage | P | Blood staffs | - | 8: 1-3 → 27-30 | Meadows |  |
+| Twincast `twincast` | Casts every projectile twice, for twice the eitr | S | Elemental staffs | - | on | Plains |  |
+| Volley `volley` | Looses three arrows in a spread, using three | S | Bows | - | on | Plains |  |
+| Skirmisher `skirmisher` | Attacking with this weapon slows you X% less | S | Bows | - | 8: 5-8 → 44-50 | Meadows |  |
 
-| Inscription | Skill | Rolls on |
-|---|---|---|
-| Blade Mastery | Swords | melee (swords) |
-| Axe Mastery | Axes | melee (axes) |
-| Club Mastery | Clubs | melee (clubs) |
-| Knife Mastery | Knives | melee (knives) |
-| Spear Mastery | Spears | melee (spears) |
-| Polearm Mastery | Polearms | melee (polearms) |
-| Fist Mastery | Unarmed | melee (fists) |
-| Bow Mastery | Bows | ranged (bows) |
-| Crossbow Mastery | Crossbows | ranged (crossbows) |
-| Elemental Mastery | Elemental Magic | staff (Elemental Magic) |
-| Blood Mastery | Blood Magic | staff (Blood Magic) |
-| Shield Mastery | Blocking | shield |
-| Woodcutter's Mastery | Woodcutting | melee (chops wood) |
-| Miner's Mastery | Pickaxes | tool (pickaxes) |
-| Angler's Mastery | Fishing | tool (fishing rods) |
-| Green Thumb | Farming | tool (Farming tools) |
-| Wanderer's Mastery | Run, Jump, Swim and Sneak | legs, cape |
-| Artisan's Mastery | Crafting and Cooking | head, utility |
+## Throwing
 
-## Shields
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Throwing Grip `throwing_grip` | Secondary attack throws this weapon | S | Axes, Knives | Swords, Maces | on | Meadows |  |
+| Returning `returning` | Thrown, this weapon flies back to you | S | Spears | - | on | Swamp |  |
+| Bifrost Step `bifrost_step` | A thrown hit carries you to your weapon | S | Spears | - | on | Swamp |  |
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Stalwart | +x% block armor | shield | 4-6 → 25-30 | 100 |
-| Perfect Guard | +x% perfect block bonus | shield (can parry) | 5-8 → 30-35 | 100 |
-| Repelling Guard | +x% block knockback | shield | 5-8 → 30-35 | 100 |
-| Tireless Guard | Blocking costs x% less stamina | shield | 3-5 → 15-18 | 100 |
-| Keen Guard | Perfect-block window x ms longer | shield (can parry) | 10-15 → 55-60 | 60 |
-| Anchored Guard | Blocking with this shield: no knockback or stagger | shield | on/off, T5 | 30 |
-| Seidr Riposte | A perfect block restores x eitr | shield (can parry) | T3: 11-13 → 15-18 | 60 |
+## Blocking and parry
 
-## Armour: health, stamina and eitr
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Stalwart `stalwart` | +X% block armor | P | shields | melee | 13: 2-3 → 23-24 | Meadows |  |
+| Repelling Guard `repelling_guard` | +X% block knockback | S | Round shields, Tower shields | Bucklers | 8: 5-6 → 22-24 | Meadows |  |
+| Perfect Guard `perfect_guard` | +X% perfect block bonus (only items that can parry) | P | Bucklers, Round shields | melee | 13: 2-3 → 23-24 | Meadows |  |
+| Tireless Guard `tireless_guard` | Blocking costs X% less stamina | S | shields | melee | 8: 2-3 → 19-21 | Meadows | 30 |
+| Bramblehide `bramblehide` | Melee attackers take X% of the damage they deal to you | P | Round shields, Tower shields, Chests | Bucklers, Legs | 13: 2-2.5 → 13-14 | Meadows |  |
+| Mist Veil `mist_veil` | X% chance to avoid a hit | S | Bucklers, Chests | Round shields, Capes | 8: 2-3 → 13-14 | Meadows | 15 |
+| Last Stand `stalwart_hc` | +X% block armour while health is critical | S | shields | melee | 8: 4-5 → 22-24 | Meadows |  |
+| Desperate Guard `perfect_guard_hc` | +X% parry bonus while health is critical | S | Bucklers, Round shields | melee | 8: 4-5 → 22-24 | Meadows |  |
+| Cornered Veil `mist_veil_hc` | While health-critical, X% chance to avoid a hit | S | Bucklers | Chests, Capes | 8: 4-6 → 24-27 | Meadows | 15 |
+| Lone Blade `lone_blade` | Off-hand empty: blocks with +X% of its attack power | P | Swords | Axes, Maces, Knives, Spears | 8: 4-6 → 25-28 | Meadows |  |
+| Anchored Guard `anchored_guard` | Blocking with this shield: no knockback or stagger | S | Tower shields | Round shields | on | Meadows |  |
+| Keen Guard `keen_guard` | Perfect-block window X ms longer (only items that can parry) | S | Bucklers | one-handed, Round shields | 8: 40-44 → 92-100 | Meadows | 150 |
+| Seidr Riposte `seidr_riposte` | A perfect block restores X eitr (only items that can parry) | S | Bucklers | one-handed, Round shields | 8: 15-20 → 71-80 | Swamp |  |
+| Shield Mend `shield_mend` | Blocking or parrying a hit heals X | S | Bucklers, Round shields | Tower shields | 8: 1 → 12 | Meadows |  |
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Vigor | +x maximum health | head, chest | 3-5 → 22-26 | 100 |
-| Stout Heart | +x maximum health, but health regenerates x% slower | chest | 6-10 → 44-52 | 60 |
-| Endurance | +x maximum stamina | chest, legs | 4-6 → 23-28 | 100 |
-| Wellspring | +x maximum eitr | head, cape | T3: 8-12 → 18-25 | 100 |
-| Troll Blood | Health regenerates x% faster | chest, legs | 3-5 → 20-25 | 100 |
-| Cornered Blood | While health-critical, health regenerates x% faster | chest | 10-15 → 52-60 | 60 |
-| Second Wind | Stamina regenerates x% faster | head, legs | 3-5 → 20-25 | 100 |
-| Seidr Flow | Eitr regenerates x% faster | head, cape | T3: 14-17 → 20-25 | 100 |
-| Restless Mind | Eitr regenerates x% faster, but maximum eitr is lower by half as much | head | T3: 28-34 → 40-50 | 60 |
-| Mending | Heal x every 10 seconds | head, chest | 1 → 4-5 | 100 |
-| Valhalla's Edge | Health-critical starts x percentage points higher | head | 1-2 → 7-8 | 50 |
-| Reflex Draught | Becoming health-critical drinks your best healing mead | chest, utility | on/off, T6 | 30 |
-| Swift Draught | While health-critical, healing meads heal at once | utility | on/off, T5 | 30 |
+## Health and regeneration
 
-## Armour: protection
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Vigor `vigor` | +X maximum health | P | Chests | shields, Helmets, Legs, Capes, Trinkets | 13: 3-4 → 37-40 | Meadows |  |
+| Troll Blood `troll_blood` | Health regenerates X% faster | S | Helmets | Chests, Legs, Capes, Trinkets | 13: 2-3 → 23-24 | Meadows | 150 |
+| Valhalla's Edge `valhallas_edge` | Health-critical starts X percentage points higher | S | Trinkets | Helmets | 8: 2-4 → 22-24 | Meadows | 20 |
+| Mending `mending` | Heal X every 10 seconds | S | Chests | Helmets, Legs, Capes | 13: 0.2-0.8 → 12.8-14 | Meadows |  |
+| Cornered Blood `troll_blood_hc` | While health-critical, health regenerates X% faster | S | Helmets | Chests, Capes | 8: 4-6 → 30-33 | Meadows | 150 |
+| Stout Heart `stout_heart` | +X maximum health, but health regenerates X% slower | P | Chests | Legs | 8: 4-8 → 51-58 | Swamp |  |
+| Purity `purity` | Burning, poison and frost wear off X% faster | S | Helmets, Trinkets | Chests | 8: 5-8 → 44-50 | Meadows | 75 |
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Hardened | +x% armor | head, chest, legs, cape | 4-6 → 25-30 | 100 |
-| Cornered Hide | While health-critical, +x% armor | chest, legs | 10-15 → 54-62 | 60 |
-| Padded, Mailed, Riveted | x% less blunt / slash / pierce damage taken | chest, legs | 2-4 → 14-16 | 100 |
-| Ironclad | x% less blunt, slash and pierce damage taken | chest | 1-2 → 8-10 | 60 |
-| Arrowward | x% less damage from projectiles | chest | 2-4 → 14-16 | 70 |
-| Flameward | x% less fire damage taken | chest, cape | 2-4 → 14-16 | 100 |
-| Frostward | x% less frost damage taken | head, cape | 2-4 → 14-16 | 100 |
-| Stormward | x% less lightning damage taken | head, cape | 2-4 → 14-16 | 100 |
-| Venomward | x% less poison damage taken | legs, cape | 2-4 → 14-16 | 100 |
-| Elemental Ward | x% less fire, frost, lightning and poison damage taken | cape | 1-2 → 8-10 | 60 |
-| Fire, Frost, Lightning, Poison Bulwark | Resistant to fire / frost / lightning / poison | cape | on/off, T5 | 30 |
-| Mist Veil | x% chance to avoid a hit | legs, cape | 1-2 → 7-8 | 60 |
-| Cornered Veil | While health-critical, x% chance to avoid a hit | cape | 3-5 → 15-18 | 50 |
-| Bramblehide | Melee attackers take x% of the damage they deal to you | chest | 5-8 → 30-35 | 70 |
-| Runic Ward | After 10 s without damage, a ward absorbs the next x damage | chest | 5-8 → 35-45 | 70 |
-| Resolute | You build up x% less stagger | chest, legs | 5-10 → 40-50 | 100 |
-| Ironroot | You are knocked back x% less | legs | 5-10 → 40-50 | 100 |
-| Quick Recovery | You recover from stagger x% sooner | head | 5-10 → 40-50 | 70 |
-| Purity | Burning, poison and frost wear off x% faster | head, chest | 5-10 → 40-50 | 70 |
-| Coldblood | Frost slows you x% less | legs, cape | 10-20 → 80-100 | 70 |
-| Ashen Skin | Heat builds up x% slower | chest, cape | T3: 20-25 → 30-35 | 100 |
+## Stamina and eitr
+
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Endurance `endurance` | +X maximum stamina | P | Legs | Chests, Capes, Trinkets | 13: 3-4 → 37-40 | Meadows |  |
+| Wellspring `wellspring` | +X maximum eitr | P | Helmets | staffs, Chests, Capes, Trinkets | 13: 4-6 → 56-60 | Meadows |  |
+| Second Wind `second_wind` | Stamina regenerates X% faster | S | Legs | Chests, Capes, Trinkets | 13: 2-3 → 23-24 | Meadows | 100 |
+| Seidr Flow `seidr_flow` | Eitr regenerates X% faster | S | staffs, Helmets | Chests, Legs, Capes, Trinkets | 13: 3-4 → 34-36 | Meadows | 100 |
+| Last Breath `second_wind_hc` | +X% stamina regeneration while health is critical | S | Legs | Trinkets | 8: 4-6 → 30-33 | Meadows | 100 |
+| Seidr Surge `seidr_flow_hc` | +X% eitr regeneration while health is critical | S | Helmets | staffs, Capes | 8: 4-7 → 44-50 | Meadows | 100 |
+| Restless Mind `restless_mind` | Eitr regenerates X% faster, but maximum eitr is lower by half as much | S | Helmets | Trinkets | 8: 10-17 → 87-100 | Swamp |  |
+
+## Armour and resistances
+
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Hardened `hardened` | +X% armor | P | Helmets, Chests, Legs | Capes | 13: 2-3 → 17-18 | Meadows |  |
+| Flameward `flameward` | X% less fire damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
+| Frostward `frostward` | X% less frost damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
+| Stormward `stormward` | X% less lightning damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
+| Venomward `venomward` | X% less poison damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
+| Spiritward `spiritward` | -X% spirit damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
+| Elemental Ward `elemental_ward` | X% less fire, frost, lightning and poison damage taken | S | Capes | Chests | 4: 2-4 → 11-14 | Plains | 50 |
+| Padded `padded` | X% less blunt damage taken | S | Chests | shields, Helmets, Legs | 13: 1-2 → 17-18 | Meadows | 50 |
+| Mailed `mailed` | X% less slash damage taken | S | Chests | shields, Helmets, Legs | 13: 1-2 → 17-18 | Meadows | 50 |
+| Riveted `riveted` | X% less pierce damage taken | S | Chests | shields, Helmets, Legs | 13: 1-2 → 17-18 | Meadows | 50 |
+| Ironclad `ironclad` | X% less blunt, slash and pierce damage taken | S | Chests | Tower shields | 4: 2-4 → 11-14 | Plains | 50 |
+| Cornered Hide `hardened_hc` | While health-critical, +X% armor | S | Chests | Legs, Trinkets | 8: 4-5 → 22-24 | Meadows |  |
+| Forsaken Ward `forsaken_ward` | -X% damage taken from bosses | S | Round shields, Tower shields, Chests | Bucklers, Helmets, Legs, Capes | 8: 2-3 → 11-12 | Meadows | 40 |
+| Ember Skin `ember_skin` | -X% burning and lava damage taken | S | Legs, Capes | Helmets, Chests | 8: 3-5 → 23-25 | Meadows | 75 |
+| Quench `quench` | Burning on you ends X% sooner | S | Capes | Chests, Legs | 8: 5-8 → 36-40 | Meadows | 75 |
+| Arrowward `arrowward` | X% less damage from projectiles | S | Round shields, Tower shields, Chests | Bucklers, Helmets, Legs, Capes | 8: 2-3 → 15-16 | Meadows | 60 |
+| Runic Ward `runic_ward` | After 10 s without damage, a ward absorbs the next X damage | P | Chests | Round shields | 8: 5-8 → 40-45 | Black Forest |  |
+| Resolute `resolute` | You build up X% less stagger | S | Chests, Legs | Tower shields | 8: 5-8 → 44-50 | Meadows | 75 |
+| Ironroot `ironroot` | You are knocked back X% less | S | Legs | Tower shields | 8: 5-8 → 44-50 | Meadows | 75 |
+| Quick Recovery `quick_recovery` | You recover from stagger X% sooner | S | Helmets | Legs | 8: 5-8 → 44-50 | Meadows | 75 |
+| Coldblood `coldblood` | Frost slows you X% less | S | Legs, Capes | - | 8: 10-17 → 87-100 | Meadows | 100 |
+| Fire Bulwark `bulwark_fire` | Resistant to fire | S | Capes | - | on | Mistlands |  |
+| Frost Bulwark `bulwark_frost` | Resistant to frost | S | Capes | - | on | Mistlands |  |
+| Lightning Bulwark `bulwark_lightning` | Resistant to lightning | S | Capes | - | on | Mistlands |  |
+| Poison Bulwark `bulwark_poison` | Resistant to poison | S | Capes | - | on | Mistlands |  |
 
 ## Movement
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Fleetfoot | You move x% faster | legs | 1-2 → 7-8 | 100 |
-| Cornered Flight | While health-critical, you move x% faster | legs | 4-6 → 16-20 | 60 |
-| Stride | You sprint x% faster | legs | 3-5 → 15-18 | 100 |
-| Ghostwalk | You move x% faster while sneaking | cape | 3-5 → 15-18 | 100 |
-| Pack Mule | You move x% faster while encumbered | legs, cape | 6-10 → 30-36 | 70 |
-| Momentum | You move x% faster for 5 s after a dodge roll | legs | 3-5 → 15-18 | 70 |
-| Pathfinder | You move x% faster on roads and paths | legs | 3-5 → 15-18 | 60 |
-| Mountain Goat | Steep slopes slow you x% less | legs | 10-20 → 80-100 | 60 |
-| Marshstrider | Tar and shallow water slow you x% less | legs | 10-20 → 80-100 | 60 |
-| Spring-Heeled | You jump x% higher | legs | 5-10 → 40-50 | 100 |
-| Light Leap | Jumping costs x% less stamina | legs | 3-5 → 15-18 | 100 |
-| Long Wind | Sprinting costs x% less stamina | legs | 3-5 → 15-18 | 100 |
-| Nimble | Dodge rolls cost x% less stamina | legs, cape | 3-5 → 15-18 | 100 |
-| Soft Landing | You take x% less fall damage | legs, cape | 5-10 → 35-40 | 100 |
-| Raven's Glide | You fall slowly and take no fall damage | cape | on/off, T4 | 30 |
-| Strong Swimmer | You swim x% faster for x% less stamina | cape | 5-10 → 40-50 | 70 |
-| Soft Tread | You make x% less noise | legs, cape | 5-10 → 40-50 | 100 |
-| Shadowmeld | While sneaking you are x% harder to see | head, cape | 5-10 → 40-50 | 100 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Evader's Fury `evaders_fury` | Dodging through a melee attack grants +X% damage for 10 s | S | Legs | Capes, Trinkets | 8: 5-7 → 31-35 | Meadows |  |
+| Supple Fit `supple_fit` | No longer slows your movement (only items that slow you) | S | Tower shields, Chests, Legs | weapons, staffs, Bucklers, Round shields, Helmets | on | Meadows |  |
+| Soft Tread `soft_tread` | You make X% less noise | S | Legs | Capes, Trinkets | 8: 2-6 → 44-50 | Meadows | 75 |
+| Fleetfoot `fleetfoot` | You move X% faster | S | Legs | Capes, Trinkets | 8: 1-2 → 11-12 | Meadows | 15 |
+| Long Wind `long_wind` | Sprinting costs X% less stamina | S | Legs | Capes, Trinkets | 8: 4-5 → 22-24 | Meadows | 30 |
+| Nimble `nimble` | Dodge rolls cost X% less stamina | S | Legs | Trinkets | 8: 1-2 → 18-20 | Meadows | 30 |
+| Light Leap `light_leap` | Jumping costs X% less stamina | S | Legs | Trinkets | 8: 2-3 → 19-21 | Meadows | 30 |
+| Windstep `windstep` | Jump once more in the air | S | Legs | - | on | Plains |  |
+| Raven's Glide `ravens_glide` | You fall slowly and take no fall damage | S | Legs, Capes | - | on | Plains |  |
+| Cornered Flight `fleetfoot_hc` | While health-critical, you move X% faster | S | Legs | Trinkets | 8: 1-2 → 19-21 | Meadows | 15 |
+| Sea Ward `sea_ward` | The ship you steer takes X% less damage | S | Capes | Trinkets, Utility | 8: 5-7 → 31-35 | Meadows | 75 |
+| Ghostwalk `ghostwalk` | You move X% faster while sneaking | S | Legs | Capes, Trinkets | 8: 3-4 → 17-18 | Meadows | 50 |
+| Spring-Heeled `spring_heeled` | You jump X% higher | S | Legs | - | 8: 5-8 → 44-50 | Meadows | 50 |
+| Soft Landing `soft_landing` | You take X% less fall damage | S | Legs, Capes | - | 8: 5-8 → 36-40 | Meadows | 80 |
+| Stride `stride` | You sprint X% faster | S | Legs | Trinkets | 8: 3-4 → 17-18 | Meadows | 30 |
+| Pack Mule `pack_mule` | You move X% faster while encumbered | S | Legs, Utility | Capes | 8: 6-8 → 32-36 | Meadows | 50 |
+| Momentum `momentum` | You move X% faster for 5 s after a dodge roll | S | Legs | - | 8: 3-4 → 17-18 | Meadows | 40 |
+| Pathfinder `pathfinder` | You move X% faster on roads and paths | S | Legs | - | 8: 3-4 → 17-18 | Meadows | 30 |
+| Mountain Goat `mountain_goat` | Steep slopes slow you X% less | S | Legs | - | 8: 10-17 → 87-100 | Meadows | 75 |
+| Marshstrider `marshstrider` | Tar and shallow water slow you X% less | S | Legs | - | 8: 10-17 → 87-100 | Meadows | 75 |
+| Strong Swimmer `strong_swimmer` | You swim X% faster for X% less stamina | S | Legs, Capes | Trinkets | 8: 5-8 → 44-50 | Meadows | 50 |
+| Shadowmeld `shadowmeld` | While sneaking you are X% harder to see | S | Helmets, Capes | Legs | 8: 5-8 → 44-50 | Meadows | 75 |
+| Fair Winds `fair_winds` | A ship you steer sails X% faster | S | Capes | Trinkets, Utility | 8: 5-8 → 44-50 | Meadows | 50 |
 
 ## Weather and comfort
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Emberheart | You never become Cold | chest, cape | on/off, T6 | 40 |
-| Winterborn | You never become Freezing | chest, cape | on/off, T3 | 25 |
-| Oilskin | Rain never makes you Wet | head, cape | on/off, T6 | 40 |
-| Sealegs | Being Wet does not slow your regeneration | chest | on/off, T5 | 40 |
-| Hearthlight | You give off a soft light | head | on/off | 40 |
-| Mistbane | Your mist-clearing light clears x% farther | head, utility | T2: 30-40 → 40-50 | 70 |
-| Hearthbound | +x comfort | chest, cape, utility | T5: 1 → 2 | 60 |
-| Gourmand | Food lasts x% longer | chest, utility | 5-10 → 40-50 | 100 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Ashen Skin `ashen_skin` | Heat builds up X% slower | S | Capes | Chests | 8: 15-16 → 33-35 | Plains |  |
+| Oilskin `oilskin` | Rain never makes you Wet | S | Capes | Helmets | on | Plains |  |
+| Emberheart `emberheart` | You never become Cold | S | Capes | Chests | on | Plains |  |
+| Hearthbound `hearthbound` | +X comfort | S | Capes | Trinkets, Utility | 2: 1 → 2 | Plains | 3 |
+| Hearthlight `hearthlight` | You give off a soft light | S | Helmets | Chests, Capes, Trinkets | on | Meadows |  |
+| Winterborn `winterborn` | You never become Freezing | S | Capes | Chests | on | Mountain |  |
+| Sealegs `sealegs` | Being Wet does not slow your regeneration | S | Chests | Capes | on | Swamp |  |
 
-## Utility
+## Meads and food
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Broad Back | +x carrying capacity | chest, utility | 10-15 → 60-75 | 100 |
-| Magpie | Picks up items from x% farther away | cape, utility | 10-20 → 80-100 | 100 |
-| Huginn's Eye | The map reveals x% farther around you | head, utility | 5-10 → 40-50 | 100 |
-| Mimir's Insight | All skills level up x% faster | head, utility | 5-10 → 40-50 | 100 |
-| Soulbound | Skills lose x% less on death | head, utility | 10-20 → 80-100 | 70 |
-| Brewer's Haste | Mead cooldowns are x% shorter | head, utility | 5-10 → 40-50 | 70 |
-| Forsaken Favour | Your forsaken power recharges x% faster | head, utility | 5-10 → 40-50 | 70 |
-| Harvester | x% chance for picked plants to yield double | utility | 5-10 → 40-50 | 100 |
-| Beast Whisperer | Creatures you tame tame x% faster | cape, utility | 10-20 → 80-100 | 70 |
-| Fair Winds | A ship you steer sails x% faster | cape, utility | 5-10 → 40-50 | 70 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Long Brew `long_brew` | Mead effects last X% longer | S | Trinkets | Utility | 8: 5-8 → 36-40 | Meadows | 100 |
+| Potent Brew `potent_brew` | Restoring meads restore X% more | S | Trinkets | Utility | 8: 5-7 → 27-30 | Meadows | 50 |
+| Bottomless Flask `bottomless_flask` | X% chance a mead is not used up | S | Utility | Trinkets | 8: 3-4 → 18-20 | Swamp | 50 |
+| Hearty Appetite `hearty_appetite` | Food gives X% more health, stamina and eitr | S | Chests | Trinkets, Utility | 8: 2-3 → 14-15 | Meadows | 30 |
+| Well Fed `well_fed` | +X% food health regeneration | S | Chests | Helmets, Trinkets | 8: 5-7 → 27-30 | Meadows | 50 |
+| Deep Rest `deep_rest` | Rested lasts X% longer | S | Capes | Helmets, Trinkets, Utility | 8: 5-8 → 44-50 | Meadows | 100 |
+| Gourmand `gourmand` | Food lasts X% longer | S | Chests, Trinkets | Utility | 8: 5-8 → 44-50 | Meadows | 100 |
 
-## Loot find
+## Adrenaline
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Norns' Favour | Magic gear dropped by enemies you kill rolls a higher rarity x% more often | head, utility | 5-8 → 30-35 | 50 |
-| Fateweaver | Enemies you kill are x% more likely to drop an extra rune | head, utility | 5-8 → 30-35 | 50 |
-| Trophy Taker | Enemies you kill drop their trophy x% more often | utility | 5-8 → 30-35 | 70 |
-| Hoardfinder | Enemies you kill drop coins and treasure x% more often | utility | 5-8 → 30-35 | 70 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Battle Rush `battle_rush` | Trinket effects last X% longer | P | Trinkets | shields | 8: 5-8 → 36-40 | Meadows | 100 |
+| Blood Up `blood_up` | Blocks and parries give X% more adrenaline | S | shields | Trinkets | 8: 5-8 → 36-40 | Meadows | 100 |
 
-## Tools
+## Charms and fortune
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Builder's Reach | Build and repair x% farther away | tool (hammer, hoe, cultivator) | 10-20 → 80-100 | 100 |
-| Tireless Hands | Building, repairing, tilling and planting cost x% less stamina | tool (hammer, hoe, cultivator) | 3-5 → 20-25 | 100 |
-| Deep Vein | Rock and ore you break drop x extra | tool (pickaxes) | 1 → 2-3 | 70 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Forsaken Favour `forsaken_favour` | Your forsaken power recharges X% faster | S | Trinkets | Helmets, Utility | 8: 2-4 → 22-24 | Meadows | 30 |
+| Brewer's Haste `brewers_haste` | Mead cooldowns are X% shorter | S | Trinkets | Utility | 8: 5-7 → 27-30 | Meadows | 30 |
+| Swift Draught `swift_draught` | While health-critical, healing meads heal at once | S | Trinkets | Utility | on | Swamp |  |
+| Reflex Draught `reflex_draught` | Becoming health-critical drinks your best healing mead | S | Trinkets | Utility | on | Swamp |  |
+| Magpie `magpie` | Picks up items from X% farther away | S | Utility | Trinkets | 8: 10-17 → 87-100 | Meadows | 100 |
+| Broad Back `broad_back` | +X carrying capacity | P | Utility | Capes, Trinkets | 13: 10-16 → 138-150 | Meadows |  |
+| Hoardfinder `hoardfinder` | Enemies you kill drop coins and treasure X% more often | S | Trinkets | Utility | 8: 1-2 → 11-12 | Meadows | 200 |
+| Norns' Favour `norns_favour` | Magic gear dropped by enemies you kill rolls a higher rarity X% more often | S | Trinkets | Helmets, Utility | 8: 1-2 → 16-18 | Plains | 200 |
+| Silver Tongue `silver_tongue` | Traders charge you X% less | S | Trinkets | Utility | 8: 2-3 → 14-15 | Meadows | 30 |
+| Fateweaver `fateweaver` | Enemies you kill are X% more likely to drop an extra rune | S | Trinkets | Helmets, Utility | 8: 5-7 → 31-35 | Meadows | 200 |
+| Beast Whisperer `beast_whisperer` | Creatures you tame tame X% faster | S | Trinkets | Capes, Utility | 8: 10-17 → 87-100 | Meadows | 100 |
 
-## Any gear
+## Perception and learning
 
-| Inscription | Effect | Rolls on | Values | Wt |
-|---|---|---|---|---|
-| Well-Forged | +x% maximum durability | gear with durability | 10-15 → 65-80 | 100 |
-| Everlasting | Never loses durability | gear with durability | on/off, T4 | 25 |
-| Lightened | Weighs x% less | all gear | 5-10 → 40-50 | 100 |
-| Gossamer | Weighs nothing | all gear | on/off, T4 | 20 |
-| Supple Fit | No longer slows your movement | melee, shield, armour, cape (items that slow you) | on/off, T6 | 40 |
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Mimir's Insight `mimirs_insight` | All skills level up X% faster | S | Helmets | Trinkets, Utility | 8: 1-2 → 18-20 | Meadows | 100 |
+| Huginn's Eye `huginns_eye` | The map reveals X% farther around you | S | Helmets | Lights, Trinkets | 8: 1-3 → 27-30 | Meadows | 100 |
+| Trophy Taker `trophy_taker` | Enemies you kill drop their trophy X% more often | S | Helmets | Trinkets | 8: 1-2 → 16-18 | Meadows | 200 |
+| Soulbound `soulbound` | Skills lose X% less on death | S | Helmets, Trinkets | Utility | 8: 10-17 → 87-100 | Meadows | 75 |
 
+## Gathering and building
+
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Deep Vein `deep_vein` | Rock and ore you break drop X extra | S | Pickaxes | - | 2: 1 → 2 | Plains |  |
+| Heartwood `heartwood` | Trees and logs you fell drop X extra wood | S | Axes, Battleaxes | Dual axes | 4: 1 → 4 | Meadows |  |
+| Builder's Reach `builders_reach` | Build and repair X% farther away (only building tools) | S | Tools | - | 8: 5-10 → 61-70 | Meadows | 100 |
+| Mistbane `mistbane` | Your mist-clearing light clears X% farther | S | Utility | - | 4: 25-65 → 183-250 | Meadows | 100 |
+| Masterbuilder `masterbuilder` | Build without a crafting station nearby | S | Tools | - | on | Deep North |  |
+| Timber Bite `timber_bite` | +X% damage to trees and logs | S | Axes, Battleaxes | Dual axes | 8: 5-8 → 36-40 | Meadows | 100 |
+| Stone Bite `stone_bite` | +X% damage to rock and ore | S | Pickaxes | - | 8: 5-8 → 36-40 | Meadows | 100 |
+| Butcher's Cut `butchers_cut` | Animals you kill drop X more meat and hide | S | Knives | Bows, Tools | 3: 1 → 3 | Meadows |  |
+| Patient Line `patient_line` | X% chance a cast keeps its bait | S | Fishing rod | - | 8: 5-8 → 36-40 | Meadows | 75 |
+| Big Catch `big_catch` | X% better odds of a bigger fish | S | Fishing rod | Helmets | 8: 5-8 → 36-40 | Meadows | 100 |
+| Steady Reel `steady_reel` | -X% reeling stamina | S | Fishing rod | - | 8: 5-7 → 31-35 | Meadows | 60 |
+| Thrifty Hands `thrifty_hands` | X% chance crafting uses no materials | S | Tools | Trinkets, Utility | 8: 2-3 → 14-15 | Meadows | 30 |
+| Bountiful Forge `bountiful_forge` | X% chance to craft one more | S | Tools | Trinkets, Utility | 8: 2-3 → 11-12 | Swamp | 30 |
+| Tireless Hands `tireless_hands` | Building, repairing, tilling and planting cost X% less stamina (only building tools) | S | Tools | - | 8: 3-5 → 23-25 | Meadows | 30 |
+| Harvester `harvester` | X% chance for picked plants to yield double | S | Trinkets, Utility | - | 8: 5-8 → 44-50 | Meadows | 100 |
+
+## Skills
+
+Each adds X levels to its skill: 8 tiers, +1-2 → +16-18 from Meadows gear (Woodcutter's Mastery and Green Thumb +2 → +15). All are suffixes, with no cap, and one item holds only one of them.
+
+| Inscription | Gives | Best on | Also on |
+|---|---|---|---|
+| Blade Mastery `blade_mastery` | +X Swords skill | Swords, Greatswords | - |
+| Knife Mastery `knife_mastery` | +X Knives skill | Knives | - |
+| Club Mastery `club_mastery` | +X Clubs skill | Maces, Sledges | - |
+| Polearm Mastery `polearm_mastery` | +X Polearms skill | Atgeirs | - |
+| Spear Mastery `spear_mastery` | +X Spears skill | Spears | - |
+| Shield Mastery `shield_mastery` | +X Blocking skill | shields | - |
+| Axe Mastery `axe_mastery` | +X Axes skill | Axes, Battleaxes, Dual axes | - |
+| Bow Mastery `bow_mastery` | +X Bows skill | Bows | - |
+| Crossbow Mastery `crossbow_mastery` | +X Crossbows skill | Crossbows | - |
+| Blood Mastery `blood_mastery` | +X Blood Magic skill | Blood staffs | - |
+| Artisan's Mastery `artisan_mastery` | +X Crafting and Cooking skills | Tools | Trinkets, Utility |
+| Elemental Mastery `elemental_mastery` | +X Elemental Magic skill | Elemental staffs | - |
+| Fist Mastery `fist_mastery` | +X Unarmed skill | Fists | - |
+| Miner's Mastery `pick_mastery` | +X Pickaxes skill | Pickaxes | - |
+| Angler's Mastery `fishing_mastery` | +X Fishing skill | Fishing rod | - |
+| Wanderer's Mastery `wanderer_mastery` | +X Run, Jump, Swim and Sneak skills | Legs | Trinkets |
+| Woodcutter's Mastery `woodcutting_mastery` | +X Woodcutting skill | Axes, Battleaxes, Dual axes | - |
+| Green Thumb `farming_mastery` | +X Farming skill (only farming tools) | Tools | - |
+
+## Item properties
+
+| Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
+|---|---|---|---|---|---|---|---|
+| Well-Forged `well_forged` | +X% maximum durability (only items with durability) | S | - | weapons, staffs, shields, armour, Lights, Pickaxes, Tools | 8: 10-24 → 172-200 | Meadows |  |
+| Lightened `lightened` | Weighs X% less | S | - | weapons, staffs, shields, armour, Lights, Pickaxes, Tools, Fishing rod | 4: 10-17 → 39-50 | Meadows |  |
+| Everlasting `everlasting` | Never loses durability (only items with durability) | S | - | weapons, staffs, shields, armour, Lights, Pickaxes, Tools | on | Ashlands |  |
+| Gossamer `gossamer` | Weighs nothing | S | - | weapons, staffs, shields, armour, Lights, Pickaxes, Tools, Fishing rod | on | Plains |  |

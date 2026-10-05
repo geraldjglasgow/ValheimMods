@@ -5,11 +5,15 @@ namespace EliteCrafting.Rules
 {
     /// <summary>
     /// Reads the merged affix document (configuration.md section 6) into <see cref="AffixRules"/>: the root keys,
-    /// every affix entry, then the cross-entry checks and lookups (<see cref="AffixIndex"/>). Null when any error.
+    /// every affix entry, the pool additions mods made through the API (<see cref="CodeLayer.ApplyPools"/>), then the
+    /// cross-entry checks and lookups (<see cref="AffixIndex"/>). Null when any error.
     /// </summary>
     internal static class AffixFamilyParser
     {
-        private static readonly string[] RootKeys = { FamilyBuilder.UseDefaultsKey, "health_critical", "caps", "inscriptions" };
+        private static readonly string[] RootKeys =
+        {
+            RuleFormat.Key, FamilyBuilder.UseDefaultsKey, "health_critical", "caps", "inscriptions",
+        };
 
         public static AffixRules? Parse(YamlMappingNode root, RuleIssues issues)
         {
@@ -23,6 +27,7 @@ namespace EliteCrafting.Rules
             {
                 return null;
             }
+            CodeLayer.ApplyPools(rules.Affixes, issues);
             AffixIndex.Build(rules, issues);
             return issues.HasErrors ? null : rules;
         }

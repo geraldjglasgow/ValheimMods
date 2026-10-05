@@ -6,14 +6,14 @@ Runes and magic gear drop beside a creature's normal loot, at the same moment: w
 
 - A creature drops loot only if a player or a player's pet hit it.
 - Tamed and summoned creatures drop nothing, nor Elite Creatures Reborn's Cloven twins and Phantom husks.
-- A creature's tier is the earliest biome it naturally lives in (else where it dies): Meadows 1, Black Forest 2, Swamp 3, Mountain and Ocean 4, Plains 5, Mistlands 6, Ashlands and Deep North 7.
+- A creature's tier is the earliest biome it naturally lives in (else where it dies): Meadows 1, Black Forest 2, Swamp 3, Mountain and Ocean 4, Plains 5, Mistlands 6, Ashlands 7, Deep North 8. Other mods can set their creatures' tiers (Elite Creatures Pack does).
 
 ## Chance per kill
 
-| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-|---|---|---|---|---|---|---|---|
-| Rune | 4% | 5% | 6% | 7% | 8% | 9% | 10% |
-| Magic item | 1% | 1.25% | 1.5% | 1.75% | 2% | 2.25% | 2.5% |
+| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| Rune | 4% | 5% | 6% | 7% | 8% | 9% | 10% | 11% |
+| Magic item | 1% | 1.25% | 1.5% | 1.75% | 2% | 2.25% | 2.5% | 2.75% |
 
 Stars multiply the chance: one star x2, two stars x3. At most 5 runes and 2 magic items per kill.
 
@@ -21,24 +21,24 @@ Stars multiply the chance: one star x2, two stars x3. At most 5 runes and 2 magi
 
 When a rune drops, the chance it is each rune, by tier:
 
-| Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 |
-|---|---|---|---|---|---|---|---|
-| Awakening | 57% | 41% | 33% | 27% | 23% | 20% | 17% |
-| Shaping | 21% | 21% | 21% | 20% | 19% | 18% | 17% |
-| Recasting | 17% | 18% | 18% | 18% | 19% | 18% | 17% |
-| Ascension | - | 16% | 18% | 18% | 19% | 18% | 17% |
-| Consecrated | - | - | 3% | 7% | 9% | 12% | 15% |
-| Cleansing | 4% | 4% | 4% | 5% | 6% | 6% | 7% |
-| Serpent | - | - | 3% | 4% | 6% | 7% | 9% |
+| Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 |
+|---|---|---|---|---|---|---|---|---|
+| Awakening | 57% | 41% | 33% | 27% | 23% | 20% | 17% | 16% |
+| Shaping | 21% | 21% | 21% | 20% | 19% | 18% | 17% | 17% |
+| Recasting | 17% | 18% | 18% | 18% | 19% | 18% | 17% | 17% |
+| Ascension | - | 16% | 18% | 18% | 19% | 18% | 17% | 17% |
+| Consecrated | - | - | 3% | 7% | 9% | 12% | 15% | 18% |
+| Cleansing | 4% | 4% | 4% | 5% | 6% | 6% | 7% | 7% |
+| Serpent | - | - | 3% | 4% | 6% | 7% | 9% | 10% |
 
 ## Magic items
 
-A dropped item is something a player can craft, from the creature's tier or one below. Its rarity:
+A dropped item is something a player can craft, of the creature's tier as item level or one below; each item of the same level is picked three times as often as one of the level below. Utility items and tools drop half as often as other classes, lights and the fishing rod a quarter as often, backpacks never. Its rarity:
 
-| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-|---|---|---|---|---|---|---|---|
-| Magic / Rare | 80/20 | 70/30 | 60/40 | 50/50 | 45/55 | 40/60 | 35/65 |
-| From bosses | 40/60 | 30/70 | 20/80 | 15/85 | 10/90 | 5/95 | 0/100 |
+| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|---|
+| Magic / Rare | 80/20 | 70/30 | 60/40 | 50/50 | 45/55 | 40/60 | 35/65 | 30/70 |
+| From bosses | 40/60 | 30/70 | 20/80 | 15/85 | 10/90 | 5/95 | 0/100 | 0/100 |
 
 ## Bosses
 

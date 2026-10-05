@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using EliteCrafting.Core;
 using EliteCrafting.Effects;
-using EliteCrafting.Items;
 
 namespace EliteCrafting.Rules
 {
     /// <summary>
     /// The affix family's cross-entry work, done once per load: the id table, the channel table (one per effect, param
-    /// and condition of the enabled affixes, with its cap resolved: YAML <c>caps:</c> key, then the effect-level key,
-    /// then the registry default), the rollable pools per slot, and the load warnings (never-rolling affixes, caps
-    /// nobody feeds, unknown cap effects are errors).
+    /// and condition of the enabled affixes, with its cap resolved per channel: see <see cref="ResolveCap"/>), the
+    /// rollable pools per item class with their fit, and the load warnings (never-rolling affixes; unknown cap effects
+    /// are errors).
     /// </summary>
     internal static class AffixIndex
     {
@@ -33,6 +32,10 @@ namespace EliteCrafting.Rules
             if (def.Enabled && (def.Weight <= 0f || NoTierWeight(def)))
             {
                 issues.Warn($"inscriptions[{def.Id}]", null, "weight 0 (or every tier weight 0): it never rolls; existing copies keep working");
+            }
+            if (def.Enabled && def.BestClasses.Count == 0 && def.AllowedClasses.Count == 0)
+            {
+                issues.Warn($"inscriptions[{def.Id}].classes", null, "names no class in best or allowed: it never rolls");
             }
         }
 
@@ -108,51 +111,69 @@ namespace EliteCrafting.Rules
             };
         }
 
+        /// <summary>
+        /// The cap of one channel (classes-and-tiers.md section 8): the most specific <c>caps:</c> key wins, each
+        /// channel capped on its own. <c>effect:param@health_critical</c>, then <c>effect@health_critical</c> (the
+        /// conditional channels only), then <c>effect:param</c>, then <c>effect</c> (so <c>damage_taken: 50</c> caps every
+        /// damage type separately), then the registry default.
+        /// </summary>
         private static float ResolveCap(AffixRules rules, AffixDef def, string key)
         {
-            if (rules.Caps.TryGetValue(key, out float cap))
+            foreach (string candidate in CapKeys(def, key))
             {
-                return cap;
-            }
-            string effectKey = def.Condition == AffixCondition.HealthCritical ? def.Effect + "@health_critical" : def.Effect;
-            if (rules.Caps.TryGetValue(effectKey, out cap))
-            {
-                return cap;
+                if (rules.Caps.TryGetValue(candidate, out float cap))
+                {
+                    return cap;
+                }
             }
             return def.EffectDef.DefaultCap ?? float.PositiveInfinity;
         }
 
+        private static IEnumerable<string> CapKeys(AffixDef def, string key)
+        {
+            yield return key;
+            string plain = def.Param == null ? def.Effect : def.Effect + ":" + def.Param;
+            if (def.Condition == AffixCondition.HealthCritical)
+            {
+                yield return def.Effect + "@health_critical";
+                yield return plain;
+            }
+            yield return def.Effect;
+        }
+
+        // One pool per class id any affix names, in file order; unknown ids get a pool no item reaches (ClassChecks warns).
         private static void BuildPools(AffixRules rules)
         {
-            Dictionary<ItemSlot, List<AffixDef>> pools = new Dictionary<ItemSlot, List<AffixDef>>();
+            Dictionary<string, List<PoolEntry>> pools = new Dictionary<string, List<PoolEntry>>(StringComparer.Ordinal);
             foreach (AffixDef def in rules.Affixes)
             {
                 if (!def.Enabled || def.Weight <= 0f)
                 {
                     continue;
                 }
-                foreach (ItemSlot slot in def.Slots)
-                {
-                    Add(pools, slot, def);
-                }
+                AddAll(pools, def, def.BestClasses, ClassFit.Best);
+                AddAll(pools, def, def.AllowedClasses, ClassFit.Allowed);
             }
             rules.Pools = Freeze(pools);
         }
 
-        private static void Add(Dictionary<ItemSlot, List<AffixDef>> pools, ItemSlot slot, AffixDef def)
+        private static void AddAll(Dictionary<string, List<PoolEntry>> pools, AffixDef def, IReadOnlyList<string> classes, ClassFit fit)
         {
-            if (!pools.TryGetValue(slot, out List<AffixDef> list))
+            foreach (string classId in classes)
             {
-                list = new List<AffixDef>();
-                pools[slot] = list;
+                if (!pools.TryGetValue(classId, out List<PoolEntry> list))
+                {
+                    list = new List<PoolEntry>();
+                    pools[classId] = list;
+                }
+                list.Add(new PoolEntry(def, fit));
             }
-            list.Add(def);
         }
 
-        private static Dictionary<ItemSlot, AffixDef[]> Freeze(Dictionary<ItemSlot, List<AffixDef>> pools)
+        private static Dictionary<string, PoolEntry[]> Freeze(Dictionary<string, List<PoolEntry>> pools)
         {
-            Dictionary<ItemSlot, AffixDef[]> frozen = new Dictionary<ItemSlot, AffixDef[]>();
-            foreach (KeyValuePair<ItemSlot, List<AffixDef>> pair in pools)
+            Dictionary<string, PoolEntry[]> frozen = new Dictionary<string, PoolEntry[]>(StringComparer.Ordinal);
+            foreach (KeyValuePair<string, List<PoolEntry>> pair in pools)
             {
                 frozen[pair.Key] = pair.Value.ToArray();
             }

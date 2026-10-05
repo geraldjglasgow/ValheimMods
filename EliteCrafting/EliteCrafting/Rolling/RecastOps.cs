@@ -13,7 +13,8 @@ namespace EliteCrafting.Rolling
     {
         /// <summary>
         /// Picks the affixes to replace (<see cref="Pick"/>), draws as many new ones with only the kept ones on the item
-        /// (so a replaced affix may come back) and puts each where the old one stood. All or nothing: fails when the
+        /// (so a replaced affix may come back; a replaced one frees its kind's place first, and the new one may be either
+        /// kind within the rarity's limits) and puts each where the old one stood. All or nothing: fails when the
         /// item holds no affix or the pool cannot replace every pick. Unreadable segments stay.
         /// </summary>
         public static RollOutcome Recast(ItemState current, RollContext context)
@@ -32,9 +33,9 @@ namespace EliteCrafting.Rolling
 
         /// <summary>
         /// Which of <paramref name="count"/> places to reroll: how many uniformly in 1..count, then which uniformly (a
-        /// partial shuffle). Shared with the Recasting Rune on Epic Loot items.
+        /// partial shuffle).
         /// </summary>
-        internal static bool[] Pick(int count, Random random)
+        private static bool[] Pick(int count, Random random)
         {
             int[] order = new int[count];
             for (int i = 0; i < count; i++)

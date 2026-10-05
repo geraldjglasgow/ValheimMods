@@ -1,4 +1,5 @@
 using EliteCrafting.Affixes;
+using EliteCrafting.Items;
 using EliteCrafting.Rolling;
 using EliteCrafting.Rules;
 using UnityEngine;
@@ -6,16 +7,16 @@ using UnityEngine;
 namespace EliteCrafting.Commands
 {
     /// <summary>
-    /// <c>ecraft roll &lt;rarity&gt; &lt;prefab|slot&gt; [tier]</c> (console-commands.md section 3): creates a rolled magic
+    /// <c>ecraft roll &lt;rarity&gt; &lt;prefab|class&gt; [level]</c> (console-commands.md section 3): creates a rolled magic
     /// item in the caller's own inventory (dropped at the feet when full). The item is built as a gear drop builds it
     /// (drops.md section 8: upgrade level 1, full durability, the world's world level, no crafter, a random variant)
     /// and rolled with <see cref="ItemRoller.RollFresh"/>, the drop's own procedure, so it is a true sample.
-    /// <c>tier</c> (1-7) overrides the base's tier ceiling for this roll.
+    /// <c>level</c> (1-8) overrides the base's item level for this roll; a class id picks a random base of that class.
     /// Runs on the caller's machine; the item is client-owned like any other.
     /// </summary>
     internal static class RollCommand
     {
-        public const string Grammar = "ecraft roll <rarity> <prefab|slot> [tier]";
+        public const string Grammar = "ecraft roll <rarity> <prefab|class> [level]";
 
         public static void Run(CommandCall call)
         {
@@ -26,7 +27,7 @@ namespace EliteCrafting.Commands
                 return;
             }
             RarityDef? rarity = ParseRarity(call);
-            if (rarity == null || !Counts.TryParse(call, 2, 1, 7, 0, out int tier, Grammar))
+            if (rarity == null || !Counts.TryParse(call, 2, 1, TierResult.MaxLevel, 0, out int level, Grammar))
             {
                 return;
             }
@@ -37,7 +38,7 @@ namespace EliteCrafting.Commands
                 call.Fail(problem!, Grammar);
                 return;
             }
-            RollInto(call, player, prefab, rarity, tier, random);
+            RollInto(call, player, prefab, rarity, level, random);
         }
 
         private static RarityDef? ParseRarity(CommandCall call)
@@ -68,14 +69,14 @@ namespace EliteCrafting.Commands
             return ids;
         }
 
-        private static void RollInto(CommandCall call, Player player, GameObject prefab, RarityDef rarity, int tier, System.Random random)
+        private static void RollInto(CommandCall call, Player player, GameObject prefab, RarityDef rarity, int level, System.Random random)
         {
             ItemDrop.ItemData item = InventorySpawn.NewItem(prefab);
             int variants = item.m_shared.m_variants;
             item.m_variant = variants > 1 ? random.Next(variants) : 0;
             RollContext context = RollContext.For(item);
             context.Random = random;
-            context.Ceiling = tier > 0 ? tier : context.Ceiling;
+            context.Level = level > 0 ? level : context.Level;
             ItemState? state = RollerCall.Roll(call, () => ItemRoller.RollFresh(ItemState.Empty, rarity, context));
             if (state == null || !RollerCall.Commit(call, item, state))
             {
@@ -84,7 +85,7 @@ namespace EliteCrafting.Commands
             item.m_durability = item.GetMaxDurability();
             bool inInventory = InventorySpawn.GiveItem(player, item);
             ItemReport.Write(call, item, inInventory ? "your inventory" : "the ground at your feet (inventory full)");
-            call.Detail($"rolled with tier ceiling {context.Ceiling}" + (tier > 0 ? " (overridden)" : " (the base's own)"));
+            call.Detail($"rolled as class {context.Class.ClassId ?? "-"} at item level {context.Level}" + (level > 0 ? " (overridden)" : " (the base's own)"));
         }
     }
 }

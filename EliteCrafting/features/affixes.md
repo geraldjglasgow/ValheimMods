@@ -264,6 +264,8 @@ across items. **Player-global** affixes sum into channels (`effects-runtime.md` 
 
 # 2. Slot sanity matrix
 
+> **Superseded 2026-10-05 by `classes-and-tiers.md`:** item classes (economy `classes:`) replace the slot taxonomy and `slots`; inscriptions list `classes: { best, allowed }`.
+
 PLAN.md's rules, applied (user directive 2026-09-23: no armor stats on weapons, no weapon stats on armor):
 
 - Item-local stats stay on the item they describe: swing speed, brands, reach, arc, draw, reload → weapons; block and

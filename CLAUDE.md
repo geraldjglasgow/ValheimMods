@@ -129,6 +129,7 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | AreaLoading | arriving somewhere far: land and objects loaded fast during a jump or respawn, the server-objects settle check, distance-scaled waits |
 | WindowInput | a mod's own window treated like the game's while open: free cursor, no attacks, mouse look or zoom, Esc closes it |
 | MapClicks | a click on a mod's own map icon waits out the double click window; the game's pins under it can still be placed and removed |
+| EliteCraftingLink | EliteCrafting's public API by reflection: typed wrappers (classes, inscriptions, items, hooks) that do nothing without EliteCrafting |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs

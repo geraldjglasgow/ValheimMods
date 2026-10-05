@@ -5,10 +5,16 @@ using YamlDotNet.RepresentationModel;
 
 namespace EliteCrafting.Rules
 {
-    /// <summary>Reads <c>rarities:</c> (ladder order = list order) and <c>rolling:</c>, with the rarity.md section 7 checks.</summary>
+    /// <summary>
+    /// Reads <c>rarities:</c> (ladder order = list order) and <c>rolling:</c>, with the rarity.md section 7 checks and the
+    /// prefix and suffix limits of classes-and-tiers.md section 6.
+    /// </summary>
     internal static class RarityParser
     {
-        private static readonly string[] Keys = { "id", "name", "color", "glow", "inscriptions", "drop_weight" };
+        private static readonly string[] Keys = { "id", "name", "color", "glow", "inscriptions", "drop_weight", "prefixes", "suffixes" };
+
+        /// <summary>The format-1 key the item levels and tier ladders replaced: a warning where a user file still has it.</summary>
+        private const string RemovedTierWindow = "tier_window";
 
         public static List<RarityDef> Parse(MapReader root)
         {
@@ -44,6 +50,7 @@ namespace EliteCrafting.Rules
             };
             ReadColor(r, rarity);
             ReadCounts(r, rarity);
+            ReadLimits(r, rarity);
             return rarity;
         }
 
@@ -81,6 +88,17 @@ namespace EliteCrafting.Rules
             }
         }
 
+        // prefixes / suffixes default to the maximum count: no limit beyond it.
+        private static void ReadLimits(MapReader r, RarityDef rarity)
+        {
+            rarity.MaxPrefixes = r.Int("prefixes", rarity.MaxAffixes, 0);
+            rarity.MaxSuffixes = r.Int("suffixes", rarity.MaxAffixes, 0);
+            if (rarity.MaxPrefixes + rarity.MaxSuffixes < rarity.MinAffixes)
+            {
+                r.Warn("prefixes", $"prefixes + suffixes is below inscriptions.min ({rarity.MinAffixes}): a fresh roll can never reach it");
+            }
+        }
+
         private static void CheckLadder(MapReader root, List<RarityDef> rarities)
         {
             if (rarities.Count < 2)
@@ -107,10 +125,14 @@ namespace EliteCrafting.Rules
                 return new RollingSettings();
             }
             MapReader r = sub.Value;
-            r.Unknown("tier_window", "promote_adds_at_least", "count_weights");
+            r.Unknown("allowed_closed_fraction", "promote_adds_at_least", "count_weights", RemovedTierWindow);
+            if (r.Has(RemovedTierWindow))
+            {
+                r.Warn(RemovedTierWindow, "is no longer read: an item rolls every tier its item level has unlocked (allowed_closed_fraction closes the top of allowed classes)");
+            }
             return new RollingSettings
             {
-                TierWindow = r.Int("tier_window", 3, 1, 7),
+                AllowedClosedFraction = r.Float("allowed_closed_fraction", 0.334f, 0f, 1f),
                 PromoteAddsAtLeast = r.Int("promote_adds_at_least", 1, 0),
                 CountWeights = ReadCountWeights(r),
             };

@@ -32,6 +32,28 @@ namespace EliteCrafting.Rules
             return values.ToArray();
         }
 
+        /// <summary>
+        /// A list indexed by tier: 8 numbers, tier 1 first (classes-and-tiers.md section 2). A list of 7 (format 1, before
+        /// Deep North) still loads with its last value repeated for tier 8.
+        /// </summary>
+        public static float[]? TierFloats(YamlNode node, string path, RuleIssues issues, int tiers)
+        {
+            float[]? values = Floats(node, path, issues);
+            if (values == null || values.Length == tiers)
+            {
+                return values;
+            }
+            if (values.Length == tiers - 1 && values.Length > 0)
+            {
+                float[] padded = new float[tiers];
+                System.Array.Copy(values, padded, values.Length);
+                padded[tiers - 1] = values[values.Length - 1];
+                return padded;
+            }
+            issues.Error(path, node, $"should have {tiers} entries, tier 1 first (a list of {tiers - 1} still loads), has {values.Length}");
+            return null;
+        }
+
         /// <summary>Every (key, value node) of a mapping, keys as text.</summary>
         public static IEnumerable<KeyValuePair<string, YamlNode>> Pairs(YamlMappingNode map)
         {

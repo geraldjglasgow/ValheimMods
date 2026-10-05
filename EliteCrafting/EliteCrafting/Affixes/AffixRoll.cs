@@ -3,8 +3,9 @@ using System;
 namespace EliteCrafting.Affixes
 {
     /// <summary>
-    /// One rolled affix on an item: its id, the tier it rolled at and the rolled value (already rounded at roll time,
-    /// so what is stored is exactly what is displayed and applied; flags store 1). Immutable.
+    /// One rolled affix on an item: its id, the tier it rolled at as a strength grade (1 = the inscription's weakest
+    /// tier; shown as <c>AffixDef.ShownTier</c>) and the rolled value (already rounded and scaled at roll time, so what is
+    /// stored is exactly what is displayed and applied; flags store 1). Immutable.
     /// </summary>
     public readonly struct AffixRoll : IEquatable<AffixRoll>
     {
@@ -16,6 +17,8 @@ namespace EliteCrafting.Affixes
         }
 
         public string Id { get; }
+
+        /// <summary>The strength grade on the inscription's own ladder: 1 = T<c>k</c> (the weakest), k = T1.</summary>
         public int Tier { get; }
         public float Value { get; }
 

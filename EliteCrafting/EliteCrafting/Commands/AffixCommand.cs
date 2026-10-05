@@ -9,11 +9,12 @@ using EliteCrafting.Rules;
 namespace EliteCrafting.Commands
 {
     /// <summary>
-    /// <c>ecraft affix &lt;affix_id&gt; [tier] [value] [cursor|hover|&lt;slot&gt;]</c> (console-commands.md section 3): adds,
-    /// or replaces in place, one specific affix on an item in the caller's own inventory, for testing an effect. The
-    /// first number is the tier (default: the highest the affix defines), the second the value (default: a normal
-    /// roll in that tier's range; any number is accepted as a test value). Appended even past the rarity's maximum;
-    /// exclusion groups, slots and requirements are not enforced, each with a warning line. Never writes an item of a
+    /// <c>ecraft inscribe &lt;inscription_id&gt; [tier] [value] [cursor|hover|&lt;slot&gt;]</c> (console-commands.md section 3):
+    /// adds, or replaces in place, one specific affix on an item in the caller's own inventory, for testing an effect.
+    /// The first number is the tier as shown (1 = the strongest; default: the strongest the affix defines), the second
+    /// the value (default: a normal roll in that tier's range, scaled like a roll; any number is accepted as a test
+    /// value). Appended even past the rarity's maximum and its prefix or suffix limit; exclusion groups, item classes,
+    /// item levels and requirements are not enforced, each with a warning line. Never writes an item of a
     /// newer format. Spec gap, decided here: a Common target is made the ladder's first magic rarity, since an item
     /// holding affixes without a rarity is not a state the mod otherwise produces.
     /// </summary>
@@ -35,6 +36,7 @@ namespace EliteCrafting.Commands
                 return;
             }
             List<string> warnings = Warnings(def, args, item, state);
+            AffixArgs.ScaleDefault(def, ref args, ItemClasses.Classify(item));
             ItemState changed = Apply(state, new AffixRoll(def.Id, args.Tier, args.Value), warnings);
             if (RollerCall.Commit(call, item, changed))
             {
@@ -75,11 +77,13 @@ namespace EliteCrafting.Commands
         private static List<string> Warnings(AffixDef def, AffixArgs args, ItemDrop.ItemData item, ItemState state)
         {
             List<string> warnings = new List<string>();
-            SlotInfo slot = ItemSlots.Classify(item);
+            ClassInfo info = ItemClasses.Classify(item);
+            AffixTierDef row = def.TierRow(args.Tier)!;
             if (!def.Enabled) warnings.Add($"{def.Id} is disabled: it stays dormant.");
-            if (!def.RollsOn(slot.Slot)) warnings.Add($"{def.Id} does not roll on {ItemSlots.Id(slot.Slot)} items.");
-            if (!ItemSlots.Satisfies(slot, def.Requires)) warnings.Add($"the item does not meet {def.Id}'s requires block.");
-            if (args.OutsideRange) warnings.Add($"value {Numbers.Format(args.Value)} is outside T{AffixTierNumbers.Shown(args.Tier)}'s range (test value).");
+            if (def.FitFor(info.ClassId) == ClassFit.None) warnings.Add($"{def.Id} does not roll on {info.ClassId ?? "classless"} items.");
+            if (row.Level > ItemTier.Of(item)) warnings.Add($"T{row.Shown} unlocks at item level {row.Level}; the item is level {ItemTier.Of(item)}.");
+            if (!ItemClasses.Satisfies(info, def.Requires)) warnings.Add($"the item does not meet {def.Id}'s requires block.");
+            if (args.OutsideRange) warnings.Add($"value {Numbers.Format(args.Value)} is outside T{row.Shown}'s range (test value).");
             string? clash = ExclusionClash(def, state);
             if (clash != null) warnings.Add($"shares exclusion group '{def.ExclusionGroup}' with {clash} on the item (ignored).");
             return warnings;
@@ -99,21 +103,36 @@ namespace EliteCrafting.Commands
         }
     }
 
-    /// <summary>The optional arguments of <c>ecraft affix</c>: tier, value and target word, in any word position.</summary>
+    /// <summary>The optional arguments of <c>ecraft inscribe</c>: tier, value and target word, in any word position.</summary>
     internal readonly struct AffixArgs
     {
-        private AffixArgs(int tier, float value, bool outside, string target)
+        private AffixArgs(int tier, float value, bool outside, string target, bool rolled)
         {
             Tier = tier;
             Value = value;
             OutsideRange = outside;
             Target = target;
+            Rolled = rolled;
         }
 
+        /// <summary>The strength grade (1 = the weakest tier).</summary>
         public int Tier { get; }
         public float Value { get; }
         public bool OutsideRange { get; }
         public string Target { get; }
+
+        /// <summary>The value was drawn here, not given: a scaled affix's draw is then scaled like a roll.</summary>
+        public bool Rolled { get; }
+
+        /// <summary>A drawn value of a scaled affix times the item class's damage_scale, as <c>ItemRoller</c> stores it.</summary>
+        public static void ScaleDefault(AffixDef def, ref AffixArgs args, ClassInfo info)
+        {
+            if (args.Rolled && def.Scaled)
+            {
+                int decimals = def.TierRow(args.Tier)?.Decimals ?? 0;
+                args = new AffixArgs(args.Tier, RollMath.Scale(args.Value, info.DamageScale, decimals), args.OutsideRange, args.Target, true);
+            }
+        }
 
         public static bool TryParse(CommandCall call, AffixDef def, string grammar, out AffixArgs args)
         {
@@ -143,10 +162,10 @@ namespace EliteCrafting.Commands
         private static bool Build(CommandCall call, AffixDef def, List<string> numbers, string target, string grammar, out AffixArgs args)
         {
             args = default;
-            int tier = def.MaxTier;   // a strength grade: the strongest row unless a tier is given (1 = strongest)
+            int tier = def.StrongestGrade;   // a strength grade: the strongest row unless a tier is given (1 = strongest)
             if (numbers.Count > 0)
             {
-                tier = Numbers.TryInt(numbers[0], out int shown) ? AffixTierNumbers.Grade(shown) : 0;
+                tier = Numbers.TryInt(numbers[0], out int shown) ? def.GradeOf(shown) : 0;
             }
             if (def.TierRow(tier) == null)
             {
@@ -157,7 +176,7 @@ namespace EliteCrafting.Commands
             float value = numbers.Count > 1 ? Round(float.Parse(numbers[1], System.Globalization.CultureInfo.InvariantCulture), 2)
                 : RollValue(def, row);
             bool outside = def.Value == AffixValueType.Flag ? value != 1f : value < row.Min || value > row.Max;
-            args = new AffixArgs(tier, value, outside, target);
+            args = new AffixArgs(tier, value, outside, target, numbers.Count < 2);
             return true;
         }
 
@@ -166,7 +185,7 @@ namespace EliteCrafting.Commands
             List<string> tiers = new List<string>();
             for (int i = def.Tiers.Count - 1; i >= 0; i--)
             {
-                tiers.Add(Numbers.Format(AffixTierNumbers.Shown(def.Tiers[i].Tier)));
+                tiers.Add(Numbers.Format(def.Tiers[i].Shown));
             }
             return string.Join(",", tiers);
         }

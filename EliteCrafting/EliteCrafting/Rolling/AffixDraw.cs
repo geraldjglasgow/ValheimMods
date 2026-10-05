@@ -6,20 +6,22 @@ using EliteCrafting.Rules;
 namespace EliteCrafting.Rolling
 {
     /// <summary>
-    /// One roll's working state over a builder (rarity.md section 4): which ids and exclusion groups the item already
-    /// holds, and the two-stage draw itself - the affix by <c>weight</c>, then its tier by tier weight, then the value.
-    /// Short-lived: made per roll, never shared.
+    /// One roll's working state over a builder (classes-and-tiers.md section 5): which ids and exclusion groups the item
+    /// already holds, its prefix and suffix counts against the rarity's limits, and the two-stage draw itself - the
+    /// affix by <c>weight</c> from the item class's pool, then its tier by tier weight, then the value. Short-lived:
+    /// made per roll, never shared.
     /// <para>
-    /// Occupancy: every affix on the item holds its id (dormant ones too); its exclusion group is known when the id is
-    /// still defined (enabled or not); an orphaned id has no known group and blocks nothing else.
+    /// Occupancy: every affix on the item holds its id (dormant ones too); its exclusion group and kind are known when
+    /// the id is still defined (enabled or not); an orphaned id has neither and blocks nothing else.
     /// </para>
     /// </summary>
     internal sealed class AffixDraw
     {
         private readonly RollContext _context;
+        private readonly AffixLimits _limits;
         private readonly HashSet<string> _ids = new HashSet<string>();
         private readonly HashSet<string> _groups = new HashSet<string>();
-        private readonly List<AffixDef> _candidates = new List<AffixDef>();
+        private readonly List<PoolEntry> _candidates = new List<PoolEntry>();
         private readonly List<AffixTierDef> _tiers = new List<AffixTierDef>();
         private readonly List<float> _weights = new List<float>();
 
@@ -27,6 +29,7 @@ namespace EliteCrafting.Rolling
         {
             Builder = builder;
             _context = context;
+            _limits = AffixLimits.For(builder, context);
             foreach (AffixRoll roll in builder.Affixes)
             {
                 Occupy(roll.Id);
@@ -38,32 +41,36 @@ namespace EliteCrafting.Rolling
         /// <summary>Draws one affix and appends it. False (nothing changed) when the pool has no candidate.</summary>
         public bool TryAdd()
         {
-            if (!TryDraw(out AffixRoll roll))
+            if (!TryDraw(out AffixRoll roll, out AffixDef def))
             {
                 return false;
             }
             Builder.AddAffix(roll);
             Occupy(roll.Id);
+            _limits.Count(def);
             return true;
         }
 
-        private bool TryDraw(out AffixRoll roll)
+        private bool TryDraw(out AffixRoll roll, out AffixDef def)
         {
             roll = default;
+            def = null!;
             Gather();
-            AffixDef? def = PickAffix(_candidates);
-            if (def == null)
+            int index = PickAffix();
+            if (index < 0)
             {
                 return false;
             }
-            TierWindow.Eligible(def, _context, _tiers);
-            AffixTierDef tier = TierWindow.Pick(_tiers, _context, _weights);
-            roll = new AffixRoll(def.Id, tier.Tier, ValueOf(def, tier));
+            PoolEntry entry = _candidates[index];
+            def = entry.Def;
+            TierEligibility.Eligible(def, entry.Fit, _context, _tiers);
+            AffixTierDef tier = TierEligibility.Pick(_tiers, _context, _weights);
+            roll = new AffixRoll(def.Id, tier.Grade, ValueOf(def, tier));
             return true;
         }
 
         /// <summary>Marks an id (and its exclusion group) as held by the item.</summary>
-        public void Occupy(string id)
+        private void Occupy(string id)
         {
             _ids.Add(id);
             string? group = _context.Rules.Affixes.Get(id)?.ExclusionGroup;
@@ -73,13 +80,22 @@ namespace EliteCrafting.Rolling
             }
         }
 
-        private float ValueOf(AffixDef def, AffixTierDef tier) =>
-            def.Value == AffixValueType.Flag ? 1f : RollMath.RollValue(tier.Min, tier.Max, tier.Decimals, _context.Random);
+        // Uniform in the tier's range at its decimals; a scaled affix is then multiplied by the class's damage_scale
+        // and rounded again (what is stored is final); flags store 1.
+        private float ValueOf(AffixDef def, AffixTierDef tier)
+        {
+            if (def.Value == AffixValueType.Flag)
+            {
+                return 1f;
+            }
+            float value = RollMath.RollValue(tier.Min, tier.Max, tier.Decimals, _context.Random);
+            return def.Scaled ? RollMath.Scale(value, _context.Class.DamageScale, tier.Decimals) : value;
+        }
 
         private void Gather()
         {
             _candidates.Clear();
-            IReadOnlyList<AffixDef> pool = _context.Rules.Affixes.Pool(_context.Slot.Slot);
+            IReadOnlyList<PoolEntry> pool = _context.Rules.Affixes.Pool(_context.Class.ClassId);
             for (int i = 0; i < pool.Count; i++)
             {
                 if (IsCandidate(pool[i]))
@@ -89,9 +105,10 @@ namespace EliteCrafting.Rolling
             }
         }
 
-        private bool IsCandidate(AffixDef def)
+        private bool IsCandidate(PoolEntry entry)
         {
-            if (!def.Enabled || def.Weight <= 0f || _ids.Contains(def.Id))
+            AffixDef def = entry.Def;
+            if (!def.Enabled || def.Weight <= 0f || _ids.Contains(def.Id) || !_limits.Allows(def.Kind))
             {
                 return false;
             }
@@ -99,23 +116,22 @@ namespace EliteCrafting.Rolling
             {
                 return false;
             }
-            if (!def.RollsOn(_context.Slot.Slot) || !ItemSlots.Satisfies(_context.Slot, def.Requires))
+            if (!ItemClasses.Satisfies(_context.Class, def.Requires))
             {
                 return false;
             }
-            TierWindow.Eligible(def, _context, _tiers);
+            TierEligibility.Eligible(def, entry.Fit, _context, _tiers);
             return _tiers.Count > 0;
         }
 
-        private AffixDef? PickAffix(List<AffixDef> pool)
+        private int PickAffix()
         {
             _weights.Clear();
-            foreach (AffixDef def in pool)
+            foreach (PoolEntry entry in _candidates)
             {
-                _weights.Add(def.Weight);
+                _weights.Add(entry.Def.Weight);
             }
-            int index = RollMath.PickWeighted(_weights, _context.Random);
-            return index < 0 ? null : pool[index];
+            return RollMath.PickWeighted(_weights, _context.Random);
         }
     }
 }

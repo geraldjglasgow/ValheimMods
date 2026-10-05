@@ -35,11 +35,10 @@ namespace EliteCrafting.Commands
 
         private static string Headline(ItemDrop.ItemData item)
         {
-            SlotInfo info = ItemSlots.Classify(item);
-            string slot = info.Slot == ItemSlot.None ? "-" : ItemSlots.Id(info.Slot);
-            string kind = ItemSlots.IsMagicBase(item) ? "magic base" : ItemSlots.IsStone(item) ? "a rune, not a magic base" : "not a magic base";
-            return $"{ItemText.Name(item)} [{item.m_quality}] ({ItemText.Prefab(item)}), slot {slot}, "
-                + $"tier ceiling {ItemTier.Of(item)}, {kind}";
+            string itemClass = ItemClasses.Classify(item).ClassId ?? "-";
+            string kind = ItemClasses.IsMagicBase(item) ? "magic base" : ItemClasses.IsStone(item) ? "a rune, not a magic base" : "not a magic base";
+            return $"{ItemText.Name(item)} [{item.m_quality}] ({ItemText.Prefab(item)}), class {itemClass}, "
+                + $"item level {ItemTier.Of(item)}, {kind}";
         }
 
         /// <summary>Every <c>ecf_</c> key as stored: the version, the state keys in order, then any other <c>ecf_</c> key.</summary>
@@ -99,11 +98,12 @@ namespace EliteCrafting.Commands
         {
             AffixRoll roll = state.Affixes[index];
             AffixDef? def = state.DefinitionAt(index);
-            string head = $"inscription {roll.Id} T{AffixTierNumbers.Shown(roll.Tier)} {Numbers.Format(roll.Value)} -> ";
             if (def == null)
             {
-                return head + "dormant (not in configuration)";
+                return $"inscription {roll.Id} grade {roll.Tier} {Numbers.Format(roll.Value)} -> dormant (not in configuration)";
             }
+            string head = $"inscription {roll.Id} T{def.ShownTier(roll.Tier)} of {def.TierCount} {Numbers.Format(roll.Value)} "
+                + $"({EnumIds<AffixKind>.Id(def.Kind)}) -> ";
             string effect = def.Param == null ? def.Effect : $"{def.Effect}:{def.Param}";
             string status = def.Enabled ? "active" : "dormant (disabled)";
             string tier = def.TierRow(roll.Tier) == null ? ", tier not defined any more" : "";

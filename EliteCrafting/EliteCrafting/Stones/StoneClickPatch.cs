@@ -32,7 +32,7 @@ namespace EliteCrafting.Stones
         {
             Player player = Player.m_localPlayer;
             return player != null && gui.m_dragGo != null && gui.m_dragItem != null && item != null
-                && item != gui.m_dragItem && IsStone(gui.m_dragItem) && !ItemSlots.IsStone(item)
+                && item != gui.m_dragItem && IsStone(gui.m_dragItem) && !ItemClasses.IsStone(item)
                 && !player.IsTeleporting() && WouldBeAUse(player, item);
         }
 
@@ -45,7 +45,7 @@ namespace EliteCrafting.Stones
         // vanilla swap, so a stone can still be put into an occupied chest slot.
         private static bool WouldBeAUse(Player player, ItemDrop.ItemData item)
         {
-            return ItemSlots.IsMagicBase(item) || player.GetInventory().ContainsItem(item);
+            return ItemClasses.IsMagicBase(item) || player.GetInventory().ContainsItem(item);
         }
 
         // Steps 1-12, then the gate, which commits. A refusal is shown and nothing changes.

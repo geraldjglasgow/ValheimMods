@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using EliteCrafting.Core;
-using EliteCrafting.Epic;
 using EliteCrafting.Rules;
 
 namespace EliteCrafting.Stones
@@ -54,11 +53,10 @@ namespace EliteCrafting.Stones
             return false;
         }
 
-        /// <summary>The rune's verb; while Epic Loot is installed, its counterpart on Epic Loot's magic (<see cref="EpicVerbs"/>).</summary>
         public static StoneResult Run(StoneJob job)
         {
             StoneVerb verb = job.Def!.Verb;
-            return EpicApi.Installed ? EpicVerbs.Run(job) : Implemented[verb].Run(job);
+            return Implemented[verb].Run(job);
         }
     }
 }

@@ -1,13 +1,18 @@
 using System.Collections.Generic;
-using EliteCrafting.Items;
 using YamlDotNet.RepresentationModel;
 
 namespace EliteCrafting.Rules
 {
-    /// <summary>Reads <c>drops:</c> (economy-yaml.md section 8): globals, chances, the tier tables and the gear block.</summary>
+    /// <summary>
+    /// Reads <c>drops:</c> (economy-yaml.md section 8): globals, chances, the tier tables and the gear block. Tier lists
+    /// have eight entries (1 Meadows ... 8 Deep North); seven still load (<see cref="YamlLists.TierFloats"/>).
+    /// </summary>
     internal static class DropParser
     {
-        public const int Tiers = 7;
+        public const int Tiers = 8;
+
+        /// <summary>The format-1 key the classes' <c>drop_weight</c> replaced: a warning where a user file still has it.</summary>
+        private const string RemovedSlotWeights = "slot_weights";
 
         private static readonly string[] Keys =
         {
@@ -58,11 +63,17 @@ namespace EliteCrafting.Rules
                 return;
             }
             chances.Value.Unknown("rune", "gear");
-            drops.StoneChance = chances.Value.Floats("rune", Tiers) ?? new float[Tiers];
-            drops.GearChance = chances.Value.Floats("gear", Tiers) ?? new float[Tiers];
+            drops.StoneChance = TierList(chances.Value, "rune") ?? new float[Tiers];
+            drops.GearChance = TierList(chances.Value, "gear") ?? new float[Tiers];
         }
 
-        /// <summary>A map of id → seven weights, tier 1 first.</summary>
+        private static float[]? TierList(MapReader r, string key)
+        {
+            YamlNode? node = r.Node(key);
+            return node == null ? null : YamlLists.TierFloats(node, r.At(key), r.Issues, Tiers);
+        }
+
+        /// <summary>A map of id → eight weights, tier 1 first.</summary>
         private static Dictionary<string, float[]> TierRows(MapReader r, string key)
         {
             Dictionary<string, float[]> rows = new Dictionary<string, float[]>(System.StringComparer.Ordinal);
@@ -73,7 +84,7 @@ namespace EliteCrafting.Rules
             }
             foreach (KeyValuePair<string, YamlNode> pair in YamlLists.Pairs(sub.Value.Map))
             {
-                float[]? row = YamlLists.Floats(pair.Value, sub.Value.At(pair.Key), r.Issues, Tiers);
+                float[]? row = YamlLists.TierFloats(pair.Value, sub.Value.At(pair.Key), r.Issues, Tiers);
                 if (row != null)
                 {
                     rows[pair.Key] = row;
@@ -90,34 +101,20 @@ namespace EliteCrafting.Rules
                 return new GearDropRules();
             }
             MapReader r = sub.Value;
-            r.Unknown("require_recipe", "tiers_below", "same_tier_weight", "lower_tier_weight", "slot_weights", "exclude", "include");
+            r.Unknown("require_recipe", "tiers_below", "same_tier_weight", "lower_tier_weight", "exclude", "include", RemovedSlotWeights);
+            if (r.Has(RemovedSlotWeights))
+            {
+                r.Warn(RemovedSlotWeights, "is no longer read: each item class's drop_weight (economy classes) weighs its bases");
+            }
             return new GearDropRules
             {
                 RequireRecipe = r.Bool("require_recipe", true),
-                TiersBelow = r.Int("tiers_below", 1, 0, 6),
+                TiersBelow = r.Int("tiers_below", 1, 0, Tiers - 1),
                 SameTierWeight = r.Float("same_tier_weight", 3f, 0f),
                 LowerTierWeight = r.Float("lower_tier_weight", 1f, 0f),
-                SlotWeights = ReadSlotWeights(r),
                 Exclude = r.Strings("exclude") ?? new List<string>(),
-                Include = YamlLists.IntMap(r, "include", 1, 7),
+                Include = YamlLists.IntMap(r, "include", 1, Tiers),
             };
-        }
-
-        private static Dictionary<ItemSlot, float> ReadSlotWeights(MapReader r)
-        {
-            Dictionary<ItemSlot, float> weights = new Dictionary<ItemSlot, float>();
-            foreach (KeyValuePair<string, float> pair in YamlLists.FloatMap(r, "slot_weights"))
-            {
-                if (ItemSlots.TryParse(pair.Key, out ItemSlot slot))
-                {
-                    weights[slot] = pair.Value;
-                }
-                else
-                {
-                    r.Issues.Error($"{r.At("slot_weights")}.{pair.Key}", r.Node("slot_weights"), "is not a slot");
-                }
-            }
-            return weights;
         }
 
         private static ChestDrops ReadChests(MapReader r)

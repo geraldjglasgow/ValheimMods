@@ -8,9 +8,10 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Turns a family's texts into one merged document: the built-in defaults (unless the main file says
-    /// <c>use_defaults: false</c>), then every file in the order given (main file first, then by name). Syntax errors
-    /// are recorded per file; the caller parses the merged document and decides.
+    /// Turns a family's texts into one merged document: what mods registered through the API (<see cref="CodeLayer"/>,
+    /// always at the bottom), the built-in defaults (unless the main file says <c>use_defaults: false</c>), then every
+    /// file in the order given (main file first, then by name). Syntax errors are recorded per file; the caller parses
+    /// the merged document and decides.
     /// </summary>
     internal static class FamilyBuilder
     {
@@ -19,11 +20,33 @@ namespace EliteCrafting.Rules
         public static YamlMappingNode Merge(FamilySpec spec, IReadOnlyList<SourceText> files, RuleIssues issues) =>
             Merge(spec, files, issues, out _);
 
-        /// <summary><see cref="Merge(FamilySpec, IReadOnlyList{SourceText}, RuleIssues)"/>, also saying whether the built-in defaults were layered in.</summary>
-        public static YamlMappingNode Merge(FamilySpec spec, IReadOnlyList<SourceText> files, RuleIssues issues, out bool usedDefaults)
+        /// <summary>
+        /// <see cref="Merge(FamilySpec, IReadOnlyList{SourceText}, RuleIssues)"/>, also saying whether the built-in
+        /// defaults were layered in; <paramref name="withCode"/> false leaves the registered layer out (the last resort
+        /// when it breaks the defaults).
+        /// </summary>
+        public static YamlMappingNode Merge(FamilySpec spec, IReadOnlyList<SourceText> files, RuleIssues issues, out bool usedDefaults,
+            bool withCode = true)
+        {
+            List<SourceLayer> layers = FileLayers(spec, files, issues, out bool useDefaults);
+            if (useDefaults)
+            {
+                layers.Insert(0, Defaults(spec, issues));
+            }
+            SourceLayer? code = withCode ? CodeLayer.For(spec, issues) : null;
+            if (code != null)
+            {
+                layers.Insert(0, code);
+            }
+            usedDefaults = useDefaults;
+            return YamlMerge.Merge(layers, spec.IdLists, issues);
+        }
+
+        // The files that load, in the order given; whether the main file leaves the built-in defaults in.
+        private static List<SourceLayer> FileLayers(FamilySpec spec, IReadOnlyList<SourceText> files, RuleIssues issues, out bool useDefaults)
         {
             List<SourceLayer> layers = new List<SourceLayer>();
-            bool useDefaults = true;
+            useDefaults = true;
             foreach (SourceText file in files)
             {
                 YamlMappingNode? root = Load(file, issues);
@@ -34,12 +57,7 @@ namespace EliteCrafting.Rules
                 useDefaults &= ReadUseDefaults(spec, file, root, issues);
                 layers.Add(new SourceLayer(file.Name, root, builtIn: false));
             }
-            if (useDefaults)
-            {
-                layers.Insert(0, Defaults(spec, issues));
-            }
-            usedDefaults = useDefaults;
-            return YamlMerge.Merge(layers, spec.IdLists, issues);
+            return layers;
         }
 
         /// <summary>The embedded default text of a family (also written as the main file on first run).</summary>

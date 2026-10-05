@@ -6,16 +6,16 @@ using UnityEngine;
 
 namespace EliteCrafting.Loot
 {
-    /// <summary>One item type that can drop pre-rolled: its prefab, slot, affix ceiling, pool tier and affix capacity.</summary>
+    /// <summary>One item type that can drop pre-rolled: its prefab, class, item level, pool tier and affix capacity.</summary>
     public sealed class GearBase
     {
-        internal GearBase(GameObject prefab, ItemDrop template, string name, SlotInfo slot, int ceiling, int poolTier, int capacity)
+        internal GearBase(GameObject prefab, ItemDrop template, string name, ClassInfo info, int level, int poolTier, GearCapacity capacity)
         {
             Prefab = prefab;
             Template = template;
             Name = name;
-            Slot = slot;
-            Ceiling = ceiling;
+            Class = info;
+            Level = level;
             PoolTier = poolTier;
             Capacity = capacity;
         }
@@ -23,23 +23,28 @@ namespace EliteCrafting.Loot
         public GameObject Prefab { get; }
         public ItemDrop Template { get; }
         public string Name { get; }
-        public SlotInfo Slot { get; }
 
-        /// <summary>The base's own tier (item-tier.md): the ceiling its affixes roll under, never the biome's.</summary>
-        public int Ceiling { get; }
+        /// <summary>The base's item class (classes-and-tiers.md section 1).</summary>
+        public ClassInfo Class { get; }
 
-        /// <summary>The tier the pool files it under: the ceiling, or its <c>gear.include</c> tier.</summary>
+        /// <summary>The base's own item level (1-8): the level its affixes roll under, never the biome's.</summary>
+        public int Level { get; }
+
+        /// <summary>The tier the pool files it under: the item level, or its <c>gear.include</c> tier.</summary>
         public int PoolTier { get; }
 
-        /// <summary>The most affixes a fresh roll can give it (<see cref="GearCapacity"/>).</summary>
-        public int Capacity { get; }
+        /// <summary>How many affixes a fresh roll can give it, per kind (<see cref="GearCapacity"/>).</summary>
+        internal GearCapacity Capacity { get; }
+
+        /// <summary>The most affixes a fresh roll at this rarity can give it.</summary>
+        public int CapacityFor(RarityDef rarity) => Capacity.For(rarity);
     }
 
     /// <summary>
-    /// Collects the drop-eligible magic bases from the object database (drops.md section 8): magic bases only (never
-    /// stackable, never a stone), not in <c>gear.exclude</c>, and - unless listed in <c>gear.include</c> - with a
-    /// recipe (when <c>gear.require_recipe</c>), no DLC and no quest flag. A base whose pool cannot fill the lowest
-    /// magic rarity's minimum is left out with one load warning.
+    /// Collects the drop-eligible magic bases from the object database (drops.md section 8, classes-and-tiers.md section
+    /// 10): magic bases only (a class with <c>rolls: true</c>, never stackable, never a rune), not in <c>gear.exclude</c>,
+    /// and - unless listed in <c>gear.include</c> - with a recipe (when <c>gear.require_recipe</c>), no DLC and no quest
+    /// flag. A base whose pool cannot fill the lowest magic rarity's minimum is left out with one load warning.
     /// </summary>
     internal static class GearBases
     {
@@ -49,11 +54,12 @@ namespace EliteCrafting.Loot
             List<string> thin = new List<string>();
             GearDropRules gear = rules.Economy.Drops.Gear;
             HashSet<string> exclude = new HashSet<string>(gear.Exclude, System.StringComparer.Ordinal);
-            int minimum = LowestMagicMinimum(rules.Economy);
+            RarityDef? lowest = LowestMagic(rules.Economy);
+            int minimum = lowest == null ? 1 : System.Math.Max(1, lowest.MinAffixes);
             foreach (GameObject prefab in db.m_items)
             {
-                GearBase? found = prefab == null ? null : TryBase(prefab, gear, exclude, rules.Affixes);
-                if (found != null && found.Capacity < minimum)
+                GearBase? found = prefab == null ? null : TryBase(prefab, gear, exclude, rules);
+                if (found != null && lowest != null && found.CapacityFor(lowest) < minimum)
                 {
                     thin.Add(found.Name);
                 }
@@ -62,17 +68,22 @@ namespace EliteCrafting.Loot
                     bases.Add(found);
                 }
             }
-            if (thin.Count > 0)
-            {
-                Log.Warn($"gear drops: {thin.Count} bases cannot fill {minimum} inscriptions at their tier and never drop: {string.Join(", ", thin)}");
-            }
+            WarnThin(thin, minimum);
             return bases;
         }
 
-        private static GearBase? TryBase(GameObject prefab, GearDropRules gear, HashSet<string> exclude, AffixRules affixes)
+        private static void WarnThin(List<string> thin, int minimum)
+        {
+            if (thin.Count > 0)
+            {
+                Log.Warn($"gear drops: {thin.Count} bases cannot fill {minimum} inscriptions at their item level and never drop: {string.Join(", ", thin)}");
+            }
+        }
+
+        private static GearBase? TryBase(GameObject prefab, GearDropRules gear, HashSet<string> exclude, RuleSet rules)
         {
             ItemDrop drop = prefab.GetComponent<ItemDrop>();
-            if (drop == null || !ItemSlots.IsMagicBase(drop.m_itemData))
+            if (drop == null || !ItemClasses.IsMagicBase(drop.m_itemData))
             {
                 return null;
             }
@@ -82,10 +93,10 @@ namespace EliteCrafting.Loot
             {
                 return null;
             }
-            int ceiling = ItemTier.Of(name);
-            SlotInfo slot = ItemSlots.Classify(drop.m_itemData);
-            int poolTier = included ? BiomeTiers.Clamp(includeTier) : ceiling;
-            return new GearBase(prefab, drop, name, slot, ceiling, poolTier, GearCapacity.Of(slot, ceiling, affixes));
+            int level = ItemTier.Of(name);
+            ClassInfo info = ItemClasses.Classify(drop.m_itemData);
+            int poolTier = included ? BiomeTiers.Clamp(includeTier) : level;
+            return new GearBase(prefab, drop, name, info, level, poolTier, GearCapacity.Of(info, level, rules));
         }
 
         private static bool Eligible(ItemDrop.ItemData item, string name, GearDropRules gear)
@@ -98,16 +109,16 @@ namespace EliteCrafting.Loot
             return !gear.RequireRecipe || ItemTier.HasRecipe(name);
         }
 
-        private static int LowestMagicMinimum(EconomyRules economy)
+        private static RarityDef? LowestMagic(EconomyRules economy)
         {
             for (int i = 0; i < economy.Rarities.Count; i++)
             {
                 if (!economy.Rarities[i].IsBase)
                 {
-                    return System.Math.Max(1, economy.Rarities[i].MinAffixes);
+                    return economy.Rarities[i];
                 }
             }
-            return 1;
+            return null;
         }
     }
 }

@@ -4,9 +4,15 @@ using YamlDotNet.RepresentationModel;
 
 namespace EliteCrafting.Rules
 {
-    /// <summary>Reads <c>item_tiers:</c> (item-tier.md) and <c>biomes:</c>. Prefab names are checked against the game later, as warnings.</summary>
+    /// <summary>
+    /// Reads <c>item_tiers:</c> (item-tier.md; item levels 1-8 since classes-and-tiers.md section 2) and <c>biomes:</c>.
+    /// Prefab names are checked against the game later, as warnings.
+    /// </summary>
     internal static class TierMapParser
     {
+        /// <summary>The highest item level and biome tier (8, Deep North).</summary>
+        public const int MaxTier = 8;
+
         public static ItemTierMaps ParseItemTiers(MapReader root)
         {
             MapReader? sub = root.Sub("item_tiers");
@@ -18,12 +24,12 @@ namespace EliteCrafting.Rules
             r.Unknown("items", "materials", "material_depth", "stations", "station_levels", "fallback_tier");
             return new ItemTierMaps
             {
-                Items = YamlLists.IntMap(r, "items", 1, 7),
-                Materials = YamlLists.IntMap(r, "materials", 1, 7),
+                Items = YamlLists.IntMap(r, "items", 1, MaxTier),
+                Materials = YamlLists.IntMap(r, "materials", 1, MaxTier),
                 MaterialDepth = r.Int("material_depth", 3, 0, 10),
-                Stations = YamlLists.IntMap(r, "stations", 1, 7),
+                Stations = YamlLists.IntMap(r, "stations", 1, MaxTier),
                 StationLevels = ReadStationLevels(r),
-                FallbackTier = r.Int("fallback_tier", 1, 1, 7),
+                FallbackTier = r.Int("fallback_tier", 1, 1, MaxTier),
             };
         }
 
@@ -45,7 +51,7 @@ namespace EliteCrafting.Rules
         private static Dictionary<int, int> LevelRow(MapReader sub, string station)
         {
             Dictionary<int, int> row = new Dictionary<int, int>();
-            foreach (KeyValuePair<string, int> level in YamlLists.IntMap(sub, station, 1, 7))
+            foreach (KeyValuePair<string, int> level in YamlLists.IntMap(sub, station, 1, MaxTier))
             {
                 if (Numbers.TryInt(level.Key, out int minLevel) && minLevel >= 1)
                 {
@@ -59,17 +65,6 @@ namespace EliteCrafting.Rules
             return row;
         }
 
-        public static Dictionary<string, int> ParseBiomes(MapReader root)
-        {
-            Dictionary<string, int> biomes = YamlLists.IntMap(root, "biomes", 1, 8);
-            foreach (KeyValuePair<string, int> biome in new List<KeyValuePair<string, int>>(biomes))
-            {
-                if (biome.Value > 7)
-                {
-                    biomes[biome.Key] = 7;   // tier 8 (deep_north) is reserved: clamped until it ships
-                }
-            }
-            return biomes;
-        }
+        public static Dictionary<string, int> ParseBiomes(MapReader root) => YamlLists.IntMap(root, "biomes", 1, MaxTier);
     }
 }

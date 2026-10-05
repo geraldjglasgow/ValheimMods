@@ -9,8 +9,8 @@ namespace EliteCrafting.Commands
 {
     /// <summary>
     /// <c>ecraft tiers</c> (item-tier.md section 7, DECISIONS.md TIR-5): writes
-    /// <c>EliteCrafting_item_tiers_reference.yml</c> to the config folder: every magic base with its slot, tier and the
-    /// step that decided it, then the craft materials of magic-base recipes that are not in <c>item_tiers.materials</c>
+    /// <c>EliteCrafting_item_tiers_reference.yml</c> to the config folder: every magic base with its item class, item level
+    /// (1-8) and the step that decided it, then the craft materials of magic-base recipes that are not in <c>item_tiers.materials</c>
     /// (items with an explicit override skipped), then the map keys that match no prefab. Not read by the mod (it is
     /// not in either family's pattern). Sorted by name so two runs diff cleanly. Runs on the caller's machine.
     /// </summary>
@@ -46,7 +46,7 @@ namespace EliteCrafting.Commands
             foreach (GameObject go in db.m_items)
             {
                 ItemDrop? drop = go != null ? go.GetComponent<ItemDrop>() : null;
-                if (drop != null && ItemSlots.IsMagicBase(drop.m_itemData))
+                if (drop != null && ItemClasses.IsMagicBase(drop.m_itemData))
                 {
                     bases[go!.name] = drop.m_itemData;
                 }
@@ -59,9 +59,9 @@ namespace EliteCrafting.Commands
             sb.Append("\nitems:\n");
             foreach (KeyValuePair<string, ItemDrop.ItemData> pair in bases)
             {
-                TierResult tier = ItemTier.Explain(pair.Key);
-                string slot = ItemSlots.Id(ItemSlots.SlotOf(pair.Value));
-                sb.Append($"  {Yaml.Quote(pair.Key)}: {{slot: {slot}, tier: {tier.Tier}, source: {Yaml.Quote(tier.Source)}}}\n");
+                TierResult level = ItemTier.Explain(pair.Key);
+                string itemClass = ItemClasses.Classify(pair.Value).ClassId ?? "-";
+                sb.Append($"  {Yaml.Quote(pair.Key)}: {{class: {itemClass}, level: {level.Tier}, source: {Yaml.Quote(level.Source)}}}\n");
             }
         }
 

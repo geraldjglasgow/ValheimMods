@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.5.0
+
+- Item classes: each kind of item rolls its own inscriptions (`ecraft classes`).
+- Tiers by item level: Meadows gear rolls the weakest tier, Deep North gear every tier; strong tiers are rare.
+- Prefixes and suffixes: Magic holds 1 of each, Rare 3; totals are capped across your gear.
+- Brands add flat damage (+X fire), scaled by weapon.
+- 47 new inscriptions, including critical hits, chain lightning, throwing weapons, Glass Cannon and Heavy Hand.
+- Deep North gear is item level 8.
+- An API for other mods; PackPanel and Elite Creatures Pack use it.
+- Removed: Epic Loot integration.
+- Your inscriptions and economy files are saved as `.v1.bak` and replaced: redo your changes.
+- Existing magic items keep their inscriptions.
+
 ## 0.4.0
 
 - Creature drops appear with the creature's own loot when its body dissolves, not at the moment of death.

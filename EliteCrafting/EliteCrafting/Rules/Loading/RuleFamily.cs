@@ -58,6 +58,13 @@ namespace EliteCrafting.Rules
             }
         }
 
+        /// <summary>
+        /// Builds the family again from the texts it was last given (no disk read): this machine's files on the author,
+        /// the server's on a bound player. For API registrations made after the rules loaded (<see cref="CodeLayer"/>,
+        /// external effects), which may also make a file valid that was rejected before them.
+        /// </summary>
+        public void Rebuild() => Guarded("API registrations", Recompute);
+
         /// <summary>Re-reads this machine's files; the author adopts them when they build, a bound player only keeps them.</summary>
         public FamilyReload ReloadLocal()
         {
@@ -119,8 +126,10 @@ namespace EliteCrafting.Rules
             {
                 Log.Error($"{_spec.Prefix}: using the built-in defaults alone until the files are fixed");
                 List<SourceText> none = new List<SourceText>();
-                Adopt(Build(none, "built-in defaults", out _) ?? throw new InvalidOperationException(
-                    $"the built-in {_spec.MainFile} does not validate"), new RuleSources(none, true, fromServer: false));
+                T? fallback = Build(none, "built-in defaults", out _)
+                    ?? Build(none, "built-in defaults without what mods registered", out _, withCode: false);
+                Adopt(fallback ?? throw new InvalidOperationException($"the built-in {_spec.MainFile} does not validate"),
+                    new RuleSources(none, true, fromServer: false));
                 Publish(none);
             }
             return false;
@@ -128,7 +137,7 @@ namespace EliteCrafting.Rules
 
         private void AdoptPushed()
         {
-            List<SourceText> files = Unpack(_article.Value);
+            List<SourceText> files = RuleFormat.KeepCurrent(Unpack(_article.Value), "the server");
             T? model = Build(files, "the server's files", out bool defaults);
             if (model != null)
             {
@@ -142,10 +151,10 @@ namespace EliteCrafting.Rules
             }
         }
 
-        private T? Build(List<SourceText> files, string what, out bool usedDefaults)
+        private T? Build(List<SourceText> files, string what, out bool usedDefaults, bool withCode = true)
         {
             RuleIssues issues = new RuleIssues();
-            YamlMappingNode merged = FamilyBuilder.Merge(_spec, files, issues, out usedDefaults);
+            YamlMappingNode merged = FamilyBuilder.Merge(_spec, files, issues, out usedDefaults, withCode);
             T? model = issues.HasErrors ? null : SafeParse(merged, issues);
             Report(issues, what);
             return issues.HasErrors ? null : model;

@@ -1,5 +1,4 @@
 using EliteCrafting.Affixes;
-using EliteCrafting.Epic;
 using EliteCrafting.Items;
 using EliteCrafting.Rolling;
 using EliteCrafting.Rules;
@@ -10,8 +9,7 @@ namespace EliteCrafting.Stones
     /// <summary>
     /// Everything one rune use reads, gathered once per click on the local client: the player, the rune stack and
     /// the target, the rules snapshot (the server's synced rules while it binds), the rune's definition, the target's
-    /// state, slot and current rarity. Read-only; the pipeline and the verbs decide from it. While Epic Loot is installed
-    /// the rarity is the target's Epic Loot rarity (<see cref="EpicRarity"/>) and <see cref="Epic"/> its Epic Loot magic.
+    /// state, item class and current rarity. Read-only; the pipeline and the verbs decide from it.
     /// </summary>
     internal sealed class StoneJob
     {
@@ -24,9 +22,8 @@ namespace EliteCrafting.Stones
             Rules = ActiveRules.Current;
             Def = Rules.Economy.StoneForPrefab(ItemTier.PrefabName(stone));
             State = ItemState.Read(target);
-            Slot = ItemSlots.Classify(target);
-            Epic = EpicApi.Ready ? EpicItem.Parse(EpicApi.MagicJson(target)) : null;
-            Rarity = EpicApi.Installed ? EpicRarity.Of(Epic, Rules.Economy) : State.IsMagic ? State.Rarity : Rules.Economy.BaseRarity;
+            Class = ItemClasses.Classify(target);
+            Rarity = State.IsMagic ? State.Rarity : Rules.Economy.BaseRarity;
         }
 
         public Player Player { get; }
@@ -39,10 +36,9 @@ namespace EliteCrafting.Stones
         public StoneDef? Def { get; }
 
         public ItemState State { get; }
-        public SlotInfo Slot { get; }
 
-        /// <summary>The target's Epic Loot magic (a working copy); null without Epic Loot or on a plain item.</summary>
-        public EpicItem? Epic { get; }
+        /// <summary>The target's item class with its hands, traits and skills.</summary>
+        public ClassInfo Class { get; }
 
         /// <summary>The target's rarity before the rune acts (the base rarity for Normal); null when unknown.</summary>
         public RarityDef? Rarity { get; }
@@ -59,13 +55,13 @@ namespace EliteCrafting.Stones
         public static StoneJob Create(Player player, ItemDrop.ItemData stone, ItemDrop.ItemData target) =>
             new StoneJob(player, stone, target);
 
-        /// <summary>A roll context for this target under this job's rules, with the rune's floor.</summary>
+        /// <summary>A roll context for this target under this job's rules: its class and item level, the rune's floor.</summary>
         public RollContext RollContext()
         {
             return new RollContext
             {
-                Slot = Slot,
-                Ceiling = ItemTier.Of(Target),
+                Class = Class,
+                Level = ItemTier.Of(Target),
                 TierFloor = Def?.TierFloor ?? 0,
                 Random = RollRandom.Create(),
                 Rules = Rules,

@@ -4,23 +4,22 @@ using System.Collections.Generic;
 namespace EliteCrafting.Rolling
 {
     /// <summary>
-    /// The numeric core of every roll (rarity.md section 4, affixes.md "Value types"), free of game types so a scratch
-    /// harness can compile it on its own and check the distributions. Pure: every random number comes from the
-    /// <see cref="Random"/> passed in, so a seeded source reproduces a roll exactly.
+    /// The numeric core of every roll (classes-and-tiers.md section 5, affixes.md "Value types"), free of game types so
+    /// a scratch harness can compile it on its own and check the distributions. Pure: every random number comes from
+    /// the <see cref="Random"/> passed in, so a seeded source reproduces a roll exactly.
     /// </summary>
     internal static class RollMath
     {
-        /// <summary>The highest affix tier shipped (7 = ashlands; 8 deep_north is reserved).</summary>
-        public const int MaxTier = 7;
-
-        public static int ClampCeiling(int ceiling) => Math.Min(Math.Max(ceiling, 1), MaxTier);
-
-        /// <summary>A stone's floor, clamped down to the ceiling (item-tier.md section 6); 0 = none.</summary>
-        public static int EffectiveFloor(int ceiling, int floor) => floor <= 0 ? 0 : Math.Min(floor, ceiling);
-
-        /// <summary><c>low = max(ceiling - window + 1, floor, 1)</c>; the window's top is the ceiling.</summary>
-        public static int WindowLow(int ceiling, int window, int floor) =>
-            Math.Max(Math.Max(ceiling - Math.Max(window, 1) + 1, floor), 1);
+        /// <summary>
+        /// A <c>scaled</c> value times the item class's <c>damage_scale</c>, rounded again to the tier's decimals (half
+        /// away from zero), so what is stored is what is shown and applied. In decimal: 5 x 0.7 is 3.5 and rounds to 4,
+        /// where the float product would be 3.4999 and round down.
+        /// </summary>
+        public static float Scale(float value, float scale, int decimals)
+        {
+            decimals = Math.Min(Math.Max(decimals, 0), 4);
+            return (float)Math.Round((decimal)value * (decimal)scale, decimals, MidpointRounding.AwayFromZero);
+        }
 
         /// <summary>
         /// A value uniform in [min, max] at the tier's decimals: every representable step (1, 0.1 or 0.01 apart)

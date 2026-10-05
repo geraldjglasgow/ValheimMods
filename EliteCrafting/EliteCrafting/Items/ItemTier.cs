@@ -5,8 +5,9 @@ using EliteCrafting.Rules;
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The tier ceiling of an item type, 1-7 (item-tier.md, user decision 2026-09-23): the explicit YAML item map,
-    /// else the highest tier among its recipe's craft materials (crafted intermediates followed
+    /// The item level of an item type, 1 Meadows to 8 Deep North (classes-and-tiers.md section 2, item-tier.md for the
+    /// derivation; the code keeps the older word "tier"): the explicit YAML item map, else a level a mod set through the
+    /// API (<see cref="CodeLevels"/>), else the highest tier among its recipe's craft materials (crafted intermediates followed
     /// <c>material_depth</c> deep, cycle-safe; the lowest of several recipes), else its crafting station (with optional
     /// per-level refinement), else <c>fallback_tier</c>. Computed per prefab name on first use and cached; the cache
     /// is dropped on every rules change and whenever the object database's recipes change.
@@ -20,13 +21,13 @@ namespace EliteCrafting.Items
             ActiveRules.RulesChanged += Cache.Clear;
         }
 
-        /// <summary>The tier ceiling of an item (by its prefab).</summary>
+        /// <summary>The item level of an item (by its prefab), 1-8.</summary>
         public static int Of(ItemDrop.ItemData? item) => Explain(PrefabName(item)).Tier;
 
-        /// <summary>The tier ceiling of an item prefab name.</summary>
+        /// <summary>The item level of an item prefab name, 1-8.</summary>
         public static int Of(string prefabName) => Explain(prefabName).Tier;
 
-        /// <summary>The tier and the step that decided it (<c>override</c>, <c>material: Bronze</c>, <c>station: forge</c>, <c>fallback</c>).</summary>
+        /// <summary>The tier and the step that decided it (<c>override</c>, <c>api</c>, <c>material: Bronze</c>, <c>station: forge</c>, <c>fallback</c>).</summary>
         public static TierResult Explain(string? prefabName)
         {
             RefreshRecipes();
@@ -57,6 +58,9 @@ namespace EliteCrafting.Items
             return true;
         }
 
+        /// <summary>Drops every cached level (an API level was set: <see cref="CodeLevels"/>).</summary>
+        internal static void Forget() => Cache.Clear();
+
         /// <summary>Whether an enabled recipe crafts this prefab (index refreshed first).</summary>
         public static bool HasRecipe(string prefabName)
         {
@@ -79,15 +83,19 @@ namespace EliteCrafting.Items
         }
     }
 
-    /// <summary>A derived tier and why.</summary>
+    /// <summary>A derived item level and why.</summary>
     public readonly struct TierResult
     {
+        /// <summary>The highest item level (8, Deep North).</summary>
+        public const int MaxLevel = 8;
+
         public TierResult(int tier, string source)
         {
-            Tier = Math.Max(1, Math.Min(7, tier));
+            Tier = Math.Max(1, Math.Min(MaxLevel, tier));
             Source = source;
         }
 
+        /// <summary>The item level, 1-8.</summary>
         public int Tier { get; }
         public string Source { get; }
     }
@@ -100,6 +108,10 @@ namespace EliteCrafting.Items
             if (maps.Items.TryGetValue(prefab, out int explicitTier))
             {
                 return new TierResult(explicitTier, "override");
+            }
+            if (CodeLevels.TryGet(prefab, out int codeTier))
+            {
+                return new TierResult(codeTier, "api");
             }
             string material = "";
             int tier = RecipeTier(prefab, maps, maps.MaterialDepth, new HashSet<string>(), ref material);

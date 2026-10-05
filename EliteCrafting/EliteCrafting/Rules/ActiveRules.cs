@@ -1,6 +1,7 @@
 using System;
 using EliteCrafting.Core;
 using EliteCrafting.Effects;
+using EliteCrafting.Items;
 
 namespace EliteCrafting.Rules
 {
@@ -54,6 +55,30 @@ namespace EliteCrafting.Rules
         internal static RuleSources SourcesInForce(FamilySpec family) =>
             (family == FamilySpec.Affixes ? _affixes?.InForce : _economy?.InForce) ?? RuleSources.None;
 
+        /// <summary>
+        /// After API registrations made once the rules had loaded (at most once per frame, <c>Api/RuleRebuild</c>):
+        /// builds the inscription family again from the texts it was last given when <paramref name="inscriptions"/>
+        /// (registered inscriptions, pool additions, external effects), and in any case publishes a new
+        /// <see cref="Current"/> with a new generation, so every cache built from the rules, item classes, item levels
+        /// or loot profiles is dropped. Nothing before the rules first loaded: that load reads every registration.
+        /// </summary>
+        internal static void RebuildForApi(bool inscriptions)
+        {
+            if (_affixes?.Active == null || _economy?.Active == null)
+            {
+                return;
+            }
+            int before = _generation;
+            if (inscriptions)
+            {
+                _affixes.Rebuild();
+            }
+            if (_generation == before)
+            {
+                Compose();
+            }
+        }
+
         private static void Poll()
         {
             _affixes?.PollDisk();
@@ -68,7 +93,8 @@ namespace EliteCrafting.Rules
             }
             Current = new RuleSet(_affixes.Active, _economy.Active, ++_generation);
             Log.Info($"rules applied (generation {_generation}): {Current.Affixes.Affixes.Count} inscriptions, "
-                + $"{Current.Economy.Rarities.Count} rarities, {Current.Economy.Stones.Count} runes");
+                + $"{Current.Economy.Rarities.Count} rarities, {Current.Economy.Stones.Count} runes, {Current.Economy.Classes.Count} item classes");
+            ClassChecks.UnknownClasses(Current, id => ItemClasses.Get(id) != null).ForEach(Log.Warn);
             Raise();
         }
 

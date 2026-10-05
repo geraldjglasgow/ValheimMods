@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using EliteCrafting.Effects;
-using EliteCrafting.Items;
 
 namespace EliteCrafting.Rules
 {
     /// <summary>
     /// The affix family (<c>EliteCrafting_affixes*.yml</c>) after merging and validation, with the lookups every
-    /// reader needs precomputed at load: by id, the channel table, and the rollable pools per slot. Immutable.
+    /// reader needs precomputed at load: by id, the channel table, and the rollable pools per item class. Immutable.
     /// </summary>
     public sealed class AffixRules
     {
@@ -27,16 +26,32 @@ namespace EliteCrafting.Rules
         /// <summary>One channel per distinct (effect, param, condition) of the enabled affixes; index = AffixDef.ChannelIndex.</summary>
         public IReadOnlyList<ChannelDef> Channels { get; internal set; } = Array.Empty<ChannelDef>();
 
-        internal Dictionary<ItemSlot, AffixDef[]> Pools { get; set; } = new Dictionary<ItemSlot, AffixDef[]>();
+        internal Dictionary<string, PoolEntry[]> Pools { get; set; } = new Dictionary<string, PoolEntry[]>(StringComparer.Ordinal);
 
         public AffixDef? Get(string? id) => id != null && ById.TryGetValue(id, out AffixDef def) ? def : null;
 
         /// <summary>
-        /// Enabled affixes with weight above 0 that list the slot. Tier, requires and exclusion filters are the
-        /// roller's job.
+        /// Enabled affixes with weight above 0 that list the item class in <c>classes.best</c> or <c>classes.allowed</c>,
+        /// in file order, each with its fit. Level, tier, requires, limit and exclusion filters are the roller's job.
         /// </summary>
-        public IReadOnlyList<AffixDef> Pool(ItemSlot slot) =>
-            Pools.TryGetValue(slot, out AffixDef[] pool) ? pool : Array.Empty<AffixDef>();
+        public IReadOnlyList<PoolEntry> Pool(string? classId) =>
+            classId != null && Pools.TryGetValue(classId, out PoolEntry[] pool) ? pool : Array.Empty<PoolEntry>();
+
+        /// <summary>The class ids any affix names (pools exist for exactly these).</summary>
+        public IEnumerable<string> PooledClasses => Pools.Keys;
+    }
+
+    /// <summary>One affix of a class's pool and how it fits the class.</summary>
+    public readonly struct PoolEntry
+    {
+        public PoolEntry(AffixDef def, ClassFit fit)
+        {
+            Def = def;
+            Fit = fit;
+        }
+
+        public AffixDef Def { get; }
+        public ClassFit Fit { get; }
     }
 
     /// <summary>

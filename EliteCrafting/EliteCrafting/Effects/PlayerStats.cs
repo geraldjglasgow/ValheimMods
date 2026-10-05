@@ -6,20 +6,22 @@ namespace EliteCrafting.Effects
     /// <summary>
     /// The player-global totals another peer needs, published on the player's own ZDO (effects-runtime.md section 7,
     /// the pattern of the loot-find keys): the creature's owner reads Dazing Blows and Beast Whisperer, the ship's
-    /// owner Fair Winds, the resource's owner Deep Vein, Heartwood and Harvester, and every client Hearthlight and
-    /// Mistbane. Written by the player's own client (it owns its player ZDO) at the end of a rebuild, only when a
-    /// value changed, so normal play sends nothing. The unconditional totals only: a health-critical copy would depend
-    /// on health the reader cannot see. A reader clamps what it reads to the running rules' cap (a client cannot
+    /// owner Fair Winds and Sea Ward, the hit target's owner Lingering Wounds, the resource's owner Deep Vein, Heartwood and Harvester, the dying animal's owner
+    /// Butcher's Cut, and every client Hearthlight and Mistbane. Written by the player's own client (it owns its player
+    /// ZDO) at the end of a rebuild, only when a value changed, so normal play sends nothing. The unconditional totals
+    /// only: a health-critical copy would depend on health the reader cannot see. A reader clamps what it reads to the running rules' cap (a client cannot
     /// publish more than the server's rules allow), and a player without the key reads 0.
     /// </summary>
     internal static class PlayerStats
     {
-        public const int Daze = 0, Light = 1, Demist = 2, Taming = 3, Sail = 4, YieldMining = 5, YieldLumber = 6, Harvest = 7;
+        public const int Daze = 0, Light = 1, Demist = 2, Taming = 3, Sail = 4, YieldMining = 5, YieldLumber = 6, Harvest = 7,
+            Dot = 8, Butcher = 9, ShipWard = 10;
 
         private static readonly EffectKind[] Kinds =
         {
             EffectKind.StaggerDurationDealt, EffectKind.LightAura, EffectKind.DemistRadius, EffectKind.TamingSpeed,
             EffectKind.SailSpeed, EffectKind.YieldMining, EffectKind.YieldLumber, EffectKind.YieldPickable,
+            EffectKind.DotDuration, EffectKind.ButcherYield, EffectKind.ShipDamageTaken,
         };
 
         private static readonly int[] Hashes =
@@ -27,6 +29,7 @@ namespace EliteCrafting.Effects
             "ecf_daze".GetStableHashCode(), "ecf_light".GetStableHashCode(), "ecf_demist".GetStableHashCode(),
             "ecf_taming".GetStableHashCode(), "ecf_sail".GetStableHashCode(), "ecf_yield_mining".GetStableHashCode(),
             "ecf_yield_lumber".GetStableHashCode(), "ecf_harvest".GetStableHashCode(),
+            "ecf_dot".GetStableHashCode(), "ecf_butcher".GetStableHashCode(), "ecf_ship_ward".GetStableHashCode(),
         };
 
         private static readonly float[] Caps = new float[Kinds.Length];
@@ -50,6 +53,9 @@ namespace EliteCrafting.Effects
                 }
             }
         }
+
+        /// <summary>The stat a kind is published as, or -1 (the API reads other players' totals through it).</summary>
+        public static int StatOf(EffectKind kind) => Array.IndexOf(Kinds, kind);
 
         /// <summary>A player's published total, clamped to the running rules.</summary>
         public static float Of(Player? player, int stat)
