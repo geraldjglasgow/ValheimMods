@@ -1,6 +1,6 @@
 {
     "name": "EliteCrafting",
-    "version_number": "0.6.0",
+    "version_number": "0.6.1",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteCrafting",
     "description": "Work in progress, big changes ahead. Runes and magic gear: creatures and chests drop runes that awaken, shape, raise, reroll and seal items across three rarities. Required on server and all clients.",
     "dependencies": [

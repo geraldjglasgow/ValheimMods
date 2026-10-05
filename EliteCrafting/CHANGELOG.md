@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1
+
+- Fixed: Magic and Rare set armour shows its inscriptions again with Epic Loot installed.
+- Fixed: mead bases and the dragon egg no longer drop or roll as magic items.
+
 ## 0.6.0
 
 - Runes are stone tablets, each with its own glyph and icon.

@@ -32,7 +32,10 @@ namespace EliteCrafting.Items
             return found == null ? ClassInfo.None : new ClassInfo(found, HandsOf(shared.m_itemType), TraitsOf(shared), SkillsOf(shared));
         }
 
-        /// <summary>Steps 1-3: the item's class, without the rune check and the class info around it.</summary>
+        /// <summary>
+        /// Steps 1-3: the item's class, without the rune check and the class info around it. Step 3 takes equippable
+        /// items only: a mead base or the dragon egg keeps the game's default skill (Swords) and would match sword_1h.
+        /// </summary>
         public static ItemClass? Find(ItemDrop.ItemData item, string? prefab, ClassIndex index)
         {
             if (prefab != null && index.ByPrefab.TryGetValue(prefab, out ItemClass listed))
@@ -40,7 +43,7 @@ namespace EliteCrafting.Items
                 return listed;
             }
             ItemClass? asked = ClassRegistry.Ask(item, index);
-            if (asked != null || IsBackpack(item.m_shared))
+            if (asked != null || IsBackpack(item.m_shared) || !item.IsEquipable())
             {
                 return asked;
             }

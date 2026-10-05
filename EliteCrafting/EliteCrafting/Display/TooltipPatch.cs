@@ -21,7 +21,8 @@ namespace EliteCrafting.Display
         private static readonly string?[] LastResult = new string?[2];
         private static int _next;
 
-        [HarmonyPostfix]
+        /// <summary>Runs after Epic Loot's postfix, which cuts a set item's tooltip at the set effect line (and so our block).</summary>
+        [HarmonyPostfix, HarmonyPriority(Priority.Last), HarmonyAfter("randyknapp.mods.epicloot")]
         private static void Postfix(ItemDrop.ItemData item, bool crafting, bool appending, ref string __result)
         {
             if (appending || item == null || __result == null)
