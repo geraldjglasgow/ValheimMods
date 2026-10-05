@@ -21,6 +21,7 @@ namespace FeastMaster
         private const string RuleMethod = "Prepare";
         private const string InstalledHook = "Installed";
         private const string RemovedHook = "Removed";
+        private const BindingFlags OwnStatic = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 
         private static readonly List<Type> classes = new List<Type>();
         private static readonly HashSet<Type> installed = new HashSet<Type>();
@@ -74,7 +75,7 @@ namespace FeastMaster
 
         private static bool Wanted(Type type)
         {
-            MethodInfo rule = AccessTools.DeclaredMethod(type, RuleMethod, Type.EmptyTypes);
+            MethodInfo rule = OwnMethod(type, RuleMethod);
             if (rule == null)
                 return true;
             try
@@ -128,9 +129,12 @@ namespace FeastMaster
                 .Concat(info.Finalizers).Concat(info.ILManipulators).ToList();
         }
 
+        /// <summary>The class's own parameterless static method, or null. Plain reflection: AccessTools logs a warning for every miss.</summary>
+        private static MethodInfo OwnMethod(Type type, string name) => type.GetMethod(name, OwnStatic, null, Type.EmptyTypes, null);
+
         private static void RunHook(Type type, string name)
         {
-            MethodInfo hook = AccessTools.DeclaredMethod(type, name, Type.EmptyTypes);
+            MethodInfo hook = OwnMethod(type, name);
             if (hook == null)
                 return;
             try
@@ -147,7 +151,7 @@ namespace FeastMaster
         private static void LogActive()
         {
             List<string> names = classes
-                .Where(t => installed.Contains(t) && AccessTools.DeclaredMethod(t, RuleMethod, Type.EmptyTypes) != null)
+                .Where(t => installed.Contains(t) && OwnMethod(t, RuleMethod) != null)
                 .Select(t => t.Name)
                 .ToList();
             FeastMaster.Log.LogInfo(names.Count == 0

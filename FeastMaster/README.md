@@ -24,6 +24,8 @@ server's values bind every player, display settings stay your own. Console: `cha
 binds your settings.
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs

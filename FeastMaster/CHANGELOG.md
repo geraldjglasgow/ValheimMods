@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.7.3
+
+- Fixed: no more Harmony warnings in the log at startup.
+
 ## 4.7.2
 
 - Faster loading: the config file is written once instead of once per setting.

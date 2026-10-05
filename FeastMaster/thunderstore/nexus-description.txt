@@ -27,6 +27,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 BepInEx/config/com.FeastMaster.cfg. Every setting is described in the file and applies without a restart; the server's values bind every player, display settings stay your own. Console: [b]charter status[/b] shows whether the server binds your settings.
 
 [size=4][b]Links[/b][/size]
+Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/FeastMaster. Licence: GPL-3.0. Tips: [url=https://ko-fi.com/milkeyman]ko-fi.com/milkeyman[/url].
 
 [size=4][b]Shout outs[/b][/size]
