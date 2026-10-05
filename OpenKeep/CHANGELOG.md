@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.1
+
+- Blueprints: the build camera comes out with B, as in normal building, instead of by itself.
+- Blueprints: ghost buildings are a little easier to see.
+
 ## 2.2.0
 
 - Stow: `Auto Tidy` (off by default): nearby chests send stray items to the chest they belong in, learning where players put things.

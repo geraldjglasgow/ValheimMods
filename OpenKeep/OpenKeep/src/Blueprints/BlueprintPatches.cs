@@ -74,7 +74,6 @@ namespace OpenKeep.Blueprints
             BlueprintSafe.Run("OpenKeep blueprint session", BlueprintSession.Tick);
             BlueprintSafe.Run("OpenKeep fix ground session", GroundFixSession.Tick);
             BlueprintSafe.Run("OpenKeep blueprint zoom", HammerZoom.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint camera", BlueprintCamera.Tick);
             BlueprintSafe.Run("OpenKeep blueprint build", BuildJob.Tick);
             Sites.SiteHooks.Update();
         }

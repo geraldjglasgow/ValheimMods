@@ -370,7 +370,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.2.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.2.1]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -414,8 +414,8 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
                             building under the crosshair (touching drawn boxes), which pieces touch the ground (floors
                             cut or fill, the rest only fill), the plan and checks, pin/apply/undo, the yellow/blue outline
     HammerZoom.cs           the camera zooms out to 80 m (faster when far) while an entry of the tab is selected
-    BlueprintCamera.cs      the build camera (section 11) comes out by itself with an entry of the tab, flying within
-                            50 m of the player (CameraArea.AroundPlayer) instead of near a station; Toggle Key puts it back
+    BlueprintCamera.cs      with an entry of the tab the build camera (section 11, Toggle Key B as in normal building)
+                            flies within 50 m of the player (CameraArea.AroundPlayer) instead of near a station
     GroundWriter.cs         RPC OpenKeep_BlueprintGround on each touched terrain compiler; its owner writes the heights
                             (as the game's LevelTerrain) and paint, saves and redraws
     SitePlan.cs, SiteProtection.cs, MaterialBill.cs   the check: in the way, interiors, no-build, wards, learned, materials
@@ -466,8 +466,7 @@ reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection.
 and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Stow's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
 PackPanel's main grid through `Core.PackPanelGrid`, Stacks' `PackPanelKeys` its Key Stack through `Core.PackPanelLink`,
 and Stow's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Blueprints'
-`BlueprintCamera` drives Build Camera's `CameraState`, `CameraToggle.CanUse`, `CameraNeeds` and `CameraSettings`, and
-sets `CameraArea.AroundPlayer`. Everything else goes through `Core`.
+`BlueprintCamera` sets Build Camera's `CameraArea.AroundPlayer`. Everything else goes through `Core`.
 
 ## Patched game methods
 
@@ -1884,8 +1883,9 @@ repaired through the game's own paths, so a dedicated server and the other playe
   made, then they stay in "All"); favourites refuse them.
 - Selecting an entry previews it; the first click pins, the second builds; arrows turn, Home faces you again,
   Alt + Left / Right turn a degree (repeating), PageUp / PageDown (Alt: 2 m) move the floor, End puts it back,
-  Backspace lets go; the wheel zooms (to 80 m). Fixed keys. The build camera and the zoom come out only while an
-  entry of the tab is selected, never while building normally. The hammer's Remove button (the middle button by
+  Backspace lets go; the wheel zooms (to 80 m). Fixed keys. The zoom comes out only while an entry of the tab is
+  selected, never while building normally; the build camera comes out with B as always (no longer by itself, the
+  user's rule of 2026-10-05) and then flies within 50 m of the player. The hammer's Remove button (the middle button by
   default) removes nothing while an entry is selected (asked by the lead: aiming a tool at a building must never take
   a piece down). Off: no tab, no entries, commands refused.
 - The tab's order: Fix ground, Site planner, Copy building, Construction ghosts, then the blueprints of the folder
@@ -2049,7 +2049,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.2.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.2.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the

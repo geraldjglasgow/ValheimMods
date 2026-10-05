@@ -20,9 +20,10 @@ namespace OpenKeep.Blueprints.Sites
     {
         /// <summary>
         /// The plain ghost: the texture lightened and cooled by the colour (blue over red cancels the wood and thatch's
-        /// yellow, which read green over the scene), at 4 % opacity; tuned live with the user in game.
+        /// yellow, which read green over the scene), at 6 % opacity (tuned live with the user at 4 %; the user's 6 % of
+        /// 2026-10-05).
         /// </summary>
-        public static Color Pale { get; private set; } = new Color(1.01f, 1.34f, 2.4f, 0.04f);
+        public static Color Pale { get; private set; } = new Color(1.01f, 1.34f, 2.4f, 0.06f);
 
         /// <summary>A glowing ghost piece (the planner's selection, a hovered queue row) is this opaque.</summary>
         public const float GlowAlpha = 0.4f;
