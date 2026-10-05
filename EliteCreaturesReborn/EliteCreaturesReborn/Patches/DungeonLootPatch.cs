@@ -42,7 +42,7 @@ namespace EliteCreaturesReborn.Patches
             return container.m_nview != null && container.m_nview.IsValid() && container.m_nview.IsOwner()
                 && container.m_defaultItems != null && container.m_defaultItems.m_drops.Count > 0
                 && container.GetInventory() != null && container.GetInventory().NrOfItems() == 0
-                && SpawnerRespawnPatch.InDungeon(container);
+                && SpawnerRespawn.InDungeon(container);
         }
 
         /// <summary>True once the configured world days have passed since the last fill. An unstamped chest is stamped now.</summary>
@@ -55,7 +55,7 @@ namespace EliteCreaturesReborn.Patches
                 zdo.Set(TraitKeys.LootFilledAt, now.Ticks); // first sight: start its clock, do not refill
                 return false;
             }
-            return (now - new DateTime(ticks)).TotalDays >= days;
+            return (now - new DateTime(ticks)).TotalSeconds >= days * NetTime.DaySeconds();
         }
 
         // Adds the chest's own drop table again, exactly as the game does when it first fills it, then restamps the

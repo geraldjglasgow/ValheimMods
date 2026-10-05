@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Util;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Rules
@@ -16,17 +17,18 @@ namespace EliteCreaturesReborn.Rules
         public bool DungeonLoot;
         public float DungeonLootDays = 14f;
 
-        /// <summary>A world day is 1440 world minutes, which is the unit the game's own spawner timer counts in.</summary>
-        public const float MinutesPerDay = 1440f;
-
-        /// <summary>The spawner timer in the game's own unit, or 0 when this kind of spawner is left alone.</summary>
+        /// <summary>
+        /// The spawner timer in the game's own unit, minutes of the world clock (30 to a world day), or 0 when this kind
+        /// of spawner is left alone. Up to 3.18.2 a day was counted as 1440 of them, 48 world days.
+        /// </summary>
         public float MinutesFor(bool inDungeon)
         {
+            float dayMinutes = (float)(NetTime.DaySeconds() / 60.0);
             if (inDungeon)
             {
-                return Dungeons ? Mathf.Max(0f, DungeonDays) * MinutesPerDay : 0f;
+                return Dungeons ? Mathf.Max(0f, DungeonDays) * dayMinutes : 0f;
             }
-            return Camps ? Mathf.Max(0f, CampDays) * MinutesPerDay : 0f;
+            return Camps ? Mathf.Max(0f, CampDays) * dayMinutes : 0f;
         }
 
         public RespawnRules Clone()

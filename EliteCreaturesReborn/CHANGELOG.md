@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.19.0
+
+- Boss hints: when Bonemass, Moder, Yagluth or the Elder dies, players nearby are pointed to the Bog Witch, the ancient forge, Haldor or Hildir (`Boss hints`).
+- Fixed: with respawning on, new dungeons and camps get their creatures at once.
+- Fixed: respawn and dungeon loot days are world days (each counted as 48 before).
+
 ## 3.18.2
 
 - Fixed: respawning `camps` no longer refills dungeons; `dungeons` and `dungeon loot` now work.

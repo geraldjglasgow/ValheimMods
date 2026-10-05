@@ -7,7 +7,7 @@ namespace EliteCreaturesReborn
         // spec's Identity section and must never change again - altering it orphans everyone's settings.
         public const string Guid = "gglasgow.elitecreaturesreborn";
         public const string Name = "Elite Creatures Reborn";
-        public const string PluginVersion = "3.18.2";
+        public const string PluginVersion = "3.19.0";
         public const string Author = "Gerald Glasgow";
         public const string Licence = "GNU General Public License v3.0";
     }

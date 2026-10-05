@@ -11,6 +11,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Breeding: tamed young inherit a mutation and stars.
 - Loot: four drop modes, rules per creature.
 - Boss damage board: who did how much damage.
+- Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir.
 - Death recap: `F10` replays the seconds before each death, hit by hit.
 - Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
 - Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
@@ -27,6 +28,8 @@ Console: `elite tier`, `damage` and `deaths` for everyone, the other `elite` com
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs

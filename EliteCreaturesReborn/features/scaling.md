@@ -139,6 +139,14 @@ creature or spawns one itself.
   location as a parent: the game creates every networked object of a room or location on its own. Up to 3.18.1 the
   test asked for a parent room, which never matched: `camps` also refilled dungeons, `dungeons` and `dungeon loot`
   did nothing.
+- **Only a spawner that has spawned before gets the timer** (at load if it has, or right after its first spawn), so
+  a place nobody has visited fills exactly as the game fills it. A timer on a fresh spawner counts from the world's
+  year zero, because its last-alive time is unset, so its first spawn waits until the world is older than the timer.
+  Up to 3.18.2 every one-shot spawner was armed at load, and new camps and dungeons stayed empty in younger worlds
+  (reported on Nexus 2026-10-05).
+- The game's timer counts minutes of the world clock, which runs at real time and jumps when players sleep, so a world
+  day is the game's day length (1800 s, 30 minutes of it). Up to 3.18.2 a day was counted as 1440 minutes, 48 world
+  days, and the dungeon loot clock as 24 hours; both now use the day length.
 - The timer is a local value the owner reads. Nothing is written and there is nothing to replicate.
 
 ## How loot regeneration works
@@ -257,3 +265,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
 | 2026-09-26 | Respawn tier gap closed by world tiers: a respawned creature rolls at the current tier. | EliteCreaturesReborn-v3.6.0 |
+| 2026-10-05 | Respawn timer only after a spawner's first spawn (new places were empty); days counted as the game's day length. | uncommitted |

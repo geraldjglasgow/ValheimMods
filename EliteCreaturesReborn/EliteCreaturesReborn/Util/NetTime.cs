@@ -16,5 +16,11 @@ namespace EliteCreaturesReborn.Util
 
         /// <summary>Seconds elapsed since a millisecond stamp, on the shared clock.</summary>
         public static float SecondsSince(long stampMs) => (NowMs() - stampMs) / 1000f;
+
+        /// <summary>
+        /// Seconds of this clock in one world day: the game's day length (1800, 30 real minutes, unless a mod changed it).
+        /// The clock runs at real time and jumps when players sleep, so a day is never 24 hours of it.
+        /// </summary>
+        public static double DaySeconds() => EnvMan.instance != null ? EnvMan.instance.m_dayLengthSec : 1800.0;
     }
 }

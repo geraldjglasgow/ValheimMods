@@ -349,6 +349,16 @@ pauses, the arrow keys step a frame, clicking a hit plays from just before it. T
 on your machine; turning `Record deaths` off keeps the hit list without video. Settings are in
 `10 - Death Recap (per player)`. Design notes in `features/death-recap.md`.
 
+## Boss hints
+
+When Bonemass, Moder, Yagluth or the Elder dies, every player within 100 m of it reads, six seconds later, "You feel
+a presence pulling you..." and a compass direction (north, northeast, ... northwest). It is the direction from the
+altar that boss was summoned at to a place worth finding next: Bonemass points to the Bog Witch, Moder to the ancient
+forge (the Forge of Potential), Yagluth to Haldor and the Elder to Hildir. Where the world has several possible spots
+for that place, it is the one nearest the altar; a boss that fell far from any altar of its own (spawned by command)
+points from where it fell. A Twin or Tethered pair gives one hint, a Phantom copy none, and a world without the place
+says nothing. Each player turns it off with `Boss hints` in `8 - Display (per player)`.
+
 ## Console commands
 
 | Command | Does |

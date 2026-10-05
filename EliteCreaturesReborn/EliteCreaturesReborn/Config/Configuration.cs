@@ -28,6 +28,7 @@ namespace EliteCreaturesReborn.Config
         public static ConfigEntry<float> BossBoardSeconds = null!;
         public static ConfigEntry<bool> ShowWorldTier = null!;
         public static ConfigEntry<bool> ShowWorldTierOnHud = null!;
+        public static ConfigEntry<bool> BossHints = null!;
 
         public static void BindAll(ConfigFile config)
         {
@@ -46,6 +47,7 @@ namespace EliteCreaturesReborn.Config
                     new AcceptableValueRange<float>(0f, 1f)));
             BindNameplate(config);
             BindBoardAndTier(config);
+            BindHints(config);
             PaletteSettings.Bind(config);
             Recap.RecapSettings.Bind(config);
             BindDiagnostics(config);
@@ -89,6 +91,14 @@ namespace EliteCreaturesReborn.Config
             ShowWorldTierOnHud = config.Bind(Display, "Show world tier under minimap", true,
                 "With PackPanel installed: show the world tier in a small box under the minimap as well, so it is in view "
                 + "without opening the inventory. Hidden anyway while world tiers are off. Client side; never locked.");
+        }
+
+        private static void BindHints(ConfigFile config)
+        {
+            BossHints = config.Bind(Display, "Boss hints", true,
+                "When Bonemass, Moder, Yagluth or the Elder dies, every player within 100 m feels a pull: the compass "
+                + "direction from the boss's altar to the Bog Witch (Bonemass), the ancient forge (Moder), Haldor "
+                + "(Yagluth) or Hildir (the Elder). Client side; never locked.");
         }
 
         // Not a display preference and never locked: a switch that makes the death/split/absorb chain log every step, so

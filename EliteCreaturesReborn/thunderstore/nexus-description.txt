@@ -17,6 +17,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Breeding: tamed creatures pass a mutation and stars to their young.
 [*]Loot: four drop modes and drop rules per creature.
 [*]Boss damage board: who hurt the boss and how much.
+[*]Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir.
 [*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
 [*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
@@ -29,6 +30,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 BepInEx/config/gglasgow.elitecreaturesreborn.cfg (each player's own settings) and BepInEx/config/creature_rules.yml (the rules). Both apply without a restart; the server's rules bind every player. Console: [b]elite tier[/b], [b]damage[/b] and [b]deaths[/b] for everyone, the other [b]elite[/b] commands for admins. In detail: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md]the reference on GitHub[/url].
 
 [size=4][b]Links[/b][/size]
+Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/EliteCreaturesReborn. Licence: GPL-3.0.
 
 [size=4][b]Shout outs[/b][/size]
