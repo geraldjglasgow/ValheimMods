@@ -1,5 +1,4 @@
 using System.Text;
-using BepInEx.Configuration;
 using HarmonyLib;
 using Hotkeys;
 using PackPanel.Core;
@@ -10,13 +9,13 @@ namespace PackPanel.Consume
 {
     /// <summary>
     /// The Food and Mead bar (the user's request, 2026-09-28: the food and mead hotkeys shown in the bottom left of the
-    /// screen; two squares and nothing else since 2026-09-29). In the empty strip under the game's health panel, level with
-    /// its left edge: a food square with the Food Key over it, then a mead square with the Mead Key over it
-    /// (<see cref="ConsumeBarCell"/>), then since 2026-10-05 a square per Mead slot with its Mead Slot key and its mead
-    /// (<see cref="ConsumeBarSlots"/>). A group or slot without a key, or a group without slots, is left out; nothing shows
-    /// without any, while dead, or with the module off. A child of the HUD's root, so it hides with the HUD. Checked from a
-    /// <c>Hud.Update</c> postfix ten times a second, built again only when a group or slot comes or goes or a key changes.
-    /// Per player (<c>5. Look / Food And Mead Bar</c>); local only, nothing is sent.
+    /// screen). In the empty strip under the game's health panel, level with its left edge: a food square with the Food Key
+    /// over it (<see cref="ConsumeBarCell"/>), then a square per Mead slot with its Mead Slot key and its mead
+    /// (<see cref="ConsumeBarSlots"/>; since 2026-10-05, when the Mead Key and its square went). Food without slots or a
+    /// key, or a slot without a key, is left out; nothing shows without any, while dead, or with the module off. A child of
+    /// the HUD's root, so it hides with the HUD. Checked from a <c>Hud.Update</c> postfix ten times a second, built again
+    /// only when a square comes or goes or a key changes. Per player (<c>5. Look / Food And Mead Bar</c>); local only,
+    /// nothing is sent.
     /// </summary>
     [HarmonyPatch(typeof(Hud), nameof(Hud.Update))]
     public static class ConsumeBar
@@ -28,7 +27,6 @@ namespace PackPanel.Consume
         /// <summary>The bar's bottom-left corner in HUD units: the health panel's left edge, under its bottom (58).</summary>
         private static readonly Vector2 Corner = new Vector2(50f, 6f);
 
-        private static readonly SlotKind[] Groups = { SlotKind.Food, SlotKind.Mead };
         private static RectTransform bar;
         private static string built;
         private static float next;
@@ -55,20 +53,16 @@ namespace PackPanel.Consume
         private static bool Shown(Player player) =>
             player != null && !player.IsDead() && InventoryState.Active && player == InventoryState.Player && ConsumeSettings.Bar.Value;
 
-        private static ConfigEntry<KeyboardShortcut> KeyOf(SlotKind kind) => kind == SlotKind.Food ? ConsumeSettings.FoodKey : ConsumeSettings.MeadKey;
+        private static string FoodKeyName() => KeyNames.Short(ConsumeSettings.FoodKey.Value);
 
-        private static bool Drawn(SlotKind kind) => InventoryState.CellsOf(kind).Count > 0 && KeyNames.Short(KeyOf(kind).Value).Length > 0;
+        private static bool FoodDrawn() => InventoryState.CellsOf(SlotKind.Food).Count > 0 && FoodKeyName().Length > 0;
 
-        /// <summary>What the bar is built from: each drawn group and slot and its key; empty when nothing is drawn.</summary>
+        /// <summary>What the bar is built from: the food square and each drawn slot with its key; empty when nothing is drawn.</summary>
         private static string Plan()
         {
             StringBuilder plan = new StringBuilder();
-            foreach (SlotKind kind in Groups)
-            {
-                if (!Drawn(kind))
-                    continue;
-                plan.Append(kind).Append(' ').Append(KeyNames.Short(KeyOf(kind).Value)).Append('|');
-            }
+            if (FoodDrawn())
+                plan.Append("food ").Append(FoodKeyName()).Append('|');
             ConsumeBarSlots.Plan(plan);
             return plan.ToString();
         }
@@ -83,11 +77,9 @@ namespace PackPanel.Consume
                 return;
             bar = MakeBar(hud.m_healthPanel);
             float x = 0f;
-            foreach (SlotKind kind in Groups)
+            if (FoodDrawn())
             {
-                if (!Drawn(kind))
-                    continue;
-                ConsumeBarCell.Group(bar, template, kind, KeyNames.Short(KeyOf(kind).Value), x);
+                ConsumeBarCell.Group(bar, template, SlotKind.Food, FoodKeyName(), x);
                 x += ConsumeBarCell.Size + Gap;
             }
             ConsumeBarSlots.Build(bar, template, x, Gap);

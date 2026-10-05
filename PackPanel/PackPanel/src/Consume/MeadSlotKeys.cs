@@ -13,7 +13,7 @@ namespace PackPanel.Consume
     /// ... up to 5 meads (default 3), maybe like ALT+key"): one key per Mead slot, counted left to right, Left Alt + 1 to 5
     /// by default, each drinking the mead in its own slot the way the hotbar's number keys use their item, through
     /// <c>Humanoid.UseItem(inventory, item, fromInventoryGui: true)</c>, so the game's own message tells why a mead cannot be
-    /// drunk now. Read with the Food Key and the Mead Key (<see cref="ConsumeKeys"/>), under the same rules. The game reads
+    /// drunk now. Read with the Food Key (<see cref="ConsumeKeys"/>), under the same rules. The game reads
     /// its hotbar keys without modifiers, so Alt + 1 is also its Hotbar 1 (the user, 2026-10-05: "while holding alt we need
     /// to make sure that doesn't happen"): the <c>Player.UseHotbarItem</c> prefix uses nothing while Alt is held
     /// (<see cref="HoldsHotbar"/>), whatever the press does for the meads.

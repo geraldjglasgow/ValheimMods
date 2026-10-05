@@ -42,8 +42,7 @@ Settings are in `BepInEx/config/milkyteam.packpanel.cfg`. Backpack and tacklebox
 | `Ammo Slots` | 3 (0-5) | Slots for arrows, bolts and bait. |
 | `Coin Purse` | true | A purse slot for coins. |
 | `Food Key` | Z | Per player: eats from the Food slots; not with a hammer, hoe or cultivator in hand. |
-| `Mead Key` | B | Per player: drinks from the Mead slots; not with a hammer, hoe or cultivator in hand. |
-| `Mead Slot 1 Key` to `Mead Slot 5 Key` | `Alpha1 + LeftAlt` to `Alpha5 + LeftAlt` | Per player: drinks the mead in that Mead slot (left to right); not with a hammer, hoe or cultivator in hand. A key for a slot you do not have does nothing. |
+| `Mead Slot 1 Key` to `Mead Slot 5 Key` | `Alpha1 + LeftAlt` to `Alpha5 + LeftAlt` | Per player: drinks the mead in that Mead slot (left to right); not with a hammer, hoe or cultivator in hand. A key for a slot you do not have does nothing. While its modifier is held, the number keys use no hotbar item. |
 
 ### 3. Key Ring
 
@@ -74,7 +73,7 @@ The default `Key Items`: `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,
 | `Timber Border Jaggedness` | 1.5 (0-2.5) | How rough the Timber edge is. |
 | `Night Shade` | 0.65 (0.3-1) | Panel brightness at midnight; 1 never darkens. |
 | `Weight Under Minimap` | true | Armour and weight boxes beside the minimap. |
-| `Food And Mead Bar` | true | Shows the Food and Mead keys under your health bar, then each Mead slot's mead with its Mead Slot key. |
+| `Food And Mead Bar` | true | Shows the Food Key under your health bar, then each Mead slot's mead with its Mead Slot key. |
 | `Crafting Panel Width` | 100 (0-600) | Extra width for the crafting panel and the panel above it (the game's are 570); 0 is the game's width. |
 | `Crafting Panel Height` | 90 (0-400) | Extra height for the crafting panel (the game's is 650); 0 is the game's height. |
 

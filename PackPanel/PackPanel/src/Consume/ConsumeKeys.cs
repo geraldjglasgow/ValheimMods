@@ -5,13 +5,13 @@ using PackPanel.Slots;
 namespace PackPanel.Consume
 {
     /// <summary>
-    /// The Food Key, the Mead Key and the Mead Slot keys (<see cref="MeadSlotKeys"/>), read in the local player's frame
+    /// The Food Key and the Mead Slot keys (<see cref="MeadSlotKeys"/>), read in the local player's frame
     /// (<see cref="PlayerTick"/>). They work where the game's hotbar keys work (<c>Player.TakeInput</c>: no inventory, map,
     /// menu, chat, console or text input open, not dead or teleporting) and nowhere else, so inside the inventory Z stays
     /// OpenKeep's Find Key. Not with a hammer, hoe or cultivator in hand either (<c>Player.InPlaceMode</c>; the user's
-    /// request, 2026-10-04): there B is OpenKeep's build camera and EarthWright's Select Value Key, Z EarthWright's Snap
-    /// Hold Key. A Food or Mead Key press eats or drinks everything it can from its slots (<see cref="SlotMeals"/>); when
-    /// nothing could be taken the centre message says so. A Mead Slot key drinks from its one slot.
+    /// request, 2026-10-04): there Z is EarthWright's Snap Hold Key. A Food Key press eats everything it can from the Food
+    /// slots (<see cref="SlotMeals"/>); when nothing could be eaten the centre message says so. A Mead Slot key drinks from
+    /// its one slot. The Mead Key (B, every mead at once) was removed on 2026-10-05 (the user: "not needed").
     /// </summary>
     public static class ConsumeKeys
     {
@@ -20,14 +20,11 @@ namespace PackPanel.Consume
             if (!Works(player))
                 return;
             bool food = Hotkey.Pressed(ConsumeSettings.FoodKey);
-            bool mead = Hotkey.Pressed(ConsumeSettings.MeadKey);
             int slot = MeadSlotKeys.Pressed();
-            if ((!food && !mead && slot < 0) || !Ready(player))
+            if ((!food && slot < 0) || !Ready(player))
                 return;
             if (food && SlotMeals.TakeAll(player, SlotKind.Food) == 0)
                 Messages.Center(ConsumeWords.NothingToEat);
-            if (mead && SlotMeals.TakeAll(player, SlotKind.Mead) == 0)
-                Messages.Center(ConsumeWords.NothingToDrink);
             if (slot >= 0)
                 MeadSlotKeys.Drink(player, slot);
         }

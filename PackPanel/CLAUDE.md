@@ -188,17 +188,17 @@ PackPanel/PackPanel/src/
                             an empty purse, ring cell or box cell for what goes there);
                             GetBoundItems and GetHotbar stop at x 8
     CarryWeight.cs          Base Carry Weight and the worn pack's carry: Player.GetMaxCarryWeight postfix
-  Consume/                  the Food Key, the Mead Key and the Mead Slot keys (section 2. Slots, per player) and the
-                            Food and Mead bar (5. Look, per player)
-    ConsumeSettings.cs, ConsumeWords.cs   the keys (Z, B, Left Alt + 1..5; the YAML editor registered with the Hotkeys
-                            library's Typing), the "nothing to eat / drink" and "mead slot empty" words
+  Consume/                  the Food Key and the Mead Slot keys (section 2. Slots, per player) and the Food and Mead
+                            bar (5. Look, per player)
+    ConsumeSettings.cs, ConsumeWords.cs   the keys (Z, Left Alt + 1..5; the YAML editor registered with the Hotkeys
+                            library's Typing), the "nothing to eat" and "mead slot empty" words
     ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) and build mode
-                            (Player.InPlaceMode) eats or drinks from its slots
+                            (Player.InPlaceMode) eats from the Food slots or drinks from one Mead slot
     MeadSlotKeys.cs         a Mead Slot key drinks its one slot's mead (Humanoid.UseItem, the game's messages);
                             Player.UseHotbarItem prefix: no hotbar item while Alt (the keys' modifier) is held
     ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, a food square
-                            and a mead square (copies of the HUD's food square) with each key (Hotkeys'
-                            KeyNames.Short, shrunk to fit) over its top-left corner
+                            (a copy of the HUD's food square) with the Food Key (Hotkeys' KeyNames.Short, shrunk to
+                            fit) over its top-left corner
     ConsumeBarSlots.cs      then a square per Mead slot with its Mead Slot key, showing the slot's mead (faded mead
                             icon when empty), refreshed with the bar's check
     SlotMeals.cs            left to right, every item that can be taken now: the game's checks without messages,
@@ -411,8 +411,8 @@ Both, upgraded in their slot (`Crafting/InPlaceUpgrade`): prefix and finalizer `
 `General` (`Lock Configuration`), `1. Inventory` (`Enabled` true, `Inventory Width` 8 (8-12), `Inventory Rows` 5 (0-10; 0 = the two hand cells),
 `Base Carry Weight` 300 (50-10000), `Keep Slots On Death` false), `2. Slots` (`Equipment Slots` true, `Utility Slots` 3
 (0-5), `Trinket Slot` true, `Backpack Slot` true, `Backpack Items` empty, `Slots Per Group` 0 (0-5), `Food Slots` 3, `Food Slots Follow
-Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Key` B, `Mead
-Slot 1 Key` to `Mead Slot 5 Key` LeftAlt + 1 to 5), `3. Key Ring` (`Key Ring` true, `Key Items`
+Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Slot 1 Key` to
+`Mead Slot 5 Key` LeftAlt + 1 to 5; `Mead Key` B until 2026-10-05), `3. Key Ring` (`Key Ring` true, `Key Items`
 `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,HildirKey_plainsfortress,DvergrKey,BloodGoldKey`, `Key Stack` 10
 (1-100)), `4. Backpacks` (`Backpacks` true, `Backpack Portal Pass` false, and `Show Worn Backpack` true, the one key there not
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
@@ -494,7 +494,7 @@ tackleboxes:
   `packpanel_driftwood_tacklebox` ...), icons `assets/tacklebox_<word>.png`.
 - GameObjects created: `PackPanel_slots` (the slot panel, a child of the player panel), `PackPanel_stats` (the stat
   boxes' panel, a child of the player panel), `PackPanel_buttonstrip` (OpenKeep's strip mark), `PackPanel_keyring` (the
-  key ring's pop-up, a child of the player panel, with `wire`, `hub` and `caption`), `PackPanel_keynotice` (the new-key note under the ring button), `PackPanel_consumebar` (the Food and Mead bar, a child of the HUD's `hudroot` after `healthpanel`, with the squares `PackPanel_food` and `PackPanel_mead`), `PackPanel_keyring_button` (in the
+  key ring's pop-up, a child of the player panel, with `wire`, `hub` and `caption`), `PackPanel_keynotice` (the new-key note under the ring button), `PackPanel_consumebar` (the Food and Mead bar, a child of the HUD's `hudroot` after `healthpanel`, with the squares `PackPanel_food` and `PackPanel_meadslot1`..`5`), `PackPanel_keyring_button` (in the
   slot panel), `PackPanel_tacklebox` (the tacklebox's pop-up, a child of the player panel), `PackPanel_tab_gear` and
   `PackPanel_tab_consumables` (the tab buttons, in the slot panel), `PackPanel_gearstats` (the Gear tab's sheet, in the
   slot panel, with `viewport/content/row/label` and `value`, and `scrollbar/handle`), `PackPanel_blocked` (the cross on
@@ -509,7 +509,7 @@ tackleboxes:
   `_coins`, `_wrongslot`, `_dropped`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
   `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
   `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
-  `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_nothingtodrink`, `_meadslotempty`, for the stat breakdowns `_tip_base`, `_tip_other`,
+  `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_meadslotempty` (`_nothingtodrink` went with the Mead Key), for the stat breakdowns `_tip_base`, `_tip_other`,
   `_tip_nothing`, `_tip_effect`, `_tip_carry`, `_tip_world`, `_tip_heaviest`, `_tip_missinghealth`, `_tip_parryarmor`, `_tip_skill` (the stat sheet uses the game's own `$item_`, `$inventory_` and `$se_` words); backpacks
   `$packpanel_backpack_<word>` and `$packpanel_backpack_<word>_description` for deerhide, trollhide, rootbound,
   wolfpelt, lox, carapace, asksvin and moosehide, and `$packpanel_backpack_noroom`; the tacklebox `$packpanel_tackle`
@@ -1039,7 +1039,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 - Mead Slot keys (GitHub issue #16, 2026-10-05: a player found B drinking every mead and wanted to choose; the user:
   "per slot keys, need to account for the fact you can have up to 5 meads (default 3), maybe like ALT+key", and
   "configurable too from config"): `Mead Slot 1 Key` to `Mead Slot 5 Key` (LeftAlt + 1 to 5, per player), one per
-  possible Mead slot, counted left to right on the Consumables tab; B still drinks them all. A press drinks that slot's
+  possible Mead slot, counted left to right on the Consumables tab. A press drinks that slot's
   mead through `Humanoid.UseItem(inventory, item, fromInventoryGui: true)` without a pre-check, so the game's own
   `$msg_cantconsume` says why it cannot be drunk now; an empty slot: "That mead slot is empty". A key for a slot that
   does not exist (Mead Slots 3, Alt + 4) does nothing of PackPanel's. Same rules as the other two keys (outside the
@@ -1053,6 +1053,9 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   never touch the hotbar. Only with PackPanel's `Enabled` on (the keys read nothing otherwise). Left Alt is unbound in the game; in the workspace
   only OpenKeep's Alt + D/R/L and its held Pull Modifier, EarthWright's Alt modifiers (hoe in hand, where these keys
   stand down) and unreleased HaloMenu's ring (Left Alt alone, held) use it.
+- The Mead Key removed (2026-10-05, after 0.9.0, the user: "remove the B mead button. not needed"): with a key per slot,
+  B (every mead it can, left to right) and its square on the bar went, with its word `_nothingtodrink`. An old cfg keeps
+  its orphaned `Mead Key` line, which nothing reads. `SlotMeals` still serves the Food Key.
 - Food and Mead bar (the user's request, 2026-09-28: "the hotkeys for food displayed in the bottom left of the screen for
   the food and meads"): one row in the empty strip under the game's health panel (`hudroot/healthpanel` is anchored to
   the bottom-left corner at x 49.5, its bottom at y 58, read offline from the main scene; the Forsaken power sits right
@@ -1066,7 +1069,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   Since 2026-10-05 (the user: "mead drink hotkeys need to be next to the food eat key in that bottom left") the Mead Slot
   keys follow on the same row, one square per existing Mead slot whose key is set, the same 6-unit gap: the slot's mead
   as the icon (so the player sees which key drinks which mead), the mead slot icon at 35% when the slot is empty, the key
-  over the corner. Key labels auto-size from 18 down to 10 to fit the square's width ("Alt+1"); Z and B stay 18.
+  over the corner. Key labels auto-size from 18 down to 10 to fit the square's width ("Alt+1"); Z stays 18. The mead
+  square (B) went with the Mead Key the same day: food first, then the slots.
   Eating is the local player's own action, as a hotbar key's is; nothing is sent.
 
 ## Not yet implemented
@@ -1084,7 +1088,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.9.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.10.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1293,18 +1297,16 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
 47. Food and Mead keys, single player: three different foods and a second of the first in the Food slots, hungry:
     press Z outside the inventory: three foods are eaten (the eat animation, three food icons), the duplicate stays.
     Press Z again at once: "Nothing in your food slots can be eaten now". A health mead, a stamina mead, a second
-    health mead and a frost resistance mead: B drinks health, stamina and frost, the second health mead stays. Z inside
+    health mead and a frost resistance mead: B does nothing (the Mead Key is gone). Z inside
     the inventory eats nothing (OpenKeep's Find Key works there); in chat, the console or the map nothing happens.
     Looking at a tame wolf while pressing Z: you eat, the wolf is not fed.
 48. Keys and settings: `Food Key = LeftShift + Z`: Z alone does nothing, Shift + Z eats while walking with W; with the
-    YAML editor open the keys do nothing. With the hammer, hoe or cultivator in hand, B and Z eat and drink nothing (B
-    toggles OpenKeep's build camera only); put it away and they work again. Dedicated server with A and B: each eats from their own slots, the other sees
+    YAML editor open the keys do nothing. With the hammer, hoe or cultivator in hand, Z eats nothing; put it away and they work again. Dedicated server with A and B: each eats from their own slots, the other sees
     the food effects and the eat animation.
-53. Food and Mead bar: with the inventory shut, the bottom-left corner under the health bar shows two squares and
-    nothing else, matching the game's food squares above in look: the food icon with a yellow "Z" over its top-left
-    corner, then the mead icon with a yellow "B". Putting food or meads in the slots changes nothing on the bar.
-    `Food Key = LeftShift + Z`: the label reads "Shift+Z"; `Mead Key = None`: the mead square goes. `Mead
-    Slots = 0`: only the food group. `Food And Mead Bar = false`: gone. Hide the HUD (Ctrl+F3): gone with it. Die: gone
+53. Food and Mead bar: with the inventory shut, the bottom-left corner under the health bar shows the food square,
+    matching the game's food squares above in look: the food icon with a yellow "Z" over its top-left corner, then the
+    Mead slot squares (63). Putting food in the slots changes nothing on the bar. `Food Key = LeftShift + Z`: the label
+    reads "Shift+Z"; `Food Key = None`: the food square goes. `Mead Slots = 0`: only the food square. `Food And Mead Bar = false`: gone. Hide the HUD (Ctrl+F3): gone with it. Die: gone
     until the respawn. Build mode with the hammer: the bar does not cover the key hints.
 54. Ammo first: 20 Wood arrows in the first Ammo slot and 30 more in the grid. Craft 20 Wood arrows at the workbench:
     the slot's stack reads 40, the grid's stays 30. Craft Flint arrows: they go into the second Ammo slot, not the
@@ -1405,8 +1407,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     "That mead slot is empty", the hotbar's third item is not used. `Mead Slots = 3`, Alt + 4 and Alt + 7: nothing (no
     hotbar item used, nothing equipped). With the hammer in hand Alt + 1 drinks nothing and the hammer stays in hand.
     Release Alt: 1 equips the sword again. `Mead Slot 1 Key = LeftShift + F1` in the .cfg: Shift + F1 drinks slot 1 and
-    Shift + 1 uses nothing (Alt + 2..5 still Alt). B still drinks every mead it can.
-63. Bar with Mead Slot keys: bottom left reads the food square "Z", the mead square "B", then three squares labelled
+    Shift + 1 uses nothing (Alt + 2..5 still Alt). B drinks nothing.
+63. Bar with Mead Slot keys: bottom left reads the food square "Z", then three squares labelled
     "Alt+1", "Alt+2", "Alt+3" (smaller text, inside the square), each showing the mead in that slot; an empty slot shows
     the faded mead icon; drink the last of a mead: its square fades at once (within a tenth of a second). `Mead Slots =
-    5`: five slot squares; `Mead Slot 2 Key = None`: square 2 goes, the others close up. Z and B labels unchanged in size.
+    5`: five slot squares; `Mead Slot 2 Key = None`: square 2 goes, the others close up. The Z label unchanged in size; no "B" square.

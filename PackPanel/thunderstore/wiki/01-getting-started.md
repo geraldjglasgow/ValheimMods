@@ -21,7 +21,7 @@ PackPanel replaces the player's inventory screen:
 
 1. Open the inventory: the grid, a column of stat boxes, then the slot panel.
 2. Drop up to three utilities (belts, the wishbone, the wisplight...) on the Utility slots. All are worn.
-3. On the Consumables tab fill the Food, Mead and Ammo slots. Outside the inventory, Z eats and B drinks from them; Left Alt + 1 to 5 drinks the mead in that one slot.
+3. On the Consumables tab fill the Food, Mead and Ammo slots. Outside the inventory, Z eats from them and Left Alt + 1 to 5 drinks the mead in that one slot.
 4. Craft a Deerhide Satchel (workbench level 2) and drop it on the Backpack slot: 4 more cells.
 5. Craft a Driftwood Tacklebox (workbench level 2), drop it on the Tacklebox slot and right click it to open it.
 

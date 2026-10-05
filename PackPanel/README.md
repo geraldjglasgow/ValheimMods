@@ -3,13 +3,13 @@
 A bigger, better organised inventory, with labelled slots always on screen.
 
 ## Features
-- A grid from your two hands up to 12 x 10, with `Base Carry Weight` and `Keep Slots On Death`.
+- A grid from two cells up to 12 x 10, with `Base Carry Weight` and `Keep Slots On Death`.
 - Gear tab: armour, backpack, utilities, trinket and a stat sheet.
-- Consumables tab: food, mead and ammo, with eat and drink keys and a key per mead slot.
+- Consumables tab: food, mead and ammo, with an eat key and a drink key per mead slot.
 - A coin purse, a key ring and four tackleboxes for bait.
-- Eight backpacks for slots and carry weight, worn as equipment EliteCrafting and Epic Loot can enchant.
+- Eight backpacks for slots and carry weight, enchantable with EliteCrafting or Epic Loot.
 - Armour and weight by the minimap, a bigger crafting panel, a brown or timber look, darker at night.
-- With OpenKeep 1.8.0+, its buttons join the inventory and its quick stack and sort skip the slots.
+- With OpenKeep 1.8.0+, its buttons join the inventory; quick stack and sort skip the slots.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `PackPanel.dll` in
@@ -17,7 +17,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 - Not compatible with mods that resize the inventory or add equipment slots, like ExtraSlots.
 - Removing the mod loses what lies outside the game's grid, every backpack and tacklebox, and keys above
   one per stack: empty them first.
-- Lowering `Inventory Width` or `Key Stack` can lose items; fewer slots or taking off a pack drops what no longer fits.
+- Lowering `Inventory Width`, `Key Stack` or slot counts, or taking off a pack, drops what no longer fits.
 
 ## Configuration
 `BepInEx/config/milkyteam.packpanel.cfg`, plus `PackPanel.Backpacks.yml` and `PackPanel.Tackleboxes.yml` (format:

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0
+
+- Removed the `Mead Key` (B) and its square on the food and mead bar; the Mead Slot keys replace it.
+- Fixed: Alt + a number key no longer also equips or uses that hotbar item.
+
 ## 0.9.0
 
 - Mead Slot keys: Left Alt + 1 to 5 drink the mead in that slot, shown on the food and mead bar.
