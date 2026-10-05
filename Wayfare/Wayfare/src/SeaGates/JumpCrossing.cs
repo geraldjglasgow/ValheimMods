@@ -1,17 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Wayfare.Targeting;
 
 namespace Wayfare.SeaGates
 {
     /// <summary>The ship owner, a ship with players aboard and no jump under way, against every gate loaded here, in the
-    /// gate's own frame (no physics triggers). Approach: within 30 m of the surface and near the span, a steered ship
-    /// asks the server for a grant ahead of time. Crossing: an end of the float box is a quarter of the ship's length
+    /// gate's own frame (no physics triggers). Crossing: an end of the float box is a quarter of the ship's length
     /// through the surface, inside the span, while the box's centre is still on the near side and the ship is moving
-    /// across, so the ship is seen sailing into the portal before the jump. A crossing either starts a
-    /// jump or is refused - no helmsman, no fresh grant, restricted cargo - and then the ship simply sails on and
-    /// everyone aboard sees why, once: that ship and gate get no new attempt until the ship has left the 30 m zone or
-    /// its centre has crossed. Moving across matters: once the centre is through, the stern is on the far side of it and
-    /// would otherwise read as a crossing the other way.</summary>
+    /// across, so the ship is seen sailing into the portal. A crossing either stops the ship in the gate for its
+    /// helmsman to pick a destination on the map (<see cref="JumpChoice"/>) or is refused - no helmsman, portal travel
+    /// blocked, restricted cargo - and then the ship simply sails on and everyone aboard sees why, once: that ship and
+    /// gate get no new attempt until the ship has left the 30 m zone or its centre has crossed. A ship whose helmsman
+    /// closed the map sails on the same way, remembered in its ZDO (<see cref="SeaGateFields.SailOnKey"/>) so a new
+    /// owner does not stop it again before then. Moving across matters: once the centre is through, the stern is on the far side of
+    /// it and would otherwise read as a crossing the other way.</summary>
     internal static class JumpCrossing
     {
         private const float ZoneMetres = 30f;
@@ -36,7 +38,7 @@ namespace Wayfare.SeaGates
             }
         }
 
-        /// <summary>True when a jump began through this gate.</summary>
+        /// <summary>True when the ship stopped in this gate.</summary>
         private static bool CheckGate(Ship ship, LoadedGate gate, FloatBox box, bool helm)
         {
             (Ship, long) key = (ship, gate.Id);
@@ -44,21 +46,20 @@ namespace Wayfare.SeaGates
             if (!InZone(gate.Geometry, centre))
             {
                 refused.Remove(key);
+                ForgetSailOn(ship, gate.Id);
                 return false;
             }
             int side = GateGeometry.SideOf(centre.z);
-            if (refused.TryGetValue(key, out int refusedSide) && refusedSide == side)
+            if ((refused.TryGetValue(key, out int refusedSide) && refusedSide == side) || SailsOn(ship, gate.Id, side))
                 return false;
             refused.Remove(key);
-            if (helm)
-                SeaGateGrant.Request(gate, ship);
             if (!Crossing(ship, gate.Geometry, box, side))
                 return false;
             string reason = Attempt(ship, gate, side, helm);
             if (reason == null)
                 return true;
             refused[key] = side;
-            Tell(ship, reason);
+            JumpChoice.TellCrew(ship, 0L, reason);
             return false;
         }
 
@@ -85,27 +86,31 @@ namespace Wayfare.SeaGates
             return GateGeometry.SideOf(local.z) != centreSide && Mathf.Abs(local.z) >= through && gate.WithinSpan(local.x);
         }
 
-        /// <summary>Null when the jump began, otherwise the reason token to show the crew.</summary>
+        /// <summary>Null when the ship stopped for its helmsman to choose, otherwise the reason token to show the crew.</summary>
         private static string Attempt(Ship ship, LoadedGate gate, int entrySide, bool helm)
         {
             if (!helm)
                 return SeaGateWords.DeniedNoHelmsman;
-            if (!SeaGateGrant.TryGet(gate.Id, out JumpGrant grant))
-                return SeaGateGrant.DenialFor(gate.Id) ?? SeaGateWords.DeniedNotReady;
+            if (TeleportGate.Blocked(out string blocked))
+                return blocked;
             if (CargoCheck.Blocked(ship, out string cargo))
                 return cargo ?? SeaGateWords.DeniedCargo;
-            return JumpBegin.TryBegin(ship, gate, grant, entrySide) ? null : SeaGateWords.DeniedNotReady;
+            JumpChoice.Stop(ship, gate, entrySide);
+            return null;
         }
 
-        /// <summary>Everyone aboard: <c>Player.Message</c> shows it here for the local player and sends the player's own
-        /// "Message" RPC to the client that owns any other.</summary>
-        private static void Tell(Ship ship, string reasonToken)
+        /// <summary>The helmsman closed the map in this gate and the ship's centre is still on the side it came from.</summary>
+        private static bool SailsOn(Ship ship, long gateId, int side)
         {
-            foreach (Player player in ship.m_players)
-            {
-                if (player != null)
-                    player.Message(MessageHud.MessageType.Center, reasonToken);
-            }
+            ZDO zdo = ship.m_nview.GetZDO();
+            return zdo.GetLong(SeaGateFields.SailOnKey, 0L) == gateId && zdo.GetInt(SeaGateFields.SailOnSideKey, 0) == side;
+        }
+
+        private static void ForgetSailOn(Ship ship, long gateId)
+        {
+            ZDO zdo = ship.m_nview.GetZDO();
+            if (zdo.GetLong(SeaGateFields.SailOnKey, 0L) == gateId)
+                zdo.Set(SeaGateFields.SailOnKey, 0L);
         }
 
         /// <summary>Drops the memory of ships that are gone.</summary>

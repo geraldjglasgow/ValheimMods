@@ -18,7 +18,7 @@ namespace Wayfare
     {
         public const string PluginGuid = "com.Wayfare";
         public const string PluginName = "Wayfare";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.3.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

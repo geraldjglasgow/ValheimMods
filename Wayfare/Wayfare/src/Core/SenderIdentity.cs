@@ -11,9 +11,23 @@ namespace Wayfare.Core
         {
             ZNetPeer peer = ZNet.instance != null ? ZNet.instance.GetPeer(sender) : null;
             if (peer != null)
-                return peer.m_playerID;
+                return PeerPlayerId(peer);
             bool self = ZRoutedRpc.instance != null && sender == ZRoutedRpc.instance.m_id;
             return self && Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerID() : 0L;
+        }
+
+        /// <summary>A connected peer's player id. The game registers a "PlayerID" message on the server but no client
+        /// ever sends it, so <c>m_playerID</c> stays 0 for every remote player; the id is read from the player's own
+        /// ZDO instead (<c>Player.SetPlayerID</c> writes it at spawn, and the server holds every player's ZDO). 0
+        /// while the peer has no character (loading in, dead).</summary>
+        public static long PeerPlayerId(ZNetPeer peer)
+        {
+            if (peer.m_playerID != 0L)
+                return peer.m_playerID;
+            if (peer.m_characterID.IsNone() || ZDOMan.instance == null)
+                return 0L;
+            ZDO character = ZDOMan.instance.GetZDO(peer.m_characterID);
+            return character != null ? character.GetLong(ZDOVars.s_playerID) : 0L;
         }
 
         /// <summary>True when a routed RPC came from the server: the server peer's uid on a client, this

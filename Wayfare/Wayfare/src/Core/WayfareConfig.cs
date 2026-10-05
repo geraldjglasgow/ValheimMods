@@ -10,7 +10,6 @@ namespace Wayfare.Core
     {
         public static ConfigEntry<bool> LockConfiguration { get; private set; }
         public static ConfigEntry<bool> Enabled { get; private set; }
-        public static ConfigEntry<bool> UnownedPortalsArePublic { get; private set; }
         public static ConfigEntry<KeyboardShortcut> ToggleIconsKey { get; private set; }
         public static ConfigEntry<float> IconScale { get; private set; }
         public static ConfigEntry<bool> ShowTags { get; private set; }
@@ -62,8 +61,6 @@ namespace Wayfare.Core
                 "Server only. When on, every player uses the server's values for this file and cannot override them locally.");
             Enabled = config.Bind("General", "Enabled", true,
                 "Master switch. Off disables portal targeting and access modes; portals behave as vanilla.");
-            UnownedPortalsArePublic = config.Bind("Access", "Unowned Portals Are Public", true,
-                "A portal nobody has set a mode on yet is targetable by anyone (Public) when on, or by nobody but an admin (Private-like) when off.");
             ToggleIconsKey = config.Bind("Map", "Toggle Icons Key", new KeyboardShortcut(KeyCode.P),
                 "Toggles portal icons on the ordinary (non-targeting) map.", synced: false);
             IconScale = config.Bind("Map", "Icon Scale", 1f,

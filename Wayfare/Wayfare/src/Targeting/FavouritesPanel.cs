@@ -126,13 +126,13 @@ namespace Wayfare.Targeting
         }
 
         /// <summary>The favourites this player may target now, in snapshot order: the map icons' rules, so a favourite
-        /// whose portal went private or admin-only, or lost its tag, leaves the list until it is open to them again.</summary>
+        /// whose portal went private or admin-only leaves the list until it is open to them again.</summary>
         private static List<PortalInfo> Collect(long playerId, bool isAdmin)
         {
             List<PortalInfo> favourites = new List<PortalInfo>();
             foreach (PortalInfo info in PortalRegistry.Portals)
             {
-                if (PlayerFavourites.IsFavourite(info.Id) && PortalFields.HasTag(info.Tag) && PortalAccess.MayTarget(info.Mode, info.Owner, playerId, isAdmin))
+                if (PlayerFavourites.IsFavourite(info.Id) && PortalAccess.MayTarget(info.Mode, info.Owner, playerId, isAdmin))
                     favourites.Add(info);
             }
             return favourites;

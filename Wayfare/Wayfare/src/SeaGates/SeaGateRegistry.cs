@@ -20,7 +20,6 @@ namespace Wayfare.SeaGates
         /// <summary>The gate's id: its anchor's id.</summary>
         public long Id => Anchor.Id;
         public ZDO AnchorZdo => Anchor.Zdo;
-        public long DestId => SeaGateFields.GetDest(AnchorZdo);
         public int Sides => SeaGateFields.GetSides(AnchorZdo);
         public string Name => SeaGateFields.GetName(AnchorZdo);
 

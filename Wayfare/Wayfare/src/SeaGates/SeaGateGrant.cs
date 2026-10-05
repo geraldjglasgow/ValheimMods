@@ -29,11 +29,11 @@ namespace Wayfare.SeaGates
         public GateGeometry DestGeometry => new GateGeometry(DestAnchor, DestPartner);
     }
 
-    /// <summary>Asking the server whether ships may jump through a gate, before the bow arrives. The ship owner's
-    /// client asks (<see cref="RequestRpc"/>, routed to the server, never to a pillar's owner); the server decides
-    /// (<see cref="SeaGateGrantServer"/>) and answers with a grant or a denial, which this client keeps per source
-    /// gate for <see cref="LifeSeconds"/>. Answers are taken only from the server, so no other client can forge one.
-    /// The latest answer wins: a grant clears the gate's denial and a denial clears its grant.</summary>
+    /// <summary>Asking the server whether a ship may jump from one gate to the gate its helmsman picked. The ship
+    /// owner's client asks (<see cref="RequestRpc"/>, routed to the server, never to a pillar's owner); the server
+    /// decides (<see cref="SeaGateGrantServer"/>) and answers with a grant or a denial, which this client keeps per
+    /// source gate for <see cref="LifeSeconds"/>. Answers are taken only from the server, so no other client can forge
+    /// one. The latest answer wins: a grant clears the gate's denial and a denial clears its grant.</summary>
     public static class SeaGateGrant
     {
         public const string RequestRpc = "wf_SeaGateRequest";
@@ -42,10 +42,6 @@ namespace Wayfare.SeaGates
 
         /// <summary>How long a grant or a denial counts after it arrives.</summary>
         public const float LifeSeconds = 10f;
-
-        // A held grant is renewed once it is this old, so a ship still approaching always holds one with time left
-        // instead of losing it for a round trip at the moment it expires.
-        private const float RenewSeconds = 5f;
 
         // At most one request per gate in this time, while an answer is on its way.
         private const float RequestGapSeconds = 2f;
@@ -71,43 +67,54 @@ namespace Wayfare.SeaGates
                 return;
             registeredOn = rpc;
             Clear();
-            rpc.Register<long, ZDOID>(RequestRpc, SeaGateGrantServer.OnRequest);
+            rpc.Register<long, long, ZDOID>(RequestRpc, SeaGateGrantServer.OnRequest);
             rpc.Register<ZPackage>(GrantRpc, OnGrant);
-            rpc.Register<long, string>(DenyRpc, OnDeny);
+            rpc.Register<long, long, string>(DenyRpc, OnDeny);
         }
 
-        /// <summary>Ship owner's client, a steered ship near the gate: ask the server, unless a fresh grant is held or
-        /// a request is already on its way. The ship goes along so the server can judge access for its helmsman.</summary>
-        public static void Request(LoadedGate gate, Ship ship)
+        /// <summary>Ship owner's client, a ship stopped in the gate with a destination picked: ask the server, unless a
+        /// grant for that destination is held or a request is already on its way. The ship goes along so the server
+        /// can judge access for its helmsman.</summary>
+        public static void Request(LoadedGate gate, long destId, Ship ship)
         {
-            if (gate == null || gate.Id == 0L || ZRoutedRpc.instance == null)
+            if (gate == null || gate.Id == 0L || destId == 0L || ZRoutedRpc.instance == null)
                 return;
             long id = gate.Id;
-            if (grants.TryGetValue(id, out JumpGrant held) && Time.time - held.ReceivedAt < RenewSeconds)
+            if (TryGet(id, destId, out _))
                 return;
             if (requestedAt.TryGetValue(id, out float sentAt) && Time.time - sentAt < RequestGapSeconds)
                 return;
             EnsureRegistered();
             requestedAt[id] = Time.time;
             ZDO shipZdo = ship != null && ship.m_nview != null && ship.m_nview.IsValid() ? ship.m_nview.GetZDO() : null;
-            ZRoutedRpc.instance.InvokeRoutedRPC(RequestRpc, id, shipZdo != null ? shipZdo.m_uid : ZDOID.None);
+            ZRoutedRpc.instance.InvokeRoutedRPC(RequestRpc, id, destId, shipZdo != null ? shipZdo.m_uid : ZDOID.None);
         }
 
-        /// <summary>A grant for this gate received in the last 10 seconds.</summary>
-        public static bool TryGet(long sourceGateId, out JumpGrant grant)
+        /// <summary>A grant from this gate to that one, received in the last 10 seconds.</summary>
+        public static bool TryGet(long sourceGateId, long destId, out JumpGrant grant)
         {
-            if (grants.TryGetValue(sourceGateId, out grant) && Time.time - grant.ReceivedAt < LifeSeconds)
+            if (grants.TryGetValue(sourceGateId, out grant) && grant.DestId == destId && Time.time - grant.ReceivedAt < LifeSeconds)
                 return true;
             grant = default;
             return false;
         }
 
-        /// <summary>The last denial token for this gate, received in the last 10 seconds, or null.</summary>
-        public static string DenialFor(long sourceGateId)
+        /// <summary>The denial token for a jump from this gate to that one, received in the last 10 seconds, or null;
+        /// read once.</summary>
+        public static string TakeDenial(long sourceGateId, long destId)
         {
-            if (denials.TryGetValue(sourceGateId, out Denial denial) && Time.time - denial.At < LifeSeconds)
-                return denial.Token;
-            return null;
+            if (!denials.TryGetValue(sourceGateId, out Denial denial) || denial.DestId != destId)
+                return null;
+            denials.Remove(sourceGateId);
+            return Time.time - denial.At < LifeSeconds ? denial.Token : null;
+        }
+
+        /// <summary>Forgets this gate's answers and pending request, for a new pick.</summary>
+        public static void Forget(long sourceGateId)
+        {
+            grants.Remove(sourceGateId);
+            denials.Remove(sourceGateId);
+            requestedAt.Remove(sourceGateId);
         }
 
         /// <summary>Forgets every grant, denial and pending request: a world unload, or a new session.</summary>
@@ -131,9 +138,9 @@ namespace Wayfare.SeaGates
             ZRoutedRpc.instance.InvokeRoutedRPC(target, GrantRpc, pkg);
         }
 
-        internal static void SendDenial(long target, long sourceId, string reasonToken)
+        internal static void SendDenial(long target, long sourceId, long destId, string reasonToken)
         {
-            ZRoutedRpc.instance.InvokeRoutedRPC(target, DenyRpc, sourceId, reasonToken);
+            ZRoutedRpc.instance.InvokeRoutedRPC(target, DenyRpc, sourceId, destId, reasonToken);
         }
 
         private static void OnGrant(long sender, ZPackage pkg)
@@ -146,21 +153,23 @@ namespace Wayfare.SeaGates
             denials.Remove(grant.SourceId);
         }
 
-        private static void OnDeny(long sender, long sourceId, string reasonToken)
+        private static void OnDeny(long sender, long sourceId, long destId, string reasonToken)
         {
             if (!SenderIdentity.IsFromServer(sender))
                 return;
-            denials[sourceId] = new Denial(reasonToken, Time.time);
+            denials[sourceId] = new Denial(destId, reasonToken, Time.time);
             grants.Remove(sourceId);
         }
 
         private readonly struct Denial
         {
+            public readonly long DestId;
             public readonly string Token;
             public readonly float At;
 
-            public Denial(string token, float at)
+            public Denial(long destId, string token, float at)
             {
+                DestId = destId;
                 Token = token;
                 At = at;
             }

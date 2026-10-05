@@ -10,9 +10,9 @@ namespace Wayfare.Targeting
     /// (see PLAN.md: that system's own click-to-toggle and save behaviour would otherwise run on a portal icon
     /// too). Visible whenever a targeting session is active, or the player toggled icons on with the hotkey while
     /// the large map is open; every frame it runs is guarded by <see cref="ShouldShow"/>, which is false for the
-    /// entire lifetime of a headless dedicated server (no <c>Minimap.instance</c>, no local player). Only portals with a
-    /// tag are drawn (<see cref="PortalFields.HasTag(string)"/>); the portal the player stands at is drawn still, marked
-    /// "You are here", and takes no clicks.</summary>
+    /// entire lifetime of a headless dedicated server (no <c>Minimap.instance</c>, no local player). Every portal the
+    /// player may target is drawn, tagged or not; the portal the player stands at is drawn still, marked "You are
+    /// here", and takes no clicks.</summary>
     public static class MapOverlay
     {
         private static readonly Dictionary<ZDOID, PortalIcon> icons = new Dictionary<ZDOID, PortalIcon>();
@@ -88,8 +88,6 @@ namespace Wayfare.Targeting
 
         private static bool Shown(PortalInfo info, bool isHere, long playerId, bool isAdmin)
         {
-            if (!PortalFields.HasTag(info.Tag))
-                return false;
             if (!isHere && !PortalAccess.MayTarget(info.Mode, info.Owner, playerId, isAdmin))
                 return false;
             return Minimap.instance.IsPointVisible(info.Position, Minimap.instance.m_mapImageLarge);

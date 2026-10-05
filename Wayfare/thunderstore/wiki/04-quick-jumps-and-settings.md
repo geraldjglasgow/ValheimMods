@@ -31,12 +31,6 @@ on.
 | `Lock Configuration` | on | Read on the server only. On: every player uses the server's values. See Multiplayer below. |
 | `Enabled` | on | Master switch. Off: portals pair by tag as in the game; no map targeting, access modes, sea gate jumps or quick jumps. |
 
-### Access
-
-| Key | Default | Meaning |
-| --- | --- | --- |
-| `Unowned Portals Are Public` | on | A portal or sea gate nobody has set a mode on is Public. Off: only admins may travel to it. |
-
 ### Map
 
 | Key | Default | Meaning |

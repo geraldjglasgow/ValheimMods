@@ -5,8 +5,9 @@ using Wayfare.Core;
 
 namespace Wayfare.SeaGates
 {
-    /// <summary>The ship owner's side of a jump: approach and crossing (<see cref="JumpCrossing"/>), begin
-    /// (<see cref="JumpBegin"/>), move, settle (<see cref="JumpSettle"/>) and release. It runs on whichever machine owns
+    /// <summary>The ship owner's side of a jump: crossing (<see cref="JumpCrossing"/>), the stop while the helmsman
+    /// picks the destination (<see cref="JumpChoice"/>), begin (<see cref="JumpBegin"/>), move, settle
+    /// (<see cref="JumpSettle"/>) and release. It runs on whichever machine owns
     /// each ship's ZDO and has the ship loaded; every step reads the jump from the ship's ZDO, so an owner that changes
     /// mid-jump (<c>Ship.UpdateOwner</c> hands a ship to a player aboard; the server hands a ZDO to a peer near it when
     /// its owner is far away) carries on from where the last one stopped. Moving the ship's ZDO to the destination
@@ -26,7 +27,8 @@ namespace Wayfare.SeaGates
         private static bool tickFailed;
 
         /// <summary>Every frame on every machine (called by <see cref="SeaGateDriver"/>). Jumps already under way always
-        /// go on to their release, whatever the settings say; only new ones need sea gates switched on.</summary>
+        /// go on to their release, whatever the settings say; only new ones need sea gates switched on, and a ship
+        /// stopped to choose sails on when they are switched off.</summary>
         public static void Tick()
         {
             if (ZNet.instance == null || ZNetScene.instance == null)
@@ -66,6 +68,9 @@ namespace Wayfare.SeaGates
                 case JumpState.None:
                     if (mayStart)
                         JumpCrossing.Check(ship);
+                    break;
+                case JumpState.Choosing:
+                    JumpChoice.Tick(ship, zdo, mayStart);
                     break;
                 case JumpState.Frozen:
                     TryMove(ship, zdo);

@@ -4,9 +4,9 @@ using Wayfare.Core;
 
 namespace Wayfare.SeaGates
 {
-    /// <summary>The ship owner starts a jump: the destination pose, the whole jump written to the ship's ZDO at once (so
-    /// whoever owns the ship next carries it on), the ship frozen where it is, and a <see cref="JumpOrder"/> to every
-    /// crew member's peer. A player's peer is the owner of the player's ZDO (<c>Character.GetOwner</c>): each client owns
+    /// <summary>The ship owner starts a jump from a ship stopped in the gate (<see cref="JumpChoice"/>): the destination
+    /// pose, the whole jump written to the ship's ZDO at once (so whoever owns the ship next carries it on), the ship
+    /// frozen where it is, and a <see cref="JumpOrder"/> to every crew member's peer. A player's peer is the owner of the player's ZDO (<c>Character.GetOwner</c>): each client owns
     /// its own player, and that uid is the one <c>ZRoutedRpc</c> routes by (<c>ZNet</c> sets the routed id to
     /// <c>ZDOMan.GetSessionID()</c>), so the owner's own player is reached the same way.</summary>
     internal static class JumpBegin
@@ -24,8 +24,9 @@ namespace Wayfare.SeaGates
 
         private static readonly List<long> crew = new List<long>();
 
-        /// <summary>False, with nothing changed, when the destination has no side to leave by.</summary>
-        internal static bool TryBegin(Ship ship, LoadedGate gate, JumpGrant grant, int entrySide)
+        /// <summary>False, with nothing changed, when the destination has no side to leave by. The speed is the one the
+        /// ship had when it stopped, given back on release.</summary>
+        internal static bool TryBegin(Ship ship, LoadedGate gate, JumpGrant grant, int entrySide, float speed)
         {
             if (!JumpPose.TryDestination(ship, gate.Geometry, grant.DestGeometry, entrySide, grant.DestSides,
                     out Vector3 pos, out Quaternion rot))
@@ -33,7 +34,7 @@ namespace Wayfare.SeaGates
             ZDO zdo = ship.m_nview.GetZDO();
             CollectCrew(ship);
             JumpOrder order = BuildOrder(ship, zdo, grant, pos, rot);
-            WriteJump(zdo, order, ship.GetSpeed(), crew.Count);
+            WriteJump(zdo, order, speed, crew.Count);
             ShipFreeze.Hold(ship);
             foreach (long peer in crew)
                 CrewJump.Send(peer, order);

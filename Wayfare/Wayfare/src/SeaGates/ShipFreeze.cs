@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace Wayfare.SeaGates
 {
-    /// <summary>A ship whose ZDO says it is jumping stays where it is on every machine and every instance, including one
-    /// recreated after its zone unloads or after an ownership change; a ship inside its safe time takes no damage.
+    /// <summary>A ship whose ZDO says it is stopped by a gate (choosing or jumping) stays where it is on every machine
+    /// and every instance, including one recreated after its zone unloads or after an ownership change; a ship inside
+    /// its safe time takes no damage.
     /// How the game moves a ship (verified in the decompiled assembly): only the ZDO owner simulates it
     /// (<c>Ship.CustomFixedUpdate</c> returns before buoyancy on any other machine) and its <c>ZSyncTransform</c> writes
     /// the body's pose and velocity to the ZDO each LateUpdate; every other machine places the ship from the ZDO
@@ -20,11 +21,11 @@ namespace Wayfare.SeaGates
         // Bodies this mod made kinematic, so a release touches only those and sets back exactly what it changed.
         private static readonly HashSet<Rigidbody> frozen = new HashSet<Rigidbody>();
 
-        public static bool IsFrozen(ZDO ship) => SeaGateFields.IsJumping(ship);
+        public static bool IsFrozen(ZDO ship) => SeaGateFields.IsStopped(ship);
 
         public static bool IsSafe(ZDO ship) => ship != null && ship.GetLong(SeaGateFields.SafeKey, 0L) > SeaGateFields.Now;
 
-        /// <summary>A jumping ship, every fixed step and wherever the jump changes its pose: the owner's body stops dead
+        /// <summary>A stopped ship, every fixed step and wherever the jump changes its pose: the owner's body stops dead
         /// and turns kinematic; on any other machine (an owner a moment ago) it goes back to the game's own handling.</summary>
         internal static void Hold(Ship ship)
         {
@@ -52,7 +53,7 @@ namespace Wayfare.SeaGates
             body.isKinematic = false;
         }
 
-        /// <summary>Owner, the end of a jump: back to physics with the stored speed along the ship's new heading, and the
+        /// <summary>Owner, the end of a jump or a stop: back to physics with the stored speed along the ship's new heading, and the
         /// sail and rudder as they were. Only the owner writes those to the ZDO (<c>Ship.UpdateControlls</c>, skipped
         /// while frozen), so the ZDO still holds them from before the jump, while an owner whose copy of the ship was
         /// recreated at the destination starts with the sail down.</summary>
@@ -89,9 +90,9 @@ namespace Wayfare.SeaGates
         internal static void Prune() => frozen.RemoveWhere(body => body == null);
     }
 
-    /// <summary>A jumping ship gets no buoyancy, sail force, upside-down or Ashlands damage and no speed changes: its
-    /// whole fixed update is skipped, on every machine. Not gated on the settings: these keys are written only by a jump
-    /// that has begun, and letting go of a ship mid-jump could drop it into water that is not loaded.</summary>
+    /// <summary>A stopped ship gets no buoyancy, sail force, upside-down or Ashlands damage and no speed changes: its
+    /// whole fixed update is skipped, on every machine. Not gated on the settings: these keys are written only by a stop or
+    /// jump that has begun, and letting go of a ship mid-jump could drop it into water that is not loaded.</summary>
     [HarmonyPatch(typeof(Ship), nameof(Ship.CustomFixedUpdate))]
     public static class ShipFreezeFixedUpdatePatch
     {

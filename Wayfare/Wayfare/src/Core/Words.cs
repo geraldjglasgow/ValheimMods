@@ -17,7 +17,6 @@ namespace Wayfare.Core
         public static readonly string DeniedAdmin = Language.Add("wf_denied_admin", "Only a server admin may target this portal");
         public static readonly string DeniedBlocked = Language.Add("wf_denied_blocked", "Portal travel is blocked here");
         public static readonly string DeniedGeneric = Language.Add("wf_denied_generic", "You may not target that portal");
-        public static readonly string NeedsTag = Language.Add("wf_needs_tag", "This portal needs a tag");
 
         public static readonly string Favourited = Language.Add("wf_favourited", "Added to favourites");
         public static readonly string Unfavourited = Language.Add("wf_unfavourited", "Removed from favourites");

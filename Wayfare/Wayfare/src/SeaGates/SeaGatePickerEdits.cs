@@ -8,7 +8,6 @@ namespace Wayfare.SeaGates
     /// <summary>What a gate edit changes.</summary>
     internal enum SeaGateEditKind
     {
-        Dest = 0,
         Name = 1,
         Mode = 2
     }
@@ -54,7 +53,7 @@ namespace Wayfare.SeaGates
             {
                 SeaGateEditKind kind = (SeaGateEditKind)pkg.ReadInt();
                 edit = new SeaGateEdit(kind, pkg.ReadLong(), pkg.ReadBool(), pkg.ReadLong(), pkg.ReadString());
-                return kind >= SeaGateEditKind.Dest && kind <= SeaGateEditKind.Mode;
+                return kind >= SeaGateEditKind.Name && kind <= SeaGateEditKind.Mode;
             }
             catch (Exception)
             {
@@ -63,17 +62,16 @@ namespace Wayfare.SeaGates
         }
     }
 
-    /// <summary>The three things players change on a gate - its destination, its name and its access mode - and who may.
+    /// <summary>The two things players change on a gate - its name and its access mode - and who may.
     /// A client never sends an edit straight to the anchor's owner: when that owner is another client it cannot tell
     /// who sent it (a client's only peer is the server, so <see cref="SenderIdentity"/> there names the owner's own
     /// player, and an Alt+E would make the owner the gate's owner). The edit goes to the server instead
     /// (<see cref="EditRpc"/>), which knows every peer's player and admin rights and holds every ZDO. It checks the
     /// anchor rule (the pillar's id below its partner's) and the right to change the gate (<see cref="PortalAccess.MayCycle"/>,
     /// the right to cycle its access mode), then writes the edit itself where it owns the anchor or nobody does, and
-    /// otherwise forwards it with the requester's identity to the anchor's owner (<see cref="SeaGateFields.SetDestRpc"/>,
-    /// <see cref="SeaGateFields.SetNameRpc"/>, <see cref="SeaGateFields.SetModeRpc"/> on the pillar's ZNetView). The
-    /// owner takes it only from the server, checks the right again on its own copy of the ZDO and writes. The
-    /// destination's own access is not checked here: the server checks it at every jump.</summary>
+    /// otherwise forwards it with the requester's identity to the anchor's owner (<see cref="SeaGateFields.SetNameRpc"/>,
+    /// <see cref="SeaGateFields.SetModeRpc"/> on the pillar's ZNetView). The owner takes it only from the server, checks
+    /// the right again on its own copy of the ZDO and writes.</summary>
     internal static class SeaGatePickerEdits
     {
         internal const int NameLimit = 20;
@@ -85,13 +83,6 @@ namespace Wayfare.SeaGates
 
         /// <summary>On every new session's <c>ZRoutedRpc</c>, every machine (only the server answers).</summary>
         internal static void Register(ZRoutedRpc rpc) => rpc.Register<ZDOID, ZPackage>(EditRpc, OnRequest);
-
-        /// <summary>Picker side: makes another gate this gate's destination.</summary>
-        internal static void SendDest(LoadedGate source, long destId)
-        {
-            if (source != null)
-                Send(source.Anchor, new SeaGateEdit(SeaGateEditKind.Dest, 0L, false, destId, ""));
-        }
 
         /// <summary>A rename typed into the text box.</summary>
         internal static void SendName(SeaGatePillar anchor, string name) =>
@@ -106,17 +97,6 @@ namespace Wayfare.SeaGates
             if (anchor == null || !anchor.IsValid || ZRoutedRpc.instance == null)
                 return;
             ZRoutedRpc.instance.InvokeRoutedRPC(EditRpc, anchor.Zdo.m_uid, edit.Write());
-        }
-
-        /// <summary>A listed gate's name as the map shows it.</summary>
-        internal static string ListedName(long gateId)
-        {
-            foreach (SeaGateInfo info in SeaGateIndex.Gates)
-            {
-                if (info.Id == gateId && !string.IsNullOrEmpty(info.Name))
-                    return info.Name;
-            }
-            return Localization.instance.Localize(SeaGateWords.DefaultName);
         }
 
         /// <summary>Server: an edit from a player. The identity is the sender's, resolved here.</summary>
@@ -153,29 +133,14 @@ namespace Wayfare.SeaGates
                 Apply(pillar.Zdo, edit);
         }
 
-        private static string RpcOf(SeaGateEditKind kind)
-        {
-            switch (kind)
-            {
-                case SeaGateEditKind.Dest: return SeaGateFields.SetDestRpc;
-                case SeaGateEditKind.Name: return SeaGateFields.SetNameRpc;
-                default: return SeaGateFields.SetModeRpc;
-            }
-        }
+        private static string RpcOf(SeaGateEditKind kind) =>
+            kind == SeaGateEditKind.Name ? SeaGateFields.SetNameRpc : SeaGateFields.SetModeRpc;
 
         private static bool Allowed(ZDO zdo, SeaGateEdit edit)
         {
             if (!On || edit.PlayerId == 0L || !HoldsGateFields(zdo) || !PortalAccess.MayCycle(zdo, edit.PlayerId, edit.IsAdmin))
                 return false;
-            switch (edit.Kind)
-            {
-                case SeaGateEditKind.Dest:
-                    return edit.Value != SeaGateFields.GetId(zdo) && edit.Value != SeaGateFields.GetPartner(zdo);
-                case SeaGateEditKind.Mode:
-                    return edit.Value >= (long)PortalMode.Public && edit.Value <= (long)PortalMode.Admin;
-                default:
-                    return true;
-            }
+            return edit.Kind != SeaGateEditKind.Mode || PortalAccess.MaySet(edit.Value, edit.IsAdmin);
         }
 
         /// <summary>A pillar ZDO that is its pair's anchor (the smaller id), judged from its own ZDO alone so it works
@@ -189,18 +154,10 @@ namespace Wayfare.SeaGates
 
         private static void Apply(ZDO zdo, SeaGateEdit edit)
         {
-            switch (edit.Kind)
-            {
-                case SeaGateEditKind.Dest:
-                    zdo.Set(SeaGateFields.DestKey, edit.Value);
-                    break;
-                case SeaGateEditKind.Name:
-                    zdo.Set(SeaGateFields.NameKey, Clean(edit.Text));
-                    break;
-                case SeaGateEditKind.Mode:
-                    PortalFields.SetModeAndOwner(zdo, (PortalMode)edit.Value, edit.PlayerId);
-                    break;
-            }
+            if (edit.Kind == SeaGateEditKind.Name)
+                zdo.Set(SeaGateFields.NameKey, Clean(edit.Text));
+            else
+                PortalFields.SetModeAndOwner(zdo, (PortalMode)edit.Value, edit.PlayerId);
         }
 
         /// <summary>Trimmed, at most <see cref="NameLimit"/> characters, without control characters or the angle brackets

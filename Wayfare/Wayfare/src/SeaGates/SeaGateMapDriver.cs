@@ -6,7 +6,7 @@ using Wayfare.Core;
 namespace Wayfare.SeaGates
 {
     /// <summary>The ticker of the index and the picker: the server's pillar scan and its answers, the picker's session
-    /// checks, the sea gate map icons and the picker's hint. Started by <see cref="SeaGateIndex.EnsureRegistered"/>, so
+    /// checks, the sea gate map icons, the crew's pointers and the picker's hint. Started by <see cref="SeaGateIndex.EnsureRegistered"/>, so
     /// it runs on a dedicated server too, where everything but the scan finds no map and does nothing. Each part is
     /// guarded on its own: an exception is logged once per part and the others keep running.</summary>
     internal static class SeaGateMapDriver
@@ -30,12 +30,14 @@ namespace Wayfare.SeaGates
             if (!Running)
             {
                 Run("picker", SeaGatePicker.Close);
+                Run("crew pointers", SeaGatePointers.Clear);
                 Run("map icons", SeaGateMapIcons.Clear);
                 return;
             }
             Run("index", SeaGateIndexServer.Tick);
             Run("picker", SeaGatePicker.Tick);
             Run("map icons", SeaGateMapIcons.Tick);
+            Run("crew pointers", SeaGatePointers.Tick);
         }
 
         private static void Run(string name, Action tick)

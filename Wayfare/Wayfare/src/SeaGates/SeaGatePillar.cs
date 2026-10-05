@@ -7,8 +7,10 @@ namespace Wayfare.SeaGates
     /// <summary>The component on every sea gate pillar (added to the prefab by <see cref="SeaGatePiece"/>). Registers
     /// the pillar's RPCs, joins <see cref="SeaGateRegistry"/>, and on the placer's machine starts pairing a fresh
     /// pillar. A placement ghost has no ZDO (<c>ZNetView.m_forceDisableInit</c>) and does none of this. Either pillar
-    /// of a gate answers E (the destination picker) and Alt+E (the gate's access mode, kept on the anchor, the same
-    /// rule and modes as portals); its hover text is drawn by <see cref="SeaGatePillarHover"/>.</summary>
+    /// of a gate answers E (a text box to name the gate, like a portal's tag) and Alt+E (the gate's access mode, kept on
+    /// the anchor, the same rule and modes as portals); both need the right to change the gate. Its hover text is drawn
+    /// by <see cref="SeaGatePillarHover"/>. A gate has no destination of its own: a ship sailing in picks any gate on
+    /// the map (<see cref="SeaGatePicker"/>).</summary>
     public sealed class SeaGatePillar : MonoBehaviour, Hoverable, Interactable, TextReceiver
     {
         private static readonly string NotOwner = Language.Add("wf_sg_notowner", "You don't own this sea gate");
@@ -28,7 +30,6 @@ namespace Wayfare.SeaGates
                 return;
             View.Register<long, int>(SeaGateFields.PairRpc, (sender, partnerId, sides) => SeaGatePairing.OnPair(this, sender, partnerId, sides));
             View.Register<long>(SeaGateFields.UnpairRpc, (sender, partnerId) => SeaGatePairing.OnUnpair(this, sender, partnerId));
-            View.Register<ZPackage>(SeaGateFields.SetDestRpc, (sender, pkg) => SeaGatePickerEdits.OnForwarded(this, sender, SeaGateEditKind.Dest, pkg));
             View.Register<ZPackage>(SeaGateFields.SetNameRpc, (sender, pkg) => SeaGatePickerEdits.OnForwarded(this, sender, SeaGateEditKind.Name, pkg));
             View.Register<ZPackage>(SeaGateFields.SetModeRpc, (sender, pkg) => SeaGatePickerEdits.OnForwarded(this, sender, SeaGateEditKind.Mode, pkg));
             SeaGateRegistry.Add(this);
@@ -49,7 +50,7 @@ namespace Wayfare.SeaGates
 
         public float GetHoverOffset() => 0f;
 
-        /// <summary>E opens the destination picker, Alt+E cycles the gate's access mode. An unpaired pillar only says so.</summary>
+        /// <summary>E names the gate, Alt+E cycles its access mode. An unpaired pillar only says so.</summary>
         public bool Interact(Humanoid user, bool hold, bool alt)
         {
             Player player = user as Player;
@@ -66,10 +67,12 @@ namespace Wayfare.SeaGates
                 player.Message(MessageHud.MessageType.Center, "$piece_noaccess");
                 return true;
             }
+            if (!MayChange(gate.AnchorZdo, player))
+                return true;
             if (alt)
-                TryCycle(gate.Anchor, player);
-            else
-                SeaGatePicker.Open(this);
+                Cycle(gate.Anchor);
+            else if (TextInput.instance != null)
+                TextInput.instance.RequestText(this, SeaGateWords.RenameTopic, SeaGatePickerEdits.NameLimit);
             return true;
         }
 
@@ -91,21 +94,23 @@ namespace Wayfare.SeaGates
                 SeaGatePickerEdits.SendName(gate.Anchor, text);
         }
 
-        /// <summary>Client side of Alt+E: the same right as on a portal (unowned, own, or admin), checked here to say
-        /// so and again by the server and the anchor's owner, which hold the gate's mode and owner.</summary>
-        private static void TryCycle(SeaGatePillar anchor, Player player)
+        /// <summary>Client side of E and Alt+E: the same right as cycling a portal's mode (unowned, own, or admin),
+        /// checked here to say so and again by the server and the anchor's owner, which hold the gate's mode and
+        /// owner.</summary>
+        private static bool MayChange(ZDO anchor, Player player)
         {
-            ZDO zdo = anchor.Zdo;
-            if (zdo == null)
-                return;
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
-            if (!PortalAccess.MayCycle(zdo, player.GetPlayerID(), isAdmin))
-            {
-                player.Message(MessageHud.MessageType.Center, NotOwner);
-                return;
-            }
-            PortalMode mode = PortalFields.GetMode(zdo, WayfareConfig.UnownedPortalsArePublic.Value);
-            SeaGatePickerEdits.SendMode(anchor, (PortalMode)(((int)mode + 1) % 3));
+            if (anchor != null && PortalAccess.MayCycle(anchor, player.GetPlayerID(), isAdmin))
+                return true;
+            player.Message(MessageHud.MessageType.Center, NotOwner);
+            return false;
+        }
+
+        private static void Cycle(SeaGatePillar anchor)
+        {
+            PortalMode mode = PortalFields.GetMode(anchor.Zdo);
+            bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
+            SeaGatePickerEdits.SendMode(anchor, PortalAccess.NextMode(mode, isAdmin));
         }
     }
 }

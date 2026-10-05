@@ -8,8 +8,7 @@ namespace Wayfare.Portals
     }
 
     /// <summary>The two Wayfare-owned fields on a portal's own ZDO: access mode and owner. Absent (a portal no
-    /// Wayfare player has ever touched) reads as unowned, mode decided by <see cref="Core.WayfareConfig.UnownedPortalsArePublic"/>.
-    /// Also whether the portal has the game's own tag, without which it is not usable.</summary>
+    /// Wayfare player has ever touched) reads as unowned and Public: every portal is built Public (the user's rule, 2026-10-05).</summary>
     public static class PortalFields
     {
         public const string ModeKey = "wf_mode";
@@ -18,18 +17,10 @@ namespace Wayfare.Portals
 
         public static bool HasOwner(ZDO zdo) => GetOwner(zdo) != 0L;
 
-        /// <summary>A portal is usable only with a tag (the user's rule, 2026-10-04): untagged it stays closed, is not
-        /// on the map and takes no one anywhere.</summary>
-        public static bool HasTag(ZDO zdo) => zdo != null && HasTag(zdo.GetString(ZDOVars.s_tag));
-
-        public static bool HasTag(string tag) => !string.IsNullOrWhiteSpace(tag);
-
-        public static PortalMode GetMode(ZDO zdo, bool unownedIsPublic)
+        public static PortalMode GetMode(ZDO zdo)
         {
             int raw = zdo.GetInt(ModeKey, NoMode);
-            if (raw < 0)
-                return unownedIsPublic ? PortalMode.Public : PortalMode.Private;
-            return (PortalMode)raw;
+            return raw < 0 ? PortalMode.Public : (PortalMode)raw;
         }
 
         public static long GetOwner(ZDO zdo) => zdo.GetLong(OwnerKey, 0L);

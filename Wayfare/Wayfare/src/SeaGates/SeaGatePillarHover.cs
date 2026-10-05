@@ -3,11 +3,9 @@ using Wayfare.Portals;
 
 namespace Wayfare.SeaGates
 {
-    /// <summary>A pillar's hover text. Unpaired: the pillar's name and how to pair it. Paired: the gate's name, where it
-    /// sends ships, then the E and Alt+E prompts in the look of the portals' own (<see cref="TeleportWorldHoverPatch"/>).
-    /// The destination's name comes from the server's gate list (<see cref="SeaGateIndex.Gates"/>, fetched when the
-    /// picker opens), else from a loaded gate, else the default name. Names players typed are shown without rich text
-    /// and never run through the localizer.</summary>
+    /// <summary>A pillar's hover text. Unpaired: the pillar's name and how to pair it. Paired: the gate's name, how a
+    /// ship uses it, then the E and Alt+E prompts in the look of the portals' own (<see cref="TeleportWorldHoverPatch"/>).
+    /// Names players typed are shown without rich text and never run through the localizer.</summary>
     public static class SeaGatePillarHover
     {
         private const string UseKey = "[<color=yellow><b>$KEY_Use</b></color>] ";
@@ -22,7 +20,7 @@ namespace Wayfare.SeaGates
             LoadedGate gate = SeaGateRegistry.GateOf(pillar);
             if (gate == null)
                 return pillarName + "\n" + UnpairedLines(pillar);
-            return Shown(gate.Name) + "\n" + DestinationLine(gate.DestId) + "\n" + Localize(UseKey + SeaGateWords.HoverSetDest) +
+            return Shown(gate.Name) + "\n" + Localize(SeaGateWords.HoverSailIn) + "\n" + Localize(UseKey + SeaGateWords.HoverRename) +
                    "\n" + CycleLine(gate);
         }
 
@@ -38,28 +36,9 @@ namespace Wayfare.SeaGates
             return check.Describe() + "\n" + Localize(SeaGateWords.FixHint);
         }
 
-        private static string DestinationLine(long destId)
-        {
-            if (destId == 0L)
-                return Localize(SeaGateWords.NoDestination);
-            return string.Format(Localize(SeaGateWords.Destination), Shown(DestinationName(destId)));
-        }
-
-        /// <summary>The destination's stored name; empty when no list on this machine has it.</summary>
-        private static string DestinationName(long destId)
-        {
-            foreach (SeaGateInfo info in SeaGateIndex.Gates)
-            {
-                if (info.Id == destId)
-                    return info.Name;
-            }
-            LoadedGate loaded = SeaGateRegistry.FindGate(destId);
-            return loaded != null ? loaded.Name : "";
-        }
-
         private static string CycleLine(LoadedGate gate)
         {
-            PortalMode mode = PortalFields.GetMode(gate.AnchorZdo, WayfareConfig.UnownedPortalsArePublic.Value);
+            PortalMode mode = PortalFields.GetMode(gate.AnchorZdo);
             string label = Localize(ModeCycle.ModeLabel(mode));
             return Localize(ModeCycle.AltUseKeys) + string.Format(Localize(Words.HoverCycle), label);
         }

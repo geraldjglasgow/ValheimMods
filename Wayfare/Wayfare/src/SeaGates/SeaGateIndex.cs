@@ -13,16 +13,14 @@ namespace Wayfare.SeaGates
         public readonly string Name;
         public readonly PortalMode Mode;
         public readonly long Owner;
-        public readonly long DestId;
 
-        public SeaGateInfo(long id, Vector3 position, string name, PortalMode mode, long owner, long destId)
+        public SeaGateInfo(long id, Vector3 position, string name, PortalMode mode, long owner)
         {
             Id = id;
             Position = position;
             Name = name;
             Mode = mode;
             Owner = owner;
-            DestId = destId;
         }
     }
 
@@ -113,7 +111,6 @@ namespace Wayfare.SeaGates
                 pkg.Write(gate.Name ?? "");
                 pkg.Write((int)gate.Mode);
                 pkg.Write(gate.Owner);
-                pkg.Write(gate.DestId);
             }
             ZRoutedRpc.instance.InvokeRoutedRPC(peer, ListRpc, pkg);
         }
@@ -137,7 +134,7 @@ namespace Wayfare.SeaGates
             for (int i = 0; i < count; i++)
             {
                 gates.Add(new SeaGateInfo(pkg.ReadLong(), pkg.ReadVector3(), pkg.ReadString(),
-                    (PortalMode)pkg.ReadInt(), pkg.ReadLong(), pkg.ReadLong()));
+                    (PortalMode)pkg.ReadInt(), pkg.ReadLong()));
             }
             SetSnapshot(gates);
         }

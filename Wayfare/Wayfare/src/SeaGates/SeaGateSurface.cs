@@ -8,13 +8,12 @@ namespace Wayfare.SeaGates
     /// <summary>The client-side portal surface between the pillars of every gate loaded on this machine. Visual only:
     /// no collider, no ZDO, nothing networked; ship detection is geometric, in <see cref="ShipJump"/>. Each gate gets
     /// one <see cref="SeaGateSurfaceView"/>, built once when the gate appears in <see cref="SeaGateRegistry.Gates"/>
-    /// (re-read a few times a second), faded in, held at <see cref="DimIntensity"/> while the gate has no destination,
-    /// faded out and destroyed when the gate is gone or a pillar unloads. Every frame only the fades and the sheet's
+    /// (re-read a few times a second), faded in to full brightness (every gate reaches every other), faded out and
+    /// destroyed when the gate is gone or a pillar unloads. Every frame only the fades and the sheet's
     /// shimmer move.</summary>
     public static class SeaGateSurface
     {
         private const float ScanSeconds = 0.25f;
-        private const float DimIntensity = 0.4f;
 
         private static readonly Dictionary<long, SeaGateSurfaceView> live = new Dictionary<long, SeaGateSurfaceView>();
         private static readonly List<SeaGateSurfaceView> all = new List<SeaGateSurfaceView>();   // live and fading out
@@ -76,7 +75,7 @@ namespace Wayfare.SeaGates
             }
             if (view == null && !broken.Contains(gate.Id))
                 view = Create(gate);
-            view?.SetTarget(gate.DestId == 0L ? DimIntensity : 1f);
+            view?.SetTarget(1f);
         }
 
         private static SeaGateSurfaceView Create(LoadedGate gate)

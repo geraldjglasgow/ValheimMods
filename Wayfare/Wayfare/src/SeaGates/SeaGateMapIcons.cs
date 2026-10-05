@@ -11,9 +11,9 @@ namespace Wayfare.SeaGates
     /// on the same layer above every pin as the portal icons (<see cref="MapIconLayer"/>, <see cref="MapOverlay"/>),
     /// never the game's own pins. Shown while the picker is open, and on the ordinary large map while the player has
     /// map icons toggled on (<see cref="HotkeyToggle"/>), never during portal targeting, where a sea gate is no
-    /// destination. Only the gates the local player may target are drawn, plus, in the picker, the gate it was opened
-    /// at, always, in gold, with a line to its current destination. The list is asked for again every
-    /// <see cref="RequestSeconds"/> while icons show. Icons are placed through the map image's own rectangle, the same
+    /// destination. Only the gates the local player may target are drawn, plus, in the picker, the gate the ship
+    /// stopped in, always, in gold. The list is asked for again every <see cref="RequestSeconds"/> while icons show.
+    /// Icons are placed through the map image's own rectangle, the same
     /// arithmetic the game uses for its pins, so they sit right whatever the layer's anchors are.</summary>
     internal static class SeaGateMapIcons
     {
@@ -57,7 +57,6 @@ namespace Wayfare.SeaGates
             if (source != null)
                 Show(source.Id, (source.Anchor.transform.position + source.Partner.transform.position) * 0.5f, source.Name, true, seen);
             RemoveStale(seen);
-            DrawLink(source);
         }
 
         private static bool ShouldShow()
@@ -93,7 +92,7 @@ namespace Wayfare.SeaGates
 
         /// <summary>Puts an icon over a world position, as the game places its own pins; false when that spot is off the
         /// visible part of the map.</summary>
-        private static bool Place(RectTransform root, Vector3 world)
+        internal static bool Place(RectTransform root, Vector3 world)
         {
             Minimap map = Minimap.instance;
             RawImage image = map.m_mapImageLarge;
@@ -115,23 +114,6 @@ namespace Wayfare.SeaGates
             icon.Label.color = isSource ? SourceLabel : Color.white;
             if (isSource)
                 icon.Root.SetAsLastSibling();
-        }
-
-        /// <summary>In the picker, a line from the gate to its current destination while both are on screen.</summary>
-        private static void DrawLink(LoadedGate source)
-        {
-            long destId = source != null ? source.DestId : 0L;
-            if (destId == 0L || !IsShown(source.Id, out Icon from) || !IsShown(destId, out Icon to))
-            {
-                SeaGateMapLink.Hide();
-                return;
-            }
-            SeaGateMapLink.Show(Minimap.instance.m_pinRootLarge, from.Root.position, to.Root.position);
-        }
-
-        private static bool IsShown(long id, out Icon icon)
-        {
-            return icons.TryGetValue(id, out icon) && icon.Root != null && icon.Root.gameObject.activeSelf;
         }
 
         /// <summary>The gate whose icon is under a screen point, the nearest when icons overlap.</summary>
@@ -174,7 +156,6 @@ namespace Wayfare.SeaGates
 
         internal static void Clear()
         {
-            SeaGateMapLink.Hide();
             if (icons.Count == 0)
                 return;
             foreach (Icon icon in icons.Values)

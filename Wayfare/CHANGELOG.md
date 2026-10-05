@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+- Every portal reaches every other; a tag is only its name. Untagged portals are open again.
+- Sea gates: every gate reaches every other. Sail in and the helmsman picks the destination on the map.
+- Sea gates: the whole crew sees the map with each other's pointers; E on a pillar only names the gate.
+- The map opens framed on every portal you may use.
+- Access: only admins may set Admin; a Private portal answers only to its owner.
+- Removed: `Unowned Portals Are Public`; a portal nobody has set is Public.
+- Fixed: walking into a portal with the inventory open left both stuck open.
+
 ## 0.2.0
 
 - Portals need a tag: untagged ones stay dark, closed and off the map; tagged ones glow as connected.

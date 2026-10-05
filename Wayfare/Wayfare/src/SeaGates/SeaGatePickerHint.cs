@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 namespace Wayfare.SeaGates
 {
-    /// <summary>The picker's one line of help (<see cref="SeaGateWords.PickerHint"/>) in the upper left corner of the large
-    /// map while the picker is open: a child of the map image, drawn after the map's own children, outlined so it reads
+    /// <summary>The picker's one line of help (the helmsman's or the crew's, from <see cref="SeaGatePicker"/>) in the
+    /// upper left corner of the large map while the picker is open: a child of the map image, drawn after the map's own children, outlined so it reads
     /// on any terrain. Built once per map and only switched on and off after that.</summary>
     internal static class SeaGatePickerHint
     {
@@ -13,16 +13,16 @@ namespace Wayfare.SeaGates
 
         private static Text label;
 
-        internal static void Show()
+        internal static void Show(string line)
         {
             Minimap map = Minimap.instance;
             if (map == null || map.m_mapImageLarge == null)
                 return;
             Text text = Get(map.m_mapImageLarge.transform);
-            if (text.gameObject.activeSelf)
-                return;
-            text.text = Localization.instance.Localize(SeaGateWords.PickerHint);
-            text.gameObject.SetActive(true);
+            if (text.text != line)
+                text.text = line;
+            if (!text.gameObject.activeSelf)
+                text.gameObject.SetActive(true);
         }
 
         internal static void Hide()

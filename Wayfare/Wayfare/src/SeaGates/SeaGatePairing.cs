@@ -113,12 +113,9 @@ namespace Wayfare.SeaGates
             }
         }
 
-        /// <summary>Writes the other half of the link. A gate formed with a different partner than before starts
-        /// without a destination.</summary>
+        /// <summary>Writes the other half of the link.</summary>
         private static void Link(ZDO zdo, long partnerId, int sides)
         {
-            if (SeaGateFields.GetPartner(zdo) != partnerId)
-                zdo.Set(SeaGateFields.DestKey, 0L);
             zdo.Set(SeaGateFields.PartnerKey, partnerId);
             zdo.Set(SeaGateFields.SidesKey, sides);
             SeaGateRegistry.Invalidate();
@@ -131,7 +128,6 @@ namespace Wayfare.SeaGates
                 return;
             ZDO zdo = pillar.Zdo;
             zdo.Set(SeaGateFields.PartnerKey, 0L);
-            zdo.Set(SeaGateFields.DestKey, 0L);
             SeaGateRegistry.Invalidate();
         }
 

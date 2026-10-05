@@ -1,8 +1,8 @@
 # Sea Gates
 
-**Experimental.** A sea gate is a portal for ships: two pillars with water between them. A ship sailing through comes
-out of another sea gate with everyone aboard, keeping its speed. Only ships jump: a swimmer or a walker passing
-through is not moved.
+**Experimental.** A sea gate is a portal for ships: two pillars with water between them. Every sea gate reaches every
+other. A ship sailing in stops, its helmsman picks any other sea gate on the map, and the ship comes out there with
+everyone aboard, keeping its speed. Only ships jump: a swimmer or a walker passing through is not moved.
 
 ## Building the pillars
 
@@ -18,9 +18,8 @@ through is not moved.
     exit.
 - Depth is measured to the ground: digging the seabed deeper counts, a dock or other building piece does not.
 - A pillar pairs with the nearest pillar that is not already in a gate.
-- Once paired, a portal swirl fills the gap: dim while the gate has no destination, bright once it has one. The
-  builder, if within 40 m, sees "The sea gate is open".
-- Removing either pillar closes the gate. A gate formed again, with another pillar, starts without a destination.
+- Once paired, a portal swirl fills the gap. The builder, if within 40 m, sees "The sea gate is open".
+- Removing either pillar closes the gate.
 
 ## The placement preview
 
@@ -45,29 +44,35 @@ A placed pillar keeps trying by itself, so fixing the problem (digging, moving o
 without rebuilding: its hover text says "Fix it and the gate opens by itself". With no other pillar in reach it says
 "Not paired: build a second pillar 10 to 15 m away across the water".
 
-## Destination, name and access
+## Name and access
 
-Look at either pillar of a gate: the hover text shows the gate's name, its destination and its access mode.
+Look at either pillar of a gate: the hover text shows the gate's name and its access mode.
 
-- **E** opens the map as the sea gate picker: only the sea gates you may sail to, and this gate in gold with a line to
-  its current destination. Click another gate to make it the destination ("Ships sailing through now go to ...").
-  Click this gate to rename it (up to 20 characters; a gate without a name is "Sea gate"). Closing the map changes
-  nothing.
+- **E** names the gate (up to 20 characters; a gate without a name is "Sea gate"). The name is only a label on the
+  map.
 - **Shift+E** cycles the gate's access mode, exactly as on a portal ([Portals and Access](wiki:Portals and Access)):
   Public, Private, Admin.
-- Setting the destination, renaming and changing the mode need the same right: the gate has no owner yet, you own it,
-  or you are an admin ("You don't own this sea gate"); under a ward you need access to it.
-- A destination is one way: each gate has its own. For the way back, set the other gate's destination too.
-- Who may sail there is the destination gate's access mode, judged for the player at the helm.
+- Naming and changing the mode need the same right: the gate has no owner yet, you own it, or you are an admin ("You
+  don't own this sea gate"); under a ward you need access to it.
+- Who may sail to a gate is that gate's access mode, judged for the player at the helm.
 - On the map a sea gate is a dark blue disc with two waves in a teal ring. Gates show while you pick, and on the
   ordinary map with `Toggle Icons Key` (P).
 
 ## Sailing through
 
 1. Someone must be at the helm. Sail between the pillars, from either side.
-2. A quarter of the ship's length through, everyone aboard sees the game's teleport screen.
-3. Everyone lands on deck where they stood, facing the same way. Whoever steered has the helm again; anyone seated is
-   standing. The ship keeps its speed, sail and rudder.
+2. A quarter of the ship's length through, the ship stops in the gate and everyone aboard gets the map: every sea
+   gate the helmsman may sail to, the gate the ship is in shown in gold. The ship takes no damage while it waits.
+3. Everyone's pointer shows on the others' maps as an arrow with their name, so the crew can point gates out; the
+   helmsman's is gold. Only the helmsman picks: a click by anyone else says "Only the helmsman picks the sea gate".
+4. The helmsman clicks a gate. Everyone aboard sees the game's teleport screen.
+5. Everyone lands on deck where they stood, facing the same way. Whoever steered has the helm again; anyone seated is
+   standing. The ship keeps the speed it had when it stopped, its sail and its rudder.
+
+The helmsman closing the map (Escape, the map key, the inventory) sails on through without jumping; so does leaving
+the helm. To pick again, sail out of the gate and back in, or turn and come through from the other side. Anyone else
+closing the map only closes their own; opening the map again while the ship still waits brings the gates and
+pointers back.
 
 - The ship comes out of the destination gate on the side it was heading for, at the same place across the gate and
   the same angle, half a ship's length plus 4 m beyond it. If that side is too shallow there, it comes out of the
@@ -75,18 +80,18 @@ Look at either pillar of a gate: the hover text shows the gate's name, its desti
 - If another ship or a large object is in the way, the ship is placed clear of it, up to 20 m further out.
 - The ship's storage goes along. Tamed animals and items lying loose on deck stay behind.
 
-When a ship does not jump, everyone aboard sees why and the ship sails on through; turn and sail through again to
-retry.
+When a ship does not stop or does not jump, everyone aboard sees why. Before the stop (no helmsman, restricted cargo,
+portals blocked) the ship sails on through; turn and sail through again to retry. After a pick is refused, the map
+stays open: pick another gate, or close the map to sail on.
 
 | Message | Meaning |
 | --- | --- |
 | A ship passes through a sea gate only with someone at the helm | nobody steers |
-| This sea gate has no destination | set one with E |
-| The destination sea gate is gone | its pillars were removed or no longer pair |
-| Only the destination gate's owner may sail there | the destination is Private |
-| Only a server admin may sail to the destination gate | the destination is Admin |
+| The destination sea gate is gone | its pillars were removed or no longer pair; pick another |
+| Only the destination gate's owner may sail there | the picked gate is Private |
+| Only a server admin may sail to the destination gate | the picked gate is Admin |
 | Ore and other restricted cargo can't pass through a sea gate | see below |
-| The sea gate wasn't ready: sail through again | the gate could not open in time |
+| The sea gate wasn't ready: sail through again | the destination had no room to come out; the ship sails on |
 | This sea gate is closed | sea gates are switched off |
 | Portal travel is blocked here | a world modifier blocks portals |
 

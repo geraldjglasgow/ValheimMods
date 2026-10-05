@@ -1,7 +1,6 @@
 using HarmonyLib;
 using UnityEngine;
 using Wayfare.Core;
-using Wayfare.Portals;
 
 namespace Wayfare.Targeting
 {
@@ -31,7 +30,8 @@ namespace Wayfare.Targeting
                 return;
             SourcePortal = source;
             Active = true;
-            Minimap.instance.SetMapMode(Minimap.MapMode.Large);
+            MapOpening.Large(Minimap.instance);
+            MapFit.FitPortals(Minimap.instance, Player.m_localPlayer, source.transform.position);
         }
 
         public static void Close()
@@ -77,8 +77,8 @@ namespace Wayfare.Targeting
     }
 
     /// <summary>Vanilla's only call site for <c>TeleportWorld.Teleport</c>: the local player's collider entering a
-    /// portal's trigger. Replaced with opening targeting instead of an immediate tag-paired teleport; a portal
-    /// without a tag opens nothing and says it needs one.</summary>
+    /// portal's trigger. Replaced with opening targeting instead of an immediate tag-paired teleport, tagged or
+    /// not: the tag is only the portal's name.</summary>
     [HarmonyPatch(typeof(TeleportWorldTrigger), "OnTriggerEnter")]
     public static class PortalTriggerPatch
     {
@@ -90,11 +90,7 @@ namespace Wayfare.Targeting
             Player player = colliderIn != null ? colliderIn.GetComponent<Player>() : null;
             if (player == null || player != Player.m_localPlayer)
                 return true;
-            TeleportWorld portal = __instance.GetComponentInParent<TeleportWorld>();
-            if (portal != null && portal.m_nview != null && PortalFields.HasTag(portal.m_nview.GetZDO()))
-                TargetingSession.Open(portal);
-            else
-                player.Message(MessageHud.MessageType.Center, Words.NeedsTag);
+            TargetingSession.Open(__instance.GetComponentInParent<TeleportWorld>());
             return false;
         }
     }

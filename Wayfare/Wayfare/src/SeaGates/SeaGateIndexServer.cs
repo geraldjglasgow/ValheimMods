@@ -70,14 +70,13 @@ namespace Wayfare.SeaGates
         {
             List<ZDO> pillars = SeaGateScan.Pillars();
             Dictionary<long, ZDO> byId = ById(pillars);
-            bool unownedIsPublic = WayfareConfig.UnownedPortalsArePublic.Value;
             List<SeaGateInfo> gates = new List<SeaGateInfo>();
             foreach (ZDO anchor in pillars)
             {
                 if (!byId.TryGetValue(SeaGateFields.GetPartner(anchor), out ZDO partner))
                     continue;
                 if (SeaGateFields.IsMutual(anchor, partner) && SeaGateFields.IsAnchor(anchor, partner))
-                    gates.Add(ToInfo(anchor, partner, unownedIsPublic));
+                    gates.Add(ToInfo(anchor, partner));
             }
             return gates;
         }
@@ -110,11 +109,10 @@ namespace Wayfare.SeaGates
             return byId;
         }
 
-        private static SeaGateInfo ToInfo(ZDO anchor, ZDO partner, bool unownedIsPublic)
+        private static SeaGateInfo ToInfo(ZDO anchor, ZDO partner)
         {
             return new SeaGateInfo(SeaGateFields.GetId(anchor), (anchor.GetPosition() + partner.GetPosition()) * 0.5f,
-                SeaGateFields.GetName(anchor), PortalFields.GetMode(anchor, unownedIsPublic), PortalFields.GetOwner(anchor),
-                SeaGateFields.GetDest(anchor));
+                SeaGateFields.GetName(anchor), PortalFields.GetMode(anchor), PortalFields.GetOwner(anchor));
         }
     }
 }

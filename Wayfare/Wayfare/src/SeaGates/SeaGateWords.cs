@@ -12,14 +12,10 @@ namespace Wayfare.SeaGates
         public static readonly string DefaultName = Language.Add("wf_sg_default_name", "Sea gate");
 
         public static readonly string Unpaired = Language.Add("wf_sg_unpaired", "Not paired: build a second pillar 10 to 15 m away across the water");
-        public static readonly string NoDestination = Language.Add("wf_sg_nodest", "No destination");
-        public static readonly string Destination = Language.Add("wf_sg_dest", "Destination: {0}");
-        public static readonly string HoverSetDest = Language.Add("wf_sg_hover_setdest", "Set destination");
+        public static readonly string HoverRename = Language.Add("wf_sg_hover_rename", "Name");
+        public static readonly string HoverSailIn = Language.Add("wf_sg_hover_sailin", "Sail in with someone at the helm to pick any sea gate");
 
-        public static readonly string PickerHint = Language.Add("wf_sg_picker_hint",
-            "Click a sea gate to sail there from this gate. Click this gate to rename it.");
         public static readonly string RenameTopic = Language.Add("wf_sg_rename", "Name this sea gate");
-        public static readonly string DestinationSet = Language.Add("wf_sg_dest_set", "Ships sailing through now go to {0}");
 
         public static readonly string PairOk = Language.Add("wf_sg_pair_ok", "Pairs with this pillar");
         public static readonly string PairTooFar = Language.Add("wf_sg_pair_far", "Too far from the other pillar: {0} m, at most {1} m");
@@ -31,7 +27,6 @@ namespace Wayfare.SeaGates
         public static readonly string Paired = Language.Add("wf_sg_paired", "The sea gate is open");
         public static readonly string FixHint = Language.Add("wf_sg_fix_hint", "Fix it and the gate opens by itself");
 
-        public static readonly string DeniedNoDest = Language.Add("wf_sg_denied_nodest", "This sea gate has no destination");
         public static readonly string DeniedGone = Language.Add("wf_sg_denied_gone", "The destination sea gate is gone");
         public static readonly string DeniedCargo = Language.Add("wf_sg_denied_cargo", "Ore and other restricted cargo can't pass through a sea gate");
         public static readonly string DeniedNotReady = Language.Add("wf_sg_denied_notready", "The sea gate wasn't ready: sail through again");

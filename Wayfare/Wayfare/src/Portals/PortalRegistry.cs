@@ -50,14 +50,13 @@ namespace Wayfare.Portals
         /// the server, which is why <see cref="PortalSync"/> uses it there to answer clients.</summary>
         internal static List<PortalInfo> ReadLocal()
         {
-            bool unownedIsPublic = WayfareConfig.UnownedPortalsArePublic.Value;
             List<PortalInfo> portals = new List<PortalInfo>();
             foreach (ZDO zdo in ZDOMan.instance.GetPortalList())
             {
                 if (zdo == null || !zdo.IsValid() || !PortalDiscovery.IsPortalPrefab(zdo.GetPrefab()))
                     continue;
                 portals.Add(new PortalInfo(zdo.m_uid, zdo.GetPosition(), zdo.GetString(ZDOVars.s_tag),
-                    PortalFields.GetMode(zdo, unownedIsPublic), PortalFields.GetOwner(zdo)));
+                    PortalFields.GetMode(zdo), PortalFields.GetOwner(zdo)));
             }
             return portals;
         }

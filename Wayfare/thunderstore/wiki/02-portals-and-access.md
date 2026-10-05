@@ -4,8 +4,8 @@
 
 - Walk into any portal: the large map opens with an icon on every portal you may travel to. The icons are larger and
   pulse while you choose. Click one to go there.
-- Portals no longer pair: any tagged portal reaches any other. A tag is the name under the portal's icon; E on a
-  portal still opens the tag box. Every tagged portal glows as connected; one without a tag stays dark and closed.
+- Portals no longer pair: every portal reaches every other and glows as connected, tagged or not. A tag is only the
+  name under the portal's icon; E on a portal opens the tag box.
 - Double-click a portal icon to place a map pin there; a right click removes a pin under it first.
 - Closing the map (Escape, the map key, the inventory) cancels. Walk out of the portal and back in to choose again.
 - The game's carry rules apply: with ore, metal or other items portals refuse, you cannot travel, unless the portal
@@ -26,11 +26,12 @@ Every portal has a mode; its hover text shows which.
 | Admin | server admins |
 
 - **Shift+E** on a portal (the game's alternate use: hold the AltPlace key, Left Shift by default, and press Use)
-  moves it to the next mode: Public, Private, Admin, then Public again.
+  moves it to the next mode: Public, Private, then Public again. Only an admin may choose Admin: for them Shift+E
+  goes Public, Private, Admin, then Public again.
 - Changing the mode makes you the portal's owner. Anyone may change a portal nobody owns; an owned one only its owner
-  or an admin ("You don't own this portal"). Under a ward you need access to the ward.
-- A portal nobody has set a mode on counts as Public; with `Unowned Portals Are Public` off, only admins may travel
-  to it.
+  or an admin ("You don't own this portal"). A Private portal only its owner, the player who made it private, not
+  even an admin. Under a ward you need access to the ward.
+- Every new portal is Public, and so is any portal nobody has set a mode on.
 - The mode decides where you may travel to, not which portal you may enter: any portal you walk into lists every
   portal you may use.
 - Portals you may not use never show on your map. A refusal says why: "Only the portal's owner may target it" or
@@ -43,7 +44,7 @@ Every portal has a mode; its hover text shows which.
 - Right-click a portal icon on the map to add it to your favourites, or to remove it ("Added to favourites",
   "Removed from favourites"). A favourite shows a ring around its icon.
 - While you choose a destination, your favourites are listed on the left of the map; click one to travel there. A
-  long list scrolls with the mouse wheel. A portal you may no longer use, or one that lost its tag, leaves the list.
+  long list scrolls with the mouse wheel. A portal you may no longer use leaves the list.
 - Favourites are your own, kept with your character, and stay through renames and server restarts. Only portals you
   may still use are listed.
 

@@ -4,9 +4,9 @@ namespace Wayfare.Portals
     /// the two can never disagree about who may target a portal.</summary>
     public static class PortalAccess
     {
-        public static bool MayTarget(ZDO portalZdo, long playerId, bool isAdmin, bool unownedIsPublic)
+        public static bool MayTarget(ZDO portalZdo, long playerId, bool isAdmin)
         {
-            return MayTarget(PortalFields.GetMode(portalZdo, unownedIsPublic), PortalFields.GetOwner(portalZdo), playerId, isAdmin);
+            return MayTarget(PortalFields.GetMode(portalZdo), PortalFields.GetOwner(portalZdo), playerId, isAdmin);
         }
 
         /// <summary>Same rule, from an already-taken snapshot (<see cref="PortalInfo"/>) rather than a live ZDO -
@@ -27,13 +27,31 @@ namespace Wayfare.Portals
             }
         }
 
+        /// <summary>The mode Shift+E moves to: Public, Private, Admin for an admin; Public and Private for anyone else,
+        /// whose press on an Admin portal they own makes it Public.</summary>
+        public static PortalMode NextMode(PortalMode mode, bool isAdmin)
+        {
+            if (isAdmin)
+                return (PortalMode)(((int)mode + 1) % 3);
+            return mode == PortalMode.Public ? PortalMode.Private : PortalMode.Public;
+        }
+
+        /// <summary>Whether the acting player may set this mode: only an admin may set Admin.</summary>
+        public static bool MaySet(long modeRaw, bool isAdmin)
+        {
+            if (modeRaw < (long)PortalMode.Public || modeRaw > (long)PortalMode.Admin)
+                return false;
+            return isAdmin || modeRaw != (long)PortalMode.Admin;
+        }
+
         /// <summary>Whether the acting player may cycle this portal's mode. An unowned portal may be claimed by
-        /// anyone; an owned one only by its owner or an admin - otherwise ownership would mean nothing.</summary>
+        /// anyone; an owned one only by its owner or an admin - otherwise ownership would mean nothing. A Private
+        /// portal only by its owner, the player who made it private (the user's rule, 2026-10-05): not even an admin.</summary>
         public static bool MayCycle(ZDO portalZdo, long playerId, bool isAdmin)
         {
-            if (!PortalFields.HasOwner(portalZdo))
+            if (!PortalFields.HasOwner(portalZdo) || PortalFields.GetOwner(portalZdo) == playerId)
                 return true;
-            return isAdmin || PortalFields.GetOwner(portalZdo) == playerId;
+            return isAdmin && PortalFields.GetMode(portalZdo) != PortalMode.Private;
         }
     }
 }

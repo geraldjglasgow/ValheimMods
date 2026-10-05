@@ -19,9 +19,9 @@ tag-paired target vanilla's `Game.ConnectPortalsCoroutine` maintains server-side
 targeting is independent of that connection entirely: we never read or write it. `Game.ConnectPortalsCoroutine`
 keeps running (it is server code we do not patch out), but nothing reads its result any more: the portal's look
 (glow, connect sound, swirl, the hover's "connected") comes from `TeleportWorld.HaveTarget`/`TargetFound`, which
-`Portals/PortalOpenPatch.cs` answers from the tag instead. A portal must have a tag to be usable (the user's rule,
-2026-10-04): a tagged portal counts as connected to every other, an untagged one stays closed, is left off the map,
-opens no targeting when walked into ("This portal needs a tag") and is refused by the server as a source or target.
+`Portals/PortalOpenPatch.cs` answers true for every portal. Every portal reaches every other, tagged or not, and the
+tag is only its name (the user's rule, 2026-10-05; 0.2.0 had briefly required a tag and left untagged portals dark,
+off the map and refused).
 No vanilla teleport ever fires because entering a portal's trigger is intercepted (below) before
 `TeleportWorld.Teleport()` runs.
 
@@ -79,7 +79,7 @@ Two different actions need two different authorities, and neither is "trust the 
   (routed, ZDOID + mode) to the server, which resolves the sender's player and admin flag, checks the portal and
   `MayCycle`, and writes the change itself when it owns the ZDO or nobody does; otherwise it forwards `wf_SetMode`
   (player id, admin flag, mode) on the portal's `ZNetView` to the owner, which accepts it only from the server and
-  checks again against its own copy before writing. Sea gate edits (mode, destination, name) take the same path
+  checks again against its own copy before writing. Sea gate edits (mode, name) take the same path
   (`wf_SeaGateEdit`).
 - **Targeting a portal** (`Targeting/RPC_wf_RequestTeleport`) is different: the portal a player wants to target is
   usually not owned by that player's own machine, and trusting "whichever client owns this ZDO right now" to police
@@ -164,7 +164,7 @@ Wayfare/Wayfare/src/
     PortalAccess.cs               May(PortalInfo, playerID, isAdmin) - the one access rule, used by client display
                                   filtering and by the server's teleport grant
     ModeCycle.cs                  TeleportWorld.Interact prefix (alt) + RPC_wf_SetMode owner-side handler
-    PortalOpenPatch.cs            TeleportWorld.HaveTarget / TargetFound postfixes: open exactly when tagged
+    PortalOpenPatch.cs            TeleportWorld.HaveTarget / TargetFound postfixes: every portal open
   Targeting/
     TargetingSession.cs           TeleportWorldTrigger.OnTriggerEnter prefix; open/close targeting, the source
                                   portal reference, guarded against the load-order incident
@@ -198,9 +198,8 @@ Wayfare/Wayfare/config/           (none yet - no YAML needed, cfg-only)
 
 ## Open questions the spec left for this document (decided here, not asked)
 
-- **Unowned portal default mode**: SPEC item 8 already requires a config toggle
-  (`Map / Unowned Portals Are Public`, synced, default true) - `PortalAccess.May` reads it whenever `wf_owner` is
-  `0`/absent, rather than treating "no mode set" as a fourth silent state.
+- **Unowned portal default mode**: Public, always (the user's rule, 2026-10-05: every portal is built Public). The
+  `Unowned Portals Are Public` setting SPEC item 8 asked for was removed then; a portal with no `wf_mode` reads Public.
 - **Who may cycle a portal's mode**: not specified. Decision: the interact prefix allows cycling when the portal is
   unowned, when the acting player already owns it, or when the acting player is an admin; otherwise it shows
   "$wf_notowner" and does nothing. Without this, any player could reassign ownership of someone else's Private
@@ -226,12 +225,14 @@ Wayfare/Wayfare/config/           (none yet - no YAML needed, cfg-only)
 
 A portal for ships. Building in water is awkward in Valheim, so a sea gate is two pillars built on the ground, on
 land or in shallow water, one on each side of a channel, a river mouth or a shore and an islet. Once the second pillar stands close enough to the
-first, a portal surface fades in between them over the water. A ship that sails through comes out of the
-destination gate with everyone aboard, keeping its speed. Ships only: a swimmer or a walker passing through the
-surface is ignored.
+first, a portal surface fades in between them over the water. Every gate reaches every other: a ship that sails in
+stops, its helmsman picks any other gate on the map, and the ship comes out there with everyone aboard, keeping its
+speed. Ships only: a swimmer or a walker passing through the surface is ignored.
 
-Decided with the user: the destination is set on the gate (not picked at the helm); restricted cargo (ore, metal,
-eggs) blocks the jump like a portal, with a synced setting to allow it; ships only. The overriding requirement is
+Decided with the user: the destination is picked at the helm each time, like walking into a portal (changed
+2026-10-05; 0.1.0 and 0.2.0 set one destination per gate with E, which left a new gate "not connected"); E on a
+pillar only names the gate; restricted cargo (ore, metal, eggs) blocks the jump like a portal, with a synced setting
+to allow it; ships only. The overriding requirement is
 that nobody may die or be lost at sea in a jump: every step below exists for that.
 
 ### What the game does that shapes this (verified in the decompiled assembly)
@@ -252,7 +253,7 @@ that nobody may die or be lost at sea in a jump: every step below exists for tha
   peer. Ownership can change mid-jump, so the jump's state lives in the ship's ZDO and whoever owns the ship
   carries it on.
 - **ZDOIDs are renumbered on every world load** (`ZDO.Load`: `m_uid.SetID(++ZDOID.m_loadID)`). Pairs and
-  destinations therefore use an id of our own (`wf_sg_id`, a random long), never a ZDOID.
+  gates therefore use an id of our own (`wf_sg_id`, a random long), never a ZDOID.
 
 ### Building and pairing
 
@@ -277,43 +278,50 @@ that nobody may die or be lost at sea in a jump: every step below exists for tha
   a stray one opens the gate without rebuilding; a player within 40 m is told "The sea gate is open".
 - **Stored:** each pillar gets `wf_sg_id` and `wf_sg_partner` (the partner's id) and `wf_sg_sides`. A pair counts
   only when each names the other; a one-sided link reads as unpaired. The anchor is the pillar with the smaller id
-  (decided by the ids, so no write can race): it holds the gate's own fields, destination (`wf_sg_dest`, the
-  destination gate's id), name, `wf_mode` and `wf_owner`, and its id is the gate's id. The other pillar forwards
+  (decided by the ids, so no write can race): it holds the gate's own fields, name, `wf_mode` and `wf_owner`, and its
+  id is the gate's id (an old `wf_sg_dest` from 0.2.0 is left in place and never read). The other pillar forwards
   interactions to it. The new pillar writes its own ZDO; the partner's link is written by an owner-side RPC on the
   partner (`wf_SeaGatePair`), the same shape as `wf_SetMode`.
 - **The surface** is client-side only: built when both pillars are loaded, a quad from below the water to the
-  pillar tops wearing the game portal's own swirl effect, dimmed while the gate has no destination. Destroying
+  pillar tops wearing the game portal's own swirl effect, at full brightness. Destroying
   either pillar unpairs the other and the surface fades out.
 
-### Setting the destination and access
+### Name and access
 
-- E on either pillar opens the Wayfare map in a sea-gate picker that lists only sea gates. Clicking one sets the
-  destination; clicking the gate itself opens a text box to rename it. Alt+E cycles the access mode, as on portals.
-  The list comes from the server, `wf_RequestSeaGates`/`wf_SeaGateList` (the same shape as
-  `wf_RequestPortals`, sent when the picker opens, not on a tick), built from the pillars the server holds.
-- Sea gates use the portals' access modes and owner rule unchanged: the same cycle key, and setting a destination
-  needs the same right as cycling the mode (unowned, own, or admin). The picker shows only gates `PortalAccess.May`
-  allows.
+- E on either pillar opens a text box to name the gate; Alt+E cycles the access mode, as on portals. Naming needs
+  the same right as cycling the mode (unowned, own, or admin).
+- The helmsman's picker (below) lists only sea gates, from the server: `wf_RequestSeaGates`/`wf_SeaGateList` (the
+  same shape as `wf_RequestPortals`, sent when the picker opens and every 5 s while it is open), built from the
+  pillars the server holds. It shows only gates `PortalAccess.May` allows for the helmsman.
 - Sea gates never appear in the walk-in portal targeting list; they show on the map with an icon of their own.
 - The `NoPortals` world modifier closes sea gates too.
 
 ### The jump
 
-1. **Approach (owner only).** Each frame the machine that owns a ship checks it against every loaded gate in the
-   gate's own frame (`GateGeometry`; no physics triggers, so no layer questions). A ship within 30 m of the surface,
-   inside the span and with someone at the helm asks the server for a grant: `wf_SeaGateRequest` (source gate id). The server checks that the
-   destination exists and is paired, access for the ship owner's player (`SenderIdentity`) and `NoPortals`, then
-   replies `wf_SeaGateGrant` (both destination pillar positions, which sides are usable) or `wf_SeaGateDeny`. The
-   grant is good for 10 s, so it is in hand before the bow arrives.
-2. **Crossing.** The jump starts when either end of the ship's float box is a quarter of the ship's length through
-   the surface inside the span, while its centre is still on the near side, so the ship is seen sailing in. Only a steered ship jumps. With no grant, a denied grant or restricted
-   cargo, nothing happens: the ship sails through and the crew sees why. Nothing ever
-   half-happens.
+1. **Crossing (owner only).** Each frame the machine that owns a ship checks it against every loaded gate in the
+   gate's own frame (`GateGeometry`; no physics triggers, so no layer questions). The ship stops when either end of
+   its float box is a quarter of the ship's length through the surface inside the span, while its centre is still on
+   the near side, so the ship is seen sailing in. Only a steered ship stops. With nobody at the helm, `NoPortals` or
+   restricted cargo, nothing happens: the ship sails through and the crew sees why. Nothing ever half-happens.
+2. **Stop and pick.** The owner freezes the ship where it is (`wf_sg_state` = 4, choosing; `wf_sg_speed`, a new
+   `wf_sg_stop` id, `wf_sg_sgate`, `wf_sg_sside`). Every crew client (the ship it steers, `Player.GetControlledShip`,
+   else the one it stands aboard, `Ship.GetLocalShip`) sees the state and opens the large map as the sea gate picker,
+   the source gate in gold. Each sends its map pointer as a world point to every other crew member's peer
+   (`wf_SeaGatePointer` on the ship's `ZNetView`: stop id, x, z; 10 Hz while moving, 2 Hz at rest, nothing off the
+   map), drawn as an arrow with the player's name, the helmsman's gold (asked 2026-10-05, so the crew can point gates
+   out). Only the helmsman picks; anyone else closing the map only closes their own. The helmsman's click sends `wf_SeaGatePick` (stop id, gate id) on the ship's `ZNetView` to the owner,
+   which takes it only from the helmsman's machine and only for this stop, writes `wf_sg_picked` and asks the server:
+   `wf_SeaGateRequest` (source gate id, picked gate id, ship). The server checks both gates exist and are paired,
+   access to the picked gate for the helmsman and `NoPortals`, then replies `wf_SeaGateGrant` (both destination pillar
+   positions, which sides are usable) or `wf_SeaGateDeny` (with the picked gate). A denial is told to the crew and
+   clears the pick, the map stays open. Closing the map sends a pick of 0: the ship sails on with its speed and is
+   not stopped by that gate again until it has left the 30 m zone or its centre has crossed (`wf_sg_sailon`,
+   `wf_sg_sailside`, kept in the ZDO so a new owner knows). Leaving the helm or switching sea gates off sails on too.
 3. **Cargo check.** The owner checks the ship's container (`Inventory.IsTeleportable`) and every crew member's
    `wf_sg_heavy` flag. Each client keeps that flag up to date on its own player ZDO, once a second while aboard a
    ship, from `Player.IsTeleportable`. `Allow Restricted Cargo` (synced, default off) skips both.
-4. **Freeze.** The owner makes the ship kinematic where it is and writes the jump to the ship's ZDO: `wf_sg_jump`
-   (id), `wf_sg_state` = 1 (frozen), `wf_sg_speed`, `wf_sg_crew` (count from `Ship.m_players`, which includes remote
+4. **Freeze.** On the grant the ship is already kinematic where it stopped; the owner writes the jump to the ship's
+   ZDO: `wf_sg_jump` (id), `wf_sg_state` = 1 (frozen), `wf_sg_speed` (from the stop), `wf_sg_crew` (count from `Ship.m_players`, which includes remote
    players), `wf_sg_until` (timeout). It then sends `wf_SeaGateJump` to every crew member's peer: the jump id, the
    ship, the destination pose and the fallback spot.
 5. **Crew (each client, for its own player).** Leave the helm or seat, remembering the helm. Record the player's
@@ -361,16 +369,17 @@ that nobody may die or be lost at sea in a jump: every step below exists for tha
 ### Own names
 
 - Prefab `WF_SeaGatePillar`.
-- Pillar ZDO keys `wf_sg_id`, `wf_sg_partner`, `wf_sg_dest`, `wf_sg_name` (plus `wf_mode`/`wf_owner` on the
+- Pillar ZDO keys `wf_sg_id`, `wf_sg_partner`, `wf_sg_sides`, `wf_sg_name` (plus `wf_mode`/`wf_owner` on the
   anchor).
 - Ship ZDO keys `wf_sg_jump`, `wf_sg_state`, `wf_sg_speed`, `wf_sg_crew`, `wf_sg_landed`, `wf_sg_until`,
-  `wf_sg_safe`.
+  `wf_sg_safe`, and for the stop `wf_sg_stop`, `wf_sg_sgate`, `wf_sg_sside`, `wf_sg_picked`, `wf_sg_sailon`,
+  `wf_sg_sailside`.
 - Player ZDO key `wf_sg_heavy`.
 - RPCs: `wf_SeaGatePair`, `wf_SeaGateUnpair` (on the pillar's `ZNetView`); `wf_SeaGateEdit` (routed, to the
-  server) forwarded as `wf_SeaGateSetDest`/`wf_SeaGateSetName`/`wf_SeaGateSetMode` (on the anchor's `ZNetView`, from
-  the server only); `wf_RequestSeaGates`/`wf_SeaGateList` and `wf_SeaGateRequest`/`wf_SeaGateGrant`/`wf_SeaGateDeny`
+  server) forwarded as `wf_SeaGateSetName`/`wf_SeaGateSetMode` (on the anchor's `ZNetView`, from the server
+  only); `wf_RequestSeaGates`/`wf_SeaGateList` and `wf_SeaGateRequest`/`wf_SeaGateGrant`/`wf_SeaGateDeny`
   (routed, server); `wf_SeaGateJump` (routed, to each
-  crew peer); `wf_SeaGateLanded` (on the ship's `ZNetView`).
+  crew peer); `wf_SeaGateLanded`, `wf_SeaGatePick` and `wf_SeaGatePointer` (on the ship's `ZNetView`).
 
 ### Layout
 
@@ -382,9 +391,10 @@ Wayfare/Wayfare/src/SeaGates/
   pairing      SeaGatePairing, SeaGatePairRules, SeaGateDepth, SeaGatePreview, SeaGatePreviewLine
   surface      SeaGateSurface, SeaGateSurfaceView/Frame/Template/Effect/Fit/Particles/Sheet/Look
   list, map    SeaGateIndex, SeaGateIndexServer, SeaGateScan, SeaGatePicker, SeaGatePickerEdits, SeaGatePickerHint,
-               SeaGateMapDriver, SeaGateMapIcons, SeaGateMapLink, SeaGateMapSprites
+               SeaGatePointers, SeaGatePointerMarks, SeaGateMapDriver, SeaGateMapIcons, SeaGateMapSprites
   grant        SeaGateGrant, SeaGateGrantServer, CargoCheck
-  ship         ShipJump, ShipFreeze, JumpShips, JumpCrossing, JumpBegin, JumpPose, JumpSettle, JumpClearance
+  ship         ShipJump, ShipFreeze, JumpShips, JumpCrossing, JumpChoice, JumpBegin, JumpPose, JumpSettle,
+               JumpClearance
   crew         CrewJump, CrewHold, CrewSpot, CrewHelm, CrewFallback, CrewReport, CrewLogout, JumpProtection
 ```
 
@@ -409,9 +419,13 @@ Wayfare/Wayfare/src/SeaGates/
 
 ### Test checklist (dedicated server, two clients)
 
-- A Longship at full sail with two players aboard, one at the helm and one on deck, to a gate in a zone neither
-  has visited this session: both land on deck at their spots, the helmsman is back at the helm, the ship keeps its
-  speed.
+- A Longship at full sail with two players aboard, one at the helm and one on deck, into a gate: the ship stops, the
+  map opens for both, each sees the other's named pointer, the deck player's click does not pick, the helmsman's
+  click on a gate in a zone neither has visited this session
+  jumps; both land on deck at their spots, the helmsman is back at the helm, the ship keeps its speed.
+- Closing the map in the gate: the ship sails on through at its speed and does not stop again until it leaves or
+  turns back through. A Private gate of another player picked: the reason shows, the map stays open.
+- Two new gates, never touched: each reaches the other with no setup.
 - A ship parked across the destination exit: the arriving ship is placed clear of it.
 - The owner, then a crew member, disconnects mid-jump: the other player still lands on deck or on the fallback.
 - Ore in the cargo, and ore in a crew member's pocket, with `Allow Restricted Cargo` off (no jump, reason shown)
@@ -419,7 +433,7 @@ Wayfare/Wayfare/src/SeaGates/
 - A destination with one shallow side: the ship exits on the deep side.
 - Raft, Karve, Drakkar and a modded ship.
 - A swimmer through the surface: nothing. Pillars never appear in the walk-in portal list.
-- Server restart: pairs and destinations are kept. One pillar destroyed: the other unpairs and the surface goes.
+- Server restart: pairs and names are kept. One pillar destroyed: the other unpairs and the surface goes.
 
 ## Jump speed (moved from OpenKeep on 2026-10-04, untested in Wayfare)
 

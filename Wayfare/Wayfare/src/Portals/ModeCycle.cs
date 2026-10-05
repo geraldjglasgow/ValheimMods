@@ -46,7 +46,7 @@ namespace Wayfare.Portals
                 player.Message(MessageHud.MessageType.Center, Words.NotOwner);
                 return;
             }
-            PortalMode next = Next(PortalFields.GetMode(zdo, WayfareConfig.UnownedPortalsArePublic.Value));
+            PortalMode next = PortalAccess.NextMode(PortalFields.GetMode(zdo), isAdmin);
             if (ZRoutedRpc.instance != null)
                 ZRoutedRpc.instance.InvokeRoutedRPC(RequestModeRpc, zdo.m_uid, (int)next);
         }
@@ -81,7 +81,7 @@ namespace Wayfare.Portals
 
         private static bool May(ZDO zdo, long playerId, bool isAdmin, int modeRaw)
         {
-            if (playerId == 0L || modeRaw < (int)PortalMode.Public || modeRaw > (int)PortalMode.Admin)
+            if (playerId == 0L || !PortalAccess.MaySet(modeRaw, isAdmin))
                 return false;
             return PortalAccess.MayCycle(zdo, playerId, isAdmin);
         }
@@ -93,8 +93,6 @@ namespace Wayfare.Portals
             bool known = sender == ZRoutedRpc.instance.m_id || ZNet.instance.GetPeer(sender) != null;
             return known ? SenderIdentity.PlayerId(sender) : 0L;
         }
-
-        private static PortalMode Next(PortalMode mode) => (PortalMode)(((int)mode + 1) % 3);
 
         /// <summary>The Alt+Use prompt, unlocalized, as the game's item stand writes its own: the AltPlace key and Use
         /// (Shift + E), or the gamepad's alt keys and Use. The whole prompt goes through the localizer, which turns
@@ -154,7 +152,7 @@ namespace Wayfare.Portals
         {
             if (!WayfareConfig.Enabled.Value || __instance == null || __instance.m_nview == null || !__instance.m_nview.IsValid())
                 return;
-            PortalMode mode = PortalFields.GetMode(__instance.m_nview.GetZDO(), WayfareConfig.UnownedPortalsArePublic.Value);
+            PortalMode mode = PortalFields.GetMode(__instance.m_nview.GetZDO());
             string label = Localization.instance.Localize(ModeCycle.ModeLabel(mode));
             string line = string.Format(Localization.instance.Localize(Words.HoverCycle), label);
             __result += "\n" + Localization.instance.Localize(ModeCycle.AltUseKeys) + line;
