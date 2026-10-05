@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0
+
+- `Auto Equip`: gear in the Gear tab is always worn; right click gear in an open chest to wear it.
+- A piece taken off with a full inventory drops at your feet; broken gear stays in its slot until repaired.
+- Inventory Rows 0: the hotbar shows every open first-row cell.
+- Rarity backgrounds for EliteCrafting items now come from EliteCrafting.
+
 ## 0.10.0
 
 - Removed the `Mead Key` (B) and its square on the food and mead bar; the Mead Slot keys replace it.

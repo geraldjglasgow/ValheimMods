@@ -9,7 +9,8 @@ namespace PackPanel.Worn
     /// (<see cref="ExtraUtilities"/>) and moves what was put on into its worn slot; UnequipItem forgets an extra utility
     /// and moves what came off out of its slot. The game's "is it equipped" questions answer yes for the extras, so its
     /// own UnequipItem, drag and use paths treat them like the game's utility. A backpack is worn by PackPanel too
-    /// (<see cref="BackpackEquip"/>), never as the game's utility. Unequip all and the death drop take them off too.
+    /// (<see cref="BackpackEquip"/>), never as the game's utility. Unequip all and the death drop take them off too; a
+    /// piece the game takes off because it broke stays in its slot.
     /// </summary>
     public static class EquipPatches
     {
@@ -51,6 +52,17 @@ namespace PackPanel.Worn
                 ExtraUtilities.Forget(item);
                 WornPlacement.OnTakenOff(__instance, item);
             }
+        }
+
+        /// <summary>A piece that breaks while worn stays in its slot (<see cref="WornPlacement.BeginBreak"/>).</summary>
+        [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.DrainEquipedItemDurability))]
+        public static class Break
+        {
+            [HarmonyPrefix]
+            public static void Prefix() => WornPlacement.BeginBreak();
+
+            [HarmonyFinalizer]
+            public static void Finalizer() => WornPlacement.EndBreak();
         }
 
         [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.IsItemEquiped))]

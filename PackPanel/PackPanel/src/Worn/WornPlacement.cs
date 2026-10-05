@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using PackPanel.Core;
-using PackPanel.Layout;
 using PackPanel.Slots;
 
 namespace PackPanel.Worn
@@ -16,6 +15,7 @@ namespace PackPanel.Worn
     {
         private static int suspended;
         private static int equipping;
+        private static int breaking;
 
         public static bool Suspended => suspended > 0;
 
@@ -26,6 +26,14 @@ namespace PackPanel.Worn
         public static void BeginEquip() => equipping++;
 
         public static void EndEquip() => equipping = equipping > 0 ? equipping - 1 : 0;
+
+        /// <summary>
+        /// Inside the game's DrainEquipedItemDurability, which takes a piece off when it breaks: a piece that breaks in its
+        /// slot stays there (the user's rule, 2026-10-05), unworn until it is repaired (<see cref="GearKeep"/> then puts it on).
+        /// </summary>
+        public static void BeginBreak() => breaking++;
+
+        public static void EndBreak() => breaking = breaking > 0 ? breaking - 1 : 0;
 
         public static void Suspend() => suspended++;
 
@@ -41,22 +49,24 @@ namespace PackPanel.Worn
         /// <summary>
         /// After the game took an item off: out of its own worn slot, into the main grid. A backpack goes to a cell that is
         /// none of its own, since those go with it (another mod's backpack in the Backpack slot is not its worn slot).
+        /// With no free cell it stays, or with Auto Equip it is dropped at the next frame (<see cref="GearKeep"/>).
         /// </summary>
         public static void OnTakenOff(Humanoid humanoid, ItemDrop.ItemData item)
         {
             Inventory inventory = humanoid.GetInventory();
-            if (Suspended || equipping > 0 || item == null || item.m_equipped || !InventoryState.IsLocal(humanoid) || !InventoryState.Manages(inventory))
+            if (Suspended || equipping > 0 || breaking > 0 || item == null || item.m_equipped || !InventoryState.IsLocal(humanoid))
                 return;
-            Slot slot = InventoryState.Layout.SlotAt(item.m_gridPos);
+            Slot slot = InventoryState.SlotAt(inventory, item.m_gridPos);
             if (slot == null || !SlotRules.IsWorn(slot.Kind) || SlotRules.WornKindOf(item) != slot.Kind || !inventory.ContainsItem(item))
                 return;
-            Vector2i free = slot.Kind == SlotKind.Backpack
-                ? MainCells.FindEmptyOffPack(inventory, InventoryState.Layout)
-                : MainCells.FindEmpty(inventory, InventoryState.Layout, topFirst: false);
-            if (free.x < 0)
-                return;
-            item.m_gridPos = free;
-            inventory.Changed();
+            Vector2i free = GearOut.FreeCell(inventory, slot.Kind);
+            if (free.x >= 0)
+            {
+                item.m_gridPos = free;
+                inventory.Changed();
+            }
+            else if (GearKeep.On)
+                GearKeep.Leave(item);
         }
 
         /// <summary>Every worn item into its slot, after a layout was applied; extra utilities without a slot come off.</summary>

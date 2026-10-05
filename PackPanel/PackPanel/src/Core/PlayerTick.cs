@@ -10,8 +10,8 @@ namespace PackPanel.Core
     /// The local player's frame (<c>Player.Update</c> postfix): a layout change waiting from this frame's settings is
     /// applied once (several keys changed together, as a server's reloaded file does, give one layout, not one per key),
     /// a backpack's slots follow it into and out of its slot (<see cref="BackpackWear"/>), a tacklebox's cells follow it
-    /// (<see cref="TackleboxWear"/>), the Food Key and the Mead Slot keys are read (<see cref="ConsumeKeys"/>), keys never carried before are noticed (<see cref="Ring.KeyRingNews"/>), and extra utilities
-    /// that left without being taken off are forgotten.
+    /// (<see cref="TackleboxWear"/>), the Food Key and the Mead Slot keys are read (<see cref="ConsumeKeys"/>), keys never carried before are noticed (<see cref="Ring.KeyRingNews"/>), extra utilities
+    /// that left without being taken off are forgotten, and with Auto Equip the gear slots are kept worn (<see cref="GearKeep"/>).
     /// </summary>
     [HarmonyPatch(typeof(Player), nameof(Player.Update))]
     public static class PlayerTick
@@ -26,8 +26,10 @@ namespace PackPanel.Core
             TackleboxWear.Tick(__instance);
             ConsumeKeys.Tick(__instance);
             Ring.KeyRingNews.Tick(__instance);
-            if (InventoryState.IsLocal(__instance))
-                ExtraUtilities.Prune(__instance);
+            if (!InventoryState.IsLocal(__instance))
+                return;
+            ExtraUtilities.Prune(__instance);
+            GearKeep.Tick(__instance);
         }
     }
 }

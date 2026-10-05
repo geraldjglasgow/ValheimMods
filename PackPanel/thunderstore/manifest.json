@@ -1,6 +1,6 @@
 {
     "name": "PackPanel",
-    "version_number": "0.10.0",
+    "version_number": "0.11.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/PackPanel",
     "description": "Bigger inventory with labelled armour, utility, food, mead and ammo slots, a stat sheet, coin purse, key ring, tacklebox for bait, eight craftable backpacks you wear, and a brown or timber look. Server synced; works with OpenKeep.",
     "dependencies": [
