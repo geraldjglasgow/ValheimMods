@@ -5,9 +5,9 @@ using UnityEngine;
 namespace PackPanel.Panels
 {
     /// <summary>
-    /// The same stacked carry-weight fraction in the inventory and on the HUD, including overload flashing. The HUD asks
-    /// every frame, so the text is built only when the weight, the most or the flash changes, and the same string is
-    /// returned otherwise.
+    /// The same stacked carry-weight fraction in the inventory and on the HUD, including overload flashing. The HUD and
+    /// the open inventory ask every frame, so the text is built only when the weight, the most or the flash changes, and
+    /// the same string is returned otherwise.
     /// </summary>
     public static class WeightDisplay
     {
@@ -36,15 +36,22 @@ namespace PackPanel.Panels
             return $"<line-height=60%><voffset=-0.12em>{current}</voffset>\n<size=75%>\u2014\u2014</size>\n{max}</line-height>";
         }
 
-        // Verified against the game's UpdateInventoryWeight(Player): it rewrites m_weight every inventory update.
+        // Verified against the game's UpdateInventoryWeight(Player): every frame the inventory is open it writes m_weight
+        // as "weight/most" (the weight red while over and the flash is on) and does nothing else. While the section is on
+        // this prefix writes the stacked text instead and skips it, touching the text only when the string changed, so the
+        // text is not re-parsed and the canvas not rebuilt every frame; with the section off the game's own method runs.
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateInventoryWeight))]
         public static class InventoryWeight
         {
-            [HarmonyPostfix]
-            public static void Postfix(InventoryGui __instance, Player player)
+            [HarmonyPrefix]
+            public static bool Prefix(InventoryGui __instance, Player player)
             {
-                if (InventoryState.Active && player != null && __instance.m_weight != null)
-                    __instance.m_weight.text = Format(player);
+                if (!InventoryState.Active || player == null || __instance.m_weight == null)
+                    return true;
+                string text = Format(player);
+                if (__instance.m_weight.text != text)
+                    __instance.m_weight.text = text;
+                return false;
             }
         }
     }

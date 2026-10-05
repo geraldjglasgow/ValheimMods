@@ -22,11 +22,16 @@ namespace PackPanel.Panels
         private static readonly Color CaptionColour = new Color(0.96f, 0.89f, 0.74f, 1f);
 
         private static readonly List<InventoryElement> captioned = new List<InventoryElement>();
+        private static readonly List<Transform> hints = new List<Transform>();
 
         public static string TextFor(Slot slot) => Language.Localize(Words.Caption(slot.Kind));
 
         /// <summary>The grid was placed again: the hints to keep up to date are the ones set from now on.</summary>
-        public static void Clear() => captioned.Clear();
+        public static void Clear()
+        {
+            captioned.Clear();
+            hints.Clear();
+        }
 
         public static void Set(InventoryElement element, Slot slot, TMP_FontAsset font)
         {
@@ -37,16 +42,18 @@ namespace PackPanel.Panels
             icon.color = SlotIcons.TintFor(slot.Kind);
             icon.enabled = icon.sprite != null;
             captioned.Add(element);
+            hints.Add(hint);
         }
 
         /// <summary>Every frame the grid is drawn: a hint shows while its slot is empty.</summary>
         public static void Refresh()
         {
             bool on = InventorySettings.SlotLabels.Value;
-            foreach (InventoryElement element in captioned)
+            for (int i = 0; i < captioned.Count; i++)
             {
-                Transform hint = element != null ? element.transform.Find(Name) : null;
-                if (hint == null)
+                InventoryElement element = captioned[i];
+                Transform hint = hints[i];
+                if (element == null || hint == null)
                     continue;
                 bool show = on && !element.m_used;
                 if (hint.gameObject.activeSelf != show)

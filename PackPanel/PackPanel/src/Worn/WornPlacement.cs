@@ -38,16 +38,21 @@ namespace PackPanel.Worn
                 Place(humanoid.GetInventory(), item);
         }
 
-        /// <summary>After the game took an item off: out of its worn slot, into the main grid.</summary>
+        /// <summary>
+        /// After the game took an item off: out of its own worn slot, into the main grid. A backpack goes to a cell that is
+        /// none of its own, since those go with it (another mod's backpack in the Backpack slot is not its worn slot).
+        /// </summary>
         public static void OnTakenOff(Humanoid humanoid, ItemDrop.ItemData item)
         {
             Inventory inventory = humanoid.GetInventory();
             if (Suspended || equipping > 0 || item == null || item.m_equipped || !InventoryState.IsLocal(humanoid) || !InventoryState.Manages(inventory))
                 return;
             Slot slot = InventoryState.Layout.SlotAt(item.m_gridPos);
-            if (slot == null || !SlotRules.IsWorn(slot.Kind) || !inventory.ContainsItem(item))
+            if (slot == null || !SlotRules.IsWorn(slot.Kind) || SlotRules.WornKindOf(item) != slot.Kind || !inventory.ContainsItem(item))
                 return;
-            Vector2i free = MainCells.FindEmpty(inventory, InventoryState.Layout, topFirst: false);
+            Vector2i free = slot.Kind == SlotKind.Backpack
+                ? MainCells.FindEmptyOffPack(inventory, InventoryState.Layout)
+                : MainCells.FindEmpty(inventory, InventoryState.Layout, topFirst: false);
             if (free.x < 0)
                 return;
             item.m_gridPos = free;

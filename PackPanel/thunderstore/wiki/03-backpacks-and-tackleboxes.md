@@ -15,7 +15,8 @@ Both are crafted, and each recipe takes the one before it, so you upgrade rather
 | Ashlands | Asksvin Pack | Black forge 2 | Carapace Pack, 10 Asksvin hide, 6 Flametal, 4 Morgen sinew | +16 | +150 | 6 |
 | Deep North | Moosehide Pack | Black forge 4 | Asksvin Pack, 10 Moose hide, 4 Moose sinew, 5 Gold | +16 | +200 | 7 |
 
-- Wear one by putting it in the Backpack slot (drop it there or right click it).
+- Wear one by putting it in the Backpack slot (drop it there or right click it). The worn pack is equipment: it shows as
+  equipped, and with Epic Loot it can be enchanted at the enchanting table, its effects working while you wear it.
 - Its cells are added to the bottom of the grid, and its carry weight to yours. Unused cells of a part row are crossed out.
 - Take it off by dragging it out. Its items move to free cells; what does not fit drops at your feet.
 - It hangs on your back for every player to see. `Show Worn Backpack` hides it without losing its cells.
@@ -36,3 +37,9 @@ Both are crafted, and each recipe takes the one before it, so you upgrade rather
 - Bait you pick up goes into the box first. You can also drag bait onto the slot.
 - The fishing rod takes bait from the box first. Right click a bait in the box to fish with that one.
 - Taking the box out moves its bait into the grid; what does not fit drops at your feet.
+
+## Upgrading
+
+- Craft the next backpack while the one its recipe takes is in the Backpack slot: the new one replaces it there. No free cell is needed, everything in its cells stays, and a bigger pack opens more cells.
+- The same for a tacklebox in the Tacklebox slot: its bait stays.
+- A pack or box carried in the grid upgrades the game's way, and the new one needs a free cell. So does crafting several at once, or crafting for free.

@@ -1,4 +1,5 @@
 using HarmonyLib;
+using PackPanel.Backpacks;
 using PackPanel.Core;
 
 namespace PackPanel.Worn
@@ -7,8 +8,8 @@ namespace PackPanel.Worn
     /// Equipping and unequipping on the local player. EquipItem wears a second to fifth utility beside the game's one
     /// (<see cref="ExtraUtilities"/>) and moves what was put on into its worn slot; UnequipItem forgets an extra utility
     /// and moves what came off out of its slot. The game's "is it equipped" questions answer yes for the extras, so its
-    /// own UnequipItem, drag and use paths treat them like the game's utility. Unequip all and the death drop take them
-    /// off too.
+    /// own UnequipItem, drag and use paths treat them like the game's utility. A backpack is worn by PackPanel too
+    /// (<see cref="BackpackEquip"/>), never as the game's utility. Unequip all and the death drop take them off too.
     /// </summary>
     public static class EquipPatches
     {
@@ -19,9 +20,12 @@ namespace PackPanel.Worn
             public static bool Prefix(Humanoid __instance, ItemDrop.ItemData item, bool triggerEquipEffects, ref bool __result)
             {
                 WornPlacement.BeginEquip();
-                if (!ExtraUtilities.Takes(__instance, item))
+                if (BackpackEquip.Takes(item))
+                    __result = BackpackEquip.Wear(__instance, item, triggerEquipEffects);
+                else if (ExtraUtilities.Takes(__instance, item))
+                    __result = ExtraUtilities.Wear(__instance, item, triggerEquipEffects);
+                else
                     return true;
-                __result = ExtraUtilities.Wear(__instance, item, triggerEquipEffects);
                 return false;
             }
 
@@ -55,8 +59,8 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Humanoid __instance, ItemDrop.ItemData item, ref bool __result)
             {
-                if (!__result && ExtraUtilities.IsWorn(item) && InventoryState.IsLocal(__instance))
-                    __result = true;
+                if (!__result && InventoryState.IsLocal(__instance))
+                    __result = ExtraUtilities.IsWorn(item) || BackpackEquip.IsWorn(__instance, item);
             }
         }
 
@@ -82,8 +86,10 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Humanoid __instance)
             {
-                if (InventoryState.IsLocal(__instance))
-                    ExtraUtilities.TakeOffAll(__instance);
+                if (!InventoryState.IsLocal(__instance))
+                    return;
+                ExtraUtilities.TakeOffAll(__instance);
+                BackpackEquip.TakeOffAll(__instance);
             }
         }
 
@@ -93,8 +99,10 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Player __instance)
             {
-                if (InventoryState.IsLocal(__instance))
-                    ExtraUtilities.TakeOffAll(__instance);
+                if (!InventoryState.IsLocal(__instance))
+                    return;
+                ExtraUtilities.TakeOffAll(__instance);
+                BackpackEquip.TakeOffAll(__instance);
             }
         }
     }

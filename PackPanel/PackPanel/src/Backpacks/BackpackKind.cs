@@ -28,6 +28,9 @@ namespace PackPanel.Backpacks
 
         public GameObject Worn { get; internal set; }
 
+        /// <summary>Equipment: a Utility item, worn in the Backpack slot by PackPanel (<see cref="BackpackEquip"/>).</summary>
+        public override ItemDrop.ItemData.ItemType ItemType => ItemDrop.ItemData.ItemType.Utility;
+
         public override CraftStats Recipe => Stats;
 
         public override CraftStats DefaultRecipe => Defaults;

@@ -1,3 +1,4 @@
+using PackPanel.Core;
 using PlateColumn;
 using TMPro;
 using UnityEngine;
@@ -51,7 +52,7 @@ namespace PackPanel.Panels
                 // The number is turned into text only when it or the box changes.
                 int value = Mathf.CeilToInt(Player.m_localPlayer.GetBodyArmor());
                 if (value == armorShown && armor.Text == armorText) return;
-                armor.Text.text = value.ToString();
+                armor.Text.text = NumberText.Of(value);
                 armorShown = value;
                 armorText = armor.Text;
             }

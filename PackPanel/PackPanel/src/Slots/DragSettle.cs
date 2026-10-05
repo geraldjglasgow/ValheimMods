@@ -65,9 +65,9 @@ namespace PackPanel.Slots
                 return;
             Slot slot = InventoryState.Layout.SlotAt(item.m_gridPos);
             SlotKind? kind = SlotRules.WornKindOf(item);
-            if (slot != null && SlotRules.IsWorn(slot.Kind))
+            if (slot != null && SlotRules.IsWorn(slot.Kind) && kind == slot.Kind)
             {
-                if (!item.m_equipped && kind == slot.Kind)
+                if (!item.m_equipped)
                     player.EquipItem(item);
                 return;
             }

@@ -22,6 +22,8 @@ namespace PackPanel.Ring
         public const string Name = "PackPanel_keyring_button";
         private static InventoryElement button;
         private static string shownList;
+        private static int[] counts;
+        private static int[] shownCounts;
 
         public static void Place(InventoryGui gui, RectTransform panel, SlotPanelLayout plan, float step, TMP_FontAsset font)
         {
@@ -50,15 +52,35 @@ namespace PackPanel.Ring
             button.m_icon.enabled = !InventorySettings.SlotLabels.Value;
             button.m_icon.sprite = SlotIcons.For(SlotKind.Key);
             button.m_icon.color = SlotIcons.Hint;
-            int[] counts = KeyRing.Counts(InventoryState.Player.GetInventory());
+            counts = KeyRing.Counts(InventoryState.Player.GetInventory(), counts);
+            if (shownList == null || shownCounts == null || !SameCounts())
+                ShowCounts(gui);
+            button.m_selected.SetActive(KeyRingGamepad.OnButton(gui));
+            KeyRingNotice.Show(button);
+        }
+
+        private static bool SameCounts()
+        {
+            if (shownCounts.Length != counts.Length)
+                return false;
+            for (int i = 0; i < counts.Length; i++)
+            {
+                if (shownCounts[i] != counts[i])
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>The number of different keys held and the list, again only when a count changed.</summary>
+        private static void ShowCounts(InventoryGui gui)
+        {
             int kinds = 0;
             for (int number = 1; number < counts.Length; number++)
                 kinds += counts[number] > 0 ? 1 : 0;
             button.m_quality.enabled = kinds > 0;
-            button.m_quality.text = kinds.ToString();
+            button.m_quality.text = NumberText.Of(kinds);
             ShowList(gui, counts);
-            button.m_selected.SetActive(KeyRingGamepad.OnButton(gui));
-            KeyRingNotice.Show(button);
+            shownCounts = (int[])counts.Clone();
         }
 
         /// <summary>The tooltip: every key held and how many, in ring order; written only when it changed.</summary>

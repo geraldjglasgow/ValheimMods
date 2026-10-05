@@ -41,8 +41,8 @@ Settings are in `BepInEx/config/milkyteam.packpanel.cfg`. Backpack and tacklebox
 | `Mead Slots` | 3 (0-5) | Slots for meads and potions. |
 | `Ammo Slots` | 3 (0-5) | Slots for arrows, bolts and bait. |
 | `Coin Purse` | true | A purse slot for coins. |
-| `Food Key` | Z | Per player: eats from the Food slots. |
-| `Mead Key` | B | Per player: drinks from the Mead slots. |
+| `Food Key` | Z | Per player: eats from the Food slots; not with a hammer, hoe or cultivator in hand. |
+| `Mead Key` | B | Per player: drinks from the Mead slots; not with a hammer, hoe or cultivator in hand. |
 
 ### 3. Key Ring
 
@@ -74,6 +74,8 @@ The default `Key Items`: `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,
 | `Night Shade` | 0.65 (0.3-1) | Panel brightness at midnight; 1 never darkens. |
 | `Weight Under Minimap` | true | Armour and weight boxes beside the minimap. |
 | `Food And Mead Bar` | true | Shows the Food and Mead keys under your health bar. |
+| `Crafting Panel Width` | 100 (0-600) | Extra width for the crafting panel and the panel above it (the game's are 570); 0 is the game's width. |
+| `Crafting Panel Height` | 90 (0-400) | Extra height for the crafting panel (the game's is 650); 0 is the game's height. |
 
 ### 6. Tacklebox
 

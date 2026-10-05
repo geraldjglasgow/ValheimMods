@@ -10,9 +10,9 @@ namespace PackPanel.Crafting
     /// <summary>
     /// A crafted item's prefab (a backpack or a tacklebox): a copy of the game's Troll hide item (net view, rigidbody,
     /// sync, the ground sparkle) with the item's model in place of the hide, centred, a box collider around it, and its
-    /// own shared data: name, description, icon (<c>assets/&lt;group&gt;_&lt;word&gt;.png</c>, rendered from the model), a
-    /// Misc item, one per stack, the kind's weight, teleportable. Only the copy's shared data changes: the game's Troll
-    /// hide keeps its own.
+    /// own shared data: name, description, icon (<c>assets/&lt;group&gt;_&lt;word&gt;.png</c>, rendered from the model), the
+    /// kind's item type (a backpack is a Utility item, a tacklebox a Misc item), one per stack, the kind's weight,
+    /// teleportable. Only the copy's shared data changes: the game's Troll hide keeps its own.
     /// </summary>
     public static class CraftedItem
     {
@@ -52,7 +52,7 @@ namespace PackPanel.Crafting
         {
             shared.m_name = kind.Token;
             shared.m_description = kind.DescriptionToken;
-            shared.m_itemType = ItemDrop.ItemData.ItemType.Misc;
+            shared.m_itemType = kind.ItemType;
             shared.m_maxStackSize = 1;
             shared.m_maxQuality = 1;
             shared.m_weight = kind.Weight;

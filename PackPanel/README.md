@@ -5,10 +5,10 @@ A bigger, better organised inventory, with labelled slots always on screen.
 ## Features
 - A grid from your two hands up to 12 x 10, with `Base Carry Weight` and `Keep Slots On Death`.
 - Gear tab: armour, backpack, utilities, trinket and a stat sheet.
-- Consumables tab: food, mead and ammo, with keys to eat and drink (Z, B).
-- A coin purse, a key ring and four craftable tackleboxes for bait.
-- Eight craftable backpacks for more slots and carry weight.
-- Armour and weight beside the minimap, a bigger crafting panel, a brown or timber look that darkens at night.
+- Consumables tab: food, mead and ammo, with eat and drink keys.
+- A coin purse, a key ring and four tackleboxes for bait.
+- Eight backpacks for slots and carry weight, worn as equipment Epic Loot can enchant.
+- Armour and weight by the minimap, a bigger crafting panel, a brown or timber look, darker at night.
 - With OpenKeep 1.8.0+, its buttons join the inventory and its quick stack and sort skip the slots.
 
 ## Install

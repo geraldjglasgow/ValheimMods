@@ -1,3 +1,4 @@
+using PackPanel.Core;
 using System.Collections.Generic;
 using PackPanel.Slots;
 using UnityEngine.UI;
@@ -72,7 +73,7 @@ namespace PackPanel.Ring
                 ItemDrop.ItemData key = inventory.GetItemAt(element.Position.x, element.Position.y);
                 element.m_amount.enabled = key != null && key.m_stack > 1;
                 if (element.m_amount.enabled)
-                    element.m_amount.text = key.m_stack.ToString();
+                    element.m_amount.text = NumberText.Of(key.m_stack);
             }
         }
     }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+- Backpacks are equipment: the worn pack shows as equipped, and Epic Loot can enchant it with utility effects.
+- Less work every frame for the inventory, the HUD boxes, the key ring and item counts.
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 0.7.0
 
 - New `Crafting Panel Width` and `Crafting Panel Height` (per player): a bigger crafting panel and recipe list.

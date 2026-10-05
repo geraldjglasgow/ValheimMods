@@ -11,7 +11,7 @@ namespace PackPanel.Ring
     /// A character without the record starts with every key it carries then, silently. The set is also kept in memory for
     /// the character being played, so a new body after death (whose data may predate the last save) keeps it. Read in
     /// the local player's frame while the ring is active, over the whole inventory: a stack above Key Stack spills into
-    /// the grid.
+    /// the grid. Scanned only after the inventory changed (its <c>m_onChanged</c>), a new body or a new key list.
     /// </summary>
     public static class KeyRingNews
     {
@@ -19,6 +19,9 @@ namespace PackPanel.Ring
         private static readonly HashSet<string> seen = new HashSet<string>();
         private static PlayerProfile seenProfile;
         private static Player seenFor;
+        private static Inventory watched;
+        private static IReadOnlyList<string> scannedKeys;
+        private static bool changed = true;
 
         public static void Tick(Player player)
         {
@@ -26,6 +29,8 @@ namespace PackPanel.Ring
                 return;
             if (player != seenFor)
                 Follow(player);
+            if (!Due(player.GetInventory()))
+                return;
             bool added = false;
             foreach (ItemDrop.ItemData item in player.GetInventory().GetAllItems())
             {
@@ -36,6 +41,22 @@ namespace PackPanel.Ring
             }
             if (added)
                 Save(player);
+        }
+
+        /// <summary>Whether to scan: the inventory changed since the last scan, or it is a new inventory or key list.</summary>
+        private static bool Due(Inventory inventory)
+        {
+            if (inventory != watched)
+            {
+                watched = inventory;
+                inventory.m_onChanged += () => changed = true;
+                changed = true;
+            }
+            if (!changed && ReferenceEquals(scannedKeys, KeyRing.Prefabs))
+                return false;
+            changed = false;
+            scannedKeys = KeyRing.Prefabs;
+            return true;
         }
 
         /// <summary>A new body: the same character keeps the set (merged with the body's record), another starts from its own.</summary>

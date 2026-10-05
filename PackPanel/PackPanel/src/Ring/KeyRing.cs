@@ -72,10 +72,12 @@ namespace PackPanel.Ring
         /// <summary>
         /// How many of each ring key the whole inventory holds, every world level together, by ring number (index 0 is
         /// unused). Matched by shared name, which needs no string made per item, as this runs every frame the ring shows.
+        /// Written into <paramref name="reuse"/> when it fits, so no array is made per frame either.
         /// </summary>
-        public static int[] Counts(Inventory inventory)
+        public static int[] Counts(Inventory inventory, int[] reuse)
         {
-            int[] counts = new int[Prefabs.Count + 1];
+            int[] counts = reuse != null && reuse.Length == Prefabs.Count + 1 ? reuse : new int[Prefabs.Count + 1];
+            Array.Clear(counts, 0, counts.Length);
             foreach (ItemDrop.ItemData item in inventory.GetAllItems())
             {
                 for (int number = 1; number < counts.Length; number++)

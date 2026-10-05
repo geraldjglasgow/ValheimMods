@@ -73,8 +73,18 @@ namespace PackPanel.Worn
         /// </summary>
         public static void Prune(Humanoid humanoid)
         {
+            if (worn.Count == 0)
+                return;
             Inventory inventory = humanoid.GetInventory();
-            if (worn.RemoveAll(item => !item.m_equipped || !inventory.ContainsItem(item)) > 0)
+            bool removed = false;
+            for (int i = worn.Count - 1; i >= 0; i--)
+            {
+                if (worn[i].m_equipped && inventory.ContainsItem(worn[i]))
+                    continue;
+                worn.RemoveAt(i);
+                removed = true;
+            }
+            if (removed)
                 humanoid.SetupEquipment();
         }
 

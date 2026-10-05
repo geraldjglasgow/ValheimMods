@@ -74,7 +74,7 @@ namespace PackPanel.Panels
         {
             ItemDrop.ItemData coins = purse != null ? InventoryState.ItemIn(SlotKind.Purse, 1) : null;
             if (coins != null)
-                purse.m_amount.text = coins.m_stack.ToString();
+                purse.m_amount.text = NumberText.Of(coins.m_stack);
         }
 
         private static void SkinContainer(InventoryGrid grid)

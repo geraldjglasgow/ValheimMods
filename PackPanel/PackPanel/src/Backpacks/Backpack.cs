@@ -9,8 +9,8 @@ namespace PackPanel.Backpacks
     /// The backpack a player wears (the user's request, 2026-09-28, then one per biome): an item of PackPanel's own, worn by
     /// lying in the Backpack slot. While it lies there the main grid has its slots at the bottom (<see cref="LayoutBuilder"/>,
     /// a partly used last row keeps its spare cells blocked), the player carries more (<see cref="CarryWeight"/>), and the
-    /// player's ZDO names it, so every client hangs its model on that player's back (<see cref="BackpackMount"/>). The game
-    /// knows no equip state for it: it is a Misc item, worn by where it lies.
+    /// player's ZDO names it, so every client hangs its model on that player's back (<see cref="BackpackMount"/>). It is worn
+    /// by where it lies; being equipment, it also carries the game's equipped flag there (<see cref="BackpackEquip"/>).
     /// </summary>
     public static class Backpack
     {
@@ -18,20 +18,24 @@ namespace PackPanel.Backpacks
         public static readonly int WornKey = "PackPanel.backpack".GetStableHashCode();
 
         /// <summary>The kind of the backpack in the Backpack slot of a layout, or null.</summary>
-        public static BackpackKind InSlot(Inventory inventory, InventoryLayout layout)
-        {
-            IReadOnlyList<Vector2i> cells = layout.CellsOf(SlotKind.Backpack);
-            if (cells.Count == 0)
-                return null;
-            return BackpackCatalog.Of(inventory.GetItemAt(cells[0].x, cells[0].y));
-        }
+        public static BackpackKind InSlot(Inventory inventory, InventoryLayout layout) => BackpackCatalog.Of(ItemInSlot(inventory, layout));
 
         /// <summary>The kind the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
-        public static BackpackKind Worn(Player player)
+        public static BackpackKind Worn(Player player) => BackpackCatalog.Of(WornItem(player));
+
+        /// <summary>The pack the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
+        public static ItemDrop.ItemData WornItem(Player player)
         {
             if (!InventoryState.IsLocal(player) || !InventoryState.Active || !BackpackSettings.Active)
                 return null;
-            return InSlot(player.GetInventory(), InventoryState.Layout);
+            ItemDrop.ItemData item = ItemInSlot(player.GetInventory(), InventoryState.Layout);
+            return BackpackCatalog.Of(item) != null ? item : null;
+        }
+
+        private static ItemDrop.ItemData ItemInSlot(Inventory inventory, InventoryLayout layout)
+        {
+            IReadOnlyList<Vector2i> cells = layout.CellsOf(SlotKind.Backpack);
+            return cells.Count > 0 ? inventory.GetItemAt(cells[0].x, cells[0].y) : null;
         }
 
         /// <summary>

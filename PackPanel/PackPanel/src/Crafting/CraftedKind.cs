@@ -37,6 +37,9 @@ namespace PackPanel.Crafting
 
         public GameObject Item { get; internal set; }
 
+        /// <summary>The game's item type of the item: a Misc item, which the game neither equips nor uses.</summary>
+        public virtual ItemDrop.ItemData.ItemType ItemType => ItemDrop.ItemData.ItemType.Misc;
+
         /// <summary>The recipe in use: the YAML over the built-in default.</summary>
         public abstract CraftStats Recipe { get; }
 

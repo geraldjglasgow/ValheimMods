@@ -179,7 +179,9 @@ PackPanel/PackPanel/src/
     BackpackPrefab.cs       ZNetScene.Awake (BundlePrefabs.NetPrefabs): each model of the bundle, the item
                             (Crafting/CraftedItem) and the worn copy; registered in ZNetScene and ObjectDB (ItemPrefabs)
     BackpackWear.cs         the local player's frame: re-layout when the worn pack or its slots changed, the ZDO key
-    BackpackUse.cs          Humanoid.UseItem prefix: right click wears a pack or takes it off
+    BackpackEquip.cs        a pack is equipment (a Utility item): EquipItem wears it in the Backpack slot, never as the
+                            game's utility; the pack in the slot carries m_equipped, every frame (Sync)
+    BackpackUse.cs          Humanoid.UseItem prefix: right click wears a pack (EquipItem) or takes it off
     BackpackGrave.cs        before a take all from a grave the worn pack (found at the grave's Backpack slot cell) goes
                             on first; the rows a waiting pack adds (RowsAdded: the layout's own rule)
     BackpackMount.cs        VisEquipment.UpdateEquipmentVisuals postfix: hangs, swaps or takes down the model on Spine2
@@ -292,8 +294,8 @@ All on the local player's own inventory only unless said: prefix `Player.Load` (
 `Inventory.GetEmptySlots`, `Inventory.HaveEmptySlot`, `Inventory.CanAddItem(ItemData, int)`, `Inventory.AddItem(ItemData)`
 (the purse, and the key ring's, the tacklebox's and the Ammo slots' own prefixes), `Inventory.AddItem(ItemData, int, int, int, bool)` and
 `Inventory.AddItem(ItemData, Vector2i)` (slot rules), `InventoryGrid.DropItem` (`Priority.High`),
-`InventoryGui.OnSelectedItem` (prefix, postfix, finalizer), `Humanoid.EquipItem` (prefix, postfix, finalizer),
-`Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
+`InventoryGui.OnSelectedItem` (prefix, postfix, finalizer), `Humanoid.EquipItem` (prefix, postfix, finalizer; the
+prefix also wears PackPanel's backpacks, on any character), `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
 out of the list for the call), `Inventory.MoveAll` (prefix, postfix, finalizer; the key ring has its own prefix and
 postfix), `Container.Load` (prefix and postfix, graves only, any player's); the key ring: `InventoryGui.OnSelectedItem`
 (a second prefix, `Priority.First`), `InventoryGui.OnRightClickItem` (prefix), `InventoryGrid.UpdateGamepad` (private;
@@ -714,8 +716,9 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   the user chose own models worn on the back and seen by every player, overflow dropped when a pack comes off, the
   troll leather armour as the Trollhide's look, and accepted the plan's table: +4 slots, then +50 carry weight, then
   +4 slots, ... up to +16 slots and +200, each recipe taking the pack before it, Backpack Portal Pass optional and
-  off). A pack is a Misc item worn by lying in the Backpack slot: the game has no equip slot for it (capes use
-  Shoulder, utilities are already three), and the slot already existed. Worn, it adds its slots to the bottom of the
+  off). A pack is worn by lying in the Backpack slot: the game has no equip slot for it (capes use Shoulder, utilities
+  are already three), and the slot already existed. It was a Misc item until 2026-10-04 and is equipment since (below,
+  "Backpacks are equipment"). Worn, it adds its slots to the bottom of the
   main grid: as many rows as the slots need, the cells of a partly used last row beyond them blocked (`InventoryLayout`
   `BackpackSlots`, `BlockedCells`, `IsBlocked`; `IsMain` excludes them, so every room question, the migration and the
   slot rules keep out, and OpenKeep's sort through `PackPanel.mainGrid`; their elements are shown dimmed with a grey
@@ -762,6 +765,29 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   (`BackpackPanelHeight`, the user's call). Backpack Portal Pass replaces `Inventory.IsTeleportable` for the local
   player's inventory while the worn pack says `portal: true`: its cells may hold what portals refuse, everything else
   follows the game's rule, and items of tool tier 1000 or more never pass.
+- Backpacks are equipment (the user's question, 2026-10-04: "can it be an equipment? and can we make it work with epic
+  loot?", after asking whether Epic Loot could roll stats on backpacks). Epic Loot makes an item magic only when the
+  game counts it equipable (`CanBeMagicItem`: `ItemData.IsEquipable`), picks effects by item type name (none allows
+  Misc) and applies only equipped items' effects (`Inventory.GetEquippedItems`, the `m_equipped` flags), so a Misc pack
+  got nothing. A pack is now a Utility item (`BackpackKind.ItemType`; the tackleboxes stay Misc) that PackPanel wears,
+  never as the game's utility: `Humanoid.EquipItem` on any PackPanel pack, on any character, is `BackpackEquip.Wear`
+  (false where no Backpack slot is laid out, so neither the main menu nor PackPanel off makes it the game's utility),
+  which takes the pack worn before off and sets `m_equipped`; `WornPlacement` moves it into the Backpack slot
+  (`SlotRules.WornKindOf` answers Backpack for a pack and the Backpack slot is worn; another mod's backpack only lies
+  there). `IsItemEquiped` answers yes for a flagged pack in the local inventory, so the game's own unequip, drag, drop,
+  chest and unequip-all paths take it off. Where it lies stays the truth for the layout: every frame `BackpackEquip.Sync`
+  wears the pack in the slot and takes any other off, through EquipItem and UnequipItem so Epic Loot hears of it; a worn
+  pack that left without an unequip (crafted away in place, trashed) loses the flag and an UnequipItem call tells Epic
+  Loot. None of the game's equip guards (attacking, swimming, world level): the pack in the slot gives its slots, so it
+  is worn. Unequip all (the tombstone) takes it off, so it goes into the grave like armour (`MoveInventoryToGrave` keeps
+  equipped items with the player); with the keep-equipment world modifier it stays, like armour. The grid shows the
+  game's equipped mark on it. Epic Loot needs nothing more: its enchanting table lists packs, rolls Utility effects
+  (carry weight, movement, stamina, health and the like) and applies them while the pack is worn, and the stat sheet
+  lists them. EliteCrafting's runes follow with Epic Loot installed (they ask Epic Loot); its own inscriptions leave
+  packs out (`ItemSlots`, by the `$packpanel_backpack_` name: its effects read only the game's utility field). Right
+  click from the slot keeps the old rule (a cell outside its own rows, else "no room"); a hotbar key wears it through
+  the game's toggle. Upgrading a magic pack makes a plain new pack (the game crafts a new item); carrying the magic over
+  was asked about and is not decided.
 - Capes under the pack (the user's request, 2026-09-28: "if player has backpacks showing, make it so capes do not
   glitch through the backpack when running"). The game's capes are MagicaCloth 2 mesh cloths (`VisEquipment.SetupCloth`)
   hanging from the shoulders to the ankles (their meshes: tops 1.69-1.72, hems 0.0-0.21 in the player's frame); at rest
@@ -951,7 +977,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.7.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.8.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1256,3 +1282,13 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     requirements centred and the Craft row (with OpenKeep's stepper) full width. Both at 0, or PackPanel's Enabled off:
     the game's panel exactly. Change either in the cfg with the inventory open: the panel follows within seconds.
     A 16:10 window: the width shrinks to what fits.
+61. Backpack as equipment (Megingjord worn throughout: it stays worn and carry weight keeps its +150, so no pack ever
+    becomes the game's utility): the worn Trollhide Backpack shows the game's equipped mark in the Backpack slot;
+    `GetEquippedItems` lists it. Right click it: it comes off into a cell above its rows, no mark; again: on, marked.
+    Drag the Deerhide Satchel onto the slot: the satchel is marked, the Trollhide lies unmarked where the satchel was.
+    Drag the worn pack into a chest: it arrives unmarked, the rows go. A pack on the hotbar, its key: after the equip
+    bar it is in the Backpack slot, marked. Relog: still marked. Die: the grave holds it unmarked; take all: marked
+    again. `Backpacks = false`: the mark goes, carry weight back; `true`: marked again. With Epic Loot: the enchanting
+    table lists the pack, worn or not; enchant it: utility effects (carry weight, movement speed, ...); worn, the stat
+    sheet's Epic Loot lines show them, taken off they go. An EliteCrafting rune on it works with Epic Loot; without
+    Epic Loot a rune is refused ("not a magic base") and no pack drops as magic gear.

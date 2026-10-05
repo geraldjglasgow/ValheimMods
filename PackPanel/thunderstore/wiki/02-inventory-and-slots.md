@@ -35,7 +35,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 
 - `Food Key` (Z) eats every food in the Food slots that can be eaten now, left to right. `Mead Key` (B) drinks every mead in the Mead slots that can be drunk now.
 - The game's rules apply: two of the same food eat one, two health meads drink one.
-- The keys work like hotbar keys: outside the inventory, map, menus and chat.
+- The keys work like hotbar keys: outside the inventory, map, menus and chat. They do nothing with a hammer, hoe or cultivator in hand, where Z and B are building keys.
 - If nothing can be taken: "Nothing in your food slots can be eaten now" (or drunk, for meads).
 - A key with a modifier, such as `LeftShift + Z`, needs exactly that modifier. `None` turns a key off.
 - The Food and Mead bar, two squares under your health bar, shows both keys.
@@ -55,7 +55,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 
 ## Where new items go
 
-- Pickups, crafting and purchases fill the grid, never a slot. "Inventory full" means the grid is full.
+- Pickups, crafting and purchases fill the grid, never a slot. "Inventory full" means the grid is full. The one exception: a backpack or tacklebox [upgraded in its slot](wiki:Backpacks and Tackleboxes).
 - Coins, keys, bait and arrows go to the purse, the ring, the tacklebox and the Ammo slots first, even when the grid is full.
 - Items still join a matching stack in a slot (cooked meat joins the same meat in a Food slot).
 - When a setting changes the layout, items keep their place if it still exists. What no longer fits drops at your feet: "No room for N items: dropped at your feet".
@@ -63,6 +63,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 ## Death and graves
 
 - By default everything goes to the grave. Take all from your own grave and everything goes back where it was, armour, backpack and tacklebox included, worn again.
+- Use on your own grave takes everything at once when it fits, otherwise it opens the grave. The backpack you wore counts with its cells and carry weight, and slot items count as going back into their slots, so a full backpack still comes back in one press.
 - `Keep Slots On Death` keeps your gear, backpack, utility, trinket, food, mead and ammo slots and your tacklebox when you die. The grid, the purse, the keys and the bait still go to the grave.
 
 ## Gamepad

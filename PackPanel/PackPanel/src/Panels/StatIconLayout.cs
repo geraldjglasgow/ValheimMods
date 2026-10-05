@@ -6,7 +6,10 @@ using UnityEngine.UI;
 
 namespace PackPanel.Panels
 {
-    /// <summary>Centers live values over icons in compact squares and restores the previous layout when disabled.</summary>
+    /// <summary>
+    /// Centers live values over icons in compact squares and restores the previous layout when disabled. Applied every
+    /// frame, so a value is written only when it differs: an unchanged write would still dirty the HUD's canvas.
+    /// </summary>
     public static class StatIconLayout
     {
         public const float Size = 48f;
@@ -16,7 +19,7 @@ namespace PackPanel.Panels
         public static void Apply(RectTransform box, Image background, TMP_Text value, bool weight)
         {
             Remember(box);
-            box.sizeDelta = new Vector2(Size, Size);
+            SetSize(box, new Vector2(Size, Size));
             for (int i = 0; i < box.childCount; i++)
             {
                 Image icon = box.GetChild(i).GetComponent<Image>();
@@ -44,18 +47,26 @@ namespace PackPanel.Panels
                     value.enableAutoSizing = auto; value.alignment = alignment;
                 };
             }
-            value.alignment = TextAlignmentOptions.Center;
-            value.enableAutoSizing = true;
-            value.fontSizeMin = 8f;
-            value.fontSizeMax = 11f;
+            if (value.alignment != TextAlignmentOptions.Center) value.alignment = TextAlignmentOptions.Center;
+            if (!value.enableAutoSizing) value.enableAutoSizing = true;
+            if (value.fontSizeMin != 8f) value.fontSizeMin = 8f;
+            if (value.fontSizeMax != 11f) value.fontSizeMax = 11f;
         }
 
         private static void Center(RectTransform rect, Vector2 size)
         {
             Remember(rect);
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition = Vector2.zero;
-            rect.sizeDelta = size;
+            Vector2 middle = new Vector2(0.5f, 0.5f);
+            if (rect.anchorMin != middle) rect.anchorMin = middle;
+            if (rect.anchorMax != middle) rect.anchorMax = middle;
+            if (rect.pivot != middle) rect.pivot = middle;
+            if (rect.anchoredPosition != Vector2.zero) rect.anchoredPosition = Vector2.zero;
+            SetSize(rect, size);
+        }
+
+        private static void SetSize(RectTransform rect, Vector2 size)
+        {
+            if (rect.sizeDelta != size) rect.sizeDelta = size;
         }
 
         private static void Remember(RectTransform rect)

@@ -6,9 +6,10 @@ namespace PackPanel.Backpacks
     /// <summary>
     /// The local player's frame (from <see cref="PlayerTick"/>). When a backpack went into or out of its slot, or its
     /// slots changed (the YAML, a setting), the layout is applied again: slots added at the bottom, or taken away with what
-    /// they held moved to free cells and the rest dropped at the player's feet (the user's choice). The player's ZDO names
-    /// the worn pack, so every client shows it on the back. Only here, in Update: Keep Slots On Death takes the pack out of
-    /// the inventory for the length of <c>CreateTombStone</c>, which no frame sees, and a dead player is left alone.
+    /// they held moved to free cells and the rest dropped at the player's feet (the user's choice). The pack in the slot
+    /// carries the equipped flag (<see cref="BackpackEquip.Sync"/>). The player's ZDO names the worn pack, so every client
+    /// shows it on the back. Only here, in Update: Keep Slots On Death takes the pack out of the inventory for the length
+    /// of <c>CreateTombStone</c>, which no frame sees, and a dead player is left alone.
     /// </summary>
     public static class BackpackWear
     {
@@ -16,6 +17,7 @@ namespace PackPanel.Backpacks
         {
             if (player.IsDead())
                 return;
+            BackpackEquip.Sync(player);
             BackpackKind worn = Backpack.Worn(player);
             if (InventoryState.Active && InventoryState.Layout.BackpackSlots != BackpackSettings.Slots(worn))
                 LayoutApply.Apply(player, dropOverflow: true);

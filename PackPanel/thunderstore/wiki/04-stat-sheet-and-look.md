@@ -21,6 +21,15 @@ The Gear tab lists your stats as the game counts them, with everything you wear 
 - A column between the grid and the slot panel shows your armour, your weight (carried over carry limit, flashing red when over) and boxes from other mods, such as Elite Creatures Reborn's world tier.
 - `Weight Under Minimap` shows the same boxes in a column right of the minimap. The minimap moves a little left to make room.
 
+## Crafting panel
+
+The crafting panel is bigger than the game's 570 x 650, with a wider and longer recipe list and more room for the description. Both settings are your own.
+
+- `Crafting Panel Width` (100): extra width, growing to the left. The panel above it (your name, skills, trophies, PvP) widens with it.
+- `Crafting Panel Height` (90): extra height, growing down.
+- It never covers the inventory's panels or runs off the bottom of the screen: on a small screen it gets what fits.
+- 0 keeps the game's size.
+
 ## Look
 
 All look settings are your own.

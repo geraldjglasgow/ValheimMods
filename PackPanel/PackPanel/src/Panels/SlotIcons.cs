@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PackPanel.Look;
 using PackPanel.Slots;
 using UnityEngine;
@@ -15,9 +16,16 @@ namespace PackPanel.Panels
 
         public static Color TintFor(SlotKind kind) => Hint;
 
+        /// <summary>Each kind's icon name, made once: the key ring's button asks every frame.</summary>
+        private static readonly Dictionary<SlotKind, string> names = new Dictionary<SlotKind, string>();
+
         public static Sprite For(SlotKind kind)
         {
-            return kind == SlotKind.Retired ? null : SkinArt.Icon(kind.ToString().ToLowerInvariant());
+            if (kind == SlotKind.Retired)
+                return null;
+            if (!names.TryGetValue(kind, out string name))
+                names[kind] = name = kind.ToString().ToLowerInvariant();
+            return SkinArt.Icon(name);
         }
 
     }

@@ -4,7 +4,8 @@ namespace PackPanel.Slots
 {
     /// <summary>
     /// What a slot holds. Head to Utility and <see cref="Trinket"/> are worn (<see cref="SlotRules.IsWorn"/>): an item in such
-    /// a slot is the one the player wears. The others are carried: each takes only its kind of item. <see cref="Retired"/> stands for a slot an
+    /// a slot is the one the player wears (in <see cref="Backpack"/>: PackPanel's own packs; another mod's backpack only lies
+    /// there). The others are carried: each takes only its kind of item. <see cref="Retired"/> stands for a slot an
     /// older build had (the quick slots) when a layout record is read, so the cells after it keep their places; it takes
     /// nothing, so what sat there moves into the grid. <see cref="Key"/> is a ring cell (<see cref="KeyRing"/>): each takes
     /// one key. <see cref="Tacklebox"/> holds a tacklebox and <see cref="Tackle"/> is one of that box's cells

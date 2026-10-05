@@ -1,13 +1,13 @@
 # Getting Started
 
-This wiki describes version 0.6.2.
+This wiki describes version 0.8.0.
 
 PackPanel replaces the player's inventory screen:
 
 - A bigger grid: 8 x 5 by default, up to 12 x 10, or down to the two cells for your hands.
 - Labelled slots always on screen, on two tabs: Gear (armour, cape, backpack, up to five worn utilities, trinket, a stat sheet) and Consumables (food, mead and ammo, with keys to eat and drink). Under both: a coin purse, a key ring and a tacklebox.
 - Eight craftable backpacks worn on your back, and four craftable tackleboxes for bait.
-- Armour and weight boxes beside the grid and the minimap, a Timber or Brown look that darkens at night.
+- Armour and weight boxes beside the grid and the minimap, a bigger crafting panel, a Timber or Brown look that darkens at night.
 - A base carry weight setting and an option to keep your slot items when you die.
 
 ## Install
@@ -28,8 +28,8 @@ PackPanel replaces the player's inventory screen:
 ## Pages
 
 - [Inventory and Slots](wiki:Inventory and Slots): the grid, every slot, eating and drinking, ammo, purse, key ring, death.
-- [Backpacks and Tackleboxes](wiki:Backpacks and Tackleboxes): recipes, sizes, use.
-- [Stat Sheet and Look](wiki:Stat Sheet and Look): the stat sheet, stat boxes, themes.
+- [Backpacks and Tackleboxes](wiki:Backpacks and Tackleboxes): recipes, sizes, upgrades, use.
+- [Stat Sheet and Look](wiki:Stat Sheet and Look): the stat sheet, stat boxes, the crafting panel, themes.
 - [Configuration](wiki:Configuration): every setting, the YAML files, the console command.
 - [Mod Compatibility](wiki:Mod Compatibility): OpenKeep, FeastMaster, Elite Creatures Reborn, Epic Loot, BiomeLords and others.
 

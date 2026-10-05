@@ -1,3 +1,4 @@
+using PackPanel.Core;
 using System.Collections.Generic;
 using PackPanel.Slots;
 using UnityEngine;
@@ -74,7 +75,7 @@ namespace PackPanel.Tackle
                 ItemDrop.ItemData item = inventory.GetItemAt(element.Position.x, element.Position.y);
                 element.m_amount.enabled = item != null && item.m_stack > 1;
                 if (element.m_amount.enabled)
-                    element.m_amount.text = item.m_stack.ToString();
+                    element.m_amount.text = NumberText.Of(item.m_stack);
             }
         }
     }

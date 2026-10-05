@@ -27,6 +27,24 @@ namespace PackPanel.Layout
             return new Vector2i(-1, -1);
         }
 
+        /// <summary>
+        /// The first free main cell bottom row first that is none of a worn backpack's own cells: where the pack itself goes
+        /// when it comes off, since its cells go with it; (-1, -1) when there is none.
+        /// </summary>
+        public static Vector2i FindEmptyOffPack(Inventory inventory, InventoryLayout layout)
+        {
+            for (int y = layout.MainRows - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < layout.Width; x++)
+                {
+                    Vector2i cell = new Vector2i(x, y);
+                    if (layout.IsMain(cell) && !layout.IsPackCell(cell) && inventory.GetItemAt(x, y) == null)
+                        return cell;
+                }
+            }
+            return new Vector2i(-1, -1);
+        }
+
         public static int CountEmpty(Inventory inventory, InventoryLayout layout)
         {
             int used = 0;
