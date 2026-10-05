@@ -41,7 +41,7 @@ namespace EliteCreaturesReborn.Breeding
             ZDO zdo = parent.m_nview.GetZDO();
             CreatureTraits mother = TraitsOf(parent.m_character);
             CreatureTraits? sire = TraitStore.TakeSire(zdo);
-            int barred = BodySize.Barred(parent.m_character); // a large kind never inherits Gilded or Relentless
+            int barred = MutationBars.Of(parent.m_character); // a large kind never inherits Gilded or Relentless
             CreatureTraits child = KeeperBonus.Apply(zdo, Inheritance.Offspring(mother, sire, RuleState.Active, barred), mother, sire);
             Log.Diag($"breeding: {parent.name} ({mother.Stars} stars, mask {mother.Mask}) and "
                 + (sire != null ? $"partner ({sire.Stars} stars, mask {sire.Mask})" : "no partner")

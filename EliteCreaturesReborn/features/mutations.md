@@ -44,7 +44,7 @@ here.
 | --- | --- | --- |
 | Mad | Moves and attacks far faster - +60% movement, +50% attack speed | Half health |
 | Bloated | Double health. On death it smokes for 1.5 seconds, then explodes | None |
-| Cloaked | Invisible at more than 10 metres (15 for trolls, lox and the Rime Giant), nameplate included. Never rolled by a drake | None |
+| Cloaked | Invisible at more than 10 metres (15 for trolls, lox and the Rime Giant), nameplate included. Never rolled by a drake or a deathsquito | None |
 | Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
 | Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health in any one second, and knocks them back on any melee hit | None |
@@ -1131,9 +1131,6 @@ creatures:
   - match: Hatchling
     mutation chances:
       Cloaked:     [0]
-#  - match: Deathsquito
-#    mutation chances:
-#      Cloaked:     [0]
 
 # Every biome below overrides only what it names. Delete a line to fall back to
 # `defaults`; delete a whole biome to make it behave like the defaults entirely.
@@ -1406,8 +1403,8 @@ The same entries carry the per-creature loot rules (`loot.md`), and one entry ma
   it.
 - **The shipped file has four**: Troll, Lox and ECP_RimeGiant with `mutation power: Cloaked: { reveal distance: 15 }`, because
   big bodies are hard to hide, and Hatchling (the drake) with `mutation chances: Cloaked: [0]`, because an invisible
-  flyer spitting frost from above is no fight. A commented Deathsquito example shows how to end Cloaked mosquitoes
-  in the Plains.
+  flyer spitting frost from above is no fight. Deathsquitos are never Cloaked by a rule in the mod, not the file:
+  an invisible needle out of nowhere is no fight either, and a world saved with one loads it without the cloak.
 
 ### Locking clients to the server
 

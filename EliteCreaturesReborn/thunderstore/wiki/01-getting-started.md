@@ -3,7 +3,7 @@
 Creatures roll more stars than the game's two, and some carry a **mutation** that changes the fight. Bosses take an
 **aspect** instead, shown at their altar. Everything gets harder as bosses fall, and harder fights pay more loot.
 
-This wiki describes version 3.18.0.
+This wiki describes version 3.18.1.
 
 ## Install
 

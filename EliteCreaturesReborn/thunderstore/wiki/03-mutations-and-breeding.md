@@ -12,7 +12,7 @@ creatures with five or more stars.
 | --- | --- | --- | --- |
 | Mad | Red `#E23030` | Much faster, with half health; never on bats. | `move` 1.6 E, `attack speed` 1.5 E, `health` 0.5 |
 | Bloated | Brown `#8B5A2B` | Double health; explodes 1.5 s after death, dealing blunt damage times (1 + stars). | `health` 2 E, `delay` 1.5, `damage` 40 E, `radius` 4 m E |
-| Cloaked | Blue `#4AA6FF` | Invisible until you are within 10 m (15 m for trolls, lox and the Rime Giant); never on drakes or bats. | `reveal distance` 10 E, `fade time` 0.5 s, `fade margin` 1 m |
+| Cloaked | Blue `#4AA6FF` | Invisible until you are within 10 m (15 m for trolls, lox and the Rime Giant); never on drakes, bats or deathsquitos. | `reveal distance` 10 E, `fade time` 0.5 s, `fade margin` 1 m |
 | Splintering | White `#FFFFFF` | Deals less damage and splits into two weaker copies on death. | `damage` 0.6, `max generations` 0, `max descendants` 0 (0 = no limit) |
 | Leeching | Green `#33CC33` | Heals from damage it deals, and regenerates after 5 s unhit. | `lifesteal` 10% E, `regen` 0.5%/s, `regen cap` 20/s, `combat cooldown` 5 s |
 | Warding | Navy `#101C50` | Reflects part of each hit back at you (at most 7.5% of your max health per second) and knocks you back. | `reflect` 30% E, `max reflect` 7.5, `knockback` 4 E |

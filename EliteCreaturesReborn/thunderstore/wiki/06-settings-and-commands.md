@@ -36,17 +36,17 @@ Percentages are 0-100. Lists by star count start at 0 stars, and the last entry 
 (Custom only). Unlisted biomes use the Meadows entry.
 
 **`creatures:`** entries (`match:` a prefab name) take the loot keys ([Loot and Respawning](wiki:Loot and Respawning))
-and the three mutation keys, for that creature only. For example, no Cloaked mosquitoes:
+and the three mutation keys, for that creature only. For example, no Cloaked wolves:
 
 ```yaml
 creatures:
-  - match: Deathsquito
+  - match: Wolf
     mutation chances:
       Cloaked: [0]
 ```
 
 A new file already makes trolls, lox and Elite Creatures Pack's Rime Giant reveal Cloaked at 15 m, keeps drakes from
-being Cloaked and keeps bats from being Mad or Cloaked.
+being Cloaked and keeps bats from being Mad or Cloaked. Deathsquitos are never Cloaked, whatever the file says.
 
 ## Your own settings
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.18.1
+
+- Deathsquitos are never Cloaked, whatever the rule file says; one a world saved Cloaked loads without it.
+
 ## 3.18.0
 
 - Portalbound: Bonemass rolls it too, its slime ball arcing out of a portal above you; only the Elder and Bonemass get it.

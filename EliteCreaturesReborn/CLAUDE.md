@@ -75,7 +75,7 @@ Nineteen, one per creature by default, each with its own colour and its own name
 | --- | --- |
 | Mad | Far faster, half health; never on bats |
 | Bloated | Double health, explodes 1.5 seconds after it dies |
-| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes and bats are never Cloaked |
+| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes, bats and deathsquitos are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
@@ -297,11 +297,11 @@ set any of these keys:
 A creature can have mutation rules of its own. An entry under `creatures:` in the rule file, matched by prefab name,
 takes `mutation chance`, `mutation chances` and `mutation power` exactly as a biome block does. They change that
 creature only, in whatever biome it is in, and everything they do not name still comes from the biome. This ends
-Cloaked mosquitoes and leaves the rest of the Plains alone:
+Cloaked wolves and leaves the rest of the Mountain alone:
 
 ```yaml
 creatures:
-  - match: Deathsquito
+  - match: Wolf
     mutation chances:
       Cloaked: [0]
 ```
@@ -312,7 +312,8 @@ creatures:
 `mutations enabled` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
 entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with five: Troll,
 Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
-never Cloaked, and Bat sets Mad and Cloaked to `[0]`, so bats are never either.
+never Cloaked, and Bat sets Mad and Cloaked to `[0]`, so bats are never either. A Deathsquito is never Cloaked
+whatever the file says (a rule in the mod, not the file), and one a world saved Cloaked loads without it.
 
 ## Respawning
 

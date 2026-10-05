@@ -130,6 +130,7 @@ namespace EliteCreaturesReborn.Runtime
                 return false;
             }
             Traits = TraitStore.Load(zdo);
+            Traits.Mask &= ~MutationBars.OfKind(PrefabName); // a cloaked Deathsquito saved before the bar loads plain
             Rules = ResolveRules(TraitStore.GetBiome(zdo));
             return true;
         }
@@ -182,7 +183,7 @@ namespace EliteCreaturesReborn.Runtime
                 return (_forcedDraw ?? BossDraw.Roll(PrefabName)).ToTraits(); // a Bountiful roll brings its extras with it
             }
             return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current(), biome,
-                BodySize.Barred(_character)); // a large body never rolls Gilded or Relentless
+                MutationBars.Of(_character)); // a large body never rolls Gilded or Relentless, a Deathsquito never Cloaked
         }
 
         /// <summary>
