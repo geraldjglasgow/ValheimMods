@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Fixed: portal and sea gate icons wiggled while panning the map.
+
 ## 0.3.0
 
 - Every portal reaches every other; a tag is only its name. Untagged portals are open again.

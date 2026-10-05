@@ -55,7 +55,7 @@ namespace Wayfare.SeaGates
 
         private sealed class Ticker : MonoBehaviour
         {
-            private void Update() => Tick();
+            private void LateUpdate() => Tick(); // after Minimap.Update moved the map this frame, so icons do not trail it
         }
     }
 }
