@@ -33,8 +33,11 @@ namespace OpenKeep.Core
             return parsed.Count == 0 ? Empty : new ItemMatchSet(parsed);
         }
 
+        /// <summary>An empty set returns at once, without building the item's prefab name (a string per call).</summary>
         public bool Matches(ItemDrop.ItemData item)
         {
+            if (matchers.Count == 0)
+                return false;
             return item != null && item.m_shared != null && Matches(ItemNames.PrefabName(item), item.m_shared);
         }
 

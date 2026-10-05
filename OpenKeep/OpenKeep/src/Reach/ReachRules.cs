@@ -15,11 +15,12 @@ namespace OpenKeep.Reach
 
         public static ReachModel Current { get; private set; }
 
-        /// <summary>The YAML apply callback: replaces the model and the shared enabled table.</summary>
+        /// <summary>The YAML apply callback: replaces the model and the shared enabled table; the reach list and its counts start over.</summary>
         public static void Apply(YamlModel model)
         {
             Current = model as ReachModel;
             ContainerRules.SetEnabled(EnabledTable());
+            ReachChests.Invalidate();
             int listed = Current != null ? Current.Containers.Count : 0;
             int stations = Current != null ? Current.Stations.Count : 0;
             Plugin.Log.LogInfo($"OpenKeep: reach rules applied, {listed} container and {stations} station prefabs listed.");

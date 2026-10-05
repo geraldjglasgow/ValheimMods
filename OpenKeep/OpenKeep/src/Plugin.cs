@@ -5,6 +5,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using MapClicks;
 using OpenKeep.Batch;
 using OpenKeep.BuildCamera;
 using OpenKeep.Capacity;
@@ -33,7 +34,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "2.0.0";
+        public const string PluginVersion = "2.0.1";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -53,6 +54,7 @@ namespace OpenKeep
             int failed = PatchEverything(harmony);
             StacksModule.HookSpawns(harmony);
             AreaLoader.Install(harmony, text => Log.LogInfo("OpenKeep: " + text));
+            IconClick.Install(harmony);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
             Synced.Finish(harmony);

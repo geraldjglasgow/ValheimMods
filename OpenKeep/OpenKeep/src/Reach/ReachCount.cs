@@ -1,44 +1,20 @@
 using System;
 using System.Collections.Generic;
-using OpenKeep.Core;
-using UnityEngine;
 
 namespace OpenKeep.Reach
 {
     /// <summary>
-    /// The reachable containers of the local player and what they hold. The container list is found once per
-    /// frame (the panels ask for every row every frame); contents are always read live. Every count honours the
-    /// prefab's allow / deny lists per stack and the game's quality and world level filters.
+    /// The reachable containers of the local player and what they hold. The container list comes from
+    /// <see cref="ReachChests"/> (one list per frame, its slow rule checks every quarter second); requirement counts
+    /// (<see cref="InContainers"/>) come from <see cref="StorageIndex"/>, which walks the containers once per change
+    /// (the panels ask for every row every frame); per container counts and the first stack lookups read the
+    /// contents live. Every count honours the prefab's allow / deny lists per stack and the game's quality and world
+    /// level filters.
     /// </summary>
     public static class ReachCount
     {
-        private static int cachedFrame = -1;
-        private static List<Container> cached = new List<Container>();
-
         /// <summary>Every reachable container, nearest first: section 0 rules, the enabled table and the per prefab range.</summary>
-        public static List<Container> Containers()
-        {
-            if (Time.frameCount == cachedFrame)
-                return cached;
-            cachedFrame = Time.frameCount;
-            cached = Find();
-            return cached;
-        }
-
-        private static List<Container> Find()
-        {
-            List<Container> result = new List<Container>();
-            Player player = Player.m_localPlayer;
-            if (player == null)
-                return result;
-            Vector3 position = player.transform.position;
-            foreach (Container container in ContainerScan.Nearby(position, ReachRules.MaxRange(), ContainerUse.Reach))
-            {
-                if (Vector3.Distance(position, container.transform.position) <= ReachRules.RangeFor(container))
-                    result.Add(container);
-            }
-            return result;
-        }
+        public static List<Container> Containers() => ReachChests.List();
 
         /// <summary>The game's requirement filter: shared name, quality (-1 for any) and the world level rule.</summary>
         public static bool Matches(ItemDrop.ItemData item, string name, int quality, bool worldLevel)
@@ -50,9 +26,12 @@ namespace OpenKeep.Reach
             return !worldLevel || item.m_worldLevel >= Game.m_worldLevel;
         }
 
-        /// <summary>Items of a shared name in every reachable container.</summary>
+        /// <summary>Items of a shared name in every reachable container: from the storage index for the world level rule
+        /// every requirement uses, else (no caller today) counted live.</summary>
         public static int InContainers(string name, int quality, bool worldLevel)
         {
+            if (name != null && worldLevel)
+                return StorageIndex.Count(name, quality);
             int sum = 0;
             foreach (Container container in Containers())
                 sum += CountIn(container, name, quality, worldLevel);

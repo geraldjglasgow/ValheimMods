@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -40,6 +40,7 @@
     <ProjectReference Include="$(ModLibsPath)\ItemCopies\ItemCopies.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
     <ProjectReference Include="$(ModLibsPath)\AreaLoading\AreaLoading.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\MapClicks\MapClicks.csproj" />
   </ItemGroup>
 
   <ItemGroup>

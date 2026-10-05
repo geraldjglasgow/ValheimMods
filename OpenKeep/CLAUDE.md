@@ -50,8 +50,10 @@ OpenKeep/OpenKeep/src/
   Core/                     shared by every module
     CoreModule.cs, CoreSettings.cs, SharedMode.cs   section 0. Containers (Ships, Carts, Player Chests, Honour Wards,
                             Shared Chests: Off, View, Full)
-    ContainerScan.cs        loaded containers (Container.Awake postfix), Nearby, IsUsable, IsShared, InUseByAnother,
-                            Claim, Save, PrefabName, IsShip, IsCart, IsPrivateChest
+    ContainerScan.cs        loaded containers (Container.Awake postfix, Registered count), Nearby, Allowed, IsUsable
+                            (= IsReady + IsAllowed), IsShared, InUseByAnother, Claim, Save, PrefabName, IsShip, IsCart,
+                            IsPrivateChest
+    ContainerFacts.cs       a tracked container's fixed facts (prefab name, ship, cart, private chest), found on first use
     ContainerRules.cs       per prefab enabled table, filled by Reach's YAML, read by every module
     ContainerUse.cs         Reach or Stow (both share the section 0 rules today)
     ItemMatcher.cs, ItemMatchSet.cs, ItemGroups.cs   the item vocabulary and the groups: map of a YAML file
@@ -67,7 +69,12 @@ OpenKeep/OpenKeep/src/
     ReachModule.cs, ReachSettings.cs, ReachMode.cs, RequirementDisplay.cs
     ReachModel.cs, ContainerRule.cs, StationRule.cs, ReachRules.cs   OpenKeep.Reach*.yml, per prefab container
                             and station rules, gate and ranges
-    ReachCount.cs           reachable containers (one list per frame), counting per stack with allow/deny
+    ReachChests.cs          reachable containers: candidates by the section 0 rules every 0.25 s (sooner on a woken
+                            container, a rules apply, a new player body, 4 m moved, a wider range), narrowed every frame
+                            by IsReady and each prefab's range; one list instance while its members stay the same
+    StorageIndex.cs         what the reachable containers hold per name and per name + quality, walked again only when
+                            the list instance, any inventory (Inventory.Changed prefix) or the world level changed
+    ReachCount.cs           the reach list, requirement counts from StorageIndex, live per-container counts and lookups
     ReachPayment.cs         the payment window (ConsumeResources, DoCrafting) and the RemoveItem prefix
     EpicLootLink.cs         Epic Loot's RegisterInventoryProvider (reflection, from Plugin.Start): its table pays from chests
     ReachPull.cs            moving items from containers into the inventory, never in two places
@@ -174,8 +181,8 @@ OpenKeep/OpenKeep/src/
     BedChoiceMap.cs         the large map while dead: the game's map update, zoom to fit, map key/Escape one frame
                             late
     BedChoiceLabel.cs       the countdown in the large map's upper left corner (seconds in large figures)
-    BedChoiceMapPatch.cs, BedChoiceClickPatch.cs, BedChoiceDoubleClickPatch.cs, BedChoiceScreenPatch.cs,
-    BedChoiceEndPatch.cs    Minimap.Update, OnMapLeftClick, OnMapDblClick, Hud.UpdateBlackScreen, Game._RequestRespawn
+    BedChoiceMapPatch.cs, BedChoiceClickPatch.cs, BedChoiceScreenPatch.cs,
+    BedChoiceEndPatch.cs    Minimap.Update, OnMapLeftClick, Hud.UpdateBlackScreen, Game._RequestRespawn
     BedPins.cs, BedPinsPatch.cs   the other known beds as unsaved bed pins (Minimap.UpdateProfilePins postfix)
     BedPinLook.cs, BedPinLookPatch.cs   bed icons yellow (Minimap.UpdatePins postfix); twice the size and pulsing
                             while choosing
@@ -346,7 +353,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.0.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.0.1]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -400,8 +407,9 @@ station list and caps; Homestead's Build On Wood; all `Priority.Low`).
 Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Game._RequestRespawn()` (private: the
 choice of bed ends), `Game.FindSpawnPoint(out Vector3, out bool, float)` (Quick Respawn's load speed, a class of its
 own beside the prefix and postfix below), `Hud.UpdateBlackScreen(Player, float)` (private: no black screen during
-the choice of bed), `Minimap.OnMapDblClick()` and `Minimap.OnMapLeftClick()` (during the choice of bed: no new pin,
-a click picks a bed; the click one `Priority.First`), `Minimap.Update()` (private: the map during the choice of bed, skipping the game's update),
+the choice of bed), `Minimap.OnMapLeftClick()` (during the choice of bed a click picks a bed, `Priority.First`; the
+MapClicks library's `IconClick.Install` in `Plugin.Awake` adds, by name, a `Minimap.OnMapDblClick()` prefix and a
+`Minimap.Update()` postfix that hold the pick through the double click window), `Minimap.Update()` (private: the map during the choice of bed, skipping the game's update),
 `Container.RPC_OpenResponse(long, bool)`
 (a refusal is silent while viewing), `InventoryGrid.DropItem(Inventory, ItemData, int, Vector2i)` (Shared,
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
@@ -610,6 +618,15 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   shortfall paid short and logged; the player gains, never loses. The build panel passes quality 0 to
   `SetupRequirement`, so its rows use the Building switch. Reachable means `ContainerScan.IsUsable`: a chest another
   player is using is neither counted nor paid from, in every `Shared Chests` mode.
+- Counting: the reach list (`ReachChests`) re-runs the section 0 rules (switches, prefab table, privacy, the ward
+  scan) over its candidates every 0.25 s and at once on a woken container, `ReachRules.Apply`, a new local player,
+  4 m moved or a wider range; loaded, in use by another player, still there and range run every frame, so leaving
+  range or another player opening a chest counts at once, while a ward toggle, a changed permitted list or a section 0
+  switch reaches Reach within 0.25 s. Requirement counts come from `StorageIndex`: one walk of the reachable
+  containers per change (a new list instance, which includes the 0.25 s refresh as a safety net for changes that
+  bypass `Inventory.Changed`; any `Inventory.Changed`, so payments, pulls, drags and another player's change loaded
+  from the ZDO; a new world level). Payment, Pull, Borrow, Fill and the station hover read the containers live. A
+  requirement row counts storage only when the inventory alone is short.
 - Single ingredient recipes: `GetFirstRequiredItem` returns the inventory's stack, else the container's stack;
   the game reads only its name and quality (`Recipe.GetAmount`, `DoCrafting`).
 - Rows: Split shows `min(have, need) + storage part`, Total shows the need in the storage colour, rows stay red
@@ -1077,7 +1094,10 @@ Beds:
   day; first a visible 140 unit disc, then, at the user's word, invisible and no larger than the icon at its largest:
   an empty rect of twice `m_pinSizeLarge`, the doubled icon at the top of its pulse); a click inside one picks that bed
   (the nearest when areas overlap; the radius is the area's screen size turned into map metres at the current zoom;
-  the game's pin radius only before the first area exists). The nearest bed is pinged when the map opens (`BedPing`, asked the
+  the game's pin radius only before the first area exists). The pick waits out the game's double click window (0.3 s,
+  the MapClicks library's `IconClick.Hold`), so the game's pins keep working under a bed (asked 2026-10-04): a double
+  click there places a pin instead of waking, and a right click removes a pin as anywhere else (the bed icons are
+  unsaved pins, which the game's removal skips). The nearest bed is pinged when the map opens (`BedPing`, asked the
   same day: the game's ping marker as a local unsaved pin, built directly like the bed pins, twice the size, pulsing,
   tinted gold after every pin update), under the bed's icon and bubble; it goes when the choice ends.
 
@@ -1640,7 +1660,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.0.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.0.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -1922,7 +1942,8 @@ from a script.
     the map's upper left corner counting
     down from 30. Wait: at 0 you wake in A. Die again and click B: the map closes, you wake in B after B's share of the wait (log
     `chose the bed at ...`, `waking in ... s after death`). Die and press M (and once Escape): the map closes at once,
-    you wake in A, the game menu does not open, and the cursor hides again. A double click beside the beds adds no pin.
+    you wake in A, the game menu does not open, and the cursor hides again. Die, double click on B: the pin name field
+    opens there and you do not wake; name the pin, right click it on B: the pin goes, B stays; click B: you wake in B.
     Hide the bed icons in the map filter first: they show during the choice and are hidden again after. After the
     choice, open the map: the bed icons are back to the normal size and still. With a portal, a map pin and the death
     marker beside a bed (and Wayfare's portal icons shown): the bed icon is drawn over all of them during the choice,

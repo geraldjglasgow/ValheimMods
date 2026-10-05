@@ -32,7 +32,8 @@ Crafting and station feeding never use a chest another player has open.
 - **Epic Loot:** its enchanting table takes materials from nearby chests.
 - **EliteCrafting:** its magic items are never salvaged.
 - **GrindstoneSkills:** batch-cooked dishes each roll their own stars.
-- **Wayfare:** quick portal jumps are Wayfare's (they moved there); OpenKeep keeps the quick respawn.
+- **Wayfare:** quick portal jumps (near portals quicker, no loading screen into a loaded area) are Wayfare's; OpenKeep keeps the quick respawn.
+- **EarthWright:** with the [Build Camera](wiki:Build Camera) out, its terrain edits still reach only from where you stand.
 - **Trash can mods:** if one already put a trash can under the armour, OpenKeep's goes into the button row.
 
 ## Console commands

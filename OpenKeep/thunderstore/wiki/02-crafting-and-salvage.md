@@ -77,22 +77,83 @@ Its enchanting table takes materials from chests in reach. Gear stored in chests
 
 ## Batch crafting
 
-A `- amount +` stepper beside Craft makes many at once (section `10. Batch Crafting`).
+A `- amount +` stepper beside Craft makes many at once, and `Craft Speed` sets how long crafting takes (section `10. Batch Crafting`).
 
 | Setting | Default | Who | Meaning |
 | --- | --- | --- | --- |
 | `Enabled` | on | Server | Show the stepper. Off: the game's panel, where Shift + Craft makes 5. |
 | `Max Amount` | 100 | Server | The most one Craft makes (1 to 1000). |
+| `Craft Speed` | 1 | Server | How fast the craft bar fills at every station and by hand, upgrades included (0.1 to 10): 2 takes half the time, 0.5 twice as long. Works with `Enabled` off too. |
 
 | Input | Effect |
 | --- | --- |
 | Click `+` / `-` | One more or fewer. |
+| Mouse wheel over the stepper | Up for more, down for fewer; Shift and Ctrl work as for clicks. |
 | `Shift` + click | To the next multiple of ten. |
 | `Ctrl` + click | To 1, or to the most you can make. |
 | Click the number | Type an amount. |
-| Gamepad D-pad left / right | Step the amount. |
+| Gamepad D-pad left / right | Step the amount; held down, it soon steps by tens. |
 
-The amount counts crafts: 5 crafts of 20 arrows makes 100. It stops at what your materials (chests included) and inventory room allow. With GrindstoneSkills, each dish rolls its own stars.
+The amount counts crafts: 5 crafts of 20 arrows makes 100. It stops at what your materials (chests included) and inventory room allow. One craft takes the game's 2 s and a batch of any size 6 s, divided by `Craft Speed`; your crafting skill shortens both as usual. With GrindstoneSkills, each dish rolls its own stars.
+
+## Recipe list
+
+A search row above the crafting panel's recipe list (Craft and Upgrade tabs), favourite recipes and five views (section `12. Recipe List`). All are Player settings.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `Search` | on | The search row, with the favourites only star and the view button at its right end. |
+| `Search Key` | Left Ctrl + F | Put the cursor into the search field. |
+| `Clear Search On Close` | on | Empty the search when the inventory closes. Off: it stays until you change it. |
+| `Favourites` | on | Favourite recipes, marked with the game's orange star. |
+| `Favourites First` | on | Favourites come first in the list, the rest in the game's order. |
+| `Recipe View` | List | `List` (the game's), `CompactList` (lower rows, more on screen), `SmallGrid`, `MediumGrid` or `LargeGrid` (icon tiles, 5, 4 or 3 to a row). |
+| `Gamepad Controls` | on | The right stick shortcuts below. |
+
+| Search | Finds |
+| --- | --- |
+| `sword` | Recipes whose item name holds the word, in your language or the prefab name (`SwordIron`). |
+| `@iron` | Recipes that need a material with that word. On the Upgrade tab: the upgrade's materials. |
+| `-word` / `-@word` | Leaves those out. |
+
+Every word must match; spaces separate words, any case. Escape in the field clears it, Enter keeps the text.
+
+| Input | Effect |
+| --- | --- |
+| Middle click a recipe, `F` over it, or the star under its name | Make it a favourite, or not. |
+| The star above the list | Favourites only, or all again. Shift + click: clear every favourite (asks first). |
+| The view button above the list | The next view; Shift + click: the one before. |
+| Hover a tile | Its name. A tile shows the quality level in its corner. |
+| Gamepad right stick up / down / left / right | Search / track or untrack / favourite / favourites only. |
+
+`F` is Stow's `Favourite Item Key`; over an inventory slot it keeps its Stow meaning. On a gamepad in a grid, the left stick and D-pad up and down step a row, the left stick left and right a tile. Favourites are saved with your character.
+
+## Recipe tracker
+
+Pins recipes on screen with every material they need, to watch while you gather (section `13. Recipe Tracker`). All are Player settings.
+
+- **Track:** right click a recipe in the crafting list, click its `Track` button under the recipe's name, or push the gamepad's right stick down. The same again untracks it. On the Upgrade tab it tracks the next level.
+- **Each entry:** the item with `- amount +` and `X`, the station and level it needs, then one row per material with what you have against what the amount needs. Rows show in the Have or Missing colour; the name turns the Ready colour once everything is there. A recipe that takes any one of its materials says so.
+- **Amount:** starts at the batch amount when you track the selected recipe, else 1. Change it with `-` / `+` (Shift: to the next ten) or the mouse wheel over the entry, up to 9999.
+- **Moving and removing:** with the inventory open, drag the tracker by its title and click `X` to remove an entry. It stays on top of the open inventory.
+- Tracked recipes are saved with your character.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `Enabled` | on | The tracker and the `Track` button. |
+| `Max Tracked` | 6 | The most recipes tracked at once (1 to 12). |
+| `Count Nearby Chests` | on | Materials in the chests you could craft from count too (needs Reach and its `Crafting` switch on). Off: only what you carry. |
+| `Untrack When Crafted` | on | Crafting a tracked recipe counts its amount down; once all are made it leaves the tracker. Off: it stays until you remove it. |
+| `Hide In Combat` | on | Hidden while a creature is after you, and for 5 s after. |
+| `Hide With Map` | on | Hidden while the large map is open. |
+| `Scale` | 1 | The tracker's size (0.5 to 2). |
+| `Font` | Sans | The game's typefaces: `Sans`, `Serif` or `Norse`. |
+| `Font Size` | 16 | Text size (10 to 28); the tracker widens with it. |
+| `Have Colour` | #FFFFFF | A material you have enough of. |
+| `Missing Colour` | #FF6A5A | A material you are short of. |
+| `Ready Colour` | #FFB65C | The recipe's name once every material is there. |
+| `Background Opacity` | 0.56 | The dark background, 0 (none) to 1. |
+| `Position` | empty | The top left corner as `x,y` from the screen's top left; written when you drag it. Empty: the default place, `20,330`. |
 
 ## Salvage
 

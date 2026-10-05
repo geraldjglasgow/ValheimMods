@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.1
+
+- Homestead: on the bed choice map a double click places a map pin, also on a bed.
+- Reach: lighter on the frame rate with the crafting or build panel open near many chests.
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 2.0.0
 - Quick portals moved to Wayfare: install it for quick jumps. `Quick Area Loading` now speeds respawns only.
 - Build Camera: build from a free camera near a crafting station (B with a build tool).

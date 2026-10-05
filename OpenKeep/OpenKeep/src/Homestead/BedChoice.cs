@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MapClicks;
 using UnityEngine;
 
 namespace OpenKeep.Homestead
@@ -8,7 +9,8 @@ namespace OpenKeep.Homestead
     /// above 0, the world has a map and there are two beds or more; the nearest is already the spawn point
     /// (<see cref="BedRespawn.Choose"/>). The respawn the game asked for is moved to the end of the choice, so the game
     /// wakes the player in the nearest bed on its own if nothing else happens. A click on a bed makes it the spawn
-    /// point and ends the choice; the time running out, the map key or Escape end it with the bed already chosen. At
+    /// point and ends the choice once the game's double click window has passed (a double click places a pin under
+    /// the bed instead, and a right click removes one, as anywhere on the map); the time running out, the map key or Escape end it with the bed already chosen. At
     /// the end the respawn is asked for again with what is left of the wait for that bed (<see cref="BedWait"/>), so a
     /// near bed wakes the player at once. Active only while the same game and the same player exist and the player is
     /// still dead, so a quit, a respawn or a revival from elsewhere ends it without a call.
@@ -52,7 +54,9 @@ namespace OpenKeep.Homestead
                 Confirm();
         }
 
-        /// <summary>A click at <paramref name="point"/> on the map: the bed nearest to it within <paramref name="radius"/> metres is chosen.</summary>
+        /// <summary>A click at <paramref name="point"/> on the map: the bed nearest to it within <paramref name="radius"/>
+        /// metres wakes the player, once the game's double click window has passed: a double click there places a pin
+        /// under the bed instead (asked 2026-10-04).</summary>
         public static void ClickAt(Vector3 point, float radius)
         {
             int index = -1;
@@ -64,7 +68,15 @@ namespace OpenKeep.Homestead
             }
             if (index < 0)
                 return;
-            BedRespawn.Prefer(beds[index]);
+            Vector3 bed = beds[index];
+            IconClick.Hold(() => Choose(bed));
+        }
+
+        private static void Choose(Vector3 bed)
+        {
+            if (!Active)
+                return;
+            BedRespawn.Prefer(bed);
             Confirm();
         }
 

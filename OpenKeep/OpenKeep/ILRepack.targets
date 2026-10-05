@@ -15,6 +15,7 @@
       <InputAssemblies Include="$(OutDir)ItemCopies.dll" />
       <InputAssemblies Include="$(OutDir)PlateColumn.dll" />
       <InputAssemblies Include="$(OutDir)AreaLoading.dll" />
+      <InputAssemblies Include="$(OutDir)MapClicks.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

@@ -1,8 +1,8 @@
 # Getting Started
 
-OpenKeep is storage for Valheim in one mod: craft, build and feed stations from nearby chests; quick stack, sort, route and trash; salvage and batch crafting; stack sizes, weights, chest sizes, station capacities and contents signs. Its Homestead section adds base tweaks: a choice of bed after death, quicker respawns and portals, campfires on wood, honey rate, fires, smelters and pets fed from chests, night-only torches, quicker Rested and repairs.
+OpenKeep is storage for Valheim in one mod: craft, build and feed stations from nearby chests; quick stack, sort, route and trash; salvage, batch crafting and craft speed; recipe search, favourite recipes, grid views and a recipe tracker; stack sizes, weights, chest sizes, station capacities and contents signs. Its Homestead section adds base tweaks: a choice of bed after death, quicker respawns, campfires on wood, honey rate, fires, smelters and pets fed from chests, night-only torches, quicker Rested and repairs. A build camera lets you build from a free camera near a crafting station.
 
-This wiki describes version 1.14.0.
+This wiki describes version 2.0.1.
 
 ## Install
 
@@ -48,11 +48,12 @@ Every key can be rebound in the cfg, main key first (`R + LeftAlt`); empty switc
 
 ## Pages
 
-- [Crafting and Salvage](wiki:Crafting and Salvage) - crafting from chests, station feeding, cart workbench, batch crafting, salvage.
+- [Crafting and Salvage](wiki:Crafting and Salvage) - crafting from chests, station feeding, cart workbench, batch crafting, craft speed, recipe search and favourites, recipe tracker, salvage.
 - [Stow and Sort](wiki:Stow and Sort) - quick stack, store, top up, route, favourites, trash, sorting, ground pickup.
 - [Stacks and Containers](wiki:Stacks and Containers) - stack sizes, weights, chest sizes, station capacities, contents signs.
-- [Homestead](wiki:Homestead) - beds, portals, fires, torches, honey, self-feeding stations, pets, Rested, repairs.
+- [Homestead](wiki:Homestead) - beds and respawn, fires, torches, honey, self-feeding stations, pets, Rested, repairs.
 - [Multiplayer and Commands](wiki:Multiplayer and Commands) - server settings, shared chests, other mods, console commands.
+- [Build Camera](wiki:Build Camera) - build, remove and repair from a free camera near a crafting station.
 
 ## Links
 

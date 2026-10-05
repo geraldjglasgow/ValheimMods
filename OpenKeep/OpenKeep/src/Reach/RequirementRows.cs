@@ -26,7 +26,7 @@ namespace OpenKeep.Reach
             string name = Requirements.Name(req);
             int need = req.GetAmount(quality) * craftMultiplier;
             int have = player.GetInventory().CountItems(name);
-            int stored = ReachCount.InContainers(name, -1, true);
+            int stored = have >= need ? 0 : ReachCount.InContainers(name, -1, true);
             Show(amountText, name, need, have, stored);
         }
 

@@ -7,7 +7,7 @@ Section `8. Homestead`: base tweaks outside storage. All are Server settings exc
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | `Nearest Bed Respawn` | on | Every bed you own is a spawn bed; you wake in the one nearest where you died. |
-| `Bed Choice Seconds` | 30 | After a death the map opens this long so you can click a bed (0 to 60). 0: no map. |
+| `Bed Choice Seconds` | 30 | With two beds or more, a death opens the map this long so you can click a bed (0 to 60). 0: no map. |
 | `Quick Respawn` | on | The nearer you died to your bed, the sooner you wake. |
 | `Quick Respawn Seconds` | 1 | The wait when you died beside the bed (0 to 18). |
 | `Quick Respawn Range` | 1000 m | The distance at which the game's full 18 s wait applies (10 to 20000). |
@@ -17,7 +17,8 @@ Section `8. Homestead`: base tweaks outside storage. All are Server settings exc
 
 - Any bed you own lets you sleep. A bed counts once you have claimed, slept in or visited it.
 - If your nearest bed is gone, you wake in the next one; with none left, at the world start.
-- On the bed map, click a bed to wake there; the map key or Escape picks the nearest at once.
+- On the bed map, click a bed to wake there; the map key or Escape picks the nearest at once. Bed icons are twice the size, pulse and sit above every other map icon, and a gold ping marks the nearest bed. A click anywhere on a bed's icon counts; a double click places a map pin there instead.
+- Quick portal jumps are not in OpenKeep: they are in the Wayfare mod.
 
 ## Building and honey
 

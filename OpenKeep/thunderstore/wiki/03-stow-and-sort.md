@@ -16,20 +16,20 @@ Section `2. Stow`: buttons and keys to move items between you and chests, sort, 
 | `Take All Key` | Shift + G | Player | Take everything from the open chest. |
 | `Top Up Key` | R | Player | Fill your partial stacks from the open and nearby chests. |
 | `Dump Key` | Left Alt + D | Player | Quick stack to nearby chests without opening the inventory. |
-| `Route Modifier` | Left Ctrl | Player | Ctrl + click a stack: send it to the nearest chest holding that item, else the open chest, else a chest with the same group or that accepts it. |
+| `Route Modifier` | Left Ctrl | Player | Ctrl + click a stack: send it to the nearest chest holding that item with room for it, else the open chest, else a chest with the same group or that accepts it. Full chests are passed over. |
 | `Store One Key` | V | Player | Send one of the hovered item to the open chest, or the nearest chest holding it. |
 | `Find Key` | Z | Player | Point to every nearby chest holding the hovered item. |
 | `Button Row Offset` | 0 | Player | Move the button row up or down, in pixels. |
 | `Trash Can On Stat Column` | on | Player | Off: the trash can joins the button row. |
 | `Main Inventory Rows` | 0 | Player | Rows these actions use. 0: the game's rows. Set it for mods that add ordinary rows. |
 
-When a chest is full, the rest goes to the next nearest chest holding the item. Quick stack, store all and dump leave the hotbar and other mods' slots alone; equipped and favourite items never move.
+When a chest is full, the rest goes to the next nearest chest holding the item; with Ctrl + click, whatever is still left then goes into the open chest. Quick stack, store all and dump leave the hotbar and other mods' slots alone; equipped and favourite items never move.
 
 ## Favourites, junk and trash
 
 | Setting | Default | Who | Meaning |
 | --- | --- | --- | --- |
-| `Favourite Item Key` | F | Player | Mark the hovered kind of item as a favourite: it never moves, is never trashed or salvaged. |
+| `Favourite Item Key` | F | Player | Mark the hovered kind of item as a favourite: it never moves, is never trashed or salvaged. Over a recipe in the crafting list it makes a favourite recipe (see [Crafting and Salvage](wiki:Crafting and Salvage)). |
 | `Favourite Slot Key` | Shift + F | Player | Mark the hovered slot as a favourite: its content stays put. |
 | `Junk Key` | J | Player | Mark the hovered kind of item as junk. |
 | `Destroy Junk Key` | Shift + Delete | Player | Destroy every junk stack you carry. |
