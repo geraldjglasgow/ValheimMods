@@ -2,7 +2,7 @@
 
 New creatures for Valheim, each with its own fight, and bone weapons made from what they drop.
 
-This wiki describes version 0.6.0.
+This wiki describes version 0.7.0.
 
 | Creature | Where | In short |
 | --- | --- | --- |
@@ -55,8 +55,27 @@ With `devcommands`, `spawn <prefab> [amount] [level]` makes any of these (level 
 
 - **Elite Creatures Reborn** (optional): these creatures roll stars and mutations, and its
   `elite spawn <prefab> <stars>` takes these prefabs.
+- **EliteCrafting** (optional): every creature here drops its runes and magic gear, the bosses more (below). The
+  bone weapons, the Bone Crossbow and the Executioner's Greataxe are item level 2 (Black Forest) and the Kraken shield
+  level 4, so they roll inscriptions like the game's gear of those biomes.
 - **Epic Loot:** add an `ECP_CryptMimic` entry to its loot tables to give mimics magic items.
 - Loot mods, spawn mods and other mods' ships work with these creatures.
+
+## With EliteCrafting
+
+Runes and magic gear come on top of each creature's own loot. Boss magic items roll Rare more often, as from the game's
+bosses: 70% at level 2, 85% at level 4.
+
+| Creature | Level | Drops |
+| --- | --- | --- |
+| Kraken | 4 (Ocean) | Every kill: 3 runes, 1 magic item and a Serpent Rune |
+| Rime Giant | 4 (Mountain) | Every kill: 3 runes and 1 magic item; 50%: a Consecrated Rune |
+| Crypt Executioner | 2 (Black Forest) | Every kill: 2 runes and 1 magic item; 25%: an Ascension Rune |
+| Its raised skeletons | - | Nothing |
+| Crypt Mimic | The crypt's: 2 burial chamber, 3 sunken crypt | A crypt chest's odds: 30% a rune and 10% a magic item (36% and 12% in a sunken crypt) |
+| Greydwarf Slinger, arsenal skeletons, Skeleton Crossbowman | 2 (Black Forest) | A Black Forest creature's odds: 5% a rune, 1.25% a magic item |
+
+A server's EliteCrafting files can change any of these by prefab name. `ecraft tiers` lists the bone weapons' levels.
 
 ## Links
 

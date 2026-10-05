@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.6.2</Version>
+    <Version>0.7.0</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -43,6 +43,8 @@
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
     <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
+    <!-- Elite Crafting's API bound by reflection (no reference to Elite Crafting): classes, item levels, creature loot -->
+    <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
   </ItemGroup>
 
   <ItemGroup>

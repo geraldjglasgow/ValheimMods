@@ -30,6 +30,7 @@ namespace EliteCreaturesPack.Slinger
         public static float Share => share.Value / 100f;
 
         public static bool Nests => nests.Value;
+        public static Heightmap.Biome Biomes => biomes.Value;
         public static bool InBiome(Heightmap.Biome biome) => (biomes.Value & biome) != 0;
         public static float ShotInterval => shotInterval.Value;
         public static float StoneDamage => stoneDamage.Value;

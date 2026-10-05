@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+- With EliteCrafting: every creature drops runes; the Kraken, Rime Giant and Crypt Executioner drop extra.
+- With EliteCrafting: bone weapons and the Kraken shield have item levels.
+- The Kraken's loot lands on the ship's deck or the water, not the sea floor.
+
 ## 0.6.2
 
 - Faster loading: the config file is written once instead of once per setting.

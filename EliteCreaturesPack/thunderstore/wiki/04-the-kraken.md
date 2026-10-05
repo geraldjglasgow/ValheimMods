@@ -46,7 +46,9 @@ aboard).
 
 ## Loot
 
-On the held ship's deck: 20-29 Chitin, 5-7 Raw kraken tentacle, 150-299 Coins and exactly 1 Kraken beak.
+On the held ship's deck, or on the water where it died if it held no ship: 20-29 Chitin, 5-7 Raw kraken tentacle,
+150-299 Coins and exactly 1 Kraken beak. Loot other mods add (such as EliteCrafting's runes and magic gear: every kill 3
+runes, 1 magic item and a Serpent Rune) lands there too, never on the sea floor.
 
 | Item | What it is |
 | --- | --- |
@@ -70,6 +72,8 @@ Made at the **forge** (the serpent scale shield's level) from **10 Fine wood, 5 
 
 **Parry bite:** parry a creature's blow with it and the beak bites back: 60 pierce, +10 per quality level above 1.
 Works on any creature, melee or ranged, never on players.
+
+With EliteCrafting it is a round shield of item level 4 (Mountain and Ocean) and can become magic.
 
 ## Settings: `5 - Kraken`
 

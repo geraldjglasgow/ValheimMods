@@ -6,7 +6,8 @@ namespace EliteCreaturesPack.Kraken
     /// OWNER, as the kraken dies. The game makes a creature's corpse where its body is and drops its loot round it; the
     /// kraken's body may be deep under a ship, so first it is moved to where its head is seen (up beside the ship, facing
     /// it, or where it swam), a little under the surface, and its loot is aimed at the held ship's deck (or just over the
-    /// water where it died, where the game's items float).
+    /// water where it died, where the game's items float). Items other mods drop in its death go to the same spot
+    /// (<see cref="KrakenDropSpot"/>).
     /// </summary>
     public static class KrakenDeath
     {
@@ -28,12 +29,18 @@ namespace EliteCreaturesPack.Kraken
 
         public static void AimLoot(KrakenBrain brain, CharacterDrop drop)
         {
+            Vector3 target = LootSpot(brain);
+            drop.m_spawnOffset = drop.transform.InverseTransformVector(target - brain.Character.GetCenterPoint());
+        }
+
+        /// <summary>Where its loot lands: over the middle of the held ship's deck, or just over the water where it died.</summary>
+        public static Vector3 LootSpot(KrakenBrain brain)
+        {
             Ship? ship = Held(brain);
             ShipHull? hull = ship != null ? ShipHull.Of(ship) : null;
-            Vector3 target = ship != null && hull != null
+            return ship != null && hull != null
                 ? ship.transform.TransformPoint(new Vector3(0f, hull.Rail + OverDeck, hull.MiddleZ))
                 : Surface(brain.transform.position, OverDeck);
-            drop.m_spawnOffset = drop.transform.InverseTransformVector(target - brain.Character.GetCenterPoint());
         }
 
         private static Ship? Held(KrakenBrain brain) => brain.State.Grips ? KrakenShips.Find(brain.State.Ship) : null;

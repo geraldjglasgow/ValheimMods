@@ -104,19 +104,36 @@ namespace EliteCreaturesPack.Kraken
 
     /// <summary>
     /// A kraken dying, on its owner, before the game makes its corpse and drops its loot: moved to where its head is seen
-    /// (<see cref="KrakenDeath"/>), so the corpse comes up there, and its loot aimed at the held ship's deck.
+    /// (<see cref="KrakenDeath"/>), so the corpse comes up there, and its loot aimed at the held ship's deck. First of all
+    /// the mods' parts of a death, so they see it where it is seen; from then until after the last of them (Elite
+    /// Crafting drops its runes and gear in its own finalizer) what they drop goes to the deck too (<see cref="KrakenDropSpot"/>).
     /// </summary>
     [HarmonyPatch(typeof(Character), nameof(Character.OnDeath))]
     public static class KrakenDeathPatch
     {
+        [HarmonyPriority(Priority.First)]
         private static void Prefix(Character __instance)
         {
             KrakenBrain? brain = KrakenBrain.Loaded.Count > 0 ? KrakenAIPatch.Find(__instance) : null;
             if (brain != null && __instance.m_nview != null && __instance.m_nview.IsOwner())
             {
-                SafeCall.Run("Character.OnDeath kraken", () => KrakenDeath.Prepare(brain));
+                SafeCall.Run("Character.OnDeath kraken", () =>
+                {
+                    KrakenDeath.Prepare(brain);
+                    KrakenDropSpot.Open(KrakenDeath.LootSpot(brain));
+                });
             }
         }
+
+        [HarmonyPriority(Priority.Last)]
+        private static void Finalizer() => KrakenDropSpot.Close();
+    }
+
+    /// <summary>An item dropped while a kraken dies goes where its loot does (<see cref="KrakenDropSpot"/>); any other passes untouched.</summary>
+    [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.DropItem))]
+    public static class KrakenDropSpotPatch
+    {
+        private static void Prefix(ref Vector3 position) => KrakenDropSpot.Redirect(ref position);
     }
 
     /// <summary>A kraken's loot lands on the deck of the ship it held (or floats up where it died), not on the sea floor.</summary>

@@ -33,7 +33,8 @@ Prefab names are hashed into saved worlds: never rename one after a release.
 
 ```
 EliteCreaturesPack/
-  EliteCreaturesPack.cs   plugin entry: settings, PatchAll, each creature's Prefabs.Install, Synced.Finish, Guard
+  EliteCreaturesPack.cs   plugin entry: settings, PatchAll, each creature's Prefabs.Install, Synced.Finish, the Elite
+                          Crafting hand-off, Guard
   Core/                   Settings (General + the Changed event, root namespace), Log, SafeCall, NameList
   Mimic/                  the crypt mimic: prefabs, body, bite, disguise, leap, crypt swap, loot, patches, settings
   Slinger/                the Greydwarf Slinger: prefabs, kit, sling rig, shot, stone, aim, spawns, patches, settings
@@ -45,11 +46,13 @@ EliteCreaturesPack/
                           single-blow clips, look (models, colliders, glow, bowstring), players' items and spine,
                           bone arrow, recipes, words, settings (section 8: master and spawn switches only)
   Skeletons/              the one even draw for a Black Forest skeleton's spawn: plain, arsenal or crossbowman, and its patches
+  Crafting/               Elite Crafting, optional: the gear's item classes and levels, the creatures' rune and gear loot
   Kraken/                 the Kraken: prefabs, settings, state, spawns, words, patches, and
     Motion/               pure Unity maths, no game types: tentacle poses (curl, deck run, swim, limp), the bone rigs, easing
     Ships/                a ship's hull, deck scan, the ship scene it is drawn in, holding the ship
     Body/                 every machine's drawing: KrakenBody, head and tentacle motion, strike and head-attack timelines, impacts
-    Fight/                the owner's brain (hunt, fight, targets), the attack RPCs, hit tests, ink jet, effects, death
+    Fight/                the owner's brain (hunt, fight, targets), the attack RPCs, hit tests, ink jet, effects, death and
+                          where its loot lands (other mods' drops in its death too: KrakenDropSpot)
     Build/                the prefab: serpent copy, model from the bundle, materials, hit boxes, corpse
     Ink/                  the ink's status effect and the screen splats
     Loot/                 its items: beak, raw and cooked tentacle, the Kraken shield (copies of game items wearing the
@@ -135,6 +138,55 @@ Optional, both ways. Only key names, a prefab name and a version cross (`Mimic/E
   `EliteController.Start` rolls, so it gets nothing at all.
 - The Rime Giant's corpse colour patch replaces only a colour with no shift at all, so it works with the game's level
   looks and ECR's star looks alike without asking either.
+
+## Elite Crafting
+
+Optional, one way (added 2026-10-05, untested in game; the user: "custom mods in elite creatures pack can drop our rune
+currency", "all the bone items need to be classified and have tiers"). With Elite Crafting installed (a soft
+`BepInDependency` on `com.EliteCrafting`, so it loads first), `Crafting/CraftingHandOff` registers in the plugin's Awake,
+on every peer, through Elite Crafting's public API (`ValheimModLibs/EliteCraftingLink`, merged, bound by reflection: no
+reference, nothing happens without it; `EliteCrafting/features/api.md`). A server's Elite Crafting files win over each
+registration by prefab name (a class's `items`, `item_tiers.items`, `drops.bosses`, `drops.creatures`); `ecraft tiers`
+shows these levels as source `api`.
+
+**Gear** (`CraftingGear`): every equippable is claimed for its class (each already meets the default file's rule for its
+game item; the claim pins it whatever order a server puts the rules in) and given its item level by where it comes
+from, since Elite Crafting knows none of the mod's materials (spine, axehead, beak). Ammo (`ECP_ArrowBone`,
+`ECP_BoltBoneBlunt`) and materials and food (`ECP_Spine`, `ECP_ExecutionerAxehead`, `ECP_KrakenBeak`, the kraken's meat)
+stack, so Elite Crafting never makes them magic; they are left alone.
+
+| Prefab | Class | Level | Why |
+| --- | --- | --- | --- |
+| `ECP_BoneDagger` | knife | 2 | Copper knife copy; bone fragments and the Black Forest skeletons' spine, workbench 2 (like the bronze kit) |
+| `ECP_BoneSword`, `ECP_BoneAxe`, `ECP_BoneMace` | sword_1h, axe_1h, mace_1h | 2 | Bronze sword, axe and mace copies, a little weaker; same materials |
+| `ECP_BoneSpear`, `ECP_BoneAtgeir` | spear, atgeir | 2 | Bronze spear and atgeir copies; same materials |
+| `ECP_BoneBow` | bow | 2 | Finewood bow copy; same materials |
+| `ECP_BoneCrossbow` | crossbow | 2 | Arbalest copy with its own 30 blunt; spine, bones, wood, leather at workbench 2 (the crossbowmen are Black Forest skeletons) |
+| `ECP_ExecutionerGreataxe` | battleaxe | 2 | Battleaxe copy hitting like a fully upgraded bronze axe; the Black Forest Crypt Executioner's axehead |
+| `ECP_ShieldKraken` | shield | 4 | Silver shield copy, better than the serpent scale shield; the Kraken's beak and silver (the ocean is level 4) |
+
+**Creature loot** (`CraftingLoot`): runes and rolled gear from Elite Crafting's own roll, beside the creature's drops.
+Elite Crafting reads a level from the game's spawn lists, which none of these is in, so each has one here. Bosses and
+mini-bosses get boss entries (guaranteed runes and gear, a bonus rune, the boss rarity row) scaled against the game's
+bosses in Elite Crafting's file (Elder: level 2, 2 runes, 1 gear, Ascension 100%; Moder: level 4, 3 runes, 1 gear,
+Consecrated 100%).
+
+| Prefab | Level | Entry | Why |
+| --- | --- | --- | --- |
+| `ECP_Kraken` | 4 | boss: 3 runes, 1 gear, Serpent 100% | A boss of the open sea (game boss flag, 3000 health): Moder's at her level, the sea's rune for her Consecrated |
+| `ECP_RimeGiant` | 4 | boss: 3 runes, 1 gear, Consecrated 50% | Mini-boss, one per mountain ever, plates only fire breaks; level of the lowest of its `Biomes` (Mountain), resent when they change |
+| `ECP_Headsman` | 2 | boss: 2 runes, 1 gear, Ascension 25% | The burial chambers' mini-boss (900 health), back every 3 days: a little under the Elder |
+| `ECP_HeadsmanSkeleton` | - | multiplier 0 | The Executioner's raised skeletons drop nothing: no rune farm beside a boss |
+| `ECP_CryptMimic` | where it dies | rune x6, gear x8 | It is a crypt chest: a chest's chances (Elite Crafting's chests 30% and 10%, a level 2 creature 5% and 1.25%); the chest it replaced was rolled and removed. Forest crypt 2, sunken crypt 3 |
+| `ECP_GreydwarfSlinger` | 2 | creature | Lowest of its `Biomes` (Black Forest), resent when they change |
+| `ECP_Skeleton<Title>` (7), `ECP_SkeletonCrossbowman` | 2 | creature | They take the Black Forest Skeleton's spawns |
+
+Nothing in Elite Crafting kept these creatures from dropping (none is tamed or player-faction, all are hit by players,
+deaths without a ragdoll drop at once), but the Kraken's runes and gear would have dropped where its body was, which
+may be deep under the ship it holds: Elite Crafting drops at the dying creature's middle. So its death prefix now runs
+first (`HarmonyPriority.First`: it is moved to where its head is seen before any other mod looks), and from then until
+its finalizer, which runs last, `KrakenDropSpot` sends every `ItemDrop.DropItem` to the spot its own loot is aimed at
+(the held ship's deck, or just over the water).
 
 ## Assets
 

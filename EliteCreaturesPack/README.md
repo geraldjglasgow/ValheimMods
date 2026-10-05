@@ -13,6 +13,7 @@ New creatures for Valheim, each with its own fight, and bone weapons to make.
 - Skeleton arsenal: the skeletons' bone weapons, crossbow and greataxe, to make at the workbench.
 - With Elite Creatures Reborn (optional) they roll stars and mutations, a dormant mimic stays disguised, and the
   kraken needs 3.12.0 or later.
+- With EliteCrafting (optional) every creature drops runes and the bone weapons roll inscriptions.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `EliteCreaturesPack.dll`

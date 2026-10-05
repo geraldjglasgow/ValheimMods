@@ -2,6 +2,9 @@
 
 Bone weapons made at the workbench from what the [Skeletons](wiki:Skeletons) drop.
 
+**With EliteCrafting:** every weapon here is item level 2 (Black Forest) and can become magic, as the game's weapon of
+its class (the Bone Dagger a knife, the Executioner's Greataxe a battleaxe). Spines, arrows and bolts stack and never do.
+
 **Spine:** a crafting material that weighs and stacks like bone fragments. Arsenal skeletons and crossbowmen drop
 one, one kill in ten.
 

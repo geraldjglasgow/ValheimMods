@@ -17,7 +17,7 @@ A crypt chest that bites. It looks exactly like the chest it replaced until some
 - **Stats:** 40 health; weak to blunt and fire; resists pierce and frost; immune to poison. Undead: crypt skeletons
   and draugr leave it alone.
 - **Loot:** a fresh roll of the replaced chest's loot. Epic Loot needs an `ECP_CryptMimic` entry to give it magic
-  items.
+  items. With EliteCrafting it drops runes and magic gear at a crypt chest's odds (30% and 10% in a burial chamber).
 
 ### Settings: `2 - Crypt Mimic`
 
@@ -41,7 +41,7 @@ A greydwarf with a slingshot. It stands and shoots like a skeleton archer and ne
 - **Beating it:** it does not lead a moving target. Run across its line, roll or block. Up close it still shoots but
   has no claws.
 - **Stats:** a Greydwarf's (40 health, same resistances).
-- **Loot:** a Greydwarf's drops plus 2-3 Stone.
+- **Loot:** a Greydwarf's drops plus 2-3 Stone. With EliteCrafting, runes and magic gear as from any Black Forest creature.
 
 ### Settings: `3 - Greydwarf Slinger`
 
