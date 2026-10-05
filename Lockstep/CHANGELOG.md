@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 0.3.2
 
 - Less work every frame keeping the server's settings in sync.
