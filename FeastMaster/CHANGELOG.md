@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.7.2
+
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 4.7.1
 
 - Less work every frame keeping the server's settings in sync.
