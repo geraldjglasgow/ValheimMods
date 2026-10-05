@@ -5,7 +5,7 @@
     <AssemblyName>EarthWright</AssemblyName>
     <RootNamespace>EarthWright</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.3.3</Version>
+    <Version>0.3.4</Version>
     <Product>EarthWright</Product>
     <Description>EarthWright: terraforming for Valheim's hoe and cultivator</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

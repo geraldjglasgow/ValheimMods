@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+
+- Discord link on the store page.
+
 ## 0.3.3
 
 - Less work every frame while previewing a brush's volume, continuing a flat and planning roads.

@@ -25,6 +25,8 @@ stay your own. Console: `ew help`; all commands with arguments:
 https://github.com/geraldjglasgow/ValheimMods/blob/main/EarthWright/CLAUDE.md#console-commands
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs
