@@ -14,6 +14,17 @@ namespace Wayfare.Targeting
         public static bool Active { get; private set; }
         public static TeleportWorld SourcePortal { get; private set; }
 
+        /// <summary>The portal the player stands at, the map's "you are here"; none outside a session.</summary>
+        public static ZDOID SourceId
+        {
+            get
+            {
+                if (!Active || SourcePortal == null || SourcePortal.m_nview == null || !SourcePortal.m_nview.IsValid())
+                    return ZDOID.None;
+                return SourcePortal.m_nview.GetZDO().m_uid;
+            }
+        }
+
         public static void Open(TeleportWorld source)
         {
             if (source == null || Minimap.instance == null || Player.m_localPlayer == null || !WayfareConfig.Enabled.Value)
@@ -31,9 +42,10 @@ namespace Wayfare.Targeting
 
         public static void Select(ZDOID target)
         {
-            if (!Active || SourcePortal == null || SourcePortal.m_nview == null || !SourcePortal.m_nview.IsValid())
+            ZDOID source = SourceId;
+            if (source == ZDOID.None || target == source)
                 return;
-            TeleportGate.RequestTeleport(SourcePortal.m_nview.GetZDO().m_uid, target);
+            TeleportGate.RequestTeleport(source, target);
         }
 
         /// <summary>The destination comes from the server's grant, never from a local ZDO lookup - a client
@@ -65,7 +77,8 @@ namespace Wayfare.Targeting
     }
 
     /// <summary>Vanilla's only call site for <c>TeleportWorld.Teleport</c>: the local player's collider entering a
-    /// portal's trigger. Replaced with opening targeting instead of an immediate tag-paired teleport.</summary>
+    /// portal's trigger. Replaced with opening targeting instead of an immediate tag-paired teleport; a portal
+    /// without a tag opens nothing and says it needs one.</summary>
     [HarmonyPatch(typeof(TeleportWorldTrigger), "OnTriggerEnter")]
     public static class PortalTriggerPatch
     {
@@ -78,7 +91,10 @@ namespace Wayfare.Targeting
             if (player == null || player != Player.m_localPlayer)
                 return true;
             TeleportWorld portal = __instance.GetComponentInParent<TeleportWorld>();
-            TargetingSession.Open(portal);
+            if (portal != null && portal.m_nview != null && PortalFields.HasTag(portal.m_nview.GetZDO()))
+                TargetingSession.Open(portal);
+            else
+                player.Message(MessageHud.MessageType.Center, Words.NeedsTag);
             return false;
         }
     }

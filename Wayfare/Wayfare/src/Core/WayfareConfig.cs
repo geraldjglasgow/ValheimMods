@@ -75,7 +75,7 @@ namespace Wayfare.Core
         private static void BindSeaGates(SyncedConfiguration config)
         {
             SeaGatesEnabled = config.Bind("Sea Gates", "Enabled", true,
-                "Sea gates: two pillars built on land open a portal for ships between them. Off: pillars stand but no ship jumps.");
+                "Sea gates: two pillars on land or in shallow water open a portal for ships between them. Off: pillars stand but no ship jumps.");
             PillarRecipe = config.Bind("Sea Gates", "Pillar Recipe", "Stone:10,FineWood:5,GreydwarfEye:5,SurtlingCore:1",
                 "What one sea gate pillar costs, as Item:Amount pairs. Built with the hammer near a workbench.");
             AllowRestrictedCargo = config.Bind("Sea Gates", "Allow Restricted Cargo", false,

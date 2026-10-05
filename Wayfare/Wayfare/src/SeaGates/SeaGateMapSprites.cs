@@ -4,7 +4,7 @@ namespace Wayfare.SeaGates
 {
     /// <summary>The sea gate map icons, drawn once at runtime so nothing ships as a binary asset: a dark sea-blue disc
     /// with two pale waves across it inside a ring, teal for a gate, gold for the gate the picker was opened at. Unlike
-    /// the portals' plain filled circle (<c>Targeting.IconFactory</c>), so the two never read as the same thing.</summary>
+    /// the portals' gold portal icon (<c>Targeting.IconFactory</c>), so the two never read as the same thing.</summary>
     internal static class SeaGateMapSprites
     {
         private const int Size = 32;

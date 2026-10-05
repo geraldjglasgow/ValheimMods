@@ -11,7 +11,6 @@ namespace Wayfare.SeaGates
     public static class SeaGatePillarHover
     {
         private const string UseKey = "[<color=yellow><b>$KEY_Use</b></color>] ";
-        private const string AltKey = "[<color=yellow><b>$KEY_AltPlace</b></color>] ";
 
         public static string Text(SeaGatePillar pillar, bool seaGatesOn)
         {
@@ -62,7 +61,7 @@ namespace Wayfare.SeaGates
         {
             PortalMode mode = PortalFields.GetMode(gate.AnchorZdo, WayfareConfig.UnownedPortalsArePublic.Value);
             string label = Localize(ModeCycle.ModeLabel(mode));
-            return Localize(AltKey) + string.Format(Localize(Words.HoverCycle), label);
+            return Localize(ModeCycle.AltUseKeys) + string.Format(Localize(Words.HoverCycle), label);
         }
 
         /// <summary>A gate name as a player typed it, or the default name when it has none.</summary>

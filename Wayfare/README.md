@@ -1,11 +1,11 @@
 # Wayfare
 
 Walk into a portal and the world map opens on every portal you may use; click one and you travel there. No more
-matching tags: any portal can reach any other, and each tag is shown as a name beside its icon.
+matching tags: any tagged portal reaches any other, its tag shown beside its icon; untagged portals stay closed.
 
 ## Features
 - Map targeting: walk in, click a portal on the map, go. The game's carry rules, fade and cooldown still apply.
-- Access modes: Public, Private (owner only) or Admin, cycled with Alt+Use on a portal.
+- Access modes: Public, Private (owner only) or Admin, cycled with Shift+E on a portal.
 - Favourites: right-click a portal icon to pin it to a panel on the map.
 - `Toggle Icons Key` (P) shows portal icons on the ordinary map.
 - Works with any mod's portals.

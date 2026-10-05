@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Wayfare.Core;
 using Wayfare.Portals;
 
@@ -11,17 +10,12 @@ namespace Wayfare.Targeting
     /// (see PLAN.md: that system's own click-to-toggle and save behaviour would otherwise run on a portal icon
     /// too). Visible whenever a targeting session is active, or the player toggled icons on with the hotkey while
     /// the large map is open; every frame it runs is guarded by <see cref="ShouldShow"/>, which is false for the
-    /// entire lifetime of a headless dedicated server (no <c>Minimap.instance</c>, no local player).</summary>
+    /// entire lifetime of a headless dedicated server (no <c>Minimap.instance</c>, no local player). Only portals with a
+    /// tag are drawn (<see cref="PortalFields.HasTag(string)"/>); the portal the player stands at is drawn still, marked
+    /// "You are here", and takes no clicks.</summary>
     public static class MapOverlay
     {
-        private sealed class Icon
-        {
-            public RectTransform Root;
-            public Image Image;
-            public Text Label;
-        }
-
-        private static readonly Dictionary<ZDOID, Icon> icons = new Dictionary<ZDOID, Icon>();
+        private static readonly Dictionary<ZDOID, PortalIcon> icons = new Dictionary<ZDOID, PortalIcon>();
         private static GameObject driver;
 
         public static void EnsureRunning()
@@ -33,18 +27,26 @@ namespace Wayfare.Targeting
             driver.AddComponent<Ticker>();
         }
 
+        /// <summary>The portal whose click area holds the point, the nearest when two overlap; never the portal the
+        /// player stands at.</summary>
         public static bool TryHitTest(Vector2 screenPos, out ZDOID hit)
         {
-            foreach (KeyValuePair<ZDOID, Icon> entry in icons)
+            hit = ZDOID.None;
+            ZDOID here = TargetingSession.SourceId;
+            float best = float.MaxValue;
+            foreach (KeyValuePair<ZDOID, PortalIcon> entry in icons)
             {
-                if (RectTransformUtility.RectangleContainsScreenPoint(entry.Value.Root, screenPos, null))
+                RectTransform zone = entry.Value.Zone;
+                if (entry.Key == here || !RectTransformUtility.RectangleContainsScreenPoint(zone, screenPos, null))
+                    continue;
+                float distance = ((Vector2)zone.position - screenPos).sqrMagnitude;
+                if (distance < best)
                 {
+                    best = distance;
                     hit = entry.Key;
-                    return true;
                 }
             }
-            hit = ZDOID.None;
-            return false;
+            return hit != ZDOID.None;
         }
 
         private static bool ShouldShow()
@@ -72,29 +74,42 @@ namespace Wayfare.Targeting
                 return;
             long playerId = Player.m_localPlayer.GetPlayerID();
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
+            ZDOID here = TargetingSession.SourceId;
             HashSet<ZDOID> seen = new HashSet<ZDOID>();
             foreach (PortalInfo info in PortalRegistry.Portals)
             {
-                if (!PortalAccess.MayTarget(info.Mode, info.Owner, playerId, isAdmin))
-                    continue;
-                if (!Minimap.instance.IsPointVisible(info.Position, Minimap.instance.m_mapImageLarge))
+                if (!Shown(info, info.Id == here, playerId, isAdmin))
                     continue;
                 seen.Add(info.Id);
-                Place(info);
+                Place(info, info.Id == here);
             }
             RemoveStale(seen);
         }
 
-        private static void Place(PortalInfo info)
+        private static bool Shown(PortalInfo info, bool isHere, long playerId, bool isAdmin)
         {
-            if (!icons.TryGetValue(info.Id, out Icon icon))
-                icons[info.Id] = icon = BuildIcon();
+            if (!PortalFields.HasTag(info.Tag))
+                return false;
+            if (!isHere && !PortalAccess.MayTarget(info.Mode, info.Owner, playerId, isAdmin))
+                return false;
+            return Minimap.instance.IsPointVisible(info.Position, Minimap.instance.m_mapImageLarge);
+        }
+
+        private static void Place(PortalInfo info, bool isHere)
+        {
+            if (!icons.TryGetValue(info.Id, out PortalIcon icon))
+                icons[info.Id] = icon = PortalIcon.Make(MapIconLayer.Root);
             Minimap.instance.WorldToMapPoint(info.Position, out float mx, out float my);
             icon.Root.anchoredPosition = Minimap.instance.MapPointToLocalGuiPos(mx, my, Minimap.instance.m_mapImageLarge);
-            float size = MapIconLayer.IconSize();
+            float size = MapIconLayer.IconSize(pulse: !isHere);
             icon.Root.sizeDelta = new Vector2(size, size);
-            icon.Image.sprite = PlayerFavourites.IsFavourite(info.Id) ? IconFactory.Favourite : IconFactory.Portal;
-            bool showTag = WayfareConfig.ShowTags.Value && !string.IsNullOrEmpty(info.Tag);
+            float click = MapIconLayer.ClickSize();
+            icon.Zone.sizeDelta = new Vector2(click, click);
+            icon.Image.sprite = IconFactory.Portal;
+            icon.Image.color = IconFactory.Gold;
+            icon.Ring.gameObject.SetActive(PlayerFavourites.IsFavourite(info.Id));
+            icon.Here.gameObject.SetActive(isHere);
+            bool showTag = WayfareConfig.ShowTags.Value;
             icon.Label.gameObject.SetActive(showTag);
             if (showTag)
                 icon.Label.text = info.Tag;
@@ -119,44 +134,12 @@ namespace Wayfare.Targeting
 
         private static void Clear()
         {
-            foreach (Icon icon in icons.Values)
+            foreach (PortalIcon icon in icons.Values)
             {
                 if (icon.Root != null)
                     Object.Destroy(icon.Root.gameObject);
             }
             icons.Clear();
-        }
-
-        private static Icon BuildIcon()
-        {
-            GameObject go = new GameObject("Wayfare.PortalIcon", typeof(RectTransform), typeof(Image));
-            RectTransform root = (RectTransform)go.transform;
-            root.SetParent(MapIconLayer.Root, worldPositionStays: false);
-            root.anchorMin = root.anchorMax = Vector2.zero; // the map's lower-left corner, where pin positions start
-            root.pivot = new Vector2(0.5f, 0.5f);
-            Image image = go.GetComponent<Image>();
-            image.raycastTarget = false;
-            return new Icon { Root = root, Image = image, Label = BuildLabel(root) };
-        }
-
-        private static Text BuildLabel(RectTransform parent)
-        {
-            GameObject go = new GameObject("Label", typeof(RectTransform));
-            RectTransform rect = (RectTransform)go.transform;
-            rect.SetParent(parent, worldPositionStays: false);
-            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0f);
-            rect.pivot = new Vector2(0.5f, 1f);
-            rect.anchoredPosition = new Vector2(0f, -2f);
-            rect.sizeDelta = new Vector2(160f, 20f);
-            Text text = go.AddComponent<Text>();
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            text.fontSize = 12;
-            text.alignment = TextAnchor.UpperCenter;
-            text.color = Color.white;
-            text.raycastTarget = false;
-            text.horizontalOverflow = HorizontalWrapMode.Overflow;
-            text.verticalOverflow = VerticalWrapMode.Overflow;
-            return text;
         }
 
         private sealed class Ticker : MonoBehaviour

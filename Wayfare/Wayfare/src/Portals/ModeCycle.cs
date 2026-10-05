@@ -96,6 +96,18 @@ namespace Wayfare.Portals
 
         private static PortalMode Next(PortalMode mode) => (PortalMode)(((int)mode + 1) % 3);
 
+        /// <summary>The Alt+Use prompt, unlocalized, as the game's item stand writes its own: the AltPlace key and Use
+        /// (Shift + E), or the gamepad's alt keys and Use. The whole prompt goes through the localizer, which turns
+        /// each <c>$KEY_</c> into the bound key.</summary>
+        public static string AltUseKeys
+        {
+            get
+            {
+                string alt = ZInput.IsNonClassicFunctionality() && ZInput.IsGamepadActive() ? "$KEY_AltKeys" : "$KEY_AltPlace";
+                return "[<color=yellow><b>" + alt + " + $KEY_Use</b></color>] ";
+            }
+        }
+
         public static string ModeLabel(PortalMode mode)
         {
             switch (mode)
@@ -145,7 +157,7 @@ namespace Wayfare.Portals
             PortalMode mode = PortalFields.GetMode(__instance.m_nview.GetZDO(), WayfareConfig.UnownedPortalsArePublic.Value);
             string label = Localization.instance.Localize(ModeCycle.ModeLabel(mode));
             string line = string.Format(Localization.instance.Localize(Words.HoverCycle), label);
-            __result += "\n[<color=yellow><b>$KEY_AltPlace</b></color>] " + Localization.instance.Localize(line);
+            __result += "\n" + Localization.instance.Localize(ModeCycle.AltUseKeys) + line;
         }
     }
 }

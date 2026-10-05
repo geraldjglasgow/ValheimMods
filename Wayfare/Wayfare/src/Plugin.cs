@@ -2,6 +2,7 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using MapClicks;
 using PatchGuard;
 using SyncedConfig;
 using Wayfare.Core;
@@ -17,7 +18,7 @@ namespace Wayfare
     {
         public const string PluginGuid = "com.Wayfare";
         public const string PluginName = "Wayfare";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.2.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -33,6 +34,7 @@ namespace Wayfare
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             JumpSpeed.Install(harmony);
+            IconClick.Install(harmony);
             PortalDiscovery.EnsureRunning();
             PortalRegistry.EnsureRunning();
             MapOverlay.EnsureRunning();

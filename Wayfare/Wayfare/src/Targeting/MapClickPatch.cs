@@ -1,12 +1,16 @@
 using HarmonyLib;
+using MapClicks;
 using Wayfare.Core;
 
 namespace Wayfare.Targeting
 {
-    /// <summary>Left click on one of Wayfare's own icons targets that portal instead of running Minimap's own pin
-    /// click-to-toggle; right click favourites/unfavourites it instead of removing a real placed pin. Both
-    /// prefixes only intercept when the click actually landed on one of our icons - everywhere else the vanilla
-    /// map keeps working exactly as it always has.</summary>
+    /// <summary>While choosing a destination, a left click on one of Wayfare's icons (its click area, the nearest when
+    /// two overlap) targets that portal instead of running Minimap's own pin click-to-toggle; right click
+    /// favourites/unfavourites it instead of removing a real placed pin. Both leave the game's pins under an icon
+    /// working (the user's ask, 2026-10-04): the travel waits out the game's double click window, so a double click
+    /// places a pin there instead (<see cref="IconClick.Hold"/>), and a right click on a placed pin removes the pin
+    /// first. Outside targeting a left click is the game's. Everywhere else the vanilla map keeps working exactly as
+    /// it always has.</summary>
     [HarmonyPatch(typeof(Minimap), nameof(Minimap.OnMapLeftClick))]
     public static class MapLeftClickPatch
     {
@@ -17,10 +21,9 @@ namespace Wayfare.Targeting
             // targeting or the game's pin toggle; anywhere else the game's own click runs.
             if (SeaGates.SeaGatePicker.Active)
                 return !SeaGates.SeaGatePicker.TryClick(ZInput.pointerPosition);
-            if (!WayfareConfig.Enabled.Value || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
+            if (!WayfareConfig.Enabled.Value || !TargetingSession.Active || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
                 return true;
-            if (TargetingSession.Active)
-                TargetingSession.Select(hit);
+            IconClick.Hold(() => TargetingSession.Select(hit));
             return false;
         }
     }
@@ -32,6 +35,8 @@ namespace Wayfare.Targeting
         public static bool Prefix()
         {
             if (!WayfareConfig.Enabled.Value || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
+                return true;
+            if (IconClick.PinUnderPointer(Minimap.instance))
                 return true;
             bool on = PlayerFavourites.Toggle(hit);
             if (Player.m_localPlayer != null)

@@ -17,10 +17,13 @@ full behaviour and the test checklist.
 `TeleportWorld.Teleport()` reads `m_nview.GetZDO().GetConnectionZDOID(ZDOExtraData.ConnectionType.Portal)` - the
 tag-paired target vanilla's `Game.ConnectPortalsCoroutine` maintains server-side every 5 seconds. Wayfare's
 targeting is independent of that connection entirely: we never read or write it. `Game.ConnectPortalsCoroutine`
-keeps running (it is server code we do not patch out) and still shows "$piece_portal_connected" in the hover text
-and plays the connected effect when two same-tagged portals exist, which is cosmetic noise but harmless - nothing
-in Wayfare depends on that connection, and no vanilla teleport ever fires from it because entering a portal's
-trigger is intercepted (below) before `TeleportWorld.Teleport()` runs.
+keeps running (it is server code we do not patch out), but nothing reads its result any more: the portal's look
+(glow, connect sound, swirl, the hover's "connected") comes from `TeleportWorld.HaveTarget`/`TargetFound`, which
+`Portals/PortalOpenPatch.cs` answers from the tag instead. A portal must have a tag to be usable (the user's rule,
+2026-10-04): a tagged portal counts as connected to every other, an untagged one stays closed, is left off the map,
+opens no targeting when walked into ("This portal needs a tag") and is refused by the server as a source or target.
+No vanilla teleport ever fires because entering a portal's trigger is intercepted (below) before
+`TeleportWorld.Teleport()` runs.
 
 ## How entering a portal is intercepted
 
@@ -110,16 +113,19 @@ run alongside ours). Decision: Wayfare draws its own overlay, a set of plain `Un
 layer (`MapIconLayer`: stretched over the large map and kept as its last child, so above every pin and marker; icons
 anchored at its lower-left corner, where the game measures pin positions from), larger and pulsing while the player
 is choosing a destination, and while
-targeting is active a Harmony prefix on `Minimap.OnMapLeftClick`/`OnMapMiddleClick` intercepts the click, checks it
-against our own icon rects, and skips the vanilla handler entirely (`return false`) so no vanilla pin is placed or
-toggled while targeting. Left the map (any other mode) or pressed cancel (Escape, already the game's own map-close
+targeting is active a Harmony prefix on `Minimap.OnMapLeftClick` checks the click against each icon's click area (an
+invisible rect as wide as the icon at the top of its pulse, held still; the nearest icon when two overlap, never the
+portal the player stands at) and skips the vanilla handler (`return false`). The travel itself waits out the game's
+double click window (the MapClicks library's `IconClick.Hold`), so a double click on an icon places a pin there
+instead, and a right click on an icon removes a placed pin under it before it toggles a favourite (asked 2026-10-04:
+the game's pins under portal icons stay placeable and removable). Outside targeting a left click is the game's. The
+portal the player stands at is drawn still, with a small red "You are here" above it. Left the map (any other mode) or pressed cancel (Escape, already the game's own map-close
 binding) exits targeting through the same `SetMapMode` postfix that tears the overlay down.
 
-No custom art ships: the portal icon and the favourite-star overlay are small procedural textures built once at
-runtime (`Targeting/IconFactory.cs`, `Texture2D.SetPixels` + `Sprite.Create`) - a filled circle for a plain portal,
-the same circle with a ring for a favourite, both in a Wayfare-owned colour. This keeps the clean-room boundary
-simple (nothing borrowed, nothing to ship as a binary asset) and needs no `thunderstore/` art beyond the store
-icon. Labels (the portal's tag) use a plain `UnityEngine.UI.Text` with Unity's built-in legacy font
+No custom art ships: the icon is the game's own portal map icon (the pin bar's portal, `Minimap.PinType.Icon4`, read
+from `Minimap.m_icons` at runtime) tinted gold (asked 2026-10-04), with a procedural ring around a favourite
+(`Targeting/IconFactory.cs`, `Texture2D.SetPixels` + `Sprite.Create`; a procedural circle stands in only if the map
+has no portal icon). Nothing to ship as a binary asset and no `thunderstore/` art beyond the store icon. Labels (the portal's tag) use a plain `UnityEngine.UI.Text` with Unity's built-in legacy font
 (`Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")`) - `TMP_Text` needs a `TMP_FontAsset` we do not have one
 of.
 
@@ -158,13 +164,15 @@ Wayfare/Wayfare/src/
     PortalAccess.cs               May(PortalInfo, playerID, isAdmin) - the one access rule, used by client display
                                   filtering and by the server's teleport grant
     ModeCycle.cs                  TeleportWorld.Interact prefix (alt) + RPC_wf_SetMode owner-side handler
+    PortalOpenPatch.cs            TeleportWorld.HaveTarget / TargetFound postfixes: open exactly when tagged
   Targeting/
     TargetingSession.cs           TeleportWorldTrigger.OnTriggerEnter prefix; open/close targeting, the source
                                   portal reference, guarded against the load-order incident
     TeleportGate.cs               client: send wf_RequestTeleport, await grant/deny; server: validate + reply
-    MapOverlay.cs                 builds/destroys the icon+label objects on MapIconLayer
-    IconFactory.cs                procedural circle / favourite-ring sprites, built once and cached
-    MapClickPatch.cs              Minimap.OnMapLeftClick / OnMapMiddleClick prefixes: hit-test our icons first
+    MapOverlay.cs                 places/destroys the portal icons on MapIconLayer, hit-tests their click areas
+    PortalIcon.cs                 one icon: gold game portal sprite, favourite ring, tag, "You are here", click area
+    IconFactory.cs                the game's portal sprite, the gold and red, the procedural favourite ring
+    MapClickPatch.cs              Minimap.OnMapLeftClick / RemovePinUnderPointer prefixes: hit-test our icons first
     FavouritesPanel.cs            the left-side favourites list UI
     PlayerFavourites.cs           Player.m_customData persistence, keyed by ZDOID string
   HotkeyToggle.cs                 Player.Update postfix: default P toggles portal icons on the small/non-targeting

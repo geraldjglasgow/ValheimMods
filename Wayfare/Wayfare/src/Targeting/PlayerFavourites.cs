@@ -19,6 +19,18 @@ namespace Wayfare.Targeting
         private static HashSet<string> cache;
         private static readonly Dictionary<ZDOID, string> keys = new Dictionary<ZDOID, string>();
         private static int keysVersion = -1;
+        private static int version;
+
+        /// <summary>Changes whenever the favourite set does (a toggle, another character's set loaded), so a list
+        /// built from it knows when to refill.</summary>
+        public static int Version
+        {
+            get
+            {
+                Set();
+                return version;
+            }
+        }
 
         public static bool IsFavourite(ZDOID id) => TryKey(id, out string key) && Set().Contains(key);
 
@@ -32,18 +44,8 @@ namespace Wayfare.Targeting
             if (on)
                 set.Add(key);
             Save(set);
+            version++;
             return on;
-        }
-
-        /// <summary>The favourite portals present in the current snapshot.</summary>
-        public static IEnumerable<ZDOID> All()
-        {
-            HashSet<string> set = Set();
-            foreach (PortalInfo info in PortalRegistry.Portals)
-            {
-                if (TryKey(info.Id, out string key) && set.Contains(key))
-                    yield return info.Id;
-            }
         }
 
         /// <summary>The key of a portal in the current snapshot, from a lookup rebuilt only when the snapshot changes
@@ -71,6 +73,7 @@ namespace Wayfare.Targeting
             {
                 cachedFor = Player.m_localPlayer;
                 cache = Load();
+                version++;
             }
             return cache ?? (cache = new HashSet<string>());
         }

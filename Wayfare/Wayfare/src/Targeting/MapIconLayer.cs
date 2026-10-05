@@ -38,13 +38,21 @@ namespace Wayfare.Targeting
 
         public static bool Choosing => TargetingSession.Active || SeaGates.SeaGatePicker.Active;
 
-        /// <summary>An icon's side this frame: normal, or larger and pulsing while choosing; <paramref name="factor"/>
-        /// scales it further (the sea gate picker's own gate is drawn larger still).</summary>
-        public static float IconSize(float factor = 1f)
+        /// <summary>An icon's side this frame: normal, or larger and pulsing while choosing (held still with
+        /// <paramref name="pulse"/> false: the portal the player stands at); <paramref name="factor"/> scales it further
+        /// (the sea gate picker's own gate is drawn larger still).</summary>
+        public static float IconSize(float factor = 1f, bool pulse = true)
         {
-            float size = (Choosing ? ChoosingSize : NormalSize) * factor * Mathf.Max(0.25f, WayfareConfig.IconScale.Value);
-            return Choosing ? size * (1f + PulseAmount * Mathf.Sin(Time.unscaledTime * 2f * Mathf.PI / PulseSeconds)) : size;
+            float size = StillSize(factor);
+            return Choosing && pulse ? size * (1f + PulseAmount * Mathf.Sin(Time.unscaledTime * 2f * Mathf.PI / PulseSeconds)) : size;
         }
+
+        /// <summary>The side of an icon's click area: the icon at the top of its pulse, held still, so it does not grow
+        /// and shrink under the pointer (as OpenKeep's bed icons during the choice of bed).</summary>
+        public static float ClickSize() => StillSize(1f) * (Choosing ? 1f + PulseAmount : 1f);
+
+        private static float StillSize(float factor) =>
+            (Choosing ? ChoosingSize : NormalSize) * factor * Mathf.Max(0.25f, WayfareConfig.IconScale.Value);
 
         private static RectTransform Build(RectTransform mapRect)
         {

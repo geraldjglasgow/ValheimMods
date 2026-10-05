@@ -63,8 +63,10 @@ namespace Wayfare.Targeting
                 return blockedReason;
             ZDO sourceZdo = ZDOMan.instance.GetZDO(sourceId);
             ZDO targetZdo = ZDOMan.instance.GetZDO(targetId);
-            if (sourceZdo == null || targetZdo == null || !PortalDiscovery.IsPortalPrefab(targetZdo.GetPrefab()))
+            if (sourceZdo == null || targetZdo == null || !PortalDiscovery.IsPortalPrefab(targetZdo.GetPrefab()) || sourceId == targetId)
                 return Words.DeniedGeneric;
+            if (!PortalFields.HasTag(sourceZdo) || !PortalFields.HasTag(targetZdo))
+                return Words.NeedsTag;
             bool unownedIsPublic = WayfareConfig.UnownedPortalsArePublic.Value;
             if (!PortalAccess.MayTarget(targetZdo, SenderIdentity.PlayerId(sender), SenderIdentity.IsAdmin(sender), unownedIsPublic))
                 return DenialReason(targetZdo, unownedIsPublic);
