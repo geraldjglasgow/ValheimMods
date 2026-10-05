@@ -36,6 +36,10 @@ namespace EliteCreaturesReborn.Commands
         {
             Difficulty difficulty = RuleState.Active.Difficulty;
             string head = $"elite tier: world tier {tier} of {WorldTier.Ceiling()}, difficulty {DifficultyNames.Name(difficulty)}";
+            if (!RuleState.Active.CreatureStars)
+            {
+                head += " - creature stars off: no stars from this mod, creatures keep the game's level";
+            }
             if (difficulty == Difficulty.Custom)
             {
                 EliteCommands.Reply(args, $"{head} - star boost x{rules.StarBoostAt(tier):0.##}, mutation boost x{rules.MutationBoostAt(tier):0.##}");
@@ -45,11 +49,20 @@ namespace EliteCreaturesReborn.Commands
             Player? player = Player.m_localPlayer;
             if (player != null)
             {
-                Heightmap.Biome biome = Heightmap.FindBiome(player.transform.position);
-                PresetCell cell = PresetCell.For(difficulty, tier, PresetTables.Rank(biome));
-                EliteCommands.Reply(args, $"  here ({biome}): up to {cell.Cap} stars, {cell.StarredPercent:0}% starred, "
-                    + $"{cell.Mutation:0}% of plain creatures mutated (+25% of that per star)");
+                ReportHere(args, difficulty, tier, Heightmap.FindBiome(player.transform.position));
             }
+        }
+
+        private static void ReportHere(Terminal.ConsoleEventArgs args, Difficulty difficulty, int tier, Heightmap.Biome biome)
+        {
+            PresetCell cell = PresetCell.For(difficulty, tier, PresetTables.Rank(biome));
+            if (!RuleState.Active.CreatureStars)
+            {
+                EliteCommands.Reply(args, $"  here ({biome}): {cell.Mutation:0}% of creatures mutated");
+                return;
+            }
+            EliteCommands.Reply(args, $"  here ({biome}): up to {cell.Cap} stars, {cell.StarredPercent:0}% starred, "
+                + $"{cell.Mutation:0}% of plain creatures mutated (+25% of that per star)");
         }
 
         private static void ReportUnlisted(Terminal.ConsoleEventArgs args, TierRules rules, Dictionary<string, string> known)

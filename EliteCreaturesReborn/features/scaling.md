@@ -22,6 +22,10 @@ look, the last it ships. Only the look: the game's per-level size stays out, sin
 creature and index 5 a five-star one. An index past the end of a line reuses its last entry, which is what lets a
 server raise the ceiling without rewriting every line.
 
+With `creature stars: false` at the top of the rule file none of this applies to creatures: they roll no stars, keep
+the level the game or another mod gave them, and that level scales them the game's way (health, damage, loot, look,
+badges). The lines below are not read for them, not even index 0. Bosses do the same with `stars: false`.
+
 | Line | What it multiplies | Default at 0-5 stars |
 | --- | --- | --- |
 | `growth` | Size bonus, added to 1 | 0.06, 0.10, 0.15, 0.20, 0.25, 0.30 |

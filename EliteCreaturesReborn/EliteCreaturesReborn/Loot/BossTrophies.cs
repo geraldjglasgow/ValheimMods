@@ -7,14 +7,15 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Loot
 {
     /// <summary>
-    /// A boss's own trophies, the one drop no loot rule touches: a boss with N stars drops exactly N+1 of each
-    /// trophy in its own drop table - one head for the plain fight, five for a four-star one - in every loot mode,
-    /// Vanilla included. A head per star is a count the group can read off the nameplate before the fight, not a
-    /// quantity to roll or multiply, so it is the whole rule: no `drops` line, extra roll, global or boss
-    /// multiplier, other aspect's factor or trophy switch changes it, and like an aspect's pay it stays when the loot
-    /// rules are off. Bountiful alone scales it, since it pays more of everything: N+1 times its own `loot` (x2 by
-    /// default, so a four-star Bountiful boss drops ten heads), rounded. The table decides, not the game's roll: a
-    /// trophy row in the boss's table pays N+1 even if its
+    /// A boss's own trophies, the one drop no loot rule touches: a boss with N stars drops one of each trophy in its
+    /// own drop table for every player within 100 m of it, plus N+1 - two heads for a plain fight alone, six for a
+    /// two-star one with three players - in every loot mode, Vanilla included (the user, 2026-10-04). A head per
+    /// player and per star is a count the group can read before the fight, not a quantity to roll or multiply, so it
+    /// is the whole rule: no `drops` line, extra roll, global or boss multiplier, other aspect's factor or trophy
+    /// switch changes it, and like an aspect's pay it stays when the loot rules are off. Bountiful alone scales it,
+    /// since it pays more of everything: the count times its own `loot` (x2 by default, so that two-star group's
+    /// Bountiful boss drops twelve heads), rounded. The table decides, not the game's roll: a trophy row in the
+    /// boss's table pays even if its
     /// chance (1 on every vanilla boss) came up empty. The engine holds these rows out of the list before any rule
     /// runs and pays them back last, so nothing in between can scale or reroll them; a row the rule file adds for
     /// the same item still adds on top. The exception is a trophy the boss's `creatures:` entry names under `drop
@@ -25,6 +26,10 @@ namespace EliteCreaturesReborn.Loot
     {
         /// <summary>Nothing held: not a boss, or no trophy in its table left to this rule.</summary>
         public static readonly BossTrophies None = new BossTrophies(new List<GameObject>(), 0);
+
+        /// <summary>Metres from the boss within which a player earns a head of their own. The count is taken on the
+        /// boss's owner, who is in the fight, so every player that close is loaded there.</summary>
+        private const float PlayerRange = 100f;
 
         private readonly List<GameObject> _heads;
         private readonly int _count;
@@ -53,13 +58,14 @@ namespace EliteCreaturesReborn.Loot
                 return None;
             }
             result.RemoveAll(pair => heads.Contains(pair.Key));
-            return new BossTrophies(heads, Count(controller.Traits));
+            return new BossTrophies(heads, Count(controller));
         }
 
-        /// <summary>N+1 heads, times Bountiful's own loot multiplier when the boss carries it.</summary>
-        private static int Count(CreatureTraits traits)
+        /// <summary>A head per player near the boss plus N+1, times Bountiful's own loot multiplier when it carries it.</summary>
+        private static int Count(EliteController controller)
         {
-            float heads = traits.Stars + 1;
+            CreatureTraits traits = controller.Traits;
+            float heads = Player.GetPlayersInRangeXZ(controller.transform.position, PlayerRange) + traits.Stars + 1;
             if (traits.HasAspect(Aspect.Bountiful))
             {
                 heads *= RuleState.Active.Boss.Aspects.LootOf(Aspect.Bountiful);
@@ -70,7 +76,7 @@ namespace EliteCreaturesReborn.Loot
         /// <summary>True for a trophy held here, which the engine's rerolls pass by.</summary>
         public bool Holds(GameObject prefab) => _heads.Contains(prefab);
 
-        /// <summary>Last of all, after every rule and multiplier: N+1 of each held trophy, scaled by nothing.</summary>
+        /// <summary>Last of all, after every rule and multiplier: the count of each held trophy, scaled by nothing.</summary>
         public void Pay(List<KeyValuePair<GameObject, int>> result)
         {
             foreach (GameObject head in _heads)

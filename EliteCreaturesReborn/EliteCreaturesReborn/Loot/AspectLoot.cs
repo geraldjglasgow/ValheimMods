@@ -11,7 +11,7 @@ namespace EliteCreaturesReborn.Loot
     /// multiply; in Vanilla - where the loot rules are off and nothing else touches the drops - it is applied here on
     /// its own, because an aspect that pays must keep paying with the loot rules off (`configuration.md`). Either way it
     /// only touches the boss's own table and never sees a boss's own trophies, which <see cref="BossTrophies"/> holds out
-    /// and pays as one per star plus one (times Bountiful's multiplier when it carries Bountiful). A boss
+    /// and pays as one per player near it plus one per star plus one (times Bountiful's multiplier when it carries Bountiful). A boss
     /// that carries several aspects (Bountiful and its extras) pays every one of them, multiplied together.
     /// </summary>
     internal static class AspectLoot

@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.17.0
+
+- New `creature stars: false` rule: creatures keep the game's or another mod's stars, and still mutate.
+- `stars: false` under `bosses:` keeps a boss's game level instead of resetting it to 1.
+- Bosses drop one more trophy for each player within 100 m.
+- `elite tier`, `elite inspect` and the death recap show kept levels.
+- Fixed: Epic Loot's boss trophy mode no longer replaces the boss trophy count.
+- Less work every frame; faster loading, the config file is written once instead of once per setting.
+
 ## 3.16.0
 
 - New mutations: Frostbound (ice trail, chilling aura), Mudbound (mud trail), Corrodent (ruins armour) and Cloning (hides behind a decoy).

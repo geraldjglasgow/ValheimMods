@@ -12,7 +12,8 @@ namespace EliteCreaturesReborn.Breeding
     /// of the parents' own, picked at random from both, whenever either has one (at the rule file's chance, 100 by
     /// default); a mutation switched off in `mutations enabled` is never passed on, and neither is one the species' body
     /// rules out (Gilded and Relentless for a large kind, <see cref="BodySize.Barred"/>), which a parent rolled before
-    /// that rule may still carry. A newborn never rolls anything new.
+    /// that rule may still carry. A newborn never rolls anything new. With `creature stars: false` it inherits no stars of
+    /// this mod: it keeps the level the game gives it, its parent's.
     /// </summary>
     internal static class Inheritance
     {
@@ -20,7 +21,7 @@ namespace EliteCreaturesReborn.Breeding
         public static CreatureTraits Offspring(CreatureTraits mother, CreatureTraits? sire, RuleSet rules, int barred = 0)
         {
             int cap = Mathf.Max(mother.Stars, sire?.Stars ?? 0);
-            int stars = Random.Range(0, cap + 1);
+            int stars = rules.CreatureStars ? Random.Range(0, cap + 1) : 0; // off: the game passes the parent's level on
             int mask = PickMutation((mother.Mask | (sire?.Mask ?? 0)) & ~barred, rules);
             return new CreatureTraits(stars, mask);
         }

@@ -13,7 +13,8 @@ namespace EliteCreaturesReborn.Runtime
     /// "rolled once by the owner, stored in the ZDO, read by everyone": the owner rolls and writes; every machine loads
     /// and applies. A machine that meets a creature its owner has not rolled yet stays pending and keeps checking, so it
     /// updates itself exactly once, cleanly, the moment the state arrives - and a creature handed to a machine before it
-    /// was ever rolled is rolled by that new owner. It keeps the creature at vanilla level 1, applies the fixed scaling,
+    /// was ever rolled is rolled by that new owner. It keeps the creature at vanilla level 1 (unless this mod's stars are
+    /// off for its kind, <see cref="RuleSet.KeepsLevel"/>), applies the fixed scaling,
     /// and installs the per-frame behaviours (which self-gate on ownership). Patches read the traits and rules from here.
     /// </summary>
     public sealed class EliteController : MonoBehaviour
@@ -84,7 +85,11 @@ namespace EliteCreaturesReborn.Runtime
             }
         }
 
-        private void OnDestroy() => RuleState.Changed -= OnRulesChanged;
+        private void OnDestroy()
+        {
+            RuleState.Changed -= OnRulesChanged;
+            SwingRegistry.Forget(_character);
+        }
 
         // An edited or newly synced rule file reaches creatures already loaded: every power read from Rules as it acts
         // (Warding's reflect and its ceiling, Leeching, knockback...) takes the new value at once. What was applied
@@ -132,23 +137,36 @@ namespace EliteCreaturesReborn.Runtime
         /// <summary>
         /// A boss scales on the boss table; every other creature on its biome's, with its own `creatures:` entry's
         /// mutation keys on top. Every machine resolves the same: the biome is in the ZDO, the prefab is the object's.
+        /// A creature that keeps its game level takes no star power: the game's level scales it instead.
         /// </summary>
         private BiomeRules ResolveRules(Heightmap.Biome biome)
         {
-            return _isBoss ? BossView.For(RuleState.Active.Boss) : RuleState.Active.For(biome, PrefabName);
+            RuleSet set = RuleState.Active;
+            bool keeps = set.KeepsLevel(Traits.Stars, _isBoss);
+            if (_isBoss)
+            {
+                return BossView.For(set.Boss, unstarred: keeps);
+            }
+            BiomeRules rules = set.For(biome, PrefabName);
+            return keeps ? set.Unstarred(rules) : rules;
         }
 
         private string PrefabName => Utils.GetPrefabName(gameObject);
 
         // OWNER ONLY: the single roll, written to the ZDO for everyone. Reached here only when this machine owns it. When
         // a console spawn has forced exact traits, those are written verbatim instead - bypassing every chance and cap.
+        // This mod's stars replace the game's level, so it goes back to 1 - unless they are off for this kind and it has
+        // none, when the level the game or another mod gave it stays.
         private void RollFresh(ZDO zdo)
         {
             Heightmap.Biome biome = _forced != null ? _forcedBiome : Heightmap.FindBiome(_character.transform.position);
             CreatureTraits fresh = _forced ?? RollFor(biome);
             TraitStore.Save(zdo, fresh);
             TraitStore.SetBiome(zdo, biome);
-            _character.SetLevel(1);
+            if (!RuleState.Active.KeepsLevel(fresh.Stars, _isBoss))
+            {
+                _character.SetLevel(1);
+            }
             FreshlyResolved = true;
             _forced = null;
             _forcedDraw = null;
@@ -198,6 +216,7 @@ namespace EliteCreaturesReborn.Runtime
                 StatApplier.ApplyHealth(_character, Rules, Traits, FreshlyResolved); // owner writes s_maxHealth; others read it
             }
             _ready = true;
+            SwingRegistry.Track(this); // the swing speed is fixed from here on, so AnimSpeedPatch skips a creature at 1
             if (Disguise.Holds(_character))
             {
                 _dressPending = true; // keep polling in Update until it wakes

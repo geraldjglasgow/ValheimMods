@@ -11,7 +11,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [list]
 [*]Mutations: nineteen, shown on the nameplate, such as Mad, Bloated, Frostbound and Cloning.
 [*]Difficulty: Easy to Extreme; new biomes start gentle, cleared ones keep hardening.
-[*]Stars: beyond vanilla's two, up to eight on Extreme.
+[*]Stars: beyond vanilla's two, up to eight on Extreme, or off for another mod's.
 [*]Boss aspects: one per fight (Twin, Nightfall, Brutal and fifteen more), shown at the altar with the boss's stars.
 [*]World tiers: each boss's first defeat makes stars and mutations more common.
 [*]Breeding: tamed creatures pass a mutation and stars to their young.
@@ -23,7 +23,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [/list]
 
 [size=4][b]Install[/b][/size]
-Needed on the server and every client. Install BepInExPack for Valheim, then put EliteCreaturesReborn.dll in BepInEx/plugins (or use a mod manager). Remove other creature star mods first; their configs are not read.
+Needed on the server and every client. Install BepInExPack for Valheim, then put EliteCreaturesReborn.dll in BepInEx/plugins (or use a mod manager). Remove other star mods, or set creature stars: false: their configs are not read.
 
 [size=4][b]Configuration[/b][/size]
 BepInEx/config/gglasgow.elitecreaturesreborn.cfg (each player's own settings) and BepInEx/config/creature_rules.yml (the rules). Both apply without a restart; the server's rules bind every player. Console: [b]elite tier[/b], [b]damage[/b] and [b]deaths[/b] for everyone, the other [b]elite[/b] commands for admins. In detail: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md]the reference on GitHub[/url].

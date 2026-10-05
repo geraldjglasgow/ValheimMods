@@ -29,12 +29,7 @@ namespace EliteCreaturesReborn.Rules
             {
                 return result;
             }
-            RuleSet set = new RuleSet
-            {
-                Difficulty = ReadDifficulty(root, result),
-                LockToServer = YamlRead.Bool(root, "lock to server", true, result.Errors),
-                MaxMutations = Math.Max(0, YamlRead.Int(root, "max mutations", 1, result.Errors)),
-            };
+            RuleSet set = ReadTopLevel(root, result);
             ReadMutationEnabled(set, root, result);
             ReadDefaults(set, root, result);
             ReadBosses(set, root, result);
@@ -44,6 +39,18 @@ namespace EliteCreaturesReborn.Rules
             ReadCreatures(set, root, result);
             ReadBiomes(set, root, result);
             return Finish(set, result);
+        }
+
+        // The single lines at the top of the file.
+        private static RuleSet ReadTopLevel(YamlMappingNode root, Result result)
+        {
+            return new RuleSet
+            {
+                Difficulty = ReadDifficulty(root, result),
+                CreatureStars = YamlRead.Bool(root, "creature stars", true, result.Errors),
+                LockToServer = YamlRead.Bool(root, "lock to server", true, result.Errors),
+                MaxMutations = Math.Max(0, YamlRead.Int(root, "max mutations", 1, result.Errors)),
+            };
         }
 
         // The steps that need the whole file read: the star fallback for unlisted biomes, Extreme's longer star lines.

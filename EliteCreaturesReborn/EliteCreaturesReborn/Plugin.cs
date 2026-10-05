@@ -19,6 +19,7 @@ namespace EliteCreaturesReborn
         private void Awake()
         {
             Log.Bind(Logger);
+            ConfigReloader.HoldSaves(Config);
             Configuration.BindAll(Config);
             RuleFile.Initialise();
             ServerLock.Setup(Config, PluginInfo.Guid, PluginInfo.Name, PluginInfo.PluginVersion);

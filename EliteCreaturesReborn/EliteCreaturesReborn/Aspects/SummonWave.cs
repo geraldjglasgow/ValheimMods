@@ -46,13 +46,19 @@ namespace EliteCreaturesReborn.Aspects
         }
 
         // Same frame as the Instantiate, before the creature's controller wakes: the forced stars are then written as its
-        // roll, exactly as `elite spawn` does it.
+        // roll, exactly as `elite spawn` does it. With creature stars off they come as the game's own level instead,
+        // which the creature then keeps.
         private static void Arrive(GameObject creature, int stars, Vector3 pos)
         {
             EliteController elite = creature.GetComponent<EliteController>();
             if (elite != null)
             {
-                elite.ForceTraits(new CreatureTraits(stars, 0), Heightmap.FindBiome(pos));
+                bool starred = RuleState.Active.CreatureStars;
+                elite.ForceTraits(new CreatureTraits(starred ? stars : 0, 0), Heightmap.FindBiome(pos));
+                if (!starred)
+                {
+                    creature.GetComponent<Character>().SetLevel(stars + 1);
+                }
             }
             BaseAI ai = creature.GetComponent<BaseAI>();
             if (ai != null)

@@ -3,21 +3,22 @@
 Creatures spawn with more stars and mutations, traits that change how a fight goes; bosses take an aspect instead.
 
 ## Features
-- Mutations: nineteen, shown on the nameplate, such as Mad, Bloated, Frostbound and Cloning.
+- Mutations: nineteen on the nameplate, such as Mad, Bloated, Frostbound and Cloning.
 - Difficulty: Easy to Extreme; new biomes start gentle, cleared ones keep hardening.
-- Stars: beyond vanilla's two, up to eight on Extreme.
+- Stars: beyond vanilla's two, up to eight on Extreme, or off for another mod's.
 - Boss aspects: one per fight (Twin, Nightfall, Brutal and fifteen more), shown at the altar with the boss's stars.
 - World tiers: each boss's first defeat makes stars and mutations more common.
-- Breeding: tamed creatures pass a mutation and stars to their young.
-- Loot: four drop modes and drop rules per creature.
-- Boss damage board: who hurt the boss and how much.
+- Breeding: tamed young inherit a mutation and stars.
+- Loot: four drop modes, rules per creature.
+- Boss damage board: who did how much damage.
 - Death recap: `F10` replays the seconds before each death, hit by hit.
 - Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
 - Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put
-`EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other creature star mods first; their configs are not read.
+`EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `creature stars: false`: their
+configs are not read.
 
 ## Configuration
 `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` (each player's own settings) and

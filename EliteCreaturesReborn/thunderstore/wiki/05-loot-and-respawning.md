@@ -11,7 +11,8 @@ Set with `mode:` under `loot:`.
 | Rolled (default) | The drop table is rolled once more per star |
 | Curated | Only the drops you list for that creature |
 
-- Trophies are not multiplied unless `multiply trophies: true`. Bosses always drop one trophy per star plus one.
+- Trophies are not multiplied unless `multiply trophies: true`. Bosses always drop one trophy for every player
+  within 100 m, plus one per star plus one (twice that when Bountiful).
 - Mutations do not add loot, except Gilded (3x loot plus coins). Thieving creatures drop what they stole.
 - Boss aspect loot multipliers apply in every mode, Vanilla included.
 - Other mods' drops are left alone.

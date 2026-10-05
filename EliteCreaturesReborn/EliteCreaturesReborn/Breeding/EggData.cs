@@ -1,4 +1,5 @@
 using System.Globalization;
+using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
 
@@ -20,7 +21,10 @@ namespace EliteCreaturesReborn.Breeding
             egg.m_itemData.m_customData[TraitKeys.EggTraits] = string.Join(",",
                 t.Stars.ToString(CultureInfo.InvariantCulture), t.Mask.ToString(CultureInfo.InvariantCulture),
                 ((int)born.Biome).ToString(CultureInfo.InvariantCulture));
-            egg.SetQuality(t.Stars + 1);
+            if (!RuleState.Active.KeepsLevel(t.Stars, isBoss: false))
+            {
+                egg.SetQuality(t.Stars + 1); // with this mod's stars off the game's quality, the parent's level, stays
+            }
             Log.Diag($"breeding: egg laid with {t.Stars} stars, mask {t.Mask}");
         }
 

@@ -56,7 +56,8 @@ else. It is a **single setting, off by default**, because the default should sui
 about it yet - and the player who has thought about it will find the setting.
 
 **Bosses are the exception** (2026-10-03, at the user's request). A boss drops N+1 of each trophy in its own table for
-N stars, in every mode including Vanilla, untouched by every multiplier and the switch, because the head count is the
+N stars, plus one for every player within 100 m of it (the user, 2026-10-04: per player and per star, on top of
+each other), in every mode including Vanilla, untouched by every multiplier and the switch, because the head count is the
 stars' visible reward for the fight. A `drop overrides` row naming the trophy is the server's own words and is
 honoured instead.
 
@@ -113,7 +114,9 @@ time. That argument does not apply to a mutation, which you meet rather than cho
   drop pile, which is the same rule the game already follows for ordinary loot.
 - Because the mod keeps creatures at **vanilla level 1** and scales them itself (`scaling.md`), the game applies
   no level loot bonus of its own. The mod's multiplier is the whole story, and there is no second multiplier
-  hiding underneath it.
+  hiding underneath it. The exception is a creature that keeps its game level (`creature stars: false`): the game has
+  already paid its level bonus, so it takes no star `drops` line and no extra rolls; the global, Gilded and boss
+  multipliers still apply.
 
 This must work on a dedicated server the first time it is built, not in a later pass.
 

@@ -3,14 +3,15 @@
 ## The rule file
 
 `BepInEx/config/creature_rules.yml` holds every gameplay rule. Saved changes apply at once. If the file has a mistake,
-the log (`BepInEx/LogOutput.log`) names the line and the old rules stay in force. Delete the file to get the defaults
-back.
+the log (`BepInEx/LogOutput.log`) names the line and the old rules stay in force. The file is never rewritten: what it
+names stays as written, and anything it leaves out uses the default. Delete it to get a new file with every default.
 
 Percentages are 0-100. Lists by star count start at 0 stars, and the last entry repeats.
 
 | Block | Sets | Page |
 | --- | --- | --- |
 | `difficulty:` | Easy to Extreme, or Custom | [Difficulty and World Tiers](wiki:Difficulty and World Tiers) |
+| `creature stars:` | false: creatures keep the stars the game or another mod gave them, and still mutate (true) | |
 | `lock to server:` | true: everyone uses the server's file; false: each player's own | |
 | `max mutations:` | Most mutations per creature (1; 0 = no limit). Custom only | |
 | `mutations enabled:` | Turn each mutation on or off | [Mutations and Breeding](wiki:Mutations and Breeding) |
@@ -44,18 +45,20 @@ creatures:
       Cloaked: [0]
 ```
 
-The default file already makes trolls and lox reveal Cloaked at 15 m and keeps drakes from being Cloaked.
+A new file already makes trolls, lox and Elite Creatures Pack's Rime Giant reveal Cloaked at 15 m, keeps drakes from
+being Cloaked and keeps bats from being Mad or Cloaked.
 
 ## Your own settings
 
-`gglasgow.elitecreaturesreborn.cfg` holds per-player display preferences. The server never changes them.
+`gglasgow.elitecreaturesreborn.cfg` holds each player's own display and death recap settings. The server never changes
+them.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | Show trait names | true | Mutation name in front of the creature's name |
 | Coloured stars | true | Stars in the mutation's colour |
 | Nameplate distance | 0 | How close you must be to see mutation names; 0 = the game's distance |
-| Effect density | 1 | Strength of mutation effects, 0 to 1; 0 hides them but they still hurt |
+| Effect density | 1 | Strength of mutation and aspect effects, 0 to 1; 0 hides them but they still hurt. Warnings (Stormbound circles, ice and mud, tornadoes) always show |
 | Small star size | 1.3 | Size of a small star |
 | Large star size | 2.2 | Size of a large star (worth five) |
 | Show stolen items | true | Show what a Thieving creature carries |
@@ -69,9 +72,36 @@ The default file already makes trolls and lox reveal Cloaked at 15 m and keeps d
 | Star colours | see [Mutations and Breeding](wiki:Mutations and Breeding) | One colour per mutation |
 | Log diagnostics | false | Log details of Splintering, Bloated and Devouring deaths for bug reports |
 
+## Death recap
+
+Every death can be watched again. Dying and respawning are unchanged; two seconds after a death a line at the top left
+names the killer and the key ("Killed by Mad Greydwarf 2★. F10: death recap"). F10, `/deaths` in chat or `deaths` in
+the F5 console opens the recap window any time in a world, alive or dead; Esc or the key closes it.
+
+- **Deaths**, newest first: a picture of the moment, the killer, the day and the clip's length. Kept until the game
+  closes, on your machine only.
+- **Killer and summary**: its mutations, aspect and stars; the damage you took, over how long, by type.
+- **Video** of your own screen: the 15 seconds before the death and 2 after. Play or pause, speeds 0.25x, 0.5x, 1x and
+  2x, and a timeline to drag, marked at every hit and the death; hover it for a preview. Space plays or pauses, the
+  arrow keys step one frame.
+- **Hits**: time, who or what, damage by type, health left. Click one to play from just before it.
+
+Settings, in the section `10 - Death Recap (per player)`:
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| Record deaths | true | Record the video; off keeps only the hit list |
+| Recap key | F10 | Opens and closes the window |
+| Death notice | true | The line naming the killer after a death |
+| Deaths kept | 5 | Deaths the window keeps (1 to 10) |
+| Seconds before death | 15 | Video kept before a death (5 to 30) |
+| Video frames per second | 15 | Smoother but more memory (5 to 30) |
+| Video height | 360 | Pixels; sharper but more memory, about 10 MB per death at 360 (180 to 720) |
+
 ## Console commands
 
-Press F5. `elite tier` and `damage` work for everyone; the rest need admin (your ID in the server's `adminlist.txt`).
+Press F5. `elite tier`, `damage` and `deaths` work for everyone; the rest need admin (your ID in the server's
+`adminlist.txt`).
 
 | Command | What it does |
 | --- | --- |
@@ -82,6 +112,7 @@ Press F5. `elite tier` and `damage` work for everyone; the rest need admin (your
 | `elite reference` | Writes `creature_reference.yml`: every creature's prefab name, health and drops |
 | `elite tier` | Shows the world tier, the difficulty and what they do where you stand |
 | `damage` | Shows the last boss damage board (`/damage` in chat) |
+| `deaths` | Opens the death recap window (`/deaths` in chat) |
 | `charter` | Shows whether the server's settings apply to you |
 | `charter diff` | Shows where the server's settings differ from your file |
 | `charter versions` | Shows your and the server's mod versions |

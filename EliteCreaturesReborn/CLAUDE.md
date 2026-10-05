@@ -49,6 +49,24 @@ Ashlands Bloated, and `mutations enabled` still wins. `max mutations` and the wo
 **6 to 8 stars** happen only on Extreme. The `star power` lines have nine entries; a file whose lines stop at five
 stars continues them by the built-in steps (an 8-star creature has about 1.5 times a 5-star's health and 1.4 times its damage).
 
+## Creature stars off
+
+`creature stars: false` at the top of `creature_rules.yml` (a file from before 3.17.0 has no line: add it) turns this
+mod's creature stars off, for playing beside another mod that gives creatures stars, such as Path of Valheim:
+
+- Creatures roll no stars here and keep the stars the game or the other mod gave them, with the game's own health,
+  damage, loot, look and nameplate stars for them. The `star power` lines, the star `drops` line and the extra rolls
+  do not apply to them.
+- They still roll mutations: on a difficulty at the biome's rate for a creature with no stars, on Custom at each
+  mutation's 0-star chance. A mutation's own numbers (Bloated's health, Mad's speed...) apply on top of the other mod's.
+- Newborns inherit no stars from this mod (the game passes on the parent's level), and GrindstoneSkills' extra star
+  for a newborn is declined.
+- A Summoner boss's adds come at the game's level for their stars (`stars: 2` makes them level 3). `elite spawn`
+  still gives the stars it names.
+
+Bosses have their own switch, `stars:` under `bosses:`; with it off a boss keeps its level the same way. `elite tier`
+says when creature stars are off, and `elite inspect` shows a kept level.
+
 ## Mutations
 
 Nineteen, one per creature by default, each with its own colour and its own name on the nameplate.
@@ -206,8 +224,9 @@ Everything is in the `aspects:` block under `bosses:` in the rule file: the off 
 seconds (`shift seconds`; 0 fixes each altar; an older file's `shift hours` still works), the chance of each outcome, the loot multiplier, every aspect's numbers, and per boss the creatures
 Summoner calls and, optionally, which aspects that boss may roll.
 
-**Boss trophies.** A boss drops one trophy per star plus one (five heads from a four-star boss) in every loot mode,
-Vanilla included. Only Bountiful changes that count, times its own loot (ten heads from a four-star Bountiful boss);
+**Boss trophies.** A boss drops one trophy for every player within 100 m of it, plus one per star plus one (six heads
+from a two-star boss killed by three players) in every loot mode, Vanilla included, whatever another mod (Epic Loot's
+boss trophy mode) sets. Only Bountiful changes that count, times its own loot (twelve heads for that group);
 nothing else does: not the `drops` line, extra rolls, the global or boss multiplier, another aspect's loot or
 `multiply trophies`. Each Twin drops its own; of a Tethered pair only the last to fall drops anything; Phantom copies drop nothing.
 Only a `drop overrides` row naming the trophy in the boss's `creatures:` entry replaces it, and an `extra drops` row
@@ -268,7 +287,7 @@ Each entry under `creatures:` in the rule file is matched by prefab name (`elite
 set any of these keys:
 
 - `drops` - replaces the star `drops` line for this creature
-- `multiply trophies` - this creature's own trophy switch (a boss's own trophies ignore it: always one per star plus one, times Bountiful's loot)
+- `multiply trophies` - this creature's own trophy switch (a boss's own trophies ignore it: always one per player near it plus one per star plus one, times Bountiful's loot)
 - `drop overrides` - changes rows of its own drop table: `item`, then `amount: [min, max]` (inclusive), `chance`
   0-100, or `remove: true` to delete the row
 - `extra drops` - adds rows with `item`, `amount` and `chance`; `per star: true` makes a row follow the loot mode

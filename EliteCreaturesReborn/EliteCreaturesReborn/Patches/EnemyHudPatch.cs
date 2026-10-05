@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
-    /// Replaces the nameplate's stars with the mod's coloured row. Each frame, for every elite creature's nameplate it
+    /// Replaces the nameplate's stars with the mod's coloured row. Each frame, for every starred creature's nameplate it
     /// hides the vanilla two- and three-star badges (which only ever cover those two counts) and ensures the coloured
     /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count - on
     /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite. A
@@ -64,7 +64,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 return;
             }
-            if (Config.Configuration.ColouredStars.Value)
+            if (Config.Configuration.ColouredStars.Value && HasStars(character))
             {
                 HideVanillaBadges(gui);
                 EnsureRow(gui, character);
@@ -98,6 +98,10 @@ namespace EliteCreaturesReborn.Patches
             EliteController controller = character.GetComponent<EliteController>();
             return controller != null && controller.Ready;
         }
+
+        // A creature with none of this mod's stars keeps the game's badges: a level another mod or the game gave it
+        // (this mod's stars off) shows as the game, or that mod, draws it.
+        private static bool HasStars(Character character) => character.GetComponent<EliteController>().Traits.Stars > 0;
 
         private static void HideVanillaBadges(GameObject gui)
         {

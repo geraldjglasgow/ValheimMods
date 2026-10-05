@@ -54,13 +54,14 @@ The biome decides which mutation (see [Mutations and Breeding](wiki:Mutations an
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Size | +6% | +10% | +15% | +20% | +25% | +30% | +35% | +40% | +45% |
 | Health | x1 | x1.4 | x1.95 | x2.6 | x3.3 | x4 | x4.7 | x5.4 | x6.1 |
-| Damage | x1 | x1.2 | x1.45 | x1.75 | x2.1 | x2.5 | x2.9 | x3.3 | x3.7 |
+| Damage | x1 | x1.15 | x1.3 | x1.5 | x1.75 | x2 | x2.25 | x2.5 | x2.75 |
 | Attack speed | x1 | x1.02 | x1.05 | x1.08 | x1.12 | x1.16 | x1.19 | x1.22 | x1.25 |
 | Move speed | x1 | x1 | x1.03 | x1.06 | x1.1 | x1.15 | x1.18 | x1.21 | x1.24 |
 | Loot | x1 | x1 | x1.5 | x2 | x2.5 | x3 | x3.5 | x4 | x4.5 |
 
-These are the `star power` lines: `growth`, `hp`, `attack`, `swing speed`, `speed`, `drops`. On the nameplate a large
-star is worth five, and stars take the mutation's colour. Bosses use their own table ([Boss Aspects](wiki:Boss Aspects)).
+These are the `star power` lines of a new rule file: `growth`, `hp`, `attack`, `swing speed`, `speed`, `drops`; an
+existing file keeps its own. The same on every difficulty. On the nameplate a large star is worth five, and stars take
+the mutation's colour. Bosses use their own table ([Boss Aspects](wiki:Boss Aspects)).
 
 ## World tiers
 

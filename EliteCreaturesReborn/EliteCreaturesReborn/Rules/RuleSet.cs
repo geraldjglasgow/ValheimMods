@@ -6,7 +6,7 @@ using EliteCreaturesReborn.Util;
 namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
-    /// One loaded rule file: the two top-level switches and the resolved rules per biome. Every biome entry is already
+    /// One loaded rule file: the top-level switches and the resolved rules per biome. Every biome entry is already
     /// merged over <see cref="Defaults"/>, so a lookup is a single dictionary hit with a fall back to the defaults for
     /// an unknown or modded biome. A creature with mutation keys in its `creatures:` entry gets those laid over its
     /// biome's rules on first lookup, cached here, so the cache goes when a reload replaces the set.
@@ -19,6 +19,9 @@ namespace EliteCreaturesReborn.Rules
         public bool LockToServer = true;
         public int MaxMutations = 1;
         public BiomeRules Defaults = new BiomeRules();
+
+        /// <summary>The <c>creature stars:</c> line. False: creatures roll no stars and keep the game's level.</summary>
+        public bool CreatureStars = true;
 
         /// <summary>Per-mutation on/off switch. An entry missing here (an old file, an unlisted mutation) means enabled.</summary>
         public readonly Dictionary<Mutation, bool> MutationEnabled = new Dictionary<Mutation, bool>();
@@ -52,6 +55,28 @@ namespace EliteCreaturesReborn.Rules
             new Dictionary<string, BiomeRules>(StringComparer.OrdinalIgnoreCase);
 
         private readonly HashSet<string> _loggedUnlisted = new HashSet<string>();
+
+        // Keyed by the rules object itself, like the creature merges: one neutral copy per biome block or merge.
+        private readonly Dictionary<BiomeRules, BiomeRules> _unstarred = new Dictionary<BiomeRules, BiomeRules>();
+
+        /// <summary>
+        /// True when a creature with no stars of this mod keeps the level the game (or another mod) gave it: this mod's
+        /// stars are off for its kind - `creature stars: false`, or `stars: false` under `bosses:` for a boss. Such a
+        /// creature is never put back to level 1, and the star power lines do not touch it; the game's level does.
+        /// </summary>
+        public bool KeepsLevel(int stars, bool isBoss) => stars == 0 && !(isBoss ? Boss.Enabled : CreatureStars);
+
+        /// <summary>The rules with neutral star power, for a creature that keeps its level: its mutations still apply.</summary>
+        public BiomeRules Unstarred(BiomeRules rules)
+        {
+            if (!_unstarred.TryGetValue(rules, out BiomeRules neutral))
+            {
+                neutral = rules.Clone();
+                neutral.Star = new StarPower();
+                _unstarred[rules] = neutral;
+            }
+            return neutral;
+        }
 
         /// <summary>
         /// The rules that govern one creature: its biome's, with its own `creatures:` entry's mutation keys on top. A

@@ -22,6 +22,10 @@ namespace EliteCreaturesReborn.Rules
 # tier boosts instead; a file without this line is Custom.
 difficulty: Medium
 
+# false: creatures (not bosses) get no stars from this mod and keep the stars the
+# game or another mod gave them; they still roll mutations, at the 0-star chance.
+creature stars: true
+
 # Connected players use the server's copy of this file.
 lock to server: true
 

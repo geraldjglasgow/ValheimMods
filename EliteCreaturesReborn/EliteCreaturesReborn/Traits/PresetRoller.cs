@@ -19,7 +19,7 @@ namespace EliteCreaturesReborn.Traits
         public static CreatureTraits Roll(BiomeRules rules, RuleSet ruleSet, int tier, Heightmap.Biome biome, int barred)
         {
             PresetCell cell = PresetCell.For(ruleSet.Difficulty, tier, PresetTables.Rank(biome));
-            int stars = TraitRoller.PickWeighted(cell.Weights);
+            int stars = ruleSet.CreatureStars ? TraitRoller.PickWeighted(cell.Weights) : 0;
             float rate = Mathf.Min(100f, cell.Mutation * (1f + PresetTables.StarMutation * stars));
             int mask = Dice.Percent(rate) ? PickOne(rules, ruleSet, stars, barred) : 0;
             return new CreatureTraits(stars, mask) { Tier = tier };

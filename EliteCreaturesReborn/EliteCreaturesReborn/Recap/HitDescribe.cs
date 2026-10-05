@@ -27,7 +27,8 @@ namespace EliteCreaturesReborn.Recap
             {
                 return name + Stars(attacker.GetLevel() - 1);
             }
-            return Naming.Decorate(controller.Traits, name) + Stars(controller.Traits.Stars);
+            int stars = controller.Traits.Stars > 0 ? controller.Traits.Stars : attacker.GetLevel() - 1; // a kept level's
+            return Naming.Decorate(controller.Traits, name) + Stars(stars);
         }
 
         public static string Stars(int stars) => stars > 0 ? " " + stars + "★" : "";

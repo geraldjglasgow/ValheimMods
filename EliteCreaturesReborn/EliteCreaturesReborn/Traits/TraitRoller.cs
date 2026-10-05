@@ -14,7 +14,8 @@ namespace EliteCreaturesReborn.Traits
     /// multiplies every mutation chance, so a hardened world keeps each biome's character but pushes it upward. A large
     /// creature never rolls Gilded or Relentless (<see cref="BodySize.Barred"/>): they are left out before the dice, so
     /// its chance at every other mutation is unchanged. That is the Custom difficulty; under a preset the roll is
-    /// <see cref="PresetRoller"/>'s instead.
+    /// <see cref="PresetRoller"/>'s instead. With `creature stars: false` neither draws stars: every creature rolls its
+    /// mutations as a 0-star one, and keeps whatever level the game or another mod gave it.
     /// </summary>
     public static class TraitRoller
     {
@@ -25,7 +26,7 @@ namespace EliteCreaturesReborn.Traits
             {
                 return PresetRoller.Roll(rules, ruleSet, tier, biome, barred);
             }
-            int stars = RollStars(rules.StarChances, ruleSet.Tiers.StarBoostAt(tier));
+            int stars = ruleSet.CreatureStars ? RollStars(rules.StarChances, ruleSet.Tiers.StarBoostAt(tier)) : 0;
             int mask = RollMutations(rules, stars, ruleSet, ruleSet.Tiers.MutationBoostAt(tier), barred);
             return new CreatureTraits(stars, mask) { Tier = tier };
         }

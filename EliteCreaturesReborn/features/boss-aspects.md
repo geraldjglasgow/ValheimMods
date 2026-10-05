@@ -553,9 +553,9 @@ up and 2 m from anything, a second portal on its hand"). Judgement calls made wh
   close 1.2 s after the throw. Loot x1.2.
 - **`none` raised from 30 to 38**, so a plain fight is still about one in five with sixteen aspects (Portalbound only
   counts for the Elder).
-- **Boss trophies**: a boss with N stars drops N+1 of its trophy in every loot mode, untouched by every multiplier
+- **Boss trophies**: a boss with N stars drops N+1 of its trophy, plus one per player within 100 m (2026-10-04), in every loot mode, untouched by every multiplier
   and the trophy switch (the user's rule); a `drop overrides` row naming it is honoured instead (`loot.md` section 2).
-  Bountiful alone scales the count, by its own `loot` (x2: N+1 doubled), rounded (the user, 2026-10-04: Bountiful
+  Bountiful alone scales the count, by its own `loot` (x2: the whole count doubled; three players and two stars give twelve), rounded (the user, 2026-10-04: Bountiful
   pays more of all loot, heads included).
 - **Tethered damage board** (the user, 2026-10-04): one board per pair, when the last falls. The first to fall sends
   none and hands its tally on to its partner's (the route a Phantom copy's hits take), so the last board counts both.

@@ -33,7 +33,7 @@ namespace EliteCreaturesReborn.Aspects
                 return null;
             }
             Mark(nview.GetZDO(), bossZdo, traits, link);
-            character.SetLevel(1);
+            character.SetLevel(boss.Creature.GetLevel()); // 1 for a starred boss; a kept level is the copy's too
             Wake(boss, copy);
             return character;
         }

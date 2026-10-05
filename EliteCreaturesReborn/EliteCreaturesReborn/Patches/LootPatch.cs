@@ -9,13 +9,17 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// Hands a kill's freshly built drop list to the loot engine. Because the mod keeps creatures at vanilla level 1,
-    /// the game applies no level loot bonus of its own, so the engine's result is the whole story. Runs on the dying
+    /// the game applies no level loot bonus of its own, so the engine's result is the whole story - except for a
+    /// creature that keeps its game level (this mod's stars off), whose level bonus the game has already paid. Runs on the dying
     /// creature's owner (where the game builds the drop list); reads its traits, replicated from the owner's roll, so
     /// the outcome is the same wherever the creature was rolled. A creature the mod has not resolved is left vanilla.
+    /// Runs after every other mod's postfix, so a boss's trophy count is ours: Epic Loot's own boss trophy mode
+    /// overwrote it with the player count when it ran after us.
     /// </summary>
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     public static class LootPatch
     {
+        [HarmonyPriority(Priority.Last)]
         private static void Postfix(CharacterDrop __instance, List<KeyValuePair<GameObject, int>> __result) =>
             Guard.Run("CharacterDrop.GenerateDropList", () => Rework(__instance, __result));
 

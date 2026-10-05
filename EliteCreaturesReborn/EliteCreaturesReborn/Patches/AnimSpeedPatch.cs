@@ -1,3 +1,4 @@
+using System;
 using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
@@ -15,19 +16,36 @@ namespace EliteCreaturesReborn.Patches
     /// (animation is local); the factor comes from synced traits and, for Tethered, from the pair's health in their ZDOs,
     /// so every client animates it the same. Tethered's part changes from step to step, which the absolute write takes
     /// as it comes: the fixed factor times the live one, never times the animator's current speed.
+    /// It runs for every character's animator, players included, so it asks <see cref="SwingRegistry"/> first and leaves
+    /// at once for anything at its own speed: one lookup, nothing allocated. Exceptions are reported the way
+    /// <see cref="Guard.Run(string, Action)"/> reports them, inline so the step allocates no closure.
     /// </summary>
-    [HarmonyPatch(typeof(CharacterAnimEvent), "CustomFixedUpdate")]
+    [HarmonyPatch(typeof(CharacterAnimEvent), nameof(CharacterAnimEvent.CustomFixedUpdate))]
     public static class AnimSpeedPatch
     {
-        private static void Postfix(CharacterAnimEvent __instance) =>
-            Guard.Run("CharacterAnimEvent.CustomFixedUpdate", () => Adjust(__instance));
-
-        private static void Adjust(CharacterAnimEvent animEvent)
+        private static void Postfix(CharacterAnimEvent __instance)
         {
-            Traverse traverse = Traverse.Create(animEvent);
-            Character character = traverse.Field("m_character").GetValue<Character>();
-            Animator animator = traverse.Field("m_animator").GetValue<Animator>();
-            float factor = Factor(character);
+            EliteController? controller = SwingRegistry.For(__instance.m_character);
+            if (controller is null)
+            {
+                return;
+            }
+            try
+            {
+                Adjust(__instance, controller);
+            }
+            catch (Exception e)
+            {
+                Guard.Report(e, "CharacterAnimEvent.CustomFixedUpdate");
+                throw;
+            }
+        }
+
+        private static void Adjust(CharacterAnimEvent animEvent, EliteController controller)
+        {
+            Character character = animEvent.m_character;
+            Animator animator = animEvent.m_animator;
+            float factor = controller.SwingSpeedFactor * TetherLink.SwingFactor(controller);
             if (animator == null || Mathf.Approximately(factor, 1f))
             {
                 return;
@@ -38,14 +56,6 @@ namespace EliteCreaturesReborn.Patches
             {
                 animator.speed = factor;
             }
-        }
-
-        /// <summary>The creature's swing speed from its stars and Mad, times a Tethered boss's gap; 1 for anything else.</summary>
-        private static float Factor(Character character)
-        {
-            EliteController controller = character != null ? character.GetComponent<EliteController>() : null!;
-            return controller == null || !controller.Ready
-                ? 1f : controller.SwingSpeedFactor * TetherLink.SwingFactor(controller);
         }
     }
 }

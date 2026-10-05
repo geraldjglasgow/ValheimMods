@@ -13,7 +13,7 @@ namespace EliteCreaturesReborn.Loot
     /// and every player sees the one pile the game replicates. Trophies step outside all of it unless the trophy
     /// switch says otherwise - except a row the file names explicitly, which is the server's own words and honoured.
     /// A boss's own trophies stand outside it whatever the switch, in every mode: held out first, paid back last as
-    /// one per star plus one (<see cref="BossTrophies"/>). The engine only touches rows it owns: the creature's own
+    /// one per player near it plus one per star plus one (<see cref="BossTrophies"/>). The engine only touches rows it owns: the creature's own
     /// table and rows the rule file names. A row another mod injected into the same list (EpicLoot's materials, say)
     /// passes through untouched by mode, strip and multiplier alike, whatever order Harmony happens to run the
     /// postfixes in.
@@ -92,9 +92,8 @@ namespace EliteCreaturesReborn.Loot
                 GildedMultiplier = GildedLoot.Factor(controller),
             };
             ctx.TrophiesFollow = ctx.Rule?.MultiplyTrophies ?? loot.MultiplyTrophies;
-            ctx.DropsMultiplier = ctx.Rule?.Drops != null
-                ? LineAt(ctx.Rule.Drops, ctx.Stars) : LiveDropsLine(controller, ctx.IsBoss, ctx.Stars);
-            ctx.ExtraRolls = DropRoller.ExtraRolls(loot, ctx.Stars);
+            ctx.DropsMultiplier = StarDrops.Multiplier(ctx.Rule, controller, ctx.IsBoss, ctx.Stars);
+            ctx.ExtraRolls = StarDrops.ExtraRolls(loot, ctx.IsBoss, ctx.Stars);
             if (ctx.Rule != null)
             {
                 foreach (DropRule row in ctx.Rule.Overrides)
@@ -116,26 +115,6 @@ namespace EliteCreaturesReborn.Loot
                     ctx.Ours.Add(row.m_prefab);
                 }
             }
-        }
-
-        /// <summary>
-        /// The star `drops` line from the rules active right now, not the snapshot the creature resolved with. Loot
-        /// is applied at death, so a rule-file edit re-tunes what an already-spawned creature pays - the same hot
-        /// reload every other loot setting gets by reading RuleState at death. Falls back to the resolve-time
-        /// snapshot only when the ZDO is already gone.
-        /// </summary>
-        private static float LiveDropsLine(EliteController controller, bool isBoss, int stars)
-        {
-            if (isBoss)
-            {
-                return RuleState.Active.Boss.Star.DropsAt(stars);
-            }
-            ZDO? zdo = controller.View != null && controller.View.IsValid() ? controller.View.GetZDO() : null;
-            if (zdo == null)
-            {
-                return controller.Rules.Star.DropsAt(stars);
-            }
-            return RuleState.Active.For(Traits.TraitStore.GetBiome(zdo)).Star.DropsAt(stars);
         }
 
         private static CreatureLootRule? FindRule(EliteController controller)
@@ -277,15 +256,6 @@ namespace EliteCreaturesReborn.Loot
                         result[i].Key, DropRoller.Scaled(result[i].Value, factor));
                 }
             }
-        }
-
-        private static float LineAt(float[] line, int stars)
-        {
-            if (line.Length == 0)
-            {
-                return 1f;
-            }
-            return line[Mathf.Clamp(stars, 0, line.Length - 1)];
         }
     }
 }
