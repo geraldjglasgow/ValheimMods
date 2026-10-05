@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- Discord link on the store page.
+
 ## 0.7.0
 
 - With EliteCrafting: every creature drops runes; the Kraken, Rime Giant and Crypt Executioner drop extra.
