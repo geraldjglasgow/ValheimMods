@@ -1,0 +1,2100 @@
+{
+ "darkwood_gate": {
+  "name": "Darkwood Gate",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "Wood",
+    16
+   ],
+   [
+    "Iron",
+    4
+   ],
+   [
+    "Tar",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.02,
+   4.01,
+   0.59
+  ],
+  "pivot_above_bottom": 0.01,
+  "note": "2 wide, 4 tall, pivot at the bottom (needs darkwood materials)"
+ },
+ "fire_pit": {
+  "name": "Campfire",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Stone",
+    5
+   ],
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.6,
+   0.28,
+   1.51
+  ],
+  "pivot_above_bottom": 0.09,
+  "note": "a raycast straight up must hit a roof (underRoof) or rain puts it out; smoke needs a vent above"
+ },
+ "hearth": {
+  "name": "Hearth",
+  "category": "Misc",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    15
+   ]
+  ],
+  "snaps": [
+   [
+    -2.0,
+    0.0,
+    1.5
+   ],
+   [
+    -2.0,
+    0.0,
+    -1.5
+   ],
+   [
+    2.0,
+    0.0,
+    1.5
+   ],
+   [
+    2.0,
+    0.0,
+    -1.5
+   ],
+   [
+    -2.0,
+    0.5,
+    1.5
+   ],
+   [
+    -2.0,
+    0.5,
+    -1.5
+   ],
+   [
+    2.0,
+    0.5,
+    1.5
+   ],
+   [
+    2.0,
+    0.5,
+    -1.5
+   ]
+  ],
+  "size": [
+   4.12,
+   0.76,
+   3.1
+  ],
+  "pivot_above_bottom": 0.01,
+  "note": "4 x 3 stone hearth; leave a ridge vent above it"
+ },
+ "piece_banner01": {
+  "name": "Black Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Coal",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.93,
+  "note": "black banner, hangs below its pivot (top bar); thin along x, so it faces +-x at yaw 0; must touch what holds it"
+ },
+ "piece_cookingstation": {
+  "name": "Cooking Station",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.73,
+   1.28,
+   0.78
+  ],
+  "pivot_above_bottom": 0.18,
+  "note": "fire check point 0.2 above the pivot: put the pivot on the fire's centre; three at yaw 0/60/120 share one campfire"
+ },
+ "piece_workbench": {
+  "name": "Workbench",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.06,
+   1.85,
+   1.33
+  ],
+  "pivot_above_bottom": 0.02,
+  "note": "front (work side) is +z; needs a roof above; extensions within 5 m"
+ },
+ "piece_workbench_ext1": {
+  "name": "Chopping Block",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Flint",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.05,
+   1.21,
+   0.72
+  ],
+  "pivot_above_bottom": 0.0,
+  "note": "chopping block; counts within 5 m of the workbench"
+ },
+ "piece_workbench_ext2": {
+  "name": "Tanning Rack",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Flint",
+    15
+   ],
+   [
+    "LeatherScraps",
+    20
+   ],
+   [
+    "DeerHide",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.41,
+   1.99,
+   1.22
+  ],
+  "pivot_above_bottom": 0.04,
+  "note": "tanning rack; counts within 5 m of the workbench"
+ },
+ "portal_wood": {
+  "name": "Portal",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "GreydwarfEye",
+    10
+   ],
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.23,
+   3.29,
+   1.18
+  ],
+  "pivot_above_bottom": 0.01,
+  "note": "3.3 m tall: does not fit under a 3 m ceiling; front +z"
+ },
+ "stake_wall": {
+  "name": "Stakewall",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.1,
+   3.57,
+   0.58
+  ],
+  "pivot_above_bottom": 0.2,
+  "note": "2 wide, snaps 0..2 high but the points reach 3.5"
+ },
+ "stone_arch": {
+  "name": "Stone Arch",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    0.5
+   ],
+   [
+    1.0,
+    0.5,
+    -0.5
+   ],
+   [
+    1.0,
+    -0.5,
+    0.5
+   ],
+   [
+    1.0,
+    -0.5,
+    -0.5
+   ],
+   [
+    -1.0,
+    0.5,
+    0.5
+   ],
+   [
+    -1.0,
+    0.5,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.01,
+   1.03,
+   1.13
+  ],
+  "pivot_above_bottom": 0.53
+ },
+ "stone_floor_2x2": {
+  "name": "Stone Floor 2x2",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    6
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    1.0
+   ],
+   [
+    1.0,
+    -0.5,
+    1.0
+   ],
+   [
+    1.0,
+    0.5,
+    -1.0
+   ],
+   [
+    1.0,
+    -0.5,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.5,
+    1.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    1.0
+   ],
+   [
+    -1.0,
+    0.5,
+    -1.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.5,
+  "note": "1 m thick, top = pivot + 0.5"
+ },
+ "stone_pillar": {
+  "name": "Stone Pillar",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    1.0,
+    0.5
+   ],
+   [
+    0.5,
+    1.0,
+    -0.5
+   ],
+   [
+    0.5,
+    -1.0,
+    0.5
+   ],
+   [
+    0.5,
+    -1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    1.0,
+    0.5
+   ],
+   [
+    -0.5,
+    1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    -1.0,
+    0.5
+   ],
+   [
+    -0.5,
+    -1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.14,
+   2.0,
+   1.13
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "stone_stair": {
+  "name": "Stone Stair",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.04,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.0,
+  "note": "rises 1 toward local -z over 2 m; pivot at the bottom"
+ },
+ "stone_wall_1x1": {
+  "name": "Stone Wall 1x1",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    3
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.5,
+    0.5
+   ],
+   [
+    0.5,
+    0.5,
+    -0.5
+   ],
+   [
+    0.5,
+    -0.5,
+    0.5
+   ],
+   [
+    0.5,
+    -0.5,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.5,
+    0.5
+   ],
+   [
+    -0.5,
+    0.5,
+    -0.5
+   ],
+   [
+    -0.5,
+    -0.5,
+    0.5
+   ],
+   [
+    -0.5,
+    -0.5,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.09,
+   1.18,
+   1.2
+  ],
+  "pivot_above_bottom": 0.58
+ },
+ "stone_wall_2x1": {
+  "name": "Stone Wall 2x1",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    0.5
+   ],
+   [
+    1.0,
+    0.5,
+    -0.5
+   ],
+   [
+    1.0,
+    -0.5,
+    0.5
+   ],
+   [
+    1.0,
+    -0.5,
+    -0.5
+   ],
+   [
+    -1.0,
+    0.5,
+    0.5
+   ],
+   [
+    -1.0,
+    0.5,
+    -0.5
+   ],
+   [
+    -1.0,
+    -0.5,
+    0.5
+   ],
+   [
+    -1.0,
+    -0.5,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.18,
+   1.18,
+   1.2
+  ],
+  "pivot_above_bottom": 0.58
+ },
+ "stone_wall_4x2": {
+  "name": "Stone Wall 4x2",
+  "category": "BuildingStonecutter",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    6
+   ]
+  ],
+  "snaps": [
+   [
+    2.0,
+    1.0,
+    0.5
+   ],
+   [
+    2.0,
+    1.0,
+    -0.5
+   ],
+   [
+    2.0,
+    -1.0,
+    0.5
+   ],
+   [
+    2.0,
+    -1.0,
+    -0.5
+   ],
+   [
+    -2.0,
+    1.0,
+    0.5
+   ],
+   [
+    -2.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -2.0,
+    -1.0,
+    0.5
+   ],
+   [
+    -2.0,
+    -1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   4.22,
+   2.22,
+   1.34
+  ],
+  "pivot_above_bottom": 1.11
+ },
+ "wood_beam": {
+  "name": "Wood Beam 2 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   0.4,
+   0.4
+  ],
+  "pivot_above_bottom": 0.2
+ },
+ "wood_beam_1": {
+  "name": "Wood Beam 1 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   0.4,
+   0.4
+  ],
+  "pivot_above_bottom": 0.2
+ },
+ "wood_beam_26": {
+  "name": "Wood Beam 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.27,
+   1.54,
+   0.4
+  ],
+  "pivot_above_bottom": 0.26,
+  "note": "runs along x rising toward +x (1 over 2); pivot at the low end height, centred along x"
+ },
+ "wood_beam_45": {
+  "name": "Wood Beam 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.43,
+   2.43,
+   0.4
+  ],
+  "pivot_above_bottom": 1.21,
+  "note": "runs along x rising toward +x (2 over 2), centred"
+ },
+ "wood_door": {
+  "name": "Wood Door",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.264
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.264
+   ],
+   [
+    1.0,
+    -1.0,
+    -0.264
+   ],
+   [
+    -1.0,
+    -1.0,
+    -0.264
+   ]
+  ],
+  "size": [
+   2.0,
+   2.02,
+   0.5
+  ],
+  "pivot_above_bottom": 1.01
+ },
+ "wood_fence": {
+  "name": "Roundpole Fence",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -1.1,
+    1.0,
+    0.0
+   ],
+   [
+    0.9,
+    1.0,
+    0.0
+   ],
+   [
+    -1.1,
+    0.0,
+    0.0
+   ],
+   [
+    0.9,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.69,
+   2.3,
+   0.31
+  ],
+  "pivot_above_bottom": 0.76,
+  "note": "2 m along x but spans x -1.1..0.9: at yaw 0 the pivot is 0.1 east of the span centre"
+ },
+ "wood_fence_gate": {
+  "name": "Roundpole Gate",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    0.8,
+    1.0,
+    0.0
+   ],
+   [
+    -1.2,
+    1.0,
+    0.0
+   ],
+   [
+    0.8,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.2,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.89,
+   2.33,
+   0.29
+  ],
+  "pivot_above_bottom": 1.03,
+  "note": "spans x -1.2..0.8, pivot 1 above the bottom"
+ },
+ "wood_floor": {
+  "name": "Wood Floor 2x2",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.01,
+   0.22,
+   2.0
+  ],
+  "pivot_above_bottom": 0.14,
+  "note": "top = pivot + 0.08"
+ },
+ "wood_floor_1x1": {
+  "name": "Wood Floor 1x1",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    -0.5
+   ],
+   [
+    0.5,
+    0.0,
+    0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    0.5
+   ]
+  ],
+  "size": [
+   1.0,
+   0.1,
+   1.0
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "wood_gate": {
+  "name": "Wood Gate",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    12
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.02,
+   3.03,
+   0.59
+  ],
+  "pivot_above_bottom": 1.02,
+  "note": "the taller wood door: 2 wide, 3 tall, pivot 1 above the bottom"
+ },
+ "wood_ledge": {
+  "name": "Wood Ledge",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   0.09,
+   0.6
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "wood_log_26": {
+  "name": "Log Beam 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.67,
+   1.71,
+   0.63
+  ],
+  "pivot_above_bottom": 0.36
+ },
+ "wood_log_45": {
+  "name": "Log Beam 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.66,
+   2.66,
+   0.63
+  ],
+  "pivot_above_bottom": 1.34,
+  "note": "log version of wood_beam_45 (core wood); good for crossed gable horns"
+ },
+ "wood_pole": {
+  "name": "Wood Pole 1 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.5,
+    0.0
+   ],
+   [
+    0.0,
+    -0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   0.4,
+   1.0,
+   0.4
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "wood_pole2": {
+  "name": "Wood Pole 2 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.4,
+   2.0,
+   0.4
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "wood_pole_log": {
+  "name": "Log Pole 2 m",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.53,
+   2.22,
+   0.55
+  ],
+  "pivot_above_bottom": 1.11
+ },
+ "wood_pole_log_4": {
+  "name": "Log Pole 4 m",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    -2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.53,
+   4.44,
+   0.55
+  ],
+  "pivot_above_bottom": 2.22
+ },
+ "wood_roof": {
+  "name": "Thatch Roof 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.22,
+   1.61,
+   2.96
+  ],
+  "pivot_above_bottom": 0.35,
+  "note": "26 deg: rises 1 over 2 toward local -z; pivot at the low edge height"
+ },
+ "wood_roof_45": {
+  "name": "Thatch Roof 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.21,
+   2.79,
+   2.92
+  ],
+  "pivot_above_bottom": 1.39,
+  "note": "rises toward local -z; plane through the pivot. yaw 270 rises to +x, 90 to -x, 180 to +z"
+ },
+ "wood_roof_67": {
+  "name": "Thatch Roof 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    3.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    3.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.04,
+   5.25,
+   2.52
+  ],
+  "pivot_above_bottom": 1.82
+ },
+ "wood_roof_icorner_45": {
+  "name": "Thatch Roof Inner Corner 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    2.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    2.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    2.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.71,
+   2.68,
+   2.73
+  ],
+  "pivot_above_bottom": 0.21
+ },
+ "wood_roof_ocorner_45": {
+  "name": "Thatch Roof Outer Corner 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    2.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.79,
+   2.5,
+   2.75
+  ],
+  "pivot_above_bottom": 0.27
+ },
+ "wood_roof_top": {
+  "name": "Thatch Roof Ridge 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   2.21,
+   0.98,
+   2.87
+  ],
+  "pivot_above_bottom": 0.17
+ },
+ "wood_roof_top_45": {
+  "name": "Thatch Roof Ridge 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.2,
+   1.27,
+   2.57
+  ],
+  "pivot_above_bottom": 0.12,
+  "note": "ridge along x, 1 above the pivot; eaves at z +-1 at pivot height. yaw 90: ridge along z"
+ },
+ "wood_roof_top_67": {
+  "name": "Thatch Roof Ridge 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.02,
+   2.86,
+   2.76
+  ],
+  "pivot_above_bottom": 0.72
+ },
+ "wood_stair": {
+  "name": "Wood Stairs",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.18,
+   2.1
+  ],
+  "pivot_above_bottom": 0.13,
+  "note": "rises 1 toward local -z over 2 m; pivot at the bottom edge height. yaw 180 rises to +z"
+ },
+ "wood_stepladder": {
+  "name": "Wood Ladder",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    0.0,
+    1.0
+   ],
+   [
+    0.5,
+    0.0,
+    1.0
+   ],
+   [
+    -0.5,
+    2.0,
+    -1.0
+   ],
+   [
+    0.5,
+    2.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   1.03,
+   2.15,
+   2.17
+  ],
+  "pivot_above_bottom": 0.07,
+  "note": "1 wide, rises 2 toward local -z over 2 m (45 deg); pivot at the bottom centre"
+ },
+ "wood_wall_half": {
+  "name": "Wood Wall Half",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    0.5,
+    0.0
+   ],
+   [
+    1.0,
+    -0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   2.01,
+   1.0,
+   0.43
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "wood_wall_log": {
+  "name": "Log Beam 2 m",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.25,
+    0.0
+   ],
+   [
+    -1.0,
+    0.25,
+    0.0
+   ],
+   [
+    1.0,
+    -0.25,
+    0.0
+   ],
+   [
+    -1.0,
+    -0.25,
+    0.0
+   ]
+  ],
+  "size": [
+   2.44,
+   0.53,
+   0.55
+  ],
+  "pivot_above_bottom": 0.27
+ },
+ "wood_wall_log_4x0.5": {
+  "name": "Log Beam 4 m",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    2.0,
+    0.25,
+    0.0
+   ],
+   [
+    -2.0,
+    0.25,
+    0.0
+   ],
+   [
+    2.0,
+    -0.25,
+    0.0
+   ],
+   [
+    -2.0,
+    -0.25,
+    0.0
+   ]
+  ],
+  "size": [
+   4.66,
+   0.53,
+   0.55
+  ],
+  "pivot_above_bottom": 0.27
+ },
+ "wood_wall_quarter": {
+  "name": "Wood Wall 1x1",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.01,
+   1.0,
+   0.43
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "wood_wall_roof": {
+  "name": "Wood Wall 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.26,
+   1.51,
+   0.4
+  ],
+  "pivot_above_bottom": 0.26
+ },
+ "wood_wall_roof_45": {
+  "name": "Wood Wall 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.41,
+   2.41,
+   0.4
+  ],
+  "pivot_above_bottom": 0.2,
+  "note": "gable triangle, right angle at +x (tall side x=+1), pivot at the bottom centre; yaw 180 mirrors"
+ },
+ "wood_wall_roof_45_upsidedown": {
+  "name": "Wood Wall 45\u00b0 (Inverted)",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.25,
+    0.0
+   ],
+   [
+    -1.0,
+    2.25,
+    0.0
+   ],
+   [
+    1.0,
+    2.25,
+    0.0
+   ]
+  ],
+  "size": [
+   2.41,
+   2.41,
+   0.42
+  ],
+  "pivot_above_bottom": -0.05
+ },
+ "wood_wall_roof_top_45": {
+  "name": "Wood Roof Cross 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.53,
+   2.53,
+   0.41
+  ],
+  "pivot_above_bottom": 0.26,
+  "note": "not a gable peak: a V (valley) wall, bottom y 0 at x +-1 and top y 2 at x +-1"
+ },
+ "wood_window": {
+  "name": "Wood Shutter",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    4
+   ],
+   [
+    "BronzeNails",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.5,
+    0.0
+   ],
+   [
+    0.0,
+    -0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   1.18,
+   1.05,
+   0.56
+  ],
+  "pivot_above_bottom": 0.52,
+  "note": "1x1 shutter (opens like a door) hinged at the pivot (x 0), spans x -1..0; yaw 180 spans 0..1"
+ },
+ "woodwall": {
+  "name": "Wood Wall",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   2.02,
+   0.43
+  ],
+  "pivot_above_bottom": 1.01
+ }
+}

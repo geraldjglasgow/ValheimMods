@@ -12,6 +12,37 @@ rather than starting from scratch. The centre, ground height and player id are s
 - `stage2.py`: the keep and its gable roof.
 - `stage3.py`: buildings with props.
 
+`examples/blueprints/` holds saved builds the user can ask for by name ("build the house"): one JSON per build
+(pieces in a frame whose door faces -z, in placement order) and `blueprint.py` to use them:
+- `pieces.json` is the piece catalogue: name, material, build cost, snap points, size at yaw 0, pivot height and a
+  note on the traps (which way a roof rises, how a shutter hinges, what hangs). Read it before designing; add pieces
+  with `python measure_pieces.py <prefab...>` (`--all` for every Hammer piece; needs the game running).
+- `kit.py` has the building blocks (stone runs, curtain wall with walk, towers, 45 degree roofs, gables, timber
+  frame buildings, fences); `compound.py` and `plain_wood_house.py` are designs written with it. Run a design
+  script to write its JSON again.
+- `python preview.py <name> [--views oblique,top,front,east|cam=x,y,z:tx,ty,tz]` renders a blueprint offline in
+  headless Blender from the catalogue's shapes: check layout, heights and overlaps before anything goes in game.
+  `previews/` keeps renders of the saved designs.
+- `python blueprint.py cost <name>` adds up the materials.
+- `python blueprint.py list` names them.
+- `python blueprint.py build <name>` builds where the player stands with the door toward where they look
+  (`--facing west`, `--at x,z`, `--ground y`; `--dry` checks only). It refuses when built pieces are already in the
+  footprint (`--force`), then clears trees, rocks and shrubs, levels a square with EarthWright's admin
+  `ew terrain level`, moves the player out in front of the door, places every piece and counts them.
+- `python blueprint.py save <name> --center x,z --ground y --facing <door direction>` captures what the player built
+  there (`--anyone` for every builder); the area must be loaded.
+- `plain_wood_house` (444 pieces): the two-storey 10 x 10 m wood house with campfire and three cooking stations,
+  workbench, tanning rack, chopping block, portal upstairs and a black banner. `plain_wood_house.py` is its design
+  source and writes the JSON again after a change.
+- `compound` (4,414 pieces, never built in game): an 82 x 60 m walled compound with a boat canal out through the
+  east wall, wall walk, corner/gate/water-gate towers, great hall, two longhouses, two plain_wood_houses, smithy,
+  barn, fenced field. Its site digs the canal, so it needs ground 0.5-2.5 m above sea level (30) with open water
+  east of it: `build compound --ground 31.5 --facing <gate side>`. `great_hall`, `longhouse`, `smithy` and `barn`
+  are its buildings on their own.
+- A blueprint's `site`: `clear_radius`, `stand` (where the player ends up), and either `level_half` (one square) or
+  `terrain` steps `{"op": "level"|"paint", "at": [x, z], "half": m, "y": m | "paint": kind}`, run with the
+  player moved to each centre (EarthWright levels around the player); `water` makes the build check sea level.
+
 ## Ground rules
 
 - The user starts and closes the game. Never launch or kill it from a script. A rebuilt mod DLL loads only after
