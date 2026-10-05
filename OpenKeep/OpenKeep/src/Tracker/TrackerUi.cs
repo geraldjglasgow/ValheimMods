@@ -10,6 +10,7 @@ namespace OpenKeep.Tracker
     /// The tracker's building blocks: nodes, texts in the tracker's font (created asleep so they never look for
     /// TextMeshPro's missing default font), icons, rows and columns laid out by Unity's layout groups, and small text
     /// buttons that light up in the game's orange under the pointer. Only buttons and the title catch the pointer.
+    /// Texts are never given a height below their line: TextMeshPro's Ellipsis then draws nothing at all.
     /// </summary>
     public static class TrackerUi
     {
@@ -61,6 +62,7 @@ namespace OpenKeep.Tracker
             Button button = rect.gameObject.AddComponent<Button>();
             TMP_Text text = Text(rect, "label", size, TextAlignmentOptions.Center);
             Stretch((RectTransform)text.transform);
+            text.overflowMode = TextOverflowModes.Overflow;   // a box under a line's height must not swallow the glyph
             text.text = label;
             button.targetGraphic = text;
             ColorBlock colours = button.colors;
@@ -106,12 +108,23 @@ namespace OpenKeep.Tracker
             layout.preferredHeight = height;
         }
 
-        /// <summary>A text that takes the row's spare width, at least that much.</summary>
-        public static void Flexible(Component text, float minWidth)
+        /// <summary>
+        /// A text as wide as its words, up to most (a longer one ends in ...), that also takes the row's spare width.
+        /// Measured once, so its text is set first.
+        /// </summary>
+        public static void Flexible(TMP_Text text, float most)
         {
             LayoutElement layout = text.gameObject.AddComponent<LayoutElement>();
             layout.flexibleWidth = 1f;
-            layout.minWidth = minWidth;
+            layout.preferredWidth = Mathf.Min(text.GetPreferredValues(text.text).x + 1f, most);
+            layout.minWidth = layout.preferredWidth;
+        }
+
+        /// <summary>A short text (a count, an amount) as wide as its words, at least that much, never cut off.</summary>
+        public static void Short(TMP_Text text, float minWidth)
+        {
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.gameObject.AddComponent<LayoutElement>().minWidth = minWidth;
         }
 
         public static void Stretch(RectTransform rect)

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.1
+
+- Recipe Tracker: narrower, only as wide as its rows; `-`, `+` and the amount show with the inventory open.
+- Recipe Tracker: an X at the left of each recipe removes it while the inventory is open.
+- Fixed: the tracker's `-`, `+` and `X` buttons never showed.
+
 ## 2.1.0
 
 - Salvage: the tab's list leaves out the hotbar and PackPanel's slots; the Salvage Key still works on them.

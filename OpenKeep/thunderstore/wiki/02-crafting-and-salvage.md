@@ -135,7 +135,7 @@ Pins recipes on screen with every material they need, to watch while you gather 
 - **Track:** right click a recipe in the crafting list, click its `Track` button under the recipe's name, or push the gamepad's right stick down. The same again untracks it. On the Upgrade tab it tracks the next level.
 - **Each entry:** the item with `- amount +` and `X`, the station and level it needs, then one row per material with what you have against what the amount needs. Rows show in the Have or Missing colour; the name turns the Ready colour once everything is there. A recipe that takes any one of its materials says so.
 - **Amount:** starts at the batch amount when you track the selected recipe, else 1. Change it with `-` / `+` (Shift: to the next ten) or the mouse wheel over the entry, up to 9999.
-- **Moving and removing:** with the inventory open, drag the tracker by its title and click `X` to remove an entry. It stays on top of the open inventory.
+- **Moving and removing:** with the inventory open, drag the tracker by its title and click the `X` at an entry's left to remove it. The `X`, `-` and `+` show only then, so the tracker stays narrow while you play. It stays on top of the open inventory.
 - Tracked recipes are saved with your character.
 
 | Setting | Default | Meaning |

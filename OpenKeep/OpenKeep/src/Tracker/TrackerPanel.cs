@@ -11,7 +11,8 @@ namespace OpenKeep.Tracker
     /// the pointer before the inventory's full-screen drop area. Its background is the crafting panel's dark item
     /// background at the chosen opacity. Only the title (the drag handle, built once so a rebuild never ends a drag),
     /// the headers and their buttons catch the pointer, and only while the cursor is free, so clicks elsewhere pass
-    /// through to the inventory below. The entries sit in a column of their own under the title.
+    /// through to the inventory below. The entries sit in a column of their own under the title. The panel is as wide
+    /// as its widest row, so it narrows when the inventory closes and the entries' buttons hide.
     /// </summary>
     public sealed class TrackerPanel
     {
@@ -25,6 +26,7 @@ namespace OpenKeep.Tracker
         private readonly TMP_Text title;
         private readonly RectTransform list;
         private readonly List<TrackerEntry> entries = new List<TrackerEntry>();
+        private bool? open;
 
         private TrackerPanel(RectTransform root)
         {
@@ -32,12 +34,13 @@ namespace OpenKeep.Tracker
             group = root.gameObject.AddComponent<CanvasGroup>();
             background = root.gameObject.AddComponent<Image>();
             background.raycastTarget = false;
-            TrackerUi.Column(root.gameObject, 4f).padding = new RectOffset(8, 8, 6, 8);
+            TrackerUi.Column(root.gameObject, 2f).padding = new RectOffset(6, 6, 4, 6);
             ContentSizeFitter fit = root.gameObject.AddComponent<ContentSizeFitter>();
+            fit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             title = Title(root);
             list = TrackerUi.Node("OpenKeep_TrackerList", root);
-            TrackerUi.Column(list.gameObject, 6f);
+            TrackerUi.Column(list.gameObject, 4f);
         }
 
         public static TrackerPanel Create(Transform hudRoot)
@@ -72,11 +75,19 @@ namespace OpenKeep.Tracker
                 root.gameObject.SetActive(visible);
         }
 
-        /// <summary>The pointer is caught only while the cursor is free (inventory, map or menu open).</summary>
+        /// <summary>
+        /// While the cursor is free (inventory, map or menu open) the pointer is caught and the entries show their X,
+        /// - and +; otherwise the tracker narrows to icons, names and counts.
+        /// </summary>
         public void Interactive(bool free)
         {
-            if (group.blocksRaycasts != free)
-                group.blocksRaycasts = free;
+            if (open == free)
+                return;
+            open = free;
+            group.blocksRaycasts = free;
+            foreach (TrackerEntry entry in entries)
+                entry.ShowControls(free);
+            KeepOnScreen();
         }
 
         /// <summary>The look and the entries again from the settings and the tracked list; the place stays.</summary>
@@ -94,8 +105,11 @@ namespace OpenKeep.Tracker
             for (int i = 0; i < tracked.Count; i++)
             {
                 Recipe recipe = tracked[i].Recipe;
-                if (recipe != null)
-                    entries.Add(TrackerEntry.Build(list, tracked[i], recipe, i));
+                if (recipe == null)
+                    continue;
+                TrackerEntry entry = TrackerEntry.Build(list, tracked[i], recipe, i);
+                entry.ShowControls(open == true);
+                entries.Add(entry);
             }
         }
 
@@ -109,7 +123,6 @@ namespace OpenKeep.Tracker
         {
             float scale = TrackerSettings.Scale.Value;
             root.localScale = new Vector3(scale, scale, 1f);
-            root.sizeDelta = new Vector2(TrackerStyle.Width, root.sizeDelta.y);
             Image source = GameBackground();
             if (source != null)
             {

@@ -30,7 +30,7 @@ namespace OpenKeep.Tracker
         public static void Bind(SyncedConfiguration synced)
         {
             Enabled = synced.Bind(Section, "Enabled", true,
-                "Track a recipe (right click it in the crafting list, its Track button, or right stick down on a gamepad) to keep it on screen with every material it needs: what you have against what the tracked amount needs. With the inventory open, drag the tracker by its title, change an amount with - and + (Shift: tens) or the mouse wheel, and remove a recipe with X.", synced: false);
+                "Track a recipe (right click it in the crafting list, its Track button, or right stick down on a gamepad) to keep it on screen with every material it needs: what you have against what the tracked amount needs. With the inventory open, drag the tracker by its title, change an amount with - and + (Shift: tens) or the mouse wheel, and remove a recipe with the X at its left.", synced: false);
             MaxTracked = synced.Bind(Section, "Max Tracked", 6, "The most recipes tracked at once.", synced: false,
                 acceptableValues: new AcceptableValueRange<int>(1, 12));
             CountNearbyChests = synced.Bind(Section, "Count Nearby Chests", true,

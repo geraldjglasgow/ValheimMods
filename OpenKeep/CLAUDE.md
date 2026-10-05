@@ -316,8 +316,8 @@ OpenKeep/OpenKeep/src/
     TrackerList.cs          the tracked list in the character's custom data, toggle, remove, step, crafted
     TrackerCounts.cs        need (requirement x amount) and have (inventory, and Reach's containers)
     TrackerHud.cs           on the HUD's object: build, show or hide, rebuild on change, count twice a second
-    TrackerPanel.cs         the column under hudroot, its own canvas above the inventory's, background, title
-    TrackerEntry.cs         one recipe: header (icon, name, - x+ X), station line, material rows
+    TrackerPanel.cs         the column under hudroot, its own canvas above the inventory's, background, title, fit
+    TrackerEntry.cs         one recipe: header (X, icon, name, - x +), station line, material rows; controls
     TrackerUi.cs, TrackerStyle.cs   texts, icons, rows, text buttons; fonts and colours from the settings
     TrackerDrag.cs, TrackerWheel.cs   drag by the title (Position written), the wheel on a header
     TrackerVisibility.cs    on, something tracked, alive, no large map, no threat for 5 s; the free cursor
@@ -354,7 +354,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.1.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.1.1]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -1553,6 +1553,8 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   Reach's matching switch on, Reach's own count of the containers within reach. Rows and the recipe's name colour by
   Have / Missing / Ready. A recipe that takes any one material says so and is ready once one row is. The station and
   level the recipe needs show under the name.
+- No untracking when ready: asked for on 2026-10-05 and dropped the same day, since an entry the player could
+  already make once would leave before + could raise it. A ready entry stays, its name in the Ready colour.
 - `Untrack When Crafted`: a DoCrafting prefix (`Priority.Low`, after Batch put the started amount back) notes how
   many of the item at that quality the player holds; the postfix compares: more means the craft happened (refusals,
   an upgrader's failure or break leave it as it was). The crafts (the multi-craft amount, 1 for an upgrade) count the
@@ -1569,8 +1571,16 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   pointer, and only while the game has freed the cursor (`ZCursor`), so clicks on material rows reach the inventory
   below and an attack with a locked cursor never clicks it. Dragging keeps it on screen and writes `Position`.
 - Look: the game's materials only: the crafting panel's dark item background at `Background Opacity`, the game's
-  three fonts by name (`Font`), its orange for hover and Ready. `Scale`, `Font Size` (the width follows, 16 per
-  point) and the colours are the "sizing, type and colours" the request asked for.
+  three fonts by name (`Font`), its orange for hover and Ready. `Scale`, `Font Size` and the colours are the "sizing,
+  type and colours" the request asked for.
+- Compact (asked for on 2026-10-05: tighter, same text and icon sizes): the panel is as wide as its widest row (a
+  horizontal `ContentSizeFitter`); names are as wide as their words up to 11 points (header) or 9 (material) and end
+  in ... past that, counts are at least 3 points wide so a digit more barely moves them. With the cursor locked an
+  entry shows only its icon, name, the amount when more than one, and its rows; once the cursor is free (the
+  inventory open) each header gains an X at its left (removes it; asked for as "an X in the upper left of the box")
+  and - and + round the amount, and the panel widens for them. The notes' indent follows the X. Texts are never
+  given a height below their line: with Ellipsis overflow TextMeshPro then draws nothing (2.0.0's - x1 + X were
+  invisible that way, 1.2 and 1 point high boxes); the buttons' labels, the amount and the counts overflow instead.
 - Hidden when: off, nothing tracked, dead, the large map open (`Hide With Map`), or a creature targeted the player
   in the last 5 s (`Hide In Combat`; the game's `Player.IsTargeted`, true for 1 s after a creature has the player as
   its target). The inventory being open does not hide it: that is when it can be dragged and edited.
@@ -1675,7 +1685,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.1.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.1.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2030,14 +2040,15 @@ from a script.
     `Craft Speed = 2`: a single craft's bar fills in half the time, a batch too, and an upgrade; `0.5`: twice as long.
     Dedicated server with `Craft Speed = 3` and Lock Configuration on: a client's own value is ignored, the server's
     applies at once on a cfg edit (hot reload).
-74. Tracker: right click a recipe you cannot make yet: "Tracking ...", a panel at the left edge shows its icon, name,
+74. Tracker: right click a recipe you cannot make yet: "Tracking ...", a narrow panel at the left edge shows its icon, name,
     the station and level it needs, and one row per material with have/need (red while short, white once enough; the
     name turns orange when all are there). Set the stepper to 5 first and track the selected recipe: x5 and every
     need times 5. Pick up materials: the counts follow within half a second. Stand by a chest with Reach on: its
     materials count too (`Count Nearby Chests = false`: only the inventory). The Upgrade tab tracks the next level
     ("..., level 3") with the upgrade's materials.
-75. Tracker editing, inventory open: - and + change the amount (Shift: tens), the mouse wheel over a header too; X
-    removes it. Drag the "Tracked recipes" title: it moves, stays on screen, and is there again after a restart
+75. Tracker editing, inventory open: each header shows an X at its left and - x1 + at its right, the panel wider;
+    closed, only icon, name (xN when more than one) and rows. - and + change the amount (Shift: tens), the mouse wheel
+    over a header too; X removes it. Drag the "Tracked recipes" title: it moves, stays on screen, and is there again after a restart
     (`Position` written). Clicking a material row clicks what is under it (an inventory slot). Inventory closed:
     attacking never clicks the tracker. More than `Max Tracked`: refused with a message.
 76. Tracker visibility: open the large map: it hides (`Hide With Map = false`: stays). A greyling attacks: it hides
@@ -2045,4 +2056,4 @@ from a script.
 77. Untrack When Crafted: track a recipe x3, craft 2 (stepper 2): x1 left; craft 1 more: it leaves with "... made,
     off the tracker". A refused craft (no room) changes nothing. `Untrack When Crafted = false`: it stays.
 78. Tracker look: `Scale = 1.5`, `Font = Norse`, `Font Size = 20`, the colours and `Background Opacity = 0` apply
-    within half a second of saving the cfg; the panel widens with the font.
+    within half a second of saving the cfg; the panel widens with the font and stays as narrow as its rows.

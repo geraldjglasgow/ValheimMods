@@ -17,8 +17,6 @@ namespace OpenKeep.Tracker
 
         public static float Size => TrackerSettings.FontSize.Value;
 
-        public static float Width => Size * 16f;
-
         public static Color Have => TrackerSettings.Colour(TrackerSettings.HaveColour, Color.white);
 
         public static Color Missing => TrackerSettings.Colour(TrackerSettings.MissingColour, new Color(1f, 0.42f, 0.35f));
