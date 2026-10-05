@@ -8,7 +8,8 @@ namespace EliteCrafting.Loot
     /// world-container drops on the container's owner (section 11); the loot-find stats (section 10) - published by each
     /// player's own client to its player ZDO, read by the creature's owner at the kill.
     /// The patches are <see cref="DeathPatch"/> (the roll, killer stats), <see cref="AllyHitPatch"/> (<c>ecf_ally_hit</c>),
-    /// <see cref="GenerateDropListPatch"/> (Trophy Taker, Hoardfinder), <see cref="ChestFillPatch"/> (chests) and
+    /// <see cref="GenerateDropListPatch"/> (Trophy Taker, Hoardfinder), <see cref="RagdollSetupPatch"/> /
+    /// <see cref="RagdollSpawnLootPatch"/> (our drops ride the ragdoll, <see cref="CorpseLoot"/>), <see cref="ChestFillPatch"/> (chests) and
     /// <see cref="FindEquipmentPatch"/> / <see cref="FindSpawnPatch"/> (republishing the find stats).
     /// Tables: the per-tier stone and rarity draws are precomputed by the rules (<c>EconomyRules.StoneDraw</c>,
     /// <c>GearRarityDraw</c>); the creature profiles and the gear pool are derived here and dropped on every rules change.

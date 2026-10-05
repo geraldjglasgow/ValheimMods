@@ -1,6 +1,6 @@
 # Drops and Loot
 
-Runes and magic gear drop beside a creature's normal loot. Every number here is a default the server can change in `EliteCrafting_economy.yml`.
+Runes and magic gear drop beside a creature's normal loot, at the same moment: when its body dissolves, or at once for a creature that leaves none. Every number here is a default the server can change in `EliteCrafting_economy.yml`.
 
 ## Who drops loot
 

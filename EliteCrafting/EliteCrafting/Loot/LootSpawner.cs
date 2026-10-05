@@ -6,8 +6,9 @@ using UnityEngine;
 namespace EliteCrafting.Loot
 {
     /// <summary>
-    /// Puts our drops into the world at the moment of death (drops.md section 1, DRP-6): at the creature's center point
-    /// with the game's own small scatter and upward push. Everything goes through the game's
+    /// Puts our drops into the world with the game's own small scatter and upward push (drops.md section 1). During a
+    /// creature's death the items are held for its ragdoll instead and spawned here when it dissolves
+    /// (<see cref="CorpseLoot"/>), as the game does with its own loot. Everything goes through the game's
     /// <c>ItemDrop.DropItem</c>, which saves the item's full data into the new ZDO before returning, so no peer can see a
     /// dropped item without its custom data (game notes Q15). Runs on the creature's owner; the game replicates the rest.
     /// </summary>
@@ -19,8 +20,13 @@ namespace EliteCrafting.Loot
         private static readonly Dictionary<StoneDef, int> Grouped = new Dictionary<StoneDef, int>();
         private static readonly HashSet<string> MissingPrefabs = new HashSet<string>(System.StringComparer.Ordinal);
 
+        /// <summary>Spawns <paramref name="amount"/> of the item near <paramref name="center"/>, or holds it for the ragdoll during a death.</summary>
         public static void Drop(ItemDrop.ItemData item, int amount, Vector3 center)
         {
+            if (CorpseLoot.Hold(item, amount))
+            {
+                return;
+            }
             Quaternion rotation = Quaternion.Euler(0f, Random.Range(0, 360), 0f);
             ItemDrop drop = ItemDrop.DropItem(item, amount, center + Random.insideUnitSphere * DropArea, rotation);
             Rigidbody body = drop.GetComponent<Rigidbody>();

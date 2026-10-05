@@ -140,7 +140,10 @@ pure, never write. `RollContext.For(item, tierFloor)`; `RollContext.Random` defa
 Debug surface: `LootRoller.Simulate(tier, stars, kills, creaturePrefab?)` → `LootSimulation` (`ToString` prints totals),
 `LootRoller.SpawnAt(position, tier, stars, creaturePrefab?)`, `LootPreview.Explain(Character)`, `GearPool.Bases` and
 `GearPool.ForTier(tier)` (the drop-eligible bases), `GearFactory.Build(...)` (a pre-rolled item, written through
-`ItemState.Write`). ZDO keys (effects-runtime.md section 7): `ecf_ally_hit` (creature), `ecf_filled` (a world container
+`ItemState.Write`). The drops are held during the death and stored on the creature's ragdoll, spawned when it
+dissolves with the vanilla loot, or dropped at once with no ragdoll (`Loot/CorpseLoot`, Ragdoll.Setup postfix and
+Ragdoll.SpawnLoot prefix). ZDO keys (effects-runtime.md section 7): `ecf_corpse_loot` (ragdoll: the held items' saved
+data), `ecf_ally_hit` (creature), `ecf_filled` (a world container
 rolled once, on its owner, when the game fills it: `Loot/ChestFillPatch`), the player's own `ecf_find_rarity`,
 `ecf_find_stones`, `ecf_find_trophy`, `ecf_find_coins` (`Loot/FindPublisher`, read from the last hitter by the creature's
 owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: `ecr_resolved`, `ecr_stars`,

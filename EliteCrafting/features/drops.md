@@ -28,12 +28,14 @@ is not started.
   (`../DECISIONS.md` RC-7).
 - **Our drops do not go through the creature's vanilla drop list.** Verified in the decompile: when a creature
   leaves a ragdoll, the game stores its loot on the ragdoll as *prefab and amount only* and spawns it later - any
-  custom data on a pre-rolled item would be lost there. So the mod builds its own small list and spawns it directly,
-  using the game's own "drop this item data" path, which saves the item's full data (custom data included) to the
-  new world object.
-- **Our drops appear at the moment of death**, at the creature's center point with the same small scatter the game
-  uses. The creature's vanilla loot may appear a few seconds later when its ragdoll dissolves. (Judgement call,
-  `../DECISIONS.md` DRP-6; delaying ours to match would mean storing our rolls on the ragdoll.)
+  custom data on a pre-rolled item would be lost there. So the mod builds its own small list, stores each item's
+  full saved data (custom data included) on the ragdoll's ZDO under its own key **`ecf_corpse_loot`**, and spawns it
+  with the game's own "drop this item data" path, which saves the item's full data to the new world object.
+- **Our drops appear when the vanilla loot does** (user decision 2026-10-04, replacing DRP-6's drop-at-death): when
+  the creature leaves a ragdoll that drops items, ours spawn when the ragdoll dissolves, at the same spot and with the
+  same scatter as its vanilla loot; a creature with no such ragdoll drops ours at the moment of death at its center
+  point, as the game does with its own. The ragdoll's owner spawns them; the data lives in the ZDO, so a ragdoll that
+  changes owner or unloads and loads again still drops them, once (`Loot/CorpseLoot`).
 - Building a gear item: clone the base prefab's item data, set its drop prefab, upgrade level 1, full durability,
   the world's world level, and our keys, then hand it to the game's drop-item-data call, which saves the ZDO before
   any other peer can see the object (recipe in `~/scratch/specs/ec-game-notes.md` section 15). Runes are spawned the

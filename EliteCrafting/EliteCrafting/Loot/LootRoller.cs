@@ -41,6 +41,7 @@ namespace EliteCrafting.Loot
             EcrWatch.Record(facts.Ecr);
             LootInput input = InputFor(profile, facts, rules.Economy, modifiers);
             LootPlanner.Plan(rules.Economy, input, Rng, Plan);
+            CorpseLoot.Begin(facts.Center);   // held for the ragdoll; the death hook's finalizer drops what it did not take
             int gear = SpawnPlan(Plan, facts.Center, facts.Cheated, rules);
             LogRoll(profile.Prefab, input, Plan, gear);
         }

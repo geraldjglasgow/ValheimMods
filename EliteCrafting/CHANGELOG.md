@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- Creature drops appear with the creature's own loot when its body dissolves, not at the moment of death.
+
 ## 0.3.0
 
 - Recasting Rune rerolls one to all of an item's inscriptions in place and never removes one.

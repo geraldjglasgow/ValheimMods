@@ -14,7 +14,8 @@ namespace EliteCrafting.Loot
     /// <para>
     /// The killer's loot-find totals are read once here (<see cref="KillerStats"/>): Fateweaver and Norns' Favour go into
     /// our roll, Trophy Taker and Hoardfinder open the <see cref="VanillaDropBoost"/> window for the game's own drop roll,
-    /// which runs later in the same method; the finalizer closes it.
+    /// which runs later in the same method; the finalizer closes it. Our drops are held while the death runs: the
+    /// creature's ragdoll takes them (<see cref="CorpseLoot"/>), and the finalizer drops what no ragdoll took.
     /// </para>
     /// </summary>
     [HarmonyPatch(typeof(Character), nameof(Character.OnDeath))]
@@ -39,6 +40,17 @@ namespace EliteCrafting.Loot
             }
         }
 
-        private static void Finalizer() => VanillaDropBoost.End();
+        private static void Finalizer()
+        {
+            VanillaDropBoost.End();
+            try
+            {
+                CorpseLoot.End();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"creature drops failed to spawn: {e}");
+            }
+        }
     }
 }
