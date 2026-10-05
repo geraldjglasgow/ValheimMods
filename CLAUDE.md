@@ -55,7 +55,9 @@ arrow, the spine, the Bone Crossbow and its blunted bolt, and the Executioner's 
 that stops food from degrading. Foods and meads are discovered from the item database.
 
 **ShipConfig**: one health setting per ship prefab, applied to new and already loaded ships. The minimal example
-of the shared libraries.
+of the shared libraries. Its ship panel (HUD, under the minimap while aboard) reads GrindstoneSkills' public
+`GrindstoneSkills.Api.SailingApi` by reflection (`Panel/GrindstoneLink.cs`) for the Sailing bonuses and abilities;
+changing that API's endpoints needs a matching ShipConfig change.
 
 **Lockstep** (published as OathBound up to 0.1.2, renamed to avoid confusion with LionAndOtter's unrelated Oathbound): the next boss stays sealed until every player on the server has defeated the previous one. Per player
 credit, a self-maintaining roster with ignore and inactivity rules, altar gate with a spawn guard, admin console
@@ -64,7 +66,12 @@ commands, a YAML chain. Design and status in `Lockstep/PLAN.md`.
 **OpenKeep**: storage in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
 container sizes, carts as stations, contents signs and shared chests; plus a Homestead section outside storage
 (respawn at the nearest owned bed, campfires on wooden floors, honey per day, fires refuelling from nearby chests,
-torches lit only at night) and a build camera that flies free near a crafting station. Design in `OpenKeep/CLAUDE.md`.
+torches lit only at night), a build camera that flies free near a crafting station, and blueprints (section 14, off
+by default): a Blueprints tab in the game's hammer lists saved builds (DevBridge's blueprint JSON, in folders,
+renamed with F2) and places one as a ghost construction site with the ground shaped to fit, built as materials are
+handed over; plus Fix ground, a Site planner (build queue, one house at a time) and Copy building (select buildings
+in the world, save them as a blueprint). Design in `OpenKeep/CLAUDE.md` and
+`OpenKeep/SPEC-Blueprints.md`.
 
 **PackPanel**: the player's own inventory and its UI, kept separate from the storage mod: a bigger grid, labelled
 slots always on screen (armour, a backpack, worn utilities, food, meads, ammo, a coin purse), a key ring, eight

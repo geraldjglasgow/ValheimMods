@@ -20,6 +20,7 @@ The elder new attack: fires tons of shards of wood spikes out. its completely bl
 Openkeep
 config file decluttering
 add speedy paths
+metal bars can use 'stack of bars' as inventory for them. actually change number of stacked bars to represent how many players have. up to 25 or so.
 
 
 Wayfare
@@ -45,3 +46,7 @@ Grindstone skills
 Feastmaster
 
 EliteCrafting
+allmods that can role on body armor, 13Tier of life, so T13 and lower can roll on rags
+silver chestplate could role T7 - T13
+Each type of item can only from a certain pool of affixes
+
