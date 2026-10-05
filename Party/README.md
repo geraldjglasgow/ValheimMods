@@ -28,6 +28,8 @@ gameplay values bind every player (`Lock Configuration`), the display stays your
 `BepInEx/config/Party.<world>.parties.yml`.
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs
