@@ -10,8 +10,8 @@ namespace PackPanel.Slots
 {
     /// <summary>
     /// Which items each slot takes. Worn slots take the game's item types for them (helmet, chest, legs, shoulder,
-    /// utility, trinket); food is a consumable that fills a food bar, a mead any other consumable; ammo includes the game's
-    /// non-equipable ammo (bait); the purse takes coins only; a ring cell only its own key (<see cref="KeyRing"/>); the
+    /// utility, trinket); food is a consumable that fills a food bar, a mead any other consumable; ammo includes bait and
+    /// non-equipable ammo; the purse takes coins only; a ring cell only its own key (<see cref="KeyRing"/>); the
     /// Tacklebox slot PackPanel's tackleboxes and a box's cell bait (<see cref="TackleRules"/>). The backpack slot takes
     /// PackPanel's backpacks (<see cref="BackpackCatalog"/>), an item whose prefab name contains "backpack", or one listed
     /// in Backpack Items: the game has none, other mods do. It is worn for PackPanel's own packs, which are equipment

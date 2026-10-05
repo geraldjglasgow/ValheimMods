@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.1
+
+- Fixed: bait can be dragged into the tacklebox's cells, and picked-up bait goes into the box.
+- Picked-up bait no longer fills the Ammo slots.
+
 ## 0.8.0
 
 - Backpacks are equipment: the worn pack shows as equipped, and Epic Loot can enchant it with utility effects.

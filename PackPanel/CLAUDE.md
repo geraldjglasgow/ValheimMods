@@ -209,7 +209,7 @@ PackPanel/PackPanel/src/
                             message
     TackleboxPrefab.cs      ZNetScene.Awake: each box's item from the bundle packpanel_tackleboxes
     TackleboxWear.cs        the local player's frame: re-layout when the box or its cells changed
-    TackleRules.cs          what a box takes: bait (non-equipable ammo of the FishingRod's ammo type) and Tackle Items
+    TackleRules.cs          what a box takes: bait (ammo of the FishingRod's ammo type) and Tackle Items
     TackleRouting.cs        Inventory.AddItem(ItemData) prefix: bait into the box first (stacks, then an empty cell)
     TackleboxUse.cs         Humanoid.UseItem prefix: right click a box into its slot, on its slot opens the pop-up;
                             right click a bait in the box equips it (the game's ammo), again unequips
@@ -497,8 +497,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   game's crafting reaches it (`InventoryGui.DoCrafting` adds by name with no cell, which ends in `AddItem(ItemData)`), as
   do pickups, traders and click moves; `CanAddItem` counts empty Ammo slots as room (`MainCells.AmmoRoom`), so a full
   grid still crafts and picks up arrows. A take all moves arrows that landed in main cells into the Ammo slots after it
-  (`TakeAllRouting`), a take all from the own grave too (arrows that lay in the grid top up the Ammo slots). Bait
-  (`AmmoNonEquipable`) is left to the tacklebox. The stacking is shared with the tacklebox (`SlotFill`). No setting:
+  (`TakeAllRouting`), a take all from the own grave too (arrows that lay in the grid top up the Ammo slots). Bait (also
+  `ItemType.Ammo`, of the rod's ammo type) is left to the tacklebox. The stacking is shared with the tacklebox (`SlotFill`). No setting:
   0 Ammo slots routes nothing.
 - Slot rules: the dropped item must suit its cell, and in a swap the displaced item must suit the cell the dropped one
   came from. Checked in the `OnSelectedItem` prefix before the game starts, because after a refused `DropItem` the game
@@ -906,8 +906,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   bait kept in the main grid into them (`LayoutMigration.GatherTackle`), so a new box fills with the bait carried.
 - Which bait the rod uses: the game uses its equipped ammo, and when none is equipped takes the first bait by cell
   index, which would be stray bait in the grid. `AmmoSearch` (was `TackleAmmo`) makes the box's cells come first. A right click on a bait
-  in the box equips it through the game's own ammo slot (`Humanoid.EquipItem`, which takes non-equipable ammo; the
-  game's own right click does nothing for bait), so the rod uses it and the grid shows the game's equipped mark; the
+  in the box equips it through the game's own ammo slot (`Humanoid.EquipItem`; the game's baits are
+  `ItemType.Ammo`, not `AmmoNonEquipable`), so the rod uses it and the grid shows the game's equipped mark; the
   game counts any ammo of the same name as equipped, so the old one comes off first (a starred stack of the same bait).
 - The pop-up (`PackPanel_tacklebox`) hangs where the ring's does (`PopupPlace`, shared), so opening one shuts the
   other. Every cell shows, empty ones with a "Bait" caption and a hook icon, at 0.8 of the grid's size (the ring's are
@@ -977,7 +977,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.8.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.8.1]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;

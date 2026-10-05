@@ -9,13 +9,14 @@ namespace PackPanel.Tackle
 {
     /// <summary>
     /// What a tacklebox's cells take: fishing bait, and the items named in Tackle Items (the user's choice: bait only by
-    /// default). Bait is what the game's fishing rod shoots: non-equipable ammo of the rod's own ammo type, read from the
-    /// rod in the item database rather than written here; before the database has the rod, any non-equipable ammo (the
-    /// game's only such items are its baits).
+    /// default). Bait is what the game's fishing rod shoots: ammo of the rod's own ammo type, read from the rod in the item
+    /// database; before the database has the rod, the game's own bait type. The game's baits are plain ammo
+    /// (<c>ItemType.Ammo</c>), not non-equipable ammo; either counts.
     /// </summary>
     public static class TackleRules
     {
         private const string Rod = "FishingRod";
+        private const string GameBait = "$item_fishingbait";
         private static string baitType;
         private static string parsed;
         private static HashSet<string> listed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -26,10 +27,11 @@ namespace PackPanel.Tackle
 
         public static bool IsBait(ItemDrop.ItemData item)
         {
-            if (item == null || item.m_shared.m_itemType != ItemDrop.ItemData.ItemType.AmmoNonEquipable)
+            if (item == null)
                 return false;
-            string bait = BaitType();
-            return bait == null || item.m_shared.m_ammoType == bait;
+            ItemDrop.ItemData.ItemType type = item.m_shared.m_itemType;
+            bool ammo = type == ItemDrop.ItemData.ItemType.Ammo || type == ItemDrop.ItemData.ItemType.AmmoNonEquipable;
+            return ammo && item.m_shared.m_ammoType == (BaitType() ?? GameBait);
         }
 
         private static string BaitType()

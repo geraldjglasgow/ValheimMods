@@ -8,8 +8,8 @@ namespace PackPanel.Slots
     /// trader, a click move from a chest) go into the Ammo slots first (the user's request, 2026-09-28), the way coins go
     /// to the purse: onto a stack of the same ammo in an Ammo slot up to the stack size, left to right, then into an empty
     /// Ammo slot whole (<see cref="SlotFill"/>). What the slots cannot hold goes on through the game's own add (another
-    /// stack, then a free main cell). Bait is the tacklebox's (<see cref="Tackle.TackleRouting"/>), so only equipable
-    /// ammo is routed here. A take all is sorted out after it (<see cref="TakeAllRouting"/>).
+    /// stack, then a free main cell). Bait is the tacklebox's (<see cref="Tackle.TackleRouting"/>): the game's baits are
+    /// ammo too, so they are left out here. A take all is sorted out after it (<see cref="TakeAllRouting"/>).
     /// </summary>
     [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData) })]
     public static class AmmoRouting
@@ -26,7 +26,8 @@ namespace PackPanel.Slots
             return false;
         }
 
-        public static bool IsAmmo(ItemDrop.ItemData item) => item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Ammo;
+        public static bool IsAmmo(ItemDrop.ItemData item) =>
+            item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Ammo && !Tackle.TackleRules.IsBait(item);
 
         /// <summary>Moves what fits of the ammo into the Ammo slots; true when none is left outside them.</summary>
         public static bool TakeIn(Inventory inventory, ItemDrop.ItemData item) =>
