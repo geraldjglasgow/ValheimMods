@@ -2,7 +2,7 @@
 
 Terraforming for Valheim's hoe and cultivator: brush size, shapes and edges, exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits, protection, new menu
-entries. The log line `Loading [EarthWright 0.3.2]` confirms the version. Built on 2026-09-27 from the user's
+entries. The log line `Loading [EarthWright 0.3.3]` confirms the version. Built on 2026-09-27 from the user's
 feature list (`SPEC.md`, gitignored) and the game's own code, by a main session and ten module agents following
 `PLAN.md`, which holds the design, the feature map and the judgement calls. This file is the code map, the patched
 methods, the network names and the in-game test checklist.
@@ -41,7 +41,7 @@ Rules that apply to every change:
 | Folder | What it holds |
 | --- | --- |
 | `Core/` | settings section 0, `Command` (`ew`), `Keys`, `Language` + `LanguageFiles` + `WordList` (translations), `Messages`, `HudText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
-| `Terrain/` | edit model (`TerrainEdit`, `BrushStroke`, `VertexSet`, wire), `Dispatcher`, `OwnerHandler`, `ServerRelay`, `Refusals`, `EditGuards`/`EditEvents`, `TerrainRead`; the engine (`Engine*`, `Math/Footprint`, `HeightView`, `ChangeBuffer`, `PaintOps`, `SlopeRelax`), limits (`HeightLimits`, `Limit*`, `EngineBaseHeights`), `ew limits` |
+| `Terrain/` | edit model (`TerrainEdit`, `BrushStroke`, `VertexSet`, wire), `Dispatcher`, `OwnerHandler`, `ServerRelay`, `Refusals`, `EditGuards`/`EditEvents`, `TerrainRead` + `VertexSampler` (vertex reads; the sampler finds each heightmap and compiler once per pass); the engine (`Engine*`, `Math/Footprint`, `HeightView`, `ChangeBuffer`, `PaintOps`, `SlopeRelax`), limits (`HeightLimits`, `Limit*`, `EngineBaseHeights`), `ew limits` |
 | `Actions/` | `ToolAction`, `ActionCatalog`, `VanillaActions` (the game's six entries), `SpecialActions`, `EditFactory`, `PlacementHook` |
 | `Brush/` | `BrushState` (read by all), values and memory per entry, keys, wheel capture, target height modes, ghost placement ("no silent blocks"), repeat, hard level, game key guards, HUD lines, `BrushCaps` |
 | `Preview/` | outline, changed points, volume, ghost ring, piece highlight, world grid, HUD overlay, cursor readout, dust, the F6 panel and Esc button |
@@ -144,7 +144,7 @@ names and types match): scratch harness `patchcheck`, reflection only.
 
 Single player first, then a dedicated server with an admin (A) and a player (B). Nothing below has been run in game.
 
-1. Load: `Loading [EarthWright 0.3.2]`, no failed patches, no exceptions; `ew help` lists the subcommands.
+1. Load: `Loading [EarthWright 0.3.3]`, no failed patches, no exceptions; `ew help` lists the subcommands.
 2. Hoe menu: the game's four entries, then Lower, Smooth, Paint, Reset, Ramp, Road, Groundbreaker (Clear only with
    Clearing Enabled; Terraform only for admins); icons; search finds "lower"; cultivator shows Till and Uproot.
 3. Brush: Alt+wheel and `[`/`]` resize without zooming; B cycles values; N shapes; arrows rotate; I grid; O edge;

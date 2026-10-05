@@ -58,19 +58,33 @@ namespace EarthWright.Terrain
         public static bool TryWorld(Heightmap map, int index, out float height)
         {
             height = 0f;
-            if (map == null || index < 0 || index >= map.m_heights.Count)
+            if (!Valid(map, index))
                 return false;
-            height = (Captured(map, out float[] stored) ? stored[index] : Uncaptured(map, index)) + map.transform.position.y;
+            height = (Captured(map, out float[] stored) ? stored[index] : Uncaptured(map, TerrainRead.CompilerOf(map), index)) + map.transform.position.y;
             return true;
         }
+
+        /// <summary>
+        /// The same height relative to the heightmap (add its position's y), with its compiler already found (null when it
+        /// has none), for readers of many vertices that keep the compiler and position at hand.
+        /// </summary>
+        internal static bool TryLocal(Heightmap map, TerrainComp comp, int index, out float local)
+        {
+            local = 0f;
+            if (!Valid(map, index))
+                return false;
+            local = Captured(map, out float[] stored) ? stored[index] : Uncaptured(map, comp, index);
+            return true;
+        }
+
+        private static bool Valid(Heightmap map, int index) => map != null && index >= 0 && index < map.m_heights.Count;
 
         private static bool Captured(Heightmap map, out float[] stored) => cache.TryGetValue(map, out stored) && stored.Length == map.m_heights.Count;
 
         /// <summary>A heightmap not rebuilt with a compiler yet: its shown height, less any deltas a compiler already holds.</summary>
-        private static float Uncaptured(Heightmap map, int index)
+        private static float Uncaptured(Heightmap map, TerrainComp comp, int index)
         {
             float local = map.m_heights[index];
-            TerrainComp comp = TerrainComp.FindTerrainCompiler(map.transform.position);
             if (comp != null && comp.m_initialized && index < comp.m_levelDelta.Length)
                 local -= comp.m_levelDelta[index] + comp.m_smoothDelta[index];
             return local;

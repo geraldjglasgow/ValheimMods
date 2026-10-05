@@ -90,7 +90,7 @@ parallel by one agent each. An agent owns its folder and may change only its own
 - `Terrain`: `TerrainEdit` (`ForStroke`, `ForVertices`, `Flags`, `Source`), `BrushStroke`, `VertexSet`
   (`TargetVertex`, `RawVertex`), `Dispatcher.Submit(edit)` / `SendChecked` / `Compilers(edit)`,
   `EditGuards.AddSender/AddOwner`, `EditEvents.Building/BeforeSend/Sent/Applied`, `Engine.Apply/Estimate`
-  (`EditResult`, `EditEstimate`, `VertexChange`), `TerrainRead.TryVertex/GroundHeight/BaseHeight`, `Refusals.Send`.
+  (`EditResult`, `EditEstimate`, `VertexChange`), `TerrainRead.TryVertex/GroundHeight`, `VertexSampler.TryVertex/BaseHeight`, `Refusals.Send`.
 - `Actions`: `ToolAction`, `ActionCatalog.Register/For/ById/Current/All`, `SpecialActions.Register(key, ISpecialAction)`,
   `EditFactory.Build(action)`, `PlacementHook.SkipPlacedEffect`.
 - `Brush`: `BrushState` (read by all, written by Brush), `BrushCaps.LevelMaxRadius/LevelUnlocks` (set by Gear).

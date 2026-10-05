@@ -13,6 +13,8 @@ namespace EarthWright.Preview
     /// </summary>
     internal static class VolumeMesh
     {
+        private static readonly VertexSampler sampler = new VertexSampler();
+
         /// <summary>False when the stroke's height operation has no surface to aim for (paint, smooth, remove).</summary>
         public static bool HasSurface(HeightOp op)
         {
@@ -20,7 +22,10 @@ namespace EarthWright.Preview
                 || op == HeightOp.SetMax || op == HeightOp.Offset || op == HeightOp.Reset;
         }
 
-        /// <summary>The height the stroke aims for at a point whose ground is at <paramref name="ground"/> (amounts as the engine caps them).</summary>
+        /// <summary>
+        /// The height the stroke aims for at a point whose ground is at <paramref name="ground"/> (amounts as the engine caps
+        /// them). The generated heights are read through the sampler pass <see cref="Build"/> opens.
+        /// </summary>
         public static float Top(StrokeParams p, Vector3 point, float ground)
         {
             BrushStroke s = p.Stroke;
@@ -31,8 +36,8 @@ namespace EarthWright.Preview
                 case HeightOp.Lower: return ground - p.Amount;
                 case HeightOp.SetMin: return Mathf.Max(ground, s.Target);
                 case HeightOp.SetMax: return Mathf.Min(ground, s.Target);
-                case HeightOp.Offset: return TerrainRead.BaseHeight(point, ground) + p.Amount;
-                case HeightOp.Reset: return TerrainRead.BaseHeight(point, ground);
+                case HeightOp.Offset: return sampler.BaseHeight(point, ground) + p.Amount;
+                case HeightOp.Reset: return sampler.BaseHeight(point, ground);
                 default: return ground;
             }
         }
@@ -43,6 +48,7 @@ namespace EarthWright.Preview
             data.Clear(p.Stroke.Center);
             if (!HasSurface(p.Stroke.Height) || loops.Count == 0)
                 return false;
+            sampler.Begin();
             List<Vector3[]> tops = new List<Vector3[]>();
             foreach (Vector3[] loop in loops)
             {

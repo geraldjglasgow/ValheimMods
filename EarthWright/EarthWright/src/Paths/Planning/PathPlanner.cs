@@ -11,6 +11,8 @@ namespace EarthWright.Paths
     /// </summary>
     public static class PathPlanner
     {
+        private static readonly VertexSampler sampler = new VertexSampler();
+
         public static PathPlan Plan(PathDraft draft)
         {
             PathPlan plan = new PathPlan(draft, draft.BuildLine());
@@ -45,10 +47,11 @@ namespace EarthWright.Paths
 
         private static void ReadTerrain(List<PlannedVertex> vertices, PathPlan plan)
         {
+            sampler.Begin();
             foreach (PlannedVertex planned in vertices)
             {
                 PlannedVertex vertex = planned;
-                if (TerrainRead.TryVertex(new Vector3(vertex.X, 0f, vertex.Z), out VertexInfo info))
+                if (sampler.TryVertex(new Vector3(vertex.X, 0f, vertex.Z), out VertexInfo info))
                 {
                     vertex.Loaded = true;
                     vertex.Current = info.Current;

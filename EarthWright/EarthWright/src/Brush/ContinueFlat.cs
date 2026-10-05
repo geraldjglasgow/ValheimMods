@@ -18,6 +18,7 @@ namespace EarthWright.Brush
         private const float CacheSeconds = 0.25f;
 
         private static readonly List<float> heights = new List<float>();
+        private static readonly VertexSampler sampler = new VertexSampler();
         private static Vector3Int cachedVertex;
         private static float cachedRadius = -1f;
         private static float cachedAt = -10f;
@@ -62,6 +63,7 @@ namespace EarthWright.Brush
         private static void Sample(Vector3 aim, float radius)
         {
             heights.Clear();
+            sampler.Begin();
             float step = Mathf.Max(1f, Mathf.Ceil(radius / 10f));
             for (float dx = -radius; dx <= radius; dx += step)
             {
@@ -69,7 +71,7 @@ namespace EarthWright.Brush
                 {
                     if (dx * dx + dz * dz > radius * radius)
                         continue;
-                    if (TerrainRead.TryVertex(aim + new Vector3(dx, 0f, dz), out VertexInfo info) && info.HeightModified)
+                    if (sampler.TryVertex(aim + new Vector3(dx, 0f, dz), out VertexInfo info) && info.HeightModified)
                         heights.Add(info.Current);
                 }
             }
