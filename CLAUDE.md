@@ -128,6 +128,7 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | Hotkeys | hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types |
 | AreaLoading | arriving somewhere far: land and objects loaded fast during a jump or respawn, the server-objects settle check, distance-scaled waits |
 | WindowInput | a mod's own window treated like the game's while open: free cursor, no attacks, mouse look or zoom, Esc closes it |
+| MapClicks | a click on a mod's own map icon waits out the double click window; the game's pins under it can still be placed and removed |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs
@@ -247,7 +248,9 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
 - Test in the running game through `DevBridge` (here installed in `LocalTesting` only): once the user has started the
   profile, `curl -s http://127.0.0.1:7780/help` lists endpoints for screenshots, the UI tree, clicks, keys, mouse,
   console commands, the log, reflection and ZDOs. `DevBridge/REFERENCE.md` has the test loop and the limits. A rebuilt
-  mod loads only after the user restarts the game.
+  mod loads only after the user restarts the game. Before building, editing terrain or taking screenshots through it,
+  read `DevBridge/AGENT-NOTES.md`: placing real pieces, piece measurements, support, and the traps (`/frame` moves the
+  player), with working scripts in `DevBridge/examples/castle/`.
 
 ## Releasing
 

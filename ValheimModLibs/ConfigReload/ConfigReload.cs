@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using BepInEx;
@@ -23,8 +24,22 @@ namespace ConfigReload;
 /// </remarks>
 public static class ConfigReloader
 {
+	private static readonly HashSet<ConfigFile> held = new();
+
 	/// <summary>
-	/// Call once at the end of your plugin's Awake, after all Config.Bind calls.
+	/// Call first in Awake, before the binds: while SaveOnConfigSet is on, BepInEx rewrites the whole .cfg on every
+	/// Bind. <see cref="Setup"/> turns saving back on and writes the file once.
+	/// </summary>
+	public static void HoldSaves(ConfigFile config)
+	{
+		if (config.SaveOnConfigSet && held.Add(config))
+		{
+			config.SaveOnConfigSet = false;
+		}
+	}
+
+	/// <summary>
+	/// Call once at the end of your plugin's Awake, after all Config.Bind calls. Ends <see cref="HoldSaves"/>.
 	/// </summary>
 	/// <param name="config">The plugin's ConfigFile (<c>Config</c> in a BaseUnityPlugin).</param>
 	/// <param name="log">Optional logger for reload messages and errors.</param>
@@ -32,6 +47,10 @@ public static class ConfigReloader
 	/// <returns>The poller, keep the reference alive or dispose it to stop watching.</returns>
 	public static IDisposable Setup(ConfigFile config, ManualLogSource? log = null, bool saveNow = true)
 	{
+		if (held.Remove(config))
+		{
+			config.SaveOnConfigSet = true;
+		}
 		if (saveNow)
 		{
 			config.Save();
@@ -121,7 +140,7 @@ public static class ConfigReloader
 					return;
 				}
 				log?.LogInfo($"{fileName} changed on disk, reloading");
-				config.Reload();
+				ReloadQuietly();
 			}
 			catch (Exception ex)
 			{
@@ -131,6 +150,25 @@ public static class ConfigReloader
 			{
 				Resnapshot();
 				Interlocked.Exchange(ref reloading, 0);
+			}
+		}
+
+		// Every changed entry would save the whole file while SaveOnConfigSet is on: reload without saving, then save once.
+		private void ReloadQuietly()
+		{
+			bool save = config.SaveOnConfigSet;
+			config.SaveOnConfigSet = false;
+			try
+			{
+				config.Reload();
+			}
+			finally
+			{
+				config.SaveOnConfigSet = save;
+			}
+			if (save)
+			{
+				config.Save();
 			}
 		}
 

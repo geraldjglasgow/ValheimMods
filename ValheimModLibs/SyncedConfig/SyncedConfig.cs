@@ -51,6 +51,7 @@ public sealed class SyncedConfiguration
 	public SyncedConfiguration(BaseUnityPlugin plugin, ManualLogSource log, string title, string version, string? oldestAccepted = null, bool mandatory = true)
 	{
 		Config = plugin.Config;
+		ConfigReload.ConfigReloader.HoldSaves(Config);
 		Log = log;
 		string guid = plugin.Info.Metadata.GUID;
 		Sync = new Charter.Charter(guid, title, version, oldestAccepted, mandatory);
@@ -91,8 +92,8 @@ public sealed class SyncedConfiguration
 	public YamlFileSet AddYaml(YamlFileSet set) => Yaml.Register(set);
 
 	/// <summary>
-	/// Call at the end of Awake: installs the Charter patches, writes the .cfg, starts hot reloading it, installs
-	/// the YAML load/apply hooks.
+	/// Call at the end of Awake: installs the Charter patches, writes the .cfg (held from the constructor on, so the
+	/// binds do not rewrite it one by one), starts hot reloading it, installs the YAML load/apply hooks.
 	/// </summary>
 	public void Finish(Harmony harmony, int yamlApplyPriority = Priority.Normal)
 	{
