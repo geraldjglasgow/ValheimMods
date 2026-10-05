@@ -49,13 +49,17 @@ namespace GrindstoneSkills
         private static float ForceFactor(Ship ship)
         {
             ZNetView nview = ship.m_nview;
-            if (!SailingSkill.Active || nview == null || !nview.IsValid() || !nview.IsOwner())
+            if (nview == null || !nview.IsValid() || !nview.IsOwner())
                 return 1f;
-            Player helmsman = Helm.Helmsman(ship);
-            if (helmsman == null)
-                return 1f;
-            float speed = 1f + SailingSkill.Share(SailingSettings.ShipSpeed.Value, SailingSkill.Of(helmsman));
+            float speed = SpeedFactor(ship);
             return speed * speed;
+        }
+
+        /// <summary>The top speed factor the helmsman's level gives the ship: 1.2 is 20% faster; 1 without a helmsman or with Sailing off.</summary>
+        public static float SpeedFactor(Ship ship)
+        {
+            Player helmsman = SailingSkill.Active ? Helm.Helmsman(ship) : null;
+            return helmsman != null ? 1f + SailingSkill.Share(SailingSettings.ShipSpeed.Value, SailingSkill.Of(helmsman)) : 1f;
         }
     }
 }

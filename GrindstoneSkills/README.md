@@ -25,6 +25,8 @@ Compost bins first.
 applies without a restart; the server's values bind every player. Console: `fishlog` lists your catches.
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs

@@ -20,7 +20,7 @@ namespace GrindstoneSkills
                 if (!SailingSkill.Active || player == null || player != Player.m_localPlayer || Ship.GetLocalShip() == null)
                     return;
                 __state = __instance.m_exploreRadius;
-                __instance.m_exploreRadius *= 1f + SailingSkill.Share(SailingSettings.ExploreRadius.Value, SailingSkill.Local());
+                __instance.m_exploreRadius *= RadiusFactor();
             }
 
             [HarmonyFinalizer]
@@ -30,5 +30,9 @@ namespace GrindstoneSkills
                     __instance.m_exploreRadius = __state;
             }
         }
+
+        /// <summary>The factor on the local player's exploration radius while aboard: 2 doubles it; 1 with Sailing off.</summary>
+        public static float RadiusFactor() =>
+            SailingSkill.Active ? 1f + SailingSkill.Share(SailingSettings.ExploreRadius.Value, SailingSkill.Local()) : 1f;
     }
 }

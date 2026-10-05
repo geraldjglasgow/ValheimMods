@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.0
+
+- Sailing: an API for other mods; ShipConfig's ship panel shows your Sailing bonuses and abilities.
+
 ## 0.13.3
 
 - Farming: less work for every growing plant and every E press, even with Farming off.

@@ -17,6 +17,9 @@ namespace GrindstoneSkills
     {
         private static float readyAt;
 
+        /// <summary>Seconds until the local player may use it again; 0 when ready.</summary>
+        public static float CooldownLeft => Mathf.Max(0f, readyAt - Time.time);
+
         [HarmonyPatch(typeof(Player), nameof(Player.Update))]
         private static class KeyCheck
         {

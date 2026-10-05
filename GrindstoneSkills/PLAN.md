@@ -451,6 +451,13 @@ The request: "active ability for sailing: changes the wind direction level 25. 3
   (`wind` command) and the world-edge push-back wind are left alone. Players ashore or on other ships keep the
   weather's wind, as with Moder.
 
+### Public API (2026-10-05)
+
+`GrindstoneSkills.Api.SailingApi` (`Api/SailingApi.cs`), plain types only, read by ShipConfig's ship panel through
+reflection: `GetApiVersion` (1), `GetShipSpeedFactor(Ship)` (the helmsman's top speed factor), `GetExploreRadiusFactor`,
+`GetAbilities` (unlocked ids: `windcall`, `lookout`), and per id `GetAbilityName`, `GetAbilityKey`,
+`GetAbilityDescription`, `GetAbilityCooldown` (seconds left), `GetAbilityCooldownLength`. Later versions only add endpoints.
+
 ### Settings
 
 - **8 - Sailing (synced):** Sailing Enabled, Ship Health At 100, Ship Speed At 100, Exploration Radius At 100, Helm
