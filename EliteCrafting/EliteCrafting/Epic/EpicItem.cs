@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -75,15 +77,75 @@ namespace EliteCrafting.Epic
         }
 
         /// <summary>
-        /// Every effect replaced by another item's (the Recasting Rune, the Serpent's reroll). The augment and temper marks pointed at the old
+        /// Every effect replaced by another item's (the Serpent's reroll). The augment and temper marks pointed at the old
         /// effects, so they go; sockets and their shards stay.
         /// </summary>
         public void TakeEffects(EpicItem other)
         {
             root["Effects"] = other.Effects.DeepClone();
+            ClearMarks();
+        }
+
+        /// <summary>
+        /// Removes the picked effects and every augment and temper mark: a scratch copy the Recasting Rune draws its new
+        /// effects on, never written to the item.
+        /// </summary>
+        public void RemoveEffects(bool[] picked)
+        {
+            for (int i = Math.Min(picked.Length, Effects.Count) - 1; i >= 0; i--)
+            {
+                if (picked[i])
+                {
+                    Effects.RemoveAt(i);
+                }
+            }
+            ClearMarks();
+        }
+
+        /// <summary>
+        /// The Recasting Rune: each picked effect swapped in place for the next of <paramref name="source"/>'s newest
+        /// effects, as many as were picked. The swapped effects lose their marks; the kept ones keep their places and marks.
+        /// </summary>
+        public void ReplaceEffects(bool[] picked, EpicItem source)
+        {
+            int next = source.EffectCount - picked.Count(p => p);
+            for (int i = 0; i < picked.Length && i < Effects.Count; i++)
+            {
+                if (picked[i])
+                {
+                    Effects[i] = source.Effects[next++].DeepClone();
+                    DropMark(i);
+                }
+            }
+        }
+
+        private void ClearMarks()
+        {
             root["AugmentedEffectIndex"] = -1;
             root["AugmentedEffectIndices"] = new JArray();
             root["TemperedEffectIndices"] = new JArray();
+        }
+
+        private void DropMark(int index)
+        {
+            JToken? single = root["AugmentedEffectIndex"];
+            if (single != null && single.Type == JTokenType.Integer && (int)single == index)
+            {
+                root["AugmentedEffectIndex"] = -1;
+            }
+            Unmark(root["AugmentedEffectIndices"] as JArray, index);
+            Unmark(root["TemperedEffectIndices"] as JArray, index);
+        }
+
+        private static void Unmark(JArray? marks, int index)
+        {
+            for (int i = (marks?.Count ?? 0) - 1; i >= 0; i--)
+            {
+                if (marks![i].Type == JTokenType.Integer && (int)marks[i] == index)
+                {
+                    marks.RemoveAt(i);
+                }
+            }
         }
 
         private JArray Effects

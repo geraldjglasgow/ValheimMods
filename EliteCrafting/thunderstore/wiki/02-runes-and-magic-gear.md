@@ -18,6 +18,7 @@
 |---|---|---|
 | Awakening | Normal | Makes it Magic with one inscription |
 | Shaping | Magic | Adds one inscription, up to two |
+| Recasting | Magic | Rerolls one or more of its inscriptions in place (on two: one half the time, both the other half); never removes one, stays Magic |
 | Ascension | Magic | Makes it Rare, keeping its inscriptions and adding enough to reach three |
 | Consecrated | Rare | Adds one inscription, up to six |
 | Cleansing | Magic, Rare | Back to Normal; every inscription is lost |
@@ -25,10 +26,10 @@
 
 - Click the rune stack onto an item in your own inventory (not in a chest). Equipped items work too unless the server forbids it.
 - A success uses one rune. If the rune cannot be used, it is kept and a message says why.
-- Cleansing and Serpent cannot be undone, so you hold **Shift** while clicking (left trigger on a gamepad). The `Confirm destructive runes` setting changes this.
-- Runes stack to 50, weigh 0.2 and go through portals. Each is a coloured stone: Awakening green, Shaping teal, Ascension blue, Consecrated gold, Cleansing silver, Serpent dark green.
+- Cleansing and Serpent ask first: hold **Shift** while clicking (left trigger on a gamepad). The `Confirm destructive runes` setting changes this. Recasting does not ask, though the inscriptions it replaces are gone for good.
+- Runes stack to 50, weigh 0.2 and go through portals. Each is a coloured stone: Awakening green, Shaping teal, Recasting violet, Ascension blue, Consecrated gold, Cleansing silver, Serpent dark green.
 
-**Serpent outcomes**: 35% nothing more; 35% one inscription past the limit (a 3rd on Magic, a 7th on Rare); 30% every inscription rerolled at any tier. The tooltip then shows `Sealed: Corrupted`.
+**Serpent outcomes**: 35% nothing more; 35% one inscription past the limit (a 3rd on Magic, a 7th on Rare); 30% every inscription rerolled at any tier. The tooltip then shows `Sealed`.
 
 ## Tiers
 
@@ -49,7 +50,7 @@ Some inscriptions only roll on later items (most eitr ones from Plains); see the
 - The same effect on several pieces adds up, to a cap (for example +25% move speed, 25% avoid chance). `ecraft stats` shows your totals.
 - **Health-critical** means at or below 30% health; "while health-critical" inscriptions work only then. Valhalla's Edge raises the line, up to 50%.
 - One item never has the same inscription twice or two of one group (listed on the [Inscription List](wiki:Inscription List)).
-- An inscription the server switches off stays on the item greyed as `(dormant)`. It does nothing but still takes a place.
+- An inscription the server switches off stays on the item greyed as `(dormant)`. It does nothing but still takes a place until Recasting rerolls it, or Cleansing or a Serpent reroll clears it.
 
 ## How magic items look
 
@@ -66,6 +67,7 @@ EliteCrafting drops no magic gear while Epic Loot is installed (runes still drop
 |---|---|
 | Awakening | Makes a plain item an Epic Loot Magic item |
 | Shaping | Adds one effect to a Magic item, up to Epic Loot's limit |
+| Recasting | Rerolls one or more effects of a Magic item in place, as Epic Loot rolls them; never fewer, sockets and augments stay |
 | Ascension | Makes a Magic item Rare, keeping its effects |
 | Consecrated | Adds one effect to a Rare item, up to Epic Loot's limit |
 | Cleansing | Does not work |

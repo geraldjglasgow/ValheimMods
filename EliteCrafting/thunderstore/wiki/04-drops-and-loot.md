@@ -19,14 +19,17 @@ Stars multiply the chance: one star x2, two stars x3. At most 5 runes and 2 magi
 
 ## Which rune drops
 
+When a rune drops, the chance it is each rune, by tier:
+
 | Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 |
 |---|---|---|---|---|---|---|---|
-| Awakening | 69% | 50% | 40% | 33% | 28% | 25% | 21% |
-| Shaping | 26% | 25% | 25% | 25% | 23% | 22% | 21% |
-| Ascension | - | 20% | 22% | 23% | 23% | 22% | 21% |
-| Consecrated | - | - | 4% | 8% | 12% | 15% | 18% |
-| Cleansing | 5% | 5% | 5% | 6% | 7% | 7% | 8% |
-| Serpent | - | - | 4% | 5% | 7% | 9% | 11% |
+| Awakening | 57% | 41% | 33% | 27% | 23% | 20% | 17% |
+| Shaping | 21% | 21% | 21% | 20% | 19% | 18% | 17% |
+| Recasting | 17% | 18% | 18% | 18% | 19% | 18% | 17% |
+| Ascension | - | 16% | 18% | 18% | 19% | 18% | 17% |
+| Consecrated | - | - | 3% | 7% | 9% | 12% | 15% |
+| Cleansing | 4% | 4% | 4% | 5% | 6% | 6% | 7% |
+| Serpent | - | - | 3% | 4% | 6% | 7% | 9% |
 
 ## Magic items
 

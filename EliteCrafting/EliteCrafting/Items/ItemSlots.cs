@@ -99,8 +99,20 @@ namespace EliteCrafting.Items
     /// <summary>The classification rules themselves, run once per item type.</summary>
     internal static class SlotClassifier
     {
+        /// <summary>
+        /// The shared name prefix of PackPanel's backpacks. They are Utility items since 2026-10-04 (equipment, for Epic Loot)
+        /// but worn in PackPanel's own Backpack slot, never the game's utility field our effects read: inscriptions on one
+        /// would do nothing, so a pack is no magic base and never drops as magic gear. With Epic Loot the runes take Epic
+        /// Loot's eligibility instead, so they still work on packs there.
+        /// </summary>
+        private const string PackPanelBackpack = "$packpanel_backpack_";
+
         public static SlotInfo Classify(ItemDrop.ItemData.SharedData shared)
         {
+            if (shared.m_name != null && shared.m_name.StartsWith(PackPanelBackpack, System.StringComparison.Ordinal))
+            {
+                return SlotInfo.NotEligible;
+            }
             ItemSlot slot = SlotFor(shared);
             if (slot == ItemSlot.None)
             {

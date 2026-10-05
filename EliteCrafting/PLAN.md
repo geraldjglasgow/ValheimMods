@@ -469,6 +469,10 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   (`[120, 130, 120, 110, 100, 90, 80]`), no boss bonus, violet tint, crystal look. With Epic Loot: every effect
   replaced by a fresh Epic Loot roll of the item's rarity, renamed, sockets kept (the Serpent's chaotic reroll
   without the seal). Amends the 2026-10-02 "six runes only" decision.
+- 2026-10-04 — Recasting never removes an inscription (user: "it should never remove stats from item. it should
+  reroll 1 to the max number of effects for the item"): it rerolls between one and all of the item's inscriptions, how
+  many uniform in 1..count, each new one in the old one's place, the rest kept; all or nothing when the pool runs
+  short. Same on Epic Loot items (kept effects keep their augment marks). Replaces the fresh 1-2 roll above.
 
 ## Open questions
 

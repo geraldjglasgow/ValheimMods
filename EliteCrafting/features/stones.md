@@ -132,7 +132,8 @@ or needs stating.
   - they **count** toward the rarity's minimum and maximum (they occupy space until removed), so they can make an
     item full for Shaping and Consecrated;
   - promotion, Shaping and Consecrated keep them;
-  - Recasting, Cleansing and the Serpent's `chaotic_reroll` remove them - that is how a player clears them.
+  - Cleansing and the Serpent's `chaotic_reroll` remove them - that is how a player clears them; Recasting replaces
+    one when it is among the inscriptions it picks.
 - The item's **vanilla upgrade level**, durability, crafter name and variant are untouched by every rune.
 - **Tier ceiling and window** apply to every roll except the Serpent's `chaotic_reroll` (`item-tier.md` section 6).
 - **The Serpent never changes the rarity.** Promotion (Awakening, Ascension) and Cleansing are the only ways an item
@@ -149,7 +150,7 @@ or needs stating.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `awakening` | Awakening Rune | `ECF_Awakening` | promote | normal | 1 | no | Normal -> Magic, one inscription |
 | `shaping` | Shaping Rune | `ECF_Shaping` | add | magic | 1 | no | one more inscription on a Magic item (up to 2) |
-| `recasting` | Recasting Rune | `ECF_Recasting` | reroll | magic | 1 | no | every inscription rolled again, 1-2, still Magic |
+| `recasting` | Recasting Rune | `ECF_Recasting` | reroll | magic | 1 | no | one to all of its inscriptions rolled again in place, never fewer, still Magic |
 | `ascension` | Ascension Rune | `ECF_Ascension` | promote | magic | 1 | no | Magic -> Rare, inscriptions kept, filled to at least three |
 | `consecrated` | Consecrated Rune | `ECF_Consecrated` | add | rare | 1 | no | one more inscription on a Rare item (up to 6) |
 | `cleansing` | Cleansing Rune | `ECF_Cleansing` | strip | magic, rare | 1 | **yes** | back to Normal, every inscription gone |
@@ -241,16 +242,18 @@ to 6).
 
 # 8a. Recasting Rune (verb `reroll`)
 
-Rerolls a Magic item (user decision 2026-10-04: the "alteration" currency, renamed). Every inscription goes and the
-item is rolled fresh at its own rarity, as a dropped item is (`rarity.md` section 4): the count drawn again in the
-rarity's range (1-2 on Magic; `rolling.count_weights` if set), each inscription under the item's ceiling and window
-and the rune's `tier_floor`. The rarity never changes.
+Rerolls a Magic item (user decision 2026-10-04: the "alteration" currency, renamed). It **never removes an
+inscription** (user decision 2026-10-04, same day): between one and all of the item's inscriptions are rolled again,
+each in its own place, and the rest stay. How many is uniform in 1..count, then which ones uniformly; on a
+two-inscription item it rerolls one half the time and both the other half. Each new inscription rolls under the item's
+ceiling and window and the rune's `tier_floor`. The rarity and the count never change.
 
 ## Behaviour
 
 1. Checks (section 1). No precondition of its own beyond the rarity: a Magic item with one inscription or two.
-2. Roll fresh at the item's rarity on a copy. The same inscriptions may come back: it is a new draw, not an exclusion.
-3. Success: the new set replaces the old one.
+2. Pick the inscriptions to replace, then draw as many on a copy holding only the kept ones: a replaced inscription may
+   come back (a new draw, not an exclusion), a kept one cannot come twice.
+3. Success: each new inscription takes the place of the one it replaces.
 
 Judgement calls: **no confirm gate** by default (it is the rune a player spends again and again; an owner can set
 `confirm: true`); about as common as Shaping in the drop tables (`drops.md` section 5).
@@ -259,13 +262,14 @@ Judgement calls: **no confirm gate** by default (it is the rune a player spends 
 
 | Situation | Result | Message |
 | --- | --- | --- |
-| Dormant inscriptions present | removed with the rest; they no longer count | `rerolled` |
-| The pool cannot reach the rarity's minimum (every candidate excluded) | refused, nothing changes | `no_eligible_affix` |
+| Dormant inscriptions present | picked like any other; a picked one is replaced by an active one, an unpicked one stays | `rerolled` |
+| The pool cannot replace every picked inscription | refused, nothing changes (never fewer inscriptions) | `no_eligible_affix` |
+| A Magic item with no inscription at all (broken data) | rolled fresh at its rarity, 1-2 | `rerolled` |
 | An owner put the base rarity (Normal) in its `applies_to` | refused: a Normal item holds no inscriptions | `wrong_rarity` |
-| An owner put `rare` in its `applies_to` | works: 3-6 rolled fresh on the Rare item | `rerolled` |
+| An owner put `rare` in its `applies_to` | works: one to all of the Rare item's inscriptions rerolled | `rerolled` |
 | Sealed | refused | `sealed` |
 | Equipped | allowed; rebuild | - |
-| Epic Loot installed | every effect replaced by a fresh Epic Loot roll of the item's rarity, renamed, sockets kept | `epic_rerolled` |
+| Epic Loot installed | one to all of the effects replaced in place by new Epic Loot rolls (drawn as Epic Loot allows beside the kept ones), renamed; sockets and the kept effects' augment marks stay; refused when Epic Loot cannot roll every replacement | `epic_rerolled` |
 
 ---
 
@@ -370,7 +374,7 @@ so draws afresh; the player never saw the first draw.
 - [ ] Every refusal and feedback message id localized
 - [ ] Awakening and Ascension: one rarity up, the counts of section 7
 - [ ] Shaping and Consecrated: one more inscription, refused when full
-- [ ] Recasting: every inscription rerolled, 1-2, still Magic; refused on Normal and Rare
+- [ ] Recasting: one to all inscriptions rerolled in place, the count never drops, still Magic; refused on Normal and Rare
 - [ ] Cleansing: back to Normal, confirm gate
 - [ ] Serpent: three outcomes and their fallbacks, seal, rarity unchanged
 - [ ] Confirm gate: hold-Shift / dialog / off, client preference
@@ -383,6 +387,7 @@ so draws afresh; the player never saw the first draw.
 | 2026-09-23 | Specified in Phase 0 (the earlier stone catalog). | pending |
 | 2026-10-02 | Rewritten for the six runes and three rarities (user decision); built. Not tested in game. | pending |
 | 2026-10-04 | The Recasting Rune, verb `reroll` (user decision); built. Not tested in game. | pending |
+| 2026-10-04 | Recasting never removes an inscription: it rerolls one to all of them in place (user decision); built. Not tested in game. | pending |
 
 ---
 

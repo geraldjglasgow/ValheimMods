@@ -6,7 +6,7 @@ ecf_stone_awakening_desc: "Awakens a Normal item: it becomes Magic and gains an 
 ecf_stone_shaping: "Shaping Rune"
 ecf_stone_shaping_desc: "Adds a second inscription to a Magic item."
 ecf_stone_recasting: "Recasting Rune"
-ecf_stone_recasting_desc: "Recasts a Magic item: every inscription is rolled again, one or two of them. It stays Magic."
+ecf_stone_recasting_desc: "Recasts a Magic item: one or more of its inscriptions are rolled again. It never loses one and stays Magic."
 ecf_stone_ascension: "Ascension Rune"
 ecf_stone_ascension_desc: "Raises a Magic item to Rare, keeping its inscriptions and adding one more."
 ecf_stone_consecrated: "Consecrated Rune"

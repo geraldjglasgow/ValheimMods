@@ -11,7 +11,8 @@ namespace EliteCrafting.Stones
     /// not ours). Promote: Awakening rolls Epic Loot's own Magic item; Ascension makes Magic Rare, keeps every effect and
     /// adds up to Epic Loot's Rare minimum (at least <c>promote_adds_at_least</c>, never past its maximum), renamed as
     /// Epic Loot names it. Add: Shaping and Consecrated add one effect up to Epic Loot's maximum for the rarity. Reroll:
-    /// the Recasting Rune replaces every effect with a fresh Epic Loot roll of the same rarity, sockets kept. Strip:
+    /// the Recasting Rune replaces one to all of the effects in place with new Epic Loot rolls, the rest and the sockets
+    /// kept. Strip:
     /// the Cleansing Rune does not work on Epic Loot items. Corrupt: <see cref="EpicSerpent"/>. Every roll is a dry run
     /// on a copy; <see cref="StoneCommit"/> writes it.
     /// </summary>
@@ -97,15 +98,34 @@ namespace EliteCrafting.Stones
             {
                 return WrongRarity(job);
             }
-            EpicItem? item = Rerolled(job, job.Epic);
+            EpicItem? item = job.Epic.EffectCount == 0 ? Rerolled(job, job.Epic) : Recast(job, job.Epic);
             return item == null
                 ? StoneResult.Refuse("epic_no_effect")
                 : StoneResult.Epic(item.Json, null, "epic_rerolled", job.ItemName);
         }
 
+        // One to all of the effects (RecastOps.Pick) replaced in place by new Epic Loot rolls, drawn with only the kept
+        // effects on the item, renamed; the count never drops. Null when Epic Loot cannot roll every replacement.
+        private static EpicItem? Recast(StoneJob job, EpicItem epic)
+        {
+            Random random = RollRandom.Create();
+            bool[] picked = RecastOps.Pick(epic.EffectCount, random);
+            EpicItem scratch = epic.Copy();
+            scratch.RemoveEffects(picked);
+            int wanted = epic.EffectCount - scratch.EffectCount;
+            if (EpicEffects.Add(job.Target, scratch, wanted, random) < wanted)
+            {
+                return null;
+            }
+            EpicItem item = epic.Copy();
+            item.ReplaceEffects(picked, scratch);
+            EpicExtras.Rename(job.Target, item);
+            return item;
+        }
+
         /// <summary>
         /// A copy with every effect replaced by a fresh Epic Loot roll of the same rarity, renamed, sockets kept (the
-        /// Recasting Rune, the Serpent's chaotic reroll); null when Epic Loot rolled no effect.
+        /// Serpent's chaotic reroll, the Recasting Rune on an item with no effect); null when Epic Loot rolled no effect.
         /// </summary>
         public static EpicItem? Rerolled(StoneJob job, EpicItem epic)
         {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+- Recasting Rune rerolls one to all of an item's inscriptions in place and never removes one.
+- With Epic Loot: Recasting rerolls one to all effects in place; augments and sockets stay.
+- PackPanel's backpacks never become magic gear; with Epic Loot, runes work on them.
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 0.2.0
 
 - Recasting Rune, the seventh rune: rerolls every inscription on a Magic item, which stays Magic. Drops everywhere.

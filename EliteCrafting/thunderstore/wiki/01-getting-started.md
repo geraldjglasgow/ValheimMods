@@ -1,12 +1,12 @@
 # Getting Started
 
-This wiki describes version 0.1.0. **Work in progress:** the config, the YAML files and the data stored on items will change.
+This wiki describes version 0.3.0. **Work in progress:** the config, the YAML files and the data stored on items will change.
 
 ## What it does
 
 - Gear comes in three rarities: Normal (plain), Magic (1-2 inscriptions) and Rare (3-6).
 - An inscription is a magic property such as +damage or faster movement. There are 162, stronger on later-biome items.
-- Six runes change an item's rarity and inscriptions.
+- Seven runes change an item's rarity and inscriptions.
 - Creatures, bosses and world chests drop runes and ready-made magic gear.
 
 ## Install
@@ -18,7 +18,7 @@ Install on the server **and** every client, same version, with r2modman, the Thu
 1. Kill creatures and open dungeon chests to find runes and magic gear.
 2. Click an **Awakening Rune** onto a plain weapon or armour piece in your inventory: it becomes Magic with one inscription.
 3. Hover the item to read its inscriptions. Each shows its tier: T1 strongest, T7 weakest.
-4. **Shaping** adds a second inscription, **Ascension** makes the item Rare, **Consecrated** adds more, up to six.
+4. **Shaping** adds a second inscription, **Recasting** rerolls a Magic item you do not like, **Ascension** makes the item Rare, **Consecrated** adds more, up to six.
 5. Type `ecraft help` in the console (F5) for commands.
 
 ## Other mods

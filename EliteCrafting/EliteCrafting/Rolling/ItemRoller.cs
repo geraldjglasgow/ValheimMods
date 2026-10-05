@@ -32,6 +32,16 @@ namespace EliteCrafting.Rolling
         }
 
         /// <summary>
+        /// The Recasting Rune: between one and all of the item's affixes (how many uniformly, then which) are replaced in
+        /// place by new draws; the rest stay, as do the rarity and the count. A replaced affix may come back. All or
+        /// nothing: fails with <see cref="RollFailure.NoEligibleAffix"/> when the pool cannot replace every pick.
+        /// </summary>
+        public static RollOutcome Recast(ItemState current, RollContext context)
+        {
+            return RollLog.Report("recast", current, RecastOps.Recast(current, context), context);
+        }
+
+        /// <summary>
         /// Adds exactly <paramref name="count"/> affixes at the end of the list (Shaping, Consecrated, the Serpent's
         /// add). Does not change the rarity and does not check the rarity's maximum (the caller decides whether the
         /// item has room). All or nothing: fails with <see cref="RollFailure.NoEligibleAffix"/> when fewer candidates

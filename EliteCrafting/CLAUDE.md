@@ -97,7 +97,8 @@ rune ids (`awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `clea
 `description`, `item_weight`).
 
 **Items** (`Items/`). `ItemSlots.Classify(item)` → `SlotInfo` (slot, hands, traits, governing skills; cached per
-SharedData), `SlotOf`, `IsMagicBase`, `IsStone`, `Satisfies(slotInfo, affix.Requires)`, `Id(slot)`/`TryParse`.
+SharedData; PackPanel's backpacks, Utility items worn outside the game's utility field, are never eligible), `SlotOf`,
+`IsMagicBase`, `IsStone`, `Satisfies(slotInfo, affix.Requires)`, `Id(slot)`/`TryParse`.
 `ItemTier.Of(item | prefabName)`, `ItemTier.Explain(prefab)` (tier + source, for `ecraft tiers`), `ItemTier.PrefabName(item)`,
 `ItemTier.RefreshRecipes()` (recipe index up to date, tier cache dropped when rebuilt), `ItemTier.HasRecipe(prefab)`
 (never call the internal `RecipeIndex.Refresh` from outside Items). Rune prefabs: `StonePrefabs.Get(runeId)`,
@@ -127,7 +128,9 @@ registered here but applied by Loot.
 
 **Rolling** (`Rolling/`, implemented by Stones). `ItemRoller.RollFresh(state, rarity, ctx)` (a dropped item),
 `AddAffixes(state, count, ctx)` (Shaping, Consecrated, the Serpent's extra inscription), `Promote(state, toRarity, ctx)`
-(Awakening, Ascension: adds `max(new.min - count, promote_adds_at_least)`, not past the new maximum) and
+(Awakening, Ascension: adds `max(new.min - count, promote_adds_at_least)`, not past the new maximum), `Recast(state, ctx)`
+(Recasting: one to all of the affixes, how many uniformly then which, replaced in place; the count never drops; all
+or nothing; `RecastOps.Pick` is shared with the Epic Loot path) and
 `RollChaotic(state, rarity, ctx)` (the Serpent: every affix out, the count drawn in the rarity's range, any tier the
 affix defines) → `RollOutcome` (new state or `RollFailure`: `NoEligibleAffix`, `NotMagicBase`, `Full`, `NewerFormat`);
 pure, never write. `RollContext.For(item, tierFloor)`; `RollContext.Random` defaults to `RollRandom.Create()`
@@ -146,7 +149,7 @@ owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: 
 **Stones** (`Stones/`, the runes). `InventoryGui.OnSelectedItem` prefix (local player), `StonePipeline.Evaluate(job)`
 (read-only, 10 checks then the verb as a dry run), `ConfirmGate.Pass` (Cleansing and Serpent: `confirm: true`), then
 `StoneCommit` (one `ItemState.Write`, then the cost). Five verbs (`StoneVerbs`): `PromoteVerb`, `AddVerb`, `StripVerb`,
-`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.RollFresh` at the item's own rarity, refused on the base rarity).
+`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.Recast`, or `RollFresh` on a Magic item with no affix; refused on the base rarity).
 The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
 outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
 
@@ -161,8 +164,9 @@ steps); `EpicExtras` reads two public Epic Loot classes outside the API: `LootRo
 effect count range per rarity, fallback Magic 1-3, Rare 2-4) and `MagicItemNames.GetNameForItem` (fallback: the name
 stays). In `Stones/`, `EpicChecks` replaces pipeline step 2 and `StoneVerbs.Run` hands every verb to `EpicVerbs`:
 Awakening = Epic Loot's own Magic roll, Ascension = Magic to Rare plus effects up to Epic Loot's Rare minimum (at least
-`promote_adds_at_least`), renamed; Shaping/Consecrated = one effect up to Epic Loot's maximum; Recasting = every
-effect replaced by a fresh Epic Loot roll of the same rarity (`EpicVerbs.Rerolled`, shared with the Serpent); the Serpent
+`promote_adds_at_least`), renamed; Shaping/Consecrated = one effect up to Epic Loot's maximum; Recasting = one to
+all effects replaced in place by new `EpicEffects` rolls drawn beside the kept ones (`EpicItem.RemoveEffects` and
+`ReplaceEffects`; kept effects keep their augment marks; `EpicVerbs.Rerolled` only for an item with none); the Serpent
 (`EpicSerpent`) seals with our `ecf_sealed` (Epic Loot's own table does not read it) after seal only, one effect past
 the maximum by `overflow`, or every effect replaced by a fresh roll (sockets kept, augment marks cleared); Cleansing
 refuses (`epic_no_strip`, the user chose not to hook it up). `StoneResult.EpicJson` is written through
@@ -227,7 +231,7 @@ Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you
 |---|---|---|---|
 | Awakening Rune | Normal | Makes the item Magic with one inscription | everywhere, most of all in the Meadows; Eikthyr |
 | Shaping Rune | Magic | Adds one inscription, up to two | everywhere; Eikthyr |
-| Recasting Rune | Magic | Rerolls every inscription: the item stays Magic with one or two new ones | everywhere |
+| Recasting Rune | Magic | Rerolls one or more of its inscriptions in place (on two: one half the time, both the other half); never removes one, stays Magic | everywhere |
 | Ascension Rune | Magic | Makes it Rare, keeps its inscriptions and adds one (two on a one-inscription item, Rare's minimum is three) | Black Forest and later; the Elder |
 | Consecrated Rune | Rare | Adds one inscription, up to six | Swamp and later, more the later the biome; Moder, Yagluth, the Queen, the Fader, half the time Bonemass |
 | Cleansing Rune | Magic, Rare | Strips it back to Normal: every inscription is lost | everywhere |
@@ -238,8 +242,8 @@ A sealed item takes no rune again. Every rune's odds, costs and the rarities it 
 
 **With Epic Loot installed** the runes work on Epic Loot's own magic items instead, and only Epic Loot drops magic
 gear (runes still drop). Awakening makes a plain item an Epic Loot Magic item, rolled as Epic Loot rolls one;
-Shaping and Consecrated add one Epic Loot effect, up to Epic Loot's most for that rarity; Recasting replaces every
-effect of a Magic item with a fresh Epic Loot roll (sockets stay); Ascension makes a Magic item
+Shaping and Consecrated add one Epic Loot effect, up to Epic Loot's most for that rarity; Recasting rerolls one or more
+effects of a Magic item in place, never fewer (sockets stay); Ascension makes a Magic item
 Rare and adds effects; the Serpent Rune seals it after nothing more, one effect past the limit, or every effect
 rerolled (sockets and shards stay). The Cleansing Rune does not work on Epic Loot items, nor does any rune on Epic or
 higher items or on unidentified ones. Epic Loot's own enchanting table still works on a sealed item.

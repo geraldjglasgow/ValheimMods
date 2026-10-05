@@ -23,11 +23,12 @@ namespace EliteCrafting
     {
         public const string PluginGuid = "com.EliteCrafting";
         public const string PluginName = "EliteCrafting";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.3.0";
 
         private void Awake()
         {
             Log.Bind(Logger);
+            ConfigReloader.HoldSaves(Config);
             ServerBinding.Create(Config, PluginGuid, PluginVersion);
             ActiveRules.Initialise(ServerBinding.Charter);
             ModSettings.Bind(Config);

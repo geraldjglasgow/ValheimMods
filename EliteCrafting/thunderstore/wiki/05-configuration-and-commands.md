@@ -57,6 +57,7 @@ runes:
 
 - Switch an inscription off with `enabled: false`, or make it rarer with a lower `weight`, in `EliteCrafting_inscriptions_myserver.yml`.
 - Deleting an entry does nothing (it comes back from the defaults); use `enabled: false`.
+- The built-in defaults always sit under your files, so runes, drops and inscriptions a new version adds reach your server without editing. `use_defaults: false` in a main file turns that off: the files are then the whole configuration.
 - A file with a mistake is named in the log, and the previous rules stay.
 - `ecraft dump` writes the rules in force to a file.
 
@@ -71,7 +72,7 @@ Open the console with F5. Commands marked * work for everyone unless the server 
 | `ecraft stats` * | Shows your inscription totals and caps |
 | `ecraft list inscriptions\|runes\|rarities [filter]` * | Lists the rules in force; filter by slot, such as `legs` |
 | `ecraft ecr` * | Shows the Elite Creatures Reborn link and what the creature you look at would drop |
-| `ecraft give <rune>\|all [count]` | Gives runes: `awakening`, `shaping`, `ascension`, `consecrated`, `cleansing`, `serpent` |
+| `ecraft give <rune>\|all [count]` | Gives runes: `awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent` |
 | `ecraft roll magic\|rare <item or slot> [tier]` | Gives a rolled magic item, for example `ecraft roll rare SwordIron` or `ecraft roll magic legs` |
 | `ecraft reroll` | Rerolls an item's inscriptions |
 | `ecraft inscribe <inscription> [tier] [value]` | Adds one chosen inscription, for testing |
