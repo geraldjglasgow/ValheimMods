@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+
+- Discord link on the store page.
+
 ## 0.3.3
 
 - Faster loading: the config file is written once instead of once per setting.

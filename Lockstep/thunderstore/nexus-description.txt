@@ -27,6 +27,7 @@ Needed on the server and every client; the server refuses clients without it. In
 BepInEx/config/com.Lockstep.cfg and LockstepChain.yml; the server keeps its roster in Lockstep.<world>.roster.yml. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]lockstep status[/b] shows who the group waits for; admin commands: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/Lockstep/PLAN.md]Lockstep/PLAN.md[/url]. [b]charter status[/b] shows whether the server binds your settings.
 
 [size=4][b]Links[/b][/size]
+Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/Lockstep. Licence: GPL-3.0.
 
 [size=4][b]Shout outs[/b][/size]
