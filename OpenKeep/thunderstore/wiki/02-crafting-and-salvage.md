@@ -157,7 +157,7 @@ Pins recipes on screen with every material they need, to watch while you gather 
 
 ## Salvage
 
-Turns a whole stack back into materials (section `3. Salvage`): pick it on the **Salvage** tab of the crafting panel, or hover it and press `Backspace`. Returns must fit in your inventory.
+Turns a whole stack back into materials (section `3. Salvage`): pick it on the **Salvage** tab of the crafting panel, or hover it and press `Backspace`. Returns must fit in your inventory. The tab lists neither the hotbar nor PackPanel's slots (the key still works there); with Epic Loot, magic items show their rarity background.
 
 | Setting | Default | Who | Meaning |
 | --- | --- | --- | --- |

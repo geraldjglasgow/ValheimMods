@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+
+- Salvage: the tab's list leaves out the hotbar and PackPanel's slots; the Salvage Key still works on them.
+- Salvage: with Epic Loot, magic items show their rarity background on the tab.
+
 ## 2.0.2
 
 - Fixed: with Epic Loot, recipe tile and button tooltips showed far from what they describe.

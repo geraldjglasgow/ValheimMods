@@ -121,6 +121,7 @@ OpenKeep/OpenKeep/src/
     SalvageInventory.cs     the exact fit simulation and the add with rollback
     SalvageActions.cs       the public face: CanSalvage, WhyNot, Returns, Salvage, Confirm
     SalvageTab.cs, SalvageList.cs, SalvageRow.cs, SalvagePanel.cs, SalvageGuiPatches.cs   the third tab
+    SalvageRarity.cs        Epic Loot's rarity background behind the tab's icons, through its published API
     SalvageHotkey.cs        InventoryGui.Update postfix: Salvage Key
   Stacks/                   section 4
     StacksModule.cs, StacksSettings.cs, StacksModel.cs, StackRule.cs, ItemValue.cs
@@ -353,7 +354,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.0.2]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.1.0]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -849,6 +850,13 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - No progress bar; the tab selection persists like the game's tabs; the list shows the quality number and `x<n>`;
   success prints a top-left message. The Salvage Key reads the hovered stack of the player grid at the pointer,
   else the gamepad selection, and ignores presses while an item is dragged or a popup shows.
+- The list leaves out the hotbar (the first eight cells of the top row) and PackPanel's slots (rows below its
+  published main grid); the Salvage Key still works on them (user decision 2026-10-05).
+- With Epic Loot, a magic item's row icon and the selected stack's icon get its rarity background, the one its
+  inventory grid shows: the rows are OpenKeep's, so Epic Loot's own `AddRecipeToList` patch never sees them, and they
+  go through `EpicLoot.API.ApplyMagicItemBackgroundToIcon` (reflection, nothing referenced). Epic Loot's client
+  setting `Interface / Show Rarity In Recipe List` decides. The panel postfix runs `HarmonyAfter` Epic Loot, whose
+  `UpdateRecipe` postfix hides the background when no recipe is selected.
 
 ### Stacks and Capacity
 
@@ -1667,7 +1675,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.0.2]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.1.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the

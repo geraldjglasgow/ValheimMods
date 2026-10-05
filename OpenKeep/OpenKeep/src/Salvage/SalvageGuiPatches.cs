@@ -38,9 +38,13 @@ namespace OpenKeep.Salvage
         [HarmonyPostfix]
         public static void AfterCraftingPanel(InventoryGui __instance) => SalvageTab.Refresh(__instance);
 
-        /// <summary>The game has just cleared the right side (no recipe selected); fill it with the selected stack.</summary>
+        /// <summary>
+        /// The game has just cleared the right side (no recipe selected); fill it with the selected stack. After Epic
+        /// Loot's postfix, which hides the icon's rarity background when no recipe is selected.
+        /// </summary>
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
         [HarmonyPostfix]
+        [HarmonyAfter("randyknapp.mods.epicloot")]
         public static void AfterUpdateRecipe(InventoryGui __instance, Player player)
         {
             if (SalvageTab.Active)

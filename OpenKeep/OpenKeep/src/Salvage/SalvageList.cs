@@ -10,10 +10,15 @@ namespace OpenKeep.Salvage
     /// <summary>
     /// The left list of the crafting panel while the Salvage tab is selected: one row per salvageable inventory
     /// stack, built from the game's recipe element prefab in the game's list root, with the game's selection
-    /// marker, centring and gamepad stepping. The game's own recipe rows are removed while the tab is active.
+    /// marker, centring and gamepad stepping. The game's own recipe rows are removed while the tab is active. The
+    /// hotbar and PackPanel's slots are not listed (the Salvage Key still works on them); a magic item shows Epic
+    /// Loot's rarity background behind its icon.
     /// </summary>
     public static class SalvageList
     {
+        /// <summary>The game's hotbar: the first eight cells of the top row.</summary>
+        private const int HotbarWidth = 8;
+
         private static readonly List<SalvageRow> rows = new List<SalvageRow>();
         private static ItemDrop.ItemData selected;
         private static int selectedIndex;
@@ -32,7 +37,7 @@ namespace OpenKeep.Salvage
                 return;
             foreach (ItemDrop.ItemData item in player.GetInventory().GetAllItemsInGridOrder())
             {
-                if (SalvageActions.CanSalvage(item))
+                if (Listed(player, item))
                     rows.Add(CreateRow(gui, item, rows.Count));
             }
             float height = Mathf.Max(gui.m_recipeListBaseSize, rows.Count * gui.m_recipeListSpace);
@@ -41,6 +46,13 @@ namespace OpenKeep.Salvage
             if (index < 0)
                 index = Mathf.Clamp(selectedIndex, 0, rows.Count - 1);
             Select(gui, index, center);
+        }
+
+        private static bool Listed(Player player, ItemDrop.ItemData item)
+        {
+            if (item.m_gridPos.y == 0 && item.m_gridPos.x < HotbarWidth)
+                return false;
+            return !PackPanelGrid.InSlot(player, player.GetInventory(), item) && SalvageActions.CanSalvage(item);
         }
 
         private static void ClearGameRows(InventoryGui gui)
@@ -73,6 +85,7 @@ namespace OpenKeep.Salvage
             Image icon = element.transform.Find("icon").GetComponent<Image>();
             icon.sprite = item.GetIcon();
             icon.color = Color.white;
+            SalvageRarity.Apply(icon.gameObject, item);
             TMP_Text name = element.transform.Find("name").GetComponent<TMP_Text>();
             name.text = ItemNames.DisplayName(item) + (item.m_stack > 1 ? $" x{item.m_stack}" : "");
             name.color = Color.white;
