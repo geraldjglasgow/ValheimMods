@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using OpenKeep.Blueprints;
 using OpenKeep.Signs;
 using OpenKeep.Stacks;
+using OpenKeep.Stow;
 using PatchGuard;
 using UnityEngine;
 
@@ -11,12 +13,13 @@ namespace OpenKeep.Core
     /// <summary>
     /// The <c>openkeep</c> console command: <c>reload</c> (cfg and every YAML file; admin or host on a server),
     /// <c>containers</c> (the reachable containers around the player), <c>write docs</c> (the Stacks module's
-    /// documentation files) and <c>signs</c> (the Signs module's list, reset and rewrite).
+    /// documentation files), <c>signs</c> (the Signs module's list, reset and rewrite) and <c>tidy</c> (how Auto Tidy
+    /// scores the chests around the player).
     /// </summary>
     public static class Command
     {
         private const float ListRange = 20f;
-        private static readonly string[] SubCommands = { "reload", "containers", "write", "signs" };
+        private static readonly string[] SubCommands = { "reload", "containers", "write", "signs", "tidy", "blueprint" };
         private static bool registered;
 
         internal static void Register()
@@ -24,7 +27,7 @@ namespace OpenKeep.Core
             if (registered)
                 return;
             registered = true;
-            new Terminal.ConsoleCommand("openkeep", "OpenKeep: openkeep reload | containers | write docs | signs [reset | rewrite]",
+            new Terminal.ConsoleCommand("openkeep", "OpenKeep: openkeep reload | containers | write docs | signs [reset | rewrite] | tidy",
                 (Terminal.ConsoleEvent)(args => Guard.Run("openkeep command", () => Run(args))),
                 optionsFetcher: () => new List<string>(SubCommands));
         }
@@ -38,6 +41,8 @@ namespace OpenKeep.Core
                 case "containers": Containers(args); break;
                 case "write": WriteDocs(args); break;
                 case "signs": Signs(args); break;
+                case "tidy": TidyCommand.Run(args); break;
+                case "blueprint": BlueprintCommands.Run(args); break;
                 default: Help(args); break;
             }
         }
@@ -50,6 +55,8 @@ namespace OpenKeep.Core
             args.Context.AddString("openkeep signs         lists the loaded containers with their sign state");
             args.Context.AddString("openkeep signs reset   allows signs again on containers whose sign was removed with the hammer (admin or host)");
             args.Context.AddString("openkeep signs rewrite rewrites the sign of every loaded container this game owns");
+            args.Context.AddString("openkeep tidy          Auto Tidy: the chests within 20 m with their kinds, junk score and strays, and the look timings");
+            args.Context.AddString("openkeep blueprint     blueprints: list, save <name>, undo (while blueprints are on)");
         }
 
         private static void Reload(Terminal.ConsoleEventArgs args)

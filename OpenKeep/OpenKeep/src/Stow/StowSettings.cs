@@ -49,6 +49,7 @@ namespace OpenKeep.Stow
         public static ConfigEntry<bool> PickupOnlyHeldItems { get; private set; }
         public static ConfigEntry<int> ButtonRowOffset { get; private set; }
         public static ConfigEntry<bool> TrashOnStatColumn { get; private set; }
+        public static ConfigEntry<bool> AutoTidy { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
         {
@@ -59,12 +60,13 @@ namespace OpenKeep.Stow
             BindClicks(synced);
             BindCycling(synced);
             BindPickup(synced);
+            BindTidy(synced);
         }
 
         private static void BindMoves(SyncedConfiguration synced)
         {
             Enabled = synced.Bind(Section, "Enabled", true,
-                "Master switch of the Stow module: panel buttons, hotkeys, sorting, trashing, routing, chest cycling and ground pickup.");
+                "Master switch of the Stow module: panel buttons, hotkeys, sorting, trashing, routing, chest cycling, ground pickup and auto tidy.");
             QuickStackKey = synced.Bind(Section, "Quick Stack Key", new KeyboardShortcut(KeyCode.Q),
                 "Inventory open: every non-favourite stack whose item already exists in the open container (or, with no container open, in any nearby container) moves there.", synced: false);
             QuickStackNearby = synced.Bind(Section, "Quick Stack Nearby", true,
@@ -162,6 +164,12 @@ namespace OpenKeep.Stow
                 acceptableValues: new AcceptableValueRange<float>(0f, 3600f));
             PickupOnlyHeldItems = synced.Bind(Section, "Pickup Only Held Items", true,
                 "A container only takes items it already holds; the YAML accept list adds more. Off: it takes everything its refuse list allows.");
+        }
+
+        private static void BindTidy(SyncedConfiguration synced)
+        {
+            AutoTidy = synced.Bind(Section, "Auto Tidy", false,
+                "Nearby chests sort items out between themselves: an item with no place in its chest (anything in a junk chest of mixed items, or a stray among other things) moves to the nearest chest within 15 m that is its home - one that mostly holds that item or things like it, or held it until it ran out. Chests learn from what players put where by hand, and an item a player puts back after it was moved stays there. Ships, carts and private chests take no part.");
         }
     }
 }

@@ -7,6 +7,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using MapClicks;
 using OpenKeep.Batch;
+using OpenKeep.Blueprints;
 using OpenKeep.BuildCamera;
 using OpenKeep.Capacity;
 using OpenKeep.Carts;
@@ -34,7 +35,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "2.1.1";
+        public const string PluginVersion = "2.2.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -81,6 +82,7 @@ namespace OpenKeep
             CameraModule.Initialize(Synced);
             RecipeListModule.Initialize(Synced);
             TrackerModule.Initialize(Synced);
+            BlueprintsModule.Initialize(Synced);
         }
 
         /// <summary>Links that need every other plugin loaded first.</summary>

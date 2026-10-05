@@ -113,6 +113,18 @@ OpenKeep/OpenKeep/src/
     GroundPickup.cs         Container.CheckForChanges postfix
     PickupOrder.cs          which pickup chest takes a drop: holders before acceptors, nearest to the drop first,
                             a full one passed over
+    TidySchedule.cs         Auto Tidy's looks: Container.CheckForChanges prefix/postfix, first sight, change, close,
+                            retries with backoff for chests whose strays wait, wakes near a change, one per frame
+    TidyChanges.cs          Container.OnContainerChanged postfix: a closed owned chest changed (not by Auto Tidy)
+    TidyHands.cs            Container.SetInUse prefix/postfix: contents at open against release = put in by hand
+    TidySweep.cs            one look: memory update, strays to the nearest home with room, 8 stacks at most
+    TidyChests.cs           which chests take part, ready now, the homes of a stray (nearest first, 15 m)
+    TidyMemory.cs           ZDO OpenKeep.tidy: per prefab first seen, fading peak, last amount, hand, kept, sent away
+    TidyProfile.cs, TidyProfiles.cs   a chest's weights, shares, random-items score; kept per revision
+    TidyThemes.cs, TidyLabels.cs, TidyFamilies.cs   what is alike: learned pairs, YAML groups, type themes,
+                            smelting families from the game's stations and recipes
+    TidyHandOver.cs         RPC OpenKeep_TidyHandOver: the owner hands a free chest over (Container.Awake postfix)
+    TidyCommand.cs          openkeep tidy
   Salvage/                  section 3
     SalvageModule.cs, SalvageSettings.cs, SalvageWords.cs, RoundingMode.cs
     SalvageModel.cs, FractionOverride.cs, SalvageRules.cs   OpenKeep.Salvage*.yml, recipe lookup, blockers
@@ -328,7 +340,8 @@ OpenKeep/OpenKeep/src/
     CameraState.cs          out or not, position, yaw and pitch; out only while its player is the local player
     CameraToggle.cs         Player.Update postfix: Toggle Key / Gamepad Toggle in and out, every end condition
     PadToggle.cs            Gamepad Toggle: ZInput button names joined with +
-    CameraArea.cs           where the camera may be: station build range x Range Multiplier, flat and as high
+    CameraArea.cs           where the camera may be: station build range x Range Multiplier, flat and as high; while
+                            AroundPlayer (set by Blueprints) a ball of 50 m round the player's body (the user's cap)
     CameraNeeds.cs          Resting and comfort conditions, read where the player stands
     CameraMotion.cs         one frame of flying: movement keys and left stick flat, Jump/Crouch and the triggers up
                             and down, Run faster; held in the area, then swept
@@ -347,14 +360,97 @@ OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, Ope
                             OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml,
                             OpenKeep.Stations.yml
 OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon (128 px, scaled down from the
-                            author's 1254 px drawing, which is not in the repository); every PNG here is embedded
+                            author's 1254 px drawing, which is not in the repository); the Blueprints tab's icons
+                            (128 px, drawn with Python and PIL at 4x in the style of the first two): blueprint.png,
+                            fixground.png, planner.png, copy.png, ghostsshown.png, ghostshidden.png, folder.png,
+                            folderup.png, foldernew.png; every PNG here is embedded
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.1.1]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.2.0]` line, `Guard.Install` last.
+  Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
+    BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
+    BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
+    BlueprintTab.cs, BlueprintPieceList.cs, BlueprintTabPatches.cs   the "Blueprints" tab of the game's build menu
+                            (BuildUi): a copy of its last tab with its own piece list, shown while on and the hammer
+                            is the tool; the other four lists never show the entries; folder clicks; no favourites
+    HammerTable.cs          the game's hammer table (ObjectDB "Hammer"): the entries appended and taken out again, in a
+                            spare category (first of DeepNorth, Feasts, Food, Meads unused there, logged) listed as
+                            "Blueprints" while in
+    BlueprintMenu.cs        the tab's view (tools, then the folder's blueprints) and the identity checks (Owns,
+                            IsFix, IsPlanner, IsCopy, IsGhosts, IsOurs, NameOf, InHand); refills the table when the switch, the
+                            folder, its files or the player changes
+    BlueprintEntries.cs, BlueprintIcons.cs   the entries as empty pieces (one per tool and blueprint; names and
+                            descriptions, prefab names without spaces) and the nine icons (folder.png, folderup.png
+                            and foldernew.png only on the folder panel)
+    GhostSwitch.cs          the Construction ghosts switch: this player's choice to draw site ghosts (Visible = shown
+                            or the Site planner in hand), flipped by a click on its entry, kept in TabMemory
+    BlueprintSelection.cs   keeps the hammer's selection on the chosen entry across refills (and renames)
+    BlueprintFolders.cs, BlueprintRename.cs, BlueprintFiles.cs   folders opened, New folder (the panel's button), F2
+                            and right-click rename/move through NamePrompt (+ the ConnectPanel F2 guard), the file
+                            operations and name rules
+    Tab/                    the tab's own UI on the game's piece buttons (namespace OpenKeep.Blueprints.Tab):
+                            TabButtons (a BuildUiPieceButton.Setup postfix sets everything below per piece), TabLabel
+                            (the name band), TabMark (pick frame), TabPicks (the multi-selection),
+                            TabClicks (Ctrl / Shift + click, right click), TabBox (selection box on empty space),
+                            TabDrag + TabGhost + TabMoves (drag onto a panel folder or breadcrumb part, the ghost, the moves), TabLook
+                            (the menu's font, outlined label material, frames); FolderPanel + FolderRows (the folder
+                            panel in the menu's tag column, rows copied from its tag button), NewFolderBadge (the New
+                            folder button on its first row, a copy of the menu's key badge), Breadcrumb +
+                            BreadcrumbParts (the folder chain above the list), FolderTarget (a panel row's or
+                            breadcrumb part's folder: click, drop, right click), TabMemory (folder, tab and the
+                            ghosts switch kept on this machine in OpenKeep.BlueprintsTab.txt)
+    Blueprint.cs, GroundPaint.cs, BlueprintReader.cs, BlueprintWriter.cs, BlueprintLibrary.cs   DevBridge's blueprint
+                            JSON in BepInEx/config/OpenKeep.Blueprints and its subfolders (plain_wood_house
+                            embedded), plus "relief"; paths like "houses/barn", CurrentFolder, listings, SaveNew
+    BuildFrame.cs, SiteArea.cs, WaterRule.cs, GroundMask.cs   the frame, pad and paint, sea level, dirt under pieces
+    GroundGrid.cs, GroundFit.cs   the ground work for any IGroundTarget: pad heights, 45° cuts and ~35° fills (rounded by
+                            smoothing passes for Fix ground), within 8 m of the generated ground; stone 0.5 per m³
+    GroundUndo.cs           the last build's or fix's heights, put back by Alt+Z (Fix ground) or openkeep blueprint undo
+    GroundFixBuilding.cs, GroundFixInside.cs, GroundFixTarget.cs, GroundFixPlan.cs, GroundFixSession.cs, GroundOutline.cs   Fix ground: the
+                            building under the crosshair (touching drawn boxes), which pieces touch the ground (floors
+                            cut or fill, the rest only fill), the plan and checks, pin/apply/undo, the yellow/blue outline
+    HammerZoom.cs           the camera zooms out to 80 m (faster when far) while an entry of the tab is selected
+    BlueprintCamera.cs      the build camera (section 11) comes out by itself with an entry of the tab, flying within
+                            50 m of the player (CameraArea.AroundPlayer) instead of near a station; Toggle Key puts it back
+    GroundWriter.cs         RPC OpenKeep_BlueprintGround on each touched terrain compiler; its owner writes the heights
+                            (as the game's LevelTerrain) and paint, saves and redraws
+    SitePlan.cs, SiteProtection.cs, MaterialBill.cs   the check: in the way, interiors, no-build, wards, learned, materials
+    SiteObjects.cs, SiteClearing.cs   trees, logs, stumps, shrubs, rocks, pickables (never ore, crops, offerings)
+    PiecePlacer.cs, BuildJob.cs, BuildUndo.cs   one piece as Player.PlacePiece without OnPlaced; a site's all-at-once
+                            build (80 a frame); undo takes down the player's last site and its pieces
+    PieceShapes.cs, GhostView.cs, SiteOutline.cs, BlueprintHud.cs   the preview, outline lines and HUD (IMGUI)
+    BlueprintTool.cs, BlueprintSession.cs, BlueprintKeys.cs   a blueprint entry's click (pin, build), aim/turn/height
+                            and the fixed keys
+    BlueprintPatches.cs     TerrainComp.Awake (ground RPC), Player.TryPlacePiece (the click), Player.AddKnownPiece
+                            (no unlock message), Player.RemovePiece (no removal while an entry is selected); the
+                            BlueprintRunner MonoBehaviour (menu, tab, rename, session, build job, HUD)
+    BlueprintCapture.cs, BlueprintCommands.cs, BlueprintWords.cs, BlueprintSafe.cs   capture of real pieces (by radius
+                            for openkeep blueprint save, or an explicit list for Copy), the command, ok_bp_* words
+    NamePrompt.cs           the game's text box (TextInput) asking for a name: saving, New folder, F2 and right-click rename
+    Sites/                  construction sites ("ghost mode"): SiteState (the ZDO contract), SiteCodec (the blueprint
+                            as bytes), SiteMarker (post: hover, E deliver, Shift+E take down), SitePrefab (OpenKeep_Site
+                            from wood_pole2), SitePlacement, SiteGhost + GhostPick + GhostLook (everyone's ghost, see-through look, glow, picking; hidden and unpickable
+                            while this player's Construction ghosts switch is off, unless the Site planner is in hand),
+                            SiteBuilder / SitePieces / SiteGround / SiteOrder / SiteNeeds / SiteCosts / SiteStore (the
+                            owner builds as materials come in or all at once), SiteDelivery, SiteTakeDown, SiteRights,
+                            SiteNetwork, SiteHover, SiteRun, SiteSettings (Build As Resources Come In), SiteWords,
+                            SiteHooks (the seams), SmartSelect + Smart*.cs (one enclosed house from a click;
+                            SmartSameType: the joined pieces of one prefab), SiteSupport (what holds each piece up:
+                            cheapest path to the ground over touching boxes; a queued selection brings its supports)
+    Planner/                the Site planner entry: PlannerSession, PlannerKeys (+ a Chat.Update prefix so Enter does
+                            not open chat), PlannerClicks, PlannerSelection, PlannerAim, PlannerHouse, PlannerPieces,
+                            PlannerBill, PlannerGlow, PlannerHud, PlannerGroup (G: same type), QueueEdits / QueueRpc / QueueCheck (the queue, owner
+                            writes), PlannerPanel / PanelModel / PanelStyles (the side panel, WindowInput), PlannerWords
+    Copy/                   the Copy building entry: CopyModule, CopySession, CopyKeys, CopyAim, CopyClicks, CopyHover,
+                            CopySelection (the chosen real pieces, this machine only), CopyBuildings (a building =
+                            GroundFixBuilding.From), CopySameType + CopyGrid + CopyTouch (G: joined pieces of one
+                            prefab), CopyFootprint, CopyHud, CopyGlow + CopyGlowPatches (the game's piece tint through
+                            MaterialMan, held), CopySave (Enter: name, BlueprintCapture.Of, BlueprintLibrary.SaveNew),
+                            ChatEnter (one Chat.Update prefix any tool claims Enter through), CopyWords
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -369,14 +465,16 @@ reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection.
 `ReachCount.CountIn` and `ContainerRule`, so the Reach YAML's `stations:` and `containers:` rules apply to auto fuel
 and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Stow's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
 PackPanel's main grid through `Core.PackPanelGrid`, Stacks' `PackPanelKeys` its Key Stack through `Core.PackPanelLink`,
-and Stow's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Everything else goes
-through `Core`.
+and Stow's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Blueprints'
+`BlueprintCamera` drives Build Camera's `CameraState`, `CameraToggle.CanUse`, `CameraNeeds` and `CameraSettings`, and
+sets `CameraArea.AroundPlayer`. Everything else goes through `Core`.
 
 ## Patched game methods
 
 Postfix: `Bed.Awake` (remember own beds, forget others at a known point), `Bed.GetHoverText` (Sleep on every own
-bed), `Container.Awake` (Core tracking; Capacity sizes; Shared RPC registration), `Container.CheckForChanges`
-(ground pickup; the sign refresh tick), `Container.GetHoverText`, `Container.OnDestroyed` (the owner removes the
+bed), `Container.Awake` (Core tracking; Capacity sizes; Shared RPC registration; Auto Tidy's hand-over RPC),
+`Container.CheckForChanges` (ground pickup; the sign refresh tick; Auto Tidy's tick, with a prefix noting the loaded
+revision), `Container.OnContainerChanged()` (private: Auto Tidy's change trigger), `Container.GetHoverText`, `Container.OnDestroyed` (the owner removes the
 container's sign), `Container.SetInUse(bool)` (the user name), `CookingStation.GetHoverText`,
 `CraftingStation.GetLevel(bool)`, `CraftingStation.Interact(Humanoid, bool, bool)` (Homestead's auto repair on the
 local player's client once the game made the station current; carts with a workbench open theirs through it too),
@@ -422,7 +520,7 @@ game's multi-craft fields), `InventoryGui.OnRightClickItem(InventoryGrid, ItemDa
 `Inventory.IsTeleportable(bool)`, `Inventory.RemoveItem(string, int, int, bool)` (the payment hook),
 `SE_Cozy.UpdateStatusEffect(float)` (the Resting effect's tick on the player's own client: `Rested Delay` into the
 copy's `m_delay`), `Vagon.Interact`.
-Prefix and postfix: `Bed.Interact(Humanoid, bool, bool)` (an own bed becomes the spawn point, then the game's sleep
+Prefix and postfix: `Container.SetInUse(bool)` (Auto Tidy: the contents at open and at release), `Bed.Interact(Humanoid, bool, bool)` (an own bed becomes the spawn point, then the game's sleep
 path; remember), `Beehive.UpdateBees()` (honey rate and progress on the hive's ZDO owner),
 `CookingStation.OnAddFuelSwitch`, `CookingStation.OnInteract(Humanoid)`, `Fermenter.Interact`, `Fireplace.Interact`,
 `Game.FindSpawnPoint(out Vector3, out bool, float)` (a cleared point is forgotten and the next nearest bed set),
@@ -447,6 +545,27 @@ Speed). Recipe Tracker: postfix `Hud.Awake()` (private: adds the tracker's drive
 Batch has put the started amount back) and postfix `InventoryGui.DoCrafting(Player)` (a tracked recipe made).
 Prefix and finalizer (the payment window): `InventoryGui.DoCrafting`, `Player.ConsumeResources`. Batch has its own
 prefix (`Priority.First`, the started craft's amount) and finalizer on `InventoryGui.DoCrafting`.
+Blueprints: postfix `TerrainComp.Awake()` (private: the ground RPC); prefix
+`Player.TryPlacePiece(Piece)` (`Priority.First`: a blueprint entry's click), `Player.AddKnownPiece(Piece)` (private:
+the entries known without a message) and `Player.RemovePiece()` (private, `Priority.First`: no removal for the local
+player while an entry of the tab is selected; HarmonyX still runs Build Camera's prefix and finalizer there); postfix
+`BuildUi.Awake()` (private: the Blueprints tab); prefix and postfix `BuildUi.OpenBuildMenu()` (the tab shown or hidden);
+prefix `BuildUi.OnSelectPiece(Piece)` (Ctrl / Shift + click picks and the menu stays open; nothing while a name box
+is up), `BuildUi.Update()` (private: skipped while a name box is up over the menu;
+otherwise a right click on a blueprint of the grid or a folder of the panel or the breadcrumb renames it and skips that
+frame of the menu), `TabHandler.Update()` (private: the build menu's own tab keys held while a name box is up) and
+`BuildUi.PressedFavoriteButton(BuildUiPieceButton)` (no favourites for the entries); postfix
+`BuildUi.UpdateTagButtons(bool)` (private: the folder panel and breadcrumb follow the game's tag column); postfix
+`BuildUiPieceButton.Setup(Piece, BuildUi)` (name band, pick mark and drag handle follow the piece); prefix
+`Player.SetControls(...)` (`TabCtrlPatch`: a Ctrl + click in the Blueprints tab does not toggle sneaking); postfix
+`GetAvailablePiecesWithTag(int, PieceTable, IList<Piece>)` of `ByUsagePieceList`, `ByMaterialPieceList`,
+`RecentPieceList` and `FavoritePieceList` (the entries only in their own tab); prefix and postfix
+`ConnectPanel.Update()` (private: an F2 that renames leaves the connection panel as it was); postfix `ZNetScene.Awake()` again for the site post and `ZNet.Awake()` (the site
+RPCs every machine answers); prefix `Chat.Update()` (skipped for the one frame Enter queues a planner selection);
+prefix `Chat.Update()` again (`ChatEnterPatch`: skipped for a frame a Copy save takes Enter); prefix
+`WearNTear.Highlight()` (the game's hover tint held back while Copy building is selected) and postfix
+`WearNTear.ResetHighlight()` (private: a piece the Copy tool lights gets its glow back);
+WindowInput's own patches (its Harmony id `milkyteam.openkeep.planner`) while the planner's panel is open.
 
 ## Config sections and keys
 
@@ -455,7 +574,7 @@ Chests`: the enum `Off`, `View`, `Full`, default `Off`), `1. Reach` (`Enabled`, 
 `Upgrading`, `Feed Stations`, and the YAML `stations:` map; unsynced `Fill Modifier`, `Pull Modifier`, `Toggle Key`, `Show Links`, `Link Key`,
 `Link Seconds`, `Requirement Display`, `Storage Colour`, `Flash On Pull`), `2. Stow` (`Enabled`, `Quick Stack
 Nearby`, `Nearby Range`, `Ground Pickup`, `Pickup Range`, `Pickup Interval`, `Pickup Delay`, `Pickup Only Held
-Items`; unsynced every key, `Sort Order`, `Sort Favourite Items`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
+Items`, `Auto Tidy` false; unsynced every key, `Sort Order`, `Sort Favourite Items`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
 Uses Salvage`, `Cycle With Wheel`, `Show Favourites`, `Button Row Offset`, `Trash Can On Stat Column`), `3. Salvage` (`Enabled`, `Return Fraction`, `Rounding`, `At
 Least One`, `Upgrade Materials`, `Require Known Recipe`, `Require Station`, `Skip Items With Mod Data`, `Mod Data
 Prefixes`; unsynced `Salvage Key`), `4. Stacks`
@@ -483,7 +602,8 @@ View` `List` (`List`, `CompactList`, `SmallGrid`, `MediumGrid`, `LargeGrid`), `G
 `13. Recipe Tracker` (`Enabled` true, `Max Tracked` 6 (1 to 12), `Count Nearby Chests` true, `Untrack When Crafted`
 true, `Hide In Combat` true, `Hide With Map` true, `Scale` 1 (0.5 to 2), `Font` `Sans` (`Sans`, `Serif`, `Norse`),
 `Font Size` 16 (10 to 28), `Have Colour` `#FFFFFF`, `Missing Colour` `#FF6A5A`, `Ready Colour` `#FFB65C`, `Background
-Opacity` 0.56, `Position` empty; all unsynced).
+Opacity` 0.56, `Position` empty; all unsynced), `14. Blueprints` (`Enabled` false, `Build Without Materials` false,
+`Build As Resources Come In` true; all synced; the keys are fixed).
 Keys, defaults and meanings are in each entry's description in the .cfg (bound in the modules' `*Settings.cs`; the
 README only names the features). Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), so every module has a master switch.
@@ -507,6 +627,12 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   raise the data revision and a removal would never reach the other clients; left alone when the setting is off or
   the prefab unlisted. The game's `fuel` is written only through `Fireplace.AddFuel` (`RPC_AddFuelAmount`), `state`
   only through `RPC_ToggleOn`.
+- Auto Tidy: `OpenKeep.tidy` (byte array) on a container, written only by its ZDO owner at a look when something
+  changed: a `ZPackage` of version (int, 2), count (int), then per prefab its name (string), first seen (double, world
+  seconds), peak stacks (float) and its time (double), stacks at the last look (float), flags (byte: 1 put in by hand,
+  2 kept) and the time Auto Tidy last sent it away (double). `OpenKeep_TidyHandOver` (no payload) is registered on
+  every container's net view and sent to the ZDO owner, which, when the chest is free, force sends the ZDO to the asker
+  and sets it as owner (the game's own grant of an open).
 - RPCs, registered on every container's net view in a `Container.Awake` postfix (once per view), every payload one
   `ZPackage`. A request starts with a header: request id (long), the requester's player id (long) and name
   (string); it goes to the ZDO's owner at send time (`ZNetView.InvokeRPC(name, pkg)`).
@@ -565,7 +691,20 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `ok_autorepair_one`, `ok_autorepair_many`; Build Camera: `ok_cam_nostation`, `ok_cam_needs`, `ok_cam_pickupneeds`,
   `ok_cam_resting`, `ok_cam_comfort`; Recipe List: `ok_recipe_*`; Recipe Tracker: `ok_tracker_*`.
 - Console: `openkeep reload`, `openkeep containers`, `openkeep write docs`, `openkeep signs`, `openkeep signs reset`,
-  `openkeep signs rewrite`.
+  `openkeep signs rewrite`, `openkeep tidy`, `openkeep blueprint list | save <name> [radius] [all] [replace] | undo`.
+- Blueprints: RPC `OpenKeep_BlueprintGround` (on each terrain compiler's own view, to its owner); local menu entries
+  (never networked or placed) `OpenKeep_Blueprint_<path, all but letters and digits as _>_<hash>`,
+  `OpenKeep_FixGround`, `OpenKeep_SitePlanner`, `OpenKeep_Copy`, `OpenKeep_GhostSwitch` (their `$ok_bp_entry_*` and tool names land in the
+  player's known recipes);
+  folder `BepInEx/config/OpenKeep.Blueprints/**/*.json` (its subfolders are the tab's folders), embedded defaults
+  `OpenKeep.blueprints.<file>`; words `ok_bp_*` (the tab `ok_bp_tab`), `ok_fix*`, `ok_site_*`, `ok_planner*`, `ok_copy*`;
+  this machine's tab memory `BepInEx/config/OpenKeep.BlueprintsTab.txt` (`folder=`, `tab=`, `ghosts=shown|hidden`,
+  never synced).
+- Construction sites: prefab `OpenKeep_Site` (networked post); its ZDO keys `OpenKeep.site_bp`, `site_name`,
+  `site_origin`, `site_yaw`, `site_built`, `site_queue`, `site_store`, `site_ground`, `site_groundStone`,
+  `site_creator`, `site_creatorName` (all `OpenKeep.`); RPCs on the post `OpenKeep_SiteDeliver`,
+  `OpenKeep_SiteTakeDown`, `OpenKeep_SiteQueue`; routed `OpenKeep_SiteTakeDownAsk` (to the server) and
+  `OpenKeep_SiteBuilt` (to everyone, shown within 40 m).
 
 ## Decisions where the spec was silent
 
@@ -693,7 +832,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   Clicks with a dragged item, on the container grid, or with the game's drop modifier stay the game's.
 - Cycling is limited to `min(Nearby Range, InventoryGui.m_autoCloseDistance)` (4 m) because the panel closes any
   container farther away; the ring is sorted by `atan2` around the player; the wheel has a 0.25 s cooldown and
-  only counts over the container grid. Opening goes through `Container.Interact` (the game's RPC path).
+  only counts over the container grid, and not while EliteCrafting scrolls a long tooltip (its `ecf_tooltip_bar`
+  shows in `UITooltip.m_tooltip`, found by name). Opening goes through `Container.Interact` (the game's RPC path).
 - Ground pickup runs in the `Container.CheckForChanges` postfix (once a second per container) on the owner client,
   staggered per container, skips containers in use, containers not usable by the local player and placed pieces
   (`ItemDrop.IsPiece`); the age comes from the drop's `spawntime` ZDO value against `ZNet.GetTime`; rule order is
@@ -810,6 +950,43 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   section 0 switches (the rules are repeated in `Cycling.Viewable` because `ContainerScan` has no viewable query;
   moving it into Core would be cleaner). In `Off` the ring is the usable containers, as before.
 - Find marks shared chests too (they are targets), so the player sees where a quick stack would go.
+- Auto Tidy (2026-10-05, the user's design: chests sort themselves; "some players have junk chests they throw everything
+  into, and want the items to flow to the proper chests"; weigh how long an item has been in a chest and the chest's
+  random items against like items; an emptied chest keeps its items; no lag. Of the automatic options offered they
+  chose: looks only on a change, learning from players' hands, learned themes; no manual marks. One setting only, on
+  or off: range, memory length and every threshold are fixed):
+  - Scoring (`TidyProfile`): per prefab, stacks held or remembered (the larger) x settled (15 % on arrival, all after
+    one in-game day) x origin (1 by hand, 0.5 arrived on its own). An item's share is the weight alike to it over the
+    total; the random-items score is one over the weighted mean share (n for n unrelated kinds). Score 5 or more: a
+    junk chest, home to nothing, everything in it a stray. Elsewhere a stray has under 25 %. A home is no junk chest
+    with at least 25 % and twice the source's share (no back and forth), or a chest that keeps the item. Homes within
+    15 m are tried nearest first (the closest-first rule), the next when one is full or refuses it (YAML `refuse`).
+  - Alike (`TidyThemes`): the same prefab, a shared label (YAML group; a type theme for non-materials: food, trophies,
+    fish, ammo, armour, weapons and tools, utility; a smelting family: inputs and outputs of every fuelled `Smelter`
+    keyed by its fuel, plus materials crafted only from one family, so bars and bronze are one theme), or a learned
+    pair: two prefabs put in by hand and settled together in 2 or more chests of at most 8 such prefabs.
+  - Memory (`TidyMemory`): written in the chest's ZDO by its owner. A look happens on every change of an owned chest,
+    so an item held at the last look and gone now left with this change: its peak restarts fading then, over three
+    in-game days. The first look at a chest (no key yet) counts its contents as settled and put in by hand: they were
+    there before Auto Tidy.
+  - Hands (`TidyHands`): the game opens a chest only on its owner, so the owner notes the contents when it is taken
+    into use and compares at release; prefabs that grew were put in by hand (Shared Full requests too). An item put
+    back by hand within 15 minutes of world time after Auto Tidy sent it away becomes kept there: never a stray, always
+    a home, until it fades out after leaving.
+  - Looks (`TidySchedule`): never a timer over every chest. First sight of an owned chest (spread over 30 s), a change
+    while closed (`OnContainerChanged`, not Auto Tidy's own moves, not while loading), a release (3 s later), and for a
+    chest whose strays found no ready home with room: after 1, 2, 4, 8, then every 10 minutes, and soon after any chest
+    within 15 m changes (another client's change shows as a new loaded revision). One look per frame, a chest at most
+    every 10 s, 8 stacks per look (a look that used them all comes back in 3 s). Profiles are kept per data revision,
+    loaded revision, rules and learned themes for up to 5 minutes, and the random-items score (every pair) is worked
+    out only for a chest that already passed the cheap share test. Offline with .NET 8 against the built DLL
+    (2026-10-05): 200 chests of 20 items scored for one stray with nothing cached took 1.2 ms.
+  - Multiplayer: items move only between two chests the looking client owns (no other client can write either), with
+    the game's inventory methods and save path. A home owned by another client is asked to hand over (`TidyHandOver`,
+    at most once per 30 s per chest); the owner grants it as the game grants an open (free chest, ZDO force sent, then
+    the owner set), and the source looks again 3 s later. A chest in use is never a source or a home.
+  - Taking part: a piece placed by a player, not a ship, cart or private chest, and usable as Stow uses containers
+    (section 0, prefab table, ward, privacy for the local player).
 - Vocabulary: the chest-side button that stores your matching items is `Store all` (`Store All Key`; 1.1.0 to 1.2.0
   called it `Stow all` / `Stow All Key`, carried over; 1.0.0 already used `Store All Key`), the button that refills your stacks from the chests is `Top up` (`Top Up Key`, was `Restock
   Key`), an item marked for destruction is junk (`Junk Key`, was `Trash Flag Key`; `Destroy Junk Key`, was `Trash
@@ -1675,6 +1852,193 @@ repaired through the game's own paths, so a dedicated server and the other playe
   every setting each frame (the range from `LightLod.m_baseRange` while the game fades it), so a recolour or switch
   by another mod follows; `Circlet Intensity`, `Range` and `Spot Angle` above 0 replace the worn light's own.
 
+### Blueprints
+
+- The user's request (2026-10-05): place builds like DevBridge's blueprints in game and shape the ground to fit (flatten
+  a hill, dig water below sea level), with the ground under a home painted dirt. Built in EarthWright first, switched
+  off for everyone the same day ("keep all code for now, remove the config option, do not allow anyone to use
+  this"), moved here ("move this code for the building stuff into openkeep"), then given its switch back and its own
+  tool ("make it a config option to turn this off or on. make a new hammer (use existing asset) that is called
+  OpenKeep, and it will provide the building interface/hotkeys for this feature"). `14. Blueprints / Enabled` is
+  synced and off by default. Later the same day: Fix ground, Ctrl + arrows for small turns (Alt since: Ctrl and Shift move the build camera), zooming out for large
+  structures, "Build Without Materials" (off), stone for raised and lowered ground, construction sites ("ghost
+  mode") with "Build As Resources Come In", the Site planner's queue and side panel with hover glow, and smart select
+  (one house at a time); built by the lead and three agents from SPEC-Blueprints.md. Then, still the same day, the
+  OpenKeep hammer was removed again at the user's request: the same tools moved into a new Blueprints tab of the
+  regular hammer, with folders, naming and renaming, and a distinct icon per tool. Never run in game.
+- Without EarthWright, OpenKeep writes the ground itself: one package per terrain compiler to its owner, which adds
+  the change to the level delta as the game's own level operation does, so the game's limit holds (8 m from the
+  generated ground; the HUD counts points that stop short). Protection is the game's sender-side check, as for a hoe.
+- The interface is a "Blueprints" tab in the game's own hammer build menu, after By Usage, By Material, Recent and
+  Favorites. The visible menu is `BuildUi` (BuildUIV2); the old `Hud.m_pieceCategoryTabs` window is switched off in
+  `Hud.Awake` and never shown, so the tab is a copy of BuildUi's last tab under the same parent (a
+  HorizontalLayoutGroup places it; read offline from the game's scene bundle), with its own piece list (it asks for
+  the tag column but has no tags: the column, with the game's search field, holds the folder panel) and a place in the
+  menu's TabHandler, so Q / E (TabLeft / TabRight) and the gamepad reach it. It shows
+  only while `Enabled` is on and the hammer is the tool; hidden, its handler entry has no button (the tab keys skip
+  it) and a menu that showed it goes back to the first tab. The entries live in the hammer's own table only while on,
+  appended after the game's pieces, in one category the hammer does not use (the first of DeepNorth, Feasts, Food,
+  Meads unused by its categories and pieces, logged at the first fill; Misc if all four are taken), so the hammer's
+  own lists and selections never shift; that category is also added to the table's categories with the label
+  "Blueprints" while the entries are in. The four game lists filter the entries out (unless the tab could not be
+  made, then they stay in "All"); favourites refuse them.
+- Selecting an entry previews it; the first click pins, the second builds; arrows turn, Home faces you again,
+  Alt + Left / Right turn a degree (repeating), PageUp / PageDown (Alt: 2 m) move the floor, End puts it back,
+  Backspace lets go; the wheel zooms (to 80 m). Fixed keys. The build camera and the zoom come out only while an
+  entry of the tab is selected, never while building normally. The hammer's Remove button (the middle button by
+  default) removes nothing while an entry is selected (asked by the lead: aiming a tool at a building must never take
+  a piece down). Off: no tab, no entries, commands refused.
+- The tab's order: Fix ground, Site planner, Copy building, Construction ghosts, then the blueprints of the folder
+  shown. Folders are
+  subfolders of `BepInEx/config/OpenKeep.Blueprints`; a blueprint is named by its path ("houses/plain_wood_house"); the
+  folder shown is kept (back to the top when it disappears). Folders are only on the folder panel and the breadcrumb:
+  the grid lost its Up and New folder entries ("get rid of the up icon where the blueprints go ... get rid of the
+  icon for add folder where the blueprints go") and then its folder entries ("also remove the child folder icon from
+  where the blueprints are. We can navigate via the left file organizer and top bar"), all on 2026-10-05. Opening,
+  dropping into and renaming folders happen there; a folder itself cannot be dragged (the panel rows are not drag
+  sources), so it moves by a rename to a path ("houses/old"). Entries are named by the file name made readable; a blueprint's name in game (HUD, site) is its file name, whatever
+  the JSON says. The blueprint the player chose stays selected while other folders are shown (kept in the table; the
+  game stores a selection as a place in a category's list, so it is put back after every refill).
+- F2 renames: with the menu open the blueprint under the mouse, with it closed the selected blueprint; the
+  text box starts with its name. A plain name renames it in its folder; a name with "/" is a path from the top
+  folder ("houses/barn" moves it into houses, made when missing; "/barn" moves it to the top); "." and ".." parts,
+  names that are not valid file names, taken names and a folder into itself are refused with a message. Only the
+  file's name changes, never its content; a pinned or selected blueprint follows its file. The game's own F2 (the
+  connection panel) is put back for a press that renames. A right click on a blueprint in the menu, or on a folder
+  of the panel or the breadcrumb, renames it the same way (the user, 2026-10-05: "lets make right clicking a blueprint
+  or folder change the name"). The
+  game's piece buttons have no right click of their own; the right button is the game's Build Menu key, which closes
+  the menu in `BuildUi.NavigationUpdate`, so the press is read from the mouse in a `BuildUi.Update` prefix that skips
+  that frame of the menu. Right click on a folder of the panel or the breadcrumb (not the top) renames it too.
+- The name box over the open menu (the user, 2026-10-05: "when right clicking on an icon don't close the blueprints,
+  just have the pop up show up"): right click, F2 and the New folder button open the game's text box over the build menu, which
+  stays open on its tab, folder and scroll. The game draws the box above the HUD (its canvas sorts at 1100, the HUD at
+  400) and focuses its field. While a box is up (`NamePrompt.Showing`: the game's own test, true for the frame its Esc
+  or Enter closes it, or the box's panel shown) the menu's `Update` is skipped (F would focus its search field, Esc and
+  the Build Menu key would close it, gamepad buttons act), its tab handler's Q / E are held, and clicks, drags and the
+  selection box in the tab do nothing; the player's own keys (hotbar, movement) are the game's, already held by the
+  box. Esc closes only the box; after OK the tab is filled again in place.
+- The folder panel (the user, 2026-10-05: "have kind of a file manager to the left ... the parent folder has a up
+  arrow and name, then all the folder names inside the parent"): the build menu's own left column, where the other tabs
+  list their tags under the search field, shows folders while the Blueprints tab is shown (inside the menu's frame
+  rather than beside it: the game's own look and scrolling, on screen at any resolution, and the search field now works
+  on this tab too). First the folder above with the up icon (a click goes up; at the top this row is "Blueprints" itself,
+  highlighted, inert), then every folder in it with the shown one highlighted and its own subfolders indented under it;
+  at the top, the top's folders. At the right end of the first row sits the New folder button (the user, 2026-10-05:
+  "PUT THE NEW FOLDER icon to the right of the parent folder ... kinda like the F and Q things"): a copy of the build
+  menu's own key badge (the "Q" beside its tabs, `TabContainer/InputHelp/MK hints/Left`: its key_base sprite and grey)
+  holding foldernew.png, brighter under the mouse, with the game's tooltip (the prefab its piece icons use) naming
+  the folder the new one goes into. It is a Button of its own on the row, so its click never reaches the row (no going
+  up); it asks for a name over the open menu and makes the folder inside the folder shown. The rows are copies of the
+  game's tag button (its hover, highlight and gamepad
+  navigation) with a small folder icon, OpenKeep's own, after the game's buttons in the column; the game's "All" row is
+  hidden on this tab and given back on the others. Rebuilt when the folder or the files change; the wheel scrolls it.
+- The breadcrumb ("across the top it shows the folder chain you're in"): a strip across the top of the piece list
+  (the list moves down by its 30 px while the tab is shown), "Blueprints > houses > nordic", the shown folder bold and
+  inert, every other part a button (underlined under the mouse). Too long a chain loses parts from the left behind
+  "...", which opens the folder above the first part shown; laid out again when the folder or the strip's width changes.
+- Panel rows, the panel's up row and breadcrumb parts are the drop targets of the drag and drop (green frame); the
+  folder shown never is.
+- Remembering the folder ("remember what folder their in so they don't have to keep going back to same place when
+  opening and closing hammer"). Found in the decompile: closing the menu or putting the hammer away keeps its tab
+  (`BuildUi.Close` keeps `m_currentPieceList` and `m_currentBuildTool`), but `OpenBuildMenu` starts on the first tab
+  whenever the build tool changed since it was last open (after the hoe or the cultivator) and a new menu (another
+  world, a restart) starts on its first tab; the folder lived only as long as the game. Now the tab and the folder are
+  kept on this machine in `BepInEx/config/OpenKeep.BlueprintsTab.txt` (`folder=houses/nordic`, `tab=true`; a file, not
+  PlayerPrefs, so it can be read and deleted; never synced), read when the hammer's table is first filled (a folder that
+  is gone falls back to the top) and written when either changes. A menu opened with the hammer goes back to the
+  Blueprints tab when that was the last tab shown with the hammer.
+- Names on icons (the user, 2026-10-05: "The foldername should be visible on the icon", "each blueprint you create
+  should have the name on the icon"): every blueprint entry shows its name on a dark band along
+  the bottom of its icon, in the menu's own font (taken from its tab labels) with a black outline, at most two lines,
+  cut with an ellipsis. Text children on the game's buttons rather than names baked into textures: the buttons are
+  64 px cells (read from the scene bundle) and the menu scales them, so live text stays sharp, needs no texture per
+  entry and follows a rename at once; the menu reuses its buttons, so a `BuildUiPieceButton.Setup` postfix sets the
+  band (and hides it for any other piece) every time a button is given a piece. The tools keep plain icons.
+- Several at once, as in a file explorer (the user: "holding click and drag to select multiple", "clicking 1 then
+  holding shift and clicking another will select all between those 2, and holding CTRL and clicking will select
+  multiple one at a time"): only blueprints can be picked. Ctrl + click toggles one (it becomes the
+  anchor); Shift + click picks everything from the anchor to it in the tab's order (Ctrl + Shift adds the range to the
+  picks); holding the left button on empty space of the list and dragging draws a gold box that picks what it touches
+  (with Ctrl added to the picks), and a plain click on empty space clears them. Picks have a gold frame. The game's
+  sneak key is Ctrl and it still reads the player's keys with the menu open, so a Ctrl + click there does not toggle
+  sneaking. A plain click
+  on an entry clears the picks and does what it always did (it is selected and the menu closes). The picks clear when the menu closes, it shows another tab or another folder. The box is an invisible area
+  behind the buttons inside the list's viewport, active only on this tab: as a child of the list it takes the drag
+  the list would otherwise scroll by (dragging empty space scrolled the list before), while the wheel is not a drag
+  and still scrolls; the box is kept in the list's space, so scrolling while drawing keeps its start.
+- Drag and drop (the user: "I should be able to drag and drop the building blueprints ive created into folders"):
+  a press on a blueprint that moves past the event system's drag threshold drags it, or every pick when it is one
+  of them; a short press stays a click. A drag handle on the game's button is enabled only while the button shows a
+  blueprint (Unity sends drag events only to enabled behaviours), so every other button's drag
+  still reaches the list's scrolling; the drag marks the press as no click. A see-through ghost of the icon with a
+  count follows the mouse, the folder under it gets a green frame (a folder panel row - its first row for the folder
+  above - or a breadcrumb part), and letting go there moves the blueprints into that folder one by one through the
+  rename path (a path from the top folder): a name already taken there refuses that one at the top left and the rest
+  still move; then the picks clear and the tab is filled again. Anywhere else nothing happens. A drag the event system loses
+  (the menu closed) ends by itself.
+- A site's ghost is one faint white film you see through (the user, 2026-10-05: "that clearish ghost like color",
+  then "barely visible ... can play the game normally and see through it"). A solid blue tint came first, then
+  see-through faces on Sprites/Default, whose layers stacked into a glowing white block. Now every ghost renderer
+  draws twice after all else in the frame (queues 3990/3991, so water and smoke are never hidden): depth only
+  (Unity's Hidden/Internal-Colored), then a child renderer on the same mesh draws white at 12 % where that
+  depth is the nearest, so only one layer shows; no shadows. Then ("ghost like ... you can still make out the
+  details") the film became the piece's own texture on Sprites/Default, lightened and cooled (colour 1.01, 1.34, 2.4: the wood's
+  yellow read green) and 4 % opaque, tuned live with the user, still
+  one layer thanks to the depth pass; GhostLook.Tune(alpha, brightness, texture) changes it live through DevBridge
+  eval. Planner glows colour it 40 % opaque.
+- Copy building (the user's request, 2026-10-05: "a way to copy existing buildings and allowing selecting multiple
+  builds (if someone wants to copy a compound), have those same kinda controls"): with the entry selected and the menu
+  closed, a click selects the piece under the crosshair (no Ctrl + click: Ctrl lowers the build camera), Shift + click
+  its whole building: every piece joined through touching drawn boxes, as Fix ground finds it, plus everything inside
+  it (a piece whose centre lies within a building piece's footprint and between its lowest bottom and highest top,
+  and what touches that); at most 4,000 pieces within 90 m, so a huge compound takes several clicks; or lets it go
+  when all of it was selected (the user's choice: holding Shift highlights the whole building); G + click
+  the joined pieces of the same prefab; holding Shift or G previews what a click
+  takes; Backspace clears; Enter asks for a name ("Building N", the first free) and saves the selection into the
+  folder the tab shows. Several buildings make one blueprint. The frame faces the camera (yaw snapped to a quarter
+  turn), the ground is the most common ground height under the pieces, and relief and water are kept as the console
+  save does. Only player-built pieces, never ships, carts or site posts; anyone's pieces may be copied (copying
+  changes nothing). The selection and its glow are this machine's only: gold selected, pale blue what a click adds,
+  red what it lets go, through the game's own piece tint held in MaterialMan (at most 200 pieces set a frame, nothing
+  while the selection stands still); the game's hover tint is held back while the entry is selected.
+- Construction ghosts (the user, 2026-10-05: "can we have some option in the hammer to turn off unbuilt building
+  outlines?"): a switch entry after Copy building. A click on it in the menu flips it and the menu stays open (it is
+  never selected for building); its icon (an eye, crossed out in red while hidden), its band ("Ghosts shown" /
+  "Ghosts hidden") and its description show the state, and a top-left message says the new one. It is this player's
+  only (client-only, never synced), kept as `ghosts=` in `OpenKeep.BlueprintsTab.txt`. Hidden: every site ghost on this
+  machine has its root switched off, ghosts loaded later start hidden, no copies are made meanwhile and
+  `SiteGhost.Pick` finds nothing; while the Site planner entry is in hand the ghosts show anyway, since the planner
+  works on them. The site posts, their hover text, delivery and building are not touched.
+- Each tool has its own icon, 128 px, drawn in the style of blueprint.png and fixground.png (thick ink outline, warm
+  wood and straw, the grass-and-earth slab): the Site planner a ghost house and a ticked clipboard, Copy building a
+  house with its pale copy and an arrow, Construction ghosts a big eye in front of a ghost house (ghostsshown.png),
+  crossed out by a red bar while hidden (ghostshidden.png). The folder panel's rows show a small wooden folder with a blueprint sheet
+  (folder.png), its up row the folder with a big yellow arrow (folderup.png), and its New folder button the folder
+  with a green plus (foldernew.png).
+- The second click places a construction site (SPEC-Blueprints.md section 1): a post 2 m in front holding the state,
+  a ghost every player sees, materials handed over with E, Shift+E (creator or admin, checked by the server) takes it
+  down and drops what was handed over. The post's owner builds: with "Build As Resources Come In" one piece every
+  0.125 s (ground first, then the queue, then the rest), off all at once when everything is there; "Build Without
+  Materials" or no-cost mode builds at once. A site near the world centre owned by a dedicated server is taken over
+  by a client that has it loaded.
+- Players pay every piece's materials (into the site) and must have learned every piece; no-cost mode pays nothing,
+  "Build Without Materials" pays nothing but still needs learned pieces. Raised ground costs 0.5 Stone per m³ and
+  lowered ground gives as much back; only the difference counts. Any player-built piece in the way refuses the site. Water is the world's sea level: a blueprint with water sets its floor from the
+  sea. Clearing removes without drops and never takes ore. Pieces skip `WearNTear.OnPlaced`, so support is first
+  checked 30 s later, when the whole build and its ground stand.
+- Stability (asked 2026-10-05): a queued selection is built together with the unbuilt pieces that hold it up, lowest
+  first (`SiteSupport`: from every piece on the ground, support spreads over touching boxes, resting on a piece below
+  costs 1, beside 4, hanging 6; each piece keeps its cheapest path). Checked offline: a house's roof alone brings
+  its walls and posts (plain_wood_house 42 roofs + 46 supports, mead_hall 144 + 81), 4-9 ms a house, 118 ms the compound.
+- Site planner G (hold): the hover glow shows the joined pieces of the same type (a wall run, a roof slope); G + click
+  selects or lets them go. Shift + click stays the whole house.
+- Putting the hammer away with a blueprint pinned places it as a construction site (as the second click): its
+  unbuilt pieces stay as a ghost. Another piece picked in the hammer's menu only lets the pin go; death never places.
+- `openkeep blueprint list | save <name> [radius] [all] [replace] | undo` (refused while off); `list` shows every folder
+  and blueprint as paths and the folder the tab shows; `save` writes into that folder, keeps a 1 m relief of the
+  ground and water where it lay below sea level, and the new file shows in the tab within seconds.
+
 ## Not yet implemented
 
 - Capacity: the read-only container grid on hover (SPEC section 5's stretch goal); no setting is bound for it.
@@ -1685,7 +2049,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.1.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.2.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2057,3 +2421,12 @@ from a script.
     off the tracker". A refused craft (no room) changes nothing. `Untrack When Crafted = false`: it stays.
 78. Tracker look: `Scale = 1.5`, `Font = Norse`, `Font Size = 20`, the colours and `Background Opacity = 0` apply
     within half a second of saving the cfg; the panel widens with the font and stays as narrow as its rows.
+79. Auto Tidy on (`Auto Tidy = true`), a test world: a wood chest (15 stacks) and a stone chest a few metres apart, a
+    junk chest with ten kinds including wood and stone. Within 30 s the wood and stone leave the junk chest for their
+    chests (8 stacks per look, the rest 3 s later); `openkeep tidy` shows the junk chest `JUNK`, the wood chest
+    `Wood 100%`, the looks and their times (the slowest well under 1 ms in a small base). Put one stack of stone into
+    the wood chest and close it: within about 5 s it is in the stone chest. Take it back and put it into the wood chest
+    again: it stays (`kept: Stone`). Empty the wood chest, put wood in the junk chest: it goes to the empty wood chest.
+    A chest of six kinds of bar is not junk (the `smelted on Coal` family). A chest left alone is not looked at again
+    (`Looks` stays put). Two clients: A owns the junk chest, B the wood chest (B opened it last): B's log shows `tidy
+    handed piece_chest_wood over to peer <A>` and the wood moves within seconds.

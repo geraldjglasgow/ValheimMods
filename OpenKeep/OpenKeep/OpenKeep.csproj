@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>2.1.1</Version>
+    <Version>2.2.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -41,6 +41,8 @@
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
     <ProjectReference Include="$(ModLibsPath)\AreaLoading\AreaLoading.csproj" />
     <ProjectReference Include="$(ModLibsPath)\MapClicks\MapClicks.csproj" />
+    <!-- WindowInput: the Site planner's queue panel treated like a game window (free cursor, no attacks, Esc closes) -->
+    <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +68,11 @@
     </Reference>
     <Reference Include="gui_framework">
       <HintPath>$(ManagedPath)\gui_framework.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Splatform: the platform user id a placed piece records as its creator's (Blueprints module) -->
+    <Reference Include="Splatform">
+      <HintPath>$(ManagedPath)\Splatform.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
@@ -120,6 +127,8 @@
     <!-- UI images, decoded at runtime through the game's ImageConversion (StowSprites.Decode, by reflection: the
          module targets netstandard 2.1). Keep them small: the in-game size, not the source. -->
     <EmbeddedResource Include="assets\*.png" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />
+    <!-- Blueprints written into BepInEx/config/OpenKeep.Blueprints the first time (Blueprints module): OpenKeep.blueprints.<file> -->
+    <EmbeddedResource Include="blueprints\*.json" LogicalName="OpenKeep.blueprints.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

@@ -33,13 +33,24 @@ namespace OpenKeep.Stow
         private static void PollWheel(InventoryGui gui)
         {
             float wheel = ZInput.GetMouseScrollWheel();
-            if (wheel == 0f || Time.time - lastWheel < WheelCooldown || Keys.TextInputActive || gui.m_containerGrid == null)
+            if (wheel == 0f || Time.time - lastWheel < WheelCooldown || Keys.TextInputActive || gui.m_containerGrid == null || TooltipScrolls())
                 return;
             RectTransform rect = gui.m_containerGrid.transform as RectTransform;
             if (rect == null || !rect.rect.Contains((Vector2)rect.InverseTransformPoint(ZInput.pointerPosition)))
                 return;
             lastWheel = Time.time;
             Cycle(wheel > 0f ? -1 : 1);
+        }
+
+        /// <summary>
+        /// EliteCrafting scrolls a tooltip too tall for the screen with the wheel, showing a bar named
+        /// <c>ecf_tooltip_bar</c> in it; while that shows the wheel is the tooltip's. Found by name, no reference.
+        /// </summary>
+        private static bool TooltipScrolls()
+        {
+            GameObject tooltip = UITooltip.m_tooltip;
+            Transform bar = tooltip != null && tooltip.activeInHierarchy ? Utils.FindChild(tooltip.transform, "ecf_tooltip_bar") : null;
+            return bar != null && bar.gameObject.activeInHierarchy;
         }
 
         public static void Cycle(int direction)

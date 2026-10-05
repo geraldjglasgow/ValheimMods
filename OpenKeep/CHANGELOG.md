@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.0
+
+- Stow: `Auto Tidy` (off by default): nearby chests send stray items to the chest they belong in, learning where players put things.
+- Blueprints (off by default): a Blueprints tab in the hammer saves buildings and places them as construction sites built as materials come in.
+- Blueprints: Copy building, folders, Fix ground and a Site planner queue.
+- Stow: chest cycling with the wheel waits while EliteCrafting scrolls a tooltip.
+- Console: `openkeep tidy` and `openkeep blueprint`.
+
 ## 2.1.1
 
 - Recipe Tracker: narrower, only as wide as its rows; `-`, `+` and the amount show with the inventory open.

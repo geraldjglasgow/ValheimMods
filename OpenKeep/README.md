@@ -8,7 +8,8 @@ Storage for Valheim, plus a few base tweaks.
 - Crafting: Salvage tab, batches, craft speed, recipe search, favourites, grid views, recipe tracker.
 - Stacks and Capacity: stack sizes, weights, chest and station sizes, contents on hover.
 - Build Camera: build from a free camera near a crafting station (B with the hammer).
-- Off by default: cart workbenches, chest contents signs, shared chests.
+- Off by default: cart workbenches, chest contents signs, shared chests, Auto Tidy (stray items go to the chest
+  they belong in) and Blueprints (save buildings, place them as construction sites from the hammer).
 - Homestead: choose your bed after death, quick respawns, campfires on wood, honey rate, fires, smelters and pets
   fed from chests, night-only torches, quicker Rested, auto repair.
 - Works with PackPanel (inventory) and Wayfare (portals, quick jumps); neither is required.
@@ -26,6 +27,8 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 applies without a restart; the server's values bind every player. Console: `openkeep help`.
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs

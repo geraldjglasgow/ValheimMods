@@ -7,7 +7,8 @@
 #   group:Ores      every item of a group from the groups map below
 #   *               everything
 # Groups are also used by routing (Route Modifier + click): a container holding an item of the same group is a
-# target. Container keys are prefab names (piece_chest_wood, piece_chest, piece_chest_blackmetal, VikingShip, Cart).
+# target; Auto Tidy counts a group as one kind, so a chest of copper and tin ore is one home for Ores.
+# Container keys are prefab names (piece_chest_wood, piece_chest, piece_chest_blackmetal, VikingShip, Cart).
 #   pickup: true    the prefab takes items from the ground (needs the cfg master switch Ground Pickup)
 #   accept: [...]   taken from the ground and routed here even when the container does not hold them yet
 #   refuse: [...]   never taken, never routed here (refuse wins)

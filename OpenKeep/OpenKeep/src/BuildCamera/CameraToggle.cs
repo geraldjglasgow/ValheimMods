@@ -38,7 +38,8 @@ namespace OpenKeep.BuildCamera
             return Keys.Pressed(CameraPrefs.ToggleKey) || PadToggle.Pressed();
         }
 
-        private static bool CanUse(Player player)
+        /// <summary>The camera may be out for this player now: build mode, alive, not teleporting, not seated at a helm, no free fly camera.</summary>
+        public static bool CanUse(Player player)
         {
             return player.InPlaceMode() && !player.IsDead() && !player.IsTeleporting() && player.GetAttachCameraPoint() == null
                 && GameCamera.instance != null && !GameCamera.InFreeFly();
