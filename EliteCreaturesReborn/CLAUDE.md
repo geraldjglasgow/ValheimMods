@@ -141,7 +141,7 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   its kind. Its nameplate shows each creature it ate, by that creature's trophy (a horned monster head for one with no
   trophy)
 - **Thieving** - it holds one item per star; `max items` is the fewest it holds whatever its stars (enhanced),
-  and 8 is the most. It never takes equipped gear or more than one item per landed melee hit, and gives back everything
+  and 8 is the most. It never takes equipped gear, the Wishbone or more than one item per landed melee hit, and gives back everything
   it holds when it is killed. With PackPanel it takes only from your main grid, never from PackPanel's slots (gear,
   backpack, food, mead, ammo, coin purse, key ring, tacklebox)
 - **Gilded** - `loot` multiplier on its drops (enhanced), applied in every loot mode; `bonus item` the item prefab
@@ -211,11 +211,11 @@ and aspect when it first appears.
 | Colossal | 40% bigger, 15% more health, 15% slower. Its heavy blows send out a shockwave that knocks players within 8 m down, no damage; roll through it or jump it | x1.2 |
 | Tethered | Comes as two bosses joined by a faint tether, each with 25% less health and damage; they keep their own health and die apart. The further apart their health, the tauter and redder the tether, the faster both attack (up to 50%) and the less damage the one with less health left takes (up to 50%), both at their most once the gap reaches 50 points. Kill one first and the other fights on at full speed. Both health bars show, one under the other; only the last to fall drops loot, and the damage board shows once, when the last falls, counting both | x1 |
 | Bountiful | Carries two more aspects at once, drawn from that boss's own rotation (never two of Twin, Tethered and Phantom). The altar shows all of them before you offer, and the name carries every word: "Bountiful Enraged Mending Eikthyr". Its twin, tethered partner or Phantom copies carry its other aspects too (each copy calls its own Summoner waves and marks its own Fixated player). Pays every aspect's loot multiplied together, and twice the boss trophies | x2 (times each extra's) |
-| Portalbound | Elder only. As it winds up its vine throw a portal opens 5 to 8 m up within 20 m of its target, in sight of them; as it throws, a second portal opens on its hand and the vines fly out of the far portal at you. No clear spot: it throws as usual | x1.2 |
+| Portalbound | The Elder and Bonemass only. As it winds up its throw (the Elder's vines, Bonemass's slime ball) a portal opens 5 to 8 m up within 20 m of its target, in sight of them; as it throws, a second portal opens on its hand and the vines fly, or the slime arcs, out of the far portal at you. No clear spot: it throws as usual | x1.2 |
 | Nightfall | Night falls on the fight: every player within 60 m of it sees a storming midnight - rain, lightning and thunder - and turns Wet and Cold as under a real storm at night (a roof, a fire or frost resistance still help); the day comes back over a few seconds once it dies or you go 10 m past that range. Every 10 to 20 seconds of fight a tornado whirls up 6 to 9 m in front of each player: for 1.5 seconds it forms, harmless, then hunts that player at 40% of a player's run speed until 10 seconds after it rose, and anyone its funnel touches (1.5 m wide at the ground, 9 m at its 14 m top) takes 25 lightning damage a second; armour does not help. One tornado per player at a time. A tornado that passes over one of the Elder's roots picks it up and throws it in a random direction, 6 to 10 m away. Only what each player sees and feels changes: the world's time and weather never do | x1.3 |
 | Brutal | Its heavy blows throw every player they hit 20 m away, 3 m up at the peak; the hit deals its damage as usual, the landing none. A roll through the blow, or a block that holds (a parry included), keeps you on your feet; a broken guard or a blow from behind throws you. Never while swimming, seated, riding or on a ship's deck | x1.2 |
 
-The chances are weights: 42 for the plain fight and 10 for each of the eighteen aspects (Portalbound only for the Elder), so about one boss fight in
+The chances are weights: 42 for the plain fight and 10 for each of the eighteen aspects (Portalbound only for the Elder and Bonemass), so about one boss fight in
 five stays as the game ships it. Stormbound's lightning, Gravitic's slam, Colossal's shockwave and Nightfall's tornadoes
 are dodged, not blocked: a roll timed through them avoids them, and a raised shield does not. Brutal's throw is the one
 a shield stops.
@@ -268,7 +268,7 @@ the default day) still works when the file names only that; if both are named, `
 - **Bountiful** - `extra aspects` how many more aspects it carries, drawn by the chances from that boss's rotation
 - **Portalbound** - `min height` m the far portal hangs at least above whatever is under it (ground, building,
   treetop or water); `clearance` m it keeps from anything solid and any creature; `range` m from the boss's target it
-  opens within, with a clear line to it (0: never). Only the Elder rolls it
+  opens within, with a clear line to it (0: never). Only the Elder and Bonemass roll it
 - **Nightfall** - `range` m from the boss, along the ground, within which a player's sky turns to a storming
   midnight (kept until 10 m past it) and each player gets a tornado; `every` and `every max` the least and most seconds
   of fight between waves, drawn each time (never shorter than `life`; `every` 0 turns them off); `life` seconds from a

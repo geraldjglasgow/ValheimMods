@@ -7,7 +7,7 @@ namespace EliteCreaturesReborn.Aspects
     /// in a random direction, a random distance out on the ground plane, and at least `min height` above whatever is
     /// under it there - the ground, a building, a treetop or the sea's surface - plus a little more at random. It is
     /// kept only if it is within `range` of the target, at least `clearance` from any solid thing or creature (the boss's
-    /// own body included), and has a clear line to the target's middle, so the vines it sends can reach. A bounded
+    /// own body included), and has a clear line to the target's middle, so the throw it sends can reach. A bounded
     /// number of draws is tried; when none fits there is no portal and the attack is thrown as the game made it.
     /// </summary>
     internal static class PortalSpots

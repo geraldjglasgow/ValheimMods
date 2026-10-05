@@ -62,7 +62,8 @@ namespace EliteCreaturesReborn.Display
                 + $"the further apart their health, the faster both attack (up to {N(rules, aspect, Fields.AttackSpeed)}%) "
                 + $"and the less damage the weaker one takes (up to {N(rules, aspect, Fields.Armour)}%)",
             Aspect.Bountiful => $"carries {N(rules, aspect, Fields.ExtraAspects)} more aspects at once",
-            Aspect.Portalbound => "throws its vines through portals: one opens at its hand, the other somewhere above you",
+            Aspect.Portalbound => "throws through portals (the Elder its vines, Bonemass its slime): one opens at its hand, "
+                + "the other somewhere above you",
             Aspect.Nightfall => $"turns the sky to a storming midnight within {N(rules, aspect, Fields.Range)} m of it; "
                 + $"every {N(rules, aspect, Fields.Every)}-{N(rules, aspect, Fields.EveryMax)} seconds a tornado rises by "
                 + $"each player there and hunts them for {N(rules, aspect, Fields.Life)} seconds: "

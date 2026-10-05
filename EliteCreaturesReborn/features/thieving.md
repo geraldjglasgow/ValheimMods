@@ -98,6 +98,9 @@ a loss players file as a bug rather than as a story, and a thief that cannot tak
 still a thief. This is a fixed rule with **no config switch**: a server that turns it on would be shipping a
 different mutation, and the spec would rather say what this one is.
 
+**It never takes the Wishbone,** equipped or not: it is a boss reward, and a thief that runs off with it costs a
+boss fight. Same fixed rule, no switch.
+
 **The hotbar is the last resort on purpose.** It is the row a player has arranged deliberately, so the backpack
 is robbed first and the arranged row only when there is nothing else - which also means a player carrying nothing
 but their hotbar still gets robbed rather than being quietly immune.
@@ -451,6 +454,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Steals on a landed melee hit that deals damage; takes nothing on a ranged, parried or dodged hit
 - [ ] Pool order: backpack unequipped, then hotbar unequipped, then nothing
 - [ ] Never takes equipped gear, wherever it sits in the grid
+- [ ] Never takes the Wishbone, equipped or not
 - [ ] With PackPanel: never takes from a slot (gear, Backpack, food, mead, ammo, purse, key ring, tacklebox); a worn
   pack's rows can be robbed, the pack never; a 10-wide grid's (9,0) goes before the hotbar; PackPanel disabled in
   r2modman steals as before

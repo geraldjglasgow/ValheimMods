@@ -6,10 +6,10 @@ namespace EliteCreaturesReborn.Aspects
     /// <summary>
     /// A Portalbound throw as one client sees it. It watches the boss's ZDO (<see cref="PortalStore"/>): when a far
     /// portal opens it draws it where the owner put it, facing the target, with the portal-opening sound; when the
-    /// vines are let go it opens the second portal on the hand the boss throws with (<see cref="PortalAttacks"/>) and
-    /// turns the far one to where the vines are aimed; when the closing time comes on the shared clock - or the boss
+    /// throw is let go it opens the second portal on the hand the boss throws with (<see cref="PortalAttacks"/>) and
+    /// turns the far one to where the throw is aimed; when the closing time comes on the shared clock - or the boss
     /// falls - both close. A client that meets the boss mid-throw draws the rest of it the same way; one that meets it
-    /// after the closing time draws nothing. The vines themselves are the game's own networked projectiles, seen by
+    /// after the closing time draws nothing. The throw itself (vines, slime) is the game's own networked projectiles, seen by
     /// everyone as they are. Built only where there is a screen: never on a dedicated server.
     /// </summary>
     internal sealed class PortalView
@@ -53,7 +53,7 @@ namespace EliteCreaturesReborn.Aspects
             }
         }
 
-        // An open throw: closed when its time comes, and the hand's portal opened when the vines are let go.
+        // An open throw: closed when its time comes, and the hand's portal opened when the throw is let go.
         private void Follow(ZDO zdo, long openedAt)
         {
             if (Closing(zdo))
@@ -83,7 +83,7 @@ namespace EliteCreaturesReborn.Aspects
             PortalEffects.Opened(spot);
         }
 
-        // The vines are let go: the far portal turns to them and the portal at the hand opens.
+        // The throw is let go: the far portal turns to it and the portal at the hand opens.
         private void Release(ZDO zdo, long firedAt)
         {
             _seenFire = firedAt;

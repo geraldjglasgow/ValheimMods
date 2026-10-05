@@ -9,27 +9,28 @@ namespace EliteCreaturesReborn.Aspects
     /// boss starts a portal-carried attack (<see cref="PortalAttacks"/>) at a creature, it looks for a spot for the far
     /// portal around that target (<see cref="PortalSpots"/>) and writes it into the boss's ZDO with the moment it opened
     /// (<see cref="PortalStore"/>); with no spot, the attack is thrown as the game made it. When the game lets the
-    /// vines go, each one leaves from the far portal's face toward the target's middle, where the target is at that
-    /// moment, instead of from the boss; the game still adds its own spread. The moment of the first one is written
-    /// too, which opens the portal at the hand everywhere. When the attack ends both portals close a little later; cut
-    /// short before the throw (a stagger, a death), they close at once. Every write carries the latest closing time, so
-    /// the portals close on time even if this machine stops owning the boss mid-attack. Nothing is drawn here.
+    /// projectiles go (the Elder's vines, Bonemass's slime), each one leaves from the far portal's face for the target's
+    /// middle, where the target is at that moment, instead of from the boss: straight at it, or along the arc that lands
+    /// on it for one that falls (<see cref="PortalAim"/>); the game still adds its own spread. The moment of the first one
+    /// is written too, which opens the portal at the hand everywhere. When the attack ends both portals close a little
+    /// later; cut short before the throw (a stagger, a death), they close at once. Every write carries the latest closing
+    /// time, so the portals close on time even if this machine stops owning the boss mid-attack. Nothing is drawn here.
     /// </summary>
     internal sealed class PortalOwner
     {
-        /// <summary>The longest a wind-up may hold the far portal open before the vines come; past it, it closes.</summary>
+        /// <summary>The longest a wind-up may hold the far portal open before the throw comes; past it, it closes.</summary>
         private const float MaxWindup = 5f;
 
-        /// <summary>Seconds both portals stay open after the last vine, so the throw is seen to end.</summary>
+        /// <summary>Seconds both portals stay open after the last projectile, so the throw is seen to end.</summary>
         private const float Linger = 1.2f;
 
         /// <summary>Spare seconds on the closing time written at the release, for a throw that runs a little long.</summary>
         private const float Slack = 0.5f;
 
-        /// <summary>How far in front of the far portal's face the vines appear.</summary>
+        /// <summary>How far in front of the far portal's face the projectiles appear.</summary>
         private const float Mouth = 0.6f;
 
-        /// <summary>The longest stream of vines the closing time allows for, whatever the attack's own numbers say.</summary>
+        /// <summary>The longest stream of projectiles the closing time allows for, whatever the attack's own numbers say.</summary>
         private const float MaxStream = 10f;
 
         private readonly EliteController _controller;
@@ -39,6 +40,8 @@ namespace EliteCreaturesReborn.Aspects
         private Character? _target;
         private Vector3 _spot;
         private Vector3 _aim;
+        private float _speed;
+        private float _gravity;
         private bool _released;
 
         public PortalOwner(EliteController controller, Humanoid boss, string prefab)
@@ -62,7 +65,7 @@ namespace EliteCreaturesReborn.Aspects
             Character? target = Target();
             if (target == null || !PortalSpots.TryFind(target.GetCenterPoint(), PortalSettings.Read(), out Vector3 spot))
             {
-                Log.Diag($"{_boss.name}: Portalbound found no clear spot; the vines come from its hand");
+                Log.Diag($"{_boss.name}: Portalbound found no clear spot; the throw comes from its hand");
                 return;
             }
             Open(attack, target, spot);
@@ -81,6 +84,8 @@ namespace EliteCreaturesReborn.Aspects
             _target = target;
             _spot = spot;
             _aim = target.GetCenterPoint();
+            _speed = PortalAim.SpeedOf(attack);
+            _gravity = PortalAim.GravityOf(attack);
             _released = false;
             long now = NetTime.NowMs();
             PortalStore.Open(_controller.View.GetZDO(), now, spot, _aim, now + Ms(MaxWindup + Stream(attack) + Linger));
@@ -88,8 +93,8 @@ namespace EliteCreaturesReborn.Aspects
         }
 
         /// <summary>
-        /// From the spawn-point patch, on the owner, as the game places each vine of this attack: it leaves from the far
-        /// portal's face toward the target's middle. The first one marks the release.
+        /// From the spawn-point patch, on the owner, as the game places each projectile of this attack: it leaves from the
+        /// far portal's face for the target's middle. The first one marks the release.
         /// </summary>
         public void Redirect(Attack attack, ref Vector3 spawnPoint, ref Vector3 aimDir)
         {
@@ -107,7 +112,7 @@ namespace EliteCreaturesReborn.Aspects
                 return; // the target stands in the portal itself: nothing sensible to aim at, the game's aim stands
             }
             spawnPoint = _spot + toward.normalized * Mouth;
-            aimDir = (_aim - spawnPoint).normalized;
+            aimDir = PortalAim.Toward(spawnPoint, _aim, _speed, _gravity);
             if (!_released)
             {
                 Release(attack);

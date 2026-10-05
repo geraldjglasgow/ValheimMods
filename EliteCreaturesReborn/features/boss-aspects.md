@@ -547,10 +547,13 @@ up and 2 m from anything, a second portal on its hand"). Judgement calls made wh
   after the first try in game, 2026-10-03). Both attack up to 50% faster and the one with less health left takes up to 50% less damage, scaling
   evenly up to a 50-point gap (`full gap`). A dead or unloaded partner counts as empty, so killing one first leaves the
   other at full speed. The partner spawns 6 m away. The tether is a local line from slack pale blue to taut red.
-- **Portalbound** is gated in code to the Elder (`PortalAttacks`), its vine throw `gd_king_shoot`: the far portal is
+- **Portalbound** is gated in code to the Elder (`PortalAttacks`), its vine throw `gd_king_shoot`, and since 2026-10-04
+  Bonemass, its slime throw `bonemass_attack_throw` (the user: only those two): the far portal is
   4-20 m from the target, 5-8 m above whatever is under it, 2 m clear of anything including creatures, in sight of
   the target, 24 tries or the throw is ordinary. The portals are the wooden portal's own swirl, cloned locally, and
-  close 1.2 s after the throw. Loot x1.2.
+  close 1.2 s after the throw. Loot x1.2. Bonemass's slime falls (20 m/s, gravity 10), so it leaves the far portal on
+  the lower arc that lands on the target (`PortalAim`); the Elder's vines fly straight. Its portal sits on the middle
+  knuckles, `l_hand.007` and `r_hand.007`.
 - **`none` raised from 30 to 38**, so a plain fight is still about one in five with sixteen aspects (Portalbound only
   counts for the Elder).
 - **Boss trophies**: a boss with N stars drops N+1 of its trophy, plus one per player within 100 m (2026-10-04), in every loot mode, untouched by every multiplier
@@ -734,3 +737,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-27 | 3.9.0: Adaptive, Fixated, Stormbound, Gravitic and Colossal added at the user's request, with their loot, chances (`none` 20 -> 30), rule-file fields and judgement calls; `elite inspect` shows Adaptive's type and Fixated's mark. Built, not tested in game. | - |
 | 2026-10-03 | Tethered, Bountiful (bosses carry several aspects) and Portalbound (Elder only) added at the user's request; `none` 30 -> 38; boss trophies one per star plus one. Built by parallel agents, not tested in game. | - |
 | 2026-10-04 | Altar stars and a 15 s shift (`shift seconds`); Nightfall and Brutal added at the user's request; `none` 38 -> 42. Built by parallel agents, untested in game. | - |
+| 2026-10-04 | Portalbound for Bonemass too, its slime throw carried on an arc; only the Elder and Bonemass roll it (the user). Built, untested in game. | - |

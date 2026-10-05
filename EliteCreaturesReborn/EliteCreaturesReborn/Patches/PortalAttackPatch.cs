@@ -39,7 +39,7 @@ namespace EliteCreaturesReborn.Patches
     /// Where the game places a projectile and which way it sends it: asked once as a projectile attack's animation
     /// lets go (for the release sound) and again for every projectile of every burst after it, only on the attacker's
     /// owner. For a Portalbound boss's portal-carried attack the answer is changed to the far portal and the target, so
-    /// the vines - the game's own networked projectiles, with the game's own spread added after - fly from there.
+    /// the vines or the slime - the game's own networked projectiles, with the game's own spread added after - fly from there.
     /// Anything that is not a boss is a single check. A failure is reported and never rethrown.
     /// </summary>
     [HarmonyPatch(typeof(Attack), nameof(Attack.GetProjectileSpawnPoint))]

@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.18.0
+
+- Portalbound: Bonemass rolls it too, its slime ball arcing out of a portal above you; only the Elder and Bonemass get it.
+- Thieving never steals the Wishbone.
+
 ## 3.17.0
 
 - New `creature stars: false` rule: creatures keep the game's or another mod's stars, and still mutate.

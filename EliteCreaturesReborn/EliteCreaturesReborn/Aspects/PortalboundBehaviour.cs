@@ -6,13 +6,13 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
-    /// Portalbound: the boss throws its vines through portals. As it winds up its vine attack a portal opens somewhere
-    /// near its target - at least `min height` above the ground, `clearance` from anything, within `range` of the
-    /// target and in sight of it - and as it lets the vines go a second portal opens on its throwing hand; the vines
-    /// come out of the far portal at the target instead of from the hand. Only the Elder has an attack the portals
-    /// carry (<see cref="PortalAttacks"/>), so only the Elder rolls it. Attached by AspectInstaller on every machine,
-    /// never to a Phantom copy. On the boss's owner - the only machine that runs its attacks - it decides where the far
-    /// portal opens and sends the vines from it (<see cref="PortalOwner"/>, reached through
+    /// Portalbound: the boss throws through portals. As it winds up its throw (the Elder's vines, Bonemass's slime) a
+    /// portal opens somewhere near its target - at least `min height` above the ground, `clearance` from anything,
+    /// within `range` of the target and in sight of it - and as it lets go a second portal opens on its throwing hand;
+    /// the throw comes out of the far portal at the target instead of from the hand. Only the Elder and Bonemass have
+    /// an attack the portals carry (<see cref="PortalAttacks"/>), so only they roll it. Attached by AspectInstaller on
+    /// every machine, never to a Phantom copy. On the boss's owner - the only machine that runs its attacks - it decides
+    /// where the far portal opens and sends the throw from it (<see cref="PortalOwner"/>, reached through
     /// <see cref="Patches.PortalStartPatch"/> and <see cref="Patches.PortalSpawnPointPatch"/>), self-gating on live
     /// ownership; on every client with a screen it draws both portals (<see cref="PortalView"/>). The two meet only in
     /// what the owner writes into the boss's ZDO (<see cref="PortalStore"/>).

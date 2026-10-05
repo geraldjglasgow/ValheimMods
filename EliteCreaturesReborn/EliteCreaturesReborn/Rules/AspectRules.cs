@@ -68,7 +68,7 @@ namespace EliteCreaturesReborn.Rules
             }
             if (aspect == Aspect.Portalbound && !Aspects.PortalAttacks.Supports(bossPrefab))
             {
-                return false; // only a boss with an attack the portals know how to carry (the Elder, for now)
+                return false; // only a boss with an attack the portals know how to carry: the Elder and Bonemass
             }
             return aspect == Aspect.None || rule?.Rotation == null || rule.Rotation.Contains(aspect);
         }

@@ -28,6 +28,9 @@ namespace EliteCreaturesReborn.Patches
     {
         private const int HotbarWidth = 8;
 
+        // Never stolen, equipped or not: losing the wishbone to a thief that runs off is a lost boss reward.
+        private static readonly HashSet<string> Unstealable = new HashSet<string> { "Wishbone" };
+
         private static int _counter;
 
         // Read before the game touches the hit: RPC_Damage drops a dodgeable hit that meets a dodge roll's i-frames
@@ -126,13 +129,16 @@ namespace EliteCreaturesReborn.Patches
             List<ItemDrop.ItemData> pool = new List<ItemDrop.ItemData>();
             foreach (ItemDrop.ItemData item in all)
             {
-                if (!item.m_equipped && item.m_gridPos.y < mainRows && InHotbar(item.m_gridPos) == hotbar)
+                if (Stealable(item) && item.m_gridPos.y < mainRows && InHotbar(item.m_gridPos) == hotbar)
                 {
                     pool.Add(item);
                 }
             }
             return pool;
         }
+
+        private static bool Stealable(ItemDrop.ItemData item) =>
+            !item.m_equipped && (item.m_dropPrefab == null || !Unstealable.Contains(item.m_dropPrefab.name));
 
         // The hotbar is row 0's first eight cells, the ones the 1-8 keys use (Inventory.GetHotbar counts to 8); a grid
         // wider than 8 (PackPanel's) has ordinary cells right of it, robbed before the hotbar like any other.

@@ -5,7 +5,7 @@ namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
     /// One Portalbound portal, drawn locally on each client: the wooden portal's swirl inside a glowing rim
-    /// (<see cref="PortalEffects"/>), facing where the vines go. It opens by growing from nothing and closes by
+    /// (<see cref="PortalEffects"/>), facing where the throw goes. It opens by growing from nothing and closes by
     /// shrinking back to nothing, its swirl dimming as it goes, then removes itself; it lives apart from the boss, so a
     /// boss that dies or unloads mid-throw leaves its portals to close on their own rather than vanish. The far portal
     /// hangs where it was put and turns to face the target's latest place; the one at the hand rides the boss's hand,

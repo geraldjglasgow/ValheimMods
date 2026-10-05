@@ -10,8 +10,10 @@ namespace EliteCreaturesReborn.Aspects
     /// projectile attack, because only a projectile can leave from somewhere else. The Elder's is `gd_king_shoot`, its
     /// "shaman attack": the stream of vines (25 of them, a tenth of a second apart) it throws at a target 15 to 50 m
     /// away - not its stomp (a blow on the ground around it), its root spawn (roots raised under the target) or its
-    /// scream. Another boss joins by adding its prefab here with its attack items and the bones of the hands it throws
-    /// with; a boss not listed never rolls Portalbound (<see cref="Supports"/>, read by the rotation).
+    /// scream. Bonemass's is `bonemass_attack_throw` (asked 2026-10-04): the slime ball it lobs, one at 20 m/s under
+    /// gravity, which bursts into its blobs where it lands - not its punch or its poison cloud. Only these two roll
+    /// Portalbound (the user, 2026-10-04). Another boss joins by adding its prefab here with its attack items and the
+    /// bones of the hands it throws with; a boss not listed never rolls it (<see cref="Supports"/>, read by the rotation).
     /// </summary>
     public static class PortalAttacks
     {
@@ -28,10 +30,12 @@ namespace EliteCreaturesReborn.Aspects
         }
 
         // The Elder's hands are over 2 m long from wrist to fingertip, so its portal sits on the knuckles of the middle
-        // fingers, the heart of each hand, rather than on the wrist bones.
+        // fingers, the heart of each hand, rather than on the wrist bones. Bonemass's knuckles are a metre past its
+        // wrists (`l_hand`, `r_hand`); its middle finger's are `l_hand.007` and `r_hand.007`.
         private static readonly Dictionary<string, Entry> ByBoss = new Dictionary<string, Entry>
         {
             ["gd_king"] = new Entry(new[] { "gd_king_shoot" }, new[] { "l_middle1", "r_middle1" }),
+            ["Bonemass"] = new Entry(new[] { "bonemass_attack_throw" }, new[] { "l_hand.007", "r_hand.007" }),
         };
 
         public static bool Supports(string bossPrefab) => ByBoss.ContainsKey(bossPrefab);

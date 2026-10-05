@@ -5,7 +5,7 @@ namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
     /// A Portalbound boss's current pair of portals, in its ZDO: where the far portal hangs and the point it faces, when
-    /// it opened, when the vines were let go through it (which is when the portal at the hand opens), and when both
+    /// it opened, when the throw was let go through it (which is when the portal at the hand opens), and when both
     /// close - every moment on the shared clock. The owner writes them and the game replicates them to every client
     /// holding the boss, so the portals need no message of their own: each client opens and closes the same two portals
     /// at the same moments, a client that meets the boss mid-attack draws the rest of it, and portals whose owner left
@@ -16,7 +16,7 @@ namespace EliteCreaturesReborn.Aspects
         /// <summary>The point the far portal faces: the target's centre at the wind-up, then again at the release.</summary>
         private const string AimKey = "ecr_portal_aim";
 
-        /// <summary>When the vines were let go (shared-clock ms); 0 until then, for each attack.</summary>
+        /// <summary>When the throw was let go (shared-clock ms); 0 until then, for each attack.</summary>
         private const string FireKey = "ecr_portal_fire";
 
         /// <summary>When both portals close (shared-clock ms).</summary>
@@ -44,7 +44,7 @@ namespace EliteCreaturesReborn.Aspects
             zdo.Set(TraitKeys.PortalAt, atMs);
         }
 
-        /// <summary>Owner only, as the vines are let go: where they are aimed, and when the portals close at the latest.</summary>
+        /// <summary>Owner only, as the throw is let go: where it is aimed, and when the portals close at the latest.</summary>
         public static void Fire(ZDO zdo, long atMs, Vector3 aim, long shutMs)
         {
             zdo.Set(AimKey, aim);

@@ -19,7 +19,7 @@ creatures with five or more stars.
 | Plated | Yellow `#F2C40C` | Tough at full health, hits harder as it is hurt. | `armour` 40% E, `max reduction` 55%, `damage` +60% E |
 | Miasmic | Dark green `#1E6B2E` | Leaves poison clouds that hurt players, never creatures. | `cloud life` 6 s, `cloud damage` 5 E, `clouds per second` 1 E, `cloud radius` 4 m |
 | Devouring | Dark red `#7A0F0F` | Eats weaker creatures to grow, then hunts players. | see below |
-| Thieving | Violet `#A64BE0` | Each melee hit steals one unequipped item; kill it to get everything back. | `max items` 1 E (at least one per star, at most 8) |
+| Thieving | Violet `#A64BE0` | Each melee hit steals one unequipped item (never the Wishbone); kill it to get everything back. | `max items` 1 E (at least one per star, at most 8) |
 | Gilded | Pale gold `#FFE066` | Never attacks, runs from players; pays 3x loot plus coins. The rarest. | `loot` 3 E, `bonus item` Coins, `bonus amount` 20 per star+1 E (max 100), `flee distance` 30 m |
 | Blinking | Cyan `#29E0E0` | Every 30 s of a fight, teleports behind its target after a flash and chime; less health. | `health` 0.75, `every` 30 s (0 = off), `distance` 4 m, `tell time` 0.5 s |
 | Relentless | Orange `#FF7F24` | Chases you up to 150 m, seen or not; never faster than normal. | `chase distance` 150 m (0 = off) |
