@@ -53,12 +53,22 @@ prefab name, health and drops.
 
 ## Respawning
 
-All off by default. Times are in world days (30 real minutes each).
+Most creatures guarding a place in Valheim are placed once and never come back after you kill them. These switches
+bring them back. All off by default, all under `respawning:`. Times are in world days (30 real minutes each).
 
 | Switch | Timer | What comes back |
 | --- | --- | --- |
-| `camps` | `camp days` 5 | Creatures in cleared camps |
-| `dungeons` | `dungeon days` 7 | Creatures in cleared dungeons |
-| `dungeon loot` | `dungeon loot days` 14 | Items in fully emptied dungeon chests |
+| `camps` | `camp days` 5 | Creatures guarding places out in the world: Fuling and Draugr villages, Greydwarf and skeleton ruins, Swamp huts, Mistlands dvergr outposts, Ashlands fortresses, drake nests, tar pits and the like |
+| `dungeons` | `dungeon days` 7 | Creatures inside dungeons, the places you enter through a door with a loading screen: Burial Chambers, Sunken Crypts, Frost Caves, Infested Mines and the like |
+| `dungeon loot` | `dungeon loot days` 14 | The contents of dungeon chests, refilled from their usual loot |
 
-All under `respawning:`.
+- **Only creatures (and dungeon chests) come back.** This is not a location reset: destroyed buildings, totems,
+  spawner nests, rocks, ore, pickables and chests out in the world stay as you left them.
+- Each creature comes back on its own: once the timer has passed since it was last seen alive, the next time a
+  player comes near its spot. One still alive somewhere (it wandered off, or you tamed it) is not replaced.
+- Never inside your base: a spot near your workbench, fire or other base pieces stays clear.
+- Creatures the game already brings back on its own timer keep it.
+- A dungeon chest refills only once it is completely empty, never topped up while you are still looting it. Its timer
+  starts the first time it is seen with `dungeon loot` on.
+- Works in existing worlds: places you cleared before turning it on come back too.
+- Changes apply as each area loads; a place already loaded around you keeps its old timer until you come back.

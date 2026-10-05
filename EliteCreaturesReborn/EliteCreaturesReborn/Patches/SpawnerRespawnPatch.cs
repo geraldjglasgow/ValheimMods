@@ -35,7 +35,12 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        /// <summary>A dungeon spawner sits inside a generated room; a camp's sits in the world.</summary>
-        internal static bool InDungeon(Component spawner) => spawner.GetComponentInParent<Room>() != null;
+        /// <summary>
+        /// A dungeon spawner sits in an interior, which the game builds high above its entrance; a camp's sits on the
+        /// ground, Fuling and Draugr villages included. Asked of the position with the game's own interior test,
+        /// because no live spawner or chest has its room as a parent: the game creates every networked object of a
+        /// room or a location on its own, at the top of the scene.
+        /// </summary>
+        internal static bool InDungeon(Component spawner) => Character.InInterior(spawner.transform.position);
     }
 }

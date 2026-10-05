@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.18.2
+
+- Fixed: respawning `camps` no longer refills dungeons; `dungeons` and `dungeon loot` now work.
+- Respawn settings described more clearly in a new rule file and on the wiki.
+
 ## 3.18.1
 
 - Deathsquitos are never Cloaked, whatever the rule file says; one a world saved Cloaked loads without it.

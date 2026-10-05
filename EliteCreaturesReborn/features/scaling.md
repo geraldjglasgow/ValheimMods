@@ -133,7 +133,12 @@ creature or spawns one itself.
 
 - **A spawner the game already gave a timer of its own is never touched.** That one respawns as its designer
   intended, and overriding it would be this mod deciding it knows better about a spawner it did not write.
-- A spawner counts as a **dungeon** one when it sits inside a generated room, and a **camp** one otherwise.
+- A spawner counts as a **dungeon** one when it sits in an interior (the game's own test, `Character.InInterior`:
+  higher than 3000 m, since interiors are built 5000 m above their entrance), and a **camp** one otherwise, so Fuling
+  and Draugr villages, though built from generated rooms, are camps. No live spawner or chest has its room or
+  location as a parent: the game creates every networked object of a room or location on its own. Up to 3.18.1 the
+  test asked for a parent room, which never matched: `camps` also refilled dungeons, `dungeons` and `dungeon loot`
+  did nothing.
 - The timer is a local value the owner reads. Nothing is written and there is nothing to replicate.
 
 ## How loot regeneration works
@@ -141,7 +146,8 @@ creature or spawns one itself.
 A chest refills from its own drop table, exactly as the game fills a fresh one.
 
 - **Only when emptied.** A chest a player is still working through is never topped up under them.
-- **Only inside a generated room**, so a player's own chests and world-surface containers are never touched.
+- **Only inside a dungeon** (the interior test above), so a player's own chests and chests out in the world are never
+  touched.
 - **Only on the owner**, at the moment the chest loads - the same point the game itself fills a fresh chest, so a
   returning player finds it already stocked rather than watching items appear in front of them.
 - The fill time lives in the chest's own ZDO, which the game replicates and saves, so the clock survives a restart
@@ -236,7 +242,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 - [ ] Spawner behaviour as section 3 says
 - [ ] A spawner the game already gave a timer of its own is never touched
-- [ ] Loot regeneration only when emptied, only inside a generated room, only on the owner
+- [ ] Loot regeneration only when emptied, only inside a dungeon, only on the owner
 - [~] A respawned camp rolls at the world's current tier - closed by world tiers in 3.6.0, not tested in game
 
 ## Verification

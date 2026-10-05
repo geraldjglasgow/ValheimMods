@@ -317,10 +317,25 @@ whatever the file says (a rule in the mod, not the file), and one a world saved 
 
 ## Respawning
 
-Cleared camps and dungeons can fill up again, and emptied dungeon chests can refill, each on its own timer in world
-days (a world day is 30 real minutes at the game's default speed). All three are off by default, so clearing a camp
-or a dungeon stays worth doing. A spawner the game already times on its own is left alone, and a chest refills only
-once it has been fully emptied.
+Most creatures guarding a place are placed by the game once, through a spawner that never fires again. Under
+`respawning:` in the rule file, cleared camps and dungeons can fill up again, and emptied dungeon chests can refill,
+each on its own timer in world days (a world day is 30 real minutes at the game's default speed). All three are off
+by default, so clearing a camp or a dungeon stays worth doing.
+
+- **Camps** (`camps`, `camp days` 5) are every such place out in the world: Fuling and Draugr villages, Greydwarf and
+  skeleton ruins, Swamp huts, Mistlands dvergr outposts, Ashlands fortresses, drake nests, tar pits and the like.
+- **Dungeons** (`dungeons`, `dungeon days` 7) are the interiors entered through a door with a loading screen: Burial
+  Chambers, Sunken Crypts, Frost Caves, Infested Mines and the like.
+- **Dungeon loot** (`dungeon loot`, `dungeon loot days` 14) refills a dungeon chest from its own loot table once it
+  has been fully emptied, never topping up one still being looted. Its clock starts the first time it is seen with
+  the switch on. Chests out in the world are never refilled.
+
+Only creatures and dungeon chest contents come back; this is not a location reset, so destroyed buildings, totems,
+spawner nests, rocks, ore and pickables stay as they were left. Each spawner works on its own, the game's way: once
+the timer has passed since its creature was last seen alive, it spawns again when a player comes near. A creature
+still alive elsewhere (wandered off, tamed) is not replaced, a spot inside a player base (near a workbench, a fire)
+stays clear, and a spawner the game already times on its own keeps its timer. Places cleared before the switch was
+turned on come back too. A change applies as each area loads.
 
 ## Death recap
 

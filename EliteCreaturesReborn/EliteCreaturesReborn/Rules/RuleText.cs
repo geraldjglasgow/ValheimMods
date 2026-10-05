@@ -98,12 +98,17 @@ defaults:
     Corrodent:   { durability: 3 }
     Cloning:     { times: 1, range: 12, decoy life: 20, cooldown: 30, reveal effect: vfx_spawn_small, reveal sound: sfx_spawn, vanish effect: vfx_odin_despawn }
 
-# Refilling cleared camps, dungeons and dungeon chests. Days are world days (30 real minutes).
+# Bringing back the creatures the game places only once. Days are world days
+# (30 real minutes). Only creatures and dungeon chest contents come back, never
+# buildings, nests, rocks or pickables.
 respawning:
+  # Places out in the world: Fuling and Draugr villages, ruins, towers, camps.
   camps: false
   camp days: 5
+  # Inside dungeons, behind a loading door: crypts, caves, mines.
   dungeons: false
   dungeon days: 7
+  # Dungeon chests refill only once fully emptied.
   dungeon loot: false
   dungeon loot days: 14
 
