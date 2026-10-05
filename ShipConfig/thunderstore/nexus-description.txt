@@ -15,6 +15,7 @@ Configure every ship in Valheim: health, speed, steering, damage and build cost,
 [*]Modded ships get settings too (any ship with a Ship and a WearNTear component).
 [*]Changes apply at once, to new ships and to ships already in the world.
 [*]AshlandsOceanDamage off lets ships sail the Ashlands ocean unharmed (this skips the Drakkar's progression gate).
+[*]A small ship panel under the minimap while aboard: speed, speed multiplier, map explore radius and, with GrindstoneSkills, your Sailing abilities and their cooldowns (hover for details).
 [/list]
 
 [size=4][b]Install[/b][/size]
@@ -24,6 +25,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 BepInEx/config/com.ShipConfig.cfg; the ship entries appear after the first world load. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]charter status[/b] shows whether the server binds your settings.
 
 [size=4][b]Links[/b][/size]
+Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/ShipConfig. Licence: GPL-3.0.
 
 [size=4][b]Shout outs[/b][/size]

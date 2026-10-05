@@ -9,6 +9,8 @@ Configure every ship in Valheim: health, speed, steering, damage and build cost,
 - Modded ships get settings too (any ship with a `Ship` and a `WearNTear` component).
 - Changes apply at once, to new ships and to ships already in the world.
 - `AshlandsOceanDamage` off lets ships sail the Ashlands ocean unharmed (this skips the Drakkar's progression gate).
+- A small ship panel under the minimap while aboard: speed, speed multiplier, map explore radius and, with
+  GrindstoneSkills, your Sailing abilities and their cooldowns (hover for details).
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `ShipConfig.dll` in
@@ -20,6 +22,8 @@ in the file and applies without a restart; the server's values bind every player
 `charter status` shows whether the server binds your settings.
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs

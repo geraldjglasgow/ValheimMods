@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0
+
+- Ship panel under the minimap while aboard: speed, speed multiplier and map explore radius (`Ship Panel`).
+- With GrindstoneSkills: the panel lists your Sailing abilities with their cooldowns; hover one to read what it does.
+
 ## 1.3.3
 
 - Faster loading: the config file is written once instead of once per setting.

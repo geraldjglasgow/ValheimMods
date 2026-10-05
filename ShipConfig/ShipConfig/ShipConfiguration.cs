@@ -21,6 +21,7 @@ namespace ShipConfig
             LockConfiguration = config.BindLocking("General", "Lock Configuration", true,
                 "Server only. When on, every player uses the server's values for this file and cannot override them locally.");
             ShipMultipliers.Initialize(config);
+            PanelSettings.Initialize(config);
         }
 
         public static bool TryGet(string name, out ShipEntries entries) => Ships.TryGetValue(name, out entries);
