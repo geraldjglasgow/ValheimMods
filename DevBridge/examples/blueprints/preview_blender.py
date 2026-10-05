@@ -1,6 +1,8 @@
 # Blender side of preview.py: blender -b --factory-startup -P preview_blender.py -- <name>-preview.json
 # Builds one mesh per colour group, a ground grid (dug squares from the site's terrain shown as water), then renders
-# each requested view with the Workbench engine into <out>-<view>.png.
+# each requested view with the Workbench engine into <out>-<view>.png. The named views frame the whole build however
+# tall or wide it is (a camera far enough back that its bounding sphere fills the frame); "upper" frames its top
+# third, "cut" shows the cut-away model (east half and roofs left out) when preview.py sent one.
 import json, math, sys
 import bpy
 from mathutils import Vector
@@ -24,12 +26,22 @@ def add_mesh(name, verts, faces, mat):
     return ob
 
 
-def bounds():
+def bounds(groups=None, z_from=None):
     xs, ys, zs = [], [], []
-    for g in data["groups"].values():
+    for g in (groups or data["groups"]).values():
         for x, y, z in g["v"]:
-            xs.append(x); ys.append(y); zs.append(z)
+            if z_from is None or z >= z_from:
+                xs.append(x); ys.append(y); zs.append(z)
     return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
+
+
+def fitted(name, direction, b):
+    """A camera looking along -direction at the centre of bounds b, far enough back to hold their bounding sphere
+    (30 mm lens, 16:10: the narrower, vertical field of view is 41 degrees)."""
+    (x0, x1), (y0, y1), (z0, z1) = b
+    c = Vector(((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
+    r = max(Vector((x1 - x0, y1 - y0, z1 - z0)).length / 2, 4)
+    return camera(name, c + Vector(direction).normalized() * r / math.sin(math.radians(20.5)) * 1.03, c)
 
 
 def dug(site):
@@ -42,13 +54,13 @@ def ground(bx, by):
     holes = dug(data["site"])
     v, f, wv, wf = [], [], [], []
     m = 20
-    for i in range(int(bx[0] - m), int(bx[1] + m), 2):
-        for j in range(int(by[0] - m), int(by[1] + m), 2):
-            cx, cy = i + 1, j + 1
+    for i in range(int(bx[0] - m), int(bx[1] + m)):
+        for j in range(int(by[0] - m), int(by[1] + m)):
+            cx, cy = i + 0.5, j + 0.5
             wet = any(h[0] <= cx <= h[1] and h[2] <= cy <= h[3] for h in holes)
             tv, tf, z = (wv, wf, -1.5) if wet else (v, f, -0.02)
             b = len(tv)
-            tv += [(i, j, z), (i + 2, j, z), (i + 2, j + 2, z), (i, j + 2, z)]
+            tv += [(i, j, z), (i + 1, j, z), (i + 1, j + 1, z), (i, j + 1, z)]
             tf.append((b, b + 1, b + 2, b + 3))
     add_mesh("ground", v, f, material("grass", (0.33, 0.45, 0.22)))
     if wv:
@@ -70,16 +82,19 @@ def camera(name, loc, target, ortho=None):
 
 
 def views(bx, by, bz):
-    c = Vector(((bx[0] + bx[1]) / 2, (by[0] + by[1]) / 2, 0))
-    r = max(bx[1] - bx[0], by[1] - by[0], 12)
-    return {
-        "oblique": camera("oblique", c + Vector((-0.55 * r, -1.25 * r, 0.95 * r)), c),
-        "top": camera("top", c + Vector((0, 0, 3 * r)), c + Vector((0, 0.001, 0)), ortho=r * 1.1),
-        "front": camera("front", c + Vector((0, -1.6 * r, 0.35 * r)), c + Vector((0, 0, bz[1] / 3))),
-        "back": camera("back", c + Vector((0, 1.6 * r, 0.35 * r)), c + Vector((0, 0, bz[1] / 3))),
-        "east": camera("east", c + Vector((1.6 * r, 0, 0.35 * r)), c + Vector((0, 0, bz[1] / 3))),
-        "west": camera("west", c + Vector((-1.6 * r, 0, 0.35 * r)), c + Vector((0, 0, bz[1] / 3))),
+    b, c = (bx, by, bz), Vector(((bx[0] + bx[1]) / 2, (by[0] + by[1]) / 2, 0))
+    upper = bounds(z_from=bz[0] + 0.65 * (bz[1] - bz[0]))
+    cams = {
+        "oblique": fitted("oblique", (-0.55, -1.25, 0.95), b),
+        "top": camera("top", c + Vector((0, 0, 3 * max(bx[1] - bx[0], by[1] - by[0], 12) + bz[1])), c + Vector((0, 0.001, 0)),
+                      ortho=max(bx[1] - bx[0], (by[1] - by[0]) * 1.6) * 1.08),     # fits both ways at 16:10
+        "upper": fitted("upper", (0.8, -0.9, 0.75), upper),
     }
+    for name, d in (("front", (0, -1, 0.25)), ("back", (0, 1, 0.25)), ("east", (1, 0, 0.25)), ("west", (-1, 0, 0.25))):
+        cams[name] = fitted(name, d, b)
+    if data.get("cut"):
+        cams["cut"] = fitted("cut", (1, -0.35, 0.3), b)
+    return cams
 
 
 def close_up(spec):
@@ -104,12 +119,19 @@ def setup():
 
 def main():
     setup()
-    for name, g in data["groups"].items():
-        add_mesh(name, [tuple(v) for v in g["v"]], [tuple(f) for f in g["f"]], material(name, data["colours"][name]))
+    models = {"full": [], "cut": []}
+    for model, groups in (("full", data["groups"]), ("cut", data.get("cut") or {})):
+        for name, g in groups.items():
+            ob = add_mesh(f"{model}-{name}", [tuple(v) for v in g["v"]], [tuple(f) for f in g["f"]],
+                          material(name, data["colours"][name]))
+            models[model].append(ob)
     bx, by, bz = bounds()
     ground(bx, by)
     cams = views(bx, by, bz)
     for i, view in enumerate(data["views"]):
+        for model, obs in models.items():
+            for ob in obs:
+                ob.hide_render = (model == "cut") != (view == "cut")
         bpy.context.scene.camera = cams[view] if view in cams else close_up(view)
         label = view if view in cams else f"cam{i}"
         bpy.context.scene.render.filepath = f"{data['out']}-{label}.png"

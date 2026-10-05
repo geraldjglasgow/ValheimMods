@@ -1,0 +1,47 @@
+{
+ "name": "pen",
+ "description": "12 x 12 m animal pen: roundpole fence all round, a gate in the front, a lean-to shelter in the back corner.",
+ "source": "compound.py",
+ "site": {
+  "level_half": 6.5,
+  "clear_radius": 14,
+  "stand": [
+   0,
+   -9
+  ]
+ },
+ "pieces": [
+  ["wood_fence", -4.9, 0, -6, 0],
+  ["wood_fence", -4.9, 0, 6, 0],
+  ["wood_fence", -2.9, 0, -6, 0],
+  ["wood_fence", -2.9, 0, 6, 0],
+  ["wood_fence", -0.9, 0, 6, 0],
+  ["wood_fence", 1.1, 0, -6, 0],
+  ["wood_fence", 1.1, 0, 6, 0],
+  ["wood_fence", 3.1, 0, -6, 0],
+  ["wood_fence", 3.1, 0, 6, 0],
+  ["wood_fence", 5.1, 0, -6, 0],
+  ["wood_fence", 5.1, 0, 6, 0],
+  ["wood_fence", -6, 0, -5.1, 90],
+  ["wood_fence", 6, 0, -5.1, 90],
+  ["wood_fence", -6, 0, -3.1, 90],
+  ["wood_fence", 6, 0, -3.1, 90],
+  ["wood_fence", -6, 0, -1.1, 90],
+  ["wood_fence", 6, 0, -1.1, 90],
+  ["wood_fence", -6, 0, 0.9, 90],
+  ["wood_fence", 6, 0, 0.9, 90],
+  ["wood_fence", -6, 0, 2.9, 90],
+  ["wood_fence", 6, 0, 2.9, 90],
+  ["wood_fence", -6, 0, 4.9, 90],
+  ["wood_fence", 6, 0, 4.9, 90],
+  ["wood_fence_gate", -0.8, 1.0, -6, 0],
+  ["wood_pole_log", 1, 1.0, 1, 0],
+  ["wood_pole_log", 5, 1.0, 1, 0],
+  ["wood_pole_log_4", 1, 1.78, 5, 0],
+  ["wood_pole_log_4", 5, 1.78, 5, 0],
+  ["wood_roof", 2, 2.1, 2, 180],
+  ["wood_roof", 4, 2.1, 2, 180],
+  ["wood_roof", 2, 3.1, 4, 180],
+  ["wood_roof", 4, 3.1, 4, 180]
+ ]
+}

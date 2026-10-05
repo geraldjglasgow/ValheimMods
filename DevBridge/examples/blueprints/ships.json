@@ -1,0 +1,204 @@
+{
+ "_notes": {
+  "buoyancy": "Ship.CustomFixedUpdate pushes up while centre of mass y <= water + m_waterLevelOffset - 0.5 (m_disableLevel): a boat rides with its centre of mass about that high above the water.",
+  "sea_level": "ZoneSystem.m_waterLevel, 30 in every world; terrain below it fills with water.",
+  "canal": "The user's rule: a canal is 15 m of water, and nothing crosses it lower than the masts (open water gates). Otherwise: water width at least hull width + 2 m; 2.5 m of water is enough for every boat. Boats cannot turn in a canal narrower than their length: they back out.",
+  "fields": "hull: the solid colliders (width across, length, keel and top from the pivot); drawn: everything drawn incl. sail and yard (width is the yard); mast_top_above_pivot = drawn height - pivot_above_bottom."
+ },
+ "Raft": {
+  "name": "Raft",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "Resin",
+    6
+   ]
+  ],
+  "hull": {
+   "width": 3.19,
+   "length": 5.82,
+   "keel": 0.1,
+   "top": 0.48
+  },
+  "drawn": {
+   "width": 6.31,
+   "height": 7.52,
+   "length": 6.69,
+   "pivot_above_bottom": 1.48
+  },
+  "mast_top_above_pivot": 6.04,
+  "float_box": [
+   4.7,
+   1.0,
+   6.91
+  ],
+  "water_level_offset": 1.5
+ },
+ "Karve": {
+  "name": "Karve",
+  "cost": [
+   [
+    "FineWood",
+    30
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "Resin",
+    20
+   ],
+   [
+    "BronzeNails",
+    80
+   ]
+  ],
+  "hull": {
+   "width": 2.87,
+   "length": 10.12,
+   "keel": -0.51,
+   "top": 2.72
+  },
+  "drawn": {
+   "width": 7.81,
+   "height": 9.41,
+   "length": 10.12,
+   "pivot_above_bottom": 1.09
+  },
+  "mast_top_above_pivot": 8.32,
+  "float_box": [
+   4.0,
+   1.0,
+   10.0
+  ],
+  "water_level_offset": 1.2
+ },
+ "VikingShip": {
+  "name": "Longship",
+  "cost": [
+   [
+    "IronNails",
+    100
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "FineWood",
+    40
+   ],
+   [
+    "ElderBark",
+    40
+   ]
+  ],
+  "hull": {
+   "width": 4.68,
+   "length": 21.59,
+   "keel": -0.72,
+   "top": 4.31
+  },
+  "drawn": {
+   "width": 9.4,
+   "height": 12.57,
+   "length": 22.58,
+   "pivot_above_bottom": 1.57
+  },
+  "mast_top_above_pivot": 11.0,
+  "float_box": [
+   8.0,
+   1.0,
+   17.0
+  ],
+  "water_level_offset": 1.5
+ },
+ "VikingShip_Ashlands": {
+  "name": "Drakkar",
+  "cost": [
+   [
+    "IronNails",
+    100
+   ],
+   [
+    "CeramicPlate",
+    30
+   ],
+   [
+    "FineWood",
+    50
+   ],
+   [
+    "YggdrasilWood",
+    25
+   ]
+  ],
+  "hull": {
+   "width": 10.19,
+   "length": 35.08,
+   "keel": -0.34,
+   "top": 11.31
+  },
+  "drawn": {
+   "width": 15.23,
+   "height": 19.74,
+   "length": 35.21,
+   "pivot_above_bottom": 1.85
+  },
+  "mast_top_above_pivot": 17.89,
+  "float_box": [
+   9.5,
+   1.55,
+   22.5
+  ],
+  "water_level_offset": 2.1
+ },
+ "Trailership": {
+  "name": "Longship",
+  "cost": [
+   [
+    "IronNails",
+    80
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "FineWood",
+    40
+   ],
+   [
+    "ElderBark",
+    40
+   ]
+  ],
+  "hull": {
+   "width": 4.68,
+   "length": 21.59,
+   "keel": -0.72,
+   "top": 4.31
+  },
+  "drawn": {
+   "width": 9.4,
+   "height": 12.57,
+   "length": 21.37,
+   "pivot_above_bottom": 1.57
+  },
+  "mast_top_above_pivot": 11.0,
+  "float_box": [
+   8.0,
+   1.0,
+   17.0
+  ],
+  "water_level_offset": 1.7
+ }
+}

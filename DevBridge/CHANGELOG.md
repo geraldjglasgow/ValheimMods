@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Discord link on the store page.
+
 ## 0.1.0
 
 - First release: drive the running game over HTTP on 127.0.0.1, for modders and their AI agents.

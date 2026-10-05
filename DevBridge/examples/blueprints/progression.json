@@ -1,0 +1,35 @@
+{
+ "_notes": [
+  "Every material any hammer piece costs (piece_costs.json, read from the game 2026-10-05), by the boss kill that opens it. A stage's materials are the ones it adds; 'before moder' means the stages up to and including bonemass.",
+  "A material is placed where a group normally first gets it: by the tool or key the boss gives (antler pickaxe, swamp key, wishbone, dragon tear, wisplight) or the biome that follows that boss. Traders (Haldor, Hildir) count from the start.",
+  "This game has Deep North content (moose, seals, writhan, frostwood, gold, ice, snowballs): it comes after Fader.",
+  "Not certain, placed by their description and the pieces that use them: GlowWorm, NornThread, Pot_Shard_Green, CharcoalResin, Ruby, SilverNecklace, Snowball.",
+  "python blueprint.py cost <name> shows each material's stage; --before <boss> lists the pieces that need that boss or later."
+ ],
+ "stages": [
+  {"key": "start", "boss": null, "opens": "Meadows and Black Forest with stone and flint tools, burial chambers, the traders",
+   "materials": ["Wood", "Stone", "StoneRock", "Flint", "Resin", "LeatherScraps", "DeerHide", "Feathers", "Raspberry", "Dandelion",
+                 "Mushroom", "RoundLog", "Coins", "BoneFragments", "Blueberries", "Thistle", "GreydwarfEye", "SurtlingCore",
+                 "TrophySkeleton", "Coal", "FirCone", "PineCone", "QueenBee", "TrollHide", "BjornHide", "BjornPaw", "TrophyBjorn",
+                 "Ectoplasm", "Ruby", "SilverNecklace", "Thunderstone", "BarrelRings", "Ironpit", "BarberKit"]},
+  {"key": "eikthyr", "boss": "Eikthyr", "opens": "Hard antler: the antler pickaxe mines copper and tin, so bronze; the bronze axe fells birch and oak (fine wood); the cultivator",
+   "materials": ["Copper", "Tin", "Bronze", "BronzeNails", "FineWood", "Acorn", "Carrot", "SharpeningStone"]},
+  {"key": "elder", "boss": "The Elder", "opens": "Swamp key: sunken crypts and their iron; the Swamp",
+   "materials": ["Iron", "IronNails", "Chain", "Guck", "Bloodbag", "Turnip", "ElderBark", "CandleWick"]},
+  {"key": "bonemass", "boss": "Bonemass", "opens": "Wishbone: silver in the Mountains; wolves, obsidian, crystal",
+   "materials": ["Silver", "Obsidian", "Crystal", "WolfPelt", "WolfClaw", "TrophyWolf", "Lantern"]},
+  {"key": "moder", "boss": "Moder", "opens": "Dragon tear: the artisan table (spinning wheel, blast furnace); the Plains",
+   "materials": ["DragonTear", "BlackMetal", "Flax", "Barley", "Tar", "LoxPelt", "Cloudberry"]},
+  {"key": "yagluth", "boss": "Yagluth", "opens": "Torn spirit: the wisplight; the Mistlands",
+   "materials": ["YagluthDrop", "YggdrasilWood", "BlackMarble", "BlackCore", "Sap", "Eitr", "Wisp", "JuteRed", "JuteBlue",
+                 "DvergrNeedle", "MechanicalSpring", "ScaleHide", "GlowWorm"]},
+  {"key": "queen", "boss": "The Queen", "opens": "The Ashlands",
+   "materials": ["QueenDrop", "Blackwood", "Grausten", "FlametalNew", "CeramicPlate", "CharredBone", "CharredCogwheel",
+                 "Charredskull", "TrophyCharredMelee", "AskHide", "AsksvinCarrionNeck", "AsksvinCarrionPelvic",
+                 "AsksvinCarrionRibcage", "AsksvinCarrionSkull", "TrophyAsksvin", "SulfurStone", "ProustitePowder",
+                 "MoltenCore", "MorgenSinew", "CelestialFeather", "GemstoneRed", "CharcoalResin", "Pot_Shard_Green", "ShieldCore"]},
+  {"key": "fader", "boss": "Fader", "opens": "The Deep North",
+   "materials": ["FaderDrop", "Frostwood", "FrostCore", "Ice", "Snowball", "Gold", "MooseHide", "MooseSinew", "TrophyMoose",
+                 "SealHide", "WrithanRoots", "NornThread"]}
+ ]
+}

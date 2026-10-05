@@ -117,29 +117,31 @@ def wall_stairs(plan, line, u0, rise=4):
 
 
 # ---------------------------------------------------------------- roofs and gables (ridge along z)
-def roof(W, L, H, side_over=1, gable_over=1, vents=(), horns=True):
-    """45 degree thatch roof over a W x L building (W/2 odd) with walls H high: ridge along z, side_over 2 m rows
-    of eaves, gable_over metres past each gable. Rows in `vents` (their z) get a raised ridge on posts."""
+def roof(W, L, H, side_over=1, gable_over=1, vents=(), horns="both", kind="wood"):
+    """45 degree roof over a W x L building (W/2 odd) with walls H high: ridge along z, side_over 2 m rows of eaves,
+    gable_over metres past each gable (or (front, back)). Rows in `vents` (their z) get a raised ridge on posts.
+    horns: crossed log horns at "both" gable ends, "front", "back" or none (None).
+    kind "wood" is thatch; "darkwood" the darkwood roof (same shapes)."""
     p, hw = Plan(), W // 2
     yr = H + hw - 1                                   # ridge eaves height (peak yr + 1)
-    rows = spans(-(L / 2 + gable_over), L / 2 + gable_over)
+    front, back = gable_over if isinstance(gable_over, tuple) else (gable_over, gable_over)
+    rows = spans(-(L / 2 + front), L / 2 + back)
+    slope, top = f"{kind}_roof_45", f"{kind}_roof_top_45"
     for c in [hw - 1] + [hw - 1 + 2 * k for k in range(1, side_over + 1)] + list(range(hw - 3, 1, -2)):
         for z in rows:
-            p.add(Plan.KEEP, "wood_roof_45", -c, yr - c + 1, z, 270)
-            p.add(Plan.KEEP, "wood_roof_45", c, yr - c + 1, z, 90)
+            p.add(Plan.KEEP, slope, -c, yr - c + 1, z, 270)
+            p.add(Plan.KEEP, slope, c, yr - c + 1, z, 90)
     for z in rows:
         if z not in vents:
-            p.add(Plan.KEEP + 1, "wood_roof_top_45", 0, yr, z, 90)
+            p.add(Plan.KEEP + 1, top, 0, yr, z, 90)
+    for sx, zp in sorted({(sx, z + dz) for z in vents for sx in (-1, 1) for dz in (-1, 1)}):   # rows share posts
+        p.add(Plan.KEEP + 1, "wood_pole", sx, yr + 0.5, zp)
     for z in vents:
-        for sx in (-1, 1):
-            for dz in (-1, 1):
-                p.add(Plan.KEEP + 1, "wood_pole", sx, yr + 0.5, z + dz)
-        p.add(Plan.KEEP + 2, "wood_roof_top_45", 0, yr + 1, z, 90)
-    if horns:
-        for zs in (-1, 1):
-            ze = zs * (L / 2 + gable_over - 0.3)
-            p.add(Plan.KEEP + 3, "wood_log_45", 0, yr + 1.35, ze, 0)
-            p.add(Plan.KEEP + 3, "wood_log_45", 0, yr + 1.35, ze, 180)
+        p.add(Plan.KEEP + 2, top, 0, yr + 1, z, 90)
+    ends = {"both": (-1, 1), "front": (-1,), "back": (1,)}.get(horns, ())
+    for ze in [-(L / 2 + front - 0.3) if e < 0 else L / 2 + back - 0.3 for e in ends]:
+        p.add(Plan.KEEP + 3, "wood_log_45", 0, yr + 1.35, ze, 0)
+        p.add(Plan.KEEP + 3, "wood_log_45", 0, yr + 1.35, ze, 180)
     return p
 
 
@@ -158,21 +160,27 @@ def gable(plan, ph, W, H, z):
 
 
 # ---------------------------------------------------------------- one-storey timber buildings
-def _bay(plan, line, a, kind, H):
-    """One 2 m bay of an H (3 or 4) m wall: S solid, W window (shutters), D the 3 m wood gate, L low wall, O open."""
-    put = lambda ph, n, y, v=0.0, yaw=0: line.put(plan, ph, n, a, y, v, yaw)
+def _bay(plan, line, a, kind, H, y0=0.0):
+    """One 2 m bay of an H (3 or 4) m wall standing on y0: S solid, W window (shutters), D the 3 m wood gate,
+    d the 2 m wood door (with a half wall over it), L low wall, O open."""
+    put = lambda ph, n, y, v=0.0, yaw=0: line.put(plan, ph, n, a, y0 + y, v, yaw)
     if kind == "S":
         put(10, "woodwall", 1)
         put(10, "wood_wall_half" if H == 3 else "woodwall", 2.5 if H == 3 else 3)
     elif kind == "W":
         put(10, "wood_wall_half", 0.5)
         put(10, "wood_wall_half" if H == 3 else "woodwall", 2.5 if H == 3 else 3)
-        line.put(plan, 11, "wood_window", a - 1, 1.5, 0, 180)
-        line.put(plan, 11, "wood_window", a + 1, 1.5, 0, 0)
+        line.put(plan, 11, "wood_window", a - 1, y0 + 1.5, 0, 180)
+        line.put(plan, 11, "wood_window", a + 1, y0 + 1.5, 0, 0)
         put(11, "wood_beam", 0.9, O)
         put(11, "wood_beam", 2.1, O)
     elif kind == "D":
         put(10, "wood_gate", 1.05)
+        if H == 4:
+            put(10, "wood_wall_half", 3.5)
+    elif kind == "d":
+        put(10, "wood_door", 1.02)
+        put(10, "wood_wall_half", 2.5)
         if H == 4:
             put(10, "wood_wall_half", 3.5)
     elif kind == "L":
@@ -245,10 +253,11 @@ def building(W, L, H, bays, floor="wood", side_over=1, vents=(), inside=()):
 
 
 # ---------------------------------------------------------------- towers on the wall
-def tower(cx, cz, half, walks, ridge="z"):
+def tower(cx, cz, half, walks, ridge="z", closed=()):
     """A square stone tower 2*half wide centred at (cx, cz): stone up to the walk (y 4), a timber watch storey to
     y 7 under a gable roof. walks: (axis, lo, hi) bands of wall walk running through it; the bays they cross stay
-    open, the others alternate arrow slits and solid wall."""
+    open, the others alternate arrow slits and solid wall. closed: faces ("S", "N", "W", "E") kept shut anyway,
+    e.g. the side of a water-gate tower that looks over the open gate."""
     p, w = Plan(), 2 * half
     x0, z0 = cx - half, cz - half
     stone_run(p, 0, Line(x0, z0 + 0.5, "+x", "-z"), 0, w, -1)
@@ -258,12 +267,13 @@ def tower(cx, cz, half, walks, ridge="z"):
     for x in spans(x0, x0 + w):
         for z in spans(z0, z0 + w):
             p.add(2, "wood_floor", x, WALK - 0.08, z)
-    faces = [(Line(x0, z0 + 0.2, "+x", "-z"), "x"), (Line(x0, cz + half - 0.2, "+x", "+z"), "x"),
-             (Line(x0 + 0.2, z0, "+z", "-x"), "z"), (Line(cx + half - 0.2, z0, "+z", "+x"), "z")]
-    for line, along in faces:
+    faces = [("S", Line(x0, z0 + 0.2, "+x", "-z"), "x"), ("N", Line(x0, cz + half - 0.2, "+x", "+z"), "x"),
+             ("W", Line(x0 + 0.2, z0, "+z", "-x"), "z"), ("E", Line(cx + half - 0.2, z0, "+z", "+x"), "z")]
+    for key, line, along in faces:
         for i, a in enumerate(spans(0, w)):
             mid = (x0 if along == "x" else z0) + a
-            crossed = any(ax != along and min(mid + 1, hi) - max(mid - 1, lo) >= 1 for ax, lo, hi in walks)
+            crossed = key not in closed and any(ax != along and min(mid + 1, hi) - max(mid - 1, lo) >= 1
+                                                for ax, lo, hi in walks)
             if not crossed:
                 line.put(p, 10, "wood_wall_half" if i % 2 == 0 else "woodwall", a, WALK + 0.5 if i % 2 == 0 else WALK + 1)
                 line.put(p, 10, "wood_wall_half", a, WALK + 2.5)

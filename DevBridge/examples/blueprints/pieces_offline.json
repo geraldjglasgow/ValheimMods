@@ -1,0 +1,3092 @@
+{
+ "forge": {
+  "name": "Forge",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Stone",
+    4
+   ],
+   [
+    "Coal",
+    4
+   ],
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Copper",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.87,
+   1.25,
+   1.17
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.62,
+   0.07
+  ],
+  "measured": "offline"
+ },
+ "forge_ext1": {
+  "name": "Forge Bellows",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    5
+   ],
+   [
+    "DeerHide",
+    5
+   ],
+   [
+    "Chain",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.76,
+   1.91,
+   1.59
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   -0.06,
+   0.95,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "forge_ext2": {
+  "name": "Anvils",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    5
+   ],
+   [
+    "Bronze",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.84,
+   0.84,
+   0.9
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   -0.05,
+   0.42,
+   -0.01
+  ],
+  "measured": "offline"
+ },
+ "forge_ext3": {
+  "name": "Grinding Wheel",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    25
+   ],
+   [
+    "SharpeningStone",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.75,
+   1.41,
+   1.05
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.71,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "forge_ext4": {
+  "name": "Smith's Anvil",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    20
+   ],
+   [
+    "Wood",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.9,
+   1.4,
+   1.27
+  ],
+  "pivot_above_bottom": -0.04,
+  "centre": [
+   0.0,
+   0.74,
+   0.16
+  ],
+  "measured": "offline"
+ },
+ "forge_ext5": {
+  "name": "Forge Cooler",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    25
+   ],
+   [
+    "Copper",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.95,
+   1.0,
+   0.94
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.5,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "forge_ext6": {
+  "name": "Forge Tool Rack",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    15
+   ],
+   [
+    "Wood",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.5,
+   0.94,
+   0.41
+  ],
+  "pivot_above_bottom": 0.7,
+  "centre": [
+   0.0,
+   -0.23,
+   0.11
+  ],
+  "measured": "offline"
+ },
+ "piece_workbench_ext3": {
+  "name": "Adze",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Bronze",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.19,
+   1.54,
+   1.33
+  ],
+  "pivot_above_bottom": 0.36,
+  "centre": [
+   0.0,
+   0.41,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_workbench_ext4": {
+  "name": "Tool Shelf",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    4
+   ],
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Obsidian",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.8,
+   1.66,
+   0.44
+  ],
+  "pivot_above_bottom": 0.37,
+  "centre": [
+   -0.01,
+   0.46,
+   0.02
+  ],
+  "measured": "offline"
+ },
+ "smelter": {
+  "name": "Smelter",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.03,
+   4.24,
+   2.58
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.18,
+   2.12,
+   -0.02
+  ],
+  "measured": "offline"
+ },
+ "blastfurnace": {
+  "name": "Blast Furnace",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ],
+   [
+    "Iron",
+    10
+   ],
+   [
+    "FineWood",
+    20
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.74,
+   5.58,
+   3.97
+  ],
+  "pivot_above_bottom": 0.4,
+  "centre": [
+   -0.19,
+   2.38,
+   -0.03
+  ],
+  "measured": "offline"
+ },
+ "charcoal_kiln": {
+  "name": "Charcoal Kiln",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.68,
+   3.72,
+   4.93
+  ],
+  "pivot_above_bottom": 0.63,
+  "centre": [
+   0.0,
+   1.23,
+   -0.16
+  ],
+  "measured": "offline"
+ },
+ "blackforge": {
+  "name": "Black Forge",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    10
+   ],
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "BlackCore",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.79,
+   1.16,
+   1.92
+  ],
+  "pivot_above_bottom": -0.01,
+  "centre": [
+   0.0,
+   0.59,
+   0.1
+  ],
+  "measured": "offline"
+ },
+ "blackforge_ext1": {
+  "name": "Black Forge Cooler",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    5
+   ],
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.58,
+   0.34,
+   0.54
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.17,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "blackforge_ext2_vise": {
+  "name": "Vice",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    8
+   ],
+   [
+    "MechanicalSpring",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.71,
+   1.21,
+   0.84
+  ],
+  "pivot_above_bottom": 0.02,
+  "centre": [
+   0.0,
+   0.59,
+   -0.06
+  ],
+  "measured": "offline"
+ },
+ "piece_artisanstation": {
+  "name": "Artisan Table",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "DragonTear",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.99,
+   3.52,
+   4.0
+  ],
+  "pivot_above_bottom": 0.71,
+  "centre": [
+   -0.04,
+   1.05,
+   -0.15
+  ],
+  "measured": "offline"
+ },
+ "piece_cauldron": {
+  "name": "Cauldron",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Tin",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.4,
+   2.6,
+   1.53
+  ],
+  "pivot_above_bottom": 0.32,
+  "centre": [
+   0.14,
+   0.98,
+   0.06
+  ],
+  "measured": "offline"
+ },
+ "cauldron_ext1_spice": {
+  "name": "Spice Rack",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Dandelion",
+    3
+   ],
+   [
+    "Carrot",
+    2
+   ],
+   [
+    "Mushroom",
+    5
+   ],
+   [
+    "Thistle",
+    3
+   ],
+   [
+    "Turnip",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.15,
+   2.27,
+   0.57
+  ],
+  "pivot_above_bottom": 0.97,
+  "centre": [
+   -0.02,
+   0.17,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "cauldron_ext3_butchertable": {
+  "name": "Butcher's Table",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "ElderBark",
+    2
+   ],
+   [
+    "RoundLog",
+    4
+   ],
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "Silver",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.25,
+   1.37,
+   1.25
+  ],
+  "pivot_above_bottom": -0.01,
+  "centre": [
+   0.0,
+   0.69,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "cauldron_ext4_pots": {
+  "name": "Pots and Pans",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    5
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "FineWood",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.0,
+   2.1,
+   0.85
+  ],
+  "pivot_above_bottom": 1.19,
+  "centre": [
+   0.0,
+   -0.14,
+   0.41
+  ],
+  "measured": "offline"
+ },
+ "cauldron_ext5_mortarandpestle": {
+  "name": "Mortar and Pestle",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    8
+   ],
+   [
+    "FineWood",
+    6
+   ],
+   [
+    "RoundLog",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.99,
+   0.96,
+   0.99
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   -0.32,
+   0.47,
+   0.04
+  ],
+  "measured": "offline"
+ },
+ "cauldron_ext6_rollingpins": {
+  "name": "Rolling Pins and Cutting Boards",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    8
+   ],
+   [
+    "FineWood",
+    6
+   ],
+   [
+    "FlametalNew",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.86,
+   1.66,
+   0.38
+  ],
+  "pivot_above_bottom": 0.17,
+  "centre": [
+   0.0,
+   0.66,
+   -0.03
+  ],
+  "measured": "offline"
+ },
+ "cauldron_ext7_smoker": {
+  "name": "Smoker",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Gold",
+    5
+   ],
+   [
+    "Frostwood",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.17,
+   1.18,
+   0.89
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   -0.11,
+   0.59,
+   0.01
+  ],
+  "measured": "offline"
+ },
+ "piece_oven": {
+  "name": "Stone Oven",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Iron",
+    15
+   ],
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    2.0,
+    -1.0
+   ],
+   [
+    0.5,
+    0.0,
+    -1.0
+   ],
+   [
+    0.5,
+    2.0,
+    1.0
+   ],
+   [
+    0.5,
+    0.0,
+    1.0
+   ],
+   [
+    -1.5,
+    2.0,
+    -1.0
+   ],
+   [
+    -1.5,
+    2.0,
+    1.0
+   ],
+   [
+    -1.5,
+    0.0,
+    1.0
+   ],
+   [
+    -1.5,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   3.03,
+   2.38,
+   2.01
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.01,
+   1.19,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_preptable": {
+  "name": "Food Preparation Table",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "LeatherScraps",
+    15
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.53,
+   1.23,
+   0.69
+  ],
+  "pivot_above_bottom": 0.03,
+  "centre": [
+   -0.02,
+   0.59,
+   0.02
+  ],
+  "measured": "offline"
+ },
+ "piece_cookingstation_iron": {
+  "name": "Iron Cooking Station",
+  "category": "Crafting",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    3
+   ],
+   [
+    "Chain",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.73,
+   2.7,
+   0.96
+  ],
+  "pivot_above_bottom": 0.3,
+  "centre": [
+   -0.07,
+   1.05,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "fermenter": {
+  "name": "Fermenter",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    30
+   ],
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "Resin",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.68,
+   2.2,
+   2.02
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   1.1,
+   0.19
+  ],
+  "measured": "offline"
+ },
+ "piece_MeadCauldron": {
+  "name": "Mead Ketill",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Tin",
+    4
+   ],
+   [
+    "Copper",
+    6
+   ],
+   [
+    "LeatherScraps",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.34,
+   1.04,
+   0.85
+  ],
+  "pivot_above_bottom": 0.16,
+  "centre": [
+   0.0,
+   0.36,
+   0.01
+  ],
+  "measured": "offline"
+ },
+ "piece_chest_wood": {
+  "name": "Chest",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.64,
+   0.79,
+   0.75
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.39,
+   0.01
+  ],
+  "measured": "offline"
+ },
+ "piece_chest": {
+  "name": "Reinforced Chest",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.84,
+   1.09,
+   0.97
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.54,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_chest_barrel": {
+  "name": "Barrel",
+  "category": "Furniture",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "BarrelRings",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.8,
+   0.9,
+   0.8
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.45,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_chest_private": {
+  "name": "Personal Chest",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Iron",
+    8
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.92,
+   0.54,
+   0.49
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.27,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_spinningwheel": {
+  "name": "Spinning Wheel",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "IronNails",
+    10
+   ],
+   [
+    "LeatherScraps",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.93,
+   2.93,
+   3.61
+  ],
+  "pivot_above_bottom": 0.68,
+  "centre": [
+   0.03,
+   0.78,
+   -0.07
+  ],
+  "measured": "offline"
+ },
+ "windmill": {
+  "name": "Windmill",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "Wood",
+    30
+   ],
+   [
+    "IronNails",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   5.42,
+   8.49,
+   5.75
+  ],
+  "pivot_above_bottom": 0.05,
+  "centre": [
+   0.0,
+   4.2,
+   -0.7
+  ],
+  "measured": "offline"
+ },
+ "piece_beehive": {
+  "name": "Beehive",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "QueenBee",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.82,
+   1.68,
+   1.69
+  ],
+  "pivot_above_bottom": 0.02,
+  "centre": [
+   -0.02,
+   0.82,
+   0.02
+  ],
+  "measured": "offline"
+ },
+ "bed": {
+  "name": "Bed",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    8
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.7,
+   0.69,
+   3.13
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.04,
+   0.34,
+   0.1
+  ],
+  "comfort": 1,
+  "comfort_group": "Bed",
+  "measured": "offline"
+ },
+ "piece_bed02": {
+  "name": "Dragon Bed",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    40
+   ],
+   [
+    "DeerHide",
+    7
+   ],
+   [
+    "WolfPelt",
+    4
+   ],
+   [
+    "Feathers",
+    10
+   ],
+   [
+    "IronNails",
+    15
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.83,
+   1.75,
+   3.49
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   -0.05,
+   0.87,
+   0.11
+  ],
+  "comfort": 2,
+  "comfort_group": "Bed",
+  "measured": "offline"
+ },
+ "piece_chair": {
+  "name": "Stool",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.59,
+   0.52,
+   0.5
+  ],
+  "pivot_above_bottom": -0.07,
+  "centre": [
+   0.0,
+   0.33,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_chair02": {
+  "name": "Wood Chair",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.51,
+   1.22,
+   1.14
+  ],
+  "pivot_above_bottom": 0.02,
+  "centre": [
+   0.0,
+   0.6,
+   -0.18
+  ],
+  "comfort": 2,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_chair03": {
+  "name": "Darkwood Chair",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "Tar",
+    1
+   ],
+   [
+    "IronNails",
+    5
+   ],
+   [
+    "DeerHide",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.59,
+   1.28,
+   0.62
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   -0.01,
+   0.63,
+   -0.01
+  ],
+  "comfort": 2,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_bench01": {
+  "name": "Wood Bench",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.5,
+   0.54,
+   0.62
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.02,
+   0.27,
+   -0.03
+  ],
+  "comfort": 1,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_logbench01": {
+  "name": "Sitting Log",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.7,
+   0.59,
+   0.63
+  ],
+  "pivot_above_bottom": 0.1,
+  "centre": [
+   0.0,
+   0.19,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_throne01": {
+  "name": "Raven Throne",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "IronNails",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.12,
+   2.82,
+   0.94
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   1.41,
+   0.02
+  ],
+  "comfort": 3,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_throne02": {
+  "name": "Stone Throne",
+  "category": "Furniture",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "DeerHide",
+    2
+   ],
+   [
+    "WolfPelt",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.62,
+   2.97,
+   1.16
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   1.48,
+   -0.05
+  ],
+  "comfort": 3,
+  "comfort_group": "Chair",
+  "measured": "offline"
+ },
+ "piece_table": {
+  "name": "Table",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.5,
+   0.83,
+   1.25
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   0.4,
+   -0.02
+  ],
+  "comfort": 1,
+  "comfort_group": "Table",
+  "measured": "offline"
+ },
+ "piece_table_oak": {
+  "name": "Long Heavy Table",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "IronNails",
+    20
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   6.6,
+   0.82,
+   1.92
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.05,
+   0.4,
+   -0.01
+  ],
+  "comfort": 2,
+  "comfort_group": "Table",
+  "measured": "offline"
+ },
+ "piece_table_round": {
+  "name": "Round Table",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "IronNails",
+    20
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.53,
+   0.82,
+   2.51
+  ],
+  "pivot_above_bottom": 0.02,
+  "centre": [
+   0.0,
+   0.39,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Table",
+  "measured": "offline"
+ },
+ "piece_table_runed": {
+  "name": "Long Carved Table",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    20
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "IronNails",
+    20
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.06,
+   0.78,
+   1.21
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.39,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Table",
+  "measured": "offline"
+ },
+ "rug_wolf": {
+  "name": "Wolf Rug",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "WolfPelt",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.55,
+   0.11,
+   3.46
+  ],
+  "pivot_above_bottom": -0.03,
+  "centre": [
+   0.0,
+   0.08,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Carpet",
+  "measured": "offline"
+ },
+ "rug_Bjorn": {
+  "name": "Bearskin Rug",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "BjornHide",
+    1
+   ],
+   [
+    "BjornPaw",
+    2
+   ],
+   [
+    "TrophyBjorn",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.25,
+   1.13,
+   5.07
+  ],
+  "pivot_above_bottom": 0.16,
+  "centre": [
+   0.0,
+   0.41,
+   0.12
+  ],
+  "comfort": 2,
+  "comfort_group": "Carpet",
+  "measured": "offline"
+ },
+ "rug_fur": {
+  "name": "Lox Rug",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LoxPelt",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.06,
+   0.08,
+   3.97
+  ],
+  "pivot_above_bottom": -0.03,
+  "centre": [
+   0.0,
+   0.07,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Carpet",
+  "measured": "offline"
+ },
+ "rug_deer": {
+  "name": "Deer Rug",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "DeerHide",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.11,
+   0.01,
+   3.11
+  ],
+  "pivot_above_bottom": -0.06,
+  "centre": [
+   0.0,
+   0.07,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Carpet",
+  "measured": "offline"
+ },
+ "jute_carpet": {
+  "name": "Red Jute Carpet",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "JuteRed",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.99,
+   0.09,
+   3.0
+  ],
+  "pivot_above_bottom": -0.03,
+  "centre": [
+   0.0,
+   0.07,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Carpet",
+  "measured": "offline"
+ },
+ "piece_cloth_hanging_door": {
+  "name": "Red Jute Curtain",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "JuteRed",
+    4
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   2.5,
+   1.13
+  ],
+  "pivot_above_bottom": 2.4,
+  "centre": [
+   0.0,
+   -1.15,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Banner",
+  "measured": "offline"
+ },
+ "piece_cloth_hanging_door_blue": {
+  "name": "Blue Jute Drapes",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "JuteBlue",
+    4
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.34,
+   4.29,
+   2.0
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   2.15,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Banner",
+  "measured": "offline"
+ },
+ "piece_banner02": {
+  "name": "Blue Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.93,
+  "centre": [
+   0.0,
+   -1.41,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Banner",
+  "measured": "offline"
+ },
+ "piece_banner04": {
+  "name": "Red Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Bloodbag",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.93,
+  "centre": [
+   0.0,
+   -1.41,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Banner",
+  "measured": "offline"
+ },
+ "piece_brazierfloor01": {
+  "name": "Standing Brazier",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "Coal",
+    2
+   ],
+   [
+    "WolfClaw",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   1.02,
+   0.99
+  ],
+  "pivot_above_bottom": 1.06,
+  "centre": [
+   0.01,
+   -0.55,
+   0.01
+  ],
+  "comfort": 1,
+  "comfort_group": "Fire",
+  "measured": "offline"
+ },
+ "piece_brazierfloor02": {
+  "name": "Blue Standing Brazier",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "GreydwarfEye",
+    5
+   ],
+   [
+    "WolfClaw",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   1.02,
+   0.99
+  ],
+  "pivot_above_bottom": 1.06,
+  "centre": [
+   0.01,
+   -0.55,
+   0.01
+  ],
+  "comfort": 1,
+  "comfort_group": "Fire",
+  "measured": "offline"
+ },
+ "piece_brazierceiling01": {
+  "name": "Hanging Brazier",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "Coal",
+    2
+   ],
+   [
+    "Chain",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   1.95,
+   0.99
+  ],
+  "pivot_above_bottom": -0.03,
+  "centre": [
+   0.01,
+   1.01,
+   0.01
+  ],
+  "comfort": 1,
+  "comfort_group": "Fire",
+  "measured": "offline"
+ },
+ "piece_walltorch": {
+  "name": "Sconce",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Copper",
+    2
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.45,
+   0.95,
+   0.31
+  ],
+  "pivot_above_bottom": 0.33,
+  "centre": [
+   0.02,
+   0.14,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_groundtorch_wood": {
+  "name": "Standing Wood Torch",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.12,
+   1.41,
+   0.13
+  ],
+  "pivot_above_bottom": 0.65,
+  "centre": [
+   0.0,
+   0.05,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_dvergr_lantern": {
+  "name": "Dvergr Wall Lantern",
+  "category": "Furniture",
+  "material": "Iron",
+  "cost": [
+   [
+    "Copper",
+    2
+   ],
+   [
+    "Lantern",
+    1
+   ],
+   [
+    "Chain",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.31,
+    0.0
+   ]
+  ],
+  "size": [
+   1.14,
+   1.34,
+   0.67
+  ],
+  "pivot_above_bottom": 0.89,
+  "centre": [
+   -0.57,
+   -0.22,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Lantern",
+  "measured": "offline"
+ },
+ "piece_dvergr_lantern_pole": {
+  "name": "Dvergr Pole Lantern",
+  "category": "Furniture",
+  "material": "Iron",
+  "cost": [
+   [
+    "Copper",
+    3
+   ],
+   [
+    "Lantern",
+    1
+   ],
+   [
+    "Chain",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.21,
+   3.53,
+   0.54
+  ],
+  "pivot_above_bottom": 3.0,
+  "centre": [
+   -0.53,
+   -1.23,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Lantern",
+  "measured": "offline"
+ },
+ "piece_Lavalantern": {
+  "name": "Lava Lantern",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FlametalNew",
+    1
+   ],
+   [
+    "ProustitePowder",
+    1
+   ],
+   [
+    "SulfurStone",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.38,
+   0.82,
+   0.39
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   0.4,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Lantern",
+  "measured": "offline"
+ },
+ "piece_snowlantern": {
+  "name": "Snow Lantern",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Snowball",
+    8
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.52,
+   0.47,
+   0.53
+  ],
+  "pivot_above_bottom": 0.03,
+  "centre": [
+   0.0,
+   0.2,
+   0.0
+  ],
+  "comfort": 2,
+  "comfort_group": "Lantern",
+  "measured": "offline"
+ },
+ "Candle_resin": {
+  "name": "Resin Candle",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Resin",
+    1
+   ],
+   [
+    "CandleWick",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.27,
+   0.32,
+   0.25
+  ],
+  "pivot_above_bottom": 0.03,
+  "centre": [
+   0.07,
+   0.14,
+   0.01
+  ],
+  "measured": "offline"
+ },
+ "piece_CelebrationGarland": {
+  "name": "Flower Garland",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Dandelion",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.18,
+   1.17,
+   0.42
+  ],
+  "pivot_above_bottom": 0.35,
+  "centre": [
+   0.0,
+   0.23,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Garland",
+  "measured": "offline"
+ },
+ "piece_FairylightGarland": {
+  "name": "Fey Lights",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Thistle",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.14,
+   1.22,
+   0.14
+  ],
+  "pivot_above_bottom": 0.47,
+  "centre": [
+   0.0,
+   0.14,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Garland",
+  "measured": "offline"
+ },
+ "itemstand": {
+  "name": "Item Stand",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "BronzeNails",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.5,
+   0.5,
+   0.2
+  ],
+  "pivot_above_bottom": 0.25,
+  "centre": [
+   0.0,
+   0.0,
+   0.05
+  ],
+  "comfort": 1,
+  "comfort_group": "Display",
+  "measured": "offline"
+ },
+ "itemstandh": {
+  "name": "Item Stand",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "BronzeNails",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   0.06,
+   0.2
+  ],
+  "pivot_above_bottom": 0.03,
+  "centre": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Display",
+  "measured": "offline"
+ },
+ "ArmorStand": {
+  "name": "Armour Stand",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    8
+   ],
+   [
+    "IronNails",
+    4
+   ],
+   [
+    "LeatherScraps",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.37,
+   2.16,
+   1.13
+  ],
+  "pivot_above_bottom": 0.03,
+  "centre": [
+   0.0,
+   1.05,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Display",
+  "measured": "offline"
+ },
+ "piece_pot1": {
+  "name": "Medium Green Pot",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Pot_Shard_Green",
+    4
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.77,
+   0.95,
+   0.78
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   0.47,
+   -0.01
+  ],
+  "comfort": 1,
+  "comfort_group": "Decor",
+  "measured": "offline"
+ },
+ "piece_pot2": {
+  "name": "Large Green Pot",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Pot_Shard_Green",
+    5
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.69,
+   1.6,
+   0.71
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   0.8,
+   -0.01
+  ],
+  "comfort": 1,
+  "comfort_group": "Decor",
+  "measured": "offline"
+ },
+ "piece_pot3": {
+  "name": "Small Green Pot",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Pot_Shard_Green",
+    3
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.9,
+   0.73,
+   0.91
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   0.36,
+   -0.01
+  ],
+  "comfort": 1,
+  "comfort_group": "Decor",
+  "measured": "offline"
+ },
+ "piece_pot1_red": {
+  "name": "Medium Red Pot",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Pot_Shard_Red",
+    4
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.77,
+   0.95,
+   0.78
+  ],
+  "pivot_above_bottom": 0.01,
+  "centre": [
+   0.0,
+   0.47,
+   -0.01
+  ],
+  "measured": "offline"
+ },
+ "piece_bathtub": {
+  "name": "Hot Tub",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "Tar",
+    6
+   ],
+   [
+    "Iron",
+    10
+   ],
+   [
+    "Stone",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    -1.5
+   ],
+   [
+    -0.5,
+    0.0,
+    -1.5
+   ],
+   [
+    -1.5,
+    0.0,
+    -0.5
+   ],
+   [
+    -1.5,
+    0.0,
+    0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    1.5
+   ],
+   [
+    0.5,
+    0.0,
+    1.5
+   ],
+   [
+    1.5,
+    0.0,
+    0.5
+   ],
+   [
+    1.5,
+    0.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   3.29,
+   2.29,
+   3.68
+  ],
+  "pivot_above_bottom": 0.03,
+  "centre": [
+   0.0,
+   1.12,
+   -0.19
+  ],
+  "comfort": 2,
+  "comfort_group": "Leisure",
+  "measured": "offline"
+ },
+ "piece_barber": {
+  "name": "Barber Station",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "BarberKit",
+    1
+   ],
+   [
+    "BronzeNails",
+    5
+   ],
+   [
+    "TrollHide",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.0,
+   1.44,
+   1.5
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.0,
+   0.72,
+   0.0
+  ],
+  "comfort": 1,
+  "comfort_group": "Leisure",
+  "measured": "offline"
+ },
+ "wood_dragon1": {
+  "name": "Wood Dragon Adornment",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.59,
+   1.49,
+   3.32
+  ],
+  "pivot_above_bottom": 0.26,
+  "centre": [
+   0.0,
+   0.49,
+   1.63
+  ],
+  "measured": "offline"
+ },
+ "darkwood_raven": {
+  "name": "Raven Adornment",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.53,
+   1.47,
+   3.17
+  ],
+  "pivot_above_bottom": 0.24,
+  "centre": [
+   0.0,
+   0.49,
+   1.6
+  ],
+  "measured": "offline"
+ },
+ "darkwood_wolf": {
+  "name": "Wolf Adornment",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.97,
+   2.05,
+   2.16
+  ],
+  "pivot_above_bottom": 0.72,
+  "centre": [
+   0.0,
+   0.31,
+   1.08
+  ],
+  "measured": "offline"
+ },
+ "darkwood_roof_45": {
+  "name": "Shingle Roof 45°",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.4,
+   2.47,
+   2.76
+  ],
+  "pivot_above_bottom": 1.4,
+  "centre": [
+   0.0,
+   -0.16,
+   0.35
+  ],
+  "measured": "offline"
+ },
+ "darkwood_roof_top_45": {
+  "name": "Shingle Roof Ridge 45°",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.32,
+   1.67,
+   3.36
+  ],
+  "pivot_above_bottom": 0.45,
+  "centre": [
+   0.0,
+   0.39,
+   0.01
+  ],
+  "measured": "offline"
+ },
+ "darkwood_beam": {
+  "name": "Darkwood Beam 2 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.25,
+    0.0
+   ],
+   [
+    1.0,
+    0.25,
+    0.0
+   ]
+  ],
+  "size": [
+   2.02,
+   0.41,
+   0.49
+  ],
+  "pivot_above_bottom": -0.05,
+  "centre": [
+   0.0,
+   0.26,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "darkwood_pole": {
+  "name": "Darkwood Pole 2m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.49,
+   2.02,
+   0.49
+  ],
+  "pivot_above_bottom": 1.01,
+  "centre": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "wood_ledge": {
+  "name": "Wood Ledge",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   0.09,
+   0.6
+  ],
+  "pivot_above_bottom": 0.02,
+  "centre": [
+   0.0,
+   0.02,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_drawbridge": {
+  "name": "Timberwood Drawbridge",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "FlametalNew",
+    2
+   ],
+   [
+    "Gold",
+    2
+   ],
+   [
+    "Frostwood",
+    24
+   ]
+  ],
+  "snaps": [
+   [
+    -0.25,
+    5.75,
+    -2.0
+   ],
+   [
+    -0.25,
+    5.75,
+    2.0
+   ],
+   [
+    -0.25,
+    -0.2,
+    -2.0
+   ],
+   [
+    -0.25,
+    -0.2,
+    2.0
+   ],
+   [
+    -0.25,
+    -1.2,
+    -2.0
+   ],
+   [
+    -0.25,
+    -1.2,
+    2.0
+   ]
+  ],
+  "size": [
+   3.37,
+   11.66,
+   4.58
+  ],
+  "pivot_above_bottom": 1.21,
+  "centre": [
+   0.07,
+   4.61,
+   0.01
+  ],
+  "door": {
+   "component": "Door (m_name $morkhalla_drawbridge) driving an Animator (controller drawbridge2_animator); no hinge or angle fields on the Door itself",
+   "hinge": {
+    "child": "door",
+    "pivot": [
+     -0.5,
+     0.5,
+     0.0
+    ],
+    "axis": "local z through the hinge point (the deck width runs along z)"
+   },
+   "closed": "state 0, animator state 'rotated_up' (tag closed): door euler z = 79 deg (raised), counterweights ('weights') at y 0.5",
+   "open": "state 1 or -1, 'rotated_down' (tag open): door euler z = 0 (lowered, lies along local +x), counterweights at y 3.0; opening 1.5 s (flat at 1.25 s), closing 2.17 s",
+   "lowered": {
+    "size": [
+     11.21,
+     7.01,
+     4.58
+    ],
+    "pivot_above_bottom": 1.21,
+    "centre": [
+     3.99,
+     2.29,
+     0.01
+    ],
+    "plank_x": [
+     -0.47,
+     9.59
+    ],
+    "plank_length": 10.06,
+    "plank_top_y": 0.69,
+    "plank_width_z": 4.52,
+    "reach_from_pivot": 9.59
+   },
+   "raised_check": {
+    "size": [
+     3.37,
+     11.66,
+     4.58
+    ],
+    "pivot_above_bottom": 1.21,
+    "centre": [
+     0.07,
+     4.61,
+     0.01
+    ]
+   }
+  },
+  "note": "size/centre are the raised (closed) pose, as built; door.lowered is the open pose, deck along local +x from the hinge. Snap points are on the frame side only (x -0.25).",
+  "measured": "offline"
+ },
+ "piece_drawbridge_log": {
+  "name": "Rustic Drawbridge",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Silver",
+    2
+   ],
+   [
+    "TrophyWolf",
+    2
+   ],
+   [
+    "RoundLog",
+    10
+   ]
+  ],
+  "snaps": [
+   [
+    -0.25,
+    3.8,
+    -1.0
+   ],
+   [
+    -0.25,
+    3.8,
+    1.0
+   ],
+   [
+    -0.25,
+    -0.2,
+    -1.0
+   ],
+   [
+    -0.25,
+    -0.2,
+    1.0
+   ],
+   [
+    -0.25,
+    -1.2,
+    -1.0
+   ],
+   [
+    -0.25,
+    -1.2,
+    1.0
+   ]
+  ],
+  "size": [
+   3.08,
+   6.89,
+   2.68
+  ],
+  "pivot_above_bottom": 1.19,
+  "centre": [
+   -0.2,
+   2.26,
+   0.0
+  ],
+  "door": {
+   "component": "Door (m_name $morkhalla_drawbridge) driving an Animator (controller drawbridge2_animator); no hinge or angle fields on the Door itself",
+   "hinge": {
+    "child": "door",
+    "pivot": [
+     0.0,
+     -0.27,
+     0.0
+    ],
+    "axis": "local z through the hinge point (the deck width runs along z)"
+   },
+   "closed": "state 0, animator state 'rotated_up' (tag closed): door euler z = 79 deg (raised), counterweights ('weights') at y 0.5",
+   "open": "state 1 or -1, 'rotated_down' (tag open): door euler z = 0 (lowered, lies along local +x), counterweights at y 3.0; opening 1.5 s (flat at 1.25 s), closing 2.17 s",
+   "lowered": {
+    "size": [
+     7.76,
+     5.0,
+     2.68
+    ],
+    "pivot_above_bottom": 1.19,
+    "centre": [
+     2.14,
+     1.31,
+     0.0
+    ],
+    "plank_x": [
+     0.02,
+     6.02
+    ],
+    "plank_length": 6.0,
+    "plank_top_y": 0.05,
+    "plank_width_z": 2.33,
+    "reach_from_pivot": 6.02
+   },
+   "raised_check": {
+    "size": [
+     3.08,
+     6.89,
+     2.68
+    ],
+    "pivot_above_bottom": 1.19,
+    "centre": [
+     -0.2,
+     2.26,
+     0.0
+    ]
+   }
+  },
+  "note": "size/centre are the raised (closed) pose, as built; door.lowered is the open pose, deck along local +x from the hinge. Snap points are on the frame side only (x -0.25).",
+  "measured": "offline"
+ },
+ "sign": {
+  "name": "Sign",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Coal",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   0.5,
+   0.1
+  ],
+  "pivot_above_bottom": 0.25,
+  "centre": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "measured": "offline"
+ },
+ "piece_cartographytable": {
+  "name": "Cartography Table",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "BoneFragments",
+    10
+   ],
+   [
+    "Bronze",
+    2
+   ],
+   [
+    "LeatherScraps",
+    5
+   ],
+   [
+    "Raspberry",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.24,
+   1.61,
+   2.5
+  ],
+  "pivot_above_bottom": 0.0,
+  "centre": [
+   0.05,
+   0.81,
+   0.03
+  ],
+  "measured": "offline"
+ }
+}

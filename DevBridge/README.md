@@ -23,6 +23,8 @@ overlays, look swaps and input do not.
 `BepInEx/config/com.DevBridge.cfg`: the port (default 7780; a second game takes the next free one, up to 7789).
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Full reference: https://github.com/geraldjglasgow/ValheimMods/blob/main/DevBridge/REFERENCE.md. Bugs and ideas:
 https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

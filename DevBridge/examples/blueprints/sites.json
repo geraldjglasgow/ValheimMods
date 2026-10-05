@@ -2,11 +2,20 @@
  "compound": {
   "world": "Ravenholt",
   "at": [
-   664.76,
-   517.49
+   552.0,
+   613.0
   ],
   "ground": 32.5,
-  "facing": 180,
-  "saved": "2026-10-05 01:44"
+  "facing": 110.0,
+  "saved": "2026-10-05 03:40"
+ },
+ "hut_2x2": {
+  "world": "Ravenholt",
+  "at": [
+   196.92,
+   588.83
+  ],
+  "ground": 32.74,
+  "facing": 90.0
  }
 }

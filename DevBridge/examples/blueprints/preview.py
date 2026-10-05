@@ -2,15 +2,17 @@
 """Render a blueprint offline (no game needed): every piece becomes a simple shape built from its snap points in
 pieces.json (slopes, gables, beams, boxes), coloured by kind, then Blender renders it headless.
 
-  python preview.py compound [--out <folder>] [--views oblique,top,gate,canal]
+  python preview.py compound [--out <folder>] [--views oblique,front,upper,cut]
 
-Writes <name>-<view>.png. Shapes are approximations: they show layout, heights, gaps and overlaps, not textures.
+Views: oblique, front, back, east, west (each frames the whole build), top (plan), upper (its top third), cut (the
+inside: the east half and the roofs left out), or cam=x,y,z:tx,ty,tz. Writes <name>-<view>.png. Shapes are
+approximations: they show layout, heights, gaps and overlaps, not textures.
 """
 import argparse, json, math, os, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BLENDER = os.path.expandvars(r"%USERPROFILE%\tools\blender\blender.exe")
-CAT = json.load(open(os.path.join(HERE, "pieces.json")))
+CAT = {**json.load(open(os.path.join(HERE, "pieces_offline.json"))), **json.load(open(os.path.join(HERE, "pieces.json")))}
 
 COLOURS = {"thatch": (0.78, 0.62, 0.30), "stone": (0.52, 0.52, 0.50), "log": (0.30, 0.20, 0.12),
            "wood": (0.55, 0.38, 0.22), "floor": (0.66, 0.50, 0.32), "prop": (0.70, 0.15, 0.12),
@@ -93,7 +95,8 @@ def shape(name):
             ext.append((-pab, -pab + size[1]))
         else:
             half = min(size[ax], 0.3 if name.startswith("wood") and size[ax] < 0.7 else size[ax]) / 2
-            ext.append((-half, half))
+            mid = c["centre"][ax] if "centre" in c and not sn else 0.0
+            ext.append((mid - half, mid + half))
     return [box(ext[0][0], ext[0][1], ext[1][0], ext[1][1], ext[2][0], ext[2][1])]
 
 
@@ -114,6 +117,15 @@ def mesh(pieces):
     return out
 
 
+def cut_away(pieces):
+    """The build without its roofs and without the walls and fittings east of the middle, floors and stairs kept:
+    the inside seen from the east."""
+    xs = [p[1] for p in pieces]
+    mid = (min(xs) + max(xs)) / 2
+    return [p for p in pieces if "roof" not in p[0]
+            and (p[1] <= mid + 0.5 or "floor" in p[0] or "stair" in p[0] or "ladder" in p[0])]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("name")
@@ -123,9 +135,11 @@ def main():
     a = ap.parse_args()
     a.out = os.path.abspath(a.out)
     bp = json.load(open(os.path.join(HERE, a.name + ".json")))
-    data = {"groups": mesh(bp["pieces"]), "colours": COLOURS, "site": bp.get("site", {}),
-            "views": a.views.split(";") if ";" in a.views or "cam=" in a.views else a.views.split(","), "out": os.path.join(a.out, a.name)}
-    path = os.path.join(a.out, a.name + "-preview.json")
+    views = a.views.split(";") if ";" in a.views or "cam=" in a.views else a.views.split(",")
+    data = {"groups": mesh(bp["pieces"]), "cut": mesh(cut_away(bp["pieces"])) if "cut" in views else None,
+            "colours": COLOURS, "site": bp.get("site", {}),
+            "views": views, "out": os.path.join(a.out, a.name)}
+    path = os.path.join(tempfile.gettempdir(), a.name + "-preview.json")              # the scene, for Blender only
     with open(path, "w") as f:
         json.dump(data, f)
     script = os.path.join(HERE, "preview_blender.py")

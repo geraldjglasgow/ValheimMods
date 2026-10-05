@@ -4,18 +4,31 @@
   python measure_pieces.py wood_floor stone_wall_4x2 ...   measure these (merged into pieces.json)
   python measure_pieces.py --set building                  the building set below
   python measure_pieces.py --all                           every piece the Hammer builds
+  python measure_pieces.py --ships                         the boats, into ships.json (hull, mast, float rules)
 
 Per piece: the game's name, category, material, build cost, snap points (local, at yaw 0; the most reliable
 footprint), the drawn size at yaw 0 and how far the pivot sits above the mesh bottom (both from a /lineup copy, so
 they include trims and snow meshes), plus the hand-written notes in NOTES (facing, hanging, traps). Coordinates: x
 right, y up, z forward (+z is the side a /lineup copy turns toward the player, its front).
 """
-import json, os, sys
+import itertools, json, os, re, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from blueprint import get, ev, val  # noqa: E402
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pieces.json")
+SHIPS_OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ships.json")
+SHIPS = ["Raft", "Karve", "VikingShip", "VikingShip_Ashlands", "Trailership"]
+SHIP_NOTES = {
+    "buoyancy": "Ship.CustomFixedUpdate pushes up while centre of mass y <= water + m_waterLevelOffset - 0.5 "
+                "(m_disableLevel): a boat rides with its centre of mass about that high above the water.",
+    "sea_level": "ZoneSystem.m_waterLevel, 30 in every world; terrain below it fills with water.",
+    "canal": "Water width at least hull width + 2 m; nothing over the water lower than mast_top_above_pivot "
+             "(say mast_top + 1 above the water); 2.5 m of water is enough for every boat. Boats cannot turn in a "
+             "canal narrower than their length: they back out.",
+    "fields": "hull: the solid colliders (width across, length, keel and top from the pivot); drawn: everything "
+              "drawn incl. sail and yard (width is the yard); mast_top_above_pivot = drawn height - pivot_above_bottom.",
+}
 
 BUILDING = """wood_floor wood_floor_1x1 woodwall wood_wall_half wood_wall_quarter wood_wall_roof wood_wall_roof_45
 wood_wall_roof_45_upsidedown wood_wall_roof_top_45 wood_beam wood_beam_1 wood_beam_26 wood_beam_45 wood_pole
@@ -99,6 +112,67 @@ def measure(name):
     return entry
 
 
+def vec(text):
+    return [float(x) for x in re.findall(r"-?\d+\.\d+", text)]
+
+
+def hull(name):
+    """Extent of the hull colliders (children of ship/*collider*), each corner through its own transform."""
+    ship = f'$prefab("{name}").transform.Find("ship")'
+    root, pts = vec(val(f'$prefab("{name}").transform.position')), []
+    for i in range(int(val(f"{ship}.childCount"))):
+        group = f"{ship}.GetChild({i})"
+        if "collider" not in val(f"{group}.name").lower():
+            continue
+        for j in range(int(val(f"{group}.childCount"))):
+            pts += corners(f"{group}.GetChild({j})", root)
+    if not pts:
+        return None
+    xs, ys, zs = zip(*pts)
+    return {"width": round(max(xs) - min(xs), 2), "length": round(max(zs) - min(zs), 2),
+            "keel": round(min(ys), 2), "top": round(max(ys), 2)}
+
+
+def corners(ch, root):
+    mesh, box = ev(f"{ch}.MeshCollider.sharedMesh.bounds"), ev(f"{ch}.BoxCollider.size")
+    if not mesh.startswith("ERR"):
+        b = vec(mesh.split(" = ", 1)[1]); c, e = b[:3], b[3:6]
+    elif not box.startswith("ERR"):
+        e = [s / 2 for s in vec(box.split(" = ", 1)[1])]; c = vec(val(f"{ch}.BoxCollider.center"))
+    else:
+        return []
+    out = []
+    for sx, sy, sz in itertools.product((-1, 1), repeat=3):
+        p = vec(val(f"{ch}.TransformPoint($v3({c[0] + sx * e[0]},{c[1] + sy * e[1]},{c[2] + sz * e[2]}))"))
+        out.append([p[k] - root[k] for k in range(3)])
+    return out
+
+
+def measure_ship(name):
+    p = f'$prefab("{name}")'
+    size, pivot = drawn(name)
+    return {
+        "name": val(f"Localization.instance.Localize({p}.Piece.m_name)"), "cost": cost(p), "hull": hull(name),
+        "drawn": {"width": size[0], "height": size[1], "length": size[2], "pivot_above_bottom": pivot},
+        "mast_top_above_pivot": round(size[1] - pivot, 2),
+        "float_box": [round(v, 2) for v in vec(val(f"{p}.Ship.m_floatCollider.size"))],
+        "water_level_offset": float(val(f"{p}.Ship.m_waterLevelOffset")),
+    }
+
+
+def ships():
+    data = {"_notes": SHIP_NOTES}
+    for n in SHIPS:
+        try:
+            data[n] = measure_ship(n)
+            print(n, data[n]["name"], "hull", data[n]["hull"], "mast", data[n]["mast_top_above_pivot"])
+        except Exception as e:
+            print("skipped", n, str(e)[:120])
+    with open(SHIPS_OUT, "w") as f:
+        json.dump(data, f, indent=1)
+    print(f"{len(data) - 1} boats in {SHIPS_OUT}")
+
+
 def hammer_pieces():
     table = 'ObjectDB.instance.GetItemPrefab("Hammer").ItemDrop.m_itemData.m_shared.m_buildPieces.m_pieces'
     return [val(f"{table}[{i}].name") for i in range(int(val(f"{table}.Count")))]
@@ -106,6 +180,8 @@ def hammer_pieces():
 
 def main():
     args = sys.argv[1:]
+    if args == ["--ships"]:
+        return ships()
     names = BUILDING if args == ["--set", "building"] else hammer_pieces() if args == ["--all"] else args
     data = json.load(open(OUT)) if os.path.exists(OUT) else {}
     for n in names:

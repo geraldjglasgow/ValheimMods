@@ -1,0 +1,76 @@
+{
+ "_notes": [
+  "Structural support per material and world: [max support, min support, vertical loss, horizontal loss]. A piece on the ground has the max; every other piece takes a neighbour's support minus loss x distance (+0.1) x that support, and breaks below the min. support.py uses these.",
+  "vanilla: the game's own values (WearNTear.GetMaterialProperties).",
+  "Ravenholt: the server runs Cornerstone (VentureValheim), which replaces these values and syncs them to every player. The local .cfg in the LocalTesting profile is NOT what applies (it says 0.001); the synced values are read from the plugin in the running game: python support.py --read Ravenholt (while on that server).",
+  "What Ravenholt's values mean: stone loses 0.05 instead of 0.125 going up, so about 21 courses (42 m) stand instead of 8 (16 m), and 0.05 instead of 1.0 going sideways, so stone can jut out; wood loses 0.05 both ways (about 40 m); core wood is unchanged.",
+  "default_world: the world a check uses when a build names none. A world's 'before': the next boss its group has not killed; check.py flags materials it or a later boss opens (2026-10-05, Ravenholt: moder)."
+ ],
+ "vanilla": {
+  "stone": [
+   1000,
+   100,
+   0.125,
+   1.0
+  ],
+  "wood": [
+   100,
+   10,
+   0.125,
+   0.2
+  ],
+  "hard": [
+   140,
+   10,
+   0.1,
+   0.1666667
+  ],
+  "iron": [
+   1500,
+   20,
+   0.0769231,
+   0.0769231
+  ],
+  "marble": [
+   1500,
+   100,
+   0.125,
+   0.5
+  ]
+ },
+ "Ravenholt": {
+  "read": "2026-10-05, Cornerstone 1.0.0 synced from the server",
+  "stone": [
+   1000,
+   100,
+   0.05,
+   0.05
+  ],
+  "wood": [
+   100,
+   10,
+   0.05,
+   0.05
+  ],
+  "hard": [
+   140,
+   10,
+   0.1,
+   0.1666667
+  ],
+  "iron": [
+   1500,
+   20,
+   0.05,
+   0.05
+  ],
+  "marble": [
+   1500,
+   100,
+   0.05,
+   0.05
+  ],
+  "before": "moder"
+ },
+ "default_world": "Ravenholt"
+}

@@ -1,0 +1,6 @@
+[
+ {"name": "Gate A", "world": "FinePointPen", "x": 493, "z": -862, "biome": "BlackForest", "note": "start: the Karve waits 22 m south"},
+ {"name": "Gate B", "world": "FinePointPen", "x": 971, "z": -562, "biome": "BlackForest", "note": "about 560 m from A"},
+ {"name": "Gate C", "world": "FinePointPen", "x": 989, "z": -2486, "biome": "Swamp", "note": "about 1.7 km from A"},
+ {"name": "Gate D", "world": "FinePointPen", "x": -540, "z": 408, "biome": "BlackForest", "note": "about 1.6 km from A"}
+]

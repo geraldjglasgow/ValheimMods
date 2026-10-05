@@ -1,6 +1,7 @@
 {
  "name": "plain_wood_house",
  "description": "Two-storey plain wood house, 10 x 10 m, 3 m storeys, Wood Gate door. Ground floor: campfire with three cooking stations under an opening to the roof, workbench, tanning rack, chopping block, stairs. Upstairs: portal. Black banner on the front gable. Smoke leaves through a capped ridge vent.",
+ "source": "plain_wood_house.py",
  "site": {
   "level_half": 5.5,
   "clear_radius": 9,

@@ -1,4 +1,3900 @@
 {
+ "BatteringRam": {
+  "name": "Battering Ram",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    20
+   ],
+   [
+    "FlametalNew",
+    10
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.84,
+   2.45,
+   4.91
+  ],
+  "pivot_above_bottom": -0.23
+ },
+ "Cart": {
+  "name": "Cart",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "BronzeNails",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.05,
+   1.25,
+   3.27
+  ],
+  "pivot_above_bottom": 0.05
+ },
+ "Catapult": {
+  "name": "Catapult",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    20
+   ],
+   [
+    "FlametalNew",
+    10
+   ],
+   [
+    "CharredCogwheel",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.4,
+   3.96,
+   6.37
+  ],
+  "pivot_above_bottom": -0.23
+ },
+ "Karve": {
+  "name": "Karve",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    30
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "Resin",
+    20
+   ],
+   [
+    "BronzeNails",
+    80
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   7.81,
+   9.41,
+   10.12
+  ],
+  "pivot_above_bottom": 1.08
+ },
+ "Piece_flametal_beam": {
+  "name": "Flametal Beam",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "FlametalNew",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   0.56,
+   0.56
+  ],
+  "pivot_above_bottom": 0.28
+ },
+ "Piece_flametal_pillar": {
+  "name": "Flametal Pillar",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "FlametalNew",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.5,
+   2.01,
+   0.5
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_floor_1x1": {
+  "name": "Grausten Floor 1x1",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.25,
+    0.5
+   ],
+   [
+    -0.5,
+    0.25,
+    0.5
+   ],
+   [
+    0.5,
+    0.25,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.25,
+    -0.5
+   ],
+   [
+    0.5,
+    -0.25,
+    0.5
+   ],
+   [
+    -0.5,
+    -0.25,
+    0.5
+   ],
+   [
+    0.5,
+    -0.25,
+    -0.5
+   ],
+   [
+    -0.5,
+    -0.25,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.03,
+   0.5,
+   1.03
+  ],
+  "pivot_above_bottom": 0.25
+ },
+ "Piece_grausten_floor_2x2": {
+  "name": "Grausten Floor 2x2",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.25,
+    1.0
+   ],
+   [
+    -1.0,
+    0.25,
+    1.0
+   ],
+   [
+    1.0,
+    0.25,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.25,
+    -1.0
+   ],
+   [
+    1.0,
+    -0.25,
+    1.0
+   ],
+   [
+    -1.0,
+    -0.25,
+    1.0
+   ],
+   [
+    1.0,
+    -0.25,
+    -1.0
+   ],
+   [
+    -1.0,
+    -0.25,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.04,
+   0.5,
+   2.04
+  ],
+  "pivot_above_bottom": 0.25
+ },
+ "Piece_grausten_floor_4x4": {
+  "name": "Grausten Floor 4x4",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    2.0,
+    0.25,
+    2.0
+   ],
+   [
+    -2.0,
+    0.25,
+    2.0
+   ],
+   [
+    2.0,
+    0.25,
+    -2.0
+   ],
+   [
+    -2.0,
+    0.25,
+    -2.0
+   ],
+   [
+    2.0,
+    -0.25,
+    2.0
+   ],
+   [
+    -2.0,
+    -0.25,
+    2.0
+   ],
+   [
+    2.0,
+    -0.25,
+    -2.0
+   ],
+   [
+    -2.0,
+    -0.25,
+    -2.0
+   ]
+  ],
+  "size": [
+   4.03,
+   0.5,
+   4.03
+  ],
+  "pivot_above_bottom": 0.25
+ },
+ "Piece_grausten_pillar_arch": {
+  "name": "Grausten Medium Arch",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    -2.0,
+    2.0,
+    0.0
+   ],
+   [
+    -2.0,
+    2.5,
+    0.0
+   ],
+   [
+    -2.0,
+    2.0,
+    -0.5
+   ],
+   [
+    -2.0,
+    2.0,
+    0.5
+   ],
+   [
+    -2.0,
+    1.5,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    -0.5
+   ],
+   [
+    0.0,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.52,
+   2.48,
+   1.0
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "Piece_grausten_pillar_arch_small": {
+  "name": "Grausten Small Arch",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.26,
+   1.24,
+   0.5
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_pillarbase_medium": {
+  "name": "Grausten Medium Pillar",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    3
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    -0.5
+   ],
+   [
+    0.0,
+    1.0,
+    0.5
+   ],
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    -0.5
+   ],
+   [
+    0.0,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   1.01,
+   1.0
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_pillarbase_small": {
+  "name": "Grausten Small Pillar",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.5,
+   1.0,
+   0.5
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_pillarbase_tapered": {
+  "name": "Grausten Tapered Pillar",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.75,
+    0.0
+   ],
+   [
+    0.0,
+    0.75,
+    -0.5
+   ],
+   [
+    0.0,
+    0.75,
+    0.5
+   ],
+   [
+    0.5,
+    0.75,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    -0.5
+   ],
+   [
+    0.0,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   2.0,
+   1.0
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_pillarbase_tapered_inverted": {
+  "name": "Grausten Tapered Pillar (Inverted)",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    -0.5,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    2.0,
+    -0.5
+   ],
+   [
+    0.0,
+    2.0,
+    0.5
+   ],
+   [
+    0.5,
+    2.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.25,
+    0.0
+   ],
+   [
+    0.0,
+    1.25,
+    -0.5
+   ],
+   [
+    0.0,
+    1.25,
+    0.5
+   ],
+   [
+    0.5,
+    1.25,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   2.0,
+   1.0
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_pillarbeam_medium": {
+  "name": "Grausten Medium Beam",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    3
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.5,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    -0.5
+   ],
+   [
+    0.5,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    -0.5,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.5,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    0.5
+   ],
+   [
+    -0.5,
+    -0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   1.01,
+   1.0,
+   1.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "Piece_grausten_pillarbeam_small": {
+  "name": "Grausten Small Beam",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   0.56,
+   0.56
+  ],
+  "pivot_above_bottom": 0.28
+ },
+ "Piece_grausten_stone_ladder": {
+  "name": "Grausten Steep Stairs",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    0.0,
+    0.75
+   ],
+   [
+    0.5,
+    0.0,
+    0.75
+   ],
+   [
+    -0.5,
+    2.0,
+    -1.25
+   ],
+   [
+    0.5,
+    2.0,
+    -1.25
+   ]
+  ],
+  "size": [
+   1.12,
+   2.28,
+   2.05
+  ],
+  "pivot_above_bottom": 0.27
+ },
+ "Piece_grausten_wall_1x2": {
+  "name": "Grausten Wall 1x2",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    2.0,
+    0.0
+   ],
+   [
+    0.5,
+    2.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.03,
+   2.05,
+   0.39
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_wall_2x2": {
+  "name": "Grausten Wall 2x2",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    6
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.05,
+   2.06,
+   0.39
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "Piece_grausten_wall_4x2": {
+  "name": "Grausten Wall 4x2",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    12
+   ]
+  ],
+  "snaps": [
+   [
+    -2.0,
+    2.0,
+    0.0
+   ],
+   [
+    2.0,
+    2.0,
+    0.0
+   ],
+   [
+    -2.0,
+    0.0,
+    0.0
+   ],
+   [
+    2.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   4.1,
+   2.06,
+   0.39
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "Piece_grausten_wall_arch": {
+  "name": "Grausten Wall Arch",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.04,
+   2.04,
+   0.38
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_wall_arch_inverted": {
+  "name": "Grausten Wall Arch (Inverted)",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.04,
+   2.04,
+   0.38
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "Piece_grausten_window_2x2": {
+  "name": "Grausten Window 2x2",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.04,
+   2.03,
+   0.39
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "Piece_grausten_window_4x2": {
+  "name": "Grausten Window 4x2",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    10
+   ]
+  ],
+  "snaps": [
+   [
+    -2.0,
+    2.0,
+    0.0
+   ],
+   [
+    2.0,
+    2.0,
+    0.0
+   ],
+   [
+    -2.0,
+    0.0,
+    0.0
+   ],
+   [
+    2.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   4.08,
+   2.03,
+   0.39
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "Placeable_HardRock": {
+  "name": "Mysterious Rock",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "StoneRock",
+    1
+   ],
+   [
+    "Coal",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.65,
+   0.48,
+   0.67
+  ],
+  "pivot_above_bottom": 0.04
+ },
+ "Raft": {
+  "name": "Raft",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "Resin",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   6.31,
+   7.52,
+   6.69
+  ],
+  "pivot_above_bottom": 1.47
+ },
+ "VikingShip": {
+  "name": "Longship",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "IronNails",
+    100
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "FineWood",
+    40
+   ],
+   [
+    "ElderBark",
+    40
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   9.4,
+   12.57,
+   22.58
+  ],
+  "pivot_above_bottom": 1.56
+ },
+ "VikingShip_Ashlands": {
+  "name": "Drakkar",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "IronNails",
+    100
+   ],
+   [
+    "CeramicPlate",
+    30
+   ],
+   [
+    "FineWood",
+    50
+   ],
+   [
+    "YggdrasilWood",
+    25
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   15.23,
+   19.74,
+   35.21
+  ],
+  "pivot_above_bottom": 1.84
+ },
+ "WF_SeaGatePillar": {
+  "name": "Sea Gate Pillar",
+  "category": "Misc",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "GreydwarfEye",
+    5
+   ],
+   [
+    "SurtlingCore",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    1.0,
+    0.5
+   ],
+   [
+    0.5,
+    1.0,
+    -0.5
+   ],
+   [
+    0.5,
+    -1.0,
+    0.5
+   ],
+   [
+    0.5,
+    -1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    1.0,
+    0.5
+   ],
+   [
+    -0.5,
+    1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    -1.0,
+    0.5
+   ],
+   [
+    -0.5,
+    -1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.43,
+   4.5,
+   1.41
+  ],
+  "pivot_above_bottom": 2.25
+ },
+ "artisan_ext1": {
+  "name": "Artisan Press",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ],
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "QueenDrop",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.36,
+   2.07,
+   0.66
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "ashwood_arch_big": {
+  "name": "Ashwood Arch",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    2.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.24,
+   2.23,
+   0.41
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "ashwood_beam_1m": {
+  "name": "Ashwood Beam 1 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.02,
+   0.4,
+   0.4
+  ],
+  "pivot_above_bottom": 0.2
+ },
+ "ashwood_beam_2m": {
+  "name": "Ashwood Beam 2 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.04,
+   0.4,
+   0.4
+  ],
+  "pivot_above_bottom": 1.2,
+  "note": "measured 2026-10-05: the pivot height looks wrong (outside the drawn size); measure again or check in game before relying on it"
+ },
+ "ashwood_bed": {
+  "name": "Ashwood Bed",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    8
+   ],
+   [
+    "LoxPelt",
+    2
+   ],
+   [
+    "AskHide",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.84,
+   1.07,
+   3.1
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "ashwood_deco_floor": {
+  "name": "Ashwood Decorative Floor",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   0.17,
+   2.01
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "ashwood_decowall_2x2": {
+  "name": "Ashwood Decorative Wall",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   2.0,
+   0.17
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "ashwood_decowall_divider": {
+  "name": "Ashwood Divider",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.5,
+    -1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.03,
+   2.0,
+   0.15
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "ashwood_decowall_tree": {
+  "name": "Ashwood Decorative Window",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.01,
+   0.11
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "ashwood_door": {
+  "name": "Ashwood Door",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "FlametalNew",
+    1
+   ],
+   [
+    "Blackwood",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    -2.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    -2.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   3.01,
+   0.51
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "ashwood_floor_1x1": {
+  "name": "Ashwood Floor 1x1",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    0.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.03,
+   0.18,
+   1.01
+  ],
+  "pivot_above_bottom": 0.1
+ },
+ "ashwood_floor_2x2": {
+  "name": "Ashwood Floor 2x2",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.04,
+   0.18,
+   2.02
+  ],
+  "pivot_above_bottom": 0.1
+ },
+ "ashwood_halfwall_1x2": {
+  "name": "Ashwood Half Wall",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.03,
+   1.0,
+   0.28
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "ashwood_pole_1m": {
+  "name": "Ashwood Pole 1 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.4,
+   1.02,
+   0.4
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "ashwood_pole_2m": {
+  "name": "Ashwood Pole 2 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.4,
+   2.04,
+   0.4
+  ],
+  "pivot_above_bottom": 1.01
+ },
+ "ashwood_quarterwall_1x1": {
+  "name": "Ashwood Quarter Wall",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.02,
+   1.0,
+   0.28
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "ashwood_stair": {
+  "name": "Ashwood Stair",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    -1.0
+   ],
+   [
+    0.0,
+    1.0,
+    -1.0
+   ],
+   [
+    0.5,
+    1.0,
+    -1.0
+   ],
+   [
+    0.0,
+    0.0,
+    1.0
+   ],
+   [
+    0.0,
+    0.0,
+    1.0
+   ],
+   [
+    0.5,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   1.02,
+   1.49,
+   2.02
+  ],
+  "pivot_above_bottom": 0.4
+ },
+ "ashwood_wall_2x2": {
+  "name": "Ashwood Wall",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.03,
+   2.0,
+   0.28
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "ashwood_wall_arch": {
+  "name": "Ashwood Arched Wall",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.02,
+   1.02,
+   0.21
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "ashwood_wall_beam_26": {
+  "name": "Ashwood Beam 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.33,
+   1.56,
+   0.43
+  ],
+  "pivot_above_bottom": 0.27
+ },
+ "ashwood_wall_beam_45": {
+  "name": "Ashwood Beam 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.43,
+   2.41,
+   0.42
+  ],
+  "pivot_above_bottom": 0.22
+ },
+ "ashwood_wall_beam_67": {
+  "name": "Ashwood Beam 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.55,
+   4.3,
+   0.43
+  ],
+  "pivot_above_bottom": 0.15
+ },
+ "ashwood_wall_cross_26": {
+  "name": "Ashwood Roof Cross 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   2.35,
+   1.56,
+   0.45
+  ],
+  "pivot_above_bottom": 0.27
+ },
+ "ashwood_wall_cross_45": {
+  "name": "Ashwood Roof Cross 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.46,
+   2.41,
+   0.46
+  ],
+  "pivot_above_bottom": 0.22
+ },
+ "ashwood_wall_cross_67": {
+  "name": "Ashwood Roof Cross 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.57,
+   4.3,
+   0.44
+  ],
+  "pivot_above_bottom": 0.15
+ },
+ "ashwood_wall_roof_26": {
+  "name": "Ashwood Wall 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.41,
+   1.69,
+   0.44
+  ],
+  "pivot_above_bottom": 0.37
+ },
+ "ashwood_wall_roof_26_upsidedown": {
+  "name": "Ashwood Wall 26\u00b0 (Inverted)",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.25,
+    0.0
+   ],
+   [
+    -1.0,
+    1.25,
+    0.0
+   ],
+   [
+    1.0,
+    1.25,
+    0.0
+   ]
+  ],
+  "size": [
+   2.41,
+   1.69,
+   0.46
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "ashwood_wall_roof_45": {
+  "name": "Ashwood Wall 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.53,
+   2.53,
+   0.43
+  ],
+  "pivot_above_bottom": 0.26
+ },
+ "ashwood_wall_roof_45_upsidedown": {
+  "name": "Ashwood Wall 45\u00b0 (Inverted)",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.25,
+    0.0
+   ],
+   [
+    -1.0,
+    2.25,
+    0.0
+   ],
+   [
+    1.0,
+    2.25,
+    0.0
+   ]
+  ],
+  "size": [
+   2.53,
+   2.53,
+   0.44
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "ashwood_wall_roof_67_a": {
+  "name": "Ashwood Wall 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.55,
+   4.3,
+   0.43
+  ],
+  "pivot_above_bottom": 0.16
+ },
+ "ashwood_wall_roof_67_upsidedown": {
+  "name": "Ashwood Wall 67\u00b0 (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    -4.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.55,
+   4.3,
+   0.43
+  ],
+  "pivot_above_bottom": 4.14
+ },
+ "bar_blackmetal_stack": {
+  "name": "Black Metal Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMetal",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_bronze_stack": {
+  "name": "Bronze Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Bronze",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_copper_stack": {
+  "name": "Copper Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Copper",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_flametal_stack": {
+  "name": "Flametal Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FlametalNew",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_gold_stack": {
+  "name": "Bloodgold Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Gold",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_iron_stack": {
+  "name": "Iron Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_silver_stack": {
+  "name": "Silver Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Silver",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "bar_tin_stack": {
+  "name": "Tin Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Tin",
+    30
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.0,
+   0.63
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "blackforge_ext3_metalcutter": {
+  "name": "Metal Cutter",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ],
+   [
+    "FlametalNew",
+    5
+   ],
+   [
+    "Blackwood",
+    5
+   ],
+   [
+    "CharredBone",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.71,
+   1.15,
+   0.66
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "blackforge_ext4_gemcutter": {
+  "name": "Gem Cutter",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "FlametalNew",
+    5
+   ],
+   [
+    "Blackwood",
+    8
+   ],
+   [
+    "MorgenSinew",
+    2
+   ],
+   [
+    "GemstoneRed",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.2,
+   0.7,
+   0.98
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "blackforge_ext5_apron": {
+  "name": "Smith's Aprons",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Gold",
+    5
+   ],
+   [
+    "Frostwood",
+    8
+   ],
+   [
+    "MooseHide",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.29,
+   1.52,
+   0.3
+  ],
+  "pivot_above_bottom": 0.66
+ },
+ "blackmarble_1x1": {
+  "name": "Black Marble 1x1x1",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.5,
+    0.5
+   ],
+   [
+    0.5,
+    0.5,
+    -0.5
+   ],
+   [
+    0.5,
+    -0.5,
+    0.5
+   ],
+   [
+    0.5,
+    -0.5,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.5,
+    0.5
+   ],
+   [
+    -0.5,
+    0.5,
+    -0.5
+   ],
+   [
+    -0.5,
+    -0.5,
+    0.5
+   ],
+   [
+    -0.5,
+    -0.5,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "blackmarble_2x1x1": {
+  "name": "Black Marble 2x1x1",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    0.5
+   ],
+   [
+    1.0,
+    0.5,
+    -0.5
+   ],
+   [
+    1.0,
+    -0.5,
+    0.5
+   ],
+   [
+    1.0,
+    -0.5,
+    -0.5
+   ],
+   [
+    -1.0,
+    0.5,
+    0.5
+   ],
+   [
+    -1.0,
+    0.5,
+    -0.5
+   ],
+   [
+    -1.0,
+    -0.5,
+    0.5
+   ],
+   [
+    -1.0,
+    -0.5,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   1.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "blackmarble_2x2x2": {
+  "name": "Black Marble 2x2x2",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   2.0,
+   2.01
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "blackmarble_arch": {
+  "name": "Black Marble Arch",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.5
+   ],
+   [
+    1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    0.0,
+    -1.0,
+    0.5
+   ],
+   [
+    0.0,
+    -1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.99,
+   2.0,
+   1.0
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "blackmarble_base_1": {
+  "name": "Black Marble Plinth",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.5
+   ],
+   [
+    0.0,
+    1.0,
+    -0.5
+   ],
+   [
+    1.0,
+    -1.0,
+    0.5
+   ],
+   [
+    1.0,
+    -1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.02,
+   2.01,
+   1.02
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "blackmarble_basecorner": {
+  "name": "Black Marble Plinth Corner",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.01,
+   2.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.99
+ },
+ "blackmarble_column_1": {
+  "name": "Black Marble Column Small",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.5,
+    0.0
+   ],
+   [
+    0.0,
+    -0.5,
+    0.0
+   ],
+   [
+    0.354,
+    0.5,
+    0.354
+   ],
+   [
+    0.5,
+    0.5,
+    0.0
+   ],
+   [
+    0.354,
+    0.5,
+    -0.354
+   ],
+   [
+    0.0,
+    0.5,
+    -0.5
+   ],
+   [
+    -0.354,
+    0.5,
+    -0.354
+   ],
+   [
+    -0.5,
+    0.5,
+    0.0
+   ],
+   [
+    -0.354,
+    0.5,
+    0.354
+   ],
+   [
+    0.0,
+    0.5,
+    0.5
+   ],
+   [
+    0.354,
+    -0.5,
+    0.354
+   ],
+   [
+    0.5,
+    -0.5,
+    0.0
+   ],
+   [
+    0.354,
+    -0.5,
+    -0.354
+   ],
+   [
+    0.0,
+    -0.5,
+    -0.5
+   ],
+   [
+    -0.354,
+    -0.5,
+    -0.354
+   ],
+   [
+    -0.5,
+    -0.5,
+    0.0
+   ],
+   [
+    -0.354,
+    -0.5,
+    0.354
+   ],
+   [
+    0.0,
+    -0.5,
+    0.5
+   ]
+  ],
+  "size": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "blackmarble_column_2": {
+  "name": "Black Marble Column Wide",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.5,
+    0.0
+   ],
+   [
+    0.0,
+    -0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    0.5,
+    0.0
+   ],
+   [
+    -0.707,
+    0.5,
+    -0.707
+   ],
+   [
+    0.0,
+    0.5,
+    -1.0
+   ],
+   [
+    0.707,
+    0.5,
+    -0.707
+   ],
+   [
+    1.0,
+    0.5,
+    0.0
+   ],
+   [
+    0.707,
+    0.5,
+    0.707
+   ],
+   [
+    0.0,
+    0.5,
+    1.0
+   ],
+   [
+    -0.707,
+    0.5,
+    0.707
+   ],
+   [
+    -1.0,
+    -0.5,
+    0.0
+   ],
+   [
+    -0.707,
+    -0.5,
+    -0.707
+   ],
+   [
+    0.0,
+    -0.5,
+    -1.0
+   ],
+   [
+    0.707,
+    -0.5,
+    -0.707
+   ],
+   [
+    1.0,
+    -0.5,
+    0.0
+   ],
+   [
+    0.707,
+    -0.5,
+    0.707
+   ],
+   [
+    0.0,
+    -0.5,
+    1.0
+   ],
+   [
+    -0.707,
+    -0.5,
+    0.707
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "blackmarble_floor": {
+  "name": "Black Marble Floor",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    1.0
+   ],
+   [
+    1.0,
+    0.5,
+    -1.0
+   ],
+   [
+    1.0,
+    -0.5,
+    1.0
+   ],
+   [
+    1.0,
+    -0.5,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.5,
+    1.0
+   ],
+   [
+    -1.0,
+    0.5,
+    -1.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    1.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "blackmarble_floor_triangle": {
+  "name": "Black Marble Floor Triangle",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    3
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    -0.5,
+    -1.0
+   ],
+   [
+    1.0,
+    0.5,
+    -1.0
+   ],
+   [
+    1.0,
+    -0.5,
+    1.0
+   ],
+   [
+    1.0,
+    0.5,
+    1.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    1.0
+   ],
+   [
+    -1.0,
+    0.5,
+    1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "blackmarble_out_1": {
+  "name": "Black Marble Cornice",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.5
+   ],
+   [
+    1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    0.0,
+    -1.0,
+    0.5
+   ],
+   [
+    0.0,
+    -1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.02,
+   2.01,
+   1.02
+  ],
+  "pivot_above_bottom": 1.01
+ },
+ "blackmarble_outcorner": {
+  "name": "Black Marble Cornice Corner",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   2.0,
+   2.01
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "blackmarble_pile": {
+  "name": "Black Marble Pile",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.58,
+   0.99,
+   1.56
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "blackmarble_stair": {
+  "name": "Black Marble Stair",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "blackmarble_tip": {
+  "name": "Black Marble Quarter Spire",
+  "category": "BuildingStonecutter",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    -1.0,
+    -0.5
+   ],
+   [
+    0.5,
+    -1.0,
+    0.5
+   ],
+   [
+    -0.5,
+    -1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    -1.0,
+    0.5
+   ],
+   [
+    -0.5,
+    1.0,
+    0.5
+   ]
+  ],
+  "size": [
+   1.0,
+   2.02,
+   1.0
+  ],
+  "pivot_above_bottom": 1.02
+ },
+ "blackwood_stack": {
+  "name": "Ashwood Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.1,
+   0.69,
+   2.1
+  ],
+  "pivot_above_bottom": 0.33
+ },
+ "bone_stack": {
+  "name": "Bone Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "BoneFragments",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.01,
+   0.63,
+   1.05
+  ],
+  "pivot_above_bottom": 0.06
+ },
+ "bonfire": {
+  "name": "Bonfire",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "SurtlingCore",
+    1
+   ],
+   [
+    "ElderBark",
+    5
+   ],
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "RoundLog",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.31,
+   1.03,
+   4.37
+  ],
+  "pivot_above_bottom": 0.49
+ },
+ "cauldron_ext1_spice": {
+  "name": "Spice Rack",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Dandelion",
+    3
+   ],
+   [
+    "Carrot",
+    2
+   ],
+   [
+    "Mushroom",
+    5
+   ],
+   [
+    "Thistle",
+    3
+   ],
+   [
+    "Turnip",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.15,
+   2.27,
+   0.57
+  ],
+  "pivot_above_bottom": 0.97
+ },
+ "charcoal_kiln": {
+  "name": "Charcoal Kiln",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   4.68,
+   3.72,
+   4.94
+  ],
+  "pivot_above_bottom": 0.63
+ },
+ "coal_pile": {
+  "name": "Coal Pile",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Coal",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.46,
+   1.03,
+   1.49
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "crystal_wall_1x1": {
+  "name": "Crystal Wall 1x1",
+  "category": "BuildingStonecutter",
+  "material": "Wood",
+  "cost": [
+   [
+    "Crystal",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.09,
+   1.18,
+   0.36
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "darkwood_arch": {
+  "name": "Darkwood Arch",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    2.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.26,
+   2.22,
+   0.5
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "darkwood_beam4x4": {
+  "name": "Darkwood Beam 4 m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    4
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -2.0,
+    0.25,
+    0.0
+   ],
+   [
+    2.0,
+    0.25,
+    0.0
+   ]
+  ],
+  "size": [
+   4.02,
+   0.42,
+   0.49
+  ],
+  "pivot_above_bottom": -0.05
+ },
+ "darkwood_beam_26": {
+  "name": "Darkwood Beam 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -0.25,
+    0.0
+   ],
+   [
+    1.0,
+    0.75,
+    0.0
+   ]
+  ],
+  "size": [
+   2.24,
+   1.45,
+   0.49
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "darkwood_beam_45": {
+  "name": "Darkwood Beam 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.37,
+   2.37,
+   0.49
+  ],
+  "pivot_above_bottom": 1.18
+ },
+ "darkwood_beam_67": {
+  "name": "[piece_darkwoodbeam67]",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.48,
+   4.25,
+   0.52
+  ],
+  "pivot_above_bottom": 0.13
+ },
+ "darkwood_decowall": {
+  "name": "Carved Darkwood Divider",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    2.0,
+    0.0
+   ],
+   [
+    -0.5,
+    2.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   2.0,
+   0.2
+  ],
+  "pivot_above_bottom": 0.0
+ },
  "darkwood_gate": {
   "name": "Darkwood Gate",
   "category": "BuildingWorkbench",
@@ -52,6 +3948,523 @@
   "pivot_above_bottom": 0.01,
   "note": "2 wide, 4 tall, pivot at the bottom (needs darkwood materials)"
  },
+ "darkwood_pole4": {
+  "name": "Darkwood Pole 4m",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    4
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    -2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.49,
+   4.02,
+   0.49
+  ],
+  "pivot_above_bottom": 2.01
+ },
+ "darkwood_roof": {
+  "name": "Shingle Roof 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.4,
+   1.16,
+   2.7
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "darkwood_roof_67": {
+  "name": "Shingle Roof 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    3.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    3.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.36,
+   4.7,
+   2.74
+  ],
+  "pivot_above_bottom": 1.65
+ },
+ "darkwood_roof_icorner": {
+  "name": "Shingle Roof Inner Corner 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.66,
+   1.53,
+   2.74
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "darkwood_roof_icorner_45": {
+  "name": "Shingle Roof Inner Corner 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    2.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    2.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    2.0,
+    1.0
+   ]
+  ],
+  "size": [
+   3.22,
+   2.56,
+   3.18
+  ],
+  "pivot_above_bottom": 0.11
+ },
+ "darkwood_roof_icorner_67": {
+  "name": "Shingle Roof Inner Corner 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    4.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    4.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    4.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.96,
+   4.9,
+   3.03
+  ],
+  "pivot_above_bottom": 0.62
+ },
+ "darkwood_roof_ocorner": {
+  "name": "Shingle Roof Outer Corner 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   3.04,
+   1.58,
+   3.08
+  ],
+  "pivot_above_bottom": 0.26
+ },
+ "darkwood_roof_ocorner_45": {
+  "name": "Shingle Roof Outer Corner 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    2.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.9,
+   2.65,
+   2.98
+  ],
+  "pivot_above_bottom": 0.42
+ },
+ "darkwood_roof_ocorner_67": {
+  "name": "Shingle Roof Outer Corner 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    4.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.96,
+   4.85,
+   2.97
+  ],
+  "pivot_above_bottom": 0.57
+ },
+ "darkwood_roof_top": {
+  "name": "Shingle Roof Ridge 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.5,
+    0.0
+   ],
+   [
+    1.0,
+    0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   2.41,
+   1.01,
+   3.47
+  ],
+  "pivot_above_bottom": 0.24
+ },
+ "darkwood_roof_top_67": {
+  "name": "Shingle Roof Ridge 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.38,
+   2.86,
+   3.29
+  ],
+  "pivot_above_bottom": 0.62
+ },
+ "eitrrefinery": {
+  "name": "Eitr Refinery",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    20
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "BlackCore",
+    5
+   ],
+   [
+    "Sap",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   5.64,
+   4.42,
+   2.95
+  ],
+  "pivot_above_bottom": 0.01
+ },
  "fire_pit": {
   "name": "Campfire",
   "category": "Misc",
@@ -74,6 +4487,151 @@
   ],
   "pivot_above_bottom": 0.09,
   "note": "a raycast straight up must hit a roof (underRoof) or rain puts it out; smoke needs a vent above"
+ },
+ "fire_pit_iron": {
+  "name": "Iron Fire Pit",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Ironpit",
+    1
+   ],
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.5,
+   1.08,
+   1.5
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "flametal_gate": {
+  "name": "Flametal Gate",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "FlametalNew",
+    16
+   ]
+  ],
+  "snaps": [
+   [
+    0.95,
+    0.0,
+    0.0
+   ],
+   [
+    -0.55,
+    0.0,
+    0.0
+   ],
+   [
+    0.95,
+    4.0,
+    0.0
+   ],
+   [
+    -0.55,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.61,
+   5.45,
+   0.6
+  ],
+  "pivot_above_bottom": -0.02
+ },
+ "flint_pile": {
+  "name": "Flint Pile",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Flint",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.49,
+   0.65,
+   1.5
+  ],
+  "pivot_above_bottom": 0.06
+ },
+ "grausten_pile": {
+  "name": "Grausten Pile",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Grausten",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.19,
+   1.48,
+   2.39
+  ],
+  "pivot_above_bottom": 0.15
+ },
+ "grindstone_feeder": {
+  "name": "Animal Feeder",
+  "category": "Misc",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "LeatherScraps",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.8,
+   0.9,
+   0.8
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "guard_stone": {
+  "name": "Ward",
+  "category": "Misc",
+  "material": "Stone",
+  "cost": [
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "GreydwarfEye",
+    5
+   ],
+   [
+    "SurtlingCore",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.03,
+   1.61,
+   0.78
+  ],
+  "pivot_above_bottom": 0.0
  },
  "hearth": {
   "name": "Hearth",
@@ -135,6 +4693,453 @@
   "pivot_above_bottom": 0.01,
   "note": "4 x 3 stone hearth; leave a ridge vent above it"
  },
+ "incinerator": {
+  "name": "Obliterator",
+  "category": "Crafting",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    8
+   ],
+   [
+    "Copper",
+    4
+   ],
+   [
+    "Thunderstone",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.4,
+   11.49,
+   1.7
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "iron_floor_1x1_v2": {
+  "name": "Cage Floor 1x1",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    -0.5,
+    0.0
+   ],
+   [
+    -0.5,
+    -0.5,
+    0.0
+   ],
+   [
+    0.5,
+    -0.5,
+    -1.0
+   ],
+   [
+    -0.5,
+    -0.5,
+    -1.0
+   ]
+  ],
+  "size": [
+   1.0,
+   0.12,
+   1.16
+  ],
+  "pivot_above_bottom": 0.53,
+  "note": "measured 2026-10-05: the pivot height looks wrong (outside the drawn size); measure again or check in game before relying on it"
+ },
+ "iron_floor_2x2": {
+  "name": "Cage Floor 2x2",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   0.12,
+   2.16
+  ],
+  "pivot_above_bottom": 0.03
+ },
+ "iron_grate": {
+  "name": "Iron Gate",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.01,
+   2.99,
+   0.11
+  ],
+  "pivot_above_bottom": 0.99
+ },
+ "iron_wall_1x1": {
+  "name": "Cage Wall 1x1",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ],
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.0,
+   1.16,
+   0.12
+  ],
+  "pivot_above_bottom": 0.09
+ },
+ "iron_wall_2x2": {
+  "name": "Cage Wall 2x2",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   2.16,
+   0.12
+  ],
+  "pivot_above_bottom": 1.09
+ },
+ "jute_carpet_blue": {
+  "name": "Blue Jute Carpet",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "JuteBlue",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.0,
+   0.06,
+   3.0
+  ],
+  "pivot_above_bottom": -0.03
+ },
+ "piece_ArcheryTarget": {
+  "name": "Archery Target",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "LeatherScraps",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.05,
+   2.0,
+   0.35
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "piece_EternalPyre": {
+  "name": "Eternal Pyre",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "FaderDrop",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.28,
+   4.63,
+   2.29
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_FrostFoundry": {
+  "name": "Frost Foundry",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Iron",
+    15
+   ],
+   [
+    "Stone",
+    20
+   ],
+   [
+    "FrostCore",
+    10
+   ]
+  ],
+  "snaps": [
+   [
+    1.75,
+    -0.25,
+    -2.75
+   ],
+   [
+    1.75,
+    -0.25,
+    2.75
+   ],
+   [
+    -1.75,
+    -0.25,
+    2.75
+   ],
+   [
+    -1.75,
+    -0.25,
+    -2.75
+   ]
+  ],
+  "size": [
+   3.47,
+   1.32,
+   5.51
+  ],
+  "pivot_above_bottom": 0.26
+ },
+ "piece_FrostKiln": {
+  "name": "Frigid Kiln",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "FrostCore",
+    10
+   ],
+   [
+    "Ice",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   7.14,
+   3.98,
+   9.14
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_TrainingDummy": {
+  "name": "T.W.I.G.",
+  "category": "Misc",
+  "material": null,
+  "cost": [
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "BronzeNails",
+    10
+   ],
+   [
+    "Ectoplasm",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.78,
+   2.32,
+   0.91
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_asksvinskeleton": {
+  "name": "Asksvin Skeleton",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "BoneFragments",
+    50
+   ],
+   [
+    "AsksvinCarrionNeck",
+    1
+   ],
+   [
+    "AsksvinCarrionPelvic",
+    1
+   ],
+   [
+    "AsksvinCarrionRibcage",
+    1
+   ],
+   [
+    "AsksvinCarrionSkull",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.34,
+   1.95,
+   1.66
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_augmenter": {
+  "name": "Augmenter Relic",
+  "category": "Misc",
+  "material": null,
+  "cost": [
+   [
+    "Obsidian",
+    10
+   ],
+   [
+    "Crystal",
+    3
+   ],
+   [
+    "Bronze",
+    3
+   ],
+   [
+    "SwordCheat",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.65,
+   1.36,
+   1.64
+  ],
+  "pivot_above_bottom": 0.0
+ },
  "piece_banner01": {
   "name": "Black Banner",
   "category": "Furniture",
@@ -162,6 +5167,568 @@
   "pivot_above_bottom": 2.93,
   "note": "black banner, hangs below its pivot (top bar); thin along x, so it faces +-x at yaw 0; must touch what holds it"
  },
+ "piece_banner03": {
+  "name": "White and Red Striped Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Raspberry",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner05": {
+  "name": "Green Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Guck",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner06": {
+  "name": "Blue, Red and White Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    2
+   ],
+   [
+    "Raspberry",
+    2
+   ],
+   [
+    "Cloudberry",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner07": {
+  "name": "White and Blue Striped Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    2
+   ],
+   [
+    "Cloudberry",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner08": {
+  "name": "Yellow Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Dandelion",
+    4
+   ],
+   [
+    "Coal",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner09": {
+  "name": "Purple Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    2
+   ],
+   [
+    "Raspberry",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner10": {
+  "name": "Orange Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Carrot",
+    2
+   ],
+   [
+    "Cloudberry",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_banner11": {
+  "name": "White Banner",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Coal",
+    2
+   ],
+   [
+    "Cloudberry",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.2,
+   3.03,
+   1.41
+  ],
+  "pivot_above_bottom": 2.92
+ },
+ "piece_bench_runed": {
+  "name": "Carved Bench",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    6
+   ],
+   [
+    "MooseHide",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.11,
+   0.87,
+   0.65
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_birdnest": {
+  "name": "Birds' Nest",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "WrithanRoots",
+    2
+   ],
+   [
+    "Acorn",
+    3
+   ],
+   [
+    "Thistle",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.81,
+   1.26,
+   0.81
+  ],
+  "pivot_above_bottom": 0.59
+ },
+ "piece_blackmarble_bench": {
+  "name": "Black Marble Bench",
+  "category": "Furniture",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ],
+   [
+    "Copper",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.55,
+   1.01,
+   0.63
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_blackmarble_table": {
+  "name": "Black Marble Table",
+  "category": "Furniture",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ],
+   [
+    "Copper",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.56,
+   0.82,
+   1.49
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_blackmarble_throne": {
+  "name": "Black Marble Throne",
+  "category": "Furniture",
+  "material": "Marble",
+  "cost": [
+   [
+    "BlackMarble",
+    20
+   ],
+   [
+    "ScaleHide",
+    4
+   ],
+   [
+    "DeerHide",
+    2
+   ],
+   [
+    "Copper",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.65,
+   2.94,
+   1.21
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_blackwood_bench01": {
+  "name": "Ashwood Bench",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.05,
+   0.5,
+   2.04
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_bone_throne": {
+  "name": "Bone Throne",
+  "category": "Furniture",
+  "material": "Marble",
+  "cost": [
+   [
+    "CharredBone",
+    15
+   ],
+   [
+    "FlametalNew",
+    4
+   ],
+   [
+    "Grausten",
+    20
+   ],
+   [
+    "Charredskull",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.56,
+   3.17,
+   0.83
+  ],
+  "pivot_above_bottom": 0.03
+ },
+ "piece_chair_runed": {
+  "name": "Carved Chair",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ],
+   [
+    "MooseSinew",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.47,
+   1.24,
+   1.13
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "piece_chest_blackmetal": {
+  "name": "Black Metal Chest",
+  "category": "Furniture",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "BlackMetal",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.31,
+   1.04,
+   1.52
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_chest_grausten": {
+  "name": "Grausten Chest",
+  "category": "DeepNorth",
+  "material": "Iron",
+  "cost": [
+   [
+    "Grausten",
+    10
+   ],
+   [
+    "TrophyCharredMelee",
+    5
+   ],
+   [
+    "FlametalNew",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.72,
+   1.18,
+   1.22
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_chest_treasure": {
+  "name": "Treasure Chest",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Coins",
+    99
+   ],
+   [
+    "Ruby",
+    5
+   ],
+   [
+    "SilverNecklace",
+    2
+   ],
+   [
+    "FineWood",
+    8
+   ],
+   [
+    "Silver",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.16,
+   0.6,
+   1.03
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "piece_chest_warderobe": {
+  "name": "Wardrobe",
+  "category": "DeepNorth",
+  "material": "Iron",
+  "cost": [
+   [
+    "Frostwood",
+    10
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "BlackMetal",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.68,
+   2.68,
+   1.11
+  ],
+  "pivot_above_bottom": -0.01
+ },
+ "piece_cloth_hanging_door_blue2": {
+  "name": "Blue Jute Curtain",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "JuteBlue",
+    4
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.17,
+   0.85,
+   2.2
+  ],
+  "pivot_above_bottom": 0.0
+ },
  "piece_cookingstation": {
   "name": "Cooking Station",
   "category": "Crafting",
@@ -180,6 +5747,1273 @@
   ],
   "pivot_above_bottom": 0.18,
   "note": "fire check point 0.2 above the pivot: put the pivot on the fire's centre; three at yaw 0/60/120 share one campfire"
+ },
+ "piece_dvergr_metal_wall_2x2": {
+  "name": "Dvergr Metal Wall",
+  "category": "BuildingStonecutter",
+  "material": "Iron",
+  "cost": [
+   [
+    "Copper",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.0,
+   2.0,
+   0.08
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "piece_dvergr_sharpstakes": {
+  "name": "Dvergr Sharp Stakes",
+  "category": "Misc",
+  "material": "HardWood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.74,
+   2.49,
+   3.81
+  ],
+  "pivot_above_bottom": 0.81
+ },
+ "piece_dvergr_spiralstair": {
+  "name": "Dvergr Spiral Staircase Left",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Copper",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.75,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    1.75
+   ]
+  ],
+  "size": [
+   2.33,
+   1.25,
+   2.32
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "piece_dvergr_spiralstair_right": {
+  "name": "Dvergr Spiral Staircase Right",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Copper",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.75,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.0,
+    1.75
+   ]
+  ],
+  "size": [
+   2.33,
+   1.25,
+   2.32
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "piece_dvergr_stake_wall": {
+  "name": "Dvergr Stakewall",
+  "category": "Misc",
+  "material": "HardWood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    8
+   ],
+   [
+    "Iron",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.14,
+   4.47,
+   1.1
+  ],
+  "pivot_above_bottom": 0.5
+ },
+ "piece_enchanter": {
+  "name": "Enchanter Relic",
+  "category": "Misc",
+  "material": null,
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "SurtlingCore",
+    3
+   ],
+   [
+    "Copper",
+    3
+   ],
+   [
+    "SwordCheat",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.65,
+   1.36,
+   1.64
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_enchantingtable": {
+  "name": "Enchanting Table",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "GreydwarfEye",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.21,
+   1.4,
+   3.19
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_gift1": {
+  "name": "Yuleklapp",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "BoneFragments",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   0.35,
+   0.4
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_gift2": {
+  "name": "Yuleklapp",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    3
+   ],
+   [
+    "Dandelion",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.74,
+   0.42,
+   0.48
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_gift3": {
+  "name": "Yuleklapp",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "Raspberry",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.93,
+   0.53,
+   0.6
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_grausten_roof_45": {
+  "name": "Grausten Roof",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.44,
+   2.53,
+   2.48
+  ],
+  "pivot_above_bottom": 1.33
+ },
+ "piece_grausten_roof_45_arch": {
+  "name": "Grausten Arched Roof",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    -1.0,
+    1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.44,
+   2.18,
+   2.53
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "piece_grausten_roof_45_arch_corner": {
+  "name": "Grausten Arched Roof Corner",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    1.0,
+    -1.0,
+    1.5
+   ]
+  ],
+  "size": [
+   2.44,
+   2.21,
+   2.49
+  ],
+  "pivot_above_bottom": 1.04
+ },
+ "piece_grausten_roof_45_arch_corner2": {
+  "name": "Grausten Arched Roof Corner",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.44,
+   2.2,
+   2.49
+  ],
+  "pivot_above_bottom": 1.04
+ },
+ "piece_grausten_roof_45_corner": {
+  "name": "Grausten Roof Corner",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    1.0,
+    -1.0,
+    1.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.37,
+   2.23,
+   2.48
+  ],
+  "pivot_above_bottom": 1.02
+ },
+ "piece_grausten_roof_45_corner2": {
+  "name": "Grausten Roof Corner",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -0.5
+   ],
+   [
+    -1.0,
+    -1.0,
+    1.5
+   ],
+   [
+    -1.0,
+    1.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   2.37,
+   2.23,
+   2.48
+  ],
+  "pivot_above_bottom": 1.03
+ },
+ "piece_grausten_stonestair": {
+  "name": "Grausten Stairs",
+  "category": "BuildingStonecutter",
+  "material": "Ashstone",
+  "cost": [
+   [
+    "Grausten",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    -1.0
+   ]
+  ],
+  "size": [
+   2.0,
+   1.0,
+   2.0
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_groundtorch": {
+  "name": "Standing Iron Torch",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    2
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.27,
+   1.48,
+   0.28
+  ],
+  "pivot_above_bottom": 0.65
+ },
+ "piece_groundtorch_blue": {
+  "name": "Standing Blue-burning Iron Torch",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    2
+   ],
+   [
+    "GreydwarfEye",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.23,
+   1.48,
+   0.24
+  ],
+  "pivot_above_bottom": 0.65
+ },
+ "piece_groundtorch_green": {
+  "name": "Standing Green-burning Iron Torch",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    2
+   ],
+   [
+    "Guck",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.23,
+   1.48,
+   0.24
+  ],
+  "pivot_above_bottom": 0.65
+ },
+ "piece_groundtorch_mist": {
+  "name": "Wisp Torch",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    1
+   ],
+   [
+    "Wisp",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.3,
+   1.2,
+   0.3
+  ],
+  "pivot_above_bottom": 0.64
+ },
+ "piece_hexagonal_door": {
+  "name": "Hexagonal Gate",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    8
+   ],
+   [
+    "Copper",
+    8
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    -2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   3.94,
+   4.22,
+   0.69
+  ],
+  "pivot_above_bottom": 2.1
+ },
+ "piece_hoodedlantern": {
+  "name": "Hooded Lantern",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    3
+   ],
+   [
+    "GlowWorm",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.36,
+   0.66,
+   0.43
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_icecube": {
+  "name": "Ice Block",
+  "category": "BuildingStonecutter",
+  "material": "Ice",
+  "cost": [
+   [
+    "Ice",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -0.5,
+    1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    1.0,
+    0.5
+   ],
+   [
+    0.5,
+    1.0,
+    0.5
+   ],
+   [
+    0.5,
+    1.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    -0.5
+   ],
+   [
+    -0.5,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    0.0,
+    0.5
+   ],
+   [
+    0.5,
+    0.0,
+    -0.5
+   ]
+  ],
+  "size": [
+   1.09,
+   1.18,
+   1.2
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "piece_jackoturnip": {
+  "name": "Jack-o-turnip",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Turnip",
+    4
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.61,
+   0.69,
+   0.59
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_magetable": {
+  "name": "Galdr Table",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    20
+   ],
+   [
+    "BlackMetal",
+    10
+   ],
+   [
+    "BlackCore",
+    5
+   ],
+   [
+    "Eitr",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.56,
+   2.73,
+   3.34
+  ],
+  "pivot_above_bottom": 0.04
+ },
+ "piece_magetable_ext": {
+  "name": "Rune Table",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    10
+   ],
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Eitr",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.01,
+   1.09,
+   1.01
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_magetable_ext2": {
+  "name": "Unfading Candles",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    10
+   ],
+   [
+    "TrophySkeleton",
+    3
+   ],
+   [
+    "Eitr",
+    10
+   ],
+   [
+    "Resin",
+    15
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.62,
+   1.14,
+   0.63
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_magetable_ext3": {
+  "name": "Feathery Wreath",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "CelestialFeather",
+    8
+   ],
+   [
+    "TrophyAsksvin",
+    1
+   ],
+   [
+    "Eitr",
+    10
+   ],
+   [
+    "Blackwood",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.36,
+   1.54,
+   0.54
+  ],
+  "pivot_above_bottom": 0.66
+ },
+ "piece_magetable_ext4": {
+  "name": "Standing Loom",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    5
+   ],
+   [
+    "NornThread",
+    10
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.06,
+   1.71,
+   0.66
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_maypole": {
+  "name": "Maypole",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Dandelion",
+    4
+   ],
+   [
+    "Thistle",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.89,
+   5.07,
+   4.2
+  ],
+  "pivot_above_bottom": 0.05
+ },
+ "piece_mistletoe": {
+  "name": "Mistletoe",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    1
+   ],
+   [
+    "JuteRed",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.66,
+   0.75,
+   0.71
+  ],
+  "pivot_above_bottom": -0.61,
+  "note": "measured 2026-10-05: the pivot height looks wrong (outside the drawn size); measure again or check in game before relying on it"
+ },
+ "piece_moose_throne": {
+  "name": "Antler Throne",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    15
+   ],
+   [
+    "TrophyMoose",
+    1
+   ],
+   [
+    "MooseHide",
+    5
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.25,
+   3.68,
+   1.33
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_sapcollector": {
+  "name": "Sap Extractor",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "DvergrNeedle",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.64,
+   3.43,
+   0.53
+  ],
+  "pivot_above_bottom": 0.81
+ },
+ "piece_sharpstakes": {
+  "name": "Sharp Stakes",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    6
+   ],
+   [
+    "RoundLog",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.4,
+   1.56,
+   2.67
+  ],
+  "pivot_above_bottom": 0.38
+ },
+ "piece_shieldgenerator": {
+  "name": "Shield Generator",
+  "category": "Misc",
+  "material": "Stone",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    5
+   ],
+   [
+    "ShieldCore",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.7,
+   6.51,
+   3.35
+  ],
+  "pivot_above_bottom": 0.02
+ },
+ "piece_stakewall_blackwood": {
+  "name": "Ashwood Stakewall",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Blackwood",
+    6
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    2.0,
+    -0.085
+   ],
+   [
+    1.0,
+    2.0,
+    -0.085
+   ],
+   [
+    -1.0,
+    2.0,
+    0.38
+   ],
+   [
+    1.0,
+    2.0,
+    0.38
+   ],
+   [
+    -1.0,
+    0.0,
+    -0.085
+   ],
+   [
+    1.0,
+    0.0,
+    -0.085
+   ],
+   [
+    -1.0,
+    0.0,
+    0.38
+   ],
+   [
+    1.0,
+    0.0,
+    0.38
+   ]
+  ],
+  "size": [
+   2.01,
+   2.69,
+   3.89
+  ],
+  "pivot_above_bottom": 0.01
+ },
+ "piece_stonecutter": {
+  "name": "Stonecutter",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Iron",
+    2
+   ],
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.29,
+   2.09,
+   1.64
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_table_runed_small": {
+  "name": "Square Carved Table",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    6
+   ],
+   [
+    "Tar",
+    1
+   ],
+   [
+    "IronNails",
+    6
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.0,
+   0.79,
+   1.04
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "piece_trap_troll": {
+  "name": "Trap",
+  "category": "Misc",
+  "material": "Iron",
+  "cost": [
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "BronzeNails",
+    10
+   ],
+   [
+    "MechanicalSpring",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.96,
+   1.67,
+   0.5
+  ],
+  "pivot_above_bottom": 0.56
+ },
+ "piece_turret": {
+  "name": "Ballista",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMetal",
+    10
+   ],
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "MechanicalSpring",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.64,
+   2.64,
+   3.93
+  ],
+  "pivot_above_bottom": 0.53
+ },
+ "piece_wisplure": {
+  "name": "Wisp Fountain",
+  "category": "Crafting",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "YagluthDrop",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.63,
+   5.0,
+   1.89
+  ],
+  "pivot_above_bottom": 1.18
  },
  "piece_workbench": {
   "name": "Workbench",
@@ -254,6 +7088,246 @@
   "pivot_above_bottom": 0.04,
   "note": "tanning rack; counts within 5 m of the workbench"
  },
+ "piece_workbench_ext3": {
+  "name": "Adze",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Bronze",
+    3
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.26,
+   1.54,
+   1.45
+  ],
+  "pivot_above_bottom": 0.36
+ },
+ "piece_workbench_ext4": {
+  "name": "Tool Shelf",
+  "category": "Crafting",
+  "material": "Wood",
+  "cost": [
+   [
+    "Iron",
+    4
+   ],
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Obsidian",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.82,
+   1.66,
+   0.55
+  ],
+  "pivot_above_bottom": 0.37
+ },
+ "piece_xmascrown": {
+  "name": "Yule Wreath",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "PineCone",
+    4
+   ],
+   [
+    "JuteRed",
+    1
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.37,
+   0.83,
+   0.86
+  ],
+  "pivot_above_bottom": 0.41
+ },
+ "piece_xmasgarland": {
+  "name": "Yule Garland",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "PineCone",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.37,
+   0.75,
+   2.2
+  ],
+  "pivot_above_bottom": -0.1
+ },
+ "piece_xmastree": {
+  "name": "Yule Tree",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "FirCone",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.56,
+   2.8,
+   1.8
+  ],
+  "pivot_above_bottom": 0.16
+ },
+ "portal_ancient": {
+  "name": "Ancient Bark Portal",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "ElderBark",
+    20
+   ],
+   [
+    "Iron",
+    5
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   4.23,
+   3.29,
+   1.18
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "portal_blackmarble": {
+  "name": "Black Marble Portal",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "BlackMarble",
+    20
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "Eitr",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   4.23,
+   3.29,
+   1.18
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "portal_obsidian": {
+  "name": "Obsidian Portal",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Obsidian",
+    20
+   ],
+   [
+    "Silver",
+    5
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   4.23,
+   3.29,
+   1.18
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "portal_stone": {
+  "name": "Portal \u2013 Stone",
+  "category": "Misc",
+  "material": "Stone",
+  "cost": [
+   [
+    "GreydwarfEye",
+    10
+   ],
+   [
+    "Grausten",
+    30
+   ],
+   [
+    "MoltenCore",
+    2
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   8.62,
+   6.99,
+   4.26
+  ],
+  "pivot_above_bottom": 0.42
+ },
  "portal_wood": {
   "name": "Portal",
   "category": "Misc",
@@ -280,6 +7354,643 @@
   ],
   "pivot_above_bottom": 0.01,
   "note": "3.3 m tall: does not fit under a 3 m ceiling; front +z"
+ },
+ "rug_asksvin": {
+  "name": "Asksvin Rug",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "AskHide",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.0,
+   0.02,
+   3.0
+  ],
+  "pivot_above_bottom": -0.03
+ },
+ "rug_hare": {
+  "name": "Hare Rug",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "ScaleHide",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.08,
+   0.02,
+   1.85
+  ],
+  "pivot_above_bottom": -0.03
+ },
+ "rug_moose": {
+  "name": "Moose Hide Carpet",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "MooseHide",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   3.4,
+   0.02,
+   4.0
+  ],
+  "pivot_above_bottom": -0.04
+ },
+ "rug_seal": {
+  "name": "Sealskin Rug",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "SealHide",
+    4
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.97,
+   0.01,
+   2.3
+  ],
+  "pivot_above_bottom": -0.06
+ },
+ "rug_straw": {
+  "name": "Straw",
+  "category": "Furniture",
+  "material": "Wood",
+  "cost": [
+   [
+    "Barley",
+    1
+   ],
+   [
+    "Flax",
+    1
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.12,
+   0.27,
+   2.09
+  ],
+  "pivot_above_bottom": 0.03
+ },
+ "scale_halfwall_1x2": {
+  "name": "Scalewood Half Wall",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.04,
+   1.04,
+   0.29
+  ],
+  "pivot_above_bottom": 0.03
+ },
+ "scale_quarterwall_1x1": {
+  "name": "Scalewood Quarter Wall",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.5,
+    1.0,
+    0.0
+   ],
+   [
+    -0.5,
+    1.0,
+    0.0
+   ],
+   [
+    0.5,
+    0.0,
+    0.0
+   ],
+   [
+    -0.5,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   1.03,
+   1.04,
+   0.28
+  ],
+  "pivot_above_bottom": 0.0
+ },
+ "scale_wall_2x2": {
+  "name": "Scalewood Wall",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.04,
+   2.05,
+   0.29
+  ],
+  "pivot_above_bottom": 1.03
+ },
+ "scale_wall_roof_26": {
+  "name": "Scalewood Wall 26\u00b0 Left",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.13,
+   1.16,
+   0.25
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "scale_wall_roof_26_flipped": {
+  "name": "Scalewood Wall 26\u00b0 Right",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.13,
+   1.16,
+   0.25
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "scale_wall_roof_26_upsidedown": {
+  "name": "Scalewood Wall 26\u00b0 Right (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.13,
+   1.16,
+   0.25
+  ],
+  "pivot_above_bottom": 0.09
+ },
+ "scale_wall_roof_26_upsidedown_flipped": {
+  "name": "Scalewood Wall 26\u00b0 Left (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.13,
+   1.16,
+   0.25
+  ],
+  "pivot_above_bottom": 0.09
+ },
+ "scale_wall_roof_45": {
+  "name": "Scalewood Wall 45\u00b0 Left",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.14,
+   2.14,
+   0.25
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "scale_wall_roof_45_flipped": {
+  "name": "Scalewood Wall 45\u00b0 Right",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.14,
+   2.14,
+   0.25
+  ],
+  "pivot_above_bottom": 0.07
+ },
+ "scale_wall_roof_45_upsidedown": {
+  "name": "Scalewood Wall 45\u00b0 Right (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.14,
+   2.14,
+   0.25
+  ],
+  "pivot_above_bottom": 0.05
+ },
+ "scale_wall_roof_45_upsidedown_flipped": {
+  "name": "Scalewood Wall 45\u00b0 Left (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.14,
+   2.14,
+   0.26
+  ],
+  "pivot_above_bottom": 0.05
+ },
+ "scale_wall_roof_67": {
+  "name": "Scalewood Wall 67\u00b0 Left",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.16,
+   4.11,
+   0.25
+  ],
+  "pivot_above_bottom": 0.05
+ },
+ "scale_wall_roof_67_flipped": {
+  "name": "Scalewood Wall 67\u00b0 Right",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.16,
+   4.11,
+   0.25
+  ],
+  "pivot_above_bottom": 0.05
+ },
+ "scale_wall_roof_67_upsidedown": {
+  "name": "Scalewood Wall 67\u00b0 Right (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    4.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.16,
+   4.11,
+   0.25
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "scale_wall_roof_67_upsidedown_flipped": {
+  "name": "Scalewood Wall 67\u00b0 Left (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    4.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.16,
+   4.11,
+   0.25
+  ],
+  "pivot_above_bottom": 0.08
+ },
+ "skull_pile": {
+  "name": "Pile of Skulls",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Charredskull",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.18,
+   0.85,
+   1.09
+  ],
+  "pivot_above_bottom": 0.07
  },
  "stake_wall": {
   "name": "Stakewall",
@@ -320,6 +8031,622 @@
   ],
   "pivot_above_bottom": 0.2,
   "note": "2 wide, snaps 0..2 high but the points reach 3.5"
+ },
+ "stave_beam_26": {
+  "name": "Timber Beam 26\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.36,
+   1.65,
+   0.71
+  ],
+  "pivot_above_bottom": 0.35
+ },
+ "stave_beam_2m": {
+  "name": "Timber Beam 2m",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.03,
+   0.7,
+   0.71
+  ],
+  "pivot_above_bottom": 0.35
+ },
+ "stave_beam_45": {
+  "name": "Timber Beam 45\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.52,
+   2.52,
+   0.71
+  ],
+  "pivot_above_bottom": 1.27
+ },
+ "stave_beam_4m": {
+  "name": "Timber Beam 4m",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    2.0,
+    0.0,
+    0.0
+   ],
+   [
+    -2.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   4.1,
+   0.72,
+   0.72
+  ],
+  "pivot_above_bottom": 0.35
+ },
+ "stave_beam_67": {
+  "name": "Timber Beam 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.61,
+   4.31,
+   0.72
+  ],
+  "pivot_above_bottom": 0.15
+ },
+ "stave_deco_beam_26": {
+  "name": "Decorated Timber Beam 26\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.28,
+   1.57,
+   0.31
+  ],
+  "pivot_above_bottom": 0.1
+ },
+ "stave_deco_beam_2m": {
+  "name": "Decorated Timber Beam 2m",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.01,
+   0.66,
+   0.31
+  ],
+  "pivot_above_bottom": 0.25
+ },
+ "stave_deco_beam_45": {
+  "name": "Decorated Timber Beam 45\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.57,
+   2.58,
+   0.42
+  ],
+  "pivot_above_bottom": 0.22
+ },
+ "stave_deco_beam_67": {
+  "name": "Decorated Timber Beam 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.57,
+   4.3,
+   0.31
+  ],
+  "pivot_above_bottom": 0.04
+ },
+ "stave_deco_pole_2m": {
+  "name": "Decorated Timber Pole 2m",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.66,
+   2.01,
+   0.31
+  ],
+  "pivot_above_bottom": 0.99
+ },
+ "stave_deco_wall_2x2": {
+  "name": "Lathed Timber Wall",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.03,
+   2.02,
+   0.57
+  ],
+  "pivot_above_bottom": 1.0
+ },
+ "stave_gate": {
+  "name": "Timberwood Gate",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "Frostwood",
+    24
+   ],
+   [
+    "Gold",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    6.0,
+    0.0
+   ],
+   [
+    -1.0,
+    6.0,
+    0.0
+   ],
+   [
+    1.0,
+    3.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.4,
+   6.44,
+   0.72
+  ],
+  "pivot_above_bottom": 0.03
+ },
+ "stave_pole_2m": {
+  "name": "Timber Pole 2m",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.71,
+   2.04,
+   0.71
+  ],
+  "pivot_above_bottom": 1.01
+ },
+ "stave_pole_4m": {
+  "name": "Timber Pole 4m",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    3.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.72,
+   4.1,
+   0.72
+  ],
+  "pivot_above_bottom": 1.02
+ },
+ "stave_wall_2x2": {
+  "name": "Timber Wall",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.01,
+   2.03,
+   0.7
+  ],
+  "pivot_above_bottom": 1.02
+ },
+ "stave_wall_cross_26": {
+  "name": "Timber Roof Cross 26\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   2.38,
+   1.58,
+   0.8
+  ],
+  "pivot_above_bottom": 0.3
+ },
+ "stave_wall_cross_45": {
+  "name": "Timber Roof Cross 45\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    2.0,
+    0.0
+   ],
+   [
+    0.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.51,
+   2.5,
+   0.76
+  ],
+  "pivot_above_bottom": 0.24
+ },
+ "stave_wall_cross_67": {
+  "name": "Timber Roof Cross 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Timberwood",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ],
+   [
+    0.0,
+    2.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.66,
+   4.31,
+   0.82
+  ],
+  "pivot_above_bottom": 0.15
  },
  "stone_arch": {
   "name": "Stone Arch",
@@ -369,6 +8696,45 @@
    1.13
   ],
   "pivot_above_bottom": 0.53
+ },
+ "stone_fence": {
+  "name": "Stone Fence",
+  "category": "Misc",
+  "material": "Stone",
+  "cost": [
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.33,
+   1.13,
+   1.08
+  ],
+  "pivot_above_bottom": 0.06
  },
  "stone_floor_2x2": {
   "name": "Stone Floor 2x2",
@@ -429,6 +8795,24 @@
   ],
   "pivot_above_bottom": 0.5,
   "note": "1 m thick, top = pivot + 0.5"
+ },
+ "stone_pile": {
+  "name": "Stone Pile",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Stone",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.67,
+   0.92,
+   1.54
+  ],
+  "pivot_above_bottom": 0.09
  },
  "stone_pillar": {
   "name": "Stone Pillar",
@@ -716,6 +9100,42 @@
   ],
   "pivot_above_bottom": 1.11
  },
+ "treasure_pile": {
+  "name": "Coin Pile",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Coins",
+    999
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.3,
+   0.4,
+   2.3
+  ],
+  "pivot_above_bottom": -0.05
+ },
+ "treasure_stack": {
+  "name": "Coin Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Coins",
+    99
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   0.44,
+   0.55,
+   0.51
+  ],
+  "pivot_above_bottom": -0.01
+ },
  "wood_beam": {
   "name": "Wood Beam 2 m",
   "category": "BuildingWorkbench",
@@ -833,6 +9253,53 @@
   ],
   "pivot_above_bottom": 1.21,
   "note": "runs along x rising toward +x (2 over 2), centred"
+ },
+ "wood_beam_67": {
+  "name": "Wood Beam 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.54,
+   4.31,
+   0.43
+  ],
+  "pivot_above_bottom": 0.17
+ },
+ "wood_core_stack": {
+  "name": "Corewood Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "RoundLog",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.99,
+   1.32,
+   2.22
+  ],
+  "pivot_above_bottom": 0.04
  },
  "wood_door": {
   "name": "Wood Door",
@@ -973,6 +9440,24 @@
   "pivot_above_bottom": 1.03,
   "note": "spans x -1.2..0.8, pivot 1 above the bottom"
  },
+ "wood_fine_stack": {
+  "name": "Finewood Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "FineWood",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.08,
+   1.1,
+   2.08
+  ],
+  "pivot_above_bottom": 0.08
+ },
  "wood_floor": {
   "name": "Wood Floor 2x2",
   "category": "BuildingWorkbench",
@@ -1051,6 +9536,24 @@
    1.0
   ],
   "pivot_above_bottom": 0.02
+ },
+ "wood_frost_stack": {
+  "name": "Timberwood Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Frostwood",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.37,
+   1.22,
+   2.08
+  ],
+  "pivot_above_bottom": 0.11
  },
  "wood_gate": {
   "name": "Wood Gate",
@@ -1168,6 +9671,35 @@
   ],
   "pivot_above_bottom": 1.34,
   "note": "log version of wood_beam_45 (core wood); good for crossed gable horns"
+ },
+ "wood_log_67": {
+  "name": "Log Beam 67\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "HardWood",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.51,
+   4.29,
+   0.52
+  ],
+  "pivot_above_bottom": 0.12
  },
  "wood_pole": {
   "name": "Wood Pole 1 m",
@@ -1404,6 +9936,45 @@
   ],
   "pivot_above_bottom": 1.82
  },
+ "wood_roof_icorner": {
+  "name": "Thatch Roof Inner Corner 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.69,
+   1.36,
+   2.74
+  ],
+  "pivot_above_bottom": 0.11
+ },
  "wood_roof_icorner_45": {
   "name": "Thatch Roof Inner Corner 45\u00b0",
   "category": "BuildingWorkbench",
@@ -1443,6 +10014,84 @@
   ],
   "pivot_above_bottom": 0.21
  },
+ "wood_roof_icorner_67": {
+  "name": "Thatch Roof Inner Corner 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    4.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    4.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    4.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.81,
+   4.93,
+   2.87
+  ],
+  "pivot_above_bottom": 0.47
+ },
+ "wood_roof_ocorner": {
+  "name": "Thatch Roof Outer Corner 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    1.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.75,
+   1.4,
+   2.78
+  ],
+  "pivot_above_bottom": 0.24
+ },
  "wood_roof_ocorner_45": {
   "name": "Thatch Roof Outer Corner 45\u00b0",
   "category": "BuildingWorkbench",
@@ -1481,6 +10130,45 @@
    2.75
   ],
   "pivot_above_bottom": 0.27
+ },
+ "wood_roof_ocorner_67": {
+  "name": "Thatch Roof Outer Corner 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    -1.0
+   ],
+   [
+    1.0,
+    0.0,
+    1.0
+   ],
+   [
+    -1.0,
+    4.0,
+    -1.0
+   ],
+   [
+    -1.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "size": [
+   2.97,
+   4.73,
+   2.89
+  ],
+  "pivot_above_bottom": 0.59
  },
  "wood_roof_top": {
   "name": "Thatch Roof Ridge 26\u00b0",
@@ -1629,6 +10317,24 @@
    2.76
   ],
   "pivot_above_bottom": 0.72
+ },
+ "wood_stack": {
+  "name": "Wood Stack",
+  "category": "Misc",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   2.46,
+   1.3,
+   2.31
+  ],
+  "pivot_above_bottom": 0.58
  },
  "wood_stair": {
   "name": "Wood Stairs",
@@ -1969,6 +10675,152 @@
   ],
   "pivot_above_bottom": -0.05
  },
+ "wood_wall_roof_67_a": {
+  "name": "Wood Wall 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.54,
+   4.31,
+   0.43
+  ],
+  "pivot_above_bottom": 0.17
+ },
+ "wood_wall_roof_67_upsidedown": {
+  "name": "Wood Wall 67\u00b0 (Inverted)",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    -4.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.54,
+   4.31,
+   0.43
+  ],
+  "pivot_above_bottom": 4.14
+ },
+ "wood_wall_roof_a": {
+  "name": "Wood Wall 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.26,
+   1.51,
+   0.4
+  ],
+  "pivot_above_bottom": 0.25
+ },
+ "wood_wall_roof_top": {
+  "name": "Wood Roof Cross 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    0.0,
+    0.5,
+    0.0
+   ],
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.52,
+   1.64,
+   0.41
+  ],
+  "pivot_above_bottom": 0.32
+ },
  "wood_wall_roof_top_45": {
   "name": "Wood Roof Cross 45\u00b0",
   "category": "BuildingWorkbench",
@@ -2014,6 +10866,84 @@
   "pivot_above_bottom": 0.26,
   "note": "not a gable peak: a V (valley) wall, bottom y 0 at x +-1 and top y 2 at x +-1"
  },
+ "wood_wall_roof_top_67": {
+  "name": "Wood Roof Cross 67\u00b0",
+  "category": "DeepNorth",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    2.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ],
+   [
+    -1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.58,
+   4.35,
+   0.44
+  ],
+  "pivot_above_bottom": 0.18
+ },
+ "wood_wall_roof_upsidedown": {
+  "name": "Wood Wall 26\u00b0 (Inverted)",
+  "category": "BuildingWorkbench",
+  "material": "Wood",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.25,
+    0.0
+   ],
+   [
+    -1.0,
+    1.25,
+    0.0
+   ],
+   [
+    1.0,
+    1.25,
+    0.0
+   ]
+  ],
+  "size": [
+   2.26,
+   1.51,
+   0.42
+  ],
+  "pivot_above_bottom": 0.0
+ },
  "wood_window": {
   "name": "Wood Shutter",
   "category": "BuildingWorkbench",
@@ -2057,6 +10987,189 @@
   ],
   "pivot_above_bottom": 0.52,
   "note": "1x1 shutter (opens like a door) hinged at the pivot (x 0), spans x -1..0; yaw 180 spans 0..1"
+ },
+ "wood_yggdrasil_stack": {
+  "name": "Yggdrasil Wood Stack",
+  "category": "Misc",
+  "material": "HardWood",
+  "cost": [
+   [
+    "YggdrasilWood",
+    50
+   ]
+  ],
+  "snaps": [],
+  "size": [
+   1.97,
+   1.93,
+   3.06
+  ],
+  "pivot_above_bottom": 0.51
+ },
+ "woodiron_beam": {
+  "name": "Wood Iron Beam",
+  "category": "BuildingWorkbench",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.0,
+    0.0
+   ],
+   [
+    -1.0,
+    0.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.01,
+   0.31,
+   0.38
+  ],
+  "pivot_above_bottom": 0.15
+ },
+ "woodiron_beam_26": {
+  "name": "Wood Iron Beam 26\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    0.5,
+    0.0
+   ],
+   [
+    -1.0,
+    -0.5,
+    0.0
+   ]
+  ],
+  "size": [
+   2.21,
+   1.37,
+   0.46
+  ],
+  "pivot_above_bottom": 0.68
+ },
+ "woodiron_beam_45": {
+  "name": "Wood Iron Beam 45\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    1.0,
+    1.0,
+    0.0
+   ],
+   [
+    -1.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.37,
+   2.37,
+   0.42
+  ],
+  "pivot_above_bottom": 1.17
+ },
+ "woodiron_beam_67": {
+  "name": "Wood Iron Beam 67\u00b0",
+  "category": "BuildingWorkbench",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   [
+    1.0,
+    4.0,
+    0.0
+   ]
+  ],
+  "size": [
+   2.26,
+   4.14,
+   0.41
+  ],
+  "pivot_above_bottom": 0.06
+ },
+ "woodiron_pole": {
+  "name": "Wood Iron Pole",
+  "category": "BuildingWorkbench",
+  "material": "Iron",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "snaps": [
+   [
+    0.0,
+    1.0,
+    0.0
+   ],
+   [
+    0.0,
+    -1.0,
+    0.0
+   ]
+  ],
+  "size": [
+   0.31,
+   2.01,
+   0.38
+  ],
+  "pivot_above_bottom": 1.0
  },
  "woodwall": {
   "name": "Wood Wall",

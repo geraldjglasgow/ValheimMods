@@ -1,0 +1,5787 @@
+{
+ "ArmorStand": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    8
+   ],
+   [
+    "IronNails",
+    4
+   ],
+   [
+    "LeatherScraps",
+    2
+   ]
+  ],
+  "name": "Armour Stand",
+  "station": "Workbench"
+ },
+ "BatteringRam": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Blackwood",
+    20
+   ],
+   [
+    "FlametalNew",
+    10
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "name": "Battering Ram",
+  "station": "Workbench"
+ },
+ "Candle_resin": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Resin",
+    1
+   ],
+   [
+    "CandleWick",
+    1
+   ]
+  ],
+  "name": "Resin Candle",
+  "station": "Workbench"
+ },
+ "Cart": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "BronzeNails",
+    10
+   ]
+  ],
+  "name": "Cart",
+  "station": "Workbench"
+ },
+ "Catapult": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Blackwood",
+    20
+   ],
+   [
+    "FlametalNew",
+    10
+   ],
+   [
+    "CharredCogwheel",
+    1
+   ]
+  ],
+  "name": "Catapult",
+  "station": "Workbench"
+ },
+ "Karve": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    30
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "Resin",
+    20
+   ],
+   [
+    "BronzeNails",
+    80
+   ]
+  ],
+  "name": "Karve",
+  "station": "Workbench"
+ },
+ "Piece_flametal_beam": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "FlametalNew",
+    2
+   ]
+  ],
+  "name": "Flametal Beam",
+  "station": "Black Forge"
+ },
+ "Piece_flametal_pillar": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "FlametalNew",
+    2
+   ]
+  ],
+  "name": "Flametal Pillar",
+  "station": "Black Forge"
+ },
+ "Piece_grausten_floor_1x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "name": "Grausten Floor 1x1",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_floor_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "name": "Grausten Floor 2x2",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_floor_4x4": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    8
+   ]
+  ],
+  "name": "Grausten Floor 4x4",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillar_arch": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "name": "Grausten Medium Arch",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillar_arch_small": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "name": "Grausten Small Arch",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillarbase_medium": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    3
+   ]
+  ],
+  "name": "Grausten Medium Pillar",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillarbase_small": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    1
+   ]
+  ],
+  "name": "Grausten Small Pillar",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillarbase_tapered": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Tapered Pillar",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillarbase_tapered_inverted": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Tapered Pillar (Inverted)",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillarbeam_medium": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    3
+   ]
+  ],
+  "name": "Grausten Medium Beam",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_pillarbeam_small": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    1
+   ]
+  ],
+  "name": "Grausten Small Beam",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_stone_ladder": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Steep Stairs",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_wall_1x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "name": "Grausten Wall 1x2",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_wall_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    6
+   ]
+  ],
+  "name": "Grausten Wall 2x2",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_wall_4x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    12
+   ]
+  ],
+  "name": "Grausten Wall 4x2",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_wall_arch": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "name": "Grausten Wall Arch",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_wall_arch_inverted": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    2
+   ]
+  ],
+  "name": "Grausten Wall Arch (Inverted)",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_window_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    4
+   ]
+  ],
+  "name": "Grausten Window 2x2",
+  "station": "Stonecutter"
+ },
+ "Piece_grausten_window_4x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    10
+   ]
+  ],
+  "name": "Grausten Window 4x2",
+  "station": "Stonecutter"
+ },
+ "Placeable_HardRock": {
+  "category": "Misc",
+  "cost": [
+   [
+    "StoneRock",
+    1
+   ],
+   [
+    "Coal",
+    1
+   ]
+  ],
+  "name": "Mysterious Rock",
+  "station": null
+ },
+ "Raft": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "Resin",
+    6
+   ]
+  ],
+  "name": "Raft",
+  "station": "Workbench"
+ },
+ "VikingShip": {
+  "category": "Misc",
+  "cost": [
+   [
+    "IronNails",
+    100
+   ],
+   [
+    "DeerHide",
+    10
+   ],
+   [
+    "FineWood",
+    40
+   ],
+   [
+    "ElderBark",
+    40
+   ]
+  ],
+  "name": "Longship",
+  "station": "Workbench"
+ },
+ "VikingShip_Ashlands": {
+  "category": "Misc",
+  "cost": [
+   [
+    "IronNails",
+    100
+   ],
+   [
+    "CeramicPlate",
+    30
+   ],
+   [
+    "FineWood",
+    50
+   ],
+   [
+    "YggdrasilWood",
+    25
+   ]
+  ],
+  "name": "Drakkar",
+  "station": "Workbench"
+ },
+ "WF_SeaGatePillar": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "GreydwarfEye",
+    5
+   ],
+   [
+    "SurtlingCore",
+    1
+   ]
+  ],
+  "name": "Sea Gate Pillar",
+  "station": "Workbench"
+ },
+ "artisan_ext1": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ],
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "QueenDrop",
+    1
+   ]
+  ],
+  "name": "Artisan Press",
+  "station": "Artisan Table"
+ },
+ "ashwood_arch_big": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Arch",
+  "station": "Workbench"
+ },
+ "ashwood_beam_1m": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "name": "Ashwood Beam 1 m",
+  "station": "Workbench"
+ },
+ "ashwood_beam_2m": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Beam 2 m",
+  "station": "Workbench"
+ },
+ "ashwood_bed": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Blackwood",
+    8
+   ],
+   [
+    "LoxPelt",
+    2
+   ],
+   [
+    "AskHide",
+    2
+   ]
+  ],
+  "name": "Ashwood Bed",
+  "station": "Workbench"
+ },
+ "ashwood_deco_floor": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    4
+   ]
+  ],
+  "name": "Ashwood Decorative Floor",
+  "station": "Workbench"
+ },
+ "ashwood_decowall_2x2": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    4
+   ]
+  ],
+  "name": "Ashwood Decorative Wall",
+  "station": "Workbench"
+ },
+ "ashwood_decowall_divider": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Divider",
+  "station": "Workbench"
+ },
+ "ashwood_decowall_tree": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Decorative Window",
+  "station": "Workbench"
+ },
+ "ashwood_door": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "FlametalNew",
+    1
+   ],
+   [
+    "Blackwood",
+    5
+   ]
+  ],
+  "name": "Ashwood Door",
+  "station": "Workbench"
+ },
+ "ashwood_floor_1x1": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "name": "Ashwood Floor 1x1",
+  "station": "Workbench"
+ },
+ "ashwood_floor_2x2": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Floor 2x2",
+  "station": "Workbench"
+ },
+ "ashwood_halfwall_1x2": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "name": "Ashwood Half Wall",
+  "station": "Workbench"
+ },
+ "ashwood_pole_1m": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "name": "Ashwood Pole 1 m",
+  "station": "Workbench"
+ },
+ "ashwood_pole_2m": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Pole 2 m",
+  "station": "Workbench"
+ },
+ "ashwood_quarterwall_1x1": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    1
+   ]
+  ],
+  "name": "Ashwood Quarter Wall",
+  "station": "Workbench"
+ },
+ "ashwood_stair": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Stair",
+  "station": "Workbench"
+ },
+ "ashwood_wall_2x2": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall",
+  "station": "Workbench"
+ },
+ "ashwood_wall_arch": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Arched Wall",
+  "station": "Workbench"
+ },
+ "ashwood_wall_beam_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Beam 26\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_beam_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Beam 45\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_beam_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Beam 67\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_cross_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Roof Cross 26\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_cross_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Roof Cross 45\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_cross_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Roof Cross 67\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_roof_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall 26\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_roof_26_upsidedown": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall 26\u00b0 (Inverted)",
+  "station": "Workbench"
+ },
+ "ashwood_wall_roof_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall 45\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_roof_45_upsidedown": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall 45\u00b0 (Inverted)",
+  "station": "Workbench"
+ },
+ "ashwood_wall_roof_67_a": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall 67\u00b0",
+  "station": "Workbench"
+ },
+ "ashwood_wall_roof_67_upsidedown": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Blackwood",
+    2
+   ]
+  ],
+  "name": "Ashwood Wall 67\u00b0 (Inverted)",
+  "station": "Workbench"
+ },
+ "bar_blackmetal_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "BlackMetal",
+    30
+   ]
+  ],
+  "name": "Black Metal Stack",
+  "station": null
+ },
+ "bar_bronze_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Bronze",
+    30
+   ]
+  ],
+  "name": "Bronze Stack",
+  "station": null
+ },
+ "bar_copper_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Copper",
+    30
+   ]
+  ],
+  "name": "Copper Stack",
+  "station": null
+ },
+ "bar_flametal_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FlametalNew",
+    30
+   ]
+  ],
+  "name": "Flametal Stack",
+  "station": null
+ },
+ "bar_gold_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Gold",
+    30
+   ]
+  ],
+  "name": "Bloodgold Stack",
+  "station": null
+ },
+ "bar_iron_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Iron",
+    30
+   ]
+  ],
+  "name": "Iron Stack",
+  "station": null
+ },
+ "bar_silver_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Silver",
+    30
+   ]
+  ],
+  "name": "Silver Stack",
+  "station": null
+ },
+ "bar_tin_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Tin",
+    30
+   ]
+  ],
+  "name": "Tin Stack",
+  "station": null
+ },
+ "bed": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    8
+   ]
+  ],
+  "name": "Bed",
+  "station": "Workbench"
+ },
+ "blackforge": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    10
+   ],
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "BlackCore",
+    5
+   ]
+  ],
+  "name": "Black Forge",
+  "station": "Workbench"
+ },
+ "blackforge_ext1": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    5
+   ],
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "name": "Black Forge Cooler",
+  "station": "Black Forge"
+ },
+ "blackforge_ext2_vise": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    8
+   ],
+   [
+    "MechanicalSpring",
+    2
+   ]
+  ],
+  "name": "Vice",
+  "station": "Black Forge"
+ },
+ "blackforge_ext3_metalcutter": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ],
+   [
+    "FlametalNew",
+    5
+   ],
+   [
+    "Blackwood",
+    5
+   ],
+   [
+    "CharredBone",
+    4
+   ]
+  ],
+  "name": "Metal Cutter",
+  "station": "Black Forge"
+ },
+ "blackforge_ext4_gemcutter": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "FlametalNew",
+    5
+   ],
+   [
+    "Blackwood",
+    8
+   ],
+   [
+    "MorgenSinew",
+    2
+   ],
+   [
+    "GemstoneRed",
+    1
+   ]
+  ],
+  "name": "Gem Cutter",
+  "station": "Black Forge"
+ },
+ "blackforge_ext5_apron": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Gold",
+    5
+   ],
+   [
+    "Frostwood",
+    8
+   ],
+   [
+    "MooseHide",
+    2
+   ]
+  ],
+  "name": "Smith's Aprons",
+  "station": "Black Forge"
+ },
+ "blackmarble_1x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    2
+   ]
+  ],
+  "name": "Black Marble 1x1x1",
+  "station": "Stonecutter"
+ },
+ "blackmarble_2x1x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "name": "Black Marble 2x1x1",
+  "station": "Stonecutter"
+ },
+ "blackmarble_2x2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    8
+   ]
+  ],
+  "name": "Black Marble 2x2x2",
+  "station": "Stonecutter"
+ },
+ "blackmarble_arch": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ]
+  ],
+  "name": "Black Marble Arch",
+  "station": "Stonecutter"
+ },
+ "blackmarble_base_1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ]
+  ],
+  "name": "Black Marble Plinth",
+  "station": "Stonecutter"
+ },
+ "blackmarble_basecorner": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ]
+  ],
+  "name": "Black Marble Plinth Corner",
+  "station": "Stonecutter"
+ },
+ "blackmarble_column_1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    2
+   ]
+  ],
+  "name": "Black Marble Column Small",
+  "station": "Stonecutter"
+ },
+ "blackmarble_column_2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "name": "Black Marble Column Wide",
+  "station": "Stonecutter"
+ },
+ "blackmarble_floor": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    4
+   ]
+  ],
+  "name": "Black Marble Floor",
+  "station": "Stonecutter"
+ },
+ "blackmarble_floor_triangle": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    3
+   ]
+  ],
+  "name": "Black Marble Floor Triangle",
+  "station": "Stonecutter"
+ },
+ "blackmarble_out_1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    5
+   ]
+  ],
+  "name": "Black Marble Cornice",
+  "station": "Stonecutter"
+ },
+ "blackmarble_outcorner": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ]
+  ],
+  "name": "Black Marble Cornice Corner",
+  "station": "Stonecutter"
+ },
+ "blackmarble_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "BlackMarble",
+    50
+   ]
+  ],
+  "name": "Black Marble Pile",
+  "station": null
+ },
+ "blackmarble_stair": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    8
+   ]
+  ],
+  "name": "Black Marble Stair",
+  "station": "Stonecutter"
+ },
+ "blackmarble_tip": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "BlackMarble",
+    2
+   ]
+  ],
+  "name": "Black Marble Quarter Spire",
+  "station": "Stonecutter"
+ },
+ "blackwood_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Blackwood",
+    50
+   ]
+  ],
+  "name": "Ashwood Stack",
+  "station": null
+ },
+ "blastfurnace": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ],
+   [
+    "Iron",
+    10
+   ],
+   [
+    "FineWood",
+    20
+   ]
+  ],
+  "name": "Blast Furnace",
+  "station": "Artisan Table"
+ },
+ "bone_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "BoneFragments",
+    50
+   ]
+  ],
+  "name": "Bone Stack",
+  "station": null
+ },
+ "bonfire": {
+  "category": "Misc",
+  "cost": [
+   [
+    "SurtlingCore",
+    1
+   ],
+   [
+    "ElderBark",
+    5
+   ],
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "RoundLog",
+    5
+   ]
+  ],
+  "name": "Bonfire",
+  "station": null
+ },
+ "cauldron_ext1_spice": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Dandelion",
+    3
+   ],
+   [
+    "Carrot",
+    2
+   ],
+   [
+    "Mushroom",
+    5
+   ],
+   [
+    "Thistle",
+    3
+   ],
+   [
+    "Turnip",
+    3
+   ]
+  ],
+  "name": "Spice Rack",
+  "station": "Workbench"
+ },
+ "cauldron_ext3_butchertable": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "ElderBark",
+    2
+   ],
+   [
+    "RoundLog",
+    4
+   ],
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "Silver",
+    2
+   ]
+  ],
+  "name": "Butcher's Table",
+  "station": "Workbench"
+ },
+ "cauldron_ext4_pots": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    5
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "FineWood",
+    10
+   ]
+  ],
+  "name": "Pots and Pans",
+  "station": "Workbench"
+ },
+ "cauldron_ext5_mortarandpestle": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    8
+   ],
+   [
+    "FineWood",
+    6
+   ],
+   [
+    "RoundLog",
+    4
+   ]
+  ],
+  "name": "Mortar and Pestle",
+  "station": "Workbench"
+ },
+ "cauldron_ext6_rollingpins": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Blackwood",
+    8
+   ],
+   [
+    "FineWood",
+    6
+   ],
+   [
+    "FlametalNew",
+    4
+   ]
+  ],
+  "name": "Rolling Pins and Cutting Boards",
+  "station": "Workbench"
+ },
+ "cauldron_ext7_smoker": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Gold",
+    5
+   ],
+   [
+    "Frostwood",
+    6
+   ]
+  ],
+  "name": "Smoker",
+  "station": "Workbench"
+ },
+ "charcoal_kiln": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ]
+  ],
+  "name": "Charcoal Kiln",
+  "station": "Workbench"
+ },
+ "coal_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Coal",
+    50
+   ]
+  ],
+  "name": "Coal Pile",
+  "station": null
+ },
+ "crystal_wall_1x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Crystal",
+    2
+   ]
+  ],
+  "name": "Crystal Wall 1x1",
+  "station": "Workbench"
+ },
+ "darkwood_arch": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Arch",
+  "station": "Workbench"
+ },
+ "darkwood_beam": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Beam 2 m",
+  "station": "Workbench"
+ },
+ "darkwood_beam4x4": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    4
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Beam 4 m",
+  "station": "Workbench"
+ },
+ "darkwood_beam_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Beam 26\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_beam_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Beam 45\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_beam_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "[piece_darkwoodbeam67]",
+  "station": "Workbench"
+ },
+ "darkwood_decowall": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Carved Darkwood Divider",
+  "station": "Workbench"
+ },
+ "darkwood_gate": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    16
+   ],
+   [
+    "Iron",
+    4
+   ],
+   [
+    "Tar",
+    2
+   ]
+  ],
+  "name": "Darkwood Gate",
+  "station": "Forge"
+ },
+ "darkwood_pole": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Pole 2m",
+  "station": "Workbench"
+ },
+ "darkwood_pole4": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    4
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Darkwood Pole 4m",
+  "station": "Workbench"
+ },
+ "darkwood_raven": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Raven Adornment",
+  "station": "Workbench"
+ },
+ "darkwood_roof": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof 26\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof 45\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof 67\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_icorner": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Inner Corner 26\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_icorner_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Inner Corner 45\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_icorner_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Inner Corner 67\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_ocorner": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Outer Corner 26\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_ocorner_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Outer Corner 45\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_ocorner_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Outer Corner 67\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_top": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Ridge 26\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_top_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Ridge 45\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_roof_top_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Shingle Roof Ridge 67\u00b0",
+  "station": "Workbench"
+ },
+ "darkwood_wolf": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Tar",
+    1
+   ]
+  ],
+  "name": "Wolf Adornment",
+  "station": "Workbench"
+ },
+ "eitrrefinery": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    20
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "BlackCore",
+    5
+   ],
+   [
+    "Sap",
+    3
+   ]
+  ],
+  "name": "Eitr Refinery",
+  "station": "Workbench"
+ },
+ "fermenter": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "FineWood",
+    30
+   ],
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "Resin",
+    10
+   ]
+  ],
+  "name": "Fermenter",
+  "station": "Forge"
+ },
+ "fire_pit": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Stone",
+    5
+   ],
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Campfire",
+  "station": null
+ },
+ "fire_pit_iron": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Ironpit",
+    1
+   ],
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Iron Fire Pit",
+  "station": null
+ },
+ "flametal_gate": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "FlametalNew",
+    16
+   ]
+  ],
+  "name": "Flametal Gate",
+  "station": "Black Forge"
+ },
+ "flint_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Flint",
+    50
+   ]
+  ],
+  "name": "Flint Pile",
+  "station": null
+ },
+ "forge": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    4
+   ],
+   [
+    "Coal",
+    4
+   ],
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Copper",
+    6
+   ]
+  ],
+  "name": "Forge",
+  "station": "Workbench"
+ },
+ "forge_ext1": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    5
+   ],
+   [
+    "DeerHide",
+    5
+   ],
+   [
+    "Chain",
+    4
+   ]
+  ],
+  "name": "Forge Bellows",
+  "station": "Workbench"
+ },
+ "forge_ext2": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    5
+   ],
+   [
+    "Bronze",
+    2
+   ]
+  ],
+  "name": "Anvils",
+  "station": "Workbench"
+ },
+ "forge_ext3": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    25
+   ],
+   [
+    "SharpeningStone",
+    1
+   ]
+  ],
+  "name": "Grinding Wheel",
+  "station": "Workbench"
+ },
+ "forge_ext4": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    20
+   ],
+   [
+    "Wood",
+    5
+   ]
+  ],
+  "name": "Smith's Anvil",
+  "station": "Workbench"
+ },
+ "forge_ext5": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "FineWood",
+    25
+   ],
+   [
+    "Copper",
+    10
+   ]
+  ],
+  "name": "Forge Cooler",
+  "station": "Workbench"
+ },
+ "forge_ext6": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    15
+   ],
+   [
+    "Wood",
+    10
+   ]
+  ],
+  "name": "Forge Tool Rack",
+  "station": "Workbench"
+ },
+ "grausten_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Grausten",
+    50
+   ]
+  ],
+  "name": "Grausten Pile",
+  "station": null
+ },
+ "grindstone_feeder": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "LeatherScraps",
+    4
+   ]
+  ],
+  "name": "Animal Feeder",
+  "station": "Workbench"
+ },
+ "guard_stone": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "GreydwarfEye",
+    5
+   ],
+   [
+    "SurtlingCore",
+    1
+   ]
+  ],
+  "name": "Ward",
+  "station": null
+ },
+ "hearth": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Stone",
+    15
+   ]
+  ],
+  "name": "Hearth",
+  "station": "Stonecutter"
+ },
+ "incinerator": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    8
+   ],
+   [
+    "Copper",
+    4
+   ],
+   [
+    "Thunderstone",
+    1
+   ]
+  ],
+  "name": "Obliterator",
+  "station": "Forge"
+ },
+ "iron_floor_1x1_v2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Cage Floor 1x1",
+  "station": "Forge"
+ },
+ "iron_floor_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "name": "Cage Floor 2x2",
+  "station": "Forge"
+ },
+ "iron_grate": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Iron",
+    4
+   ]
+  ],
+  "name": "Iron Gate",
+  "station": "Forge"
+ },
+ "iron_wall_1x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Cage Wall 1x1",
+  "station": "Forge"
+ },
+ "iron_wall_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "name": "Cage Wall 2x2",
+  "station": "Forge"
+ },
+ "itemstand": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "BronzeNails",
+    1
+   ]
+  ],
+  "name": "Item Stand",
+  "station": "Workbench"
+ },
+ "itemstandh": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "BronzeNails",
+    1
+   ]
+  ],
+  "name": "Item Stand",
+  "station": "Workbench"
+ },
+ "jute_carpet": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "JuteRed",
+    4
+   ]
+  ],
+  "name": "Red Jute Carpet",
+  "station": "Workbench"
+ },
+ "jute_carpet_blue": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "JuteBlue",
+    4
+   ]
+  ],
+  "name": "Blue Jute Carpet",
+  "station": "Workbench"
+ },
+ "piece_ArcheryTarget": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "LeatherScraps",
+    10
+   ]
+  ],
+  "name": "Archery Target",
+  "station": "Workbench"
+ },
+ "piece_CelebrationGarland": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Dandelion",
+    1
+   ]
+  ],
+  "name": "Flower Garland",
+  "station": "Workbench"
+ },
+ "piece_EternalPyre": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "FaderDrop",
+    1
+   ]
+  ],
+  "name": "Eternal Pyre",
+  "station": "Stonecutter"
+ },
+ "piece_FairylightGarland": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Thistle",
+    1
+   ]
+  ],
+  "name": "Fey Lights",
+  "station": "Workbench"
+ },
+ "piece_FrostFoundry": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    15
+   ],
+   [
+    "Stone",
+    20
+   ],
+   [
+    "FrostCore",
+    10
+   ]
+  ],
+  "name": "Frost Foundry",
+  "station": "Workbench"
+ },
+ "piece_FrostKiln": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "FrostCore",
+    10
+   ],
+   [
+    "Ice",
+    5
+   ]
+  ],
+  "name": "Frigid Kiln",
+  "station": "Workbench"
+ },
+ "piece_Lavalantern": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FlametalNew",
+    1
+   ],
+   [
+    "ProustitePowder",
+    1
+   ],
+   [
+    "SulfurStone",
+    1
+   ]
+  ],
+  "name": "Lava Lantern",
+  "station": "Workbench"
+ },
+ "piece_MeadCauldron": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Tin",
+    4
+   ],
+   [
+    "Copper",
+    6
+   ],
+   [
+    "LeatherScraps",
+    2
+   ]
+  ],
+  "name": "Mead Ketill",
+  "station": "Forge"
+ },
+ "piece_TrainingDummy": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    5
+   ],
+   [
+    "BronzeNails",
+    10
+   ],
+   [
+    "Ectoplasm",
+    5
+   ]
+  ],
+  "name": "T.W.I.G.",
+  "station": "Workbench"
+ },
+ "piece_artisanstation": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "DragonTear",
+    2
+   ]
+  ],
+  "name": "Artisan Table",
+  "station": null
+ },
+ "piece_asksvinskeleton": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "BoneFragments",
+    50
+   ],
+   [
+    "AsksvinCarrionNeck",
+    1
+   ],
+   [
+    "AsksvinCarrionPelvic",
+    1
+   ],
+   [
+    "AsksvinCarrionRibcage",
+    1
+   ],
+   [
+    "AsksvinCarrionSkull",
+    1
+   ]
+  ],
+  "name": "Asksvin Skeleton",
+  "station": "Workbench"
+ },
+ "piece_augmenter": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Obsidian",
+    10
+   ],
+   [
+    "Crystal",
+    3
+   ],
+   [
+    "Bronze",
+    3
+   ],
+   [
+    "SwordCheat",
+    1
+   ]
+  ],
+  "name": "Augmenter Relic",
+  "station": null
+ },
+ "piece_banner01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Coal",
+    4
+   ]
+  ],
+  "name": "Black Banner",
+  "station": "Workbench"
+ },
+ "piece_banner02": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    4
+   ]
+  ],
+  "name": "Blue Banner",
+  "station": "Workbench"
+ },
+ "piece_banner03": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Raspberry",
+    4
+   ]
+  ],
+  "name": "White and Red Striped Banner",
+  "station": "Workbench"
+ },
+ "piece_banner04": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Bloodbag",
+    1
+   ]
+  ],
+  "name": "Red Banner",
+  "station": "Workbench"
+ },
+ "piece_banner05": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Guck",
+    1
+   ]
+  ],
+  "name": "Green Banner",
+  "station": "Workbench"
+ },
+ "piece_banner06": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    2
+   ],
+   [
+    "Raspberry",
+    2
+   ],
+   [
+    "Cloudberry",
+    1
+   ]
+  ],
+  "name": "Blue, Red and White Banner",
+  "station": "Workbench"
+ },
+ "piece_banner07": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    2
+   ],
+   [
+    "Cloudberry",
+    3
+   ]
+  ],
+  "name": "White and Blue Striped Banner",
+  "station": "Workbench"
+ },
+ "piece_banner08": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Dandelion",
+    4
+   ],
+   [
+    "Coal",
+    2
+   ]
+  ],
+  "name": "Yellow Banner",
+  "station": "Workbench"
+ },
+ "piece_banner09": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Blueberries",
+    2
+   ],
+   [
+    "Raspberry",
+    3
+   ]
+  ],
+  "name": "Purple Banner",
+  "station": "Workbench"
+ },
+ "piece_banner10": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Carrot",
+    2
+   ],
+   [
+    "Cloudberry",
+    3
+   ]
+  ],
+  "name": "Orange Banner",
+  "station": "Workbench"
+ },
+ "piece_banner11": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LeatherScraps",
+    6
+   ],
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "Coal",
+    2
+   ],
+   [
+    "Cloudberry",
+    4
+   ]
+  ],
+  "name": "White Banner",
+  "station": "Workbench"
+ },
+ "piece_barber": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "BarberKit",
+    1
+   ],
+   [
+    "BronzeNails",
+    5
+   ],
+   [
+    "TrollHide",
+    5
+   ]
+  ],
+  "name": "Barber Station",
+  "station": "Workbench"
+ },
+ "piece_bathtub": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    20
+   ],
+   [
+    "Tar",
+    6
+   ],
+   [
+    "Iron",
+    10
+   ],
+   [
+    "Stone",
+    8
+   ]
+  ],
+  "name": "Hot Tub",
+  "station": "Workbench"
+ },
+ "piece_bed02": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    40
+   ],
+   [
+    "DeerHide",
+    7
+   ],
+   [
+    "WolfPelt",
+    4
+   ],
+   [
+    "Feathers",
+    10
+   ],
+   [
+    "IronNails",
+    15
+   ]
+  ],
+  "name": "Dragon Bed",
+  "station": "Workbench"
+ },
+ "piece_beehive": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "QueenBee",
+    1
+   ]
+  ],
+  "name": "Beehive",
+  "station": "Workbench"
+ },
+ "piece_bench01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    6
+   ]
+  ],
+  "name": "Wood Bench",
+  "station": "Workbench"
+ },
+ "piece_bench_runed": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    6
+   ],
+   [
+    "MooseHide",
+    1
+   ]
+  ],
+  "name": "Carved Bench",
+  "station": "Workbench"
+ },
+ "piece_birdnest": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "WrithanRoots",
+    2
+   ],
+   [
+    "Acorn",
+    3
+   ],
+   [
+    "Thistle",
+    5
+   ]
+  ],
+  "name": "Birds' Nest",
+  "station": "Workbench"
+ },
+ "piece_blackmarble_bench": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ],
+   [
+    "Copper",
+    3
+   ]
+  ],
+  "name": "Black Marble Bench",
+  "station": "Stonecutter"
+ },
+ "piece_blackmarble_table": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "BlackMarble",
+    6
+   ],
+   [
+    "Copper",
+    3
+   ]
+  ],
+  "name": "Black Marble Table",
+  "station": "Stonecutter"
+ },
+ "piece_blackmarble_throne": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "BlackMarble",
+    20
+   ],
+   [
+    "ScaleHide",
+    4
+   ],
+   [
+    "DeerHide",
+    2
+   ],
+   [
+    "Copper",
+    5
+   ]
+  ],
+  "name": "Black Marble Throne",
+  "station": "Stonecutter"
+ },
+ "piece_blackwood_bench01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Blackwood",
+    6
+   ]
+  ],
+  "name": "Ashwood Bench",
+  "station": "Workbench"
+ },
+ "piece_bone_throne": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "CharredBone",
+    15
+   ],
+   [
+    "FlametalNew",
+    4
+   ],
+   [
+    "Grausten",
+    20
+   ],
+   [
+    "Charredskull",
+    3
+   ]
+  ],
+  "name": "Bone Throne",
+  "station": "Stonecutter"
+ },
+ "piece_brazierceiling01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "Coal",
+    2
+   ],
+   [
+    "Chain",
+    1
+   ]
+  ],
+  "name": "Hanging Brazier",
+  "station": "Forge"
+ },
+ "piece_brazierfloor01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "Coal",
+    2
+   ],
+   [
+    "WolfClaw",
+    3
+   ]
+  ],
+  "name": "Standing Brazier",
+  "station": "Forge"
+ },
+ "piece_brazierfloor02": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Bronze",
+    5
+   ],
+   [
+    "GreydwarfEye",
+    5
+   ],
+   [
+    "WolfClaw",
+    3
+   ]
+  ],
+  "name": "Blue Standing Brazier",
+  "station": "Forge"
+ },
+ "piece_cartographytable": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "BoneFragments",
+    10
+   ],
+   [
+    "Bronze",
+    2
+   ],
+   [
+    "LeatherScraps",
+    5
+   ],
+   [
+    "Raspberry",
+    4
+   ]
+  ],
+  "name": "Cartography Table",
+  "station": "Workbench"
+ },
+ "piece_cauldron": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Tin",
+    10
+   ]
+  ],
+  "name": "Cauldron",
+  "station": "Forge"
+ },
+ "piece_chair": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ]
+  ],
+  "name": "Stool",
+  "station": "Workbench"
+ },
+ "piece_chair02": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ]
+  ],
+  "name": "Wood Chair",
+  "station": "Workbench"
+ },
+ "piece_chair03": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "Tar",
+    1
+   ],
+   [
+    "IronNails",
+    5
+   ],
+   [
+    "DeerHide",
+    1
+   ]
+  ],
+  "name": "Darkwood Chair",
+  "station": "Workbench"
+ },
+ "piece_chair_runed": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ],
+   [
+    "MooseSinew",
+    1
+   ]
+  ],
+  "name": "Carved Chair",
+  "station": "Workbench"
+ },
+ "piece_chest": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "name": "Reinforced Chest",
+  "station": "Workbench"
+ },
+ "piece_chest_barrel": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "BarrelRings",
+    1
+   ]
+  ],
+  "name": "Barrel",
+  "station": "Workbench"
+ },
+ "piece_chest_blackmetal": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "BlackMetal",
+    6
+   ]
+  ],
+  "name": "Black Metal Chest",
+  "station": "Workbench"
+ },
+ "piece_chest_grausten": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Grausten",
+    10
+   ],
+   [
+    "TrophyCharredMelee",
+    5
+   ],
+   [
+    "FlametalNew",
+    2
+   ]
+  ],
+  "name": "Grausten Chest",
+  "station": "Workbench"
+ },
+ "piece_chest_private": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Iron",
+    8
+   ]
+  ],
+  "name": "Personal Chest",
+  "station": "Workbench"
+ },
+ "piece_chest_treasure": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Coins",
+    99
+   ],
+   [
+    "Ruby",
+    5
+   ],
+   [
+    "SilverNecklace",
+    2
+   ],
+   [
+    "FineWood",
+    8
+   ],
+   [
+    "Silver",
+    2
+   ]
+  ],
+  "name": "Treasure Chest",
+  "station": "Workbench"
+ },
+ "piece_chest_warderobe": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    10
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "BlackMetal",
+    6
+   ]
+  ],
+  "name": "Wardrobe",
+  "station": "Workbench"
+ },
+ "piece_chest_wood": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    10
+   ]
+  ],
+  "name": "Chest",
+  "station": "Workbench"
+ },
+ "piece_cloth_hanging_door": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "JuteRed",
+    4
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "name": "Red Jute Curtain",
+  "station": "Workbench"
+ },
+ "piece_cloth_hanging_door_blue": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "JuteBlue",
+    4
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "name": "Blue Jute Drapes",
+  "station": "Workbench"
+ },
+ "piece_cloth_hanging_door_blue2": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "JuteBlue",
+    4
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "name": "Blue Jute Curtain",
+  "station": "Workbench"
+ },
+ "piece_cookingstation": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Cooking Station",
+  "station": null
+ },
+ "piece_cookingstation_iron": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    3
+   ],
+   [
+    "Chain",
+    3
+   ]
+  ],
+  "name": "Iron Cooking Station",
+  "station": "Forge"
+ },
+ "piece_drawbridge": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "FlametalNew",
+    2
+   ],
+   [
+    "Gold",
+    2
+   ],
+   [
+    "Frostwood",
+    24
+   ]
+  ],
+  "name": "Timberwood Drawbridge",
+  "station": "Workbench"
+ },
+ "piece_drawbridge_log": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Silver",
+    2
+   ],
+   [
+    "TrophyWolf",
+    2
+   ],
+   [
+    "RoundLog",
+    10
+   ]
+  ],
+  "name": "Rustic Drawbridge",
+  "station": "Workbench"
+ },
+ "piece_dvergr_lantern": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Copper",
+    2
+   ],
+   [
+    "Lantern",
+    1
+   ],
+   [
+    "Chain",
+    1
+   ]
+  ],
+  "name": "Dvergr Wall Lantern",
+  "station": "Black Forge"
+ },
+ "piece_dvergr_lantern_pole": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Copper",
+    3
+   ],
+   [
+    "Lantern",
+    1
+   ],
+   [
+    "Chain",
+    1
+   ]
+  ],
+  "name": "Dvergr Pole Lantern",
+  "station": "Black Forge"
+ },
+ "piece_dvergr_metal_wall_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Copper",
+    2
+   ]
+  ],
+  "name": "Dvergr Metal Wall",
+  "station": "Black Forge"
+ },
+ "piece_dvergr_sharpstakes": {
+  "category": "Misc",
+  "cost": [
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Iron",
+    2
+   ]
+  ],
+  "name": "Dvergr Sharp Stakes",
+  "station": "Black Forge"
+ },
+ "piece_dvergr_spiralstair": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Copper",
+    2
+   ]
+  ],
+  "name": "Dvergr Spiral Staircase Left",
+  "station": "Black Forge"
+ },
+ "piece_dvergr_spiralstair_right": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Copper",
+    2
+   ]
+  ],
+  "name": "Dvergr Spiral Staircase Right",
+  "station": "Black Forge"
+ },
+ "piece_dvergr_stake_wall": {
+  "category": "Misc",
+  "cost": [
+   [
+    "YggdrasilWood",
+    8
+   ],
+   [
+    "Iron",
+    8
+   ]
+  ],
+  "name": "Dvergr Stakewall",
+  "station": "Black Forge"
+ },
+ "piece_enchanter": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "SurtlingCore",
+    3
+   ],
+   [
+    "Copper",
+    3
+   ],
+   [
+    "SwordCheat",
+    1
+   ]
+  ],
+  "name": "Enchanter Relic",
+  "station": null
+ },
+ "piece_enchantingtable": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "GreydwarfEye",
+    2
+   ]
+  ],
+  "name": "Enchanting Table",
+  "station": null
+ },
+ "piece_gift1": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "BoneFragments",
+    1
+   ]
+  ],
+  "name": "Yuleklapp",
+  "station": "Workbench"
+ },
+ "piece_gift2": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    3
+   ],
+   [
+    "Dandelion",
+    1
+   ]
+  ],
+  "name": "Yuleklapp",
+  "station": "Workbench"
+ },
+ "piece_gift3": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    4
+   ],
+   [
+    "Raspberry",
+    1
+   ]
+  ],
+  "name": "Yuleklapp",
+  "station": "Workbench"
+ },
+ "piece_grausten_roof_45": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Roof",
+  "station": "Stonecutter"
+ },
+ "piece_grausten_roof_45_arch": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Arched Roof",
+  "station": "Stonecutter"
+ },
+ "piece_grausten_roof_45_arch_corner": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Arched Roof Corner",
+  "station": "Stonecutter"
+ },
+ "piece_grausten_roof_45_arch_corner2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Arched Roof Corner",
+  "station": "Stonecutter"
+ },
+ "piece_grausten_roof_45_corner": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Roof Corner",
+  "station": "Stonecutter"
+ },
+ "piece_grausten_roof_45_corner2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    5
+   ]
+  ],
+  "name": "Grausten Roof Corner",
+  "station": "Stonecutter"
+ },
+ "piece_grausten_stonestair": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Grausten",
+    8
+   ]
+  ],
+  "name": "Grausten Stairs",
+  "station": "Stonecutter"
+ },
+ "piece_groundtorch": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Iron",
+    2
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "name": "Standing Iron Torch",
+  "station": "Forge"
+ },
+ "piece_groundtorch_blue": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Iron",
+    2
+   ],
+   [
+    "GreydwarfEye",
+    2
+   ]
+  ],
+  "name": "Standing Blue-burning Iron Torch",
+  "station": "Forge"
+ },
+ "piece_groundtorch_green": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Iron",
+    2
+   ],
+   [
+    "Guck",
+    2
+   ]
+  ],
+  "name": "Standing Green-burning Iron Torch",
+  "station": "Forge"
+ },
+ "piece_groundtorch_mist": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "YggdrasilWood",
+    1
+   ],
+   [
+    "Wisp",
+    1
+   ]
+  ],
+  "name": "Wisp Torch",
+  "station": null
+ },
+ "piece_groundtorch_wood": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "name": "Standing Wood Torch",
+  "station": "Workbench"
+ },
+ "piece_hexagonal_door": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "YggdrasilWood",
+    8
+   ],
+   [
+    "Copper",
+    8
+   ]
+  ],
+  "name": "Hexagonal Gate",
+  "station": "Black Forge"
+ },
+ "piece_hoodedlantern": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Frostwood",
+    3
+   ],
+   [
+    "GlowWorm",
+    1
+   ]
+  ],
+  "name": "Hooded Lantern",
+  "station": null
+ },
+ "piece_icecube": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Ice",
+    2
+   ]
+  ],
+  "name": "Ice Block",
+  "station": "Workbench"
+ },
+ "piece_jackoturnip": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Turnip",
+    4
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "name": "Jack-o-turnip",
+  "station": "Workbench"
+ },
+ "piece_logbench01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "name": "Sitting Log",
+  "station": null
+ },
+ "piece_magetable": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "YggdrasilWood",
+    20
+   ],
+   [
+    "BlackMetal",
+    10
+   ],
+   [
+    "BlackCore",
+    5
+   ],
+   [
+    "Eitr",
+    5
+   ]
+  ],
+  "name": "Galdr Table",
+  "station": "Workbench"
+ },
+ "piece_magetable_ext": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    10
+   ],
+   [
+    "YggdrasilWood",
+    5
+   ],
+   [
+    "Eitr",
+    10
+   ]
+  ],
+  "name": "Rune Table",
+  "station": "Galdr Table"
+ },
+ "piece_magetable_ext2": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "BlackMarble",
+    10
+   ],
+   [
+    "TrophySkeleton",
+    3
+   ],
+   [
+    "Eitr",
+    10
+   ],
+   [
+    "Resin",
+    15
+   ]
+  ],
+  "name": "Unfading Candles",
+  "station": "Galdr Table"
+ },
+ "piece_magetable_ext3": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "CelestialFeather",
+    8
+   ],
+   [
+    "TrophyAsksvin",
+    1
+   ],
+   [
+    "Eitr",
+    10
+   ],
+   [
+    "Blackwood",
+    3
+   ]
+  ],
+  "name": "Feathery Wreath",
+  "station": "Galdr Table"
+ },
+ "piece_magetable_ext4": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Frostwood",
+    5
+   ],
+   [
+    "NornThread",
+    10
+   ]
+  ],
+  "name": "Standing Loom",
+  "station": "Galdr Table"
+ },
+ "piece_maypole": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Dandelion",
+    4
+   ],
+   [
+    "Thistle",
+    4
+   ]
+  ],
+  "name": "Maypole",
+  "station": "Workbench"
+ },
+ "piece_mistletoe": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    1
+   ],
+   [
+    "JuteRed",
+    1
+   ]
+  ],
+  "name": "Mistletoe",
+  "station": "Workbench"
+ },
+ "piece_moose_throne": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Frostwood",
+    15
+   ],
+   [
+    "TrophyMoose",
+    1
+   ],
+   [
+    "MooseHide",
+    5
+   ]
+  ],
+  "name": "Antler Throne",
+  "station": "Workbench"
+ },
+ "piece_oven": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    15
+   ],
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    4
+   ]
+  ],
+  "name": "Stone Oven",
+  "station": "Artisan Table"
+ },
+ "piece_pot1": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Pot_Shard_Green",
+    4
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "name": "Medium Green Pot",
+  "station": null
+ },
+ "piece_pot2": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Pot_Shard_Green",
+    5
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "name": "Large Green Pot",
+  "station": null
+ },
+ "piece_pot3": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Pot_Shard_Green",
+    3
+   ],
+   [
+    "CharcoalResin",
+    1
+   ]
+  ],
+  "name": "Small Green Pot",
+  "station": null
+ },
+ "piece_preptable": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "LeatherScraps",
+    15
+   ]
+  ],
+  "name": "Food Preparation Table",
+  "station": "Workbench"
+ },
+ "piece_repair": {
+  "category": "All",
+  "cost": [],
+  "name": "Repair",
+  "station": null
+ },
+ "piece_sapcollector": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "DvergrNeedle",
+    1
+   ]
+  ],
+  "name": "Sap Extractor",
+  "station": "Workbench"
+ },
+ "piece_sharpstakes": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    6
+   ],
+   [
+    "RoundLog",
+    4
+   ]
+  ],
+  "name": "Sharp Stakes",
+  "station": "Workbench"
+ },
+ "piece_shieldgenerator": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Iron",
+    5
+   ],
+   [
+    "Copper",
+    5
+   ],
+   [
+    "ShieldCore",
+    1
+   ]
+  ],
+  "name": "Shield Generator",
+  "station": "Workbench"
+ },
+ "piece_snowlantern": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Snowball",
+    8
+   ]
+  ],
+  "name": "Snow Lantern",
+  "station": "Workbench"
+ },
+ "piece_spinningwheel": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "IronNails",
+    10
+   ],
+   [
+    "LeatherScraps",
+    5
+   ]
+  ],
+  "name": "Spinning Wheel",
+  "station": "Artisan Table"
+ },
+ "piece_stakewall_blackwood": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Blackwood",
+    6
+   ]
+  ],
+  "name": "Ashwood Stakewall",
+  "station": "Workbench"
+ },
+ "piece_stonecutter": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Iron",
+    2
+   ],
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "name": "Stonecutter",
+  "station": "Workbench"
+ },
+ "piece_table": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    6
+   ]
+  ],
+  "name": "Table",
+  "station": "Workbench"
+ },
+ "piece_table_oak": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "IronNails",
+    20
+   ]
+  ],
+  "name": "Long Heavy Table",
+  "station": "Workbench"
+ },
+ "piece_table_round": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "IronNails",
+    20
+   ]
+  ],
+  "name": "Round Table",
+  "station": "Workbench"
+ },
+ "piece_table_runed": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    20
+   ],
+   [
+    "Tar",
+    2
+   ],
+   [
+    "IronNails",
+    20
+   ]
+  ],
+  "name": "Long Carved Table",
+  "station": "Workbench"
+ },
+ "piece_table_runed_small": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    6
+   ],
+   [
+    "Tar",
+    1
+   ],
+   [
+    "IronNails",
+    6
+   ]
+  ],
+  "name": "Square Carved Table",
+  "station": "Workbench"
+ },
+ "piece_throne01": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "IronNails",
+    10
+   ]
+  ],
+  "name": "Raven Throne",
+  "station": "Workbench"
+ },
+ "piece_throne02": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "DeerHide",
+    2
+   ],
+   [
+    "WolfPelt",
+    2
+   ]
+  ],
+  "name": "Stone Throne",
+  "station": "Stonecutter"
+ },
+ "piece_trap_troll": {
+  "category": "Misc",
+  "cost": [
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "BronzeNails",
+    10
+   ],
+   [
+    "MechanicalSpring",
+    1
+   ]
+  ],
+  "name": "Trap",
+  "station": "Workbench"
+ },
+ "piece_turret": {
+  "category": "Misc",
+  "cost": [
+   [
+    "BlackMetal",
+    10
+   ],
+   [
+    "YggdrasilWood",
+    10
+   ],
+   [
+    "MechanicalSpring",
+    3
+   ]
+  ],
+  "name": "Ballista",
+  "station": "Workbench"
+ },
+ "piece_walltorch": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Copper",
+    2
+   ],
+   [
+    "Resin",
+    2
+   ]
+  ],
+  "name": "Sconce",
+  "station": "Forge"
+ },
+ "piece_wisplure": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    10
+   ],
+   [
+    "YagluthDrop",
+    1
+   ]
+  ],
+  "name": "Wisp Fountain",
+  "station": "Stonecutter"
+ },
+ "piece_workbench": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ]
+  ],
+  "name": "Workbench",
+  "station": null
+ },
+ "piece_workbench_ext1": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Flint",
+    10
+   ]
+  ],
+  "name": "Chopping Block",
+  "station": "Workbench"
+ },
+ "piece_workbench_ext2": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "Flint",
+    15
+   ],
+   [
+    "LeatherScraps",
+    20
+   ],
+   [
+    "DeerHide",
+    5
+   ]
+  ],
+  "name": "Tanning Rack",
+  "station": "Workbench"
+ },
+ "piece_workbench_ext3": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Bronze",
+    3
+   ]
+  ],
+  "name": "Adze",
+  "station": "Forge"
+ },
+ "piece_workbench_ext4": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Iron",
+    4
+   ],
+   [
+    "FineWood",
+    10
+   ],
+   [
+    "Obsidian",
+    4
+   ]
+  ],
+  "name": "Tool Shelf",
+  "station": "Forge"
+ },
+ "piece_xmascrown": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "PineCone",
+    4
+   ],
+   [
+    "JuteRed",
+    1
+   ],
+   [
+    "FineWood",
+    1
+   ]
+  ],
+  "name": "Yule Wreath",
+  "station": "Workbench"
+ },
+ "piece_xmasgarland": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "FineWood",
+    2
+   ],
+   [
+    "PineCone",
+    1
+   ]
+  ],
+  "name": "Yule Garland",
+  "station": "Workbench"
+ },
+ "piece_xmastree": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    10
+   ],
+   [
+    "FirCone",
+    1
+   ]
+  ],
+  "name": "Yule Tree",
+  "station": "Workbench"
+ },
+ "portal_ancient": {
+  "category": "Misc",
+  "cost": [
+   [
+    "ElderBark",
+    20
+   ],
+   [
+    "Iron",
+    5
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "name": "Ancient Bark Portal",
+  "station": "Workbench"
+ },
+ "portal_blackmarble": {
+  "category": "Misc",
+  "cost": [
+   [
+    "BlackMarble",
+    20
+   ],
+   [
+    "BlackMetal",
+    5
+   ],
+   [
+    "Eitr",
+    2
+   ]
+  ],
+  "name": "Black Marble Portal",
+  "station": "Workbench"
+ },
+ "portal_obsidian": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Obsidian",
+    20
+   ],
+   [
+    "Silver",
+    5
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "name": "Obsidian Portal",
+  "station": "Workbench"
+ },
+ "portal_stone": {
+  "category": "Misc",
+  "cost": [
+   [
+    "GreydwarfEye",
+    10
+   ],
+   [
+    "Grausten",
+    30
+   ],
+   [
+    "MoltenCore",
+    2
+   ]
+  ],
+  "name": "Portal \u2013 Stone",
+  "station": "Stonecutter"
+ },
+ "portal_wood": {
+  "category": "Misc",
+  "cost": [
+   [
+    "GreydwarfEye",
+    10
+   ],
+   [
+    "FineWood",
+    20
+   ],
+   [
+    "SurtlingCore",
+    2
+   ]
+  ],
+  "name": "Portal",
+  "station": "Workbench"
+ },
+ "rug_Bjorn": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "BjornHide",
+    1
+   ],
+   [
+    "BjornPaw",
+    2
+   ],
+   [
+    "TrophyBjorn",
+    1
+   ]
+  ],
+  "name": "Bearskin Rug",
+  "station": "Workbench"
+ },
+ "rug_asksvin": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "AskHide",
+    4
+   ]
+  ],
+  "name": "Asksvin Rug",
+  "station": "Workbench"
+ },
+ "rug_deer": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "DeerHide",
+    4
+   ]
+  ],
+  "name": "Deer Rug",
+  "station": "Workbench"
+ },
+ "rug_fur": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "LoxPelt",
+    4
+   ]
+  ],
+  "name": "Lox Rug",
+  "station": "Workbench"
+ },
+ "rug_hare": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "ScaleHide",
+    4
+   ]
+  ],
+  "name": "Hare Rug",
+  "station": "Workbench"
+ },
+ "rug_moose": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "MooseHide",
+    4
+   ]
+  ],
+  "name": "Moose Hide Carpet",
+  "station": "Workbench"
+ },
+ "rug_seal": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "SealHide",
+    4
+   ]
+  ],
+  "name": "Sealskin Rug",
+  "station": "Workbench"
+ },
+ "rug_straw": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Barley",
+    1
+   ],
+   [
+    "Flax",
+    1
+   ]
+  ],
+  "name": "Straw",
+  "station": "Workbench"
+ },
+ "rug_wolf": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "WolfPelt",
+    4
+   ]
+  ],
+  "name": "Wolf Rug",
+  "station": "Workbench"
+ },
+ "scale_halfwall_1x2": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    1
+   ]
+  ],
+  "name": "Scalewood Half Wall",
+  "station": "Workbench"
+ },
+ "scale_quarterwall_1x1": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    1
+   ]
+  ],
+  "name": "Scalewood Quarter Wall",
+  "station": "Workbench"
+ },
+ "scale_wall_2x2": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_26": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 26\u00b0 Left",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_26_flipped": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 26\u00b0 Right",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_26_upsidedown": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 26\u00b0 Right (Inverted)",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_26_upsidedown_flipped": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 26\u00b0 Left (Inverted)",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_45": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 45\u00b0 Left",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_45_flipped": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 45\u00b0 Right",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_45_upsidedown": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 45\u00b0 Right (Inverted)",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_45_upsidedown_flipped": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 45\u00b0 Left (Inverted)",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 67\u00b0 Left",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_67_flipped": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 67\u00b0 Right",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_67_upsidedown": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 67\u00b0 Right (Inverted)",
+  "station": "Workbench"
+ },
+ "scale_wall_roof_67_upsidedown_flipped": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Scalewood Wall 67\u00b0 Left (Inverted)",
+  "station": "Workbench"
+ },
+ "sign": {
+  "category": "Furniture",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Coal",
+    1
+   ]
+  ],
+  "name": "Sign",
+  "station": null
+ },
+ "skull_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Charredskull",
+    50
+   ]
+  ],
+  "name": "Pile of Skulls",
+  "station": null
+ },
+ "smelter": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "SurtlingCore",
+    5
+   ]
+  ],
+  "name": "Smelter",
+  "station": "Workbench"
+ },
+ "stake_wall": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    4
+   ]
+  ],
+  "name": "Stakewall",
+  "station": "Workbench"
+ },
+ "stave_beam_26": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Beam 26\u00b0",
+  "station": "Workbench"
+ },
+ "stave_beam_2m": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Beam 2m",
+  "station": "Workbench"
+ },
+ "stave_beam_45": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Beam 45\u00b0",
+  "station": "Workbench"
+ },
+ "stave_beam_4m": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "name": "Timber Beam 4m",
+  "station": "Workbench"
+ },
+ "stave_beam_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Beam 67\u00b0",
+  "station": "Workbench"
+ },
+ "stave_deco_beam_26": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Decorated Timber Beam 26\u00b0",
+  "station": "Workbench"
+ },
+ "stave_deco_beam_2m": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Decorated Timber Beam 2m",
+  "station": "Workbench"
+ },
+ "stave_deco_beam_45": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Decorated Timber Beam 45\u00b0",
+  "station": "Workbench"
+ },
+ "stave_deco_beam_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Decorated Timber Beam 67\u00b0",
+  "station": "Workbench"
+ },
+ "stave_deco_pole_2m": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Decorated Timber Pole 2m",
+  "station": "Workbench"
+ },
+ "stave_deco_wall_2x2": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "name": "Lathed Timber Wall",
+  "station": "Workbench"
+ },
+ "stave_gate": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Frostwood",
+    24
+   ],
+   [
+    "Gold",
+    4
+   ]
+  ],
+  "name": "Timberwood Gate",
+  "station": "Forge"
+ },
+ "stave_pole_2m": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Pole 2m",
+  "station": "Workbench"
+ },
+ "stave_pole_4m": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "name": "Timber Pole 4m",
+  "station": "Workbench"
+ },
+ "stave_wall_2x2": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    4
+   ]
+  ],
+  "name": "Timber Wall",
+  "station": "Workbench"
+ },
+ "stave_wall_cross_26": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Roof Cross 26\u00b0",
+  "station": "Workbench"
+ },
+ "stave_wall_cross_45": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Roof Cross 45\u00b0",
+  "station": "Workbench"
+ },
+ "stave_wall_cross_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Frostwood",
+    2
+   ]
+  ],
+  "name": "Timber Roof Cross 67\u00b0",
+  "station": "Workbench"
+ },
+ "stone_arch": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "name": "Stone Arch",
+  "station": "Stonecutter"
+ },
+ "stone_fence": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "name": "Stone Fence",
+  "station": "Workbench"
+ },
+ "stone_floor_2x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    6
+   ]
+  ],
+  "name": "Stone Floor 2x2",
+  "station": "Stonecutter"
+ },
+ "stone_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Stone",
+    50
+   ]
+  ],
+  "name": "Stone Pile",
+  "station": null
+ },
+ "stone_pillar": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    5
+   ]
+  ],
+  "name": "Stone Pillar",
+  "station": "Stonecutter"
+ },
+ "stone_stair": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    8
+   ]
+  ],
+  "name": "Stone Stair",
+  "station": "Stonecutter"
+ },
+ "stone_wall_1x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    3
+   ]
+  ],
+  "name": "Stone Wall 1x1",
+  "station": "Stonecutter"
+ },
+ "stone_wall_2x1": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    4
+   ]
+  ],
+  "name": "Stone Wall 2x1",
+  "station": "Stonecutter"
+ },
+ "stone_wall_4x2": {
+  "category": "BuildingStonecutter",
+  "cost": [
+   [
+    "Stone",
+    6
+   ]
+  ],
+  "name": "Stone Wall 4x2",
+  "station": "Stonecutter"
+ },
+ "treasure_pile": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Coins",
+    999
+   ]
+  ],
+  "name": "Coin Pile",
+  "station": null
+ },
+ "treasure_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Coins",
+    99
+   ]
+  ],
+  "name": "Coin Stack",
+  "station": null
+ },
+ "windmill": {
+  "category": "Crafting",
+  "cost": [
+   [
+    "Stone",
+    20
+   ],
+   [
+    "Wood",
+    30
+   ],
+   [
+    "IronNails",
+    30
+   ]
+  ],
+  "name": "Windmill",
+  "station": "Artisan Table"
+ },
+ "wood_beam": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Beam 2 m",
+  "station": "Workbench"
+ },
+ "wood_beam_1": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Wood Beam 1 m",
+  "station": "Workbench"
+ },
+ "wood_beam_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Beam 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_beam_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Beam 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_beam_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Beam 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_core_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "RoundLog",
+    50
+   ]
+  ],
+  "name": "Corewood Stack",
+  "station": null
+ },
+ "wood_door": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    4
+   ]
+  ],
+  "name": "Wood Door",
+  "station": "Workbench"
+ },
+ "wood_dragon1": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    10
+   ]
+  ],
+  "name": "Wood Dragon Adornment",
+  "station": "Workbench"
+ },
+ "wood_fence": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Roundpole Fence",
+  "station": "Workbench"
+ },
+ "wood_fence_gate": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    4
+   ]
+  ],
+  "name": "Roundpole Gate",
+  "station": "Workbench"
+ },
+ "wood_fine_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "FineWood",
+    50
+   ]
+  ],
+  "name": "Finewood Stack",
+  "station": null
+ },
+ "wood_floor": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Floor 2x2",
+  "station": "Workbench"
+ },
+ "wood_floor_1x1": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Wood Floor 1x1",
+  "station": "Workbench"
+ },
+ "wood_frost_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Frostwood",
+    50
+   ]
+  ],
+  "name": "Timberwood Stack",
+  "station": null
+ },
+ "wood_gate": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    12
+   ]
+  ],
+  "name": "Wood Gate",
+  "station": "Workbench"
+ },
+ "wood_log_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "name": "Log Beam 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_log_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "name": "Log Beam 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_log_67": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "name": "Log Beam 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_pole": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Wood Pole 1 m",
+  "station": "Workbench"
+ },
+ "wood_pole2": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Pole 2 m",
+  "station": "Workbench"
+ },
+ "wood_pole_log": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    1
+   ]
+  ],
+  "name": "Log Pole 2 m",
+  "station": "Workbench"
+ },
+ "wood_pole_log_4": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "name": "Log Pole 4 m",
+  "station": "Workbench"
+ },
+ "wood_roof": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_icorner": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Inner Corner 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_icorner_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Inner Corner 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_icorner_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Inner Corner 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_ocorner": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Outer Corner 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_ocorner_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Outer Corner 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_ocorner_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Outer Corner 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_top": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Ridge 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_top_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Ridge 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_roof_top_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Thatch Roof Ridge 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "Wood",
+    50
+   ]
+  ],
+  "name": "Wood Stack",
+  "station": null
+ },
+ "wood_stair": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Stairs",
+  "station": "Workbench"
+ },
+ "wood_stepladder": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Ladder",
+  "station": "Workbench"
+ },
+ "wood_wall_half": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Wood Wall Half",
+  "station": "Workbench"
+ },
+ "wood_wall_log": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    1
+   ]
+  ],
+  "name": "Log Beam 2 m",
+  "station": "Workbench"
+ },
+ "wood_wall_log_4x0.5": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "RoundLog",
+    2
+   ]
+  ],
+  "name": "Log Beam 4 m",
+  "station": "Workbench"
+ },
+ "wood_wall_quarter": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    1
+   ]
+  ],
+  "name": "Wood Wall 1x1",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_45_upsidedown": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall 45\u00b0 (Inverted)",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_67_a": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_67_upsidedown": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall 67\u00b0 (Inverted)",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_a": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_top": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Roof Cross 26\u00b0",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_top_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Roof Cross 45\u00b0",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_top_67": {
+  "category": "DeepNorth",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Roof Cross 67\u00b0",
+  "station": "Workbench"
+ },
+ "wood_wall_roof_upsidedown": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall 26\u00b0 (Inverted)",
+  "station": "Workbench"
+ },
+ "wood_window": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    4
+   ],
+   [
+    "BronzeNails",
+    2
+   ]
+  ],
+  "name": "Wood Shutter",
+  "station": "Workbench"
+ },
+ "wood_yggdrasil_stack": {
+  "category": "Misc",
+  "cost": [
+   [
+    "YggdrasilWood",
+    50
+   ]
+  ],
+  "name": "Yggdrasil Wood Stack",
+  "station": null
+ },
+ "woodiron_beam": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Wood Iron Beam",
+  "station": "Forge"
+ },
+ "woodiron_beam_26": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Wood Iron Beam 26\u00b0",
+  "station": "Forge"
+ },
+ "woodiron_beam_45": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Wood Iron Beam 45\u00b0",
+  "station": "Forge"
+ },
+ "woodiron_beam_67": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Wood Iron Beam 67\u00b0",
+  "station": "Forge"
+ },
+ "woodiron_pole": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ],
+   [
+    "Iron",
+    1
+   ]
+  ],
+  "name": "Wood Iron Pole",
+  "station": "Forge"
+ },
+ "woodwall": {
+  "category": "BuildingWorkbench",
+  "cost": [
+   [
+    "Wood",
+    2
+   ]
+  ],
+  "name": "Wood Wall",
+  "station": "Workbench"
+ }
+}

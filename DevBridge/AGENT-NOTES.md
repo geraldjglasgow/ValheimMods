@@ -13,7 +13,8 @@ rather than starting from scratch. The centre, ground height and player id are s
 - `stage3.py`: buildings with props.
 
 `examples/blueprints/` holds saved builds the user can ask for by name ("build the house"): one JSON per build
-(pieces in a frame whose door faces -z, in placement order) and `blueprint.py` to use them:
+(pieces in a frame whose door faces -z, in placement order) and `blueprint.py` to use them. The `valheim-builder`
+skill is the short guide to all of it:
 - `pieces.json` is the piece catalogue: name, material, build cost, snap points, size at yaw 0, pivot height and a
   note on the traps (which way a roof rises, how a shutter hinges, what hangs). Read it before designing; add pieces
   with `python measure_pieces.py <prefab...>` (`--all` for every Hammer piece; needs the game running).
@@ -23,6 +24,16 @@ rather than starting from scratch. The centre, ground height and player id are s
 - `python preview.py <name> [--views oblique,top,front,east|cam=x,y,z:tx,ty,tz]` renders a blueprint offline in
   headless Blender from the catalogue's shapes: check layout, heights and overlaps before anything goes in game.
   `previews/` keeps renders of the saved designs.
+- `ships.json` (`python measure_pieces.py --ships`): every boat's hull width, length, keel, mast height, float box and
+  water offset, with the buoyancy rule and canal rules in `_notes`.
+- `python blueprint.py ghost <name>` shows a build where it would go as still local stage copies (no collision, not
+  saved) and saves the spot in `sites.json`; `build <name> --saved` builds there. `--line x1,z1:x2,z2` turns a build
+  to any angle (frame +x toward the second point); `--replace` removes others' pieces in the footprint first.
+- `pieces_offline.json`: furniture, stations, ornaments and drawbridges read offline from the game's bundles
+  (UnityPy; tools in the session scratchpad), and `comfort.json`: every comfort piece with its group and the
+  SE_Rested rules. `python blueprint.py comfort <name>` gives the comfort at every bed of a build.
+- `furnish.py` places furniture per building (`on()` stands a piece on a surface by its pivot height, `hung()` hangs
+  one by its bottom), `village_buildings.py` holds the village's buildings, `village_plan.py` its layout and plan image.
 - `python blueprint.py cost <name>` adds up the materials.
 - `python blueprint.py list` names them.
 - `python blueprint.py build <name>` builds where the player stands with the door toward where they look
@@ -34,10 +45,11 @@ rather than starting from scratch. The centre, ground height and player id are s
 - `plain_wood_house` (444 pieces): the two-storey 10 x 10 m wood house with campfire and three cooking stations,
   workbench, tanning rack, chopping block, portal upstairs and a black banner. `plain_wood_house.py` is its design
   source and writes the JSON again after a change.
-- `compound` (4,414 pieces, never built in game): an 82 x 60 m walled compound with a boat canal out through the
-  east wall, wall walk, corner/gate/water-gate towers, great hall, two longhouses, two plain_wood_houses, smithy,
-  barn, fenced field. Its site digs the canal, so it needs ground 0.5-2.5 m above sea level (30) with open water
-  east of it: `build compound --ground 31.5 --facing <gate side>`. `great_hall`, `longhouse`, `smithy` and `barn`
+- `compound` (4,501 pieces, never built in game): an 82 x 66 m walled compound with a 15 m boat canal (the user's
+  rule; a Drakkar fits) straight through it between water gates open to the sky in the west and east walls (the
+  crossing inside, a drawbridge, waits on measuring the drawbridge piece), wall walk, corner/gate/water-gate
+  towers, great hall, two longhouses, two plain_wood_houses, smithy, barn, fenced field. Its site digs the canal 5 m
+  deep, so it needs ground 0.5-2.5 m above sea level (30) with open water east of it. `great_hall`, `longhouse`, `smithy` and `barn`
   are its buildings on their own.
 - A blueprint's `site`: `clear_radius`, `stand` (where the player ends up), and either `level_half` (one square) or
   `terrain` steps `{"op": "level"|"paint", "at": [x, z], "half": m, "y": m | "paint": kind}`, run with the
