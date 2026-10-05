@@ -62,6 +62,7 @@ namespace EliteCrafting.Display
             ModSettings.GlowMaxLights.SettingChanged += OnGlowSettingChanged;
             ModSettings.GlowRefreshSeconds.SettingChanged += OnGlowSettingChanged;
             ModSettings.GlowStones.SettingChanged += OnGlowSettingChanged;
+            ModSettings.LootBeam.SettingChanged += OnGlowSettingChanged;
         }
 
         private static void OnGlowSettingChanged(object sender, EventArgs e) => GlowManager.Instance?.RequestTick();

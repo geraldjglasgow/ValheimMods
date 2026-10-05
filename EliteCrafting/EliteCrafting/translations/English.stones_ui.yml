@@ -5,6 +5,7 @@
 
 # refusals: the rune is kept, the item unchanged
 ecf_msg_not_own_inventory: "Runes work only on items in your own inventory."
+ecf_msg_stone_out_of_reach: "Take the rune from your inventory or the chest you have open."
 ecf_msg_not_magic_base: "This item cannot hold inscriptions."
 ecf_msg_stone_disabled: "The $1 is disabled on this server."
 ecf_msg_sealed: "This item is sealed. No rune can change it."

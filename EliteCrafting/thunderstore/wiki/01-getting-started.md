@@ -1,6 +1,6 @@
 # Getting Started
 
-This wiki describes version 0.5.0. **Work in progress:** the config, the YAML files and the data stored on items will change.
+This wiki describes version 0.6.0. **Work in progress:** the config, the YAML files and the data stored on items will change.
 
 ## What it does
 

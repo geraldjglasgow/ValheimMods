@@ -481,6 +481,20 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   our own inscriptions only. `Epic/`, `Stones/EpicChecks` and `Stones/EpicVerbs` deleted, with the `Newtonsoft.Json`
   reference and the `epic_*` words. Supersedes the 2026-10-03 Epic Loot decision and the Epic Loot parts of both
   2026-10-04 Recasting entries.
+- 2026-10-05 — The runes are the workshop's rune tablets (user: "use these"): seven chipped stone tablets, each with
+  its glyph cut into the top and coloured, from ValheimAssets `Assets/Items/RuneTablets`, embedded as the bundle
+  `ecf_runes` with an icon each (`features/prefabs.md` section 4). Every rune is a copy of the Ruby wearing its tablet;
+  the colour is painted in, so the YAML `tint` no longer recolours the model or icon, only the ground glow. Without the
+  bundle the old look (group bases, tint) comes back.
+- 2026-10-05 — A rune can be used straight from an open chest (user: "i want to take out of chest and just use on
+  items I have"): the stack carried from the chest you have open is clicked onto an item in your own inventory and paid
+  from the chest. The target must still be in your own inventory. Supersedes APP-2's "a rune in an open chest is
+  moved over first".
+- 2026-10-05 — Dropped magic items get a loot beam (user: "can the item in game (when on the ground, dropped) also have
+  some like glow to it similar to epic loot?"; picked "C" of five previews: beam, sparks, beam + sparks, ground halo,
+  recoloured game twinkle). Our own effect `ecf_lootglow_beam_motes` from ValheimAssets, bundle `ecf_lootglow`, in the
+  rarity's light tone, under the ground glow's nearest-N cap; new per-player switch `Loot beam` (default on). The
+  game's gold twinkle on the item stays (the recolour, option E, was not chosen). `features/display.md` section 5.
 
 ## Open questions
 

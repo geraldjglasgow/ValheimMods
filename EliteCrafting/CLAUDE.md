@@ -13,7 +13,7 @@ ZDO key prefix `ecf_`, console command `ecraft`, YAML families `EliteCrafting_in
 `AffixRoll`, `features/affixes.md`) and **stone** (`StoneDef`, `StoneVerb`, `Stones/`, `features/stones.md`, loc keys
 `$ecf_stone_<id>`, `$ecf_msg_*`, the effect id `find_stones`). Item data key `ecf_inscriptions` (the old `ecf_affixes`
 is read when the new key is absent and removed on the next write).
-Libraries merged: Charter, ConfigReload, PatchGuard, YamlDotNet (ECR's pattern). **No YamlConfig, no SyncedConfig, no
+Libraries merged: Charter, ConfigReload, PatchGuard, BundlePrefabs (the rune tablets' bundle `assets/bundles/ecf_runes.*` and the loot beam's `ecf_lootglow.*`), YamlDotNet (ECR's pattern). **No YamlConfig, no SyncedConfig, no
 ItemCopies** (live runes share their prefab's `SharedData` instead).
 
 **Status (2026-10-03): 0.1.0 on Thunderstore, a work in progress, never tested in game.** The crafting was cut to six runes (user decision 2026-10-02, PLAN.md
@@ -52,7 +52,7 @@ It must end with 0 errors before you hand back. Output: `dist/EliteCrafting.dll`
 | `Items/` | Items | `ItemClasses` (with `ItemClass`, `ClassInfo`, `ClassRegistry`, `ClassClassifier`) and `ItemTier` are spine (implemented); rune prefabs, upgrade carry-over, stack warning go in `ItemsFeature` + new files |
 | `Stones/` | Stones | the runes: click gesture, pipeline, refusals, verbs |
 | `Effects/` | Effects | `EffectRegistry`/`EffectDef`/`ItemEffects` are contract; `EffectCatalog` (the registered ids) and everything else is Effects' |
-| `Display/` | Display | names, tooltip block, ground glow, crafting panel upgrade tab, item / armor stand hovers |
+| `Display/` | Display | names, tooltip block, ground glow, crafting panel upgrade tab, item / armor stand hovers, icon backdrops (`Backdrops/`), long tooltip scrolling (`Tooltips/`) |
 | `Loot/` | Loot | rune drops and pre-rolled gear drops, chests, killer loot-find stats, the Elite Creatures Reborn hook |
 | `Commands/` | Commands | `ecraft` |
 | `Localization/` | spine | `Words` (namespace `EliteCrafting.Text`) |
@@ -137,7 +137,7 @@ fields it names), `ClaimItems(classId, prefabs)`, `AddClassifier(id, Func<ItemDa
 `ItemTier.RefreshRecipes()` (recipe index up to date, tier cache dropped when rebuilt), `ItemTier.HasRecipe(prefab)`
 (never call the internal `RecipeIndex.Refresh` from outside Items). Rune prefabs: `StonePrefabs.Get(runeId)`,
 `GetByPrefabName`, `IsRegistered`, `IsBuilt`, `IsStonePrefab(prefab)` (the seven runes, built from code on every peer,
-registered in ObjectDB and ZNetScene before any inventory or ZDO; every live rune is linked to its prefab's
+registered in ObjectDB and ZNetScene before any inventory or ZDO; each a copy of the Ruby wearing its rune tablet and icon from the embedded bundle `ecf_runes` (`StoneTablets`, every peer; without the bundle the old tinted group bases); every live rune is linked to its prefab's
 `SharedData` in an `ItemDrop.Awake` postfix, so the economy YAML's name, description, stack and weight reach every
 stack). A rune is recognised by its drop prefab name (`ECF_...`, `ItemSlots.IsStone`; never a magic base); spawned
 runes set `m_worldLevel` so they stack. `StoneStackGuard` keeps a rune stack whole when it loads larger than the
@@ -194,7 +194,8 @@ owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: 
 
 **Stones** (`Stones/`, the runes). `InventoryGui.OnSelectedItem` prefix (local player), `StonePipeline.Evaluate(job)`
 (read-only, 10 checks then the verb as a dry run), `ConfirmGate.Pass` (Cleansing and Serpent: `confirm: true`), then
-`StoneCommit` (one `ItemState.Write`, then the cost). Five verbs (`StoneVerbs`): `PromoteVerb`, `AddVerb`, `StripVerb`,
+`StoneCommit` (one `ItemState.Write`, then the cost, paid from `StoneJob.StoneSource`: the player's inventory or the
+open container this client owns, so a rune works straight from a chest). Five verbs (`StoneVerbs`): `PromoteVerb`, `AddVerb`, `StripVerb`,
 `CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.Recast`, or `RollFresh` on a Magic item with no affix; refused on the base rarity).
 The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
 outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
@@ -209,10 +210,13 @@ synced, default off). `ServerBinding.Charter` is the only Charter.
 
 **Display** (`Display/`). Draws on the viewing client only; its caches drop on `ItemStateCache.Written`,
 `ActiveRules.RulesChanged`, `Words.Changed` and a display setting change. No state of its own in items or ZDOs.
-Surfaces: grid tooltip title, tooltip block (`ItemData.GetTooltip` postfix), ground hover, pickup message, ground glow,
+Surfaces: grid tooltip title, tooltip block (`ItemData.GetTooltip` postfix), ground hover, pickup message, ground glow (a light and the loot beam, `GlowBeams`: bundle `ecf_lootglow`, `Loot beam` switch),
 the crafting panel's upgrade tab (`CraftingPanel`: the upgrade target's block under the recipe, names colored through
 the label color) and item / armor stand hovers (`StandHover`, the item decoded from the stand ZDO by `StandItems` once
-per ZDO revision). Every per-frame surface memoises its last input and output.
+per ZDO revision). Every per-frame surface memoises its last input and output. The rarity backdrop behind every icon of a
+magic item (`Backdrops/`: grids, hotbar, drag, crafting panel, radial menu, top-left messages; moved from PackPanel
+2026-10-05, no setting) and the scroll bar on a tooltip too tall for the screen (`Tooltips/TooltipScroll`, wheel or
+right stick; OpenKeep's wheel cycling yields to its `ecf_tooltip_bar`); display.md sections 2 and 3.
 
 ## API
 
@@ -306,7 +310,8 @@ The store README links here for the full reference; keep it in step with the cod
 
 ### Runes
 
-Pick up a stack of runes in the inventory and click it onto an item in your own inventory (not in an open chest).
+Pick up a stack of runes, from your inventory or straight from the chest you have open, and click it onto an item in
+your own inventory (the item cannot be in the chest).
 One rune is used per success; a refused rune is kept. A rune dropped on another rune stacks or swaps as usual. The
 Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you click (or switch
 `Confirm destructive runes` to a dialog).

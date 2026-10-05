@@ -8,7 +8,7 @@ namespace EliteCrafting.Display
     /// The ground glow's single manager (display.md section 5). Every <c>Glow refresh seconds</c> it walks the game's
     /// live <c>ItemDrop</c> list, refreshes each item's data with the game's revision-checked <c>Load()</c>, decides
     /// glow and color only for new or changed items, and lights the nearest <c>Glow max lights</c> glowing items to the
-    /// camera; the rest keep a disabled light. No per-item Update, no per-frame work besides one timer compare.
+    /// camera, with their loot beams when <c>Loot beam</c> is on; the rest keep a disabled light and beam. No per-item Update, no per-frame work besides one timer compare.
     /// Lives on every client with graphics, never on a headless server; purely local, nothing is sent.
     /// </summary>
     internal sealed class GlowManager : MonoBehaviour
@@ -68,11 +68,12 @@ namespace EliteCrafting.Display
             int cap = ModSettings.GlowMaxLights.Value;
             float intensity = ModSettings.GlowIntensity.Value;
             float range = ModSettings.GlowRange.Value;
+            bool beam = ModSettings.LootBeam.Value;
             for (int i = 0; i < _candidates.Count; i++)
             {
                 if (i < cap)
                 {
-                    _candidates[i].Shine(intensity, range);
+                    _candidates[i].Shine(intensity, range, beam);
                 }
                 else
                 {
@@ -115,7 +116,7 @@ namespace EliteCrafting.Display
             return item;
         }
 
-        /// <summary>Forgets items that left the list (picked up, unloaded); their lights died with them.</summary>
+        /// <summary>Forgets items that left the list (picked up, unloaded); their lights and beams died with them.</summary>
         private void Prune()
         {
             _gone.Clear();
@@ -131,13 +132,13 @@ namespace EliteCrafting.Display
                 GlowItem item = _items[_gone[i]];
                 if (item.Drop != null)
                 {
-                    item.RemoveLight();
+                    item.RemoveGlow();
                 }
                 _items.Remove(_gone[i]);
             }
         }
 
-        /// <summary>Glow switched off (or a cap of 0): every light is removed and the list forgotten.</summary>
+        /// <summary>Glow switched off (or a cap of 0): every light and beam is removed and the list forgotten.</summary>
         private void Clear()
         {
             if (_items.Count == 0)
@@ -148,7 +149,7 @@ namespace EliteCrafting.Display
             {
                 if (item.Drop != null)
                 {
-                    item.RemoveLight();
+                    item.RemoveGlow();
                 }
             }
             _items.Clear();

@@ -35,6 +35,7 @@ Synced settings come from the server; player settings are your own.
 | Glow max lights | 25 | Player | Only the nearest this many items glow, 0-100 |
 | Glow refresh seconds | 1 | Player | How often the nearest are re-chosen, 0.25-5 |
 | Glow runes | Off | Player | Runes on the ground glow too |
+| Loot beam | On | Player | Glowing items also show a beam of light with rising sparks |
 | Log rolls | Off | Player | Write every roll to the log |
 | Log effect rebuilds | Off | Player | Write inscription totals to the log when they change |
 | Synergy | Off | Synced | Elite Creatures Reborn's stars and world tier raise drops |

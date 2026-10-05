@@ -42,7 +42,8 @@ namespace EliteCrafting.Stones
         // IMP-55: a click is a stone use (applied or refused) when the target is gear a stone could change, wherever
         // it lies (a chest target is refused with not_own_inventory, APP-2), or any item in the player's own inventory
         // (a non-magic one is refused with not_magic_base, APP-1). A stone onto a plain item in a container stays a
-        // vanilla swap, so a stone can still be put into an occupied chest slot.
+        // vanilla swap, so a stone can still be put into an occupied chest slot. The stone itself may be carried from
+        // the player's inventory or from the open chest (APP-2, 2026-10-05).
         private static bool WouldBeAUse(Player player, ItemDrop.ItemData item)
         {
             return ItemClasses.IsMagicBase(item) || player.GetInventory().ContainsItem(item);

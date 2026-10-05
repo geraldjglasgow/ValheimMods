@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0
+
+- Runes are stone tablets, each with its own glyph and icon.
+- Runes work straight from the chest you have open; the item stays in your inventory.
+- Magic and Rare items show a rarity background on every icon, with or without PackPanel.
+- Dropped magic items shine a beam of light with rising sparks (`Loot beam`).
+- Tooltips taller than the screen scroll with the mouse wheel or right stick.
+
 ## 0.5.0
 
 - Item classes: each kind of item rolls its own inscriptions (`ecraft classes`).

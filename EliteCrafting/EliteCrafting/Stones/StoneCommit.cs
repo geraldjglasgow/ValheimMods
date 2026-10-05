@@ -35,11 +35,12 @@ namespace EliteCrafting.Stones
         }
 
         // The cost leaves the carried stack in the same frame as the write, so no use can ever land without being paid for.
+        // A rune taken from an open chest is paid from the chest, which saves itself (this client owns it while it is open).
         private static void Pay(StoneJob job)
         {
             if (job.Cost > 0)
             {
-                job.Inventory.RemoveItem(job.Stone, job.Cost);
+                job.StoneSource!.RemoveItem(job.Stone, job.Cost);
             }
         }
 
@@ -51,7 +52,7 @@ namespace EliteCrafting.Stones
             {
                 return;
             }
-            if (job.Stone.m_stack <= 0 || !job.Inventory.ContainsItem(job.Stone))
+            if (job.Stone.m_stack <= 0 || !job.StoneSource!.ContainsItem(job.Stone))
             {
                 // As vanilla does when a split drag ends: without it the grids' drop-focus overlay stays on.
                 gui.SetupDragItem(null, null, 1);

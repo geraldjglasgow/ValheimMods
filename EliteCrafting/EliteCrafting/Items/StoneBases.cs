@@ -97,7 +97,8 @@ namespace EliteCrafting.Items
             return null;
         }
 
-        private static GameObject? Find(IList<GameObject>? first, IList<GameObject>? second, string name) =>
+        /// <summary>A game item (an ItemDrop on it) by name from either list, or null.</summary>
+        public static GameObject? Find(IList<GameObject>? first, IList<GameObject>? second, string name) =>
             FindIn(first, name) ?? FindIn(second, name);
 
         // Only real items qualify: the object must carry an ItemDrop to clone the item data from.

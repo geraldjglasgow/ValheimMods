@@ -9,7 +9,7 @@ namespace EliteCrafting.Display
 {
     /// <summary>
     /// One dropped item the glow manager knows (display.md section 5): whether it glows and in which color, and its
-    /// light if it has one. The color is re-decided only when the item's data object, its custom-data dictionary (the
+    /// light and loot beam (<see cref="GlowBeams"/>) if it has them. The color is re-decided only when the item's data object, its custom-data dictionary (the
     /// game's <c>Load</c> replaces it when the ZDO changed), the rules generation or the <c>Glow stones</c> switch
     /// changed, so a tick touches the parse cache only for new or changed items. Viewing client only.
     /// </summary>
@@ -22,6 +22,8 @@ namespace EliteCrafting.Display
         private int _rulesGeneration = -1;
         private bool _stonesSwitch;
         private Light? _light;
+        private GameObject? _beam;
+        private Color32 _beamColor;
 
         public GlowItem(ItemDrop drop)
         {
@@ -52,12 +54,25 @@ namespace EliteCrafting.Display
             Color = color;
             if (!Glows)
             {
-                RemoveLight();
+                RemoveGlow();
             }
         }
 
-        /// <summary>Turns the light on with the current preferences, creating it the first time.</summary>
-        public void Shine(float intensity, float range)
+        /// <summary>Turns the light (and, with <paramref name="beam"/>, the loot beam) on with the current preferences.</summary>
+        public void Shine(float intensity, float range, bool beam)
+        {
+            ShineLight(intensity, range);
+            if (beam)
+            {
+                ShowBeam();
+            }
+            else
+            {
+                RemoveBeam();
+            }
+        }
+
+        private void ShineLight(float intensity, float range)
         {
             if (_light == null)
             {
@@ -70,22 +85,57 @@ namespace EliteCrafting.Display
             _light.enabled = true;
         }
 
-        /// <summary>Over the nearest-N cap: the light is disabled, not destroyed.</summary>
+        // The beam is made in the item's color the first time, made again when the color changed, and stood upright on
+        // every tick (a dropped item rolls; the beam is its child).
+        private void ShowBeam()
+        {
+            if (_beam != null && !_beamColor.Equals(Color))
+            {
+                RemoveBeam();
+            }
+            if (_beam == null)
+            {
+                _beam = GlowBeams.Create(Drop.transform, Color);
+                _beamColor = Color;
+            }
+            if (_beam != null)
+            {
+                GlowBeams.Upright(_beam.transform);
+                _beam.SetActive(true);
+            }
+        }
+
+        /// <summary>Over the nearest-N cap: the light and the beam are switched off, not destroyed.</summary>
         public void Dim()
         {
             if (_light != null)
             {
                 _light.enabled = false;
             }
+            if (_beam != null)
+            {
+                _beam.SetActive(false);
+            }
         }
 
-        public void RemoveLight()
+        /// <summary>The light and the beam are destroyed (the item stopped glowing, or the glow was switched off).</summary>
+        public void RemoveGlow()
         {
             if (_light != null)
             {
                 UnityEngine.Object.Destroy(_light.gameObject);
             }
             _light = null;
+            RemoveBeam();
+        }
+
+        private void RemoveBeam()
+        {
+            if (_beam != null)
+            {
+                UnityEngine.Object.Destroy(_beam);
+            }
+            _beam = null;
         }
 
         /// <summary>Magic items glow in their rarity color when the rarity says <c>glow</c> (never the base rarity);

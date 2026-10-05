@@ -81,6 +81,7 @@ section 2).
 | Message id | English text | Raised by |
 | --- | --- | --- |
 | `$ecf_msg_not_own_inventory` | Runes work only on items in your own inventory. | all |
+| `$ecf_msg_stone_out_of_reach` | Take the rune from your inventory or the chest you have open. | all |
 | `$ecf_msg_not_magic_base` | This item cannot hold inscriptions. | all (includes stackable items) |
 | `$ecf_msg_newer_format` | *(owned by `item-data.md`)* | all |
 | `$ecf_msg_unknown_rarity` | *(owned by `item-data.md`)* | all |

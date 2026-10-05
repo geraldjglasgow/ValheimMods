@@ -7,7 +7,7 @@ on every peer, their names, how they are told apart in the world and in the inve
 the base's own lights), and their icons. What each rune does is `stones.md` (the code's word for a rune is stone);
 its YAML entry is `economy-yaml.md`.
 
-**Status: Phase 1 built, not tested in game** (2026-09-23). Base prefab names are **believed vanilla, not yet verified in game** (section 4); fallbacks per group are coded (DECISIONS.md IMP-15). ItemCopies is not used (IMP-1).
+**Status: Phase 1 built, not tested in game** (2026-09-23); the rune tablets (section 4) built 2026-10-05, not tested in game. The bases Ruby, Crystal and SurtlingCore exist in the game (checked 2026-10-05 through DevBridge); fallbacks per group are coded (DECISIONS.md IMP-15). ItemCopies is not used (IMP-1).
 
 ---
 
@@ -79,8 +79,29 @@ Seven in total: `ECF_` + the PascalCase id (`StoneCatalog.PrefabFor`).
 
 # 4. Telling them apart
 
-**v1 needs no asset authoring.** A clone keeps its base's mesh and texture, supplied by the game on every client;
-nothing of Iron Gate's ships in our zip. Three levers:
+**The rune tablets (since 2026-10-05, user decision, `../PLAN.md` Decisions log).** Each rune is a small chipped stone
+tablet with its glyph cut into the top and coloured: our own models from ValheimAssets `Assets/Items/RuneTablets`
+(`ecf_runetablet_<id>`, its `BRIEF.md` has the glyphs, colours and sizes), embedded in the DLL as the bundle
+`ecf_runes` (`.windows`, `.linux`; ValheimModLibs `BundlePrefabs`), with an icon each (`ecf_runetablet_<id>_icon`).
+`Items/StoneTablets`, on every peer at step 2 of the clone build (the collider is physics, so the server needs it):
+
+- Every rune is a copy of the **Ruby** (the ascension group's base and its fallbacks, a plain small item), whatever its
+  group; the group bases below only matter without the tablets.
+- The copy loses its own look: every collider, renderer, mesh, light, particle system and LOD group (the root and its
+  `attach` child stay, with only their drawing removed). The tablet goes where the model was, under `attach` when there
+  is one, named `model`, centred on it, on the item's layer, with its own box collider.
+- It wears a copy of the game's `SerpentScale` material (opaque Standard with a normal map, the Kraken beak's source
+  in EliteCreaturesPack) with the tablet's baked albedo and normal map, no metal, gloss 0.15 (`GameMaterials.Dress` +
+  `Plain`), so the game lights it like its own items. Not the Ruby's own: it is Standard in Fade mode (see-through,
+  render queue 3000). Without SerpentScale the bundle's own Standard material stays.
+- Its icon is the bundle's sprite. The colour is painted into the model and the icon, so no tint is applied to either
+  (`StoneVisuals.Apply` skips a tablet); the rune's tint still colours its ground glow. A YAML `tint` or a rethemed
+  rarity palette therefore no longer recolours a rune's model or icon.
+- A bundle that cannot load (warning) leaves every rune on the old look below; a rune missing from the bundle keeps
+  its own base's look.
+
+**Without the tablets (the v1 look, now the fallback).** A clone keeps its base's mesh and texture, supplied by the
+game on every client; nothing of Iron Gate's ships in our zip. Three levers:
 
 **(a) One vanilla base per group.** From the game-notes survey of the decompile's item code; the prefab names live
 in asset bundles, so **every row must be verified in game during Phase 1** (`ecraft dump items` lists every item with
@@ -135,6 +156,10 @@ The seven runes are the whole set. The YAML tunes or disables them; it cannot ad
 
 # 6. Icons
 
+**Since 2026-10-05 each rune shows its tablet's icon** from the bundle (section 4): rendered in the workshop from the
+model (`Assets/Items/RuneTablets/icons.py`), 256 x 256, never tinted. The tinted vanilla sprites below are the fallback
+without the bundle.
+
 **v1: runtime-tinted vanilla sprites**, matching the world model's tint.
 
 - At registration on a client (not on a dedicated server), the base item's icon sprite is copied and tinted once,
@@ -148,6 +173,8 @@ The seven runes are the whole set. The YAML tunes or disables them; it cannot ad
 ---
 
 # 7. Phase 3 upgrade path
+
+**Done 2026-10-05**: the rune tablets (section 4), swapped in at step 2 as planned here. Kept for the record:
 
 Our own meshes, either authored on the Mac and shipped as our own AssetBundle embedded in the DLL (our art, fine for
 the clean room), or generated procedurally in code (low-poly crystals). Either is swapped in at step 2 of the clone

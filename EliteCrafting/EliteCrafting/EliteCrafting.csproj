@@ -6,7 +6,7 @@
     <RootNamespace>EliteCrafting</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <Product>EliteCrafting</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -42,6 +42,7 @@
     <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
     <ProjectReference Include="$(ModLibsPath)\ConfigReload\ConfigReload.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,6 +74,10 @@
       <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>false</Private>
@@ -93,6 +98,10 @@
       <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(ManagedPath)\UnityEngine.UI.dll</HintPath>
       <Private>false</Private>
@@ -107,6 +116,12 @@
   <ItemGroup>
     <EmbeddedResource Include="config\*.yml" LogicalName="EliteCrafting.config.%(Filename)%(Extension)" />
     <EmbeddedResource Include="translations\*.yml" LogicalName="EliteCrafting.translations.%(Filename)%(Extension)" />
+    <!-- The rune tablets: seven stone tablets with their glyphs and icons (ValheimAssets Assets/Items/RuneTablets,
+         ecf_runetablet_<rune>), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecf_runes.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
+    <!-- The loot beam on dropped magic items: a soft shaft of light with sparks rising round it (ValheimAssets
+         Assets/Effects/ecf_lootglow_beam_motes, built with Tools/Vfx/build.py), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecf_lootglow.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

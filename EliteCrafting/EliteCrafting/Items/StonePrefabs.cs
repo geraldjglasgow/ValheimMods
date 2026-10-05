@@ -81,9 +81,11 @@ namespace EliteCrafting.Items
             _holder.SetActive(false);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
             GameObject?[] bases = ResolveBases(first, second);
+            bool tablets = StoneTablets.Load(StoneBases.Find(first, second, StoneTablets.MaterialItem));
             foreach (string id in StoneCatalog.BuiltInIds)
             {
-                Add(new StoneEntry(StoneCatalog.PrefabFor(id), id, StoneBases.GroupOf(id)), bases);
+                StoneGroup group = tablets ? StoneTablets.BaseGroup : StoneBases.GroupOf(id);
+                Add(new StoneEntry(StoneCatalog.PrefabFor(id), id, group), bases, tablets);
             }
         }
 
@@ -99,7 +101,7 @@ namespace EliteCrafting.Items
             return bases;
         }
 
-        private static void Add(StoneEntry entry, GameObject?[] bases)
+        private static void Add(StoneEntry entry, GameObject?[] bases, bool tablets)
         {
             GameObject? basePrefab = bases[(int)entry.Group];
             if (basePrefab == null)
@@ -108,6 +110,7 @@ namespace EliteCrafting.Items
                 return;
             }
             StoneCloner.Build(entry, basePrefab, _holder!.transform);
+            entry.WearsTablet = tablets && StoneTablets.Wear(entry);
             Entries.Add(entry);
             ByName[entry.PrefabName] = entry;
             ByObject[entry.Prefab] = entry;

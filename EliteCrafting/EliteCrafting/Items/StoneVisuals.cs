@@ -26,10 +26,13 @@ namespace EliteCrafting.Items
         public static Color TintOfPrefab(string? prefabName) =>
             StoneTints.TryByPrefab(prefabName, out Color tint) ? tint : Color.white;
 
-        /// <summary>Draws one prefab in its current tint. Clients only; a no-op when headless.</summary>
+        /// <summary>
+        /// Draws one prefab in its current tint. Clients only; a no-op when headless, and for a rune tablet, whose
+        /// colour is painted into it (the tint still colours its ground glow, read through <see cref="TintOfPrefab"/>).
+        /// </summary>
         internal static void Apply(StoneEntry entry)
         {
-            if (Headless)
+            if (Headless || entry.WearsTablet)
             {
                 return;
             }

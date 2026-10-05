@@ -20,12 +20,16 @@ namespace EliteCrafting.Stones
             return ItemChecks(job) ?? StoneChecks(job) ?? RarityChecks(job) ?? StoneVerbs.Run(job);
         }
 
-        // 1-3: own inventory, magic base, not a newer format.
+        // 1-3: target in the own inventory and the rune within reach (own inventory or the open chest), magic base, not a newer format.
         private static StoneResult? ItemChecks(StoneJob job)
         {
-            if (!job.Inventory.ContainsItem(job.Stone) || !job.Inventory.ContainsItem(job.Target))
+            if (!job.Inventory.ContainsItem(job.Target))
             {
                 return StoneResult.Refuse("not_own_inventory");
+            }
+            if (job.StoneSource == null)
+            {
+                return StoneResult.Refuse("stone_out_of_reach");
             }
             if (!ItemClasses.IsMagicBase(job.Target))
             {

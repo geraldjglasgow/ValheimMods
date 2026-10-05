@@ -38,8 +38,8 @@ color. Normal and non-magic items are left exactly as vanilla draws them.
 | Armor stand slot hover | postfix `Switch.GetHoverText` for switches that are an `ArmorStand` slot (found once per switch): the slot's hover names the slot, not the item, so a colored name line and the block go under its first line; the item comes from the slot's `<index>_itemData`. IMP-123 | 2 |
 | Drag ghost name, "dropped"/"broke" messages | `InventoryGui.UpdateItemDrag`, the message calls | optional, 3 |
 
-- **Hotbar**: vanilla draws icons and durability there, no names, so there is nothing to color. Phase 3 may add a
-  thin rarity-colored slot border in the grid and the hotbar (a display preference, default on; DSP-3).
+- **Hotbar**: vanilla draws icons and durability there, no names, so there is nothing to color; the icon backdrop
+  (below) marks the rarity there instead.
 - The rarity word is not added to the name ("Rare Bronze sword"): the color carries it and the tooltip spells it out
   (section 3), which also serves players who cannot tell the colors apart (`../DECISIONS.md` DSP-2).
 - An **unknown rarity id** draws in the default text color (`item-data.md` section 6).
@@ -49,6 +49,29 @@ color. Normal and non-magic items are left exactly as vanilla draws them.
   item, the rules, the words or a display setting change.
 - Runes carry no `ecf_` data and get no block; what a rune does is its item description (`$ecf_stone_<id>_desc`),
   written by the Items area.
+
+**Icon backdrop** (user decision 2026-10-05: "when you show the icon for a magic/rare item its always the elite
+crafting icon with the background"; moved from PackPanel the same day, so it shows with or without PackPanel, and
+PackPanel draws none). Behind **every** icon of a Magic or Rare item, a rounded square with a bright rim, a faint inlaid
+line and a soft centre glow (the user's pick "H2" of the mockups, nothing animated; `Display/Backdrops/BackdropArt`,
+painted in code) in a light tone of the rarity colour (its hue at full value, saturation x0.6: Magic `#78FF66`, Rare
+`#66B4FF`). Normal, plain, unknown-rarity items and runes get none. No setting: it always shows.
+
+| Where | Hook |
+|---|---|
+| Every inventory grid (player, its slots, containers, other mods' grids) | postfix `InventoryGrid.UpdateGui` |
+| Hotbar | postfix `HotkeyBar.UpdateIcons` |
+| Dragged item at the cursor | postfix `InventoryGui.UpdateItemDrag` (`m_dragGo`'s `icon`) |
+| Crafting panel: upgrade entry in the list, the selected upgrade's icon | postfix `InventoryGui.AddRecipeToList`, postfix `InventoryGui.UpdateRecipe` (`m_recipeIcon`) |
+| Radial menu items | postfix `Valheim.UI.ItemElement.Init` |
+| Top-left message (picked up, removed, dropped, broke) | prefix (first) / postfix on `Character.ShowPickupMessage`, `ShowRemovedMessage`, `Humanoid.DropItem`, `DrainEquipedItemDurability` name the item; postfix `MessageHud.ShowMessage` tags the message it queued with that item's icon; postfix `UpdateMessage` shows the tagged one's backdrop and fades it with the icon over 4 s |
+
+- One Image per icon (`ecf_backdrop`, `IconBackdrop`), a sibling of the icon just above its cell's own `bkg` (or first),
+  so the equipped and queued marks and the icon lie over it; it covers the icon's rect less 3 of every 64 units a side,
+  follows the icon's rect and scale, ignores layout groups, and shows only while the icon shows (enabled, active, a
+  sprite, not transparent: an upgrade the player cannot afford hides its icon, and the backdrop with it).
+- Not drawn: the split dialog (a magic item never stacks), food icons, discovery pop-ups (they name the item kind, not
+  the item). An item Epic Loot also calls magic gets ours too (EliteCrafting ignores Epic Loot).
 
 ---
 
@@ -106,6 +129,16 @@ Detail levels (preference `Tooltip detail`):
 | `Standard` (default) | Compact + tier on each affix |
 | `Full` | Standard + the tier's roll range `[4-7]` after each value + unreadable segments + the item's tier ceiling (`item-tier.md`) on the rarity line |
 
+**Long tooltips** (user request 2026-10-05: "allow a scrollbar on a tooltip if its not showing everything";
+`Display/Tooltips/TooltipScroll`). A component on every game tooltip as it is made (postfix `UITooltip.OnHoverStart`)
+does nothing until the text would take the tooltip past the screen. Then the text moves into a clipped viewport
+(`ecf_tooltip_scroll`, the tooltip's full width, in the text's place in the layout) sized so the whole tooltip fits the
+screen less 24 units above and below (at least 80 units of text); a slim bar on its right (`ecf_tooltip_bar`, track
+white at 12%, thumb at 55%) shows the view, and the mouse wheel (60 units a notch) or the right stick (700 units a
+second) scrolls it while it shows. A new text starts at the top. Only the item tooltip's shape (a
+`VerticalLayoutGroup` holding `Topic` and `Text`) is handled. OpenKeep's `Cycle With Wheel` leaves the wheel alone
+while `ecf_tooltip_bar` shows (found by name).
+
 ---
 
 # 4. Display preferences
@@ -158,6 +191,27 @@ How:
   N. Candidate items are remembered between ticks so the walk touches the record cache only for new objects.
 - The light is removed when the item is picked up (the object is destroyed) or its data changes to non-glowing.
 
+**The loot beam** (user decision 2026-10-05: option "C" of five previewed, `../PLAN.md` Decisions log). With `Loot
+beam` on, each lit item also shows a soft shaft of light about 3.7 m tall, brightest at its foot and breathing a
+little, with thin wisps rising through it, a faint halo at the item and a few sparks drifting up about a metre. Our own
+effect: ValheimAssets `Assets/Effects/ecf_lootglow_beam_motes` (built from `ecf_lootglow_beam` and
+`ecf_lootglow_motes`), embedded as the bundle `ecf_lootglow`, dressed in the game's particle shaders at runtime
+(`BundleEffects`). `Display/GlowBeams`, `GlowItem`:
+
+- The same nearest-N cap as the light: an item over the cap has its beam switched off, not destroyed.
+- A child of the item, stood upright and at normal size on every tick (a dropped item rolls; the sparks simulate in
+  world space). Destroyed with the item, when it stops glowing, and when the glow or the beam is switched off.
+- Colour: the effect's five systems are authored in Magic green with their own saturation and alpha (shaft and halo
+  0.6 and 0.22, wisps 0.45 and 0.4, sparks between 0.2 and 0.45 at 1, pixels 0.6 at 1). The glow colour replaces the
+  hue, multiplies the saturation, sets full value and keeps the alpha, so Magic gives the light tone `#78FF66` and Rare
+  `#66B4FF` (the inventory backdrop's), exact for any palette colour. One recoloured copy is kept per colour, so an
+  instance starts in its own colour.
+- About 13 particles alive per beam in 5 systems (at most 26); 25 beams are about 125 systems and 325 particles. The
+  beam's cost is its additive overdraw (three 0.45-0.6 x 3.7 m billboards). The game's own gold twinkle on the item
+  stays.
+- Local only, like the light: no ZNetView, nothing sent, never loaded on a headless server. A bundle that cannot load
+  leaves the light alone (warning).
+
 | Preference (per player) | Default | Range | Meaning |
 |---|---|---|---|
 | `Ground glow` | `true` | on/off | Master switch |
@@ -166,9 +220,10 @@ How:
 | `Glow max lights` | `25` | 0-100 | Nearest-N cap. 0 is the same as off |
 | `Glow refresh seconds` | `1.0` | 0.25-5 | Timer for the nearest-N re-evaluation |
 | `Glow runes` | `false` | on/off | Runes glow in their tint too |
+| `Loot beam` | `true` | on/off | Lit items also show the loot beam |
 
-All numbers are judgement calls, to be tuned in play (DSP-4; every rarity glows the same size). Phase 3 adds an
-optional soft loot-beam variant under the same cap.
+All numbers are judgement calls, to be tuned in play (DSP-4; every rarity glows the same size). The loot beam above
+is the soft loot-beam variant this paragraph used to plan for Phase 3.
 
 ---
 

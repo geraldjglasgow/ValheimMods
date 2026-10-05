@@ -41,7 +41,7 @@ two this file adds).
 
 | # | Check | Refusal id |
 |---|---|---|
-| 1 | Target and rune are both in the **local player's own inventory** (the clicked grid is the player grid, and the carried item's inventory is the player's) | `not_own_inventory` |
+| 1 | Target is in the **local player's own inventory**; then the rune is in that inventory or in the open container this client owns (2026-10-05) | `not_own_inventory`, then `stone_out_of_reach` |
 | 2 | Target is a **magic base** (`item-data.md` section 2) | `not_magic_base` |
 | 3 | Target's format version is not newer than this mod's (`item-data.md` section 8) | `newer_format` |
 | 4 | The rune has a live definition in the economy YAML | `stone_disabled` |
@@ -63,8 +63,11 @@ Rules around the pipeline:
   `seal_only`) is a success and costs the rune (`stones.md`).
 - **The dry run's result is what commits.** Nothing is rolled twice: the record built in step 12 is the one written
   in step 14, so the player gets exactly the outcome the checks approved.
-- The rune must come from the player's own inventory too (step 1): a rune in an open chest is moved over first.
-  Every write stays inside the one inventory this client owns. (Judgement call, `../DECISIONS.md` APP-2.)
+- The rune may come from the player's own inventory or straight from the open chest (step 1; user decision
+  2026-10-05, `../PLAN.md` Decisions log, superseding APP-2's "moved over first"). A rune from the chest is paid from
+  the chest, which this client owns while it is open (the game hands a container to whoever opens it) and which saves
+  itself on the change, as when an item is taken out. A container this client does not own (another mod letting
+  several players open one) refuses with `stone_out_of_reach`.
 - Cost is paid only from the carried stack (step 10). Other stacks of the same rune are not pooled. (Judgement
   call, APP-3, shared with `stones.md`: the player sees which stack pays.)
 

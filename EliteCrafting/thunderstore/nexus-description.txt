@@ -34,6 +34,7 @@ Needed on the server and every client, same version. Install BepInExPack for Val
 BepInEx/config/com.EliteCrafting.cfg and the EliteCrafting_*.yml files. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]ecraft help[/b].
 
 [size=4][b]Links[/b][/size]
+Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/EliteCrafting. Licence: GPL-3.0.
 
 [size=4][b]Shout outs[/b][/size]

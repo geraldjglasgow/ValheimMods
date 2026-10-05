@@ -52,6 +52,7 @@ namespace EliteCrafting.Config
         public static ConfigEntry<int> GlowMaxLights { get; private set; } = null!;
         public static ConfigEntry<float> GlowRefreshSeconds { get; private set; } = null!;
         public static ConfigEntry<bool> GlowStones { get; private set; } = null!;
+        public static ConfigEntry<bool> LootBeam { get; private set; } = null!;
         public static ConfigEntry<bool> LogRolls { get; private set; } = null!;
         public static ConfigEntry<bool> LogEffectRebuilds { get; private set; } = null!;
 
@@ -109,6 +110,9 @@ namespace EliteCrafting.Config
                     new AcceptableValueRange<float>(0.25f, 5f))));
             GlowStones = Local(config.Bind(Glow, "Glow runes", false,
                 "Runes lying in the world glow in their tint too. Per player."));
+            LootBeam = Local(config.Bind(Glow, "Loot beam", true,
+                "Glowing items also show a soft beam of light with sparks rising round it, in their color (the nearest " +
+                "'Glow max lights' of them). Per player."));
         }
 
         private static void BindDiagnostics(ConfigFile config)

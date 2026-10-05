@@ -17,6 +17,7 @@ namespace EliteCrafting.Stones
         {
             Player = player;
             Inventory = player.GetInventory();
+            StoneSource = SourceOf(Inventory, stone);
             Stone = stone;
             Target = target;
             Rules = ActiveRules.Current;
@@ -27,7 +28,16 @@ namespace EliteCrafting.Stones
         }
 
         public Player Player { get; }
+
+        /// <summary>The player's own inventory: where the target must be.</summary>
         public Inventory Inventory { get; }
+
+        /// <summary>
+        /// Where the rune stack lies and is paid from: the player's inventory, or the open container when this client
+        /// owns it (the game hands a container to whoever opens it); null when neither holds it.
+        /// </summary>
+        public Inventory? StoneSource { get; }
+
         public ItemDrop.ItemData Stone { get; }
         public ItemDrop.ItemData Target { get; }
         public RuleSet Rules { get; }
@@ -54,6 +64,17 @@ namespace EliteCrafting.Stones
 
         public static StoneJob Create(Player player, ItemDrop.ItemData stone, ItemDrop.ItemData target) =>
             new StoneJob(player, stone, target);
+
+        private static Inventory? SourceOf(Inventory own, ItemDrop.ItemData stone)
+        {
+            if (own.ContainsItem(stone))
+            {
+                return own;
+            }
+            Container? open = InventoryGui.instance != null ? InventoryGui.instance.m_currentContainer : null;
+            Inventory? chest = open != null && open.IsOwner() ? open.GetInventory() : null;
+            return chest != null && chest.ContainsItem(stone) ? chest : null;
+        }
 
         /// <summary>A roll context for this target under this job's rules: its class and item level, the rune's floor.</summary>
         public RollContext RollContext()

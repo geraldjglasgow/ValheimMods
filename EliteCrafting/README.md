@@ -27,6 +27,8 @@ Mods that make weapons or armor stackable can merge magic items and lose inscrip
 and applies without a restart; the server's values bind every player (`Lock Configuration`). Console: `ecraft help`.
 
 ## Links
+Discord: https://discord.gg/DrFUyfuXzT
+
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
 ## Shout outs

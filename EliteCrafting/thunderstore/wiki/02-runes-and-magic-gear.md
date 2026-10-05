@@ -43,10 +43,10 @@ PackPanel adds a Backpacks class.
 | Cleansing | Magic, Rare | Back to Normal; every inscription is lost |
 | Serpent | Magic, Rare | A gamble, then the item is **sealed**: no rune works on it again |
 
-- Click the rune stack onto an item in your own inventory (not in a chest). Equipped items work too unless the server forbids it.
+- Click the rune stack onto an item in your own inventory. The rune can come straight from the chest you have open; the item must be in your inventory. Equipped items work too unless the server forbids it.
 - A success uses one rune. If the rune cannot be used, it is kept and a message says why, for example "No inscription can roll on this item".
 - Cleansing and Serpent ask first: hold **Shift** while clicking (left trigger on a gamepad). The `Confirm destructive runes` setting changes this. Recasting does not ask, though the inscriptions it replaces are gone for good.
-- Runes stack to 50, weigh 0.2 and go through portals. Each is a coloured stone: Awakening green, Shaping teal, Recasting violet, Ascension blue, Consecrated gold, Cleansing silver, Serpent dark green.
+- Runes stack to 50, weigh 0.2 and go through portals. Each is a stone tablet with its own glyph; with `Glow runes` on, it glows on the ground in its colour: Awakening green, Shaping teal, Recasting violet, Ascension blue, Consecrated gold, Cleansing silver, Serpent dark green.
 
 **Serpent outcomes**: 35% nothing more; 35% one inscription past the limit (a 3rd on Magic, a 7th on Rare, even past the prefix or suffix limit); 30% every inscription rerolled at any of its tiers, equally likely, whatever the item level. The tooltip then shows `Sealed`.
 
@@ -77,5 +77,5 @@ PackPanel adds a Backpacks class.
 
 - Names in the rarity colour: tooltips, the ground, pickup messages, item and armour stands.
 - The tooltip lists prefixes first, then suffixes, each with its tier, for example `+14% armor  T4`. With `Tooltip detail` on Full it also shows value ranges and the item's class and level (`Swords · item level 4`).
-- Magic items on the ground glow in their rarity colour.
+- Magic items on the ground glow in their rarity colour, with a soft beam of light and rising sparks.
 - The workbench upgrade tab shows the item's inscriptions.

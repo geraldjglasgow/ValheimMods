@@ -27,8 +27,11 @@ namespace EliteCrafting.Items
         /// <summary>The base item's icon, untinted (the fallback when tinting is impossible).</summary>
         public Sprite? BaseIcon { get; set; }
 
-        /// <summary>Client-only visual state (materials, lights, scale); null on a dedicated server.</summary>
+        /// <summary>Client-only visual state (materials, lights, scale); null on a dedicated server and for a tablet.</summary>
         public StoneLook? Look { get; set; }
+
+        /// <summary>Wears its rune tablet (<see cref="StoneTablets"/>): its colour and icon are its own, never tinted.</summary>
+        public bool WearsTablet { get; set; }
     }
 
     /// <summary>
