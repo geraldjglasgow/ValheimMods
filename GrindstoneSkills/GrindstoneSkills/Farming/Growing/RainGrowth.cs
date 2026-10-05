@@ -32,13 +32,26 @@ namespace GrindstoneSkills
             if (!FarmSkill.Active || timeSincePlanted < Interval || ZNet.instance == null)
                 return;
             double now = ZNet.instance.GetTimeSeconds();
-            Mark mark = marks.GetValue(__instance, plant => new Mark { Time = now });
+            Mark mark = MarkOf(__instance, now);
             double elapsed = now - mark.Time;
             if (elapsed < Interval)
                 return;
             mark.Time = now;
             if (Raining(__instance))
                 PlantClock.Advance(__instance, System.Math.Min(elapsed, MaxCredit) * Bonus);
+        }
+
+        /// <summary>
+        /// The plant's mark, set to now when the plant is first seen. No GetValue lambda: one capturing now would allocate
+        /// on every pass of every plant, Farming on or off.
+        /// </summary>
+        private static Mark MarkOf(Plant plant, double now)
+        {
+            if (marks.TryGetValue(plant, out Mark mark))
+                return mark;
+            mark = new Mark { Time = now };
+            marks.Add(plant, mark);
+            return mark;
         }
 
         private static float Bonus => Mathf.Max(0f, FarmingPerkSettings.RainBonus.Value) / 100f;

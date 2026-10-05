@@ -24,7 +24,7 @@ namespace GrindstoneSkills
         private static void Postfix(Plant __instance, ref string __result)
         {
             if (FarmSkill.Active && !string.IsNullOrEmpty(__result))
-                __result += HookGuard.Run("Farming almanac", () => Lines(__instance), "");
+                __result += HookGuard.Run("Farming almanac", static plant => Lines(plant), __instance, "");
         }
 
         private static string Lines(Plant plant)

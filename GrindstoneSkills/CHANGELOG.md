@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.3
+
+- Farming: less work for every growing plant and every E press, even with Farming off.
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 0.13.2
 
 - Sailing: Wind Call (K) works only while you steer a ship; elsewhere the key does nothing.

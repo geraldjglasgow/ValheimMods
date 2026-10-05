@@ -1,6 +1,6 @@
 # Getting Started
 
-This wiki describes version 0.13.1.
+This wiki describes version 0.13.3.
 
 GrindstoneSkills deepens five of the game's skills (your levels count) and adds four new ones. Perks grow evenly from nothing at level 0 to full at level 100; milestones unlock at a set level. The Skills window becomes a skill book, and skill loss on death is configurable.
 
@@ -32,7 +32,7 @@ Since 0.13.0 nothing rolls stars; items starred earlier keep theirs. See [Skill 
 | O | aboard, Sailing 50 | Lookout |
 | E | a growing crop someone planted | tend it, once a day |
 | E | a tamed animal you cannot command | pet it |
-| Shift + E | a kitchen | cycle its trash filter |
+| Shift + E | a kitchen | cycle its trash filter (above "all dishes" it throws away every dish) |
 | Shift (held) | placing a seed | plant one, not a row |
 | `/fishlog` | chat | your angler's log |
 

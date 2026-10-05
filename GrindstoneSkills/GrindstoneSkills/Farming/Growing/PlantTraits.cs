@@ -24,8 +24,9 @@ namespace GrindstoneSkills
         [HarmonyPatch(typeof(Plant), nameof(Plant.UpdateHealth))]
         private static class Health
         {
+            // Runs even with Farming off (that restores the game's values), so the lambda is static: nothing allocated per pass.
             [HarmonyPrefix]
-            private static void Prefix(Plant __instance) => HookGuard.Run("Farming traits", () => Apply(__instance));
+            private static void Prefix(Plant __instance) => HookGuard.Run("Farming traits", static plant => Apply(plant), __instance);
         }
 
         private static void Apply(Plant plant)

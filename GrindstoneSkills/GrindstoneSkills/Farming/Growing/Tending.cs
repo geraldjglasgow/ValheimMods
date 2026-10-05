@@ -32,8 +32,11 @@ namespace GrindstoneSkills
                     return;
                 Plant plant = go.GetComponentInParent<Plant>();
                 if (plant != null)
-                    HookGuard.Run("Farming tending", () => Tend(__instance, plant));
+                    Guarded(__instance, plant);
             }
+
+            // Its own method: a lambda capturing the prefix's parameters would allocate on every use of anything.
+            private static void Guarded(Player player, Plant plant) => HookGuard.Run("Farming tending", () => Tend(player, plant));
         }
 
         /// <summary>

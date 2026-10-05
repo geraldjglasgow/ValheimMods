@@ -35,5 +35,35 @@ namespace GrindstoneSkills
                 return fallback;
             }
         }
+
+        /// <summary>
+        /// Run with the hook's argument passed in, for hooks that run several times a second (every plant's slow update):
+        /// a static lambda captures nothing, so it allocates nothing, where a capturing one allocates on every call.
+        /// </summary>
+        public static void Run<TArg>(string context, Action<TArg> action, TArg arg)
+        {
+            try
+            {
+                action(arg);
+            }
+            catch (Exception exception)
+            {
+                Guard.Report(exception, context);
+            }
+        }
+
+        /// <summary>Same as <see cref="Run{TArg}(string, Action{TArg}, TArg)"/> for a hook that returns a value.</summary>
+        public static T Run<TArg, T>(string context, Func<TArg, T> func, TArg arg, T fallback)
+        {
+            try
+            {
+                return func(arg);
+            }
+            catch (Exception exception)
+            {
+                Guard.Report(exception, context);
+                return fallback;
+            }
+        }
     }
 }
