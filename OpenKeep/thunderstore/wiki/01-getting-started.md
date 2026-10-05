@@ -2,7 +2,7 @@
 
 OpenKeep is storage for Valheim in one mod: craft, build and feed stations from nearby chests; quick stack, sort, route and trash; salvage, batch crafting and craft speed; recipe search, favourite recipes, grid views and a recipe tracker; stack sizes, weights, chest sizes, station capacities and contents signs. Its Homestead section adds base tweaks: a choice of bed after death, quicker respawns, campfires on wood, honey rate, fires, smelters and pets fed from chests, night-only torches, quicker Rested and repairs. A build camera lets you build from a free camera near a crafting station.
 
-This wiki describes version 2.0.1.
+This wiki describes version 2.0.2.
 
 ## Install
 

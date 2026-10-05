@@ -296,7 +296,7 @@ OpenKeep/OpenKeep/src/
     RecipeLayout.cs, RecipeTile.cs   row and tile places for the view; a row reshaped into a tile or a compact row
     RecipeRows.cs           per row: the star, middle click (favourite), right click (track), the hover for F
     RecipeStar.cs           the build menu's favourite star (sprite and colour), OpenKeep's drawn star before it
-    RecipeTips.cs           the game's tooltips (the inventory slots' prefab) on OpenKeep's parts and on tiles
+    RecipeTips.cs           the game's tooltips (a copy of the inventory slots' prefab) on OpenKeep's parts and on tiles
     RecipeSprites.cs        the view button's drawn icons
     PanelButton.cs          copies of the crafting panel's buttons without their gamepad key and hint
     SearchBar.cs            the row above the list: a copy of the build menu's search field; the list gives up
@@ -353,7 +353,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.0.1]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.0.2]` line, `Guard.Install` last.
 
 Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -1508,6 +1508,13 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   uncraftable recipe's icon in its list (alpha 0; the grey name says it); a tile shows it greyed. The view button
   cycles forward (Shift: back) and writes the cfg; a change of `Recipe View`, `Search`, `Favourites` or `Favourites
   First` rebuilds an open panel at once.
+- Tooltips (2026-10-05, the user: the tile's hover text was "so far away from item"): Epic Loot postfixes
+  `UITooltip.OnHoverStart` and turns every tooltip with a `Topic` child and no `Scroll View` child into a scroll box
+  of its item tooltip size (350 tall at least) set half its width beside the hovered element, which suits an item's
+  long text, not a tile's name. `RecipeTips` therefore gives every OpenKeep tip a copy of the item slots' prefab, made
+  once under an inactive holder, carrying an empty, inactive `Scroll View` child: Epic Loot passes it by and the tip
+  shows as the game shows an item's, below and right of the pointer. Found by decompiling Epic Loot 0.14.13 into the
+  scratch folder (no `CLEANROOM.md`); nothing of it is referenced.
 - Track and favourite buttons: copies of the game's Style button (`m_variantButton`) under the recipe's name, from
   where the Style button starts (right of it while the game shows it). Hidden on the Salvage tab and with no recipe.
 - Gamepad (`Gamepad Controls`): read in a prefix of `UpdateRecipeGamepadInput`, which the game calls only while the
@@ -1660,7 +1667,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.0.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.0.2]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2004,8 +2011,9 @@ from a script.
 71. Views: the view button cycles List, Compact list, Small grid (5 a row), Medium grid (4), Large grid (3), Shift +
     click goes back; the cfg's `Recipe View` follows. In a grid: icons fill the tiles, uncraftable ones greyed, the
     selected tile orange, quality levels small top left on the Upgrade tab, worn items show a durability bar; hover a
-    tile: the game's tooltip with the name (arrows: x20). Scrolling works; the selected recipe stays selected across a
-    view change. Compact list: lower rows, icons and texts still fit.
+    tile: the game's tooltip with the name (arrows: x20), just below and right of the pointer, with Epic Loot
+    installed too (also the search row's and buttons' tips). Scrolling works; the selected recipe stays selected
+    across a view change. Compact list: lower rows, icons and texts still fit.
 72. Gamepad in the crafting panel: right stick up opens the search (Big Picture: Steam's keyboard), down tracks the
     selected recipe, left favourites it, right switches favourites only; holding a direction acts once. In a grid:
     D-pad up and down move a row, left stick left and right a tile; D-pad left and right still change the batch

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Fixed: with Epic Loot, recipe tile and button tooltips showed far from what they describe.
+
 ## 2.0.1
 
 - Homestead: on the bed choice map a double click places a map pin, also on a bed.
