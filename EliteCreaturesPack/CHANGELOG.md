@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2
+
+- Faster loading: the config file is written once instead of once per setting.
+
 ## 0.6.1
 
 - Rime Giant: the ice boulder's blunt damage is halved (20 blunt + 40 frost by default).
