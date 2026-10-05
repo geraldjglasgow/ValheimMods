@@ -3,10 +3,12 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using EliteCraftingLink;
 using HarmonyLib;
 using PatchGuard;
 using PackPanel.Backpacks;
 using PackPanel.Core;
+using PackPanel.Elite;
 using PackPanel.Look;
 using PackPanel.Tackle;
 using SyncedConfig;
@@ -15,16 +17,18 @@ namespace PackPanel
 {
     /// <summary>
     /// Plugin entry. <see cref="InventoryModule"/> binds the settings, registers the backpacks' and tackleboxes' YAML
-    /// files and the words; patches are applied per class afterwards, the backpacks' and tackleboxes' prefabs hook
-    /// ZNetScene, Guard.Install goes last.
+    /// files and the words; with EliteCrafting present (loaded first, soft dependency) the backpacks are registered with
+    /// it (<see cref="EliteSetup"/>); patches are applied per class afterwards, the backpacks' and tackleboxes' prefabs
+    /// hook ZNetScene, Guard.Install goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency(Layout.BiomeLordsLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(CraftingLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "milkyteam.packpanel";
         public const string PluginName = "PackPanel";
-        public const string PluginVersion = "0.8.1";
+        public const string PluginVersion = "0.9.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -41,6 +45,7 @@ namespace PackPanel
             LockConfiguration = Synced.BindLocking("General", "Lock Configuration", true,
                 "[Server Only] Clients cannot change synced settings while connected to a server that has this on.");
             InventoryModule.Initialize(Synced);
+            EliteSetup.Register();
 
             Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);

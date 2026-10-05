@@ -36,11 +36,7 @@ namespace PackPanel.Backpacks
         /// The rows the pack waiting in a grave adds, 0 when none waits: every slot cell of the grave lies that much lower
         /// than in the layout in use (<see cref="Tackle.TackleboxGrave"/> looks for its box there).
         /// </summary>
-        public static int WaitingRows(Inventory grave)
-        {
-            BackpackKind kind = BackpackCatalog.Of(WaitingPack(grave));
-            return kind != null ? RowsAdded(InventoryState.Layout, BackpackSettings.Slots(kind)) : 0;
-        }
+        public static int WaitingRows(Inventory grave) => RowsAdded(InventoryState.Layout, BackpackSettings.SlotsOf(WaitingPack(grave)));
 
         /// <summary>
         /// The main rows a pack of that many slots adds to the layout in use (which has none): its cells continue right
@@ -61,21 +57,23 @@ namespace PackPanel.Backpacks
                 return null;
             foreach (ItemDrop.ItemData item in grave.GetAllItems())
             {
-                BackpackKind kind = BackpackCatalog.Of(item);
-                if (kind != null && item.m_gridPos == SlotCellWearing(kind))
+                if (BackpackCatalog.Of(item) != null && item.m_gridPos == SlotCellWearing(item))
                     return item;
             }
             return null;
         }
 
-        /// <summary>Where the Backpack slot was in the grave: the layout in use, pushed down by the rows this pack adds.</summary>
-        private static Vector2i SlotCellWearing(BackpackKind kind)
+        /// <summary>
+        /// Where the Backpack slot was in the grave: the layout in use, pushed down by the rows this pack adds (its Deep
+        /// Pockets included, as when the grave was made).
+        /// </summary>
+        private static Vector2i SlotCellWearing(ItemDrop.ItemData pack)
         {
             InventoryLayout layout = InventoryState.Layout;
             int index = layout.IndexOf(new Slot(SlotKind.Backpack, 1).Id);
             if (index < 0)
                 return new Vector2i(-1, -1);
-            int rows = RowsAdded(layout, BackpackSettings.Slots(kind));
+            int rows = RowsAdded(layout, BackpackSettings.SlotsOf(pack));
             Vector2i cell = layout.CellOf(index);
             return new Vector2i(cell.x, cell.y + rows);
         }

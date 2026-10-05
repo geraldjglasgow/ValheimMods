@@ -10,6 +10,7 @@
 | Mod | With PackPanel |
 | --- | --- |
 | OpenKeep 1.8.0+ | Its buttons sit under the grid, and quick stack and sort never touch your slots. An `OpenKeep.Stacks.yml` entry for a key overrides `Key Stack`. With a hammer, hoe or cultivator in hand, B is its Build Camera key, not the Mead Key. |
+| EliteCrafting 0.5.0+ | Backpacks take its runes and their inscriptions work while worn; its Deep Pockets adds 1 to 4 backpack cells by item level; magic items show their rarity colour behind them; an upgraded pack keeps its inscriptions. See [Backpacks and Tackleboxes](wiki:Backpacks and Tackleboxes). |
 | EarthWright | With a hoe or cultivator in hand, Z and B are its Snap Hold and Select Value keys, not the Food and Mead keys. |
 | FeastMaster | The Food slots follow its `Food Slots` setting. |
 | Elite Creatures Reborn | Its world tier box joins the stat boxes, and Thieving never steals from your slots. |

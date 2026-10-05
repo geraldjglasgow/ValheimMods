@@ -60,6 +60,20 @@ namespace Hotkeys
             return main != KeyCode.None && Input.GetKey(main) && AllHeld(ModifiersOf(key));
         }
 
+        /// <summary>
+        /// A set shortcut with modifiers, all of them held, its main key or not (Alt while the player reaches for Alt + 1),
+        /// nothing being typed. False for a shortcut without modifiers.
+        /// </summary>
+        public static bool ModifiersHeld(ConfigEntry<KeyboardShortcut>? key)
+        {
+            if (key == null || Typing.Active || key.Value.MainKey == KeyCode.None)
+            {
+                return false;
+            }
+            KeyCode[] modifiers = ModifiersOf(key);
+            return modifiers.Length > 0 && AllHeld(modifiers);
+        }
+
         private static KeyCode[] ModifiersOf(ConfigEntry<KeyboardShortcut> key)
         {
             if (Modifiers.TryGetValue(key, out KeyCode[] modifiers))

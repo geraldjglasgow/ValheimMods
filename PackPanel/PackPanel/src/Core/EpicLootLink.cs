@@ -14,7 +14,8 @@ namespace PackPanel.Core
     /// once with Epic Loot's own total (<c>GetTotalPlayerActiveMagicEffectValue</c>), written with Epic Loot's own words
     /// (<c>GetMagicItemEffectDefinition</c>'s DisplayText, localized, the total in its {0}). Epic Loot lists the
     /// inventory's equipped items (<c>Inventory.GetEquippedItems</c>), so PackPanel's extra utilities count with no
-    /// provider of ours. Absent, missing a method or failing: no lines, one warning in the log.
+    /// provider of ours. Absent, missing a method or failing: no lines, one warning in the log. Also whether Epic Loot
+    /// counts an item magic (<see cref="IsMagic"/>), for the grid's rarity backgrounds.
     /// </summary>
     public static class EpicLootLink
     {
@@ -26,6 +27,26 @@ namespace PackPanel.Core
         private static MethodInfo activeEffects;
         private static MethodInfo total;
         private static MethodInfo definition;
+        private static Func<ItemDrop.ItemData, bool> isMagicItem;
+
+        /// <summary>
+        /// Whether Epic Loot counts an item magic (<c>IsMagicItem</c>; it then draws its own rarity background in the
+        /// grid, so PackPanel's for EliteCrafting stands back, <see cref="Elite.RarityBackdrop"/>). False without Epic Loot.
+        /// </summary>
+        public static bool IsMagic(ItemDrop.ItemData item)
+        {
+            Bind();
+            try
+            {
+                return isMagicItem != null && isMagicItem(item);
+            }
+            catch (Exception e)
+            {
+                isMagicItem = null;
+                Plugin.Log.LogWarning($"Epic Loot's IsMagicItem failed, PackPanel no longer asks it: {e.Message}");
+                return false;
+            }
+        }
 
         public static bool Present
         {
@@ -114,11 +135,21 @@ namespace PackPanel.Core
             activeEffects = api?.GetMethod("GetAllActiveMagicEffects", new[] { typeof(Player), typeof(string) });
             total = api?.GetMethod("GetTotalPlayerActiveMagicEffectValue", new[] { typeof(Player), typeof(string), typeof(float), typeof(ItemDrop.ItemData) });
             definition = api?.GetMethod("GetMagicItemEffectDefinition", new[] { typeof(string) });
+            isMagicItem = MagicCheck(api);
             if (activeEffects == null || total == null || definition == null)
             {
                 Plugin.Log.LogWarning("Epic Loot is installed but its API lacks a method PackPanel uses; its effects are left out of the stats panel");
                 activeEffects = null;
             }
+        }
+
+        /// <summary><c>IsMagicItem(ItemData)</c> as a typed delegate (asked every frame for EliteCrafting's magic items), or null.</summary>
+        private static Func<ItemDrop.ItemData, bool> MagicCheck(Type api)
+        {
+            MethodInfo method = api?.GetMethod("IsMagicItem", new[] { typeof(ItemDrop.ItemData) });
+            if (method == null || method.ReturnType != typeof(bool))
+                return null;
+            return (Func<ItemDrop.ItemData, bool>)Delegate.CreateDelegate(typeof(Func<ItemDrop.ItemData, bool>), method);
         }
     }
 }

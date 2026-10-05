@@ -34,11 +34,12 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 ## Eating and drinking
 
 - `Food Key` (Z) eats every food in the Food slots that can be eaten now, left to right. `Mead Key` (B) drinks every mead in the Mead slots that can be drunk now.
+- `Mead Slot 1 Key` to `Mead Slot 5 Key` (Left Alt + 1 to 5) drink the mead in that one Mead slot, counted left to right on the Consumables tab. If it cannot be drunk now the game says why; an empty slot says "That mead slot is empty". The same press never also uses a hotbar item.
 - The game's rules apply: two of the same food eat one, two health meads drink one.
 - The keys work like hotbar keys: outside the inventory, map, menus and chat. They do nothing with a hammer, hoe or cultivator in hand, where Z and B are building keys.
-- If nothing can be taken: "Nothing in your food slots can be eaten now" (or drunk, for meads).
+- If Z or B finds nothing to take: "Nothing in your food slots can be eaten now" (or drunk, for meads).
 - A key with a modifier, such as `LeftShift + Z`, needs exactly that modifier. `None` turns a key off.
-- The Food and Mead bar, two squares under your health bar, shows both keys.
+- The Food and Mead bar under your health bar shows a food square with the Food Key, a mead square with the Mead Key, then a square per Mead slot showing its mead and its Mead Slot key (the slot's faded icon when it is empty).
 
 ## Ammo
 

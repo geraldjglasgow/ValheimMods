@@ -43,3 +43,15 @@ Both are crafted, and each recipe takes the one before it, so you upgrade rather
 - Craft the next backpack while the one its recipe takes is in the Backpack slot: the new one replaces it there. No free cell is needed, everything in its cells stays, and a bigger pack opens more cells.
 - The same for a tacklebox in the Tacklebox slot: its bait stays.
 - A pack or box carried in the grid upgrades the game's way, and the new one needs a free cell. So does crafting several at once, or crafting for free.
+
+## Magic backpacks (EliteCrafting)
+
+With EliteCrafting 0.5.0 or later installed, backpacks are an item class of their own (Backpacks):
+
+- EliteCrafting's runes work on them like on other gear. They never drop ready-made: make one magic with runes.
+- Item levels by biome: Deerhide Satchel 1, Trollhide 2, Rootbound 3, Wolfpelt 4, Lox Hauler 5, Carapace 6, Asksvin 7, Moosehide 8.
+- They roll Deep Pockets, Broad Back and Pack Mule at every tier, and Lightened, Gossamer, Magpie and Harvester with their top third of tiers closed.
+- **Deep Pockets** (prefix): +1 to +4 backpack cells. +1 can roll from item level 1, +2 from level 3, +3 from level 6, +4 only on the Moosehide Pack (8). The cells appear as the rune lands; a Cleansing Rune takes them away, their items moving to free cells and the rest dropping at your feet.
+- The other inscriptions work while the pack is in the Backpack slot. Lightened and Gossamer lighten the pack wherever it is.
+- Upgrading a magic pack keeps its rarity and inscriptions, with the same values and tiers.
+- Every magic item shows its rarity colour behind it, in the grid, the slots, the key ring, the tacklebox and chests.

@@ -12,10 +12,11 @@ namespace PackPanel.Consume
     /// The Food and Mead bar (the user's request, 2026-09-28: the food and mead hotkeys shown in the bottom left of the
     /// screen; two squares and nothing else since 2026-09-29). In the empty strip under the game's health panel, level with
     /// its left edge: a food square with the Food Key over it, then a mead square with the Mead Key over it
-    /// (<see cref="ConsumeBarCell"/>). A group without slots or without a key is left out; nothing shows without either,
-    /// while dead, or with the module off. A child of the HUD's root, so it hides with the HUD. Checked from a
-    /// <c>Hud.Update</c> postfix ten times a second, built again only when a group comes or goes or a key changes. Per
-    /// player (<c>5. Look / Food And Mead Bar</c>); local only, nothing is sent.
+    /// (<see cref="ConsumeBarCell"/>), then since 2026-10-05 a square per Mead slot with its Mead Slot key and its mead
+    /// (<see cref="ConsumeBarSlots"/>). A group or slot without a key, or a group without slots, is left out; nothing shows
+    /// without any, while dead, or with the module off. A child of the HUD's root, so it hides with the HUD. Checked from a
+    /// <c>Hud.Update</c> postfix ten times a second, built again only when a group or slot comes or goes or a key changes.
+    /// Per player (<c>5. Look / Food And Mead Bar</c>); local only, nothing is sent.
     /// </summary>
     [HarmonyPatch(typeof(Hud), nameof(Hud.Update))]
     public static class ConsumeBar
@@ -47,6 +48,8 @@ namespace PackPanel.Consume
             bool show = plan.Length > 0;
             if (bar.gameObject.activeSelf != show)
                 bar.gameObject.SetActive(show);
+            if (show)
+                ConsumeBarSlots.Refresh(player);
         }
 
         private static bool Shown(Player player) =>
@@ -56,7 +59,7 @@ namespace PackPanel.Consume
 
         private static bool Drawn(SlotKind kind) => InventoryState.CellsOf(kind).Count > 0 && KeyNames.Short(KeyOf(kind).Value).Length > 0;
 
-        /// <summary>What the bar is built from: each drawn group and its key; empty when nothing is drawn.</summary>
+        /// <summary>What the bar is built from: each drawn group and slot and its key; empty when nothing is drawn.</summary>
         private static string Plan()
         {
             StringBuilder plan = new StringBuilder();
@@ -66,6 +69,7 @@ namespace PackPanel.Consume
                     continue;
                 plan.Append(kind).Append(' ').Append(KeyNames.Short(KeyOf(kind).Value)).Append('|');
             }
+            ConsumeBarSlots.Plan(plan);
             return plan.ToString();
         }
 
@@ -86,6 +90,7 @@ namespace PackPanel.Consume
                 ConsumeBarCell.Group(bar, template, kind, KeyNames.Short(KeyOf(kind).Value), x);
                 x += ConsumeBarCell.Size + Gap;
             }
+            ConsumeBarSlots.Build(bar, template, x, Gap);
             built = plan;
         }
 

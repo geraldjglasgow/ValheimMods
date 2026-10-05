@@ -69,6 +69,87 @@ BiomeLords' own crate (`SpillToCrate`). `EnsureExpanded` and `FindExtraRowSlot` 
 slots) do nothing. At switch time BiomeLords still has the buff on, so the requested height decides: at or under its
 base takes the rows away until the next grant.
 
+## With EliteCrafting
+
+Built 2026-10-05 at the user's request, on EliteCrafting's public API (`../EliteCrafting/features/api.md`, API version
+1) through the merged library `../ValheimModLibs/EliteCraftingLink` (a `ProjectReference` and an `ILRepack.targets`
+line): no reference to EliteCrafting, and without it (or with one older than API version 1) none of this runs and
+PackPanel works alone. A soft `BepInDependency` on `com.EliteCrafting` makes BepInEx run EliteCrafting's Awake first;
+`Plugin.Awake` calls `Elite/EliteSetup.Register` right after `InventoryModule.Initialize`. This replaces what the
+decision "Backpacks are equipment" and test 61 say about EliteCrafting (its inscriptions left packs out; a magic pack
+upgraded into a plain one).
+
+- **Registered** (`Elite/EliteDefinitions` holds every JSON, in the field names of EliteCrafting's YAML format 2): the
+  item class `backpack` (group `jewel`, name `$packpanel_class_backpack` "Backpacks", `rolls: true`, `drop_weight: 0`,
+  so a pack never drops pre-rolled: players make one magic with runes), the eight packs claimed for it by prefab, item
+  levels by biome in the catalog's order (Deerhide 1, Trollhide 2, Rootbound 3, Wolfpelt 4, Lox 5, Carapace 6, Asksvin
+  7, Moosehide 8); the external effect `pack_slots` (item scope, flat, raise, cap 8) and the inscription `deep_pockets`
+  (name `$packpanel_affix_deep_pockets` "Deep Pockets", prefix, family `charms_fortune`, category utility, best on
+  `backpack` only, ladder `{ count: 4, from: 1, min: 1, max: 4 }`: +1 at item level 1, +2 at 3, +3 at 6, +4 at 8); its
+  tooltip sentence under the key EliteCrafting looks for, `ecf_affix_deep_pockets_line` "+$1 inventory slots" (it asks
+  the game's localization for `ecf_affix_<id>_line`; PackPanel's `Language.Add` puts it there); EliteCrafting's own
+  `broad_back` and `pack_mule` (best fit) and `lightened`, `gossamer`, `magpie`, `harvester` (allowed) in the class's
+  pool; the equipment provider `packpanel` and an item-changed listener (`Elite/WornPackLink`). The ids `deep_pockets`
+  and `pack_slots` are the user's, not `packpanel_` ones: an EliteCrafting YAML entry with the same id would win (it
+  warns). Registrations are code: every peer running both mods makes the same ones, the dedicated server included, and
+  the server's synced EliteCrafting files still override them (e.g. `enabled: false` on `deep_pockets`).
+- **The worn pack is equipment** for EliteCrafting: it counts the game's equipment fields only, and a pack is never the
+  game's utility, so the provider answers the pack in the local player's Backpack slot (`Backpack.WornItem`; nothing
+  for another player, whose totals EliteCrafting does not compute on this peer). Broad Back, Pack Mule, Magpie and
+  Harvester then work while it is worn (EliteCrafting applies them and publishes its shared stats on the player's ZDO);
+  Lightened and Gossamer change the pack's own weight wherever it is. `BackpackWear.Tick` tells EliteCrafting
+  (`InvalidatePlayer`) when the worn pack changes; the listener does when a write (a rune) changes the worn pack.
+- **Deep Pockets**: a pack's slots are `BackpackSettings.SlotsOf(item)` = its kind's slots (the YAML) + round(the pack's
+  own `GetItemTotal(pack, "pack_slots")`) (`Elite/DeepPockets`, 0 without EliteCrafting or with its `Affix effects`
+  off). Every place that sized the grid from a pack asks it: `Backpack.SlotsFor` (the layout), `BackpackWear.Tick` (the
+  frame's check), `BackpackGrave` (the grave's waiting pack and where its slot was) and `GraveFit`. So a change (a rune
+  adds or cleanses it, a carried-over upgrade, a server file turning it off) re-lays the grid exactly as a pack with
+  that many slots: more rows, or fewer with their items moved to free cells and the rest dropped. The main rows include
+  them, so `PackPanel.mainGrid` (written with every layout) stays the grid's truth for OpenKeep and ECR. All on the
+  owning client from the item's own data (saved with the character, carried by the item into graves and chests); other
+  players see only the pack on the back, as before.
+- **Rarity backgrounds** (`Elite/RarityBackdrop`, `InventoryGrid.UpdateGui` postfix): PackPanel drew no Epic Loot
+  backgrounds (Epic Loot draws its own, a `magicItem` image in every grid's cells, PackPanel's slot cells included since
+  they are the player grid's elements). For EliteCrafting's magic items (`IsMagic`) in the player grid (main, slot, key
+  ring and tacklebox cells) and the container grid, a rounded fill (`RoundedFill`) in `GetRarityColor` at 45%
+  opacity, inset 3 units, first among the cell's children (`PackPanel_rarity`), so the icon, counts and marks lie over
+  it. An item Epic Loot also calls magic (`EpicLootLink.IsMagic`, its API's `IsMagicItem`) keeps Epic Loot's and gets
+  none (Epic Loot first). Only with `Enabled` on. Worked out every frame a grid shows; items with no custom data are
+  skipped at once and a backdrop is changed only when its cell's state changes. Viewing client only.
+- **Upgrades carry the magic** (`Elite/MagicCarryOver`, `InventoryGui.DoCrafting` prefix, postfix, finalizer):
+  EliteCrafting's own carry-over covers only the game's quality upgrade, while a pack's recipe takes the pack before it
+  and crafts a new item. Around the craft of a PackPanel backpack (not multi-crafting, not a quality upgrade) the
+  inventory's items are noted; after it, when exactly one pack with `ecf_` data left (the cost) and exactly one new pack
+  arrived, the old pack's `ecf_` keys go onto the new one in a new dictionary (EliteCrafting's item cache then reads it
+  afresh), the inventory is marked changed (weight) and EliteCrafting told. The inscriptions keep their rolled values
+  and tiers. In a postfix, so `InPlaceUpgrade`'s finalizer has not yet put back or dropped an old pack the game did not
+  take. `InPlaceUpgrade` now also puts the set-aside worn pack first in the inventory's list (`TakenFirst`), since the
+  game's cost takes copies in list order: the worn pack is the one used, not a spare in the grid. Crafted from the grid
+  the game takes the first copy it finds. Epic Loot's data is not carried.
+- Names: words `$packpanel_class_backpack`, `$packpanel_affix_deep_pockets` and EliteCrafting's key
+  `ecf_affix_deep_pockets_line`; the GameObject `PackPanel_rarity` (a cell's backdrop). No RPC, no ZDO key, no setting.
+
+```
+PackPanel/PackPanel/src/Elite/
+  EliteDefinitions.cs   the ids and the JSON of the class, effect and inscription, the pool additions
+  EliteSetup.cs         Register (Plugin.Awake): words, class, claims, levels, effect, inscription, pools, the link
+  WornPackLink.cs       the equipment provider (the worn pack), InvalidatePlayer on a change, the item-changed listener
+  DeepPockets.cs        Extra(pack): the pack's own pack_slots total, rounded (BackpackSettings.SlotsOf adds it)
+  RarityBackdrop.cs     InventoryGrid.UpdateGui postfix: the rarity fill behind EliteCrafting's magic items
+  MagicCarryOver.cs     InventoryGui.DoCrafting prefix/postfix/finalizer: an upgraded pack's ecf_ keys onto the new one
+```
+
+Verified offline on 2026-10-05 (a scratch .NET 8 harness): every Harmony patch of the built PackPanel.dll against the
+game's assemblies (73 classes, 87 methods); PackPanel's JSON through the built EliteCrafting.dll's API, both rule
+families built with 0 errors and 0 warnings, the ladder and the pool as above, the cap 8 channel, the item levels from
+the API, Deep Pockets rolling on a pack with `GetItemTotal` answering it, and the carry-over's copy. Not run in game.
+In game (LocalTesting with EliteCrafting): an Awakening rune on a worn pack makes it Magic; with Deep Pockets the grid
+gains its slots at once, a Cleansing rune takes them away (items move, the rest drop); the tooltip reads "+N inventory
+slots"; a magic pack has the rarity fill in its slot and in the grid, an Epic Loot magic item only Epic Loot's; Broad
+Back on the worn pack raises carry weight, taken off it goes; upgrade a magic worn Trollhide at the forge: the Rootbound
+Pack is magic with the same inscriptions, its slots 8 + Deep Pockets; die wearing a Deep Pockets pack: the grave's Use
+takes all back; `ecraft classes` lists `backpack` with eight items, `ecraft tiers` levels 1-8 (source api).
+
 ## Layout
 
 ```
@@ -107,15 +188,19 @@ PackPanel/PackPanel/src/
                             an empty purse, ring cell or box cell for what goes there);
                             GetBoundItems and GetHotbar stop at x 8
     CarryWeight.cs          Base Carry Weight and the worn pack's carry: Player.GetMaxCarryWeight postfix
-  Consume/                  the Food Key and the Mead Key (section 2. Slots, per player) and the Food and Mead bar
-                            (5. Look, per player)
-    ConsumeSettings.cs, ConsumeWords.cs   the two keys (Z, B; the YAML editor registered with the Hotkeys library's
-                            Typing), the "nothing to eat / drink" words
+  Consume/                  the Food Key, the Mead Key and the Mead Slot keys (section 2. Slots, per player) and the
+                            Food and Mead bar (5. Look, per player)
+    ConsumeSettings.cs, ConsumeWords.cs   the keys (Z, B, Left Alt + 1..5; the YAML editor registered with the Hotkeys
+                            library's Typing), the "nothing to eat / drink" and "mead slot empty" words
     ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) and build mode
                             (Player.InPlaceMode) eats or drinks from its slots
+    MeadSlotKeys.cs         a Mead Slot key drinks its one slot's mead (Humanoid.UseItem, the game's messages);
+                            Player.UseHotbarItem prefix: no hotbar item while Alt (the keys' modifier) is held
     ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, a food square
                             and a mead square (copies of the HUD's food square) with each key (Hotkeys'
-                            KeyNames.Short) over its top-left corner
+                            KeyNames.Short, shrunk to fit) over its top-left corner
+    ConsumeBarSlots.cs      then a square per Mead slot with its Mead Slot key, showing the slot's mead (faded mead
+                            icon when empty), refreshed with the bar's check
     SlotMeals.cs            left to right, every item that can be taken now: the game's checks without messages,
                             then Humanoid.UseItem(inventory, item, fromInventoryGui: true)
   Slots/
@@ -304,7 +389,7 @@ postfix `Inventory.GetBoundItems`, `Inventory.GetHotbar`, `Humanoid.UnequipItem`
 `Humanoid.IsItemTypeEquiped`, `Humanoid.UnequipAllItems`, `Player.UnequipDeathDropItems`,
 `Humanoid.UpdateEquipmentStatusEffects`, `Humanoid.GetSetCount`, `Player.GetEquipmentEitrRegenModifier`,
 `Player.UpdateModifiers`, `Humanoid.GetEquipmentWeight`, `Humanoid.UpdateEquipment`, `InventoryGrid.UpdateGui`,
-`InventoryGui.UpdateContainer`, `Player.Update`, `Player.GetMaxCarryWeight` (Base Carry Weight; any player, only the
+`InventoryGui.UpdateContainer`, `Player.Update`, `Player.UseHotbarItem` (prefix: skipped while a Mead Slot key's modifier is held), `Player.GetMaxCarryWeight` (Base Carry Weight; any player, only the
 local one's matters), `Hud.Update` (private; Weight Under Minimap, and a second postfix for the Food and Mead bar), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
 text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words),
 `UnityEngine.UI.Image.OnEnable` (Panel Theme: a newly shown wood panel is themed on the next frame). The backpacks:
@@ -326,7 +411,8 @@ Both, upgraded in their slot (`Crafting/InPlaceUpgrade`): prefix and finalizer `
 `General` (`Lock Configuration`), `1. Inventory` (`Enabled` true, `Inventory Width` 8 (8-12), `Inventory Rows` 5 (0-10; 0 = the two hand cells),
 `Base Carry Weight` 300 (50-10000), `Keep Slots On Death` false), `2. Slots` (`Equipment Slots` true, `Utility Slots` 3
 (0-5), `Trinket Slot` true, `Backpack Slot` true, `Backpack Items` empty, `Slots Per Group` 0 (0-5), `Food Slots` 3, `Food Slots Follow
-Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Key` B), `3. Key Ring` (`Key Ring` true, `Key Items`
+Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Key` B, `Mead
+Slot 1 Key` to `Mead Slot 5 Key` LeftAlt + 1 to 5), `3. Key Ring` (`Key Ring` true, `Key Items`
 `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,HildirKey_plainsfortress,DvergrKey,BloodGoldKey`, `Key Stack` 10
 (1-100)), `4. Backpacks` (`Backpacks` true, `Backpack Portal Pass` false, and `Show Worn Backpack` true, the one key there not
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
@@ -423,7 +509,7 @@ tackleboxes:
   `_coins`, `_wrongslot`, `_dropped`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
   `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
   `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
-  `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_nothingtodrink`, for the stat breakdowns `_tip_base`, `_tip_other`,
+  `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_nothingtodrink`, `_meadslotempty`, for the stat breakdowns `_tip_base`, `_tip_other`,
   `_tip_nothing`, `_tip_effect`, `_tip_carry`, `_tip_world`, `_tip_heaviest`, `_tip_missinghealth`, `_tip_parryarmor`, `_tip_skill` (the stat sheet uses the game's own `$item_`, `$inventory_` and `$se_` words); backpacks
   `$packpanel_backpack_<word>` and `$packpanel_backpack_<word>_description` for deerhide, trollhide, rootbound,
   wolfpelt, lox, carapace, asksvin and moosehide, and `$packpanel_backpack_noroom`; the tacklebox `$packpanel_tackle`
@@ -950,6 +1036,23 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   or category), through `Humanoid.UseItem(inventory, item, fromInventoryGui: true)`: the hotbar's path (animation,
   sound, effect, food) minus feeding what the player looks at. Each check sees what the earlier items gave, so two of
   the same food eat one, and meads of one category (health, stamina) drink one. Nothing taken: a centre message.
+- Mead Slot keys (GitHub issue #16, 2026-10-05: a player found B drinking every mead and wanted to choose; the user:
+  "per slot keys, need to account for the fact you can have up to 5 meads (default 3), maybe like ALT+key", and
+  "configurable too from config"): `Mead Slot 1 Key` to `Mead Slot 5 Key` (LeftAlt + 1 to 5, per player), one per
+  possible Mead slot, counted left to right on the Consumables tab; B still drinks them all. A press drinks that slot's
+  mead through `Humanoid.UseItem(inventory, item, fromInventoryGui: true)` without a pre-check, so the game's own
+  `$msg_cantconsume` says why it cannot be drunk now; an empty slot: "That mead slot is empty". A key for a slot that
+  does not exist (Mead Slots 3, Alt + 4) does nothing of PackPanel's. Same rules as the other two keys (outside the
+  inventory, no build tool). The game reads Hotbar1..8 without modifiers (`ZInput` binds Digit1..8 alone and
+  `Player.Update` calls `UseHotbarItem(i)` on `GetButtonDown`; `HotkeyBar` too, for the gamepad and clicks), so Alt + 1
+  is also its Hotbar 1. The first build skipped the hotbar only in a frame where a Mead Slot key drank, which left Alt + 1
+  equipping item 1 with a build tool in hand, for a slot that does not exist or a key the game saw a frame apart; the
+  user: "ALT1 also will equip/dequip the item in slot 1 (or use it), so while holding alt we need to make sure that
+  doesn't happen". So the `Player.UseHotbarItem` prefix uses nothing while any set Mead Slot key's modifiers are all
+  held (`Hotkey.ModifiersHeld`; a key without modifiers: while it is held itself): with the defaults, Alt + 1 to 8
+  never touch the hotbar. Only with PackPanel's `Enabled` on (the keys read nothing otherwise). Left Alt is unbound in the game; in the workspace
+  only OpenKeep's Alt + D/R/L and its held Pull Modifier, EarthWright's Alt modifiers (hoe in hand, where these keys
+  stand down) and unreleased HaloMenu's ring (Left Alt alone, held) use it.
 - Food and Mead bar (the user's request, 2026-09-28: "the hotkeys for food displayed in the bottom left of the screen for
   the food and meads"): one row in the empty strip under the game's health panel (`hudroot/healthpanel` is anchored to
   the bottom-left corner at x 49.5, its bottom at y 58, read offline from the main scene; the Forsaken power sits right
@@ -960,6 +1063,10 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   hotbar shows its numbers. No items, counts or dimming. A group with no slots or no key (None) is left out. Checked
   ten times a second, rebuilt only when a group or a key changes; hidden while dead, with `Enabled` off or with the HUD
   hidden (a child of `hudroot`). Per player, `5. Look / Food And Mead Bar`.
+  Since 2026-10-05 (the user: "mead drink hotkeys need to be next to the food eat key in that bottom left") the Mead Slot
+  keys follow on the same row, one square per existing Mead slot whose key is set, the same 6-unit gap: the slot's mead
+  as the icon (so the player sees which key drinks which mead), the mead slot icon at 35% when the slot is empty, the key
+  over the corner. Key labels auto-size from 18 down to 10 to fit the square's width ("Alt+1"); Z and B stay 18.
   Eating is the local player's own action, as a hotbar key's is; nothing is sent.
 
 ## Not yet implemented
@@ -977,7 +1084,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.8.1]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.9.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1292,3 +1399,14 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     table lists the pack, worn or not; enchant it: utility effects (carry weight, movement speed, ...); worn, the stat
     sheet's Epic Loot lines show them, taken off they go. An EliteCrafting rune on it works with Epic Loot; without
     Epic Loot a rune is refused ("not a magic base") and no pack drops as magic gear.
+62. Mead Slot keys: a health mead, a stamina mead and a frost resistance mead in Mead slots 1 to 3, a sword on hotbar 1.
+    Alt + 2 outside the inventory: the stamina mead is drunk (eat animation, its effect), the sword stays sheathed; Alt + 2
+    again: the game's "can't consume" message. Alt + 1: the health mead; 1 alone: the sword. Empty slot 3, Alt + 3:
+    "That mead slot is empty", the hotbar's third item is not used. `Mead Slots = 3`, Alt + 4 and Alt + 7: nothing (no
+    hotbar item used, nothing equipped). With the hammer in hand Alt + 1 drinks nothing and the hammer stays in hand.
+    Release Alt: 1 equips the sword again. `Mead Slot 1 Key = LeftShift + F1` in the .cfg: Shift + F1 drinks slot 1 and
+    Shift + 1 uses nothing (Alt + 2..5 still Alt). B still drinks every mead it can.
+63. Bar with Mead Slot keys: bottom left reads the food square "Z", the mead square "B", then three squares labelled
+    "Alt+1", "Alt+2", "Alt+3" (smaller text, inside the square), each showing the mead in that slot; an empty slot shows
+    the faded mead icon; drink the last of a mead: its square fades at once (within a tenth of a second). `Mead Slots =
+    5`: five slot squares; `Mead Slot 2 Key = None`: square 2 goes, the others close up. Z and B labels unchanged in size.

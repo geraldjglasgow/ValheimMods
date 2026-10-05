@@ -1,13 +1,15 @@
 using PackPanel.Core;
+using PackPanel.Elite;
 using PackPanel.Layout;
 
 namespace PackPanel.Backpacks
 {
     /// <summary>
     /// The local player's frame (from <see cref="PlayerTick"/>). When a backpack went into or out of its slot, or its
-    /// slots changed (the YAML, a setting), the layout is applied again: slots added at the bottom, or taken away with what
-    /// they held moved to free cells and the rest dropped at the player's feet (the user's choice). The pack in the slot
-    /// carries the equipped flag (<see cref="BackpackEquip.Sync"/>). The player's ZDO names the worn pack, so every client
+    /// slots changed (the YAML, a setting, its EliteCrafting Deep Pockets), the layout is applied again: slots added at the
+    /// bottom, or taken away with what they held moved to free cells and the rest dropped at the player's feet (the user's
+    /// choice). The pack in the slot carries the equipped flag (<see cref="BackpackEquip.Sync"/>), and EliteCrafting hears
+    /// when the worn pack changes (<see cref="WornPackLink"/>). The player's ZDO names the worn pack, so every client
     /// shows it on the back. Only here, in Update: Keep Slots On Death takes the pack out of the inventory for the length
     /// of <c>CreateTombStone</c>, which no frame sees, and a dead player is left alone.
     /// </summary>
@@ -18,10 +20,11 @@ namespace PackPanel.Backpacks
             if (player.IsDead())
                 return;
             BackpackEquip.Sync(player);
-            BackpackKind worn = Backpack.Worn(player);
-            if (InventoryState.Active && InventoryState.Layout.BackpackSlots != BackpackSettings.Slots(worn))
+            ItemDrop.ItemData pack = Backpack.WornItem(player);
+            WornPackLink.Follow(player, pack);
+            if (InventoryState.Active && InventoryState.Layout.BackpackSlots != BackpackSettings.SlotsOf(pack))
                 LayoutApply.Apply(player, dropOverflow: true);
-            Show(player, worn);
+            Show(player, BackpackCatalog.Of(pack));
         }
 
         /// <summary>

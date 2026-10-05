@@ -15,7 +15,8 @@ namespace PackPanel.Crafting
     /// full grid: "Inventory full", nothing crafted), put the new pack there and consume the old one out of the slot,
     /// closing its rows and moving or dropping what lay in them. For the length of the game's craft the old pack is set
     /// aside off the grid, so the emptied slot is the free cell the game finds for the new one, and the game's own cost
-    /// consumes the old one. One that was not consumed (the craft stopped, or the game took a spare copy from the grid)
+    /// consumes the old one (put first in the inventory's list, so the cost takes it rather than a spare copy in the
+    /// grid). One that was not consumed (the craft stopped, or the game took a spare copy from the grid)
     /// goes back into the slot, or into a free cell when the new one is there. Not for multi-crafting or crafting
     /// without cost, which consume no or several old ones.
     /// </summary>
@@ -53,6 +54,7 @@ namespace PackPanel.Crafting
                     return;
                 old = there;
                 there.m_gridPos = Aside;
+                TakenFirst(player.GetInventory(), there);
             }
 
             [HarmonyFinalizer]
@@ -117,6 +119,17 @@ namespace PackPanel.Crafting
                     return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// The game's cost takes copies in the inventory's list order (<c>Inventory.RemoveItem(name, ...)</c>), so the pack
+        /// set aside goes first in the list: the worn pack is the one used, and a magic one's EliteCrafting inscriptions
+        /// carry over to the new pack (<see cref="Elite.MagicCarryOver"/>) rather than a spare copy's in the grid.
+        /// </summary>
+        private static void TakenFirst(Inventory inventory, ItemDrop.ItemData item)
+        {
+            if (inventory.m_inventory.Remove(item))
+                inventory.m_inventory.Insert(0, item);
         }
 
         private static bool WithoutCost(Player player) =>

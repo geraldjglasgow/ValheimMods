@@ -36,8 +36,9 @@ namespace PackPanel.Slots
             InventoryLayout layout = InventoryState.Layout;
             ItemDrop.ItemData pack = BackpackGrave.WaitingPack(grave);
             BackpackKind kind = BackpackCatalog.Of(pack);
-            int shift = BackpackGrave.RowsAdded(layout, BackpackSettings.Slots(kind));
-            int free = MainCells.CountEmpty(inventory, layout) + BackpackSettings.Slots(kind);
+            int slots = BackpackSettings.SlotsOf(pack);
+            int shift = BackpackGrave.RowsAdded(layout, slots);
+            int free = MainCells.CountEmpty(inventory, layout) + slots;
             if (GridItems(inventory, grave, pack, layout.MainRows + shift, shift) > free)
                 return false;
             float carry = player.GetMaxCarryWeight() + BackpackSettings.Carry(kind) * Game.m_carryWeightRate;

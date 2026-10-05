@@ -26,6 +26,16 @@ namespace PackPanel.Backpacks
 
         public static int Slots(BackpackKind kind) => Active && kind != null ? kind.Stats.Slots : 0;
 
+        /// <summary>
+        /// The slots one pack gives: its kind's, plus what its EliteCrafting Deep Pockets adds (<see cref="Elite.DeepPockets"/>).
+        /// Every place that sizes the grid from a pack item asks this, so they all agree.
+        /// </summary>
+        public static int SlotsOf(ItemDrop.ItemData pack)
+        {
+            BackpackKind kind = BackpackCatalog.Of(pack);
+            return Active && kind != null ? kind.Stats.Slots + Elite.DeepPockets.Extra(pack) : 0;
+        }
+
         public static float Carry(BackpackKind kind) => Active && kind != null ? kind.Stats.Carry : 0f;
 
         public static bool Portal(BackpackKind kind) => Active && PortalPass.Value && kind != null && kind.Stats.Portal;

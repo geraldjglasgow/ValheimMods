@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0
+
+- Mead Slot keys: Left Alt + 1 to 5 drink the mead in that slot, shown on the food and mead bar.
+- With EliteCrafting: backpacks take runes and their inscriptions work while worn.
+- With EliteCrafting: Deep Pockets adds 1 to 4 backpack slots.
+- With EliteCrafting: magic items show their rarity colour behind them; an upgraded backpack keeps its inscriptions.
+
 ## 0.8.1
 
 - Fixed: bait can be dragged into the tacklebox's cells, and picked-up bait goes into the box.

@@ -17,9 +17,6 @@ namespace PackPanel.Backpacks
         /// <summary>On a player's ZDO (int): the stable hash of the worn pack's prefab name, 0 for none. Written by its own client.</summary>
         public static readonly int WornKey = "PackPanel.backpack".GetStableHashCode();
 
-        /// <summary>The kind of the backpack in the Backpack slot of a layout, or null.</summary>
-        public static BackpackKind InSlot(Inventory inventory, InventoryLayout layout) => BackpackCatalog.Of(ItemInSlot(inventory, layout));
-
         /// <summary>The kind the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
         public static BackpackKind Worn(Player player) => BackpackCatalog.Of(WornItem(player));
 
@@ -39,9 +36,9 @@ namespace PackPanel.Backpacks
         }
 
         /// <summary>
-        /// The slots the worn pack adds to the next layout. The items still lie where the recorded layout put them, so
-        /// the Backpack slot is looked up there.
+        /// The slots the worn pack adds to the next layout (its Deep Pockets included). The items still lie where the
+        /// recorded layout put them, so the Backpack slot is looked up there.
         /// </summary>
-        public static int SlotsFor(Player player) => BackpackSettings.Slots(InSlot(player.GetInventory(), LayoutRecord.Read(player)));
+        public static int SlotsFor(Player player) => BackpackSettings.SlotsOf(ItemInSlot(player.GetInventory(), LayoutRecord.Read(player)));
     }
 }
