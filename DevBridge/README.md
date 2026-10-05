@@ -16,8 +16,8 @@ or a script can see the game, play it and check a mod unattended.
 ## Install
 For development profiles only, never a profile you play in: any program on your computer can control the game while
 it runs. Install with r2modman or the Thunderstore app, or put `DevBridge.dll` in `BepInEx/plugins`. It listens on
-127.0.0.1 only and refuses requests from web browsers. On a dedicated server everything but screenshots and input
-works.
+127.0.0.1 only and refuses requests from web browsers. On a dedicated server most endpoints work; screenshots,
+overlays, look swaps and input do not.
 
 ## Configuration
 `BepInEx/config/com.DevBridge.cfg`: the port (default 7780; a second game takes the next free one, up to 7789).
