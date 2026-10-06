@@ -4,19 +4,24 @@ using Wayfare.Core;
 
 namespace Wayfare.Portals
 {
-    /// <summary>The live, client-side snapshot of every known portal, rebuilt roughly every 5 seconds - the same
-    /// cadence the game's own portal-reconnect tick runs at. Where this machine is the server (single player, a
-    /// host) it reads <c>ZDOMan.GetPortalList()</c> directly; on a pure client that list only ever holds nearby
-    /// portals (the game never distributes distant portal ZDOs to peers), so the tick instead asks the server for
-    /// a snapshot through <see cref="PortalSync"/>. Never runs on a pure dedicated server (no local player,
-    /// nothing to display to); every read no-ops when the world is not loaded, so it is safe to poll from the
-    /// moment the plugin starts.</summary>
+    /// <summary>The live, client-side snapshot of every known portal, checked roughly every 5 seconds - the same
+    /// cadence the game's own portal-reconnect tick runs at - and when the player walks into a portal. Where this
+    /// machine is the server (single player, a host) it reads <c>ZDOMan.GetPortalList()</c> directly, and only when
+    /// the list changed (<see cref="PortalListVersion"/>); on a pure client that list only ever holds nearby portals
+    /// (the game never distributes distant portal ZDOs to peers), so the tick instead asks the server, which answers
+    /// only when its list differs from the one held (<see cref="PortalSync"/>). Never runs on a pure dedicated server
+    /// (no local player, nothing to display to); every read no-ops when the world is not loaded, so it is safe to
+    /// poll from the moment the plugin starts.</summary>
     public static class PortalRegistry
     {
         private const float IntervalSeconds = 5f;
 
         private static readonly List<PortalInfo> snapshot = new List<PortalInfo>();
         private static GameObject driver;
+
+        // Where this machine is the server: the world and version of its own list the snapshot was read from.
+        private static ZDOMan readFrom;
+        private static long readVersion;
 
         public static IReadOnlyList<PortalInfo> Portals => snapshot;
 
@@ -43,6 +48,11 @@ namespace Wayfare.Portals
                 PortalSync.RequestFromServer();
                 return;
             }
+            long version = PortalListVersion.Read();
+            if (readFrom == ZDOMan.instance && readVersion == version)
+                return;
+            readFrom = ZDOMan.instance;
+            readVersion = version;
             SetSnapshot(ReadLocal());
         }
 

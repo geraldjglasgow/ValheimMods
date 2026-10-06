@@ -1,4 +1,6 @@
 using HarmonyLib;
+using Hotkeys;
+using UnityEngine;
 using Wayfare.Core;
 
 namespace Wayfare.Targeting
@@ -22,9 +24,9 @@ namespace Wayfare.Targeting
         {
             if (__instance != Player.m_localPlayer || !WayfareConfig.Enabled.Value)
                 return;
-            if (!Minimap.IsOpen() || TargetingSession.Active)
-                return;
-            if (Keys.Pressed(WayfareConfig.ToggleIconsKey))
+            if (!Minimap.IsOpen() || TargetingSession.Active || !Input.anyKeyDown)
+                return; // no key went down this frame: nothing to read (the hotkey's typing check is the dearer part)
+            if (Hotkey.Pressed(WayfareConfig.ToggleIconsKey))
                 HotkeyToggle.Toggle();
         }
     }

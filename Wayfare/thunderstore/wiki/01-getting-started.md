@@ -5,7 +5,7 @@ one and you travel there. Portals get access modes (Public, Private, Admin) and 
 across water, carry a ship and its crew to any other gate picked on the map. Quick jumps make near portals quicker and skip the loading
 screen where nothing needs loading.
 
-This wiki describes version 0.3.0.
+This wiki describes version 0.3.2.
 
 ## Install
 

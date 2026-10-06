@@ -12,11 +12,19 @@ namespace Wayfare.Targeting
     /// the large map is open; every frame it runs is guarded by <see cref="ShouldShow"/>, which is false for the
     /// entire lifetime of a headless dedicated server (no <c>Minimap.instance</c>, no local player). Every portal the
     /// player may target is drawn, tagged or not; the portal the player stands at is drawn still, marked "You are
-    /// here", and takes no clicks.</summary>
+    /// here", and takes no clicks. Icons are made once and kept: an icon panned or zoomed off the map, or every icon
+    /// when the map closes, is only hidden and shows again as it was; the icon of a portal that left the list goes back
+    /// to a spare pool for the next portal that needs one. Nothing runs for a hidden icon.</summary>
     public static class MapOverlay
     {
-        private static readonly Dictionary<ZDOID, PortalIcon> icons = new Dictionary<ZDOID, PortalIcon>();
+        private static readonly Dictionary<ZDOID, PortalIcon> icons = new Dictionary<ZDOID, PortalIcon>();   // shown or hidden
+        private static readonly List<PortalIcon> spare = new List<PortalIcon>();                               // hidden, any portal
+        private static readonly HashSet<ZDOID> seen = new HashSet<ZDOID>();                                    // reused every frame
+        private static readonly HashSet<ZDOID> listed = new HashSet<ZDOID>();
+        private static readonly List<ZDOID> gone = new List<ZDOID>();
         private static GameObject driver;
+        private static bool showing;
+        private static int keptFor = -1;   // the registry version the icons were last sorted against
 
         public static void EnsureRunning()
         {
@@ -37,7 +45,8 @@ namespace Wayfare.Targeting
             foreach (KeyValuePair<ZDOID, PortalIcon> entry in icons)
             {
                 RectTransform zone = entry.Value.Zone;
-                if (entry.Key == here || !RectTransformUtility.RectangleContainsScreenPoint(zone, screenPos, null))
+                if (entry.Key == here || zone == null || !zone.gameObject.activeInHierarchy ||
+                    !RectTransformUtility.RectangleContainsScreenPoint(zone, screenPos, null))
                     continue;
                 float distance = ((Vector2)zone.position - screenPos).sqrMagnitude;
                 if (distance < best)
@@ -60,7 +69,7 @@ namespace Wayfare.Targeting
         {
             if (!ShouldShow())
             {
-                Clear();
+                HideAll();
                 FavouritesPanel.Clear();
                 return;
             }
@@ -72,10 +81,11 @@ namespace Wayfare.Targeting
         {
             if (MapIconLayer.Root == null)
                 return;
+            ReleaseGone();
             long playerId = Player.m_localPlayer.GetPlayerID();
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
             ZDOID here = TargetingSession.SourceId;
-            HashSet<ZDOID> seen = new HashSet<ZDOID>();
+            seen.Clear();
             foreach (PortalInfo info in PortalRegistry.Portals)
             {
                 if (!Shown(info, info.Id == here, playerId, isAdmin))
@@ -83,7 +93,8 @@ namespace Wayfare.Targeting
                 seen.Add(info.Id);
                 Place(info, info.Id == here);
             }
-            RemoveStale(seen);
+            HideUnseen();
+            showing = true;
         }
 
         private static bool Shown(PortalInfo info, bool isHere, long playerId, bool isAdmin)
@@ -95,49 +106,83 @@ namespace Wayfare.Targeting
 
         private static void Place(PortalInfo info, bool isHere)
         {
-            if (!icons.TryGetValue(info.Id, out PortalIcon icon))
-                icons[info.Id] = icon = PortalIcon.Make(MapIconLayer.Root);
+            if (!icons.TryGetValue(info.Id, out PortalIcon icon) || icon.Root == null)
+                icons[info.Id] = icon = Take();
+            if (!icon.Root.gameObject.activeSelf)
+                icon.Root.gameObject.SetActive(true);
             Minimap.instance.WorldToMapPoint(info.Position, out float mx, out float my);
             icon.Root.anchoredPosition = Minimap.instance.MapPointToLocalGuiPos(mx, my, Minimap.instance.m_mapImageLarge);
             float size = MapIconLayer.IconSize(pulse: !isHere);
             icon.Root.sizeDelta = new Vector2(size, size);
             float click = MapIconLayer.ClickSize();
             icon.Zone.sizeDelta = new Vector2(click, click);
-            icon.Image.sprite = IconFactory.Portal;
-            icon.Image.color = IconFactory.Gold;
-            icon.Ring.gameObject.SetActive(PlayerFavourites.IsFavourite(info.Id));
-            icon.Here.gameObject.SetActive(isHere);
-            bool showTag = WayfareConfig.ShowTags.Value;
-            icon.Label.gameObject.SetActive(showTag);
-            if (showTag)
-                icon.Label.text = info.Tag;
+            icon.Show(info.Id, isHere, WayfareConfig.ShowTags.Value ? info.Tag ?? "" : null);
         }
 
-        private static void RemoveStale(HashSet<ZDOID> seen)
+        /// <summary>A spare icon (one whose map is gone is dropped), else a new one.</summary>
+        private static PortalIcon Take()
         {
-            List<ZDOID> stale = null;
-            foreach (ZDOID id in icons.Keys)
+            while (spare.Count > 0)
             {
-                if (!seen.Contains(id))
-                    (stale ??= new List<ZDOID>()).Add(id);
-            }
-            if (stale == null)
-                return;
-            foreach (ZDOID id in stale)
-            {
-                Object.Destroy(icons[id].Root.gameObject);
-                icons.Remove(id);
-            }
-        }
-
-        private static void Clear()
-        {
-            foreach (PortalIcon icon in icons.Values)
-            {
+                PortalIcon icon = spare[spare.Count - 1];
+                spare.RemoveAt(spare.Count - 1);
                 if (icon.Root != null)
-                    Object.Destroy(icon.Root.gameObject);
+                    return icon;
             }
-            icons.Clear();
+            return PortalIcon.Make(MapIconLayer.Root);
+        }
+
+        /// <summary>Hides the icons of listed portals not drawn this frame (off the visible map, or no longer open to
+        /// this player); they keep their place in <see cref="icons"/>.</summary>
+        private static void HideUnseen()
+        {
+            foreach (KeyValuePair<ZDOID, PortalIcon> entry in icons)
+            {
+                if (!seen.Contains(entry.Key))
+                    Hide(entry.Value);
+            }
+        }
+
+        /// <summary>When the portal list has changed: the icons of portals no longer in it go to the spare pool, and
+        /// icons whose map is gone (another world loaded) are forgotten.</summary>
+        private static void ReleaseGone()
+        {
+            if (keptFor == PortalRegistry.Version)
+                return;
+            keptFor = PortalRegistry.Version;
+            listed.Clear();
+            foreach (PortalInfo info in PortalRegistry.Portals)
+                listed.Add(info.Id);
+            gone.Clear();
+            foreach (KeyValuePair<ZDOID, PortalIcon> entry in icons)
+            {
+                if (!listed.Contains(entry.Key) || entry.Value.Root == null)
+                    gone.Add(entry.Key);
+            }
+            foreach (ZDOID id in gone)
+            {
+                PortalIcon icon = icons[id];
+                icons.Remove(id);
+                if (icon.Root != null)
+                    spare.Add(Hide(icon));
+            }
+        }
+
+        /// <summary>The map closed or icons are off: every icon is hidden, once.</summary>
+        private static void HideAll()
+        {
+            if (!showing)
+                return;
+            showing = false;
+            foreach (PortalIcon icon in icons.Values)
+                Hide(icon);
+        }
+
+        private static PortalIcon Hide(PortalIcon icon)
+        {
+            if (icon.Root != null && icon.Root.gameObject.activeSelf)
+                icon.Root.gameObject.SetActive(false);
+            return icon;
         }
 
         private sealed class Ticker : MonoBehaviour

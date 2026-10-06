@@ -1,6 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 using Wayfare.Core;
+using Wayfare.Portals;
 
 namespace Wayfare.Targeting
 {
@@ -30,6 +31,7 @@ namespace Wayfare.Targeting
                 return;
             SourcePortal = source;
             Active = true;
+            PortalRegistry.Refresh(); // a portal built since the last check shows at once (a host frames it too)
             MapOpening.Large(Minimap.instance);
             MapFit.FitPortals(Minimap.instance, Player.m_localPlayer, source.transform.position);
         }

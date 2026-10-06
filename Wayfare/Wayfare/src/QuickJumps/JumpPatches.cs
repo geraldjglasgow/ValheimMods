@@ -1,21 +1,28 @@
 using HarmonyLib;
 using UnityEngine;
+using Wayfare.SeaGates;
 
 namespace Wayfare.QuickJumps
 {
-    /// <summary><c>Player.UpdateTeleport(float)</c> prefix (private; the game calls it in the fixed update of a living
-    /// player on its owner's client): a long jump of the local player is hurried by <see cref="JumpTiming"/> before the
-    /// game adds this tick to its timer. A sea gate's crew hold, another prefix here, replaces the game's step while it
-    /// runs; <see cref="JumpTiming"/> stands aside then.</summary>
+    /// <summary>The one <c>Player.UpdateTeleport(float)</c> prefix (private; the game calls it every physics step of a
+    /// living player on its owner's client, teleporting or not). While a sea gate jump holds the local player, the crew
+    /// hold replaces the game's step (<see cref="CrewHold"/>). Otherwise a long jump is hurried by
+    /// <see cref="JumpTiming"/> before the game adds this tick to its timer, and the crew hold's between-jumps work runs
+    /// (<see cref="CrewHold.Between"/>).</summary>
     [HarmonyPatch(typeof(Player), nameof(Player.UpdateTeleport))]
-    public static class JumpTimingPatch
+    public static class TeleportStepPatch
     {
         [HarmonyPrefix]
-        public static void Prefix(Player __instance, float dt)
+        public static bool Prefix(Player __instance, float dt)
         {
-            if (__instance != Player.m_localPlayer || !__instance.m_teleporting || !__instance.m_distantTeleport)
-                return;
-            JumpTiming.Hurry(__instance, dt);
+            if (__instance == null || __instance != Player.m_localPlayer)
+                return true;
+            if (CrewHold.Holding)
+                return !CrewHold.Step(__instance, dt);
+            if (__instance.m_teleporting && __instance.m_distantTeleport)
+                JumpTiming.Hurry(__instance, dt);
+            CrewHold.Between(__instance);
+            return true;
         }
     }
 

@@ -11,8 +11,10 @@ namespace Wayfare.Portals
     /// Wayfare player has ever touched) reads as unowned and Public: every portal is built Public (the user's rule, 2026-10-05).</summary>
     public static class PortalFields
     {
-        public const string ModeKey = "wf_mode";
-        public const string OwnerKey = "wf_owner";
+        // As the hashes the game stores them under: read for every portal on every list the server builds and on every
+        // hover frame.
+        public static readonly int ModeKey = "wf_mode".GetStableHashCode();
+        public static readonly int OwnerKey = "wf_owner".GetStableHashCode();
         private const int NoMode = -1;
 
         public static bool HasOwner(ZDO zdo) => GetOwner(zdo) != 0L;

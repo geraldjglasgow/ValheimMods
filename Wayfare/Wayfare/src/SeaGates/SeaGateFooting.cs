@@ -13,7 +13,7 @@ namespace Wayfare.SeaGates
     /// <c>Player.m_placementStatus</c> and the ghost's colour at the end of <c>Player.UpdatePlacementGhost</c>
     /// (<c>SetPlacementGhostValid</c>); the postfix overrides both, and <c>Player.TryPlacePiece</c>, which calls it and
     /// then reads the status, refuses the pillar. The base is the lowest point of the ghost's visible meshes, which the
-    /// game sets down on the ray hit.</summary>
+    /// game sets down on the ray hit. Run from the one placement ghost patch (<see cref="PillarGhostPatch"/>).</summary>
     public static class SeaGateFooting
     {
         /// <summary>The deepest water a pillar's base may stand in, in metres below sea level.</summary>
@@ -46,7 +46,7 @@ namespace Wayfare.SeaGates
             GameObject ghost = player.m_placementGhost;
             if (ghost == null || !ghost.activeSelf || player.m_placementStatus != Player.PlacementStatus.Valid)
                 return;
-            if (!SeaGatePiece.IsPillar(ghost))
+            if (!SeaGatePreview.IsPillarGhost(ghost))
                 return;
             float depth = DepthOf(BaseHeight(ghost));
             if (depth <= MaxDepth)
@@ -81,13 +81,6 @@ namespace Wayfare.SeaGates
         }
 
         private static string Metres(float value) => value.ToString("0.#", CultureInfo.InvariantCulture);
-    }
-
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
-    public static class SeaGateFootingGhostPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance) => SeaGateFooting.Check(__instance);
     }
 
     [HarmonyPatch(typeof(Player), nameof(Player.TryPlacePiece))]

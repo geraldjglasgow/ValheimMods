@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2
+
+- A portal built moments ago shows on the map as soon as you walk into any portal.
+- Fixed: `Toggle Icons Key` fired while typing a map pin name or in the console.
+- Fixed: a `Toggle Icons Key` with Shift, Ctrl or Alt did nothing while walking.
+- Lighter on frame rate and the server with the map open, near sea gates and with many portals.
+- Update the server and every client together.
+
 ## 0.3.1
 
 - Fixed: portal and sea gate icons wiggled while panning the map.

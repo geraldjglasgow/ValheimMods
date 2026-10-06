@@ -27,9 +27,10 @@ namespace Wayfare.SeaGates
     /// <summary>The server's complete list of gates and the client snapshot of it, <c>wf_RequestSeaGates</c>/
     /// <c>wf_SeaGateList</c>, the same shape as <see cref="PortalSync"/>: a client only ever holds the pillar ZDOs near
     /// it, the server holds all of them (<see cref="SeaGateScan"/>, <see cref="SeaGateIndexServer"/>). A client asks
-    /// when the picker opens and every few seconds while sea gate icons are on the map; only the server answers, and a
-    /// client accepts a list only from the server. Where this machine is the server (a host, single player) the
-    /// snapshot is filled locally, without a message.</summary>
+    /// when the picker opens and every few seconds while sea gate icons are on the map, saying which version of the list
+    /// it holds; only the server answers, only when that list has changed, and a client accepts a list only from the
+    /// server. Where this machine is the server (a host, single player) the snapshot is filled locally, without a
+    /// message.</summary>
     public static class SeaGateIndex
     {
         public const string RequestRpc = "wf_RequestSeaGates";
@@ -38,6 +39,10 @@ namespace Wayfare.SeaGates
         private const int MaxGates = 100000;
 
         private static readonly List<SeaGateInfo> snapshot = new List<SeaGateInfo>();
+
+        // The version of the server's list the snapshot is (sent with every request); 0 while none is held. A server
+        // without versions (an older Wayfare) sends none and every list again, as before.
+        private static long held;
 
         // The instance registered on, not a bool: every new session constructs a fresh ZRoutedRpc with empty
         // handler tables, and an unknown routed method is dropped silently.
@@ -57,40 +62,36 @@ namespace Wayfare.SeaGates
                 return;
             registeredOn = rpc;
             snapshot.Clear();
+            held = 0L;
             SeaGateIndexServer.Reset();
-            rpc.Register(RequestRpc, OnRequest);
+            rpc.Register<long>(RequestRpc, OnRequest);
             rpc.Register<ZPackage>(ListRpc, OnList);
             SeaGatePickerEdits.Register(rpc);
             SeaGateMapDriver.EnsureRunning();
         }
 
-        /// <summary>Asks for a fresh list. No explicit target routes to the server; on the server itself the request
-        /// is queued directly.</summary>
+        /// <summary>Asks for the list, unless the one held is still current. No explicit target routes to the server; on
+        /// the server itself the request is queued directly.</summary>
         public static void RequestFromServer()
         {
             if (ZNet.instance == null || ZRoutedRpc.instance == null)
                 return;
             EnsureRegistered();
             if (ZNet.instance.IsServer())
-                SeaGateIndexServer.Enqueue(ZRoutedRpc.instance.m_id);
+                SeaGateIndexServer.Enqueue(ZRoutedRpc.instance.m_id, 0L);
             else
-                ZRoutedRpc.instance.InvokeRoutedRPC(RequestRpc);
+                ZRoutedRpc.instance.InvokeRoutedRPC(RequestRpc, held);
         }
 
-        /// <summary>Server: a gate id to its two pillar ZDOs, only when they name each other. A miss scans again at
-        /// once if the last pass is not fresh, so a gate paired since then is found; repeated misses scan at most
-        /// once per <see cref="SeaGateScan.FreshSeconds"/>.</summary>
+        /// <summary>Server: a gate id to its two pillar ZDOs, from the index of every pillar (<see cref="SeaGateScan"/>),
+        /// only when they name each other. Never searches the world: a pillar is in the index from the moment it reaches
+        /// the server.</summary>
         public static bool TryFindOnServer(long gateId, out ZDO anchor, out ZDO partner)
         {
             anchor = null;
             partner = null;
             if (gateId == 0L || ZNet.instance == null || !ZNet.instance.IsServer() || ZDOMan.instance == null)
                 return false;
-            if (SeaGateIndexServer.TryFind(gateId, out anchor, out partner))
-                return true;
-            if (SeaGateScan.IsFresh)
-                return false;
-            SeaGateScan.ScanNow();
             return SeaGateIndexServer.TryFind(gateId, out anchor, out partner);
         }
 
@@ -100,7 +101,8 @@ namespace Wayfare.SeaGates
             snapshot.AddRange(gates);
         }
 
-        internal static void Send(long peer, List<SeaGateInfo> gates)
+        /// <summary>The list, then its version, which a client from before versions never reads.</summary>
+        internal static void Send(long peer, List<SeaGateInfo> gates, long version)
         {
             ZPackage pkg = new ZPackage();
             pkg.Write(gates.Count);
@@ -112,15 +114,16 @@ namespace Wayfare.SeaGates
                 pkg.Write((int)gate.Mode);
                 pkg.Write(gate.Owner);
             }
+            pkg.Write(version);
             ZRoutedRpc.instance.InvokeRoutedRPC(peer, ListRpc, pkg);
         }
 
-        private static void OnRequest(long sender)
+        private static void OnRequest(long sender, long senderHolds)
         {
             if (ZNet.instance == null || !ZNet.instance.IsServer())
                 return;
             if (WayfareConfig.Enabled.Value && WayfareConfig.SeaGatesEnabled.Value)
-                SeaGateIndexServer.Enqueue(sender);
+                SeaGateIndexServer.Enqueue(sender, senderHolds);
         }
 
         private static void OnList(long sender, ZPackage pkg)
@@ -136,6 +139,7 @@ namespace Wayfare.SeaGates
                 gates.Add(new SeaGateInfo(pkg.ReadLong(), pkg.ReadVector3(), pkg.ReadString(),
                     (PortalMode)pkg.ReadInt(), pkg.ReadLong()));
             }
+            held = pkg.GetPos() < pkg.Size() ? pkg.ReadLong() : 0L;
             SetSnapshot(gates);
         }
     }

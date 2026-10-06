@@ -62,11 +62,15 @@ namespace Wayfare.SeaGates
             return sheet;
         }
 
-        /// <summary>Scrolls the layers and sets the alpha; every frame, 32 vertices.</summary>
+        /// <summary>Scrolls the layers and sets the alpha; every frame, 32 vertices, but only while some camera drew
+        /// the sheet last frame (a gate behind the player or out of view uploads nothing; it picks up the scroll from
+        /// the time when it comes back into view).</summary>
         internal void Animate(float time, float intensity)
         {
-            renderer.enabled = intensity > 0f;
-            if (!renderer.enabled)
+            bool on = intensity > 0f;
+            if (renderer.enabled != on)
+                renderer.enabled = on;
+            if (!on || !renderer.isVisible)
                 return;
             float pulse = 1f - PulseDepth * (0.5f + 0.5f * Mathf.Sin(time * PulseSpeed));
             for (int i = 0; i < baseUv.Length; i++)

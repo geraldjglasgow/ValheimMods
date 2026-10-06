@@ -21,7 +21,17 @@ namespace Wayfare.SeaGates
         // Bodies this mod made kinematic, so a release touches only those and sets back exactly what it changed.
         private static readonly HashSet<Rigidbody> frozen = new HashSet<Rigidbody>();
 
+        // The prefabs of every ship this machine has loaded (each joins in Ship.Awake, see ShipJumpAwakePatch): a hit on
+        // any other piece is let through after one set lookup, without reading its ZDO.
+        private static readonly HashSet<int> shipPrefabs = new HashSet<int>();
+
         public static bool IsFrozen(ZDO ship) => SeaGateFields.IsStopped(ship);
+
+        /// <summary>The ZDO of a ship prefab. A ship's WearNTear reads the same ZDO as its Ship (both take the ZNetView on
+        /// their own object), so of all the pieces only ships' hulls match.</summary>
+        public static bool IsShip(ZDO zdo) => shipPrefabs.Contains(zdo.GetPrefab());
+
+        internal static void KnowShip(ZDO zdo) => shipPrefabs.Add(zdo.GetPrefab());
 
         public static bool IsSafe(ZDO ship) => ship != null && ship.GetLong(SeaGateFields.SafeKey, 0L) > SeaGateFields.Now;
 
@@ -46,9 +56,10 @@ namespace Wayfare.SeaGates
             frozen.Add(body);
         }
 
+        /// <summary>Called every physics step of every ship that is not stopped: nothing to look up while no body is held.</summary>
         internal static void Restore(Rigidbody body)
         {
-            if (body == null || !frozen.Remove(body))
+            if (frozen.Count == 0 || body == null || !frozen.Remove(body))
                 return;
             body.isKinematic = false;
         }
@@ -116,7 +127,8 @@ namespace Wayfare.SeaGates
     /// <summary>A frozen or safe ship takes no damage. <c>WearNTear.ApplyDamage</c> is where every kind ends: hits and
     /// <c>ImpactEffect</c> collisions (both through <c>Damage</c> and the owner's <c>RPC_Damage</c>), the ship's own
     /// water-impact, upside-down and Ashlands damage, and rain/ash/lava wear. Not gated on the settings, for the same
-    /// reason as the freeze; the keys are read from the piece's ZDO, so any ship prefab is covered.</summary>
+    /// reason as the freeze; the keys are read from the ship's ZDO, so any ship prefab is covered. Every other piece's
+    /// hit (this runs for every piece in the world that takes damage or wear) leaves after one set lookup.</summary>
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.ApplyDamage))]
     public static class ShipFreezeDamagePatch
     {
@@ -125,7 +137,7 @@ namespace Wayfare.SeaGates
         {
             ZNetView view = __instance != null ? __instance.m_nview : null;
             ZDO zdo = view != null && view.IsValid() ? view.GetZDO() : null;
-            if (!ShipFreeze.IsFrozen(zdo) && !ShipFreeze.IsSafe(zdo))
+            if (zdo == null || !ShipFreeze.IsShip(zdo) || (!ShipFreeze.IsFrozen(zdo) && !ShipFreeze.IsSafe(zdo)))
                 return true;
             __result = false;
             return false;

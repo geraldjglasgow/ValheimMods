@@ -45,14 +45,19 @@ kept whole for `Game.ConnectPortals`). An earlier revision of this document clai
 every peer regardless of distance; that was wrong - `AddIfPortal` in `ZDOMan.RPC_ZDOData` classifies whatever
 happens to arrive, but the only send path (`ZDOMan.CreateSyncList` → `FindSectorObjects`) covers sectors near the
 peer, so a pure client only ever holds the portals it has been near this session. SPEC item 1 ("every portal the
-player may target") is therefore met by Wayfare's own sync: on the registry's ~5s tick a client sends
-`wf_RequestPortals` (routed, no target = the server) and the server replies `wf_PortalList` with a snapshot built
-from its authoritative `GetPortalList()` (`Portals/PortalSync.cs`). For the same reason the `wf_TeleportGranted`
+player may target") is therefore met by Wayfare's own sync: on the registry's ~5s tick, and when the player walks
+into a portal, a client sends `wf_RequestPortals` (routed, no target = the server) with the version of the list it
+holds, and the server replies `wf_PortalList` with a snapshot built from its authoritative `GetPortalList()`, followed
+by that list's version, only when the version differs (`Portals/PortalSync.cs`). The version folds every portal ZDO's
+id, data revision and position (`PortalListVersion`), so an unchanged list is never built or sent again; one built
+list is sent to every client that asks while it is current. For the same reason the `wf_TeleportGranted`
 reply carries the destination position and rotation - the requesting client usually holds no ZDO for the target
 portal. And because widening `PortalPrefabHash` happens after `ZDOMan` has already loaded/received ZDOs,
 `PortalDiscovery` re-classifies existing ZDOs whose prefab it just added (`ZDOMan.AddIfPortal`); without that the
 save-writer (`GetSaveClonePerChunk` skips hash-listed ZDOs from regular chunks) would silently drop a modded
-portal from the next save.
+portal from the next save. That pass over every ZDO runs in a postfix on `ZDOMan.LoadChunks`/`Load`, inside the
+world load, whenever the scene is ready by then (and again for every later world load of the same game); only
+otherwise in the ticker's first run.
 
 Decision: a postfix on `Game.Awake` walks every prefab registered in `ZNetScene` (after it has registered them;
 `ZNetScene.Awake` postfix, `Priority.Low`, matching OpenKeep's own scene-scan precedent), finds every one carrying a
@@ -65,9 +70,9 @@ locally but would not get world-wide distribution; that limitation is inherent t
 called out in `SPEC.md`, not something Wayfare's code can fix.
 
 Wayfare's own portal list is a live query (`Portals/PortalRegistry.cs`): every ~5 seconds (the same cadence as
-vanilla's own reconnect tick, so a portal is never stale longer than vanilla's own tag pairing would be) it re-reads
-`ZDOMan.instance.GetPortalList()` and rebuilds the visible/targetable set. Nothing is cached indefinitely (SPEC
-item 4).
+vanilla's own reconnect tick, so a portal is never stale longer than vanilla's own tag pairing would be) it checks
+the list's version and, when it changed, re-reads `ZDOMan.instance.GetPortalList()` and rebuilds the
+visible/targetable set (on a client: asks the server, above). Nothing is cached indefinitely (SPEC item 4).
 
 ## Access modes: where enforcement lives
 
@@ -155,21 +160,23 @@ Wayfare/Wayfare/src/
   Core/
     WayfareConfig.cs             SyncedConfiguration bindings (General, Map, Favourites sections)
     Language.cs                  $wf_ words, Localization.SetupLanguage postfix
-    Keys.cs                      hotkey polling helper (KeyboardShortcut + no-text-input guard)
+    (hotkeys)                    the Hotkeys library (ValheimModLibs): fires while W is held, nothing while typing
   Portals/
     PortalDiscovery.cs            Game.Awake postfix: TeleportWorld-component scan into PortalPrefabHash
-    PortalRegistry.cs             5s live re-read of ZDOMan.GetPortalList(), the current portal snapshot
+    PortalRegistry.cs             5s check of the portal list (re-read only when its version changed), the snapshot
+    PortalSync.cs                 wf_RequestPortals / wf_PortalList with the list's version, PortalListVersion
     PortalInfo.cs                 readonly struct: ZDOID, position, tag, mode, owner
     PortalFields.cs               wf_mode / wf_owner ZDO get/set, the Mode enum, default-mode config lookup
     PortalAccess.cs               May(PortalInfo, playerID, isAdmin) - the one access rule, used by client display
                                   filtering and by the server's teleport grant
     ModeCycle.cs                  TeleportWorld.Interact prefix (alt) + RPC_wf_SetMode owner-side handler
+    CycleHover.cs                 the Alt+E hover line, localized once per mode, language and input device
     PortalOpenPatch.cs            TeleportWorld.HaveTarget / TargetFound postfixes: every portal open
   Targeting/
     TargetingSession.cs           TeleportWorldTrigger.OnTriggerEnter prefix; open/close targeting, the source
                                   portal reference, guarded against the load-order incident
     TeleportGate.cs               client: send wf_RequestTeleport, await grant/deny; server: validate + reply
-    MapOverlay.cs                 places/destroys the portal icons on MapIconLayer, hit-tests their click areas
+    MapOverlay.cs                 places/hides the portal icons on MapIconLayer (kept and reused), hit-tests their click areas
     PortalIcon.cs                 one icon: gold game portal sprite, favourite ring, tag, "You are here", click area
     IconFactory.cs                the game's portal sprite, the gold and red, the procedural favourite ring
     MapClickPatch.cs              Minimap.OnMapLeftClick / RemovePinUnderPointer prefixes: hit-test our icons first
@@ -291,8 +298,11 @@ that nobody may die or be lost at sea in a jump: every step below exists for tha
 - E on either pillar opens a text box to name the gate; Alt+E cycles the access mode, as on portals. Naming needs
   the same right as cycling the mode (unowned, own, or admin).
 - The helmsman's picker (below) lists only sea gates, from the server: `wf_RequestSeaGates`/`wf_SeaGateList` (the
-  same shape as `wf_RequestPortals`, sent when the picker opens and every 5 s while it is open), built from the
-  pillars the server holds. It shows only gates `PortalAccess.May` allows for the helmsman.
+  same shape as `wf_RequestPortals`, with the list's version, sent when the picker opens and every 5 s while it is
+  open, answered only when the list changed), built from the pillars the server holds. The server keeps an index of
+  every pillar (`SeaGateScan`): one pass over the world spread over frames right after it loaded, then each pillar
+  ZDO the server creates or receives (a `ZDOMan.AddIfPortal` postfix); no request ever searches the world. A jump
+  request arriving before that first pass is done is left unanswered, and the ship's owner asks again 2 s later. It shows only gates `PortalAccess.May` allows for the helmsman.
 - Sea gates never appear in the walk-in portal targeting list; they show on the map with an icon of their own.
 - The `NoPortals` world modifier closes sea gates too.
 

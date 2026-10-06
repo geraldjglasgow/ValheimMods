@@ -1,97 +1,122 @@
 using System.Collections.Generic;
-using UnityEngine;
+using HarmonyLib;
+using Wayfare.Core;
 
 namespace Wayfare.SeaGates
 {
-    /// <summary>Server: every sea gate pillar ZDO in the world. The server holds every ZDO, but finding one prefab among
-    /// them means walking all of them (<c>ZDOMan.GetAllZDOsWithPrefabIterative</c> walks up to 400 occupied sectors a
-    /// call and adds the out-of-world sector and the portal lists on the last call), so a pass is spread over frames,
-    /// one call per frame, and starts only when someone asks and the last pass is older than
-    /// <see cref="FreshSeconds"/>. The result is kept as ZDOIDs, not ZDOs: the game pools ZDOs and reuses a destroyed
-    /// one for another object, while a destroyed object's id simply resolves to null. A lookup that misses may scan at
-    /// once (<see cref="ScanNow"/>), so a gate paired a moment ago is still found.</summary>
+    /// <summary>Server: every sea gate pillar ZDO in the world, kept up to date as pillars come rather than searched for
+    /// on request. A pillar reaches the server in one of three ways: the world loads it, this machine creates it (a host
+    /// building), or a client sends it. The last two both pass <c>ZDOMan.AddIfPortal</c> with the prefab known
+    /// (<c>CreateNewZDO</c>, and <c>RPC_ZDOData</c> after the data is read), where <see cref="PillarIndexPatch"/> adds it.
+    /// For the first, one pass over the loaded world runs once, right after the world has loaded, spread over frames
+    /// (<c>ZDOMan.GetAllZDOsWithPrefabIterative</c> walks up to 400 occupied sectors a call); after it nothing walks the
+    /// world again, and no request ever waits for or starts a walk. The index is kept as ZDOIDs, not ZDOs: the game pools
+    /// ZDOs and reuses a destroyed one for another object, while a destroyed object's id simply resolves to null and is
+    /// dropped the next time the index is read.</summary>
     internal static class SeaGateScan
     {
-        internal const float FreshSeconds = 5f;
-
-        private static readonly List<ZDOID> found = new List<ZDOID>();
+        private static readonly HashSet<ZDOID> found = new HashSet<ZDOID>();
         private static readonly List<ZDO> buffer = new List<ZDO>();
-        private static ZDOMan scannedOn;
-        private static ZDOMan runningOn;
-        private static float doneAt;
+        private static readonly List<ZDOID> dead = new List<ZDOID>();
+        private static readonly List<ZDO> live = new List<ZDO>();
+        private static ZDOMan indexedOn;
+        private static bool seeded;
         private static int index;
 
-        /// <summary>A pass of this world finished less than <see cref="FreshSeconds"/> ago.</summary>
-        internal static bool IsFresh => scannedOn != null && scannedOn == ZDOMan.instance && Time.time - doneAt < FreshSeconds;
+        /// <summary>The pass over the loaded world is done: the index holds every pillar of this world.</summary>
+        internal static bool Seeded => seeded && indexedOn != null && indexedOn == ZDOMan.instance;
 
-        private static bool Running => runningOn != null && runningOn == ZDOMan.instance;
-
-        /// <summary>Starts a pass unless one is running or the last one is still fresh.</summary>
-        internal static void Want()
-        {
-            if (Running || IsFresh || ZDOMan.instance == null)
-                return;
-            buffer.Clear();
-            index = 0;
-            runningOn = ZDOMan.instance;
-        }
-
-        /// <summary>One step of a running pass; called every frame on the server.</summary>
+        /// <summary>Every frame on the server: one step of the pass over the loaded world, until it is done.</summary>
         internal static void Step()
-        {
-            if (!Running)
-            {
-                runningOn = null;
-                return;
-            }
-            if (runningOn.GetAllZDOsWithPrefabIterative(SeaGateFields.PillarPrefab, buffer, ref index))
-                Finish(runningOn);
-        }
-
-        /// <summary>A whole pass at once, for a lookup that cannot wait. Finishes a running pass too.</summary>
-        internal static void ScanNow()
         {
             ZDOMan man = ZDOMan.instance;
             if (man == null)
                 return;
-            buffer.Clear();
-            int at = 0;
-            while (!man.GetAllZDOsWithPrefabIterative(SeaGateFields.PillarPrefab, buffer, ref at))
-            {
-            }
-            Finish(man);
-        }
-
-        /// <summary>The pillars of the last pass that still exist.</summary>
-        internal static List<ZDO> Pillars()
-        {
-            List<ZDO> pillars = new List<ZDO>(found.Count);
-            ZDOMan man = ZDOMan.instance;
-            if (man == null || scannedOn != man)
-                return pillars;
-            foreach (ZDOID id in found)
-            {
-                ZDO zdo = man.GetZDO(id);
-                if (zdo != null && zdo.IsValid() && SeaGateFields.IsPillar(zdo))
-                    pillars.Add(zdo);
-            }
-            return pillars;
-        }
-
-        /// <summary>Keeps the ids, once each: the out-of-world sector is walked twice by the game's iterator.</summary>
-        private static void Finish(ZDOMan man)
-        {
-            HashSet<ZDOID> seen = new HashSet<ZDOID>();
-            found.Clear();
+            Follow(man);
+            if (seeded)
+                return;
+            if (!man.GetAllZDOsWithPrefabIterative(SeaGateFields.PillarPrefab, buffer, ref index))
+                return;
             foreach (ZDO zdo in buffer)
             {
-                if (zdo != null && zdo.IsValid() && SeaGateFields.IsPillar(zdo) && seen.Add(zdo.m_uid))
+                if (zdo != null && zdo.IsValid() && SeaGateFields.IsPillar(zdo))
                     found.Add(zdo.m_uid);
             }
             buffer.Clear();
-            scannedOn = man;
-            runningOn = null;
-            doneAt = Time.time;
+            seeded = true;
+        }
+
+        /// <summary>A pillar ZDO this server just created or received.</summary>
+        internal static void Add(ZDOMan man, ZDO zdo)
+        {
+            Follow(man);
+            found.Add(zdo.m_uid);
+        }
+
+        /// <summary>A new world (another ZDOMan) starts a new index and a new pass.</summary>
+        private static void Follow(ZDOMan man)
+        {
+            if (indexedOn == man)
+                return;
+            indexedOn = man;
+            found.Clear();
+            buffer.Clear();
+            seeded = false;
+            index = 0;
+        }
+
+        /// <summary>The last <see cref="Pillars"/> folded into one number: every live pillar's id and data revision and
+        /// their count. It changes whenever a pillar comes, goes or any of its data changes (name, partner, mode).</summary>
+        internal static long Fold { get; private set; }
+
+        /// <summary>The indexed pillars that still exist, in one list kept and refilled by every call (read it before the
+        /// next); ids that no longer resolve to a pillar are dropped. Sets <see cref="Fold"/>.</summary>
+        internal static List<ZDO> Pillars()
+        {
+            live.Clear();
+            ZDOMan man = ZDOMan.instance;
+            ListHash hash = ListHash.Start(0);
+            if (man != null && indexedOn == man)
+                Collect(man, ref hash);
+            hash.Add(live.Count);
+            Fold = hash.Value;
+            return live;
+        }
+
+        private static void Collect(ZDOMan man, ref ListHash hash)
+        {
+            dead.Clear();
+            foreach (ZDOID id in found)
+            {
+                ZDO zdo = man.GetZDO(id);
+                if (zdo == null || !zdo.IsValid() || !SeaGateFields.IsPillar(zdo))
+                {
+                    dead.Add(id);
+                    continue;
+                }
+                live.Add(zdo);
+                hash.Add(id.UserID);
+                hash.Add(id.ID);
+                hash.Add(zdo.DataRevision);
+            }
+            foreach (ZDOID id in dead)
+                found.Remove(id);
+        }
+    }
+
+    /// <summary>Every ZDO the game creates (<c>CreateNewZDO</c>) or receives (<c>RPC_ZDOData</c>, after reading its data)
+    /// passes <c>ZDOMan.AddIfPortal</c> with its prefab; a sea gate pillar's joins the server's index there. This runs
+    /// for every ZDO update a server receives, so anything but a pillar leaves after one comparison. Not gated on the
+    /// settings: the index must be complete when sea gates are switched on.</summary>
+    [HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.AddIfPortal))]
+    public static class PillarIndexPatch
+    {
+        [HarmonyPostfix]
+        public static void Postfix(ZDOMan __instance, ZDO zdo, int prefabHash)
+        {
+            if (prefabHash != SeaGateFields.PillarHash || zdo == null || ZNet.instance == null || !ZNet.instance.IsServer())
+                return;
+            SeaGateScan.Add(__instance, zdo);
         }
     }
 }

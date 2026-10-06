@@ -15,11 +15,13 @@ namespace Wayfare.SeaGates
         private const int MaxSteps = 10;
         private const float AtPoseMetres = 0.5f;
         private const float NoWater = -1000f;
-        private const int SearchEveryFrames = 5;  // a blocked exit is searched a few times a second, not every frame
+        private const float SearchSeconds = 0.1f; // a blocked exit is searched ten times a second, not every frame
         private const float ArrivalSeconds = 3f;  // in the same zone this long before an exit is searched
 
         private static Vector2s referenceZone;
         private static float referenceSince;
+        private static float nextSearch;
+        private static int searchFrame = -1;  // the frame a search was due: every ship waiting searches in it
 
         /// <summary>This machine has a point's area loaded, objects and water.</summary>
         internal static bool Ready(Vector3 point)
@@ -74,7 +76,7 @@ namespace Wayfare.SeaGates
                 return;
             if ((ship.transform.position - pos).sqrMagnitude > AtPoseMetres * AtPoseMetres || !Ready(pos))
                 return;
-            if (Time.frameCount % SearchEveryFrames != 0)
+            if (!SearchDue())
                 return;
             bool late = SeaGateFields.Now > zdo.GetLong(SeaGateFields.UntilKey, 0L);
             if (!TryFindPose(ship, zdo, pos, rot, late, out Vector3 found) || !Ready(found))
@@ -83,6 +85,19 @@ namespace Wayfare.SeaGates
             if (found != pos)
                 ShipFreeze.Place(ship, found, rot);
             zdo.Set(SeaGateFields.StateKey, (int)JumpState.Settled);
+        }
+
+        /// <summary>Whether this frame searches: one frame every <see cref="SearchSeconds"/>, in real seconds on every
+        /// machine, and every ship that waits to settle searches in that same frame.</summary>
+        private static bool SearchDue()
+        {
+            if (Time.frameCount == searchFrame)
+                return true;
+            if (Time.time < nextSearch)
+                return false;
+            nextSearch = Time.time + SearchSeconds;
+            searchFrame = Time.frameCount;
+            return true;
         }
 
         /// <summary>Not before a ship that gives way has moved off (<see cref="Clearance.Wait"/>), unless late.</summary>

@@ -24,36 +24,39 @@ namespace Wayfare.SeaGates
         public const string PillarPrefab = "WF_SeaGatePillar";
         public static readonly int PillarHash = PillarPrefab.GetStableHashCode();
 
+        // The ZDO keys are kept as the hashes the game stores them under (the same a ZDO's string overloads work out
+        // on every call): ships read theirs every physics step and on every hit.
+
         // Pillar ZDO keys.
-        public const string IdKey = "wf_sg_id";            // long, this pillar's own id
-        public const string PartnerKey = "wf_sg_partner";  // long, the partner pillar's id
-        public const string SidesKey = "wf_sg_sides";      // int, SideFront | SideBack: which sides are deep enough to exit on
-        public const string NameKey = "wf_sg_name";        // string, the gate's name (anchor only)
+        public static readonly int IdKey = Hash("wf_sg_id");            // long, this pillar's own id
+        public static readonly int PartnerKey = Hash("wf_sg_partner");  // long, the partner pillar's id
+        public static readonly int SidesKey = Hash("wf_sg_sides");      // int, SideFront | SideBack: which sides are deep enough to exit on
+        public static readonly int NameKey = Hash("wf_sg_name");        // string, the gate's name (anchor only)
 
         // Ship ZDO keys.
-        public const string JumpKey = "wf_sg_jump";        // int, the current jump's id
-        public const string StateKey = "wf_sg_state";      // int, JumpState
-        public const string SpeedKey = "wf_sg_speed";      // float, speed to give back on release
-        public const string CrewKey = "wf_sg_crew";        // int, players aboard when the jump began
-        public const string LandedKey = "wf_sg_landed";    // int, crew members who reported landing
-        public const string LandedAtKey = "wf_sg_landedat";    // long ticks, when the latest crew report was counted
+        public static readonly int JumpKey = Hash("wf_sg_jump");        // int, the current jump's id
+        public static readonly int StateKey = Hash("wf_sg_state");      // int, JumpState
+        public static readonly int SpeedKey = Hash("wf_sg_speed");      // float, speed to give back on release
+        public static readonly int CrewKey = Hash("wf_sg_crew");        // int, players aboard when the jump began
+        public static readonly int LandedKey = Hash("wf_sg_landed");    // int, crew members who reported landing
+        public static readonly int LandedAtKey = Hash("wf_sg_landedat");    // long ticks, when the latest crew report was counted
         public const string LandedPlayerPrefix = "wf_sg_landed_"; // + player id: int, the jump that player's report counted for
-        public const string MoveAtKey = "wf_sg_moveat";    // long ticks, when the ship moves to the destination
-        public const string UntilKey = "wf_sg_until";      // long ticks, give up waiting for the crew
-        public const string SafeKey = "wf_sg_safe";        // long ticks, the ship takes no damage until then
-        public const string DestPosKey = "wf_sg_dpos";     // Vector3, the ship's destination position
-        public const string DestRotKey = "wf_sg_drot";     // Quaternion, the ship's destination rotation
-        public const string DestAnchorKey = "wf_sg_danchor";   // Vector3, the destination anchor pillar
-        public const string DestPartnerKey = "wf_sg_dpartner"; // Vector3, the destination partner pillar
-        public const string StopKey = "wf_sg_stop";        // int, the current stop's id, so a client tells one stop from the next
-        public const string StopGateKey = "wf_sg_sgate";   // long, the gate the ship stopped in
-        public const string StopSideKey = "wf_sg_sside";   // int, the side of that gate the ship's centre was on
-        public const string PickedKey = "wf_sg_picked";    // long, the gate the helmsman picked; 0 while choosing
-        public const string SailOnKey = "wf_sg_sailon";    // long, a gate the ship sails on through after the map closed
-        public const string SailOnSideKey = "wf_sg_sailside"; // int, the side it came from: no stop there until it leaves or crosses
+        public static readonly int MoveAtKey = Hash("wf_sg_moveat");    // long ticks, when the ship moves to the destination
+        public static readonly int UntilKey = Hash("wf_sg_until");      // long ticks, give up waiting for the crew
+        public static readonly int SafeKey = Hash("wf_sg_safe");        // long ticks, the ship takes no damage until then
+        public static readonly int DestPosKey = Hash("wf_sg_dpos");     // Vector3, the ship's destination position
+        public static readonly int DestRotKey = Hash("wf_sg_drot");     // Quaternion, the ship's destination rotation
+        public static readonly int DestAnchorKey = Hash("wf_sg_danchor");   // Vector3, the destination anchor pillar
+        public static readonly int DestPartnerKey = Hash("wf_sg_dpartner"); // Vector3, the destination partner pillar
+        public static readonly int StopKey = Hash("wf_sg_stop");        // int, the current stop's id, so a client tells one stop from the next
+        public static readonly int StopGateKey = Hash("wf_sg_sgate");   // long, the gate the ship stopped in
+        public static readonly int StopSideKey = Hash("wf_sg_sside");   // int, the side of that gate the ship's centre was on
+        public static readonly int PickedKey = Hash("wf_sg_picked");    // long, the gate the helmsman picked; 0 while choosing
+        public static readonly int SailOnKey = Hash("wf_sg_sailon");    // long, a gate the ship sails on through after the map closed
+        public static readonly int SailOnSideKey = Hash("wf_sg_sailside"); // int, the side it came from: no stop there until it leaves or crosses
 
         // Player ZDO key, written by each client for its own player.
-        public const string HeavyKey = "wf_sg_heavy";      // bool, carrying something that may not teleport
+        public static readonly int HeavyKey = Hash("wf_sg_heavy");      // bool, carrying something that may not teleport
 
         // RPCs on a pillar's ZNetView.
         public const string PairRpc = "wf_SeaGatePair";
@@ -74,6 +77,8 @@ namespace Wayfare.SeaGates
         public const int SideFront = 1;
         public const int SideBack = 2;
         public const int BothSides = SideFront | SideBack;
+
+        private static int Hash(string key) => key.GetStableHashCode();
 
         public static bool IsPillar(ZDO zdo) => zdo != null && zdo.GetPrefab() == PillarHash;
 

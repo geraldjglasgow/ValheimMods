@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Wayfare.Core;
+using Wayfare.Portals;
 
 namespace Wayfare.Targeting
 {
@@ -13,12 +14,71 @@ namespace Wayfare.Targeting
     {
         private const float RingOverhang = 0.2f;
 
+        private static readonly LocalWord youAreHere = new LocalWord(Words.YouAreHere);
+
+        /// <summary>"You are here" in the player's language, localized once per language: an icon is kept and reused.</summary>
+        public static string YouAreHere => youAreHere.Text;
+
         public RectTransform Root;
         public Image Image;
         public Image Ring;
         public RectTransform Zone;
         public Text Label;
         public Text Here;
+
+        // What the icon last showed, so a redraw every frame writes only what changed: each write is a call into the
+        // engine and can mark the canvas for a rebuild. The ring, the "here" line and the label start as Make leaves them.
+        private Sprite shownSprite;
+        private bool ringShown;
+        private bool hereShown;
+        private bool labelShown = true;
+
+        // Whether the portal is a favourite, and what that was looked up for: the portal, the favourites' and the
+        // portal list's versions (an icon is handed to another portal from the spare pool).
+        private ZDOID favouriteFor = ZDOID.None;
+        private int favouriteVersion = -1;
+        private int favouriteListVersion = -1;
+        private bool favourite;
+
+        /// <summary>Draws the icon's look for a portal: the gold portal sprite, the favourite ring, "You are here" and
+        /// the tag (null hides it); only what changed since the last frame is written.</summary>
+        public void Show(ZDOID id, bool here, string tag)
+        {
+            Sprite sprite = IconFactory.Portal;
+            if (!ReferenceEquals(sprite, shownSprite))
+            {
+                shownSprite = sprite;
+                Image.sprite = sprite;
+                Image.color = IconFactory.Gold;
+            }
+            SetShown(Ring.gameObject, IsFavourite(id), ref ringShown);
+            SetShown(Here.gameObject, here, ref hereShown);
+            if (here)
+                Here.text = YouAreHere;
+            SetShown(Label.gameObject, tag != null, ref labelShown);
+            if (tag != null)
+                Label.text = tag;
+        }
+
+        private bool IsFavourite(ZDOID id)
+        {
+            int version = PlayerFavourites.Version;
+            if (id == favouriteFor && version == favouriteVersion && PortalRegistry.Version == favouriteListVersion)
+                return favourite;
+            favouriteFor = id;
+            favouriteVersion = version;
+            favouriteListVersion = PortalRegistry.Version;
+            favourite = PlayerFavourites.IsFavourite(id);
+            return favourite;
+        }
+
+        private static void SetShown(GameObject go, bool on, ref bool shown)
+        {
+            if (on == shown)
+                return;
+            shown = on;
+            go.SetActive(on);
+        }
 
         public static PortalIcon Make(RectTransform layer)
         {

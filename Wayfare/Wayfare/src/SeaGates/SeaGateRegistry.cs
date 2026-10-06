@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Wayfare.Core;
 
 namespace Wayfare.SeaGates
 {
@@ -28,9 +29,10 @@ namespace Wayfare.SeaGates
     }
 
     /// <summary>The sea gate pillars loaded on this machine (each <see cref="SeaGatePillar"/> adds itself on Awake and
-    /// leaves on destroy) and the gates they form. The gate list is rebuilt when a pillar comes or goes and at most
-    /// once a second otherwise, since pairing changes arrive as ZDO writes. Only loaded gates: the complete list lives
-    /// on the server (<see cref="SeaGateIndex"/>).</summary>
+    /// leaves on destroy) and the gates they form. The gate list is rebuilt when a pillar comes or goes; otherwise, since
+    /// pairing changes arrive as ZDO writes, once a second the loaded pillars' ids and data revisions are folded into
+    /// one number and the list is rebuilt only when that changed, so the same <see cref="LoadedGate"/> objects stay while
+    /// nothing did. Only loaded gates: the complete list lives on the server (<see cref="SeaGateIndex"/>).</summary>
     public static class SeaGateRegistry
     {
         private const float RebuildSeconds = 1f;
@@ -39,6 +41,7 @@ namespace Wayfare.SeaGates
         private static readonly List<LoadedGate> gates = new List<LoadedGate>();
         private static bool dirty = true;
         private static float builtAt;
+        private static long builtFold;
 
         public static IReadOnlyList<SeaGatePillar> Pillars => pillars;
 
@@ -47,7 +50,7 @@ namespace Wayfare.SeaGates
             get
             {
                 if (dirty || Time.time - builtAt > RebuildSeconds)
-                    Rebuild();
+                    Refresh();
                 return gates;
             }
         }
@@ -101,10 +104,39 @@ namespace Wayfare.SeaGates
             return null;
         }
 
-        private static void Rebuild()
+        private static void Refresh()
         {
+            bool forced = dirty;
             dirty = false;
             builtAt = Time.time;
+            long fold = PillarFold();
+            if (!forced && fold == builtFold)
+                return;
+            builtFold = fold;
+            Rebuild();
+        }
+
+        /// <summary>Every loaded pillar's id and data revision, in list order (a gone or invalid one as a gap).</summary>
+        private static long PillarFold()
+        {
+            ListHash hash = ListHash.Start(pillars.Count);
+            foreach (SeaGatePillar pillar in pillars)
+            {
+                ZDO zdo = pillar != null && pillar.IsValid ? pillar.Zdo : null;
+                if (zdo == null)
+                {
+                    hash.Add(0L);
+                    continue;
+                }
+                hash.Add(zdo.m_uid.UserID);
+                hash.Add(zdo.m_uid.ID);
+                hash.Add(zdo.DataRevision);
+            }
+            return hash.Value;
+        }
+
+        private static void Rebuild()
+        {
             gates.Clear();
             pillars.RemoveAll(p => p == null);
             foreach (SeaGatePillar pillar in pillars)

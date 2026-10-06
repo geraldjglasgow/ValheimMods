@@ -152,10 +152,7 @@ namespace Wayfare.Portals
         {
             if (!WayfareConfig.Enabled.Value || __instance == null || __instance.m_nview == null || !__instance.m_nview.IsValid())
                 return;
-            PortalMode mode = PortalFields.GetMode(__instance.m_nview.GetZDO());
-            string label = Localization.instance.Localize(ModeCycle.ModeLabel(mode));
-            string line = string.Format(Localization.instance.Localize(Words.HoverCycle), label);
-            __result += "\n" + Localization.instance.Localize(ModeCycle.AltUseKeys) + line;
+            __result = CycleHover.Append(__result, PortalFields.GetMode(__instance.m_nview.GetZDO()));
         }
     }
 }

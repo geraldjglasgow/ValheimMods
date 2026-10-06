@@ -12,9 +12,11 @@ namespace Wayfare.SeaGates
     /// never the game's own pins. Shown while the picker is open, and on the ordinary large map while the player has
     /// map icons toggled on (<see cref="HotkeyToggle"/>), never during portal targeting, where a sea gate is no
     /// destination. Only the gates the local player may target are drawn, plus, in the picker, the gate the ship
-    /// stopped in, always, in gold. The list is asked for again every <see cref="RequestSeconds"/> while icons show.
-    /// Icons are placed through the map image's own rectangle, the same
-    /// arithmetic the game uses for its pins, so they sit right whatever the layer's anchors are.</summary>
+    /// stopped in, always, in gold. The list is asked for again every <see cref="RequestSeconds"/> while icons show
+    /// (the server answers only when it changed). Icons are placed through the map image's own rectangle, the same
+    /// arithmetic the game uses for its pins, so they sit right whatever the layer's anchors are. An icon off the visible
+    /// map, or every icon while the map is closed, is only hidden and shows again as it was; only a gate that left the
+    /// list loses its icon.</summary>
     internal static class SeaGateMapIcons
     {
         private const float IconSize = 24f;
@@ -27,12 +29,14 @@ namespace Wayfare.SeaGates
             public RectTransform Root;
             public Image Image;
             public Text Label;
+            public Sprite ShownSprite;  // the sprite last written, so a redraw every frame writes it only on a change
         }
 
         private static readonly Dictionary<long, Icon> icons = new Dictionary<long, Icon>();
         private static readonly HashSet<long> seen = new HashSet<long>();   // reused every frame
+        private static readonly LocalWord defaultName = new LocalWord(SeaGateWords.DefaultName);
         private static float requestedAt = float.NegativeInfinity;
-        private static string defaultName;
+        private static bool showing;
 
         /// <summary>Asks the server for the list now and restarts the poll.</summary>
         internal static void RequestNow()
@@ -45,12 +49,12 @@ namespace Wayfare.SeaGates
         {
             if (!ShouldShow())
             {
-                Clear();
+                Hide();
                 return;
             }
             if (Time.time - requestedAt >= RequestSeconds)
                 RequestNow();
-            defaultName = Localization.instance.Localize(SeaGateWords.DefaultName);
+            showing = true;
             seen.Clear();
             LoadedGate source = SeaGatePicker.Source;
             ShowListed(source != null ? source.Id : 0L, seen);
@@ -109,11 +113,25 @@ namespace Wayfare.SeaGates
         {
             float size = MapIconLayer.IconSize(isSource ? SourceSize / IconSize : 1f);
             icon.Root.sizeDelta = new Vector2(size, size);
-            icon.Image.sprite = isSource ? SeaGateMapSprites.Source : SeaGateMapSprites.Gate;
-            icon.Label.text = string.IsNullOrEmpty(name) ? defaultName : name;
+            Sprite sprite = isSource ? SeaGateMapSprites.Source : SeaGateMapSprites.Gate;
+            if (!ReferenceEquals(sprite, icon.ShownSprite))
+            {
+                icon.ShownSprite = sprite;
+                icon.Image.sprite = sprite;
+            }
+            icon.Label.text = string.IsNullOrEmpty(name) ? defaultName.Text : name;
             icon.Label.color = isSource ? SourceLabel : Color.white;
             if (isSource)
-                icon.Root.SetAsLastSibling();
+                OnTop(icon.Root);
+        }
+
+        /// <summary>The ship's gate drawn over every other icon, under only the crew's pointers; moved only when
+        /// something came above it, since every move changes the layer's order and rebuilds it.</summary>
+        private static void OnTop(RectTransform root)
+        {
+            Transform layer = root.parent;
+            if (layer != null && root.GetSiblingIndex() < layer.childCount - 1 - SeaGatePointerMarks.Count)
+                root.SetAsLastSibling();
         }
 
         /// <summary>The gate whose icon is under a screen point, the nearest when icons overlap.</summary>
@@ -154,8 +172,23 @@ namespace Wayfare.SeaGates
             }
         }
 
+        /// <summary>The map closed or icons are off: every icon is hidden, once.</summary>
+        private static void Hide()
+        {
+            if (!showing)
+                return;
+            showing = false;
+            foreach (Icon icon in icons.Values)
+            {
+                if (icon.Root != null && icon.Root.gameObject.activeSelf)
+                    icon.Root.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>Destroys every icon: the world unloads, or sea gates are switched off.</summary>
         internal static void Clear()
         {
+            showing = false;
             if (icons.Count == 0)
                 return;
             foreach (Icon icon in icons.Values)

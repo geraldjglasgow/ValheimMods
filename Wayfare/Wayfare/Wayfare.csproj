@@ -5,7 +5,7 @@
     <AssemblyName>Wayfare</AssemblyName>
     <RootNamespace>Wayfare</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <Product>Wayfare</Product>
     <Description>Wayfare: map-based portal targeting for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -38,6 +38,7 @@
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\AreaLoading\AreaLoading.csproj" />
     <ProjectReference Include="$(ModLibsPath)\MapClicks\MapClicks.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
   </ItemGroup>
 
   <ItemGroup>

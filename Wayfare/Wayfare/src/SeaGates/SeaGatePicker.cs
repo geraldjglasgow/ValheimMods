@@ -31,6 +31,14 @@ namespace Wayfare.SeaGates
         private static bool closedAtHelm;  // closed by the helmsman, which sailed on
         private static float resentAt;
 
+        // The hint line last built, and what it was built from: at the helm or not, the helmsman (their id and their
+        // player once loaded) and the language. The picker asks for it every frame it is open.
+        private static string hint;
+        private static bool hintAtHelm;
+        private static long hintUser = -1L;
+        private static Player hintHelmsman;
+        private static int hintRevision = -1;
+
         public static bool Active { get; private set; }
 
         /// <summary>The ship and stop the picker is open for.</summary>
@@ -124,10 +132,23 @@ namespace Wayfare.SeaGates
 
         private static string Hint()
         {
+            ShipControlls controls = AtHelm ? null : Ship.m_shipControlls;
+            long user = controls != null ? controls.GetUser() : 0L;
+            Player helmsman = user != 0L ? Player.GetPlayer(user) : null;
+            if (hint != null && AtHelm == hintAtHelm && user == hintUser && helmsman == hintHelmsman && Language.Revision == hintRevision)
+                return hint;
+            hintAtHelm = AtHelm;
+            hintUser = user;
+            hintHelmsman = helmsman;
+            hintRevision = Language.Revision;
+            hint = HintText(helmsman);
+            return hint;
+        }
+
+        private static string HintText(Player helmsman)
+        {
             if (AtHelm)
                 return Localization.instance.Localize(HelmHint);
-            ShipControlls controls = Ship.m_shipControlls;
-            Player helmsman = controls != null && controls.GetUser() != 0L ? Player.GetPlayer(controls.GetUser()) : null;
             string name = helmsman != null ? helmsman.GetPlayerName() : Localization.instance.Localize(Helmsman);
             return string.Format(Localization.instance.Localize(CrewHint), name);
         }

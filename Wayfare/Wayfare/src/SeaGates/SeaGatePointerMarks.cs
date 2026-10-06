@@ -19,10 +19,16 @@ namespace Wayfare.SeaGates
             public RectTransform Root;
             public Image Arrow;
             public Text Label;
+            public long ColourFor;      // the player id and helmsman the colour was picked for
+            public long ColourHelm;
+            public Color Colour;
         }
 
         private static readonly Dictionary<long, Mark> marks = new Dictionary<long, Mark>();
         private static readonly List<long> gone = new List<long>();
+
+        /// <summary>How many pointer marks are on the layer, all of them at its top.</summary>
+        internal static int Count => marks.Count;
 
         internal static void Draw(Dictionary<long, CrewPointer> pointers, long helmsmanId)
         {
@@ -46,11 +52,31 @@ namespace Wayfare.SeaGates
                 mark.Root.gameObject.SetActive(visible);
             if (!visible)
                 return;
-            Color color = pointer.PlayerId == helmsmanId ? HelmGold : ColorOf(pointer.PlayerId);
+            Color color = ColourOf(mark, pointer.PlayerId, helmsmanId);
             mark.Arrow.color = color;
             mark.Label.color = color;
             mark.Label.text = pointer.Name ?? "";
-            mark.Root.SetAsLastSibling();
+            OnTop(mark.Root);
+        }
+
+        private static Color ColourOf(Mark mark, long playerId, long helmsmanId)
+        {
+            if (mark.ColourFor != playerId || mark.ColourHelm != helmsmanId || mark.ColourFor == 0L)
+            {
+                mark.ColourFor = playerId;
+                mark.ColourHelm = helmsmanId;
+                mark.Colour = playerId == helmsmanId ? HelmGold : ColorOf(playerId);
+            }
+            return mark.Colour;
+        }
+
+        /// <summary>Every mark sits in the top block of the layer, above every icon; one is moved only when an icon came
+        /// above it (made after it), so the marks never trade places every frame, which would rebuild the layer.</summary>
+        private static void OnTop(RectTransform root)
+        {
+            Transform layer = root.parent;
+            if (layer != null && root.GetSiblingIndex() < layer.childCount - marks.Count)
+                root.SetAsLastSibling();
         }
 
         /// <summary>A bright colour of the player's own, the same on every machine and every stop.</summary>

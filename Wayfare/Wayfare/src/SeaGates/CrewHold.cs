@@ -108,6 +108,16 @@ namespace Wayfare.SeaGates
             }
         }
 
+        /// <summary>Every physics step of the local player while no hold runs (from <c>TeleportStepPatch</c>): sends a
+        /// pending landing report again (whatever the settings say: it finishes a jump) and runs the helm request after
+        /// a landing.</summary>
+        internal static void Between(Player p)
+        {
+            CrewReport.Tick();
+            if (WayfareConfig.Enabled.Value && WayfareConfig.SeaGatesEnabled.Value)
+                CrewHelm.Tick(p);
+        }
+
         private static bool Advance(Player p, float dt)
         {
             if (p != player || order == null || !p.m_teleporting)
@@ -268,27 +278,6 @@ namespace Wayfare.SeaGates
             p.transform.rotation = rot;
             p.m_body.linearVelocity = Vector3.zero;
             p.m_maxAirAltitude = pos.y;
-        }
-    }
-
-    /// <summary>Replaces vanilla's teleport step for the local player while a sea gate jump holds them; otherwise sends
-    /// a pending landing report again (whatever the settings say: it finishes a jump) and runs the helm request after a
-    /// landing. <c>UpdateTeleport</c> runs every physics step of the local player while alive (<c>Player.FixedUpdate</c>,
-    /// owner only, not dead), teleporting or not.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdateTeleport))]
-    public static class CrewHoldTeleportPatch
-    {
-        [HarmonyPrefix]
-        public static bool Prefix(Player __instance, float dt)
-        {
-            if (__instance == null || __instance != Player.m_localPlayer)
-                return true;
-            if (CrewHold.Holding)
-                return !CrewHold.Step(__instance, dt);
-            CrewReport.Tick();
-            if (WayfareConfig.Enabled.Value && WayfareConfig.SeaGatesEnabled.Value)
-                CrewHelm.Tick(__instance);
-            return true;
         }
     }
 

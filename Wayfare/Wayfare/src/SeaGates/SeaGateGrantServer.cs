@@ -8,12 +8,13 @@ namespace Wayfare.SeaGates
     /// every pillar ZDO, so it alone can find a distant destination, and it is the one party every client trusts to
     /// judge access - the same reasoning as <see cref="TeleportGate"/>. The destination is the gate the helmsman picked;
     /// access is that gate's, read from its anchor (which carries <c>wf_mode</c>/<c>wf_owner</c>) for the asking
-    /// player, by the portals' own rule.</summary>
+    /// player, by the portals' own rule. Both gates are looked up in the server's index of pillars
+    /// (<see cref="SeaGateScan"/>), never by searching the world.</summary>
     internal static class SeaGateGrantServer
     {
         internal static void OnRequest(long sender, long sourceId, long destId, ZDOID shipId)
         {
-            if (ZNet.instance == null || !ZNet.instance.IsServer())
+            if (ZNet.instance == null || !ZNet.instance.IsServer() || !Answerable)
                 return;
             string denial = Evaluate(sender, sourceId, destId, shipId, out ZDO destAnchor, out ZDO destPartner);
             if (denial != null)
@@ -21,6 +22,13 @@ namespace Wayfare.SeaGates
             else
                 SeaGateGrant.SendGrant(sender, sourceId, destId, destAnchor, destPartner);
         }
+
+        /// <summary>The index holds every pillar of the world, so a gate it does not know is gone, or sea gates are off and
+        /// every request is refused anyway. In the second or two after the world loaded, while the index is still being
+        /// filled, a request is left unanswered rather than wrongly refused: the ship's owner asks again every 2 s
+        /// (<see cref="SeaGateGrant.Request"/>).</summary>
+        private static bool Answerable =>
+            SeaGateScan.Seeded || !WayfareConfig.Enabled.Value || !WayfareConfig.SeaGatesEnabled.Value;
 
         /// <summary>Null when the jump is granted, otherwise the denial token to send back.</summary>
         private static string Evaluate(long sender, long sourceId, long destId, ZDOID shipId, out ZDO destAnchor, out ZDO destPartner)

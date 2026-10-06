@@ -52,7 +52,7 @@ Every portal has a mode; its hover text shows which.
 
 - `Toggle Icons Key` (P): with the large map open, shows or hides portal and sea gate icons on the ordinary map, so
   you can see your network without standing in a portal. It does not fire while Shift, Ctrl or Alt is held or while
-  you type in chat.
+  you type (chat, console, a map pin name).
 - Icons draw above the game's pins. `Icon Scale` sets their size and `Show Tags` the names under portal icons; both
   are your own settings ([Quick Jumps and Settings](wiki:Quick Jumps and Settings)).
 

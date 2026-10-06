@@ -22,6 +22,9 @@ namespace Wayfare.SeaGates
         private LineRenderer line;
         private GameObject label;
         private string shownText;
+        private string colouredFrom;   // the reason the coloured text was made from, compared by reference
+        private bool colouredOk;
+        private string coloured;
         private float labelSetAt;
         private int refreshedFrame = -10;
 
@@ -33,7 +36,7 @@ namespace Wayfare.SeaGates
             preview.refreshedFrame = Time.frameCount;
             preview.DrawLine(from + Vector3.up * Lift, to + Vector3.up * Lift, ok ? OkColour : BadColour);
             preview.label.transform.position = (from + to) * 0.5f + Vector3.up * (Lift + LabelLift);
-            preview.SetLabel(Text(ok, reason));
+            preview.SetLabel(preview.Text(ok, reason));
         }
 
         public static void Hide()
@@ -42,7 +45,17 @@ namespace Wayfare.SeaGates
                 instance.HideAll();
         }
 
-        private static string Text(bool ok, string reason) => (ok ? "<color=#66FF77>" : "<color=#FF6655>") + reason + "</color>";
+        /// <summary>The coloured reason, made again only when the reason or the verdict changes (the reason is a
+        /// string kept until it changes, <see cref="SeaGatePreview.Reason"/>).</summary>
+        private string Text(bool ok, string reason)
+        {
+            if (coloured != null && ok == colouredOk && ReferenceEquals(reason, colouredFrom))
+                return coloured;
+            colouredFrom = reason;
+            colouredOk = ok;
+            coloured = (ok ? "<color=#66FF77>" : "<color=#FF6655>") + reason + "</color>";
+            return coloured;
+        }
 
         private static SeaGatePreviewLine Ensure()
         {
