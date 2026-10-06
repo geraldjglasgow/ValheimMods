@@ -40,7 +40,7 @@ namespace ShipConfig
         {
             ConfigEntry<float> entry = config.Bind(Section, key, 1f,
                 $"Multiplier on the {subject} of every ship, on top of the per-ship value. 1 is vanilla.");
-            entry.SettingChanged += Guard.Wrap($"apply {key}", (_, _) => ShipValues.ApplyAll());
+            entry.SettingChanged += Guard.Wrap($"apply {key}", (_, _) => ShipValueQueue.RequestAll());
             return entry;
         }
 

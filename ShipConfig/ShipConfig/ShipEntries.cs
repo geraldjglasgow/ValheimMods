@@ -119,11 +119,11 @@ namespace ShipConfig
                     "Multiplier on the materials needed to build this ship. 1 is vanilla. Each material is rounded to the nearest whole number and never drops below 1.");
         }
 
-        /// <summary>Binds Prefab.Key in the Ship section, synced; a change re-applies this ship.</summary>
+        /// <summary>Binds Prefab.Key in the Ship section, synced; a change re-applies this ship, next frame (<see cref="ShipValueQueue"/>).</summary>
         private ConfigEntry<T> BindEntry<T>(SyncedConfiguration synced, string key, T defaultValue, string description)
         {
             ConfigEntry<T> entry = synced.Bind(Section, $"{Name}.{key}", defaultValue, description);
-            entry.SettingChanged += Guard.Wrap($"apply {Name}.{key}", (_, _) => ShipValues.Apply(Name));
+            entry.SettingChanged += Guard.Wrap($"apply {Name}.{key}", (_, _) => ShipValueQueue.Request(Name));
             return entry;
         }
 

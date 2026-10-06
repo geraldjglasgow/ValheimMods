@@ -31,19 +31,19 @@ namespace ShipConfig
         /// <summary>GrindstoneSkills is installed with a Sailing API this mod can use.</summary>
         public static bool Present => Bind();
 
-        public static float SpeedFactor(Ship ship) => Ask(() => speedFactor(ship), 1f);
-        public static float ExploreFactor() => Ask(() => exploreFactor(), 1f);
-        public static string[] Abilities() => Ask(() => abilities(), Array.Empty<string>());
-        public static string AbilityName(string id) => Ask(() => abilityName(id), id);
-        public static string AbilityKey(string id) => Ask(() => abilityKey(id), "");
-        public static string AbilityDescription(string id) => Ask(() => abilityDescription(id), "");
-        public static float AbilityCooldown(string id) => Ask(() => abilityCooldown(id), 0f);
-        public static float AbilityCooldownLength(string id) => Ask(() => abilityCooldownLength(id), 0f);
+        // Bind first, then the bound delegate is handed over with its argument: no closure per call (the panel asks
+        // every refresh, several times per ability).
+        public static float SpeedFactor(Ship ship) => Bind() ? Ask(speedFactor, ship, 1f) : 1f;
+        public static float ExploreFactor() => Bind() ? Ask(exploreFactor, 1f) : 1f;
+        public static string[] Abilities() => Bind() ? Ask(abilities, Array.Empty<string>()) : Array.Empty<string>();
+        public static string AbilityName(string id) => Bind() ? Ask(abilityName, id, id) : id;
+        public static string AbilityKey(string id) => Bind() ? Ask(abilityKey, id, "") : "";
+        public static string AbilityDescription(string id) => Bind() ? Ask(abilityDescription, id, "") : "";
+        public static float AbilityCooldown(string id) => Bind() ? Ask(abilityCooldown, id, 0f) : 0f;
+        public static float AbilityCooldownLength(string id) => Bind() ? Ask(abilityCooldownLength, id, 0f) : 0f;
 
         private static T Ask<T>(Func<T> call, T fallback)
         {
-            if (!Bind())
-                return fallback;
             try
             {
                 T answer = call();
@@ -51,10 +51,29 @@ namespace ShipConfig
             }
             catch (Exception e)
             {
-                ready = false;
-                ShipConfig.Log.LogWarning($"GrindstoneSkills' Sailing API failed; the ship panel stops asking it: {e}");
-                return fallback;
+                return Failed(e, fallback);
             }
+        }
+
+        private static T Ask<TArg, T>(Func<TArg, T> call, TArg arg, T fallback)
+        {
+            try
+            {
+                T answer = call(arg);
+                return answer != null ? answer : fallback;
+            }
+            catch (Exception e)
+            {
+                return Failed(e, fallback);
+            }
+        }
+
+        /// <summary>A call threw: the link is off for the session, and this and every later answer is the neutral one.</summary>
+        private static T Failed<T>(Exception e, T fallback)
+        {
+            ready = false;
+            ShipConfig.Log.LogWarning($"GrindstoneSkills' Sailing API failed; the ship panel stops asking it: {e}");
+            return fallback;
         }
 
         private static bool Bind()

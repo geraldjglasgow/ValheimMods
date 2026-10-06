@@ -19,6 +19,12 @@ namespace ShipConfig
         private RectTransform track;
         private RectTransform fill;
 
+        // What the line was last drawn from, so a refresh with the same numbers formats and writes nothing.
+        private int shownA = int.MinValue;
+        private int shownB = int.MinValue;
+        private string shownName;
+        private string shownKey;
+
         public float Height { get; }
         public UITooltip Tip { get; }
 
@@ -51,6 +57,18 @@ namespace ShipConfig
             track.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Whether the line's inputs differ from the last ones drawn (numbers already rounded to what the line shows,
+        /// plus up to two strings); records them when they do, so the caller formats only then.
+        /// </summary>
+        public bool Changed(int a, int b, string name = null, string key = null)
+        {
+            if (a == shownA && b == shownB && shownName == name && shownKey == key)
+                return false;
+            (shownA, shownB, shownName, shownKey) = (a, b, name, key);
+            return true;
+        }
+
         public void Set(string labelText, string valueText, string topic, string text)
         {
             label.text = labelText;
@@ -69,7 +87,8 @@ namespace ShipConfig
             bool cooling = progress > 0f && progress < 1f;
             if (track.gameObject.activeSelf != cooling)
                 track.gameObject.SetActive(cooling);
-            fill.anchorMax = new Vector2(Mathf.Clamp01(progress), 1f);
+            if (cooling)
+                fill.anchorMax = new Vector2(progress, 1f);
         }
 
         /// <summary>Shown <paramref name="top"/> below the panel's top edge, inset by <paramref name="side"/> on both sides.</summary>

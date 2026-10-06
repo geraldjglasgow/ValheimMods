@@ -12,7 +12,7 @@ namespace ShipConfig
     {
         public const string PluginGuid = "com.ShipConfig";
         public const string PluginName = "ShipConfig";
-        public const string PluginVersion = "1.4.0";
+        public const string PluginVersion = "1.4.1";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -22,6 +22,7 @@ namespace ShipConfig
             Log = Logger;
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             ShipConfiguration.Initialize(Synced);
+            ShipValueQueue.Initialize(this);
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());

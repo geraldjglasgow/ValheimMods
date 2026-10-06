@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1
+
+- Less work every frame: the ship panel, ship damage and wear, and building pieces loading.
+- Joining a server with many changed ship values applies them once, not once per setting.
+
 ## 1.4.0
 
 - Ship panel under the minimap while aboard: speed, speed multiplier and map explore radius (`Ship Panel`).

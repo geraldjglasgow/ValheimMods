@@ -35,16 +35,12 @@ namespace ShipConfig
         }
 
         /// <summary>
-        /// A WearNTear awoke. For a ship whose prefab has no entries yet, binds them (defaults from the scene prefab
-        /// of that name, or from the instance when the prefab is not in the scene) and applies them to prefab and
-        /// loaded ships; then applies the values to this instance. Not a ship: nothing.
+        /// A ship's WearNTear awoke. For a ship whose prefab has no entries yet, binds them (defaults from the scene
+        /// prefab of that name, or from the instance when the prefab is not in the scene) and applies them to prefab
+        /// and loaded ships; then applies the values to this instance.
         /// </summary>
-        public static void OnWearNTearAwake(WearNTear wearNTear)
+        public static void OnShipAwake(WearNTear wearNTear, Ship ship)
         {
-            Ship ship = wearNTear.GetComponent<Ship>();
-            if (ship == null)
-                return;
-
             string name = Utils.GetPrefabName(wearNTear.gameObject);
             if (!ShipConfiguration.TryGet(name, out ShipEntries entries))
             {
@@ -86,12 +82,19 @@ namespace ShipConfig
 
     /// <summary>
     /// A ship instance awoke. WearNTear.Awake is the hook, not Ship.Awake: Ship's fields need no Awake, while
-    /// WearNTear.Awake reads the stored health and adds the world level bonus, and both must be done first.
+    /// WearNTear.Awake reads the stored health and adds the world level bonus, and both must be done first. Every
+    /// building piece wakes through here, so anything not a ship leaves at once, before the guard, and the guard's
+    /// lambda is static: a piece costs one component lookup and no allocation.
     /// </summary>
     [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Awake))]
     public static class WearNTearAwakePatch
     {
         [HarmonyPostfix]
-        public static void Postfix(WearNTear __instance) => Guard.Run("ship awake", () => ShipDiscovery.OnWearNTearAwake(__instance));
+        public static void Postfix(WearNTear __instance)
+        {
+            if (!__instance.TryGetComponent(out Ship ship))
+                return;
+            Guard.Run("ship awake", static (w, s) => ShipDiscovery.OnShipAwake(w, s), __instance, ship);
+        }
     }
 }

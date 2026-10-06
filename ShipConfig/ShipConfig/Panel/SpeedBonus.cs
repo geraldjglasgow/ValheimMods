@@ -13,6 +13,10 @@ namespace ShipConfig
     {
         private const float LeastDrag = 0.0001f;
 
+        // The last ship asked about and its prefab name: the panel asks four times a second about the same ship.
+        private static Ship namedShip;
+        private static string shipName;
+
         /// <summary>The ship is rowed (slow ahead or astern) rather than sailed.</summary>
         public static bool Rowing(Ship ship)
         {
@@ -23,7 +27,7 @@ namespace ShipConfig
         /// <summary>The ship's own top speed factor against vanilla, from its force and drag; 1 for a ship without entries.</summary>
         public static float FromSettings(Ship ship, bool rowing)
         {
-            if (!ShipConfiguration.TryGet(Utils.GetPrefabName(ship.gameObject), out ShipEntries entries))
+            if (!ShipConfiguration.TryGet(PrefabName(ship), out ShipEntries entries))
                 return 1f;
             float vanillaForce = (float)(rowing ? entries.PaddleForce.DefaultValue : entries.SailForce.DefaultValue);
             float vanillaDrag = (float)entries.ForwardDrag.DefaultValue;
@@ -34,18 +38,27 @@ namespace ShipConfig
             return Mathf.Sqrt(force / vanillaForce * (vanillaDrag / drag));
         }
 
-        /// <summary>The whole factor and a short account of it for the tooltip.</summary>
-        public static float Total(Ship ship, out string account)
+        /// <summary>The two parts of the factor: the ship's settings, and the helmsman's Sailing skill (1 without GrindstoneSkills).</summary>
+        public static void Parts(Ship ship, out bool rowing, out float settings, out float skill)
         {
-            bool rowing = Rowing(ship);
-            float settings = FromSettings(ship, rowing);
-            account = $"Top speed against a vanilla ship of this kind, {(rowing ? "rowing" : "under sail")}.\n" +
+            rowing = Rowing(ship);
+            settings = FromSettings(ship, rowing);
+            skill = GrindstoneLink.Present ? GrindstoneLink.SpeedFactor(ship) : 1f;
+        }
+
+        /// <summary>A short account of the factor for the tooltip, built only when its numbers changed.</summary>
+        public static string Account(bool rowing, float settings, float skill)
+        {
+            string account = $"Top speed against a vanilla ship of this kind, {(rowing ? "rowing" : "under sail")}.\n" +
                 $"Ship settings: x{settings:0.00}";
-            if (!GrindstoneLink.Present)
-                return settings;
-            float skill = GrindstoneLink.SpeedFactor(ship);
-            account += $"\nHelmsman's Sailing skill: x{skill:0.00}";
-            return settings * skill;
+            return GrindstoneLink.Present ? account + $"\nHelmsman's Sailing skill: x{skill:0.00}" : account;
+        }
+
+        private static string PrefabName(Ship ship)
+        {
+            if (ship != namedShip || shipName == null)
+                (namedShip, shipName) = (ship, Utils.GetPrefabName(ship.gameObject));
+            return shipName;
         }
     }
 }

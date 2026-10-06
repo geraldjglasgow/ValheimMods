@@ -34,6 +34,7 @@ namespace ShipConfig
         private readonly RectTransform divider;
         private readonly List<PanelRow> abilities = new List<PanelRow>();
         private int laidOut = -1;
+        private bool interactive = true;
 
         public PanelHover Hover { get; }
 
@@ -73,14 +74,21 @@ namespace ShipConfig
         }
 
         /// <summary>The lines are hit-tested only while the cursor is free (inventory, map or a menu open).</summary>
-        public void Interactive(bool free) => group.blocksRaycasts = free;
+        public void Interactive(bool free)
+        {
+            if (interactive == free)
+                return;
+            interactive = free;
+            group.blocksRaycasts = free;
+        }
 
+        /// <summary>Each line compares the numbers it shows, rounded as shown, and formats its text only when they moved.</summary>
         public void Refresh(Ship ship, float metresPerSecond)
         {
-            speed.Set("Speed", $"{metresPerSecond * 3.6f:0.0} km/h", "Speed",
-                "How fast the ship moves over the water, in kilometres per hour.");
-            float factor = SpeedBonus.Total(ship, out string account);
-            multiplier.Set("Speed multiplier", Multiplier(factor), "Speed multiplier", account);
+            int tenths = Mathf.RoundToInt(metresPerSecond * 36f);   // 0.1 km/h, as shown
+            if (speed.Changed(tenths, 0))
+                speed.Set("Speed", $"{tenths / 10f:0.0} km/h", "Speed", "How fast the ship moves over the water, in kilometres per hour.");
+            RefreshMultiplier(ship);
             RefreshExplore();
             string[] ids = GrindstoneLink.Abilities();
             for (int i = 0; i < ids.Length; i++)
@@ -88,6 +96,14 @@ namespace ShipConfig
             for (int i = ids.Length; i < abilities.Count; i++)
                 abilities[i].Hide();
             Layout(ids.Length);
+        }
+
+        private void RefreshMultiplier(Ship ship)
+        {
+            SpeedBonus.Parts(ship, out bool rowing, out float settings, out float skill);
+            int settingsShown = Mathf.RoundToInt(settings * 100f), skillShown = Mathf.RoundToInt(skill * 100f);
+            if (multiplier.Changed(settingsShown, skillShown * 2 + (rowing ? 1 : 0)))
+                multiplier.Set("Speed multiplier", Multiplier(settings * skill), "Speed multiplier", SpeedBonus.Account(rowing, settings, skill));
         }
 
         /// <summary>"x1.32", orange above vanilla, red below.</summary>
@@ -103,6 +119,8 @@ namespace ShipConfig
         {
             float factor = GrindstoneLink.ExploreFactor();
             float radius = Minimap.instance != null ? Minimap.instance.m_exploreRadius : VanillaExploreRadius;
+            if (!explore.Changed(Mathf.RoundToInt(radius * factor), Mathf.RoundToInt(factor * 100f) * 2 + (GrindstoneLink.Present ? 1 : 0)))
+                return;
             string account = $"How far around you the map uncovers as you sail. Vanilla {VanillaExploreRadius:0} m.";
             if (GrindstoneLink.Present)
                 account += $"\nYour Sailing skill: x{factor:0.00}";
@@ -113,11 +131,13 @@ namespace ShipConfig
         {
             string name = GrindstoneLink.AbilityName(id);
             string key = GrindstoneLink.AbilityKey(id);
-            string label = key.Length > 0 ? $"[<color=yellow>{key}</color>] <color=#FFFFFF>{name}</color>" : name;
             float left = GrindstoneLink.AbilityCooldown(id);
             float length = GrindstoneLink.AbilityCooldownLength(id);
-            row.Set(label, Cooldown(left), name, GrindstoneLink.AbilityDescription(id));
             row.SetBar(left > 0f && length > 0f ? 1f - left / length : 1f);
+            if (!row.Changed(Mathf.Max(0, Mathf.CeilToInt(left)), 0, name, key))
+                return;
+            string label = key.Length > 0 ? $"[<color=yellow>{key}</color>] <color=#FFFFFF>{name}</color>" : name;
+            row.Set(label, Cooldown(left), name, GrindstoneLink.AbilityDescription(id));
         }
 
         /// <summary>"Ready" in the game's orange, else the time left in grey: "42 s", "2:05".</summary>

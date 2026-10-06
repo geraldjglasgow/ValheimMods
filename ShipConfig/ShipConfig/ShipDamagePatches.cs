@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HarmonyLib;
 
 namespace ShipConfig
@@ -5,17 +6,35 @@ namespace ShipConfig
     /// <summary>
     /// Damage taken and invulnerability. Every hit on a WearNTear (attacks, collisions, and the ship's own water
     /// impact, capsize and Ashlands ocean damage, which all call WearNTear.Damage) reaches the owner through
-    /// RPC_Damage; weather, support and biome wear reach ApplyDamage directly from UpdateWear. Only objects with a
-    /// Ship component are affected.
+    /// RPC_Damage; weather, support and biome wear reach ApplyDamage directly from UpdateWear. Only the ship prefabs
+    /// ShipConfig knows (each has a Ship component) are affected.
     /// </summary>
     public static class ShipDamage
     {
-        /// <summary>The entries of the ship this WearNTear belongs to; null for anything that is not a known ship.</summary>
+        /// <summary>The known ships by the hash of their prefab name, which is what each one's ZDO carries.</summary>
+        private static readonly Dictionary<int, ShipEntries> byPrefab = new Dictionary<int, ShipEntries>();
+
+        /// <summary>
+        /// The entries of the ship this WearNTear belongs to; null for anything that is not a known ship. Every hit on
+        /// every piece and every weather-wear tick asks, so it is one dictionary lookup by the ZDO's prefab hash: no
+        /// component lookup and no name string.
+        /// </summary>
         public static ShipEntries ForShip(WearNTear wearNTear)
         {
-            if (wearNTear == null || wearNTear.GetComponent<Ship>() == null)
+            ZDO zdo = wearNTear != null && wearNTear.m_nview != null ? wearNTear.m_nview.GetZDO() : null;
+            if (zdo == null)
                 return null;
-            return ShipConfiguration.TryGet(Utils.GetPrefabName(wearNTear.gameObject), out ShipEntries entries) ? entries : null;
+            if (byPrefab.Count != ShipConfiguration.Ships.Count)
+                Index();
+            return byPrefab.TryGetValue(zdo.GetPrefab(), out ShipEntries entries) ? entries : null;
+        }
+
+        /// <summary>Ships are only ever added, so a count that differs means new ones to index.</summary>
+        private static void Index()
+        {
+            byPrefab.Clear();
+            foreach (KeyValuePair<string, ShipEntries> ship in ShipConfiguration.Ships)
+                byPrefab[ship.Key.GetStableHashCode()] = ship.Value;
         }
     }
 
