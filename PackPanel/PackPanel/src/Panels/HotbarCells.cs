@@ -16,6 +16,8 @@ namespace PackPanel.Panels
     /// have +4 inventory I should see hotkeys 1-6"). The game draws boxes only up to its last item and makes them all
     /// again whenever that count changes, so the empty boxes after it are PackPanel's own: taken out of the game's list
     /// before it runs, put back after it, made again only when the count they follow changes. With rows the bar is the game's.
+    /// Only the game's own bar gets them (the first under the HUD): a quickslot mod's copy of the bar is left alone, so two
+    /// bars never take the boxes from each other every frame.
     /// </summary>
     [HarmonyPatch(typeof(HotkeyBar), nameof(HotkeyBar.UpdateIcons))]
     public static class HotbarCells
@@ -23,25 +25,53 @@ namespace PackPanel.Panels
         private static readonly List<HotkeyBar.ElementData> pads = new List<HotkeyBar.ElementData>();
         private static HotkeyBar owner;
         private static int padsFrom = -1;
+        private static Hud lookedIn;
+        private static HotkeyBar games;
 
         [HarmonyPrefix]
         private static void Prefix(HotkeyBar __instance)
         {
-            if (__instance == owner)
-                __instance.m_elements.RemoveAll(pads.Contains);
+            if (pads.Count == 0 || __instance != owner)
+                return;
+            List<HotkeyBar.ElementData> elements = __instance.m_elements;
+            for (int i = elements.Count - 1; i >= 0; i--)
+            {
+                if (pads.Contains(elements[i]))
+                    elements.RemoveAt(i);
+            }
         }
 
         [HarmonyPostfix]
         private static void Postfix(HotkeyBar __instance, Player player)
         {
+            if (!IsGames(__instance))
+                return;
             int from = __instance.m_elements.Count;
             int wanted = player != null && !player.IsDead() ? Wanted() : 0;
             if (__instance != owner || from != padsFrom || pads.Count != Math.Max(0, wanted - from))
                 Rebuild(__instance, player, from, wanted);
             bool gamepad = ZInput.IsGamepadActive();
             for (int i = 0; i < pads.Count; i++)
-                pads[i].m_selection.SetActive(gamepad && from + i == __instance.m_selected);
+            {
+                bool selected = gamepad && from + i == __instance.m_selected;
+                if (pads[i].m_selection.activeSelf != selected)
+                    pads[i].m_selection.SetActive(selected);
+            }
             __instance.m_elements.AddRange(pads);
+        }
+
+        /// <summary>The game's own bar: the first under the HUD, looked up once per HUD; without one, the first bar seen.</summary>
+        private static bool IsGames(HotkeyBar bar)
+        {
+            Hud hud = Hud.instance;
+            if (!ReferenceEquals(hud, lookedIn) || games == null)
+            {
+                lookedIn = hud;
+                games = hud != null ? hud.GetComponentInChildren<HotkeyBar>(true) : null;
+                if (games == null)
+                    games = bar;
+            }
+            return bar == games;
         }
 
         /// <summary>The open cells of the top row up to key 8 while the main grid is only the hands, else 0.</summary>

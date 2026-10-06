@@ -17,21 +17,27 @@ namespace PackPanel.Slots
     [HarmonyPatch(typeof(Inventory), nameof(Inventory.MoveAll))]
     public static class TakeAllRouting
     {
+        /// <summary>The items held before the take all, one set reused (a take all into the player never runs inside another).</summary>
+        private static readonly HashSet<ItemDrop.ItemData> before = new HashSet<ItemDrop.ItemData>();
+
         [HarmonyPrefix]
-        public static void Prefix(Inventory __instance, out HashSet<ItemDrop.ItemData> __state)
+        public static void Prefix(Inventory __instance, out bool __state)
         {
-            bool routes = InventoryState.Manages(__instance) && (KeyRing.Active || Tacklebox.Active || InventoryState.CellsOf(SlotKind.Ammo).Count > 0);
-            __state = routes ? new HashSet<ItemDrop.ItemData>(__instance.GetAllItems()) : null;
+            __state = InventoryState.Manages(__instance) && (KeyRing.Active || Tacklebox.Active || InventoryState.CellsOf(SlotKind.Ammo).Count > 0);
+            if (!__state)
+                return;
+            before.Clear();
+            before.UnionWith(__instance.GetAllItems());
         }
 
         [HarmonyPostfix]
-        public static void Postfix(Inventory __instance, HashSet<ItemDrop.ItemData> __state)
+        public static void Postfix(Inventory __instance, bool __state)
         {
-            if (__state == null)
+            if (!__state)
                 return;
             foreach (ItemDrop.ItemData item in new List<ItemDrop.ItemData>(__instance.GetAllItems()))
             {
-                if (__state.Contains(item) || !InventoryState.Layout.IsMain(item.m_gridPos))
+                if (before.Contains(item) || !InventoryState.Layout.IsMain(item.m_gridPos))
                     continue;
                 if (Route(__instance, item) && item.m_stack <= 0)
                     __instance.RemoveItem(item);

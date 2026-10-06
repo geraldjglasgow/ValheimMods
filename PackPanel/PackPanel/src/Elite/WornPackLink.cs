@@ -1,21 +1,26 @@
 using System.Collections.Generic;
 using EliteCraftingLink;
 using PackPanel.Backpacks;
+using PackPanel.Core;
+using PackPanel.Worn;
 
 namespace PackPanel.Elite
 {
     /// <summary>
-    /// The worn backpack as EliteCrafting equipment. EliteCrafting counts the game's equipment fields only, and a pack is
-    /// worn in PackPanel's Backpack slot, never as the game's utility, so an equipment provider names it: the pack in the
-    /// local player's Backpack slot (<see cref="Backpack.WornItem"/>; none for any other player, whose totals EliteCrafting
-    /// does not compute here). Its inscriptions then count like worn gear (Broad Back's carry weight, Pack Mule, Magpie,
-    /// Harvester). EliteCrafting is told to rebuild the player's totals when the worn pack changes (checked each frame by
+    /// The worn backpack and the extra worn utilities as EliteCrafting equipment. EliteCrafting counts the game's
+    /// equipment fields only, and a pack is worn in PackPanel's Backpack slot, never as the game's utility, while the
+    /// utilities beyond the game's one are PackPanel's (<see cref="ExtraUtilities"/>), so an equipment provider names them:
+    /// the pack in the local player's Backpack slot (<see cref="Backpack.WornItem"/>) and each extra utility still worn
+    /// (since 2026-10-05: before, an inscription on the second or third utility did nothing); none for any other player,
+    /// whose totals EliteCrafting does not compute here. Their inscriptions then count like worn gear (Broad Back's carry
+    /// weight, Pack Mule, Magpie, Harvester). An extra utility worn or taken off runs the game's SetupEquipment, which
+    /// makes EliteCrafting rebuild. EliteCrafting is told to rebuild the player's totals when the worn pack changes (checked each frame by
     /// <see cref="BackpackWear"/>) and when a write changes the worn pack's inscriptions (its item-changed listener).
     /// The provider answers from one reused list: EliteCrafting reads it at once and keeps nothing.
     /// </summary>
     public static class WornPackLink
     {
-        private static readonly List<ItemDrop.ItemData> answer = new List<ItemDrop.ItemData>(1);
+        private static readonly List<ItemDrop.ItemData> answer = new List<ItemDrop.ItemData>(5);
         private static ItemDrop.ItemData lastWorn;
 
         internal static void Register(List<string> refused)
@@ -39,6 +44,11 @@ namespace PackPanel.Elite
             ItemDrop.ItemData pack = Backpack.WornItem(player);
             if (pack != null)
                 answer.Add(pack);
+            if (!InventoryState.IsLocal(player))
+                return answer;
+            foreach (ItemDrop.ItemData utility in ExtraUtilities.Worn)
+                if (utility.m_equipped && utility != pack)
+                    answer.Add(utility);
             return answer;
         }
 

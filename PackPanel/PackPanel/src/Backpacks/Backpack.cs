@@ -17,8 +17,31 @@ namespace PackPanel.Backpacks
         /// <summary>On a player's ZDO (int): the stable hash of the worn pack's prefab name, 0 for none. Written by its own client.</summary>
         public static readonly int WornKey = "PackPanel.backpack".GetStableHashCode();
 
+        private static readonly InventoryWatch wornWatch = new InventoryWatch();
+        private static InventoryLayout wornLayout;
+        private static BackpackKind wornKind;
+
         /// <summary>The kind the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
         public static BackpackKind Worn(Player player) => BackpackCatalog.Of(WornItem(player));
+
+        /// <summary>
+        /// <see cref="Worn"/> for the carry weight, which the game asks every frame (<c>IsEncumbered</c>): the Backpack
+        /// slot is looked at again only after the inventory changed (<see cref="InventoryWatch"/>) or the layout did,
+        /// rather than the inventory searched on every call. The settings are read every time.
+        /// </summary>
+        public static BackpackKind WornNow(Player player)
+        {
+            if (!InventoryState.IsLocal(player) || !InventoryState.Active || !BackpackSettings.Active)
+                return null;
+            Inventory inventory = player.GetInventory();
+            InventoryLayout layout = InventoryState.Layout;
+            if (wornWatch.Changed(inventory) || !ReferenceEquals(layout, wornLayout))
+            {
+                wornLayout = layout;
+                wornKind = BackpackCatalog.Of(ItemInSlot(inventory, layout));
+            }
+            return wornKind;
+        }
 
         /// <summary>The pack the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
         public static ItemDrop.ItemData WornItem(Player player)

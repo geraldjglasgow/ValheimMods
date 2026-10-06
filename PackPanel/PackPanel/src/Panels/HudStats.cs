@@ -7,7 +7,8 @@ namespace PackPanel.Panels
 {
     /// <summary>
     /// Armor, weight and world level in inventory order, with matching squares in a column right of the minimap: full
-    /// size (48 units, the user found them tiny at 65%), the map moved over to make room (<see cref="HudRoom"/>).
+    /// size (48 units, the user found them tiny at 65%), the map moved over to make room (<see cref="HudRoom"/>). Every
+    /// frame: the column is found once and kept while it lives, and only its shown boxes are dressed.
     /// </summary>
     public static class HudStats
     {
@@ -18,23 +19,32 @@ namespace PackPanel.Panels
         private static float nextTry;
         private static int armorShown;
         private static TMP_Text armorText;
+        private static RectTransform column;
 
         public static void Refresh(bool show)
         {
             InventoryGui gui = InventoryGui.instance;
             if (gui == null || gui.m_takeAllButton == null) return;
             Armor(gui, show);
-            RectTransform column = HudRow.Container();
-            if (column != null)
+            RectTransform hud = HudColumn();
+            if (hud != null && hud.gameObject.activeInHierarchy)
             {
-                if (column.localScale.x != Scale) column.localScale = Vector3.one * Scale;
-                for (int i = 0; i < column.childCount; i++)
+                if (hud.localScale.x != Scale) hud.localScale = Vector3.one * Scale;
+                for (int i = 0; i < hud.childCount; i++)
                 {
-                    RectTransform box = column.GetChild(i) as RectTransform;
-                    if (box != null && StatIconFrames.IsHudStat(box)) StatIconFrames.Dress(gui, box, true);
+                    RectTransform box = hud.GetChild(i) as RectTransform;
+                    if (box != null && box.gameObject.activeSelf && StatIconFrames.IsHudStat(box)) StatIconFrames.Dress(gui, box, true);
                 }
             }
-            HudRoom.Fit(column);
+            HudRoom.Fit(hud);
+        }
+
+        /// <summary>The library's HUD column (<see cref="HudRow.Container"/>, which searches the minimap for it), kept while it lives.</summary>
+        private static RectTransform HudColumn()
+        {
+            if (!Column.Active) return null;
+            if (column == null) column = HudRow.Container();
+            return column;
         }
 
         private static void Armor(InventoryGui gui, bool show)

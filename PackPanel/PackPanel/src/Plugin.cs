@@ -28,14 +28,12 @@ namespace PackPanel
     {
         public const string PluginGuid = "milkyteam.packpanel";
         public const string PluginName = "PackPanel";
-        public const string PluginVersion = "0.11.0";
+        public const string PluginVersion = "0.12.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
         public static ConfigEntry<bool> LockConfiguration { get; private set; }
         public static Plugin Instance { get; private set; }
-
-        private EditorHost editorHost;
 
         private void Awake()
         {
@@ -54,7 +52,6 @@ namespace PackPanel
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
             Synced.Finish(harmony);
-            editorHost = EditorHost.Add(gameObject, Synced.YamlEditor);
             Log.LogInfo($"Loading [{PluginName} {PluginVersion}]" + (failed > 0 ? $" with {failed} failed patches, see above" : ""));
 
             // Exceptions thrown by this mod's patches are logged under the PackPanel log source, then rethrown.
@@ -63,8 +60,6 @@ namespace PackPanel
 
         private void Update()
         {
-            Synced.YamlEditor.Update();
-            editorHost?.Follow();
             GamePanelTheme.Update();
             NightShade.Update();
         }

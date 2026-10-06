@@ -1,7 +1,6 @@
 using System.Text;
-using HarmonyLib;
-using Hotkeys;
 using PackPanel.Core;
+using PackPanel.Layout;
 using PackPanel.Slots;
 using UnityEngine;
 
@@ -13,11 +12,10 @@ namespace PackPanel.Consume
     /// over it (<see cref="ConsumeBarCell"/>), then a square per Mead slot with its Mead Slot key and its mead
     /// (<see cref="ConsumeBarSlots"/>; since 2026-10-05, when the Mead Key and its square went). Food without slots or a
     /// key, or a slot without a key, is left out; nothing shows without any, while dead, or with the module off. A child of
-    /// the HUD's root, so it hides with the HUD. Checked from a <c>Hud.Update</c> postfix ten times a second, built again
-    /// only when a square comes or goes or a key changes. Per player (<c>5. Look / Food And Mead Bar</c>); local only,
+    /// the HUD's root, so it hides with the HUD. Checked from the <c>Hud.Update</c> postfix (<see cref="HudTick"/>) ten times a second, planned again
+    /// only when the layout or a key changes, built again only when a square comes or goes or a key changes. Per player (<c>5. Look / Food And Mead Bar</c>); local only,
     /// nothing is sent.
     /// </summary>
-    [HarmonyPatch(typeof(Hud), nameof(Hud.Update))]
     public static class ConsumeBar
     {
         public const string Name = "PackPanel_consumebar";
@@ -30,9 +28,11 @@ namespace PackPanel.Consume
         private static RectTransform bar;
         private static string built;
         private static float next;
+        private static string planned = "";
+        private static InventoryLayout plannedLayout;
+        private static int plannedKeys = -1;
 
-        [HarmonyPostfix]
-        public static void Postfix(Hud __instance)
+        public static void Tick(Hud hud)
         {
             if (Time.time < next)
                 return;
@@ -40,7 +40,7 @@ namespace PackPanel.Consume
             Player player = Player.m_localPlayer;
             string plan = Shown(player) ? Plan() : "";
             if (plan.Length > 0 && (bar == null || plan != built))
-                Build(__instance, plan);
+                Build(hud, plan);
             if (bar == null)
                 return;
             bool show = plan.Length > 0;
@@ -53,18 +53,27 @@ namespace PackPanel.Consume
         private static bool Shown(Player player) =>
             player != null && !player.IsDead() && InventoryState.Active && player == InventoryState.Player && ConsumeSettings.Bar.Value;
 
-        private static string FoodKeyName() => KeyNames.Short(ConsumeSettings.FoodKey.Value);
+        private static string FoodKeyName() => ConsumeKeyNames.Food;
 
         private static bool FoodDrawn() => InventoryState.CellsOf(SlotKind.Food).Count > 0 && FoodKeyName().Length > 0;
 
-        /// <summary>What the bar is built from: the food square and each drawn slot with its key; empty when nothing is drawn.</summary>
+        /// <summary>
+        /// What the bar is built from: the food square and each drawn slot with its key; empty when nothing is drawn. Made
+        /// again only when the layout (the slots) or a key changed, the same text otherwise.
+        /// </summary>
         private static string Plan()
         {
+            InventoryLayout layout = InventoryState.Layout;
+            if (ReferenceEquals(layout, plannedLayout) && ConsumeKeyNames.Version == plannedKeys)
+                return planned;
+            plannedLayout = layout;
+            plannedKeys = ConsumeKeyNames.Version;
             StringBuilder plan = new StringBuilder();
             if (FoodDrawn())
                 plan.Append("food ").Append(FoodKeyName()).Append('|');
             ConsumeBarSlots.Plan(plan);
-            return plan.ToString();
+            planned = plan.ToString();
+            return planned;
         }
 
         private static void Build(Hud hud, string plan)

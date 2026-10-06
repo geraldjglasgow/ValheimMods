@@ -12,7 +12,7 @@ namespace PackPanel.Tackle
     /// size in rows of <see cref="Columns"/>: the game's grid still owns it, so clicks, drags, the game's tooltip, its
     /// equipped mark on the bait in use and the gamepad work as on any cell. Unlike the key ring every cell shows, empty
     /// ones with their caption, so a bait can be dropped into any of them. Every frame a stack shows its count alone, and
-    /// only above one, like the ring and the purse.
+    /// only above one, like the ring and the purse (the game's "37/100" goes to a stand-in, <see cref="Panels.GridHold"/>).
     /// </summary>
     public static class TackleCells
     {
@@ -65,17 +65,15 @@ namespace PackPanel.Tackle
             return element != null && element.gameObject.activeInHierarchy;
         }
 
-        /// <summary>Every frame the pop-up shows: a stack's count alone ("37"), only above one.</summary>
+        /// <summary>Every frame the pop-up shows: a stack's count alone ("37"), only above one, written only when it changes.</summary>
         public static void Refresh(Inventory inventory)
         {
             foreach (InventoryElement element in elements)
             {
-                if (element == null || !element.m_used)
+                if (element == null)
                     continue;
-                ItemDrop.ItemData item = inventory.GetItemAt(element.Position.x, element.Position.y);
-                element.m_amount.enabled = item != null && item.m_stack > 1;
-                if (element.m_amount.enabled)
-                    element.m_amount.text = NumberText.Of(item.m_stack);
+                ItemDrop.ItemData item = element.m_used ? inventory.GetItemAt(element.Position.x, element.Position.y) : null;
+                NumberText.ShowCount(element.m_amount, item);
             }
         }
     }

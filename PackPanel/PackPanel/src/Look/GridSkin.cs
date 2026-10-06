@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using HarmonyLib;
 using PlateColumn;
 using PackPanel.Core;
 using PackPanel.Panels;
@@ -15,6 +16,8 @@ namespace PackPanel.Look
     /// units past their panel; the brown ones reach 12, a little room between the frame and the cells, and the container
     /// panel sits 4 units lower so the two frames keep the game's gap. Off, the game's sprites, materials and sizes come
     /// back: each panel's own are remembered the first time it is changed, the cell sprite once from the game's element.
+    /// What is remembered of a panel goes with it: destroyed panels are dropped when a new one is remembered, and all of
+    /// them when the inventory is destroyed (leaving the world).
     /// </summary>
     public static class GridSkin
     {
@@ -23,6 +26,7 @@ namespace PackPanel.Look
 
         private static readonly Dictionary<Image, Sprite> panelSprites = new Dictionary<Image, Sprite>();
         private static readonly Dictionary<Image, Material> panelMaterials = new Dictionary<Image, Material>();
+        private static readonly List<Image> gone = new List<Image>();
         private static Sprite gameCell;
 
         /// <summary>The brown look is part of the new inventory: the master switch off brings the game's back too.</summary>
@@ -65,6 +69,7 @@ namespace PackPanel.Look
             TimberBackground.Apply(image, false);
             if (!panelSprites.ContainsKey(image) && image.sprite != Skin.Panel && !SkinArt.IsPanel(image.sprite))
             {
+                Prune();
                 panelSprites[image] = image.sprite;
                 panelMaterials[image] = image.material;
             }
@@ -94,6 +99,33 @@ namespace PackPanel.Look
         public static Sprite GameSprite(Image image) => image != null && panelSprites.TryGetValue(image, out Sprite kept) ? kept : image?.sprite;
 
         public static Material GameMaterial(Image image) => image != null && panelMaterials.TryGetValue(image, out Material kept) ? kept : image?.material;
+
+        /// <summary>Panels go with the inventory (a new world builds new ones): their remembered sprites go with them.</summary>
+        private static void Prune()
+        {
+            gone.Clear();
+            foreach (Image image in panelSprites.Keys)
+                if (image == null)
+                    gone.Add(image);
+            foreach (Image image in gone)
+            {
+                panelSprites.Remove(image);
+                panelMaterials.Remove(image);
+            }
+            gone.Clear();
+        }
+
+        /// <summary>The inventory is destroyed (leaving the world): nothing remembered of its panels is needed any more.</summary>
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnDestroy))]
+        public static class Forget
+        {
+            [HarmonyPostfix]
+            public static void Postfix()
+            {
+                panelSprites.Clear();
+                panelMaterials.Clear();
+            }
+        }
 
         /// <summary>A panel's wood: its direct child named Bkg, as the game's scene names it.</summary>
         public static Image Background(RectTransform panel)

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Hotkeys;
 using PackPanel.Core;
 using PackPanel.Panels;
 using PackPanel.Slots;
@@ -77,6 +76,6 @@ namespace PackPanel.Consume
 
         private static int Count() => Math.Min(InventoryState.CellsOf(SlotKind.Mead).Count, ConsumeSettings.MeadSlotKeys.Length);
 
-        private static string Key(int slot) => KeyNames.Short(ConsumeSettings.MeadSlotKeys[slot].Value);
+        private static string Key(int slot) => ConsumeKeyNames.Mead(slot);
     }
 }

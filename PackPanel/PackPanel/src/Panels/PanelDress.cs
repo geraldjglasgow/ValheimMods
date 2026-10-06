@@ -13,7 +13,8 @@ namespace PackPanel.Panels
     /// own (a child of the player panel named <c>PlateColumn_boxes</c>, a vertical column in rank order), so every copy
     /// of the library still finds it, adds its boxes and orders them; the library sets the container's place only when
     /// it makes it, so the move holds. PackPanel makes the column itself when no other mod has, so the game's armour and
-    /// weight are boxes too. Checked every frame the grid is drawn; nothing is written unless it changed.
+    /// weight are boxes too. Checked every frame the grid is drawn; nothing is written unless it changed, and the
+    /// container and the panel's background are found by name once and kept while they live.
     /// </summary>
     public static class PanelDress
     {
@@ -27,11 +28,30 @@ namespace PackPanel.Panels
         public const float SideGap = 4f;
         private const string Boxes = "PlateColumn_boxes";
 
+        private static RectTransform boxes;
+        private static Image background;
+
         /// <summary>How far the panel's background reaches past the panel's rect (its stretched Bkg's size delta).</summary>
         public static float Overhang(InventoryGui gui)
         {
-            Image background = GridSkin.Background(gui.m_player);
-            return background != null ? Mathf.Max(0f, background.rectTransform.sizeDelta.x / 2f) : 0f;
+            Image bkg = Background(gui);
+            return bkg != null ? Mathf.Max(0f, bkg.rectTransform.sizeDelta.x / 2f) : 0f;
+        }
+
+        /// <summary>The player panel's background (<see cref="GridSkin.Background(RectTransform)"/>), kept while it lives.</summary>
+        private static Image Background(InventoryGui gui)
+        {
+            if (background == null || background.transform.parent != gui.m_player)
+                background = GridSkin.Background(gui.m_player);
+            return background;
+        }
+
+        /// <summary>The library's column container on the player panel, kept while it lives; null while there is none.</summary>
+        public static RectTransform ColumnBoxes(InventoryGui gui)
+        {
+            if (boxes == null || boxes.parent != gui.m_player)
+                boxes = gui.m_player.Find(Boxes) as RectTransform;
+            return boxes;
         }
 
         /// <summary>The first grid row's top under the panel's top: the grid's 2 unit inset plus the frame's pad.</summary>
@@ -49,24 +69,24 @@ namespace PackPanel.Panels
 
         public static void Update(InventoryGui gui)
         {
-            RectTransform boxes = gui.m_player.Find(Boxes) as RectTransform ?? Column.Boxes(gui);
-            if (boxes == null)
+            RectTransform column = ColumnBoxes(gui) ?? Column.Boxes(gui);
+            if (column == null)
                 return;
             bool inPanel = StatsPanel.On && StatsPanel.Find(gui) != null;
-            StatIconFrames.Apply(gui, boxes, inPanel);
-            float width = inPanel ? StatsPanel.ContentWidth(gui) : Column.BoxSize;
-            if (!Mathf.Approximately(boxes.sizeDelta.x, width))
+            StatIconFrames.Apply(gui, column, inPanel);
+            float width = inPanel ? StatsPanel.ContentWidth(column) : Column.BoxSize;
+            if (!Mathf.Approximately(column.sizeDelta.x, width))
             {
-                boxes.sizeDelta = new Vector2(width, boxes.sizeDelta.y);
+                column.sizeDelta = new Vector2(width, column.sizeDelta.y);
                 SlotPanel.Refresh(gui);
             }
-            Move(boxes, inPanel ? StatsPanel.ColumnStart(gui) : new Vector2(Column.Left, -Column.Top));
+            Move(column, inPanel ? StatsPanel.ColumnStart(gui) : new Vector2(Column.Left, -Column.Top));
         }
 
-        private static void Move(RectTransform boxes, Vector2 at)
+        private static void Move(RectTransform column, Vector2 at)
         {
-            if ((boxes.anchoredPosition - at).sqrMagnitude > 0.01f)
-                boxes.anchoredPosition = at;
+            if ((column.anchoredPosition - at).sqrMagnitude > 0.01f)
+                column.anchoredPosition = at;
         }
     }
 }

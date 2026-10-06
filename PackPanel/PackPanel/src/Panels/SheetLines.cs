@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using PackPanel.Core;
+using PackPanel.Elite;
 
 namespace PackPanel.Panels
 {
@@ -8,7 +9,8 @@ namespace PackPanel.Panels
     /// shield in hand (<see cref="HeldStatLines"/>), the game's resistances, the gear's other modifiers (<see cref="GearStatLines"/>), then Epic Loot's active effects when installed, a section per
     /// group (<see cref="EffectGroups"/>), each effect once with Epic Loot's total in Epic Loot's own words
     /// (<see cref="EpicLootLink"/>). Epic Loot's effects that also feed the game's numbers (health, armour, carry weight,
-    /// movement) are listed too: the core lines are totals, these say what the magic adds.
+    /// movement) are listed too: the core lines are totals, these say what the magic adds. Then EliteCrafting's
+    /// inscriptions, a section per category (<see cref="EliteStatLines"/>).
     /// </summary>
     public static class SheetLines
     {
@@ -28,6 +30,7 @@ namespace PackPanel.Panels
             if (EpicLootLink.ActiveTypes(player, types))
                 foreach (EffectGroups.Group group in EffectGroups.Order)
                     AddGroup(player, sheet, group);
+            EliteStatLines.Fill(player, sheet);
         }
 
         private static void AddGroup(Player player, StatSheet sheet, EffectGroups.Group group)

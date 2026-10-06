@@ -1,4 +1,3 @@
-using HarmonyLib;
 using PackPanel.Core;
 
 namespace PackPanel.Slots
@@ -9,23 +8,11 @@ namespace PackPanel.Slots
     /// to the purse: onto a stack of the same ammo in an Ammo slot up to the stack size, left to right, then into an empty
     /// Ammo slot whole (<see cref="SlotFill"/>). What the slots cannot hold goes on through the game's own add (another
     /// stack, then a free main cell). Bait is the tacklebox's (<see cref="Tackle.TackleRouting"/>): the game's baits are
-    /// ammo too, so they are left out here. A take all is sorted out after it (<see cref="TakeAllRouting"/>).
+    /// ammo too, so they are left out here. A take all is sorted out after it (<see cref="TakeAllRouting"/>). Called from
+    /// the one AddItem patch (<see cref="AddRouting"/>), after the purse, the key ring and the tacklebox.
     /// </summary>
-    [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData) })]
     public static class AmmoRouting
     {
-        /// <summary>An add another route already made (the purse, the key ring, the tacklebox) is left alone.</summary>
-        [HarmonyPrefix]
-        public static bool Prefix(Inventory __instance, ItemDrop.ItemData item, ref bool __result, bool __runOriginal)
-        {
-            if (!__runOriginal)
-                return false;
-            if (item == null || !InventoryState.Manages(__instance) || !IsAmmo(item) || !TakeIn(__instance, item))
-                return true;
-            __result = true;
-            return false;
-        }
-
         public static bool IsAmmo(ItemDrop.ItemData item) =>
             item.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Ammo && !Tackle.TackleRules.IsBait(item);
 

@@ -21,7 +21,17 @@ namespace PackPanel.Panels
     {
         public const string Name = "PackPanel_stats";
 
-        public static RectTransform Find(InventoryGui gui) => gui != null ? gui.m_player.Find(Name) as RectTransform : null;
+        private static RectTransform found;
+
+        /// <summary>The panel, found by name once and kept while it lives (asked every frame the grid is drawn); null before it is made.</summary>
+        public static RectTransform Find(InventoryGui gui)
+        {
+            if (gui == null)
+                return null;
+            if (found == null || found.parent != gui.m_player)
+                found = gui.m_player.Find(Name) as RectTransform;
+            return found;
+        }
 
         /// <summary>Whether the panel is part of the layout: whenever the inventory section lays the panel out.</summary>
         public static bool On => InventoryState.Active;
@@ -37,14 +47,17 @@ namespace PackPanel.Panels
         public static float Width(InventoryGui gui) => SideMargin * 2f + ContentWidth(gui);
 
         /// <summary>Fit the compact readouts, but leave room for any wider plates another mod adds.</summary>
-        public static float ContentWidth(InventoryGui gui)
+        public static float ContentWidth(InventoryGui gui) => ContentWidth(PanelDress.ColumnBoxes(gui));
+
+        /// <summary><see cref="ContentWidth(InventoryGui)"/> of a column container already found (null: none).</summary>
+        public static float ContentWidth(Transform boxes)
         {
             float width = StatIconLayout.Size;
-            Transform boxes = gui.m_player.Find("PlateColumn_boxes");
-            if (boxes != null)
-                foreach (Transform child in boxes)
-                    if (child.gameObject.activeSelf && child is RectTransform rect)
-                        width = Mathf.Max(width, rect.rect.width);
+            if (boxes == null)
+                return width;
+            for (int i = 0; i < boxes.childCount; i++)
+                if (boxes.GetChild(i) is RectTransform rect && rect.gameObject.activeSelf)
+                    width = Mathf.Max(width, rect.rect.width);
             return width;
         }
 
@@ -57,7 +70,7 @@ namespace PackPanel.Panels
         /// <summary>The active boxes one under the other, the library's spacing between them.</summary>
         public static float ColumnHeight(InventoryGui gui)
         {
-            Transform boxes = gui.m_player.Find("PlateColumn_boxes");
+            Transform boxes = PanelDress.ColumnBoxes(gui);
             float height = 0f;
             int count = 0;
             if (boxes != null)

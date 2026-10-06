@@ -22,8 +22,10 @@ namespace PackPanel.Ring
         public const string Name = "PackPanel_keyring_button";
         private static InventoryElement button;
         private static string shownList;
+        private static readonly InventoryWatch watch = new InventoryWatch();
         private static int[] counts;
         private static int[] shownCounts;
+        private static int countedVersion = -1;
 
         public static void Place(InventoryGui gui, RectTransform panel, SlotPanelLayout plan, float step, TMP_FontAsset font)
         {
@@ -42,9 +44,14 @@ namespace PackPanel.Ring
             GridSkin.Cell(button);
             SlotLabels.Set(button, new Slot(SlotKind.Key, 0), font);
             shownList = null;
+            KeyRingNotice.Forget();
         }
 
-        /// <summary>Every frame the grid is drawn: the icon, the number of different keys held, the list and the gamepad's highlight.</summary>
+        /// <summary>
+        /// Every frame the grid is drawn: the icon, the gamepad's highlight and, counted again only after the inventory
+        /// changed (<see cref="InventoryWatch"/>), the key list or the item database did, the number of different keys
+        /// held and the list.
+        /// </summary>
         public static void Refresh(InventoryGui gui)
         {
             if (button == null || !button.gameObject.activeInHierarchy || !KeyRing.Active)
@@ -52,11 +59,26 @@ namespace PackPanel.Ring
             button.m_icon.enabled = !InventorySettings.SlotLabels.Value;
             button.m_icon.sprite = SlotIcons.For(SlotKind.Key);
             button.m_icon.color = SlotIcons.Hint;
-            counts = KeyRing.Counts(InventoryState.Player.GetInventory(), counts);
-            if (shownList == null || shownCounts == null || !SameCounts())
-                ShowCounts(gui);
+            Inventory inventory = InventoryState.Player.GetInventory();
+            if (Due(inventory))
+            {
+                counts = KeyRing.Counts(inventory, counts);
+                if (shownList == null || shownCounts == null || !SameCounts())
+                    ShowCounts(gui);
+            }
             button.m_selected.SetActive(KeyRingGamepad.OnButton(gui));
             KeyRingNotice.Show(button);
+        }
+
+        /// <summary>Whether to count again: the inventory changed, the key lookup was made again or the button placed again.</summary>
+        private static bool Due(Inventory inventory)
+        {
+            bool changed = watch.Changed(inventory);
+            KeyNames.Get();
+            if (!changed && countedVersion == KeyNames.Version && shownList != null && counts != null)
+                return false;
+            countedVersion = KeyNames.Version;
+            return true;
         }
 
         private static bool SameCounts()

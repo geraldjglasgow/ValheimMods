@@ -15,6 +15,7 @@ namespace PackPanel.Panels
         public static string MissingHealth { get; private set; }
         public static string ParryArmour { get; private set; }
         public static string Skill { get; private set; }
+        public static string Capped { get; private set; }
 
         public static void Register()
         {
@@ -28,6 +29,7 @@ namespace PackPanel.Panels
             MissingHealth = Language.Add("packpanel_tip_missinghealth", "Missing health");
             ParryArmour = Language.Add("packpanel_tip_parryarmor", "Block armor on a parry");
             Skill = Language.Add("packpanel_tip_skill", "Skill");
+            Capped = Language.Add("packpanel_tip_capped", "Over the cap: the game applies less than the sum");
         }
     }
 }

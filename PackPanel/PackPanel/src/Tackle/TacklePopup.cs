@@ -23,8 +23,9 @@ namespace PackPanel.Tackle
         private static float step = 70f;
         private static bool placed;
         private static bool fresh;
+        private static readonly PanelFind popupFind = new PanelFind(Name);
 
-        public static RectTransform Find(InventoryGui gui) => gui != null ? gui.m_player.Find(Name) as RectTransform : null;
+        public static RectTransform Find(InventoryGui gui) => popupFind.In(gui);
 
         /// <summary>
         /// Where the pop-up hangs, under the slot panel and the Tacklebox slot, worked out when the grid is placed; it is
@@ -82,6 +83,7 @@ namespace PackPanel.Tackle
         private static void Make(InventoryGui gui)
         {
             RectTransform popup = SlotPanel.MakePanel(gui, Name);
+            popupFind.Made(gui, popup);
             popup.pivot = new Vector2(0f, 1f);
             GridSkin.Panel(popup.GetComponent<Image>());   // remembers the game's sprite while it still shows it
         }

@@ -31,6 +31,7 @@ namespace PackPanel.Core
         public static string StatResistances { get; private set; }
         public static string StatGear { get; private set; }
         public static string StatEpicLoot { get; private set; }
+        public static string StatEliteCrafting { get; private set; }
         public static string StatOffence { get; private set; }
         public static string StatDefence { get; private set; }
         public static string StatResources { get; private set; }
@@ -70,6 +71,7 @@ namespace PackPanel.Core
             StatResistances = Language.Add("packpanel_stat_resistances", "Resistances");
             StatGear = Language.Add("packpanel_stat_gear", "Gear bonuses");
             StatEpicLoot = Language.Add("packpanel_stat_epicloot", "Epic Loot");
+            StatEliteCrafting = Language.Add("packpanel_stat_elitecrafting", "EliteCrafting");
             StatOffence = Language.Add("packpanel_stat_offence", "Offence");
             StatDefence = Language.Add("packpanel_stat_defence", "Defence");
             StatResources = Language.Add("packpanel_stat_resources", "Health and stamina");

@@ -8,23 +8,24 @@ namespace PackPanel.Panels
 {
     /// <summary>
     /// Centers live values over icons in compact squares and restores the previous layout when disabled. Applied every
-    /// frame, so a value is written only when it differs: an unchanged write would still dirty the HUD's canvas.
+    /// frame, so a value is written only when it differs: an unchanged write would still dirty the HUD's canvas. Each
+    /// box's images are looked up once (again when its children change in number), not searched for every frame. A
+    /// restore puts back only the boxes under the panel it is asked for, so the inventory's never undoes the HUD's.
     /// </summary>
     public static class StatIconLayout
     {
         public const float Size = 48f;
         private static readonly Dictionary<RectTransform, Action> rects = new Dictionary<RectTransform, Action>();
         private static readonly Dictionary<TMP_Text, Action> texts = new Dictionary<TMP_Text, Action>();
+        private static readonly Dictionary<RectTransform, Image[]> images = new Dictionary<RectTransform, Image[]>();
+        private static readonly List<Component> undone = new List<Component>();
 
         public static void Apply(RectTransform box, Image background, TMP_Text value, bool weight)
         {
             Remember(box);
             SetSize(box, new Vector2(Size, Size));
-            for (int i = 0; i < box.childCount; i++)
-            {
-                Image icon = box.GetChild(i).GetComponent<Image>();
+            foreach (Image icon in ImagesOf(box))
                 if (icon != null && icon != background) Center(icon.rectTransform, new Vector2(32f, 32f));
-            }
             if (value == null) return;
             Transform line = value.transform;
             while (line.parent != box) line = line.parent;
@@ -32,6 +33,18 @@ namespace PackPanel.Panels
             Center((RectTransform)line, textSize);
             if (value.transform != line) Center(value.rectTransform, textSize);
             Font(value);
+        }
+
+        /// <summary>The image of each direct child of the box (null for a child without one), in child order.</summary>
+        private static Image[] ImagesOf(RectTransform box)
+        {
+            if (images.TryGetValue(box, out Image[] found) && found.Length == box.childCount)
+                return found;
+            found = new Image[box.childCount];
+            for (int i = 0; i < found.Length; i++)
+                found[i] = box.GetChild(i).GetComponent<Image>();
+            images[box] = found;
+            return found;
         }
 
         private static void Font(TMP_Text value)
@@ -81,12 +94,24 @@ namespace PackPanel.Panels
             };
         }
 
-        public static void Restore()
+        /// <summary>The previous layout back on everything under <paramref name="under"/> (on everything for null), then forgotten.</summary>
+        public static void Restore(Transform under)
         {
-            foreach (var pair in rects) if (pair.Key != null) pair.Value();
-            foreach (var pair in texts) if (pair.Key != null) pair.Value();
-            rects.Clear();
-            texts.Clear();
+            Restore(rects, under);
+            Restore(texts, under);
+            images.Clear();
+        }
+
+        private static void Restore<T>(Dictionary<T, Action> memos, Transform under) where T : Component
+        {
+            undone.Clear();
+            foreach (var pair in memos)
+                if (pair.Key == null || under == null || pair.Key.transform.IsChildOf(under)) undone.Add(pair.Key);
+            foreach (Component key in undone)
+            {
+                if (key != null) memos[(T)key]();
+                memos.Remove((T)key);
+            }
         }
     }
 }

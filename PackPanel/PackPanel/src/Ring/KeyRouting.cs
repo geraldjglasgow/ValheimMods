@@ -1,5 +1,4 @@
 using System;
-using HarmonyLib;
 using PackPanel.Core;
 
 namespace PackPanel.Ring
@@ -9,23 +8,10 @@ namespace PackPanel.Ring
     /// from a chest) go into their ring cell first, the way coins go to the purse: into the empty cell whole, or onto the
     /// key already there up to the stack size when it is the same world level. What the cell cannot hold goes on through
     /// the game's own add (another stack of that key, then a free main cell). A take all is sorted out after it
-    /// (<see cref="Slots.TakeAllRouting"/>).
+    /// (<see cref="Slots.TakeAllRouting"/>). Called from the one AddItem patch (<see cref="Slots.AddRouting"/>).
     /// </summary>
-    [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), new[] { typeof(ItemDrop.ItemData) })]
     public static class KeyRouting
     {
-        /// <summary>An add another mod's prefix already made is left alone, or the same item would also land on the ring.</summary>
-        [HarmonyPrefix]
-        public static bool Prefix(Inventory __instance, ItemDrop.ItemData item, ref bool __result, bool __runOriginal)
-        {
-            if (!__runOriginal)
-                return false;
-            if (item == null || !InventoryState.Manages(__instance) || !TakeIn(__instance, item))
-                return true;
-            __result = true;
-            return false;
-        }
-
         /// <summary>
         /// Moves what fits of a key into its ring cell; true when none is left outside it. The key is either not in the
         /// inventory yet (an add) or in a main cell (a take all): an empty ring cell takes it whole, as the same item.

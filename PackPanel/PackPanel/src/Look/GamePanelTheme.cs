@@ -8,16 +8,27 @@ using UnityEngine;
 
 namespace PackPanel.Look
 {
-    /// <summary>Replaces native wood panel art with PackPanel's frame and wallpaper, retaining layout and controls.</summary>
+    /// <summary>
+    /// Replaces native wood panel art with PackPanel's frame and wallpaper, retaining layout and controls. A scene load or
+    /// a theme change looks at every image again, <see cref="PerFrame"/> a frame rather than all in one; the sprites
+    /// already judged are forgotten on a scene load, so the list never keeps a scene's runtime sprites alive.
+    /// </summary>
     public static class GamePanelTheme
     {
+        private const int PerFrame = 500;
         private static bool pending = true;
+        private static Image[] scan;
+        private static int scanned;
         private static readonly HashSet<Image> newlyEnabled = new HashSet<Image>();
         private static readonly Dictionary<Sprite, bool> woodSprites = new Dictionary<Sprite, bool>();
 
         public static void Initialize()
         {
-            SceneManager.sceneLoaded += (scene, mode) => RequestRefresh();
+            SceneManager.sceneLoaded += (scene, mode) =>
+            {
+                woodSprites.Clear();
+                RequestRefresh();
+            };
             InventorySettings.Enabled.SettingChanged += (sender, args) => RequestRefresh();
             InventorySettings.BrownStyle.SettingChanged += (sender, args) => RequestRefresh();
             InventorySettings.PanelTheme.SettingChanged += (sender, args) => RequestRefresh();
@@ -29,31 +40,45 @@ namespace PackPanel.Look
         // Inactive panels are included so switching back to Brown/vanilla restores them too.
         public static void Update()
         {
-            if (!pending && newlyEnabled.Count == 0)
+            if (!pending && scan == null && newlyEnabled.Count == 0)
                 return;
             bool on = SkinArt.Timber && SkinArt.Panel != null;
             if (pending)
             {
                 pending = false;
-                foreach (Image image in Resources.FindObjectsOfTypeAll<Image>())
-                    if (image.gameObject.scene.IsValid() && image.canvas != null && IsPanel(image))
-                        TimberBackground.Apply(image, on);
+                scan = Resources.FindObjectsOfTypeAll<Image>();
+                scanned = 0;
             }
-            else
-                foreach (Image image in newlyEnabled)
-                    if (image != null && image.gameObject.scene.IsValid() && image.canvas != null && IsPanel(image))
-                        TimberBackground.Apply(image, on);
+            if (scan != null)
+                ScanSome(on);
+            foreach (Image image in newlyEnabled)
+                if (image != null && Themed(image))
+                    TimberBackground.Apply(image, on);
             newlyEnabled.Clear();
         }
 
+        /// <summary>The next <see cref="PerFrame"/> images of the scan; the scan ends with the last.</summary>
+        private static void ScanSome(bool on)
+        {
+            int end = Math.Min(scan.Length, scanned + PerFrame);
+            for (; scanned < end; scanned++)
+            {
+                Image image = scan[scanned];
+                if (image != null && Themed(image))
+                    TimberBackground.Apply(image, on);
+            }
+            if (scanned >= scan.Length)
+                scan = null;
+        }
+
+        private static bool Themed(Image image) => image.gameObject.scene.IsValid() && image.canvas != null && IsPanel(image);
+
         private static bool IsPanel(Image image)
         {
-            // The independently drawn rim is decorative, not another panel to style recursively.
-            if (image.name == "PackPanel_frame")
-                return false;
-            if (image.transform.Find("PackPanel_timberwood") != null)
-                return true;
-            return (image.type == Image.Type.Sliced || image.type == Image.Type.Tiled) && image.fillCenter && WoodSprite(image.sprite);
+            bool panel = image.transform.Find("PackPanel_timberwood") != null
+                || ((image.type == Image.Type.Sliced || image.type == Image.Type.Tiled) && image.fillCenter && WoodSprite(image.sprite));
+            // The independently drawn rim is decorative, not another panel to style recursively (its name read last: a new string).
+            return panel && image.name != "PackPanel_frame";
         }
 
         /// <summary>

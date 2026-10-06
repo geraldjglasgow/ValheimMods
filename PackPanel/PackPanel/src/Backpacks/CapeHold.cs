@@ -58,10 +58,12 @@ namespace PackPanel.Backpacks
             hold.HoldAll(capes);
         }
 
-        /// <summary>Every frame while the pack hangs: a cape put on, changed or taken off since (the game makes a new list).</summary>
-        internal static void Follow(Transform mount, List<GameObject> capes)
+        /// <summary>
+        /// Every frame while the pack hangs: a cape put on, changed or taken off since (the game makes a new list). The hold
+        /// is the one <see cref="BackpackMount"/> keeps for the mount, not looked up every frame.
+        /// </summary>
+        internal static void Follow(CapeHold hold, List<GameObject> capes)
         {
-            CapeHold hold = mount != null ? mount.GetComponent<CapeHold>() : null;
             if (hold == null || ReferenceEquals(capes, hold.capes))
                 return;
             hold.Release();

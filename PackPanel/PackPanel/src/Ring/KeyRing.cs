@@ -16,7 +16,6 @@ namespace PackPanel.Ring
     {
         private static string parsed;
         private static List<string> prefabs = new List<string>();
-        private static string[] sharedNames;
 
         /// <summary>The ring is part of the layout the settings ask for: the master switch and Key Ring on.</summary>
         public static bool On => InventorySettings.Enabled.Value && KeyRingSettings.KeyRing.Value;
@@ -71,32 +70,25 @@ namespace PackPanel.Ring
 
         /// <summary>
         /// How many of each ring key the whole inventory holds, every world level together, by ring number (index 0 is
-        /// unused). Matched by shared name, which needs no string made per item, as this runs every frame the ring shows.
-        /// Written into <paramref name="reuse"/> when it fits, so no array is made per frame either.
+        /// unused). Each item is looked up once by its shared name (<see cref="KeyNames"/>), which needs no string made per
+        /// item. Written into <paramref name="reuse"/> when it fits, so no array is made per count either.
         /// </summary>
         public static int[] Counts(Inventory inventory, int[] reuse)
         {
+            Dictionary<string, List<int>> names = KeyNames.Get();
             int[] counts = reuse != null && reuse.Length == Prefabs.Count + 1 ? reuse : new int[Prefabs.Count + 1];
             Array.Clear(counts, 0, counts.Length);
-            foreach (ItemDrop.ItemData item in inventory.GetAllItems())
+            List<ItemDrop.ItemData> items = inventory.GetAllItems();
+            for (int i = 0; i < items.Count; i++)
             {
-                for (int number = 1; number < counts.Length; number++)
-                {
-                    if (item.m_shared.m_name == SharedName(number))
-                        counts[number] += item.m_stack;
-                }
+                ItemDrop.ItemData item = items[i];
+                string name = item.m_shared.m_name;
+                if (name == null || !names.TryGetValue(name, out List<int> numbers))
+                    continue;
+                for (int n = 0; n < numbers.Count; n++)
+                    counts[numbers[n]] += item.m_stack;
             }
             return counts;
-        }
-
-        /// <summary>The shared name of key <paramref name="number"/>, kept once the item database has it.</summary>
-        private static string SharedName(int number)
-        {
-            if (sharedNames == null || sharedNames.Length != Prefabs.Count)
-                sharedNames = new string[Prefabs.Count];
-            if (sharedNames[number - 1] == null)
-                sharedNames[number - 1] = Key(number)?.m_shared.m_name;
-            return sharedNames[number - 1];
         }
 
         private static void Parse()
@@ -104,7 +96,6 @@ namespace PackPanel.Ring
             string value = KeyRingSettings.KeyItems.Value ?? "";
             if (value == parsed)
                 return;
-            sharedNames = null;
             List<string> list = new List<string>();
             foreach (string part in value.Split(','))
             {

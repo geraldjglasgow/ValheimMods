@@ -60,6 +60,7 @@ namespace PackPanel.Panels
     public static class ContainerPanelSize
     {
         private static RectTransform sizedPanel;
+        private static RectTransform scroll;
         private static float baseWidth;
         private static float scrollX;
         private static int shownColumns;
@@ -71,10 +72,10 @@ namespace PackPanel.Panels
             if (container == null || container.GetInventory() == null)
                 return;
             RectTransform panel = __instance.m_container;
-            RectTransform scroll = panel.Find("ContainerScroll") as RectTransform;
             if (panel != sizedPanel)
             {
                 sizedPanel = panel;
+                scroll = panel.Find("ContainerScroll") as RectTransform;   // once per panel, not every frame a chest is open
                 baseWidth = panel.sizeDelta.x;
                 scrollX = scroll != null ? scroll.anchoredPosition.x : 0f;
                 shownColumns = InventorySettings.GameWidth;

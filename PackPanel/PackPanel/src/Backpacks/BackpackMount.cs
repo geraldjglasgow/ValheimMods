@@ -41,7 +41,7 @@ namespace PackPanel.Backpacks
             Hanging hanging = Hangings.GetOrCreateValue(__instance).On(spine);
             if (hanging.Id == wanted?.Id)
             {
-                CapeHold.Follow(hanging.Mount, __instance.m_shoulderItemInstances);
+                CapeHold.Follow(hanging.Hold, __instance.m_shoulderItemInstances);
                 return;
             }
             if (hanging.Mount != null)
@@ -63,6 +63,9 @@ namespace PackPanel.Backpacks
 
             public Transform Mount { get; private set; }
 
+            /// <summary>The mount's cape hold, looked up with the mount.</summary>
+            public CapeHold Hold { get; private set; }
+
             /// <summary>The worn pack's prefab id, null for none.</summary>
             public string Id { get; private set; }
 
@@ -73,6 +76,7 @@ namespace PackPanel.Backpacks
                     spine = bone;
                     Mount = bone.Find(Name);
                     Id = Wears(Mount);
+                    Hold = Mount != null ? Mount.GetComponent<CapeHold>() : null;
                 }
                 return this;
             }
@@ -81,6 +85,7 @@ namespace PackPanel.Backpacks
             {
                 Mount = mount;
                 Id = mount != null ? id : null;
+                Hold = mount != null ? mount.GetComponent<CapeHold>() : null;
             }
         }
 

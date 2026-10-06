@@ -122,12 +122,27 @@ upgraded into a plain one).
   the game takes the first copy it finds. Epic Loot's data is not carried.
 - Names: words `$packpanel_class_backpack`, `$packpanel_affix_deep_pockets` and EliteCrafting's key
   `ecf_affix_deep_pockets_line`; the GameObject `PackPanel_rarity` (a cell's backdrop). No RPC, no ZDO key, no setting.
+- **Extra utilities count** (2026-10-05): EliteCrafting counted only the game's one utility, so an inscription on the
+  second or third worn utility did nothing. The provider now also names every extra utility still worn
+  (`ExtraUtilities.Worn`, `m_equipped`); wearing or taking one off runs the game's `SetupEquipment`, EliteCrafting's
+  rebuild trigger.
+- **The stat sheet** (the user, 2026-10-05: "I need elitecrafting to be compatible with packpanel, where the center
+  panel also includes stats on gear from elite crafting"): after Epic Loot's sections, one section per EliteCrafting
+  category, "EliteCrafting · Offence", "· Defence", "· Utility" (an unknown category under "· Other"), each
+  inscription once with its values summed over everything worn, in its own tooltip sentence, from EliteCrafting's
+  `GetPlayerInscriptionsJson` (added for this in EliteCrafting 0.7.0; asked through `CraftingLink.HasEndpoint` once,
+  so an older EliteCrafting shows nothing and logs nothing). The JSON is read with the merged YamlDotNet. Hovering a
+  line lists each item and its own value, then "Over the cap: the game applies less than the sum" when the effect's
+  channel passes its cap. Read with the sheet, four times a second while the Gear tab shows. Words
+  `$packpanel_stat_elitecrafting`, `$packpanel_tip_capped`.
 
 ```
 PackPanel/PackPanel/src/Elite/
   EliteDefinitions.cs   the ids and the JSON of the class, effect and inscription, the pool additions
   EliteSetup.cs         Register (Plugin.Awake): words, class, claims, levels, effect, inscription, pools, the link
-  WornPackLink.cs       the equipment provider (the worn pack), InvalidatePlayer on a change, the item-changed listener
+  WornPackLink.cs       the equipment provider (the worn pack and the extra worn utilities), InvalidatePlayer on a
+                        change, the item-changed listener
+  EliteStatLines.cs     the stat sheet's EliteCrafting sections (GetPlayerInscriptionsJson), each line's per-item tip
   DeepPockets.cs        Extra(pack): the pack's own pack_slots total, rounded (BackpackSettings.SlotsOf adds it)
   MagicCarryOver.cs     InventoryGui.DoCrafting prefix/postfix/finalizer: an upgraded pack's ecf_ keys onto the new one
 ```
@@ -158,12 +173,13 @@ PackPanel/PackPanel/src/
     Words.cs                the $packpanel_ words: slot captions, the key ring's words, the messages
     PlayerTick.cs           Player.Update postfix: the waiting layout change, the worn backpack's slots, the
                             tacklebox's cells, pruning extra utilities
+    WearGate.cs             when PlayerTick checks the backpack, tacklebox and Auto Equip: on an inventory change, a new
+                            layout or a pending drop, else every 0.25 s (retries refused equips)
+    HudTick.cs              the one Hud.Update postfix: the Food and Mead bar, then Weight Under Minimap
     OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader)
     EpicLootLink.cs         Epic Loot's active effects, totals and display texts through its public API, by reflection
     Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names (read
                             once per drop prefab)
-    EditorHost.cs           the YAML editor's window drawn by a component of its own, enabled only while the window is
-                            open, so the plugin has no OnGUI
   Layout/
     InventoryLayout.cs      width, main rows (a worn pack's included), backpack slots and blocked cells, the ordered
                             slots; slot k is cell (k % width, mainRows + k / width); the record 1|W|R|ids
@@ -189,9 +205,10 @@ PackPanel/PackPanel/src/
                             (Player.InPlaceMode) eats from the Food slots or drinks from one Mead slot
     MeadSlotKeys.cs         a Mead Slot key drinks its one slot's mead (Humanoid.UseItem, the game's messages);
                             Player.UseHotbarItem prefix: no hotbar item while Alt (the keys' modifier) is held
-    ConsumeBar.cs, ConsumeBarCell.cs   Hud.Update postfix: PackPanel_consumebar under the health panel, a food square
+    ConsumeBar.cs, ConsumeBarCell.cs   from HudTick: PackPanel_consumebar under the health panel, a food square
                             (a copy of the HUD's food square) with the Food Key (Hotkeys' KeyNames.Short, shrunk to
-                            fit) over its top-left corner
+                            fit) over its top-left corner; the plan made again only on a layout or key change
+                            (ConsumeKeyNames: the key names, again on SettingChanged)
     ConsumeBarSlots.cs      then a square per Mead slot with its Mead Slot key, showing the slot's mead (faded mead
                             icon when empty), refreshed with the bar's check
     SlotMeals.cs            left to right, every item that can be taken now: the game's checks without messages,
@@ -205,8 +222,10 @@ PackPanel/PackPanel/src/
     AmmoSearch.cs           Inventory.GetAmmoItem prefix: the tacklebox's bait, then the Ammo slots left to right,
                             then the game's own search
     FoodCount.cs            foods a player can eat: FeastMaster's Food Slots entry through BepInEx's Chainloader, else 3
-    CoinPurse.cs            Inventory.AddItem(ItemData) prefix: coins into the purse first
-    AmmoRouting.cs          Inventory.AddItem(ItemData) prefix: arrows and bolts (equipable ammo) into the Ammo slots
+    AddRouting.cs           the one Inventory.AddItem(ItemData) prefix: the purse, the key ring, the tacklebox, the Ammo
+                            slots, in that order
+    CoinPurse.cs            from AddRouting: coins into the purse first
+    AmmoRouting.cs          from AddRouting: arrows and bolts (equipable ammo) into the Ammo slots
                             first, crafted or picked up
     SlotFill.cs             an item into a group of slot cells: onto a same stack, then an empty cell (ammo, bait)
     SlotDrop.cs, SlotAddPatches.cs   the slot rules on InventoryGrid.DropItem and the positional adds
@@ -235,7 +254,7 @@ PackPanel/PackPanel/src/
   Ring/
     KeyRing.cs, KeyRingSettings.cs   Key Items parsed (ring number = list place), a key's ring cell, counts per key by
                             cached shared name; section 3. Key Ring
-    KeyRouting.cs           Inventory.AddItem(ItemData) prefix: keys into their ring cell first (a take all:
+    KeyRouting.cs           from AddRouting: keys into their ring cell first (a take all:
                             Slots/TakeAllRouting)
     KeyStacks.cs            Key Stack into the keys' stack size (ObjectDB.Awake/CopyOtherDB postfixes, settings
                             changes), only without OpenKeep
@@ -263,7 +282,7 @@ PackPanel/PackPanel/src/
                             (Crafting/CraftedItem) and the worn copy; registered in ZNetScene and ObjectDB (ItemPrefabs)
     BackpackWear.cs         the local player's frame: re-layout when the worn pack or its slots changed, the ZDO key
     BackpackEquip.cs        a pack is equipment (a Utility item): EquipItem wears it in the Backpack slot, never as the
-                            game's utility; the pack in the slot carries m_equipped, every frame (Sync)
+                            game's utility; the pack in the slot carries m_equipped, kept by Sync (WearGate)
     BackpackUse.cs          Humanoid.UseItem prefix: right click wears a pack (EquipItem) or takes it off
     BackpackGrave.cs        before a take all from a grave the worn pack (found at the grave's Backpack slot cell) goes
                             on first; the rows a waiting pack adds (RowsAdded: the layout's own rule)
@@ -293,7 +312,7 @@ PackPanel/PackPanel/src/
     TackleboxPrefab.cs      ZNetScene.Awake: each box's item from the bundle packpanel_tackleboxes
     TackleboxWear.cs        the local player's frame: re-layout when the box or its cells changed
     TackleRules.cs          what a box takes: bait (ammo of the FishingRod's ammo type) and Tackle Items
-    TackleRouting.cs        Inventory.AddItem(ItemData) prefix: bait into the box first (stacks, then an empty cell)
+    TackleRouting.cs        from AddRouting: bait into the box first (stacks, then an empty cell)
     TackleboxUse.cs         Humanoid.UseItem prefix: right click a box into its slot, on its slot opens the pop-up;
                             right click a bait in the box equips it (the game's ammo), again unequips
     TackleClicks.cs         InventoryGui.OnSelectedItem prefix (Priority.First): bait let go on the slot goes into the
@@ -317,11 +336,12 @@ PackPanel/PackPanel/src/
     PanelDress.cs           where the side panels go, and the library's box column moved into the stats panel (every frame)
     StatsPanel.cs           PackPanel_stats between the inventory and the slot panel, behind the box column
     StatIconFrames.cs       vanilla gray backplates for armor, weight and world-tier icons; original strip layout
-    StatIconLayout.cs       48-unit squares, centered icons and inset 8-11 point number overlays; restores on disable
+    StatIconLayout.cs       48-unit squares, centered icons and inset 8-11 point number overlays; restores on disable,
+                            only the boxes under the panel turned off (the inventory's never undoes the HUD's)
     WeightDisplay.cs        current weight / dash / capacity on three lines in the inventory and HUD; overload still flashes
     HudStats.cs             matching full-size squares in a column right of the minimap; armor, weight, world tier by rank
     HudRoom.cs              moves the minimap and the status effects left while that column shows a box
-    HudWeight.cs            Weight Under Minimap: Hud.Update postfix writing a box in PlateColumn's HUD column
+    HudWeight.cs            Weight Under Minimap: from HudTick, writing a box in PlateColumn's HUD column
     SlotPanel.cs, SlotPanelLayout.cs   PackPanel_slots right of the stats panel: the tab buttons across the top, the
                             shown tab's cells (Gear: gear column left, utilities and the trinket right; Consumables: a row each of
                             food, mead, ammo), the purse, the key ring's button and the Tacklebox slot last under both
@@ -329,7 +349,8 @@ PackPanel/PackPanel/src/
     TabButtons.cs           the two tab buttons, copies of the game's take-all button, stripped of its gamepad key,
                             colour scripts and localizer
     GearStats.cs, SheetScroll.cs   PackPanel_gearstats: the Gear tab's stat sheet between the columns, a rounded inset
-                            with a wheel-scrolled list, worked out 4 times a second
+                            with a wheel-scrolled list; its inputs fingerprinted 4 times a second (SheetInputs.cs), the
+                            sheet worked out again only when they changed (and every 2 s for what they cannot see)
     StatRows.cs, StatSheet.cs   the sheet drawn as rows (label wraps, value right, headings), restyled before every
                             write; the sheet as lines with sections and a change key
     SheetLines.cs, GearStatLines.cs, EffectGroups.cs   everything it lists; the game's numbers (its getters and words);
@@ -354,7 +375,8 @@ PackPanel/PackPanel/src/
     SkinArt.cs              the embedded pictures as sprites (panel 9-sliced, button states, icons, timber)
     GridSkin.cs             Brown Style panels (default material, 12 unit reach) and cells
     NightShade.cs           the panels darker with the light around you (Night Shade), grey only; never the cells
-    GamePanelTheme.cs       Panel Theme over the game's wood panels (a rescan per scene, Image.OnEnable postfix)
+    GamePanelTheme.cs       Panel Theme over the game's wood panels (a rescan per scene, 500 images a frame;
+                            Image.OnEnable postfix)
     TimberBackground.cs, TimberFrame.cs, TimberCoordinates.cs   the timber wallpaper aligned to the screen and the rim
 PackPanel/PackPanel/config/ the embedded default PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml
 PackPanel/PackPanel/assets/ embedded images: panel.png, cell.png, button*.png, icon_<slot>.png, ring_*.png (painted by
@@ -375,12 +397,13 @@ PackPanel/artwork/          background studies for the timber theme (not embedde
 All on the local player's own inventory only unless said: prefix `Player.Load` (and postfix and finalizer),
 `Player.SetInventorySize` (replaced), `InventoryGui.SetInventorySize` (replaced), `InventoryGui.Show` (prefix: the crafting panel's size), `Inventory.FindEmptySlot`,
 `Inventory.GetEmptySlots`, `Inventory.HaveEmptySlot`, `Inventory.CanAddItem(ItemData, int)`, `Inventory.AddItem(ItemData)`
-(the purse, and the key ring's, the tacklebox's and the Ammo slots' own prefixes), `Inventory.AddItem(ItemData, int, int, int, bool)` and
+(one prefix, `Slots/AddRouting`: the purse, the key ring, the tacklebox, the Ammo slots), `Inventory.AddItem(ItemData, int, int, int, bool)` and
 `Inventory.AddItem(ItemData, Vector2i)` (slot rules), `InventoryGrid.DropItem` (`Priority.High`),
 `InventoryGui.OnSelectedItem` (prefix, postfix, finalizer), `Humanoid.EquipItem` (prefix, postfix, finalizer; the
 prefix also wears PackPanel's backpacks, on any character), `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
 out of the list for the call), `Inventory.MoveAll` (prefix, postfix, finalizer; the key ring has its own prefix and
-postfix), `Container.Load` (prefix and postfix, graves only, any player's); the key ring: `InventoryGui.OnSelectedItem`
+postfix), `Container.RPC_TakeAllResponse` (private; prefix and finalizer: which container a granted take all comes
+from, so a grave is known without a search), `Container.Load` (prefix and postfix, graves only, any player's); the key ring: `InventoryGui.OnSelectedItem`
 (a second prefix, `Priority.First`), `InventoryGui.OnRightClickItem` (prefix), `InventoryGrid.UpdateGamepad` (private;
 prefix and postfix), `InventoryGui.Update` (private; prefix), postfix `InventoryGui.Show` and `InventoryGui.Hide`;
 postfix `Inventory.GetBoundItems`, `Inventory.GetHotbar`, `Humanoid.UnequipItem`, `Humanoid.IsItemEquiped`,
@@ -388,7 +411,7 @@ postfix `Inventory.GetBoundItems`, `Inventory.GetHotbar`, `Humanoid.UnequipItem`
 `Humanoid.UpdateEquipmentStatusEffects`, `Humanoid.GetSetCount`, `Player.GetEquipmentEitrRegenModifier`,
 `Player.UpdateModifiers`, `Humanoid.GetEquipmentWeight`, `Humanoid.UpdateEquipment`, `InventoryGrid.UpdateGui`,
 `InventoryGui.UpdateContainer`, `Player.Update`, `Player.UseHotbarItem` (prefix: skipped while a Mead Slot key's modifier is held), `Player.GetMaxCarryWeight` (Base Carry Weight; any player, only the
-local one's matters), `Hud.Update` (private; Weight Under Minimap, and a second postfix for the Food and Mead bar), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
+local one's matters), `Hud.Update` (private; one postfix, `Core/HudTick`: the Food and Mead bar and Weight Under Minimap), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
 text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words),
 `UnityEngine.UI.Image.OnEnable` (Panel Theme: a newly shown wood panel is themed on the next frame). The backpacks:
 prefix `Humanoid.UseItem` (local player, from the inventory screen), `Inventory.IsTeleportable` (the local player's
@@ -396,7 +419,7 @@ inventory, Backpack Portal Pass only); postfix
 `VisEquipment.UpdateEquipmentVisuals` (private, every player's character on every client), `ObjectDB.Awake` and
 `ObjectDB.CopyOtherDB` (the recipes; `Priority.Low` for Key Stack without OpenKeep), and through BundlePrefabs
 `ZNetScene.Awake` (the prefabs) and again `ObjectDB.Awake`/`CopyOtherDB` (the items). The tacklebox: prefix
-`Inventory.AddItem(ItemData)` (bait into the box, its own prefix), `Inventory.GetAmmoItem` (the box's bait first, then the Ammo slots left to right; `Slots/AmmoSearch`),
+`Inventory.AddItem(ItemData)` (bait into the box, through `AddRouting`), `Inventory.GetAmmoItem` (the box's bait first, then the Ammo slots left to right; `Slots/AmmoSearch`),
 `Humanoid.UseItem` (a second prefix: boxes and bait in the box), `InventoryGui.OnSelectedItem` (a third prefix,
 `Priority.First`: bait let go on the slot), postfix
 `InventoryGui.Show` and `InventoryGui.Hide`; the recipes and prefabs through the same patches as the backpacks'.
@@ -508,10 +531,10 @@ tackleboxes:
 - Charter articles: `packpanel_backpacks`, `packpanel_tackleboxes`, plus the cfg sync of the shared libraries.
 - Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
   `_coins`, `_wrongslot`, `_dropped`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
-  `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
+  `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_elitecrafting`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
   `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
   `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_meadslotempty` (`_nothingtodrink` went with the Mead Key), for the stat breakdowns `_tip_base`, `_tip_other`,
-  `_tip_nothing`, `_tip_effect`, `_tip_carry`, `_tip_world`, `_tip_heaviest`, `_tip_missinghealth`, `_tip_parryarmor`, `_tip_skill` (the stat sheet uses the game's own `$item_`, `$inventory_` and `$se_` words); backpacks
+  `_tip_nothing`, `_tip_effect`, `_tip_carry`, `_tip_world`, `_tip_heaviest`, `_tip_missinghealth`, `_tip_parryarmor`, `_tip_skill`, `_tip_capped` (the stat sheet uses the game's own `$item_`, `$inventory_` and `$se_` words); backpacks
   `$packpanel_backpack_<word>` and `$packpanel_backpack_<word>_description` for deerhide, trollhide, rootbound,
   wolfpelt, lox, carapace, asksvin and moosehide, and `$packpanel_backpack_noroom`; the tacklebox `$packpanel_tackle`
   (the slot's caption), `$packpanel_bait` (a cell's), `$packpanel_tacklebox_full`, and
@@ -574,6 +597,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   chest wider than 8 columns may then reach under the side panels. The game's HUD hotbar draws boxes only up to its
   last item; with the hands only, `Panels/HotbarCells` adds empty boxes up to the last open cell of row 0 (key 8 at
   most), so the bar shows every hotbar key the player has: 1-2 bare, 1-6 with a 4 slot pack (the user, 2026-10-05).
+  Only on the game's own bar (the first under the HUD); a quickslot mod's copy of the bar gets none.
   With rows the bar is the game's. Keys 3 to 8 find nothing in blocked cells. Lowering the setting drops what no longer fits.
 - Room: `FindEmptySlot`, `GetEmptySlots`, `HaveEmptySlot` and `CanAddItem` count the main grid only, so pickups,
   crafting, purchases and the tombstone's easy-fit check never land in a slot (the bottom-first search would fill the
@@ -614,7 +638,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   it dragged), one an attack or a swim refused, an old save. `GearKeep` in the player's frame puts it on, after the
   game's equip guards checked silently (`WearCheck`: attack, dodge, swim, durability, DLC, world level) and, for a
   utility, only when it is worn beside the others without taking one off (else two utilities of one name took turns
-  every frame); one another mod's equip refuses is not tried again until it leaves its slot. Not during a drag, a
+  every frame); one another mod's equip refuses is not tried again until it leaves its slot. Checked on an inventory
+  change or a new layout, else every 0.25 s (`Core/WearGate`, which also retries an attack's refusal). Not during a drag, a
   suspended move or while dead. (3) A piece taken off with a full grid stayed in its slot; now it is dropped at the
   feet with the game's `DropItem` (the "dropped" message), a frame later: `WornPlacement.OnTakenOff` notes it and
   `GearKeep` drops it only if it still lies unworn in its slot, because the game unequips before it removes an item
@@ -890,7 +915,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   which takes the pack worn before off and sets `m_equipped`; `WornPlacement` moves it into the Backpack slot
   (`SlotRules.WornKindOf` answers Backpack for a pack and the Backpack slot is worn; another mod's backpack only lies
   there). `IsItemEquiped` answers yes for a flagged pack in the local inventory, so the game's own unequip, drag, drop,
-  chest and unequip-all paths take it off. Where it lies stays the truth for the layout: every frame `BackpackEquip.Sync`
+  chest and unequip-all paths take it off. Where it lies stays the truth for the layout: `BackpackEquip.Sync` (on an
+  inventory change or a new layout, else every 0.25 s, `Core/WearGate`)
   wears the pack in the slot and takes any other off, through EquipItem and UnequipItem so Epic Loot hears of it; a worn
   pack that left without an unequip (crafted away in place, trashed) loses the flag and an UnequipItem call tells Epic
   Loot. None of the game's equip guards (attacking, swimming, world level): the pack in the slot gives its slots, so it
@@ -928,7 +954,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   a key shows up when the player gets it; the brief had kept every key ever found, by the game's known list); a key
   being dragged stays in its cell until it lands, so its cell stays meanwhile. Per-frame counts compare shared names
   cached from ObjectDB, so no prefab name string is made per item.
-- Key routing: an `Inventory.AddItem(ItemData)` prefix like the purse's: an empty ring cell takes the item itself, a key
+- Key routing: through the one `Inventory.AddItem(ItemData)` prefix (`Slots/AddRouting`), after the purse: an empty ring cell takes the item itself, a key
   of the same world level (`IsSameType`) takes what fits up to the stack size, the rest goes on through the game (other
   stacks, then the grid). A take all puts each item at its old cell first, so `TakeAllRouting` moves the keys that came
   in and sit in main cells once it is done; from the own grave they are back in their cells already. `CanAddItem` counts
@@ -1082,6 +1108,12 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   never touch the hotbar. Only with PackPanel's `Enabled` on (the keys read nothing otherwise). Left Alt is unbound in the game; in the workspace
   only OpenKeep's Alt + D/R/L and its held Pull Modifier, EarthWright's Alt modifiers (hoe in hand, where these keys
   stand down) and unreleased HaloMenu's ring (Left Alt alone, held) use it.
+- Stuck Alt (the user, 2026-10-05, sev 1 on 0.11.0: "when i use 1,2,3 its not equiping my weapon, its trying to drink
+  mead"): the config and the hotbar were right; the Hotkeys library read Shift, Ctrl and Alt through Unity's old
+  `Input`, which keeps Alt held after the window loses focus with it down (Alt + Tab out, back with the mouse) until
+  Alt is pressed again, so plain 1 to 3 were Mead Slot keys and the hotbar was held back. The library now reads them
+  through the game's `ZInput` (the input system, reset on focus loss: `ResetAndDisableNonBackgroundDevices`), the
+  same state the game's own hotbar keys come from.
 - The Mead Key removed (2026-10-05, after 0.9.0, the user: "remove the B mead button. not needed"): with a key per slot,
   B (every mead it can, left to right) and its square on the bar went, with its word `_nothingtodrink`. An old cfg keeps
   its orphaned `Mead Key` line, which nothing reads. `SlotMeals` still serves the Food Key.
@@ -1117,7 +1149,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.11.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.12.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1458,3 +1490,10 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     it shows in box 5, the boxes stay 1 to 6. Wear a 12 or 16 slot pack: boxes 1 to 8. Take the pack off: boxes 1 and
     2 again. Die: the bar goes as in the game, comes back on respawn. Gamepad: the hotbar left/right selection reaches
     the empty boxes. `Inventory Rows = 5`: the game's bar, boxes only up to the last item.
+66. EliteCrafting on the stat sheet (EliteCrafting 0.7.0): wear rare gear with inscriptions (e.g. Patterns of the Bear
+    with Lightened, Hardened, Padded; legs with Vigor; a helmet with Vigor): the Gear tab's sheet ends with
+    "EliteCrafting · Offence", "· Defence", "· Utility" sections, each inscription once in its tooltip words, Vigor's
+    two values summed. Hover the Vigor line: both items with their own values. Take the helmet off: the line drops to
+    the legs' value within a second. A Megingjord with an inscription in the second Utility slot: its line shows and
+    `ecraft stats` counts it. With EliteCrafting 0.6.x: no EliteCrafting section, nothing in the log. Without
+    EliteCrafting: nothing. Epic Loot's sections still come first.

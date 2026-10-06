@@ -133,11 +133,13 @@ namespace PackPanel.Layout
 
         private static Slot ParseId(string id)
         {
-            foreach (SlotKind kind in Enum.GetValues(typeof(SlotKind)))
+            IReadOnlyList<SlotKind> kinds = Slot.Kinds;
+            for (int i = 0; i < kinds.Count; i++)
             {
-                string name = kind.ToString().ToLowerInvariant();
+                SlotKind kind = kinds[i];
                 if (kind == SlotKind.Retired)
                     continue;
+                string name = Slot.Prefix(kind);
                 if (id.StartsWith(name, StringComparison.Ordinal) && int.TryParse(id.Substring(name.Length), out int number))
                     return new Slot(kind, number);
             }

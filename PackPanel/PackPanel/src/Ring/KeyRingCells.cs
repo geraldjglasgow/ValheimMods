@@ -12,7 +12,8 @@ namespace PackPanel.Ring
     /// grid's size: the game's grid still owns it, so clicks, drags, the game's tooltip and the gamepad work as on any
     /// cell. Only cells holding a key are on the ring (the user's call: a key shows up when the player gets it and goes
     /// when the last one is used or moved away); a key being dragged stays in its cell until it lands, so its cell stays.
-    /// Every frame a key shows its count alone, and only above one, like the purse.
+    /// Every frame a key shows its count alone, and only above one, like the purse (the game's "3/10" goes to a stand-in,
+    /// <see cref="Panels.GridHold"/>).
     /// </summary>
     public static class KeyRingCells
     {
@@ -63,17 +64,15 @@ namespace PackPanel.Ring
             return element != null && element.gameObject.activeInHierarchy;
         }
 
-        /// <summary>Every frame the ring shows: a key's count alone ("3"), only above one.</summary>
+        /// <summary>Every frame the ring shows: a key's count alone ("3"), only above one, written only when it changes.</summary>
         public static void Refresh(Inventory inventory)
         {
             foreach (InventoryElement element in elements)
             {
-                if (element == null || !element.m_used || !element.gameObject.activeSelf)
+                if (element == null || !element.gameObject.activeSelf)
                     continue;
-                ItemDrop.ItemData key = inventory.GetItemAt(element.Position.x, element.Position.y);
-                element.m_amount.enabled = key != null && key.m_stack > 1;
-                if (element.m_amount.enabled)
-                    element.m_amount.text = NumberText.Of(key.m_stack);
+                ItemDrop.ItemData key = element.m_used ? inventory.GetItemAt(element.Position.x, element.Position.y) : null;
+                NumberText.ShowCount(element.m_amount, key);
             }
         }
     }

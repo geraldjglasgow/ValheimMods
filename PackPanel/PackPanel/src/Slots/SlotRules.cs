@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using PackPanel.Backpacks;
 using PackPanel.Core;
 using PackPanel.Ring;
@@ -75,15 +76,32 @@ namespace PackPanel.Slots
         {
             if (BackpackCatalog.Of(item) != null)
                 return true;   // PackPanel's own packs: not all have "backpack" in their prefab name (PackPanel_LoxHauler)
-            string prefab = item.m_dropPrefab != null ? item.m_dropPrefab.name : "";
+            string prefab = item.m_dropPrefab != null ? ItemNames.PrefabName(item) : "";
             if (prefab.IndexOf("backpack", StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
+            return ListedPacks().Contains(prefab);
+        }
+
+        private static HashSet<string> listedPacks;
+        private static bool watchingList;
+
+        /// <summary>Backpack Items as a set of prefab names, read from the setting once and again after it changed.</summary>
+        private static HashSet<string> ListedPacks()
+        {
+            if (listedPacks != null)
+                return listedPacks;
+            if (!watchingList)
+            {
+                watchingList = true;
+                InventorySettings.BackpackItems.SettingChanged += (sender, args) => listedPacks = null;
+            }
+            listedPacks = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string listed in InventorySettings.BackpackItems.Value.Split(','))
             {
-                if (listed.Trim().Length > 0 && string.Equals(listed.Trim(), prefab, StringComparison.OrdinalIgnoreCase))
-                    return true;
+                if (listed.Trim().Length > 0)
+                    listedPacks.Add(listed.Trim());
             }
-            return false;
+            return listedPacks;
         }
 
         private static bool Is(ItemDrop.ItemData item, ItemType type) => item.m_shared.m_itemType == type;

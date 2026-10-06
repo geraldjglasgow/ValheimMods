@@ -8,9 +8,9 @@ using UnityEngine.UI;
 namespace PackPanel.Panels
 {
     /// <summary>
-    /// Vanilla gray squares behind compact status icons, with small centered value overlays. Dressed every frame (the
-    /// inventory panel's restore resets the HUD copies too), so each box's parts are looked up once and kept
-    /// (<see cref="BoxParts"/>): no names read, no searches and no garbage per frame.
+    /// Vanilla gray squares behind compact status icons, with small centered value overlays. Dressed every frame, so each
+    /// box's parts are looked up once and kept (<see cref="BoxParts"/>): no names read, no searches and no garbage per
+    /// frame. The inventory column's layout is put back once when its dressing turns off, and only its own boxes.
     /// </summary>
     public static class StatIconFrames
     {
@@ -20,6 +20,7 @@ namespace PackPanel.Panels
         private static readonly List<RectTransform> column = new List<RectTransform>();
         private static readonly List<RectTransform> gone = new List<RectTransform>();
         private static Transform owner;
+        private static bool dressed;
 
         /// <summary>
         /// Every box of the column, the game's armour and weight among them: those stay on the player panel, pinned over
@@ -27,8 +28,9 @@ namespace PackPanel.Panels
         /// </summary>
         public static void Apply(InventoryGui gui, RectTransform boxes, bool on)
         {
-            if (owner != boxes) { colours.Clear(); StatIconLayout.Restore(); owner = boxes; Prune(); }
-            if (!on) StatIconLayout.Restore();
+            if (owner != boxes) { colours.Clear(); StatIconLayout.Restore(null); owner = boxes; dressed = false; Prune(); }
+            if (!on && dressed) StatIconLayout.Restore(boxes);
+            dressed = on;
             Column.BoxesIn(boxes, column);
             foreach (RectTransform box in column)
             {
@@ -47,7 +49,7 @@ namespace PackPanel.Panels
             BoxParts bits = PartsOf(box);
             Image background = bits.Background != null ? bits.Background : bits.Background = Background(box);
             if (background == null) return;
-            if (bits.Frame == null) bits.Frame = background.transform.Find(Name);
+            if (!bits.FrameLooked) { bits.FrameLooked = true; bits.Frame = background.transform.Find(Name); }
             if (on && bits.Frame == null) bits.Frame = Create(background.transform, gui);
             if (bits.Frame == null) return;
             // A new plate can be copied from the already styled armor plate.
@@ -122,6 +124,7 @@ namespace PackPanel.Panels
             public bool HudStat { get; }
             public Image Background;
             public Transform Frame;
+            public bool FrameLooked;
             public TMP_Text Value;
         }
     }

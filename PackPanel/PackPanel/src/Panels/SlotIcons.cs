@@ -16,16 +16,16 @@ namespace PackPanel.Panels
 
         public static Color TintFor(SlotKind kind) => Hint;
 
-        /// <summary>Each kind's icon name, made once: the key ring's button asks every frame.</summary>
-        private static readonly Dictionary<SlotKind, string> names = new Dictionary<SlotKind, string>();
+        /// <summary>Each kind's icon, by kind, read once: the key ring's button and the Food and Mead bar ask every frame.</summary>
+        private static readonly Dictionary<SlotKind, Sprite> icons = new Dictionary<SlotKind, Sprite>();
 
         public static Sprite For(SlotKind kind)
         {
             if (kind == SlotKind.Retired)
                 return null;
-            if (!names.TryGetValue(kind, out string name))
-                names[kind] = name = kind.ToString().ToLowerInvariant();
-            return SkinArt.Icon(name);
+            if (!icons.TryGetValue(kind, out Sprite icon) || (!ReferenceEquals(icon, null) && icon == null))
+                icons[kind] = icon = SkinArt.Icon(kind.ToString().ToLowerInvariant());
+            return icon;
         }
 
     }

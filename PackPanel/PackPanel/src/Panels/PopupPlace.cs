@@ -12,6 +12,8 @@ namespace PackPanel.Panels
     public static class PopupPlace
     {
         private static readonly Vector3[] corners = new Vector3[4];
+        private static RectTransform backgroundOf;
+        private static Image background;
 
         public static void Under(InventoryGui gui, RectTransform popup, float slotLeft, float centre, float top)
         {
@@ -23,10 +25,17 @@ namespace PackPanel.Panels
                 popup.anchoredPosition = at;
         }
 
-        /// <summary>A panel's right edge, its background's reach included, from the player panel's top-right corner.</summary>
+        /// <summary>
+        /// A panel's right edge, its background's reach included, from the player panel's top-right corner. The background
+        /// is looked up once per panel (asked every frame a pop-up and a chest are open).
+        /// </summary>
         private static float RightEdge(InventoryGui gui, RectTransform panel)
         {
-            Image background = GridSkin.Background(panel);
+            if (panel != backgroundOf)
+            {
+                backgroundOf = panel;
+                background = GridSkin.Background(panel);
+            }
             (background != null ? background.rectTransform : panel).GetWorldCorners(corners);
             return gui.m_player.InverseTransformPoint(corners[2]).x - gui.m_player.rect.xMax;
         }

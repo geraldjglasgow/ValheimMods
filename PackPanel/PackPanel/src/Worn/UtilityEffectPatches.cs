@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HarmonyLib;
 using PackPanel.Core;
 
@@ -24,11 +25,12 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Humanoid __instance, string setName, ref int __result)
             {
-                if (!InventoryState.IsLocal(__instance))
+                IReadOnlyList<ItemDrop.ItemData> worn = ExtraUtilities.Worn;
+                if (worn.Count == 0 || !InventoryState.IsLocal(__instance))
                     return;
-                foreach (ItemDrop.ItemData item in ExtraUtilities.Worn)
+                for (int i = 0; i < worn.Count; i++)
                 {
-                    if (item.m_shared.m_setName == setName)
+                    if (worn[i].m_shared.m_setName == setName)
                         __result++;
                 }
             }
@@ -40,10 +42,11 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Player __instance, ref float __result)
             {
-                if (!InventoryState.IsLocal(__instance))
+                IReadOnlyList<ItemDrop.ItemData> worn = ExtraUtilities.Worn;
+                if (worn.Count == 0 || !InventoryState.IsLocal(__instance))
                     return;
-                foreach (ItemDrop.ItemData item in ExtraUtilities.Worn)
-                    __result += item.m_shared.m_eitrRegenModifier;
+                for (int i = 0; i < worn.Count; i++)
+                    __result += worn[i].m_shared.m_eitrRegenModifier;
             }
         }
 
@@ -53,13 +56,18 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Player __instance)
             {
-                if (!InventoryState.IsLocal(__instance) || ExtraUtilities.Worn.Count == 0 || Player.s_equipmentModifierSourceFields == null)
+                IReadOnlyList<ItemDrop.ItemData> worn = ExtraUtilities.Worn;
+                if (worn.Count == 0 || Player.s_equipmentModifierSourceFields == null || !InventoryState.IsLocal(__instance))
                     return;
+                AccessTools.FieldRef<ItemDrop.ItemData.SharedData, float>[] fields = ModifierFields.Get();
                 float[] values = __instance.m_equipmentModifierValues;
-                for (int i = 0; i < values.Length; i++)
+                int count = System.Math.Min(values.Length, fields.Length);
+                // Item by item, each value in the game's order: every value gets the same sum, in the same order, as before.
+                for (int w = 0; w < worn.Count; w++)
                 {
-                    foreach (ItemDrop.ItemData item in ExtraUtilities.Worn)
-                        values[i] += (float)Player.s_equipmentModifierSourceFields[i].GetValue(item.m_shared);
+                    ItemDrop.ItemData.SharedData shared = worn[w].m_shared;
+                    for (int i = 0; i < count; i++)
+                        values[i] += fields[i](shared);
                 }
             }
         }
@@ -70,10 +78,11 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Humanoid __instance, ref float __result)
             {
-                if (!InventoryState.IsLocal(__instance))
+                IReadOnlyList<ItemDrop.ItemData> worn = ExtraUtilities.Worn;
+                if (worn.Count == 0 || !InventoryState.IsLocal(__instance))
                     return;
-                foreach (ItemDrop.ItemData item in ExtraUtilities.Worn)
-                    __result += item.m_shared.m_weight;
+                for (int i = 0; i < worn.Count; i++)
+                    __result += worn[i].m_shared.m_weight;
             }
         }
 
@@ -83,7 +92,7 @@ namespace PackPanel.Worn
             [HarmonyPostfix]
             public static void Postfix(Humanoid __instance, float dt)
             {
-                if (!InventoryState.IsLocal(__instance))
+                if (ExtraUtilities.Worn.Count == 0 || !InventoryState.IsLocal(__instance))
                     return;
                 // Backwards: a utility that breaks is taken off, which removes it from the list.
                 for (int i = ExtraUtilities.Worn.Count - 1; i >= 0; i--)

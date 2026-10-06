@@ -1,3 +1,5 @@
+using TMPro;
+
 namespace PackPanel.Core
 {
     /// <summary>
@@ -13,6 +15,22 @@ namespace PackPanel.Core
             if (number < 0 || number >= made.Length)
                 return number.ToString();
             return made[number] ?? (made[number] = number.ToString());
+        }
+
+        /// <summary>
+        /// A cell's count alone ("3"), shown only above one, written only when it changes: the game's own writes to a ring
+        /// or tackle cell's count go to a stand-in meanwhile (<see cref="Panels.GridHold"/>).
+        /// </summary>
+        public static void ShowCount(TMP_Text amount, ItemDrop.ItemData item)
+        {
+            bool show = item != null && item.m_stack > 1;
+            if (amount.enabled != show)
+                amount.enabled = show;
+            if (!show)
+                return;
+            string text = Of(item.m_stack);
+            if (amount.text != text)
+                amount.text = text;
         }
     }
 }

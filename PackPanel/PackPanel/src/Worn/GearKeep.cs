@@ -22,6 +22,9 @@ namespace PackPanel.Worn
 
         public static bool On => InventoryState.Active && InventorySettings.AutoEquip.Value;
 
+        /// <summary>A piece waits to be dropped, so the next frame must look (<see cref="Core.WearGate"/>).</summary>
+        public static bool Pending => leaving.Count > 0;
+
         /// <summary>A piece taken off with no free main cell: dropped at the next frame if it still lies there unworn.</summary>
         public static void Leave(ItemDrop.ItemData item)
         {

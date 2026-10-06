@@ -14,7 +14,8 @@ namespace PackPanel.Ring
     /// button's key icon breathes slowly between its own colours and gold (<see cref="Period"/> seconds a breath) and a small box
     /// under the button says so ("Swamp Key went onto your key ring", or "2 new keys went onto your key ring"). It waits
     /// until the ring is opened; it is never saved. The button shows only with the inventory open, so a key picked up on
-    /// the road is announced the next time the inventory opens. The box takes no clicks.
+    /// the road is announced the next time the inventory opens. The box takes no clicks. The box, its text and the hint's
+    /// icon are found once per placed button (<see cref="Forget"/>), and the text is made only when a key was added.
     /// </summary>
     public static class KeyRingNotice
     {
@@ -24,60 +25,79 @@ namespace PackPanel.Ring
         private const float Height = 26f;
         private static readonly Color Glow = new Color(1f, 0.86f, 0.4f, 1f);
         private static readonly List<string> waiting = new List<string>();
-        private static string shownText;
+        private static bool unwritten = true;
+        private static InventoryElement foundOn;
+        private static Transform box;
+        private static Image hint;
 
         public static void Add(ItemDrop.ItemData key)
         {
             waiting.Add(key.m_shared.m_name);
-            shownText = null;
+            unwritten = true;
         }
 
         public static void Clear() => waiting.Clear();
+
+        /// <summary>The button was placed again (its hint may be new): look its parts up again on the next frame.</summary>
+        public static void Forget() => foundOn = null;
 
         /// <summary>Every frame the button is refreshed (after it set its icon's colour): the box and the breathing icon, or neither.</summary>
         public static void Show(InventoryElement button)
         {
             if (KeyRingState.Open)
                 waiting.Clear();
-            Transform box = button.transform.Find(Name);
+            Find(button);
             if (waiting.Count == 0)
             {
                 if (box != null && box.gameObject.activeSelf)
-                    Rest(button, box);
+                    Rest();
                 return;
             }
-            box = box != null ? box : Make(button);
-            box.gameObject.SetActive(true);
-            Write(box);
+            if (box == null)
+            {
+                box = Make(button);
+                unwritten = true;
+            }
+            if (!box.gameObject.activeSelf)
+                box.gameObject.SetActive(true);
+            Write();
             Breathe(button, 0.5f - 0.5f * Mathf.Cos(Time.unscaledTime * 2f * Mathf.PI / Period));
+        }
+
+        private static void Find(InventoryElement button)
+        {
+            if (foundOn == button)
+                return;
+            foundOn = button;
+            box = button.transform.Find(Name);
+            Transform icon = button.transform.Find(HintIcon);
+            hint = icon != null ? icon.GetComponent<Image>() : null;
         }
 
         /// <summary>Both icons the button may show (its own with Slot Labels off, the hint's with them on), from their hint colour towards gold.</summary>
         private static void Breathe(InventoryElement button, float glow)
         {
             button.m_icon.color = Color.Lerp(SlotIcons.Hint, Glow, glow);
-            Transform hint = button.transform.Find(HintIcon);
             if (hint != null)
-                hint.GetComponent<Image>().color = Color.Lerp(SlotIcons.TintFor(SlotKind.Key), Glow, glow);
+                hint.color = Color.Lerp(SlotIcons.TintFor(SlotKind.Key), Glow, glow);
         }
 
-        private static void Rest(InventoryElement button, Transform box)
+        private static void Rest()
         {
             box.gameObject.SetActive(false);
-            Transform hint = button.transform.Find(HintIcon);
             if (hint != null)
-                hint.GetComponent<Image>().color = SlotIcons.TintFor(SlotKind.Key);
+                hint.color = SlotIcons.TintFor(SlotKind.Key);
         }
 
-        /// <summary>The text for what is waiting, set (and the box sized to it) only when it changed.</summary>
-        private static void Write(Transform box)
+        /// <summary>The text for what is waiting, made, set and the box sized to it only after a key was added.</summary>
+        private static void Write()
         {
+            if (!unwritten)
+                return;
+            unwritten = false;
             string text = waiting.Count == 1
                 ? string.Format(Language.Localize(Words.KeyNew), Language.Localize(waiting[0]))
                 : string.Format(Language.Localize(Words.KeysNew), waiting.Count);
-            if (text == shownText)
-                return;
-            shownText = text;
             TMP_Text label = box.GetComponentInChildren<TMP_Text>(true);
             label.text = text;
             ((RectTransform)box).sizeDelta = new Vector2(label.GetPreferredValues(text).x + 16f, Height);

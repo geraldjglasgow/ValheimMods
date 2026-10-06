@@ -15,6 +15,7 @@ The Gear tab lists your stats as the game counts them, with everything you wear 
 | Resistances | Each damage type you resist (green) or are weak to (red) |
 | Gear bonuses | Every other modifier from your gear, such as stamina use |
 | Epic Loot | With Epic Loot installed: your active magic effects and their totals |
+| EliteCrafting | With EliteCrafting 0.7.0+: your active inscriptions by Offence, Defence and Utility, summed; hover for each item's value |
 
 ## Stat boxes
 

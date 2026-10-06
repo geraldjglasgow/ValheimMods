@@ -5,7 +5,7 @@ This wiki describes version 0.9.0.
 PackPanel replaces the player's inventory screen:
 
 - A bigger grid: 8 x 5 by default, up to 12 x 10, or down to the two cells for your hands.
-- Labelled slots always on screen, on two tabs: Gear (armour, cape, backpack, up to five worn utilities, trinket, a stat sheet) and Consumables (food, mead and ammo, with keys to eat, drink everything or drink one mead slot). Under both: a coin purse, a key ring and a tacklebox.
+- Labelled slots always on screen, on two tabs: Gear (armour, cape, backpack, up to five worn utilities, trinket, a stat sheet) and Consumables (food, mead and ammo, with keys to eat or drink one mead slot). Under both: a coin purse, a key ring and a tacklebox.
 - Eight craftable backpacks worn on your back, and four craftable tackleboxes for bait.
 - Armour and weight boxes beside the grid and the minimap, a bigger crafting panel, a Timber or Brown look that darkens at night.
 - A base carry weight setting and an option to keep your slot items when you die.

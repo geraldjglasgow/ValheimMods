@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.0
+
+- With EliteCrafting 0.7.0+, the stat sheet lists your inscriptions by category; hover a line for each item's value.
+- Fixed: EliteCrafting inscriptions on a second or third utility did nothing.
+- Fixed: after Alt + Tab, the number keys could drink meads instead of using the hotbar.
+- Fixed: empty hotbar boxes flickered beside a mod that adds a second hotbar.
+- Less work every frame for the inventory, the HUD, the hotbar and pickups.
+
 ## 0.11.0
 
 - `Auto Equip`: gear in the Gear tab is always worn; right click gear in an open chest to wear it.

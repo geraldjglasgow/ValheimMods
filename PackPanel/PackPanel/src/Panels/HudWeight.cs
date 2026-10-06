@@ -1,4 +1,3 @@
-using HarmonyLib;
 using PlateColumn;
 using PackPanel.Core;
 using UnityEngine;
@@ -8,12 +7,11 @@ namespace PackPanel.Panels
     /// <summary>
     /// The weight beside the minimap (the user's request): a box in PlateColumn's HUD column showing what the local
     /// player carries out of the most they can carry, with the weight icon, written as the inventory's weight box writes
-    /// it (red flashing while over). The game writes its own only while the inventory is open, so a <c>Hud.Update</c>
-    /// postfix writes this one every frame, touching the text only when it changes. At the game's weight rank, so
+    /// it (red flashing while over). The game writes its own only while the inventory is open, so the <c>Hud.Update</c>
+    /// postfix (<see cref="HudTick"/>) writes this one every frame, touching the text only when it changes. At the game's weight rank, so
     /// it comes before Elite Creatures Reborn's world tier as in the inventory's stat column. Weight Under Minimap (per player) and the
     /// section's master switch show it. Local only; nothing is sent.
     /// </summary>
-    [HarmonyPatch(typeof(Hud), nameof(Hud.Update))]
     public static class HudWeight
     {
         private const string Id = "packpanel_weight";
@@ -26,19 +24,20 @@ namespace PackPanel.Panels
         private static string shown;
         private static float nextTry;
 
-        [HarmonyPostfix]
-        public static void Postfix()
+        public static void Tick()
         {
             Player player = Player.m_localPlayer;
             bool show = player != null && InventorySettings.Enabled.Value && InventorySettings.WeightUnderMinimap.Value;
-            HudStats.Refresh(show);
             Plate plate = Current(show);
-            if (plate == null)
-                return;
-            if (plate.Rect.gameObject.activeSelf != show)
-                plate.Rect.gameObject.SetActive(show);
-            if (show)
-                Write(plate, player);
+            if (plate != null)
+            {
+                if (plate.Rect.gameObject.activeSelf != show)
+                    plate.Rect.gameObject.SetActive(show);
+                if (show)
+                    Write(plate, player);
+            }
+            // After the box is shown or hidden: the column dresses only the boxes it shows.
+            HudStats.Refresh(show);
         }
 
         /// <summary>The box already made while it lives, else a new one when it is to be shown; null otherwise.</summary>

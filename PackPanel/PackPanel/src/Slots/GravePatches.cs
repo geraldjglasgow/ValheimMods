@@ -24,6 +24,19 @@ namespace PackPanel.Slots
         /// <summary>A take all into the player's inventory from something that is not a grave is under way.</summary>
         public static bool ForeignTakeAll { get; private set; }
 
+        /// <summary>The container whose granted take all (holding Use on it) is moving its items now, else null.</summary>
+        private static Container grantedFrom;
+
+        [HarmonyPatch(typeof(Container), nameof(Container.RPC_TakeAllResponse))]
+        public static class Granted
+        {
+            [HarmonyPrefix]
+            public static void Prefix(Container __instance) => grantedFrom = __instance;
+
+            [HarmonyFinalizer]
+            public static void Finalizer() => grantedFrom = null;
+        }
+
         [HarmonyPatch(typeof(Player), nameof(Player.CreateTombStone))]
         public static class Tombstone
         {
@@ -79,8 +92,15 @@ namespace PackPanel.Slots
             public static void Finalizer() => ForeignTakeAll = false;
         }
 
+        /// <summary>
+        /// Whether the take all comes from a grave: the open chest's or the granted take all's container, asked once; only a
+        /// take all from neither (another mod's) searches the graves in the world.
+        /// </summary>
         private static bool IsGrave(Inventory inventory)
         {
+            if (From(InventoryGui.instance != null ? InventoryGui.instance.m_currentContainer : null, inventory, out bool fromGrave)
+                || From(grantedFrom, inventory, out fromGrave))
+                return fromGrave;
             foreach (TombStone grave in UnityEngine.Object.FindObjectsByType<TombStone>(FindObjectsSortMode.None))
             {
                 Container container = grave.GetComponent<Container>();
@@ -88,6 +108,15 @@ namespace PackPanel.Slots
                     return true;
             }
             return false;
+        }
+
+        private static bool From(Container container, Inventory inventory, out bool grave)
+        {
+            grave = false;
+            if (container == null || container.GetInventory() != inventory)
+                return false;
+            grave = container.GetComponent<TombStone>() != null;
+            return true;
         }
 
         private static void WearWhatCameBack(Inventory inventory)

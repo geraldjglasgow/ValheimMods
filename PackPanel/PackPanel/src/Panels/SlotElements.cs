@@ -5,6 +5,7 @@ using PackPanel.Look;
 using PackPanel.Ring;
 using PackPanel.Slots;
 using PackPanel.Tackle;
+using TMPro;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -16,7 +17,8 @@ namespace PackPanel.Panels
     /// last slot row are hidden, the hotbar numbers stop at 8 and every cell gets the skin. Each frame the grid's root is
     /// kept to the main rows (the game sizes it for every row), the gamepad's selection turns to its slot tab, the stat
     /// sheet is brought up to date, the purse shows its count and the key ring's pop-up and button are brought up to
-    /// date. The container grid only gets the skin.
+    /// date; the root's size and the purse's count are written only when they change, the game's own writes going to
+    /// stand-ins meanwhile (<see cref="GridHold"/>). The container grid only gets the skin.
     /// </summary>
     [HarmonyPatch(typeof(InventoryGrid), nameof(InventoryGrid.UpdateGui))]
     public static class SlotElements
@@ -27,6 +29,8 @@ namespace PackPanel.Panels
         private static int containerVersion;
         private static int placedVersion;
         private static int version;
+        private static int purseStack = -1;
+        private static string purseText;
 
         /// <summary>A setting the elements show changed (labels, keys, skin, layout): place them again next frame.</summary>
         public static void Invalidate() => version++;
@@ -58,7 +62,7 @@ namespace PackPanel.Panels
             PanelDress.Update(gui);
             if (!InventoryState.Active)
                 return;
-            grid.m_gridRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, InventoryState.Layout.MainRows * grid.m_elementSpace);
+            KeepRoot(grid);
             SlotTabs.FollowGamepad(grid);
             GearStats.Refresh();
             ShowCoins(ElementPlacer.PurseElement);
@@ -69,12 +73,36 @@ namespace PackPanel.Panels
             TackleboxSlot.Refresh(ElementPlacer.TackleboxElement);
         }
 
-        /// <summary>The purse shows its count alone ("51"), not the game's "51/999".</summary>
+        /// <summary>The grid's root as tall as the main rows, set only when it is not (the game's own size went to a stand-in).</summary>
+        private static void KeepRoot(InventoryGrid grid)
+        {
+            float rows = InventoryState.Layout.MainRows * grid.m_elementSpace;
+            if (!Mathf.Approximately(grid.m_gridRoot.rect.height, rows))
+                grid.m_gridRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rows);
+        }
+
+        /// <summary>
+        /// The purse shows its count alone ("51"), not the game's "51/999", and shows it when the game would (a stacking
+        /// item there): the game wrote to a stand-in (<see cref="GridHold"/>), so both are written here, only when they change.
+        /// </summary>
         private static void ShowCoins(InventoryElement purse)
         {
-            ItemDrop.ItemData coins = purse != null ? InventoryState.ItemIn(SlotKind.Purse, 1) : null;
-            if (coins != null)
-                purse.m_amount.text = NumberText.Of(coins.m_stack);
+            if (purse == null)
+                return;
+            ItemDrop.ItemData coins = InventoryState.ItemIn(SlotKind.Purse, 1);
+            TMP_Text amount = purse.m_amount;
+            bool show = coins != null && coins.m_shared.m_maxStackSize > 1;
+            if (amount.enabled != show)
+                amount.enabled = show;
+            if (coins == null)
+                return;
+            if (coins.m_stack != purseStack || purseText == null)
+            {
+                purseStack = coins.m_stack;
+                purseText = NumberText.Of(purseStack);
+            }
+            if (amount.text != purseText)
+                amount.text = purseText;
         }
 
         private static void SkinContainer(InventoryGrid grid)
