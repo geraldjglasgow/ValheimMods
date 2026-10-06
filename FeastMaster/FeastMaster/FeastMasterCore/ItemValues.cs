@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
+using HarmonyLib;
 using ItemCopies;
 
 namespace FeastMaster
@@ -19,7 +20,29 @@ namespace FeastMaster
         // Foods and meads written at least once this session; see ShouldWrite.
         private static readonly HashSet<Dictionary<string, ConfigEntry<float>>> writtenFoods = new HashSet<Dictionary<string, ConfigEntry<float>>>();
         private static readonly HashSet<MeadEffectConfig> writtenMeads = new HashSet<MeadEffectConfig>();
+        // Changed since the last frame, applied together by Tick: foods and meads by name, or everything.
+        private static readonly HashSet<string> changedFoods = new HashSet<string>();
+        private static readonly HashSet<string> changedMeads = new HashSet<string>();
+        private static bool changedAll;
         private static bool suspended;
+        private static Harmony harmony;
+        private static bool spawnsHooked;
+
+        /// <summary>The Harmony instance the spawn hooks go on, once a food value is first changed.</summary>
+        public static void UseHarmony(Harmony instance) => harmony = instance;
+
+        /// <summary>
+        /// Called by <see cref="ChangedRules.Refresh"/> while food values are changed: hooks new item copies (world
+        /// items, items entering an inventory) so they get the values too. At defaults the game is left without the
+        /// hooks; once installed they stay, and cost one flag test while every food value is back at its default.
+        /// </summary>
+        public static void HookSpawns()
+        {
+            if (spawnsHooked || harmony == null)
+                return;
+            spawnsHooked = true;
+            Copies.HookSpawns(harmony, ApplyCopy);
+        }
 
         /// <summary>
         /// Binding an entry that exists in the .cfg raises SettingChanged; while the item database is bound the
@@ -27,11 +50,15 @@ namespace FeastMaster
         /// </summary>
         public static void SuspendWhileBinding(bool suspend) => suspended = suspend;
 
-        /// <summary>Re-applies every item on any setting change: edits in game, file reloads and server pushes.</summary>
+        /// <summary>
+        /// Re-applies the items on any setting change: edits in game, file reloads and server pushes. A change only
+        /// marks what it touched; <see cref="Tick"/> applies them all on the next frame, so a server pushing many
+        /// values one at a time (Charter, on joining) or a file reload costs one pass, with the final values.
+        /// </summary>
         public static void HookConfig(ConfigFile config)
         {
             config.SettingChanged += OnSettingChanged;
-            config.ConfigReloaded += (_, __) => ApplyAll();
+            config.ConfigReloaded += (_, __) => changedAll = true;
         }
 
         private static void OnSettingChanged(object sender, SettingChangedEventArgs args)
@@ -41,11 +68,20 @@ namespace FeastMaster
             // Foods and meads are both keyed by prefab name, which is also their section name.
             string section = args.ChangedSetting.Definition.Section;
             if (foods.Contains(section))
-                ApplyFood(section);
-            else if (meads.TryGetValue(section, out SE_Stats effect))
-                ApplyMead(section, effect);
+                changedFoods.Add(section);
+            else if (meads.ContainsKey(section))
+                changedMeads.Add(section);
             else
+                changedAll = true;
+        }
+
+        /// <summary>Called every frame by <see cref="SwitchTicker"/>: one pass for whatever changed since the last frame.</summary>
+        public static void Tick()
+        {
+            if (changedAll)
                 ApplyAll();
+            else if (changedFoods.Count > 0 || changedMeads.Count > 0)
+                ApplyChanged();
         }
 
         public static void RegisterFood(string prefabName) => foods.Add(prefabName);
@@ -54,6 +90,7 @@ namespace FeastMaster
 
         public static void ApplyAll()
         {
+            ForgetChanges();
             Copies.ApplyAll(ApplyNamed);
             foreach (KeyValuePair<string, SE_Stats> mead in meads)
                 ApplyMead(mead.Key, mead.Value);
@@ -61,13 +98,31 @@ namespace FeastMaster
             RefreshEatenFood();
         }
 
-        /// <summary>One food: its prefab and every live copy, then the player's food update.</summary>
-        private static void ApplyFood(string prefabName)
+        /// <summary>The changed foods in one walk of the prefabs and live copies, then the player's food update; the changed meads.</summary>
+        private static void ApplyChanged()
         {
-            if (!FeastMasterData.FoodConfigs.TryGetValue(prefabName, out Dictionary<string, ConfigEntry<float>> configs))
-                return;
-            Copies.Apply(prefabName, shared => Apply(shared, configs));
-            RefreshEatenFood();
+            try
+            {
+                if (changedFoods.Count > 0)
+                {
+                    Copies.Apply(changedFoods, ApplyNamed);
+                    RefreshEatenFood();
+                }
+                foreach (string mead in changedMeads)
+                    ApplyMead(mead, meads[mead]);
+            }
+            finally
+            {
+                ForgetChanges();
+            }
+        }
+
+        // Cleared before (ApplyAll) or after (ApplyChanged) a pass, so one that throws is not tried again every frame.
+        private static void ForgetChanges()
+        {
+            changedAll = false;
+            changedFoods.Clear();
+            changedMeads.Clear();
         }
 
         /// <summary>The ItemCopies.ApplyAll write: foods get their values, every other item is left alone.</summary>
@@ -80,7 +135,7 @@ namespace FeastMaster
         /// <summary>The ItemCopies.HookSpawns callback: a new world item or an item entering an inventory.</summary>
         public static void ApplyCopy(ItemDrop.ItemData item)
         {
-            if (FeastMasterData.TryGetFood(item, out Dictionary<string, ConfigEntry<float>> configs))
+            if (ChangedRules.FoodValues && FeastMasterData.TryGetFood(item, out Dictionary<string, ConfigEntry<float>> configs))
                 Apply(item.m_shared, configs);
         }
 

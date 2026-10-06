@@ -101,19 +101,17 @@ namespace FeastMaster
         }
     }
 
-    /// <summary>Encumbered: UpdateStats drains m_encumberedStaminaDrain per second while walking encumbered.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
-    public static class EncumberedCostPatch
+    /// <summary>
+    /// Encumbered: UpdateStats drains m_encumberedStaminaDrain per second while walking encumbered. Asked by
+    /// <see cref="UpdateStatsPatch"/>, the one UpdateStats patch.
+    /// </summary>
+    public static class EncumberedCostRule
     {
-        public static bool Prepare() => Customized.Any(Settings.EncumberedCost);
+        public static bool Rules() => Customized.Any(Settings.EncumberedCost);
 
-        [HarmonyPrefix]
-        public static void Prefix(Player __instance, out ScaledFields __state)
-        {
-            __state = CostRules.Scale(ref __instance.m_encumberedStaminaDrain, Mathf.Max(0f, Settings.EncumberedCost.Value));
-        }
+        public static ScaledFields Scale(Player player) =>
+            CostRules.Scale(ref player.m_encumberedStaminaDrain, Mathf.Max(0f, Settings.EncumberedCost.Value));
 
-        [HarmonyFinalizer]
-        public static void Finalizer(Player __instance, ScaledFields __state) => CostRules.Restore(ref __instance.m_encumberedStaminaDrain, __state);
+        public static void Restore(Player player, ScaledFields saved) => CostRules.Restore(ref player.m_encumberedStaminaDrain, saved);
     }
 }

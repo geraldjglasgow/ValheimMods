@@ -89,6 +89,7 @@ namespace FeastMaster
             if (BindAll(db))
                 FeastMaster.Log.LogInfo($"Loaded {FoodConfigs.Count} food and {MeadConfigs.Count} mead configurations in {stopwatch.ElapsedMilliseconds} ms.");
             ItemValues.ApplyAll();
+            ChangedRules.Refresh();
             PatchSwitch.MarkDirty();
         }
 
@@ -163,6 +164,7 @@ namespace FeastMaster
             };
             if (!string.IsNullOrEmpty(shared.m_name))
                 foodsByToken[shared.m_name] = prefabName;
+            FoodLookup.Forget();
         }
 
         /// <summary>
@@ -220,12 +222,21 @@ namespace FeastMaster
                 $"Added fraction of the jump stamina cost while {prefabName} lasts: -0.2 makes jumping 20% cheaper.");
         }
 
-        /// <summary>Finds the config of a food item by its prefab, falling back to its localization token.</summary>
+        /// <summary>
+        /// The config of a food item, or false for any other item. Hot (the regen hooks every physics step, item
+        /// spawns): the answer is kept per shared data object (<see cref="FoodLookup"/>), so the prefab's name, which
+        /// allocates, is read once per item kind.
+        /// </summary>
         public static bool TryGetFood(ItemDrop.ItemData item, out Dictionary<string, ConfigEntry<float>> configs)
         {
             configs = null;
-            if (item == null)
-                return false;
+            return item != null && FoodLookup.TryGet(item, out configs);
+        }
+
+        /// <summary>Finds the config of a food item by its prefab, falling back to its localization token.</summary>
+        internal static bool FindFood(ItemDrop.ItemData item, out Dictionary<string, ConfigEntry<float>> configs)
+        {
+            configs = null;
 
             if (item.m_dropPrefab != null && FoodConfigs.TryGetValue(item.m_dropPrefab.name, out configs))
                 return true;

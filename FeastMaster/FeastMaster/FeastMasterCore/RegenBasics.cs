@@ -6,30 +6,27 @@ namespace FeastMaster
     /// <summary>
     /// Stamina Regen Multiplier, Low Stamina Regen Bonus and Eitr Regen Multiplier scale the player's base regen
     /// fields for the duration of UpdateStats, the way the costs scale their drain fields: nothing is written
-    /// permanently, so the settings hot reload.
+    /// permanently, so the settings hot reload. Asked by <see cref="UpdateStatsPatch"/>, the one UpdateStats patch.
     /// </summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
-    public static class RegenBasicsPatch
+    public static class RegenBasicsRule
     {
-        public static bool Prepare() => Customized.Any(Settings.StaminaRegenMultiplier, Settings.LowStaminaRegenBonus, Settings.EitrRegenMultiplier);
+        public static bool Rules() => Customized.Any(Settings.StaminaRegenMultiplier, Settings.LowStaminaRegenBonus, Settings.EitrRegenMultiplier);
 
-        [HarmonyPrefix]
-        public static void Prefix(Player __instance, out ScaledGroup __state)
+        public static ScaledGroup Scale(Player player)
         {
-            __state = new ScaledGroup
+            return new ScaledGroup
             {
-                First = CostRules.Scale(ref __instance.m_staminaRegen, Mathf.Max(0f, Settings.StaminaRegenMultiplier.Value)),
-                Second = CostRules.Scale(ref __instance.m_staminaRegenTimeMultiplier, Mathf.Max(0f, Settings.LowStaminaRegenBonus.Value)),
-                Third = CostRules.Scale(ref __instance.m_eiterRegen, Mathf.Max(0f, Settings.EitrRegenMultiplier.Value)),
+                First = CostRules.Scale(ref player.m_staminaRegen, Mathf.Max(0f, Settings.StaminaRegenMultiplier.Value)),
+                Second = CostRules.Scale(ref player.m_staminaRegenTimeMultiplier, Mathf.Max(0f, Settings.LowStaminaRegenBonus.Value)),
+                Third = CostRules.Scale(ref player.m_eiterRegen, Mathf.Max(0f, Settings.EitrRegenMultiplier.Value)),
             };
         }
 
-        [HarmonyFinalizer]
-        public static void Finalizer(Player __instance, ScaledGroup __state)
+        public static void Restore(Player player, ScaledGroup saved)
         {
-            CostRules.Restore(ref __instance.m_staminaRegen, __state.First);
-            CostRules.Restore(ref __instance.m_staminaRegenTimeMultiplier, __state.Second);
-            CostRules.Restore(ref __instance.m_eiterRegen, __state.Third);
+            CostRules.Restore(ref player.m_staminaRegen, saved.First);
+            CostRules.Restore(ref player.m_staminaRegenTimeMultiplier, saved.Second);
+            CostRules.Restore(ref player.m_eiterRegen, saved.Third);
         }
     }
 

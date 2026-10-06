@@ -14,7 +14,8 @@ namespace FeastMaster
     /// Harmony itself asks before patching; a class without one is always installed. Every setting change (an edit,
     /// a file reload, a server push) marks the rules for a fresh look, done once on the next frame on the main
     /// thread: classes whose rule turned true are patched and their optional <c>Installed()</c> runs, classes whose
-    /// rule turned false are unpatched and their optional <c>Removed()</c> puts back what they changed.
+    /// rule turned false are unpatched and their optional <c>Removed()</c> puts back what they changed. The flags in
+    /// <see cref="ChangedRules"/> are worked out first, so the rules and the hot hooks read the same answers.
     /// </summary>
     public static class PatchSwitch
     {
@@ -56,6 +57,7 @@ namespace FeastMaster
 
         private static void Refresh(bool log)
         {
+            ChangedRules.Refresh();
             foreach (Type type in classes)
             {
                 if (failed.Contains(type))
@@ -161,8 +163,9 @@ namespace FeastMaster
     }
 
     /// <summary>
-    /// A hidden, scene-independent behaviour that runs <see cref="PatchSwitch.Tick"/> once per frame on the main
-    /// thread. Its own object rather than the plugin's, which a scene load can take down on some setups.
+    /// A hidden, scene-independent behaviour that runs <see cref="ItemValues.Tick"/> and <see cref="PatchSwitch.Tick"/>
+    /// once per frame on the main thread. Its own object rather than the plugin's, which a scene load can take down on
+    /// some setups.
     /// </summary>
     internal sealed class SwitchTicker : MonoBehaviour
     {
@@ -178,6 +181,10 @@ namespace FeastMaster
             instance = holder.AddComponent<SwitchTicker>();
         }
 
-        private void Update() => Guard.Run("patch switch", PatchSwitch.Tick);
+        private void Update()
+        {
+            Guard.Run("item values", ItemValues.Tick);
+            Guard.Run("patch switch", PatchSwitch.Tick);
+        }
     }
 }

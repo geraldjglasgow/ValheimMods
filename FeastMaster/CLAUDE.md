@@ -23,9 +23,12 @@ Rules that still apply to every change:
   `Removed()`. Foods, meads and Rested are written only once one of their values is changed.
 - Functions 5 to 20 lines, one responsibility per class, classes under 300 lines. Prefix, postfix and finalizer
   patches only; no transpilers. Every patch class is applied on its own by `PatchSwitch`, so one failure is
-  logged and the others still apply.
+  logged and the others still apply. A method that runs every physics step gets one patch class whose rules are
+  asked in turn (`UpdateStatsPatch` for `Player.UpdateStats`).
 - Settings are read at use time (`ConfigEntry.Value`), never cached, so edits, file reloads and server pushes apply
-  at once. Every gameplay setting is bound synced; only section `8. Display` is bound with `synced: false`.
+  at once. Only whether groups of them differ from their defaults is kept (`ChangedRules`, worked out at the start of
+  every PatchSwitch refresh): the patch rules return those flags and the hot hooks test one instead of comparing
+  settings. Every gameplay setting is bound synced; only section `8. Display` is bound with `synced: false`.
 - Game fields are never changed permanently: a drain, regen or delay field is scaled or swapped in a prefix for
   one call and restored in a finalizer. Item shared data and mead status effect assets are the exception, written
   from the configured values on load and on every change.
@@ -40,8 +43,11 @@ FeastMaster/FeastMaster/FeastMasterCore/
   PatchSwitch.cs          installs each patch class while its Prepare() is true, removes it when false (re-checked
                           once per frame after any setting change, from a hidden SwitchTicker), runs the class's
                           optional Installed() / Removed(), logs the installed rule-driven patches
-  Customized.cs           whether entries differ from their defaults (floats with a small tolerance); any food's
-                          Vigor, a food's or mead's values
+  Customized.cs           whether entries differ from their defaults (floats with a small tolerance, one float
+                          entry without boxing); any food's Vigor, a food's or mead's values
+  ChangedRules.cs         those answers kept per PatchSwitch refresh: any food value, any Vigor / Eitr Vigor, the
+                          stamina regen rules, the UpdateStats rules; hooks the item spawns once a food value changes
+  FoodLookup.cs           a food's config kept per shared data object (no prefab name read on the hot paths)
   FeastMasterData.cs      section 0 (multipliers, Disable Food Degradation, Degradation Curve, Eat Again At, Lock
                           Configuration), one section per food (Health, Stamina, Duration, HealthRegen, Eitr, Vigor,
                           EitrVigor) and per mead (nine entries), bound from the item database on
@@ -66,8 +72,10 @@ FeastMaster/FeastMaster/FeastMasterCore/
   FeastServings.cs        Feast Servings (Feast.GetStack, GetStackPercentige capped at 1, GetHoverText)
   Cooking.cs              cook times and burning (CookingStation.UpdateCooking, on the station's owner)
   ItemValues.cs           writes the configured values into the items' shared data (the prefab and every live
-                          copy, through ItemCopies; new copies via Copies.HookSpawns) and the mead status effect
-                          assets on load and on every SettingChanged / ConfigReloaded, then forces the player's
+                          copy, through ItemCopies; new copies via Copies.HookSpawns, hooked once a food value is
+                          changed and a flag test while none is) and the mead status effect
+                          assets on load, and on the frame after any SettingChanged / ConfigReloaded (one pass
+                          for every change since the last frame, run by SwitchTicker), then forces the player's
                           food update and refreshes the mead effect the local player is under; Vigor and Eitr
                           Vigor per item
   Patches.cs              ObjectDB load hooks, consume-time safety nets (Player.EatFood, SEMan.AddStatusEffect)
@@ -76,13 +84,16 @@ FeastMaster/FeastMaster/FeastMasterCore/
                           own value kept in BaseOriginals and put back) and stamina from skills (postfix)
   HealthRegen.cs          Continuous Food Healing (Player.UpdateFood prefix, heals per frame, holds the tick timer at 0)
   StaminaRegen.cs         SEMan.ModifyStaminaRegen postfix (Vigor, extra stamina, sneak bonus, curve, blocking
-                          factor), RegenCurve (shared with eitr), Player.UpdateStats postfix (encumbered and
-                          swimming regen), OnSwimming stroke timer
-  RegenBasics.cs          Stamina Regen Multiplier, Low Stamina Regen Bonus, Eitr Regen Multiplier (UpdateStats
-                          prefix/finalizer), Stamina Regen Delay (RPC_UseStamina), Eitr Regen Delay (RPC_UseEitr)
+                          factor) and a last postfix keeping the multiplier for the encumbered and swimming regen,
+                          RegenCurve (shared with eitr), RestrictedStaminaRegen (encumbered and swimming regen),
+                          OnSwimming stroke timer
+  UpdateStatsPatch.cs     the one Player.UpdateStats patch: regen basics and encumbered cost in the prefix and
+                          finalizer, the encumbered and swimming regen in the postfix; StaminaCapture
+  RegenBasics.cs          Stamina Regen Multiplier, Low Stamina Regen Bonus, Eitr Regen Multiplier (asked by
+                          UpdateStatsPatch), Stamina Regen Delay (RPC_UseStamina), Eitr Regen Delay (RPC_UseEitr)
   EitrRegen.cs            SEMan.ModifyEitrRegen postfix (Eitr Vigor, eitr curve, blocking eitr factor)
   CostRules.cs            out of combat, free sneaking, skill discount, and the scale/swap/restore helpers
-  StaminaCostsMovement.cs run, jump, dodge, sneak, swim, encumbered costs
+  StaminaCostsMovement.cs run, jump, dodge, sneak, swim, encumbered costs (encumbered asked by UpdateStatsPatch)
   StaminaCostsActions.cs  block, attack, tool, fishing, harpoon costs
   GameplayRules.cs        Eat Again At (Food.CanEatAgain), skill gain (Skills.RaiseSkill), Drowning Damage
   WorldRates.cs           world rate overrides (Game.UpdateWorldRates postfix, refresh on setting change)
@@ -98,14 +109,15 @@ Startup order in `Awake`: `FeastMasterData.Initialize`, `Settings.Initialize`, `
 
 Every method below is patched only while a setting its patch class reads is changed (see `PatchSwitch`), except
 `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `ZNetScene.Awake` (config binding) and `Localization.SetupLanguage` (own
-words only), which are always patched.
+words only), which are always patched, and ItemCopies' postfixes on `ItemDrop.Awake` and `Inventory.AddItem`, put on
+once a food value is first changed and left on (a flag test while every food value is at its default).
 
 Postfix: `Attack.GetAttackStamina`, `Hud.Awake` (food slots), `Feast.GetStackPercentige` (capped at 1), `ZNetScene.Awake` (`Priority.Last`, binds the station and feast food sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
 `Hud.UpdateStamina`, `Hud.UpdateEitr`, `Hud.UpdateFood`, `ItemDrop.ItemData.GetTooltip` (static, six
 parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `Player.Food.CanEatAgain`,
 `Player.GetBuildStamina`, `Player.GetDodgeStaminaUse`, `Player.GetTotalFoodValue` (`ref float stamina`),
-`Player.OnSwimming` (stroke timer), `Player.UpdateStats(float)` (encumbered and swimming regen),
-`SEMan.ModifyStaminaRegen`, `SEMan.ModifyEitrRegen`.
+`Player.OnSwimming` (stroke timer), `SEMan.ModifyStaminaRegen` (the rules, and a `Priority.Last` one keeping the
+multiplier inside UpdateStats), `SEMan.ModifyEitrRegen`.
 Prefix and postfix: `Player.UpdateFood` (Auto Eat; the expiring food in the prefix, the refill in the postfix).
 Prefix: `Player.CanEat` and `Player.EatFood` (`Priority.Low`) for Food Slots, skipping the game's method only where
 the configured count and 3 decide differently; `Character.Damage` (drowning), `Player.EatFood`, `Player.GetTotalFoodValue` (degradation, base values),
@@ -114,7 +126,9 @@ the configured count and 3 decide differently; `Character.Damage` (drowning), `P
 Prefix and finalizer (field scaled or swapped for one call): `Character.Jump`, `CookingStation.UpdateCooking`, `Feast.GetStack`, `Feast.GetStackPercentige`, `Feast.GetHoverText`, `Fermenter.GetStatus`,
 `Fermenter.DelayedTap`, `FishingFloat.FixedUpdate`,
 `Humanoid.BlockAttack`, `Player.CheckRun`, `Player.OnSneaking`, `Player.OnSwimming`, `Player.RPC_UseEitr`,
-`Player.RPC_UseStamina`, `Player.UpdateStats(float)` (encumbered cost and the regen basics), `SE_Harpooned.UpdateStatusEffect`.
+`Player.RPC_UseStamina`, `SE_Harpooned.UpdateStatusEffect`.
+Prefix, postfix and finalizer: `Player.UpdateStats(float)` (one class: the regen basics and encumbered cost scaled in
+the prefix and restored in the finalizer, the encumbered and swimming regen in the postfix).
 
 Helpers that return a cost (`GetDodgeStaminaUse`, `GetAttackStamina`, `GetBuildStamina`, `Fish.GetStaminaUse`) get a
 postfix on `__result`. The scratchpad tool `patchcheck` (a .NET 8 console program) resolves every patch class
@@ -193,7 +207,10 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
   local player; the `AddStatusEffect` prefix still writes the values into a freshly cloned effect.
 - `SettingChanged` is ignored while the item database is being bound (BepInEx raises it for every entry read from
   the file); one `ApplyAll` runs at the end of the load instead. Foods and meads are both keyed by prefab name,
-  which is also their section name, so a change is applied to that one item.
+  which is also their section name, so a change marks that one item; any other setting, or a file reload, marks
+  everything. `ItemValues.Tick` applies what was marked on the next frame: the changed foods in one batched
+  `Copies.Apply` walk, the changed meads, or one `ApplyAll`. Charter writes a server's values one entry at a time on
+  joining, so K differing values cost one walk of the items rather than K.
 - `Localization.AddWord` is private and the dictionary is cleared on every language setup, so the words are added
   in a postfix of `SetupLanguage` (assembly_guiutils, publicized).
 - Fermenter settings are one global value each, not per mead or per barrel: `Fermentation Time` is absolute seconds

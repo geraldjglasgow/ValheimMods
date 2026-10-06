@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.7.4
+
+- Less work every frame for stamina and eitr regeneration, cooking and new items.
+- Joining a server or reloading the config applies food and mead values once, not once per setting.
+
 ## 4.7.3
 
 - Fixed: no more Harmony warnings in the log at startup.

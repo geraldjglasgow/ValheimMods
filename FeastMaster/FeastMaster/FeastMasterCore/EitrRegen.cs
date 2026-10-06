@@ -23,7 +23,8 @@ namespace FeastMaster
             if (!(__instance.m_character is Player player))
                 return;
 
-            eitrMultiplier += EitrVigor(player) / 100f;
+            if (ChangedRules.EitrVigor)
+                eitrMultiplier += EitrVigor(player) / 100f;
             eitrMultiplier *= CurveFactor(player);
             if (player.IsBlocking())
                 eitrMultiplier *= Settings.BlockingEitrRegenFactor.Value / Settings.GameBlockingRegenFactor;

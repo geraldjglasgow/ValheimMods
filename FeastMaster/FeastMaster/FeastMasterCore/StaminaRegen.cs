@@ -7,14 +7,18 @@ namespace FeastMaster
     /// The regeneration multiplier rules, applied through the game's single hook for status effect multipliers:
     /// Player.UpdateStats calls SEMan.ModifyStaminaRegen(ref multiplier) and multiplies its regen by the result.
     /// Vigor, extra stamina and the sneak bonus are added to the multiplier; the bar-level curve then scales it.
+    /// Also installed for <see cref="RestrictedStaminaRegen"/> alone, which only needs the last postfix: it keeps the
+    /// multiplier the game's UpdateStats got (<see cref="StaminaCapture"/>), so the hook is not asked twice per step.
     /// </summary>
     [HarmonyPatch(typeof(SEMan), nameof(SEMan.ModifyStaminaRegen))]
     public static class StaminaRegenMultiplierPatch
     {
-        public static bool Prepare()
+        public static bool Prepare() => ChangedRules.StaminaRegenRules || ChangedRules.RestrictedRegen;
+
+        public static bool Rules()
         {
-            return Customized.AnyFood(FeastMasterData.Vigor)
-                || Customized.Any(Settings.VigorPerStaminaPoint, Settings.VigorMultiplier, Settings.RegenCurveStrength,
+            return ChangedRules.Vigor
+                || Customized.Any(Settings.VigorMultiplier, Settings.RegenCurveStrength,
                     Settings.RegenCurvePivot, Settings.RegenPerExtraStaminaPoint, Settings.CountFoodStaminaOnly,
                     Settings.SneakSkillRegenBonus, Settings.BlockingRegenFactor);
         }
@@ -22,16 +26,21 @@ namespace FeastMaster
         [HarmonyPostfix]
         public static void Postfix(SEMan __instance, ref float staminaMultiplier)
         {
-            if (!(__instance.m_character is Player player))
+            if (!ChangedRules.StaminaRegenRules || !(__instance.m_character is Player player))
                 return;
 
-            staminaMultiplier += Vigor(player) / 100f;
+            if (ChangedRules.Vigor)
+                staminaMultiplier += Vigor(player) / 100f;
             staminaMultiplier += ExtraStaminaBonus(player) / 100f;
             staminaMultiplier += SneakBonus(player) / 100f;
             staminaMultiplier *= CurveFactor(player);
             if (player.IsBlocking())
                 staminaMultiplier *= Settings.BlockingRegenFactor.Value / Settings.GameBlockingRegenFactor;
         }
+
+        /// <summary>Runs after every other postfix, so the kept multiplier is the one the game goes on with.</summary>
+        [HarmonyPostfix, HarmonyPriority(Priority.Last)]
+        public static void Remember(SEMan __instance, ref float staminaMultiplier) => StaminaCapture.Seen(__instance, staminaMultiplier);
 
         /// <summary>Total Vigor of the active foods in percent. Vigor does not fade with the food.</summary>
         public static float Vigor(Player player)
@@ -102,32 +111,30 @@ namespace FeastMaster
     }
 
     /// <summary>
-    /// Regeneration while encumbered or swimming. The game zeroes regeneration in both states; this postfix
+    /// Regeneration while encumbered or swimming. The game zeroes regeneration in both states; this rule
     /// applies the game's own formula at the configured fraction, with the same multipliers, the regen delay
     /// timer and Game.m_staminaRegenRate, capped at max stamina. The game's other zero conditions (attacking,
-    /// dodging, wall running) still stop regeneration.
+    /// dodging, wall running) still stop regeneration. Asked by <see cref="UpdateStatsPatch"/> after UpdateStats.
     /// </summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
-    public static class RestrictedStaminaRegenPatch
+    public static class RestrictedStaminaRegen
     {
-        public static bool Prepare() => Customized.Any(Settings.EncumberedRegenFraction, Settings.SwimmingRegenFraction, Settings.SwimmingRegenDelay);
+        public static bool Rules() => Customized.Any(Settings.EncumberedRegenFraction, Settings.SwimmingRegenFraction, Settings.SwimmingRegenDelay);
 
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance, float dt)
+        public static void Apply(Player player, float dt)
         {
-            if (__instance.InIntro() || __instance.IsTeleporting() || __instance.InAttack() || __instance.InDodge() || __instance.m_wallRunning)
+            if (player.InIntro() || player.IsTeleporting() || player.InAttack() || player.InDodge() || player.m_wallRunning)
                 return;
-            float fraction = Fraction(__instance);
+            float fraction = Fraction(player);
             if (fraction <= 0f)
                 return;
 
-            float maxStamina = __instance.GetMaxStamina();
-            if (__instance.m_stamina >= maxStamina || __instance.m_staminaRegenTimer > 0f)
+            float maxStamina = player.GetMaxStamina();
+            if (player.m_stamina >= maxStamina || player.m_staminaRegenTimer > 0f)
                 return;
 
-            float regen = Regen(__instance, maxStamina) * (__instance.IsBlocking() ? Settings.GameBlockingRegenFactor : 1f) * fraction;
-            __instance.m_stamina = Mathf.Min(maxStamina, __instance.m_stamina + regen * dt * Game.m_staminaRegenRate);
-            __instance.m_nview.GetZDO().Set(ZDOVars.s_stamina, __instance.m_stamina);
+            float regen = Regen(player, maxStamina) * (player.IsBlocking() ? Settings.GameBlockingRegenFactor : 1f) * fraction;
+            player.m_stamina = Mathf.Min(maxStamina, player.m_stamina + regen * dt * Game.m_staminaRegenRate);
+            player.m_nview.GetZDO().Set(ZDOVars.s_stamina, player.m_stamina);
         }
 
         /// <summary>
@@ -146,8 +153,11 @@ namespace FeastMaster
         private static float Regen(Player player, float maxStamina)
         {
             float regen = player.m_staminaRegen + (1f - player.m_stamina / maxStamina) * player.m_staminaRegen * player.m_staminaRegenTimeMultiplier;
-            float multiplier = 1f;
-            player.m_seman.ModifyStaminaRegen(ref multiplier);
+            if (!StaminaCapture.TryGet(player, out float multiplier))
+            {
+                multiplier = 1f;
+                player.m_seman.ModifyStaminaRegen(ref multiplier);
+            }
             return regen * multiplier;
         }
     }
@@ -156,7 +166,7 @@ namespace FeastMaster
     [HarmonyPatch(typeof(Player), nameof(Player.OnSwimming))]
     public static class SwimmingRegenDelayPatch
     {
-        public static bool Prepare() => RestrictedStaminaRegenPatch.Prepare();
+        public static bool Prepare() => ChangedRules.RestrictedRegen;
 
         private static float lastStrokeTime = -1000f;
 

@@ -4,7 +4,7 @@ FeastMaster lets you configure every food and mead in Valheim, how health, stami
 cost, cooking, brewing and feasts, and a few HUD options. Every setting starts at the game's behaviour, and while a
 setting is at its default FeastMaster leaves that part of the game (and other mods) alone.
 
-This wiki describes version 4.7.0.
+This wiki describes version 4.7.4.
 
 ## Install
 

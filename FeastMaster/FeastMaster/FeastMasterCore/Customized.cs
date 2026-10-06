@@ -20,6 +20,9 @@ namespace FeastMaster
             return false;
         }
 
+        /// <summary>One float entry, compared without boxing or a params array (spawn hooks and timers call it).</summary>
+        public static bool Any(ConfigEntry<float> entry) => entry != null && !Same(entry.Value, (float)entry.DefaultValue);
+
         /// <summary>
         /// Floats are compared with a small tolerance: a default read from the game (a food's health, a cook time)
         /// is written to the .cfg with 7 significant digits and may not read back as the exact same float.
@@ -27,9 +30,11 @@ namespace FeastMaster
         private static bool Same(object value, object defaultValue)
         {
             if (value is float a && defaultValue is float b)
-                return Math.Abs(a - b) <= 1e-5f * Math.Max(1f, Math.Abs(b));
+                return Same(a, b);
             return Equals(value, defaultValue);
         }
+
+        private static bool Same(float a, float b) => Math.Abs(a - b) <= 1e-5f * Math.Max(1f, Math.Abs(b));
 
         /// <summary>Any food whose entry <paramref name="key"/> (Vigor, EitrVigor) is changed.</summary>
         public static bool AnyFood(string key)
@@ -46,8 +51,8 @@ namespace FeastMaster
         public static bool FoodValues(Dictionary<string, ConfigEntry<float>> configs)
         {
             return GlobalFoodValues()
-                || Any(configs[FeastMasterData.Health], configs[FeastMasterData.Stamina], configs[FeastMasterData.Duration],
-                    configs[FeastMasterData.HealthRegen], configs[FeastMasterData.Eitr]);
+                || Any(configs[FeastMasterData.Health]) || Any(configs[FeastMasterData.Stamina]) || Any(configs[FeastMasterData.Duration])
+                || Any(configs[FeastMasterData.HealthRegen]) || Any(configs[FeastMasterData.Eitr]);
         }
 
         public static bool AnyFoodValues()
@@ -64,8 +69,8 @@ namespace FeastMaster
 
         private static bool GlobalFoodValues()
         {
-            return Any(FeastMasterData.HealthModifier, FeastMasterData.StaminaModifier, FeastMasterData.DurationModifier,
-                FeastMasterData.HealthRegenModifier, FeastMasterData.EitrModifier);
+            return Any(FeastMasterData.HealthModifier) || Any(FeastMasterData.StaminaModifier) || Any(FeastMasterData.DurationModifier)
+                || Any(FeastMasterData.HealthRegenModifier) || Any(FeastMasterData.EitrModifier);
         }
 
         public static bool Mead(MeadEffectConfig config)

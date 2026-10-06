@@ -4,11 +4,11 @@ using HarmonyLib;
 
 namespace FeastMaster
 {
-    /// <summary>The station's own values, replaced for one cooking tick.</summary>
-    public sealed class CookingSwap
+    /// <summary>The station's own values, replaced for one cooking tick; Times is null when nothing was replaced.</summary>
+    public struct CookingSwap
     {
         public bool CanOvercook;
-        public float[] CookTimes;
+        public float[] Times;
     }
 
     /// <summary>
@@ -31,23 +31,38 @@ namespace FeastMaster
 
     public static class CookingRules
     {
-        /// <summary>Applies the configured values on the owner; null (nothing replaced) on every other peer.</summary>
+        // The station's own times for the one call in progress: UpdateCooking does not run inside another, so one buffer
+        // serves every station; a call that somehow nests gets an array of its own.
+        private static float[] buffer = new float[8];
+        private static bool bufferInUse;
+
+        /// <summary>Applies the configured values on the owner; nothing replaced (Times null) on every other peer.</summary>
         public static CookingSwap Swap(CookingStation station)
         {
             ZNetView view = station.m_nview;
             if (view == null || !view.IsValid() || !view.IsOwner())
-                return null;
+                return default;
             CookingSwap saved = new CookingSwap { CanOvercook = station.m_canOvercookItems };
             station.m_canOvercookItems &= Settings.FoodCanBurn.Value;
             CookTimes.TryGet(view.GetZDO().GetPrefab(), out Dictionary<ItemDrop, ConfigEntry<float>> entries);
-            saved.CookTimes = SwapTimes(station.m_conversion, entries, Settings.CookTimeMultiplier.Value);
+            saved.Times = SwapTimes(station.m_conversion, entries, Settings.CookTimeMultiplier.Value);
             return saved;
+        }
+
+        private static float[] Times(int count)
+        {
+            if (bufferInUse)
+                return new float[count];
+            if (buffer.Length < count)
+                buffer = new float[count];
+            bufferInUse = true;
+            return buffer;
         }
 
         /// <summary>Each recipe's time becomes its station entry (or its own time) times the multiplier.</summary>
         private static float[] SwapTimes(List<CookingStation.ItemConversion> recipes, Dictionary<ItemDrop, ConfigEntry<float>> entries, float multiplier)
         {
-            float[] times = new float[recipes.Count];
+            float[] times = Times(recipes.Count);
             for (int i = 0; i < recipes.Count; i++)
             {
                 CookingStation.ItemConversion recipe = recipes[i];
@@ -63,15 +78,17 @@ namespace FeastMaster
 
         public static void Restore(CookingStation station, CookingSwap saved)
         {
-            if (saved == null)
+            if (saved.Times == null)
                 return;
             station.m_canOvercookItems = saved.CanOvercook;
             List<CookingStation.ItemConversion> recipes = station.m_conversion;
-            for (int i = 0; i < saved.CookTimes.Length && i < recipes.Count; i++)
+            for (int i = 0; i < saved.Times.Length && i < recipes.Count; i++)
             {
                 if (recipes[i] != null)
-                    recipes[i].m_cookTime = saved.CookTimes[i];
+                    recipes[i].m_cookTime = saved.Times[i];
             }
+            if (ReferenceEquals(saved.Times, buffer))
+                bufferInUse = false;
         }
     }
 }
