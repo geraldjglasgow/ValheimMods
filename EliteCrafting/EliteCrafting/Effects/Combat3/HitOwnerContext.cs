@@ -1,5 +1,4 @@
 using System;
-using HarmonyLib;
 
 namespace EliteCrafting.Effects.Combat3
 {
@@ -10,7 +9,8 @@ namespace EliteCrafting.Effects.Combat3
     /// the penetration of the weapon it last swung (<c>ecf_pen</c>, <see cref="Penetration"/>, at the swing's start), each
     /// clamped to the running rules. A creature, or a player without the keys, reads 0. Set for the duration of the
     /// RPC only; a hit resolved inside another (Bramblehide's returned damage on a creature this peer owns) keeps its
-    /// own values and restores the outer ones. Works on a dedicated server: it needs no local player.
+    /// own values and restores the outer ones. Works on a dedicated server: it needs no local player. Entered and left
+    /// by <see cref="IncomingDamageDispatch"/>, which looks the attacker's ZDO up once for every feature.
     /// </summary>
     internal static class HitOwnerContext
     {
@@ -26,13 +26,13 @@ namespace EliteCrafting.Effects.Combat3
         /// <summary>The share of each resistance the attacker's hit bypasses (0 = none).</summary>
         public static float ResistBypass { get; private set; }
 
-        public static Saved Enter(Character target, HitData hit)
+        /// <summary>The values for a hit the target's owner resolves; <paramref name="attacker"/> is null off the owner.</summary>
+        public static Saved Enter(ZDO? attacker)
         {
             Saved outer = new Saved { DotScale = DotScale, ResistBypass = ResistBypass };
-            bool owner = ItemEffects.Enabled && target.m_nview != null && target.m_nview.IsValid() && target.m_nview.IsOwner();
-            bool fromPlayer = owner && !hit.m_attacker.IsNone();
-            DotScale = fromPlayer ? 1f + PlayerStats.OfAttacker(hit, PlayerStats.Dot) : 1f;
-            ResistBypass = fromPlayer ? Penetration.OfAttacker(hit) : 0f;
+            bool fromPlayer = attacker != null && ItemEffects.Enabled;
+            DotScale = fromPlayer ? 1f + PlayerStats.OfZdo(attacker, PlayerStats.Dot) : 1f;
+            ResistBypass = fromPlayer ? Penetration.OfZdo(attacker) : 0f;
             return outer;
         }
 
@@ -46,24 +46,6 @@ namespace EliteCrafting.Effects.Combat3
         {
             DotScale = 1f;
             ResistBypass = 0f;
-        }
-    }
-
-    [HarmonyPatch(typeof(Character), nameof(Character.RPC_Damage))]
-    internal static class HitOwnerContextPatch
-    {
-        private static void Prefix(Character __instance, HitData hit, out HitOwnerContext.Saved __state) =>
-            __state = HitOwnerContext.Enter(__instance, hit);
-
-        private static void Postfix(HitOwnerContext.Saved __state) => HitOwnerContext.Exit(__state);
-
-        private static Exception? Finalizer(Exception? __exception)
-        {
-            if (__exception != null)
-            {
-                HitOwnerContext.Reset();
-            }
-            return __exception;
         }
     }
 }

@@ -105,6 +105,6 @@ namespace EliteCrafting.Api
             }
         }
 
-        private static string Quote(string text) => "\"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+        internal static string Quote(string text) => "\"" + text.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
     }
 }

@@ -5,7 +5,7 @@ Runes and magic gear drop beside a creature's normal loot, at the same moment: w
 ## Who drops loot
 
 - A creature drops loot only if a player or a player's pet hit it.
-- Tamed and summoned creatures drop nothing, nor Elite Creatures Reborn's Cloven twins and Phantom husks.
+- Tamed and summoned creatures drop nothing, nor Elite Creatures Reborn's Phantom copies and Cloning decoys, nor the first of a Tethered pair to fall.
 - A creature's tier is the earliest biome it naturally lives in (else where it dies): Meadows 1, Black Forest 2, Swamp 3, Mountain and Ocean 4, Plains 5, Mistlands 6, Ashlands 7, Deep North 8. Other mods can set their creatures' tiers (Elite Creatures Pack does).
 
 ## Chance per kill

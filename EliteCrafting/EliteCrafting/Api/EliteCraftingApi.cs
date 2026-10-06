@@ -78,6 +78,14 @@ namespace EliteCrafting.Api
         public static float GetItemTotal(ItemDrop.ItemData item, string effect, string? param = null) =>
             ApiGuard.Run("GetItemTotal", ApiTotals.Item, item, effect, param, 0f);
 
+        /// <summary>
+        /// The local player's active inscriptions on everything that counts, one entry per inscription, values summed and
+        /// worded as the tooltip words a line: <c>[{ "id", "category", "line", "total", "capped", "item_local",
+        /// "sources": [{ "item", "value" }] }]</c>. Another player: an empty list.
+        /// </summary>
+        public static string? GetPlayerInscriptionsJson(Player player) =>
+            ApiGuard.Run("GetPlayerInscriptionsJson", ApiPlayerLines.Json, player, null);
+
         // ---- 4. items
 
         public static bool IsMagic(ItemDrop.ItemData item) => ApiGuard.Run("IsMagic", ApiItems.IsMagic, item, false);

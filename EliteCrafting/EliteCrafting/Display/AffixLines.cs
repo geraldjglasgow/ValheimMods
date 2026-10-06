@@ -80,22 +80,28 @@ namespace EliteCrafting.Display
         /// The affix's own sentence (<c>$ecf_affix_&lt;id&gt;_line</c>) when a translation has one; otherwise the
         /// generic "value name" line. An orphaned affix (no definition) shows its bare stored value and its name or id.
         /// </summary>
-        private static string Text(AffixRoll roll, AffixDef? def)
+        private static string Text(AffixRoll roll, AffixDef? def) => Sentence(roll.Id, roll.Value, def);
+
+        /// <summary>
+        /// The line an inscription of this id shows with this value; also the API's summed lines
+        /// (<c>GetPlayerInscriptionsJson</c>), which word a player's total the way the tooltip words one item.
+        /// </summary>
+        internal static string Sentence(string id, float value, AffixDef? def)
         {
-            string lineKey = "ecf_affix_" + roll.Id + "_line";
+            string lineKey = "ecf_affix_" + id + "_line";
             if (DisplayWords.Has(lineKey))
             {
-                return Words.Localize("$" + lineKey, DisplayWords.Plain(roll.Value));
+                return Words.Localize("$" + lineKey, DisplayWords.Plain(value));
             }
             string name = def != null
-                ? DisplayWords.Name(def.Name, roll.Id)
-                : DisplayWords.Name("$ecf_affix_" + roll.Id, roll.Id);
+                ? DisplayWords.Name(def.Name, id)
+                : DisplayWords.Name("$ecf_affix_" + id, id);
             if (def != null && def.Value == AffixValueType.Flag)
             {
                 return name;
             }
-            string value = def != null ? DisplayWords.Signed(roll.Value, def) : DisplayWords.Plain(roll.Value);
-            return Words.Localize("$ecf_ui_affix_line", value, name);
+            string shown = def != null ? DisplayWords.Signed(value, def) : DisplayWords.Plain(value);
+            return Words.Localize("$ecf_ui_affix_line", shown, name);
         }
 
         /// <summary>

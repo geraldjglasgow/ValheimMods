@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using EliteCrafting.Core;
 using EliteCrafting.Items;
 using EliteCrafting.Rules;
 using UnityEngine;
@@ -45,42 +44,21 @@ namespace EliteCrafting.Loot
     /// 10): magic bases only (a class with <c>rolls: true</c>, never stackable, never a rune), not in <c>gear.exclude</c>,
     /// and - unless listed in <c>gear.include</c> - with a recipe (when <c>gear.require_recipe</c>), no DLC and no quest
     /// flag. A base whose pool cannot fill the lowest magic rarity's minimum is left out with one load warning.
+    /// All at once (<see cref="Collect"/>) or a slice at a time (<see cref="GearCollector"/>, the pool's warm-up).
     /// </summary>
     internal static class GearBases
     {
         public static List<GearBase> Collect(ObjectDB db, RuleSet rules)
         {
-            List<GearBase> bases = new List<GearBase>();
-            List<string> thin = new List<string>();
-            GearDropRules gear = rules.Economy.Drops.Gear;
-            HashSet<string> exclude = new HashSet<string>(gear.Exclude, System.StringComparer.Ordinal);
-            RarityDef? lowest = LowestMagic(rules.Economy);
-            int minimum = lowest == null ? 1 : System.Math.Max(1, lowest.MinAffixes);
+            GearCollector collector = new GearCollector(rules);
             foreach (GameObject prefab in db.m_items)
             {
-                GearBase? found = prefab == null ? null : TryBase(prefab, gear, exclude, rules);
-                if (found != null && lowest != null && found.CapacityFor(lowest) < minimum)
-                {
-                    thin.Add(found.Name);
-                }
-                else if (found != null)
-                {
-                    bases.Add(found);
-                }
+                collector.Add(prefab);
             }
-            WarnThin(thin, minimum);
-            return bases;
+            return collector.Finish();
         }
 
-        private static void WarnThin(List<string> thin, int minimum)
-        {
-            if (thin.Count > 0)
-            {
-                Log.Warn($"gear drops: {thin.Count} bases cannot fill {minimum} inscriptions at their item level and never drop: {string.Join(", ", thin)}");
-            }
-        }
-
-        private static GearBase? TryBase(GameObject prefab, GearDropRules gear, HashSet<string> exclude, RuleSet rules)
+        internal static GearBase? TryBase(GameObject prefab, GearDropRules gear, HashSet<string> exclude, RuleSet rules)
         {
             ItemDrop drop = prefab.GetComponent<ItemDrop>();
             if (drop == null || !ItemClasses.IsMagicBase(drop.m_itemData))
@@ -109,7 +87,7 @@ namespace EliteCrafting.Loot
             return !gear.RequireRecipe || ItemTier.HasRecipe(name);
         }
 
-        private static RarityDef? LowestMagic(EconomyRules economy)
+        internal static RarityDef? LowestMagic(EconomyRules economy)
         {
             for (int i = 0; i < economy.Rarities.Count; i++)
             {

@@ -1,4 +1,3 @@
-using HarmonyLib;
 using UnityEngine;
 
 namespace EliteCrafting.Effects
@@ -97,38 +96,6 @@ namespace EliteCrafting.Effects
             back.m_hitType = HitData.HitType.PlayerHit;
             back.SetAttacker(player);
             attacker.Damage(back);
-        }
-    }
-
-    [HarmonyPatch(typeof(Character), nameof(Character.RPC_Damage))]
-    internal static class IncomingDamagePatch
-    {
-        private static bool Prefix(Character __instance, HitData hit) =>
-            !(__instance is Player player) || !ReferenceEquals(player, Player.m_localPlayer) || IncomingHits.OnIncoming(player, hit);
-
-        private static void Postfix() => IncomingHits.Steadfast = false;
-    }
-
-    /// <summary>ApplyDamage on the local player: ward before, thorns after (health lost = before minus after).</summary>
-    [HarmonyPatch(typeof(Character), nameof(Character.ApplyDamage))]
-    internal static class HealthLossPatch
-    {
-        private static void Prefix(Character __instance, HitData hit, out float __state)
-        {
-            __state = -1f;
-            if (ReferenceEquals(__instance, Player.m_localPlayer) && !__instance.IsDead())
-            {
-                IncomingHits.BeforeHealthLoss(hit);
-                __state = __instance.GetHealth();
-            }
-        }
-
-        private static void Postfix(Character __instance, HitData hit, float __state)
-        {
-            if (__state > 0f && __instance is Player player)
-            {
-                IncomingHits.AfterHealthLoss(player, hit, __state - player.GetHealth());
-            }
         }
     }
 }

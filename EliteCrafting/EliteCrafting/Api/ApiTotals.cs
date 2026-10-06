@@ -18,7 +18,8 @@ namespace EliteCrafting.Api
     /// </summary>
     internal static class ApiTotals
     {
-        private static readonly Dictionary<string, int[]> ChannelCache = new Dictionary<string, int[]>(StringComparer.Ordinal);
+        // Keyed on (effect, param) as a tuple, so a call with a param builds no key string.
+        private static readonly Dictionary<(string Effect, string? Param), int[]> ChannelCache = new Dictionary<(string Effect, string? Param), int[]>();
         private static ChannelPlan? _cachePlan;
 
         public static float Player(Player? player, string? effect, string? param)
@@ -102,7 +103,7 @@ namespace EliteCrafting.Api
                 ChannelCache.Clear();
                 _cachePlan = plan;
             }
-            string key = param == null ? effect : effect + ":" + param;
+            (string, string?) key = (effect, param);
             if (!ChannelCache.TryGetValue(key, out int[] found))
             {
                 List<int> list = new List<int>();

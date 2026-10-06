@@ -52,7 +52,7 @@ namespace EliteCrafting.Effects
             return maxHealth * (1f + health);
         }
 
-        /// <summary>A hit being built for a character: raise it when the attacker is a tagged summon.</summary>
+        /// <summary>A hit being built for a character, not by the local player (<see cref="OutgoingDamageDispatch"/>): raise it when the attacker is a tagged summon.</summary>
         public static void OnHit(HitData hit)
         {
             if (hit.m_attacker.IsNone() || ZDOMan.instance == null)
@@ -80,9 +80,5 @@ namespace EliteCrafting.Effects
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Character), nameof(Character.SetMaxHealth))]
         private static void MaxHealth(Character __instance, ref float health) => health = Summons.Raised(__instance, health);
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(Character), nameof(Character.Damage))]
-        private static void Damage(HitData hit) => Summons.OnHit(hit);
     }
 }

@@ -80,7 +80,7 @@ namespace EliteCrafting.Loot
             }
             if (Ecr.Worthless && drops.Ecr.SkipWorthless)
             {
-                reason = "Elite Creatures Reborn marks it worthless (Cloven twin or Phantom husk)";
+                reason = "Elite Creatures Reborn pays nothing for it (Phantom copy, Cloning decoy, or first of a Tethered pair)";
                 return false;
             }
             reason = "";

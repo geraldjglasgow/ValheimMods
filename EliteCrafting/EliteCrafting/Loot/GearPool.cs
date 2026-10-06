@@ -9,20 +9,17 @@ namespace EliteCrafting.Loot
     /// <summary>
     /// The pre-rolled gear pool per drop tier 1-8 (drops.md sections 8 and 13, classes-and-tiers.md section 10): bases
     /// at the drop tier weigh <c>same_tier_weight</c>, bases up to <c>tiers_below</c> below it weigh
-    /// <c>lower_tier_weight</c>, both times the class's <c>drop_weight</c>. Rebuilt when the rules generation, the class
-    /// registry, the object database instance, its item count or its recipe count changes (other mods add items and
-    /// recipes late), so the first kill after a change rebuilds and every other kill costs five comparisons. Main
-    /// thread only.
+    /// <c>lower_tier_weight</c>, both times the class's <c>drop_weight</c>. Out of date when the rules generation, the
+    /// class registry, the object database instance, its item count or its recipe count changes (other mods add items
+    /// and recipes late, <see cref="GearPoolKey"/>). <see cref="GearPoolWarmup"/> builds it again a slice a frame
+    /// shortly after such a change, so a kill finds it ready and costs five comparisons; a draw that comes first (in
+    /// the first seconds after a world load or a rules change) still builds it at once. Main thread only.
     /// </summary>
     public static class GearPool
     {
         private static WeightedTable<GearBase>[] _tables = Array.Empty<WeightedTable<GearBase>>();
         private static IReadOnlyList<GearBase> _bases = Array.Empty<GearBase>();
-        private static int _generation = -1;
-        private static int _classes = -1;
-        private static ObjectDB? _db;
-        private static int _items = -1;
-        private static int _recipes = -1;
+        private static GearPoolKey? _key;
 
         /// <summary>Every drop-eligible base of the current build (for the reference command).</summary>
         public static IReadOnlyList<GearBase> Bases
@@ -41,39 +38,37 @@ namespace EliteCrafting.Loot
             return tier >= 1 && tier <= _tables.Length ? _tables[tier - 1] : WeightedTable<GearBase>.Empty;
         }
 
-        internal static void Invalidate() => _generation = -1;
+        internal static void Invalidate() => _key = null;
 
-        private static void EnsureFresh()
-        {
-            ObjectDB? db = ObjectDB.instance;
-            RuleSet rules = ActiveRules.Current;
-            int items = db?.m_items?.Count ?? -1;
-            int recipes = db?.m_recipes?.Count ?? -1;
-            if (_generation == rules.Generation && _classes == ItemClasses.Version && ReferenceEquals(db, _db)
-                && items == _items && recipes == _recipes)
-            {
-                return;
-            }
-            _generation = rules.Generation;
-            _classes = ItemClasses.Version;
-            _db = db;
-            _items = items;
-            _recipes = recipes;
-            Build(db, rules);
-        }
+        /// <summary>Whether the pool in use was built from exactly these inputs.</summary>
+        internal static bool IsFresh(GearPoolKey key) => _key.HasValue && _key.Value.Equals(key);
 
-        private static void Build(ObjectDB? db, RuleSet rules)
+        /// <summary>Takes a finished collection as the pool (the warm-up's last slice, or a draw that came first).</summary>
+        internal static void Adopt(GearPoolKey key, IReadOnlyList<GearBase> bases, RuleSet rules)
         {
-            _bases = db?.m_items == null ? Array.Empty<GearBase>() : (IReadOnlyList<GearBase>)GearBases.Collect(db, rules);
+            _key = key;
+            _bases = bases;
             _tables = new WeightedTable<GearBase>[DropParser.Tiers];
             for (int tier = 1; tier <= DropParser.Tiers; tier++)
             {
                 _tables[tier - 1] = WeightedTable<GearBase>.Build(Weights(_bases, tier, rules.Economy.Drops.Gear));
             }
-            if (db != null)
+            if (key.Db != null)
             {
                 Log.Info($"gear drop pool: {_bases.Count} bases; per tier {Sizes()}");
             }
+        }
+
+        private static void EnsureFresh()
+        {
+            GearPoolKey key = GearPoolKey.Now();
+            if (IsFresh(key))
+            {
+                return;
+            }
+            RuleSet rules = ActiveRules.Current;
+            ObjectDB? db = key.Db;
+            Adopt(key, db?.m_items == null ? Array.Empty<GearBase>() : (IReadOnlyList<GearBase>)GearBases.Collect(db, rules), rules);
         }
 
         private static IEnumerable<KeyValuePair<GearBase, float>> Weights(IReadOnlyList<GearBase> bases, int tier, GearDropRules gear)
@@ -95,5 +90,36 @@ namespace EliteCrafting.Loot
             }
             return string.Join(", ", parts);
         }
+    }
+
+    /// <summary>
+    /// What the gear pool is built from: the object database instance, its item and recipe counts, the rules
+    /// generation and the class registry version. Any part changing makes the pool out of date.
+    /// </summary>
+    internal readonly struct GearPoolKey : IEquatable<GearPoolKey>
+    {
+        private GearPoolKey(ObjectDB? db, int generation, int classes)
+        {
+            Db = db;
+            Generation = generation;
+            Classes = classes;
+            Items = db?.m_items?.Count ?? -1;
+            Recipes = db?.m_recipes?.Count ?? -1;
+        }
+
+        public ObjectDB? Db { get; }
+        public int Generation { get; }
+        public int Classes { get; }
+        public int Items { get; }
+        public int Recipes { get; }
+
+        public static GearPoolKey Now() => new GearPoolKey(ObjectDB.instance, ActiveRules.Generation, ItemClasses.Version);
+
+        public bool Equals(GearPoolKey other) => ReferenceEquals(Db, other.Db) && Generation == other.Generation
+            && Classes == other.Classes && Items == other.Items && Recipes == other.Recipes;
+
+        public override bool Equals(object? obj) => obj is GearPoolKey other && Equals(other);
+
+        public override int GetHashCode() => (Generation * 397) ^ (Classes * 31) ^ Items ^ (Recipes << 12);
     }
 }

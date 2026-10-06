@@ -1,7 +1,10 @@
 using EliteCrafting.Affixes;
+using EliteCrafting.Display.Backdrops;
+using EliteCrafting.Rules;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EliteCrafting.Display
 {
@@ -15,6 +18,8 @@ namespace EliteCrafting.Display
     /// <item>The selected recipe's name label, and each upgrade entry in the recipe list: colored through the label's
     /// <c>color</c> property, not a tag. The game rewrites the name text every frame; a tag would change the text twice
     /// per frame and rebuild the label, while an unchanged color is a compare and nothing else.</item>
+    /// <item>The rarity backdrop behind the selected upgrade's large icon and an upgrade entry's icon
+    /// (<see cref="IconBackdrop"/>), from the same two patches.</item>
     /// </list>
     /// Runs on the local player's client only, every frame while the panel is open: two field reads, one cached state
     /// lookup, no allocation.
@@ -53,12 +58,17 @@ namespace EliteCrafting.Display
             private static void Postfix(InventoryGui __instance)
             {
                 ColorName(__instance.m_recipeName, _target);
+                Recipe? recipe = __instance.m_selectedRecipe.Recipe;
+                IconBackdrop.Set(__instance.m_recipeIcon, recipe != null ? __instance.m_selectedRecipe.ItemData : null);
                 _recipeItem = null;
                 _target = null;
             }
         }
 
-        /// <summary>An upgrade entry in the recipe list, built on list rebuilds only (tab, station, inventory change).</summary>
+        /// <summary>
+        /// An upgrade entry in the recipe list, built on list rebuilds only (tab, station, inventory change): its name in
+        /// the rarity color and its icon's backdrop. The game makes every entry anew, so a plain item's needs nothing.
+        /// </summary>
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.AddRecipeToList))]
         private static class RecipeListPatch
         {
@@ -66,18 +76,28 @@ namespace EliteCrafting.Display
             private static void Postfix(InventoryGui __instance, ItemDrop.ItemData item, bool canCraft)
             {
                 int count = __instance.m_availableRecipes.Count;
-                if (item == null || count == 0 || !RarityPalette.TryNameColor(ItemState.Read(item).Rarity, out Color color))
+                RarityDef? rarity = item == null || count == 0 ? null : ItemState.Read(item).Rarity;
+                GameObject? element = rarity == null || rarity.IsBase ? null : __instance.m_availableRecipes[count - 1].InterfaceElement;
+                if (element == null)
                 {
                     return;
                 }
-                GameObject element = __instance.m_availableRecipes[count - 1].InterfaceElement;
-                Transform? name = element == null ? null : element.transform.Find("name");
-                TMP_Text? label = name == null ? null : name.GetComponent<TMP_Text>();
-                if (label != null)
+                Transform icon = element.transform.Find("icon");
+                if (icon != null)
                 {
-                    // The game greys an entry the player cannot afford; keep that cue by dimming the rarity color alike.
-                    label.color = canCraft ? color : new Color(color.r * 0.66f, color.g * 0.66f, color.b * 0.66f, 1f);
+                    IconBackdrop.Set(icon.GetComponent<Image>(), item);
                 }
+                ColorEntry(element.transform.Find("name"), rarity, canCraft);
+            }
+        }
+
+        // The game greys an entry the player cannot afford; keep that cue by dimming the rarity color alike.
+        private static void ColorEntry(Transform? name, RarityDef? rarity, bool canCraft)
+        {
+            TMP_Text? label = name == null ? null : name.GetComponent<TMP_Text>();
+            if (label != null && RarityPalette.TryNameColor(rarity, out Color color))
+            {
+                label.color = canCraft ? color : new Color(color.r * 0.66f, color.g * 0.66f, color.b * 0.66f, 1f);
             }
         }
 

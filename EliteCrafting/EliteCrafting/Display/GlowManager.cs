@@ -6,7 +6,8 @@ namespace EliteCrafting.Display
 {
     /// <summary>
     /// The ground glow's single manager (display.md section 5). Every <c>Glow refresh seconds</c> it walks the game's
-    /// live <c>ItemDrop</c> list, refreshes each item's data with the game's revision-checked <c>Load()</c>, decides
+    /// live <c>ItemDrop</c> list, reloads an item's data only when its saved item bytes changed (<see cref="GlowItem.Reload"/>,
+    /// never per tick for a drop that only moves), decides
     /// glow and color only for new or changed items, and lights the nearest <c>Glow max lights</c> glowing items to the
     /// camera, with their loot beams when <c>Loot beam</c> is on; the rest keep a disabled light and beam. No per-item Update, no per-frame work besides one timer compare.
     /// Lives on every client with graphics, never on a headless server; purely local, nothing is sent.
@@ -94,7 +95,7 @@ namespace EliteCrafting.Display
                     continue;
                 }
                 GlowItem item = Track(drop);
-                drop.Load();
+                item.Reload(drop.m_nview.GetZDO());
                 item.Refresh();
                 if (item.Glows)
                 {

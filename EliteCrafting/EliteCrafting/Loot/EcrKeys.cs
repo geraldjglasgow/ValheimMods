@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace EliteCrafting.Loot
 {
     /// <summary>
@@ -5,7 +7,8 @@ namespace EliteCrafting.Loot
     /// mod in this repository; the names were read from its source (<c>Traits/TraitKeys.cs</c>, <c>Traits/AspectStore.cs</c>)
     /// and are the whole contract between the two mods: no ECR type or assembly is referenced, and a renamed key only
     /// degrades to "no ECR data" (section 8). ECR writes them with the string overloads of <c>ZDO.Set</c>, which hash the
-    /// name with <c>GetStableHashCode</c>, so the hashes below address the same values. Read only, never written.
+    /// name with <c>GetStableHashCode</c> (a ZDOID under the pair <c>ZDO.GetHashZDOID</c> makes), so the hashes below
+    /// address the same values. Read only, never written.
     /// </summary>
     internal static class EcrKeys
     {
@@ -15,8 +18,20 @@ namespace EliteCrafting.Loot
         /// <summary>Int: ECR's star count, 0 to its ceiling (<c>TraitStore.Save</c>).</summary>
         public const string Stars = "ecr_stars";
 
-        /// <summary>Bool: the Cloven twin or a Phantom husk, which ECR strips of loot (<c>AspectStore.MarkTwin</c>/<c>MarkHusk</c>).</summary>
-        public const string Worthless = "ecr_asp_worthless";
+        /// <summary>
+        /// ZDOID: on a Phantom copy, the boss it belongs to (<c>AspectStore.SetPhantomOf</c>). Its presence is what makes a
+        /// copy a copy; ECR turns the copy's own drops off.
+        /// </summary>
+        public const string PhantomOf = "ecr_phantom_of";
+
+        /// <summary>ZDOID: on a Cloning decoy, the creature it stands in for (<c>CloneStore</c>); hollow like a Phantom copy.</summary>
+        public const string CloneOf = "ecr_clone_of";
+
+        /// <summary>
+        /// ZDOID: on each of a Tethered pair, the other boss (<c>AspectStore.SetTether</c>). ECR pays only the last of the
+        /// pair to fall (<c>Loot/TetherLoot</c>); a Twin pair has no such rule, each Twin pays its own.
+        /// </summary>
+        public const string Tether = "ecr_tether";
 
         /// <summary>
         /// Int 0-7: the world tier the creature was rolled at. <b>Not written by ECR yet</b> (DECISIONS ECR-6, decided by
@@ -27,7 +42,9 @@ namespace EliteCrafting.Loot
 
         public static readonly int ResolvedHash = Resolved.GetStableHashCode();
         public static readonly int StarsHash = Stars.GetStableHashCode();
-        public static readonly int WorthlessHash = Worthless.GetStableHashCode();
+        public static readonly KeyValuePair<int, int> PhantomOfHash = ZDO.GetHashZDOID(PhantomOf);
+        public static readonly KeyValuePair<int, int> CloneOfHash = ZDO.GetHashZDOID(CloneOf);
+        public static readonly KeyValuePair<int, int> TetherHash = ZDO.GetHashZDOID(Tether);
         public static readonly int TierHash = Tier.GetStableHashCode();
     }
 }

@@ -6,9 +6,10 @@ using Valheim.UI;
 namespace EliteCrafting.Display.Backdrops
 {
     /// <summary>
-    /// Backdrops on the icons outside the item cells: the item following the cursor while dragged, the crafting panel
-    /// (an upgrade entry in the recipe list and the selected upgrade's large icon, both showing the player's own item)
-    /// and the radial menu's items. The split dialog needs none: a magic item never stacks.
+    /// Backdrops on the icons outside the item cells: the item following the cursor while dragged and the radial menu's
+    /// items. The crafting panel's (an upgrade entry in the recipe list and the selected upgrade's large icon, both
+    /// showing the player's own item) are set by <see cref="CraftingPanel"/>, from its own two patches. The split dialog
+    /// needs none: a magic item never stacks.
     /// </summary>
     internal static class PanelBackdrops
     {
@@ -33,38 +34,6 @@ namespace EliteCrafting.Display.Backdrops
                     _ghostIcon = icon == null ? null : icon.GetComponent<Image>();
                 }
                 IconBackdrop.Set(_ghostIcon, __instance.m_dragItem);
-            }
-        }
-
-        /// <summary>An upgrade entry in the recipe list, on list rebuilds only; its icon is hidden while it cannot be afforded.</summary>
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.AddRecipeToList))]
-        private static class RecipeListPatch
-        {
-            [HarmonyPostfix]
-            private static void Postfix(InventoryGui __instance, ItemDrop.ItemData item)
-            {
-                int count = __instance.m_availableRecipes.Count;
-                if (item == null || count == 0)
-                {
-                    return;
-                }
-                GameObject element = __instance.m_availableRecipes[count - 1].InterfaceElement;
-                Transform? icon = element == null ? null : element.transform.Find("icon");
-                if (icon != null)
-                {
-                    IconBackdrop.Set(icon.GetComponent<Image>(), item);
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
-        private static class SelectedRecipePatch
-        {
-            [HarmonyPostfix]
-            private static void Postfix(InventoryGui __instance)
-            {
-                Recipe? recipe = __instance.m_selectedRecipe.Recipe;
-                IconBackdrop.Set(__instance.m_recipeIcon, recipe != null ? __instance.m_selectedRecipe.ItemData : null);
             }
         }
 

@@ -23,8 +23,9 @@ namespace EliteCrafting.Effects
     }
 
     /// <summary>
-    /// <c>item_block</c>: base block power. The game derives the blocking value and the
-    /// tooltip's block line from it, on the blocker's own client.
+    /// Base block power: Lone Blade's share of attack power added first (<see cref="LoneBlade"/>), then <c>item_block</c>
+    /// scales the sum, in one postfix (one cache lookup per call). The game derives the blocking value and the tooltip's
+    /// block line from it, on the blocker's own client.
     /// </summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetBaseBlockPower), new[] { typeof(int) })]
     internal static class ItemBlockPatch
@@ -32,24 +33,35 @@ namespace EliteCrafting.Effects
         private static void Postfix(ItemDrop.ItemData __instance, ref float __result)
         {
             ItemLocalSums? sums = ItemLocalCache.Get(__instance);
-            if (sums != null)
+            if (sums == null)
             {
-                __result *= 1f + sums.Get(EffectKind.ItemBlock);
+                return;
             }
+            float share = LoneBlade.Share(__instance, sums);
+            if (share > 0f)
+            {
+                __result += __instance.GetDamage().GetTotalDamage() * share;
+            }
+            __result *= 1f + sums.Get(EffectKind.ItemBlock);
         }
     }
 
-    /// <summary><c>item_deflection</c>: the shield's block knockback force (used by the blocker's client in BlockAttack).</summary>
+    /// <summary>
+    /// The shield's block knockback force (used by the blocker's client in BlockAttack): Lone Blade's half share, then
+    /// <c>item_deflection</c>, in one postfix.
+    /// </summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetDeflectionForce), new[] { typeof(int) })]
     internal static class ItemDeflectionPatch
     {
         private static void Postfix(ItemDrop.ItemData __instance, ref float __result)
         {
             ItemLocalSums? sums = ItemLocalCache.Get(__instance);
-            if (sums != null)
+            if (sums == null)
             {
-                __result *= 1f + sums.Get(EffectKind.ItemDeflection);
+                return;
             }
+            __result *= 1f + LoneBlade.Share(__instance, sums) / 2f;
+            __result *= 1f + sums.Get(EffectKind.ItemDeflection);
         }
     }
 

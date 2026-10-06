@@ -39,10 +39,9 @@ namespace EliteCrafting.Effects.Combat3
             }
         }
 
-        /// <summary>The hit's attacker's published share, clamped to the running rules (0 for a creature).</summary>
-        public static float OfAttacker(HitData hit)
+        /// <summary>The share published in the attacker's ZDO, clamped to the running rules (0 for null or a creature's).</summary>
+        public static float OfZdo(ZDO? zdo)
         {
-            ZDO? zdo = ZDOMan.instance != null ? ZDOMan.instance.GetZDO(hit.m_attacker) : null;
             float share = zdo != null ? zdo.GetFloat(Key, 0f) : 0f;
             return float.IsNaN(share) ? 0f : Mathf.Clamp(share, 0f, CombatCaps.Penetration);
         }

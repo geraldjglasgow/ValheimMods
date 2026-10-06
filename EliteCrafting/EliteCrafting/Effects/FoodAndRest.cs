@@ -8,22 +8,22 @@ namespace EliteCrafting.Effects
 
     /// <summary>
     /// Hearty Appetite (<c>food_values</c>): the foods' part of maximum health, stamina and eitr is X% larger (the base
-    /// values are not). Runs before <see cref="MaxPoolsPatch"/>, so Restless Mind's eitr loss applies to the whole.
-    /// Reads the unconditional totals, like the other pool bonuses (a pool that followed the health-critical state would
-    /// move the threshold it depends on). A change shows at the next food tick, within a second.
+    /// values are not). Called first by <see cref="MaxPoolsPatch"/> (the one GetTotalFoodValue postfix), so Restless
+    /// Mind's eitr loss applies to the whole. Reads the unconditional totals, like the other pool bonuses (a pool that
+    /// followed the health-critical state would move the threshold it depends on). A change shows at the next food
+    /// tick, within a second.
     /// </summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.GetTotalFoodValue))]
-    internal static class FoodValuesPatch
+    internal static class FoodValues
     {
-        [HarmonyPriority(Priority.High)]
-        private static void Postfix(Player __instance, ref float hp, ref float stamina, ref float eitr)
+        /// <summary>The local player's foods, effects on (tested by the caller).</summary>
+        public static void AddTo(Player player, ref float hp, ref float stamina, ref float eitr)
         {
             float more = AggregateBuilder.Normal[EffectKind.FoodValues];
-            if (more <= 0f || !ReferenceEquals(__instance, Player.m_localPlayer) || !ItemEffects.Enabled)
+            if (more <= 0f)
             {
                 return;
             }
-            foreach (Player.Food food in __instance.m_foods)
+            foreach (Player.Food food in player.m_foods)
             {
                 hp += food.m_health * more;
                 stamina += food.m_stamina * more;

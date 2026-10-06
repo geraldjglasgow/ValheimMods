@@ -40,6 +40,7 @@ mods (PackPanel, Elite Creatures Pack) use it for compatibility. Names and behav
 | `bool RegisterExternalEffect(string json)` | An effect EliteCrafting rolls, displays and sums but does not apply: fields `id`, `scope` (player / item), `value` (percent / flat / flag, or a list of them), `polarity` (raise / lower), `cap`, `param` (none or a kind), optional `description`. The registering mod applies it by reading totals. |
 | `float GetPlayerTotal(Player player, string effect, string param = null)` | The capped total of a player-global channel on that player (local player: live; others: 0 unless the effect publishes to the ZDO). |
 | `float GetItemTotal(ItemDrop.ItemData item, string effect, string param = null)` | An item's own sum for an item-local effect. |
+| `string GetPlayerInscriptionsJson(Player player)` | The local player's active inscriptions on everything that counts, one entry per inscription id, values summed and worded as the tooltip words a line: `[{ id, category, line, total, capped, item_local, sources: [{ item, value }] }]` (added in 0.7.0 for PackPanel's stat sheet). |
 
 Registrations made after the rules loaded rebuild the rule set once at the end of the frame.
 
@@ -119,4 +120,12 @@ are split by section: `CraftingLink` (Present, versions, endpoints, `Guid`), `Cr
   write, so their answer must be cheap; their items also count for the loot-find stats. Filters are asked wherever
   "magic base" is decided (drops ask with the prefab's item data, so decide from the item type); registering or
   removing one refreshes the rules at the end of the frame so the gear pool follows.
-- **Endpoint names.** `HasEndpoint` and `GetEndpointNames` read the API class's public static methods (34 in version 1).
+- **Endpoint names.** `HasEndpoint` and `GetEndpointNames` read the API class's public static methods (34 in version 1,
+  35 since 0.7.0 added `GetPlayerInscriptionsJson`; the API version stays 1, so a caller asks `HasEndpoint`).
+- **Player inscriptions.** `GetPlayerInscriptionsJson` (`Api/ApiPlayerLines`) reads `ItemEffects.CollectLocal` (the
+  game's equipment and the providers' items, active inscriptions only), groups by inscription id in the order first
+  met, sums the stored values and words the sum with the tooltip's own sentence (`AffixLines.Sentence`: the
+  `ecf_affix_<id>_line` translation, else the generic line). `category` is `offense`, `defense` or `utility`; `capped`
+  is true when the inscription's player-global channel, summed over every inscription feeding it, passes its cap;
+  `item_local` marks effects that apply per item. Each source is the item's localized name and its own signed value
+  (empty for a flag). Another player or effects off: `[]`; no player: null. Allocates.

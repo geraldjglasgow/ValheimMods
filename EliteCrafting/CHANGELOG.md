@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0
+
+- Recasting Rune: every inscription is replaced by one or two new ones; the item stays Magic.
+- Fixed: Elite Creatures Reborn's Phantom copies dropped EliteCrafting loot; they and Cloning decoys now drop none.
+- Of a Tethered boss pair, only the last to fall drops EliteCrafting loot.
+- With PackPanel 0.12.0+, its stat sheet lists your active inscriptions.
+- Less work per hit, per frame and for dropped items; no stutter on the first kill after loading.
+- Update the server and every client together.
+
 ## 0.6.1
 
 - Fixed: Magic and Rare set armour shows its inscriptions again with Epic Loot installed.

@@ -57,7 +57,7 @@ rolling:
 # confirm (hold Shift / dialog first), stack (default 50), item_weight (the item weight of
 # one rune, default 0.2), name, description (loc key or text), tint.
 # Verbs: promote (one rarity up), add (one inscription, not past the rarity's maximum),
-# reroll (one to all of the item's inscriptions rolled again in place, the rest kept, never fewer),
+# reroll (every inscription replaced: the item rolled fresh at its rarity, a new count in its range),
 # strip (back to the base rarity, every inscription gone), corrupt (one outcome, then the
 # item is sealed for good: no rune works on it again). `tier_floor` is the weakest
 # inscription tier the rune rolls, counted like the tooltip: 1 = the best tier the item
@@ -66,7 +66,7 @@ rolling:
 runes:
   - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, one inscription
   - { id: shaping,     verb: add,     applies_to: [magic] }        # one more on a Magic item (up to 2)
-  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # one to all inscriptions rolled again
+  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # all inscriptions replaced by 1-2 new
   - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, one more (to Rare's 3 at least)
   - { id: consecrated, verb: add,     applies_to: [rare] }         # one more on a Rare item (up to 6)
   - id: cleansing                                                  # back to Normal

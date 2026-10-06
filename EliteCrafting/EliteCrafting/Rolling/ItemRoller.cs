@@ -22,7 +22,7 @@ namespace EliteCrafting.Rolling
     public static class ItemRoller
     {
         /// <summary>
-        /// Rolls an item fresh at <paramref name="rarity"/> (pre-rolled drops, <c>ecraft roll</c>): every affix is
+        /// Rolls an item fresh at <paramref name="rarity"/> (pre-rolled drops, <c>ecraft roll</c>, the Recasting Rune): every affix is
         /// replaced; the count is drawn in [min, max] of the rarity (uniform, or <c>rolling.count_weights</c>). Sets
         /// the rarity. Fails with <see cref="RollFailure.NoEligibleAffix"/> when the pool cannot reach the rarity's
         /// minimum (drops then fall back to a lower rarity themselves).
@@ -30,16 +30,6 @@ namespace EliteCrafting.Rolling
         public static RollOutcome RollFresh(ItemState current, RarityDef rarity, RollContext context)
         {
             return RollLog.Report("fresh " + rarity.Id, current, RollOps.RollFresh(current, rarity, context), context);
-        }
-
-        /// <summary>
-        /// The Recasting Rune: between one and all of the item's affixes (how many uniformly, then which) are replaced in
-        /// place by new draws; the rest stay, as do the rarity and the count. A replaced affix may come back. All or
-        /// nothing: fails with <see cref="RollFailure.NoEligibleAffix"/> when the pool cannot replace every pick.
-        /// </summary>
-        public static RollOutcome Recast(ItemState current, RollContext context)
-        {
-            return RollLog.Report("recast", current, RecastOps.Recast(current, context), context);
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace EliteCrafting.Effects
             Add("craft_save", Hook, PlayerGlobal, ValueTypes.Percent, None, Raise, 30, M, "InventoryGui.DoCrafting: a craft's payment given back");
             Add("craft_extra", Hook, PlayerGlobal, ValueTypes.Percent, None, Raise, 30, M, "InventoryGui.DoCrafting: one more of the recipe's output");
             Add("trader_discount", Hook, PlayerGlobal, ValueTypes.Percent, None, Raise, 30, M, "StoreGui price window: lower trader prices, shown and paid");
-            Add("free_build", Hook, ItemLocal, ValueTypes.Flag, None, Raise, null, M, "postfix Player.HaveRequirements(Piece): no station needed with this tool");
+            Add("free_build", Hook, ItemLocal, ValueTypes.Flag, None, Raise, null, M, "prefix Player.HaveRequirements(Piece): no station needed with this tool");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace EliteCrafting.Rules
         /// <summary>Index = ECR world tier; percent on the gear rarity weights, summed with Norns' Favour.</summary>
         public IReadOnlyList<float> TierRarityBonus { get; internal set; } = new[] { 0f, 5f, 10f, 15f, 20f, 25f, 30f, 35f };
 
-        /// <summary>ECR's worthless creatures (Cloven twin, Phantom husks) drop nothing from us; applies with the synergy off too.</summary>
+        /// <summary>ECR's hollow copies (Phantom copies, Cloning decoys) drop nothing from us; applies with the synergy off too.</summary>
         public bool SkipWorthless { get; internal set; } = true;
 
         /// <summary>The star multiplier for this many ECR stars: the list, then the last entry plus the step per extra star.</summary>

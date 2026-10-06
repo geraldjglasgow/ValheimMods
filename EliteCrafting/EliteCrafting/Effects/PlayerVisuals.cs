@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -8,7 +8,9 @@ namespace EliteCrafting.Effects
     /// What other players see of a player's affixes, drawn by every client from the published stats
     /// (<see cref="PlayerStats"/>): Hearthlight's soft light on the player, and Mistbane's wider mist clearing around
     /// the player's own demister (the mist is drawn per client, so each client widens the demisters of the players it
-    /// sees). Once a second, over the loaded players and demisters only; nothing on a headless server.
+    /// sees). Once a second, over the loaded players and demisters only; nothing on a headless server. Each player's
+    /// light and each demister's owner (or none: a placed demister) and first range are remembered in weak tables, so a
+    /// tick does no search.
     /// </summary>
     internal static class PlayerVisuals
     {
@@ -18,10 +20,23 @@ namespace EliteCrafting.Effects
         /// <summary>Judgement calls: a warm, shadowless light a little above the head, 6 m reach.</summary>
         private static readonly Color LightColor = new Color(1f, 0.82f, 0.55f);
 
-        private static readonly List<Demister> Scaled = new List<Demister>();
-        private static readonly List<float> BaseRange = new List<float>();
+        private static readonly ConditionalWeakTable<Player, LightRef> Lights = new ConditionalWeakTable<Player, LightRef>();
+        private static readonly ConditionalWeakTable<Demister, DemisterRef> Demisters = new ConditionalWeakTable<Demister, DemisterRef>();
+        private static readonly ConditionalWeakTable<Player, LightRef>.CreateValueCallback FindLight = Find;
+        private static readonly ConditionalWeakTable<Demister, DemisterRef>.CreateValueCallback ResolveDemister = Resolve;
         private static float _next;
         private static bool? _headless;
+
+        private sealed class LightRef
+        {
+            public GameObject? Light;
+        }
+
+        private sealed class DemisterRef
+        {
+            public Player? Owner;
+            public float BaseRange;
+        }
 
         public static void Tick()
         {
@@ -41,22 +56,30 @@ namespace EliteCrafting.Effects
 
         private static void UpdateLight(Player player, bool on)
         {
-            Transform? existing = player.transform.Find(LightName);
-            if (existing != null)
+            LightRef known = Lights.GetValue(player, FindLight);
+            GameObject? light = known.Light;
+            if (light != null)
             {
-                if (existing.gameObject.activeSelf != on)
+                if (light.activeSelf != on)
                 {
-                    existing.gameObject.SetActive(on);
+                    light.SetActive(on);
                 }
                 return;
             }
             if (on)
             {
-                CreateLight(player.transform);
+                known.Light = CreateLight(player.transform);
             }
         }
 
-        private static void CreateLight(Transform parent)
+        // First sight of a player: a light made earlier under it (none on a new player object).
+        private static LightRef Find(Player player)
+        {
+            Transform? existing = player.transform.Find(LightName);
+            return new LightRef { Light = existing != null ? existing.gameObject : null };
+        }
+
+        private static GameObject CreateLight(Transform parent)
         {
             GameObject holder = new GameObject(LightName);
             holder.transform.SetParent(parent, false);
@@ -67,39 +90,32 @@ namespace EliteCrafting.Effects
             light.intensity = 1.1f;
             light.color = LightColor;
             light.shadows = LightShadows.None;
+            return holder;
         }
 
         // Each demister under a player gets that player's published radius bonus over the range it had when first seen.
         private static void UpdateDemisters()
         {
-            for (int i = Scaled.Count - 1; i >= 0; i--)
-            {
-                if (Scaled[i] == null)
-                {
-                    Scaled.RemoveAt(i);
-                    BaseRange.RemoveAt(i);
-                }
-            }
             foreach (Demister demister in Demister.GetDemisters())
             {
-                Player? owner = demister != null && demister.m_forceField != null ? demister.GetComponentInParent<Player>() : null;
-                if (owner != null)
+                if (demister == null || demister.m_forceField == null)
                 {
-                    Scale(demister!, PlayerStats.Of(owner, PlayerStats.Demist));
+                    continue;
+                }
+                DemisterRef known = Demisters.GetValue(demister, ResolveDemister);
+                if (known.Owner != null)
+                {
+                    Scale(demister, known.BaseRange * (1f + PlayerStats.Of(known.Owner, PlayerStats.Demist)));
                 }
             }
         }
 
-        private static void Scale(Demister demister, float bonus)
+        // First sight of a demister: the player it hangs under (a worn Wisplight), or none (a placed one), and its range.
+        private static DemisterRef Resolve(Demister demister) =>
+            new DemisterRef { Owner = demister.GetComponentInParent<Player>(), BaseRange = demister.m_forceField.endRange };
+
+        private static void Scale(Demister demister, float range)
         {
-            int i = Scaled.IndexOf(demister);
-            if (i < 0)
-            {
-                Scaled.Add(demister);
-                BaseRange.Add(demister.m_forceField.endRange);
-                i = Scaled.Count - 1;
-            }
-            float range = BaseRange[i] * (1f + bonus);
             if (demister.m_forceField.endRange != range)
             {
                 demister.m_forceField.endRange = range;

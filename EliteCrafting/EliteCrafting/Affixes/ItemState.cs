@@ -90,6 +90,13 @@ namespace EliteCrafting.Affixes
         /// <summary>What effects read: the active affixes (<see cref="EffectRollBuilder"/>).</summary>
         public IReadOnlyList<EffectRoll> EffectRolls => _effective;
 
+        /// <summary>
+        /// The effects area's item-local numbers for this state (<c>Effects.ItemLocalCache</c>), made on first use and kept
+        /// with it, so a hot getter costs the one cache lookup of <see cref="Read"/>. Valid as long as the state is: a
+        /// state never changes, and a write, a reload by the game or a rules change hands out a new one. Main thread only.
+        /// </summary>
+        internal object? LocalSums;
+
         public ItemStateBuilder ToBuilder() => new ItemStateBuilder(Data);
 
         // ---- entry points

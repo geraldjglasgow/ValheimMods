@@ -9,6 +9,13 @@ namespace EliteCrafting.Effects
     /// as chop when the item chops (keen_edge on axes). A brand on a group param splits its share evenly over the
     /// group's types (judgement call: the total added stays X% of the base).
     /// <para>
+    /// Normal priority; <c>added_damage</c> has its own Low-priority postfix (<see cref="Combat3.AddedDamagePatch"/>), so
+    /// the percent brands measure the item's own damage before anything flat is added, and another mod's postfix keeps
+    /// its place between the two. One cache lookup per call (<see cref="ItemLocalCache"/>): this postfix hands the
+    /// item's numbers to the later one (<see cref="Handed"/>), which looks them up itself only when another item's
+    /// GetDamage ran in between.
+    /// </para>
+    /// <para>
     /// Runs on the attacker's client when the hit is built (Attack), so the numbers travel inside the HitData; and on
     /// any peer for the tooltip, from the same replicated item data. Hot: per hit and per tooltip frame.
     /// </para>
@@ -16,21 +23,31 @@ namespace EliteCrafting.Effects
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetDamage), new[] { typeof(int), typeof(float) })]
     internal static class ItemDamagePatch
     {
+        private static ItemDrop.ItemData? _handedItem;
+        private static ItemLocalSums? _handedSums;
+
+        /// <summary>The item's local numbers when this call's first postfix just looked them up, else a lookup; handed once.</summary>
+        public static ItemLocalSums? Handed(ItemDrop.ItemData item)
+        {
+            ItemLocalSums? sums = ReferenceEquals(item, _handedItem) ? _handedSums : ItemLocalCache.Get(item);
+            _handedItem = null;
+            _handedSums = null;
+            return sums;
+        }
+
         private static void Postfix(ItemDrop.ItemData __instance, ref HitData.DamageTypes __result)
         {
             ItemLocalSums? sums = ItemLocalCache.Get(__instance);
-            if (sums != null)
+            _handedItem = __instance;
+            _handedSums = sums;
+            if (sums != null && sums.HasBrand)
             {
-                Apply(ref __result, sums);
+                Brand(ref __result, sums);
             }
         }
 
-        private static void Apply(ref HitData.DamageTypes damage, ItemLocalSums sums)
+        private static void Brand(ref HitData.DamageTypes damage, ItemLocalSums sums)
         {
-            if (!sums.HasBrand)
-            {
-                return;
-            }
             float combat = DamageSlots.Combat(in damage);
             for (int t = 0; t < DamageSlots.Count; t++)
             {

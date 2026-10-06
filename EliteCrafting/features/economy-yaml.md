@@ -136,7 +136,7 @@ Verb-specific fields:
 runes:
   - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, one inscription
   - { id: shaping,     verb: add,     applies_to: [magic] }        # one more on a Magic item (up to 2)
-  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # one to all inscriptions rolled again
+  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # all inscriptions replaced by 1-2 new
   - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, one more (to Rare's 3 at least)
   - { id: consecrated, verb: add,     applies_to: [rare] }         # one more on a Rare item (up to 6)
   - id: cleansing                                                  # back to Normal

@@ -12,9 +12,11 @@ namespace EliteCrafting.Loot
     /// Publishes the local player's loot-find totals to its own player ZDO (effects-runtime.md section 7): the capped sum
     /// of each find channel over the equipped items that count (<see cref="ItemEffects.CollectLocal"/>, so the
     /// <c>Affix effects</c> switch and dormant affixes are respected). Runs on the local player's client only - the one
-    /// peer that owns that ZDO - and never on a dedicated server (no local player). Event driven, never per frame:
-    /// equipment set-up, spawn, a state write to an equipped item, a rules apply and the <c>Affix effects</c> switch.
-    /// A value is written only when it differs from what the ZDO holds, so normal play sends nothing.
+    /// peer that owns that ZDO - and never on a dedicated server (no local player). After each rebuild of the effects
+    /// (<see cref="EffectRuntime.Rebuilt"/>, at most once a frame), so it follows every trigger of the aggregate:
+    /// equipment set-up, spawn, a state write to an equipped item, a rules apply, the <c>Affix effects</c> switch, a
+    /// counted-gear change and the API's InvalidatePlayer. A value is written only when it differs from what the ZDO
+    /// holds, so normal play sends nothing.
     /// </summary>
     internal static class FindPublisher
     {
@@ -23,15 +25,7 @@ namespace EliteCrafting.Loot
         private static readonly float[] Sums = new float[FindKeys.Count];
         private static float[] _channelSums = Array.Empty<float>();
 
-        public static void Install()
-        {
-            ActiveRules.RulesChanged += Publish;
-            ItemStateCache.Written += OnItemWritten;
-            if (ModSettings.AffixEffects != null)
-            {
-                ModSettings.AffixEffects.SettingChanged += OnSwitchChanged;
-            }
-        }
+        public static void Install() => EffectRuntime.Rebuilt += Publish;
 
         /// <summary>Recomputes and writes the local player's totals. Safe to call at any time; no local player = no-op.</summary>
         public static void Publish()
@@ -97,16 +91,6 @@ namespace EliteCrafting.Loot
             }
             return _channelSums;
         }
-
-        private static void OnItemWritten(ItemDrop.ItemData item)
-        {
-            if (ItemEffects.IsEquippedByLocalPlayer(item))
-            {
-                Publish();
-            }
-        }
-
-        private static void OnSwitchChanged(object sender, EventArgs e) => Publish();
 
         private static void LogChange(int stat)
         {

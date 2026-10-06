@@ -27,6 +27,10 @@ namespace EliteCrafting.Display.Tooltips
         private const float StickSpeed = 700f;
         private const float BarWidth = 3f;
         private const float BarInset = 2f;
+
+        // Until wrapped, the fit is measured only for a new text or screen height, on that frame and the next (the
+        // layout may settle a frame late); a text that fits costs a reference and an int compare after that.
+        private const int FitChecks = 2;
         private static readonly Color TrackColour = new Color(1f, 1f, 1f, 0.12f);
         private static readonly Color ThumbColour = new Color(1f, 1f, 1f, 0.55f);
 
@@ -41,6 +45,9 @@ namespace EliteCrafting.Display.Tooltips
         private RectTransform? _thumb;
         private string? _shownText;
         private float _offset;
+        private string? _fitText;
+        private int _fitScreen;
+        private int _fitChecks;
 
         [HarmonyPatch(typeof(UITooltip), nameof(UITooltip.OnHoverStart))]
         private static class AttachPatch
@@ -71,6 +78,10 @@ namespace EliteCrafting.Display.Tooltips
 
         private void LateUpdate()
         {
+            if (_viewport == null && !FitMayHaveChanged())
+            {
+                return;
+            }
             float needed = LayoutUtility.GetPreferredHeight(_text);
             float room = Room();
             if (_viewport == null)
@@ -87,6 +98,24 @@ namespace EliteCrafting.Display.Tooltips
                 _offset = 0f;
             }
             Scroll(needed, room);
+        }
+
+        private bool FitMayHaveChanged()
+        {
+            string text = _label!.text;
+            int screen = Screen.height;
+            if (!ReferenceEquals(text, _fitText) || screen != _fitScreen)
+            {
+                _fitText = text;
+                _fitScreen = screen;
+                _fitChecks = FitChecks;
+            }
+            if (_fitChecks == 0)
+            {
+                return false;
+            }
+            _fitChecks--;
+            return true;
         }
 
         /// <summary>The text's room: the screen in the tooltip's units, less the margins, the padding and the topic.</summary>

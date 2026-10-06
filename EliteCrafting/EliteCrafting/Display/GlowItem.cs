@@ -9,14 +9,17 @@ namespace EliteCrafting.Display
 {
     /// <summary>
     /// One dropped item the glow manager knows (display.md section 5): whether it glows and in which color, and its
-    /// light and loot beam (<see cref="GlowBeams"/>) if it has them. The color is re-decided only when the item's data object, its custom-data dictionary (the
-    /// game's <c>Load</c> replaces it when the ZDO changed), the rules generation or the <c>Glow stones</c> switch
+    /// light and loot beam (<see cref="GlowBeams"/>) if it has them. The item's data is reloaded from its ZDO only when
+    /// the saved item bytes really changed (<see cref="Reload"/>: a moving drop's ZDO changes revision with every
+    /// position update, its item bytes do not), and the color is re-decided only when the item's data object, its
+    /// custom-data dictionary (the game's <c>Load</c> replaces it), the rules generation or the <c>Glow stones</c> switch
     /// changed, so a tick touches the parse cache only for new or changed items. Viewing client only.
     /// </summary>
     internal sealed class GlowItem
     {
         private const float LightHeight = 0.3f;
 
+        private byte[]? _bytes;
         private ItemDrop.ItemData? _data;
         private Dictionary<string, string>? _source;
         private int _rulesGeneration = -1;
@@ -35,6 +38,42 @@ namespace EliteCrafting.Display
         public float SqrDistance { get; set; }
         public bool Glows { get; private set; }
         public Color32 Color { get; private set; }
+
+        /// <summary>
+        /// The game's <c>Load</c> (a full re-read of the item) only when the ZDO's item bytes are a new array with new
+        /// content: the first sight, or a real change to the item on the ground. A moving drop's ZDO is re-sent with
+        /// every position update, as a new array holding the same bytes; a byte compare skips those.
+        /// </summary>
+        public void Reload(ZDO zdo)
+        {
+            byte[]? bytes = zdo.GetByteArray(ZDOVars.s_itemData);
+            if (ReferenceEquals(bytes, _bytes))
+            {
+                return;
+            }
+            bool same = bytes != null && _bytes != null && SameBytes(bytes, _bytes);
+            _bytes = bytes;
+            if (!same)
+            {
+                Drop.Load();
+            }
+        }
+
+        private static bool SameBytes(byte[] a, byte[] b)
+        {
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         /// <summary>Re-decides glow and color if anything it depends on changed; removes the light if it stops glowing.</summary>
         public void Refresh()
@@ -72,17 +111,41 @@ namespace EliteCrafting.Display
             }
         }
 
+        // Each value is written only when it differs (rule 14): a resting drop's light is left alone.
         private void ShineLight(float intensity, float range)
         {
             if (_light == null)
             {
                 _light = GlowLights.Create(Drop.transform);
             }
-            _light.transform.position = Drop.transform.position + Vector3.up * LightHeight;
-            _light.color = Color;
-            _light.intensity = intensity;
-            _light.range = range;
-            _light.enabled = true;
+            Transform at = _light.transform;
+            Vector3 position = Drop.transform.position + Vector3.up * LightHeight;
+            if (at.position != position)
+            {
+                at.position = position;
+            }
+            Color color = Color;
+            if (_light.color != color)
+            {
+                _light.color = color;
+            }
+            SetLevels(_light, intensity, range);
+        }
+
+        private static void SetLevels(Light light, float intensity, float range)
+        {
+            if (light.intensity != intensity)
+            {
+                light.intensity = intensity;
+            }
+            if (light.range != range)
+            {
+                light.range = range;
+            }
+            if (!light.enabled)
+            {
+                light.enabled = true;
+            }
         }
 
         // The beam is made in the item's color the first time, made again when the color changed, and stood upright on
@@ -101,7 +164,10 @@ namespace EliteCrafting.Display
             if (_beam != null)
             {
                 GlowBeams.Upright(_beam.transform);
-                _beam.SetActive(true);
+                if (!_beam.activeSelf)
+                {
+                    _beam.SetActive(true);
+                }
             }
         }
 

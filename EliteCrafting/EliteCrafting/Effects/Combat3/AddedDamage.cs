@@ -11,7 +11,8 @@ namespace EliteCrafting.Effects.Combat3
     /// <para>
     /// Runs wherever the number is asked for: on the attacker's client when the hit is built (so the added damage
     /// travels inside the HitData), and on any peer for the tooltip, from the item's replicated data. Low priority, so
-    /// the percent brands measure the item's own damage before anything flat is added.
+    /// the percent brands measure the item's own damage before anything flat is added. The item's local numbers sit on
+    /// its cached state (<see cref="ItemLocalCache"/>), handed over by the brand postfix of the same call.
     /// </para>
     /// </summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetDamage), new[] { typeof(int), typeof(float) })]
@@ -20,7 +21,7 @@ namespace EliteCrafting.Effects.Combat3
         [HarmonyPriority(Priority.Low)]
         private static void Postfix(ItemDrop.ItemData __instance, ref HitData.DamageTypes __result)
         {
-            ItemLocalSums? sums = ItemLocalCache.Get(__instance);
+            ItemLocalSums? sums = ItemDamagePatch.Handed(__instance);
             if (sums != null && sums.HasAdded)
             {
                 Add(ref __result, sums);

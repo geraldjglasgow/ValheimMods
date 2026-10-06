@@ -150,12 +150,14 @@ affixes on counted equipment, the trinket included (`ActiveAffix`: item, roll, d
 `IsEquippedByLocalPlayer`, `Enabled` (the `Affix effects` switch). `EffectTotals.Snapshot()` → `EffectSnapshot`
 (per channel sum, applied value after caps, sources; health-critical state; `States`: the Phase 2 runtime states in
 force, e.g. `ward 12 left`, `evader's fury`, `momentum`) for `ecraft stats`. The aggregate is
-rebuilt at most once per frame after `ItemStateCache.Written` on an equipped item, equipment set-up, inventory change,
-spawn, rules change, the `Affix effects` switch and teleport end.
+rebuilt at most once per frame after `ItemStateCache.Written` on an equipped item, equipment set-up, an inventory change
+that changed the counted gear (`GearSignature`; any other only recounts Fafnir's Greed coins), spawn, rules change, the
+`Affix effects` switch and teleport end.
 Network surface (all `features/effects-runtime.md` section 7): routed RPCs `ECF_KillRestore` (creature owner → the
 killer's peer: Reaper / Soul Reaper) and `ECF_MeleeDodged` (attacker's peer → the dodger's peer: Evader's Fury), both
-registered at `ZNet.Awake` on every peer, argument-less; the status effect `ECF_Hamstring` (in ObjectDB on every
-peer); player-ZDO floats written by the player's own client when they change: `ecf_daze`, `ecf_light`, `ecf_demist`,
+registered at `ZNet.Awake` on every peer, argument-less, sent only to a player whose player-ZDO int `ecf_wants` asks for
+them (bit 1 kill restore, bit 2 Evader's Fury; written by its own client when it changes, `PlayerStats`); the status
+effect `ECF_Hamstring` (in ObjectDB on every peer); player-ZDO floats written by the player's own client when they change: `ecf_daze`, `ecf_light`, `ecf_demist`,
 `ecf_taming`, `ecf_sail`, `ecf_yield_mining`, `ecf_yield_lumber`, `ecf_harvest` (readers clamp to the caps); summon ZDO
 floats `ecf_summon_damage`, `ecf_summon_health` (the caster, at spawn). The four loot-find effects (`find_*`) are
 registered here but applied by Loot.
@@ -169,9 +171,8 @@ the best that-many; chaotic rolls take any tier the inscription defines, uniform
 Values are uniform in the tier's range at its decimals; `scaled` inscriptions are multiplied by the class's
 `damage_scale` and rounded again (`RollMath.Scale`, decimal arithmetic). `ItemRoller.RollFresh(state, rarity, ctx)` (a dropped item),
 `AddAffixes(state, count, ctx)` (Shaping, Consecrated, the Serpent's extra inscription), `Promote(state, toRarity, ctx)`
-(Awakening, Ascension: adds `max(new.min - count, promote_adds_at_least)`, not past the new maximum), `Recast(state, ctx)`
-(Recasting: one to all of the affixes, how many uniformly then which, replaced in place; the count never drops; all
-or nothing) and
+(Awakening, Ascension: adds `max(new.min - count, promote_adds_at_least)`, not past the new maximum; all or nothing),
+the Recasting Rune being `RollFresh` at the item's own rarity (since 2026-10-05), and
 `RollChaotic(state, rarity, ctx)` (the Serpent: every affix out, the count drawn in the rarity's range, any tier the
 affix defines) → `RollOutcome` (new state or `RollFailure`: `NoEligibleAffix`, `NotMagicBase`, `Full`, `NewerFormat`);
 pure, never write. `RollContext.For(item, tierFloor)` (`Class` = `ClassInfo`, `Level` 1-8, `TierFloor`, `Chaotic`,
@@ -190,13 +191,15 @@ data), `ecf_ally_hit` (creature), `ecf_filled` (a world container
 rolled once, on its owner, when the game fills it: `Loot/ChestFillPatch`), the player's own `ecf_find_rarity`,
 `ecf_find_stones`, `ecf_find_trophy`, `ecf_find_coins` (`Loot/FindPublisher`, read from the last hitter by the creature's
 owner). Elite Creatures Reborn keys, read only, only when ECR's GUID is loaded: `ecr_resolved`, `ecr_stars`,
-`ecr_asp_worthless`, `ecr_tier` (`Loot/EcrKeys`; `ecr_tier` is not written by ECR yet).
+`ecr_phantom_of` and `ecr_clone_of` (a Phantom copy or Cloning decoy: drops nothing), `ecr_tether` (the first of a
+Tethered pair to fall drops nothing; each Twin pays, as in ECR), `ecr_tier` (`Loot/EcrKeys`;
+`ecr_tier` is not written by ECR yet).
 
 **Stones** (`Stones/`, the runes). `InventoryGui.OnSelectedItem` prefix (local player), `StonePipeline.Evaluate(job)`
 (read-only, 10 checks then the verb as a dry run), `ConfirmGate.Pass` (Cleansing and Serpent: `confirm: true`), then
 `StoneCommit` (one `ItemState.Write`, then the cost, paid from `StoneJob.StoneSource`: the player's inventory or the
 open container this client owns, so a rune works straight from a chest). Five verbs (`StoneVerbs`): `PromoteVerb`, `AddVerb`, `StripVerb`,
-`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.Recast`, or `RollFresh` on a Magic item with no affix; refused on the base rarity).
+`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.RollFresh` at the item's rarity, every affix replaced, 1-2 on Magic; refused on the base rarity).
 The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
 outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
 
@@ -253,6 +256,8 @@ public static class (ILRepack internalizes only the merged libraries), `ApiVersi
   `ExternalItem` (item scope, inside the item-local range): no-ops in the aggregate and the item hooks, like the
   loot-find kinds, and `VerifyCatalog` accepts them. They roll, show (polarity, unit) and sum into channels like any
   effect; the registering mod applies them by reading the totals.
+- **Player inscriptions** (`ApiPlayerLines`, 0.7.0, for PackPanel's stat sheet): `GetPlayerInscriptionsJson` lists the
+  local player's active inscriptions summed per id and worded by `AffixLines.Sentence` (api.md section 7).
 - **Totals** (`ApiTotals`, inscription units): the local player from the last rebuild (`AggregateBuilder.LastPlan` and
   `Sums`: the channels of the effect and param, capped, health-critical ones only while critical, item-local ones never);
   another player only what it publishes (loot find, `FindKeys`; shared stats, `PlayerStats.StatOf`), param-less; an item
@@ -320,7 +325,7 @@ Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you
 |---|---|---|---|
 | Awakening Rune | Normal | Makes the item Magic with one inscription | everywhere, most of all in the Meadows; Eikthyr |
 | Shaping Rune | Magic | Adds one inscription, up to two | everywhere; Eikthyr |
-| Recasting Rune | Magic | Rerolls one or more of its inscriptions in place (on two: one half the time, both the other half); never removes one, stays Magic | everywhere |
+| Recasting Rune | Magic | Replaces every inscription with one or two new ones; stays Magic | everywhere |
 | Ascension Rune | Magic | Makes it Rare, keeps its inscriptions and adds one (two on a one-inscription item, Rare's minimum is three) | Black Forest and later; the Elder |
 | Consecrated Rune | Rare | Adds one inscription, up to six | Swamp and later, more the later the biome; Moder, Yagluth, the Queen, the Fader, half the time Bonemass |
 | Cleansing Rune | Magic, Rare | Strips it back to Normal: every inscription is lost | everywhere |

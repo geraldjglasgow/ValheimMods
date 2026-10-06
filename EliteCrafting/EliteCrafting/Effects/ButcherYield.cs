@@ -22,29 +22,29 @@ namespace EliteCrafting.Effects
     {
         private static void Postfix(CharacterDrop __instance, List<KeyValuePair<GameObject, int>> __result)
         {
-            Character? animal = __instance != null ? __instance.GetComponent<Character>() : null;
-            if (__result == null || __result.Count == 0 || !IsDyingAnimal(animal))
+            if (__result == null || __result.Count == 0 || __instance == null)
             {
                 return;
             }
-            HitData? last = animal!.m_lastHit;
-            int extra = last == null ? 0 : Mathf.RoundToInt(PlayerStats.OfAttacker(last, PlayerStats.Butcher));
-            if (extra > 0)
+            Character? creature = __instance.m_character;   // the game's own, set at Start
+            if (!IsDyingOnOwner(creature) || creature!.m_lastHit == null)
+            {
+                return;
+            }
+            int extra = Mathf.RoundToInt(PlayerStats.OfAttacker(creature.m_lastHit, PlayerStats.Butcher));
+            if (extra > 0 && IsAnimal(creature))
             {
                 AddExtra(__result, extra);
             }
         }
 
         // On the creature's owner, during its death: the game only rolls loot there, at zero health.
-        private static bool IsDyingAnimal(Character? creature)
-        {
-            if (creature == null || creature.IsPlayer() || creature.IsBoss() || creature.GetHealth() > 0f
-                || creature.m_nview == null || !creature.m_nview.IsValid() || !creature.m_nview.IsOwner())
-            {
-                return false;
-            }
-            return creature.GetFaction() == Character.Faction.AnimalsVeg || creature.GetComponent<Tameable>() != null;
-        }
+        private static bool IsDyingOnOwner(Character? creature) =>
+            creature != null && !creature.IsPlayer() && !creature.IsBoss() && creature.m_nview != null
+            && creature.m_nview.IsValid() && creature.m_nview.IsOwner() && creature.GetHealth() <= 0f;
+
+        private static bool IsAnimal(Character creature) =>
+            creature.GetFaction() == Character.Faction.AnimalsVeg || creature.GetComponent<Tameable>() != null;
 
         private static void AddExtra(List<KeyValuePair<GameObject, int>> drops, int extra)
         {
@@ -59,11 +59,13 @@ namespace EliteCrafting.Effects
     }
 
     /// <summary>
-    /// Which drops are meat or hide. Meat: any item a cooking station in the game cooks (read once per session from
-    /// ZNetScene, so every mod's meat on a registered cooking station counts). Hide: a material whose prefab name says
+    /// Which drops are meat or hide. Meat: any item a cooking station in the game cooks (read once per ZNetScene, at the
+    /// end of its Awake after other mods' registrations, so every mod's meat on a registered cooking station counts;
+    /// a scene not read then is read at the first drop check). Hide: a material whose prefab name says
     /// hide, pelt or leather (DeerHide, TrollHide, LoxPelt, WolfPelt, LeatherScraps; judgement call: the game marks
     /// hides no other way). Trophies, fangs, feathers and the rest are never multiplied.
     /// </summary>
+    [HarmonyPatch]
     internal static class AnimalProduce
     {
         private static readonly string[] HideWords = { "hide", "pelt", "leather" };
@@ -95,6 +97,22 @@ namespace EliteCrafting.Effects
                 }
             }
             return false;
+        }
+
+        [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
+        [HarmonyPostfix, HarmonyPriority(Priority.Last)]
+        private static void SceneAwake()
+        {
+            try
+            {
+                RefreshMeats();
+            }
+            catch (Exception e)
+            {
+                // A throw here would stop ZNetScene from loading the world; the first drop check tries again.
+                _scene = null;
+                Core.Log.Warn($"meat list not read at scene start: {e.Message}");
+            }
         }
 
         // Once per ZNetScene (one per session): every cooking station's raw inputs.

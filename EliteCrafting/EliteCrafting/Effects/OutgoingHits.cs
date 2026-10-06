@@ -1,4 +1,3 @@
-using HarmonyLib;
 using UnityEngine;
 
 namespace EliteCrafting.Effects
@@ -125,20 +124,6 @@ namespace EliteCrafting.Effects
             if (attack != null && attack.m_attackChainLevels >= 3 && attack.m_currentAttackCainLevel == attack.m_attackChainLevels - 1)
             {
                 CombatWindows.OnComboFinisher();
-            }
-        }
-    }
-
-    /// <summary>Filters Character.Damage to hits whose attacker is the local player (one ZDOID compare).</summary>
-    [HarmonyPatch(typeof(Character), nameof(Character.Damage))]
-    internal static class OutgoingDamagePatch
-    {
-        private static void Prefix(Character __instance, HitData hit)
-        {
-            Player? player = Player.m_localPlayer;
-            if (player != null && hit.m_attacker == player.GetZDOID() && ItemEffects.Enabled)
-            {
-                OutgoingHits.OnHit(player, __instance, hit);
             }
         }
     }

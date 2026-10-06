@@ -12,12 +12,19 @@ namespace EliteCrafting.Rules
     /// <c>&lt;prefix&gt;*.yml</c> in case-insensitive name order. Writes the main file from the built-in defaults on
     /// first run (no file of the family exists), and in place of a format-1 main file (renamed to <c>.v1.bak</c>,
     /// <see cref="RuleFormat"/>); never writes anything else. Extra files not in the current format are skipped with a
-    /// warning. Tracks names, sizes and write times so the reload can tell when anything changed.
+    /// warning. Tracks names, sizes and write times so the reload can tell when anything changed; between reads the
+    /// folder is listed again only when its own write time moved (a file added, removed or renamed), otherwise the
+    /// poll costs one stat per known file (<see cref="Changed"/>).
     /// </summary>
     internal sealed class RuleFiles
     {
+        /// <summary>A folder write time this recent may still move within its own clock tick: trusted from the next poll.</summary>
+        private static readonly TimeSpan Settle = TimeSpan.FromSeconds(3);
+
         private readonly FamilySpec _spec;
         private string _signature = "";
+        private List<string> _paths = new List<string>();
+        private DateTime _folderWrite;
 
         public RuleFiles(FamilySpec spec)
         {
@@ -62,8 +69,17 @@ namespace EliteCrafting.Rules
                     texts.Add(new SourceText(name, text));
                 }
             }
-            _signature = Signature(List());
+            Remember();
             return texts;
+        }
+
+        // After a read (which may have replaced an old main file): the folder's time first, so a change made while
+        // listing shows at the next poll.
+        private void Remember()
+        {
+            _folderWrite = FolderWriteTime();
+            _paths = List();
+            _signature = Signature(_paths);
         }
 
         private static string? ReadText(string path)
@@ -91,8 +107,35 @@ namespace EliteCrafting.Rules
             return null;
         }
 
-        /// <summary>True when a file was added, removed or rewritten since the last <see cref="Read"/>.</summary>
-        public bool Changed() => Signature(List()) != _signature;
+        /// <summary>
+        /// True when a file was added, removed or rewritten since the last <see cref="Read"/>. The folder is listed again
+        /// only when its write time moved (entries added, removed or renamed; editors that save by replacing the file
+        /// land here too); an in-place save shows in the known files' own sizes and write times.
+        /// </summary>
+        public bool Changed()
+        {
+            DateTime folder = FolderWriteTime();
+            if (folder == DateTime.MinValue || folder != _folderWrite)
+            {
+                _folderWrite = folder;
+                _paths = List();
+            }
+            return Signature(_paths) != _signature;
+        }
+
+        // Unreadable reads as "unknown" (a re-list every poll); a time inside the settle window as well.
+        private static DateTime FolderWriteTime()
+        {
+            try
+            {
+                DateTime write = Directory.GetLastWriteTimeUtc(Folder);
+                return DateTime.UtcNow - write < Settle ? DateTime.MinValue : write;
+            }
+            catch (Exception)
+            {
+                return DateTime.MinValue;
+            }
+        }
 
         private List<string> List()
         {

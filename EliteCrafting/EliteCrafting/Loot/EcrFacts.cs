@@ -25,7 +25,7 @@ namespace EliteCrafting.Loot
         /// <summary>ECR is installed on this peer, so the keys were read.</summary>
         public bool Present { get; }
 
-        /// <summary>The star and tier keys were read too (the synergy was on); otherwise only the worthless flag.</summary>
+        /// <summary>The star and tier keys were read too (the synergy was on); otherwise only the copy marks.</summary>
         public bool ReadFull { get; }
 
         /// <summary><c>ecr_resolved</c>: ECR has rolled this creature.</summary>
@@ -34,7 +34,10 @@ namespace EliteCrafting.Loot
         /// <summary><c>ecr_stars</c>, never below 0 (a negative or unreadable value is 0).</summary>
         public int Stars { get; }
 
-        /// <summary><c>ecr_asp_worthless</c>: the Cloven twin or a Phantom husk.</summary>
+        /// <summary>
+        /// Pays nothing, as ECR's own loot rules say: a Phantom copy (<c>ecr_phantom_of</c>), a Cloning decoy
+        /// (<c>ecr_clone_of</c>), or the first of a Tethered pair to fall while its partner still stands (<c>ecr_tether</c>).
+        /// </summary>
         public bool Worthless { get; }
 
         /// <summary><c>ecr_tier</c> is on the creature (not yet written by any ECR release, DECISIONS ECR-6).</summary>
@@ -50,7 +53,7 @@ namespace EliteCrafting.Loot
 
         /// <summary>
         /// Reads the creature's ECR keys. <paramref name="full"/> (the synergy is on) adds the star and tier reads; the
-        /// worthless flag is read whenever ECR is present, synergy or not (ECR-7). ECR absent: nothing is read.
+        /// copy marks are read whenever ECR is present, synergy or not (ECR-7). ECR absent: nothing is read.
         /// </summary>
         public static EcrFacts Read(ZDO zdo, bool full)
         {
@@ -58,7 +61,8 @@ namespace EliteCrafting.Loot
             {
                 return default;
             }
-            bool worthless = zdo.GetBool(EcrKeys.WorthlessHash);
+            bool worthless = zdo.GetZDOID(EcrKeys.PhantomOfHash) != ZDOID.None
+                || zdo.GetZDOID(EcrKeys.CloneOfHash) != ZDOID.None || TetherStanding(zdo);
             if (!full)
             {
                 return new EcrFacts(false, false, 0, worthless, -1);
@@ -66,6 +70,18 @@ namespace EliteCrafting.Loot
             bool resolved = zdo.GetBool(EcrKeys.ResolvedHash);
             int stars = Math.Max(0, zdo.GetInt(EcrKeys.StarsHash));
             return new EcrFacts(true, resolved, stars, worthless, zdo.GetInt(EcrKeys.TierHash, -1));
+        }
+
+        /// <summary>
+        /// A Tethered boss whose partner is still in the fight: its ZDO is here with health left (no health key is full
+        /// health). ECR's own test (<c>TetherPair.Standing</c>), made on the same owner at the same death, so both mods
+        /// agree on which of the pair pays. A partner whose ZDO is gone has fallen.
+        /// </summary>
+        private static bool TetherStanding(ZDO zdo)
+        {
+            ZDOID partner = zdo.GetZDOID(EcrKeys.TetherHash);
+            ZDO? other = partner != ZDOID.None && ZDOMan.instance != null ? ZDOMan.instance.GetZDO(partner) : null;
+            return other != null && other.IsValid() && other.GetFloat(ZDOVars.s_health, 1f) > 0f;
         }
     }
 

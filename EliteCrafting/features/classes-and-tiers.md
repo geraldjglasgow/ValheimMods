@@ -101,8 +101,7 @@ Inputs: the item's class and level, the rarity, the rune's floor, chaotic or not
 ## 6. Rarity limits
 
 Rarities gain `prefixes` and `suffixes` (economy file): Magic 1 and 1, Rare 3 and 3, Normal 0. Every roll respects them:
-fresh rolls, Shaping and Consecrated, promotions, Recasting (a replaced inscription frees its own kind first; the new one
-may be either kind if the limits hold afterwards). The Serpent's "one past the cap" outcome may also pass the prefix or
+fresh rolls, Shaping and Consecrated, promotions, Recasting (a fresh roll at the item's rarity since 2026-10-05). The Serpent's "one past the cap" outcome may also pass the prefix or
 suffix limit by its `overflow`. Counts (`inscriptions: { min, max }`) work as before, so a Rare with 3+3 limits and max 6
 is full at 6.
 

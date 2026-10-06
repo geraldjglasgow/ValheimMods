@@ -11,20 +11,27 @@ namespace EliteCrafting.Effects
     /// <summary>
     /// When the aggregate is rebuilt (effects-runtime.md section 3). Triggers only set a dirty flag; the per-frame
     /// <see cref="Tick"/> (from <see cref="EffectDriver"/>) rebuilds at most once per frame. Triggers: equipment set up
-    /// (equip, unequip, hide/show hand items), the local inventory's change callback, a state write to an item the local
-    /// player has equipped, spawn, a rules apply, the <c>Affix effects</c> switch, the end of a teleport, and the
-    /// aggregate found missing (death, anything that cleared the status effects). Local player only.
+    /// (equip, unequip, hide/show hand items), the local inventory's change callback when it changed the counted gear
+    /// (<see cref="GearSignature"/>; any other inventory change only recounts Fafnir's Greed coins), a state write to an
+    /// item the local player has equipped, spawn, a rules apply, the <c>Affix effects</c> switch, the end of a teleport,
+    /// and the aggregate found missing (death, anything that cleared the status effects). Local player only.
     /// </summary>
     internal static class EffectRuntime
     {
         private static bool _dirty = true;
         private static bool _enabled = true;
         private static bool _teleporting;
+        private static bool _inventoryChanged;
         private static Player? _player;
         private static Inventory? _inventory;
-        private static readonly Action OnInventoryChanged = MarkDirty;
+        private static readonly Action OnInventoryChanged = NoteInventoryChanged;
+
+        /// <summary>After every rebuild (at most once a frame), local player only: Loot republishes the find totals.</summary>
+        public static event Action? Rebuilt;
 
         public static void MarkDirty() => _dirty = true;
+
+        private static void NoteInventoryChanged() => _inventoryChanged = true;
 
         public static void Install()
         {
@@ -49,6 +56,7 @@ namespace EliteCrafting.Effects
                 return;
             }
             WatchState(player);
+            WatchInventory(player);
             if (_dirty)
             {
                 _dirty = false;
@@ -95,6 +103,24 @@ namespace EliteCrafting.Effects
             }
         }
 
+        // At most once per frame after inventory changes: a rebuild only when the counted gear changed; otherwise the
+        // coin stacks (the only inventory-wide input of the totals) are counted again. The game's own Changed already
+        // recomputed the inventory's weight.
+        private static void WatchInventory(Player player)
+        {
+            if (!_inventoryChanged)
+            {
+                return;
+            }
+            _inventoryChanged = false;
+            if (_dirty || GearSignature.Changed(player))
+            {
+                _dirty = true;
+                return;
+            }
+            AttackBonuses.RefreshCoins(player, AggregateBuilder.Critical[EffectKind.CoinDamage] > 0f);
+        }
+
         private static void OnPlayerChanged(Player? player)
         {
             if (_inventory != null)
@@ -114,7 +140,7 @@ namespace EliteCrafting.Effects
 
         private static void OnItemWritten(ItemDrop.ItemData item)
         {
-            ItemLocalCache.Forget(item);
+            // The item's local numbers need no dropping: they live on the state the write cached (ItemLocalCache).
             // Equipped: the totals may change. Anywhere in the inventory: its weight may change (Lightened), and the
             // rebuild recomputes the inventory's total weight.
             if (ItemEffects.IsEquippedByLocalPlayer(item) || (_inventory != null && _inventory.ContainsItem(item)))
@@ -127,6 +153,7 @@ namespace EliteCrafting.Effects
         {
             MaxPools.Snapshot before = MaxPools.Take();
             AggregateBuilder.Build(player);
+            GearSignature.Remember(player);
             if (ItemEffects.Enabled)
             {
                 AggregateHost.Apply(player);
@@ -143,13 +170,15 @@ namespace EliteCrafting.Effects
         }
 
         // Phase 2 state that follows the new totals: the player's clones of Wet and Tared, the equipment top-up and
-        // movement refund, the coin stacks, and the stats other peers read from this player's ZDO.
+        // movement refund, the coin stacks, and the stats other peers read from this player's ZDO (the loot-find ones
+        // through Rebuilt).
         private static void AfterRebuild(Player player)
         {
             StatusEffectTweaks.Refresh(player);
             Equipment.Refresh(player);
             AttackBonuses.RefreshCoins(player, AggregateBuilder.Critical[EffectKind.CoinDamage] > 0f);
             PlayerStats.Publish(player);
+            Rebuilt?.Invoke();
         }
 
         private static void LogRebuild()

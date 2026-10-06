@@ -8,12 +8,14 @@ namespace EliteCrafting.Effects
     /// <item>The kill is seen on the dying creature's ZDO owner (Character.OnDeath returns early elsewhere, and only the
     /// owner records the last hit): often a nearby client on a dedicated server, not necessarily the killer.</item>
     /// <item>The killer is the last hit's attacker when that is a player (the same rule Loot uses for its find
-    /// stats). The owner cannot see the killer's gear, so it does not compute anything: it sends one argument-less
-    /// routed RPC to the killer's peer only (the owner of the killer's player ZDO). When the owner is the killer, the
-    /// routed RPC is handled locally without a network send.</item>
+    /// stats). The owner cannot see the killer's gear, so it does not compute anything: when the killer's player ZDO
+    /// says it wants kill restores (<see cref="PlayerStats.WantsKillRestore"/>, published by the killer's own client), it
+    /// sends one argument-less routed RPC to the killer's peer only (the owner of the killer's player ZDO). When the
+    /// owner is the killer, the routed RPC is handled locally without a network send.</item>
     /// <item>The killer's client restores from its own aggregate totals, exactly as for its other stats.</item>
     /// </list>
-    /// One small message per player kill, to one peer. A kill no player took part in (a fall, a pet) sends nothing.
+    /// One small message per kill by a player with Reaper or Soul Reaper, to that player's peer. A kill by anyone else,
+    /// or no player at all (a fall, a pet), sends nothing.
     /// </summary>
     internal static class KillCredit
     {
@@ -36,7 +38,8 @@ namespace EliteCrafting.Effects
             }
             Player? killer = creature.m_lastHit?.GetAttacker() as Player;
             ZDO? zdo = killer != null && killer.m_nview != null ? killer.m_nview.GetZDO() : null;
-            if (zdo == null || zdo.GetOwner() == 0L || ZRoutedRpc.instance == null)
+            if (zdo == null || zdo.GetOwner() == 0L || ZRoutedRpc.instance == null
+                || !PlayerStats.Wants(zdo, PlayerStats.WantsKillRestore))
             {
                 return;
             }

@@ -11,11 +11,22 @@ namespace EliteCrafting.Effects
     /// ZDO) at the end of a rebuild, only when a value changed, so normal play sends nothing. The unconditional totals
     /// only: a health-critical copy would depend on health the reader cannot see. A reader clamps what it reads to the running rules' cap (a client cannot
     /// publish more than the server's rules allow), and a player without the key reads 0.
+    /// <para>
+    /// Beside the floats, the int <c>ecf_wants</c> (<see cref="WantsKillRestore"/>, <see cref="WantsDodgeFury"/>): which
+    /// of the argument-less routed RPCs this player's client acts on, so their senders (the creature's owner at a kill,
+    /// the attacker's peer at a dodged melee hit) send one only to a player who has the inscription. Taken from the
+    /// health-critical set, which holds the unconditional totals too. A player without the key wants nothing.
+    /// </para>
     /// </summary>
     internal static class PlayerStats
     {
         public const int Daze = 0, Light = 1, Demist = 2, Taming = 3, Sail = 4, YieldMining = 5, YieldLumber = 6, Harvest = 7,
             Dot = 8, Butcher = 9, ShipWard = 10;
+
+        /// <summary>Bits of <c>ecf_wants</c>: Reaper / Soul Reaper (<see cref="KillCredit"/>), Evader's Fury (<see cref="MeleeDodge"/>).</summary>
+        public const int WantsKillRestore = 1, WantsDodgeFury = 2;
+
+        private static readonly int WantsHash = "ecf_wants".GetStableHashCode();
 
         private static readonly EffectKind[] Kinds =
         {
@@ -52,7 +63,27 @@ namespace EliteCrafting.Effects
                     zdo.Set(Hashes[i], value);
                 }
             }
+            PublishWants(zdo);
         }
+
+        private static void PublishWants(ZDO zdo)
+        {
+            int wants = ItemEffects.Enabled ? WantedBits(AggregateBuilder.Critical) : 0;
+            if (zdo.GetInt(WantsHash, 0) != wants)
+            {
+                zdo.Set(WantsHash, wants);
+            }
+        }
+
+        private static int WantedBits(AggregateValues v)
+        {
+            float[] restore = v.KillRestore;
+            bool kill = restore[AggregateValues.Health] > 0f || restore[AggregateValues.Stamina] > 0f || restore[AggregateValues.Eitr] > 0f;
+            return (kill ? WantsKillRestore : 0) | (v[EffectKind.DodgeFury] > 0f ? WantsDodgeFury : 0);
+        }
+
+        /// <summary>Whether the player whose ZDO this is acts on the routed RPC <paramref name="bit"/> (read by its sender).</summary>
+        public static bool Wants(ZDO zdo, int bit) => (zdo.GetInt(WantsHash, 0) & bit) != 0;
 
         /// <summary>The stat a kind is published as, or -1 (the API reads other players' totals through it).</summary>
         public static int StatOf(EffectKind kind) => Array.IndexOf(Kinds, kind);
@@ -71,9 +102,11 @@ namespace EliteCrafting.Effects
             {
                 return 0f;
             }
-            ZDO? zdo = ZDOMan.instance.GetZDO(hit.m_attacker);
-            return zdo == null ? 0f : Clamp(stat, zdo.GetFloat(Hashes[stat], 0f));
+            return OfZdo(ZDOMan.instance.GetZDO(hit.m_attacker), stat);
         }
+
+        /// <summary>The published total in a player ZDO already looked up (0 for null or a non-player's).</summary>
+        public static float OfZdo(ZDO? zdo, int stat) => zdo == null ? 0f : Clamp(stat, zdo.GetFloat(Hashes[stat], 0f));
 
         private static float Clamp(int stat, float value)
         {

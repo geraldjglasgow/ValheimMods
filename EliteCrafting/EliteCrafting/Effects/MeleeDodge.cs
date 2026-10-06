@@ -8,9 +8,10 @@ namespace EliteCrafting.Effects
     /// hit on the attacker's side (Attack.DoMeleeAttack / DoAreaAttack skip a dodge-invincible target and call
     /// Player.HitWhileDodging, and never send the damage), so the dodging player's own client never sees such a hit in
     /// its damage RPC. The game's own "hit while dodging" RPC carries no hint of melee or ranged (projectiles send it
-    /// too), so while a melee or area attack resolves on the attacker's peer, a dodged player also gets one
-    /// argument-less routed RPC (<c>ECF_MeleeDodged</c>) to the peer owning its player ZDO, where the window opens.
-    /// Registered on every peer's routed RPC table at ZNet.Awake, like <see cref="KillCredit"/>.
+    /// too), so while a melee or area attack resolves on the attacker's peer, a dodged player with Evader's Fury (its
+    /// player ZDO's <see cref="PlayerStats.WantsDodgeFury"/> bit, published by its own client) also gets one
+    /// argument-less routed RPC (<c>ECF_MeleeDodged</c>) to the peer owning its player ZDO, where the window opens; a
+    /// player without it gets nothing. Registered on every peer's routed RPC table at ZNet.Awake, like <see cref="KillCredit"/>.
     /// </summary>
     internal static class MeleeDodge
     {
@@ -27,7 +28,8 @@ namespace EliteCrafting.Effects
         public static void OnHitWhileDodging(Player player)
         {
             ZDO? zdo = InMelee && player.m_nview != null ? player.m_nview.GetZDO() : null;
-            if (zdo != null && zdo.GetOwner() != 0L && ZRoutedRpc.instance != null)
+            if (zdo != null && zdo.GetOwner() != 0L && ZRoutedRpc.instance != null
+                && PlayerStats.Wants(zdo, PlayerStats.WantsDodgeFury))
             {
                 ZRoutedRpc.instance.InvokeRoutedRPC(zdo.GetOwner(), Rpc);
             }

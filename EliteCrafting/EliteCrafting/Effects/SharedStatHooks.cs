@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 
@@ -30,18 +31,44 @@ namespace EliteCrafting.Effects
 
     /// <summary>
     /// Fair Winds, on the ship's owner (sail physics run there; the owner is not always the helmsman): the sail force is
-    /// X% larger, X being the published value of the player at the helm.
+    /// X% larger, X being the published value of the player at the helm. Every physics step, so the helmsman's Player
+    /// is kept per ship for its user id (looked up again when the user changes, or at most once a second while that
+    /// player is not loaded here).
     /// </summary>
     [HarmonyPatch(typeof(Ship), nameof(Ship.GetSailForce))]
     internal static class SailPatch
     {
+        private const float RetrySeconds = 1f;
+
+        private static readonly ConditionalWeakTable<Ship, Helm> Helms = new ConditionalWeakTable<Ship, Helm>();
+
+        private sealed class Helm
+        {
+            public long User;
+            public Player? Player;
+            public float RetryAt;
+        }
+
         private static void Postfix(Ship __instance, ref Vector3 __result)
         {
             long user = __instance.m_shipControlls != null ? __instance.m_shipControlls.GetUser() : 0L;
             if (user != 0L)
             {
-                __result *= 1f + PlayerStats.Of(Player.GetPlayer(user), PlayerStats.Sail);
+                __result *= 1f + PlayerStats.Of(Helmsman(__instance, user), PlayerStats.Sail);
             }
+        }
+
+        private static Player? Helmsman(Ship ship, long user)
+        {
+            Helm helm = Helms.GetOrCreateValue(ship);
+            if (helm.User == user && (helm.Player != null || Time.time < helm.RetryAt))
+            {
+                return helm.Player;
+            }
+            helm.User = user;
+            helm.Player = Player.GetPlayer(user);
+            helm.RetryAt = Time.time + RetrySeconds;
+            return helm.Player;
         }
     }
 

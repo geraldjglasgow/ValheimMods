@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
@@ -18,8 +21,10 @@ namespace EliteCrafting.Effects
     /// </summary>
     internal static class ThrowSwing
     {
-        // An attack's settings are its public fields; its runtime state (character, weapon, timers) is private.
+        // An attack's settings are its public fields; its runtime state (character, weapon, timers) is private. They are
+        // copied by a method compiled once (plain field assignments, no boxing); by reflection if that cannot be built.
         private static readonly FieldInfo[] Settings = typeof(Attack).GetFields(BindingFlags.Public | BindingFlags.Instance);
+        private static readonly Action<Attack, Attack>? CopySettings = BuildCopier();
 
         /// <summary>True while the local player's Humanoid.StartAttack runs for a secondary attack.</summary>
         public static bool Secondary;
@@ -37,11 +42,42 @@ namespace EliteCrafting.Effects
                 return;
             }
             float stamina = clone.m_attackStamina;
+            Copy(spear, clone);
+            clone.m_attackStamina = Mathf.Max(stamina, spear.m_attackStamina);
+        }
+
+        private static void Copy(Attack from, Attack to)
+        {
+            if (CopySettings != null)
+            {
+                CopySettings(to, from);
+                return;
+            }
             foreach (FieldInfo field in Settings)
             {
-                field.SetValue(clone, field.GetValue(spear));
+                field.SetValue(to, field.GetValue(from));
             }
-            clone.m_attackStamina = Mathf.Max(stamina, spear.m_attackStamina);
+        }
+
+        // to.field = from.field for every setting; null (the reflection loop) when a field cannot be assigned this way.
+        private static Action<Attack, Attack>? BuildCopier()
+        {
+            try
+            {
+                ParameterExpression to = Expression.Parameter(typeof(Attack), "to");
+                ParameterExpression from = Expression.Parameter(typeof(Attack), "from");
+                List<Expression> body = new List<Expression>();
+                foreach (FieldInfo field in Settings)
+                {
+                    body.Add(Expression.Assign(Expression.Field(to, field), Expression.Field(from, field)));
+                }
+                return body.Count == 0 ? null : Expression.Lambda<Action<Attack, Attack>>(Expression.Block(body), to, from).Compile();
+            }
+            catch (Exception e)
+            {
+                Core.Log.Warn($"Throwing Grip copies the throw by reflection: {e.Message}");
+                return null;
+            }
         }
 
         // A single one-handed sword, axe, mace or knife: the classes the inscription rolls on, checked again because an

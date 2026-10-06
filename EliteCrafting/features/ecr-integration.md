@@ -76,7 +76,8 @@ owner wrote them when it rolled the creature; the game replicates them to every 
 |---|---|---|---|
 | `ecr_resolved` | bool | `TraitStore.Save`, once the creature's traits are rolled | the creature has ECR data at all; without it the ECR star term is not used |
 | `ecr_stars` | int, 0 to ECR's ceiling (5 by default, no enforced maximum) | `TraitStore.Save` | the star input (section 4), when the synergy is on |
-| `ecr_asp_worthless` | bool | `AspectStore.MarkTwin` (Cloven) and `AspectStore.MarkHusk` (Phantom) | drop nothing (section 6), whenever ECR is present |
+| `ecr_phantom_of`, `ecr_clone_of` | ZDOID | `AspectStore.SetPhantomOf` (Phantom copy), `CloneStore` (Cloning decoy) | present: drop nothing (section 6), whenever ECR is present |
+| `ecr_tether` | ZDOID | `AspectStore.SetTether` (each of a Tethered pair) | partner still standing (ZDO here, health above 0): drop nothing (section 6) |
 | `ecr_tier` | int 0-7 | **not written by ECR yet - proposed** (section 5) | the world-tier terms, when the synergy is on |
 
 Read nowhere: `ecr_mask` (mutations), `ecr_biome` (ECR's roll biome; our tier comes from our own spawn data,
@@ -163,15 +164,19 @@ R_tier  = drops.ecr.tier_rarity_bonus[tier]               percent, added to Norn
 
 # 6. Worthless creatures
 
-ECR marks some creatures as worth nothing: the second half of a **Cloven** boss (a copy of the boss prefab) and
-**Phantom husks** (`ecr_asp_worthless`, ECR `boss-aspects.md`). ECR clears their vanilla drop list itself
-(`Patches/LootPatch.cs`); our drops are spawned by our own death hook (RC-12), so ECR's clear does not reach them.
+ECR makes hollow doubles that are worth nothing: **Phantom copies** of a boss (`ecr_phantom_of`, the boss's ZDOID) and
+**Cloning decoys** (`ecr_clone_of`). ECR turns their vanilla drops off itself (`Aspects/PhantomBody`); our drops are
+spawned by our own death hook (RC-12), so ECR's switch does not reach them. (Until 2026-10-05 this read
+`ecr_asp_worthless`, a draft key ECR never shipped, so every Phantom copy paid our boss loot.)
 
-- **Whenever ECR is present, a creature whose ZDO has `ecr_asp_worthless` true drops nothing from EliteCrafting** -
+- **Whenever ECR is present, a creature whose ZDO carries either mark drops nothing from EliteCrafting** -
   no runes, no gear, no bonus rows, no boss guarantees - **whether or not the synergy is switched on** (ECR-7). This
-  is not a bonus; it prevents a Cloven Moder from paying our boss guarantees twice. The check sits with the other
+  is not a bonus; it stops a Phantom boss from paying our boss guarantees once per copy. The check sits with the other
   "which deaths drop" rules (`drops.md` section 2) as a fifth rule.
-- `drops.ecr.skip_worthless` (default true) turns it off for an owner who wants the twin to pay.
+- **Tethered and Twin follow ECR's own loot rules** (2026-10-05): of a Tethered pair only the last to fall pays, so the
+  first, dying while its partner's ZDO is still here with health left (ECR's `TetherPair.Standing` test, same owner,
+  same death), drops nothing from EliteCrafting either. Each Twin pays its own, as in ECR, so both roll our boss loot.
+- `drops.ecr.skip_worthless` (default true) turns it off for an owner who wants these to pay.
 - ECR absent: never read (a stale key on a creature from an old ECR install is ignored, section 8).
 
 ---

@@ -61,6 +61,7 @@ namespace EliteCrafting.Effects
             {
                 return;
             }
+            FoodValues.AddTo(player, ref hp, ref stamina, ref eitr);
             AggregateValues v = AggregateBuilder.Normal;
             hp += v[EffectKind.MaxHealth];
             stamina += v[EffectKind.MaxStamina];
@@ -71,7 +72,7 @@ namespace EliteCrafting.Effects
     [HarmonyPatch(typeof(Player), nameof(Player.GetTotalFoodValue))]
     internal static class MaxPoolsPatch
     {
-        // Runs where the player's food ticks run: its own client.
+        // Runs where the player's food ticks run: its own client. Hearty Appetite first, then the pool bonuses.
         private static void Postfix(Player __instance, ref float hp, ref float stamina, ref float eitr)
         {
             MaxPools.AddTo(__instance, ref hp, ref stamina, ref eitr);

@@ -37,6 +37,9 @@ namespace EliteCrafting.Rules
         public float DropWeight { get; internal set; } = 1f;
 
         public bool IsBase => Index == 0;
+
+        /// <summary>Display's icon backdrop tone, worked out once per definition (<c>Display/Backdrops/BackdropTone</c>).</summary>
+        internal Color? BackdropTone;
     }
 
     /// <summary>The <c>rolling:</c> section (rarity.md section 4, classes-and-tiers.md section 5).</summary>

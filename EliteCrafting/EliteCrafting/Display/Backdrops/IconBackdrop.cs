@@ -9,17 +9,26 @@ namespace EliteCrafting.Display.Backdrops
     /// The rarity backdrop behind one item icon (display.md section 2, "Icon backdrop"): an Image of
     /// <see cref="BackdropArt"/> in <see cref="BackdropTone"/>, made once per icon as a sibling of it, just above its
     /// cell's own background (<c>bkg</c>) or first, so every marker and the icon draw over it. It covers the icon's rect
-    /// less 3 of every 64 units on each side (58 of the game's 64-unit icon), follows the icon's rect, and shows only
-    /// while the icon does. Display only, on the viewing client.
+    /// less 3 of every 64 units on each side (58 of the game's 64-unit icon), follows the icon's rect (fitted when made and
+    /// whenever the icon's size changes), and shows only while the icon does. Display only, on the viewing client.
+    /// Per-frame callers pay the custom-data test first; <see cref="Hide"/> is one int test while no backdrop shows.
     /// </summary>
     internal static class IconBackdrop
     {
         private const string Name = "ecf_backdrop";
         private const float Inset = (64f - BackdropArt.Span) / 2f / 64f;
 
-        private static readonly Dictionary<Image, Image> Made = new Dictionary<Image, Image>();
+        private static readonly Dictionary<Image, Made> Backdrops = new Dictionary<Image, Made>();
         private static readonly List<Image> Gone = new List<Image>();
         private static int _sweepAt = 64;
+        private static int _shown;
+
+        /// <summary>A made backdrop and the icon size it was last fitted to.</summary>
+        private sealed class Made
+        {
+            public Image Backdrop = null!;
+            public Vector2 FittedSize = new Vector2(-1f, -1f);
+        }
 
         /// <summary>Shows the backdrop for the item while the icon shows, else hides it. Called per frame by most surfaces.</summary>
         public static void Set(Image? icon, ItemDrop.ItemData? item)
@@ -28,7 +37,7 @@ namespace EliteCrafting.Display.Backdrops
             {
                 return;
             }
-            if (Visible(icon) && BackdropTone.TryGet(item, out Color tone))
+            if (BackdropTone.TryGet(item, out Color tone) && Visible(icon))
             {
                 Show(icon, tone);
             }
@@ -40,17 +49,30 @@ namespace EliteCrafting.Display.Backdrops
 
         public static void Hide(Image? icon)
         {
-            if (icon != null && Made.TryGetValue(icon, out Image backdrop) && backdrop != null && backdrop.enabled)
+            if (_shown == 0 || icon == null || !Backdrops.TryGetValue(icon, out Made made))
+            {
+                return;
+            }
+            Image backdrop = made.Backdrop;
+            if (backdrop != null && backdrop.enabled)
             {
                 backdrop.enabled = false;
+                _shown--;
             }
         }
 
         /// <summary>The icon's backdrop, made on first use, fitted to the icon and shown in the tone.</summary>
         public static Image Show(Image icon, Color tone)
         {
-            Image backdrop = Get(icon);
-            Fit((RectTransform)backdrop.transform, icon.rectTransform);
+            Made made = Get(icon);
+            Image backdrop = made.Backdrop;
+            RectTransform iconRect = icon.rectTransform;
+            Vector2 size = iconRect.rect.size;
+            if (size != made.FittedSize)
+            {
+                made.FittedSize = size;
+                Fit((RectTransform)backdrop.transform, iconRect, size);
+            }
             if (backdrop.color != tone)
             {
                 backdrop.color = tone;
@@ -58,6 +80,7 @@ namespace EliteCrafting.Display.Backdrops
             if (!backdrop.enabled)
             {
                 backdrop.enabled = true;
+                _shown++;
             }
             return backdrop;
         }
@@ -65,38 +88,50 @@ namespace EliteCrafting.Display.Backdrops
         private static bool Visible(Image icon) =>
             icon.enabled && icon.gameObject.activeSelf && icon.sprite != null && icon.color.a > 0.01f;
 
-        private static Image Get(Image icon)
+        private static Made Get(Image icon)
         {
-            if (Made.TryGetValue(icon, out Image backdrop) && backdrop != null)
+            if (Backdrops.TryGetValue(icon, out Made made) && made.Backdrop != null)
             {
-                return backdrop;
+                return made;
             }
             Sweep();
-            backdrop = Make(icon);
-            Made[icon] = backdrop;
-            return backdrop;
+            made = new Made { Backdrop = Make(icon) };
+            Backdrops[icon] = made;
+            return made;
         }
 
         /// <summary>Forgets icons the game destroyed (recipe lists are rebuilt, drag ghosts come and go), now and then.</summary>
         private static void Sweep()
         {
-            if (Made.Count < _sweepAt)
+            if (Backdrops.Count < _sweepAt)
             {
                 return;
             }
-            Gone.Clear();
-            foreach (KeyValuePair<Image, Image> pair in Made)
+            CollectGone();
+            foreach (Image icon in Gone)
             {
-                if (pair.Key == null || pair.Value == null)
+                Backdrops.Remove(icon);
+            }
+            _sweepAt = Math.Max(64, Backdrops.Count * 2);
+        }
+
+        /// <summary>Lists the destroyed pairs in <see cref="Gone"/> and recounts the backdrops showing.</summary>
+        private static void CollectGone()
+        {
+            Gone.Clear();
+            _shown = 0;
+            foreach (KeyValuePair<Image, Made> pair in Backdrops)
+            {
+                Image backdrop = pair.Value.Backdrop;
+                if (pair.Key == null || backdrop == null)
                 {
                     Gone.Add(pair.Key!);
                 }
+                else if (backdrop.enabled)
+                {
+                    _shown++;
+                }
             }
-            foreach (Image icon in Gone)
-            {
-                Made.Remove(icon);
-            }
-            _sweepAt = Math.Max(64, Made.Count * 2);
         }
 
         private static Image Make(Image icon)
@@ -118,9 +153,9 @@ namespace EliteCrafting.Display.Backdrops
         }
 
         /// <summary>The icon's anchors, pivot and scale, its corners moved in by the inset; written only when they differ.</summary>
-        private static void Fit(RectTransform backdrop, RectTransform icon)
+        private static void Fit(RectTransform backdrop, RectTransform icon, Vector2 size)
         {
-            Vector2 inset = icon.rect.size * Inset;
+            Vector2 inset = size * Inset;
             Vector2 min = icon.offsetMin + inset;
             Vector2 max = icon.offsetMax - inset;
             if (backdrop.anchorMin != icon.anchorMin || backdrop.anchorMax != icon.anchorMax || backdrop.pivot != icon.pivot)

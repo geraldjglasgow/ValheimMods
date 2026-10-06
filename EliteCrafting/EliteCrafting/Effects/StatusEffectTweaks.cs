@@ -89,22 +89,28 @@ namespace EliteCrafting.Effects
 
     /// <summary>
     /// Purity: burning, poison and frost on the local player run their clock X% faster, so they end sooner and deal
-    /// what is left of their damage never. The base update runs for every status effect the owner ticks; the first
-    /// check is one float read.
+    /// what is left of their damage never; Quench (<see cref="BurningDecay"/>) shares the postfix. The base update runs
+    /// for every status effect the owner ticks; the first check is two float reads.
     /// </summary>
     [HarmonyPatch(typeof(StatusEffect), nameof(StatusEffect.UpdateStatusEffect))]
     internal static class DebuffDecayPatch
     {
         private static void Postfix(StatusEffect __instance, float dt)
         {
-            float decay = AggregateHost.Current[EffectKind.DebuffDecay];
-            if (decay <= 0f || !ReferenceEquals(__instance.m_character, Player.m_localPlayer))
+            AggregateValues v = AggregateHost.Current;
+            float decay = v[EffectKind.DebuffDecay];
+            float sooner = v[EffectKind.BurningDecay];
+            if ((decay <= 0f && sooner <= 0f) || !ReferenceEquals(__instance.m_character, Player.m_localPlayer))
             {
                 return;
             }
-            if (__instance is SE_Burning || __instance is SE_Poison || __instance is SE_Frost)
+            if (decay > 0f && (__instance is SE_Burning || __instance is SE_Poison || __instance is SE_Frost))
             {
                 __instance.m_time += dt * decay;
+            }
+            if (sooner > 0f)
+            {
+                BurningDecay.Apply(__instance, dt, sooner);
             }
         }
     }

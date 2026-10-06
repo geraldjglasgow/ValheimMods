@@ -37,7 +37,7 @@ PackPanel adds a Backpacks class.
 |---|---|---|
 | Awakening | Normal | Makes it Magic with one inscription |
 | Shaping | Magic | Adds one inscription, up to two: the kind (prefix or suffix) the item lacks |
-| Recasting | Magic | Rerolls one or more of its inscriptions in place (on two: one half the time, both the other half); never removes one, stays Magic |
+| Recasting | Magic | Replaces every inscription with one or two new ones; stays Magic |
 | Ascension | Magic | Makes it Rare, keeping its inscriptions and adding enough to reach three |
 | Consecrated | Rare | Adds one inscription, up to six (three prefixes and three suffixes) |
 | Cleansing | Magic, Rare | Back to Normal; every inscription is lost |

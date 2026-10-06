@@ -41,9 +41,16 @@ namespace EliteCrafting.Display
         /// <summary>Stands the beam straight up at normal size, however the item lies or is scaled.</summary>
         public static void Upright(Transform beam)
         {
-            beam.rotation = Quaternion.identity;
+            if (beam.rotation != Quaternion.identity)
+            {
+                beam.rotation = Quaternion.identity;
+            }
             float scale = beam.parent != null ? Mathf.Max(beam.parent.lossyScale.x, 0.001f) : 1f;
-            beam.localScale = Vector3.one / scale;
+            Vector3 local = Vector3.one / scale;
+            if (beam.localScale != local)
+            {
+                beam.localScale = local;
+            }
         }
 
         private static GameObject? Template(Color32 colour)

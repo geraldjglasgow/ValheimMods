@@ -23,7 +23,7 @@ namespace EliteCrafting
     {
         public const string PluginGuid = "com.EliteCrafting";
         public const string PluginName = "EliteCrafting";
-        public const string PluginVersion = "0.6.1";
+        public const string PluginVersion = "0.7.0";
 
         private void Awake()
         {

@@ -26,8 +26,7 @@ namespace EliteCrafting.Api
         {
             if (player != null && ReferenceEquals(player, Player.m_localPlayer))
             {
-                EffectRuntime.MarkDirty();
-                FindPublisher.Publish();
+                EffectRuntime.MarkDirty();   // the rebuild republishes loot find (FindPublisher)
             }
             return true;
         }

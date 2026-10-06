@@ -16,9 +16,10 @@ namespace EliteCrafting.Effects
     /// <para>
     /// Phase 2 sends three things, each scoped: the hits the local player builds carry their changes to the target's
     /// owner (the game's own damage RPC, <see cref="OutgoingHits"/>); a creature's owner sends one routed RPC to the
-    /// killer's peer on a kill (<see cref="KillCredit"/>); and the player's own client publishes the few totals other
-    /// peers apply - stagger length, taming, sailing, gathering, light, mist - on its player ZDO when they change
-    /// (<see cref="PlayerStats"/>). Summons carry their staff's bonus in their own ZDO (<see cref="Summons"/>).
+    /// killer's peer on a kill, only when the killer has Reaper or Soul Reaper (<see cref="KillCredit"/>; Evader's Fury's
+    /// <see cref="MeleeDodge"/> likewise); and the player's own client publishes the few totals other
+    /// peers apply - stagger length, taming, sailing, gathering, light, mist, and which of those RPCs it wants - on its
+    /// player ZDO when they change (<see cref="PlayerStats"/>). Summons carry their staff's bonus in their own ZDO (<see cref="Summons"/>).
     /// </para>
     /// </summary>
     public static class EffectsFeature

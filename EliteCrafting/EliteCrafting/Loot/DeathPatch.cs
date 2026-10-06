@@ -8,7 +8,7 @@ namespace EliteCrafting.Loot
     /// Our own death hook (drops.md section 1, DECISIONS RC-12): our stones and gear never enter the creature's vanilla
     /// drop list, so the ragdoll path (prefab and amount only, custom data lost) and other loot mods never see them.
     /// A prefix, because the game destroys the creature's ZDO at the end of its death handling, and the roll needs the
-    /// ZDO (attackers, ally flag, cheated, Elite Creatures Reborn's stars and worthless flag). The game calls this on every peer that runs the death; the roller acts only
+    /// ZDO (attackers, ally flag, cheated, Elite Creatures Reborn's stars and copy marks). The game calls this on every peer that runs the death; the roller acts only
     /// on the ZDO owner, the same peer the game's own drops run on. Player deaths use the player's override and never
     /// reach this method.
     /// <para>

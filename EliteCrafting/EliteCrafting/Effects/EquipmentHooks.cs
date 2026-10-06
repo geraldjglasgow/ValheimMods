@@ -99,33 +99,15 @@ namespace EliteCrafting.Effects
     /// Lone Blade: with the off-hand empty, this one-handed weapon blocks with +X% of its own attack power added to its
     /// block armor, and parries with +X/2 % deflection force. Only while the local player holds it in the right hand
     /// with nothing in the left (the tooltip shows the raised numbers then, and only then). Blocking is resolved on
-    /// the blocker's own client.
+    /// the blocker's own client. Applied by the block and deflection postfixes in <c>ItemStatPatches</c>, before
+    /// <c>item_block</c> and <c>item_deflection</c>.
     /// </summary>
-    [HarmonyPatch]
-    internal static class LoneBladePatch
+    internal static class LoneBlade
     {
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetBaseBlockPower), new[] { typeof(int) })]
-        private static void Block(ItemDrop.ItemData __instance, ref float __result)
+        /// <summary>The share in force for this item now: its Lone Blade value while held alone, else 0.</summary>
+        public static float Share(ItemDrop.ItemData item, ItemLocalSums sums)
         {
-            float share = Share(__instance);
-            if (share > 0f)
-            {
-                __result += __instance.GetDamage().GetTotalDamage() * share;
-            }
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetDeflectionForce), new[] { typeof(int) })]
-        private static void Deflection(ItemDrop.ItemData __instance, ref float __result)
-        {
-            __result *= 1f + Share(__instance) / 2f;
-        }
-
-        private static float Share(ItemDrop.ItemData item)
-        {
-            ItemLocalSums? sums = ItemLocalCache.Get(item);
-            float share = sums != null ? sums.Get(EffectKind.LoneBlade) : 0f;
+            float share = sums.Get(EffectKind.LoneBlade);
             Player? player = share > 0f ? Player.m_localPlayer : null;
             return player != null && ReferenceEquals(player.m_rightItem, item) && player.m_leftItem == null ? share : 0f;
         }
