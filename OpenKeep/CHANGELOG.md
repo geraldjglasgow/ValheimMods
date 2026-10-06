@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+- Removed: `Quick World Save`. The world saves with the game's own code again, which game 1.0.17 fixed. Nothing to do; the old setting is ignored.
+
 ## 2.4.0
 
 - Quick World Save (on by default): the game stands still for a much shorter moment while the world saves. Server or host only.
