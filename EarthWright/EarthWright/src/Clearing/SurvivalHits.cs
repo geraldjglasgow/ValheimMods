@@ -1,3 +1,4 @@
+using EarthWright.Core;
 using UnityEngine;
 
 namespace EarthWright.Clearing
@@ -6,50 +7,46 @@ namespace EarthWright.Clearing
     /// Survival clearing with drops: the object is struck through its own damage RPC with a blow of the player's tool
     /// tier (axe for wood, pickaxe for stone) that is far larger than any object's health, so the game's own code destroys it and drops its wood and
     /// stone (a tree falls and leaves a log and a stump, which <see cref="SurvivalFollowUp"/> clears next). Rocks are
-    /// struck once per hit area, since each area holds its own health. Pickables are picked, then removed.
-    /// The caller has claimed the object, so the RPC runs here, where the attacker (this player) is known.
+    /// struck once per hit area, since each area holds its own health. Pickables are picked, then removed
+    /// (<see cref="OwnedPick"/>). Every RPC goes to the object's owner, who runs the game's damage code; the blow names
+    /// this player as the attacker. Only an object nobody owns is claimed, so the RPC is not sent to everybody.
     /// </summary>
     public static class SurvivalHits
     {
         private const float Blow = 100000f;
 
-        public static void Strike(ClearTarget target, Player player, ClearTools tools)
+        /// <summary>Strikes the object; returns how many hits went out.</summary>
+        public static int Strike(ClearTarget target, Player player, ClearTools tools)
         {
             ZNetView view = target.View;
             GameObject go = view.gameObject;
             if (go.GetComponent<Pickable>() != null)
-            {
-                Pick(view);
-                return;
-            }
+                return OwnedPick.PickThenRemove(view, true) ? 1 : 0;
+            if (!view.HasOwner())
+                view.ClaimOwnership();
             HitData hit = MakeHit(go, target.Kind, player, tools);
             MineRock5 big = go.GetComponent<MineRock5>();
             MineRock small = go.GetComponent<MineRock>();
             if (big != null)
-                StrikeAreas(view, "RPC_Damage", hit, big.m_hitAreas != null ? big.m_hitAreas.Count : 0);
-            else if (small != null)
-                StrikeAreas(view, "Hit", hit, small.m_hitAreas != null ? small.m_hitAreas.Length : 0);
-            else
-                view.InvokeRPC("RPC_Damage", hit);
-        }
-
-        /// <summary>The pickable's own pick RPC drops its item and extras; the emptied object is then removed.</summary>
-        private static void Pick(ZNetView view)
-        {
-            view.InvokeRPC("RPC_Pick", 0);
-            ClearExecutor.Remove(view);
+                return StrikeAreas(view, "RPC_Damage", hit, big.m_hitAreas != null ? big.m_hitAreas.Count : 0);
+            if (small != null)
+                return StrikeAreas(view, "Hit", hit, small.m_hitAreas != null ? small.m_hitAreas.Length : 0);
+            view.InvokeRPC("RPC_Damage", hit);
+            return 1;
         }
 
         /// <summary>One blow per hit area; the rock destroys itself when the last area breaks. Without areas it is removed.</summary>
-        private static void StrikeAreas(ZNetView view, string rpc, HitData hit, int areas)
+        private static int StrikeAreas(ZNetView view, string rpc, HitData hit, int areas)
         {
             if (areas == 0)
             {
                 ClearExecutor.Remove(view);
-                return;
+                return 1;
             }
-            for (int i = 0; i < areas && view.IsValid(); i++)
+            int sent = 0;
+            for (int i = 0; i < areas && view.IsValid(); i++, sent++)
                 view.InvokeRPC(rpc, hit, i);
+            return sent;
         }
 
         private static HitData MakeHit(GameObject go, ClearCategory kind, Player player, ClearTools tools)

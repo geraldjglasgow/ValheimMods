@@ -13,8 +13,8 @@ namespace EarthWright.Extras
     /// Refused as a whole where the cultivator is refused (dungeons, no-build locations) and when the tool's level does
     /// not unlock it; plants under someone else's ward or refused by the protection rules are skipped
     /// (<see cref="UprootTargets"/>). The costs module charges the click once something will be uprooted. Each plant is
-    /// changed by this player taking ownership of it first, then (with "Uproot Picks Items") picked so its items drop,
-    /// then destroyed; drops and removal replicate to everyone through the game's own objects.
+    /// (with "Uproot Picks Items") picked by its owner so its items drop once, then destroyed (<see cref="OwnedPick"/>);
+    /// drops and removal replicate to everyone through the game's own objects.
     /// </summary>
     public sealed class UprootAction : ISpecialAction
     {
@@ -60,19 +60,11 @@ namespace EarthWright.Extras
             return removed;
         }
 
-        /// <summary>Takes ownership, optionally picks (the owner drops the items), then destroys the object.</summary>
+        /// <summary>Optionally picks (through the owner, who drops the items), then destroys the object (<see cref="OwnedPick"/>).</summary>
         private static bool Remove(Pickable pickable, bool picks)
         {
-            ZNetView view = pickable.GetComponent<ZNetView>();
-            if (view == null || !view.IsValid())
-                return false;
-            view.ClaimOwnership();
-            if (picks && pickable.CanBePicked())
-                pickable.RPC_Pick(0L, 0);
-            // A pickable that does not regrow destroys itself when picked; only what is left is destroyed here.
-            if (view.IsValid())
-                view.Destroy();
-            return true;
+            ZNetView view = pickable.m_nview != null ? pickable.m_nview : pickable.GetComponent<ZNetView>();
+            return OwnedPick.PickThenRemove(view, picks && pickable.CanBePicked());
         }
     }
 }

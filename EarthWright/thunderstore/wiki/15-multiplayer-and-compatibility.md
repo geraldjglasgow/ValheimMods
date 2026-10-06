@@ -4,7 +4,7 @@ EarthWright is built for dedicated servers first; single player and hosted world
 
 ## Installing on a server
 
-- Install EarthWright on the server and on every client, in the same version (0.3.1). When the versions differ, or one side lacks it, the connection is refused and the reason is shown on the connection screen.
+- Install EarthWright on the server and on every client, in the same version (0.4.0). When the versions differ, or one side lacks it, the connection is refused and the reason is shown on the connection screen.
 - Admins are the players on the server's admin list and the host. In single player you are an admin.
 - Configure the server's `milkyteam.earthwright.cfg` and YAML files; players need not change anything.
 
@@ -51,4 +51,4 @@ Version 0.2.0 removed the shovel of 0.1.x with its recipe, levels and Dig entry;
 
 ## Reporting problems
 
-Set `Debug Log` (section 0) to true to write every terrain edit sent and applied to the BepInEx log. Report bugs and ideas at https://github.com/geraldjglasgow/ValheimMods/issues with the mod's name and version (the log line `Loading [EarthWright 0.3.1]` confirms it).
+Set `Debug Log` (section 0) to true to write every terrain edit sent and applied to the BepInEx log. Report bugs and ideas at https://github.com/geraldjglasgow/ValheimMods/issues with the mod's name and version (the log line `Loading [EarthWright 0.4.0]` confirms it).

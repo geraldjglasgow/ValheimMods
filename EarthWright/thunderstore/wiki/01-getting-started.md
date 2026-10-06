@@ -1,6 +1,6 @@
 # Getting Started
 
-This wiki describes version 0.3.1.
+This wiki describes version 0.4.0.
 
 EarthWright is terraforming for Valheim's hoe and cultivator, inside the game's own build menu. You still pick an entry, aim and click, but every brush can be resized and reshaped, levelled to an exact height, and previewed point by point before you swing. Server admins decide the rules: costs, height limits, who may dig where.
 

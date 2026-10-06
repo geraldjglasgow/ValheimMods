@@ -8,12 +8,18 @@ namespace EarthWright.Brush
     /// When it hits something else (a rock, tree, cliff, water) or nothing in reach, "no silent blocks": a terrain-only
     /// ray finds the ground behind the object, or else the ground straight under the hit point. Building pieces are
     /// not looked through.
-    /// Runs on the player's machine against its own colliders.
+    /// Runs on the player's machine against its own colliders. The ghost's Piece is looked up once per ghost and the
+    /// hit collider's kind once per collider, since both are asked every frame.
     /// </summary>
     public static class GhostAim
     {
         private const float GameRayLength = 50f;
         private static int terrainMask;
+
+        private static GameObject pieceOf;
+        private static Piece ghostPiece;
+        private static Collider kindOf;
+        private static bool kindTerrain, kindBuilding;
 
         /// <param name="direct">The game's own ray hit terrain (the game's placement checks are valid as they are).</param>
         public static bool TryAim(Player player, out Vector3 point, out bool direct)
@@ -27,13 +33,15 @@ namespace EarthWright.Brush
             float reach = Reach(player);
             bool hitSomething = Physics.Raycast(origin, forward, out RaycastHit hit, GameRayLength, RayMask(player)) && hit.collider != null;
             bool inReach = hitSomething && !hit.collider.attachedRigidbody && InReach(player, hit.point, reach);
-            if (inReach && hit.collider.GetComponent<Heightmap>() != null)
+            if (hitSomething)
+                Classify(hit.collider);
+            if (inReach && kindTerrain)
             {
                 point = hit.point;
                 direct = true;
                 return true;
             }
-            if (!BrushSettings.AimThroughObjects.Value || (hitSomething && IsBuilding(hit.collider)))
+            if (!BrushSettings.AimThroughObjects.Value || (hitSomething && kindBuilding))
                 return false;
             return Behind(player, origin, forward, reach, out point) || (inReach && Under(hit.point, out point));
         }
@@ -42,21 +50,45 @@ namespace EarthWright.Brush
         public static float Reach(Player player)
         {
             float reach = player.m_maxPlaceDistance;
-            Piece piece = player.m_placementGhost != null ? player.m_placementGhost.GetComponent<Piece>() : null;
+            Piece piece = GhostPiece(player);
             if (piece != null)
                 reach += piece.m_extraPlacementDistance;
             return reach;
         }
 
-        /// <summary>Building pieces (walls, floors, carts, ships) keep the game's refusal: the brush never aims under a building.</summary>
-        private static bool IsBuilding(Collider collider) => collider.GetComponentInParent<Piece>() != null;
+        /// <summary>The Piece of the player's placement ghost, looked up again only when the game made a new ghost.</summary>
+        public static Piece GhostPiece(Player player)
+        {
+            GameObject ghost = player.m_placementGhost;
+            if (ghost == null)
+                return null;
+            if (!ReferenceEquals(ghost, pieceOf))
+            {
+                pieceOf = ghost;
+                ghostPiece = ghost.GetComponent<Piece>();
+            }
+            return ghostPiece;
+        }
 
-        private static bool InReach(Player player, Vector3 point, float reach) => Vector3.Distance(player.m_eye.position, point) < reach;
+        /// <summary>
+        /// Whether the hit collider is terrain, and whether it belongs to a building piece (walls, floors, carts, ships keep
+        /// the game's refusal: the brush never aims under a building); worked out again only for a new collider.
+        /// </summary>
+        private static void Classify(Collider collider)
+        {
+            if (ReferenceEquals(collider, kindOf))
+                return;
+            kindOf = collider;
+            kindTerrain = collider.GetComponent<Heightmap>() != null;
+            kindBuilding = !kindTerrain && collider.GetComponentInParent<Piece>() != null;
+        }
+
+        private static bool InReach(Player player, Vector3 point, float reach) => (point - player.m_eye.position).sqrMagnitude < reach * reach;
 
         /// <summary>The mask the game's ray uses for the selected piece (with water for water-aware pieces).</summary>
         private static int RayMask(Player player)
         {
-            Piece piece = player.m_placementGhost != null ? player.m_placementGhost.GetComponent<Piece>() : null;
+            Piece piece = GhostPiece(player);
             bool water = piece != null && (piece.m_waterPiece || piece.m_noInWater);
             return water ? player.m_placeWaterRayMask : player.m_placeRayMask;
         }

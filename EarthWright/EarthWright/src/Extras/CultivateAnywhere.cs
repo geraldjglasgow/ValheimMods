@@ -1,5 +1,4 @@
 using EarthWright.Core;
-using HarmonyLib;
 using UnityEngine;
 
 namespace EarthWright.Extras
@@ -31,19 +30,15 @@ namespace EarthWright.Extras
     /// <summary>
     /// After the game (and the brush) placed and checked the local player's ghost - every frame, and again inside
     /// TryPlacePiece just before a click is judged: the seed grid moves seeds and saplings, and "Cultivate Anywhere"
-    /// lifts the "needs dirt" refusal. Low priority, so the brush's own ghost placement runs first.
+    /// lifts the "needs dirt" refusal. Called from the shared <c>Player.UpdatePlacementGhost</c> postfix
+    /// (Patches/PlacementGhostPatch) after the brush's own ghost placement.
     /// </summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
-    public static class ExtrasGhostPatch
+    public static class ExtrasGhost
     {
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.Low)]
-        public static void Postfix(Player __instance, bool flashGuardStone)
+        public static void Run(Player player, bool flashGuardStone)
         {
-            if (!ReferenceEquals(__instance, Player.m_localPlayer) || __instance.m_placementGhost == null)
-                return;
-            Safe.Run("EarthWright seed grid", () => SeedGrid.Apply(__instance, flashGuardStone));
-            Safe.Run("EarthWright cultivate anywhere", () => CultivateAnywhere.Apply(__instance, flashGuardStone));
+            Safe.Run("EarthWright seed grid", (user, flash) => SeedGrid.Apply(user, flash), player, flashGuardStone);
+            Safe.Run("EarthWright cultivate anywhere", (user, flash) => CultivateAnywhere.Apply(user, flash), player, flashGuardStone);
         }
     }
 }

@@ -42,7 +42,8 @@ namespace EarthWright.Terrain
             ZRoutedRpc.instance.InvokeRoutedRPC(peer, RefusedRpc, reason);
         }
 
-        private static void Show(string reason)
+        /// <summary>Shows a reason on this machine (at most once a second).</summary>
+        internal static void Show(string reason)
         {
             if (Time.time - lastShown < 1f)
                 return;

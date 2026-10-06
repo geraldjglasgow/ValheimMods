@@ -25,12 +25,4 @@ namespace EarthWright.Gear
         [HarmonyPostfix]
         public static void Postfix(Player __instance, ref float __result) => __result *= ToolSpeed.Factor(__instance);
     }
-
-    /// <summary>Sprinting is faster by "Movement Speed" while a terrain tool is held.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.GetRunSpeedFactor))]
-    public static class ToolRunSpeedPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance, ref float __result) => __result *= ToolSpeed.Factor(__instance);
-    }
 }

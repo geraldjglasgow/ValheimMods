@@ -17,9 +17,24 @@ namespace EarthWright.Terrain
         }
 
         /// <summary>Sender: what the edit would change, read from the local terrain (compilers and heightmaps). Writes nothing. <paramref name="withChanges"/> fills the per-vertex list.</summary>
-        public static EditEstimate Estimate(TerrainEdit edit, bool withChanges = false)
+        public static EditEstimate Estimate(TerrainEdit edit, bool withChanges = false) => Estimate(edit, withChanges ? int.MaxValue : 0);
+
+        /// <summary>
+        /// As <see cref="Estimate(TerrainEdit, bool)"/>, with at most <paramref name="changeLimit"/> entries in the per-vertex
+        /// list (the preview draws only so many); every changed vertex is still counted and costed.
+        /// </summary>
+        public static EditEstimate Estimate(TerrainEdit edit, int changeLimit)
         {
-            return Safe.Call("EarthWright engine (estimate)", () => EngineEstimate.Run(edit, withChanges), new EditEstimate());
+            return Safe.Call("EarthWright engine (estimate)", () => EngineEstimate.Run(edit, changeLimit), new EditEstimate());
+        }
+
+        /// <summary>
+        /// Sender: whether the edit would change anything on this heightmap, planned on this machine's copy of it, so no
+        /// empty compiler is created for it. True when it cannot tell (the heightmap is not built yet).
+        /// </summary>
+        public static bool WouldChange(Heightmap map, TerrainEdit edit)
+        {
+            return Safe.Call("EarthWright engine (would change)", () => EngineEstimate.Changes(map, edit), true);
         }
 
         /// <summary>
@@ -63,7 +78,7 @@ namespace EarthWright.Terrain
         /// <summary>At least one vertex would be held back by a height limit.</summary>
         public bool HitLimit;
 
-        /// <summary>Per-vertex changes, for the grid preview (only filled when asked for).</summary>
+        /// <summary>Per-vertex changes, for the grid preview (only filled when asked for, up to the limit asked for).</summary>
         public readonly List<VertexChange> Changes = new List<VertexChange>();
     }
 

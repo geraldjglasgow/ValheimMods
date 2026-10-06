@@ -2,7 +2,7 @@
 
 Terraforming for Valheim's hoe and cultivator: brush size, shapes and edges, exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits, protection, new menu
-entries. The log line `Loading [EarthWright 0.3.4]` confirms the version. Built on 2026-09-27 from the user's
+entries. The log line `Loading [EarthWright 0.4.0]` confirms the version. Built on 2026-09-27 from the user's
 feature list (`SPEC.md`, gitignored) and the game's own code, by a main session and ten module agents following
 `PLAN.md`, which holds the design, the feature map and the judgement calls. This file is the code map, the patched
 methods, the network names and the in-game test checklist.
@@ -29,19 +29,26 @@ Rules that apply to every change:
    edit with `Dispatcher.SendChecked` instead of the game's RPC. Special entries (ramp, road, clear, groundbreaker,
    uproot, custom) run their `ISpecialAction` instead and charge through `Costs.CostApi`.
 2. Keys and commands build edits and call `Dispatcher.Submit` (or `Check` → charge → `SendChecked`).
-3. `Dispatcher` sends each touched terrain compiler the edit over its own ZNetView (`EW_TerrainEdit`); a privileged
-   edit goes to the server first (`EW_RelayEdit`), which checks the sender is an admin and forwards it.
+3. `Dispatcher` sends each touched terrain compiler the edit over its own ZNetView (`EW_TerrainEdit`); a missing
+   compiler is created only where the edit changes that heightmap (`Engine.WouldChange`), an unowned one is claimed
+   first (never sent to owner 0, which would reach everybody and nobody would apply it). A privileged edit goes to
+   the server first (`EW_RelayEdit`), which checks the sender is an admin and forwards it. Every part carries a
+   request id; the sender keeps it until answered (`EditAnswers`, 10 s) and sends a "retry" again to the current
+   owner after 0.25 s, at most 3 times, then tells the player the edit did not arrive.
 4. `Terrain/OwnerHandler` on the compiler's owner drops privileged flags not relayed by the server, runs the owner
-   guards, applies through `Engine.Apply`, saves the compiler to its ZDO and pokes the heightmap. Refusals go back as
-   `EW_EditRefused`.
+   guards, applies through `Engine.Apply` and pokes the heightmap at once; `SaveThrottle` saves the compiler to its
+   ZDO at most every 0.3 s (a pending save is written before the compiler unloads, the world saves or the session
+   ends). The receiver always answers (`EW_EditAnswer`): applied, refused with the reason, or retry when it does not
+   own the compiler or has not loaded it. Only the server takes back a compiler that lost its owner with a save
+   pending; a client that lost it to another machine reloads and hands its unsaved edits to the new owner.
 5. Every client draws the ZDO's values through the patched `TerrainComp.ApplyToHeightmap` (clamp ±Absolute limit).
 
 ## Code map (`EarthWright/src/`)
 
 | Folder | What it holds |
 | --- | --- |
-| `Core/` | settings section 0, `Command` (`ew`), `Keys`, `Language` + `LanguageFiles` + `WordList` (translations), `Messages`, `HudText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
-| `Terrain/` | edit model (`TerrainEdit`, `BrushStroke`, `VertexSet`, wire), `Dispatcher`, `OwnerHandler`, `ServerRelay`, `Refusals`, `EditGuards`/`EditEvents`, `TerrainRead` + `VertexSampler` (vertex reads; the sampler finds each heightmap and compiler once per pass); the engine (`Engine*`, `Math/Footprint`, `HeightView`, `ChangeBuffer`, `PaintOps`, `SlopeRelax`), limits (`HeightLimits`, `Limit*`, `EngineBaseHeights`), `ew limits` |
+| `Core/` | settings section 0, `Command` (`ew`), `Keys` (on the Hotkeys library), `PrefabNames` (cached names), `Language` + `LanguageFiles` + `WordList` (translations), `Messages`, `HudText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
+| `Terrain/` | edit model (`TerrainEdit`, `BrushStroke`, `VertexSet`, wire), `Dispatcher`, `OwnerHandler`, `SaveThrottle`, `ServerRelay`, `Refusals`, `EditGuards`/`EditEvents`, `TerrainRead` + `VertexSampler` (vertex reads; the sampler finds each heightmap and compiler once per pass); `LiveEstimate` (the brush click's estimate, shared by the preview and the cost line); the engine (`Engine*`, `Math/Footprint`, `HeightView`, `ChangeBuffer`, `PaintOps`, `SlopeRelax`), limits (`HeightLimits`, `Limit*`, `EngineBaseHeights`), `ew limits` |
 | `Actions/` | `ToolAction`, `ActionCatalog`, `VanillaActions` (the game's six entries), `SpecialActions`, `EditFactory`, `PlacementHook` |
 | `Brush/` | `BrushState` (read by all), values and memory per entry, keys, wheel capture, target height modes, ghost placement ("no silent blocks"), repeat, hard level, game key guards, HUD lines, `BrushCaps` |
 | `Preview/` | outline, changed points, volume, ghost ring, piece highlight, world grid, HUD overlay, cursor readout, dust, the F6 panel and Esc button |
@@ -53,6 +60,7 @@ Rules that apply to every change:
 | `Menu/` | EarthWright's entries (cloned prefabs, icons), toggles, table layout, full build menu, descriptions with key hints, custom YAML entries, `EntryRegistry` |
 | `Gear/` | tool levels and level gate, reach, light, speed, torch |
 | `Extras/` | road travel bonus, seed grid, cultivate anywhere, uproot |
+| `Patches/` | the one patch per hot game method shared by several modules (`Player.UpdatePlacement`, `Player.UpdatePlacementGhost`, `ZInput.GetMouseScrollWheel`, `Player.GetRunSpeedFactor`): the shared tests once, then each module in turn |
 
 Seams between modules: `BrushCaps` (level radius, unlocks, entry refusal), `UndoHooks.AddFirst`, `MenuHooks`,
 `Keys.PanelTyping`, `PlacementHook.SkipPlacedEffect`, `HeightLimits.AddDigException`, `ObjectRules.Refusal`,
@@ -60,8 +68,9 @@ Seams between modules: `BrushCaps` (level radius, unlocks, entry refusal), `Undo
 
 ## Network and data names
 
-- RPCs: `EW_TerrainEdit` (compiler ZNetView), `EW_RelayEdit`, `EW_EditRefused`, `EW_ZoneRequest`, `EW_ZoneReply`
-  (routed). Wire version `EditWire.Version` = 1.
+- RPCs: `EW_TerrainEdit` (compiler ZNetView), `EW_RelayEdit`, `EW_EditRefused`, `EW_EditAnswer`, `EW_ZoneRequest`,
+  `EW_ZoneReply` (routed). Wire version `EditWire.Version` = 3 (2: vertex sets travel compressed; 3, 2026-10-06: the
+  header carries the request id the receiver answers with `EW_EditAnswer`). Server and clients must match.
 - Charter: GUID `milkyteam.earthwright`, cfg `milkyteam.earthwright.cfg`, standing article `ew.zones`.
 - YAML sets (pattern, sync key): `EarthWright.Brushes*.yml` `earthwright_brushes`, `EarthWright.Costs*.yml`
   `earthwright_costs`, `EarthWright.Entries*.yml` `earthwright_entries`, `EarthWright.Limits*.yml`
@@ -90,34 +99,36 @@ Admin zones (limit terraforming to them): `ew zone add <name> <radius> [player]`
 | --- | --- | --- |
 | Actions | `Player.TryPlacePiece` | prefix + postfix |
 | Actions | `TerrainOp.Awake` | prefix (High) |
-| Brush | `Player.UpdatePlacementGhost` | postfix |
-| Brush | `ZInput.GetMouseScrollWheel` | postfix |
+| Patches | `Player.UpdatePlacementGhost` | postfix (Brush ghost placement, then Extras seed grid and cultivate anywhere) |
+| Patches | `Player.UpdatePlacement` | prefix + finalizer (Costs placement scope, Brush floor key never removes, Preview dust) |
+| Patches | `ZInput.GetMouseScrollWheel` | postfix (Preview panel, Brush wheel capture) |
+| Patches | `Player.GetRunSpeedFactor` | postfix (Gear movement speed, Extras road sprint) |
 | Brush | `GameCamera.UpdateCamera` | prefix + postfix (gamepad zoom) |
-| Brush | `Player.UpdatePlacement` | prefix (floor key never removes) |
 | Brush | `KeyHints.Update` | prefix (F9 does not switch the gamepad layout) |
 | Brush | `Player.Update` | prefix + finalizer (debug-mode Z/B/K/L quiet on brush keys) |
 | Core | `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `ZNetScene.Awake`, `Terminal.InitTerminal`, `Localization.SetupLanguage` | postfix |
-| Costs | `Player.UpdatePlacement`, `Player.TryPlacePiece` | scope prefix + finalizer (+ postfix) |
+| Costs | `Player.TryPlacePiece` | scope prefix + finalizer (+ postfix) |
 | Costs | `Player.HaveStamina`, `Player.HaveRequirements`, `Player.ConsumeResources` | prefix |
 | Costs | `Player.GetBuildStamina`, `Player.GetPlaceDurability` | postfix |
-| Extras | `Player.GetRunSpeedFactor`, `Player.UpdatePlacementGhost` | postfix |
 | Extras | `Player.CheckRun` | prefix + finalizer; `Player.UseStamina` prefix |
 | Gear | `Humanoid.EquipItem` | prefix + postfix (torch) |
-| Gear | `Player.GetJogSpeedFactor`, `Player.GetRunSpeedFactor`, `Recipe.GetRequiredStationLevel`, `VisEquipment.SetRightHandEquipped` | postfix |
+| Gear | `Player.GetJogSpeedFactor`, `Recipe.GetRequiredStationLevel`, `VisEquipment.SetRightHandEquipped` | postfix |
 | History | `Game.Start`, `Game.OnDestroy` | postfix |
 | Menu | `Player.AddKnownPiece` | prefix (silent unlock) |
-| Preview | `Player.PlacePiece`, `Player.UpdatePlacement` | prefix + finalizer (dust) |
+| Preview | `Player.PlacePiece` | prefix + finalizer (dust) |
 | Preview | `TerrainOp.Awake` | prefix (First, dust) |
-| Preview | `Player.TakeInput`, `PlayerController.InInventoryEtc`, `PlayerController.TakeInput`, `GameCamera.UpdateMouseCapture`, `ZInput.GetMouseScrollWheel` | postfix (panel) |
+| Preview | `Player.TakeInput`, `PlayerController.InInventoryEtc`, `PlayerController.TakeInput`, `GameCamera.UpdateMouseCapture` | postfix (panel) |
 | Preview | `Menu.Start` postfix, `Menu.Update` prefix | Esc button, Esc closes the panel |
 | Protection | `Player.TryPlacePiece` | prefix (First: click frame; Low: game terrain pieces under lock) |
 | Protection | `Attack.SpawnOnHitTerrain` | prefix (pickaxe under lock) |
 | Protection | `Game.Start` | postfix (zone RPCs, host zone reload) |
 | Terrain | `TerrainComp.Awake` postfix, `Game.Start` postfix | RPC registration |
+| Terrain | `TerrainComp.OnDestroy`, `ZNet.SaveWorld`, `ZNetScene.Shutdown` | prefix (write pending compiler saves) |
 | Terrain | `TerrainComp.ApplyToHeightmap`, `TerrainComp.LevelTerrain`, `TerrainComp.RaiseTerrain`, `Heightmap.AtMaxWorldLevelDepth` | prefix replacements (limits) |
 
 All 53 patch classes were checked offline on 2026-09-27 against the game's assemblies (targets resolve, parameter
-names and types match): scratch harness `patchcheck`, reflection only.
+names and types match): scratch harness `patchcheck`, reflection only. The three save-flush prefixes (2026-10-05) were
+checked against the decompiled game only.
 
 ## Decisions made during integration (beyond PLAN.md)
 
@@ -137,6 +148,9 @@ names and types match): scratch harness `patchcheck`, reflection only.
 - Resets (keys, `ew reset`) and restores are free and never held back by the cooldown; reset strokes and privileged
   edits pay no volume stone.
 - Custom entries that run `ew forestry` / `ew debris` charge the entry and then the command (known, documented).
+- Clearing strikes its targets about 10 per frame (`ClearQueue`), each through the object's owner: only an unowned
+  object is claimed; a pickable another machine owns is picked by that owner and removed here a second later
+  (`Core/OwnedPick`, also used by Uproot), so its items never drop twice.
 - Undo records a generous square and prunes unchanged values once the edit is applied (at once on owned ground,
   after 3 s otherwise), so it never reverts neighbours' later edits outside that window.
 
@@ -144,7 +158,7 @@ names and types match): scratch harness `patchcheck`, reflection only.
 
 Single player first, then a dedicated server with an admin (A) and a player (B). Nothing below has been run in game.
 
-1. Load: `Loading [EarthWright 0.3.4]`, no failed patches, no exceptions; `ew help` lists the subcommands.
+1. Load: `Loading [EarthWright 0.4.0]`, no failed patches, no exceptions; `ew help` lists the subcommands.
 2. Hoe menu: the game's four entries, then Lower, Smooth, Paint, Reset, Ramp, Road, Groundbreaker (Clear only with
    Clearing Enabled; Terraform only for admins); icons; search finds "lower"; cultivator shows Till and Uproot.
 3. Brush: Alt+wheel and `[`/`]` resize without zooming; B cycles values; N shapes; arrows rotate; I grid; O edge;

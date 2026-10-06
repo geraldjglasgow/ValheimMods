@@ -26,7 +26,7 @@ namespace EarthWright.Protection
             ZoneBook.Initialize(synced);
             ZoneCommands.Register();
             ProtectionGuards.Register();
-            EditEvents.Building += edit => Safe.Run("EarthWright admin routing", () => AdminRouting.OnBuilding(edit));
+            EditEvents.Building += AdminRouting.OnBuilding;
             DigExceptions.Initialize();
             HeightLimits.AddDigException(DigExceptions.Lifts);
             ProtectionPanel.Register();

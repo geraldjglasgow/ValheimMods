@@ -5,7 +5,7 @@
     <AssemblyName>EarthWright</AssemblyName>
     <RootNamespace>EarthWright</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.3.4</Version>
+    <Version>0.4.0</Version>
     <Product>EarthWright</Product>
     <Description>EarthWright: terraforming for Valheim's hoe and cultivator</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -38,6 +38,7 @@
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
     <ProjectReference Include="$(ModLibsPath)\ItemCopies\ItemCopies.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
   </ItemGroup>
 
   <ItemGroup>

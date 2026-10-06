@@ -16,6 +16,7 @@ namespace EarthWright.Clearing
             ClearingWords.Register();
             ResetKeys.Initialize();
             SurvivalFollowUp.Initialize();
+            ClearQueue.Initialize();
             ClearingCommands.Register();
             TerrainCommand.Register();
             SpecialActions.Register("clear", new ClearAction());

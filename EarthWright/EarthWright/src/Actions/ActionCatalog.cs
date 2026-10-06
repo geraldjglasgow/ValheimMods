@@ -7,13 +7,23 @@ namespace EarthWright.Actions
     /// <summary>
     /// Every known terrain action by piece prefab name: the game's own hoe and cultivator entries
     /// (<see cref="VanillaActions"/>), EarthWright's own entries (registered by the Menu module), and terrain pieces of
-    /// other mods, whose action is derived from their TerrainOp the first time they are seen.
+    /// other mods, whose action is derived from their TerrainOp the first time they are seen. A piece that is not
+    /// terrain work (a seed, a sapling) is remembered as such, and the last piece asked about is answered without a
+    /// lookup, since the selected piece is asked several times every frame.
     /// </summary>
     public static class ActionCatalog
     {
         private static readonly Dictionary<string, ToolAction> actions = new Dictionary<string, ToolAction>();
+        private static readonly HashSet<string> notTerrain = new HashSet<string>();
+        private static Piece lastPiece;
+        private static ToolAction lastAction;
 
-        public static void Register(ToolAction action) => actions[action.Id] = action;
+        public static void Register(ToolAction action)
+        {
+            actions[action.Id] = action;
+            notTerrain.Remove(action.Id);
+            lastPiece = null;
+        }
 
         public static IEnumerable<ToolAction> All => actions.Values;
 
@@ -22,12 +32,26 @@ namespace EarthWright.Actions
         {
             if (piece == null)
                 return null;
-            string name = Utils.GetPrefabName(piece.gameObject);
+            if (ReferenceEquals(piece, lastPiece))
+                return lastAction;
+            lastAction = Lookup(piece);
+            lastPiece = piece;
+            return lastAction;
+        }
+
+        private static ToolAction Lookup(Piece piece)
+        {
+            string name = PrefabNames.Of(piece.gameObject);
             if (actions.TryGetValue(name, out ToolAction known))
                 return known;
+            if (notTerrain.Contains(name))
+                return null;
             TerrainOp op = piece.GetComponent<TerrainOp>();
             if (op == null)
+            {
+                notTerrain.Add(name);
                 return null;
+            }
             ToolAction derived = Derive(name, op.m_settings);
             actions[name] = derived;
             return derived;

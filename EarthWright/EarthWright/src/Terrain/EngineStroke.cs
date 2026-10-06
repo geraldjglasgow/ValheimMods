@@ -22,9 +22,13 @@ namespace EarthWright.Terrain
         public Footprint PaintPrint;
 
         /// <summary>The stroke's values; <paramref name="admin"/> (an approved admin edit) raises the caps to the admin ceilings.</summary>
-        public static StrokeParams From(TerrainEdit edit, bool admin = false)
+        public static StrokeParams From(TerrainEdit edit, bool admin = false) => Fill(new StrokeParams(), edit, admin);
+
+        /// <summary>The same values written into a kept object (the preview's, built again every frame).</summary>
+        public static StrokeParams Fill(StrokeParams p, TerrainEdit edit, bool admin = false)
         {
-            StrokeParams p = new StrokeParams { Stroke = edit.Stroke };
+            p.Stroke = edit.Stroke;
+            p.Valid = false;
             BrushStroke s = edit.Stroke;
             if (s == null || !Finite(s))
                 return p;

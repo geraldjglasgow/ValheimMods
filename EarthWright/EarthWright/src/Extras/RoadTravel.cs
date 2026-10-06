@@ -66,14 +66,6 @@ namespace EarthWright.Extras
         public static float SpeedFactor(Player player) => ReferenceEquals(player, Player.m_localPlayer) ? 1f + Bonus : 1f;
     }
 
-    /// <summary>Sprinting on a road is faster by the road's bonus.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.GetRunSpeedFactor))]
-    public static class RoadSprintSpeedPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance, ref float __result) => __result *= RoadTravel.SpeedFactor(__instance);
-    }
-
     /// <summary>
     /// Marks the local player's sprint stamina check (<c>Player.CheckRun</c>), whose only stamina use is the sprint
     /// drain, so <see cref="RoadStaminaPatch"/> lowers exactly that use and nothing else.

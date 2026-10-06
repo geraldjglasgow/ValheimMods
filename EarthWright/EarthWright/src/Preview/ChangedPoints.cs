@@ -7,10 +7,11 @@ using UnityEngine;
 namespace EarthWright.Preview
 {
     /// <summary>
-    /// The exact preview of what a click would change: asks the engine for an estimate of the current edit (the same
-    /// planners the owner runs; at most five times a second, twice for very large brushes, and only when the brush moved
-    /// or changed or a second has passed so edits by anyone show up), marks every changed vertex in one combined mesh,
-    /// and puts "N points, +X m³ / −Y m³" into the HUD.
+    /// The exact preview of what a click would change: asks for the estimate of the current edit (the same planners the
+    /// owner runs, through <see cref="LiveEstimate"/>, which the cost line shares; at most five times a second, twice for
+    /// very large brushes, and planned again only when the brush moved or changed or a second has passed so edits by
+    /// anyone show up), marks the changed vertices (up to the point limit) in one combined mesh, and puts
+    /// "N points, +X m³ / −Y m³" into the HUD. Nothing is redrawn while the estimate and the marker settings stay.
     /// </summary>
     internal static class ChangedPoints
     {
@@ -21,13 +22,12 @@ namespace EarthWright.Preview
         /// <summary>Brushes wider than this (metres of reach) plan tens of thousands of points per estimate: ask twice a second.</summary>
         private const float LargeReach = 30f;
         private const float LargeInterval = 0.5f;
-        private const float RefreshSeconds = 1f;
 
         private static readonly MeshLayer layer = new MeshLayer("EarthWright Points");
         private static readonly MeshData data = new MeshData();
         private static float nextCheck;
-        private static float lastRun = -10f;
-        private static string lastKey;
+        private static EditEstimate shown;
+        private static Vector3 shownLook;
 
         public static void Update()
         {
@@ -40,13 +40,15 @@ namespace EarthWright.Preview
             if (Time.time < nextCheck)
                 return;
             nextCheck = Time.time + (edit.Stroke.Reach > LargeReach ? LargeInterval : MinInterval);
-            string key = Key(edit);
-            if (key == lastKey && Time.time - lastRun < RefreshSeconds)
-                return;
-            lastKey = key;
-            lastRun = Time.time;
             bool markers = PreviewSettings.ShowPoints.Value;
-            EditEstimate estimate = Safe.Call("EarthWright preview estimate", () => Engine.Estimate(edit, markers), null);
+            int limit = markers ? PreviewSettings.PointLimit.Value : 0;
+            LiveEstimate.PreferredChanges = limit;
+            EditEstimate estimate = Safe.Call("EarthWright preview estimate", (e, l) => LiveEstimate.For(e, l), edit, limit, null);
+            Vector3 look = new Vector3(markers ? 1f : 0f, PreviewSettings.PointLimit.Value, PreviewSettings.PointSize.Value);
+            if (estimate != null && estimate == shown && look == shownLook)
+                return;
+            shown = estimate;
+            shownLook = look;
             Publish(estimate);
             Draw(edit.Stroke, estimate, markers);
         }
@@ -84,23 +86,12 @@ namespace EarthWright.Preview
             HudText.Set(HudKey, text.ToString(), 50);
         }
 
-        /// <summary>Everything that changes the estimate or the markers, in centimetres so hand jitter does not count.</summary>
-        private static string Key(TerrainEdit edit)
-        {
-            BrushStroke s = edit.Stroke;
-            return string.Join("|", edit.Source, (int)edit.Flags, Cm(s.Center.x), Cm(s.Center.y), Cm(s.Center.z), s.Shape, Cm(s.Radius),
-                Cm(s.Radius2), Cm(s.Rotation), Cm(s.Hardness), s.Height, s.Style, Cm(s.Target), Cm(s.Amount), Cm(s.MaxStep), Cm(s.Strength),
-                s.Paint, Cm(s.EffectivePaintRadius), Cm(s.Density), PreviewSettings.ShowPoints.Value, PreviewSettings.PointLimit.Value,
-                Cm(PreviewSettings.PointSize.Value));
-        }
-
-        private static int Cm(float value) => Mathf.RoundToInt(value * 100f);
-
         public static void Clear()
         {
             layer.Hide();
             HudText.Clear(HudKey);
-            lastKey = null;
+            shown = null;
+            LiveEstimate.PreferredChanges = 0;
         }
     }
 }

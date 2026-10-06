@@ -3,17 +3,6 @@ using HarmonyLib;
 
 namespace EarthWright.Costs
 {
-    /// <summary>Marks the local player's placement frame, so the cost patches only act inside the game's own click.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacement))]
-    public static class UpdatePlacementCostScope
-    {
-        [HarmonyPrefix]
-        public static void Prefix(Player __instance) => PlacementCharges.BeginUpdate(__instance);
-
-        [HarmonyFinalizer]
-        public static void Finalizer() => PlacementCharges.EndUpdate();
-    }
-
     /// <summary>Marks TryPlacePiece (special handlers run inside it) and opens the charging window after a placed brush entry.</summary>
     [HarmonyPatch(typeof(Player), nameof(Player.TryPlacePiece))]
     public static class TryPlacePieceCostScope
@@ -25,7 +14,8 @@ namespace EarthWright.Costs
         [HarmonyPostfix]
         public static void Postfix(Player __instance, Piece piece, bool __result)
         {
-            Safe.Run("EarthWright costs", () => PlacementCharges.AfterPlace(__instance, piece, __result));
+            if (__result && PlacementCharges.InUpdate)
+                Safe.Run("EarthWright costs", (player, placed) => PlacementCharges.AfterPlace(player, placed, true), __instance, piece);
         }
 
         [HarmonyFinalizer]
@@ -45,8 +35,7 @@ namespace EarthWright.Costs
         {
             if (!PlacementCharges.InUpdate || PlacementCharges.TryDepth > 0 || __instance != Player.m_localPlayer)
                 return true;
-            float requested = amount;
-            float? needed = Safe.Call<float?>("EarthWright stamina check", () => PlacementCharges.StaminaCheck(__instance, requested), null);
+            float? needed = Safe.Call<Player, float, float?>("EarthWright stamina check", (player, requested) => PlacementCharges.StaminaCheck(player, requested), __instance, amount, null);
             if (needed == null)
                 return true;
             if (needed.Value <= 0f)
@@ -68,7 +57,7 @@ namespace EarthWright.Costs
         {
             if (mode != Player.RequirementMode.CanBuild || piece == null || __instance != Player.m_localPlayer)
                 return true;
-            bool? verdict = Safe.Call<bool?>("EarthWright requirements", () => PlacementCharges.CanStart(__instance, piece), null);
+            bool? verdict = Safe.Call<Player, Piece, bool?>("EarthWright requirements", (player, checkedPiece) => PlacementCharges.CanStart(player, checkedPiece), __instance, piece, null);
             if (verdict == null)
                 return true;
             __result = verdict.Value;
@@ -87,7 +76,7 @@ namespace EarthWright.Costs
             CostContext ctx = PlacementCharges.Charging;
             if (ctx == null || ctx.Player != __instance || ctx.Piece == null || requirements != ctx.Piece.m_resources)
                 return;
-            Piece.Requirement[] replaced = Safe.Call("EarthWright materials", () => PlacementCharges.Materials(ctx), null);
+            Piece.Requirement[] replaced = Safe.Call("EarthWright materials", charged => PlacementCharges.Materials(charged), ctx, null);
             if (replaced != null)
                 requirements = replaced;
         }
@@ -103,8 +92,7 @@ namespace EarthWright.Costs
             CostContext ctx = PlacementCharges.Charging;
             if (ctx == null || ctx.Player != __instance)
                 return;
-            float vanilla = __result;
-            __result = Safe.Call("EarthWright stamina", () => StaminaCost.For(ctx, vanilla), vanilla);
+            __result = Safe.Call("EarthWright stamina", (charged, vanilla) => StaminaCost.For(charged, vanilla), ctx, __result, __result);
         }
     }
 
@@ -118,8 +106,7 @@ namespace EarthWright.Costs
             CostContext ctx = PlacementCharges.Charging;
             if (ctx == null || ctx.Player != __instance)
                 return;
-            float vanilla = __result;
-            __result = Safe.Call("EarthWright tool wear", () => WearCost.For(ctx, vanilla), vanilla);
+            __result = Safe.Call("EarthWright tool wear", (charged, vanilla) => WearCost.For(charged, vanilla), ctx, __result, __result);
         }
     }
 }

@@ -6,7 +6,8 @@ namespace EarthWright.Preview
     /// <summary>
     /// The loops of a footprint laid on the current ground: every point takes the terrain height there (buildings
     /// ignored, since the brush edits the terrain beneath them). Reading heights is the costly part, so the result is
-    /// kept until the footprint changes or half a second has passed (the ground may have been edited meanwhile).
+    /// kept until the footprint changes or half a second has passed (the ground may have been edited meanwhile). The
+    /// point arrays are rewritten in place while the point count stays, so moving the brush allocates nothing.
     /// </summary>
     internal sealed class GroundLoops
     {
@@ -16,6 +17,7 @@ namespace EarthWright.Preview
         public static readonly GroundLoops Brush = new GroundLoops();
 
         private readonly List<Vector3[]> loops = new List<Vector3[]>();
+        private readonly List<Vector2[]> flat = new List<Vector2[]>();
         private FootprintSpec last;
         private float builtAt = -10f;
 
@@ -31,22 +33,21 @@ namespace EarthWright.Preview
             last = spec;
             builtAt = Time.time;
             Version++;
-            loops.Clear();
-            foreach (Vector2[] flat in OutlineShape.Loops(spec))
-                loops.Add(OnGround(flat, spec.CenterY));
+            OutlineShape.Loops(spec, flat);
+            for (int n = 0; n < flat.Count; n++)
+                OnGround(flat[n], spec.CenterY, OutlineShape.Slot(loops, n, flat[n].Length));
+            loops.RemoveRange(flat.Count, loops.Count - flat.Count);
             return true;
         }
 
-        private static Vector3[] OnGround(Vector2[] flat, float fallback)
+        private static void OnGround(Vector2[] flat, float fallback, Vector3[] points)
         {
-            Vector3[] points = new Vector3[flat.Length];
             for (int i = 0; i < flat.Length; i++)
             {
                 Vector3 p = new Vector3(flat[i].x, fallback, flat[i].y);
                 p.y = GroundSampler.Height(p, fallback);
                 points[i] = p;
             }
-            return points;
         }
     }
 }

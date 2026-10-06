@@ -22,16 +22,21 @@ namespace EarthWright.Clearing
 
         private const float Interval = 1.5f;
         private const int Passes = 4;
-        private const float LogRange = 25f;
+
+        /// <summary>How far beyond the area new logs are looked for (they roll).</summary>
+        public const float LogRange = 25f;
 
         private static readonly List<Pending> pending = new List<Pending>();
+        private static readonly List<ZNetView> around = new List<ZNetView>();
+        private static readonly List<ZNetView> candidates = new List<ZNetView>();
 
         internal static void Initialize() => Ticker.OnUpdate("EarthWright survival clearing", Update);
 
         /// <summary>Call before the first blow: remembers the logs already lying around, then schedules the passes.</summary>
         public static void Schedule(ClearPlan plan)
         {
-            pending.Add(new Pending { Due = Time.time + Interval, Left = Passes, Plan = plan, OldLogs = LogsNear(plan.Area) });
+            List<ZNetView> nearby = plan.Nearby ?? ObjectScan.Within(plan.Area.Center, plan.Area.Reach + LogRange, null);
+            pending.Add(new Pending { Due = Time.time + Interval, Left = Passes, Plan = plan, OldLogs = Logs(nearby) });
         }
 
         private static void Update()
@@ -57,38 +62,39 @@ namespace EarthWright.Clearing
             }
         }
 
+        /// <summary>One walk over the loaded objects per pass: what lies inside the area, and new logs that rolled out of it.</summary>
         private static int RunPass(Pending next, Player player)
         {
             ClearPlan first = next.Plan;
             ClearPlan pass = first.Again();
             pass.Player = player;
-            List<ZNetView> views = ObjectScan.Inside(first.Area);
-            if ((first.Mask & ClearCategory.Logs) != 0)
-                views.AddRange(NewLogsOutside(first.Area, next.OldLogs));
-            ClearPlanner.AddAll(pass, views);
+            bool logs = (first.Mask & ClearCategory.Logs) != 0;
+            ObjectScan.Collect(first.Area.Center, first.Area.Reach + (logs ? LogRange : 0f), null, around);
+            candidates.Clear();
+            foreach (ZNetView view in around)
+            {
+                if (first.Area.Contains(view.transform.position) || (logs && IsNewLog(view, next.OldLogs)))
+                    candidates.Add(view);
+            }
+            ClearPlanner.AddAll(pass, candidates);
             return ClearExecutor.Run(pass, player);
         }
 
-        private static HashSet<ZDOID> LogsNear(ClearArea area)
+        /// <summary>The logs among the objects (lying there before the first blow).</summary>
+        private static HashSet<ZDOID> Logs(List<ZNetView> views)
         {
             HashSet<ZDOID> ids = new HashSet<ZDOID>();
-            foreach (ZNetView view in ObjectScan.Within(area.Center, area.Reach + LogRange, null))
+            foreach (ZNetView view in views)
             {
-                if (view.GetComponent<TreeLog>() != null)
+                if (view != null && view.IsValid() && view.GetComponent<TreeLog>() != null)
                     ids.Add(view.GetZDO().m_uid);
             }
             return ids;
         }
 
-        private static List<ZNetView> NewLogsOutside(ClearArea area, HashSet<ZDOID> oldLogs)
+        private static bool IsNewLog(ZNetView view, HashSet<ZDOID> oldLogs)
         {
-            List<ZNetView> logs = new List<ZNetView>();
-            foreach (ZNetView view in ObjectScan.Within(area.Center, area.Reach + LogRange, p => !area.Contains(p)))
-            {
-                if (view.GetComponent<TreeLog>() != null && !oldLogs.Contains(view.GetZDO().m_uid))
-                    logs.Add(view);
-            }
-            return logs;
+            return view.GetComponent<TreeLog>() != null && !oldLogs.Contains(view.GetZDO().m_uid);
         }
     }
 }

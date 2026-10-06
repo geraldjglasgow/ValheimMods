@@ -22,7 +22,7 @@ namespace EarthWright.Protection
         {
             if (character == null || character != Player.m_localPlayer || !IsTerrainPrefab(prefab))
                 return null;
-            string item = weapon?.m_dropPrefab != null ? weapon.m_dropPrefab.name : null;
+            string item = PrefabNames.OfItem(weapon);
             return TerrainLock.BlocksLocal(item) ? ProtectionWords.Locked : null;
         }
 

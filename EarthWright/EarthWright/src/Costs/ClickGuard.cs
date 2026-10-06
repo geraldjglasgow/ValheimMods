@@ -68,7 +68,8 @@ namespace EarthWright.Costs
         {
             if (!VolumeCharge.Enabled || VolumeCharge.Exempt(edit) || BillBuilder.MaterialsFree(ctx.Player))
                 return BillBuilder.For(ctx, 0f, 0f);
-            EditEstimate estimate = Engine.Estimate(edit);
+            // The preview's estimate of this same click when it is fresh, so a held click does not plan twice.
+            EditEstimate estimate = LiveEstimate.For(edit, 0, LiveEstimate.ClickAge);
             return BillBuilder.For(ctx, estimate != null ? estimate.Raised : 0f, PavedArea.Of(estimate));
         }
     }

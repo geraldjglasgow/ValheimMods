@@ -14,6 +14,8 @@ namespace EarthWright.Extras
     {
         private static HashSet<string> grown;
         private static HashSet<string> wild;
+        private static Collider[] hits = new Collider[512];
+        private static readonly HashSet<Pickable> seen = new HashSet<Pickable>();
 
         /// <summary>
         /// Wild pickables standing inside the footprint that are world objects of their own (with their own network
@@ -22,16 +24,33 @@ namespace EarthWright.Extras
         public static List<Pickable> In(Footprint area)
         {
             List<Pickable> result = new List<Pickable>();
-            HashSet<Pickable> seen = new HashSet<Pickable>();
-            foreach (Collider collider in Physics.OverlapSphere(area.Center, area.Reach + 2f, ~0, QueryTriggerInteraction.Collide))
+            seen.Clear();
+            int count = Overlap(area.Center, area.Reach + 2f);
+            for (int i = 0; i < count; i++)
             {
-                Pickable pickable = collider.GetComponentInParent<Pickable>();
+                Pickable pickable = hits[i].GetComponentInParent<Pickable>();
                 if (pickable == null || !seen.Add(pickable) || pickable.GetComponent<ZNetView>() == null)
                     continue;
                 if (area.Contains(pickable.transform.position) && IsWild(pickable))
                     result.Add(pickable);
             }
+            seen.Clear();
             return result;
+        }
+
+        /// <summary>
+        /// Every collider in the sphere into the reused buffer, which grows when a dense area fills it. All layers and
+        /// triggers: wild pickables sit on several layers, and a narrower mask would quietly leave some standing.
+        /// </summary>
+        private static int Overlap(Vector3 center, float radius)
+        {
+            int count = Physics.OverlapSphereNonAlloc(center, radius, hits, ~0, QueryTriggerInteraction.Collide);
+            while (count == hits.Length)
+            {
+                hits = new Collider[hits.Length * 2];
+                count = Physics.OverlapSphereNonAlloc(center, radius, hits, ~0, QueryTriggerInteraction.Collide);
+            }
+            return count;
         }
 
         /// <summary>The pickable grew wild. False whenever that cannot be told (never uproots a crop by mistake).</summary>

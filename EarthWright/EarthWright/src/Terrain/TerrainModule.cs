@@ -12,6 +12,9 @@ namespace EarthWright.Terrain
         public static void Initialize(SyncedConfiguration synced)
         {
             Refusals.Initialize();
+            EditAnswers.Initialize();
+            SaveThrottle.Initialize();
+            LiveEstimate.Initialize();
             EngineSettings.Bind(synced);
         }
 
@@ -19,6 +22,7 @@ namespace EarthWright.Terrain
         {
             ServerRelay.EnsureRegistered();
             Refusals.EnsureRegistered();
+            EditAnswers.EnsureRegistered();
         }
     }
 

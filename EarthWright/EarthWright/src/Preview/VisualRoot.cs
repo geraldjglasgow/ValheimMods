@@ -36,10 +36,34 @@ namespace EarthWright.Preview
         private GameObject go;
         private LineRenderer line;
         private Vector3[] buffer = new Vector3[0];
+        private object shownSource;
+        private int shownVersion = -1;
+        private Color shownColour;
+        private float shownWidth;
 
         public LineStrip(string name)
         {
             this.name = name;
+        }
+
+        /// <summary>
+        /// The strip already shows this version of these points in this colour and width (the caller then skips the copy
+        /// and <see cref="Show"/>: setting the points rebuilds the line's mesh).
+        /// </summary>
+        public bool Shows(object source, int version, Color colour, float width)
+        {
+            return go != null && go.activeSelf && ReferenceEquals(source, shownSource) && version == shownVersion
+                && colour == shownColour && width == shownWidth;
+        }
+
+        /// <summary>Draws the points as a line (closed when <paramref name="loop"/>), remembered as that source's version.</summary>
+        public void Show(Vector3[] points, int count, bool loop, Color colour, float width, object source, int version)
+        {
+            shownSource = source;
+            shownVersion = version;
+            shownColour = colour;
+            shownWidth = width;
+            Show(points, count, loop, colour, width);
         }
 
         /// <summary>Draws the points as a line (closed when <paramref name="loop"/>). Nothing when no material exists.</summary>
@@ -63,6 +87,7 @@ namespace EarthWright.Preview
 
         public void Hide()
         {
+            shownVersion = -1;
             if (go != null && go.activeSelf)
                 go.SetActive(false);
         }

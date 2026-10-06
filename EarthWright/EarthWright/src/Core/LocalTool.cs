@@ -19,8 +19,7 @@ namespace EarthWright.Core
         {
             get
             {
-                ItemDrop.ItemData item = Player != null ? Player.GetRightItem() : null;
-                return item?.m_dropPrefab != null ? item.m_dropPrefab.name : null;
+                return PrefabNames.OfItem(Player != null ? Player.GetRightItem() : null);
             }
         }
 
@@ -45,7 +44,7 @@ namespace EarthWright.Core
             get
             {
                 Piece piece = SelectedPiece;
-                return piece != null ? Utils.GetPrefabName(piece.gameObject) : null;
+                return piece != null ? PrefabNames.Of(piece.gameObject) : null;
             }
         }
 

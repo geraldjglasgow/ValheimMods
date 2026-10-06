@@ -9,6 +9,8 @@ namespace EarthWright.Core
         {
             GeneralSettings.Bind(synced);
             CoreCommands.Register();
+            Keys.Register();
+            OwnedPick.Initialize();
         }
     }
 }

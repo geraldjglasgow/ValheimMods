@@ -17,10 +17,11 @@ namespace EarthWright.Brush
 
         public static bool Fire(ConfigEntry<KeyboardShortcut> key)
         {
-            if (key == null || Keys.TextInputActive)
+            if (key == null)
                 return false;
             KeyboardShortcut shortcut = key.Value;
-            if (shortcut.MainKey == KeyCode.None || !ModifiersHeld(shortcut))
+            // The cheap test first: the typing test and the modifiers only for a key that is held.
+            if (shortcut.MainKey == KeyCode.None || !Input.GetKey(shortcut.MainKey) || Keys.TextInputActive || !ModifiersHeld(shortcut))
                 return false;
             float now = Time.unscaledTime;
             if (Input.GetKeyDown(shortcut.MainKey))
@@ -40,7 +41,7 @@ namespace EarthWright.Brush
         {
             foreach (KeyCode modifier in shortcut.Modifiers)
             {
-                if (!Input.GetKey(modifier))
+                if (!Hotkeys.Hotkey.KeyHeld(modifier))
                     return false;
             }
             return true;

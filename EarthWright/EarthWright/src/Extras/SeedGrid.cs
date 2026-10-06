@@ -10,18 +10,37 @@ namespace EarthWright.Extras
     /// placed it, and the game's cultivated-ground, dungeon, no-build and ward checks are redone for the new point, so
     /// what the ghost shows is what the click plants. Planting itself stays the game's (the plant is placed where the
     /// ghost stands), so it replicates as usual. The brush is not active for seeds, so the key is free for this then.
+    /// The ground height and the checks of a grid point are kept while the ghost stays on it (for at most
+    /// <see cref="CellSeconds"/>, so edited ground and a new ward show), and worked out again for the click itself.
     /// </summary>
     public static class SeedGrid
     {
         private const string HudKey = "seedgrid";
+        private const float CellSeconds = 0.5f;
+
         private static bool hudShown;
         private static float hudSpacing;
 
-        /// <summary>The selected piece is a seed or sapling (it grows into something).</summary>
+        private static Piece plantOf;
+        private static Plant selectedPlant;
+        private static Piece plantPiece;
+
+        private static Piece cellPiece;
+        private static float cellX, cellZ, cellUntil, cellHeight;
+        private static Player.PlacementStatus cellStatus;
+        private static bool cellChecked;
+
+        /// <summary>The selected piece is a seed or sapling (it grows into something); looked up once per selected piece.</summary>
         public static Plant SelectedPlant()
         {
             Piece piece = LocalTool.SelectedPiece;
-            return piece != null ? piece.GetComponent<Plant>() : null;
+            if (!ReferenceEquals(piece, plantOf))
+            {
+                plantOf = piece;
+                selectedPlant = piece != null ? piece.GetComponent<Plant>() : null;
+                plantPiece = selectedPlant != null ? selectedPlant.GetComponent<Piece>() : null;
+            }
+            return selectedPlant;
         }
 
         /// <summary>Per frame: the toggle key and the HUD line.</summary>
@@ -66,10 +85,26 @@ namespace EarthWright.Extras
             float spacing = Spacing(plant);
             Vector3 p = ghost.transform.position;
             Vector3 snapped = new Vector3(Mathf.Round(p.x / spacing) * spacing, p.y, Mathf.Round(p.z / spacing) * spacing);
-            if (ZoneSystem.instance != null)
-                snapped.y = ZoneSystem.instance.GetGroundHeight(snapped);
+            if (flash || !SameCell(snapped))
+                NewCell(snapped);
+            snapped.y = cellHeight;
             ghost.transform.position = snapped;
-            Recheck(player, plant.GetComponent<Piece>(), snapped, flash);
+            Recheck(player, plantPiece, snapped, flash);
+        }
+
+        private static bool SameCell(Vector3 snapped)
+        {
+            return Time.time < cellUntil && ReferenceEquals(cellPiece, plantPiece) && snapped.x == cellX && snapped.z == cellZ;
+        }
+
+        private static void NewCell(Vector3 snapped)
+        {
+            cellPiece = plantPiece;
+            cellX = snapped.x;
+            cellZ = snapped.z;
+            cellUntil = Time.time + CellSeconds;
+            cellHeight = ZoneSystem.instance != null ? ZoneSystem.instance.GetGroundHeight(snapped) : snapped.y;
+            cellChecked = false;
         }
 
         /// <summary>The grid spacing for this plant: the setting, or twice the plant's grow radius when the setting is 0.</summary>
@@ -89,11 +124,20 @@ namespace EarthWright.Extras
             Player.PlacementStatus status = player.m_placementStatus;
             if (piece == null || (status != Player.PlacementStatus.Valid && status != Player.PlacementStatus.NeedCultivated))
                 return;
+            if (!cellChecked)
+            {
+                cellStatus = AreaStatus(player, piece, point, flash);
+                cellChecked = true;
+            }
+            GhostStatus.Set(player, cellStatus);
+        }
+
+        private static Player.PlacementStatus AreaStatus(Player player, Piece piece, Vector3 point, bool flash)
+        {
             Heightmap map = Heightmap.FindHeightmap(point);
             if (piece.m_cultivatedGroundOnly && (map == null || !map.IsCultivated(point)))
-                GhostStatus.Set(player, Player.PlacementStatus.NeedCultivated);
-            else
-                GhostStatus.Set(player, GhostStatus.Checked(player, piece, point, flash));
+                return Player.PlacementStatus.NeedCultivated;
+            return GhostStatus.Checked(player, piece, point, flash);
         }
     }
 }

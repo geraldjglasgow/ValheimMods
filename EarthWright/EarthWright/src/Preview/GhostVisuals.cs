@@ -25,6 +25,7 @@ namespace EarthWright.Preview
         }
 
         private static GameObject ghost;
+        private static TerrainOp ghostOp;
         private static readonly List<Part> parts = new List<Part>();
         private static readonly List<Renderer> renderers = new List<Renderer>();
         private static ParticleSystem.Particle[] particles = new ParticleSystem.Particle[64];
@@ -56,7 +57,7 @@ namespace EarthWright.Preview
         private static float Factor()
         {
             StrokeParams p = PreviewFrame.Params;
-            TerrainOp op = ghost.GetComponent<TerrainOp>();
+            TerrainOp op = ghostOp;
             if (op == null || p == null)
                 return 1f;
             TerrainOp.Settings s = op.m_settings;
@@ -71,6 +72,7 @@ namespace EarthWright.Preview
         private static void Capture(GameObject current)
         {
             ghost = current;
+            ghostOp = current != null ? current.GetComponent<TerrainOp>() : null;
             parts.Clear();
             renderers.Clear();
             applied = 1f;

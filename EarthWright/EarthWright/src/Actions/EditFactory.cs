@@ -13,39 +13,48 @@ namespace EarthWright.Actions
         /// <summary>The edit a click with this action would send now; also used by the preview and the costs.</summary>
         public static TerrainEdit Build(ToolAction action)
         {
-            BrushStroke stroke = StrokeOf(action);
+            TerrainEdit edit = TerrainEdit.ForStroke(new BrushStroke(), action.Id);
+            Fill(edit, action);
+            return edit;
+        }
+
+        /// <summary>Writes what <see cref="Build"/> would return now into a kept edit (the preview's, every frame).</summary>
+        public static void Fill(TerrainEdit edit, ToolAction action)
+        {
+            edit.ResetStroke(action.Id);
+            BrushStroke stroke = edit.Stroke;
+            FillStroke(stroke, action);
             ApplyPaint(stroke, action);
             ApplyOneShot(stroke);
-            TerrainEdit edit = TerrainEdit.ForStroke(stroke, action.Id);
             if (BrushState.GridMode)
                 edit.Flags |= EditFlags.GridAligned;
             if (action.PaintHeightCheck)
                 edit.Flags |= EditFlags.PaintHeightCheck;
             if (action.AdminOnly)
                 edit.Flags |= EditFlags.Privileged;
-            return edit;
         }
 
-        /// <summary>The footprint and height values of the stroke, from the brush state.</summary>
-        private static BrushStroke StrokeOf(ToolAction action)
+        /// <summary>The footprint and height values of the stroke, from the brush state (every field, the stroke may be reused).</summary>
+        private static void FillStroke(BrushStroke s, ToolAction action)
         {
-            return new BrushStroke
-            {
-                Center = BrushState.Center,
-                Shape = BrushState.Shape,
-                Radius = action.Resizable ? BrushState.Radius : action.BaseRadius,
-                Radius2 = BrushState.Radius2,
-                Rotation = BrushState.Rotation,
-                Hardness = BrushState.GridMode ? 1f : BrushState.Hardness,
-                Height = action.Height,
-                Style = BrushState.Style,
-                Target = BrushState.TargetHeight,
-                Amount = BrushState.Amount,
-                MaxStep = BrushState.MaxStep,
-                Strength = BrushState.Strength,
-                Density = BrushState.Density,
-                Seed = Random.Range(int.MinValue, int.MaxValue),
-            };
+            s.Center = BrushState.Center;
+            s.Shape = BrushState.Shape;
+            s.Radius = action.Resizable ? BrushState.Radius : action.BaseRadius;
+            s.Radius2 = BrushState.Radius2;
+            s.Rotation = BrushState.Rotation;
+            s.Hardness = BrushState.GridMode ? 1f : BrushState.Hardness;
+            s.Height = action.Height;
+            s.Style = BrushState.Style;
+            s.Target = BrushState.TargetHeight;
+            s.Amount = BrushState.Amount;
+            s.MaxStep = BrushState.MaxStep;
+            s.Strength = BrushState.Strength;
+            s.Density = BrushState.Density;
+            s.PaintStrength = 1f;
+            s.BandMin = 0f;
+            s.BandMax = 0f;
+            s.RandomShare = 1f;
+            s.Seed = Random.Range(int.MinValue, int.MaxValue);
         }
 
         /// <summary>The hard-level key's overrides; they apply to one built edit and are cleared by <see cref="ClearOneShot"/>.</summary>

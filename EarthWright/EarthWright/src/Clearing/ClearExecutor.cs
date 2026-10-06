@@ -3,43 +3,40 @@ using EarthWright.Core;
 namespace EarthWright.Clearing
 {
     /// <summary>
-    /// Carries out a <see cref="ClearPlan"/>. Each object is first claimed (this machine becomes its owner, as the game
-    /// does when it removes an object itself), so every change below is made by the owner and replicates to everyone:
-    /// either the object is destroyed outright (nothing drops) or it is hit through its own damage RPC, which on the
-    /// owner runs the game's normal chopping and mining and drops wood and stone (<see cref="SurvivalHits"/>).
+    /// Carries out a <see cref="ClearPlan"/>: its targets go into the <see cref="ClearQueue"/>, which strikes a few per
+    /// frame. Either the object is destroyed outright (nothing drops; this machine takes it first, since destroying needs
+    /// the owner) or it is hit through its own damage RPC, which runs on the object's owner the game's normal chopping and
+    /// mining and drops wood and stone there (<see cref="SurvivalHits"/>); an object nobody owns is claimed first, so
+    /// the hit has somewhere to go. Objects another player owns are never taken over to be hit: that would take over
+    /// the physics of a tree or a rolling log the other player is simulating.
     /// </summary>
     public static class ClearExecutor
     {
-        /// <summary>Clears every target; returns how many were taken away or struck.</summary>
+        /// <summary>Queues every target; returns how many will be taken away or struck.</summary>
         public static int Run(ClearPlan plan, Player player)
         {
             int cleared = 0;
             foreach (ClearTarget target in plan.Targets)
             {
-                if (Safe.Call("EarthWright clearing", () => ClearOne(plan, target, player), false))
+                if (ClearQueue.Add(plan, target, player))
                     cleared++;
             }
             return cleared;
         }
 
-        private static bool ClearOne(ClearPlan plan, ClearTarget target, Player player)
+        /// <summary>Clears one queued target; returns how many hits it took (0 when it was gone).</summary>
+        internal static int ClearOne(ClearQueue.Job job)
         {
-            ZNetView view = target.View;
+            ZNetView view = job.Target.View;
             if (view == null || !view.IsValid())
-                return false;
-            view.ClaimOwnership();
-            if (plan.Drops)
-                SurvivalHits.Strike(target, player, plan.Tools);
-            else
-                Remove(view);
-            return true;
+                return 0;
+            if (job.Plan.Drops)
+                return SurvivalHits.Strike(job.Target, job.Player, job.Plan.Tools);
+            Remove(view);
+            return 1;
         }
 
-        /// <summary>Destroys an object this machine owns; its ZDO is destroyed for everyone.</summary>
-        public static void Remove(ZNetView view)
-        {
-            if (view != null && view.IsValid() && ZNetScene.instance != null)
-                ZNetScene.instance.Destroy(view.gameObject);
-        }
+        /// <summary>Destroys an object for everyone; its ZDO is destroyed with it.</summary>
+        public static void Remove(ZNetView view) => OwnedPick.Remove(view);
     }
 }

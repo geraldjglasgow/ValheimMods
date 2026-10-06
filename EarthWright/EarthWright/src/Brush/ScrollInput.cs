@@ -76,25 +76,4 @@ namespace EarthWright.Brush
             }
         }
     }
-
-    /// <summary>Postfix on <c>ZInput.GetMouseScrollWheel</c>: the rest of the game reads 0 while the brush owns the wheel.</summary>
-    [HarmonyPatch(typeof(ZInput), nameof(ZInput.GetMouseScrollWheel))]
-    public static class ScrollWheelPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix(ref float __result)
-        {
-            if (__result == 0f)
-                return;
-            try
-            {
-                if (ScrollInput.HideFromGame())
-                    __result = 0f;
-            }
-            catch (System.Exception e)
-            {
-                BrushLog.Error("scroll capture", e);
-            }
-        }
-    }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using EarthWright.Core;
 
 namespace EarthWright.Terrain
@@ -7,7 +6,8 @@ namespace EarthWright.Terrain
     /// Privileged edits (admin tools, the admin limit override) go to the server first. The server checks that the
     /// sending peer is on its admin list and forwards the edit to the owner of each compiler named in the request; the
     /// owner trusts the privileged flags only because the server is the RPC sender. A compiler the server does not
-    /// know yet (created a moment ago by the sender) is addressed to the sender, who owns it.
+    /// know yet, or knows without an owner (created or claimed a moment ago by the sender), is addressed to the sender,
+    /// who owns it. A receiver that does not own it after all answers the sender, who sends the part again.
     /// </summary>
     public static class ServerRelay
     {
@@ -24,17 +24,14 @@ namespace EarthWright.Terrain
             rpc.Register<ZPackage>(RelayRpc, (sender, pkg) => Safe.Run("EarthWright relay", () => OnRelay(sender, pkg)));
         }
 
-        /// <summary>Sender: asks the server to forward the edit to the given compilers.</summary>
-        public static void Send(TerrainEdit edit, List<TerrainComp> comps)
+        /// <summary>Sender: asks the server to forward the compiler's part of the edit to the compiler's owner.</summary>
+        public static void Send(TerrainComp comp, TerrainEdit part)
         {
             EnsureRegistered();
             ZPackage pkg = new ZPackage();
-            pkg.Write(comps.Count);
-            foreach (TerrainComp comp in comps)
-            {
-                pkg.Write(comp.m_nview.GetZDO().m_uid);
-                pkg.Write(EditWire.Write(Dispatcher.PartFor(comp, edit) ?? edit));
-            }
+            pkg.Write(1);
+            pkg.Write(comp.m_nview.GetZDO().m_uid);
+            pkg.Write(EditWire.Write(part));
             ZRoutedRpc.instance.InvokeRoutedRPC(RelayRpc, pkg);
         }
 
@@ -50,9 +47,22 @@ namespace EarthWright.Terrain
                 ZPackage editPkg = pkg.ReadPackage();
                 if (admin)
                     Forward(sender, id, editPkg);
+                else
+                    Refuse(sender, editPkg);
             }
-            if (!admin)
+        }
+
+        /// <summary>A non-admin's privileged part is answered as refused (the reason is shown to the sender).</summary>
+        private static void Refuse(long sender, ZPackage editPkg)
+        {
+            TerrainEdit edit = EditWire.Read(editPkg, sender);
+            if (edit == null || edit.RequestId == 0)
+            {
                 Refusals.Send(sender, Refusals.NotAdmin);
+                return;
+            }
+            edit.SenderPeer = sender;
+            EditAnswers.Send(edit, EditAnswer.Refused, Refusals.NotAdmin);
         }
 
         private static void Forward(long sender, ZDOID id, ZPackage editPkg)

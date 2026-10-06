@@ -15,14 +15,14 @@ namespace EarthWright.History
     {
         public static void Initialize()
         {
-            EditEvents.BeforeSend += edit => Safe.Run("EarthWright undo snapshot", () => OnBeforeSend(edit));
+            EditEvents.BeforeSend += (edit, comps) => Safe.Run("EarthWright undo snapshot", () => OnBeforeSend(edit, comps));
         }
 
-        private static void OnBeforeSend(TerrainEdit edit)
+        /// <summary>The edit is about to go to these compilers (found once by the dispatcher).</summary>
+        private static void OnBeforeSend(TerrainEdit edit, IReadOnlyList<TerrainComp> comps)
         {
-            if (edit == null || Side.IsDedicated)
+            if (edit == null || comps == null || Side.IsDedicated)
                 return;
-            List<TerrainComp> comps = Dispatcher.Compilers(edit);
             foreach (TerrainComp comp in comps)
                 SendTracker.Note(comp, edit);
             if (edit.Has(EditFlags.IsRestore))

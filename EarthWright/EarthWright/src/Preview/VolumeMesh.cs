@@ -14,6 +14,7 @@ namespace EarthWright.Preview
     internal static class VolumeMesh
     {
         private static readonly VertexSampler sampler = new VertexSampler();
+        private static readonly List<Vector3[]> tops = new List<Vector3[]>();
 
         /// <summary>False when the stroke's height operation has no surface to aim for (paint, smooth, remove).</summary>
         public static bool HasSurface(HeightOp op)
@@ -49,13 +50,13 @@ namespace EarthWright.Preview
             if (!HasSurface(p.Stroke.Height) || loops.Count == 0)
                 return false;
             sampler.Begin();
-            List<Vector3[]> tops = new List<Vector3[]>();
-            foreach (Vector3[] loop in loops)
+            for (int n = 0; n < loops.Count; n++)
             {
-                Vector3[] top = Tops(p, loop);
-                Walls(data, loop, top, colour);
-                tops.Add(top);
+                Vector3[] top = OutlineShape.Slot(tops, n, loops[n].Length);
+                Tops(p, loops[n], top);
+                Walls(data, loops[n], top, colour);
             }
+            tops.RemoveRange(loops.Count, tops.Count - loops.Count);
             Color lid = new Color(colour.r, colour.g, colour.b, colour.a * 0.8f);
             if (tops.Count > 1)
                 Band(data, tops[0], tops[1], lid);
@@ -64,12 +65,10 @@ namespace EarthWright.Preview
             return data.Vertices.Count > 0;
         }
 
-        private static Vector3[] Tops(StrokeParams p, Vector3[] loop)
+        private static void Tops(StrokeParams p, Vector3[] loop, Vector3[] top)
         {
-            Vector3[] top = new Vector3[loop.Length];
             for (int i = 0; i < loop.Length; i++)
                 top[i] = new Vector3(loop[i].x, Top(p, loop[i], loop[i].y), loop[i].z);
-            return top;
         }
 
         private static Vector3 CentreTop(StrokeParams p)

@@ -29,6 +29,11 @@ namespace EarthWright.Preview
 
         private static int terrainMask;
 
+        // The preview's own edit and stroke values, filled in place every frame (nothing new per frame). A plain
+        // object: ForStroke reads ZNet, which is not up yet at the main menu, and a throw here broke the type for good.
+        private static readonly TerrainEdit kept = new TerrainEdit { Stroke = new BrushStroke() };
+        private static readonly StrokeParams keptParams = new StrokeParams();
+
         /// <summary>A brush entry (not a special one) is selected with a terrain tool out and a place to draw.</summary>
         public static bool BrushVisible { get; private set; }
 
@@ -66,18 +71,24 @@ namespace EarthWright.Preview
             Player player = LocalTool.Player;
             if (Action == null || Action.IsPathTool || player == null || !Aim(player, out Vector3 aim, out bool beyond))
                 return false;
-            TerrainEdit edit = Safe.Call("EarthWright preview edit", () => EditFactory.Build(Action), null);
+            TerrainEdit edit = Safe.Call("EarthWright preview edit", action => Filled(action), Action, null);
             if (edit?.Stroke == null)
                 return false;
             // The building hooks only add flags (admin routing, terraform limits); the click will carry them too.
             EditEvents.RaiseBuilding(edit);
             if (beyond)
                 edit.Stroke.Center = new Vector3(aim.x, TargetHeight.Used(Action) ? BrushState.TargetHeight : aim.y, aim.z);
-            StrokeParams p = StrokeParams.From(edit);
+            StrokeParams p = StrokeParams.Fill(keptParams, edit);
             if (!p.Valid)
                 return false;
             Show(edit, p, player, beyond);
             return true;
+        }
+
+        private static TerrainEdit Filled(ToolAction action)
+        {
+            EditFactory.Fill(kept, action);
+            return kept;
         }
 
         private static void Show(TerrainEdit edit, StrokeParams p, Player player, bool beyond)
@@ -102,7 +113,7 @@ namespace EarthWright.Preview
             aim = BrushState.AimPoint;
             if (!BrushState.HasAim && !FarGround(out aim))
                 return false;
-            Distance = Vector3.Distance(eye, aim);
+            Distance = (aim - eye).magnitude;
             beyond = !BrushState.HasAim;
             return BrushState.HasAim || Distance > Reach;
         }

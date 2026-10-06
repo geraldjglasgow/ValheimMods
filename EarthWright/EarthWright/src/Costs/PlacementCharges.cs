@@ -41,6 +41,7 @@ namespace EarthWright.Costs
             CostContext ctx = CostContext.ForPiece(player, piece);
             if (ctx != null && !ctx.Action.IsSpecial)
                 Charging = ctx;
+            BuildBarVerdicts.Clear();
         }
 
         /// <summary>
@@ -62,8 +63,13 @@ namespace EarthWright.Costs
             return StaminaCost.For(ctx, StaminaCost.Vanilla(player));
         }
 
-        /// <summary>The game's requirement check for a terrain entry: null keeps the game's answer.</summary>
-        public static bool? CanStart(Player player, Piece piece)
+        /// <summary>
+        /// The game's requirement check for a terrain entry: null keeps the game's answer. Worked out fresh inside the
+        /// local player's placement (the click); the build bar's checks share a short-lived verdict per piece.
+        /// </summary>
+        public static bool? CanStart(Player player, Piece piece) => InUpdate ? Work(player, piece) : BuildBarVerdicts.For(player, piece);
+
+        internal static bool? Work(Player player, Piece piece)
         {
             CostContext ctx = CostContext.ForPiece(player, piece);
             if (ctx == null)

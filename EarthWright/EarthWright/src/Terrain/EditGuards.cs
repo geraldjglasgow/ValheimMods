@@ -46,7 +46,7 @@ namespace EarthWright.Terrain
         {
             foreach (var guard in guards)
             {
-                string reason = Safe.Call(guard.Name, () => guard.Check(context), null);
+                string reason = Safe.Call(guard.Name, guard.Check, context, null);
                 if (!string.IsNullOrEmpty(reason))
                     return reason;
             }
@@ -58,24 +58,55 @@ namespace EarthWright.Terrain
     /// Hooks around sending and applying edits.
     /// <list type="bullet">
     /// <item><see cref="Building"/>: sender, before the guards; may amend the edit (flags, filters).</item>
-    /// <item><see cref="BeforeSend"/>: sender, after the guards passed, before the edit leaves (the undo snapshot).</item>
+    /// <item><see cref="BeforeSend"/>: sender, after the guards passed, before the edit leaves (the undo snapshot), with the
+    /// compilers it goes to (<see cref="Dispatcher.Compilers"/>, found once per send).</item>
     /// <item><see cref="Sent"/>: sender, after the edit left.</item>
-    /// <item><see cref="Applied"/>: owner, after the edit changed a compiler and was saved.</item>
+    /// <item><see cref="Applied"/>: owner, after the edit changed a compiler (saved at once or shortly, <see cref="SaveThrottle"/>).</item>
     /// </list>
     /// </summary>
     public static class EditEvents
     {
-        public static event Action<TerrainEdit> Building;
-        public static event Action<TerrainEdit> BeforeSend;
-        public static event Action<TerrainEdit> Sent;
-        public static event Action<TerrainComp, TerrainEdit> Applied;
+        private static readonly List<Action<TerrainEdit>> building = new List<Action<TerrainEdit>>();
+        private static readonly List<Action<TerrainEdit, IReadOnlyList<TerrainComp>>> beforeSend = new List<Action<TerrainEdit, IReadOnlyList<TerrainComp>>>();
+        private static readonly List<Action<TerrainEdit>> sent = new List<Action<TerrainEdit>>();
+        private static readonly List<Action<TerrainComp, TerrainEdit>> applied = new List<Action<TerrainComp, TerrainEdit>>();
 
-        internal static void RaiseBuilding(TerrainEdit edit) => Safe.Run("EditEvents.Building", () => Building?.Invoke(edit));
+        // Handlers are kept in lists, so raising walks them one by one (one failing handler does not stop the rest)
+        // without a closure or an invocation-list array per call: Building runs every frame for the preview.
+        public static event Action<TerrainEdit> Building { add => building.Add(value); remove => building.Remove(value); }
+        public static event Action<TerrainEdit, IReadOnlyList<TerrainComp>> BeforeSend { add => beforeSend.Add(value); remove => beforeSend.Remove(value); }
+        public static event Action<TerrainEdit> Sent { add => sent.Add(value); remove => sent.Remove(value); }
+        public static event Action<TerrainComp, TerrainEdit> Applied { add => applied.Add(value); remove => applied.Remove(value); }
 
-        internal static void RaiseBeforeSend(TerrainEdit edit) => Safe.Run("EditEvents.BeforeSend", () => BeforeSend?.Invoke(edit));
+        internal static void RaiseBuilding(TerrainEdit edit) => Raise(building, edit, "EditEvents.Building");
 
-        internal static void RaiseSent(TerrainEdit edit) => Safe.Run("EditEvents.Sent", () => Sent?.Invoke(edit));
+        internal static void RaiseBeforeSend(TerrainEdit edit, IReadOnlyList<TerrainComp> comps)
+        {
+            for (int i = 0; i < beforeSend.Count; i++)
+                Safe.Run("EditEvents.BeforeSend", beforeSend[i], edit, comps);
+        }
 
-        internal static void RaiseApplied(TerrainComp comp, TerrainEdit edit) => Safe.Run("EditEvents.Applied", () => Applied?.Invoke(comp, edit));
+        internal static void RaiseSent(TerrainEdit edit) => Raise(sent, edit, "EditEvents.Sent");
+
+        internal static void RaiseApplied(TerrainComp comp, TerrainEdit edit)
+        {
+            for (int i = 0; i < applied.Count; i++)
+                Safe.Run("EditEvents.Applied", applied[i], comp, edit);
+        }
+
+        private static void Raise(List<Action<TerrainEdit>> handlers, TerrainEdit edit, string context)
+        {
+            for (int i = 0; i < handlers.Count; i++)
+            {
+                try
+                {
+                    handlers[i](edit);
+                }
+                catch (Exception e)
+                {
+                    Safe.Error(context, e);
+                }
+            }
+        }
     }
 }

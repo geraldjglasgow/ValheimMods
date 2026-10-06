@@ -35,23 +35,34 @@ namespace EarthWright.History
         private static void Save(Terminal.ConsoleEventArgs args, string name)
         {
             Player player = Player.m_localPlayer;
-            if (player == null)
+            string refusal = SaveRefusal(player, name);
+            if (refusal != null)
             {
-                args.Context.AddString("EarthWright: snapshots are taken around your character; join a world first.");
-                return;
-            }
-            if (!Snapshots.Has(name) && Snapshots.Count >= Snapshots.Max)
-            {
-                args.Context.AddString($"EarthWright keeps at most {Snapshots.Max} snapshots; delete one first (ew snapshot delete <name>).");
+                args.Context.AddString(refusal);
                 return;
             }
             float radius = Mathf.Clamp(args.TryParameterFloat(4, HistorySettings.SnapshotRadius.Value), 1f, Snapshots.MaxRadius);
             Snapshot snapshot = Snapshots.Save(name, player.transform.position, radius, out bool partial);
-            string saved = Language.Format(HistoryWords.SnapshotSaved, name, snapshot.Values.Points.ToString());
+            if (snapshot == null)
+            {
+                args.Context.AddString($"EarthWright keeps at most {Snapshots.MaxBytes / (1024 * 1024)} MB of snapshots; delete one first "
+                    + "(ew snapshot delete <name>) or use a smaller radius.");
+                return;
+            }
+            string saved = Language.Format(HistoryWords.SnapshotSaved, name, snapshot.Points.ToString());
             args.Context.AddString(saved + $" (radius {radius:0.#} m)");
             if (partial)
                 args.Context.AddString(Language.Localize(HistoryWords.SnapshotPartial));
             Messages.Center(saved);
+        }
+
+        private static string SaveRefusal(Player player, string name)
+        {
+            if (player == null)
+                return "EarthWright: snapshots are taken around your character; join a world first.";
+            if (!Snapshots.Has(name) && Snapshots.Count >= Snapshots.Max)
+                return $"EarthWright keeps at most {Snapshots.Max} snapshots; delete one first (ew snapshot delete <name>).";
+            return null;
         }
 
         private static void Restore(Terminal.ConsoleEventArgs args, string name)
@@ -86,7 +97,7 @@ namespace EarthWright.History
             foreach (Snapshot s in Snapshots.All)
             {
                 int minutes = Mathf.FloorToInt((Time.time - s.Taken) / 60f);
-                args.Context.AddString($"  {s.Name}: around ({s.Center.x:0}, {s.Center.z:0}), radius {s.Radius:0.#} m, {s.Values.Points} points, {minutes} min ago");
+                args.Context.AddString($"  {s.Name}: around ({s.Center.x:0}, {s.Center.z:0}), radius {s.Radius:0.#} m, {s.Points} points, {minutes} min ago");
             }
         }
     }

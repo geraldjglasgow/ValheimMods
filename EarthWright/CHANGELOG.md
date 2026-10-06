@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0
+
+- Fixed: an edit could vanish when the ground changed owner; it is sent again, and you are told if it never arrives.
+- Fixed: clearing and Uproot no longer take over objects another player owns; picked items drop once.
+- Clearing a large area no longer freezes the game.
+- Snapshots are kept compressed, at most 16 MB together; a save past that is refused.
+- Less network traffic while a click is held, and less work every frame.
+- Update the server and every client together.
+
 ## 0.3.4
 
 - Discord link on the store page.

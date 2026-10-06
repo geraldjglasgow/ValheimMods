@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
 using EarthWright.Core;
 using UnityEngine;
 
@@ -17,6 +16,9 @@ namespace EarthWright.Preview
     {
         private const float Margin = 16f;
         private const float MinWidth = 240f;
+
+        private static string badge, badgeShadow;
+        private static int badgeFor = -1;
 
         public static void OnGui()
         {
@@ -42,37 +44,32 @@ namespace EarthWright.Preview
             float y = Screen.height * 0.5f + HudSettings.HudOffsetY.Value * scale;
             float width = Mathf.Max(MinWidth, Screen.width - x - Margin);
             if (HudSettings.ShowLockedBadge.Value && Plugin.Synced != null && Plugin.Synced.IsLocked)
+                DrawBadge(x, y, width, scale);
+            HudBlock.Refresh();
+            List<string> lines = HudBlock.Lines;
+            List<string> shadows = HudBlock.Shadows;
+            for (int i = 0; i < lines.Count; i++)
+                y += Draw(lines[i], shadows[i], x, y, width, scale);
+        }
+
+        private static void DrawBadge(float x, float y, float width, float scale)
+        {
+            if (badgeFor != Language.Version)
             {
-                string badge = Language.Localize("$ew_preview_locked");
-                float height = HudStyles.Badge.CalcHeight(new GUIContent(badge), width);
-                HudStyles.Shadowed(new Rect(x, y - height, width, height), badge, HudStyles.Badge, HudStyles.BadgeShadow, scale);
+                badgeFor = Language.Version;
+                badge = Language.Localize("$ew_preview_locked");
+                badgeShadow = HudStyles.Plain(badge);
             }
-            foreach (string line in BlockLines())
-                y += Draw(line, x, y, width, HudStyles.Line, HudStyles.Shadow, scale);
+            float height = HudStyles.Height(HudStyles.Badge, badge, width);
+            HudStyles.Shadowed(new Rect(x, y - height, width, height), badge, badgeShadow, HudStyles.Badge, HudStyles.BadgeShadow, scale);
         }
 
         /// <summary>Draws one wrapped line and returns its height.</summary>
-        private static float Draw(string text, float x, float y, float width, GUIStyle style, GUIStyle shadow, float scale)
+        private static float Draw(string text, string shadowText, float x, float y, float width, float scale)
         {
-            float height = style.CalcHeight(new GUIContent(text), width);
-            HudStyles.Shadowed(new Rect(x, y, width, height), text, style, shadow, scale);
+            float height = HudStyles.Height(HudStyles.Line, text, width);
+            HudStyles.Shadowed(new Rect(x, y, width, height), text, shadowText, HudStyles.Line, HudStyles.Shadow, scale);
             return height + scale;
-        }
-
-        private static List<string> BlockLines()
-        {
-            List<string> lines = new List<string>();
-            List<string> module = HudText.Current();
-            if (PreviewFrame.BrushVisible && PreviewFrame.Tone == PreviewTone.OutOfReach)
-                lines.Add(string.Format(CultureInfo.InvariantCulture, "<color=#b8b8b8>{0} ({1:0.0} m / {2:0.0} m)</color>",
-                    Language.Localize("$ew_preview_outofreach"), PreviewFrame.Distance, PreviewFrame.Reach));
-            string reason = PreviewStatus.FirstReason;
-            if (!string.IsNullOrEmpty(reason) && !module.Exists(line => line.Contains(reason)))
-                lines.Add("<color=#ff5a4a>" + reason + "</color>");
-            lines.AddRange(module);
-            if (CursorReadout.Text != null)
-                lines.Add("<color=#c8c8c8>" + CursorReadout.Text + "</color>");
-            return lines;
         }
     }
 }

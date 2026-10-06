@@ -20,15 +20,15 @@ namespace EarthWright.Terrain
             edgeCells.Clear();
         }
 
-        /// <summary>Adds one heightmap's plan to the estimate.</summary>
-        public void Add(HeightView view, ChangeBuffer changes, EditEstimate estimate, bool withChanges)
+        /// <summary>Adds one heightmap's plan to the estimate; the per-vertex list stops at <paramref name="changeLimit"/> entries.</summary>
+        public void Add(HeightView view, ChangeBuffer changes, EditEstimate estimate, int changeLimit)
         {
             estimate.HitLimit |= changes.HitLimit;
             for (int n = 0; n < changes.HeightCount; n++)
             {
                 HeightChange c = changes.Heights[n];
                 if (Mathf.Abs(c.After - c.Before) >= EngineRecord.MinChange && FirstTime(view, c.Index, edgeVertices))
-                    AddVertex(view, c, estimate, withChanges);
+                    AddVertex(view, c, estimate, estimate.Changes.Count < changeLimit);
             }
             for (int n = 0; n < changes.PaintCount; n++)
             {
@@ -45,14 +45,14 @@ namespace EarthWright.Terrain
                 estimate.PavedCells++;
         }
 
-        private static void AddVertex(HeightView view, HeightChange c, EditEstimate estimate, bool withChanges)
+        private static void AddVertex(HeightView view, HeightChange c, EditEstimate estimate, bool listed)
         {
             float area = view.Scale * view.Scale;
             estimate.Vertices++;
             estimate.Raised += Mathf.Max(0f, c.After - c.Before) * area;
             estimate.Lowered += Mathf.Max(0f, c.Before - c.After) * area;
             estimate.HitLimit |= c.Limited;
-            if (!withChanges)
+            if (!listed)
                 return;
             int x = c.Index % view.Pitch;
             int y = c.Index / view.Pitch;

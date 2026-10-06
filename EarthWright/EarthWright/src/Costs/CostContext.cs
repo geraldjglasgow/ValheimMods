@@ -84,14 +84,13 @@ namespace EarthWright.Costs
         private static ItemDrop.ItemData TerrainTool(Player player)
         {
             ItemDrop.ItemData item = player.GetRightItem();
-            string name = item != null && item.m_dropPrefab != null ? item.m_dropPrefab.name : null;
-            return LocalTool.IsToolName(name) ? item : null;
+            return LocalTool.IsToolName(PrefabNames.OfItem(item)) ? item : null;
         }
 
         /// <summary>The held tool's family; other mods' entries stay "modded", and without a known tool the entry's own.</summary>
         private static ToolFamily FamilyOf(ItemDrop.ItemData tool, ToolAction action)
         {
-            string name = tool != null && tool.m_dropPrefab != null ? tool.m_dropPrefab.name : null;
+            string name = PrefabNames.OfItem(tool);
             if (action.Family == ToolFamily.Modded || name == null)
                 return action.Family;
             return name == ToolNames.Cultivator ? ToolFamily.Cultivator : name == ToolNames.Hoe ? ToolFamily.Hoe : action.Family;
@@ -111,7 +110,7 @@ namespace EarthWright.Costs
         private static Piece PieceOf(Player player, ToolAction action)
         {
             Piece selected = player.GetSelectedPiece();
-            if (selected != null && Utils.GetPrefabName(selected.gameObject) == action.Id)
+            if (selected != null && PrefabNames.Of(selected.gameObject) == action.Id)
                 return selected;
             GameObject prefab = EntryRegistry.Prefab(action.Id);
             if (prefab == null && ZNetScene.instance != null)

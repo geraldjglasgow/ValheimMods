@@ -10,16 +10,23 @@ namespace EarthWright.Paths
     /// <summary>
     /// The module's per-frame driver: follows which entry is selected (forgetting points when it changes, if set, and
     /// always on death and logout), hands the keys to <see cref="PathInput"/>, and while the ramp or road entry is
-    /// selected re-plans ten times a second (at once after a click or key) for the preview, the HUD and the preview
-    /// status. Everything shown is hidden again when the entry is deselected or the tool put away.
+    /// selected re-plans for the preview, the HUD and the preview status when something the plan is made from changed:
+    /// at once after a click or key, within a tenth of a second when the cursor, brush or modifiers moved, and once a
+    /// second otherwise (the ground, costs or wards). Everything shown is hidden again when the entry is deselected or
+    /// the tool put away.
     /// </summary>
     public static class PathSession
     {
         private const float PlanInterval = 0.1f;
+
+        /// <summary>A plan whose inputs did not change is made again after this long: the ground, costs or wards may have.</summary>
+        private const float RefreshSeconds = 1f;
         private const string StatusKey = "paths";
 
         private static string lastSpecial;
         private static float nextPlan;
+        private static float plannedAt = -10f;
+        private static PlanInputs planned;
         private static bool dirty = true;
         private static bool shown;
 
@@ -44,7 +51,19 @@ namespace EarthWright.Paths
                 return;
             }
             if (dirty || Time.time >= nextPlan)
-                Refresh(current);
+                MaybeRefresh(current);
+        }
+
+        /// <summary>Plans again when marked dirty, when the inputs moved, or when the plan is a second old.</summary>
+        private static void MaybeRefresh(ToolAction current)
+        {
+            nextPlan = Time.time + PlanInterval;
+            PlanInputs now = PlanInputs.Now(current);
+            if (!dirty && now.Same(planned) && Time.time - plannedAt < RefreshSeconds)
+                return;
+            planned = now;
+            plannedAt = Time.time;
+            Refresh(current);
         }
 
         /// <summary>The undo hook: removes the selected tool's last point. True when one was removed.</summary>
@@ -61,7 +80,6 @@ namespace EarthWright.Paths
         private static void Refresh(ToolAction current)
         {
             dirty = false;
-            nextPlan = Time.time + PlanInterval;
             PathView view = PathSelection.IsRamp(current) ? PathViews.Ramp() : PathViews.Road();
             string work = WorkProblem(view, current);
             PathPreview.Show(view);

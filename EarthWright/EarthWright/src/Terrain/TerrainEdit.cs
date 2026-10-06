@@ -21,6 +21,9 @@ namespace EarthWright.Terrain
         /// <summary>What made the edit: the piece prefab name, or a name such as "ramp", "undo", "command:reset".</summary>
         public string Source = "";
 
+        /// <summary>The sender's id for this part (from a counter), echoed in the receiver's answer; 0 = no answer wanted.</summary>
+        public int RequestId;
+
         public BrushStroke Stroke;
 
         public VertexSet Vertices;
@@ -30,6 +33,20 @@ namespace EarthWright.Terrain
         public static TerrainEdit ForStroke(BrushStroke stroke, string source)
         {
             return new TerrainEdit { Kind = EditKind.Stroke, Stroke = stroke, Source = source ?? "", SenderPlayer = LocalPlayerId(), SenderPeer = ZNet.GetUID() };
+        }
+
+        /// <summary>Makes a kept edit a fresh stroke edit of this source again (flags cleared, sender now), keeping its stroke object.</summary>
+        public void ResetStroke(string source)
+        {
+            Kind = EditKind.Stroke;
+            Flags = default;
+            RequestId = 0;
+            Source = source ?? "";
+            Vertices = null;
+            SenderPlayer = LocalPlayerId();
+            SenderPeer = ZNet.GetUID();
+            if (Stroke == null)
+                Stroke = new BrushStroke();
         }
 
         public static TerrainEdit ForVertices(VertexSet set, string source)

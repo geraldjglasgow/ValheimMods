@@ -79,7 +79,8 @@ namespace EarthWright.Preview
         [HarmonyPrefix]
         public static void Prefix(Player __instance, Piece piece)
         {
-            if (piece == null || !Safe.Call("EarthWright dust", () => DustFilter.Applies(__instance, piece), false))
+            if (piece == null || !HudSettings.RemoveDust.Value
+                || !Safe.Call("EarthWright dust", (player, placed) => DustFilter.Applies(player, placed), __instance, piece, false))
                 return;
             swapped = piece;
             original = piece.m_placeEffect;
@@ -106,34 +107,37 @@ namespace EarthWright.Preview
         [HarmonyPriority(Priority.First)]
         public static void Prefix(TerrainOp __instance)
         {
-            if (DustFilter.Placing && __instance != null)
-                __instance.m_onPlacedEffect = Safe.Call("EarthWright dust", () => DustFilter.Filter(__instance.m_onPlacedEffect), __instance.m_onPlacedEffect);
+            if (!DustFilter.Placing || __instance == null)
+                return;
+            EffectList placed = __instance.m_onPlacedEffect;
+            __instance.m_onPlacedEffect = Safe.Call("EarthWright dust", list => DustFilter.Filter(list), placed, placed);
         }
     }
 
-    /// <summary>The tool's own build effect, played by the game after a successful terrain placement (swap undone by the finalizer).</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacement))]
-    public static class DustBuildEffectPatch
+    /// <summary>
+    /// The tool's own build effect, played by the game after a successful terrain placement: swapped in the local
+    /// player's <c>Player.UpdatePlacement</c> prefix and put back by its finalizer (the shared patch in
+    /// <c>Patches/UpdatePlacementPatch</c>).
+    /// </summary>
+    internal static class DustBuildEffect
     {
         private static ItemDrop.ItemData.SharedData swapped;
         private static EffectList original;
 
-        [HarmonyPrefix]
-        public static void Prefix(Player __instance)
+        public static void Begin(Player player)
         {
-            if (!HudSettings.RemoveDust.Value)
+            if (!HudSettings.RemoveDust.Value || !player.InPlaceMode())
                 return;
-            ItemDrop.ItemData tool = __instance != null && __instance.InPlaceMode() ? __instance.GetRightItem() : null;
-            Piece piece = tool?.m_shared != null ? __instance.GetSelectedPiece() : null;
-            if (piece == null || !Safe.Call("EarthWright dust", () => DustFilter.Applies(__instance, piece), false))
+            ItemDrop.ItemData tool = player.GetRightItem();
+            Piece piece = tool?.m_shared != null ? player.GetSelectedPiece() : null;
+            if (piece == null || !Safe.Call("EarthWright dust", (user, selected) => DustFilter.Applies(user, selected), player, piece, false))
                 return;
             swapped = tool.m_shared;
             original = swapped.m_buildEffect;
             swapped.m_buildEffect = DustFilter.SoundsOnly(original);
         }
 
-        [HarmonyFinalizer]
-        public static void Finalizer()
+        public static void End()
         {
             if (swapped != null)
                 swapped.m_buildEffect = original;

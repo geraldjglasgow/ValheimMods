@@ -24,6 +24,9 @@ namespace EarthWright.Core
         /// <summary>The language the words were last installed for (the game's language), or null before the game set one up.</summary>
         public static string CurrentLanguage { get; private set; }
 
+        /// <summary>Counts the times the words the game shows changed (a language set up, a word added), for localized text caches.</summary>
+        public static int Version { get; private set; }
+
         /// <summary>
         /// Key prefixes of words that come from configuration data rather than from the mod: the custom entries of
         /// EarthWright.Entries.yml ("ew_custom_&lt;id&gt;", registered by the Menu module when the YAML loads). They are shown
@@ -51,6 +54,7 @@ namespace EarthWright.Core
             {
                 localization.AddWord(key, Text(key));
                 localization.m_cache.EvictAll();
+                Version++;
             }
             return "$" + key;
         }
@@ -98,6 +102,7 @@ namespace EarthWright.Core
             foreach (string key in english.Keys)
                 localization.AddWord(key, Text(key));
             localization.m_cache.EvictAll();
+            Version++;
         }
 
         // The game's localization only once the game made it: reading Localization.instance would create it early,

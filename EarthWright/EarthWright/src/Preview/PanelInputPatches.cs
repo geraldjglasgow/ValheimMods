@@ -58,17 +58,6 @@ namespace EarthWright.Preview
             }
         }
 
-        [HarmonyPatch(typeof(ZInput), nameof(ZInput.GetMouseScrollWheel))]
-        public static class Zoom
-        {
-            [HarmonyPostfix]
-            public static void Postfix(ref float __result)
-            {
-                if (PanelWindow.IsOpen)
-                    __result = 0f;
-            }
-        }
-
         [HarmonyPatch(typeof(global::Menu), nameof(global::Menu.Update))]
         public static class Escape
         {

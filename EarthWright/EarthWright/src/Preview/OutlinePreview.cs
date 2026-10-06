@@ -8,7 +8,8 @@ namespace EarthWright.Preview
     /// The footprint outline on the ground: the height footprint (outer and, for ring and frame, inner edge), and a
     /// second, thinner outline where the paint reaches when the paint footprint differs from it. A paint-only stroke
     /// shows its paint footprint as the main outline. Coloured normal, blocked or out of reach. Lines float a little
-    /// above the ground so the terrain does not swallow them.
+    /// above the ground so the terrain does not swallow them. A line is set again only when its loops were rebuilt or
+    /// its colour or width changed.
     /// </summary>
     internal static class OutlinePreview
     {
@@ -32,14 +33,14 @@ namespace EarthWright.Preview
             bool paintOnly = stroke.Height == HeightOp.None;
             GroundLoops source = paintOnly ? paintOnlyLoops : GroundLoops.Brush;
             source.Get(paintOnly ? PreviewFrame.PaintSpec : PreviewFrame.HeightSpec, out List<Vector3[]> loops);
-            Draw(brushLines, loops, PreviewFrame.ToneColour(PreviewSettings.OutlineColour.Value), width);
+            Draw(brushLines, source, loops, PreviewFrame.ToneColour(PreviewSettings.OutlineColour.Value), width);
             if (paintOnly || !HasOwnPaintOutline(stroke))
             {
                 Hide(paintLines);
                 return;
             }
             paintLoops.Get(PreviewFrame.PaintSpec, out List<Vector3[]> paint);
-            Draw(paintLines, paint, PreviewFrame.ToneColour(PreviewSettings.PaintOutlineColour.Value), width * 0.75f);
+            Draw(paintLines, paintLoops, paint, PreviewFrame.ToneColour(PreviewSettings.PaintOutlineColour.Value), width * 0.75f);
         }
 
         /// <summary>The stroke paints, and its paint footprint is visibly larger or smaller than the height footprint.</summary>
@@ -48,7 +49,8 @@ namespace EarthWright.Preview
             return stroke.Paint != PaintOp.None && Mathf.Abs(PreviewFrame.PaintSpec.Print.Outer - PreviewFrame.HeightSpec.Print.Outer) > 0.05f;
         }
 
-        private static void Draw(LineStrip[] lines, List<Vector3[]> loops, Color colour, float width)
+        /// <summary>Draws each loop on its strip, skipping a strip that already shows this version of the loops.</summary>
+        private static void Draw(LineStrip[] lines, GroundLoops source, List<Vector3[]> loops, Color colour, float width)
         {
             for (int i = 0; i < lines.Length; i++)
             {
@@ -57,8 +59,10 @@ namespace EarthWright.Preview
                     lines[i].Hide();
                     continue;
                 }
+                if (lines[i].Shows(source, source.Version, colour, width))
+                    continue;
                 Vector3[] points = Lifted(loops[i]);
-                lines[i].Show(points, loops[i].Length, true, colour, width);
+                lines[i].Show(points, loops[i].Length, true, colour, width, source, source.Version);
             }
         }
 

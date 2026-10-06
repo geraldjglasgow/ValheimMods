@@ -1,7 +1,6 @@
 using EarthWright.Actions;
 using EarthWright.Core;
 using EarthWright.Terrain;
-using HarmonyLib;
 using UnityEngine;
 
 namespace EarthWright.Brush
@@ -16,9 +15,22 @@ namespace EarthWright.Brush
     /// </summary>
     public static class GhostPlacer
     {
-        public static void AfterGame(Player player, bool flashGuardStone)
+        /// <summary>Called from the shared <c>Player.UpdatePlacementGhost</c> postfix (Patches/PlacementGhostPatch).</summary>
+        public static void Run(Player player, bool flashGuardStone)
         {
-            if (player != Player.m_localPlayer || !BrushState.Active || player.m_placementGhost == null)
+            try
+            {
+                AfterGame(player, flashGuardStone);
+            }
+            catch (System.Exception e)
+            {
+                BrushLog.Error("brush ghost", e);
+            }
+        }
+
+        private static void AfterGame(Player player, bool flashGuardStone)
+        {
+            if (!BrushState.Active)
                 return;
             ToolAction action = ActionCatalog.Current;
             if (action == null || action != BrushState.Action)
@@ -41,21 +53,4 @@ namespace EarthWright.Brush
         }
     }
 
-    /// <summary>Postfix on <c>Player.UpdatePlacementGhost</c>: the brush positions the ghost of terrain entries.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
-    public static class PlacementGhostPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance, bool flashGuardStone)
-        {
-            try
-            {
-                GhostPlacer.AfterGame(__instance, flashGuardStone);
-            }
-            catch (System.Exception e)
-            {
-                BrushLog.Error("brush ghost", e);
-            }
-        }
-    }
 }

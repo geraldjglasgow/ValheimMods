@@ -16,6 +16,9 @@ namespace EarthWright.Costs
         private const string Red = "#ff6a5a";
         private const string Green = "#9be39b";
 
+        /// <summary>The cost line refreshes every 0.25 s: an estimate that young is taken wherever the brush stood.</summary>
+        private const float RecentAge = 0.25f;
+
         /// <summary>The HUD text, or null when the use costs nothing worth showing.</summary>
         public string Text;
 
@@ -38,7 +41,11 @@ namespace EarthWright.Costs
             return new CostLine { Text = text, ShortReason = station ?? items };
         }
 
-        /// <summary>The estimate of a brush click now, only while a volume cost is set (special entries: none).</summary>
+        /// <summary>
+        /// The estimate of a brush click now, only while a volume cost is set (special entries: none); shared with the
+        /// changed-points preview (<see cref="LiveEstimate"/>), which estimates the same click, and taken from it while
+        /// it is younger than the line's own refresh even when the brush has moved since.
+        /// </summary>
         private static EditEstimate EstimateOf(CostContext ctx)
         {
             if (ctx.Action.IsSpecial || !VolumeCharge.Enabled || BillBuilder.MaterialsFree(ctx.Player))
@@ -46,7 +53,7 @@ namespace EarthWright.Costs
             TerrainEdit edit = EditFactory.Build(ctx.Action);
             // The building hooks only add flags (admin routing, terraform limits); the click will carry them too.
             EditEvents.RaiseBuilding(edit);
-            return VolumeCharge.Exempt(edit) ? null : Engine.Estimate(edit);
+            return VolumeCharge.Exempt(edit) ? null : LiveEstimate.Recent(edit, RecentAge);
         }
 
         /// <summary>Adds a missing station in red and returns the matching reason, or null when every station is near.</summary>

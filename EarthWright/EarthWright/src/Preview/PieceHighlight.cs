@@ -17,6 +17,7 @@ namespace EarthWright.Preview
 
         private static readonly Collider[] hits = new Collider[1024];
         private static readonly HashSet<WearNTear> seen = new HashSet<WearNTear>();
+        private static readonly HashSet<Transform> roots = new HashSet<Transform>();
         private static int pieceMask;
         private static float next;
 
@@ -31,15 +32,27 @@ namespace EarthWright.Preview
             FootprintSpec spec = stroke.Height == HeightOp.None ? PreviewFrame.PaintSpec : PreviewFrame.HeightSpec;
             int count = Physics.OverlapSphereNonAlloc(stroke.Center, stroke.Reach, hits, pieceMask);
             seen.Clear();
+            roots.Clear();
             for (int i = 0; i < count && seen.Count < MaxPieces; i++)
             {
-                WearNTear piece = hits[i] != null ? hits[i].GetComponentInParent<WearNTear>() : null;
+                WearNTear piece = PieceOf(hits[i]);
                 if (piece == null || !seen.Add(piece))
                     continue;
                 Vector3 at = piece.transform.position;
                 if (spec.Covers(at.x, at.z))
                     piece.Highlight();
             }
+        }
+
+        /// <summary>
+        /// The piece a collider belongs to, looked up once per object: a piece has many colliders, all under its own
+        /// root (networked objects are scene roots), so a collider of an object already seen this pass is skipped.
+        /// </summary>
+        private static WearNTear PieceOf(Collider hit)
+        {
+            if (hit == null || !roots.Add(hit.transform.root))
+                return null;
+            return hit.GetComponentInParent<WearNTear>();
         }
     }
 }

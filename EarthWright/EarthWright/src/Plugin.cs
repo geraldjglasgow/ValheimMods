@@ -31,7 +31,7 @@ namespace EarthWright
     {
         public const string PluginGuid = "milkyteam.earthwright";
         public const string PluginName = "EarthWright";
-        public const string PluginVersion = "0.3.4";
+        public const string PluginVersion = "0.4.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -84,17 +84,9 @@ namespace EarthWright
             MenuHooks.ClearingEnabled = () => ClearingSettings.Enabled;
         }
 
-        private void Update()
-        {
-            Synced.YamlEditor.Update();
-            Ticker.Tick();
-        }
+        private void Update() => Ticker.Tick();
 
-        private void OnGUI()
-        {
-            Synced.YamlEditor.OnGUI();
-            Ticker.Gui();
-        }
+        private void OnGUI() => Ticker.Gui();
 
         /// <summary>Applies every patch class on its own so one failure is logged and the others still apply.</summary>
         private static int PatchEverything(Harmony harmony)

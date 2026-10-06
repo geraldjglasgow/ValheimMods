@@ -38,6 +38,6 @@ A snapshot is a named copy of the ground around you, kept in memory until you lo
 | `ew snapshot list` | Lists the snapshots with their place, radius, size and age. |
 | `ew snapshot delete <name>` | Forgets a snapshot. |
 
-- At most 32 snapshots are kept.
+- At most 32 snapshots are kept, 16 MB together.
 - Only ground that is loaded around you is recorded; the command says so when part of the area was not.
 - A restore follows the same rules as undo: protection applies and the ground must be loaded.

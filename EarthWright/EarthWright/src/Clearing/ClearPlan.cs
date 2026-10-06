@@ -40,6 +40,12 @@ namespace EarthWright.Clearing
         public int NeedAxe;
         public int NeedPickaxe;
 
+        /// <summary>
+        /// Survival with drops: every object within the log range around the area when it was planned, so the follow-up
+        /// passes know which logs were lying there before the first blow without walking the objects again.
+        /// </summary>
+        public List<ZNetView> Nearby;
+
         public bool Empty => Targets.Count == 0;
 
         /// <summary>A new, empty plan with the same player, tool, area, kinds and mode (a survival follow-up pass).</summary>
@@ -71,8 +77,17 @@ namespace EarthWright.Clearing
             };
             plan.Refusal = ClearRules.Refusal(player, area.Center, tool);
             if (plan.Refusal == null)
-                AddAll(plan, ObjectScan.Inside(area));
+                AddAll(plan, Candidates(plan));
             return plan;
+        }
+
+        /// <summary>The objects inside the area; with drops, found within the log range once and kept for the follow-up.</summary>
+        private static List<ZNetView> Candidates(ClearPlan plan)
+        {
+            if (!plan.Drops)
+                return ObjectScan.Inside(plan.Area);
+            plan.Nearby = ObjectScan.Within(plan.Area.Center, plan.Area.Reach + SurvivalFollowUp.LogRange, null);
+            return ObjectScan.Inside(plan.Area, plan.Nearby);
         }
 
         /// <summary>Adds every object of the plan's kinds that may be cleared.</summary>

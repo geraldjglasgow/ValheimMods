@@ -33,7 +33,7 @@ namespace EarthWright.Gear
         /// <summary>The item is a terrain tool by its prefab name.</summary>
         public static bool IsTool(ItemDrop.ItemData item)
         {
-            return item != null && item.m_dropPrefab != null && LocalTool.IsToolName(item.m_dropPrefab.name);
+            return LocalTool.IsToolName(PrefabNames.OfItem(item));
         }
     }
 }

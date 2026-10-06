@@ -5,9 +5,12 @@ using UnityEngine;
 namespace EarthWright.Terrain
 {
     /// <summary>
-    /// Sender side: runs the hooks and guards, finds every terrain compiler an edit touches (creating missing ones, as
-    /// the game does for its own terrain ops) and sends each the edit through the compiler's own network view, which
-    /// delivers it to the compiler's owner. A privileged edit goes through the server instead (<see cref="ServerRelay"/>).
+    /// Sender side: runs the hooks and guards, finds every terrain compiler an edit touches (creating a missing one where
+    /// the edit changes that heightmap, as the game does for its own terrain ops) and sends each the edit through the
+    /// compiler's own network view, which delivers it to the compiler's owner. A privileged edit goes through the server
+    /// instead (<see cref="ServerRelay"/>). Every part carries a request id the receiver answers (<see cref="EditAnswers"/>);
+    /// an edit is never sent to an unowned compiler (the game would hand it to everybody and nobody would apply it): such
+    /// a compiler is claimed first, as the game does with one it creates.
     /// </summary>
     public static class Dispatcher
     {
@@ -43,40 +46,72 @@ namespace EarthWright.Terrain
         /// <summary>Sends an edit whose building hook and sender guards already ran (the placement hook checks before the game charges).</summary>
         public static void SendChecked(TerrainEdit edit)
         {
-            EditEvents.RaiseBeforeSend(edit);
-            Route(edit);
-            EditEvents.RaiseSent(edit);
+            try
+            {
+                List<TerrainComp> comps = Compilers(edit);
+                EditEvents.RaiseBeforeSend(edit, comps);
+                Route(edit, comps);
+                EditEvents.RaiseSent(edit);
+            }
+            finally
+            {
+                TargetZones.Forget();
+            }
         }
 
-        private static void Route(TerrainEdit edit)
+        private static void Route(TerrainEdit edit, List<TerrainComp> comps)
         {
-            List<TerrainComp> comps = Compilers(edit);
             if (GeneralSettings.DebugLog.Value)
                 Plugin.Log.LogInfo($"Edit {edit.Source} ({edit.Kind}, {edit.Flags}) to {comps.Count} terrain compilers");
-            if (edit.Has(EditFlags.Privileged))
-            {
-                ServerRelay.Send(edit, comps);
-                return;
-            }
             foreach (TerrainComp comp in comps)
             {
                 TerrainEdit part = PartFor(comp, edit);
                 if (part != null)
-                    comp.m_nview.InvokeRPC(OwnerHandler.RpcName, EditWire.Write(part));
+                    SendPart(comp, part, 0);
             }
         }
 
-        /// <summary>The compilers of every heightmap the edit touches, created where missing.</summary>
+        /// <summary>
+        /// Sends one compiler its part with a new request id: to the compiler's owner, or through the server for a
+        /// privileged edit. An unowned compiler is claimed first. Also used to send a part again after a retry answer.
+        /// </summary>
+        internal static void SendPart(TerrainComp comp, TerrainEdit part, int attempts)
+        {
+            ZNetView view = comp.m_nview;
+            if (!view.HasOwner())
+                view.ClaimOwnership();
+            EditAnswers.Track(comp, part, attempts);
+            if (part.Has(EditFlags.Privileged))
+                ServerRelay.Send(comp, part);
+            else
+                view.InvokeRPC(OwnerHandler.RpcName, EditWire.Write(part));
+        }
+
+        /// <summary>
+        /// The compilers of every heightmap the edit touches. A missing one is created only where the edit would change
+        /// something (planned on this machine's copy of that ground, <see cref="Engine.WouldChange"/>), so a stroke near a
+        /// zone edge leaves no empty compiler on the neighbouring heightmap. Found once per send and handed to the hooks.
+        /// </summary>
         public static List<TerrainComp> Compilers(TerrainEdit edit)
         {
             List<TerrainComp> comps = new List<TerrainComp>();
             foreach (Heightmap map in Maps(edit))
             {
-                TerrainComp comp = map.GetAndCreateTerrainCompiler();
+                TerrainComp comp = CompilerOf(map, edit);
                 if (comp != null && comp.m_nview != null && comp.m_nview.IsValid())
                     comps.Add(comp);
             }
             return comps;
+        }
+
+        /// <summary>The heightmap's compiler; a missing one is created when the edit changes this heightmap (a restore always).</summary>
+        private static TerrainComp CompilerOf(Heightmap map, TerrainEdit edit)
+        {
+            TerrainComp comp = TerrainComp.FindTerrainCompiler(map.transform.position);
+            if (comp != null)
+                return comp;
+            bool restore = edit.Kind == EditKind.Vertices && edit.Vertices.Mode == VertexMode.Restore;
+            return restore || Engine.WouldChange(map, edit) ? map.GetAndCreateTerrainCompiler() : null;
         }
 
         /// <summary>The loaded heightmaps an edit touches: a restore's own, the ones a target vertex lies on, or those under a stroke.</summary>
@@ -95,43 +130,50 @@ namespace EarthWright.Terrain
             }
             else
             {
-                edit.GetArea(out Vector3 center, out float radius);
-                Heightmap.FindHeightmap(center, radius, maps);
+                StrokeMaps(edit.Stroke, maps);
             }
             return maps;
+        }
+
+        /// <summary>
+        /// The heightmaps the stroke's own reach (a circle holding every vertex and paint cell it may touch) gets into. The
+        /// gentle-slopes ring is left out on purpose: the owner relaxes only a compiler the stroke itself changed, and
+        /// only within it, so a heightmap the reach misses is never changed.
+        /// </summary>
+        private static void StrokeMaps(BrushStroke stroke, List<Heightmap> maps)
+        {
+            float reach = stroke.Reach;
+            Heightmap.FindHeightmap(stroke.Center, reach, maps);
+            for (int i = maps.Count - 1; i >= 0; i--)
+            {
+                if (!Reaches(maps[i], stroke.Center, reach))
+                    maps.RemoveAt(i);
+            }
+        }
+
+        /// <summary>The circle (XZ) reaches into the heightmap's square (the game's own test is square against square).</summary>
+        private static bool Reaches(Heightmap map, Vector3 center, float radius)
+        {
+            float half = map.m_width * map.m_scale * 0.5f;
+            Vector3 origin = map.transform.position;
+            float dx = Mathf.Max(Mathf.Abs(center.x - origin.x) - half, 0f);
+            float dz = Mathf.Max(Mathf.Abs(center.z - origin.z) - half, 0f);
+            return dx * dx + dz * dz <= radius * radius;
         }
 
         /// <summary>
         /// Only the heightmaps a target vertex lies on (a vertex on a shared edge counts for both), so a long diagonal
         /// ramp does not create empty compilers in zones its bounding square merely covers.
         /// </summary>
-        private static void TargetMaps(VertexSet set, List<Heightmap> maps)
-        {
-            List<Heightmap> found = new List<Heightmap>();
-            foreach (TargetVertex v in set.Targets)
-            {
-                found.Clear();
-                Heightmap.FindHeightmap(new Vector3(v.X, 0f, v.Z), 0f, found);
-                foreach (Heightmap map in found)
-                {
-                    if (!maps.Contains(map))
-                        maps.Add(map);
-                }
-            }
-        }
+        private static void TargetMaps(VertexSet set, List<Heightmap> maps) => TargetZones.Maps(set, maps);
 
         /// <summary>The edit as it goes to one compiler: target vertices outside its heightmap are left out; null if none remain.</summary>
         public static TerrainEdit PartFor(TerrainComp comp, TerrainEdit edit)
         {
             if (edit.Kind != EditKind.Vertices || edit.Vertices.Mode != VertexMode.Targets)
                 return edit;
-            VertexSet part = new VertexSet { Mode = VertexMode.Targets };
-            foreach (TargetVertex v in edit.Vertices.Targets)
-            {
-                if (comp.m_hmap.IsPointInside(new Vector3(v.X, 0f, v.Z)))
-                    part.Targets.Add(v);
-            }
-            if (part.Targets.Count == 0)
+            VertexSet part = TargetZones.PartOf(comp.m_hmap, edit.Vertices);
+            if (part == null)
                 return null;
             return new TerrainEdit
             {

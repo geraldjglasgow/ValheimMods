@@ -1,20 +1,25 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace EarthWright.Terrain
 {
     /// <summary>
     /// The network form of a <see cref="TerrainEdit"/>: a version byte, the header, then the stroke or the vertex set.
-    /// A package of an unknown version is refused rather than misread.
+    /// A package of an unknown version is refused rather than misread (logged once per sending peer). Version 2: vertex
+    /// sets travel compressed. Version 3: the header carries the request id the receiver answers.
     /// </summary>
     public static class EditWire
     {
-        public const byte Version = 1;
+        public const byte Version = 3;
+
+        private static readonly HashSet<long> warned = new HashSet<long>();
 
         public static ZPackage Write(TerrainEdit edit)
         {
             ZPackage pkg = new ZPackage();
             pkg.Write(Version);
+            pkg.Write(edit.RequestId);
             pkg.Write((byte)edit.Kind);
             pkg.Write((int)edit.Flags);
             pkg.Write(edit.SenderPlayer);
@@ -27,30 +32,35 @@ namespace EarthWright.Terrain
             return pkg;
         }
 
-        /// <summary>Reads an edit, or returns null (and logs) when the package is not one this version understands.</summary>
-        public static TerrainEdit Read(ZPackage pkg)
+        /// <summary>Reads an edit, or returns null (and logs once for that peer) when the package is not one this version understands.</summary>
+        public static TerrainEdit Read(ZPackage pkg, long sender)
         {
             try
             {
                 byte version = pkg.ReadByte();
-                if (version != Version)
-                {
-                    Plugin.Log.LogWarning($"Terrain edit of wire version {version} ignored (this is {Version}); is every player on the same EarthWright?");
-                    return null;
-                }
-                return ReadBody(pkg);
+                if (version == Version)
+                    return ReadBody(pkg);
+                Warn(sender, $"Terrain edits of wire version {version} from peer {sender} are ignored (this is {Version}); is every player on the same EarthWright?");
+                return null;
             }
             catch (Exception e)
             {
-                Plugin.Log.LogWarning("Unreadable terrain edit ignored: " + e.Message);
+                Warn(sender, $"Unreadable terrain edit from peer {sender} ignored: {e.Message}");
                 return null;
             }
+        }
+
+        private static void Warn(long sender, string text)
+        {
+            if (warned.Add(sender))
+                Plugin.Log.LogWarning(text);
         }
 
         private static TerrainEdit ReadBody(ZPackage pkg)
         {
             TerrainEdit edit = new TerrainEdit
             {
+                RequestId = pkg.ReadInt(),
                 Kind = (EditKind)pkg.ReadByte(),
                 Flags = (EditFlags)pkg.ReadInt(),
                 SenderPlayer = pkg.ReadLong(),
@@ -69,7 +79,7 @@ namespace EarthWright.Terrain
         {
             ZPackage pkg = Write(edit);
             pkg.SetPos(0);
-            return Read(new ZPackage(pkg.GetArray()));
+            return Read(new ZPackage(pkg.GetArray()), 0L);
         }
     }
 

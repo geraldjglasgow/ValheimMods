@@ -50,7 +50,8 @@ Dispatcher.Submit / PlacementHook ── EditEvents.Building ── EditGuards.C
    '-- privileged ──> server "EW_RelayEdit": admin check ──> routed to each compiler's owner (sender = server)
                                                                               |
 owner: OwnerHandler.Receive ── drop privileged flags unless relayed ── EditGuards.CheckOwner ── Engine.Apply
-       ── TerrainComp.Save() (ZDO, replicated) ── Poke ── grass reset ── EditEvents.Applied
+       ── SaveThrottle (TerrainComp.Save() into the ZDO, replicated; at most every 0.3 s) ── Poke ── grass reset
+       ── EditEvents.Applied
 refusals travel back to the sender as "EW_EditRefused" and show as a centre message.
 every client: Heightmap rebuild ── TerrainComp.ApplyToHeightmap (patched: EarthWright's height limits)
 ```

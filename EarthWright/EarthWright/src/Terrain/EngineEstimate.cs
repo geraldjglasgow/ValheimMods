@@ -20,13 +20,13 @@ namespace EarthWright.Terrain
         private static readonly LimitContext limits = new LimitContext();
         private static readonly EngineEstimateSum sum = new EngineEstimateSum();
 
-        public static EditEstimate Run(TerrainEdit edit, bool withChanges)
+        /// <summary>The estimate, with at most <paramref name="changeLimit"/> per-vertex entries (0: none).</summary>
+        public static EditEstimate Run(TerrainEdit edit, int changeLimit)
         {
             EditEstimate estimate = new EditEstimate();
             if (edit == null || !FindMaps(edit))
                 return estimate;
-            bool admin = edit.Has(EditFlags.Privileged) && Side.LocalIsAdmin;
-            limits.Reset(admin && edit.Has(EditFlags.IgnoreLimits), admin);
+            ResetLimits(edit);
             Func<float, float, float, bool> probe = EngineViews.PieceProbeFor(edit);
             sum.Begin();
             foreach (Heightmap map in maps)
@@ -35,9 +35,27 @@ namespace EarthWright.Terrain
                     continue;
                 view.UnderPiece = probe;
                 EnginePlanner.Plan(view, edit, limits, changes);
-                sum.Add(view, changes, estimate, withChanges);
+                sum.Add(view, changes, estimate, changeLimit);
             }
             return estimate;
+        }
+
+        /// <summary>Whether the edit plans any height or paint change on this one heightmap; true when it cannot be read.</summary>
+        public static bool Changes(Heightmap map, TerrainEdit edit)
+        {
+            if (edit == null || !EngineViews.ForMap(map, view))
+                return true;
+            ResetLimits(edit);
+            view.UnderPiece = EngineViews.PieceProbeFor(edit);
+            EnginePlanner.Plan(view, edit, limits, changes);
+            return changes.HeightCount > 0 || changes.PaintCount > 0;
+        }
+
+        /// <summary>A privileged edit is planned that way only for a local admin, as the server would approve it.</summary>
+        private static void ResetLimits(TerrainEdit edit)
+        {
+            bool admin = edit.Has(EditFlags.Privileged) && Side.LocalIsAdmin;
+            limits.Reset(admin && edit.Has(EditFlags.IgnoreLimits), admin);
         }
 
         /// <summary>The loaded heightmaps the edit may touch (an undo restore addresses exactly one).</summary>
