@@ -5,7 +5,7 @@ has defeated the boss before it, and says who the group is waiting for. Fast pla
 build anywhere; they just cannot summon the next boss ahead of the group. Installing on a world you already play is
 safe: bosses already defeated count as cleared for everyone.
 
-This wiki describes version 0.3.1.
+This wiki describes version 0.4.0.
 
 Lockstep was published as OathBound up to 0.1.2. It does not read OathBound's files, so remove OathBound. It is not
 related to LionAndOtter's Oathbound.

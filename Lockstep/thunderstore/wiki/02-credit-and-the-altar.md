@@ -11,7 +11,8 @@ When a boss from the [boss chain](wiki:Configuration) dies, each player **online
 | They were online at all, anywhere | `Credit Everyone Online` (off) |
 
 A player who logged out before the boss died gets no credit (an admin can `lockstep grant` it). Credit never expires.
-A boss not in the chain gives no credit.
+A boss not in the chain gives no credit. Credit counts only once the server sees the boss die; a kill report it
+cannot confirm gives no credit and is logged on the server.
 
 ## Who counts
 

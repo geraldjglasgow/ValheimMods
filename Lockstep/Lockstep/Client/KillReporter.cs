@@ -6,7 +6,8 @@ namespace Lockstep
     /// <summary>
     /// Runs on the client that owns a dying boss (the only place OnDeath runs) and tells the server which
     /// players attacked it. The boss ZDO carries one flag per attacking player name, written by the game
-    /// in Character.RPC_Damage. Prefix because OnDeath destroys the object at its end.
+    /// in Character.RPC_Damage. Prefix because OnDeath destroys the object at its end. The report names the
+    /// boss's ZDO, so the server can check it against its own world (Server/KillWitness.cs).
     /// </summary>
     [HarmonyPatch(typeof(Character), nameof(Character.OnDeath))]
     public static class KillReporter
@@ -31,7 +32,7 @@ namespace Lockstep
             }
             Lockstep.Log.LogInfo($"{__instance.m_name} died, attackers: {(attackers.Count > 0 ? string.Join(", ", attackers) : "none recorded")}.");
             ZRoutedRpc.instance.InvokeRoutedRPC(ProgressServer.RpcBossDefeated,
-                __instance.m_defeatSetGlobalKey, string.Join("\n", attackers), __instance.transform.position);
+                zdo.m_uid, __instance.m_defeatSetGlobalKey, string.Join("\n", attackers));
         }
     }
 }

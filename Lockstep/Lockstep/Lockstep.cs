@@ -12,7 +12,7 @@ namespace Lockstep
     {
         public const string PluginGuid = "com.Lockstep";
         public const string PluginName = "Lockstep";
-        public const string PluginVersion = "0.3.4";
+        public const string PluginVersion = "0.4.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -24,6 +24,7 @@ namespace Lockstep
             LockstepConfiguration.Initialize(Synced);
             ProgressState.Initialize(Synced);
             Chain.Changed += ProgressServer.Publish;
+            Chain.Changed += KillWitness.ChainChanged;
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- The server confirms a boss really died before giving credit; unconfirmed kill reports are refused and logged.
+- Less work updating the altars' waiting list when players join, leave or earn credit.
+- Update the server and every client together.
+
 ## 0.3.4
 
 - Discord link on the store page.

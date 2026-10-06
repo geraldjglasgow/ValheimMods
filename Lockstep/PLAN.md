@@ -100,6 +100,10 @@ conveniences over the same file. This replaces the separate JSON credit table de
   the boss ZDO and sends them with the key to the server in one custom RPC. The server maps
   names to player IDs through the online player list and credits them. A player who hit the boss once and then
   died and respawned still has their name in the ZDO, so death does not lose credit.
+- The server checks a report before crediting anyone (`Server/KillWitness.cs`): it names the boss's ZDOID, which
+  must be (or have been in the last minute) a boss of that stage (the stage's prefab, or any creature whose death
+  sets its key), owned by the sender or near the sender. Credit is given when the boss's ZDO is destroyed, which
+  the game does at the end of every death; a report whose boss is not destroyed within a minute is dropped.
 - Secondary rule, **radius**: also credit online players within `Credit Radius` of the boss (default 200 m) who
   never landed a hit, such as a dedicated healer or the one who kited adds. Config toggle, on by default.
 - Config toggle: credit everyone online at kill time, regardless of distance. For groups who trust each other.
@@ -217,6 +221,7 @@ Lockstep/
   Server/
     Roster.cs                   YAML roster: player ID, name, last seen, ignored flag, cleared stages
     ProgressServer.cs           login tracking, credit, the gating rule, the summary pushed to clients
+    KillWitness.cs              checks a kill report against the server's own world, credits on the boss's destroy
     ServerCommands.cs           server side of the console command
   Client/
     ProgressState.cs            the per-stage summary as every client sees it

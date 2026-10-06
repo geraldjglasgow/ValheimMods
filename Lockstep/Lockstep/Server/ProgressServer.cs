@@ -14,7 +14,9 @@ namespace Lockstep
     /// </summary>
     public static class ProgressServer
     {
-        public const string RpcBossDefeated = "Lockstep_BossDefeated";
+        // Renamed from Lockstep_BossDefeated when the report gained the boss's ZDOID: an old client and a new server (or
+        // the other way round) ignore each other's report instead of misreading it.
+        public const string RpcBossDefeated = "Lockstep_BossKilled";
         public const string RpcCommand = "Lockstep_Command";
         public const string RpcReply = "Lockstep_Reply";
 
@@ -25,8 +27,8 @@ namespace Lockstep
         /// <summary>Registers the routed RPCs. Called on every instance; the server handlers check <see cref="IsServer"/>.</summary>
         public static void RegisterRpcs()
         {
-            ZRoutedRpc.instance.Register<string, string, Vector3>(RpcBossDefeated,
-                (sender, key, attackers, position) => Guard.Run("boss defeated", () => OnBossDefeated(key, attackers, position)));
+            ZRoutedRpc.instance.Register<ZDOID, string, string>(RpcBossDefeated,
+                (sender, boss, key, attackers) => Guard.Run("boss defeated", () => OnBossDefeated(sender, boss, key, attackers)));
             ZRoutedRpc.instance.Register<string>(RpcCommand,
                 (sender, line) => Guard.Run("command", () => ServerCommands.OnCommand(sender, line)));
             ZRoutedRpc.instance.Register<string>(RpcReply,
@@ -38,6 +40,7 @@ namespace Lockstep
         {
             roster?.Dispose();
             roster = null;
+            KillWitness.Clear();
         }
 
         internal static Roster EnsureRoster()
@@ -117,7 +120,8 @@ namespace Lockstep
                 yield return new OnlinePlayer { Id = local.GetPlayerID(), Name = local.GetPlayerName(), Position = local.transform.position };
         }
 
-        private static void OnBossDefeated(string key, string attackers, Vector3 position)
+        /// <summary>A boss's owner says it died; <see cref="KillWitness"/> checks that against the server's world first.</summary>
+        private static void OnBossDefeated(long sender, ZDOID boss, string key, string attackers)
         {
             if (!IsServer)
                 return;
@@ -127,8 +131,14 @@ namespace Lockstep
                 Lockstep.Log.LogInfo($"A boss with key {key} died; it is not in the chain.");
                 return;
             }
+            KillWitness.Reported(sender, boss, stage, attackers);
+        }
+
+        /// <summary>A kill the server has checked: credits the players who earned it and pushes the new summary.</summary>
+        internal static void Credit(Stage stage, string attackers, Vector3 position)
+        {
             Roster r = EnsureRoster();
-            List<string> credited = CreditPlayers(r, key, attackers, position);
+            List<string> credited = CreditPlayers(r, stage.Key, attackers, position);
             r.Save();
             Lockstep.Log.LogInfo($"{stage.Name} defeated. Credited: {(credited.Count > 0 ? string.Join(", ", credited) : "nobody new")}.");
             Publish();
@@ -177,19 +187,21 @@ namespace Lockstep
         }
 
         /// <summary>Names of counted players who still miss the previous stage. Empty means the stage is open.</summary>
-        public static List<string> WaitingFor(Stage stage)
+        public static List<string> WaitingFor(Stage stage) => StillMissing(Chain.Previous(stage), CountedPlayers());
+
+        /// <summary>Counted players without credit for <paramref name="previous"/>; nobody for the first stage.</summary>
+        private static List<string> StillMissing(Stage previous, List<RosterEntry> counted)
         {
-            Stage previous = Chain.Previous(stage);
-            if (previous == null)
+            if (previous == null || EnsureRoster().Data.InstalledKeys.Contains(previous.Key))
                 return new List<string>();
-            Roster r = EnsureRoster();
-            if (r.Data.InstalledKeys.Contains(previous.Key))
-                return new List<string>();
+            return counted.Where(e => !e.Cleared.Contains(previous.Key)).Select(e => e.Name).ToList();
+        }
+
+        /// <summary>The roster entries that hold the group back, worked out once per summary rather than once per stage.</summary>
+        private static List<RosterEntry> CountedPlayers()
+        {
             HashSet<long> online = new HashSet<long>(Online().Select(p => p.Id));
-            return r.Data.Players
-                .Where(e => Counts(e, online) && !e.Cleared.Contains(previous.Key))
-                .Select(e => e.Name)
-                .ToList();
+            return EnsureRoster().Data.Players.Where(e => Counts(e, online)).ToList();
         }
 
         /// <summary>Pushes the per-stage summary to every client through the Charter article.</summary>
@@ -199,13 +211,15 @@ namespace Lockstep
             if (!IsServer || roster == null)
                 return;
             StringBuilder text = new StringBuilder();
-            foreach (Stage stage in Chain.Stages)
+            List<RosterEntry> counted = CountedPlayers();
+            IReadOnlyList<Stage> stages = Chain.Stages;
+            for (int i = 0; i < stages.Count; i++)
             {
-                Stage previous = Chain.Previous(stage);
+                Stage stage = stages[i], previous = i > 0 ? stages[i - 1] : null;
                 text.Append(stage.BossPrefab).Append('\t')
                     .Append(stage.Name).Append('\t')
                     .Append(previous?.Name ?? "").Append('\t')
-                    .Append(string.Join(", ", WaitingFor(stage))).Append('\n');
+                    .Append(string.Join(", ", StillMissing(previous, counted))).Append('\n');
             }
             ProgressState.Assign(text.ToString());
         }
