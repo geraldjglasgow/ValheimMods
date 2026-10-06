@@ -9,12 +9,14 @@ namespace GrindstoneSkills
     /// </summary>
     public static class KitchenFilter
     {
+        private static readonly int MinStarsHash = Keys.MinStars.GetStableHashCode();
+
         /// <summary>The minimum stars this kitchen keeps, 0..3.</summary>
         public static int MinStars(ZNetView nview)
         {
             if (!KitchenSettings.TrashFilter.Value || nview == null || !nview.IsValid())
                 return 0;
-            return Mathf.Clamp(nview.GetZDO().GetInt(Keys.MinStars), 0, Stars.Max);
+            return Mathf.Clamp(nview.GetZDO().GetInt(MinStarsHash), 0, Stars.Max);
         }
 
         /// <summary>Whether a dish with these stars is thrown away at this kitchen.</summary>

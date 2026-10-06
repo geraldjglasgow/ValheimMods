@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -44,7 +45,11 @@ namespace GrindstoneSkills
         /// <summary>World time <paramref name="seconds"/> from now, in ticks.</summary>
         public static long TicksIn(double seconds) => Now.AddSeconds(seconds).Ticks;
 
-        public static string PrefabName(Component component) => Utils.GetPrefabName(component.gameObject);
+        private static readonly ConditionalWeakTable<GameObject, string> prefabNames = new ConditionalWeakTable<GameObject, string>();
+
+        /// <summary>The object's prefab name, worked out once per object: the herd timers ask for every creature every few seconds.</summary>
+        public static string PrefabName(Component component) =>
+            prefabNames.GetValue(component.gameObject, gameObject => Utils.GetPrefabName(gameObject));
 
         /// <summary>The creature's tier for experience: 1 + half a step per doubling of its health over 10, from 1 to 5.</summary>
         public static float Tier(Character character) => character == null ? 1f : Tier(PrefabName(character));

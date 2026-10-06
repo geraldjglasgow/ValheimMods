@@ -43,21 +43,20 @@ namespace GrindstoneSkills
             }
         }
 
-        [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), typeof(string), typeof(object[]))]
-        private static class SendSwap
+        /// <summary>
+        /// From <see cref="RpcSendSwap"/> (ZNetView.InvokeRPC): true when this send was the game's add and went out as
+        /// ours instead, so the game's own send is skipped.
+        /// </summary>
+        internal static bool Swapped(ZNetView view, string method, object[] parameters)
         {
-            [HarmonyPrefix]
-            private static bool Prefix(ZNetView __instance, string method, object[] parameters)
-            {
-                Adding add = adding;
-                if (add == null || add.StarCount <= 0 || !ReferenceEquals(add.View, __instance) || method != VanillaRpc)
-                    return true;
-                if (parameters == null || parameters.Length != 2 || !(parameters[0] is string name) || !(parameters[1] is bool cheated))
-                    return true;
-                adding = null;
-                __instance.InvokeRPC(Keys.RpcAddMill, Package(name, cheated, add.StarCount));
+            Adding add = adding;
+            if (add == null || add.StarCount <= 0 || !ReferenceEquals(add.View, view) || method != VanillaRpc)
                 return false;
-            }
+            if (parameters == null || parameters.Length != 2 || !(parameters[0] is string name) || !(parameters[1] is bool cheated))
+                return false;
+            adding = null;
+            view.InvokeRPC(Keys.RpcAddMill, Package(name, cheated, add.StarCount));
+            return true;
         }
 
         private static ZPackage Package(string name, bool cheated, int stars)

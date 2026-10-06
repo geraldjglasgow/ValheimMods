@@ -19,15 +19,16 @@ namespace GrindstoneSkills
         {
             [HarmonyPostfix]
             [HarmonyPriority(Priority.Last)]
-            private static void Postfix(ObjectDB __instance) => HookGuard.Run("legendary fish items", () => Widen(__instance));
+            private static void Postfix() => HookGuard.Run("legendary fish items", Widen);
         }
 
-        private static void Widen(ObjectDB db)
+        /// <summary>Every fish item of the database that just woke (<see cref="FishInfo.Species"/>).</summary>
+        private static void Widen()
         {
-            foreach (GameObject prefab in db.m_items)
+            foreach (GameObject prefab in FishInfo.Species())
             {
-                ItemDrop item = prefab != null && prefab.GetComponent<Fish>() != null ? prefab.GetComponent<ItemDrop>() : null;
-                if (item != null && item.m_itemData.m_shared.m_maxQuality < FishInfo.LegendaryLevel)
+                ItemDrop item = prefab.GetComponent<ItemDrop>();
+                if (item.m_itemData.m_shared.m_maxQuality < FishInfo.LegendaryLevel)
                     item.m_itemData.m_shared.m_maxQuality = FishInfo.LegendaryLevel;
             }
         }

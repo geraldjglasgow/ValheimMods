@@ -19,8 +19,7 @@ namespace GrindstoneSkills
             [HarmonyPrefix]
             private static void Prefix(Tameable __instance, ref float time)
             {
-                float step = time;
-                time = HookGuard.Run("taming speed", () => Scaled(__instance, step), step);
+                time = HookGuard.Run("taming speed", static taming => Scaled(taming.tameable, taming.step), (tameable: __instance, step: time), time);
             }
         }
 

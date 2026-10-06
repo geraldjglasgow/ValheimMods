@@ -7,9 +7,10 @@ namespace GrindstoneSkills
     /// Cooking experience for a dish that was thrown away by a trash filter. The dish is never taken off, so the game's
     /// take-off experience would be lost; the station's owner sends it to the cook instead, by routed RPC
     /// (<see cref="Keys.RpcCookCredit"/>). An offline cook loses it.
-    /// ZRoutedRpc.InvokeRoutedRPC to Everybody handles the call on the sender at once and routes it on; the server
-    /// passes it to every peer except the sender, so each machine, the sender included, handles it exactly once. Only
-    /// the client whose local player is the cook acts on it; a dedicated server has no local player and ignores it.
+    /// The RPC goes to the cook's machine alone (<see cref="PlayerIds.PeerOf"/>): handled at once when the cook is the
+    /// sender's own player, else routed through the server to that one peer. Only when the sender cannot tell where the
+    /// cook plays does it go to Everybody, as it used to. Only the client whose local player is the cook acts on it; a
+    /// dedicated server has no local player and ignores it.
     /// The routed RPC is registered in a ZNet.Awake postfix, where the game creates a fresh ZRoutedRpc for each session.
     /// </summary>
     public static class CookCredit
@@ -29,7 +30,7 @@ namespace GrindstoneSkills
         {
             if (cookPlayerId == 0L || ZRoutedRpc.instance == null)
                 return;
-            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcCookCredit, cookPlayerId, dishPrefab ?? "");
+            ZRoutedRpc.instance.InvokeRoutedRPC(PlayerIds.PeerOf(cookPlayerId), Keys.RpcCookCredit, cookPlayerId, dishPrefab ?? "");
         }
 
         private static void Receive(long sender, long cookPlayerId, string dishPrefab) =>

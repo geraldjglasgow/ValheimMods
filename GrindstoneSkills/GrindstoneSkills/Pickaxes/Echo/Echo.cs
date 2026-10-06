@@ -13,8 +13,8 @@ namespace GrindstoneSkills
     /// <list type="bullet">
     /// <item><b>Cooldown:</b> "Echo Cooldown" seconds, the miner's own, in memory. Only a ping starts it: a swing with
     /// nothing in range is silent and leaves the Echo ready, so the first swing that has a deposit in range pings at
-    /// once. Such a swing costs one scan; swings come about once a second, and a scan is one walk over the loaded
-    /// objects.</item>
+    /// once. Such a swing only looks through the deposits the last walk over the loaded objects found; a new walk
+    /// happens every few seconds or after a few metres (<see cref="EchoScan"/>).</item>
     /// <item><b>The text ignores "Show Callouts":</b> it is the feature itself (the only way to learn which deposit and
     /// how far), not a callout about something that happened; "Echo Level" above 100 turns the Echo off.</item>
     /// </list>

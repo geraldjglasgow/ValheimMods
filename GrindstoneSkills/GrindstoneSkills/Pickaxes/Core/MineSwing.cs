@@ -50,11 +50,11 @@ namespace GrindstoneSkills
                     return;
                 IReadOnlyList<Rock> hit = Rocks;
                 Attack attack = Attack;
-                factor *= HookGuard.Run("mine swing experience", () => MineXp.SwingScale(hit, attack), 1f);
+                factor *= HookGuard.Run("mine swing experience", static swing => MineXp.SwingScale(swing.hit, swing.attack), (hit, attack), 1f);
                 if (hit.Count == 0)
                     return;
-                HookGuard.Run("pickaxe wear", () => PickaxePerks.OnSwingHitRock(attack, hit));
-                HookGuard.Run("echo", () => Echo.OnSwingHitRock(attack, hit));
+                HookGuard.Run("pickaxe wear", static swing => PickaxePerks.OnSwingHitRock(swing.attack, swing.hit), (hit, attack));
+                HookGuard.Run("echo", static swing => Echo.OnSwingHitRock(swing.attack, swing.hit), (hit, attack));
             }
         }
 

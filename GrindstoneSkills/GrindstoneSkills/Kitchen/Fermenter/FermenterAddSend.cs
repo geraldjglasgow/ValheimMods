@@ -38,21 +38,20 @@ namespace GrindstoneSkills
             private static void Finalizer() => adding = null;
         }
 
-        [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), typeof(string), typeof(object[]))]
-        private static class SendSwap
+        /// <summary>
+        /// From <see cref="RpcSendSwap"/> (ZNetView.InvokeRPC): true when this send was the game's add and went out as
+        /// ours instead, so the game's own send is skipped.
+        /// </summary>
+        internal static bool Swapped(ZNetView view, string method, object[] parameters)
         {
-            [HarmonyPrefix]
-            private static bool Prefix(ZNetView __instance, string method, object[] parameters)
-            {
-                Adding add = adding;
-                if (add == null || !ReferenceEquals(add.View, __instance) || method != VanillaRpc)
-                    return true;
-                if (parameters == null || parameters.Length != 2 || !(parameters[0] is int nameHash) || !(parameters[1] is bool cheated))
-                    return true;
-                adding = null;
-                __instance.InvokeRPC(Keys.RpcAddBase, Package(nameHash, cheated, add));
+            Adding add = adding;
+            if (add == null || !ReferenceEquals(add.View, view) || method != VanillaRpc)
                 return false;
-            }
+            if (parameters == null || parameters.Length != 2 || !(parameters[0] is int nameHash) || !(parameters[1] is bool cheated))
+                return false;
+            adding = null;
+            view.InvokeRPC(Keys.RpcAddBase, Package(nameHash, cheated, add));
+            return true;
         }
 
         /// <summary>The payload in the order <see cref="Keys.RpcAddBase"/> documents.</summary>

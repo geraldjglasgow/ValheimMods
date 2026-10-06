@@ -6,7 +6,7 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Floating words above animals ("Twins!", "Strong offspring!"). The event happens on the creature's owner, which
-    /// may be a dedicated server, so the owner broadcasts a routed RPC (<see cref="Keys.RpcHerdCallout"/>) and every
+    /// may be a dedicated server, so the owner sends a routed RPC to the players near it (<see cref="Keys.RpcHerdCallout"/>, <see cref="NearbyRpc"/>) and every
     /// client whose camera is near the spot draws it (<see cref="FloatingText"/>), if its own Husbandry "Show Callouts"
     /// is on. Registered in a ZNet.Awake postfix, where the game creates a fresh ZRoutedRpc for each session.
     /// </summary>
@@ -21,9 +21,8 @@ namespace GrindstoneSkills
 
         public static void Send(Vector3 position, string text)
         {
-            if (ZRoutedRpc.instance == null || string.IsNullOrEmpty(text))
-                return;
-            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcHerdCallout, position, text);
+            if (!string.IsNullOrEmpty(text))
+                NearbyRpc.Send(position, FloatingText.Range, Keys.RpcHerdCallout, position, text);
         }
 
         private static void Receive(long sender, Vector3 position, string text) =>

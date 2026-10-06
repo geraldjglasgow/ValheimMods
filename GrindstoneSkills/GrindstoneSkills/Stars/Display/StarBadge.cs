@@ -9,6 +9,9 @@ namespace GrindstoneSkills
     /// the bottom. The column starts under the hotkey number and ends beside the stack count, covering neither. Glyphs
     /// are made the first time a slot shows that many stars and afterwards only switched on and off; the badge lives
     /// and dies with its slot, which the grid destroys when its size changes.
+    /// <para>The grids call <see cref="Apply"/> for every slot every frame, and since rolls give no stars
+    /// (<see cref="StarOdds"/>) only items starred before that, or eggs from a starred hen, still have any. While no
+    /// badge exists, hiding stars returns before looking at the slot.</para>
     /// </summary>
     public class StarBadge : MonoBehaviour
     {
@@ -17,13 +20,16 @@ namespace GrindstoneSkills
         private const float CentreX = 8f;
         private const float FirstCentreY = -24f;
 
+        /// <summary>Badges that woke and are not destroyed yet. One added to a hidden slot counts once the slot shows.</summary>
+        private static int live;
+
         private readonly RectTransform[] glyphs = new RectTransform[Stars.Max];
         private int shown;
 
         /// <summary>Shows <paramref name="stars"/> on the slot. 0 hides them, and adds nothing to a slot without a badge.</summary>
         public static void Apply(GameObject slot, int stars)
         {
-            if (slot == null)
+            if ((stars <= 0 && live == 0) || slot == null)
                 return;
             if (!slot.TryGetComponent(out StarBadge badge))
             {
@@ -33,6 +39,10 @@ namespace GrindstoneSkills
             }
             badge.Show(Mathf.Clamp(stars, 0, Stars.Max));
         }
+
+        private void Awake() => live++;
+
+        private void OnDestroy() => live--;
 
         private void Show(int stars)
         {

@@ -254,7 +254,11 @@ These are in addition to what the game already gives (shorter craft time):
   - active-food stars in the player's custom data.
 - **Cook level:** sent with the add RPC. Skills are client-side in vanilla too, so this trusts the client no less
   than the game does.
-- **Transient RPCs:** add-with-stars, set-filter and the XP credit.
+- **Transient RPCs:** add-with-stars, set-filter and the XP credit. Every skill's XP credit (cooking, woodcutting,
+  husbandry) goes to the receiving player's machine alone (`PlayerIds.PeerOf`: the owner of their character's ZDO),
+  and to everybody only when the sender has no such ZDO. Callouts (mine, wood, fish, herd) go only to the players
+  whose character stands near the spot (`NearbyRpc`). Object RPCs on plants, pickables, chunked rocks and tameables
+  are registered on an object only when the first one arrives for it (`LazyRpcs`).
 
 ## Settings
 
@@ -381,8 +385,9 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
   - `Player.PlacePiece` instantiates the ship on the builder's client, which owns it, then calls `Piece.SetCreator`.
     A postfix stores the builder's level on the ship's ZDO (`grindstone_shipwright`) and raises the new ship's max
     health (its `Awake` ran before the level was stored).
-  - Every client that loads a ship raises `WearNTear.m_health` in a prefix on `WearNTear.Awake`, before the game
-    adds the world level bonus and computes the health share, so every machine agrees on the max.
+  - Every client that loads a ship raises `WearNTear.m_health` in a prefix on `Ship.Awake` (not on every building
+    piece's `WearNTear.Awake`), so every machine agrees on the max; when the ship's `WearNTear` woke first, its health
+    share is worked out again.
   - The current health in the ZDO is absolute and untouched; a new ship has none stored and reads as full.
 - **Speed (`HelmSpeed`):**
   - The game moves a ship in `Ship.CustomFixedUpdate` on the ZDO owner only, and the owner is not always the
@@ -878,7 +883,9 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - Credits reach the miner as one raise; the game gives at most one level per raise. Discovery is credited before the
   hit is sent.
 - Echo sees only loaded objects. Non-owners' chunk healths lag up to 10 s (the game reloads them), which Echo and
-  "chunks left" follow; broken chunks reach everybody at once.
+  "chunks left" follow; broken chunks reach everybody at once. Echo walks the loaded objects at most every 5 s (sooner
+  after 8 m of moving) and picks from the deposits that walk found, so one loaded or fractured since is pinged a few
+  seconds late.
 - When the miner owns the rock, chunks broken by splash count in their Mine Hits and Mines stats. Splash does not
   trigger a Dvergr area (`m_triggerPrivateArea`) as a hit does.
 - A swing whose first rock hit does not land (its chunk already broken on the owner, lag) does not splash.
@@ -1590,9 +1597,11 @@ Everything runs on the parent's (or young animal's, or egg's) ZDO owner, at the 
   beside the animal, with the world's resource rate. The table is the creature's own drops minus trophies, food and
   cooking inputs, weighted by drop chance: hens feathers, boars leather scraps, wolves pelts and fangs, lox pelts,
   moose hides and sinew. A due roll waits for a keeper (an area loads 60 m out, beyond Keeper Range) and never stacks.
-- **Extra honey (`ExtraHoney`):** on the harvester's client, a prefix on `Beehive.Extract` (which the game calls only
-  after its own ward and honey checks) records the honey count; after `Beehive.Interact`, Husbandry rises by Honey
-  Experience per honey and each honey rolls the player's share for one more, spawned at the hive as a networked item.
+- **Extra honey (`ExtraHoney`):** on the hive's owner, a prefix on `Beehive.RPC_Extract` records the honey count;
+  once the game has emptied the hive, a postfix finds the harvester (the loaded player whose character the caller
+  owns), rolls per honey their share (published Husbandry level) for one more, spawned at the hive as a networked
+  item, and sends their client one Honey credit per honey (`HusbandryCredit`), which raises Husbandry by Honey
+  Experience. A second press within a round trip, or two players at once, are paid only for the honey handed out.
   OpenKeep's hive settings only change how much honey there is, so they add up.
 - **Starred eggs (`YieldStarItems`):** every item with `EggGrow` becomes a star item while Husbandry is on (the game
   already stores the laying hen's level in the egg's quality): eggs from starred hens show their star, stack apart,
@@ -1626,7 +1635,8 @@ Everything runs on the parent's (or young animal's, or egg's) ZDO owner, at the 
     like the game), turns and eats one: the feeder's owner removes the item (directly or by `grindstone_FeederTake`),
     `m_onConsumedItem` runs with that food's prefab (so fed time, Fed Duration and feeding experience follow), and the
     consume effect and animation play. It gives up after 30 s or when the feeder empties. Loaded feeders are a list
-    filled in `Container.Awake`; non-owners read a feeder's inventory from its ZDO.
+    filled in `Container.Awake`, left as each is destroyed and emptied with the world; non-owners read a feeder's
+    inventory from its ZDO.
 
 ### Animal lore (level 20)
 
@@ -1844,7 +1854,7 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 ### Picking
 
 - **Owner (`RPC_Pick`):** every dropped item that carries stars gets the crop's stars (extra drops too); a giant adds
-  its extra stack.
+  its extra stack, in a postfix and only when the game's body really picked the crop.
 - **Picker's client (`Interact`)** does the rest:
   - Bonus yield: 50% chance at level 100 instead of the game's 25%, via the instance's `m_maxLevelBonusChance`
     during the call.
@@ -1875,9 +1885,10 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 
 - **Growth speed:** the planter's 40% at level 100, plus 25% when fertilized. `GetGrowTime` is divided by it on
   every client, from the ZDO, so the half-grown look agrees everywhere.
-- **Rain:** at most once per 10 s of game time per plant (a mark in memory), the owner credits half the time since
+- **Rain:** at most once per 60 s of game time per plant (a mark in memory), the owner credits half the time since
   the last mark while it is wet at the owner's client (+50%), by moving `s_plantTime` back. Dry time moves the mark
-  without credit; one credit is at most 30 s.
+  without credit; one credit is at most 90 s. Each credit is a ZDO write the game sends to every peer near the plant,
+  so they stay a minute apart.
 - **Tending:** E (the game's use key) on a growing plant tends it and every growing plant within 2.5 m that the
   player may access (ward).
   - Each gains 10% of its grow time, once per in-game day, through an RPC to its owner.

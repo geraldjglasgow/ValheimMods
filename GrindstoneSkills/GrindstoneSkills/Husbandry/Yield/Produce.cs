@@ -31,7 +31,7 @@ namespace GrindstoneSkills
             private static void Postfix(Tameable __instance)
             {
                 if (HusbandrySkill.Active && HusbandryYieldSettings.ProduceChance.Value > 0f && IsFedOwnedTame(__instance))
-                    HookGuard.Run("produce", () => Advance(__instance));
+                    HookGuard.Run("produce", static tame => Advance(tame), __instance);
             }
         }
 

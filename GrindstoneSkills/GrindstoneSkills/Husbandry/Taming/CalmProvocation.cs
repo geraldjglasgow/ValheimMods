@@ -13,12 +13,15 @@ namespace GrindstoneSkills
     /// </summary>
     public static class CalmProvocation
     {
+        private static readonly int BrokenByHash = Keys.CalmBrokenBy.GetStableHashCode();
+        private static readonly int BrokenAtHash = Keys.CalmBrokenAt.GetStableHashCode();
+
         [HarmonyPatch(typeof(MonsterAI), nameof(MonsterAI.OnDamaged))]
         private static class Hurt
         {
             [HarmonyPostfix]
             private static void Postfix(MonsterAI __instance, Character attacker) =>
-                Guard.Run("calm provocation", () => Remember(__instance, attacker));
+                Guard.Run("calm provocation", static hurt => Remember(hurt.ai, hurt.attacker), (ai: __instance, attacker));
         }
 
         private static void Remember(MonsterAI ai, Character attacker)
@@ -36,10 +39,10 @@ namespace GrindstoneSkills
         public static bool IsWary(Tameable tameable, Player player)
         {
             ZDO zdo = tameable.m_nview.GetZDO();
-            long by = zdo.GetLong(Keys.CalmBrokenBy);
+            long by = zdo.GetLong(BrokenByHash);
             if (by == 0L || by != player.GetPlayerID())
                 return false;
-            return Herd.SecondsSince(zdo.GetLong(Keys.CalmBrokenAt)) < HusbandryTamingSettings.CalmBreakTime.Value;
+            return Herd.SecondsSince(zdo.GetLong(BrokenAtHash)) < HusbandryTamingSettings.CalmBreakTime.Value;
         }
     }
 }

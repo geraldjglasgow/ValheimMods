@@ -9,11 +9,14 @@ namespace GrindstoneSkills
     /// to its ZDO a frame later. While RPC_Pick runs for a crop with stars (<see cref="CropKeys"/>), every new item that
     /// can carry stars gets the crop's, is rescaled and saved at once, as the cooking stations do
     /// (<see cref="StationSpawnStars"/>). A giant also drops its extra crop, (Giant Crop Yield - 1) times the crop's
-    /// amount, as one stack.
+    /// amount, as one stack, in a postfix and only when the game's body really picked the crop (m_picked turned true:
+    /// the owner runs RPC_SetPicked at once), so a pick another mod skips or the game's body throws drops nothing extra.
+    /// The giant flag is read in the prefix: the pick destroys the crop's ZDO.
     /// </summary>
     public static class CropSpawn
     {
         private static int open = -1;
+        private static bool giant;
 
         [HarmonyPatch(typeof(Pickable), nameof(Pickable.RPC_Pick))]
         private static class Pick
@@ -29,15 +32,24 @@ namespace GrindstoneSkills
                     return;
                 __state = true;
                 open = CropKeys.Stars(nview);
-                if (CropKeys.Giant(nview))
-                    HookGuard.Run("Farming giant", () => DropGiant(__instance));
+                giant = CropKeys.Giant(nview);
+            }
+
+            [HarmonyPostfix]
+            private static void Postfix(Pickable __instance, bool __state)
+            {
+                if (__state && giant && __instance.m_picked)
+                    HookGuard.Run("Farming giant", static pickable => DropGiant(pickable), __instance);
             }
 
             [HarmonyFinalizer]
             private static void Finalizer(bool __state)
             {
                 if (__state)
+                {
                     open = -1;
+                    giant = false;
+                }
             }
         }
 
@@ -61,15 +73,11 @@ namespace GrindstoneSkills
             }
         }
 
-        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.OnCreateNew), typeof(ItemDrop), typeof(bool))]
-        private static class Created
+        /// <summary>A new item, from <see cref="ItemCreated"/> (ItemDrop.OnCreateNew).</summary>
+        internal static void OnCreated(ItemDrop item)
         {
-            [HarmonyPostfix]
-            private static void Postfix(ItemDrop item)
-            {
-                if (open > 0 && item?.m_itemData != null)
-                    HookGuard.Run("Farming crop stars", () => Apply(item, open));
-            }
+            if (open > 0 && item?.m_itemData != null)
+                HookGuard.Run("Farming crop stars", static drop => Apply(drop, open), item);
         }
 
         /// <summary>Gives a new item stars, when it can carry them, and saves it at once.</summary>

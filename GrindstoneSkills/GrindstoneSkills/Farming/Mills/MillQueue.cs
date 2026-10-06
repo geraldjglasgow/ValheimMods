@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 
@@ -19,6 +20,14 @@ namespace GrindstoneSkills
     {
         private static readonly int StarsHash = Keys.MillStars.GetStableHashCode();
 
+        private sealed class Known
+        {
+            public bool StarMill;
+        }
+
+        /// <summary>Whether each smelter is a star mill, decided once per instance: every ore queued or taken asks.</summary>
+        private static readonly ConditionalWeakTable<Smelter, Known> known = new ConditionalWeakTable<Smelter, Known>();
+
         /// <summary>The stars of the item RemoveOneOre took last; 0 for an item without a digit.</summary>
         public static int LastTaken { get; private set; }
 
@@ -26,10 +35,13 @@ namespace GrindstoneSkills
         public static ZDO Tracked(Smelter smelter)
         {
             ZNetView nview = smelter != null ? smelter.m_nview : null;
-            if (nview == null || !nview.IsValid() || !nview.IsOwner() || !CropStarItems.IsStarMill(Utils.GetPrefabName(smelter.gameObject)))
+            if (nview == null || !nview.IsValid() || !nview.IsOwner() || !IsStarMill(smelter))
                 return null;
             return nview.GetZDO();
         }
+
+        private static bool IsStarMill(Smelter smelter) =>
+            known.GetValue(smelter, instance => new Known { StarMill = CropStarItems.IsStarMill(Utils.GetPrefabName(instance.gameObject)) }).StarMill;
 
         [HarmonyPatch(typeof(Smelter), nameof(Smelter.QueueOre))]
         private static class Queued

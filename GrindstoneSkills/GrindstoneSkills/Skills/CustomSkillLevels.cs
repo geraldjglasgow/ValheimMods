@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using HarmonyLib;
 using PatchGuard;
-using UnityEngine;
 
 namespace GrindstoneSkills
 {
@@ -20,20 +18,14 @@ namespace GrindstoneSkills
         private static float timer;
         private static Player publishedFor;
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class Tick
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(Player player, float dt)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (__instance != Player.m_localPlayer)
-                    return;
-                timer += Time.deltaTime;
-                if (timer < Interval)
-                    return;
-                timer = 0f;
-                Guard.Run("custom skill levels", () => Publish(__instance));
-            }
+            timer += dt;
+            if (timer < Interval)
+                return;
+            timer = 0f;
+            Guard.Run("custom skill levels", static p => Publish(p), player);
         }
 
         private static void Publish(Player player)

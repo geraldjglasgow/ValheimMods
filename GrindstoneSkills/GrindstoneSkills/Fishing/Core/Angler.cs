@@ -10,6 +10,9 @@ namespace GrindstoneSkills
     /// </summary>
     public static class Angler
     {
+        private static readonly int AnglerLevelHash = Keys.AnglerLevel.GetStableHashCode();
+        private static readonly int BaitStarsHash = Keys.BaitStars.GetStableHashCode();
+
         public static void Stamp(FishingFloat fishingFloat, float level, int baitStars)
         {
             ZDO zdo = fishingFloat.m_nview.GetZDO();
@@ -21,14 +24,14 @@ namespace GrindstoneSkills
         public static float Level(FishingFloat fishingFloat)
         {
             ZDO zdo = Zdo(fishingFloat);
-            return zdo == null ? 0f : UnityEngine.Mathf.Max(0f, zdo.GetFloat(Keys.AnglerLevel));
+            return zdo == null ? 0f : UnityEngine.Mathf.Max(0f, zdo.GetFloat(AnglerLevelHash));
         }
 
         /// <summary>The stars of the bait on the float's hook; 0 when unknown.</summary>
         public static int BaitStars(FishingFloat fishingFloat)
         {
             ZDO zdo = Zdo(fishingFloat);
-            return zdo == null ? 0 : UnityEngine.Mathf.Clamp(zdo.GetInt(Keys.BaitStars), 0, Stars.Max);
+            return zdo == null ? 0 : UnityEngine.Mathf.Clamp(zdo.GetInt(BaitStarsHash), 0, Stars.Max);
         }
 
         /// <summary>

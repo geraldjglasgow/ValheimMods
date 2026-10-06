@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using HarmonyLib;
-using UnityEngine;
 
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Fills <see cref="Kitchen"/> from the scene's prefabs (cooking stations, fermenters) and the item database's
-    /// recipes (kitchen crafting stations). Runs last after both ZNetScene.Awake and ObjectDB.Awake, whichever comes
+    /// Fills <see cref="Kitchen"/> from the scene's prefabs (cooking stations, fermenters, read once through
+    /// <see cref="PrefabIndex"/>) and the item database's recipes (kitchen crafting stations). Runs last after both ZNetScene.Awake and ObjectDB.Awake, whichever comes
     /// second finds both, so prefabs and recipes another mod registers in its own Awake postfix are found too.
     /// Adding is idempotent, so running twice is harmless.
     /// </summary>
@@ -32,8 +31,8 @@ namespace GrindstoneSkills
         {
             int before = Kitchen.Count;
             if (ZNetScene.instance != null)
-                foreach (GameObject prefab in ZNetScene.instance.m_prefabs)
-                    AddStation(prefab);
+                foreach (PrefabIndex.Converter converter in PrefabIndex.Scene().Converters)
+                    AddStation(converter);
             if (ObjectDB.instance != null)
                 foreach (Recipe recipe in ObjectDB.instance.m_recipes)
                     AddRecipe(recipe);
@@ -41,15 +40,13 @@ namespace GrindstoneSkills
                 GrindstoneSkills.Log.LogInfo($"Kitchen items that carry stars: {Kitchen.Count}.");
         }
 
-        private static void AddStation(GameObject prefab)
+        private static void AddStation(PrefabIndex.Converter converter)
         {
-            if (prefab == null)
-                return;
-            CookingStation station = prefab.GetComponent<CookingStation>();
+            CookingStation station = converter.Station;
             if (Kitchen.IsKitchen(station))
                 foreach (CookingStation.ItemConversion conversion in station.m_conversion)
                     AddConversion(conversion.m_from, conversion.m_to);
-            Fermenter fermenter = prefab.GetComponent<Fermenter>();
+            Fermenter fermenter = converter.Fermenter;
             if (fermenter != null)
                 foreach (Fermenter.ItemConversion conversion in fermenter.m_conversion)
                     AddConversion(conversion.m_from, conversion.m_to);

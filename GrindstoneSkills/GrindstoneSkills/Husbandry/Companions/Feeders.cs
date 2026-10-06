@@ -9,8 +9,9 @@ namespace GrindstoneSkills
     /// The animal feeders loaded on this machine, what they hold and taking food out of one.
     /// <list type="bullet">
     /// <item>Every feeder adds itself in a Container.Awake postfix, only an instance with a ZDO (not the build ghost),
-    /// and registers <see cref="Keys.RpcFeederTake"/> on its view beside the game's own container RPCs. Destroyed ones
-    /// (unloaded, taken down) are dropped on the next search, so eating needs no physics search.</item>
+    /// and registers <see cref="Keys.RpcFeederTake"/> on its view beside the game's own container RPCs. A destroyed one
+    /// (unloaded, taken down) drops out at once (<see cref="FeederLife"/>), and the list is emptied when the world's net
+    /// scene goes, so it holds only the feeders loaded now and eating needs no physics search.</item>
     /// <item>A container's inventory is changed only by its owner, which saves it to the ZDO; every other machine reloads
     /// it from the ZDO within a second of a change (Container.CheckForChanges). That copy is what a creature's owner reads
     /// to decide what a feeder holds.</item>
@@ -29,12 +30,31 @@ namespace GrindstoneSkills
             private static void Postfix(Container __instance)
             {
                 ZNetView view = __instance.m_nview;
-                if (view == null || view.GetZDO() == null || view.GetZDO().GetPrefab() != FeederPrefab.Hash)
-                    return;
-                view.Register<string>(Keys.RpcFeederTake, (sender, itemName) => Receive(__instance, itemName));
-                Loaded.Add(__instance);
+                if (view != null && view.GetZDO() != null && view.GetZDO().GetPrefab() == FeederPrefab.Hash)
+                    Track(__instance, view);
             }
         }
+
+        [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.OnDestroy))]
+        private static class WorldExit
+        {
+            [HarmonyPostfix]
+            private static void Postfix() => Loaded.Clear();
+        }
+
+        /// <summary>
+        /// A feeder that just woke: its RPC, its place in the list and the component that takes it out again. Apart from
+        /// the postfix, so only a feeder pays for the handler's closure, not every container that wakes.
+        /// </summary>
+        private static void Track(Container feeder, ZNetView view)
+        {
+            view.Register<string>(Keys.RpcFeederTake, (sender, itemName) => Receive(feeder, itemName));
+            feeder.gameObject.AddComponent<FeederLife>().Feeder = feeder;
+            Loaded.Add(feeder);
+        }
+
+        /// <summary>Takes a destroyed feeder out of the list (<see cref="FeederLife"/>).</summary>
+        public static void Forget(Container feeder) => Loaded.Remove(feeder);
 
         /// <summary>A loaded feeder whose view and inventory are there.</summary>
         public static bool IsUsable(Container feeder) =>

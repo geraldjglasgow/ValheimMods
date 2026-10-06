@@ -13,6 +13,10 @@ namespace GrindstoneSkills
     /// </summary>
     public static class SkillBook
     {
+        // The last pane found, and its window: the gamepad follow asks every frame while the window is open.
+        private static SkillsDialog paneDialog;
+        private static BookPane pane;
+
         [HarmonyPatch(typeof(SkillsDialog), nameof(SkillsDialog.Setup))]
         private static class Open
         {
@@ -26,7 +30,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPostfix]
             private static void Postfix(SkillsDialog __instance, GameObject selectedObject) =>
-                HookGuard.Run("skill book", () => PaneOf(__instance)?.ShowEntry(selectedObject));
+                HookGuard.Run("skill book", static click => PaneOf(click.dialog)?.ShowEntry(click.selectedObject), (dialog: __instance, selectedObject));
         }
 
         [HarmonyPatch(typeof(SkillsDialog), nameof(SkillsDialog.Update))]
@@ -36,7 +40,7 @@ namespace GrindstoneSkills
             private static void Postfix(SkillsDialog __instance)
             {
                 if (ZInput.IsExclusiveGamepadActive() && !ZInput.IsTouchActive())
-                    HookGuard.Run("skill book", () => PaneOf(__instance)?.Follow(__instance.m_selectionIndex));
+                    HookGuard.Run("skill book", static dialog => PaneOf(dialog)?.Follow(dialog.m_selectionIndex), __instance);
             }
         }
 
@@ -48,12 +52,16 @@ namespace GrindstoneSkills
             BookLayout.PaneOf(dialog)?.Open(player);
         }
 
-        /// <summary>The pane once the window has one; the window makes it as it opens.</summary>
+        /// <summary>The pane once the window has one (the window makes it as it opens), remembered per window.</summary>
         private static BookPane PaneOf(SkillsDialog dialog)
         {
+            if (pane != null && paneDialog == dialog)
+                return pane;
             Transform frame = dialog.skillListScrollRect != null ? dialog.skillListScrollRect.transform.parent?.parent : null;
-            Transform pane = frame != null ? frame.Find(BookLayout.PaneName) : null;
-            return pane != null ? pane.GetComponent<BookPane>() : null;
+            Transform found = frame != null ? frame.Find(BookLayout.PaneName) : null;
+            paneDialog = dialog;
+            pane = found != null ? found.GetComponent<BookPane>() : null;
+            return pane;
         }
 
         /// <summary>Empties every entry's tooltip, which then never shows, and hides one the game already began to show.</summary>

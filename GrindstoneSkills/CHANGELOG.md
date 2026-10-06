@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.14.1
+
+- Husbandry: extra honey is rolled by the hive; two players or a double press no longer both get paid.
+- Fixed: a giant crop another mod kept from being picked still dropped its extra crops.
+- Fixed: after Alt+Tab, a stuck Alt could block the Wind Call (K) and Lookout (O) keys.
+- Less work every frame for plants, fish, rocks, compost bins and hover text; less network traffic.
+- Update the server and every client together.
+
 ## 0.14.0
 
 - Sailing: an API for other mods; ShipConfig's ship panel shows your Sailing bonuses and abilities.

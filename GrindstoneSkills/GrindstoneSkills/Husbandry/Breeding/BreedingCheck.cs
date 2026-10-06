@@ -24,17 +24,17 @@ namespace GrindstoneSkills
             private static void Prefix(Procreation __instance, out BreedingCall __state)
             {
                 Procreation parent = __instance;
-                __state = Breeds(parent) ? HookGuard.Run("breeding pace", () => BreedingPace.Apply(parent), null) : null;
+                __state = Breeds(parent) ? HookGuard.Run("breeding pace", static p => BreedingPace.Apply(p), parent, (BreedingCall)null) : null;
                 BreedingCall call = __state;
                 if (call != null)
-                    HookGuard.Run("birth rolls", () => BirthRolls.Before(parent, call));
+                    HookGuard.Run("birth rolls", static birth => BirthRolls.Before(birth.parent, birth.call), (parent, call));
             }
 
             [HarmonyPostfix]
             private static void Postfix(Procreation __instance, BreedingCall __state)
             {
                 if (__state != null)
-                    HookGuard.Run("birth", () => BirthRolls.After(__instance, __state));
+                    HookGuard.Run("birth", static birth => BirthRolls.After(birth.parent, birth.call), (parent: __instance, call: __state));
             }
 
             [HarmonyFinalizer]

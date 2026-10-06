@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 
 namespace GrindstoneSkills
 {
@@ -8,8 +9,10 @@ namespace GrindstoneSkills
     /// <item>Player.PlacePiece instantiates the ship on the builder's client, which owns it, and then calls
     /// Piece.SetCreator. A postfix there stores the builder's level in the ship's ZDO and raises the new ship's max
     /// health; its Awake ran before the level was stored.</item>
-    /// <item>Every client that loads the ship later raises it in WearNTear.Awake, before the game adds the world level
-    /// bonus and computes the health share, so every machine agrees on the max.</item>
+    /// <item>Every client that loads the ship later raises it in Ship.Awake (patched there rather than in every building
+    /// piece's WearNTear.Awake), so every machine agrees on the max. When the ship's WearNTear woke first, it already
+    /// added the world level bonus (a factor too, so the order does not matter) and computed the health share, which is
+    /// then worked out again.</item>
     /// </list>
     /// The current health in the ZDO is an absolute number and stays untouched: a new ship has none stored and reads as
     /// full. Ships built without GrindstoneSkills have no stored level and keep the game's health. A changed setting
@@ -38,18 +41,24 @@ namespace GrindstoneSkills
             }
         }
 
-        [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Awake))]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.Awake))]
         private static class Loaded
         {
             [HarmonyPrefix]
-            private static void Prefix(WearNTear __instance)
+            private static void Prefix(Ship __instance)
             {
-                if (__instance.GetComponent<Ship>() == null)
-                    return;
+                WearNTear wearNTear = __instance.GetComponent<WearNTear>();
                 ZNetView nview = __instance.GetComponent<ZNetView>();
                 ZDO zdo = nview != null ? nview.GetZDO() : null;
-                if (zdo != null)
-                    __instance.m_health *= Factor(zdo.GetFloat(LevelHash));
+                if (wearNTear == null || zdo == null)
+                    return;
+                float factor = Factor(zdo.GetFloat(LevelHash));
+                if (Mathf.Approximately(factor, 1f))
+                    return;
+                wearNTear.m_health *= factor;
+                // m_nview is set in WearNTear.Awake: when it already ran, its health share used the old max.
+                if (wearNTear.m_nview != null)
+                    wearNTear.m_healthPercentage = Mathf.Clamp01(zdo.GetFloat(ZDOVars.s_health, wearNTear.m_health) / wearNTear.m_health);
             }
         }
 

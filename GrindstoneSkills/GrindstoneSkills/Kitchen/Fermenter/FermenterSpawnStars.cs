@@ -1,4 +1,3 @@
-using HarmonyLib;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -25,20 +24,16 @@ namespace GrindstoneSkills
 
         public static void End(int? previous) => scope = previous;
 
-        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.OnCreateNew), typeof(ItemDrop), typeof(bool))]
-        private static class Created
+        /// <summary>A new item, from <see cref="ItemCreated"/> (ItemDrop.OnCreateNew).</summary>
+        internal static void OnCreated(ItemDrop item)
         {
-            [HarmonyPostfix]
-            private static void Postfix(ItemDrop item)
-            {
-                if (scope == null || item == null || !Kitchen.IsKitchenItem(item.m_itemData))
-                    return;
-                int quality = Stars.ToQuality(scope.Value);
-                if (item.m_itemData.m_quality == quality)
-                    return;
-                item.SetQuality(quality);
-                item.Save();
-            }
+            if (scope == null || item == null || !Kitchen.IsKitchenItem(item.m_itemData))
+                return;
+            int quality = Stars.ToQuality(scope.Value);
+            if (item.m_itemData.m_quality == quality)
+                return;
+            item.SetQuality(quality);
+            item.Save();
         }
     }
 }

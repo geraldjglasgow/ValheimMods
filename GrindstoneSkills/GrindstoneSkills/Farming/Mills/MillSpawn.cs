@@ -59,16 +59,12 @@ namespace GrindstoneSkills
             private static void Finalizer() => dropping = false;
         }
 
-        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.OnCreateNew), typeof(ItemDrop), typeof(bool))]
-        private static class Created
+        /// <summary>A new item, from <see cref="ItemCreated"/> (ItemDrop.OnCreateNew).</summary>
+        internal static void OnCreated(ItemDrop item)
         {
-            [HarmonyPostfix]
-            private static void Postfix(ItemDrop item)
-            {
-                int stars = spawning >= 0 ? spawning : dropping ? MillQueue.LastTaken : 0;
-                if (stars > 0 && item?.m_itemData != null)
-                    HookGuard.Run("Farming mill stars", () => CropSpawn.Apply(item, stars));
-            }
+            int stars = spawning >= 0 ? spawning : dropping ? MillQueue.LastTaken : 0;
+            if (stars > 0 && item?.m_itemData != null)
+                HookGuard.Run("Farming mill stars", static drop => CropSpawn.Apply(drop.item, drop.stars), (item, stars));
         }
     }
 }

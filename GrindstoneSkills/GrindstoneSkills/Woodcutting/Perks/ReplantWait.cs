@@ -25,7 +25,7 @@ namespace GrindstoneSkills
             [HarmonyPrefix]
             private static bool Prefix(Plant __instance, ref GameObject __result)
             {
-                if (!WoodSkill.Active || !Blocked(__instance.GetStatus()) || !HookGuard.Run("replanting", () => Waits(__instance), false))
+                if (!WoodSkill.Active || !Blocked(__instance.GetStatus()) || !HookGuard.Run("replanting", static plant => Waits(plant), __instance, false))
                     return true;
                 __result = null;
                 return false;

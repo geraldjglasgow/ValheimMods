@@ -13,25 +13,46 @@ namespace GrindstoneSkills
     /// <item>for a plant a player planted, "[E] Tend" or "Tended today" while tending is on;</item>
     /// <item>from the viewer's Almanac Level, the odds of the stars it will ripen with (companions counted now).</item>
     /// </list>
-    /// Everything is read from the plant's ZDO on the viewing client.
+    /// Everything is read from the plant's ZDO on the viewing client. The lines are kept for the plant in view and
+    /// rebuilt after 0.25 s, or at once when its ZDO changes (tended, fertilized).
     /// </summary>
     [HarmonyPatch(typeof(Plant), nameof(Plant.GetHoverText))]
     public static class PlantHover
     {
+        private const float RefreshSeconds = 0.25f;
+
         private static readonly StringBuilder text = new StringBuilder();
+        private static Plant lastPlant;
+        private static uint lastRevision;
+        private static string lastLines = "";
+        private static float refreshAt;
 
         [HarmonyPostfix]
         private static void Postfix(Plant __instance, ref string __result)
         {
             if (FarmSkill.Active && !string.IsNullOrEmpty(__result))
-                __result += HookGuard.Run("Farming almanac", static plant => Lines(plant), __instance, "");
+                __result += HookGuard.Run("Farming almanac", static plant => Cached(plant), __instance, "");
         }
 
-        private static string Lines(Plant plant)
+        /// <summary>The lines for this plant, rebuilt when the plant or its ZDO changed or the refresh time passed.</summary>
+        private static string Cached(Plant plant)
         {
             ZDO zdo = PlantKeys.Of(plant);
             if (zdo == null)
                 return "";
+            float now = Time.time;
+            if (ReferenceEquals(plant, lastPlant) && zdo.DataRevision == lastRevision && now < refreshAt)
+                return lastLines;
+            lastPlant = plant;
+            lastRevision = zdo.DataRevision;
+            refreshAt = now + RefreshSeconds;
+            lastLines = "";
+            lastLines = Lines(plant, zdo);
+            return lastLines;
+        }
+
+        private static string Lines(Plant plant, ZDO zdo)
+        {
             text.Clear();
             if (plant.GetStatus() == Plant.Status.Healthy)
                 text.Append('\n').Append(Ripening(PlantClock.Left(plant)));
@@ -67,7 +88,8 @@ namespace GrindstoneSkills
             CropPlant crop = CropCatalog.OfPlant(plant);
             if (!CropRoll.Rolls(crop) || !PlantKeys.IsPlanted(zdo) || !FarmSkill.Reached(FarmingPerkSettings.AlmanacLevel.Value, FarmSkill.Local()))
                 return;
-            float[] odds = StarOdds.At(CropRoll.EffectiveNow(plant, crop, zdo));
+            // The hover runs every frame while it is shown: the companions' physics query only when the odds need it.
+            float[] odds = StarOdds.At(StarOdds.DependOnLevel ? CropRoll.EffectiveNow(plant, crop, zdo) : 0f);
             text.Append('\n');
             for (int stars = 1; stars <= Stars.Max; stars++)
                 text.Append(StarText.Colored(stars)).Append(' ').Append(Percent(odds[stars])).Append(stars < Stars.Max ? "  " : "");

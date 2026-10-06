@@ -1,4 +1,3 @@
-using HarmonyLib;
 using Hotkeys;
 using PatchGuard;
 using UnityEngine;
@@ -19,15 +18,11 @@ namespace GrindstoneSkills
         /// <summary>Seconds until the local player may use it again; 0 when ready.</summary>
         public static float CooldownLeft => Mathf.Max(0f, readyAt - Time.time);
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class KeyCheck
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(Player player)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (__instance == Player.m_localPlayer && Pressed(__instance))
-                    Guard.Run("lookout key", () => TrySend(__instance));
-            }
+            if (Pressed(player))
+                Guard.Run("lookout key", static p => TrySend(p), player);
         }
 
         public static bool Unlockable => SailingSkill.Active && LookoutSettings.Level.Value <= SailingSkill.MaxLevel;

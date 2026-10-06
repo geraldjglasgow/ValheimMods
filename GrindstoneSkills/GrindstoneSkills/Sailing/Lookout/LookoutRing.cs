@@ -1,3 +1,4 @@
+using System;
 using PatchGuard;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -39,7 +40,9 @@ namespace GrindstoneSkills
             ring.Spread(0f);
         }
 
-        private void Update() => Guard.Run("lookout ring", Step);
+        private Action step;
+
+        private void Update() => Guard.Run("lookout ring", step ??= Step);
 
         private void Step()
         {

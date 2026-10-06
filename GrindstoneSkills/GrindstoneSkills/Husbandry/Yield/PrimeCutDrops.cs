@@ -48,7 +48,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(Ragdoll __instance) =>
-                ragdollStars = HusbandrySkill.Active ? HookGuard.Run("prime cuts", () => Read(__instance), 0) : 0;
+                ragdollStars = HusbandrySkill.Active ? HookGuard.Run("prime cuts", static ragdoll => Read(ragdoll), __instance, 0) : 0;
 
             [HarmonyFinalizer]
             private static void Finalizer() => ragdollStars = 0;
@@ -62,7 +62,7 @@ namespace GrindstoneSkills
             {
                 int stars = Current;
                 if (stars > 0)
-                    HookGuard.Run("prime cuts", () => Apply(__instance, stars));
+                    HookGuard.Run("prime cuts", static drop => Apply(drop.item, drop.stars), (item: __instance, stars));
             }
         }
 

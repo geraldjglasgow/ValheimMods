@@ -10,7 +10,7 @@ namespace GrindstoneSkills
     /// <item><see cref="ShowLocal"/>: the miner's own events ("Clean strike!", the Echo's distance), on the miner's client
     /// only.</item>
     /// <item><see cref="Broadcast"/>: events everybody near should see (finds), from any machine, the rock's owner
-    /// included: a routed RPC to everybody (<see cref="Keys.RpcMineCallout"/>); each client with a camera within
+    /// included: a routed RPC to the players near the spot (<see cref="Keys.RpcMineCallout"/>, <see cref="NearbyRpc"/>); each client with a camera within
     /// <see cref="Range"/> of the spot draws it. A dedicated server draws nothing.</item>
     /// </list>
     /// Send the English text; it is shown as given. The routed RPC is registered in a ZNet.Awake postfix, where the game
@@ -38,8 +38,8 @@ namespace GrindstoneSkills
         /// <summary>Shows <paramref name="text"/> at <paramref name="position"/> to every player near it, this one included.</summary>
         public static void Broadcast(Vector3 position, string text)
         {
-            if (ZRoutedRpc.instance != null && !string.IsNullOrEmpty(text))
-                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcMineCallout, position, text);
+            if (!string.IsNullOrEmpty(text))
+                NearbyRpc.Send(position, Range, Keys.RpcMineCallout, position, text);
         }
 
         private static void Receive(long sender, Vector3 position, string text) =>

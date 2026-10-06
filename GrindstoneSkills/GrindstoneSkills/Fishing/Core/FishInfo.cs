@@ -21,8 +21,8 @@ namespace GrindstoneSkills
         /// <summary>A Perch's pull (Fish.m_staminaUse), the weakest in the game: the species scale's yardstick.</summary>
         private const float PerchPull = 3f;
 
-        private static readonly List<GameObject> species = new List<GameObject>();
-        private static ObjectDB speciesFrom;
+        /// <summary>Each item prefab's Fish component (null for any other item), looked up once per prefab: tooltips ask every frame.</summary>
+        private static readonly Dictionary<GameObject, Fish> fishOfPrefab = new Dictionary<GameObject, Fish>();
 
         public static ItemDrop Item(Fish fish) =>
             fish == null ? null : fish.m_itemDrop != null ? fish.m_itemDrop : fish.GetComponent<ItemDrop>();
@@ -50,26 +50,23 @@ namespace GrindstoneSkills
             fish == null ? 1f : Mathf.Sqrt(Mathf.Max(PerchPull, fish.m_staminaUse) / PerchPull);
 
         /// <summary>The Fish component on an item's prefab, or null when the item is not a fish.</summary>
-        public static Fish OfItem(ItemDrop.ItemData item) =>
-            item == null || item.m_dropPrefab == null ? null : item.m_dropPrefab.GetComponent<Fish>();
+        public static Fish OfItem(ItemDrop.ItemData item)
+        {
+            GameObject prefab = item?.m_dropPrefab;
+            if (prefab == null)
+                return null;
+            if (!fishOfPrefab.TryGetValue(prefab, out Fish fish))
+                fishOfPrefab[prefab] = fish = prefab.GetComponent<Fish>();
+            return fish;
+        }
 
         public static bool IsFishItem(ItemDrop.ItemData item) => OfItem(item) != null;
 
-        /// <summary>Every item prefab that is a fish, the game's twelve and any a mod adds; read once per item database.</summary>
-        public static IReadOnlyList<GameObject> Species()
-        {
-            ObjectDB db = ObjectDB.instance;
-            if (db == null || db == speciesFrom)
-                return species;
-            speciesFrom = db;
-            species.Clear();
-            foreach (GameObject prefab in db.m_items)
-            {
-                if (prefab != null && prefab.GetComponent<Fish>() != null && prefab.GetComponent<ItemDrop>() != null)
-                    species.Add(prefab);
-            }
-            return species;
-        }
+        /// <summary>
+        /// Every item prefab that is a fish (a Fish and an ItemDrop), the game's twelve and any a mod adds; read once per
+        /// item database (<see cref="PrefabIndex"/>).
+        /// </summary>
+        public static IReadOnlyList<GameObject> Species() => PrefabIndex.Items().Fish;
 
         /// <summary>"a Pike", "an Anglerfish": the name with its English article.</summary>
         public static string WithArticle(string name) =>

@@ -58,7 +58,7 @@ namespace GrindstoneSkills
             ByTree.Clear();
             BySpecies.Clear();
             AddVegetation(zones.m_vegetation);
-            AddPrefabs(ZNetScene.instance.m_prefabs);
+            AddPrefabs(PrefabIndex.Scene());
             builtFor = zones;
             GrindstoneSkills.Log.LogInfo($"Old growth: size ranges for {ByTree.Count} trees of {BySpecies.Count} kinds.");
         }
@@ -73,20 +73,17 @@ namespace GrindstoneSkills
             }
         }
 
-        private static void AddPrefabs(List<GameObject> prefabs)
+        /// <summary>Tree prefabs scaled away from 1, and the trees saplings grow into (<see cref="PrefabIndex"/>).</summary>
+        private static void AddPrefabs(PrefabIndex.ScenePrefabs prefabs)
         {
-            foreach (GameObject prefab in prefabs)
+            foreach (TreeBase tree in prefabs.Trees)
             {
-                if (prefab == null)
-                    continue;
-                TreeBase tree = prefab.GetComponent<TreeBase>();
-                float scale = prefab.transform.localScale.x;
-                if (tree != null && !Mathf.Approximately(scale, 1f))
+                float scale = tree.transform.localScale.x;
+                if (!Mathf.Approximately(scale, 1f))
                     Add(tree, scale, scale);
-                Plant plant = prefab.GetComponent<Plant>();
-                if (plant != null)
-                    AddSapling(plant);
             }
+            foreach (Plant plant in prefabs.Plants)
+                AddSapling(plant);
         }
 
         private static void AddSapling(Plant plant)

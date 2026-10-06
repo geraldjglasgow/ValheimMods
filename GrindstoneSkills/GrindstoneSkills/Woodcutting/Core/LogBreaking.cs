@@ -34,7 +34,7 @@ namespace GrindstoneSkills
             {
                 Woodcutter woodcutter = WoodSkill.Active && IsOwned(__instance) ? Woodcutter.FromHit(hit) : null;
                 if (woodcutter != null)
-                    HookGuard.Run("clean splits", () => CleanSplits.OnLogHit(__instance, hit, woodcutter));
+                    HookGuard.Run("clean splits", static split => CleanSplits.OnLogHit(split.log, split.hit, split.woodcutter), (log: __instance, hit, woodcutter));
             }
         }
 
@@ -43,7 +43,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(TreeLog __instance, HitData hitData, out DropCount __state) =>
-                __state = HookGuard.Run("log break", () => Begin(__instance, hitData), null);
+                __state = HookGuard.Run("log break", static broken => Begin(broken.log, broken.hitData), (log: __instance, hitData), (DropCount)null);
 
             [HarmonyPostfix]
             private static void Postfix()

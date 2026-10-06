@@ -30,7 +30,7 @@ namespace GrindstoneSkills
                 __state = null;
                 if (hit == null || !HusbandrySkill.Active || hit.m_attacker.IsNone())
                     return;
-                float factor = HookGuard.Run("pack damage", () => DealtFactor(hit), 1f);
+                float factor = HookGuard.Run("pack damage", static h => DealtFactor(h), hit, 1f);
                 if (factor <= 1f)
                     return;
                 __state = hit.m_damage;
@@ -53,7 +53,7 @@ namespace GrindstoneSkills
             {
                 if (hit == null || !HusbandrySkill.Active || __instance.IsPlayer() || !__instance.IsTamed())
                     return;
-                HookGuard.Run("pack toughness", () => Soften(__instance, hit));
+                HookGuard.Run("pack toughness", static taken => Soften(taken.character, taken.hit), (character: __instance, hit));
             }
         }
 

@@ -1,5 +1,4 @@
 using System;
-using HarmonyLib;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -34,20 +33,14 @@ namespace GrindstoneSkills
 
         private static float timer;
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class Tick
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(float dt)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (!DefenseSkill.IsLocal(__instance))
-                    return;
-                timer += Time.deltaTime;
-                if (timer < Interval)
-                    return;
-                timer = 0f;
-                HookGuard.Run("defense effects", Refresh);
-            }
+            timer += dt;
+            if (timer < Interval)
+                return;
+            timer = 0f;
+            HookGuard.Run("defense effects", Refresh);
         }
 
         /// <summary>Adds the icon of every state that holds and has none yet.</summary>

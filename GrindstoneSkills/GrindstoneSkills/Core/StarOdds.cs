@@ -8,8 +8,16 @@ namespace GrindstoneSkills
     /// </summary>
     public static class StarOdds
     {
-        /// <summary>The chance of each star count (index = stars): always 0 stars.</summary>
-        public static float[] At(float effectiveLevel) => new float[] { 1f, 0f, 0f, 0f };
+        /// <summary>
+        /// Whether the odds depend on the effective level at all; false while stars are off. A caller whose level costs
+        /// work (a crop counts its companions with a physics query) skips working it out when false.
+        /// </summary>
+        public static bool DependOnLevel => false;
+
+        private static readonly float[] NoStars = { 1f, 0f, 0f, 0f };
+
+        /// <summary>The chance of each star count (index = stars): always 0 stars. One shared array: callers only read it.</summary>
+        public static float[] At(float effectiveLevel) => NoStars;
 
         /// <summary>Rolls a star count at the effective level: always 0.</summary>
         public static int Roll(float effectiveLevel) => 0;

@@ -52,7 +52,7 @@ namespace GrindstoneSkills
         private static void Local(UnityEngine.Component target, HitData hit)
         {
             if (PickSkill.Active && IsLocalPickaxeHit(hit))
-                HookGuard.Run("mine hit", () => Handle(target, hit));
+                HookGuard.Run("mine hit", static mine => Handle(mine.target, mine.hit), (target, hit));
         }
 
         private static void Handle(UnityEngine.Component target, HitData hit)

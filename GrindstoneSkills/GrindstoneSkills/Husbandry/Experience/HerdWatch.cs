@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using HarmonyLib;
 using PatchGuard;
-using UnityEngine;
 
 namespace GrindstoneSkills
 {
@@ -21,20 +19,14 @@ namespace GrindstoneSkills
         private static readonly Dictionary<ZDOID, HerdSnapshot> next = new Dictionary<ZDOID, HerdSnapshot>();
         private static float timer;
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class Tick
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(Player player, float dt)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (__instance != Player.m_localPlayer)
-                    return;
-                timer += Time.deltaTime;
-                if (timer < Interval)
-                    return;
-                timer = 0f;
-                Guard.Run("herd watch", () => Scan(__instance));
-            }
+            timer += dt;
+            if (timer < Interval)
+                return;
+            timer = 0f;
+            Guard.Run("herd watch", static p => Scan(p), player);
         }
 
         private static void Scan(Player player)

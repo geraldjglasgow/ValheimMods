@@ -26,7 +26,7 @@ namespace GrindstoneSkills
                 return true;
             Player player = (Player)__instance;
             __state = player.GetHealth();
-            return HookGuard.Run("defense damage", () => Take(player, hit), true);
+            return HookGuard.Run("defense damage", static intake => Take(intake.player, intake.hit), (player, hit), true);
         }
 
         [HarmonyPostfix]

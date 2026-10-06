@@ -1,4 +1,3 @@
-using HarmonyLib;
 using Hotkeys;
 using PatchGuard;
 using UnityEngine;
@@ -20,15 +19,11 @@ namespace GrindstoneSkills
         /// <summary>Seconds until the local player may use it again; 0 when ready.</summary>
         public static float CooldownLeft => Mathf.Max(0f, readyAt - Time.time);
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class KeyCheck
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(Player player)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (__instance == Player.m_localPlayer && Hotkey.Pressed(WindCallSettings.Key) && __instance.TakeInput())
-                    Guard.Run("wind call key", () => TrySend(__instance));
-            }
+            if (Hotkey.Pressed(WindCallSettings.Key) && player.TakeInput())
+                Guard.Run("wind call key", static p => TrySend(p), player);
         }
 
         public static bool Unlockable => SailingSkill.Active && WindCallSettings.Level.Value <= SailingSkill.MaxLevel;

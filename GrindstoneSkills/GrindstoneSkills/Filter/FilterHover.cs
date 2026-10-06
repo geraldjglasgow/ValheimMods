@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 
 namespace GrindstoneSkills
 {
@@ -8,14 +9,31 @@ namespace GrindstoneSkills
     /// localizes the m_hoverText that UpdateCooking refreshes every second, while the oven's own GetHoverText returns
     /// ""); kitchen crafting stations through CraftingStation.GetHoverText while in use range (out of range it shows
     /// only "too far"). The line is added after localizing, so it is always current and never fills the game's small
-    /// Localize cache with percentages. Where a ward denies the local player, the key hint is left out.
+    /// Localize cache with percentages. Where a ward denies the local player, the key hint is left out. The line (ward
+    /// check, key hint, setting text) is kept for the kitchen in view and its filter setting, and rebuilt after 0.25 s
+    /// or at once when either changes.
     /// </summary>
     public static class FilterHover
     {
+        private const float RefreshSeconds = 0.25f;
+
+        private static ZNetView lastView;
+        private static int lastMinStars = -1;
+        private static string lastLine = "";
+        private static float refreshAt;
+
         private static string Line(ZNetView nview)
         {
+            int minStars = KitchenFilter.MinStars(nview);
+            float now = Time.time;
+            if (ReferenceEquals(nview, lastView) && minStars == lastMinStars && now < refreshAt)
+                return lastLine;
             bool access = PrivateArea.CheckAccess(nview.transform.position, 0f, flash: false);
-            return FilterText.HoverLine(KitchenFilter.MinStars(nview), access);
+            lastView = nview;
+            lastMinStars = minStars;
+            refreshAt = now + RefreshSeconds;
+            lastLine = FilterText.HoverLine(minStars, access);
+            return lastLine;
         }
 
         private static void Append(ZNetView nview, ref string text)

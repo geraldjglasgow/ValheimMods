@@ -15,7 +15,8 @@ namespace GrindstoneSkills
     /// <summary>
     /// Woodcutting credit for something that happened on another machine: a tree felled or a log broken on its owner.
     /// Skills live on each player's own client, so the owner sends the credit by routed RPC (<see cref="Keys.RpcWoodCredit"/>)
-    /// to everybody, and only the client whose local player has that player ID acts on it (as <see cref="CookCredit"/>);
+    /// to that player's machine alone (<see cref="PlayerIds.PeerOf"/>, Everybody when it cannot tell), and only the client
+    /// whose local player has that player ID acts on it (as <see cref="CookCredit"/>);
     /// a dedicated server has no local player and ignores it. An offline woodcutter loses it. The receiver hands it to
     /// experience (<see cref="WoodXp.OnCredit"/>: amount, discovery) and to <see cref="Domino"/> (the chain message).
     /// The routed RPC is registered in a ZNet.Awake postfix, where the game creates a fresh ZRoutedRpc for each session.
@@ -44,7 +45,7 @@ namespace GrindstoneSkills
             pkg.Write(species ?? "");
             pkg.Write(amount);
             pkg.Write(chain);
-            ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcWoodCredit, pkg);
+            ZRoutedRpc.instance.InvokeRoutedRPC(PlayerIds.PeerOf(playerId), Keys.RpcWoodCredit, pkg);
         }
 
         private static void Receive(long sender, ZPackage pkg)

@@ -9,7 +9,8 @@ namespace GrindstoneSkills
     /// fills green to red with the tension, and a word above it for the fight's state ("Line", "Thrashing! Ease off",
     /// "Spent! Reel it in", "Catch your breath 3"). It hangs under the game's HUD root, so it hides with the HUD, and is
     /// built on first use from plain UI images and the HUD's own font. <see cref="Show"/> is called every step of the
-    /// fight; the bar hides itself a moment after the calls stop (the fish landed, got away or the line snapped).
+    /// fight; the bar hides itself a moment after the calls stop (the fish landed, got away or the line snapped). Each
+    /// step writes only what changed: the fill when it moved by a visible amount, the word when it differs.
     /// </summary>
     public sealed class TensionBar : MonoBehaviour
     {
@@ -23,12 +24,18 @@ namespace GrindstoneSkills
         private static readonly Color Strained = new Color(0.95f, 0.8f, 0.25f);
         private static readonly Color Breaking = new Color(0.9f, 0.2f, 0.15f);
 
+        /// <summary>The smallest change of the fill's width, in pixels, worth a rebuild of the bar.</summary>
+        private const float WidthStep = 0.5f;
+
         private static TensionBar instance;
+        private static int breathShown = -1;
+        private static string breathText = "";
 
         private RectTransform fill;
         private Image fillImage;
         private TMP_Text label;
         private float shownUntil;
+        private float shownWidth = -1f;
 
         /// <summary>Shows the fight's tension and state; builds the bar the first time.</summary>
         public static void Show(FloatFight fight)
@@ -36,7 +43,8 @@ namespace GrindstoneSkills
             TensionBar bar = instance != null ? instance : Build();
             if (bar == null || fight == null)
                 return;
-            bar.gameObject.SetActive(true);
+            if (!bar.gameObject.activeSelf)
+                bar.gameObject.SetActive(true);
             bar.shownUntil = Time.time + StaleSeconds;
             bar.Set(fight.Tension, State(fight));
         }
@@ -56,8 +64,12 @@ namespace GrindstoneSkills
         private void Set(float tension, string state)
         {
             float share = Mathf.Clamp01(tension);
-            fill.sizeDelta = new Vector2(Width * share, BarHeight);
-            fillImage.color = share < 0.5f ? Color.Lerp(Calm, Strained, share * 2f) : Color.Lerp(Strained, Breaking, share * 2f - 1f);
+            if (Mathf.Abs(Width * share - shownWidth) >= WidthStep)
+            {
+                shownWidth = Width * share;
+                fill.sizeDelta = new Vector2(shownWidth, BarHeight);
+                fillImage.color = share < 0.5f ? Color.Lerp(Calm, Strained, share * 2f) : Color.Lerp(Strained, Breaking, share * 2f - 1f);
+            }
             if (label.text != state)
                 label.text = state;
         }
@@ -65,10 +77,21 @@ namespace GrindstoneSkills
         private static string State(FloatFight fight)
         {
             if (fight.InGrace)
-                return "Catch your breath " + Mathf.CeilToInt(fight.GraceUntil - Time.time);
+                return Breath(Mathf.CeilToInt(fight.GraceUntil - Time.time));
             if (fight.Spent)
                 return "<color=#9be07a>Spent! Reel it in</color>";
             return fight.Thrashing ? "<color=#ff6a50>Thrashing! Ease off</color>" : "Line";
+        }
+
+        /// <summary>"Catch your breath N", built only when N changes.</summary>
+        private static string Breath(int seconds)
+        {
+            if (seconds != breathShown)
+            {
+                breathShown = seconds;
+                breathText = "Catch your breath " + seconds;
+            }
+            return breathText;
         }
 
         private static TensionBar Build()

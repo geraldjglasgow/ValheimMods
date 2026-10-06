@@ -9,7 +9,8 @@ namespace GrindstoneSkills
     /// live in its ZDO (<see cref="Keys.CompostPoints"/>). Once a second, on the bin's owner while Farming and composting
     /// are on, it composts one item every Compost Time seconds (<see cref="CompostDigest"/>) and every 10 s feeds the
     /// crops around it (<see cref="CompostFeed"/>). Kitchen trash reaches it through <see cref="Keys.RpcAddCompost"/>
-    /// (<see cref="CompostTrash"/>). A placement ghost (no ZDO) does nothing.
+    /// (<see cref="CompostTrash"/>). A placement ghost (no ZDO) does nothing. Every bin ticks from one update
+    /// (<see cref="Ticker"/>), all on the same frame once a second.
     /// </summary>
     public class CompostBin : MonoBehaviour
     {
@@ -17,6 +18,7 @@ namespace GrindstoneSkills
 
         private static readonly int PointsHash = Keys.CompostPoints.GetStableHashCode();
         private static readonly List<CompostBin> all = new List<CompostBin>();
+        private static float nextTick;
 
         private ZNetView nview;
         private float digestTimer;
@@ -43,7 +45,21 @@ namespace GrindstoneSkills
                 return;
             all.Add(this);
             nview.Register<float>(Keys.RpcAddCompost, (sender, points) => Guard.Run(Keys.RpcAddCompost, () => AddPoints(points)));
-            InvokeRepeating(nameof(Tick), Random.Range(1f, 2f), 1f);
+            Ticker.Ensure();
+        }
+
+        /// <summary>Ticks every loaded bin once a second, from <see cref="Ticker"/>.</summary>
+        internal static void TickAll()
+        {
+            float now = Time.time;
+            if (all.Count == 0 || now < nextTick)
+                return;
+            nextTick = now + 1f;
+            for (int i = all.Count - 1; i >= 0; i--)
+            {
+                if (all[i] != null)
+                    all[i].Tick();
+            }
         }
 
         private void OnDestroy() => all.Remove(this);
@@ -79,12 +95,12 @@ namespace GrindstoneSkills
             if (digestTimer >= Mathf.Max(1f, CompostSettings.CompostTime.Value))
             {
                 digestTimer = 0f;
-                HookGuard.Run("Composting", () => CompostDigest.Step(this));
+                HookGuard.Run("Composting", static bin => CompostDigest.Step(bin), this);
             }
             if (feedTimer >= FeedInterval)
             {
                 feedTimer = 0f;
-                HookGuard.Run("Compost feeding", () => CompostFeed.Step(this));
+                HookGuard.Run("Compost feeding", static bin => CompostFeed.Step(bin), this);
             }
         }
     }

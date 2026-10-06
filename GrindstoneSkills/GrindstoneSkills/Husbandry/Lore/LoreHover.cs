@@ -20,6 +20,8 @@ namespace GrindstoneSkills
         private const float RefreshSeconds = 0.25f;
 
         private static Component lastSource;
+        private static Character lastCharacter;
+        private static bool lastYoung;
         private static string lastLines = "";
         private static float refreshAt;
 
@@ -36,7 +38,7 @@ namespace GrindstoneSkills
             [HarmonyPostfix]
             private static void Postfix(Character __instance, ref string __result)
             {
-                if (__instance.GetComponent<Tameable>() == null && __instance.GetComponent<Growup>() != null)
+                if (HusbandrySkill.Active && IsYoung(__instance))
                     Append(__instance, ref __result);
             }
         }
@@ -46,6 +48,17 @@ namespace GrindstoneSkills
         {
             [HarmonyPostfix]
             private static void Postfix(EggGrow __instance, ref string __result) => Append(__instance, ref __result);
+        }
+
+        /// <summary>A young animal: a Growup and no Tameable. Decided once for the character last looked at.</summary>
+        private static bool IsYoung(Character character)
+        {
+            if (!ReferenceEquals(character, lastCharacter))
+            {
+                lastCharacter = character;
+                lastYoung = character.GetComponent<Tameable>() == null && character.GetComponent<Growup>() != null;
+            }
+            return lastYoung;
         }
 
         private static void Append(Component source, ref string text)
@@ -67,7 +80,7 @@ namespace GrindstoneSkills
                 return lastLines;
             lastSource = source;
             refreshAt = now + RefreshSeconds;
-            lastLines = HookGuard.Run("animal lore", () => Build(source), "") ?? "";
+            lastLines = HookGuard.Run("animal lore", static lore => Build(lore), source, "") ?? "";
             return lastLines;
         }
 

@@ -25,7 +25,7 @@ namespace GrindstoneSkills
             [HarmonyPrefix]
             private static void Prefix(ImpactEffect __instance, out bool __state) =>
                 __state = Current == null && WoodSkill.Active && IsOwned(__instance)
-                    && HookGuard.Run("log impact", () => Begin(__instance), false);
+                    && HookGuard.Run("log impact", static effect => Begin(effect), __instance, false);
 
             [HarmonyFinalizer]
             private static void Finalizer(bool __state) => End(__state);

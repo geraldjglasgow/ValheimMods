@@ -9,7 +9,7 @@ namespace GrindstoneSkills
     /// <list type="bullet">
     /// <item><see cref="ShowLocal"/>: the angler's own events ("Perfect strike!", "Spent!"), on the angler's client only.</item>
     /// <item><see cref="Broadcast"/>: events everybody near should see (a big one, a snag landed): a routed RPC to
-    /// everybody (<see cref="Keys.RpcFishCallout"/>); each client with a camera within <see cref="FloatingText.Range"/> of
+    /// the players near it (<see cref="Keys.RpcFishCallout"/>, <see cref="NearbyRpc"/>); each client with a camera within <see cref="FloatingText.Range"/> of
     /// the spot draws it.</item>
     /// <item><see cref="Announce"/>: a line top left for every player on the server (<see cref="Keys.RpcFishAnnounce"/>),
     /// for a legendary catch. A dedicated server shows nothing.</item>
@@ -40,8 +40,8 @@ namespace GrindstoneSkills
         /// <summary>Shows <paramref name="text"/> at <paramref name="position"/> to every player near it, this one included.</summary>
         public static void Broadcast(Vector3 position, string text)
         {
-            if (ZRoutedRpc.instance != null && !string.IsNullOrEmpty(text))
-                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcFishCallout, position, text);
+            if (!string.IsNullOrEmpty(text))
+                NearbyRpc.Send(position, FloatingText.Range, Keys.RpcFishCallout, position, text);
         }
 
         /// <summary>Shows <paramref name="text"/> top left to every player on the server, this one included.</summary>

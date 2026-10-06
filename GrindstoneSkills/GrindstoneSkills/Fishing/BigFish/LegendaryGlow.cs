@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -34,7 +35,9 @@ namespace GrindstoneSkills
 
         public void Remove() => Destroy(gameObject);
 
-        private void LateUpdate() => HookGuard.Run("legendary glow", Step);
+        private Action step;
+
+        private void LateUpdate() => HookGuard.Run("legendary glow", step ??= Step);
 
         private static Light AddLight(Transform parent)
         {

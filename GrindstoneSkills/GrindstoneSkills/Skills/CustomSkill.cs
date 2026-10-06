@@ -16,6 +16,7 @@ namespace GrindstoneSkills
         public const float MaxLevel = 100f;
 
         private readonly Func<Sprite> icon;
+        private readonly int levelHash;
 
         /// <param name="identity">The name whose stable hash is the type number. Never change it: saved levels use it.</param>
         /// <param name="name">The name shown in the skills panel, and the word raiseskill and resetskill take.</param>
@@ -27,6 +28,7 @@ namespace GrindstoneSkills
             Type = (Skills.SkillType)(identity.GetStableHashCode() & 0x7FFFFFFF);
             LocalizationKey = "skill_" + Type.ToString().ToLowerInvariant();
             LevelKey = levelKey;
+            levelHash = levelKey.GetStableHashCode();
             this.icon = icon;
             Definition = new Skills.SkillDef { m_skill = Type, m_description = description, m_increseStep = increaseStep };
         }
@@ -57,7 +59,7 @@ namespace GrindstoneSkills
             if (player == Player.m_localPlayer)
                 return player.GetSkillLevel(Type);
             ZNetView nview = player.m_nview;
-            return nview != null && nview.IsValid() ? Mathf.Max(0f, nview.GetZDO().GetFloat(LevelKey)) : 0f;
+            return nview != null && nview.IsValid() ? Mathf.Max(0f, nview.GetZDO().GetFloat(levelHash)) : 0f;
         }
 
         /// <summary>Fills in the definition's icon while it has none.</summary>

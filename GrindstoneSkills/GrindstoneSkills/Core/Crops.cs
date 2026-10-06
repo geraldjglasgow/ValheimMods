@@ -8,7 +8,7 @@ namespace GrindstoneSkills
     /// Crops belong to the Farming module, never to Foraging: a pickable whose prefab name is in any Plant's
     /// m_grownPrefabs, planted or wild (jotun puffs, magecap and the seed carrots, turnips and onions grow wild from the
     /// same prefabs; vines too, though Farming leaves them to the game). Filled from the scene's prefabs when ZNetScene
-    /// wakes, so plants other mods register in their own Awake postfix count too.
+    /// wakes (<see cref="PrefabIndex"/>), so plants other mods register in their own Awake postfix count too.
     /// </summary>
     public static class Crops
     {
@@ -25,10 +25,10 @@ namespace GrindstoneSkills
         {
             [HarmonyPostfix]
             [HarmonyPriority(Priority.Last)]
-            private static void Postfix(ZNetScene __instance)
+            private static void Postfix()
             {
-                foreach (GameObject prefab in __instance.m_prefabs)
-                    Add(prefab != null ? prefab.GetComponent<Plant>() : null);
+                foreach (Plant plant in PrefabIndex.Scene().Plants)
+                    Add(plant);
             }
         }
 

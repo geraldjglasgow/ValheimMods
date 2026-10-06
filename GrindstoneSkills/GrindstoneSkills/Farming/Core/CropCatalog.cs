@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Every crop plant in the game, read from the scene's prefabs when ZNetScene wakes (last, so plants other mods
+    /// Every crop plant in the game, read from the scene's prefabs (<see cref="PrefabIndex"/>) when ZNetScene wakes (last, so plants other mods
     /// register in their own Awake postfix count too): a Plant whose grown prefab has a Pickable and no TreeBase (tree
     /// saplings) or Vine (vines grow segments of their own and are left to the game). Looked up by the plant's prefab
     /// name or hash, and by the pickable it grows. A pickable grown by several plants maps to the first found.
@@ -70,10 +70,10 @@ namespace GrindstoneSkills
         {
             [HarmonyPostfix]
             [HarmonyPriority(Priority.Last)]
-            private static void Postfix(ZNetScene __instance)
+            private static void Postfix()
             {
-                foreach (GameObject prefab in __instance.m_prefabs)
-                    Add(prefab != null ? prefab.GetComponent<Plant>() : null);
+                foreach (Plant plant in PrefabIndex.Scene().Plants)
+                    Add(plant);
                 CropStarItems.Discover();
             }
         }

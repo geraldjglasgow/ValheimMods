@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -60,7 +61,9 @@ namespace GrindstoneSkills
 
         public void Remove() => Destroy(gameObject);
 
-        private void LateUpdate() => HookGuard.Run("seam glow", Step);
+        private Action step;
+
+        private void LateUpdate() => HookGuard.Run("seam glow", step ??= Step);
 
         /// <summary>Sizes the mark by the chunk (a boulder's big chunk gets a bigger one) and makes its parts.</summary>
         private void Build()

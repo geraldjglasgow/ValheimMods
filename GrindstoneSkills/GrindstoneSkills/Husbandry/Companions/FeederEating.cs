@@ -57,8 +57,10 @@ namespace GrindstoneSkills
                 }
                 if (!HusbandrySkill.Active || !Wants(__instance))
                     return;
-                MonsterAI ai = __instance;
-                __result = HookGuard.Run("feeder eating", () => Update(ai, humanoid, dt), false);
+                // A static lambda with its arguments passed in: a capturing one would allocate on every call, 20 times a
+                // second for every creature, before the gate above.
+                __result = HookGuard.Run("feeder eating", static call => Update(call.ai, call.humanoid, call.dt),
+                    (ai: __instance, humanoid, dt), false);
             }
         }
 

@@ -29,7 +29,7 @@ namespace GrindstoneSkills
             [HarmonyPostfix]
             private static void Postfix(Player __instance, Piece piece, ref bool __result)
             {
-                if (__result && FeederPrefab.Is(piece) && !HookGuard.Run("feeder gate", () => Allowed(__instance), true))
+                if (__result && FeederPrefab.Is(piece) && !HookGuard.Run("feeder gate", static p => Allowed(p), __instance, true))
                     __result = false;
             }
         }
@@ -42,7 +42,7 @@ namespace GrindstoneSkills
             {
                 Piece feeder = FeederPrefab.Piece;
                 if (feeder != null && __instance.m_availablePieces.Contains(feeder)
-                    && !HookGuard.Run("feeder gate", () => Allowed(player), true))
+                    && !HookGuard.Run("feeder gate", static p => Allowed(p), player, true))
                     Hide(__instance, feeder);
             }
         }

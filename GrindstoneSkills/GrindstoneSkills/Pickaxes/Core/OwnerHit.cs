@@ -36,7 +36,7 @@ namespace GrindstoneSkills
             {
                 __state = Current;
                 Enter();
-                Current = PickSkill.Active ? HookGuard.Run("owner hit", () => Begin(__instance, hit, hitAreaIndex), null) : null;
+                Current = PickSkill.Active ? HookGuard.Run("owner hit", static owner => Begin(owner.rock, owner.hit, owner.index), (rock: __instance, hit, index: hitAreaIndex), (Scope)null) : null;
             }
 
             [HarmonyPostfix]

@@ -28,8 +28,7 @@ namespace GrindstoneSkills
             {
                 if (!FishSkill.Active || __result == null || __instance.IsOutOfWater())
                     return;
-                string text = __result;
-                __result = HookGuard.Run("fish hover", () => HoverText(__instance, text), text);
+                __result = HookGuard.Run("fish hover", static hover => HoverText(hover.fish, hover.text), (fish: __instance, text: __result), __result);
             }
         }
 

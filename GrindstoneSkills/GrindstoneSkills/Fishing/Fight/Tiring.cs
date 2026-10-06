@@ -29,7 +29,7 @@ namespace GrindstoneSkills
             private static void Postfix(Fish __instance)
             {
                 if (FishSkill.Active)
-                    HookGuard.Run("thrash", () => OnThrash(__instance));
+                    HookGuard.Run("thrash", static fish => OnThrash(fish), __instance);
             }
         }
 

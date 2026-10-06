@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using HarmonyLib;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -15,8 +14,8 @@ namespace GrindstoneSkills
     /// to break its chunk). Marks are lost if the rock changes owner in between.</item>
     /// <item><see cref="Take"/> runs on the owner when a chunk breaks: true once per mark of that miner on that chunk.</item>
     /// </list>
-    /// The RPC is registered on every MineRock5 in a postfix on MineRock5.Awake, where the game registers its own
-    /// RPC_Damage (only for an instance with a ZDO).
+    /// The RPC is registered on a MineRock5's view when the first mark arrives for it (<see cref="LazyRpcs"/>), beside the
+    /// game's own RPC_Damage, not on every rock that wakes.
     /// </summary>
     public static class CleanStrikeMarks
     {
@@ -27,16 +26,12 @@ namespace GrindstoneSkills
 
         private static readonly List<Mark> Marks = new List<Mark>();
 
-        [HarmonyPatch(typeof(MineRock5), nameof(MineRock5.Awake))]
-        private static class Register
+        /// <summary>Registers the mark RPC on a rock's view, when the first mark arrives for it (<see cref="LazyRpcs"/>).</summary>
+        public static void RegisterOn(ZNetView view)
         {
-            [HarmonyPostfix]
-            private static void Postfix(MineRock5 __instance)
-            {
-                ZNetView view = __instance.m_nview;
-                if (view != null && view.GetZDO() != null)
-                    view.Register<int, ZDOID>(Keys.RpcCleanStrike, (sender, area, miner) => Receive(__instance, area, miner));
-            }
+            MineRock5 chunks = view.GetComponent<MineRock5>();
+            if (chunks != null)
+                view.Register<int, ZDOID>(Keys.RpcCleanStrike, (sender, area, miner) => Receive(chunks, area, miner));
         }
 
         /// <summary>On the miner's client: marks the chunk <paramref name="area"/> of <paramref name="rock"/> for the local player.</summary>

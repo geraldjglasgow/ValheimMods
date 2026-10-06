@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace GrindstoneSkills
 {
@@ -34,17 +33,17 @@ namespace GrindstoneSkills
                 return;
             int before = meat.Count;
             HashSet<string> kitchenInputs = new HashSet<string>();
-            foreach (GameObject prefab in ZNetScene.instance.m_prefabs)
-                AddStation(prefab, kitchenInputs);
-            foreach (GameObject prefab in ZNetScene.instance.m_prefabs)
-                AddMeat(prefab, kitchenInputs);
+            PrefabIndex.ScenePrefabs prefabs = PrefabIndex.Scene();
+            foreach (PrefabIndex.Converter converter in prefabs.Converters)
+                AddStation(converter.Station, kitchenInputs);
+            foreach (CharacterDrop drops in prefabs.TameableDrops)
+                AddMeat(drops, kitchenInputs);
             if (meat.Count != before)
                 GrindstoneSkills.Log.LogInfo($"Husbandry: animal meat for Prime Cuts: {string.Join(", ", meat.Keys)}.");
         }
 
-        private static void AddStation(GameObject prefab, HashSet<string> kitchenInputs)
+        private static void AddStation(CookingStation station, HashSet<string> kitchenInputs)
         {
-            CookingStation station = prefab != null ? prefab.GetComponent<CookingStation>() : null;
             if (station == null || station.m_conversion == null)
                 return;
             bool kitchen = Kitchen.IsKitchen(station);
@@ -59,10 +58,10 @@ namespace GrindstoneSkills
             }
         }
 
-        private static void AddMeat(GameObject prefab, HashSet<string> kitchenInputs)
+        /// <summary>The kitchen inputs a tameable creature drops (its CharacterDrop).</summary>
+        private static void AddMeat(CharacterDrop drops, HashSet<string> kitchenInputs)
         {
-            CharacterDrop drops = prefab != null && prefab.GetComponent<Tameable>() != null ? prefab.GetComponent<CharacterDrop>() : null;
-            if (drops == null || drops.m_drops == null)
+            if (drops.m_drops == null)
                 return;
             foreach (CharacterDrop.Drop drop in drops.m_drops)
             {

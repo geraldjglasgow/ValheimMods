@@ -30,16 +30,11 @@ namespace GrindstoneSkills
                     return false;
                 if (!FishSkill.Active)
                     return true;
-                FishingFloat picked = null;
-                Fish fish = __instance;
-                bool handled = HookGuard.Run("bite chance", () =>
-                {
-                    picked = Pick(fish);
-                    return true;
-                }, false);
-                if (handled)
-                    __result = picked;
-                return !handled;
+                (bool handled, FishingFloat picked) bite =
+                    HookGuard.Run("bite chance", static fish => (true, Pick(fish)), __instance, (false, (FishingFloat)null));
+                if (bite.handled)
+                    __result = bite.picked;
+                return !bite.handled;
             }
         }
 

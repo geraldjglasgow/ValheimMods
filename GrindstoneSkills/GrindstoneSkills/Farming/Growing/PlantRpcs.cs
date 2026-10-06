@@ -1,11 +1,10 @@
-using HarmonyLib;
 using PatchGuard;
 
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Farming's RPCs on a plant, to its owner, registered on every plant's ZNetView beside the game's (Plant.Awake,
-    /// only when the view has a ZDO, so never on a placement ghost):
+    /// Farming's RPCs on a plant, to its owner, registered on a plant's ZNetView beside the game's when the first of them
+    /// arrives for it (<see cref="LazyRpcs"/>), so the thousands of plants nobody tends or fertilizes carry none:
     /// <list type="bullet">
     /// <item><see cref="Keys.RpcTend"/> (int day): tended on that in-game day. Once per day the plant gains Tending Bonus
     /// percent of its grow time (<see cref="PlantClock"/>).</item>
@@ -14,18 +13,14 @@ namespace GrindstoneSkills
     /// </summary>
     public static class PlantRpcs
     {
-        [HarmonyPatch(typeof(Plant), nameof(Plant.Awake))]
-        private static class Register
+        /// <summary>Registers both RPCs on a plant's view, when the first of them arrives for it (<see cref="LazyRpcs"/>).</summary>
+        public static void RegisterOn(ZNetView nview)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Plant __instance)
-            {
-                ZNetView nview = __instance.m_nview;
-                if (nview == null || nview.GetZDO() == null)
-                    return;
-                nview.Register<int>(Keys.RpcTend, (sender, day) => Guard.Run(Keys.RpcTend, () => Tend(__instance, day)));
-                nview.Register(Keys.RpcFertilize, sender => Guard.Run(Keys.RpcFertilize, () => Fertilize(__instance)));
-            }
+            Plant plant = nview.GetComponent<Plant>();
+            if (plant == null || LazyRpcs.Has(nview, Keys.RpcTend) || LazyRpcs.Has(nview, Keys.RpcFertilize))
+                return;
+            nview.Register<int>(Keys.RpcTend, (sender, day) => Guard.Run(Keys.RpcTend, () => Tend(plant, day)));
+            nview.Register(Keys.RpcFertilize, sender => Guard.Run(Keys.RpcFertilize, () => Fertilize(plant)));
         }
 
         /// <summary>On the owner: records the day and adds the growth, unless the plant was already tended that day.</summary>

@@ -68,7 +68,7 @@ namespace GrindstoneSkills
             lastSource = source;
             refreshAt = now + RefreshSeconds;
             lastLines = "";
-            lastLines = HookGuard.Run("read the rock", () => Build(source), "") ?? "";
+            lastLines = HookGuard.Run("read the rock", static rock => Build(rock), source, "") ?? "";
             return lastLines;
         }
 

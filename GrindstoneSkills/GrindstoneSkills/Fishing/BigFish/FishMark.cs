@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -10,18 +12,23 @@ namespace GrindstoneSkills
     /// it while it is hooked, and once two seconds after it loaded (in case its data arrived after it did); ItemDrop.Load
     /// reads only when the ZDO's data changed, and rescales the fish. It also puts the glow on a legendary fish
     /// (<see cref="LegendaryGlow"/>), on every client including the owner's, and takes it off if the fish stops being one.
-    /// While Fishing is turned off it does nothing and takes any glow off.
+    /// While Fishing is turned off it does nothing and takes any glow off. The marks are driven by one update
+    /// (<see cref="Ticker"/>), not one per fish.
     /// </summary>
     public sealed class FishMark : MonoBehaviour
     {
         private const float Every = 0.5f;
         private const float LateLoad = 2f;
 
+        private static readonly List<FishMark> marks = new List<FishMark>();
+
         private Fish fish;
         private LegendaryGlow glow;
         private float next;
         private float born;
         private bool lateLoaded;
+        private int index = -1;
+        private Action refresh;
 
         [HarmonyPatch(typeof(Fish), nameof(Fish.Start))]
         private static class Attach
@@ -30,7 +37,7 @@ namespace GrindstoneSkills
             private static void Postfix(Fish __instance)
             {
                 if (ZNet.instance != null && !ZNet.instance.IsDedicated())
-                    HookGuard.Run("fish mark", () => Add(__instance));
+                    HookGuard.Run("fish mark", static fish => Add(fish), __instance);
             }
         }
 
@@ -39,14 +46,36 @@ namespace GrindstoneSkills
             FishMark mark = fish.gameObject.AddComponent<FishMark>();
             mark.fish = fish;
             mark.born = Time.time;
+            mark.refresh = mark.Refresh;
+            mark.index = marks.Count;
+            marks.Add(mark);
+            Ticker.Ensure();
         }
 
-        private void Update()
+        /// <summary>Refreshes each loaded fish's mark twice a second, from <see cref="Ticker"/>.</summary>
+        internal static void TickAll()
         {
-            if (Time.time < next)
+            float now = Time.time;
+            for (int i = marks.Count - 1; i >= 0; i--)
+            {
+                FishMark mark = marks[i];
+                if (now < mark.next)
+                    continue;
+                mark.next = now + Every;
+                HookGuard.Run("fish mark", mark.refresh);
+            }
+        }
+
+        /// <summary>Swap-removes the mark from the list.</summary>
+        private void OnDestroy()
+        {
+            if (index < 0 || index >= marks.Count || !ReferenceEquals(marks[index], this))
                 return;
-            next = Time.time + Every;
-            HookGuard.Run("fish mark", Refresh);
+            FishMark moved = marks[marks.Count - 1];
+            marks[index] = moved;
+            moved.index = index;
+            marks.RemoveAt(marks.Count - 1);
+            index = -1;
         }
 
         private void Refresh()

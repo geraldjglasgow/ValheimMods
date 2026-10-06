@@ -58,8 +58,7 @@ namespace GrindstoneSkills
             {
                 if (skillType != FishSkill.Skill || Current == null || unscoped || __instance.m_player != Player.m_localPlayer)
                     return;
-                bool onLine = FishOnLine;
-                factor *= HookGuard.Run("fishing reel experience", () => FishXp.ReelScale(onLine), 1f);
+                factor *= HookGuard.Run("fishing reel experience", static onLine => FishXp.ReelScale(onLine), FishOnLine, 1f);
             }
         }
 
@@ -97,7 +96,8 @@ namespace GrindstoneSkills
             FishOnLine = fish != null;
             state.Open = true;
             state.WasSnagged = fight.Snagged;
-            bool run = HookGuard.Run("fishing float step", () => Before(fishingFloat, fight, angler, fish), true);
+            bool run = HookGuard.Run("fishing float step", static step => Before(step.fishingFloat, step.fight, step.angler, step.fish),
+                (fishingFloat, fight, angler, fish), true);
             if (run)
                 Swap(fishingFloat, ReelFactor(fight, fish != null), ref state);
             return run;
@@ -148,10 +148,9 @@ namespace GrindstoneSkills
                 fishingFloat.m_pullLineSpeed = state.Speed;
                 fishingFloat.m_pullLineSpeedMaxSkill = state.SpeedMaxSkill;
             }
-            Player angler = Player.m_localPlayer;
-            FloatFight fight = Fight;
             if (state.WasSnagged)
-                HookGuard.Run("snag landing", () => Snags.AfterStep(fishingFloat, fight, angler));
+                HookGuard.Run("snag landing", static step => Snags.AfterStep(step.fishingFloat, step.fight, step.angler),
+                    (fishingFloat, fight: Fight, angler: Player.m_localPlayer));
             Current = null;
             Fight = null;
             FishOnLine = false;

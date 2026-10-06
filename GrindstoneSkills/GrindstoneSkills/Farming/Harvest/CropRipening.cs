@@ -27,8 +27,13 @@ namespace GrindstoneSkills
         private static void Postfix(Plant __instance, GameObject __result, CropRoll.Grower? __state)
         {
             if (__result != null && __state.HasValue)
-                HookGuard.Run("Farming ripening", () => Ripen(__instance, __result, __state.Value));
+                HookGuard.Run("Farming ripening", static grow => Ripen(grow.plant, grow.grown, grow.grower),
+                    (plant: __instance, grown: __result, grower: __state.Value));
         }
+
+        /// <summary>The roll's effective level, companions counted where the crop stands (a physics query).</summary>
+        private static float Effective(CropRoll.Grower grower, GameObject grown, CropPlant crop) =>
+            CropRoll.Effective(grower, Companions.Count(grown.transform.position, crop));
 
         private static void Ripen(Plant plant, GameObject grown, CropRoll.Grower grower)
         {
@@ -37,7 +42,7 @@ namespace GrindstoneSkills
             if (crop == null || nview == null || !nview.IsValid())
                 return;
             bool rolls = CropRoll.Rolls(crop);
-            int stars = rolls ? StarOdds.Roll(CropRoll.Effective(grower, Companions.Count(grown.transform.position, crop))) : 0;
+            int stars = rolls ? StarOdds.Roll(StarOdds.DependOnLevel ? Effective(grower, grown, crop) : 0f) : 0;
             bool giant = CropRoll.RollGiant(grower.Level);
             CropKeys.Write(nview.GetZDO(), stars, giant, crop.PrefabHash);
             float size = CropLook.Size(stars, giant);

@@ -31,7 +31,7 @@ namespace GrindstoneSkills
                 __state = null;
                 if (!IncomingHit.Active || !DefenseSkill.IsLocal(__instance) || hit == null)
                     return;
-                __state = HookGuard.Run("defense block", () => BlockState.Before(__instance, hit), null);
+                __state = HookGuard.Run("defense block", static block => BlockState.Before(block.humanoid, block.hit), (humanoid: __instance, hit), (BlockState)null);
                 InBlock = __state != null;
             }
 
@@ -39,7 +39,8 @@ namespace GrindstoneSkills
             private static void Postfix(Humanoid __instance, HitData hit, Character attacker, bool __result, BlockState __state)
             {
                 if (__state != null && __result)
-                    HookGuard.Run("defense blocked", () => Blocked((Player)__instance, hit, attacker, __state));
+                    HookGuard.Run("defense blocked", static block => Blocked((Player)block.humanoid, block.hit, block.attacker, block.state),
+                        (humanoid: __instance, hit, attacker, state: __state));
             }
 
             [HarmonyFinalizer]

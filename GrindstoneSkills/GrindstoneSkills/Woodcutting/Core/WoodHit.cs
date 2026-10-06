@@ -65,7 +65,7 @@ namespace GrindstoneSkills
         private static void Tag(Component target, HitData hit)
         {
             if (hit != null && WoodSkill.Active && (ImpactScope.Current != null || hit.m_skill == WoodSkill.Skill))
-                HookGuard.Run("wood hit", () => TagHit(target, hit));
+                HookGuard.Run("wood hit", static wood => TagHit(wood.target, wood.hit), (target, hit));
         }
 
         private static void TagHit(Component target, HitData hit)

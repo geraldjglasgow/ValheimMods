@@ -36,15 +36,11 @@ namespace GrindstoneSkills
             }
         }
 
-        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.OnCreateNew), typeof(ItemDrop), typeof(bool))]
-        private static class Created
+        /// <summary>A new item, from <see cref="ItemCreated"/> (ItemDrop.OnCreateNew).</summary>
+        internal static void OnCreated(ItemDrop item)
         {
-            [HarmonyPostfix]
-            private static void Postfix(ItemDrop item)
-            {
-                if (open && item?.m_itemData?.m_dropPrefab != null)
-                    HookGuard.Run("Foraging stars", () => Apply(item));
-            }
+            if (open && item?.m_itemData?.m_dropPrefab != null)
+                HookGuard.Run("Foraging stars", static drop => Apply(drop), item);
         }
 
         private static void Apply(ItemDrop item)

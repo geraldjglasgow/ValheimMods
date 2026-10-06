@@ -46,7 +46,7 @@ namespace GrindstoneSkills
                 Player player = Player.m_localPlayer;
                 if (skillType != ForagingSkill.Type || !Active || entry == null || player == null || __instance.m_player != player)
                     return;
-                factor *= HookGuard.Run("Foraging experience", () => Scale(player), 1f);
+                factor *= HookGuard.Run("Foraging experience", static p => Scale(p), player, 1f);
             }
         }
 

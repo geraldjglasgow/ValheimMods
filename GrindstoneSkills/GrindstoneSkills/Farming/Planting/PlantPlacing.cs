@@ -40,7 +40,7 @@ namespace GrindstoneSkills
             private static void Postfix(Piece __instance, long uid)
             {
                 if (placing && FarmSkill.Active)
-                    HookGuard.Run("Farming planter", () => Mark(__instance.GetComponent<Plant>(), uid));
+                    HookGuard.Run("Farming planter", static planted => Mark(planted.piece.GetComponent<Plant>(), planted.uid), (piece: __instance, uid));
             }
         }
 

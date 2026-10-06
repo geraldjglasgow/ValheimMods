@@ -54,7 +54,7 @@ namespace GrindstoneSkills
             private static void Prefix(Character __instance, HitData hit)
             {
                 if (riposte != null && hit != null && !hit.m_ranged && !DefenseSkill.IsLocal(__instance))
-                    HookGuard.Run("riposte", () => Empower(hit));
+                    HookGuard.Run("riposte", static h => Empower(h), hit);
             }
         }
 

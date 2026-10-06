@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -7,12 +9,25 @@ namespace GrindstoneSkills
     /// </summary>
     public static class Forage
     {
-        /// <summary>The pickable's forage entry, or null when it is not forage.</summary>
+        private sealed class Known
+        {
+            public bool Crop;
+            public string Item;
+        }
+
+        private static readonly ConditionalWeakTable<Pickable, Known> known = new ConditionalWeakTable<Pickable, Known>();
+
+        /// <summary>
+        /// The pickable's forage entry, or null when it is not forage. Whether it is a crop and its item's prefab name are
+        /// remembered per instance: the hover asks every frame, and both names would be a new string each time. The entry
+        /// itself is looked up each time, so a reloaded Forage file applies at once.
+        /// </summary>
         public static ForageEntry Of(Pickable pickable)
         {
-            if (!ForagingSkill.Active || pickable == null || pickable.m_itemPrefab == null || Crops.IsCrop(pickable))
+            if (!ForagingSkill.Active || pickable == null || pickable.m_itemPrefab == null)
                 return null;
-            return ForageFile.Find(pickable.m_itemPrefab.name);
+            Known seen = known.GetValue(pickable, instance => new Known { Crop = Crops.IsCrop(instance), Item = instance.m_itemPrefab.name });
+            return seen.Crop ? null : ForageFile.Find(seen.Item);
         }
 
         /// <summary>Whether a pick of it now would be taken: loaded, enabled, not picked yet.</summary>

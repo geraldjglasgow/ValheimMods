@@ -25,7 +25,7 @@ namespace GrindstoneSkills
             private static void Prefix(Character __instance, out ButcherContext __state)
             {
                 __state = Open;
-                Open = HusbandrySkill.Active ? HookGuard.Run("butchering", () => Begin(__instance), null) : null;
+                Open = HusbandrySkill.Active ? HookGuard.Run("butchering", static character => Begin(character), __instance, (ButcherContext)null) : null;
             }
 
             [HarmonyFinalizer]

@@ -28,7 +28,7 @@ namespace GrindstoneSkills
                 FloatFight fight = FishSkill.Active ? FloatFight.Of(__instance) : null;
                 if (fight == null)
                     return true;
-                return !HookGuard.Run("strike", () => TryHook(__instance, fight), false);
+                return !HookGuard.Run("strike", static strike => TryHook(strike.fishingFloat, strike.fight), (fishingFloat: __instance, fight), false);
             }
         }
 
@@ -46,7 +46,7 @@ namespace GrindstoneSkills
             private static void Postfix(FishingFloat __instance, bool correctBait, float __state)
             {
                 if (correctBait && __instance.m_nibbler != null && __instance.m_nibbleTime != __state && FishSkill.Active)
-                    HookGuard.Run("nibble", () => OnNibble(__instance));
+                    HookGuard.Run("nibble", static fishingFloat => OnNibble(fishingFloat), __instance);
             }
         }
 

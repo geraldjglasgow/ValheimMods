@@ -19,6 +19,7 @@ namespace GrindstoneSkills
     /// </summary>
     public static class Chum
     {
+        private static readonly int ChumSinceHash = Keys.ChumSince.GetStableHashCode();
         private const float ListEvery = 1f;
 
         private static readonly List<Vector3> floating = new List<Vector3>();
@@ -33,7 +34,7 @@ namespace GrindstoneSkills
             private static void Postfix(ItemDrop __instance)
             {
                 if (FishSkill.Active)
-                    HookGuard.Run("chum", () => Age(__instance));
+                    HookGuard.Run("chum", static item => Age(item), __instance);
             }
         }
 
@@ -74,7 +75,7 @@ namespace GrindstoneSkills
                 return;
             ZDO zdo = drop.m_nview.GetZDO();
             long now = ZNet.instance.GetTime().Ticks;
-            long since = zdo.GetLong(Keys.ChumSince, 0L);
+            long since = zdo.GetLong(ChumSinceHash, 0L);
             if (since == 0L)
                 zdo.Set(Keys.ChumSince, now);
             else if (TimeSpan.FromTicks(now - since).TotalSeconds >= FishingBiteSettings.ChumDuration.Value)

@@ -23,7 +23,7 @@ namespace GrindstoneSkills
             private static void Postfix(TreeLog __instance)
             {
                 if (Felling.Open != null || LogBreaking.Open != null)
-                    HookGuard.Run("log spawn", () => Spawned(__instance));
+                    HookGuard.Run("log spawn", static log => Spawned(log), __instance);
             }
         }
 

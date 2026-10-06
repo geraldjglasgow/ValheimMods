@@ -9,6 +9,10 @@ namespace GrindstoneSkills
     /// </summary>
     public static class FilterStations
     {
+        // The last switch asked about and its cooking station (null for any other switch): hovering asks every frame.
+        private static Switch lastSwitch;
+        private static CookingStation lastStation;
+
         public static bool Enabled => KitchenSettings.TrashFilter != null && KitchenSettings.TrashFilter.Value;
 
         /// <summary>A kitchen cooking station without an add-food switch.</summary>
@@ -27,7 +31,12 @@ namespace GrindstoneSkills
         {
             if (!Enabled || sw == null)
                 return null;
-            CookingStation station = sw.GetComponentInParent<CookingStation>();
+            if (!ReferenceEquals(sw, lastSwitch))
+            {
+                lastSwitch = sw;
+                lastStation = sw.GetComponentInParent<CookingStation>();
+            }
+            CookingStation station = lastStation;
             if (!Kitchen.IsKitchen(station) || station.m_addFoodSwitch != sw)
                 return null;
             return Valid(station.m_nview);

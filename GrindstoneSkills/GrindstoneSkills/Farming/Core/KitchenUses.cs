@@ -36,8 +36,8 @@ namespace GrindstoneSkills
             conversions.Clear();
             foreach (Recipe recipe in ObjectDB.instance.m_recipes)
                 AddRecipe(recipe);
-            foreach (GameObject prefab in ZNetScene.instance.m_prefabs)
-                AddPrefab(prefab);
+            foreach (PrefabIndex.Converter converter in PrefabIndex.Scene().Converters)
+                AddPrefab(converter);
         }
 
         private static void AddRecipe(Recipe recipe)
@@ -52,22 +52,20 @@ namespace GrindstoneSkills
             }
         }
 
-        private static void AddPrefab(GameObject prefab)
+        private static void AddPrefab(PrefabIndex.Converter converter)
         {
-            if (prefab == null)
-                return;
-            CookingStation station = prefab.GetComponent<CookingStation>();
+            CookingStation station = converter.Station;
             if (Kitchen.IsKitchen(station))
                 foreach (CookingStation.ItemConversion conversion in station.m_conversion)
                     Note(conversion.m_from, conversion.m_to);
-            Fermenter fermenter = prefab.GetComponent<Fermenter>();
+            Fermenter fermenter = converter.Fermenter;
             if (fermenter != null)
                 foreach (Fermenter.ItemConversion conversion in fermenter.m_conversion)
                     Note(conversion.m_from, conversion.m_to);
-            Smelter smelter = prefab.GetComponent<Smelter>();
+            Smelter smelter = converter.Smelter;
             if (smelter?.m_conversion != null)
                 foreach (Smelter.ItemConversion conversion in smelter.m_conversion)
-                    AddConversion(prefab.name, conversion.m_from, conversion.m_to);
+                    AddConversion(converter.Prefab.name, conversion.m_from, conversion.m_to);
         }
 
         private static void Note(ItemDrop from, ItemDrop to)

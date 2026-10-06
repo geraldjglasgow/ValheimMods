@@ -26,7 +26,7 @@ namespace GrindstoneSkills
             private static void Prefix(Growup __instance, out float __state)
             {
                 Growup young = __instance;
-                float factor = HookGuard.Run("growing up", () => YoungFactor(young), 1f);
+                float factor = HookGuard.Run("growing up", static grow => YoungFactor(grow), young, 1f);
                 __state = factor > 1f ? young.m_growTime : Untouched;
                 if (factor > 1f)
                     young.m_growTime /= factor;
@@ -47,7 +47,7 @@ namespace GrindstoneSkills
             private static void Prefix(EggGrow __instance, out float __state)
             {
                 EggGrow egg = __instance;
-                float factor = HookGuard.Run("hatching", () => Tends(egg.m_nview) ? Factor(egg.transform.position) : 1f, 1f);
+                float factor = HookGuard.Run("hatching", static grow => Tends(grow.m_nview) ? Factor(grow.transform.position) : 1f, egg, 1f);
                 __state = factor > 1f ? egg.m_growTime : Untouched;
                 if (factor > 1f)
                     egg.m_growTime /= factor;

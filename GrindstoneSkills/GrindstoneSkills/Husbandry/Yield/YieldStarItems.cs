@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -34,11 +32,8 @@ namespace GrindstoneSkills
         {
             if (ObjectDB.instance == null)
                 return;
-            foreach (GameObject prefab in ObjectDB.instance.m_items)
-            {
-                if (prefab != null && prefab.GetComponent<EggGrow>() != null)
-                    Kitchen.AddStarItem(prefab.GetComponent<ItemDrop>());
-            }
+            foreach (ItemDrop egg in PrefabIndex.Items().Eggs)
+                Kitchen.AddStarItem(egg);
         }
 
         private static void RegisterMeat()

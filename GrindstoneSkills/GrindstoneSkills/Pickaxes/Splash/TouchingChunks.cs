@@ -31,7 +31,7 @@ namespace GrindstoneSkills
             private static void Prefix(MineRock5 __instance, HitData hit)
             {
                 if (hit != null && hit.m_skill == PickSkill.Skill && PickSkill.Active && !__instance.m_haveSetupBounds)
-                    HookGuard.Run("splash boxes", () => BeforeHit(__instance));
+                    HookGuard.Run("splash boxes", static rock => BeforeHit(rock), __instance);
             }
         }
 

@@ -19,8 +19,7 @@ namespace GrindstoneSkills
         {
             if (appending || __result == null || !FishSkill.Active || !FishInfo.IsFishItem(item))
                 return;
-            string text = __result;
-            __result = HookGuard.Run("fish tooltip", () => text + Lines(item), text);
+            __result += HookGuard.Run("fish tooltip", static fish => Lines(fish), item, "");
         }
 
         private static string Lines(ItemDrop.ItemData item)

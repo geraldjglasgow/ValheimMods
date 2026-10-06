@@ -1,4 +1,3 @@
-using HarmonyLib;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -26,20 +25,14 @@ namespace GrindstoneSkills
             return Time.time - lastCombat >= delay && player.m_lastCombatTimer >= delay;
         }
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class Tick
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(Player player, float dt)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (!DefenseSkill.IsLocal(__instance))
-                    return;
-                timer += Time.deltaTime;
-                if (timer < DefenseSettings.RegenerationInterval.Value)
-                    return;
-                timer = 0f;
-                HookGuard.Run("defense regeneration", () => Heal(__instance));
-            }
+            timer += dt;
+            if (timer < DefenseSettings.RegenerationInterval.Value)
+                return;
+            timer = 0f;
+            HookGuard.Run("defense regeneration", static p => Heal(p), player);
         }
 
         private static void Heal(Player player)

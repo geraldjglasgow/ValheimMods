@@ -24,7 +24,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(MineRock5 __instance, int hitAreaIndex, HitData hit, out Pending __state) =>
-                __state = PickSkill.Active ? HookGuard.Run("chunk damage", () => BeginArea(__instance, hitAreaIndex, hit), null) : null;
+                __state = PickSkill.Active ? HookGuard.Run("chunk damage", static area => BeginArea(area.rock, area.index, area.hit), (rock: __instance, index: hitAreaIndex, hit), (Pending)null) : null;
 
             [HarmonyPostfix]
             private static void Postfix(MineRock5 __instance, bool __result, Pending __state)
@@ -39,7 +39,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(MineRock __instance, HitData hit, int hitAreaIndex, out Pending __state) =>
-                __state = PickSkill.Active ? HookGuard.Run("old chunk damage", () => BeginOld(__instance, hitAreaIndex, hit), null) : null;
+                __state = PickSkill.Active ? HookGuard.Run("old chunk damage", static area => BeginOld(area.rock, area.index, area.hit), (rock: __instance, index: hitAreaIndex, hit), (Pending)null) : null;
 
             [HarmonyPostfix]
             private static void Postfix(MineRock __instance, Pending __state)

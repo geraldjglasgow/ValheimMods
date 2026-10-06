@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using HarmonyLib;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -10,7 +9,8 @@ namespace GrindstoneSkills
     /// So just before the game's RPC the picker sends <see cref="Keys.RpcForageMark"/> on the plant's ZNetView to its
     /// owner, with the effective level: the Foraging level, plus Best Time Levels when the plant is at its best where
     /// the picker stands. Routed RPCs from one peer arrive in order, so the owner has the mark when RPC_Pick comes
-    /// (<see cref="ForageSpawn"/> takes it). Marks live in the owner's memory, per plant and sender, for 10 s.
+    /// (<see cref="ForageSpawn"/> takes it). Marks live in the owner's memory, per plant and sender, for 10 s. The RPC is
+    /// registered on a pickable's view when the first mark arrives for it (<see cref="LazyRpcs"/>), not on every one.
     /// </summary>
     public static class ForageMarks
     {
@@ -44,16 +44,12 @@ namespace GrindstoneSkills
             return Time.time - mark.Time <= Lifetime;
         }
 
-        [HarmonyPatch(typeof(Pickable), nameof(Pickable.Awake))]
-        private static class RegisterMark
+        /// <summary>Registers the mark RPC on a pickable's view, when the first mark arrives for it (<see cref="LazyRpcs"/>).</summary>
+        public static void RegisterOn(ZNetView nview)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Pickable __instance)
-            {
-                ZNetView nview = __instance.m_nview;
-                if (nview != null && nview.GetZDO() != null)
-                    nview.Register<float>(Keys.RpcForageMark, (sender, level) => Receive(__instance, sender, level));
-            }
+            Pickable pickable = nview.GetComponent<Pickable>();
+            if (pickable != null)
+                nview.Register<float>(Keys.RpcForageMark, (sender, level) => Receive(pickable, sender, level));
         }
 
         private static void Receive(Pickable pickable, long sender, float level)

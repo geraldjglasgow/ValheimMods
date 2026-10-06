@@ -15,20 +15,17 @@ namespace GrindstoneSkills
     /// again starts its time over but earns nothing, so petting is no experience farm.</item>
     /// </list>
     /// Content Duration 0 turns contentment and the petting experience off; nothing happens while Husbandry is off. The
-    /// RPC is registered on every tameable's view (with a ZDO) in a Tameable.Awake postfix.
+    /// RPC is registered on a tameable's view when the first pet arrives for it (<see cref="LazyRpcs"/>), not on every
+    /// one that wakes.
     /// </summary>
     public static class Petting
     {
-        [HarmonyPatch(typeof(Tameable), nameof(Tameable.Awake))]
-        private static class Register
+        /// <summary>Registers the pet RPC on a tameable's view, when the first pet arrives for it (<see cref="LazyRpcs"/>).</summary>
+        public static void RegisterOn(ZNetView nview)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Tameable __instance)
-            {
-                ZNetView view = __instance.m_nview;
-                if (view != null && view.IsValid())
-                    view.Register(Keys.RpcPet, sender => Receive(__instance));
-            }
+            Tameable tameable = nview.GetComponent<Tameable>();
+            if (tameable != null)
+                nview.Register(Keys.RpcPet, sender => Receive(tameable));
         }
 
         [HarmonyPatch(typeof(Tameable), nameof(Tameable.Interact))]

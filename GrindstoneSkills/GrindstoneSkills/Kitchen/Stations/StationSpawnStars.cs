@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using HarmonyLib;
 
 namespace GrindstoneSkills
 {
@@ -42,15 +41,11 @@ namespace GrindstoneSkills
             queue.Clear();
         }
 
-        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.OnCreateNew), typeof(ItemDrop), typeof(bool))]
-        private static class Created
+        /// <summary>A new item, from <see cref="ItemCreated"/> (ItemDrop.OnCreateNew).</summary>
+        internal static void OnCreated(ItemDrop item)
         {
-            [HarmonyPostfix]
-            private static void Postfix(ItemDrop item)
-            {
-                if (open && item != null && item.m_itemData?.m_dropPrefab != null)
-                    Apply(item, Take(item.m_itemData.m_dropPrefab.name));
-            }
+            if (open && item != null && item.m_itemData?.m_dropPrefab != null)
+                Apply(item, Take(item.m_itemData.m_dropPrefab.name));
         }
 
         /// <summary>The stars queued first for this prefab, removed from the queue; 0 when none are.</summary>

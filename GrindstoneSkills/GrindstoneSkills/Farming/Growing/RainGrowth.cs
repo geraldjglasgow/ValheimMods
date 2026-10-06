@@ -6,18 +6,24 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Plants grow faster in the rain. Plant.UpdateHealth runs from Plant.SUpdate on every slow-update pass (the game's
-    /// 10 s gate there never closes, so that is several times a second), so time is measured here: at most once per 10 s
+    /// 10 s gate there never closes, so that is several times a second), so time is measured here: at most once per 60 s
     /// of game time per plant, the plant's owner credits a healthy plant a player planted with Rain Growth Bonus percent of
     /// the time since the last credit, while the weather is wet (EnvMan.IsWet: the environment at the owner's client,
     /// which stands near the plant, since owners are the nearby players). Dry spells move the mark without crediting, and
-    /// a long gap (a hitch, an ownership change) counts at most 30 s. A plant under a roof reads "no sun" and gains
+    /// a long gap (a hitch, an ownership change) counts at most 90 s. A plant under a roof reads "no sun" and gains
     /// nothing, as it does not grow.
+    /// <para>A credit is a write to the plant's ZDO, which the game sends again to every peer near it: one credit a
+    /// minute keeps 500 crops in the rain to about 8 writes a second, where one every 10 s sent 50 for the same
+    /// growth.</para>
     /// </summary>
     [HarmonyPatch(typeof(Plant), nameof(Plant.UpdateHealth))]
     public static class RainGrowth
     {
-        private const double Interval = 10.0;
-        private const double MaxCredit = 30.0;
+        /// <summary>A plant younger than this is left alone: it was just planted.</summary>
+        private const double MinAge = 10.0;
+
+        private const double Interval = 60.0;
+        private const double MaxCredit = 90.0;
 
         private sealed class Mark
         {
@@ -29,7 +35,7 @@ namespace GrindstoneSkills
         [HarmonyPostfix]
         private static void Postfix(Plant __instance, double timeSincePlanted)
         {
-            if (!FarmSkill.Active || timeSincePlanted < Interval || ZNet.instance == null)
+            if (!FarmSkill.Active || timeSincePlanted < MinAge || ZNet.instance == null)
                 return;
             double now = ZNet.instance.GetTimeSeconds();
             Mark mark = MarkOf(__instance, now);

@@ -11,17 +11,22 @@ namespace GrindstoneSkills
     /// any distance and the hover timer is held at 0, until the reveal ends; the game then drops tags beyond 10 m on
     /// its own. The pulse is a snapshot: a creature that was inside the radius keeps its tag wherever it goes.
     /// Enemies are the game's own (BaseAI.IsEnemy, so tamed creatures are not); bosses are left out, since their
-    /// tag is the boss bar at the top of the screen.
+    /// tag is the boss bar at the top of the screen. Once the latest reveal has ended the list is emptied, so the hud
+    /// patches go back to one test and no destroyed creature is kept.
     /// </summary>
     public static class LookoutReveal
     {
         private static readonly Dictionary<Character, float> revealed = new Dictionary<Character, float>();
+
+        /// <summary>When the last of the current reveals ends.</summary>
+        private static float latestUntil;
 
         /// <summary>Reveals every enemy within <paramref name="radius"/> (flat) of the centre for some seconds; returns how many.</summary>
         public static int Reveal(Player player, Vector3 center, float radius, float seconds)
         {
             Prune();
             float until = Time.time + Mathf.Max(0f, seconds);
+            latestUntil = Mathf.Max(latestUntil, until);
             int count = 0;
             foreach (Character character in Character.GetAllCharacters())
             {
@@ -77,6 +82,11 @@ namespace GrindstoneSkills
             {
                 if (revealed.Count == 0)
                     return;
+                if (Time.time >= latestUntil)
+                {
+                    revealed.Clear();
+                    return;
+                }
                 foreach (KeyValuePair<Character, EnemyHud.HudData> hud in __instance.m_huds)
                 {
                     if (IsRevealed(hud.Key))

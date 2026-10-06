@@ -19,7 +19,7 @@ namespace GrindstoneSkills
         {
             [HarmonyPrefix]
             private static void Prefix(Destructible __instance, HitData hit, out RockBreak __state) =>
-                __state = PickSkill.Active && hit != null ? HookGuard.Run("piece break", () => Begin(__instance, hit), null) : null;
+                __state = PickSkill.Active && hit != null ? HookGuard.Run("piece break", static piece => Begin(piece.destructible, piece.hit), (destructible: __instance, hit), (RockBreak)null) : null;
 
             [HarmonyPostfix]
             private static void Postfix(RockBreak __state)

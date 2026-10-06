@@ -1,4 +1,3 @@
-using HarmonyLib;
 using PatchGuard;
 using UnityEngine;
 
@@ -20,20 +19,14 @@ namespace GrindstoneSkills
         private static Ship lastShip;
         private static Vector3 lastPosition;
 
-        [HarmonyPatch(typeof(Player), nameof(Player.Update))]
-        private static class Tick
+        /// <summary>Every frame for the local player (<see cref="LocalPlayerTick"/>).</summary>
+        public static void Tick(Player player, float dt)
         {
-            [HarmonyPostfix]
-            private static void Postfix(Player __instance)
-            {
-                if (__instance != Player.m_localPlayer)
-                    return;
-                timer += Time.deltaTime;
-                if (timer < Interval)
-                    return;
-                timer = 0f;
-                Guard.Run("sailing tick", () => Earn(__instance));
-            }
+            timer += dt;
+            if (timer < Interval)
+                return;
+            timer = 0f;
+            Guard.Run("sailing tick", static p => Earn(p), player);
         }
 
         private static void Earn(Player player)

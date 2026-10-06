@@ -4,65 +4,47 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Extra honey and honey experience, on the harvester's own client (where their skill lives). Beehive.Interact runs
-    /// there: when the player is not holding the key, the ward allows it and the hive has honey, it calls Extract, which
-    /// sends RPC_Extract to the hive's owner; the owner spawns one honey per level (its stack scaled by the world's
-    /// resource rate) and empties the hive. A prefix opens a harvest for the local player's interaction; a prefix on
-    /// Extract, which the game calls only after its own checks, notes the honey count the game is taking; a postfix
-    /// then raises Husbandry by "Honey Experience" per honey and rolls, per honey, the player's share of "Extra Honey
-    /// At 100" for one more. Extra honey is spawned here as RPC_Extract spawns it: a networked instance at the hive's
-    /// spawn point, stacked above the game's own, so every client sees it. Settings that change how fast a hive fills
-    /// (OpenKeep's) only change the count the game takes, so the two add up.
+    /// Extra honey and honey experience, on the hive's owner. Beehive.Interact on the harvester's client sends
+    /// RPC_Extract to the owner, which spawns one honey per level (its stack scaled by the world's resource rate) and
+    /// empties the hive. A prefix on RPC_Extract notes the honey count on the owner; a postfix, once the hive is really
+    /// empty, finds the harvester (the loaded player whose character the caller owns), rolls per honey their share of
+    /// "Extra Honey At 100" for one more, at their published Husbandry level, and sends their client one Honey credit per
+    /// honey (<see cref="HusbandryCredit"/>), which raises Husbandry by "Honey Experience". So a second press within a
+    /// round trip, or two players harvesting together, are paid only for the honey the owner hands out. Extra honey is
+    /// spawned as RPC_Extract spawns it: a networked instance at the hive's spawn point, stacked above the game's own.
+    /// Settings that change how fast a hive fills (OpenKeep's) only change the count the game takes, so the two add up.
     /// </summary>
     public static class ExtraHoney
     {
         private const float Spread = 0.5f;
         private const float StackStep = 0.25f;
 
-        private static bool harvesting;
-        private static int harvested;
-
-        [HarmonyPatch(typeof(Beehive), nameof(Beehive.Interact))]
-        private static class Harvest
+        [HarmonyPatch(typeof(Beehive), nameof(Beehive.RPC_Extract))]
+        private static class Extract
         {
             [HarmonyPrefix]
-            private static void Prefix(Humanoid character, bool repeat)
-            {
-                harvested = 0;
-                harvesting = !repeat && HusbandrySkill.Active && character != null && character == Player.m_localPlayer;
-            }
+            private static void Prefix(Beehive __instance, out int __state) =>
+                __state = HusbandrySkill.Active && __instance.m_nview != null && __instance.m_nview.IsOwner()
+                    ? __instance.GetHoneyLevel() : 0;
 
             [HarmonyPostfix]
-            private static void Postfix(Beehive __instance, Humanoid character)
+            private static void Postfix(Beehive __instance, long caller, int __state)
             {
-                int count = harvesting ? harvested : 0;
-                if (count > 0 && character is Player player)
-                    HookGuard.Run("extra honey", () => Reward(__instance, player, count));
-            }
-
-            [HarmonyFinalizer]
-            private static void Finalizer()
-            {
-                harvesting = false;
-                harvested = 0;
+                if (__state > 0 && __instance.GetHoneyLevel() == 0)
+                    HookGuard.Run("extra honey", static call => Reward(call.hive, call.caller, call.count),
+                        (hive: __instance, caller, count: __state));
             }
         }
 
-        [HarmonyPatch(typeof(Beehive), nameof(Beehive.Extract))]
-        private static class Extracting
+        private static void Reward(Beehive hive, long caller, int count)
         {
-            [HarmonyPrefix]
-            private static void Prefix(Beehive __instance)
-            {
-                if (harvesting)
-                    harvested = __instance.GetHoneyLevel();
-            }
-        }
-
-        private static void Reward(Beehive hive, Player player, int count)
-        {
-            HusbandryXp.Raise(player, Mathf.Max(0f, HusbandryExperienceSettings.Honey.Value) * count);
-            float share = HusbandrySkill.Share(HusbandryYieldSettings.ExtraHoney.Value, HusbandrySkill.Of(player));
+            Player harvester = PlayerOfPeer(caller);
+            if (harvester == null)
+                return;
+            long playerId = harvester.GetPlayerID();
+            for (int i = 0; i < count; i++)
+                HusbandryCredit.Send(playerId, HusbandryCredit.Kind.Honey, "");
+            float share = HusbandrySkill.Share(HusbandryYieldSettings.ExtraHoney.Value, HusbandrySkill.Of(harvester));
             int extra = 0;
             for (int i = 0; i < count; i++)
             {
@@ -71,6 +53,18 @@ namespace GrindstoneSkills
             }
             for (int i = 0; i < extra; i++)
                 Spawn(hive, count + i);
+        }
+
+        /// <summary>The loaded player whose character ZDO the peer owns (a player always owns their own), or null.</summary>
+        private static Player PlayerOfPeer(long peer)
+        {
+            foreach (Player player in Player.GetAllPlayers())
+            {
+                ZDO zdo = player != null && player.m_nview != null ? player.m_nview.GetZDO() : null;
+                if (zdo != null && zdo.GetOwner() == peer)
+                    return player;
+            }
+            return null;
         }
 
         private static void Spawn(Beehive hive, int index)

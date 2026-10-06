@@ -15,7 +15,8 @@ namespace GrindstoneSkills
         /// <summary>The item's stars; 0 for anything that is not a kitchen item.</summary>
         public static int Get(ItemDrop.ItemData item)
         {
-            if (item == null || !Kitchen.IsKitchenItem(item))
+            // Quality first: nearly every item has quality 1 (0 stars), which needs no kitchen lookup.
+            if (item == null || item.m_quality <= 1 || !Kitchen.IsKitchenItem(item))
                 return 0;
             return Mathf.Clamp(item.m_quality - 1, 0, Max);
         }

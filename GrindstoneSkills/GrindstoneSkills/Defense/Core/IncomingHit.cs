@@ -40,7 +40,7 @@ namespace GrindstoneSkills
             {
                 __state = !Active && hit != null && DefenseSkill.Active && DefenseSkill.IsLocal(__instance);
                 if (__state)
-                    HookGuard.Run("defense hit", () => Begin((Player)__instance, hit));
+                    HookGuard.Run("defense hit", static arrive => Begin((Player)arrive.character, arrive.hit), (character: __instance, hit));
             }
 
             [HarmonyFinalizer]
@@ -48,7 +48,7 @@ namespace GrindstoneSkills
             {
                 if (!__state)
                     return;
-                HookGuard.Run("defense hit outcome", () => Resolve((Player)__instance));
+                HookGuard.Run("defense hit outcome", static character => Resolve((Player)character), __instance);
                 End((Player)__instance);
             }
         }
