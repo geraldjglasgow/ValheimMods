@@ -61,6 +61,8 @@ condition they need (`IsServer`, a receiving client) holds, the pattern already 
 The vitals tick rate is `Vitals Updates Per Second` (server-synced, default 3, clamped 1-5) rather than a fixed
 constant, since it trades bar smoothness against RPC volume - an admin can turn it down on a busy server or up for
 a small group. Default 3 was a judgement call: visibly live without meaningfully adding to traffic at party-size-8.
+The rate is a ceiling: a client reports only while another member is online, and skips a report that matches the
+last one sent (bars within half a percent, position within half a metre) until a 1.5 s heartbeat is due.
 
 ## Friendly fire
 
@@ -87,9 +89,10 @@ model this workspace already builds every feature on.
   new icon: a distinct display color (its own local setting) plus a bold/size bump on the nameplate text and a
   double-size map pin, rather than a custom sprite. Written down here because it is a judgement call, not a spec
   requirement.
-- Map/minimap pins: `Minimap.AddPin(pos, PinType.Player, name, save:false, isChecked:false, ownerID:<player id>)`
-  per online member other than the local player, position and existence refreshed every vitals tick;
-  `PinData.m_iconElement.color` set to the party color. This runs regardless of that player's own "share position"
+- Map/minimap pins: `Minimap.AddPin(pos, PinType.Player, name, save:false, isChecked:false)` (owner 0: a shared-map
+  owner would grey the pin and hide it with shared map data) per online member other than the local player,
+  position and existence refreshed every vitals tick; the party color goes on in a `Minimap.UpdatePins` postfix,
+  since that pass sets every icon white. This runs regardless of that player's own "share position"
   setting, per spec - Party pins are a separate, additional set of pins, never reusing or overriding the vanilla
   shared-position pin.
 

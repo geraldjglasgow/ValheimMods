@@ -33,10 +33,14 @@ namespace Party
         public static ConfigEntry<bool> ShowEitr { get; private set; }
         public static ConfigEntry<bool> ShowAilments { get; private set; }
 
+        /// <summary>Bumped on every change to any entry, so the per-frame panel code compares one number, not every setting.</summary>
+        public static int Revision { get; private set; }
+
         public static void Initialize(SyncedConfiguration config)
         {
             BindGameplay(config);
             BindDisplay(config);
+            config.Config.SettingChanged += (_, __) => Revision++;
         }
 
         private static void BindGameplay(SyncedConfiguration config)

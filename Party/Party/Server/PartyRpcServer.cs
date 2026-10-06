@@ -37,8 +37,8 @@ namespace Party.Server
             rpc.Register<string>(RpcPromote, (s, name) => Guard.Run("party promote", () => Server(() => OnPromote(s, name))));
             rpc.Register<string>(RpcChat, (s, text) => Guard.Run("party chat", () => Server(() => OnChat(s, text))));
             rpc.Register<Vector3>(RpcPing, (s, pos) => Guard.Run("party ping", () => Server(() => OnPing(s, pos))));
-            rpc.Register<ZPackage>(RpcVitalsReport,
-                (s, pkg) => Guard.Run("party vitals", () => Server(() => OnVitals(s, pkg))));
+            // Static, with arguments: this one arrives several times a second per member, so it allocates no closures.
+            rpc.Register<ZPackage>(RpcVitalsReport, (s, pkg) => Guard.Run("party vitals", static (sender, report) => OnVitals(sender, report), s, pkg));
             rpc.Register<Vector3>(RpcDeath, (s, pos) => Guard.Run("party death", () => Server(() => OnDeath(s, pos))));
             rpc.Register<string>(RpcRename, (s, name) => Guard.Run("party rename", () => Server(() => OnRename(s, name))));
             rpc.Register(RpcStatus, s => Guard.Run("party status", () => Server(() => OnStatus(s))));
@@ -147,7 +147,7 @@ namespace Party.Server
 
         private static void OnVitals(long senderPeerId, ZPackage pkg)
         {
-            if (!Identity.TryFindByPeerId(senderPeerId, out OnlinePlayer sender))
+            if (!Identity.IsServer || !Identity.TryFindByPeerId(senderPeerId, out OnlinePlayer sender))
                 return;
             RelayToOthers(sender, RpcVitalsDeliver, sender.Id, pkg);
         }

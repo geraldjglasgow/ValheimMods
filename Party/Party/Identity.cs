@@ -30,56 +30,54 @@ namespace Party
             foreach (ZNetPeer peer in ZNet.instance.GetPeers())
             {
                 if (peer.m_playerID != 0)
-                    yield return new OnlinePlayer { Id = peer.m_playerID, Name = peer.m_playerName, PeerId = peer.m_uid, Position = peer.m_refPos };
+                    yield return FromPeer(peer);
             }
-            Player local = Player.m_localPlayer;
-            if (local != null && !ZNet.instance.IsDedicated())
-                yield return new OnlinePlayer { Id = local.GetPlayerID(), Name = local.GetPlayerName(), PeerId = ZNet.GetUID(), Position = local.transform.position };
+            if (TryHost(out OnlinePlayer host))
+                yield return host;
         }
 
         /// <summary>Finds an online player by persistent ID. Server side only.</summary>
-        public static bool TryFind(long id, out OnlinePlayer player)
-        {
-            foreach (OnlinePlayer candidate in Online())
-            {
-                if (candidate.Id == id)
-                {
-                    player = candidate;
-                    return true;
-                }
-            }
-            player = default;
-            return false;
-        }
+        public static bool TryFind(long id, out OnlinePlayer player) =>
+            TryFindWhere(id, static (candidate, key) => candidate.Id == key, out player);
 
         /// <summary>Finds an online player by their routing peer ID (the sender of an incoming RPC). Server side only.</summary>
-        public static bool TryFindByPeerId(long peerId, out OnlinePlayer player)
-        {
-            foreach (OnlinePlayer candidate in Online())
-            {
-                if (candidate.PeerId == peerId)
-                {
-                    player = candidate;
-                    return true;
-                }
-            }
-            player = default;
-            return false;
-        }
+        public static bool TryFindByPeerId(long peerId, out OnlinePlayer player) =>
+            TryFindWhere(peerId, static (candidate, key) => candidate.PeerId == key, out player);
 
         /// <summary>Finds an online player by name (case insensitive). Server side only.</summary>
-        public static bool TryFindByName(string name, out OnlinePlayer player)
+        public static bool TryFindByName(string name, out OnlinePlayer player) =>
+            TryFindWhere(name, static (candidate, key) => string.Equals(candidate.Name, key, System.StringComparison.OrdinalIgnoreCase), out player);
+
+        /// <summary>
+        /// The lookups behind the finders: a plain loop over the peers, then the host, with a static match, so the
+        /// vitals relay (several reports a second per member) allocates nothing to resolve its sender and recipients.
+        /// </summary>
+        private static bool TryFindWhere<TKey>(TKey key, System.Func<OnlinePlayer, TKey, bool> match, out OnlinePlayer player)
         {
-            foreach (OnlinePlayer candidate in Online())
+            List<ZNetPeer> peers = ZNet.instance.GetPeers();
+            for (int i = 0; i < peers.Count; i++)
             {
-                if (string.Equals(candidate.Name, name, System.StringComparison.OrdinalIgnoreCase))
-                {
-                    player = candidate;
+                if (peers[i].m_playerID == 0)
+                    continue;
+                player = FromPeer(peers[i]);
+                if (match(player, key))
                     return true;
-                }
             }
-            player = default;
-            return false;
+            return TryHost(out player) && match(player, key);
+        }
+
+        private static OnlinePlayer FromPeer(ZNetPeer peer) =>
+            new OnlinePlayer { Id = peer.m_playerID, Name = peer.m_playerName, PeerId = peer.m_uid, Position = peer.m_refPos };
+
+        /// <summary>The host's own player on a listen server; a dedicated server has none.</summary>
+        private static bool TryHost(out OnlinePlayer player)
+        {
+            Player local = Player.m_localPlayer;
+            bool host = local != null && !ZNet.instance.IsDedicated();
+            player = host
+                ? new OnlinePlayer { Id = local.GetPlayerID(), Name = local.GetPlayerName(), PeerId = ZNet.GetUID(), Position = local.transform.position }
+                : default;
+            return host;
         }
 
         /// <summary>The peer routing ID to send to a given player, or the local pseudo-ID when it is the host itself.</summary>

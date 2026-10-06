@@ -21,8 +21,20 @@ namespace Party.UI
         private static RectTransform panelRect;
         private static CanvasGroup canvasGroup;
         private static TMP_Text titleText;
+        private static RectTransform titleRect;
         private static readonly List<PartyRowView> rows = new List<PartyRowView>();
-        private static string lastRowSignature = "";
+        private static readonly List<(PartyMemberView member, float? distance)> content = new List<(PartyMemberView, float?)>();
+        private static readonly PartyMemberView selfView = new PartyMemberView { Online = true };
+
+        // What the rows were built for and what the layout was last written for; both are re-checked only when
+        // their inputs move, so a steady frame compares a few numbers and writes nothing.
+        private static int rowRevision = -1;
+        private static (int, float, float, bool, bool, bool) rowSettings;
+        private static int layoutRevision = -1;
+        private static int layoutRows = -1;
+        private static bool layoutEdit;
+        private static bool layoutDragging;
+        private static string layoutTitle;
 
         public static void ToggleEditMode(bool on)
         {
@@ -53,17 +65,20 @@ namespace Party.UI
             PartyConfig.PanelY.Value = Mathf.Clamp(-anchoredPosition.y, 0f, area.height - 60f);
         }
 
+        /// <summary>Built on first show, so a client that never joins a party builds nothing.</summary>
         public static void Tick()
         {
             bool shouldShow = PartyClientState.InParty || EditMode;
-            EnsureBuilt();
-            canvasRoot.SetActive(shouldShow);
+            if (shouldShow)
+                EnsureBuilt();
+            if (canvasRoot != null && canvasRoot.activeSelf != shouldShow)
+                canvasRoot.SetActive(shouldShow);
             if (!shouldShow)
                 return;
             EnsureRowsMatchSettings();
-            List<(PartyMemberView member, float? distance)> content = RowContents();
+            FillRowContents();
             ApplyLayout(content.Count);
-            UpdateRows(content);
+            UpdateRows();
         }
 
         private static void EnsureBuilt()
@@ -114,6 +129,7 @@ namespace Party.UI
             titleGo.transform.SetParent(parent, false);
             RectTransform rect = titleGo.GetComponent<RectTransform>();
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0f, 1f);
+            titleRect = rect;
             titleGo.SetActive(false);   // the text wakes with its font set, so it never looks for TextMeshPro's missing default
             titleText = titleGo.AddComponent<TextMeshProUGUI>();
             titleText.font = PartyFont.Get();
@@ -136,6 +152,8 @@ namespace Party.UI
         private static void ApplyLayout(int rowCount)
         {
             EnsurePosition();
+            if (!LayoutChanged(rowCount))
+                return;
             float padding = PartyConfig.PanelPadding.Value;
             float width = PartyConfig.BarWidth.Value + padding * 2f;
             float titleHeight = PartyConfig.TitleFontSize.Value + padding;
@@ -150,9 +168,24 @@ namespace Party.UI
             ApplyTitle(width, padding, titleHeight);
         }
 
+        /// <summary>Whether anything the layout reads moved since it was written: the config, the rows, the mode, a drag, the name.</summary>
+        private static bool LayoutChanged(int rowCount)
+        {
+            string name = PartyClientState.Name;
+            bool dragging = PartyDragHandler.Dragging;
+            if (layoutRevision == PartyConfig.Revision && layoutRows == rowCount && layoutEdit == EditMode &&
+                layoutDragging == dragging && ReferenceEquals(layoutTitle, name))
+                return false;
+            layoutRevision = PartyConfig.Revision;
+            layoutRows = rowCount;
+            layoutEdit = EditMode;
+            layoutDragging = dragging;
+            layoutTitle = name;
+            return true;
+        }
+
         private static void ApplyTitle(float width, float padding, float titleHeight)
         {
-            RectTransform titleRect = titleText.GetComponent<RectTransform>();
             titleRect.anchoredPosition = new Vector2(padding, -padding * 0.5f);
             titleRect.sizeDelta = new Vector2(width - padding * 2f, titleHeight);
             titleText.fontSize = PartyConfig.TitleFontSize.Value;
@@ -162,11 +195,14 @@ namespace Party.UI
         /// <summary>Rows bake sizes at construction; when a layout setting changes they are rebuilt, not patched.</summary>
         private static void EnsureRowsMatchSettings()
         {
-            string signature = $"{PartyConfig.FontSize.Value}|{PartyConfig.BarWidth.Value}|{PartyConfig.BarHeight.Value}|" +
-                               $"{PartyConfig.ShowStamina.Value}|{PartyConfig.ShowEitr.Value}|{PartyConfig.ShowAilments.Value}";
-            if (signature == lastRowSignature)
+            if (rowRevision == PartyConfig.Revision)
                 return;
-            lastRowSignature = signature;
+            rowRevision = PartyConfig.Revision;
+            var settings = (PartyConfig.FontSize.Value, PartyConfig.BarWidth.Value, PartyConfig.BarHeight.Value,
+                            PartyConfig.ShowStamina.Value, PartyConfig.ShowEitr.Value, PartyConfig.ShowAilments.Value);
+            if (settings == rowSettings)
+                return;
+            rowSettings = settings;
             foreach (PartyRowView row in rows)
                 Object.Destroy(row.Root);
             rows.Clear();
@@ -176,9 +212,9 @@ namespace Party.UI
         /// Who gets a row this frame. The local player's row is the live Player when there is one; while dead
         /// (no Player object) their roster entry stands in, so the counts always match what is placed.
         /// </summary>
-        private static List<(PartyMemberView member, float? distance)> RowContents()
+        private static void FillRowContents()
         {
-            List<(PartyMemberView, float?)> content = new List<(PartyMemberView, float?)>();
+            content.Clear();
             Player local = Player.m_localPlayer;
             long selfId = Identity.LocalPlayerId;
             if (PartyConfig.ShowOwnRow.Value && local != null)
@@ -192,10 +228,9 @@ namespace Party.UI
                     : (float?)null;
                 content.Add((member, distance));
             }
-            return content;
         }
 
-        private static void UpdateRows(List<(PartyMemberView member, float? distance)> content)
+        private static void UpdateRows()
         {
             EnsureRowCount(content.Count, PartyConfig.BarWidth.Value);
             float padding = PartyConfig.PanelPadding.Value;
@@ -203,8 +238,7 @@ namespace Party.UI
             float rowStep = HealthPanelLayout.RowHeight() + PartyConfig.RowSpacing.Value;
             for (int i = 0; i < content.Count; i++)
             {
-                RectTransform rect = rows[i].Root.GetComponent<RectTransform>();
-                rect.anchoredPosition = new Vector2(padding, -(titleHeight + i * rowStep));
+                rows[i].SetPosition(new Vector2(padding, -(titleHeight + i * rowStep)));
                 rows[i].Apply(content[i].member, content[i].distance);
             }
         }
@@ -220,18 +254,16 @@ namespace Party.UI
             }
         }
 
+        /// <summary>The local player's row: one view, refreshed in place each frame.</summary>
         private static PartyMemberView SelfRow(Player local)
         {
-            return new PartyMemberView
-            {
-                Id = Identity.LocalPlayerId,
-                Name = Identity.LocalPlayerName,
-                Online = true,
-                Health = Fraction(local.GetHealth(), local.GetMaxHealth()),
-                Stamina = Fraction(local.GetStamina(), local.GetMaxStamina()),
-                Eitr = Fraction(local.GetEitr(), local.GetMaxEitr()),
-                Ailments = Ailments.Mask(local),
-            };
+            selfView.Id = local.GetPlayerID();
+            selfView.Name = local.GetPlayerName();
+            selfView.Health = Fraction(local.GetHealth(), local.GetMaxHealth());
+            selfView.Stamina = Fraction(local.GetStamina(), local.GetMaxStamina());
+            selfView.Eitr = Fraction(local.GetEitr(), local.GetMaxEitr());
+            selfView.Ailments = Ailments.Mask(local);
+            return selfView;
         }
 
         private static float Fraction(float value, float max) => max > 0f ? Mathf.Clamp01(value / max) : 0f;

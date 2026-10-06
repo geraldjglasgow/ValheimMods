@@ -19,7 +19,16 @@ namespace Party.Server
         public string Name { get; set; } = "";
         public List<PartyMember> Members { get; set; } = new List<PartyMember>();
 
-        public PartyMember Find(long id) => Members.Find(m => m.Id == id);
+        /// <summary>A loop rather than <c>List.Find</c>, whose lambda over the id would allocate on every vitals relay.</summary>
+        public PartyMember Find(long id)
+        {
+            for (int i = 0; i < Members.Count; i++)
+            {
+                if (Members[i].Id == id)
+                    return Members[i];
+            }
+            return null;
+        }
 
         public bool Contains(long id) => Find(id) != null;
     }

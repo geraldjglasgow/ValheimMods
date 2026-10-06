@@ -14,6 +14,8 @@ namespace Party.UI
         private readonly RectTransform fill;
         private readonly float height;
         private float shown = 1f;
+        private float writtenWidth = -1f;
+        private bool fillActive = true;
 
         public BarView(Transform parent, float y, float width, float barHeight, Color color)
         {
@@ -36,8 +38,17 @@ namespace Party.UI
         {
             shown = Mathf.Lerp(shown, Mathf.Clamp01(fraction), 1f - Mathf.Exp(-SmoothRate * Time.deltaTime));
             float width = fullWidth * shown;
-            fill.sizeDelta = new Vector2(width, height);
-            fill.gameObject.SetActive(width > 0.5f);
+            if (Mathf.Abs(width - writtenWidth) >= 0.01f)
+            {
+                writtenWidth = width;
+                fill.sizeDelta = new Vector2(width, height);
+            }
+            bool active = width > 0.5f;
+            if (active != fillActive)
+            {
+                fillActive = active;
+                fill.gameObject.SetActive(active);
+            }
         }
 
         private static GameObject NewRect(string name, Transform parent, float x, float y, float width, float height)
@@ -62,6 +73,7 @@ namespace Party.UI
         private const float StatusWidth = 80f;
 
         public readonly GameObject Root;
+        private readonly RectTransform rootRect;
         private readonly TMP_Text nameText;
         private readonly TMP_Text statusText;
         private readonly BarView health;
@@ -71,12 +83,22 @@ namespace Party.UI
         private readonly float barWidth;
         private float nextBarY;
 
+        // The last values written, so a steady row writes nothing (rows are rebuilt, not reused, so no reset).
+        private Vector2 position = new Vector2(float.NaN, float.NaN);
+        private string shownName;
+        private int shownLeader = -1;
+        private int shownOnline = -1;
+        private int shownRevision = -1;
+        private int shownDistance = int.MinValue;
+        private int shownAilments = -1;
+        private bool ailmentSpritesMissing;
+
         public PartyRowView(Transform parent, float width)
         {
             barWidth = width;
             Root = new GameObject("Row", typeof(RectTransform));
             Root.transform.SetParent(parent, false);
-            RectTransform rootRect = Root.GetComponent<RectTransform>();
+            rootRect = Root.GetComponent<RectTransform>();
             rootRect.anchorMin = rootRect.anchorMax = rootRect.pivot = new Vector2(0f, 1f);
             rootRect.sizeDelta = new Vector2(width, HealthPanelLayout.RowHeight());
 
@@ -143,21 +165,51 @@ namespace Party.UI
             return text;
         }
 
+        public void SetPosition(Vector2 anchored)
+        {
+            if (anchored == position)
+                return;
+            position = anchored;
+            rootRect.anchoredPosition = anchored;
+        }
+
         public void Apply(PartyMemberView member, float? distance)
         {
-            bool leader = member.IsLeader;
-            nameText.text = (leader ? "* " : "") + member.Name;
-            nameText.color = leader ? ColorHelper.Parse(PartyConfig.LeaderColor.Value) : Color.white;
-            nameText.fontStyle = leader ? FontStyles.Bold : FontStyles.Normal;
-            float alpha = member.Online ? 1f : 0.45f;
-            nameText.alpha = alpha;
-            statusText.alpha = member.Online ? 0.8f : 0.45f;
-            statusText.text = member.Online ? (distance.HasValue ? $"{distance.Value:0}m" : "") : "offline";
-
+            ApplyName(member);
+            ApplyStatus(member.Online, distance);
             health.SetFraction(member.Online ? member.Health : 0f, barWidth);
             stamina?.SetFraction(member.Online ? member.Stamina : 0f, barWidth);
             eitr?.SetFraction(member.Online ? member.Eitr : 0f, barWidth);
             ApplyAilments(member);
+        }
+
+        /// <summary>The name line, written only when the name, the leader mark, the online state or the config changed.</summary>
+        private void ApplyName(PartyMemberView member)
+        {
+            int leader = member.IsLeader ? 1 : 0;
+            int online = member.Online ? 1 : 0;
+            if (member.Name == shownName && leader == shownLeader && online == shownOnline &&
+                shownRevision == PartyConfig.Revision)
+                return;
+            shownRevision = PartyConfig.Revision;
+            shownName = member.Name;
+            shownLeader = leader;
+            shownOnline = online;
+            nameText.text = leader == 1 ? "* " + member.Name : member.Name;
+            nameText.color = leader == 1 ? ColorHelper.LeaderColor() : Color.white;
+            nameText.fontStyle = leader == 1 ? FontStyles.Bold : FontStyles.Normal;
+            nameText.alpha = member.Online ? 1f : 0.45f;
+            statusText.alpha = member.Online ? 0.8f : 0.45f;
+        }
+
+        /// <summary>Distance in whole metres, compared as a number before any text is made; -1 none, -2 offline.</summary>
+        private void ApplyStatus(bool online, float? distance)
+        {
+            int metres = !online ? -2 : distance.HasValue ? Mathf.RoundToInt(distance.Value) : -1;
+            if (metres == shownDistance)
+                return;
+            shownDistance = metres;
+            statusText.text = metres == -2 ? "offline" : metres == -1 ? "" : metres + "m";
         }
 
         /// <summary>Icons pack to the left in bit order; sprites resolve lazily so a missing ObjectDB just retries.</summary>
@@ -165,15 +217,22 @@ namespace Party.UI
         {
             if (ailmentIcons == null)
                 return;
+            int mask = member.Online ? member.Ailments : 0;
+            if (mask == shownAilments && !ailmentSpritesMissing)
+                return;
+            shownAilments = mask;
+            ailmentSpritesMissing = false;
             int shown = 0;
             float size = HealthPanelLayout.AilmentIconSize();
             for (int i = 0; i < ailmentIcons.Length; i++)
             {
-                bool on = member.Online && (member.Ailments & (1 << i)) != 0;
+                bool on = (mask & (1 << i)) != 0;
                 if (on && ailmentIcons[i].sprite == null)
                     ailmentIcons[i].sprite = Ailments.Icon(i);
+                ailmentSpritesMissing |= on && ailmentIcons[i].sprite == null;
                 on &= ailmentIcons[i].sprite != null;
-                ailmentIcons[i].gameObject.SetActive(on);
+                if (ailmentIcons[i].gameObject.activeSelf != on)
+                    ailmentIcons[i].gameObject.SetActive(on);
                 if (on)
                     ailmentIcons[i].rectTransform.anchoredPosition = new Vector2(shown++ * (size + 2f), ailmentIcons[i].rectTransform.anchoredPosition.y);
             }

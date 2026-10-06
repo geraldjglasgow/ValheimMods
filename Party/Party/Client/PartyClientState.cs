@@ -31,7 +31,29 @@ namespace Party.Client
         public static bool InParty => Members.Count > 0;
         public static bool IsLeader => InParty && LeaderId == Identity.LocalPlayerId;
 
-        public static PartyMemberView Find(long id) => Members.Find(m => m.Id == id);
+        /// <summary>A loop, not <c>List.Find</c>: nameplates and every hit on the player ask, and a lambda over the id allocates.</summary>
+        public static PartyMemberView Find(long id)
+        {
+            List<PartyMemberView> members = Members;
+            for (int i = 0; i < members.Count; i++)
+            {
+                if (members[i].Id == id)
+                    return members[i];
+            }
+            return null;
+        }
+
+        /// <summary>Whether another member of the party is online, so there is anyone to report vitals to.</summary>
+        public static bool AnyOtherOnline(long selfId)
+        {
+            List<PartyMemberView> members = Members;
+            for (int i = 0; i < members.Count; i++)
+            {
+                if (members[i].Online && members[i].Id != selfId)
+                    return true;
+            }
+            return false;
+        }
 
         /// <summary>Parses the <c>Party_Roster</c> wire text; empty means no party.</summary>
         public static void ApplyRoster(string text)

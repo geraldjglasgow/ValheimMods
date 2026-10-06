@@ -6,18 +6,27 @@ using Party.UI;
 
 namespace Party.Client
 {
-    /// <summary>The mod's one MonoBehaviour: ticks and draws everything else, which are all static classes.</summary>
+    /// <summary>The mod's ticking MonoBehaviour: ticks everything else, which are all static classes.</summary>
     public class PartyTicker : MonoBehaviour
     {
         private float inviteExpiryTimer;
+        private PartyGui gui;
+
+        private void Awake()
+        {
+            gui = gameObject.AddComponent<PartyGui>();
+            gui.enabled = false;
+        }
 
         private void Update()
         {
             if (ZNet.instance == null)
                 return;
             float dt = Time.deltaTime;
-            PartyRpcClient.Tick(dt);
             TickInviteExpiry(dt);
+            if (ZNet.instance.IsDedicated())
+                return;   // a dedicated server has no player, map, nameplates or panel to draw
+            PartyRpcClient.Tick(dt);
             MapPins.Tick();
             NameplateColorizer.Tick();
             TempPartyPins.Tick();
@@ -25,6 +34,7 @@ namespace Party.Client
             HealthPanel.Tick();
             if (HealthPanel.EditMode && Input.GetKeyDown(KeyCode.Escape))
                 HealthPanel.ToggleEditMode(false);
+            gui.Refresh();
         }
 
         /// <summary>Server-side invite timeouts, checked once a second.</summary>
@@ -39,6 +49,24 @@ namespace Party.Client
 
         /// <summary>Runs after every script's Update, so it wins the race against the game's own camera controller.</summary>
         private void LateUpdate() => HealthPanel.EnforceCursor();
+    }
+
+    /// <summary>
+    /// The IMGUI drawing, on its own component so it is enabled only while something could be drawn: an enabled
+    /// OnGUI costs a layout and a repaint pass every frame even when it draws nothing. The layout pass is kept
+    /// only while the invite window (a GUI.Window, which needs it) is open.
+    /// </summary>
+    public class PartyGui : MonoBehaviour
+    {
+        public void Refresh()
+        {
+            bool invite = InvitePromptUI.Active;
+            bool needed = invite || ChatIndicator.Visible() || OffscreenArrows.AnyCandidate();
+            if (enabled != needed)
+                enabled = needed;
+            if (useGUILayout != invite)
+                useGUILayout = invite;
+        }
 
         private void OnGUI()
         {

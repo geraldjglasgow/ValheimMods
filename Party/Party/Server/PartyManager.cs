@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using Party.Api;
 
 namespace Party.Server
@@ -27,8 +27,17 @@ namespace Party.Server
             store = null;
         }
 
-        public static PartyRecord FindPartyOf(long playerId) =>
-            EnsureStore().Data.Parties.FirstOrDefault(p => p.Contains(playerId));
+        /// <summary>A plain loop: the vitals relay asks several times a second per member, and LINQ over a lambda allocates.</summary>
+        public static PartyRecord FindPartyOf(long playerId)
+        {
+            List<PartyRecord> parties = EnsureStore().Data.Parties;
+            for (int i = 0; i < parties.Count; i++)
+            {
+                if (parties[i].Contains(playerId))
+                    return parties[i];
+            }
+            return null;
+        }
 
         public static bool IsFull(PartyRecord party) => party.Members.Count >= PartyConfig.MaxPartySize.Value;
 

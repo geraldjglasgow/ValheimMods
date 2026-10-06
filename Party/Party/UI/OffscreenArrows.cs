@@ -8,6 +8,23 @@ namespace Party.UI
     {
         private const float Margin = 40f;
 
+        /// <summary>Built on the first draw: GUI.skin only exists inside OnGUI.</summary>
+        private static GUIStyle labelStyle;
+
+        /// <summary>Whether any member could need an arrow: the GUI component stays off when none could.</summary>
+        public static bool AnyCandidate()
+        {
+            if (!PartyClientState.InParty)
+                return false;
+            long selfId = Identity.LocalPlayerId;
+            foreach (PartyMemberView member in PartyClientState.Members)
+            {
+                if (member.Id != selfId && member.Online && member.PositionValid)
+                    return true;
+            }
+            return false;
+        }
+
         public static void Draw()
         {
             if (!PartyClientState.InParty)
@@ -15,9 +32,10 @@ namespace Party.UI
             Camera cam = Utils.GetMainCamera();
             if (cam == null)
                 return;
+            long selfId = Identity.LocalPlayerId;
             foreach (PartyMemberView member in PartyClientState.Members)
             {
-                if (member.Id == Identity.LocalPlayerId || !member.Online || !member.PositionValid)
+                if (member.Id == selfId || !member.Online || !member.PositionValid)
                     continue;
                 DrawFor(cam, member);
             }
@@ -58,7 +76,7 @@ namespace Party.UI
             Matrix4x4 previousMatrix = GUI.matrix;
             Color previousColor = GUI.color;
             GUIUtility.RotateAroundPivot(angle, pos);
-            GUI.color = member.IsLeader ? ColorHelper.Parse(PartyConfig.LeaderColor.Value) : ColorHelper.Parse(PartyConfig.PartyColor.Value);
+            GUI.color = ColorHelper.MemberColor(member.IsLeader);
             GUI.DrawTexture(new Rect(pos.x - 4f, pos.y - 10f, 8f, 20f), Texture2D.whiteTexture);
             GUI.matrix = previousMatrix;
             GUI.color = Color.white;
@@ -66,6 +84,7 @@ namespace Party.UI
             GUI.color = previousColor;
         }
 
-        private static GUIStyle LabelStyle() => new GUIStyle(GUI.skin.label) { fontSize = 11, alignment = TextAnchor.MiddleCenter };
+        private static GUIStyle LabelStyle() =>
+            labelStyle ?? (labelStyle = new GUIStyle(GUI.skin.label) { fontSize = 11, alignment = TextAnchor.MiddleCenter });
     }
 }

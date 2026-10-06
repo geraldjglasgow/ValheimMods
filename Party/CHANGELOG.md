@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Party pings and death pins on the map are coloured like the party.
+- Less work every frame for the health panel, name colours, map pins and arrows.
+
 ## 0.1.0
 
 - First release: parties with one leader, a size cap and automatic leader handover, kept through logout and restarts.

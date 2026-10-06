@@ -17,18 +17,33 @@ namespace Party.Api
         /// <summary>(anyMemberId, newLeaderId).</summary>
         public static event Action<long, long> LeaderChanged;
 
-        public static bool IsInParty(long playerId) => FindMembers(playerId, out _) != null;
+        // The bool and leader questions are answered without building a member list: other mods may ask per hit.
+        public static bool IsInParty(long playerId) => Identity.IsServer
+            ? PartyManager.FindPartyOf(playerId) != null
+            : PartyClientState.InParty && PartyClientState.Find(playerId) != null;
 
         public static bool AreInSameParty(long playerIdA, long playerIdB)
         {
-            List<PartyMemberInfo> members = FindMembers(playerIdA, out _);
-            return members != null && members.Exists(m => m.Id == playerIdB);
+            if (Identity.IsServer)
+            {
+                PartyRecord party = PartyManager.FindPartyOf(playerIdA);
+                return party != null && party.Contains(playerIdB);
+            }
+            return PartyClientState.InParty && PartyClientState.Find(playerIdA) != null && PartyClientState.Find(playerIdB) != null;
         }
 
         public static long? GetLeader(long playerId)
         {
-            FindMembers(playerId, out long leaderId);
+            long leaderId = LeaderOf(playerId);
             return leaderId == 0 ? (long?)null : leaderId;
+        }
+
+        /// <summary>The leader of the player's party, or 0 when they have none (as far as this peer knows).</summary>
+        private static long LeaderOf(long playerId)
+        {
+            if (Identity.IsServer)
+                return PartyManager.FindPartyOf(playerId)?.LeaderId ?? 0;
+            return PartyClientState.InParty && PartyClientState.Find(playerId) != null ? PartyClientState.LeaderId : 0;
         }
 
         public static IReadOnlyList<PartyMemberInfo> GetMembers(long playerId)

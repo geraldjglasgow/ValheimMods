@@ -12,6 +12,8 @@ namespace Party.UI
         private static float remainingSeconds;
         private static bool active;
 
+        public static bool Active => active;
+
         public static void Show(string inviter, int timeoutSeconds)
         {
             inviterName = inviter;

@@ -7,11 +7,13 @@ namespace Party.Chat
     {
         private static readonly GUIStyle style = new GUIStyle { fontSize = 14, fontStyle = FontStyle.Bold };
 
+        public static bool Visible() => PartyChatState.ToggleModeOn && IsChatInputOpen();
+
         public static void Draw()
         {
-            if (!PartyChatState.ToggleModeOn || !IsChatInputOpen())
+            if (!Visible())
                 return;
-            style.normal.textColor = ColorHelper.Parse(PartyConfig.PartyColor.Value);
+            style.normal.textColor = ColorHelper.PartyColor();
             GUI.Label(new Rect(16, Screen.height - 90, 300, 24), "[Party Chat] everything you type goes to your party", style);
         }
 

@@ -1,3 +1,4 @@
+using UnityEngine;
 using Party.Client;
 
 namespace Party.Hooks
@@ -21,7 +22,9 @@ namespace Party.Hooks
             PartyMemberView member = PartyClientState.Find(player.GetPlayerID());
             if (member == null)
                 return;
-            data.m_name.color = member.IsLeader ? ColorHelper.Parse(PartyConfig.LeaderColor.Value) : ColorHelper.Parse(PartyConfig.PartyColor.Value);
+            Color color = ColorHelper.MemberColor(member.IsLeader);
+            if (data.m_name.color != color)
+                data.m_name.color = color;
         }
     }
 }
