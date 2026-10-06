@@ -13,6 +13,7 @@ namespace DevBridge.Events
         /// <summary>A reply for a long poll or the kinds list; null once a stream has written and closed the response.</summary>
         internal static Reply Answer(BridgeRequest request, HttpListenerResponse response)
         {
+            EventLog.StartRecording();
             if (string.Equals(request.Get("kinds"), "list", StringComparison.OrdinalIgnoreCase))
                 return new Reply(200, "text/plain", EventKinds.List());
             EventQuery query = EventQuery.From(request);

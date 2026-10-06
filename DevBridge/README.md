@@ -7,7 +7,7 @@ or a script can see the game, play it and check a mod unattended.
 - See: screenshots, the live UI tree, the log, game state, nearby objects and their ZDOs.
 - Drive: clicks, keys, mouse, typed text, console commands, waits for a menu, a loaded world or a log line.
 - Inspect: reflection and expression eval on any object, method traces, a stream of game events.
-- Measure: frame cost per mod, slow motion and frame stepping, motion contact sheets, debug overlays (colliders, AI
+- Measure: frame cost per mod, memory and garbage-collection hitches (`/heap`), slow motion and frame stepping, motion contact sheets, debug overlays (colliders, AI
   senses, paths, wards).
 - Test: scripted scenarios, a client compared with a dedicated server on one machine, live value tuning.
 - Iterate: hot reload a mod's DLL, swap a prefab's look, stage an asset bundle beside the game's own models.

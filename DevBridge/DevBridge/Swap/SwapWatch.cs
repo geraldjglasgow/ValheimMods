@@ -30,6 +30,8 @@ namespace DevBridge.Swap
 
         internal static bool On(string bundle) => Active.ContainsKey(bundle);
 
+        internal static bool Any => Active.Count > 0;
+
         internal static void Start(LoadedBundle loaded)
         {
             Active[loaded.Name] = new Watch { Bundle = loaded.Name, Path = loaded.Path, Seen = loaded.FileTime, Loaded = loaded.FileTime };
@@ -85,7 +87,8 @@ namespace DevBridge.Swap
 
     /// <summary>
     /// Once a second, on the main thread: copies of swapped prefabs spawned since take the swap (a starred creature's
-    /// own body material included), and watched bundle files the workshop rebuilt are reloaded.
+    /// own body material included; the copies are caught as they are made, see NewCopies), and watched bundle files the
+    /// workshop rebuilt are reloaded. With no swap and no watch left it does nothing but one test per frame.
     /// </summary>
     internal sealed class SwapKeeper : MonoBehaviour
     {
@@ -99,7 +102,7 @@ namespace DevBridge.Swap
 
         private void Update()
         {
-            if (Time.unscaledTime < next) return;
+            if (Time.unscaledTime < next || (!Swaps.Any && !Watches.Any)) return;
             next = Time.unscaledTime + 1f;
             Swaps.Sweep();
             Watches.Tick();

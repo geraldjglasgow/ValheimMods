@@ -20,6 +20,8 @@ namespace DevBridge.Swap
 
         internal static IEnumerable<SwapEntry> All => Entries.Values.OrderBy(e => e.PrefabName).ToList();
 
+        internal static bool Any => Entries.Count > 0;
+
         internal static string Names() => Entries.Count == 0 ? "none" : string.Join(", ", All.Select(e => e.PrefabName));
 
         internal static SwapEntry Get(string prefab) =>
@@ -31,6 +33,7 @@ namespace DevBridge.Swap
             Source(loaded, entry.Asset);
             if (Entries.TryGetValue(entry.PrefabName, out SwapEntry old)) Take(old);
             Entries[entry.PrefabName] = entry;
+            NewCopies.Watch(Entries.Values.Select(e => e.Hash));
             try
             {
                 Apply(entry, loaded);
@@ -90,6 +93,7 @@ namespace DevBridge.Swap
         {
             if (entry.On && entry.Prefab) Revert(entry);
             Entries.Remove(entry.PrefabName);
+            NewCopies.Watch(Entries.Values.Select(e => e.Hash));
         }
 
         /// <summary>Before its bundle reloads: each swap from it comes off and waits for the new load.</summary>
@@ -139,14 +143,29 @@ namespace DevBridge.Swap
         private static IEnumerable<SwapEntry> From(LoadedBundle loaded) =>
             Entries.Values.Where(e => string.Equals(e.Bundle, loaded.Name, StringComparison.OrdinalIgnoreCase)).ToList();
 
-        /// <summary>Once a second: copies of swapped prefabs spawned (or worn, shown, placed) since take the swap.</summary>
+        /// <summary>
+        /// Once a second: copies of swapped prefabs spawned (or worn, shown, placed) since take the swap. Only what
+        /// NewCopies caught since the last sweep is looked at, with the stage and the build ghost, not the whole world.
+        /// </summary>
         internal static void Sweep()
+        {
+            if (Entries.Count > 0) ReachAll(Targets.Fresh);
+            NewCopies.Clear();
+        }
+
+        /// <summary>On demand (/swap?list=1): every swap reaches whatever draws its prefab now, the whole world walked once.</summary>
+        internal static void Rescan()
+        {
+            if (Entries.Count > 0) ReachAll(Targets.Of);
+        }
+
+        private static void ReachAll(Func<SwapEntry, List<Target>> find)
         {
             foreach (SwapEntry entry in Entries.Values.Where(e => e.On).ToList())
             {
                 try
                 {
-                    if (!Rebased(entry) && entry.Prefab) Reach(entry);
+                    if (!Rebased(entry) && entry.Prefab) Reach(entry, find(entry));
                 }
                 catch (Exception error)
                 {
@@ -156,9 +175,9 @@ namespace DevBridge.Swap
             }
         }
 
-        private static void Reach(SwapEntry entry)
+        private static void Reach(SwapEntry entry, List<Target> found)
         {
-            foreach (Target target in Targets.Of(entry).Where(t => !entry.Covered.ContainsKey(t.Root))) Applier.To(entry, target);
+            foreach (Target target in found.Where(t => !entry.Covered.ContainsKey(t.Root))) Applier.To(entry, target);
             foreach (GameObject gone in entry.Covered.Keys.Where(k => !k).ToList()) entry.Covered.Remove(gone);
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using DevBridge.Events;
 using DevBridge.Scenario;
 using DevBridge.Server;
 using UnityEngine;
@@ -30,6 +31,7 @@ namespace DevBridge.Routes
         /// <summary>Answers at once only for bad input; otherwise the scenario thread answers when the run ends.</summary>
         private static void Handle(BridgeRequest request)
         {
+            EventLog.StartRecording(); // wait_event steps read the game's events
             string file = request.Get("file");
             string json = file != null ? Read(file) : request.Get("body")
                 ?? throw new BridgeException("give file=<scenario.json>, or POST the scenario itself with Content-Type: application/json");

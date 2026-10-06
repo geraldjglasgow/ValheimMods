@@ -23,8 +23,9 @@ namespace DevBridge.Scenario
         private static bool Counts(LineBuffer.Line line, Step step)
         {
             if (line.Level == LogLevel.None || (int)line.Level > (int)step.Level) return false;
-            if (step.Grep != null && !Has(line.Text, step.Grep)) return false;
-            return !step.Ignore.Any(text => Has(line.Text, text));
+            string text = line.Text;
+            if (step.Grep != null && !Has(text, step.Grep)) return false;
+            return !step.Ignore.Any(ignored => Has(text, ignored));
         }
 
         private static bool Has(string text, string part) => text.IndexOf(part, StringComparison.OrdinalIgnoreCase) >= 0;

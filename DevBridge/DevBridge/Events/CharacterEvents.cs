@@ -36,7 +36,7 @@ namespace DevBridge.Events
                 data["attacker_prefab"] = CharacterFacts.Prefab(attacker);
                 data["distance"] = CharacterFacts.Distance(attacker, target);
             }
-            EventLog.Add("hit", data);
+            EventLog.AddPlain("hit", data);
         }
 
         private static Dictionary<string, object> Types(HitData.DamageTypes d)
@@ -67,7 +67,7 @@ namespace DevBridge.Events
             Cause(data, character.m_lastHit);
             data["position"] = CharacterFacts.Position(character);
             CharacterFacts.Flags(data, character);
-            EventLog.Add("death", data);
+            EventLog.AddPlain("death", data);
             if (character.IsBoss()) Boss("died", character);
         }
 
@@ -90,7 +90,7 @@ namespace DevBridge.Events
             data["owner"] = character.IsOwner() ? "me" : "other";
             data["position"] = CharacterFacts.Position(character);
             CharacterFacts.Flags(data, character);
-            EventLog.Add("spawn", data);
+            EventLog.AddPlain("spawn", data);
             if (character.IsBoss()) Boss("appeared", character);
         }
 
@@ -99,7 +99,7 @@ namespace DevBridge.Events
             var data = new Dictionary<string, object> { ["what"] = what };
             CharacterFacts.Into(data, boss);
             data["position"] = CharacterFacts.Position(boss);
-            EventLog.Add("boss", data);
+            EventLog.AddPlain("boss", data);
         }
     }
 }

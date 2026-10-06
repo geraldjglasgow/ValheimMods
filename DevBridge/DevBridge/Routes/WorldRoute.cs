@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 using DevBridge.Server;
 using DevBridge.World;
 
@@ -30,6 +32,14 @@ namespace DevBridge.Routes
         private static void Zdo(BridgeRequest request)
         {
             ZdoNames.Add(request.Get("keys"));
+            Async.Start(request, Named(request, ZdoNames.Prepare()));
+        }
+
+        // The key names are read in the background on the first /zdo, so that one waits for them without holding up a
+        // frame; the ZDO is picked once they are there, as it is then.
+        private static IEnumerator Named(BridgeRequest request, Task names)
+        {
+            while (!names.IsCompleted) yield return null;
             request.Json(WorldDump.Zdo(Pick(request), request.Flag("full")));
         }
 

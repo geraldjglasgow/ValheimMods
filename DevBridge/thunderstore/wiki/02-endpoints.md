@@ -37,13 +37,14 @@ coordinates are game-window pixels from the top-left. [Getting Started](wiki:Get
 | --- | --- |
 | `/eval` | Reflection on any object, private members too: `Player.m_localPlayer.m_runSpeed`, `$hover.Character.GetLevel()`, method calls, assignments (`Terminal.m_cheat = true`); `members=1`, `methods=1` list them |
 | `/trace` | Patches a game or mod method now and records each call: time, ms, instance, arguments, result or exception (`method=Type.Method`, `where=`, `stack=1`); `id=N&last=20` reads them, `off=N` or `off=all` unpatches |
-| `/events` | Game events (`hit`, `death`, `spawn`, `player`, `boss`, log warnings, console lines and more): a long poll (`since=`, `kinds=`, `grep=`, `wait=`) or a live NDJSON stream (`stream=1`); `kinds=list` explains each kind |
+| `/events` | Game events (`hit`, `death`, `spawn`, `player`, `boss`, log warnings, console lines and more): a long poll (`since=`, `kinds=`, `grep=`, `wait=`) or a live NDJSON stream (`stream=1`); `kinds=list` explains each kind; records from the first `/events` or `/scenario` call |
 
 ## Measure
 
 | Endpoint | What it does |
 | --- | --- |
 | `/perf` | Samples `seconds=` (default 5, max 60): fps, frame ms avg/p50/p95/p99/max, collections, heap; per mod the main-thread ms and calls per frame of its Harmony patches and MonoBehaviour updates, with its costliest methods (`mod=`, `top=`, `baseline=1`) |
+| `/heap` | Memory now (managed heap, collections, GC mode, Unity native); `seconds=` (max 120) puts each hitch beside garbage collections, log lines and spawned objects; `objects=1` Unity objects by type, `statics=1` mods' static collections and broken static constructors; `mark=`/`diff=` show what grew |
 | `/time` | This machine's game clock: slow motion (`scale=0.25`), `pause=1`, `resume=1`, `step=N` frames or `step_seconds=`, `reset=1` hands it back |
 | `/burst` | A run of frames (`seconds=2&frames=12`, or `every=N`; at most 64) on one labelled contact sheet; `crop=`, `cell=`, `keep=1`, `video=` through ffmpeg |
 | `/overlay` | Persistent debug lines round the player: colliders, AI senses and targets, AI paths, wards, portals, edited terrain, spawners, zones (`show=`, `off=`, `radius=30`) |

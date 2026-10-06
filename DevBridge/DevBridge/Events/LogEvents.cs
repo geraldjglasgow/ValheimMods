@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using BepInEx.Logging;
-using HarmonyLib;
 
 namespace DevBridge.Events
 {
@@ -27,7 +25,7 @@ namespace DevBridge.Events
         {
             try
             {
-                if ((eventArgs.Level & Wanted) == 0 || !Admit(out int skipped)) return;
+                if (!EventLog.Recording || (eventArgs.Level & Wanted) == 0 || !Admit(out int skipped)) return;
                 string text = eventArgs.Data?.ToString() ?? "";
                 var data = new Dictionary<string, object>
                 {
@@ -67,18 +65,20 @@ namespace DevBridge.Events
         }
     }
 
-    /// <summary>console events: every line the console and chat print, without rich-text tags (beside ConsoleCapture,
-    /// which keeps the same lines for /console and /log?buffer=console).</summary>
-    [HarmonyPatch(typeof(Terminal), nameof(Terminal.AddString), typeof(string))]
+    /// <summary>console events: every line the console and chat print, without rich-text tags, handed over by
+    /// ConsoleCapture, which takes the tags out once for its own lines and these.</summary>
     internal static class ConsoleEvents
     {
-        private static readonly Regex Tags = new Regex("<[^>]*>");
-
-        private static void Postfix(Terminal __instance, string text) => Publish.Safely("console", () =>
+        internal static void Printed(string source, string plain)
         {
-            string plain = Tags.Replace(text ?? "", "").Trim();
-            if (plain.Length == 0) return;
-            EventLog.Add("console", new Dictionary<string, object> { ["source"] = __instance is Chat ? "chat" : "console", ["text"] = plain });
-        });
+            if (EventLog.Recording) Publish.Safely("console", static (s, p) => Add(s, p), source, plain);
+        }
+
+        private static void Add(string source, string plain)
+        {
+            string text = plain.Trim();
+            if (text.Length == 0) return;
+            EventLog.AddPlain("console", new Dictionary<string, object> { ["source"] = source, ["text"] = text });
+        }
     }
 }

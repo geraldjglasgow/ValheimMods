@@ -50,7 +50,7 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/log` | numbered recent log lines (`since=`, `level=warning`, `grep=`), or the console's (`buffer=console`) |
 | `/eval` | reflection: `Player.m_localPlayer.m_runSpeed`, `$hover.Character.GetLevel()`, `Terminal.m_cheat = true`, `members=1` |
 | `/nearby` | networked objects near the player with creature, item, container and piece details and ZDO ids |
-| `/zdo` | every value a ZDO stores (`id=`, `hover=1`, `nearest=Troll`), key names recovered from the game's and plugins' strings; owner id and revisions; `full=1` leaves strings uncut |
+| `/zdo` | every value a ZDO stores (`id=`, `hover=1`, `nearest=Troll`), key names recovered from the game's and plugins' strings (read on the first `/zdo`, kept in `BepInEx/cache/DevBridge.zdonames`, read again only for a changed file); owner id and revisions; `full=1` leaves strings uncut |
 | `/bundle` | load an asset bundle from a file (`load=`), list its assets by type (`assets=`), `reload=` it after a rebuild, `unload=` |
 | `/prefabs` | the game's prefabs by name text and kind (`filter=sfx_`, `kind=creature`, `piece`, `item`, `sfx`, `vfx`) |
 | `/place` | a still, local copy of a bundle prefab in a row in front of the player, dressed in a game material or worn by a game creature |
@@ -67,6 +67,7 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/events` | game events as they happen (hits, deaths, spawns, the player, bosses, log warnings, console lines, hitbox records, other features' kinds): a long poll (`since=`, `kinds=`, `grep=`, `wait=`) or a live NDJSON stream (`stream=1`) |
 | `/trace` | live tracepoints: patch any game or mod method now (`method=Attack.DoMeleeAttack`) and record each call: time, ms, instance, arguments, result or exception; `id=N&last=20` reads them, `off=N` or `off=all` unpatches |
 | `/perf` | samples `seconds=` (default 5, max 60): fps, frame ms avg/p50/p95/p99/max, collections, managed heap; per mod the main-thread ms and calls per frame of its Harmony patches and MonoBehaviour updates, with its costliest methods (`mod=`, `top=`, `baseline=1`) |
+| `/heap` | memory now (managed heap, collections, GC mode, Unity native); `seconds=` watches frames and puts each hitch beside the garbage collections, the log lines and the objects spawned around it; `objects=1` Unity objects by type, `statics=1` mods' static collections, both with `mark=`/`diff=` |
 | `/scenario` | a scripted test from a JSON file (`file=`) or POST body: setup, steps, cleanup; each step calls an endpoint, evals, waits, waits for an event or checks the log, with expectations; pass/fail per step |
 | `/sync` | this game against every other DevBridge on the machine (a dedicated server, a host, clients): `peers=1` who runs what, a ZDO (`id=`, `nearest=`, `hover=1`), an `/eval` result (`expr=`), a plugin's config (`config=`); `"same"` and the differences |
 | `/config` | a plugin's config entries in memory (`mod=` name or GUID, `section=`): value, default, type, description, Charter status; without `mod=` the plugins |
@@ -97,8 +98,9 @@ draws a yellow line from the attacker's centre to the player with the player's b
 and the distance centre to centre and the gap body to body (`you_distance`/`you_gap` on a swing, `distance`/`gap` on a
 hit). `players=1` adds the players' own swings; `clear=1` empties the list; `off=1` stops it.
 
-The lines are drawn over everything (no depth test) and only on this machine, and a swing is drawn only where the game
-works it out, on the attacker's owner (single player or the host). Hits on the player are seen wherever the player is.
+The lines are drawn over everything (no depth test) and only on this machine, at most 600 at once (the oldest go first),
+from line renderers kept and reused as `/overlay` does; a swing is drawn only where the game works it out, on the
+attacker's owner (single player or the host). Hits on the player are seen wherever the player is.
 Area and custom damage have no shape to draw; their hits still get the yellow line and the distances.
 
 ## Watching and measuring
@@ -172,6 +174,13 @@ says there are more). `stream=1` sends the same events as NDJSON, one line each 
 or `seconds=` pass; after 15 quiet seconds it sends one space, which ends no line. Both are answered on the HTTP thread
 and never hold up a frame. `kinds=list` describes every kind.
 
+The game's own events (hits, deaths, spawns, the player, bosses, log and console lines) are recorded from the first
+`/events` or `/scenario` call of the session, not from the game's start, so a game nobody tests pays nothing for them.
+To see a world's spawns as it loads, call `/events` once before logging in (the main menu is fine). What the endpoints
+publish (`trace`, `swap`, `reload`...) is recorded either way. Once recording, the game patches behind the events cost
+little when they have nothing to record (a hit on a creature this machine does not own, an alert that is not a boss's):
+they leave at once and allocate nothing, and a recorded event allocates only its own data.
+
 | Kind | Data |
 | --- | --- |
 | `hit` | target, prefab, id, level, damage (after block, resistances, armour, difficulty), types, raw, health, max, how, attacker, distance |
@@ -225,6 +234,29 @@ which times nothing, or time one mod with `mod=OpenKeep`. Probing stutters the g
 come off over the frames after the reply, as they went on (HarmonyX keeps its rebuilt copies of the timed methods until
 a restart, with the same behaviour). One sample runs at a time; its summary is also a `perf` event. It measures this
 process only: a client's own cost, or a host's or server's.
+
+### What memory holds and whether hitches are the collector
+
+`/heap` alone reads the memory now: the managed heap in use, its size and free space, the collection count, the GC
+mode and incremental time slice and Unity's native allocator. It costs nothing.
+
+`/heap?seconds=30` (max 120) watches frames without patching anything: each garbage collection (when, the frame's time
+and the next one's, the heap in use before and after), each frame over `hitch=` ms (default 40) and whether a
+collection came within a frame of it, and a `verdict` such as "3 of 3 frames over 40 ms came within a frame of a
+garbage collection". Each hitch lists the log lines written from the frame before it to the frame after (`log`)
+and how many networked objects appeared or went in its frame (`objects_change`): a dungeon spawning or a zone loading
+shows there. `heap.growth_mb_per_s` is the heap in use growing between collections, a lower bound on the
+managed allocation rate (Valheim's Boehm Mono counts no allocations; space reused inside partly filled blocks after a
+collection is not seen). A collection's pause grows with the heap it walks, so a big heap and a high growth rate
+together are the stutter.
+
+`/heap?objects=1` counts every loaded Unity object by type with its native size (`top=`, `sort=count`); `type=Texture2D`
+lists that type's largest objects by name. `/heap?statics=1` sizes every plugin's static collections (anything with a
+`Count`), per mod and per field, with `nested` = the items of the collections they hold one level down (`mod=`, `top=`),
+and lists `broken_types`: classes whose static constructor threw, which fail on every use after. Reading a static runs
+its class's static constructor if nothing has used the class yet, so take this census in the world. Both take
+`mark=a` to keep the census and `diff=a` later to show what grew since: a leak shows as a row that only grows. Each
+census walks everything once and is a hitch of its own (`census_ms`).
 
 ## Testing
 
@@ -443,10 +475,12 @@ dressed game shader) as a copy wearing the bundle's textures; `materials=replace
 animators' clips of the same names, keeping a fighting creature's state. The reply lists each renderer as swapped
 (triangles before and after), kept or failed, the bundle's unused renderers as missing, and the copies reached.
 `watch=1` reloads the bundle when its file is rebuilt and swaps again in the same frame, as `/bundle?reload=` does;
-`revert=1` puts everything back, copies spawned since included. Only this machine sees it: colliders, AI and networking
-are untouched, and swaps last until reverted or the game closes, across logouts (a mod's prefab built anew for each
-world takes the swap again within a second). A mod that embeds the bundle holds its name, so build the preview as
-`<name>_preview`.
+`revert=1` puts everything back, copies spawned since included. Copies made after the swap (networked copies loaded or
+spawned, items worn or put on a stand) are caught as the game makes them and take it within a second, without the world
+being walked again; `/swap?list=1` walks everything once and reaches anything left over. Only this machine sees it:
+colliders, AI and networking are untouched, and swaps last until reverted or the game closes, across logouts (a mod's
+prefab built anew for each world takes the swap again within a second). A mod that embeds the bundle holds its name,
+so build the preview as `<name>_preview`.
 
     .\build.ps1 -Asset crypt_mimic -Bundle ecp_mimic_preview          # in ValheimAssets
     curl -s "$B/swap?prefab=ECP_CryptMimic&load=$W/out/bundles/ecp_mimic_preview.windows&asset=crypt_mimic&materials=keep&clips=1&watch=1"

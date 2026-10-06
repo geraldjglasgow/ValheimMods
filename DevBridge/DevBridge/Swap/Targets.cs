@@ -85,8 +85,23 @@ namespace DevBridge.Swap
             return all;
         }
 
+        /// <summary>
+        /// What may have started drawing the prefab since the last sweep, found without walking the world: the stage's
+        /// still copies, the build ghost, and the copies <see cref="NewCopies"/> caught as the game made them.
+        /// </summary>
+        internal static List<Target> Fresh(SwapEntry entry)
+        {
+            var fresh = new List<Target>();
+            fresh.AddRange(Staged(entry));
+            fresh.AddRange(Ghost(entry));
+            fresh.AddRange(NewCopies.Of(entry));
+            return fresh;
+        }
+
         private static Target Make(SwapEntry entry, GameObject root, Transform bones, string kind) =>
             new Target { Root = root, Prefab = entry.Prefab.transform, BoneRoot = bones, Kind = kind };
+
+        internal static Target Instance(SwapEntry entry, ZNetView view) => Make(entry, view.gameObject, view.transform, InstanceKind);
 
         /// <summary>The networked copies this machine has loaded, by the prefab hash in their ZDO.</summary>
         private static IEnumerable<Target> Instances(SwapEntry entry)
@@ -94,8 +109,7 @@ namespace DevBridge.Swap
             if (!ZNetScene.instance) yield break;
             foreach (KeyValuePair<ZDO, ZNetView> pair in ZNetScene.instance.m_instances)
             {
-                if (pair.Key != null && pair.Value && pair.Key.GetPrefab() == entry.Hash)
-                    yield return Make(entry, pair.Value.gameObject, pair.Value.transform, InstanceKind);
+                if (pair.Key != null && pair.Value && pair.Key.GetPrefab() == entry.Hash) yield return Instance(entry, pair.Value);
             }
         }
 
@@ -117,15 +131,24 @@ namespace DevBridge.Swap
         /// </summary>
         private static IEnumerable<Target> Stands(SwapEntry entry)
         {
-            GameObject attach = ItemStand.GetAttachPrefab(entry.Prefab);
-            if (!attach) yield break;
-            string prefix = Paths.Of(ItemStand.GetAttachGameObject(attach).transform, entry.Prefab.transform);
+            string prefix = StandPrefix(entry);
+            if (prefix == null) yield break;
             foreach (ItemStand stand in Object.FindObjectsByType<ItemStand>(FindObjectsSortMode.None).Where(s => s.m_visualHash == entry.Hash && s.m_visualItem))
-            {
-                Target target = Make(entry, stand.m_visualItem, stand.m_visualItem.transform, WornKind);
-                target.Prefix = prefix;
-                yield return target;
-            }
+                yield return OnStand(entry, stand, prefix);
+        }
+
+        /// <summary>Where a stand's visual of the item sits in the item prefab; null when the item cannot go on a stand.</summary>
+        internal static string StandPrefix(SwapEntry entry)
+        {
+            GameObject attach = ItemStand.GetAttachPrefab(entry.Prefab);
+            return attach ? Paths.Of(ItemStand.GetAttachGameObject(attach).transform, entry.Prefab.transform) : null;
+        }
+
+        internal static Target OnStand(SwapEntry entry, ItemStand stand, string prefix)
+        {
+            Target target = Make(entry, stand.m_visualItem, stand.m_visualItem.transform, WornKind);
+            target.Prefix = prefix;
+            return target;
         }
 
         /// <summary>
@@ -136,14 +159,16 @@ namespace DevBridge.Swap
         {
             foreach (VisEquipment wearer in Object.FindObjectsByType<VisEquipment>(FindObjectsSortMode.None))
             {
-                foreach (GameObject item in Items(wearer, entry.Hash).Where(i => i))
-                {
-                    Target target = Make(entry, item, wearer.transform, WornKind);
-                    target.Prefix = Utils.GetPrefabName(item.name);
-                    if (target.Prefix == "attach_skin") target.Body = wearer.m_bodyModel;
-                    yield return target;
-                }
+                foreach (GameObject item in Items(wearer, entry.Hash).Where(i => i)) yield return WornItem(entry, wearer, item);
             }
+        }
+
+        internal static Target WornItem(SwapEntry entry, VisEquipment wearer, GameObject item)
+        {
+            Target target = Make(entry, item, wearer.transform, WornKind);
+            target.Prefix = Utils.GetPrefabName(item.name);
+            if (target.Prefix == "attach_skin") target.Body = wearer.m_bodyModel;
+            return target;
         }
 
         /// <summary>The visuals the wearer made from the item with this hash, in every slot.</summary>

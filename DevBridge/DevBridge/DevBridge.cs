@@ -3,7 +3,6 @@ using BepInEx.Configuration;
 using DevBridge.Logs;
 using DevBridge.Routes;
 using DevBridge.Server;
-using DevBridge.World;
 using HarmonyLib;
 using UnityEngine;
 
@@ -18,7 +17,7 @@ namespace DevBridge
     {
         public const string PluginGuid = "com.DevBridge";
         public const string PluginName = "DevBridge";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "0.2.0";
 
         internal static DevBridgePlugin Instance { get; private set; }
 
@@ -37,8 +36,6 @@ namespace DevBridge
             server = new HttpBridge(RouteTable.Build(), Logger);
             server.Start(port.Value);
         }
-
-        private void Start() => ZdoNames.Prepare();
 
         private void Update()
         {

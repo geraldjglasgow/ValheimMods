@@ -26,7 +26,8 @@ namespace DevBridge.Routes
             "                       file is rebuilt. This machine only; build the preview under its own bundle name (build.ps1 -Bundle\n" +
             "                       <name>_preview)\n" +
             "/swap?prefab=<prefab>&revert=1   the original look back everywhere (prefab=all for every swap)\n" +
-            "/swap?list=1           what is swapped (also /swap alone); watch=1|0&bundle=<name> starts or stops watching (all without bundle=)",
+            "/swap?list=1           what is swapped (also /swap alone), after reaching anything that draws a swapped prefab and\n" +
+            "                       has not taken the swap yet; watch=1|0&bundle=<name> starts or stops watching (all without bundle=)",
             Handle);
 
         private static void Handle(BridgeRequest request)
@@ -129,10 +130,15 @@ namespace DevBridge.Routes
             return new Dictionary<string, object> { ["watching"] = Watches.Names };
         }
 
-        private static object List() => new Dictionary<string, object>
+        // The sweep reaches only copies caught as they were made; a listing walks everything once, so its counts are whole.
+        private static object List()
         {
-            ["swaps"] = Swaps.All.Select(SwapReport.Brief).ToList(),
-            ["watching"] = Watches.Names,
-        };
+            Swaps.Rescan();
+            return new Dictionary<string, object>
+            {
+                ["swaps"] = Swaps.All.Select(SwapReport.Brief).ToList(),
+                ["watching"] = Watches.Names,
+            };
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace DevBridge.Events
         {
             var data = new Dictionary<string, object> { ["what"] = what, ["name"] = player.GetPlayerName() };
             foreach (KeyValuePair<string, object> fact in facts) data[fact.Key] = fact.Value;
-            EventLog.Add("player", data);
+            EventLog.AddPlain("player", data);
         }
 
         /// <summary>Spawned on entering the world, respawned after a death; first is this session's first spawn.</summary>
@@ -61,13 +61,18 @@ namespace DevBridge.Events
             });
         }
 
+        private static void Skilled(Player player, Skills.SkillType skill, float level) =>
+            Add("skill", player, new Dictionary<string, object> { ["skill"] = skill.ToString(), ["level"] = (int)level });
+
         private static bool Local(Player player) => player != null && player == Player.m_localPlayer;
 
         [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
         private static class Spawn
         {
-            private static void Postfix(Player __instance, bool spawnValkyrie) =>
-                Publish.Safely("player", () => Spawned(__instance, spawnValkyrie));
+            private static void Postfix(Player __instance, bool spawnValkyrie)
+            {
+                if (EventLog.Recording) Publish.Safely("player", static (p, valkyrie) => Spawned(p, valkyrie), __instance, spawnValkyrie);
+            }
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.TeleportTo))]
@@ -75,11 +80,12 @@ namespace DevBridge.Events
         {
             private static void Postfix(Player __instance, Vector3 pos, bool distantTeleport, bool __result)
             {
-                if (__result) Publish.Safely("player", () => { if (Local(__instance)) Teleporting(__instance, pos, distantTeleport); });
+                if (!EventLog.Recording || !__result || !Local(__instance)) return;
+                Publish.Safely("player", static (p, to, distant) => Teleporting(p, to, distant), __instance, pos, distantTeleport);
             }
         }
 
-        // Runs every physics step; the work happens only on the step the teleport ends.
+        // Runs every physics step; it leaves at once, allocating nothing, except on the step the teleport ends.
         [HarmonyPatch(typeof(Player), nameof(Player.UpdateTeleport))]
         private static class Teleported
         {
@@ -87,17 +93,18 @@ namespace DevBridge.Events
 
             private static void Postfix(Player __instance, bool __state)
             {
-                if (__state && !__instance.m_teleporting) Publish.Safely("player", () => { if (Local(__instance)) Arrived(__instance); });
+                if (!__state || __instance.m_teleporting || !EventLog.Recording || !Local(__instance)) return;
+                Publish.Safely("player", static p => Arrived(p), __instance);
             }
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.OnSkillLevelup))]
         private static class Skill
         {
-            private static void Postfix(Player __instance, Skills.SkillType skill, float level) => Publish.Safely("player", () =>
+            private static void Postfix(Player __instance, Skills.SkillType skill, float level)
             {
-                if (Local(__instance)) Add("skill", __instance, new Dictionary<string, object> { ["skill"] = skill.ToString(), ["level"] = (int)level });
-            });
+                if (EventLog.Recording && Local(__instance)) Publish.Safely("player", static (p, s, l) => Skilled(p, s, l), __instance, skill, level);
+            }
         }
     }
 }

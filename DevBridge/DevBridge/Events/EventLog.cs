@@ -39,6 +39,7 @@ namespace DevBridge.Events
         private static readonly object Gate = new object();
         private static long next = 1;
         private static int mainThread = -1;
+        private static volatile bool recording;
 
         /// <summary>The number the next event will get; pass it back as since= to read only newer events.</summary>
         internal static long Next
@@ -54,14 +55,28 @@ namespace DevBridge.Events
 
         internal static bool OnMainThread => Thread.CurrentThread.ManagedThreadId == mainThread;
 
+        /// <summary>Whether the game's own events (hits, deaths, spawns, the player, bosses, log and console lines) are
+        /// recorded: off until the first /events or /scenario call, so a game nobody tests pays one flag test per patch
+        /// call. What the endpoints publish (trace, swap, reload...) is recorded either way.</summary>
+        internal static bool Recording => recording;
+
+        /// <summary>Starts recording the game's own events; called by /events and /scenario, it stays on for the session.</summary>
+        internal static void StartRecording() => recording = true;
+
         /// <summary>Called once from the plugin's Awake, so events added on the main thread get the game time.</summary>
         internal static void SetMainThread() => mainThread = Thread.CurrentThread.ManagedThreadId;
 
         /// <summary>Records an event; kind is one lower-case word (hit, death, trace, reload...). The data is copied as plain
         /// data (Unity values become numbers or names), so the caller may keep changing its own dictionary.</summary>
-        internal static void Add(string kind, Dictionary<string, object> data)
+        internal static void Add(string kind, Dictionary<string, object> data) => Keep(kind, EventData.Plain(data));
+
+        /// <summary>Records an event whose data is plain already (strings, numbers, bools, number arrays and maps of them)
+        /// and was made for this event alone: kept as it is, without the copy Add makes. The game patches' events use it.</summary>
+        internal static void AddPlain(string kind, Dictionary<string, object> data) => Keep(kind, data ?? new Dictionary<string, object>());
+
+        private static void Keep(string kind, Dictionary<string, object> data)
         {
-            var added = new GameEvent { Kind = kind, Clock = DateTime.Now, Data = EventData.Plain(data) };
+            var added = new GameEvent { Kind = kind, Clock = DateTime.Now, Data = data };
             if (OnMainThread) added.GameTime = Fmt.R(Time.time);
             lock (Gate)
             {

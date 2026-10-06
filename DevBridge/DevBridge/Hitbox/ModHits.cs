@@ -1,4 +1,5 @@
 using System.Reflection;
+using DevBridge.Events;
 using HarmonyLib;
 using UnityEngine;
 
@@ -44,7 +45,7 @@ namespace DevBridge.Hitbox
             }
             catch (System.Exception error)
             {
-                Debug.LogWarning($"[DevBridge] hitbox: {error.GetType().Name}: {error.Message}");
+                Publish.WarnOnce("hitbox (axe head)", error);
             }
         }
 

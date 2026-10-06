@@ -50,11 +50,19 @@ namespace DevBridge.Routes
             return !Hud.instance || !Hud.instance.m_loadingScreen.gameObject.activeInHierarchy || Hud.instance.m_loadingScreen.alpha < 0.05f;
         }
 
-        private static Func<string> LogMatch(string grep, long since) => () =>
+        // Each look reads only the lines logged since the one before (a line's text is put together when read).
+        private static Func<string> LogMatch(string grep, long since)
         {
-            List<LineBuffer.Line> hits = LogCapture.Lines.Since(since, 1, l => l.Text.IndexOf(grep, StringComparison.OrdinalIgnoreCase) >= 0);
-            return hits.Count == 0 ? null : $"{hits[0].Seq} {hits[0].Text}";
-        };
+            long cursor = since;
+            Func<LineBuffer.Line, bool> match = l => l.Text.IndexOf(grep, StringComparison.OrdinalIgnoreCase) >= 0;
+            return () =>
+            {
+                long end = LogCapture.Lines.Next;
+                List<LineBuffer.Line> hits = LogCapture.Lines.Since(cursor, 1, match);
+                cursor = end;
+                return hits.Count == 0 ? null : $"{hits[0].Seq} {hits[0].Text}";
+            };
+        }
 
         private static IEnumerator Until(BridgeRequest request, Func<string> condition, float timeout)
         {
