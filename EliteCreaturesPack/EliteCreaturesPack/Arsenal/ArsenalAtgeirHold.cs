@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using EliteCreaturesPack.Core;
-using HarmonyLib;
 using UnityEngine;
 
 namespace EliteCreaturesPack.Arsenal
 {
     /// <summary>
-    /// On every player, on every peer: while the Bone Atgeir is in the right hand (as the player's equipment shows it, which
+    /// On every player, on every peer that draws (<see cref="PlayerHolds"/>): while the Bone Atgeir is in the right hand (as the player's equipment shows it, which
     /// the game syncs), the player's animator plays the Bone Atgeir's own three attacks in place of the game's atgeir
     /// attacks (AssetWorkshop SkelArsenal/AtgeirAuthor: the game's moves with the left fist on this haft throughout, each
     /// ending in the stance, the game's lengths and markers), and the left fist is put on the haft after each pose
@@ -118,18 +117,5 @@ namespace EliteCreaturesPack.Arsenal
             }
             return ours;
         }
-    }
-
-    /// <summary>Every player carries <see cref="ArsenalAtgeirHold"/>, on every peer.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
-    public static class ArsenalAtgeirHolder
-    {
-        private static void Postfix(Player __instance) => SafeCall.Run("Player.Awake bone atgeir", () =>
-        {
-            if (__instance.GetComponent<ArsenalAtgeirHold>() == null)
-            {
-                __instance.gameObject.AddComponent<ArsenalAtgeirHold>();
-            }
-        });
     }
 }

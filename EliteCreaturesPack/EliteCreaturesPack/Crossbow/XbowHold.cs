@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using EliteCreaturesPack.Core;
-using HarmonyLib;
 using UnityEngine;
 
 namespace EliteCreaturesPack.Crossbow
 {
     /// <summary>
-    /// On every player, on every peer: while the Bone Crossbow is in the left hand (as the player's equipment shows it,
+    /// On every player, on every peer that draws (<see cref="PlayerHolds"/>): while the Bone Crossbow is in the left hand (as the player's equipment shows it,
     /// which the game syncs), the player's animator plays the Bone Crossbow's own reload in place of the game's Arbalest
     /// reload (AssetWorkshop Crossbow/XbowClips: the crossbowman's reload, lowering the crossbow, drawing the string into
     /// the nut, laying a bolt; timed so the game's reload state, at 1.4x, paced so the 2.3 s default ends it as the hand
@@ -103,19 +102,5 @@ namespace EliteCreaturesPack.Crossbow
             (ours[gameReload], ours[gameDone]) = (reload, done);
             return ours;
         }
-    }
-
-    /// <summary>Every player carries <see cref="XbowHold"/> and <see cref="XbowPlayerRig"/>, on every peer.</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
-    public static class XbowHolder
-    {
-        private static void Postfix(Player __instance) => SafeCall.Run("Player.Awake bone crossbow", () =>
-        {
-            if (__instance.GetComponent<XbowHold>() == null)
-            {
-                __instance.gameObject.AddComponent<XbowHold>();
-                __instance.gameObject.AddComponent<XbowPlayerRig>();
-            }
-        });
     }
 }

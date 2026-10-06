@@ -19,8 +19,7 @@ namespace EliteCreaturesPack.Skeletons
             {
                 return false;
             }
-            SpawnSystem.SpawnData? instead = null;
-            SafeCall.Run("SpawnSystem.Spawn skeleton draw", () => instead = SkeletonDraw.Wild(critter));
+            SpawnSystem.SpawnData? instead = SafeCall.Run("SpawnSystem.Spawn skeleton draw", static data => SkeletonDraw.Wild(data), critter, null);
             if (instead == null)
             {
                 return true;
@@ -40,8 +39,8 @@ namespace EliteCreaturesPack.Skeletons
     {
         private static void Prefix(CreatureSpawner __instance, out GameObject? __state)
         {
-            GameObject? swap = null;
-            SafeCall.Run("CreatureSpawner.Spawn skeleton draw", () => swap = SkeletonDraw.Instead(__instance.m_creaturePrefab));
+            GameObject? swap = SafeCall.Run("CreatureSpawner.Spawn skeleton draw",
+                static prefab => SkeletonDraw.Instead(prefab), __instance.m_creaturePrefab, null);
             __state = swap == null ? null : __instance.m_creaturePrefab;
             if (swap != null)
             {
@@ -64,9 +63,8 @@ namespace EliteCreaturesPack.Skeletons
     {
         private static void Postfix(ref SpawnArea.SpawnData __result)
         {
-            SpawnArea.SpawnData picked = __result;
-            SafeCall.Run("SpawnArea.SelectWeightedPrefab skeleton draw", () => picked = SkeletonDraw.BonePile(picked));
-            __result = picked;
+            __result = SafeCall.Run("SpawnArea.SelectWeightedPrefab skeleton draw",
+                static picked => SkeletonDraw.BonePile(picked), __result, __result);
         }
     }
 }

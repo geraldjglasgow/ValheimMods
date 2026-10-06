@@ -2,7 +2,7 @@
 
 New creatures for Valheim, each with its own fight, and bone weapons made from what they drop.
 
-This wiki describes version 0.7.0.
+This wiki describes version 0.7.2.
 
 | Creature | Where | In short |
 | --- | --- | --- |

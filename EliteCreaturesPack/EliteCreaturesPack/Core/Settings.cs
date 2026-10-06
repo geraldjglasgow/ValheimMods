@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using BepInEx.Configuration;
 using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Core;
@@ -9,6 +10,7 @@ using EliteCreaturesPack.Mimic;
 using EliteCreaturesPack.RimeGiant;
 using EliteCreaturesPack.Slinger;
 using SyncedConfig;
+using UnityEngine;
 
 namespace EliteCreaturesPack
 {
@@ -24,13 +26,21 @@ namespace EliteCreaturesPack
         public static ConfigEntry<bool> LockConfiguration { get; private set; } = null!;
 
         /// <summary>
-        /// After any setting changes, on the main thread: an edit of the .cfg reloaded, or the server's values arriving.
-        /// Each creature puts its new numbers on its prefabs and on the ones already loaded.
+        /// Once, on the main thread, the frame after one or more settings changed: an edit of the .cfg reloaded, or the
+        /// server's values arriving (many at once on joining). Each creature puts its new numbers on its prefabs and on the
+        /// ones already loaded, so a batch of changes costs one pass rather than one per value.
         /// </summary>
         public static event Action? Changed;
 
-        public static void Initialize(SyncedConfiguration config)
+        /// <summary>Runs the next frame's <see cref="Changed"/> (the plugin, which is never destroyed).</summary>
+        private static MonoBehaviour? host;
+
+        /// <summary>The frame a <see cref="Changed"/> was put off from, or -1 when none is waiting.</summary>
+        private static int waitingSince = -1;
+
+        public static void Initialize(SyncedConfiguration config, MonoBehaviour plugin)
         {
+            host = plugin;
             LockConfiguration = config.BindLocking(General, "Lock Configuration", true,
                 "Server only. When on, every player uses the server's values for this file and cannot override them locally.");
             MimicSettings.Initialize(config);
@@ -42,7 +52,39 @@ namespace EliteCreaturesPack
             ArsenalSettings.Initialize(config);
             HeadsmanSettings.Initialize(config);
             GreataxeSettings.Initialize(config);
-            config.Config.SettingChanged += (sender, args) => SafeCall.Run("settings changed", () => Changed?.Invoke());
+            config.Config.SettingChanged += (sender, args) => SafeCall.Run("settings changed", Coalesce);
+        }
+
+        /// <summary>
+        /// A setting changed: <see cref="Changed"/> goes out next frame, once for every change until then. A wait older
+        /// than a frame was lost (its coroutine stopped) and is started again; without a running plugin it goes out now.
+        /// </summary>
+        private static void Coalesce()
+        {
+            int frame = Time.frameCount;
+            if (waitingSince >= 0 && frame <= waitingSince + 1)
+            {
+                return;
+            }
+            if (host == null || !host.isActiveAndEnabled)
+            {
+                Announce();
+                return;
+            }
+            waitingSince = frame;
+            host.StartCoroutine(NextFrame());
+        }
+
+        private static IEnumerator NextFrame()
+        {
+            yield return null;
+            Announce();
+        }
+
+        private static void Announce()
+        {
+            waitingSince = -1;
+            SafeCall.Run("settings changed", () => Changed?.Invoke());
         }
 
         /// <summary>A range from <paramref name="min"/> to <paramref name="max"/>, for a number setting.</summary>

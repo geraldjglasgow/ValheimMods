@@ -85,8 +85,9 @@ ValheimAssets `Crossbow/XbowClips`; change both together). The Bone Crossbow (`X
 Arbalest with the bundle's two models in its `attach/Unloaded` and `attach/Loaded` slots (the game's WeaponLoadState
 swaps them), 1.25 times the crossbowmen's size; `XbowRecipe` puts it on the workbench with the cost from the config.
 
-Each creature builds its prefabs on every ZNetScene wake (`BundlePrefabs.NetPrefabs.OnSceneAwake`) and listens to
-`Settings.Changed` to put new numbers on its prefabs and on the loaded creatures. Local ice and frost effects go
+Each creature builds its prefabs on the first ZNetScene wake and registers them on every one
+(`BundlePrefabs.NetPrefabs.OnSceneAwake`), and listens to `Settings.Changed` (raised once, the frame after any number of
+settings changed) to put new numbers on its prefabs and on the loaded creatures. Local ice and frost effects go
 through the `LocalEffects` library.
 
 ## The skeleton arsenal
@@ -114,8 +115,9 @@ at the slot's origin); the bowstrings are a cube between the tips in `ArsenalLoo
 plain skeleton, the arsenal skeletons and the crossbowman (`Skeletons/SkeletonDraw`, its three spawn patches in
 `SkeletonPatches`; the user, 2026-09-30).
 
-Players' weapons that need more than the game's clips carry a component on every player (added in `Player.Awake`,
-active only while the item is in hand, on every peer): `Headsman/Greataxe/GreataxeHold` (combo override, left hand on
+Players' weapons that need more than the game's clips carry a component on every player (added by the one
+`Player.Awake` patch in `Core/PlayerHolds`, active only while the item is in hand, on every peer that draws; a dedicated
+server gets none): `Headsman/Greataxe/GreataxeHold` (combo override, left hand on
 the haft), `Arsenal/ArsenalAtgeirHold` (the Bone Atgeir's own attacks, left hand on the haft), `Crossbow/XbowHold` and
 `XbowPlayerRig`/`XbowPlayerHand` (the Bone Crossbow's reload clip, right hand on the stock and string, the string and
 bolts moved by the reload clip's time and the game's synced loaded flag). The override swap and the haft grip are

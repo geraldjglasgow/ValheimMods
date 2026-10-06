@@ -1,5 +1,6 @@
 using BundlePrefabs;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace EliteCreaturesPack.Slinger
 {
@@ -9,7 +10,8 @@ namespace EliteCreaturesPack.Slinger
     /// settles; each band runs from its prong tip to its end of the pouch; the pebble sits in the pouch while drawn.
     /// Timed by the animator's own state (the "throw" state playing the shot clip, which the game syncs), so it needs
     /// no network of its own and an interrupted shot simply lets go. The workshop's preview moves them the same way
-    /// (AssetWorkshop Slinger/SlingRigPreview).
+    /// (AssetWorkshop Slinger/SlingRigPreview). Only looks: the stone leaves from the fork's muzzle, which this never
+    /// moves, so a dedicated server (no graphics) runs none of it, and a slinger at rest is posed once, not every frame.
     /// </summary>
     public sealed class SlingRig : MonoBehaviour
     {
@@ -23,9 +25,15 @@ namespace EliteCreaturesPack.Slinger
         private Transform slingshot = null!, pinch = null!, pouch = null!, pebble = null!;
         private Transform anchorA = null!, anchorB = null!, rest = null!, bandA = null!, bandB = null!;
         private Vector3 released;
+        private bool resting;
 
         private void Awake()
         {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                enabled = false;
+                return;
+            }
             animator = GetComponentInChildren<Animator>();
             Transform? Part(string name) => GameMaterials.Find(transform, name);
             Transform? s = Part("ecr_sling_slingshot"), p = Part("ecr_sling_pinch"), q = Part("ecr_sling_pouch"), st = Part("ecr_sling_stone");
@@ -42,6 +50,17 @@ namespace EliteCreaturesPack.Slinger
         private void LateUpdate()
         {
             float time = ShotTime();
+            if (time < 0f && resting)
+            {
+                return;
+            }
+            resting = time < 0f;
+            Pose(time);
+        }
+
+        /// <summary>The pouch, pebble and bands at `time` seconds into the shot (below zero: at rest).</summary>
+        private void Pose(float time)
+        {
             bool drawn = time >= Grab && time < Release;
             if (drawn)
             {

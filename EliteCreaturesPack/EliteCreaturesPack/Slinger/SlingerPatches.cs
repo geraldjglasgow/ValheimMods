@@ -6,16 +6,21 @@ namespace EliteCreaturesPack.Slinger
 {
     /// <summary>
     /// A wild Greydwarf spawn may come as a slinger (<see cref="SlingerSpawns.Wild"/>): the spawn is made again with the
-    /// slinger's data, through the same method, so levels, hunting and night despawn work as for the greydwarf. A
-    /// failure is reported and the greydwarf spawns as usual.
+    /// slinger's data, through the same method, so levels, hunting and night despawn work as for the greydwarf. When
+    /// another mod's prefix has already skipped the spawn, this one lets it be. A failure is reported and the greydwarf
+    /// spawns as usual.
     /// </summary>
     [HarmonyPatch(typeof(SpawnSystem), "Spawn")]
     public static class SlingerWildSpawnPatch
     {
-        private static bool Prefix(SpawnSystem __instance, SpawnSystem.SpawnData critter, Vector3 spawnPoint, bool eventSpawner)
+        private static bool Prefix(SpawnSystem __instance, SpawnSystem.SpawnData critter, Vector3 spawnPoint, bool eventSpawner, bool __runOriginal)
         {
-            SpawnSystem.SpawnData? slinger = null;
-            SafeCall.Run("SpawnSystem.Spawn slinger", () => slinger = SlingerSpawns.Wild(critter, spawnPoint));
+            if (!__runOriginal)
+            {
+                return false;
+            }
+            SpawnSystem.SpawnData? slinger = SafeCall.Run("SpawnSystem.Spawn slinger",
+                static (data, point) => SlingerSpawns.Wild(data, point), critter, spawnPoint, null);
             if (slinger == null)
             {
                 return true;
@@ -33,7 +38,7 @@ namespace EliteCreaturesPack.Slinger
         {
             if (__instance.m_attackOriginJoint == SlingerShot.Muzzle)   // every projectile passes here: bows, spells
             {
-                SafeCall.Run("Attack.FireProjectileBurst slinger aim", () => SlingerAim.Lob(__instance));
+                SafeCall.Run("Attack.FireProjectileBurst slinger aim", static attack => SlingerAim.Lob(attack), __instance);
             }
         }
     }
@@ -44,9 +49,8 @@ namespace EliteCreaturesPack.Slinger
     {
         private static void Postfix(SpawnArea __instance, ref SpawnArea.SpawnData __result)
         {
-            SpawnArea.SpawnData picked = __result;
-            SafeCall.Run("SpawnArea.SelectWeightedPrefab slinger", () => picked = SlingerSpawns.Nest(picked, __instance.transform.position));
-            __result = picked;
+            __result = SafeCall.Run("SpawnArea.SelectWeightedPrefab slinger",
+                static (picked, at) => SlingerSpawns.Nest(picked, at), __result, __instance.transform.position, __result);
         }
     }
 }

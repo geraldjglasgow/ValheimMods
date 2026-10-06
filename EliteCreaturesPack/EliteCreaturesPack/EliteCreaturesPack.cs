@@ -31,7 +31,7 @@ namespace EliteCreaturesPack
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.7.1";
+        public const string PluginVersion = "0.7.2";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 
@@ -39,7 +39,7 @@ namespace EliteCreaturesPack
         {
             Log.Bind(Logger);
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
-            Settings.Initialize(Synced);
+            Settings.Initialize(Synced, this);
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());

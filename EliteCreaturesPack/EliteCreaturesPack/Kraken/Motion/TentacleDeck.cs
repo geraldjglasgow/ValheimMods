@@ -61,6 +61,9 @@ namespace EliteCreaturesPack.Kraken.Motion
         private const float MinUnder = 0.8f;
         private const float MaxDrop = 1.1f;   // metres down per metre along: it drapes, it does not fold
 
+        /// <summary>The path being built, one list reused by every tentacle on every frame (all on the main thread).</summary>
+        private static readonly List<Vector3> Path = new List<Vector3>();
+
         public static void Build(TentacleFrame frame, DeckProfile deck, float reach, Vector3[] into)
         {
             List<Vector3> path = Visible(deck, reach);
@@ -90,7 +93,10 @@ namespace EliteCreaturesPack.Kraken.Motion
         private static List<Vector3> Visible(DeckProfile deck, float reach)
         {
             float top = Mathf.Max(deck.Rail() + TentacleSpec.Radius(0.25f) + Clearance, 0.1f);
-            var path = new List<Vector3> { Vector3.zero, new Vector3(0f, top, 0f) };
+            List<Vector3> path = Path;
+            path.Clear();
+            path.Add(Vector3.zero);
+            path.Add(new Vector3(0f, top, 0f));
             for (int i = 1; i <= ArcSteps; i++)
             {
                 float a = Mathf.PI - i * (Mathf.PI / 2f) / ArcSteps;

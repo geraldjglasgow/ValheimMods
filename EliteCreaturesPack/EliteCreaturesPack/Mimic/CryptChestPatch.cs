@@ -14,9 +14,7 @@ namespace EliteCreaturesPack.Mimic
     {
         private static bool Prefix(Container __instance)
         {
-            bool claimed = false;
-            SafeCall.Run("Container.AddDefaultItems mimic", () => claimed = CryptSwap.Claim(__instance));
-            return !claimed;
+            return !SafeCall.Run("Container.AddDefaultItems mimic", static chest => CryptSwap.Claim(chest), __instance, false);
         }
     }
 
@@ -24,6 +22,6 @@ namespace EliteCreaturesPack.Mimic
     public static class CryptChestAwakePatch
     {
         private static void Postfix(Container __instance) =>
-            SafeCall.Run("Container.Awake mimic", () => CryptSwap.Resume(__instance));
+            SafeCall.Run("Container.Awake mimic", static chest => CryptSwap.Resume(chest), __instance);
     }
 }

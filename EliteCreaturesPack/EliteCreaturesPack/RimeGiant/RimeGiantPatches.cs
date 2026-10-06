@@ -9,7 +9,7 @@ namespace EliteCreaturesPack.RimeGiant
     public static class RimeGiantSpawnPatch
     {
         private static void Postfix(SpawnSystem __instance) =>
-            SafeCall.Run("SpawnSystem.Awake rime giant", () => RimeGiantSpawns.Join(__instance));
+            SafeCall.Run("SpawnSystem.Awake rime giant", static system => RimeGiantSpawns.Join(system), __instance);
     }
 
     /// <summary>
@@ -25,9 +25,7 @@ namespace EliteCreaturesPack.RimeGiant
             {
                 return true;   // not ours, or the game's no-spawn switch is on and it spawns nothing (nor claims)
             }
-            bool allowed = false;
-            SafeCall.Run("SpawnSystem.Spawn rime giant", () => allowed = RimeGiantSpawns.Allow(spawnPoint));
-            return allowed;
+            return SafeCall.Run("SpawnSystem.Spawn rime giant", static point => RimeGiantSpawns.Allow(point), spawnPoint, false);
         }
     }
 
@@ -42,7 +40,7 @@ namespace EliteCreaturesPack.RimeGiant
         {
             if (hit != null && __instance.TryGetComponent(out RimeArmour armour) && __instance.m_nview.IsOwner())
             {
-                SafeCall.Run("Character.RPC_Damage rime armour", () => armour.Soften(hit));
+                SafeCall.Run("Character.RPC_Damage rime armour", static (a, h) => a.Soften(h), armour, hit);
             }
         }
     }
@@ -58,7 +56,7 @@ namespace EliteCreaturesPack.RimeGiant
         {
             if (hit != null && hit.m_damage.m_fire > 0f && __instance.TryGetComponent(out RimeArmour armour))
             {
-                SafeCall.Run("Character.ApplyDamage rime armour", () => armour.Melt(hit.m_damage.m_fire));
+                SafeCall.Run("Character.ApplyDamage rime armour", static (a, fire) => a.Melt(fire), armour, hit.m_damage.m_fire);
             }
         }
     }
@@ -75,41 +73,6 @@ namespace EliteCreaturesPack.RimeGiant
                 return;
             }
             SafeCall.Run("Attack.OnAttackTrigger rime avalanche", avalanche.Roll);
-        }
-    }
-
-    /// <summary>A sleeping giant is a snowy outcrop: no name plate or health bar over it.</summary>
-    [HarmonyPatch(typeof(EnemyHud), "TestShow")]
-    public static class RimeGiantHudPatch
-    {
-        private static void Postfix(Character c, ref bool __result)
-        {
-            if (__result && c != null && c.TryGetComponent(out RimeSlumber slumber) && slumber.Asleep)
-            {
-                __result = false;
-            }
-        }
-    }
-
-    /// <summary>
-    /// A sleeping giant has no hover name or text, decided after every other decoration (Elite Creatures Reborn's star
-    /// words included, when it is installed). Awake, it is an ordinary creature again.
-    /// </summary>
-    [HarmonyPatch(typeof(Character))]
-    public static class RimeGiantHoverPatch
-    {
-        [HarmonyPatch("GetHoverText"), HarmonyPostfix, HarmonyPriority(Priority.Last)]
-        private static void HoverText(Character __instance, ref string __result) => Blank(__instance, ref __result);
-
-        [HarmonyPatch("GetHoverName"), HarmonyPostfix, HarmonyPriority(Priority.Last)]
-        private static void HoverName(Character __instance, ref string __result) => Blank(__instance, ref __result);
-
-        private static void Blank(Character character, ref string text)
-        {
-            if (character.TryGetComponent(out RimeSlumber slumber) && slumber.Asleep)
-            {
-                text = "";
-            }
         }
     }
 

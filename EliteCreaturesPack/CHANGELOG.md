@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2
+
+- Fixed: a Greydwarf Slinger could spawn where another mod had blocked the greydwarf's spawn.
+- Lighter on frame rate, memory and dedicated servers; joining another world in the same session is quicker.
+
 ## 0.7.1
 
 - Discord link on the store page.

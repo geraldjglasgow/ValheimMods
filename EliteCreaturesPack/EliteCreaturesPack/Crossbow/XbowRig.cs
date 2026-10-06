@@ -1,6 +1,7 @@
 using BundlePrefabs;
 using LocalEffects;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace EliteCreaturesPack.Crossbow
 {
@@ -12,7 +13,8 @@ namespace EliteCreaturesPack.Crossbow
     /// from the grab in the quiver to the lay, and the quiver's first bolt is gone meanwhile. Timed by the animator's own
     /// state (the "attack_bow" state playing the fire clip, which the game syncs), so it needs no network of its own and
     /// an interrupted reload is simply spanned and loaded again. The workshop's preview moves them the same way
-    /// (AssetWorkshop Crossbow/XbowRigPreview).
+    /// (AssetWorkshop Crossbow/XbowRigPreview). Only looks: the bolt leaves from the crossbow's muzzle, which this never
+    /// moves, so a dedicated server (no graphics) runs none of it, and a crossbowman at rest is posed once, not every frame.
     /// </summary>
     public sealed class XbowRig : MonoBehaviour
     {
@@ -29,9 +31,15 @@ namespace EliteCreaturesPack.Crossbow
         private Transform bow = null!, tipA = null!, tipB = null!, rest = null!, nut = null!, stringA = null!, stringB = null!, pinch = null!;
         private GameObject grooveBolt = null!, handBolt = null!, quiverBolt = null!;
         private float last = -1f;
+        private bool resting;
 
         private void Awake()
         {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                enabled = false;
+                return;
+            }
             animator = GetComponentInChildren<Animator>();
             Transform? Part(string name) => GameMaterials.Find(transform, name);
             Transform? b = Part("ecp_xbow_crossbow"), ta = Part("ecp_xbow_tip_a"), tb = Part("ecp_xbow_tip_b"), r = Part("ecp_xbow_rest"), n = Part("ecp_xbow_nut");
@@ -50,6 +58,17 @@ namespace EliteCreaturesPack.Crossbow
         private void LateUpdate()
         {
             float time = FireTime();
+            if (time < 0f && resting)
+            {
+                return;
+            }
+            resting = time < 0f;
+            Pose(time);
+        }
+
+        /// <summary>The bolts and the string at `time` seconds into the fire clip (below zero: at rest), and the click.</summary>
+        private void Pose(float time)
+        {
             grooveBolt.SetActive(time < Fire || time >= Lay);
             handBolt.SetActive(time >= BoltGrab && time < Lay);
             quiverBolt.SetActive(time < BoltGrab || time >= Done);

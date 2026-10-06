@@ -1,5 +1,6 @@
 using BundlePrefabs;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace EliteCreaturesPack.Headsman
 {
@@ -9,7 +10,9 @@ namespace EliteCreaturesPack.Headsman
     /// at the waist to follow it (a skeleton turns further than its muscles go); the axe is gone from a throw's release
     /// and forms again in the raised hands (<see cref="HeadsmanForming"/>); chunks fly where the slam lands
     /// (<see cref="HeadsmanRocks"/>); and the sound cues play
-    /// (<see cref="HeadsmanSounds"/>). Local only: the network carries the animator, and that is enough.
+    /// (<see cref="HeadsmanSounds"/>). Local only: the network carries the animator, and that is enough. A dedicated
+    /// server only turns the body (the owner's cut follows the turned blade, <see cref="Edge"/>); the axe forming, the
+    /// sounds and the rocks are for eyes and ears it does not have.
     /// </summary>
     public sealed class HeadsmanRig : MonoBehaviour
     {
@@ -18,6 +21,7 @@ namespace EliteCreaturesPack.Headsman
         private HeadsmanForming forming = null!;
         private HeadsmanMove? current;
         private float last = -1f;
+        private bool draws;
 
         private void Awake()
         {
@@ -31,6 +35,7 @@ namespace EliteCreaturesPack.Headsman
             }
             (head, neck, spine, chest, axe) = (h, n, s, c, a);
             forming = new HeadsmanForming(axe);
+            draws = SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null;
         }
 
         /// <summary>The blade's edge in the world, where the axe bites the floor.</summary>
@@ -46,6 +51,11 @@ namespace EliteCreaturesPack.Headsman
             if (move == HeadsmanMoves.Rear)
             {
                 Turn(time);
+            }
+            if (!draws)
+            {
+                last = time;
+                return;
             }
             forming.Show(move, time);
             if (move != null)

@@ -59,7 +59,7 @@ namespace EliteCreaturesPack.Kraken
                 hit.m_statusEffectHash = __state.Effect;
                 return;
             }
-            SafeCall.Run("kraken shield parry", () => Bite(__instance, attacker, __state.Quality));
+            SafeCall.Run("kraken shield parry", static (defender, foe, quality) => Bite(defender, foe, quality), __instance, attacker, __state.Quality);
         }
 
         /// <summary>If the game threw inside, the hit gets its own status effect back.</summary>

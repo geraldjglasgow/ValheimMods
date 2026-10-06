@@ -14,12 +14,13 @@ namespace EliteCreaturesPack.Kraken
     {
         private static bool Prefix(MonsterAI __instance, float dt, ref bool __result)
         {
-            KrakenBrain? brain = Find(__instance);
+            // Every monster's AI passes here many times a second, server included: nothing to look up without a kraken.
+            KrakenBrain? brain = KrakenBrain.Loaded.Count == 0 ? null : Find(__instance);
             if (brain == null)
             {
                 return true;
             }
-            SafeCall.Run("MonsterAI.UpdateAI kraken", () => brain.Think(dt));
+            SafeCall.Run("MonsterAI.UpdateAI kraken", static (mind, step) => mind.Think(step), brain, dt);
             __result = false;
             return false;
         }
@@ -70,7 +71,7 @@ namespace EliteCreaturesPack.Kraken
         {
             if (KrakenBrain.Loaded.Count > 0)
             {
-                SafeCall.Run("Ship.CustomFixedUpdate kraken hold", () => ShipHold.Furl(__instance));
+                SafeCall.Run("Ship.CustomFixedUpdate kraken hold", static ship => ShipHold.Furl(ship), __instance);
             }
         }
 
@@ -78,7 +79,7 @@ namespace EliteCreaturesPack.Kraken
         {
             if (KrakenBrain.Loaded.Count > 0)
             {
-                SafeCall.Run("Ship.CustomFixedUpdate kraken hold", () => ShipHold.Keep(__instance));
+                SafeCall.Run("Ship.CustomFixedUpdate kraken hold", static ship => ShipHold.Keep(ship), __instance);
             }
         }
     }
@@ -96,9 +97,7 @@ namespace EliteCreaturesPack.Kraken
             {
                 return true;
             }
-            bool spared = false;
-            SafeCall.Run("WearNTear.RPC_Damage kraken", () => spared = ShipHold.Spares(__instance, hit));
-            return !spared;
+            return !SafeCall.Run("WearNTear.RPC_Damage kraken", static (part, blow) => ShipHold.Spares(part, blow), __instance, hit, false);
         }
     }
 
@@ -117,11 +116,11 @@ namespace EliteCreaturesPack.Kraken
             KrakenBrain? brain = KrakenBrain.Loaded.Count > 0 ? KrakenAIPatch.Find(__instance) : null;
             if (brain != null && __instance.m_nview != null && __instance.m_nview.IsOwner())
             {
-                SafeCall.Run("Character.OnDeath kraken", () =>
+                SafeCall.Run("Character.OnDeath kraken", static dying =>
                 {
-                    KrakenDeath.Prepare(brain);
-                    KrakenDropSpot.Open(KrakenDeath.LootSpot(brain));
-                });
+                    KrakenDeath.Prepare(dying);
+                    KrakenDropSpot.Open(KrakenDeath.LootSpot(dying));
+                }, brain);
             }
         }
 
@@ -145,7 +144,7 @@ namespace EliteCreaturesPack.Kraken
             KrakenBrain? brain = KrakenBrain.Loaded.Count > 0 ? KrakenAIPatch.Find(__instance) : null;
             if (brain != null)
             {
-                SafeCall.Run("CharacterDrop.OnDeath kraken", () => KrakenDeath.AimLoot(brain, __instance));
+                SafeCall.Run("CharacterDrop.OnDeath kraken", static (dying, drop) => KrakenDeath.AimLoot(dying, drop), brain, __instance);
             }
         }
     }
@@ -155,7 +154,7 @@ namespace EliteCreaturesPack.Kraken
     public static class KrakenSpawnPatch
     {
         private static void Postfix(SpawnSystem __instance) =>
-            SafeCall.Run("SpawnSystem.Awake kraken", () => KrakenSpawns.Join(__instance));
+            SafeCall.Run("SpawnSystem.Awake kraken", static system => KrakenSpawns.Join(system), __instance);
     }
 
     /// <summary>
@@ -171,9 +170,8 @@ namespace EliteCreaturesPack.Kraken
             {
                 return true;
             }
-            bool allowed = false;
-            Vector3 point = spawnPoint;
-            SafeCall.Run("SpawnSystem.Spawn kraken", () => allowed = KrakenSpawns.Allow(ref point));
+            (bool allowed, Vector3 point) = SafeCall.Run("SpawnSystem.Spawn kraken",
+                static at => (KrakenSpawns.Allow(ref at), at), spawnPoint, (false, spawnPoint));
             spawnPoint = point;
             return allowed;
         }

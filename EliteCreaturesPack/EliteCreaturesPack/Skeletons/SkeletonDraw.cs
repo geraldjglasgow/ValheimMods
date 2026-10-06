@@ -43,10 +43,14 @@ namespace EliteCreaturesPack.Skeletons
             };
         }
 
+        /// <summary>The draw's candidates, one list reused by every spawn (spawns run on the main thread, one at a time).</summary>
+        private static readonly List<GameObject> Others = new List<GameObject>();
+
         /// <summary>The skeleton drawn to spawn in place of this one, or null when the draw is this one itself.</summary>
         public static GameObject? Instead(GameObject? prefab)
         {
-            var others = new List<GameObject>();
+            List<GameObject> others = Others;
+            others.Clear();
             AddArsenal(others, prefab);
             AddCrossbowman(others, prefab);
             if (others.Count == 0)

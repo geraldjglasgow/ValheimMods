@@ -15,6 +15,9 @@ namespace EliteCreaturesPack.Mimic
         public const string PendingKey = "ecp_mimic_swap";
         public const string ChestKey = "ecp_mimic_chest";
 
+        /// <summary>The pending key's hash, made once: every chest that loads anywhere asks for it.</summary>
+        private static readonly int PendingHash = PendingKey.GetStableHashCode();
+
         /// <summary>OWNER, first fill. True when the chest becomes a mimic, so it must not be filled.</summary>
         public static bool Claim(Container chest)
         {
@@ -22,7 +25,7 @@ namespace EliteCreaturesPack.Mimic
             {
                 return false;
             }
-            chest.m_nview.GetZDO().Set(PendingKey, true);
+            chest.m_nview.GetZDO().Set(PendingHash, true);
             chest.gameObject.AddComponent<CryptSwapper>();
             return true;
         }
@@ -31,7 +34,7 @@ namespace EliteCreaturesPack.Mimic
         public static void Resume(Container chest)
         {
             ZNetView nview = chest.m_nview;
-            if (nview != null && nview.IsValid() && nview.IsOwner() && nview.GetZDO().GetBool(PendingKey)
+            if (nview != null && nview.IsValid() && nview.IsOwner() && nview.GetZDO().GetBool(PendingHash)
                 && chest.GetComponent<CryptSwapper>() == null)
             {
                 chest.gameObject.AddComponent<CryptSwapper>();

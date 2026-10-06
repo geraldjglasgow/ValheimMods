@@ -1,4 +1,5 @@
 using System.Collections;
+using EliteCreaturesPack.Core;
 using PatchGuard;
 using UnityEngine;
 
@@ -6,12 +7,12 @@ namespace EliteCreaturesPack.Mimic
 {
     /// <summary>
     /// The mimic's disguise and ambush. While it sleeps it is a chest on every client: no health bar (the chest's hover
-    /// text comes from <see cref="MimicDisguisePatch"/>). Pressing E on it sends the opener to the creature's owner, which wakes it,
+    /// text comes from <see cref="DisguiseHoverPatch"/>). Pressing E on it sends the opener to the creature's owner, which wakes it,
     /// sets the opener as its target and plays the ambush: the lid bursts open and snaps shut on the opener - a bite that
     /// cannot be dodged or blocked, because the opener walked into it. From then on it is an ordinary awake creature
     /// whose AI lunges with <see cref="MimicBite"/>. A copy split off by Splintering is born awake: it spawns mid-fight.
     /// </summary>
-    public class MimicDisguise : MonoBehaviour, Interactable
+    public class MimicDisguise : MonoBehaviour, Interactable, IDisguise
     {
         public const string OpenRpc = "ecp_mimic_open";
         private const float SnapDelay = 10f / 30f;   // the ambush clip closes its jaws on frame 10
@@ -23,11 +24,23 @@ namespace EliteCreaturesPack.Mimic
 
         public bool IsDormant => _ai != null && _ai.IsSleeping();
 
+        /// <summary>
+        /// The one question everything that could give a mimic away asks: is it still pretending to be a chest? The
+        /// answer comes from the game's own sleep state, which the ZDO carries to every client, so every machine
+        /// answers the same.
+        /// </summary>
+        public bool Holds => IsDormant;
+
+        public string HoverText() => ChestLook.HoverText();
+
+        public string HoverName() => ChestLook.Name();
+
         private void Awake()
         {
             _character = GetComponent<Character>();
             _ai = GetComponent<MonsterAI>();
             _nview = GetComponent<ZNetView>();
+            Disguises.Register(_character, this);
             if (_nview != null && _nview.IsValid())
             {
                 _nview.Register<ZDOID>(OpenRpc, (sender, opener) => Guard.Run("MimicDisguise.Open", () => Opened(opener)));
@@ -64,6 +77,8 @@ namespace EliteCreaturesPack.Mimic
                 _ai.Wakeup(); // an Elite Creatures Reborn Splintering copy: its parent was already fighting
             }
         }
+
+        private void OnDestroy() => Disguises.Unregister(_character);
 
         private void Update()
         {

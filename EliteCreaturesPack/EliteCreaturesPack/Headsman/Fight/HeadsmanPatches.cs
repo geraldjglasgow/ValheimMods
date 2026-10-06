@@ -33,7 +33,7 @@ namespace EliteCreaturesPack.Headsman
 
         private static bool Prefix(MonsterAI __instance, ref bool __result)
         {
-            if (!waiting.TryGetValue(__instance, out System.Func<bool> waits) || !waits())
+            if (waiting.Count == 0 || !waiting.TryGetValue(__instance, out System.Func<bool> waits) || !waits())
             {
                 return true;
             }
@@ -53,13 +53,12 @@ namespace EliteCreaturesPack.Headsman
         private const float Near = 8f;
         private static readonly List<Character> around = new List<Character>();
 
+        /// <summary>Every creature's every attack passes here: only the rear strike (the Executioner's alone) goes further.</summary>
         private static void Postfix(BaseAI __instance, ItemDrop.ItemData item, ref bool __result)
         {
             if (__result && item?.m_shared.m_name == HeadsmanAttacks.RearName)
             {
-                bool several = true;
-                SafeCall.Run("BaseAI.CanUseAttack rear strike", () => several = Foes(__instance.GetComponent<Character>()) >= 2);
-                __result = several;
+                __result = SafeCall.Run("BaseAI.CanUseAttack rear strike", static ai => Foes(ai.m_character) >= 2, __instance, true);
             }
         }
 
@@ -71,7 +70,16 @@ namespace EliteCreaturesPack.Headsman
             }
             around.Clear();
             Character.GetCharactersInRange(boss.transform.position, Near, around);
-            return around.FindAll(c => c != boss && !c.IsDead() && BaseAI.IsEnemy(boss, c)).Count;
+            int foes = 0;
+            foreach (Character other in around)
+            {
+                if (other != boss && !other.IsDead() && BaseAI.IsEnemy(boss, other))
+                {
+                    foes++;
+                }
+            }
+            around.Clear();
+            return foes;
         }
     }
 }

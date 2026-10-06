@@ -11,30 +11,45 @@ namespace EliteCreaturesPack.Headsman
     /// them (<see cref="HeadsmanSoundTable"/>): a variant at random, each of its layers a clip started where the recipe
     /// says, filtered and faded (<see cref="HeadsmanVoice"/>). The clips are found by name among the game's loaded sounds,
     /// each played through the game's own audio source settings for it (its mixer group, so the game's volume sliders
-    /// apply, and its distances). Nothing of the game's audio is shipped. Silent on a dedicated server.
+    /// apply, and its distances). Nothing of the game's audio is shipped. Silent on a dedicated server. The clips are
+    /// looked for once a session (searching every loaded object is slow); a later world join looks again only when one
+    /// it found was unloaded since.
     /// </summary>
     public static class HeadsmanSounds
     {
         private const string Voice = "Enemy_Skeleton_Basic_Verse_Attack_01";
         private static readonly Dictionary<string, (AudioClip clip, AudioSource? source)> clips = new Dictionary<string, (AudioClip, AudioSource?)>();
         private static AudioSource? fallback;
-        private static bool rescanned;
+        private static bool scanned, rescanned;
 
         private static bool Headless => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
 
         /// <summary>Finds every clip the table names; logs the ones the game has not loaded (their layers stay silent).</summary>
         public static void Load(ZNetScene scene)
         {
-            if (Headless)
+            if (Headless || (scanned && !Forget()))
             {
                 return;
             }
+            (scanned, rescanned) = (true, false);
             Scan();
             string[] missing = Wanted().Where(name => !clips.ContainsKey(name)).ToArray();
             if (missing.Length > 0)
             {
                 Log.Info($"Crypt Executioner: {missing.Length} sound clips not loaded yet ({string.Join(", ", missing)}); looked for again at the first cue.");
             }
+        }
+
+        /// <summary>Drops the found clips the game has unloaded since (or whose sound source it destroyed); true if any.</summary>
+        private static bool Forget()
+        {
+            string[] gone = clips.Where(entry => entry.Value.clip == null || (entry.Value.source is object && entry.Value.source == null))
+                .Select(entry => entry.Key).ToArray();
+            foreach (string name in gone)
+            {
+                clips.Remove(name);
+            }
+            return gone.Length > 0;
         }
 
         private static IEnumerable<string> Wanted() =>

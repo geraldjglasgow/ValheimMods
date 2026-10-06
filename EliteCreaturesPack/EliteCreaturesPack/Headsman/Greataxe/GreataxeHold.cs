@@ -4,7 +4,7 @@ using UnityEngine;
 namespace EliteCreaturesPack.Headsman
 {
     /// <summary>
-    /// On every player, on every peer: while the Executioner's Greataxe is in the right hand (as the player's equipment
+    /// On every player, on every peer that draws (<see cref="PlayerHolds"/>): while the Executioner's Greataxe is in the right hand (as the player's equipment
     /// shows it, which the game syncs), the player's animator plays the greataxe's combo (<see cref="GreataxeAnimations"/>)
     /// and, after each pose, the left fist is put on the haft (<see cref="HaftGrip"/>). The game's controller comes
     /// back when the greataxe leaves the hand, unless another mod has put its own in meanwhile.

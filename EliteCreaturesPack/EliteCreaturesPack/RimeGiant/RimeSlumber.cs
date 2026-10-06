@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesPack.Core;
 using UnityEngine;
 
 namespace EliteCreaturesPack.RimeGiant
@@ -11,7 +12,7 @@ namespace EliteCreaturesPack.RimeGiant
     /// <see cref="Settle"/> seconds. Asleep, its body is fixed in place so nobody can shove it about; since a fixed body
     /// does not fall either, the owner sets a sleeping giant down on the ground itself.
     /// </summary>
-    public class RimeSlumber : MonoBehaviour
+    public class RimeSlumber : MonoBehaviour, IDisguise
     {
         public const string Blizzard = "SnowStorm";
         private const float Check = 1f;
@@ -26,13 +27,23 @@ namespace EliteCreaturesPack.RimeGiant
 
         public bool Asleep => _ai != null && _ai.IsSleeping();
 
+        /// <summary>A sleeping giant has no hover name or text (<see cref="DisguiseHoverPatch"/>) and no name plate.</summary>
+        public bool Holds => Asleep;
+
+        public string HoverText() => "";
+
+        public string HoverName() => "";
+
         private void Awake()
         {
             _ai = GetComponent<MonsterAI>();
             _character = GetComponent<Character>();
             _nview = GetComponent<ZNetView>();
             _crust = RimeKit.CrustPieces(transform);
+            Disguises.Register(_character, this);
         }
+
+        private void OnDestroy() => Disguises.Unregister(_character);
 
         private void Update()
         {

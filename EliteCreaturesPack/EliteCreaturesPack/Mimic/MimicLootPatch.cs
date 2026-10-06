@@ -14,6 +14,6 @@ namespace EliteCreaturesPack.Mimic
     {
         [HarmonyPriority(Priority.Last)]
         private static void Postfix(CharacterDrop __instance, List<KeyValuePair<GameObject, int>> __result) =>
-            SafeCall.Run("CharacterDrop.GenerateDropList mimic", () => MimicLoot.AddChestLoot(__instance, __result));
+            SafeCall.Run("CharacterDrop.GenerateDropList mimic", static (drop, list) => MimicLoot.AddChestLoot(drop, list), __instance, __result);
     }
 }

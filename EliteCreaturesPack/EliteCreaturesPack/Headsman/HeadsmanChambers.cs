@@ -61,45 +61,58 @@ namespace EliteCreaturesPack.Headsman
         [HarmonyPatch(typeof(DungeonGenerator), "GenerateRooms")]
         public static class Generated
         {
-            private static void Postfix(DungeonGenerator __instance, ZoneSystem.SpawnMode mode) =>
-                SafeCall.Run("DungeonGenerator.GenerateRooms crypt executioner", () =>
+            private static void Postfix(DungeonGenerator __instance, ZoneSystem.SpawnMode mode)
+            {
+                if (mode != ZoneSystem.SpawnMode.Client)
                 {
-                    if (mode != ZoneSystem.SpawnMode.Client)
+                    SafeCall.Run("DungeonGenerator.GenerateRooms crypt executioner", static (dungeon, ghost) =>
                     {
-                        Roll(__instance, DungeonGenerator.m_placedRooms.ToList(), mode == ZoneSystem.SpawnMode.Ghost);
-                    }
-                });
+                        if (Pending(dungeon))
+                        {
+                            Roll(dungeon, DungeonGenerator.m_placedRooms.ToList(), ghost);
+                        }
+                    }, __instance, mode == ZoneSystem.SpawnMode.Ghost);
+                }
+            }
         }
 
         /// <summary>A saved chamber's rooms placed as it loads: chambers from before the mod roll on their owner.</summary>
         [HarmonyPatch(typeof(DungeonGenerator), "Spawn")]
         public static class Loaded
         {
-            private static void Postfix(DungeonGenerator __instance) =>
-                SafeCall.Run("DungeonGenerator.Spawn crypt executioner", () =>
+            private static void Postfix(DungeonGenerator __instance)
+            {
+                if (__instance.m_nview != null && __instance.m_nview.IsOwner())
                 {
-                    if (__instance.m_nview != null && __instance.m_nview.IsOwner())
+                    SafeCall.Run("DungeonGenerator.Spawn crypt executioner", static dungeon =>
                     {
-                        Roll(__instance, __instance.GetComponentsInChildren<Room>().ToList(), false);
-                    }
-                });
+                        if (Pending(dungeon))   // every dungeon of every theme loads here: rooms are gathered only for ours
+                        {
+                            Roll(dungeon, dungeon.GetComponentsInChildren<Room>().ToList(), false);
+                        }
+                    }, __instance);
+                }
+            }
         }
 
-        /// <summary>Once per chamber: by its seed, a spawner in its largest room (only its ZDO kept when generated as a ghost).</summary>
-        private static void Roll(DungeonGenerator dungeon, List<Room> rooms, bool ghost)
+        /// <summary>Whether this is a burial chamber not rolled yet, while the Executioner is on.</summary>
+        private static bool Pending(DungeonGenerator dungeon)
         {
             ZDO? zdo = dungeon.m_nview != null ? dungeon.m_nview.GetZDO() : null;
-            if (prefab == null || zdo == null || !HeadsmanSettings.On || (dungeon.m_themes & Room.Theme.ForestCrypt) == 0 || zdo.GetBool(RolledKey))
-            {
-                return;
-            }
-            zdo.Set(RolledKey, true);
+            return prefab != null && zdo != null && HeadsmanSettings.On && (dungeon.m_themes & Room.Theme.ForestCrypt) != 0
+                && !zdo.GetBool(RolledKey);
+        }
+
+        /// <summary>Once per chamber (<see cref="Pending"/>): by its seed, a spawner in its largest room (only its ZDO kept when generated as a ghost).</summary>
+        private static void Roll(DungeonGenerator dungeon, List<Room> rooms, bool ghost)
+        {
+            dungeon.m_nview.GetZDO().Set(RolledKey, true);
             Room? hall = Hall(rooms);
             if (hall == null || new System.Random(dungeon.GetSeed() ^ Salt).NextDouble() >= HeadsmanSettings.Chambers)
             {
                 return;
             }
-            GameObject spawner = Object.Instantiate(prefab, Floor(hall), hall.transform.rotation);
+            GameObject spawner = Object.Instantiate(prefab!, Floor(hall), hall.transform.rotation);   // Pending checked it
             Log.Info($"Crypt Executioner waits in {dungeon.name}'s {hall.name}.");
             if (ghost)
             {
