@@ -11,7 +11,7 @@ Storage for Valheim, plus a few base tweaks.
 - Off by default: cart workbenches, chest contents signs, shared chests, Auto Tidy (stray items go to the chest
   they belong in) and Blueprints (save buildings, place them as construction sites from the hammer).
 - Homestead: choose your bed after death, quick respawns, campfires on wood, honey rate, fires, smelters and pets
-  fed from chests, night-only torches, quicker Rested, auto repair.
+  fed from chests, night-only torches, quicker Rested, auto repair, a shorter world save freeze.
 - Works with PackPanel (inventory) and Wayfare (portals, quick jumps); neither is required.
 
 ## Install

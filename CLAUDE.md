@@ -66,7 +66,7 @@ commands, a YAML chain. Design and status in `Lockstep/PLAN.md`.
 **OpenKeep**: storage in one mod: craft from containers, quick stack, sort, salvage, stack sizes,
 container sizes, carts as stations, contents signs and shared chests; plus a Homestead section outside storage
 (respawn at the nearest owned bed, campfires on wooden floors, honey per day, fires refuelling from nearby chests,
-torches lit only at night), a build camera that flies free near a crafting station, and blueprints (section 14, off
+torches lit only at night, a shorter world save freeze), a build camera that flies free near a crafting station, and blueprints (section 14, off
 by default): a Blueprints tab in the game's hammer lists saved builds (DevBridge's blueprint JSON, in folders,
 renamed with F2) and places one as a ghost construction site with the ground shaped to fit, built as materials are
 handed over; plus Fix ground, a Site planner (build queue, one house at a time) and Copy building (select buildings

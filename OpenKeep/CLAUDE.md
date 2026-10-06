@@ -270,6 +270,12 @@ OpenKeep/OpenKeep/src/
                             hungry tame picks the nearest container holding its food, walks there and eats one
     PetFood.cs              what a container offers a creature (its m_consumeItems by shared name, the world level
                             rule, the containers: rule) and the spot beside the container where it stands to eat
+    SaveFeature.cs, SaveSettings.cs   Quick World Save
+    SaveValueCopy.cs        ZDOExtraData.PrepareSave prefix: the stored values of the saved objects only, the seven
+                            tables on worker threads from 20000 objects
+    SaveObjectCopy.cs       ZDOMan.AddObjectsPerChunk prefix (private): the changed chunks' object clones, chunks on
+                            worker threads from 20000 objects, appended in the game's order
+    SaveChunkCopy.cs        one chunk's clones exactly as the game makes them, reading only the game's tables
     RestFeature.cs, RestSettings.cs   Rested Delay
     RestDelay.cs            the setting at use time for the game's Resting only (name hash); the log line with the
                             asset's own delay
@@ -395,7 +401,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.3.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.4.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -532,7 +538,8 @@ request timeouts; Torch Switch Key), `Switch.GetHoverText`, `Terminal.InitTermin
 (the hammer opt-out on the removing player's client), `ZNetScene.Awake` (documentation; container list and sizes;
 station list and caps; Homestead's Build On Wood; all `Priority.Low`, none throws: `SceneSafe`), `ZNetScene.OnDestroy()`
 (private: Core forgets the tracked containers when the world is left).
-Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Container.OnContainerChanged()` (private,
+Prefix: `ZDOExtraData.PrepareSave()` and `ZDOMan.AddObjectsPerChunk(int, byte, int[], ref List<...>)` (private; both on
+the machine that saves the world, Quick World Save, fall back to the game on a throw), `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Container.OnContainerChanged()` (private,
 `Priority.First`: a held container's save waits for the end of the hold, `SaveHolds`), `Inventory.Changed()` (private:
 the inventory change count), `Game._RequestRespawn()` (private: the
 choice of bed ends), `Game.FindSpawnPoint(out Vector3, out bool, float)` (Quick Respawn's load speed, a class of its
@@ -621,7 +628,7 @@ Respawn` true, `Quick Respawn Range` 1000 (10 to 20000), `Quick Respawn Seconds`
 Respawn` true, `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Beds On Map` true, `Quick Area Loading` true (the respawn only),
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30), `Quick World Save` true; all synced; unsynced `Beds On Map` true, `Quick Area Loading` true (the respawn only),
 `Torch Switch Key` O),
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
@@ -1539,6 +1546,25 @@ Pets eating from containers (1.8.0; the user asked for tamed animals eating from
   so with both mods the first postfix to find food takes the creature and the other sees `__result` true and stands
   down.
 
+Quick World Save (2.4.0; the user asked for world saves without the 1 to 2 s freeze):
+- Vanilla (game 2026-10): `ZNet.SaveWorld` runs `ZDOMan.PrepareSave` on the main thread, then writes on a thread.
+  PrepareSave clones the persistent objects of the chunks changed since the last save (`GetSaveClonePerChunk`, four
+  `AddObjectsPerChunk` calls), then `ZDOExtraData.PrepareSave` clones every stored value of every object in the world
+  into `s_save*`, though the only reader (`ZDO.Save` through `GetSaveData`, from `SaveChunk`) asks only for the
+  changed chunks' objects. The "World saved (X+Y s)" message: X is the freeze, Y the thread.
+- The values prefix copies the entries of the objects in `m_saveData.m_objectsByChunk` alone (portal chunk included),
+  with the game's own `Clone` (`BinarySearchDictionary.Clone` is a shallow `MemberwiseClone`, as in the game), and
+  keeps `RegenerateConnectionHashData` and the full `s_connectionsHashData` copy. From 20000 objects the seven
+  tables are copied side by side (`Parallel.Invoke`), and the changed chunks' object clones chunk by chunk
+  (`Parallel.For`, results appended in the game's order): the main thread waits inside the call, so nothing writes
+  the tables meanwhile, and the workers only read them. Below 20000 the copy runs on the main thread.
+- Nothing differs on disk. A throw logs a warning and runs the game's own copy; the object copy appends only after
+  every chunk is done, so the game's rerun starts clean. Only the machine that saves (server, host, single player)
+  acts; clients run nothing.
+- Not done: spreading the snapshot over frames (change tracking, transpilers). Also not addressed: every client's
+  own character save at the same moment (`Game.SavePlayerProfile` from the server's `SavePlayerProfile` RPC packs the
+  8 MB explored map byte by byte, compresses and writes it on the main thread).
+
 Rested sooner (1.7.0; the user asked for the comfort buff after 5 s):
 - Vanilla (UnityPy, bundle c4210710, 2026-09-27): `Resting` is an `SE_Cozy` with `m_delay` 20 (the class default 10
   is not what the game uses), `m_ttl` 0 and `m_statusEffect` `Rested`; `Rested` is an `SE_Rested` with `m_baseTTL`
@@ -2115,7 +2141,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.3.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.4.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2502,3 +2528,8 @@ from a script.
     A chest of six kinds of bar is not junk (the `smelted on Coal` family). A chest left alone is not looked at again
     (`Looks` stays put). Two clients: A owns the junk chest, B the wood chest (B opened it last): B's log shows `tidy
     handed piece_chest_wood over to peer <A>` and the wood moves within seconds.
+80. Quick World Save, a world with a large base: save with the console `save` (or wait for the autosave). The log shows
+    the game's `GetSaveClonePerChunk ... [N ms]` and `ZDOExtraData.PrepareSave done [N ms]` lower than with `Quick
+    World Save = false`, and the first number of "World saved (X+Y s)" smaller. Change a chest, save, quit, load: the
+    chest is as left; build a piece and destroy another, save, reload: both stay that way; a portal pair still links.
+    No `quick world save fell back` warning. Dedicated server: the same on the server's log; clients log nothing.

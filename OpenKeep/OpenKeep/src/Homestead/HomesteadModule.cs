@@ -8,7 +8,7 @@ namespace OpenKeep.Homestead
     /// wooden floors (Fire*), honey per day (Hive*), fires refilling themselves from nearby containers (Fuel*), torches
     /// lit only at night (Torch*), smelters and kilns feeding themselves from the containers beside them (Feed*),
     /// Rested sooner (Rest*), area repair with the hammer (Repair*), gear repaired on opening a crafting station
-    /// (StationRepair*) and tamed animals eating from containers (Pet*). The quick waits and the quick land loading are
+    /// (StationRepair*), tamed animals eating from containers (Pet*) and a shorter world save freeze (Save*). The quick waits and the quick land loading are
     /// the AreaLoading library's, shared with Wayfare, which took the quick portals on 2026-10-04. Fuel and Feed share <see cref="NearbyTake"/> and <see cref="TakeRetry"/>; Pet takes through
     /// <see cref="NearbyTake"/> too. Each feature binds its own keys.
     /// </summary>
@@ -28,6 +28,7 @@ namespace OpenKeep.Homestead
             RepairFeature.Initialize(synced);
             StationRepairFeature.Initialize(synced);
             PetFeature.Initialize(synced);
+            SaveFeature.Initialize(synced);
         }
     }
 }

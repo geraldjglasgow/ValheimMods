@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.0
+
+- Quick World Save (on by default): the game stands still for a much shorter moment while the world saves. Server or host only.
+
 ## 2.3.0
 
 - Reach: ship and cart storage counts only for the player sailing or pulling it.

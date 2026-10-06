@@ -64,4 +64,10 @@ Cooking stations, ovens and fermenters are not fed. Food on the ground is eaten 
 | `Area Repair` | on | Repairing a piece with the hammer also repairs the damaged pieces touching it, for free. |
 | `Auto Repair` | on | Opening a crafting station repairs all the gear it can repair, as its repair button does. |
 
+## World save
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `Quick World Save` | on | The game stands still for a much shorter moment while the world saves; the file written is the same. Only the server's (or host's) setting counts. |
+
 Area repair still needs each piece's crafting station nearby and ward access.
