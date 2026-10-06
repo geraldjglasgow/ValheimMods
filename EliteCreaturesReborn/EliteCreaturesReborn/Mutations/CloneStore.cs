@@ -13,6 +13,9 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     internal static class CloneStore
     {
+        private static readonly int ClonesHash = TraitKeys.Clones.GetStableHashCode();
+        private static readonly int CloneAtHash = TraitKeys.CloneAt.GetStableHashCode();
+
         private static readonly KeyValuePair<int, int> DecoyKey = ZDO.GetHashZDOID(TraitKeys.CloneDecoy);
         private static readonly KeyValuePair<int, int> OfKey = ZDO.GetHashZDOID(TraitKeys.CloneOf);
 
@@ -34,10 +37,10 @@ namespace EliteCreaturesReborn.Mutations
         }
 
         /// <summary>On the creature: how many tricks it has done in its life.</summary>
-        public static int Done(ZDO zdo) => zdo.GetInt(TraitKeys.Clones);
+        public static int Done(ZDO zdo) => zdo.GetInt(ClonesHash);
 
         /// <summary>On the creature: seconds since its current trick began, or since its last one ended.</summary>
-        public static float SecondsSinceMark(ZDO zdo) => NetTime.SecondsSince(zdo.GetLong(TraitKeys.CloneAt));
+        public static float SecondsSinceMark(ZDO zdo) => NetTime.SecondsSince(zdo.GetLong(CloneAtHash));
 
         /// <summary>
         /// Owner: a trick is spent - it hides behind <paramref name="decoy"/> from now, counted and stamped. A decoy that

@@ -21,18 +21,25 @@ namespace EliteCreaturesReborn.Mutations
             public long TimeMs;
         }
 
-        /// <summary>Reads the trail from a creature's ZDO. Works on any machine - the ZDO is shared. Empty when unset.</summary>
-        public static List<Drop> Read(ZDO zdo)
+        private static readonly int TrailHash = TraitKeys.MiasmaTrail.GetStableHashCode();
+        private static readonly int SeqHash = TraitKeys.MiasmaSeq.GetStableHashCode();
+
+        /// <summary>
+        /// Reads the trail from a creature's ZDO into <paramref name="into"/>, which is cleared first. Works on any machine
+        /// - the ZDO is shared. Empty when unset.
+        /// </summary>
+        public static void Read(ZDO zdo, List<Drop> into)
         {
-            List<Drop> drops = new List<Drop>();
-            byte[]? bytes = zdo != null ? zdo.GetByteArray(TraitKeys.MiasmaTrail) : null;
-            if (bytes == null || bytes.Length == 0)
+            into.Clear();
+            byte[]? bytes = zdo != null ? zdo.GetByteArray(TrailHash) : null;
+            if (bytes != null && bytes.Length > 0)
             {
-                return drops;
+                Decode(new ZPackage(bytes), into);
             }
-            Decode(new ZPackage(bytes), drops);
-            return drops;
         }
+
+        /// <summary>The drop counter's current value: it moves exactly when the owner writes a new drop.</summary>
+        public static long Seq(ZDO zdo) => zdo.GetLong(SeqHash, 0L);
 
         private static void Decode(ZPackage pkg, List<Drop> drops)
         {
@@ -73,8 +80,8 @@ namespace EliteCreaturesReborn.Mutations
         /// </summary>
         public static long NextId(ZDO zdo)
         {
-            long next = zdo.GetLong(TraitKeys.MiasmaSeq, 1L);
-            zdo.Set(TraitKeys.MiasmaSeq, next + 1L);
+            long next = zdo.GetLong(SeqHash, 1L);
+            zdo.Set(SeqHash, next + 1L);
             return next;
         }
     }

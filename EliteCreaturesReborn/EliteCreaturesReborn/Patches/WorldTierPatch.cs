@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Reflection;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 
@@ -36,5 +38,34 @@ namespace EliteCreaturesReborn.Patches
             TierAnnounce.EnsureRegistered();
             WorldTier.WarnUnknownKeys();
         }
+    }
+
+    /// <summary>
+    /// Every change to the world's global keys, on every machine: the game adds, removes and clears them only through
+    /// these three, whether the server sets a key or a client receives the list, and recomputes the world's rates after
+    /// each (the fourth, which also follows a reset). The world tier counts again on its next read
+    /// (<see cref="WorldTier.KeysChanged"/>), so a tier read every frame is a cached number, never stale.
+    /// </summary>
+    /// <remarks>A game that renamed one of them skips that one (the tier then also counts again every few seconds).</remarks>
+    [HarmonyPatch]
+    public static class TierKeysPatch
+    {
+        private static readonly string[] Changes = { "GlobalKeyAdd", "GlobalKeyRemove", "ClearGlobalKeys", "UpdateWorldRates" };
+
+        private static bool Prepare() => TargetMethods().GetEnumerator().MoveNext();
+
+        private static IEnumerable<MethodBase> TargetMethods()
+        {
+            foreach (string name in Changes)
+            {
+                MethodInfo? method = AccessTools.Method(typeof(ZoneSystem), name);
+                if (method != null)
+                {
+                    yield return method;
+                }
+            }
+        }
+
+        private static void Postfix() => WorldTier.KeysChanged();
     }
 }

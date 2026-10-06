@@ -25,7 +25,8 @@ namespace EliteCreaturesReborn.Patches
 
         [HarmonyPriority(Priority.Last)]
         private static void Prefix(Humanoid __instance, HitData hit) =>
-            Guard.Run("Humanoid.BlockAttack thieving", () => _parried = IsParry(__instance, hit) ? hit : null);
+            Guard.Run("Humanoid.BlockAttack thieving", static (blocker, blow) => _parried = IsParry(blocker, blow) ? blow : null,
+                __instance, hit);
 
         private static bool IsParry(Humanoid blocker, HitData hit)
         {

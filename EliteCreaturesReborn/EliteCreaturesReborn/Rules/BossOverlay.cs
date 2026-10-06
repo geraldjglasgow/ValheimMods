@@ -17,7 +17,7 @@ namespace EliteCreaturesReborn.Rules
             {
                 boss.StarChances = chances;
             }
-            ApplyPower(boss.Star, block, errors);
+            ApplyPower(boss.Star, block, errors, warnings);
             if (YamlRead.Child(block, Fields.Aspects) is YamlNode aspects
                 && YamlRead.Map(aspects, errors, "'aspects'") is YamlMappingNode map)
             {
@@ -25,7 +25,9 @@ namespace EliteCreaturesReborn.Rules
             }
         }
 
-        private static void ApplyPower(StarPower star, YamlMappingNode block, List<string> errors)
+        /// <summary>The boss star lines. A `drops` line, which an older file still carries, only warns: a boss's stars pay
+        /// in heads and never multiply its other drops (<c>Loot.StarDrops</c>).</summary>
+        private static void ApplyPower(StarPower star, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             if (!(YamlRead.Child(block, "star power") is YamlMappingNode map))
             {
@@ -36,7 +38,11 @@ namespace EliteCreaturesReborn.Rules
             star.Attack = Line(map, Fields.Attack, star.Attack, errors);
             star.SwingSpeed = Line(map, Fields.SwingSpeed, star.SwingSpeed, errors);
             star.Speed = Line(map, Fields.Speed, star.Speed, errors);
-            star.Drops = Line(map, Fields.Drops, star.Drops, errors);
+            if (YamlRead.Child(map, Fields.Drops) != null)
+            {
+                warnings.Add($"bosses star power '{Fields.Drops}' is no longer used: a boss's stars pay in heads, and its "
+                    + "other drops are never multiplied by stars. Delete the line.");
+            }
         }
 
         private static float[] Line(YamlMappingNode map, string key, float[] current, List<string> errors)

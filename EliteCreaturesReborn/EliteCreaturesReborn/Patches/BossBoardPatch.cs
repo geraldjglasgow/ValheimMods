@@ -42,8 +42,15 @@ namespace EliteCreaturesReborn.Patches
                 && AspectStore.GetPhantomOf(nview.GetZDO()) != ZDOID.None;
         }
 
-        private static void Postfix(Character __instance, HitData hit, float __state) =>
-            SafeCall.Run("Character.ApplyDamage boss tally", () => Credit(__instance, hit, __state));
+        // Every hit on every character comes through here: anything but a tallied one stops at the first test.
+        private static void Postfix(Character __instance, HitData hit, float __state)
+        {
+            if (__state > 0f)
+            {
+                SafeCall.Run("Character.ApplyDamage boss tally", static (victim, blow) => Credit(victim, blow.hit, blow.before),
+                    __instance, (hit, before: __state));
+            }
+        }
 
         private static void Credit(Character victim, HitData hit, float before)
         {
@@ -67,8 +74,14 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(Character), "OnDeath")]
     public static class BossBoardDeathPatch
     {
-        private static void Prefix(Character __instance) =>
-            SafeCall.Run("Character.OnDeath boss board", () => Announce(__instance));
+        // Every death of every character comes through here: anything but a boss stops at the first test.
+        private static void Prefix(Character __instance)
+        {
+            if (__instance.IsBoss())
+            {
+                SafeCall.Run("Character.OnDeath boss board", static victim => Announce(victim), __instance);
+            }
+        }
 
         private static void Announce(Character victim)
         {

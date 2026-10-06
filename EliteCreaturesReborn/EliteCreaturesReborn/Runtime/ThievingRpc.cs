@@ -1,64 +1,71 @@
 using EliteCreaturesReborn.Mutations;
+using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
 using PatchGuard;
-using UnityEngine;
 
 namespace EliteCreaturesReborn.Runtime
 {
     /// <summary>
-    /// The Thieving steal command, routed the same way CreatureRpc.Devour already is: from whichever machine decided
-    /// the theft (the robbed player's own client - their Inventory is authoritative there, nowhere else) to the
-    /// creature's own owner, over the creature's own ZNetView. `InvokeRPC` with no explicit target routes to the ZDO
-    /// owner; the handler is registered on every machine but only the owner ever acts on it. Registered once per
-    /// creature from EliteController.Setup, alongside CreatureRpc.Register.
+    /// The Thieving steal request, from the machine that decided the theft (the robbed player's own client - their
+    /// Inventory is authoritative there, nowhere else) to the creature's owner, over the creature's own ZNetView:
+    /// `InvokeRPC` with no explicit target routes to the ZDO owner, and to this machine directly when it is the owner.
+    /// The owner banks the item or refuses it, and always answers (<see cref="StealEscrow"/>), so the player keeps the
+    /// item whenever it was not banked. Registered only on Thieving creatures, once they have resolved, on every
+    /// machine, so the request reaches whichever machine owns the creature.
     /// </summary>
     public static class ThievingRpc
     {
-        public const string Steal = "ecr_steal";
+        // Renamed with the answer it now expects: an owner running a build that never answers does not know this name,
+        // so it drops the request and the player gets the item back on the timeout instead of losing it.
+        public const string Steal = "ecr_steal_ask";
 
         public static void Register(ZNetView nview, EliteController controller) =>
-            nview.Register<int, ZPackage>(Steal, (sender, counter, pkg) => Bank(nview, controller, sender, counter, pkg));
+            nview.Register<int, ZPackage>(Steal, (sender, id, pkg) => Bank(nview, controller, sender, id, pkg));
 
-        /// <summary>Player-client side, once the item has already left the player's inventory. `sender` on the far end
-        /// is this machine's own id, which doubles as the stealer id for the ZDO-backed dedup - nothing extra to send.</summary>
-        public static void Send(ZNetView creatureView, int counter, ItemDrop.ItemData item)
+        /// <summary>Player-client side, once <see cref="StealEscrow.Hold"/> holds the item. `sender` on the far end is
+        /// this machine's own id, which doubles as the stealer id for the ZDO-backed dedup - nothing extra to send.</summary>
+        public static void Send(ZNetView creatureView, int id, ItemDrop.ItemData item)
         {
             ZPackage pkg = new ZPackage();
             item.Save(pkg);
-            creatureView.InvokeRPC(Steal, counter, pkg);
+            creatureView.InvokeRPC(Steal, id, pkg);
         }
 
-        private static void Bank(ZNetView nview, EliteController controller, long sender, int counter, ZPackage pkg) =>
-            Guard.Run("ThievingRpc.Steal", () => BankItem(nview, controller, sender, counter, pkg));
-
-        private static void BankItem(ZNetView nview, EliteController controller, long sender, int counter, ZPackage pkg)
+        // The answer goes out whatever happens here, a throw included: an unanswered request is only given back late.
+        private static void Bank(ZNetView nview, EliteController controller, long sender, int id, ZPackage pkg)
         {
-            if (!nview.IsOwner())
+            bool banked = false;
+            try
             {
-                return; // only the owner ever writes the pouch
+                banked = Guard.Run("ThievingRpc.Steal", static ask => BankItem(ask.nview, ask.controller, ask.sender, ask.id, ask.pkg),
+                    (nview, controller, sender, id, pkg));
+            }
+            finally
+            {
+                StealEscrow.Answer(sender, id, banked);
+            }
+        }
+
+        // Only the owner writes the pouch, and it re-checks what the player saw: a live Thieving creature with room.
+        private static bool BankItem(ZNetView nview, EliteController controller, long sender, int id, ZPackage pkg)
+        {
+            if (!nview.IsValid() || !nview.IsOwner() || !controller.Ready || controller.Creature.IsDead()
+                || !controller.Traits.Has(Mutation.Thieving))
+            {
+                return false; // ownership moved in flight, or the thief is gone: refused, the player keeps it
             }
             var (prefabHash, item) = ItemDrop.ItemData.Load(pkg, Version.Item.ChunksNCheats);
             if (prefabHash == 0 || !PouchStore.TryResolvePrefab(prefabHash, item))
             {
-                Log.Diag($"{nview.name}: steal packet named an unresolvable prefab ({prefabHash}), item lost");
-                return;
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{nview.name}: steal request named an unresolvable prefab ({prefabHash}), refused");
+                }
+                return false;
             }
-            ResolveOrDrop(nview, controller, sender, counter, item);
-        }
-
-        // The client already checked room before taking the item; this is the owner's own, authoritative re-check.
-        // The two can disagree by a frame on a busy server - the item is never discarded, only dropped at the creature.
-        private static void ResolveOrDrop(ZNetView nview, EliteController controller, long sender, int counter, ItemDrop.ItemData item)
-        {
-            ZDO zdo = nview.GetZDO();
             int maxItems = PouchStore.ResolvedMaxItems(controller.Rules, controller.Traits);
-            PouchStore.Entry entry = new PouchStore.Entry { Item = item, StealerId = sender, StealCounter = counter };
-            if (PouchStore.TryAdd(zdo, entry, maxItems))
-            {
-                return;
-            }
-            Log.Diag($"{nview.name}: pouch full at bank time, dropping '{item.m_shared?.m_name}' at the creature");
-            ItemDrop.DropItem(item, item.m_stack, nview.transform.position, Quaternion.identity);
+            PouchStore.Entry entry = new PouchStore.Entry { Item = item, StealerId = sender, StealCounter = id };
+            return PouchStore.TryAdd(nview.GetZDO(), entry, maxItems); // false: full since the player looked, refused
         }
     }
 }

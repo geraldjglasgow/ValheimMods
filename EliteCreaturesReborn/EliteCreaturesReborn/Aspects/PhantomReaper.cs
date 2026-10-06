@@ -26,7 +26,10 @@ namespace EliteCreaturesReborn.Aspects
                     released++;
                 }
             }
-            Log.Diag($"phantom boss {boss} fell; {released} copies released");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"phantom boss {boss} fell; {released} copies released");
+            }
         }
 
         private static bool IsCopyOf(Character character, ZDOID boss)

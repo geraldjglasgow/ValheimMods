@@ -32,7 +32,7 @@ Settings are under `bosses:` > `aspects:` > `power:` in `creature_rules.yml`.
 | Tethered | Two linked bosses with separate health; the further apart their health, the faster they attack and the tougher the weaker one gets. Only the last to die drops loot, and the damage board shows then, counting both. | `less health` 25%, `less damage` 25%, `attack speed` 50%, `armour` 50%, `full gap` 50 | x1 |
 | Bountiful | Carries two extra aspects at once, and drops twice the boss trophies. | `extra aspects` 2 | x2 times the extras' |
 | Portalbound | The Elder and Bonemass only: the Elder's vines fly, Bonemass's slime ball arcs, at you out of a portal. | `min height` 5 m, `clearance` 2 m, `range` 20 m | x1.2 |
-| Nightfall | Storming midnight for every player within 60 m: rain, thunder, Wet and Cold as in a real night storm (shelter, fire and frost resistance help). The day returns once it dies or you go 10 m past that range; the world's time and weather never change. Every 10-20 s of fight a tornado rises 6-9 m in front of each player, harmless for 1.5 s, then hunts them at 40% of run speed until 10 s after it rose. Its funnel deals 25 lightning damage a second; armour does not help. It tosses the Elder's roots. | `range` 60 m, `every` 10 s, `every max` 20 s, `life` 10 s, `form time` 1.5 s, `tornado speed` 40%, `damage` 25, `base width` 1.5 m, `top width` 9 m, `height` 14 m, `toss distance` 10 m | x1.3 |
+| Nightfall | Storming midnight for every player within 60 m: rain, thunder, Wet and Cold as in a real night storm (shelter, fire and frost resistance help). The day returns once it dies or you go 10 m past that range; the world's time and weather never change. Every 18-28 s of fight a tornado rises 6-9 m in front of each player, harmless for 1.5 s, then hunts them at 40% of run speed until 10 s after it rose. Its funnel deals 25 lightning damage a second; armour does not help. It tosses the Elder's roots. | `range` 60 m, `every` 18 s, `every max` 28 s (older rule files keep their own), `life` 10 s, `form time` 1.5 s, `tornado speed` 40%, `damage` 25, `base width` 1.5 m, `top width` 9 m, `height` 14 m, `toss distance` 10 m | x1.3 |
 | Brutal | Its heavy blows throw the players they hit far away; the hit does its damage, the landing none. A roll, or a block or parry that holds, keeps you on your feet. Never while swimming, seated, riding or on a ship's deck. | `launch` 20 m (0 = never, at most 40), `lift` 3 m high (1 to 15) | x1.2 |
 
 The loot multiplier applies in every loot mode. About one fight in five has no aspect. Stormbound, Gravitic, Colossal
@@ -61,9 +61,8 @@ speed never changes.
 | Health | x1 | x1.5 | x2.25 | x3.4 |
 | Damage | x1 | x1.25 | x1.55 | x1.9 |
 | Size | - | +5% | +10% | +15% |
-| Loot | x1 | x1.5 | x2 | x2.5 |
 
-A boss drops one trophy for every player within 100 m of it, plus one per star plus one, whatever the loot settings; Bountiful doubles that. Three players and a two-star Bountiful boss: twelve trophies.
+Stars add trophies only; the rest of a boss's drops is never multiplied by stars. A boss drops one trophy for every player within 100 m of it, plus one per star plus one, whatever the loot settings; Bountiful doubles that. Three players and a two-star Bountiful boss: twelve trophies.
 
 ## Damage board
 
@@ -78,7 +77,7 @@ Under `bosses:`:
 | --- | --- | --- |
 | `stars` | true | false: bosses never get stars, and the altar shows none |
 | `star chances` | [90, 6, 3, 1] | % chance of 0, 1, 2, 3 stars |
-| `star power` | the table above | Boss star multipliers |
+| `star power` | the table above | Boss star multipliers (no `drops` line; an old one only warns) |
 | `aspects:` `enabled` | true | false: no aspects |
 | `shift seconds` | 15 | Real seconds between altar shifts (stars and aspect); 0 = never changes. An older file's `shift hours` (in-game hours, 75 s each) still works while `shift seconds` is absent |
 | `chances` | none 42, each aspect 10 | Weight of each aspect; 0 removes it |

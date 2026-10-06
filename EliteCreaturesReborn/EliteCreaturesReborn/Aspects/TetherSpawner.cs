@@ -34,7 +34,10 @@ namespace EliteCreaturesReborn.Aspects
             if (partner != null)
             {
                 AspectStore.SetTether(zdo, partner.GetZDOID());
-                Log.Diag($"{boss.name}: tethered partner spawned, {traits.Stars} star(s)");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{boss.name}: tethered partner spawned, {traits.Stars} star(s)");
+                }
             }
         }
     }

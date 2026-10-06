@@ -58,7 +58,7 @@ namespace EliteCreaturesReborn.Mutations
             }
         }
 
-        private void Update() => Guard.Run("RelentlessBehaviour.Update", Step);
+        private void Update() => Guard.Run("RelentlessBehaviour.Update", static self => self.Step(), this);
 
         // Owner-only state: a machine that does not own the creature holds nothing, so when it becomes the owner it
         // reads the quarry fresh from the ZDO rather than trusting a memory from before someone else drove it.

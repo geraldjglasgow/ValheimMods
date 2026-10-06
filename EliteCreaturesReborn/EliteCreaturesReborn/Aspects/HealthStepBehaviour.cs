@@ -28,7 +28,7 @@ namespace EliteCreaturesReborn.Aspects
             _label = GetType().Name + ".Update";
         }
 
-        protected void Update() => Guard.Run(_label, Step);
+        protected void Update() => Guard.Run(_label, static self => self.Step(), this);
 
         /// <summary>How many marks a boss at this fraction of its maximum health has passed.</summary>
         protected abstract int Passed(float fraction);

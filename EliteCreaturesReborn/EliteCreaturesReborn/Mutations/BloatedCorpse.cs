@@ -1,4 +1,5 @@
 using EliteCreaturesReborn.Runtime;
+using EliteCreaturesReborn.Util;
 using EliteCreaturesReborn.Visuals;
 using PatchGuard;
 using UnityEngine;
@@ -44,11 +45,14 @@ namespace EliteCreaturesReborn.Mutations
             corpse._blast = blast;
             corpse._corpseId = corpseId;
             corpse._found = corpseId == ZDOID.None; // no corpse to look for: the warning stays at the place of death
-            GameObject? warning = EffectResolver.Resolve(warningEffect, EffectResolver.Warning, "Bloated warning effect");
-            LingeringVisual.Hold(holder, warning, WarningRadius); // full strength until the fuse ends and takes it away
+            if (!Machine.Headless) // a dedicated server still keeps the fuse and holds the corpse, but draws nothing
+            {
+                GameObject? warning = EffectResolver.Resolve(warningEffect, EffectResolver.Warning, "Bloated warning effect");
+                LingeringVisual.Hold(holder, warning, WarningRadius); // full strength until the fuse ends and takes it away
+            }
         }
 
-        private void Update() => Guard.Run("BloatedCorpse.Update", Step);
+        private void Update() => Guard.Run("BloatedCorpse.Update", static self => self.Step(), this);
 
         private void Step()
         {

@@ -22,6 +22,7 @@ namespace EliteCreaturesReborn.Display
         private const float RefreshInterval = 0.5f; // a meal can come at any moment
 
         private Character _character = null!;
+        private EliteController? _controller;
         private RectTransform _healthBar = null!;
         private IconRow? _row;
         private int _lastCount = -1;
@@ -36,9 +37,9 @@ namespace EliteCreaturesReborn.Display
             _row = new IconRow(healthBar, Prefix);
         }
 
-        private void Start() => Guard.Run("MealIcons.Start", Refresh);
+        private void Start() => Guard.Run("MealIcons.Start", static self => self.Refresh(), this);
 
-        private void Update() => Guard.Run("MealIcons.Update", Poll);
+        private void Update() => Guard.Run("MealIcons.Update", static self => self.Poll(), this);
 
         private void Poll()
         {
@@ -54,8 +55,11 @@ namespace EliteCreaturesReborn.Display
         // Re-laid out only when something it depends on moved: a new meal, the star row, or the pouch icons beside it.
         private void Refresh()
         {
-            EliteController? controller = _character != null ? _character.GetComponent<EliteController>() : null;
-            ZDO? zdo = controller != null && controller.Ready ? controller.View.GetZDO() : null;
+            if (_controller == null && _character != null)
+            {
+                _controller = _character.GetComponent<EliteController>();
+            }
+            ZDO? zdo = _controller != null && _controller.Ready ? _controller.View.GetZDO() : null;
             if (zdo == null || _healthBar == null || _row == null)
             {
                 return;

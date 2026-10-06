@@ -15,7 +15,7 @@ namespace EliteCreaturesReborn.Patches
     public static class CharacterLifecyclePatch
     {
         private static void Postfix(Character __instance) =>
-            Guard.Run("Character.Awake attach", () => Attach(__instance));
+            Guard.Run("Character.Awake attach", static character => Attach(character), __instance);
 
         private static void Attach(Character character)
         {

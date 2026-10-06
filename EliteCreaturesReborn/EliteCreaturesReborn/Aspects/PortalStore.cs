@@ -13,6 +13,9 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal static class PortalStore
     {
+        private static readonly int PortalAtHash = TraitKeys.PortalAt.GetStableHashCode();
+        private static readonly int PortalSpotHash = TraitKeys.PortalSpot.GetStableHashCode();
+
         /// <summary>The point the far portal faces: the target's centre at the wind-up, then again at the release.</summary>
         private const string AimKey = "ecr_portal_aim";
 
@@ -23,13 +26,13 @@ namespace EliteCreaturesReborn.Aspects
         private const string ShutKey = "ecr_portal_shut";
 
         /// <summary>When the latest far portal opened; 0 before the first.</summary>
-        public static long OpenedAt(ZDO zdo) => zdo.GetLong(TraitKeys.PortalAt);
+        public static long OpenedAt(ZDO zdo) => zdo.GetLong(PortalAtHash);
 
         public static long FiredAt(ZDO zdo) => zdo.GetLong(FireKey);
 
         public static long ShutAt(ZDO zdo) => zdo.GetLong(ShutKey);
 
-        public static Vector3 Spot(ZDO zdo) => zdo.GetVec3(TraitKeys.PortalSpot, Vector3.zero);
+        public static Vector3 Spot(ZDO zdo) => zdo.GetVec3(PortalSpotHash, Vector3.zero);
 
         public static Vector3 Aim(ZDO zdo) => zdo.GetVec3(AimKey, Vector3.zero);
 

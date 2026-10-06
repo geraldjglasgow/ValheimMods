@@ -79,7 +79,7 @@ namespace EliteCreaturesReborn.Visuals
             {
                 Log.Warn($"no vanilla effect matched the {role} tell; it will not be shown");
             }
-            else
+            else if (Log.Diagnostics)
             {
                 Log.Diag($"the {role} tell is {found.name}");
             }

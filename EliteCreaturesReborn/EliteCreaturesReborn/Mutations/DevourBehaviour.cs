@@ -1,7 +1,6 @@
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Rules;
-using HarmonyLib;
 using PatchGuard;
 using UnityEngine;
 
@@ -25,12 +24,17 @@ namespace EliteCreaturesReborn.Mutations
         /// judgement call - long enough to survive a brief lull mid-fight, short enough that breaking off loses it.</summary>
         private const float ProvokeWindow = 6f;
 
+        /// <summary>Seconds between reads of the reference player health: a scan of the players near it.</summary>
+        private const float ReferenceInterval = 1f;
+
         private EliteController _controller = null!;
         private Character _character = null!;
         private MonsterAI _ai = null!;
         private float _slowPer100;
         private float _threshold = 0.333f;
         private float _provokedUntil;
+        private float _reference = PlayerReference.FallbackHealth;
+        private float _nextReference;
 
         public bool HuntsPlayers { get; private set; }
 
@@ -44,9 +48,13 @@ namespace EliteCreaturesReborn.Mutations
             _ai = GetComponent<MonsterAI>();
             _slowPer100 = _controller.Rules.PowerOf(Mutation.Devouring, Fields.SlowPer100Health);
             _threshold = _controller.Rules.PowerOf(Mutation.Devouring, Fields.PlayerThreshold);
+            if (_character != null)
+            {
+                Devourers.Bind(_character, this); // emptied with the controller's own entry as the creature goes
+            }
         }
 
-        private void Update() => Guard.Run("DevourBehaviour.Update", Step);
+        private void Update() => Guard.Run("DevourBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {
@@ -67,8 +75,13 @@ namespace EliteCreaturesReborn.Mutations
 
         private void UpdateThreat()
         {
+            if (Time.time >= _nextReference)
+            {
+                _nextReference = Time.time + ReferenceInterval;
+                _reference = PlayerReference.MaxHealthNear(transform.position);
+            }
             float perHit = TraitStore.GetDevouredDamage(_controller.View.GetZDO());
-            HuntsPlayers = perHit > _threshold * PlayerReference.MaxHealth();
+            HuntsPlayers = perHit > _threshold * _reference;
             if (HuntsPlayers && _ai != null)
             {
                 _ai.SetHuntPlayer(hunt: true);
@@ -87,9 +100,8 @@ namespace EliteCreaturesReborn.Mutations
             {
                 return;
             }
-            Traverse ai = Traverse.Create(_ai);
-            ai.Field("m_targetCreature").SetValue(player);
-            ai.Field("m_lastKnownTargetPos").SetValue(player.transform.position);
+            _ai.m_targetCreature = player;
+            _ai.m_lastKnownTargetPos = player.transform.position;
         }
     }
 }

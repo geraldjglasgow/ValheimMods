@@ -4,27 +4,20 @@ using HarmonyLib;
 namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
-    /// Suppresses the nameplate of a cloaked creature while it is beyond its visible distance, in step with its hidden
-    /// renderers, so a cloaked creature gives away nothing - not even a nameplate - until you are close. A Blinking
-    /// creature's nameplate hides the same way for the moment its body is veiled mid-blink, so it never lingers at the
-    /// spot it left.
+    /// Suppresses a creature's nameplate while its body is hidden on this machine, in step with its renderers, so it gives
+    /// nothing away - not even a nameplate: a Cloaked creature beyond its visible distance, a Blinking one for the moment
+    /// its body is veiled mid-blink, so the plate never lingers at the spot it left, and a Cloning one while it hides
+    /// behind its decoy (<see cref="CloneBehaviour.Hidden"/>), so only the decoy's plate shows and nothing marks where the
+    /// creature really is; the decoy's own plate reads the same name, stars and health. The game asks this for every
+    /// creature near the player each frame, so the hidden ones are found in one lookup (<see cref="PlateVeils"/>), and
+    /// with none loaded it is one count check.
     /// </summary>
     [HarmonyPatch(typeof(EnemyHud), "TestShow")]
     public static class EnemyHudCloakPatch
     {
         private static void Postfix(Character c, ref bool __result)
         {
-            if (!__result || c == null)
-            {
-                return;
-            }
-            CloakBehaviour cloak = c.GetComponent<CloakBehaviour>();
-            if (cloak != null && cloak.Hidden)
-            {
-                __result = false;
-            }
-            BlinkBehaviour blink = c.GetComponent<BlinkBehaviour>();
-            if (blink != null && blink.Veiled)
+            if (__result && c != null && PlateVeils.Hides(c))
             {
                 __result = false;
             }

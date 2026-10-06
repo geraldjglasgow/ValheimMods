@@ -85,7 +85,7 @@ namespace EliteCreaturesReborn.Visuals
             return values;
         }
 
-        private void Update() => Guard.Run("LingeringVisual.Update", Step);
+        private void Update() => Guard.Run("LingeringVisual.Update", static self => self.Step(), this);
 
         private void Step()
         {

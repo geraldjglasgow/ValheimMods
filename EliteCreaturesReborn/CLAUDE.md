@@ -133,7 +133,8 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
 - **Devouring** - `absorb health`/`absorb damage` percent kept permanently from a victim (enhanced; an instant
   kill always lands the killing blow, so the full amount is kept); `slow per 100 health`, its cost;
   `move` base speed multiplier before the slow (`0.5` halves it; not enhanced);
-  `player threshold` fraction of a player's max health a hit must pass before it hunts players for good;
+  `player threshold` fraction of a player's max health (the highest among the players within 64 m of it) a hit must
+  pass before it hunts players for good;
   `devour cooldown` seconds after a meal before it can eat again; `max prey health` the most current health a creature
   may have for it to hunt and eat it, as a percent of its own current health, 100 by default, so no more than its own
   (0 lifts the limit; not enhanced). A boss or a large creature is never prey, whatever this says; `min meals` the fewest creatures it eats in its life whatever its stars, 1 by default (not enhanced) - it
@@ -142,7 +143,8 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   trophy)
 - **Thieving** - it holds one item per star; `max items` is the fewest it holds whatever its stars (enhanced),
   and 8 is the most. It never takes equipped gear, the Wishbone or more than one item per landed melee hit, and gives back everything
-  it holds when it is killed. With PackPanel it takes only from your main grid, never from PackPanel's slots (gear,
+  it holds when it is killed. A stolen item it cannot keep (its pouch filled meanwhile, it died or went out of reach
+  before the theft reached it) comes back to you within seconds, into your inventory or at your feet. With PackPanel it takes only from your main grid, never from PackPanel's slots (gear,
   backpack, food, mead, ammo, coin purse, key ring, tacklebox)
 - **Gilded** - `loot` multiplier on its drops (enhanced), applied in every loot mode; `bonus item` the item prefab
   of its purse and `bonus amount` how many per star plus one (enhanced), never multiplied and capped at 100;
@@ -212,7 +214,7 @@ and aspect when it first appears.
 | Tethered | Comes as two bosses joined by a faint tether, each with 25% less health and damage; they keep their own health and die apart. The further apart their health, the tauter and redder the tether, the faster both attack (up to 50%) and the less damage the one with less health left takes (up to 50%), both at their most once the gap reaches 50 points. Kill one first and the other fights on at full speed. Both health bars show, one under the other; only the last to fall drops loot, and the damage board shows once, when the last falls, counting both | x1 |
 | Bountiful | Carries two more aspects at once, drawn from that boss's own rotation (never two of Twin, Tethered and Phantom). The altar shows all of them before you offer, and the name carries every word: "Bountiful Enraged Mending Eikthyr". Its twin, tethered partner or Phantom copies carry its other aspects too (each copy calls its own Summoner waves and marks its own Fixated player). Pays every aspect's loot multiplied together, and twice the boss trophies | x2 (times each extra's) |
 | Portalbound | The Elder and Bonemass only. As it winds up its throw (the Elder's vines, Bonemass's slime ball) a portal opens 5 to 8 m up within 20 m of its target, in sight of them; as it throws, a second portal opens on its hand and the vines fly, or the slime arcs, out of the far portal at you. No clear spot: it throws as usual | x1.2 |
-| Nightfall | Night falls on the fight: every player within 60 m of it sees a storming midnight - rain, lightning and thunder - and turns Wet and Cold as under a real storm at night (a roof, a fire or frost resistance still help); the day comes back over a few seconds once it dies or you go 10 m past that range. Every 10 to 20 seconds of fight a tornado whirls up 6 to 9 m in front of each player: for 1.5 seconds it forms, harmless, then hunts that player at 40% of a player's run speed until 10 seconds after it rose, and anyone its funnel touches (1.5 m wide at the ground, 9 m at its 14 m top) takes 25 lightning damage a second; armour does not help. One tornado per player at a time. A tornado that passes over one of the Elder's roots picks it up and throws it in a random direction, 6 to 10 m away. Only what each player sees and feels changes: the world's time and weather never do | x1.3 |
+| Nightfall | Night falls on the fight: every player within 60 m of it sees a storming midnight - rain, lightning and thunder - and turns Wet and Cold as under a real storm at night (a roof, a fire or frost resistance still help); the day comes back over a few seconds once it dies or you go 10 m past that range. Every 18 to 28 seconds of fight a tornado whirls up 6 to 9 m in front of each player: for 1.5 seconds it forms, harmless, then hunts that player at 40% of a player's run speed until 10 seconds after it rose, and anyone its funnel touches (1.5 m wide at the ground, 9 m at its 14 m top) takes 25 lightning damage a second; armour does not help. One tornado per player at a time. A tornado that passes over one of the Elder's roots picks it up and throws it in a random direction, 6 to 10 m away. Only what each player sees and feels changes: the world's time and weather never do | x1.3 |
 | Brutal | Its heavy blows throw every player they hit 20 m away, 3 m up at the peak; the hit deals its damage as usual, the landing none. A roll through the blow, or a block that holds (a parry included), keeps you on your feet; a broken guard or a blow from behind throws you. Never while swimming, seated, riding or on a ship's deck | x1.2 |
 
 The chances are weights: 42 for the plain fight and 10 for each of the eighteen aspects (Portalbound only for the Elder and Bonemass), so about one boss fight in
@@ -231,6 +233,11 @@ nothing else does: not the `drops` line, extra rolls, the global or boss multipl
 `multiply trophies`. Each Twin drops its own; of a Tethered pair only the last to fall drops anything; Phantom copies drop nothing.
 Only a `drop overrides` row naming the trophy in the boss's `creatures:` entry replaces it, and an `extra drops` row
 adds on top.
+
+**Boss stars never multiply its other drops** (since 2026-10-05; Wishbones piled up): the heads are what stars pay. The
+rest of a boss's table drops once - no extra rolls, no star `drops` line (a `drops` line under `bosses: star power:` in
+an older file only warns) - times its aspect's loot and the global and boss multipliers. A `drops` line in the boss's
+own `creatures:` entry still applies.
 
 ## Boss aspect power fields
 

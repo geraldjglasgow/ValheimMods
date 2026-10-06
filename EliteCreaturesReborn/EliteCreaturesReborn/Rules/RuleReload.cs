@@ -20,7 +20,7 @@ namespace EliteCreaturesReborn.Rules
             holder.AddComponent<RuleReload>();
         }
 
-        private void Update() => Guard.Run("RuleReload.Update", Poll);
+        private void Update() => Guard.Run("RuleReload.Update", static self => self.Poll(), this);
 
         private void Poll()
         {

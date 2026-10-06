@@ -41,7 +41,7 @@ namespace EliteCreaturesReborn.Mutations
             _combatCooldown = rules.PowerOf(Mutation.Leeching, Fields.CombatCooldown);
         }
 
-        private void Update() => Guard.Run("LeechBehaviour.Update", Step);
+        private void Update() => Guard.Run("LeechBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {

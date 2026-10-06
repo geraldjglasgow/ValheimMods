@@ -127,7 +127,7 @@ namespace EliteCreaturesReborn.Aspects
             }
         }
 
-        private void LateUpdate() => Guard.Run("TornadoVisual.LateUpdate", Step);
+        private void LateUpdate() => Guard.Run("TornadoVisual.LateUpdate", static self => self.Step(), this);
 
         private void Step()
         {

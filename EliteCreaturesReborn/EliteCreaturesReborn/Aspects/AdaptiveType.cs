@@ -26,6 +26,8 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal static class AdaptiveTypes
     {
+        private static readonly int AdaptedHash = TraitKeys.Adapted.GetStableHashCode();
+
         /// <summary>The highest type value; the tracked types run from 1 to this.</summary>
         public const int Last = (int)AdaptiveType.Spirit;
 
@@ -61,7 +63,7 @@ namespace EliteCreaturesReborn.Aspects
         /// <summary>The type the boss resists now, as its owner wrote it; none for no ZDO or a bad value.</summary>
         public static AdaptiveType Read(ZDO? zdo)
         {
-            int value = zdo != null ? zdo.GetInt(TraitKeys.Adapted) : 0;
+            int value = zdo != null ? zdo.GetInt(AdaptedHash) : 0;
             return value >= 0 && value <= Last ? (AdaptiveType)value : AdaptiveType.None;
         }
 

@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Patches
     public static class ColossalCorpseMadePatch
     {
         private static void Postfix(Humanoid __instance, Ragdoll ragdoll) =>
-            SafeCall.Run("Humanoid.OnRagdollCreated (Colossal)", () => ColossalCorpse.Grow(__instance, ragdoll));
+            SafeCall.Run("Humanoid.OnRagdollCreated (Colossal)", static (dying, body) => ColossalCorpse.Grow(dying, body), __instance,
+                ragdoll);
     }
 
     /// <summary>
@@ -21,6 +22,6 @@ namespace EliteCreaturesReborn.Patches
     public static class ColossalCorpseWakePatch
     {
         private static void Postfix(Ragdoll __instance) =>
-            SafeCall.Run("Ragdoll.Awake (Colossal)", () => ColossalCorpse.Wake(__instance));
+            SafeCall.Run("Ragdoll.Awake (Colossal)", static body => ColossalCorpse.Wake(body), __instance);
     }
 }

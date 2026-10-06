@@ -113,7 +113,10 @@ namespace EliteCreaturesReborn.Aspects
             wave.At = NetTime.NowMs();
             TornadoStore.Write(zdo, wave);
             Hunt.Start(wave);
-            Log.Diag($"{_boss.name}: Nightfall raises {wave.Count} tornado(es)");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{_boss.name}: Nightfall raises {wave.Count} tornado(es)");
+            }
         }
     }
 }

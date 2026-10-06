@@ -13,8 +13,14 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(Character), "OnDeath")]
     public static class BossHintDeathPatch
     {
-        private static void Prefix(Character __instance) =>
-            SafeCall.Run("Character.OnDeath boss hint", () => Ask(__instance));
+        // Every death of every character comes through here: anything but a boss stops at the first test.
+        private static void Prefix(Character __instance)
+        {
+            if (__instance.IsBoss())
+            {
+                SafeCall.Run("Character.OnDeath boss hint", static victim => Ask(victim), __instance);
+            }
+        }
 
         private static void Ask(Character victim)
         {

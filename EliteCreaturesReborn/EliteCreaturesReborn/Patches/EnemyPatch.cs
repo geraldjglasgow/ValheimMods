@@ -1,6 +1,5 @@
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Runtime;
-using EliteCreaturesReborn.Traits;
 using HarmonyLib;
 
 namespace EliteCreaturesReborn.Patches
@@ -18,7 +17,8 @@ namespace EliteCreaturesReborn.Patches
     /// kind. Asymmetric on purpose: only the devourer's own enmity is overridden, so other creatures still treat it by
     /// their normal rules. Consulted on the owner of the querying AI; the Devouring flag, the meal count and both healths
     /// are read from synced state, so this only forces enmity where the devourer is simulated. It stands aside while
-    /// <see cref="GildedEnemyPatch.GameOnly"/> asks for the game's own answer.
+    /// <see cref="GildedEnemyPatch.GameOnly"/> asks for the game's own answer. IsEnemy is asked constantly, so the devourer is
+    /// found through <see cref="Devourers"/>, and with none loaded the first test is one count check.
     /// </summary>
     [HarmonyPatch(typeof(BaseAI), "IsEnemy", new[] { typeof(Character), typeof(Character) })]
     public static class EnemyPatch
@@ -29,11 +29,11 @@ namespace EliteCreaturesReborn.Patches
         // pull it off the player it turned on. Asymmetric: only the devourer's own enmity is overridden.
         private static void Postfix(Character a, Character b, ref bool __result)
         {
-            if (GildedEnemyPatch.GameOnly || a == null || b == null || a == b || b.IsBoss())
+            if (!Devourers.Any || GildedEnemyPatch.GameOnly || a == null || b == null || a == b || b.IsBoss())
             {
-                return;
+                return; // the common case, by far: no devourer loaded here at all
             }
-            EliteController? devourer = Devourer(a);
+            EliteController? devourer = Devourers.Of(a);
             bool? forced = devourer != null ? Enmity(a, devourer, b) : null;
             if (forced.HasValue)
             {
@@ -61,16 +61,10 @@ namespace EliteCreaturesReborn.Patches
             return DevourLimits.FitsInMaw(devourer, b) ? true : (bool?)null;
         }
 
-        private static EliteController? Devourer(Character character)
-        {
-            EliteController controller = character.GetComponent<EliteController>();
-            return controller != null && controller.Ready && controller.Traits.Has(Mutation.Devouring) ? controller : null;
-        }
-
         // A player counts as an enemy only once it is being hunted for good, or while a recent attack still provokes it.
         private static bool AfterPlayers(Character devourer)
         {
-            DevourBehaviour behaviour = devourer.GetComponent<DevourBehaviour>();
+            DevourBehaviour? behaviour = Devourers.BehaviourOf(devourer);
             return behaviour != null && (behaviour.HuntsPlayers || behaviour.IsProvoked);
         }
     }

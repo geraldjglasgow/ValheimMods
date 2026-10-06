@@ -58,7 +58,7 @@ namespace EliteCreaturesReborn.Aspects
             _controller.View.Register<ZPackage>(Rpc, OnShuffle);
         }
 
-        private void Update() => Guard.Run("PhantomShuffle.Update", Tick);
+        private void Update() => Guard.Run("PhantomShuffle.Update", static self => self.Tick(), this);
 
         private void Tick()
         {

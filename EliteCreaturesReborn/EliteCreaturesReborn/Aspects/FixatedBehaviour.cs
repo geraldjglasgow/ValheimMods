@@ -34,11 +34,11 @@ namespace EliteCreaturesReborn.Aspects
             }
         }
 
-        private void Update() => Guard.Run("FixatedBehaviour.Update", Decide);
+        private void Update() => Guard.Run("FixatedBehaviour.Update", static self => self.Decide(), this);
 
         private void Decide() => _owner?.Tick();
 
-        private void LateUpdate() => Guard.Run("FixatedBehaviour.LateUpdate", Draw);
+        private void LateUpdate() => Guard.Run("FixatedBehaviour.LateUpdate", static self => self.Draw(), this);
 
         private void Draw() => _view?.Draw();
 

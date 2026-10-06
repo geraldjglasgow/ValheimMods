@@ -102,7 +102,10 @@ namespace EliteCreaturesReborn.Aspects
             StormStore.Write(zdo, strikeAt, settings.Radius, settings.Damage, centers);
             _fight = 0f;
             _due = settings.Every;
-            Log.Diag($"{_boss.name}: Stormbound calls lightning on {centers.Count} circle(s)");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{_boss.name}: Stormbound calls lightning on {centers.Count} circle(s)");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Util;
 using EliteCreaturesReborn.Visuals;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace EliteCreaturesReborn.Mutations
     /// <see cref="BloatedCorpse"/>). It is driven from a routed broadcast (see <see cref="Runtime.EliteRpc"/>): every
     /// client draws the burst and plays the bang at the owner's corpse position, but only the owner's copy is
     /// <c>damaging</c> and deals the blunt damage in a radius, scaled by star count as (1 + stars). It has no attacker,
-    /// so it feeds nothing.
+    /// so it feeds nothing. A dedicated server draws nothing, and deals the damage only when it was the owner.
     /// </summary>
     public static class BloatedBlast
     {
@@ -21,10 +22,10 @@ namespace EliteCreaturesReborn.Mutations
 
         public static void Detonate(Vector3 pos, BlastSpec blast, bool damaging)
         {
-            GameObject? prefab = EffectResolver.Resolve(blast.Effect, EffectResolver.Blast, "Bloated blast effect");
-            CosmeticClone.FlashWhole(prefab, pos, blast.Radius, DrawScale); // every machine draws the blast
-            GameObject? sound = EffectResolver.ResolveSound(blast.Sound, EffectResolver.BlastSound, "Bloated blast sound");
-            CosmeticClone.Sound(sound, pos); // and hears it
+            if (!Machine.Headless)
+            {
+                Draw(pos, blast); // every machine with a screen draws and hears the blast
+            }
             if (!damaging) // only the owner's blast decides damage; remote copies are visual only
             {
                 return;
@@ -39,6 +40,14 @@ namespace EliteCreaturesReborn.Mutations
                     character.Damage(BuildHit(pos, damage));
                 }
             }
+        }
+
+        private static void Draw(Vector3 pos, BlastSpec blast)
+        {
+            GameObject? prefab = EffectResolver.Resolve(blast.Effect, EffectResolver.Blast, "Bloated blast effect");
+            CosmeticClone.FlashWhole(prefab, pos, blast.Radius, DrawScale);
+            GameObject? sound = EffectResolver.ResolveSound(blast.Sound, EffectResolver.BlastSound, "Bloated blast sound");
+            CosmeticClone.Sound(sound, pos);
         }
 
         private static HitData BuildHit(Vector3 pos, float damage)

@@ -54,7 +54,7 @@ namespace EliteCreaturesReborn.Aspects
             }
         }
 
-        private void Update() => Guard.Run("PortalboundBehaviour.Update", Step);
+        private void Update() => Guard.Run("PortalboundBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {

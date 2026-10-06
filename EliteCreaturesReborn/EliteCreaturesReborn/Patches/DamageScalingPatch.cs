@@ -2,8 +2,6 @@ using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
-using HarmonyLib;
-using PatchGuard;
 
 namespace EliteCreaturesReborn.Patches
 {
@@ -15,31 +13,28 @@ namespace EliteCreaturesReborn.Patches
     /// Phantom copy on the way out, Shielded on the way in.
     /// Two more attacker-mutation hit tweaks live here because this is the prefix that owns the outgoing hit:
     /// Miasmic adds vanilla Poison when it hits a player, and Devouring zeroes knockback so its prey never tumbles away.
-    /// Hits with no attacker - poison clouds, explosions, reflected damage - carry no traits and pass through.
+    /// Hits with no attacker - poison clouds, explosions, reflected damage - carry no traits and pass through. A step of
+    /// <see cref="HitPatch"/>, before the hit.
     /// </summary>
-    [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class DamageScalingPatch
     {
-        private static void Prefix(Character __instance, HitData hit) =>
-            Guard.Run("Character.RPC_Damage scaling", () => Scale(__instance, hit));
-
-        private static void Scale(Character victim, HitData hit)
+        internal static void Scale(Struck struck)
         {
-            ZNetView nview = victim.GetComponent<ZNetView>();
-            if (hit == null || nview == null || !nview.IsValid() || !nview.IsOwner())
+            HitData? hit = struck.Hit;
+            if (hit == null || !struck.Owned)
             {
                 return;
             }
-            ApplyOutgoing(victim, hit);
-            ApplyIncoming(victim, hit);
-            ApplyAttackerMutations(victim, hit);
+            ApplyOutgoing(struck, hit);
+            ApplyIncoming(struck.Elite, hit, struck.Victim);
+            ApplyAttackerMutations(struck, hit);
         }
 
         // Attacker-mutation tweaks to the outgoing hit, applied after scaling so they are not multiplied by it.
-        private static void ApplyAttackerMutations(Character victim, HitData hit)
+        private static void ApplyAttackerMutations(Struck struck, HitData hit)
         {
-            Character attacker = hit.GetAttacker();
-            EliteController? controller = attacker != null ? attacker.GetComponent<EliteController>() : null;
+            Character victim = struck.Victim;
+            EliteController? controller = struck.AttackerElite;
             if (controller == null || !controller.Ready)
             {
                 return;
@@ -57,27 +52,22 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        private static void ApplyOutgoing(Character victim, HitData hit)
+        private static void ApplyOutgoing(Struck struck, HitData hit)
         {
-            Character attacker = hit.GetAttacker();
-            if (attacker == null || attacker.IsPlayer())
-            {
-                return;
-            }
-            EliteController controller = attacker.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready)
+            Character? attacker = struck.Attacker;
+            EliteController? controller = struck.AttackerElite; // none for a player
+            if (attacker == null || controller == null || !controller.Ready)
             {
                 return;
             }
             CreatureTraits traits = controller.Traits;
             hit.ApplyModifier(DamageMath.OutgoingMultiplier(controller.Rules, traits, attacker.GetHealthPercentage()));
             hit.m_damage.m_blunt += DamageMath.DevouredFlatDamage(traits, controller.View.GetZDO());
-            AspectDamage.Outgoing(controller, victim, hit); // after the stars, so an aspect multiplies the starred hit
+            AspectDamage.Outgoing(controller, struck.Victim, hit); // after the stars, so an aspect multiplies the starred hit
         }
 
-        private static void ApplyIncoming(Character victim, HitData hit)
+        private static void ApplyIncoming(EliteController? controller, HitData hit, Character victim)
         {
-            EliteController controller = victim.GetComponent<EliteController>();
             if (controller == null || !controller.Ready)
             {
                 return;

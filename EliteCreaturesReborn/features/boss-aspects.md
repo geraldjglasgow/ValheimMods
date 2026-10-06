@@ -358,7 +358,8 @@ is one editable table, so reordering it after a few real fights costs nothing, a
 to revisit. Of the five added in 3.9.0 only Gravitic's 1.3x came from the user; Stormbound's and Colossal's 1.2x and
 Adaptive's and Fixated's 1.3x are judgement calls.
 
-The multiplier stacks on the boss star `drops` line and the loot rules' boss multiplier. **It applies even with the
+The multiplier stacks on the loot rules' boss multiplier (a boss's stars no longer multiply its drops, `loot.md`
+section 2). **It applies even with the
 loot rules in Vanilla mode** (`configuration.md`: "an aspect that scales loot must work with loot rules off") -
 there it is the only thing that touches a boss's drops. Phantom copies drop nothing at all, whatever the table says.
 
@@ -677,7 +678,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Nightfall: storming midnight for players within 60 m (along the ground) of a living boss; night falls over 6 s
   and lifts over 6 s after its death, its unloading or 70 m; Wet and Cold under it; nothing inside dungeons or forced
   weather; two at once share one sky
-- [ ] Nightfall: one tornado per player within 60 m every 10-20 s of fight; forms 1.5 s harmless; hunts at 40% run
+- [ ] Nightfall: one tornado per player within 60 m every 18-28 s of fight (10-20 until 2026-10-05, +8 s at the user's request); forms 1.5 s harmless; hunts at 40% run
   speed until 10 s; 25 lightning damage a second inside the funnel, no stagger, a roll passes; drawn at effect
   density 0; boss death breaks every tornado up; a late arrival sees them where they are; a hand-over keeps rhythm and
   positions; never two tornadoes on one player

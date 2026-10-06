@@ -91,7 +91,7 @@ namespace EliteCreaturesReborn.Aspects
             return points;
         }
 
-        private void Update() => Guard.Run("StormCircle.Update", Pulse);
+        private void Update() => Guard.Run("StormCircle.Update", static self => self.Pulse(), this);
 
         // Brighter and quicker as the strike nears: from a steady glow to a fast throb in the last moments.
         private void Pulse()

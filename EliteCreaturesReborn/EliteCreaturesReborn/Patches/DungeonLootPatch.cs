@@ -19,8 +19,14 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(Container), "Awake")]
     public static class DungeonLootPatch
     {
-        private static void Postfix(Container __instance) =>
-            Guard.Run("Container.Awake loot regen", () => Consider(__instance));
+        // Every chest, cart and ship hold that loads comes through here: with dungeon loot off, the first test ends it.
+        private static void Postfix(Container __instance)
+        {
+            if (RuleState.Active.Respawn.DungeonLoot)
+            {
+                Guard.Run("Container.Awake loot regen", static container => Consider(container), __instance);
+            }
+        }
 
         private static void Consider(Container container)
         {
@@ -41,8 +47,17 @@ namespace EliteCreaturesReborn.Patches
         {
             return container.m_nview != null && container.m_nview.IsValid() && container.m_nview.IsOwner()
                 && container.m_defaultItems != null && container.m_defaultItems.m_drops.Count > 0
-                && container.GetInventory() != null && container.GetInventory().NrOfItems() == 0
-                && SpawnerRespawn.InDungeon(container);
+                && container.GetInventory() != null && SpawnerRespawn.InDungeon(container) && Empty(container);
+        }
+
+        // Container.Awake does not read the stored items - the game first loads them on its next CheckForChanges - so
+        // here every chest's inventory still reads empty, a full one included. Load them now with the same call
+        // CheckForChanges makes (which then finds the revision unchanged and skips), and judge what is really inside.
+        // A chest the game has just filled for the first time is already saved and loaded, and holds its loot.
+        private static bool Empty(Container container)
+        {
+            container.Load();
+            return container.GetInventory().NrOfItems() == 0;
         }
 
         /// <summary>True once the configured world days have passed since the last fill. An unstamped chest is stamped now.</summary>
@@ -68,7 +83,10 @@ namespace EliteCreaturesReborn.Patches
             }
             zdo.Set(TraitKeys.LootFilledAt, ZNet.instance.GetTime().Ticks);
             container.Save();
-            Log.Diag($"{container.m_name}: dungeon loot regenerated");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{container.m_name}: dungeon loot regenerated");
+            }
         }
     }
 }

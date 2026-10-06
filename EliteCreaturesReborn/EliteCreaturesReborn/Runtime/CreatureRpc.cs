@@ -10,16 +10,16 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Runtime
 {
     /// <summary>
-    /// The per-creature calls routed through a creature's own ZNetView, because that channel is the one the engine
-    /// scopes to the clients that actually hold the creature. One is an owner-directed command - "you devoured this, take
-    /// it" (to the devourer's owner, where its ZDO and health live, and where the meal joins its meal list). The other is
-    /// a scoped effect broadcast - the Warding reflect sound, the devour tell and the other one-shot tells - which every
-    /// client holding the creature draws and no one else receives, unlike the world-wide bus
-    /// in <see cref="EliteRpc"/>. Two more owner-directed commands serve the boss aspects: a Twin's share of its
+    /// The per-creature calls routed through a creature's own ZNetView, because a call addressed to the creature is
+    /// handled only where the creature is loaded. One is an owner-directed command - "you devoured this, take it" (to the
+    /// devourer's owner, where its ZDO and health live, and where the meal joins its meal list). The other is an effect
+    /// tell - the Warding reflect sound, the devour tell and the other one-shot tells - sent to each player near the
+    /// creature, so only the clients that could see it get it (unlike the world-wide bus in <see cref="EliteRpc"/>,
+    /// whose calls every machine handles). Two more owner-directed commands serve the boss aspects: a Twin's share of its
     /// partner's lost health, and a Phantom copy's dismissal when its boss dies. (The prey pin is not here: a bite pins
     /// the prey directly on the prey's own owner, which is the same machine the hit resolves on, so it needs no
-    /// routing.) Registered once per creature; sending to an object you already own is delivered locally, so a
-    /// single-machine session uses one path.
+    /// routing.) Registered once per creature, each command only where it can be sent; sending to an object you already
+    /// own is delivered locally, so a single-machine session uses one path.
     /// </summary>
     public static class CreatureRpc
     {
@@ -41,17 +41,41 @@ namespace EliteCreaturesReborn.Runtime
         /// </summary>
         private const float ReflectVolume = 0.3f;
 
-        /// <summary>Registers all handlers on a creature, capturing its own Character/controller. Called once per creature.</summary>
-        public static void Register(ZNetView nview, Character character, EliteController controller)
-        {
-            // The command handler runs on THIS creature's owner - that is where a no-target routed call is delivered.
-            nview.Register<float, float, int>(Devour,
-                (sender, health, damage, meal) => ApplyAbsorb(character, controller, health, damage, meal));
+        /// <summary>How near a player must be to be sent a tell: further than a flash or its sound carries in a fight.</summary>
+        private const float TellRange = 100f;
+
+        /// <summary>Registers the effect handler on a creature, on every machine, before it has resolved: a tell can
+        /// reach a machine still waiting for the owner's roll.</summary>
+        public static void Register(ZNetView nview) =>
             // The flash handler runs on EVERY client holding the creature, drawing a pure cosmetic; nobody gates it.
             nview.Register<Vector3, float, string>(Flash, (sender, pos, radius, role) => DrawFlash(pos, radius, role));
-            // Twin's share of a partner's lost health, and a Phantom copy's dismissal: both commands to this owner.
-            nview.Register<float, bool>(TwinShare, (sender, loss, fatal) => ReceiveShare(character, loss, fatal));
-            nview.Register(VanishCall, sender => Guard.Run("CreatureRpc.Vanish", () => Fall(character)));
+
+        /// <summary>
+        /// Registers the owner-directed commands a creature can receive, once its traits have resolved, and only those
+        /// its traits can be sent: a devour for a devourer, a twin's share and a phantom's dismissal for a boss (twins and
+        /// copies are bosses too), a steal for a thief. An ordinary creature registers none, so an area full of them
+        /// loading at once builds no handlers it will never use. A command sent to a machine still waiting for the roll is
+        /// dropped there; the owner rolled at once and has its handlers.
+        /// </summary>
+        public static void RegisterCommands(EliteController controller, bool boss)
+        {
+            ZNetView nview = controller.View;
+            Character character = controller.Creature;
+            if (controller.Traits.Has(Mutation.Devouring))
+            {
+                // The command handler runs on THIS creature's owner - that is where a no-target routed call is delivered.
+                nview.Register<float, float, int>(Devour,
+                    (sender, health, damage, meal) => ApplyAbsorb(character, controller, health, damage, meal));
+            }
+            if (boss)
+            {
+                nview.Register<float, bool>(TwinShare, (sender, loss, fatal) => ReceiveShare(character, loss, fatal));
+                nview.Register(VanishCall, sender => Guard.Run("CreatureRpc.Vanish", () => Fall(character)));
+            }
+            if (controller.Traits.Has(Mutation.Thieving))
+            {
+                ThievingRpc.Register(nview, controller); // the robbed player's client routes a steal to the owner
+            }
         }
 
         private static void ReceiveShare(Character character, float loss, bool fatal) =>
@@ -87,20 +111,29 @@ namespace EliteCreaturesReborn.Runtime
         }
 
         /// <summary>
-        /// Scoped effect broadcast through the creature's own ZNetView. <c>Everybody</c> is delivered locally to the
-        /// sender and relayed to peers, but the game dispatches it only where this creature's ZNetView exists (others
-        /// drop it), so a player three biomes away never draws a flash from a fight they cannot see. Keeps the wire quiet
-        /// even though Warding fires on every melee hit.
+        /// Effect tell through the creature's own ZNetView, sent only to the players within <see cref="TellRange"/> of
+        /// it - each one's own machine, found from the players loaded here (a player's ZDO is owned by that player's
+        /// machine) - rather than to everybody: it goes out on every hit a Warding creature takes, and a player three
+        /// biomes away would only drop it unread. The local player's copy is delivered locally; a dedicated server has
+        /// no player of its own and sends only to the players near the creature.
         /// </summary>
         public static void FireFlash(ZNetView creatureView, Vector3 pos, float radius, string role)
         {
-            if (creatureView != null && creatureView.IsValid())
+            if (creatureView == null || !creatureView.IsValid())
             {
-                creatureView.InvokeRPC(ZRoutedRpc.Everybody, Flash, pos, radius, role ?? "");
+                return;
+            }
+            foreach (Player player in Player.GetAllPlayers())
+            {
+                ZDO? zdo = player.m_nview != null && player.m_nview.IsValid() ? player.m_nview.GetZDO() : null;
+                if (zdo != null && zdo.GetOwner() != 0L && (player.transform.position - pos).sqrMagnitude <= TellRange * TellRange)
+                {
+                    creatureView.InvokeRPC(zdo.GetOwner(), Flash, pos, radius, role ?? "");
+                }
             }
         }
 
-        /// <summary>The reflect tell at the attacker, the same scoped way; it carries no size, since nothing is drawn.</summary>
+        /// <summary>The reflect tell at the attacker, the same way; it carries no size, since nothing is drawn.</summary>
         public static void FireReflect(ZNetView creatureView, Vector3 pos) => FireFlash(creatureView, pos, 0f, ReflectRole);
 
         /// <summary>
@@ -109,8 +142,14 @@ namespace EliteCreaturesReborn.Runtime
         /// </summary>
         public static void FireDevour(ZNetView devourerView, Vector3 pos) => FireFlash(devourerView, pos, 0f, DevourRole);
 
-        private static void DrawFlash(Vector3 pos, float radius, string role) =>
-            Guard.Run("CreatureRpc.Flash", () => DrawRole(pos, radius, role));
+        // A dedicated server holds every creature near a player, so it gets every tell; it has no one to show it to.
+        private static void DrawFlash(Vector3 pos, float radius, string role)
+        {
+            if (!Machine.Headless)
+            {
+                Guard.Run("CreatureRpc.Flash", static tell => DrawRole(tell.pos, tell.radius, tell.role), (pos, radius, role));
+            }
+        }
 
         private static void DrawRole(Vector3 pos, float radius, string role)
         {
@@ -156,7 +195,10 @@ namespace EliteCreaturesReborn.Runtime
             ZDO zdo = controller.View.GetZDO();
             if (DevourLimits.Sated(controller))
             {
-                Log.Diag($"{killer.name} has eaten its {MealStore.Count(zdo)}; this meal is not banked");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{killer.name} has eaten its {MealStore.Count(zdo)}; this meal is not banked");
+                }
                 return;
             }
             MealStore.Add(zdo, meal);

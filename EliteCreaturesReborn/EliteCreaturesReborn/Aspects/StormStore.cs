@@ -15,6 +15,9 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal static class StormStore
     {
+        private static readonly int StormAtHash = TraitKeys.StormAt.GetStableHashCode();
+        private static readonly int StormCirclesHash = TraitKeys.StormCircles.GetStableHashCode();
+
         /// <summary>A sanity cap on the circles one storm carries, whatever the player count.</summary>
         private const int MaxCircles = 32;
 
@@ -25,7 +28,7 @@ namespace EliteCreaturesReborn.Aspects
         private const int PerCircle = 12;
 
         /// <summary>When the latest storm's lightning falls, in shared-clock ms; 0 before the first.</summary>
-        public static long StrikeAt(ZDO zdo) => zdo.GetLong(TraitKeys.StormAt);
+        public static long StrikeAt(ZDO zdo) => zdo.GetLong(StormAtHash);
 
         /// <summary>Owner only: the storm, then the time every machine watches for a change.</summary>
         public static void Write(ZDO zdo, long strikeAtMs, float radius, float damage, List<Vector3> centers)
@@ -52,7 +55,7 @@ namespace EliteCreaturesReborn.Aspects
             List<Vector3> centers = new List<Vector3>();
             radius = 0f;
             damage = 0f;
-            byte[]? bytes = zdo.GetByteArray(TraitKeys.StormCircles);
+            byte[]? bytes = zdo.GetByteArray(StormCirclesHash);
             if (bytes == null || bytes.Length < Header)
             {
                 return centers;

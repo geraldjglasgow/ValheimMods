@@ -19,23 +19,24 @@ namespace EliteCreaturesReborn.Patches
         {
             if (__state > 0f && __instance.GetHealth() < __state)
             {
-                SafeCall.Run("Character.ApplyDamage death recap", () => HitLog.Record((Player)__instance, hit));
+                SafeCall.Run("Character.ApplyDamage death recap", static (player, blow) => HitLog.Record((Player)player, blow),
+                    __instance, hit);
             }
         }
     }
 
     /// <summary>
     /// The creature behind later burning and poison ticks: <c>RPC_Damage</c> takes a hit's fire, spirit and poison off
-    /// before it lands and turns them into ticks with no attacker, so its prefix notes who carried them.
+    /// before it lands and turns them into ticks with no attacker, so before the hit (a step of <see cref="HitPatch"/>)
+    /// this notes who carried them.
     /// </summary>
-    [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class RecapSourcePatch
     {
-        private static void Prefix(Character __instance, HitData hit)
+        internal static void Note(Character victim, HitData hit)
         {
-            if (hit != null && __instance == Player.m_localPlayer)
+            if (hit != null && victim == Player.m_localPlayer)
             {
-                SafeCall.Run("Character.RPC_Damage death recap", () => HitLog.NoteSource(hit));
+                SafeCall.Run("Character.RPC_Damage death recap", static blow => HitLog.NoteSource(blow), hit);
             }
         }
     }

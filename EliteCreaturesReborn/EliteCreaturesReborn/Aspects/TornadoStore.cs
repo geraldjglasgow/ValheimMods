@@ -16,6 +16,10 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal static class TornadoStore
     {
+        private static readonly int TornadoAtHash = TraitKeys.TornadoAt.GetStableHashCode();
+        private static readonly int TornadoTrackHash = TraitKeys.TornadoTrack.GetStableHashCode();
+        private static readonly int TornadoWaveHash = TraitKeys.TornadoWave.GetStableHashCode();
+
         /// <summary>A sanity cap on the tornadoes one wave carries, whatever the player count.</summary>
         private const int MaxTornadoes = 32;
 
@@ -32,10 +36,10 @@ namespace EliteCreaturesReborn.Aspects
         private const int PerTrack = 16;
 
         /// <summary>When the latest wave rose, in shared-clock ms; 0 before the first.</summary>
-        public static long At(ZDO zdo) => zdo.GetLong(TraitKeys.TornadoAt);
+        public static long At(ZDO zdo) => zdo.GetLong(TornadoAtHash);
 
         /// <summary>The latest track's packed bytes, so a reader can tell a fresh one from one it has read.</summary>
-        public static byte[]? TrackBytes(ZDO zdo) => zdo.GetByteArray(TraitKeys.TornadoTrack);
+        public static byte[]? TrackBytes(ZDO zdo) => zdo.GetByteArray(TornadoTrackHash);
 
         /// <summary>Owner only: the wave, then the time every machine watches for a change.</summary>
         public static void Write(ZDO zdo, TornadoWave wave)
@@ -68,7 +72,7 @@ namespace EliteCreaturesReborn.Aspects
         /// <summary>The latest wave, with the moment it rose; null when there is none or the blob is unreadable.</summary>
         public static TornadoWave? Read(ZDO zdo)
         {
-            byte[]? bytes = zdo.GetByteArray(TraitKeys.TornadoWave);
+            byte[]? bytes = zdo.GetByteArray(TornadoWaveHash);
             long at = At(zdo);
             if (bytes == null || bytes.Length < Header || at <= 0L)
             {

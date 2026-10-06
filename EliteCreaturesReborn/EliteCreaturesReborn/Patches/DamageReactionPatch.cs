@@ -5,7 +5,6 @@ using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
-using HarmonyLib;
 using PatchGuard;
 using UnityEngine;
 
@@ -15,54 +14,51 @@ namespace EliteCreaturesReborn.Patches
     /// The reactions to a hit that has landed: Warding reflects a capped share of the base hit back at the attacker
     /// (see <see cref="WardingReflect"/>) and knocks it back on a melee hit, Leeching heals the attacker for a share of
     /// what it dealt, and a Reflective boss returns a share of what it took as true damage. All key off what the hit
-    /// actually did, so they run in a postfix once the hit is resolved, on the victim's owner, reading their
-    /// percentages from the biome rules each creature carries. The prefix only records what Warding needs from before
-    /// the hit (its health, backstab stamp and stagger state), and never throws, so it can never stop a hit landing.
+    /// actually did, so they run once the hit is resolved, on the victim's owner, reading their percentages from the
+    /// biome rules each creature carries; two steps of <see cref="HitPatch"/>. Before the hit it only records what
+    /// Warding needs (its health, backstab stamp and stagger state), and never throws, so it can never stop a hit landing.
     /// </summary>
-    [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class DamageReactionPatch
     {
-        private static void Prefix(Character __instance, out WardingReflect.Before __state)
+        internal static WardingReflect.Before Capture(Struck struck)
         {
-            __state = default;
             try
             {
-                __state = WardingReflect.Capture(__instance);
+                return WardingReflect.Capture(struck.Victim, struck.Elite);
             }
             catch (Exception e)
             {
                 Guard.Report(e, "Character.RPC_Damage warding capture");
+                return default;
             }
         }
 
-        private static void Postfix(Character __instance, HitData hit, WardingReflect.Before __state) =>
-            Guard.Run("Character.RPC_Damage reaction", () => React(__instance, hit, __state));
-
-        private static void React(Character victim, HitData hit, WardingReflect.Before before)
+        internal static void React(Struck struck, WardingReflect.Before before)
         {
-            ZNetView nview = victim.GetComponent<ZNetView>();
-            if (hit == null || nview == null || !nview.IsValid() || !nview.IsOwner())
+            HitData? hit = struck.Hit;
+            if (hit == null || !struck.Owned)
             {
                 return;
             }
             float dealt = hit.GetTotalDamage();
-            Character attacker = hit.GetAttacker();
+            Character? attacker = struck.Attacker;
             if (dealt <= 0f || attacker == null)
             {
                 return;
             }
-            Warding(victim, attacker, hit, before);
-            Leech(attacker, dealt);
-            ReflectiveHit.Return(victim, attacker, dealt);
+            Warding(struck, attacker, hit, before);
+            Leech(struck.AttackerElite, attacker, dealt);
+            ReflectiveHit.Return(struck.Victim, struck.Elite, attacker, dealt);
         }
 
-        private static void Warding(Character victim, Character attacker, HitData hit, WardingReflect.Before before)
+        private static void Warding(Struck struck, Character attacker, HitData hit, WardingReflect.Before before)
         {
-            EliteController? controller = With(victim, Mutation.Warding);
+            EliteController? controller = With(struck.Elite, Mutation.Warding);
             if (controller == null)
             {
                 return;
             }
+            Character victim = struck.Victim;
             WardingReflect.Return(controller, victim, attacker, hit, before);
             if (!hit.m_ranged)
             {
@@ -72,9 +68,9 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        private static void Leech(Character attacker, float dealt)
+        private static void Leech(EliteController? attackerElite, Character attacker, float dealt)
         {
-            EliteController? controller = With(attacker, Mutation.Leeching);
+            EliteController? controller = With(attackerElite, Mutation.Leeching);
             if (controller != null)
             {
                 float steal = Enhance.Magnitude(controller.Rules, controller.Traits, Mutation.Leeching, Fields.Lifesteal);
@@ -82,10 +78,7 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        private static EliteController? With(Character character, Mutation mutation)
-        {
-            EliteController? controller = character.GetComponent<EliteController>();
-            return controller != null && controller.Ready && controller.Traits.Has(mutation) ? controller : null;
-        }
+        private static EliteController? With(EliteController? controller, Mutation mutation) =>
+            controller != null && controller.Ready && controller.Traits.Has(mutation) ? controller : null;
     }
 }

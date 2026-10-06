@@ -29,6 +29,13 @@ namespace EliteCreaturesReborn.Aspects
         private float _timer;
         private BossDraw? _locked;
 
+        // The hover lines as last drawn, kept while the bowl's ZDO, the whole second of the shift count-down and the
+        // rule set (a reload replaces it) are the ones they were drawn from: the hover is asked for every frame.
+        private string _hover = "";
+        private uint _hoverRevision = uint.MaxValue;
+        private int _hoverSecond = int.MinValue;
+        private RuleSet? _hoverRules;
+
         /// <summary>Added to an altar that summons a boss, on every machine, as the bowl starts.</summary>
         public static void Attach(OfferingBowl bowl)
         {
@@ -45,7 +52,7 @@ namespace EliteCreaturesReborn.Aspects
             _boss = Utils.GetPrefabName(_bowl.m_bossPrefab);
         }
 
-        private void Update() => Guard.Run("AltarAspect.Update", Tick);
+        private void Update() => Guard.Run("AltarAspect.Update", static self => self.Tick(), this);
 
         private void Tick()
         {
@@ -113,7 +120,8 @@ namespace EliteCreaturesReborn.Aspects
             return locked;
         }
 
-        /// <summary>The lines appended to the bowl's hover text, drawn from the ZDO on whichever machine is looking.</summary>
+        /// <summary>The lines appended to the bowl's hover text, drawn from the ZDO on whichever machine is looking, and
+        /// drawn again only when what they show has changed.</summary>
         public string HoverLines()
         {
             ZDO? zdo = Zdo();
@@ -121,14 +129,28 @@ namespace EliteCreaturesReborn.Aspects
             {
                 return "";
             }
+            RuleSet set = RuleState.Active;
+            double seconds = SecondsToShift(zdo, set.Boss.Aspects);
+            int second = seconds < 0 ? -1 : Mathf.CeilToInt((float)seconds);
+            if (zdo.DataRevision != _hoverRevision || second != _hoverSecond || !ReferenceEquals(set, _hoverRules))
+            {
+                _hoverRevision = zdo.DataRevision;
+                _hoverSecond = second;
+                _hoverRules = set;
+                _hover = DrawHover(zdo, set.Boss.Aspects, seconds);
+            }
+            return _hover;
+        }
+
+        private static string DrawHover(ZDO zdo, AspectRules rules, double secondsToShift)
+        {
             int? stars = StarsOn && AspectStore.AltarStarsRolled(zdo) ? AspectStore.GetAltarStars(zdo) : (int?)null;
             BossAspects? aspects = AspectsOn && AspectStore.AltarRolled(zdo) ? AspectStore.GetAltarAspects(zdo) : (BossAspects?)null;
             if (stars == null && aspects == null)
             {
                 return ""; // both off, or the owner's first roll has not arrived yet
             }
-            AspectRules rules = RuleState.Active.Boss.Aspects;
-            return AspectText.AltarLines(stars, aspects, rules, SecondsToShift(zdo, rules));
+            return AspectText.AltarLines(stars, aspects, rules, secondsToShift);
         }
 
         /// <summary>Seconds until the next shift; negative when shifting is off and the altar is fixed.</summary>

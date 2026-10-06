@@ -14,6 +14,8 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal sealed class GraviticClock
     {
+        private static readonly int GravityAtHash = TraitKeys.GravityAt.GetStableHashCode();
+
         /// <summary>Seconds out of the fight that end it; anything shorter is a lull that only pauses the count.</summary>
         private const float ResetAfter = 10f;
 
@@ -50,7 +52,7 @@ namespace EliteCreaturesReborn.Aspects
         {
             _primed = true;
             _fought = 0f;
-            long last = zdo.GetLong(TraitKeys.GravityAt);
+            long last = zdo.GetLong(GravityAtHash);
             float since = last > 0L ? NetTime.SecondsSince(last) : float.MaxValue;
             _due = since < every ? Mathf.Clamp(every - since, 0f, every) : every;
         }

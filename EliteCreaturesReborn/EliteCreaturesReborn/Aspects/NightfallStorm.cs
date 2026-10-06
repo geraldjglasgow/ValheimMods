@@ -46,7 +46,7 @@ namespace EliteCreaturesReborn.Aspects
             Live.Add(this);
         }
 
-        private void Update() => Guard.Run("NightfallStorm.Update", Step);
+        private void Update() => Guard.Run("NightfallStorm.Update", static self => self.Step(), this);
 
         private void Step()
         {

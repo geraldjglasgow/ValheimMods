@@ -95,8 +95,8 @@ Settings, in the section `10 - Death Recap (per player)`:
 | Death notice | true | The line naming the killer after a death |
 | Deaths kept | 5 | Deaths the window keeps (1 to 10) |
 | Seconds before death | 15 | Video kept before a death (5 to 30) |
-| Video frames per second | 15 | Smoother but more memory (5 to 30) |
-| Video height | 360 | Pixels; sharper but more memory, about 10 MB per death at 360 (180 to 720) |
+| Video frames per second | 10 | Smoother but more memory (5 to 30) |
+| Video height | 360 | Pixels; sharper but more memory, about 7 MB per death at 360 and 10 frames a second (180 to 720) |
 
 ## Console commands
 

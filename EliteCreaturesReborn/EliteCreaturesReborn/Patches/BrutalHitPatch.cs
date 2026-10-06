@@ -5,23 +5,23 @@ namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
     /// A Brutal throw, decided where a hit on a player is applied: <c>Character.RPC_Damage</c> on the player's own client,
-    /// which owns their body. The prefix notes whether the hit is a marked one aimed at this machine's own player and not
-    /// rolled through - read first, because the game drops a dodged hit without applying it and this postfix still runs
-    /// after that early return. The postfix then throws the player (<see cref="BrutalHit.Judge"/>) once the game has
-    /// dealt the damage and decided any block. Any unmarked hit is one float check. It runs inside the game's hit, so a
-    /// failure is reported and swallowed, and the hit stays an ordinary one.
+    /// which owns their body; two steps of <see cref="HitPatch"/>. Before the hit it notes whether the hit is a marked one
+    /// aimed at this machine's own player and not rolled through - read first, because the game drops a dodged hit
+    /// without applying it and the steps after the hit still run after that early return. After the hit it throws the
+    /// player (<see cref="BrutalHit.Judge"/>) once the game has dealt the damage and decided any block. Any unmarked hit
+    /// is one float check. It runs inside the game's hit, so a failure is reported and swallowed, and the hit stays an
+    /// ordinary one.
     /// </summary>
-    [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class BrutalHitPatch
     {
-        private static void Prefix(Character __instance, HitData hit, out bool __state) =>
-            __state = hit != null && BrutalBlow.Carries(hit) && BrutalHit.Aimed(__instance, hit);
+        internal static bool Marked(Character victim, HitData hit) =>
+            hit != null && BrutalBlow.Carries(hit) && BrutalHit.Aimed(victim, hit);
 
-        private static void Postfix(Character __instance, HitData hit, bool __state)
+        internal static void Throw(Character victim, HitData hit, bool marked)
         {
-            if (__state)
+            if (marked)
             {
-                SafeCall.Run("Character.RPC_Damage brutal", () => BrutalHit.Judge(__instance, hit));
+                SafeCall.Run("Character.RPC_Damage brutal", static (player, blow) => BrutalHit.Judge(player, blow), victim, hit);
             }
         }
     }
@@ -39,7 +39,7 @@ namespace EliteCreaturesReborn.Patches
         {
             if (BrutalBlow.Carries(__instance))
             {
-                SafeCall.Run("HitData.BlockDamage brutal", () => BrutalHit.Withstood(__instance));
+                SafeCall.Run("HitData.BlockDamage brutal", static blow => BrutalHit.Withstood(blow), __instance);
             }
         }
     }

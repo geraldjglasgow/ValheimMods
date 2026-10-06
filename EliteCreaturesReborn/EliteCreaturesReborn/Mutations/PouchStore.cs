@@ -32,14 +32,57 @@ namespace EliteCreaturesReborn.Mutations
         // package, not per item, matching how a single item is saved into a ZDO field elsewhere in the game.
         private const byte ItemVersion = 109;
 
+        private static readonly int PouchHash = TraitKeys.Pouch.GetStableHashCode();
+
         private static bool _warnedCap;
 
-        public static int Count(ZDO zdo) => Load(zdo).Count;
+        /// <summary>
+        /// How many items the pouch holds, read from the packed array's header without unpacking a single item: the
+        /// version byte, then the count as a little-endian int (how ZPackage writes it). Only <see cref="Save"/> writes the
+        /// pouch, and only with items that resolved, so the header and a full <see cref="Load"/> agree - unless a mod that
+        /// added one of the items was removed since, which Load skips and this still counts.
+        /// </summary>
+        public static int Count(ZDO? zdo)
+        {
+            byte[]? bytes = Raw(zdo);
+            if (bytes == null || bytes.Length < 5)
+            {
+                return 0;
+            }
+            return Mathf.Max(0, bytes[1] | bytes[2] << 8 | bytes[3] << 16 | bytes[4] << 24);
+        }
+
+        /// <summary>The pouch exactly as stored, or null when there is none: what a reader keeps to see whether it changed.</summary>
+        public static byte[]? Raw(ZDO? zdo) =>
+            zdo != null && zdo.GetByteArray(PouchHash, out byte[] bytes) && bytes != null && bytes.Length > 0 ? bytes : null;
+
+        /// <summary>True when two stored pouches hold the same bytes, the same array or not: a ZDO update from another
+        /// machine brings a new array even when the pouch did not change.</summary>
+        public static bool Same(byte[]? a, byte[]? b)
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+            if (a == null || b == null || a.Length != b.Length)
+            {
+                return false;
+            }
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         public static List<Entry> Load(ZDO zdo)
         {
             List<Entry> entries = new List<Entry>();
-            if (zdo == null || !zdo.GetByteArray(TraitKeys.Pouch, out byte[] bytes) || bytes == null || bytes.Length == 0)
+            byte[]? bytes = Raw(zdo);
+            if (bytes == null)
             {
                 return entries;
             }
@@ -114,7 +157,7 @@ namespace EliteCreaturesReborn.Mutations
         }
 
         /// <summary>Owner-only: bank a steal if there is room and it is not already banked. False means "no room" - the
-        /// caller drops the item at the creature instead of discarding it. True covers both "banked" and "already had it".</summary>
+        /// owner refuses the steal and the player keeps the item. True covers both "banked" and "already had it".</summary>
         public static bool TryAdd(ZDO zdo, Entry entry, int maxItems)
         {
             List<Entry> entries = Load(zdo);

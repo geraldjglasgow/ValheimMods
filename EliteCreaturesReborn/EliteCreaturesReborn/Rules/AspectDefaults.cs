@@ -97,7 +97,7 @@ namespace EliteCreaturesReborn.Rules
                 [Aspect.Portalbound] = new Dictionary<string, float>
                     { [Fields.MinHeight] = 5f, [Fields.Clearance] = 2f, [Fields.Range] = 20f },
                 [Aspect.Nightfall] = new Dictionary<string, float>
-                    { [Fields.Range] = 60f, [Fields.Every] = 10f, [Fields.EveryMax] = 20f, [Fields.Life] = 10f,
+                    { [Fields.Range] = 60f, [Fields.Every] = 18f, [Fields.EveryMax] = 28f, [Fields.Life] = 10f,
                       [Fields.FormTime] = 1.5f, [Fields.TornadoSpeed] = 40f, [Fields.Damage] = 25f, [Fields.TopWidth] = 9f,
                       [Fields.BaseWidth] = 1.5f, [Fields.Height] = 14f, [Fields.TossDistance] = 10f },
                 [Aspect.Brutal] = new Dictionary<string, float> { [Fields.Launch] = 20f, [Fields.Lift] = 3f },

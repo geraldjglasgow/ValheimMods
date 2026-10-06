@@ -25,7 +25,7 @@ namespace EliteCreaturesReborn.Display
             {
                 return false;
             }
-            ZNetView nview = character.GetComponent<ZNetView>();
+            ZNetView nview = character.m_nview;
             ZDO? zdo = nview != null && nview.IsValid() ? nview.GetZDO() : null;
             id = zdo != null ? zdo.m_uid : ZDOID.None;
             return zdo != null && AspectStore.GetTether(zdo) != ZDOID.None;

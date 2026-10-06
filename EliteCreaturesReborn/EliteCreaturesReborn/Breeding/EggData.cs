@@ -25,14 +25,17 @@ namespace EliteCreaturesReborn.Breeding
             {
                 egg.SetQuality(t.Stars + 1); // with this mod's stars off the game's quality, the parent's level, stays
             }
-            Log.Diag($"breeding: egg laid with {t.Stars} stars, mask {t.Mask}");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"breeding: egg laid with {t.Stars} stars, mask {t.Mask}");
+            }
         }
 
         /// <summary>True when the egg carries traits from this mod; an egg from anywhere else hatches a wild roll.</summary>
         public static bool Has(ItemDrop.ItemData egg) => egg.m_customData.ContainsKey(TraitKeys.EggTraits);
 
-        /// <summary>The newborn this egg hatches, or null when it carries no traits or they cannot be read. Read for the
-        /// hover text every frame, so it stays quiet; an unreadable egg simply hatches as a wild roll.</summary>
+        /// <summary>The newborn this egg hatches, or null when it carries no traits or they cannot be read. The hover
+        /// line keeps what it reads (EggText), so this runs once per change; an unreadable egg simply hatches wild.</summary>
         public static Lineage.Newborn? Read(ItemDrop.ItemData egg)
         {
             if (!egg.m_customData.TryGetValue(TraitKeys.EggTraits, out string text))
@@ -43,7 +46,10 @@ namespace EliteCreaturesReborn.Breeding
             if (parts.Length < 3 || !Int(parts[0], out int stars) || !Int(parts[1], out int mask)
                 || !Int(parts[2], out int biome))
             {
-                Log.Diag($"breeding: an egg's traits '{text}' could not be read");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"breeding: an egg's traits '{text}' could not be read");
+                }
                 return null;
             }
             return new Lineage.Newborn(new CreatureTraits(stars, mask), (Heightmap.Biome)biome);

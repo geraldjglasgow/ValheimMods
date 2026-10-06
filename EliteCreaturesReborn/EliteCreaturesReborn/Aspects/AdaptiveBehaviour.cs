@@ -45,7 +45,7 @@ namespace EliteCreaturesReborn.Aspects
             _glow = character != null ? AdaptiveGlow.Create(character) : null;
         }
 
-        private void Update() => Guard.Run("AdaptiveBehaviour.Update", Step);
+        private void Update() => Guard.Run("AdaptiveBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {

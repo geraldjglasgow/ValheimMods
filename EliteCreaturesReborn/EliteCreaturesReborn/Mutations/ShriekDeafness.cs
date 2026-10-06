@@ -69,7 +69,7 @@ namespace EliteCreaturesReborn.Mutations
             _ring = ShriekRing.Begin(transform);
         }
 
-        private void Update() => Guard.Run("ShriekDeafness.Update", Step);
+        private void Update() => Guard.Run("ShriekDeafness.Update", static self => self.Step(), this);
 
         private void Step()
         {

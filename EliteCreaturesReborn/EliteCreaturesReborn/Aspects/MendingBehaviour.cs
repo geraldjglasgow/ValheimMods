@@ -25,7 +25,7 @@ namespace EliteCreaturesReborn.Aspects
             _controller = GetComponent<EliteController>();
         }
 
-        private void Update() => Guard.Run("MendingBehaviour.Update", Step);
+        private void Update() => Guard.Run("MendingBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {

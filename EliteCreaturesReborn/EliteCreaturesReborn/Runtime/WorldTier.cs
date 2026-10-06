@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Util;
+using UnityEngine;
 
 namespace EliteCreaturesReborn.Runtime
 {
@@ -8,14 +9,44 @@ namespace EliteCreaturesReborn.Runtime
     /// The world tier as this machine sees it: how many of the listed bosses the world carries a defeat key for. It is
     /// derived, never stored. The server owns the game's global keys and already sends them to every client on join and
     /// on every change, so the client that owns and rolls a creature reads the same tier as the server without a
-    /// message of the mod's own. With tiers off, or before the world is up, the tier is 0.
+    /// message of the mod's own. With tiers off, or before the world is up, the tier is 0. The count is kept until the
+    /// world's keys change (<see cref="KeysChanged"/>, from the game's own key handling), the rule set is replaced or the
+    /// world is left, and in any case for no more than <see cref="RecountSeconds"/>, so the HUD box can ask every frame.
     /// </summary>
     public static class WorldTier
     {
+        /// <summary>The longest a count is kept, should a key ever change by a path that does not report it.</summary>
+        private const float RecountSeconds = 5f;
+
+        private static int _tier;
+        private static int _version;
+        private static int _countedVersion = -1;
+        private static RuleSet? _countedRules;
+        private static ZoneSystem? _countedZones;
+        private static float _countedAt;
+
         public static int Current()
         {
-            TierRules rules = RuleState.Active.Tiers;
+            RuleSet set = RuleState.Active;
             ZoneSystem zones = ZoneSystem.instance;
+            if (_countedVersion == _version && ReferenceEquals(set, _countedRules) && ReferenceEquals(zones, _countedZones)
+                && Time.unscaledTime - _countedAt < RecountSeconds)
+            {
+                return _tier;
+            }
+            _tier = Count(set.Tiers, zones);
+            _countedVersion = _version;
+            _countedRules = set;
+            _countedZones = zones;
+            _countedAt = Time.unscaledTime;
+            return _tier;
+        }
+
+        /// <summary>The world's global keys changed: the next <see cref="Current"/> counts again.</summary>
+        public static void KeysChanged() => _version++;
+
+        private static int Count(TierRules rules, ZoneSystem zones)
+        {
             if (!rules.Enabled || zones == null)
             {
                 return 0;

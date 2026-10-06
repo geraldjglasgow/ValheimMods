@@ -36,7 +36,6 @@ namespace EliteCreaturesReborn.Patches
             public BiomeRules Rules = null!;
             public int PrefabHash;
             public int Generation;
-            public string CascadeRoot = "";
             public string ResolvedRoot = "";
             public Heightmap.Biome Biome;
             public float MaxHealth;
@@ -70,7 +69,10 @@ namespace EliteCreaturesReborn.Patches
             ZNetView nview = victim.GetComponent<ZNetView>();
             bool owner = nview != null && nview.IsValid() && nview.IsOwner();
             EliteController controller = victim.GetComponent<EliteController>();
-            Log.Diag($"OnDeath {victim.name}: owner={owner} ready={(controller != null && controller.Ready)}");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"OnDeath {victim.name}: owner={owner} ready={(controller != null && controller.Ready)}");
+            }
             if (!owner || controller == null || !controller.Ready)
             {
                 return null; // all death work is the owner's, and only on a resolved creature
@@ -89,7 +91,7 @@ namespace EliteCreaturesReborn.Patches
             {
                 Victim = victim, Traits = controller.Traits, Rules = controller.Rules,
                 PrefabHash = zdo.GetPrefab(), Generation = zdo.GetInt(TraitKeys.Generation),
-                CascadeRoot = stored, ResolvedRoot = resolved, Biome = TraitStore.GetBiome(zdo),
+                ResolvedRoot = resolved, Biome = TraitStore.GetBiome(zdo),
                 MaxHealth = victim.GetMaxHealth(), Pos = victim.transform.position, Rot = victim.transform.rotation,
                 Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo), Id = zdo.m_uid,
                 Tame = SplinterTame.Read(victim, zdo), // a tamed splinterer's copies are tamed too
@@ -97,7 +99,7 @@ namespace EliteCreaturesReborn.Patches
         }
 
         private static void Postfix(Character __instance) =>
-            Guard.Run("Character.OnDeath", () => Handle(__instance));
+            Guard.Run("Character.OnDeath", static victim => Handle(victim), __instance);
 
         private static void Handle(Character victim)
         {
@@ -113,7 +115,7 @@ namespace EliteCreaturesReborn.Patches
                 PhantomReaper.Release(snap.Id); // the boss is gone, so are its phantoms
             }
             Feed(snap);
-            DescendantRegistry.Unregister(snap.CascadeRoot);
+            DescendantRegistry.Died(snap.Victim); // a copy this machine counted is counted out at its death, as before
         }
 
         private static void RunTraitDeaths(Snapshot snap)
@@ -124,7 +126,10 @@ namespace EliteCreaturesReborn.Patches
             }
             if (snap.Traits.Has(Mutation.Splintering))
             {
-                Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
+                }
                 Splitter.Split(snap.Pos, snap.Rot, snap.PrefabHash, snap.Traits, snap.Rules,
                     snap.Generation, snap.ResolvedRoot, snap.Biome, snap.Tame);
             }
@@ -143,7 +148,10 @@ namespace EliteCreaturesReborn.Patches
         {
             BiomeRules rules = snap.Rules;
             CreatureTraits traits = snap.Traits;
-            Log.Diag($"{snap.Victim.name}: bloated death, fuse={rules.PowerOf(Mutation.Bloated, Fields.Delay)}s");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{snap.Victim.name}: bloated death, fuse={rules.PowerOf(Mutation.Bloated, Fields.Delay)}s");
+            }
             BlastSpec blast = new BlastSpec(
                 Enhance.Magnitude(rules, traits, Mutation.Bloated, Fields.Damage),
                 Enhance.Magnitude(rules, traits, Mutation.Bloated, Fields.Radius), traits.Stars,
@@ -166,7 +174,10 @@ namespace EliteCreaturesReborn.Patches
             EliteController? kc = devourer != null ? devourer.GetComponent<EliteController>() : null;
             if (devourer == null || kc == null || !kc.Ready || !kc.Traits.Has(Mutation.Devouring))
             {
-                Log.Diag($"{snap.Victim.name}: devourer not resolvable here; cross-owner feed skipped");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{snap.Victim.name}: devourer not resolvable here; cross-owner feed skipped");
+                }
                 return;
             }
             Grant(snap, devourer, kc);
@@ -180,7 +191,10 @@ namespace EliteCreaturesReborn.Patches
                 * Enhance.Magnitude(kc.Rules, kc.Traits, Mutation.Devouring, Fields.AbsorbHealth) / 100f;
             float damage = EstimateDamage(snap.Victim, snap.MaxHealth)
                 * Enhance.Magnitude(kc.Rules, kc.Traits, Mutation.Devouring, Fields.AbsorbDamage) / 100f;
-            Log.Diag($"{devourer.name} devoured {snap.Victim.name}: +hp={health:0.#} +dmg={damage:0.#}");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{devourer.name} devoured {snap.Victim.name}: +hp={health:0.#} +dmg={damage:0.#}");
+            }
             CreatureRpc.Absorb(devourer, health, damage, snap.PrefabHash); // the prefab is what its nameplate shows it ate
         }
 

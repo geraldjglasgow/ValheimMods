@@ -26,6 +26,7 @@ namespace EliteCreaturesReborn
             Harmony harmony = new Harmony(PluginInfo.Guid);
             harmony.PatchAll(typeof(Plugin).Assembly);
             Recap.RecapHost.Attach(gameObject, harmony);
+            gameObject.AddComponent<Tally.TallyFlush>();
             ServerLock.Install(harmony);
             Guard.Install(harmony, Logger, typeof(Plugin).Assembly);
             ConfigReloader.Setup(Config, Logger);

@@ -35,7 +35,7 @@ namespace EliteCreaturesReborn.Aspects
             }
         }
 
-        private void Update() => Guard.Run("StormboundBehaviour.Update", Step);
+        private void Update() => Guard.Run("StormboundBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {

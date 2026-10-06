@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
@@ -21,12 +22,21 @@ namespace EliteCreaturesReborn.Aspects
         /// <summary>The slowest a misconfigured negative `attack speed` may make a boss animate, so it never freezes.</summary>
         private const float MinSwing = 0.1f;
 
+        /// <summary>Seconds between looks for a partner this machine does not hold (dead, or not loaded here).</summary>
+        private const float FindRetry = 1f;
+
+        // The link of each Tethered boss loaded here, so the per-step speed read and the per-hit brace find it with one
+        // lookup rather than a component search.
+        private static readonly Dictionary<EliteController, TetherLink> Links = new Dictionary<EliteController, TetherLink>();
+
         private Character _character = null!;
         private ZNetView _nview = null!;
         private ZDOID _partnerId = ZDOID.None;
         private Character? _partner;
         private bool _leads;
         private TetherLine? _line;
+        private EliteController? _controller;
+        private float _nextFind;
 
         /// <summary>How taut the tether is on this machine this frame, 0 to 1; 0 until the pair is known.</summary>
         public float Strength { get; private set; }
@@ -35,15 +45,28 @@ namespace EliteCreaturesReborn.Aspects
         {
             _character = GetComponent<Character>();
             _nview = GetComponent<ZNetView>();
+            _controller = GetComponent<EliteController>();
+            if (_controller != null)
+            {
+                Links[_controller] = this;
+            }
             _line = TetherLine.Create();
         }
 
-        private void Update() => Guard.Run("TetherLink.Update", Measure);
+        private void Update() => Guard.Run("TetherLink.Update", static self => self.Measure(), this);
 
         // After the bodies have moved this frame, so the line's ends sit on them rather than a frame behind.
-        private void LateUpdate() => Guard.Run("TetherLink.LateUpdate", Draw);
+        private void LateUpdate() => Guard.Run("TetherLink.LateUpdate", static self => self.Draw(), this);
 
-        private void OnDestroy() => _line?.Dispose();
+        // `is not null` rather than Unity's ==: the controller may already read as destroyed here, and its entry must go.
+        private void OnDestroy()
+        {
+            _line?.Dispose();
+            if (_controller is not null)
+            {
+                Links.Remove(_controller);
+            }
+        }
 
         private void Measure()
         {
@@ -69,16 +92,18 @@ namespace EliteCreaturesReborn.Aspects
             }
         }
 
-        /// <summary>The other boss as this machine holds it, looked up again whenever the one held is gone.</summary>
+        /// <summary>The other boss as this machine holds it, looked up again whenever the one held is gone - at most once
+        /// every <see cref="FindRetry"/> while it cannot be found, as after it has died.</summary>
         private Character? Partner()
         {
             if (_partnerId == ZDOID.None)
             {
                 ReadPartner();
             }
-            if (!TetherPair.Alive(_partner))
+            if (!TetherPair.Alive(_partner) && Time.time >= _nextFind)
             {
                 _partner = TetherPair.Find(_partnerId);
+                _nextFind = _partner == null ? Time.time + FindRetry : 0f;
             }
             return _partner;
         }
@@ -105,8 +130,7 @@ namespace EliteCreaturesReborn.Aspects
             {
                 return 1f;
             }
-            TetherLink link = controller.GetComponent<TetherLink>();
-            if (link == null)
+            if (!Links.TryGetValue(controller, out TetherLink link))
             {
                 return 1f;
             }
@@ -121,8 +145,7 @@ namespace EliteCreaturesReborn.Aspects
         /// </summary>
         public static void Brace(EliteController victim, HitData hit)
         {
-            TetherLink link = victim.GetComponent<TetherLink>();
-            float cut = link != null ? link.ArmourNow() : 0f;
+            float cut = Links.TryGetValue(victim, out TetherLink link) ? link.ArmourNow() : 0f;
             if (cut > 0f)
             {
                 hit.ApplyModifier(AspectMath.Cut(cut));

@@ -18,7 +18,7 @@ bosses:
     attack:      [1,   1.25, 1.55, 1.9,  2.3,  2.75]
     swing speed: [1]
     speed:       [1]
-    drops:       [1,   1.5,  2,    2.5,  3,    3.5]
+    # No drops line: a boss's stars pay in heads, its other drops are never multiplied by stars.
 
   aspects:
     enabled: true
@@ -87,7 +87,7 @@ bosses:
       Tethered:     { less health: 25, less damage: 25, attack speed: 50, armour: 50, full gap: 50 }
       Bountiful:    { extra aspects: 2 }
       Portalbound:  { min height: 5, clearance: 2, range: 20 }
-      Nightfall:    { range: 60, every: 10, every max: 20, life: 10, form time: 1.5, tornado speed: 40, damage: 25, top width: 9, base width: 1.5, height: 14, toss distance: 10 }
+      Nightfall:    { range: 60, every: 18, every max: 28, life: 10, form time: 1.5, tornado speed: 40, damage: 25, top width: 9, base width: 1.5, height: 14, toss distance: 10 }
       Brutal:       { launch: 20, lift: 3 }
 
     # Per boss, by prefab name: summons is what Summoner calls (no list, no Summoner);

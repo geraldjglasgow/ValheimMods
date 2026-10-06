@@ -14,6 +14,8 @@ namespace EliteCreaturesReborn.Mutations
     /// (each reads the trail and reconstructs the same clouds locally). A cloud built on the owner also carries damage;
     /// one built on a remote client is visual only. This component therefore runs on every machine, and gates only the
     /// emit on live ownership, so a creature handed to a new owner simply keeps being fed drops by whoever owns it now.
+    /// The trail is read again only when its drop counter moves (as the ground trails do), not every frame; a dedicated
+    /// server lays only the damaging clouds of creatures it owns, and draws none (<see cref="PoisonCloud"/>).
     /// </summary>
     public sealed class MiasmaField : MonoBehaviour
     {
@@ -22,12 +24,14 @@ namespace EliteCreaturesReborn.Mutations
         private Vector3 _lastPosition;
         private float _movingTime;
         private long _lastSeenId;
+        private long _seenSeq = -1L;
         private float _interval = 1f;
         private float _life = 6f;
         private float _damage = 5f;
         private float _radius = 4f;
         private string _effect = "";
         private readonly List<MiasmaTrail.Drop> _scratch = new List<MiasmaTrail.Drop>();
+        private readonly List<MiasmaTrail.Drop> _drops = new List<MiasmaTrail.Drop>();
 
         private void Start()
         {
@@ -52,7 +56,7 @@ namespace EliteCreaturesReborn.Mutations
             _effect = _controller.Rules.PrefabOf(Mutation.Miasmic, Fields.CloudEffect);
         }
 
-        private void Update() => Guard.Run("MiasmaField.Update", Step);
+        private void Update() => Guard.Run("MiasmaField.Update", static self => self.Step(), this);
 
         private void Step()
         {
@@ -101,17 +105,26 @@ namespace EliteCreaturesReborn.Mutations
         private void Append(Vector3 pos)
         {
             ZDO zdo = _controller.View.GetZDO();
-            List<MiasmaTrail.Drop> drops = MiasmaTrail.Read(zdo);
-            MiasmaTrail.TrimExpired(drops, _life);
-            drops.Add(new MiasmaTrail.Drop { Id = MiasmaTrail.NextId(zdo), Pos = pos, TimeMs = NetTime.NowMs() });
-            MiasmaTrail.Write(zdo, drops);
+            MiasmaTrail.Read(zdo, _drops);
+            MiasmaTrail.TrimExpired(_drops, _life);
+            _drops.Add(new MiasmaTrail.Drop { Id = MiasmaTrail.NextId(zdo), Pos = pos, TimeMs = NetTime.NowMs() });
+            MiasmaTrail.Write(zdo, _drops);
         }
 
-        /// <summary>Every machine: spawn each not-yet-seen drop once, damaging only where this machine owns the creature.</summary>
+        /// <summary>
+        /// Every machine: spawn each not-yet-seen drop once, damaging only where this machine owns the creature. Read only
+        /// when the owner wrote a new drop.
+        /// </summary>
         private void Reconstruct()
         {
-            _scratch.Clear();
-            _scratch.AddRange(MiasmaTrail.Read(_controller.View.GetZDO()));
+            ZDO zdo = _controller.View.GetZDO();
+            long seq = MiasmaTrail.Seq(zdo);
+            if (seq == _seenSeq)
+            {
+                return;
+            }
+            _seenSeq = seq;
+            MiasmaTrail.Read(zdo, _scratch);
             bool owner = _controller.IsOwner();
             foreach (MiasmaTrail.Drop drop in _scratch)
             {

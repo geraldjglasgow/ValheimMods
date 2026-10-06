@@ -41,12 +41,12 @@ namespace EliteCreaturesReborn.Recap
             Seconds = config.Bind(Section, "Seconds before death", 15,
                 new ConfigDescription("How much of the time before a death the video keeps. Client side.",
                     new AcceptableValueRange<int>(5, 30)));
-            FramesPerSecond = config.Bind(Section, "Video frames per second", 15,
-                new ConfigDescription("Frames the video records each second. More is smoother and uses more memory. "
-                    + "Client side.", new AcceptableValueRange<int>(5, 30)));
+            FramesPerSecond = config.Bind(Section, "Video frames per second", 10,
+                new ConfigDescription("Frames the video records each second. More is smoother and uses more memory and "
+                    + "frame time. Client side.", new AcceptableValueRange<int>(5, 30)));
             Height = config.Bind(Section, "Video height", 360,
                 new ConfigDescription("Height of the recorded video in pixels; its width follows the screen's shape. "
-                    + "Higher is sharper and uses more memory (360: about 10 MB per death). Client side.",
+                    + "Higher is sharper and uses more memory (360 at 10 frames a second: about 7 MB per death). Client side.",
                     new AcceptableValueRange<int>(180, 720)));
         }
     }

@@ -70,7 +70,7 @@ namespace EliteCreaturesReborn.Aspects
         /// <summary>The far portal turns, smoothly, to face along <paramref name="facing"/>.</summary>
         public void Face(Vector3 facing) => _facing = Look(facing, _facing);
 
-        private void LateUpdate() => Guard.Run("PortalRift.LateUpdate", Step);
+        private void LateUpdate() => Guard.Run("PortalRift.LateUpdate", static self => self.Step(), this);
 
         // After the animation has posed the hand: follow it, turn, and grow or shrink.
         private void Step()

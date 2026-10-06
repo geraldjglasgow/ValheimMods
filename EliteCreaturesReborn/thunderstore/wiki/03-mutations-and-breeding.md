@@ -37,7 +37,7 @@ prefabs; `elite effects <text>` lists them.
 
 **Devouring.** Ignores players while feeding (unless hit) and kills other creatures in one bite, keeping part of their
 health and damage. It eats only creatures with no more health than itself, never bosses or large creatures, one per
-star (at least one), then acts normally. Once its gained damage passes a third of a player's health, it hunts players.
+star (at least one), then acts normally. Once its gained damage passes a third of the health of the toughest player nearby, it hunts players.
 Its meals show on its nameplate. Settings: `absorb health` 50% E, `absorb damage` 25% E, `slow per 100 health` 2%,
 `move` 1, `player threshold` 0.333, `devour cooldown` 60 s, `max prey health` 100% (0 = no limit), `min meals` 1.
 

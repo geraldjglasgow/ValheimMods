@@ -21,11 +21,11 @@ namespace EliteCreaturesReborn.Patches
     {
         [HarmonyPriority(Priority.Last)]
         private static void Postfix(CharacterDrop __instance, List<KeyValuePair<GameObject, int>> __result) =>
-            Guard.Run("CharacterDrop.GenerateDropList", () => Rework(__instance, __result));
+            Guard.Run("CharacterDrop.GenerateDropList", static (drop, result) => Rework(drop, result), __instance, __result);
 
         private static void Rework(CharacterDrop drop, List<KeyValuePair<GameObject, int>> result)
         {
-            Character character = Traverse.Create(drop).Field("m_character").GetValue<Character>();
+            Character character = drop.m_character;
             EliteController? controller = character != null ? character.GetComponent<EliteController>() : null;
             if (controller == null || !controller.Ready || result == null)
             {

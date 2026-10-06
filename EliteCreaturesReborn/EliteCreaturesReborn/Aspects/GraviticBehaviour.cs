@@ -49,7 +49,7 @@ namespace EliteCreaturesReborn.Aspects
 
         private void OnDestroy() => GraviticPull.Release(this);
 
-        private void Update() => Guard.Run("GraviticBehaviour.Update", Step);
+        private void Update() => Guard.Run("GraviticBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {

@@ -64,13 +64,24 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(Growup), "GrowUpdate")]
     public static class GrowUpPatch
     {
-        private static void Prefix(Growup __instance) =>
-            SafeCall.Run("Growup.GrowUpdate traits", () => Hold(__instance));
+        // Each young creature ticks here every few seconds; only the tick that grows it up (the game's own test, which
+        // it makes next) does anything.
+        private static void Prefix(Growup __instance)
+        {
+            if (GrowsNow(__instance))
+            {
+                SafeCall.Run("Growup.GrowUpdate traits", static young => Hold(young), __instance);
+            }
+        }
+
+        private static bool GrowsNow(Growup young) =>
+            young.m_nview != null && young.m_nview.IsValid() && young.m_nview.IsOwner() && young.m_baseAI != null
+            && young.m_baseAI.GetTimeSinceSpawned().TotalSeconds > young.m_growTime;
 
         private static void Hold(Growup young)
         {
             Character? character = young.GetComponent<Character>();
-            if (character != null && young.m_nview != null && young.m_nview.IsValid() && young.m_nview.IsOwner())
+            if (character != null)
             {
                 Lineage.Begin(() => Parents.Grown(character));
             }
@@ -87,8 +98,14 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(EggGrow), "GrowUpdate")]
     public static class HatchPatch
     {
-        private static void Prefix(EggGrow __instance) =>
-            SafeCall.Run("EggGrow.GrowUpdate traits", () => Hold(__instance));
+        // Each egg ticks here every few seconds; only an owned one carrying traits goes past the first test.
+        private static void Prefix(EggGrow __instance)
+        {
+            if (__instance.m_nview != null && __instance.m_nview.IsValid() && __instance.m_nview.IsOwner())
+            {
+                SafeCall.Run("EggGrow.GrowUpdate traits", static egg => Hold(egg), __instance);
+            }
+        }
 
         private static void Hold(EggGrow egg)
         {

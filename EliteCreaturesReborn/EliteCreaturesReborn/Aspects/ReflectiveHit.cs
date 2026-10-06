@@ -14,9 +14,9 @@ namespace EliteCreaturesReborn.Aspects
     /// </summary>
     internal static class ReflectiveHit
     {
-        public static void Return(Character boss, Character attacker, float dealt)
+        /// <summary>On the boss's owner, once a hit has landed; <paramref name="controller"/> is the boss's own.</summary>
+        public static void Return(Character boss, EliteController? controller, Character attacker, float dealt)
         {
-            EliteController controller = boss.GetComponent<EliteController>();
             if (controller == null || !controller.Ready || !controller.Traits.HasAspect(Aspect.Reflective) || attacker == boss)
             {
                 return;

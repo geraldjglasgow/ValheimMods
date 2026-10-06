@@ -22,6 +22,8 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     public sealed class ScreecherBehaviour : MonoBehaviour
     {
+        private static readonly int ShriekAtHash = TraitKeys.ShriekAt.GetStableHashCode();
+
         /// <summary>The tell, to every client holding the creature: where it shrieked and how far the shriek carries.</summary>
         public const string Rpc = "ecr_shriek";
 
@@ -66,7 +68,7 @@ namespace EliteCreaturesReborn.Mutations
         /// <summary>The cooldown, read from the shared-clock stamp in the ZDO, so a new owner honours the old one's.</summary>
         private bool Rested(BiomeRules rules)
         {
-            long last = _controller!.View.GetZDO().GetLong(TraitKeys.ShriekAt);
+            long last = _controller!.View.GetZDO().GetLong(ShriekAtHash);
             return last <= 0L || NetTime.SecondsSince(last) >= rules.PowerOf(Mutation.Screecher, Fields.Cooldown);
         }
 
@@ -79,7 +81,10 @@ namespace EliteCreaturesReborn.Mutations
             float seconds = Enhance.Magnitude(rules, controller.Traits, Mutation.Screecher, Fields.MuteTime);
             controller.View.InvokeRPC(ZRoutedRpc.Everybody, Rpc, _character.GetCenterPoint(), radius);
             int deafened = Deafen(radius, seconds);
-            Log.Diag($"{name} shrieked: {deafened} player(s) within {radius:0}m deafened for {seconds:0.0}s");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{name} shrieked: {deafened} player(s) within {radius:0}m deafened for {seconds:0.0}s");
+            }
         }
 
         /// <summary>

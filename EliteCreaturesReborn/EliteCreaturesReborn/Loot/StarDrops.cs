@@ -7,23 +7,29 @@ namespace EliteCreaturesReborn.Loot
     /// <summary>
     /// What a kill's stars add to its loot: the star `drops` line (Scaled) and the extra rolls (Rolled, Curated). A
     /// creature that keeps its game level (this mod's stars off for its kind, <see cref="RuleSet.KeepsLevel"/>) has none
-    /// of this mod's stars to pay for - the game already scaled its pile by that level - so it takes neither.
+    /// of this mod's stars to pay for - the game already scaled its pile by that level - so it takes neither. Nor does a
+    /// boss (the user, 2026-10-05: a starred boss dropped a pile of Wishbones): its stars pay in heads
+    /// (<see cref="BossTrophies"/>), and the rest of its table drops once, scaled only by its aspect and the multipliers.
     /// </summary>
     internal static class StarDrops
     {
-        /// <summary>The quantity multiplier: the creature's own `drops` line, else its biome's or the boss table's.</summary>
+        /// <summary>The quantity multiplier: the creature's own `drops` line, else its biome's; 1 for a boss without one.</summary>
         public static float Multiplier(CreatureLootRule? rule, EliteController controller, bool isBoss, int stars)
         {
             if (RuleState.Active.KeepsLevel(stars, isBoss))
             {
                 return 1f;
             }
-            return rule?.Drops != null ? LineAt(rule.Drops, stars) : LiveDropsLine(controller, isBoss, stars);
+            if (rule?.Drops != null)
+            {
+                return LineAt(rule.Drops, stars); // the server's own words for this creature, a boss's too
+            }
+            return isBoss ? 1f : LiveDropsLine(controller, stars);
         }
 
-        /// <summary>How many times the table is rolled again.</summary>
+        /// <summary>How many times the table is rolled again: never for a boss.</summary>
         public static int ExtraRolls(LootRules loot, bool isBoss, int stars) =>
-            RuleState.Active.KeepsLevel(stars, isBoss) ? 0 : DropRoller.ExtraRolls(loot, stars);
+            isBoss || RuleState.Active.KeepsLevel(stars, isBoss) ? 0 : DropRoller.ExtraRolls(loot, stars);
 
         /// <summary>
         /// The star `drops` line from the rules active right now, not the snapshot the creature resolved with. Loot
@@ -31,12 +37,8 @@ namespace EliteCreaturesReborn.Loot
         /// reload every other loot setting gets by reading RuleState at death. Falls back to the resolve-time
         /// snapshot only when the ZDO is already gone.
         /// </summary>
-        private static float LiveDropsLine(EliteController controller, bool isBoss, int stars)
+        private static float LiveDropsLine(EliteController controller, int stars)
         {
-            if (isBoss)
-            {
-                return RuleState.Active.Boss.Star.DropsAt(stars);
-            }
             ZDO? zdo = controller.View != null && controller.View.IsValid() ? controller.View.GetZDO() : null;
             if (zdo == null)
             {

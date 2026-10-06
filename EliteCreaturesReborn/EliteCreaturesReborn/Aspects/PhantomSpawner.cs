@@ -43,7 +43,10 @@ namespace EliteCreaturesReborn.Aspects
             PhantomShuffle.Send(boss, dest, places); // drawn here at once, while the boss still stands where it vanishes
             Split(boss, places);
             PhantomShuffle.Move(boss, dest, centre);
-            Log.Diag($"{boss.name}: split off {copies} phantom copies for {players} players online and hid among them");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{boss.name}: split off {copies} phantom copies for {players} players online and hid among them");
+            }
         }
 
         /// <summary><paramref name="count"/> places evenly round the centre, from a random start.</summary>

@@ -33,7 +33,10 @@ namespace EliteCreaturesReborn.Aspects
             if (twin != null)
             {
                 AspectStore.SetTwin(zdo, twin.GetZDOID());
-                Log.Diag($"{boss.name}: twin spawned, {traits.Stars} star(s)");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{boss.name}: twin spawned, {traits.Stars} star(s)");
+                }
             }
         }
     }

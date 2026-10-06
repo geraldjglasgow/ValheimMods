@@ -11,11 +11,13 @@ namespace EliteCreaturesReborn.Runtime
     {
         public const string Key = "ecp_disguised";
 
+        private static readonly int KeyHash = Key.GetStableHashCode();
+
         public static bool Holds(Character character)
         {
             ZNetView? nview = character != null ? character.m_nview : null;
             ZDO? zdo = nview != null && nview.IsValid() ? nview.GetZDO() : null;
-            return zdo != null && zdo.GetBool(Key) && character!.GetBaseAI() is MonsterAI ai && ai.IsSleeping();
+            return zdo != null && zdo.GetBool(KeyHash) && character!.GetBaseAI() is MonsterAI ai && ai.IsSleeping();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace EliteCreaturesReborn.Patches
     public static class CloneAttackPatch
     {
         private static void Postfix(Attack __instance, HitData hitData) =>
-            Guard.Run("Attack.ModifyDamage cloning", () => Disarm(__instance, hitData));
+            Guard.Run("Attack.ModifyDamage cloning", static (attack, hit) => Disarm(attack, hit), __instance, hitData);
 
         private static void Disarm(Attack attack, HitData hit)
         {

@@ -28,6 +28,10 @@ namespace EliteCreaturesReborn.Mutations
         /// enough to carry it past a tree or a rock, short enough that a player who backs off is soon forgotten.</summary>
         private const float FleeMemory = 3f;
 
+        /// <summary>Seconds between looks for a player in sight. A look is one raycast per player in range, and the AI
+        /// steps 20 times a second; between looks the player last seen is followed, so the flee point stays current.</summary>
+        private const float LookInterval = 0.25f;
+
         private static readonly Dictionary<BaseAI, GildedBehaviour> ByAI = new Dictionary<BaseAI, GildedBehaviour>();
         private static readonly HashSet<Character> Bodies = new HashSet<Character>();
 
@@ -37,6 +41,8 @@ namespace EliteCreaturesReborn.Mutations
         private float _fleeDistance = 30f;
         private Vector3 _fleeFrom;
         private float _fleeUntil;
+        private float _nextLook;
+        private Player? _seen;
 
         /// <summary>True while any Gilded monster is loaded here; when false, it is the per-step patches' whole cost.</summary>
         public static bool Any => ByAI.Count > 0;
@@ -90,10 +96,14 @@ namespace EliteCreaturesReborn.Mutations
             {
                 return false;
             }
-            Player? seen = NearestSeen();
-            if (seen != null)
+            if (Time.time >= _nextLook)
             {
-                Remember(seen.transform.position);
+                _nextLook = Time.time + LookInterval;
+                _seen = NearestSeen();
+            }
+            if (_seen != null)
+            {
+                Remember(_seen.transform.position);
             }
             from = _fleeFrom;
             return Time.time < _fleeUntil;
@@ -102,10 +112,11 @@ namespace EliteCreaturesReborn.Mutations
         private Player? NearestSeen()
         {
             Player? nearest = null;
-            float best = _fleeDistance;
+            float best = _fleeDistance * _fleeDistance;
+            Vector3 here = transform.position;
             foreach (Player player in Player.GetAllPlayers())
             {
-                float distance = Vector3.Distance(player.transform.position, transform.position);
+                float distance = (player.transform.position - here).sqrMagnitude;
                 if (distance <= best && Sees(player))
                 {
                     nearest = player;

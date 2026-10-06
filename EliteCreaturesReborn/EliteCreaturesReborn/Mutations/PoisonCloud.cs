@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Util;
 using EliteCreaturesReborn.Visuals;
 using PatchGuard;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace EliteCreaturesReborn.Mutations
     /// PLAYERS ONLY, with the game's own Poison: it applies a poison-typed hit whose strength is <c>cloud damage</c>, and
     /// RPC_Damage converts that into the vanilla SE_Poison status effect - the same debuff, icon and tick as a blob's.
     /// It carries no attacker, so it neither scales with mutations nor feeds Leeching. Strength, life and radius arrive
-    /// at spawn.
+    /// at spawn. A dedicated server makes only the damaging copy, for a creature it owns, and never the look.
     /// </summary>
     public sealed class PoisonCloud : MonoBehaviour
     {
@@ -26,6 +27,11 @@ namespace EliteCreaturesReborn.Mutations
 
         public static void Spawn(Vector3 position, float lifetime, float damage, float radius, string effect, bool damaging)
         {
+            bool headless = Machine.Headless;
+            if (headless && !damaging)
+            {
+                return; // a dedicated server draws nothing, and this copy would hurt no one
+            }
             GameObject holder = new GameObject("ecr_miasma_cloud");
             holder.transform.position = position;
             PoisonCloud cloud = holder.AddComponent<PoisonCloud>();
@@ -33,11 +39,14 @@ namespace EliteCreaturesReborn.Mutations
             cloud._damage = damage;
             cloud._radius = radius;
             cloud._damaging = damaging;
-            GameObject? prefab = EffectResolver.Resolve(effect, EffectResolver.Cloud, "Miasmic cloud effect");
-            LingeringVisual.Attach(holder, prefab, lifetime, radius);
+            if (!headless) // the poison is the server's to deal when it owns the creature; the look is never its to draw
+            {
+                GameObject? prefab = EffectResolver.Resolve(effect, EffectResolver.Cloud, "Miasmic cloud effect");
+                LingeringVisual.Attach(holder, prefab, lifetime, radius);
+            }
         }
 
-        private void Update() => Guard.Run("PoisonCloud.Update", Step);
+        private void Update() => Guard.Run("PoisonCloud.Update", static self => self.Step(), this);
 
         private void Step()
         {

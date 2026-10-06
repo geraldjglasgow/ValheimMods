@@ -21,16 +21,23 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(OfferingBowl), nameof(OfferingBowl.GetHoverText))]
     public static class AltarHoverPatch
     {
-        private static void Postfix(OfferingBowl __instance, ref string __result)
-        {
-            string current = __result;
-            __result = Guard.Run("OfferingBowl.GetHoverText aspect", () => current + Lines(__instance));
-        }
+        private static void Postfix(OfferingBowl __instance, ref string __result) =>
+            __result = Guard.Run("OfferingBowl.GetHoverText aspect", static (bowl, text) => text + Lines(bowl), __instance,
+                __result);
+
+        // The bowl last hovered and its aspect (null for an altar that summons an item): one bowl is hovered at a time,
+        // so this is looked up once per bowl the player turns to, not every frame.
+        private static OfferingBowl? _lastBowl;
+        private static AltarAspect? _lastAltar;
 
         private static string Lines(OfferingBowl bowl)
         {
-            AltarAspect altar = bowl.GetComponent<AltarAspect>();
-            return altar != null ? altar.HoverLines() : "";
+            if (!ReferenceEquals(bowl, _lastBowl))
+            {
+                _lastBowl = bowl;
+                _lastAltar = bowl.GetComponent<AltarAspect>();
+            }
+            return _lastAltar != null ? _lastAltar.HoverLines() : "";
         }
     }
 

@@ -45,11 +45,12 @@ namespace EliteCreaturesReborn.Mutations
             }
         }
 
-        /// <summary>Prefix side: what the postfix needs to tell the base hit from its bonuses.</summary>
-        public static Before Capture(Character victim)
+        /// <summary>Prefix side: what the postfix needs to tell the base hit from its bonuses. <paramref name="controller"/>
+        /// is the victim's own, looked up once for the whole hit.</summary>
+        public static Before Capture(Character victim, EliteController? controller)
         {
             ZNetView nview = victim.m_nview;
-            if (nview == null || !nview.IsValid() || !nview.IsOwner() || !IsWarding(victim))
+            if (nview == null || !nview.IsValid() || !nview.IsOwner() || !IsWarding(controller))
             {
                 return default;
             }
@@ -72,16 +73,13 @@ namespace EliteCreaturesReborn.Mutations
                 return;
             }
             attacker.Damage(Reflected(victim, attacker, amount));
-            // Route the tell through THIS creature's own ZNetView, not the world-wide bus: Warding fires on every
-            // melee hit, so scoping it to the clients holding the creature (the attacker included) keeps it quiet.
+            // Route the tell through THIS creature's own ZNetView, not the world-wide bus: every player still receives
+            // it, but only the clients holding the creature (the attacker included) handle it; the rest drop it unread.
             CreatureRpc.FireReflect(controller.View, attacker.GetCenterPoint());
         }
 
-        private static bool IsWarding(Character character)
-        {
-            EliteController controller = character.GetComponent<EliteController>();
-            return controller != null && controller.Ready && controller.Traits.Has(Mutation.Warding);
-        }
+        private static bool IsWarding(EliteController? controller) =>
+            controller != null && controller.Ready && controller.Traits.Has(Mutation.Warding);
 
         /// <summary>What the hit did without its two bonuses, never more than the health the creature lost.</summary>
         private static float BaseHit(Character victim, HitData hit, Before before)

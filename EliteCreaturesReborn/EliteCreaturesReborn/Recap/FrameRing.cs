@@ -11,7 +11,7 @@ namespace EliteCreaturesReborn.Recap
 
     /// <summary>
     /// The last seconds of the screen as JPEG frames, oldest first. Filled by the encoder thread, read by the main thread
-    /// when a recap is made, so every access holds the lock. Only the newest seconds are kept: about 10 MB at the defaults.
+    /// when a recap is made, so every access holds the lock. Only the newest seconds are kept: about 7 MB at the defaults.
     /// </summary>
     internal static class FrameRing
     {

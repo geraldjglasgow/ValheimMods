@@ -72,8 +72,8 @@ namespace EliteCreaturesReborn.Display
         {
             bar = default;
             ZDO? zdo = BossZdo(character);
-            EliteController controller = character.GetComponent<EliteController>();
-            if (zdo == null || controller == null || !controller.Ready || controller.Traits.PhantomCopy
+            EliteController? controller = zdo != null ? ReadyElites.Of(character) : null;
+            if (zdo == null || controller == null || controller.Traits.PhantomCopy
                 || !controller.Traits.HasAspect(Aspect.Phantom))
             {
                 return false;
@@ -97,7 +97,11 @@ namespace EliteCreaturesReborn.Display
             {
                 if (copies[i].Gui != null && copies[i].Gui.transform is RectTransform root)
                 {
-                    root.anchoredPosition = template.anchoredPosition + SlotOffset(i, copies.Count, slot, top);
+                    Vector2 place = template.anchoredPosition + SlotOffset(i, copies.Count, slot, top);
+                    if (root.anchoredPosition != place)
+                    {
+                        root.anchoredPosition = place; // a write marks the canvas for a rebuild: only when it moved
+                    }
                     PhantomBarShape.Shrink(root, slot - Gap);
                 }
             }
@@ -149,13 +153,13 @@ namespace EliteCreaturesReborn.Display
             {
                 return null;
             }
-            ZNetView nview = character.GetComponent<ZNetView>();
+            ZNetView nview = character.m_nview;
             return nview != null && nview.IsValid() ? nview.GetZDO() : null;
         }
 
         private static float BossBarWidth(RectTransform template)
         {
-            RectTransform? health = template.Find("Health") as RectTransform;
+            RectTransform? health = PhantomBarShape.HealthOf(template);
             return health != null && health.sizeDelta.x > 1f ? health.sizeDelta.x : FallbackWidth;
         }
 

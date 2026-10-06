@@ -53,8 +53,7 @@ namespace EliteCreaturesReborn.Rules
                     Hp = new[] { 1f, 1.5f, 2.25f, 3.4f, 5.1f, 7.6f },
                     Attack = new[] { 1f, 1.25f, 1.55f, 1.9f, 2.3f, 2.75f },
                     SwingSpeed = new[] { 1f },
-                    Speed = new[] { 1f },
-                    Drops = new[] { 1f, 1.5f, 2f, 2.5f, 3f, 3.5f },
+                    Speed = new[] { 1f }, // no Drops: a boss's stars never multiply its drops (StarDrops)
                 },
                 Aspects = AspectDefaults.Build(),
             };

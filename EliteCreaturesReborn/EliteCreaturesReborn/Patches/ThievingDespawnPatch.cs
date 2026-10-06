@@ -1,6 +1,4 @@
 using EliteCreaturesReborn.Mutations;
-using EliteCreaturesReborn.Runtime;
-using EliteCreaturesReborn.Traits;
 using HarmonyLib;
 using PatchGuard;
 
@@ -22,21 +20,25 @@ namespace EliteCreaturesReborn.Patches
         /// <summary>BaseAI.MoveAwayAndDespawn's own range: with a player this close it walks away instead of vanishing.</summary>
         private const float DespawnRange = 40f;
 
-        private static void Prefix(BaseAI __instance) =>
-            Guard.Run("BaseAI.MoveAwayAndDespawn thieving", () => DropPouch(__instance));
+        // Every creature walking off to despawn comes through here on every AI tick, on the server too: the first test
+        // is two field reads and one ZDO lookup, and only a creature carrying stolen goods goes any further.
+        private static void Prefix(BaseAI __instance)
+        {
+            ZNetView nview = __instance.m_nview;
+            if (nview != null && nview.IsValid() && nview.IsOwner() && PouchStore.Count(nview.GetZDO()) > 0)
+            {
+                Guard.Run("BaseAI.MoveAwayAndDespawn thieving", static ai => DropPouch(ai), __instance);
+            }
+        }
 
         private static void DropPouch(BaseAI ai)
         {
-            Character? character = Traverse.Create(ai).Field("m_character").GetValue<Character>();
-            ZNetView? nview = character != null ? character.GetComponent<ZNetView>() : null;
-            EliteController? controller = character != null ? character.GetComponent<EliteController>() : null;
-            if (character == null || nview == null || !nview.IsValid() || !nview.IsOwner()
-                || controller == null || !controller.Ready || !controller.Traits.Has(Mutation.Thieving)
-                || Player.GetClosestPlayer(character.transform.position, DespawnRange) != null)
+            Character character = ai.m_character;
+            if (character == null || Player.GetClosestPlayer(character.transform.position, DespawnRange) != null)
             {
-                return; // not a thief, or only walking away this tick: the destroy has not come yet
+                return; // only walking away this tick: the destroy has not come yet
             }
-            PouchDrop.DropAll(PouchStore.Load(nview.GetZDO()), character.transform.position);
+            PouchDrop.DropAll(PouchStore.Load(ai.m_nview.GetZDO()), character.transform.position);
         }
     }
 }

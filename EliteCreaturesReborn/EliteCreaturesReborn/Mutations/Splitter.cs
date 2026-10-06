@@ -25,13 +25,19 @@ namespace EliteCreaturesReborn.Mutations
             GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(prefabHash) : null;
             if (prefab == null)
             {
-                Log.Diag($"split aborted: no prefab for hash {prefabHash} (scene missing or prefab unknown)");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"split aborted: no prefab for hash {prefabHash} (scene missing or prefab unknown)");
+                }
                 return;
             }
             int nextGen = generation + 1;
             if (Truncated(rules, nextGen, root))
             {
-                Log.Diag($"split truncated at gen {nextGen}, root {root} (a cascade cap is on)");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"split truncated at gen {nextGen}, root {root} (a cascade cap is on)");
+                }
                 return;
             }
             SpawnCopy(prefab, pos, rot, parentTraits, nextGen, root, biome, tame);
@@ -77,8 +83,11 @@ namespace EliteCreaturesReborn.Mutations
             zdo.Set(TraitKeys.CascadeRoot, root);
             character.SetLevel(1);
             tame?.Apply(copy, zdo);
-            DescendantRegistry.Register(root);
-            Log.Diag($"split copy spawned: {copy.name} stars={traits.Stars} mask={traits.Mask} gen={gen} splinters={traits.Has(Mutation.Splintering)} tamed={character.IsTamed()}");
+            DescendantRegistry.Register(root, copy);
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"split copy spawned: {copy.name} stars={traits.Stars} mask={traits.Mask} gen={gen} splinters={traits.Has(Mutation.Splintering)} tamed={character.IsTamed()}");
+            }
         }
     }
 }

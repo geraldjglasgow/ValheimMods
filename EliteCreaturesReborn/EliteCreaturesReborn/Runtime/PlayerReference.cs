@@ -1,25 +1,38 @@
+using UnityEngine;
+
 namespace EliteCreaturesReborn.Runtime
 {
     /// <summary>
     /// A reference player maximum health, for the one owner-side decision that needs one - whether a Devouring
-    /// creature's per-hit damage has grown past a share of a player's health and it should start hunting players. Like
-    /// <see cref="PlayerSpeed"/>, it tracks the local player when there is one and remembers the last value, so a
-    /// headless dedicated server (which never has a local player) still has a sane figure once any player has been
-    /// observed. Before that, a documented fallback stands in - see DECISIONS.md on why it is what it is.
+    /// creature's per-hit damage has grown past a share of a player's health and it should start hunting players. It is
+    /// the highest maximum health among the living players near the creature, read the same way on every machine (a
+    /// player's maximum health travels in its ZDO), so the answer does not depend on which machine owns the creature:
+    /// a dedicated server, which has no local player, decides as a client owner would. With no player near, the last
+    /// value seen stands, and before any, a documented fallback - see DECISIONS.md on why it is what it is.
     /// </summary>
     internal static class PlayerReference
     {
-        /// <summary>A mid-progression player's health; the stand-in until a real local player is seen on this machine.</summary>
+        /// <summary>A mid-progression player's health; the stand-in until a real player is seen on this machine.</summary>
         public const float FallbackHealth = 100f;
+
+        /// <summary>How near a player must be to count: well inside the area any machine that owns the creature holds.</summary>
+        private const float Range = 64f;
 
         private static float _health = FallbackHealth;
 
-        public static float MaxHealth()
+        public static float MaxHealthNear(Vector3 position)
         {
-            Player local = Player.m_localPlayer;
-            if (local != null && local.GetMaxHealth() > 0f)
+            float best = 0f;
+            foreach (Player player in Player.GetAllPlayers())
             {
-                _health = local.GetMaxHealth();
+                if (!player.IsDead() && (player.transform.position - position).sqrMagnitude <= Range * Range)
+                {
+                    best = Mathf.Max(best, player.GetMaxHealth());
+                }
+            }
+            if (best > 0f)
+            {
+                _health = best;
             }
             return _health;
         }

@@ -3,11 +3,12 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// The jump itself, on the owner, through the path the game uses to put a character somewhere at once (a ladder, a
-    /// trap): the transform set, then physics synced so the rigidbody goes with it. Its momentum is dropped, so it
-    /// arrives standing rather than still running the way it was going; it faces its target; and its AI forgets the
-    /// path it was following, which would otherwise walk it back round to where it came from. ZSyncTransform writes the
-    /// new position to the ZDO; a client snaps a jump of 5 m or more and eases a shorter one, which
+    /// The jump itself, on the owner: the transform and the creature's own rigidbody set together, so the next physics
+    /// step starts from the new place without syncing every transform in the scene, and the ZDO's position and rotation
+    /// written in the same moment, so the other machines get the new place with this frame's update rather than at the
+    /// next ZSyncTransform tick. Its momentum is dropped, so it arrives standing rather than still running the way it was
+    /// going; it faces its target; and its AI forgets the path it was following, which would otherwise walk it back round
+    /// to where it came from. A client snaps a jump of 5 m or more and eases a shorter one, which
     /// <see cref="BlinkVeil"/> hides.
     /// </summary>
     internal static class BlinkMove
@@ -23,7 +24,7 @@ namespace EliteCreaturesReborn.Mutations
                 me.SetLookDir(look);
             }
             Still(me);
-            Physics.SyncTransforms();
+            Place(me, body);
             Forget(me.GetBaseAI());
         }
 
@@ -31,11 +32,26 @@ namespace EliteCreaturesReborn.Mutations
         {
             me.m_currentVel = Vector3.zero; // the smoothed run velocity the next physics step would otherwise re-apply
             me.m_maxAirAltitude = me.transform.position.y; // no landing thud for a fall that never happened
-            Rigidbody rigidbody = me.GetComponent<Rigidbody>();
+            Rigidbody rigidbody = me.m_body;
             if (rigidbody != null)
             {
                 rigidbody.linearVelocity = Vector3.zero;
                 rigidbody.angularVelocity = Vector3.zero;
+            }
+        }
+
+        private static void Place(Character me, Transform body)
+        {
+            if (me.m_body != null)
+            {
+                me.m_body.position = body.position;
+                me.m_body.rotation = body.rotation;
+            }
+            ZDO? zdo = me.m_nview != null && me.m_nview.IsValid() ? me.m_nview.GetZDO() : null;
+            if (zdo != null && zdo.IsOwner())
+            {
+                zdo.SetPosition(body.position);
+                zdo.SetRotation(body.rotation);
             }
         }
 

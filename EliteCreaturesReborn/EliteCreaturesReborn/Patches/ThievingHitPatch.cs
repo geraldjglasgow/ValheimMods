@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
-using HarmonyLib;
-using PatchGuard;
 using PlayerGrid;
 using UnityEngine;
 
@@ -20,10 +18,11 @@ namespace EliteCreaturesReborn.Patches
     /// ZDO) before an item is ever removed. A landed melee hit takes at most one item however much room is left, so a
     /// 3-star thief needs three hits to fill its pouch. A ranged or area hit, a hit that deals no damage, a hit dodged or
     /// parried, a creature already full, or a player carrying nothing unequipped in their own grid (PackPanel's slots
-    /// never count) are all ordinary hits - nothing here ever discards an item; not-taking it is always safe.
+    /// never count) are all ordinary hits - nothing here ever discards an item; not-taking it is always safe. Both halves
+    /// are steps of <see cref="HitPatch"/>. The item is held, not destroyed, until the creature's owner has banked it
+    /// (<see cref="StealEscrow"/>): a refused or unanswered steal gives it back.
     /// </para>
     /// </summary>
-    [HarmonyPatch(typeof(Character), "RPC_Damage")]
     public static class ThievingHitPatch
     {
         private const int HotbarWidth = 8;
@@ -31,25 +30,20 @@ namespace EliteCreaturesReborn.Patches
         // Never stolen, equipped or not: losing the wishbone to a thief that runs off is a lost boss reward.
         private static readonly HashSet<string> Unstealable = new HashSet<string> { "Wishbone" };
 
-        private static int _counter;
-
         // Read before the game touches the hit: RPC_Damage drops a dodgeable hit that meets a dodge roll's i-frames
-        // without applying anything, but this postfix still runs after that early return, with the damage untouched.
-        private static void Prefix(Character __instance, HitData hit, out bool __state) =>
-            __state = Guard.Run("Character.RPC_Damage thieving dodge",
-                () => hit != null && hit.m_dodgeable && __instance.IsDodgeInvincible());
+        // without applying anything, but the steps after the hit still run after that early return, damage untouched.
+        internal static bool Dodged(Struck struck) =>
+            struck.Hit != null && struck.Hit.m_dodgeable && struck.Victim.IsDodgeInvincible();
 
-        private static void Postfix(Character __instance, HitData hit, bool __state) =>
-            Guard.Run("Character.RPC_Damage thieving", () => TrySteal(__instance, hit, __state));
-
-        private static void TrySteal(Character victim, HitData hit, bool dodged)
+        internal static void TrySteal(Struck struck, bool dodged)
         {
-            ZNetView victimView = victim.GetComponent<ZNetView>();
-            if (!Landed(hit, dodged) || !victim.IsPlayer() || victimView == null || !victimView.IsValid() || !victimView.IsOwner())
+            Character victim = struck.Victim;
+            HitData? hit = struck.Hit;
+            if (hit == null || !Landed(hit, dodged) || !victim.IsPlayer() || !struck.Owned)
             {
                 return; // only the robbed player's own client decides this, and only on a landed, damaging hit
             }
-            EliteController? thief = ReadyThief(hit.GetAttacker());
+            EliteController? thief = ReadyThief(struck.Attacker, struck.AttackerElite);
             if (thief == null)
             {
                 return;
@@ -66,14 +60,9 @@ namespace EliteCreaturesReborn.Patches
         // A resolved, Thieving, un-tamed creature; null otherwise. Tamed is checked here because vanilla taming is
         // live today independent of this mod's own (unbuilt) taming feature - the spec's "never steals, from its
         // owner or from anyone" applies regardless.
-        private static EliteController? ReadyThief(Character? attacker)
+        private static EliteController? ReadyThief(Character? attacker, EliteController? controller)
         {
-            if (attacker == null)
-            {
-                return null;
-            }
-            EliteController? controller = attacker.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready || !controller.Traits.Has(Mutation.Thieving))
+            if (attacker == null || controller == null || !controller.Ready || !controller.Traits.Has(Mutation.Thieving))
             {
                 return null;
             }
@@ -84,9 +73,9 @@ namespace EliteCreaturesReborn.Patches
         private static void Steal(Character victim, EliteController thief)
         {
             ZNetView creatureView = thief.View;
-            if (creatureView == null || !creatureView.IsValid())
+            if (creatureView == null || !creatureView.IsValid() || creatureView.GetZDO().GetOwner() == 0L)
             {
-                return; // no theft happens at all - the creature cannot be reached to bank it
+                return; // no theft happens at all - the creature has no owner to bank it
             }
             int maxItems = PouchStore.ResolvedMaxItems(thief.Rules, thief.Traits);
             if (PouchStore.Count(creatureView.GetZDO()) >= maxItems)
@@ -144,15 +133,20 @@ namespace EliteCreaturesReborn.Patches
         // wider than 8 (PackPanel's) has ordinary cells right of it, robbed before the hotbar like any other.
         private static bool InHotbar(Vector2i cell) => cell.y == 0 && cell.x < HotbarWidth;
 
+        // The stack leaves the inventory now and is held until the creature's owner answers: banked, it is gone; refused
+        // or unanswered, it comes back (StealEscrow). Nothing is taken at all when it cannot be held.
         private static void Take(Character victim, EliteController thief, ZNetView creatureView, ItemDrop.ItemData item)
         {
-            Humanoid humanoid = (Humanoid)victim;
             string name = item.m_shared.m_name;
             int stack = item.m_stack;
-            humanoid.GetInventory().RemoveItem(item); // takes the whole stack, whatever it was
+            int id = StealEscrow.Hold(((Humanoid)victim).GetInventory(), item);
+            if (id == 0)
+            {
+                return;
+            }
             Announce(thief, name, stack);
             CreatureRpc.FireFlash(creatureView, victim.GetCenterPoint(), 2f, "steal");
-            ThievingRpc.Send(creatureView, ++_counter, item);
+            ThievingRpc.Send(creatureView, id, item);
         }
 
         private static void Announce(EliteController thief, string itemName, int stack)

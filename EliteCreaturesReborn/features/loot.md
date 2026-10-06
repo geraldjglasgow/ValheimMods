@@ -61,6 +61,11 @@ each other), in every mode including Vanilla, untouched by every multiplier and 
 stars' visible reward for the fight. A `drop overrides` row naming the trophy is the server's own words and is
 honoured instead.
 
+**And a boss's stars pay nothing else** (2026-10-05, the user: too many Wishbones). Its other rows drop once: no extra
+rolls in Rolled or Curated, no star `drops` line in Scaled (the `bosses: star power: drops` line is gone; an older
+file's only warns). The aspect's loot and the global and boss multipliers still apply, and so does a `drops` line in
+the boss's own `creatures:` entry (`Loot/StarDrops`).
+
 ---
 
 # 3. Mutations and attunements do not change loot - Gilded excepted
@@ -136,8 +141,8 @@ changes gameplay, so it lives with the other synced, lockable rules:
   the default star ceiling. 0 means uncapped, for the server that has raised the ceiling and means it. This
   answers the twenty-star problem the same way the Splintering caps do in `mutations.md`.
 - **Global loot multiplier**: one number over every dropped quantity, applied after the mode. Default 1.
-- **Boss loot multiplier**: the same, bosses only, applied on top of the boss `drops` line and the aspect
-  multiplier (`boss-aspects.md`). Default 1.
+- **Boss loot multiplier**: the same, bosses only, applied on top of the aspect multiplier (`boss-aspects.md`).
+  Default 1. A boss's stars add nothing to its drops but heads (section 2).
 - **Trophy multiplication**: off by default; on makes trophies follow the mode. A drop is a trophy when its item
   type is the game's own Trophy type, so modded trophies are covered without a name list.
 - **Per-creature and per-boss drop rules** in `creature_rules.yml` - section 6.

@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Mutations
     /// time as the player closes, rather than snapping, so a hard cut never looks like a rendering fault. A hysteresis
     /// band (fade in at reveal distance, out only at reveal distance + margin) stops it strobing for a player standing
     /// on the boundary. This is a client-side visual, so it runs on every client; the nameplate patch reads
-    /// <see cref="Hidden"/> and hides the nameplate in step. See DECISIONS.md on why the body may snap on opaque shaders.
+    /// <see cref="Hidden"/> (through <see cref="PlateVeils"/>) and hides the nameplate in step. The renderers are touched
+    /// only on a frame the fade moves, not every frame. See DECISIONS.md on why the body may snap on opaque shaders.
     /// </summary>
     public sealed class CloakBehaviour : MonoBehaviour
     {
@@ -24,9 +25,23 @@ namespace EliteCreaturesReborn.Mutations
         private float _fadeTime = 0.5f;
         private bool _revealed;
         private float _phase;
+        private float _applied = float.NaN; // the phase the renderers last showed; NaN until first applied
+        private Character? _character;
 
         /// <summary>True while the creature is fully cloaked, so the nameplate can hide in exact step with the body.</summary>
         public bool Hidden => _phase <= 0f;
+
+        // Joins at once, not at Start: it is hidden from the moment it is added, and its nameplate must hide with it.
+        private void Awake()
+        {
+            _character = GetComponent<Character>();
+            if (_character != null)
+            {
+                PlateVeils.Join(_character, this);
+            }
+        }
+
+        private void OnDestroy() => PlateVeils.Leave(_character, this);
 
         private void Start()
         {
@@ -43,7 +58,7 @@ namespace EliteCreaturesReborn.Mutations
             Apply();
         }
 
-        private void Update() => Guard.Run("CloakBehaviour.Update", Step);
+        private void Update() => Guard.Run("CloakBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {
@@ -82,6 +97,11 @@ namespace EliteCreaturesReborn.Mutations
 
         private void Apply()
         {
+            if (_phase == _applied)
+            {
+                return; // nothing moved since the renderers were last set: at rest, fully hidden or fully shown
+            }
+            _applied = _phase;
             bool visible = _phase > 0.001f;
             foreach (Renderer renderer in _renderers)
             {

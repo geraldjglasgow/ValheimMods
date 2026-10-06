@@ -13,6 +13,6 @@ namespace EliteCreaturesReborn.Patches
     public static class InventoryTierPatch
     {
         private static void Postfix(InventoryGui __instance) =>
-            Guard.Run("InventoryGui world tier", () => TierPlate.Refresh(__instance));
+            Guard.Run("InventoryGui world tier", static gui => TierPlate.Refresh(gui), __instance);
     }
 }

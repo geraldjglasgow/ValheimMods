@@ -64,7 +64,10 @@ namespace EliteCreaturesReborn.Mutations
             _ai = _character.GetBaseAI();
             Read(_controller.Rules);
             _controller.View.Register<int, Vector3>(Rpc, OnMessage); // on every machine: each one draws the broadcast
+            PlateVeils.Join(_character, this); // its nameplate hides while the body is veiled mid-blink
         }
+
+        private void OnDestroy() => PlateVeils.Leave(_character, this);
 
         private void Read(BiomeRules rules)
         {
@@ -76,7 +79,7 @@ namespace EliteCreaturesReborn.Mutations
             _tellSound = rules.PrefabOf(Mutation.Blinking, Fields.TellSound);
         }
 
-        private void Update() => Guard.Run("BlinkBehaviour.Update", Step);
+        private void Update() => Guard.Run("BlinkBehaviour.Update", static self => self.Step(), this);
 
         private void Step()
         {
@@ -173,8 +176,9 @@ namespace EliteCreaturesReborn.Mutations
             Quarry() == target && Vector3.Distance(target.transform.position, _dest) <= _distance + LeaveSlack;
 
         /// <summary>
-        /// To every client holding the creature: <c>Everybody</c> through its own ZNetView is delivered here at once
-        /// and dropped by any peer that does not hold it - the same scoping as the Warding tell.
+        /// To every client holding the creature: <c>Everybody</c> through its own ZNetView is delivered here at once and
+        /// relayed by the server to every player, and any machine that does not hold the creature drops it unread - the
+        /// same path as the Warding tell.
         /// </summary>
         private void Send(int phase, Vector3 dest) =>
             _controller.View.InvokeRPC(ZRoutedRpc.Everybody, Rpc, phase, dest);

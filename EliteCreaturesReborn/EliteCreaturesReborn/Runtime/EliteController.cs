@@ -1,3 +1,5 @@
+using EliteCreaturesReborn.Display;
+using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
@@ -39,6 +41,9 @@ namespace EliteCreaturesReborn.Runtime
         public ZNetView View => _nview;
         public bool Ready => _ready;
 
+        /// <summary>The decorated name the hover name shows, kept while the name it decorates stays the same.</summary>
+        public NameMemo Name { get; } = new NameMemo();
+
         private void Start() => Guard.Run("EliteController.Start", Setup);
 
         private void Setup()
@@ -57,8 +62,7 @@ namespace EliteCreaturesReborn.Runtime
                 return;
             }
             EliteRpc.EnsureRegistered();
-            CreatureRpc.Register(_nview, _character, this); // on every machine, so a routed command reaches the owner
-            ThievingRpc.Register(_nview, this); // same shape: the robbed player's client routes a steal to the owner
+            CreatureRpc.Register(_nview); // on every machine; the commands follow once the traits are known (Apply)
             RuleState.Changed += OnRulesChanged;
             if (!TryResolve())
             {
@@ -75,7 +79,7 @@ namespace EliteCreaturesReborn.Runtime
         {
             if (_pending)
             {
-                Guard.Run("EliteController.Resolve", PollResolve);
+                Guard.Run("EliteController.Resolve", static self => self.PollResolve(), this);
             }
             else if (_dressPending && !Disguise.Holds(_character))
             {
@@ -89,6 +93,8 @@ namespace EliteCreaturesReborn.Runtime
         {
             RuleState.Changed -= OnRulesChanged;
             SwingRegistry.Forget(_character);
+            Devourers.Forget(_character);
+            ReadyElites.Forget(_character);
         }
 
         // An edited or newly synced rule file reaches creatures already loaded: every power read from Rules as it acts
@@ -217,7 +223,10 @@ namespace EliteCreaturesReborn.Runtime
                 StatApplier.ApplyHealth(_character, Rules, Traits, FreshlyResolved); // owner writes s_maxHealth; others read it
             }
             _ready = true;
+            CreatureRpc.RegisterCommands(this, _isBoss); // on every machine, so a routed command reaches the owner
+            ReadyElites.Track(this); // so the nameplate finds it without a component search
             SwingRegistry.Track(this); // the swing speed is fixed from here on, so AnimSpeedPatch skips a creature at 1
+            Devourers.Track(this); // so the enmity patch finds a devourer without a component search
             if (Disguise.Holds(_character))
             {
                 _dressPending = true; // keep polling in Update until it wakes

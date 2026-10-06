@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using EliteCreaturesReborn.Display;
 using EliteCreaturesReborn.Runtime;
@@ -11,13 +10,16 @@ using UnityEngine.UI;
 namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
-    /// Replaces the nameplate's stars with the mod's coloured row. Each frame, for every starred creature's nameplate it
-    /// hides the vanilla two- and three-star badges (which only ever cover those two counts) and ensures the coloured
-    /// <see cref="StarRow"/> is present, so the star display is one consistent, individually-drawn row at any count - on
-    /// a boss's health bar too, which has no star badges of its own and borrows the creature bar's star sprite. A
-    /// Phantom copy's boss bar gets no star row: it is gathered instead and laid out small in one row with the boss's own
-    /// bar by <see cref="PhantomBars"/>; a Tethered pair's two bars are stacked by <see cref="TetherBars"/>. It also adds the icon rows on the star row's line: what a Thieving creature carries
-    /// (<see cref="PouchIcons"/>) and what a Devouring creature has eaten (<see cref="MealIcons"/>).
+    /// Replaces the nameplate's stars with the mod's coloured row. For every starred creature's nameplate it hides the
+    /// vanilla two- and three-star badges (which only ever cover those two counts) and adds the coloured
+    /// <see cref="StarRow"/>, so the star display is one consistent, individually-drawn row at any count - on a boss's
+    /// health bar too, which has no star badges of its own and borrows the creature bar's star sprite. A Phantom copy's
+    /// boss bar gets no star row: it is gathered instead and laid out small in one row with the boss's own bar by
+    /// <see cref="PhantomBars"/>; a Tethered pair's two bars are stacked by <see cref="TetherBars"/>. It also adds the
+    /// icon rows on the star row's line: what a Thieving creature carries (<see cref="PouchIcons"/>) and what a Devouring
+    /// creature has eaten (<see cref="MealIcons"/>). Each plate is dressed once (<see cref="PlateDress"/>) and then only
+    /// kept: its badges stay hidden every frame, and it is dressed again only when a display setting changes. The game's
+    /// plates are read from its own fields, not by reflection.
     /// </summary>
     [HarmonyPatch(typeof(EnemyHud), "UpdateHuds")]
     public static class EnemyHudPatch
@@ -31,12 +33,17 @@ namespace EliteCreaturesReborn.Patches
         /// <summary>This frame's Tethered pair bars, reused every frame.</summary>
         private static readonly List<PhantomBars.Bar> Pairs = new List<PhantomBars.Bar>();
 
+        /// <summary>How far each plate the game shows has been dressed, by the game's own record of the plate.</summary>
+        private static readonly Dictionary<EnemyHud.HudData, PlateDress> Dressed = new Dictionary<EnemyHud.HudData, PlateDress>();
+
+        private static readonly List<EnemyHud.HudData> Gone = new List<EnemyHud.HudData>();
+
         private static void Postfix(EnemyHud __instance) =>
-            Guard.Run("EnemyHud.UpdateHuds stars", () => Decorate(__instance));
+            Guard.Run("EnemyHud.UpdateHuds stars", static hud => Decorate(hud), __instance);
 
         private static void Decorate(EnemyHud hud)
         {
-            IDictionary? huds = Traverse.Create(hud).Field("m_huds").GetValue() as IDictionary;
+            Dictionary<Character, EnemyHud.HudData> huds = hud.m_huds;
             if (huds == null)
             {
                 return;
@@ -44,33 +51,66 @@ namespace EliteCreaturesReborn.Patches
             Copies.Clear();
             Bosses.Clear();
             Pairs.Clear();
-            foreach (object data in huds.Values)
+            int wanted = PlateDress.Wanted();
+            int frame = Time.frameCount;
+            foreach (EnemyHud.HudData data in huds.Values)
             {
-                DecorateOne(Traverse.Create(data));
+                DecorateOne(data, wanted, frame);
             }
             PhantomBars.Layout(Copies, Bosses);
             TetherBars.Layout(Pairs);
+            Forget(frame);
         }
 
-        private static void DecorateOne(Traverse data)
+        private static void DecorateOne(EnemyHud.HudData data, int wanted, int frame)
         {
-            Character character = data.Field("m_character").GetValue<Character>();
-            GameObject gui = data.Field("m_gui").GetValue<GameObject>();
+            Character character = data.m_character;
+            GameObject gui = data.m_gui;
             if (character == null || gui == null)
             {
                 return;
             }
-            if (Gather(character, gui) || !IsElite(character))
+            PlateDress dress = DressOf(data, character);
+            dress.Seen = frame;
+            if (character.IsBoss() && Gather(character, gui))
             {
                 return;
             }
-            if (Config.Configuration.ColouredStars.Value && HasStars(character))
+            if (!dress.DressedUnder(wanted))
             {
-                HideVanillaBadges(gui);
-                EnsureRow(gui, character);
+                Dress(data, dress, wanted);
             }
-            EnsureIcons<PouchIcons>(gui, character, Config.Configuration.ShowStolenItems.Value, Mutation.Thieving);
-            EnsureIcons<MealIcons>(gui, character, Config.Configuration.ShowDevouredCreatures.Value, Mutation.Devouring);
+            if (dress.Starred)
+            {
+                HideVanillaBadges(data); // the game sets them again every frame from the level
+            }
+        }
+
+        private static PlateDress DressOf(EnemyHud.HudData data, Character character)
+        {
+            if (!Dressed.TryGetValue(data, out PlateDress dress))
+            {
+                dress = new PlateDress(character.GetComponent<EliteController>());
+                Dressed[data] = dress;
+            }
+            return dress;
+        }
+
+        /// <summary>Plates the game no longer shows (it drops one a frame at most) are forgotten with it.</summary>
+        private static void Forget(int frame)
+        {
+            Gone.Clear();
+            foreach (KeyValuePair<EnemyHud.HudData, PlateDress> pair in Dressed)
+            {
+                if (pair.Value.Seen != frame)
+                {
+                    Gone.Add(pair.Key);
+                }
+            }
+            foreach (EnemyHud.HudData data in Gone)
+            {
+                Dressed.Remove(data);
+            }
         }
 
         /// <summary>Collects the boss bars laid out after the loop: a Phantom copy's (true: it takes no star row), a
@@ -93,20 +133,31 @@ namespace EliteCreaturesReborn.Patches
             return false;
         }
 
-        private static bool IsElite(Character character)
+        // Every part the settings ask for, added once; the plate counts as dressed only when none is still missing. A
+        // creature with none of this mod's stars keeps the game's badges: a level another mod or the game gave it (this
+        // mod's stars off) shows as the game, or that mod, draws it. Nothing is dressed before the creature resolves.
+        private static void Dress(EnemyHud.HudData data, PlateDress dress, int wanted)
         {
-            EliteController controller = character.GetComponent<EliteController>();
-            return controller != null && controller.Ready;
+            EliteController? controller = dress.Controller;
+            if (controller != null && !controller.Ready)
+            {
+                return; // its traits are not here yet: dressed once they are
+            }
+            bool done = true;
+            if (controller != null)
+            {
+                dress.Starred = (wanted & PlateDress.Stars) != 0 && controller.Traits.Stars > 0;
+                done &= !dress.Starred || EnsureRow(data.m_gui, controller.Creature);
+                done &= EnsureIcons<PouchIcons>(data.m_gui, controller, (wanted & PlateDress.Stolen) != 0, Mutation.Thieving);
+                done &= EnsureIcons<MealIcons>(data.m_gui, controller, (wanted & PlateDress.Devoured) != 0, Mutation.Devouring);
+            }
+            dress.DressedFor = done ? wanted : -1;
         }
 
-        // A creature with none of this mod's stars keeps the game's badges: a level another mod or the game gave it
-        // (this mod's stars off) shows as the game, or that mod, draws it.
-        private static bool HasStars(Character character) => character.GetComponent<EliteController>().Traits.Stars > 0;
-
-        private static void HideVanillaBadges(GameObject gui)
+        private static void HideVanillaBadges(EnemyHud.HudData data)
         {
-            SetInactive(gui.transform.Find("level_2"));
-            SetInactive(gui.transform.Find("level_3"));
+            SetInactive(data.m_level2);
+            SetInactive(data.m_level3);
         }
 
         private static void SetInactive(Transform badge)
@@ -117,39 +168,38 @@ namespace EliteCreaturesReborn.Patches
             }
         }
 
-        private static void EnsureRow(GameObject gui, Character character)
+        /// <summary>True once the plate has its star row; false while the sprite or the bar cannot be found yet.</summary>
+        private static bool EnsureRow(GameObject gui, Character character)
         {
             if (gui.GetComponent<StarRow>() != null)
             {
-                return;
+                return true;
             }
             Sprite? sprite = FindStarSprite(gui);
             RectTransform? bar = gui.transform.Find("Health") as RectTransform;
             if (sprite == null || bar == null)
             {
-                return;
+                return false;
             }
             gui.AddComponent<StarRow>().Init(character, sprite, bar);
+            return true;
         }
 
         // A mutation's icon row on the nameplate - what a thief carries, what a devourer has eaten - added once, when the
-        // player shows it and the creature carries the mutation.
-        private static void EnsureIcons<T>(GameObject gui, Character character, bool shown, Mutation mutation)
+        // player shows it and the creature carries the mutation. True unless it is wanted and the bar is not there yet.
+        private static bool EnsureIcons<T>(GameObject gui, EliteController controller, bool shown, Mutation mutation)
             where T : MonoBehaviour, IPlateIcons
         {
-            if (!shown || gui.GetComponent<T>() != null)
+            if (!shown || !controller.Traits.Has(mutation) || gui.GetComponent<T>() != null)
             {
-                return;
-            }
-            EliteController controller = character.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready || !controller.Traits.Has(mutation))
-            {
-                return;
+                return true;
             }
             if (gui.transform.Find("Health") is RectTransform bar)
             {
-                gui.AddComponent<T>().Init(character, bar);
+                gui.AddComponent<T>().Init(controller.Creature, bar);
+                return true;
             }
+            return false;
         }
 
         private static Sprite? FindStarSprite(GameObject gui)

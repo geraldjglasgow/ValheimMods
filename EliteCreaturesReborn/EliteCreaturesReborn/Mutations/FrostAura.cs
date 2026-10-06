@@ -54,7 +54,7 @@ namespace EliteCreaturesReborn.Mutations
             if (_wait <= 0f)
             {
                 _wait = CheckEvery;
-                Guard.Run("FrostAura.Check", Check);
+                Guard.Run("FrostAura.Check", static self => self.Check(), this);
             }
         }
 

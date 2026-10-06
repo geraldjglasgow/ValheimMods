@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
 {
@@ -6,12 +7,20 @@ namespace EliteCreaturesReborn.Mutations
     /// Counts the live members of each Splintering cascade, keyed by the cascade's root. Only consulted when the
     /// (off-by-default) live-descendant cap is on, to decide whether a further split is truncated. Counts are kept
     /// on the owner where splits happen; a miscount only ever loosens or tightens the cap by a few, never crashes.
+    /// <para>
+    /// A copy is counted by the machine that spawned it, through a <see cref="DescendantMark"/> riding the copy there, and
+    /// counted out exactly once: when it dies on this machine, or else when it leaves this machine any other way -
+    /// despawned, unloaded with its zone, or taken down when the world is left - so no entry outlives the copies it
+    /// counts. A copy that dies on another machine (it changed owner) is counted out here as it unloads; its new owner
+    /// never counted it, so its death there takes nothing off that machine's counts. Leaving the world clears it all.
+    /// </para>
     /// </summary>
     public static class DescendantRegistry
     {
         private static readonly Dictionary<string, int> Counts = new Dictionary<string, int>();
 
-        public static void Register(string root)
+        /// <summary>Counts a copy this machine just spawned into its cascade, until it dies or goes.</summary>
+        public static void Register(string root, GameObject copy)
         {
             if (string.IsNullOrEmpty(root))
             {
@@ -19,6 +28,17 @@ namespace EliteCreaturesReborn.Mutations
             }
             Counts.TryGetValue(root, out int count);
             Counts[root] = count + 1;
+            copy.AddComponent<DescendantMark>().Root = root;
+        }
+
+        /// <summary>A creature died here: if this machine counted it, it is counted out now rather than as it goes.</summary>
+        public static void Died(Character? creature)
+        {
+            DescendantMark? mark = creature is not null ? creature.GetComponent<DescendantMark>() : null;
+            if (mark != null)
+            {
+                mark.Release();
+            }
         }
 
         public static void Unregister(string root)
@@ -46,5 +66,26 @@ namespace EliteCreaturesReborn.Mutations
             Counts.TryGetValue(root, out int count);
             return count;
         }
+
+        /// <summary>The world is being left: every count goes with it.</summary>
+        public static void Clear() => Counts.Clear();
+    }
+
+    /// <summary>
+    /// Rides a Splintering copy on the machine that spawned and counted it, and counts it out of its cascade once:
+    /// at its death there, or when it is destroyed here any other way (despawned, unloaded, the world left).
+    /// </summary>
+    internal sealed class DescendantMark : MonoBehaviour
+    {
+        public string Root = "";
+
+        public void Release()
+        {
+            string root = Root;
+            Root = "";
+            DescendantRegistry.Unregister(root);
+        }
+
+        private void OnDestroy() => Release();
     }
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.20.0
+
+- Boss stars add only trophies; other boss drops are no longer multiplied. Remove `drops` under `bosses: star power:`.
+- Nightfall tornadoes come every 18-28 s, was 10-20 (new rule files; edit `every` in yours).
+- Thieving: an item the creature cannot keep comes back to you.
+- Devouring's `player threshold` uses the toughest player nearby, also on dedicated servers.
+- Death recap: `Video frames per second` defaults to 10, was 15.
+- Fixed: `dungeon loot` refilled dungeon chests that still had items in them.
+- Less lag in busy fights and on busy servers.
+- Update the server and every client together.
+
 ## 3.19.0
 
 - Boss hints: when Bonemass, Moder, Yagluth or the Elder dies, players nearby are pointed to the Bog Witch, the ancient forge, Haldor or Hildir (`Boss hints`).

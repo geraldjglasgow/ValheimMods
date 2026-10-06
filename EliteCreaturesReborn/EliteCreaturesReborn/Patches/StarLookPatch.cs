@@ -1,5 +1,7 @@
+using System;
 using EliteCreaturesReborn.Visuals;
 using HarmonyLib;
+using PatchGuard;
 
 namespace EliteCreaturesReborn.Patches
 {
@@ -14,7 +16,14 @@ namespace EliteCreaturesReborn.Patches
         private static void Postfix(LevelEffects __instance, ref float hue, ref float saturation, ref float value)
         {
             LevelEffects.LevelSetup? setup = null;
-            SafeCall.Run("LevelEffects.GetColorChanges (star look)", () => setup = StarLook.SetupFor(__instance));
+            try
+            {
+                setup = StarLook.SetupFor(__instance);
+            }
+            catch (Exception e)
+            {
+                Guard.Report(e, "LevelEffects.GetColorChanges (star look)");
+            }
             if (setup != null)
             {
                 hue = setup.m_hue;
@@ -32,7 +41,8 @@ namespace EliteCreaturesReborn.Patches
     public static class StarCorpseMadePatch
     {
         private static void Postfix(Character __instance, Ragdoll ragdoll) =>
-            SafeCall.Run("Character.OnRagdollCreated (star look)", () => StarCorpse.Made(__instance, ragdoll));
+            SafeCall.Run("Character.OnRagdollCreated (star look)", static (dying, body) => StarCorpse.Made(dying, body), __instance,
+                ragdoll);
     }
 
     /// <summary>The owner, as a humanoid creature makes its ragdoll: as <see cref="StarCorpseMadePatch"/>.</summary>
@@ -40,7 +50,8 @@ namespace EliteCreaturesReborn.Patches
     public static class StarCorpseMadeHumanoidPatch
     {
         private static void Postfix(Humanoid __instance, Ragdoll ragdoll) =>
-            SafeCall.Run("Humanoid.OnRagdollCreated (star look)", () => StarCorpse.Made(__instance, ragdoll));
+            SafeCall.Run("Humanoid.OnRagdollCreated (star look)", static (dying, body) => StarCorpse.Made(dying, body), __instance,
+                ragdoll);
     }
 
     /// <summary>Every machine, as any ragdoll wakes: one recorded as a starred creature's corpse takes its look.</summary>
@@ -48,6 +59,6 @@ namespace EliteCreaturesReborn.Patches
     public static class StarCorpseWakePatch
     {
         private static void Postfix(Ragdoll __instance) =>
-            SafeCall.Run("Ragdoll.Awake (star look)", () => StarCorpse.Wake(__instance));
+            SafeCall.Run("Ragdoll.Awake (star look)", static body => StarCorpse.Wake(body), __instance);
     }
 }

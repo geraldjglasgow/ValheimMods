@@ -15,6 +15,9 @@ namespace EliteCreaturesReborn.Config
 
         private static readonly ConfigEntry<string>[] Colors = new ConfigEntry<string>[MutationCatalog.InOrder.Length];
 
+        /// <summary>Counts edits to any colour, so text drawn with the palette and kept knows when to draw again.</summary>
+        public static int Version { get; private set; }
+
         public static void Bind(ConfigFile config)
         {
             foreach (Mutation mutation in MutationCatalog.InOrder)
@@ -22,6 +25,7 @@ namespace EliteCreaturesReborn.Config
                 string key = $"{MutationCatalog.Word(mutation)} star colour";
                 Colors[(int)mutation] = config.Bind(Section, key, MutationCatalog.DefaultColorHex(mutation),
                     $"Colour of a star carrying the {MutationCatalog.Word(mutation)} mutation. Client side.");
+                Colors[(int)mutation].SettingChanged += (_, _) => Version++;
             }
         }
 

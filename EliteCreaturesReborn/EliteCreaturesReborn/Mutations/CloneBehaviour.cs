@@ -34,7 +34,6 @@ namespace EliteCreaturesReborn.Mutations
         private BaseAI? _ai;
         private readonly CloneVeil _veil = new CloneVeil();
         private CloakBehaviour? _cloak;
-        private System.Action? _step;
         private bool _headless;
         private bool _spent;
         private float _senseTimer;
@@ -60,9 +59,12 @@ namespace EliteCreaturesReborn.Mutations
             _cloak = GetComponent<CloakBehaviour>();
             _headless = BlinkEffects.Headless();
             _controller.View.Register(HitRpc, OnHit); // on every machine: whichever owns it then is the one that acts
+            PlateVeils.Join(_character, this); // its nameplate hides while its body does
         }
 
-        private void Update() => Guard.Run("CloneBehaviour.Update", _step ??= Step);
+        private void OnDestroy() => PlateVeils.Leave(_character, this);
+
+        private void Update() => Guard.Run("CloneBehaviour.Update", static self => self.Step(), this);
 
         // The owner decides first, so on its own screen the body hides in the very frame the decoy appears.
         private void Step()
@@ -161,16 +163,22 @@ namespace EliteCreaturesReborn.Mutations
         {
             ZDOID decoy = CloneSpawner.Make(_controller, target);
             CloneStore.Begin(zdo, decoy);
-            Log.Diag(decoy != ZDOID.None
-                ? $"{name} hides behind a decoy from {target.GetPlayerName()} ({CloneStore.Done(zdo)} of {Times()})"
-                : $"{name}: its decoy could not be made; the trick is spent");
+            if (Log.Diagnostics)
+            {
+                Log.Diag(decoy != ZDOID.None
+                    ? $"{name} hides behind a decoy from {target.GetPlayerName()} ({CloneStore.Done(zdo)} of {Times()})"
+                    : $"{name}: its decoy could not be made; the trick is spent");
+            }
         }
 
         /// <summary>Owner: it shows itself. Its decoy, finding it no longer hides, leaves in a puff on its own owner.</summary>
         private void End(ZDO zdo)
         {
             CloneStore.End(zdo);
-            Log.Diag($"{name} shows itself");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{name} shows itself");
+            }
         }
 
         private void OnHit(long sender) => Guard.Run("CloneBehaviour.Hit", () =>

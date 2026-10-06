@@ -65,7 +65,10 @@ namespace EliteCreaturesReborn.Aspects
             Character? target = Target();
             if (target == null || !PortalSpots.TryFind(target.GetCenterPoint(), PortalSettings.Read(), out Vector3 spot))
             {
-                Log.Diag($"{_boss.name}: Portalbound found no clear spot; the throw comes from its hand");
+                if (Log.Diagnostics)
+                {
+                    Log.Diag($"{_boss.name}: Portalbound found no clear spot; the throw comes from its hand");
+                }
                 return;
             }
             Open(attack, target, spot);
@@ -89,7 +92,10 @@ namespace EliteCreaturesReborn.Aspects
             _released = false;
             long now = NetTime.NowMs();
             PortalStore.Open(_controller.View.GetZDO(), now, spot, _aim, now + Ms(MaxWindup + Stream(attack) + Linger));
-            Log.Diag($"{_boss.name}: Portalbound opens a portal at {spot} for {target.name}");
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{_boss.name}: Portalbound opens a portal at {spot} for {target.name}");
+            }
         }
 
         /// <summary>

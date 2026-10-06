@@ -14,6 +14,8 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     public static class MealStore
     {
+        private static readonly int DevouredMealsHash = TraitKeys.DevouredMeals.GetStableHashCode();
+
         private const int Width = 4;
 
         /// <summary>How many creatures it has devoured; 0 for a creature that never has, or one with no ZDO.</summary>
@@ -46,7 +48,7 @@ namespace EliteCreaturesReborn.Mutations
         }
 
         private static byte[] Bytes(ZDO? zdo) =>
-            zdo != null && zdo.GetByteArray(TraitKeys.DevouredMeals, out byte[] bytes) && bytes != null
+            zdo != null && zdo.GetByteArray(DevouredMealsHash, out byte[] bytes) && bytes != null
                 ? bytes : System.Array.Empty<byte>();
     }
 }

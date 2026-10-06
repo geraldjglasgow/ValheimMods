@@ -9,11 +9,8 @@ namespace EliteCreaturesReborn.Patches
     [HarmonyPatch(typeof(EggGrow), nameof(EggGrow.GetHoverText))]
     public static class EggHoverPatch
     {
-        private static void Postfix(EggGrow __instance, ref string __result)
-        {
-            string current = __result;
-            __result = Guard.Run("EggGrow.GetHoverText traits", () => Append(__instance, current));
-        }
+        private static void Postfix(EggGrow __instance, ref string __result) =>
+            __result = Guard.Run("EggGrow.GetHoverText traits", static (egg, text) => Append(egg, text), __instance, __result);
 
         private static string Append(EggGrow egg, string text)
         {
@@ -37,11 +34,8 @@ namespace EliteCreaturesReborn.Patches
         private static MethodBase? Target() => AccessTools.Method(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip),
             new[] { typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float), typeof(int), typeof(bool) });
 
-        private static void Postfix(ItemDrop.ItemData item, ref string __result)
-        {
-            string current = __result;
-            __result = Guard.Run("ItemData.GetTooltip egg traits", () => Append(item, current));
-        }
+        private static void Postfix(ItemDrop.ItemData item, ref string __result) =>
+            __result = Guard.Run("ItemData.GetTooltip egg traits", static (data, text) => Append(data, text), item, __result);
 
         private static string Append(ItemDrop.ItemData item, string text)
         {

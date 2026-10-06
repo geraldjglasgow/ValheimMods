@@ -24,11 +24,16 @@ namespace EliteCreaturesReborn.Patches
     {
         internal static void Arm(CreatureSpawner spawner)
         {
+            RespawnRules rules = RuleState.Active.Respawn;
+            if (!rules.Camps && !rules.Dungeons)
+            {
+                return; // both off, the default: every spawner is left as the game made it
+            }
             if (spawner == null || spawner.m_respawnTimeMinuts > 0f || !spawner.HasSpawned())
             {
                 return;
             }
-            float minutes = RuleState.Active.Respawn.MinutesFor(InDungeon(spawner));
+            float minutes = rules.MinutesFor(InDungeon(spawner));
             if (minutes > 0f)
             {
                 spawner.m_respawnTimeMinuts = minutes;
@@ -49,7 +54,7 @@ namespace EliteCreaturesReborn.Patches
     public static class SpawnerRespawnPatch
     {
         private static void Postfix(CreatureSpawner __instance) =>
-            Guard.Run("CreatureSpawner.Awake respawn", () => SpawnerRespawn.Arm(__instance));
+            Guard.Run("CreatureSpawner.Awake respawn", static spawner => SpawnerRespawn.Arm(spawner), __instance);
     }
 
     /// <summary>A spawner that has just spawned its first creature is armed for the next one.</summary>
@@ -57,6 +62,6 @@ namespace EliteCreaturesReborn.Patches
     public static class SpawnerFirstSpawnPatch
     {
         private static void Postfix(CreatureSpawner __instance) =>
-            Guard.Run("CreatureSpawner.Spawn respawn", () => SpawnerRespawn.Arm(__instance));
+            Guard.Run("CreatureSpawner.Spawn respawn", static spawner => SpawnerRespawn.Arm(spawner), __instance);
     }
 }

@@ -143,7 +143,7 @@ namespace EliteCreaturesReborn.Mutations
             return light;
         }
 
-        private void Update() => Guard.Run("GildedGlitter.Update", Step);
+        private void Update() => Guard.Run("GildedGlitter.Update", static self => self.Step(), this);
 
         private void Step()
         {
