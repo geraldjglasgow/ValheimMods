@@ -6,7 +6,8 @@ namespace OpenKeep.Shared
 {
     /// <summary>
     /// The feedback of SPEC 9.2. In Full mode, mouse-down on a stack of the open chest's grid sends
-    /// <c>OpenKeep_Touch</c> (slot, player name, on) to the chest's owner, which forwards it to everybody; the
+    /// <c>OpenKeep_Touch</c> (slot, player name, on) to the chest's owner, which forwards it to the players within
+    /// <see cref="ViewRange"/> of the chest (only they can have it open or in view); the
     /// touch ends when the button is up with nothing dragged, when the panel leaves the chest, or after
     /// <c>Touch Seconds</c>. Other clients tint that slot (<c>Touch Colour</c>, <c>Show Touches</c>) and add
     /// "&lt;name&gt; is moving this" to its tooltip until the touch ends or <c>Touch Seconds</c> pass. Feedback
@@ -22,12 +23,16 @@ namespace OpenKeep.Shared
             public float Until;
         }
 
+        /// <summary>Players this close to a chest are sent its touches, metres (the game closes a chest panel at 4 m).</summary>
+        public const float ViewRange = 10f;
+
         private static readonly List<Touch> touches = new List<Touch>();
+        private static readonly List<Player> nearby = new List<Player>();
         private static Container sentContainer;
         private static Vector2i sentSlot;
         private static float sentAt;
 
-        /// <summary>OpenKeep_Touch: the owner forwards a fresh touch to everybody; a forwarded one is shown.</summary>
+        /// <summary>OpenKeep_Touch: the owner forwards a fresh touch to the players nearby; a forwarded one is shown.</summary>
         public static void Receive(Container container, long sender, ZPackage pkg)
         {
             Vector2i slot = pkg.ReadVector2i();
@@ -37,7 +42,7 @@ namespace OpenKeep.Shared
             if (!forwarded)
             {
                 if (container.m_nview.IsOwner())
-                    container.m_nview.InvokeRPC(ZNetView.Everybody, ChestRequests.TouchRpc, Packet(slot, name, on, true));
+                    Forward(container, Packet(slot, name, on, true));
                 return;
             }
             if (Player.m_localPlayer != null && name == Player.m_localPlayer.GetPlayerName())
@@ -45,6 +50,20 @@ namespace OpenKeep.Shared
             touches.RemoveAll(touch => touch.Container == container && touch.Slot == slot);
             if (on)
                 touches.Add(new Touch { Container = container, Slot = slot, Name = name, Until = Time.time + SharedSettings.TouchSeconds.Value });
+        }
+
+        /// <summary>To the machine of every player near the chest, the owner's own included.</summary>
+        private static void Forward(Container container, ZPackage pkg)
+        {
+            nearby.Clear();
+            Player.GetPlayersInRange(container.transform.position, ViewRange, nearby);
+            foreach (Player player in nearby)
+            {
+                ZDO zdo = player.m_nview != null && player.m_nview.IsValid() ? player.m_nview.GetZDO() : null;
+                if (zdo != null && zdo.HasOwner())
+                    container.m_nview.InvokeRPC(zdo.GetOwner(), ChestRequests.TouchRpc, pkg);
+            }
+            nearby.Clear();
         }
 
         private static ZPackage Packet(Vector2i slot, string name, bool on, bool forwarded)

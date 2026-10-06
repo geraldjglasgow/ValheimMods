@@ -20,6 +20,8 @@ namespace OpenKeep.Blueprints.Sites
         public static string FreeBuild { get; private set; }
         public static string Placed { get; private set; }
         public static string Delivered { get; private set; }
+        public static string NotDelivered { get; private set; }
+        public static string NoAnswer { get; private set; }
         public static string NothingToGive { get; private set; }
         public static string NothingNeeded { get; private set; }
         public static string NotYours { get; private set; }
@@ -47,6 +49,8 @@ namespace OpenKeep.Blueprints.Sites
         {
             Placed = Language.Add("ok_site_placed", "Construction site $1 placed: hand it the materials (E on its post)");
             Delivered = Language.Add("ok_site_delivered", "Handed over: $1");
+            NotDelivered = Language.Add("ok_site_notdelivered", "The site did not take the materials; they are back with you");
+            NoAnswer = Language.Add("ok_site_noanswer", "The site did not answer yet; the materials come back if it never takes them");
             NothingToGive = Language.Add("ok_site_nothingtogive", "You carry nothing this site still needs");
             NothingNeeded = Language.Add("ok_site_nothingneeded", "This site has everything it needs");
             NotYours = Language.Add("ok_site_notyours", "Only $1 or an admin can take this site down");

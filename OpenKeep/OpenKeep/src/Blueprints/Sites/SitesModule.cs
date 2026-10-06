@@ -18,6 +18,7 @@ namespace OpenKeep.Blueprints.Sites
             SiteHooks.MarkerCreated += SiteTakeDown.Register;
             SiteHooks.OnUpdate("OpenKeep site ghosts", SiteGhost.TickAll);
             SiteHooks.OnUpdate("OpenKeep site builder", SiteBuilder.Tick);
+            SiteHooks.OnUpdate("OpenKeep site deliveries", SiteDeliveries.CheckTimeouts);
         }
     }
 }

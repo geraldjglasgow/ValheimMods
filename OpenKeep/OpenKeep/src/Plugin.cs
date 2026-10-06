@@ -35,7 +35,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "2.2.1";
+        public const string PluginVersion = "2.3.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -87,10 +87,6 @@ namespace OpenKeep
 
         /// <summary>Links that need every other plugin loaded first.</summary>
         private void Start() => EpicLootLink.Register();
-
-        private void Update() => Synced.YamlEditor.Update();
-
-        private void OnGUI() => Synced.YamlEditor.OnGUI();
 
         /// <summary>Applies every patch class on its own so one failure is logged and the others still apply.</summary>
         private static int PatchEverything(Harmony harmony)

@@ -8,7 +8,8 @@ namespace OpenKeep.Reach
     /// Moves items from the reachable containers into the player's inventory (the Pull modifier and the unit a
     /// station borrows). Only as much as fits is moved; a stack is removed from its container first and added to
     /// the inventory with the game's <c>AddItem</c>, and whatever that did not place goes straight back into the
-    /// container, so an item is never in two places and never nowhere.
+    /// container, so an item is never in two places and never nowhere. A unit put back goes into the container before
+    /// it leaves the inventory. Each container is held while it changes (<see cref="SaveHolds"/>), so it is written once.
     /// </summary>
     public static class ReachPull
     {
@@ -20,9 +21,10 @@ namespace OpenKeep.Reach
             {
                 if (moved >= amount)
                     break;
-                if (ReachCount.FirstIn(container, wanted) == null || !ContainerScan.Claim(container))
+                if (ReachCount.FirstIn(container, wanted) == null)
                     continue;
-                moved += MoveFrom(container, inventory, wanted, amount - moved);
+                using (SaveHolds.Hold(container))
+                    moved += ContainerScan.Claim(container) ? MoveFrom(container, inventory, wanted, amount - moved) : 0;
             }
             return moved;
         }
@@ -86,14 +88,30 @@ namespace OpenKeep.Reach
             unit.m_equipped = false;
             foreach (Container container in HoldersFirst(ReachCount.Containers(), name))
             {
-                if (!ReachRules.RuleFor(container).Accepts(unit) || !container.GetInventory().CanAddItem(unit, 1) || !ContainerScan.Claim(container))
+                if (!ReachRules.RuleFor(container).Accepts(unit) || !container.GetInventory().CanAddItem(unit, 1))
                     continue;
-                if (!inventory.RemoveItem(item, 1) || !container.GetInventory().AddItem(unit))
-                    continue;
-                ContainerScan.Save(container);
-                return true;
+                using (SaveHolds.Hold(container))
+                {
+                    if (ContainerScan.Claim(container) && StoreOne(container, inventory, item, unit))
+                        return true;
+                }
             }
             return false;
+        }
+
+        /// <summary>The unit goes into the container first and leaves the inventory only once it is there (else it comes out again).</summary>
+        private static bool StoreOne(Container container, Inventory inventory, ItemDrop.ItemData item, ItemDrop.ItemData unit)
+        {
+            Inventory chest = container.GetInventory();
+            if (!chest.CanAddItem(unit, 1) || !chest.AddItem(unit))
+                return false;
+            if (!inventory.RemoveItem(item, 1))
+            {
+                chest.RemoveItem(unit.m_shared.m_name, 1, unit.m_quality, false);
+                return false;
+            }
+            ContainerScan.Save(container);
+            return true;
         }
 
         /// <summary>The containers holding the item first, then the others, each in the order given (nearest first).</summary>

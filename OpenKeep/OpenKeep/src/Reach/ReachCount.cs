@@ -47,8 +47,16 @@ namespace OpenKeep.Reach
         public static int CountMatching(Func<ItemDrop.ItemData, bool> accepts)
         {
             int sum = 0;
+            int worldLevel = Game.m_worldLevel;
             foreach (Container container in Containers())
-                sum += CountIn(container, item => item.m_worldLevel >= Game.m_worldLevel && accepts(item));
+            {
+                ContainerRule rule = ReachRules.RuleFor(container);
+                foreach (ItemDrop.ItemData item in container.GetInventory().GetAllItems())
+                {
+                    if (item.m_worldLevel >= worldLevel && accepts(item) && rule.Accepts(item))
+                        sum += item.m_stack;
+                }
+            }
             return sum;
         }
 

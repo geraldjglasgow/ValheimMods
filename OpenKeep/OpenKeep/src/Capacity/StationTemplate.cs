@@ -38,7 +38,7 @@ namespace OpenKeep.Capacity
         private static string Normalize(string text) => text.TrimStart('﻿').Replace("\r\n", "\n").TrimEnd();
 
         /// <summary>The template up to and including the stations: line, then one commented line per prefab.</summary>
-        public static string Generate(string template, Dictionary<string, Smelter> prefabs)
+        public static string Generate(string template, IReadOnlyDictionary<string, Smelter> prefabs)
         {
             StringBuilder text = new StringBuilder();
             foreach (string line in Normalize(template).Split('\n'))

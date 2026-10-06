@@ -1,14 +1,12 @@
-using HarmonyLib;
 using OpenKeep.Core;
 
 namespace OpenKeep.Reach
 {
     /// <summary>Polls the Toggle Key and the Link Key once per frame for the local player (<c>Player.Update</c>).</summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.Update))]
     public static class ReachKeys
     {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance)
+        /// <summary>After the local player's update (<see cref="PlayerUpdatePatch"/>).</summary>
+        public static void Tick(Player __instance)
         {
             if (__instance != Player.m_localPlayer || !ReachSettings.Enabled.Value)
                 return;

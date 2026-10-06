@@ -11,7 +11,9 @@ namespace OpenKeep.Stow
     /// stacks move per look, so a big junk chest empties over a few looks rather than in one frame. Items move only
     /// between chests this client owns, with the game's own inventory methods, so no other client ever writes the same
     /// chest at once; when the nearest home belongs to another client it is asked to hand that chest over
-    /// (<see cref="TidyHandOver"/>) and the item waits for the next look.
+    /// (<see cref="HandOver"/>, only when the home has room for the item) and the item waits for the next look. Both
+    /// chests are held while stacks move (<see cref="SaveHolds"/>), so each is written once per home. The memory is
+    /// written last and the chest's own read marker moved past it, so the owner does not read its whole inventory back.
     /// </summary>
     internal static class TidySweep
     {
@@ -38,8 +40,20 @@ namespace OpenKeep.Stow
             TidyHands.Clear(source);
             moved = Strays(source, memory, TidyProfiles.Build(source, memory), ref waiting);
             if (changed || moved > 0)
-                memory.Write(zdo);
+                WriteMemory(source, zdo, memory);
             return true;
+        }
+
+        /// <summary>
+        /// Writes the memory into the ZDO. The inventory there is unchanged by it, so when the chest had read (or saved)
+        /// the ZDO's latest data before, its read marker moves along and the game does not load the same items again.
+        /// </summary>
+        private static void WriteMemory(Container source, ZDO zdo, TidyMemory memory)
+        {
+            uint before = zdo.DataRevision;
+            memory.Write(zdo);
+            if (source.m_nview.IsOwner() && source.m_lastRevision == before)
+                source.m_lastRevision = zdo.DataRevision;
         }
 
         /// <summary>Sends each stray prefab the chest holds to its homes until the stack budget is spent.</summary>
@@ -84,7 +98,7 @@ namespace OpenKeep.Stow
                     continue;
                 if (!home.m_nview.IsOwner())
                 {
-                    if (TidyHandOver.Ask(home))
+                    if (HasRoom(source, home, prefab) && HandOver.Ask(home, HandOver.BackgroundSeconds))
                         TidySchedule.Soon(source);
                     waiting = true;
                     return moved;
@@ -99,15 +113,42 @@ namespace OpenKeep.Stow
             return moved;
         }
 
+        /// <summary>The home (in our copy) has room for a unit of the prefab's first stack in the source: worth asking for.</summary>
+        private static bool HasRoom(Container source, Container home, string prefab)
+        {
+            foreach (ItemDrop.ItemData item in source.GetInventory().GetAllItems())
+            {
+                if (ItemNames.PrefabName(item) == prefab)
+                    return home.GetInventory().CanAddItem(item, 1);
+            }
+            return false;
+        }
+
         /// <summary>
         /// Moves the prefab's stacks into the home until one does not fully go (home full or refusing it, or the budget
-        /// spent); <paramref name="left"/> then tells the caller to try the next home with the rest.
+        /// spent); <paramref name="left"/> then tells the caller to try the next home with the rest. Both chests are held,
+        /// and their single saves happen while <see cref="Moving"/> is still set.
         /// </summary>
         private static int MoveStacks(Container source, Container home, string prefab, int budget, out bool left)
         {
             left = true;
-            if (budget <= 0 || !ContainerScan.Claim(home))
+            if (budget <= 0 || !ContainerScan.Claim(home, HandOver.BackgroundSeconds))
                 return 0;
+            Moving = true;
+            try
+            {
+                using (SaveHolds.Hold(source))
+                using (SaveHolds.Hold(home))
+                    return MoveHeld(source, home, prefab, budget, out left);
+            }
+            finally
+            {
+                Moving = false;
+            }
+        }
+
+        private static int MoveHeld(Container source, Container home, string prefab, int budget, out bool left)
+        {
             int stacks = 0;
             left = false;
             foreach (ItemDrop.ItemData item in new List<ItemDrop.ItemData>(source.GetInventory().GetAllItems()))
@@ -132,31 +173,16 @@ namespace OpenKeep.Stow
         {
             if (StowRules.Refuses(home, item))
                 return 0;
-            Moving = true;
-            try
-            {
-                return ChestOps.Transfer(source.GetInventory(), item, item.m_stack, home.GetInventory(), ChestOps.NoSlot);
-            }
-            finally
-            {
-                Moving = false;
-            }
+            return ChestOps.Transfer(source.GetInventory(), item, item.m_stack, home.GetInventory(), ChestOps.NoSlot);
         }
 
+        /// <summary>Marks both chests changed; the holds write each once when they end.</summary>
         private static void Saved(Container source, Container home, int stacks)
         {
             if (stacks <= 0)
                 return;
-            Moving = true;
-            try
-            {
-                ContainerScan.Save(source);
-                ContainerScan.Save(home);
-            }
-            finally
-            {
-                Moving = false;
-            }
+            ContainerScan.Save(source);
+            ContainerScan.Save(home);
             Plugin.Log.LogDebug($"OpenKeep: tidy moved {stacks} stacks from {ContainerScan.PrefabName(source)} to {ContainerScan.PrefabName(home)}");
         }
     }

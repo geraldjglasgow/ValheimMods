@@ -8,7 +8,7 @@ namespace OpenKeep.Blueprints
     /// What the Blueprints tab of the game's hammer shows (<see cref="View"/>): the tools first (Fix ground, the Site
     /// planner, Copy building, the Construction ghosts switch), then the blueprints of the folder shown; the folders themselves are on the folder panel
     /// and the breadcrumb (<see cref="Tab.FolderPanel"/>, <see cref="Tab.Breadcrumb"/>).
-    /// Every frame it checks the switch, the folder and its files; when one changed the entries go into the hammer's
+    /// Every frame it checks the switch and the folder, and the folder's files while the tab is shown; when one changed the entries go into the hammer's
     /// build table (<see cref="HammerTable"/>), the local player knows them at once without the game's "new piece"
     /// message, and the entry the player chose stays selected (<see cref="BlueprintSelection"/>; a chosen blueprint is
     /// kept in the table though another folder is shown). Off, the table holds none of them.
@@ -22,7 +22,7 @@ namespace OpenKeep.Blueprints
         public static IReadOnlyList<GameObject> View => view;
 
         /// <summary>The piece is one of the tab's blueprint entries.</summary>
-        public static bool Owns(Piece piece) => Named(piece).StartsWith(BlueprintEntries.BlueprintPrefix);
+        public static bool Owns(Piece piece) => Named(piece) == BlueprintEntries.BlueprintPrefix;
 
         /// <summary>The piece is the tab's Fix ground entry.</summary>
         public static bool IsFix(Piece piece) => Named(piece) == BlueprintEntries.FixName;
@@ -37,7 +37,7 @@ namespace OpenKeep.Blueprints
         public static bool IsGhosts(Piece piece) => Named(piece) == BlueprintEntries.GhostsName;
 
         /// <summary>Any of the tab's entries (never a real building piece).</summary>
-        public static bool IsOurs(Piece piece) => Owns(piece) || IsFix(piece) || IsPlanner(piece) || IsCopy(piece) || IsGhosts(piece);
+        public static bool IsOurs(Piece piece) => Named(piece).Length > 0;
 
         /// <summary>The blueprint path of a blueprint entry ("houses/barn"), or null for any other piece.</summary>
         public static string NameOf(Piece piece) => Owns(piece) ? BlueprintEntries.PathOf(piece) : null;
@@ -46,7 +46,8 @@ namespace OpenKeep.Blueprints
         public static bool InHand(Player player) =>
             BlueprintSettings.Enabled && player != null && player.InPlaceMode() && IsOurs(player.GetSelectedPiece());
 
-        private static string Named(Piece piece) => piece != null ? Utils.GetPrefabName(piece.gameObject) : "";
+        /// <summary>The entry kind (<see cref="BlueprintEntries.KindOf"/>): a lookup by object, never a prefab name read.</summary>
+        private static string Named(Piece piece) => BlueprintEntries.KindOf(piece);
 
         /// <summary>A blueprint or folder was renamed or moved: a selected blueprint inside it stays selected under its new path.</summary>
         public static void Moved(string from, string to)
@@ -66,7 +67,7 @@ namespace OpenKeep.Blueprints
             Player player = Player.m_localPlayer;
             BlueprintSelection.Track(player, table);
             bool on = BlueprintSettings.Enabled;
-            if (on)
+            if (on && BlueprintTab.Showing)
                 BlueprintLibrary.Names();
             var now = (on, BlueprintLibrary.CurrentFolder, BlueprintLibrary.Version, player, table);
             if (now.Equals(shown) && HammerTable.Intact(table))

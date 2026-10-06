@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using OpenKeep.Core;
 using UnityEngine;
 
@@ -18,15 +19,29 @@ namespace OpenKeep.Stow
         /// <summary>A chest that holds the item ranks this far ahead of one that only accepts it, whatever the distances.</summary>
         private const float HolderLead = 100000f;
 
-        /// <summary>True when no other pickup chest in reach of the drop ranks before <paramref name="container"/> and can take it now.</summary>
-        public static bool IsFirst(Container container, ItemDrop drop)
+        /// <summary>
+        /// The other usable pickup chests that could reach a drop this chest reaches: within twice the pickup range of
+        /// it. Found once per sweep; <see cref="IsFirst"/> narrows them to the ones in range of each drop.
+        /// </summary>
+        public static List<Container> Rivals(Container container, float range)
+        {
+            List<Container> rivals = ContainerScan.Nearby(container.transform.position, range * 2f, ContainerUse.Stow);
+            rivals.RemoveAll(rival => rival == container || !StowRules.PicksUp(rival));
+            return rivals;
+        }
+
+        /// <summary>True when no rival in reach of the drop ranks before <paramref name="container"/> and can take it now.</summary>
+        public static bool IsFirst(Container container, ItemDrop drop, List<Container> rivals, float range)
         {
             ItemDrop.ItemData item = drop.m_itemData;
             Vector3 at = drop.transform.position;
             float rank = Rank(container, item, at);
-            foreach (Container rival in ContainerScan.Nearby(at, StowSettings.PickupRange.Value, ContainerUse.Stow))
+            float reach = range * range;
+            foreach (Container rival in rivals)
             {
-                if (rival != container && Rank(rival, item, at) < rank && TakesNow(rival, item))
+                if (rival == null || (rival.transform.position - at).sqrMagnitude > reach)
+                    continue;
+                if (Rank(rival, item, at) < rank && TakesNow(rival, item))
                     return false;
             }
             return true;

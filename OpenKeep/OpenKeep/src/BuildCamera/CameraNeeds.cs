@@ -30,6 +30,10 @@ namespace OpenKeep.BuildCamera
             return string.Join(", ", parts);
         }
 
+        /// <summary>Everything <see cref="Describe"/> reads, folded into one number: the line changes only when this does.</summary>
+        public static int Key(Player player, ConfigEntry<bool> resting, ConfigEntry<int> comfort) =>
+            (MissesResting(player, resting) ? 1 : 0) | (player.GetComfortLevel() & 0xfff) << 1 | (comfort.Value & 0xfff) << 13;
+
         private static bool MissesResting(Player player, ConfigEntry<bool> resting)
         {
             return resting.Value && !player.GetSEMan().HaveStatusEffect(SEMan.s_statusEffectResting);

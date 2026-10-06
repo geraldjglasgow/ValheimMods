@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
-using HarmonyLib;
+using OpenKeep.Core;
 using UnityEngine;
 
 namespace OpenKeep.Stow
@@ -14,7 +14,6 @@ namespace OpenKeep.Stow
     /// <c>CheckForChanges</c> of every container; at most one look per frame, and a chest looks at most once every
     /// <see cref="MinGap"/> seconds. Looks are timed; <see cref="Stats"/> reports them for <c>openkeep tidy</c>.
     /// </summary>
-    [HarmonyPatch(typeof(Container), nameof(Container.CheckForChanges))]
     public static class TidySchedule
     {
         private const float ChangeDelay = 3f;
@@ -31,6 +30,7 @@ namespace OpenKeep.Stow
 
         private static readonly Dictionary<Container, State> states = new Dictionary<Container, State>();
         private static readonly HashSet<Container> waiting = new HashSet<Container>();
+        private static readonly PruneMark pruneMark = new PruneMark(512);
         private static int lastFrame = -1;
 
         public static int Looks { get; private set; }
@@ -38,14 +38,8 @@ namespace OpenKeep.Stow
         public static double TotalMs { get; private set; }
         public static double SlowestMs { get; private set; }
 
-        [HarmonyPrefix]
-        public static void Prefix(Container __instance, out uint __state)
-        {
-            __state = __instance.m_lastRevision;
-        }
-
-        [HarmonyPostfix]
-        public static void Postfix(Container __instance, uint __state)
+        /// <summary>After the container's <c>CheckForChanges</c> (<see cref="ContainerTickPatch"/>); <paramref name="__state"/> is the revision it had loaded before.</summary>
+        public static void Tick(Container __instance, uint __state)
         {
             ZNetView view = __instance.m_nview;
             if (!On || view == null || !view.IsValid())
@@ -56,8 +50,10 @@ namespace OpenKeep.Stow
                     Wake(__instance.transform.position);
                 return;
             }
+            if (Player.m_localPlayer == null || ZNet.instance == null)
+                return;
             State state = StateOf(__instance);
-            if (Time.time < state.Next || Time.frameCount == lastFrame || Player.m_localPlayer == null || ZNet.instance == null)
+            if (Time.time < state.Next || Time.frameCount == lastFrame)
                 return;
             lastFrame = Time.frameCount;
             Look(__instance, state);
@@ -89,12 +85,12 @@ namespace OpenKeep.Stow
         private static void Look(Container chest, State state)
         {
             state.Next = float.MaxValue;
-            Stopwatch watch = Stopwatch.StartNew();
+            long start = Stopwatch.GetTimestamp();
             bool looked = TidySweep.Run(chest, out int moved, out bool strays);
-            watch.Stop();
+            double ms = (Stopwatch.GetTimestamp() - start) * 1000.0 / Stopwatch.Frequency;
             state.LastLook = Time.time;
             if (looked)
-                Count(watch.Elapsed.TotalMilliseconds, moved);
+                Count(ms, moved);
             float again = Again(chest, state, looked, moved, strays);
             if (again < state.Next)
                 state.Next = again;
@@ -146,7 +142,7 @@ namespace OpenKeep.Stow
         {
             if (states.TryGetValue(chest, out State state))
                 return state;
-            if (states.Count > 512)
+            if (pruneMark.Due(states.Count))
                 Prune();
             state = new State { Next = Time.time + FirstSpread * ((chest.GetInstanceID() & 0xFF) / 256f) };
             states[chest] = state;
@@ -162,6 +158,7 @@ namespace OpenKeep.Stow
                     gone.Add(key);
             }
             gone.ForEach(key => states.Remove(key));
+            pruneMark.Pruned(states.Count);
         }
     }
 }

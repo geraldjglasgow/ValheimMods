@@ -100,8 +100,8 @@ namespace OpenKeep.Stow
             {
                 ChestBatch batch = new ChestBatch(targets[i], StowWords.MovedTo);
                 List<Container> later = batch.Shared ? targets.GetRange(i + 1, targets.Count - i - 1) : null;
-                foreach (ItemDrop.ItemData item in Candidates(player, targets[i], onlyHeld))
-                    batch.Put(item, item.m_stack, 1, later != null && later.Count > 0 ? () => SpillOver(player, item, later) : (Action)null);
+                using (SaveHolds.Hold(targets[i]))
+                    PutAll(player, targets[i], onlyHeld, batch, later);
                 batch.Finish();
                 if (batch.Waiting)
                     waiting = true;
@@ -109,6 +109,13 @@ namespace OpenKeep.Stow
                     stacks += batch.Moved;
             }
             StackMover.ReportAction(stacks, waiting);
+        }
+
+        /// <summary>Every candidate stack into one target, the chest written once at the end (<see cref="SaveHolds"/>).</summary>
+        private static void PutAll(Player player, Container target, bool onlyHeld, ChestBatch batch, List<Container> later)
+        {
+            foreach (ItemDrop.ItemData item in Candidates(player, target, onlyHeld))
+                batch.Put(item, item.m_stack, 1, later != null && later.Count > 0 ? () => SpillOver(player, item, later) : (Action)null);
         }
 
         /// <summary>

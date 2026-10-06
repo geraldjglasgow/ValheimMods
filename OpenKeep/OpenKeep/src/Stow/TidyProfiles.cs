@@ -10,7 +10,8 @@ namespace OpenKeep.Stow
     /// depend on changed: the ZDO's data revision (contents or memory written), the revision the inventory was loaded
     /// at, the stow rules, the learned themes and, because settling and fading go on with the clock, at most
     /// <see cref="MaxAge"/> seconds (settling takes a day, fading days). A profile is scored only when a look asks for
-    /// it. So a base of quiet chests costs a dictionary lookup per neighbour, not a walk.
+    /// it, and the memory is read again only when the ZDO changed. So a base of quiet chests costs a dictionary lookup
+    /// per neighbour, not a walk.
     /// </summary>
     internal static class TidyProfiles
     {
@@ -32,6 +33,7 @@ namespace OpenKeep.Stow
         }
 
         private static readonly Dictionary<Container, Kept> kept = new Dictionary<Container, Kept>();
+        private static readonly PruneMark pruneMark = new PruneMark(256);
 
         /// <summary>World time now, in seconds; the clock every chest memory is written in.</summary>
         public static double Now => ZNet.instance != null ? ZNet.instance.GetTimeSeconds() : 0.0;
@@ -70,11 +72,19 @@ namespace OpenKeep.Stow
             return held;
         }
 
+        /// <summary>
+        /// The kept entry: the memory is read again only when the ZDO changed; a profile that only went stale (age, the
+        /// inventory loaded again, rules or themes) is scored again from the memory in hand.
+        /// </summary>
         private static Kept Get(Container container)
         {
             ZDO zdo = container.m_nview.GetZDO();
-            if (kept.TryGetValue(container, out Kept entry) && Fresh(entry, container, zdo))
+            if (kept.TryGetValue(container, out Kept entry) && entry.DataRevision == zdo.DataRevision)
+            {
+                if (!Fresh(entry, container))
+                    Rescore(entry, container);
                 return entry;
+            }
             TidyMemory memory = TidyMemory.Read(zdo);
             entry = new Kept
             {
@@ -86,15 +96,24 @@ namespace OpenKeep.Stow
                 Memory = memory,
                 Chest = container,
             };
-            if (kept.Count > 256)
+            if (pruneMark.Due(kept.Count))
                 Prune();
             kept[container] = entry;
             return entry;
         }
 
-        private static bool Fresh(Kept entry, Container container, ZDO zdo) =>
-            entry.DataRevision == zdo.DataRevision && entry.LoadedRevision == container.m_lastRevision && entry.Themes == TidyThemes.Version
+        private static bool Fresh(Kept entry, Container container) =>
+            entry.LoadedRevision == container.m_lastRevision && entry.Themes == TidyThemes.Version
             && ReferenceEquals(entry.Groups, StowRules.Groups) && Time.time - entry.Built < MaxAge;
+
+        private static void Rescore(Kept entry, Container container)
+        {
+            entry.LoadedRevision = container.m_lastRevision;
+            entry.Groups = StowRules.Groups;
+            entry.Themes = TidyThemes.Version;
+            entry.Built = Time.time;
+            entry.Profile = null;
+        }
 
         private static void Prune()
         {
@@ -105,6 +124,7 @@ namespace OpenKeep.Stow
                     gone.Add(pair.Key);
             }
             gone.ForEach(container => kept.Remove(container));
+            pruneMark.Pruned(kept.Count);
         }
     }
 }

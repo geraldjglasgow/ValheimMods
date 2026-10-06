@@ -29,9 +29,9 @@ namespace OpenKeep.Core
         private static void BindSwitches(SyncedConfiguration synced)
         {
             Ships = synced.Bind(Section, "Ships", true,
-                "Ship storage counts as a container: crafting, station feeding, quick stacking and every other module may use it.");
+                "Ship storage counts as a container for the player sailing it: crafting, station feeding, quick stacking and every other module may use it.");
             Carts = synced.Bind(Section, "Carts", true,
-                "Cart storage counts as a container.");
+                "Cart storage counts as a container for the player pulling it.");
             PlayerChests = synced.Bind(Section, "Player Chests", false,
                 "The private chest (piece_chest_private) counts as a container, for its owner only.");
             HonourWards = synced.Bind(Section, "Honour Wards", true,

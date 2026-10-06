@@ -41,11 +41,15 @@ namespace OpenKeep.Stow
                     Messages.Center(WhyNot(container));
                 return;
             }
-            if (!ContainerScan.Claim(container))
-                return;
-            Inventory inventory = container.GetInventory();
-            int stacks = Sort(inventory, item => false, 0, inventory.GetHeight());
-            ContainerScan.Save(container);
+            int stacks;
+            using (SaveHolds.Hold(container))
+            {
+                if (!ContainerScan.Claim(container))
+                    return;
+                Inventory inventory = container.GetInventory();
+                stacks = Sort(inventory, item => false, 0, inventory.GetHeight());
+                ContainerScan.Save(container);
+            }
             if (!quiet)
                 Messages.Center(StowWords.Format(StowWords.Sorted, stacks));
         }

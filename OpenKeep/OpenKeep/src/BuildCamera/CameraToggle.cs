@@ -1,4 +1,3 @@
-using HarmonyLib;
 using OpenKeep.Core;
 using UnityEngine;
 
@@ -12,11 +11,10 @@ namespace OpenKeep.BuildCamera
     /// mode), the player dies or teleports, takes a seat with its own camera (a ship's helm), the game's free fly
     /// camera starts, the setting is turned off, or no station's area holds the player any more.
     /// </summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.Update))]
     public static class CameraToggle
     {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance)
+        /// <summary>After the local player's update (<see cref="PlayerUpdatePatch"/>).</summary>
+        public static void Tick(Player __instance)
         {
             if (__instance != Player.m_localPlayer)
                 return;

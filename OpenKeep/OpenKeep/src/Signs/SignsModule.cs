@@ -21,6 +21,7 @@ namespace OpenKeep.Signs
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(SignsModule).Assembly, DefaultResource),
                 EditorLabel = () => "Edit sign rules",
             });
+            SignsSettings.Enabled.SettingChanged += Guard.Wrap("signs switch", (_, _) => SignRefresh.Switched());
             SignsSettings.Height.SettingChanged += Guard.Wrap("signs layout", (_, _) => SignRefresh.RulesChanged());
             SignsSettings.Rotation.SettingChanged += Guard.Wrap("signs layout", (_, _) => SignRefresh.RulesChanged());
             SignsSettings.ShowCounts.SettingChanged += Guard.Wrap("signs text", (_, _) => SignRefresh.RulesChanged());

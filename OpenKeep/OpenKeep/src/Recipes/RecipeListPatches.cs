@@ -47,16 +47,8 @@ namespace OpenKeep.Recipes
         [HarmonyPriority(Priority.First)]
         public static bool BeforeUpdate() => TypingGuard.BeforeInventoryUpdate();
 
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
-        [HarmonyPostfix]
-        public static void AfterUpdate(InventoryGui __instance) => RecipeInput.Poll(__instance);
-
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Hide))]
         [HarmonyPostfix]
         public static void AfterHide() => SearchBar.Closed();
-
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
-        [HarmonyPostfix]
-        public static void AfterUpdateRecipe(InventoryGui __instance) => RecipeActions.Refresh(__instance);
     }
 }

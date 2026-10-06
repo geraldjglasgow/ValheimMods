@@ -3,7 +3,8 @@ using HarmonyLib;
 namespace OpenKeep.Stow
 {
     /// <summary><c>Show Favourites</c>: after the grid has drawn its elements, every element shows its marks.
-    /// Favourite slots are shown on the player grid only (the grid that is updated with a player).</summary>
+    /// Favourite slots are shown on the player grid only (the grid that is updated with a player). The grid updates
+    /// every frame; the marks are set again only when what they show could have changed (<see cref="GridMarks"/>).</summary>
     [HarmonyPatch(typeof(InventoryGrid), nameof(InventoryGrid.UpdateGui))]
     public static class FavouriteOverlay
     {
@@ -16,6 +17,8 @@ namespace OpenKeep.Stow
         public static void Refresh(InventoryGrid grid, bool playerGrid)
         {
             bool show = StowSettings.Enabled.Value && StowSettings.ShowFavourites.Value;
+            if (GridMarks.Of(grid).Current(grid.m_inventory, grid.m_elements, show, playerGrid))
+                return;
             Inventory inventory = grid.m_inventory;
             foreach (InventoryElement element in grid.m_elements)
             {

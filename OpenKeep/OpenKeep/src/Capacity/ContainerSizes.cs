@@ -71,6 +71,10 @@ namespace OpenKeep.Capacity
                 Resize(container, name, size);
         }
 
+        /// <summary>
+        /// Sets the container's and its inventory's size. Only an inventory read from the ZDO at least once is marked
+        /// changed: on the owner that saves it, and an inventory not read yet would be saved empty over the chest's items.
+        /// </summary>
         private static void Resize(Container container, string name, ContainerSize size)
         {
             Inventory inventory = container.GetInventory();
@@ -89,7 +93,8 @@ namespace OpenKeep.Capacity
             container.m_height = size.Height;
             inventory.m_width = size.Width;
             inventory.m_height = size.Height;
-            inventory.Changed();
+            if (container.m_lastRevision != uint.MaxValue)
+                inventory.Changed();
         }
 
         private static bool HoldsItemOutside(Inventory inventory, ContainerSize size)

@@ -19,8 +19,8 @@ namespace OpenKeep.Shared
                 return;
             string wanted = inUse && Player.m_localPlayer != null ? Player.m_localPlayer.GetPlayerName() : "";
             ZDO zdo = view.GetZDO();
-            if (zdo.GetString(SharedState.UserKey, "") != wanted)
-                zdo.Set(SharedState.UserKey, wanted);
+            if (zdo.GetString(SharedState.UserHash, "") != wanted)
+                zdo.Set(SharedState.UserHash, wanted);
         }
     }
 }

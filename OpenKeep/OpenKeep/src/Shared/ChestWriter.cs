@@ -5,26 +5,24 @@ namespace OpenKeep.Shared
 {
     /// <summary>
     /// The one writer of SPEC 9.3, for every module that changes a container. When the local client owns the
-    /// chest or may claim it because nobody uses it (<see cref="CanWriteNow"/>), a call changes the inventory at
-    /// once: claim, the game's inventory methods, save (<see cref="ChestSync"/>). When <c>Shared Chests</c> is
-    /// <c>Full</c> and another player uses the chest (<see cref="IsShared"/>), a call sends a request to the
-    /// owning client and applies the answer when it comes (<see cref="ChestAsk"/>). Every call reports through
-    /// <c>done(bool ok)</c>, synchronously or when the reply arrives; every refusal shows the centre message.
-    /// A chest that is neither writable now nor shared refuses with "The chest cannot be changed right now".
+    /// chest or may claim it because nobody owns or uses it (<see cref="CanWriteNow"/>), a call changes the inventory
+    /// at once: claim, the game's inventory methods, save (<see cref="ChestSync"/>). When another client owns the
+    /// chest (<see cref="IsShared"/>: another player uses it and <c>Shared Chests</c> is <c>Full</c>, or nobody uses
+    /// it and its owner is another client), a call sends a request to that client and applies the answer when it comes
+    /// (<see cref="ChestAsk"/>), so only the owner ever writes it. Every call reports through <c>done(bool ok)</c>,
+    /// synchronously or when the reply arrives; every refusal shows the centre message. A chest that is neither
+    /// writable now nor shared refuses with "The chest cannot be changed right now".
     /// </summary>
     public static class ChestWriter
     {
-        /// <summary>True when the local client may change the chest synchronously (owner, or claimable because nobody uses it).</summary>
-        public static bool CanWriteNow(Container c)
-        {
-            ZNetView view = c != null ? c.m_nview : null;
-            if (view == null || !view.IsValid() || c.GetInventory() == null)
-                return false;
-            return view.IsOwner() || !ContainerScan.InUseByAnother(c);
-        }
+        /// <summary>True when the local client may change the chest synchronously (owner, or claimable because nobody owns or uses it).</summary>
+        public static bool CanWriteNow(Container c) => ContainerScan.CanClaimNow(c);
 
-        /// <summary>True when writes must go through requests (Full mode, another player uses it, otherwise usable).</summary>
-        public static bool IsShared(Container c) => ContainerScan.IsShared(c);
+        /// <summary>
+        /// True when writes must go through requests to the owner: Full mode and another player uses it, or another
+        /// client owns it and nobody uses it (every other usability rule passing in both cases).
+        /// </summary>
+        public static bool IsShared(Container c) => ContainerScan.IsShared(c) || ContainerScan.IsRemote(c);
 
         /// <summary>Takes <paramref name="amount"/> of a chest stack into the local player's inventory.</summary>
         public static void Take(Container c, ItemDrop.ItemData item, int amount, Action<bool> done)

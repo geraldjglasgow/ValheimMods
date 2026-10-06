@@ -30,10 +30,9 @@ namespace OpenKeep.BuildCamera
                 return;
             if (__instance.IsDead() || __instance.IsTeleporting() || Collect(__instance) == 0)
                 return;
-            string missing = CameraNeeds.Describe(__instance, CameraSettings.PickupNeedsResting, CameraSettings.PickupMinComfort);
-            if (missing != null)
+            if (!CameraNeeds.Met(__instance, CameraSettings.PickupNeedsResting, CameraSettings.PickupMinComfort))
             {
-                PickupPanel.Show(missing);
+                PickupPanel.Show(__instance);
                 return;
             }
             for (int i = 0; i < items.Count; i++)

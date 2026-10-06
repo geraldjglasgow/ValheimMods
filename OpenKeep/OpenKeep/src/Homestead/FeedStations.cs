@@ -14,13 +14,39 @@ namespace OpenKeep.Homestead
     {
         private static readonly List<Collider> colliders = new List<Collider>();
 
+        /// <summary>Per station, built by a player and no battering ram: fixed once placed, so looked up once.</summary>
+        private static readonly Dictionary<Smelter, bool> playerBuilt = new Dictionary<Smelter, bool>();
+
         public static bool OwnedPlayerStation(Smelter station)
         {
             ZNetView view = station != null ? station.m_nview : null;
             if (view == null || !view.IsValid() || !view.IsOwner())
                 return false;
+            if (!playerBuilt.TryGetValue(station, out bool built))
+                built = Remember(station, view);
+            return built;
+        }
+
+        private static bool Remember(Smelter station, ZNetView view)
+        {
             Piece piece = view.GetComponent<Piece>();
-            return piece != null && piece.IsPlacedByPlayer() && view.GetComponentInChildren<SiegeMachine>() == null;
+            bool built = piece != null && piece.IsPlacedByPlayer() && view.GetComponentInChildren<SiegeMachine>() == null;
+            if (playerBuilt.Count >= 256)
+                Prune();
+            playerBuilt[station] = built;
+            return built;
+        }
+
+        private static void Prune()
+        {
+            List<Smelter> gone = new List<Smelter>();
+            foreach (Smelter key in playerBuilt.Keys)
+            {
+                if (key == null)
+                    gone.Add(key);
+            }
+            foreach (Smelter key in gone)
+                playerBuilt.Remove(key);
         }
 
         /// <summary>

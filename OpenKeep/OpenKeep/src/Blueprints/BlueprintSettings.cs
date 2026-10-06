@@ -64,8 +64,11 @@ namespace OpenKeep.Blueprints
         /// <summary>How far the crosshair finds ground for a blueprint, metres.</summary>
         public const float AimRange = 200f;
 
-        /// <summary>Pieces placed per frame while building.</summary>
-        public const int PiecesPerFrame = 80;
+        /// <summary>Pieces placed per frame while building at once, at most (fewer when the frame budget is spent).</summary>
+        public const int PiecesPerFrame = 20;
+
+        /// <summary>Seconds of a frame spent on burst work: preview and ghost copies, pieces built at once (<see cref="FrameBudget"/>).</summary>
+        public const double FrameSeconds = 0.002;
 
         /// <summary>Blueprints with more pieces preview only what stands near the ground.</summary>
         public const int FullPreviewLimit = 3000;

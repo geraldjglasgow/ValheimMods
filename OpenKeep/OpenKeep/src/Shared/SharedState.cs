@@ -11,6 +11,9 @@ namespace OpenKeep.Shared
     {
         public const string UserKey = "OpenKeep.user";
 
+        /// <summary><see cref="UserKey"/> hashed once (the owner compares it every frame a chest is open).</summary>
+        public static readonly int UserHash = UserKey.GetStableHashCode();
+
         /// <summary>The container the local player views without owning it, or null.</summary>
         public static Container ViewedContainer { get; private set; }
 
@@ -47,7 +50,7 @@ namespace OpenKeep.Shared
         public static string UserName(Container container)
         {
             ZNetView view = container != null ? container.m_nview : null;
-            string name = view != null && view.IsValid() ? view.GetZDO().GetString(UserKey, "") : "";
+            string name = view != null && view.IsValid() ? view.GetZDO().GetString(UserHash, "") : "";
             return string.IsNullOrEmpty(name) ? Language.Localize(SharedWords.Someone) : name;
         }
 

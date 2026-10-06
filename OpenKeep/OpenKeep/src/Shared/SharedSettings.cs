@@ -33,14 +33,19 @@ namespace OpenKeep.Shared
                 "Colour (hex, #rrggbb) of a slot another player is moving.", synced: false);
         }
 
-        /// <summary>The touch colour, or the default when the setting does not parse.</summary>
+        private static string parsedText;
+        private static Color parsedColour;
+
+        /// <summary>The touch colour, or the default when the setting does not parse; parsed again only when the setting's text changes.</summary>
         public static Color Colour()
         {
-            string value = (TouchColour.Value ?? "").Trim();
-            if (ColorUtility.TryParseHtmlString(value, out Color colour))
-                return colour;
-            ColorUtility.TryParseHtmlString(DefaultColour, out colour);
-            return colour;
+            string text = TouchColour.Value;
+            if (text != null && text == parsedText)
+                return parsedColour;
+            parsedText = text;
+            if (!ColorUtility.TryParseHtmlString((text ?? "").Trim(), out parsedColour))
+                ColorUtility.TryParseHtmlString(DefaultColour, out parsedColour);
+            return parsedColour;
         }
     }
 }

@@ -85,6 +85,9 @@ namespace OpenKeep.Blueprints
 
         public static void Clear(string block) => blocks.Remove(block);
 
+        /// <summary>There is something to draw: a block of lines or a running build (<see cref="BlueprintGui"/> runs only then).</summary>
+        public static bool Wanted => blocks.Count > 0 || BuildJob.Busy;
+
         /// <summary>OnGUI: the blocks (and a running build's progress) below and right of the screen's centre.</summary>
         public static void Draw()
         {

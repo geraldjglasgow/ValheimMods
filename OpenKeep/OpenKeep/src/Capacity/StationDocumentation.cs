@@ -8,13 +8,14 @@ namespace OpenKeep.Capacity
 {
     /// <summary>
     /// OpenKeep.Stations.txt next to the .cfg: every station prefab with its vanilla caps (0 = the station takes no
-    /// items or no fuel), tab separated. Written with the Stacks module's documentation files.
+    /// items or no fuel), tab separated. Written with the Stacks module's documentation files, only when its text
+    /// changed unless forced (<see cref="Stacks.DocFile"/>).
     /// </summary>
     public static class StationDocumentation
     {
         public const string FileName = "OpenKeep.Stations.txt";
 
-        public static void Write(string folder)
+        public static void Write(string folder, bool force)
         {
             if (ZNetScene.instance == null)
                 return;
@@ -28,8 +29,8 @@ namespace OpenKeep.Capacity
                 count++;
             }
             string path = Path.Combine(folder, FileName);
-            File.WriteAllText(path, text.ToString(), new UTF8Encoding(false));
-            Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({count} stations).");
+            if (Stacks.DocFile.Write(path, text.ToString(), force))
+                Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({count} stations).");
         }
     }
 }

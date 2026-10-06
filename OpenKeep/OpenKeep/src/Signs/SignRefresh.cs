@@ -1,4 +1,3 @@
-using HarmonyLib;
 using OpenKeep.Core;
 using UnityEngine;
 
@@ -11,18 +10,20 @@ namespace OpenKeep.Signs
     /// first seen since it loaded, the sign's place is checked and it is placed anew if wrong; when the container's
     /// ZDO data revision moved since the last look (every save of its inventory) the text is rebuilt and written if
     /// the mod may. One throttle per container: after a write nothing is written again for <c>Update Seconds</c>;
-    /// the next tick after the wait looks again, so a change during the wait is not lost.
+    /// the next tick after the wait looks again, so a change during the wait is not lost. With the module off a
+    /// container is looked at once after it loaded and once after the switch changed (its sign, if any, is removed
+    /// and the link cleared, so a second look would find nothing), not every second.
     /// </summary>
-    [HarmonyPatch(typeof(Container), nameof(Container.CheckForChanges))]
     public static class SignRefresh
     {
         private static int rules;
-
-        [HarmonyPostfix]
-        public static void Postfix(Container __instance) => Tick(__instance, false);
+        private static int switched;
 
         /// <summary>A setting or the YAML changed: every container checks its sign's place and text again.</summary>
         public static void RulesChanged() => rules++;
+
+        /// <summary>The module was switched on or off: every loaded container looks once more, so a switched-off one loses its sign.</summary>
+        public static void Switched() => switched++;
 
         /// <summary>The console's rewrite: every loaded container the local game owns, throttle ignored, text written afresh.</summary>
         public static int RewriteAll()
@@ -41,10 +42,13 @@ namespace OpenKeep.Signs
         {
             if (!Owned(container))
                 return false;
+            SignState state = SignStates.For(container);
+            if (!force && !SignsSettings.Enabled.Value && state.LookedOff == switched)
+                return false;
+            state.LookedOff = SignsSettings.Enabled.Value ? -1 : switched;
             ZDO zdo = container.m_nview.GetZDO();
             if (!SignRules.Allows(container) || SignLinks.NoSign(zdo))
                 return SignLinks.SignId(zdo) != ZDOID.None && SignRemover.RemoveFrom(zdo);
-            SignState state = SignStates.For(container);
             if (!force && Time.time < state.NextWrite)
                 return false;
             bool wrote = Refresh(container, zdo, state, force);

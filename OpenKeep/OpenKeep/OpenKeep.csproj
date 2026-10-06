@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>2.2.1</Version>
+    <Version>2.3.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -43,6 +43,8 @@
     <ProjectReference Include="$(ModLibsPath)\MapClicks\MapClicks.csproj" />
     <!-- WindowInput: the Site planner's queue panel treated like a game window (free cursor, no attacks, Esc closes) -->
     <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
+    <!-- Hotkeys: every OpenKeep hotkey read the workspace's way (Core/Keys passes them on) -->
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
   </ItemGroup>
 
   <ItemGroup>

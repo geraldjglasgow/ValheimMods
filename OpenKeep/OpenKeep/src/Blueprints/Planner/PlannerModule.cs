@@ -20,7 +20,7 @@ namespace OpenKeep.Blueprints.Planner
             PlannerWords.Register();
             SiteHooks.PlannerClick = PlannerClicks.OnClick;
             SiteHooks.OnUpdate("OpenKeep site planner", PlannerSession.Tick);
-            SiteHooks.OnGui("OpenKeep site planner panel", PlannerPanel.OnGui);
+            SiteHooks.OnGui("OpenKeep site planner panel", PlannerPanel.OnGui, () => PlannerPanel.Showing);
             SiteHooks.MarkerCreated += QueueRpc.Register;
             // The library's patches go in by hand (no attributes), once per merged copy; its own Harmony id keeps them apart.
             GameWindow.Install(new Harmony(Plugin.PluginGuid + ".planner"));

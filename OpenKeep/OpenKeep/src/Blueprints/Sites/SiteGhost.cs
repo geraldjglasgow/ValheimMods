@@ -11,13 +11,13 @@ namespace OpenKeep.Blueprints.Sites
     /// A copy goes away when its piece's bit is set in the ZDO; with more than <see cref="BlueprintRules.FullPreviewLimit"/>
     /// unbuilt pieces only what stands within <see cref="BlueprintRules.OutlineHeight"/> of the ground is drawn, the rest
     /// once the unbuilt count falls below the limit. Pieces glow brighter under a key (the planner's selection, a hovered
-    /// queue row): the last key set that holds a piece decides its glow. Copies are made a few hundred a frame. While this
-    /// player has the Construction ghosts switch off (<see cref="GhostSwitch.Visible"/>, the Site planner in hand shows
-    /// them anyway) every ghost's root is inactive, no copies are made and nothing can be picked; the posts are untouched.
+    /// queue row): the last key set that holds a piece decides its glow. Copies are made within a time budget each frame
+    /// (<see cref="FrameBudget"/>, shared by every site). While this player has the Construction ghosts switch off
+    /// (<see cref="GhostSwitch.Visible"/>, the Site planner in hand shows them anyway) every ghost's root is inactive, no
+    /// copies are made and nothing can be picked; the posts are untouched.
     /// </summary>
     public sealed class SiteGhost
     {
-        private const int CopiesPerFrame = 300;
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly Dictionary<SiteMarker, SiteGhost> ghosts = new Dictionary<SiteMarker, SiteGhost>();
         private static readonly List<Renderer> renderers = new List<Renderer>();
@@ -61,7 +61,7 @@ namespace OpenKeep.Blueprints.Sites
         {
             if (ZNet.instance == null || ZNet.instance.IsDedicated())
                 return;
-            int budget = CopiesPerFrame;
+            double until = FrameBudget.Until();
             bool visible = GhostSwitch.Visible;
             foreach (SiteMarker site in SiteMarker.Loaded)
             {
@@ -71,7 +71,7 @@ namespace OpenKeep.Blueprints.Sites
                 if (ghost.root.activeSelf != visible)
                     ghost.root.SetActive(visible);
                 if (visible)
-                    ghost.Update(ref budget);
+                    ghost.Update(until);
             }
         }
 
@@ -153,15 +153,12 @@ namespace OpenKeep.Blueprints.Sites
             return i < built.Length && built[i];
         }
 
-        private void Update(ref int budget)
+        private void Update(double until)
         {
             if (site.State.Zdo.DataRevision != revision)
                 Refresh();
-            while (budget > 0 && made < todo.Count)
-            {
+            while (made < todo.Count && FrameBudget.Left(until))
                 Copy(todo[made++]);
-                budget--;
-            }
         }
 
         /// <summary>The ZDO changed: copies of built pieces go, and a large site draws in full once few enough pieces are left.</summary>

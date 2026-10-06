@@ -13,8 +13,10 @@ namespace OpenKeep.Reach
     /// (amount minus what the inventory holds) from the reachable containers, nearest first, and then lets the
     /// game remove what the inventory has. The inventory therefore always pays first with the game's own code.
     /// Nothing can be lost: the game calls RemoveItem only after the crafted item or the piece exists, the
-    /// containers give up exactly the shortfall, and the inventory part is the game's untouched path. If a
-    /// container vanished since counting the shortfall is paid short and logged; the player gained, not lost.
+    /// containers give up exactly the shortfall, and the inventory part is the game's untouched path. A craft or a
+    /// placement is checked first in the same frame (<see cref="ReachReady"/>: refused while a container it needs is
+    /// still another client's), so it is never paid short; a payment from another mod's path that falls short is
+    /// logged. Each container is held while it pays (<see cref="SaveHolds"/>), so it is written once.
     /// </summary>
     public static class ReachPayment
     {
@@ -60,14 +62,23 @@ namespace OpenKeep.Reach
             {
                 if (remaining <= 0)
                     break;
-                if (ReachCount.CountIn(container, name, quality, worldLevel) <= 0 || !ContainerScan.Claim(container))
+                if (ReachCount.CountIn(container, name, quality, worldLevel) <= 0)
                     continue;
-                int taken = Remove(container, name, remaining, quality, worldLevel);
-                if (taken > 0)
-                    ContainerScan.Save(container);
-                remaining -= taken;
+                using (SaveHolds.Hold(container))
+                    remaining -= TakeFrom(container, name, remaining, quality, worldLevel);
             }
             return amount - remaining;
+        }
+
+        /// <summary>Claims one container and removes up to the amount from it, saved once; 0 when it cannot be claimed now.</summary>
+        private static int TakeFrom(Container container, string name, int amount, int quality, bool worldLevel)
+        {
+            if (!ContainerScan.Claim(container))
+                return 0;
+            int taken = Remove(container, name, amount, quality, worldLevel);
+            if (taken > 0)
+                ContainerScan.Save(container);
+            return taken;
         }
 
         /// <summary>The game's RemoveItem loop, stack by stack, with the prefab's allow / deny lists applied per stack.</summary>
@@ -101,14 +112,18 @@ namespace OpenKeep.Reach
         public static void Finalizer() => ReachPayment.End();
     }
 
-    /// <summary>Opens the payment window around crafting, which pays single ingredient recipes without ConsumeResources.</summary>
+    /// <summary>
+    /// Opens the payment window around crafting, which pays single ingredient recipes without ConsumeResources; a craft
+    /// whose storage part cannot be paid now is not made (<see cref="ReachReady"/>).
+    /// </summary>
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.DoCrafting))]
     public static class CraftingWindow
     {
         [HarmonyPrefix]
-        public static void Prefix(InventoryGui __instance)
+        public static bool Prefix(InventoryGui __instance, Player player)
         {
             ReachPayment.Begin(__instance.m_craftUpgradeItem == null ? ReachMode.Crafting : ReachMode.Upgrading);
+            return ReachReady.CraftReady(__instance, player, quiet: false);
         }
 
         [HarmonyFinalizer]

@@ -17,38 +17,53 @@ namespace OpenKeep.Reach
         private const float Width = 0.05f;
         private static Material material;
 
-        /// <summary>Lines from every reachable container.</summary>
+        /// <summary>Lines from every reachable container; the stations are found once for all of them.</summary>
         public static void ShowAll()
         {
+            if (!ReachSettings.ShowLinks.Value)
+                return;
+            List<Vector3> stations = StationPoints();
             foreach (Container container in ReachCount.Containers())
-                Show(container);
+                Show(container, stations);
         }
 
         public static void Show(Container container)
         {
-            if (container == null || !ReachSettings.ShowLinks.Value)
-                return;
-            Vector3 from = container.transform.position;
-            foreach (Vector3 to in StationPoints(from, ReachRules.RangeFor(container)))
-                Draw(from, to);
+            if (container != null && ReachSettings.ShowLinks.Value)
+                Show(container, StationPoints());
         }
 
-        private static List<Vector3> StationPoints(Vector3 from, float range)
+        private static void Show(Container container, List<Vector3> stations)
+        {
+            if (container == null)
+                return;
+            Vector3 from = container.transform.position;
+            float range = ReachRules.RangeFor(container);
+            float limit = range * range;
+            foreach (Vector3 to in stations)
+            {
+                if ((to - from).sqrMagnitude <= limit)
+                    Draw(from, to);
+            }
+        }
+
+        /// <summary>Where every loaded crafting station, smelter, cooking station, fermenter and fire stands.</summary>
+        private static List<Vector3> StationPoints()
         {
             List<Vector3> points = new List<Vector3>();
-            Add(points, CraftingStation.m_allStations, from, range);
-            Add(points, Object.FindObjectsByType<Smelter>(FindObjectsSortMode.None), from, range);
-            Add(points, Object.FindObjectsByType<CookingStation>(FindObjectsSortMode.None), from, range);
-            Add(points, Object.FindObjectsByType<Fermenter>(FindObjectsSortMode.None), from, range);
-            Add(points, Object.FindObjectsByType<Fireplace>(FindObjectsSortMode.None), from, range);
+            Add(points, CraftingStation.m_allStations);
+            Add(points, Object.FindObjectsByType<Smelter>(FindObjectsSortMode.None));
+            Add(points, Object.FindObjectsByType<CookingStation>(FindObjectsSortMode.None));
+            Add(points, Object.FindObjectsByType<Fermenter>(FindObjectsSortMode.None));
+            Add(points, Object.FindObjectsByType<Fireplace>(FindObjectsSortMode.None));
             return points;
         }
 
-        private static void Add<T>(List<Vector3> points, IEnumerable<T> stations, Vector3 from, float range) where T : Component
+        private static void Add<T>(List<Vector3> points, IEnumerable<T> stations) where T : Component
         {
             foreach (T station in stations)
             {
-                if (station != null && Vector3.Distance(from, station.transform.position) <= range)
+                if (station != null)
                     points.Add(station.transform.position);
             }
         }

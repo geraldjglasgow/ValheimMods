@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OpenKeep.Core;
 using UnityEngine;
 
 namespace OpenKeep.Homestead
@@ -14,6 +15,7 @@ namespace OpenKeep.Homestead
         public const float WaitSeconds = 10f;
 
         private static readonly Dictionary<Component, float> waitUntil = new Dictionary<Component, float>();
+        private static readonly PruneMark pruneMark = new PruneMark(128);
 
         public static bool Due(Component taker)
         {
@@ -23,7 +25,7 @@ namespace OpenKeep.Homestead
         public static void Later(Component taker)
         {
             waitUntil[taker] = Time.time + WaitSeconds;
-            if (waitUntil.Count > 128)
+            if (pruneMark.Due(waitUntil.Count))
                 Prune();
         }
 
@@ -38,6 +40,7 @@ namespace OpenKeep.Homestead
             }
             foreach (Component taker in gone)
                 waitUntil.Remove(taker);
+            pruneMark.Pruned(waitUntil.Count);
         }
     }
 }

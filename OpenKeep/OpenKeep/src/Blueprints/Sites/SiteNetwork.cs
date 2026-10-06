@@ -7,7 +7,8 @@ namespace OpenKeep.Blueprints.Sites
     /// <summary>
     /// The construction sites' routed RPCs that are not tied to a loaded post, registered on every machine when the
     /// network starts: a take-down request to the server (<see cref="SiteTakeDown.AskRpc"/>, which only the server answers,
-    /// since only it knows the admin list and every player's id) and the "built" notice sent to everybody when a site is
+    /// since only it knows the admin list and every player's id), a player's machine asking the server for a site the
+    /// server owns (<see cref="SiteTakeOver.Rpc"/>) and the "built" notice sent to everybody when a site is
     /// finished (each machine shows it when its player is within <see cref="CrewRange"/> metres).
     /// </summary>
     public static class SiteNetwork
@@ -21,6 +22,8 @@ namespace OpenKeep.Blueprints.Sites
         {
             rpc.Register<ZDOID>(SiteTakeDown.AskRpc,
                 (sender, id) => BlueprintSafe.Run("OpenKeep site take down request", () => SiteTakeDown.OnAsk(sender, id)));
+            rpc.Register<ZDOID>(SiteTakeOver.Rpc,
+                (sender, id) => BlueprintSafe.Run("OpenKeep site take over", () => SiteTakeOver.OnAsk(sender, id)));
             rpc.Register<Vector3, string, int>(BuiltRpc,
                 (sender, at, name, pieces) => BlueprintSafe.Run("OpenKeep site built", () => OnBuilt(at, name, pieces)));
         }

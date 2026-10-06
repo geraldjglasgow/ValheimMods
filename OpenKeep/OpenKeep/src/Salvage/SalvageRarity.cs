@@ -23,6 +23,9 @@ namespace OpenKeep.Salvage
         private static MethodInfo apply;
         private static ConfigEntry<bool> shown;
 
+        /// <summary>The call's arguments, reused (asked every frame while the Salvage tab shows); cleared after each call.</summary>
+        private static readonly object[] args = new object[2];
+
         /// <summary>Draws or hides the background behind an icon for this item (none for a non-magic item).</summary>
         public static void Apply(GameObject icon, ItemDrop.ItemData item)
         {
@@ -30,12 +33,18 @@ namespace OpenKeep.Salvage
                 return;
             try
             {
-                apply.Invoke(null, new object[] { icon, item });
+                args[0] = icon;
+                args[1] = item;
+                apply.Invoke(null, args);
             }
             catch (Exception e)
             {
                 apply = null;
                 Plugin.Log.LogWarning($"OpenKeep: Epic Loot rarity backgrounds off, {e.GetType().Name}: {e.Message}");
+            }
+            finally
+            {
+                args[0] = args[1] = null;
             }
         }
 

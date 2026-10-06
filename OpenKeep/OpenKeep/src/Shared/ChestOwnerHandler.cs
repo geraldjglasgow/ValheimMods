@@ -9,11 +9,42 @@ namespace OpenKeep.Shared
     /// inventory (the slot still holds what the requester saw, the amount is there, the target takes it), applies
     /// it with the game's inventory methods, saves the chest and replies. A client that no longer owns the ZDO
     /// answers "not owner". Nothing is applied when a check fails, so a denied request leaves both sides as they
-    /// were.
+    /// were. Each request holds the chest's saves (<see cref="SaveHolds"/>), so a take-all or stack-all of many stacks
+    /// writes the chest once.
     /// </summary>
     public static class ChestOwnerHandler
     {
         public static void Take(Container container, long sender, ZPackage pkg)
+        {
+            using (SaveHolds.Hold(container))
+                TakeHeld(container, sender, pkg);
+        }
+
+        public static void Put(Container container, long sender, ZPackage pkg)
+        {
+            using (SaveHolds.Hold(container))
+                PutHeld(container, sender, pkg);
+        }
+
+        public static void Move(Container container, long sender, ZPackage pkg)
+        {
+            using (SaveHolds.Hold(container))
+                MoveHeld(container, sender, pkg);
+        }
+
+        public static void TakeAll(Container container, long sender, ZPackage pkg)
+        {
+            using (SaveHolds.Hold(container))
+                TakeAllHeld(container, sender, pkg);
+        }
+
+        public static void StackAll(Container container, long sender, ZPackage pkg)
+        {
+            using (SaveHolds.Hold(container))
+                StackAllHeld(container, sender, pkg);
+        }
+
+        private static void TakeHeld(Container container, long sender, ZPackage pkg)
         {
             ChestRequests.Header header = ChestRequests.ReadHeader(pkg);
             Vector2i slot = pkg.ReadVector2i();
@@ -37,7 +68,7 @@ namespace OpenKeep.Shared
             Grant(container, sender, header, payload);
         }
 
-        public static void Put(Container container, long sender, ZPackage pkg)
+        private static void PutHeld(Container container, long sender, ZPackage pkg)
         {
             ChestRequests.Header header = ChestRequests.ReadHeader(pkg);
             ItemDrop.ItemData item = ItemPacket.Read(pkg);
@@ -63,7 +94,7 @@ namespace OpenKeep.Shared
             Grant(container, sender, header, payload);
         }
 
-        public static void Move(Container container, long sender, ZPackage pkg)
+        private static void MoveHeld(Container container, long sender, ZPackage pkg)
         {
             ChestRequests.Header header = ChestRequests.ReadHeader(pkg);
             Vector2i from = pkg.ReadVector2i();
@@ -82,7 +113,7 @@ namespace OpenKeep.Shared
             Grant(container, sender, header, null);
         }
 
-        public static void TakeAll(Container container, long sender, ZPackage pkg)
+        private static void TakeAllHeld(Container container, long sender, ZPackage pkg)
         {
             ChestRequests.Header header = ChestRequests.ReadHeader(pkg);
             int count = pkg.ReadInt();
@@ -120,7 +151,7 @@ namespace OpenKeep.Shared
             return taken;
         }
 
-        public static void StackAll(Container container, long sender, ZPackage pkg)
+        private static void StackAllHeld(Container container, long sender, ZPackage pkg)
         {
             ChestRequests.Header header = ChestRequests.ReadHeader(pkg);
             int count = pkg.ReadInt();

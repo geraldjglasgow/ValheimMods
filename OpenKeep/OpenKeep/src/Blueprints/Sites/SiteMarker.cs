@@ -40,7 +40,7 @@ namespace OpenKeep.Blueprints.Sites
             SiteGhost.Forget(this);
         }
 
-        public string GetHoverText() => BlueprintSafe.Call("OpenKeep site hover", () => SiteHover.Text(this), "");
+        public string GetHoverText() => SiteHover.Cached(this) ?? BlueprintSafe.Call("OpenKeep site hover", () => SiteHover.Text(this), "");
 
         public string GetHoverName() => State?.Name ?? "";
 

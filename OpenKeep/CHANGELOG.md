@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.3.0
+
+- Reach: ship and cart storage counts only for the player sailing or pulling it.
+- Reach: crafting from a chest another player used last may first say "Fetching the materials from storage, try again".
+- Fixed: chests and drops another player's game held could lose or duplicate items.
+- Shared chests and Blueprints: a moved stack or handed-over materials come back if no answer arrives.
+- Fixed: hotkeys ignored after Shift, Ctrl or Alt was released in another window.
+- Lighter on frame rate and server near many chests, signs and construction sites.
+- Update the server and every client together.
+
 ## 2.2.1
 
 - Blueprints: the build camera comes out with B, as in normal building, instead of by itself.

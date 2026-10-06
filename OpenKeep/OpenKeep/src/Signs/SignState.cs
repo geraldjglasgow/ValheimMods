@@ -11,5 +11,8 @@ namespace OpenKeep.Signs
 
         /// <summary>The rules generation the sign's place and text were last checked against.</summary>
         public int Rules { get; set; } = -1;
+
+        /// <summary>The switch generation this container was last looked at with the module off; -1 when the module was on.</summary>
+        public int LookedOff { get; set; } = -1;
     }
 }

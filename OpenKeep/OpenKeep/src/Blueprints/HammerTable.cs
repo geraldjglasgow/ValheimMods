@@ -24,12 +24,23 @@ namespace OpenKeep.Blueprints
         private static Piece.PieceCategory? picked;
         private static GameObject lastPut;
 
+        /// <summary>The hammer item, looked up once per item database (asked every frame).</summary>
+        private static ObjectDB foundIn;
+        private static ItemDrop hammerDrop;
+
         /// <summary>The hammer's build table, or null before the item database is up.</summary>
         public static PieceTable Find()
         {
-            GameObject hammer = ObjectDB.instance != null ? ObjectDB.instance.GetItemPrefab(HammerItem) : null;
-            ItemDrop drop = hammer != null ? hammer.GetComponent<ItemDrop>() : null;
-            return drop != null ? drop.m_itemData.m_shared.m_buildPieces : null;
+            ObjectDB db = ObjectDB.instance;
+            if (db == null)
+                return null;
+            if (db != foundIn || hammerDrop == null)
+            {
+                GameObject hammer = db.GetItemPrefab(HammerItem);
+                hammerDrop = hammer != null ? hammer.GetComponent<ItemDrop>() : null;
+                foundIn = hammerDrop != null ? db : null;
+            }
+            return hammerDrop != null ? hammerDrop.m_itemData.m_shared.m_buildPieces : null;
         }
 
         /// <summary>The table is the hammer's.</summary>

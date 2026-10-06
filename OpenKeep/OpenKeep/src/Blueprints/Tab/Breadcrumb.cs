@@ -20,7 +20,9 @@ namespace OpenKeep.Blueprints.Tab
         private static RectTransform strip;
         private static RectTransform list;
         private static Vector2 listTop;
+        /// <summary>The folder and width the strip was last built for (null: build again).</summary>
         private static string built;
+        private static int builtWidth;
 
         /// <summary>BuildUi.Awake: the strip above the piece list, hidden until the tab is shown.</summary>
         public static void Install(BuildUi ui)
@@ -55,12 +57,16 @@ namespace OpenKeep.Blueprints.Tab
                 list.offsetMax = showing ? listTop - new Vector2(0f, Height + Gap) : listTop;
                 built = null;
             }
-            float width = strip.rect.width;
-            string key = BlueprintLibrary.CurrentFolder + "|" + Mathf.RoundToInt(width);
-            if (!showing || width <= 0f || key == built)
+            if (!showing)
                 return;
-            built = key;
-            BreadcrumbParts.Build(Chain(BlueprintLibrary.CurrentFolder), width);
+            float width = strip.rect.width;
+            string folder = BlueprintLibrary.CurrentFolder;
+            int rounded = Mathf.RoundToInt(width);
+            if (width <= 0f || (built != null && built == folder && builtWidth == rounded))
+                return;
+            built = folder;
+            builtWidth = rounded;
+            BreadcrumbParts.Build(Chain(folder), width);
         }
 
         /// <summary>The folders from the top to <paramref name="current"/>: "", "houses", "houses/nordic".</summary>

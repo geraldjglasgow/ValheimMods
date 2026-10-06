@@ -23,7 +23,8 @@ namespace OpenKeep.Stow
             foreach (Container container in StowTargets.Nearby(player))
             {
                 ChestBatch batch = new ChestBatch(container, StowWords.ToppedUpFrom);
-                Fill(container, room, batch);
+                using (SaveHolds.Hold(container))
+                    Fill(container, room, batch);
                 batch.Finish();
                 if (batch.Waiting)
                     waiting = true;

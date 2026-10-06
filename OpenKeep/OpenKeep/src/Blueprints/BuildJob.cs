@@ -7,7 +7,8 @@ namespace OpenKeep.Blueprints
     /// <summary>
     /// Builds the rest of a construction site at once, on the machine that owns the site (<see cref="SiteBuilder"/>
     /// starts it once the site holds everything it still needs, or when building is free, after shaping the ground):
-    /// <see cref="BlueprintRules.PiecesPerFrame"/> pieces a frame in <see cref="SiteOrder"/>, each piece's materials
+    /// as many pieces a frame as fit the frame budget (<see cref="BlueprintRules.FrameSeconds"/>, at most
+    /// <see cref="BlueprintRules.PiecesPerFrame"/>) in <see cref="SiteOrder"/>, each piece's materials
     /// taken from the site's store unless free, the built pieces and the store written once a frame
     /// (<see cref="SitePieces"/>). Every machine sees the pieces as ordinary networked pieces. Stops quietly when the
     /// site goes away, another machine takes it over (that machine's builder carries on from the ZDO), the store runs
@@ -26,6 +27,9 @@ namespace OpenKeep.Blueprints
         }
 
         private static Run run;
+
+        /// <summary>Seconds one piece took to place, averaged over the last frames (0 before the first): sizes the next batch.</summary>
+        private static double perPiece;
 
         public static bool Busy => run != null;
 
@@ -57,12 +61,30 @@ namespace OpenKeep.Blueprints
                 run = null;
                 return;
             }
-            int count = Mathf.Min(BlueprintRules.PiecesPerFrame, run.Order.Count - run.Next);
+            int count = Mathf.Min(Batch(), run.Order.Count - run.Next);
             List<int> batch = run.Order.GetRange(run.Next, count);
             run.Next += count;
+            double start = Time.realtimeSinceStartupAsDouble;
             bool placed = SitePieces.Place(run.Site, batch, run.Player, run.Free, run.Cheated);
+            Measure(Time.realtimeSinceStartupAsDouble - start, count);
             if (!placed || run.Next >= run.Order.Count)
                 run = null;
+        }
+
+        /// <summary>As many pieces as fit the frame budget at the measured cost, 1 to <see cref="BlueprintRules.PiecesPerFrame"/>.</summary>
+        private static int Batch()
+        {
+            if (perPiece <= 0)
+                return 1;
+            return Mathf.Clamp((int)(BlueprintRules.FrameSeconds / perPiece), 1, BlueprintRules.PiecesPerFrame);
+        }
+
+        private static void Measure(double seconds, int count)
+        {
+            if (count <= 0)
+                return;
+            double each = seconds / count;
+            perPiece = perPiece <= 0 ? each : perPiece * 0.7 + each * 0.3;
         }
 
         /// <summary>The site is still loaded and this machine's, and the player who started it is still here.</summary>

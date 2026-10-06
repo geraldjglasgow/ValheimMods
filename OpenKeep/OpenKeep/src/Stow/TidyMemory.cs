@@ -18,6 +18,8 @@ namespace OpenKeep.Stow
     {
         public const string Key = "OpenKeep.tidy";
 
+        private static readonly int KeyHash = Key.GetStableHashCode();
+
         /// <summary>World seconds after a send-away in which a player putting the item back by hand keeps it there.</summary>
         public const double CorrectionSeconds = 900.0;
 
@@ -53,7 +55,7 @@ namespace OpenKeep.Stow
         public static TidyMemory Read(ZDO zdo)
         {
             TidyMemory memory = new TidyMemory();
-            byte[] bytes = zdo != null ? zdo.GetByteArray(Key) : null;
+            byte[] bytes = zdo != null ? zdo.GetByteArray(KeyHash) : null;
             if (bytes == null || bytes.Length == 0)
                 return memory;
             memory.IsNew = false;
@@ -76,7 +78,7 @@ namespace OpenKeep.Stow
             pkg.Write(Entries.Count);
             foreach (KeyValuePair<string, Entry> pair in Entries)
                 WriteEntry(pkg, pair.Key, pair.Value);
-            zdo.Set(Key, pkg.GetArray());
+            zdo.Set(KeyHash, pkg.GetArray());
             IsNew = false;
         }
 

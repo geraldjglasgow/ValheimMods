@@ -7,8 +7,10 @@ namespace OpenKeep.Shared
     /// <summary>
     /// The request path of <see cref="ChestWriter"/>: builds each request of SPEC 9.2, checks what the requester
     /// must check first (a take fits the inventory, a stack-all has candidates), and applies the owner's answer
-    /// to the requester's own inventory. The chest itself is never touched here; its copy on this client refreshes
-    /// from the ZDO once the owner saved.
+    /// to the requester's own inventory. What a put or a stack-all sends is held out of the inventory until the
+    /// answer (<see cref="Escrow"/>): the chest's take stays with the chest, the rest comes back, all of it on a "no"
+    /// or when no answer ever comes. The chest itself is never touched here; its copy on this client refreshes from
+    /// the ZDO once the owner saved.
     /// </summary>
     internal static class ChestAsk
     {
@@ -31,8 +33,7 @@ namespace OpenKeep.Shared
             int expected = item.m_stack;
             ChestRequester.Send(container, ChestRequests.TakeRpc, from,
                 pkg => { pkg.Write(from); pkg.Write(name); pkg.Write(expected); pkg.Write(fit); },
-                payload => done(ReceiveItem(player, payload, slot)),
-                reason => done(false));
+                payload => ReceiveItem(player, payload, slot), null, done);
         }
 
         private static bool ReceiveItem(Player player, ZPackage payload, Vector2i slot)
@@ -53,15 +54,17 @@ namespace OpenKeep.Shared
                 done(false);
                 return;
             }
+            Escrow held = Escrow.Hold(player, item, copy.m_stack);
+            if (held == null)
+            {
+                done(false);
+                return;
+            }
             bool hasSlot = slot.x >= 0;
             ChestRequester.Send(container, ChestRequests.PutRpc, slot,
                 pkg => { ItemPacket.Write(pkg, copy); pkg.Write(hasSlot); pkg.Write(slot); },
-                payload =>
-                {
-                    ChestOps.RemoveFromPlayer(player.GetInventory(), item, payload.ReadInt());
-                    done(true);
-                },
-                reason => done(false));
+                payload => { held.Return(payload.ReadInt()); return true; },
+                () => held.Return(0), done);
         }
 
         public static void Move(Container container, Vector2i from, Vector2i to, int amount, Action<bool> done)
@@ -75,8 +78,7 @@ namespace OpenKeep.Shared
             string name = item.m_shared.m_name;
             ChestRequester.Send(container, ChestRequests.MoveRpc, from,
                 pkg => { pkg.Write(from); pkg.Write(to); pkg.Write(amount); pkg.Write(name); },
-                payload => done(true),
-                reason => done(false));
+                payload => true, null, done);
         }
 
         public static void TakeAll(Container container, Player player, Action<bool> done)
@@ -90,8 +92,7 @@ namespace OpenKeep.Shared
             }
             ChestRequester.Send(container, ChestRequests.TakeAllRpc, ChestOps.NoSlot,
                 pkg => WriteEntries(pkg, entries),
-                payload => done(ReceiveItems(player, payload)),
-                reason => done(false));
+                payload => ReceiveItems(player, payload), null, done);
         }
 
         /// <summary>The chest stacks, in the game's order, with the units of each that the inventory can take.</summary>
@@ -143,10 +144,12 @@ namespace OpenKeep.Shared
                 done(false);
                 return;
             }
+            List<ItemDrop.ItemData> copies = new List<ItemDrop.ItemData>();
+            List<Escrow> held = HoldAll(player, candidates, copies);
             ChestRequester.Send(container, ChestRequests.StackAllRpc, ChestOps.NoSlot,
-                pkg => WriteCandidates(pkg, candidates),
-                payload => done(ReceiveAccepted(player, candidates, payload)),
-                reason => done(false));
+                pkg => WriteCandidates(pkg, copies),
+                payload => ReceiveAccepted(held, payload),
+                () => held.ForEach(escrow => escrow.Return(0)), done);
         }
 
         /// <summary>
@@ -167,28 +170,49 @@ namespace OpenKeep.Shared
             return candidates;
         }
 
-        private static void WriteCandidates(ZPackage pkg, List<ItemDrop.ItemData> candidates)
+        /// <summary>Holds every candidate stack back and lists the copy of each one held; a stack that left meanwhile is not sent.</summary>
+        private static List<Escrow> HoldAll(Player player, List<ItemDrop.ItemData> candidates, List<ItemDrop.ItemData> copies)
         {
-            pkg.Write(candidates.Count);
-            for (int i = 0; i < candidates.Count; i++)
+            List<Escrow> held = new List<Escrow>();
+            foreach (ItemDrop.ItemData item in candidates)
+            {
+                ItemDrop.ItemData copy = ItemPacket.Copy(item, item.m_stack);
+                Escrow escrow = Escrow.Hold(player, item, item.m_stack);
+                if (escrow == null)
+                    continue;
+                copies.Add(copy);
+                held.Add(escrow);
+            }
+            return held;
+        }
+
+        private static void WriteCandidates(ZPackage pkg, List<ItemDrop.ItemData> copies)
+        {
+            pkg.Write(copies.Count);
+            for (int i = 0; i < copies.Count; i++)
             {
                 pkg.Write(i);
-                ItemPacket.Write(pkg, ItemPacket.Copy(candidates[i], candidates[i].m_stack));
+                ItemPacket.Write(pkg, copies[i]);
             }
         }
 
-        private static bool ReceiveAccepted(Player player, List<ItemDrop.ItemData> candidates, ZPackage payload)
+        /// <summary>The chest kept what it accepted of each held stack; the rest of every stack comes back.</summary>
+        private static bool ReceiveAccepted(List<Escrow> held, ZPackage payload)
         {
+            int[] accepted = new int[held.Count];
             int count = payload.ReadInt();
-            int total = 0;
             for (int i = 0; i < count; i++)
             {
                 int index = payload.ReadInt();
-                int accepted = payload.ReadInt();
-                if (index < 0 || index >= candidates.Count)
-                    continue;
-                ChestOps.RemoveFromPlayer(player.GetInventory(), candidates[index], accepted);
-                total += accepted;
+                int units = payload.ReadInt();
+                if (index >= 0 && index < held.Count && units > 0)
+                    accepted[index] += units;
+            }
+            int total = 0;
+            for (int i = 0; i < held.Count; i++)
+            {
+                held[i].Return(accepted[i]);
+                total += accepted[i];
             }
             Messages.Center(total > 0 ? "$msg_stackall " + total : "$msg_stackall_none");
             return total > 0;

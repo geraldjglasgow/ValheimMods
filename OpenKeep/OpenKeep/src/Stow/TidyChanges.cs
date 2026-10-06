@@ -15,7 +15,7 @@ namespace OpenKeep.Stow
         [HarmonyPostfix]
         public static void Postfix(Container __instance)
         {
-            if (!StowSettings.Enabled.Value || !StowSettings.AutoTidy.Value || TidySweep.Moving || __instance.m_loading)
+            if (!StowSettings.Enabled.Value || !StowSettings.AutoTidy.Value || TidySweep.Moving || __instance.m_loading || Player.m_localPlayer == null)
                 return;
             ZNetView view = __instance.m_nview;
             if (view == null || !view.IsValid() || !view.IsOwner() || __instance.IsInUse())

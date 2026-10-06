@@ -1,4 +1,3 @@
-using HarmonyLib;
 using OpenKeep.Core;
 using UnityEngine;
 
@@ -10,11 +9,10 @@ namespace OpenKeep.Homestead
     /// the game's Use. The target is the game's own hover object (<c>Player.GetHoverObject</c>, what Use would act on).
     /// The key is not the game's Use and is read separately, so it never adds fuel or toggles a fire itself.
     /// </summary>
-    [HarmonyPatch(typeof(Player), nameof(Player.Update))]
     public static class TorchKeyPatch
     {
-        [HarmonyPostfix]
-        public static void Postfix(Player __instance)
+        /// <summary>After the local player's update (<see cref="PlayerUpdatePatch"/>).</summary>
+        public static void Tick(Player __instance)
         {
             if (__instance != Player.m_localPlayer || !Keys.Pressed(TorchSettings.SwitchKey))
                 return;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using OpenKeep.Core;
 using UnityEngine;
@@ -19,7 +18,8 @@ namespace OpenKeep.Stow
         private const int MaxKinds = 8;
         private const float RelearnSeconds = 30f;
 
-        private static HashSet<string> learned = new HashSet<string>(StringComparer.Ordinal);
+        /// <summary>The learned pairs, each as its two prefab name hashes (<see cref="Pair"/>), so a test builds no string.</summary>
+        private static HashSet<long> learned = new HashSet<long>();
         private static float learnedAt = float.MinValue;
 
         public static int Version { get; private set; }
@@ -35,16 +35,16 @@ namespace OpenKeep.Stow
             if (Time.time - learnedAt < RelearnSeconds)
                 return;
             learnedAt = Time.time;
-            HashSet<string> fresh = Learn();
+            HashSet<long> fresh = Learn();
             if (fresh.SetEquals(learned))
                 return;
             learned = fresh;
             Version++;
         }
 
-        private static HashSet<string> Learn()
+        private static HashSet<long> Learn()
         {
-            Dictionary<string, int> together = new Dictionary<string, int>(StringComparer.Ordinal);
+            Dictionary<long, int> together = new Dictionary<long, int>();
             foreach (Container chest in ContainerScan.All())
             {
                 if (!TidyChests.TakesPart(chest) || !TidyChests.IsLoaded(chest))
@@ -53,8 +53,8 @@ namespace OpenKeep.Stow
                 if (kept.Count >= 2 && kept.Count <= MaxKinds)
                     Tally(kept, together);
             }
-            HashSet<string> pairs = new HashSet<string>(StringComparer.Ordinal);
-            foreach (KeyValuePair<string, int> pair in together)
+            HashSet<long> pairs = new HashSet<long>();
+            foreach (KeyValuePair<long, int> pair in together)
             {
                 if (pair.Value >= MinChests)
                     pairs.Add(pair.Key);
@@ -77,19 +77,24 @@ namespace OpenKeep.Stow
             return kept;
         }
 
-        private static void Tally(List<string> kept, Dictionary<string, int> together)
+        private static void Tally(List<string> kept, Dictionary<long, int> together)
         {
             for (int i = 0; i < kept.Count; i++)
             {
                 for (int j = i + 1; j < kept.Count; j++)
                 {
-                    string key = Pair(kept[i], kept[j]);
+                    long key = Pair(kept[i], kept[j]);
                     together.TryGetValue(key, out int count);
                     together[key] = count + 1;
                 }
             }
         }
 
-        private static string Pair(string a, string b) => string.CompareOrdinal(a, b) < 0 ? a + "|" + b : b + "|" + a;
+        /// <summary>The pair as one number, the same either way round: the two names' stable hashes, smaller first.</summary>
+        private static long Pair(string a, string b)
+        {
+            int x = a.GetStableHashCode(), y = b.GetStableHashCode();
+            return x < y ? ((long)x << 32) | (uint)y : ((long)y << 32) | (uint)x;
+        }
     }
 }

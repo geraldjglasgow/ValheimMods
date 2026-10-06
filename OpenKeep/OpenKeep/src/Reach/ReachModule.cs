@@ -31,6 +31,7 @@ namespace OpenKeep.Reach
             Language.Add("ok_pulled", "Pulled from storage:");
             Language.Add("ok_nothingtopull", "Nothing to pull from storage");
             Language.Add("ok_nofit", "The materials from storage do not fit in the inventory");
+            Language.Add("ok_reach_wait", "Fetching the materials from storage, try again");
         }
     }
 }

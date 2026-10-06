@@ -64,13 +64,15 @@ namespace OpenKeep.Blueprints
         /// </summary>
         public static List<FixPiece> WithInside(Piece start) => Grow(Gather(start), start, inside: true);
 
-        /// <summary>Every player-built piece within reach of the start, in a grid of cells.</summary>
+        /// <summary>Every player-built piece within reach of the start, in a grid of cells (the distance test first: a big base loads tens of thousands of pieces).</summary>
         private static Dictionary<long, List<FixPiece>> Gather(Piece start)
         {
             Dictionary<long, List<FixPiece>> grid = new Dictionary<long, List<FixPiece>>();
+            Vector3 origin = start.transform.position;
+            float reach = BlueprintRules.FixReach * BlueprintRules.FixReach;
             foreach (Piece piece in Piece.s_allPieces)
             {
-                if (piece != null && piece.IsPlacedByPlayer() && !BlueprintMenu.IsOurs(piece) && Flat(piece.transform.position - start.transform.position) <= BlueprintRules.FixReach)
+                if (piece != null && FlatSqr(piece.transform.position - origin) <= reach && piece.IsPlacedByPlayer() && !BlueprintMenu.IsOurs(piece))
                     Add(grid, Describe(piece));
             }
             return grid;
@@ -178,6 +180,8 @@ namespace OpenKeep.Blueprints
 
         private static long Key(int x, int z) => ((long)x << 32) ^ (uint)z;
 
-        private static float Flat(Vector3 v) => Mathf.Sqrt(v.x * v.x + v.z * v.z);
+        private static float Flat(Vector3 v) => Mathf.Sqrt(FlatSqr(v));
+
+        private static float FlatSqr(Vector3 v) => v.x * v.x + v.z * v.z;
     }
 }

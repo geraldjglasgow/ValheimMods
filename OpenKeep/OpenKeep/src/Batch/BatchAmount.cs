@@ -101,8 +101,9 @@ namespace OpenKeep.Batch
 
         /// <summary>
         /// Whether that many crafts can be made now: within Max Amount, the materials (the game's HaveRequirements, so the
-        /// station counts and, with Reach, the containers; skipped without a craft cost) and room for what is made.
-        /// One craft always passes; the game checks it as usual.
+        /// station counts and, with Reach, the containers; skipped without a craft cost) and room for what is made, the
+        /// last two remembered while nothing changed (<see cref="BatchCheck"/>). One craft always passes; the game checks
+        /// it as usual.
         /// </summary>
         public static bool CanMake(Player player, Recipe made, int amount)
         {
@@ -110,10 +111,7 @@ namespace OpenKeep.Batch
                 return true;
             if (amount > BatchSettings.MaxAmount.Value)
                 return false;
-            bool free = player.NoCostCheat() || (ZoneSystem.instance != null && ZoneSystem.instance.GetGlobalKey(GlobalKeys.NoCraftCost));
-            if (!free && !player.HaveRequirements(made, false, 1, amount))
-                return false;
-            return player.GetInventory().CanAddItem(made.m_item.gameObject, made.m_amount * amount);
+            return BatchCheck.HaveAndFit(player, made, amount);
         }
 
         /// <summary>The most crafts that can be made now, at least 1. CanMake only turns false as the amount grows, so a binary search finds it.</summary>

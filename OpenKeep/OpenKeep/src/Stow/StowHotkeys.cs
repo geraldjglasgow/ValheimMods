@@ -1,4 +1,3 @@
-using HarmonyLib;
 using OpenKeep.Core;
 
 namespace OpenKeep.Stow
@@ -8,11 +7,10 @@ namespace OpenKeep.Stow
     /// visible and no popup or split dialog is up. Combined shortcuts are checked before the single key they share
     /// (Shift+G before G, Shift+F before F, Shift+Delete before Delete); the core's single-key rule keeps them apart anyway.
     /// </summary>
-    [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
     public static class StowHotkeys
     {
-        [HarmonyPostfix]
-        public static void Postfix(InventoryGui __instance)
+        /// <summary>After the inventory's update (<see cref="InventoryUpdatePatch"/>).</summary>
+        public static void Tick(InventoryGui __instance)
         {
             PanelButtons.Follow(__instance);
             Poll(__instance);

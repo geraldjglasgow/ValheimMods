@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
@@ -15,12 +16,16 @@ namespace OpenKeep.Carts
         public const string WorkbenchPrefab = "piece_workbench";
         private const float UseDistance = 4f;
 
-        public static bool IsCart(CraftingStation station) => station != null && station.GetComponent<Vagon>() != null;
+        /// <summary>The stations this mod added to carts; <c>GetLevel</c> asks for every station every refresh, so no
+        /// component lookup there.</summary>
+        private static readonly HashSet<CraftingStation> added = new HashSet<CraftingStation>();
+
+        public static bool IsCart(CraftingStation station) => station != null && added.Contains(station);
 
         /// <summary>Adds, removes or updates the station of every loaded cart to match the settings.</summary>
         public static void ApplyAll()
         {
-            foreach (Vagon cart in new System.Collections.Generic.List<Vagon>(Vagon.m_instances))
+            foreach (Vagon cart in new List<Vagon>(Vagon.m_instances))
                 Apply(cart);
         }
 
@@ -33,7 +38,7 @@ namespace OpenKeep.Carts
             if (wanted && existing == null)
                 Add(cart);
             else if (!wanted && existing != null)
-                Object.Destroy(existing);
+                Remove(existing);
             else if (existing != null)
                 existing.m_rangeBuild = CartsSettings.CartStationRange.Value;
         }
@@ -46,7 +51,16 @@ namespace OpenKeep.Carts
                 Plugin.Log.LogWarning("OpenKeep: the workbench prefab has no crafting station; carts stay plain carts");
                 return;
             }
-            Copy(template, cart.gameObject.AddComponent<CraftingStation>(), cart.transform);
+            CraftingStation station = cart.gameObject.AddComponent<CraftingStation>();
+            Copy(template, station, cart.transform);
+            added.RemoveWhere(old => old == null);
+            added.Add(station);
+        }
+
+        private static void Remove(CraftingStation station)
+        {
+            added.Remove(station);
+            Object.Destroy(station);
         }
 
         private static CraftingStation Template()

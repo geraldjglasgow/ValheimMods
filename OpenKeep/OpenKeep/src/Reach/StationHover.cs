@@ -1,17 +1,55 @@
 using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using OpenKeep.Core;
+using UnityEngine;
 
 namespace OpenKeep.Reach
 {
     /// <summary>
     /// The "From storage: n" line of station hover texts. Smelters and ovens hover through their switches
     /// (<c>Switch.GetHoverText</c>, which calls the station's own hover callback or a fixed text); fires,
-    /// fermenters and plain cooking stations through their own <c>GetHoverText</c>.
+    /// fermenters and plain cooking stations through their own <c>GetHoverText</c>. Hover texts run every frame, so
+    /// the line of the hovered station is worked out once and kept until something it counts could have changed.
     /// </summary>
     public static class StationHover
     {
+        /// <summary>A hover text runs every frame; its line is kept this long at most, and dropped sooner on any change.</summary>
+        private const float KeepSeconds = 1f;
+
+        private static UnityEngine.Object memoFor;
+        private static List<Container> memoList;
+        private static int memoChange;
+        private static int memoWorldLevel;
+        private static float memoAt;
+        private static string memoLine;
+
         public static bool Active => ReachRules.Active(ReachMode.Stations);
+
+        /// <summary>
+        /// The line last worked out for this station, while the reach list, every inventory and the world level are
+        /// as they were and it is under a second old. "" means the station shows no line.
+        /// </summary>
+        public static bool Remembered(UnityEngine.Object station, out string line)
+        {
+            line = memoLine;
+            if (!ReferenceEquals(station, memoFor) || Time.unscaledTime - memoAt > KeepSeconds)
+                return false;
+            return ReferenceEquals(ReachChests.List(), memoList) && StorageIndex.Change == memoChange
+                && Game.m_worldLevel == memoWorldLevel;
+        }
+
+        /// <summary>Keeps the line just worked out for this station ("" for none); see <see cref="Remembered"/>.</summary>
+        public static string Remember(UnityEngine.Object station, string line)
+        {
+            memoFor = station;
+            memoList = ReachChests.List();
+            memoChange = StorageIndex.Change;
+            memoWorldLevel = Game.m_worldLevel;
+            memoAt = Time.unscaledTime;
+            memoLine = line;
+            return line;
+        }
 
         /// <summary>Feeding is on and the station's prefab is not disabled in the stations: map.</summary>
         public static bool Shows(UnityEngine.Component station) => Active && ReachRules.StationRuleFor(station).Enabled;
@@ -51,9 +89,15 @@ namespace OpenKeep.Reach
         {
             if (!StationHover.Active || string.IsNullOrEmpty(__result))
                 return;
-            Func<ItemDrop.ItemData, bool> accepts = StationHover.SwitchAccepts(__instance);
-            if (accepts != null)
-                __result += StationHover.Line(accepts);
+            if (!StationHover.Remembered(__instance, out string line))
+                line = StationHover.Remember(__instance, Work(__instance));
+            __result += line;
+        }
+
+        private static string Work(Switch sw)
+        {
+            Func<ItemDrop.ItemData, bool> accepts = StationHover.SwitchAccepts(sw);
+            return accepts != null ? StationHover.Line(accepts) : "";
         }
     }
 
@@ -63,10 +107,15 @@ namespace OpenKeep.Reach
         [HarmonyPostfix]
         public static void Postfix(Fireplace __instance, ref string __result)
         {
-            if (!StationHover.Shows(__instance) || string.IsNullOrEmpty(__result) || !__instance.m_canRefill || __instance.m_infiniteFuel || __instance.m_fuelItem == null)
+            if (!StationHover.Active || string.IsNullOrEmpty(__result) || !__instance.m_canRefill || __instance.m_infiniteFuel || __instance.m_fuelItem == null)
                 return;
-            __result += StationHover.Line(StationAccepts.Fuel(__instance, __instance.m_fuelItem));
+            if (!StationHover.Remembered(__instance, out string line))
+                line = StationHover.Remember(__instance, Work(__instance));
+            __result += line;
         }
+
+        private static string Work(Fireplace fire) =>
+            StationHover.Shows(fire) ? StationHover.Line(StationAccepts.Fuel(fire, fire.m_fuelItem)) : "";
     }
 
     [HarmonyPatch(typeof(Fermenter), nameof(Fermenter.GetHoverText))]
@@ -75,11 +124,18 @@ namespace OpenKeep.Reach
         [HarmonyPostfix]
         public static void Postfix(Fermenter __instance, ref string __result)
         {
-            if (!StationHover.Shows(__instance) || string.IsNullOrEmpty(__result) || __instance.GetContent() != 0)
+            if (!StationHover.Active || string.IsNullOrEmpty(__result) || __instance.GetContent() != 0)
                 return;
-            if (!PrivateArea.CheckAccess(__instance.transform.position, 0f, false))
-                return;
-            __result += StationHover.Line(StationAccepts.FermenterBase(__instance));
+            if (!StationHover.Remembered(__instance, out string line))
+                line = StationHover.Remember(__instance, Work(__instance));
+            __result += line;
+        }
+
+        private static string Work(Fermenter fermenter)
+        {
+            if (!StationHover.Shows(fermenter) || !PrivateArea.CheckAccess(fermenter.transform.position, 0f, false))
+                return "";
+            return StationHover.Line(StationAccepts.FermenterBase(fermenter));
         }
     }
 
@@ -89,9 +145,14 @@ namespace OpenKeep.Reach
         [HarmonyPostfix]
         public static void Postfix(CookingStation __instance, ref string __result)
         {
-            if (!StationHover.Shows(__instance) || string.IsNullOrEmpty(__result))
+            if (!StationHover.Active || string.IsNullOrEmpty(__result))
                 return;
-            __result += StationHover.Line(StationAccepts.CookingFood(__instance));
+            if (!StationHover.Remembered(__instance, out string line))
+                line = StationHover.Remember(__instance, Work(__instance));
+            __result += line;
         }
+
+        private static string Work(CookingStation station) =>
+            StationHover.Shows(station) ? StationHover.Line(StationAccepts.CookingFood(station)) : "";
     }
 }

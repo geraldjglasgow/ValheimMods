@@ -1,4 +1,5 @@
 using HarmonyLib;
+using OpenKeep.Core;
 
 namespace OpenKeep.Capacity
 {
@@ -7,7 +8,8 @@ namespace OpenKeep.Capacity
     /// station list is generated into a still-default OpenKeep.Stations.yml and the caps are applied to the prefabs
     /// and the loaded stations. Instances copy the prefab's fields when they are instantiated (ZNetScene.CreateObject
     /// and Player.PlacePiece both instantiate the prefab), so that alone covers new stations; the Smelter.Awake
-    /// postfix only guards a station made from another copy of its prefab.
+    /// postfix only guards a station made from another copy of its prefab. The scene postfix never throws
+    /// (<see cref="SceneSafe"/>).
     /// </summary>
     public static class StationSceneReady
     {
@@ -18,8 +20,8 @@ namespace OpenKeep.Capacity
             [HarmonyPriority(Priority.Low)]
             private static void Postfix()
             {
-                StationTemplate.GenerateIfDefault();
-                StationCapacities.ApplyAll();
+                SceneSafe.Run("the station list", StationTemplate.GenerateIfDefault);
+                SceneSafe.Run("the station caps", StationCapacities.ApplyAll);
             }
         }
 

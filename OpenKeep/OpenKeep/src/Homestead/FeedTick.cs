@@ -64,14 +64,13 @@ namespace OpenKeep.Homestead
             return true;
         }
 
-        /// <summary>One line per unit at debug level; a warning when the game's count did not go up by one.</summary>
+        /// <summary>A warning when the game's count did not go up by one (nothing is built or logged per unit fed).</summary>
         private static void Report(Smelter station, string item, float before, float after)
         {
+            if (after + 0.01f >= before + 1f)
+                return;
             string name = Utils.GetPrefabName(station.m_nview.gameObject);
-            if (after + 0.01f < before + 1f)
-                Plugin.Log.LogWarning($"OpenKeep: {name} took one {item} from containers but the game did not add it ({before:0.##} before, {after:0.##} after)");
-            else
-                Plugin.Log.LogDebug($"OpenKeep: {name} fed itself one {item} from containers near it ({before:0.#} -> {after:0.#})");
+            Plugin.Log.LogWarning($"OpenKeep: {name} took one {item} from containers but the game did not add it ({before:0.##} before, {after:0.##} after)");
         }
     }
 }

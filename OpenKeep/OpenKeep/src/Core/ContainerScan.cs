@@ -13,7 +13,9 @@ namespace OpenKeep.Core
     /// Tracking: a postfix on <c>Container.Awake</c> adds every container whose net view had a ZDO (the only case in
     /// which the game creates its inventory). <c>Container</c> has no Unity <c>OnDestroy</c>, so destroyed and
     /// unloaded containers are pruned lazily: every call of <see cref="All"/> drops the entries Unity reports as
-    /// destroyed. "Inventory read at least once" is the game's own marker <c>m_lastRevision</c>: <c>Load</c> sets it
+    /// destroyed, and so does a new entry once the table has doubled since the last prune (<see cref="PruneMark"/>; a
+    /// dedicated server may never call <see cref="All"/>). The table is emptied when the network scene goes (the world
+    /// is left). "Inventory read at least once" is the game's own marker <c>m_lastRevision</c>: <c>Load</c> sets it
     /// on its first run whether or not the ZDO carried items, so a fresh container without items counts as loaded.
     /// Each tracked container keeps its <see cref="ContainerFacts"/> (prefab name, ship, cart, private chest), found
     /// on first use; nothing that can change at runtime (access, ward, in use, settings) is kept.
@@ -21,6 +23,10 @@ namespace OpenKeep.Core
     public static class ContainerScan
     {
         private static readonly Dictionary<Container, ContainerFacts> loaded = new Dictionary<Container, ContainerFacts>();
+        private static readonly List<Container> walk = new List<Container>();
+        private static readonly List<KeyValuePair<float, Container>> found = new List<KeyValuePair<float, Container>>();
+        private static readonly Comparison<KeyValuePair<float, Container>> Nearest = (a, b) => a.Key.CompareTo(b.Key);
+        private static readonly PruneMark pruneMark = new PruneMark(256);
 
         /// <summary>How many containers registered so far; a list kept a while compares it to see that one woke since.</summary>
         public static int Registered { get; private set; }
@@ -28,13 +34,21 @@ namespace OpenKeep.Core
         /// <summary>Every usable container within range of a position, nearest first. Never throws.</summary>
         public static List<Container> Nearby(Vector3 position, float range, ContainerUse use)
         {
-            return Nearby(point => Vector3.Distance(position, point), range, container => IsUsable(container, use));
+            return Nearby(point => (position - point).sqrMagnitude, range, container => IsUsable(container, use));
+        }
+
+        /// <summary>The usable containers among <paramref name="among"/> within range of a position, nearest first. Never throws.</summary>
+        public static List<Container> Nearby(IEnumerable<Container> among, Vector3 position, float range, ContainerUse use)
+        {
+            walk.Clear();
+            walk.AddRange(among);
+            return Closest(point => (position - point).sqrMagnitude, range, container => IsUsable(container, use));
         }
 
         /// <summary>Every usable container whose position lies within range of a box (0 inside it), nearest first. Never throws.</summary>
         public static List<Container> Nearby(Bounds area, float range, ContainerUse use)
         {
-            return Nearby(point => Mathf.Sqrt(area.SqrDistance(point)), range, container => IsUsable(container, use));
+            return Nearby(area.SqrDistance, range, container => IsUsable(container, use));
         }
 
         /// <summary>
@@ -44,27 +58,48 @@ namespace OpenKeep.Core
         /// </summary>
         public static List<Container> Allowed(Vector3 position, float range)
         {
-            return Nearby(point => Vector3.Distance(position, point), range, IsAllowed);
+            return Nearby(point => (position - point).sqrMagnitude, range, IsAllowed);
         }
 
-        private static List<Container> Nearby(Func<Vector3, float> distanceTo, float range, Func<Container, bool> usable)
+        /// <summary>Walks a reused copy of the registry, since the usability test may record a container's facts in it.</summary>
+        private static List<Container> Nearby(Func<Vector3, float> squaredDistanceTo, float range, Func<Container, bool> usable)
         {
-            List<KeyValuePair<float, Container>> found = new List<KeyValuePair<float, Container>>();
-            foreach (Container container in All())
+            walk.Clear();
+            Snapshot(walk);
+            return Closest(squaredDistanceTo, range, usable);
+        }
+
+        /// <summary>The containers in the walk list within range, nearest first, by squared distance (no square root per
+        /// container); empties the walk list.</summary>
+        private static List<Container> Closest(Func<Vector3, float> squaredDistanceTo, float range, Func<Container, bool> usable)
+        {
+            float reach = range * range;
+            found.Clear();
+            foreach (Container container in walk)
+                Consider(container, squaredDistanceTo, reach, usable);
+            walk.Clear();
+            found.Sort(Nearest);
+            List<Container> result = new List<Container>(found.Count);
+            foreach (KeyValuePair<float, Container> pair in found)
+                result.Add(pair.Value);
+            found.Clear();
+            return result;
+        }
+
+        private static void Consider(Container container, Func<Vector3, float> squaredDistanceTo, float reach, Func<Container, bool> usable)
+        {
+            try
             {
-                try
-                {
-                    float distance = distanceTo(container.transform.position);
-                    if (distance <= range && usable(container))
-                        found.Add(new KeyValuePair<float, Container>(distance, container));
-                }
-                catch (Exception e)
-                {
-                    Plugin.Log.LogDebug($"OpenKeep: container skipped, {e.GetType().Name}: {e.Message}");
-                }
+                if (container == null)
+                    return;
+                float squared = squaredDistanceTo(container.transform.position);
+                if (squared <= reach && usable(container))
+                    found.Add(new KeyValuePair<float, Container>(squared, container));
             }
-            found.Sort((a, b) => a.Key.CompareTo(b.Key));
-            return found.ConvertAll(pair => pair.Value);
+            catch (Exception e)
+            {
+                Plugin.Log.LogDebug($"OpenKeep: container skipped, {e.GetType().Name}: {e.Message}");
+            }
         }
 
         /// <summary>
@@ -81,8 +116,10 @@ namespace OpenKeep.Core
         }
 
         /// <summary>The part of <see cref="IsUsable"/> that changes from moment to moment and is cheap: inventory read
-        /// from the ZDO, valid net view, not in use by another player.</summary>
-        public static bool IsReady(Container container) => IsLoaded(container) && !InUseByAnother(container);
+        /// from the ZDO, valid net view, not in use by another player, and for ship and cart storage the local client
+        /// owning the vehicle (only the vehicle's owner may change it).</summary>
+        public static bool IsReady(Container container) =>
+            IsLoaded(container) && !InUseByAnother(container) && !ContainerClaim.VehicleOfAnother(container);
 
         /// <summary>The rest of <see cref="IsUsable"/>: inventory created, valid net view, then the switches, the prefab
         /// table and the access checks (privacy and the ward scan, the slow part).</summary>
@@ -124,47 +161,71 @@ namespace OpenKeep.Core
         public static IReadOnlyCollection<Container> All()
         {
             List<Container> live = new List<Container>(loaded.Count);
-            List<Container> gone = null;
+            Snapshot(live);
+            return live;
+        }
+
+        /// <summary>Fills the list with every live tracked container and drops the destroyed ones from the registry.</summary>
+        private static void Snapshot(List<Container> live)
+        {
+            bool dead = false;
             foreach (Container container in loaded.Keys)
             {
                 if (container != null)
                     live.Add(container);
                 else
-                    (gone ?? (gone = new List<Container>())).Add(container);
+                    dead = true;
             }
-            if (gone != null)
-                gone.ForEach(container => loaded.Remove(container));
-            return live;
+            if (dead)
+                Prune();
         }
 
-        /// <summary>
-        /// Claims ownership of the container's ZDO for the local client the way the game does after an open or a
-        /// take-all was granted (<c>ZNetView.ClaimOwnership</c>, then the ZDO is force sent to the previous owner),
-        /// and reads the latest inventory data from the ZDO. True when the local client owns it afterwards.
-        /// A container another player is using is never claimed (the game never hands such a chest over either).
-        /// </summary>
-        public static bool Claim(Container container)
+        /// <summary>Drops the destroyed and unloaded containers.</summary>
+        private static void Prune()
         {
-            ZNetView view = container != null ? container.m_nview : null;
-            if (view == null || !view.IsValid() || container.m_inventory == null || InUseByAnother(container))
-                return false;
-            if (!view.IsOwner())
+            List<Container> gone = new List<Container>();
+            foreach (Container container in loaded.Keys)
             {
-                ZDO zdo = view.GetZDO();
-                long previous = zdo.GetOwner();
-                view.ClaimOwnership();
-                if (previous != 0L && ZDOMan.instance != null)
-                    ZDOMan.instance.ForceSendZDO(previous, zdo.m_uid);
+                if (container == null)
+                    gone.Add(container);
             }
-            if (!view.IsOwner())
+            foreach (Container container in gone)
+                loaded.Remove(container);
+            pruneMark.Pruned(loaded.Count);
+        }
+
+        /// <summary>The world was left: nothing of it stays tracked.</summary>
+        internal static void Forget() => loaded.Clear();
+
+        /// <summary>
+        /// Makes the local client the container's owner and reads the latest inventory data from the ZDO; true when it
+        /// owns the container afterwards (<see cref="ContainerClaim"/>: one nobody owns is claimed the way the game claims
+        /// a free object, one another client owns is asked for and used on a later call, ship and cart storage only
+        /// while the local client owns the vehicle). A container another player is using is never claimed.
+        /// </summary>
+        public static bool Claim(Container container) => ContainerClaim.Claim(container, HandOver.ActionSeconds);
+
+        /// <summary><see cref="Claim(Container)"/> for background work, which asks another client for the container at
+        /// most once per <paramref name="askEvery"/> seconds.</summary>
+        public static bool Claim(Container container, float askEvery) => ContainerClaim.Claim(container, askEvery);
+
+        /// <summary>The local client owns the container or may claim it this moment, so a change can be made at once.</summary>
+        public static bool CanClaimNow(Container container) => ContainerClaim.CanClaimNow(container);
+
+        /// <summary>
+        /// A container another client owns and nobody is using, every other rule passing: it is changed only through
+        /// that client, by request (<c>Shared.ChestWriter</c>) or once that client hands it over (<see cref="Claim(Container)"/>).
+        /// </summary>
+        public static bool IsRemote(Container container)
+        {
+            if (!IsLoaded(container) || InUseByAnother(container) || !ContainerClaim.OwnedElsewhere(container))
                 return false;
-            container.Load();
-            return true;
+            return PassesRules(container);
         }
 
         /// <summary>
         /// Persists a changed inventory through the game's own path: the inventory's change callback, which makes
-        /// the owning container write the ZDO. Only the owner can save; call <see cref="Claim"/> first.
+        /// the owning container write the ZDO. Only the owner can save; call <see cref="Claim(Container)"/> first.
         /// </summary>
         public static void Save(Container container)
         {
@@ -189,6 +250,8 @@ namespace OpenKeep.Core
         {
             if (container == null || container.m_inventory == null || loaded.ContainsKey(container))
                 return;
+            if (pruneMark.Due(loaded.Count))
+                Prune();
             loaded.Add(container, null);
             Registered++;
         }
@@ -255,5 +318,13 @@ namespace OpenKeep.Core
     {
         [HarmonyPostfix]
         public static void Postfix(Container __instance) => ContainerScan.Track(__instance);
+    }
+
+    /// <summary>The network scene goes when the world is left (client and server): the tracked containers are forgotten.</summary>
+    [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.OnDestroy))]
+    public static class ContainerSceneGonePatch
+    {
+        [HarmonyPostfix]
+        public static void Postfix() => ContainerScan.Forget();
     }
 }

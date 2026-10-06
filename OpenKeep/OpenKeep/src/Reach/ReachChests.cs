@@ -14,8 +14,10 @@ namespace OpenKeep.Reach
     /// moved further than the margin or the widest range grew. Every frame the candidates are narrowed by the checks
     /// that change from moment to moment (still there, inventory read, not open by another player:
     /// <see cref="ContainerScan.IsReady"/>) and by each prefab's range from where the player stands now, so leaving a
-    /// container's range or another player opening it counts at once. A refresh of the candidates always gives a new
-    /// list, so <see cref="StorageIndex"/> counts afresh at least every quarter second even when nothing reported a change.
+    /// container's range or another player opening it counts at once. A refresh keeps the same list when it finds the
+    /// same containers in the same order (contents changes reach <see cref="StorageIndex"/> through
+    /// <c>Inventory.Changed</c>); only a refresh forced by the rules' apply or another local player gives a new list,
+    /// so the index counts afresh under the new rules.
     /// </summary>
     public static class ReachChests
     {
@@ -69,13 +71,14 @@ namespace OpenKeep.Reach
         {
             if (stale || player != candidatesFor || candidatesRegistered != ContainerScan.Registered)
                 return true;
-            if (Time.unscaledTime - candidatesAt >= RefreshSeconds || Vector3.Distance(position, candidatesFrom) > Margin)
+            if (Time.unscaledTime - candidatesAt >= RefreshSeconds || (position - candidatesFrom).sqrMagnitude > Margin * Margin)
                 return true;
             return ReachRules.MaxRange() + Margin > candidatesRange;
         }
 
         private static void FindCandidates(Player player, Vector3 position)
         {
+            refreshed = stale || player != candidatesFor;
             candidatesRange = ReachRules.MaxRange() + Margin;
             candidates = ContainerScan.Allowed(position, candidatesRange);
             candidatesFor = player;
@@ -83,7 +86,6 @@ namespace OpenKeep.Reach
             candidatesAt = Time.unscaledTime;
             candidatesRegistered = ContainerScan.Registered;
             stale = false;
-            refreshed = true;
         }
 
         /// <summary>The candidates in reach from here now, nearest first; the current list again when its members did not change.</summary>
@@ -108,9 +110,10 @@ namespace OpenKeep.Reach
             {
                 if (container == null || !ContainerScan.IsReady(container))
                     return;
-                float distance = Vector3.Distance(position, container.transform.position);
-                if (distance <= ReachRules.RangeFor(container))
-                    scratch.Add(new KeyValuePair<float, Container>(distance, container));
+                float squared = (position - container.transform.position).sqrMagnitude;
+                float range = ReachRules.RangeFor(container);
+                if (squared <= range * range)
+                    scratch.Add(new KeyValuePair<float, Container>(squared, container));
             }
             catch (Exception e)
             {

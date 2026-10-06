@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using UnityEngine;
 
@@ -59,29 +60,70 @@ namespace OpenKeep.Blueprints
         }
     }
 
-    /// <summary>Runs the blueprint feature every frame and draws its HUD; on the plugin's own object.</summary>
+    /// <summary>
+    /// Runs the blueprint feature every frame, on the plugin's own object, and switches its IMGUI drawing
+    /// (<see cref="BlueprintGui"/>) on only while there is something to draw. Nothing runs on a dedicated server (no
+    /// player, no screen). While Blueprints is off the work idles once things have settled: it runs on for
+    /// <see cref="Settle"/> seconds after the switch was last on and after a new local player or build menu came (the
+    /// tab, the entries and the tools put away), and whenever a construction site is loaded or a build still runs.
+    /// </summary>
     public sealed class BlueprintRunner : MonoBehaviour
     {
-        private void Update()
+        private const float Settle = 3f;
+
+        private static readonly (string Name, Action Run)[] Ticks =
         {
-            BlueprintSafe.Run("OpenKeep blueprint menu", BlueprintMenu.Refresh);
-            BlueprintSafe.Run("OpenKeep blueprints tab", BlueprintTab.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint picks", Tab.TabPicks.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint box", Tab.TabBox.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint drag", Tab.TabDrag.Tick);
-            BlueprintSafe.Run("OpenKeep blueprints tab memory", Tab.TabMemory.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint rename", BlueprintRename.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint session", BlueprintSession.Tick);
-            BlueprintSafe.Run("OpenKeep fix ground session", GroundFixSession.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint zoom", HammerZoom.Tick);
-            BlueprintSafe.Run("OpenKeep blueprint build", BuildJob.Tick);
-            Sites.SiteHooks.Update();
+            ("OpenKeep blueprint menu", BlueprintMenu.Refresh),
+            ("OpenKeep blueprints tab", BlueprintTab.Tick),
+            ("OpenKeep blueprint picks", Tab.TabPicks.Tick),
+            ("OpenKeep blueprint box", Tab.TabBox.Tick),
+            ("OpenKeep blueprint drag", Tab.TabDrag.Tick),
+            ("OpenKeep blueprints tab memory", Tab.TabMemory.Tick),
+            ("OpenKeep blueprint rename", BlueprintRename.Tick),
+            ("OpenKeep blueprint session", BlueprintSession.Tick),
+            ("OpenKeep fix ground session", GroundFixSession.Tick),
+            ("OpenKeep blueprint zoom", HammerZoom.Tick),
+            ("OpenKeep blueprint build", BuildJob.Tick),
+        };
+
+        private BlueprintGui gui;
+        private float busyUntil;
+        private Player seenPlayer;
+        private BuildUi seenMenu;
+
+        private void Awake()
+        {
+            gui = gameObject.AddComponent<BlueprintGui>();
+            gui.enabled = false;
         }
 
-        private void OnGUI()
+        private void Update()
         {
-            BlueprintSafe.Run("OpenKeep blueprint HUD", BlueprintHud.Draw);
-            Sites.SiteHooks.Gui();
+            if (ZNet.instance != null && ZNet.instance.IsDedicated())
+            {
+                enabled = false;
+                return;
+            }
+            bool busy = Busy();
+            if (busy)
+            {
+                foreach ((string name, Action run) in Ticks)
+                    BlueprintSafe.Run(name, run);
+                Sites.SiteHooks.Update();
+            }
+            gui.Want(busy && (BlueprintHud.Wanted || Sites.SiteHooks.GuiWanted));
+        }
+
+        private bool Busy()
+        {
+            float now = Time.unscaledTime;
+            if (BlueprintSettings.Enabled || Player.m_localPlayer != seenPlayer || BlueprintTab.Menu != seenMenu)
+            {
+                busyUntil = now + Settle;
+                seenPlayer = Player.m_localPlayer;
+                seenMenu = BlueprintTab.Menu;
+            }
+            return now < busyUntil || Sites.SiteMarker.Loaded.Count > 0 || BuildJob.Busy || Sites.SiteDeliveries.Waiting;
         }
     }
 }

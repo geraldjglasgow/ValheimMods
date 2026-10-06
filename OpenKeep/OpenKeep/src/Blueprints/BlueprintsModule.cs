@@ -9,7 +9,8 @@ namespace OpenKeep.Blueprints
     /// hills and fills dips, digs water areas below sea level, lays dirt under the building and places every piece;
     /// plus 'openkeep blueprint' to list, save and undo. One synced switch,
     /// <see cref="BlueprintSettings.Enabled"/>, off by default. The patches are ordinary patch classes; the per-frame
-    /// work and the HUD run in <see cref="BlueprintRunner"/>.
+    /// work runs in <see cref="BlueprintRunner"/> (idle on a dedicated server and, once settled, while off) and the HUD in
+    /// <see cref="BlueprintGui"/>, switched on only while it has something to draw.
     /// </summary>
     public static class BlueprintsModule
     {

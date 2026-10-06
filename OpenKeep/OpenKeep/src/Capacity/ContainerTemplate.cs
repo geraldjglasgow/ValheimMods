@@ -50,7 +50,7 @@ namespace OpenKeep.Capacity
         private static string Normalize(string text) => text.TrimStart('\uFEFF').Replace("\r\n", "\n").Replace("\n#  ", "\n  # ").TrimEnd();
 
         /// <summary>The template up to and including the containers: line, then one commented line per prefab.</summary>
-        public static string Generate(string template, Dictionary<string, Container> prefabs)
+        public static string Generate(string template, IReadOnlyDictionary<string, Container> prefabs)
         {
             StringBuilder text = new StringBuilder();
             foreach (string line in Normalize(template).Split('\n'))

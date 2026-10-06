@@ -1,4 +1,3 @@
-using HarmonyLib;
 using OpenKeep.Core;
 using UnityEngine;
 
@@ -9,11 +8,10 @@ namespace OpenKeep.Salvage
     /// gamepad selection when nothing is under the pointer) is salvaged after the game's yes/no popup.
     /// Signature verified: InventoryGui.Update().
     /// </summary>
-    [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
     public static class SalvageHotkey
     {
-        [HarmonyPostfix]
-        public static void Postfix(InventoryGui __instance)
+        /// <summary>After the inventory's update (<see cref="InventoryUpdatePatch"/>).</summary>
+        public static void Tick(InventoryGui __instance)
         {
             if (!SalvageSettings.Enabled.Value || !Keys.InventoryOpen || UnifiedPopup.IsVisible())
                 return;

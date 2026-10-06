@@ -13,6 +13,14 @@ namespace OpenKeep.Blueprints.Sites
         public float NextStep;
         public float OwnedSince = -1f;
 
+        /// <summary>
+        /// While steps change nothing (a site waiting for materials): the wait before the next look, doubling up to
+        /// <see cref="SiteBuilder"/>'s limit (0: not idle), and the ZDO revision the last idle step saw; a new revision
+        /// (a delivery) wakes the site at once.
+        /// </summary>
+        public float IdleDelay;
+        public uint IdleRevision;
+
         /// <summary>The ground work planned last on this machine (the owner's), and when.</summary>
         public GroundWork Ground;
         public float GroundAt;

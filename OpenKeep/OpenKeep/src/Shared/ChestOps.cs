@@ -124,23 +124,5 @@ namespace OpenKeep.Shared
             inventory.Changed();
             return true;
         }
-
-        /// <summary>Removes what the owner accepted from the requester's own stack; a stack that changed meanwhile is logged.</summary>
-        public static void RemoveFromPlayer(Inventory inventory, ItemDrop.ItemData item, int accepted)
-        {
-            if (accepted <= 0 || item == null)
-                return;
-            if (!inventory.ContainsItem(item))
-            {
-                Plugin.Log.LogWarning($"OpenKeep: the chest accepted {accepted} x {item.m_shared.m_name} but the stack left the inventory meanwhile");
-                return;
-            }
-            if (item.m_stack < accepted)
-            {
-                Plugin.Log.LogWarning($"OpenKeep: the chest accepted {accepted} x {item.m_shared.m_name} but only {item.m_stack} are left in the inventory");
-                accepted = item.m_stack;
-            }
-            inventory.RemoveItem(item, accepted);
-        }
     }
 }

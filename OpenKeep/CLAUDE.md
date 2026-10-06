@@ -36,7 +36,9 @@ Rules that still apply to every change:
 - Container access is the game's: `ContainerScan.IsUsable` runs the privacy check, the ward check, the in-use rule
   and the section 0 switches for every candidate; nothing changes a container's inventory without
   `ContainerScan.Claim` before and `ContainerScan.Save` after, and a chest another player is using is changed only
-  through the Shared module's requests to its owner (`ChestWriter`), never locally.
+  through the Shared module's requests to its owner (`ChestWriter`), never locally. `Claim` takes only a container
+  nobody owns; one another client owns is asked for (`HandOver`) and used once it arrives, ship and cart storage
+  only while the local client owns the vehicle.
 - Nullable is off. Zero compiler warnings from the mod's own code. Build from the workspace root with
   `"/c/Program Files/dotnet/dotnet" build OpenKeep/OpenKeep/OpenKeep.csproj -c Release`; the build copies the
   merged DLL to `dist/` and to the r2modman profile `LocalTesting`. Never launch or kill the game from a script.
@@ -46,7 +48,9 @@ Rules that still apply to every change:
 ```
 OpenKeep/OpenKeep/src/
   Plugin.cs                 entry: Lock Configuration, module Initialize calls, patches per class, Synced.Finish,
-                            Guard.Install last; the YAML editor's Update and OnGUI
+                            Guard.Install last (the YAML editor draws from SyncedConfig's host, no OnGUI here)
+  HotPatches.cs             one patch per hot game method several features hook (Player.Update, InventoryGui.Update and
+                            UpdateRecipe postfixes, Container.CheckForChanges), asking each feature in turn
   Core/                     shared by every module
     CoreModule.cs, CoreSettings.cs, SharedMode.cs   section 0. Containers (Ships, Carts, Player Chests, Honour Wards,
                             Shared Chests: Off, View, Full)
@@ -59,7 +63,17 @@ OpenKeep/OpenKeep/src/
     ItemMatcher.cs, ItemMatchSet.cs, ItemGroups.cs   the item vocabulary and the groups: map of a YAML file
     ItemNames.cs            prefab name, display name, stacking identity of an item
     CharacterData.cs        string sets and flags in Player.m_customData under OpenKeep.<key>
-    Keys.cs                 KeyboardShortcut helpers, InventoryOpen, TextInputActive
+    Keys.cs                 the hotkeys through the Hotkeys library (main key looked at first), InventoryOpen,
+                            TextInputActive (Typing.Active; the YAML editor registered as a window)
+    InventoryChanges.cs     the count of every Inventory.Changed (prefix); the per-frame caches key on it
+    SaveHolds.cs            one save per container per operation: Container.OnContainerChanged prefix skips the
+                            game's save while held, Claim loads once per hold, the end of the hold saves once
+    ContainerClaim.cs       who may become a container's owner: a free one is claimed, another client's is asked
+                            for, vehicle storage never; CanClaimNow, OwnedElsewhere, VehicleOfAnother
+    HandOver.cs             RPC OpenKeep_HandOver (Container.Awake postfix): the owner hands a chest nobody uses over,
+                            latest data first; never ship or cart storage; asked at most every 1 s (actions) or 30 s
+    PruneMark.cs            when a per-object table is pruned: once it doubled since the last prune
+    SceneSafe.cs            ZNetScene.Awake postfix work that logs and swallows a throw (a throw there stops the world loading)
     RenamedKeys.cs          Carry: a renamed cfg key takes the old line's value from BepInEx's orphaned entries
     Messages.cs, Language.cs   centre and top-left messages; $ok_ words (Localization.SetupLanguage postfix)
     Command.cs              the openkeep console command (Terminal.InitTerminal postfix)
@@ -73,9 +87,11 @@ OpenKeep/OpenKeep/src/
                             container, a rules apply, a new player body, 4 m moved, a wider range), narrowed every frame
                             by IsReady and each prefab's range; one list instance while its members stay the same
     StorageIndex.cs         what the reachable containers hold per name and per name + quality, walked again only when
-                            the list instance, any inventory (Inventory.Changed prefix) or the world level changed
+                            the list instance, any inventory (InventoryChanges) or the world level changed
     ReachCount.cs           the reach list, requirement counts from StorageIndex, live per-container counts and lookups
     ReachPayment.cs         the payment window (ConsumeResources, DoCrafting) and the RemoveItem prefix
+    ReachReady.cs           before a craft (DoCrafting prefix) or a placement (TryPlacePiece prefix): storage can pay
+                            now, else the chests are asked for and it waits; Craft pressed asks at once
     EpicLootLink.cs         Epic Loot's RegisterInventoryProvider (reflection, from Plugin.Start): its table pays from chests
     ReachPull.cs            moving items from containers into the inventory, never in two places
     Requirements.cs         the game's requirement filter (upgrader resources, missing items)
@@ -85,7 +101,7 @@ OpenKeep/OpenKeep/src/
     StationFeed.cs, StationAccepts.cs, StationHover.cs   borrow one unit, Fill, Pull, "From storage" hover lines
     SmelterOrePatch.cs, SmelterFuelPatch.cs, CookingFoodPatch.cs, CookingFuelPatch.cs, FireplacePatch.cs,
     FermenterPatch.cs       one prefix/postfix pair per station entry point
-    ReachKeys.cs            Toggle Key and Link Key (Player.Update postfix)
+    ReachKeys.cs            Toggle Key and Link Key (from HotPatches' Player.Update postfix)
     ReachLinks.cs           link lines (LineRenderer) and the PlacePiece postfix
   Stow/                     section 2
     StowModule.cs, StowSettings.cs, StowWords.cs, SortOrder.cs
@@ -98,22 +114,23 @@ OpenKeep/OpenKeep/src/
                             item, nearest first, until placed; one put per step, a shared chest's answer continues it
     TopUp.cs, Sorting.cs, Trash.cs, Routing.cs, Finder.cs, Cycling.cs
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
-    StowHotkeys.cs          InventoryGui.Update postfix: the hotkeys and cycling
+    StowHotkeys.cs          after InventoryGui.Update (HotPatches): the hotkeys and cycling
     PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button; Follow puts
                             the row into PackPanel's strip while it is shown
     TrashPlate.cs           the trash can's own plate in the game's style, a copy of the game's armour plate
                             named Trash, 78 under it (the spot trash can mods use); the game's plates only read
     HoveredItem.cs          the slot under the pointer (or the gamepad selection)
     ClickRouting.cs         InventoryGui.OnSelectedItem prefix: Route Modifier + click
-    DumpKeyPatch.cs         Player.Update postfix: Dump Key outside the inventory
+    DumpKeyPatch.cs         after Player.Update (HotPatches): Dump Key outside the inventory
     AutoSortPatch.cs        InventoryGui.Show prefix/postfix
-    FavouriteOverlay.cs, SlotMarks.cs, StowSprites.cs   star, cross, border marks on the grid elements; the trash
+    FavouriteOverlay.cs, GridMarks.cs, SlotMarks.cs, StowSprites.cs   star, cross, border marks on the grid elements,
+                            set again only when the grid, an inventory or the favourites changed (GridMarks); the trash
                             icon from assets/trash.png
     LinkMarker.cs           Find Key: a line from the player and a floating count
     GroundPickup.cs         Container.CheckForChanges postfix
     PickupOrder.cs          which pickup chest takes a drop: holders before acceptors, nearest to the drop first,
                             a full one passed over
-    TidySchedule.cs         Auto Tidy's looks: Container.CheckForChanges prefix/postfix, first sight, change, close,
+    TidySchedule.cs         Auto Tidy's looks: after Container.CheckForChanges (HotPatches), first sight, change, close,
                             retries with backoff for chests whose strays wait, wakes near a change, one per frame
     TidyChanges.cs          Container.OnContainerChanged postfix: a closed owned chest changed (not by Auto Tidy)
     TidyHands.cs            Container.SetInUse prefix/postfix: contents at open against release = put in by hand
@@ -123,7 +140,6 @@ OpenKeep/OpenKeep/src/
     TidyProfile.cs, TidyProfiles.cs   a chest's weights, shares, random-items score; kept per revision
     TidyThemes.cs, TidyLabels.cs, TidyFamilies.cs   what is alike: learned pairs, YAML groups, type themes,
                             smelting families from the game's stations and recipes
-    TidyHandOver.cs         RPC OpenKeep_TidyHandOver: the owner hands a free chest over (Container.Awake postfix)
     TidyCommand.cs          openkeep tidy
   Salvage/                  section 3
     SalvageModule.cs, SalvageSettings.cs, SalvageWords.cs, RoundingMode.cs
@@ -134,7 +150,7 @@ OpenKeep/OpenKeep/src/
     SalvageActions.cs       the public face: CanSalvage, WhyNot, Returns, Salvage, Confirm
     SalvageTab.cs, SalvageList.cs, SalvageRow.cs, SalvagePanel.cs, SalvageGuiPatches.cs   the third tab
     SalvageRarity.cs        Epic Loot's rarity background behind the tab's icons, through its published API
-    SalvageHotkey.cs        InventoryGui.Update postfix: Salvage Key
+    SalvageHotkey.cs        after InventoryGui.Update (HotPatches): Salvage Key
   Stacks/                   section 4
     StacksModule.cs, StacksSettings.cs, StacksModel.cs, StackRule.cs, ItemValue.cs
     StackValues.cs          writes stack and weight into the prefabs and every live item (ItemCopies for the world
@@ -145,6 +161,7 @@ OpenKeep/OpenKeep/src/
     MergeIntoChests.cs      InventoryGrid.DropItem prefix (skips a viewed or shared chest)
     TeleportPatch.cs        Inventory.IsTeleportable prefix
     Documentation.cs        OpenKeep.Items.txt and OpenKeep.Containers.txt (ZNetScene.Awake postfix)
+    DocFile.cs              a documentation file is written only when its text changed (the console command always)
   Capacity/                 section 5
     CapacityModule.cs, CapacitySettings.cs, HoverFill.cs, ContainersModel.cs, ContainerSize.cs
     ContainerPrefabs.cs, VanillaSizes.cs, ContainerSizes.cs   prefab discovery, vanilla sizes, apply and resize
@@ -158,6 +175,8 @@ OpenKeep/OpenKeep/src/
     StationTemplate.cs      fills a still-default OpenKeep.Stations.yml with every station prefab
     StationSceneReady.cs    ZNetScene.Awake and Smelter.Awake postfixes
     StationDocumentation.cs OpenKeep.Stations.txt (called from Stacks' Documentation.Write)
+    ScenePrefabs.cs         one walk over the scene's prefabs for both ContainerPrefabs and StationPrefabs, kept while
+                            the scene and its prefab count stay the same
   Carts/                    section 6
     CartsModule.cs, CartsSettings.cs
     CartStation.cs          the CraftingStation component on every loaded cart (Vagon.Awake postfix)
@@ -173,7 +192,7 @@ OpenKeep/OpenKeep/src/
     SignPlacer.cs           Object.Instantiate of the sign prefab, creator, link, first text; Replace keeps the words
     SignRemover.cs          ZNetScene.Destroy when loaded, ZDOMan.DestroyZDO when not
     SignState.cs, SignStates.cs   per container throttle, revision and rules generation
-    SignRefresh.cs          Container.CheckForChanges postfix: the owner's tick; RewriteAll, RulesChanged
+    SignRefresh.cs          after Container.CheckForChanges (HotPatches): the owner's tick; RewriteAll, RulesChanged
     SignOptOut.cs           WearNTear.Remove postfix: OpenKeep.noSign on the container (the hammer)
     SignWear.cs             m_noSupportWear and m_noRoofWear cleared on every automatic sign instance
     ContainerGonePatch.cs   Container.OnDestroyed postfix: the owner removes the sign
@@ -222,6 +241,9 @@ OpenKeep/OpenKeep/src/
                             the station's predicate, the container's allow/deny and the world level rule; claim,
                             remove, save
     TakeRetry.cs            Fuel and Feed: 10 s wait for a fire or station that found nothing
+    FuelHolders.cs          which loaded containers hold an item (by shared name), one index for every fire; after an
+                            inventory change, at most every 2 s, only containers whose ZDO revision moved are walked
+                            again; Auto Fuel looks only at those near the fire
     FuelPatch.cs            Fireplace.UpdateFireplace postfix (after TorchPatch)
     TorchFeature.cs, TorchSettings.cs   Torches Night Only, Torch Pieces, Torch Margin, Torch Switch Key (unsynced),
                             the $ok_torch_ words
@@ -234,7 +256,7 @@ OpenKeep/OpenKeep/src/
                             unowned fire) and the owner's write
     TorchPatch.cs           Fireplace.UpdateFireplace postfix (Priority.High)
     TorchHoverPatch.cs      Fireplace.GetHoverText postfix: "Lights at nightfall", "[O] Keep lit" / "Light at night only"
-    TorchKeyPatch.cs        Player.Update postfix: Torch Switch Key on the hovered fire
+    TorchKeyPatch.cs        after Player.Update (HotPatches): Torch Switch Key on the hovered fire
     TorchRpcPatch.cs        Fireplace.Awake postfix: registers OpenKeep_TorchKeepLit on every fire
     FeedFeature.cs, FeedSettings.cs   Auto Feed Stations, Auto Feed Range, Auto Feed Skip, Auto Feed Leave
     FeedStations.cs         the stations (Smelter, ZDO owned here, a piece a player built) and their outline (the
@@ -279,13 +301,16 @@ OpenKeep/OpenKeep/src/
     ChestSync.cs, ChestOps.cs, InventoryFit.cs   the synchronous path; the inventory operations both sides use;
                             the dry run of Inventory.AddItem
     ChestRequests.cs        the RPC names, headers, reasons, registration (Container.Awake postfix), Send, Reply
-    ChestRequester.cs       pending requests, replies, the one retry, timeouts (Player.Update postfix)
+    ChestRequester.cs       pending requests, replies, the one retry, timeouts and late answers (Player.Update postfix)
     ChestAsk.cs             builds each request and applies the owner's answer on the requester
+    Escrow.cs               a put's units held out of the inventory until the answer; the rest comes back
     ChestOwnerHandler.cs    the referee: validates, applies with the game's methods, saves, replies
     ItemPacket.cs           one item on the wire (prefab name + the game's ItemData.Save fields)
     Touches.cs              OpenKeep_Touch: InventoryGrid.OnLeftDown, InventoryGui.Update, InventoryGrid.UpdateGui
   Batch/                    section 10
     BatchModule.cs, BatchSettings.cs   section 10. Batch Crafting (no words of its own)
+    BatchCheck.cs           CanMake's materials and room answers kept per amount until an inventory, the recipe or
+                            the station changes, at most 0.25 s
     BatchAmount.cs          the amount: where it applies, back to 1 on another recipe, CanMake, Limit (binary
                             search), the - and + steps with Shift and Ctrl, the gamepad's fast repeat, a typed
                             amount, NextCraft for Reach's Pull modifier, Current (its recipe, for the tracker)
@@ -338,7 +363,7 @@ OpenKeep/OpenKeep/src/
     CameraModule.cs, CameraSettings.cs, CameraPrefs.cs   section 11. Build Camera (synced gameplay keys; unsynced
                             keys, speed, head light, panel) and the ok_cam_* words
     CameraState.cs          out or not, position, yaw and pitch; out only while its player is the local player
-    CameraToggle.cs         Player.Update postfix: Toggle Key / Gamepad Toggle in and out, every end condition
+    CameraToggle.cs         after Player.Update (HotPatches): Toggle Key / Gamepad Toggle in and out, every end condition
     PadToggle.cs            Gamepad Toggle: ZInput button names joined with +
     CameraArea.cs           where the camera may be: station build range x Range Multiplier, flat and as high; while
                             AroundPlayer (set by Blueprints) a ball of 50 m round the player's body (the user's cap)
@@ -370,7 +395,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.2.1]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 2.3.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -421,13 +446,15 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
     SitePlan.cs, SiteProtection.cs, MaterialBill.cs   the check: in the way, interiors, no-build, wards, learned, materials
     SiteObjects.cs, SiteClearing.cs   trees, logs, stumps, shrubs, rocks, pickables (never ore, crops, offerings)
     PiecePlacer.cs, BuildJob.cs, BuildUndo.cs   one piece as Player.PlacePiece without OnPlaced; a site's all-at-once
-                            build (80 a frame); undo takes down the player's last site and its pieces
+                            build (a 2 ms budget a frame, at most 20 pieces); undo takes down the player's last site and its pieces
     PieceShapes.cs, GhostView.cs, SiteOutline.cs, BlueprintHud.cs   the preview, outline lines and HUD (IMGUI)
     BlueprintTool.cs, BlueprintSession.cs, BlueprintKeys.cs   a blueprint entry's click (pin, build), aim/turn/height
                             and the fixed keys
     BlueprintPatches.cs     TerrainComp.Awake (ground RPC), Player.TryPlacePiece (the click), Player.AddKnownPiece
                             (no unlock message), Player.RemovePiece (no removal while an entry is selected); the
-                            BlueprintRunner MonoBehaviour (menu, tab, rename, session, build job, HUD)
+                            BlueprintRunner MonoBehaviour (menu, tab, rename, session, build job; disabled on a
+                            dedicated server, idle once settled while off unless a site is loaded or a build runs)
+    BlueprintGui.cs         the IMGUI HUD and the planner panel, enabled only while one of them has something to draw
     BlueprintCapture.cs, BlueprintCommands.cs, BlueprintWords.cs, BlueprintSafe.cs   capture of real pieces (by radius
                             for openkeep blueprint save, or an explicit list for Copy), the command, ok_bp_* words
     NamePrompt.cs           the game's text box (TextInput) asking for a name: saving, New folder, F2 and right-click rename
@@ -436,7 +463,9 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
                             from wood_pole2), SitePlacement, SiteGhost + GhostPick + GhostLook (everyone's ghost, see-through look, glow, picking; hidden and unpickable
                             while this player's Construction ghosts switch is off, unless the Site planner is in hand),
                             SiteBuilder / SitePieces / SiteGround / SiteOrder / SiteNeeds / SiteCosts / SiteStore (the
-                            owner builds as materials come in or all at once), SiteDelivery, SiteTakeDown, SiteRights,
+                            owner builds as materials come in or all at once), SiteDelivery + SiteDeliveries +
+                            SiteParcel (materials held until the post's owner answers), SiteTakeOver (a server-owned
+                            site handed by the server to the first machine that asks), SiteTakeDown, SiteRights,
                             SiteNetwork, SiteHover, SiteRun, SiteSettings (Build As Resources Come In), SiteWords,
                             SiteHooks (the seams), SmartSelect + Smart*.cs (one enclosed house from a click;
                             SmartSameType: the joined pieces of one prefab), SiteSupport (what holds each piece up:
@@ -471,7 +500,7 @@ and Stow's `TrashPlate` sits at rank 120 so the column reads armour, trash, weig
 ## Patched game methods
 
 Postfix: `Bed.Awake` (remember own beds, forget others at a known point), `Bed.GetHoverText` (Sleep on every own
-bed), `Container.Awake` (Core tracking; Capacity sizes; Shared RPC registration; Auto Tidy's hand-over RPC),
+bed), `Container.Awake` (Core tracking; Capacity sizes; Shared RPC registration; Core's hand-over RPC),
 `Container.CheckForChanges` (ground pickup; the sign refresh tick; Auto Tidy's tick, with a prefix noting the loaded
 revision), `Container.OnContainerChanged()` (private: Auto Tidy's change trigger), `Container.GetHoverText`, `Container.OnDestroyed` (the owner removes the
 container's sign), `Container.SetInUse(bool)` (the user name), `CookingStation.GetHoverText`,
@@ -501,8 +530,11 @@ by name by the AreaLoading library, `AreaLoader.Install` in `Plugin.Awake`),
 animation, a class of its own), `Player.PlacePiece`, `Player.Update` (Reach keys; Dump Key;
 request timeouts; Torch Switch Key), `Switch.GetHoverText`, `Terminal.InitTerminal`, `Vagon.Awake`, `Vagon.GetHoverText`, `WearNTear.Remove(bool)`
 (the hammer opt-out on the removing player's client), `ZNetScene.Awake` (documentation; container list and sizes;
-station list and caps; Homestead's Build On Wood; all `Priority.Low`).
-Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Game._RequestRespawn()` (private: the
+station list and caps; Homestead's Build On Wood; all `Priority.Low`, none throws: `SceneSafe`), `ZNetScene.OnDestroy()`
+(private: Core forgets the tracked containers when the world is left).
+Prefix: `Container.Interact(Humanoid, bool, bool)` (the read-only open), `Container.OnContainerChanged()` (private,
+`Priority.First`: a held container's save waits for the end of the hold, `SaveHolds`), `Inventory.Changed()` (private:
+the inventory change count), `Game._RequestRespawn()` (private: the
 choice of bed ends), `Game.FindSpawnPoint(out Vector3, out bool, float)` (Quick Respawn's load speed, a class of its
 own beside the prefix and postfix below), `Hud.UpdateBlackScreen(Player, float)` (private: no black screen during
 the choice of bed), `Minimap.OnMapLeftClick()` (during the choice of bed a click picks a bed, `Priority.First`; the
@@ -511,10 +543,12 @@ MapClicks library's `IconClick.Install` in `Plugin.Awake` adds, by name, a `Mini
 `Container.RPC_OpenResponse(long, bool)`
 (a refusal is silent while viewing), `InventoryGrid.DropItem(Inventory, ItemData, int, Vector2i)` (Shared,
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
-modifier; Salvage tab; Batch, with a postfix too), `InventoryGui.UpdateRecipe(Player, float)` (Batch drives the
+modifier; Salvage tab; Batch, with a postfix too; a postfix asks for the chests a started craft pays from), `InventoryGui.UpdateRecipe(Player, float)` (Batch drives the
 game's multi-craft fields), `InventoryGui.OnRightClickItem(InventoryGrid, ItemData)` (refused on a viewed chest),
 `InventoryGui.OnSelectedItem` (Shared, `Priority.First`; Stow's Route Modifier), `InventoryGui.OnStackAll`,
 `InventoryGui.OnTakeAll`, `InventoryGui.OnTabCraftPressed`, `InventoryGui.OnTabUpgradePressed`,
+`InventoryGui.DoCrafting(Player)` (private: the payment window; refused while storage cannot pay now, `ReachReady`),
+`Player.TryPlacePiece(Piece)` (`Priority.Low`, after the Blueprints tab's: waits while storage cannot pay now),
 `InventoryGui.UpdateContainer(Player)` (the viewer's panel), `InventoryGui.UpdateRecipeGamepadInput`,
 `Inventory.IsTeleportable(bool)`, `Inventory.RemoveItem(string, int, int, bool)` (the payment hook),
 `SE_Cozy.UpdateStatusEffect(float)` (the Resting effect's tick on the player's own client: `Rested Delay` into the
@@ -629,9 +663,10 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Auto Tidy: `OpenKeep.tidy` (byte array) on a container, written only by its ZDO owner at a look when something
   changed: a `ZPackage` of version (int, 2), count (int), then per prefab its name (string), first seen (double, world
   seconds), peak stacks (float) and its time (double), stacks at the last look (float), flags (byte: 1 put in by hand,
-  2 kept) and the time Auto Tidy last sent it away (double). `OpenKeep_TidyHandOver` (no payload) is registered on
-  every container's net view and sent to the ZDO owner, which, when the chest is free, force sends the ZDO to the asker
-  and sets it as owner (the game's own grant of an open).
+  2 kept) and the time Auto Tidy last sent it away (double).
+- Hand-over: `OpenKeep_HandOver` (no payload) is registered on every container's net view and sent to the ZDO owner,
+  which, when nobody uses the chest and it is no ship or cart storage, force sends the ZDO to the asker and sets it as
+  owner (the game's own grant of an open). It replaced `OpenKeep_TidyHandOver` (2026-10-06).
 - RPCs, registered on every container's net view in a `Container.Awake` postfix (once per view), every payload one
   `ZPackage`. A request starts with a header: request id (long), the requester's player id (long) and name
   (string); it goes to the ZDO's owner at send time (`ZNetView.InvokeRPC(name, pkg)`).
@@ -701,7 +736,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   never synced).
 - Construction sites: prefab `OpenKeep_Site` (networked post); its ZDO keys `OpenKeep.site_bp`, `site_name`,
   `site_origin`, `site_yaw`, `site_built`, `site_queue`, `site_store`, `site_ground`, `site_groundStone`,
-  `site_creator`, `site_creatorName` (all `OpenKeep.`); RPCs on the post `OpenKeep_SiteDeliver`,
+  `site_creator`, `site_creatorName` (all `OpenKeep.`); RPCs on the post `OpenKeep_SiteDeliver` (request id, then the
+  amounts), its answer `OpenKeep_SiteDelivered` (id, yes or no, reason), routed `OpenKeep_SiteTakeOver` (to the
+  server: a site it owns, by ZDO id),
   `OpenKeep_SiteTakeDown`, `OpenKeep_SiteQueue`; routed `OpenKeep_SiteTakeDownAsk` (to the server) and
   `OpenKeep_SiteBuilt` (to everyone, shown within 40 m).
 
@@ -727,22 +764,35 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   sees such a chest and nothing is ever applied speculatively; `Claim` refuses a chest in use as well, since the
   game never hands such a chest over. `IsShared` is the other side: `Shared Chests` is `Full`, another player uses
   the chest, and every other usability rule passes; only `Shared.ChestWriter` may change it, by request.
-- `Claim` claims ownership, force-sends the ZDO to the previous owner as the game does after a granted open, then
-  calls `Container.Load` so the latest data is read (a no-op when the data revision has not changed; ownership
-  changes only the owner revision). `Save` calls `Inventory.Changed()`, the game's own path to the ZDO, and logs a
+- `Claim` (`ContainerClaim`): a container the local client owns is used at once; one nobody owns is claimed with
+  `ZNetView.ClaimOwnership` (the game's way for a free object); one another client owns is never taken locally: its
+  owner is asked (`OpenKeep_HandOver`, `HandOver.Ask`, at most every 1 s for a player's action, 30 s for Auto Fuel,
+  Auto Feed, pets and Auto Tidy) to hand it over with its latest data, and `Claim` returns false until it is ours, so
+  our older copy never overwrites the last owner's change. Ship and cart storage is never claimed or asked for: it is
+  usable (`IsReady`) only while the local client owns the vehicle, and otherwise written only by request to its owner
+  (Stow, through `ChestWriter`). Then `Container.Load` reads the latest data (a no-op when the data revision has not
+  changed). `Save` calls `Inventory.Changed()`, the game's own path to the ZDO, and logs a
   warning when the client does not own the container.
+- Save holds: a quick stack, store all, top up, sort, a ground pickup sweep, every `ChestSync` call and every
+  container Auto Fuel, Auto Feed and pets take from hold the container's saves (`SaveHolds`, in a `using`): the
+  game's save after each change is skipped, `Claim` loads only on the first claim of the hold (the held inventory is
+  newer than the ZDO), and the end of the outermost hold saves once. Only synchronous work is held, so no other client's change can arrive meanwhile.
+  Auto Tidy's moves are not held (their saves must happen while its `Moving` flag is set).
 - A private chest without a `Piece` is unusable (the game's privacy check would need the piece's creator).
 - The ward check never flashes the ward. `ContainerUse` is accepted but does not distinguish rules yet.
 - Vocabulary: an unknown keyword (`foo:`) or an unknown `type:` name is an invalid entry with `Problem` set; it
   matches nothing and the YAML model warns. `ItemGroups` warns about invalid members and members naming unknown
   groups; cycles are tolerated through a visited set.
-- `Keys`: a shortcut with modifiers uses BepInEx's `IsDown`; a single key fires only with no Shift, Ctrl or Alt
-  held, so `F` and `LeftShift + F` never fire together. `TextInputActive` covers chat, console, the sign text input,
+- `Keys`: a single key fires only with no Shift, Ctrl or Alt held, so `F` and `LeftShift + F` never fire
+  together. `TextInputActive` covers chat, console, the sign text input,
   any selected input field and the YAML editor. `CharacterData` strips commas from set members.
 - `openkeep reload` is allowed with no `ZNet` or when the local player is admin or host; it runs
   `Config.Reload`, `Yaml.LoadAll`, `Yaml.ApplyAll`. `openkeep containers` lists within 20 m.
 - Keys (Core, 1.8.0): a shortcut with modifiers is now its main key down with all its modifiers held and no other
-  Shift, Ctrl or Alt, as EarthWright does; BepInEx's `IsDown` refused it while any other key (W) was held.
+  Shift, Ctrl or Alt, as EarthWright does; BepInEx's `IsDown` refused it while any other key (W) was held. After
+  2.2.1 `Keys` passes every read to the workspace's Hotkeys library (`Hotkey.Pressed`, `Hotkey.Held`,
+  `Typing.Active`): the same rules, modifiers read through the game's `ZInput` (one let go in another window is not
+  stuck), the main key tested first.
 
 ### Reach
 
@@ -753,8 +803,13 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   Upgrading from `m_craftUpgradeItem`); inside it the `RemoveItem` prefix computes the shortfall against the same
   name, quality and world-level filter the game removes with, takes exactly that from reachable containers nearest
   first (claim, remove per stack honouring allow/deny, save), and the game then removes what the inventory has.
-  Finalizers close the window even after an exception. A container that vanished since counting leaves the
-  shortfall paid short and logged; the player gains, never loses. The build panel passes quality 0 to
+  Finalizers close the window even after an exception. Before a craft (`DoCrafting` prefix) and a placement
+  (`TryPlacePiece` prefix) `ReachReady` checks in the same frame that the inventory plus the containers the client may
+  change now (owned, or owned by nobody) cover every shortfall; if not, every other reachable container holding the
+  item is asked for (`HandOver`) and the craft or placement is refused with "Fetching the materials from storage, try
+  again" (the game's missing-requirement message when nothing holds it any more). Pressing Craft asks at once, so the
+  hand-over usually arrives within the craft's progress bar. A payment from another mod's path that falls short is
+  logged. Each paying container is held (one save). The build panel passes quality 0 to
   `SetupRequirement`, so its rows use the Building switch. Reachable means `ContainerScan.IsUsable`: a chest another
   player is using is neither counted nor paid from, in every `Shared Chests` mode.
 - Counting: the reach list (`ReachChests`) re-runs the section 0 rules (switches, prefab table, privacy, the ward
@@ -764,7 +819,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   switch reaches Reach within 0.25 s. Requirement counts come from `StorageIndex`: one walk of the reachable
   containers per change (a new list instance, which includes the 0.25 s refresh as a safety net for changes that
   bypass `Inventory.Changed`; any `Inventory.Changed`, so payments, pulls, drags and another player's change loaded
-  from the ZDO; a new world level). Payment, Pull, Borrow, Fill and the station hover read the containers live. A
+  from the ZDO; a new world level). Payment, Pull, Borrow and Fill read the containers live; the station hover's
+  "From storage" line is counted live but kept while the hovered object, the reach list, the inventories and the
+  world level stay the same (`StationHover.Line`). A
   requirement row counts storage only when the inventory alone is short.
 - Single ingredient recipes: `GetFirstRequiredItem` returns the inventory's stack, else the container's stack;
   the game reads only its name and quality (`Recipe.GetAmount`, `DoCrafting`).
@@ -836,8 +893,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Ground pickup runs in the `Container.CheckForChanges` postfix (once a second per container) on the owner client,
   staggered per container, skips containers in use, containers not usable by the local player and placed pieces
   (`ItemDrop.IsPiece`); the age comes from the drop's `spawntime` ZDO value against `ZNet.GetTime`; rule order is
-  refuse, accept, then the only-held rule; the drop is claimed, loaded, added with `AddItem`, then destroyed
-  through `ZNetScene` or reduced and saved. Unchanged by the Shared module: owner only.
+  refuse, accept, then the only-held rule; a drop this client owns (or nobody owns, then claimed) is loaded, added
+  with `AddItem`, then destroyed through `ZNetScene` or reduced and saved; a drop another client owns is asked for
+  with the game's `ItemDrop.RequestOwn` (its own backoff) and taken on a later sweep. Unchanged by the Shared module.
 - Buttons are clones of `m_takeAllButton`: Quick stack, Store all, Top up and Sort, 78x26 px,
   anchored bottom-centre of `m_player` with the pivot at the bottom; one Sort centred at the bottom of
   `m_container`. Both hang below their panel's bottom edge: `anchoredPosition.y` is `-(26 + 4)`, so the top of a
@@ -981,8 +1039,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
     out only for a chest that already passed the cheap share test. Offline with .NET 8 against the built DLL
     (2026-10-05): 200 chests of 20 items scored for one stray with nothing cached took 1.2 ms.
   - Multiplayer: items move only between two chests the looking client owns (no other client can write either), with
-    the game's inventory methods and save path. A home owned by another client is asked to hand over (`TidyHandOver`,
-    at most once per 30 s per chest); the owner grants it as the game grants an open (free chest, ZDO force sent, then
+    the game's inventory methods and save path, both chests held (one save each per home). A home owned by another
+    client that has room for the item is asked to hand over (`HandOver`, at most once per 30 s per chest); the owner grants it as the game grants an open (free chest, ZDO force sent, then
     the owner set), and the source looks again 3 s later. A chest in use is never a source or a home.
   - Taking part: a piece placed by a player, not a ship, cart or private chest, and usable as Stow uses containers
     (section 0, prefab table, ward, privacy for the local player).
@@ -1116,10 +1174,15 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `UpdateContainer` prefix. In View mode the Take all and Stack all buttons are disabled and a drag from the chest
   is cleared; in Full mode both buttons send their batch.
 - A slot with a request under way ignores further clicks on it (no second request, no message) until the reply or
-  the timeout. Requests without a reply after `Request Timeout` are denied locally ("The chest did not answer").
+  the timeout. Requests without a reply after `Request Timeout` are denied locally ("The chest did not answer") but
+  wait 30 s more for a late answer, which is still applied (a take still arrives, a put keeps what the chest took);
+  a late no, or none, gives back what was held. A put or stack-all holds its units out of the inventory until the
+  answer (`Escrow`): the whole stack leaves (and comes back to its own slot when that is free), a part is taken off
+  the stack. A chest another client owns and nobody uses is written the same way, by request to its owner, in every
+  `Shared Chests` mode (`ChestWriter.IsShared` = `ContainerScan.IsShared` or `IsRemote`).
 - Touches: mouse-down on a stack of the open chest's grid sends a touch (Full mode); the sent touch ends when the
   button is up with nothing dragged, when the panel leaves the chest, or after `Touch Seconds`; received touches
-  expire after `Touch Seconds`; a player's own touch is not shown to them. The owner forwards touches to everybody.
+  expire after `Touch Seconds`; a player's own touch is not shown to them. The owner forwards touches to the machines of the players within 10 m of the chest.
 - The `DropItem` prefix runs with `Priority.First` and zeroes `amount` so later prefixes on the same method see
   nothing to merge (Harmony runs every prefix); the split dialog ends in the same `DropItem`.
 - A cart another player pulls is in use (`m_wagon.InUse()`), so interacting with its storage opens it as a viewer
@@ -1183,8 +1246,9 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   placed again on the container's next tick. The mod's own removals go through `ZNetScene.Destroy` (nothing
   drops).
 - Removal: the container's owner destroys the linked sign (loaded: `ZNetScene.Destroy` after claiming; not loaded:
-  claim, then `ZDOMan.DestroyZDO`) and clears `OpenKeep.sign` when the container may not have a sign (module off,
-  prefab off, ship or cart, opted out) and in `Container.OnDestroyed` (the game's own hook the owner runs when the
+  claim, then `ZDOMan.DestroyZDO`) and clears `OpenKeep.sign` when the container may not have a sign (module off:
+  looked at once after the container loads and once after the switch changes, not every second; prefab off, ship or
+  cart, opted out) and in `Container.OnDestroyed` (the game's own hook the owner runs when the
   container is destroyed by the hammer or damage). Signs a player edited are removed the same way.
 - Orphans: `Sign.Awake` adds a `SignOrphanCheck` component to every sign carrying `OpenKeep.signOf`; ten seconds
   later, and every five seconds while the sign is not owned here, it checks that the container ZDO exists and
@@ -1351,7 +1415,8 @@ Fires feeding themselves (Auto Fuel):
   Steady state is one unit and one container write per unit burned (read with UnityPy 2026-09-27: wood fires 5000 s
   per unit, most torches and braziers 20000 s, the wood torch 10000 s); a fire that burned out unloaded (the game
   burns the whole absence in its first tick) refills in one go. The fuel is compared before and after (warning).
-- Containers: `ContainerScan.Nearby(fire position, Auto Fuel Range, Reach)`, nearest first; `StationAccepts.Fuel`
+- Containers: the loaded containers holding the fuel (`FuelHolders`, one shared walk) within Auto Fuel Range, through
+  `ContainerScan.Nearby(holders, fire position, Auto Fuel Range, Reach)`, nearest first; `StationAccepts.Fuel`
   (fuel item by shared name, the fire prefab's `stations:` allow/deny), the world level rule (1.7.0: an item's
   `m_worldLevel` below `Game.m_worldLevel` is skipped, as `Inventory.HaveItem` does for a fire fed by hand) and per
   stack the container prefab's allow/deny; claim, `RemoveItem`, save (`NearbyTake`). `stations:` `enabled: false` stops it. The containers' `range:` (metres from
@@ -2019,7 +2084,8 @@ repaired through the game's own paths, so a dedicated server and the other playe
 - The second click places a construction site (SPEC-Blueprints.md section 1): a post 2 m in front holding the state,
   a ghost every player sees, materials handed over with E, Shift+E (creator or admin, checked by the server) takes it
   down and drops what was handed over. The post's owner builds: with "Build As Resources Come In" one piece every
-  0.125 s (ground first, then the queue, then the rest), off all at once when everything is there; "Build Without
+  0.125 s (ground first, then the queue, then the rest; a site whose looks change nothing backs off to every 2 s
+  until its ZDO changes, e.g. a delivery), off all at once when everything is there; "Build Without
   Materials" or no-cost mode builds at once. A site near the world centre owned by a dedicated server is taken over
   by a client that has it loaded.
 - Players pay every piece's materials (into the site) and must have learned every piece; no-cost mode pays nothing,
@@ -2049,7 +2115,7 @@ repaired through the game's own paths, so a dedicated server and the other playe
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 2.2.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 2.3.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2121,8 +2187,14 @@ from a script.
     nothing that A's chest accepted; B tops up from it (`Topped up n items from Chest`); B sorts it: `The chest
     cannot be changed right now`; B trashes a stack of it from the chest grid (it is taken and destroyed, `Destroyed
     ...`); A crafts while B holds the chest: the chest is not counted for A (the requirement row shows only A's
-    inventory). Stop A's client while B has a request pending: B sees `The chest did not answer` after 2 s and
-    nothing moved on B's side.
+    inventory). Stop A's client while B has a request pending: B sees `The chest did not answer` after 2 s, and
+    a stack B was putting comes back to B's inventory within 30 s (nothing is in two places).
+    Hand-over (2026-10-06): A opens and closes a chest, walks off but stays near; B crafts from it: the first craft
+    may say `Fetching the materials from storage, try again` (log on A: `handed ... over to peer`), the next press
+    crafts and pays from the chest. B quick stacks into a chest A owns and nobody uses: it goes by request (A's log
+    shows `request ... put`). A sails a ship with wood in its hold; B crafts at a workbench near it: the hold is not
+    counted for B, and A's ship is never taken over. Site delivery to a post another machine owns: `Handed over` comes
+    with the answer; with that machine gone, `The site did not answer yet` and the materials return within 30 s.
 13. `openkeep reload` reloads the cfg and every YAML file; the Configuration Manager `Edit YAML` entries open the
     editor for each set.
 14. Signs, `7. Signs / Enabled = true`; place a wooden chest: a blank sign appears above it within 2 s, facing the
@@ -2175,8 +2247,8 @@ from a script.
     the hive's count carries on.
 30. Stow ground pickup with a fresh cfg: `Pickup Range = 2`; an item dropped 3 m from the chest stays on the ground.
 31. Auto Fuel, single player: a chest with 20 wood within 20 m of a new bonfire (0/10): within 2 s it shows 10/10,
-    the chest holds 10, one fuel-added puff, log `bonfire refilled itself with 10 Wood from containers near it
-    (10/10)`. With devcommands, `skiptime 5000`: the campfire drops a unit and is full again within 2 s. A sconce
+    the chest holds 10, one fuel-added puff, debug log `bonfire refilled itself with 10 Wood from containers
+    near it (10/10)`. With devcommands, `skiptime 5000`: the campfire drops a unit and is full again within 2 s. A sconce
     15 m from a resin chest does the same after `skiptime 20000`. A chest 25 m away gives nothing.
     `stations: { hearth: { enabled: false } }` in OpenKeep.Reach.yml: the hearth no longer refills;
     `containers: { piece_chest_wood: { deny: [Resin] } }`: torches take resin only from other chests. The resin candle

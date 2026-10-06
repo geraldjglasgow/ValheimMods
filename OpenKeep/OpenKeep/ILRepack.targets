@@ -17,6 +17,7 @@
       <InputAssemblies Include="$(OutDir)AreaLoading.dll" />
       <InputAssemblies Include="$(OutDir)MapClicks.dll" />
       <InputAssemblies Include="$(OutDir)WindowInput.dll" />
+      <InputAssemblies Include="$(OutDir)Hotkeys.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

@@ -14,6 +14,7 @@ namespace OpenKeep.Blueprints.Sites
     {
         private static readonly List<(string Name, Action Run)> updates = new List<(string, Action)>();
         private static readonly List<(string Name, Action Run)> guis = new List<(string, Action)>();
+        private static readonly List<Func<bool>> guiWanted = new List<Func<bool>>();
 
         /// <summary>The Site planner entry was clicked by the local player (set by the planner module).</summary>
         public static Action<Player> PlannerClick = player => { };
@@ -26,7 +27,26 @@ namespace OpenKeep.Blueprints.Sites
 
         public static void OnUpdate(string name, Action run) => updates.Add((name, run));
 
-        public static void OnGui(string name, Action run) => guis.Add((name, run));
+        /// <summary>An OnGUI callback and when it has something to draw; the runner draws only while one has.</summary>
+        public static void OnGui(string name, Action run, Func<bool> wanted)
+        {
+            guis.Add((name, run));
+            guiWanted.Add(wanted);
+        }
+
+        /// <summary>A registered OnGUI callback has something to draw now.</summary>
+        internal static bool GuiWanted
+        {
+            get
+            {
+                foreach (Func<bool> wanted in guiWanted)
+                {
+                    if (wanted())
+                        return true;
+                }
+                return false;
+            }
+        }
 
         internal static void Update()
         {

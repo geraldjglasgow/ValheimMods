@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using OpenKeep.Core;
 using UnityEngine;
@@ -39,18 +40,40 @@ namespace OpenKeep.Stow
         /// </summary>
         public static List<Container> Homes(Container source, string prefab, float sourceShare)
         {
+            List<Container> homes = new List<Container>();
+            foreach (KeyValuePair<float, Container> pair in Near(source))
+            {
+                if (pair.Value != null && IsHome(TidyProfiles.Of(pair.Value), prefab, sourceShare))
+                    homes.Add(pair.Value);
+            }
+            return homes;
+        }
+
+        private static readonly List<KeyValuePair<float, Container>> near = new List<KeyValuePair<float, Container>>();
+        private static readonly Comparison<KeyValuePair<float, Container>> ByDistance = (a, b) => a.Key.CompareTo(b.Key);
+        private static Container nearOf;
+        private static int nearFrame = -1;
+
+        /// <summary>
+        /// The loaded chests taking part within <see cref="Range"/> of the source, nearest first, found once per source
+        /// and frame (a look asks once per stray it holds), squared distance first.
+        /// </summary>
+        private static List<KeyValuePair<float, Container>> Near(Container source)
+        {
+            if (source == nearOf && nearFrame == Time.frameCount)
+                return near;
+            nearOf = source;
+            nearFrame = Time.frameCount;
+            near.Clear();
             Vector3 origin = source.transform.position;
-            List<KeyValuePair<float, Container>> found = new List<KeyValuePair<float, Container>>();
             foreach (Container chest in ContainerScan.All())
             {
-                float distance = Vector3.Distance(origin, chest.transform.position);
-                if (chest == source || distance > Range || !TakesPart(chest) || !IsLoaded(chest))
-                    continue;
-                if (IsHome(TidyProfiles.Of(chest), prefab, sourceShare))
-                    found.Add(new KeyValuePair<float, Container>(distance, chest));
+                float squared = (chest.transform.position - origin).sqrMagnitude;
+                if (squared <= Range * Range && chest != source && TakesPart(chest) && IsLoaded(chest))
+                    near.Add(new KeyValuePair<float, Container>(squared, chest));
             }
-            found.Sort((a, b) => a.Key.CompareTo(b.Key));
-            return found.ConvertAll(pair => pair.Value);
+            near.Sort(ByDistance);
+            return near;
         }
 
         /// <summary>Kept there, or alike enough (the cheap test first), in a chest that is no junk chest.</summary>

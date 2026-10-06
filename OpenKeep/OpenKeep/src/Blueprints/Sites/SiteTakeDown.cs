@@ -60,11 +60,19 @@ namespace OpenKeep.Blueprints.Sites
             ZRoutedRpc.instance.InvokeRoutedRPC(owner != 0L ? owner : sender, id, RpcName);
         }
 
-        /// <summary>The owner (or the asker, when nobody owned the post): only the server's approval counts.</summary>
+        /// <summary>
+        /// The owner (or the asker, when nobody owned the post, which it then claims): only the server's approval counts.
+        /// A machine the post has moved away from meanwhile does nothing (its copy of the store may be old); the player asks again.
+        /// </summary>
         private static void OnApproved(SiteMarker site, long sender)
         {
             if (site == null || site.State == null || !site.View.IsValid() || sender != ZRoutedRpc.instance.GetServerPeerID())
                 return;
+            if (!site.View.IsOwner() && site.View.HasOwner())
+            {
+                Plugin.Log.LogInfo($"OpenKeep: site {site.State.Name} changed owner before it could be taken down; ask again");
+                return;
+            }
             site.View.ClaimOwnership();
             int dropped = SiteStore.Drop(site.transform.position, site.State.Store);
             Plugin.Log.LogInfo($"OpenKeep: site {site.State.Name} at {site.State.Frame.Origin} taken down ({site.State.BuiltCount} pieces built, {dropped} materials handed back)");

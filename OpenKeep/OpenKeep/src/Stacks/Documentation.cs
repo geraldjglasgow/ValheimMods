@@ -13,20 +13,23 @@ namespace OpenKeep.Stacks
     /// <summary>
     /// OpenKeep.Items.txt and OpenKeep.Containers.txt next to the .cfg: every item with its prefab name, display
     /// name, type, vanilla and current stack and weight, and every container prefab with its vanilla size; the
-    /// Capacity module's OpenKeep.Stations.txt goes with them. Written on load when "Write Documentation" is on and
-    /// by the console command "openkeep write docs" (by reflection).
+    /// Capacity module's OpenKeep.Stations.txt goes with them. Written on load when "Write Documentation" is on (only
+    /// files whose text changed, <see cref="DocFile"/>) and by the console command "openkeep write docs" (by
+    /// reflection, always). The prefab lists come from the scene's one shared walk (<see cref="ContainerPrefabs"/>).
     /// </summary>
     public static class Documentation
     {
         public const string ItemsFile = "OpenKeep.Items.txt";
         public const string ContainersFile = "OpenKeep.Containers.txt";
 
-        public static void Write()
+        public static void Write() => Write(true);
+
+        private static void Write(bool force)
         {
             string folder = Path.GetDirectoryName(StacksModule.Synced.Config.ConfigFilePath);
-            WriteItems(Path.Combine(folder, ItemsFile));
-            WriteContainers(Path.Combine(folder, ContainersFile));
-            StationDocumentation.Write(folder);
+            WriteItems(Path.Combine(folder, ItemsFile), force);
+            WriteContainers(Path.Combine(folder, ContainersFile), force);
+            StationDocumentation.Write(folder, force);
         }
 
         /// <summary>Writes the files when the setting is on and the item database and the scene are there.</summary>
@@ -37,10 +40,10 @@ namespace OpenKeep.Stacks
             ObjectDB db = ObjectDB.instance;
             if (db == null || db.m_items == null || db.m_items.Count == 0)
                 return;
-            Guard.Run("write documentation", Write);
+            Guard.Run("write documentation", () => Write(false));
         }
 
-        private static void WriteItems(string path)
+        private static void WriteItems(string path, bool force)
         {
             ObjectDB db = ObjectDB.instance;
             if (db == null)
@@ -50,8 +53,8 @@ namespace OpenKeep.Stacks
             List<ItemDrop> prefabs = StackValues.Prefabs(db).OrderBy(p => p.name, System.StringComparer.OrdinalIgnoreCase).ToList();
             foreach (ItemDrop prefab in prefabs)
                 text.AppendLine(ItemLine(prefab));
-            File.WriteAllText(path, text.ToString(), new UTF8Encoding(false));
-            Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({prefabs.Count} items).");
+            if (DocFile.Write(path, text.ToString(), force))
+                Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({prefabs.Count} items).");
         }
 
         private static string ItemLine(ItemDrop prefab)
@@ -65,7 +68,7 @@ namespace OpenKeep.Stacks
 
         private static string Number(float value) => value.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
 
-        private static void WriteContainers(string path)
+        private static void WriteContainers(string path, bool force)
         {
             ZNetScene scene = ZNetScene.instance;
             if (scene == null)
@@ -79,8 +82,8 @@ namespace OpenKeep.Stacks
                 text.AppendLine(string.Join("\t", prefab.Key, vanilla.Width.ToString(), vanilla.Height.ToString()));
                 count++;
             }
-            File.WriteAllText(path, text.ToString(), new UTF8Encoding(false));
-            Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({count} containers).");
+            if (DocFile.Write(path, text.ToString(), force))
+                Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({count} containers).");
         }
 
         /// <summary>The scene comes after the database in the game scene: write once both exist.</summary>
@@ -89,7 +92,7 @@ namespace OpenKeep.Stacks
         {
             [HarmonyPostfix]
             [HarmonyPriority(Priority.Low)]
-            private static void Postfix() => WriteIfReady();
+            private static void Postfix() => SceneSafe.Run("the documentation files", WriteIfReady);
         }
     }
 }

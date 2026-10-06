@@ -12,7 +12,8 @@ namespace OpenKeep.Homestead
     /// all the whole units that fit are taken from the containers near the fire and handed to the game in one
     /// <c>Fireplace.AddFuel</c> (the game's <c>RPC_AddFuelAmount</c>, handled at once on the owner: clamp, ZDO write,
     /// the fuel-added effect, <c>UpdateState</c>). A burning fire so stays between one unit below the cap and the cap,
-    /// one container write per unit burned; a fire that burned out while nobody was near refills in one go.
+    /// one container write per unit burned; a fire that burned out while nobody was near refills in one go. Needs a
+    /// local player (the containers' access is that player's), so a dedicated server takes nothing and scans nothing.
     /// </summary>
     public static class FuelRefill
     {
@@ -42,10 +43,18 @@ namespace OpenKeep.Homestead
             return fire.m_canRefill && !fire.m_infiniteFuel && fire.m_fuelItem != null && fire.m_maxFuel >= 1f;
         }
 
-        /// <summary>Up to <paramref name="room"/> units of the fire's own fuel from the containers within Auto Fuel Range of the fire.</summary>
+        /// <summary>
+        /// Up to <paramref name="room"/> units of the fire's own fuel from the containers within Auto Fuel Range of the
+        /// fire; only those that hold the fuel (<see cref="FuelHolders"/>) are looked at.
+        /// </summary>
         private static int Take(Fireplace fire, int room)
         {
-            List<Container> near = ContainerScan.Nearby(fire.transform.position, FuelSettings.AutoFuelRange.Value, ContainerUse.Reach);
+            Vector3 at = fire.transform.position;
+            float range = FuelSettings.AutoFuelRange.Value;
+            IReadOnlyList<Container> holders = FuelHolders.Near(fire.m_fuelItem.m_itemData.m_shared.m_name, at, range);
+            if (holders.Count == 0)
+                return 0;
+            List<Container> near = ContainerScan.Nearby(holders, at, range, ContainerUse.Reach);
             return NearbyTake.Take(near, StationAccepts.Fuel(fire, fire.m_fuelItem), room);
         }
 
@@ -65,7 +74,7 @@ namespace OpenKeep.Homestead
             if (after + 0.01f < before + units)
                 Plugin.Log.LogWarning($"OpenKeep: {name} took {units} {fuel} from containers but its fuel only went from {before:0.##} to {after:0.##}");
             else
-                Plugin.Log.LogInfo($"OpenKeep: {name} refilled itself with {units} {fuel} from containers near it ({after:0.#}/{fire.m_maxFuel:0})");
+                Plugin.Log.LogDebug($"OpenKeep: {name} refilled itself with {units} {fuel} from containers near it ({after:0.#}/{fire.m_maxFuel:0})");
         }
     }
 }

@@ -28,8 +28,8 @@ A container counts when it is in range, you could open it, no other player has i
 
 | Setting (`0. Containers`) | Default | Who | Meaning |
 | --- | --- | --- | --- |
-| `Ships` | on | Server | Ship storage counts. |
-| `Carts` | on | Server | Cart storage counts. |
+| `Ships` | on | Server | Ship storage counts, for the player sailing it. |
+| `Carts` | on | Server | Cart storage counts, for the player pulling it. |
 | `Player Chests` | off | Server | The personal chest counts, for its owner. Also remove its entry from `OpenKeep.Reach.yml`. |
 | `Honour Wards` | on | Server | Skip containers in wards you have no access to. |
 | `Shared Chests` | Off | Server | What happens with a chest another player has open; see [Multiplayer and Commands](wiki:Multiplayer and Commands). |

@@ -35,10 +35,6 @@ namespace OpenKeep.Batch
             BatchDrive.Drive(__instance, BatchAmount.Value);
         }
 
-        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
-        [HarmonyPostfix]
-        public static void AfterUpdateRecipe(InventoryGui __instance, Player player) => BatchStepper.Refresh(__instance, player);
-
         /// <summary>Drives the amount once more (a click can land before this frame's UpdateRecipe) and remembers that it did.</summary>
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnCraftPressed))]
         [HarmonyPrefix]

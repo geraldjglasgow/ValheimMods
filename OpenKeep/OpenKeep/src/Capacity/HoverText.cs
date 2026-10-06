@@ -11,22 +11,57 @@ namespace OpenKeep.Capacity
     /// "Hover Contents": Container.GetHoverText() gets a fill line and up to Hover Lines content lines appended,
     /// only for a container the local player could open: the game's own guard stone check
     /// (PrivateArea.CheckAccess when the container checks guard stones) and privacy check (Container.CheckAccess)
-    /// are run, and the net view must be valid.
+    /// are run, and the net view must be valid. The game asks for the hover text every frame; the lines are built
+    /// again only when the hovered container, the revision its inventory was last loaded or saved at (the game's
+    /// <c>m_lastRevision</c>) or the two settings changed, and at least every <see cref="MaxAge"/> seconds (a ward
+    /// switched on, the language changed).
     /// </summary>
     public static class HoverText
     {
+        private const float MaxAge = 0.5f;
+
+        private static Container builtFor;
+        private static uint builtRevision = uint.MaxValue;
+        private static HoverFill builtFill;
+        private static int builtLines = -1;
+        private static float builtAt = float.MinValue;
+        private static string builtExtra = "";
+
         public static string Append(Container container, string text)
         {
-            if (!CapacitySettings.HoverContents.Value || !CanSee(container))
+            if (!CapacitySettings.HoverContents.Value)
                 return text;
-            Inventory inventory = container.GetInventory();
+            string extra = Extra(container);
+            return extra.Length == 0 ? text : text + extra;
+        }
+
+        /// <summary>The localized lines to append for this container, empty for none; built again only when out of date.</summary>
+        private static string Extra(Container container)
+        {
+            HoverFill fill = CapacitySettings.HoverFill.Value;
+            int lines = CapacitySettings.HoverLines.Value;
+            float now = Time.unscaledTime;
+            if (container == builtFor && container.m_lastRevision == builtRevision && fill == builtFill && lines == builtLines
+                && now - builtAt < MaxAge)
+                return builtExtra;
+            builtExtra = CanSee(container) ? Build(container.GetInventory(), lines) : "";
+            builtFor = container;
+            builtRevision = container != null ? container.m_lastRevision : uint.MaxValue;
+            builtFill = fill;
+            builtLines = lines;
+            builtAt = now;
+            return builtExtra;
+        }
+
+        private static string Build(Inventory inventory, int maxLines)
+        {
             StringBuilder extra = new StringBuilder();
             string fill = FillLine(inventory);
             if (fill != null)
                 extra.Append('\n').Append(fill);
-            foreach (string line in ContentLines(inventory, CapacitySettings.HoverLines.Value))
+            foreach (string line in ContentLines(inventory, maxLines))
                 extra.Append('\n').Append(line);
-            return extra.Length == 0 ? text : text + Language.Localize(extra.ToString());
+            return extra.Length == 0 ? "" : Language.Localize(extra.ToString());
         }
 
         private static bool CanSee(Container container)

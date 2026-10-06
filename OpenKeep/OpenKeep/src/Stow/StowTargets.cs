@@ -8,9 +8,10 @@ namespace OpenKeep.Stow
 {
     /// <summary>
     /// The containers an action may write to: the one the player has open and the ones within <c>Nearby Range</c>,
-    /// nearest first, the open one first. A target is usable (the section 0 rules pass and the local client owns
-    /// it or may claim it because nobody uses it) or shared (<c>Shared Chests</c> is <c>Full</c>, another player
-    /// uses it and the rules pass; the writer sends requests to that player's client). A chest the player only
+    /// nearest first, the open one first. A target is usable (the section 0 rules pass and nobody else uses it) or
+    /// shared (<see cref="ChestWriter.IsShared"/>: another client owns it, or <c>Shared Chests</c> is <c>Full</c> and
+    /// another player uses it, and the rules pass); the writer sends requests to the owner of any chest it may not
+    /// change at once. A chest the player only
     /// views (<c>View</c> mode) is no target; the actions that need the open container say "Viewing only" for it.
     /// </summary>
     public static class StowTargets
@@ -33,7 +34,7 @@ namespace OpenKeep.Stow
         {
             try
             {
-                return ContainerScan.IsUsable(container, ContainerUse.Stow) || ContainerScan.IsShared(container);
+                return ContainerScan.IsUsable(container, ContainerUse.Stow) || ChestWriter.IsShared(container);
             }
             catch (Exception e)
             {

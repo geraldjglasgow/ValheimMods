@@ -3,7 +3,7 @@
 Storage for Valheim, plus a few base tweaks.
 
 ## Features
-- Reach: craft, build and feed stations from nearby chests, ships and carts.
+- Reach: craft, build and feed stations from nearby chests and the ship or cart you are using.
 - Stow: quick stack, store all, top up, sort, route and trash, by button or hotkey.
 - Crafting: Salvage tab, batches, craft speed, recipe search, favourites, grid views, recipe tracker.
 - Stacks and Capacity: stack sizes, weights, chest and station sizes, contents on hover.

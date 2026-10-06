@@ -17,7 +17,7 @@
 | `View` | You can see its contents but not change them (`Viewing only`). |
 | `Full` | Both of you can use it at once. If you both grab the same stack, one gets it (`Someone else got there first`). |
 
-Crafting and station feeding never use a chest another player has open.
+Crafting and station feeding never use a chest another player has open. A chest another player used last is fetched first: the first craft may say "Fetching the materials from storage, try again".
 
 | Setting (`9. Shared`) | Default | Who | Meaning |
 | --- | --- | --- | --- |

@@ -20,19 +20,36 @@ namespace OpenKeep.BuildCamera
         private static RectTransform panel;
         private static TMP_Text label;
         private static float until;
+        private static int shownKey = -1;
 
-        public static void Show(string missing)
+        /// <summary>
+        /// Shows what the player misses, from every fixed update while it holds pickup back: the text is built and laid out
+        /// only when what it says changed (<see cref="CameraNeeds.Key"/>), otherwise the panel only stays up longer.
+        /// </summary>
+        public static void Show(Player player)
         {
             if (!CameraPrefs.PickupPanel.Value || Hud.instance == null || Hud.instance.m_buildSelection == null)
                 return;
             if (panel == null)
                 Build(Hud.instance);
+            int key = CameraNeeds.Key(player, CameraSettings.PickupNeedsResting, CameraSettings.PickupMinComfort);
+            if (key != shownKey)
+                Draw(player, key);
+            Vector2 position = CameraPrefs.PickupPanelPosition.Value;
+            if (panel.anchoredPosition != position)
+                panel.anchoredPosition = position;
+            if (!panel.gameObject.activeSelf)
+                panel.gameObject.SetActive(true);
+            until = Time.time + ShowSeconds;
+        }
+
+        private static void Draw(Player player, int key)
+        {
+            shownKey = key;
+            string missing = CameraNeeds.Describe(player, CameraSettings.PickupNeedsResting, CameraSettings.PickupMinComfort) ?? "";
             label.text = Language.Localize(CameraModule.PickupNeeds) + ": " + missing;
             Vector2 size = label.GetPreferredValues(label.text);
             panel.sizeDelta = size + Vector2.one * (2f * Padding);
-            panel.anchoredPosition = CameraPrefs.PickupPanelPosition.Value;
-            panel.gameObject.SetActive(true);
-            until = Time.time + ShowSeconds;
         }
 
         public static void Tick()
@@ -50,6 +67,7 @@ namespace OpenKeep.BuildCamera
             panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(0.5f, 1f);
             PickupPanelLook.Background(root.AddComponent<Image>(), hud);
             label = Label(panel, hud.m_buildSelection);
+            shownKey = -1;
         }
 
         private static TMP_Text Label(RectTransform parent, TMP_Text like)

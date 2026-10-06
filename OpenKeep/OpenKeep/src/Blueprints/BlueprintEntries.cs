@@ -24,7 +24,16 @@ namespace OpenKeep.Blueprints
         private static readonly Dictionary<string, GameObject> blueprints = new Dictionary<string, GameObject>();
         private static readonly Dictionary<GameObject, string> paths = new Dictionary<GameObject, string>();
         private static readonly Dictionary<string, GameObject> tools = new Dictionary<string, GameObject>();
+
+        /// <summary>Every entry made, by its object: its tool name, or <see cref="BlueprintPrefix"/> for a blueprint.</summary>
+        private static readonly Dictionary<GameObject, string> kinds = new Dictionary<GameObject, string>();
         private static GameObject holder;
+
+        /// <summary>
+        /// What the piece is as an entry: its tool name, <see cref="BlueprintPrefix"/> for a blueprint, or "" for any other
+        /// piece. A lookup by object, not by name, since the menu asks every frame and once per piece of the build list.
+        /// </summary>
+        public static string KindOf(Piece piece) => piece != null && kinds.TryGetValue(piece.gameObject, out string kind) ? kind : "";
 
         /// <summary>The blueprint path of an entry, or null for a tool or any other piece.</summary>
         public static string PathOf(Piece piece) => piece != null && paths.TryGetValue(piece.gameObject, out string path) ? path : null;
@@ -60,7 +69,10 @@ namespace OpenKeep.Blueprints
         private static GameObject Tool(string prefabName, string name, string description, string icon)
         {
             if (!tools.TryGetValue(prefabName, out GameObject entry) || entry == null)
+            {
                 tools[prefabName] = entry = Make(prefabName, name, Language.Localize(description), BlueprintIcons.Get(icon));
+                kinds[entry] = prefabName;
+            }
             return entry;
         }
 
@@ -71,6 +83,7 @@ namespace OpenKeep.Blueprints
                 return entry;
             string word = Language.Add(WordKey(path), Title(BlueprintLibrary.Leaf(path)));
             entry = Make(BlueprintPrefix + Plain(path) + "_" + Hash(path), word, "", BlueprintIcons.Get(BlueprintIcons.Blueprint));
+            kinds[entry] = BlueprintPrefix;
             blueprints[path] = entry;
             paths[entry] = path;
             return entry;

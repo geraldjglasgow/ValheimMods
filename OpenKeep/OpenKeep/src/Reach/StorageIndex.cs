@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using HarmonyLib;
+using OpenKeep.Core;
 
 namespace OpenKeep.Reach
 {
@@ -9,11 +9,11 @@ namespace OpenKeep.Reach
     /// container's allow / deny lists accept it and the world level rule holds, the filter every requirement count
     /// uses. The walk is repeated before the next answer whenever the tables could be wrong: the reach list is another
     /// instance (a container came or went, moved in or out of range, was opened by another player, or the quarter
-    /// second refresh and the rules' apply, see <see cref="ReachChests"/>), any inventory changed (the game's
-    /// <c>Inventory.Changed</c>, which every add, remove, move, sort and load from the ZDO ends in, so a craft paid from
-    /// a chest, a drag between the inventory and a chest and another player's change arriving by ZDO all count at once)
-    /// or the world level changed. A panel asking for every requirement every frame walks the containers once per
-    /// change instead of once per row.
+    /// second refresh and the rules' apply, see <see cref="ReachChests"/>), any inventory changed
+    /// (<see cref="InventoryChanges"/>: the game's <c>Inventory.Changed</c>, which every add, remove, move, sort and load
+    /// from the ZDO ends in, so a craft paid from a chest, a drag between the inventory and a chest and another player's
+    /// change arriving by ZDO all count at once) or the world level changed. A panel asking for every requirement every
+    /// frame walks the containers once per change instead of once per row.
     /// </summary>
     public static class StorageIndex
     {
@@ -22,10 +22,8 @@ namespace OpenKeep.Reach
         private static List<Container> countedList;
         private static int countedChange = -1;
         private static int countedWorldLevel = int.MinValue;
-        private static int change;
-
-        /// <summary>Any inventory changed: the next answer walks the containers again.</summary>
-        public static void MarkChanged() => change++;
+        /// <summary>Goes up on every inventory change (<see cref="InventoryChanges"/>); a cache of anything counted from containers compares it.</summary>
+        public static int Change => InventoryChanges.Count;
 
         /// <summary>Items of a shared name (any quality below 0) in the reachable containers that pass the world level rule.</summary>
         public static int Count(string name, int quality)
@@ -42,9 +40,9 @@ namespace OpenKeep.Reach
         {
             List<Container> containers = ReachChests.List();
             int worldLevel = Game.m_worldLevel;
+            int change = InventoryChanges.Count;
             if (ReferenceEquals(containers, countedList) && change == countedChange && worldLevel == countedWorldLevel)
                 return;
-            int seen = change;
             byName.Clear();
             byQuality.Clear();
             foreach (Container container in containers)
@@ -53,7 +51,7 @@ namespace OpenKeep.Reach
                     Add(container);
             }
             countedList = containers;
-            countedChange = seen;
+            countedChange = change;
             countedWorldLevel = worldLevel;
         }
 
@@ -79,13 +77,5 @@ namespace OpenKeep.Reach
             table.TryGetValue(key, out int sum);
             table[key] = sum + amount;
         }
-    }
-
-    /// <summary>Every inventory change marks the storage index; a prefix, so it runs even when a change callback throws.</summary>
-    [HarmonyPatch(typeof(Inventory), nameof(Inventory.Changed))]
-    public static class InventoryChangedPatch
-    {
-        [HarmonyPrefix]
-        public static void Prefix() => StorageIndex.MarkChanged();
     }
 }

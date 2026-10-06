@@ -6,13 +6,11 @@ namespace OpenKeep.Blueprints
     /// <summary>
     /// The preview of a blueprint: plain copies of its pieces' looks (<see cref="PieceShapes"/>) under one root that
     /// stands at the frame, so moving or turning the blueprint moves one transform. Only this machine draws them:
-    /// nothing is networked, nothing collides. Copies are made a few hundred a frame; a blueprint of more than
+    /// nothing is networked, nothing collides. Copies are made within a time budget each frame (<see cref="FrameBudget"/>); a blueprint of more than
     /// <see cref="BlueprintRules.FullPreviewLimit"/> pieces shows only what stands near the ground.
     /// </summary>
     public static class GhostView
     {
-        private const int CopiesPerFrame = 300;
-
         private static GameObject root;
         private static Blueprint shown;
         private static List<BlueprintPiece> todo = new List<BlueprintPiece>();
@@ -28,7 +26,8 @@ namespace OpenKeep.Blueprints
             root.transform.SetPositionAndRotation(frame.Origin, frame.Rotation);
             if (!root.activeSelf)
                 root.SetActive(true);
-            for (int n = 0; n < CopiesPerFrame && made < todo.Count; n++)
+            double until = FrameBudget.Until();
+            while (made < todo.Count && FrameBudget.Left(until))
                 Copy(todo[made++]);
         }
 

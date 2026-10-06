@@ -31,16 +31,23 @@ namespace OpenKeep.Homestead
             {
                 if (taken >= wanted)
                     break;
-                if (Spare(container, usable, keep).Count == 0 || !ContainerScan.Claim(container))
+                if (Spare(container, usable, keep).Count == 0)
                     continue;
-                taken += TakeFrom(container, usable, keep, wanted - taken, removed);
+                using (SaveHolds.Hold(container))
+                    taken += TakeFrom(container, usable, keep, wanted - taken, removed);
             }
             return taken;
         }
 
-        /// <summary>Removes from the spare units of one claimed container (read again after the claim loaded it), then saves it through the game.</summary>
+        /// <summary>
+        /// Claims one container and removes from its spare units (read again after the claim loaded it), then saves it
+        /// through the game, once (the caller holds its saves). A container another client owns is asked for at most once
+        /// per <see cref="HandOver.BackgroundSeconds"/> and used once it is ours, never taken on this timer.
+        /// </summary>
         private static int TakeFrom(Container container, Func<ItemDrop.ItemData, bool> accepts, int keep, int wanted, Action<ItemDrop.ItemData, int> removed)
         {
+            if (!ContainerScan.Claim(container, HandOver.BackgroundSeconds))
+                return 0;
             Dictionary<string, int> spare = Spare(container, accepts, keep);
             ContainerRule rule = ReachRules.RuleFor(container);
             Inventory inventory = container.GetInventory();

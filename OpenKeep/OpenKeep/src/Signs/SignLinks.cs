@@ -1,9 +1,13 @@
+using System.Collections.Generic;
+
 namespace OpenKeep.Signs
 {
     /// <summary>
     /// The ZDO keys that tie a sign to its container and the small reads and writes on them: the container carries
     /// <c>OpenKeep.sign</c> (its sign's id) and <c>OpenKeep.noSign</c> (the hammer opt-out), the sign carries
-    /// <c>OpenKeep.signOf</c> (its container's id) and <c>OpenKeep.autoText</c> (what the mod last wrote).
+    /// <c>OpenKeep.signOf</c> (its container's id) and <c>OpenKeep.autoText</c> (what the mod last wrote). The keys are
+    /// hashed once: a ZDO id read by name builds two strings every time, and the owner reads every container's link
+    /// once a second.
     /// </summary>
     public static class SignLinks
     {
@@ -12,7 +16,11 @@ namespace OpenKeep.Signs
         public const string AutoTextKey = "OpenKeep.autoText";
         public const string NoSignKey = "OpenKeep.noSign";
 
-        public static ZDOID SignId(ZDO container) => container.GetZDOID(SignKey);
+        private static readonly KeyValuePair<int, int> SignHash = ZDO.GetHashZDOID(SignKey);
+        private static readonly KeyValuePair<int, int> SignOfHash = ZDO.GetHashZDOID(SignOfKey);
+        private static readonly int NoSignHash = NoSignKey.GetStableHashCode();
+
+        public static ZDOID SignId(ZDO container) => container.GetZDOID(SignHash);
 
         /// <summary>The container's sign ZDO, or null when it has none or the linked ZDO no longer exists.</summary>
         public static ZDO LinkedSign(ZDO container)
@@ -23,29 +31,29 @@ namespace OpenKeep.Signs
             return ZDOMan.instance.GetZDO(id);
         }
 
-        public static ZDOID ContainerId(ZDO sign) => sign.GetZDOID(SignOfKey);
+        public static ZDOID ContainerId(ZDO sign) => sign.GetZDOID(SignOfHash);
 
         /// <summary>A sign this mod placed: it names its container.</summary>
         public static bool IsAutomatic(ZDO sign) => sign != null && sign.IsValid() && ContainerId(sign) != ZDOID.None;
 
         public static void Link(ZDO container, ZDO sign)
         {
-            sign.Set(SignOfKey, container.m_uid);
-            container.Set(SignKey, sign.m_uid);
+            sign.Set(SignOfHash, container.m_uid);
+            container.Set(SignHash, sign.m_uid);
         }
 
         public static void Unlink(ZDO container)
         {
             if (SignId(container) != ZDOID.None)
-                container.Set(SignKey, ZDOID.None);
+                container.Set(SignHash, ZDOID.None);
         }
 
-        public static bool NoSign(ZDO container) => container.GetBool(NoSignKey);
+        public static bool NoSign(ZDO container) => container.GetBool(NoSignHash);
 
         public static void SetNoSign(ZDO container, bool value)
         {
             if (NoSign(container) != value)
-                container.Set(NoSignKey, value);
+                container.Set(NoSignHash, value);
         }
 
         /// <summary>The game's in-use flag of a container ZDO another client owns (an open chest is never claimed).</summary>
