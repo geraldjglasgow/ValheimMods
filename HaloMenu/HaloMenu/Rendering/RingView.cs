@@ -19,6 +19,8 @@ namespace HaloMenu.Rendering
         private readonly RectTransform root;
         private readonly Text centerLabel;
         private readonly List<SegmentView> segments = new List<SegmentView>();
+        private string shownLabel;
+        private bool labelShown;
 
         public RingView(string ringId)
         {
@@ -79,6 +81,10 @@ namespace HaloMenu.Rendering
         private void UpdateCenterLabel(int? highlightedIndex, SlotAssignment slots, bool showCenterLabel)
         {
             string label = showCenterLabel && highlightedIndex.HasValue ? slots.LabelAt(highlightedIndex.Value) : null;
+            if (labelShown && label == shownLabel)
+                return; // written only on a change, not every frame the ring is open
+            labelShown = true;
+            shownLabel = label;
             centerLabel.gameObject.SetActive(!string.IsNullOrEmpty(label));
             centerLabel.text = label ?? string.Empty;
         }

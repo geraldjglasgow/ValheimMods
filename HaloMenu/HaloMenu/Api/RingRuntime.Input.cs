@@ -9,7 +9,9 @@ namespace HaloMenu.Api
     {
         private bool HandleCloseInput()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            // In game Esc reaches the ring through the menu (RingWindow), so it cancels the ring and never also opens
+            // the menu; only without a game menu (the start screen) does the ring read Esc itself.
+            if (Menu.instance == null && Input.GetKeyDown(KeyCode.Escape))
             {
                 Close(cancel: true);
                 return true;
@@ -28,12 +30,16 @@ namespace HaloMenu.Api
         {
             if (Input.GetMouseButtonDown(1))
             {
+                RingWindow.SwallowUntilReleased(1);
                 Close(cancel: true);
                 return true;
             }
-            if (Input.GetMouseButtonDown(0) || InputSource.Pressed(settings.Hotkey))
+            if (Input.GetMouseButtonDown(0))
+            {
+                RingWindow.SwallowUntilReleased(0);
                 return TrySelectOrShake();
-            return false;
+            }
+            return InputSource.Pressed(settings.Hotkey) && TrySelectOrShake();
         }
 
         /// <summary>A disabled highlighted entry shakes and refuses; the ring stays open. Returns true when the

@@ -15,7 +15,8 @@ namespace HaloMenu.Config
     {
         // Fully qualified on the right: a field named the same as its enum type would otherwise shadow the type
         // in simple-name lookup and make "ActivationMode.Hold" resolve as a (nonexistent) member of the field.
-        public KeyboardShortcut Hotkey = new KeyboardShortcut(KeyCode.LeftAlt);
+        // BackQuote: no workspace mod binds it, nor does the game (Left Alt clashed with PackPanel's Alt + 1..5 mead keys).
+        public KeyboardShortcut Hotkey = new KeyboardShortcut(KeyCode.BackQuote);
         public ActivationMode ActivationMode = HaloMenu.API.ActivationMode.Hold;
         public bool GamepadEnabled = true;
         public GamepadStick GamepadStick = HaloMenu.API.GamepadStick.Right;

@@ -35,6 +35,9 @@
     <ProjectReference Include="..\HaloMenu.API\HaloMenu.API.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\ConfigReload\ConfigReload.csproj" />
+    <!-- Hotkeys: the ring keys read the workspace's way; WindowInput: an open ring holds input like a game window -->
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>

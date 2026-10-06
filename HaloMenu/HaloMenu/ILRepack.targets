@@ -14,6 +14,8 @@
       <InputAssemblies Include="$(TargetPath)" />
       <InputAssemblies Include="$(OutDir)PatchGuard.dll" />
       <InputAssemblies Include="$(OutDir)ConfigReload.dll" />
+      <InputAssemblies Include="$(OutDir)Hotkeys.dll" />
+      <InputAssemblies Include="$(OutDir)WindowInput.dll" />
     </ItemGroup>
     <ItemGroup>
       <LibraryPaths Include="$(OutDir)" />

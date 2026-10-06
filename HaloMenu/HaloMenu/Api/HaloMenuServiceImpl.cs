@@ -33,10 +33,26 @@ namespace HaloMenu.Api
         {
             if (rings.TryGetValue(ringId, out RingRuntime existing))
                 return existing;
-            RingSettings settings = RingSettings.Bind(config, ringId, RingDefaults.Default());
-            RingRuntime ring = new RingRuntime(ringId, settings);
+            RingRuntime ring = new RingRuntime(ringId, BindQuietly(ringId));
             AddRing(ring);
             return ring;
+        }
+
+        /// <summary>A ring's 18 entries bound with saving held, then the .cfg written once, not once per Bind.</summary>
+        private RingSettings BindQuietly(string ringId)
+        {
+            bool saving = config.SaveOnConfigSet;
+            config.SaveOnConfigSet = false;
+            try
+            {
+                return RingSettings.Bind(config, ringId, RingDefaults.Default());
+            }
+            finally
+            {
+                config.SaveOnConfigSet = saving;
+                if (saving)
+                    config.Save();
+            }
         }
 
         private void AddRing(RingRuntime ring)

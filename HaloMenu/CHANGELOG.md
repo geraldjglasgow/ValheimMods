@@ -2,6 +2,7 @@
 
 ## 0.1.0
 
+- Default key: backquote (was Left Alt); attacks and hotbar keys are blocked while a ring is open.
 - First cut, built from `SPEC.md`. Hold and Toggle activation, angle-based selection with a dead zone and
   hysteresis, gamepad stick support, evenly spaced segments (2-16) with live-configurable radii/gap/start angle,
   center label, hover scale/brightness/rim feedback, disabled-entry dimming and refusal shake.

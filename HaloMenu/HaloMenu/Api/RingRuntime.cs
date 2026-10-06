@@ -28,6 +28,8 @@ namespace HaloMenu.Api
         private int pooledSegmentCount = -1;
         private bool layoutDirty = true;
         private float lastGameUiScale = -1f;
+        private HoverVisualConfig visual;
+        private bool visualDirty = true;
 
         public RingRuntime(string id, RingSettings settings)
         {
@@ -35,6 +37,7 @@ namespace HaloMenu.Api
             this.settings = settings;
             view = new RingView(id);
             SubscribeLayoutInvalidation();
+            SubscribeVisualInvalidation();
             EnsureLayout();
         }
 
@@ -147,16 +150,31 @@ namespace HaloMenu.Api
 
         private void UpdateView(float deltaTime)
         {
-            HoverVisualConfig cfg = ReadVisualConfig();
-            view.Tick(highlightedIndex, slots, cfg, settings.ShowCenterLabel.Value, deltaTime);
+            view.Tick(highlightedIndex, slots, VisualConfig(), settings.ShowCenterLabel.Value, deltaTime);
         }
 
-        private HoverVisualConfig ReadVisualConfig()
+        /// <summary>The hover look, parsed once and again only after one of its settings changed (key: the four
+        /// Visual entries; expiry: their SettingChanged), not every frame the ring is open.</summary>
+        private HoverVisualConfig VisualConfig()
         {
+            if (!visualDirty)
+                return visual;
+            visualDirty = false;
             Color baseColor = ParseColor(settings.SegmentColor.Value, new Color(0.08f, 0.08f, 0.09f, 0.8f));
             Color highlightColor = ParseColor(settings.HighlightColor.Value, new Color(0.83f, 0.68f, 0.21f, 1f));
-            return new HoverVisualConfig(settings.HoverScale.Value, settings.AnimationDuration.Value, baseColor, highlightColor);
+            visual = new HoverVisualConfig(settings.HoverScale.Value, settings.AnimationDuration.Value, baseColor, highlightColor);
+            return visual;
         }
+
+        private void SubscribeVisualInvalidation()
+        {
+            settings.SegmentColor.SettingChanged += MarkVisualDirty;
+            settings.HighlightColor.SettingChanged += MarkVisualDirty;
+            settings.HoverScale.SettingChanged += MarkVisualDirty;
+            settings.AnimationDuration.SettingChanged += MarkVisualDirty;
+        }
+
+        private void MarkVisualDirty(object sender, System.EventArgs e) => visualDirty = true;
 
         private static Color ParseColor(string hex, Color fallback) =>
             ColorUtility.TryParseHtmlString(hex, out Color c) ? c : fallback;

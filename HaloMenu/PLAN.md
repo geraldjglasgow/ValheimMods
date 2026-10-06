@@ -34,7 +34,8 @@ HaloMenu/
     Runtime/
       RingState.cs, SelectionMath.cs, HysteresisSelector.cs   the angle math and the ~2 degree sticky band
       SlotAssignment.cs        which entry (if any) sits in each segment, resolved once per open
-      InputSource.cs           hotkey polling, mouse offset, gamepad stick vector
+      InputSource.cs           hotkey polling (through the Hotkeys library), mouse offset, gamepad stick vector
+      RingWindow.cs            an open ring registered with the WindowInput library (cursor, look, attacks, Esc)
       CursorLockState.cs       save/restore ZCursor's lock state and visibility
       BlockingUiWatcher.cs     inventory/map/console/chat/text-input/menu/death, checked at open and once per frame
       GameUiScale.cs           reads Hud's own root Canvas.scaleFactor so HaloMenu inherits Valheim's UI scale
@@ -52,9 +53,6 @@ HaloMenu/
                                 the Ring property/event surface, Hold/Toggle input, and layout caching, split
                                 across four files for size, all one partial class
       HaloMenuServiceImpl.cs   the plugin's HaloMenuService: owns the default ring and every API-created ring
-    Patches/
-      MouseLookPatch.cs         Player.SetMouseLook prefix: zeroes the look vector while a ring is open
-      CursorCapturePatch.cs     GameCamera.UpdateMouseCapture prefix: unlocks/shows the cursor, skips the original
   Sample.HaloMenuDemo/          references HaloMenu.API.csproj only, proves the two-assembly split
 ```
 
@@ -67,15 +65,14 @@ two internalized copies of same-named types.
 
 ## Decisions the spec left open
 
-- **Camera look and cursor, mechanism.** The game's own `Hud.InRadial()` already suspends look and unlocks the
-  cursor for the vanilla hotbar radial menu (`Hud.m_radialMenu`, a `RadialBase`; see `PlayerController.LateUpdate`
-  and `GameCamera.UpdateMouseCapture`), and it looked tempting to piggyback on it by making `Hud.InRadial()` return
-  true. Rejected: `PlayerController.LateUpdate` also reads `Hud.instance.m_radialMenu.IsBlockingInput` directly
-  (not through `InRadial()`) whenever `InRadial()` is true, so forcing it true while the vanilla radial is null or
-  inactive would NullReferenceException. Instead: a prefix on `Player.SetMouseLook` zeroes the look vector while a
-  ring is open (the same choke point vanilla's own radial uses, one step downstream), and a prefix on
-  `GameCamera.UpdateMouseCapture` sets the cursor unlocked/visible and skips the original for that frame. Neither
-  touches vanilla's own radial menu or any of its fields.
+- **Camera look, cursor and the player's keys.** The game's own `Hud.InRadial()` suspends look, unlocks the cursor
+  and blocks attack, block, jump, dodge and use for the vanilla hotbar radial menu, but forcing it true would
+  NullReferenceException in `PlayerController.LateUpdate` (it reads `Hud.instance.m_radialMenu.IsBlockingInput`
+  directly). Instead an open ring is a window of the WindowInput library (`Runtime/RingWindow.cs`, since
+  2026-10-05; it replaced HaloMenu's own `SetMouseLook` and `UpdateMouseCapture` prefixes): the cursor is free, the
+  camera does not follow the mouse or zoom, `Player.TakeInput` and `InInventoryEtc` hold attacks, blocks, use and
+  hotbar keys the way the vanilla radial does, walking stays, and Esc cancels the ring instead of opening the menu.
+  A mouse button that closed a Toggle ring stays swallowed until it is let go, so the selecting click never swings.
 - **Cursor restore.** `CursorLockState` saves `ZCursor.LockState`/`IsVisible` once on open and restores them once
   on close, literally per the spec's "store the prior state, do not assume." Because `GameCamera.UpdateMouseCapture`
   runs unpatched again the very next frame after close, it also re-derives the correct state from current game
@@ -101,10 +98,10 @@ two internalized copies of same-named types.
   resolved once per open, not re-checked while the ring stays open, to honor the layout/slot stability the
   performance section asks for; `IsEnabled` (opacity, refusal-shake) is re-read live every frame, since the spec
   explicitly describes it changing the ring's *appearance* while open.
-- **Visual settings need no cache at all.** `HoverScale`, `AnimationDuration`, `SegmentColor`, `HighlightColor`
-  and `ShowCenterLabel` are read live every frame the ring is open and applied directly to each segment's Graphic
-  color / RectTransform scale - there was never a baked copy of them to invalidate, so "changes without a restart"
-  falls out for free rather than needing an explicit rebuild path.
+- **Visual settings.** `HoverScale`, `AnimationDuration`, `SegmentColor` and `HighlightColor` are parsed into one
+  `HoverVisualConfig` and kept until one of them fires `SettingChanged` (no colour parsing per frame); a change
+  still shows on the next frame, no restart. `ShowCenterLabel` is read live. Segment scale, icon offset and the
+  center label are written only when they change.
 - **UI scale.** Rather than re-deriving Valheim's own reference-resolution formula, `GameUiScale.Factor()` reads
   the scale factor of `Hud.instance.m_rootObject`'s own Canvas at layout-build time and multiplies it by the
   ring's own `UIScale` setting. This is what "respect Valheim's own UI scale setting" means here: whatever the
@@ -122,8 +119,13 @@ two internalized copies of same-named types.
   (six-ish static property reads) and hotkey polling are a separate, unavoidable input/lifecycle concern and run
   every frame regardless of ring state; they were not folded into that budget.
 - **Toggle mode's select gestures.** Left-click, or pressing the hotkey again, both select; right-click or Escape
-  both cancel - matching the FSM diagram and the prose exactly. Escape is read with a plain `Input.GetKeyDown`, not
-  gated behind `BlockingUiWatcher`, since a ring open by definition means no blocking UI is already up.
+  both cancel - matching the FSM diagram and the prose exactly. In game Escape reaches the ring through the menu's
+  own Esc check (WindowInput), so it cancels the ring without also opening the menu; without a game menu (the start
+  screen) the ring reads Esc itself.
+- **Hotkeys.** Read through the workspace's Hotkeys library: modifiers without allocating, Alt read as the game
+  reads it, nothing while the player types; other keys held (W, Shift) never stop a ring opening. The default ring
+  opens on BackQuote (\`), bound by neither the game nor any workspace mod; Left Alt clashed with PackPanel's
+  Alt + 1..5 mead keys.
 - **Colors are hex strings**, not `ConfigEntry<Color>` - matches how color settings are already bound elsewhere in
   this workspace (`Party.PartyColor`), parsed with `ColorUtility.TryParseHtmlString` at use time, defaulting back
   to the compiled-in default on an unparsable string rather than throwing.

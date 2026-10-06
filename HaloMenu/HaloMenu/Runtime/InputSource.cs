@@ -1,35 +1,24 @@
 using BepInEx.Configuration;
 using HaloMenu.API;
+using Hotkeys;
 using UnityEngine;
 
 namespace HaloMenu.Runtime
 {
-    /// <summary>Hotkey polling and the raw selection offset vector, mouse or gamepad. A shortcut with modifiers
-    /// uses BepInEx's own KeyboardShortcut.IsDown/IsPressed; a bare key is read directly so it keeps working while
-    /// the player is moving (WASD is held throughout, which BepInEx's own IsDown would otherwise see as "another
-    /// key held" and refuse).</summary>
+    /// <summary>Hotkey polling and the raw selection offset vector, mouse or gamepad. The keys are read through the
+    /// workspace's Hotkeys library: modifiers are honoured without allocating (BepInEx hands them out as a LINQ
+    /// sequence), nothing fires while the player types, and Alt is read the way the game reads it. The main key going
+    /// down is tested first, so a closed ring costs one key test a frame. Other keys held (W, Shift while running) never
+    /// stop a ring from opening.</summary>
     public static class InputSource
     {
         public static bool Pressed(ConfigEntry<KeyboardShortcut> key)
         {
-            KeyboardShortcut shortcut = key.Value;
-            if (shortcut.MainKey == KeyCode.None)
-                return false;
-            return HasModifiers(shortcut) ? shortcut.IsDown() : Input.GetKeyDown(shortcut.MainKey);
+            KeyCode main = key.Value.MainKey;
+            return main != KeyCode.None && Input.GetKeyDown(main) && Hotkey.Held(key);
         }
 
-        public static bool Held(ConfigEntry<KeyboardShortcut> key)
-        {
-            KeyboardShortcut shortcut = key.Value;
-            if (shortcut.MainKey == KeyCode.None || !Input.GetKey(shortcut.MainKey))
-                return false;
-            foreach (KeyCode modifier in shortcut.Modifiers)
-            {
-                if (!Input.GetKey(modifier))
-                    return false;
-            }
-            return true;
-        }
+        public static bool Held(ConfigEntry<KeyboardShortcut> key) => Hotkey.Held(key);
 
         public static Vector2 ScreenCenter() => new Vector2(Screen.width, Screen.height) / 2f;
 
@@ -47,12 +36,5 @@ namespace HaloMenu.Runtime
         private static Vector2 StickVector(GamepadStick stick) => stick == GamepadStick.Left
             ? new Vector2(ZInput.GetJoyLeftStickX(), ZInput.GetJoyLeftStickY())
             : new Vector2(ZInput.GetJoyRightStickX(), ZInput.GetJoyRightStickY());
-
-        private static bool HasModifiers(KeyboardShortcut shortcut)
-        {
-            foreach (KeyCode _ in shortcut.Modifiers)
-                return true;
-            return false;
-        }
     }
 }

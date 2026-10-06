@@ -4,8 +4,9 @@ using HaloMenu.API;
 namespace HaloMenu.Config
 {
     /// <summary>
-    /// One ring's live config entries: Input, Layout and Visual, each read at use time (never cached), so a
-    /// change from the ConfigurationManager UI or a file reload takes effect on the ring's next open. The default
+    /// One ring's live config entries: Input, Layout and Visual, read at use time or cached until their own
+    /// SettingChanged (the layout, the hover look), so a change from the ConfigurationManager UI or a file reload
+    /// takes effect on the ring's next open. The default
     /// ring binds under the bare section names from the feature sheet ("Input", "Layout", "Visual"); a ring made
     /// through <see cref="HaloMenu.API.HaloMenuAPI.CreateRing"/> gets its own subsection, named after its ring id,
     /// so two rings never collide on the same key.

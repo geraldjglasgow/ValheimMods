@@ -22,6 +22,8 @@ namespace HaloMenu.Rendering
 
         private float hoverT;
         private float shakeTimer;
+        private float shownScale = 1f;
+        private bool shaking;
 
         public static SegmentView Create(Transform parent)
         {
@@ -61,20 +63,34 @@ namespace HaloMenu.Rendering
             ApplyColors(eased, entryEnabled, cfg);
         }
 
+        // Scale and icon offset are written only when they change: a settled segment (the tween done, no shake)
+        // writes nothing, since a transform write marks the canvas for a rebuild. Graphic.color compares by itself.
         private void ApplyScale(float eased, float hoverScale, float deltaTime)
         {
             float scale = Mathf.Lerp(1f, hoverScale, eased);
-            root.localScale = new Vector3(scale, scale, 1f);
-            if (shakeTimer > 0f)
+            if (scale != shownScale)
             {
-                shakeTimer = Mathf.Max(0f, shakeTimer - deltaTime);
-                float wobble = Mathf.Sin(shakeTimer * 40f) * ShakeAmplitude * (shakeTimer / ShakeDuration);
-                icon.rectTransform.anchoredPosition = new Vector2(wobble, 0f);
+                shownScale = scale;
+                root.localScale = new Vector3(scale, scale, 1f);
             }
-            else
+            ApplyShake(deltaTime);
+        }
+
+        private void ApplyShake(float deltaTime)
+        {
+            if (shakeTimer <= 0f)
             {
-                icon.rectTransform.anchoredPosition = Vector2.zero;
+                if (shaking)
+                {
+                    shaking = false;
+                    icon.rectTransform.anchoredPosition = Vector2.zero;
+                }
+                return;
             }
+            shaking = true;
+            shakeTimer = Mathf.Max(0f, shakeTimer - deltaTime);
+            float wobble = Mathf.Sin(shakeTimer * 40f) * ShakeAmplitude * (shakeTimer / ShakeDuration);
+            icon.rectTransform.anchoredPosition = new Vector2(wobble, 0f);
         }
 
         private void ApplyColors(float eased, bool entryEnabled, HoverVisualConfig cfg)

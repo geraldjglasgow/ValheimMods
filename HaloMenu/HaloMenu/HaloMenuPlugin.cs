@@ -22,6 +22,7 @@ namespace HaloMenu
         private void Awake()
         {
             Log = Logger;
+            ConfigReloader.HoldSaves(Config);
             HaloMenuConfig config = HaloMenuConfig.Bind(Config);
             HaloLog.Source = Logger;
             HaloLog.Level = config.LogLevel;
@@ -32,7 +33,7 @@ namespace HaloMenu
             driver.Service = service;
 
             Harmony harmony = new Harmony(PluginGuid);
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            RingWindow.Install(harmony);
 
             ConfigReloader.Setup(Config, Logger);
 

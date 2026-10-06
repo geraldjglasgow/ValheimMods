@@ -30,9 +30,9 @@ HaloMenu opens an empty, icon-less ring - it needs a mod that registers entries 
 To try `Sample.HaloMenuDemo` for that: build it (see "Building" below, or just build the whole `HaloMenu.sln`),
 then copy both files from `Sample.HaloMenuDemo/dist/` - `Sample.HaloMenuDemo.dll` and `HaloMenu.API.dll` (the same
 one HaloMenu itself ships; either copy is fine, they're identical) - into `BepInEx/plugins` alongside
-`HaloMenu.dll`. It registers two entries on the default ring (hold Left Alt) and its own 6-segment ring on `[`.
+`HaloMenu.dll`. It registers two entries on the default ring (hold the backquote key, `` ` ``) and its own 6-segment ring on `[`.
 
-Default hotkey: hold Left Alt.
+Default hotkey: hold the backquote key (`` ` ``).
 
 ### For mod authors: the API
 

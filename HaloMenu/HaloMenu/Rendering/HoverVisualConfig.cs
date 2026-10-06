@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HaloMenu.Rendering
 {
-    /// <summary>Read live from <see cref="Config.RingSettings"/> every frame the ring is open; nothing here is cached.</summary>
+    /// <summary>A ring's hover look, parsed from its <see cref="Config.RingSettings"/> once and again after a Visual setting changes.</summary>
     public readonly struct HoverVisualConfig
     {
         public readonly float HoverScale;
