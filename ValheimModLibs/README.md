@@ -5,7 +5,6 @@ Small, focused libraries for Valheim BepInEx mods, extracted from Elite Creature
 | Library | What it does | Depends on |
 | --- | --- | --- |
 | [ConfigReload](ConfigReload/) | Writes the .cfg at startup, hot reloads it on edit | BepInEx |
-| [TraitSets](TraitSets/) | Enum sets in ZDOs (one bit-mask key per set), weighted multi rolls | game, Unity |
 | [YamlConfig](YamlConfig/) | YAML documents with parse helpers and validation, hot reload, Charter push, write-back, in-game editor, Valheim hooks | Charter, YamlDotNet, BepInEx, Harmony, game |
 | [SyncedConfig](SyncedConfig/) | Facade: Charter + ConfigReload + YamlConfig in one object with `Bind`, `BindLocking`, `AddYaml`, `Finish` | all of the above |
 | [PatchGuard](PatchGuard/) | Logs exceptions from the mod's own code under the mod's name (`Guard.Run` / `Guard.Wrap` around entry points), then rethrows; `Profiler` times patched methods | BepInEx, Harmony |
@@ -32,7 +31,7 @@ Outputs land in each project's `bin/Release`. To use a library from a mod, add a
 
 - No plugin of its own, no runtime dependency for players. Everything is merged into the consuming mod.
 - Game specific code is limited to what the game forces (ZDO storage, the three Valheim hook points). Everything else is plain .NET.
-- Namespaces are one word each (`Charter`, `ConfigReload`, `ItemCopies`, `TraitSets`, `YamlConfig`, `SyncedConfig`, `BundlePrefabs`, `LocalEffects`), public surface kept small and documented in the source.
+- Namespaces are one word each (`Charter`, `ConfigReload`, `ItemCopies`, `YamlConfig`, `SyncedConfig`, `BundlePrefabs`, `LocalEffects`), public surface kept small and documented in the source.
 - Every library is our own code, GPL-3.0 like the rest, written from its own specification; no third-party library is copied into the workspace.
 
 GPL-3.0 licensed. See the `LICENSE` file.

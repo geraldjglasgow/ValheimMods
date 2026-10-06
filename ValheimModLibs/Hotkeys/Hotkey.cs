@@ -12,6 +12,7 @@ namespace Hotkeys
     /// (BepInEx's own <c>IsDown</c> refuses a shortcut while any other key at all is held). A single key is the key going
     /// down with no Shift, Ctrl or Alt held, so it never fires together with a modified shortcut on the same key (Z next to
     /// Ctrl + Z). Nothing counts while the player types (<see cref="Typing.Active"/>). No key (None) never fires.
+    /// Whether a key is held is read as the game reads it (<see cref="KeyHeld"/>).
     /// </summary>
     public static class Hotkey
     {
@@ -29,36 +30,47 @@ namespace Hotkeys
 
         private static readonly HashSet<ConfigEntry<KeyboardShortcut>> Watched = new HashSet<ConfigEntry<KeyboardShortcut>>();
 
-        /// <summary>Down this frame, modifiers honoured, nothing being typed.</summary>
+        /// <summary>
+        /// Down this frame, modifiers honoured, nothing being typed. Mods read their keys many times a frame, so the main
+        /// key going down is tested first: the modifiers and the typing test only run on the frame it does.
+        /// </summary>
         public static bool Pressed(ConfigEntry<KeyboardShortcut>? key)
         {
-            if (key == null || Typing.Active)
+            if (key == null)
             {
                 return false;
             }
             KeyCode main = key.Value.MainKey;
-            if (main == KeyCode.None)
+            if (main == KeyCode.None || !Input.GetKeyDown(main))
             {
                 return false;
             }
             KeyCode[] modifiers = ModifiersOf(key);
-            if (modifiers.Length > 0)
-            {
-                return Input.GetKeyDown(main) && AllHeld(modifiers) && !OtherModifierHeld(main, modifiers);
-            }
-            return Input.GetKeyDown(main) && !ModifierHeld(main);
+            bool chord = modifiers.Length > 0
+                ? AllHeld(modifiers) && !OtherModifierHeld(main, modifiers)
+                : !ModifierHeld(main);
+            return chord && !Typing.Active;
         }
 
         /// <summary>The main key held with its modifiers (for modifier settings such as LeftShift), nothing being typed.</summary>
         public static bool Held(ConfigEntry<KeyboardShortcut>? key)
         {
-            if (key == null || Typing.Active)
+            if (key == null)
             {
                 return false;
             }
             KeyCode main = key.Value.MainKey;
-            return main != KeyCode.None && Input.GetKey(main) && AllHeld(ModifiersOf(key));
+            return main != KeyCode.None && KeyHeld(main) && AllHeld(ModifiersOf(key)) && !Typing.Active;
         }
+
+        /// <summary>
+        /// A key held now. Shift, Ctrl and Alt are read through the game's own input (<c>ZInput</c>, Unity's input system),
+        /// which lets go of every key when the window loses focus. Unity's old <c>Input</c> keeps a modifier held that was
+        /// let go in another window (Alt + Tab out, Alt + Z to an overlay, back with the mouse) until it is pressed again:
+        /// a stuck Left Alt made PackPanel's plain 1 to 3 drink meads and skip the hotbar (2026-10-05).
+        /// </summary>
+        public static bool KeyHeld(KeyCode key) =>
+            Array.IndexOf(ModifierKeys, key) >= 0 ? ZInput.GetKey(key, false) : Input.GetKey(key);
 
         /// <summary>
         /// A set shortcut with modifiers, all of them held, its main key or not (Alt while the player reaches for Alt + 1),
@@ -66,12 +78,12 @@ namespace Hotkeys
         /// </summary>
         public static bool ModifiersHeld(ConfigEntry<KeyboardShortcut>? key)
         {
-            if (key == null || Typing.Active || key.Value.MainKey == KeyCode.None)
+            if (key == null || key.Value.MainKey == KeyCode.None)
             {
                 return false;
             }
             KeyCode[] modifiers = ModifiersOf(key);
-            return modifiers.Length > 0 && AllHeld(modifiers);
+            return modifiers.Length > 0 && AllHeld(modifiers) && !Typing.Active;
         }
 
         private static KeyCode[] ModifiersOf(ConfigEntry<KeyboardShortcut> key)
@@ -93,7 +105,7 @@ namespace Hotkeys
         {
             foreach (KeyCode held in keys)
             {
-                if (!Input.GetKey(held))
+                if (!KeyHeld(held))
                 {
                     return false;
                 }
@@ -106,7 +118,7 @@ namespace Hotkeys
         {
             foreach (KeyCode modifier in ModifierKeys)
             {
-                if (modifier != main && Array.IndexOf(modifiers, modifier) < 0 && Input.GetKey(modifier))
+                if (modifier != main && Array.IndexOf(modifiers, modifier) < 0 && KeyHeld(modifier))
                 {
                     return true;
                 }
@@ -119,7 +131,7 @@ namespace Hotkeys
         {
             foreach (KeyCode modifier in ModifierKeys)
             {
-                if (modifier != self && Input.GetKey(modifier))
+                if (modifier != self && KeyHeld(modifier))
                 {
                     return true;
                 }

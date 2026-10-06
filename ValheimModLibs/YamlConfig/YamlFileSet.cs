@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Charter;
 
 namespace YamlConfig;
@@ -59,4 +60,12 @@ public sealed class YamlFileSet
 	internal Dictionary<string, DateTime> Snapshot { get; } = new(StringComparer.OrdinalIgnoreCase);
 
 	internal int ReloadPending;
+
+	/// <summary>
+	/// <see cref="FilePattern"/> as a whole-name match, compiled the first time the files are looked for (the watcher
+	/// looks every five seconds); made on the timer thread or the main thread, both make the same one.
+	/// </summary>
+	internal Regex NameFilter => nameFilter ??= new Regex("^" + Regex.Escape(FilePattern).Replace("\\*", ".*") + "$", RegexOptions.IgnoreCase);
+
+	private Regex? nameFilter;
 }

@@ -29,6 +29,9 @@ public sealed class YamlFileHub
 	private readonly YamlFileWatcher watcher;
 	private bool loaded;
 
+	/// <summary>The model already built from the files being published, so <see cref="Receive"/> does not parse them again.</summary>
+	private (YamlFileSet Set, YamlModel Model)? built;
+
 	/// <param name="modName">Prefix of every log line.</param>
 	/// <param name="log">The mod's logger.</param>
 	/// <param name="searchFolders">Where files are looked for, in order; defaults are written to the first.</param>
@@ -136,9 +139,9 @@ public sealed class YamlFileHub
 	/// </summary>
 	public void Replace(YamlFileSet set, IReadOnlyDictionary<string, string> files, bool saveToDisk)
 	{
-		if (TryBuild(set, files, out _, "editor"))
+		if (TryBuild(set, files, out YamlModel model, "editor"))
 		{
-			Publish(set, files, saveToDisk);
+			Publish(set, files, model, saveToDisk);
 		}
 	}
 
@@ -180,8 +183,7 @@ public sealed class YamlFileHub
 
 	private void LoadSet(YamlFileSet set)
 	{
-		Dictionary<string, string> files = store.ReadOrCreate(set);
-		watcher.TakeSnapshot(set);
+		Dictionary<string, string> files = watcher.ReadOrCreate(set);
 		if (files.Count == 0)
 		{
 			if (set.Enabled())
@@ -190,33 +192,37 @@ public sealed class YamlFileHub
 			}
 			return;
 		}
-		if (TryBuild(set, files, out _, "startup"))
+		if (TryBuild(set, files, out YamlModel model, "startup"))
 		{
-			Publish(set, files, writeBack: false);
+			Publish(set, files, model, writeBack: false);
 		}
 	}
 
 	// Main thread, from the watcher: parse and publish the changed files without writing them back.
 	private void ReloadFromDisk(YamlFileSet set)
 	{
-		Dictionary<string, string> files = store.Read(store.Discover(set));
-		watcher.TakeSnapshot(set);
+		Dictionary<string, string> files = watcher.Read(set);
 		if (files.Count == 0)
 		{
 			log.LogWarning($"{modName}: every {set.FilePattern} file is gone, keeping the loaded configuration");
 		}
-		else if (TryBuild(set, files, out _, "reload"))
+		else if (TryBuild(set, files, out YamlModel model, "reload"))
 		{
-			Publish(set, files, writeBack: false);
+			Publish(set, files, model, writeBack: false);
 			log.LogInfo($"{modName}: {set.MainFileName} reloaded" + (IsAuthor ? "" : ", not applied, remote configuration active"));
 		}
 	}
 
-	/// <summary>Assigns the files to the set's article (or applies them directly when there is no charter).</summary>
-	private void Publish(YamlFileSet set, IReadOnlyDictionary<string, string> files, bool writeBack)
+	/// <summary>
+	/// Assigns the files to the set's article (or applies them directly when there is no charter). The article raises
+	/// its change at once, on this side, with these files: <see cref="Receive"/> takes the model they were built into.
+	/// </summary>
+	private void Publish(YamlFileSet set, IReadOnlyDictionary<string, string> files, YamlModel model, bool writeBack)
 	{
 		bool previous = SuppressWriteBack;
+		(YamlFileSet, YamlModel)? previousBuilt = built;
 		SuppressWriteBack = previous || !writeBack;
+		built = (set, model);
 		try
 		{
 			if (set.Channel is null)
@@ -231,18 +237,16 @@ public sealed class YamlFileHub
 		finally
 		{
 			SuppressWriteBack = previous;
+			built = previousBuilt;
 		}
 	}
 
 	/// <summary>The article changed: on players the server pushed files, on the server it assigned its own.</summary>
 	private void Receive(YamlFileSet set, IReadOnlyDictionary<string, string> files)
 	{
-		if (!TryBuild(set, files, out YamlModel model, "received"))
+		YamlModel? model = built is { } own && own.Set == set ? own.Model : BuildReceived(set, files);
+		if (model is null)
 		{
-			foreach (KeyValuePair<string, string> file in files)
-			{
-				log.LogWarning($"{modName}: content of {file.Key}:\n{file.Value}");
-			}
 			return;
 		}
 		set.Files = files;
@@ -256,6 +260,20 @@ public sealed class YamlFileHub
 			store.WriteAll(files);
 			watcher.TakeSnapshot(set);
 		}
+	}
+
+	/// <summary>Files that arrived from the server (or were assigned without a model): parsed here, shown when they fail.</summary>
+	private YamlModel? BuildReceived(YamlFileSet set, IReadOnlyDictionary<string, string> files)
+	{
+		if (TryBuild(set, files, out YamlModel model, "received"))
+		{
+			return model;
+		}
+		foreach (KeyValuePair<string, string> file in files)
+		{
+			log.LogWarning($"{modName}: content of {file.Key}:\n{file.Value}");
+		}
+		return null;
 	}
 
 	private void Apply(YamlFileSet set)

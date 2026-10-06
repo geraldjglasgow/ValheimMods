@@ -11,10 +11,16 @@ namespace BundlePrefabs;
 /// embeds one per platform, named <c>&lt;name&gt;.windows</c> and <c>&lt;name&gt;.linux</c> (dedicated servers run the
 /// Linux player); macOS takes <c>&lt;name&gt;.osx</c> when there is one and otherwise tries the Windows build.
 /// Each bundle loads once per process and stays loaded.
+/// <para>
+/// It is read straight from the resource stream (the assembly's own memory), not copied into a byte array first: a
+/// copy left the size of every bundle as garbage on the first world load. Unity keeps reading the stream for as long
+/// as the bundle is loaded (its LZ4 chunks load on demand), so the stream is kept with it and never closed.
+/// </para>
 /// </summary>
 public static class EmbeddedBundle
 {
 	private static readonly Dictionary<string, AssetBundle> loaded = new();
+	private static readonly List<Stream> streams = new();
 
 	public static AssetBundle Load(Assembly assembly, string name)
 	{
@@ -23,11 +29,14 @@ public static class EmbeddedBundle
 			return bundle;
 		}
 		string resource = FindResource(assembly, name);
-		using Stream stream = assembly.GetManifestResourceStream(resource);
-		using var memory = new MemoryStream();
-		stream.CopyTo(memory);
-		bundle = AssetBundle.LoadFromMemory(memory.ToArray())
-			?? throw new InvalidOperationException($"asset bundle {resource} did not load on {Application.platform}");
+		Stream stream = assembly.GetManifestResourceStream(resource);
+		bundle = AssetBundle.LoadFromStream(stream);
+		if (bundle == null)
+		{
+			stream.Dispose();
+			throw new InvalidOperationException($"asset bundle {resource} did not load on {Application.platform}");
+		}
+		streams.Add(stream);
 		loaded[name] = bundle;
 		return bundle;
 	}

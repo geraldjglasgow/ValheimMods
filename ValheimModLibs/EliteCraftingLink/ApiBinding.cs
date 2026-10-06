@@ -8,9 +8,11 @@ namespace EliteCraftingLink
 {
     /// <summary>
     /// Finds EliteCrafting's API: the plugin by its GUID in BepInEx's chainloader, then the type
-    /// <c>EliteCrafting.Api.EliteCraftingApi</c> in its assembly, then <c>GetApiVersion()</c>. Until EliteCrafting is in
-    /// the chainloader the search runs again on every call (one dictionary lookup), so a caller that asks too early
-    /// still binds later; once it is found, or found too old, the answer is kept for the process. Endpoints become
+    /// <c>EliteCrafting.Api.EliteCraftingApi</c> in its assembly, then <c>GetApiVersion()</c>. While BepInEx is still
+    /// loading plugins the search runs again on every call (one dictionary lookup), so a caller that asks too early
+    /// still binds later; once it is found, or found too old, or the plugins have finished loading without it (the
+    /// game's start screen or network exists, <see cref="PluginsLoaded"/>), the answer is kept for the process, so an
+    /// absent EliteCrafting costs one flag test per call. Endpoints become
     /// typed delegates (<see cref="Create{T}"/>), so a call costs what a direct call costs. Nothing of EliteCrafting is
     /// referenced. Main thread only.
     /// </summary>
@@ -70,8 +72,13 @@ namespace EliteCraftingLink
 
         private static void Settle()
         {
-            if (_settled || !Chainloader.PluginInfos.TryGetValue(Guid, out PluginInfo info) || info.Instance == null)
+            if (_settled)
             {
+                return;
+            }
+            if (!Chainloader.PluginInfos.TryGetValue(Guid, out PluginInfo info) || info.Instance == null)
+            {
+                _settled = PluginsLoaded();
                 return;
             }
             _settled = true;
@@ -84,6 +91,13 @@ namespace EliteCraftingLink
             }
             _api = type;
         }
+
+        /// <summary>
+        /// BepInEx has loaded every plugin: it does so in one go before the game's first scene, so once the start
+        /// screen (<c>FejdStartup</c>, a dedicated server's too) or the network (in a world) exists, a plugin that is
+        /// not in the chainloader will not come.
+        /// </summary>
+        private static bool PluginsLoaded() => FejdStartup.instance != null || ZNet.instance != null;
 
         private static int ReadVersion(Type? type)
         {

@@ -53,7 +53,7 @@ rules = hub.Register(new YamlFileSet("MyMod.Rules*.yml", "mymod.rules",
 hub.HookGame(harmony, Priority.Normal);   // load at the main menu or dedicated server start, apply at first spawn
 ```
 
-The hub finds `MyMod.Rules*.yml` in every search folder (main file first), parses all files into one model, and publishes the contents through a Charter article named by the sync key (an ordinary article: it travels only while the server's binding is on). Every side reacts to that article: players receive the server's files while bound and keep their own files otherwise, the server applies its own. Edits on disk are picked up every five seconds and published without being written back; the editor's save is written back atomically on the author. `Applied` fires after each apply; `ApplyAll()` re-applies the current models.
+The hub finds `MyMod.Rules*.yml` in every search folder (main file first), parses all files into one model, and publishes the contents through a Charter article named by the sync key (an ordinary article: it travels only while the server's binding is on). Every side reacts to that article: players receive the server's files while bound and keep their own files otherwise, the server applies its own. Files are parsed once per load, reload or save: the model built to validate them is the one applied (only files received from the server are parsed on arrival). Edits on disk are picked up every five seconds and published without being written back; the editor's save is written back atomically on the author. `Applied` fires after each apply; `ApplyAll()` re-applies the current models.
 
 With `SyncedConfiguration` (the `SyncedConfig` library) all of this is `config.AddYaml(new YamlFileSet(...))` and `config.Finish(harmony)`.
 
@@ -61,11 +61,15 @@ With `SyncedConfiguration` (the `SyncedConfig` library) all of this is `config.A
 
 ```csharp
 editor = new YamlEditorWindow(hub, "MyMod YAML Editor") { Translate = Localization.instance.Localize };
-
-void Update()     => editor.Update();       // also from LateUpdate: keeps the cursor free
-void OnGUI()      => editor.OnGUI();
+YamlEditorHost.Add(gameObject, editor);     // draws it and keeps the cursor free, only while it is open
 // ConfigurationManager: new ConfigurationManagerAttributes { CustomDrawer = _ => editor.DrawButtons() }
 ```
+
+Unity runs an IMGUI pass every frame for every enabled behaviour with an `OnGUI`, even one that draws nothing, so the
+window is drawn by a `YamlEditorHost` component that `Open` enables and `Close` disables; a plugin needs no `OnGUI`
+or `Update` for it. `SyncedConfiguration` adds the host for its `YamlEditor` to the plugin's object. Without a host,
+call `editor.Update()` from Update and LateUpdate and `editor.OnGUI()` from OnGUI; with one, `OnGUI()` does nothing,
+so a plugin that still calls it does not draw the window twice.
 
 Full screen, one text area per file (Tab indents two spaces, Enter keeps the indentation), a validation panel that re-parses on every change, and `Save and apply`, `Apply without saving`, `Discard`. Saving and applying are only enabled for the author while there are no errors.
 

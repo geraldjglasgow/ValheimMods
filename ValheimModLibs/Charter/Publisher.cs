@@ -48,7 +48,7 @@ internal sealed class Publisher
 	}
 
 	/// <summary>The first push to a peer that the game just accepted: everything.</summary>
-	public void SendFirst(ZNetPeer peer) => courier.Send(peer, Build(peer, true), "first");
+	public void SendFirst(ZNetPeer peer) => courier.Send(peer, Build(Stewardship.IsSteward(peer), true), "first");
 
 	/// <summary>A push with only the flags, when the peer's steward status changed.</summary>
 	public void SendFlags(ZNetPeer peer) => courier.Send(peer, Header(peer), "steward flag");
@@ -74,21 +74,37 @@ internal sealed class Publisher
 		}
 		if (Side.IsServer)
 		{
-			foreach (ZNetPeer peer in Side.ReadyPeers())
-			{
-				courier.Send(peer, Build(peer, full), full ? "full" : "delta");
-			}
+			SendToAll(full ? "full" : "delta");
 		}
 		dirtyClauses.Clear();
 		dirtyArticles.Clear();
 		full = false;
 	}
 
-	private PushBody Header(ZNetPeer peer) => new() { Bound = ledger.BindingOn, Steward = Stewardship.IsSteward(peer) };
-
-	private PushBody Build(ZNetPeer peer, bool everything)
+	/// <summary>
+	/// The same push to every ready peer. The body differs only by the peer's steward flag, so it is built, serialised
+	/// and compressed at most twice (once per flag) rather than once per peer.
+	/// </summary>
+	private void SendToAll(string reason)
 	{
-		PushBody body = Header(peer);
+		Parcel? player = null;
+		Parcel? steward = null;
+		foreach (ZNetPeer peer in Side.ReadyPeers())
+		{
+			Parcel parcel = Stewardship.IsSteward(peer)
+				? (steward ??= new Parcel(Build(true, full)))
+				: (player ??= new Parcel(Build(false, full)));
+			courier.Send(peer, parcel, reason);
+		}
+	}
+
+	private PushBody Header(ZNetPeer peer) => Header(Stewardship.IsSteward(peer));
+
+	private PushBody Header(bool steward) => new() { Bound = ledger.BindingOn, Steward = steward };
+
+	private PushBody Build(bool steward, bool everything)
+	{
+		PushBody body = Header(steward);
 		IEnumerable<IClause> clauses = everything ? ledger.Pushable : dirtyClauses;
 		if (!body.Bound)
 		{

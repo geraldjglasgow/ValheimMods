@@ -77,6 +77,67 @@ public static class Guard
 		}
 	}
 
+	/// <summary>
+	/// Same as <see cref="Run(string, Action)"/> with the argument passed in, for hot paths (patches on per-frame or
+	/// per-hit methods). Called with a static lambda, <c>Guard.Run("ctx", static c => Step(c), __instance)</c>, it captures
+	/// nothing and allocates nothing; a lambda that captures a parameter allocates its closure on every call, at the start
+	/// of the patch method, before any early return in it.
+	/// </summary>
+	public static void Run<TArg>(string context, Action<TArg> action, TArg arg)
+	{
+		try
+		{
+			action(arg);
+		}
+		catch (Exception e)
+		{
+			Report(e, context);
+			throw;
+		}
+	}
+
+	/// <summary>Same as <see cref="Run{TArg}(string, Action{TArg}, TArg)"/> with two arguments.</summary>
+	public static void Run<T1, T2>(string context, Action<T1, T2> action, T1 first, T2 second)
+	{
+		try
+		{
+			action(first, second);
+		}
+		catch (Exception e)
+		{
+			Report(e, context);
+			throw;
+		}
+	}
+
+	/// <summary>Same as <see cref="Run{TArg}(string, Action{TArg}, TArg)"/> for code that returns a value.</summary>
+	public static T Run<TArg, T>(string context, Func<TArg, T> func, TArg arg)
+	{
+		try
+		{
+			return func(arg);
+		}
+		catch (Exception e)
+		{
+			Report(e, context);
+			throw;
+		}
+	}
+
+	/// <summary>Same as <see cref="Run{TArg, T}(string, Func{TArg, T}, TArg)"/> with two arguments.</summary>
+	public static T Run<T1, T2, T>(string context, Func<T1, T2, T> func, T1 first, T2 second)
+	{
+		try
+		{
+			return func(first, second);
+		}
+		catch (Exception e)
+		{
+			Report(e, context);
+			throw;
+		}
+	}
+
 	/// <summary>Wraps a callback so it is guarded when invoked, for event handlers and delegates handed to the game.</summary>
 	public static Action Wrap(string context, Action action) => () => Run(context, action);
 

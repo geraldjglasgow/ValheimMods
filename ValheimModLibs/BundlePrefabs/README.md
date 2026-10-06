@@ -20,7 +20,8 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
 
 - `EmbeddedBundle.Load(assembly, name)` loads `<name>.windows` or `<name>.linux` (a dedicated server runs the Linux
   player; macOS tries `<name>.osx`, then the Windows build) from the assembly's embedded resources, once per process.
-  A bundle only loads on the platform it was built for, so embed one per platform.
+  A bundle only loads on the platform it was built for, so embed one per platform. It is read straight from the
+  resource stream (`AssetBundle.LoadFromStream`, no byte-array copy left as garbage), which stays open with the bundle.
 - `PrefabBench.Copy(prefab, name)` makes an inactive copy under a never-destroyed, inactive parent: no Awake runs, so
   no ZDO is created and no Character starts, until the game instantiates it. The name is what the game hashes, so it
   must be unique across mods (prefix it with the mod).

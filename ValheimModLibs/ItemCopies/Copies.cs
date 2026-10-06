@@ -14,39 +14,39 @@ namespace ItemCopies;
 public static class Copies
 {
 	/// <summary>Writes <paramref name="write"/> into the named prefab's own shared data and into every live copy of it.</summary>
-	public static void Apply(string prefabName, Action<ItemDrop.ItemData.SharedData> write)
+	public static void Apply(string prefabName, Action<ItemDrop.ItemData.SharedData> write) =>
+		Walk(name => name == prefabName, (_, shared) => write(shared));
+
+	/// <summary>
+	/// Writes <paramref name="write"/> into several prefabs and every live copy of them in one walk of the prefabs and
+	/// the live items, where one <see cref="Apply(string, Action{ItemDrop.ItemData.SharedData})"/> per name walks them
+	/// once each; it is told which prefab each copy belongs to. Pass a <see cref="HashSet{T}"/> for many names.
+	/// </summary>
+	public static void Apply(ICollection<string> prefabNames, Action<string, ItemDrop.ItemData.SharedData> write)
 	{
-		HashSet<ItemDrop.ItemData.SharedData> seen = new();
-		foreach ((string name, ItemDrop.ItemData.SharedData shared) in CopyScan.Prefabs())
+		if (prefabNames.Count > 0)
 		{
-			if (name == prefabName && seen.Add(shared))
-			{
-				write(shared);
-			}
-		}
-		foreach ((string? name, ItemDrop.ItemData.SharedData shared) in CopyScan.LiveItems())
-		{
-			if (name == prefabName && seen.Add(shared))
-			{
-				write(shared);
-			}
+			Walk(prefabNames.Contains, write);
 		}
 	}
 
 	/// <summary>Writes <paramref name="write"/> into every registered prefab and every live copy, each at most once, naming the prefab it belongs to.</summary>
-	public static void ApplyAll(Action<string, ItemDrop.ItemData.SharedData> write)
+	public static void ApplyAll(Action<string, ItemDrop.ItemData.SharedData> write) => Walk(_ => true, write);
+
+	// One walk: the registered prefabs, then the live copies; a copy without a prefab name is never written.
+	private static void Walk(Func<string, bool> wanted, Action<string, ItemDrop.ItemData.SharedData> write)
 	{
 		HashSet<ItemDrop.ItemData.SharedData> seen = new();
 		foreach ((string name, ItemDrop.ItemData.SharedData shared) in CopyScan.Prefabs())
 		{
-			if (seen.Add(shared))
+			if (wanted(name) && seen.Add(shared))
 			{
 				write(name, shared);
 			}
 		}
 		foreach ((string? name, ItemDrop.ItemData.SharedData shared) in CopyScan.LiveItems())
 		{
-			if (name != null && seen.Add(shared))
+			if (name != null && wanted(name) && seen.Add(shared))
 			{
 				write(name, shared);
 			}

@@ -7,9 +7,10 @@ namespace YamlConfig;
 
 /// <summary>
 /// The in-game IMGUI editor for one <see cref="YamlFileSet"/>: a text area per file, live validation, and save
-/// or apply through the hub. Call <see cref="Update"/> from your plugin's Update and LateUpdate (it keeps the
-/// cursor free), <see cref="OnGUI"/> from OnGUI, and <see cref="DrawButtons"/> from a ConfigurationManager custom
-/// drawer to offer one open button per set.
+/// or apply through the hub. Give it a <see cref="YamlEditorHost"/> (the SyncedConfig facade does), which draws it
+/// and keeps the cursor free only while it is open; without one, call <see cref="Update"/> from your plugin's Update
+/// and LateUpdate and <see cref="OnGUI"/> from OnGUI. Call <see cref="DrawButtons"/> from a ConfigurationManager
+/// custom drawer to offer one open button per set.
 /// </summary>
 public sealed class YamlEditorWindow
 {
@@ -42,6 +43,9 @@ public sealed class YamlEditorWindow
 	/// <summary>True while a set is being edited.</summary>
 	public bool IsOpen => set is not null;
 
+	/// <summary>The component that draws the window while it is open, if it has one.</summary>
+	internal YamlEditorHost? Host { get; set; }
+
 	/// <summary>Opens a set for editing with its current file contents.</summary>
 	public void Open(YamlFileSet set)
 	{
@@ -58,10 +62,24 @@ public sealed class YamlEditorWindow
 			scrolls.Add(Vector2.zero);
 		}
 		Validate();
+		FollowHost();
 	}
 
 	/// <summary>Closes the window without applying.</summary>
-	public void Close() => set = null;
+	public void Close()
+	{
+		set = null;
+		FollowHost();
+	}
+
+	/// <summary>The host draws (and costs an IMGUI pass) only while the window is open.</summary>
+	private void FollowHost()
+	{
+		if (Host != null)
+		{
+			Host.enabled = IsOpen;
+		}
+	}
 
 	/// <summary>One button per registered set that has files, each opening that set. For a ConfigurationManager drawer.</summary>
 	public void DrawButtons()
@@ -85,8 +103,19 @@ public sealed class YamlEditorWindow
 		}
 	}
 
-	/// <summary>Draws the window while open.</summary>
+	/// <summary>
+	/// Draws the window while open, for a plugin that draws it from its own OnGUI. With a <see cref="YamlEditorHost"/>
+	/// the host draws it and this does nothing, so the window is never drawn twice.
+	/// </summary>
 	public void OnGUI()
+	{
+		if (Host == null)
+		{
+			Draw();
+		}
+	}
+
+	internal void Draw()
 	{
 		if (set is null)
 		{

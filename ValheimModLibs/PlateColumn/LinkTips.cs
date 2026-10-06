@@ -15,6 +15,7 @@ namespace PlateColumn
     public sealed class LinkTips : MonoBehaviour, IPointerEnterHandler, IPointerMoveHandler, IPointerExitHandler
     {
         private const float ShowDelay = 0.3f;
+        private const float LookSeconds = 0.25f;
 
         private readonly Dictionary<string, KeyValuePair<string, string>> tips = new Dictionary<string, KeyValuePair<string, string>>();
         private GameObject? prefab;
@@ -25,6 +26,16 @@ namespace PlateColumn
         private string hovered = "";
         private float showAt = -1f;
         private GameObject? box;
+
+        // The link under the pointer as last looked for, and what for: it is looked for again only when the pointer
+        // moved, the text or the tips changed, or a quarter second passed (the mesh may follow a new text a frame
+        // late), and a link's id (a new string each time it is read) is read again only for another link or a new look.
+        private bool moved;
+        private string? seenText;
+        private float nextLook;
+        private int underIndex = -1;
+        private string underId = "";
+        private string under = "";
 
         /// <summary>The text's word tips, added the first time. Null when the game's item tooltip cannot be found.</summary>
         public static LinkTips? On(InventoryGui gui, TMP_Text text)
@@ -46,12 +57,17 @@ namespace PlateColumn
         }
 
         /// <summary>The tip for the words tagged <c>&lt;link="id"&gt;</c>.</summary>
-        public void Set(string id, string topic, string words) => tips[id] = new KeyValuePair<string, string>(topic, words);
+        public void Set(string id, string topic, string words)
+        {
+            tips[id] = new KeyValuePair<string, string>(topic, words);
+            moved = true;
+        }
 
         /// <summary>Forgets every tip and hides the one showing; for text about to be rewritten.</summary>
         public void Clear()
         {
             tips.Clear();
+            moved = true;
             Hide();
         }
 
@@ -73,11 +89,12 @@ namespace PlateColumn
         {
             pointer = eventData.position;
             eventCamera = eventData.enterEventCamera;
+            moved = true;
         }
 
         private void Update()
         {
-            string id = inside ? LinkAt() : "";
+            string id = inside ? Under() : "";
             if (id != hovered)
             {
                 Hide();
@@ -91,20 +108,41 @@ namespace PlateColumn
             }
         }
 
-        /// <summary>The id of the link under the pointer that has a tip, "" for none.</summary>
-        private string LinkAt()
+        /// <summary>The id of the link under the pointer that has a tip, "" for none; the last answer until something
+        /// it depends on changed.</summary>
+        private string Under()
         {
             if (text == null)
             {
                 return "";
             }
+            string current = text.text;
+            bool fresh = !ReferenceEquals(current, seenText) || Time.unscaledTime >= nextLook;
+            if (!moved && !fresh)
+            {
+                return under;
+            }
+            moved = false;
+            seenText = current;
+            nextLook = Time.unscaledTime + LookSeconds;
+            under = LinkAt(text, fresh);
+            return under;
+        }
+
+        private string LinkAt(TMP_Text text, bool fresh)
+        {
             int index = TMP_TextUtilities.FindIntersectingLink(text, pointer, eventCamera);
             if (index < 0 || index >= text.textInfo.linkCount)
             {
+                underIndex = -1;
                 return "";
             }
-            string id = text.textInfo.linkInfo[index].GetLinkID();
-            return tips.ContainsKey(id) ? id : "";
+            if (index != underIndex || fresh)
+            {
+                underIndex = index;
+                underId = text.textInfo.linkInfo[index].GetLinkID();
+            }
+            return tips.ContainsKey(underId) ? underId : "";
         }
 
         private void Show()

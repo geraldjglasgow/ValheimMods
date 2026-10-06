@@ -36,6 +36,18 @@ GameObject? aura = LocalEffect.Attach(prefab, creature.transform, position, endl
   exactly `scale` times what `Flash` draws.
   The game's `LightLod` and `LightFlicker` read a light's range and position as it wakes and restore them later, so
   `ScaleLights` resizes their remembered values too (by reflection).
+- On a dedicated server every call makes nothing (`ZNet.IsDedicated`): nobody there sees or hears an effect, and
+  `Attach` returns null as it does at density 0.
+- Spent one-shot bursts (`Flash`, `FlashWhole`, `FlashScaled`) are kept for the next burst of the same kind
+  (`BurstPool`: same prefab, sizing, radius, scale and density; at most 8 per kind, scene objects that go with the
+  scene): hidden with their particles cleared when their time is up, and shown again at the next burst's place, where
+  their particle systems play from the start as in a fresh copy. Only a prefab whose parts all restart that way is
+  pooled: particle systems with no stop action, their renderers, plain meshes and lights, colliders, a timer on the
+  root (removed; its time kept) and the parts `Strip` removes. Anything else acts once per life as it wakes and would
+  not act again in a reused copy, so such prefabs are made and destroyed as before: the game's `ZSFX` (it plays once,
+  so `Sound` and `SoundOnly` are never pooled), `LightLod` and `LightFlicker` (they fade their light once), `CamShaker`,
+  animators, trails (they would streak from the last place), rigidbodies and any other script. `Attach` is not pooled
+  either: its copy belongs to its parent and goes with it.
 
 Consumers: EliteCreaturesReborn (every mutation and aspect effect, through its `CosmeticClone` with the player's
 `Effect density`), EliteCreaturesPack (the Rime Giant's ice, frost and avalanche).

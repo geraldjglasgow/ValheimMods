@@ -16,19 +16,34 @@ internal static class Fragmenter
 	public const int CompressAbove = 1024;
 	public const int LargestBody = 8 * 1024 * 1024;
 
-	public static List<ZPackage> Split(string guid, int sequence, byte[] body, out int wireBytes, out bool compressed)
+	/// <summary>Cuts a (compressed or plain) payload into fragment-sized pieces, at least one.</summary>
+	public static List<byte[]> Slice(byte[] payload)
 	{
-		compressed = body.Length > CompressAbove;
-		byte[] payload = compressed ? Compress(body) : body;
-		wireBytes = payload.Length;
 		int count = Math.Max(1, (payload.Length + FragmentBytes - 1) / FragmentBytes);
-		List<ZPackage> fragments = new(count);
+		List<byte[]> slices = new(count);
+		if (count == 1)
+		{
+			slices.Add(payload);
+			return slices;
+		}
 		for (int index = 0; index < count; index++)
 		{
 			int offset = index * FragmentBytes;
 			byte[] slice = new byte[Math.Min(FragmentBytes, payload.Length - offset)];
 			Array.Copy(payload, offset, slice, 0, slice.Length);
-			fragments.Add(Fragment(guid, sequence, index, count, compressed, slice));
+			slices.Add(slice);
+		}
+		return slices;
+	}
+
+	/// <summary>The fragment packages of one push to one peer: the parcel's slices behind that peer's header.</summary>
+	public static List<ZPackage> Split(string guid, int sequence, Parcel parcel)
+	{
+		int count = parcel.Slices.Count;
+		List<ZPackage> fragments = new(count);
+		for (int index = 0; index < count; index++)
+		{
+			fragments.Add(Fragment(guid, sequence, index, count, parcel.Compressed, parcel.Slices[index]));
 		}
 		return fragments;
 	}

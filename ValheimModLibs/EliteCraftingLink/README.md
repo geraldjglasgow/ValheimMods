@@ -42,7 +42,7 @@ under the endpoint's name and the call answers `false`.
 |---|---|
 | `CraftingLink` | `Guid`, `Present`, `ApiVersion`, `PluginVersion`, `HasEndpoint`, `EndpointNames` |
 | `CraftingClasses` | `RegisterItemClass`, `ClaimItems`, `RegisterClassifier` / `UnregisterClassifier`, `SetItemLevel`, `GetItemClass`, `GetItemLevel` |
-| `CraftingInscriptions` | `RegisterInscription`, `AddToPool`, `RegisterExternalEffect`, `GetPlayerTotal`, `GetItemTotal` |
+| `CraftingInscriptions` | `RegisterInscription`, `AddToPool`, `RegisterExternalEffect`, `GetPlayerTotal`, `GetItemTotal`, `GetPlayerInscriptionsJson` (EliteCrafting 0.7.0+: ask `CraftingLink.HasEndpoint` first) |
 | `CraftingItems` | `IsMagic`, `GetRarity`, `GetRarityColor`, `GetInscriptionsJson`, `GetDecoratedName`, `CanBeMagic`, `RollMagic`, `Cleanse` |
 | `CraftingHooks` | `RegisterEquipmentProvider` / `Unregister...`, `InvalidatePlayer`, `RegisterMagicBaseFilter` / `Unregister...`, `Add/RemoveItemChangedListener`, `Add/RemoveLootGeneratedListener`, `SetCreatureLoot` |
 

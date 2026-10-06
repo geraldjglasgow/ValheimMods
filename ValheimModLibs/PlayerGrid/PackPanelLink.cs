@@ -16,6 +16,7 @@ namespace PlayerGrid
 
         private static bool detected;
         private static ConfigFile? config;
+        private static ConfigEntry<bool>? enabled;   // kept once found: a lookup by name allocates and takes the file's lock
 
         public static bool Present
         {
@@ -30,12 +31,13 @@ namespace PlayerGrid
             }
         }
 
-        /// <summary>PackPanel is loaded and its master switch (<c>1. Inventory / Enabled</c>) is on.</summary>
+        /// <summary>PackPanel is loaded and its master switch (<c>1. Inventory / Enabled</c>) is on. Read per item and
+        /// per slot, so the entry is looked up by name only until it is found.</summary>
         public static bool LaysOutInventory
         {
             get
             {
-                ConfigEntry<bool>? enabled = Entry<bool>("1. Inventory", "Enabled");
+                enabled ??= Entry<bool>("1. Inventory", "Enabled");
                 return enabled != null && enabled.Value;
             }
         }

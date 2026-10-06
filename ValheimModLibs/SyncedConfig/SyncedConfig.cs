@@ -18,7 +18,8 @@ namespace SyncedConfig;
 /// <item>Bind entries that take the server's value while it binds (default) or stay local.</item>
 /// <item>A locking entry, the charter's binding: while it is on, players cannot amend the synced entries.</item>
 /// <item>The .cfg is written at startup and hot reloaded when edited.</item>
-/// <item>YAML files with the same sync, reload and an in-game editor.</item>
+/// <item>YAML files with the same sync, reload and an in-game editor, drawn by a <see cref="YamlEditorHost"/> on the
+/// plugin's object only while it is open (the plugin needs no OnGUI for it).</item>
 /// <item>A version check between server and clients.</item>
 /// </list>
 /// Create it in Awake, bind your entries, register YAML sources, then call <see cref="Finish"/>.
@@ -62,6 +63,7 @@ public sealed class SyncedConfiguration
 		};
 		Yaml = new YamlFileHub(title, Log, SearchPaths, Sync);
 		YamlEditor = new YamlEditorWindow(Yaml, title + " YAML Editor");
+		YamlEditorHost.Add(plugin.gameObject, YamlEditor);
 	}
 
 	/// <summary>Binds an entry. Synced entries take the server's value while connected.</summary>

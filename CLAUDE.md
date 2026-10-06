@@ -125,7 +125,6 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | ConfigReload | write the .cfg at startup, hot reload it on edit |
 | YamlConfig | YAML config files with validation, reload, sync, write-back and an in-game editor |
 | SyncedConfig | facade over the three above: `Bind`, `BindLocking`, `AddYaml`, `Finish` |
-| TraitSets | enum sets in ZDOs, weighted rolls |
 | PatchGuard | attribute exceptions from the mod's own code to the mod in the log, then rethrow |
 | ItemCopies | write item values into the prefab and every live copy of its shared data, and into new copies |
 | PlateColumn | the inventory's stat plates as one column any mod adds a plate to, each with a tooltip; embedded PNG icons |
@@ -287,8 +286,8 @@ needs a new version, and the number must match everywhere the mod records it. `p
    `plugins/<Mod>.dll`, `manifest.json`, `icon.png`, `README.md` and `CHANGELOG.md`. Without `-Version` it only
    checks and packs what is already set. It warns about older zips still lying in `thunderstore/`; delete those.
 3. **Upload** the zip to Thunderstore with `tcli`, the Thunderstore CLI. See "Uploading" below.
-4. **Commit and tag** when the user asks: `git tag <Mod>-vX.Y.Z` (one repository holds all mods, so the tag names the
-   mod), so the released versions are discoverable next time.
+4. **Commit, tag and push**, as part of every release (otherwise only when the user asks): `git tag <Mod>-vX.Y.Z`
+   (one repository holds all mods, so the tag names the mod), so the released versions are discoverable next time.
 
 `.\pack.ps1 -All` at the root packs every mod that has an icon, as a consistency check across the workspace.
 
@@ -322,7 +321,8 @@ cannot be undone: a version can be deprecated on the site but never deleted or r
    tcli publish --config-path <Mod>/thunderstore/thunderstore.toml --file <Mod>/thunderstore/<Mod>-X.Y.Z.zip
    ```
 
-   The token comes from the environment variable; `--token` overrides it. Confirm with the user before running it.
+   The token comes from the environment variable; `--token` overrides it. A release request is the confirmation
+   (the `valheim-release` skill, "A release request is the go-ahead"); confirm only an upload nobody asked for.
 5. Afterwards the store page shows the new version within a minute. Then commit and tag as in step 4 above.
 
 ### Nexus Mods
@@ -340,7 +340,8 @@ python nexus-upload.py --mod <Mod>                 upload, set the mod version, 
 It reads the version and zip from `thunderstore/manifest.json`, the changelog text from the top section of
 `CHANGELOG.md`, and the page IDs from `<Mod>/thunderstore/nexus.json` (`{"mod_id": N, "file_id": N}`; mod_id is the
 number in the page URL). The personal API key from nexusmods.com (Settings, API keys) lives in the user environment
-variable `NEXUS_API_KEY`; never in a file or the chat. Confirm with the user before uploading.
+variable `NEXUS_API_KEY`; never in a file or the chat. A release uploads to Nexus without asking for every mod with a
+`nexus.json`.
 
 The page text (summary and BBCode description) cannot be set through the API. Each mod keeps the current text in
 `<Mod>/thunderstore/nexus-description.txt`; when the README changes, update that file too and the user pastes it into

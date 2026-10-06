@@ -31,12 +31,51 @@ internal sealed class Journal
 		}
 	}
 
-	/// <summary>Trace only.</summary>
+	/// <summary>Whether trace lines are written; test it before building a trace line's text.</summary>
+	public bool Tracing => Charter.Verbosity == Verbosity.Trace;
+
+	/// <summary>Trace only. The text is built by the caller: on a path that runs often, use the overloads below.</summary>
 	public void Trace(string text)
 	{
-		if (Charter.Verbosity == Verbosity.Trace)
+		if (Tracing)
 		{
 			Source.LogInfo(prefix + text);
+		}
+	}
+
+	/// <summary>
+	/// Trace only, the line formatted only when it is written: the values pass through unboxed, so a trace line on a
+	/// path that runs per fragment or per clause costs nothing while tracing is off.
+	/// </summary>
+	public void Trace<T1>(string format, T1 a)
+	{
+		if (Tracing)
+		{
+			Source.LogInfo(prefix + string.Format(format, a));
+		}
+	}
+
+	public void Trace<T1, T2>(string format, T1 a, T2 b)
+	{
+		if (Tracing)
+		{
+			Source.LogInfo(prefix + string.Format(format, a, b));
+		}
+	}
+
+	public void Trace<T1, T2, T3>(string format, T1 a, T2 b, T3 c)
+	{
+		if (Tracing)
+		{
+			Source.LogInfo(prefix + string.Format(format, a, b, c));
+		}
+	}
+
+	public void Trace<T1, T2, T3, T4>(string format, T1 a, T2 b, T3 c, T4 d)
+	{
+		if (Tracing)
+		{
+			Source.LogInfo(prefix + string.Format(format, a, b, c, d));
 		}
 	}
 }

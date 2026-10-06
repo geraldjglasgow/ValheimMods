@@ -31,7 +31,7 @@ internal sealed class YamlFileStore
 	/// <summary>Full paths of the set's files in every search folder: the main file first, then by name.</summary>
 	public List<string> Discover(YamlFileSet set)
 	{
-		Regex nameFilter = new("^" + Regex.Escape(set.FilePattern).Replace("\\*", ".*") + "$", RegexOptions.IgnoreCase);
+		Regex nameFilter = set.NameFilter;
 		List<string> found = new();
 		foreach (string folder in searchFolders.Where(Directory.Exists))
 		{

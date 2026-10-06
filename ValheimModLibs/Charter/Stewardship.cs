@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Charter;
 
 /// <summary>
@@ -10,6 +12,7 @@ internal sealed class Stewardship
 
 	private readonly Courier courier;
 	private readonly Publisher publisher;
+	private readonly List<ZNetPeer> ready = new();
 	private float next;
 
 	public Stewardship(Courier courier, Publisher publisher)
@@ -34,7 +37,8 @@ internal sealed class Stewardship
 			return;
 		}
 		next = now + Interval;
-		foreach (ZNetPeer peer in Side.ReadyPeers())
+		Side.ReadyPeers(ready);
+		foreach (ZNetPeer peer in ready)
 		{
 			bool? last = courier.LastSteward(peer);
 			if (last != null && last != IsSteward(peer))

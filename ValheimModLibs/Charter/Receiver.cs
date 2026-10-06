@@ -62,7 +62,7 @@ internal sealed class Receiver
 		int count = pkg.ReadInt();
 		bool compressed = pkg.ReadBool();
 		byte[] data = pkg.ReadByteArray();
-		journal.Trace($"fragment {index + 1}/{count} of push #{sequence}, {data.Length} bytes");
+		journal.Trace("fragment {0}/{1} of push #{2}, {3} bytes", index + 1, count, sequence, data.Length);
 		byte[]? body = assembler.Add(sequence, index, count, compressed, data, out int wireBytes);
 		if (body != null)
 		{
@@ -143,11 +143,32 @@ internal sealed class Receiver
 		if (Bound || clause == ledger.BindingClause)
 		{
 			clause.ApplyAuthor();
-			journal.Trace($"applied {record.Section}.{record.Key} = {record.Toml}");
+			journal.Trace("applied {0}.{1} = {2}", record.Section, record.Key, record.Toml);
 		}
 	}
 
 	private void ApplyArticle(ArticleRecord record, List<IArticle> changed)
+	{
+		IArticle? article = KnownArticle(record);
+		if (article == null)
+		{
+			return;
+		}
+		if (!Bound && !article.Standing)
+		{
+			journal.Trace("ordinary article '{0}' arrived while unbound, own value kept", record.Name);
+			return;
+		}
+		bool accepted = article.Accept(record.Value);
+		if (accepted)
+		{
+			changed.Add(article);
+		}
+		journal.Trace("article '{0}' {1}", record.Name, accepted ? "changed" : "unchanged");
+	}
+
+	/// <summary>The registered article a record names, of the kind it arrived as; null (logged) otherwise.</summary>
+	private IArticle? KnownArticle(ArticleRecord record)
 	{
 		IArticle? article = ledger.FindArticle(record.Name);
 		if (article == null)
@@ -156,23 +177,14 @@ internal sealed class Receiver
 			{
 				journal.Info($"push names unknown article '{record.Name}', ignored");
 			}
-			return;
+			return null;
 		}
 		if (article.Kind != record.Kind)
 		{
 			journal.Warning($"article '{record.Name}' arrived as {record.Kind}, expected {article.Kind}, ignored");
-			return;
+			return null;
 		}
-		if (!Bound && !article.Standing)
-		{
-			journal.Trace($"ordinary article '{record.Name}' arrived while unbound, own value kept");
-			return;
-		}
-		if (article.Accept(record.Value))
-		{
-			changed.Add(article);
-		}
-		journal.Trace($"article '{record.Name}' {(changed.Contains(article) ? "changed" : "unchanged")}");
+		return article;
 	}
 
 	private void RestoreExceptBinding()

@@ -22,6 +22,9 @@ namespace EliteCraftingLink
         private static readonly Endpoint<Func<ItemDrop.ItemData, string, string?, float>> getItemTotal =
             new Endpoint<Func<ItemDrop.ItemData, string, string?, float>>("GetItemTotal");
 
+        private static readonly Endpoint<Func<Player, string?>> getPlayerInscriptionsJson =
+            new Endpoint<Func<Player, string?>>("GetPlayerInscriptionsJson");
+
         /// <summary>Adds or replaces an inscription (under the YAML: a YAML entry with the id changes only the fields it names).</summary>
         public static bool RegisterInscription(string json) => Safe.Call(registerInscription.Call, json, false);
 
@@ -42,5 +45,13 @@ namespace EliteCraftingLink
         /// <summary>The item's own capped sum of an effect.</summary>
         public static float GetItemTotal(ItemDrop.ItemData item, string effect, string? param = null) =>
             Safe.Call(getItemTotal.Call, item, effect, param, 0f);
+
+        /// <summary>
+        /// The local player's active inscriptions, one entry per inscription with its values summed and worded as the
+        /// tooltip words a line: <c>[{ "id", "category", "line", "total", "capped", "item_local", "sources": [{ "item",
+        /// "value" }] }]</c>. Null without EliteCrafting or with one before 0.7.0, which lacks it: ask
+        /// <see cref="CraftingLink.HasEndpoint"/> first to keep the missing-endpoint line out of the log.
+        /// </summary>
+        public static string? GetPlayerInscriptionsJson(Player player) => Safe.Call(getPlayerInscriptionsJson.Call, player, null);
     }
 }

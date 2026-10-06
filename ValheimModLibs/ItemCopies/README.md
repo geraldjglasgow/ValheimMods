@@ -33,6 +33,13 @@ ObjectDB.instance.Awake // your own hook
 Neither call reaches a copy twice, even when it is reachable through more than one source (an item held by the
 local player that is also the one loaded in an open container, say).
 
+Each `Apply` walks every registered prefab and every live item. For several items at once (a batch of setting
+changes, say) pass the names together: one walk, and the callback is told which prefab each copy belongs to:
+
+```csharp
+Copies.Apply(changedNames, ApplyNamed);   // a HashSet<string> of prefab names
+```
+
 ## New copies
 
 A value applied now says nothing about an item picked up, crafted or dropped a minute later. `HookSpawns` runs your

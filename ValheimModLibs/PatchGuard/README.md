@@ -26,8 +26,12 @@ not enough:
 ```csharp
 void Update() => Guard.Run("Update", () => editor.Update());
 entry.SettingChanged += Guard.Wrap("apply settings", (_, _) => Apply());
-static void Postfix(Player __instance) => Guard.Run("Player patch", () => Adjust(__instance));
+static void Postfix(Player __instance) => Guard.Run("Player patch", static p => Adjust(p), __instance);
 ```
+
+On a hot path (a patch on a per-frame or per-hit method) pass the arguments in and use a static lambda, as the last
+line does: a lambda that captures a parameter allocates its closure on every call, at the start of the patch method,
+even when the patch returns early. `Run` takes one or two arguments, with or without a return value.
 
 `Guard.Run` (with a `Func<T>` overload for code that returns a value) and `Guard.Wrap` (for `Action` and
 `EventHandler`) log and rethrow the same way; `Guard.Report(exception, context)` only logs, for places that swallow

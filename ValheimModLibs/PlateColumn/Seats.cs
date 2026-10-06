@@ -66,22 +66,22 @@ namespace PlateColumn
                     members[i].SetSiblingIndex(i);
                 }
             }
-            List<KeyValuePair<RectTransform, string>> seats = new List<KeyValuePair<RectTransform, string>>();
+            List<SeatSlot> seats = new List<SeatSlot>();
             Collect(boxes, seats);
-            Follow(panel, seats);
+            Follow(panel, seats, true);
             LayoutRebuilder.ForceRebuildLayoutImmediate(boxes);
             Pin(panel, boxes, seats);
         }
 
         /// <summary>Every seat in the container, with the name of the box it holds the place of.</summary>
-        public static void Collect(RectTransform boxes, List<KeyValuePair<RectTransform, string>> into)
+        public static void Collect(RectTransform boxes, List<SeatSlot> into)
         {
             into.Clear();
             foreach (Transform child in boxes)
             {
                 if (child is RectTransform seat && ColumnLayout.OccupantOf(child.name) is string name)
                 {
-                    into.Add(new KeyValuePair<RectTransform, string>(seat, name));
+                    into.Add(new SeatSlot(seat, name));
                 }
             }
         }
@@ -93,28 +93,31 @@ namespace PlateColumn
             return name == null ? member : panel.Find(name) as RectTransform;
         }
 
-        /// <summary>Each seat takes its box's size and shown state; true when any seat changed.</summary>
-        public static bool Follow(RectTransform panel, List<KeyValuePair<RectTransform, string>> seats)
+        /// <summary>
+        /// Each seat takes its box's size and shown state; true when any seat changed. The boxes are the ones kept from
+        /// before (<see cref="PanelChild"/>), looked up by name again only with <paramref name="recheck"/>.
+        /// </summary>
+        public static bool Follow(RectTransform panel, List<SeatSlot> seats, bool recheck)
         {
             bool changed = false;
-            foreach (KeyValuePair<RectTransform, string> seat in seats)
+            foreach (SeatSlot slot in seats)
             {
-                if (seat.Key != null)
+                if (slot.Seat != null)
                 {
-                    changed |= Follow(seat.Key, panel.Find(seat.Value) as RectTransform);
+                    changed |= Follow(slot.Seat, slot.Box.In(panel, recheck));
                 }
             }
             return changed;
         }
 
         /// <summary>Each shown box over its seat and drawn after the container; nothing is written for a box already there.</summary>
-        public static void Pin(RectTransform panel, RectTransform boxes, List<KeyValuePair<RectTransform, string>> seats)
+        public static void Pin(RectTransform panel, RectTransform boxes, List<SeatSlot> seats)
         {
-            foreach (KeyValuePair<RectTransform, string> seat in seats)
+            foreach (SeatSlot slot in seats)
             {
-                if (seat.Key != null && seat.Key.gameObject.activeSelf && panel.Find(seat.Value) is RectTransform box)
+                if (slot.Seat != null && slot.Seat.gameObject.activeSelf && slot.Box.In(panel, false) is RectTransform box)
                 {
-                    Pin(panel, boxes, seat.Key, box);
+                    Pin(panel, boxes, slot.Seat, box);
                 }
             }
         }

@@ -39,6 +39,34 @@ internal sealed class YamlFileWatcher
 		timer ??= new Timer(_ => Poll(), null, PollMilliseconds, PollMilliseconds);
 	}
 
+	/// <summary>
+	/// The set's files, the default content written first when none exists, read after the snapshot is taken: an edit
+	/// that lands while they are read is then seen by the next poll instead of being taken into the snapshot and lost.
+	/// Default files written here are taken in afterwards, since nobody could have edited them yet.
+	/// </summary>
+	public Dictionary<string, string> ReadOrCreate(YamlFileSet set)
+	{
+		TakeSnapshot(set);
+		bool existed;
+		lock (set.Snapshot)
+		{
+			existed = set.Snapshot.Count > 0;
+		}
+		Dictionary<string, string> files = store.ReadOrCreate(set);
+		if (!existed && files.Count > 0)
+		{
+			TakeSnapshot(set);
+		}
+		return files;
+	}
+
+	/// <summary>The set's files for a reload, read after the snapshot is taken, as in <see cref="ReadOrCreate"/>.</summary>
+	public Dictionary<string, string> Read(YamlFileSet set)
+	{
+		TakeSnapshot(set);
+		return store.Read(store.Discover(set));
+	}
+
 	/// <summary>Remembers the current write times of the set's files as the state the next poll compares with.</summary>
 	public void TakeSnapshot(YamlFileSet set)
 	{

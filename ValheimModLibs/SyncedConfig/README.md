@@ -28,8 +28,7 @@ public class MyPlugin : BaseUnityPlugin
         config.Finish(harmony);   // writes the .cfg, hot reloads it, installs the YAML hooks
     }
 
-    void Update()  => config.YamlEditor.Update();
-    void OnGUI()   => config.YamlEditor.OnGUI();
+    // No Update or OnGUI for the editor: a YamlEditorHost on the plugin's object draws it only while it is open.
     // ConfigurationManager button: new ConfigurationManagerAttributes { CustomDrawer = _ => config.YamlEditor.DrawButtons() }
 }
 ```

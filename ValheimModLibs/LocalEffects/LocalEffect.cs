@@ -7,7 +7,9 @@ namespace LocalEffects
     /// and heard, never networked, never a damage source. Each machine draws its own copy from state it already has, so
     /// an effect costs no network traffic. A density from 0 to 1 thins the particles and dims the lights; 0 spawns
     /// nothing, so a mod can let each player turn its effects down without changing a point of damage. Sounds are
-    /// never thinned: density governs what is seen, not what is heard.
+    /// never thinned: density governs what is seen, not what is heard. A dedicated server sees and hears nothing, so
+    /// there every call makes nothing. Spent one-shot bursts are kept for the next burst of their kind where that is
+    /// safe (<see cref="BurstPool"/>).
     /// </summary>
     public static class LocalEffect
     {
@@ -24,7 +26,7 @@ namespace LocalEffects
         /// </summary>
         public static GameObject? Attach(GameObject? prefab, Transform parent, Vector3 position, bool endless, float density = 1f)
         {
-            if (prefab == null || density <= 0f)
+            if (prefab == null || density <= 0f || Headless())
             {
                 return null;
             }
@@ -37,7 +39,7 @@ namespace LocalEffects
 
         /// <summary>A free-standing one-shot burst, scaled to a radius, that cleans itself up.</summary>
         public static void Flash(GameObject? prefab, Vector3 position, float radius, float density = 1f) =>
-            OneShot(prefab, position, radius, density);
+            OneShot(prefab, position, radius, Sizing.Radius, 1f, density);
 
         /// <summary>
         /// A one-shot burst like <see cref="Flash"/>, drawn whole at <paramref name="scale"/> times its radius-matched
@@ -45,16 +47,8 @@ namespace LocalEffects
         /// the root - all Flash does - resizes only the root system and leaves the child systems at full size; here
         /// every system follows the root, so the whole burst takes the size.
         /// </summary>
-        public static void FlashWhole(GameObject? prefab, Vector3 position, float radius, float scale, float density = 1f)
-        {
-            GameObject? clone = OneShot(prefab, position, radius, density);
-            if (clone == null)
-            {
-                return;
-            }
-            CloneParts.FollowRoot(clone);
-            clone.transform.localScale *= scale;
-        }
+        public static void FlashWhole(GameObject? prefab, Vector3 position, float radius, float scale, float density = 1f) =>
+            OneShot(prefab, position, radius, Sizing.Whole, scale, density);
 
         /// <summary>
         /// A one-shot burst drawn exactly as <see cref="Flash"/> draws it, then resized part by part to
@@ -62,21 +56,15 @@ namespace LocalEffects
         /// lights' reach and the distances between the parts. Unlike <see cref="FlashWhole"/> it leaves each system's
         /// scaling mode alone, so every part ends at the same fraction of what the player saw before, in any mode.
         /// </summary>
-        public static void FlashScaled(GameObject? prefab, Vector3 position, float radius, float scale, float density = 1f)
-        {
-            GameObject? clone = OneShot(prefab, position, radius, density);
-            if (clone != null)
-            {
-                ScaleParts.Apply(clone, scale);
-            }
-        }
+        public static void FlashScaled(GameObject? prefab, Vector3 position, float radius, float scale, float density = 1f) =>
+            OneShot(prefab, position, radius, Sizing.Parts, scale, density);
 
         /// <summary>
         /// A one-shot sound at a point: the prefab's own sound player plays it as it wakes, and its own timer removes it.
         /// </summary>
         public static void Sound(GameObject? prefab, Vector3 position)
         {
-            if (prefab == null)
+            if (prefab == null || Headless())
             {
                 return;
             }
@@ -92,7 +80,7 @@ namespace LocalEffects
         /// </summary>
         public static void SoundOnly(GameObject? prefab, Vector3 position, float volume = 1f)
         {
-            if (prefab == null || volume <= 0f)
+            if (prefab == null || volume <= 0f || Headless())
             {
                 return;
             }
@@ -103,18 +91,51 @@ namespace LocalEffects
             Object.Destroy(clone, SoundLife);
         }
 
-        private static GameObject? OneShot(GameObject? prefab, Vector3 position, float radius, float density)
+        /// <summary>
+        /// A burst: a kept one of the same kind shown again, or a fresh copy made, sized and timed. The sizes and the
+        /// density are rounded first (<see cref="BurstSizes"/>), for the key and the drawing alike, so a kept copy and
+        /// a fresh one of a kind look the same.
+        /// </summary>
+        private static void OneShot(GameObject? prefab, Vector3 position, float radius, Sizing sizing, float scale, float density)
         {
-            if (prefab == null || density <= 0f)
+            if (prefab == null || density <= 0f || Headless())
             {
-                return null;
+                return;
+            }
+            radius = BurstSizes.Size(radius);
+            scale = BurstSizes.Size(scale);
+            density = BurstSizes.Density(density);
+            BurstKey key = new BurstKey(prefab, sizing, radius, scale, density);
+            if (BurstPool.Reuse(key, position))
+            {
+                return;
             }
             GameObject clone = CloneParts.Instantiate(prefab, position);
             CloneParts.Strip(clone, endless: false);
             CloneParts.Thin(clone, density);
             clone.transform.localScale *= Mathf.Max(radius, 0.01f) / BaselineRadius;
-            Object.Destroy(clone, Mathf.Max(radius, 3f));
-            return clone;
+            Size(clone, sizing, scale);
+            BurstPool.Release(prefab, clone, key, Mathf.Max(radius, 3f));
         }
+
+        /// <summary>
+        /// <see cref="FlashWhole"/>: every system follows the root, then the root takes the scale.
+        /// <see cref="FlashScaled"/>: every part's own numbers resized.
+        /// </summary>
+        private static void Size(GameObject clone, Sizing sizing, float scale)
+        {
+            if (sizing == Sizing.Whole)
+            {
+                CloneParts.FollowRoot(clone);
+                clone.transform.localScale *= scale;
+            }
+            else if (sizing == Sizing.Parts)
+            {
+                ScaleParts.Apply(clone, scale);
+            }
+        }
+
+        /// <summary>A dedicated server: nobody there sees or hears an effect.</summary>
+        private static bool Headless() => ZNet.instance != null && ZNet.instance.IsDedicated();
     }
 }

@@ -19,8 +19,13 @@ internal sealed class Courier
 		public readonly Queue<ZPackage> Fragments = new();
 	}
 
+	/// <summary>While no fragment waits, lanes of peers that left are let go this often, not every frame.</summary>
+	private const float PruneSeconds = 5f;
+
 	private readonly Dictionary<ZNetPeer, Lane> lanes = new();
 	private readonly List<ZNetPeer> peers = new();
+	private int queued;   // fragments waiting in every lane together
+	private float nextPrune;
 	private readonly string guid;
 	private readonly string rpcName;
 	private readonly Journal journal;
@@ -36,39 +41,45 @@ internal sealed class Courier
 	public bool? LastSteward(ZNetPeer peer) => lanes.TryGetValue(peer, out Lane? lane) ? lane.Steward : null;
 
 	/// <summary>Queues one push for a peer; the fragments leave from <see cref="Tick"/>.</summary>
-	public void Send(ZNetPeer peer, PushBody body, string reason)
+	public void Send(ZNetPeer peer, PushBody body, string reason) => Send(peer, new Parcel(body), reason);
+
+	/// <summary>Queues a parcel made once for every peer that gets the same body; only the headers are per peer.</summary>
+	public void Send(ZNetPeer peer, Parcel parcel, string reason)
 	{
-		byte[] bytes = body.ToBytes();
-		if (bytes.Length > Fragmenter.LargestBody)
+		if (parcel.TooLarge)
 		{
-			journal.Error($"push refused: {bytes.Length} bytes exceed {Fragmenter.LargestBody} ({guid})");
+			journal.Error($"push refused: {parcel.BodyBytes} bytes exceed {Fragmenter.LargestBody} ({guid})");
 			return;
 		}
 		if (!lanes.TryGetValue(peer, out Lane? lane))
 		{
 			lanes[peer] = lane = new Lane();
 		}
-		lane.Steward = body.Steward;
+		lane.Steward = parcel.Steward;
 		int sequence = ++lane.Sequence;
-		List<ZPackage> fragments = Fragmenter.Split(guid, sequence, bytes, out int wireBytes, out bool compressed);
+		List<ZPackage> fragments = Fragmenter.Split(guid, sequence, parcel);
 		foreach (ZPackage fragment in fragments)
 		{
 			lane.Fragments.Enqueue(fragment);
 		}
-		journal.Info($"push #{sequence} to {Side.NameOf(peer)} ({reason}): {body.Clauses.Count} clause(s), {body.Articles.Count} article(s), " +
-			$"{wireBytes} bytes{(compressed ? " compressed" : "")}, {fragments.Count} fragment(s)");
+		queued += fragments.Count;
+		journal.Info($"push #{sequence} to {Side.NameOf(peer)} ({reason}): {parcel.Clauses} clause(s), {parcel.Articles} article(s), " +
+			$"{parcel.WireBytes} bytes{(parcel.Compressed ? " compressed" : "")}, {fragments.Count} fragment(s)");
 	}
 
 	/// <summary>
 	/// Sends one fragment per peer and forgets peers that left. Every frame on the server, and a lane stays while its peer
 	/// is connected, so the peers are copied into a list kept for the purpose (a peer that left is removed in the loop).
+	/// With every queue empty nothing is sent, so the walk then runs only every <see cref="PruneSeconds"/>.
 	/// </summary>
 	public void Tick()
 	{
-		if (lanes.Count == 0)
+		float now = UnityEngine.Time.unscaledTime;
+		if (lanes.Count == 0 || (queued == 0 && now < nextPrune))
 		{
 			return;
 		}
+		nextPrune = now + PruneSeconds;
 		peers.Clear();
 		foreach (ZNetPeer peer in lanes.Keys)
 		{
@@ -84,6 +95,7 @@ internal sealed class Courier
 	{
 		if (!Side.IsPresent(peer))
 		{
+			queued -= lanes[peer].Fragments.Count;
 			lanes.Remove(peer);
 			return;
 		}
@@ -93,6 +105,10 @@ internal sealed class Courier
 			return;
 		}
 		peer.m_rpc.Invoke(rpcName, lane.Fragments.Dequeue());
-		journal.Trace($"fragment sent to {Side.NameOf(peer)}, {lane.Fragments.Count} left in the queue");
+		queued--;
+		if (journal.Tracing)
+		{
+			journal.Trace($"fragment sent to {Side.NameOf(peer)}, {lane.Fragments.Count} left in the queue");
+		}
 	}
 }

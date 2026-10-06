@@ -20,6 +20,11 @@ namespace BundlePrefabs;
 public static class BundleEffects
 {
 	private static readonly Dictionary<string, Shader?> shaders = new();
+	// Shaders looked for and not found, kept apart from the found ones and forgotten when the net scene is another (a
+	// new world, whose bundles may bring them), so a missing one costs one search of every shader per scene, not one
+	// per effect built.
+	private static readonly HashSet<string> missing = new();
+	private static ZNetScene? missingFor;
 	private static readonly Dictionary<string, Type> parts = new()
 	{
 		["LightFlicker"] = typeof(LightFlicker), ["LightLod"] = typeof(LightLod),
@@ -98,10 +103,24 @@ public static class BundleEffects
 	/// <summary>A loaded shader by name: Shader.Find, then every loaded shader (the game's come in with its bundles).</summary>
 	public static Shader? FindShader(string name)
 	{
-		if (!shaders.TryGetValue(name, out Shader? shader) || shader == null)
+		if (shaders.TryGetValue(name, out Shader? shader) && shader != null)
 		{
-			shader = Shader.Find(name) ?? Resources.FindObjectsOfTypeAll<Shader>().FirstOrDefault(s => s.name == name);
-			shaders[name] = shader;
+			return shader;
+		}
+		if (missingFor != ZNetScene.instance)
+		{
+			missing.Clear();
+			missingFor = ZNetScene.instance;
+		}
+		if (missing.Contains(name))
+		{
+			return null;
+		}
+		shader = Shader.Find(name) ?? Resources.FindObjectsOfTypeAll<Shader>().FirstOrDefault(s => s.name == name);
+		shaders[name] = shader;
+		if (shader == null)
+		{
+			missing.Add(name);
 		}
 		return shader;
 	}

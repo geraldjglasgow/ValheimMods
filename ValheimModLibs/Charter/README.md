@@ -40,7 +40,10 @@ Console: `charter` / `charter status`, `charter diff [title]`, `charter versions
   TOML), article records (name, type tag, value) and a trailing notice string. Bodies above 1 KiB travel GZipped;
   a body above 8 MiB is refused on the author with an error line.
 - The first push goes out in a `ZNet.RPC_PeerInfo` postfix on the server, once the game accepted the peer. Later
-  pushes carry only what changed in that frame. Fragments leave one per frame per peer.
+  pushes carry only what changed in that frame. Fragments leave one per frame per peer. A push to every peer is
+  built, serialised and compressed once per distinct body (a `Parcel`; players and stewards differ only by the
+  steward flag) and shared, only the fragment headers (the peer's sequence) are written per peer. Whether a lane's
+  peer is still connected is looked up in a set of the game's peer list made once per frame.
 - On the player every push is applied on receipt: bound clauses take the author's value (written to the entry
   only, never to the .cfg), articles raise `Changed`, then `Pushed(first)`. Player edits to a bound clause are
   reverted; a steward's edit is sent to the author, which sets and saves its entry and pushes it back. When the

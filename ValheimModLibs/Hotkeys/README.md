@@ -6,9 +6,15 @@ A mod's hotkeys, read the same way in every mod of the workspace.
   held and no other Shift, Ctrl or Alt; any other key may be held, so `LeftAlt + D` fires while the player walks with W
   (BepInEx's own `KeyboardShortcut.IsDown` refuses a shortcut while any other key at all is held). A single key fires
   only with no Shift, Ctrl or Alt held, so `Z` never fires together with `LeftControl + Z`. `None` never fires.
+  Mods read their keys many times a frame, so the main key is tested first; the modifiers and `Typing.Active` are
+  read only on the frame it goes down (for `Held` and `ModifiersHeld`, only while the keys are held).
 - `Hotkey.Held(entry)`: the main key and its modifiers are held (for modifier settings such as `LeftShift`).
 - `Hotkey.ModifiersHeld(entry)`: a set shortcut's modifiers are all held, its main key or not; false without modifiers
   (PackPanel holds the game's hotbar back while Alt, its Mead Slot keys' modifier, is held).
+- `Hotkey.KeyHeld(key)`: one key held now. Shift, Ctrl and Alt are read through the game's `ZInput` (Unity's input
+  system, which lets go of every key when the window loses focus), never Unity's old `Input`, which keeps a modifier
+  held after Alt + Tab out or an overlay's Alt + Z until it is pressed again (a stuck Alt made PackPanel's plain 1 to 3
+  drink meads, 2026-10-05). Every modifier check above uses it.
 - `KeyNames.Short(shortcut)`: the shortcut's name for a key cap on the screen, modifiers first without their side:
   `Z`, `Shift+Z`, `Ctrl+1`; empty for `None`.
 - `Typing.Active`: the player is typing, and neither of the above fires: the chat has focus, the console or the game's
