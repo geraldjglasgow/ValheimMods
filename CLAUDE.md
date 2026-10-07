@@ -21,8 +21,9 @@ ValheimMods/
   Party/             shared parties: membership, chat, health bars, map visibility, friendly-fire protection
   Wayfare/           map-based portal targeting: access modes, favourites, no more tag pairing
   EarthWright/       terraforming: brush size/shape/edge, exact heights, ramps and roads, undo, height limits
-  GrindstoneSkills/  deeper skills: Cooking (starred dishes, trash filter, kitchen perks) and a new Sailing skill
+  GrindstoneSkills/  deeper skills: game skills (Cooking, Farming, Fishing, ...) and new ones (Sailing, Husbandry, ...)
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
+  Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), on Thunderstore for dev profiles
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
@@ -92,9 +93,10 @@ and quick jumps (near portals quicker, no loading screen into a loaded area; mov
 Required on the server as well as every client. Design and the judgement calls the spec left open in
 `Wayfare/PLAN.md`.
 
-**GrindstoneSkills**: deeper versions of the game's own skills, Cooking first (Farming and Crafting later). Dishes get
-0 to 3 stars rolled from the cook's level (stored in the item's quality field), stars boost food, a per-kitchen trash
-filter keeps only the stars you want, and the cook's level speeds cooking and fermenting and gives extra food.
+**GrindstoneSkills**: deeper versions of the game's own skills, Cooking first. The cook's level speeds cooking and
+fermenting, gives extra food and saves ingredients. Item stars (starred dishes, picks, crops, a kitchen trash filter)
+were removed in 0.13.0 and their last traces in 0.15.0; only eggs show stars (the hen's level the game stores). Hearthhold puts
+stars back on food through GrindstoneSkills' `StarsApi` (GrindstoneSkills keeps the stacking and display).
 Sailing is a skill of the mod's own (the game has none): ship health from the builder's level, speed from the
 helmsman's, a wider map reveal aboard, and a level 50 lookout pulse that shows enemy name tags around the ship.
 Husbandry is another own skill: taming, calm creatures, breeding (better offspring and twins), animal yield and an
@@ -112,6 +114,13 @@ shout, whisper, party radio with Party; Opus through the merged Concentus librar
 range) and TV pieces (a slim white rectangle for now, three sizes) that play a direct video link (.webm/.mp4, no
 YouTube) for everyone nearby in sync on the mod's own server clock, with a remote copied from the game's text input
 window. Required on the server and every client. Design and status in `PrestigeWorldwide/PLAN.md`.
+
+**Hearthhold**: Stardew Valley style quality for food, built on GrindstoneSkills (hard dependency). Forage, honey, sap,
+crops, meat, fish, dishes and meads come plain, bronze, silver or gold from the actor's skill level, the ingredients'
+stars and the day's fortune; starred food gives more when eaten. Daily Fortune, professions at level 100, a Shipping
+Crate that buys starred goods at dawn, trader friendship with a small discount, and an Aging Cask. GrindstoneSkills owns
+the stars themselves (quality, stacking, display) and exposes them with its `SkillsApi` and `StarsApi`, read by
+reflection (`Core/GrindstoneLink.cs`). The .cfg holds only three switches. Design in `Hearthhold/CLAUDE.md`.
 
 ### The libraries (ValheimModLibs)
 
@@ -160,7 +169,7 @@ Every mod has the same shape. New mods copy it from ShipConfig (the smallest) an
     thunderstore.toml   tcli publish settings: team, community, categories (no secrets)
     wiki/               the store's Wiki tab, one NN-title.md per page (see "Thunderstore wiki")
   dist/                 build output, the merged <Mod>.dll (gitignored)
-  README.md             the store page (Thunderstore Details tab), very short: what it does, features, install,
+  README.md             the store page (Thunderstore Details tab), a short overview: what it does, features, install,
                         configuration, links, shout outs; no Building section
   CHANGELOG.md          the store changelog: one "## X.Y.Z" section per release, newest first, one short line per change
   PLAN.md               design and roadmap while the mod is unfinished
@@ -171,10 +180,11 @@ Rules that keep the layout standard:
 
 - The mod name is the folder name, the project folder name, the csproj name, the DLL name and the manifest name.
 - Release notes go in `CHANGELOG.md`, never in the README.
-- The README and the changelog are very short and concise: a README of about 250 words besides the standard shout
-  outs (one line per feature, no setting-by-setting lists, no Building section; the .cfg describes every setting), a
-  changelog section of about 100 words (one line per change, what changed and not how). The `valheim-release` skill
-  has the README shape and checks both.
+- The README and the changelog are short and concise: a README is a quick overview of about 650 words at most besides
+  the standard shout outs (one line per feature, plus the main content listed by name with a few words each, such as
+  every mutation and boss aspect in Elite Creatures Reborn; no setting-by-setting lists, no Building section; the .cfg
+  describes every setting), a changelog section of about 100 words (one line per change, what changed and not
+  how). The `valheim-release` skill has the README shape and checks both.
 - Store assets go in `thunderstore/`, nothing store-related at the mod root.
 - Client-only display preferences are bound unsynced so every player decides for themselves; everything that
   changes gameplay is synced and lockable.
