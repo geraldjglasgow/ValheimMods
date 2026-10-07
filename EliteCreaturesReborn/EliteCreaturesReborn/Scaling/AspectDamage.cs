@@ -13,12 +13,14 @@ namespace EliteCreaturesReborn.Scaling
     /// game turns them into their ticking effects), and Fixated's boost or cut by whether the victim is its mark (see
     /// <see cref="FixatedDamage"/>). Incoming: Shielded's cut to hits from bows and crossbows, Adaptive's cut to the
     /// damage type it resists (see <see cref="AdaptiveResist"/>), and Tethered's cut to the weaker of the pair (see
-    /// <see cref="TetherLink.Brace"/>).
+    /// <see cref="TetherLink.Brace"/>). An Echoing boss's echo strikes with its boss's aspects
+    /// (<see cref="EchoLink.Source"/>).
     /// </summary>
     public static class AspectDamage
     {
         public static void Outgoing(EliteController attacker, Character victim, HitData hit)
         {
+            attacker = EchoLink.Source(attacker); // an echo's blow lands as its boss's did
             CreatureTraits traits = attacker.Traits;
             float factor = AspectMath.DamageFactor(traits);
             if (!Mathf.Approximately(factor, 1f))

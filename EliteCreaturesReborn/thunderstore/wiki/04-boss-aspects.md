@@ -34,9 +34,11 @@ Settings are under `bosses:` > `aspects:` > `power:` in `creature_rules.yml`.
 | Portalbound | The Elder and Bonemass only: the Elder's vines fly, Bonemass's slime ball arcs, at you out of a portal. | `min height` 5 m, `clearance` 2 m, `range` 20 m | x1.2 |
 | Nightfall | Storming midnight for every player within 60 m: rain, thunder, Wet and Cold as in a real night storm (shelter, fire and frost resistance help). The day returns once it dies or you go 10 m past that range; the world's time and weather never change. Every 18-28 s of fight a tornado rises 6-9 m in front of each player, harmless for 1.5 s, then hunts them at 40% of run speed until 10 s after it rose. Its funnel deals 25 lightning damage a second; armour does not help. It tosses the Elder's roots. | `range` 60 m, `every` 18 s, `every max` 28 s (older rule files keep their own), `life` 10 s, `form time` 1.5 s, `tornado speed` 40%, `damage` 25, `base width` 1.5 m, `top width` 9 m, `height` 14 m, `toss distance` 10 m | x1.3 |
 | Brutal | Its heavy blows throw the players they hit far away; the hit does its damage, the landing none. A roll, or a block or parry that holds, keeps you on your feet. Never while swimming, seated, riding or on a ship's deck. | `launch` 20 m (0 = never, at most 40), `lift` 3 m high (1 to 15) | x1.2 |
+| Echoing | 15 s into the fight a white, nearly clear ghost of the boss rises where the boss stood then, and from then on does everything the boss did 15 s before: walks its path, turns, swings, throws, staggers. Its blows hurt as the boss's did, aimed where the boss's target stood then. It cannot be hit, shows no health bar, and goes when the boss dies. | `delay` 15 s (1 to 60) | x1.3 |
 
 The loot multiplier applies in every loot mode. About one fight in five has no aspect. Stormbound, Gravitic, Colossal
-and Nightfall are dodged with a roll, not blocked; Brutal's throw is the one a shield stops.
+and Nightfall are dodged with a roll, not blocked; Brutal's throw is the one a shield stops. Echoing's ghost is beaten
+by moving: it strikes where you stood 15 seconds ago.
 
 ## What Summoner calls
 

@@ -636,6 +636,32 @@ Still open:
 
 ---
 
+### Echoing (2026-10-06)
+
+The user's design: "the fight starts normally, 15 seconds later, a 'ghost' of the boss shows up, it will replay the
+bosses actions from 15 seconds ago, it will just do this the whole time while the boss is alive ... a boss model that is
+white, still detailed, with like 8% opacity ... until the main boss dies, then it just goes away". Judgement calls made
+while building it:
+
+- **Its blows hurt**, as the boss's did: it starts the same attacks through the game's own attack code, so melee,
+  throws, breaths and slams land on whoever stands where the boss struck `delay` seconds ago, with the echo's stars and
+  the boss's aspects (Enraged, a Twin's cut, Fixated's mark). Throws aim at the spot the boss's target stood on then.
+  What an attack calls up (the Elder's roots) the echo's call up too. Without hurting it would only be a look, not an
+  aspect worth x1.3.
+- **It cannot be touched**: its colliders are off, so no blow, arrow or blast hits it and nothing bumps into it; no
+  creature or tame counts it an enemy; it shows no nameplate or health bar; it takes no fire, smoke or water damage.
+- **What it replays**: its place and facing every physics step, where it looks, the animator values the game itself
+  syncs (walking, turning, flying), every animation cue (staggers, taunts) and every attack start with the same weapon
+  and random state (so the same random swing). Not replayed: the boss's aspects' own effects (an echo is no second
+  Stormbound or Summoner), its animation speed, and its particle effects and lights, which are switched off on the echo.
+- **Who drives it**: the boss's owner records the boss in memory and drives the echo it owns; other machines only see
+  it through the game's own position and animation sync. A new owner records afresh, so the echo stands still for up to
+  `delay` seconds after an ownership change, or goes with a departing owner (it is not persistent) and rises again.
+- **Which bosses**: every boss, each of a Twin or Tethered pair with its own echo; Phantom copies never make one; the
+  Kraken never rolls it (a second body on one hull). Loot x1.3, chance 10 like the others, `delay` 15 (1 to 60).
+- **Look**: OpenKeep's construction-ghost film (depth pass, then the lightened texture at 8 % on Sprites/Default), for
+  skinned bodies, joined to the body's level-of-detail group; tuned live with `EchoLook.Tune`.
+
 # Build checklist
 
 How to read and update this section is in `README.md`. In short: `[ ]` not started, `[~]` partly, `[x]` built and
@@ -686,6 +712,12 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
   landing, off a cliff too; a roll or a holding block/parry prevents it, a broken guard does not; no throw when
   swimming, seated, riding, on a ship's deck; not thrown again mid-flight; the whoosh heard near the boss; works with
   the boss owned by another client
+- [ ] Echoing (`elite spawn Eikthyr 2 Echoing`): nothing for 15 s, then a white ghost at 8 % rises where the boss
+  stood 15 s ago, with no flash of a solid second boss; it walks the boss's path, turns, swings and staggers 15 s
+  behind; its blows and Eikthyr's lightning hurt where the boss struck then; arrows and swords pass through it, no
+  nameplate or bar, tames ignore it; it goes the moment the boss dies; the Elder's vines and Bonemass's slime fly at
+  the old spot; Moder's echo flies; with two clients both see it move smoothly, and when the boss's owner leaves it
+  goes and rises again 15 s after the other client takes the boss over
 - [ ] The aspect is in the boss's name
 - [ ] Boss stars show on the boss health bar
 
@@ -739,3 +771,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-10-03 | Tethered, Bountiful (bosses carry several aspects) and Portalbound (Elder only) added at the user's request; `none` 30 -> 38; boss trophies one per star plus one. Built by parallel agents, not tested in game. | - |
 | 2026-10-04 | Altar stars and a 15 s shift (`shift seconds`); Nightfall and Brutal added at the user's request; `none` 38 -> 42. Built by parallel agents, untested in game. | - |
 | 2026-10-04 | Portalbound for Bonemass too, its slime throw carried on an arc; only the Elder and Bonemass roll it (the user). Built, untested in game. | - |
+| 2026-10-06 | Echoing added at the user's request (a white ghost replaying the boss 15 s behind, blows included). Built, untested in game. | - |

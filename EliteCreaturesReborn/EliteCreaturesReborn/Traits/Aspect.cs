@@ -26,5 +26,6 @@ namespace EliteCreaturesReborn.Traits
         Portalbound = 16,
         Nightfall = 17,
         Brutal = 18,
+        Echoing = 19,
     }
 }

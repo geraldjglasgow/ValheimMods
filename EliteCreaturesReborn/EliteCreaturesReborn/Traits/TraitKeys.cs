@@ -209,5 +209,8 @@ namespace EliteCreaturesReborn.Traits
         /// written by its owner a few times a second while they hunt, so every client draws them where the owner moves
         /// them.</summary>
         public const string TornadoTrack = "ecr_tornado_track";
+
+        /// <summary>Echoing: on an echo, the ZDOID of the boss it replays. Its presence is what makes an echo an echo.</summary>
+        public const string EchoOf = "ecr_echo_of";
     }
 }

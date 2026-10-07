@@ -23,6 +23,7 @@ namespace EliteCreaturesReborn.Traits
         private static readonly int DevourReadyAtHash = TraitKeys.DevourReadyAt.GetStableHashCode();
         private static readonly KeyValuePair<int, int> PhantomOfKey = ZDO.GetHashZDOID(TraitKeys.PhantomOf);
         private static readonly KeyValuePair<int, int> CloneOfKey = ZDO.GetHashZDOID(TraitKeys.CloneOf);
+        private static readonly KeyValuePair<int, int> EchoOfKey = ZDO.GetHashZDOID(TraitKeys.EchoOf);
         private static readonly KeyValuePair<int, int> DevouredByKey = ZDO.GetHashZDOID(TraitKeys.DevouredBy);
 
         public static bool IsResolved(ZDO zdo) => zdo != null && zdo.GetBool(ResolvedHash);
@@ -37,6 +38,7 @@ namespace EliteCreaturesReborn.Traits
                 ExtraAspects = zdo.GetInt(AspectExtraHash),
                 PhantomCopy = zdo.GetZDOID(PhantomOfKey) != ZDOID.None,
                 Decoy = zdo.GetZDOID(CloneOfKey) != ZDOID.None,
+                Echo = zdo.GetZDOID(EchoOfKey) != ZDOID.None,
                 Tier = zdo.GetInt(TierHash),
             };
         }

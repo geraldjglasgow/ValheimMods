@@ -67,6 +67,11 @@ mod's creature stars off, for playing beside another mod that gives creatures st
 Bosses have their own switch, `stars:` under `bosses:`; with it off a boss keeps its level the same way. `elite tier`
 says when creature stars are off, and `elite inspect` shows a kept level.
 
+## Loaded crossbows
+
+A crossbow put away loaded - a weapon swap, a swim - is still loaded when drawn again, with no reload. Firing empties
+it as before. It lasts until the game closes or the player logs out.
+
 ## Mutations
 
 Nineteen, one per creature by default, each with its own colour and its own name on the nameplate.
@@ -216,8 +221,9 @@ and aspect when it first appears.
 | Portalbound | The Elder and Bonemass only. As it winds up its throw (the Elder's vines, Bonemass's slime ball) a portal opens 5 to 8 m up within 20 m of its target, in sight of them; as it throws, a second portal opens on its hand and the vines fly, or the slime arcs, out of the far portal at you. No clear spot: it throws as usual | x1.2 |
 | Nightfall | Night falls on the fight: every player within 60 m of it sees a storming midnight - rain, lightning and thunder - and turns Wet and Cold as under a real storm at night (a roof, a fire or frost resistance still help); the day comes back over a few seconds once it dies or you go 10 m past that range. Every 18 to 28 seconds of fight a tornado whirls up 6 to 9 m in front of each player: for 1.5 seconds it forms, harmless, then hunts that player at 40% of a player's run speed until 10 seconds after it rose, and anyone its funnel touches (1.5 m wide at the ground, 9 m at its 14 m top) takes 25 lightning damage a second; armour does not help. One tornado per player at a time. A tornado that passes over one of the Elder's roots picks it up and throws it in a random direction, 6 to 10 m away. Only what each player sees and feels changes: the world's time and weather never do | x1.3 |
 | Brutal | Its heavy blows throw every player they hit 20 m away, 3 m up at the peak; the hit deals its damage as usual, the landing none. A roll through the blow, or a block that holds (a parry included), keeps you on your feet; a broken guard or a blow from behind throws you. Never while swimming, seated, riding or on a ship's deck | x1.2 |
+| Echoing | 15 seconds into the fight a white, nearly clear ghost of the boss rises where the boss stood then, and from then on does everything the boss did 15 seconds before - walks its path, turns, swings, throws, staggers - until the boss dies, when it is simply gone. Its blows, throws and breaths hurt as the boss's did (its stars and its aspects' damage), aimed where the boss's target stood then; anything the boss's attacks call up (the Elder's roots) the ghost's call up too. It cannot be hit, no creature goes for it, and it shows no health bar. Each boss of a Twin or Tethered pair has its own; Phantom copies have none. The Kraken never rolls it | x1.3 |
 
-The chances are weights: 42 for the plain fight and 10 for each of the eighteen aspects (Portalbound only for the Elder and Bonemass), so about one boss fight in
+The chances are weights: 42 for the plain fight and 10 for each of the nineteen aspects (Portalbound only for the Elder and Bonemass), so about one boss fight in
 five stays as the game ships it. Stormbound's lightning, Gravitic's slam, Colossal's shockwave and Nightfall's tornadoes
 are dodged, not blocked: a roll timed through them avoids them, and a raised shield does not. Brutal's throw is the one
 a shield stops.
@@ -287,6 +293,8 @@ the default day) still works when the file names only that; if both are named, `
 - **Brutal** - `launch` m a thrown player flies across flat ground, away from the boss (0: never throws; at most
   40); `lift` m the throw peaks above where they left the ground (kept between 1 and 15). A throw never crosses the
   ground faster than 30 m/s, so a long `launch` with a low `lift` falls short
+- **Echoing** - `delay` seconds the ghost runs behind its boss (kept between 1 and 60): it rises that long into the
+  fight and replays what the boss did that long before
 
 ## Per-creature rules
 
@@ -363,8 +371,9 @@ a presence pulling you..." and a compass direction (north, northeast, ... northw
 altar that boss was summoned at to a place worth finding next: Bonemass points to the Bog Witch, Moder to the ancient
 forge (the Forge of Potential), Yagluth to Haldor and the Elder to Hildir. Where the world has several possible spots
 for that place, it is the one nearest the altar; a boss that fell far from any altar of its own (spawned by command)
-points from where it fell. A Twin or Tethered pair gives one hint, a Phantom copy none, and a world without the place
-says nothing. Each player turns it off with `Boss hints` in `8 - Display (per player)`.
+points from where it fell. A player who has already found that place (its spot explored on their map, by their own
+travels or a cartography table) gets no hint. A Twin or Tethered pair gives one hint, a Phantom copy none, and a world
+without the place says nothing. Each player turns it off with `Boss hints` in `8 - Display (per player)`.
 
 ## Console commands
 

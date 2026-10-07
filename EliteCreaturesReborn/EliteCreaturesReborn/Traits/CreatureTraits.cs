@@ -23,6 +23,10 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>True on the copies a Phantom boss brings - never on the boss itself. Read from the copy's ZDO.</summary>
         public bool PhantomCopy;
 
+        /// <summary>True on the white ghost an Echoing boss leaves behind it - never on the boss itself. Read from the echo's
+        /// ZDO. An echo carries its boss's stars and no aspect; it only replays what its boss did.</summary>
+        public bool Echo;
+
         /// <summary>True on a Cloning creature's decoy - never on the creature itself. Read from the decoy's ZDO. A decoy
         /// wears its creature's mutations (<see cref="Wears"/>: its name, its stars' colours, its health and speed) but has
         /// none of their powers: <see cref="Has"/> is false for every one, so no behaviour, hit or death of any mutation

@@ -70,6 +70,8 @@ namespace EliteCreaturesReborn.Display
                 + $"{N(rules, aspect, Fields.Damage)} damage a second inside it",
             Aspect.Brutal => $"its heavy blows throw the players they hit {N(rules, aspect, Fields.Launch)} m away; a block "
                 + "that holds or a parry keeps you on your feet, and the landing never hurts",
+            Aspect.Echoing => $"{N(rules, aspect, Fields.Delay)} seconds into the fight a white ghost of it rises and does "
+                + $"everything it did {N(rules, aspect, Fields.Delay)} seconds before, blows and throws included, until it dies",
             _ => "",
         };
 

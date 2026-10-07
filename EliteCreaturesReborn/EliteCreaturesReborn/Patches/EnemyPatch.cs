@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
@@ -29,6 +30,11 @@ namespace EliteCreaturesReborn.Patches
         // pull it off the player it turned on. Asymmetric: only the devourer's own enmity is overridden.
         private static void Postfix(Character a, Character b, ref bool __result)
         {
+            if (EchoLink.Any && b != null && EchoLink.IsEcho(b))
+            {
+                __result = false; // an echo is a ghost: no creature or tame ever goes for it, while its own blows still land
+                return;
+            }
             if (!Devourers.Any || GildedEnemyPatch.GameOnly || a == null || b == null || a == b || b.IsBoss())
             {
                 return; // the common case, by far: no devourer loaded here at all

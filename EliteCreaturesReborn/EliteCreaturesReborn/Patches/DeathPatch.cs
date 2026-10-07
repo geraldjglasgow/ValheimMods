@@ -114,6 +114,10 @@ namespace EliteCreaturesReborn.Patches
             {
                 PhantomReaper.Release(snap.Id); // the boss is gone, so are its phantoms
             }
+            if (snap.Traits.HasAspect(Aspect.Echoing))
+            {
+                EchoReaper.Release(snap.Id); // and its echo
+            }
             Feed(snap);
             DescendantRegistry.Died(snap.Victim); // a copy this machine counted is counted out at its death, as before
         }

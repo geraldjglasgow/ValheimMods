@@ -10,7 +10,8 @@ namespace EliteCreaturesReborn.Runtime
     /// the boss's first roll only - brings in its twin or tethered partner. A copy is born already resolved, so it never
     /// reaches that branch, and never brings a twin, a partner or splits of its own. A Phantom copy is hollowed here on every machine the
     /// moment it resolves, then takes the behaviours of the other aspects it carries (a Bountiful boss's, see
-    /// <see cref="Aspects.PhantomSpawner"/>).
+    /// <see cref="Aspects.PhantomSpawner"/>). An Echoing boss's echo carries no aspect, so nothing is attached to it here: it
+    /// is veiled and stilled as it wakes (<see cref="Aspects.EchoBody"/>).
     /// The hit-shaped aspects (Reflective, Shielded, Elementalist, Enraged) need no component - patches handle them.
     /// Adaptive, Fixated and Tethered have both: a component for their state and look, and a hook in
     /// <see cref="Scaling.AspectDamage"/>.
@@ -26,9 +27,9 @@ namespace EliteCreaturesReborn.Runtime
             }
             foreach (Aspect aspect in traits.Aspects())
             {
-                if (traits.PhantomCopy && aspect == Aspect.Phantom)
+                if (traits.PhantomCopy && (aspect == Aspect.Phantom || aspect == Aspect.Echoing))
                 {
-                    continue; // a copy wears a Bountiful boss's other aspects, never Phantom's own splits
+                    continue; // a copy wears a Bountiful boss's other aspects, never Phantom's splits or an echo of its own
                 }
                 Attach(controller, aspect);
                 if (controller.FreshlyResolved && controller.IsOwner())
@@ -55,6 +56,7 @@ namespace EliteCreaturesReborn.Runtime
                 case Aspect.Portalbound: controller.gameObject.AddComponent<PortalboundBehaviour>(); break;
                 case Aspect.Nightfall: AttachNightfall(controller.gameObject); break;
                 case Aspect.Brutal: controller.gameObject.AddComponent<BrutalBehaviour>(); break;
+                case Aspect.Echoing: controller.gameObject.AddComponent<EchoBehaviour>(); break;
             }
         }
 

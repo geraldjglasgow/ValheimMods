@@ -98,7 +98,7 @@ namespace EliteCreaturesReborn.Config
             BossHints = config.Bind(Display, "Boss hints", true,
                 "When Bonemass, Moder, Yagluth or the Elder dies, every player within 100 m feels a pull: the compass "
                 + "direction from the boss's altar to the Bog Witch (Bonemass), the ancient forge (Moder), Haldor "
-                + "(Yagluth) or Hildir (the Elder). Client side; never locked.");
+                + "(Yagluth) or Hildir (the Elder), until that place is explored on your map. Client side; never locked.");
         }
 
         // Not a display preference and never locked: a switch that makes the death/split/absorb chain log every step, so

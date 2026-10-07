@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.21.0
+
+- New boss aspect: Echoing, a white ghost repeating the boss's every move and blow 15 s later; x1.3 loot.
+- Existing rule files roll Echoing too; set `Echoing: 0` under `chances:` to leave it out.
+- Boss hints no longer point to a place already explored on your map.
+- A crossbow put away loaded is still loaded when drawn again.
+- Fixed: the death recap key no longer stops working after Alt + Tab.
+- Update the server and every client together.
+
 ## 3.20.0
 
 - Boss stars add only trophies; other boss drops are no longer multiplied. Remove `drops` under `bosses: star power:`.

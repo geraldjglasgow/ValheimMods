@@ -4,7 +4,7 @@ namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
     /// The boss-aspect state that is not part of the rolled traits: an altar's current stars and aspect (with a Bountiful
-    /// one's extras) and shift time, a twin's or tethered boss's partner, a phantom copy's boss, a phantom boss's split
+    /// one's extras) and shift time, a twin's or tethered boss's partner, a phantom copy's or an echo's boss, a phantom boss's split
     /// count and a summoner's wave count. The single seam between that state and the ZDO, as <see cref="TraitStore"/> is
     /// for the traits. Reads work anywhere; every write is made by the object's owner.
     /// </summary>
@@ -20,6 +20,7 @@ namespace EliteCreaturesReborn.Traits
         private static readonly KeyValuePair<int, int> TwinPartnerKey = ZDO.GetHashZDOID(TraitKeys.TwinPartner);
         private static readonly KeyValuePair<int, int> TetherPartnerKey = ZDO.GetHashZDOID(TraitKeys.TetherPartner);
         private static readonly KeyValuePair<int, int> PhantomOfKey = ZDO.GetHashZDOID(TraitKeys.PhantomOf);
+        private static readonly KeyValuePair<int, int> EchoOfKey = ZDO.GetHashZDOID(TraitKeys.EchoOf);
 
         private const int Unrolled = -1;
 
@@ -71,6 +72,11 @@ namespace EliteCreaturesReborn.Traits
         public static ZDOID GetPhantomOf(ZDO zdo) => zdo.GetZDOID(PhantomOfKey);
 
         public static void SetPhantomOf(ZDO zdo, ZDOID boss) => zdo.Set(TraitKeys.PhantomOf, boss);
+
+        /// <summary>The boss an echo replays; None for anything that is not an echo.</summary>
+        public static ZDOID GetEchoOf(ZDO zdo) => zdo.GetZDOID(EchoOfKey);
+
+        public static void SetEchoOf(ZDO zdo, ZDOID boss) => zdo.Set(TraitKeys.EchoOf, boss);
 
         public static int GetWaves(ZDO zdo) => zdo.GetInt(SummonWavesHash);
 

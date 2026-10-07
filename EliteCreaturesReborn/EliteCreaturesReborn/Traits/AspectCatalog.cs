@@ -6,22 +6,24 @@ namespace EliteCreaturesReborn.Traits
     /// </summary>
     public static class AspectCatalog
     {
-        /// <summary>The eighteen aspects, in specification order, without <see cref="Aspect.None"/>.</summary>
+        /// <summary>The nineteen aspects, in specification order, without <see cref="Aspect.None"/>.</summary>
         public static readonly Aspect[] InOrder =
         {
             Aspect.Reflective, Aspect.Shielded, Aspect.Mending, Aspect.Summoner,
             Aspect.Elementalist, Aspect.Enraged, Aspect.Twin, Aspect.Phantom,
             Aspect.Adaptive, Aspect.Fixated, Aspect.Stormbound, Aspect.Gravitic, Aspect.Colossal,
             Aspect.Tethered, Aspect.Bountiful, Aspect.Portalbound, Aspect.Nightfall, Aspect.Brutal,
+            Aspect.Echoing,
         };
 
-        /// <summary>Every outcome a roll can produce: the plain fight first, then the eighteen.</summary>
+        /// <summary>Every outcome a roll can produce: the plain fight first, then the nineteen.</summary>
         public static readonly Aspect[] Outcomes =
         {
             Aspect.None, Aspect.Reflective, Aspect.Shielded, Aspect.Mending, Aspect.Summoner,
             Aspect.Elementalist, Aspect.Enraged, Aspect.Twin, Aspect.Phantom,
             Aspect.Adaptive, Aspect.Fixated, Aspect.Stormbound, Aspect.Gravitic, Aspect.Colossal,
             Aspect.Tethered, Aspect.Bountiful, Aspect.Portalbound, Aspect.Nightfall, Aspect.Brutal,
+            Aspect.Echoing,
         };
 
         /// <summary>The word placed before the boss's own name, e.g. "Enraged" in "Enraged Eikthyr"; empty for None.</summary>

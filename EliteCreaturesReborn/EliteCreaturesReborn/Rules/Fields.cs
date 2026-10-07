@@ -195,6 +195,8 @@ namespace EliteCreaturesReborn.Rules
         public const string Launch = "launch";
         public const string Lift = "lift";
 
+        // Echoing (`delay` is shared)
+
         /// <summary>Phantom's fixed copy count before copies came per player; read only to tell a rule file it is unused.</summary>
         public const string Copies = "copies";
 

@@ -24,6 +24,7 @@ namespace EliteCreaturesReborn.Patches
                 return;
             }
             EliteController controller = character.gameObject.AddComponent<EliteController>();
+            EchoBody.VeilIfEcho(character); // an Echoing boss's echo, waking from its ZDO here: veiled before it is ever drawn
             if (character.IsBoss())
             {
                 AltarSummon.Claim(controller); // a boss an altar is instantiating right now takes the aspect it offered for

@@ -32,29 +32,4 @@ namespace EliteCreaturesReborn.Patches
             }
         }
     }
-
-    /// <summary>
-    /// The start of a character's movement step, before the game blends its stored swim velocity toward the swimmer's
-    /// intent: the pull's last push is taken back out of it here (<see cref="GraviticPull.Repay"/>), so in water the pull
-    /// never outlasts itself. Any step with nothing owed is a single bool check; a failure is reported, never rethrown.
-    /// </summary>
-    [HarmonyPatch(typeof(Character), "UpdateMotion")]
-    public static class GraviticRepayPatch
-    {
-        private static void Prefix(Character __instance)
-        {
-            if (!GraviticPull.Owes)
-            {
-                return;
-            }
-            try
-            {
-                GraviticPull.Repay(__instance);
-            }
-            catch (Exception e)
-            {
-                Guard.Report(e, "Character.UpdateMotion gravitic");
-            }
-        }
-    }
 }

@@ -58,7 +58,7 @@ namespace EliteCreaturesReborn.Mutations
         /// The game picks a humanoid's random weapon, shield and armour from a seed its ZDO keeps, as it starts; the decoy
         /// has not started yet, so the creature's seed in its place gives it the very same gear on every machine.
         /// </summary>
-        private static void Arm(Character decoy, Character real, ZDO zdo)
+        internal static void Arm(Character decoy, Character real, ZDO zdo)
         {
             if (decoy is Humanoid copy && real is Humanoid source)
             {

@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Mutations;
 using HarmonyLib;
 
@@ -8,7 +9,8 @@ namespace EliteCreaturesReborn.Patches
     /// nothing away - not even a nameplate: a Cloaked creature beyond its visible distance, a Blinking one for the moment
     /// its body is veiled mid-blink, so the plate never lingers at the spot it left, and a Cloning one while it hides
     /// behind its decoy (<see cref="CloneBehaviour.Hidden"/>), so only the decoy's plate shows and nothing marks where the
-    /// creature really is; the decoy's own plate reads the same name, stars and health. The game asks this for every
+    /// creature really is; the decoy's own plate reads the same name, stars and health. An Echoing boss's echo never shows
+    /// one (<see cref="EchoLink"/>): it is a ghost of the fight, not a second boss. The game asks this for every
     /// creature near the player each frame, so the hidden ones are found in one lookup (<see cref="PlateVeils"/>), and
     /// with none loaded it is one count check.
     /// </summary>
@@ -17,7 +19,7 @@ namespace EliteCreaturesReborn.Patches
     {
         private static void Postfix(Character c, ref bool __result)
         {
-            if (__result && c != null && PlateVeils.Hides(c))
+            if (__result && c != null && (PlateVeils.Hides(c) || EchoLink.IsEcho(c)))
             {
                 __result = false;
             }

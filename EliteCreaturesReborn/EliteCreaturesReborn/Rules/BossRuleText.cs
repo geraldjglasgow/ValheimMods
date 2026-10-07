@@ -46,6 +46,7 @@ bosses:
       Portalbound: 10
       Nightfall: 10
       Brutal: 10
+      Echoing: 10
 
     # Multiplies everything the boss drops, even in Vanilla loot mode.
     loot:
@@ -68,6 +69,7 @@ bosses:
       Portalbound: 1.2
       Nightfall: 1.3
       Brutal: 1.2
+      Echoing: 1.3
 
     # Field meanings: reference, Boss aspect power fields.
     power:
@@ -89,6 +91,7 @@ bosses:
       Portalbound:  { min height: 5, clearance: 2, range: 20 }
       Nightfall:    { range: 60, every: 18, every max: 28, life: 10, form time: 1.5, tornado speed: 40, damage: 25, top width: 9, base width: 1.5, height: 14, toss distance: 10 }
       Brutal:       { launch: 20, lift: 3 }
+      Echoing:      { delay: 15 }
 
     # Per boss, by prefab name: summons is what Summoner calls (no list, no Summoner);
     # aspects, if set, limits which aspects it rolls.
@@ -107,7 +110,7 @@ bosses:
         summons: [SeekerBrute, Seeker]
       - match: Fader
         summons: [Charred_Melee, Charred_Archer]
-      # Elite Creatures Pack's kraken holds one ship: never Twin, Phantom, Tethered or Brutal.
+      # Elite Creatures Pack's kraken holds one ship: never Twin, Phantom, Tethered, Brutal or Echoing.
       - match: ECP_Kraken
         aspects: [none, Reflective, Shielded, Mending, Summoner, Elementalist, Enraged, Adaptive, Fixated, Stormbound, Gravitic, Colossal, Bountiful, Nightfall]
 

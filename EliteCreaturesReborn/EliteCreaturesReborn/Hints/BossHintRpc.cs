@@ -11,9 +11,11 @@ namespace EliteCreaturesReborn.Hints
     /// Boss hints over the game's routed-RPC bus. The boss's owner, as it dies, asks the server - the one machine whose
     /// world knows where every location is - naming the boss and where it fell. The server takes that boss's altar nearest
     /// the fall (the one it was summoned at; the fall itself when no altar of its kind is near, as for a boss spawned by
-    /// command), finds the target nearest that altar, and sends the compass direction between the two to every machine.
-    /// Each player near the fall with hints on shows it a few seconds later, after the game's and the tier's messages. A
-    /// world without the target (one generated before that place came to the game) says nothing.
+    /// command), finds the target nearest that altar, and sends the compass direction between the two, with the target's
+    /// place, to every machine. Each player near the fall with hints on who has not yet found the target (its spot is
+    /// still unexplored on their map, their own exploring and a cartography table's both count) shows it a few seconds
+    /// later, after the game's and the tier's messages. A world without the target (one generated before that place came
+    /// to the game) says nothing.
     /// </summary>
     internal static class BossHintRpc
     {
@@ -46,7 +48,7 @@ namespace EliteCreaturesReborn.Hints
             _registeredOn = bus;
             LastSent.Clear();
             bus.Register<string, Vector3>(Ask, OnAsk);
-            bus.Register<Vector3, int>(Hint, OnHint);
+            bus.Register<Vector3, int, Vector3>(Hint, OnHint);
         }
 
         /// <summary>Owner side, as a boss dies: asks the server for its hint, when the boss leaves one.</summary>
@@ -80,7 +82,7 @@ namespace EliteCreaturesReborn.Hints
             if (!Repeat(boss, origin))
             {
                 int sector = BossHintTable.Sector(origin, target.m_position);
-                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Hint, fell, sector);
+                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Hint, fell, sector, target.m_position);
             }
         }
 
@@ -103,21 +105,25 @@ namespace EliteCreaturesReborn.Hints
             return false;
         }
 
-        private static void OnHint(long sender, Vector3 fell, int sector) =>
-            Guard.Run("BossHintRpc.OnHint", () => Show(fell, sector));
+        private static void OnHint(long sender, Vector3 fell, int sector, Vector3 target) =>
+            Guard.Run("BossHintRpc.OnHint", () => Show(fell, sector, target));
 
-        // A dedicated server has no HUD and skips this, as does a player far from the fall or with hints off.
-        private static void Show(Vector3 fell, int sector)
+        // A dedicated server has no HUD and skips this, as does a player far from the fall, with hints off, or who has
+        // already found the target.
+        private static void Show(Vector3 fell, int sector, Vector3 target)
         {
             Player player = Player.m_localPlayer;
             if (MessageHud.instance == null || player == null || !Configuration.BossHints.Value
-                || Utils.DistanceXZ(player.transform.position, fell) > PlayerRange)
+                || Utils.DistanceXZ(player.transform.position, fell) > PlayerRange || Found(target))
             {
                 return;
             }
             string text = $"You feel a presence pulling you... {BossHintTable.Word(sector)}";
             MessageHud.instance.StartCoroutine(ShowLater(text));
         }
+
+        // Found: the target's spot is explored on this player's map, by their own travels or a cartography table.
+        private static bool Found(Vector3 target) => Minimap.instance != null && Minimap.instance.IsExplored(target);
 
         private static IEnumerator ShowLater(string text)
         {
