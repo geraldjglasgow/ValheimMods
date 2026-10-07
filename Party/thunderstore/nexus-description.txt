@@ -10,15 +10,30 @@ Shared parties for Valheim: party chat, health bars, map pins and friendly-fire 
 
 [size=4][b]Features[/b][/size]
 [list]
-[*]Parties with one leader and a server-set size cap. Invites are accepted or declined, and parties survive logging out and server restarts.
-[*]Commands: [b]/party create[/b], [b]invite[/b], [b]leave[/b], [b]remove[/b], [b]promote[/b], [b]name[/b], [b]p[/b], [b]panel edit[/b] and [b]status[/b] (admin), with short forms [b]/invite[/b], [b]/leave[/b], [b]/remove[/b], [b]/promote[/b] and [b]/p[/b] unless another mod took the word. [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/Party/PLAN.md#commands]All commands[/url].
-[*]Party chat: [b]/p <text>[/b] speaks to the party, [b]/p[/b] alone toggles party-chat mode.
-[*]Health panel: each member's health, distance and ailments, draggable with [b]/party panel edit[/b]; arrows point to members off screen.
-[*]Floating names and map pins in your party color, even with position sharing off.
+[*]Parties: one leader and a size cap set by the server, kept through logging out and server restarts.
+[*]Invites: the other player accepts or declines; any member can invite.
+[*]Party names: the leader names the party, shown on the health panel.
+[*]Party chat: messages only your party sees, or a mode that sends everything you type to the party.
+[*]Health panel: each member's health, distance and ailments, draggable; arrows point to members off screen.
+[*]Names and map pins in your party colour, even with position sharing off.
 [*]Death notices: a chat line and a temporary map pin.
 [*]Friendly fire: party members cannot hurt each other, even with PvP on.
-[*]Party ping: hold Left Alt while pinging the map to ping only your party.
+[*]Party ping: hold Left Alt while pinging the map and only your party sees it.
 [*][url=https://github.com/geraldjglasgow/ValheimMods/blob/main/Party/PLAN.md#api-for-other-mods]An API for other mods[/url], without a hard dependency.
+[/list]
+
+[size=4][b]Commands[/b][/size]
+The short forms [b]/invite[/b], [b]/leave[/b], [b]/remove[/b], [b]/promote[/b] and [b]/p[/b] work too, unless another mod took the word.
+[list]
+[*][b]/party create [name][/b]: starts a party with you as leader.
+[*][b]/party invite <name>[/b]: invites an online player; starts a party if you have none.
+[*][b]/party leave[/b]: leaves your party.
+[*][b]/party remove <name>[/b]: the leader removes a member.
+[*][b]/party promote <name>[/b]: the leader hands leadership to a member.
+[*][b]/party name [text][/b]: the leader names the party.
+[*][b]/party p [text][/b]: sends a party message; alone, turns party-chat mode on or off.
+[*][b]/party panel edit[/b]: frees the mouse to drag the health panel; [b]done[/b] or Escape ends it.
+[*][b]/party status[/b]: lists every party on the server (admins).
 [/list]
 
 [size=4][b]Install[/b][/size]

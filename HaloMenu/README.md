@@ -1,107 +1,49 @@
 # HaloMenu
 
-A client-side radial menu framework for Valheim. Hold (or toggle) a hotkey, a ring of icons opens at screen
-center, move the mouse (or a gamepad stick) toward one to highlight it, release to select it.
+A radial menu that other mods fill. Hold a hotkey and a ring of icons opens at the centre of the screen; move the
+mouse or a gamepad stick toward one and let go to pick it.
 
-HaloMenu itself adds no gameplay: it is a framework other mods build on through its public API. With nothing
-registered, it opens an empty ring and does nothing else.
+HaloMenu adds no gameplay of its own: with no mod registering entries, it opens an empty ring.
 
-### Features
+## Features
+- Hold or Toggle: hold the key and release to pick, or press to open and click to pick.
+- Aim, not hover: the direction picks the segment, even past the ring's outer edge.
+- Gamepad: either stick picks the same way the mouse does.
+- Cancel: let go in the centre or press Escape (right-click too in Toggle mode).
+- 2 to 16 segments, with the hovered entry's name in the middle.
+- Hover feedback: the segment grows, brightens and gets a rim.
+- Disabled entries dim and shake when picked; hidden entries leave no gap.
+- No stray swings: attacks and hotbar keys are held back while a ring is open; walking still works.
+- Several rings: a mod can own a ring with its own hotkey; only one is open at a time.
+- Client only: no network traffic, works on a vanilla server and when only some players have it.
 
-- Hold or Toggle activation, per ring
-- Selection by angle, not hit-testing: overshoot the ring's outer edge and it still selects; a gamepad's right
-  (or left) analogue stick drives the same selection path as the mouse
-- A dead zone at the center cancels; a small hysteresis band keeps the highlight from flickering on a boundary
-- Evenly spaced segments, 2 to 16 of them, with configurable gaps, radii and start angle; the hovered entry's name
-  shows in the ring's center
-- Hover feedback: scale, a brightness lift and a rim highlight together, tunable duration (0 snaps instantly)
-- Disabled entries dim and refuse selection with a shake; invisible entries do not take up a segment at all
-- Every setting is live - changing it in the BepInEx Configuration Manager or the .cfg file takes effect the next
-  time a ring opens, no restart
-- Zero network traffic. HaloMenu never sends a packet, works on a fully vanilla server, and works with only one
-  player in the session having it installed
+## For mod authors
+Reference `HaloMenu.API.dll` only: your mod loads whether or not HaloMenu is installed.
+- `HaloMenuAPI.Register`: adds an entry to the shared default ring.
+- `HaloMenuAPI.CreateRing`: a ring of your own, with its own hotkey, layout and config sections.
+- `RingEntry`: id, label, icon, order, visible and enabled checks, and what picking it does.
+- Ring events: opening (can block), opened, highlight changed, selecting (can cancel), selected, cancelled.
+- `HaloMenuAPI.IsAvailable`: whether HaloMenu is loaded; without it every call does nothing.
+- API 1.0: only additions within 1.x; a breaking change would ship as a separate 2.0 assembly.
+- [Sample.HaloMenuDemo](https://github.com/geraldjglasgow/ValheimMods/tree/main/HaloMenu/Sample.HaloMenuDemo): two
+  entries on the default ring and a ring of its own.
 
-### For players
+## Install
+Needed on each client only. Install with r2modman or the Thunderstore app, or put `HaloMenu.dll` and
+`HaloMenu.API.dll` (both needed) in `BepInEx/plugins`.
 
-Install [BepInEx for Valheim](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/), then drop
-`HaloMenu.dll` and `HaloMenu.API.dll` (from `dist/`) into `BepInEx/plugins`. Both files are required. By itself
-HaloMenu opens an empty, icon-less ring - it needs a mod that registers entries to be worth looking at.
+## Configuration
+`BepInEx/config/com.HaloMenu.cfg`: each ring's hotkey, activation, layout and look; a mod's own ring gets its own
+sections. Every setting is described in the file and applies the next time a ring opens, no restart.
 
-To try `Sample.HaloMenuDemo` for that: build it (see "Building" below, or just build the whole `HaloMenu.sln`),
-then copy both files from `Sample.HaloMenuDemo/dist/` - `Sample.HaloMenuDemo.dll` and `HaloMenu.API.dll` (the same
-one HaloMenu itself ships; either copy is fine, they're identical) - into `BepInEx/plugins` alongside
-`HaloMenu.dll`. It registers two entries on the default ring (hold the backquote key, `` ` ``) and its own 6-segment ring on `[`.
+## Links
+Discord: https://discord.gg/DrFUyfuXzT
 
-Default hotkey: hold the backquote key (`` ` ``).
+Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
-### For mod authors: the API
-
-Reference `HaloMenu.API.dll` only - never `HaloMenu.dll`. Your mod compiles and loads whether or not HaloMenu is
-installed; call `HaloMenuAPI.IsAvailable` to check, or just call the API - `Register` on a missing HaloMenu is a
-silent no-op, not an exception.
-
-**Add an entry to the shared default ring:**
-
-```csharp
-using HaloMenu.API;
-
-HaloMenuAPI.Register(new RingEntry
-{
-    Id = "mymod.teleport_home",
-    Label = "Teleport Home",
-    Icon = mySprite,
-    Order = 100,
-    IsVisible = () => Player.m_localPlayer != null,
-    IsEnabled = () => !Player.m_localPlayer.IsEncumbered(),
-    OnSelect = () => DoTeleport(),
-});
-```
-
-`Id` is namespaced and must be unique; registering the same `Id` again replaces the prior entry. `Order` sorts
-entries clockwise from the ring's start angle. `IsVisible` is checked once when the ring opens (an invisible entry
-does not take up a segment); `IsEnabled` is checked live while the ring is open.
-
-**Own an independent ring**, with its own hotkey, config subsection and layout - the better option once your mod
-has more than a couple of entries, so you are not fighting other mods for slots on the shared ring:
-
-```csharp
-using HaloMenu.API;
-
-Ring ring = HaloMenuAPI.CreateRing("mymod.buildmenu");
-ring.Hotkey = myConfigEntry;      // a ConfigEntry<KeyboardShortcut> from your own ConfigFile
-ring.SegmentCount = 6;
-ring.Add(entryA);
-ring.Add(entryB);
-ring.OnSelected += (r, entry) => Logger.LogInfo($"{entry.Label} selected");
-ring.OnCancelled += r => Logger.LogInfo("cancelled");
-```
-
-Only one ring across the whole game is ever open at once; opening a second closes whichever one was open, as a
-cancel.
-
-**Events**, all on `Ring`: `OnRingOpening` (return false to block), `OnRingOpened`, `OnHighlightChanged`,
-`OnSelecting` (return false to turn a selection into a cancel), `OnSelected`, `OnCancelled`.
-
-**Versioning:** the API surface is frozen at 1.0 - additive changes only within the 1.x line; a breaking change
-ships as a separate `HaloMenu.API` 2.0 assembly alongside 1.x, never in place of it. `HaloMenuAPI.Version` is
-queryable at runtime.
-
-See `Sample.HaloMenuDemo/` in this repository for a complete, compiling example (Level 1 and Level 2 both), and
-`SPEC.md` for the full behavioral specification this mod was built from.
-
-### Building
-
-Requirements: .NET SDK 8, Valheim installed with BepInEx, and the `ValheimModLibs` repository checked out next to
-this one (see the workspace root `CLAUDE.md`).
-
-```
-"/c/Program Files/dotnet/dotnet" build HaloMenu/HaloMenu.sln -c Release
-```
-
-Output: `dist/HaloMenu.dll` and `dist/HaloMenu.API.dll` (both required). `Sample.HaloMenuDemo/dist/` gets its own
-DLL plus a copy of `HaloMenu.API.dll` the same way - it exists mainly to prove the API compiles and loads
-standalone, but it is a real, installable mod if you want something to test the ring with.
-
-### License
-
-GPLv3. See `LICENSE`.
+## Shout outs
+- The BepInEx and Harmony teams, for the tools every Valheim mod stands on.
+- Iron Gate Studio, for Valheim.
+- Thunderstore, for hosting this page.
+- The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game.
+- Every modder who keeps their mods open source so others can collaborate, learn and build on them.
