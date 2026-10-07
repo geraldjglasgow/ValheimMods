@@ -9,8 +9,8 @@ namespace PackPanel.Worn
     /// <summary>
     /// Auto Equip: a right click on a piece of gear in an open chest (the game's use of an item, which does nothing for
     /// equipment outside the player's own inventory) wears it. The piece in its slot comes off first and goes where any
-    /// piece taken off goes (<see cref="GearOut"/>: a free cell, else the ground), then the chest's piece moves into the
-    /// slot as a drag would move it and is put on. A utility takes a free Utility slot while it can be worn beside the
+    /// piece taken off goes (<see cref="GearOut"/>: a free cell; with none it stays on and nothing changes), then the
+    /// chest's piece moves into the slot as a drag would move it and is put on. A utility takes a free Utility slot while it can be worn beside the
     /// others, else the slot of the one it replaces. The chest is open, so this client owns it, as for a drag.
     /// </summary>
     [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.UseItem))]
@@ -39,6 +39,11 @@ namespace PackPanel.Worn
             Inventory own = humanoid.GetInventory();
             Vector2i cell = Target(humanoid, item, kind);
             ItemDrop.ItemData there = own.GetItemAt(cell.x, cell.y);
+            if (there != null && !GearOut.HasRoom(own, kind))
+            {
+                Messages.Center(Words.NoRoomOff);
+                return;
+            }
             if (there != null)
                 TakeOut(humanoid, there, kind);
             if (own.GetItemAt(cell.x, cell.y) != null)
@@ -83,7 +88,7 @@ namespace PackPanel.Worn
 
         /// <summary>
         /// The piece in the slot off and out now (not at the next frame, the slot is needed): taken off with the slot moves
-        /// held back, then into a free cell or dropped.
+        /// held back, then into a free cell.
         /// </summary>
         private static void TakeOut(Humanoid humanoid, ItemDrop.ItemData there, SlotKind kind)
         {

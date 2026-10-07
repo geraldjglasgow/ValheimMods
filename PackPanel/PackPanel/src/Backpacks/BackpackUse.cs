@@ -44,17 +44,11 @@ namespace PackPanel.Backpacks
 
         /// <summary>
         /// Bottom row first, as the game places what it picks up, skipping the cells that leave with the backpack. No room:
-        /// with Auto Equip the pack is dropped at the player's feet (its rows' items then follow the rule of a pack taken
-        /// off), without it nothing changes.
+        /// the pack stays on and nothing changes.
         /// </summary>
         private static void TakeOff(Humanoid humanoid, Inventory inventory, ItemDrop.ItemData item)
         {
             Vector2i cell = MainCells.FindEmptyOffPack(inventory, InventoryState.Layout);
-            if (cell.x < 0 && Worn.GearKeep.On)
-            {
-                humanoid.DropItem(inventory, item, item.m_stack);
-                return;
-            }
             if (cell.x < 0)
             {
                 Messages.Center(BackpackWords.NoRoom);

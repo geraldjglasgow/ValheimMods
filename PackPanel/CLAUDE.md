@@ -173,9 +173,9 @@ PackPanel/PackPanel/src/
     Words.cs                the $packpanel_ words: slot captions, the key ring's words, the messages
     PlayerTick.cs           Player.Update postfix: the waiting layout change, the worn backpack's slots, the
                             tacklebox's cells, pruning extra utilities
-    WearGate.cs             when PlayerTick checks the backpack, tacklebox and Auto Equip: on an inventory change, a new
-                            layout or a pending drop, else every 0.25 s (retries refused equips)
-    HudTick.cs              the one Hud.Update postfix: the Food and Mead bar, then Weight Under Minimap
+    WearGate.cs             when PlayerTick checks the backpack, tacklebox and Auto Equip: on an inventory change or a
+                            new layout, else every 0.25 s (retries refused equips)
+    HudTick.cs              the one Hud.Update postfix: the Food and Mead bar, Weight Under Minimap, the inventory warm-up
     OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader)
     EpicLootLink.cs         Epic Loot's active effects, totals and display texts through its public API, by reflection
     Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names (read
@@ -242,10 +242,10 @@ PackPanel/PackPanel/src/
   Worn/
     WornPlacement.cs        worn item into its slot on equip (swap with the old piece), out on unequip; suspended in
                             drags, loads and the tombstone
-    GearKeep.cs             Auto Equip in PlayerTick: a piece taken off with no free cell dropped a frame later, an
-                            unworn piece in its gear slot put on (refused ones not retried until they leave the slot)
-    GearOut.cs, WearCheck.cs   where a piece taken off goes (free cell, else the ground); the game's equip guards
-                            checked first, a utility worn beside the others, the utility a new one replaces
+    GearKeep.cs             Auto Equip in PlayerTick: an unworn piece in its gear slot put on (refused ones and ones
+                            taken off in place left off until they leave the slot)
+    GearOut.cs, WearCheck.cs   where a piece taken off goes (free cell, else it comes off in its slot); the game's equip
+                            guards checked first, a utility worn beside the others, the utility a new one replaces
     ChestWear.cs            Humanoid.UseItem prefix: right click gear in an open chest wears it (the slot's piece out first)
     ExtraUtilities.cs, ExtraEffects.cs   the worn utilities beyond the game's one and their status effects
     EquipPatches.cs         EquipItem, UnequipItem, IsItemEquiped, IsItemTypeEquiped, UnequipAllItems, UnequipDeathDropItems
@@ -332,6 +332,10 @@ PackPanel/PackPanel/src/
                             name/skills/trophies/PvP panel above (m_infoPanel) gets the same width
     (Look) ArtWarmup.cs     FejdStartup.Start postfix: SkinArt.Prewarm decodes every panel image at the main menu
                             (the 1254 px wallpaper and 1983 x 793 button stalled the first inventory open)
+    InventoryWarmup.cs      after a login, under the fading loading screen, one step every 3 frames: the crafting list,
+                            the player grid (PackPanel's placement), then the screen drawn invisibly (CanvasGroup alpha 0,
+                            root on in LateUpdate after the animator, which turns it off again), without and then with the
+                            crafting panel; the first Tab cost 180 ms after a game start (measured 2026-10-07), later ones 25
     ButtonStrip.cs          PackPanel_buttonstrip, the mark OpenKeep's button row follows
     PanelDress.cs           where the side panels go, and the library's box column moved into the stats panel (every frame)
     StatsPanel.cs           PackPanel_stats between the inventory and the slot panel, behind the box column
@@ -369,6 +373,8 @@ PackPanel/PackPanel/src/
     Divider.cs              the bronze line over the purse's row
     ContainerDrop.cs        the container panel lowered to keep the gap
     PopupPlace.cs           where a pop-up under the slot panel hangs (the key ring's, the tacklebox's)
+    ContainerBeside.cs      UpdateContainer postfix: a chest that would hang off the screen under a tall inventory goes
+                            right of it, under the slot panel, clear of the crafting panel; back under when it fits
     BackpackPanelHeight.cs  the side panels keep the height they have without a worn pack's rows
   Look/
     RoundedFill.cs, CrossMark.cs   sprites painted in code: a rounded rectangle (the stat sheet), a cross (blocked cells)
@@ -411,7 +417,7 @@ postfix `Inventory.GetBoundItems`, `Inventory.GetHotbar`, `Humanoid.UnequipItem`
 `Humanoid.UpdateEquipmentStatusEffects`, `Humanoid.GetSetCount`, `Player.GetEquipmentEitrRegenModifier`,
 `Player.UpdateModifiers`, `Humanoid.GetEquipmentWeight`, `Humanoid.UpdateEquipment`, `InventoryGrid.UpdateGui`,
 `InventoryGui.UpdateContainer`, `Player.Update`, `Player.UseHotbarItem` (prefix: skipped while a Mead Slot key's modifier is held), `Player.GetMaxCarryWeight` (Base Carry Weight; any player, only the
-local one's matters), `Hud.Update` (private; one postfix, `Core/HudTick`: the Food and Mead bar and Weight Under Minimap), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
+local one's matters), `Hud.Update` (private; one postfix, `Core/HudTick`: the Food and Mead bar, Weight Under Minimap and the inventory warm-up), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
 text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words),
 `UnityEngine.UI.Image.OnEnable` (Panel Theme: a newly shown wood panel is themed on the next frame). The backpacks:
 prefix `Humanoid.UseItem` (local player, from the inventory screen), `Inventory.IsTeleportable` (the local player's
@@ -453,20 +459,21 @@ short store page. The YAML files and the default recipes are below.
 
 The reference for players and server admins (moved unchanged from the README, which links here).
 
-Slots and carry weight take turns, and each pack's recipe takes the one before it, so you upgrade rather than collect.
-Crafting the next pack while the one it takes is in the Backpack slot upgrades it there: no free cell needed, the pack's
-rows and what they hold stay (the tackleboxes the same in the Tacklebox slot):
+Slots and carry weight take turns. Each pack is crafted from its own materials, without the pack before it (user
+decision 2026-10-06); the tackleboxes still take the box before them. A recipe that takes a pack (a server can add one
+to a cost) upgrades the one in the Backpack slot in place: no free cell needed, the pack's rows and what they hold stay
+(the tackleboxes the same in the Tacklebox slot):
 
 | Biome | Backpack | Crafted at | Cost | Slots | Carry weight |
 | --- | --- | --- | --- | --- | --- |
 | Meadows | Deerhide Satchel | Workbench, level 2 | 10 Deer hide, 8 Leather scraps | +4 | |
-| Black Forest | Trollhide Backpack | Forge, level 1 | Deerhide Satchel, 20 Troll hide, 2 Bronze | +4 | +50 |
-| Swamp | Rootbound Pack | Forge, level 2 | Trollhide Backpack, 5 Iron, 10 Root, 4 Guck | +8 | +50 |
-| Mountains | Wolfpelt Pack | Forge, level 3 | Rootbound Pack, 12 Wolf pelt, 6 Silver | +8 | +100 |
-| Plains | Lox Hauler | Forge, level 4 | Wolfpelt Pack, 8 Lox pelt, 8 Black metal, 12 Linen thread | +12 | +100 |
-| Mistlands | Carapace Pack | Black forge, level 1 | Lox Hauler, 12 Carapace, 8 Scale hide, 6 Blue jute | +12 | +150 |
-| Ashlands | Asksvin Pack | Black forge, level 2 | Carapace Pack, 10 Asksvin hide, 6 Flametal, 4 Morgen sinew | +16 | +150 |
-| Deep North | Moosehide Pack | Black forge, level 4 | Asksvin Pack, 10 Moose hide, 4 Moose sinew, 5 Gold | +16 | +200 |
+| Black Forest | Trollhide Backpack | Forge, level 1 | 20 Troll hide, 2 Bronze | +4 | +50 |
+| Swamp | Rootbound Pack | Forge, level 2 | 5 Iron, 10 Root, 4 Guck | +8 | +50 |
+| Mountains | Wolfpelt Pack | Forge, level 3 | 12 Wolf pelt, 6 Silver | +8 | +100 |
+| Plains | Lox Hauler | Forge, level 4 | 8 Lox pelt, 8 Black metal, 12 Linen thread | +12 | +100 |
+| Mistlands | Carapace Pack | Black forge, level 1 | 12 Carapace, 8 Scale hide, 6 Blue jute | +12 | +150 |
+| Ashlands | Asksvin Pack | Black forge, level 2 | 10 Asksvin hide, 6 Flametal, 4 Morgen sinew | +16 | +150 |
+| Deep North | Moosehide Pack | Black forge, level 4 | 10 Moose hide, 4 Moose sinew, 5 Gold | +16 | +200 |
 
 Every pack's station, level, cost, slots and carry weight can be changed in `PackPanel.Backpacks.yml` (below).
 
@@ -488,7 +495,7 @@ Pass` on).
 ```yaml
 backpacks:
   PackPanel_DeerhideSatchel: { slots: 8 }
-  PackPanel_TrollhideBackpack: { station: forge, level: 1, cost: "PackPanel_DeerhideSatchel:1, TrollHide:20, Bronze:2" }
+  PackPanel_TrollhideBackpack: { station: forge, level: 1, cost: "TrollHide:20, Bronze:2" }
   PackPanel_MoosehidePack: { carry: 250, portal: true }
 ```
 
@@ -530,7 +537,7 @@ tackleboxes:
 - Files next to the cfg: `PackPanel.Backpacks.yml`, `PackPanel.Tackleboxes.yml`.
 - Charter articles: `packpanel_backpacks`, `packpanel_tackleboxes`, plus the cfg sync of the shared libraries.
 - Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
-  `_coins`, `_wrongslot`, `_dropped`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
+  `_coins`, `_wrongslot`, `_dropped`, `_noroomoff`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
   `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_elitecrafting`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
   `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
   `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_meadslotempty` (`_nothingtodrink` went with the Mead Key), for the stat breakdowns `_tip_base`, `_tip_other`,
@@ -631,7 +638,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   room, or throw it on the ground if not"). Gear in the Gear tab is worn. Right click in the own grid already wore and
   slotted a piece (the game's toggle plus `WornPlacement`); what was missing: (1) a right click in an open chest did
   nothing (the game's `UseItem` toggles only the player's own inventory), so `ChestWear` takes the slot's piece off
-  and out (free cell, else dropped), moves the chest's piece into the slot with the game's `MoveItemToThis` (as a drag
+  and out (free cell; with none, "No room in your inventory to take that off" and nothing changes), moves the chest's piece into the slot with the game's `MoveItemToThis` (as a drag
   does) and wears it; a utility goes to a free Utility slot while `ExtraUtilities` would wear it beside the others,
   else to the slot of the one it replaces (a worn one of the same name, else the game's utility). (2) A piece that
   landed in its slot unworn stayed so: a drag from a chest (the game adds a clone, so `DragSettle` never sees the item
@@ -640,18 +647,20 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   utility, only when it is worn beside the others without taking one off (else two utilities of one name took turns
   every frame); one another mod's equip refuses is not tried again until it leaves its slot. Checked on an inventory
   change or a new layout, else every 0.25 s (`Core/WearGate`, which also retries an attack's refusal). Not during a drag, a
-  suspended move or while dead. (3) A piece taken off with a full grid stayed in its slot; now it is dropped at the
-  feet with the game's `DropItem` (the "dropped" message), a frame later: `WornPlacement.OnTakenOff` notes it and
-  `GearKeep` drops it only if it still lies unworn in its slot, because the game unequips before it removes an item
-  itself (a quality upgrade at a station, `DropItem`, a click move into a chest, OpenKeep's trash), and dropping inside
-  that call would leave a copy on the ground. A piece that breaks while worn stays in its slot (the user, the same day:
+  suspended move or while dead. (3) A piece taken off with a full grid is never dropped (the user, 2026-10-06: "if
+  inventory is full don't drop the item. allow it to stay in the gear"; 0.11.0 and 0.12.0 dropped it at the feet). It
+  comes off in place (the user, the same day: "if auto equip is on, inventory is full, and you want to unequip helmet,
+  it should unequip in place"): `WornPlacement.OnTakenOff` finds no free cell, leaves it unworn in its slot and tells
+  `GearKeep.LeaveOff`, so it is not put on again until it leaves the slot or the player puts it on (right click). A
+  piece that breaks while worn stays in its slot (the user, the same day:
   "broken gear should stay in the slot if it breaks there"), with or without Auto Equip: the game takes a broken piece
   off only in `Humanoid.DrainEquipedItemDurability` (PackPanel's extra utilities drain through it too), whose prefix and
   finalizer (`EquipPatches.Break`) hold `WornPlacement.OnTakenOff` back; `GearKeep`'s guards skip it while broken and put
   it on again once repaired. A broken piece the player takes off (armour at 0 durability stays worn) moves out as any.
   Backpacks: their slot was already worn by lying there (`BackpackEquip.Sync`); right click on the worn pack with no
-  room drops it (its rows' items then move or drop as for any pack taken off), and a pack right clicked in a chest
-  swaps in like armour. Off: the old behaviour in all three.
+  room says so and leaves it on (`BackpackWords.NoRoom`, with or without Auto Equip), and a pack right clicked in a
+  chest swaps in like armour. Off: no chest right click, no wearing of what lies unworn in a slot, and a piece taken
+  off with a full grid stays in its slot unworn.
 - Worn utilities (three by default, up to five): the game has one `m_utilityItem`. The others are a list on the local
   player (`ExtraUtilities`): `EquipItem`'s prefix wears the item beside the game's one while there is room and no item
   of the same name is worn (with the game's own guards: in the inventory, not attacking or dodging, not swimming,
@@ -855,7 +864,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   the user chose own models worn on the back and seen by every player, overflow dropped when a pack comes off, the
   troll leather armour as the Trollhide's look, and accepted the plan's table: +4 slots, then +50 carry weight, then
   +4 slots, ... up to +16 slots and +200, each recipe taking the pack before it, Backpack Portal Pass optional and
-  off). A pack is worn by lying in the Backpack slot: the game has no equip slot for it (capes use Shoulder, utilities
+  off). On 2026-10-06 the user dropped the pack before from every backpack recipe ("make it so backpacks don't require
+  the previous tier backpack in the recipe"); the other materials stayed as they were. A pack is worn by lying in the Backpack slot: the game has no equip slot for it (capes use Shoulder, utilities
   are already three), and the slot already existed. It was a Misc item until 2026-10-04 and is equipment since (below,
   "Backpacks are equipment"). Worn, it adds its slots to the bottom of the
   main grid: as many rows as the slots need, the cells of a partly used last row beyond them blocked (`InventoryLayout`
@@ -868,7 +878,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   the layout again with dropping, as a settings change does. Pickups fill the pack's cells first (they are the bottom
   rows, and the game places bottom first). Taken off, its cells' items go to free cells and the rest drops (the user's
   choice); right click takes it off only into a main cell that is not one of its own, else says there is no room
-  (with Auto Equip: drops it at the feet). Carry weight is
+  (with or without Auto Equip). Carry weight is
   added in the `GetMaxCarryWeight` postfix with Base Carry Weight, scaled by the world modifier. Keep Slots On Death
   takes the pack out only inside `CreateTombStone`, which no frame sees, and the frame check skips a dead player, so
   death never shrinks the grid mid-way. A grave made while a pack was worn has its cells as main cells and the slots
@@ -1149,7 +1159,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.12.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.13.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1217,7 +1227,7 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     `Utility Slots = 5` with `Slots Per Group = 0` also wears five.
 17. Backpacks, crafting: with the materials known, each pack shows at its station and level (Deerhide Satchel at the
     workbench level 2, Trollhide Backpack at the forge level 1, ..., Moosehide Pack at the black forge level 4) and
-    takes exactly its cost, the pack before it included. `PackPanel.Backpacks.yml` `PackPanel_TrollhideBackpack:
+    takes exactly its cost, no other pack in it. `PackPanel.Backpacks.yml` `PackPanel_TrollhideBackpack:
     { cost: "TrollHide:5, Wood:3" }` changes the list at once; a typo like `Trolhide:5` is skipped with a warning in the
     log; `Backpacks = false` hides every recipe. Each item shows its own icon, name and description (what it gives).
 18. Wearing: drag the Deerhide Satchel onto the Backpack slot: the grid gets a sixth row with its left 4 cells open and
@@ -1230,7 +1240,7 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     the grid keeps its rows and the weight box its carry weight; `true`: it hangs again.
 19. Taking it off with its cells full and the grid full: drag it out to the grid: its items drop at your feet with the
     "No room for N items" message; with room, they move into free cells. Right click it in the slot with the grid
-    full and `Auto Equip = false`: "No room in your inventory to take the backpack off", nothing changes (on: test 64). Trash it from the slot (OpenKeep):
+    full: "No room in your inventory to take the backpack off", nothing changes (Auto Equip on or off). Trash it from the slot (OpenKeep):
     the same as dragging it out.
 20. Two clients on a dedicated server (A wears, B watches): B sees the pack on A's back at once, the new model when A
     swaps packs, and none as soon as A takes it off; after B relogs and after A relogs, still right. The server's log
@@ -1474,17 +1484,17 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     the faded mead icon; drink the last of a mead: its square fades at once (within a tenth of a second). `Mead Slots =
     5`: five slot squares; `Mead Slot 2 Key = None`: square 2 goes, the others close up. The Z label unchanged in size; no "B" square.
 64. Auto Equip (on): open a chest holding a bronze helmet while wearing a leather one, right click the bronze helmet: it
-    is in Head and worn, the leather one in a free grid cell; with the grid full the leather one lies at your feet
-    ("dropped" message). Right click a Megingjord in the chest with three utilities worn: it replaces the game's utility
+    is in Head and worn, the leather one in a free grid cell; with the grid full: "No room in your inventory to take
+    that off", the leather one stays worn and the bronze one stays in the chest. Right click a Megingjord in the chest with three utilities worn: it replaces the game's utility
     (or a worn Megingjord), carry weight +150. Drag a chest piece from the chest onto its slot: worn within a frame.
-    Right click a worn piece with the grid full: it drops at your feet; with room it goes to the grid. The same for the
-    worn backpack: dropped, its rows' items move or drop. Upgrade the worn helmet at the forge with the grid full: the
+    Right click the worn helmet with the grid full: it comes off in Head (armour drops, unequip sound), stays unworn
+    there (wait a few seconds: Auto Equip does not put it back on), nothing on the ground; right click it again: worn. With room it goes to the grid. The worn backpack with the grid full: "No room in your
+    inventory to take the backpack off", it stays on. Upgrade the worn helmet at the forge with the grid full: the
     upgraded one is worn in Head, nothing lies on the ground. Swim with an unworn cape in Back: it goes on when you
     stand. Two Megingjords in two Utility slots: one worn, the other stays unworn, no flicker, no repeated sound. A
     worn item with durability drain (a utility or trinket that wears out) runs to 0 with the grid full and with room:
     "broke" message, it stays in its slot unworn either way; repair it at its station: it is worn again.
     `Auto Equip = false`: right click in a chest does nothing, a piece taken off with a full grid stays in its slot.
-    Dedicated server: B sees A's dropped piece and can pick it up.
 65. HUD hotbar with Inventory Rows 0: a sword in cell 1, nothing else in row 0, no pack: the bar top left shows boxes 1
     and 2. Wear the Trollhide Backpack (4 slots): boxes 1 to 6, 3 to 6 empty with their numbers. Put an item in cell 5:
     it shows in box 5, the boxes stay 1 to 6. Wear a 12 or 16 slot pack: boxes 1 to 8. Take the pack off: boxes 1 and
@@ -1497,3 +1507,9 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     the legs' value within a second. A Megingjord with an inscription in the second Utility slot: its line shows and
     `ecraft stats` counts it. With EliteCrafting 0.6.x: no EliteCrafting section, nothing in the log. Without
     EliteCrafting: nothing. Epic Loot's sections still come first.
+67. Inventory warm-up: start the game, log in and wait for the loading screen to clear; press Tab: it opens without a
+    stall (DevBridge `/heap?seconds=6&hitch=20` around the first Tab: no frame much over the 25 ms of a later opening;
+    before the warm-up 106 + 75 ms after a game start, 56 + 37 ms after a relog). Nothing flashes on screen during the
+    loading screen, no inventory sound plays, the cursor stays hidden, the recipe list and grid look as always, OpenKeep's
+    Auto Sort Inventory does not sort at login. Relog: the same. Press Tab the moment the loading screen goes: the
+    inventory opens normally. With `Enabled = false`: no warm-up.

@@ -34,6 +34,7 @@ namespace PackPanel.Core
         public static ConfigEntry<int> InventoryRows { get; private set; }
         public static ConfigEntry<bool> EquipmentSlots { get; private set; }
         public static ConfigEntry<bool> AutoEquip { get; private set; }
+        public static ConfigEntry<bool> InstantEquip { get; private set; }
         public static ConfigEntry<int> SlotsPerGroup { get; private set; }
         public static ConfigEntry<int> UtilitySlots { get; private set; }
         public static ConfigEntry<bool> TrinketSlot { get; private set; }
@@ -92,7 +93,9 @@ namespace PackPanel.Core
             EquipmentSlots = synced.Bind(SlotsSection, "Equipment Slots", true,
                 "Head, Chest, Legs and Back slots. Armour you wear sits in its slot; drop a piece on its slot to wear it, drag it out to take it off.");
             AutoEquip = synced.Bind(SlotsSection, "Auto Equip", true,
-                "Gear in the Gear tab is always worn. Right click armour, a cape, a backpack, a utility or a trinket in your inventory or in an open chest to wear it; a piece that lands in its slot any other way is put on too. Right click a worn piece to take it off: it moves into a free cell of your inventory, or is dropped at your feet when there is none. A piece that breaks while worn stays in its slot and goes back on once repaired. Off: a piece taken off with a full inventory stays in its slot, and a right click in a chest does nothing.");
+                "Gear in the Gear tab is worn. Right click armour, a cape, a backpack, a utility or a trinket in your inventory or in an open chest to wear it; a piece that lands in its slot any other way is put on too. Right click a worn piece to take it off: it moves into a free cell of your inventory; with none it comes off in its slot and stays off until you put it on again; it is never dropped. A piece that breaks while worn stays in its slot and goes back on once repaired. Off: a piece that lands in its slot unworn stays unworn, and a right click in a chest does nothing.");
+            InstantEquip = synced.Bind(SlotsSection, "Instant Equip", false,
+                "Weapons, tools, shields and armour go on and come off at once, with no equipping bar. Off: the game's equip time.");
             UtilitySlots = synced.Bind(SlotsSection, "Utility Slots", 3,
                 "Utility slots (belts, the wishbone, the wisplight...) when Slots Per Group is 0. Every utility item in a slot is worn at once, so up to this many work together. 0: none, the game's single utility item.",
                 acceptableValues: new AcceptableValueRange<int>(0, MaxGroup));

@@ -6,7 +6,8 @@ namespace PackPanel.Core
 {
     /// <summary>
     /// PackPanel's one <c>Hud.Update</c> postfix (one patch per hot method): the Food and Mead bar
-    /// (<see cref="ConsumeBar"/>), then the weight and stat boxes beside the minimap (<see cref="HudWeight"/>).
+    /// (<see cref="ConsumeBar"/>), then the weight and stat boxes beside the minimap (<see cref="HudWeight"/>), then the
+    /// inventory's warm-up after a login (<see cref="InventoryWarmup"/>; it runs during the loading screen too).
     /// </summary>
     [HarmonyPatch(typeof(Hud), nameof(Hud.Update))]
     public static class HudTick
@@ -16,6 +17,7 @@ namespace PackPanel.Core
         {
             ConsumeBar.Tick(__instance);
             HudWeight.Tick();
+            InventoryWarmup.Tick();
         }
     }
 }

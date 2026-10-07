@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0
+
+- `Instant Equip` (off by default): weapons, tools, shields and armour go on and come off with no equipping bar.
+- Auto Equip never drops gear: a piece taken off with a full inventory comes off in its slot.
+- With a full inventory, wearing gear from a chest or taking off the backpack says there is no room.
+- A chest that would hang off the screen under a tall inventory opens beside it instead.
+- Backpack recipes no longer take the previous backpack; an existing `PackPanel.Backpacks.yml` keeps the old costs until edited or deleted.
+- Fixed: the first inventory opening after logging in no longer stutters.
+- Fixed: after Alt + Tab, Left Alt no longer sticks, so the number keys use the hotbar instead of drinking meads.
+
 ## 0.12.0
 
 - With EliteCrafting 0.7.0+, the stat sheet lists your inscriptions by category; hover a line for each item's value.

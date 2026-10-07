@@ -26,6 +26,7 @@ namespace PackPanel.Core
         public static string KeysNew { get; private set; }
         public static string WrongSlot { get; private set; }
         public static string Dropped { get; private set; }
+        public static string NoRoomOff { get; private set; }
         public static string GearTab { get; private set; }
         public static string ConsumablesTab { get; private set; }
         public static string StatResistances { get; private set; }
@@ -60,6 +61,7 @@ namespace PackPanel.Core
             KeysNew = Language.Add("packpanel_keysnew", "{0} new keys went onto your key ring");
             WrongSlot = Language.Add("packpanel_wrongslot", "That does not go in that slot");
             Dropped = Language.Add("packpanel_dropped", "No room for {0} items: dropped at your feet");
+            NoRoomOff = Language.Add("packpanel_noroomoff", "No room in your inventory to take that off");
             GearTab = Language.Add("packpanel_tab_gear", "Gear");
             ConsumablesTab = Language.Add("packpanel_tab_consumables", "Consumables");
             RegisterStats();

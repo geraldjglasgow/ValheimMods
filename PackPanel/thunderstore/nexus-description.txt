@@ -10,12 +10,48 @@ A bigger, better organised inventory, with labelled slots always on screen.
 [size=4][b]Features[/b][/size]
 [list]
 [*]A grid from your two hands up to 12 x 10, with Base Carry Weight and Keep Slots On Death.
-[*]Gear tab: armour, a backpack, worn utilities, a trinket and a stat sheet.
-[*]Consumables tab: food, mead and ammo, with keys to eat and drink (Z, B).
-[*]A coin purse, a key ring and four craftable tackleboxes for bait.
-[*]Eight craftable backpacks you wear, for more slots and carry weight.
-[*]Armour and weight beside the minimap; a brown or timber look.
-[*]With OpenKeep 1.8.0 or later, its buttons join the inventory and its quick stack and sort skip the slots.
+[*]Labelled slots on two tabs, Gear and Consumables, plus a purse, key ring and tacklebox (below).
+[*]Stat sheet: your stats as the game counts them; hover a line for its breakdown.
+[*]Auto Equip: gear in its slot is always worn; right click gear in a chest to wear it.
+[*]Eight backpacks and four tackleboxes; each tacklebox is crafted from the one before (below).
+[*]Armour and weight by the minimap, a bigger crafting panel, a brown or timber look, darker at night.
+[*]With OpenKeep 1.8.0+, its buttons join the inventory; quick stack and sort skip the slots.
+[*]With EliteCrafting or Epic Loot, backpacks can be magic; the stat sheet lists their effects.
+[/list]
+
+[size=4][b]Slots[/b][/size]
+[list]
+[*]Head, Chest, Legs, Back: your armour and cape, worn.
+[*]Backpack: wear one of the eight backpacks below.
+[*]Utility: up to five belts, wishbones and the like, all worn at once.
+[*]Trinket: your worn adrenaline trinket.
+[*]Food: Z eats everything in them you can eat now.
+[*]Mead: Left Alt + 1 to 5 drinks that slot's mead, shown under your health bar.
+[*]Ammo: arrows and bolts go here first; the bow uses them left to right.
+[*]Coin purse: coins go in first, and traders pay from it.
+[*]Key ring: keys gather on a small round ring; doors still find them.
+[*]Tacklebox: holds a tacklebox, whose cells keep your bait.
+[/list]
+
+[size=4][b]Backpacks[/b][/size]
+Worn on your back for every player to see. Their cells join the bottom of your grid.
+[list]
+[*]Deerhide Satchel (Meadows): +4 slots.
+[*]Trollhide Backpack (Black Forest): +4 slots, +50 carry weight.
+[*]Rootbound Pack (Swamp): +8 slots, +50 carry weight.
+[*]Wolfpelt Pack (Mountains): +8 slots, +100 carry weight.
+[*]Lox Hauler (Plains): +12 slots, +100 carry weight.
+[*]Carapace Pack (Mistlands): +12 slots, +150 carry weight.
+[*]Asksvin Pack (Ashlands): +16 slots, +150 carry weight.
+[*]Moosehide Pack (Deep North): +16 slots, +200 carry weight.
+[/list]
+
+[size=4][b]Tackleboxes[/b][/size]
+[list]
+[*]Driftwood Tacklebox (Meadows): 1 bait cell.
+[*]Finewood Tacklebox (Black Forest): 2 bait cells.
+[*]Carapace Tacklebox (Mistlands): 6 bait cells.
+[*]Flametal Tacklebox (Ashlands): 8 bait cells.
 [/list]
 
 [size=4][b]Install[/b][/size]

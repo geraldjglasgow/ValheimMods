@@ -49,7 +49,7 @@ namespace PackPanel.Worn
         /// <summary>
         /// After the game took an item off: out of its own worn slot, into the main grid. A backpack goes to a cell that is
         /// none of its own, since those go with it (another mod's backpack in the Backpack slot is not its worn slot).
-        /// With no free cell it stays, or with Auto Equip it is dropped at the next frame (<see cref="GearKeep"/>).
+        /// With no free cell it comes off in place, in its slot, and Auto Equip leaves it off (<see cref="GearKeep.LeaveOff"/>).
         /// </summary>
         public static void OnTakenOff(Humanoid humanoid, ItemDrop.ItemData item)
         {
@@ -59,14 +59,8 @@ namespace PackPanel.Worn
             Slot slot = InventoryState.SlotAt(inventory, item.m_gridPos);
             if (slot == null || !SlotRules.IsWorn(slot.Kind) || SlotRules.WornKindOf(item) != slot.Kind || !inventory.ContainsItem(item))
                 return;
-            Vector2i free = GearOut.FreeCell(inventory, slot.Kind);
-            if (free.x >= 0)
-            {
-                item.m_gridPos = free;
-                inventory.Changed();
-            }
-            else if (GearKeep.On)
-                GearKeep.Leave(item);
+            if (!GearOut.Away(humanoid, item, slot.Kind))
+                GearKeep.LeaveOff(item);
         }
 
         /// <summary>Every worn item into its slot, after a layout was applied; extra utilities without a slot come off.</summary>
