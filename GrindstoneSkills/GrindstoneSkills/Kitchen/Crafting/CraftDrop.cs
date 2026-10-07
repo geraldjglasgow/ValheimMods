@@ -3,7 +3,7 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Crafted or saved items that do not fit the crafter's inventory go to the ground in front of them, the way the
+    /// Saved ingredients that do not fit the crafter's inventory go to the ground in front of them, the way the
     /// game drops an item (Humanoid.DropItem): ItemDrop.DropItem spawns a networked copy of the item's prefab that
     /// keeps its quality, stack and crafter, so everyone sees it and anyone can pick it up. Amounts above the stack
     /// size are dropped as several stacks.

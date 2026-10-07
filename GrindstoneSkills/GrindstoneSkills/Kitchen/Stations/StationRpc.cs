@@ -7,26 +7,23 @@ namespace GrindstoneSkills
     /// GrindstoneSkills' add RPC on cooking stations and the oven (<see cref="Keys.RpcAddItem"/>). The game's CookItem, on
     /// the cook's client, removes the raw item and sends "RPC_AddItem"(item, cheated) to the station's ZDO owner, which
     /// puts it into the first free slot (GetFreeSlot) with SetSlot, shows it to everybody and plays the add effect. Our
-    /// RPC carries the same two values plus the input's stars and the cook's level and player ID. The owner runs the
-    /// game's own RPC_AddItem unchanged, then stores the cook in the slot it filled (<see cref="StationSlots"/>). A
-    /// plain "RPC_AddItem" (a vanilla client, another mod) takes the same path with an unknown cook. Registered on every
-    /// CookingStation where the game registers its own RPCs (Awake, when the ZDO exists), so a kitchen always has it.
+    /// RPC carries the same two values plus the cook's level. The owner runs the game's own RPC_AddItem unchanged, then
+    /// stores the level in the slot it filled (<see cref="StationSlots"/>). A plain "RPC_AddItem" (a vanilla client,
+    /// another mod) takes the same path with level 0. Registered on every CookingStation where the game registers its
+    /// own RPCs (Awake, when the ZDO exists), so a kitchen always has it.
     /// </summary>
     public static class StationRpc
     {
         private static CookingStation pendingStation;
-        private static StationSlots.Cook pendingCook;
+        private static float pendingLevel;
 
         /// <summary>Sends the add to the station's owner, from the cook's client.</summary>
-        public static void SendAdd(ZNetView nview, string prefab, bool cheated, int inputStars)
+        public static void SendAdd(ZNetView nview, string prefab, bool cheated)
         {
-            Player player = Player.m_localPlayer;
             ZPackage pkg = new ZPackage();
             pkg.Write(prefab);
             pkg.Write(cheated);
-            pkg.Write((float)inputStars);
             pkg.Write(CookLevel.Local());
-            pkg.Write(player != null ? player.GetPlayerID() : 0L);
             nview.InvokeRPC(Keys.RpcAddItem, pkg);
         }
 
@@ -42,14 +39,14 @@ namespace GrindstoneSkills
             }
         }
 
-        /// <summary>On the owner: the game's own add, with the cook remembered for the slot it fills.</summary>
+        /// <summary>On the owner: the game's own add, with the cook's level remembered for the slot it fills.</summary>
         private static void Receive(CookingStation station, long sender, ZPackage pkg)
         {
             if (station == null || !station.m_nview.IsValid())
                 return;
             string prefab = pkg.ReadString();
             bool cheated = pkg.ReadBool();
-            pendingCook = ReadCook(pkg);
+            pendingLevel = Sane(pkg.ReadSingle());
             pendingStation = station;
             try
             {
@@ -61,17 +58,10 @@ namespace GrindstoneSkills
             }
         }
 
-        /// <summary>The rest of the payload, in <see cref="SendAdd"/>'s order. The level is trusted like every skill level.</summary>
-        private static StationSlots.Cook ReadCook(ZPackage pkg) => new StationSlots.Cook
-        {
-            InputStars = UnityEngine.Mathf.Clamp(Sane(pkg.ReadSingle()), 0f, Stars.Max),
-            Level = Sane(pkg.ReadSingle()),
-            PlayerId = pkg.ReadLong(),
-        };
-
+        /// <summary>A level that came over the network, trusted like every skill level but never negative, NaN or infinite.</summary>
         private static float Sane(float value) => float.IsNaN(value) || float.IsInfinity(value) || value < 0f ? 0f : value;
 
-        /// <summary>Finds the slot the game's RPC_AddItem fills (free before, holding the item after) and stores the cook there.</summary>
+        /// <summary>Finds the slot the game's RPC_AddItem fills (free before, holding the item after) and stores the level there.</summary>
         [HarmonyPatch(typeof(CookingStation), nameof(CookingStation.RPC_AddItem))]
         private static class AddItem
         {
@@ -90,8 +80,8 @@ namespace GrindstoneSkills
                 __instance.GetSlot(__state, out string name, out _, out _, out _);
                 if (name != itemName)
                     return;
-                StationSlots.Cook cook = pendingStation == __instance ? pendingCook : default;
-                StationSlots.Write(__instance.m_nview.GetZDO(), __state, cook);
+                float level = pendingStation == __instance ? pendingLevel : 0f;
+                StationSlots.Write(__instance.m_nview.GetZDO(), __state, level);
             }
         }
     }

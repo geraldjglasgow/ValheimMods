@@ -38,13 +38,6 @@ namespace GrindstoneSkills
             return Mathf.Clamp(Kitchen.FoodValue(dish) / reference, 1f, maximum);
         }
 
-        /// <summary>The tier of a dish by its prefab name.</summary>
-        public static float Tier(string dishPrefab)
-        {
-            ItemDrop drop = Kitchen.ItemPrefab(dishPrefab);
-            return Tier(drop == null ? null : drop.m_itemData);
-        }
-
         /// <summary>Raises the local player's Cooking by an amount that is already scaled, bypassing any open scope.</summary>
         public static void RaiseScaled(Player player, float factor)
         {

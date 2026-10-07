@@ -6,9 +6,8 @@ namespace GrindstoneSkills
     /// <summary>
     /// Section 52: how often fish bite, and what the angler can read. The game gives each fish a 10% chance to go for a
     /// float within 50 m every time it picks a new place to swim; that chance grows with the angler's level, at dawn and
-    /// dusk, in rain, with starred bait (crafted at the prep table, where it already rolls Cooking stars) and near chum
-    /// floating in the water. The senses are milestones: the nibbling species, then its size, then what is in reach.
-    /// Synced.
+    /// dusk, in rain and near chum floating in the water. The senses are milestones: the nibbling species, then its
+    /// size, then what is in reach. Synced.
     /// </summary>
     public static class FishingBiteSettings
     {
@@ -17,7 +16,6 @@ namespace GrindstoneSkills
         public static ConfigEntry<float> BiteChanceAt100 { get; private set; }
         public static ConfigEntry<float> DawnDuskBonus { get; private set; }
         public static ConfigEntry<float> RainBonus { get; private set; }
-        public static ConfigEntry<float> BaitBitePerStar { get; private set; }
         public static ConfigEntry<string> ChumItems { get; private set; }
         public static ConfigEntry<float> ChumBonus { get; private set; }
         public static ConfigEntry<float> ChumRadius { get; private set; }
@@ -43,9 +41,6 @@ namespace GrindstoneSkills
                 acceptableValues: Settings.UpTo(500f));
             RainBonus = config.Bind(Section, "Rain Bite Bonus", 25f,
                 "Percent more bites in wet weather.", acceptableValues: Settings.UpTo(500f));
-            BaitBitePerStar = config.Bind(Section, "Bait Bite Bonus Per Star", 20f,
-                "Percent more bites for each star of the bait on the hook. Baits crafted at the prep table roll Cooking stars like any dish.",
-                acceptableValues: Settings.UpTo(200f));
         }
 
         private static void BindChum(SyncedConfiguration config)

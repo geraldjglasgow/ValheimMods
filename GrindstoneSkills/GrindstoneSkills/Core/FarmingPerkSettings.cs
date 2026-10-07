@@ -27,7 +27,6 @@ namespace GrindstoneSkills
         public static ConfigEntry<float> RainBonus { get; private set; }
         public static ConfigEntry<float> TendingBonus { get; private set; }
         public static ConfigEntry<float> TendingRadius { get; private set; }
-        public static ConfigEntry<int> AlmanacLevel { get; private set; }
 
         public static void Initialize(SyncedConfiguration config)
         {
@@ -51,7 +50,7 @@ namespace GrindstoneSkills
                 "Chance in percent of the game's bonus crop when picking a crop, from the picker's level. Replaces the game's own 25%.",
                 acceptableValues: Settings.UpTo(100f));
             SeedReturnAt100 = config.Bind(Section, "Seed Return Chance At Level 100", 30f,
-                "Chance in percent that picking a crop also gives back the seed it grew from, with the crop's stars, from the picker's level.",
+                "Chance in percent that picking a crop also gives back the seed it grew from, from the picker's level.",
                 acceptableValues: Settings.UpTo(100f));
             AutoReplantLevel = config.Bind(Section, "Auto Replant Level", 50,
                 "From this level, picking a crop puts its plant back in the same spot with a seed from your inventory (each player can turn it off). 101 turns it off.",
@@ -68,8 +67,6 @@ namespace GrindstoneSkills
                 "From this planter level, crops grow in the Ashlands without a shield. 101 turns it off.", acceptableValues: Levels);
             ColdToleranceLevel = config.Bind(Section, "Cold Tolerance Level", 100,
                 "From this planter level, crops that grow in the Meadows also grow in the Mountain and Deep North. 101 turns it off.", acceptableValues: Levels);
-            AlmanacLevel = config.Bind(Section, "Almanac Level", 20,
-                "From this level, a growing crop's hover shows the odds of the stars it will ripen with. 101 turns it off.", acceptableValues: Levels);
         }
 
         private static void BindCare(SyncedConfiguration config)

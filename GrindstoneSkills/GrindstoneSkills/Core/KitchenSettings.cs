@@ -4,14 +4,13 @@ using SyncedConfig;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Section 4: the kitchen perks and the trash filter. Perks grow linearly from nothing at Cooking level 0 to the
-    /// configured value at level 100. Synced.
+    /// Section 4: the kitchen perks. Perks grow linearly from nothing at Cooking level 0 to the configured value at
+    /// level 100. Synced.
     /// </summary>
     public static class KitchenSettings
     {
         public const string Section = "4 - Kitchen";
 
-        public static ConfigEntry<bool> TrashFilter { get; private set; }
         public static ConfigEntry<float> CookingSpeed { get; private set; }
         public static ConfigEntry<float> ExtraBurnTime { get; private set; }
         public static ConfigEntry<float> FermentingSpeed { get; private set; }
@@ -21,8 +20,6 @@ namespace GrindstoneSkills
 
         public static void Initialize(SyncedConfiguration config)
         {
-            TrashFilter = config.Bind(Section, "Trash Filter", true,
-                "Lets players set a minimum star count on each kitchen; dishes below it are thrown away. Off: every kitchen keeps everything.");
             CookingSpeed = config.Bind(Section, "Cooking Speed At Level 100", 50f,
                 "Percent faster cooking on cooking stations and the oven, from the level of the player who put the food on.",
                 acceptableValues: Settings.UpTo(500f));

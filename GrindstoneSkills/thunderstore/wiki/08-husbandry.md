@@ -44,12 +44,13 @@ Perks grow evenly from 0 at level 0 to the value at 100.
 | Content Duration | 600 | Seconds a petted animal stays content. |
 | Content Breeding Bonus | 50 | % faster breeding while content. |
 
+**Starred eggs:** an egg from a starred hen shows the hen's stars on its icon and hatches a starred chick; eggs of different stars stack apart.
+
 ## Animal yield (26 - Animal Yield)
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | Butcher Yield At 100 | 50 | % more drops from tamed animals you kill (never trophies). |
-| Prime Cuts | false | Meat from starred tamed animals carries their stars. |
 | Produce Chance At 100 | 50 | % chance per interval that a fed tamed animal drops feathers, scraps, pelts or hides. |
 | Produce Interval | 1200 | Seconds between produce rolls. |
 | Extra Honey At 100 | 50 | % chance of one more honey per honey. |

@@ -6,8 +6,7 @@ namespace GrindstoneSkills
     /// <summary>
     /// Section 54: what a catch brings and the tackle. The fish's own bonus item (the game's 20%) grows with the angler's
     /// level; the bait can come back; a cast that sits long enough can snag something (GrindstoneSkills.Snags.yml says
-    /// what); casts and the line reach further; and a cleaned fish's size improves the Cooking stars of its fillets.
-    /// Synced, like the file.
+    /// what); and casts and the line reach further. Synced, like the file.
     /// </summary>
     public static class FishingCatchSettings
     {
@@ -21,7 +20,6 @@ namespace GrindstoneSkills
         public static ConfigEntry<float> SnagWait { get; private set; }
         public static ConfigEntry<float> CastDistanceAt100 { get; private set; }
         public static ConfigEntry<float> LineLengthAt100 { get; private set; }
-        public static ConfigEntry<float> FilletLevelsPerFishLevel { get; private set; }
 
         public static void Initialize(SyncedConfiguration config)
         {
@@ -42,9 +40,6 @@ namespace GrindstoneSkills
             BaitSaverAt100 = config.Bind(Section, "Bait Saver At 100", 30f,
                 "Percent chance, for a level 100 angler, that landing a fish gives the bait back. The game already gives it back when nothing bit.",
                 acceptableValues: Settings.UpTo(100f));
-            FilletLevelsPerFishLevel = config.Bind(Section, "Fillet Levels Per Fish Level", 10f,
-                "Cleaning a fish at the prep table rolls Cooking stars for the raw fish it gives. Each level of the fish above 1 adds this many to the cook's level for that roll, like starred ingredients: a level 5 fish +40, a legendary +50. 0 turns it off.",
-                acceptableValues: Settings.UpTo(50f));
         }
 
         private static void BindSnags(SyncedConfiguration config)

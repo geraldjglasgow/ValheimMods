@@ -60,14 +60,14 @@ namespace GrindstoneSkills
         {
             float level = page.Level;
             page.Heading("The catch");
-            if (FishingBigFishSettings.BigOneChanceAt100.Value > 0f || FishingBigFishSettings.BaitBigOnePerStar.Value > 0f)
+            if (FishingBigFishSettings.BigOneChanceAt100.Value > 0f)
                 page.Line($"Big one {Share(FishingBigFishSettings.BigOneChanceAt100.Value, level)}", "Big one", BigOneTip());
             string bonus = BonusChance(level);
             if (bonus.Length > 0)
                 page.Line($"Bonus item {bonus}", "Bonus item", "Chance a landed fish also brings its own bonus item. A legendary fish always does.");
             if (FishingCatchSettings.BaitSaverAt100.Value > 0f)
                 page.Line($"Bait saver {Share(FishingCatchSettings.BaitSaverAt100.Value, level)}", "Bait saver",
-                    "Chance a landed fish gives your bait back, stars and all.");
+                    "Chance a landed fish gives your bait back.");
             float snag = Snags.Chance(level);
             if (snag > 0f)
                 page.Line($"Snag {SkillPage.Percent(snag)}", "Snag", SnagTip());
@@ -97,12 +97,12 @@ namespace GrindstoneSkills
 
         private static string BiteTip()
         {
-            string tip = $"More fish go for your float. Bites also rise {SkillPage.Number(FishingBiteSettings.DawnDuskBonus.Value)}% at dawn and dusk, "
-                + $"{SkillPage.Number(FishingBiteSettings.RainBonus.Value)}% in rain, {SkillPage.Number(FishingBiteSettings.BaitBitePerStar.Value)}% per bait star";
+            string tip = $"More fish go for your float. Bites also rise {SkillPage.Number(FishingBiteSettings.DawnDuskBonus.Value)}% at dawn and dusk";
+            string rain = $"{SkillPage.Number(FishingBiteSettings.RainBonus.Value)}% in rain";
             string chum = ChumNames();
             if (chum.Length == 0)
-                return tip + ".";
-            return tip + $", and {SkillPage.Number(FishingBiteSettings.ChumBonus.Value)}% within {SkillPage.Number(FishingBiteSettings.ChumRadius.Value)} m of chum ({chum}) floating in the water.";
+                return tip + $" and {rain}.";
+            return tip + $", {rain}, and {SkillPage.Number(FishingBiteSettings.ChumBonus.Value)}% within {SkillPage.Number(FishingBiteSettings.ChumRadius.Value)} m of chum ({chum}) floating in the water.";
         }
 
         private static string TensionTip()
@@ -115,13 +115,8 @@ namespace GrindstoneSkills
                 : tip;
         }
 
-        private static string BigOneTip()
-        {
-            string tip = $"Chance a hooked fish grows a level, rolled again up to level {FishInfo.MaxNaturalLevel}: +{SkillPage.Number(FishingBigFishSettings.NightBonus.Value)}% at night, "
-                + $"+{SkillPage.Number(FishingBigFishSettings.BaitBigOnePerStar.Value)} points per bait star.";
-            float fillet = FishingCatchSettings.FilletLevelsPerFishLevel.Value;
-            return fillet > 0f ? tip + $" Each level above 1 adds {SkillPage.Number(fillet)} Cooking levels to its fillets' star roll." : tip;
-        }
+        private static string BigOneTip() =>
+            $"Chance a hooked fish grows a level, rolled again up to level {FishInfo.MaxNaturalLevel}: +{SkillPage.Number(FishingBigFishSettings.NightBonus.Value)}% at night.";
 
         private static string SnagTip() =>
             $"Once per cast, after {SkillPage.Duration(FishingCatchSettings.SnagWait.Value)} in the water without a bite, the line can catch a find from the biome's snag list. "

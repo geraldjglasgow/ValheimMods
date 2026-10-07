@@ -3,10 +3,9 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Foraging's page in the info pane: the extra yield and star odds of a pick at the player's level (and at a plant's
-    /// best time), the experience per pick, and the discovery and sweep perks. The numbers are the synced settings read
-    /// as the features read them: the game's extra-item roll (skill factor times the chance <see cref="ForagePick"/>
-    /// sets), <see cref="StarOdds"/> at the level <see cref="ForageMarks"/> sends, <see cref="ForageXp"/>'s scale and
+    /// Foraging's page in the info pane: the extra yield of a pick at the player's level, the experience per pick, and
+    /// the discovery and sweep perks. The numbers are the synced settings read as the features read them: the game's
+    /// extra-item roll (skill factor times the chance <see cref="ForagePick"/> sets), <see cref="ForageXp"/>'s scale and
     /// <see cref="ForageSweep.Radius"/>.
     /// </summary>
     public static class ForagingPage
@@ -23,7 +22,6 @@ namespace GrindstoneSkills
                 return;
             }
             Yield(page);
-            StarLines(page);
             Experience(page);
             Perks(page);
         }
@@ -33,18 +31,6 @@ namespace GrindstoneSkills
             float atHundred = Mathf.Clamp01(ForagePerkSettings.ExtraYieldAt100.Value / 100f);
             page.Line($"Extra yield {SkillPage.Percent(page.Factor * atHundred)}", "Extra yield",
                 $"Chance that a pick gives one more. {SkillPage.Percent(atHundred)} at level 100.");
-        }
-
-        private static void StarLines(SkillPage page)
-        {
-            float level = page.Level;
-            page.Line($"Stars on a pick {StarChance(level)}", "Stars",
-                $"Wild food (berries, mushrooms, herbs) rolls 0 to 3 stars, as dishes do: better dishes, more food eaten raw. Now {Odds(level)}.");
-            float bonus = Mathf.Max(0f, ForagePerkSettings.BestTimeLevels.Value);
-            if (bonus <= 0f)
-                return;
-            page.Line($"Stars at best time {StarChance(level + bonus)}", "best time",
-                $"Each starred plant has one (day, night, rain or dry weather), shown when you point at it. Picked then, it rolls stars as if you were {SkillPage.Number(bonus)} levels higher: {Odds(level + bonus)}.");
         }
 
         private static void Experience(SkillPage page)
@@ -76,14 +62,6 @@ namespace GrindstoneSkills
             if (level >= unlock)
                 return $"{What} {SkillPage.Number(ForageSweep.Radius(level))} m of it. {SkillPage.Number(reachAt100)} m at level 100.";
             return $"{What} {SkillPage.Number(ForageSweep.Radius(unlock))} m of it at level {unlock:0}, {SkillPage.Number(reachAt100)} m at level 100.";
-        }
-
-        private static string StarChance(float level) => SkillPage.Percent(StarOdds.ChanceAtLeast(level, 1));
-
-        private static string Odds(float level)
-        {
-            float[] odds = StarOdds.At(level);
-            return $"1★ {SkillPage.Percent(odds[1])}, 2★ {SkillPage.Percent(odds[2])}, 3★ {SkillPage.Percent(odds[3])}";
         }
     }
 }

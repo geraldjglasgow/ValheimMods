@@ -12,7 +12,7 @@ namespace GrindstoneSkills
     {
         public const string PluginGuid = "com.GrindstoneSkills";
         public const string PluginName = "GrindstoneSkills";
-        public const string PluginVersion = "0.14.1";
+        public const string PluginVersion = "0.15.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -22,6 +22,7 @@ namespace GrindstoneSkills
             Log = Logger;
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             Settings.Initialize(Synced);
+            RemovedSettings.Forget(Config);
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());

@@ -5,7 +5,7 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Section 5: Cooking experience on top of the game's own amounts. With Tier Scaling off, Discovery Multiplier 1
-    /// and Experience Multiplier 1, a player earns exactly what the game gives (plus the trash and fermenter credit).
+    /// and Experience Multiplier 1, a player earns exactly what the game gives (plus the fermenter credit).
     /// Synced.
     /// </summary>
     public static class ExperienceSettings

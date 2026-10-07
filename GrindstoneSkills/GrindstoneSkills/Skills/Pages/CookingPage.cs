@@ -1,27 +1,20 @@
-using System;
 using UnityEngine;
 
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Cooking's page in the info pane: the star odds at the player's level, the kitchen perks with the game's own
-    /// craft-time bonus, how experience scales, and the star, ingredient and trash-filter features. The numbers come
-    /// from the helpers the features themselves use (<see cref="StarOdds.At"/>, <see cref="Perks"/>,
-    /// <see cref="StarBonus"/>) at the player's own Cooking level, the level a cook's dishes and kitchen use.
+    /// Cooking's page in the info pane: the kitchen perks with the game's own craft-time bonus, the extra food and
+    /// saved ingredients, and how experience scales. The numbers come from the helpers the perks themselves use
+    /// (<see cref="Perks"/>) at the player's own Cooking level, the level a cook's kitchen uses.
     /// </summary>
     public static class CookingPage
     {
-        private const string Star = FilterText.Star;
-
         public static void Write(SkillPage page)
         {
-            page.About = "Better dishes and a faster kitchen. Trained by cooking.";
-            float[] odds = StarOdds.At(CookLevel.Effective(page.Level, 0f));
-            page.Line($"Star odds: 1{Star} {P(odds[1])}, 2{Star} {P(odds[2])}, 3{Star} {P(odds[3])}");
+            page.About = "A faster, more generous kitchen. Trained by cooking.";
             KitchenLines(page);
             YieldLines(page);
             ExperienceLines(page);
-            Features(page);
         }
 
         private static void KitchenLines(SkillPage page)
@@ -58,7 +51,7 @@ namespace GrindstoneSkills
                     "At every kitchen: cooking stations, oven, cauldron, mead cauldron and prep table. Replaces the game's own bonus food there.");
             if (KitchenSettings.IngredientSaveChance.Value > 0f)
                 page.Line($"Ingredient saved: {P(Perks.IngredientSaveChance(level))}", "Ingredient saved",
-                    "Chance per craft at the cauldron, mead cauldron or prep table to get one used ingredient back, stars and all.");
+                    "Chance per craft at the cauldron, mead cauldron or prep table to get one used ingredient back.");
         }
 
         private static void ExperienceLines(SkillPage page)
@@ -82,44 +75,6 @@ namespace GrindstoneSkills
         {
             float reference = Mathf.Max(1f, ExperienceSettings.TierReferenceValue.Value);
             return $"Experience grows with a dish's health + stamina + eitr: x1 up to {N(reference)}, x{N(tierMax)} from {N(reference * tierMax)}.";
-        }
-
-        private static void Features(SkillPage page)
-        {
-            page.Perk("Starred dishes", 0f, DishTip());
-            float perStar = Mathf.Max(0f, OddsSettings.IngredientLevelsPerStar.Value);
-            if (perStar > 0f)
-                page.Perk("Starred ingredients", 0f, IngredientTip(page.Level, perStar));
-            if (KitchenSettings.TrashFilter.Value)
-                page.Perk("Trash filter", 0f, FilterTip());
-        }
-
-        private static string DishTip() =>
-            $"A dish rolls 0 to 3 stars as it finishes, from the cook's level; meads take their base's stars. " +
-            $"Eaten, 1{Star}/2{Star}/3{Star} give {PerStar(StarBonus.Food)} health, stamina and eitr and last {PerStar(StarBonus.Duration)} longer.";
-
-        /// <summary>A bonus for 1, 2 and 3 stars: "+10%/+20%/+35%".</summary>
-        private static string PerStar(Func<int, float> bonus)
-        {
-            string[] parts = new string[Stars.Max];
-            for (int stars = 1; stars <= Stars.Max; stars++)
-                parts[stars - 1] = "+" + P(bonus(stars));
-            return string.Join("/", parts);
-        }
-
-        private static string IngredientTip(float level, float perStar)
-        {
-            float best = StarOdds.At(CookLevel.Effective(level, Stars.Max))[Stars.Max];
-            return $"Each star your ingredients carry on average adds {N(perStar)} levels to the dish's roll, even past 100. " +
-                $"With 3{Star} ingredients your 3{Star} odds are {P(best)}.";
-        }
-
-        /// <summary>The tip box localizes its text, so the key names follow the player's bindings, as the kitchen's hover does.</summary>
-        private static string FilterTip()
-        {
-            string key = ZInput.IsNonClassicFunctionality() && ZInput.IsGamepadActive() ? "$KEY_AltKeys + $KEY_Use" : "$KEY_AltPlace + $KEY_Use";
-            return $"Set on each kitchen with {key}: it keeps {FilterText.Keeps(0)}, {FilterText.Keeps(1)}, {FilterText.Keeps(2)} " +
-                $"or {FilterText.Keeps(Stars.Max)}. Dishes below it are thrown away as they finish.";
         }
 
         private static string P(float share) => SkillPage.Percent(share);

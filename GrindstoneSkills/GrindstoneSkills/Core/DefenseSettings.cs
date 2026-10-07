@@ -49,7 +49,7 @@ namespace GrindstoneSkills
                 "Health added to your base health (the game's 25) at level 100, food or no food.",
                 acceptableValues: Settings.UpTo(200f));
             FoodHealth = config.Bind(Section, "Food Health At 100", 10f,
-                "Percent more health from the food you have eaten, at level 100, counted after cooking stars.",
+                "Percent more health from the food you have eaten, at level 100.",
                 acceptableValues: Settings.UpTo(100f));
             DamageReduction = config.Bind(Section, "Damage Reduction At 100", 10f,
                 "Percent less damage taken at level 100, from every source, after armour and blocking.",

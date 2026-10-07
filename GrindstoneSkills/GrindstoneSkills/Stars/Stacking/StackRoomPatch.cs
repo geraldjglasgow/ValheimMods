@@ -4,12 +4,11 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Room for a dish counts only stacks with its own stars. Inventory.CanAddItem adds the free room of every stack
+    /// Room for an egg counts only stacks with its own stars. Inventory.CanAddItem adds the free room of every stack
     /// with the item's name (FindFreeStackSpace ignores quality) to the room in empty slots, while AddItem only fills
     /// stacks of the same quality (FindFreeStackItem). With a full inventory and room in a 1-star stack, the player's
-    /// auto pickup would keep pulling a 0-star dish in and failing with "no room". For kitchen items the stack room is
-    /// counted in stacks with the same name, quality and world level only. The crafting room check
-    /// (CanAddItem of the recipe's prefab, a 0-star item) goes through here too.
+    /// auto pickup would keep pulling a 0-star egg in and failing with "no room". For star items the stack room is
+    /// counted in stacks with the same name, quality and world level only.
     /// </summary>
     [HarmonyPatch(typeof(Inventory), nameof(Inventory.CanAddItem), typeof(ItemDrop.ItemData), typeof(int))]
     public static class StackRoomPatch
@@ -17,7 +16,7 @@ namespace GrindstoneSkills
         [HarmonyPostfix]
         private static void Postfix(Inventory __instance, ItemDrop.ItemData item, int stack, ref bool __result)
         {
-            if (!__result || !Kitchen.IsKitchenItem(item))
+            if (!__result || !Stars.IsStarItem(item))
                 return;
             __result = Room(__instance, item) >= (stack <= 0 ? item.m_stack : stack);
         }

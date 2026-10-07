@@ -16,8 +16,6 @@ namespace GrindstoneSkills
         public static ConfigEntry<int> Capacity { get; private set; }
         public static ConfigEntry<float> Radius { get; private set; }
         public static ConfigEntry<float> GrowthSpeed { get; private set; }
-        public static ConfigEntry<float> StarLevels { get; private set; }
-        public static ConfigEntry<bool> KitchenTrash { get; private set; }
         public static ConfigEntry<string> ExtraItems { get; private set; }
 
         public static void Initialize(SyncedConfiguration config)
@@ -35,9 +33,7 @@ namespace GrindstoneSkills
             Capacity = config.Bind(Section, "Compost Capacity", 100,
                 "The most compost points a bin holds; it stops composting when full.", acceptableValues: new AcceptableValueRange<int>(1, 10000));
             ExtraItems = config.Bind(Section, "Compost Items", "Entrails, BoneFragments",
-                "Item prefab names that compost besides food and anything that carries stars, separated by commas.");
-            KitchenTrash = config.Bind(Section, "Kitchen Trash Compost", true,
-                "A dish a kitchen's trash filter throws away within 20 m of a compost bin becomes a point of compost in the nearest one.");
+                "Item prefab names that compost besides food, what kitchens make, and the crops and seeds kitchens use (and their flour), separated by commas.");
         }
 
         private static void BindEffect(SyncedConfiguration config)
@@ -46,8 +42,6 @@ namespace GrindstoneSkills
                 "A bin fertilizes growing crops within this many metres, one point of compost each.", acceptableValues: new AcceptableValueRange<float>(1f, 50f));
             GrowthSpeed = config.Bind(Section, "Compost Growth Speed", 25f,
                 "Percent faster growth for a fertilized crop.", acceptableValues: Settings.UpTo(500f));
-            StarLevels = config.Bind(Section, "Compost Star Levels", 10f,
-                "Levels added to a fertilized crop's star roll.", acceptableValues: Settings.UpTo(50f));
         }
     }
 }

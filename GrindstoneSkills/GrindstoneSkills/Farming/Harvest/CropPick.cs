@@ -13,22 +13,21 @@ namespace GrindstoneSkills
     /// <item>afterwards: "Giant turnip!" for a giant, seed return (<see cref="SeedReturn"/>) and auto-replant
     /// (<see cref="AutoReplant"/>), at the picker's level.</item>
     /// </list>
-    /// The owner gives the drops their stars (<see cref="CropSpawn"/>). Wild crops and crops that ripened before Farming
-    /// get the yield and replant perks too, only no stars. Forage is the Foraging module's.
+    /// The owner drops a giant's extra crop (<see cref="GiantDrop"/>). Wild crops and crops that ripened before Farming
+    /// get the yield and replant perks too. Forage is the Foraging module's.
     /// </summary>
     [HarmonyPatch(typeof(Pickable), nameof(Pickable.Interact))]
     public static class CropPick
     {
         /// <summary>
-        /// The pick in progress. Stars and giant are read before the game's pick: when the picker owns the crop, the game
-        /// runs RPC_Pick inside Interact and the crop's ZDO is gone by the postfix.
+        /// The pick in progress. Giant is read before the game's pick: when the picker owns the crop, the game runs
+        /// RPC_Pick inside Interact and the crop's ZDO is gone by the postfix.
         /// </summary>
         public sealed class State
         {
             public Pickable Pickable;
             public CropPlant Crop;
             public float Chance;
-            public int Stars;
             public bool Giant;
             public bool ScopeOpened;
             public bool Finished;
@@ -47,7 +46,7 @@ namespace GrindstoneSkills
             __state = new State
             {
                 Pickable = __instance, Crop = crop, Chance = __instance.m_maxLevelBonusChance,
-                Stars = CropKeys.Stars(__instance.m_nview), Giant = CropKeys.Giant(__instance.m_nview),
+                Giant = CropKeys.Giant(__instance.m_nview),
             };
             __instance.m_maxLevelBonusChance = Mathf.Clamp01(FarmingPerkSettings.BonusYieldAt100.Value / 100f);
             __state.ScopeOpened = FarmXp.Begin(crop, Utils.GetPrefabName(__instance.gameObject), __state.Giant);
@@ -86,7 +85,7 @@ namespace GrindstoneSkills
         {
             if (state.Giant)
                 FarmCallout.Show(pickable.transform.position, "Giant " + state.Crop.CropName().ToLowerInvariant() + "!");
-            SeedReturn.Roll(player, pickable, state.Crop, state.Stars);
+            SeedReturn.Roll(player, pickable, state.Crop);
             AutoReplant.After(player, pickable, state.Crop);
         }
 

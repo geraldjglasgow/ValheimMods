@@ -12,8 +12,6 @@ namespace GrindstoneSkills
         // The cast.
         /// <summary>The angler's Fishing level at the cast.</summary>
         public float Level;
-        /// <summary>Stars of the bait on the hook.</summary>
-        public int BaitStars;
         /// <summary>The float touched the water and the senses have read it.</summary>
         public bool Landed;
         /// <summary>Seconds in the water without a fish on the line, towards a snag.</summary>
@@ -46,11 +44,10 @@ namespace GrindstoneSkills
         public static FloatFight Of(FishingFloat fishingFloat) =>
             fishingFloat == null ? null : fishingFloat.GetComponent<FloatFight>();
 
-        public static FloatFight Attach(FishingFloat fishingFloat, float level, int baitStars)
+        public static FloatFight Attach(FishingFloat fishingFloat, float level)
         {
             FloatFight fight = fishingFloat.gameObject.AddComponent<FloatFight>();
             fight.Level = level;
-            fight.BaitStars = baitStars;
             return fight;
         }
 

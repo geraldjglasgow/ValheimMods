@@ -18,8 +18,6 @@ namespace GrindstoneSkills
         {
             LockConfiguration = config.BindLocking(General, "Lock Configuration", true,
                 "Server only. When on, every player uses the server's values for this file and cannot override them locally.");
-            StarSettings.Initialize(config);
-            OddsSettings.Initialize(config);
             KitchenSettings.Initialize(config);
             ExperienceSettings.Initialize(config);
             DeathSettings.Initialize(config);

@@ -7,7 +7,7 @@ namespace GrindstoneSkills
     /// Feeding, on the bin's owner every 10 s: each growing, healthy crop within Compost Radius that is not fertilized yet
     /// costs one point and is marked fertilized (<see cref="PlantKeys.SetFed"/>): directly when this machine owns it, else
     /// through <see cref="Keys.RpcFertilize"/> to its owner. A fertilized crop grows Compost Growth Speed percent faster
-    /// (<see cref="GrowTime"/>) and rolls Compost Star Levels better when it ripens (<see cref="CropRoll"/>).
+    /// (<see cref="GrowTime"/>).
     /// </summary>
     public static class CompostFeed
     {

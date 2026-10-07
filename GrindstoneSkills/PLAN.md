@@ -7,13 +7,8 @@ assembly (`assembly_valheim.dll`, build 25527674, decompiled into the scratch fo
 
 ## Decisions so far (user, 2026-09-27)
 
-- **Whose skill counts: the cook's.** The dish carries a grade rolled from the cook's level, and anyone who eats it
-  gets the bonus. The cook's level also improves the kitchen itself (speed, burning, yield).
-- **Grades are stars, 0 to 3.** 0 stars is exactly vanilla, so every existing dish and anything made without the
-  skill is 0 stars. Stars are rolled, not fixed by level; without the roll the trash filter would be pointless.
-- **Trash filter on every station:** a minimum star count per station; dishes below it are thrown away.
-- **Meads carry stars:** the mead base's star passes through the fermenter into every mead it makes.
-- **Ingredient stars improve the odds** of the dish made from them.
+- **Whose skill counts: the cook's.** The cook's level improves the kitchen itself (speed, burning, yield).
+- Item stars and the trash filter were removed (0.13.0 rolls off, 0.15.0 code gone); only eggs show stars.
 - **Name: GrindstoneSkills** (first Grindstone, renamed the same day). No Thunderstore package uses either name (all
   12,047 Valheim packages checked 2026-09-27).
 - **Skill loss on death is configurable (user, 2026-09-27):** a percent of each level lost (default 5, the game's
@@ -56,94 +51,46 @@ It comes from `InventoryGui.m_craftBonusChance`/`m_craftBonusAmount`, which the 
 So at kitchens both fields are replaced for the one call (`OnInteract`, `DoCrafting`) and restored afterwards
 (`Core/ExtraFood.cs`).
 
-## Which items carry stars
+## Kitchen items
 
-- **"Kitchen items" are discovered, not listed; the game marks its kitchens itself:**
+- **"Kitchen items" are discovered, not listed; the game marks its kitchens itself (`Core/Kitchen.cs`,
+  `KitchenDiscovery`):**
   - the outputs of every `CookingStation` whose `m_skill` is Cooking;
   - the outputs of every recipe at a `CraftingStation` whose `m_craftingSkill` is Cooking;
   - the outputs of every `Fermenter` conversion.
-  - A modded kitchen that sets the same fields is picked up too.
-- **This includes intermediates:** mead bases, dough and unbaked pies get a star when crafted. The star only changes
-  food values on edible items; on an intermediate it feeds into the next step (see "Ingredient stars").
-- **Discovery:** done once when `ObjectDB` is ready, like FeastMaster discovers foods.
+  - A modded kitchen that sets the same fields is picked up too. Feasts and unstackable items are left out.
+- **This includes intermediates:** mead bases, dough and unbaked pies. For the experience tier an intermediate counts
+  as the food value of what it becomes. The compost bin takes every kitchen item.
+- **Discovery:** done once after `ZNetScene` and `ObjectDB` are ready, like FeastMaster discovers foods.
 
-## Stars
+## Egg stars (`Stars/`, `Core/Stars.cs`)
 
-- **Storage:** the item's own quality field, `m_quality = stars + 1`, so 1 means 0 stars.
-  - Stacks already separate by quality: `Inventory.FindFreeStackItem` matches name, quality and world level. Every
-    mod that stacks through the game's inventory therefore keeps star counts apart, OpenKeep included.
-  - Quality is saved with the item, in inventories and on the ground (the item's ZDO).
-  - The tooltip hides quality when `m_maxQuality` is 1, which is true for all food. The upgrade tab never offers a
-    kitchen item, since its quality already exceeds its maximum.
-  - **Checked in the game code 2026-09-27:**
-    - Recipes consume with `itemQuality = -1` (any quality), and stations and fermenters accept items by name.
-      Nothing clamps quality to `m_maxQuality`.
-    - Two things needed patches:
-      - `Player.HaveRequirementItems` counts each ingredient as the highest count of any single quality from 1 to
-        `m_maxQuality`. For food that is quality 1 only, so starred ingredients would not count and a stew could
-        not be made from 1★ meat. A scope makes quality-1 counts of kitchen items count every quality.
-      - `ItemData.IsSameType` compares quality only when `m_maxQuality > 1`, so dragging a 1★ stack onto a 3★ one
-        would merge them. It is patched for kitchen items, and `InventoryGrid.DropItem` swaps them instead.
-    - The alternative, stars in item custom data, would count ingredients correctly with no patch, but every merge
-      path would then have to be patched instead, including other mods' own.
-- **Display:** the game's star image in a corner of the item icon (inventory, containers, hotbar), a tooltip line
-  with the stars and the boosted values, and stars in the hover name on the ground.
-- **Rolled once, where the dish is finished:**
-  - cauldron, mead cauldron, prep table: at crafting;
-  - cooking stations and oven: when the dish turns done;
-  - fermenter: no roll; every mead takes its base's star.
-
-### Bonuses (defaults, synced and lockable)
-
-| Stars | Health, stamina, eitr | Duration |
-| --- | --- | --- |
-| 0 | vanilla | vanilla |
-| 1 | +10% | +10% |
-| 2 | +20% | +20% |
-| 3 | +35% | +30% |
-
-### Odds by effective level (defaults, synced and lockable)
-
-Effective level is the cook's level plus the ingredient bonus. Odds blend linearly between rows. Rows above 100
-are reachable only with starred ingredients.
-
-| Effective level | 0 | 1 | 2 | 3 |
-| --- | --- | --- | --- | --- |
-| 0 | 90% | 10% | 0% | 0% |
-| 25 | 45% | 40% | 15% | 0% |
-| 50 | 15% | 40% | 35% | 10% |
-| 75 | 5% | 20% | 45% | 30% |
-| 100 | 0% | 10% | 40% | 50% |
-| 130 | 0% | 0% | 25% | 75% |
-
-### Ingredient stars
-
-- **Bonus:** the average stars of the consumed ingredients that can carry stars adds 10 effective levels per star.
-  Ingredients that never carry stars (raw meat, mushrooms) are left out of the average instead of counting as 0,
-  so a stew is not diluted by its vegetables.
-- **At kitchen crafting stations:** the consumed stars are recorded while `DoCrafting` runs. A prefix sets a
-  recording scope, the removal patch notes the stars it takes, and a postfix rolls.
-- **At stations:** raw inputs carry no stars. Inputs that do (dough, unbaked pies) count the same way, one input
-  per slot.
-- **Which stacks a recipe takes:** a per-player setting (unsynced), "lowest stars first" (default, protects your best
-  food) or "highest stars first" (best result). It applies to `Inventory.RemoveItem` by name during crafting.
-  **To check:** OpenKeep's craft-from-containers pull follows the same order.
+- **Eggs are the only items that show stars.** The game already keeps the laying hen's level in the egg's quality (a
+  one-star hen lays quality 2 eggs, which hatch one-star chicks) but shows it nowhere, since eggs have a maximum
+  quality of 1. Husbandry registers every item with `EggGrow` while it is on (`Husbandry/Yield/YieldStarItems`).
+- **Display:** a column of the game's creature star down the slot's left edge (inventory, containers, hotbar; each
+  player's own "Stars On Icons"), a tooltip line and title with the stars, and stars in the hover name on the ground.
+- **Stacking and recipes, checked in the game code 2026-09-27:**
+  - Stacks already separate by quality: `Inventory.FindFreeStackItem` matches name, quality and world level.
+  - `ItemData.IsSameType` compares quality only when `m_maxQuality > 1`, so dragging a 1★ egg stack onto a 3★ one
+    would merge them. It is patched for star items, and `InventoryGrid.DropItem` swaps them instead.
+  - `Inventory.CanAddItem` counts room in stacks of any quality; for star items only stacks with the same stars count.
+  - `Player.HaveRequirementItems` counts each ingredient as the highest count of any single quality from 1 to
+    `m_maxQuality`, so starred eggs would not count. A scope makes quality-1 counts of star items count every quality.
+    Recipes consume with `itemQuality = -1` (any quality).
+- **Colours:** one star bronze, two silver, three gold (`StarText.Tier`, the icon star's face tinted the same).
+- **Other mods' star items:** `StarsApi.AddStarItem` (below) makes any stackable item a star item with all of the
+  above. Old starred food and crops keep their quality (no cleanup since 2026-10-06), so Hearthhold reads them as stars.
+- **Removed settings (`Core/RemovedSettings.cs`):** at startup the .cfg's orphaned entries (settings no version binds
+  any more) are dropped before the file is first written, so removed settings leave players' files.
 
 ## Cooking stations and oven
 
 - **Placing:** the cook's client adds the raw item through our own RPC on the station's `ZNetView`, carrying the
-  item, the cheated flag, the input's stars and the cook's level. The owner runs the vanilla `RPC_AddItem`, finds
-  the slot it filled, and writes our per-slot keys: cook player ID, cook level, input stars. A vanilla client's
-  plain add still works and counts as level 0 with no input stars.
-- **Finishing (on the owner):** when a slot turns Done, roll the star from the stored level and input stars, then
-  write it to the slot.
-  - At or above the station's minimum: the dish stays.
-  - Below the minimum: the slot is cleared with a small effect for everyone and nothing drops.
-  - A trashed dish is never taken off, so the game's 0.6 take-off XP would be lost. Instead the cook gets that
-    share by routed RPC. If the cook is offline, it is lost.
-- **Taking off:** vanilla `RPC_RemoveDoneItem` calls `SpawnItem(name, slot, ...)` on the owner; a patch sets the
-  spawned item's quality from that slot's star. The game's bonus-yield dish comes from the same slot, so it gets the
-  same star. Burnt items (coal) get none. Our slot keys clear when the slot does.
+  item, the cheated flag and the cook's level. The owner runs the vanilla `RPC_AddItem`, finds the slot it filled,
+  and writes our per-slot key: the cook's level. A vanilla client's plain add still works and counts as level 0.
+- **Taking off:** `OnInteract` runs with GrindstoneSkills' Extra Food chance and amount (see "Extra food"). Our slot
+  key clears when the slot does.
 - **Vanilla bug:** `SpawnItem` records "crafted by" from the owner's `Player.m_localPlayer`, which is wrong in
   multiplayer. Nothing here depends on it.
 - **Cooking speed and burn window:** per slot, from the stored cook level.
@@ -158,52 +105,16 @@ are reachable only with starred ingredients.
 
 ## Kitchen crafting stations: cauldron, mead cauldron, prep table
 
-- **Crafting runs on the cook's own client** (`InventoryGui.DoCrafting`), so everything is local: level, roll,
-  filter, XP.
-- **Every crafted item rolls on its own**, including the game's bonus item. Vanilla multi-crafting adds the whole
-  amount in one `AddItem`, so the postfix takes the crafted stack back out and re-adds it split by star, dropping
-  trashed ones.
-- **Trashing** uses up the ingredients and shows a short message such as "Trashed: 1★ Deer stew".
+- **Crafting runs on the cook's own client** (`InventoryGui.DoCrafting`), so everything is local: level, extra
+  food, XP.
 - **The ingredient-save perk** rolls here (see "Kitchen perks").
 
 ## Fermenter
 
-- **Adding the base:** the cook's client adds it through our own RPC carrying the base's stars and the cook's level.
-  The owner runs the vanilla add and stores both keys on the fermenter.
-- **Tapping:** `DelayedTap` spawns `m_producedItems` meads on the owner; a patch sets their quality from the stored
-  star, then the keys clear.
-- **No filter here.** The cauldron's filter already covers bases.
+- **Adding the base:** the cook's client adds it through our own RPC carrying the cook's level. The owner runs the
+  vanilla add and stores the level on the fermenter.
+- **Tapping:** when the owner's `RPC_Tap` taps, the key clears.
 - **Speed:** fermenting speed comes from the stored level of whoever added the base.
-
-## Trash filter
-
-- **Stored on the piece:** a minimum star count 0 to 3 in the station's ZDO, on every kitchen (cooking stations,
-  oven, cauldron, mead cauldron, prep table). Shared by everyone and persistent. New stations default to "keep all".
-- **Setting it:** the game's alternative interact (Shift+E by default, as the player bound it) cycles Keep all,
-  1★ and up, 2★ and up, 3★ only.
-  - Vanilla `CookingStation.Interact` ignores `alt` today, so Shift+E is free there.
-  - Stations that use an add-food switch take the key through the switch's hover.
-  - The change goes to the owner by RPC and is checked against ward access (`PrivateArea.CheckAccess`).
-- **Hover text:** the setting, plus the hovering player's own chance to keep a dish, for example
-  "Keeps 3★ only (your chance 42%)".
-- **Server switch:** turns the filter off entirely; stations then keep everything.
-
-## Eating
-
-- **Remembering the stars:** the game saves only each active food's name and time left, and on load rebuilds it
-  from the item prefab (`Player.Load`). So the star of each active food lives in the player's own
-  `m_customData` (saved with the character) under our key, one entry per food prefab.
-- **Stat bonus:** a postfix on `Player.GetTotalFoodValue` adds each food's star share of `m_health`, `m_stamina` and
-  `m_eitr`.
-  - This scales whatever the game computed, so it composes with FeastMaster's per-food values and its no-degrade
-    switch rather than fighting them.
-  - `UpdateFood` recomputes the per-food values from the base every second, so they are never written directly.
-- **Duration bonus:** at eating, `m_time = m_foodBurnTime * (1 + bonus)`. Vanilla's curve clamps
-  `m_time / m_foodBurnTime` to 1, so the dish stays at full strength for its bonus time, then declines as usual.
-  **To check:** the HUD's food timers and FeastMaster's timer display with `m_time` above the burn time.
-- **Re-eating:** vanilla blocks the same food until it is mostly used up. When it is eaten again, the new dish's
-  stars replace the old ones.
-- **Messages and tooltips:** the eat message and the item tooltip show the boosted values.
 
 ## Kitchen perks (defaults at level 100, linear from 0, synced and lockable)
 
@@ -220,9 +131,7 @@ These are in addition to what the game already gives (shorter craft time):
 - **Sources: the game's own.**
   - 0.4 for placing raw food and 0.6 for taking a dish off, for the player at the station;
   - 1 per item crafted at a kitchen crafting station.
-- **Additions:**
-  - A trashed dish credits the cook with the take-off share (see "Cooking stations and oven").
-  - Tapping a fermenter gives the tapper a small amount; the game gives nothing.
+- **Addition:** tapping a fermenter gives the tapper a small amount; the game gives nothing.
 - **Scaled by tier:** a scoped multiplier on `RaiseSkill` while the station interaction or `DoCrafting` runs. XP
   grows with the dish's total food value (health + stamina + eitr). Items without food value (bases, dough, unbaked
   pies) use the value of what they become. Late-biome food trains the skill much faster than cooked meat, while a
@@ -249,12 +158,11 @@ These are in addition to what the game already gives (shorter craft time):
 
 - **Required on the server and on every client.** Settings sync through Charter, and any client may own a station.
 - **Persistent state lives where the game replicates it:**
-  - slot and fermenter keys, and the filter, in the piece's ZDO;
-  - stars in the item's quality;
-  - active-food stars in the player's custom data.
+  - slot and fermenter keys in the piece's ZDO;
+  - egg stars in the item's quality (the game's own).
 - **Cook level:** sent with the add RPC. Skills are client-side in vanilla too, so this trusts the client no less
   than the game does.
-- **Transient RPCs:** add-with-stars, set-filter and the XP credit. Every skill's XP credit (cooking, woodcutting,
+- **Transient RPCs:** the kitchen adds with the cook's level, and the XP credits. Every skill's XP credit (woodcutting,
   husbandry) goes to the receiving player's machine alone (`PlayerIds.PeerOf`: the owner of their character's ZDO),
   and to everybody only when the sender has no such ZDO. Callouts (mine, wood, fish, herd) go only to the players
   whose character stands near the spot (`NearbyRpc`). Object RPCs on plants, pickables, chunked rocks and tameables
@@ -262,20 +170,19 @@ These are in addition to what the game already gives (shorter craft time):
 
 ## Settings
 
-- **Synced and lockable (gameplay):** star bonuses, odds table, ingredient bonus per star, kitchen perk values,
-  XP rates and multiplier, discovery bonus, filter on/off, skill loss on death and whether progress is lost.
-- **Per player (unsynced):** star icons on/off, and ingredient order (lowest or highest first). The filter uses the
-  game's own alternative interact; the icon position is fixed.
+- **Synced and lockable (gameplay):** kitchen perk values (4 - Kitchen), XP rates and multiplier, discovery bonus
+  (5 - Experience), skill loss on death and whether progress is lost (6 - Death).
+- **Per player (unsynced):** egg stars on icons on/off (7 - Display). The icon position is fixed.
 
 ## Compatibility
 
-- **FeastMaster:** it sets base values; GrindstoneSkills scales on top at `GetTotalFoodValue`. Test both together,
-  including the no-degrade switch and auto-eat.
-- **OpenKeep:** quick stack, sort, top-up and craft-from-containers must keep star counts apart and follow the
-  ingredient order. Quality-based stacking should give this for free; verify in game.
+- **FeastMaster:** it sets base values; the kitchen perks speed up its cook and fermenting times, and Defense's Food
+  Health scales on top at `GetTotalFoodValue`. Test both together, including the no-degrade switch and auto-eat.
+- **OpenKeep:** quick stack, sort, top-up and craft-from-containers must keep egg star counts apart.
+  Quality-based stacking should give this for free; verify in game.
 - **Mods that change the game's Cooking skill** (XP rates, bonus yield) stack with GrindstoneSkills. Mods that add a
   cooking skill of their own run beside it without clashing, since GrindstoneSkills adds no cooking skill.
-- **Mods that show item quality:** they may show a quality number on food. Acceptable; note it in the README if seen.
+- **Mods that show item quality:** they may show a quality number on eggs. Acceptable; note it in the README if seen.
 
 ## Own names
 
@@ -288,11 +195,9 @@ These are in addition to what the game already gives (shorter craft time):
 
 Planned units, each within the size limits:
 
-- `Stars/`: quality mapping, odds, display.
+- `Stars/`: egg stars: display, stacking, recipe counting.
 - `Kitchen/`: stations, cauldron, fermenter and perks, each separate.
-- `Filter/`: ZDO key, key handling, hover text.
-- `Eating/`: custom data, total-value postfix, duration.
-- `Experience/`: tier multiplier, trash credit, fermenter XP, discovery.
+- `Experience/`: tier multiplier, fermenter XP, discovery.
 - `Sailing/`: skill registration and cheats, the three perks, experience; `Sailing/Lookout/` and `Sailing/WindCall/` the two actives.
 - `Fishing/`: `Core` (angler, float scope, catch), `Fight`, `Bites`, `BigFish`, `Records`, `Rewards`, `Experience`.
 
@@ -300,47 +205,36 @@ Planned units, each within the size limits:
 
 - **Farming** (106) and **Crafting** (107) are game skills too, and the next modules, each with its own enable
   switch. Neither uses its skill much in the code yet.
-- **Party synergy:** a feast bonus when party members eat the same cook's 3-star dish.
 - **Anti-grind:** diminishing XP for the same dish within a day, if discovery plus tier scaling are not enough.
 
 ## Test checklist (LocalTesting profile, then a dedicated server with two clients)
 
-- [ ] A character's existing Cooking level drives the odds; the game's own XP and bonus yield still work.
-- [ ] Station: stars rolled at done time; a second player owning the station changes nothing; filter trashes below
-      the minimum for everyone; hover chance matches the odds table.
-- [ ] Cauldron, mead cauldron, prep table: multi-craft and the bonus item split by star; trashed items vanish; ingredient order setting honoured; ingredient stars
-      raise the odds.
-- [ ] Fermenter: all meads from a base share its star; the star survives the owner leaving mid-ferment.
-- [ ] Stars stack apart in inventory, chests, OpenKeep quick stack and on the ground; survive relog and item drop.
-- [ ] Eating: the bonus shows in max health, stamina and eitr; the duration bonus holds full strength, then declines;
-      both survive relog.
-- [ ] XP credited to the cook, not the station owner; offline cook loses it quietly; discovery bonus once per dish.
+- [ ] A character's existing Cooking level drives the kitchen perks; the game's own XP and bonus yield still work.
+- [ ] Station: cooking speed and burn window follow the cook's level; a second player owning the station changes
+      nothing.
+- [ ] Cauldron, mead cauldron, prep table: extra food at the configured chance; the ingredient save per batch.
+- [ ] Fermenter: speed from the level of whoever added the base; it survives the owner leaving mid-ferment.
+- [ ] Eggs: a starred hen's eggs show their stars and stack apart in inventory, chests, OpenKeep quick stack and on
+      the ground; survive relog and item drop; count in recipes.
+- [ ] Food starred by a version before 0.13.0 turns plain when loaded and stacks with plain food; removed settings
+      are gone from the .cfg after the first start.
+- [ ] XP goes to the player at the station, not the station owner; discovery bonus once per dish.
 - [ ] Death: 0% loss with progress kept changes nothing and shows no message; 5% and on matches the game; an edited
       .cfg applies to the next death without restarting.
-- [ ] FeastMaster together: no-degrade switch and auto-eat still work, values compose.
+- [ ] FeastMaster together: no-degrade switch and auto-eat still work, cook times compose.
 
 ## Decisions made while building (2026-09-27)
 
 - **Discovery bonus:** applies to one dish per craft, not the whole batch. A first multi-craft of n earns
   n + (D - 1) dishes' worth, not n x D.
 - **Ingredient-save perk:** rolls once per batch, so a x5 multi-craft rolls five times.
-- **Raw fish carries stars.** Cleaning fish at the prep table (`Recipe_Fish1`) is a kitchen recipe, so cleaned fish
-  rolls stars, and those feed the cooking station as input stars. Settled with the Fishing module (user, 2026-09-27):
-  whole fish never carry stars, since their quality is their size (level); the fish's level adds effective levels to
-  its fillets' roll instead (see "Fishing").
-- **Feasts** (prefabs with a `Feast` or `Piece` component) never carry stars. Placing one would lose them anyway.
 - **Icon star position is fixed:** a column down the slot's left edge. There is no per-player corner setting, only
   on/off.
 - **The ★ glyph:** the game's Averia and Norse fonts lack U+2605, but their TMP fallbacks (Noto Sans/Serif JP) have
   it. Text uses ★; icons use the game's creature-star sprite (`EnemyHud` `m_baseHud`, `level_2/star`).
-- **Filter key:** the game's own alternative interact. At the cauldron, mead cauldron and prep table, Shift+E used to
-  open the crafting screen like E; now it cycles the filter.
-- **Messages are plain English** ("Trashed:", "Saved:", filter text). No localization keys yet.
-- **Known gaps (nothing is lost):**
-  - `Tombstone.EasyFitInInventory` and OpenKeep's `ReachPull` room estimate ignore quality.
-  - With a full inventory whose only room is in starred stacks of the output, a craft is refused.
-  - FeastMaster's "count food stamina only" regen option sums `food.m_stamina` directly, so it misses the star
-    bonus (a FeastMaster change, off by default).
+- **Messages are plain English** ("Saved:"). No localization keys yet.
+- **Known gap (nothing is lost):** `Tombstone.EasyFitInInventory` and OpenKeep's `ReachPull` room estimate ignore egg
+  quality.
 
 ## Sailing
 
@@ -462,6 +356,11 @@ The request: "active ability for sailing: changes the wind direction level 25. 3
 reflection: `GetApiVersion` (1), `GetShipSpeedFactor(Ship)` (the helmsman's top speed factor), `GetExploreRadiusFactor`,
 `GetAbilities` (unlocked ids: `windcall`, `lookout`), and per id `GetAbilityName`, `GetAbilityKey`,
 `GetAbilityDescription`, `GetAbilityCooldown` (seconds left), `GetAbilityCooldownLength`. Later versions only add endpoints.
+
+Two more for Hearthhold (2026-10-06), both version 1, same rules: `SkillsApi` (`GetLocalLevel(skill)`,
+`GetLevel(Player, skill)`; a skill by panel name, the mod's own for any player through the published ZDO level, the
+game's for the local player only) and `StarsApi` (`GetMaxStars`, `AddStarItem(GameObject)`, `IsStarItem`, `GetStars`,
+`SetStars`, `GetStarText`).
 
 ### Settings
 
@@ -944,10 +843,9 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 ### The request (user, 2026-09-27)
 
 A Foraging skill for picking berries, mushrooms, flowers, thistles and the like. From the ideas offered, the user took
-the first set: stars on picks that feed Cooking, experience and extra yield through the game's own pick hook,
-first-pick experience, better odds at each plant's best time, and sweep picking. Answers: flint, stones and branches
-count, but never carry stars; stars are rolled on pick (not stored on the plant); Foraging is the mod's own skill,
-and the user makes its icon.
+the first set: experience and extra yield through the game's own pick hook, first-pick experience and sweep picking.
+Answers: flint, stones and branches count; Foraging is the mod's own skill, and the user makes its icon. Stars on
+picks and best-time picking were built too and removed (0.13.0 rolls off, 0.15.0 code gone).
 
 ### What the game already does with wild picks
 
@@ -976,56 +874,36 @@ Read from the prefab bundles (UnityPy) and the decompiled assembly, 2026-09-27:
 
 - **The skill:** a `CustomSkill` (`ForagingSkill`, identity `grindstone_foraging`, level published as
   `grindstone_foraging_level`). Icon: `assets/skill_foraging.png` embedded when present, else the Raspberry icon.
-- **The list (`GrindstoneSkills.Forage*.yml`, synced, hot reloaded):** one entry per item prefab with `stars`, `best`
-  (day, night, wet, dry; all listed must hold) and `experience` (a factor). Default: berries, mushrooms, smoke puffs,
-  fiddleheads, thistle, dandelion and royal jelly with stars; flint, stone, grausten, wood, frostwood (×0.5
-  experience), wild barley and flax without.
-- **Starred forage carries stars like dishes:** items with `stars` join `Kitchen`'s items (`ForageStarItems`, via
-  `Kitchen.AddItem`), so stacking, icons, tooltips, recipe counting, the ingredient average and eating work unchanged.
-  Items join from every file applied in the session and never leave while the game runs.
+- **The list (`GrindstoneSkills.Forage*.yml`, synced, hot reloaded):** one entry per item prefab with `experience` (a
+  factor). Default: berries, mushrooms, smoke puffs, fiddleheads, thistle, dandelion and royal jelly; flint, stone,
+  grausten, wood, frostwood (×0.5 experience), wild barley and flax.
 - **The pick (`ForagePick`, picker's client):** for forage, the plant's `m_pickRaiseSkill` becomes Foraging and
   `m_maxLevelBonusChance` the Extra Yield Chance for the one call, then both are put back. The game's own code then
   raises Foraging and rolls the extra item from the Foraging level.
-- **Stars (`ForageMarks`, `ForageSpawn`):** before the game's `RPC_Pick`, the picker sends `grindstone_ForageMark`
-  (float effective level: Foraging level, plus Best Time Levels at the plant's best) to the owner, who keeps it per
-  plant and sender for 10 s. Routed RPCs from one peer arrive in order. While `RPC_Pick` runs with that sender's mark,
-  every new item whose entry has stars rolls its own stars from the odds table at that level and is saved at once.
 - **Experience (`ForageXp`):** the game's raise, scaled inside the pick's scope to Experience Per Pick × the item's
   factor × (1 + Experience Per Biome Step × the Pickaxes biome step of the plant's spot), × Discovery Multiplier the
   first time the character picks the item (player custom data `grindstone_foraged`, callout "Discovered X!").
 - **Sweep (`ForageSweep`):** after a top-level pick, every plant of the same prefab within level / 100 × Sweep Radius
   At 100 (from Sweep Level) that can be picked is picked with the game's `Interact`, each a full forage pick.
-- **Hint (`ForageHover`):** a starred plant with a best time adds "Best picked at night" or "At its best now" to its
-  hover text.
 
 ### Settings
 
-- **33 - Foraging:** Foraging Enabled, Show Callouts and Show Hints (each player's own), Experience Per Pick (3),
-  Experience Per Biome Step (25%), Discovery Multiplier (3).
-- **34 - Forage Perks:** Extra Yield Chance At 100 (50%), Best Time Levels (20), Sweep Level (25), Sweep Radius At
-  100 (4 m).
-- The star odds are the Cooking odds table (section 3), read at the forager's effective level.
+- **33 - Foraging:** Foraging Enabled, Show Callouts (each player's own), Experience Per Pick (3), Experience Per
+  Biome Step (25%), Discovery Multiplier (3).
+- **34 - Forage Perks:** Extra Yield Chance At 100 (50%), Sweep Level (25), Sweep Radius At 100 (4 m).
 
 ### Decisions made while building (2026-09-27), for the user to confirm
 
 - **Foraging takes wild picks away from Farming** while it is on; with it off, picks are the game's again.
-- **Each item rolls its own stars**, so one pick of royal jelly (5 items) can give several stacks.
 - **Pacing:** 3 per pick in the Meadows up to 7.5 in the Ashlands (the skill's step is 1, the game's curve), so
   level 50 takes about 1,200 picks of Meadows forage or 500 of Ashlands forage, and level 100 about 6,800 or 2,700.
   Flint, stones and branches count half.
-- **Default best times:** berries a dry day, red, yellow mushrooms and smoke puffs rain, blue mushrooms and thistle
-  night, dandelion, fiddlehead and royal jelly day.
 - **Sweep** needs no key: it happens on every pick from Sweep Level, never on a held (repeat) interact. Swept picks
-  earn experience and roll stars like any pick.
-- **Berries and mushrooms now count in the ingredient average** (they used to be left out as items without stars),
-  so a 0★ mushroom lowers a dish's odds a little where it used to count for nothing.
+  earn experience like any pick.
 
 ### Known gaps
 
-- Turning `stars` off for an item after starred copies exist: after the next restart recipes no longer count those
-  copies (they are not star items any more). The file says so.
-- A lost mark (the plant's owner changing between the mark and the pick) gives a plain pick.
-- A vanilla client's picks are plain and train Farming, as without the mod.
+- A vanilla client's picks train Farming, as without the mod.
 - All texts are English.
 
 ### Test checklist
@@ -1034,15 +912,11 @@ Read from the prefab bundles (UnityPy) and the decompiled assembly, 2026-09-27:
       survives relog and the death penalty lowers it.
 - [ ] Picking a raspberry at level 0 trains Foraging, not Farming; "Discovered Raspberries!" and triple experience
       once; a planted carrot still trains Farming; wild Jotun puffs train Farming.
-- [ ] Stars: at `raiseskill foraging 100` most berries come out starred, stacks stay apart, the icon shows the stars,
-      eating a 3★ raspberry gives more; flint and branches never starred.
-- [ ] Best time: a thistle at night hovers "At its best now", by day "Best picked at night"; Show Hints off hides it.
 - [ ] Extra yield: about half of picks at 100 show "+1".
 - [ ] Sweep: nothing below 25; at 100 one pick clears the same kind within 4 m, not other kinds, not crops.
-- [ ] Cooking: Queen's jam from 3★ berries rolls better than from 0★.
-- [ ] Foraging Enabled off: picks as in the game (Farming, 25%, no stars, no hints, no sweep).
-- [ ] Dedicated server with two clients, the bushes owned by the other client: stars, extra yield, sweep and
-      experience at the picker's level; nothing in the server log.
+- [ ] Foraging Enabled off: picks as in the game (Farming, 25%, no sweep).
+- [ ] Dedicated server with two clients, the bushes owned by the other client: extra yield, sweep and experience at
+      the picker's level; nothing in the server log.
 
 ## Defense
 
@@ -1069,7 +943,7 @@ proposed, with the best decision wherever the request was vague.
 | Perk | Default at 100 | How |
 | --- | --- | --- |
 | Max health | +25 | added after the foods in a `GetTotalFoodValue` postfix (`Vitality`) |
-| Food health | +10% | of the food part of that total, after the cooking stars' postfix (lower priority) |
+| Food health | +10% | of the food part of that total, late (lower priority), after other mods' changes |
 | Damage reduction | -10% | every source, in an `ApplyDamage` prefix: after armour, before the world's damage-taken modifier |
 | Regeneration | 1% of max health per 10 s | after 10 s out of combat, scaled by `SEMan.ModifyHealthRegen` (`Recovery`) |
 | Poise | +25% | `Character.GetStaggerTreshold` for the local player; a stagger during a block breaks the guard |
@@ -1158,7 +1032,7 @@ proposed, with the best decision wherever the request was vague.
 
 - **Dodge stamina kept as asked** (-10%, on top of the game's Dodge skill), and block stamina -10% added.
 - **Damage reduction covers every source**, falls and poison included; Last Stand too.
-- **Food health counts the cooking stars** (and anything another mod added to food health before it).
+- **Food health counts anything another mod added** to food health before it.
 - **Regeneration is a share of max health**, so it keeps up late; resting and meads scale it.
 - **PvP hits do not train** unless the server turns it on; dodged hits give nothing.
 - **Shield Wall needs a shield** and works for any player behind the blocker, party or not.
@@ -1176,7 +1050,7 @@ proposed, with the best decision wherever the request was vague.
 
 - [ ] Skills panel: Defense with the helmet-and-shield icon; `raiseskill defense 100`, `resetskill defense`,
       `raiseskill all 10` includes it; survives relog; the death penalty lowers it. Sailing still listed and working.
-- [ ] Level 100: no food 50 health; with food the food part +10%; stars and FeastMaster still compose.
+- [ ] Level 100: no food 50 health; with food the food part +10%; FeastMaster still composes.
 - [ ] Damage: a known hit does 10% less; falls too; a second player sees the same health bar.
 - [ ] Regeneration: nothing for 10 s after attacking, blocking or getting hurt; then about 1% every 10 s; faster
       rested.
@@ -1259,8 +1133,8 @@ game's assemblies. Released as 0.6.0 before any in-game test; the test checklist
 Ideas proposed from the game's fishing code, all accepted ("do it all"): a real fight on the line (line tension, strike
 timing, tiring fish, grace at 0 stamina), bigger fish (big ones on the hook, legendary fish, bite rate, the angler's
 senses), records and an angler's log, treasure (bonus items, snags), bait and tackle (bait saver, cast and line, chum),
-conditions (time of day and weather), a link to Cooking (a fish's level improves its fillets' stars) and honest
-experience (no experience for reeling an empty line).
+conditions (time of day and weather) and honest experience (no experience for reeling an empty line). Starred bait
+and fillet stars (the link to Cooking) were built too and removed in 0.15.0.
 
 ### What the game's Fishing already does
 
@@ -1293,13 +1167,12 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   seeds, Anglerfish soft tissue or blue jute, Northern salmon carrot seeds or silver, Magmafish flametal ore, a Surtling
   core or grausten, Pufferfish sap or ooze.
 - **Also:** the fishing hat gives +20 Fishing (+20 Swim); fish stack by ten; item stands take fish; the game's stats
-  count catches per level up to 6. Baits are crafted at the prep table, a kitchen, so they already rolled Cooking stars
-  before this module.
+  count catches per level up to 6.
 
 ### Foundation (`Fishing/Core`)
 
-- **The angler (`Angler`, `FloatSetup`):** the `Setup` postfix, on the caster's client, stamps the angler's level and
-  the bait's stars on the float's ZDO (`grindstone_angler_level`, `grindstone_bait_stars`) for the fish owners, adds the
+- **The angler (`Angler`, `FloatSetup`):** the `Setup` postfix, on the caster's client, stamps the angler's level on
+  the float's ZDO (`grindstone_angler_level`) for the fish owners, adds the
   cast's state (`FloatFight`, a component on the float, only on the angler's client) and lengthens the line.
 - **The float's step (`FloatScope`):** a prefix and finalizer on `FishingFloat.FixedUpdate` for the local player's
   floats. Before the game's step: the senses when the float lands, snags without a fish, and with a fish the grace or
@@ -1323,15 +1196,14 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 | Strike window | 0.5 s at 0 to 1 s at 100; a perfect strike (reel within 0.2 s) skips the hook's thrash | the angler's, angler's client |
 | Tiring | each thrash 15% shorter per thrash before it (never below 20%); spent after 4 thrashes (legendary 8): no more, reel +50% | angler's client (it owns the fish) |
 | Grace (level 75) | 4 s at 0 stamina, once per fish; ends early at 25% stamina | the angler's |
-| Bite chance | +100% at 100; +50% at the height of dawn and dusk; +25% in rain; +20% per bait star; +100% near chum | the float's angler (from its ZDO), the fish's owner |
-| Big one | 25% at 100, per level, x1.5 at night, +5 points per bait star; up to level 5 | the angler's, angler's client |
+| Bite chance | +100% at 100; +50% at the height of dawn and dusk; +25% in rain; +100% near chum | the float's angler (from its ZDO), the fish's owner |
+| Big one | 25% at 100, per level, x1.5 at night; up to level 5 | the angler's, angler's client |
 | Legendary fish | 0.5% of spawned fish; only anglers from level 50 hook them; announced | the spawner; the fish's owner |
 | Senses | species 25, size 50, water 75 | the angler's |
 | Bonus item | the fish's own 20% at 0 to 40% at 100; two items from 50; legendary always | the angler's |
 | Bait saver | 30% at 100 | the angler's |
 | Snags | 2% at 0 to 6% at 100, once per cast after 8 s in the water | the angler's |
 | Cast and line | +30% distance, +50% line at 100 | the angler's |
-| Fillets | +10 effective Cooking levels per level of the fish above 1 | the crafter's client |
 
 - **Line tension (`Fight/Tension`, `Fight/TensionBar`):** reeling while the fish thrashes (`Fish.IsEscaping`) builds it,
   from 0.75 s after the hook (the hook starts a thrash while the angler still reels); at 1 the game's own line break
@@ -1353,8 +1225,6 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   everyone.
 - **Tackle (`Bites/Tackle`):** the rod attack's launch speeds times the square root of 1 + the share (a throw's range
   grows with the square of its speed), put back afterwards; the float's `m_maxDistance` when it lands.
-- **Starred bait (`Bites/StarredBait`):** `ReturnBait` gives starred bait back with its stars; the bait saver uses the
-  same.
 - **Big ones (`BigFish/BigOne`):** after the hook, on the angler's client which now owns the fish: `SetQuality` and the
   item data saved to the fish's ZDO. `FishMark` (every client with a screen) reloads hooked fish it does not own twice a
   second, so the growth shows everywhere, and every fish once 2 s after it loads.
@@ -1371,8 +1241,6 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   finds files. A snagged line reels at half speed, costs 6 stamina per second of reeling and drags the float down. It
   lands when the game's step destroys the empty float at 0.5 m of line; the find goes into the inventory (at the
   angler's feet when full). No experience.
-- **Fillets (`Rewards/Fillets`):** `CraftStars.Roll` adds the levels of the biggest fish the craft used up
-  (`CraftRecord` notes it, with its quality).
 
 ### Experience (section 50, synced)
 
@@ -1391,12 +1259,12 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - **51 - Fishing Fight:** Line Tension, Tension Build At 0, Tension Build At 100, Tension Ease, Strike Window At 0,
   Strike Window At 100, Perfect Strike Window, Tiring Per Thrash, Thrashes To Tire, Spent Reel Speed, Grace Level,
   Grace Seconds.
-- **52 - Bites:** Bite Chance At 100, Dawn And Dusk Bite Bonus, Rain Bite Bonus, Bait Bite Bonus Per Star, Chum Items,
-  Chum Bite Bonus, Chum Radius, Chum Duration, Species Sense Level, Size Sense Level, Water Sense Level.
-- **53 - Big Fish:** Big One Chance At 100, Night Big One Bonus, Bait Big One Bonus Per Star, Legendary Chance,
-  Legendary Level, Legendary Thrashes, Announce Legendary Catches.
-- **54 - Catch And Tackle:** Bonus Item Chance At 100, Double Bonus Level, Bait Saver At 100, Fillet Levels Per Fish
-  Level, Snag Chance At 0, Snag Chance At 100, Snag Wait, Cast Distance At 100, Line Length At 100.
+- **52 - Bites:** Bite Chance At 100, Dawn And Dusk Bite Bonus, Rain Bite Bonus, Chum Items, Chum Bite Bonus, Chum
+  Radius, Chum Duration, Species Sense Level, Size Sense Level, Water Sense Level.
+- **53 - Big Fish:** Big One Chance At 100, Night Big One Bonus, Legendary Chance, Legendary Level, Legendary Thrashes,
+  Announce Legendary Catches.
+- **54 - Catch And Tackle:** Bonus Item Chance At 100, Double Bonus Level, Bait Saver At 100, Snag Chance At 0, Snag
+  Chance At 100, Snag Wait, Cast Distance At 100, Line Length At 100.
 
 ### Decisions made while building (2026-09-27), for the user to confirm
 
@@ -1413,15 +1281,13 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   fish caught earlier can still be cleaned.
 - **A catch counts only when the fish was taken:** the game lets a fish go when the inventory has no room for it, and
   then no experience, log entry, record, bait saver or announcement follows.
-- **Big ones** grow on the hook, not at spawn, up to level 5, and change the fish's real level: size, pull and fillets.
+- **Big ones** grow on the hook, not at spawn, up to level 5, and change the fish's real level: size, pull and how much cleaning gives.
 - **Legendary fish** are rolled only for fish the spawn system makes; the level 50 gate uses the angler's level at the
   cast (a fishing hat put on afterwards counts from the next cast); the glow is sea-green.
-- **Starred bait:** +20% bites and +5 big-one points per star; it comes back with its stars.
 - **Weights and records are the character's own;** there are no server-wide records.
 - **The angler's log** is shown on fish tooltips and by `fishlog`; there is no panel.
 - **Snags** give no experience and block nibbles; one roll per cast.
 - **Chum** is the game's entrails and blood bags, no new item; one dropped stack is one piece of chum.
-- **Fillets:** the biggest fish among the used-up items counts, for any kitchen recipe (only cleaning uses fish today).
 - **Item stands** take fish as in the game; nothing is shown there.
 
 ### Known gaps
@@ -1456,14 +1322,12 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
       heavier catch says "new record!"; tooltips; `/fishlog` in chat; all of it after relog.
 - [ ] Snags: with Snag Chance At 0 at 100, 8 s in the water gives "Snagged something heavy!", a slow reel, and the
       biome's items; no nibbles meanwhile; sea casts use the Ocean table; the YAML hot reloads.
-- [ ] Bonus items and bait saver at 100: more bonus items, sometimes two; "Bait saved"; starred bait comes back
-      starred, after an empty reel too.
+- [ ] Bonus items and bait saver at 100: more bonus items, sometimes two; "Bait saved".
 - [ ] Tackle: casts go further and the line snaps later at 100.
-- [ ] Fillets: at Cooking 0, cleaning level 5 fish gives better stars than cleaning level 1 fish.
 - [ ] Experience: an empty reel gives none; a catch and discoveries credit; Empty Reel 100, Fight 100 and the three
       credits at 0 give the game's own.
-- [ ] **Dedicated server with two clients** (A fishes, B stands by, the fish owned by B or the server): A's level and
-      bait still decide bites; legendary fish spawn wherever spawning runs and glow for both; growth, callouts and
+- [ ] **Dedicated server with two clients** (A fishes, B stands by, the fish owned by B or the server): A's level
+      still decides bites; legendary fish spawn wherever spawning runs and glow for both; growth, callouts and
       announcements reach B; nothing in the server log.
 
 ### Status (2026-09-27)
@@ -1486,8 +1350,8 @@ tamed no longer fear or attack you; a chance for offspring to be a higher level 
 asked for every idea from the planning discussion to be built, with the best decision for anything vague: faster
 taming, longer fed time, faster breeding, bigger herds, twins, faster growing up, animal lore, produce from living
 animals, petting and contentment, pack leader, an animal feeder, optional taming level gates, extra honey, starred eggs
-for Cooking, prime cuts, and the hand-off to Elite Creatures Reborn's stars. The skill icon is the user's own art
-(`assets/skill_husbandry.png`, 64x64, from `Desktop/valheim_icons/husbendry_icon.png`).
+and the hand-off to Elite Creatures Reborn's stars (prime cuts was built too and removed in 0.15.0). The skill icon is
+the user's own art (`assets/skill_husbandry.png`, 64x64, from `Desktop/valheim_icons/husbendry_icon.png`).
 
 ### What the game already does
 
@@ -1512,7 +1376,7 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
   young (`Growup`: piglet, cub, calf, chick, hatchling) grow up after 3000 s (6000 s lox calf), keeping their level.
 - **Drops double per level:** `CharacterDrop` multiplies level-scaled drops by 2^(level-1).
 - **Elite Creatures Reborn** keeps the game level at 1, stores stars in its own traits, and rolls a newborn's stars
-  evenly from 0 to the stronger parent's; an egg's quality is its stars + 1, the same convention as Cooking.
+  evenly from 0 to the stronger parent's; an egg's quality is its stars + 1, the game's own convention.
 
 ### The skill: our own
 
@@ -1586,11 +1450,6 @@ Everything runs on the parent's (or young animal's, or egg's) ZDO owner, at the 
 - **Butcher yield (`ButcherYield`):** a `CharacterDrop.GenerateDropList` postfix inside the scope with a player killer
   multiplies every non-trophy entry by 1 + the killer's share; the fraction is a chance of one more; the game's cap of
   100 per entry holds. Each list is scaled once (the ragdoll turns the creature's own drop path off).
-- **Prime Cuts (`PrimeCutDrops`, off by default):** meat is discovered (`YieldCatalog`): kitchen cooking-station inputs
-  that some Tameable prefab drops (raw, wolf, lox, chicken, moose meat). While Prime Cuts is on, every machine makes that
-  meat a star item (`YieldStarItems`, `Kitchen.AddItem`). Meat from a starred tamed animal gets stars = level - 1, at
-  most 3, when it spawns: in the death scope directly, or through `grindstone_prime_stars` on the ragdoll's ZDO, read
-  back in `Ragdoll.SpawnLoot` (an `ItemDrop.Awake` postfix sets the quality and saves). The killer does not matter.
 - **Produce (`Produce`, `ProduceTables`):** a `Tameable.TamingUpdate` postfix (every 3 s) on the owner of a fed tamed
   animal keeps the world time of its last roll (`grindstone_produce_last`). The first tick starts the clock; once
   Produce Interval has passed and a keeper is in range, it rolls the keeper's share of Produce Chance and drops one item
@@ -1603,9 +1462,9 @@ Everything runs on the parent's (or young animal's, or egg's) ZDO owner, at the 
   item, and sends their client one Honey credit per honey (`HusbandryCredit`), which raises Husbandry by Honey
   Experience. A second press within a round trip, or two players at once, are paid only for the honey handed out.
   OpenKeep's hive settings only change how much honey there is, so they add up.
-- **Starred eggs (`YieldStarItems`):** every item with `EggGrow` becomes a star item while Husbandry is on (the game
-  already stores the laying hen's level in the egg's quality): eggs from starred hens show their star, stack apart,
-  count in recipes (the game's own recipe count ignores quality-2 eggs) and raise a dish's odds.
+- **Starred eggs (`YieldStarItems`):** every item with `EggGrow` joins the star items (`Stars`) while Husbandry is on
+  (the game already stores the laying hen's level in the egg's quality): eggs from starred hens show their star, stack
+  apart and count in recipes (the game's own recipe count ignores quality-2 eggs). See "Egg stars" in the Cooking part.
 
 ### Companions (`Husbandry/Companions`)
 
@@ -1664,7 +1523,7 @@ the best keeper near the animal now.
 - **24 - Taming:** Taming Speed At 100, Fed Duration At 100, Taming Levels, Calm Level, Calm Break Time.
 - **25 - Breeding:** Breeding Speed At 100, Herd Size At 100, Growth Speed At 100, Better Offspring At 100, Max Offspring
   Level, Twins At 100, Content Duration, Content Breeding Bonus.
-- **26 - Animal Yield:** Butcher Yield At 100, Prime Cuts, Produce Chance At 100, Produce Interval, Extra Honey At 100.
+- **26 - Animal Yield:** Butcher Yield At 100, Produce Chance At 100, Produce Interval, Extra Honey At 100.
 - **27 - Companions:** Pack Damage At 100, Pack Toughness At 100, Feeder Level, Feeder Range, Feeder Recipe.
 - **28 - Husbandry Experience:** Experience Multiplier, Taming, Tamed, Discovery Multiplier, Feeding, Birth, Petting,
   Butchering and Honey Experience.
@@ -1685,8 +1544,7 @@ The user asked for every idea with the best decision for anything vague. These a
 - **Yield means four things:** butchering (killer's level, +50%, never trophies), produce from the living animal
   (feathers, scraps, pelts, hides: 50% per 20 minutes at 100), extra honey (beekeeping is husbandry too: +50% at 100)
   and more animals (twins, herd size, better offspring).
-- **Prime Cuts is off by default:** raw meat becoming a star item changes Cooking's ingredient average even at 0
-  stars, and splits meat stacks by star. Starred eggs are on, because the game already gives eggs a quality.
+- **Starred eggs are always on** with Husbandry, because the game already gives eggs a quality.
 - **Petting refreshes contentment** on every pet but pays experience only when the animal was not content; contentment
   adds +50% breeding speed for 10 minutes.
 - **Pack leader** covers followers only (wolves), not summons; its toughness also softens the leader's own hits.
@@ -1698,9 +1556,9 @@ The user asked for every idea with the best decision for anything vague. These a
 
 ### Known gaps
 
-- Elite Creatures Reborn keeps the game level at 1, so Prime Cuts gives no stars there, and Better offspring needs
-  Elite Creatures Reborn 3.10.0 or later (`KeeperBonus`). Eggs above 3 stars under ECR show 3 in GrindstoneSkills' icons.
-- Prime Cuts meat and eggs stay star items until a restart after their switch is turned off.
+- Better offspring needs Elite Creatures Reborn 3.10.0 or later (`KeeperBonus`). Eggs above 3 stars under ECR show 3
+  in GrindstoneSkills' icons.
+- Eggs stay star items until a restart after Husbandry is turned off.
 - Two animals eating a feeder's last item at once may both be fed; a feeder changing owner while the take RPC is in
   flight keeps its item.
 - A pet whose contentment takes more than a second to come back from the owner may pay experience twice.
@@ -1728,7 +1586,6 @@ The user asked for every idea with the best decision for anything vague. These a
 - [ ] Growth at 100: a tamed piglet grows up and a warm egg hatches in half the time; a wild calf does not.
 - [ ] Butchering at 100: a tamed boar killed with the butcher knife drops about 1.5x meat and scraps, never two trophies;
       the killer gets experience, also on a dedicated server; a wolf's or a fall's kill gives plain drops.
-- [ ] Prime Cuts on: a two-star boar's meat has 1 star, also when you walk away before the body vanishes; off: none.
 - [ ] Produce (interval 60, chance 100, level 100): a fed hen drops feathers about once a minute; not when hungry; not
       with no keeper near; a second client sees the item.
 - [ ] Extra honey at 100 (chance 100): a full hive gives twice the honey and 0.5 experience per honey; none in someone
@@ -1761,7 +1618,8 @@ confirmation; the test checklist above is next.
 Ideas for a Farming skill were given in chat (starred crops, heirloom seeds, giant crops, companion planting, rain,
 an almanac hover, daily tending, level perks, experience, mill star pass-through, a compost bin). The user asked for
 all of it, with the best decision taken for anything left vague. The decisions below are those calls, for the user
-to confirm.
+to confirm. Starred crops, heirloom seeds, companion planting, the almanac's star odds and the mill star pass-through
+were removed (0.13.0 rolls off, 0.15.0 code gone).
 
 ### What the game's Farming already does
 
@@ -1812,56 +1670,44 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 
 ### Whose level counts
 
-- **The planter's**, written on the plant at placement: star odds, growth speed, grow space, heat and cold tolerance,
-  giant crops. The row width is the placing player's.
+- **The planter's**, written on the plant at placement: growth speed, grow space, heat and cold tolerance, giant
+  crops. The row width is the placing player's.
 - **The picker's**, on their client: bonus yield, seed return, auto-replant, discovery.
 - **Anyone's:** tending, rain and compost are the same for everyone.
 
-### Which items carry stars
+### Crop plants and kitchen crops
 
 - **A crop plant** is a Plant whose grown prefab has a Pickable and is not a tree (`TreeBase`) or a vine (`Vine`). Its
   seed is its piece's first resource; its crops are its pickable's item and extra drop items. `Crops.IsCrop` /
   `Crops.IsCropPrefab` (Core) answer "a crop pickable", for the Foraging module too.
 - **Kitchen relevant:** an item that is edible, an ingredient of a kitchen recipe, an input of a kitchen station or
   fermenter, or milled (a Smelter conversion) into something kitchen relevant.
-- **A crop plant whose seed or crop is kitchen relevant** makes its seed and all its crops star items
-  (`Kitchen.AddStarItem`). Then every Smelter conversion whose input carries stars gives its output stars too
-  (barley flour, oats, oat flour).
-- **Flax** is none of these, so it has no stars and the spinning wheel is left alone: starred linen would do nothing.
-- **Effect on Cooking:** crops now count in a dish's ingredient average, so starred crops raise its odds and 0★ crops
-  pull it down (before, vegetables never counted). Starred raw crops that are eaten (carrots, onions, mushrooms, kale,
-  oats, poteitr) get the star food bonus as any dish does.
+- **Kitchen crops (`Farming/Core/KitchenCrops`):** a crop plant whose seed or crop is kitchen relevant adds its seed
+  and all its crops; then every Smelter conversion whose input is one of them adds its output too (barley flour, oats,
+  oat flour). The compost bin takes them. Flax is none of these.
 
-### Stars at ripening
+### Ripening: giant crops
 
-- **Rolled by the plant's owner in `Grow`,** with the same odds table as dishes (section 3). The effective level is
-  the sum of:
-  - the planter's level;
-  - Seed Levels Per Star (10) × the stars of the seed planted (heirloom);
-  - Companion Levels (5) for each other crop kind growing or ripe within 2 m, up to 3 kinds;
-  - Compost Star Levels (10) when fertilized.
-- **Kind:** a seed and its crop are one kind (carrot and seed carrot), so companions must be real neighbours.
-- **Stored on the grown pickable's ZDO,** with the plant it grew from (for auto-replant). Starred crops stand 6% taller
-  per star.
+- **Rolled by the plant's owner in `Grow`** (`CropRipening`), from the planter's share of 2% at level 100. A giant is
+  2.5× the size and gives 6× the crop (scaled by the world's resource rate, in full stacks). The picker sees "Giant
+  turnip!" and earns 5× the picking experience.
+- **Stored on the grown pickable's ZDO** (`CropKeys`): whether it is a giant, with the plant it grew from (for
+  auto-replant and seed return).
 - **Size:** the owner sets it with `ZNetView.SetLocalScale`, which reaches other clients only for prefabs that sync
   their scale (most crops, not magecap). For the others every client applies it when the crop loads (`CropLook`).
-- **No roll:** wild crops, crops that ripened before Farming, and every crop while Farming or Crop Stars is off have
-  0 stars.
-- **Giant crops:** planter's share of 2% at level 100. A giant is always 3★, 2.5× the size and gives 6× the crop
-  (scaled by the world's resource rate, in full stacks). The picker sees "Giant turnip!" and earns 5× the picking
-  experience. Giants also grow while Crop Stars is off and from crops without stars (flax), then with 0 stars.
+- **No roll:** wild crops, crops that ripened before Farming, and every crop while Farming is off.
 
 ### Picking
 
-- **Owner (`RPC_Pick`):** every dropped item that carries stars gets the crop's stars (extra drops too); a giant adds
-  its extra stack, in a postfix and only when the game's body really picked the crop.
+- **Owner (`RPC_Pick`):** a giant adds its extra stack, in a postfix and only when the game's body really picked the
+  crop.
 - **Picker's client (`Interact`)** does the rest:
   - Bonus yield: 50% chance at level 100 instead of the game's 25%, via the instance's `m_maxLevelBonusChance`
     during the call.
-  - Seed return: 30% at 100. One seed of the plant it grew from, with the crop's stars, pops out at the crop.
+  - Seed return: 30% at 100. One seed of the plant it grew from pops out at the crop.
   - Auto-replant from level 50, each player's own switch: the same plant goes back in the same spot, paid with a seed
     from the inventory.
-    - The seed's stars count, as in manual planting. It costs no stamina and earns planting experience.
+    - It costs no stamina and earns planting experience.
     - Nothing happens without a seed or where the spot is not valid.
 - **The scythe** picks through `Interact`, so all of this applies to every crop it cuts.
 
@@ -1869,9 +1715,6 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 
 - **Planter keys:** when the local player places a plant, its ZDO gets the planter's ID and Farming level (the
   placing client owns the new ZDO).
-- **Heirloom seeds:** the stars of the seed paid for it are recorded while the placement pays (`ConsumeResources`,
-  through `CraftRecord`, so the player's Ingredient Order decides which stack is used). Each placement takes the
-  next plant waiting for its seed.
 - **Row planting:** from level 25 a row of 3, from 50 a row of 5, each player's own switch. Hold the game's
   alternative place key (Shift) to plant one.
   - The row runs across the view, snapped to the nearest world axis. Spacing is twice the planter's grow radius plus
@@ -1898,19 +1741,8 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - **Grow space:** the planter's grow radius shrinks by up to 40% at level 100, set on each instance on every client.
 - **Heat tolerance** from level 75: crops grow in the Ashlands without a shield. **Cold tolerance** from 100: crops
   that grow in the Meadows also grow in the Mountain and Deep North.
-- **Almanac (hover):** a growing plant shows "Ripe in 12 min", tending ("[E] Tend" or "Tended today") and
-  "Fertilized". From level 20 (the viewer's), it also shows the star odds of its roll, companions counted at hover.
-- **Ripe crops** show their stars and "Giant" in the hover.
-
-### Windmill
-
-- **Adding:** `OnAddOre` sends our own RPC carrying the item's stars instead of the game's `RPC_AddOre`. The owner runs
-  the game's add, then appends the stars to a parallel queue (one digit per item, `grindstone_mill_stars`).
-- **Processing:** `RemoveOneOre` pops the front digit; `QueueProcessed` spawns the pending stack first when its stars
-  differ (`grindstone_mill_spawn`). The spawned output gets the stars.
-- **Breaking the windmill** drops queued items with their stars. Adds from other mods count as 0★.
-- **Always on,** whatever Farming Enabled says: the stars belong to the items, like their stacking, and a queue whose
-  digits stopped being kept would give later items the wrong stars.
+- **Hover:** a growing plant shows "Ripe in 12 min", tending ("[E] Tend" or "Tended today") and "Fertilized".
+- **Ripe giants** show "Giant" before their name in the hover.
 
 ### Compost bin
 
@@ -1920,12 +1752,12 @@ Read from the decompiled assembly and the prefab bundles (UnityPy), 2026-09-27:
 - **Filling:** players put scraps in through the normal chest window, so quick stack works.
 - **Composting:** every 30 s the bin's owner composts one unit into 1 point (up to 100). Compostable:
   - anything with food value;
-  - anything that carries stars;
+  - what kitchens make (dishes, meads, doughs), and the crops and seeds a kitchen uses and their flour
+    (`KitchenCrops`);
   - the Compost Items list (default Entrails, BoneFragments).
 - **Feeding:** every 10 s the owner spends 1 point per growing crop within 12 m that is not fertilized, at most 20 per
   round, and marks it (directly, or by RPC to the plant's owner).
-- **Fertilized** crops grow 25% faster and roll 10 levels better.
-- **Kitchen trash:** a dish the trash filter throws away within 20 m of a bin adds 1 point to the nearest one.
+- **Fertilized** crops grow 25% faster.
 - **Hover:** "Compost 23 / 100".
 
 ### Experience (section 31, synced)
@@ -1948,53 +1780,46 @@ is `assets/skill_sailing.png` since 0.8.2, the Karve's only as a fallback.
 
 ### Settings
 
-- **29 - Farming:** Farming Enabled, Crop Stars, Seed Levels Per Star, Companion Levels, Companion Radius, Companion
-  Kinds, Giant Crop Chance At 100, Giant Crop Yield, Giant Crop Size, and each player's own Show Callouts, Row
-  Planting, Auto Replant.
+- **29 - Farming:** Farming Enabled, Giant Crop Chance At 100, Giant Crop Yield, Giant Crop Size, and each player's
+  own Show Callouts, Row Planting, Auto Replant.
 - **30 - Farming Perks:** Growth Speed At 100, Grow Space Reduction At 100, Bonus Yield Chance At 100, Seed Return
   Chance At 100, Auto Replant Level, Row Of Three Level, Row Of Five Level, Heat Tolerance Level, Cold Tolerance Level,
-  Rain Growth Bonus, Tending Bonus, Tending Radius, Almanac Level.
+  Rain Growth Bonus, Tending Bonus, Tending Radius.
 - **31 - Farming Experience:** Experience Multiplier, Tier Scaling, Tier Reference Value, Tier Maximum, Discovery
   Multiplier, Giant Crop Multiplier, Tending Experience.
-- **32 - Compost:** Compost Enabled, Compost Time, Compost Capacity, Compost Radius, Compost Growth Speed, Compost Star
-  Levels, Kitchen Trash Compost, Compost Items.
+- **32 - Compost:** Compost Enabled, Compost Time, Compost Capacity, Compost Radius, Compost Growth Speed, Compost
+  Items.
 
 ### Decisions made while building (2026-09-27), for the user to confirm
 
-- **Seeds carry stars** (heirloom breeding) and only kitchen-relevant crops do. Flax does not, so neither does linen.
 - **No auto-pickup filter:** in a base, items left on the ground never despawn. The compost bin is where spare crops
   go.
 - **Vines stay vanilla:** their berries live on segment objects the vine spawns, and they give no Farming experience.
-- **Shared odds table:** crops use the dishes' odds (section 3), so one table decides every star.
 - **Row planting belongs to Farming,** not EarthWright: it is a level perk. EarthWright's grid only snaps the ghost.
 - **Hardy crops** extend where generalist crops grow; barley, flax and the Mistlands mushrooms keep their biomes.
 
 ### Known gaps
 
 - Rain follows the weather at the plant owner's client (the biome that player stands in).
-- Items added to the windmill by other mods, and crops placed by other mods, carry no stars or planter.
+- Crops placed by other mods have no planter.
 - A plant placed close to a lower-level planter's crop can take its room, as in the game.
-- The hover counts companions when it is shown. Neighbours can change before the crop ripens.
 - The compost bin's feeding RPC can be lost if the plant unloads first; the point is then spent.
 - All texts are English.
 
 ### Test checklist
 
-- [ ] Farming Enabled off: planting, growing, picking and experience exactly vanilla; bins stop; the windmill still
-      keeps the stars items already have.
-- [ ] The log reads "Farming: N crop plants, M carry stars; star mills: windmill." (flax the only one without).
-- [ ] Planting stores planter and seed stars; row of 3 at 25 and 5 at 50, skipping bad spots; Shift plants one;
-      each extra pays its seed.
-- [ ] Growth: 40% faster at level 100; rain shortens it; tending once per day in radius; almanac time matches.
+- [ ] Farming Enabled off: planting, growing, picking and experience exactly vanilla; bins stop.
+- [ ] The log reads "Farming: N crop plants, M used in kitchens." (flax the only one not).
+- [ ] Planting stores the planter; row of 3 at 25 and 5 at 50, skipping bad spots; Shift plants one; each extra pays
+      its seed.
+- [ ] Growth: 40% faster at level 100; rain shortens it; tending once per day in radius; the hover's time matches.
 - [ ] Grow space at 100 lets crops stand closer; heat tolerance in the Ashlands at 75; cold at 100 in the Mountain.
-- [ ] Ripening rolls stars from the planter's level plus seed, companions and compost; giants appear at chance 100.
-- [ ] Picking: drops carry the stars; bonus yield 50% at 100; seed return; auto-replant at 50 with a seed; scythe.
-- [ ] Starred crops stack apart, raise dish odds, starred carrots eaten give the bonus.
-- [ ] Windmill: 1★ and 3★ barley give 1★ and 3★ flour in separate stacks; breaking it returns starred barley.
-- [ ] Compost bin: builds from the cultivator, composts food, feeds crops in range, kitchen trash adds points.
+- [ ] Ripening: giants appear at chance 100, 2.5× the size, "Giant" in the hover, 6× the crop.
+- [ ] Picking: bonus yield 50% at 100; seed return; auto-replant at 50 with a seed; scythe.
+- [ ] Compost bin: builds from the cultivator, composts food and kitchen crops, feeds crops in range.
 - [ ] Experience: tier, discovery once per crop kind, giant ×5, tending.
-- [ ] **Dedicated server with two clients:** A plants, B picks. Stars follow A's level, bonus and seed return follow
-      B's. The windmill and bin work when owned by the other player. Hovers agree on both clients.
+- [ ] **Dedicated server with two clients:** A plants, B picks. Giants and growth follow A's level, bonus and seed
+      return follow B's. The bin works when owned by the other player. Hovers agree on both clients.
 
 ## Status (2026-09-27)
 

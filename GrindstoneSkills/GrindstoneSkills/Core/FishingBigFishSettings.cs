@@ -5,8 +5,8 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Section 53: big fish. The game rolls a fish's level (1 to 5) when it spawns; a big one grows a level on the hook,
-    /// by the angler's level, at night and with starred bait. A legendary fish is a sixth level the game never rolls:
-    /// three times the size, glowing, only biting for skilled anglers, and announced to everyone when landed. Synced.
+    /// by the angler's level and more at night. A legendary fish is a sixth level the game never rolls: three times the
+    /// size, glowing, only biting for skilled anglers, and announced to everyone when landed. Synced.
     /// </summary>
     public static class FishingBigFishSettings
     {
@@ -14,7 +14,6 @@ namespace GrindstoneSkills
 
         public static ConfigEntry<float> BigOneChanceAt100 { get; private set; }
         public static ConfigEntry<float> NightBonus { get; private set; }
-        public static ConfigEntry<float> BaitBigOnePerStar { get; private set; }
         public static ConfigEntry<float> LegendaryChance { get; private set; }
         public static ConfigEntry<float> LegendaryLevel { get; private set; }
         public static ConfigEntry<int> LegendaryThrashes { get; private set; }
@@ -33,9 +32,6 @@ namespace GrindstoneSkills
                 acceptableValues: Settings.UpTo(100f));
             NightBonus = config.Bind(Section, "Night Big One Bonus", 50f,
                 "Percent more big-one chance at night.", acceptableValues: Settings.UpTo(500f));
-            BaitBigOnePerStar = config.Bind(Section, "Bait Big One Bonus Per Star", 5f,
-                "Percentage points added to the big-one chance for each star of the bait on the hook, at any level.",
-                acceptableValues: Settings.UpTo(50f));
         }
 
         private static void BindLegendary(SyncedConfiguration config)

@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text;
 using HarmonyLib;
 using UnityEngine;
@@ -6,12 +5,11 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// The almanac: a plant's hover (Plant.GetHoverText, the game's name and health status) gets, while Farming is on:
+    /// A plant's hover (Plant.GetHoverText, the game's name and health status) gets, while Farming is on:
     /// <list type="bullet">
     /// <item>when it is healthy, the time until it ripens ("Ripe in 12 min", "Ripe soon") with Farming's speed;</item>
     /// <item>"Fertilized" when a compost bin fed it;</item>
-    /// <item>for a plant a player planted, "[E] Tend" or "Tended today" while tending is on;</item>
-    /// <item>from the viewer's Almanac Level, the odds of the stars it will ripen with (companions counted now).</item>
+    /// <item>for a plant a player planted, "[E] Tend" or "Tended today" while tending is on.</item>
     /// </list>
     /// Everything is read from the plant's ZDO on the viewing client. The lines are kept for the plant in view and
     /// rebuilt after 0.25 s, or at once when its ZDO changes (tended, fertilized).
@@ -31,7 +29,7 @@ namespace GrindstoneSkills
         private static void Postfix(Plant __instance, ref string __result)
         {
             if (FarmSkill.Active && !string.IsNullOrEmpty(__result))
-                __result += HookGuard.Run("Farming almanac", static plant => Cached(plant), __instance, "");
+                __result += HookGuard.Run("Farming plant hover", static plant => Cached(plant), __instance, "");
         }
 
         /// <summary>The lines for this plant, rebuilt when the plant or its ZDO changed or the refresh time passed.</summary>
@@ -61,7 +59,6 @@ namespace GrindstoneSkills
             string tend = Tending.Enabled && PlantKeys.IsPlanted(zdo) ? TendLine(plant, zdo) : "";
             if (tend.Length > 0)
                 text.Append('\n').Append(tend);
-            AppendOdds(plant, zdo);
             return text.ToString();
         }
 
@@ -82,19 +79,5 @@ namespace GrindstoneSkills
                 return "Tended today";
             return Tending.CanTend(plant, zdo, day) ? Localization.instance.Localize("[<color=yellow><b>$KEY_Use</b></color>] Tend") : "";
         }
-
-        private static void AppendOdds(Plant plant, ZDO zdo)
-        {
-            CropPlant crop = CropCatalog.OfPlant(plant);
-            if (!CropRoll.Rolls(crop) || !PlantKeys.IsPlanted(zdo) || !FarmSkill.Reached(FarmingPerkSettings.AlmanacLevel.Value, FarmSkill.Local()))
-                return;
-            // The hover runs every frame while it is shown: the companions' physics query only when the odds need it.
-            float[] odds = StarOdds.At(StarOdds.DependOnLevel ? CropRoll.EffectiveNow(plant, crop, zdo) : 0f);
-            text.Append('\n');
-            for (int stars = 1; stars <= Stars.Max; stars++)
-                text.Append(StarText.Colored(stars)).Append(' ').Append(Percent(odds[stars])).Append(stars < Stars.Max ? "  " : "");
-        }
-
-        private static string Percent(float chance) => Mathf.RoundToInt(chance * 100f).ToString(CultureInfo.InvariantCulture) + "%";
     }
 }

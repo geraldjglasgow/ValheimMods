@@ -14,17 +14,10 @@ Perks grow evenly from 0 at level 0 to the value at 100.
 | Extra Food Chance At Level 100 | 50 | % chance of extra dishes at every kitchen but the fermenter; replaces the game's 25%. |
 | Extra Food Amount | 1 | Dishes per bonus. |
 | Ingredient Save Chance At Level 100 | 10 | % chance per item crafted at the cauldron, mead cauldron or prep table to get one ingredient back. |
-| Trash Filter | true | Kitchen trash filters on. Off, kitchens keep everything. |
-
-## Trash filter
-
-**Leave every kitchen on "all dishes" (the default).** Dishes no longer get stars (since 0.13.0), so any higher setting throws away **every** dish that kitchen makes, cauldron and prep table crafts included: the ingredients are used up and you get only a "Trashed" message. An admin can rule this out with `Trash Filter` off.
-
-Shift + E on a kitchen (not the fermenter; on the oven, its add-food switch) cycles what it keeps: all dishes, 1★ and up, 2★ and up, 3★ only. The hover shows the setting and your chance of a kept dish (0% above "all dishes"). It is shared and needs ward access to change. Thrown-away dishes go into compost if a bin is within 20 m. While the filter is on, Shift + E at the cauldron, mead cauldron or prep table cycles it instead of opening the station.
 
 ## Experience (5 - Experience)
 
-The game's amounts (0.4 food on, 0.6 dish off, 1 per crafted item) times the dish's **tier**: health + stamina + eitr ÷ 50, from 1 to 3. A trashed dish still pays its cook 0.6 × tier.
+The game's amounts (0.4 food on, 0.6 dish off, 1 per crafted item) times the dish's **tier**: health + stamina + eitr ÷ 50, from 1 to 3.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
@@ -34,5 +27,3 @@ The game's amounts (0.4 food on, 0.6 dish off, 1 per crafted item) times the dis
 | Tier Maximum Multiplier | 3 | Highest tier. |
 | Discovery Multiplier | 3 | Multiplier for a character's first make of each dish. |
 | Fermenter Tap Experience | 1 | Per fermenter tap, times the mead's tier. |
-
-Dishes starred before 0.13.0 keep their stars and eat bonus: see [Skill Book, Stars And Death](wiki:Skill Book, Stars And Death).

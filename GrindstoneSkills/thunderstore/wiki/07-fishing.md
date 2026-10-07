@@ -39,7 +39,6 @@ Bite bonuses multiply. **Chum** dropped in the water draws fish to nearby floats
 | Bite Chance At 100 | 100 | % more bites at level 100. |
 | Dawn And Dusk Bite Bonus | 50 | % more bites at dawn and dusk. |
 | Rain Bite Bonus | 25 | % more bites in rain. |
-| Bait Bite Bonus Per Star | 20 | % more bites per star of bait starred before 0.13.0. |
 | Chum Items | Entrails, Bloodbag | Items that work as chum (empty: off). |
 | Chum Bite Bonus | 100 | % more bites with chum near the float. |
 | Chum Radius | 12 | Metres chum reaches. |
@@ -56,7 +55,6 @@ A hooked fish may grow a level ("It's a big one!"), up to level 5. Legendary fis
 | --- | --- | --- |
 | Big One Chance At 100 | 25 | % chance a hooked fish grows a level. |
 | Night Big One Bonus | 50 | % more big-one chance at night. |
-| Bait Big One Bonus Per Star | 5 | Points added per bait star. |
 | Legendary Chance | 0.5 | % of spawned fish that are legendary. |
 | Legendary Level | 50 | Level to hook them. |
 | Legendary Thrashes | 8 | Thrashes before a legendary fish is spent. |
@@ -76,7 +74,6 @@ A cast left in the water without a fish may **snag** something: a heavy reel, th
 | Snag Wait | 8 | Seconds without a fish before a cast can snag. |
 | Cast Distance At 100 | 30 | % farther casts. |
 | Line Length At 100 | 50 | % longer line (game: 30 m). |
-| Fillet Levels Per Fish Level | 10 | No effect since 0.13.0. |
 
 Default snags (weight):
 

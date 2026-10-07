@@ -34,7 +34,7 @@ namespace GrindstoneSkills
         internal List<PageEntry> Entries { get; } = new List<PageEntry>();
         internal List<PagePerk> Perks { get; } = new List<PagePerk>();
 
-        /// <summary>A small heading over the lines after it ("Stars", "The fight"). Only for a page long enough to need groups.</summary>
+        /// <summary>A small heading over the lines after it ("Perks", "The fight"). Only for a page long enough to need groups.</summary>
         public void Heading(string text) => Entries.Add(new PageEntry(text, "", "", true));
 
         /// <summary>One thing the skill does at this level, short, with its number: "Max health +3.3".</summary>

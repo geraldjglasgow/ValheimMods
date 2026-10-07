@@ -1,68 +1,32 @@
 using HarmonyLib;
-using UnityEngine;
 
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// GrindstoneSkills' keys for one slot of a cooking station or oven, beside the game's own ("slot" + i holds the item
-    /// name and the cooked time, "slotstatus" + i the status). The game keeps a slot only in the station's ZDO and
-    /// changes it on the ZDO owner, so these keys live in the same ZDO, are written where the game writes its slots,
-    /// and reach every peer with it. A slot filled by a plain vanilla add reads as cook 0, level 0, no input stars and
-    /// not rolled. Every way the game empties a slot goes through CookingStation.SetSlot with an empty name (taking a
-    /// dish off, a missing recipe, the station breaking, GrindstoneSkills' trash filter); the postfix there resets our keys.
-    /// Keys are reset by writing the defaults: ZDO.Remove* does not raise the data revision, so a removal would never
-    /// reach other peers. Each key's hash ("grindstone_level" + slot, as ZDO.Get/Set with a name would hash it) is worked
-    /// out once per slot rather than built and hashed on every read.
+    /// GrindstoneSkills' key for one slot of a cooking station or oven, beside the game's own ("slot" + i holds the item
+    /// name and the cooked time, "slotstatus" + i the status): the Cooking level of the cook who put the food on. The
+    /// game keeps a slot only in the station's ZDO and changes it on the ZDO owner, so the key lives in the same ZDO, is
+    /// written where the game writes its slots, and reaches every peer with it. A slot filled by a plain vanilla add
+    /// reads as level 0. Every way the game empties a slot goes through CookingStation.SetSlot with an empty name
+    /// (taking a dish off, a missing recipe, the station breaking); the postfix there resets the key. It is reset by
+    /// writing the default: ZDO.Remove* does not raise the data revision, so a removal would never reach other peers.
+    /// Each key's hash ("grindstone_level" + slot, as ZDO.Get/Set with a name would hash it) is worked out once per slot
+    /// rather than built and hashed on every read.
     /// </summary>
     public static class StationSlots
     {
-        /// <summary>Who put the food on and with what: stored when the slot is filled.</summary>
-        public struct Cook
-        {
-            public long PlayerId;
-            public float Level;
-            public float InputStars;
-        }
-
         /// <summary>Slots whose key hashes are worked out ahead; a station with more hashes the rest on each use.</summary>
         private const int HashedSlots = 16;
 
-        private static readonly int[] CookKeys = Hashes(Keys.SlotCook);
         private static readonly int[] LevelKeys = Hashes(Keys.SlotLevel);
-        private static readonly int[] InputKeys = Hashes(Keys.SlotInput);
-        private static readonly int[] StarKeys = Hashes(Keys.SlotStars);
-
-        /// <summary>Player ID of the cook, 0 when unknown.</summary>
-        public static long CookId(ZDO zdo, int slot) => zdo.GetLong(Key(CookKeys, Keys.SlotCook, slot));
 
         /// <summary>The cook's Cooking level when the food went on, 0 when unknown.</summary>
         public static float Level(ZDO zdo, int slot) => zdo.GetFloat(Key(LevelKeys, Keys.SlotLevel, slot));
 
-        /// <summary>Stars of the raw input, 0 for plain raw food.</summary>
-        public static float InputStars(ZDO zdo, int slot) => zdo.GetFloat(Key(InputKeys, Keys.SlotInput, slot));
+        /// <summary>Stores the cook's level for a freshly filled slot.</summary>
+        public static void Write(ZDO zdo, int slot, float level) => zdo.Set(Key(LevelKeys, Keys.SlotLevel, slot), level);
 
-        /// <summary>The stars rolled when the dish turned done, -1 while not rolled.</summary>
-        public static int RolledStars(ZDO zdo, int slot) => zdo.GetInt(Key(StarKeys, Keys.SlotStars, slot), -1);
-
-        /// <summary>The stars a done dish from this slot carries: the rolled stars, 0 when never rolled.</summary>
-        public static int DishStars(ZDO zdo, int slot) => Mathf.Clamp(RolledStars(zdo, slot), 0, Stars.Max);
-
-        /// <summary>The stars the raw input in this slot carries, as a whole number of stars.</summary>
-        public static int RawStars(ZDO zdo, int slot) => Mathf.Clamp(Mathf.RoundToInt(InputStars(zdo, slot)), 0, Stars.Max);
-
-        /// <summary>Stores the cook of a freshly filled slot; its stars are not rolled yet.</summary>
-        public static void Write(ZDO zdo, int slot, Cook cook)
-        {
-            zdo.Set(Key(CookKeys, Keys.SlotCook, slot), cook.PlayerId);
-            zdo.Set(Key(LevelKeys, Keys.SlotLevel, slot), cook.Level);
-            zdo.Set(Key(InputKeys, Keys.SlotInput, slot), cook.InputStars);
-            zdo.Set(Key(StarKeys, Keys.SlotStars, slot), -1);
-        }
-
-        public static void SetStars(ZDO zdo, int slot, int stars) =>
-            zdo.Set(Key(StarKeys, Keys.SlotStars, slot), Mathf.Clamp(stars, 0, Stars.Max));
-
-        public static void Reset(ZDO zdo, int slot) => Write(zdo, slot, default);
+        public static void Reset(ZDO zdo, int slot) => Write(zdo, slot, 0f);
 
         private static int[] Hashes(string key)
         {

@@ -7,8 +7,8 @@ namespace GrindstoneSkills
     /// station, the oven's add-food switch) ends in CookingStation.CookItem on the cook's client: it claims an unowned
     /// station, refuses incompatible and unknown items and a full station, removes one item from the inventory and
     /// sends "RPC_AddItem" to the owner. At a kitchen the prefix runs the same steps in the same order and sends
-    /// <see cref="StationRpc"/>'s add instead, which carries the input's stars and the cook's level and ID; the return
-    /// value is the game's. Other stations (the FrostFoundry) keep the game's own method.
+    /// <see cref="StationRpc"/>'s add instead, which carries the cook's level; the return value is the game's. Other
+    /// stations (the FrostFoundry) keep the game's own method.
     /// </summary>
     [HarmonyPatch(typeof(CookingStation), nameof(CookingStation.CookItem))]
     public static class StationPlacement
@@ -32,9 +32,9 @@ namespace GrindstoneSkills
                 return true;
             if (!station.IsItemAllowed(item) || station.GetFreeSlot() == -1)
                 return false;
-            int inputStars = Stars.Get(item);
+            bool cheated = item.m_cheated;
             user.GetInventory().RemoveOneItem(item);
-            StationRpc.SendAdd(nview, prefab, item.m_cheated, inputStars);
+            StationRpc.SendAdd(nview, prefab, cheated);
             return true;
         }
 

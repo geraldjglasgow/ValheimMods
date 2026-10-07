@@ -6,20 +6,18 @@ namespace GrindstoneSkills
     /// Adding a mead base, on the client that adds it. The game's Fermenter.AddItem checks that the barrel is empty and
     /// the item allowed, removes one from the inventory, then sends "RPC_AddItem"(int nameHash, bool cheated) to the
     /// barrel's owner through ZNetView.InvokeRPC. While AddItem runs, that one send is swapped for
-    /// <see cref="Keys.RpcAddBase"/>, which also carries the base's stars and the local Cooking level. Every check, the
-    /// removal and the return value stay the game's (and any other mod's changes to them). A send that does not look
-    /// like the game's (another name, view or payload) goes out untouched. The owner's side is
-    /// <see cref="FermenterAddReceive"/>.
+    /// <see cref="Keys.RpcAddBase"/>, which also carries the local Cooking level. Every check, the removal and the
+    /// return value stay the game's (and any other mod's changes to them). A send that does not look like the game's
+    /// (another name, view or payload) goes out untouched. The owner's side is <see cref="FermenterAddReceive"/>.
     /// </summary>
     internal static class FermenterAddSend
     {
         private const string VanillaRpc = "RPC_AddItem";
 
-        /// <summary>The add in progress: the barrel's view, the base's stars and the cook's level.</summary>
+        /// <summary>The add in progress: the barrel's view and the cook's level.</summary>
         private sealed class Adding
         {
             public ZNetView View;
-            public int StarCount;
             public float Level;
         }
 
@@ -29,9 +27,9 @@ namespace GrindstoneSkills
         private static class AddItemScope
         {
             [HarmonyPrefix]
-            private static void Prefix(Fermenter __instance, ItemDrop.ItemData item)
+            private static void Prefix(Fermenter __instance)
             {
-                adding = new Adding { View = __instance.m_nview, StarCount = Stars.Get(item), Level = CookLevel.Local() };
+                adding = new Adding { View = __instance.m_nview, Level = CookLevel.Local() };
             }
 
             [HarmonyFinalizer]
@@ -60,7 +58,6 @@ namespace GrindstoneSkills
             ZPackage package = new ZPackage();
             package.Write(nameHash);
             package.Write(cheated);
-            package.Write(add.StarCount);
             package.Write(add.Level);
             return package;
         }

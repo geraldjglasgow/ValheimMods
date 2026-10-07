@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using PatchGuard;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -8,9 +7,8 @@ namespace GrindstoneSkills
     /// A compost bin in the world (the component <see cref="CompostPrefab"/> adds to the bin piece). Its compost points
     /// live in its ZDO (<see cref="Keys.CompostPoints"/>). Once a second, on the bin's owner while Farming and composting
     /// are on, it composts one item every Compost Time seconds (<see cref="CompostDigest"/>) and every 10 s feeds the
-    /// crops around it (<see cref="CompostFeed"/>). Kitchen trash reaches it through <see cref="Keys.RpcAddCompost"/>
-    /// (<see cref="CompostTrash"/>). A placement ghost (no ZDO) does nothing. Every bin ticks from one update
-    /// (<see cref="Ticker"/>), all on the same frame once a second.
+    /// crops around it (<see cref="CompostFeed"/>). A placement ghost (no ZDO) does nothing. Every bin ticks from one
+    /// update (<see cref="Ticker"/>), all on the same frame once a second.
     /// </summary>
     public class CompostBin : MonoBehaviour
     {
@@ -23,9 +21,6 @@ namespace GrindstoneSkills
         private ZNetView nview;
         private float digestTimer;
         private float feedTimer;
-
-        /// <summary>Every loaded bin on this machine.</summary>
-        public static IEnumerable<CompostBin> All => all;
 
         public Container Container { get; private set; }
 
@@ -44,7 +39,6 @@ namespace GrindstoneSkills
             if (nview == null || nview.GetZDO() == null)
                 return;
             all.Add(this);
-            nview.Register<float>(Keys.RpcAddCompost, (sender, points) => Guard.Run(Keys.RpcAddCompost, () => AddPoints(points)));
             Ticker.Ensure();
         }
 
@@ -64,7 +58,7 @@ namespace GrindstoneSkills
 
         private void OnDestroy() => all.Remove(this);
 
-        /// <summary>Adds points on the owner, up to the capacity. Elsewhere nothing happens (send with <see cref="Send"/>).</summary>
+        /// <summary>Adds points on the owner, up to the capacity. Elsewhere nothing happens.</summary>
         public void AddPoints(float points)
         {
             if (IsValid && nview.IsOwner() && points > 0f)
@@ -72,17 +66,6 @@ namespace GrindstoneSkills
         }
 
         public void SetPoints(float points) => nview.GetZDO().Set(PointsHash, Mathf.Max(0f, points));
-
-        /// <summary>Gives the bin points from any machine: directly on its owner, else through its owner.</summary>
-        public void Send(float points)
-        {
-            if (!IsValid || points <= 0f)
-                return;
-            if (nview.IsOwner())
-                AddPoints(points);
-            else
-                nview.InvokeRPC(Keys.RpcAddCompost, points);
-        }
 
         public bool IsOwner() => IsValid && nview.IsOwner();
 

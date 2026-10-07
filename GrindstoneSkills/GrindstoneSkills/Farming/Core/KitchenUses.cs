@@ -4,7 +4,7 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// What the kitchens and mills do with items, read from the game's data when <see cref="CropStarItems"/> discovers:
+    /// What the kitchens and mills do with items, read from the game's data when <see cref="KitchenCrops"/> discovers:
     /// every ingredient of a kitchen recipe (a CraftingStation whose skill is Cooking) with the best food value among
     /// the dishes it goes into (<see cref="Kitchen.FoodValue"/>, so an intermediate counts as what it becomes), every
     /// input of a kitchen cooking station or a fermenter, and every Smelter conversion (the windmill and spinning wheel,

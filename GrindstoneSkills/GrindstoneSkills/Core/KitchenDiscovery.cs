@@ -37,7 +37,7 @@ namespace GrindstoneSkills
                 foreach (Recipe recipe in ObjectDB.instance.m_recipes)
                     AddRecipe(recipe);
             if (Kitchen.Count != before)
-                GrindstoneSkills.Log.LogInfo($"Kitchen items that carry stars: {Kitchen.Count}.");
+                GrindstoneSkills.Log.LogInfo($"Kitchen products: {Kitchen.Count}.");
         }
 
         private static void AddStation(PrefabIndex.Converter converter)

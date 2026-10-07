@@ -16,7 +16,7 @@ In `BepInEx/config`, written at first start; edits apply without a restart.
 
 - **Lock Configuration** (`1 - General`, default `true`): the server's settings and YAML files apply to every player. Off, each player uses their own files.
 - Admins can change server settings from their own game (for example with a configuration manager).
-- Per player: `Stars On Icons`, `Ingredient Order`, the two keys, every `Show Callouts`, `Row Planting`, `Auto Replant`, `Show Hints`.
+- Per player: `Stars On Icons`, the two keys, every `Show Callouts`, `Row Planting`, `Auto Replant`.
 
 ## Reading the numbers
 
@@ -27,7 +27,7 @@ In `BepInEx/config`, written at first start; edits apply without a restart.
 
 | Sections | Page |
 | --- | --- |
-| 2, 3, 6, 7 | [Skill Book, Stars And Death](wiki:Skill Book, Stars And Death) |
+| 6, 7 | [Skill Book And Death](wiki:Skill Book And Death) |
 | 4, 5 | [Cooking Skill](wiki:Cooking Skill) |
 | 8, 9, 35 | [Sailing Skill](wiki:Sailing Skill) |
 | 10-13 | [Woodcutting Skill](wiki:Woodcutting Skill) |
@@ -65,15 +65,13 @@ biomes:
 
 ```
 forage:
-  Raspberry: { stars: true, best: [day, dry] }
+  Raspberry: {}
   Flint: { experience: 0.5 }
 ```
 
 | Field | Meaning |
 | --- | --- |
 | `<ItemPrefab>:` | an item that counts as forage (crops never do). |
-| `stars` | whether its plant shows a best-time hint (no stars roll since 0.13.0). |
-| `best` | `day`, `night`, `wet` and/or `dry`. |
 | `experience` | experience factor (default 1). |
 
 ## Console commands
@@ -89,8 +87,8 @@ forage:
 
 ## Other mods
 
-- **Elite Creatures Reborn 3.10.0+:** decides newborns' stars; Better offspring adds one more, up to one above the stronger parent. Prime Cuts gives no stars with it.
-- **FeastMaster:** star and Defense food bonuses scale its food values; cooking speeds stack with its times.
+- **Elite Creatures Reborn 3.10.0+:** decides newborns' stars; Better offspring adds one more, up to one above the stronger parent.
+- **FeastMaster:** Defense food bonuses scale its food values; cooking speeds stack with its times.
 - **OpenKeep:** crafting from chests and pets eating from chests work alongside; extra honey adds to its beehives.
 - **ShipConfig:** its ship health replaces Sailing's health bonus; Sailing's speed still applies.
 - Other mods' kitchens, rocks, trees, crops and skills work when they behave like the game's; add their items to the YAML files by prefab name.

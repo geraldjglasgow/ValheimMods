@@ -7,22 +7,22 @@ namespace GrindstoneSkills
     /// The ingredient-save perk. After a craft at a kitchen crafting station, each crafted batch (1, or all of a
     /// multi-craft, so crafting five at once saves as often as five single crafts) has
     /// <see cref="Perks.IngredientSaveChance"/> of giving back one unit of an ingredient it used up. The ingredient is
-    /// one of the used-up requirements picked at random, the unit one of its used-up units, so a starred ingredient
-    /// comes back with its stars (and a fish with its quality). It goes into the inventory, or to the ground at the
+    /// one of the used-up requirements picked at random, the unit a copy of one of its used-up units, so it comes
+    /// back as it went in (a fish with its quality). It goes into the inventory, or to the ground at the
     /// crafter's feet when there is no room, and a short message says what was saved. Nothing used up, nothing saved:
     /// a failed craft and the no-cost cheat never give anything.
     /// </summary>
     public static class IngredientSave
     {
-        public static void Roll(KitchenCraftContext craft, List<CraftRecord.Lot> lots)
+        public static void Roll(Player player, int batches, List<CraftRecord.Lot> lots)
         {
             float chance = Perks.IngredientSaveChance(CookLevel.Local());
             if (chance <= 0f)
                 return;
-            for (int batch = 0; batch < craft.Batches && lots.Count > 0; batch++)
+            for (int batch = 0; batch < batches && lots.Count > 0; batch++)
             {
                 if (UnityEngine.Random.value < chance)
-                    GiveBack(craft.Player, TakeUnit(lots));
+                    GiveBack(player, TakeUnit(lots));
             }
         }
 
@@ -59,8 +59,7 @@ namespace GrindstoneSkills
 
         private static void GiveBack(Player player, ItemDrop.ItemData unit)
         {
-            int stars = Stars.Get(unit);
-            string name = (stars > 0 ? $"{stars}★ " : "") + Localization.instance.Localize(unit.m_shared.m_name);
+            string name = Localization.instance.Localize(unit.m_shared.m_name);
             if (!player.GetInventory().AddItem(unit))
                 CraftDrop.AtFeet(player, unit, 1);
             player.Message(MessageHud.MessageType.TopLeft, $"Saved: 1 {name}", 0, unit.GetIcon());

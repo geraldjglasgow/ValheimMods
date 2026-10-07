@@ -37,15 +37,12 @@ namespace GrindstoneSkills
             if (!IsOwnedTame(creature))
                 return null;
             Player killer = creature.m_lastHit != null ? creature.m_lastHit.GetAttacker() as Player : null;
-            int level = creature.GetLevel();
             ButcherContext context = new ButcherContext
             {
                 Creature = creature,
                 Prefab = Herd.PrefabName(creature),
-                Level = level,
                 Killer = killer,
                 KillerLevel = killer != null ? HusbandrySkill.Of(killer) : 0f,
-                PrimeStars = PrimeCutDrops.StarsFor(level),
             };
             if (killer != null)
                 HusbandryCredit.Send(killer.GetPlayerID(), HusbandryCredit.Kind.Butchering, context.Prefab);

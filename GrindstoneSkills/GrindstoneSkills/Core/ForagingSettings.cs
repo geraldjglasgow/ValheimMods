@@ -4,7 +4,7 @@ using SyncedConfig;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Section 33: the Foraging module's master switch, each player's own callouts and hints, and Foraging experience;
+    /// Section 33: the Foraging module's master switch, each player's own callouts, and Foraging experience;
     /// section 34 (<see cref="ForagePerkSettings"/>) holds the perks. What counts as forage is the Forage YAML file
     /// (GrindstoneSkills.Forage*.yml, <see cref="ForageFile"/>). Gameplay values are synced and lockable.
     /// </summary>
@@ -15,7 +15,6 @@ namespace GrindstoneSkills
 
         public static ConfigEntry<bool> Enabled { get; private set; }
         public static ConfigEntry<bool> ShowCallouts { get; private set; }
-        public static ConfigEntry<bool> ShowHints { get; private set; }
         public static ConfigEntry<float> ExperiencePerPick { get; private set; }
         public static ConfigEntry<float> BiomeStep { get; private set; }
         public static ConfigEntry<float> DiscoveryMultiplier { get; private set; }
@@ -31,11 +30,9 @@ namespace GrindstoneSkills
         private static void BindSwitches(SyncedConfiguration config)
         {
             Enabled = config.Bind(Section, "Foraging Enabled", true,
-                "Turns every Foraging feature on or off: stars on picks, experience, extra yield, sweep picking, hints. Off, wild plants are picked exactly as in the game (the game trains Farming with them). Levels are kept either way.");
+                "Turns every Foraging feature on or off: experience, extra yield, sweep picking. Off, wild plants are picked exactly as in the game (the game trains Farming with them). Levels are kept either way.");
             ShowCallouts = config.Bind(Section, "Show Callouts", true,
                 "Shows words like Discovered Thistle! floating above plants you pick.", synced: false);
-            ShowHints = config.Bind(Section, "Show Hints", true,
-                "Adds a line to a wild plant's hover text saying when it is best picked, or that it is at its best now.", synced: false);
         }
 
         private static void BindExperience(SyncedConfiguration config)

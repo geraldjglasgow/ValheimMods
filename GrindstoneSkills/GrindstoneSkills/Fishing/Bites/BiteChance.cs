@@ -12,7 +12,6 @@ namespace GrindstoneSkills
     /// <list type="bullet">
     /// <item>the angler's level (Bite Chance At 100), read from the float's ZDO (<see cref="Angler"/>);</item>
     /// <item>dawn and dusk, and rain (<see cref="FishingConditions"/>);</item>
-    /// <item>the bait's stars (Bait Bite Bonus Per Star);</item>
     /// <item>chum floating near the float (<see cref="Chum"/>).</item>
     /// </list>
     /// A legendary fish ignores the floats of anglers below Legendary Level. Whether the bait is right is still the
@@ -67,8 +66,7 @@ namespace GrindstoneSkills
         private static float Factor(FishingFloat fishingFloat)
         {
             float skill = 1f + FishSkill.Share(FishingBiteSettings.BiteChanceAt100.Value, Angler.Level(fishingFloat));
-            float bait = 1f + FishSkill.Percent(FishingBiteSettings.BaitBitePerStar.Value) * Angler.BaitStars(fishingFloat);
-            return skill * bait * FishingConditions.BiteFactor() * Chum.Factor(fishingFloat.transform.position);
+            return skill * FishingConditions.BiteFactor() * Chum.Factor(fishingFloat.transform.position);
         }
     }
 }

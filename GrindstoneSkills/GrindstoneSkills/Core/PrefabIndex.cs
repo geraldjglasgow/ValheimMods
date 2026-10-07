@@ -29,9 +29,6 @@ namespace GrindstoneSkills
             public readonly List<Plant> Plants = new List<Plant>();
             public readonly List<TreeBase> Trees = new List<TreeBase>();
             public readonly List<Converter> Converters = new List<Converter>();
-
-            /// <summary>The CharacterDrop of every prefab with a Tameable.</summary>
-            public readonly List<CharacterDrop> TameableDrops = new List<CharacterDrop>();
         }
 
         /// <summary>The item database's prefabs that discoveries look for.</summary>
@@ -105,9 +102,6 @@ namespace GrindstoneSkills
             };
             if (converter.Station != null || converter.Fermenter != null || converter.Smelter != null)
                 found.Converters.Add(converter);
-            CharacterDrop drops = prefab.GetComponent<Tameable>() != null ? prefab.GetComponent<CharacterDrop>() : null;
-            if (drops != null)
-                found.TameableDrops.Add(drops);
         }
 
         private static void AddItemPrefab(GameObject prefab, ItemPrefabs found)

@@ -5,8 +5,8 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Composting, on the bin's owner: one unit of the first compostable item in the bin becomes one point of compost,
-    /// until the bin is full. Compostable: anything with food value, anything that carries stars (crops, seeds, dishes,
-    /// flour), and the items named in Compost Items. Taking the unit changes the container's inventory, which the game
+    /// until the bin is full. Compostable: anything with food value, what kitchens make (dishes, meads, doughs), the crops
+    /// and seeds a kitchen uses and their flour (<see cref="KitchenCrops"/>), and the items named in Compost Items. Taking the unit changes the container's inventory, which the game
     /// saves to the bin's ZDO on its owner (Container.OnContainerChanged), so everyone sees it go.
     /// </summary>
     public static class CompostDigest
@@ -33,7 +33,7 @@ namespace GrindstoneSkills
         {
             if (item?.m_shared == null)
                 return false;
-            if (Kitchen.Value(item.m_shared) > 0f || Kitchen.IsKitchenItem(item))
+            if (Kitchen.Value(item.m_shared) > 0f || Kitchen.IsKitchenItem(item) || KitchenCrops.Contains(item))
                 return true;
             return item.m_dropPrefab != null && Extra().Contains(item.m_dropPrefab.name);
         }

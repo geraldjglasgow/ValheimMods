@@ -4,9 +4,9 @@ using HarmonyLib;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// A starred dish lying on the ground shows its stars when looked at. ItemDrop.GetHoverText (the crosshair text)
-    /// loads the item from its ZDO, writes any quality above 1 straight after the name as "[3] " (so a 2-star dish
-    /// would read "Cooked meat[3]  x5") and localizes the result; that tag becomes the stars. If another mod removed the
+    /// A starred egg lying on the ground shows its stars when looked at. ItemDrop.GetHoverText (the crosshair text)
+    /// loads the item from its ZDO, writes any quality above 1 straight after the name as "[3] " (so a 2-star egg
+    /// would read "Egg[3]  x5") and localizes the result; that tag becomes the stars. If another mod removed the
     /// tag, the stars go at the end of the first line. GetHoverName (the unlocalized name, used in messages such as
     /// "can't use X on Y") gets the stars appended as plain glyphs.
     /// </summary>
@@ -38,7 +38,7 @@ namespace GrindstoneSkills
 
         private static string WithStars(string text, int quality, int stars)
         {
-            string glyphs = " " + StarText.Colored(stars);
+            string glyphs = " " + StarText.Tier(stars);
             string tag = "[" + quality + "] ";
             int at = text.IndexOf(tag, StringComparison.Ordinal);
             if (at >= 0)

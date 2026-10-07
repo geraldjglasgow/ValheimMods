@@ -64,13 +64,14 @@ namespace Hotkeys
         }
 
         /// <summary>
-        /// A key held now. Shift, Ctrl and Alt are read through the game's own input (<c>ZInput</c>, Unity's input system),
-        /// which lets go of every key when the window loses focus. Unity's old <c>Input</c> keeps a modifier held that was
-        /// let go in another window (Alt + Tab out, Alt + Z to an overlay, back with the mouse) until it is pressed again:
-        /// a stuck Left Alt made PackPanel's plain 1 to 3 drink meads and skip the hotbar (2026-10-05).
+        /// A key held now. Shift, Ctrl and Alt count only when both Unity's old <c>Input</c> and the game's own input
+        /// (<c>ZInput</c>, Unity's input system) say so: each can keep a modifier held that was let go in another window
+        /// (Alt + Tab out, Alt + Z to an overlay, back with the mouse). The old input stuck on 2026-10-05, the game's on
+        /// 2026-10-06; either way a stuck Left Alt made PackPanel's plain 1 to 3 drink meads and the hotbar keys do nothing.
+        /// A modifier really held reads held in both.
         /// </summary>
         public static bool KeyHeld(KeyCode key) =>
-            Array.IndexOf(ModifierKeys, key) >= 0 ? ZInput.GetKey(key, false) : Input.GetKey(key);
+            Array.IndexOf(ModifierKeys, key) >= 0 ? ZInput.GetKey(key, false) && Input.GetKey(key) : Input.GetKey(key);
 
         /// <summary>
         /// A set shortcut with modifiers, all of them held, its main key or not (Alt while the player reaches for Alt + 1),

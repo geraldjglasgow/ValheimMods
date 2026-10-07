@@ -18,7 +18,7 @@ namespace GrindstoneSkills
         private const string Barrel = "piece_chest_barrel";
         private const string Workbench = "piece_workbench";
         private const string Name = "Compost bin";
-        private const string Description = "Turns food scraps and spare crops into compost that feeds the crops around it: they grow faster and ripen with better stars.";
+        private const string Description = "Turns food scraps and spare crops into compost that feeds the crops around it: they grow faster.";
 
         private static GameObject holder;
 

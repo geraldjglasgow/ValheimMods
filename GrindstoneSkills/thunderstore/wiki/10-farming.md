@@ -4,7 +4,6 @@ The game's own skill (cultivator stamina, scythe reach, bonus crop); your level 
 
 | Level | Milestone | What |
 | --- | --- | --- |
-| 20 | Almanac | a crop's hover shows its star odds (0% since 0.13.0) |
 | 25 / 50 | Rows of three / five | placing a seed plants a row (hold Shift for one) |
 | 50 | Auto Replant | picking a crop replants it with a seed from your inventory |
 | 75 | Heat Tolerance | your crops grow in the Ashlands without a shield |
@@ -27,7 +26,6 @@ Perks grow evenly from 0 at level 0 to the value at 100.
 | Row Of Five Level | 50 | Level for rows of five. |
 | Heat Tolerance Level | 75 | Level for Heat Tolerance. |
 | Cold Tolerance Level | 100 | Level for Cold Tolerance. |
-| Almanac Level | 20 | Level for the Almanac. |
 | Rain Growth Bonus | 50 | % faster growth in rain. |
 | Tending Bonus | 10 | % of its grow time a tended plant gains. |
 | Tending Radius | 2.5 | Metres tending reaches. |
@@ -43,26 +41,19 @@ Perks grow evenly from 0 at level 0 to the value at 100.
 | Show Callouts | true | Floating words like "Giant turnip!". Per player. |
 | Row Planting | true | Plant rows once your level allows. Per player. |
 | Auto Replant | true | Replant picked crops once your level allows. Per player. |
-| Crop Stars | true | Only shows or hides the Almanac's odds since 0.13.0. |
-| Seed Levels Per Star | 10 | No effect since 0.13.0. |
-| Companion Levels | 5 | No effect since 0.13.0. |
-| Companion Radius | 2 | No effect since 0.13.0. |
-| Companion Kinds | 3 | No effect since 0.13.0. |
 
 ## Compost bin (32 - Compost)
 
-A barrel in the cultivator's Misc menu (10 wood, 4 stone, at a workbench). Fill it with food scraps; it turns them into compost and feeds growing crops nearby so they grow faster. Dishes a kitchen's trash filter throws away nearby become compost too.
+A barrel in the cultivator's Misc menu (10 wood, 4 stone, at a workbench). Fill it with food scraps; it turns them into compost and feeds growing crops nearby so they grow faster.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | Compost Enabled | true | Composting on; off, a plain barrel. |
 | Compost Time | 30 | Seconds per item turned to compost. |
 | Compost Capacity | 100 | Most compost a bin holds. |
-| Compost Items | Entrails, BoneFragments | Items that compost besides food. |
-| Kitchen Trash Compost | true | Trashed dishes within 20 m become compost. |
+| Compost Items | Entrails, BoneFragments | Items that compost besides food, kitchen products, and crops and seeds kitchens use. |
 | Compost Radius | 12 | Metres a bin feeds crops. |
 | Compost Growth Speed | 25 | % faster growth for a fed crop. |
-| Compost Star Levels | 10 | No effect since 0.13.0. |
 
 ## Experience (31 - Farming Experience)
 

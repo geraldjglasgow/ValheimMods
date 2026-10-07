@@ -7,11 +7,11 @@ namespace GrindstoneSkills
     /// <summary>
     /// What a craft at a kitchen crafting station used up. InventoryGui.DoCrafting pays after the crafted item is
     /// added: Player.ConsumeResources calls Inventory.RemoveItem(name, amount, -1) per requirement, and a
-    /// single-ingredient recipe calls it directly with its stack's quality. While <see cref="Recording"/> is on,
-    /// <see cref="IngredientTakeOrder"/> performs those removals and notes every lot it takes. Stacks taken by reference
-    /// with Inventory.RemoveItem(item, amount), which is how OpenKeep pays a shortfall from nearby chests, are noted by
-    /// the patch below. The lots give the ingredients' average stars for the roll and the pool the ingredient-save perk
-    /// draws from.
+    /// single-ingredient recipe calls it directly with its stack's quality. While <see cref="Recording"/> is on, the
+    /// patches below note every lot those removals take: by name, the stacks the game is about to take from, in its own
+    /// order; by reference with Inventory.RemoveItem(item, amount), which is how OpenKeep pays a shortfall from nearby
+    /// chests, the stack itself. Any inventory is noted, so a mod that pays from a chest the game's way is noted too.
+    /// The lots are the pool the ingredient-save perk draws from.
     /// </summary>
     public static class CraftRecord
     {
@@ -53,19 +53,33 @@ namespace GrindstoneSkills
             lots.Add(new Lot { Item = copy, Count = count });
         }
 
-        /// <summary>The mean stars of the used-up units that can carry stars; 0 when there were none.</summary>
-        public static float AverageStars()
+        /// <summary>Notes what the game's RemoveItem by name will take, walking the stacks as it does.</summary>
+        private static void NoteByName(Inventory inventory, string name, int amount, int quality, bool worldLevelBased)
         {
-            int units = 0;
-            int stars = 0;
-            foreach (Lot lot in lots)
+            foreach (ItemDrop.ItemData item in inventory.m_inventory)
             {
-                if (!Kitchen.IsKitchenItem(lot.Item))
+                if (amount <= 0)
+                    break;
+                if (item.m_shared.m_name != name || (quality >= 0 && item.m_quality != quality)
+                    || (worldLevelBased && item.m_worldLevel < Game.m_worldLevel))
                     continue;
-                units += lot.Count;
-                stars += Stars.Get(lot.Item) * lot.Count;
+                int take = Mathf.Min(item.m_stack, amount);
+                Note(item, take);
+                amount -= take;
             }
-            return units == 0 ? 0f : (float)stars / units;
+        }
+
+        // Low priority: runs after other mods' prefixes, so OpenKeep first takes the shortfall from chests.
+        [HarmonyPatch(typeof(Inventory), nameof(Inventory.RemoveItem), new[] { typeof(string), typeof(int), typeof(int), typeof(bool) })]
+        private static class NameTaken
+        {
+            [HarmonyPrefix]
+            [HarmonyPriority(Priority.Low)]
+            private static void Prefix(Inventory __instance, string name, int amount, int itemQuality, bool worldLevelBased, bool __runOriginal)
+            {
+                if (Recording && __runOriginal)
+                    NoteByName(__instance, name, amount, itemQuality, worldLevelBased);
+            }
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.RemoveItem), new[] { typeof(ItemDrop.ItemData), typeof(int) })]

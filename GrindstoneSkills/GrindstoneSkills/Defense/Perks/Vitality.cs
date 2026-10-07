@@ -7,8 +7,8 @@ namespace GrindstoneSkills
     /// Max Health and Food Health. Player.GetTotalFoodValue starts from the base health (m_baseHP, 25) and adds every
     /// active food's current health; UpdateFood calls it every second on the player's own client and passes the total
     /// to SetMaxHealth, which the health bar, the save and every other reader of max health use. This postfix runs
-    /// after the cooking stars' (<see cref="FoodTotals"/>, a lower priority runs later), so Food Health scales what
-    /// food gives with its stars and whatever another mod added, then Max Health is added flat. Only the local player
+    /// late (a lower priority runs later), so Food Health scales what food gives with whatever another mod added, then
+    /// Max Health is added flat. Only the local player
     /// is changed: GetSkillLevel knows nothing of anyone else's skills.
     /// </summary>
     [HarmonyPatch(typeof(Player), nameof(Player.GetTotalFoodValue))]

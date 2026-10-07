@@ -20,12 +20,6 @@ namespace GrindstoneSkills
         public readonly List<ItemDrop> Extras = new List<ItemDrop>();
         public string Pickable;
 
-        /// <summary>The kind for companion planting: the seed and crop prefab names, sorted, so a seed plant and its crop plant are one kind.</summary>
-        public string Kind;
-
-        /// <summary>Whether its seed and crops carry stars (set by <see cref="CropStarItems"/>).</summary>
-        public bool CarriesStars;
-
         /// <summary>Every item the plant uses or gives: the seed, the crop and the extra drops.</summary>
         public IEnumerable<ItemDrop> Items()
         {
@@ -46,13 +40,6 @@ namespace GrindstoneSkills
 
         /// <summary>Whether this plant grows where the given biome is.</summary>
         public bool GrowsIn(Heightmap.Biome biome) => Plant != null && (Plant.m_biome & biome) != 0;
-
-        internal static string KindOf(ItemDrop seed, ItemDrop crop)
-        {
-            string a = seed != null ? seed.name : "";
-            string b = crop != null ? crop.name : "";
-            return string.CompareOrdinal(a, b) <= 0 ? a + "|" + b : b + "|" + a;
-        }
 
         internal static ItemDrop ItemOf(GameObject prefab) => prefab != null ? prefab.GetComponent<ItemDrop>() : null;
     }

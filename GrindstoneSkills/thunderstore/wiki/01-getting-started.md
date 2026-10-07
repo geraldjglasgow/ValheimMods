@@ -1,22 +1,20 @@
 # Getting Started
 
-This wiki describes version 0.13.3.
+This wiki describes version 0.15.0.
 
 GrindstoneSkills deepens five of the game's skills (your levels count) and adds four new ones. Perks grow evenly from nothing at level 0 to full at level 100; milestones unlock at a set level. The Skills window becomes a skill book, and skill loss on death is configurable.
 
 | Skill | Kind | Adds |
 | --- | --- | --- |
-| [Cooking](wiki:Cooking Skill) | game | faster cooking, slower burning, extra food, saved ingredients, trash filter |
+| [Cooking](wiki:Cooking Skill) | game | faster cooking, slower burning, extra food, saved ingredients |
 | [Sailing](wiki:Sailing Skill) | new | tougher, faster ships, wider map reveal, Wind Call, Lookout |
 | [Woodcutting](wiki:Woodcutting Skill) | game | aimed falls, domino felling, clean splits, old growth, replanting, finds |
 | [Pickaxes](wiki:Pickaxes Skill) | game | seams, splash, rich veins, extra ore, Echo, finds |
-| [Foraging](wiki:Foraging Skill) | new | wild picks: extra yield, sweep picking, best-time hints |
+| [Foraging](wiki:Foraging Skill) | new | wild picks: extra yield, sweep picking |
 | [Fishing](wiki:Fishing Skill) | game | a fight on the line, more bites, big and legendary fish, snags, angler's log |
 | [Husbandry](wiki:Husbandry Skill) | new | taming, calm creatures, breeding, twins, produce, Animal Feeder |
 | [Defense](wiki:Defense Skill) | new | health, damage reduction, regeneration, guard perks, four milestones |
 | [Farming](wiki:Farming Skill) | game | faster growth, row planting, auto-replant, giant crops, tending, compost |
-
-Since 0.13.0 nothing rolls stars; items starred earlier keep theirs. See [Skill Book, Stars And Death](wiki:Skill Book, Stars And Death).
 
 ## Install
 
@@ -32,7 +30,6 @@ Since 0.13.0 nothing rolls stars; items starred earlier keep theirs. See [Skill 
 | O | aboard, Sailing 50 | Lookout |
 | E | a growing crop someone planted | tend it, once a day |
 | E | a tamed animal you cannot command | pet it |
-| Shift + E | a kitchen | cycle its trash filter (above "all dishes" it throws away every dish) |
 | Shift (held) | placing a seed | plant one, not a row |
 | `/fishlog` | chat | your angler's log |
 

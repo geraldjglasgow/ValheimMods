@@ -7,7 +7,7 @@ namespace GrindstoneSkills
     /// Sweep picking, on the picker's client: from Sweep Level, a pick of forage also picks every plant of the same
     /// kind (the same prefab) within level / 100 × Sweep Radius At 100 of it. Each is the game's own pick
     /// (Pickable.Interact, without the interact animation), so each goes through <see cref="ForagePick"/> for its
-    /// experience, extra yield and stars, and reaches its own owner. Plants are found with the colliders the player
+    /// experience and extra yield, and reaches its own owner. Plants are found with the colliders the player
     /// can interact with; crops and other modules' plants are never forage, so they are never swept.
     /// </summary>
     public static class ForageSweep

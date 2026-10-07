@@ -8,9 +8,8 @@ namespace GrindstoneSkills
     /// skill on a pick and rolls one extra item from it (m_pickRaiseSkill, m_maxLevelBonusChance: Farming and 25% on
     /// wild plants). For the one call the plant's fields are turned to Foraging and the Extra Yield Chance, so the
     /// game's own code raises Foraging (scaled by <see cref="ForageXp"/>), rolls the extra item from the Foraging level
-    /// and shows its "+1"; afterwards the fields are put back. A starred item's mark goes to the plant's owner first
-    /// (<see cref="ForageMarks"/>): the game's RPC_Pick follows it and spawns the items there. A top-level pick then
-    /// sweeps the plants of the same kind around it (<see cref="ForageSweep"/>).
+    /// and shows its "+1"; afterwards the fields are put back. A top-level pick then sweeps the plants of the same kind
+    /// around it (<see cref="ForageSweep"/>).
     /// </summary>
     [HarmonyPatch(typeof(Pickable), nameof(Pickable.Interact))]
     public static class ForagePick
@@ -37,8 +36,6 @@ namespace GrindstoneSkills
                 return;
             __state = Swap(__instance);
             __state.ScopeOpened = ForageXp.Begin(__instance, entry);
-            if (entry.Stars)
-                HookGuard.Run("Foraging mark", () => ForageMarks.Send(__instance, player, entry));
         }
 
         [HarmonyPostfix]

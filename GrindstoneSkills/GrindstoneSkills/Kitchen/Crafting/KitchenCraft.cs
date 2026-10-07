@@ -5,21 +5,18 @@ namespace GrindstoneSkills
     /// <summary>
     /// Crafting at a kitchen crafting station (cauldron, mead cauldron, prep table). InventoryGui.DoCrafting runs on
     /// the crafting player's client: it rolls the game's bonus food (m_craftBonusChance times the skill factor, for
-    /// stackable items), adds the whole amount, multi-craft and bonus included, with one Inventory.AddItem at quality
-    /// 1, pays the ingredients, then raises the skill. Upgrades take their own branch and are left alone.
-    /// The prefix swaps in GrindstoneSkills' extra food chance (<see cref="ExtraFood"/>), captures the craft
-    /// (<see cref="KitchenCraftContext"/>) and starts recording the ingredients (<see cref="CraftRecord"/>). The postfix
-    /// gives every crafted unit its star (<see cref="CraftSplit"/>) and may give an ingredient back
-    /// (<see cref="IngredientSave"/>). The finalizer puts everything back, also when the craft failed or threw.
-    /// All of it is local to the crafter; only the station's trash filter is read from its ZDO.
+    /// stackable items), adds the whole amount, multi-craft and bonus included, pays the ingredients, then raises the
+    /// skill. Upgrades take their own branch and are left alone.
+    /// The prefix swaps in GrindstoneSkills' extra food chance (<see cref="ExtraFood"/>), notes the crafter and the
+    /// batches (1, or the multi-craft amount) and starts recording the ingredients (<see cref="CraftRecord"/>). The
+    /// postfix may give an ingredient back (<see cref="IngredientSave"/>). The finalizer puts everything back, also when
+    /// the craft failed or threw. All of it is local to the crafter.
     /// </summary>
     public static class KitchenCraft
     {
-        private static KitchenCraftContext current;
+        private static Player crafter;
+        private static int batches;
         private static ExtraFood.State extraFood;
-
-        /// <summary>The kitchen craft DoCrafting is running, or null.</summary>
-        public static KitchenCraftContext Current => current;
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.DoCrafting))]
         private static class Crafting
@@ -41,20 +38,18 @@ namespace GrindstoneSkills
             Recipe recipe = gui.m_craftRecipe;
             if (player == null || !Kitchen.IsKitchen(station) || recipe == null || recipe.m_item == null || gui.m_craftUpgradeItem != null)
                 return;
-            current = new KitchenCraftContext(gui, player, station);
+            crafter = player;
+            batches = gui.m_multiCrafting ? gui.m_multiCraftAmount : 1;
             extraFood = ExtraFood.Apply();
             CraftRecord.Start();
         }
 
         private static void Finish()
         {
-            KitchenCraftContext craft = current;
-            if (craft == null)
+            if (crafter == null)
                 return;
             CraftRecord.Stop();
-            if (craft.Grades)
-                CraftSplit.Apply(craft, CraftRecord.AverageStars());
-            IngredientSave.Roll(craft, CraftRecord.Lots);
+            IngredientSave.Roll(crafter, batches, CraftRecord.Lots);
         }
 
         private static void End()
@@ -62,7 +57,8 @@ namespace GrindstoneSkills
             ExtraFood.Restore(extraFood);
             extraFood = default;
             CraftRecord.Clear();
-            current = null;
+            crafter = null;
+            batches = 0;
         }
     }
 }

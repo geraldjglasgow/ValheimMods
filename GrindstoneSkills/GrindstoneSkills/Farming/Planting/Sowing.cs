@@ -3,15 +3,13 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Plants one more of a piece for the local player, for row planting and auto-replant: pays its seed first (recording
-    /// the seed's stars, as <see cref="SeedStars"/> does for the game's own placement), then places it with the game's
-    /// Player.PlacePiece (no attack animation), so it gets a creator, a planter (<see cref="PlantPlacing"/>) and a ZDO
-    /// every client sees. Costs no stamina or tool wear, and raises planting experience as a placement does.
+    /// Plants one more of a piece for the local player, for row planting and auto-replant: pays its seed first, then
+    /// places it with the game's Player.PlacePiece (no attack animation), so it gets a creator, a planter
+    /// (<see cref="PlantPlacing"/>) and a ZDO every client sees. Costs no stamina or tool wear, and raises planting
+    /// experience as a placement does.
     /// </summary>
     public static class Sowing
     {
-        public static bool Active { get; private set; }
-
         /// <summary>Whether placing costs nothing: the player's no-cost mode or the world's free-build key for the piece.</summary>
         public static bool IsFree(Player player, Piece piece) =>
             player.m_noPlacementCost || (ZoneSystem.instance != null && ZoneSystem.instance.GetGlobalKey(piece.FreeBuildKey()));
@@ -32,45 +30,13 @@ namespace GrindstoneSkills
             return true;
         }
 
-        /// <summary>Pays, places and credits one plant. Returns the new plant, or null when none was made.</summary>
-        public static Plant Sow(Player player, Piece piece, Vector3 position, Quaternion rotation)
+        /// <summary>Pays, places and credits one plant.</summary>
+        public static void Sow(Player player, Piece piece, Vector3 position, Quaternion rotation)
         {
-            int stars = Pay(player, piece);
-            Active = true;
-            try
-            {
-                player.PlacePiece(piece, position, rotation, doAttack: false);
-            }
-            finally
-            {
-                Active = false;
-            }
-            Plant plant = PlantPlacing.TakeSown();
-            ZDO zdo = PlantKeys.Of(plant);
-            if (zdo != null)
-                PlantKeys.WriteSeed(zdo, stars);
-            FarmXp.RaiseScaled(player, FarmXp.Multiplier * FarmXp.Tier(CropCatalog.OfPlant(piece.name)));
-            return plant;
-        }
-
-        /// <summary>Takes the piece's cost and returns the stars of the seed taken; 0 when free.</summary>
-        private static int Pay(Player player, Piece piece)
-        {
-            if (IsFree(player, piece))
-                return 0;
-            bool record = !CraftRecord.Recording;
-            if (record)
-                CraftRecord.Start();
-            try
-            {
+            if (!IsFree(player, piece))
                 player.ConsumeResources(piece.m_resources, 0);
-                return record ? SeedStars.Recorded() : 0;
-            }
-            finally
-            {
-                if (record)
-                    CraftRecord.Clear();
-            }
+            player.PlacePiece(piece, position, rotation, doAttack: false);
+            FarmXp.RaiseScaled(player, FarmXp.Multiplier * FarmXp.Tier(CropCatalog.OfPlant(piece.name)));
         }
     }
 }

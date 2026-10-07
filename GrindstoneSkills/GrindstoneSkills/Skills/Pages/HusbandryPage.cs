@@ -8,7 +8,7 @@ namespace GrindstoneSkills
     /// level each needs. The numbers are the synced settings scaled by the level exactly as the features scale them
     /// (<see cref="HusbandrySkill.Share"/>, <see cref="BreedingPace.ExtraRoom"/>). Some features follow the player's own
     /// level (butchering, honey, pack leader, calm), others the best keeper's near the animal; the tips say which. A
-    /// feature whose setting is 0 is left out, as are Taming Levels while empty and Prime Cuts while off.
+    /// feature whose setting is 0 is left out, as are Taming Levels while empty.
     /// </summary>
     public static class HusbandryPage
     {
@@ -134,10 +134,7 @@ namespace GrindstoneSkills
         {
             PettingPerk(page);
             page.Perk("Starred Eggs", 0f,
-                "Eggs keep their hen's stars: they show them, stack apart, hatch starred chicks and raise a dish's odds in Cooking.");
-            if (HusbandryYieldSettings.PrimeCuts.Value)
-                page.Perk("Prime Cuts", 0f,
-                    $"Meat from a starred tamed animal keeps its stars (up to {Stars.Max}) and raises a dish's odds in Cooking.");
+                "Eggs keep their hen's stars: they show them, stack apart and hatch starred chicks.");
             page.Perk("Animal Lore", HusbandrySettings.LoreLevel.Value,
                 "Hovering an animal or an egg shows its timers: fed, taming, love or pregnancy, herd room, contentment, growing up, hatching.");
             page.Perk(FeederPrefab.DisplayName, HusbandryCompanionSettings.FeederLevel.Value, FeederTip());

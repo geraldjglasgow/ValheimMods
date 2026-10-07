@@ -4,9 +4,9 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Auto-replant: from Auto Replant Level, picking a crop puts the plant it grew from back in its spot, paid with a seed
-    /// from the picker's inventory (the seed's stars count, as when planting by hand). Nothing happens without a seed, or
-    /// where the plant could not grow (<see cref="PlantSpot"/>; the crop being picked is not in its way). Each player can
-    /// turn it off. Runs on the picker's client after the pick (<see cref="CropPick"/>).
+    /// from the picker's inventory. Nothing happens without a seed, or where the plant could not grow
+    /// (<see cref="PlantSpot"/>; the crop being picked is not in its way). Each player can turn it off. Runs on the
+    /// picker's client after the pick (<see cref="CropPick"/>).
     /// </summary>
     public static class AutoReplant
     {

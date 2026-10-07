@@ -1,35 +1,43 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// A dish's stars live in the item's own quality field: quality 1 is 0 stars (every vanilla dish), 4 is 3 stars.
-    /// Kitchen items have a maximum quality of 1, so the game never offers to upgrade them and hides the quality in
-    /// tooltips. Quality is saved with the item in inventories and in the ZDO of an item on the ground, and the
-    /// game's own free-stack search already keeps different qualities apart.
+    /// An egg's stars. The game keeps the laying hen's level in the egg's quality (a one-star hen lays quality 2 eggs,
+    /// which hatch one-star chicks) but shows it nowhere, since eggs have a maximum quality of 1; the mod shows it as
+    /// stars and keeps eggs of different levels in different stacks. Eggs join while Husbandry is on
+    /// (<see cref="YieldStarItems"/>).
     /// </summary>
     public static class Stars
     {
         public const int Max = 3;
 
-        /// <summary>The item's stars; 0 for anything that is not a kitchen item.</summary>
+        private static readonly HashSet<string> itemNames = new HashSet<string>();
+
+        /// <summary>Whether the item shows stars. Keyed by the shared name, which is also what stacks compare.</summary>
+        public static bool IsStarItem(ItemDrop.ItemData item) => item?.m_shared != null && itemNames.Contains(item.m_shared.m_name);
+
+        /// <summary>Whether items with this shared name (m_shared.m_name, e.g. "$item_egg") show stars.</summary>
+        public static bool IsStarName(string sharedName) => sharedName != null && itemNames.Contains(sharedName);
+
+        /// <summary>The item's stars; 0 for anything that is not a star item.</summary>
         public static int Get(ItemDrop.ItemData item)
         {
-            // Quality first: nearly every item has quality 1 (0 stars), which needs no kitchen lookup.
-            if (item == null || item.m_quality <= 1 || !Kitchen.IsKitchenItem(item))
+            // Quality first: nearly every item has quality 1 (0 stars), which needs no lookup.
+            if (item == null || item.m_quality <= 1 || !IsStarItem(item))
                 return 0;
             return Mathf.Clamp(item.m_quality - 1, 0, Max);
         }
 
-        /// <summary>Gives the item the stars, clamped to 0..3. Does nothing to items that are not kitchen items.</summary>
-        public static void Set(ItemDrop.ItemData item, int stars)
+        /// <summary>Lets an item prefab show its quality as stars. Unstackable items are refused. Idempotent.</summary>
+        public static void Add(ItemDrop drop)
         {
-            if (item != null && Kitchen.IsKitchenItem(item))
-                item.m_quality = ToQuality(stars);
+            ItemDrop.ItemData.SharedData shared = drop == null ? null : drop.m_itemData?.m_shared;
+            if (shared != null && shared.m_maxStackSize > 1)
+                itemNames.Add(shared.m_name);
         }
 
-        public static int ToQuality(int stars) => Mathf.Clamp(stars, 0, Max) + 1;
-
-        public static int FromQuality(int quality) => Mathf.Clamp(quality - 1, 0, Max);
+        internal static int Count => itemNames.Count;
     }
 }

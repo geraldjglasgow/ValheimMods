@@ -3,15 +3,14 @@ using UnityEngine;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// A starred dish's stars on its item slot: a column of the game's star (<see cref="StarGlyph"/>) down the slot's
-    /// left edge. Inventory, container and hotbar slots share one 64 px layout: the hotkey number in the top-left
+    /// A star item's stars on its item slot: a column of the game's star (<see cref="StarGlyph"/>) down the slot's
+    /// left edge, in the tier's colour (bronze, silver, gold). Inventory, container and hotbar slots share one 64 px layout: the hotkey number in the top-left
     /// corner, the food icon and the no-teleport mark in the top-right, the stack count and the durability bar along
     /// the bottom. The column starts under the hotkey number and ends beside the stack count, covering neither. Glyphs
     /// are made the first time a slot shows that many stars and afterwards only switched on and off; the badge lives
     /// and dies with its slot, which the grid destroys when its size changes.
-    /// <para>The grids call <see cref="Apply"/> for every slot every frame, and since rolls give no stars
-    /// (<see cref="StarOdds"/>) only items starred before that, or eggs from a starred hen, still have any. While no
-    /// badge exists, hiding stars returns before looking at the slot.</para>
+    /// <para>The grids call <see cref="Apply"/> for every slot every frame, and only eggs from a starred hen have any
+    /// stars. While no badge exists, hiding stars returns before looking at the slot.</para>
     /// </summary>
     public class StarBadge : MonoBehaviour
     {
@@ -48,12 +47,16 @@ namespace GrindstoneSkills
         {
             if (stars == shown)
                 return;
+            Color tint = StarText.TierColor(stars);
             for (int i = 0; i < glyphs.Length; i++)
             {
                 if (i < stars && glyphs[i] == null)
                     glyphs[i] = MakeGlyph(i);
-                if (glyphs[i] != null)
-                    glyphs[i].gameObject.SetActive(i < stars);
+                if (glyphs[i] == null)
+                    continue;
+                glyphs[i].gameObject.SetActive(i < stars);
+                if (i < stars)
+                    StarGlyph.Tint(glyphs[i], tint);
             }
             // Without the game's star (no game scene) nothing was drawn: try again next time.
             shown = stars == 0 || glyphs[stars - 1] != null ? stars : -1;

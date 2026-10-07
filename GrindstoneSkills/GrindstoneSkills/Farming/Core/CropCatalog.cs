@@ -74,7 +74,7 @@ namespace GrindstoneSkills
             {
                 foreach (Plant plant in PrefabIndex.Scene().Plants)
                     Add(plant);
-                CropStarItems.Discover();
+                KitchenCrops.Discover();
             }
         }
 
@@ -106,7 +106,6 @@ namespace GrindstoneSkills
                 Pickable = pickablePrefab,
             };
             AddExtras(crop, pickable.m_extraDrops);
-            crop.Kind = CropPlant.KindOf(crop.Seed, crop.Crop);
             return crop;
         }
 

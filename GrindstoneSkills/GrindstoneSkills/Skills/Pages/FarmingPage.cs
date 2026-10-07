@@ -5,10 +5,9 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Farming's page in the info pane: the game's own planting stamina and scythe reach, what the player's level does for
-    /// the crops they pick and plant, the star roll a crop they plant ripens with, and the perks with the level each
-    /// needs. The numbers are the synced settings scaled by the level exactly as the features scale them
-    /// (<see cref="FarmSkill.Share"/>, <see cref="CropPick"/>'s bonus chance, <see cref="PlantTraits.Radius"/>'s cap,
-    /// <see cref="StarOdds.At"/>).
+    /// the crops they pick and plant, the giant crop chance, and the perks with the level each needs. The numbers are the
+    /// synced settings scaled by the level exactly as the features scale them (<see cref="FarmSkill.Share"/>,
+    /// <see cref="CropPick"/>'s bonus chance, <see cref="PlantTraits.Radius"/>'s cap).
     /// </summary>
     public static class FarmingPage
     {
@@ -27,7 +26,7 @@ namespace GrindstoneSkills
                 page.Line("GrindstoneSkills' Farming is off on this server.");
                 return;
             }
-            page.About = "Grow more and better crops. Trained by planting and picking them.";
+            page.About = "Grow more crops, faster. Trained by planting and picking them.";
             Picking(page);
             Growing(page);
             Ripening(page);
@@ -56,7 +55,7 @@ namespace GrindstoneSkills
             page.Line($"Bonus crop {SkillPage.Percent(bonus)}", "Bonus crop", "Chance each crop you pick gives its bonus yield on top.");
             if (FarmingPerkSettings.SeedReturnAt100.Value > 0f)
                 page.Line($"Seed return {Share(FarmingPerkSettings.SeedReturnAt100.Value, page.Level)}", "Seed return",
-                    "Chance a pick also gives back the seed the plant grew from, with the crop's stars.");
+                    "Chance a pick also gives back the seed the plant grew from.");
         }
 
         private static void Growing(SkillPage page)
@@ -72,31 +71,11 @@ namespace GrindstoneSkills
 
         private static void Ripening(SkillPage page)
         {
-            bool stars = FarmingSettings.CropStars.Value;
             float giantAt100 = FarmingSettings.GiantChanceAt100.Value;
-            if (!stars && giantAt100 <= 0f)
+            if (giantAt100 <= 0f)
                 return;
             page.Heading("Ripening");
-            if (stars)
-                StarLines(page);
-            if (giantAt100 > 0f)
-                page.Line($"Giant crop {Share(giantAt100, page.Level)}", "Giant crop", GiantTip(stars));
-        }
-
-        private static void StarLines(SkillPage page)
-        {
-            float[] odds = StarOdds.At(page.Level);
-            page.Line($"Star odds {StarText.Colored(1)} {SkillPage.Percent(odds[1])}  {StarText.Colored(2)} {SkillPage.Percent(odds[2])}  {StarText.Colored(3)} {SkillPage.Percent(odds[3])}",
-                "Star odds", "What a crop you plant rolls when it ripens, at your level; heirloom seeds, companions and compost add levels. Only kitchen crops carry stars.");
-            float seed = FarmingSettings.SeedLevelsPerStar.Value;
-            if (seed > 0f)
-                page.Line($"Heirloom seeds +{SkillPage.Number(seed)} levels per star", "Heirloom seeds",
-                    "Each star of the seed you plant counts as that many extra levels in the crop's star roll.");
-            float companion = FarmingSettings.CompanionLevels.Value;
-            int kinds = FarmingSettings.CompanionKinds.Value;
-            if (companion > 0f && kinds > 0)
-                page.Line($"Companions +{SkillPage.Number(companion)} levels per kind", "Companions",
-                    $"Each other kind of crop growing or ripe within {SkillPage.Number(FarmingSettings.CompanionRadius.Value)} m when it ripens counts, up to {kinds} kinds. A seed and its crop are one kind.");
+            page.Line($"Giant crop {Share(giantAt100, page.Level)}", "Giant crop", GiantTip());
         }
 
         /// <summary>The perks everyone has from level 0: tending and the compost bin.</summary>
@@ -110,9 +89,6 @@ namespace GrindstoneSkills
 
         private static void Milestones(SkillPage page)
         {
-            float off = FarmSkill.MaxLevel + 1f;
-            page.Perk("Almanac", FarmingSettings.CropStars.Value ? FarmingPerkSettings.AlmanacLevel.Value : off,
-                "A growing crop's hover also shows the odds of the stars it will ripen with, counting its seed, companions and compost.");
             page.Perk("Row of Three", FarmingPerkSettings.RowOfThreeLevel.Value, RowTip(3));
             page.Perk("Row of Five", FarmingPerkSettings.RowOfFiveLevel.Value, RowTip(5));
             page.Perk("Auto Replant", FarmingPerkSettings.AutoReplantLevel.Value,
@@ -132,12 +108,9 @@ namespace GrindstoneSkills
             return more.Count == 0 ? tip + "." : tip + "; " + string.Join(", ", more) + ".";
         }
 
-        private static string GiantTip(bool stars)
-        {
-            string always = stars ? $", always {StarText.Colored(3)} for kitchen crops" : "";
-            return $"A crop you plant may ripen giant: {SkillPage.Number(FarmingSettings.GiantSize.Value)}x the size and {FarmingSettings.GiantYield.Value}x the crop{always}. "
-                + $"Picking one gives {SkillPage.Number(Mathf.Max(1f, FarmingExperienceSettings.GiantMultiplier.Value))}x the experience.";
-        }
+        private static string GiantTip() =>
+            $"A crop you plant may ripen giant: {SkillPage.Number(FarmingSettings.GiantSize.Value)}x the size and {FarmingSettings.GiantYield.Value}x the crop. "
+            + $"Picking one gives {SkillPage.Number(Mathf.Max(1f, FarmingExperienceSettings.GiantMultiplier.Value))}x the experience.";
 
         private static string TendTip()
         {
@@ -146,14 +119,9 @@ namespace GrindstoneSkills
             return $"Press {Key("$KEY_Use", "E")} on a growing plant: {reach} {SkillPage.Number(FarmingPerkSettings.TendingBonus.Value)}% of the grow time, once per in-game day.";
         }
 
-        private static string CompostTip()
-        {
-            string feed = $"+{SkillPage.Number(CompostSettings.GrowthSpeed.Value)}% growth";
-            if (FarmingSettings.CropStars.Value && CompostSettings.StarLevels.Value > 0f)
-                feed += $" and +{SkillPage.Number(CompostSettings.StarLevels.Value)} star levels";
-            return $"A barrel in the cultivator's menu. Scraps and spare crops in it become a point of compost every {SkillPage.Duration(CompostSettings.CompostTime.Value)}, "
-                + $"and each growing crop within {SkillPage.Number(CompostSettings.Radius.Value)} m takes one: {feed}.";
-        }
+        private static string CompostTip() =>
+            $"A barrel in the cultivator's menu. Scraps and spare crops in it become a point of compost every {SkillPage.Duration(CompostSettings.CompostTime.Value)}, "
+            + $"and each growing crop within {SkillPage.Number(CompostSettings.Radius.Value)} m takes one: +{SkillPage.Number(CompostSettings.GrowthSpeed.Value)}% growth.";
 
         private static string RowTip(int width) =>
             $"Placing a seed plants a row of {width} across your view, each paying its own seed. Hold {Key("$KEY_AltPlace", "Shift")} to plant one."

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.15.0
+
+- Removed the last of item stars: no star odds on skill pages or crop hovers, and no star settings.
+- Removed the kitchen trash filter, heirloom seeds, companion planting, best-time hints, starred bait and Prime Cuts.
+- Stars on eggs and other star items are bronze (1), silver (2) and gold (3).
+- An API for other mods: skill levels and item stars (Hearthhold uses it).
+- Removed settings are deleted from the .cfg.
+- Eggs still show their hen's stars.
+- Fixed: after Alt + Tab, the Sailing keys could stop working or act as if Shift, Ctrl or Alt were held.
+
 ## 0.14.1
 
 - Husbandry: extra honey is rolled by the hive; two players or a double press no longer both get paid.

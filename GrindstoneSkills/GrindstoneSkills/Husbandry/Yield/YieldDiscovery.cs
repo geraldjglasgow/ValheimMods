@@ -4,11 +4,11 @@ using HarmonyLib;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// Fills <see cref="YieldCatalog"/>, forgets the cached <see cref="ProduceTables"/> and registers the star items
+    /// Fills <see cref="YieldCatalog"/>, forgets the cached <see cref="ProduceTables"/> and registers the eggs
     /// (<see cref="YieldStarItems"/>), on every machine. Runs last after both ZNetScene.Awake and ObjectDB.Awake, like
     /// <see cref="KitchenDiscovery"/>: whichever comes second finds both, so prefabs another mod registers in its own
-    /// Awake postfix count too; running twice is harmless. The first run also subscribes to "Prime Cuts" and
-    /// "Husbandry Enabled", so turning either on (in the .cfg or by the server's sync) registers the items at once.
+    /// Awake postfix count too; running twice is harmless. The first run also subscribes to "Husbandry Enabled", so
+    /// turning it on (in the .cfg or by the server's sync) registers the eggs at once.
     /// </summary>
     public static class YieldDiscovery
     {
@@ -43,11 +43,10 @@ namespace GrindstoneSkills
             if (subscribed)
                 return;
             subscribed = true;
-            HusbandryYieldSettings.PrimeCuts.SettingChanged += OnSwitchChanged;
             HusbandrySettings.Enabled.SettingChanged += OnSwitchChanged;
         }
 
         private static void OnSwitchChanged(object sender, EventArgs args) =>
-            HookGuard.Run("husbandry star items", YieldStarItems.Register);
+            HookGuard.Run("husbandry eggs", YieldStarItems.Register);
     }
 }

@@ -24,7 +24,6 @@ namespace GrindstoneSkills
         {
             { Keys.RpcTend.GetStableHashCode(), PlantRpcs.RegisterOn },
             { Keys.RpcFertilize.GetStableHashCode(), PlantRpcs.RegisterOn },
-            { Keys.RpcForageMark.GetStableHashCode(), ForageMarks.RegisterOn },
             { Keys.RpcCleanStrike.GetStableHashCode(), CleanStrikeMarks.RegisterOn },
             { Keys.RpcPet.GetStableHashCode(), Petting.RegisterOn },
         };

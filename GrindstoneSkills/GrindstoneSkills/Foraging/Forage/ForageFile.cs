@@ -6,9 +6,8 @@ namespace GrindstoneSkills
     /// <summary>
     /// GrindstoneSkills.Forage*.yml: registered with the synced configuration (written from the embedded default when
     /// missing, sent from the server to every player while the server binds the configuration, reloaded a few seconds
-    /// after an edit, editable in game) and holding the entries of the last file set that parsed without errors. Every
-    /// machine reads the same entries: the picker's client decides experience and the best time, the plant's owner
-    /// decides which spawned items roll stars.
+    /// after an edit, editable in game) and holding the entries of the last file set that parsed without errors. The
+    /// picker's client reads them to decide what is forage and the experience of a pick.
     /// </summary>
     public static class ForageFile
     {
@@ -33,7 +32,6 @@ namespace GrindstoneSkills
         private static void Apply(YamlModel model)
         {
             current = (ForageModel)model;
-            ForageStarItems.Remember(current);
             GrindstoneSkills.Log.LogInfo($"Forage applied: {current.Items.Count} items.");
         }
     }

@@ -20,12 +20,5 @@ namespace GrindstoneSkills
 
         /// <summary>A level as a share of level 100, clamped to 0..1: the scale every perk grows on.</summary>
         public static float Factor(float level) => Mathf.Clamp01(level / MaxLevel);
-
-        /// <summary>The level a star roll uses: the cook's level plus the ingredient bonus.</summary>
-        public static float Effective(float cookLevel, float averageIngredientStars)
-        {
-            float perStar = Mathf.Max(0f, OddsSettings.IngredientLevelsPerStar.Value);
-            return Mathf.Max(0f, cookLevel) + Mathf.Max(0f, averageIngredientStars) * perStar;
-        }
     }
 }

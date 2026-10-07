@@ -7,8 +7,7 @@ namespace GrindstoneSkills
     /// What a fish is. A fish in the water is an item (ItemDrop with a Fish component), and its level is the item's
     /// quality: the game rolls 1 to 5 when it spawns (SpawnSystem, 20% per step), a big one grows on the hook
     /// (<see cref="BigOne"/>) and a legendary fish is 6 (<see cref="LegendarySpawn"/>). Quality already scales a fish's
-    /// size (+40% per level), weight, pull and thrashes, and how many raw fish cleaning gives, so it is never used for
-    /// Cooking stars; the fillets carry those.
+    /// size (+40% per level), weight, pull and thrashes, and how many raw fish cleaning gives.
     /// </summary>
     public static class FishInfo
     {
