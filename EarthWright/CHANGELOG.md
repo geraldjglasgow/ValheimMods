@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1
+
+- Fixed: after Alt + Tab, hotkeys could stop working or act as if Shift, Ctrl or Alt were held.
+- Store page: every hoe and cultivator entry listed.
+
 ## 0.4.0
 
 - Fixed: an edit could vanish when the ground changed owner; it is sent again, and you are told if it never arrives.
