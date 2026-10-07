@@ -27,7 +27,7 @@ namespace OpenKeep.Shared
         /// </summary>
         public static int Transfer(Inventory from, ItemDrop.ItemData item, int amount, Inventory to, Vector2i slot)
         {
-            amount = Mathf.Min(amount, item.m_stack);
+            amount = Mathf.Min(amount, item.m_stack, Mimir.MimirStacks.MostInto(to, item));
             if (amount <= 0 || !from.ContainsItem(item))
                 return 0;
             ItemDrop.ItemData copy = ItemPacket.Copy(item, amount);
@@ -95,7 +95,7 @@ namespace OpenKeep.Shared
             if (slot.x < 0 || slot.y < 0 || slot.x >= inventory.GetWidth() || slot.y >= inventory.GetHeight())
                 return false;
             ItemDrop.ItemData at = inventory.GetItemAt(slot.x, slot.y);
-            return at == null || (at.IsSameType(item) && at.m_stack < at.m_shared.m_maxStackSize);
+            return at == null || (at.IsSameType(item) && at.m_stack < Mimir.MimirStacks.Limit(inventory, at));
         }
 
         /// <summary>

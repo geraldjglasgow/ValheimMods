@@ -20,7 +20,7 @@ All files are in `BepInEx/config`, written on the first start. Edits apply witho
 | `milkyteam.openkeep.cfg` | Every setting, each described in the file. |
 | `OpenKeep.Reach.yml` | Which containers OpenKeep may use; what stations may take from them. |
 | `OpenKeep.Salvage.yml` | Items never salvaged; return fractions. |
-| `OpenKeep.Stow.yml` | Item groups; rules for quick stack, routing and ground pickup. |
+| `OpenKeep.Store.yml` | Item groups; rules for quick stack, routing and ground pickup. |
 | `OpenKeep.Stacks.yml` | Stack sizes and weights. |
 | `OpenKeep.Containers.yml` | Container sizes. |
 | `OpenKeep.Stations.yml` | Item and fuel capacity of smelter-type stations. |
@@ -49,7 +49,7 @@ Every key can be rebound in the cfg, main key first (`R + LeftAlt`); empty switc
 ## Pages
 
 - [Crafting and Salvage](wiki:Crafting and Salvage) - crafting from chests, station feeding, cart workbench, batch crafting, craft speed, recipe search and favourites, recipe tracker, salvage.
-- [Stow and Sort](wiki:Stow and Sort) - quick stack, store, top up, route, favourites, trash, sorting, ground pickup.
+- [Store and Sort](wiki:Store and Sort) - quick stack, store, top up, route, favourites, trash, sorting, ground pickup.
 - [Stacks and Containers](wiki:Stacks and Containers) - stack sizes, weights, chest sizes, station capacities, contents signs.
 - [Homestead](wiki:Homestead) - beds and respawn, fires, torches, honey, self-feeding stations, pets, Rested, repairs.
 - [Multiplayer and Commands](wiki:Multiplayer and Commands) - server settings, shared chests, other mods, console commands.

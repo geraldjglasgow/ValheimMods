@@ -40,7 +40,7 @@ namespace OpenKeep.Stacks
                     break;
                 if (stack == item || stack.m_gridPos == pos || !stack.IsSameType(item))
                     continue;
-                int free = stack.m_shared.m_maxStackSize - stack.m_stack;
+                int free = Mimir.MimirStacks.Limit(target, stack) - stack.m_stack;
                 if (free <= 0)
                     continue;
                 int part = Mathf.Min(free, remaining);

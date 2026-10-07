@@ -5,6 +5,6 @@ namespace OpenKeep.Core
     public enum ContainerUse
     {
         Reach,
-        Stow,
+        Store,
     }
 }

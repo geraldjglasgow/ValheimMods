@@ -6,8 +6,9 @@ using OpenKeep.Core;
 namespace OpenKeep.Salvage
 {
     /// <summary>
-    /// The public face of the module, used by the Salvage tab, the hotkey and other modules (Stow's
-    /// "Trash Uses Salvage"): can an item be salvaged, what does it return, salvage it, or ask first.
+    /// The public face of the module, used by the Salvage tab, the hotkey and other modules (Store's
+    /// "Trash Uses Salvage"): can an item be salvaged, what does it return, salvage it, or ask first. The returns
+    /// may hold an EliteCrafting rune at a chance (<see cref="EliteCraftingSalvage"/>), rolled when the stack is salvaged.
     /// </summary>
     public static class SalvageActions
     {
@@ -17,17 +18,24 @@ namespace OpenKeep.Salvage
         /// <summary>The "$ok_..." word that says why the local player cannot salvage the item, or null when they can.</summary>
         public static string WhyNot(ItemDrop.ItemData item) => SalvageRules.Blocker(Player.m_localPlayer, item);
 
-        /// <summary>The materials the whole stack returns; empty when the item has no usable recipe.</summary>
+        /// <summary>
+        /// The materials the whole stack returns, then the rune an EliteCrafting item may give back with its chance;
+        /// empty when the item has no usable recipe.
+        /// </summary>
         public static List<SalvageReturn> Returns(ItemDrop.ItemData item)
         {
-            return SalvageReturns.Compute(SalvageRules.FindRecipe(item), item);
+            List<SalvageReturn> returns = SalvageReturns.Compute(SalvageRules.FindRecipe(item), item);
+            if (returns.Count > 0)
+                EliteCraftingSalvage.AddRune(item, returns);
+            return returns;
         }
 
         /// <summary>
         /// Salvages the whole stack: removes it from the player's inventory and adds the returns. False, with a
         /// centre message saying why, when the item cannot be salvaged or the returns would not fit; then nothing
-        /// changed. The fit is checked before anything is removed; should an add still fail, the adds are rolled
-        /// back and the stack is put back into its slot.
+        /// changed. The fit is checked before anything is removed, a return at a chance counted as if it came; then
+        /// the chances are rolled. Should an add still fail, the adds are rolled back and the stack is put back into
+        /// its slot.
         /// </summary>
         public static bool Salvage(Player player, ItemDrop.ItemData item)
         {
@@ -44,7 +52,7 @@ namespace OpenKeep.Salvage
                 return Refuse(SalvageWords.Nothing);
             if (!SalvageInventory.Fits(inventory, item, returns))
                 return Refuse(SalvageWords.NoFit);
-            return Exchange(inventory, item, returns);
+            return Exchange(inventory, item, EliteCraftingSalvage.Roll(returns));
         }
 
         private static bool Exchange(Inventory inventory, ItemDrop.ItemData item, List<SalvageReturn> returns)
@@ -78,7 +86,7 @@ namespace OpenKeep.Salvage
             return text.ToString();
         }
 
-        /// <summary>"6 $item_iron, 2 $item_wood".</summary>
+        /// <summary>"6 $item_iron, 2 $item_wood, 1 $ecf_stone_awakening (25%)".</summary>
         public static string ReturnList(List<SalvageReturn> returns)
         {
             StringBuilder text = new StringBuilder();
@@ -87,6 +95,8 @@ namespace OpenKeep.Salvage
                 if (text.Length > 0)
                     text.Append(", ");
                 text.Append(entry.Amount).Append(' ').Append(entry.Name);
+                if (!entry.IsCertain)
+                    text.Append(" (").Append(entry.ChanceText).Append(')');
             }
             return text.ToString();
         }

@@ -8,26 +8,67 @@ namespace OpenKeep.Homestead
     /// <c>RequestRespawn(10f)</c>), then <c>m_respawnLoadDuration</c> (8 s) in <c>Game.FindSpawnPoint</c> until it
     /// looks for the bed, which also waits for the bed's area to load. Both parts shrink by the same share, taken from
     /// the map distance between the death point and where the profile says the player wakes (the bed, or the world
-    /// start without one). The death part is a new <c>RequestRespawn</c> delay counted from the death; the loading
-    /// part runs the game's <c>m_respawnWait</c> faster (<see cref="BedLoadPatch"/>). Off: the game's wait.
+    /// start without one): <see cref="NearSeconds"/> for the whole wait right beside it, the game's full wait from
+    /// <see cref="Range"/>.
+    /// The death part is a new <c>RequestRespawn</c> delay counted from the death; the loading part runs the game's
+    /// <c>m_respawnWait</c> faster (<see cref="BedLoadPatch"/>). A bed picked on the map skips what is left of both
+    /// (<see cref="Picked"/>). Off: the game's wait.
     /// </summary>
     public static class BedWait
     {
         /// <summary>The game's delay between death and the respawn request.</summary>
         public const float GameDeathDelay = 10f;
 
+        /// <summary>Metres on the map from the death point to the bed at which the game's full wait applies.</summary>
+        private const float Range = 1000f;
+
+        /// <summary>Seconds from death to waking when the player died right beside the bed.</summary>
+        private const float NearSeconds = 1f;
+
         private static Vector3? deathPoint;
         private static float deathTime;
         private static float loadStartedAt;
+        private static bool picked;
 
         public static void Died(Vector3 point)
         {
             deathPoint = point;
             deathTime = Time.time;
+            picked = false;
         }
 
         /// <summary>The player spawned: the next wait belongs to the next death.</summary>
-        public static void Clear() => deathPoint = null;
+        public static void Clear()
+        {
+            deathPoint = null;
+            picked = false;
+        }
+
+        /// <summary>
+        /// The choice of bed ended. With Quick Respawn the respawn starts now and waits only until the bed's area has
+        /// loaded: a bed whose area is already loaded wakes the player at once, any other behind the loading screen,
+        /// shown at once instead of fading in over the empty world. Off: the game's wait for that bed.
+        /// </summary>
+        public static void Picked()
+        {
+            if (!BedSettings.QuickRespawn.Value || Game.instance == null || !deathPoint.HasValue)
+            {
+                Schedule();
+                return;
+            }
+            picked = true;
+            Game.instance.RequestRespawn(0f, afterDeath: true);
+            if (TryTarget(out Vector3 bed) && ZNetScene.instance != null && !ZNetScene.instance.IsAreaReady(bed))
+                ShowLoadingScreen();
+        }
+
+        private static void ShowLoadingScreen()
+        {
+            if (Hud.instance == null)
+                return;
+            Hud.instance.m_loadingScreen.gameObject.SetActive(true);
+            Hud.instance.m_loadingScreen.alpha = 1f;
+        }
 
         /// <summary>
         /// Asks the game to respawn once the death part of the wait for the current bed is over, counted from the
@@ -45,11 +86,14 @@ namespace OpenKeep.Homestead
                 Plugin.Log.LogInfo($"OpenKeep: waking in {seconds:0.#} s after death (the game waits {full:0.#} s), respawn requested in {delay:0.#} s");
         }
 
-        /// <summary>How many times faster than the game the loading part runs for the current bed; 1 when off.</summary>
+        /// <summary>
+        /// How many times faster than the game the loading part runs for the current bed; 1 when off, as fast as
+        /// <see cref="QuickWait"/> allows for a bed picked on the map.
+        /// </summary>
         public static float LoadSpeed()
         {
             float full = Full();
-            return QuickWait.Speed(Seconds(full), full);
+            return QuickWait.Speed(picked ? 0f : Seconds(full), full);
         }
 
         /// <summary>
@@ -70,13 +114,12 @@ namespace OpenKeep.Homestead
         private static float Full() => GameDeathDelay + Game.instance.m_respawnLoadDuration;
 
         /// <summary>
-        /// Quick Area Loading's reason (registered with <see cref="AreaLoader"/>): the local player is dead and the game
-        /// waits for the respawn, loading the land around the bed.
+        /// The quick area loading's reason (registered with <see cref="AreaLoader"/>): the local player is dead and the
+        /// game waits for the respawn, loading the land around the bed.
         /// </summary>
         public static bool LoadingLand()
         {
-            return BedSettings.QuickAreaLoading.Value && Player.m_localPlayer == null && Game.instance != null
-                && Game.instance.WaitingForRespawn();
+            return Player.m_localPlayer == null && Game.instance != null && Game.instance.WaitingForRespawn();
         }
 
         /// <summary>The whole wait from death to waking for the current target; the game's <paramref name="full"/> when off or unknown.</summary>
@@ -85,7 +128,7 @@ namespace OpenKeep.Homestead
             if (!BedSettings.QuickRespawn.Value || !deathPoint.HasValue || !TryTarget(out Vector3 target))
                 return full;
             float metres = BedPoints.MapDistance(deathPoint.Value, target);
-            return QuickWait.Seconds(metres, BedSettings.QuickRespawnRange.Value, BedSettings.QuickRespawnSeconds.Value, full);
+            return QuickWait.Seconds(metres, Range, NearSeconds, full);
         }
 
         /// <summary>Where the game will put the player: the profile's bed, else the world start as <c>FindSpawnPoint</c> finds it.</summary>

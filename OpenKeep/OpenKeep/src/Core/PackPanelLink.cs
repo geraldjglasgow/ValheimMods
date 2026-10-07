@@ -10,7 +10,7 @@ namespace OpenKeep.Core
     /// BepInEx's chainloader, checked on first use (after every plugin has loaded) and cached for the process. Nothing of
     /// PackPanel is referenced; OpenKeep reads what it publishes: its config entries (<see cref="Entry{T}"/>), the main
     /// grid in the character's custom data (<see cref="PackPanelGrid"/>) and the strip it keeps free at the bottom of the
-    /// player panel for the button row (<c>Stow.PanelButtons</c>).
+    /// player panel for the button row (<c>Store.PanelButtons</c>).
     /// </summary>
     public static class PackPanelLink
     {

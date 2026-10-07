@@ -37,6 +37,29 @@ namespace OpenKeep.Core
             }
         }
 
+        /// <summary>Moves every unbound line of a renamed section to the new section name, before the module binds
+        /// its keys there, so a cfg written by an earlier version keeps its values. A key the new section already
+        /// has is left alone.</summary>
+        public static void CarrySection(ConfigFile config, string oldSection, string newSection)
+        {
+            Dictionary<ConfigDefinition, string> orphans = Orphans(config);
+            if (orphans == null)
+                return;
+            List<ConfigDefinition> old = new List<ConfigDefinition>();
+            foreach (ConfigDefinition definition in orphans.Keys)
+                if (definition.Section == oldSection)
+                    old.Add(definition);
+            foreach (ConfigDefinition definition in old)
+            {
+                ConfigDefinition moved = new ConfigDefinition(newSection, definition.Key);
+                if (!orphans.ContainsKey(moved))
+                    orphans[moved] = orphans[definition];
+                orphans.Remove(definition);
+            }
+            if (old.Count > 0)
+                Plugin.Log.LogInfo($"[{newSection}] takes {old.Count} values of the renamed section [{oldSection}]");
+        }
+
         /// <summary>BepInEx's unbound lines of the file, reached by reflection because the property is not public.</summary>
         private static Dictionary<ConfigDefinition, string> Orphans(ConfigFile config)
         {

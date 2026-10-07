@@ -5,8 +5,9 @@ namespace EliteCraftingLink
     /// <summary>
     /// An item's EliteCrafting state (api.md section 4): rarity (<c>normal</c>, <c>magic</c>, <c>rare</c>) and its
     /// colour, the inscriptions as JSON (<c>[{ "id", "tier", "value", "affix", "active" }]</c>, tier 1 the strongest),
-    /// the decorated name, and two writes: a fresh roll and a cleanse, on the item object handed in (call them where the
-    /// item is owned, like a rune; a sealed item is never changed). Without EliteCrafting every call answers false or null.
+    /// the decorated name, the rune a salvage may give back and its chance, and two writes: a fresh roll and a cleanse, on
+    /// the item object handed in (call them where the item is owned, like a rune; a sealed item is never changed). Without
+    /// EliteCrafting every call answers false, null or 0.
     /// </summary>
     public static class CraftingItems
     {
@@ -22,6 +23,10 @@ namespace EliteCraftingLink
         private static readonly Endpoint<Func<ItemDrop.ItemData, string, bool>> rollMagic =
             new Endpoint<Func<ItemDrop.ItemData, string, bool>>("RollMagic");
         private static readonly Endpoint<Func<ItemDrop.ItemData, bool>> cleanse = new Endpoint<Func<ItemDrop.ItemData, bool>>("Cleanse");
+        private static readonly Endpoint<Func<ItemDrop.ItemData, string?>> getSalvageRune =
+            new Endpoint<Func<ItemDrop.ItemData, string?>>("GetSalvageRune");
+        private static readonly Endpoint<Func<ItemDrop.ItemData, float>> getSalvageRuneChance =
+            new Endpoint<Func<ItemDrop.ItemData, float>>("GetSalvageRuneChance");
 
         public static bool IsMagic(ItemDrop.ItemData item) => Safe.Call(isMagic.Call, item, false);
 
@@ -44,5 +49,14 @@ namespace EliteCraftingLink
 
         /// <summary>Back to Normal.</summary>
         public static bool Cleanse(ItemDrop.ItemData item) => Safe.Call(cleanse.Call, item, false);
+
+        /// <summary>
+        /// The rune prefab (<c>ECF_Awakening</c>) salvaging the item may give back, or null (EliteCrafting 0.8.0+): an
+        /// Awakening Rune from Magic, an Ascension Rune from Rare.
+        /// </summary>
+        public static string? GetSalvageRune(ItemDrop.ItemData item) => Safe.Call(getSalvageRune.Call, item, null);
+
+        /// <summary>The chance, 0-1, that the salvage gives <see cref="GetSalvageRune"/> back; the caller rolls it. 0 for none.</summary>
+        public static float GetSalvageRuneChance(ItemDrop.ItemData item) => Safe.Call(getSalvageRuneChance.Call, item, 0f);
     }
 }

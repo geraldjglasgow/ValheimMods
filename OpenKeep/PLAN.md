@@ -50,13 +50,13 @@ OpenKeep/OpenKeep/src/
     Messages.cs             centre and top-left messages
     Command.cs              the openkeep console command
   Reach/                    section 1
-  Stow/                     section 2
+  Store/                     section 2
   Salvage/                  section 3
   Stacks/                   section 4
   Capacity/                 section 5
   Carts/                    section 6
   Shared/                   section 9 (several players in one chest; built after the others)
-OpenKeep/OpenKeep/config/   embedded default YAML files (OpenKeep.Reach.yml, OpenKeep.Stow.yml, OpenKeep.Salvage.yml,
+OpenKeep/OpenKeep/config/   embedded default YAML files (OpenKeep.Reach.yml, OpenKeep.Store.yml, OpenKeep.Salvage.yml,
                             OpenKeep.Stacks.yml, OpenKeep.Containers.yml); embedded automatically by the csproj as
                             resource "OpenKeep.config.<file>"
 ```
@@ -73,7 +73,7 @@ in the module folder; `Plugin.PatchEverything` finds them.
 Built first by the Core agent; every other module calls it and nothing else outside its own folder.
 
 ```csharp
-public enum ContainerUse { Reach, Stow }
+public enum ContainerUse { Reach, Store }
 
 public static class ContainerScan
 {
@@ -97,7 +97,7 @@ public static class ContainerScan
 
 public static class ContainerRules
 {
-    // Reach's YAML fills this; default is enabled for every prefab. Stow reads it too.
+    // Reach's YAML fills this; default is enabled for every prefab. Store reads it too.
     public static void SetEnabled(IReadOnlyDictionary<string, bool> byPrefab);
     public static bool IsEnabled(string prefabName);
 }
@@ -168,7 +168,7 @@ public static class Messages
 2. In parallel with 1, since they do not need the core: **Stacks + Capacity** (one agent), **Salvage** (one agent;
    uses `ItemMatchSet`/`ItemGroups` for its YAML, so it codes against the contract above and builds after Core
    lands, or ships its YAML model last).
-3. After 1: **Reach + Carts** (one agent) and **Stow** (one agent).
+3. After 1: **Reach + Carts** (one agent) and **Store** (one agent).
 4. **Integration**: one agent runs the whole build, checks every module against the spec's checklist by reading,
    writes `CLAUDE.md` (code map, patched methods, decisions, test checklist) and `README.md` (the store page), and
    fills `thunderstore/nexus-description.txt`. Then the user tests in game.

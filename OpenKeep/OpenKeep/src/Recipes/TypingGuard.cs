@@ -13,7 +13,7 @@ namespace OpenKeep.Recipes
     /// </summary>
     public static class TypingGuard
     {
-        public static bool TypingNow => SearchBar.Focused || BatchField.Focused;
+        public static bool TypingNow => SearchBar.Focused || BatchField.Focused || Mimir.MimirSearch.Focused;
 
         public static bool Typing => TypingWatch.WasTyping || TypingNow;
 

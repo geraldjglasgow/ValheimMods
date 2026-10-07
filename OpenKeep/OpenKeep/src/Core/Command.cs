@@ -4,7 +4,7 @@ using HarmonyLib;
 using OpenKeep.Blueprints;
 using OpenKeep.Signs;
 using OpenKeep.Stacks;
-using OpenKeep.Stow;
+using OpenKeep.Store;
 using PatchGuard;
 using UnityEngine;
 

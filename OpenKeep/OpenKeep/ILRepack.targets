@@ -18,6 +18,8 @@
       <InputAssemblies Include="$(OutDir)MapClicks.dll" />
       <InputAssemblies Include="$(OutDir)WindowInput.dll" />
       <InputAssemblies Include="$(OutDir)Hotkeys.dll" />
+      <InputAssemblies Include="$(OutDir)EliteCraftingLink.dll" />
+      <InputAssemblies Include="$(OutDir)BundlePrefabs.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

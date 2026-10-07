@@ -126,7 +126,7 @@ Every word must match; spaces separate words, any case. Escape in the field clea
 | Hover a tile | Its name. A tile shows the quality level in its corner. |
 | Gamepad right stick up / down / left / right | Search / track or untrack / favourite / favourites only. |
 
-`F` is Stow's `Favourite Item Key`; over an inventory slot it keeps its Stow meaning. On a gamepad in a grid, the left stick and D-pad up and down step a row, the left stick left and right a tile. Favourites are saved with your character.
+`F` is Store's `Favourite Item Key`; over an inventory slot it keeps its Store meaning. On a gamepad in a grid, the left stick and D-pad up and down step a row, the left stick left and right a tile. Favourites are saved with your character.
 
 ## Recipe tracker
 
@@ -157,7 +157,7 @@ Pins recipes on screen with every material they need, to watch while you gather 
 
 ## Salvage
 
-Turns a whole stack back into materials (section `3. Salvage`): pick it on the **Salvage** tab of the crafting panel, or hover it and press `Backspace`. Returns must fit in your inventory. The tab lists neither the hotbar nor PackPanel's slots (the key still works there); with Epic Loot, magic items show their rarity background.
+Turns a whole stack back into materials (section `3. Salvage`): pick it on the **Salvage** tab of the crafting panel, or hover it and press `Backspace`. Returns must fit in your inventory. The tab lists neither the hotbar nor PackPanel's slots (the key still works there); with Epic Loot, magic items show their rarity background. With EliteCrafting, a Magic item may also give back an Awakening Rune and a Rare item an Ascension Rune, one time in four (shown as `25%`).
 
 | Setting | Default | Who | Meaning |
 | --- | --- | --- | --- |
@@ -169,7 +169,7 @@ Turns a whole stack back into materials (section `3. Salvage`): pick it on the *
 | `Require Known Recipe` | on | Server | Only items whose recipe you know. |
 | `Require Station` | off | Server | The recipe's station must be in range. |
 | `Skip Items With Mod Data` | on | Server | Never salvage items another mod keeps data on. |
-| `Mod Data Prefixes` | ecf_ | Server | Which mods' data to look for (`ecf_` is EliteCrafting). |
+| `Mod Data Prefixes` | (empty) | Server | Which mods' data to look for, as key prefixes. EliteCrafting's items are always salvaged. |
 | `Salvage Key` | Backspace | Player | Salvage the hovered stack, after asking. |
 
 Example at the defaults: an item costing 20 Iron and 3 Wood returns 15 Iron and 2 Wood. Durability does not matter. Trophies, quest items, favourite and equipped items, and items with no recipe are never salvaged.

@@ -20,7 +20,7 @@ namespace OpenKeep
             BuildCamera.CameraToggle.Tick(__instance);
             Homestead.TorchKeyPatch.Tick(__instance);
             Reach.ReachKeys.Tick(__instance);
-            Stow.DumpKeyPatch.Tick(__instance);
+            Store.DumpKeyPatch.Tick(__instance);
         }
     }
 
@@ -33,7 +33,7 @@ namespace OpenKeep
         {
             Recipes.RecipeInput.Poll(__instance);
             Salvage.SalvageHotkey.Tick(__instance);
-            Stow.StowHotkeys.Tick(__instance);
+            Store.StoreHotkeys.Tick(__instance);
         }
     }
 
@@ -60,7 +60,7 @@ namespace OpenKeep
         public static void Postfix(Container __instance, uint __state)
         {
             Signs.SignRefresh.Tick(__instance, false);
-            Stow.TidySchedule.Tick(__instance, __state);
+            Store.TidySchedule.Tick(__instance, __state);
         }
     }
 }

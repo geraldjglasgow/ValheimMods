@@ -1,13 +1,13 @@
 using OpenKeep.Core;
 using OpenKeep.Salvage;
-using OpenKeep.Stow;
+using OpenKeep.Store;
 
 namespace OpenKeep.Recipes
 {
     /// <summary>
     /// The keyboard in the crafting panel, every frame the inventory shows: the Search Key puts the cursor into the
-    /// search field, Stow's Favourite Item Key over a recipe row makes it a favourite or not (over an inventory slot
-    /// the key keeps its Stow meaning), and the search follows the typed text once typing pauses.
+    /// search field, Store's Favourite Item Key over a recipe row makes it a favourite or not (over an inventory slot
+    /// the key keeps its Store meaning), and the search follows the typed text once typing pauses.
     /// </summary>
     public static class RecipeInput
     {
@@ -20,7 +20,7 @@ namespace OpenKeep.Recipes
                 return;
             if (Keys.Pressed(RecipeListSettings.SearchKey))
                 SearchBar.Focus();
-            else if (RecipeFavourites.Enabled && Keys.Pressed(StowSettings.FavouriteItemKey))
+            else if (RecipeFavourites.Enabled && Keys.Pressed(StoreSettings.FavouriteItemKey))
                 FavouriteHovered();
         }
 

@@ -1,4 +1,4 @@
-using OpenKeep.Stow;
+using OpenKeep.Store;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,7 +29,7 @@ namespace OpenKeep.Recipes
             {
                 if (sprite == null)
                     Find();
-                return sprite != null ? sprite : StowSprites.Star;
+                return sprite != null ? sprite : StoreSprites.Star;
             }
         }
 

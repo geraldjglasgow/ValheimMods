@@ -10,13 +10,57 @@ Storage for Valheim, plus a few base tweaks.
 [size=4][b]Features[/b][/size]
 [list]
 [*]Reach: craft, build and feed stations from nearby chests and the ship or cart you are using.
-[*]Stow: quick stack, store all, top up, sort, route and trash, by button or hotkey.
-[*]Crafting: Salvage tab, batches, craft speed, recipe search, favourites, grid views, recipe tracker.
+[*]Storing and sorting: quick stack, store all, sort and trash by button or hotkey (below).
+[*]Crafting: salvage, batches, recipe search and a recipe tracker (below).
 [*]Stacks and Capacity: stack sizes, weights, chest and station sizes, contents on hover.
 [*]Build Camera: build from a free camera near a crafting station (B with the hammer).
-[*]Off by default: cart workbenches, chest contents signs, shared chests, Auto Tidy (stray items go to the chest they belong in) and Blueprints (save buildings, place them as construction sites from the hammer).
-[*]Homestead: choose your bed after death, quick respawns, campfires on wood, honey rate, fires, smelters and pets fed from chests, night-only torches, quicker Rested and auto repair.
+[*]Homestead: beds, respawns, fires, honey, pets and repairs (below).
 [*]Works with PackPanel (inventory) and Wayfare (portals, quick jumps); neither is required.
+[/list]
+
+[size=4][b]Storing and sorting[/b][/size]
+[list]
+[*]Quick stack: every stack to the nearby chests that already hold it.
+[*]Store all / Take all: everything into or out of the open chest.
+[*]Top up: refills your partial stacks from nearby chests.
+[*]Route and Store one: a stack, or one item, to the nearest chest holding it.
+[*]Find: points to every nearby chest holding the hovered item.
+[*]Sort: your inventory or a chest, by category, name, weight, value or amount.
+[*]Trash can and junk: destroy a stack, or all your junk at once; favourites are safe.
+[*]Chest cycling: open the next chest around you with the arrows or the wheel.
+[/list]
+
+[size=4][b]Crafting[/b][/size]
+[list]
+[*]Station feeding: use a smelter, kiln, fire or oven empty-handed and it takes from chests.
+[*]Salvage: a Salvage tab turns gear back into most of its materials.
+[*]Batch crafting: make many at once with a - amount + stepper, at your chosen speed.
+[*]Recipe search and favourites: by name or material, favourites first, as rows or icon tiles.
+[*]Recipe tracker: right click a recipe to pin its materials on screen.
+[/list]
+
+[size=4][b]Homestead[/b][/size]
+[list]
+[*]Bed choice: every bed you own counts; after a death, click one on the map.
+[*]Quick respawn: the nearer you died to your bed, the sooner you wake.
+[*]Campfires on wood: build them on wooden floors.
+[*]Honey: set how much honey a hive makes per day.
+[*]Self-feeding: fires, torches, smelters, kilns and windmills refill from nearby chests.
+[*]Night-only torches: lit at nightfall, out at daybreak.
+[*]Pets: hungry tame animals walk to a nearby chest and eat.
+[*]Rested sooner: Rested after a few seconds of rest, not twenty.
+[*]Repairs: the hammer also fixes touching pieces; opening a station repairs your gear.
+[/list]
+
+[size=4][b]Off by default[/b][/size]
+[list]
+[*]Cart workbench: every cart carries a workbench to craft and build from.
+[*]Contents signs: a sign above each chest names what it holds.
+[*]Ground pickup: chests pick up drops lying around them.
+[*]Shared chests: view or use a chest another player has open.
+[*]Auto Tidy: stray items go to the chest they belong in.
+[*]Blueprints: save buildings, place them as construction sites from the hammer.
+[*]Mímir's Chest: a chest that never fills, with search, filters and sorting.
 [/list]
 
 [size=4][b]Install[/b][/size]

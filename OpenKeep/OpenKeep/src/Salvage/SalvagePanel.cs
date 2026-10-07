@@ -9,7 +9,8 @@ namespace OpenKeep.Salvage
     /// <summary>
     /// The right side of the crafting panel while the Salvage tab is selected, filled every frame after the game's
     /// UpdateRecipe has cleared it: the selected stack's icon, name and tooltip, the returns in the requirement
-    /// rows (amounts always white, more than four rows cycle like the game's), and the craft button as "Salvage".
+    /// rows (amounts always white, a return at a chance shows the chance, more than four rows cycle like the
+    /// game's), and the craft button as "Salvage".
     /// The icon gets Epic Loot's rarity background (<see cref="SalvageRarity"/>).
     /// </summary>
     public static class SalvagePanel
@@ -82,7 +83,7 @@ namespace OpenKeep.Salvage
             icon.color = Color.white;
             string label = Language.Localize(entry.Name);
             name.text = label;
-            amount.text = entry.Amount.ToString();
+            amount.text = entry.IsCertain ? entry.Amount.ToString() : entry.ChanceText;
             amount.color = Color.white;
             UITooltip tip = root.GetComponent<UITooltip>();
             if (tip != null)

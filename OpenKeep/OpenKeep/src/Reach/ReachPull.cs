@@ -40,13 +40,29 @@ namespace OpenKeep.Reach
                     break;
                 if (!wanted(item) || !rule.Accepts(item))
                     continue;
-                int take = Math.Min(Math.Min(item.m_stack, amount - moved), Fits(inventory, item));
-                if (take <= 0)
-                    continue;
-                moved += Transfer(source, inventory, item, take);
+                moved += Drain(source, inventory, item, amount - moved);
             }
             if (moved > 0)
                 ContainerScan.Save(container);
+            return moved;
+        }
+
+        /// <summary>Takes from one stack as much as is wanted and fits, at most a normal stack per move (a Mímir's Chest
+        /// stack can hold far more, <see cref="Mimir.MimirStacks"/>). Returns the amount moved.</summary>
+        private static int Drain(Inventory source, Inventory target, ItemDrop.ItemData item, int wanted)
+        {
+            int moved = 0;
+            while (moved < wanted && source.ContainsItem(item))
+            {
+                int room = Math.Min(Fits(target, item), Mimir.MimirStacks.MostInto(target, item));
+                int take = Math.Min(Math.Min(item.m_stack, wanted - moved), room);
+                if (take <= 0)
+                    break;
+                int got = Transfer(source, target, item, take);
+                moved += got;
+                if (got < take)
+                    break;
+            }
             return moved;
         }
 

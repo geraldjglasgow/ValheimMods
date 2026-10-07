@@ -5,7 +5,7 @@ namespace OpenKeep.Core
 {
     /// <summary>
     /// Which container prefabs the mod may use, by prefab name. Reach's YAML fills it from the <c>enabled</c>
-    /// flags of its <c>containers:</c> map; every prefab not listed is enabled. Stow reads it too.
+    /// flags of its <c>containers:</c> map; every prefab not listed is enabled. Store reads it too.
     /// </summary>
     public static class ContainerRules
     {

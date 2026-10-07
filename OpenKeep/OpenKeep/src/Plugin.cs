@@ -13,13 +13,14 @@ using OpenKeep.Capacity;
 using OpenKeep.Carts;
 using OpenKeep.Core;
 using OpenKeep.Homestead;
+using OpenKeep.Mimir;
 using OpenKeep.Reach;
 using OpenKeep.Recipes;
 using OpenKeep.Salvage;
 using OpenKeep.Shared;
 using OpenKeep.Signs;
 using OpenKeep.Stacks;
-using OpenKeep.Stow;
+using OpenKeep.Store;
 using OpenKeep.Tracker;
 using PatchGuard;
 using SyncedConfig;
@@ -35,7 +36,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "3.0.0";
+        public const string PluginVersion = "4.0.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -70,7 +71,7 @@ namespace OpenKeep
         {
             CoreModule.Initialize(Synced);
             ReachModule.Initialize(Synced);
-            StowModule.Initialize(Synced);
+            StoreModule.Initialize(Synced);
             SalvageModule.Initialize(Synced);
             StacksModule.Initialize(Synced);
             CapacityModule.Initialize(Synced);
@@ -83,6 +84,7 @@ namespace OpenKeep
             RecipeListModule.Initialize(Synced);
             TrackerModule.Initialize(Synced);
             BlueprintsModule.Initialize(Synced);
+            MimirModule.Initialize(Synced);
         }
 
         /// <summary>Links that need every other plugin loaded first.</summary>

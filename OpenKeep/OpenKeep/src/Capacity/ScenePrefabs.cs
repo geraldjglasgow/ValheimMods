@@ -59,7 +59,8 @@ namespace OpenKeep.Capacity
             if (prefab == null)
                 return;
             Container container = prefab.GetComponentInChildren<Container>(true);
-            if (container != null && !containers.ContainsKey(prefab.name))
+            // Mímir's Chest sizes itself from its contents (Mimir/MimirRows), never from the container file.
+            if (container != null && !containers.ContainsKey(prefab.name) && !Mimir.MimirPrefab.Is(prefab.name))
                 containers[prefab.name] = container;
             Smelter station = prefab.GetComponentInChildren<Smelter>(true);
             if (station != null && !stations.ContainsKey(prefab.name))

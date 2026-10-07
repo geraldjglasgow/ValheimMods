@@ -65,7 +65,7 @@ namespace OpenKeep.Recipes
         private static void BindFavourites(SyncedConfiguration synced)
         {
             Favourites = synced.Bind(Section, "Favourites", true,
-                "Middle click a recipe, press Stow's Favourite Item Key over it, or click the star beside its name to make it a favourite: it shows a star. The star above the list shows favourites only; Shift + click that star to clear every favourite.", synced: false);
+                "Middle click a recipe, press Store's Favourite Item Key over it, or click the star beside its name to make it a favourite: it shows a star. The star above the list shows favourites only; Shift + click that star to clear every favourite.", synced: false);
             FavouritesFirst = synced.Bind(Section, "Favourites First", true,
                 "Favourite recipes come first in the list, before the game's order.", synced: false);
         }

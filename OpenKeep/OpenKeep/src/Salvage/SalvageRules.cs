@@ -70,7 +70,7 @@ namespace OpenKeep.Salvage
             return Current != null && !Current.Deny.IsEmpty && Current.Deny.Matches(item);
         }
 
-        /// <summary>Favourite item names come from the Stow module's custom data; prefab and shared name both count.</summary>
+        /// <summary>Favourite item names come from the Store module's custom data; prefab and shared name both count.</summary>
         public static bool IsFavourite(ItemDrop.ItemData item)
         {
             HashSet<string> favourites = CharacterData.GetSet("favouriteItems");

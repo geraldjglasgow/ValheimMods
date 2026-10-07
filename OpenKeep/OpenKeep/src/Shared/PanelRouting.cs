@@ -30,15 +30,15 @@ namespace OpenKeep.Shared
             return false;
         }
 
-        /// <summary>Stow's Route Modifier click takes this click (its own prefix routes the stack elsewhere); read from the cfg so this module does not depend on Stow.</summary>
-        private static bool StowRoutesClick()
+        /// <summary>Store's Route Modifier click takes this click (its own prefix routes the stack elsewhere); read from the cfg so this module does not depend on Store.</summary>
+        private static bool StoreRoutesClick()
         {
             ConfigFile config = Plugin.Instance != null ? Plugin.Instance.Config : null;
             if (config == null)
                 return false;
-            if (config.TryGetEntry(new ConfigDefinition("2. Stow", "Enabled"), out ConfigEntry<bool> enabled) && !enabled.Value)
+            if (config.TryGetEntry(new ConfigDefinition("2. Store", "Enabled"), out ConfigEntry<bool> enabled) && !enabled.Value)
                 return false;
-            return config.TryGetEntry(new ConfigDefinition("2. Stow", "Route Modifier"), out ConfigEntry<KeyboardShortcut> modifier) && Keys.Held(modifier);
+            return config.TryGetEntry(new ConfigDefinition("2. Store", "Route Modifier"), out ConfigEntry<KeyboardShortcut> modifier) && Keys.Held(modifier);
         }
 
         private static bool ChestClick(Container container, ItemDrop.ItemData item, InventoryGrid.Modifier mod)
@@ -87,7 +87,7 @@ namespace OpenKeep.Shared
                     return true;
                 if (grid.GetInventory() == chest)
                     return ChestClick(container, item, mod);
-                if (grid == __instance.m_playerGrid && mod == InventoryGrid.Modifier.Move && !StowRoutesClick())
+                if (grid == __instance.m_playerGrid && mod == InventoryGrid.Modifier.Move && !StoreRoutesClick())
                     return PlayerMoveClick(container, item);
                 return true;
             }

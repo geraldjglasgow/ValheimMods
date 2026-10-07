@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.0.0
+
+- Stow is now called Store: `2. Stow` settings and `OpenKeep.Stow.yml` carry over by themselves.
+- Mímir's Chest (`Custom Storage Chests`, off by default): a chest that never fills, with search, filters, sorting and 9999 per stack.
+- Salvage: with EliteCrafting, Magic and Rare items are salvaged and may give a rune back (chance shown).
+- Store: the mouse wheel scrolls a chest taller than its panel instead of cycling chests.
+- Homestead: a bed picked on the death map wakes you as soon as its land has loaded.
+- Removed: `Bed Choice Seconds`, `Quick Respawn Range`, `Quick Respawn Seconds` and `Quick Area Loading` (now fixed). Nothing to do.
+- Fixed: typing in OpenKeep's search or amount fields no longer walks your character.
+- Fixed: after Alt + Tab, Shift, Ctrl or Alt no longer counts as held.
+- Update the server and every client together.
+
 ## 3.0.0
 
 - Removed: `Quick World Save`. The world saves with the game's own code again, which game 1.0.17 fixed. Nothing to do; the old setting is ignored.

@@ -1,7 +1,7 @@
 # CLAUDE.md - OpenKeep
 
 Storage and inventory for Valheim, version 1.7.0: crafting, building and station feeding from nearby containers
-(Reach), stow, top up, sort, junk, trash, routing, chest cycling and ground pickup (Stow), a Salvage tab, stack
+(Reach), quick stack, store all, top up, sort, junk, trash, routing, chest cycling and ground pickup (Store), a Salvage tab, stack
 sizes and weights (Stacks), container sizes, station capacities and hover contents (Capacity), carts as
 workbenches (Carts), several
 players in one chest (Shared), a contents sign above every player-built container (Signs), a - amount + stepper
@@ -59,7 +59,7 @@ OpenKeep/OpenKeep/src/
                             IsPrivateChest
     ContainerFacts.cs       a tracked container's fixed facts (prefab name, ship, cart, private chest), found on first use
     ContainerRules.cs       per prefab enabled table, filled by Reach's YAML, read by every module
-    ContainerUse.cs         Reach or Stow (both share the section 0 rules today)
+    ContainerUse.cs         Reach or Store (both share the section 0 rules today)
     ItemMatcher.cs, ItemMatchSet.cs, ItemGroups.cs   the item vocabulary and the groups: map of a YAML file
     ItemNames.cs            prefab name, display name, stacking identity of an item
     CharacterData.cs        string sets and flags in Player.m_customData under OpenKeep.<key>
@@ -103,18 +103,18 @@ OpenKeep/OpenKeep/src/
     FermenterPatch.cs       one prefix/postfix pair per station entry point
     ReachKeys.cs            Toggle Key and Link Key (from HotPatches' Player.Update postfix)
     ReachLinks.cs           link lines (LineRenderer) and the PlacePiece postfix
-  Stow/                     section 2
-    StowModule.cs, StowSettings.cs, StowWords.cs, SortOrder.cs
-    StowModel.cs, StowRule.cs, StowRules.cs   OpenKeep.Stow*.yml: groups, pickup, accept, refuse
-    StowTargets.cs          the open container and the nearby ones: usable now or shared (Full mode)
+  Store/                     section 2
+    StoreModule.cs, StoreSettings.cs, StoreWords.cs, SortOrder.cs
+    StoreModel.cs, StoreRule.cs, StoreRules.cs   OpenKeep.Store*.yml: groups, pickup, accept, refuse
+    StoreTargets.cs          the open container and the nearby ones: usable now or shared (Full mode)
     ChestBatch.cs           one action's writes to one container through Shared.ChestWriter, with the summary
     StackMover.cs           stacks with a put under way (never moved twice), the end-of-action message
-    StowActions.cs          quick stack, store all, dump, the Take all key (the game's OnTakeAll, so Shared routes it); SpillOver: a shared chest's leftover goes on to later holders
+    StoreActions.cs          quick stack, store all, dump, the Take all key (the game's OnTakeAll, so Shared routes it); SpillOver: a shared chest's leftover goes on to later holders
     Overflow.cs             one stack through a line of containers: the chosen one, then every later one holding the
                             item, nearest first, until placed; one put per step, a shared chest's answer continues it
     TopUp.cs, Sorting.cs, Trash.cs, Routing.cs, Finder.cs, Cycling.cs
     Favourites.cs, Movable.cs   favourite items, favourite slots, junk marks; what may move
-    StowHotkeys.cs          after InventoryGui.Update (HotPatches): the hotkeys and cycling
+    StoreHotkeys.cs          after InventoryGui.Update (HotPatches): the hotkeys and cycling
     PanelButtons.cs         InventoryGui.Awake postfix: the button row and the container Sort button; Follow puts
                             the row into PackPanel's strip while it is shown
     TrashPlate.cs           the trash can's own plate in the game's style, a copy of the game's armour plate
@@ -123,7 +123,7 @@ OpenKeep/OpenKeep/src/
     ClickRouting.cs         InventoryGui.OnSelectedItem prefix: Route Modifier + click
     DumpKeyPatch.cs         after Player.Update (HotPatches): Dump Key outside the inventory
     AutoSortPatch.cs        InventoryGui.Show prefix/postfix
-    FavouriteOverlay.cs, GridMarks.cs, SlotMarks.cs, StowSprites.cs   star, cross, border marks on the grid elements,
+    FavouriteOverlay.cs, GridMarks.cs, SlotMarks.cs, StoreSprites.cs   star, cross, border marks on the grid elements,
                             set again only when the grid, an inventory or the favourites changed (GridMarks); the trash
                             icon from assets/trash.png
     LinkMarker.cs           Find Key: a line from the player and a floating count
@@ -145,6 +145,7 @@ OpenKeep/OpenKeep/src/
     SalvageModule.cs, SalvageSettings.cs, SalvageWords.cs, RoundingMode.cs
     SalvageModel.cs, FractionOverride.cs, SalvageRules.cs   OpenKeep.Salvage*.yml, recipe lookup, blockers
     ModDataCheck.cs         blocker: item custom data keys under a Mod Data Prefix (another mod's state)
+    EliteCraftingSalvage.cs EliteCrafting's items: ecf_ keys never mod data, the rune they may give back (EliteCraftingLink)
     SalvageReturns.cs, SalvageReturn.cs   what a stack returns
     SalvageInventory.cs     the exact fit simulation and the add with rollback
     SalvageActions.cs       the public face: CanSalvage, WhyNot, Returns, Salvage, Confirm
@@ -201,8 +202,8 @@ OpenKeep/OpenKeep/src/
     SignsCommand.cs         openkeep signs, signs reset, signs rewrite (called from Core's Command by reflection)
   Homestead/                section 8: independent features, each with its own Feature and Settings class
     HomesteadModule.cs      Section, and the Feature.Initialize calls
-    BedFeature.cs, BedSettings.cs   Nearest Bed Respawn, Bed Choice Seconds, Quick Respawn (Range, Seconds),
-                            Beds On Map; the two words of the choice
+    BedFeature.cs, BedSettings.cs   Nearest Bed Respawn, Quick Respawn, Stand Up On Respawn, Beds On Map; the
+                            two words of the choice
     BedPoints.cs            x:y:z text, same bed (1 m, the game's IsCurrent tolerance), map distance, nearest first
     BedStore.cs, BedList.cs   OpenKeep.beds.<world uid> in the character's custom data; changes without a local
                             player wait with their scope (player id @ world uid) until Player.OnSpawned
@@ -341,9 +342,10 @@ OpenKeep/OpenKeep/src/
                             the row's height; debounced rebuild; cleared on close
     SearchButtons.cs        favourites only star (Shift: clear all) and view button at the row's end
     RecipeActions.cs        Track and favourite buttons beside the Style button under the recipe's name
-    RecipeInput.cs          Search Key, Stow's Favourite Item Key over a row, the search's debounce tick
+    RecipeInput.cs          Search Key, Store's Favourite Item Key over a row, the search's debounce tick
     RecipeGamepad.cs        right stick shortcuts (once per push) and grid stepping, from UpdateRecipeGamepadInput
     TypingGuard.cs, TypingWatch.cs   E, Tab and Escape do not close the inventory while a panel field is focused
+    TypingStill.cs          PlayerController.TakeInput postfix: no walking while one of those fields (or Mímir's search) is focused
     RecipeListPatches.cs    InventoryGui.Awake, UpdateCraftingPanel (prefix first, postfix), UpdateRecipeList,
                             UpdateRecipeGamepadInput, Update (prefix first, postfix), Hide, UpdateRecipe
   Tracker/                  section 13, the local player's client only (no ZDO key, RPC or file)
@@ -381,7 +383,7 @@ OpenKeep/OpenKeep/src/
     CameraPickup.cs         Player.FixedUpdate postfix: the game's auto pickup around the camera
     PickupPanel.cs, PickupPanelLook.cs   the HUD panel saying why camera pickup holds back, in the build menu's look
     CircletSource.cs, CircletLight.cs   the light worn on the head, copied onto the camera
-OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, OpenKeep.Stow.yml,
+OpenKeep/OpenKeep/config/   embedded default YAML files: OpenKeep.Reach.yml, OpenKeep.Store.yml,
                             OpenKeep.Salvage.yml, OpenKeep.Stacks.yml, OpenKeep.Containers.yml, OpenKeep.Signs.yml,
                             OpenKeep.Stations.yml
 OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon (128 px, scaled down from the
@@ -392,10 +394,10 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
-`CoreModule.Initialize`, `ReachModule.Initialize`, `StowModule.Initialize`, `SalvageModule.Initialize`,
+`CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 3.0.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 4.0.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -480,21 +482,46 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
                             prefab), CopyFootprint, CopyHud, CopyGlow + CopyGlowPatches (the game's piece tint through
                             MaterialMan, held), CopySave (Enter: name, BlueprintCapture.Of, BlueprintLibrary.SaveNew),
                             ChatEnter (one Chat.Update prefix any tool claims Enter through), CopyWords
+  Mimir/                    section 15, Mímir's Chest (2026-10-06): a chest that never fills, with a search
+    MimirModule.cs, MimirSettings.cs   15. Custom Storage Chests / Custom Storage Chests (off by default), the ok_mimir_* words
+    MimirPrefab.cs          OpenKeep_MimirChest: a copy of piece_chest, 8 wide, before ZNetScene.Awake (prefix)
+    MimirModel.cs           the bundle ok_mimirchest: model, lid, colliders, icon
+    MimirHammer.cs          cost and the hammer's table while on (ObjectDB.Awake, ZNetScene.Awake postfixes)
+    MimirRows.cs            Inventory.Changed postfix: the height follows the contents (2 spare rows, 4 to 32)
+    MimirFill.cs            Inventory.FindEmptySlot prefix: a Mímir inventory fills top-first (bottom-first grew it to 64 rows)
+    MimirWeight.cs          InventoryGui.UpdateContainerWeight postfix: no weight box while a Mímir's Chest is open
+    MimirLayout.cs          while open: one toolbar row taller (search + filters under the title), no Take all, the
+                            scroll bar at the right edge from the first row's top to the grid's bottom; all put back after
+    MimirFilter.cs, MimirFilterBar.cs, MimirFilterButton.cs   quick filters (Food, Meads, Equipment, Wood, Ores and
+                            metals, Trophies, Other) with stack counts, a starred-only toggle, a gold outline when picked
+    MimirClear.cs           the x inside the search field
+    MimirPack.cs            packs the chest into rows from the top (on open, on every search/filter change: matches first)
+    MimirSortMode.cs, MimirSortButtons.cs   Name / Type / Stars buttons where Take all was; each chest keeps its
+                            order in its ZDO (ok_mimir_sort) and always packs in it; no Sort button below the panel
+    MimirFind.cs            Ctrl + right click on an own inventory stack searches the chest for it
+    MimirLid.cs             the lid swings open on every client while the chest is in use
+    MimirSearch.cs, MimirQuery.cs, MimirSearchPaint.cs   the search field (a copy of the build menu's) in the
+                            container panel; InventoryGrid.UpdateGui postfix: non-matching stacks dimmed
+    MimirStacks.cs          big stacks: 9999 per slot in a Mímir inventory (Limit, MostInto, Oversized)
+    MimirStacksAdd.cs       the game's add and cell merge for a Mímir inventory, with the 9999 limit
+    MimirStacksPatches.cs   Inventory.AddItem (both public, the private cell add, the load add), CanAddItem, FindFreeStackSpace
+    MimirStacksOut.cs       out of the chest one normal stack at a time: the cut adds, InventoryGrid.DropItem, Humanoid.DropItem
+    MimirStacksText.cs      InventoryGrid.UpdateGui postfix: a Mímir slot shows its count alone (5000)
 
-Cross-module uses that are allowed: Stow's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
+Cross-module uses that are allowed: Store's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
-`Capacity.StationDocumentation` (OpenKeep.Stations.txt), Stow's
-Reach's `CraftPullPatch` asks `Batch.BatchAmount.NextCraft` how many crafts to pull materials for, Stow's
+`Capacity.StationDocumentation` (OpenKeep.Stations.txt), Store's
+Reach's `CraftPullPatch` asks `Batch.BatchAmount.NextCraft` how many crafts to pull materials for, Store's
 `Finder` reads Reach's `Link Seconds` through `ConfigDefinition("1. Reach", "Link Seconds")`, Core's `Command`
-reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection. Stow's `ChestBatch`, `Routing`, `Trash`, `Sorting` and
-`StowTargets` and Stacks' `MergeIntoChests` call `Shared.ChestWriter`, `Shared.SharedState` and
-`Shared.SharedWords`; Shared's `PanelRouting` reads Stow's `Enabled` and `Route Modifier` through
-`ConfigDefinition("2. Stow", ...)`. Homestead's `FuelRefill`, `FeedTick` and `NearbyTake` use Reach's
+reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection. Store's `ChestBatch`, `Routing`, `Trash`, `Sorting` and
+`StoreTargets` and Stacks' `MergeIntoChests` call `Shared.ChestWriter`, `Shared.SharedState` and
+`Shared.SharedWords`; Shared's `PanelRouting` reads Store's `Enabled` and `Route Modifier` through
+`ConfigDefinition("2. Store", ...)`. Homestead's `FuelRefill`, `FeedTick` and `NearbyTake` use Reach's
 `ReachRules.StationRuleFor`, `ReachRules.RuleFor`, `StationAccepts.Fuel`, `StationAccepts.SmelterOre`,
 `ReachCount.CountIn` and `ContainerRule`, so the Reach YAML's `stations:` and `containers:` rules apply to auto fuel
-and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Stow's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
+and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Store's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
 PackPanel's main grid through `Core.PackPanelGrid`, Stacks' `PackPanelKeys` its Key Stack through `Core.PackPanelLink`,
-and Stow's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Blueprints'
+and Store's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Blueprints'
 `BlueprintCamera` sets Build Camera's `CameraArea.AroundPlayer`. Everything else goes through `Core`.
 
 ## Patched game methods
@@ -516,15 +543,15 @@ Homestead's auto feed),
 `Game.RemoveCustomSpawnPoint(Vector3)` (forget a destroyed bed), `Minimap.UpdateProfilePins()` (private: the other
 known beds as bed pins),
 `InventoryGrid.OnLeftDown(UIInputHandler)` (touches), `InventoryGrid.UpdateGui(Player, ItemData)` (marks; touch
-tint), `InventoryGui.Awake` (Stow buttons; Salvage tab; Batch stepper), `InventoryGui.CloseContainer` and `InventoryGui.Hide` (end
-of viewing), `InventoryGui.SetupRequirement` (static, six parameters), `InventoryGui.Update` (Stow hotkeys; Salvage
+tint), `InventoryGui.Awake` (Store buttons; Salvage tab; Batch stepper), `InventoryGui.CloseContainer` and `InventoryGui.Hide` (end
+of viewing), `InventoryGui.SetupRequirement` (static, six parameters), `InventoryGui.Update` (Store hotkeys; Salvage
 Key; touch end), `InventoryGui.UpdateRecipe(Player, float)` (Salvage panel; Batch stepper layout), `Localization.SetupLanguage`, `MonsterAI.UpdateConsumeItem(Humanoid,
 float)` (private, in the AI update on the creature's owner: Homestead's pets eat from containers), `ObjectDB.Awake`, `Sign.Awake` (the
 orphan check component on automatic signs; their `WearNTear` wear switched off),
 `ObjectDB.CopyOtherDB` (both `Priority.Low`), `Player.GetFirstRequiredItem`, `Player.HaveRequirementItems`,
 `Player.HaveRequirements(Piece, RequirementMode)`, `Player.OnDeath` (the nearest own bed becomes the spawn point;
 the choice of bed opens, or Quick Respawn moves the respawn request),
-`ZoneSystem.Update()` and `ZNetScene.CreateDestroyObjects()` (private: Quick Area Loading for the respawn, installed
+`ZoneSystem.Update()` and `ZNetScene.CreateDestroyObjects()` (private: quick area loading for the respawn, installed
 by name by the AreaLoading library, `AreaLoader.Install` in `Plugin.Awake`),
 `Player.OnSpawned(bool)` (waiting bed changes written, the fallback dropped; after a death, no getting-up
 animation, a class of its own), `Player.PlacePiece`, `Player.Update` (Reach keys; Dump Key;
@@ -545,7 +572,7 @@ MapClicks library's `IconClick.Install` in `Plugin.Awake` adds, by name, a `Mini
 `Priority.First`, zeroes the amount for a viewed chest; Merge Into Chests), `InventoryGui.OnCraftPressed` (Pull
 modifier; Salvage tab; Batch, with a postfix too; a postfix asks for the chests a started craft pays from), `InventoryGui.UpdateRecipe(Player, float)` (Batch drives the
 game's multi-craft fields), `InventoryGui.OnRightClickItem(InventoryGrid, ItemData)` (refused on a viewed chest),
-`InventoryGui.OnSelectedItem` (Shared, `Priority.First`; Stow's Route Modifier), `InventoryGui.OnStackAll`,
+`InventoryGui.OnSelectedItem` (Shared, `Priority.First`; Store's Route Modifier), `InventoryGui.OnStackAll`,
 `InventoryGui.OnTakeAll`, `InventoryGui.OnTabCraftPressed`, `InventoryGui.OnTabUpgradePressed`,
 `InventoryGui.DoCrafting(Player)` (private: the payment window; refused while storage cannot pay now, `ReachReady`),
 `Player.TryPlacePiece(Piece)` (`Priority.Low`, after the Blueprints tab's: waits while storage cannot pay now),
@@ -599,13 +626,23 @@ prefix `Chat.Update()` again (`ChatEnterPatch`: skipped for a frame a Copy save 
 `WearNTear.Highlight()` (the game's hover tint held back while Copy building is selected) and postfix
 `WearNTear.ResetHighlight()` (private: a piece the Copy tool lights gets its glow back);
 WindowInput's own patches (its Harmony id `milkyteam.openkeep.planner`) while the planner's panel is open.
+Mímir's Chest: prefix `ZNetScene.Awake` (the prefab joins the scene's list before the game registers it); postfix
+`ObjectDB.Awake` (`Priority.Last`) and `ZNetScene.Awake` (cost and hammer); postfix `Inventory.Changed` (private: a
+Mímir inventory's height, after Core's counting prefix); postfix `InventoryGrid.UpdateGui` (the container grid only:
+the search field and the dimming). Big stacks: prefix `Inventory.AddItem(ItemData)` and `AddItem(ItemData, Vector2i)`
+(skipped for a Mímir inventory, or for a stack over its normal size going anywhere else); prefix and postfix the
+private `AddItem(ItemData, int, int, int, bool)` (Mímir: the merge onto a cell; elsewhere: the amount cut to one
+normal stack, reported unfinished) and the private load `AddItem(int, int, float, Vector2i, ...)` (the saved count
+back after the game's clamp); postfix `CanAddItem(ItemData, int)` and `FindFreeStackSpace`; prefix and postfix
+`InventoryGrid.DropItem` (`Priority.High`: a drag out cut to one normal stack, a swap of a big stack refused); prefix
+`Humanoid.DropItem` (a ground drop cut to one normal stack); postfix `InventoryGrid.UpdateGui` (the count alone).
 
 ## Config sections and keys
 
 `General` (`Lock Configuration`), `0. Containers` (`Ships`, `Carts`, `Player Chests`, `Honour Wards`, `Shared
 Chests`: the enum `Off`, `View`, `Full`, default `Off`), `1. Reach` (`Enabled`, `Range`, `Crafting`, `Building`,
 `Upgrading`, `Feed Stations`, and the YAML `stations:` map; unsynced `Fill Modifier`, `Pull Modifier`, `Toggle Key`, `Show Links`, `Link Key`,
-`Link Seconds`, `Requirement Display`, `Storage Colour`, `Flash On Pull`), `2. Stow` (`Enabled`, `Quick Stack
+`Link Seconds`, `Requirement Display`, `Storage Colour`, `Flash On Pull`), `2. Store` (`Enabled`, `Quick Stack
 Nearby`, `Nearby Range`, `Ground Pickup`, `Pickup Range`, `Pickup Interval`, `Pickup Delay`, `Pickup Only Held
 Items`, `Auto Tidy` false; unsynced every key, `Sort Order`, `Sort Favourite Items`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
 Uses Salvage`, `Cycle With Wheel`, `Show Favourites`, `Button Row Offset`, `Trash Can On Stat Column`), `3. Salvage` (`Enabled`, `Return Fraction`, `Rounding`, `At
@@ -616,12 +653,11 @@ Config Entries`, `Write Documentation`), `4a. Item Stacks` and `4b. Item Weights
 `<prefab>.Weight`, only with Per Item Config Entries), `5. Capacity` (`Enabled`; unsynced `Hover Contents`, `Hover
 Lines`, `Hover Fill`), `6. Carts` (`Cart Workbench`, `Cart Station Level`, `Cart Station Range`), `7. Signs`
 (`Enabled` false, `Show Counts` false, `Max Items` 4, `Max Characters` 50, `Update Seconds` 2, `Height` 0.1,
-`Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Bed Choice Seconds` 30 (0 to 60), `Quick
-Respawn` true, `Quick Respawn Range` 1000 (10 to 20000), `Quick Respawn Seconds` 1 (0 to 18), `Stand Up On
-Respawn` true, `Build On Wood`
+`Rotation` 0, `Empty Text` empty; all synced), `8. Homestead` (`Nearest Bed Respawn` true, `Quick
+Respawn` true, `Stand Up On Respawn` true, `Build On Wood`
 `fire_pit`, `Honey Per Day` 0, `Honey Per Player Online` false, `Auto Fuel` true, `Auto Fuel Range` 20, `Torches Night Only` true,
 `Torch Pieces` `piece_groundtorch_wood, piece_groundtorch, piece_groundtorch_green, piece_groundtorch_blue,
-piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Beds On Map` true, `Quick Area Loading` true (the respawn only),
+piece_walltorch`, `Torch Margin` 1 (in-game hours, 0 to 4), `Auto Feed Stations` true, `Auto Feed Range` 4, `Auto Feed Skip` `FineWood, RoundLog`, `Auto Feed Leave` 1 (0 to 1000), `Rested Delay` 5 (seconds, 0 to 60), `Area Repair` true, `Auto Repair` true, `Pets Eat From Chests` true, `Pet Chest Range` 10 (1 to 30); all synced; unsynced `Beds On Map` true,
 `Torch Switch Key` O),
 `9. Shared` (`Request Timeout` 2 s, `Touch Seconds` 5 s, both
 synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Crafting` (`Enabled` true, `Max Amount`
@@ -636,10 +672,11 @@ View` `List` (`List`, `CompactList`, `SmallGrid`, `MediumGrid`, `LargeGrid`), `G
 true, `Hide In Combat` true, `Hide With Map` true, `Scale` 1 (0.5 to 2), `Font` `Sans` (`Sans`, `Serif`, `Norse`),
 `Font Size` 16 (10 to 28), `Have Colour` `#FFFFFF`, `Missing Colour` `#FF6A5A`, `Ready Colour` `#FFB65C`, `Background
 Opacity` 0.56, `Position` empty; all unsynced), `14. Blueprints` (`Enabled` false, `Build Without Materials` false,
-`Build As Resources Come In` true; all synced; the keys are fixed).
+`Build As Resources Come In` true; all synced; the keys are fixed), `15. Custom Storage Chests` (`Custom Storage Chests` false, synced; no
+apostrophe in the section name, BepInEx refuses it).
 Keys, defaults and meanings are in each entry's description in the .cfg (bound in the modules' `*Settings.cs`; the
 README only names the features). Every setting of the spec is bound with the spec's section, key,
-default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), so every module has a master switch.
+default and sync flag; the one addition is `2. Store / Enabled` (synced, true), so every module has a master switch.
 
 ## Network and file names
 
@@ -695,7 +732,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   profile's own per-world spawn point), `OpenKeep.favouriteRecipes` (recipe keys: the recipe asset's name, else its
   item's prefab name), `OpenKeep.favouriteRecipesOnly` (flag), `OpenKeep.trackedRecipes` (entries `key|quality|amount`,
   `|u` added for one tracked at an upgrader station, in tracking order). Read only: PackPanel's `PackPanel.mainGrid` (see "PackPanel").
-- Charter article names: `openkeep_reach`, `openkeep_stow`, `openkeep_salvage`, `openkeep_stacks`, `openkeep_containers`,
+- Charter article names: `openkeep_reach`, `openkeep_store`, `openkeep_salvage`, `openkeep_stacks`, `openkeep_containers`,
   `openkeep_signs`, `openkeep_stations` (the YAML sets) plus the cfg sync of the shared libraries. Container ownership goes through the game's
   `ZNetView.ClaimOwnership` and `ZDOMan.ForceSendZDO`; the game's own `RPC_RequestOpen` is re-sent by a viewer.
 - GameObjects created: `OpenKeep.ReachLink` (link lines), `OpenKeep_link` (Find marker), `OpenKeep_SalvageTab`,
@@ -715,8 +752,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
 - Files next to the cfg: the seven YAML files, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt`,
   `OpenKeep.Stations.txt`.
 - Localization keys: `$ok_*` (Reach: `ok_fromstorage`, `ok_reach`, `ok_on`, `ok_off`, `ok_pulled`,
-  `ok_nothingtopull`, `ok_nofit`; Stow: `ok_stow_*`, including `ok_stow_moved_to` and `ok_stow_toppedup_from` for
-  a shared chest's reply and `ok_stow_routed_more` for a stack that went on to further containers; Salvage: `ok_salvage*`; Capacity: `ok_slots`, `ok_full`, `ok_and`, `ok_more`; Carts:
+  `ok_nothingtopull`, `ok_nofit`; Store: `ok_store_*`, including `ok_store_moved_to` and `ok_store_toppedup_from` for
+  a shared chest's reply and `ok_store_routed_more` for a stack that went on to further containers; Salvage: `ok_salvage*`; Capacity: `ok_slots`, `ok_full`, `ok_and`, `ok_more`; Carts:
   `ok_cartcraft`; Shared: `ok_shared_inuse`, `ok_shared_moving`, `ok_shared_noanswer`, `ok_shared_denied`,
   `ok_shared_readonly`, `ok_shared_someone`, `ok_shared_nofit`, `ok_shared_chestfull`, `ok_shared_unavailable`;
   Signs: `ok_signs_sign`, `ok_signs_playertext`, `ok_signs_nosign`, `ok_signs_optedout`, `ok_signs_reset`,
@@ -734,6 +771,10 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   `OpenKeep.blueprints.<file>`; words `ok_bp_*` (the tab `ok_bp_tab`), `ok_fix*`, `ok_site_*`, `ok_planner*`, `ok_copy*`;
   this machine's tab memory `BepInEx/config/OpenKeep.BlueprintsTab.txt` (`folder=`, `tab=`, `ghosts=shown|hidden`,
   never synced).
+- Mímir's Chest: prefab `OpenKeep_MimirChest` (networked piece, a copy of `piece_chest`); container and inventory name
+  `$ok_mimir_name`; words `ok_mimir_name`, `ok_mimir_desc`, `ok_mimir_search`, `ok_mimir_search_tip`; bundle
+  `ok_mimirchest` (`assets/bundles/ok_mimirchest.windows` / `.linux`, from ValheimAssets `Assets/Props/MimirsChest`);
+  GameObject `OpenKeep_MimirSearch` (the field, in the container panel). No ZDO key and no RPC of its own: the inventory is the game's `items`, the lid reads the game's `InUse`.
 - Construction sites: prefab `OpenKeep_Site` (networked post); its ZDO keys `OpenKeep.site_bp`, `site_name`,
   `site_origin`, `site_yaw`, `site_built`, `site_queue`, `site_store`, `site_ground`, `site_groundStone`,
   `site_creator`, `site_creatorName` (all `OpenKeep.`); RPCs on the post `OpenKeep_SiteDeliver` (request id, then the
@@ -770,7 +811,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   Auto Feed, pets and Auto Tidy) to hand it over with its latest data, and `Claim` returns false until it is ours, so
   our older copy never overwrites the last owner's change. Ship and cart storage is never claimed or asked for: it is
   usable (`IsReady`) only while the local client owns the vehicle, and otherwise written only by request to its owner
-  (Stow, through `ChestWriter`). Then `Container.Load` reads the latest data (a no-op when the data revision has not
+  (Store, through `ChestWriter`). Then `Container.Load` reads the latest data (a no-op when the data revision has not
   changed). `Save` calls `Inventory.Changed()`, the game's own path to the ZDO, and logs a
   warning when the client does not own the container.
 - Save holds: a quick stack, store all, top up, sort, a ground pickup sweep, every `ChestSync` call and every
@@ -848,7 +889,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   "don't cook my meats", not "hide them from recipes".
 - Toggling with the Toggle Key applies at once (the flag is read at use time).
 
-### Stow
+### Store
 
 - `Enabled` (synced, true) was added as the module's master switch.
 - Favourite slots are stored as `x:y` because the sets are comma separated.
@@ -873,8 +914,8 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   the can; each click on a stack of either grid destroys the whole stack through `Trash.Destroy` with the trash's
   refusals (favourites, worn items, a viewed chest; `Trash Uses Salvage` salvages) and no confirmation, the held Shift
   being the confirmation. An `InventoryGui.OnSelectedItem` prefix at `Priority.First + 1` takes the click (with Shift
-  held the game would open its split dialog); Shared's and Stow's other click prefixes leave split clicks alone.
-  Letting go of Shift, closing the inventory, a popup or a drag ends it (`StowHotkeys` ticks it first every frame).
+  held the game would open its split dialog); Shared's and Store's other click prefixes leave split clicks alone.
+  Letting go of Shift, closing the inventory, a popup or a drag ends it (`StoreHotkeys` ticks it first every frame).
   The pointer: the game never sets a cursor image, it only shows the system arrow every frame (`ZCursor.SetVisible`),
   so hiding the arrow does not stick; the arrow is swapped for an 8x8 transparent cursor (`Cursor.SetCursor`) and
   restored with `SetCursor(null)`, and the can is a 56 unit image child of the inventory screen placed at
@@ -905,7 +946,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   with the take-all line. The game's scene makes `m_container` a child of `m_player`, anchored to its bottom-left
   corner at (0, -30): the row fills that gap with 4 px to spare above it, so with a chest open a negative offset
   overlaps the container panel and one above 4 overlaps the player panel. `PanelButtons` keeps the
-  placed rects and `Reposition` (from `StowModule`, on `SettingChanged`) re-places them without a restart. The
+  placed rects and `Reposition` (from `StoreModule`, on `SettingChanged`) re-places them without a restart. The
   hovered item mirrors `InventoryGrid.UpdateGui`'s tooltip choice (gamepad selection, else the hovered element).
 - The stat plates are the game's `Player/Armor` and `Player/Weight` (read from the game's scene with UnityPy on
   2026-09-24), the direct children of `m_player` holding `m_armor` and `m_weight`. Each is 80x64 with three
@@ -918,18 +959,18 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   plates to the top-right corner where they are (armour at 32, -71.5; weight at 32, -227), draws each icon 48 px
   behind its number, gives each a tooltip (a bordered box pinned right of the plate, not following the mouse), and spaces every plate evenly over that span, centred on its middle, at
   least 8 px apart. The trash can (`TrashPlate`) is `Column.Add` with rank 200 (armour 100, weight 300): a copy of
-  the armour plate keeping only the wood and the icon, which shows `StowSprites.Bin` in its own colours
+  the armour plate keeping only the wood and the icon, which shows `StoreSprites.Bin` in its own colours
   (`assets/trash.png`, embedded and decoded by the library's `EmbeddedSprite`), with the tooltip "Trash" / the drag
   hint. Alone it sits at the midpoint (32, -149.25; 13.75 px between plates); with Elite Creatures' world tier plate
   (rank 400) under the weight the four sit at -41.25, -113.25, -185.25 and -257.25, 8 px apart. When a game plate
   is missing the can joins the row instead. The container panel's own weight plate (`Container/Weight`) is left as
   the game draws it.
-- Shared chests (SPEC 9.3): every container write of Stow goes through `Shared.ChestWriter`, one `Put` or `Take`
+- Shared chests (SPEC 9.3): every container write of Store goes through `Shared.ChestWriter`, one `Put` or `Take`
   per stack, whether the chest answers at once (the local client owns it or may claim it: claim, the game's
   inventory methods, save, all inside the writer) or by request (`Full` mode, another player using it). Sorting
   is the one exception: it rewrites every cell at once, which no request carries, so a chest the player views or
   shares is refused ("Viewing only" in View mode, "The chest cannot be changed right now" in Full mode; auto sort
-  skips it quietly). A Stow target (`StowTargets`) is a container that is usable now or shared; the nearby list
+  skips it quietly). A Store target (`StoreTargets`) is a container that is usable now or shared; the nearby list
   holds both, nearest first, the open one first, no duplicates. A chest the player only views (View mode) is no
   target: quick stack to the open container, Store all and Store one say "Viewing only" for it; quick stack
   nearby, Dump, Top up and Route skip it silently and use the other chests.
@@ -962,7 +1003,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   to the next container holding the item, nearest first from the player, until it is placed or none is left.
   `Overflow` runs one stack through a line: the chosen container first (Route's target, Store one's open or nearest
   holding container, taken whether or not it holds the item, as before), then every later container of the same
-  `StowTargets.Nearby` list (the open one first, then by distance, within `Nearby Range`) that holds the item by name
+  `StoreTargets.Nearby` list (the open one first, then by distance, within `Nearby Range`) that holds the item by name
   when its turn comes. Each step re-checks what could have changed while a shared chest answered: still a target
   (usable now or shared: section 0 switches, privacy, ward, in-use rule), not refusing the item, still holding it;
   the stack still in the inventory and still movable (favourites, equipped, a put under way). Every step is one
@@ -973,7 +1014,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
     every chest the client changes at once: the targets are visited nearest first, each takes every movable stack it
     holds as far as it fits, and what a full container left is still in the inventory when the next holder comes.
     The gap was a shared chest: its stack is reserved until the answer and later containers skip it, so the leftover
-    stayed. Now `StowActions.SpillOver` runs after each of its answers and sends the leftover on to the later
+    stayed. Now `StoreActions.SpillOver` runs after each of its answers and sends the leftover on to the later
     containers of the same action that hold the item (`Overflow` without a chosen container); when anything moved a
     top-left line says "Sent x to chest", so the chest's own centre summary ("Moved n stacks to chest") stays.
   - Route: after the first container, only containers holding the exact item follow. When the target was chosen for
@@ -1042,8 +1083,10 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
     the game's inventory methods and save path, both chests held (one save each per home). A home owned by another
     client that has room for the item is asked to hand over (`HandOver`, at most once per 30 s per chest); the owner grants it as the game grants an open (free chest, ZDO force sent, then
     the owner set), and the source looks again 3 s later. A chest in use is never a source or a home.
-  - Taking part: a piece placed by a player, not a ship, cart or private chest, and usable as Stow uses containers
+  - Taking part: a piece placed by a player, not a ship, cart or private chest, and usable as Store uses containers
     (section 0, prefab table, ward, privacy for the local player).
+- Store was called Stow up to 3.0.0: section `2. Store` reads an old `2. Stow` section (`RenamedKeys.CarrySection`),
+  and `OpenKeep.Stow*.yml` files are renamed to `OpenKeep.Store*.yml` at startup unless the new name exists.
 - Vocabulary: the chest-side button that stores your matching items is `Store all` (`Store All Key`; 1.1.0 to 1.2.0
   called it `Stow all` / `Stow All Key`, carried over; 1.0.0 already used `Store All Key`), the button that refills your stacks from the chests is `Top up` (`Top Up Key`, was `Restock
   Key`), an item marked for destruction is junk (`Junk Key`, was `Trash Flag Key`; `Destroy Junk Key`, was `Trash
@@ -1058,7 +1101,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   the panel up. The mod's hotkeys fire only with the panel open (`Keys.InventoryOpen`), so neither key ever does
   two things at once.
 - Reach is untouched: it counts and pays through `ContainerScan.Nearby(..., ContainerUse.Reach)`, which never
-  returns a shared chest, and nothing in Stow feeds Reach.
+  returns a shared chest, and nothing in Store feeds Reach.
 
 ### Salvage
 
@@ -1067,15 +1110,21 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   lookup is cached per object database and recipe count.
 - Returns: fraction, rounding (Round is half up), cap at `ceil(full cost)`, then At Least One; materials with the
   same name are merged before rounding. The fraction override order is exact name, first matching pattern, cfg.
-- Favourites come from Stow's `OpenKeep.favouriteItems`; prefab and shared name both count.
+- Favourites come from Store's `OpenKeep.favouriteItems`; prefab and shared name both count.
 - Blocker order: disabled, trophy or quest item, no recipe, favourite, deny list, mod data, equipped, unknown
   recipe, station. Mod data (user decision 2026-09-24, EliteCrafting DECISIONS.md SAL-14): with `Skip Items With
   Mod Data` on, an item whose `m_customData` has a key starting with one of `Mod Data Prefixes` (comma separated,
-  ordinal case-sensitive match, default `ecf_` = EliteCrafting's magic items) is not listed and not salvaged
-  (`$ok_salvage_moddata`). Only keys are compared; nothing of the other mod is referenced. The prefix list is
-  re-split only when the setting's text changes, and an empty `m_customData` is skipped before any enumeration.
-  With `Trash Uses Salvage` on, such an item is trashed by the Trash Key (after `Confirm Trash`) like any other
-  item salvage refuses.
+  ordinal case-sensitive match, default empty) is not listed and not salvaged (`$ok_salvage_moddata`). Only keys
+  are compared; nothing of the other mod is referenced. The prefix list is re-split only when the setting's text
+  changes, and an empty `m_customData` is skipped before any enumeration. With `Trash Uses Salvage` on, such an
+  item is trashed by the Trash Key (after `Confirm Trash`) like any other item salvage refuses.
+- EliteCrafting's Magic and Rare items are salvageable (user decision 2026-10-06, replacing the `ecf_` default of
+  SAL-14): while EliteCrafting is installed its keys (`ecf_`) never count as mod data, even when a cfg still lists
+  `ecf_` (the old default), and the rune EliteCrafting names (`CraftingItems.GetSalvageRune` / `...Chance` through
+  EliteCraftingLink: an Awakening Rune from Magic, an Ascension Rune from Rare, 25%, EliteCrafting's synced
+  `Runes from salvage`) joins the returns as one item at that chance. The tab's amount column and the yes/no
+  question show the chance (`25%`); the fit check counts the rune as if it came; the roll happens once, after the
+  fit check, and the top-left message lists only what came. Without EliteCrafting nothing changes.
 - Require Station is satisfied by the current station or any station of that name within build range.
 - The fit check is an exact simulation of `Inventory.AddItem`: partial stacks of quality 1 at the current world
   level fill first, the rest needs empty slots, the salvaged stack's own slot counts as free. The stack is removed
@@ -1167,7 +1216,7 @@ default and sync flag; the one addition is `2. Stow / Enabled` (synced, true), s
   Move-modifier click and its Drop-modifier click on a viewed chest's stack are both routed as a Take of the whole
   stack in Full mode (the game's drop would throw a copy on the ground while the chest keeps the stack); a plain
   click starts the game's drag. Ctrl+click (the game's move click) on the player grid with a viewed chest yields
-  to Stow's Route Modifier when Stow is enabled and the modifier is held.
+  to Store's Route Modifier when Store is enabled and the modifier is held.
 - A viewer re-sends the game's own open request 1 s after the read-only open, then every 5 s while the chest stays
   in use, and within 1 s once the in-use flag clears; a refused response is silent while viewing, a granted one
   turns the panel live through the game's `Show`. The auto-close distance is applied by the viewer's own
@@ -1297,7 +1346,8 @@ Beds:
   `HaveCustomSpawnPoint`, because `IsCurrent` matches the stale point the game leaves after clearing one. The hover
   swaps the localized "Set spawn point" for the game's "Sleep" inside the game's string.
 - Choice of bed (1.12.0, the user's request of 2026-09-30): at death, with two candidates or more, the large map opens
-  for `Bed Choice Seconds`; the nearest is already the spawn point, so doing nothing is the old behaviour. A click
+  for 30 s (`BedChoice.Seconds`, no setting since 2026-10-06, the user's call); the nearest is already the spawn
+  point, so doing nothing is the old behaviour. A click
   within the game's pin click radius (`PinInteractRadius`, it grows with zoom) of a candidate makes it the spawn point
   (`BedRespawn.Prefer`; the rest stay the fallback, nearest first) and ends the choice; the map key or Escape ends it
   with the nearest. The game's `Minimap.Update` sets the map to None for a dead player, so its prefix runs the game's
@@ -1320,12 +1370,18 @@ Beds:
   at the end the icons are destroyed (`DestroyPinMarker`) and made again at the normal size. The chosen (nearest)
   bed no longer stands out from the others.
 - Quick Respawn (1.12.0): the game's wait is `RequestRespawn(10f)` from `Player.OnDeath` plus `m_respawnLoadDuration`
-  (8 s) in `FindSpawnPoint` before it looks for the bed. Both shrink by one share: `Quick Respawn Seconds` at 0 m,
-  the full 18 s at `Quick Respawn Range`, linear between, from the map distance between the death point and the
+  (8 s) in `FindSpawnPoint` before it looks for the bed. Both shrink by one share: 1 s at 0 m, the full 18 s at
+  1000 m, linear between (`BedWait.NearSeconds` and `Range`, fixed since 2026-10-06, the user's call; they were the
+  settings `Quick Respawn Seconds` and `Quick Respawn Range`), from the map distance between the death point and the
   profile's spawn point (or the `StartTemple` location icon without one). The death part is a new `RequestRespawn`
-  counted from the death (the time spent choosing counts); the load part is `m_respawnWait` advanced faster in a
+  counted from the death; the load part is `m_respawnWait` advanced faster in a
   `FindSpawnPoint` prefix, only after a death and only with a custom spawn point (the world start path has no timer).
-  The game's own `IsAreaReady` check stays, so a far bed still waits for its area. Works with `Nearest Bed Respawn`
+  The game's own `IsAreaReady` check stays, so a far bed still waits for its area. When the choice of bed ends (a
+  click, the map key, Escape or the countdown) the rest of both parts is skipped (the user's request, 2026-10-06:
+  the map goes away and you either load or are simply spawned): `BedWait.Picked` asks for the respawn at once and
+  the load timer runs as fast as `QuickWait` allows, so the player wakes once the bed's area is ready (and, on a
+  server's client, its objects settled). A bed whose area is not loaded yet gets the loading screen at once (alpha 1),
+  rather than the game's fade over the empty world; a loaded one leaves the screen clear. Works with `Nearest Bed Respawn`
   off too (then the game's one bed). A fallback bed after a gone one is timed from its own distance.
 - Beds On Map (1.12.0, per player): the other known beds as `PinType.Bed` pins with `m_save` false, added to
   `m_pins` directly (`AddPin` would turn the bed filter back on each time) and never saved; the game draws the spawn
@@ -1359,9 +1415,9 @@ Portals (moved out 2026-10-04):
 - What stayed is the respawn: the distance-scaled wait (`QuickWait`), the bed search held on a server's client until
   the bed's objects arrived (`AreaSettle`: the ZDOs in the bed's 3x3 sectors unchanged for 0.5 s, never past the
   game's 8 s; without it a quick respawn could look for the bed before its ZDO arrived, and the game would clear the
-  bed and wake the player elsewhere) and `Quick Area Loading` (per player, now the respawn only: the land loads at 20
-  ms of `CreateLocalZones` per frame and the listed objects at 15 ms per `CreateDestroyObjects` run, zone by zone,
-  while the dead player waits to respawn). All three are the AreaLoading library's (`../ValheimModLibs/AreaLoading`),
+  bed and wake the player elsewhere) and quick area loading (always on since 2026-10-06, when the user removed its
+  setting: the land loads at 20 ms of `CreateLocalZones` per frame and the listed objects at 15 ms per
+  `CreateDestroyObjects` run, zone by zone, while the dead player waits to respawn). All three are the AreaLoading library's (`../ValheimModLibs/AreaLoading`),
   which Wayfare uses for jumps; each mod's merged copy hurries only for its own registered reason.
 - Stand Up On Respawn (1.12.0, the user's request of 2026-09-30): `Player.Awake` reads the player ZDO's `wakeup`
   flag (true when unset) and plays the getting-up animation, a state tagged `cutscene` (no movement until it ends).
@@ -1724,7 +1780,7 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   separate words; there is no quoting. The list rebuilds 0.12 s after the last key (the game's own
   `UpdateCraftingPanel`, so every other hook on it runs), scrolled to the top. Escape in the field clears it (TMP's
   cancel), Enter keeps the text; both let go of the field so the hotkeys work again. `Clear Search On Close` (on)
-  empties it when the inventory closes. `Search Key` LeftControl + F (F alone is Stow's Favourite Item Key) puts the
+  empties it when the inventory closes. `Search Key` LeftControl + F (F alone is Store's Favourite Item Key) puts the
   cursor in; the build menu uses F for its search, which would collide here.
 - Typing guard: the game closes the inventory on Use (E), Inventory (Tab) and Escape with no regard for a focused
   field. While the search or the batch amount is focused, or was at the end of the last frame (TMP may have handled
@@ -1742,10 +1798,10 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   setting) the hidden rows are destroyed and dropped from `m_availableRecipes`; the game then selects from what is
   left (`GetSelectedRecipeIndex` gives the first row when the selected recipe went), so only listed recipes can be
   crafted. Favourites first is a stable sort, so each group keeps the game's order.
-- Favourites: per character in its custom data (like Stow's favourite items), keyed by the recipe asset's name, which
+- Favourites: per character in its custom data (like Store's favourite items), keyed by the recipe asset's name, which
   is stable across sessions and languages; a recipe of a missing mod keeps its key. Middle click is the game's own
-  favourite click in the build menu; Stow's Favourite Item Key (F) over a recipe row toggles too (over a slot it
-  keeps its Stow meaning: Stow acts only on a hovered slot), and so does the star button under the recipe's name.
+  favourite click in the build menu; Store's Favourite Item Key (F) over a recipe row toggles too (over a slot it
+  keeps its Store meaning: Store acts only on a hovered slot), and so does the star button under the recipe's name.
   The mark is the build menu's own favourite star (`BuildUiPieceButton.m_favoriteStar`: sprite `craft_icon_32`, the
   game's orange) on the icon's corner; OpenKeep's drawn star stands in until the HUD exists. Favourites only with no
   favourite is refused with a hint; removing the last favourite turns it off. Clear all is Shift + click on the
@@ -1838,11 +1894,11 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   chainloader on first use and reads its config entries through its plugin's `Config` (`1. Inventory / Enabled`,
   `3. Key Ring / Key Items` and `Key Stack`; the server's values while connected). What PackPanel publishes:
   - `PackPanel.mainGrid` in the character's custom data, `width|rows|blocked` (`Core/PackPanelGrid`, trusted only
-    while PackPanel is loaded and enabled, since the key is saved with the character): Stow's `MainGrid` takes its
+    while PackPanel is loaded and enabled, since the key is saved with the character): Store's `MainGrid` takes its
     rows, `Sorting` its blocked cells (a backpack's partly used last row), Shared's `ChestAsk` skips items below its
     rows for a shared chest's stack all.
   - `PackPanel_buttonstrip`, an empty child of the player panel, active while PackPanel keeps a 30 unit strip at the
-    panel's bottom for the button row: `PanelButtons.Follow` (every frame, from `StowHotkeys`' `InventoryGui.Update`
+    panel's bottom for the button row: `PanelButtons.Follow` (every frame, from `StoreHotkeys`' `InventoryGui.Update`
     postfix) moves the row inside it, 2 units above the edge, and back below the panel when it goes. At
     `InventoryGui.Awake` the trash can is its own plate in the game's style under the armour unless PackPanel is
     enabled, when it is a button right of Sort (PackPanel's stats panel holds the column). OpenKeep builds no
@@ -2105,6 +2161,55 @@ repaired through the game's own paths, so a dedicated server and the other playe
   and blueprint as paths and the folder the tab shows; `save` writes into that folder, keeps a 1 m relief of the
   ground and water where it lay below sea level, and the new file shows in the tab within seconds.
 
+### Mímir's Chest
+
+- Asked for on 2026-10-06: "new chest ... unlimited storage and a similar search feature like crafting ... Mímir's
+  Chest ... a brand new model ... the same size as the iron chest ... some opening animation ... work with multi user
+  chest feature and the craft from chest feature". The iron chest is the game's reinforced chest, `piece_chest`.
+- It is an ordinary game `Container`, so Reach (crafting and building from it, station feeding), Store, Shared (several
+  players in it, View and Full), Signs, Auto Tidy, hover contents and the game's own take all and stack all treat it as
+  any chest with no code of their own. Only Capacity's container sizes leave it out (`ScenePrefabs` skips it), since
+  its height is its own.
+- Never full: the height follows the contents. After every inventory change on every machine (`Inventory.Changed`
+  postfix) the chest is as tall as its lowest item's row plus two empty rows, at least 4 rows and at most 32 (user, 2026-10-07); 8 wide.
+  The game keeps items below the grid when it loads a chest (`AddItem` with `skipValidPositionCheck`), and every
+  machine works the height out from the same items, so no ZDO key or RPC carries it; the container panel's grid
+  follows the new height on its own (the game rebuilds it when the size changes) and scrolls. Two spare rows mean a
+  quick stack, a store all or a Shared stack all always finds room, and the room check (`CanAddItem`, empty slots) is
+  never short while under the ceiling. The ceiling (256 stacks) is because the game saves a chest's whole inventory
+  in one ZDO string that every change sends again: 256 stacks are about 20 KB; past it the chest is full like any
+  other.
+- Big stacks (user, 2026-10-07: "allow stack sizes up to 9999", only in Mímir's Chest): in a Mímir inventory every
+  item that stacks holds up to 9999 per slot (or its own stack size if bigger); items that do not stack stay one per
+  slot. The items' shared data is never changed: the game's add, cell merge, room check (`CanAddItem`,
+  `FindFreeStackSpace`) and load are answered for Mímir inventories (`MimirStacks*.cs`), so drag and drop, move
+  clicks, Place stacks, Store all, Quick stack, Top up, Reach's put back and Shared's requests all merge into the big
+  stacks. The game saves a stack as 16 bits and every peer's load gives the saved count back after the game's clamp to
+  the normal size, so no key or RPC of ours. Out of the chest a stack goes at most one normal stack per move: a drag
+  or split moves one normal stack and the rest stays; a move click and the game's Take all move one normal stack's
+  worth per chest stack and per step (the add is reported unfinished, so the rest stays); a ground drop drops one;
+  Reach's pull and OpenKeep's transfers (`ChestOps.Transfer`, `InventoryFit`) move normal stacks; a drag that would
+  swap a big stack into another inventory is refused. A Mímir slot shows its count alone (5000), not count/limit.
+- The inventory is known by its name (`$ok_mimir_name`, the container's `m_name`), so the height works from the very
+  first load in `Container.Awake`, before any component of ours could register it.
+- Search: a copy of the build menu's search field at the top right of the container panel, only while a Mímir's Chest
+  is the open container; cleared when another chest opens. Words as the recipe search (name in the game's language or
+  prefab name, `-word` excludes). It dims rather than hides: every stack keeps its slot, so clicks, drags, Shared's
+  slot requests and touches stay right. Matches are worked out again only when the text or any inventory changes
+  (Core's change count); per frame it is one colour per slot. A new search brings the first match into view.
+  Recipe List's typing guard counts the field, so E, Tab and Escape do not close the inventory while typing.
+- Model: a workshop model on the reinforced chest's prefab (its placement, wear, sounds, hammer tab), as EliteCrafting's
+  Rune Table is on the workbench. The look follows the cost (redesigned 2026-10-07, cozy rather than spooky): a
+  well-kept farmhouse chest of honey-gold fine wood boards on a plinth under a gently arched lid, bright silver bands,
+  corner brackets and caps set with iron nail heads, two leather straps through silver buckles over the lid, leather
+  end handles, and a silver clasp whose round medallion carries Mimir's well; a soft red cloth lining inside. No glowing
+  parts and no light. The game's open and closed models (`m_open`, `m_closed`) are dropped; the lid swings open over
+  0.55 s while the game's in-use flag is set (the owner's own state, the ZDO's `InUse` on every other client, so
+  everybody sees it, viewers in Shared's View mode included). Without the bundle it keeps the reinforced chest's look
+  and works the same.
+- Cost: 10 Fine wood, 4 Silver, 10 Iron nails, 6 Leather scraps at a workbench (Mountains: a chest that never fills comes after the reinforced
+  chest). `Custom Storage Chests` (off by default, user 2026-10-07) off takes it out of the hammer; chests already built keep working, since they hold items.
+
 ## Not yet implemented
 
 - Capacity: the read-only container grid on hover (SPEC section 5's stretch goal); no setting is bound for it.
@@ -2112,10 +2217,26 @@ repaired through the game's own paths, so a dedicated server and the other playe
   `OpenKeep.cartOffset` stays reserved.
 ## Test checklist (LocalTesting profile)
 
+Mímir's Chest (2026-10-06, never run in game yet):
+- Hammer, beside the reinforced chest: Mímir's Chest with its icon, 10 Fine wood, 4 Silver, 10 Iron nails, 6 Leather scraps, at a workbench. It stands beside a
+  reinforced chest at the same size. E: the lid swings open on the red lining; close: it swings shut. A second player
+  sees it open and close. The panel shows 8 x 4 with a search field at its top right.
+- Put in 40 stacks: rows appear as it fills, always two empty below; quick stack, store all and Stack all never say
+  full. Relog: every stack where it was, the height the same. Take everything out: back to 4 rows.
+- Search `bronze`: everything else dims, the first bronze item scrolls into view; `-bar` leaves the bars out; Escape
+  clears it; E and Tab type letters while the field has the cursor. Open another chest: no field; back: empty field.
+- Reach: wood only in Mímir's Chest, craft at a workbench in range: paid from it. Shared Full: two players in it at
+  once, takes and puts both ways, a put that grows it by a row shows on both. `openkeep containers` lists
+  `OpenKeep_MimirChest`. The Capacity container file does not list it.
+- Dedicated server: both clients see the same height and items; the server log shows the prefab made and no errors.
+- Big stacks: store 300 wood in parts: one slot shows 300. Relog and a second client: still 300. Drag it to the
+  inventory: one normal stack moves, the rest stays; shift click, Take all and a ground drop the same; Reach crafts
+  from it; dragging a big stack onto a different item in the inventory does nothing.
+
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 3.0.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 4.0.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2133,7 +2254,7 @@ from a script.
    drops, and crafting still counts them; `charcoal_kiln: { enabled: false }` removes the kiln's feeding and hover
    line entirely (verify the prefab names against the log's `openkeep containers` style output or the sign; they
    were written from memory, not the assets).
-4. Stow: check the button row below the player panel and the Sort button below the container panel's Take all
+4. Store: check the button row below the player panel and the Sort button below the container panel's Take all
    line overlap no item slot and no game text (with and without a chest open; note what `Button Row Offset` a
    clean layout needs, and that a changed offset moves the buttons at once); quick stack, store all, take all with
    Shift+G (and in a shared chest in Full and View mode), top up, sort by each order (Amount: most held first),
@@ -2153,7 +2274,7 @@ from a script.
    plate`. With `devcommands`,
    `inventorysize 6` grows the panel downward and the three plates stay where they were (use a test character:
    the size is saved with it, and going back with `inventorysize 4` drops what sits in the removed rows).
-5. Ground pickup on with `pickup: true` for the chest's prefab in `OpenKeep.Stow.yml`: drop copper ore near a
+5. Ground pickup on with `pickup: true` for the chest's prefab in `OpenKeep.Store.yml`: drop copper ore near a
    chest holding copper; after the delay it is inside the chest. An item inside a stranger's ward is not taken.
 6. Salvage tab appears after Upgrade (position with and without a station), lists an iron sword, returns the
    rounded fraction; with a full inventory the button is disabled and the hotkey says so. Backspace on a hovered
@@ -2245,7 +2366,7 @@ from a script.
 29. Beehives, dedicated server, `Honey Per Player Online` on, A at a hive and B far away: A's log shows `2 honey per
     day`; B disconnects: `1 honey per day` within 10 s. A leaves and B walks to the hive: B's log shows the rate and
     the hive's count carries on.
-30. Stow ground pickup with a fresh cfg: `Pickup Range = 2`; an item dropped 3 m from the chest stays on the ground.
+30. Store ground pickup with a fresh cfg: `Pickup Range = 2`; an item dropped 3 m from the chest stays on the ground.
 31. Auto Fuel, single player: a chest with 20 wood within 20 m of a new bonfire (0/10): within 2 s it shows 10/10,
     the chest holds 10, one fuel-added puff, debug log `bonfire refilled itself with 10 Wood from containers
     near it (10/10)`. With devcommands, `skiptime 5000`: the campfire drops a unit and is full again within 2 s. A sconce
@@ -2353,7 +2474,7 @@ from a script.
     the field reads 6, the requirement rows read x6, Craft makes 6 torches in one bar (about 6 s) and uses 6 of each.
     Ctrl + `+` jumps to the most the materials allow and `+` greys out there; Shift + `+` goes 1, 10, 20; Ctrl + `-`
     is 1. Click the number, type 12, Enter: 12 (or the most the materials allow); type 0: 1; Escape: the old amount;
-    after Enter the Stow hotkeys (Q, R, T) work at once. No tooltip over -, the number or +. Select another
+    after Enter the Store hotkeys (Q, R, T) work at once. No tooltip over -, the number or +. Select another
     recipe: 1. Craft the whole batch: the field drops by itself to what is left (or 1). The Upgrade and Salvage
     tabs show the full-width button and no stepper; so does the bar while it fills. Shift +
     Craft at 1 makes one torch in about 2 s. Wood arrows at 5: the name reads `x100` and 100 arrows arrive. Five
@@ -2371,7 +2492,7 @@ from a script.
     that fits nowhere stays in the inventory. V on wood with no chest open and A full: one wood lands in B, `Stored
     one Wood`; open A (full) and press V: the wood goes to B as well. A and B full: `Nothing to move`. Quick stack (Q)
     and Dump (Alt + D) with A full: the rest lands in B (as before). A chest holding wood beyond `Nearby Range`, one in
-    a stranger's ward and one with `refuse: [Wood]` in `OpenKeep.Stow.yml` get none; a favourite wood stack is not
+    a stranger's ward and one with `refuse: [Wood]` in `OpenKeep.Store.yml` get none; a favourite wood stack is not
     routed. Ctrl + click copper ore when only a chest of tin (same group) is near: it goes there; with that chest full
     it stays (no other group chest is tried). Open chest C (no wood) while A holds wood: Ctrl + click wood goes to A.
     Open C with no chest holding the item (a stack of resin): Ctrl + click sends it to C, even with a group chest near.
@@ -2409,12 +2530,13 @@ from a script.
     choice, open the map: the bed icons are back to the normal size and still. With a portal, a map pin and the death
     marker beside a bed (and Wayfare's portal icons shown): the bed icon is drawn over all of them during the choice,
     and a click on it wakes you there, not at the portal; after the choice the icons stack as the game draws them.
-59. Bed choice, edge cases: one bed only, no map (wake at once with Quick Respawn); `Bed Choice Seconds = 0`: no map;
-    a `nomap` world: no map; log out during the choice and back in: you are at the nearest bed; destroy B while
+59. Bed choice, edge cases: one bed only, no map (wake at once with Quick Respawn); a `nomap` world: no map; log out during the choice and back in: you are at the nearest bed; destroy B while
     choosing it (second client): the log says `no bed of yours at ...; trying the bed at ...` and you wake in A.
 60. Quick Respawn: `die` right beside a bed: awake in about a second. 500 m away with the defaults: about 9.5 s. 2 km
-    away: the game's 18 s. No bed: the same by the distance to the start stones. `Quick Respawn = false`: 18 s again,
-    with the bed choice too (the choice then only picks the bed).
+    away: the game's 18 s. No bed: the same by the distance to the start stones. With two beds, click the near one a
+    few seconds after dying: the map goes and you stand there at once; click one 2 km away: the map goes, the loading
+    screen shows at once, and you wake as soon as its land has loaded. `Quick Respawn = false`: 18 s again, with the
+    bed choice too (the choice then only picks the bed).
 61. Beds On Map: all own beds show with the bed icon in yellow on the minimap and the large map, the spawn bed once (the game's icon, no second one on top);
     sleeping in another bed swaps them within a second; a destroyed bed's icon goes. `Beds On Map = false`: only the
     game's icon. Dedicated server with A and B: each sees only their own beds.
@@ -2423,9 +2545,9 @@ from a script.
 63. (Portal screen moved to Wayfare.) With OpenKeep alone every jump shows the game's teleport screen.
 64. Stand Up On Respawn: `die` beside a bed: you appear standing and can walk at once; log out and in: the game's
     getting-up animation. Dedicated server, B watching A die and respawn: B sees A standing, not lying.
-65. Quick Area Loading (world with simulation distance 4), now the respawn only: dying far from a bed, the respawn
-    waits only for the timer, not ~6 s of land loading (log `OpenKeep: loaded the land around you in ...`).
-    `Quick Area Loading = false`: the game's pace. A portal jump with OpenKeep alone: the game's pace (Wayfare's now).
+65. Quick area loading (world with simulation distance 4), the respawn only: dying far from a bed, the respawn
+    waits only for the timer, not ~6 s of land loading (log `OpenKeep: loaded the land around you in ...`). A portal
+    jump with OpenKeep alone: the game's pace (Wayfare's now).
 66. Server settle, dedicated server with a big base 1 km from where you die: dying far from your bed wakes you in
     that bed, not the next one (log has no `no bed of yours at`).
 67. Epic Loot link, with Epic Loot installed: the log says `Epic Loot's enchanting table pays materials from nearby

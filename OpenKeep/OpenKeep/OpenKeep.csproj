@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>3.0.0</Version>
+    <Version>4.0.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -45,6 +45,10 @@
     <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
     <!-- Hotkeys: every OpenKeep hotkey read the workspace's way (Core/Keys passes them on) -->
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
+    <!-- EliteCraftingLink: Salvage asks EliteCrafting which rune a Magic or Rare item may give back -->
+    <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
+    <!-- BundlePrefabs: Mímir's Chest's model and icon, an embedded bundle per platform -->
+    <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -93,6 +97,10 @@
       <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
       <Private>false</Private>
@@ -131,6 +139,8 @@
     <EmbeddedResource Include="assets\*.png" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />
     <!-- Blueprints written into BepInEx/config/OpenKeep.Blueprints the first time (Blueprints module): OpenKeep.blueprints.<file> -->
     <EmbeddedResource Include="blueprints\*.json" LogicalName="OpenKeep.blueprints.%(Filename)%(Extension)" />
+    <!-- Mímir's Chest's model, lid and icon (ValheimAssets Assets/Props/MimirsChest), one bundle per platform -->
+    <EmbeddedResource Include="assets\bundles\ok_mimirchest.*" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

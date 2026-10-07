@@ -41,8 +41,9 @@ namespace OpenKeep.Shared
                 return amount;
             if (!TakeSlot())
                 return merged;
-            space[key] = room - merged + (maxStack - rest);
-            return amount;
+            int placed = rest < maxStack ? rest : maxStack;   // a Mímir's Chest stack can be bigger than one slot holds here
+            space[key] = room - merged + (maxStack - placed);
+            return merged + placed;
         }
 
         private bool TakeSlot()

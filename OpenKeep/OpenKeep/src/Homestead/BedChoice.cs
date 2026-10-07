@@ -5,18 +5,21 @@ using UnityEngine;
 namespace OpenKeep.Homestead
 {
     /// <summary>
-    /// The choice of bed after death, on the dying player's own client. It opens at death when Bed Choice Seconds is
-    /// above 0, the world has a map and there are two beds or more; the nearest is already the spawn point
+    /// The choice of bed after death, on the dying player's own client. It opens at death for <see cref="Seconds"/>
+    /// when the world has a map and there are two beds or more; the nearest is already the spawn point
     /// (<see cref="BedRespawn.Choose"/>). The respawn the game asked for is moved to the end of the choice, so the game
     /// wakes the player in the nearest bed on its own if nothing else happens. A click on a bed makes it the spawn
     /// point and ends the choice once the game's double click window has passed (a double click places a pin under
     /// the bed instead, and a right click removes one, as anywhere on the map); the time running out, the map key or Escape end it with the bed already chosen. At
-    /// the end the respawn is asked for again with what is left of the wait for that bed (<see cref="BedWait"/>), so a
-    /// near bed wakes the player at once. Active only while the same game and the same player exist and the player is
+    /// the end the map closes and the respawn starts at once (<see cref="BedWait.Picked"/>): the player wakes as soon as
+    /// the bed's area has loaded. Active only while the same game and the same player exist and the player is
     /// still dead, so a quit, a respawn or a revival from elsewhere ends it without a call.
     /// </summary>
     public static class BedChoice
     {
+        /// <summary>How long the map stays open for the choice before the nearest bed wakes the player.</summary>
+        private const float Seconds = 30f;
+
         private static readonly List<Vector3> beds = new List<Vector3>();
         private static bool open;
         private static Game game;
@@ -33,18 +36,17 @@ namespace OpenKeep.Homestead
 
         public static bool TryOpen(Player dead, List<Vector3> candidates, Vector3 deathPoint)
         {
-            float seconds = BedSettings.BedChoiceSeconds.Value;
-            if (seconds <= 0f || candidates.Count < 2 || Minimap.instance == null || Game.m_noMap)
+            if (candidates.Count < 2 || Minimap.instance == null || Game.m_noMap)
                 return false;
             beds.Clear();
             beds.AddRange(candidates);
             open = true;
             game = Game.instance;
             player = dead;
-            deadline = Time.time + seconds;
-            BedWait.Schedule(seconds);
+            deadline = Time.time + Seconds;
+            BedWait.Schedule(Seconds);
             BedChoiceMap.Opened(Minimap.instance, deathPoint);
-            Plugin.Log.LogInfo($"OpenKeep: choosing a bed on the map, {beds.Count} beds, {seconds:0.#} s");
+            Plugin.Log.LogInfo($"OpenKeep: choosing a bed on the map, {beds.Count} beds, {Seconds:0.#} s");
             return true;
         }
 
@@ -80,13 +82,13 @@ namespace OpenKeep.Homestead
             Confirm();
         }
 
-        /// <summary>Ends the choice with the bed chosen so far and asks for the respawn after what is left of its wait.</summary>
+        /// <summary>Ends the choice with the bed chosen so far and starts the respawn there (<see cref="BedWait.Picked"/>).</summary>
         public static void Confirm()
         {
             if (!Active)
                 return;
             Close();
-            BedWait.Schedule();
+            BedWait.Picked();
         }
 
         /// <summary>Ends the choice without a new respawn request (the game's own is running).</summary>

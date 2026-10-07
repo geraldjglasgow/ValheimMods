@@ -59,8 +59,8 @@ namespace OpenKeep.Salvage
         {
             SkipModData = synced.Bind(Section, "Skip Items With Mod Data", true,
                 "Items carrying item data another mod keeps on them (a key starting with one of the Mod Data Prefixes) are not listed and not salvaged, so salvaging cannot destroy what that mod added to the item.");
-            ModDataPrefixes = synced.Bind(Section, "Mod Data Prefixes", "ecf_",
-                "Item data key prefixes that Skip Items With Mod Data looks for, separated by commas. Case-sensitive. The default ecf_ marks EliteCrafting's magic items.");
+            ModDataPrefixes = synced.Bind(Section, "Mod Data Prefixes", "",
+                "Item data key prefixes that Skip Items With Mod Data looks for, separated by commas. Case-sensitive. EliteCrafting's (ecf_) never count while it is installed: its Magic and Rare items are salvaged and may give a rune back.");
         }
     }
 }

@@ -6,7 +6,7 @@ namespace OpenKeep.Recipes
 {
     /// <summary>
     /// What every listed recipe row gets besides its place: the favourite star, a middle click that makes it a
-    /// favourite, a right click that tracks or untracks it, the hover that Stow's Favourite Item Key acts on, and in a
+    /// favourite, a right click that tracks or untracks it, the hover that Store's Favourite Item Key acts on, and in a
     /// grid a tooltip with the name (the tile hides it). The rows are new on every rebuild, so nothing is undone.
     /// </summary>
     public static class RecipeRows

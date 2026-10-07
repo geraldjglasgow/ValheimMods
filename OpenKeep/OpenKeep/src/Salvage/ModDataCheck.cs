@@ -6,8 +6,9 @@ namespace OpenKeep.Salvage
     /// <summary>
     /// Whether an item carries custom item data another mod keeps on it (magic affixes and the like), recognised by
     /// a key prefix from the setting <see cref="SalvageSettings.ModDataPrefixes"/>. Only the keys are looked at,
-    /// never the values, and nothing of the other mod is referenced. The prefix list is split again only when the
-    /// setting's text changes, so checking every stack on every panel refresh allocates nothing.
+    /// never the values, and nothing of the other mod is referenced. EliteCrafting's keys never count while it is
+    /// installed: its items are salvaged knowingly (<see cref="EliteCraftingSalvage"/>). The prefix list is split
+    /// again only when the setting's text changes, so checking every stack on every panel refresh allocates nothing.
     /// </summary>
     public static class ModDataCheck
     {
@@ -25,7 +26,7 @@ namespace OpenKeep.Salvage
                 return false;
             foreach (KeyValuePair<string, string> entry in item.m_customData)
             {
-                if (StartsWithAny(entry.Key, list))
+                if (StartsWithAny(entry.Key, list) && !EliteCraftingSalvage.Owns(entry.Key))
                     return true;
             }
             return false;
