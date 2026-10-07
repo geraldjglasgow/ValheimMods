@@ -5,14 +5,36 @@ matching tags: every portal reaches every other, and a tag is only the name show
 
 ## Features
 - Map targeting: walk in, click a portal on the map, go. The game's carry rules, fade and cooldown still apply.
-- Access modes: Public, Private (owner only) or Admin (only admins may set it), cycled with Shift+E on a portal.
+- Access modes: Public, Private or Admin per portal, cycled with Shift+E (below).
 - Favourites: right-click a portal icon to pin it to a panel on the map.
-- `Toggle Icons Key` (P) shows portal icons on the ordinary map.
-- Works with any mod's portals.
-- Sea gates: two pillars on the shore or in shallow water, 10 to 15 m apart, open a portal for ships. Sail in, pick
-  any other sea gate on the map, and the ship arrives there with its crew aboard. Experimental.
-- Quick jumps: near portals are quicker, no loading screen into an area already loaded, faster land loading after a
-  long jump.
+- `Toggle Icons Key` (P) shows portal and sea gate icons on the ordinary map.
+- Works with any mod's portals, found by themselves.
+- Sea gates: portals for ships, crew aboard (below). Experimental.
+- Quick jumps: near portals are quicker, and no loading screen where nothing needs loading (below).
+
+## Access modes
+Changing a portal's mode makes you its owner. Portals you may not use never show on your map.
+- Public: everyone may travel to it; every new portal starts Public.
+- Private: only its owner (and server admins) may travel to it.
+- Admin: only server admins may travel to it, and only an admin may set it.
+
+## Sea gates
+Two pillars with water between them open a portal for ships. Every sea gate reaches every other.
+- Sea Gate Pillar: built from the hammer's Misc tab, on land or in shallow water.
+- Pairing: two pillars 10 to 15 m apart across deep enough water open by themselves.
+- Placement preview: green and red lines and posts show where a gate would open, or why not.
+- Sailing through: the ship stops in the gate and the helmsman picks the destination on the map.
+- Crew pointers: everyone aboard sees the map and each other's named pointers.
+- Arrival: the ship comes out at the other gate with its crew on deck, its cargo and its speed.
+- Safety: a few seconds without damage after arriving; a late ship sets its crew ashore by the gate.
+- Name and access: E names a gate, Shift+E sets its access mode, as on a portal.
+- Restricted cargo: ore and metal block the jump, as with portals.
+
+## Quick jumps
+- Near portals: the closer the two portals, the quicker the jump; the farthest take the game's 8 s.
+- No loading screen: a jump into an area already loaded keeps the screen clear.
+- Faster land loading: after a long jump the land around you loads as fast as your PC allows.
+- Solid landings: on a server you land on your floors, not under them.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `Wayfare.dll` in

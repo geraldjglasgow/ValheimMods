@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3
+
+- Fixed: after Alt + Tab, `Toggle Icons Key` could stop working or act as if Shift, Ctrl or Alt were held.
+- Store page: a fuller overview of what the mod does.
+
 ## 0.3.2
 
 - A portal built moments ago shows on the map as soon as you walk into any portal.
