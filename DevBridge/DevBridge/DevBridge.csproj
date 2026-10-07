@@ -6,7 +6,7 @@
     <AssemblyName>DevBridge</AssemblyName>
     <RootNamespace>DevBridge</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <Product>DevBridge</Product>
     <Description>DevBridge: local HTTP control of the running game for automated testing</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

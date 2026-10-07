@@ -17,7 +17,7 @@ namespace DevBridge
     {
         public const string PluginGuid = "com.DevBridge";
         public const string PluginName = "DevBridge";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.2.1";
 
         internal static DevBridgePlugin Instance { get; private set; }
 

@@ -4,14 +4,33 @@ A test bridge for Valheim modders and their AI agents: it opens the running game
 or a script can see the game, play it and check a mod unattended.
 
 ## Features
-- See: screenshots, the live UI tree, the log, game state, nearby objects and their ZDOs.
-- Drive: clicks, keys, mouse, typed text, console commands, waits for a menu, a loaded world or a log line.
-- Inspect: reflection and expression eval on any object, method traces, a stream of game events.
-- Measure: frame cost per mod, memory and garbage-collection hitches (`/heap`), slow motion and frame stepping, motion contact sheets, debug overlays (colliders, AI
-  senses, paths, wards).
-- Test: scripted scenarios, a client compared with a dedicated server on one machine, live value tuning.
-- Iterate: hot reload a mod's DLL, swap a prefab's look, stage an asset bundle beside the game's own models.
-- `curl -s http://127.0.0.1:7780/help` lists every endpoint.
+- See and drive: screenshots, the UI tree, the log, ZDOs; clicks, keys, mouse and console commands.
+- Inspect and measure: reflection, method traces, game events, frame cost per mod, memory hitches.
+- Test and iterate: scripted scenarios, client and server compared, DLL hot reload, staged asset bundles.
+- `curl -s http://127.0.0.1:7780/help` lists every endpoint with its arguments.
+
+## Endpoints
+- `/status`: menu, loading or in a world, the player, open screens and loaded plugins.
+- `/screenshot`: the game window with its UI, saved as a PNG or JPG.
+- `/ui`, `/find`: the live UI tree, and elements found by text, name or component.
+- `/log`: recent lines of the BepInEx log or the game console.
+- `/nearby`, `/zdo`: networked objects around the player, and every value a ZDO stores.
+- `/prefabs`, `/config`: the game's prefabs by name and kind; a mod's config values in memory.
+- `/click`, `/hover`, `/key`, `/mouse`, `/type`: real input on UI elements, keys and the mouse.
+- `/console`: runs a console command and replies with what it printed.
+- `/wait`: waits for seconds, the menu, a loaded world or a log line.
+- `/eval`: reads, sets or calls anything by reflection, private members too.
+- `/trace`: records each call of a game or mod method, with arguments and result.
+- `/events`: hits, deaths, spawns, boss fights and warnings, polled or streamed.
+- `/perf`, `/heap`: frame cost per mod; memory and garbage-collection hitches.
+- `/time`, `/burst`: slow motion and frame stepping; a run of frames on one contact sheet.
+- `/overlay`, `/hitbox`: colliders, AI senses, paths and wards drawn in the world; melee reach.
+- `/scenario`: a scripted test from a JSON file, pass or fail per step.
+- `/sync`: one question to every game and server on this machine, with the differences.
+- `/tune`: changes a value on a prefab and every live copy, printable as C#.
+- `/reload`: hot-reloads a mod's rebuilt DLL without restarting the game.
+- `/swap`, `/bundle`, `/place`, `/lineup`: asset bundles staged beside the game's own prefabs.
+- `/animate`, `/effect`, `/sound`, `/frame`, `/light`: animations, effects, sounds, camera and lighting for staged models.
 
 ## Install
 For development profiles only, never a profile you play in: any program on your computer can control the game while

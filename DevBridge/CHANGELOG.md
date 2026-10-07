@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Store page: a fuller overview, with every endpoint listed.
+
 ## 0.2.0
 
 - New `/heap`: memory now; `seconds=` puts each hitch beside garbage collections, log lines and spawned objects.
