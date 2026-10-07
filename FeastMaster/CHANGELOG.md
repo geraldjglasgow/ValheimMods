@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.7.5
+
+- Store page: a fuller overview of what the mod does.
+
 ## 4.7.4
 
 - Less work every frame for stamina and eitr regeneration, cooking and new items.
