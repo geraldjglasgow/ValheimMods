@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Store page: a fuller overview of what the mod does.
+
 ## 0.4.0
 
 - The server confirms a boss really died before giving credit; unconfirmed kill reports are refused and logged.

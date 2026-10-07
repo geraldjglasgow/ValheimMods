@@ -4,13 +4,24 @@ The next boss stays sealed until every player on the server has defeated the pre
 group; nobody skips ahead.
 
 ## Features
-- A boss altar opens only once everyone has defeated the boss before it, and says who the group is waiting for.
+- Altar gate: a boss altar opens only once everyone has defeated the boss before it.
+- Waiting list: a closed altar names the players the group is waiting for; the offering is kept.
 - Credit per player: everyone who hit the boss, plus everyone within a set distance when it dies.
-- The roster fills itself; players away for a set number of days stop holding the group back.
-- New players catch up with everything the world has already cleared (configurable).
-- Safe to install mid-playthrough: bosses already defeated count as cleared for everyone.
-- The boss chain is a YAML file: add modded bosses or change the order.
-- Admins can grant or revoke credit and ignore or forget players from the console.
+- Roster: fills itself as players join; players away for a set number of days stop holding the group back.
+- Late joiners: new players catch up with everything the world has already cleared, or earn each boss themselves.
+- Safe mid-playthrough: bosses already defeated count as cleared for everyone.
+- Spawn guard: a sealed boss cannot spawn even if another mod gets past the altar.
+- Open world: biomes, portals, dungeons and crafting stay open, and the game's own boss progress is untouched.
+- Boss chain: Eikthyr, The Elder, Bonemass, Moder, Yagluth, The Queen and Fader, in a YAML file; add modded bosses or
+  change the order.
+
+## Console commands
+- `lockstep status`: each altar, open or who it waits for, and every player's credit.
+- `lockstep grant <player> <boss>`: gives a player credit for a boss (admins).
+- `lockstep revoke <player> <boss>`: takes that credit away (admins).
+- `lockstep ignore <player>` / `unignore`: the player never holds the group back, or counts again (admins).
+- `lockstep forget <player>`: removes a character from the roster; joining again starts fresh (admins).
+- `charter status`: whether the server's settings bind yours.
 
 ## Install
 Needed on the server and every client; the server refuses clients without it. Install with r2modman or the
@@ -20,9 +31,7 @@ files are not read.
 ## Configuration
 `BepInEx/config/com.Lockstep.cfg` and `LockstepChain.yml`; the server keeps its roster in
 `Lockstep.<world>.roster.yml`. Every setting is described in the file and applies without a restart; the server's
-values bind every player (`Lock Configuration`). Console: `lockstep status` shows who the group waits for; admin
-commands: https://github.com/geraldjglasgow/ValheimMods/blob/main/Lockstep/PLAN.md. `charter status` shows whether
-the server binds your settings.
+values bind every player (`Lock Configuration`). The Wiki tab has the details.
 
 ## Links
 Discord: https://discord.gg/DrFUyfuXzT
