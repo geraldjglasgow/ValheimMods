@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2
+
+- Store page: a fuller overview of what the mod does.
+
 ## 1.4.1
 
 - Less work every frame: the ship panel, ship damage and wear, and building pieces loading.
