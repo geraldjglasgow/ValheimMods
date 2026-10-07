@@ -44,12 +44,10 @@ namespace EliteCrafting.Stones
         {
             string title = Words.Localize("$ecf_ui_confirm_title", job.StoneName);
             string body = Words.Localize("$ecf_ui_confirm_body", job.ItemName, job.StoneName);
-            ItemDrop.ItemData stone = job.Stone;
-            ItemDrop.ItemData target = job.Target;
-            UnifiedPopup.Push(new YesNoPopup(title, body, () => Confirmed(stone, target), UnifiedPopup.Pop, localizeText: false));
+            UnifiedPopup.Push(new YesNoPopup(title, body, () => Confirmed(job), UnifiedPopup.Pop, localizeText: false));
         }
 
-        private static void Confirmed(ItemDrop.ItemData stone, ItemDrop.ItemData target)
+        private static void Confirmed(StoneJob asked)
         {
             UnifiedPopup.Pop();
             Player player = Player.m_localPlayer;
@@ -57,7 +55,7 @@ namespace EliteCrafting.Stones
             {
                 return;
             }
-            StoneJob job = StoneJob.Create(player, stone, target);
+            StoneJob job = asked.Again(player);
             StoneResult result = StonePipeline.Evaluate(job);
             if (result.Refused)
             {

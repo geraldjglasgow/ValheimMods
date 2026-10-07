@@ -19,6 +19,12 @@ namespace EliteCrafting.Affixes
         public ItemSegment[] Segments { get; set; } = Array.Empty<ItemSegment>();
         public string? SealedReason { get; set; }
 
+        /// <summary>The socket count (<c>ecf_sockets</c>), 0 = none.</summary>
+        public int Sockets { get; set; }
+
+        /// <summary>The filled sockets in order (<c>ecf_gems</c>), unreadable entries kept verbatim in place.</summary>
+        public GemSegment[] Gems { get; set; } = Array.Empty<GemSegment>();
+
         /// <summary>The reserved <c>ecf_tier</c> value, preserved verbatim.</summary>
         public string? ReservedTier { get; set; }
 
@@ -28,7 +34,8 @@ namespace EliteCrafting.Affixes
         /// </summary>
         public bool LegacyGrades { get; set; }
 
-        public bool IsEmpty => RarityId == null && Segments.Length == 0 && SealedReason == null && ReservedTier == null && !Newer;
+        public bool IsEmpty => RarityId == null && Segments.Length == 0 && SealedReason == null && ReservedTier == null && !Newer
+            && Sockets == 0 && Gems.Length == 0;
 
         public StateData Copy() => (StateData)MemberwiseClone();
     }

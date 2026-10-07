@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.8.0
+
+- New Rune Table (`Rune Table`): stores runes, turns trophies into essence; essence picks the inscription Ascension adds.
+- Sockets (`Gems and sockets`): Magic and Rare weapons, staves, armour and shields hold up to three.
+- Eleven rare gems named for Norse gods fill them, a stat by item type; a full item's gem can be replaced.
+- The Dvergr Chisel cuts a socket; every boss drops its own gems and sometimes the chisel.
+- The Consecrated Rune now gives socketless gear 1-3 sockets.
+- Magic items have 2 inscriptions, Rare 3; the Serpent Rune can add a 3rd or 4th.
+- Removed: the Shaping Rune (held stacks disappear), Magic gear drops and `Magic item drops`.
+- Inscription ladders have at most 8 tiers (was 13).
+- With OpenKeep, salvaged Magic or Rare gear may give a rune back (`Runes from salvage`).
+- Sealed items show a red infinity sign on their icon.
+- The YAML files are format 3: old main files are renamed `.v2.bak` and rewritten.
+- Update the server and every client together.
+
 ## 0.7.0
 
 - Recasting Rune: every inscription is replaced by one or two new ones; the item stays Magic.

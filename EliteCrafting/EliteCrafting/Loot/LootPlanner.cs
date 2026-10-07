@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using EliteCrafting.Rules;
+using EliteCrafting.Sockets;
 
 namespace EliteCrafting.Loot
 {
@@ -79,6 +80,7 @@ namespace EliteCrafting.Loot
             {
                 DrawStones(economy, Count(boss.StoneRolls * star, random), random, plan);
                 AddBonus(economy, boss.Bonus, random, plan);
+                BossGems.Add(economy, input.Prefab, random, plan.Stones);
             }
             if (input.GearOn)
             {
@@ -91,7 +93,7 @@ namespace EliteCrafting.Loot
             WeightedTable<StoneDef> table = economy.StoneDraw(plan.Tier);
             for (int i = 0; i < count; i++)
             {
-                if (table.TryPick((float)random.NextDouble(), out StoneDef stone))
+                if (table.TryPick((float)random.NextDouble(), out StoneDef stone) && SocketSwitch.Drops(stone))
                 {
                     plan.Stones.Add(stone);
                 }
@@ -119,7 +121,7 @@ namespace EliteCrafting.Loot
             {
                 DropBonus row = rows[i];
                 StoneDef? stone = economy.Stone(row.Stone);
-                if (stone == null || !stone.Enabled || random.NextDouble() * 100.0 >= row.Chance)
+                if (stone == null || !stone.Enabled || !SocketSwitch.Drops(stone) || random.NextDouble() * 100.0 >= row.Chance)
                 {
                     continue;
                 }

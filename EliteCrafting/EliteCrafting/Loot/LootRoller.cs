@@ -69,6 +69,7 @@ namespace EliteCrafting.Loot
             int tier = profile.Tier > 0 ? profile.Tier : BiomeTiers.AtPosition(facts.Position, economy, out _);
             LootInput input = Input(tier, facts.RollStars, profile.Boss, facts.FlaggedBoss, profile.Creature, modifiers);
             input.Ecr = facts.Ecr.Roll;
+            input.Prefab = profile.Prefab;
             return input;
         }
 
@@ -106,7 +107,9 @@ namespace EliteCrafting.Loot
         {
             CreatureProfile? profile = creaturePrefab == null ? null : CreatureProfiles.Build(creaturePrefab, economy);
             int useTier = profile != null && profile.Tier > 0 ? profile.Tier : BiomeTiers.Clamp(tier);
-            return Input(useTier, stars, profile?.Boss, false, profile?.Creature, LootModifiers.None);
+            LootInput input = Input(useTier, stars, profile?.Boss, false, profile?.Creature, LootModifiers.None);
+            input.Prefab = creaturePrefab;
+            return input;
         }
 
         private static LootInput Input(int tier, int stars, BossDrop? boss, bool flaggedBoss, CreatureDrop? creature,

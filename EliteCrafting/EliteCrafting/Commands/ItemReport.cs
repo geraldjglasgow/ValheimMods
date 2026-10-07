@@ -11,7 +11,7 @@ namespace EliteCrafting.Commands
     /// <summary>
     /// The <c>inspect</c> block for one item (console-commands.md section 3): headline, the raw <c>ecf_</c> keys, the
     /// rarity and format, one line per inscription with its effect and whether it is active, the unreadable segments,
-    /// then the seal. The raw line is what two players compare in the multiplayer checklist, so it
+    /// the socketed gems and the socket count, then the seal. The raw line is what two players compare in the multiplayer checklist, so it
     /// prints the stored strings exactly, in a fixed key order.
     /// </summary>
     internal static class ItemReport
@@ -30,6 +30,11 @@ namespace EliteCrafting.Commands
             {
                 call.Detail($"unreadable segment '{raw}' (kept as it is)");
             }
+            for (int i = 0; i < state.Gems.Count; i++)
+            {
+                call.Detail(GemLine(state, i));
+            }
+            call.Detail($"sockets {state.Sockets}, {state.FilledSockets} filled");
             call.Detail(state.IsSealed ? $"sealed ({state.SealedReason})" : "not sealed");
         }
 
@@ -108,6 +113,19 @@ namespace EliteCrafting.Commands
             string status = def.Enabled ? "active" : "dormant (disabled)";
             string tier = def.TierRow(roll.Tier) == null ? ", tier not defined any more" : "";
             return $"{head}effect {effect}, {status}{tier}";
+        }
+
+        private static string GemLine(ItemState state, int index)
+        {
+            GemRoll gem = state.Gems[index];
+            AffixDef? def = state.GemDefinitionAt(index);
+            string head = $"socket {state.GemSocketAt(index) + 1}: {gem.GemId} gives {gem.Roll.Id}";
+            if (def == null)
+            {
+                return $"{head} grade {gem.Roll.Tier} {Numbers.Format(gem.Roll.Value)} -> dormant (not in configuration)";
+            }
+            string status = def.Enabled ? "active" : "dormant (disabled)";
+            return $"{head} T{def.ShownTier(gem.Roll.Tier)} of {def.TierCount} {Numbers.Format(gem.Roll.Value)} -> {status}";
         }
     }
 

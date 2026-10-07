@@ -6,7 +6,7 @@
     <RootNamespace>EliteCrafting</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.7.0</Version>
+    <Version>0.8.0</Version>
     <Product>EliteCrafting</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -119,9 +119,16 @@
     <!-- The rune tablets: seven stone tablets with their glyphs and icons (ValheimAssets Assets/Items/RuneTablets,
          ecf_runetablet_<rune>), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecf_runes.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
+    <!-- The Dvergr Chisel and the eleven gems with their icons (ValheimAssets Assets/Items/Gems, ecf_<id>), one bundle
+         per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecf_gems.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
     <!-- The loot beam on dropped magic items: a soft shaft of light with sparks rising round it (ValheimAssets
          Assets/Effects/ecf_lootglow_beam_motes, built with Tools/Vfx/build.py), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecf_lootglow.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
+    <!-- The Rune Table's model and build-menu icon (ValheimAssets Assets/Props/RuneTable), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecf_runetable.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
+    <!-- The Rune Table's essence icons, 64 px PNGs (ValheimAssets Assets/Icons/Essences), decoded at runtime. -->
+    <EmbeddedResource Include="assets\icons\ecf_essence_*.png" LogicalName="EliteCrafting.assets.icons.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

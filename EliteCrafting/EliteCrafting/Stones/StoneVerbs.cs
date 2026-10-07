@@ -14,8 +14,9 @@ namespace EliteCrafting.Stones
     }
 
     /// <summary>
-    /// The fixed verb set of the seven runes, dispatched by the rune's <c>verb</c>: <c>promote</c> (Awakening, Ascension),
-    /// <c>add</c> (Shaping, Consecrated), <c>reroll</c> (Recasting), <c>strip</c> (Cleansing), <c>corrupt</c> (Serpent).
+    /// The fixed verb set of the runes, dispatched by the rune's <c>verb</c>: <c>promote</c> (Awakening, Ascension),
+    /// <c>reroll</c> (Recasting), <c>strip</c> (Cleansing), <c>corrupt</c> (Serpent),
+    /// <c>socket</c> (the Dvergr Chisel), <c>gem</c> (the gems), <c>consecrate</c> (the Consecrated Rune: 1-3 sockets).
     /// A new verb is one class and one line in <see cref="Implemented"/>. A stone whose verb this build cannot perform
     /// refuses as disabled (<c>stone_disabled</c>), with one log warning for the server owner, rather than failing (IMP-60).
     /// </summary>
@@ -24,10 +25,12 @@ namespace EliteCrafting.Stones
         private static readonly Dictionary<StoneVerb, IStoneVerb> Implemented = new Dictionary<StoneVerb, IStoneVerb>
         {
             { StoneVerb.Promote, new PromoteVerb() },
-            { StoneVerb.Add, new AddVerb() },
             { StoneVerb.Strip, new StripVerb() },
             { StoneVerb.Corrupt, new CorruptVerb() },
             { StoneVerb.Reroll, new RerollVerb() },
+            { StoneVerb.Socket, new SocketVerb() },
+            { StoneVerb.Gem, new GemVerb() },
+            { StoneVerb.Consecrate, new ConsecrateVerb() },
         };
 
         private static readonly HashSet<string> Warned = new HashSet<string>();

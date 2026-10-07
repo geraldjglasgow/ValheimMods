@@ -495,6 +495,43 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   recoloured game twinkle). Our own effect `ecf_lootglow_beam_motes` from ValheimAssets, bundle `ecf_lootglow`, in the
   rarity's light tone, under the ground glow's nearest-N cap; new per-player switch `Loot beam` (default on). The
   game's gold twinkle on the item stays (the recolour, option E, was not chosen). `features/display.md` section 5.
+- 2026-10-07 — Sockets and gems come back (user: PoE 2 style, "each ones gives certain stats, but change it up. have
+  it roll the tier of stat on the item when its socketed", "based on the base"; amends the 2026-10-02 "runes only"
+  decision). Names chosen by the user: **socket**, **gem**, the **Dvergr Chisel**, gems named for Norse gods. Dropped
+  Magic and Rare weapons, staves, armour and shields carry 0-3 sockets; the chisel cuts one into an item with none; eleven
+  very rare gems give one stat per base (weapon, staff, armour and shields), its tier rolled for the item when set;
+  Sleipnir's Gem (movement speed) fits armour and shields only (user: "a movement speed rune that is for armor +
+  shields only", taken as a gem). A gem into a full item replaces the one in a socket the player picks (user: "you can
+  socket it in a certain socket, it replaces it"); Cleansing leaves sockets and gems alone. Judgement calls: the gem
+  roster and stats, drop weights and boss bonuses, socket odds, Ruby and nails as placeholder looks, the replace
+  dialog as one yes/no per socket, sealed items refusing gems, the roster in code with one switch `Gems and sockets`.
+  `features/sockets.md`. Same day, user "do it all": models for the gems and the chisel (bundle `ecf_gems`), the boss
+  gems moved into code (`Sockets/BossGems`) so existing servers' economy files get them, a Sockets tab at the Rune
+  Table, and the README, wiki page, changelog and Nexus text.
+- 2026-10-07 — Four inscriptions at most, five runes, eight tiers (user: "items can only have a max of 4 mods? the magic
+  rarity item can get up to 2, then you can upgrade to rare for another, and the serpant rune has chance to give an
+  extra mod. completely remove the shaping rune. awakening rune will give 2 mods, and recasting will reroll the 2.
+  completely remove the consecrated rune ... Reduce Tiers from 13 to just 8"). Magic holds exactly 2 (one prefix, one
+  suffix), Rare exactly 3 (two of each kind at most); the Serpent's add outcome goes one past: a 3rd on Magic, a 4th on
+  Rare. The Shaping and Consecrated Runes are gone with every trace (prefabs, verb `Add`, words, drops; Eikthyr's
+  Shaping bonus became Recasting, the Consecrated boss bonuses Ascension); held stacks vanish. Every 13-tier ladder is 8.
+  Both YAML families are format 3, so an older main file is renamed `.v2.bak` and the new default written. Same day, the
+  Rune Table's essences (user): fire, frost, lightning and poison are one essence, Elemental (the speed inscriptions of
+  the old Storm went to Beast); essence works with the Ascension Rune only, where it **guarantees** the new inscription is
+  one of its own (the draw is limited to them, no longer weighted 3x), greyed out for every other rune; essence is also
+  an item, Essence (`ECF_Essence`, a Wisp copy: "some kind of whiteish looking item ... think of this as the essence of
+  the creature"), shown with its count first in the essence row, dropped when the table breaks, stored back with the
+  runes; the bowl fills with essence, a step per 50, full at 500 (user). Judgement calls: Essence stacks to 100, carried
+  Essence pays after the pool, an essence none of whose inscriptions fit the item refuses as any rune does, the five
+  shelf tablets centred on the seven anchors, Elemental's icon a stand-in of the four old ones until the user paints one.
+- 2026-10-07 — The Consecrated Rune stays, repurposed (user: "DONT actually remove the consecrated rune. Lets repurpose
+  it. make it give between 1 and 3 sockets, but 3 is very rare"): verb `consecrate`, one socket 70%, two 25%, three 5%
+  (constants), into a weapon, staff, armour piece or shield with no sockets, any rarity, only while `Gems and sockets`
+  is on (it does not drop while off); its old drop rows (Swamp and later) are back, the boss bonuses stay Ascension;
+  six runes. Same request: no EliteCrafting gear drops at all for now ("for now don't allow elitecrafting gear to drop
+  at all"): `GearDrops.On` is a false constant and the `Magic item drops` setting is removed; creatures, bosses,
+  chests and the Elite Creatures Reborn hook drop runes, gems and the chisel only. The gear code and YAML tables stay
+  for when it returns. Judgement calls: the 70/25/5 split, any rarity, refusing gear that has sockets already.
 
 ## Open questions
 

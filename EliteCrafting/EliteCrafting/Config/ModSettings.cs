@@ -37,8 +37,10 @@ namespace EliteCrafting.Config
         // gameplay, synced and lockable
         public static ConfigEntry<bool> AffixEffects { get; private set; } = null!;
         public static ConfigEntry<bool> ModifyEquippedItems { get; private set; } = null!;
+        public static ConfigEntry<bool> SalvageRunes { get; private set; } = null!;
+        public static ConfigEntry<bool> RuneTable { get; private set; } = null!;
+        public static ConfigEntry<bool> GemsAndSockets { get; private set; } = null!;
         public static ConfigEntry<bool> StoneDrops { get; private set; } = null!;
-        public static ConfigEntry<bool> MagicItemDrops { get; private set; } = null!;
         public static ConfigEntry<bool> ReadOnlyCommandsForEveryone { get; private set; } = null!;
 
         // per player, never synced
@@ -62,6 +64,7 @@ namespace EliteCrafting.Config
         internal static void Bind(ConfigFile config)
         {
             BindGameplay(config);
+            BindRunes(config);
             BindDisplay(config);
             BindGlow(config);
             BindDiagnostics(config);
@@ -72,14 +75,28 @@ namespace EliteCrafting.Config
         {
             AffixEffects = Synced(config.Bind(General, "Inscription effects", true,
                 "Master switch for every inscription effect. Off: items keep and show their inscriptions, nothing applies."));
-            ModifyEquippedItems = Synced(config.Bind(Stones, "Modify equipped items", true,
-                "Runes may be used on items that are equipped."));
             StoneDrops = Synced(config.Bind(Drops, "Rune drops", true,
                 "Creatures drop runes per the economy drop tables."));
-            MagicItemDrops = Synced(config.Bind(Drops, "Magic item drops", true,
-                "Creatures drop pre-rolled magic gear per the economy drop tables."));
             ReadOnlyCommandsForEveryone = Synced(config.Bind(Commands, "Read-only commands for everyone", true,
                 "ecraft inspect, stats, list and help work for every player; off makes them admin-only too."));
+        }
+
+        private static void BindRunes(ConfigFile config)
+        {
+            ModifyEquippedItems = Synced(config.Bind(Stones, "Modify equipped items", true,
+                "Runes may be used on items that are equipped."));
+            SalvageRunes = Synced(config.Bind(Stones, "Runes from salvage", true,
+                "Salvaging a Magic or Rare item (OpenKeep's Salvage) may give back the rune that raised it to its rarity: " +
+                "an Awakening Rune from Magic, an Ascension Rune from Rare, one time in four."));
+            RuneTable = Synced(config.Bind(Stones, "Rune Table", true,
+                "The Rune Table (hammer, Crafting tab, at a workbench): holds runes, banks essence from sacrificed trophies " +
+                "and applies runes to your gear; with the Ascension Rune an essence chooses the kind of inscription it adds, for " +
+                "10 essence per item level. Off: the hammer no longer offers it and tables already built cannot be used; what they hold is kept."));
+            GemsAndSockets = Synced(config.Bind(Stones, "Gems and sockets", true,
+                "Weapons, staves, armour and shields can hold up to three sockets: the Consecrated Rune gives an item that has " +
+                "none one to three, the Dvergr Chisel one, and the eleven very rare gems fill them, each giving a stat that " +
+                "depends on the item. Off: the Consecrated Rune, the chisel and the gems neither drop nor work; gems already " +
+                "socketed keep their stats."));
         }
 
         private static void BindDisplay(ConfigFile config)

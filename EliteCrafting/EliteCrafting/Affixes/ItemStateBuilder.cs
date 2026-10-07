@@ -12,12 +12,14 @@ namespace EliteCrafting.Affixes
     public sealed class ItemStateBuilder
     {
         private readonly List<ItemSegment> _segments;
+        private readonly List<GemSegment> _gems;
         private readonly StateData _data;
 
         internal ItemStateBuilder(StateData from)
         {
             _data = from.Copy();
             _segments = new List<ItemSegment>(from.Segments);
+            _gems = new List<GemSegment>(from.Gems);
         }
 
         /// <summary>A builder for an item with no state yet.</summary>
@@ -90,11 +92,45 @@ namespace EliteCrafting.Affixes
             return this;
         }
 
+        public int Sockets => _data.Sockets;
+
+        /// <summary>Filled sockets, unreadable entries included (they fill theirs).</summary>
+        public int GemCount => _gems.Count;
+
+        /// <summary>Sets the socket count, 0-3; never below the gems the item holds.</summary>
+        public ItemStateBuilder SetSockets(int count)
+        {
+            _data.Sockets = Math.Max(_gems.Count, Math.Min(count, GemCodec.MaxSockets));
+            return this;
+        }
+
+        /// <summary>
+        /// Puts a gem into socket <paramref name="index"/>: the next empty socket (index = the gem count) or a filled one,
+        /// whose gem is replaced (destroyed). False when the index is outside the item's sockets or past the next empty one.
+        /// </summary>
+        public bool SetGem(int index, GemRoll gem)
+        {
+            if (index < 0 || index > _gems.Count || index >= _data.Sockets)
+            {
+                return false;
+            }
+            if (index == _gems.Count)
+            {
+                _gems.Add(new GemSegment(gem));
+            }
+            else
+            {
+                _gems[index] = new GemSegment(gem);
+            }
+            return true;
+        }
+
         /// <summary>The finished state, resolved against the running rules, in the current format.</summary>
         public ItemState Build()
         {
             StateData data = _data.Copy();
             data.Segments = _segments.ToArray();
+            data.Gems = _gems.ToArray();
             if (!data.Newer)
             {
                 data.Format = ItemKeys.CurrentFormat;

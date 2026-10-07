@@ -13,11 +13,12 @@ namespace EliteCrafting.Stones
     /// </summary>
     internal sealed class StoneJob
     {
-        private StoneJob(Player player, ItemDrop.ItemData stone, ItemDrop.ItemData target)
+        private StoneJob(Player player, ItemDrop.ItemData stone, ItemDrop.ItemData target, IRuneSupply? supply)
         {
             Player = player;
             Inventory = player.GetInventory();
-            StoneSource = SourceOf(Inventory, stone);
+            Supply = supply;
+            StoneSource = supply == null ? SourceOf(Inventory, stone) : null;
             Stone = stone;
             Target = target;
             Rules = ActiveRules.Current;
@@ -38,6 +39,12 @@ namespace EliteCrafting.Stones
         /// </summary>
         public Inventory? StoneSource { get; }
 
+        /// <summary>The Rune Table paying for this use instead of a carried stack; null for a click with a carried rune.</summary>
+        public IRuneSupply? Supply { get; }
+
+        /// <summary>How many of the rune this use can pay from: the carried stack, or what the table's supply holds.</summary>
+        public int StonesHeld => Supply != null ? Supply.Held(Def?.Id) : Stone.m_stack;
+
         public ItemDrop.ItemData Stone { get; }
         public ItemDrop.ItemData Target { get; }
         public RuleSet Rules { get; }
@@ -56,6 +63,9 @@ namespace EliteCrafting.Stones
         /// <summary>Stones this use costs, paid for the rarity before the stone acts (default 1; 0 is free).</summary>
         public int Cost => Def != null && Rarity != null ? System.Math.Max(Def.CostFor(Rarity.Id), 0) : 1;
 
+        /// <summary>The socket (0-based) a gem goes into, picked in <see cref="GemChooser"/>; -1 = the next empty one.</summary>
+        public int Socket { get; private set; } = -1;
+
         public bool IsEquipped => Player.IsItemEquiped(Target);
 
         public string StoneName => Words.Localize(Def?.Name ?? Stone.m_shared.m_name);
@@ -63,7 +73,17 @@ namespace EliteCrafting.Stones
         public string ItemName => Words.Localize(Target.m_shared.m_name);
 
         public static StoneJob Create(Player player, ItemDrop.ItemData stone, ItemDrop.ItemData target) =>
-            new StoneJob(player, stone, target);
+            new StoneJob(player, stone, target, null);
+
+        /// <summary>A use paid by a supply: <paramref name="rune"/> is the rune prefab's own item data, read only.</summary>
+        public static StoneJob Create(Player player, ItemDrop.ItemData rune, ItemDrop.ItemData target, IRuneSupply supply) =>
+            new StoneJob(player, rune, target, supply);
+
+        /// <summary>The same use read afresh (after a confirm dialog, the inventory or the table may have changed).</summary>
+        public StoneJob Again(Player player) => new StoneJob(player, Stone, Target, Supply) { Socket = Socket };
+
+        /// <summary>The same use read afresh, its gem aimed at <paramref name="socket"/> (the player's pick).</summary>
+        public StoneJob AtSocket(Player player, int socket) => new StoneJob(player, Stone, Target, Supply) { Socket = socket };
 
         private static Inventory? SourceOf(Inventory own, ItemDrop.ItemData stone)
         {
@@ -84,6 +104,7 @@ namespace EliteCrafting.Stones
                 Class = Class,
                 Level = ItemTier.Of(Target),
                 TierFloor = Def?.TierFloor ?? 0,
+                Favoured = Supply?.Favoured,
                 Random = RollRandom.Create(),
                 Rules = Rules,
             };

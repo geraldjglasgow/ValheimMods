@@ -5,7 +5,7 @@ using EliteCrafting.Rules;
 namespace EliteCrafting.Affixes
 {
     /// <summary>
-    /// An item's EliteCrafting state (item-data.md): rarity, affixes, sealed reason and format version, resolved
+    /// An item's EliteCrafting state (item-data.md): rarity, affixes, sockets and gems, sealed reason and format version, resolved
     /// against the running rules. Immutable: to change an item, take <see cref="ToBuilder"/>, change the builder, and
     /// hand the result to <see cref="Write"/> - the only write path.
     /// <para>
@@ -21,6 +21,9 @@ namespace EliteCrafting.Affixes
         private readonly AffixRoll[] _rolls;
         private readonly AffixDef?[] _defs;
         private readonly string[] _unreadable;
+        private readonly GemRoll[] _gems;
+        private readonly int[] _gemSockets;
+        private readonly AffixDef?[] _gemDefs;
         private readonly EffectRoll[] _effective;
 
         internal ItemState(StateData data, RuleSet rules)
@@ -32,6 +35,8 @@ namespace EliteCrafting.Affixes
             Generation = rules.Generation;
             _rolls = Rolls(data.Segments, out _unreadable);
             _defs = Resolve(_rolls, rules.Affixes);
+            _gems = GemCodec.Readable(data.Gems, out _gemSockets);
+            _gemDefs = Resolve(_gems, rules.Affixes);
             RarityId = data.RarityId;
             Rarity = rules.Rarity(data.RarityId);
             _effective = EffectRollBuilder.Build(this);
@@ -87,7 +92,30 @@ namespace EliteCrafting.Affixes
 
         public bool HasAffix(string id) => IndexOf(id) >= 0;
 
-        /// <summary>What effects read: the active affixes (<see cref="EffectRollBuilder"/>).</summary>
+        // ---- sockets (sockets.md section 2)
+
+        /// <summary>How many sockets the item has (0-3).</summary>
+        public int Sockets => Data.Sockets;
+
+        /// <summary>The filled sockets in order (unreadable entries left out); the empty sockets follow them.</summary>
+        public IReadOnlyList<GemRoll> Gems => _gems;
+
+        /// <summary>Sockets holding something, unreadable entries included; the next empty socket has this index.</summary>
+        public int FilledSockets => Data.Gems.Length;
+
+        /// <summary>Sockets without a gem (an unreadable entry fills its socket).</summary>
+        public int FreeSockets => Math.Max(0, Data.Sockets - Data.Gems.Length);
+
+        /// <summary>The socket (0-based) gem <paramref name="index"/> sits in.</summary>
+        public int GemSocketAt(int index) => _gemSockets[index];
+
+        /// <summary>The live definition of the inscription gem <paramref name="index"/> gives; null when orphaned.</summary>
+        public AffixDef? GemDefinitionAt(int index) => _gemDefs[index];
+
+        /// <summary>A socketed gem counts while its inscription is defined and enabled; otherwise it is dormant.</summary>
+        public bool IsGemActiveAt(int index) => _gemDefs[index] != null && _gemDefs[index]!.Enabled;
+
+        /// <summary>What effects read: the active affixes, then the active gems (<see cref="EffectRollBuilder"/>).</summary>
         public IReadOnlyList<EffectRoll> EffectRolls => _effective;
 
         /// <summary>
@@ -130,6 +158,16 @@ namespace EliteCrafting.Affixes
             }
             unreadable = raw.Count == 0 ? Array.Empty<string>() : raw.ToArray();
             return rolls.Count == 0 ? Array.Empty<AffixRoll>() : rolls.ToArray();
+        }
+
+        private static AffixDef?[] Resolve(GemRoll[] gems, AffixRules rules)
+        {
+            AffixDef?[] defs = gems.Length == 0 ? Array.Empty<AffixDef?>() : new AffixDef?[gems.Length];
+            for (int i = 0; i < gems.Length; i++)
+            {
+                defs[i] = rules.Get(gems[i].Roll.Id);
+            }
+            return defs;
         }
 
         private static AffixDef?[] Resolve(AffixRoll[] rolls, AffixRules rules)

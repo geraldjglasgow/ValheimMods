@@ -26,6 +26,15 @@ namespace EliteCrafting.Affixes
         /// <summary>Sealed reason id (<see cref="SealedSerpent"/>); any value = sealed.</summary>
         public const string Sealed = "ecf_sealed";
 
+        /// <summary>Socket count, integer 1-3 (sockets.md section 2); absent = none.</summary>
+        public const string Sockets = "ecf_sockets";
+
+        /// <summary>
+        /// The filled sockets in socket order: <c>gem:inscription:grade:value;...</c>. Never longer than the socket count;
+        /// a gem is replaced in place, never removed, so the empty sockets are always the last ones.
+        /// </summary>
+        public const string Gems = "ecf_gems";
+
         /// <summary>Reserved, never written (the item level is computed, classes-and-tiers.md section 2); preserved when present.</summary>
         public const string Tier = "ecf_tier";
 
@@ -41,12 +50,13 @@ namespace EliteCrafting.Affixes
         public const string SealedSerpent = "serpent";
 
         /// <summary>The keys that make an item carry state (all but the version itself).</summary>
-        public static readonly string[] StateKeys = { Rarity, Affixes, LegacyAffixes, Sealed, Tier };
+        public static readonly string[] StateKeys = { Rarity, Affixes, LegacyAffixes, Sealed, Tier, Sockets, Gems };
 
         /// <summary>
-        /// Keys of the systems the runes replaced on 2026-10-02 (binding, honing and tempering, sigils, sockets, gems,
-        /// catalysts): never read, removed from an item the next time it is written.
+        /// Keys of the systems the runes replaced on 2026-10-02 (binding, honing and tempering, sigils, catalysts): never
+        /// read, removed from an item the next time it is written. Sockets and gems came back on 2026-10-07 under their old
+        /// keys (no released version ever wrote them).
         /// </summary>
-        public static readonly string[] RetiredKeys = { "ecf_bound", "ecf_refine", "ecf_sigil", "ecf_sockets", "ecf_gems", "ecf_catalyst" };
+        public static readonly string[] RetiredKeys = { "ecf_bound", "ecf_refine", "ecf_sigil", "ecf_catalyst" };
     }
 }

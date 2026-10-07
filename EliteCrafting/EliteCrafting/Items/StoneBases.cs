@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using EliteCrafting.Core;
+using EliteCrafting.Rules;
 using UnityEngine;
 
 namespace EliteCrafting.Items
@@ -11,6 +12,8 @@ namespace EliteCrafting.Items
         Ascension,
         Manipulation,
         Risk,
+        Gem,
+        Tool,
     }
 
     /// <summary>
@@ -24,13 +27,22 @@ namespace EliteCrafting.Items
         private static readonly string[] Ascension = { "Ruby", "Amber", "AmberPearl" };
         private static readonly string[] Manipulation = { "Crystal", "DragonTear", "Thunderstone" };
         private static readonly string[] Risk = { "SurtlingCore", "BlackCore" };
+        private static readonly string[] Gem = { "Ruby", "Amber", "AmberPearl" };
+        private static readonly string[] Tool = { "IronNails", "BronzeNails" };
 
         // Indexed by StoneGroup: keep in the enum's order.
-        private static readonly string[][] AllGroups = { Ascension, Manipulation, Risk };
+        private static readonly string[][] AllGroups = { Ascension, Manipulation, Risk, Gem, Tool };
 
-        /// <summary>The look of a rune: the two that change the rarity a gem, the Serpent a core, the rest a crystal.</summary>
+        /// <summary>
+        /// The look of a rune: the two that change the rarity a gem, the Serpent a core, the rest a crystal; the gems a
+        /// tinted Ruby, the Dvergr Chisel tinted nails (until they have models of their own).
+        /// </summary>
         public static StoneGroup GroupOf(string runeId)
         {
+            if (StoneCatalog.IsSocketStone(runeId))
+            {
+                return runeId == StoneCatalog.ChiselId ? StoneGroup.Tool : StoneGroup.Gem;
+            }
             switch (runeId)
             {
                 case "awakening":

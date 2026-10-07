@@ -5,16 +5,17 @@ using EliteCrafting.Display;
 using EliteCrafting.Items;
 using EliteCrafting.Rolling;
 using EliteCrafting.Rules;
+using EliteCrafting.Stones;
 using EliteCrafting.Text;
 
 namespace EliteCrafting.Api
 {
     /// <summary>
     /// The item endpoints (api.md section 4): reads of an item's state (rarity, colour, inscriptions, the decorated
-    /// name, whether it may become magic) and the two writes, a fresh roll and a cleanse, through the one item-state
-    /// writer with the reason <c>api</c>. The writes act on the item object the caller hands in, on the caller's peer,
-    /// like a rune: call them where the item is owned (the player's own inventory). A sealed item, or one written by a
-    /// newer EliteCrafting, is never changed.
+    /// name, whether it may become magic, the rune a salvage may give back) and the two writes, a fresh roll and a
+    /// cleanse, through the one item-state writer with the reason <c>api</c>. The writes act on the item object the
+    /// caller hands in, on the caller's peer, like a rune: call them where the item is owned (the player's own
+    /// inventory). A sealed item, or one written by a newer EliteCrafting, is never changed.
     /// </summary>
     internal static class ApiItems
     {
@@ -94,6 +95,11 @@ namespace EliteCrafting.Api
             }
             return Write(item, state.ToBuilder().ClearAffixes().SetRarity(null).Build());
         }
+
+        /// <summary>The rune prefab a salvage of the item may give back, or null (<see cref="SalvageRunes"/>).</summary>
+        public static string? SalvageRune(ItemDrop.ItemData? item) => SalvageRunes.PrefabFor(item);
+
+        public static float SalvageRuneChance(ItemDrop.ItemData? item) => SalvageRunes.ChanceFor(item);
 
         private static bool Changeable(ItemState state) => !state.IsSealed && !state.IsNewerFormat;
 

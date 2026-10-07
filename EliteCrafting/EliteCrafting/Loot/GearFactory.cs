@@ -3,13 +3,15 @@ using EliteCrafting.Affixes;
 using EliteCrafting.Core;
 using EliteCrafting.Rolling;
 using EliteCrafting.Rules;
+using EliteCrafting.Sockets;
 
 namespace EliteCrafting.Loot
 {
     /// <summary>
     /// Builds a pre-rolled gear item (drops.md section 8): a clone of the base prefab's item data with its drop prefab,
     /// upgrade level 1, full durability, the world's world level, a random style variant, no crafter, then a fresh roll
-    /// at the drawn rarity through <see cref="ItemRoller.RollFresh"/> under the base's own class and level, written with
+    /// at the drawn rarity through <see cref="ItemRoller.RollFresh"/> under the base's own class and level, its sockets
+    /// (<see cref="SocketDrops"/>), written with
     /// <see cref="ItemState.Write"/> (reason <c>drop</c>), then the API's <see cref="LootGenerated"/> listeners. If the
     /// pool cannot fill the rarity, the next lower rarity that may drop is tried.
     /// Runs on the peer that spawns the drop (the creature's owner). Nothing here touches the world.
@@ -73,7 +75,7 @@ namespace EliteCrafting.Loot
                 }
                 if (outcome.Success || outcome.Failure != RollFailure.NoEligibleAffix)
                 {
-                    return outcome.Success ? Commit(item, outcome.State!, rarity) : null;
+                    return outcome.Success ? Commit(item, SocketDrops.Add(outcome.State!, gear.Class, rarity, random), rarity) : null;
                 }
             }
             return null;

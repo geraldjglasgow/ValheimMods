@@ -2,66 +2,85 @@ using System;
 using System.Collections.Generic;
 using BundlePrefabs;
 using EliteCrafting.Core;
+using EliteCrafting.Rules;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The rune tablets (prefabs.md section 4): each rune's own model and icon from the embedded bundle
-    /// <c>ecf_runes</c> (ValheimAssets <c>Assets/Items/RuneTablets</c>, asset <c>ecf_runetablet_&lt;id&gt;</c>, icon
-    /// <c>ecf_runetablet_&lt;id&gt;_icon</c>): a small chipped stone tablet with the rune's glyph cut into its top and
-    /// coloured. The cloned base keeps its item parts (net view, rigidbody, sync, sounds, item data); its own look, lights
-    /// and colliders go, and the tablet goes where its model was (under <c>attach</c> when it has one), with the tablet's
-    /// box collider. It wears a game item's opaque material (<see cref="MaterialItem"/>'s, as the Kraken beak does; the
-    /// Ruby's own is see-through) with the tablet's baked maps, so the game lights it like its own items. Every peer,
-    /// identically (the collider is physics); a bundle that cannot load leaves the base's own look, tinted as before.
+    /// The rune tablets and the socket stones' models (prefabs.md section 4, sockets.md section 7): each one's own model
+    /// and icon from an embedded bundle. The runes' bundle is <c>ecf_runes</c> (ValheimAssets <c>Assets/Items/RuneTablets</c>,
+    /// asset <c>ecf_runetablet_&lt;id&gt;</c>): a small chipped stone tablet with the rune's glyph cut into its top and
+    /// coloured. The Dvergr Chisel's and the gems' is <c>ecf_gems</c> (<c>Assets/Items/Gems</c>, asset <c>ecf_&lt;id&gt;</c>).
+    /// Icons are the asset's name + <c>_icon</c>. The cloned base keeps its item parts (net view, rigidbody, sync, sounds,
+    /// item data); its own look, lights and colliders go, and the model goes where the base's was (under <c>attach</c>
+    /// when it has one), with the model's box collider. It wears a game item's opaque material (<see cref="MaterialItem"/>'s,
+    /// as the Kraken beak does; the Ruby's own is see-through) with the model's baked maps, so the game lights it like its
+    /// own items. Every peer, identically (the collider is physics); a bundle that cannot load, or lacks a model, leaves
+    /// the base's own look, tinted as before.
     /// </summary>
-    internal static class StoneTablets
+    internal sealed class StoneTablets
     {
-        public const string Bundle = "ecf_runes";
+        public static readonly StoneTablets Runes = new StoneTablets("ecf_runes", "ecf_runetablet_", 0.15f, "the rune tablets");
+        public static readonly StoneTablets Gems = new StoneTablets("ecf_gems", "ecf_", 0.45f, "the gem and chisel models");
 
-        /// <summary>The base every rune is copied from while the tablets load: the Ruby's group (a plain small item).</summary>
+        /// <summary>The base every stone is copied from while it wears a model: the Ruby's group (a plain small item).</summary>
         public const StoneGroup BaseGroup = StoneGroup.Ascension;
 
-        /// <summary>The game item whose material the tablets wear: opaque Standard with a normal map.</summary>
+        /// <summary>The game item whose material the models wear: opaque Standard with a normal map.</summary>
         public const string MaterialItem = "SerpentScale";
 
         private const string Holder = "attach";
         private const string ModelName = "model";
-        private const float Gloss = 0.15f;
 
-        private static AssetBundle? _bundle;
         private static Material? _game;
-        private static bool _tried;
+
+        private readonly string _bundleName;
+        private readonly string _assetPrefix;
+        private readonly float _gloss;
+        private readonly string _what;
+        private AssetBundle? _bundle;
+        private bool _tried;
+
+        private StoneTablets(string bundle, string assetPrefix, float gloss, string what)
+        {
+            _bundleName = bundle;
+            _assetPrefix = assetPrefix;
+            _gloss = gloss;
+            _what = what;
+        }
+
+        /// <summary>The bundle a stone's model comes from: the runes' tablets, else the gems and the chisel.</summary>
+        public static StoneTablets For(string stoneId) => StoneCatalog.IsRune(stoneId) ? Runes : Gems;
 
         /// <summary>Loads the bundle once per process; false (with a warning) when it cannot load.</summary>
-        public static bool Load(GameObject? materialItem)
+        public bool Load(GameObject? materialItem)
         {
             if (!_tried)
             {
                 _tried = true;
                 try
                 {
-                    _bundle = EmbeddedBundle.Load(typeof(StoneTablets).Assembly, Bundle);
-                    _game = GameMaterials.Borrow(materialItem);
+                    _bundle = EmbeddedBundle.Load(typeof(StoneTablets).Assembly, _bundleName);
+                    _game ??= GameMaterials.Borrow(materialItem);
                 }
                 catch (Exception e)
                 {
-                    Log.Warn($"the rune tablets did not load, runes keep the base items' look: {e.Message}");
+                    Log.Warn($"{_what} did not load, they keep the base items' look: {e.Message}");
                 }
             }
             return _bundle != null;
         }
 
-        /// <summary>Dresses one freshly cloned rune prefab as its tablet. False (with a warning) when the bundle lacks it.</summary>
-        public static bool Wear(StoneEntry entry)
+        /// <summary>Dresses one freshly cloned stone prefab in its model. False (with a warning) when the bundle lacks it.</summary>
+        public bool Wear(StoneEntry entry)
         {
-            string asset = "ecf_runetablet_" + entry.BuiltInId;
+            string asset = _assetPrefix + entry.BuiltInId;
             GameObject? model = _bundle?.LoadAsset<GameObject>(asset);
             if (model == null)
             {
-                Log.Warn($"the rune bundle has no {asset}; {entry.PrefabName} keeps its base item's look");
+                Log.Warn($"the {_bundleName} bundle has no {asset}; {entry.PrefabName} keeps its base item's look");
                 return false;
             }
             Material? look = Look(model);
@@ -75,15 +94,15 @@ namespace EliteCrafting.Items
             return true;
         }
 
-        /// <summary>The game material wearing the tablet's baked albedo and normal map, or null (keep the bundle's own).</summary>
-        private static Material? Look(GameObject model)
+        /// <summary>The game material wearing the model's baked albedo and normal map, or null (keep the bundle's own).</summary>
+        private Material? Look(GameObject model)
         {
             Renderer? renderer = model.GetComponentInChildren<Renderer>(true);
             if (_game == null || renderer == null || renderer.sharedMaterial == null)
             {
                 return null;
             }
-            return GameMaterials.Plain(GameMaterials.Dress(_game, renderer.sharedMaterial), Gloss);
+            return GameMaterials.Plain(GameMaterials.Dress(_game, renderer.sharedMaterial), _gloss);
         }
 
         /// <summary>Removes the base's colliders and every part that draws or lights it (models, glows, sparkles).</summary>
@@ -138,7 +157,7 @@ namespace EliteCrafting.Items
             }
         }
 
-        /// <summary>The tablet as the item's model: centred on the holder, on the item's layer, in the dressed material.</summary>
+        /// <summary>The model as the item's: centred on the holder, on the item's layer, in the dressed material.</summary>
         private static void Place(GameObject item, GameObject model, Material? look)
         {
             Transform holder = HolderOf(item);

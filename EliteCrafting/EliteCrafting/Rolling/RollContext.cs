@@ -40,6 +40,12 @@ namespace EliteCrafting.Rolling
         /// <summary>How far past the rarity's prefix and suffix limits a roll may go (the Serpent's <c>overflow</c>); 0 otherwise.</summary>
         public int LimitOverflow { get; set; }
 
+        /// <summary>
+        /// The inscription ids an essence guarantees (the Rune Table's Ascension): only these may be drawn. Null = a
+        /// plain roll.
+        /// </summary>
+        public System.Collections.Generic.ISet<string>? Favoured { get; set; }
+
         public Random Random { get; set; } = RollRandom.Create();
 
         /// <summary>The rules to roll under; the running rules unless a caller pins a snapshot.</summary>

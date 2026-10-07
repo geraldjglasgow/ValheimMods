@@ -112,6 +112,16 @@ namespace EliteCrafting.Api
         /// <summary>Back to Normal (not on a sealed item).</summary>
         public static bool Cleanse(ItemDrop.ItemData item) => ApiGuard.Run("Cleanse", ApiItems.Cleanse, item, false);
 
+        /// <summary>
+        /// The rune prefab (<c>ECF_Awakening</c>) salvaging the item may give back: an Awakening Rune from Magic, an
+        /// Ascension Rune from Rare; null for none (a Normal item, or <c>Runes from salvage</c> off). Added in 0.8.0.
+        /// </summary>
+        public static string? GetSalvageRune(ItemDrop.ItemData item) => ApiGuard.Run("GetSalvageRune", ApiItems.SalvageRune, item, null);
+
+        /// <summary>The chance, 0-1, that salvaging the item gives <see cref="GetSalvageRune"/> back (0 for none); the salvaging mod rolls it.</summary>
+        public static float GetSalvageRuneChance(ItemDrop.ItemData item) =>
+            ApiGuard.Run("GetSalvageRuneChance", ApiItems.SalvageRuneChance, item, 0f);
+
         // ---- 5. hooks
 
         /// <summary>Items a player wears outside the game's slots; their inscriptions count like equipped items.</summary>

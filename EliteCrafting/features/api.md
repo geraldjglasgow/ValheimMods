@@ -54,6 +54,7 @@ Registrations made after the rules loaded rebuild the rule set once at the end o
 | `bool CanBeMagic(item)` | A magic base under the current rules and filters. |
 | `bool RollMagic(item, string rarity)` | A fresh roll at that rarity (the item must be a magic base); written through the item-state writer. |
 | `bool Cleanse(item)` | Back to Normal. |
+| `string GetSalvageRune(item)`, `float GetSalvageRuneChance(item)` | The rune prefab a salvage of the item may give back (the enabled promote rune that raises the rarity below the item's: Awakening from Magic, Ascension from Rare) and its chance, 0-1 (25%); null and 0 for a Normal item or while `Runes from salvage` is off. The salvaging mod rolls it (OpenKeep's Salvage). Added in 0.8.0. |
 
 ## 5. Hooks
 

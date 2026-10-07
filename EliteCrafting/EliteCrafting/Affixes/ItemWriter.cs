@@ -16,6 +16,8 @@ namespace EliteCrafting.Affixes
             Set(target, ItemKeys.Affixes, ItemCodec.EncodeList(data.Segments));
             target.Remove(ItemKeys.LegacyAffixes);
             Set(target, ItemKeys.Sealed, data.SealedReason);
+            Set(target, ItemKeys.Sockets, GemCodec.EncodeSockets(data.Sockets));
+            Set(target, ItemKeys.Gems, GemCodec.EncodeGems(data.Gems));
             foreach (string key in ItemKeys.RetiredKeys)
             {
                 target.Remove(key);

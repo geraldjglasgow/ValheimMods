@@ -1,9 +1,9 @@
 # EliteCrafting - inscriptions
-format: 2
+format: 3
 #
 # Every inscription the mod can roll, which item classes it rolls on, and its tier ladder.
 # Written once, on first run, as a full copy of the built-in defaults; the mod never
-# rewrites it (a file from before format 2 is renamed to .v1.bak and written fresh). The
+# rewrites it (a file from an older format is renamed to .v<format>.bak and written fresh). The
 # built-in defaults stay underneath this file (set `use_defaults: false` to make the files
 # the whole configuration), so an entry you delete here comes back from the defaults: turn
 # an inscription off with `enabled: false` instead (existing copies go dormant), or stop it
@@ -25,13 +25,14 @@ format: 2
 # often (a tier's weight is its number unless a row says otherwise). On a class where the
 # inscription is only `allowed`, the top third of its tiers is closed
 # (`rolling.allowed_closed_fraction` in the economy file).
-#   tiers: { count: 13, from: 1, min: 3, max: 40 }
+#   tiers: { count: 8, from: 1, min: 3, max: 40 }
 #     a ladder: `count` tiers, the weakest unlocked at item level `from`, the strongest at 8,
 #     values spread from `min` (the weakest tier's low end) to `max` (the strongest's high end).
 #   tiers: [ { tier: 1, level: 8, min: 37, max: 40, weight: 1 }, ... ]
 #     explicit rows instead. A flag inscription has no min and max.
 #
-# Rarity limits (economy file): Magic holds at most 1 prefix and 1 suffix, Rare 3 and 3.
+# Rarity limits (economy file): Magic holds 2 (1 prefix and 1 suffix), Rare 3 (at most 2 of each);
+# the Serpent Rune can add one more, to 4 at most.
 
 # Health-critical: at or below this percent of maximum health the health_critical
 # inscriptions apply. The threshold inscription raises it, never past max_threshold.
@@ -558,7 +559,7 @@ inscriptions:
     classes:
       best: []
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow, staff_elemental, staff_blood]
-    tiers: { count: 13, from: 1, min: 0.5, max: 6 }
+    tiers: { count: 8, from: 1, min: 0.5, max: 6 }
 
   - id: honed_might
     effect: damage_dealt
@@ -572,7 +573,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
       allowed: []
-    tiers: { count: 13, from: 1, min: 2, max: 20 }
+    tiers: { count: 8, from: 1, min: 2, max: 20 }
 
   - id: primal_fury
     effect: damage_dealt
@@ -586,7 +587,7 @@ inscriptions:
     classes:
       best: [staff_elemental, staff_blood]
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
-    tiers: { count: 13, from: 1, min: 2, max: 25 }
+    tiers: { count: 8, from: 1, min: 2, max: 25 }
 
   - id: bonebreaker
     effect: added_damage
@@ -600,7 +601,7 @@ inscriptions:
     classes:
       best: [mace_1h, sledge]
       allowed: [fist]
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: keen_edge
     effect: added_damage
@@ -614,7 +615,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, greatsword, battleaxe, dual_axe]
       allowed: [knife, fist]
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: needlepoint
     effect: added_damage
@@ -628,7 +629,7 @@ inscriptions:
     classes:
       best: [spear, atgeir, bow, crossbow]
       allowed: [knife]
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: fafnirs_greed
     effect: coin_damage
@@ -853,7 +854,7 @@ inscriptions:
     classes:
       best: [buckler, shield, tower]
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
-    tiers: { count: 13, from: 1, min: 2, max: 24 }
+    tiers: { count: 8, from: 1, min: 2, max: 24 }
 
   - id: repelling_guard
     effect: item_deflection
@@ -878,7 +879,7 @@ inscriptions:
     classes:
       best: [buckler, shield]
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
-    tiers: { count: 13, from: 1, min: 2, max: 24 }
+    tiers: { count: 8, from: 1, min: 2, max: 24 }
 
   - id: tireless_guard
     effect: block_stamina_cost
@@ -903,7 +904,7 @@ inscriptions:
     classes:
       best: [chest, shield, tower]
       allowed: [legs, buckler]
-    tiers: { count: 13, from: 1, min: 2, max: 14 }
+    tiers: { count: 8, from: 1, min: 2, max: 14 }
 
   - id: mist_veil
     effect: avoid_hit
@@ -1040,7 +1041,7 @@ inscriptions:
     classes:
       best: [helmet, chest, legs]
       allowed: [cape]
-    tiers: { count: 13, from: 1, min: 2, max: 18 }
+    tiers: { count: 8, from: 1, min: 2, max: 18 }
 
   - id: flameward
     effect: damage_taken
@@ -1053,7 +1054,7 @@ inscriptions:
     classes:
       best: [cape, chest]
       allowed: [helmet, legs, buckler, shield, tower, trinket]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: frostward
     effect: damage_taken
@@ -1066,7 +1067,7 @@ inscriptions:
     classes:
       best: [cape, chest]
       allowed: [helmet, legs, buckler, shield, tower, trinket]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: stormward
     effect: damage_taken
@@ -1079,7 +1080,7 @@ inscriptions:
     classes:
       best: [cape, chest]
       allowed: [helmet, legs, buckler, shield, tower, trinket]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: venomward
     effect: damage_taken
@@ -1092,7 +1093,7 @@ inscriptions:
     classes:
       best: [cape, chest]
       allowed: [helmet, legs, buckler, shield, tower, trinket]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: spiritward
     effect: damage_taken
@@ -1104,7 +1105,7 @@ inscriptions:
     classes:
       best: [cape, chest]
       allowed: [helmet, legs, buckler, shield, tower, trinket]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: elemental_ward
     effect: damage_taken
@@ -1131,7 +1132,7 @@ inscriptions:
     classes:
       best: [chest]
       allowed: [helmet, legs, buckler, shield, tower]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: mailed
     effect: damage_taken
@@ -1144,7 +1145,7 @@ inscriptions:
     classes:
       best: [chest]
       allowed: [helmet, legs, buckler, shield, tower]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: riveted
     effect: damage_taken
@@ -1157,7 +1158,7 @@ inscriptions:
     classes:
       best: [chest]
       allowed: [helmet, legs, buckler, shield, tower]
-    tiers: { count: 13, from: 1, min: 1, max: 18 }
+    tiers: { count: 8, from: 1, min: 1, max: 18 }
 
   - id: ironclad
     effect: damage_taken
@@ -1550,7 +1551,7 @@ inscriptions:
     classes:
       best: [chest]
       allowed: [helmet, legs, cape, buckler, shield, tower, trinket]
-    tiers: { count: 13, from: 1, min: 3, max: 40 }
+    tiers: { count: 8, from: 1, min: 3, max: 40 }
 
   - id: troll_blood
     effect: health_recovery
@@ -1563,7 +1564,7 @@ inscriptions:
     classes:
       best: [helmet]
       allowed: [chest, legs, cape, trinket]
-    tiers: { count: 13, from: 1, min: 2, max: 24 }
+    tiers: { count: 8, from: 1, min: 2, max: 24 }
 
   - id: valhallas_edge
     effect: hc_threshold
@@ -1588,7 +1589,7 @@ inscriptions:
     classes:
       best: [chest]
       allowed: [helmet, legs, cape]
-    tiers: { count: 13, from: 1, min: 0.2, max: 14 }
+    tiers: { count: 8, from: 1, min: 0.2, max: 14 }
 
   - id: troll_blood_hc
     effect: health_recovery
@@ -1738,7 +1739,7 @@ inscriptions:
     classes:
       best: [legs]
       allowed: [chest, cape, trinket]
-    tiers: { count: 13, from: 1, min: 3, max: 40 }
+    tiers: { count: 8, from: 1, min: 3, max: 40 }
 
   - id: wellspring
     effect: max_eitr
@@ -1751,7 +1752,7 @@ inscriptions:
     classes:
       best: [helmet]
       allowed: [chest, cape, trinket, staff_elemental, staff_blood]
-    tiers: { count: 13, from: 1, min: 4, max: 60 }
+    tiers: { count: 8, from: 1, min: 4, max: 60 }
 
   - id: second_wind
     effect: stamina_recovery
@@ -1763,7 +1764,7 @@ inscriptions:
     classes:
       best: [legs]
       allowed: [chest, cape, trinket]
-    tiers: { count: 13, from: 1, min: 2, max: 24 }
+    tiers: { count: 8, from: 1, min: 2, max: 24 }
 
   - id: seidr_flow
     effect: eitr_recovery
@@ -1776,7 +1777,7 @@ inscriptions:
     classes:
       best: [helmet, staff_elemental, staff_blood]
       allowed: [chest, legs, cape, trinket]
-    tiers: { count: 13, from: 1, min: 3, max: 36 }
+    tiers: { count: 8, from: 1, min: 3, max: 36 }
 
   - id: second_wind_hc
     effect: stamina_recovery
@@ -1896,7 +1897,7 @@ inscriptions:
     classes:
       best: [utility]
       allowed: [cape, trinket]
-    tiers: { count: 13, from: 1, min: 10, max: 150 }
+    tiers: { count: 8, from: 1, min: 10, max: 150 }
 
   - id: hoardfinder
     effect: find_coins
@@ -1917,7 +1918,7 @@ inscriptions:
     affix: suffix
     family: charms_fortune
     category: utility
-    weight: 50
+    weight: 0                  # does not roll for now: magic gear does not drop (was 50)
     hook: medium
     classes:
       best: [trinket]
@@ -2132,7 +2133,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
       allowed: [light]
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: rimebrand
     effect: added_damage
@@ -2146,7 +2147,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
       allowed: []
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: stormbrand
     effect: added_damage
@@ -2160,7 +2161,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
       allowed: []
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: venombrand
     effect: added_damage
@@ -2174,7 +2175,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
       allowed: []
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: spiritbrand
     effect: added_damage
@@ -2189,7 +2190,7 @@ inscriptions:
     classes:
       best: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow]
       allowed: []
-    tiers: { count: 13, from: 1, min: 1, max: 22 }
+    tiers: { count: 8, from: 1, min: 1, max: 22 }
 
   - id: lingering_wounds
     effect: dot_duration

@@ -33,7 +33,7 @@ namespace EliteCrafting.Rolling
         }
 
         /// <summary>
-        /// Adds exactly <paramref name="count"/> affixes at the end of the list (Shaping, Consecrated, the Serpent's
+        /// Adds exactly <paramref name="count"/> affixes at the end of the list (the Serpent's
         /// add). Does not change the rarity and does not check the rarity's maximum count (the caller decides whether
         /// the item has room); the prefix and suffix limits apply, passed by <see cref="RollContext.LimitOverflow"/>. All or nothing: fails with <see cref="RollFailure.NoEligibleAffix"/> when fewer candidates
         /// exist than needed.

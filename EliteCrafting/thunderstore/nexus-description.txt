@@ -4,31 +4,80 @@ get its real mod_id/file_id and nexus-upload.py become usable for later versions
 Keep in step with README.md.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Runes and magic gear across three rarities: Normal, Magic and Rare. Creatures and chests drop runes and rarity-colored gear; click a rune onto an item to awaken, shape, raise or cleanse it, or seal it for good with the Serpent Rune. Six runes, 162 inscriptions. Server synced. Required on the server and every client.
+Runes and magic gear in three rarities: Normal, Magic and Rare. Creatures, bosses and chests drop runes; click a rune onto an item to awaken, recast, raise or cleanse it, cut sockets for gems, or gamble and seal it with the Serpent Rune. Six runes, a Rune Table, 209 inscriptions, eleven gems. Server synced. Required on the server and every client.
 
 ===== DESCRIPTION (BBCode) =====
-Runes and magic gear: creatures and chests drop both, and a rune clicked onto an item changes its rarity or inscriptions.
+[b]Work in progress:[/b] significant changes will come, including to the config, the YAML files and item data.
+
+Runes and magic gear: creatures and chests drop runes; a rune clicked onto an item changes its rarity, inscriptions or sockets.
 
 [size=4][b]Features[/b][/size]
 [list]
-[*]Three rarities: Normal, Magic (1-2 inscriptions) and Rare (3-6); magic gear glows on the ground.
-[*]162 inscriptions for every kind of gear, stronger the later the item's biome.
-[*]Six runes, clicked onto an item; a refused rune is kept:
-[list]
-[*]Awakening: Normal to Magic, one inscription.
-[*]Shaping: one more inscription on a Magic item.
-[*]Ascension: Magic to Rare, one more inscription.
-[*]Consecrated: one more inscription on a Rare item.
-[*]Cleansing: back to Normal, every inscription gone.
-[*]Serpent: seals the item for good, unchanged, with one inscription past its limit, or rerolled.
-[/list]
-[*]Drops from kills (more with stars, sure from bosses) and world chests.
+[*]Rarities: Normal, Magic and Rare, the name and icon in the rarity's colour (below).
+[*]Inscriptions: 209 magic properties; each kind of item rolls its own (below).
+[*]Tiers: gear from later biomes rolls stronger inscriptions; T1 is the strongest.
+[*]Runes: six, clicked onto an item from your inventory or an open chest (below).
+[*]Rune Table: stores runes, turns trophies into essence; an essence (Beast, Stone, Elemental, Spirit, Grave) chooses what Ascension adds.
+[*]Sockets: up to three, cut by the Consecrated Rune or one by the Dvergr Chisel, filled with eleven very rare gems (below).
+[*]Drops: creatures, bosses and world chests drop runes, more with stars; magic gear never drops.
+[*]Salvage: with OpenKeep, salvaged Magic or Rare gear may give a rune back.
+[*]Magic items on the ground glow in their colour under a beam of light.
 [*]Elite Creatures Reborn: Synergy (off by default) lets elite stars raise drops.
+[*]An API for other mods: PackPanel's backpacks and Elite Creatures Pack's creatures and bone weapons join in.
 [*]Every rune, inscription, command and file: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCrafting/CLAUDE.md#player-reference]CLAUDE.md on GitHub[/url].
 [/list]
 
+[size=4][b]Rarities[/b][/size]
+[list]
+[*]Normal: a plain item, no inscriptions.
+[*]Magic (green): two inscriptions, one prefix and one suffix.
+[*]Rare (blue): three inscriptions, at most two prefixes and two suffixes.
+[/list]
+
+[size=4][b]Runes[/b][/size]
+[list]
+[*]Awakening: makes a Normal item Magic with two inscriptions.
+[*]Recasting: replaces both inscriptions on a Magic item with two new ones.
+[*]Ascension: makes a Magic item Rare, keeping both and adding a third.
+[*]Consecrated: one to three sockets on a weapon, staff, armour piece or shield that has none.
+[*]Cleansing: strips a Magic or Rare item back to Normal.
+[*]Serpent: a gamble (nothing, a 3rd inscription on Magic or a 4th on Rare, or a wild reroll), then sealed for good.
+[/list]
+
+[size=4][b]Gems[/b][/size]
+A gem's stat depends on the item (weapon, staff, or armour and shield); its tier is rolled for the item when set.
+With every socket full you pick which gem to replace.
+[list]
+[*]Surtr's, Ymir's, Thor's, Nidhogg's, Hel's: fire, frost, lightning, poison or spirit damage, a staff bonus, resistance.
+[*]Tyr's: physical damage, summon damage, less stagger.
+[*]Freyja's, Odin's, Skadi's: health, eitr or stamina leech, a staff bonus, more of it.
+[*]Heimdall's: critical hits, cast speed, avoiding hits.
+[*]Sleipnir's: movement speed, armour and shields only.
+[/list]
+
+[size=4][b]Inscriptions[/b][/size]
+A prefix is the item's core power (damage, health, armour, blocking, leech); a suffix is everything else.
+[list]
+[*]Weapon damage (18): more damage, critical hits, slayers.
+[*]Elemental brands (6): flat fire, frost, lightning, poison or spirit damage.
+[*]On hit (10): chain lightning, paralysis, stagger, hamstring, sneak attacks.
+[*]Attack speed and cost (10): faster, longer, wider, cheaper swings.
+[*]Leech (6): health, eitr or stamina from hits and kills.
+[*]Ranged and magic (12): draw and reload speed, Volley, Twincast, summons.
+[*]Throwing (3): throw a melee weapon, recall it, leap to it.
+[*]Blocking and parry (14): stronger blocks and parries, avoiding hits, thorns.
+[*]Health, stamina and eitr (14): more of each, faster regeneration.
+[*]Armour and resistances (25): armour, less damage by type, less stagger.
+[*]Movement (23): run, sprint and swim faster, double jump, glide, sail.
+[*]Weather, food and meads (16): never Cold or Wet, longer food and meads, a light.
+[*]Fortune and insight (15): carry more; more runes, coins and trophies.
+[*]Gathering and building (15): extra ore, wood, meat and harvest; free builds.
+[*]Skill masteries (18): extra skill levels.
+[*]Item properties (4): durability, weight.
+[/list]
+
 [size=4][b]Install[/b][/size]
-Needed on the server and every client, same version. Install BepInExPack for Valheim, then put EliteCrafting.dll in BepInEx/plugins (or use a mod manager). Uninstalling deletes every rune; magic gear turns plain until reinstalled. Mods that make weapons or armor stackable can merge magic items and lose inscriptions.
+Needed on the server and every client, same version. Install BepInExPack for Valheim, then put EliteCrafting.dll in BepInEx/plugins (or use a mod manager). Uninstalling deletes every rune and gem; magic gear turns plain until reinstalled. Mods that make weapons or armor stackable can merge magic items and lose inscriptions.
 
 [size=4][b]Configuration[/b][/size]
 BepInEx/config/com.EliteCrafting.cfg and the EliteCrafting_*.yml files. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]ecraft help[/b].

@@ -32,6 +32,8 @@ namespace EliteCrafting.Affixes
                 Segments = Segments(NonEmpty(data, ItemKeys.Affixes) ?? NonEmpty(data, ItemKeys.LegacyAffixes)),
                 SealedReason = NonEmpty(data, ItemKeys.Sealed),
                 ReservedTier = NonEmpty(data, ItemKeys.Tier),
+                Sockets = GemCodec.ParseSockets(NonEmpty(data, ItemKeys.Sockets)),
+                Gems = GemCodec.ParseGems(NonEmpty(data, ItemKeys.Gems)),
             };
             return ItemMigrations.Upgrade(state);
         }
@@ -114,7 +116,7 @@ namespace EliteCrafting.Affixes
             return segments;
         }
 
-        private static bool TryParseRoll(string text, out AffixRoll roll)
+        internal static bool TryParseRoll(string text, out AffixRoll roll)
         {
             roll = default;
             string[] fields = text.Split(ItemKeys.FieldSeparator);

@@ -42,27 +42,30 @@ namespace EliteCrafting.Rules
                 result.Add(entry);
                 return;
             }
-            result[index] = YamlMerge.MergeMaps((YamlMappingNode)result[index], entry);
-            if (!layer.BuiltIn)
+            YamlMappingNode earlier = (YamlMappingNode)result[index];
+            result[index] = YamlMerge.MergeMaps(earlier, entry);
+            List<string> changed = ChangedFields(earlier, entry);
+            if (!layer.BuiltIn && changed.Count > 0)
             {
-                issues.Note($"{listKey} '{id}' overridden by {layer.Origin}: {FieldList(entry)}");
+                issues.Note($"{listKey} '{id}' overridden by {layer.Origin}: {string.Join(", ", changed)}");
             }
         }
 
         public static string? EntryId(YamlNode node) =>
             node is YamlMappingNode map ? YamlNodes.Text(YamlNodes.Child(map, "id")) : null;
 
-        private static string FieldList(YamlMappingNode entry)
+        /// <summary>The fields the later entry really changes: a main file holding the defaults word for word is no override.</summary>
+        private static List<string> ChangedFields(YamlMappingNode earlier, YamlMappingNode entry)
         {
             List<string> keys = new List<string>();
             foreach (KeyValuePair<string, YamlNode> pair in YamlLists.Pairs(entry))
             {
-                if (pair.Key != "id")
+                if (pair.Key != "id" && !YamlNodes.Same(YamlNodes.Child(earlier, pair.Key), pair.Value))
                 {
                     keys.Add(pair.Key);
                 }
             }
-            return keys.Count == 0 ? "(nothing)" : string.Join(", ", keys);
+            return keys;
         }
     }
 }

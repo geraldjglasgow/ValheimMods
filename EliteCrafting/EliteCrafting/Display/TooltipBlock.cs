@@ -9,7 +9,7 @@ namespace EliteCrafting.Display
 {
     /// <summary>
     /// Builds the tooltip affix block (display.md section 3), localized, top to bottom: rarity line, at Full the item's
-    /// class and level (classes-and-tiers.md section 9), newer-format notice, affix lines, sealed. Lines that do not
+    /// class and level (classes-and-tiers.md section 9), newer-format notice, affix lines, socket lines, sealed. Lines that do not
     /// apply are left out; an item with nothing to show gets an empty block. Called once per item state and detail
     /// level by <see cref="DisplayCache"/>, never per frame. Runs on the viewing client only.
     /// </summary>
@@ -27,6 +27,7 @@ namespace EliteCrafting.Display
                 Sb.Append('\n').Append(RarityPalette.Grey).Append(Words.Localize("$ecf_ui_newer_format")).Append(RarityPalette.Close);
             }
             AffixLines.Append(Sb, state, detail, showDormant, ItemClasses.Classify(item).DamageScale);
+            GemLines.Append(Sb, state, detail);
             AppendSealed(Sb, state);
             // The block follows the vanilla tooltip after one blank line.
             return Sb.Length == 0 ? "" : "\n" + Sb.ToString();

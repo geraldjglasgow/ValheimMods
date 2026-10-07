@@ -59,6 +59,11 @@ namespace EliteCrafting.Stones
                 StoneFeedback.Show(job.Player, result.Refusal!);
                 return;
             }
+            if (result.NeedsSocket)
+            {
+                GemChooser.Ask(job);
+                return;
+            }
             ConfirmGate.Pass(job, result, shiftHeld);
         }
     }

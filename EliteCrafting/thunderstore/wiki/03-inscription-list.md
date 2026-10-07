@@ -3,7 +3,7 @@
 All 209 inscriptions with their default values. A server can change any of them: `ecraft list inscriptions` prints the ones in force, `ecraft list inscriptions <class>` (for example `legs` or `sword_1h`) those that roll on one item class, and `ecraft inscription <id>` one inscription with every tier.
 
 - **Effect**: the tooltip line; X is the rolled value.
-- **P/S**: prefix or suffix. A Magic item holds 1 of each, a Rare item 3 of each.
+- **P/S**: prefix or suffix. A Magic item holds 1 of each, a Rare item at most 2 of each.
 - **Best on**: item classes that roll all its tiers. **Also on**: classes where its top third of tiers stays closed. "weapons" means every melee class plus bows and crossbows, "melee" the eleven melee classes, "one-handed" swords, axes, maces, knives and spears, "staffs" both staffs, "shields" bucklers, round and tower shields, "armour" helmets, chests, legs and capes; "other" means the rest of that group. The classes are listed on [Runes and Magic Gear](wiki:Runes and Magic Gear).
 - **Tiers**: how many, then the weakest tier's range → T1's range. "on" has no number and one tier. ×scale: flat added damage, multiplied by the weapon's damage scale when it rolls.
 - **From**: the biome whose gear first rolls it (its item level). The strongest tier of a longer ladder needs Deep North gear.
@@ -24,12 +24,12 @@ One item never holds the same inscription twice, nor two of one group:
 
 | Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
 |---|---|---|---|---|---|---|---|
-| Wrath `wrath` | +X% damage | P | - | weapons, staffs | 13: 0.5-0.7 → 5.6-6 | Meadows |  |
-| Honed Might `honed_might` | +X% blunt, slash and pierce damage | P | weapons | - | 13: 2-3 → 19-20 | Meadows |  |
-| Primal Fury `primal_fury` | +X% fire, frost, lightning and poison damage | P | staffs | weapons | 13: 2-3 → 24-25 | Meadows |  |
-| Bonebreaker `bonebreaker` | +X blunt damage | P | Maces, Sledges | Fists | 13: 1 → 22 ×scale | Meadows |  |
-| Keen Edge `keen_edge` | +X slash damage | P | Swords, Axes, Greatswords, Battleaxes, Dual axes | Knives, Fists | 13: 1 → 22 ×scale | Meadows |  |
-| Needlepoint `needlepoint` | +X pierce damage | P | Spears, Atgeirs, Bows, Crossbows | Knives | 13: 1 → 22 ×scale | Meadows |  |
+| Wrath `wrath` | +X% damage | P | - | weapons, staffs | 8: 0.5-0.9 → 5.3-6 | Meadows |  |
+| Honed Might `honed_might` | +X% blunt, slash and pierce damage | P | weapons | - | 8: 2-3 → 18-20 | Meadows |  |
+| Primal Fury `primal_fury` | +X% fire, frost, lightning and poison damage | P | staffs | weapons | 8: 2-4 → 22-25 | Meadows |  |
+| Bonebreaker `bonebreaker` | +X blunt damage | P | Maces, Sledges | Fists | 8: 1-3 → 20-22 ×scale | Meadows |  |
+| Keen Edge `keen_edge` | +X slash damage | P | Swords, Axes, Greatswords, Battleaxes, Dual axes | Knives, Fists | 8: 1-3 → 20-22 ×scale | Meadows |  |
+| Needlepoint `needlepoint` | +X pierce damage | P | Spears, Atgeirs, Bows, Crossbows | Knives | 8: 1-3 → 20-22 ×scale | Meadows |  |
 | Fafnir's Greed `fafnirs_greed` | +X% damage per full 999 coins carried | P | Trinkets | Utility | 8: 4-5 → 12 | Plains |  |
 | Berserkergang `berserkergang` | While health-critical, +X% damage | S | - | weapons, staffs | 8: 4-5 → 22-24 | Meadows |  |
 | Deathblow `deathblow` | +X% damage on your first hit on an enemy below 20% health | P | Greatswords, Battleaxes, Sledges | other weapons | 8: 50-65 → 220-250 | Plains |  |
@@ -47,11 +47,11 @@ One item never holds the same inscription twice, nor two of one group:
 
 | Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
 |---|---|---|---|---|---|---|---|
-| Emberbrand `emberbrand` | +X fire damage | P | weapons | Lights | 13: 1 → 22 ×scale | Meadows |  |
-| Rimebrand `rimebrand` | +X frost damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
-| Stormbrand `stormbrand` | +X lightning damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
-| Venombrand `venombrand` | +X poison damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
-| Spiritbrand `spiritbrand` | +X spirit damage | P | weapons | - | 13: 1 → 22 ×scale | Meadows |  |
+| Emberbrand `emberbrand` | +X fire damage | P | weapons | Lights | 8: 1-3 → 20-22 ×scale | Meadows |  |
+| Rimebrand `rimebrand` | +X frost damage | P | weapons | - | 8: 1-3 → 20-22 ×scale | Meadows |  |
+| Stormbrand `stormbrand` | +X lightning damage | P | weapons | - | 8: 1-3 → 20-22 ×scale | Meadows |  |
+| Venombrand `venombrand` | +X poison damage | P | weapons | - | 8: 1-3 → 20-22 ×scale | Meadows |  |
+| Spiritbrand `spiritbrand` | +X spirit damage | P | weapons | - | 8: 1-3 → 20-22 ×scale | Meadows |  |
 | Lingering Wounds `lingering_wounds` | Burning, poison and frost you inflict last X% longer | S | Elemental staffs | weapons, Blood staffs | 8: 5-8 → 36-40 | Meadows | 100 |
 
 ## On hit
@@ -124,11 +124,11 @@ One item never holds the same inscription twice, nor two of one group:
 
 | Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
 |---|---|---|---|---|---|---|---|
-| Stalwart `stalwart` | +X% block armor | P | shields | melee | 13: 2-3 → 23-24 | Meadows |  |
+| Stalwart `stalwart` | +X% block armor | P | shields | melee | 8: 2-4 → 22-24 | Meadows |  |
 | Repelling Guard `repelling_guard` | +X% block knockback | S | Round shields, Tower shields | Bucklers | 8: 5-6 → 22-24 | Meadows |  |
-| Perfect Guard `perfect_guard` | +X% perfect block bonus (only items that can parry) | P | Bucklers, Round shields | melee | 13: 2-3 → 23-24 | Meadows |  |
+| Perfect Guard `perfect_guard` | +X% perfect block bonus (only items that can parry) | P | Bucklers, Round shields | melee | 8: 2-4 → 22-24 | Meadows |  |
 | Tireless Guard `tireless_guard` | Blocking costs X% less stamina | S | shields | melee | 8: 2-3 → 19-21 | Meadows | 30 |
-| Bramblehide `bramblehide` | Melee attackers take X% of the damage they deal to you | P | Round shields, Tower shields, Chests | Bucklers, Legs | 13: 2-2.5 → 13-14 | Meadows |  |
+| Bramblehide `bramblehide` | Melee attackers take X% of the damage they deal to you | P | Round shields, Tower shields, Chests | Bucklers, Legs | 8: 2-3 → 13-14 | Meadows |  |
 | Mist Veil `mist_veil` | X% chance to avoid a hit | S | Bucklers, Chests | Round shields, Capes | 8: 2-3 → 13-14 | Meadows | 15 |
 | Last Stand `stalwart_hc` | +X% block armour while health is critical | S | shields | melee | 8: 4-5 → 22-24 | Meadows |  |
 | Desperate Guard `perfect_guard_hc` | +X% parry bonus while health is critical | S | Bucklers, Round shields | melee | 8: 4-5 → 22-24 | Meadows |  |
@@ -143,10 +143,10 @@ One item never holds the same inscription twice, nor two of one group:
 
 | Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
 |---|---|---|---|---|---|---|---|
-| Vigor `vigor` | +X maximum health | P | Chests | shields, Helmets, Legs, Capes, Trinkets | 13: 3-4 → 37-40 | Meadows |  |
-| Troll Blood `troll_blood` | Health regenerates X% faster | S | Helmets | Chests, Legs, Capes, Trinkets | 13: 2-3 → 23-24 | Meadows | 150 |
+| Vigor `vigor` | +X maximum health | P | Chests | shields, Helmets, Legs, Capes, Trinkets | 8: 3-6 → 35-40 | Meadows |  |
+| Troll Blood `troll_blood` | Health regenerates X% faster | S | Helmets | Chests, Legs, Capes, Trinkets | 8: 2-4 → 22-24 | Meadows | 150 |
 | Valhalla's Edge `valhallas_edge` | Health-critical starts X percentage points higher | S | Trinkets | Helmets | 8: 2-4 → 22-24 | Meadows | 20 |
-| Mending `mending` | Heal X every 10 seconds | S | Chests | Helmets, Legs, Capes | 13: 0.2-0.8 → 12.8-14 | Meadows |  |
+| Mending `mending` | Heal X every 10 seconds | S | Chests | Helmets, Legs, Capes | 8: 0.2-1.2 → 12-14 | Meadows |  |
 | Cornered Blood `troll_blood_hc` | While health-critical, health regenerates X% faster | S | Helmets | Chests, Capes | 8: 4-6 → 30-33 | Meadows | 150 |
 | Stout Heart `stout_heart` | +X maximum health, but health regenerates X% slower | P | Chests | Legs | 8: 4-8 → 51-58 | Swamp |  |
 | Purity `purity` | Burning, poison and frost wear off X% faster | S | Helmets, Trinkets | Chests | 8: 5-8 → 44-50 | Meadows | 75 |
@@ -155,10 +155,10 @@ One item never holds the same inscription twice, nor two of one group:
 
 | Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
 |---|---|---|---|---|---|---|---|
-| Endurance `endurance` | +X maximum stamina | P | Legs | Chests, Capes, Trinkets | 13: 3-4 → 37-40 | Meadows |  |
-| Wellspring `wellspring` | +X maximum eitr | P | Helmets | staffs, Chests, Capes, Trinkets | 13: 4-6 → 56-60 | Meadows |  |
-| Second Wind `second_wind` | Stamina regenerates X% faster | S | Legs | Chests, Capes, Trinkets | 13: 2-3 → 23-24 | Meadows | 100 |
-| Seidr Flow `seidr_flow` | Eitr regenerates X% faster | S | staffs, Helmets | Chests, Legs, Capes, Trinkets | 13: 3-4 → 34-36 | Meadows | 100 |
+| Endurance `endurance` | +X maximum stamina | P | Legs | Chests, Capes, Trinkets | 8: 3-6 → 35-40 | Meadows |  |
+| Wellspring `wellspring` | +X maximum eitr | P | Helmets | staffs, Chests, Capes, Trinkets | 8: 4-8 → 52-60 | Meadows |  |
+| Second Wind `second_wind` | Stamina regenerates X% faster | S | Legs | Chests, Capes, Trinkets | 8: 2-4 → 22-24 | Meadows | 100 |
+| Seidr Flow `seidr_flow` | Eitr regenerates X% faster | S | staffs, Helmets | Chests, Legs, Capes, Trinkets | 8: 3-5 → 32-36 | Meadows | 100 |
 | Last Breath `second_wind_hc` | +X% stamina regeneration while health is critical | S | Legs | Trinkets | 8: 4-6 → 30-33 | Meadows | 100 |
 | Seidr Surge `seidr_flow_hc` | +X% eitr regeneration while health is critical | S | Helmets | staffs, Capes | 8: 4-7 → 44-50 | Meadows | 100 |
 | Restless Mind `restless_mind` | Eitr regenerates X% faster, but maximum eitr is lower by half as much | S | Helmets | Trinkets | 8: 10-17 → 87-100 | Swamp |  |
@@ -167,16 +167,16 @@ One item never holds the same inscription twice, nor two of one group:
 
 | Inscription | Effect | P/S | Best on | Also on | Tiers | From | Cap |
 |---|---|---|---|---|---|---|---|
-| Hardened `hardened` | +X% armor | P | Helmets, Chests, Legs | Capes | 13: 2-3 → 17-18 | Meadows |  |
-| Flameward `flameward` | X% less fire damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
-| Frostward `frostward` | X% less frost damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
-| Stormward `stormward` | X% less lightning damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
-| Venomward `venomward` | X% less poison damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
-| Spiritward `spiritward` | -X% spirit damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 13: 1-2 → 17-18 | Meadows | 50 |
+| Hardened `hardened` | +X% armor | P | Helmets, Chests, Legs | Capes | 8: 2-3 → 17-18 | Meadows |  |
+| Flameward `flameward` | X% less fire damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 8: 1-2 → 16-18 | Meadows | 50 |
+| Frostward `frostward` | X% less frost damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 8: 1-2 → 16-18 | Meadows | 50 |
+| Stormward `stormward` | X% less lightning damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 8: 1-2 → 16-18 | Meadows | 50 |
+| Venomward `venomward` | X% less poison damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 8: 1-2 → 16-18 | Meadows | 50 |
+| Spiritward `spiritward` | -X% spirit damage taken | S | Chests, Capes | shields, Helmets, Legs, Trinkets | 8: 1-2 → 16-18 | Meadows | 50 |
 | Elemental Ward `elemental_ward` | X% less fire, frost, lightning and poison damage taken | S | Capes | Chests | 4: 2-4 → 11-14 | Plains | 50 |
-| Padded `padded` | X% less blunt damage taken | S | Chests | shields, Helmets, Legs | 13: 1-2 → 17-18 | Meadows | 50 |
-| Mailed `mailed` | X% less slash damage taken | S | Chests | shields, Helmets, Legs | 13: 1-2 → 17-18 | Meadows | 50 |
-| Riveted `riveted` | X% less pierce damage taken | S | Chests | shields, Helmets, Legs | 13: 1-2 → 17-18 | Meadows | 50 |
+| Padded `padded` | X% less blunt damage taken | S | Chests | shields, Helmets, Legs | 8: 1-2 → 16-18 | Meadows | 50 |
+| Mailed `mailed` | X% less slash damage taken | S | Chests | shields, Helmets, Legs | 8: 1-2 → 16-18 | Meadows | 50 |
+| Riveted `riveted` | X% less pierce damage taken | S | Chests | shields, Helmets, Legs | 8: 1-2 → 16-18 | Meadows | 50 |
 | Ironclad `ironclad` | X% less blunt, slash and pierce damage taken | S | Chests | Tower shields | 4: 2-4 → 11-14 | Plains | 50 |
 | Cornered Hide `hardened_hc` | While health-critical, +X% armor | S | Chests | Legs, Trinkets | 8: 4-5 → 22-24 | Meadows |  |
 | Forsaken Ward `forsaken_ward` | -X% damage taken from bosses | S | Round shields, Tower shields, Chests | Bucklers, Helmets, Legs, Capes | 8: 2-3 → 11-12 | Meadows | 40 |
@@ -261,9 +261,9 @@ One item never holds the same inscription twice, nor two of one group:
 | Swift Draught `swift_draught` | While health-critical, healing meads heal at once | S | Trinkets | Utility | on | Swamp |  |
 | Reflex Draught `reflex_draught` | Becoming health-critical drinks your best healing mead | S | Trinkets | Utility | on | Swamp |  |
 | Magpie `magpie` | Picks up items from X% farther away | S | Utility | Trinkets | 8: 10-17 → 87-100 | Meadows | 100 |
-| Broad Back `broad_back` | +X carrying capacity | P | Utility | Capes, Trinkets | 13: 10-16 → 138-150 | Meadows |  |
+| Broad Back `broad_back` | +X carrying capacity | P | Utility | Capes, Trinkets | 8: 10-20 → 129-150 | Meadows |  |
 | Hoardfinder `hoardfinder` | Enemies you kill drop coins and treasure X% more often | S | Trinkets | Utility | 8: 1-2 → 11-12 | Meadows | 200 |
-| Norns' Favour `norns_favour` | Magic gear dropped by enemies you kill rolls a higher rarity X% more often | S | Trinkets | Helmets, Utility | 8: 1-2 → 16-18 | Plains | 200 |
+| Norns' Favour `norns_favour` | Magic gear dropped by enemies you kill rolls a higher rarity X% more often (does not roll for now: magic gear does not drop) | S | Trinkets | Helmets, Utility | 8: 1-2 → 16-18 | Plains | 200 |
 | Silver Tongue `silver_tongue` | Traders charge you X% less | S | Trinkets | Utility | 8: 2-3 → 14-15 | Meadows | 30 |
 | Fateweaver `fateweaver` | Enemies you kill are X% more likely to drop an extra rune | S | Trinkets | Helmets, Utility | 8: 5-7 → 31-35 | Meadows | 200 |
 | Beast Whisperer `beast_whisperer` | Creatures you tame tame X% faster | S | Trinkets | Capes, Utility | 8: 10-17 → 87-100 | Meadows | 100 |

@@ -5,8 +5,8 @@ using YamlDotNet.RepresentationModel;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// Reads <c>runes:</c> (economy-yaml.md section 4), the seven runes: the common fields here, the Serpent Rune's in
-    /// <see cref="StoneVerbParser"/>. Only the seven built-in ids exist; each uses its own prefab.
+    /// Reads <c>runes:</c> (economy-yaml.md section 4), the seven runes, the Dvergr Chisel and the gems: the common
+    /// fields here, the Serpent Rune's in <see cref="StoneVerbParser"/>. Only the built-in ids exist; each uses its own prefab.
     /// </summary>
     internal static class StoneParser
     {
@@ -88,7 +88,7 @@ namespace EliteCrafting.Rules
             string? prefab = r.Str("prefab");
             if (!StoneCatalog.IsBuiltIn(id))
             {
-                r.Error("id", $"'{id}' is not a rune: the runes are {string.Join(", ", StoneCatalog.BuiltInIds)}");
+                r.Error("id", $"'{id}' is not a rune: the runes are {string.Join(", ", StoneCatalog.AllIds)}");
                 return prefab ?? "";
             }
             string own = StoneCatalog.PrefabFor(id);

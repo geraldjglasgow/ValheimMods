@@ -7,16 +7,17 @@ using EliteCrafting.Core;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// The YAML file format (classes-and-tiers.md section 7). Both families carry a root <c>format: 2</c> line; a text
-    /// without it was written for format 1 (slots, a seven-tier window) and is never merged: an old main file on disk
-    /// is renamed to <c>&lt;name&gt;.v1.bak</c> and the new default written in its place, an old extra file and any old
+    /// The YAML file format (classes-and-tiers.md section 7). Both families carry a root <c>format: 3</c> line (format 2
+    /// had six inscriptions on Rare, thirteen-tier ladders and the Shaping and Consecrated Runes; format 1, no line, slots
+    /// and a seven-tier window). An older text is never merged: an old main file on disk is renamed to
+    /// <c>&lt;name&gt;.v&lt;old format&gt;.bak</c> and the new default written in its place, an old extra file and any old
     /// text the server pushes are skipped, each with a warning. Read from the raw text, so a file with a syntax error
     /// elsewhere still has its format known.
     /// </summary>
     internal static class RuleFormat
     {
         public const string Key = "format";
-        public const int Current = 2;
+        public const int Current = 3;
 
         private static readonly Regex Line = new Regex(@"^format[ \t]*:[ \t]*['""]?(\d+)['""]?[ \t]*(#[^\r\n]*)?\r?$",
             RegexOptions.Multiline | RegexOptions.CultureInvariant);
@@ -56,34 +57,35 @@ namespace EliteCrafting.Rules
         }
 
         /// <summary>
-        /// Renames an old main file to <c>&lt;name&gt;.v1.bak</c> (<c>.v1.2.bak</c> and up when taken) and writes the
-        /// default text in its place. The new text, or null when the file could not be moved (it is then skipped).
+        /// Renames an old main file to <c>&lt;name&gt;.v&lt;format&gt;.bak</c> (<c>.v2.2.bak</c> and up when taken) and
+        /// writes the default text in its place. The new text, or null when the file could not be moved (then skipped).
         /// </summary>
-        public static string? ReplaceOldMain(string path, string defaultText)
+        public static string? ReplaceOldMain(string path, string oldText, string defaultText)
         {
+            int old = Math.Max(Of(oldText), 1);
             try
             {
-                string backup = FreeBackupPath(path);
+                string backup = FreeBackupPath(path, old);
                 File.Move(path, backup);
                 File.WriteAllText(path, defaultText, new System.Text.UTF8Encoding(false));
-                Log.Warn($"{Path.GetFileName(path)} was written for format 1 by an older EliteCrafting: renamed to "
+                Log.Warn($"{Path.GetFileName(path)} was written for format {old} by an older EliteCrafting: renamed to "
                     + $"{Path.GetFileName(backup)} and the new default written in its place (copy your changes over by hand)");
                 return defaultText;
             }
             catch (Exception e)
             {
-                Log.Error($"{Path.GetFileName(path)} is format 1 and could not be replaced ({e.Message}): skipped");
+                Log.Error($"{Path.GetFileName(path)} is format {old} and could not be replaced ({e.Message}): skipped");
                 return null;
             }
         }
 
-        private static string FreeBackupPath(string path)
+        private static string FreeBackupPath(string path, int format)
         {
             string stem = Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path));
-            string candidate = stem + ".v1.bak";
+            string candidate = $"{stem}.v{format}.bak";
             for (int n = 2; File.Exists(candidate); n++)
             {
-                candidate = $"{stem}.v1.{n}.bak";
+                candidate = $"{stem}.v{format}.{n}.bak";
             }
             return candidate;
         }

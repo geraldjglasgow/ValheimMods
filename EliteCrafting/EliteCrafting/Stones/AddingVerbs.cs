@@ -28,28 +28,4 @@ namespace EliteCrafting.Stones
             return StoneResult.Success(outcome.State!, "promoted", job.ItemName, StoneNames.Rarity(next));
         }
     }
-
-    /// <summary>
-    /// <c>add</c> (the Shaping and Consecrated Runes): one affix, refused at the rarity's maximum (dormant affixes count).
-    /// </summary>
-    internal sealed class AddVerb : IStoneVerb
-    {
-        public StoneResult Run(StoneJob job)
-        {
-            if (job.State.AffixCount >= job.Rarity!.MaxAffixes)
-            {
-                return StoneResult.Refuse("affixes_full");
-            }
-            RollOutcome outcome = ItemRoller.AddAffixes(job.State, 1, job.RollContext());
-            if (!outcome.Success)
-            {
-                return StoneResult.Refuse("no_eligible_affix");
-            }
-            string added = LastAffixId(outcome.State!);
-            return StoneResult.Success(outcome.State!, "affix_added", job.ItemName, StoneNames.Affix(job.Rules, added));
-        }
-
-        public static string LastAffixId(ItemState state) =>
-            state.AffixCount == 0 ? "" : state.Affixes[state.AffixCount - 1].Id;
-    }
 }

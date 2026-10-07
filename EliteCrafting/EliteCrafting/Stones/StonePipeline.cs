@@ -27,7 +27,7 @@ namespace EliteCrafting.Stones
             {
                 return StoneResult.Refuse("not_own_inventory");
             }
-            if (job.StoneSource == null)
+            if (job.StoneSource == null && job.Supply == null)
             {
                 return StoneResult.Refuse("stone_out_of_reach");
             }
@@ -53,7 +53,7 @@ namespace EliteCrafting.Stones
             return job.IsEquipped && !ModSettings.ModifyEquippedItems.Value ? StoneResult.Refuse("equipped") : null;
         }
 
-        // 8-10: known rarity, in applies_to, enough runes in the carried stack.
+        // 8-10: known rarity, in applies_to, enough runes in the carried stack (or the table's supply, and its essence).
         private static StoneResult? RarityChecks(StoneJob job)
         {
             if (job.Rarity == null)
@@ -64,11 +64,12 @@ namespace EliteCrafting.Stones
             {
                 return StoneResult.Refuse("wrong_rarity", job.StoneName, StoneNames.Rarity(job.Rarity));
             }
-            if (job.Stone.m_stack < job.Cost)
+            if (job.StonesHeld < job.Cost)
             {
                 return StoneResult.Refuse("not_enough_stones", job.Cost.ToString(), job.StoneName);
             }
-            return null;
+            StoneMessage? shortfall = job.Supply?.Shortfall(job);
+            return shortfall != null ? StoneResult.Refuse(shortfall.Id, shortfall.Words) : null;
         }
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace EliteCrafting.Items
 {
     /// <summary>
-    /// The seven rune prefabs (prefabs.md sections 1-3). Built once per process from code alone, whatever the YAML says, so every peer (server, host, clients, main
+    /// The rune prefabs (prefabs.md sections 1-3): the seven runes, the Dvergr Chisel and the gems. Built once per process from code alone, whatever the YAML says, so every peer (server, host, clients, main
     /// menu) has the same prefab names and hashes before any inventory or ZDO arrives. Registration into the game's
     /// databases is done by <see cref="StoneRegistrationPatches"/>; this class is the registry other areas read.
     /// </summary>
@@ -81,11 +81,13 @@ namespace EliteCrafting.Items
             _holder.SetActive(false);
             UnityEngine.Object.DontDestroyOnLoad(_holder);
             GameObject?[] bases = ResolveBases(first, second);
-            bool tablets = StoneTablets.Load(StoneBases.Find(first, second, StoneTablets.MaterialItem));
-            foreach (string id in StoneCatalog.BuiltInIds)
+            GameObject? material = StoneBases.Find(first, second, StoneTablets.MaterialItem);
+            foreach (string id in StoneCatalog.AllIds)
             {
-                StoneGroup group = tablets ? StoneTablets.BaseGroup : StoneBases.GroupOf(id);
-                Add(new StoneEntry(StoneCatalog.PrefabFor(id), id, group), bases, tablets);
+                // The runes wear their tablets, the chisel and the gems their own models; without a bundle, a tinted base.
+                bool model = StoneTablets.For(id).Load(material);
+                StoneGroup group = model ? StoneTablets.BaseGroup : StoneBases.GroupOf(id);
+                Add(new StoneEntry(StoneCatalog.PrefabFor(id), id, group), bases, model);
             }
         }
 
@@ -110,7 +112,7 @@ namespace EliteCrafting.Items
                 return;
             }
             StoneCloner.Build(entry, basePrefab, _holder!.transform);
-            entry.WearsTablet = tablets && StoneTablets.Wear(entry);
+            entry.WearsTablet = tablets && StoneTablets.For(entry.BuiltInId).Wear(entry);
             Entries.Add(entry);
             ByName[entry.PrefabName] = entry;
             ByObject[entry.Prefab] = entry;

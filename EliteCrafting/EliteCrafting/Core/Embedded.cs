@@ -24,6 +24,19 @@ namespace EliteCrafting.Core
             return reader.ReadToEnd();
         }
 
+        /// <summary>The resource's bytes (an image), or null when there is no such resource.</summary>
+        public static byte[]? Bytes(string logicalName)
+        {
+            using Stream? stream = Self.GetManifestResourceStream(logicalName);
+            if (stream == null)
+            {
+                return null;
+            }
+            using MemoryStream copy = new MemoryStream();
+            stream.CopyTo(copy);
+            return copy.ToArray();
+        }
+
         /// <summary>Every resource name starting with the prefix and ending with the suffix, in ordinal order.</summary>
         public static List<string> Names(string prefix, string suffix)
         {

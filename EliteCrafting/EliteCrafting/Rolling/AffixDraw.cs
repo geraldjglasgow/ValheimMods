@@ -108,7 +108,7 @@ namespace EliteCrafting.Rolling
         private bool IsCandidate(PoolEntry entry)
         {
             AffixDef def = entry.Def;
-            if (!def.Enabled || def.Weight <= 0f || _ids.Contains(def.Id) || !_limits.Allows(def.Kind))
+            if (!def.Enabled || def.Weight <= 0f || _ids.Contains(def.Id) || !_limits.Allows(def.Kind) || !Favoured(def.Id))
             {
                 return false;
             }
@@ -133,5 +133,8 @@ namespace EliteCrafting.Rolling
             }
             return RollMath.PickWeighted(_weights, _context.Random);
         }
+
+        // With an essence (the Rune Table's Ascension) only its own inscriptions may be drawn.
+        private bool Favoured(string id) => _context.Favoured == null || _context.Favoured.Contains(id);
     }
 }

@@ -37,8 +37,13 @@ namespace EliteCrafting.Stones
 
         public bool Refused => Refusal != null;
 
+        /// <summary>A gem onto an item whose sockets are all full: the player picks the one to replace (<see cref="GemChooser"/>).</summary>
+        public bool NeedsSocket { get; private set; }
+
         public static StoneResult Refuse(string id, params string[] words) =>
             new StoneResult(new StoneMessage(id, words), null, null);
+
+        public static StoneResult ChooseSocket() => new StoneResult(null, null, null) { NeedsSocket = true };
 
         public static StoneResult Success(Affixes.ItemState state, string feedbackId, params string[] words) =>
             new StoneResult(null, state, new StoneMessage(feedbackId, words));

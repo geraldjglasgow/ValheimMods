@@ -1,9 +1,9 @@
 # EliteCrafting - economy
 #
 # Rarities, rolling rules, runes, item classes, item tiers, biome tiers and drop tables.
-format: 2
+format: 3
 # Written once, on first run, as a full copy of the built-in defaults; the mod never
-# rewrites it (a file from before format 2 is renamed to .v1.bak and written fresh). The
+# rewrites it (a file from an older format is renamed to .v<format>.bak and written fresh). The
 # built-in defaults stay underneath this file (set
 # `use_defaults: false` to make the files the whole configuration).
 #
@@ -30,45 +30,41 @@ rarities:
     drop_weight: 0
   - id: magic
     color: "#1EFF00"
-    inscriptions: { min: 1, max: 2 }
+    inscriptions: { min: 2, max: 2 }
     prefixes: 1                # at most this many prefix inscriptions
     suffixes: 1
   - id: rare
     color: "#0070DD"
-    inscriptions: { min: 3, max: 6 }
-    prefixes: 3
-    suffixes: 3
+    inscriptions: { min: 3, max: 3 }
+    prefixes: 2
+    suffixes: 2
 
 # How inscriptions are drawn. Each item has an item level (1 meadows ... 8 deep north, see
 # item_tiers) and an item class (see classes). An inscription rolls on the classes it lists,
 # at any tier the item level has unlocked, weaker tiers more often; on a class where it is
 # only `allowed`, the top `allowed_closed_fraction` of its tiers stays closed (0.334: health
-# on a helmet stops at T5 of 13). A promotion (Awakening, Ascension) adds what the new
+# on a helmet stops at T3 of 8). A promotion (Awakening, Ascension) adds what the new
 # rarity's minimum needs, and at least `promote_adds_at_least`. `count_weights` biases how
 # many inscriptions a fresh roll (a dropped item) gets.
 rolling:
   allowed_closed_fraction: 0.334
   promote_adds_at_least: 1
-  # count_weights:
-  #   rare: { 3: 4, 4: 3, 5: 2, 6: 1 }
 
-# The seven runes. Click a rune onto an item in your own inventory. Fields: id (one of the seven),
+# The five runes. Click a rune onto an item in your own inventory. Fields: id (one of the five),
 # verb, applies_to (rarities), cost (per rarity, default 1), tier_floor, enabled,
 # confirm (hold Shift / dialog first), stack (default 50), item_weight (the item weight of
 # one rune, default 0.2), name, description (loc key or text), tint.
-# Verbs: promote (one rarity up), add (one inscription, not past the rarity's maximum),
-# reroll (every inscription replaced: the item rolled fresh at its rarity, a new count in its range),
+# Verbs: promote (one rarity up), reroll (every inscription replaced: the item rolled fresh at its rarity, a new count in its range),
 # strip (back to the base rarity, every inscription gone), corrupt (one outcome, then the
 # item is sealed for good: no rune works on it again). `tier_floor` is the weakest
 # inscription tier the rune rolls, counted like the tooltip: 1 = the best tier the item
 # allows. enabled: false keeps a rune from dropping and from being used; its prefab (and
 # every stack of it) stays.
 runes:
-  - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, one inscription
-  - { id: shaping,     verb: add,     applies_to: [magic] }        # one more on a Magic item (up to 2)
-  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # all inscriptions replaced by 1-2 new
-  - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, one more (to Rare's 3 at least)
-  - { id: consecrated, verb: add,     applies_to: [rare] }         # one more on a Rare item (up to 6)
+  - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, two inscriptions
+  - { id: recasting,   verb: reroll,  applies_to: [magic] }        # both inscriptions replaced by two new
+  - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, a third inscription
+  - { id: consecrated, verb: consecrate, applies_to: [normal, magic, rare] }  # 1-3 sockets (3 very rare) on gear with none
   - id: cleansing                                                  # back to Normal
     verb: strip
     applies_to: [magic, rare]
@@ -82,6 +78,21 @@ runes:
       - { outcome: seal_only,       weight: 35 }   # sealed as it is
       - { outcome: add_inscription, weight: 35 }   # one more inscription, past the cap
       - { outcome: chaotic_reroll,  weight: 30 }   # every inscription rerolled at any tier
+  # Sockets and gems (switch `Gems and sockets`): the Dvergr Chisel cuts one socket into a weapon,
+  # staff, armour piece or shield that has none; a gem fills a socket with a stat that depends on
+  # the item (fixed in code), its tier rolled for the item when it is set.
+  - { id: dvergr_chisel, verb: socket, applies_to: [normal, magic, rare] }
+  - { id: gem_surtr,     verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_ymir,      verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_thor,      verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_nidhogg,   verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_hel,       verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_tyr,       verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_freyja,    verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_odin,      verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_skadi,     verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_heimdall,  verb: gem, applies_to: [normal, magic, rare] }
+  - { id: gem_sleipnir,  verb: gem, applies_to: [normal, magic, rare] }
 
 # Item classes: what an item is, for inscriptions (each inscription lists the classes it rolls
 # on) and gear drops. An item belongs to the first class that names it in `items`; otherwise
@@ -427,8 +438,9 @@ biomes:
   ocean: 4                     # judgement call
   deep_north: 8
 
-# What creatures drop. The on/off switches are `Rune drops` and `Magic item drops`
-# in com.EliteCrafting.cfg.
+# What creatures drop. `Rune drops` in com.EliteCrafting.cfg switches runes off. Magic gear does
+# not drop in this version (user decision 2026-10-07): the gear chances and tables below are kept
+# for when it comes back and are not read.
 drops:
   tamed: false                 # tamed creatures drop our loot
   require_player: true         # a player (or a player's tamed creature) must have hit it
@@ -444,12 +456,24 @@ drops:
   runes:                       # which rune drops, by tier; a disabled rune never drops
     #              T1   T2   T3   T4   T5   T6   T7   T8
     awakening:   [400, 300, 220, 160, 120, 100,  80,  70]
-    shaping:     [150, 150, 140, 120, 100,  90,  80,  75]
     recasting:   [120, 130, 120, 110, 100,  90,  80,  75]
     ascension:   [  0, 120, 120, 110, 100,  90,  80,  75]
     consecrated: [  0,   0,  20,  40,  50,  60,  70,  80]
     cleansing:   [ 30,  30,  30,  30,  30,  30,  30,  30]
     serpent:     [  0,   0,  20,  25,  30,  35,  40,  45]
+    # the chisel and the gems: very rare (any gem about 1 kill in 2,500 in the Meadows, 1 in 640 in the Deep North)
+    dvergr_chisel: [5, 5, 5, 5, 5, 5, 5, 5]
+    gem_surtr:     [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_ymir:      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_thor:      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_nidhogg:   [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_hel:       [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_tyr:       [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_freyja:    [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_odin:      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_skadi:     [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_heimdall:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+    gem_sleipnir:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
   rarity_weights:              # the rarity of dropped gear, by tier
     #          T1  T2  T3  T4  T5  T6  T7  T8
@@ -468,14 +492,14 @@ drops:
     exclude: []                # item prefabs that never drop
     include: {}                # item prefab -> tier, always in the pool at that tier
 
-  bosses:
+  bosses:                      # every boss also drops its own gems and the Dvergr Chisel (fixed in code)
     Eikthyr:
       tier: 1
       rune_rolls: 2
       gear_rolls: 1
       bonus:
         - { rune: awakening, chance: 100, amount: 2 }
-        - { rune: shaping, chance: 100, amount: 1 }
+        - { rune: recasting, chance: 100, amount: 1 }
     gd_king:
       tier: 2
       rune_rolls: 2
@@ -488,32 +512,32 @@ drops:
       gear_rolls: 1
       bonus:
         - { rune: serpent, chance: 50, amount: 1 }
-        - { rune: consecrated, chance: 50, amount: 1 }
+        - { rune: ascension, chance: 50, amount: 1 }
     Dragon:
       tier: 4
       rune_rolls: 3
       gear_rolls: 1
       bonus:
-        - { rune: consecrated, chance: 100, amount: 1 }
+        - { rune: ascension, chance: 100, amount: 1 }
     GoblinKing:
       tier: 5
       rune_rolls: 4
       gear_rolls: 1
       bonus:
-        - { rune: consecrated, chance: 100, amount: 1 }
+        - { rune: ascension, chance: 100, amount: 1 }
         - { rune: serpent, chance: 25, amount: 1 }
     SeekerQueen:
       tier: 6
       rune_rolls: 4
       gear_rolls: 1
       bonus:
-        - { rune: consecrated, chance: 100, amount: 2 }
+        - { rune: ascension, chance: 100, amount: 2 }
     Fader:                     # verify prefab name
       tier: 7
       rune_rolls: 5
       gear_rolls: 1
       bonus:
-        - { rune: consecrated, chance: 100, amount: 2 }
+        - { rune: ascension, chance: 100, amount: 2 }
         - { rune: serpent, chance: 50, amount: 1 }
 
   # Per creature prefab: tier override, multipliers and bonus runes. Examples:

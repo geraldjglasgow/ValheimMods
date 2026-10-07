@@ -19,6 +19,10 @@ namespace EliteCrafting.Stones
     {
         public static void Commit(StoneJob job, StoneResult result)
         {
+            if (result.State == null)
+            {
+                return;   // a refusal or a socket still to pick: nothing to write
+            }
             bool written;
             using (ItemChanges.Because(ItemChanges.Rune(job.Def?.Id)))
             {
@@ -35,9 +39,15 @@ namespace EliteCrafting.Stones
         }
 
         // The cost leaves the carried stack in the same frame as the write, so no use can ever land without being paid for.
-        // A rune taken from an open chest is paid from the chest, which saves itself (this client owns it while it is open).
+        // A rune taken from an open chest is paid from the chest, which saves itself (this client owns it while it is open);
+        // at the Rune Table the table's supply pays (its store first, then the inventory, and the essence).
         private static void Pay(StoneJob job)
         {
+            if (job.Supply != null)
+            {
+                job.Supply.Pay(job);
+                return;
+            }
             if (job.Cost > 0)
             {
                 job.StoneSource!.RemoveItem(job.Stone, job.Cost);
@@ -48,7 +58,7 @@ namespace EliteCrafting.Stones
         private static void KeepCarrying(StoneJob job)
         {
             InventoryGui gui = InventoryGui.instance;
-            if (gui == null || gui.m_dragItem != job.Stone)
+            if (gui == null || job.Supply != null || gui.m_dragItem != job.Stone)
             {
                 return;
             }

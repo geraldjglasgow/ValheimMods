@@ -1,6 +1,6 @@
 # Drops and Loot
 
-Runes and magic gear drop beside a creature's normal loot, at the same moment: when its body dissolves, or at once for a creature that leaves none. Every number here is a default the server can change in `EliteCrafting_economy.yml`.
+Runes drop beside a creature's normal loot, at the same moment: when its body dissolves, or at once for a creature that leaves none. Magic gear never drops: every Magic or Rare item is made with runes. Every number here is a default the server can change in `EliteCrafting_economy.yml`.
 
 ## Who drops loot
 
@@ -13,50 +13,43 @@ Runes and magic gear drop beside a creature's normal loot, at the same moment: w
 | Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|---|---|---|---|---|---|---|---|
 | Rune | 4% | 5% | 6% | 7% | 8% | 9% | 10% | 11% |
-| Magic item | 1% | 1.25% | 1.5% | 1.75% | 2% | 2.25% | 2.5% | 2.75% |
 
-Stars multiply the chance: one star x2, two stars x3. At most 5 runes and 2 magic items per kill.
+Stars multiply the chance: one star x2, two stars x3. At most 5 runes per kill.
 
 ## Which rune drops
 
-When a rune drops, the chance it is each rune, by tier:
+When a rune drops, the chance it is each rune (or, rarely, a Dvergr Chisel or a gem), by tier:
 
 | Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 |
 |---|---|---|---|---|---|---|---|---|
-| Awakening | 57% | 41% | 33% | 27% | 23% | 20% | 17% | 16% |
-| Shaping | 21% | 21% | 21% | 20% | 19% | 18% | 17% | 17% |
-| Recasting | 17% | 18% | 18% | 18% | 19% | 18% | 17% | 17% |
-| Ascension | - | 16% | 18% | 18% | 19% | 18% | 17% | 17% |
-| Consecrated | - | - | 3% | 7% | 9% | 12% | 15% | 18% |
-| Cleansing | 4% | 4% | 4% | 5% | 6% | 6% | 7% | 7% |
-| Serpent | - | - | 3% | 4% | 6% | 7% | 9% | 10% |
+| Awakening | 71% | 51% | 41% | 33% | 27% | 24% | 20% | 18% |
+| Recasting | 21% | 22% | 22% | 23% | 23% | 22% | 20% | 19% |
+| Ascension | - | 20% | 22% | 23% | 23% | 22% | 20% | 19% |
+| Consecrated | - | - | 4% | 8% | 11% | 14% | 18% | 21% |
+| Cleansing | 5% | 5% | 6% | 6% | 7% | 7% | 8% | 8% |
+| Serpent | - | - | 4% | 5% | 7% | 8% | 10% | 12% |
+| Dvergr Chisel | 0.9% | 0.8% | 0.9% | 1% | 1% | 1% | 1% | 1% |
+| Any of the 11 gems | 1% | 0.9% | 1% | 1% | 1% | 1% | 1% | 1% |
 
-## Magic items
-
-A dropped item is something a player can craft, of the creature's tier as item level or one below; each item of the same level is picked three times as often as one of the level below. Utility items and tools drop half as often as other classes, lights and the fishing rod a quarter as often, backpacks never. Its rarity:
-
-| Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|---|---|---|---|---|---|---|---|---|
-| Magic / Rare | 80/20 | 70/30 | 60/40 | 50/50 | 45/55 | 40/60 | 35/65 | 30/70 |
-| From bosses | 40/60 | 30/70 | 20/80 | 15/85 | 10/90 | 5/95 | 0/100 | 0/100 |
+The Consecrated Rune, the chisel and the gems drop only while `Gems and sockets` is on. That is one gem in about 2,500 kills at tier 1 and one in 640 at tier 8, before stars ([Gems and Sockets](wiki:Gems and Sockets)).
 
 ## Bosses
 
-Bosses count as tiers 1-7 in this order. Each drops one magic item, some random runes and fixed bonus runes:
+Bosses count as tiers 1-7 in this order. Each drops some random runes, fixed bonus runes, the Dvergr Chisel 25% of the time and its own gems:
 
-| Boss | Random runes | Bonus runes |
-|---|---|---|
-| Eikthyr | 2 | 2 Awakening, 1 Shaping |
-| The Elder | 2 | 1 Ascension |
-| Bonemass | 3 | 50%: 1 Serpent; 50%: 1 Consecrated |
-| Moder | 3 | 1 Consecrated |
-| Yagluth | 4 | 1 Consecrated; 25%: 1 Serpent |
-| The Queen | 4 | 2 Consecrated |
-| Fader | 5 | 2 Consecrated; 50%: 1 Serpent |
+| Boss | Random runes | Bonus runes | Gems |
+|---|---|---|---|
+| Eikthyr | 2 | 2 Awakening, 1 Recasting | Thor's 10%, Sleipnir's 10% |
+| The Elder | 2 | 1 Ascension | Freyja's 15% |
+| Bonemass | 3 | 50%: 1 Serpent; 50%: 1 Ascension | Nidhogg's 15% |
+| Moder | 3 | 1 Ascension | Ymir's 20%, Skadi's 20% |
+| Yagluth | 4 | 1 Ascension; 25%: 1 Serpent | Surtr's 20%, Tyr's 20% |
+| The Queen | 4 | 2 Ascension | Odin's 20%, Heimdall's 20% |
+| Fader | 5 | 2 Ascension; 50%: 1 Serpent | Hel's 25% |
 
 ## World chests
 
-Dungeon chests, ruin chests and buried treasure have a 30% rune chance and a 10% magic item chance, rolled when the game first fills them. Player-built chests never roll.
+Dungeon chests, ruin chests and buried treasure have a 30% rune chance, rolled when the game first fills them. Player-built chests never roll.
 
 ## Loot-find inscriptions
 
@@ -64,11 +57,11 @@ They work for the player who lands the killing blow, up to +200% each.
 
 | Inscription | Raises |
 |---|---|
-| Norns' Favour | The chance a dropped magic item is Rare |
+| Norns' Favour | The chance a dropped magic item is Rare (nothing for now: magic gear does not drop) |
 | Fateweaver | The rune chance |
 | Trophy Taker | The creature's trophy chance |
 | Hoardfinder | The creature's coin and treasure chance |
 
 ## Elite Creatures Reborn
 
-With `Synergy` on (off by default), ECR's elite stars replace the game's stars (2 stars x1.5, 3 stars x2, up to 5 stars x3, +0.5 per star after), and ECR's world tier raises the rune chance (up to x1.7) and the Rare share (up to +35%). `ecraft ecr` shows what the creature you look at would pay.
+With `Synergy` on (off by default), ECR's elite stars replace the game's stars (2 stars x1.5, 3 stars x2, up to 5 stars x3, +0.5 per star after), and ECR's world tier raises the rune chance (up to x1.7). `ecraft ecr` shows what the creature you look at would pay.

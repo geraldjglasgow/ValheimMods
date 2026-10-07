@@ -22,7 +22,7 @@ namespace EliteCrafting.Items
         /// <summary>Whether the rune id has a tint of its own.</summary>
         public static bool HasTint(string? stoneId) => StoneTints.TryById(stoneId, out _);
 
-        /// <summary>The tint by prefab name (<c>ECF_Shaping</c>), white when none. For code that holds an item, not an id.</summary>
+        /// <summary>The tint by prefab name (<c>ECF_Recasting</c>), white when none. For code that holds an item, not an id.</summary>
         public static Color TintOfPrefab(string? prefabName) =>
             StoneTints.TryByPrefab(prefabName, out Color tint) ? tint : Color.white;
 

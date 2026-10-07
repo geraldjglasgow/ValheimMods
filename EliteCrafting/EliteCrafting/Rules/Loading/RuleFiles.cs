@@ -101,7 +101,7 @@ namespace EliteCrafting.Rules
             bool main = string.Equals(name, _spec.MainFile, StringComparison.OrdinalIgnoreCase);
             if (main && RuleFormat.Of(text) < RuleFormat.Current)
             {
-                return RuleFormat.ReplaceOldMain(path, FamilyBuilder.DefaultText(_spec));
+                return RuleFormat.ReplaceOldMain(path, text, FamilyBuilder.DefaultText(_spec));
             }
             Log.Warn($"{name} is {RuleFormat.Describe(text)}: skipped (this version reads format {RuleFormat.Current}; add 'format: {RuleFormat.Current}' once it is updated)");
             return null;

@@ -1,0 +1,69 @@
+# EliteCrafting - sockets and gems (sockets.md): the Dvergr Chisel and the eleven gems, their refusals, feedback, the
+# replace dialog and the tooltip lines. Key without the $ -> text. $1, $2, $3 are the game's placeholders, filled with
+# already-localized words.
+
+ecf_stone_dvergr_chisel: "Dvergr Chisel"
+ecf_stone_dvergr_chisel_desc: "Cuts one socket into a weapon, staff, armour piece or shield that has none. Gems go into sockets."
+
+ecf_stone_gem_surtr: "Surtr's Gem"
+ecf_stone_gem_surtr_desc: "Set into a socket. Weapon: added fire damage. Staff: elemental damage. Armour or shield: less fire damage taken. Its tier is rolled for the item."
+ecf_stone_gem_ymir: "Ymir's Gem"
+ecf_stone_gem_ymir_desc: "Set into a socket. Weapon: added frost damage. Staff: lower eitr cost. Armour or shield: less frost damage taken. Its tier is rolled for the item."
+ecf_stone_gem_thor: "Thor's Gem"
+ecf_stone_gem_thor_desc: "Set into a socket. Weapon: added lightning damage. Staff: chain lightning. Armour or shield: less lightning damage taken. Its tier is rolled for the item."
+ecf_stone_gem_nidhogg: "Nidhogg's Gem"
+ecf_stone_gem_nidhogg_desc: "Set into a socket. Weapon: added poison damage. Staff: longer damage over time. Armour or shield: less poison damage taken. Its tier is rolled for the item."
+ecf_stone_gem_hel: "Hel's Gem"
+ecf_stone_gem_hel_desc: "Set into a socket. Weapon: added spirit damage. Staff: eitr on kill. Armour or shield: less spirit damage taken. Its tier is rolled for the item."
+ecf_stone_gem_tyr: "Tyr's Gem"
+ecf_stone_gem_tyr_desc: "Set into a socket. Weapon: more physical damage. Staff: stronger summons. Armour or shield: less stagger. Its tier is rolled for the item."
+ecf_stone_gem_freyja: "Freyja's Gem"
+ecf_stone_gem_freyja_desc: "Set into a socket. Weapon: life leech. Staff: lower health cost. Armour or shield: more health. Its tier is rolled for the item."
+ecf_stone_gem_odin: "Odin's Gem"
+ecf_stone_gem_odin_desc: "Set into a socket. Weapon: eitr leech. Staff: eitr regeneration. Armour or shield: more eitr. Its tier is rolled for the item."
+ecf_stone_gem_skadi: "Skadi's Gem"
+ecf_stone_gem_skadi_desc: "Set into a socket. Weapon: stamina leech. Staff: tougher summons. Armour or shield: more stamina. Its tier is rolled for the item."
+ecf_stone_gem_heimdall: "Heimdall's Gem"
+ecf_stone_gem_heimdall_desc: "Set into a socket. Weapon: critical hit chance. Staff: faster casting. Armour or shield: a chance to avoid hits. Its tier is rolled for the item."
+ecf_stone_gem_sleipnir: "Sleipnir's Gem"
+ecf_stone_gem_sleipnir_desc: "Set into a socket of armour or a shield: faster movement. It does not fit weapons or staves. Its tier is rolled for the item."
+
+# refusals: the gem or chisel is kept, the item unchanged
+ecf_msg_gems_off: "Gems and sockets are off on this server."
+ecf_msg_no_socket_here: "Only weapons, staves, armour and shields take sockets."
+ecf_msg_has_sockets: "This item has sockets already."
+ecf_msg_gem_no_socket: "This item has no socket."
+ecf_msg_gem_wrong_item: "$1 does not fit this item."
+ecf_msg_sockets_full: "Every socket of this item is full."
+
+# feedback on success
+ecf_msg_socket_cut: "A socket is cut into $1."
+ecf_msg_gem_socketed: "$1 set into $2: $3"
+ecf_msg_gem_replaced: "$1 replaces the gem in socket $2: $3"
+
+# the replace dialog: $1 the new gem in the title; $1 the socket number, $2 what it holds, $3 the new gem in the body
+ecf_ui_gem_replace_title: "Replace a gem with $1?"
+ecf_ui_gem_replace_body: "Socket $1 holds $2.\nReplace it with $3? The old gem is lost."
+
+# tooltip lines: $1 the gem, $2 its stat
+ecf_ui_socket_gem: "$1: $2"
+ecf_ui_socket_empty: "Empty socket"
+ecf_ui_socket_unreadable: "Socket (unreadable)"
+
+# the Rune Table's Sockets tab
+ecf_table_tab_sockets: "Sockets"
+ecf_table_label_stone: "Chisel and gems"
+ecf_table_label_socket: "Sockets (pick one to replace its gem)"
+ecf_table_set_gem: "Set gem"
+ecf_table_cut_socket: "Cut socket"
+ecf_table_socket_n: "Socket $1"
+ecf_table_no_socket_gear: "No gear"
+ecf_table_no_socket_gear_desc: "Weapons, staves, armour and shields you carry show here. Pick one, then the Dvergr Chisel or a gem you carry."
+ecf_table_no_sockets: "No sockets yet."
+ecf_table_chisel_cuts: "cuts one socket into this item."
+ecf_table_chisel_has: "this item has sockets already; the chisel only cuts into an item with none."
+ecf_table_gem_no_fit: "does not fit this item."
+ecf_table_gem_gives: "gives $1 here, rolled between T$2 and T$3 at this item level."
+ecf_table_gem_needs_socket: "This item needs a socket first."
+ecf_table_gem_replaces: "It replaces the gem in socket $1, which is lost."
+ecf_table_gem_pick_socket: "Every socket is full: pick the one to replace below."

@@ -39,6 +39,54 @@ namespace EliteCrafting.Rules
 
         public static bool TryInt(YamlNode? node, out int value) => Numbers.TryInt(Text(node), out value);
 
+        /// <summary>Same content: scalars by text, maps key by key in any order, sequences item by item.</summary>
+        public static bool Same(YamlNode? a, YamlNode? b)
+        {
+            switch (a)
+            {
+                case YamlScalarNode sa:
+                    return b is YamlScalarNode sb && sa.Value == sb.Value;
+                case YamlMappingNode ma:
+                    return b is YamlMappingNode mb && SameMaps(ma, mb);
+                case YamlSequenceNode qa:
+                    return b is YamlSequenceNode qb && SameSequences(qa, qb);
+                default:
+                    return a == null && b == null;
+            }
+        }
+
+        private static bool SameMaps(YamlMappingNode a, YamlMappingNode b)
+        {
+            if (a.Children.Count != b.Children.Count)
+            {
+                return false;
+            }
+            foreach (KeyValuePair<YamlNode, YamlNode> pair in a.Children)
+            {
+                if (!Same(pair.Value, Child(b, KeyText(pair.Key))))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static bool SameSequences(YamlSequenceNode a, YamlSequenceNode b)
+        {
+            if (a.Children.Count != b.Children.Count)
+            {
+                return false;
+            }
+            for (int i = 0; i < a.Children.Count; i++)
+            {
+                if (!Same(a.Children[i], b.Children[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public static bool TryBool(YamlNode? node, out bool value)
         {
             value = false;

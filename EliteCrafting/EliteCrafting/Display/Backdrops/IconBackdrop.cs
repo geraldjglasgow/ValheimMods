@@ -30,14 +30,18 @@ namespace EliteCrafting.Display.Backdrops
             public Vector2 FittedSize = new Vector2(-1f, -1f);
         }
 
-        /// <summary>Shows the backdrop for the item while the icon shows, else hides it. Called per frame by most surfaces.</summary>
+        /// <summary>
+        /// Shows the backdrop for the item while the icon shows, else hides it, and the seal mark with it
+        /// (<see cref="IconSeal"/>). Called per frame by most surfaces.
+        /// </summary>
         public static void Set(Image? icon, ItemDrop.ItemData? item)
         {
             if (icon == null)
             {
                 return;
             }
-            if (BackdropTone.TryGet(item, out Color tone) && Visible(icon))
+            bool visible = Visible(icon);
+            if (BackdropTone.TryGet(item, out Color tone) && visible)
             {
                 Show(icon, tone);
             }
@@ -45,10 +49,19 @@ namespace EliteCrafting.Display.Backdrops
             {
                 Hide(icon);
             }
+            if (visible && IconSeal.IsSealed(item))
+            {
+                IconSeal.Show(icon);
+            }
+            else
+            {
+                IconSeal.Hide(icon);
+            }
         }
 
         public static void Hide(Image? icon)
         {
+            IconSeal.Hide(icon);
             if (_shown == 0 || icon == null || !Backdrops.TryGetValue(icon, out Made made))
             {
                 return;

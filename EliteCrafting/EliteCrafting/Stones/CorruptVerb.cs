@@ -75,7 +75,7 @@ namespace EliteCrafting.Stones
             {
                 return null;
             }
-            string added = AddVerb.LastAffixId(rolled.State!);
+            string added = rolled.State!.AffixCount == 0 ? "" : rolled.State!.Affixes[rolled.State!.AffixCount - 1].Id;
             return StoneResult.Success(Sealed(rolled.State!), "corrupt_add", job.ItemName, StoneNames.Affix(job.Rules, added));
         }
 

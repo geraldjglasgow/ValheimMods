@@ -22,9 +22,11 @@ Synced settings come from the server; player settings are your own.
 | Lock Configuration | On | Server | Everyone uses the server's settings and YAML files |
 | Inscription effects | On | Synced | Off: inscriptions stay on items but do nothing |
 | Modify equipped items | On | Synced | Runes work on equipped items |
+| Runes from salvage | On | Synced | With OpenKeep, salvaging Magic gear may give back an Awakening Rune, Rare gear an Ascension Rune (25%) |
+| Rune Table | On | Synced | The [Rune Table](wiki:Rune Table) is in the hammer and can be used. Off: it leaves the hammer and built tables cannot be used; what they hold is kept |
+| Gems and sockets | On | Synced | Sockets on weapons, staves, armour and shields; the Consecrated Rune, the Dvergr Chisel and the eleven gems drop and work; the Rune Table's Sockets tab. Off: none of it; gems already set keep their stats |
 | Confirm destructive runes | HoldShift | Player | How Cleansing and Serpent ask first: `HoldShift`, `Dialog` (yes/no) or `Off` |
 | Rune drops | On | Synced | Creatures, bosses and chests drop runes |
-| Magic item drops | On | Synced | They drop magic gear |
 | Read-only commands for everyone | On | Synced | Off: `help`, `inspect`, `stats`, `list`, `inscription`, `classes` and `ecr` become admin-only |
 | Colored item names | On | Player | Magic item names in their rarity colour |
 | Tooltip detail | Standard | Player | `Compact` (no tiers), `Standard` (tiers) or `Full` (also value ranges, the item's class and level) |
@@ -45,7 +47,7 @@ Synced settings come from the server; player settings are your own.
 Both are written on first start with every default and a comment for each field. Put your changes in an extra file such as `EliteCrafting_economy_myserver.yml`: it is read after the main file and changes only what it names.
 
 ```yaml
-format: 2
+format: 3
 drops:
   chances:
     rune: [8, 10, 12, 14, 16, 18, 20, 22]  # rune chance per tier, percent, Meadows to Deep North
@@ -60,16 +62,16 @@ classes:
 ```
 
 ```yaml
-format: 2
+format: 3
 inscriptions:
   - { id: fleetfoot, weight: 50 }          # half as often
   - { id: godslayer, enabled: false }      # switched off
-  - { id: vigor, tiers: { count: 13, from: 1, min: 5, max: 50 } }  # a stronger health ladder
+  - { id: vigor, tiers: { count: 8, from: 1, min: 5, max: 50 } }  # a stronger health ladder
 ```
 
-- **Format 2.** Both files start with `format: 2`. A main file from 0.4.0 or older is renamed `<name>.v1.bak` and written fresh, with a warning in the log; copy your changes into the new file. An extra file without `format: 2` is skipped with a warning.
+- **Format 3.** Both files start with `format: 3`. A main file from an older version is renamed `<name>.v2.bak` (from 0.5.0 to 0.7.0; `.v1.bak` from 0.4.0 or older) and written fresh, with a warning in the log; copy your changes into the new file. An extra file without `format: 3` is skipped with a warning.
 - **Inscription fields**: `affix` (`prefix` or `suffix`), `family`, `classes: { best: [...], allowed: [...] }` (class ids; the top third of tiers stays closed on `allowed`), `scaled: true` (multiplied by the weapon's damage scale), `weight` and `enabled`. `tiers` is a ladder `{ count, from, min, max }` (1-16 tiers, the weakest unlocked at item level `from`, the strongest at 8, values from `min` to `max`) or explicit rows `[ { tier, level, min, max, weight } ]`.
-- **Economy fields**: each rarity's `prefixes` and `suffixes`; `rolling.allowed_closed_fraction` (0.334, the closed top of `allowed` classes); `classes` with `id`, `rolls` (false: never magic), `damage_scale`, `drop_weight`, `match` rules and `items` (prefab names); `item_tiers` (item levels: `items` by prefab, `materials`, `stations`). Lists by tier take eight values, Meadows to Deep North; a list of seven still loads, its last value counting for Deep North too.
+- **Economy fields**: each rarity's `prefixes` and `suffixes`; `rolling.allowed_closed_fraction` (0.334, the closed top of `allowed` classes); `classes` with `id`, `rolls` (false: never magic), `damage_scale`, `match` rules and `items` (prefab names); `item_tiers` (item levels: `items` by prefab, `materials`, `stations`). Lists by tier take eight values, Meadows to Deep North; a list of seven still loads, its last value counting for Deep North too.
 - Deleting an entry does nothing (it comes back from the defaults); use `enabled: false`, or `weight: 0` to stop it rolling while existing copies keep working.
 - The built-in defaults always sit under your files, so runes, drops and inscriptions a new version adds reach your server without editing. `use_defaults: false` in a main file turns that off: the files are then the whole configuration.
 - A file with a mistake is named in the log, and the previous rules stay.
@@ -82,13 +84,13 @@ Open the console with F5. Commands marked * work for everyone unless the server 
 | Command | Does |
 |---|---|
 | `ecraft help` * | Lists the commands you may use |
-| `ecraft inspect` * | Shows an item's rarity and inscriptions |
+| `ecraft inspect` * | Shows an item's rarity, inscriptions, sockets and gems |
 | `ecraft stats` * | Shows your inscription totals and caps |
 | `ecraft list inscriptions\|runes\|rarities [filter]` * | Lists the rules in force; filter by item class (`legs`, `sword_1h`), `prefix` or `suffix`, category (`offense`, `defense`, `utility`) or id |
 | `ecraft inscription <id>` * | One inscription: its classes and every tier with its range and the item level that unlocks it |
 | `ecraft classes` * | Every item class: its items, their item levels and how many inscriptions it rolls |
 | `ecraft ecr` * | Shows the Elite Creatures Reborn link and what the creature you look at would drop |
-| `ecraft give <rune>\|all [count]` | Gives runes: `awakening`, `shaping`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent` |
+| `ecraft give <rune>\|all [count]` | Gives runes: `awakening`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent`; the chisel `dvergr_chisel`; gems `gem_surtr`, `gem_ymir`, `gem_thor`, `gem_nidhogg`, `gem_hel`, `gem_tyr`, `gem_freyja`, `gem_odin`, `gem_skadi`, `gem_heimdall`, `gem_sleipnir` |
 | `ecraft roll magic\|rare <item or class> [level]` | Gives a rolled magic item, for example `ecraft roll rare SwordIron` or `ecraft roll magic legs 8`; a class picks a random item of it, `level` (1-8) overrides its item level |
 | `ecraft reroll` | Rerolls an item's inscriptions |
 | `ecraft inscribe <inscription> [tier] [value]` | Adds one chosen inscription, for testing |
