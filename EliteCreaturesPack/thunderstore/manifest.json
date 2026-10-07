@@ -1,6 +1,6 @@
 {
     "name": "EliteCreaturesPack",
-    "version_number": "0.7.2",
+    "version_number": "0.8.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteCreaturesPack",
     "description": "New creatures with their own fights: a biting crypt chest, a slingshot greydwarf, a frost giant, a ship-hunting kraken, skeletons with bone weapons, a crypt executioner, and their weapons to make. Server synced. Required on server and all clients.",
     "dependencies": [

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0
+
+- Paws of the Bear: each punch is three quick swipes in the time of one, about a third of the damage each.
+- `Triple Strike` (section `27 - Bear Claws`) turns it off for the game's single punch.
+
 ## 0.7.2
 
 - Fixed: a Greydwarf Slinger could spawn where another mod had blocked the greydwarf's spawn.
