@@ -397,16 +397,19 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
                             fixground.png, planner.png, copy.png, ghostsshown.png, ghostshidden.png, folder.png,
                             folderup.png, foldernew.png; the recipe category icons category_<name>.png (64 px white
                             silhouettes for tinting, drawn by ../ValheimAssets/Assets/Icons/RecipeCategories/draw.py);
-                            every PNG here is embedded; assets/boots/: the boots' and split trousers' icons
-                            boots_<set>.png and pants_<set>.png (64 px, ValheimAssets
-                            Assets/Gear/SeparatedLegArmor/Icons/v008/64), embedded as OpenKeep.assets.boots.<file>
+                            every PNG here is embedded; assets/boots/native_split.txt: where the game's leggings are
+                            cut into trousers and boots (ValheimAssets Assets/Gear/SeparatedLegArmor/NativeSplit_v001,
+                            coordinates only), embedded as OpenKeep.assets.boots.native_split.txt; the trousers' and
+                            boots' icons pants_<set>.png and boots_<set>.png (64 px, NativeSplit_v001/Icons/v001/64)
+                            and the rag shoes' paint paint_boots_rag.png (256 px, Revisions/Rag_v002), as
+                            OpenKeep.assets.boots.<file>
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 4.1.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 4.2.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -518,19 +521,18 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
     MimirStacksText.cs      InventoryGrid.UpdateGui postfix: a Mímir slot shows its count alone (5000)
   Boots/                    section 16, Boots (2026-10-07): the game's 20 leggings split into leggings and boots
     BootsModule.cs, BootsSettings.cs   16. Boots / Separate Boots (off by default), the ok_boots_* words
-    BootSet.cs, BootSets.cs the 20 sets: workshop key, game leggings, OpenKeep_Boots_<Key>, name token; Is(item) by token
+    BootSet.cs, BootSets.cs the 20 sets: key (the split's too), game leggings, OpenKeep_Boots_<Key>, name token; lookups
     BootsItems.cs           prefix ZNetScene.Awake, ObjectDB.Awake, CopyOtherDB: builds once, adds the boots to the lists
-    BootsItem.cs            one boots item: a bench copy of its leggings, the boots skin, name, icon, a fifth of the stats
-    BootsDrop.cs            the dropped look: the boots mesh unskinned, at the player body's scale and turn
-    BootsBundle.cs          the bundle ok_boots: ok_pants_<set> and ok_boots_<set>, Male and Female each
-    SetLook.cs              the game materials for a set's pieces, by placeholder name (own, body paint, workshop textures)
-    LiningLook.cs           the coverage cloth keeps the bundle's Workshop/LegArmorLining material; draws nothing where unsupported
+    NativeSplit.cs          assets/boots/native_split.txt: per set the boots triangles, the paint's ankle row, the trousers' paint edits
+    MeshCut.cs              a game skinned mesh cut in two by triangles, its buffers copied back from the GPU (most are not readable)
+    SkinSplit.cs            a leggings' attach_skin meshes cut into trousers [0] and boots [1]; none headless or when the mesh differs
+    BootsItem.cs            one boots item: a bench copy of its leggings, its skin cut to the boots, name, icon cut from the leggings', a fifth of the stats
+    BootsDrop.cs            the dropped look: the boots mesh unskinned, turned into the body's space at the left foot's bind pose
+    LegsLook.cs             VisEquipment.AttachArmor postfix: a player's split leggings draw their trousers parts while on
+    PaintCut.cs, Paint.cs   the leggings' _LegsTex cut at the ankle row into trousers and boots paint, the edits applied (rags: own boots paint); texels in memory
     BootsIcons.cs           the workshop's boots and trousers icons (assets/boots), decoded once, none on a dedicated server
     LegsIcons.cs            the leggings show the trousers icon while the switch is on, their own (remembered) when off
-    BorrowedLooks.cs        placeholders worn with another game item's material (Iron v019's plates: the iron chest's)
-    BootsSkin.cs, SkinSex.cs   a piece as an attach_skin child; Male or Female shown by the body's model index
-    LegsLook.cs             VisEquipment.AttachArmor prefix: the split trousers for the 20 leggings, the body paint kept
-    LegsPaint.cs            the leggings' body paint with the feet cleared (bundle masks ok_body_feetmask_male/_female, GPU readback, kept)
+    BodyPaint.cs            the body's _LegsTex for what is worn: trousers paint (or the game's) with the boots' laid over, made once per mix
     BootsStats.cs           the 80/20 split of armour, eitr, modifiers (boots: flat +5% movement); set sizes + 1; from remembered originals
     BootsShare.cs           the weight share, taken inside Stacks' apply (StackValues.ApplyPrefab)
     BootsRecipes.cs         a boots recipe beside each leggings', the cost split a fifth / the rest
@@ -538,7 +540,8 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
     WornBoots.cs            the worn pair (the equipped flag), cached for the local player; Wear, TakeOffAll
     BootsEquipPatches.cs    EquipItem prefix, IsItemEquiped, IsItemTypeEquiped, UnequipItem, UnequipAllItems postfixes
     BootsStatPatches.cs     armour, resistances, hit durability, set count, weight, modifiers, eitr, breaking, armour difference
-    BootsShow.cs            Humanoid.SetupVisEquipment postfix (ZDO OpenKeep.boots), VisEquipment.UpdateEquipmentVisuals postfix
+    BootsShow.cs            Humanoid.SetupVisEquipment postfix (ZDO OpenKeep.boots), VisEquipment.UpdateEquipmentVisuals postfix (and the paint)
+    WornBootsLink.cs        the worn pair as an EliteCrafting equipment provider, so inscriptions on worn boots count (soft dependency)
 
 Cross-module uses that are allowed: Store's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -678,9 +681,9 @@ postfix `Humanoid.IsItemEquiped`, `IsItemTypeEquiped`, `UnequipItem`, `UnequipAl
 `Player.ApplyArmorDamageMods`, `Humanoid.GetSetCount` (private), `Humanoid.GetEquipmentWeight`, `Player.UpdateModifiers`
 (private), `Player.GetEquipmentEitrRegenModifier`, `Humanoid.UpdateEquipment` (private: a broken pair comes off);
 prefix `Player.DamageArmorDurability` (the pair is one of the pieces a hit may wear down; the original skipped only while
-a pair is worn) and `Player.TryGetArmorDifference` (boots only); prefix `VisEquipment.AttachArmor` (private: the 20
-leggings' hashes only, while on); postfix `Humanoid.SetupVisEquipment` and `VisEquipment.UpdateEquipmentVisuals`
-(private: the worn pair on every client).
+a pair is worn) and `Player.TryGetArmorDifference` (boots only); postfix `VisEquipment.AttachArmor` (private: the 20
+leggings' skins on players draw their trousers parts, while on); postfix `Humanoid.SetupVisEquipment` and
+`VisEquipment.UpdateEquipmentVisuals` (private: the worn pair and the body's leg paint on every client).
 
 ## Config sections and keys
 
@@ -823,11 +826,10 @@ default and sync flag; the one addition is `2. Store / Enabled` (synced, true), 
   `ok_mimirchest` (`assets/bundles/ok_mimirchest.windows` / `.linux`, from ValheimAssets `Assets/Props/MimirsChest`);
   GameObject `OpenKeep_MimirSearch` (the field, in the container panel). No ZDO key and no RPC of its own: the inventory is the game's `items`, the lid reads the game's `InUse`.
 - Boots: item prefabs `OpenKeep_Boots_<Key>` (20, networked items, copies of the game's leggings; PackPanel knows boots
-  by this prefix), words `ok_boots_<key>`, `ok_boots_desc`, `ok_boots_off`; recipes `Recipe_OpenKeep_Boots_<Key>`; bench
-  holders `OpenKeep_Pants_<Key>`; bundle `ok_boots` (`assets/bundles/ok_boots.windows` / `.linux`, from ValheimAssets
-  `Assets/Gear/SeparatedLegArmor`, v008: `ok_pants_<set>`, `ok_boots_<set>`, the textures `ok_body_feetmask_male`, `_female`,
-  the shader `Workshop/LegArmorLining` and its `<Set>_CoverageCloth_v008` materials); icons `OpenKeep.assets.boots.boots_<set>.png`
-  and `pants_<set>.png`; ZDO key `OpenKeep.boots` (int, the worn boots prefab's hash, 0 for none) on the
+  by this prefix), words `ok_boots_<key>`, `ok_boots_desc`, `ok_boots_off`; recipes `Recipe_OpenKeep_Boots_<Key>`; the
+  split data `OpenKeep.assets.boots.native_split.txt` (no bundle: the meshes, materials and paint are the game's own,
+  cut at runtime), icons `OpenKeep.assets.boots.boots_<set>.png` and `pants_<set>.png`, the rag shoes' paint
+  `OpenKeep.assets.boots.paint_boots_rag.png`; ZDO key `OpenKeep.boots` (int, the worn boots prefab's hash, 0 for none) on the
   player and its ragdoll, written by the owner when it changes. No RPC.
 - Construction sites: prefab `OpenKeep_Site` (networked post); its ZDO keys `OpenKeep.site_bp`, `site_name`,
   `site_origin`, `site_yaw`, `site_built`, `site_queue`, `site_store`, `site_ground`, `site_groundStone`,
@@ -2301,37 +2303,41 @@ repaired through the game's own paths, so a dedicated server and the other playe
   80% of their own. Resistances and equip effects
   cannot be split, so they stay on the leggings; durability stays whole on both (a hit wears down one random piece,
   boots included). The boots join the leggings' set and every piece of that set needs one more, so the full set is
-  what it was before, in one more piece. The recipe is split the same way so the pair costs what the leggings did:
-  a fifth of each material (rounded half up) to the boots, the rest kept; boots always cost at least one material
-  and at least one per upgrade level when the leggings do.
-- Look: the boots and the split trousers attach through the game's own armour attach (skinned to the body's bones in
-  the body's order). The leggings' body paint stays on, as for the game's own leggings: the trousers' lower legs sit
-  about 1 cm inside the body in places (the workshop's bundle check, 24 to 69% of each trousers at rest; the game's own
-  0 to 28%), and without the paint under them most looked like shorts. Only the feet are cleared, below the trousers'
-  hem at 0.152 m (the workshop's masks `ok_body_feetmask_male` and `_female`, 512 px in the body's UV space; a legs
-  texel is cleared when any mask texel under it is white), so bare feet show without boots; the cleared copy of each
-  leggings' `_LegsTex` is made through the GPU the first time a client draws it on that body (a one-off hitch).
-- How it looks with the paint on (the workshop's renders, `Renders/Bundle_v002`, not seen in game): 13 sets are whole
-  trousers with or without boots. Leather and Troll leather show the game's painted boot shaft as a band on the shin
-  when worn without boots. Iron (its paint covers none of the legs), Bear and Rag still show skin patches where the
-  trousers dip inside the body, most in crouch, jump and lunge. The workshop's proposed fix, not built: a loose
-  trousers variant per affected set (lower legs or whole legs moved a few mm out of the body) worn only without boots;
-  it changes the approved geometry, so it waits for the user.
-- v008 (2026-10-07, the user: "chatgpt just created the boots and pants over again paired with new icons"): the
-  trousers refit outside the real body, the boots widened to clear them, and inside each trousers a coverage cloth: a
-  copy of the body's legs in the garment's colour between waist and ankle, drawn with the bundle's own shader
-  `Workshop/LegArmorLining` (queue AlphaTest+1, a fixed depth offset 0, -4, so the cloth owns the pixels it shares with
-  the body and never the trousers'; the workshop found no skin in 1,600 views). The game has no such shader, so that
-  material is the bundle's (`LiningLook`); where it cannot run (`Shader.isSupported` false, another graphics API) the
-  cloth draws nothing and the body paint covers as before. The body paint and the feet masks stay.
-- Iron v019 (2026-10-07, user-approved look): wider shin plates with straps on both sides of the shin and plates over
-  the thigh, painted with the iron chest's artwork; those pieces wear the game's `IronArmorChest_mat` from
-  `ArmorIronChest` (`BorrowedLooks`), never a copy of its texture in the bundle. Its own trousers icon (`Icons/v019`).
-- Icons: the workshop's own renders of the separated pieces (`Icons/v008/64`, one trousers and one boots icon per set,
+  what it was before, in one more piece. The recipe is split the same way: a fifth of each material (rounded half up)
+  to the boots, the rest kept; boots always cost at least one material and at least one per upgrade level when the
+  leggings do. Then the boots are priced up (2026-10-08, user: "triple crafting cost for rag, leather, troll, bronze,
+  bear, roots, vilebone, lox. double for padded ... each upgrade needs to get more expensive, also everything should
+  cost at least 2"): those sets' boots craft for three times their share (Padded twice), and no boots material costs
+  less than two, to craft or per upgrade level; the leggings keep their four fifths, so a pair now costs more than the
+  leggings did. "More expensive each upgrade" is the game's own rule (the per-level amount times 1, 2 and 4 for quality
+  2, 3 and 4), so nothing was added for it. Upgrade kits (the game's upgrader resources, `m_upgraderResource`, used only
+  at an upgrader station) are not split: both pieces keep the leggings' own (before 2026-10-08 the copy lost the flag,
+  so the split leggings asked for a kit at the workbench and the boots could not be upgraded at an upgrader).
+- Look, since 2026-10-08 (the user: "chatgpt just fixed all the pants/boots ... remove the old way of the pants boots
+  being split and use these new assets"): the workshop's NativeSplit_v001, the game's own leggings cut in two and
+  nothing added. Each leggings mesh is divided by connected pieces (a piece whose rest height tops out at 0.60 m or
+  below is boots; Lox's one fur shell is cut along its calf edges at 0.43 m); the body paint at an ankle row (49 of 128
+  for most sets, Leather 76 of 256, Troll 84 of 256). The
+  trousers paint of Bronze (v004), Leather and Troll leather (v002) is carried down to the ankle with texels taken from
+  the same paint near the knee, and lies under the boots' paint. No game art ships: OpenKeep embeds only coordinates
+  (`native_split.txt`: the boots triangles per mesh, the row, each edit's target and source texel, checked against the
+  workshop's PNGs on 2026-10-08, every texel equal; rebuilt by the workshop's
+  `NativeSplit_v001/Tools/export_openkeep_split.py`) and cuts at runtime. Most game leggings meshes are not readable, so
+  `MeshCut` copies the index and vertex buffers back from the GPU once per mesh at load (checked in game: the face order
+  and vertex data match the workshop's reference); the paint is read through the GPU the first time a client needs it.
+  Both parts keep the game's materials, bones and bind poses: the leggings' skin is the game's own attach with its
+  meshes swapped for the trousers part (players only; armour stands keep whole leggings), and the boots item carries
+  the same skin cut to the boots. The body's `_LegsTex` is the trousers paint (or the game's, for other leggings or bare
+  legs) with the worn boots' paint laid over it, one texture per mix, kept. The 2026-10-07 looks (v005 to v008 bundles,
+  the coverage cloth shader, the feet masks, Iron v019's borrowed plates, the v008 icons) are gone.
+- Rag shoes (2026-10-08, user: "the ragged boots and icon were just made"): the game's rags have no footwear, so the
+  workshop painted cloth foot-wraps in the rags' colours (Rag_v002: wraps, stitched patches, dark soles; no mesh). Being
+  the workshop's own drawing, not the game's art, it ships as a PNG and is the rag shoes' boots paint (`PaintCut.OwnBoots`).
+- Icons: the workshop's renders of the cut pieces (`NativeSplit_v001/Icons/v001/64`, a trousers and a boots icon per set,
   embedded PNGs). The boots wear theirs; while the switch is on the leggings wear the trousers icon (`LegsIcons`, their
   own remembered and given back when off, prefab and live copies). Without an icon the boots fall back to a cut of the
-  leggings' own (`BundlePrefabs.SpriteCrop`); a dedicated server decodes none. Boots names follow the game's leggings names (Iron
-  Greaves: Iron Boots; Trousers of Ask: Boots of Ask; the cloth sets wear shoes).
+  leggings' own (`BundlePrefabs.SpriteCrop`); a dedicated server decodes none. Boots names follow the game's leggings names (Iron Greaves: Iron Boots; Trousers of Ask: Boots of Ask; the
+  cloth sets wear shoes).
 
 ## Not yet implemented
 
@@ -2377,7 +2383,7 @@ Mímir's Chest (2026-10-06, never run in game yet):
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 4.1.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 4.2.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the

@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0
+
+- Boots: each pair is the game's own footwear from its leggings, cut at the ankle, with new icons; Rag Shoes are cloth foot-wraps.
+- Boots: early sets' boots cost three times their share (Padded twice), at least 2 of each material; upgrade kits are not split.
+- Fixed: EliteCrafting inscriptions on worn boots now count.
+
 ## 4.1.0
 
 - Boots (`Separate Boots`, off by default): leggings split into trousers and boots (80/20 stats and cost); boots give +5% speed.

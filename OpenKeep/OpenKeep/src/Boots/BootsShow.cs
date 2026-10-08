@@ -10,8 +10,8 @@ namespace OpenKeep.Boots
     /// hash, 0 for none) whenever the game sets up its equipment visuals, written only when it changes; a death ragdoll
     /// gets its own copy the same way. Every client's visuals update (each frame, as the game reads its own equipment
     /// keys) attaches the boots' skin through the game's own armour attach when the hash changes, and takes it off when
-    /// it goes. Without a ZDO (the main menu's character) the hash is kept on the character itself. Armour stands are left
-    /// alone.
+    /// it goes, and lays the body paint for it (<see cref="BodyPaint"/>). Without a ZDO (the main menu's character) the
+    /// hash is kept on the character itself. Armour stands are left alone.
     /// </summary>
     public static class BootsShow
     {
@@ -51,6 +51,7 @@ namespace OpenKeep.Boots
                 int hash = zdo != null ? zdo.GetInt(Key) : state.Local;
                 if (hash != state.Hash)
                     state.Swap(__instance, hash);
+                BodyPaint.Update(__instance, hash != 0 ? BootSets.ByHash(hash) : null);
             }
         }
 

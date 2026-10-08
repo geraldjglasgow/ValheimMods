@@ -33,11 +33,12 @@ namespace OpenKeep
     /// YAML files and its language words; patches are applied per class afterwards, Guard.Install goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+    [BepInDependency(EliteCraftingLink.CraftingLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
     public class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "4.1.0";
+        public const string PluginVersion = "4.2.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }

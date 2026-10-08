@@ -5,7 +5,7 @@ namespace OpenKeep.Boots
 {
     /// <summary>
     /// Puts the whole split in or out together: the leggings' stats and set sizes (<see cref="BootsStats"/>), the recipes
-    /// (<see cref="BootsRecipes"/>), the leggings' trousers icon (<see cref="LegsIcons"/>), the leggings' look (<see cref="LegsLook"/>, attached again) and, through Stacks, their weight
+    /// (<see cref="BootsRecipes"/>), the leggings' trousers icon (<see cref="LegsIcons"/>), the leggings' look (<see cref="LegsLook"/>, attached again; the body paint follows) and, through Stacks, their weight
     /// (<see cref="BootsShare"/>). Runs when the item database wakes (before Stacks' own apply, which then weighs them) and
     /// when the switch changes, a server's value arriving included; switching off takes the local player's pair off.
     /// </summary>

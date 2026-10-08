@@ -15,7 +15,7 @@ namespace OpenKeep.Boots
     /// </summary>
     public static class BootsItems
     {
-        private const string Fallback = "ArmorIronLegs";
+        private const string Probe = "ArmorIronLegs";
         private static bool built;
 
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
@@ -64,16 +64,14 @@ namespace OpenKeep.Boots
                 return;
             // The main menu's database wakes with an empty list before it copies the real one in: wait for a list that
             // holds the game's leggings (the iron greaves stand for them).
-            GameObject fallback = Find(prefabs, Fallback);
-            if (fallback == null)
+            if (Find(prefabs, Probe) == null)
                 return;
             built = true;
-            Dictionary<string, Material> borrowed = BorrowedLooks.Find(prefabs);
             foreach (BootSet set in BootSets.All)
             {
                 try
                 {
-                    BuildSet(set, prefabs, fallback, borrowed);
+                    BuildSet(set, prefabs);
                 }
                 catch (Exception e)
                 {
@@ -82,7 +80,7 @@ namespace OpenKeep.Boots
             }
         }
 
-        private static void BuildSet(BootSet set, List<GameObject> prefabs, GameObject fallback, Dictionary<string, Material> borrowed)
+        private static void BuildSet(BootSet set, List<GameObject> prefabs)
         {
             GameObject legs = Find(prefabs, set.Legs);
             if (legs == null || legs.GetComponent<ItemDrop>() == null)
@@ -93,9 +91,9 @@ namespace OpenKeep.Boots
             set.LegsPrefab = legs;
             BootsStats.Remember(legs);
             LegsIcons.Remember(legs);
-            var look = new SetLook(legs, legs.GetComponent<ItemDrop>().m_itemData.m_shared.m_armorMaterial, fallback, borrowed);
-            LegsLook.Add(set, legs, look);
-            set.Item = BootsItem.Build(set, legs, look);
+            Dictionary<Mesh, Mesh[]> cuts = SkinSplit.Cut(set, legs);
+            LegsLook.Add(set, cuts);
+            set.Item = BootsItem.Build(set, legs, cuts);
         }
 
         private static GameObject Find(List<GameObject> prefabs, string name) => prefabs.Find(p => p != null && p.name == name);

@@ -1,12 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OpenKeep.Boots
 {
     /// <summary>
-    /// One of the game's 20 leggings and the boots split from it: the workshop set key (<c>Iron</c>; the bundle's prefabs
-    /// are <c>ok_pants_iron</c> and <c>ok_boots_iron</c>), the game's leggings prefab, the boots item prefab
-    /// (<c>OpenKeep_Boots_Iron</c>, PackPanel's contract is the prefix) and its name token. The prefabs are filled in when
-    /// the scene or the item database first wakes (<see cref="BootsItems"/>).
+    /// One of the game's 20 leggings and the boots split from it: the set key (<c>Iron</c>, also the workshop split's,
+    /// <see cref="NativeSplit"/>), the game's leggings prefab, the boots item prefab (<c>OpenKeep_Boots_Iron</c>,
+    /// PackPanel's contract is the prefix) and its name token. The prefabs and the cut trousers are filled in when the
+    /// scene or the item database first wakes (<see cref="BootsItems"/>).
     /// </summary>
     public sealed class BootSet
     {
@@ -19,15 +20,16 @@ namespace OpenKeep.Boots
             Prefab = Prefix + key;
             Token = token;
             Hash = Prefab.GetStableHashCode();
+            LegsHash = legs.GetStableHashCode();
         }
 
         public string Key { get; }
 
-        /// <summary>The bundle's name for the set: the key in lower case.</summary>
-        public string BundleKey => Key.ToLowerInvariant();
-
         /// <summary>The game's leggings prefab.</summary>
         public string Legs { get; }
+
+        /// <summary>The leggings prefab's hash, what VisEquipment names them by.</summary>
+        public int LegsHash { get; }
 
         /// <summary>The boots item prefab's name, what the game hashes.</summary>
         public string Prefab { get; }
@@ -43,7 +45,7 @@ namespace OpenKeep.Boots
         /// <summary>The game's leggings prefab once found.</summary>
         public GameObject LegsPrefab { get; set; }
 
-        /// <summary>The split trousers' skin under the leggings prefab (<see cref="LegsLook"/>); null without the bundle.</summary>
-        public GameObject PantsSkin { get; set; }
+        /// <summary>The trousers part of each of the leggings' skinned meshes (<see cref="LegsLook"/>); empty when uncut.</summary>
+        public Dictionary<Mesh, Mesh> Trousers { get; } = new Dictionary<Mesh, Mesh>();
     }
 }

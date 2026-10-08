@@ -12,9 +12,12 @@ Section `16. Boots`, one Server setting, off by default.
 - The leggings keep 80% of their armour, armour per upgrade, weight, movement and other stat changes, and eitr regen. The boots carry the other 20%.
 - Resistances and other effects stay on the leggings. Both pieces keep full durability.
 - The boots belong to the leggings' set. A full set needs one more piece than before: the old full set plus its boots.
-- The recipe is split the same way. The boots take a fifth of each material, rounded, and the leggings keep the rest. Together they cost what the leggings did. Upgrades are split the same way.
+- The recipe is split the same way: the boots take a fifth of each material, rounded, and the leggings keep the rest. Upgrades are split the same way.
+- Boots cost more than their fifth: Rag, Leather, Troll Leather, Bronze, Bear, Root, Vilebone and Lox boots cost three times as much to craft, Padded boots twice, and every boots material costs at least 2, to craft and per upgrade. As in the game, each upgrade costs more than the last (the per-upgrade amount once, twice, then four times).
+- Upgrade kits are not split: the leggings and the boots each need the leggings' kit at an upgrade station.
 - The boots are crafted at the leggings' station and level.
-- Leggings now end at the ankle, and the boots show on your feet. Everyone sees what you wear.
+- Leggings now end at the ankle, and the boots are the game's own footwear from those leggings, on your feet. Everyone sees what you wear.
+- Leather and troll leather boots are painted on, as the game paints them. Rag Shoes are painted cloth foot-wraps.
 
 ## Wearing boots
 

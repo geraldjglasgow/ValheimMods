@@ -5,7 +5,7 @@ namespace OpenKeep.Boots
 {
     /// <summary>
     /// The 20 leggings the workshop split (every player leggings of the game as of 2026-10-06, Deep North included; the
-    /// workshop's <c>Assets/Gear/SeparatedLegArmor</c>) and their boots' English names, made from the leggings' own
+    /// workshop's <c>Assets/Gear/SeparatedLegArmor/NativeSplit_v001</c>) and their boots' English names, made from the leggings' own
     /// ("Iron Greaves" gives "Iron Boots", "Trousers of Ask" gives "Boots of Ask"; light cloth sets wear shoes). Items are
     /// told apart by their name token, which every live copy of an item carries.
     /// </summary>
@@ -14,6 +14,8 @@ namespace OpenKeep.Boots
         private static readonly List<BootSet> all = new List<BootSet>();
         private static readonly Dictionary<string, BootSet> byToken = new Dictionary<string, BootSet>();
         private static readonly Dictionary<string, BootSet> byLegs = new Dictionary<string, BootSet>();
+        private static readonly Dictionary<int, BootSet> byHash = new Dictionary<int, BootSet>();
+        private static readonly Dictionary<int, BootSet> byLegsHash = new Dictionary<int, BootSet>();
 
         public static IReadOnlyList<BootSet> All => all;
 
@@ -54,6 +56,12 @@ namespace OpenKeep.Boots
         public static BootSet ByLegs(string legsPrefab) =>
             legsPrefab != null && byLegs.TryGetValue(legsPrefab, out BootSet set) ? set : null;
 
+        /// <summary>The set whose boots prefab has this hash, or null.</summary>
+        public static BootSet ByHash(int bootsHash) => byHash.TryGetValue(bootsHash, out BootSet set) ? set : null;
+
+        /// <summary>The set whose leggings prefab has this hash, or null.</summary>
+        public static BootSet ByLegsHash(int legsHash) => byLegsHash.TryGetValue(legsHash, out BootSet set) ? set : null;
+
         private static void Add(string key, string legs, string name)
         {
             string token = Language.Add("ok_boots_" + key.ToLowerInvariant(), name);
@@ -61,6 +69,8 @@ namespace OpenKeep.Boots
             all.Add(set);
             byToken[token] = set;
             byLegs[legs] = set;
+            byHash[set.Hash] = set;
+            byLegsHash[set.LegsHash] = set;
         }
     }
 }

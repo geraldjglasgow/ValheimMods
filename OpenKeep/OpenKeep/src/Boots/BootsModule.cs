@@ -17,6 +17,7 @@ namespace OpenKeep.Boots
             Language.Add("ok_boots_desc", "Boots split from the matching leggings: a fifth of their armour, weight and stats, worn on the feet. They count towards the leggings' set.");
             Language.Add("ok_boots_off", "Boots are switched off on this world");
             BootsSettings.Enabled.SettingChanged += (_, _) => Guard.Run("boots switch", BootsSwitch.Changed);
+            WornBootsLink.Register();
         }
     }
 }

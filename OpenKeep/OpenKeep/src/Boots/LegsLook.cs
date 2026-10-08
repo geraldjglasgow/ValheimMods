@@ -1,31 +1,26 @@
+using System;
 using System.Collections.Generic;
-using BundlePrefabs;
 using HarmonyLib;
 using UnityEngine;
+
+using Object = UnityEngine.Object;
 
 namespace OpenKeep.Boots
 {
     /// <summary>
-    /// The split leggings' look while boots are on: the game attaches the workshop's trousers (to the ankle, no boots) in
-    /// place of the leggings' own skin. The game's body paint stays, as for any leggings (the trousers' lower legs sit
-    /// partly inside the body and the paint under them keeps them whole; switched off, most looked like shorts in the
-    /// workshop's renders), except on the feet (<see cref="LegsPaint"/>). The trousers' skin waits on the bench
-    /// (<see cref="BootsSkin"/>): the game's prefabs keep their hierarchy, and <c>VisEquipment.AttachArmor</c> is answered
-    /// for the 20 leggings' hashes only. Every client draws it the same, as the switch is synced. Without the bundle the
-    /// leggings keep their own look.
+    /// The split leggings' look while Separate Boots is on: the game attaches its own leggings skin as always, and each of
+    /// its skinned meshes then draws only the trousers part (<see cref="SkinSplit"/>, the workshop's cut of the game's own
+    /// triangles), so the footwear is left to the boots; the body paint follows in <see cref="BodyPaint"/>. Players only:
+    /// armour stands and other characters keep the whole leggings. Every client draws it the same, as the switch is
+    /// synced; uncut leggings (no mesh, or a mesh the split does not fit) keep the game's look.
     /// </summary>
     public static class LegsLook
     {
-        private static readonly Dictionary<int, BootSet> byHash = new Dictionary<int, BootSet>();
-
-        /// <summary>Makes the set's trousers skin on the bench; the leggings then wear it while boots are on.</summary>
-        public static void Add(BootSet set, GameObject legs, SetLook look)
+        /// <summary>Keeps the set's trousers parts; the leggings wear them while the switch is on.</summary>
+        public static void Add(BootSet set, Dictionary<Mesh, Mesh[]> cuts)
         {
-            var holder = new GameObject("OpenKeep_Pants_" + set.Key);
-            holder.transform.SetParent(PrefabBench.Root, false);
-            set.PantsSkin = BootsSkin.Make(holder, BootsBundle.Pants(set), look);
-            if (set.PantsSkin != null)
-                byHash[legs.name.GetStableHashCode()] = set;
+            foreach (KeyValuePair<Mesh, Mesh[]> cut in cuts)
+                set.Trousers[cut.Key] = cut.Value[0];
         }
 
         /// <summary>The switch changed: every character's leggings are attached again, the split ones or the game's.</summary>
@@ -40,40 +35,32 @@ namespace OpenKeep.Boots
             }
         }
 
-        /// <summary>The set whose split trousers to wear for a leggings hash while boots are on, or null for the game's own.</summary>
-        public static BootSet Split(int itemHash) =>
-            BootsSettings.On && byHash.TryGetValue(itemHash, out BootSet set) ? set : null;
-
-        /// <summary>The game's skinned branch of AttachArmor, for the trousers' skin: under the body, bound to its bones.</summary>
-        public static List<GameObject> Attach(VisEquipment vis, GameObject skin)
+        private static void Wear(GameObject skin, Dictionary<Mesh, Mesh> trousers)
         {
-            SkinnedMeshRenderer body = vis.m_bodyModel;
-            Transform visual = body.transform.parent;
-            GameObject worn = Object.Instantiate(skin, body.transform.position, visual.rotation, visual);
-            worn.SetActive(true);
-            foreach (SkinnedMeshRenderer part in worn.GetComponentsInChildren<SkinnedMeshRenderer>())
+            foreach (SkinnedMeshRenderer part in skin.GetComponentsInChildren<SkinnedMeshRenderer>(true))
             {
-                part.rootBone = body.rootBone;
-                part.bones = body.bones;
+                if (part.sharedMesh != null && trousers.TryGetValue(part.sharedMesh, out Mesh cut))
+                    part.sharedMesh = cut;
             }
-            VisEquipment.CleanupInstance(worn);
-            vis.RefreshSnowLevel();
-            return new List<GameObject> { worn };
         }
 
-        /// <summary>The game set the leggings' body paint just before (SetLegEquipped); the feet are cleared after it.</summary>
+        /// <summary>After the game attached a split leggings' skin to a player: its meshes swapped for their trousers parts.</summary>
         [HarmonyPatch(typeof(VisEquipment), nameof(VisEquipment.AttachArmor))]
         private static class AttachPatch
         {
-            [HarmonyPrefix]
-            private static bool Prefix(VisEquipment __instance, int itemHash, ref List<GameObject> __result)
+            [HarmonyPostfix]
+            private static void Postfix(VisEquipment __instance, int itemHash, List<GameObject> __result)
             {
-                BootSet set = Split(itemHash);
-                if (set == null || __instance.m_bodyModel == null)
-                    return true;
-                __result = Attach(__instance, set.PantsSkin);
-                LegsPaint.Apply(__instance, set);
-                return false;
+                if (__result == null || !BootsSettings.On || !__instance.m_isPlayer || __instance.m_isArmorStand)
+                    return;
+                BootSet set = BootSets.ByLegsHash(itemHash);
+                if (set == null || set.Trousers.Count == 0)
+                    return;
+                foreach (GameObject piece in __result)
+                {
+                    if (piece != null && piece.name.StartsWith(SkinSplit.Skin, StringComparison.Ordinal))
+                        Wear(piece, set.Trousers);
+                }
             }
         }
     }

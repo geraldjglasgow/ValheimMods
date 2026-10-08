@@ -6,18 +6,18 @@ using UnityEngine.Rendering;
 namespace OpenKeep.Boots
 {
     /// <summary>
-    /// The workshop's icons for the split pieces (ValheimAssets <c>Assets/Gear/SeparatedLegArmor/Icons/v008/64</c>: new
-    /// renders of the separated trousers and boots, not the game's sprites), embedded as <c>assets/boots/boots_&lt;set&gt;.png</c>
-    /// and <c>pants_&lt;set&gt;.png</c> (set = the bundle key). Each is decoded once, on first use; none on a dedicated
-    /// server, which draws nothing. Null when missing (logged).
+    /// The workshop's icons for the split pieces (ValheimAssets <c>Assets/Gear/SeparatedLegArmor/NativeSplit_v001/Icons/v001/64</c>:
+    /// renders of the cut trousers and boots, the rag shoes' new paint included, not the game's sprites), embedded as
+    /// <c>assets/boots/boots_&lt;set&gt;.png</c> and <c>pants_&lt;set&gt;.png</c> (set = the key in lower case). Each is
+    /// decoded once, on first use; none on a dedicated server, which draws nothing. Null when missing (logged).
     /// </summary>
     public static class BootsIcons
     {
         private static readonly Dictionary<string, Sprite> loaded = new Dictionary<string, Sprite>();
 
-        public static Sprite Boots(BootSet set) => Load("boots_" + set.BundleKey);
+        public static Sprite Boots(BootSet set) => Load("boots_" + set.Key.ToLowerInvariant());
 
-        public static Sprite Pants(BootSet set) => Load("pants_" + set.BundleKey);
+        public static Sprite Pants(BootSet set) => Load("pants_" + set.Key.ToLowerInvariant());
 
         private static Sprite Load(string name)
         {

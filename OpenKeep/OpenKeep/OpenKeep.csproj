@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>4.1.0</Version>
+    <Version>4.2.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -141,9 +141,11 @@
     <EmbeddedResource Include="blueprints\*.json" LogicalName="OpenKeep.blueprints.%(Filename)%(Extension)" />
     <!-- Mímir's Chest's model, lid and icon (ValheimAssets Assets/Props/MimirsChest), one bundle per platform -->
     <EmbeddedResource Include="assets\bundles\ok_mimirchest.*" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />
-    <!-- Boots: the split leggings and their boots (ValheimAssets Assets/Gear/SeparatedLegArmor), one bundle per platform -->
-    <EmbeddedResource Include="assets\bundles\ok_boots.*" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />
-    <!-- Their icons (ValheimAssets Icons/v008/64): OpenKeep.assets.boots.boots_<set>.png and pants_<set>.png -->
+    <!-- Boots: where the game's leggings are cut into trousers and boots (ValheimAssets Assets/Gear/SeparatedLegArmor/
+         NativeSplit_v001), coordinates only: OpenKeep.assets.boots.native_split.txt -->
+    <EmbeddedResource Include="assets\boots\native_split.txt" LogicalName="OpenKeep.assets.boots.native_split.txt" />
+    <!-- Their icons (NativeSplit_v001/Icons/v001/64): OpenKeep.assets.boots.boots_<set>.png and pants_<set>.png; and the
+         rag shoes' own paint (Revisions/Rag_v002): OpenKeep.assets.boots.paint_boots_rag.png -->
     <EmbeddedResource Include="assets\boots\*.png" LogicalName="OpenKeep.assets.boots.%(Filename)%(Extension)" />
   </ItemGroup>
 
