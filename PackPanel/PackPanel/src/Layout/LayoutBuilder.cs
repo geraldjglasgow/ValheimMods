@@ -15,7 +15,8 @@ namespace PackPanel.Layout
     /// cells at the top left (<see cref="InventorySettings.HandCells"/>, hotbar keys 1 and 2). A worn backpack's slots
     /// follow those cells in reading order (<see cref="Backpack.SlotsFor"/>), filling the rest of a hands row first; the
     /// spare cells of a partly used last row stay blocked. The slots follow in a fixed order:
-    /// Head, Chest, Legs, Back, Backpack, Utility, Trinket, Food, Mead, Ammo, Purse, each group as many as <see cref="SlotCounts"/> says,
+    /// Head, Chest, Legs, Feet (only while OpenKeep wears its boots on their own, <see cref="OpenKeepLink.SeparateBoots"/>), Back,
+    /// Backpack, Utility, Trinket, Food, Mead, Ammo, Purse, each group as many as <see cref="SlotCounts"/> says,
     /// then with Key Ring on one ring cell per key in Key Items (<see cref="KeyRing"/>), then with Tacklebox on the Tacklebox
     /// slot and as many cells as the box in it gives (<see cref="Tacklebox.CellsFor"/>), last because their count changes
     /// with the box, so no other slot moves when it does. With the module off the layout is
@@ -50,7 +51,7 @@ namespace PackPanel.Layout
         {
             List<Slot> slots = new List<Slot>();
             if (InventorySettings.EquipmentSlots.Value)
-                Add(slots, 1, SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Back);
+                Add(slots, 1, Armour());
             if (InventorySettings.BackpackSlot.Value)
                 Add(slots, 1, SlotKind.Backpack);
             Add(slots, SlotCounts.Utility, SlotKind.Utility);
@@ -70,6 +71,12 @@ namespace PackPanel.Layout
             }
             return slots;
         }
+
+        private static readonly SlotKind[] ArmourSlots = { SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Back };
+        private static readonly SlotKind[] ArmourWithFeet = { SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Feet, SlotKind.Back };
+
+        /// <summary>The armour slots, with Feet after Legs while OpenKeep wears its boots on their own.</summary>
+        private static SlotKind[] Armour() => OpenKeepLink.SeparateBoots ? ArmourWithFeet : ArmourSlots;
 
         /// <summary>Numbers 1 to <paramref name="count"/> of every kind given.</summary>
         private static void Add(List<Slot> slots, int count, params SlotKind[] kinds)

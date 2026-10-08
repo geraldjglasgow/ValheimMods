@@ -12,7 +12,7 @@ namespace PackPanel.Tackle
     /// the game's take all (which puts each item back at its old cell) would miss them. So before a take all from the
     /// player's own grave the box that was carried goes back into its slot first and the layout grows to match; the
     /// grave's easy fit check (<see cref="GraveFit"/>) sends the box and its bait to their own cells. A spare box carried
-    /// in the grid is not mistaken for it. With Keep Slots On Death the box stays with the player and only its bait goes
+    /// in the grid is not mistaken for it. With Tacklebox in Keep On Death the box stays with the player and only its bait goes
     /// to the grave, into cells that are still there.
     /// </summary>
     public static class TackleboxGrave

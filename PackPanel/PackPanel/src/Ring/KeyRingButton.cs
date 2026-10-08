@@ -11,7 +11,7 @@ namespace PackPanel.Ring
     /// <summary>
     /// The key ring's button on the purse's row of the slot panel (<see cref="SlotPanelLayout.RingCell"/>): a copy of the
     /// game's cell, not a cell of the inventory, so it never holds an item. It shows the ring's bronze icon with its
-    /// caption like an empty slot (<see cref="SlotLabels"/>; the icon alone with Slot Labels off) and, in the game's small
+    /// caption like an empty slot (<see cref="SlotLabels"/>; its own icon with Slot Labels and Slot Icons both off) and, in the game's small
     /// corner number, how many different keys the player holds anywhere in the inventory. Hovering lists them with their
     /// counts; a click goes to <see cref="KeyRingClicks"/>. A key never carried before makes it glow, with a note under it
     /// (<see cref="KeyRingNotice"/>). The gamepad selects it through the first ring cell while the
@@ -56,7 +56,7 @@ namespace PackPanel.Ring
         {
             if (button == null || !button.gameObject.activeInHierarchy || !KeyRing.Active)
                 return;
-            button.m_icon.enabled = !InventorySettings.SlotLabels.Value;
+            button.m_icon.enabled = !SlotLabels.Shown;
             button.m_icon.sprite = SlotIcons.For(SlotKind.Key);
             button.m_icon.color = SlotIcons.Hint;
             Inventory inventory = InventoryState.Player.GetInventory();

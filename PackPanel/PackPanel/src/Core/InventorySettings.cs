@@ -1,6 +1,7 @@
 using BepInEx.Configuration;
 using PackPanel.Backpacks;
 using PackPanel.Ring;
+using PackPanel.Slots;
 using SyncedConfig;
 
 namespace PackPanel.Core
@@ -45,9 +46,10 @@ namespace PackPanel.Core
         public static ConfigEntry<int> MeadSlots { get; private set; }
         public static ConfigEntry<int> AmmoSlots { get; private set; }
         public static ConfigEntry<bool> CoinPurse { get; private set; }
-        public static ConfigEntry<bool> KeepSlotsOnDeath { get; private set; }
+        public static ConfigEntry<KeptGroups> KeepOnDeath { get; private set; }
         public static ConfigEntry<float> BaseCarryWeight { get; private set; }
         public static ConfigEntry<bool> SlotLabels { get; private set; }
+        public static ConfigEntry<bool> SlotIcons { get; private set; }
         public static ConfigEntry<bool> BrownStyle { get; private set; }
         public static ConfigEntry<InventoryTheme> PanelTheme { get; private set; }
         public static ConfigEntry<float> FrameWidth { get; private set; }
@@ -84,14 +86,14 @@ namespace PackPanel.Core
             BaseCarryWeight = synced.Bind(Section, "Base Carry Weight", GameCarryWeight,
                 "How much a player carries before being over-encumbered, before Megingjord and other effects add to it. The game has 300. The world's carry weight modifier still scales it.",
                 acceptableValues: new AcceptableValueRange<float>(50f, 10000f));
-            KeepSlotsOnDeath = synced.Bind(Section, "Keep Slots On Death", false,
-                "Items in the gear, backpack, utility, trinket, food, mead and ammo slots stay with you when you die instead of going into your grave; the armour, utilities and trinket you wore are worn again when you wake. The coin purse, the key ring and the grid follow the game's rules.");
+            KeepOnDeath = synced.Bind(Section, "Keep On Death", KeptGroups.None,
+                "The slot groups whose items stay with you when you die instead of going into your grave, comma separated (e.g. Food, Ammo): Gear (head, chest, legs, back, and feet with OpenKeep's boots), Backpack, Utility, Trinket, Food, Mead, Ammo, Tacklebox. What you wore of them is worn again when you wake. A backpack's or tacklebox's own cells, the coin purse, the key ring and the grid follow the game's rules. None: everything goes to the grave.");
         }
 
         private static void BindWorn(SyncedConfiguration synced)
         {
             EquipmentSlots = synced.Bind(SlotsSection, "Equipment Slots", true,
-                "Head, Chest, Legs and Back slots. Armour you wear sits in its slot; drop a piece on its slot to wear it, drag it out to take it off.");
+                "Head, Chest, Legs and Back slots, and a Feet slot for OpenKeep's boots while its Separate Boots is on. Armour you wear sits in its slot; drop a piece on its slot to wear it, drag it out to take it off.");
             AutoEquip = synced.Bind(SlotsSection, "Auto Equip", true,
                 "Gear in the Gear tab is worn. Right click armour, a cape, a backpack, a utility or a trinket in your inventory or in an open chest to wear it; a piece that lands in its slot any other way is put on too. Right click a worn piece to take it off: it moves into a free cell of your inventory; with none it comes off in its slot and stays off until you put it on again; it is never dropped. A piece that breaks while worn stays in its slot and goes back on once repaired. Off: a piece that lands in its slot unworn stays unworn, and a right click in a chest does nothing.");
             InstantEquip = synced.Bind(SlotsSection, "Instant Equip", false,
@@ -130,7 +132,9 @@ namespace PackPanel.Core
 
         private static void BindDisplay(SyncedConfiguration synced)
         {
-            SlotLabels = synced.Bind(LookSection, "Slot Labels", true, "The name of each slot on the slot.", synced: false);
+            SlotLabels = synced.Bind(LookSection, "Slot Labels", true, "The name of each slot on the slot while it is empty.", synced: false);
+            SlotIcons = synced.Bind(LookSection, "Slot Icons", true,
+                "A drawing of what belongs in each slot on the slot while it is empty, centred when Slot Labels is off.", synced: false);
             BrownStyle = synced.Bind(LookSection, "Brown Style", true,
                 "The brown framed look of the inventory panels, their cells and the slot panel. Off: the game's wood.", synced: false);
             WeightUnderMinimap = synced.Bind(LookSection, "Weight Under Minimap", true,

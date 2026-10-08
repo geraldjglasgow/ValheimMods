@@ -11,7 +11,7 @@ namespace PackPanel.Slots
 {
     /// <summary>
     /// Death and the grave. While the game makes the tombstone it takes the armour off; the worn slots stay put, so the
-    /// grave keeps every item at its cell (or, with Keep Slots On Death, the slots' items stay with the player,
+    /// grave keeps every item at its cell (or, with Keep On Death, the kept groups' items stay with the player,
     /// <see cref="KeptOnDeath"/>). Taking all from the player's own grave (<c>Inventory.MoveAll</c>, the game
     /// puts each item back at its old cell when it is free) brings the armour back into its slots, where it is put on
     /// again; the backpack worn at death goes back into its slot first, so its slots are there again and the cells
@@ -40,7 +40,7 @@ namespace PackPanel.Slots
         [HarmonyPatch(typeof(Player), nameof(Player.CreateTombStone))]
         public static class Tombstone
         {
-            /// <summary>Set for the local player: worn moves are suspended, and what Keep Slots On Death took out.</summary>
+            /// <summary>Set for the local player: worn moves are suspended, and what Keep On Death took out.</summary>
             public sealed class Death
             {
                 public KeptOnDeath Kept;

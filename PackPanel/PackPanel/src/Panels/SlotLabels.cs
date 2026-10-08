@@ -12,7 +12,9 @@ namespace PackPanel.Panels
     /// with the slot's name under it in the game's serif (the font of its buttons), light and easy to read. An item in
     /// the slot covers both: they show only while the slot is empty (<c>InventoryElement.m_used</c>, which the game sets
     /// every frame). No outline: on the game's font material an outline swallowed the letters. Children of the element,
-    /// so they go where the element goes and die with it when the grid rebuilds. Slot Labels off hides them.
+    /// so they go where the element goes and die with it when the grid rebuilds. Slot Labels off hides the name, Slot
+    /// Icons off the icon (asked on GitHub 2026-10-07: the names off, the drawings kept); the icon alone sits in the
+    /// middle of the slot. A change of either sets every hint again (<see cref="SlotElements.Invalidate"/>).
     /// </summary>
     public static class SlotLabels
     {
@@ -26,6 +28,9 @@ namespace PackPanel.Panels
 
         public static string TextFor(Slot slot) => Language.Localize(Words.Caption(slot.Kind));
 
+        /// <summary>Whether an empty slot shows anything at all: its name, its icon or both.</summary>
+        public static bool Shown => InventorySettings.SlotLabels.Value || InventorySettings.SlotIcons.Value;
+
         /// <summary>The grid was placed again: the hints to keep up to date are the ones set from now on.</summary>
         public static void Clear()
         {
@@ -36,19 +41,30 @@ namespace PackPanel.Panels
         public static void Set(InventoryElement element, Slot slot, TMP_FontAsset font)
         {
             Transform hint = element.transform.Find(Name) ?? Create(element, font);
-            hint.GetComponentInChildren<TMP_Text>(true).text = TextFor(slot);
+            TMP_Text caption = hint.GetComponentInChildren<TMP_Text>(true);
+            caption.text = TextFor(slot);
+            caption.gameObject.SetActive(InventorySettings.SlotLabels.Value);
             Image icon = hint.Find("icon").GetComponent<Image>();
             icon.sprite = SlotIcons.For(slot.Kind);
             icon.color = SlotIcons.TintFor(slot.Kind);
-            icon.enabled = icon.sprite != null;
+            icon.enabled = icon.sprite != null && InventorySettings.SlotIcons.Value;
+            PlaceIcon((RectTransform)icon.transform, InventorySettings.SlotLabels.Value);
             captioned.Add(element);
             hints.Add(hint);
+        }
+
+        /// <summary>Above the name when it shows, in the middle of the slot when the icon is alone.</summary>
+        private static void PlaceIcon(RectTransform rect, bool underName)
+        {
+            float y = underName ? 1f : 0.5f;
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, y);
+            rect.anchoredPosition = new Vector2(0f, underName ? -IconTop : 0f);
         }
 
         /// <summary>Every frame the grid is drawn: a hint shows while its slot is empty.</summary>
         public static void Refresh()
         {
-            bool on = InventorySettings.SlotLabels.Value;
+            bool on = Shown;
             for (int i = 0; i < captioned.Count; i++)
             {
                 InventoryElement element = captioned[i];
@@ -83,10 +99,7 @@ namespace PackPanel.Panels
 
         private static void Icon(RectTransform rect)
         {
-            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 1f);
-            rect.pivot = new Vector2(0.5f, 1f);
             rect.sizeDelta = new Vector2(IconSize, IconSize);
-            rect.anchoredPosition = new Vector2(0f, -IconTop);
             Image image = rect.gameObject.AddComponent<Image>();
             image.preserveAspect = true;
             image.raycastTarget = false;
@@ -104,12 +117,20 @@ namespace PackPanel.Panels
             TextMeshProUGUI label = rect.gameObject.AddComponent<TextMeshProUGUI>();
             label.font = font;
             rect.gameObject.SetActive(true);
+            Style(label);
+            rect.gameObject.AddComponent<CaptionStyle>();
+        }
+
+        /// <summary>The slot name's look: small enough for the longest name ("Backpack") on one line.</summary>
+        public static void Style(TextMeshProUGUI label)
+        {
             label.enableAutoSizing = true;
-            label.fontSizeMin = 9f;
-            label.fontSizeMax = 14f;
+            label.fontSizeMin = 7f;
+            label.fontSizeMax = 12f;
             label.color = CaptionColour;
             label.alignment = TextAlignmentOptions.Center;
             label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Ellipsis;
             label.raycastTarget = false;
         }
     }

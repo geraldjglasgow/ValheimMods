@@ -11,10 +11,11 @@ namespace PackPanel.Worn
     /// leave their slot or are put on again: one whose equip another mod refuses, and one taken off with no free main
     /// cell, which comes off in place (the user, 2026-10-06: "if auto equip is on, inventory is full, and you want to
     /// unequip helmet, it should unequip in place"). Backpacks keep their own rule (<see cref="Backpacks.BackpackEquip"/>).
+    /// Boots in the Feet slot are put on through the game's EquipItem, which OpenKeep answers for them.
     /// </summary>
     public static class GearKeep
     {
-        private static readonly SlotKind[] Kinds = { SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Back, SlotKind.Utility, SlotKind.Trinket };
+        private static readonly SlotKind[] Kinds = { SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Feet, SlotKind.Back, SlotKind.Utility, SlotKind.Trinket };
         private static readonly List<ItemDrop.ItemData> leftOff = new List<ItemDrop.ItemData>();
 
         public static bool On => InventoryState.Active && InventorySettings.AutoEquip.Value;

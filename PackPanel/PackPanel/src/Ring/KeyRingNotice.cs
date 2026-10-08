@@ -74,7 +74,7 @@ namespace PackPanel.Ring
             hint = icon != null ? icon.GetComponent<Image>() : null;
         }
 
-        /// <summary>Both icons the button may show (its own with Slot Labels off, the hint's with them on), from their hint colour towards gold.</summary>
+        /// <summary>Both icons the button may show (its own with Slot Labels and Slot Icons off, the hint's otherwise), from their hint colour towards gold.</summary>
         private static void Breathe(InventoryElement button, float glow)
         {
             button.m_icon.color = Color.Lerp(SlotIcons.Hint, Glow, glow);

@@ -10,6 +10,7 @@ namespace PackPanel.Core
         public static string Head { get; private set; }
         public static string Chest { get; private set; }
         public static string Legs { get; private set; }
+        public static string Feet { get; private set; }
         public static string Back { get; private set; }
         public static string Backpack { get; private set; }
         public static string Utility { get; private set; }
@@ -42,18 +43,7 @@ namespace PackPanel.Core
 
         public static void Register()
         {
-            Head = Language.Add("packpanel_head", "Head");
-            Chest = Language.Add("packpanel_chest", "Chest");
-            Legs = Language.Add("packpanel_legs", "Legs");
-            Back = Language.Add("packpanel_back", "Back");
-            Backpack = Language.Add("packpanel_backpack", "Backpack");
-            Utility = Language.Add("packpanel_utility", "Utility");
-            Trinket = Language.Add("packpanel_trinket", "Trinket");
-            Food = Language.Add("packpanel_food", "Food");
-            Mead = Language.Add("packpanel_mead", "Mead");
-            Ammo = Language.Add("packpanel_ammo", "Ammo");
-            Coins = Language.Add("packpanel_coins", "Coins");
-            Keys = Language.Add("packpanel_keys", "Keys");
+            RegisterCaptions();
             KeyRing = Language.Add("packpanel_keyring", "Key ring");
             NoKeysHeld = Language.Add("packpanel_nokeysheld", "You carry no keys");
             NotAKey = Language.Add("packpanel_notakey", "Only keys go on the key ring");
@@ -65,6 +55,24 @@ namespace PackPanel.Core
             GearTab = Language.Add("packpanel_tab_gear", "Gear");
             ConsumablesTab = Language.Add("packpanel_tab_consumables", "Consumables");
             RegisterStats();
+        }
+
+        /// <summary>The slot captions.</summary>
+        private static void RegisterCaptions()
+        {
+            Head = Language.Add("packpanel_head", "Head");
+            Chest = Language.Add("packpanel_chest", "Chest");
+            Legs = Language.Add("packpanel_legs", "Legs");
+            Feet = Language.Add("packpanel_feet", "Feet");
+            Back = Language.Add("packpanel_back", "Back");
+            Backpack = Language.Add("packpanel_backpack", "Backpack");
+            Utility = Language.Add("packpanel_utility", "Utility");
+            Trinket = Language.Add("packpanel_trinket", "Trinket");
+            Food = Language.Add("packpanel_food", "Food");
+            Mead = Language.Add("packpanel_mead", "Mead");
+            Ammo = Language.Add("packpanel_ammo", "Ammo");
+            Coins = Language.Add("packpanel_coins", "Coins");
+            Keys = Language.Add("packpanel_keys", "Keys");
         }
 
         /// <summary>The stat sheet's headings.</summary>
@@ -90,6 +98,7 @@ namespace PackPanel.Core
                 case SlotKind.Head: return Head;
                 case SlotKind.Chest: return Chest;
                 case SlotKind.Legs: return Legs;
+                case SlotKind.Feet: return Feet;
                 case SlotKind.Back: return Back;
                 case SlotKind.Backpack: return Backpack;
                 case SlotKind.Utility: return Utility;

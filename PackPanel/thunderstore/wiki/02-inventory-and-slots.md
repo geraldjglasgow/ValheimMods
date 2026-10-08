@@ -15,6 +15,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 | Slot | Where | Takes |
 | --- | --- | --- |
 | Head, Chest, Legs, Back | Gear tab | Helmets, chest armour, leg armour, capes |
+| Feet | Gear tab, under Legs | OpenKeep's boots, while OpenKeep's `Separate Boots` is on |
 | Backpack | Gear tab | PackPanel's backpacks (other mods' backpacks fit but are not worn) |
 | Utility (up to 5) | Gear tab | Belts, the wishbone, the wisplight... |
 | Trinket | Gear tab | Trinkets |
@@ -27,7 +28,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 
 ## Worn gear
 
-- An item in Head, Chest, Legs, Back, Utility or Trinket is worn.
+- An item in Head, Chest, Legs, Feet, Back, Utility or Trinket is worn.
 - Wear: drop it on its slot, or right click it in the grid. Take off: drag it to the grid, or right click it.
 - Every utility in the Utility slots is worn at once and all their effects count. Your character shows only one, and a second copy of the same utility is not worn.
 
@@ -65,7 +66,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 
 - By default everything goes to the grave. Take all from your own grave and everything goes back where it was, armour, backpack and tacklebox included, worn again.
 - Use on your own grave takes everything at once when it fits, otherwise it opens the grave. The backpack you wore counts with its cells and carry weight, and slot items count as going back into their slots, so a full backpack still comes back in one press.
-- `Keep Slots On Death` keeps your gear, backpack, utility, trinket, food, mead and ammo slots and your tacklebox when you die. The grid, the purse, the keys and the bait still go to the grave.
+- `Keep On Death` names the slot groups that stay with you when you die, any of Gear (head, chest, legs, feet, back), Backpack, Utility, Trinket, Food, Mead, Ammo and Tacklebox, e.g. `Food, Ammo`. What you wore of them is worn again when you wake. The grid, the purse, the keys and the bait always go to the grave.
 
 ## Gamepad
 

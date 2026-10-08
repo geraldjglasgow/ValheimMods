@@ -10,7 +10,7 @@ namespace PackPanel.Backpacks
     /// bottom, or taken away with what they held moved to free cells and the rest dropped at the player's feet (the user's
     /// choice). The pack in the slot carries the equipped flag (<see cref="BackpackEquip.Sync"/>), and EliteCrafting hears
     /// when the worn pack changes (<see cref="WornPackLink"/>). The player's ZDO names the worn pack, so every client
-    /// shows it on the back. Only here, in Update: Keep Slots On Death takes the pack out of the inventory for the length
+    /// shows it on the back. Only here, in Update: Keep On Death (Backpack) takes the pack out of the inventory for the length
     /// of <c>CreateTombStone</c>, which no frame sees, and a dead player is left alone.
     /// </summary>
     public static class BackpackWear

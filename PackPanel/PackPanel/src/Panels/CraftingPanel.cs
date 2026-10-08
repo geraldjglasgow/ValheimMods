@@ -15,7 +15,8 @@ namespace PackPanel.Panels
     /// width never reaches the inventory's panels on the left (the player panel and PackPanel's slot and stats panels,
     /// less the repair button that hangs off the crafting panel's left edge), the height never the screen's bottom: on a
     /// narrow screen the panel gets what fits. Everything is set from the game's own values each time, so 0, or
-    /// PackPanel off, is the game's panel exactly.
+    /// PackPanel off, is the game's panel exactly; so is AAA Crafting installed (<see cref="AaaCraftingLink"/>), which
+    /// lays the panel out itself.
     /// </summary>
     public static class CraftingPanel
     {
@@ -40,7 +41,7 @@ namespace PackPanel.Panels
             }
             if (parts == null)
                 return;
-            bool on = InventoryState.Active;
+            bool on = InventoryState.Active && !AaaCraftingLink.Present;
             float width = on ? Mathf.Min(InventorySettings.CraftingWidth.Value, RoomLeft(gui)) : 0f;
             float height = on ? Mathf.Min(InventorySettings.CraftingHeight.Value, RoomBelow(gui)) : 0f;
             Lay(gui, Mathf.Round(Mathf.Max(0f, width)), Mathf.Round(Mathf.Max(0f, height)));

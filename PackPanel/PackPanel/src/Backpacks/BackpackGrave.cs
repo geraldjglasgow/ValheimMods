@@ -11,7 +11,7 @@ namespace PackPanel.Backpacks
     /// back at its old cell, <see cref="GravePatches"/>) would miss every slot. So before a take all from the player's own
     /// grave the pack that was worn (the one lying in the Backpack slot's cell of the grave's layout) goes back into its
     /// slot first and the layout grows to match; the grave's easy fit check (<see cref="GraveFit"/>) counts the slots
-    /// and the carry weight it brings. A spare pack carried in the grid is not mistaken for it. With Keep Slots On Death
+    /// and the carry weight it brings. A spare pack carried in the grid is not mistaken for it. With Backpack in Keep On Death
     /// the pack never reaches the grave.
     /// </summary>
     public static class BackpackGrave

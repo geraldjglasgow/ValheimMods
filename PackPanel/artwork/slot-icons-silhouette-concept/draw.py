@@ -23,6 +23,15 @@ def draw(name):
         poly([(68,35),(187,35),(189,80),(205,208),(190,226),(148,224),(137,172),(126,116),(114,174),(105,223),(65,226),(49,213),(63,86)])
         line([(74,53),(181,53)],5); line([(127,60),(128,99)],4)
         line([(58,203),(105,204)],5); line([(148,204),(199,201)],5)
+    elif name=='feet':
+        # A tall leather boot from the side, toe to the left: folded cuff, strap wraps, sole and heel (OpenKeep's boots).
+        poly([(110,62),(184,62),(186,118),(192,160),(202,190),(206,226),(52,226),(46,213),(51,198),(68,183),(94,168),(112,150)])
+        poly([(98,28),(194,28),(200,66),(92,66)])
+        line([(100,68),(194,68)],5)
+        line([(111,104),(187,90)],5); line([(112,134),(190,120)],5)
+        line([(50,210),(206,210)],5)
+        poly([(128,227),(166,227),(161,215),(133,215)],CUT)
+        line([(70,208),(78,190),(98,176)],4)
     elif name=='back':
         poly([(101,36),(149,37),(164,59),(174,105),(194,156),(210,211),(191,205),(181,218),(166,209),(154,224),(133,214),(119,225),(102,214),(86,221),(71,210),(48,216),(63,165),(79,111),(88,66)])
         line([(105,79),(96,128),(80,196)],4); line([(148,81),(161,145),(179,195)],4)
@@ -102,7 +111,7 @@ def draw(name):
         ring((147,22,197,72),10)
     return im
 
-order='head chest legs back backpack utility food mead ammo purse key tacklebox tackle trinket'.split()
+order='head chest legs back backpack utility food mead ammo purse key tacklebox tackle trinket feet'.split()
 sheet=Image.new('RGB',(1200,800),(65,46,32)); d=ImageDraw.Draw(sheet)
 try:
     title=ImageFont.truetype('C:/Windows/Fonts/segoeui.ttf',25); font=ImageFont.truetype('C:/Windows/Fonts/segoeui.ttf',16)

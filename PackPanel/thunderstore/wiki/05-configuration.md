@@ -24,13 +24,13 @@ Settings are in `BepInEx/config/milkyteam.packpanel.cfg`. Backpack and tacklebox
 | `Inventory Width` | 8 (8-12) | Columns of the grid. |
 | `Inventory Rows` | 5 (0-10) | Rows of the grid; 0 leaves only your two hand cells. |
 | `Base Carry Weight` | 300 (50-10000) | Carry weight before Megingjord, effects and backpacks. |
-| `Keep Slots On Death` | false | Slot items, your backpack and your tacklebox stay with you when you die. |
+| `Keep On Death` | None | The slot groups that stay with you when you die: any of Gear, Backpack, Utility, Trinket, Food, Mead, Ammo, Tacklebox, comma separated. |
 
 ### 2. Slots
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| `Equipment Slots` | true | Head, Chest, Legs and Back slots; off, armour is worn from the grid. |
+| `Equipment Slots` | true | Head, Chest, Legs and Back slots, and Feet for OpenKeep's boots; off, armour is worn from the grid. |
 | `Utility Slots` | 3 (0-5) | Utility slots, all worn at once; 0 wears one utility, as in the game. |
 | `Trinket Slot` | true | A slot for your worn trinket. |
 | `Backpack Slot` | true | The Backpack slot; PackPanel's backpacks need it. |
@@ -66,7 +66,8 @@ The default `Key Items`: `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| `Slot Labels` | true | Icon and name on each empty slot. |
+| `Slot Labels` | true | Name on each empty slot. |
+| `Slot Icons` | true | Drawing on each empty slot. |
 | `Brown Style` | true | PackPanel's panel look instead of the game's wood. |
 | `Panel Theme` | Timber | Timber or Brown panels. |
 | `Timber Border Width` | 5.5 (3-8) | Width of the Timber edge. |
@@ -76,6 +77,8 @@ The default `Key Items`: `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,
 | `Food And Mead Bar` | true | Shows the Food Key under your health bar, then each Mead slot's mead with its Mead Slot key. |
 | `Crafting Panel Width` | 100 (0-600) | Extra width for the crafting panel and the panel above it (the game's are 570); 0 is the game's width. |
 | `Crafting Panel Height` | 90 (0-400) | Extra height for the crafting panel (the game's is 650); 0 is the game's height. |
+
+With AAA Crafting installed, the crafting panel keeps the size AAA Crafting gives it and both crafting settings do nothing.
 
 ### 6. Tacklebox
 

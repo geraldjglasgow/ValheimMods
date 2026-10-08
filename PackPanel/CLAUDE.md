@@ -53,6 +53,18 @@ nothing of PackPanel and counts as absent). What they share is data, documented 
 - PlateColumn is a library both merge; its copies cooperate through GameObject names (`PlateColumn_boxes`), as with
   Elite Creatures Reborn's world tier box. PackPanel moves the column into its stats panel; OpenKeep alone keeps its
   trash plate in the column.
+- Boots (2026-10-07; the user's request to OpenKeep: the game's leg armour split into legs and boots, "PackPanel needs a
+  boots slot if this boots feature is enabled"): OpenKeep owns the boots (items, stats, recipes, looks, wearing);
+  PackPanel only gives them a Feet slot. What PackPanel relies on: a boots item's prefab name starts `OpenKeep_Boots_`
+  (its type is `Legs`, so it is told by name, `OpenKeepLink.IsBoots`); OpenKeep's synced `16. Boots / Separate Boots`
+  (bool, default false) read through its config (`OpenKeepLink.SeparateBoots`, entry kept once found, its
+  `SettingChanged` re-lays the inventory, the server's value included); OpenKeep wears a pair in its own
+  `Humanoid.EquipItem` prefix (skipping the game's; the pair worn before comes off through the game's `UnequipItem`),
+  answers `IsItemEquiped` for the worn pair (which carries `m_equipped`), never uses `m_legItem`, refuses boots and takes
+  a worn pair off while the setting is off, and adds them to armour, set counts, modifiers and durability itself. So
+  PackPanel puts boots on and off with the game's `EquipItem`/`UnequipItem` like any piece and needs no boots patch of
+  its own besides `EquipPatches.EquipBoots` (below, "Feet slot"). Without OpenKeep, with one that has no such entry, or
+  with the entry off: no Feet slot.
 
 ## With BiomeLords
 
@@ -176,7 +188,9 @@ PackPanel/PackPanel/src/
     WearGate.cs             when PlayerTick checks the backpack, tacklebox and Auto Equip: on an inventory change or a
                             new layout, else every 0.25 s (retries refused equips)
     HudTick.cs              the one Hud.Update postfix: the Food and Mead bar, Weight Under Minimap, the inventory warm-up
-    OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader)
+    OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader); its boots (IsBoots, by prefab
+                            name) and Separate Boots (SeparateBoots, BootsChanged): the Feet slot
+    AaaCraftingLink.cs      AAA Crafting present (GUID in the chainloader): the crafting panel keeps its size
     EpicLootLink.cs         Epic Loot's active effects, totals and display texts through its public API, by reflection
     Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names (read
                             once per drop prefab)
@@ -216,8 +230,9 @@ PackPanel/PackPanel/src/
   Slots/
     SlotKind.cs, Slot.cs, SlotRules.cs   the slot kinds (Head..Back, Utility worn; Backpack, Food, Mead, Ammo, Purse
                             carried; Retired for an old record's quick slots; Key, the ring cells; Tacklebox and
-                            Tackle, the box and its cells; Trinket, worn, last), ids like food2, which item each takes (a ring cell:
-                            its own key, Accepts(Slot, item))
+                            Tackle, the box and its cells; Trinket, worn; Feet, worn, OpenKeep's boots, last), ids like
+                            food2, which item each takes (a ring cell: its own key, Accepts(Slot, item); boots by name
+                            before the item type, so only into Feet)
     SlotCounts.cs           every group's count (Slots Per Group over the group keys)
     AmmoSearch.cs           Inventory.GetAmmoItem prefix: the tacklebox's bait, then the Ammo slots left to right,
                             then the game's own search
@@ -234,7 +249,8 @@ PackPanel/PackPanel/src/
     TakeAllRouting.cs       Inventory.MoveAll prefix/postfix: keys, bait and arrows a take all put in main cells move to
                             their ring cell, into the tacklebox and into the Ammo slots
     StackAllGuard.cs        the game's Place stacks (Inventory.StackAll) leaves the slot cells alone
-    KeptOnDeath.cs          Keep Slots On Death: slot items out of the inventory while the tombstone is made
+    KeptGroups.cs           the slot groups Keep On Death can keep (flags: Gear, Backpack, Utility, ..., Tacklebox)
+    KeptOnDeath.cs          Keep On Death: the kept groups' items out of the inventory while the tombstone is made
     GravePatches.cs, GraveWidth.cs   CreateTombStone suspends worn moves; MoveAll from the own grave re-equips, from
                             anything else keeps out of the slots; a grave loads as wide as its items
     GraveFit.cs             TombStone.EasyFitInInventory for the own grave: Use takes all when the take all would fit
@@ -248,7 +264,8 @@ PackPanel/PackPanel/src/
                             guards checked first, a utility worn beside the others, the utility a new one replaces
     ChestWear.cs            Humanoid.UseItem prefix: right click gear in an open chest wears it (the slot's piece out first)
     ExtraUtilities.cs, ExtraEffects.cs   the worn utilities beyond the game's one and their status effects
-    EquipPatches.cs         EquipItem, UnequipItem, IsItemEquiped, IsItemTypeEquiped, UnequipAllItems, UnequipDeathDropItems
+    EquipPatches.cs         EquipItem, UnequipItem, IsItemEquiped, IsItemTypeEquiped, UnequipAllItems, UnequipDeathDropItems;
+                            EquipBoots: boots swap in the Feet slot
     UtilityEffectPatches.cs UpdateEquipmentStatusEffects, GetSetCount, GetEquipmentEitrRegenModifier, UpdateModifiers,
                             GetEquipmentWeight, UpdateEquipment count the extra utilities
   Ring/
@@ -347,7 +364,7 @@ PackPanel/PackPanel/src/
     HudRoom.cs              moves the minimap and the status effects left while that column shows a box
     HudWeight.cs            Weight Under Minimap: from HudTick, writing a box in PlateColumn's HUD column
     SlotPanel.cs, SlotPanelLayout.cs   PackPanel_slots right of the stats panel: the tab buttons across the top, the
-                            shown tab's cells (Gear: gear column left, utilities and the trinket right; Consumables: a row each of
+                            shown tab's cells (Gear: gear column left, Feet after Legs while laid out, utilities and the trinket right; Consumables: a row each of
                             food, mead, ammo), the purse, the key ring's button and the Tacklebox slot last under both
     SlotTab.cs, SlotTabs.cs the tabs; the shown one (session only), which kind goes where, the gamepad turning tabs
     TabButtons.cs           the two tab buttons, copies of the game's take-all button, stripped of its gamepad key,
@@ -406,7 +423,8 @@ All on the local player's own inventory only unless said: prefix `Player.Load` (
 (one prefix, `Slots/AddRouting`: the purse, the key ring, the tacklebox, the Ammo slots), `Inventory.AddItem(ItemData, int, int, int, bool)` and
 `Inventory.AddItem(ItemData, Vector2i)` (slot rules), `InventoryGrid.DropItem` (`Priority.High`),
 `InventoryGui.OnSelectedItem` (prefix, postfix, finalizer), `Humanoid.EquipItem` (prefix, postfix, finalizer; the
-prefix also wears PackPanel's backpacks, on any character), `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
+prefix also wears PackPanel's backpacks, on any character; a second prefix, `Priority.First`, and finalizer for
+OpenKeep's boots, a counter only), `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
 out of the list for the call), `Inventory.MoveAll` (prefix, postfix, finalizer; the key ring has its own prefix and
 postfix), `Container.RPC_TakeAllResponse` (private; prefix and finalizer: which container a granted take all comes
 from, so a grave is known without a search), `Container.Load` (prefix and postfix, graves only, any player's); the key ring: `InventoryGui.OnSelectedItem`
@@ -439,14 +457,15 @@ in their slot: prefix and finalizer `Humanoid.DrainEquipedItemDurability` (priva
 ## Config sections and keys
 
 `General` (`Lock Configuration`), `1. Inventory` (`Enabled` true, `Inventory Width` 8 (8-12), `Inventory Rows` 5 (0-10; 0 = the two hand cells),
-`Base Carry Weight` 300 (50-10000), `Keep Slots On Death` false), `2. Slots` (`Equipment Slots` true, `Auto Equip` true, `Utility Slots` 3
+`Base Carry Weight` 300 (50-10000), `Keep On Death` None (flags: Gear, Backpack, Utility, Trinket, Food, Mead,
+Ammo, Tacklebox; `Keep Slots On Death` true/false until 2026-10-07, not carried over)), `2. Slots` (`Equipment Slots` true, `Auto Equip` true, `Utility Slots` 3
 (0-5), `Trinket Slot` true, `Backpack Slot` true, `Backpack Items` empty, `Slots Per Group` 0 (0-5), `Food Slots` 3, `Food Slots Follow
 Eating` true, `Mead Slots` 3, `Ammo Slots` 3 (0-5 each), `Coin Purse` true; per player `Food Key` Z, `Mead Slot 1 Key` to
 `Mead Slot 5 Key` LeftAlt + 1 to 5; `Mead Key` B until 2026-10-05), `3. Key Ring` (`Key Ring` true, `Key Items`
 `HildirKey_forestcrypt,CryptKey,HildirKey_mountaincave,HildirKey_plainsfortress,DvergrKey,BloodGoldKey`, `Key Stack` 10
 (1-100)), `4. Backpacks` (`Backpacks` true, `Backpack Portal Pass` false, and `Show Worn Backpack` true, the one key there not
 synced), `6. Tacklebox` (`Tacklebox` true, `Tackle
-Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Brown Style` true, `Weight Under Minimap` true, `Food And Mead Bar` true,
+Items` empty), all synced; `5. Look` unsynced (`Slot Labels` true, `Slot Icons` true, `Brown Style` true, `Weight Under Minimap` true, `Food And Mead Bar` true,
 `Panel Theme` Timber (Brown, Timber), `Timber Border Width` 5.5 (3-8), `Timber Border Jaggedness` 1.5 (0-2.5), `Night Shade` 0.65 (0.3-1),
 `Crafting Panel Width` 100 (0-600), `Crafting Panel Height` 90 (0-400); first 160 and 120, slimmed the same day at the
 user's word). The keys
@@ -536,7 +555,7 @@ tackleboxes:
   PlateColumn boxes `..._packpanel_armor` (the HUD copy of the armour box) and `..._packpanel_weight`.
 - Files next to the cfg: `PackPanel.Backpacks.yml`, `PackPanel.Tackleboxes.yml`.
 - Charter articles: `packpanel_backpacks`, `packpanel_tackleboxes`, plus the cfg sync of the shared libraries.
-- Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
+- Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_feet`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
   `_coins`, `_wrongslot`, `_dropped`, `_noroomoff`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
   `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_elitecrafting`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
   `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
@@ -675,14 +694,33 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 - Trinket slot (the user's request, 2026-09-28: "a trinket slot under utility"): the game has one worn trinket
   (`Humanoid.m_trinketItem`, `ItemType.Trinket`, the adrenaline trinkets such as `TrinketBronzeHealth`) and equips,
   replaces, saves, entombs and shows it like its utility, so the slot is a worn kind like Head (`SlotKind.Trinket`,
-  `Trinket Slot` on by default) and needs no patch of its own: `WornPlacement`, `DragSettle`, the graves and Keep Slots
-  On Death handle it through `SlotRules.IsWorn`/`WornKindOf`. One slot, not a group: wearing several would need an
+  `Trinket Slot` on by default) and needs no patch of its own: `WornPlacement`, `DragSettle`, the graves and Keep On
+  Death handle it through `SlotRules.IsWorn`/`WornKindOf`. One slot, not a group: wearing several would need an
   `ExtraUtilities` for trinkets (the adrenaline bar reads the one field). In the layout it follows the utilities, so an
   existing record's food, mead and ammo cells move one cell on (by slot id, `LayoutMigration`); the enum value is
   appended last, as the record stores ids. Drawn under the utilities in the Gear tab's right column; with five
   utilities that column is six rows, and both tabs grow to six (`SlotPanelLayout.ContentRows`), the sheet with them.
   Its empty-slot icon (`assets/icon_trinket.png`, a rune pendant) is drawn by
   `artwork/slot-icons-silhouette-concept/draw.py` with the approved set.
+- Feet slot (2026-10-07, for OpenKeep's boots; the contract is under "With OpenKeep"): a worn kind like Trinket
+  (`SlotKind.Feet`, appended last since the record stores ids, `feet1`; an older build reads it as retired and moves
+  the boots into the grid). One slot, laid out right after Legs (Head, Chest, Legs, Feet, Back) only while `Equipment
+  Slots` and OpenKeep's `Separate Boots` are both on; the later slots' cells move one on by id, as with the trinket.
+  Drawn in the Gear tab's left column under Legs; that column is then six rows and both tabs grow to six, as with five
+  utilities (`SlotPanelLayout` now counts both columns). Boots are `Legs` items, so `SlotRules.WornKindOf` tells them by
+  prefab name before the type switch: boots only into Feet, leggings never there. Every worn-slot path covers Feet
+  through `IsWorn`/`WornKindOf` and the game's `EquipItem`/`UnequipItem`/`IsItemEquiped`, which OpenKeep answers for
+  boots: `WornPlacement`, `DragSettle`, `GearKeep` (Auto Equip, its kind list), `ChestWear`, Instant Equip, the graves'
+  re-wear and Keep On Death's Gear group. Nothing routes armour on pickup, so nothing routes boots. OpenKeep's prefix
+  takes the old pair off and may run before PackPanel's EquipItem prefix (load order), so `EquipPatches.EquipBoots`
+  (`Priority.First`, a counter only) starts `WornPlacement.BeginEquip` for boots: the old pair stays in Feet and swaps
+  with the new one, as leggings do inside the game's EquipItem. The setting flipping (on this peer, or the server's
+  value arriving) re-lays the inventory on the next frame: on, an empty Feet slot appears (boots carried stay where they
+  are until put on); off, OpenKeep takes the worn pair off (to a free cell, or in place with a full grid) and the slot
+  goes like any removed slot: what it holds moves to a free main cell, else drops with the usual message. The stat
+  sheet needs nothing: it counts every `m_equipped` item, and boots as Legs items show by name in the armour and
+  resistance breakdowns. Icon `assets/icon_feet.png` (a strapped boot from the side, drawn by the same `draw.py`),
+  caption `$packpanel_feet` "Feet".
 - Graves: `MoveInventoryToGrave` copies the width, but a grave loading again (another client, the area reloading) gets
   the tombstone prefab's width and its load drops items beyond it, so `Container.Load` of a tombstone widens the
   inventory to 32 and then to its widest item, on every client. A take all from anything that is not a grave keeps
@@ -824,7 +862,10 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 - Captions (the user asked for them to be much easier to see, and said an item may cover them): bold, bright
   (#FAE6B8), auto-sized 10 to 20 over the whole cell (3 unit inset), drawn under the icon and shown only while the slot
   is empty (`InventoryElement.m_used`, which the game sets every frame). No outline: with the game's font material a
-  TMP outline swallowed the letters and left them dark with a light rim (seen in game).
+  TMP outline swallowed the letters and left them dark with a light rim (seen in game). `Slot Labels` off hid the icon
+  and the name together until a GitHub request on 2026-10-07 ("would it be possible to keep the drawings/icons?"):
+  `Slot Labels` is now the name only and `Slot Icons` (on, per player) the drawing; with the name off the icon sits in
+  the middle of the slot. Either change sets every hint again (`SlotElements.Invalidate`).
 - The purse's element shows its count alone ("51") rather than the game's "51/999".
 - The look follows the user's mockup (2026-09-28), refined in game over several rounds: plain dark brown panels with a
   bronze frame and small rivets (`SkinArt.Panel`; a tiled wood-plank version read as thin stripes at this scale and was
@@ -845,9 +886,15 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   units) and the game's status effect row with it (its first icon sits 26 units left of the map), both remembered and
   put back when no box shows, the map is off or PackPanel is off. Elite Creatures Reborn adds its world tier box the
   same way. Off with the master switch, like every key. The key keeps its old name (`Weight Under Minimap`).
-- Keep Slots On Death (off; the user asked for it): the `Player.CreateTombStone` prefix takes the items of every slot
-  but the purse out of the inventory list (so neither the grave nor a world modifier that deletes items at death sees
-  them) with whether each was worn, and the finalizer puts them back, worn ones marked `m_equipped`. The game saves the
+- Keep On Death (nothing kept by default; the user asked for it): the `Player.CreateTombStone` prefix takes the items
+  of the kept slot groups out of the inventory list (so neither the grave nor a world modifier that deletes items at
+  death sees them) with whether each was worn, and the finalizer puts them back, worn ones marked `m_equipped`. It was
+  `Keep Slots On Death`, every slot group or none, until a GitHub request on 2026-10-07 ("keep only food and
+  ammunition for example"): now a flags setting (`KeptGroups`), any of Gear (head, chest, legs, back; feet too while laid out), Backpack,
+  Utility, Trinket, Food, Mead, Ammo and Tacklebox, comma separated in the .cfg and a checkbox each in the
+  configuration manager. The old key is not carried over (the workspace's rule for removed keys). A group not kept
+  goes to the grave as before; when the backpack goes and other slots stay, the kept items sit at their old cells and
+  the next layout (the respawn's load) moves them to their slots by id, as for any layout change. The game saves the
   character in `Game._RequestRespawn`, after the tombstone, and `Player.Load`'s `EquipInventoryItems` wears what is
   marked, so the armour and the three utilities are on again after the respawn; the dead body in between has them in
   the inventory but not on.
@@ -879,8 +926,8 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   rows, and the game places bottom first). Taken off, its cells' items go to free cells and the rest drops (the user's
   choice); right click takes it off only into a main cell that is not one of its own, else says there is no room
   (with or without Auto Equip). Carry weight is
-  added in the `GetMaxCarryWeight` postfix with Base Carry Weight, scaled by the world modifier. Keep Slots On Death
-  takes the pack out only inside `CreateTombStone`, which no frame sees, and the frame check skips a dead player, so
+  added in the `GetMaxCarryWeight` postfix with Base Carry Weight, scaled by the world modifier. Keep On Death
+  (Backpack) takes the pack out only inside `CreateTombStone`, which no frame sees, and the frame check skips a dead player, so
   death never shrinks the grid mid-way. A grave made while a pack was worn has its cells as main cells and the slots
   lower down; the take all from a grave (`Inventory.MoveAll`, after the game's take-all reply made this client the
   grave's owner) first moves the pack that lay in the grave's Backpack slot cell (a spare pack in the grid is not taken
@@ -994,7 +1041,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   that key's cell (a non-key is refused with a message). (For a short while on 2026-09-28 a right click opened it;
   the user asked for the left click back the same day.) The `OnSelectedItem` prefix (`Priority.First`, before
   `DragSettle`'s slot rules) sends a dragged key let go on any ring cell to its own cell. The empty-slot hint (icon and
-  "Keys") shows with Slot Labels on, the element's icon without; the game's quality text in the corner is the number
+  "Keys") shows with Slot Labels or Slot Icons on, the element's own icon with both off; the game's quality text in the corner is the number
   of different keys held anywhere in the inventory; the tooltip lists them with counts, written only when it changes.
   The open state is static and never saved; `InventoryGui.Show` and `Hide` postfixes close it.
 - Gamepad (the game moves by inventory cell, not by what is drawn): an `InventoryGrid.UpdateGamepad` postfix carries a
@@ -1011,12 +1058,12 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   for the character played (by `PlayerProfile`), so a new body after death whose data predates the last save keeps it.
   It looks at the whole inventory in the local player's frame while the ring is active, so every way in counts
   (pickup, purchase, crafting, a chest). `KeyRingNotice` then, while anything waits and the button is drawn: both key
-  icons (the button's own with Slot Labels off, the hint's with them on) breathe from their hint colour to gold and
+  icons (the button's own with Slot Labels and Slot Icons off, the hint's otherwise) breathe from their hint colour to gold and
   back every 1.6 s (`Time.unscaledTime`), and `PackPanel_keynotice`, a small box in PlateColumn's `Skin.Box` with one
   line in the label colour, hangs 6 units under the button, centred, sized to its text, taking no raycasts: "{key}
   went onto your key ring", or "{n} new keys went onto your key ring". Opening the ring clears it; it is never saved,
   so a key found on the road is announced when the inventory next opens.
-- Death: ring cells follow the game's rules like the purse, into the grave, also with Keep Slots On Death (the
+- Death: ring cells follow the game's rules like the purse, into the grave, also with Keep On Death (the
   request said keys go to the grave with the slots). The game's own "Place stacks" button leaves the ring's cells
   alone like every slot cell's (`StackAllGuard`).
 - Tacklebox (the user's request, 2026-09-28: "a tacklebox mod that performs similarly to the keyring, where slots show
@@ -1063,7 +1110,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 - The pop-up (`PackPanel_tacklebox`) hangs where the ring's does (`PopupPlace`, shared), so opening one shuts the
   other. Every cell shows, empty ones with a "Bait" caption and a hook icon, at 0.8 of the grid's size (the ring's are
   0.65 at the user's request; bait counts need the room) in rows of four; with the slot panel's panel look.
-- Death: the box follows the backpack (Keep Slots On Death keeps it, and its cells then still exist for the bait that
+- Death: the box follows the backpack (Keep On Death's Tacklebox keeps it, and its cells then still exist for the bait that
   went to the grave), its bait the ring cells (always to the grave). Before a take all from the own grave the box
   that was carried goes back into its slot first (`TackleboxGrave`, after `BackpackGrave`, whose waiting pack pushes the
   grave's slot rows down); Use on the grave counts the box and its bait as going back to their own cells (`GraveFit`).
@@ -1159,7 +1206,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.13.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.14.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1189,9 +1236,12 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
 7. Food, mead, ammo: cooked meat goes into Food, not into Mead; a mead into Mead; arrows into Ammo (picking up
    arrows tops up that stack). With FeastMaster at Food Slots 5 the food row has 5 slots; set FeastMaster to 4: within
    a frame 4, and the fifth slot's food moved into the grid.
-8. Keep Slots On Death on: die wearing armour and three utilities with food and arrows in their slots: the grave
-   holds only the grid's items (and the purse); after the respawn the armour and the utilities are worn, the food and
-   arrows are in their slots, the log shows `kept n slot items through death (m worn)`. Off: all of it is in the grave.
+8. `Keep On Death = Gear, Backpack, Utility, Trinket, Food, Mead, Ammo, Tacklebox`: die wearing armour and three
+   utilities with food and arrows in their slots: the grave holds only the grid's items (and the purse); after the
+   respawn the armour and the utilities are worn, the food and arrows are in their slots, the log shows `kept n slot
+   items through death (m worn)`. `Food, Ammo` only: the food and arrows stay, the armour, utilities and backpack are
+   in the grave; take all puts them back on (the pack first) and the food and arrows are still in their slots.
+   `None`: all of it is in the grave. In the configuration manager the setting is a row of checkboxes.
    Purse: the Coins slot at the bottom left of the slot panel. Pick up coins: they land in it (the caption goes, the
    count shows "51"); sell at Haldor: the coins join the purse; buy: they leave it. With the grid full and the purse
    empty, coins can still be picked up.
@@ -1211,7 +1261,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
 12. Trader: buy an inventory row from Haldor: the grid gets a row, the slot items stay in their slots (the log line
     shows items moved), nothing drops.
 13. Brown Style off: the game's wood panels and cells come back at once; on: brown again. `Slot Labels = false` hides
-    the captions. `Panel Theme = Brown` and back to `Timber`: the inventory, crafting and character panels change at
+    the slots' names and leaves their icons, centred in the slot; `Slot Icons = false` too: empty slots show nothing,
+    the key ring's button its own icon. `Panel Theme = Brown` and back to `Timber`: the inventory, crafting and character panels change at
     once.
 14. Two clients on a dedicated server: server `Inventory Rows = 8`, client file 5: the client gets 8 rows after
     joining; server `Utility Slots = 1`: the client's second and third utilities come off and move into the grid.
@@ -1249,7 +1300,7 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
 21. Death wearing the Lox Hauler (12 slots, a half row), its cells and the slots full, a spare Trollhide Backpack in
     the grid: the grave holds everything; E on the grave (take all) puts the Lox Hauler on first (not the spare) and
     everything back in its cell and slot, armour worn again. With the grid otherwise full the easy fit still succeeds
-    when the pack's cells make the room. With `Keep Slots On Death = true` the pack stays on, the grid does not shrink,
+    when the pack's cells make the room. With Backpack in `Keep On Death` the pack stays on, the grid does not shrink,
     its cells' items are in the grave.
 22. Changes while worn: `slots: 16` for the worn pack in the YAML: the rows grow at once; back down: the bottom cells'
     items move up or drop. `Backpack Slot = false` or `Enabled = false`: the pack's cells go (items move or drop), the
@@ -1283,7 +1334,7 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     read from the item's tooltip if the token differs) is true, and the sunken crypt gate opens.
 29. Routing: a chest holding a Swamp Key, take all: the key lands on the ring, not in the grid. Fill the grid, drop a
     key on the ground: it is picked up into its empty ring cell. Use up the last Intricate Key: its cell goes.
-30. Death with keys on the ring (and with Keep Slots On Death on): the keys are in the grave; take all from your own
+30. Death with keys on the ring (and with every group in Keep On Death): the keys are in the grave; take all from your own
     grave: the ring holds them again.
 31. Gamepad: with the ring shut, the D-pad never stops on a hidden cell (the ring cells, the cells after the last slot,
     a backpack's blocked cells); moving onto the ring's cells highlights the button; A opens it and selects the first
@@ -1339,7 +1390,7 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     its cells. Swap the Finewood box for the Carapace box with bait in the grid: the four new cells fill with it.
 42. Death with the Carapace box and bait in its cells: the grave holds the box and the bait; take all (E on the grave)
     puts the box back first and every bait into its cell. The same wearing the Lox Hauler: box and bait line up too.
-    With Keep Slots On Death on: the box stays in its slot, the bait is in the grave, and take all puts it back into
+    With Tacklebox in Keep On Death: the box stays in its slot, the bait is in the grave, and take all puts it back into
     the cells.
 43. Gamepad: with the pop-up shut the D-pad never stops on a box cell; X on the box opens it and selects the first cell;
     B shuts it and selects the box again, before it would close the inventory.
@@ -1414,8 +1465,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     trinket on Trinket: it is worn (the cell shows it equipped, the adrenaline bar appears); drop the stamina trinket on it:
     that one is worn and the health trinket lands where the stamina one was. Right click the worn one: it comes off into
     the grid. Right click one in the grid: it moves into Trinket. A belt dropped on Trinket, or a trinket on Utility, is
-    refused with `That does not go in that slot`. Relog: still worn, still in the slot. Die with Keep Slots On Death
-    off: the grave holds it in its slot; take all: it is worn again. `Utility Slots = 5`: the right column is six cells,
+    refused with `That does not go in that slot`. Relog: still worn, still in the slot. Die with Trinket not in Keep On Death:
+    the grave holds it in its slot; take all: it is worn again. `Utility Slots = 5`: the right column is six cells,
     the trinket last, and both tabs are one row taller; `Trinket Slot = false`: it moves into the grid and stays worn.
 54. Capes under the pack: wear the Trollhide Backpack and the troll hide cape, third person. Standing: the cape comes out
     below the pack as before. Run and sprint forward, turn sharply, jump, stop: the cape's top never shows through the
@@ -1461,7 +1512,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     grid tiles bigger); the description wider and taller, its text starting below OpenKeep's Track and star buttons;
     requirements centred and the Craft row (with OpenKeep's stepper) full width. Both at 0, or PackPanel's Enabled off:
     the game's panel exactly. Change either in the cfg with the inventory open: the panel follows within seconds.
-    A 16:10 window: the width shrinks to what fits.
+    A 16:10 window: the width shrinks to what fits. With AAA Crafting installed: the log says `AAA Crafting found`, the
+    panel is the size AAA Crafting gives it whatever Width and Height say, and its grid and buttons are not cut off.
 61. Backpack as equipment (Megingjord worn throughout: it stays worn and carry weight keeps its +150, so no pack ever
     becomes the game's utility): the worn Trollhide Backpack shows the game's equipped mark in the Backpack slot;
     `GetEquippedItems` lists it. Right click it: it comes off into a cell above its rows, no mark; again: on, marked.
@@ -1513,3 +1565,16 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     loading screen, no inventory sound plays, the cursor stays hidden, the recipe list and grid look as always, OpenKeep's
     Auto Sort Inventory does not sort at login. Relog: the same. Press Tab the moment the loading screen goes: the
     inventory opens normally. With `Enabled = false`: no warm-up.
+68. Feet slot (OpenKeep with boots): `Separate Boots = false` in OpenKeep: no Feet slot, the log has no "Feet slot"
+    line until the first layout, then `Feet slot follows OpenKeep's Separate Boots (False)`. Turn it on in game: within a
+    frame the Gear tab's left column reads Head, Chest, Legs, Feet, Back, Backpack (six rows, the sheet one row taller),
+    the empty Feet slot shows the boot icon and "Feet". Right click iron boots in the grid: worn, in Feet, armour up;
+    right click bronze boots: they are worn in Feet and the iron pair lies where the bronze one was. Drag leggings onto
+    Feet or boots onto Legs: "That does not go in that slot". Drag the worn pair into the grid: taken off. Right click
+    the worn pair with the grid full: comes off in Feet, stays off (Auto Equip). Boots in a chest, right click: worn,
+    the old pair to a free cell. Drop boots on Feet: worn within a frame. Instant Equip on: right click wears at once.
+    Die (Keep On Death None): the grave's take all puts the pair back in Feet, worn; `Keep On Death = Gear`: the pair
+    stays worn through death. Hover Armor on the sheet: the boots by name. Turn `Separate Boots` off with a pair worn and
+    room: the pair moves to the grid, the Feet slot goes, the column is five rows again; with the grid full: the pair
+    drops with "No room for 1 items". On a dedicated server whose OpenKeep has it on and a client's local cfg off: the
+    slot appears on joining. Without OpenKeep, or `Equipment Slots = false`: no Feet slot.

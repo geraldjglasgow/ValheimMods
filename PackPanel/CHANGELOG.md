@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.0
+
+- `Keep On Death` replaces `Keep Slots On Death`: pick which slot groups stay with you (e.g. `Food, Ammo`); set it again.
+- A Feet slot under Legs for OpenKeep's boots (with its `Separate Boots` on).
+- `Slot Icons`: empty slots' drawings can be turned off apart from their names.
+- With AAA Crafting, the crafting panel keeps AAA Crafting's size.
+
 ## 0.13.0
 
 - `Instant Equip` (off by default): weapons, tools, shields and armour go on and come off with no equipping bar.

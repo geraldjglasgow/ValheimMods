@@ -13,7 +13,7 @@ The in-game preview file (`PackPanel.ArtTest/background.png`) was removed in 0.6
 # Slot icons
 
 The empty-slot icons in `PackPanel/assets/icon_<slot>.png` (head, chest, legs, back, backpack, utility, food, mead,
-ammo, purse for coins, key, tacklebox, tackle) are the approved flat ochre set, `slot-icons-approved/64/` (256 px
+ammo, purse for coins, key, tacklebox, tackle, trinket, feet) are the approved flat ochre set, `slot-icons-approved/64/` (256 px
 sources in `slot-icons-approved/256/`, drawn by `slot-icons-silhouette-concept/draw.py`), installed 2026-09-28.
 `slot_icons.py` renders the earlier 3D set and writes it straight into `PackPanel/assets`: running it replaces the
 approved icons. `slot-icons/`, `slot-icons-2d-concept/` and `slot-icons-gold-concept/` are the other studies.

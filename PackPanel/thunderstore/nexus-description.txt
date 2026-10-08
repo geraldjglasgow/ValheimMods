@@ -9,7 +9,7 @@ A bigger, better organised inventory, with labelled slots always on screen.
 
 [size=4][b]Features[/b][/size]
 [list]
-[*]A grid from your two hands up to 12 x 10, with Base Carry Weight and Keep Slots On Death.
+[*]A grid from your two hands up to 12 x 10, with Base Carry Weight and Keep On Death (choose which slot groups you keep).
 [*]Labelled slots on two tabs, Gear and Consumables, plus a purse, key ring and tacklebox (below).
 [*]Stat sheet: your stats as the game counts them; hover a line for its breakdown.
 [*]Auto Equip: gear in its slot is always worn; right click gear in a chest to wear it.
@@ -21,7 +21,7 @@ A bigger, better organised inventory, with labelled slots always on screen.
 
 [size=4][b]Slots[/b][/size]
 [list]
-[*]Head, Chest, Legs, Back: your armour and cape, worn.
+[*]Head, Chest, Legs, Back: your armour and cape, worn; a Feet slot joins them for OpenKeep's boots.
 [*]Backpack: wear one of the eight backpacks below.
 [*]Utility: up to five belts, wishbones and the like, all worn at once.
 [*]Trinket: your worn adrenaline trinket.

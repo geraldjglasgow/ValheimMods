@@ -40,4 +40,4 @@ All look settings are your own.
   - Timber: wood wallpaper with chopped, bevelled edges, also on crafting, the character panel and the game's other menus.
   - Brown: plain dark brown panels with a bronze frame.
 - `Night Shade`: the panels darken at night and in dark weather, as the game's own do.
-- `Slot Labels` shows each empty slot's icon and name.
+- `Slot Labels` shows each empty slot's name, `Slot Icons` its drawing. With only the icon, it sits in the middle of the slot.

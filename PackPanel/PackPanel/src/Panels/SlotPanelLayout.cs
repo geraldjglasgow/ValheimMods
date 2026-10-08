@@ -7,9 +7,9 @@ namespace PackPanel.Panels
 {
     /// <summary>
     /// Where each slot is drawn in the slot panel, as (column, row) of its cells under the tab buttons. Two tabs
-    /// (<see cref="SlotTabs"/>) of the same size: Gear has Head, Chest, Legs, Back and the Backpack in a column on the
-    /// left, the utilities and under them the Trinket slot in a column on the right (six rows with five utilities) and
-    /// the stat sheet between them (<see cref="GearStats"/>);
+    /// (<see cref="SlotTabs"/>) of the same size: Gear has Head, Chest, Legs, Feet (OpenKeep's boots, while laid out), Back
+    /// and the Backpack in a column on the left, the utilities and under them the Trinket slot in a column on the right
+    /// (six rows with five utilities, or on the left with Feet) and the stat sheet between them (<see cref="GearStats"/>);
     /// Consumables has a row each of food, mead and ammo from the top. A kind with no slots leaves its place empty in
     /// Gear and no row in Consumables, which is not offered at all without consumable slots. Under both, on a last row
     /// of its own under a divider, the coin purse, right of it the key ring's button (the ring cells are drawn in its
@@ -21,10 +21,10 @@ namespace PackPanel.Panels
     {
         public const int MinColumns = 5;
 
-        /// <summary>The Gear tab's rows at least: the left column's five kinds and room for the sheet; the right column may need one more.</summary>
+        /// <summary>The Gear tab's rows at least: the left column's five kinds and room for the sheet; either column may need one more.</summary>
         public const int GearRows = 5;
 
-        private static readonly SlotKind[] LeftColumn = { SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Back, SlotKind.Backpack };
+        private static readonly SlotKind[] LeftColumn = { SlotKind.Head, SlotKind.Chest, SlotKind.Legs, SlotKind.Feet, SlotKind.Back, SlotKind.Backpack };
         private static readonly SlotKind[] RightColumn = { SlotKind.Utility, SlotKind.Trinket };
         private static readonly SlotKind[] ConsumableRows = { SlotKind.Food, SlotKind.Mead, SlotKind.Ammo };
 
@@ -58,7 +58,7 @@ namespace PackPanel.Panels
             panel.HasConsumables = rows > 0;
             panel.Tab = panel.HasConsumables ? tab : SlotTab.Gear;
             int gear = panel.AddColumn(layout, RightColumn, panel.Columns - 1, panel.Tab == SlotTab.Gear);
-            panel.AddColumn(layout, LeftColumn, 0, panel.Tab == SlotTab.Gear);
+            gear = Mathf.Max(gear, panel.AddColumn(layout, LeftColumn, 0, panel.Tab == SlotTab.Gear));
             panel.ContentRows = Mathf.Max(GearRows, Mathf.Max(gear, rows));
             panel.Rows = panel.ContentRows;
             panel.AddPurseRow(layout);

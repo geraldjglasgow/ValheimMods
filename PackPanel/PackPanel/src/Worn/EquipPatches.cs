@@ -10,7 +10,8 @@ namespace PackPanel.Worn
     /// and moves what came off out of its slot. The game's "is it equipped" questions answer yes for the extras, so its
     /// own UnequipItem, drag and use paths treat them like the game's utility. A backpack is worn by PackPanel too
     /// (<see cref="BackpackEquip"/>), never as the game's utility. Unequip all and the death drop take them off too; a
-    /// piece the game takes off because it broke stays in its slot.
+    /// piece the game takes off because it broke stays in its slot. OpenKeep's boots are OpenKeep's to wear: the game's
+    /// EquipItem, UnequipItem and IsItemEquiped answer for them through its patches, and these move them in and out of Feet.
     /// </summary>
     public static class EquipPatches
     {
@@ -39,6 +40,30 @@ namespace PackPanel.Worn
 
             [HarmonyFinalizer]
             public static void Finalizer() => WornPlacement.EndEquip();
+        }
+
+        /// <summary>
+        /// OpenKeep wears its boots in its own EquipItem prefix, which takes the pair worn before off first; this one runs
+        /// before every other prefix, so that pair stays in the Feet slot and swaps with the new one, as the game's own
+        /// EquipItem does for leggings (<see cref="WornPlacement.BeginEquip"/>).
+        /// </summary>
+        [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.EquipItem))]
+        public static class EquipBoots
+        {
+            [HarmonyPrefix]
+            [HarmonyPriority(Priority.First)]
+            public static void Prefix(ItemDrop.ItemData item)
+            {
+                if (OpenKeepLink.IsBoots(item))
+                    WornPlacement.BeginEquip();
+            }
+
+            [HarmonyFinalizer]
+            public static void Finalizer(ItemDrop.ItemData item)
+            {
+                if (OpenKeepLink.IsBoots(item))
+                    WornPlacement.EndEquip();
+            }
         }
 
         [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.UnequipItem))]

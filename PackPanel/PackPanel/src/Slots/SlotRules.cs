@@ -11,8 +11,8 @@ namespace PackPanel.Slots
 {
     /// <summary>
     /// Which items each slot takes. Worn slots take the game's item types for them (helmet, chest, legs, shoulder,
-    /// utility, trinket); food is a consumable that fills a food bar, a mead any other consumable; ammo includes bait and
-    /// non-equipable ammo; the purse takes coins only; a ring cell only its own key (<see cref="KeyRing"/>); the
+    /// utility, trinket; Feet OpenKeep's boots, by prefab name); food is a consumable that fills a food bar, a mead any
+    /// other consumable; ammo includes bait and non-equipable ammo; the purse takes coins only; a ring cell only its own key (<see cref="KeyRing"/>); the
     /// Tacklebox slot PackPanel's tackleboxes and a box's cell bait (<see cref="TackleRules"/>). The backpack slot takes
     /// PackPanel's backpacks (<see cref="BackpackCatalog"/>), an item whose prefab name contains "backpack", or one listed
     /// in Backpack Items: the game has none, other mods do. It is worn for PackPanel's own packs, which are equipment
@@ -22,7 +22,7 @@ namespace PackPanel.Slots
     {
         public const string CoinsName = "$item_coins";
 
-        public static bool IsWorn(SlotKind kind) => kind <= SlotKind.Utility || kind == SlotKind.Trinket;
+        public static bool IsWorn(SlotKind kind) => kind <= SlotKind.Utility || kind == SlotKind.Trinket || kind == SlotKind.Feet;
 
         /// <summary>Whether a slot takes an item: its kind's rule, and for a ring cell the one key of that cell.</summary>
         public static bool Accepts(Slot slot, ItemDrop.ItemData item) =>
@@ -47,11 +47,16 @@ namespace PackPanel.Slots
             }
         }
 
-        /// <summary>The worn slot kind of an item, or null when no worn slot takes it.</summary>
+        /// <summary>
+        /// The worn slot kind of an item, or null when no worn slot takes it. OpenKeep's boots are Legs items, so they are
+        /// told by their prefab name first: boots go to Feet only, never to Legs, and leggings never to Feet.
+        /// </summary>
         public static SlotKind? WornKindOf(ItemDrop.ItemData item)
         {
             if (BackpackCatalog.Of(item) != null)
                 return SlotKind.Backpack;
+            if (OpenKeepLink.IsBoots(item))
+                return SlotKind.Feet;
             switch (item.m_shared.m_itemType)
             {
                 case ItemType.Helmet: return SlotKind.Head;
