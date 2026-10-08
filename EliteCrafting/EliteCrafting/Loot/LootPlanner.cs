@@ -80,7 +80,7 @@ namespace EliteCrafting.Loot
             {
                 DrawStones(economy, Count(boss.StoneRolls * star, random), random, plan);
                 AddBonus(economy, boss.Bonus, random, plan);
-                BossGems.Add(economy, input.Prefab, input.Players, random, plan.Stones);
+                BossGems.Add(economy, input.Prefab, input.Stars, random, plan.Stones);
             }
             if (input.GearOn)
             {
@@ -90,10 +90,10 @@ namespace EliteCrafting.Loot
 
         private static void DrawStones(EconomyRules economy, int count, Random random, LootPlan plan)
         {
-            WeightedTable<StoneDef> table = economy.StoneDraw(plan.Tier);
+            WeightedTable<StoneDef> table = economy.StoneDraw(plan.Tier, SocketSwitch.On);
             for (int i = 0; i < count; i++)
             {
-                if (table.TryPick((float)random.NextDouble(), out StoneDef stone) && SocketSwitch.Drops(stone))
+                if (table.TryPick((float)random.NextDouble(), out StoneDef stone))
                 {
                     plan.Stones.Add(stone);
                 }

@@ -30,9 +30,6 @@ namespace EliteCrafting.Loot
         /// <summary>The creature's prefab name (null for a chest or a test roll at a bare tier): the boss gems key on it.</summary>
         public string? Prefab;
 
-        /// <summary>Players near a boss when it died (<see cref="BossParty"/>): the boss gem is rolled once for each; 0 counts as 1.</summary>
-        public int Players;
-
         /// <summary>The creature entry, or for a chest its container entry (same shape, drops.md section 11).</summary>
         public CreatureDrop? Creature;
         public bool StonesOn;

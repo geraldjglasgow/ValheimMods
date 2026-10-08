@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using EliteCrafting.Rules;
+using EliteCrafting.Sockets;
 
 namespace EliteCrafting.Loot
 {
@@ -70,7 +71,7 @@ namespace EliteCrafting.Loot
         // The table holds running totals only; each stone's share comes from its drops.stones row, which built it.
         private static void AppendStones(StringBuilder text, EconomyRules economy, int tier)
         {
-            WeightedTable<StoneDef> table = economy.StoneDraw(tier);
+            WeightedTable<StoneDef> table = economy.StoneDraw(tier, SocketSwitch.On);
             text.Append("  rune table:");
             foreach (StoneDef stone in table.Items)
             {

@@ -453,14 +453,16 @@ drops:
     gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75]
 
   runes:                       # which rune drops, by tier; a disabled rune never drops
-    #              T1   T2   T3   T4   T5   T6   T7   T8
-    awakening:   [400, 300, 220, 160, 120, 100,  80,  70]
-    recasting:   [120, 130, 120, 110, 100,  90,  80,  75]
-    ascension:   [  0, 120, 120, 110, 100,  90,  80,  75]
-    cleansing:   [ 30,  30,  30,  30,  30,  30,  30,  30]
-    serpent:     [  0,   0,  20,  25,  30,  35,  40,  45]
-    # the Dvergr Chisel: rare. Gems drop only from bosses (one at random per player near the boss, Eikthyr 15% to the Fader 80%; fixed in code).
-    dvergr_chisel: [5, 5, 5, 5, 5, 5, 5, 5]
+    # Each column adds to 100, so a weight is that rune's percent of the drops at the tier.
+    #               T1  T2  T3  T4  T5  T6  T7  T8
+    awakening:     [37, 26, 21, 18, 15, 14, 12, 10]
+    recasting:     [50, 50, 50, 50, 50, 50, 50, 50]
+    ascension:     [ 0, 10, 12, 13, 13, 12, 12, 11]
+    cleansing:     [ 3,  3,  3,  3,  4,  4,  4,  5]
+    serpent:       [ 0,  0,  2,  3,  4,  5,  6,  7]
+    # The Dvergr Chisel; with `Gems and sockets` off its share goes to the runes. Gems drop only from bosses
+    # (50% for one, plus 50% for one more per boss star; fixed in code).
+    dvergr_chisel: [10, 11, 12, 13, 14, 15, 16, 17]
 
   rarity_weights:              # the rarity of dropped gear, by tier
     #          T1  T2  T3  T4  T5  T6  T7  T8
@@ -479,7 +481,7 @@ drops:
     exclude: []                # item prefabs that never drop
     include: {}                # item prefab -> tier, always in the pool at that tier
 
-  bosses:                      # every boss may also drop one gem and the Dvergr Chisel (fixed in code)
+  bosses:                      # every boss may also drop gems and the Dvergr Chisel 25% (fixed in code)
     Eikthyr:
       tier: 1
       rune_rolls: 2

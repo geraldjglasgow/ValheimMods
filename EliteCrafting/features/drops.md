@@ -158,25 +158,21 @@ hours. Starred creatures pay double or triple. Bosses pay far more (section 9).
 Relative weights per tier. 0 means the rune never drops at that tier. **A disabled rune is removed from every
 table**, so the per-kill rune chance is unchanged and the draw is shared among the enabled runes.
 
-The rows follow the path of an item: Awakening everywhere and most of all early; Shaping and Recasting everywhere; Ascension from
-the Black Forest on; Consecrated from the Swamp on, more the later the biome; Cleansing flat everywhere; the Serpent
-from the Swamp on, where corruption is at home. Adopted defaults (DRP-13).
+Recasting is half of every drop and the Dvergr Chisel 10% in the Meadows, one more per tier (user 2026-10-08:
+"recasting rune drop rates need to be buffed. like 50% starting", "10% chance to drop chisel T1, and it goes up"); the
+other runes share the rest in their old proportions: Awakening most of all early, Ascension from the Black Forest on,
+Cleansing everywhere, the Serpent from the Swamp on. Each column adds to 100, so a weight is a percent.
 
-| Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| awakening | 400 | 300 | 220 | 160 | 120 | 100 | 80 |
-| shaping | 150 | 150 | 140 | 120 | 100 | 90 | 80 |
-| recasting | 120 | 130 | 120 | 110 | 100 | 90 | 80 |
-| ascension | 0 | 120 | 120 | 110 | 100 | 90 | 80 |
-| consecrated | 0 | 0 | 20 | 40 | 50 | 60 | 70 |
-| cleansing | 30 | 30 | 30 | 30 | 30 | 30 | 30 |
-| serpent | 0 | 0 | 20 | 25 | 30 | 35 | 40 |
+| Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| awakening | 37 | 26 | 21 | 18 | 15 | 14 | 12 | 10 |
+| recasting | 50 | 50 | 50 | 50 | 50 | 50 | 50 | 50 |
+| ascension | 0 | 10 | 12 | 13 | 13 | 12 | 12 | 11 |
+| cleansing | 3 | 3 | 3 | 3 | 4 | 4 | 4 | 5 |
+| serpent | 0 | 0 | 2 | 3 | 4 | 5 | 6 | 7 |
+| dvergr_chisel | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 |
 
-What the numbers mean in play (unstarred, non-boss), as shares of the runes that drop:
-
-- **Meadows**: Awakening 57%, Shaping 21%, Recasting 17%, Cleansing 4%.
-- **Black Forest**: Awakening 41%, Shaping 21%, Recasting 18%, Ascension 16%, Cleansing 4%.
-- **Ashlands**: Awakening, Shaping, Recasting and Ascension 17% each, Consecrated 15%, Serpent 9%, Cleansing 7%.
+With `Gems and sockets` off the chisel's share goes to the runes.
 
 ---
 

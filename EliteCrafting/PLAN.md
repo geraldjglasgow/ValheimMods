@@ -586,6 +586,13 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   the owner's payment bumps the ZDO int `ecf_rt_cast` (and `ecf_rt_cast_stone`), every client near plays the game's
   workbench craft sound and the workshop effect `ecf_rune_vortex` (bundle `ecf_tablefx`) in the stone's colour.
   Judgement calls: the chisel and gems trigger it too; no light (the effect has none).
+- 2026-10-08 — Boss gems and the rune table (user: "each boss should have a 50% chance to drop a single gem. Also you get
+  50% chance per star. So a 4 star monster could drop 1 + the 4 stars"; "10% chance to drop chisel T1, and it goes up";
+  "recasting rune drop rates need to be buffed. like 50% starting"): every game boss rolls 50% for one gem plus 50% more
+  per star; the per-player rolls (`BossParty`) are gone. In `drops.runes` Recasting is 50% at every tier, the chisel 10%
+  to 17%, the other runes shrunk in their old proportions; with `Gems and sockets` off the chisel's share now goes to
+  the runes (rune-only draw tables) instead of dropping nothing. Judgement calls: "starting" read as 50% at every tier,
+  the chisel +1% a tier, the boss chisel kept at 25%, gems still from the seven game bosses only.
 
 ## Open questions
 

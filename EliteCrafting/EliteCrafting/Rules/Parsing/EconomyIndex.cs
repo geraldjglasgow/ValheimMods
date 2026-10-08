@@ -46,22 +46,24 @@ namespace EliteCrafting.Rules
         {
             DropRules drops = rules.Drops;
             rules.StoneTables = new WeightedTable<StoneDef>[DropParser.Tiers];
+            rules.RuneOnlyTables = new WeightedTable<StoneDef>[DropParser.Tiers];
             rules.GearTables = new WeightedTable<RarityDef>[DropParser.Tiers];
             rules.BossGearTables = new WeightedTable<RarityDef>[DropParser.Tiers];
             for (int t = 0; t < DropParser.Tiers; t++)
             {
-                rules.StoneTables[t] = WeightedTable<StoneDef>.Build(StoneWeights(rules, t));
+                rules.StoneTables[t] = WeightedTable<StoneDef>.Build(StoneWeights(rules, t, sockets: true));
+                rules.RuneOnlyTables[t] = WeightedTable<StoneDef>.Build(StoneWeights(rules, t, sockets: false));
                 rules.GearTables[t] = WeightedTable<RarityDef>.Build(RarityWeights(rules, drops.RarityWeights, t));
                 rules.BossGearTables[t] = WeightedTable<RarityDef>.Build(RarityWeights(rules, drops.BossRarityWeights, t));
             }
         }
 
-        private static IEnumerable<KeyValuePair<StoneDef, float>> StoneWeights(EconomyRules rules, int tierIndex)
+        private static IEnumerable<KeyValuePair<StoneDef, float>> StoneWeights(EconomyRules rules, int tierIndex, bool sockets)
         {
             foreach (KeyValuePair<string, float[]> row in rules.Drops.Stones)
             {
                 StoneDef? stone = rules.Stone(row.Key);
-                if (stone != null && stone.Enabled)
+                if (stone != null && stone.Enabled && (sockets || !StoneCatalog.IsSocketStone(stone.Id)))
                 {
                     yield return new KeyValuePair<StoneDef, float>(stone, row.Value[tierIndex]);
                 }

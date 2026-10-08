@@ -6,36 +6,35 @@ namespace EliteCrafting.Sockets
 {
     /// <summary>
     /// What each boss adds of the socket stones (sockets.md section 7), on top of its YAML drops: the Dvergr Chisel one
-    /// time in four from every boss, and gems, any of the eleven at random, at a chance that grows boss by boss (user
-    /// 2026-10-07: "all bosses should be able to drop all gems, its just more common to get a gem at later bosses";
-    /// before, each boss had its own one or two), rolled once for every player near the boss when it dies (user: "roll the
-    /// chance multiple times per player participating in the fight", <see cref="Loot.BossParty"/>). Fixed in code so every server has them whatever its own economy file
-    /// says. Rolled on the creature's owner with the rest of the boss's drops, while <c>Rune drops</c> and
-    /// <c>Gems and sockets</c> are on.
+    /// time in four, and gems, any of the eleven at random (user 2026-10-07: "all bosses should be able to drop all gems"),
+    /// each a 50% roll: one for the boss and one more for each of its stars (user 2026-10-08: "each boss should have a 50%
+    /// chance to drop a single gem. Also you get 50% chance per star. So a 4 star monster could drop 1 + the 4 stars").
+    /// Fixed in code so every server has them whatever its own economy file says. Rolled on the creature's owner with the
+    /// rest of the boss's drops, while <c>Rune drops</c> and <c>Gems and sockets</c> are on.
     /// </summary>
     internal static class BossGems
     {
         private const float ChiselChance = 25f;
+        private const float GemChance = 50f;
 
-        // Percent chance of one gem, by boss in the game's order.
-        private static readonly Dictionary<string, float> GemChance = new Dictionary<string, float>(StringComparer.Ordinal)
+        // The game's bosses; a boss a server adds to its own boss map drops no gems.
+        private static readonly HashSet<string> Bosses = new HashSet<string>(StringComparer.Ordinal)
         {
-            ["Eikthyr"] = 15f, ["gd_king"] = 20f, ["Bonemass"] = 30f, ["Dragon"] = 40f,
-            ["GoblinKing"] = 50f, ["SeekerQueen"] = 65f, ["Fader"] = 80f,
+            "Eikthyr", "gd_king", "Bonemass", "Dragon", "GoblinKing", "SeekerQueen", "Fader",
         };
 
         private static readonly List<StoneDef> Gems = new List<StoneDef>();
 
-        /// <summary>The boss's gems (one roll per player) and chisel, each rolled on its own; a disabled stone never drops.</summary>
-        public static void Add(EconomyRules economy, string? bossPrefab, int players, Random random, List<StoneDef> into)
+        /// <summary>The boss's gems (one roll, plus one per star) and chisel, each rolled on its own; a disabled stone never drops.</summary>
+        public static void Add(EconomyRules economy, string? bossPrefab, int stars, Random random, List<StoneDef> into)
         {
-            if (!SocketSwitch.On || bossPrefab == null || !GemChance.TryGetValue(bossPrefab, out float gemChance))
+            if (!SocketSwitch.On || bossPrefab == null || !Bosses.Contains(bossPrefab))
             {
                 return;
             }
-            for (int i = 0; i < Math.Max(1, players); i++)
+            for (int i = 0; i <= Math.Max(0, stars); i++)
             {
-                if (Rolls(random, gemChance))
+                if (Rolls(random, GemChance))
                 {
                     AnyGem(economy, random, into);
                 }

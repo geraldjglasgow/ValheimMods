@@ -34,6 +34,7 @@ namespace EliteCrafting.Rules
         public IReadOnlyDictionary<string, StoneDef> StoneByPrefab { get; internal set; } = new Dictionary<string, StoneDef>();
 
         internal WeightedTable<StoneDef>[] StoneTables { get; set; } = Array.Empty<WeightedTable<StoneDef>>();
+        internal WeightedTable<StoneDef>[] RuneOnlyTables { get; set; } = Array.Empty<WeightedTable<StoneDef>>();
         internal WeightedTable<RarityDef>[] GearTables { get; set; } = Array.Empty<WeightedTable<RarityDef>>();
         internal WeightedTable<RarityDef>[] BossGearTables { get; set; } = Array.Empty<WeightedTable<RarityDef>>();
 
@@ -50,8 +51,11 @@ namespace EliteCrafting.Rules
 
         public RarityDef? Previous(RarityDef rarity) => rarity.Index > 0 ? Rarities[rarity.Index - 1] : null;
 
-        /// <summary>Which stone drops at a tier (1-8): enabled stones only, weights from <c>drops.runes</c>.</summary>
-        public WeightedTable<StoneDef> StoneDraw(int tier) => ByTier(StoneTables, tier);
+        /// <summary>
+        /// Which stone drops at a tier (1-8): enabled stones only, weights from <c>drops.runes</c>. Without
+        /// <paramref name="sockets"/> (<c>Gems and sockets</c> off) the chisel's share goes to the runes.
+        /// </summary>
+        public WeightedTable<StoneDef> StoneDraw(int tier, bool sockets) => ByTier(sockets ? StoneTables : RuneOnlyTables, tier);
 
         /// <summary>The rarity of dropped gear at a tier, <c>drop_weight</c> applied; the boss table when asked.</summary>
         public WeightedTable<RarityDef> GearRarityDraw(int tier, bool boss) => ByTier(boss ? BossGearTables : GearTables, tier);

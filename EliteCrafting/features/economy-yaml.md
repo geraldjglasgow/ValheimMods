@@ -401,14 +401,13 @@ drops:                    # on/off: the .cfg switches `Rune drops` and `Magic it
     rune: [35, 40, 45, 50, 55, 60, 65]
     gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5]
 
-  runes:                  #  T1   T2   T3   T4   T5   T6   T7
-    awakening:          [400, 300, 220, 160, 120, 100,  80]
-    shaping:            [150, 150, 140, 120, 100,  90,  80]
-    recasting:          [120, 130, 120, 110, 100,  90,  80]
-    ascension:          [  0, 120, 120, 110, 100,  90,  80]
-    consecrated:        [  0,   0,  20,  40,  50,  60,  70]
-    cleansing:          [ 30,  30,  30,  30,  30,  30,  30]
-    serpent:            [  0,   0,  20,  25,  30,  35,  40]
+  runes:                  # T1  T2  T3  T4  T5  T6  T7  T8
+    awakening:          [37, 26, 21, 18, 15, 14, 12, 10]
+    recasting:          [50, 50, 50, 50, 50, 50, 50, 50]
+    ascension:          [ 0, 10, 12, 13, 13, 12, 12, 11]
+    cleansing:          [ 3,  3,  3,  3,  4,  4,  4,  5]
+    serpent:            [ 0,  0,  2,  3,  4,  5,  6,  7]
+    dvergr_chisel:      [10, 11, 12, 13, 14, 15, 16, 17]
 
   rarity_weights:         # T1  T2  T3  T4  T5  T6  T7
     magic:              [ 80, 70, 60, 50, 45, 40, 35]

@@ -90,12 +90,12 @@ dropped item with sockets never gets more from the chisel.
 tablets (`StoneTablets.Runes`, `ecf_runes`); without the bundle the gems are tinted copies of the Ruby and the chisel
 tinted iron nails (`StoneBases` groups `Gem`, `Tool`; tints in `StoneTints`).
 
-Default drops (economy YAML): in `drops.runes`, the chisel weight 5 and each gem 0.5 in every tier (any gem about one
-kill in 3,200 in the Meadows, one in 760 in the Deep North, more with stars). **Boss gems are code** (`Sockets/BossGems`,
-added to a boss-map boss's drops in `LootPlanner.PlanBoss`, keyed on `LootInput.Prefab`), so servers whose own economy
-file predates the gems still get them: every boss the chisel 25%; Eikthyr Thor's and Sleipnir's 10% each, the Elder
-Freyja's 15%, Bonemass Nidhogg's 15%, Moder Ymir's and Skadi's 20%, Yagluth Surtr's and Tyr's 20%, the Queen Odin's
-and Heimdall's 20%, the Fader Hel's 25%.
+Default drops (economy YAML): in `drops.runes`, the chisel 10% of the runes in the Meadows, one more per tier to 17% in
+the Deep North (2026-10-08, user: "10% chance to drop chisel T1, and it goes up"); with `Gems and sockets` off its share
+goes to the runes. Gems are not in the creature table. **Boss gems are code** (`Sockets/BossGems`, added to a boss-map
+boss's drops in `LootPlanner.PlanBoss`, keyed on `LootInput.Prefab`), so every server gets them whatever its economy
+file says: for each of the seven game bosses a 50% roll for one gem (any of the eleven at random) plus one more 50% roll
+per star (`LootInput.Stars`), and the chisel 25%.
 
 `Gems and sockets` off: no sockets on drops, the chisel and gems neither drop nor work (`gems_off`), the Rune Table
 hides its Sockets tab; gems already set keep their stats.

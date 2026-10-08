@@ -250,8 +250,9 @@ roster in code. `GemRolls.Roll` (a tier the item level unlocked, whole ladder, w
 a gem into a full item returns `StoneResult.ChooseSocket()` (`NeedsSocket`), and the click opens `GemChooser` (one
 yes/no popup per filled socket; Yes re-evaluates `StoneJob.AtSocket(player, socket)`; `Confirm(job, socket)` asks once
 for a socket already picked). `SocketSwitch` (`Gems and sockets`): `LootPlanner` skips the chisel and gems while it is
-off. `BossGems` (code, not YAML): one random gem per player within 50 m (`Loot/BossParty`) at a chance growing boss by boss (15% Eikthyr to 80% the Fader) and the
-chisel 25%, keyed on `LootInput.Prefab`. Models:
+off, and the drop draw uses `EconomyRules.StoneDraw(tier, sockets: false)` (the rune-only tables, so the chisel's share goes
+to the runes). `BossGems` (code, not YAML): a 50% roll for one random gem, plus one more 50% roll per boss star
+(`LootInput.Stars`), and the chisel 25%, for the seven game bosses, keyed on `LootInput.Prefab`. Models:
 `StoneTablets` is one instance per bundle (`Runes`: `ecf_runes`, `ecf_runetablet_<id>`; `Gems`: `ecf_gems`, `ecf_<id>`;
 `For(id)`); without a bundle, tinted Ruby (gems) and iron nails (chisel), `StoneBases` groups `Gem`/`Tool`. The Rune
 Table's third tab, Sockets (`Table/Window/SocketTab`, `SocketPane`, `SocketText`; `TableTab.Shown` hides it while the
@@ -408,7 +409,7 @@ in the icon's lower right corner). The **Dvergr Chisel** cuts one into such an i
 would carry sockets too, but no magic gear drops for now.) A **gem** clicked onto an item fills its next
 empty socket with a stat that depends on the item; its tier is rolled for the item right then (the item's level decides
 the best tier it can reach). With every socket full you pick which gem to replace; the old one is lost. Gems are
-a boss reward: only bosses drop them, any gem, one at random, the later the boss the likelier (Eikthyr 15%, the Elder 20%, Bonemass 30%, Moder 40%, Yagluth 50%, the Queen 65%, the Fader 80%, rolled once for every player within 50 m of the boss when it dies; the chisel 25% from every boss).
+a boss reward: only bosses drop them, any gem, one at random: every boss 50% for one gem, plus 50% for one more per star (a 4-star boss drops up to five); the chisel 25% from every boss, and 10% (Meadows) to 17% (Deep North) of the runes creatures drop.
 Cleansing and the other runes leave sockets and gems alone; a sealed item takes neither. The Rune Table's **Sockets**
 tab does the same from a window: pick the gear, the chisel or a gem you carry, and (to replace a gem) the socket.
 `Gems and sockets` in `2 - Runes` turns the feature off.

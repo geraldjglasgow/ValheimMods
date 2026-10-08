@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.2
+
+- Bosses drop a gem 50% of the time, plus 50% for one more per star (no longer one roll per nearby player).
+- Recasting Runes are half of all rune drops; the Dvergr Chisel 10% of them in the Meadows, up to 17% in the Deep North.
+- With `Gems and sockets` off, a rune drops where a chisel would.
+- Existing servers keep their old rune weights: edit `drops.runes` in `EliteCrafting_economy.yml`, or delete it to have it rewritten.
+
 ## 0.9.1
 
 - Creatures drop runes far more often: 35% a kill in the Meadows, up 5% per biome to 70% in the Deep North.

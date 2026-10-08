@@ -37,8 +37,8 @@ The stats are the inscriptions of the same name in the [Inscription List](wiki:I
 ## Where they drop
 
 - Gems are a boss reward: only bosses drop them.
-- Every creature can drop a Dvergr Chisel in place of a rune, rarely (about one kill in 2,800 in the Meadows, one in 550 in the Deep North); stars raise the odds as they do for runes.
-- Every boss can drop any of the gems, the later the boss the likelier: Eikthyr 15%, the Elder 20%, Bonemass 30%, Moder 40%, Yagluth 50%, the Queen 65%, the Fader 80% for one gem, at random, rolled once for every player within 50 m of the boss when it dies (five players can get five gems); and the Dvergr Chisel 25% of the time.
+- Every creature can drop a Dvergr Chisel in place of a rune: 10% of the runes in the Meadows, up to 17% in the Deep North (about one kill in 29 in the Meadows, one in 8 in the Deep North); stars raise the odds as they do for runes.
+- Every boss can drop any of the gems, at random: 50% for one gem, plus 50% for one more for each star the boss has (a 4-star boss can drop five); and the Dvergr Chisel 25% of the time.
 - World chests can hold a chisel too, as one of their runes.
 
 ## The Rune Table's Sockets tab
