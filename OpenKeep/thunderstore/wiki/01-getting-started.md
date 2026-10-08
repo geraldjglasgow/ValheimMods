@@ -48,7 +48,7 @@ Every key can be rebound in the cfg, main key first (`R + LeftAlt`); empty switc
 
 ## Pages
 
-- [Crafting and Salvage](wiki:Crafting and Salvage) - crafting from chests, station feeding, cart workbench, batch crafting, craft speed, recipe search and favourites, recipe tracker, salvage.
+- [Crafting and Salvage](wiki:Crafting and Salvage) - crafting from chests, station feeding, cart workbench, batch crafting, craft speed, recipe search, categories and favourites, recipe tracker, salvage.
 - [Store and Sort](wiki:Store and Sort) - quick stack, store, top up, route, favourites, trash, sorting, ground pickup.
 - [Stacks and Containers](wiki:Stacks and Containers) - stack sizes, weights, chest sizes, station capacities, contents signs.
 - [Homestead](wiki:Homestead) - beds and respawn, fires, torches, honey, self-feeding stations, pets, Rested, repairs.

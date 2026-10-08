@@ -86,6 +86,7 @@ namespace OpenKeep.Salvage
             icon.sprite = item.GetIcon();
             icon.color = Color.white;
             SalvageRarity.Apply(icon.gameObject, item);
+            EliteCraftingLink.CraftingItems.DecorateIcon(icon.gameObject, item);
             TMP_Text name = element.transform.Find("name").GetComponent<TMP_Text>();
             name.text = ItemNames.DisplayName(item) + (item.m_stack > 1 ? $" x{item.m_stack}" : "");
             name.color = Color.white;

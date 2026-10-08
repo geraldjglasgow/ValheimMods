@@ -150,7 +150,8 @@ OpenKeep/OpenKeep/src/
     SalvageInventory.cs     the exact fit simulation and the add with rollback
     SalvageActions.cs       the public face: CanSalvage, WhyNot, Returns, Salvage, Confirm
     SalvageTab.cs, SalvageList.cs, SalvageRow.cs, SalvagePanel.cs, SalvageGuiPatches.cs   the third tab
-    SalvageRarity.cs        Epic Loot's rarity background behind the tab's icons, through its published API
+    SalvageRarity.cs        Epic Loot's rarity background behind the tab's icons, through its published API; EliteCrafting's marks
+                            (backdrop, seal, sockets) through EliteCraftingLink's `DecorateIcon` (SalvageList, SalvagePanel)
     SalvageHotkey.cs        after InventoryGui.Update (HotPatches): Salvage Key
   Stacks/                   section 4
     StacksModule.cs, StacksSettings.cs, StacksModel.cs, StackRule.cs, ItemValue.cs
@@ -341,6 +342,10 @@ OpenKeep/OpenKeep/src/
     SearchBar.cs            the row above the list: a copy of the build menu's search field; the list gives up
                             the row's height; debounced rebuild; cleared on close
     SearchButtons.cs        favourites only star (Shift: clear all) and view button at the row's end
+    RecipeCategory.cs, RecipeCategories.cs   the eight categories (flags), a recipe's category from its item type,
+                            the picked set (session only) and Toggle
+    CategoryBar.cs          the category row under the search row: eight copies of the quality - button with the
+                            embedded category_<name>.png icons, tinted light, picked (orange) or dimmed
     RecipeActions.cs        Track and favourite buttons beside the Style button under the recipe's name
     RecipeInput.cs          Search Key, Store's Favourite Item Key over a row, the search's debounce tick
     RecipeGamepad.cs        right stick shortcuts (once per push) and grid stepping, from UpdateRecipeGamepadInput
@@ -390,14 +395,18 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
                             author's 1254 px drawing, which is not in the repository); the Blueprints tab's icons
                             (128 px, drawn with Python and PIL at 4x in the style of the first two): blueprint.png,
                             fixground.png, planner.png, copy.png, ghostsshown.png, ghostshidden.png, folder.png,
-                            folderup.png, foldernew.png; every PNG here is embedded
+                            folderup.png, foldernew.png; the recipe category icons category_<name>.png (64 px white
+                            silhouettes for tinting, drawn by ../ValheimAssets/Assets/Icons/RecipeCategories/draw.py);
+                            every PNG here is embedded; assets/boots/: the boots' and split trousers' icons
+                            boots_<set>.png and pants_<set>.png (64 px, ValheimAssets
+                            Assets/Gear/SeparatedLegArmor/Icons/v008/64), embedded as OpenKeep.assets.boots.<file>
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 4.0.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 4.1.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -507,6 +516,29 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
     MimirStacksPatches.cs   Inventory.AddItem (both public, the private cell add, the load add), CanAddItem, FindFreeStackSpace
     MimirStacksOut.cs       out of the chest one normal stack at a time: the cut adds, InventoryGrid.DropItem, Humanoid.DropItem
     MimirStacksText.cs      InventoryGrid.UpdateGui postfix: a Mímir slot shows its count alone (5000)
+  Boots/                    section 16, Boots (2026-10-07): the game's 20 leggings split into leggings and boots
+    BootsModule.cs, BootsSettings.cs   16. Boots / Separate Boots (off by default), the ok_boots_* words
+    BootSet.cs, BootSets.cs the 20 sets: workshop key, game leggings, OpenKeep_Boots_<Key>, name token; Is(item) by token
+    BootsItems.cs           prefix ZNetScene.Awake, ObjectDB.Awake, CopyOtherDB: builds once, adds the boots to the lists
+    BootsItem.cs            one boots item: a bench copy of its leggings, the boots skin, name, icon, a fifth of the stats
+    BootsDrop.cs            the dropped look: the boots mesh unskinned, at the player body's scale and turn
+    BootsBundle.cs          the bundle ok_boots: ok_pants_<set> and ok_boots_<set>, Male and Female each
+    SetLook.cs              the game materials for a set's pieces, by placeholder name (own, body paint, workshop textures)
+    LiningLook.cs           the coverage cloth keeps the bundle's Workshop/LegArmorLining material; draws nothing where unsupported
+    BootsIcons.cs           the workshop's boots and trousers icons (assets/boots), decoded once, none on a dedicated server
+    LegsIcons.cs            the leggings show the trousers icon while the switch is on, their own (remembered) when off
+    BorrowedLooks.cs        placeholders worn with another game item's material (Iron v019's plates: the iron chest's)
+    BootsSkin.cs, SkinSex.cs   a piece as an attach_skin child; Male or Female shown by the body's model index
+    LegsLook.cs             VisEquipment.AttachArmor prefix: the split trousers for the 20 leggings, the body paint kept
+    LegsPaint.cs            the leggings' body paint with the feet cleared (bundle masks ok_body_feetmask_male/_female, GPU readback, kept)
+    BootsStats.cs           the 80/20 split of armour, eitr, modifiers (boots: flat +5% movement); set sizes + 1; from remembered originals
+    BootsShare.cs           the weight share, taken inside Stacks' apply (StackValues.ApplyPrefab)
+    BootsRecipes.cs         a boots recipe beside each leggings', the cost split a fifth / the rest
+    BootsSwitch.cs          ObjectDB.Awake/CopyOtherDB postfix and the switch: stats, recipes, look, Stacks, take off
+    WornBoots.cs            the worn pair (the equipped flag), cached for the local player; Wear, TakeOffAll
+    BootsEquipPatches.cs    EquipItem prefix, IsItemEquiped, IsItemTypeEquiped, UnequipItem, UnequipAllItems postfixes
+    BootsStatPatches.cs     armour, resistances, hit durability, set count, weight, modifiers, eitr, breaking, armour difference
+    BootsShow.cs            Humanoid.SetupVisEquipment postfix (ZDO OpenKeep.boots), VisEquipment.UpdateEquipmentVisuals postfix
 
 Cross-module uses that are allowed: Store's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
 `Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
@@ -522,7 +554,9 @@ reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection.
 and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Store's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
 PackPanel's main grid through `Core.PackPanelGrid`, Stacks' `PackPanelKeys` its Key Stack through `Core.PackPanelLink`,
 and Store's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Blueprints'
-`BlueprintCamera` sets Build Camera's `CameraArea.AroundPlayer`. Everything else goes through `Core`.
+`BlueprintCamera` sets Build Camera's `CameraArea.AroundPlayer`. Stacks' `StackValues.ApplyPrefab` takes the
+leggings' weight share from `Boots.BootsShare`, which reads `Stacks.VanillaValues`; `Boots.BootsSwitch` calls
+`StackValues.ApplyAll` when the switch changes. Everything else goes through `Core`.
 
 ## Patched game methods
 
@@ -637,6 +671,17 @@ back after the game's clamp); postfix `CanAddItem(ItemData, int)` and `FindFreeS
 `InventoryGrid.DropItem` (`Priority.High`: a drag out cut to one normal stack, a swap of a big stack refused); prefix
 `Humanoid.DropItem` (a ground drop cut to one normal stack); postfix `InventoryGrid.UpdateGui` (the count alone).
 
+Boots: prefix `ZNetScene.Awake`, `ObjectDB.Awake` and `ObjectDB.CopyOtherDB` (the boots built once and added to the
+lists before the game indexes them); postfix `ObjectDB.Awake` and `CopyOtherDB` (recipes, stats, look; before Stacks'
+low-priority apply); prefix `Humanoid.EquipItem` (`Priority.High`: boots worn by OpenKeep, the game's method skipped);
+postfix `Humanoid.IsItemEquiped`, `IsItemTypeEquiped`, `UnequipItem`, `UnequipAllItems`; postfix `Player.GetBodyArmor`,
+`Player.ApplyArmorDamageMods`, `Humanoid.GetSetCount` (private), `Humanoid.GetEquipmentWeight`, `Player.UpdateModifiers`
+(private), `Player.GetEquipmentEitrRegenModifier`, `Humanoid.UpdateEquipment` (private: a broken pair comes off);
+prefix `Player.DamageArmorDurability` (the pair is one of the pieces a hit may wear down; the original skipped only while
+a pair is worn) and `Player.TryGetArmorDifference` (boots only); prefix `VisEquipment.AttachArmor` (private: the 20
+leggings' hashes only, while on); postfix `Humanoid.SetupVisEquipment` and `VisEquipment.UpdateEquipmentVisuals`
+(private: the worn pair on every client).
+
 ## Config sections and keys
 
 `General` (`Lock Configuration`), `0. Containers` (`Ships`, `Carts`, `Player Chests`, `Honour Wards`, `Shared
@@ -666,14 +711,15 @@ synced; unsynced `Show Touches` true, `Touch Colour` `#ffb347`), `10. Batch Craf
 `Pickup Min Comfort` 0 (comfort 0 to 50); all synced; unsynced `Toggle Key` B, `Gamepad Toggle` `JoyAltKeys +
 JoyRStick`, `Speed` 10, `Run Multiplier` 3, `Circlet Light` true, `Circlet Intensity`, `Circlet Range`, `Circlet Spot
 Angle` (0: the circlet's own), `Pickup Panel` true, `Pickup Panel Position` (0, -120)), `12. Recipe List` (`Search`
-true, `Search Key` LeftControl + F, `Clear Search On Close` true, `Favourites` true, `Favourites First` true, `Recipe
+true, `Search Key` LeftControl + F, `Clear Search On Close` true, `Categories` true, `Favourites` true, `Favourites First` true, `Recipe
 View` `List` (`List`, `CompactList`, `SmallGrid`, `MediumGrid`, `LargeGrid`), `Gamepad Controls` true; all unsynced),
 `13. Recipe Tracker` (`Enabled` true, `Max Tracked` 6 (1 to 12), `Count Nearby Chests` true, `Untrack When Crafted`
 true, `Hide In Combat` true, `Hide With Map` true, `Scale` 1 (0.5 to 2), `Font` `Sans` (`Sans`, `Serif`, `Norse`),
 `Font Size` 16 (10 to 28), `Have Colour` `#FFFFFF`, `Missing Colour` `#FF6A5A`, `Ready Colour` `#FFB65C`, `Background
 Opacity` 0.56, `Position` empty; all unsynced), `14. Blueprints` (`Enabled` false, `Build Without Materials` false,
 `Build As Resources Come In` true; all synced; the keys are fixed), `15. Custom Storage Chests` (`Custom Storage Chests` false, synced; no
-apostrophe in the section name, BepInEx refuses it).
+apostrophe in the section name, BepInEx refuses it), `16. Boots` (`Separate Boots` false, synced; PackPanel reads this
+entry by section and key).
 Keys, defaults and meanings are in each entry's description in the .cfg (bound in the modules' `*Settings.cs`; the
 README only names the features). Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Store / Enabled` (synced, true), so every module has a master switch.
@@ -743,7 +789,8 @@ default and sync flag; the one addition is `2. Store / Enabled` (synced, true), 
   `OpenKeep_BatchAmount` and `OpenKeep_BatchMore` beside the Craft button. Build Camera: `OpenKeep_CameraCirclet` (a
   Light under the game camera), `OpenKeep_CameraPickup` with `OpenKeep_CameraPickupText` (under the HUD root). Recipe
   List: `OpenKeep_RecipeSearch` (beside `RecipeList` in the crafting panel) with `OpenKeep_RecipeSearchField`,
-  `OpenKeep_RecipeOnly` and `OpenKeep_RecipeView`; `OpenKeep_TrackButton` and `OpenKeep_FavouriteButton` beside the
+  `OpenKeep_RecipeOnly` and `OpenKeep_RecipeView`; `OpenKeep_RecipeCategories` (after it) with
+  `OpenKeep_RecipeCategory_<Category>` buttons and the sprites `OpenKeep_category_<name>`; `OpenKeep_TrackButton` and `OpenKeep_FavouriteButton` beside the
   Style button; `OpenKeep_star` on favourite rows; `OpenKeep_icon` on its buttons; a `TypingWatch` component on the
   inventory's object. Recipe Tracker: `OpenKeep_Tracker` under the HUD root with `OpenKeep_TrackerTitle` and one
   `OpenKeep_TrackerEntry` per recipe; a `TrackerHud` component on the HUD's object. The cart's station is a `CraftingStation` component on the cart
@@ -775,6 +822,13 @@ default and sync flag; the one addition is `2. Store / Enabled` (synced, true), 
   `$ok_mimir_name`; words `ok_mimir_name`, `ok_mimir_desc`, `ok_mimir_search`, `ok_mimir_search_tip`; bundle
   `ok_mimirchest` (`assets/bundles/ok_mimirchest.windows` / `.linux`, from ValheimAssets `Assets/Props/MimirsChest`);
   GameObject `OpenKeep_MimirSearch` (the field, in the container panel). No ZDO key and no RPC of its own: the inventory is the game's `items`, the lid reads the game's `InUse`.
+- Boots: item prefabs `OpenKeep_Boots_<Key>` (20, networked items, copies of the game's leggings; PackPanel knows boots
+  by this prefix), words `ok_boots_<key>`, `ok_boots_desc`, `ok_boots_off`; recipes `Recipe_OpenKeep_Boots_<Key>`; bench
+  holders `OpenKeep_Pants_<Key>`; bundle `ok_boots` (`assets/bundles/ok_boots.windows` / `.linux`, from ValheimAssets
+  `Assets/Gear/SeparatedLegArmor`, v008: `ok_pants_<set>`, `ok_boots_<set>`, the textures `ok_body_feetmask_male`, `_female`,
+  the shader `Workshop/LegArmorLining` and its `<Set>_CoverageCloth_v008` materials); icons `OpenKeep.assets.boots.boots_<set>.png`
+  and `pants_<set>.png`; ZDO key `OpenKeep.boots` (int, the worn boots prefab's hash, 0 for none) on the
+  player and its ragdoll, written by the owner when it changes. No RPC.
 - Construction sites: prefab `OpenKeep_Site` (networked post); its ZDO keys `OpenKeep.site_bp`, `site_name`,
   `site_origin`, `site_yaw`, `site_built`, `site_queue`, `site_store`, `site_ground`, `site_groundStone`,
   `site_creator`, `site_creatorName` (all `OpenKeep.`); RPCs on the post `OpenKeep_SiteDeliver` (request id, then the
@@ -1794,6 +1848,24 @@ Repair on opening a station (`Auto Repair`, asked for on 2026-09-28 as "auto rep
   starts later and caches every text it changes (`$inventory_style` on the Style button), writing it back on every
   language or input device change; an empty text is never cached. The Track label is also rewritten whenever it
   differs from what OpenKeep last set.
+- Categories (a GitHub request for PackPanel on 2026-10-07: "add categories to the crafting panel (Weapons, Armors,
+  Shields, Tools...) like in the AAA Crafting mod"; the user put them here beside the search and said "don't copy their
+  icons, but just copy how AAA crafting does this icon thing"). AAA Crafting 2.1.8 was downloaded and decompiled into
+  the scratch folder (no `CLEANROOM.md`) to see the behaviour: eight icon buttons under its search field, Ammo,
+  Weapons, Bows, Armour, Shields, Tools, Food, Materials, sorted by the item's type; none picked shows all, a click
+  shows only that category, more clicks add, a click on a picked one takes it away, the last one taken away shows all
+  again; the buttons tint by state. Nothing of it is referenced or copied: the code is OpenKeep's own
+  (`RecipeCategories`, `CategoryBar`), the icons are OpenKeep's own white silhouettes (an arrow, a sword, a bow, a
+  tunic, a round shield, a mallet, a drumstick, stacked bars). A row of its own under the search row (the search row
+  has no room for eight more buttons), as wide as the list, square buttons as large as fit up to the search row's 30
+  (21 in the game's 187 wide list, 26 with PackPanel's default extra width), spread evenly; the list gives up its
+  height too (`SearchBar.Shrink` takes the shown rows' heights). The type rule: a consumable with food, stamina, eitr
+  or regen is Food, Material is Materials, Bow is Bows, helmets, chests, legs, capes and utilities are Armour, both
+  ammo types are Ammo, Shield, Tool, and whatever else the game's `IsWeapon` calls a weapon (torches too) is Weapons;
+  meads, trinkets, trophies and misc items are in none and show only while nothing is picked. The picked set lasts
+  the game session (reset at `InventoryGui.Awake`), not saved, not cleared by `Clear Search On Close`. It filters the
+  Upgrade tab too, in the same `RecipeFilter` pass as the search and favourites. No gamepad input (the clones lose
+  their `UIGamePad`); a gamepad player keeps the search and favourites. `Categories` (on) hides the row and its filter.
 - Filtering: after the game's `UpdateRecipeList` (Craft and Upgrade tabs; it already sorted with the `sortcraft`
   setting) the hidden rows are destroyed and dropped from `m_availableRecipes`; the game then selects from what is
   left (`GetSelectedRecipeIndex` gives the first row when the selected recipe went), so only listed recipes can be
@@ -2210,12 +2282,81 @@ repaired through the game's own paths, so a dedicated server and the other playe
 - Cost: 10 Fine wood, 4 Silver, 10 Iron nails, 6 Leather scraps at a workbench (Mountains: a chest that never fills comes after the reinforced
   chest). `Custom Storage Chests` (off by default, user 2026-10-07) off takes it out of the hammer; chests already built keep working, since they hold items.
 
+### Boots
+
+- Asked for on 2026-10-07: "chatgpt just separated the vanilla valheim armor into boot and legs, we need the boots to be
+  an equipable item that goes on feet ... take the stats and split them between the boots and legs, 80% legs 20%
+  boots. We need recipies for the boots ... packpanel needs a boots slot if this boots feature is enabled." The models
+  are the workshop's split of all 20 player leggings (v005, Lox v007), approved by the user as "good enough".
+- One switch, `16. Boots / Separate Boots`, off by default (it changes every leggings' numbers, recipe and look; a
+  storage mod's players should not find their armour split without asking). The boots items always exist, so boots
+  already made survive the switch going off; off, they cannot be put on and a worn pair comes off.
+- Boots are Legs items (tooltips, armour displays, Epic Loot, EliteCrafting treat them as armour) worn by OpenKeep, never
+  in `m_legItem`: the equipped flag marks the worn pair, `EquipItem` is answered for boots, the game's `UnequipItem`
+  takes them off. A pair flagged in a save stays on at load even while the switch is off, because a client loads its
+  character before the server's value may have arrived; the switch going off takes it off.
+- The split (judgement calls; the user said only "80% legs 20% boots"): armour, armour per level, eitr regen and every
+  equipment modifier the game sums, and weight (through Stacks, which owns weights); movement is the exception on the
+  boots: every pair gives a flat +5% (user, 2026-10-07: "instead of taking away movement speed"), while the leggings keep
+  80% of their own. Resistances and equip effects
+  cannot be split, so they stay on the leggings; durability stays whole on both (a hit wears down one random piece,
+  boots included). The boots join the leggings' set and every piece of that set needs one more, so the full set is
+  what it was before, in one more piece. The recipe is split the same way so the pair costs what the leggings did:
+  a fifth of each material (rounded half up) to the boots, the rest kept; boots always cost at least one material
+  and at least one per upgrade level when the leggings do.
+- Look: the boots and the split trousers attach through the game's own armour attach (skinned to the body's bones in
+  the body's order). The leggings' body paint stays on, as for the game's own leggings: the trousers' lower legs sit
+  about 1 cm inside the body in places (the workshop's bundle check, 24 to 69% of each trousers at rest; the game's own
+  0 to 28%), and without the paint under them most looked like shorts. Only the feet are cleared, below the trousers'
+  hem at 0.152 m (the workshop's masks `ok_body_feetmask_male` and `_female`, 512 px in the body's UV space; a legs
+  texel is cleared when any mask texel under it is white), so bare feet show without boots; the cleared copy of each
+  leggings' `_LegsTex` is made through the GPU the first time a client draws it on that body (a one-off hitch).
+- How it looks with the paint on (the workshop's renders, `Renders/Bundle_v002`, not seen in game): 13 sets are whole
+  trousers with or without boots. Leather and Troll leather show the game's painted boot shaft as a band on the shin
+  when worn without boots. Iron (its paint covers none of the legs), Bear and Rag still show skin patches where the
+  trousers dip inside the body, most in crouch, jump and lunge. The workshop's proposed fix, not built: a loose
+  trousers variant per affected set (lower legs or whole legs moved a few mm out of the body) worn only without boots;
+  it changes the approved geometry, so it waits for the user.
+- v008 (2026-10-07, the user: "chatgpt just created the boots and pants over again paired with new icons"): the
+  trousers refit outside the real body, the boots widened to clear them, and inside each trousers a coverage cloth: a
+  copy of the body's legs in the garment's colour between waist and ankle, drawn with the bundle's own shader
+  `Workshop/LegArmorLining` (queue AlphaTest+1, a fixed depth offset 0, -4, so the cloth owns the pixels it shares with
+  the body and never the trousers'; the workshop found no skin in 1,600 views). The game has no such shader, so that
+  material is the bundle's (`LiningLook`); where it cannot run (`Shader.isSupported` false, another graphics API) the
+  cloth draws nothing and the body paint covers as before. The body paint and the feet masks stay.
+- Iron v019 (2026-10-07, user-approved look): wider shin plates with straps on both sides of the shin and plates over
+  the thigh, painted with the iron chest's artwork; those pieces wear the game's `IronArmorChest_mat` from
+  `ArmorIronChest` (`BorrowedLooks`), never a copy of its texture in the bundle. Its own trousers icon (`Icons/v019`).
+- Icons: the workshop's own renders of the separated pieces (`Icons/v008/64`, one trousers and one boots icon per set,
+  embedded PNGs). The boots wear theirs; while the switch is on the leggings wear the trousers icon (`LegsIcons`, their
+  own remembered and given back when off, prefab and live copies). Without an icon the boots fall back to a cut of the
+  leggings' own (`BundlePrefabs.SpriteCrop`); a dedicated server decodes none. Boots names follow the game's leggings names (Iron
+  Greaves: Iron Boots; Trousers of Ask: Boots of Ask; the cloth sets wear shoes).
+
 ## Not yet implemented
 
 - Capacity: the read-only container grid on hover (SPEC section 5's stretch goal); no setting is bound for it.
 - Carts: the cart extension piece parented to a cart (SPEC section 6's stretch goal); no setting is bound for it,
   `OpenKeep.cartOffset` stays reserved.
 ## Test checklist (LocalTesting profile)
+
+Boots (2026-10-07, never run in game yet; with PackPanel for the Feet slot):
+- `Separate Boots = true`: at a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron
+  Boots 4 at the forge (the game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.
+- Craft Iron Boots and wear them (right click): they go into PackPanel's Feet slot, the armour total rises by their
+  part, the body shows iron boots, the greaves end at the ankle. A second player sees the same; relog: still worn.
+- Male and female characters each: the right trousers and boots, no gaps at the ankle walking, running, crouching.
+- Icons: the boots show the workshop's boot icon, the leggings its trousers icon while `Separate Boots` is on and their
+  own when off (inventory, crafting list, tooltip). v008 lining: Iron, Bear, Rag, Leather and Troll leather trousers
+  without boots show no skin or painted boot band on the legs, nothing flickers while turning the camera, no lining
+  shows through the trousers; in Mistlands fog the legs fade like the rest of the body. The log has no
+  `cloth backing cannot be drawn here` line.
+- Wear Root helmet, harnesk and leggings without boots: no set bonus; add Root boots: the set bonus comes back.
+- Get hit until the boots break: they come off with the game's broken message and stay in the Feet slot.
+- Die: the boots go to the grave with the rest; the ragdoll shows what was worn.
+- Drop boots: they lie on the ground as a pair of boots. Without PackPanel: right click wears them, the grid marks them.
+- `Separate Boots = false` while worn: the boots come off, the greaves show the game's look, armour and recipe again,
+  the boots recipes leave the workbench. Dedicated server with the switch on: every client the same; no errors.
 
 Mímir's Chest (2026-10-06, never run in game yet):
 - Hammer, beside the reinforced chest: Mímir's Chest with its icon, 10 Fine wood, 4 Silver, 10 Iron nails, 6 Leather scraps, at a workbench. It stands beside a
@@ -2236,7 +2377,7 @@ Mímir's Chest (2026-10-06, never run in game yet):
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 4.0.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 4.1.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
    and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
@@ -2624,3 +2765,11 @@ from a script.
     A chest of six kinds of bar is not junk (the `smelted on Coal` family). A chest left alone is not looked at again
     (`Looks` stays put). Two clients: A owns the junk chest, B the wood chest (B opened it last): B's log shows `tidy
     handed piece_chest_wood over to peer <A>` and the wood moves within seconds.
+80. Recipe categories: at a workbench a row of eight square buttons sits under the search row (arrow, sword, bow,
+    tunic, shield, mallet, drumstick, bars), all light, each with its tooltip; the list starts below it. Click the sword:
+    only weapons are listed, the sword orange, the rest dimmed; click the shield: weapons and shields; click the sword
+    again: shields only; click the shield: every recipe again, all light. Search `bronze` with Weapons picked: only
+    bronze weapons. The Upgrade tab filters the same way; the Salvage tab shows neither row. A mead base at the
+    cauldron shows only with nothing picked. Close and reopen the inventory: the pick stays; log out and in: all again.
+    With PackPanel's wider panel the buttons are larger and still in one row. `Categories = false`: the row goes, the
+    list grows back up and shows every recipe; `Search = false` with Categories on: the row moves to the top.

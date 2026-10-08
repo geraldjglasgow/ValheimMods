@@ -1,0 +1,35 @@
+using System.Collections.Generic;
+using PlateColumn;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+namespace OpenKeep.Boots
+{
+    /// <summary>
+    /// The workshop's icons for the split pieces (ValheimAssets <c>Assets/Gear/SeparatedLegArmor/Icons/v008/64</c>: new
+    /// renders of the separated trousers and boots, not the game's sprites), embedded as <c>assets/boots/boots_&lt;set&gt;.png</c>
+    /// and <c>pants_&lt;set&gt;.png</c> (set = the bundle key). Each is decoded once, on first use; none on a dedicated
+    /// server, which draws nothing. Null when missing (logged).
+    /// </summary>
+    public static class BootsIcons
+    {
+        private static readonly Dictionary<string, Sprite> loaded = new Dictionary<string, Sprite>();
+
+        public static Sprite Boots(BootSet set) => Load("boots_" + set.BundleKey);
+
+        public static Sprite Pants(BootSet set) => Load("pants_" + set.BundleKey);
+
+        private static Sprite Load(string name)
+        {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+                return null;
+            if (loaded.TryGetValue(name, out Sprite sprite))
+                return sprite;
+            sprite = EmbeddedSprite.Load(typeof(BootsIcons).Assembly, "OpenKeep.assets.boots." + name + ".png", "OpenKeep_" + name);
+            if (sprite == null)
+                Plugin.Log.LogWarning($"OpenKeep: the icon {name}.png is missing; the item keeps a cut of the game's icon");
+            loaded[name] = sprite;
+            return sprite;
+        }
+    }
+}

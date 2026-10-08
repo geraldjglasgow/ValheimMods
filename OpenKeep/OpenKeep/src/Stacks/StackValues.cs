@@ -94,7 +94,7 @@ namespace OpenKeep.Stacks
         {
             string name = prefab.name;
             ItemDrop.ItemData.SharedData shared = prefab.m_itemData.m_shared;
-            ItemValue vanilla = VanillaValues.Remember(name, shared);
+            ItemValue vanilla = Boots.BootsShare.Weighed(name, VanillaValues.Remember(name, shared));
             ItemValue value = StacksSettings.Enabled.Value ? Compute(name, shared, vanilla, model)
                 : new ItemValue(PackPanelKeys.Over(name, vanilla.Stack), vanilla.Weight);   // Key Stack holds with the module off too
             shared.m_maxStackSize = value.Stack;

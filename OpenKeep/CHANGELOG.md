@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.0
+
+- Boots (`Separate Boots`, off by default): leggings split into trousers and boots (80/20 stats and cost); boots give +5% speed.
+- Recipe List: category buttons (Weapons, Armour, Food...) under the search filter the recipes (`Categories`).
+- Salvage: EliteCrafting items show their rarity backdrop, seal and sockets.
+- Fixed: without PackPanel, the trash can sits centred on its plate.
+
 ## 4.0.0
 
 - Stow is now called Store: `2. Stow` settings and `OpenKeep.Stow.yml` carry over by themselves.

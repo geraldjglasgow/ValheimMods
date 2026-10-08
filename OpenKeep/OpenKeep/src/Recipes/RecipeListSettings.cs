@@ -5,8 +5,8 @@ using UnityEngine;
 namespace OpenKeep.Recipes
 {
     /// <summary>
-    /// Section "12. Recipe List": the search row above the crafting panel's recipe list, favourite recipes, the list or
-    /// grid view and the gamepad shortcuts. All of them change only how the player's own panel looks and reacts, so
+    /// Section "12. Recipe List": the search row above the crafting panel's recipe list, the category row under it,
+    /// favourite recipes, the list or grid view and the gamepad shortcuts. All of them change only how the player's own panel looks and reacts, so
     /// none is synced. Values are read at use time.
     /// </summary>
     public static class RecipeListSettings
@@ -16,6 +16,7 @@ namespace OpenKeep.Recipes
         public static ConfigEntry<bool> Search { get; private set; }
         public static ConfigEntry<KeyboardShortcut> SearchKey { get; private set; }
         public static ConfigEntry<bool> ClearSearchOnClose { get; private set; }
+        public static ConfigEntry<bool> Categories { get; private set; }
         public static ConfigEntry<bool> Favourites { get; private set; }
         public static ConfigEntry<bool> FavouritesFirst { get; private set; }
         public static ConfigEntry<RecipeView> View { get; private set; }
@@ -29,12 +30,14 @@ namespace OpenKeep.Recipes
                 "With the crafting panel open: puts the cursor into the search field. Escape in the field clears it, Enter keeps the text.", synced: false);
             ClearSearchOnClose = synced.Bind(Section, "Clear Search On Close", true,
                 "The search text is cleared when the inventory closes. Off: it stays until you change it.", synced: false);
+            Categories = synced.Bind(Section, "Categories", true,
+                "A row of category buttons under the search row: Ammo, Weapons, Bows, Armour, Shields, Tools, Food and Materials. Click one to list only its recipes, click more to add them, click a lit one to take it away; with none lit every recipe shows.", synced: false);
             BindFavourites(synced);
             View = synced.Bind(Section, "Recipe View", RecipeView.List,
                 "List: the game's list. CompactList: lower rows, more on screen. SmallGrid, MediumGrid, LargeGrid: icon tiles, 5, 4 or 3 to a row; hover a tile for its name. The view button above the list switches it too.", synced: false);
             GamepadControls = synced.Bind(Section, "Gamepad Controls", true,
                 "With the crafting panel selected on a gamepad: right stick up searches (Steam's keyboard in Big Picture and on the Steam Deck), down tracks or untracks the selected recipe, left makes it a favourite or not, right switches favourites only. In a grid the left stick's left and right move between tiles.", synced: false);
-            RebuildOnChange(Search, Favourites, FavouritesFirst, View);
+            RebuildOnChange(Search, Categories, Favourites, FavouritesFirst, View);
         }
 
         /// <summary>An edit of the cfg (or the view button) shows at once in an open panel.</summary>

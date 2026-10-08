@@ -12,8 +12,9 @@ namespace OpenKeep.Recipes
     /// <summary>
     /// The search row above the recipe list: a copy of the game's build menu search field (its look, Ctrl + Backspace,
     /// and Steam's on-screen keyboard in Big Picture and on the Steam Deck), then the favourites only star and the view
-    /// button (<see cref="SearchButtons"/>). It shows on the Craft and Upgrade tabs while Search is on, and the list
-    /// gives up the row's height meanwhile; on the Salvage tab the list is the game's height again. The row follows the
+    /// button (<see cref="SearchButtons"/>), and under it the category row (<see cref="CategoryBar"/>). Each shows on the
+    /// Craft and Upgrade tabs while its setting is on, and the list gives up their height meanwhile; on the Salvage tab
+    /// the list is the game's height again. The row follows the
     /// list's current size, so a mod that makes the panel larger (PackPanel) widens the field too; a list another mod
     /// has set again since this shrank it is taken as its new full size. Built at the first
     /// panel update after the HUD exists, since the field is copied from the HUD's build menu. Typing rebuilds the list
@@ -31,6 +32,7 @@ namespace OpenKeep.Recipes
         private static RectTransform list;
         private static Vector2 setPosition;
         private static Vector2 setSize;
+        private static Vector2 taken;
         private static bool shrunk;
         private static bool failed;
         private static RecipeQuery query = RecipeQuery.All;
@@ -50,11 +52,15 @@ namespace OpenKeep.Recipes
             if (row == null)
                 return;
             bool show = RecipeListSettings.Search.Value && !SalvageTab.Active;
+            bool categories = RecipeCategories.Enabled && !SalvageTab.Active;
             if (row.gameObject.activeSelf != show)
                 row.gameObject.SetActive(show);
-            Shrink(gui, show);
+            CategoryBar.Show(categories);
+            Shrink(gui, show, categories);
             if (show)
                 SearchButtons.Refresh();
+            if (categories)
+                CategoryBar.Refresh();
         }
 
         /// <summary>
@@ -70,6 +76,8 @@ namespace OpenKeep.Recipes
             failed = false;
             query = RecipeQuery.All;
             rebuildAt = -1f;
+            CategoryBar.Reset();
+            RecipeCategories.Reset();
         }
 
         /// <summary>Puts the cursor into the field, or opens Steam's keyboard where the game would.</summary>
@@ -133,6 +141,7 @@ namespace OpenKeep.Recipes
             field = MakeField(Template());
             SearchButtons.Create(InventoryGui.instance, row, RowHeight);
             go.SetActive(false);
+            CategoryBar.Create(InventoryGui.instance, list.parent, row.GetSiblingIndex() + 1);
         }
 
         /// <summary>Stretched across the row, less the two buttons at its right end.</summary>
@@ -208,24 +217,31 @@ namespace OpenKeep.Recipes
         }
 
         /// <summary>
-        /// The list without the row's height while the row shows, from its full size: what this left it at plus the row,
-        /// or, when another mod has set it since (PackPanel's larger panel), what it is now. The row sits on its top.
+        /// The list without the shown rows' height, from its full size: what this left it at plus what it took, or, when
+        /// another mod has set it since (PackPanel's larger panel), what it is now. The rows sit on its top, the search
+        /// row first.
         /// </summary>
-        private static void Shrink(InventoryGui gui, bool on)
+        private static void Shrink(InventoryGui gui, bool search, bool categories)
         {
-            Vector2 lost = new Vector2(0f, RowHeight + RowGap);
             Vector2 position = list.anchoredPosition;
             Vector2 size = list.sizeDelta;
             bool ours = shrunk && position == setPosition && size == setSize;
             if (ours)
             {
-                position += lost;
-                size += lost;
+                position += taken;
+                size += taken;
             }
-            shrunk = on;
-            PanelButton.PlaceTopLeft(row, position.x, position.y, new Vector2(size.x, RowHeight));
-            if (on)
-                Write(gui, setPosition = position - lost, setSize = size - lost);
+            float y = position.y;
+            PanelButton.PlaceTopLeft(row, position.x, y, new Vector2(size.x, RowHeight));
+            if (search)
+                y -= RowHeight + RowGap;
+            CategoryBar.Place(position.x, y, size.x);
+            if (categories && CategoryBar.Height > 0f)
+                y -= CategoryBar.Height + RowGap;
+            taken = new Vector2(0f, position.y - y);
+            shrunk = taken.y > 0f;
+            if (shrunk)
+                Write(gui, setPosition = position - taken, setSize = size - taken);
             else if (ours)
                 Write(gui, position, size);
         }

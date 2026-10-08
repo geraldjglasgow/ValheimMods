@@ -98,13 +98,14 @@ The amount counts crafts: 5 crafts of 20 arrows makes 100. It stops at what your
 
 ## Recipe list
 
-A search row above the crafting panel's recipe list (Craft and Upgrade tabs), favourite recipes and five views (section `12. Recipe List`). All are Player settings.
+A search row and a row of category buttons above the crafting panel's recipe list (Craft and Upgrade tabs), favourite recipes and five views (section `12. Recipe List`). All are Player settings.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
 | `Search` | on | The search row, with the favourites only star and the view button at its right end. |
 | `Search Key` | Left Ctrl + F | Put the cursor into the search field. |
 | `Clear Search On Close` | on | Empty the search when the inventory closes. Off: it stays until you change it. |
+| `Categories` | on | The category row under the search: Ammo, Weapons, Bows, Armour, Shields, Tools, Food, Materials. |
 | `Favourites` | on | Favourite recipes, marked with the game's orange star. |
 | `Favourites First` | on | Favourites come first in the list, the rest in the game's order. |
 | `Recipe View` | List | `List` (the game's), `CompactList` (lower rows, more on screen), `SmallGrid`, `MediumGrid` or `LargeGrid` (icon tiles, 5, 4 or 3 to a row). |
@@ -123,10 +124,11 @@ Every word must match; spaces separate words, any case. Escape in the field clea
 | Middle click a recipe, `F` over it, or the star under its name | Make it a favourite, or not. |
 | The star above the list | Favourites only, or all again. Shift + click: clear every favourite (asks first). |
 | The view button above the list | The next view; Shift + click: the one before. |
+| A category button | Only that category's recipes; click more to add them, click a lit one to take it away. None lit: every recipe. |
 | Hover a tile | Its name. A tile shows the quality level in its corner. |
 | Gamepad right stick up / down / left / right | Search / track or untrack / favourite / favourites only. |
 
-`F` is Store's `Favourite Item Key`; over an inventory slot it keeps its Store meaning. On a gamepad in a grid, the left stick and D-pad up and down step a row, the left stick left and right a tile. Favourites are saved with your character.
+`F` is Store's `Favourite Item Key`; over an inventory slot it keeps its Store meaning. On a gamepad in a grid, the left stick and D-pad up and down step a row, the left stick left and right a tile. Favourites are saved with your character. The categories you pick stay until you leave the world. Armour includes capes and utility items; meads, trinkets and other items show only while no category is picked.
 
 ## Recipe tracker
 

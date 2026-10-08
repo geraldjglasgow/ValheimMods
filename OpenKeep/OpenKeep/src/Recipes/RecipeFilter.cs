@@ -6,7 +6,7 @@ namespace OpenKeep.Recipes
 {
     /// <summary>
     /// After the game has built the recipe list (Craft or Upgrade tab, the game's own sort order applied): the rows the
-    /// search or favourites only hides are destroyed and dropped from the game's list, favourites move to the top in
+    /// search, the categories or favourites only hide are destroyed and dropped from the game's list, favourites move to the top in
     /// the game's order, and the rows are laid out for the view. The game picks the selection afterwards from what is
     /// left (the first row when the selected recipe went), so crafting only ever sees listed recipes.
     /// </summary>
@@ -17,7 +17,7 @@ namespace OpenKeep.Recipes
             List<InventoryGui.RecipeDataPair> list = gui.m_availableRecipes;
             RecipeQuery query = SearchBar.Query;
             bool only = RecipeFavourites.OnlyFavourites;
-            if (!query.Empty || only)
+            if (!query.Empty || only || RecipeCategories.Filtering)
                 Drop(list, query, only);
             if (RecipeFavourites.Enabled && RecipeListSettings.FavouritesFirst.Value)
                 FavouritesFirst(list);
@@ -30,7 +30,8 @@ namespace OpenKeep.Recipes
             for (int i = list.Count - 1; i >= 0; i--)
             {
                 InventoryGui.RecipeDataPair pair = list[i];
-                if ((only && !RecipeFavourites.Is(pair.Recipe)) || !query.Matches(pair.Recipe, Quality(pair.ItemData)))
+                if ((only && !RecipeFavourites.Is(pair.Recipe)) || !RecipeCategories.Shows(pair.Recipe)
+                    || !query.Matches(pair.Recipe, Quality(pair.ItemData)))
                 {
                     // Destroyed before this frame renders, as the game destroys its own rows.
                     if (pair.InterfaceElement != null)

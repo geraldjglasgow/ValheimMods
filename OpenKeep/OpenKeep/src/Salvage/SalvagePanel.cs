@@ -49,6 +49,7 @@ namespace OpenKeep.Salvage
             gui.m_recipeIcon.enabled = true;
             gui.m_recipeIcon.sprite = item.GetIcon();
             SalvageRarity.Apply(gui.m_recipeIcon.gameObject, item);
+            EliteCraftingLink.CraftingItems.DecorateIcon(gui.m_recipeIcon.gameObject, item);
             gui.m_recipeName.enabled = true;
             gui.m_recipeName.text = ItemNames.DisplayName(item) + (item.m_stack > 1 ? $" x{item.m_stack}" : "");
             gui.m_recipeDecription.enabled = true;

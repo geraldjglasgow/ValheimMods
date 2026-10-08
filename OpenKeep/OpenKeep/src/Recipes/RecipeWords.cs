@@ -28,6 +28,27 @@ namespace OpenKeep.Recipes
 
         public static string View(RecipeView view) => Views[(int)view];
 
+        /// <summary>Each category's name and what it holds, in <see cref="RecipeCategories.All"/>'s order.</summary>
+        private static readonly string[,] Categories =
+        {
+            { "Ammo", "Arrows, bolts, missiles and bait." },
+            { "Weapons", "Swords, axes, maces, knives, spears, atgeirs, staffs and every other weapon, torches too." },
+            { "Bows", "Bows." },
+            { "Armour", "Helmets, chest and leg armour, capes and utility items." },
+            { "Shields", "Every kind of shield." },
+            { "Tools", "The hammer, the hoe, the cultivator and other build tools." },
+            { "Food", "Dishes and anything else that feeds you." },
+            { "Materials", "Bars, refined materials and other crafting materials." },
+        };
+
+        private const string CategoryClick = "\n\nClick: only these recipes. Click others to add them, click a lit one to take it away; with none lit every recipe shows.";
+
+        public static string CategoryTopic(RecipeCategory category) => "$ok_recipe_cat_" + Word(category);
+
+        public static string CategoryTip(RecipeCategory category) => "$ok_recipe_cat_" + Word(category) + "_tip";
+
+        private static string Word(RecipeCategory category) => category.ToString().ToLowerInvariant();
+
         public static void Register()
         {
             Language.Add("ok_recipe_search", "Search");
@@ -55,6 +76,12 @@ namespace OpenKeep.Recipes
             Language.Add("ok_recipe_view_small", "Small grid");
             Language.Add("ok_recipe_view_medium", "Medium grid");
             Language.Add("ok_recipe_view_large", "Large grid");
+            for (int i = 0; i < RecipeCategories.All.Length; i++)
+            {
+                string word = Word(RecipeCategories.All[i]);
+                Language.Add("ok_recipe_cat_" + word, Categories[i, 0]);
+                Language.Add("ok_recipe_cat_" + word + "_tip", Categories[i, 1] + CategoryClick);
+            }
         }
 
         /// <summary>Localizes a word and fills its {0} placeholder; a broken translation shows unfilled rather than throwing.</summary>

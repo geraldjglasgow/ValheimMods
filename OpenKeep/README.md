@@ -25,7 +25,7 @@ Storage for Valheim, plus a few base tweaks.
 - Station feeding: use a smelter, kiln, fire or oven empty-handed and it takes from chests.
 - Salvage: a Salvage tab turns gear back into most of its materials.
 - Batch crafting: make many at once with a - amount + stepper, at your chosen speed.
-- Recipe search and favourites: by name or material, favourites first, as rows or icon tiles.
+- Recipe search, categories and favourites: by name or material, category buttons (Weapons, Armour, Food...), favourites first, as rows or icon tiles.
 - Recipe tracker: right click a recipe to pin its materials on screen.
 
 ## Homestead
@@ -47,6 +47,7 @@ Storage for Valheim, plus a few base tweaks.
 - Auto Tidy: stray items go to the chest they belong in.
 - Blueprints: save buildings, place them as construction sites from the hammer.
 - Mímir's Chest: a chest that never fills, with search, filters and sorting.
+- Boots: the game's leggings split into leggings and boots (80/20 stats and cost), worn on the feet.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `OpenKeep.dll` in

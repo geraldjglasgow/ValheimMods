@@ -129,7 +129,9 @@ namespace OpenKeep.Store
                 return;
             part.anchorMin = wood.anchorMin;
             part.anchorMax = wood.anchorMax;
-            part.pivot = wood.pivot;
+            // Centred: an Image that keeps its sprite's aspect aligns it by the pivot, and the wood's pivot sits on its
+            // left edge, which drew the bin against the plate's left side (2026-10-07). The offsets below set the same rect.
+            part.pivot = new Vector2(0.5f, 0.5f);
             part.localScale = Vector3.one;
             part.offsetMin = wood.offsetMin + new Vector2(Pad, bottom);
             part.offsetMax = wood.offsetMax - new Vector2(Pad, top);
