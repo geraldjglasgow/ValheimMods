@@ -1,7 +1,7 @@
 # Getting Started
 
 Lockstep keeps a Valheim group together on the boss path. A boss altar stays sealed until every player on the server
-has defeated the boss before it, and says who the group is waiting for. Fast players can still explore, gather and
+has defeated the boss before it, and its hover says who the group is waiting for. Fast players can still explore, gather and
 build anywhere; they just cannot summon the next boss ahead of the group. Installing on a world you already play is
 safe: bosses already defeated count as cleared for everyone.
 
@@ -17,7 +17,8 @@ related to LionAndOtter's Oathbound.
 - A player without Lockstep is disconnected; a player with another version is refused with a message naming both
   versions.
 - A player with Lockstep is refused by a server that runs other mods with the same join check (see
-  `charter versions`) but not Lockstep. On a server that runs none of them, Lockstep does nothing.
+  `charter versions`) but not Lockstep. On a server that runs none of them, nothing is sealed and the player is told
+  so a few seconds after spawning: on screen, in chat, in the altar hover and in `lockstep status`.
 
 ## Quick start
 

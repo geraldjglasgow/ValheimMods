@@ -8,7 +8,7 @@ Works the same on a dedicated server and a hosted world.
 
 | Command | Who | Effect |
 | --- | --- | --- |
-| `lockstep` or `lockstep status` | Everyone | Each stage: open, or who it waits for; then every player on the roster |
+| `lockstep` or `lockstep status` | Everyone | Each stage: open, or who it waits for; then every player on the roster. On a server without Lockstep, says so |
 | `lockstep grant <player> <stage>` | Admins | Gives the player credit for that boss |
 | `lockstep revoke <player> <stage>` | Admins | Takes that credit away |
 | `lockstep ignore <player>` | Admins | The player never holds the group back |

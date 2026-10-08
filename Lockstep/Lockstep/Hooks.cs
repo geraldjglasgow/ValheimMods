@@ -23,7 +23,11 @@ namespace Lockstep
     public static class ZNetDestroyPatch
     {
         [HarmonyPostfix]
-        public static void Postfix() => ProgressServer.Shutdown();
+        public static void Postfix()
+        {
+            ProgressServer.Shutdown();
+            ServerCheck.Reset();
+        }
     }
 
     /// <summary>The server learns a connecting client's persistent player ID here.</summary>
@@ -50,14 +54,21 @@ namespace Lockstep
         }
     }
 
-    /// <summary>The hosting player is not a peer of their own server, so they are added to the roster on spawn.</summary>
+    /// <summary>
+    /// The hosting player is not a peer of their own server, so they are added to the roster on spawn. A player of a
+    /// remote server checks here that the server runs Lockstep.
+    /// </summary>
     [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
     public static class PlayerSpawnedPatch
     {
         [HarmonyPostfix]
         public static void Postfix(Player __instance)
         {
-            if (ZNet.instance != null && ZNet.instance.IsServer() && !ZNet.instance.IsDedicated() && __instance == Player.m_localPlayer)
+            if (ZNet.instance == null || __instance != Player.m_localPlayer)
+                return;
+            if (!ZNet.instance.IsServer())
+                ServerCheck.PlayerSpawned();
+            else if (!ZNet.instance.IsDedicated())
                 ProgressServer.PlayerSeen(__instance.GetPlayerID(), __instance.GetPlayerName());
         }
     }

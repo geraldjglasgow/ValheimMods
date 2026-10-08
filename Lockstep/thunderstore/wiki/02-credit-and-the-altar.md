@@ -52,6 +52,14 @@ A boss can be summoned only when every counted player has credit for the boss di
   lacks the one before it.
 - Altars update at once when players join or leave, a boss dies, or the roster, `Group` settings or chain change.
 
+Hovering an altar shows its gate under the game's own text:
+
+```
+Open: the first boss
+Open: everyone has defeated Eikthyr
+Sealed: waiting for Bjorn, Sigrid to defeat Eikthyr
+```
+
 Making the offering at a closed altar, or using a closed altar with item stands, shows instead:
 
 ```

@@ -26,6 +26,11 @@ namespace Lockstep
                 Print("Lockstep: not connected to a world.");
                 return;
             }
+            if (ServerCheck.Silent)
+            {
+                Print("Lockstep: " + ServerCheck.NotRunning);
+                return;
+            }
             string line = args.Args.Length > 1 ? string.Join(" ", args.Args, 1, args.Args.Length - 1) : "status";
             ZRoutedRpc.instance.InvokeRoutedRPC(ProgressServer.RpcCommand, line);
         }

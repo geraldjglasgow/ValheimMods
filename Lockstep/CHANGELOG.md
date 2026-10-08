@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- Every gated altar's hover says whether it is open or which players the group is waiting for.
+- A player on a server without Lockstep is told so, and the console commands say it too.
+
 ## 0.4.1
 
 - Store page: a fuller overview of what the mod does.

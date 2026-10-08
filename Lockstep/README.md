@@ -5,7 +5,8 @@ group; nobody skips ahead.
 
 ## Features
 - Altar gate: a boss altar opens only once everyone has defeated the boss before it.
-- Waiting list: a closed altar names the players the group is waiting for; the offering is kept.
+- Altar hover: every gated altar says whether it is open or which players the group is waiting for; the offering
+  is kept.
 - Credit per player: everyone who hit the boss, plus everyone within a set distance when it dies.
 - Roster: fills itself as players join; players away for a set number of days stop holding the group back.
 - Late joiners: new players catch up with everything the world has already cleared, or earn each boss themselves.
@@ -24,7 +25,7 @@ group; nobody skips ahead.
 - `charter status`: whether the server's settings bind yours.
 
 ## Install
-Needed on the server and every client; the server refuses clients without it. Install with r2modman or the
+Needed on the server and every client; the server refuses clients without it, and a player on a server without it is told so. Install with r2modman or the
 Thunderstore app, or put `Lockstep.dll` in `BepInEx/plugins`. Replaces OathBound (up to 0.1.2): remove it, its config
 files are not read.
 

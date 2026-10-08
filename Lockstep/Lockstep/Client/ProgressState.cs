@@ -27,6 +27,9 @@ namespace Lockstep
 
         public static IReadOnlyCollection<StageStatus> Stages => byBoss.Values;
 
+        /// <summary>Counts the summaries received, so text built from one knows when it is stale.</summary>
+        public static int Revision { get; private set; }
+
         public static void Initialize(SyncedConfiguration config)
         {
             article = new Article<string>(config.Sync, "lockstep_state", "", standing: true);
@@ -42,6 +45,7 @@ namespace Lockstep
 
         private static void Parse()
         {
+            Revision++;
             byBoss.Clear();
             foreach (string line in (article.Value ?? "").Split('\n'))
             {
@@ -59,9 +63,12 @@ namespace Lockstep
         /// <summary>The message shown at a closed altar.</summary>
         public static string ClosedMessage(StageStatus status)
         {
-            string who = LockstepConfiguration.NameMissingPlayers.Value ? status.Waiting : "the group";
-            return $"{status.Name} will not answer. Waiting for {who} to defeat {status.PreviousName}.";
+            return $"{status.Name} will not answer. Waiting for {Who(status)} to defeat {status.PreviousName}.";
         }
+
+        /// <summary>The players a closed stage waits for, or "the group" when names are hidden.</summary>
+        public static string Who(StageStatus status) =>
+            LockstepConfiguration.NameMissingPlayers.Value ? status.Waiting : "the group";
 
         public static string Summary()
         {

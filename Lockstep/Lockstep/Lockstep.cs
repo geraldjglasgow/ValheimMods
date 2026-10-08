@@ -12,17 +12,20 @@ namespace Lockstep
     {
         public const string PluginGuid = "com.Lockstep";
         public const string PluginName = "Lockstep";
-        public const string PluginVersion = "0.4.1";
+        public const string PluginVersion = "0.5.0";
 
+        public static Lockstep Instance { get; private set; }
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
 
         private void Awake()
         {
+            Instance = this;
             Log = Logger;
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             LockstepConfiguration.Initialize(Synced);
             ProgressState.Initialize(Synced);
+            ServerCheck.Initialize(Synced.Sync);
             Chain.Changed += ProgressServer.Publish;
             Chain.Changed += KillWitness.ChainChanged;
 
