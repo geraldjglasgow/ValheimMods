@@ -11,7 +11,7 @@ inscriptions or sockets.
 - Tiers: later biomes roll stronger inscriptions; T1 is the strongest.
 - Runes: six, clicked onto an item from your inventory or an open chest (below).
 - Rune Table: stores runes and turns trophies into essence, which chooses what Ascension adds.
-- Sockets: up to three, cut by the Consecrated Rune or the Dvergr Chisel, filled with rare gems (below).
+- Sockets: up to three, cut by the Dvergr Chisel, filled with gems that only bosses drop (below).
 - Drops: creatures, bosses and chests drop runes, more with stars; magic gear never drops.
 - Salvage: with OpenKeep, salvaged Magic or Rare gear may give a rune back.
 - Magic items on the ground glow under a beam of light.
@@ -29,9 +29,8 @@ inscriptions or sockets.
 - Awakening: makes a Normal item Magic with two inscriptions.
 - Recasting: replaces both inscriptions on a Magic item with two new ones.
 - Ascension: makes a Magic item Rare, keeping both and adding a third.
-- Consecrated: one to three sockets on a weapon, staff, armour piece or shield that has none.
 - Cleansing: strips a Magic or Rare item back to Normal.
-- Serpent: a gamble (nothing, one more inscription, or a wild reroll), then sealed for good.
+- Sealed: a gamble (nothing, one more inscription, or a wild reroll), then sealed for good.
 
 ## Gems
 A gem's stat depends on the item (weapon, staff, or armour and shield); a full item's gem can be replaced.

@@ -11,7 +11,8 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   `PrefabBench.Copy(prefab, name)` makes an inactive copy (no Awake, no ZDO) to build on; `NetPrefabs.OnSceneAwake` /
   `Register` add prefabs to ZNetScene after its Awake on every peer; `ItemPrefabs.Register` keeps item prefabs in every
   ObjectDB; `GameMaterials.Borrow` / `Apply` dress a model in the game's own materials, so no game texture ships in a
-  bundle; `GameMaterials.Dress(game, placeholder)` is a copy of a game material wearing a placeholder's own baked
+  bundle (`Borrow` takes the first mesh renderer's material: game items keep their sparkle, a particle renderer, on the
+  root, and borrowing it made runes see-through; `anyRenderer: true` for an effect that wants a particle material); `GameMaterials.Dress(game, placeholder)` is a copy of a game material wearing a placeholder's own baked
   albedo and normal map, and `GameMaterials.Plain` strips the game maps that fit only the game model's UVs;
   `ModelBounds.In(model, space)` measures an inactive model's meshes; `CreatureBody.Wear` puts a workshop body made on
   a game skeleton onto a copy of that creature; `BundleEffects` dresses a workshop particle effect in the game's

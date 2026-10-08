@@ -12,17 +12,11 @@ namespace EliteCrafting.Tables.Window
     {
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Hide))]
         [HarmonyPostfix]
-        private static void Hidden() => TableWindow.Close();
+        private static void Hidden() => TableWindow.CloseFading();
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Show))]
         [HarmonyPrefix]
-        private static void Showing()
-        {
-            if (!TableWindow.Opening)
-            {
-                TableWindow.Close();
-            }
-        }
+        private static void Showing() => TableWindow.BeforeShow();
 
         [HarmonyPatch(typeof(InventoryGui), "Update")]
         [HarmonyPostfix]

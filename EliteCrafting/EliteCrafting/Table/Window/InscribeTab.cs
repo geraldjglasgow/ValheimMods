@@ -35,31 +35,34 @@ namespace EliteCrafting.Tables.Window
             {
                 ItemDrop.ItemData chosen = item;
                 _rows.Add(new ListRow(item.GetIcon(), InscribePane.NameOf(item), item.m_quality.ToString(), Durability(item),
-                    item == _item, dim: false, () => Choose(chosen)));
+                    item == _item, dim: false, () => Choose(chosen), item));
             }
             view.Parts.List?.Fill(_rows);
             InscribePane.Fill(view, new InscribeChoice(_item, _rune, _essence));
         }
 
         /// <summary>Store all runes: every rune the player carries goes into the table.</summary>
-        public override void Extra(TableView view)
-        {
-            int stored = RuneStash.StoreAll(view.Store, view.Inventory);
-            if (stored > 0)
-            {
-                view.Player.Message(MessageHud.MessageType.TopLeft, Words.Localize("$ecf_table_stored", stored.ToString()));
-            }
-        }
+        public override void Extra(TableView view) => StoreAll(view);
 
+        /// <summary>A rune picked; with Shift the table's runes of that kind come out into the inventory (user 2026-10-07).</summary>
         public override void PickRune(int index)
         {
             _rune = StoneCatalog.BuiltInIds[index];
+            if (TableWindow.ShiftHeld)
+            {
+                TakeOut(_rune);
+            }
             TableWindow.MarkDirty();
         }
 
         // Slot 0 is the pure essence you have (nothing to choose); the essences follow, chosen only for the Ascension Rune.
         public override void PickEssence(int index)
         {
+            if (index == 0 && TableWindow.ShiftHeld)
+            {
+                TakeEssence();
+                return;
+            }
             if (index < 1 || index > Essences.All.Length || !TableIcons.Steers(TableIcons.Def(_rune)))
             {
                 return;
@@ -77,7 +80,7 @@ namespace EliteCrafting.Tables.Window
                 return;
             }
             Essence? essence = TableIcons.Steers(TableIcons.Def(_rune)) ? _essence : null;
-            var supply = new TableSupply(view.Store, view.Inventory, essence);
+            var supply = new TableSupply(view.Store, essence);
             StoneJob job = StoneJob.Create(view.Player, rune, _item, supply);
             StoneResult result = StonePipeline.Evaluate(job);
             if (result.Refused)

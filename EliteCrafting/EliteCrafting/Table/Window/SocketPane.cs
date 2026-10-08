@@ -17,25 +17,27 @@ namespace EliteCrafting.Tables.Window
         {
             PanelParts parts = view.Parts;
             PaneText.Header(parts, choice.Item?.GetIcon(),
-                choice.Item != null ? InscribePane.NameOf(choice.Item) : Words.Localize("$ecf_table_no_socket_gear"));
+                choice.Item != null ? InscribePane.NameOf(choice.Item) : Words.Localize("$ecf_table_no_socket_gear"), choice.Item);
             PaneText.Body(parts, choice.Item != null ? SocketText.Describe(choice) : Words.Localize("$ecf_table_no_socket_gear_desc"));
             bool sockets = choice.Item != null && ItemState.Read(choice.Item).Sockets > 0;
             PaneText.Labels(parts, "$ecf_table_label_stone", sockets ? "$ecf_table_label_socket" : null);
             FillStones(view, choice, stones);
             FillSockets(view, choice);
             bool ready = FillCost(view, choice);
-            PaneText.Button(parts, StoneCatalog.IsGem(choice.Stone) ? "$ecf_table_set_gem" : "$ecf_table_cut_socket", ready);
-            PaneText.Extra(parts, null, false);
+            PaneText.Button(parts, StoneCatalog.IsGem(choice.Stone) ? "$ecf_table_set_gem" : "$ecf_table_cut_socket",
+                ready && TableUse.Works(view, choice.Item, choice.Stone, null));
+            PaneText.Extra(parts, "$ecf_table_store_all", RuneStash.Carried(view.Inventory) > 0 && view.Store.Writable);
         }
 
-        /// <summary>The stones the row shows: the Dvergr Chisel, then each gem you carry, as many as the row has slots.</summary>
-        public static void Stones(Inventory inventory, int slots, List<string> into)
+        /// <summary>The stones the row shows: the Dvergr Chisel, then each gem the table holds or you carry (a carried one,
+        /// shown dim, can be stored with Ctrl + click), as many as fit.</summary>
+        public static void Stones(TableStore store, Inventory inventory, int slots, List<string> into)
         {
             into.Clear();
             into.Add(StoneCatalog.ChiselId);
             foreach (string gem in StoneCatalog.GemIds)
             {
-                if (into.Count < slots && RuneBag.Count(inventory, gem) > 0)
+                if (into.Count < slots && store.Runes(gem) + RuneBag.Count(inventory, gem) > 0)
                 {
                     into.Add(gem);
                 }
@@ -58,11 +60,12 @@ namespace EliteCrafting.Tables.Window
                     continue;
                 }
                 string id = stones[i];
-                int carried = RuneBag.Count(view.Inventory, id);
+                int stored = view.Store.Runes(id);
                 StoneDef? def = TableIcons.Def(id);
-                row[i].Show(TableIcons.Rune(id), null, carried.ToString(), true, dim: !StoneVerbs.IsUsable(def) || carried == 0);
+                row[i].Show(TableIcons.Rune(id), null, InscribePane.Held(stored), true,
+                    dim: !StoneVerbs.IsUsable(def) || stored == 0);
                 row[i].Choose(id == choice.Stone, StoneVisuals.Tint(id));
-                row[i].Tooltip(Words.Localize(def?.Name ?? "$ecf_stone_" + id), InscribeText.RuneTip(def, 0, carried));
+                row[i].Tooltip("", "");
             }
         }
 
@@ -83,11 +86,11 @@ namespace EliteCrafting.Tables.Window
                     row[i].Clear();
                     continue;
                 }
-                string? gem = SocketText.GemAt(state, i, out string tip);
+                string? gem = SocketText.GemAt(state, i, out _);
                 row[i].Show(gem != null ? TableIcons.Rune(gem) : null, null, "", true, dim: false);
                 bool chosen = i == choice.Socket;
                 row[i].Choose(chosen || gem == null, chosen && gem != null ? StoneVisuals.Tint(gem) : EmptySocket);
-                row[i].Tooltip(Words.Localize("$ecf_table_socket_n", (i + 1).ToString()), tip);
+                row[i].Tooltip("", "");
             }
         }
 
@@ -100,9 +103,9 @@ namespace EliteCrafting.Tables.Window
             {
                 return false;
             }
-            int carried = RuneBag.Count(view.Inventory, choice.Stone);
-            cost.Add(TableIcons.Rune(choice.Stone), Words.Localize(choice.Def?.Name ?? ""), 1, carried >= 1);
-            return carried >= 1 && StoneVerbs.IsUsable(choice.Def);
+            int stored = view.Store.Runes(choice.Stone);
+            cost.Add(TableIcons.Rune(choice.Stone), Words.Localize(choice.Def?.Name ?? ""), 1, stored >= 1);
+            return stored >= 1 && StoneVerbs.IsUsable(choice.Def);
         }
     }
 }

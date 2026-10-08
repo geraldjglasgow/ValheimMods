@@ -122,6 +122,14 @@ namespace EliteCrafting.Api
         public static float GetSalvageRuneChance(ItemDrop.ItemData item) =>
             ApiGuard.Run("GetSalvageRuneChance", ApiItems.SalvageRuneChance, item, 0f);
 
+        /// <summary>
+        /// Draws what EliteCrafting draws on its own icons onto another mod's icon of the item (0.8.0): the rarity backdrop,
+        /// the red seal mark and the socket marks, or hides them for an item without them. <paramref name="icon"/> is the
+        /// GameObject holding the icon's Image (the backdrop is made as its sibling). Call it whenever the icon shows an item.
+        /// </summary>
+        public static bool DecorateIcon(UnityEngine.GameObject icon, ItemDrop.ItemData? item) =>
+            ApiGuard.Run("DecorateIcon", ApiItems.DecorateIcon, icon, item, false);
+
         // ---- 5. hooks
 
         /// <summary>Items a player wears outside the game's slots; their inscriptions count like equipped items.</summary>

@@ -38,6 +38,7 @@ namespace EliteCrafting.Tables.Window
             holder.SetActive(false);
             GameObject copy = Object.Instantiate(crafting.gameObject, holder.transform, false);
             copy.name = "ECF_RuneTablePanel";
+            EnabledColours(crafting.gameObject, copy);
             Prune(copy.transform, "");
             ClearList(copy.transform.Find("RecipeList/Recipes"));
             StripForeign(copy);
@@ -46,6 +47,24 @@ namespace EliteCrafting.Tables.Window
             copy.transform.SetParent(crafting.parent, false);
             Object.Destroy(holder);
             return copy;
+        }
+
+        // The copied buttons' labels in their enabled colours, before the copy wakes: the game's ButtonTextColor keeps the
+        // colour its label has when it wakes as the enabled one, and the crafting panel's own buttons may be greyed right
+        // now (no recipe craftable), which left the table's Inscribe, Sacrifice and Set gem grey even when usable. The
+        // two hierarchies are still identical here, so the parts pair by order.
+        private static void EnabledColours(GameObject source, GameObject copy)
+        {
+            ButtonTextColor[] from = source.GetComponentsInChildren<ButtonTextColor>(true);
+            ButtonTextColor[] to = copy.GetComponentsInChildren<ButtonTextColor>(true);
+            for (int i = 0; i < from.Length && i < to.Length; i++)
+            {
+                TMPro.TMP_Text? text = to[i].GetComponentInChildren<TMPro.TMP_Text>(true);
+                if (text != null)
+                {
+                    text.color = from[i].m_defaultColor;
+                }
+            }
         }
 
         // Keeps a part whose path is listed (with all below it) and every part on the way to one; removes the rest.

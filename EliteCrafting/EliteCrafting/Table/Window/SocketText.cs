@@ -20,14 +20,21 @@ namespace EliteCrafting.Tables.Window
             ClassInfo info = ItemClasses.Classify(item);
             int level = ItemTier.Of(item);
             var sb = new StringBuilder();
-            sb.Append(Words.Localize("$ecf_table_gear_line", Words.Localize("$ecf_class_" + info.ClassId), level.ToString(),
+            sb.Append(Words.Localize("$ecf_table_gear_line", TableWords.ClassName(info), level.ToString(),
                 TableWords.Biome(level)));
             string block = state.IsEmpty ? "" : DisplayCache.Block(state, item).Trim('\n');
             sb.Append("\n\n").Append(state.Sockets > 0 ? block : Words.Localize("$ecf_table_no_sockets"));
+            // The stone's own description, then what it would do on this item (user 2026-10-07: no hover text on the gems
+            // and the chisel, "add the description of what the item does above").
             string name = Words.Localize(choice.Def?.Name ?? "$ecf_stone_" + choice.Stone);
-            sb.Append("\n\n").Append(Gold).Append(name).Append("</color>: ").Append(Effect(choice, state, info, level));
+            string description = Words.Localize(choice.Def?.Description ?? "$ecf_stone_" + choice.Stone + "_desc");
+            sb.Append("\n\n").Append(Gold).Append(name).Append("</color>: ").Append(description);
+            sb.Append('\n').Append(Capitalized(Effect(choice, state, info, level)));
             return sb.ToString();
         }
+
+        private static string Capitalized(string text) =>
+            text.Length > 0 ? char.ToUpper(text[0]) + text.Substring(1) : text;
 
         /// <summary>The gem in socket <paramref name="socket"/> (null when it is empty or unreadable) and its tooltip.</summary>
         public static string? GemAt(ItemState state, int socket, out string tip)

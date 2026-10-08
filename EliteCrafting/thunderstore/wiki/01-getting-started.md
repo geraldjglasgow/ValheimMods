@@ -4,12 +4,12 @@ This wiki describes version 0.8.0. **Work in progress:** the config, the YAML fi
 
 ## What it does
 
-- Gear comes in three rarities: Normal (plain), Magic (2 inscriptions) and Rare (3); the Serpent Rune can add one more.
+- Gear comes in three rarities: Normal (plain), Magic (2 inscriptions) and Rare (3); the Sealed Rune can add one more.
 - An inscription is a magic property such as +damage or faster movement. There are 209. Each is a prefix (the item's core power: damage, health, armour, blocking, leech) or a suffix (everything else).
 - Each kind of item, its class (swords, bows, helmets, trinkets...), rolls its own inscriptions, and gear from later biomes rolls stronger tiers.
-- Six runes change an item's rarity, inscriptions or sockets. Magic gear never drops: every Magic or Rare item is made with runes.
+- Five runes change an item's rarity or inscriptions; the Dvergr Chisel cuts sockets. Magic gear never drops: every Magic or Rare item is made with runes.
 - The Rune Table stores runes, turns trophies into essence and, with the Ascension Rune, lets an essence choose the new inscription.
-- Weapons, staves, armour and shields can carry up to three sockets; eleven very rare gems fill them, each adding a stat that depends on the item.
+- Weapons, staves, armour and shields can carry up to three sockets; eleven gems, dropped only by bosses, fill them, each adding a stat that depends on the item.
 - Creatures, bosses and world chests drop runes.
 
 ## Install
@@ -19,7 +19,7 @@ Install on the server **and** every client, same version, with r2modman, the Thu
 ## Updating from 0.7.0
 
 - Magic and Rare items keep their inscriptions and values; their tiers are shown on the new ladders of at most 8 tiers (was 13).
-- The Shaping Rune is gone: stacks you hold disappear. The Consecrated Rune now cuts sockets instead of adding an inscription.
+- The Shaping and Consecrated Runes are gone: stacks you hold disappear. The Dvergr Chisel cuts sockets.
 - Magic gear no longer drops; the `Magic item drops` setting is gone.
 - `EliteCrafting_inscriptions.yml` and `EliteCrafting_economy.yml` are saved as `.v2.bak` (`.v1.bak` from 0.4.0 or older) and written fresh: redo your changes in the new files ([Configuration and Commands](wiki:Configuration and Commands)).
 
@@ -28,7 +28,7 @@ Install on the server **and** every client, same version, with r2modman, the Thu
 1. Kill creatures and open dungeon chests to find runes.
 2. Click an **Awakening Rune** onto a plain weapon, armour piece, trinket or tool in your inventory: it becomes Magic with two inscriptions.
 3. Hover the item to read its inscriptions: prefixes first, then suffixes, each with its tier. T1 is the strongest.
-4. **Recasting** rerolls a Magic item you do not like, **Ascension** makes it Rare with a third inscription, **Consecrated** cuts sockets for gems. At a [Rune Table](wiki:Rune Table) an essence can choose what Ascension adds.
+4. **Recasting** rerolls a Magic item you do not like, **Ascension** makes it Rare with a third inscription. The **Dvergr Chisel** cuts sockets for gems. At a [Rune Table](wiki:Rune Table) an essence can choose what Ascension adds.
 5. Type `ecraft help` in the console (F5) for commands.
 
 ## Other mods

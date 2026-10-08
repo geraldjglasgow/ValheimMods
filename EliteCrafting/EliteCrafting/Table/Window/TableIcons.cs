@@ -19,6 +19,9 @@ namespace EliteCrafting.Tables.Window
         /// <summary>The essence's own icon (<see cref="EssenceIcons"/>), else its game item's.</summary>
         public static Sprite? Essence(Essence essence) => EssenceIcons.Of(essence);
 
+        /// <summary>The essence's icon in greyscale, while it cannot be chosen; null without an embedded icon.</summary>
+        public static Sprite? EssenceGrey(Essence essence) => EssenceIcons.Grey(essence);
+
         /// <summary>The rune's definition in the rules in force (the server's while it binds), or null.</summary>
         public static StoneDef? Def(string runeId) => ActiveRules.Current.Economy.Stone(runeId);
 

@@ -18,7 +18,7 @@ namespace EliteCrafting.Rules
         /// holds two inscriptions, Rare three, the Serpent's gamble a fourth. The Rune Table holds these only.</summary>
         public static readonly string[] BuiltInIds =
         {
-            "awakening", "recasting", "ascension", "consecrated", "cleansing", "serpent",
+            "awakening", "recasting", "ascension", "cleansing", "serpent",
         };
 
         /// <summary>The Dvergr Chisel: one socket on an item that has none.</summary>
@@ -36,7 +36,7 @@ namespace EliteCrafting.Rules
 
         public static bool IsBuiltIn(string id) => Array.IndexOf(AllIds, id) >= 0;
 
-        /// <summary>One of the six runes (not the chisel or a gem).</summary>
+        /// <summary>One of the five runes (not the chisel or a gem).</summary>
         public static bool IsRune(string id) => Array.IndexOf(BuiltInIds, id) >= 0;
 
         public static bool IsGem(string id) => Array.IndexOf(GemIds, id) >= 0;

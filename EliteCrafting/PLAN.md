@@ -525,13 +525,67 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   Essence pays after the pool, an essence none of whose inscriptions fit the item refuses as any rune does, the five
   shelf tablets centred on the seven anchors, Elemental's icon a stand-in of the four old ones until the user paints one.
 - 2026-10-07 — The Consecrated Rune stays, repurposed (user: "DONT actually remove the consecrated rune. Lets repurpose
-  it. make it give between 1 and 3 sockets, but 3 is very rare"): verb `consecrate`, one socket 70%, two 25%, three 5%
+  it. make it give between 1 and 3 sockets, but 3 is very rare"): verb `consecrate`, one socket 85%, two 10%, three 5%
   (constants), into a weapon, staff, armour piece or shield with no sockets, any rarity, only while `Gems and sockets`
   is on (it does not drop while off); its old drop rows (Swamp and later) are back, the boss bonuses stay Ascension;
   six runes. Same request: no EliteCrafting gear drops at all for now ("for now don't allow elitecrafting gear to drop
   at all"): `GearDrops.On` is a false constant and the `Magic item drops` setting is removed; creatures, bosses,
   chests and the Elite Creatures Reborn hook drop runes, gems and the chisel only. The gear code and YAML tables stay
-  for when it returns. Judgement calls: the 70/25/5 split, any rarity, refusing gear that has sockets already.
+  for when it returns. The user set the split to 85/10/5 the same day. Judgement calls: any rarity, refusing gear that has sockets already.
+- 2026-10-07 — Boss trophies can be sacrificed at the Rune Table (user: "boss trophies should be in there too?"):
+  Eikthyr 20, the Elder 30, Bonemass 40, Moder 50, Yagluth 60, the Queen 70, the Fader 80 essence (first 50-200; lowered with every trophy the same day, user: "lower how much essence you get per trophie for normal cretures and bosses": creatures 2-14, was 5-35, so a guaranteed inscription at 10 essence per item level costs about five trophies of the item's biome). Judgement calls: the amounts, and Sacrifice all trophies
+  skipping them (a boss trophy unlocks a Forsaken power; one press on it, or Shift for the stack, still takes it).
+- 2026-10-07 — Runes come out of the Rune Table again (user: "I should be allowed to shift click to take runes out of the
+  table"): Shift + click on a rune of the Inscribe tab takes all of that kind, as many as fit. And in (user: "CTRL +
+  Clicking a rune should put it in the table when the table is open"): Ctrl + click on a rune in the player's inventory
+  stores the stack, ahead of OpenKeep's Ctrl + click routing. Judgement calls: Shift takes the whole kind, not one
+  stack; Ctrl + click stores Essence too; essence still never comes out by hand.
+- 2026-10-07 — The Rune Table shows what an essence can give (user: "show the possible mods you can roll when selecting an
+  essence, maybe the mod name in a pill like thing colored with respect to the essence theme/color. you can hover the
+  pill to see info about it") and every hover text in it is a box beside the hovered element ("in a box and appear off
+  to the right or left of where you're hovering"). Judgement calls: pills only with Ascension and an essence chosen
+  (the only case an essence acts), two rows then "+N more", the hover's contents (best line, range, tiers, kind), the
+  game's own tooltip box as the box, the right side first.
+- 2026-10-07 — The Consecrated Rune is removed after all (user: "remove the concencrated rune, since we have the
+  chisel"): five runes; verb `consecrate`, its words, tint and drop row gone; held stacks vanish. The Dvergr Chisel
+  and the gems are stored in the Rune Table like runes (user: "socket things need to have the same concept as runes,
+  they can be put into the table from inventory, and taken out with shift click"): Store all (renamed from "Store runes
+  and essence", on the Sockets tab too), Ctrl + click, Shift + click in the Sockets tab's row; the Sockets tab pays from
+  the table first.
+- 2026-10-07 — Every boss can drop every gem (user: "all bosses should be able to drop all gems, its just more common to
+  get a gem at later bosses"): one gem, any of the eleven at random, Eikthyr 15%, the Elder 20%, Bonemass 30%, Moder 40%, Yagluth 50%, the Queen 65%, the Fader 80%; the
+  chisel stays 25%. Replaces each boss's own one or two gems. Judgement calls: the chances, one gem per kill. The
+  user then asked for "way lower chances": Eikthyr 2%, the Elder 3%, Bonemass 4%, Moder 5%, Yagluth 6%, the Queen 8%, the Fader 10%.
+  Then gems became a boss reward only (user: "like you need to go fight bosses to earn them for cool stats"): the
+  gem rows left the creature drop table, so creatures and world chests drop none; the chisel stays there.
+  Then (user: "roll the chance multiple times per player participating in the fight? ... I think your old rates were
+  better"): back to Eikthyr 15%, the Elder 20%, Bonemass 30%, Moder 40%, Yagluth 50%, the Queen 65%, the Fader 80%, rolled once per player within 100 m of the boss when it dies
+  (`BossParty`, at most 10). Judgement calls: "participating" as being within 100 m, the dead counted, the cap of 10. The user then set the range to 50 m.
+- 2026-10-07 — Gems held by the Rune Table show on its top (user: "if you have the freya gem in table, then you see a pink
+  gem on the table ... that for each gem"): one of each held kind, the gem item's own model, fixed spots on the top's
+  right-hand end. Judgement calls: the spots, the 0.16 m size cap, the turn. The essence in the bowl is dimmer (user: "not
+  as bright").
+- 2026-10-07 — The Rune Table works from its own stock only (user: "the chisel must be in the table to use it with the
+  cut socket button. you should be able to socket, chisel, use runes on items from inventory/chest as well like normal";
+  "they should not show your inventory quantity in the table"): its buttons pay runes, chisels, gems and essence from
+  the table alone and its rows count only that; carried stones keep the normal click. Shift + click on a stone or the
+  Essence slot opens the game's split dialog to take some out (user). Its buttons grey out only when the press would
+  be refused (user: "the inscribe button always looks grey"; the copied buttons had kept a disabled label colour).
+  Judgement calls: essence is table-only too, a 0 count shows no number.
+- 2026-10-07 — The Serpent Rune is renamed the Sealed Rune (user: "change serpent rune to Sealed Rune, and give it an
+  etched infinity symbol that matches the other runes style, also its color is red"): player words, its glow tint red
+  (#B2322E, the tablet's paint), and a new tablet in ValheimAssets (an etched infinity sign in red). The id stays `serpent` (prefab
+  `ECF_Serpent`, YAML, `ecraft give serpent`, the `ecf_sealed = serpent` reason), so held stacks and configs carry over.
+- 2026-10-07 — Short inscription lines (user: "shorten long descriptions.. like Hits may call chain lighting.... Just say
+  Chain Lighting 5% T8"): a `_short` word per inscription (209, English.affixes_short.yml) used in tooltips at Compact
+  and Standard detail; Full keeps the sentence. Same day at the Rune Table: smaller pills, no hover on the chisel and
+  gems (their description shows in the text), the cost slots on the button's row (at most two, only those needed) and
+  a narrower button, a shorter Ascension description.
+- 2026-10-07 — A use at the Rune Table shows and sounds (user: "a little vortex like thing colored the color of the rune
+  go from the table up to above the table and make some like crafting noise ... it should dissipate above the table"):
+  the owner's payment bumps the ZDO int `ecf_rt_cast` (and `ecf_rt_cast_stone`), every client near plays the game's
+  workbench craft sound and the workshop effect `ecf_rune_vortex` (bundle `ecf_tablefx`) in the stone's colour.
+  Judgement calls: the chisel and gems trigger it too; no light (the effect has none).
 
 ## Open questions
 

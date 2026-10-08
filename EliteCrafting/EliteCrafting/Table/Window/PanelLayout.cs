@@ -18,6 +18,7 @@ namespace EliteCrafting.Tables.Window
         private const float LabelHeight = 22f;
         private const float SlotSize = 44f;
         private const float Gap = 6f;
+        private const float CostScale = 0.8f;
 
         public static void Arrange(PanelParts parts, InventoryGui gui, Action<int> tab, Action<int> rune, Action<int> essence)
         {
@@ -26,6 +27,7 @@ namespace EliteCrafting.Tables.Window
             parts.List = new ListRows(gui.m_recipeElementPrefab, parts.Scroll, gui.m_recipeListSpace);
             parts.Cost = new CostRow(parts.Requirements);
             MakeRows(parts, rune, essence);
+            PlaceCost(parts);
             PlaceExtra(parts);
         }
 
@@ -49,6 +51,28 @@ namespace EliteCrafting.Tables.Window
                 tabs[i] = tab;
             }
             parts.Tabs = tabs;
+            parts.TabOrigin = rect.anchoredPosition;
+            parts.TabStep = step;
+        }
+
+        /// <summary>The shown tabs side by side from the first tab's place, so a hidden one leaves no gap.</summary>
+        public static void PlaceTabs(PanelParts parts, Func<int, bool> shown)
+        {
+            int slot = 0;
+            for (int i = 0; i < parts.Tabs.Length; i++)
+            {
+                if (!shown(i))
+                {
+                    continue;
+                }
+                var rect = (RectTransform)parts.Tabs[i].transform;
+                Vector2 at = parts.TabOrigin + new Vector2(slot * parts.TabStep, 0f);
+                if (rect.anchoredPosition != at)
+                {
+                    rect.anchoredPosition = at;
+                }
+                slot++;
+            }
         }
 
         private static void AlignList(PanelParts parts)
@@ -74,10 +98,12 @@ namespace EliteCrafting.Tables.Window
                 return;
             }
             Rect text = Rects.Pin(parts.Text.rectTransform);
-            float bottom = Rects.FromTopLeft(parts.Requirements).y - Gap;
+            float bottom = RowsBottom(parts);
             float top = bottom - 2f * (LabelHeight + SlotSize + Gap);
-            Rects.Place(parts.Text.rectTransform, text.x, text.y, text.width, Mathf.Max(60f, top - text.y - Gap));
+            parts.TextArea = new Rect(text.x, text.y, text.width, Mathf.Max(60f, top - text.y - Gap));
+            Rects.Place(parts.Text.rectTransform, text.x, text.y, text.width, parts.TextArea.height);
             parts.Text.overflowMode = TextOverflowModes.Ellipsis;
+            parts.Pills = new PillStrip(parts.Description, parts.Text);
             float y = top;
             parts.RuneLabel = Label(parts, text.x, y, text.width);
             parts.Runes = new SlotRow(parts.Description, template, Rules.StoneCatalog.BuiltInIds.Length,
@@ -87,6 +113,14 @@ namespace EliteCrafting.Tables.Window
             // The pure essence item first (what you have), then the essences to choose from.
             parts.Essences = new SlotRow(parts.Description, template, Tables.Essences.All.Length + 1,
                 new Rect(text.x, y + LabelHeight, text.width, SlotSize), essence);
+        }
+
+        // The rows end above the button's row: the cost slots move onto it (PlaceCost), so their old row is free.
+        private static float RowsBottom(PanelParts parts)
+        {
+            Transform? buttonRow = parts.Action != null ? parts.Action.transform.parent : null;
+            RectTransform above = buttonRow as RectTransform ?? parts.Requirements!;
+            return Rects.FromTopLeft(above).y - Gap;
         }
 
         // A copy of the description text, small, in the colour of the item name above it.
@@ -102,6 +136,35 @@ namespace EliteCrafting.Tables.Window
                 label.color = parts.Name.color;
             }
             return label;
+        }
+
+        // The cost slots on the button's row, left of a narrower button, smaller (user 2026-10-07: "put that next to the
+        // button on the button, make them smaller ... make the button smaller"): room for CostRow.Most of them.
+        private static void PlaceCost(PanelParts parts)
+        {
+            RectTransform? button = parts.Action != null ? (RectTransform)parts.Action.transform : null;
+            if (button == null || parts.Cost == null)
+            {
+                return;
+            }
+            Rect at = Rects.Pin(button);
+            float size = at.height * CostScale;
+            float room = CostRow.Most * (size + Gap);
+            Rects.Place(button, at.x + room, at.y, at.width - room, at.height);
+            for (int i = 0; i < parts.Cost.Slots.Count; i++)
+            {
+                Shrink((RectTransform)parts.Cost.Slots[i].Root.transform, button.parent, at.x + i * (size + Gap),
+                    at.y + (at.height - size) / 2f, size);
+            }
+        }
+
+        // A slot moved under the button's row and scaled down to the size given, its top left at x, y.
+        private static void Shrink(RectTransform slot, Transform row, float x, float y, float size)
+        {
+            Vector2 full = slot.rect.size;
+            slot.SetParent(row, false);
+            Rects.Place(slot, x, y, full.x, full.y);
+            slot.localScale = Vector3.one * (size / Mathf.Max(1f, full.x));
         }
 
         private static void PlaceExtra(PanelParts parts)

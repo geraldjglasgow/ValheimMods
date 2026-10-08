@@ -27,6 +27,8 @@ namespace EliteCraftingLink
             new Endpoint<Func<ItemDrop.ItemData, string?>>("GetSalvageRune");
         private static readonly Endpoint<Func<ItemDrop.ItemData, float>> getSalvageRuneChance =
             new Endpoint<Func<ItemDrop.ItemData, float>>("GetSalvageRuneChance");
+        private static readonly Endpoint<Func<UnityEngine.GameObject, ItemDrop.ItemData, bool>> decorateIcon =
+            new Endpoint<Func<UnityEngine.GameObject, ItemDrop.ItemData, bool>>("DecorateIcon");
 
         public static bool IsMagic(ItemDrop.ItemData item) => Safe.Call(isMagic.Call, item, false);
 
@@ -58,5 +60,11 @@ namespace EliteCraftingLink
 
         /// <summary>The chance, 0-1, that the salvage gives <see cref="GetSalvageRune"/> back; the caller rolls it. 0 for none.</summary>
         public static float GetSalvageRuneChance(ItemDrop.ItemData item) => Safe.Call(getSalvageRuneChance.Call, item, 0f);
+
+        /// <summary>
+        /// EliteCrafting's marks on an icon of the item, as on its own icons (0.8.0+): the rarity backdrop, the seal mark and
+        /// the sockets, or none for an item without them. <paramref name="icon"/> holds the icon's Image. False without it.
+        /// </summary>
+        public static bool DecorateIcon(UnityEngine.GameObject icon, ItemDrop.ItemData item) => Safe.Call(decorateIcon.Call, icon, item, false);
     }
 }

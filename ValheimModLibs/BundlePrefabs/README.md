@@ -78,7 +78,13 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   it with the original creature's name. AudioClip lives in UnityEngine.AudioModule, which this library does not
   reference: clips travel as an Array and are set by reflection (`SfxPrefabs.Load(bundle, names)`). The clips come
   from `../ValheimAssets/Tools/Sfx`; which prefab to copy: `../ValheimAssets/Reference/Codex/sfx/catalogue.md`.
-- Not yet run in the game: `CreatureBody`, `BundleEffects`, `EffectTint` and `SfxPrefabs` (2026-09-29); their previews
+- `TexturePixels.Read(texture[, region])` reads a game texture's pixels back through the GPU (game textures are not CPU
+  readable): for a mod's own runtime copies of game art, never shipped. Null on a dedicated server.
+- `SpriteCrop.Fit(source, part, name)` cuts a new square item icon out of part of a game icon at runtime (fractions of
+  the icon, y from the bottom): the sprite's region read back through the GPU, the opaque pixels of the part found and
+  fitted into a square with a margin. No game art goes into a bundle this way (OpenKeep's boots: the bottom of each
+  leggings' icon). Null on a dedicated server or any failure; keep the source icon then.
+- Not yet run in the game: `SpriteCrop` (2026-10-07), `CreatureBody`, `BundleEffects`, `EffectTint` and `SfxPrefabs` (2026-09-29); their previews
   and checks ran in the workshop's Unity project only.
 
 ## Rules

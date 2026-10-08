@@ -49,18 +49,18 @@ namespace EliteCrafting.Tables.Window
             Report(view, given * each);
         }
 
-        /// <summary>Sacrifice all trophies: every trophy the table takes, out of the whole inventory, in one press.</summary>
+        /// <summary>Sacrifice all trophies: every trophy the table takes but the bosses', out of the whole inventory, in one press.</summary>
         public override void Extra(TableView view)
         {
             Gather(view.Inventory);
-            if (_trophies.Count == 0 || !view.Store.Writable)
+            if (!AnyForAll() || !view.Store.Writable)
             {
                 return;
             }
             int gained = 0;
             foreach ((string prefab, ItemDrop.ItemData first, int count) in _trophies)
             {
-                if (TrophyYields.TryGet(first, out int each))
+                if (!TrophyYields.IsBoss(first) && TrophyYields.TryGet(first, out int each))
                 {
                     gained += Take(view.Inventory, prefab, count) * each;
                 }
@@ -98,8 +98,11 @@ namespace EliteCrafting.Tables.Window
                 parts.Cost?.Add(trophy.First!.GetIcon(), name, 1, true);
             }
             PaneText.Button(parts, "$ecf_table_sacrifice", has && view.Store.Writable);
-            PaneText.Extra(parts, "$ecf_table_sacrifice_all", _trophies.Count > 0 && view.Store.Writable);
+            PaneText.Extra(parts, "$ecf_table_sacrifice_all", AnyForAll() && view.Store.Writable);
         }
+
+        // Whether Sacrifice all trophies has anything to take: a trophy that is not a boss's.
+        private bool AnyForAll() => _trophies.Exists(t => !TrophyYields.IsBoss(t.First));
 
         private static string Describe(TableView view, ItemDrop.ItemData? trophy, int count)
         {
@@ -108,6 +111,10 @@ namespace EliteCrafting.Tables.Window
             {
                 sb.Append(Words.Localize("$ecf_table_trophy_worth", each.ToString()));
                 sb.Append('\n').Append(Words.Localize("$ecf_table_trophy_all", count.ToString(), (count * each).ToString()));
+                if (TrophyYields.IsBoss(trophy))
+                {
+                    sb.Append('\n').Append(Words.Localize("$ecf_table_trophy_boss"));
+                }
             }
             else
             {

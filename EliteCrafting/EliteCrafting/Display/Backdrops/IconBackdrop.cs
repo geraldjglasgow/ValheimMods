@@ -31,8 +31,8 @@ namespace EliteCrafting.Display.Backdrops
         }
 
         /// <summary>
-        /// Shows the backdrop for the item while the icon shows, else hides it, and the seal mark with it
-        /// (<see cref="IconSeal"/>). Called per frame by most surfaces.
+        /// Shows the backdrop for the item while the icon shows, else hides it, and the seal mark and the socket marks with
+        /// it (<see cref="IconSeal"/>, <see cref="IconSockets"/>). Called per frame by most surfaces.
         /// </summary>
         public static void Set(Image? icon, ItemDrop.ItemData? item)
         {
@@ -57,11 +57,13 @@ namespace EliteCrafting.Display.Backdrops
             {
                 IconSeal.Hide(icon);
             }
+            IconSockets.Set(icon, visible ? item : null);
         }
 
         public static void Hide(Image? icon)
         {
             IconSeal.Hide(icon);
+            IconSockets.Hide(icon);
             if (_shown == 0 || icon == null || !Backdrops.TryGetValue(icon, out Made made))
             {
                 return;

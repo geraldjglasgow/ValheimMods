@@ -5,15 +5,16 @@ namespace EliteCrafting.Tables.Window
 {
     /// <summary>
     /// The Rune Table's window on one inventory screen (rune-table.md section 6): made from the game's crafting panel the
-    /// first time it opens (<see cref="PanelBuilder"/>, <see cref="PanelLayout"/>), shown in the crafting panel's place
-    /// (its anchors, position and size copied on every open, so a UI mod's layout is followed) while the crafting panel
-    /// hides, and filled by the chosen tab. Local player only.
+    /// first time it opens (<see cref="PanelBuilder"/>, <see cref="PanelLayout"/>), shown inside the crafting panel over
+    /// its covered parts (so it slides in and out with it), and filled by the chosen tab. Local player only.
     /// </summary>
     internal sealed class TablePanel
     {
         private readonly InventoryGui _gui;
-        private readonly TableTab[] _tabs = { new InscribeTab(), new SacrificeTab(), new SocketTab() };
+        // Sacrifice always last, the furthest right (user 2026-10-07); a hidden tab leaves no gap (PanelLayout.PlaceTabs).
+        private readonly TableTab[] _tabs = { new InscribeTab(), new SocketTab(), new SacrificeTab() };
         private int _tab;
+        private readonly CraftingCover _cover = new CraftingCover();
 
         public TablePanel(InventoryGui gui)
         {
@@ -31,41 +32,43 @@ namespace EliteCrafting.Tables.Window
 
         private TableTab Current => _tabs[_tab];
 
+        /// <summary>
+        /// Shows the window inside the crafting panel, filling it, the panel's own parts covered (<see cref="CraftingCover"/>):
+        /// the inventory's animations slide the panel, so the window opens and leaves with the other panels, and a UI mod's
+        /// size or place for the panel is followed by itself.
+        /// </summary>
         public void Show()
         {
-            Follow();
-            Parts.Rect.SetSiblingIndex(_gui.m_crafting.GetSiblingIndex() + 1);
-            _gui.m_crafting.gameObject.SetActive(false);
+            RectTransform rect = Parts.Rect;
+            if (rect.parent != _gui.m_crafting)
+            {
+                rect.SetParent(_gui.m_crafting, false);
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                rect.localScale = Vector3.one;
+            }
+            rect.SetAsLastSibling();
             Parts.Root.SetActive(true);
+            _cover.Cover(_gui.m_crafting, rect);
         }
 
-        /// <summary>Takes the crafting panel's place again when a UI mod moved or resized it (only what changed is set).</summary>
+        /// <summary>Keeps the window the panel's last child (drawn over anything another mod added since).</summary>
         public void Follow()
         {
-            RectTransform crafting = _gui.m_crafting;
-            RectTransform rect = Parts.Rect;
-            if (rect.anchorMin != crafting.anchorMin || rect.anchorMax != crafting.anchorMax || rect.pivot != crafting.pivot)
+            if (Parts.Rect.GetSiblingIndex() != Parts.Rect.parent.childCount - 1)
             {
-                rect.anchorMin = crafting.anchorMin;
-                rect.anchorMax = crafting.anchorMax;
-                rect.pivot = crafting.pivot;
-            }
-            if (rect.anchoredPosition != crafting.anchoredPosition || rect.sizeDelta != crafting.sizeDelta)
-            {
-                rect.anchoredPosition = crafting.anchoredPosition;
-                rect.sizeDelta = crafting.sizeDelta;
+                Parts.Rect.SetAsLastSibling();
             }
         }
 
         public void Hide()
         {
+            _cover.Uncover();
             if (Parts.Root != null)
             {
                 Parts.Root.SetActive(false);
-            }
-            if (_gui != null && _gui.m_crafting != null)
-            {
-                _gui.m_crafting.gameObject.SetActive(true);
             }
         }
 
@@ -86,6 +89,7 @@ namespace EliteCrafting.Tables.Window
                     label.text = Words.Localize(_tabs[i].Label);
                 }
             }
+            PanelLayout.PlaceTabs(Parts, i => _tabs[i].Shown);
             Current.Fill(view);
         }
 

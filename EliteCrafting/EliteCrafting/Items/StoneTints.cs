@@ -19,7 +19,7 @@ namespace EliteCrafting.Items
         private static readonly Dictionary<string, string> Defaults = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             ["awakening"] = "#1EFF00", ["recasting"] = "#9B6BD6", ["ascension"] = "#0070DD",
-            ["consecrated"] = "#E6C35C", ["cleansing"] = "#D8E4EE", ["serpent"] = "#3F7F2A",
+            ["cleansing"] = "#D8E4EE", ["serpent"] = "#B2322E",
             // The chisel brass; each gem the colour of what it gives (sockets.md section 3).
             ["dvergr_chisel"] = "#C9A045", ["gem_surtr"] = "#FF5A1F", ["gem_ymir"] = "#8FD8FF", ["gem_thor"] = "#5C8DFF",
             ["gem_nidhogg"] = "#7FD13B", ["gem_hel"] = "#B9C4D6", ["gem_tyr"] = "#C0392B", ["gem_freyja"] = "#FF7FAE",

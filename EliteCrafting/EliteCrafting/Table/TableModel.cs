@@ -107,7 +107,8 @@ namespace EliteCrafting.Tables
             }
         }
 
-        // The glyphs' emissive material on the game's own Standard shader, so it never depends on a copy in the bundle.
+        // The glyphs' emissive material. Shader.Find("Standard") returns null in the game (checked 2026-10-07), so the
+        // glyphs keep the bundle's own Standard shader, which draws correctly; the game's is used only if it is ever found.
         private static Material Glow(Material placeholder)
         {
             var material = new Material(placeholder);

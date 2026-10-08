@@ -17,6 +17,7 @@ namespace EliteCrafting.Tables.Window
         private const string Prefix = "EliteCrafting.assets.icons.ecf_essence_";
 
         private static readonly Dictionary<string, Sprite?> Made = new Dictionary<string, Sprite?>();
+        private static readonly Dictionary<string, Sprite?> Greyed = new Dictionary<string, Sprite?>();
 
         // The game's PNG decoder, ImageConversion.LoadImage(Texture2D, byte[], bool), by reflection: its module is built
         // against a newer netstandard than this net48 project may reference (PlateColumn's EmbeddedSprite does the same).
@@ -46,24 +47,56 @@ namespace EliteCrafting.Tables.Window
             return sprite != null ? sprite : GameIcon(essence);
         }
 
-        private static Sprite? Decode(string id)
+        /// <summary>
+        /// The essence's own icon in greyscale (user 2026-10-07: the essences "should literally be grey scaled until you
+        /// select the ascension rune"), or null when it has no embedded icon.
+        /// </summary>
+        public static Sprite? Grey(Essence essence)
+        {
+            if (!Greyed.TryGetValue(essence.Id, out Sprite? sprite))
+            {
+                sprite = Decode(essence.Id, grey: true);
+                Greyed[essence.Id] = sprite;
+            }
+            return sprite;
+        }
+
+        private static Sprite? Decode(string id, bool grey = false)
         {
             byte[]? png = Embedded.Bytes(Prefix + id + ".png");
             if (png == null)
             {
                 return null;
             }
-            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false) { name = "ecf_essence_" + id };
-            if (LoadImage == null || !(LoadImage.Invoke(null, new object[] { texture, png, true }) is bool loaded) || !loaded)
+            var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false) { name = "ecf_essence_" + id + (grey ? "_grey" : "") };
+            if (LoadImage == null || !(LoadImage.Invoke(null, new object[] { texture, png, !grey }) is bool loaded) || !loaded)
             {
                 Log.Warn($"the {id} essence icon did not decode; it shows its game item's icon");
                 return null;
+            }
+            if (grey)
+            {
+                ToGrey(texture);
             }
             texture.filterMode = FilterMode.Point;
             texture.wrapMode = TextureWrapMode.Clamp;
             Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
             sprite.name = texture.name;
             return sprite;
+        }
+
+        // Every pixel to its luminance, a little darker, alpha kept; then uploaded and the CPU copy released.
+        private static void ToGrey(Texture2D texture)
+        {
+            Color32[] pixels = texture.GetPixels32();
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color32 c = pixels[i];
+                byte l = (byte)((c.r * 0.299f + c.g * 0.587f + c.b * 0.114f) * 0.8f);
+                pixels[i] = new Color32(l, l, l, c.a);
+            }
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
         }
 
         private static Sprite? GameIcon(Essence essence)

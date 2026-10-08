@@ -20,6 +20,9 @@ namespace EliteCrafting.Tables.Window
         private static bool _dirty;
         private static bool _opening;
         private static bool _owned;
+
+        // The window left up after closing while the inventory fades out; the next other Show swaps the crafting panel back.
+        private static bool _lingering;
         private static float _openedAt;
 
         // How long the window waits for the table's ownership to arrive from the server after the owner said yes.
@@ -51,10 +54,39 @@ namespace EliteCrafting.Tables.Window
             _openedAt = UnityEngine.Time.time;
             Watch(player.GetInventory());
             PanelOf(gui).Show();
-            _dirty = true;
+            _lingering = false;
+            // Filled in the frame it shows (user 2026-10-07: opening showed the crafting menu first, then the table's).
+            _dirty = false;
+            if (View() is { } view)
+            {
+                _panel!.Render(view);
+            }
         }
 
-        public static void Close()
+        public static void Close() => Close(fading: false);
+
+        /// <summary>
+        /// The inventory is closing: the window stays up through its fade-out, so the crafting panel never shows behind
+        /// it (user 2026-10-07: "it doesn't look janky"); <see cref="BeforeShow"/> puts the crafting panel back.
+        /// </summary>
+        public static void CloseFading() => Close(fading: true);
+
+        /// <summary>Before an inventory Show that is not the table's: the window closed and the crafting panel back.</summary>
+        public static void BeforeShow()
+        {
+            if (_opening)
+            {
+                return;
+            }
+            Close();
+            if (_lingering)
+            {
+                _lingering = false;
+                _panel?.Hide();
+            }
+        }
+
+        private static void Close(bool fading)
         {
             if (_table == null)
             {
@@ -62,6 +94,13 @@ namespace EliteCrafting.Tables.Window
             }
             _table = null;
             Watch(null);
+            HoverBox.Hide();
+            TableSplit.Cancel();
+            if (fading)
+            {
+                _lingering = true;
+                return;
+            }
             _panel?.Hide();
         }
 

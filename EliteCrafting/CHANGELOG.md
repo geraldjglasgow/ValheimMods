@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.0
+
+- Rune Table: holds chisels and gems too; Shift + click takes things out, Ctrl + click in the inventory puts them in.
+- Rune Table: works from what it holds; buttons grey out only when unusable; boss trophies can be sacrificed.
+- Rune Table: pills show what an essence can add to the item, with details on hover.
+- Rune Table: held gems sit on the table, runes cast a vortex in their colour, the window slides with the inventory.
+- Every boss can drop any gem, rolled for each player within 50 m; later bosses more often.
+- The Serpent Rune is now the Sealed Rune; the Consecrated Rune is gone (held stacks disappear).
+- Icons show sockets and their gems; tooltips show short inscription lines (`Tooltip detail` Full: whole sentences).
+- Update the server and every client together.
+
 ## 0.8.0
 
 - New Rune Table (`Rune Table`): stores runes, turns trophies into essence; essence picks the inscription Ascension adds.

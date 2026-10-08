@@ -42,12 +42,22 @@ namespace EliteCrafting.Tables.Window
         /// <summary>The window's tabs, made from the copied tab (<see cref="PanelLayout"/>).</summary>
         public Button[] Tabs { get; set; } = new Button[0];
 
+        /// <summary>The first tab's place and the distance between tabs (<see cref="PanelLayout.PlaceTabs"/>).</summary>
+        public Vector2 TabOrigin { get; set; }
+
+        public float TabStep { get; set; }
+
         public ListRows? List { get; set; }
         public SlotRow? Runes { get; set; }
         public SlotRow? Essences { get; set; }
         public TMP_Text? RuneLabel { get; set; }
         public TMP_Text? EssenceLabel { get; set; }
         public CostRow? Cost { get; set; }
+
+        /// <summary>The description text's whole area (from the description's top left); the pills take its bottom.</summary>
+        public Rect TextArea { get; set; }
+
+        public PillStrip? Pills { get; set; }
 
         public static PanelParts From(GameObject root) => new PanelParts(root);
 

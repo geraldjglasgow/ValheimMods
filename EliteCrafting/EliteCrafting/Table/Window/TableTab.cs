@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace EliteCrafting.Tables.Window
 {
     /// <summary>What a tab fills and does in the Rune Table's window: one each for Inscribe, Sacrifice and Sockets.</summary>
@@ -28,6 +30,44 @@ namespace EliteCrafting.Tables.Window
         /// <summary>A click on the essence row's slot.</summary>
         public virtual void PickEssence(int index)
         {
+        }
+
+        /// <summary>Store all: every rune, chisel, gem and Essence the player carries goes into the table.</summary>
+        protected static void StoreAll(TableView view)
+        {
+            int stored = RuneStash.StoreAll(view.Store, view.Inventory);
+            if (stored > 0)
+            {
+                view.Player.Message(MessageHud.MessageType.TopLeft, Text.Words.Localize("$ecf_table_stored", stored.ToString()));
+            }
+        }
+
+        /// <summary>Shift + click on a stone of the row: how many, in the game's split dialog, then those into the inventory.</summary>
+        protected static void TakeOut(string id)
+        {
+            TableWindow.Run(view =>
+            {
+                ItemDrop.ItemData? item = TableIcons.RuneItem(id);
+                TableSplit.Ask(item?.GetIcon(), Text.Words.Localize(item?.m_shared.m_name ?? id), view.Store.Runes(id),
+                    amount => TableWindow.Run(v => Took(v, RuneStash.TakeOut(v.Store, v.Inventory, id, amount))));
+            });
+        }
+
+        /// <summary>Shift + click on the Essence slot: how many, then that much of the pool as Essence items.</summary>
+        protected static void TakeEssence()
+        {
+            TableWindow.Run(view =>
+            {
+                Sprite? icon = TableIcons.EssenceItem();
+                TableSplit.Ask(icon, Text.Words.Localize("$ecf_essence_item"), view.Store.Essence,
+                    amount => TableWindow.Run(v => Took(v, RuneStash.TakeEssence(v.Store, v.Inventory, amount))));
+            });
+        }
+
+        private static void Took(TableView view, int moved)
+        {
+            string key = moved > 0 ? "$ecf_table_taken" : "$ecf_table_take_noroom";
+            view.Player.Message(MessageHud.MessageType.TopLeft, Text.Words.Localize(key, moved.ToString()));
         }
     }
 

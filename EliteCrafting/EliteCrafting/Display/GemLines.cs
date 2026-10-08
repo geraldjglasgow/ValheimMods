@@ -34,7 +34,7 @@ namespace EliteCrafting.Display
             AffixDef? def = state.GemDefinitionAt(index);
             bool dormant = !state.IsGemActiveAt(index);
             sb.Append('\n').Append(dormant ? RarityPalette.Grey : RarityPalette.OpenTag(StoneVisuals.Tint(gem.GemId)));
-            sb.Append(Words.Localize("$ecf_ui_socket_gem", GemName(gem.GemId), AffixLines.Sentence(gem.Roll.Id, gem.Roll.Value, def)));
+            sb.Append(Words.Localize("$ecf_ui_socket_gem", GemName(gem.GemId), AffixLines.Sentence(gem.Roll.Id, gem.Roll.Value, def, brief: detail != TooltipDetail.Full)));
             if (detail != TooltipDetail.Compact)
             {
                 string tier = def != null ? def.ShownTier(gem.Roll.Tier).ToString() : "?";

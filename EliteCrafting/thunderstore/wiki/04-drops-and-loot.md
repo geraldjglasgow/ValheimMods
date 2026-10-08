@@ -18,34 +18,32 @@ Stars multiply the chance: one star x2, two stars x3. At most 5 runes per kill.
 
 ## Which rune drops
 
-When a rune drops, the chance it is each rune (or, rarely, a Dvergr Chisel or a gem), by tier:
+When a rune drops, the chance it is each rune (or, rarely, a Dvergr Chisel), by tier:
 
 | Rune | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 |
 |---|---|---|---|---|---|---|---|---|
-| Awakening | 71% | 51% | 41% | 33% | 27% | 24% | 20% | 18% |
-| Recasting | 21% | 22% | 22% | 23% | 23% | 22% | 20% | 19% |
-| Ascension | - | 20% | 22% | 23% | 23% | 22% | 20% | 19% |
-| Consecrated | - | - | 4% | 8% | 11% | 14% | 18% | 21% |
-| Cleansing | 5% | 5% | 6% | 6% | 7% | 7% | 8% | 8% |
-| Serpent | - | - | 4% | 5% | 7% | 8% | 10% | 12% |
-| Dvergr Chisel | 0.9% | 0.8% | 0.9% | 1% | 1% | 1% | 1% | 1% |
-| Any of the 11 gems | 1% | 0.9% | 1% | 1% | 1% | 1% | 1% | 1% |
+| Awakening | 72% | 51% | 43% | 36% | 31% | 29% | 25% | 23% |
+| Recasting | 22% | 22% | 23% | 25% | 26% | 26% | 25% | 25% |
+| Ascension | - | 21% | 23% | 25% | 26% | 26% | 25% | 25% |
+| Cleansing | 5% | 5% | 6% | 7% | 8% | 9% | 10% | 10% |
+| Sealed | - | - | 4% | 6% | 8% | 10% | 13% | 15% |
+| Dvergr Chisel | 0.9% | 0.9% | 1% | 1% | 1% | 1% | 2% | 2% |
 
-The Consecrated Rune, the chisel and the gems drop only while `Gems and sockets` is on. That is one gem in about 2,500 kills at tier 1 and one in 640 at tier 8, before stars ([Gems and Sockets](wiki:Gems and Sockets)).
+The chisel drops only while `Gems and sockets` is on. Gems never drop from ordinary creatures or chests: only bosses drop them (below) ([Gems and Sockets](wiki:Gems and Sockets)).
 
 ## Bosses
 
-Bosses count as tiers 1-7 in this order. Each drops some random runes, fixed bonus runes, the Dvergr Chisel 25% of the time and its own gems:
+Bosses count as tiers 1-7 in this order. Each drops some random runes, fixed bonus runes, the Dvergr Chisel 25% of the time and, at the chance below, one gem (any of the eleven, at random) for every player within 50 m of it when it dies:
 
-| Boss | Random runes | Bonus runes | Gems |
+| Boss | Random runes | Bonus runes | Gem |
 |---|---|---|---|
-| Eikthyr | 2 | 2 Awakening, 1 Recasting | Thor's 10%, Sleipnir's 10% |
-| The Elder | 2 | 1 Ascension | Freyja's 15% |
-| Bonemass | 3 | 50%: 1 Serpent; 50%: 1 Ascension | Nidhogg's 15% |
-| Moder | 3 | 1 Ascension | Ymir's 20%, Skadi's 20% |
-| Yagluth | 4 | 1 Ascension; 25%: 1 Serpent | Surtr's 20%, Tyr's 20% |
-| The Queen | 4 | 2 Ascension | Odin's 20%, Heimdall's 20% |
-| Fader | 5 | 2 Ascension; 50%: 1 Serpent | Hel's 25% |
+| Eikthyr | 2 | 2 Awakening, 1 Recasting | 15% |
+| The Elder | 2 | 1 Ascension | 20% |
+| Bonemass | 3 | 50%: 1 Sealed Rune; 50%: 1 Ascension | 30% |
+| Moder | 3 | 1 Ascension | 40% |
+| Yagluth | 4 | 1 Ascension; 25%: 1 Sealed Rune | 50% |
+| The Queen | 4 | 2 Ascension | 65% |
+| Fader | 5 | 2 Ascension; 50%: 1 Sealed Rune | 80% |
 
 ## World chests
 

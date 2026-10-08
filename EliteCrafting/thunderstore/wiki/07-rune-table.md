@@ -10,9 +10,9 @@ A crafting piece the size of a workbench. It stores runes, turns trophies into e
 
 ## Inscribe
 
-- Pick a piece of gear you carry and a rune, then **Inscribe**. The rune comes from the table first, then from your inventory.
-- With the **Ascension Rune** you may also pick one of five essences: the new (third) inscription is then one of that essence's own, guaranteed. It costs 10 essence per item level: 10 on Meadows gear, 80 on Deep North gear. With every other rune the essences are greyed out.
-- **Store runes and essence** moves every rune and Essence you carry into the table. They cannot be taken out by hand.
+- Pick a piece of gear you carry and a rune the table holds, then **Inscribe**. The table uses only its own runes, gems, chisels and essence, and its numbers count only those; what you carry you can still click onto an item as usual.
+- With the **Ascension Rune** you may also pick one of five essences: the new (third) inscription is then one of that essence's own, guaranteed. It costs 10 essence per item level: 10 on Meadows gear, 80 on Deep North gear. The inscriptions it can give this item show as pills in the essence's colour; hover one to see what it does, the range and tiers it rolls here, and whether it is a prefix or suffix. With every other rune the essences are greyed out.
+- **Store all** moves every rune, Dvergr Chisel, gem and Essence you carry into the table; **Ctrl + click** one in your inventory puts that stack in. **Shift + click** a rune (or, on the Sockets tab, the chisel or a gem), or the Essence slot, asks how many and takes them out.
 
 | Essence | Its inscriptions |
 |---|---|
@@ -30,9 +30,9 @@ Creature trophies you carry become essence in the table's one pool. Each trophy 
 
 | Biome | Meadows | Black Forest | Swamp and sea | Mountains | Plains | Mistlands | Ashlands |
 |---|---|---|---|---|---|---|---|
-| Essence | 5 | 10 | 15 | 20 | 25 | 30 | 35 |
+| Essence | 2 | 4 | 6 | 8 | 10 | 12 | 14 |
 
-Boss trophies are not taken. Hold **Shift** to sacrifice the whole stack; **Sacrifice all trophies** takes every trophy you carry.
+Boss trophies give the most: Eikthyr 20, the Elder 30, Bonemass 40, Moder 50, Yagluth 60, the Queen 70, the Fader 80. Hold **Shift** to sacrifice the whole stack; **Sacrifice all trophies** takes every trophy you carry except boss trophies, so one meant for the Forsaken altar is never lost by accident: sacrifice a boss trophy by pressing Sacrifice on it.
 
 ## Sockets
 
@@ -42,4 +42,4 @@ The third tab cuts sockets and sets gems: see [Gems and Sockets](wiki:Gems and S
 
 - Essence is also an item, **Essence**: a pale glowing orb that stacks to 100. Carried Essence pays for an essence too (the table's pool first) and can be stored back.
 - A table that is broken or taken down drops every rune it holds and all its essence as Essence items.
-- The back shelf shows a tablet for each rune the table holds. The offering bowl fills with glowing essence, a step per 50 in the pool, full at 500.
+- The back shelf shows a tablet for each rune the table holds, and one of each kind of gem it holds lies on its top. The offering bowl fills with glowing essence, a step per 50 in the pool, full at 500.

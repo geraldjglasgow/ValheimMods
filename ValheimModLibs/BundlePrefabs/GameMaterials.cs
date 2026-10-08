@@ -10,16 +10,33 @@ namespace BundlePrefabs;
 /// </summary>
 public static class GameMaterials
 {
-	/// <summary>A copy of the first material on the prefab's renderers (or on the named child's), or null.</summary>
-	public static Material? Borrow(GameObject? prefab, string? child = null)
+	/// <summary>
+	/// A copy of the material on the prefab's first mesh renderer (or the named child's), or null. Particle, line and trail
+	/// renderers are passed over: most game items keep their sparkle on the root (a ParticleSystemRenderer on
+	/// `Legacy Shaders/Particles/Alpha Blended`), and borrowing it made EliteCrafting's runes see-through and unlit.
+	/// `anyRenderer` takes the first renderer of any kind (effects borrowing a particle material).
+	/// </summary>
+	public static Material? Borrow(GameObject? prefab, string? child = null, bool anyRenderer = false)
 	{
 		if (prefab == null)
 		{
 			return null;
 		}
 		Transform root = child == null ? prefab.transform : Find(prefab.transform, child) ?? prefab.transform;
-		Renderer? renderer = root.GetComponentInChildren<Renderer>(true);
+		Renderer? renderer = anyRenderer ? root.GetComponentInChildren<Renderer>(true) : FirstMesh(root);
 		return renderer == null || renderer.sharedMaterial == null ? null : new Material(renderer.sharedMaterial);
+	}
+
+	private static Renderer? FirstMesh(Transform root)
+	{
+		foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+		{
+			if (renderer is MeshRenderer || renderer is SkinnedMeshRenderer)
+			{
+				return renderer;
+			}
+		}
+		return null;
 	}
 
 	/// <summary>Replaces each placeholder material (by name) with the one `pick` returns; null keeps the placeholder.</summary>

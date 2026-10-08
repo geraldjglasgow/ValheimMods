@@ -16,9 +16,11 @@ namespace EliteCrafting.Display.Backdrops
     {
         private const string Name = "ecf_seal";
 
-        // The mark's place in the icon's rect, as fractions of its width and height from the lower left corner.
-        private static readonly Vector2 From = new Vector2(0.03f, 0.08f);
-        private static readonly Vector2 To = new Vector2(0.55f, 0.34f);
+        // The mark's place in the icon's rect, as fractions of its width and height from the lower left corner: inside the
+        // rarity backdrop's inner line (rim 3-4 and inner line 6-7 of the icon's 64 units, corner radius 4, BackdropArt),
+        // 9 units in, 16 wide and 8 high (user 2026-10-07: smaller, off the rarity border; then smaller again).
+        private static readonly Vector2 From = new Vector2(9f / 64f, 9f / 64f);
+        private static readonly Vector2 To = new Vector2(25f / 64f, 17f / 64f);
 
         private static readonly Dictionary<Image, Image> Seals = new Dictionary<Image, Image>();
         private static readonly List<Image> Gone = new List<Image>();

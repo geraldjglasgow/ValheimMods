@@ -80,7 +80,7 @@ namespace EliteCrafting.Loot
             {
                 DrawStones(economy, Count(boss.StoneRolls * star, random), random, plan);
                 AddBonus(economy, boss.Bonus, random, plan);
-                BossGems.Add(economy, input.Prefab, random, plan.Stones);
+                BossGems.Add(economy, input.Prefab, input.Players, random, plan.Stones);
             }
             if (input.GearOn)
             {

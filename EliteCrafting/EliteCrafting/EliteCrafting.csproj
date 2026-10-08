@@ -6,7 +6,7 @@
     <RootNamespace>EliteCrafting</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.8.0</Version>
+    <Version>0.9.0</Version>
     <Product>EliteCrafting</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -127,6 +127,8 @@
     <EmbeddedResource Include="assets\bundles\ecf_lootglow.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
     <!-- The Rune Table's model and build-menu icon (ValheimAssets Assets/Props/RuneTable), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecf_runetable.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
+    <!-- The Rune Table's vortex (ValheimAssets Assets/Effects/ecf_rune_vortex), played when a stone is used at the table -->
+    <EmbeddedResource Include="assets\bundles\ecf_tablefx.*" LogicalName="EliteCrafting.assets.%(Filename)%(Extension)" />
     <!-- The Rune Table's essence icons, 64 px PNGs (ValheimAssets Assets/Icons/Essences), decoded at runtime. -->
     <EmbeddedResource Include="assets\icons\ecf_essence_*.png" LogicalName="EliteCrafting.assets.icons.%(Filename)%(Extension)" />
   </ItemGroup>

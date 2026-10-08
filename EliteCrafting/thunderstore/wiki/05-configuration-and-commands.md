@@ -24,8 +24,8 @@ Synced settings come from the server; player settings are your own.
 | Modify equipped items | On | Synced | Runes work on equipped items |
 | Runes from salvage | On | Synced | With OpenKeep, salvaging Magic gear may give back an Awakening Rune, Rare gear an Ascension Rune (25%) |
 | Rune Table | On | Synced | The [Rune Table](wiki:Rune Table) is in the hammer and can be used. Off: it leaves the hammer and built tables cannot be used; what they hold is kept |
-| Gems and sockets | On | Synced | Sockets on weapons, staves, armour and shields; the Consecrated Rune, the Dvergr Chisel and the eleven gems drop and work; the Rune Table's Sockets tab. Off: none of it; gems already set keep their stats |
-| Confirm destructive runes | HoldShift | Player | How Cleansing and Serpent ask first: `HoldShift`, `Dialog` (yes/no) or `Off` |
+| Gems and sockets | On | Synced | Sockets on weapons, staves, armour and shields; the Dvergr Chisel and the eleven gems drop and work; the Rune Table's Sockets tab. Off: none of it; gems already set keep their stats |
+| Confirm destructive runes | HoldShift | Player | How Cleansing and the Sealed Rune ask first: `HoldShift`, `Dialog` (yes/no) or `Off` |
 | Rune drops | On | Synced | Creatures, bosses and chests drop runes |
 | Read-only commands for everyone | On | Synced | Off: `help`, `inspect`, `stats`, `list`, `inscription`, `classes` and `ecr` become admin-only |
 | Colored item names | On | Player | Magic item names in their rarity colour |
@@ -55,7 +55,7 @@ drops:
     Troll: { rune_multiplier: 2 }          # double runes from trolls
     Hen: { multiplier: 0 }                 # hens drop nothing
 runes:
-  - { id: serpent, cost: { rare: 2 } }     # two Serpent Runes on Rare items
+  - { id: serpent, cost: { rare: 2 } }     # two Sealed Runes on Rare items
   - { id: cleansing, enabled: false }      # switch a rune off
 classes:
   - { id: light, rolls: false }            # torches and lanterns never become magic
@@ -90,7 +90,7 @@ Open the console with F5. Commands marked * work for everyone unless the server 
 | `ecraft inscription <id>` * | One inscription: its classes and every tier with its range and the item level that unlocks it |
 | `ecraft classes` * | Every item class: its items, their item levels and how many inscriptions it rolls |
 | `ecraft ecr` * | Shows the Elite Creatures Reborn link and what the creature you look at would drop |
-| `ecraft give <rune>\|all [count]` | Gives runes: `awakening`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent`; the chisel `dvergr_chisel`; gems `gem_surtr`, `gem_ymir`, `gem_thor`, `gem_nidhogg`, `gem_hel`, `gem_tyr`, `gem_freyja`, `gem_odin`, `gem_skadi`, `gem_heimdall`, `gem_sleipnir` |
+| `ecraft give <rune>\|all [count]` | Gives runes: `awakening`, `recasting`, `ascension`, `cleansing`, `serpent`; the chisel `dvergr_chisel`; gems `gem_surtr`, `gem_ymir`, `gem_thor`, `gem_nidhogg`, `gem_hel`, `gem_tyr`, `gem_freyja`, `gem_odin`, `gem_skadi`, `gem_heimdall`, `gem_sleipnir` |
 | `ecraft roll magic\|rare <item or class> [level]` | Gives a rolled magic item, for example `ecraft roll rare SwordIron` or `ecraft roll magic legs 8`; a class picks a random item of it, `level` (1-8) overrides its item level |
 | `ecraft reroll` | Rerolls an item's inscriptions |
 | `ecraft inscribe <inscription> [tier] [value]` | Adds one chosen inscription, for testing |

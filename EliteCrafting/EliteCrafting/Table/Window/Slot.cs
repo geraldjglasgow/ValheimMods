@@ -20,7 +20,21 @@ namespace EliteCrafting.Tables.Window
             Icon = root.transform.Find("res_icon")?.GetComponent<Image>();
             Name = root.transform.Find("res_name")?.GetComponent<TMP_Text>();
             Amount = root.transform.Find("res_amount")?.GetComponent<TMP_Text>();
-            Tip = root.GetComponent<UITooltip>();
+            Tip = HoverOf(root);
+        }
+
+        // The game's tooltip follows the pointer; the table's hover text shows beside the slot (HoverBox), so the copy's
+        // UITooltip gives way to a TipHover (once: copies of a converted slot carry the TipHover already).
+        private static TipHover HoverOf(GameObject root)
+        {
+            UITooltip? game = root.GetComponent<UITooltip>();
+            if (game != null)
+            {
+                HoverBox.Remember(game.m_tooltipPrefab);
+                Object.DestroyImmediate(game);
+            }
+            TipHover? tip = root.GetComponent<TipHover>();
+            return tip != null ? tip : root.AddComponent<TipHover>();
         }
 
         public GameObject Root { get; }
@@ -28,7 +42,7 @@ namespace EliteCrafting.Tables.Window
         public Image? Icon { get; }
         public TMP_Text? Name { get; }
         public TMP_Text? Amount { get; }
-        public UITooltip? Tip { get; }
+        public TipHover Tip { get; }
         public Image? Mark { get; private set; }
 
         /// <summary>
@@ -77,14 +91,7 @@ namespace EliteCrafting.Tables.Window
             }
         }
 
-        public void Tooltip(string topic, string text)
-        {
-            if (Tip != null)
-            {
-                Tip.m_topic = topic;
-                Tip.m_text = text;
-            }
-        }
+        public void Tooltip(string topic, string text) => Tip.Set(topic, text);
 
         /// <summary>Shows the chosen-mark in the tone given (an essence's or a rune's colour), or hides it.</summary>
         public void Choose(bool chosen, Color tone = default)

@@ -54,7 +54,7 @@ namespace EliteCrafting.Display
             {
                 sb.Append(RarityPalette.Grey);
             }
-            sb.Append(Text(roll, def));
+            sb.Append(Sentence(roll.Id, roll.Value, def, brief: detail != TooltipDetail.Full));
             if (detail == TooltipDetail.Full)
             {
                 AppendRange(sb, roll, def, scale);
@@ -80,14 +80,20 @@ namespace EliteCrafting.Display
         /// The affix's own sentence (<c>$ecf_affix_&lt;id&gt;_line</c>) when a translation has one; otherwise the
         /// generic "value name" line. An orphaned affix (no definition) shows its bare stored value and its name or id.
         /// </summary>
-        private static string Text(AffixRoll roll, AffixDef? def) => Sentence(roll.Id, roll.Value, def);
 
         /// <summary>
         /// The line an inscription of this id shows with this value; also the API's summed lines
         /// (<c>GetPlayerInscriptionsJson</c>), which word a player's total the way the tooltip words one item.
         /// </summary>
-        internal static string Sentence(string id, float value, AffixDef? def)
+        internal static string Sentence(string id, float value, AffixDef? def, bool brief = false)
         {
+            // Tooltips at Compact and Standard detail take the short line (user 2026-10-07: "Just say Chain Lighting 5%
+            // T8 ... just say 7% knockback T8"); Full detail, the API and the table's texts keep the whole sentence.
+            string shortKey = "ecf_affix_" + id + "_short";
+            if (brief && DisplayWords.Has(shortKey))
+            {
+                return Words.Localize("$" + shortKey, DisplayWords.Plain(value));
+            }
             string lineKey = "ecf_affix_" + id + "_line";
             if (DisplayWords.Has(lineKey))
             {

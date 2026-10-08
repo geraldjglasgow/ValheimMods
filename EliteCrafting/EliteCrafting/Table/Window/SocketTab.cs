@@ -11,7 +11,8 @@ namespace EliteCrafting.Tables.Window
     /// The Sockets tab (sockets.md section 6, shown while <c>Gems and sockets</c> is on): the gear you carry that takes
     /// sockets on the left; on the right the chosen piece with its sockets and gems, the Dvergr Chisel and the gems you
     /// carry (the rune row), the item's sockets (the essence row: pick a filled one to replace its gem), the cost and the
-    /// button. A press runs the same checks and commit as clicking the stone onto the item, paid from your inventory; a gem
+    /// button. A press runs the same checks and commit as clicking the stone onto the item, paid from the table's own stones
+    /// first, then your inventory (stored and taken out like runes: Store all, Ctrl + click, Shift + click); a gem
     /// aimed at a filled socket asks first (<see cref="GemChooser.Confirm"/>), the old gem being lost.
     /// </summary>
     internal sealed class SocketTab : TableTab
@@ -40,10 +41,10 @@ namespace EliteCrafting.Tables.Window
             {
                 ItemDrop.ItemData chosen = item;
                 _rows.Add(new ListRow(item.GetIcon(), InscribePane.NameOf(item), item.m_quality.ToString(), null,
-                    item == _item, dim: false, () => Choose(chosen)));
+                    item == _item, dim: false, () => Choose(chosen), item));
             }
             view.Parts.List?.Fill(_rows);
-            SocketPane.Stones(view.Inventory, view.Parts.Runes?.Count ?? 0, _stones);
+            SocketPane.Stones(view.Store, view.Inventory, view.Parts.Runes?.Count ?? 0, _stones);
             _stone = _stones.Contains(_stone) ? _stone : _stones[0];
             SocketPane.Fill(view, new SocketChoice(_item, _stone, Filled(_socket)), _stones);
         }
@@ -53,9 +54,16 @@ namespace EliteCrafting.Tables.Window
             if (index < _stones.Count)
             {
                 _stone = _stones[index];
+                if (TableWindow.ShiftHeld)
+                {
+                    TakeOut(_stone);
+                }
                 TableWindow.MarkDirty();
             }
         }
+
+        /// <summary>Store all, as on the Inscribe tab: every rune, chisel, gem and Essence you carry.</summary>
+        public override void Extra(TableView view) => StoreAll(view);
 
         public override void PickEssence(int index)
         {
@@ -70,7 +78,7 @@ namespace EliteCrafting.Tables.Window
             {
                 return;
             }
-            StoneJob job = StoneJob.Create(view.Player, stone, _item, new TableSupply(view.Store, view.Inventory, null));
+            StoneJob job = StoneJob.Create(view.Player, stone, _item, new TableSupply(view.Store, null));
             int socket = Filled(_socket);
             if (StoneCatalog.IsGem(_stone) && socket >= 0)
             {

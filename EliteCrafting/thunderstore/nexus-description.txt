@@ -4,7 +4,7 @@ get its real mod_id/file_id and nexus-upload.py become usable for later versions
 Keep in step with README.md.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Runes and magic gear in three rarities: Normal, Magic and Rare. Creatures, bosses and chests drop runes; click a rune onto an item to awaken, recast, raise or cleanse it, cut sockets for gems, or gamble and seal it with the Serpent Rune. Six runes, a Rune Table, 209 inscriptions, eleven gems. Server synced. Required on the server and every client.
+Runes and magic gear in three rarities: Normal, Magic and Rare. Creatures, bosses and chests drop runes; click a rune onto an item to awaken, recast, raise or cleanse it, cut sockets for gems, or gamble and seal it with the Sealed Rune. Five runes, a Rune Table, 209 inscriptions, eleven boss gems. Server synced. Required on the server and every client.
 
 ===== DESCRIPTION (BBCode) =====
 [b]Work in progress:[/b] significant changes will come, including to the config, the YAML files and item data.
@@ -18,7 +18,7 @@ Runes and magic gear: creatures and chests drop runes; a rune clicked onto an it
 [*]Tiers: gear from later biomes rolls stronger inscriptions; T1 is the strongest.
 [*]Runes: six, clicked onto an item from your inventory or an open chest (below).
 [*]Rune Table: stores runes, turns trophies into essence; an essence (Beast, Stone, Elemental, Spirit, Grave) chooses what Ascension adds.
-[*]Sockets: up to three, cut by the Consecrated Rune or one by the Dvergr Chisel, filled with eleven very rare gems (below).
+[*]Sockets: up to three, cut by the Dvergr Chisel, filled with gems that only bosses drop (below).
 [*]Drops: creatures, bosses and world chests drop runes, more with stars; magic gear never drops.
 [*]Salvage: with OpenKeep, salvaged Magic or Rare gear may give a rune back.
 [*]Magic items on the ground glow in their colour under a beam of light.
@@ -39,9 +39,8 @@ Runes and magic gear: creatures and chests drop runes; a rune clicked onto an it
 [*]Awakening: makes a Normal item Magic with two inscriptions.
 [*]Recasting: replaces both inscriptions on a Magic item with two new ones.
 [*]Ascension: makes a Magic item Rare, keeping both and adding a third.
-[*]Consecrated: one to three sockets on a weapon, staff, armour piece or shield that has none.
 [*]Cleansing: strips a Magic or Rare item back to Normal.
-[*]Serpent: a gamble (nothing, a 3rd inscription on Magic or a 4th on Rare, or a wild reroll), then sealed for good.
+[*]Sealed: a gamble (nothing, a 3rd inscription on Magic or a 4th on Rare, or a wild reroll), then sealed for good.
 [/list]
 
 [size=4][b]Gems[/b][/size]

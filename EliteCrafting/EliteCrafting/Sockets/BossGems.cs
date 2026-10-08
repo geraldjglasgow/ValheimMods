@@ -6,54 +6,64 @@ namespace EliteCrafting.Sockets
 {
     /// <summary>
     /// What each boss adds of the socket stones (sockets.md section 7), on top of its YAML drops: the Dvergr Chisel one
-    /// time in four from every boss, and its own gems. Fixed in code so every server has them whatever its own economy
-    /// file says (a file written before the gems keeps its boss bonus lists, which replace the defaults' whole). Rolled
-    /// on the creature's owner with the rest of the boss's drops, while <c>Rune drops</c> and <c>Gems and sockets</c> are on.
+    /// time in four from every boss, and gems, any of the eleven at random, at a chance that grows boss by boss (user
+    /// 2026-10-07: "all bosses should be able to drop all gems, its just more common to get a gem at later bosses";
+    /// before, each boss had its own one or two), rolled once for every player near the boss when it dies (user: "roll the
+    /// chance multiple times per player participating in the fight", <see cref="Loot.BossParty"/>). Fixed in code so every server has them whatever its own economy file
+    /// says. Rolled on the creature's owner with the rest of the boss's drops, while <c>Rune drops</c> and
+    /// <c>Gems and sockets</c> are on.
     /// </summary>
     internal static class BossGems
     {
-        private sealed class Row
+        private const float ChiselChance = 25f;
+
+        // Percent chance of one gem, by boss in the game's order.
+        private static readonly Dictionary<string, float> GemChance = new Dictionary<string, float>(StringComparer.Ordinal)
         {
-            public Row(string stone, float chance)
-            {
-                Stone = stone;
-                Chance = chance;
-            }
-
-            public string Stone { get; }
-
-            /// <summary>Percent.</summary>
-            public float Chance { get; }
-        }
-
-        private static Row Chisel => new Row(StoneCatalog.ChiselId, 25f);
-
-        private static readonly Dictionary<string, Row[]> Table = new Dictionary<string, Row[]>(StringComparer.Ordinal)
-        {
-            ["Eikthyr"] = new[] { new Row("gem_thor", 10f), new Row("gem_sleipnir", 10f), Chisel },
-            ["gd_king"] = new[] { new Row("gem_freyja", 15f), Chisel },
-            ["Bonemass"] = new[] { new Row("gem_nidhogg", 15f), Chisel },
-            ["Dragon"] = new[] { new Row("gem_ymir", 20f), new Row("gem_skadi", 20f), Chisel },
-            ["GoblinKing"] = new[] { new Row("gem_surtr", 20f), new Row("gem_tyr", 20f), Chisel },
-            ["SeekerQueen"] = new[] { new Row("gem_odin", 20f), new Row("gem_heimdall", 20f), Chisel },
-            ["Fader"] = new[] { new Row("gem_hel", 25f), Chisel },
+            ["Eikthyr"] = 15f, ["gd_king"] = 20f, ["Bonemass"] = 30f, ["Dragon"] = 40f,
+            ["GoblinKing"] = 50f, ["SeekerQueen"] = 65f, ["Fader"] = 80f,
         };
 
-        /// <summary>The boss's gems and chisel, each row rolled on its own; a disabled stone never drops.</summary>
-        public static void Add(EconomyRules economy, string? bossPrefab, Random random, List<StoneDef> into)
+        private static readonly List<StoneDef> Gems = new List<StoneDef>();
+
+        /// <summary>The boss's gems (one roll per player) and chisel, each rolled on its own; a disabled stone never drops.</summary>
+        public static void Add(EconomyRules economy, string? bossPrefab, int players, Random random, List<StoneDef> into)
         {
-            if (!SocketSwitch.On || bossPrefab == null || !Table.TryGetValue(bossPrefab, out Row[] rows))
+            if (!SocketSwitch.On || bossPrefab == null || !GemChance.TryGetValue(bossPrefab, out float gemChance))
             {
                 return;
             }
-            foreach (Row row in rows)
+            for (int i = 0; i < Math.Max(1, players); i++)
             {
-                StoneDef? stone = economy.Stone(row.Stone);
-                if (stone != null && stone.Enabled && random.NextDouble() * 100.0 < row.Chance)
+                if (Rolls(random, gemChance))
                 {
-                    into.Add(stone);
+                    AnyGem(economy, random, into);
                 }
             }
+            StoneDef? chisel = economy.Stone(StoneCatalog.ChiselId);
+            if (chisel != null && chisel.Enabled && Rolls(random, ChiselChance))
+            {
+                into.Add(chisel);
+            }
         }
+
+        private static void AnyGem(EconomyRules economy, Random random, List<StoneDef> into)
+        {
+            Gems.Clear();
+            foreach (string id in StoneCatalog.GemIds)
+            {
+                StoneDef? gem = economy.Stone(id);
+                if (gem != null && gem.Enabled)
+                {
+                    Gems.Add(gem);
+                }
+            }
+            if (Gems.Count > 0)
+            {
+                into.Add(Gems[random.Next(Gems.Count)]);
+            }
+        }
+
+        private static bool Rolls(Random random, float percent) => random.NextDouble() * 100.0 < percent;
     }
 }

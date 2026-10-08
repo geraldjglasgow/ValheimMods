@@ -8,9 +8,7 @@ namespace EliteCrafting.Sockets
     {
         public static bool On => ModSettings.GemsAndSockets?.Value ?? true;
 
-        /// <summary>Whether this stone may drop: every other rune, and the chisel, the gems and the Consecrated Rune (it
-        /// gives sockets) while the switch is on.</summary>
-        public static bool Drops(StoneDef stone) =>
-            On || (!StoneCatalog.IsSocketStone(stone.Id) && stone.Verb != StoneVerb.Consecrate);
+        /// <summary>Whether this stone may drop: every rune, and the chisel and gems while the switch is on.</summary>
+        public static bool Drops(StoneDef stone) => On || !StoneCatalog.IsSocketStone(stone.Id);
     }
 }

@@ -43,7 +43,7 @@ under the endpoint's name and the call answers `false`.
 | `CraftingLink` | `Guid`, `Present`, `ApiVersion`, `PluginVersion`, `HasEndpoint`, `EndpointNames` |
 | `CraftingClasses` | `RegisterItemClass`, `ClaimItems`, `RegisterClassifier` / `UnregisterClassifier`, `SetItemLevel`, `GetItemClass`, `GetItemLevel` |
 | `CraftingInscriptions` | `RegisterInscription`, `AddToPool`, `RegisterExternalEffect`, `GetPlayerTotal`, `GetItemTotal`, `GetPlayerInscriptionsJson` (EliteCrafting 0.7.0+: ask `CraftingLink.HasEndpoint` first) |
-| `CraftingItems` | `IsMagic`, `GetRarity`, `GetRarityColor`, `GetInscriptionsJson`, `GetDecoratedName`, `CanBeMagic`, `RollMagic`, `Cleanse`, `GetSalvageRune` / `GetSalvageRuneChance` (EliteCrafting 0.8.0+; OpenKeep's Salvage) |
+| `CraftingItems` | `IsMagic`, `GetRarity`, `GetRarityColor`, `GetInscriptionsJson`, `GetDecoratedName`, `CanBeMagic`, `RollMagic`, `Cleanse`, `GetSalvageRune` / `GetSalvageRuneChance`, `DecorateIcon` (EliteCrafting 0.8.0+; OpenKeep's Salvage) |
 | `CraftingHooks` | `RegisterEquipmentProvider` / `Unregister...`, `InvalidatePlayer`, `RegisterMagicBaseFilter` / `Unregister...`, `Add/RemoveItemChangedListener`, `Add/RemoveLootGeneratedListener`, `SetCreatureLoot` |
 
 ## Internals

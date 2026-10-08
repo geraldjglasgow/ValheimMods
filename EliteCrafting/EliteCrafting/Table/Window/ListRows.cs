@@ -10,8 +10,10 @@ namespace EliteCrafting.Tables.Window
     /// <summary>One row of the window's list: what it shows and what a click does.</summary>
     internal readonly struct ListRow
     {
-        public ListRow(Sprite? icon, string name, string? badge, float? durability, bool selected, bool dim, Action click)
+        public ListRow(Sprite? icon, string name, string? badge, float? durability, bool selected, bool dim, Action click,
+            ItemDrop.ItemData? item = null)
         {
+            Item = item;
             Icon = icon;
             Name = name;
             Badge = badge;
@@ -20,6 +22,9 @@ namespace EliteCrafting.Tables.Window
             Dim = dim;
             Click = click;
         }
+
+        /// <summary>The player's item the row shows, for its icon's rarity backdrop, seal and sockets; null for none.</summary>
+        public ItemDrop.ItemData? Item { get; }
 
         public Sprite? Icon { get; }
         public string Name { get; }
@@ -80,6 +85,7 @@ namespace EliteCrafting.Tables.Window
             {
                 icon.sprite = row.Icon;
                 icon.color = row.Dim ? new Color(1f, 1f, 1f, 0.5f) : Color.white;
+                Display.Backdrops.IconBackdrop.Set(icon, row.Item);
             }
             TMP_Text? name = element.transform.Find("name")?.GetComponent<TMP_Text>();
             if (name != null)

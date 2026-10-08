@@ -7,17 +7,42 @@ namespace EliteCrafting.Tables.Window
     /// <summary>Fills the description panel's fixed parts: icon, name, text, row labels, the main and the small button.</summary>
     internal static class PaneText
     {
-        public static void Header(PanelParts parts, Sprite? icon, string name)
+        public static void Header(PanelParts parts, Sprite? icon, string name, ItemDrop.ItemData? item = null)
         {
+            Pills(parts, null, default);
             if (parts.Icon != null)
             {
                 parts.Icon.gameObject.SetActive(icon != null);
                 parts.Icon.sprite = icon;
+                Display.Backdrops.IconBackdrop.Set(parts.Icon, icon != null ? item : null);
             }
             if (parts.Name != null)
             {
                 parts.Name.text = name;
             }
+        }
+
+        /// <summary>
+        /// Shows pills under the text, in the given colour, the text giving up their height; null or none hides them and
+        /// gives the text its whole area back (every pane's <see cref="Header"/> starts that way).
+        /// </summary>
+        public static void Pills(PanelParts parts, System.Collections.Generic.IReadOnlyList<Pill>? pills, Color tone)
+        {
+            if (parts.Text == null || parts.Pills == null)
+            {
+                return;
+            }
+            Rect area = parts.TextArea;
+            bool show = pills != null && pills.Count > 0;
+            float strip = show ? PillStrip.AreaHeight + 6f : 0f;
+            Rects.Place(parts.Text.rectTransform, area.x, area.y, area.width, Mathf.Max(30f, area.height - strip));
+            if (!show)
+            {
+                parts.Pills.Hide();
+                return;
+            }
+            parts.Pills.Place(area.x, area.y + area.height - PillStrip.AreaHeight, area.width);
+            parts.Pills.Show(pills!, tone);
         }
 
         public static void Body(PanelParts parts, string text)

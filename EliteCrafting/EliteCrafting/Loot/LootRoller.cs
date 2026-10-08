@@ -70,6 +70,7 @@ namespace EliteCrafting.Loot
             LootInput input = Input(tier, facts.RollStars, profile.Boss, facts.FlaggedBoss, profile.Creature, modifiers);
             input.Ecr = facts.Ecr.Roll;
             input.Prefab = profile.Prefab;
+            input.Players = input.IsBoss ? BossParty.Count(facts.Position) : 1;
             return input;
         }
 

@@ -10,7 +10,7 @@ namespace EliteCrafting.Tables
     /// <summary>
     /// The Rune Table piece <c>ECF_RuneTable</c> (rune-table.md section 2): a copy of the game's workbench (its size,
     /// placement, wear, sounds and wood) without the crafting station, wearing the table's own model from the embedded
-    /// bundle (<see cref="TableModel"/>), with <see cref="RuneTable"/>, <see cref="TableShelf"/> and <see cref="TableBowl"/> added. Made once per process on every peer,
+    /// bundle (<see cref="TableModel"/>), with <see cref="RuneTable"/>, <see cref="TableShelf"/>, <see cref="TableBowl"/> and <see cref="TableGems"/> added. Made once per process on every peer,
     /// dedicated server included, under BundlePrefabs' inactive bench (no Awake, no ZDO), and added to the scene's
     /// prefab list before ZNetScene.Awake registers it, whether the table is switched on or not, so tables already
     /// built always load. The hammer and the cost are <see cref="TableHammer"/>'s.
@@ -71,6 +71,8 @@ namespace EliteCrafting.Tables
             copy.AddComponent<RuneTable>();
             copy.AddComponent<TableShelf>();
             copy.AddComponent<TableBowl>();
+            copy.AddComponent<TableGems>();
+            copy.AddComponent<TableCast>();
             return copy;
         }
 

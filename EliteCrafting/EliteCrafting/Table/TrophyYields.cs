@@ -4,9 +4,12 @@ namespace EliteCrafting.Tables
 {
     /// <summary>
     /// What a trophy is worth at the Rune Table (rune-table.md section 3): pure essence for the table's one pool, more the later its creature's
-    /// biome (Meadows 5, Black Forest 10, Swamp and the sea 15, Mountains 20, Plains 25, Mistlands 30, Ashlands 35).
-    /// Boss trophies are not listed: players need them for the Forsaken powers. A trophy the game does not have is
-    /// simply never offered.
+    /// biome (Meadows 2, Black Forest 4, Swamp and the sea 6, Mountains 8, Plains 10, Mistlands 12, Ashlands 14; lowered
+    /// 2026-10-07 by the user's word, so a guaranteed inscription (10 essence per item level) costs about five trophies of
+    /// the item's own biome).
+    /// Boss trophies are worth the most (user 2026-10-07: "boss trophies should be in there too"): Eikthyr 20 ... the
+    /// Fader 80. A boss trophy also unlocks a Forsaken power at the altar, so Sacrifice all trophies never takes one
+    /// (<see cref="IsBoss"/>): only a press on that trophy does. A trophy the game does not have is simply never offered.
     /// </summary>
     internal static class TrophyYields
     {
@@ -14,39 +17,55 @@ namespace EliteCrafting.Tables
             new Dictionary<string, int>
             {
                 // Meadows
-                ["TrophyBoar"] = 5, ["TrophyNeck"] = 5, ["TrophyDeer"] = 5,
+                ["TrophyBoar"] = 2, ["TrophyNeck"] = 2, ["TrophyDeer"] = 2,
                 // Black Forest
-                ["TrophyGreydwarf"] = 10, ["TrophyBjorn"] = 10,
-                ["TrophyGreydwarfBrute"] = 10, ["TrophyFrostTroll"] = 10,
-                ["TrophyGreydwarfShaman"] = 10, ["TrophyGhost"] = 10,
-                ["TrophySkeleton"] = 10, ["TrophySkeletonPoison"] = 10,
+                ["TrophyGreydwarf"] = 4, ["TrophyBjorn"] = 4,
+                ["TrophyGreydwarfBrute"] = 4, ["TrophyFrostTroll"] = 4,
+                ["TrophyGreydwarfShaman"] = 4, ["TrophyGhost"] = 4,
+                ["TrophySkeleton"] = 4, ["TrophySkeletonPoison"] = 4,
                 // Swamp and the sea
-                ["TrophySurtling"] = 15, ["TrophyBlob"] = 15, ["TrophyLeech"] = 15,
-                ["TrophyAbomination"] = 15, ["TrophyWraith"] = 15,
-                ["TrophyDraugr"] = 15, ["TrophyDraugrElite"] = 15, ["TrophyDraugrFem"] = 15,
-                ["TrophySerpent"] = 15,
+                ["TrophySurtling"] = 6, ["TrophyBlob"] = 6, ["TrophyLeech"] = 6,
+                ["TrophyAbomination"] = 6, ["TrophyWraith"] = 6,
+                ["TrophyDraugr"] = 6, ["TrophyDraugrElite"] = 6, ["TrophyDraugrFem"] = 6,
+                ["TrophySerpent"] = 6,
                 // Mountains
-                ["TrophyWolf"] = 20, ["TrophyHatchling"] = 20, ["TrophyUlv"] = 20,
-                ["TrophyFenring"] = 20, ["TrophyCultist"] = 20, ["TrophySGolem"] = 20,
+                ["TrophyWolf"] = 8, ["TrophyHatchling"] = 8, ["TrophyUlv"] = 8,
+                ["TrophyFenring"] = 8, ["TrophyCultist"] = 8, ["TrophySGolem"] = 8,
                 // Plains
-                ["TrophyLox"] = 25, ["TrophyGoblin"] = 25, ["TrophyGoblinBrute"] = 25,
-                ["TrophyGoblinShaman"] = 25, ["TrophyDeathsquito"] = 25,
-                ["TrophyGrowth"] = 25, ["TrophyBjornUndead"] = 25,
+                ["TrophyLox"] = 10, ["TrophyGoblin"] = 10, ["TrophyGoblinBrute"] = 10,
+                ["TrophyGoblinShaman"] = 10, ["TrophyDeathsquito"] = 10,
+                ["TrophyGrowth"] = 10, ["TrophyBjornUndead"] = 10,
                 // Mistlands
-                ["TrophyHare"] = 30, ["TrophySeekerBrute"] = 30, ["TrophyGjall"] = 30,
-                ["TrophySeeker"] = 30, ["TrophyTick"] = 30, ["TrophyDvergr"] = 30,
+                ["TrophyHare"] = 12, ["TrophySeekerBrute"] = 12, ["TrophyGjall"] = 12,
+                ["TrophySeeker"] = 12, ["TrophyTick"] = 12, ["TrophyDvergr"] = 12,
                 // Ashlands
-                ["TrophyAsksvin"] = 35, ["TrophyVolture"] = 35, ["TrophyMorgen"] = 35,
-                ["TrophyCharredArcher"] = 35, ["TrophyCharredMage"] = 35,
-                ["TrophyCharredMelee"] = 35, ["TrophyFallenValkyrie"] = 35,
+                ["TrophyAsksvin"] = 14, ["TrophyVolture"] = 14, ["TrophyMorgen"] = 14,
+                ["TrophyCharredArcher"] = 14, ["TrophyCharredMage"] = 14,
+                ["TrophyCharredMelee"] = 14, ["TrophyFallenValkyrie"] = 14,
             };
 
-        /// <summary>The pure essence one of this trophy gives; false for anything else.</summary>
+        private static readonly Dictionary<string, int> Bosses =
+            new Dictionary<string, int>
+            {
+                ["TrophyEikthyr"] = 20, ["TrophyTheElder"] = 30, ["TrophyBonemass"] = 40, ["TrophyDragonQueen"] = 50,
+                ["TrophyGoblinKing"] = 60, ["TrophySeekerQueen"] = 70, ["TrophyFader"] = 80,
+            };
+
+        /// <summary>The essence one of this trophy gives; false for anything else.</summary>
         public static bool TryGet(ItemDrop.ItemData? item, out int amount)
         {
             amount = 0;
-            string? prefab = item?.m_dropPrefab != null ? item.m_dropPrefab.name : null;
-            return prefab != null && Yields.TryGetValue(prefab, out amount);
+            string? prefab = Prefab(item);
+            return prefab != null && (Yields.TryGetValue(prefab, out amount) || Bosses.TryGetValue(prefab, out amount));
         }
+
+        /// <summary>A boss trophy: taken one press at a time, never by Sacrifice all trophies.</summary>
+        public static bool IsBoss(ItemDrop.ItemData? item)
+        {
+            string? prefab = Prefab(item);
+            return prefab != null && Bosses.ContainsKey(prefab);
+        }
+
+        private static string? Prefab(ItemDrop.ItemData? item) => item?.m_dropPrefab != null ? item.m_dropPrefab.name : null;
     }
 }

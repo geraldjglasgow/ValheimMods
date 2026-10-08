@@ -8,7 +8,7 @@
 | Magic | 2 | 1 | 1 | green |
 | Rare | 3 | at most 2 | at most 2 | blue |
 
-- The Serpent Rune can add one more, past these limits: a 3rd on Magic, a 4th on Rare. No item holds more than four.
+- The Sealed Rune can add one more, past these limits: a 3rd on Magic, a 4th on Rare. No item holds more than four.
 - A **prefix** is the item's core power (damage, health, armour, blocking, leech); a **suffix** is everything else. The [Inscription List](wiki:Inscription List) marks each.
 - Magic gear never drops: crafted and found items start Normal, and only runes make them Magic or Rare. Magic items never stack.
 
@@ -39,17 +39,16 @@ PackPanel adds a Backpacks class.
 | Awakening | Normal | Makes it Magic with two inscriptions, a prefix and a suffix |
 | Recasting | Magic | Replaces both inscriptions with two new ones; stays Magic |
 | Ascension | Magic | Makes it Rare, keeping both inscriptions and adding a third; at a [Rune Table](wiki:Rune Table) an essence can choose what it is |
-| Consecrated | Normal, Magic, Rare | Cuts 1 to 3 sockets into a weapon, staff, armour piece or shield that has none: one 70%, two 25%, three 5%. Needs `Gems and sockets` on ([Gems and Sockets](wiki:Gems and Sockets)) |
 | Cleansing | Magic, Rare | Back to Normal; every inscription is lost |
-| Serpent | Magic, Rare | A gamble, then the item is **sealed**: no rune works on it again |
+| Sealed | Magic, Rare | A gamble, then the item is **sealed**: no rune works on it again |
 
 - Click the rune stack onto an item in your own inventory. The rune can come straight from the chest you have open; the item must be in your inventory. Equipped items work too unless the server forbids it.
 - A success uses one rune. If the rune cannot be used, it is kept and a message says why, for example "No inscription can roll on this item".
-- Cleansing and Serpent ask first: hold **Shift** while clicking (left trigger on a gamepad). The `Confirm destructive runes` setting changes this. Recasting does not ask, though the inscriptions it replaces are gone for good.
-- Runes stack to 50, weigh 0.2 and go through portals. Each is a stone tablet with its own glyph; with `Glow runes` on, it glows on the ground in its colour: Awakening green, Recasting violet, Ascension blue, Consecrated gold, Cleansing silver, Serpent dark green.
+- Cleansing and the Sealed Rune ask first: hold **Shift** while clicking (left trigger on a gamepad). The `Confirm destructive runes` setting changes this. Recasting does not ask, though the inscriptions it replaces are gone for good.
+- Runes stack to 50, weigh 0.2 and go through portals. Each is a stone tablet with its own glyph; with `Glow runes` on, it glows on the ground in its colour: Awakening green, Recasting violet, Ascension blue, Cleansing silver, Sealed red.
 - A [Rune Table](wiki:Rune Table) does the same from a window, with runes stored in it.
 
-**Serpent outcomes**: 35% nothing more; 35% one inscription past the limit (a 3rd on Magic, a 4th on Rare, even past the prefix or suffix limit); 30% every inscription rerolled at any of its tiers, equally likely, whatever the item level. The tooltip then shows `Sealed`.
+**Sealed Rune outcomes**: 35% nothing more; 35% one inscription past the limit (a 3rd on Magic, a 4th on Rare, even past the prefix or suffix limit); 30% every inscription rerolled at any of its tiers, equally likely, whatever the item level. The tooltip then shows `Sealed`.
 
 ## Item level and tiers
 
@@ -72,7 +71,7 @@ PackPanel adds a Backpacks class.
 - The same effect on several pieces adds up, to a cap on the total across everything you wear: for example move speed 15%, attack speed 15%, chance to avoid a hit 15%, leech 5%, critical hit chance 25%, damage taken 50% less per damage type, stamina, eitr and health costs 30% less, cooldowns 30% shorter. The [Inscription List](wiki:Inscription List) gives every cap; `ecraft stats` shows your totals.
 - **Health-critical** means at or below 30% health; "while health-critical" inscriptions work only then. Valhalla's Edge raises the line, up to 50%.
 - One item never has the same inscription twice or two of one group (listed on the [Inscription List](wiki:Inscription List)).
-- An inscription the server switches off stays on the item greyed as `(dormant)`. It does nothing but still takes a place until Recasting rerolls it, or Cleansing or a Serpent reroll clears it.
+- An inscription the server switches off stays on the item greyed as `(dormant)`. It does nothing but still takes a place until Recasting rerolls it, or Cleansing or a Sealed Rune reroll clears it.
 
 ## How magic items look
 

@@ -20,7 +20,7 @@ namespace EliteCrafting.Tables.Window
             ClassInfo info = ItemClasses.Classify(item);
             int level = ItemTier.Of(item);
             var sb = new StringBuilder();
-            sb.Append(Words.Localize("$ecf_table_gear_line", Words.Localize("$ecf_class_" + info.ClassId), level.ToString(), TableWords.Biome(level)));
+            sb.Append(Words.Localize("$ecf_table_gear_line", TableWords.ClassName(info), level.ToString(), TableWords.Biome(level)));
             sb.Append("\n\n");
             string block = state.IsMagic ? DisplayCache.Block(state, item) : "";
             sb.Append(block.Length > 0 ? block.Trim('\n') : Words.Localize("$ecf_table_plain"));
@@ -44,6 +44,13 @@ namespace EliteCrafting.Tables.Window
             return Gold + Words.Localize(def.Name) + "</color>: " + Words.Localize(def.Description);
         }
 
+        // Whether the rune works on the item's rarity (Ascension: Magic only).
+        private static bool AscensionTakes(InscribeChoice choice)
+        {
+            string? rarity = ItemState.Read(choice.Item!).RarityId ?? ActiveRules.Current.Economy.BaseRarity?.Id;
+            return rarity != null && choice.Def != null && choice.Def.AppliesToRarity(rarity);
+        }
+
         private static string SteerLine(InscribeChoice choice, ClassInfo info)
         {
             if (!TableIcons.Steers(choice.Def))
@@ -56,6 +63,14 @@ namespace EliteCrafting.Tables.Window
                 return Words.Localize("$ecf_table_pick_essence", choice.EssenceCost.ToString());
             }
             (int favoured, int total) = Share(essence, info.ClassId);
+            if (favoured == 0)
+            {
+                return Words.Localize("$ecf_table_steer_none", TableWords.EssenceName(essence));
+            }
+            if (!AscensionTakes(choice))
+            {
+                return Words.Localize("$ecf_table_steer_magic_only", TableWords.EssenceName(essence));
+            }
             return Words.Localize("$ecf_table_steer", TableWords.EssenceName(essence), favoured.ToString(), total.ToString(),
                 choice.EssenceCost.ToString());
         }

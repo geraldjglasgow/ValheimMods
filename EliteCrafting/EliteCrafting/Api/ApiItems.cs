@@ -99,6 +99,17 @@ namespace EliteCrafting.Api
         /// <summary>The rune prefab a salvage of the item may give back, or null (<see cref="SalvageRunes"/>).</summary>
         public static string? SalvageRune(ItemDrop.ItemData? item) => SalvageRunes.PrefabFor(item);
 
+        public static bool DecorateIcon(UnityEngine.GameObject? icon, ItemDrop.ItemData? item)
+        {
+            UnityEngine.UI.Image? image = icon != null ? icon.GetComponent<UnityEngine.UI.Image>() : null;
+            if (image == null)
+            {
+                return false;
+            }
+            Display.Backdrops.IconBackdrop.Set(image, item);
+            return true;
+        }
+
         public static float SalvageRuneChance(ItemDrop.ItemData? item) => SalvageRunes.ChanceFor(item);
 
         private static bool Changeable(ItemState state) => !state.IsSealed && !state.IsNewerFormat;

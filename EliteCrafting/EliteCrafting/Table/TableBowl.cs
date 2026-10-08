@@ -9,7 +9,9 @@ namespace EliteCrafting.Tables
     /// with essence the more you have in the table. maybe 500+ makes it look full. it fills more and more in increments
     /// of 50"): a pale glowing surface inside the bowl, one step higher for every 50 essence in the pool, full from 500,
     /// none under 50. The bowl is found by the model's <c>col_box_bowl</c> collider, at the bowl's middle; its inside is
-    /// the workshop model's (floor 1.09 m, rim 1.195 m above the table's foot). Every client draws it from the table's
+    /// the workshop model's (floor 1.09 m, rim 1.195 m above the table's foot). Its material is a whitened copy of the
+    /// table's own glyph glow (the <c>glow</c> part), whose shader the game is known to draw: <c>Shader.Find("Standard")</c>
+    /// returns null in the game, which left the first disc unshaded and magenta. Every client draws it from the table's
     /// replicated ZDO, looked at when its data changes, at most twice a second; nothing is sent. Switched off on a
     /// dedicated server and on a model without the bowl.
     /// </summary>
@@ -29,6 +31,7 @@ namespace EliteCrafting.Tables
         private ZNetView? _view;
         private TableStore? _store;
         private Transform? _bowl;
+        private Material? _glow;
         private GameObject? _surface;
         private uint _seen = uint.MaxValue;
         private int _level = -1;
@@ -39,7 +42,8 @@ namespace EliteCrafting.Tables
             _view = GetComponent<ZNetView>();
             _store = _view != null ? new TableStore(_view) : null;
             _bowl = TableShelf.Find(transform, "col_box_bowl");
-            enabled = _bowl != null && !StoneVisuals.Headless;
+            _glow = TableShelf.Find(transform, "glow")?.GetComponent<MeshRenderer>()?.sharedMaterial;
+            enabled = _bowl != null && _glow != null && !StoneVisuals.Headless;
         }
 
         private void Update()
@@ -67,7 +71,7 @@ namespace EliteCrafting.Tables
             _level = level;
             if (level > 0 && _surface == null)
             {
-                _surface = BowlSurface.Make(_bowl!);
+                _surface = BowlSurface.Make(_bowl!, _glow!);
             }
             if (_surface == null)
             {
@@ -102,14 +106,14 @@ namespace EliteCrafting.Tables
         private static Mesh? _disc;
         private static Material? _material;
 
-        public static GameObject Make(Transform bowl)
+        public static GameObject Make(Transform bowl, Material glow)
         {
             var surface = new GameObject("ecf_bowl_essence");
             surface.layer = bowl.gameObject.layer;
             surface.transform.SetParent(bowl, false);
             surface.AddComponent<MeshFilter>().sharedMesh = _disc ??= Disc();
             MeshRenderer renderer = surface.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = _material ??= Glow();
+            renderer.sharedMaterial = _material ??= Whiten(glow);
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
             return surface;
@@ -133,14 +137,15 @@ namespace EliteCrafting.Tables
             return mesh;
         }
 
-        // The essence item's whitish glow, on the game's own Standard shader (as the table's glyphs).
-        private static Material Glow()
+        // The essence item's whitish glow: the glyphs' emissive material, recoloured.
+        private static Material Whiten(Material glow)
         {
-            var material = new Material(Shader.Find("Standard")) { name = "ecf_bowl_essence" };
-            material.color = new Color(0.93f, 0.96f, 1f);
-            material.SetFloat("_Glossiness", 0.7f);
+            var material = new Material(glow) { name = "ecf_bowl_essence" };
+            material.color = new Color(0.78f, 0.81f, 0.86f);
+            material.SetFloat("_Glossiness", 0.45f);
             material.EnableKeyword("_EMISSION");
-            material.SetColor("_EmissionColor", new Color(0.62f, 0.70f, 0.78f));
+            // A soft glow, not a lamp (user 2026-10-07: "not as bright").
+            material.SetColor("_EmissionColor", new Color(0.2f, 0.23f, 0.27f));
             return material;
         }
     }

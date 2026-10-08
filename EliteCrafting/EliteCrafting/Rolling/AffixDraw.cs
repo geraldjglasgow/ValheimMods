@@ -92,6 +92,14 @@ namespace EliteCrafting.Rolling
             return def.Scaled ? RollMath.Scale(value, _context.Class.DamageScale, tier.Decimals) : value;
         }
 
+        /// <summary>Every inscription the next draw could take, in pool order; draws nothing (the Rune Table shows them).</summary>
+        public void Candidates(List<PoolEntry> into)
+        {
+            Gather();
+            into.Clear();
+            into.AddRange(_candidates);
+        }
+
         private void Gather()
         {
             _candidates.Clear();

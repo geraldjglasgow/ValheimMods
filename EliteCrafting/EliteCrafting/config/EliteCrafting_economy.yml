@@ -64,7 +64,6 @@ runes:
   - { id: awakening,   verb: promote, applies_to: [normal] }       # Normal -> Magic, two inscriptions
   - { id: recasting,   verb: reroll,  applies_to: [magic] }        # both inscriptions replaced by two new
   - { id: ascension,   verb: promote, applies_to: [magic] }        # Magic -> Rare, a third inscription
-  - { id: consecrated, verb: consecrate, applies_to: [normal, magic, rare] }  # 1-3 sockets (3 very rare) on gear with none
   - id: cleansing                                                  # back to Normal
     verb: strip
     applies_to: [magic, rare]
@@ -458,22 +457,10 @@ drops:
     awakening:   [400, 300, 220, 160, 120, 100,  80,  70]
     recasting:   [120, 130, 120, 110, 100,  90,  80,  75]
     ascension:   [  0, 120, 120, 110, 100,  90,  80,  75]
-    consecrated: [  0,   0,  20,  40,  50,  60,  70,  80]
     cleansing:   [ 30,  30,  30,  30,  30,  30,  30,  30]
     serpent:     [  0,   0,  20,  25,  30,  35,  40,  45]
-    # the chisel and the gems: very rare (any gem about 1 kill in 2,500 in the Meadows, 1 in 640 in the Deep North)
+    # the Dvergr Chisel: rare. Gems drop only from bosses (one at random per player near the boss, Eikthyr 15% to the Fader 80%; fixed in code).
     dvergr_chisel: [5, 5, 5, 5, 5, 5, 5, 5]
-    gem_surtr:     [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_ymir:      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_thor:      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_nidhogg:   [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_hel:       [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_tyr:       [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_freyja:    [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_odin:      [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_skadi:     [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_heimdall:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-    gem_sleipnir:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
 
   rarity_weights:              # the rarity of dropped gear, by tier
     #          T1  T2  T3  T4  T5  T6  T7  T8
@@ -492,7 +479,7 @@ drops:
     exclude: []                # item prefabs that never drop
     include: {}                # item prefab -> tier, always in the pool at that tier
 
-  bosses:                      # every boss also drops its own gems and the Dvergr Chisel (fixed in code)
+  bosses:                      # every boss may also drop one gem and the Dvergr Chisel (fixed in code)
     Eikthyr:
       tier: 1
       rune_rolls: 2

@@ -97,7 +97,7 @@ public static class BundleEffects
 			return null;
 		}
 		string[] path = borrow.Split(new[] { '/' }, 2);
-		return GameMaterials.Borrow(ZNetScene.instance.GetPrefab(path[0]), path.Length > 1 ? path[1] : null);
+		return GameMaterials.Borrow(ZNetScene.instance.GetPrefab(path[0]), path.Length > 1 ? path[1] : null, anyRenderer: true);
 	}
 
 	/// <summary>A loaded shader by name: Shader.Find, then every loaded shader (the game's come in with its bundles).</summary>

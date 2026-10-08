@@ -13,6 +13,8 @@ namespace EliteCrafting.Tables
     {
         private static readonly Dictionary<string, int> RuneKeys = new Dictionary<string, int>();
         private static readonly int EssenceKey = "ecf_rt_essence".GetStableHashCode();
+        private static readonly int CastKey = "ecf_rt_cast".GetStableHashCode();
+        private static readonly int CastStoneKey = "ecf_rt_cast_stone".GetStableHashCode();
 
         private readonly ZNetView _view;
 
@@ -29,6 +31,23 @@ namespace EliteCrafting.Tables
 
         /// <summary>The pure essence in the table's pool, which every chosen essence costs from.</summary>
         public int Essence => Valid ? _view.GetZDO().GetInt(EssenceKey) : 0;
+
+        /// <summary>How many stones were used at the table (every client plays the vortex when it grows) and the last one's id.</summary>
+        public int Casts => Valid ? _view.GetZDO().GetInt(CastKey) : 0;
+
+        public string CastStone => Valid ? _view.GetZDO().GetString(CastStoneKey) : "";
+
+        /// <summary>One use of a stone at the table, on its owner (<see cref="TableCast"/> shows it everywhere).</summary>
+        public void MarkCast(string stoneId)
+        {
+            if (!Writable)
+            {
+                return;
+            }
+            ZDO zdo = _view.GetZDO();
+            zdo.Set(CastStoneKey, stoneId);
+            zdo.Set(CastKey, zdo.GetInt(CastKey) + 1);
+        }
 
         public bool AddRunes(string runeId, int count) => Change(RuneKey(runeId), count);
 

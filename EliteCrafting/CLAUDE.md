@@ -17,10 +17,11 @@ Libraries merged: Charter, ConfigReload, PatchGuard, BundlePrefabs (the rune tab
 ItemCopies** (live runes share their prefab's `SharedData` instead).
 
 **Status (2026-10-03): 0.1.0 on Thunderstore, a work in progress, never tested in game.** The crafting was cut to six runes (user decision 2026-10-02, PLAN.md
-Decisions log): Normal, Magic and Rare only; Awakening, Shaping, Ascension, Consecrated, Cleansing and the Serpent Rune.
+Decisions log): Normal, Magic and Rare only; Awakening, Shaping, Ascension, Consecrated, Cleansing and the Sealed Rune.
 The Recasting Rune (rerolls a Magic item) was added as the seventh on 2026-10-04 (user decision), untested. On
-2026-10-07 (user decisions) the Shaping Rune was removed and the Consecrated Rune now gives sockets: **six runes**,
-Magic holds exactly two inscriptions and Rare three (the Serpent Rune can add one more: four at most), every ladder has
+2026-10-07 (user decisions) the Shaping and Consecrated Runes were removed (Consecrated was a socket rune for an
+hour; the Dvergr Chisel cuts sockets): **five runes**,
+Magic holds exactly two inscriptions and Rare three (the Sealed Rune can add one more: four at most), every ladder has
 at most 8 tiers, both YAML families are **format 3**, and **no magic gear drops** for now (`Loot/GearDrops.On` is a
 `false` constant, the `Magic item drops` setting is gone; the gear path and YAML tables stay for later).
 The Epic Loot integration was removed on 2026-10-05 (user decision): EliteCrafting ignores Epic Loot entirely and
@@ -119,11 +120,11 @@ channel capped on its own. Removed keys (`slots`, `rolling.tier_window`, `drops.
 read. Unknown class ids in an inscription are a warning logged at compose (`ClassChecks`, both families and the class
 registry in). `RuleFormat`: both families carry `format: 3` (2026-10-07); an older main file on disk is renamed to
 `<name>.v<old format>.bak` and the default written in its place, an old extra file or server text is skipped with a warning. `StoneCatalog.BuiltInIds` are the six
-rune ids (`awakening`, `recasting`, `ascension`, `consecrated`, `cleansing`, `serpent`; the Rune Table's list),
+rune ids (`awakening`, `recasting`, `ascension`, `cleansing`, `serpent`; the Rune Table's list),
 `ChiselId` (`dvergr_chisel`) and `GemIds` (`gem_<god>`, eleven) the socket stones, `AllIds` every one (`IsBuiltIn`,
 `IsRune`, `IsGem`, `IsSocketStone`); `PrefabFor(id)` gives
 `ECF_` + PascalCase id. The YAML tunes or disables them but cannot add a rune. `StoneVerb`: `Promote`, `Strip`,
-`Corrupt`, `Reroll`, `Socket`, `Gem`, `Consecrate`; `CorruptOutcome`: `SealOnly`, `AddInscription`, `ChaoticReroll`. `Drops.Chests` (`StoneChance`,
+`Corrupt`, `Reroll`, `Socket`, `Gem`; `CorruptOutcome`: `SealOnly`, `AddInscription`, `ChaoticReroll`. `Drops.Chests` (`StoneChance`,
 `GearChance`, `Containers`: prefab → `CreatureDrop`); `Drops.Ecr` (`EcrDrops`). `FamilySpec` id lists `rarities` and
 `runes` merge by id. `ActiveRules.ReloadLocal()` re-reads this machine's files (`ecraft reload`) and returns a
 `FamilyReload` per family (`Applied`, `Rejected`, `Bound`, `NoFiles`). `ActiveRules.SourcesInForce(FamilySpec.Affixes|Economy)`
@@ -145,7 +146,7 @@ fields it names), `ClaimItems(classId, prefabs)`, `AddClassifier(id, Func<ItemDa
 `ItemTier.Of(item | prefabName)` is the item level 1-8 (8 = Deep North), `ItemTier.Explain(prefab)` (level + source, for `ecraft tiers`), `ItemTier.PrefabName(item)`,
 `ItemTier.RefreshRecipes()` (recipe index up to date, tier cache dropped when rebuilt), `ItemTier.HasRecipe(prefab)`
 (never call the internal `RecipeIndex.Refresh` from outside Items). Rune prefabs: `StonePrefabs.Get(runeId)`,
-`GetByPrefabName`, `IsRegistered`, `IsBuilt`, `IsStonePrefab(prefab)` (the six runes, built from code on every peer,
+`GetByPrefabName`, `IsRegistered`, `IsBuilt`, `IsStonePrefab(prefab)` (the five runes, built from code on every peer,
 registered in ObjectDB and ZNetScene before any inventory or ZDO; each a copy of the Ruby wearing its rune tablet and icon from the embedded bundle `ecf_runes` (`StoneTablets`, every peer; without the bundle the old tinted group bases); every live rune is linked to its prefab's
 `SharedData` in an `ItemDrop.Awake` postfix, so the economy YAML's name, description, stack and weight reach every
 stack). A rune is recognised by its drop prefab name (`ECF_...`, `ItemSlots.IsStone`; never a magic base); spawned
@@ -179,13 +180,13 @@ allowed class below the closed top (`tier >= 1 + floor(k * rolling.allowed_close
 the best that-many; chaotic rolls take any tier the inscription defines, uniformly (class pool and limits still apply).
 Values are uniform in the tier's range at its decimals; `scaled` inscriptions are multiplied by the class's
 `damage_scale` and rounded again (`RollMath.Scale`, decimal arithmetic). `ItemRoller.RollFresh(state, rarity, ctx)` (a dropped item),
-`AddAffixes(state, count, ctx)` (the Serpent's extra inscription, `ecraft reroll`), `Promote(state, toRarity, ctx)`
+`AddAffixes(state, count, ctx)` (the Sealed Rune's extra inscription, `ecraft reroll`), `Promote(state, toRarity, ctx)`
 (Awakening, Ascension: adds `max(new.min - count, promote_adds_at_least)`, not past the new maximum; all or nothing),
 the Recasting Rune being `RollFresh` at the item's own rarity (since 2026-10-05), and
-`RollChaotic(state, rarity, ctx)` (the Serpent: every affix out, the count drawn in the rarity's range, any tier the
+`RollChaotic(state, rarity, ctx)` (the Sealed Rune: every affix out, the count drawn in the rarity's range, any tier the
 affix defines) → `RollOutcome` (new state or `RollFailure`: `NoEligibleAffix`, `NotMagicBase`, `Full`, `NewerFormat`);
 pure, never write. `RollContext.For(item, tierFloor)` (`Class` = `ClassInfo`, `Level` 1-8, `TierFloor`, `Chaotic`,
-`LimitOverflow`: how far the Serpent's add may pass the prefix and suffix limits); `RollContext.Random` defaults to
+`LimitOverflow`: how far the Sealed Rune's add may pass the prefix and suffix limits); `RollContext.Random` defaults to
 `RollRandom.Create()` (independently seeded; never `new Random()` per roll).
 
 **Loot** (`Loot/`). Runs on the dying creature's ZDO owner only (`DeathPatch`, prefix on `Character.OnDeath`). No
@@ -206,12 +207,11 @@ Tethered pair to fall drops nothing; each Twin pays, as in ECR), `ecr_tier` (`Lo
 `ecr_tier` is not written by ECR yet).
 
 **Stones** (`Stones/`, the runes). `InventoryGui.OnSelectedItem` prefix (local player), `StonePipeline.Evaluate(job)`
-(read-only, 10 checks then the verb as a dry run), `ConfirmGate.Pass` (Cleansing and Serpent: `confirm: true`), then
+(read-only, 10 checks then the verb as a dry run), `ConfirmGate.Pass` (Cleansing and the Sealed Rune: `confirm: true`), then
 `StoneCommit` (one `ItemState.Write`, then the cost, paid from `StoneJob.StoneSource`: the player's inventory or the
 open container this client owns, so a rune works straight from a chest). Rune verbs (`StoneVerbs`): `PromoteVerb`, `StripVerb`,
-`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.RollFresh` at the item's rarity, every affix replaced, two on Magic; refused on the base rarity),
-`ConsecrateVerb` (the Consecrated Rune: 1-3 sockets, 70/25/5, into socketable gear with none; needs `Gems and sockets`).
-The Serpent draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
+`CorruptVerb`, `RerollVerb` (Recasting: `ItemRoller.RollFresh` at the item's rarity, every affix replaced, two on Magic; refused on the base rarity).
+The Sealed Rune draws its outcome by weight; an outcome that cannot be carried out falls back to sealing only, and every
 outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
 
 **Rune Table** (`Table/`, rune-table.md, user decision 2026-10-06; built, never run in game). Piece `ECF_RuneTable`
@@ -220,14 +220,24 @@ outcome seals (`ecf_sealed = serpent`). A sealed item refuses every rune.
 10 Stone, 5 Greydwarf eye). `RuneTable` (hover, use key, the chest-style open handshake `ECF_RT_Open` / `ECF_RT_Opened`
 that hands ZDO ownership to the opener), `TableStore` (ZDO ints `ecf_rt_rune_<id>` and one pool `ecf_rt_essence`, owner-only
 writes), `Essences` (5, inscription ids each, used with the Ascension Rune only, `CostPerLevel` 10), `TrophyYields` (trophy prefab →
-essence, 5-35 by biome, no bosses), `TableSupply` (an `Stones/IRuneSupply`: table store then inventory, plus the essence:
-the pool first, then carried `ECF_Essence`). `EssenceItem` (`ECF_Essence`, a Wisp copy, stack 100, every peer: ZNetScene.Awake
+essence, 2-14 by biome, bosses 20-80; `IsBoss`: never taken by Sacrifice all), `TableSupply` (an `Stones/IRuneSupply`: the table's store only, stones and the essence
+pool; carried stones are used by the normal click). `EssenceItem` (`ECF_Essence`, a Wisp copy, stack 100, every peer: ZNetScene.Awake
 prefix, ObjectDB.Awake/CopyOtherDB postfixes), `TableShelf` (a tablet per held rune on the middle five of seven anchors) and
-`TableBowl` (the bowl's glowing fill, a step per 50 essence, full at 500) draw from the ZDO on every client.
+`TableBowl` (the bowl's glowing fill, a step per 50 essence, full at 500) and `TableGems` (one of each held gem kind
+lying on the top's right-hand end) draw from the ZDO on every client, and `TableCast` plays a use: the owner's
+payment counts it (`ecf_rt_cast` int, `ecf_rt_cast_stone` id), every client near plays the workbench craft sound and
+`TableVortex` (bundle `ecf_tablefx`, effect `ecf_rune_vortex`, recoloured by `Display/ParticleRetint`) on the slab.
 Stones takes a supply instead of a carried stack (`StoneJob.Create(player, rune, target, supply)`, `StonesHeld`,
 `Again`), and `RollContext.Favoured` limits the draw to the chosen essence's inscriptions (`AffixDraw`), a guaranteed one. The window (`Table/Window/`) is a
-pruned copy of the game's crafting panel shown in its place (`PanelBuilder`, `PanelLayout`, `TablePanel`, `TableWindow`
-with its `InventoryGui` Show/Hide/Update patches) with three tabs (`InscribeTab`, `SacrificeTab`, `SocketTab`); `RuneStash` stores runes and carried essence and drops both (essence as items) when the table is destroyed.
+pruned copy of the game's crafting panel shown inside it over its covered parts, so it slides with the inventory
+(`PanelBuilder`, `PanelLayout`, `TablePanel`, `CraftingCover`, `TableWindow`
+with its `InventoryGui` Show/Hide/Update patches) with three tabs (`InscribeTab`, `SacrificeTab`, `SocketTab`); `RuneStash` stores runes and carried essence (all, or one Ctrl + clicked stack through `TableCtrlClick`, an
+`InventoryGui.OnSelectedItem` prefix ahead of OpenKeep's Route Modifier that clears the clicked item), takes a
+rune kind out on Shift + click (`TakeOut`) and drops both (essence as items) when the table is destroyed.
+The table's class line uses the class's own name (`TableWords.ClassName`), so a class another mod registered shows its word.
+With Ascension and an essence, `EssencePills` (the roller's `AffixDraw.Candidates`) fills a `PillStrip` of `PillView`s
+(`PillArt`) under the text; every hover text in the window is a `TipHover` shown by `HoverBox` beside the element
+(right, else left), the game's tooltip box without its pointer-following `UITooltip`.
 
 **Sockets and gems** (`Sockets/`, sockets.md, user decision 2026-10-07; built, never run in game). `ItemState.Sockets`,
 `Gems` (`GemRoll`: gem id + the `AffixRoll` it gave), `FilledSockets`, `FreeSockets`, `GemSocketAt`, `GemDefinitionAt`,
@@ -240,7 +250,8 @@ roster in code. `GemRolls.Roll` (a tier the item level unlocked, whole ladder, w
 a gem into a full item returns `StoneResult.ChooseSocket()` (`NeedsSocket`), and the click opens `GemChooser` (one
 yes/no popup per filled socket; Yes re-evaluates `StoneJob.AtSocket(player, socket)`; `Confirm(job, socket)` asks once
 for a socket already picked). `SocketSwitch` (`Gems and sockets`): `LootPlanner` skips the chisel and gems while it is
-off. `BossGems` (code, not YAML): each boss-map boss's own gems and the chisel, keyed on `LootInput.Prefab`. Models:
+off. `BossGems` (code, not YAML): one random gem per player within 50 m (`Loot/BossParty`) at a chance growing boss by boss (15% Eikthyr to 80% the Fader) and the
+chisel 25%, keyed on `LootInput.Prefab`. Models:
 `StoneTablets` is one instance per bundle (`Runes`: `ecf_runes`, `ecf_runetablet_<id>`; `Gems`: `ecf_gems`, `ecf_<id>`;
 `For(id)`); without a bundle, tinted Ruby (gems) and iron nails (chisel), `StoneBases` groups `Gem`/`Tool`. The Rune
 Table's third tab, Sockets (`Table/Window/SocketTab`, `SocketPane`, `SocketText`; `TableTab.Shown` hides it while the
@@ -256,14 +267,16 @@ below the item's, at a fixed 25%), read by OpenKeep's Salvage through the API. `
 **Words** (`Localization/Words`, namespace `EliteCrafting.Text`): `Words.Localize(text, params words)`, `Words.Add`,
 `Words.Has`, and `Words.Changed` (after a language setup and after `Add`; drop cached localized text there).
 
-**Display** (`Display/`). Draws on the viewing client only; its caches drop on `ItemStateCache.Written`,
+**Display** (`Display/`). Inscription lines in tooltips are the short form (`ecf_affix_<id>_short`,
+`translations/English.affixes_short.yml`, one per `_line` sentence; `AffixLines.Sentence(..., brief)`) at `Tooltip detail`
+Compact and Standard, the whole sentence at Full and in the API and the table's texts (user 2026-10-07). Draws on the viewing client only; its caches drop on `ItemStateCache.Written`,
 `ActiveRules.RulesChanged`, `Words.Changed` and a display setting change. No state of its own in items or ZDOs.
 Surfaces: grid tooltip title, tooltip block (`ItemData.GetTooltip` postfix), ground hover, pickup message, ground glow (a light and the loot beam, `GlowBeams`: bundle `ecf_lootglow`, `Loot beam` switch),
 the crafting panel's upgrade tab (`CraftingPanel`: the upgrade target's block under the recipe, names colored through
 the label color) and item / armor stand hovers (`StandHover`, the item decoded from the stand ZDO by `StandItems` once
 per ZDO revision). Every per-frame surface memoises its last input and output. The rarity backdrop behind every icon of a
 magic item (`Backdrops/`: grids, hotbar, drag, crafting panel, radial menu, top-left messages; moved from PackPanel
-2026-10-05, no setting), a red infinity sign (dark outline) on a sealed item's icon, lower left (`Backdrops/IconSeal`, `SealArt`, painted in code, driven by the backdrop so it shows on every surface the backdrop does; user request 2026-10-06), and the scroll bar on a tooltip too tall for the screen (`Tooltips/TooltipScroll`, wheel or
+2026-10-05, no setting), a red infinity sign (dark outline) on a sealed item's icon, lower left (`Backdrops/IconSeal`, `SealArt`, painted in code, driven by the backdrop so it shows on every surface the backdrop does; user request 2026-10-06), the item's sockets as small round marks in the lower right corner, first in the corner, second above, third to its left, an empty one a dark hollow and a filled one its gem's colour (`Backdrops/IconSockets`, `SocketArt`; Normal items too; user request 2026-10-07), and the scroll bar on a tooltip too tall for the screen (`Tooltips/TooltipScroll`, wheel or
 right stick; OpenKeep's wheel cycling yields to its `ecf_tooltip_bar`); display.md sections 2 and 3.
 
 ## API
@@ -318,14 +331,14 @@ public static class (ILRepack internalizes only the merged libraries), `ApiVersi
   reason) and the upgrade carry-over copies the data onto the new item without a write. Loot-generated listeners run in
   `GearFactory.Build` after a pre-rolled item (creature or world container) was written.
 - **Items.** `RollMagic` (`ItemRoller.RollFresh`) and `Cleanse` write through `ItemState.Write` on the caller's peer and
-  refuse sealed and newer-format items. `GetSalvageRune` / `GetSalvageRuneChance` (0.8.0, `Stones/SalvageRunes`) read
+  refuse sealed and newer-format items. `DecorateIcon` (0.8.0) puts the icon marks (backdrop, seal, sockets) on another mod's icon. `GetSalvageRune` / `GetSalvageRuneChance` (0.8.0, `Stones/SalvageRunes`) read
   only: the rune prefab a salvage may give back and its chance; the salvaging mod rolls and adds it.
 - **Multiplayer.** Registrations are code: every peer must make the same ones. Nothing is sent; the server's synced YAML
   still overrides what code registered.
 
 ## YAML defaults
 
-Both default files are **format 3** (`format: 3` since 2026-10-07: Magic 2, Rare 3, six runes, ladders of at most 8
+Both default files are **format 3** (`format: 3` since 2026-10-07: Magic 2, Rare 3, five runes, ladders of at most 8
 tiers; format 2 was classes-and-tiers.md, 2026-10-05), written from the planning page
 (https://claude.ai/artifact/VmVJDaDhHFrCP6dhKt1LoM): `config/EliteCrafting_inscriptions.yml` has 207 inscriptions, each
 with `affix` (prefix/suffix), `family`, `classes { best, allowed }`, optional `scaled`, and a tier ladder
@@ -360,14 +373,14 @@ The store README links here for the full reference; keep it in step with the cod
 | Magic | 2 (one prefix, one suffix) | green |
 | Rare | 3 (at most two prefixes, two suffixes) | blue |
 
-The Serpent Rune can add one more past that: a 3rd on Magic, a 4th on Rare. No item holds more than four.
+The Sealed Rune can add one more past that: a 3rd on Magic, a 4th on Rare. No item holds more than four.
 
 ### Runes
 
 Pick up a stack of runes, from your inventory or straight from the chest you have open, and click it onto an item in
 your own inventory (the item cannot be in the chest).
 One rune is used per success; a refused rune is kept. A rune dropped on another rune stacks or swaps as usual. The
-Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you click (or switch
+Cleansing and Sealed Runes cannot be undone and ask first: hold Shift while you click (or switch
 `Confirm destructive runes` to a dialog).
 
 | Rune | Works on | Does | Drops from |
@@ -375,9 +388,8 @@ Cleansing and Serpent Runes cannot be undone and ask first: hold Shift while you
 | Awakening Rune | Normal | Makes the item Magic with two inscriptions | everywhere, most of all in the Meadows; Eikthyr |
 | Recasting Rune | Magic | Replaces both inscriptions with two new ones; stays Magic | everywhere; Eikthyr |
 | Ascension Rune | Magic | Makes it Rare, keeps its inscriptions and adds a third; at the Rune Table an essence chooses what it is | Black Forest and later, more the later the biome; every boss but Eikthyr (Bonemass half the time) |
-| Consecrated Rune | any weapon, staff, armour piece or shield without sockets | Gives it one socket (70%), two (25%) or three (5%) | Swamp and later, more the later the biome |
 | Cleansing Rune | Magic, Rare | Strips it back to Normal: every inscription is lost | everywhere |
-| Serpent Rune | Magic, Rare | Corrupts it and **seals** it for good, with one of three outcomes: nothing more (35%), one inscription past the cap, a 3rd on Magic or a 4th on Rare (35%), or a chaotic reroll: every inscription rolled again at any tier, ignoring the item's limits (30%) | Swamp and later; sometimes Bonemass, Yagluth and the Fader |
+| Sealed Rune | Magic, Rare | Corrupts it and **seals** it for good, with one of three outcomes: nothing more (35%), one inscription past the cap, a 3rd on Magic or a 4th on Rare (35%), or a chaotic reroll: every inscription rolled again at any tier, ignoring the item's limits (30%) | Swamp and later; sometimes Bonemass, Yagluth and the Fader |
 
 A sealed item takes no rune again. Every rune's odds, costs and the rarities it accepts are in
 `EliteCrafting_economy.yml`.
@@ -391,43 +403,49 @@ changing equipped items.
 
 ### Gems and sockets
 
-Weapons, staves, armour and shields can hold up to three sockets (shown as "Empty socket" lines). The **Consecrated
-Rune** gives such an item that has none one to three (three is very rare), the **Dvergr Chisel** exactly one. (Dropped
-gear would carry sockets too, but no magic gear drops for now.) A **gem** clicked onto an item fills its next
+Weapons, staves, armour and shields can hold up to three sockets (shown as "Empty socket" lines and as small circles
+in the icon's lower right corner). The **Dvergr Chisel** cuts one into such an item that has none. (Dropped gear
+would carry sockets too, but no magic gear drops for now.) A **gem** clicked onto an item fills its next
 empty socket with a stat that depends on the item; its tier is rolled for the item right then (the item's level decides
-the best tier it can reach). With every socket full you pick which gem to replace; the old one is lost. Gems are very
-rare: any creature may drop one, more often in later biomes and from starred creatures, and each boss has its own.
+the best tier it can reach). With every socket full you pick which gem to replace; the old one is lost. Gems are
+a boss reward: only bosses drop them, any gem, one at random, the later the boss the likelier (Eikthyr 15%, the Elder 20%, Bonemass 30%, Moder 40%, Yagluth 50%, the Queen 65%, the Fader 80%, rolled once for every player within 50 m of the boss when it dies; the chisel 25% from every boss).
 Cleansing and the other runes leave sockets and gems alone; a sealed item takes neither. The Rune Table's **Sockets**
 tab does the same from a window: pick the gear, the chisel or a gem you carry, and (to replace a gem) the socket.
 `Gems and sockets` in `2 - Runes` turns the feature off.
 
-| Gem | Weapons | Staves | Armour and shields | Boss |
-|---|---|---|---|---|
-| Surtr's | added fire damage | elemental damage | fire resistance | Yagluth |
-| Ymir's | added frost damage | lower eitr cost | frost resistance | Moder |
-| Thor's | added lightning damage | chain lightning | lightning resistance | Eikthyr |
-| Nidhogg's | added poison damage | longer damage over time | poison resistance | Bonemass |
-| Hel's | added spirit damage | eitr on kill | spirit resistance | the Fader |
-| Tyr's | physical damage | summon damage | less stagger | Yagluth |
-| Freyja's | life leech | lower health cost | health | the Elder |
-| Odin's | eitr leech | eitr regeneration | eitr | the Queen |
-| Skadi's | stamina leech | summon health | stamina | Moder |
-| Heimdall's | critical hit chance | cast speed | avoid hits | the Queen |
-| Sleipnir's | - | - | movement speed | Eikthyr |
+| Gem | Weapons | Staves | Armour and shields |
+|---|---|---|---|
+| Surtr's | added fire damage | elemental damage | fire resistance |
+| Ymir's | added frost damage | lower eitr cost | frost resistance |
+| Thor's | added lightning damage | chain lightning | lightning resistance |
+| Nidhogg's | added poison damage | longer damage over time | poison resistance |
+| Hel's | added spirit damage | eitr on kill | spirit resistance |
+| Tyr's | physical damage | summon damage | less stagger |
+| Freyja's | life leech | lower health cost | health |
+| Odin's | eitr leech | eitr regeneration | eitr |
+| Skadi's | stamina leech | summon health | stamina |
+| Heimdall's | critical hit chance | cast speed | avoid hits |
+| Sleipnir's | - | - | movement speed |
 
 ### The Rune Table
 
 Built with the hammer at a workbench (10 Wood, 10 Stone, 5 Greydwarf eye). Use it to open its window in the crafting
 panel's place, with three tabs:
 
-- **Inscribe**: pick a piece of your gear and a rune, then Inscribe. The rune comes from the table first, then from
-  your inventory. With the Ascension Rune you may also pick an essence: the third inscription is then one of that
-  essence's own, for 10 essence per item level; for every other rune the essences are greyed out. Store runes and
-  essence (under the item's name) moves every rune and Essence you carry into the table; they cannot be taken out
-  again, but a table taken down drops them all (its essence as Essence items).
-- **Sacrifice**: trophies you carry become essence in the table's one pool: 5 (Meadows) to 35 (Ashlands) each. Shift sacrifices
-  every trophy of that kind; Sacrifice all trophies (under the trophy's name) every trophy the table takes. Boss
-  trophies are not taken.
+- **Inscribe**: pick a piece of your gear and a rune, then Inscribe. The rune comes from the table: its buttons use
+  only what the table holds, and the rows count only that (runes you carry are used the normal way, clicked onto an
+  item; the button is greyed only when the press would be refused). With the Ascension Rune you may also pick an essence: the third inscription is then one of that
+  essence's own, for 10 essence per item level; the inscriptions it can give show as pills in the essence's colour
+  (hover one for its range and tiers on this item); for every other rune the essences are greyed out. Store runes and
+  essence (Store all, under the item's name) moves every rune, Dvergr Chisel, gem and Essence you carry into the table,
+  and Ctrl + click on one in your inventory puts that stack in. Shift + click on a rune (on the Sockets tab: the chisel or a
+  gem), or on the Essence slot, opens the game's split dialog: take out as many as you choose. The Sockets tab uses the
+  table's chisels and gems. A table taken down drops everything it holds (its essence
+  as Essence items).
+- **Sacrifice**: trophies you carry become essence in the table's one pool: 2 (Meadows) to 14 (Ashlands) each, about five of the item's own biome per guaranteed inscription. Shift sacrifices
+  every trophy of that kind; Sacrifice all trophies (under the trophy's name) every trophy the table takes except
+  the bosses'. A boss trophy gives the most (Eikthyr 20, the Elder 30, Bonemass 40, Moder 50, Yagluth 60, the Queen 70, the Fader 80) and is taken only by a press on it, so one meant
+  for the Forsaken altar is never lost by accident.
 - **Sockets** (while `Gems and sockets` is on): pick a weapon, staff, armour piece or shield, then the Dvergr Chisel or
   a gem you carry, and to replace a gem the socket it sits in; Cut socket or Set gem uses one from your inventory
   (see Gems and sockets above).
