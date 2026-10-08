@@ -90,5 +90,19 @@ namespace EliteCreaturesPack.Core
                 return fallback;
             }
         }
+
+        /// <summary>Same as <see cref="Run{TArg, T}(string, Func{TArg, T}, TArg, T)"/> with three arguments.</summary>
+        public static T Run<T1, T2, T3, T>(string context, Func<T1, T2, T3, T> func, T1 first, T2 second, T3 third, T fallback)
+        {
+            try
+            {
+                return func(first, second, third);
+            }
+            catch (Exception e)
+            {
+                Guard.Report(e, context);
+                return fallback;
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesPack.Core;
 using UnityEngine;
 
 namespace EliteCreaturesPack.Arsenal
@@ -43,6 +44,7 @@ namespace EliteCreaturesPack.Arsenal
         {
             Creatures[weapon] = creature;
             byName[creature.name] = (this, weapon);
+            StandIns.Add(creature, weapon.IsBow ? new[] { Skeleton } : new[] { Skeleton, NoArcher });
         }
 
         /// <summary>The kind whose skeleton this is, and whether that skeleton comes as an archer, or null.</summary>

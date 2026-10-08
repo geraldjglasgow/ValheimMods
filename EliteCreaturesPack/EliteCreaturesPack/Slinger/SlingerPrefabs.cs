@@ -69,6 +69,7 @@ namespace EliteCreaturesPack.Slinger
             shot = SlingerShot.Build(rock, stone, scene.GetPrefab("sfx_bow_fire"));
             ItemPrefabs.Register(harmony, shot);
             Prefab = SlingerCreature.Build(greydwarf, shot, stone, bundle, scene.GetPrefab("Stone"));
+            StandIns.Add(Prefab, Greydwarf);
             return true;
         }
     }

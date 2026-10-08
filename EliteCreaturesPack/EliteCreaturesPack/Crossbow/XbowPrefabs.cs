@@ -111,6 +111,7 @@ namespace EliteCreaturesPack.Crossbow
             GameObject shot = XbowShot.Build(kind, bow, bolt!, scene.GetPrefab("sfx_arbalest_fire"));
             ItemPrefabs.Register(harmony, shot);
             kind.Prefab = XbowCreature.Build(kind, skeleton, shot, bundle, EmbeddedBundle.Prefab(bundle, Kit), XbowBolts.Item ?? scene.GetPrefab("BoltBone"));
+            StandIns.Add(kind.Prefab, kind.Skeleton);
         }
     }
 }

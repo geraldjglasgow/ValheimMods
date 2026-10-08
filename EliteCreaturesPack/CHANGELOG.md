@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.2
+
+- Fixed: bone piles and greydwarf nests no longer fill rooms with arsenal skeletons and slingers; they stop at their usual count.
+- Fixed: wild arsenal skeletons and slingers count toward the game's spawn limits.
+
 ## 0.8.1
 
 - With EliteCrafting 0.8.0: the Rime Giant's bonus is an Ascension Rune (the Consecrated Rune is gone), so its loot loads again.

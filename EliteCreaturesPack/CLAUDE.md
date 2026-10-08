@@ -35,7 +35,7 @@ Prefab names are hashed into saved worlds: never rename one after a release.
 EliteCreaturesPack/
   EliteCreaturesPack.cs   plugin entry: settings, PatchAll, each creature's Prefabs.Install, Synced.Finish, the Elite
                           Crafting hand-off, Guard
-  Core/                   Settings (General + the Changed event, root namespace), Log, SafeCall, NameList
+  Core/                   Settings (General + the Changed event, root namespace), Log, SafeCall, NameList, StandIns
   Mimic/                  the crypt mimic: prefabs, body, bite, disguise, leap, crypt swap, loot, patches, settings
   Slinger/                the Greydwarf Slinger: prefabs, kit, sling rig, shot, stone, aim, spawns, patches, settings
   RimeGiant/              the Rime Giant: prefabs, kit, look, armour, slumber, attacks, avalanche, boulder, mountains, spawns, patches, settings
@@ -117,7 +117,8 @@ blow (`ArsenalClips`: a copy of the clip with its hit no later than 75%) in plac
 at the slot's origin); the bowstrings are a cube between the tips in `ArsenalLook` (numbers from the workshop's
 `out/ecp_skel_bow*_points.json`). Which skeleton a Black Forest skeleton's spawn becomes is one even draw among the
 plain skeleton, the arsenal skeletons and the crossbowman (`Skeletons/SkeletonDraw`, its three spawn patches in
-`SkeletonPatches`; the user, 2026-09-30).
+`SkeletonPatches`; the user, 2026-09-30). Every creature that spawns in another's place registers in `Core/StandIns`, so
+bone piles, nests and wild spawn caps count it as the creature it replaced (`Core/StandInPatches`).
 
 Players' weapons that need more than the game's clips carry a component on every player (added by the one
 `Player.Awake` patch in `Core/PlayerHolds`, active only while the item is in hand, on every peer that draws; a dedicated
