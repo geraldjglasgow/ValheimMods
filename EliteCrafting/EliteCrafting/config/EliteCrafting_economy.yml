@@ -449,7 +449,7 @@ drops:
   star_step: 1                 # added per star beyond the list
 
   chances:                     # base chance per kill, by tier
-    rune: [4, 5, 6, 7, 8, 9, 10, 11]
+    rune: [35, 40, 45, 50, 55, 60, 65, 70]
     gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75]
 
   runes:                       # which rune drops, by tier; a disabled rune never drops
@@ -538,7 +538,7 @@ drops:
   # biome), the same rune and rarity tables and per-kill caps as creatures. Player-built chests never roll; containers
   # generated before the mod was installed were filled then and do not roll.
   chests:
-    rune_chance: 30
+    rune_chance: 50
     gear_chance: 10
 
   # Elite Creatures Reborn (read only where ECR is installed; ecr-integration.md). With the .cfg switch

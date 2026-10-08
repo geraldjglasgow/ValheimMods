@@ -50,7 +50,7 @@ Both are written on first start with every default and a comment for each field.
 format: 3
 drops:
   chances:
-    rune: [8, 10, 12, 14, 16, 18, 20, 22]  # rune chance per tier, percent, Meadows to Deep North
+    rune: [20, 25, 30, 35, 40, 45, 50, 55] # rune chance per tier, percent, Meadows to Deep North
   creatures:
     Troll: { rune_multiplier: 2 }          # double runes from trolls
     Hen: { multiplier: 0 }                 # hens drop nothing

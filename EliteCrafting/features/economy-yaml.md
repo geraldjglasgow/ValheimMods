@@ -356,7 +356,7 @@ biomes:
 | `max_gear_per_kill` | int | 2 | cap on gear from one non-boss kill |
 | `star_multipliers` | list | `[1, 2, 3]` | by stars (vanilla level - 1); index 0 = no stars |
 | `star_step` | number | 1 | added per star beyond the list |
-| `chances.rune` | 7 percents | `[4, 5, 6, 7, 8, 9, 10]` | base rune chance per tier |
+| `chances.rune` | 7 percents | `[35, 40, 45, 50, 55, 60, 65]` | base rune chance per tier |
 | `chances.gear` | 7 percents | `[1, 1.25, 1.5, 1.75, 2, 2.25, 2.5]` | base gear chance per tier |
 | `runes` | map rune id -> 7 weights | table below | rune draw per tier; missing id = never drops |
 | `rarity_weights` | map rarity id -> 7 weights | table below | gear rarity draw per tier |
@@ -370,7 +370,7 @@ biomes:
 | `gear.include` | map item prefab -> tier | `{}` | always in the pool at that tier |
 | `bosses` | map prefab -> boss entry | table below | boss guarantees |
 | `creatures` | map prefab -> creature entry | `{}` | per-creature overrides |
-| `chests.rune_chance` | percent | 30 | rune chance per world container (Phase 2, `drops.md` section 11) |
+| `chests.rune_chance` | percent | 50 | rune chance per world container (Phase 2, `drops.md` section 11) |
 | `chests.gear_chance` | percent | 10 | gear chance per world container |
 | `chests.containers` | map container prefab -> container entry | `{}` | per-container overrides |
 | `ecr.star_multipliers` | list, index = Elite Creatures Reborn stars | `[1, 1, 1.5, 2, 2.5, 3]` | replaces `star_multipliers` for ECR-resolved creatures while the `.cfg` `Synergy` is on (`ecr-integration.md` 4) |
@@ -398,7 +398,7 @@ drops:                    # on/off: the .cfg switches `Rune drops` and `Magic it
   star_step: 1
 
   chances:
-    rune: [4, 5, 6, 7, 8, 9, 10]
+    rune: [35, 40, 45, 50, 55, 60, 65]
     gear: [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5]
 
   runes:                  #  T1   T2   T3   T4   T5   T6   T7

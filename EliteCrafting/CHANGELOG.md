@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1
+
+- Creatures drop runes far more often: 35% a kill in the Meadows, up 5% per biome to 70% in the Deep North.
+- World chests hold a rune 50% of the time (was 30%).
+- Existing servers keep their old rates: edit `drops.chances.rune` and `drops.chests.rune_chance` in `EliteCrafting_economy.yml`, or delete it to have it rewritten.
+
 ## 0.9.0
 
 - Rune Table: holds chisels and gems too; Shift + click takes things out, Ctrl + click in the inventory puts them in.

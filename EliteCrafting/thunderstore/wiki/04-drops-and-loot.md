@@ -12,7 +12,7 @@ Runes drop beside a creature's normal loot, at the same moment: when its body di
 
 | Tier | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
 |---|---|---|---|---|---|---|---|---|
-| Rune | 4% | 5% | 6% | 7% | 8% | 9% | 10% | 11% |
+| Rune | 35% | 40% | 45% | 50% | 55% | 60% | 65% | 70% |
 
 Stars multiply the chance: one star x2, two stars x3. At most 5 runes per kill.
 
@@ -47,7 +47,7 @@ Bosses count as tiers 1-7 in this order. Each drops some random runes, fixed bon
 
 ## World chests
 
-Dungeon chests, ruin chests and buried treasure have a 30% rune chance, rolled when the game first fills them. Player-built chests never roll.
+Dungeon chests, ruin chests and buried treasure have a 50% rune chance, rolled when the game first fills them. Player-built chests never roll.
 
 ## Loot-find inscriptions
 

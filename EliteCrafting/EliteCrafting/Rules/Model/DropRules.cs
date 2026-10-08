@@ -86,7 +86,7 @@ namespace EliteCrafting.Rules
     /// <summary>World-container drops (drops.md section 11): flat chances plus per-container-prefab overrides.</summary>
     public sealed class ChestDrops
     {
-        public float StoneChance { get; internal set; } = 30f;
+        public float StoneChance { get; internal set; } = 50f;
         public float GearChance { get; internal set; } = 10f;
 
         /// <summary>Container prefab -> override, in the <c>drops.creatures</c> entry shape (IMP-79).</summary>

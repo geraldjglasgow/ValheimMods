@@ -128,13 +128,13 @@ instead of saturating at one drop.
 
 | Tier | Rune chance | Gear chance |
 | --- | --- | --- |
-| 1 meadows | 4% | 1.00% |
-| 2 black_forest | 5% | 1.25% |
-| 3 swamp | 6% | 1.50% |
-| 4 mountain | 7% | 1.75% |
-| 5 plains | 8% | 2.00% |
-| 6 mistlands | 9% | 2.25% |
-| 7 ashlands | 10% | 2.50% |
+| 1 meadows | 35% | 1.00% |
+| 2 black_forest | 40% | 1.25% |
+| 3 swamp | 45% | 1.50% |
+| 4 mountain | 50% | 1.75% |
+| 5 plains | 55% | 2.00% |
+| 6 mistlands | 60% | 2.25% |
+| 7 ashlands | 65% | 2.50% |
 
 | Stars | Multiplier |
 | --- | --- |
@@ -336,7 +336,7 @@ rune chance),
   rolling them on their next open would also pay out chests that were already looted. (IMP-76.)
 - **Tier**: the container entry's `tier` (below), else the biome at the container's position (dungeons report their
   surface biome; the `biomes:` map).
-- **Chances**: `drops.chests.rune_chance` (default 30) and `gear_chance` (default 10), percent per container, the
+- **Chances**: `drops.chests.rune_chance` (default 50) and `gear_chance` (default 10), percent per container, the
   same floor/fraction rule as creatures (section 4), times the container entry's multipliers; the same rune table
   (section 5) and gear rarity rows (section 6) at the chest's tier; capped by `max_runes_per_kill` /
   `max_gear_per_kill`. No stars, no killer, no loot-find affixes. The `.cfg` switches `Rune drops` and `Magic item
