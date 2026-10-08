@@ -37,6 +37,7 @@ namespace GrindstoneSkills
             player = owner;
             skills.Clear();
             skills.AddRange(owner.GetSkills().GetSkillList());
+            SkillOrder.Arrange(skills);
             shown = -1;
             int index = skills.FindIndex(skill => skill.m_info.m_skill == remembered);
             ShowAt(index >= 0 ? index : 0);

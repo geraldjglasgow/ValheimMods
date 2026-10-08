@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.0
+
+- The skills window lists skills A to Z by name, in your language.
+
 ## 0.15.0
 
 - Removed the last of item stars: no star odds on skill pages or crop hovers, and no star settings.

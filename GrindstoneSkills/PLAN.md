@@ -1092,6 +1092,9 @@ numbers for what it does for you, in the same box as the inventory's world tier,
 - **Choosing (`SkillBook`):** postfixes on `SkillsDialog.Setup` (every opening: empties the entries' own tooltips and
   shows the skill shown last, else the first), `SkillClicked` (the entry's Button) and `Update` (with a gamepad the page
   follows `m_selectionIndex`).
+- **Order (`SkillOrder`, 2026-10-07):** the list is always A to Z by the shown (localized) name (no
+  setting, the user's call). `Skills.GetSkillList` is sorted only while `SkillsDialog.Setup` runs, so the game places
+  and gamepad-steps the entries in that order itself; `BookPane` sorts its copy the same way so its indexes match.
 - **Pages (`SkillPage`, `SkillPages`, `PageText`):** a writer per skill fills a `SkillPage` for the local player at
   the moment it is shown: `About` (one sentence), `Line`s with the numbers at the player's level (bonuses included,
   as the game floors them), optional `Heading`s, and `Perk`s (name, level that unlocks it, hover text; a level above
