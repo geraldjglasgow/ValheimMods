@@ -20,9 +20,10 @@ namespace GrindstoneSkills
         private const float BarWidth = 8f;
         private static readonly Color RuleColour = new Color(0.85f, 0.76f, 0.63f, 0.35f);
 
-        public static BookPane Build(SkillsDialog dialog, RectTransform frame, RectTransform list)
+        /// <summary>Builds the pane beside the list, reaching <paramref name="raised"/> above the list's top (the sort bar's room).</summary>
+        public static BookPane Build(SkillsDialog dialog, RectTransform frame, RectTransform list, float raised)
         {
-            RectTransform pane = Box(frame, list);
+            RectTransform pane = Box(frame, list, raised);
             BookPane book = pane.gameObject.AddComponent<BookPane>();
             book.Dialog = dialog;
             book.Icon = Icon(pane);
@@ -38,13 +39,13 @@ namespace GrindstoneSkills
             return book;
         }
 
-        private static RectTransform Box(RectTransform frame, RectTransform list)
+        private static RectTransform Box(RectTransform frame, RectTransform list, float raised)
         {
             RectTransform pane = Part(BookLayout.PaneName, frame);
             pane.anchorMin = pane.anchorMax = new Vector2(0.5f, 1f);
             pane.pivot = new Vector2(0f, 1f);
-            pane.anchoredPosition = new Vector2(list.anchoredPosition.x + list.sizeDelta.x / 2f + BookLayout.Gap, list.anchoredPosition.y);
-            pane.sizeDelta = new Vector2(BookLayout.PaneWidth, list.sizeDelta.y);
+            pane.anchoredPosition = new Vector2(list.anchoredPosition.x + list.sizeDelta.x / 2f + BookLayout.Gap, list.anchoredPosition.y + raised);
+            pane.sizeDelta = new Vector2(BookLayout.PaneWidth, list.sizeDelta.y + raised);
             Image image = pane.gameObject.AddComponent<Image>();
             Image source = list.GetComponent<Image>();
             if (source != null)

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.17.0
+
+- The skills window lists skills in the game's order again.
+- New: a Sort by dropdown above the skills list (Default, Name, Level); your choice is remembered.
+
 ## 0.16.0
 
 - The skills window lists skills A to Z by name, in your language.

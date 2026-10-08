@@ -1092,9 +1092,15 @@ numbers for what it does for you, in the same box as the inventory's world tier,
 - **Choosing (`SkillBook`):** postfixes on `SkillsDialog.Setup` (every opening: empties the entries' own tooltips and
   shows the skill shown last, else the first), `SkillClicked` (the entry's Button) and `Update` (with a gamepad the page
   follows `m_selectionIndex`).
-- **Order (`SkillOrder`, 2026-10-07):** the list is always A to Z by the shown (localized) name (no
-  setting, the user's call). `Skills.GetSkillList` is sorted only while `SkillsDialog.Setup` runs, so the game places
+- **Order (`SkillOrder`, `SortBar`, 2026-10-08):** a "Sort by" dropdown above the list picks Default (the game's
+  order, the default again since the user asked on 2026-10-08; 0.16.0 had A to Z always), Name (A to Z by the shown,
+  localized name) or Level (highest first, ties by name). The choice is kept in the game's preferences
+  (`PlatformPrefs` key `GrindstoneSkills_SkillSort`, saved on change), so it survives closing the window and the game;
+  no .cfg setting. The dropdown is a copy of the settings window's Radial Size dropdown (`Menu.m_settingsPrefab`),
+  stripped of its `SettingsTooltip` and handlers; 20 high like the "Sort by" line (caption 14 point, not auto-sized), it takes 28 off the top of the list; the pane starts level with it.
+  Choosing re-runs `SkillsDialog.Setup`. `Skills.GetSkillList` is sorted only while `Setup` runs, so the game places
   and gamepad-steps the entries in that order itself; `BookPane` sorts its copy the same way so its indexes match.
+  The dropdown is mouse only (the window's gamepad stepping moves through the entries).
 - **Pages (`SkillPage`, `SkillPages`, `PageText`):** a writer per skill fills a `SkillPage` for the local player at
   the moment it is shown: `About` (one sentence), `Line`s with the numbers at the player's level (bonuses included,
   as the game floors them), optional `Heading`s, and `Perk`s (name, level that unlocks it, hover text; a level above

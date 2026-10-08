@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -5,8 +6,9 @@ namespace GrindstoneSkills
     /// <summary>
     /// Makes room for the info pane in the skills window, once per window: the frame grows by the pane's width and
     /// <see cref="ExtraHeight"/>, the list (the dark box holding the entries) moves left by half of the added width and
-    /// grows by the added height, so it shows more skills, and the pane (<see cref="PaneBuilder"/>) fills the space on
-    /// its right, as tall as the list. The frame stays centred and keeps its margins; the title and the Close button
+    /// grows by the added height, so it shows more skills, less the room the sort dropdown (<see cref="SortBar"/>) takes
+    /// over it, and the pane (<see cref="PaneBuilder"/>) fills the space on its right, from the dropdown's top to the
+    /// list's bottom. The frame stays centred and keeps its margins; the title and the Close button
     /// are anchored to the frame's top and bottom and follow it. Measured from the game's layout (2026-09-28): frame
     /// 458 x 657, list 410 x 526 at 48 under the frame's top, its scrollbar 1 to 11 units right of it.
     /// </summary>
@@ -30,16 +32,20 @@ namespace GrindstoneSkills
             Transform existing = frame.Find(PaneName);
             if (existing != null)
                 return existing.GetComponent<BookPane>();
-            Widen(frame, list);
-            return PaneBuilder.Build(dialog, frame, list);
+            TMP_Dropdown sorter = SortBar.Source();
+            float bar = sorter != null ? SortBar.Height : 0f;
+            Widen(frame, list, bar);
+            if (sorter != null)
+                SortBar.Build(dialog, frame, list, sorter);
+            return PaneBuilder.Build(dialog, frame, list, bar);
         }
 
-        private static void Widen(RectTransform frame, RectTransform list)
+        private static void Widen(RectTransform frame, RectTransform list, float bar)
         {
             float added = PaneWidth + Gap;
             frame.sizeDelta += new Vector2(added, ExtraHeight);
-            list.anchoredPosition -= new Vector2(added / 2f, 0f);
-            list.sizeDelta += new Vector2(0f, ExtraHeight);
+            list.anchoredPosition -= new Vector2(added / 2f, bar);
+            list.sizeDelta += new Vector2(0f, ExtraHeight - bar);
         }
     }
 }
