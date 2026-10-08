@@ -5,7 +5,7 @@ one and you travel there. Portals get access modes (Public, Private, Admin) and 
 across water, carry a ship and its crew to any other gate picked on the map. Quick jumps make near portals quicker and skip the loading
 screen where nothing needs loading.
 
-This wiki describes version 0.3.2.
+This wiki describes version 0.4.0.
 
 ## Install
 
@@ -26,6 +26,9 @@ Everyone needs the same version, or the player cannot join. Use r2modman or the 
 3. Click an icon. You travel there with the game's own fade.
 
 Close the map (Escape or the map key) to stay where you are; walk out and back in to choose again.
+
+The server's `Teleport Mode` can change this: a dropdown of named portals instead of the map, or the game's own
+portals ([Portals and Access](wiki:Portals and Access)).
 
 ## Pages
 

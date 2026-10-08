@@ -60,7 +60,7 @@ namespace Wayfare.Targeting
 
         private static bool ShouldShow()
         {
-            return WayfareConfig.Enabled.Value && Player.m_localPlayer != null && Minimap.instance != null &&
+            return WayfareConfig.PortalsOn && Player.m_localPlayer != null && Minimap.instance != null &&
                    Minimap.instance.m_mode == Minimap.MapMode.Large && (TargetingSession.Active || HotkeyToggle.IconsOn) &&
                    !SeaGates.SeaGatePicker.Active; // the sea gate picker shows sea gates only
         }

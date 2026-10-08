@@ -158,7 +158,8 @@ exercised on every server start, not just as an edge case).
 Wayfare/Wayfare/src/
   Plugin.cs                     entry: WayfareConfig.Initialize, Harmony.PatchAll, Synced.Finish, Guard.Install
   Core/
-    WayfareConfig.cs             SyncedConfiguration bindings (General, Map, Favourites sections)
+    WayfareConfig.cs             SyncedConfiguration bindings (General, Map, Favourites sections), PortalsOn, InMode
+    TeleportMode.cs              the Teleport Mode enum: Map, TargetTeleport, Default
     Language.cs                  $wf_ words, Localization.SetupLanguage postfix
     (hotkeys)                    the Hotkeys library (ValheimModLibs): fires while W is held, nothing while typing
   Portals/
@@ -171,11 +172,17 @@ Wayfare/Wayfare/src/
                                   filtering and by the server's teleport grant
     ModeCycle.cs                  TeleportWorld.Interact prefix (alt) + RPC_wf_SetMode owner-side handler
     CycleHover.cs                 the Alt+E hover line, localized once per mode, language and input device
-    PortalOpenPatch.cs            TeleportWorld.HaveTarget / TargetFound postfixes: every portal open
+    PortalOpenPatch.cs            TeleportWorld.HaveTarget / TargetFound postfixes: every portal open (named only
+                                  in TargetTeleport)
   Targeting/
     TargetingSession.cs           TeleportWorldTrigger.OnTriggerEnter prefix; open/close targeting, the source
                                   portal reference, guarded against the load-order incident
     TeleportGate.cs               client: send wf_RequestTeleport, await grant/deny; server: validate + reply
+    PortalTravel.cs               a grant to the picker or the map session; the teleport out of the destination
+    PortalPicker.cs               TargetTeleport: open/close, the chosen destination, refills, Teleport
+    PickerWindow.cs               the window: a copy of the game's text input window, its field swapped for
+    PickerDropdown.cs             a copy of the settings window's dropdown
+    PickerChoices.cs              the destinations (named, allowed, favourites first) and their labels
     MapOverlay.cs                 places/hides the portal icons on MapIconLayer (kept and reused), hit-tests their click areas
     PortalIcon.cs                 one icon: gold game portal sprite, favourite ring, tag, "You are here", click area
     IconFactory.cs                the game's portal sprite, the gold and red, the procedural favourite ring
@@ -227,6 +234,32 @@ Wayfare/Wayfare/config/           (none yet - no YAML needed, cfg-only)
   (`TeleportGate.OnRequestTeleport` and `ModeCycle.OnSetMode` both check `Enabled` themselves) - a client that
   bypassed its own UI while the server has the mod turned off should still be refused, not accidentally let through
   because only the "normal" entry point checked the switch.
+
+## Teleport modes (General, Teleport Mode; added 2026-10-08, untested in game)
+
+The user's ask: let the server choose how portals pick a destination. One synced, lockable enum, default `Map`:
+
+- **Map** - everything above: walking in opens the world map, every portal on it, tagged or not.
+- **TargetTeleport** - walking into a *named* portal opens a small window with a dropdown of every other named portal
+  the player may target (the user's design: "all teleporters that have a tag are connected to each other"). An
+  unnamed portal stays dark (`PortalOpen` answers its tag) and walking into it only says "Name this portal to connect
+  it"; the server's grant (`TeleportGate.Evaluate`) refuses an unnamed source or target in this mode, so a client
+  cannot skip the rule. The list uses the map's access rule, favourites first, then by name, then nearest; each
+  entry shows its distance in grey, which also tells two portals of one name apart. Teleport sends the same
+  `wf_RequestTeleport` the map click sends; the grant lands in `PortalTravel`, which hands it to the picker while it
+  is open, else to the map session. Closed by Cancel, Esc (the WindowInput library), death, a mode change, or
+  walking more than 4 m from the portal (walking stays possible while it is open). The list refills when the portal
+  snapshot or the favourites change, never under an open list. Access modes (Alt+E), favourites (right click on
+  a map icon, P shows icons on the map) and the server's portal list work as in Map.
+- **Default** - the game's own portals: tag pairing, the game's teleport, no access modes, no Wayfare portal icons
+  (`WayfareConfig.PortalsOn` is false). `PortalDiscovery` still runs, so modded portals pair through the game's own
+  list. Quick jumps and sea gates follow `Enabled` alone and work in every mode.
+
+The window is a copy of the game's text input window (`TextInput.m_panel`: wood panel `woodpanel_password`, 540 x 200,
+`Topic`, `TextField` 482 x 40, `Cancel`, `OK`, read from the game's scene bundle 2026-10-08), parented beside the
+original on its canvas. The text field is replaced by a copy of the settings window's Radial Size dropdown (as
+GrindstoneSkills' sort bar), OK becomes Teleport, both buttons keep their gamepad keys (B, X) and get new clicks.
+Built once per HUD, hidden between uses.
 
 ## Sea gates (built 2026-10-04, untested in game)
 

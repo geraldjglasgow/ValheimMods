@@ -56,7 +56,7 @@ namespace Wayfare.Targeting
         /// <summary>Null when the request is granted, otherwise the localised denial reason token to send back.</summary>
         private static string Evaluate(long sender, ZDOID sourceId, ZDOID targetId)
         {
-            if (!WayfareConfig.Enabled.Value)
+            if (!WayfareConfig.PortalsOn)
                 return Words.DeniedGeneric;
             PortalDiscovery.EnsureDiscovered();
             if (Blocked(out string blockedReason))
@@ -65,6 +65,8 @@ namespace Wayfare.Targeting
             ZDO targetZdo = ZDOMan.instance.GetZDO(targetId);
             if (sourceZdo == null || targetZdo == null || !PortalDiscovery.IsPortalPrefab(targetZdo.GetPrefab()) || sourceId == targetId)
                 return Words.DeniedGeneric;
+            if (WayfareConfig.InMode(TeleportMode.TargetTeleport) && (!PortalFields.HasName(sourceZdo) || !PortalFields.HasName(targetZdo)))
+                return Words.DeniedGeneric; // only named portals are connected in this mode
             if (!PortalAccess.MayTarget(targetZdo, SenderIdentity.PlayerId(sender), SenderIdentity.IsAdmin(sender)))
                 return DenialReason(targetZdo);
             return null;
@@ -97,7 +99,7 @@ namespace Wayfare.Targeting
         private static void OnGranted(long sender, ZDOID targetId, Vector3 targetPos, Quaternion targetRot)
         {
             if (SenderIdentity.IsFromServer(sender))
-                TargetingSession.CompleteTeleport(targetPos, targetRot);
+                PortalTravel.Granted(targetPos, targetRot);
         }
 
         private static void OnDenied(long sender, ZDOID targetId, string reasonToken)

@@ -15,6 +15,23 @@
   here".
 - A new or renamed portal appears on the map within a few seconds.
 
+## Teleport modes
+
+`Teleport Mode` (General) sets how a portal picks its destination, the same for every player on a server.
+
+| Mode | Walking into a portal |
+| --- | --- |
+| Map (default) | the map opens, as above |
+| TargetTeleport | a window opens with a dropdown of every other named portal |
+| Default | the game's own portals: two portals with the same tag connect |
+
+- TargetTeleport: pick a portal in the dropdown and press Teleport (X on a gamepad). Cancel, Escape or
+  walking away from the portal closes the window.
+- Only named portals are connected. An unnamed one stays dark: "Name this portal to connect it".
+- The list holds the portals you may travel to (access modes below), your favourites first, then by name, each with
+  its distance from you.
+- Default: access modes, favourites and portal map icons are off. Quick jumps and sea gates work in every mode.
+
 ## Access modes
 
 Every portal has a mode; its hover text shows which.

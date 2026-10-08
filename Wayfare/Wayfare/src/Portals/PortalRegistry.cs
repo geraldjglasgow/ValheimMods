@@ -40,7 +40,7 @@ namespace Wayfare.Portals
 
         internal static void Refresh()
         {
-            if (!WayfareConfig.Enabled.Value || ZDOMan.instance == null || Player.m_localPlayer == null)
+            if (!WayfareConfig.PortalsOn || ZDOMan.instance == null || Player.m_localPlayer == null)
                 return;
             PortalDiscovery.EnsureDiscovered();
             if (ZNet.instance != null && !ZNet.instance.IsServer())

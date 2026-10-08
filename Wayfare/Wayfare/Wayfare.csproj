@@ -5,7 +5,7 @@
     <AssemblyName>Wayfare</AssemblyName>
     <RootNamespace>Wayfare</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.3.3</Version>
+    <Version>0.4.0</Version>
     <Product>Wayfare</Product>
     <Description>Wayfare: map-based portal targeting for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -39,6 +39,7 @@
     <ProjectReference Include="$(ModLibsPath)\AreaLoading\AreaLoading.csproj" />
     <ProjectReference Include="$(ModLibsPath)\MapClicks\MapClicks.csproj" />
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -92,6 +93,10 @@
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>$(ManagedPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">

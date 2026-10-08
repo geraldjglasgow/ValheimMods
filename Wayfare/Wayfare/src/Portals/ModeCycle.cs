@@ -54,7 +54,7 @@ namespace Wayfare.Portals
         /// <summary>Server: a player asks to cycle a portal. The identity is the sender's, resolved here.</summary>
         private static void OnRequestMode(long sender, ZDOID portalId, int modeRaw)
         {
-            if (!WayfareConfig.Enabled.Value || ZNet.instance == null || !ZNet.instance.IsServer() || ZDOMan.instance == null)
+            if (!WayfareConfig.PortalsOn || ZNet.instance == null || !ZNet.instance.IsServer() || ZDOMan.instance == null)
                 return;
             ZDO zdo = ZDOMan.instance.GetZDO(portalId);
             long playerId = PlayerOf(sender);
@@ -70,7 +70,7 @@ namespace Wayfare.Portals
         /// <summary>Portal owner: a cycle the server checked and forwarded with the requester's identity.</summary>
         public static void OnSetMode(TeleportWorld portal, long sender, long playerId, bool isAdmin, int modeRaw)
         {
-            if (!WayfareConfig.Enabled.Value || !SenderIdentity.IsFromServer(sender))
+            if (!WayfareConfig.PortalsOn || !SenderIdentity.IsFromServer(sender))
                 return;
             if (portal == null || portal.m_nview == null || !portal.m_nview.IsValid() || !portal.m_nview.IsOwner())
                 return;
@@ -136,7 +136,7 @@ namespace Wayfare.Portals
         [HarmonyPrefix]
         public static bool Prefix(TeleportWorld __instance, Humanoid human, bool hold, bool alt, ref bool __result)
         {
-            if (hold || !alt || !WayfareConfig.Enabled.Value)
+            if (hold || !alt || !WayfareConfig.PortalsOn)
                 return true;
             __result = true;
             ModeCycle.TryCycle(__instance, human as Player);
@@ -150,7 +150,7 @@ namespace Wayfare.Portals
         [HarmonyPostfix]
         public static void Postfix(TeleportWorld __instance, ref string __result)
         {
-            if (!WayfareConfig.Enabled.Value || __instance == null || __instance.m_nview == null || !__instance.m_nview.IsValid())
+            if (!WayfareConfig.PortalsOn || __instance == null || __instance.m_nview == null || !__instance.m_nview.IsValid())
                 return;
             __result = CycleHover.Append(__result, PortalFields.GetMode(__instance.m_nview.GetZDO()));
         }

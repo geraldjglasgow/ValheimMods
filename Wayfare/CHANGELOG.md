@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- `Teleport Mode` (General): `Map` (as before), `TargetTeleport` or `Default` (the game's tag pairing).
+- TargetTeleport: walking into a named portal opens a dropdown of every other named portal; pick one, press Teleport.
+- TargetTeleport: unnamed portals stay dark and unconnected; favourites list first, each portal with its distance.
+- Default: access modes and portal map icons are off; quick jumps and sea gates still work.
+
 ## 0.3.3
 
 - Fixed: after Alt + Tab, `Toggle Icons Key` could stop working or act as if Shift, Ctrl or Alt were held.

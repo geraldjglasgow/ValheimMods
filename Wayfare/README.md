@@ -1,10 +1,12 @@
 # Wayfare
 
 Walk into a portal and the world map opens on every portal you may use; click one and you travel there. No more
-matching tags: every portal reaches every other, and a tag is only the name shown beside its icon.
+matching tags: every portal reaches every other, and a tag is only the name shown beside its icon. The server can
+switch portals to a dropdown of named portals, or back to the game's own tag pairing.
 
 ## Features
 - Map targeting: walk in, click a portal on the map, go. The game's carry rules, fade and cooldown still apply.
+- `Teleport Mode`: Map, TargetTeleport (pick from a dropdown of every named portal) or Default (the game's portals).
 - Access modes: Public, Private or Admin per portal, cycled with Shift+E (below).
 - Favourites: right-click a portal icon to pin it to a panel on the map.
 - `Toggle Icons Key` (P) shows portal and sea gate icons on the ordinary map.

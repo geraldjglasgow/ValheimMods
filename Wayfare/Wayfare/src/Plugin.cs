@@ -10,6 +10,7 @@ using Wayfare.Portals;
 using Wayfare.QuickJumps;
 using Wayfare.SeaGates;
 using Wayfare.Targeting;
+using WindowInput;
 
 namespace Wayfare
 {
@@ -18,7 +19,7 @@ namespace Wayfare
     {
         public const string PluginGuid = "com.Wayfare";
         public const string PluginName = "Wayfare";
-        public const string PluginVersion = "0.3.3";
+        public const string PluginVersion = "0.4.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -35,6 +36,8 @@ namespace Wayfare
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             JumpSpeed.Install(harmony);
             IconClick.Install(harmony);
+            GameWindow.Install(harmony);
+            GameWindow.Add(() => PortalPicker.IsOpen, PortalPicker.Close);
             PortalDiscovery.EnsureRunning();
             PortalRegistry.EnsureRunning();
             MapOverlay.EnsureRunning();

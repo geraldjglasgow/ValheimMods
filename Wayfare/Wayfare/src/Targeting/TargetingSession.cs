@@ -27,7 +27,7 @@ namespace Wayfare.Targeting
 
         public static void Open(TeleportWorld source)
         {
-            if (source == null || Minimap.instance == null || Player.m_localPlayer == null || !WayfareConfig.Enabled.Value)
+            if (source == null || Minimap.instance == null || Player.m_localPlayer == null || !WayfareConfig.PortalsOn)
                 return;
             SourcePortal = source;
             Active = true;
@@ -50,8 +50,7 @@ namespace Wayfare.Targeting
             TeleportGate.RequestTeleport(source, target);
         }
 
-        /// <summary>The destination comes from the server's grant, never from a local ZDO lookup - a client
-        /// usually holds no ZDO at all for a distant portal.</summary>
+        /// <summary>The server's grant for the map's session (<see cref="PortalTravel"/>).</summary>
         public static void CompleteTeleport(Vector3 targetPos, Quaternion targetRot)
         {
             if (Player.m_localPlayer == null || SourcePortal == null)
@@ -59,15 +58,7 @@ namespace Wayfare.Targeting
                 Close();
                 return;
             }
-            if (!Player.m_localPlayer.IsTeleportable(SourcePortal.m_allowAllItems))
-            {
-                Player.m_localPlayer.Message(MessageHud.MessageType.Center, "$msg_noteleport");
-                return;
-            }
-            Vector3 exitPos = targetPos + targetRot * Vector3.forward * SourcePortal.m_exitDistance + Vector3.up;
-            Player.m_localPlayer.TeleportTo(exitPos, targetRot, distantTeleport: true);
-            Game.instance.IncrementPlayerStat(PlayerStatType.PortalsUsed);
-            if (Minimap.instance != null)
+            if (PortalTravel.Go(SourcePortal, targetPos, targetRot) && Minimap.instance != null)
                 Minimap.instance.SetMapMode(Minimap.MapMode.Small);
         }
 
@@ -79,20 +70,25 @@ namespace Wayfare.Targeting
     }
 
     /// <summary>Vanilla's only call site for <c>TeleportWorld.Teleport</c>: the local player's collider entering a
-    /// portal's trigger. Replaced with opening targeting instead of an immediate tag-paired teleport, tagged or
-    /// not: the tag is only the portal's name.</summary>
+    /// portal's trigger. Replaced with opening targeting instead of an immediate tag-paired teleport: the map, tagged
+    /// or not (the tag is only the portal's name), or the TargetTeleport picker. The Default teleport mode keeps the
+    /// game's own teleport.</summary>
     [HarmonyPatch(typeof(TeleportWorldTrigger), "OnTriggerEnter")]
     public static class PortalTriggerPatch
     {
         [HarmonyPrefix]
         public static bool Prefix(TeleportWorldTrigger __instance, Collider colliderIn)
         {
-            if (!WayfareConfig.Enabled.Value)
+            if (!WayfareConfig.PortalsOn)
                 return true;
             Player player = colliderIn != null ? colliderIn.GetComponent<Player>() : null;
             if (player == null || player != Player.m_localPlayer)
                 return true;
-            TargetingSession.Open(__instance.GetComponentInParent<TeleportWorld>());
+            TeleportWorld portal = __instance.GetComponentInParent<TeleportWorld>();
+            if (WayfareConfig.InMode(TeleportMode.TargetTeleport))
+                PortalPicker.Open(portal);
+            else
+                TargetingSession.Open(portal);
             return false;
         }
     }
@@ -118,6 +114,10 @@ namespace Wayfare.Targeting
     public static class GameTeardownPatch
     {
         [HarmonyPostfix]
-        public static void Postfix() => TargetingSession.Close();
+        public static void Postfix()
+        {
+            TargetingSession.Close();
+            PortalPicker.Close();
+        }
     }
 }

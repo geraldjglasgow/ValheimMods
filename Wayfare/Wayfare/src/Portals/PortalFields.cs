@@ -27,6 +27,12 @@ namespace Wayfare.Portals
 
         public static long GetOwner(ZDO zdo) => zdo.GetLong(OwnerKey, 0L);
 
+        /// <summary>The portal has a tag, its name; in the TargetTeleport mode only named portals are connected. Read
+        /// straight from the ZDO: the game's own <c>GetText</c> runs the word filter, too dear for every frame.</summary>
+        public static bool HasName(ZDO zdo) => HasName(zdo.GetString(ZDOVars.s_tag));
+
+        public static bool HasName(string tag) => !string.IsNullOrWhiteSpace(tag);
+
         public static void SetModeAndOwner(ZDO zdo, PortalMode mode, long ownerPlayerId)
         {
             zdo.Set(ModeKey, (int)mode);

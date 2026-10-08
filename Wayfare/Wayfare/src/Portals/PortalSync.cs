@@ -51,7 +51,7 @@ namespace Wayfare.Portals
 
         private static void OnRequestPortals(long sender, long senderHolds)
         {
-            if (ZNet.instance == null || !ZNet.instance.IsServer() || !WayfareConfig.Enabled.Value || ZDOMan.instance == null)
+            if (ZNet.instance == null || !ZNet.instance.IsServer() || !WayfareConfig.PortalsOn || ZDOMan.instance == null)
                 return;
             PortalDiscovery.EnsureDiscovered();
             long version = PortalListVersion.Read();

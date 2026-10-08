@@ -24,6 +24,11 @@ namespace Wayfare.Core
         public static readonly string TargetingHint = Language.Add("wf_targeting_hint", "Click a portal to travel there");
         public static readonly string YouAreHere = Language.Add("wf_you_are_here", "You are here");
 
+        public static readonly string PickerTopic = Language.Add("wf_picker_topic", "Teleport to");
+        public static readonly string PickerGo = Language.Add("wf_picker_go", "Teleport");
+        public static readonly string PickerNone = Language.Add("wf_picker_none", "No other named portal");
+        public static readonly string PickerUnnamed = Language.Add("wf_picker_unnamed", "Name this portal to connect it");
+
         public static void Touch()
         {
             // Referencing any field above is enough to run the static initializers.

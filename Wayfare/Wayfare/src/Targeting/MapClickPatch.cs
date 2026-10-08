@@ -21,7 +21,7 @@ namespace Wayfare.Targeting
             // targeting or the game's pin toggle; anywhere else the game's own click runs.
             if (SeaGates.SeaGatePicker.Active)
                 return !SeaGates.SeaGatePicker.TryClick(ZInput.pointerPosition);
-            if (!WayfareConfig.Enabled.Value || !TargetingSession.Active || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
+            if (!WayfareConfig.PortalsOn || !TargetingSession.Active || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
                 return true;
             IconClick.Hold(() => TargetingSession.Select(hit));
             return false;
@@ -34,7 +34,7 @@ namespace Wayfare.Targeting
         [HarmonyPrefix]
         public static bool Prefix()
         {
-            if (!WayfareConfig.Enabled.Value || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
+            if (!WayfareConfig.PortalsOn || !MapOverlay.TryHitTest(ZInput.pointerPosition, out ZDOID hit))
                 return true;
             if (IconClick.PinUnderPointer(Minimap.instance))
                 return true;

@@ -10,6 +10,7 @@ namespace Wayfare.Core
     {
         public static ConfigEntry<bool> LockConfiguration { get; private set; }
         public static ConfigEntry<bool> Enabled { get; private set; }
+        public static ConfigEntry<TeleportMode> TeleportMode { get; private set; }
         public static ConfigEntry<KeyboardShortcut> ToggleIconsKey { get; private set; }
         public static ConfigEntry<float> IconScale { get; private set; }
         public static ConfigEntry<bool> ShowTags { get; private set; }
@@ -28,6 +29,13 @@ namespace Wayfare.Core
         public static ConfigEntry<float> QuickPortalSeconds { get; private set; }
         public static ConfigEntry<bool> ScreenOnlyWhenLoading { get; private set; }
         public static ConfigEntry<bool> QuickAreaLoading { get; private set; }
+
+        /// <summary>Wayfare's own portals are on: targeting, access modes, portal icons. Off in the Default teleport
+        /// mode, where portals are the game's; quick jumps and sea gates follow <see cref="Enabled"/> alone.</summary>
+        public static bool PortalsOn => Enabled.Value && TeleportMode.Value != Core.TeleportMode.Default;
+
+        /// <summary>Wayfare is on and portals use this teleport mode.</summary>
+        public static bool InMode(TeleportMode mode) => Enabled.Value && TeleportMode.Value == mode;
 
         public static void Initialize(SyncedConfiguration config)
         {
@@ -61,6 +69,8 @@ namespace Wayfare.Core
                 "Server only. When on, every player uses the server's values for this file and cannot override them locally.");
             Enabled = config.Bind("General", "Enabled", true,
                 "Master switch. Off disables portal targeting and access modes; portals behave as vanilla.");
+            TeleportMode = config.Bind("General", "Teleport Mode", Core.TeleportMode.Map,
+                "How a portal picks its destination. Map: walking in opens the world map, click any portal there to travel to it. TargetTeleport: walking into a named portal opens a window with a dropdown of every other named portal; pick one and press Teleport (portals without a name are not connected). Default: the game's own portals, paired by tag; access modes and portal map icons are off. Quick jumps and sea gates work in every mode.");
             ToggleIconsKey = config.Bind("Map", "Toggle Icons Key", new KeyboardShortcut(KeyCode.P),
                 "Toggles portal icons on the ordinary (non-targeting) map.", synced: false);
             IconScale = config.Bind("Map", "Icon Scale", 1f,

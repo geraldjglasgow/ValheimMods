@@ -1,6 +1,6 @@
 {
     "name": "Wayfare",
-    "version_number": "0.3.3",
+    "version_number": "0.4.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/Wayfare",
     "description": "Walk into any portal and pick its destination on the world map. Access modes, favourites, quick jumps and sea gates that carry ships. Needed on the server too.",
     "dependencies": [

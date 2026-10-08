@@ -30,6 +30,7 @@ on.
 | --- | --- | --- |
 | `Lock Configuration` | on | Read on the server only. On: every player uses the server's values. See Multiplayer below. |
 | `Enabled` | on | Master switch. Off: portals pair by tag as in the game; no map targeting, access modes, sea gate jumps or quick jumps. |
+| `Teleport Mode` | Map | How a portal picks its destination: Map, TargetTeleport (a dropdown of named portals) or Default (the game's tag pairing). See [Portals and Access](wiki:Portals and Access). |
 
 ### Map
 
