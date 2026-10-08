@@ -175,12 +175,13 @@ stack, so Elite Crafting never makes them magic; they are left alone.
 Elite Crafting reads a level from the game's spawn lists, which none of these is in, so each has one here. Bosses and
 mini-bosses get boss entries (guaranteed runes and gear, a bonus rune, the boss rarity row) scaled against the game's
 bosses in Elite Crafting's file (Elder: level 2, 2 runes, 1 gear, Ascension 100%; Moder: level 4, 3 runes, 1 gear,
-Consecrated 100%).
+Ascension 100%). Elite Crafting 0.8.0 removed the Consecrated Rune (an entry naming it is refused whole) and drops no gear
+for now, so the gear counts below roll nothing until it does again.
 
 | Prefab | Level | Entry | Why |
 | --- | --- | --- | --- |
-| `ECP_Kraken` | 4 | boss: 3 runes, 1 gear, Serpent 100% | A boss of the open sea (game boss flag, 3000 health): Moder's at her level, the sea's rune for her Consecrated |
-| `ECP_RimeGiant` | 4 | boss: 3 runes, 1 gear, Consecrated 50% | Mini-boss, one per mountain ever, plates only fire breaks; level of the lowest of its `Biomes` (Mountain), resent when they change |
+| `ECP_Kraken` | 4 | boss: 3 runes, 1 gear, Sealed Rune 100% | A boss of the open sea (game boss flag, 3000 health): Moder's at her level, the sea's rune for her Ascension |
+| `ECP_RimeGiant` | 4 | boss: 3 runes, 1 gear, Ascension 50% | Mini-boss, one per mountain ever, plates only fire breaks; level of the lowest of its `Biomes` (Mountain), resent when they change |
 | `ECP_Headsman` | 2 | boss: 2 runes, 1 gear, Ascension 25% | The burial chambers' mini-boss (900 health), back every 3 days: a little under the Elder |
 | `ECP_HeadsmanSkeleton` | - | multiplier 0 | The Executioner's raised skeletons drop nothing: no rune farm beside a boss |
 | `ECP_CryptMimic` | where it dies | rune x6, gear x8 | It is a crypt chest: a chest's chances (Elite Crafting's chests 30% and 10%, a level 2 creature 5% and 1.25%); the chest it replaced was rolled and removed. Forest crypt 2, sunken crypt 3 |

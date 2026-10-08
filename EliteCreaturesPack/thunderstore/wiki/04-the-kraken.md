@@ -47,8 +47,8 @@ aboard).
 ## Loot
 
 On the held ship's deck, or on the water where it died if it held no ship: 20-29 Chitin, 5-7 Raw kraken tentacle,
-150-299 Coins and exactly 1 Kraken beak. Loot other mods add (such as EliteCrafting's runes and magic gear: every kill 3
-runes, 1 magic item and a Serpent Rune) lands there too, never on the sea floor.
+150-299 Coins and exactly 1 Kraken beak. Loot other mods add (such as EliteCrafting's runes: every kill 3
+runes and a Sealed Rune) lands there too, never on the sea floor.
 
 | Item | What it is |
 | --- | --- |

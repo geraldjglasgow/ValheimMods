@@ -46,7 +46,7 @@ lightning, poison and spirit go through in full.
 - 1500 health (a forest troll: 600). Troll resistances, **immune to frost**, **weak to fire**.
 - Wolves, drakes, golems and fenrings leave it alone.
 - **Loot:** 4-7 Crystal, 3-5 Freeze gland, 3-5 Silver ore. No troll hide.
-- **With EliteCrafting:** every kill also 3 runes and 1 magic item, and half the time a Consecrated Rune.
+- **With EliteCrafting:** every kill also 3 runes, and half the time an Ascension Rune.
 
 ## Settings: `4 - Rime Giant`
 

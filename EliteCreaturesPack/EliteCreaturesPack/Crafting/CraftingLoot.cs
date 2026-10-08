@@ -19,7 +19,7 @@ namespace EliteCreaturesPack.Crafting
     /// <list type="bullet">
     /// <item>Bosses and mini-bosses get boss entries like the game's bosses in Elite Crafting's file (runes and gear every
     /// kill, a bonus rune, the boss rarity row). The Kraken, a boss of the open sea (level 4): Moder's at that level, the
-    /// Serpent's rune for her Consecrated. The Rime Giant, a sleeping mini-boss, one per mountain ever (the lowest level of
+    /// Sealed Rune (id serpent) for her Ascension (Elite Crafting 0.8.0 removed the Consecrated Rune). The Rime Giant, a sleeping mini-boss, one per mountain ever (the lowest level of
     /// its spawn biomes, Mountain 4): Moder's with half her bonus. The Crypt Executioner, the burial chambers' mini-boss
     /// (Black Forest 2), back every few days: a little under the Elder.</item>
     /// <item>The skeletons that take the Black Forest Skeleton's spawns (the arsenal skeletons, the crossbowman): its
@@ -63,7 +63,7 @@ namespace EliteCreaturesPack.Crafting
         private static IEnumerable<KeyValuePair<string, string>> Profiles()
         {
             yield return Boss(KrakenPrefabs.Creature, Ocean, 3, "serpent", 100);
-            yield return Boss(RimeGiantPrefabs.Creature, BiomeLevels.Lowest(RimeGiantSettings.Biomes, Mountain), 3, "consecrated", 50);
+            yield return Boss(RimeGiantPrefabs.Creature, BiomeLevels.Lowest(RimeGiantSettings.Biomes, Mountain), 3, "ascension", 50);
             yield return Boss(HeadsmanPrefabs.Creature, BlackForest, 2, "ascension", 25);
             yield return Entry(HeadsmanSummon.Name, "\"multiplier\": 0");
             yield return Entry(MimicPrefabs.Creature, "\"rune_multiplier\": 6, \"gear_multiplier\": 8");

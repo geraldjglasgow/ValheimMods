@@ -38,7 +38,7 @@ A skeleton headsman, a quarter taller than the rest, with a bone greataxe. A min
   minutes) after it dies.
 - **Stats:** 900 health; weak to blunt and fire; Undead.
 - **Loot:** 20-39 Coins, 4-7 Bone fragments, and a 50% chance of the **Executioner's axehead**. With EliteCrafting,
-  every kill also 2 runes and 1 magic item, and a 25% chance of an Ascension Rune; its raised skeletons drop nothing.
+  every kill also 2 runes, and a 25% chance of an Ascension Rune; its raised skeletons drop nothing.
 
 | Move | When | Damage | Answer |
 | --- | --- | --- | --- |

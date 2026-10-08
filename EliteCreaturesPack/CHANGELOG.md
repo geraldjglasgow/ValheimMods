@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1
+
+- With EliteCrafting 0.8.0: the Rime Giant's bonus is an Ascension Rune (the Consecrated Rune is gone), so its loot loads again.
+
 ## 0.8.0
 
 - Paws of the Bear: each punch is three quick swipes in the time of one, about a third of the damage each.
