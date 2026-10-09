@@ -32,6 +32,8 @@ New creatures for Valheim, each with its own fight, and bone weapons made from w
 - Kraken shield: better than the serpent scale shield, and a parry makes its beak bite back.
 - Cooked kraken tentacle: cooks like serpent meat, more health and stamina for longer.
 - Paws of the Bear (the game's bear claws): each punch is three fast swipes, about a third of the damage each.
+- Bone Ballista: a small ballista with spine arms that you hold and aim yourself (90 degrees of turn); it reloads
+  from Bone Missiles in your pack.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `EliteCreaturesPack.dll`

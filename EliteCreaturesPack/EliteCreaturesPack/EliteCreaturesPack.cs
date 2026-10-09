@@ -1,6 +1,7 @@
 using System.Reflection;
 using BepInEx;
 using EliteCreaturesPack.Arsenal;
+using EliteCreaturesPack.Ballista;
 using EliteCraftingLink;
 using EliteCreaturesPack.Core;
 using EliteCreaturesPack.Crafting;
@@ -31,7 +32,7 @@ namespace EliteCreaturesPack
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.8.2";
+        public const string PluginVersion = "0.9.0";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 
@@ -67,6 +68,7 @@ namespace EliteCreaturesPack
             ArsenalPrefabs.Install(harmony);
             XbowPrefabs.Install(harmony);
             HeadsmanPrefabs.Install(harmony);
+            BallistaPrefabs.Install(harmony);
         }
     }
 }

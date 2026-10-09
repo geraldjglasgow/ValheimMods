@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.8.2</Version>
+    <Version>0.9.0</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -67,6 +67,10 @@
     <!-- The Crypt Executioner's greataxe in 29 pieces, its kit and clips, and the players' greataxe and axehead with their
          icons (AssetWorkshop assets/ecp_headsman: build.ps1 -Bundle -Install), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecp_headsman.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- The Bone Ballista (flat: mount, yaw, pitch, spine arm vertebrae, string halves, points) and its Bone Missile, with
+         their icons (ValheimAssets Assets/Props/BoneBallista: build.ps1 -Asset ecp_bone_ballista,ecp_bone_missile
+         -Bundle ecp_boneballista), one bundle per platform. -->
+    <EmbeddedResource Include="assets\bundles\ecp_boneballista.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0
+
+- Bone Ballista: a small ballista with spine arms that you hold with E and aim yourself; 3 Spines and 25 bone fragments.
+- Bone Missiles (workbench 2, 20 for 5 bone fragments and 2 feathers): 50 blunt; the ballista reloads by itself while you carry them.
+- `Enabled` in section `28 - Bone Ballista` turns it off.
+- Update the server and every client together.
+
 ## 0.8.2
 
 - Fixed: bone piles and greydwarf nests no longer fill rooms with arsenal skeletons and slingers; they stop at their usual count.

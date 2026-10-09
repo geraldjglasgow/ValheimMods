@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using BepInEx.Configuration;
 using EliteCreaturesPack.Arsenal;
+using EliteCreaturesPack.Ballista;
 using EliteCreaturesPack.BearClaws;
 using EliteCreaturesPack.Core;
 using EliteCreaturesPack.Crossbow;
@@ -54,6 +55,7 @@ namespace EliteCreaturesPack
             HeadsmanSettings.Initialize(config);
             GreataxeSettings.Initialize(config);
             BearClawsSettings.Initialize(config);
+            BallistaSettings.Initialize(config);
             config.Config.SettingChanged += (sender, args) => SafeCall.Run("settings changed", Coalesce);
         }
 
