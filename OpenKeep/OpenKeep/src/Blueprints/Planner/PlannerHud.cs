@@ -6,7 +6,7 @@ namespace OpenKeep.Blueprints.Planner
 {
     /// <summary>
     /// The Site planner's block of HUD lines ("planner", <see cref="BlueprintHud"/>): the site's name and how much of it
-    /// stands, the ghost piece under the crosshair (with Shift, the size of its house) or a grey hint when there is
+    /// stands, the ghost piece under the crosshair (with Shift, G or both, how many pieces a click takes) or a grey hint when there is
     /// none, the selection with its size and the materials its unbuilt pieces need, and the keys (left out while the
     /// queue panel is shown, which lists its own). The selection line is made again only when the selection or the
     /// site's ZDO changed.
@@ -43,7 +43,9 @@ namespace OpenKeep.Blueprints.Planner
             int piece = PlannerAim.Piece;
             string name = PlannerPieces.Name(site.State.Blueprint, piece);
             string line = BlueprintWords.Format(PlannerSelection.Contains(site, piece) ? PlannerWords.AimingSelected : PlannerWords.Aiming, name);
-            if (PlannerKeys.SameType)
+            if (PlannerKeys.HouseType)
+                line += "  " + BlueprintWords.Format(PlannerWords.HouseTypePreview, PlannerGroup.InHouse(site, piece).Count);
+            else if (PlannerKeys.SameType)
                 line += "  " + BlueprintWords.Format(PlannerWords.SameTypePreview, PlannerGroup.Of(site, piece).Count);
             else if (PlannerKeys.Shift)
                 line += "  " + BlueprintWords.Format(PlannerWords.HousePreview, PlannerHouse.Of(site, piece).Count);

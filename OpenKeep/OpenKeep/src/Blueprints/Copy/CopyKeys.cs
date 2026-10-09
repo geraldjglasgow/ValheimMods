@@ -6,8 +6,8 @@ namespace OpenKeep.Blueprints.Copy
     /// <summary>
     /// The Copy tool's keys, fixed like the Site planner's: Enter saves the selection (asking for a name), Backspace
     /// clears it; a click takes one piece, Shift + click the whole building, G + click the joined pieces
-    /// of one type (held alone, Shift and G preview what a click would take). Nothing fires while text is typed, with Alt held, or while a game window
-    /// takes the input. Enter is also the game's chat key: while it saves, the chat line stays shut (<see cref="ChatEnter"/>).
+    /// of one type, Shift + G + click every piece of that type in the building (held without a click, the keys preview what a
+    /// click would take). Nothing fires while text is typed, with Alt held, or while a game window takes the input. Enter is also the game's chat key: while it saves, the chat line stays shut (<see cref="ChatEnter"/>).
     /// </summary>
     public static class CopyKeys
     {
@@ -20,8 +20,11 @@ namespace OpenKeep.Blueprints.Copy
         /// <summary>G is held (not while text is typed).</summary>
         public static bool SameType => Input.GetKey(SameTypeKey) && !Keys.TextInputActive;
 
-        /// <summary>What a click takes now: G its joined pieces of one type, Shift its building, otherwise the piece (no Ctrl: it lowers the build camera).</summary>
-        public static CopyMode Mode => SameType ? CopyMode.SameType : Shift ? CopyMode.Building : CopyMode.Piece;
+        /// <summary>
+        /// What a click takes now: Shift + G every piece of one type in its building, G its joined pieces of one type, Shift its
+        /// building, otherwise the piece (no Ctrl: it lowers the build camera).
+        /// </summary>
+        public static CopyMode Mode => SameType ? (Shift ? CopyMode.BuildingType : CopyMode.SameType) : Shift ? CopyMode.Building : CopyMode.Piece;
 
         private static bool Alt => Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
 

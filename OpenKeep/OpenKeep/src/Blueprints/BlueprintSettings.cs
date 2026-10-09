@@ -29,7 +29,8 @@ namespace OpenKeep.Blueprints
                 "BepInEx/config/OpenKeep.Blueprints with their folders (F2 renames). Placing one clears the site, shapes the ground to fit (cuts " +
                 "hills, fills dips, digs water areas below sea level, within the game's 8 m), paints dirt under the building and places every " +
                 "piece. Players pay the pieces' materials, must have learned the pieces and cannot build over wards or other buildings; " +
-                "no-cost mode is free. Off: no Blueprints tab.");
+                "no-cost mode is free. The hammer also gets the Blueprint Bench, where players share blueprints with everyone in the world " +
+                "(kept on the server). Off: no Blueprints tab and no bench to build; benches already built stay shut.");
             FreeMaterialsEntry = synced.Bind(Section, "Build Without Materials", false,
                 "When on, blueprints and ground fixes from the Blueprints tab cost nothing: no building materials and no stone for raised ground " +
                 "(and lowered ground gives no stone back). Pieces must still have been learned. Off: players pay every piece's materials, " +

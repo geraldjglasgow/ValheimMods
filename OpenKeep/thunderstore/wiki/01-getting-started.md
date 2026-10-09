@@ -26,7 +26,8 @@ All files are in `BepInEx/config`, written on the first start. Edits apply witho
 | `OpenKeep.Stations.yml` | Item and fuel capacity of smelter-type stations. |
 | `OpenKeep.Signs.yml` | Which containers get a contents sign, and where. |
 
-- After a world loads, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt` and `OpenKeep.Stations.txt` list every prefab name the YAML files need.
+- After a world loads, `OpenKeep.Items.txt` and `OpenKeep.Stations.txt` list item and station prefab names; `OpenKeep.Containers.yml` lists every container.
+- The YAML files can be edited in game with Configuration Manager's File Editor; a save applies within seconds.
 - A YAML file with an error is ignored and the previous rules stay; the log names the bad entry.
 - With a configuration manager, each YAML file has an `Edit ...` entry.
 - **Server** settings come from the server in multiplayer. **Player** settings (keys, display, colours, sort order) are always your own.

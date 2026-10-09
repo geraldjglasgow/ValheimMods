@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0
+
+- Boots moved to the new mod EliteEquipment: section `16. Boots` is gone and boots made with OpenKeep disappear. Install EliteEquipment to wear boots.
+- Blueprints: the Blueprint Bench (5 Wood) shares blueprints with everyone on the server; take theirs into your library.
+- Blueprints: Shift + G + click picks every piece of that type in the building (Copy building, Site planner).
+- `OpenKeep.Containers.yml` lists every container prefab itself, adding those of mods installed later; `OpenKeep.Containers.txt` is gone.
+
 ## 4.2.0
 
 - Boots: each pair is the game's own footwear from its leggings, cut at the ankle, with new icons; Rag Shoes are cloth foot-wraps.

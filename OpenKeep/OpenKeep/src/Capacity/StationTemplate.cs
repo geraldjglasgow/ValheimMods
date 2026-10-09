@@ -10,8 +10,8 @@ namespace OpenKeep.Capacity
 {
     /// <summary>
     /// Fills the freshly written OpenKeep.Stations.yml with every station prefab of the scene and its vanilla caps,
-    /// all commented out, the first time a world loads. Only on the author, and only while the file on disk still
-    /// equals the embedded default, so a file the player has touched is never rewritten. A cap the station does not
+    /// all commented out, the first time a world loads. Only on the author, and only while the file's entries still
+    /// equal the embedded default's, so a file the player has touched is never rewritten. A cap the station does not
     /// use is left out of its line; a station using neither is not listed.
     /// </summary>
     public static class StationTemplate
@@ -28,7 +28,7 @@ namespace OpenKeep.Capacity
             if (!File.Exists(path))
                 return;
             string template = ContainerTemplate.DefaultText(set);
-            if (template == null || Normalize(File.ReadAllText(path)) != Normalize(template))
+            if (template == null || !ContainerTemplate.IsDefault(File.ReadAllText(path), template, StationsKey))
                 return;
             string generated = Generate(template, StationPrefabs.All());
             synced.Yaml.Replace(set, new Dictionary<string, string> { [path] = generated }, saveToDisk: true);

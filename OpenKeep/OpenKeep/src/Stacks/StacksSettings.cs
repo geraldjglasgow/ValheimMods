@@ -35,7 +35,7 @@ namespace OpenKeep.Stacks
             PerItemConfigEntries = synced.Bind(Section, "Per Item Config Entries", false,
                 "Generates one <prefab>.Stack and <prefab>.Weight entry per item into sections 4a and 4b when the item database loads, for Configuration Manager users. 0 or the vanilla value means not set. OpenKeep.Stacks.yml wins where it names the same item.");
             WriteDocumentation = synced.Bind(Section, "Write Documentation", true,
-                "On load, OpenKeep.Items.txt next to the .cfg lists every item with prefab name, display name, type, vanilla and current stack and weight; OpenKeep.Containers.txt lists every container prefab with its vanilla size. The console command 'openkeep write docs' writes them at any time.");
+                "On load, OpenKeep.Items.txt next to the .cfg lists every item with prefab name, display name, type, vanilla and current stack and weight. The console command 'openkeep write docs' writes it at any time. Container prefabs are listed in OpenKeep.Containers.yml.");
         }
     }
 }

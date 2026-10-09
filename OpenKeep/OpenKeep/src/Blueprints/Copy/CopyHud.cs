@@ -7,7 +7,8 @@ namespace OpenKeep.Blueprints.Copy
     /// <summary>
     /// The Copy tool's block of HUD lines ("copy", <see cref="BlueprintHud"/>): the selection (pieces, buildings and the
     /// footprint in the frame it would be saved in, its front toward the camera), the piece under the crosshair with
-    /// what a click takes (the piece, with Shift its building, with G its joined pieces of one type) or a grey hint, and
+    /// what a click takes (the piece, with Shift its building, with G its joined pieces of one type, with Shift + G every piece of that type
+    /// in its building) or a grey hint, and
     /// the keys. The selection line is made again only when the selection or the facing quarter changed.
     /// </summary>
     public static class CopyHud
@@ -73,6 +74,8 @@ namespace OpenKeep.Blueprints.Copy
                     return Language.Localize(drops ? CopyWords.DropPiece : CopyWords.TakePiece);
                 case CopyMode.SameType:
                     return BlueprintWords.Format(drops ? CopyWords.DropGroup : CopyWords.TakeGroup, count);
+                case CopyMode.BuildingType:
+                    return BlueprintWords.Format(drops ? CopyWords.DropType : CopyWords.TakeType, count);
                 default:
                     return BuildingAction(count, drops);
             }

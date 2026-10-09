@@ -21,6 +21,8 @@ namespace OpenKeep.Blueprints.Copy
         public static string DropPiece { get; private set; }
         public static string TakeGroup { get; private set; }
         public static string DropGroup { get; private set; }
+        public static string TakeType { get; private set; }
+        public static string DropType { get; private set; }
         public static string Keys { get; private set; }
         public static string Added { get; private set; }
         public static string Removed { get; private set; }
@@ -39,7 +41,8 @@ namespace OpenKeep.Blueprints.Copy
             AimHint = Language.Add("ok_copy_aim", "Aim at a building to copy it");
             Aiming = Language.Add("ok_copy_aiming", "Aiming at: $1");
             Keys = Language.Add("ok_copy_keys", "<color=yellow>Click</color> one piece  <color=yellow>Shift + click</color> its whole building  " +
-                "<color=yellow>G + click</color> its joined pieces of one type  <color=yellow>Enter</color> save as a blueprint  " +
+                "<color=yellow>G + click</color> its joined pieces of one type  " +
+                "<color=yellow>Shift + G + click</color> every piece of that type in the building  <color=yellow>Enter</color> save as a blueprint  " +
                 "<color=yellow>Backspace</color> clear");
             AddActions();
             AddMessages();
@@ -54,6 +57,8 @@ namespace OpenKeep.Blueprints.Copy
             DropPiece = Language.Add("ok_copy_drop_piece", "click lets this piece go");
             TakeGroup = Language.Add("ok_copy_take_group", "G + click selects its $1 joined pieces of this type");
             DropGroup = Language.Add("ok_copy_drop_group", "G + click lets its $1 joined pieces of this type go");
+            TakeType = Language.Add("ok_copy_take_type", "Shift + G + click selects all $1 pieces of this type in its building");
+            DropType = Language.Add("ok_copy_drop_type", "Shift + G + click lets all $1 pieces of this type in its building go");
         }
 
         private static void AddMessages()

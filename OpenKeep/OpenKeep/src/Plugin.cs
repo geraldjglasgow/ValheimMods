@@ -8,7 +8,6 @@ using HarmonyLib;
 using MapClicks;
 using OpenKeep.Batch;
 using OpenKeep.Blueprints;
-using OpenKeep.Boots;
 using OpenKeep.BuildCamera;
 using OpenKeep.Capacity;
 using OpenKeep.Carts;
@@ -38,7 +37,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "4.2.0";
+        public const string PluginVersion = "5.0.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -87,7 +86,6 @@ namespace OpenKeep
             TrackerModule.Initialize(Synced);
             BlueprintsModule.Initialize(Synced);
             MimirModule.Initialize(Synced);
-            BootsModule.Initialize(Synced);
         }
 
         /// <summary>Links that need every other plugin loaded first.</summary>

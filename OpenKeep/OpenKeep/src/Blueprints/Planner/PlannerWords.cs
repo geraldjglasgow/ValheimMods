@@ -15,6 +15,9 @@ namespace OpenKeep.Blueprints.Planner
         public static string SameTypePreview { get; private set; }
         public static string SameTypeAdded { get; private set; }
         public static string SameTypeRemoved { get; private set; }
+        public static string HouseTypePreview { get; private set; }
+        public static string HouseTypeAdded { get; private set; }
+        public static string HouseTypeRemoved { get; private set; }
         public static string AimHint { get; private set; }
         public static string SelectionLine { get; private set; }
         public static string Supports { get; private set; }
@@ -50,6 +53,7 @@ namespace OpenKeep.Blueprints.Planner
             AimingSelected = Language.Add("ok_planner_aiming_selected", "Aiming at: $1 (selected)");
             HousePreview = Language.Add("ok_planner_house_preview", "- Shift + click selects its house: $1 pieces");
             SameTypePreview = Language.Add("ok_planner_sametype_preview", "- G + click selects the $1 joined pieces of this type");
+            HouseTypePreview = Language.Add("ok_planner_housetype_preview", "- Shift + G + click selects all $1 pieces of this type in its house");
             AimHint = Language.Add("ok_planner_aim", "Aim at a ghost piece of a construction site");
             SelectionLine = Language.Add("ok_planner_selection_line", "Selection: $1 pieces$3 - $2");
             Supports = Language.Add("ok_planner_supports", ", +$1 to hold them up");
@@ -57,6 +61,7 @@ namespace OpenKeep.Blueprints.Planner
             Free = Language.Add("ok_planner_free", "free");
             Keys = Language.Add("ok_planner_keys", "<color=yellow>Click</color> select a piece  <color=yellow>Shift + click</color> its whole house  " +
                 "<color=yellow>G + click</color> its joined pieces of the same type  " +
+                "<color=yellow>Shift + G + click</color> every piece of that type in the house  " +
                 "<color=yellow>Enter</color> queue the selection  <color=yellow>Backspace</color> clear it  <color=yellow>K</color> build queue");
             AddQueue();
             AddPanel();
@@ -74,6 +79,8 @@ namespace OpenKeep.Blueprints.Planner
             HouseRemoved = Language.Add("ok_planner_house_removed", "House let go: $1 pieces");
             SameTypeAdded = Language.Add("ok_planner_sametype_added", "$1 joined pieces of this type selected");
             SameTypeRemoved = Language.Add("ok_planner_sametype_removed", "$1 joined pieces of this type let go");
+            HouseTypeAdded = Language.Add("ok_planner_housetype_added", "$1 pieces of this type in the house selected");
+            HouseTypeRemoved = Language.Add("ok_planner_housetype_removed", "$1 pieces of this type in the house let go");
         }
 
         private static void AddPanel()

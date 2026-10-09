@@ -94,7 +94,7 @@ namespace OpenKeep.Blueprints
         [HarmonyPostfix]
         public static void Postfix(ConnectPanel __instance, bool __state)
         {
-            if (__instance.m_root != null && BlueprintSafe.Call("OpenKeep rename key", () => BlueprintRename.Claimed() != null, false))
+            if (__instance.m_root != null && BlueprintSafe.Call("OpenKeep rename key", () => BlueprintRename.Claimed() != null || Bench.BenchWindow.IsOpen, false))
                 __instance.m_root.gameObject.SetActive(__state);
         }
     }

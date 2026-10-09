@@ -5,7 +5,7 @@ namespace OpenKeep.Capacity
 {
     /// <summary>
     /// When the scene's prefabs exist (ZNetScene.Awake, low priority so other mods' prefabs are registered) the
-    /// container list is generated into a still-default OpenKeep.Containers.yml and the sizes are applied; every
+    /// container list in OpenKeep.Containers.yml is brought up to date and the sizes are applied; every
     /// container that awakes afterwards gets its configured size at once (Container.Awake, after the game created
     /// its inventory from the prefab's width and height). The scene postfix never throws (<see cref="SceneSafe"/>).
     /// </summary>
@@ -18,7 +18,7 @@ namespace OpenKeep.Capacity
             [HarmonyPriority(Priority.Low)]
             private static void Postfix()
             {
-                SceneSafe.Run("the container list", ContainerTemplate.GenerateIfDefault);
+                SceneSafe.Run("the container list", ContainerTemplate.ListPrefabs);
                 SceneSafe.Run("the container sizes", ContainerSizes.ApplyAll);
             }
         }

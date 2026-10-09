@@ -7,7 +7,8 @@ namespace OpenKeep.Blueprints.Planner
     /// <summary>
     /// The Site planner's keys, fixed (the feature keeps few settings): Enter queues the selection, Backspace clears
     /// it, K opens and closes the queue panel; Shift with a click picks a whole house, G with a click the joined pieces of
-    /// the same type (held alone, either previews its pieces in the hover glow). Nothing fires while text is
+    /// the same type, Shift + G every piece of that type in the house (held without a click, the keys preview the pieces in
+    /// the hover glow). Nothing fires while text is
     /// typed or with Alt held, nor while a game window takes the input (the planner's own panel excepted, so K closes
     /// it). Enter is also the game's chat key: while it queues a selection, the chat line stays shut that frame.
     /// </summary>
@@ -25,6 +26,9 @@ namespace OpenKeep.Blueprints.Planner
 
         /// <summary>G is held (not while text is typed): clicks and the hover glow take the joined pieces of the same type.</summary>
         public static bool SameType => Input.GetKey(SameTypeKey) && !Keys.TextInputActive;
+
+        /// <summary>Shift and G are held: clicks and the hover glow take every piece of the same type in the house.</summary>
+        public static bool HouseType => SameType && Shift;
 
         private static bool Alt => Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
 

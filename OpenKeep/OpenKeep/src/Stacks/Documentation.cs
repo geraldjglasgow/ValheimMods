@@ -11,16 +11,15 @@ using UnityEngine;
 namespace OpenKeep.Stacks
 {
     /// <summary>
-    /// OpenKeep.Items.txt and OpenKeep.Containers.txt next to the .cfg: every item with its prefab name, display
-    /// name, type, vanilla and current stack and weight, and every container prefab with its vanilla size; the
-    /// Capacity module's OpenKeep.Stations.txt goes with them. Written on load when "Write Documentation" is on (only
-    /// files whose text changed, <see cref="DocFile"/>) and by the console command "openkeep write docs" (by
-    /// reflection, always). The prefab lists come from the scene's one shared walk (<see cref="ContainerPrefabs"/>).
+    /// OpenKeep.Items.txt next to the .cfg: every item with its prefab name, display name, type, vanilla and current
+    /// stack and weight; the Capacity module's OpenKeep.Stations.txt goes with it. Written on load when "Write
+    /// Documentation" is on (only files whose text changed, <see cref="DocFile"/>) and by the console command
+    /// "openkeep write docs" (by reflection, always). Container prefabs are listed in OpenKeep.Containers.yml itself
+    /// (<see cref="ContainerTemplate"/>).
     /// </summary>
     public static class Documentation
     {
         public const string ItemsFile = "OpenKeep.Items.txt";
-        public const string ContainersFile = "OpenKeep.Containers.txt";
 
         public static void Write() => Write(true);
 
@@ -28,7 +27,6 @@ namespace OpenKeep.Stacks
         {
             string folder = Path.GetDirectoryName(StacksModule.Synced.Config.ConfigFilePath);
             WriteItems(Path.Combine(folder, ItemsFile), force);
-            WriteContainers(Path.Combine(folder, ContainersFile), force);
             StationDocumentation.Write(folder, force);
         }
 
@@ -67,24 +65,6 @@ namespace OpenKeep.Stacks
         }
 
         private static string Number(float value) => value.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
-
-        private static void WriteContainers(string path, bool force)
-        {
-            ZNetScene scene = ZNetScene.instance;
-            if (scene == null)
-                return;
-            StringBuilder text = new StringBuilder();
-            text.AppendLine("prefab\tvanilla width\tvanilla height");
-            int count = 0;
-            foreach (KeyValuePair<string, Container> prefab in ContainerPrefabs.All().OrderBy(p => p.Key, System.StringComparer.OrdinalIgnoreCase))
-            {
-                ContainerSize vanilla = VanillaSizes.Remember(prefab.Key, prefab.Value);
-                text.AppendLine(string.Join("\t", prefab.Key, vanilla.Width.ToString(), vanilla.Height.ToString()));
-                count++;
-            }
-            if (DocFile.Write(path, text.ToString(), force))
-                Plugin.Log.LogInfo($"OpenKeep: wrote {path} ({count} containers).");
-        }
 
         /// <summary>The scene comes after the database in the game scene: write once both exist.</summary>
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]

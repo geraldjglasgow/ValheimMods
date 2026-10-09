@@ -7,7 +7,8 @@ namespace OpenKeep.Blueprints.Copy
     /// <summary>
     /// A click with the Copy entry (<see cref="Sites.SiteHooks.CopyClick"/>, routed by <see cref="BlueprintTool"/>, which
     /// already kept the game from placing anything): the building under the crosshair is selected, or let go when every
-    /// piece of it was (Shift + click); a plain click the piece alone, with G its joined pieces of the same type. The same pieces the hover
+    /// piece of it was (Shift + click); a plain click the piece alone, with G its joined pieces of the same type, with Shift + G
+    /// every piece of that type in its building. The same pieces the hover
     /// showed (<see cref="CopyHover.Take"/>), its building looked up now when the hover had not found it yet.
     /// </summary>
     public static class CopyClicks

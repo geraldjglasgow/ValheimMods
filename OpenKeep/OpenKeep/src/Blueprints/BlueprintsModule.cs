@@ -21,6 +21,7 @@ namespace OpenKeep.Blueprints
             Sites.SitesModule.Initialize(synced);
             Planner.PlannerModule.Initialize(synced);
             Copy.CopyModule.Initialize(synced);
+            Bench.BenchModule.Initialize();
             OpenKeep.BuildCamera.CameraArea.AroundPlayer = () => BlueprintCamera.EntryOut;
             Plugin.Instance.gameObject.AddComponent<BlueprintRunner>();
         }

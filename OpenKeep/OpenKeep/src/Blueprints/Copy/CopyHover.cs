@@ -5,7 +5,7 @@ namespace OpenKeep.Blueprints.Copy
 {
     /// <summary>
     /// What a click would take now (the hover preview): the piece under the crosshair, with Shift its building,
-    /// with G its joined pieces of the same type; and whether the click would let them go instead (every one of them is
+    /// with G its joined pieces of the same type, with Shift + G every piece of that type in its building; and whether the click would let them go instead (every one of them is
     /// selected already). Set again only when the aimed piece, the mode, the building found or the selection changed;
     /// <see cref="Version"/> changes with it so the glow follows.
     /// </summary>
@@ -56,7 +56,9 @@ namespace OpenKeep.Blueprints.Copy
                 return new List<FixPiece> { GroundFixBuilding.Describe(aimed) };
             if (building == null)
                 return None;
-            return mode == CopyMode.SameType ? CopySameType.Of(building, aimed) : building;
+            if (mode == CopyMode.Building)
+                return building;
+            return CopySameType.Of(building, aimed, wholeBuilding: mode == CopyMode.BuildingType);
         }
 
         /// <summary>The hover becomes these pieces; the glow is told only when they or what a click does to them changed.</summary>

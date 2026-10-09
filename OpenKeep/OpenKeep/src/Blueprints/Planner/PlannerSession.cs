@@ -6,7 +6,7 @@ namespace OpenKeep.Blueprints.Planner
     /// <summary>
     /// The Site planner while its entry is selected in the hammer's Blueprints tab with the build menu closed (and blueprints
     /// on): every frame the keys, the ghost piece under the crosshair, the panel's site, the three glows (the hovered
-    /// piece, or with Shift its house; the selection; the queue row under the mouse) and the HUD block. While the entry
+    /// piece, or with Shift, G or both what a click takes; the selection; the queue row under the mouse) and the HUD block. While the entry
     /// is not active the glows and the HUD go; when it is no longer selected at all the panel closes. The selection
     /// stays until it is queued or cleared, its site goes, or the local player changes.
     /// </summary>
@@ -57,10 +57,16 @@ namespace OpenKeep.Blueprints.Planner
             }
             SiteMarker site = PlannerAim.Site;
             int piece = PlannerAim.Piece;
-            bool sameType = PlannerKeys.SameType;
-            bool house = !sameType && PlannerKeys.Shift;
-            PlannerGlow.Show(PlannerGlow.HoverKey, site, (piece, house, sameType), () => sameType ? PlannerGroup.Of(site, piece)
-                : house ? PlannerHouse.Of(site, piece) : new List<int> { piece }, PlannerGlow.Hover);
+            bool sameType = PlannerKeys.SameType, shift = PlannerKeys.Shift;
+            PlannerGlow.Show(PlannerGlow.HoverKey, site, (piece, shift, sameType), () => HoverPieces(site, piece, shift, sameType), PlannerGlow.Hover);
+        }
+
+        /// <summary>What a click would take: the piece, with Shift its house, with G its joined pieces of one type, with both every piece of that type in the house.</summary>
+        private static List<int> HoverPieces(SiteMarker site, int piece, bool shift, bool sameType)
+        {
+            if (sameType)
+                return shift ? PlannerGroup.InHouse(site, piece) : PlannerGroup.Of(site, piece);
+            return shift ? PlannerHouse.Of(site, piece) : new List<int> { piece };
         }
 
         private static void ShowSelection()

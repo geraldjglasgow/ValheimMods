@@ -76,6 +76,19 @@ namespace OpenKeep.Blueprints
             return true;
         }
 
+        /// <summary>Deletes a blueprint, or a folder with everything in it (never the top folder); false with the system's reason.</summary>
+        public static bool Delete(string path, bool folder, out string error)
+        {
+            error = null;
+            if (string.IsNullOrEmpty(path))
+                return false;
+            bool done = folder
+                ? Run(() => Directory.Delete(BlueprintLibrary.FullPath(path), true), out error)
+                : Run(() => File.Delete(BlueprintLibrary.PathOf(path)), out error);
+            BlueprintLibrary.Rescan();
+            return done;
+        }
+
         /// <summary>Why a move cannot be made: the target exists (a change of case only is allowed) or a folder would go into itself.</summary>
         private static string Refusal(string from, string to, bool folder)
         {

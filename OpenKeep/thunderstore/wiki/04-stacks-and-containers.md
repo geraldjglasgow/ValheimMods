@@ -40,7 +40,7 @@ Section `5. Capacity`.
 | `Hover Lines` | 8 | Player | How many lines (0 to 40). |
 | `Hover Fill` | Fraction | Player | `Fraction` (`12 / 24 slots`), `Percent` (`50% full`) or `Off`. |
 
-`OpenKeep.Containers.yml` sets each container's grid. The first time a world loads, it lists every container with its vanilla size, commented out: remove the `#` and change the numbers. A chest never shrinks below a slot that holds an item. The chest panel shows at most 8 columns.
+`OpenKeep.Containers.yml` sets each container's grid. It lists every container with its vanilla size, commented out: remove the `#` and change the numbers. A container from a mod added later is added at the end when a world loads. A chest never shrinks below a slot that holds an item. The chest panel shows at most 8 columns.
 
 ```yaml
 containers:

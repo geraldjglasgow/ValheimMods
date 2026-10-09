@@ -162,12 +162,12 @@ OpenKeep/OpenKeep/src/
     PackPanelKeys.cs        PackPanel's Key Stack for the prefabs in its Key Items, as their starting stack
     MergeIntoChests.cs      InventoryGrid.DropItem prefix (skips a viewed or shared chest)
     TeleportPatch.cs        Inventory.IsTeleportable prefix
-    Documentation.cs        OpenKeep.Items.txt and OpenKeep.Containers.txt (ZNetScene.Awake postfix)
+    Documentation.cs        OpenKeep.Items.txt (ZNetScene.Awake postfix)
     DocFile.cs              a documentation file is written only when its text changed (the console command always)
   Capacity/                 section 5
     CapacityModule.cs, CapacitySettings.cs, HoverFill.cs, ContainersModel.cs, ContainerSize.cs
     ContainerPrefabs.cs, VanillaSizes.cs, ContainerSizes.cs   prefab discovery, vanilla sizes, apply and resize
-    ContainerTemplate.cs    fills a still-default OpenKeep.Containers.yml with every container prefab
+    ContainerTemplate.cs    keeps every container prefab listed (commented) in OpenKeep.Containers.yml
     SceneReady.cs           ZNetScene.Awake and Container.Awake postfixes
     HoverText.cs            Container.GetHoverText postfix
     StationsFile.cs         the OpenKeep.Stations*.yml set (registered from CapacityModule) and its Enabled hook
@@ -397,19 +397,14 @@ OpenKeep/OpenKeep/assets/   embedded UI images: trash.png, the trash can's icon 
                             fixground.png, planner.png, copy.png, ghostsshown.png, ghostshidden.png, folder.png,
                             folderup.png, foldernew.png; the recipe category icons category_<name>.png (64 px white
                             silhouettes for tinting, drawn by ../ValheimAssets/Assets/Icons/RecipeCategories/draw.py);
-                            every PNG here is embedded; assets/boots/native_split.txt: where the game's leggings are
-                            cut into trousers and boots (ValheimAssets Assets/Gear/SeparatedLegArmor/NativeSplit_v001,
-                            coordinates only), embedded as OpenKeep.assets.boots.native_split.txt; the trousers' and
-                            boots' icons pants_<set>.png and boots_<set>.png (64 px, NativeSplit_v001/Icons/v001/64)
-                            and the rag shoes' paint paint_boots_rag.png (256 px, Revisions/Rag_v002), as
-                            OpenKeep.assets.boots.<file>
+                            every PNG here is embedded
 ```
 
 Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configuration), then
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 4.2.0]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.0.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -486,14 +481,27 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
                             cheapest path to the ground over touching boxes; a queued selection brings its supports)
     Planner/                the Site planner entry: PlannerSession, PlannerKeys (+ a Chat.Update prefix so Enter does
                             not open chat), PlannerClicks, PlannerSelection, PlannerAim, PlannerHouse, PlannerPieces,
-                            PlannerBill, PlannerGlow, PlannerHud, PlannerGroup (G: same type), QueueEdits / QueueRpc / QueueCheck (the queue, owner
+                            PlannerBill, PlannerGlow, PlannerHud, PlannerGroup (G: same type; Shift + G: that type in the house), QueueEdits / QueueRpc / QueueCheck (the queue, owner
                             writes), PlannerPanel / PanelModel / PanelStyles (the side panel, WindowInput), PlannerWords
     Copy/                   the Copy building entry: CopyModule, CopySession, CopyKeys, CopyAim, CopyClicks, CopyHover,
                             CopySelection (the chosen real pieces, this machine only), CopyBuildings (a building =
                             GroundFixBuilding.From), CopySameType + CopyGrid + CopyTouch (G: joined pieces of one
-                            prefab), CopyFootprint, CopyHud, CopyGlow + CopyGlowPatches (the game's piece tint through
+                            prefab; Shift + G: every one in the building), CopyFootprint, CopyHud, CopyGlow + CopyGlowPatches (the game's piece tint through
                             MaterialMan, held), CopySave (Enter: name, BlueprintCapture.Of, BlueprintLibrary.SaveNew),
                             ChatEnter (one Chat.Update prefix any tool claims Enter through), CopyWords
+    Bench/                  the Blueprint Bench (2026-10-08, namespace OpenKeep.Blueprints.Bench): BenchModule (+ BenchSession,
+                            the per-frame work), BenchPrefab (OpenKeep_BlueprintBench: a workbench copy without its station,
+                            ZNetScene.Awake prefix), BenchModel (the bundle ok_blueprintbench: drafting desk, glowing plan,
+                            icon), BenchHammer (5 Wood, in the hammer while Blueprints is on), BlueprintBench
+                            (hover, E opens), BenchWindow (open, close, keys), BenchUi + BenchCopies (the window: an own
+                            canvas, copies of the crafting panel's wood, title, list, rows and buttons), BenchPaneView +
+                            BenchRowView + BenchListDrop + BenchDrag (one file explorer side, its rows, drag and drop),
+                            BenchEntry (lines, buttons, IBenchPane) + BenchSelection, LibraryPane / PoolPane (the two
+                            sides' contents and actions), BenchConfirm (the game's yes / no box), BenchPool (the
+                            listing on a player's machine), BenchShare / BenchTake (files out and in, in parts), BenchRpc
+                            (the RPCs, ZNet.Awake), BenchServer + BenchRights + BenchStore (the server: checks, rights, the
+                            pool on its disk), BenchZip + BenchInbox (gzip, parts), BenchOwner + BenchListing, BenchPaths +
+                            BenchLimits, BenchWords
   Mimir/                    section 15, Mímir's Chest (2026-10-06): a chest that never fills, with a search
     MimirModule.cs, MimirSettings.cs   15. Custom Storage Chests / Custom Storage Chests (off by default), the ok_mimir_* words
     MimirPrefab.cs          OpenKeep_MimirChest: a copy of piece_chest, 8 wide, before ZNetScene.Awake (prefix)
@@ -519,33 +527,9 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
     MimirStacksPatches.cs   Inventory.AddItem (both public, the private cell add, the load add), CanAddItem, FindFreeStackSpace
     MimirStacksOut.cs       out of the chest one normal stack at a time: the cut adds, InventoryGrid.DropItem, Humanoid.DropItem
     MimirStacksText.cs      InventoryGrid.UpdateGui postfix: a Mímir slot shows its count alone (5000)
-  Boots/                    section 16, Boots (2026-10-07): the game's 20 leggings split into leggings and boots
-    BootsModule.cs, BootsSettings.cs   16. Boots / Separate Boots (off by default), the ok_boots_* words
-    BootSet.cs, BootSets.cs the 20 sets: key (the split's too), game leggings, OpenKeep_Boots_<Key>, name token; lookups
-    BootsItems.cs           prefix ZNetScene.Awake, ObjectDB.Awake, CopyOtherDB: builds once, adds the boots to the lists
-    NativeSplit.cs          assets/boots/native_split.txt: per set the boots triangles, the paint's ankle row, the trousers' paint edits
-    MeshCut.cs              a game skinned mesh cut in two by triangles, its buffers copied back from the GPU (most are not readable)
-    SkinSplit.cs            a leggings' attach_skin meshes cut into trousers [0] and boots [1]; none headless or when the mesh differs
-    BootsItem.cs            one boots item: a bench copy of its leggings, its skin cut to the boots, name, icon cut from the leggings', a fifth of the stats
-    BootsDrop.cs            the dropped look: the boots mesh unskinned, turned into the body's space at the left foot's bind pose
-    LegsLook.cs             VisEquipment.AttachArmor postfix: a player's split leggings draw their trousers parts while on
-    PaintCut.cs, Paint.cs   the leggings' _LegsTex cut at the ankle row into trousers and boots paint, the edits applied (rags: own boots paint); texels in memory
-    BootsIcons.cs           the workshop's boots and trousers icons (assets/boots), decoded once, none on a dedicated server
-    LegsIcons.cs            the leggings show the trousers icon while the switch is on, their own (remembered) when off
-    BodyPaint.cs            the body's _LegsTex for what is worn: trousers paint (or the game's) with the boots' laid over, made once per mix
-    BootsStats.cs           the 80/20 split of armour, eitr, modifiers (boots: flat +5% movement); set sizes + 1; from remembered originals
-    BootsShare.cs           the weight share, taken inside Stacks' apply (StackValues.ApplyPrefab)
-    BootsRecipes.cs         a boots recipe beside each leggings', the cost split a fifth / the rest
-    BootsSwitch.cs          ObjectDB.Awake/CopyOtherDB postfix and the switch: stats, recipes, look, Stacks, take off
-    WornBoots.cs            the worn pair (the equipped flag), cached for the local player; Wear, TakeOffAll
-    BootsEquipPatches.cs    EquipItem prefix, IsItemEquiped, IsItemTypeEquiped, UnequipItem, UnequipAllItems postfixes
-    BootsStatPatches.cs     armour, resistances, hit durability, set count, weight, modifiers, eitr, breaking, armour difference
-    BootsShow.cs            Humanoid.SetupVisEquipment postfix (ZDO OpenKeep.boots), VisEquipment.UpdateEquipmentVisuals postfix (and the paint)
-    WornBootsLink.cs        the worn pair as an EliteCrafting equipment provider, so inscriptions on worn boots count (soft dependency)
 
 Cross-module uses that are allowed: Store's `Trash` calls `Salvage.SalvageActions` (Trash Uses Salvage), Stacks'
-`Documentation` calls `Capacity.ContainerPrefabs` and `Capacity.VanillaSizes` (OpenKeep.Containers.txt) and
-`Capacity.StationDocumentation` (OpenKeep.Stations.txt), Store's
+`Documentation` calls `Capacity.StationDocumentation` (OpenKeep.Stations.txt), Store's
 Reach's `CraftPullPatch` asks `Batch.BatchAmount.NextCraft` how many crafts to pull materials for, Store's
 `Finder` reads Reach's `Link Seconds` through `ConfigDefinition("1. Reach", "Link Seconds")`, Core's `Command`
 reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection. Store's `ChestBatch`, `Routing`, `Trash`, `Sorting` and
@@ -557,9 +541,7 @@ reaches `Stacks.Documentation.Write` and `Signs.SignsCommand.Run` by reflection.
 and auto feed; `TorchPrefabs` uses `FirePrefabs.Find`. Store's `MainGrid` and `Sorting` and Shared's `ChestAsk` read
 PackPanel's main grid through `Core.PackPanelGrid`, Stacks' `PackPanelKeys` its Key Stack through `Core.PackPanelLink`,
 and Store's `TrashPlate` sits at rank 120 so the column reads armour, trash, weight, world tier. Blueprints'
-`BlueprintCamera` sets Build Camera's `CameraArea.AroundPlayer`. Stacks' `StackValues.ApplyPrefab` takes the
-leggings' weight share from `Boots.BootsShare`, which reads `Stacks.VanillaValues`; `Boots.BootsSwitch` calls
-`StackValues.ApplyAll` when the switch changes. Everything else goes through `Core`.
+`BlueprintCamera` sets Build Camera's `CameraArea.AroundPlayer`. Everything else goes through `Core`.
 
 ## Patched game methods
 
@@ -663,6 +645,9 @@ prefix `Chat.Update()` again (`ChatEnterPatch`: skipped for a frame a Copy save 
 `WearNTear.Highlight()` (the game's hover tint held back while Copy building is selected) and postfix
 `WearNTear.ResetHighlight()` (private: a piece the Copy tool lights gets its glow back);
 WindowInput's own patches (its Harmony id `milkyteam.openkeep.planner`) while the planner's panel is open.
+Blueprint Bench: prefix `ZNetScene.Awake` (the prefab joins the scene's list before the game registers it); postfix
+`ObjectDB.Awake` (`Priority.Last`) and `ZNetScene.Awake` (cost and hammer); postfix `ZNet.Awake` (the bench RPCs);
+WindowInput's patches while its window is open (installed once, by whichever asks first).
 Mímir's Chest: prefix `ZNetScene.Awake` (the prefab joins the scene's list before the game registers it); postfix
 `ObjectDB.Awake` (`Priority.Last`) and `ZNetScene.Awake` (cost and hammer); postfix `Inventory.Changed` (private: a
 Mímir inventory's height, after Core's counting prefix); postfix `InventoryGrid.UpdateGui` (the container grid only:
@@ -673,17 +658,6 @@ normal stack, reported unfinished) and the private load `AddItem(int, int, float
 back after the game's clamp); postfix `CanAddItem(ItemData, int)` and `FindFreeStackSpace`; prefix and postfix
 `InventoryGrid.DropItem` (`Priority.High`: a drag out cut to one normal stack, a swap of a big stack refused); prefix
 `Humanoid.DropItem` (a ground drop cut to one normal stack); postfix `InventoryGrid.UpdateGui` (the count alone).
-
-Boots: prefix `ZNetScene.Awake`, `ObjectDB.Awake` and `ObjectDB.CopyOtherDB` (the boots built once and added to the
-lists before the game indexes them); postfix `ObjectDB.Awake` and `CopyOtherDB` (recipes, stats, look; before Stacks'
-low-priority apply); prefix `Humanoid.EquipItem` (`Priority.High`: boots worn by OpenKeep, the game's method skipped);
-postfix `Humanoid.IsItemEquiped`, `IsItemTypeEquiped`, `UnequipItem`, `UnequipAllItems`; postfix `Player.GetBodyArmor`,
-`Player.ApplyArmorDamageMods`, `Humanoid.GetSetCount` (private), `Humanoid.GetEquipmentWeight`, `Player.UpdateModifiers`
-(private), `Player.GetEquipmentEitrRegenModifier`, `Humanoid.UpdateEquipment` (private: a broken pair comes off);
-prefix `Player.DamageArmorDurability` (the pair is one of the pieces a hit may wear down; the original skipped only while
-a pair is worn) and `Player.TryGetArmorDifference` (boots only); postfix `VisEquipment.AttachArmor` (private: the 20
-leggings' skins on players draw their trousers parts, while on); postfix `Humanoid.SetupVisEquipment` and
-`VisEquipment.UpdateEquipmentVisuals` (private: the worn pair and the body's leg paint on every client).
 
 ## Config sections and keys
 
@@ -721,8 +695,7 @@ true, `Hide In Combat` true, `Hide With Map` true, `Scale` 1 (0.5 to 2), `Font` 
 `Font Size` 16 (10 to 28), `Have Colour` `#FFFFFF`, `Missing Colour` `#FF6A5A`, `Ready Colour` `#FFB65C`, `Background
 Opacity` 0.56, `Position` empty; all unsynced), `14. Blueprints` (`Enabled` false, `Build Without Materials` false,
 `Build As Resources Come In` true; all synced; the keys are fixed), `15. Custom Storage Chests` (`Custom Storage Chests` false, synced; no
-apostrophe in the section name, BepInEx refuses it), `16. Boots` (`Separate Boots` false, synced; PackPanel reads this
-entry by section and key).
+apostrophe in the section name, BepInEx refuses it).
 Keys, defaults and meanings are in each entry's description in the .cfg (bound in the modules' `*Settings.cs`; the
 README only names the features). Every setting of the spec is bound with the spec's section, key,
 default and sync flag; the one addition is `2. Store / Enabled` (synced, true), so every module has a master switch.
@@ -799,8 +772,8 @@ default and sync flag; the one addition is `2. Store / Enabled` (synced, true), 
   `OpenKeep_TrackerEntry` per recipe; a `TrackerHud` component on the HUD's object. The cart's station is a `CraftingStation` component on the cart
   instance, no new prefab. Shared creates none: touches recolour the grid's icons. Signs instantiates the game's
   own `sign` prefab (a normal piece, no new prefab) and adds a `SignOrphanCheck` component to loaded automatic signs.
-- Files next to the cfg: the seven YAML files, `OpenKeep.Items.txt`, `OpenKeep.Containers.txt`,
-  `OpenKeep.Stations.txt`.
+- Files next to the cfg: the seven YAML files, `OpenKeep.Items.txt`, `OpenKeep.Stations.txt`. Container prefab
+  names are listed in `OpenKeep.Containers.yml` itself.
 - Localization keys: `$ok_*` (Reach: `ok_fromstorage`, `ok_reach`, `ok_on`, `ok_off`, `ok_pulled`,
   `ok_nothingtopull`, `ok_nofit`; Store: `ok_store_*`, including `ok_store_moved_to` and `ok_store_toppedup_from` for
   a shared chest's reply and `ok_store_routed_more` for a stack that went on to further containers; Salvage: `ok_salvage*`; Capacity: `ok_slots`, `ok_full`, `ok_and`, `ok_more`; Carts:
@@ -821,16 +794,18 @@ default and sync flag; the one addition is `2. Store / Enabled` (synced, true), 
   `OpenKeep.blueprints.<file>`; words `ok_bp_*` (the tab `ok_bp_tab`), `ok_fix*`, `ok_site_*`, `ok_planner*`, `ok_copy*`;
   this machine's tab memory `BepInEx/config/OpenKeep.BlueprintsTab.txt` (`folder=`, `tab=`, `ghosts=shown|hidden`,
   never synced).
+- Blueprint Bench: prefab `OpenKeep_BlueprintBench` (networked piece, a copy of `piece_workbench`), bundle
+  `ok_blueprintbench` (`assets/bundles/*.windows`, `.linux`; prefab `ok_blueprintbench` with `model`, `glow_plan`,
+  `col_box_desk`, `col_box_board`; sprite `ok_blueprintbench_icon`); routed RPCs
+  `OpenKeep_BenchList`, `OpenKeep_BenchPut`, `OpenKeep_BenchGet`, `OpenKeep_BenchRemove`, `OpenKeep_BenchMove`,
+  `OpenKeep_BenchMakeFolder` (to the server), `OpenKeep_BenchListing`, `OpenKeep_BenchPutDone`, `OpenKeep_BenchFile`, `OpenKeep_BenchSay` (to the asker),
+  `OpenKeep_BenchChanged` (to everybody); the server's pool `BepInEx/config/OpenKeep.SharedBlueprints/<world>/<name>_<character
+  id>/**/*.json` (empty folders kept); the window's canvas `OpenKeep_BlueprintBench` under the game's `IngameGui` (sort
+  650); words `ok_bench*`. No ZDO key.
 - Mímir's Chest: prefab `OpenKeep_MimirChest` (networked piece, a copy of `piece_chest`); container and inventory name
   `$ok_mimir_name`; words `ok_mimir_name`, `ok_mimir_desc`, `ok_mimir_search`, `ok_mimir_search_tip`; bundle
   `ok_mimirchest` (`assets/bundles/ok_mimirchest.windows` / `.linux`, from ValheimAssets `Assets/Props/MimirsChest`);
   GameObject `OpenKeep_MimirSearch` (the field, in the container panel). No ZDO key and no RPC of its own: the inventory is the game's `items`, the lid reads the game's `InUse`.
-- Boots: item prefabs `OpenKeep_Boots_<Key>` (20, networked items, copies of the game's leggings; PackPanel knows boots
-  by this prefix), words `ok_boots_<key>`, `ok_boots_desc`, `ok_boots_off`; recipes `Recipe_OpenKeep_Boots_<Key>`; the
-  split data `OpenKeep.assets.boots.native_split.txt` (no bundle: the meshes, materials and paint are the game's own,
-  cut at runtime), icons `OpenKeep.assets.boots.boots_<set>.png` and `pants_<set>.png`, the rag shoes' paint
-  `OpenKeep.assets.boots.paint_boots_rag.png`; ZDO key `OpenKeep.boots` (int, the worn boots prefab's hash, 0 for none) on the
-  player and its ragdoll, written by the owner when it changes. No RPC.
 - Construction sites: prefab `OpenKeep_Site` (networked post); its ZDO keys `OpenKeep.site_bp`, `site_name`,
   `site_origin`, `site_yaw`, `site_built`, `site_queue`, `site_store`, `site_ground`, `site_groundStone`,
   `site_creator`, `site_creatorName` (all `OpenKeep.`); RPCs on the post `OpenKeep_SiteDeliver` (request id, then the
@@ -1220,9 +1195,11 @@ default and sync flag; the one addition is `2. Store / Enabled` (synced, true), 
   at the file's root) is read anyway with a warning naming the fix; a non-map root key warns as unknown. Generated
   and default files comment entries as `  # entry` - indentation first - so removing the `#` alone also works.
   `ContainerTemplate.Normalize` treats the 1.1.0 style (`#  entry`) as still-default so updating players keep
-  getting the generated list.
-- The container list is generated at `ZNetScene.Awake` on the author while the file still equals the
-  embedded default, through `Yaml.Replace(saveToDisk: true)`. Sizes are set on the prefab's `m_width` /
+  getting the generated list; "still default" compares only the lines after `containers:`, so an older header counts.
+- The container list is kept at `ZNetScene.Awake` on the author, through `Yaml.Replace(saveToDisk: true)` with the
+  set's other files kept: a still-default file gets the whole list in place of its examples; any other file gets a
+  `  # name: { width, height }` line appended for each prefab no file of the set names yet (a key at a line start,
+  commented or not, quoted or not), so a mod installed later shows up and the player's lines are never rewritten. Sizes are set on the prefab's `m_width` /
   `m_height` and on every loaded instance's `Container` and `Inventory` fields, then `Changed()`; shrinking below
   an occupied cell is refused with a warning; widths above 8 warn. The documentation files are written at scene
   load and after every Stacks YAML apply, tab separated.
@@ -2189,8 +2166,9 @@ repaired through the game's own paths, so a dedicated server and the other playe
   it (a piece whose centre lies within a building piece's footprint and between its lowest bottom and highest top,
   and what touches that); at most 4,000 pieces within 90 m, so a huge compound takes several clicks; or lets it go
   when all of it was selected (the user's choice: holding Shift highlights the whole building); G + click
-  the joined pieces of the same prefab; holding Shift or G previews what a click
-  takes; Backspace clears; Enter asks for a name ("Building N", the first free) and saves the selection into the
+  the joined pieces of the same prefab; Shift + G + click every piece of that prefab in its building, joined or not
+  (asked 2026-10-08: "select all of a single object for the whole structure"); holding Shift, G or both previews what a
+  click takes; Backspace clears; Enter asks for a name ("Building N", the first free) and saves the selection into the
   folder the tab shows. Several buildings make one blueprint. The frame faces the camera (yaw snapped to a quarter
   turn), the ground is the most common ground height under the pieces, and relief and water are kept as the console
   save does. Only player-built pieces, never ships, carts or site posts; anyone's pieces may be copied (copying
@@ -2228,12 +2206,71 @@ repaired through the game's own paths, so a dedicated server and the other playe
   costs 1, beside 4, hanging 6; each piece keeps its cheapest path). Checked offline: a house's roof alone brings
   its walls and posts (plain_wood_house 42 roofs + 46 supports, mead_hall 144 + 81), 4-9 ms a house, 118 ms the compound.
 - Site planner G (hold): the hover glow shows the joined pieces of the same type (a wall run, a roof slope); G + click
-  selects or lets them go. Shift + click stays the whole house.
+  selects or lets them go. Shift + click stays the whole house; Shift + G (hold, click) every unbuilt piece of that type
+  in the house, as in Copy building (2026-10-08); it is queued as a selection, not a house.
 - Putting the hammer away with a blueprint pinned places it as a construction site (as the second click): its
   unbuilt pieces stay as a ghost. Another piece picked in the hammer's menu only lets the pin go; death never places.
 - `openkeep blueprint list | save <name> [radius] [all] [replace] | undo` (refused while off); `list` shows every folder
   and blueprint as paths and the folder the tab shows; `save` writes into that folder, keeps a 1 m relief of the
   ground and water where it lay below sea level, and the new file shows in the tab within seconds.
+
+### Blueprint Bench
+
+- Asked for on 2026-10-08: "a construction bench that players can share blueprints at ... a shared pool that is
+  organizable by folder, players select blueprints to share that show up in the table under their name, or they can
+  choose to share all", then "no config, if blueprints is on then the bench is on. make the blueprints bench 1/2 the
+  size of the regular workbench". Built the same day; never run in game. The first build shrank the workbench; the
+  user: "I didn't mean use the workbench and scale it down. I meant build a completely new bench that is 50% shorter
+  than the workbench model. make it look cool too."
+- The model is its own (ValheimAssets `Assets/Props/BlueprintBench`, built 2026-10-08, BRIEF there): a Norse drafting
+  desk about half the workbench in every dimension (1.515 x 0.923 x 0.694 m against 3.051 x 1.847 x 1.331; "half the
+  size" and "50% shorter" read together), beast-head front posts, a slanted board whose parchment carries a longhouse
+  plan in faint blue-white glowing lines (`glow_plan`, the construction ghosts' colour), iron square and dividers, ink pot
+  and quill, a rack of rolled blueprints below; 2,450 + 86 triangles, 256 px point filtered. The prefab is still a copy
+  of the workbench (placement, wear, sounds, hammer tab) as EliteCrafting's Rune Table: its station, children (models,
+  range circle, player-base area), root renderers and colliders go, the bundle's model takes their place in the
+  workbench's body material (`high`, Custom/Piece) wearing the bench's maps; the glow keeps its emissive material;
+  `WearNTear.m_fragmentRoots` is cleared (the workbench's fragments were stripped children, which would throw when the
+  bench breaks). Without the bundle it falls back to the workbench at half size. Hammer, Crafting tab, 5 Wood (my
+  choice), built near a workbench, icon from the bundle. In the hammer only while `14. Blueprints / Enabled` is on
+  (refreshed when it changes); benches already built stay and say blueprints are off. E opens its window behind the
+  game's ward check.
+- The window, second version (the user, 2026-10-08: "the background for the blueprint bench needs to be like the vanilla
+  wood background, or if working with packpanel, it should support packpanel background. it needs to be valheim styled.
+  also you should be allowed to share files as well. have the whole file organizational structure in here"; the first
+  was an IMGUI window). Read as: the game's own panel look, and two file explorers that share and take files and whole
+  folders. Its own canvas under the game's IngameGui (the game's GuiScaler, sort 650: above the inventory, below the
+  text box and pop-ups), 1240 x 720, every part a copy of the crafting panel's: the shadow and wood background (`Bkg`,
+  sprite `woodpanel_crafting_240`), the title in its font with the braid line, the recipe list (frame, clipping,
+  scroll bar) with rows copied from its recipe row, the craft button. A copy loses gamepad hooks, hints, tooltips,
+  localizers and layout groups, and a PackPanel skin copied with it is shed (the image gets white, filled, no
+  material back); PackPanel then skins the copy itself when it is shown, as it does every image with a game wood panel
+  sprite, so the window is vanilla wood without PackPanel and timber with it, with no reference between the mods.
+- Each side is one folder at a time: the way up (".."), its folders, its blueprints, with the folder trail above
+  ("Blueprints / Houses"). Click picks, Ctrl / Shift + click as in Explorer, a click on empty space lets go; double
+  click opens; right click or F2 renames (the game's name box, folder/name moves); Delete deletes or removes, after the
+  game's yes / no box. Drag the picks onto a folder line (or the way up) to move them, or across: library -> pool
+  shares into the pool folder dropped on in the player's own part (any other player's part refuses: "Blueprints are
+  shared into your own part"), pool -> library takes a copy into the library folder dropped on. Buttons: library New
+  folder, Rename, Delete, Share (into the pool folder shown when it is the player's own part, else its top), Share all
+  (every blueprint to its own path); pool Take a copy (into the library folder shown), New folder, Rename, Remove (the
+  sharer or an admin). A shared or taken folder keeps its inner folders. The pool's top lists everyone who shared, the
+  local player first and always (so they can make folders before sharing). Empty folders are kept on the server. Hidden
+  behind the game's boxes; closes beyond 6 m, on death, with the inventory or map, when the bench goes or blueprints go
+  off; Esc closes it unless a box is up. The connection panel stays shut on F2 while it is open.
+- My choices where the request was silent: one pool per world (every bench shows it; a bench is only the door), on the
+  server's disk rather than in a ZDO (blueprints are 15 to 420 KB of JSON that every client near a ZDO would download),
+  under `<name>_<character id>` so an admin can tidy it by hand; a player is their character (id read by the server
+  from the sender's player object, never from the request). Sharing to a path again replaces it there; Share all is a
+  one-time upload, nothing syncs later. A taken copy never overwrites: a name already in the library folder gets " (2)",
+  " (3)". The library gained a delete (`BlueprintFiles.Delete`; the hammer tab has none). Limits (fixed): 4 MB a file,
+  250 blueprints a player, the server unpacks with a ceiling.
+- Transfers: a file is gzipped (compound.json 421 KB -> 36 KB) and sent in 32 KB parts as routed RPCs, 2 parts a frame
+  when sharing, 3 files at a time when taking; parts arrive in order (one sender's routed RPCs keep it), a part out of
+  turn drops the file, 30 s without an answer gives up. One top-left message sums each batch up. The server answers
+  only the asker and announces every change to everybody; an open window lists the pool again at most once a second.
+  The server checks everything again (switch, character, paths valid on Windows and Linux, sizes, counts, rights);
+  without OpenKeep on the server the window says the server does not answer.
 
 ### Mímir's Chest
 
@@ -2284,85 +2321,12 @@ repaired through the game's own paths, so a dedicated server and the other playe
 - Cost: 10 Fine wood, 4 Silver, 10 Iron nails, 6 Leather scraps at a workbench (Mountains: a chest that never fills comes after the reinforced
   chest). `Custom Storage Chests` (off by default, user 2026-10-07) off takes it out of the hammer; chests already built keep working, since they hold items.
 
-### Boots
-
-- Asked for on 2026-10-07: "chatgpt just separated the vanilla valheim armor into boot and legs, we need the boots to be
-  an equipable item that goes on feet ... take the stats and split them between the boots and legs, 80% legs 20%
-  boots. We need recipies for the boots ... packpanel needs a boots slot if this boots feature is enabled." The models
-  are the workshop's split of all 20 player leggings (v005, Lox v007), approved by the user as "good enough".
-- One switch, `16. Boots / Separate Boots`, off by default (it changes every leggings' numbers, recipe and look; a
-  storage mod's players should not find their armour split without asking). The boots items always exist, so boots
-  already made survive the switch going off; off, they cannot be put on and a worn pair comes off.
-- Boots are Legs items (tooltips, armour displays, Epic Loot, EliteCrafting treat them as armour) worn by OpenKeep, never
-  in `m_legItem`: the equipped flag marks the worn pair, `EquipItem` is answered for boots, the game's `UnequipItem`
-  takes them off. A pair flagged in a save stays on at load even while the switch is off, because a client loads its
-  character before the server's value may have arrived; the switch going off takes it off.
-- The split (judgement calls; the user said only "80% legs 20% boots"): armour, armour per level, eitr regen and every
-  equipment modifier the game sums, and weight (through Stacks, which owns weights); movement is the exception on the
-  boots: every pair gives a flat +5% (user, 2026-10-07: "instead of taking away movement speed"), while the leggings keep
-  80% of their own. Resistances and equip effects
-  cannot be split, so they stay on the leggings; durability stays whole on both (a hit wears down one random piece,
-  boots included). The boots join the leggings' set and every piece of that set needs one more, so the full set is
-  what it was before, in one more piece. The recipe is split the same way: a fifth of each material (rounded half up)
-  to the boots, the rest kept; boots always cost at least one material and at least one per upgrade level when the
-  leggings do. Then the boots are priced up (2026-10-08, user: "triple crafting cost for rag, leather, troll, bronze,
-  bear, roots, vilebone, lox. double for padded ... each upgrade needs to get more expensive, also everything should
-  cost at least 2"): those sets' boots craft for three times their share (Padded twice), and no boots material costs
-  less than two, to craft or per upgrade level; the leggings keep their four fifths, so a pair now costs more than the
-  leggings did. "More expensive each upgrade" is the game's own rule (the per-level amount times 1, 2 and 4 for quality
-  2, 3 and 4), so nothing was added for it. Upgrade kits (the game's upgrader resources, `m_upgraderResource`, used only
-  at an upgrader station) are not split: both pieces keep the leggings' own (before 2026-10-08 the copy lost the flag,
-  so the split leggings asked for a kit at the workbench and the boots could not be upgraded at an upgrader).
-- Look, since 2026-10-08 (the user: "chatgpt just fixed all the pants/boots ... remove the old way of the pants boots
-  being split and use these new assets"): the workshop's NativeSplit_v001, the game's own leggings cut in two and
-  nothing added. Each leggings mesh is divided by connected pieces (a piece whose rest height tops out at 0.60 m or
-  below is boots; Lox's one fur shell is cut along its calf edges at 0.43 m); the body paint at an ankle row (49 of 128
-  for most sets, Leather 76 of 256, Troll 84 of 256). The
-  trousers paint of Bronze (v004), Leather and Troll leather (v002) is carried down to the ankle with texels taken from
-  the same paint near the knee, and lies under the boots' paint. No game art ships: OpenKeep embeds only coordinates
-  (`native_split.txt`: the boots triangles per mesh, the row, each edit's target and source texel, checked against the
-  workshop's PNGs on 2026-10-08, every texel equal; rebuilt by the workshop's
-  `NativeSplit_v001/Tools/export_openkeep_split.py`) and cuts at runtime. Most game leggings meshes are not readable, so
-  `MeshCut` copies the index and vertex buffers back from the GPU once per mesh at load (checked in game: the face order
-  and vertex data match the workshop's reference); the paint is read through the GPU the first time a client needs it.
-  Both parts keep the game's materials, bones and bind poses: the leggings' skin is the game's own attach with its
-  meshes swapped for the trousers part (players only; armour stands keep whole leggings), and the boots item carries
-  the same skin cut to the boots. The body's `_LegsTex` is the trousers paint (or the game's, for other leggings or bare
-  legs) with the worn boots' paint laid over it, one texture per mix, kept. The 2026-10-07 looks (v005 to v008 bundles,
-  the coverage cloth shader, the feet masks, Iron v019's borrowed plates, the v008 icons) are gone.
-- Rag shoes (2026-10-08, user: "the ragged boots and icon were just made"): the game's rags have no footwear, so the
-  workshop painted cloth foot-wraps in the rags' colours (Rag_v002: wraps, stitched patches, dark soles; no mesh). Being
-  the workshop's own drawing, not the game's art, it ships as a PNG and is the rag shoes' boots paint (`PaintCut.OwnBoots`).
-- Icons: the workshop's renders of the cut pieces (`NativeSplit_v001/Icons/v001/64`, a trousers and a boots icon per set,
-  embedded PNGs). The boots wear theirs; while the switch is on the leggings wear the trousers icon (`LegsIcons`, their
-  own remembered and given back when off, prefab and live copies). Without an icon the boots fall back to a cut of the
-  leggings' own (`BundlePrefabs.SpriteCrop`); a dedicated server decodes none. Boots names follow the game's leggings names (Iron Greaves: Iron Boots; Trousers of Ask: Boots of Ask; the
-  cloth sets wear shoes).
-
 ## Not yet implemented
 
 - Capacity: the read-only container grid on hover (SPEC section 5's stretch goal); no setting is bound for it.
 - Carts: the cart extension piece parented to a cart (SPEC section 6's stretch goal); no setting is bound for it,
   `OpenKeep.cartOffset` stays reserved.
 ## Test checklist (LocalTesting profile)
-
-Boots (2026-10-07, never run in game yet; with PackPanel for the Feet slot):
-- `Separate Boots = true`: at a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron
-  Boots 4 at the forge (the game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.
-- Craft Iron Boots and wear them (right click): they go into PackPanel's Feet slot, the armour total rises by their
-  part, the body shows iron boots, the greaves end at the ankle. A second player sees the same; relog: still worn.
-- Male and female characters each: the right trousers and boots, no gaps at the ankle walking, running, crouching.
-- Icons: the boots show the workshop's boot icon, the leggings its trousers icon while `Separate Boots` is on and their
-  own when off (inventory, crafting list, tooltip). v008 lining: Iron, Bear, Rag, Leather and Troll leather trousers
-  without boots show no skin or painted boot band on the legs, nothing flickers while turning the camera, no lining
-  shows through the trousers; in Mistlands fog the legs fade like the rest of the body. The log has no
-  `cloth backing cannot be drawn here` line.
-- Wear Root helmet, harnesk and leggings without boots: no set bonus; add Root boots: the set bonus comes back.
-- Get hit until the boots break: they come off with the game's broken message and stay in the Feet slot.
-- Die: the boots go to the grave with the rest; the ragdoll shows what was worn.
-- Drop boots: they lie on the ground as a pair of boots. Without PackPanel: right click wears them, the grid marks them.
-- `Separate Boots = false` while worn: the boots come off, the greaves show the game's look, armour and recipe again,
-  the boots recipes leave the workbench. Dedicated server with the switch on: every client the same; no errors.
 
 Mímir's Chest (2026-10-06, never run in game yet):
 - Hammer, beside the reinforced chest: Mímir's Chest with its icon, 10 Fine wood, 4 Silver, 10 Iron nails, 6 Leather scraps, at a workbench. It stands beside a
@@ -2383,9 +2347,10 @@ Mímir's Chest (2026-10-06, never run in game yet):
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 4.2.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
-   appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` and `OpenKeep.Containers.txt` are written
-   and `OpenKeep.Containers.yml` lists every container prefab commented out (chests, `VikingShip`, `Cart`).
+1. Log shows `Loading [OpenKeep 5.0.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+   appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` is written and `OpenKeep.Containers.yml`
+   lists every container prefab commented out (chests, `VikingShip`, `Cart`); with an edited file, a container of a
+   mod installed afterwards is appended at its end on the next world load, and nothing else in the file changes.
 2. Reach: with wood only in a chest 10 m away, the hammer shows the campfire requirement as `0 + 5` in the
    storage colour and lets you place it; the wood leaves the chest. Craft a club the same way. Park a Karve with
    wood in its hold next to a workbench: the wood counts and is taken from the hold; with `Ships` off it is not;
@@ -2463,8 +2428,8 @@ from a script.
     shows `request ... put`). A sails a ship with wood in its hold; B crafts at a workbench near it: the hold is not
     counted for B, and A's ship is never taken over. Site delivery to a post another machine owns: `Handed over` comes
     with the answer; with that machine gone, `The site did not answer yet` and the materials return within 30 s.
-13. `openkeep reload` reloads the cfg and every YAML file; the Configuration Manager `Edit YAML` entries open the
-    editor for each set.
+13. `openkeep reload` reloads the cfg and every YAML file; a YAML file saved from Configuration Manager's File Editor
+    (shudnal's version) reloads within seconds.
 14. Signs, `7. Signs / Enabled = true`; place a wooden chest: a blank sign appears above it within 2 s, facing the
     chest's front (if it faces backwards, note it: the `Rotation` default changes). It does not crumble, in rain
     or in the open (its wear is switched off). Put wood and stone in: the sign reads `Wood, Stone` within 2 s;
@@ -2597,7 +2562,7 @@ from a script.
     fuel ... ignored`, still running without fuel; `piece_bathtub: { items: 5 }` warns and the tub runs on wood alone.
     `items: 0` or `items: 2000` logs a YAML error and the previous caps stay. Removing the entry brings back 10/20 on
     existing and new smelters. `5. Capacity / Enabled = false` restores every vanilla cap; true restores the file's.
-    "Edit station capacities" opens in the Configuration Manager.
+    A save from Configuration Manager's File Editor applies within seconds.
 45. Station capacity, dedicated server with A and B: the server's log lists the stations on its first world load and
     the clients' files are not rewritten. Server `smelter: { items: 30 }`, A's own file different: A and B both see
     `/30` and add up to 30; the server edits it to 40 and both see `/40` within seconds. Lock Configuration keeps A
@@ -2779,3 +2744,18 @@ from a script.
     cauldron shows only with nothing picked. Close and reopen the inventory: the pick stays; log out and in: all again.
     With PackPanel's wider panel the buttons are larger and still in one row. `Categories = false`: the row goes, the
     list grows back up and shows every recipe; `Search = false` with Categories on: the row moves to the top.
+81. Blueprint Bench, dedicated server, two clients A and B, `14. Blueprints / Enabled = true`: the hammer's Crafting tab
+    has Blueprint Bench (its own icon, 5 Wood) next to a workbench; placed, it is the drafting desk (half a workbench;
+    no bundle warning in the log), its plan glowing faint blue by day and night, solid to walk into, no range circle and
+    no crafting; smashed with a pickaxe it breaks into fragments without an error. Hover: "Blueprint Bench [E] Use"; E
+    opens the window: the game's wood panel (without PackPanel), timber with PackPanel's timber look, title in the
+    game's font, two lists with the game's recipe rows and buttons. A double clicks into a folder (trail follows, ".."
+    goes back), Ctrl + clicks two blueprints, drags them onto the right side: "Sharing: n to go", then "Shared n
+    blueprints"; A "(you)" shows at the pool's top. In A's part: New folder "old", drag a blueprint onto it (moves),
+    right click renames, Delete asks in the game's yes / no box. B at another bench sees A's part; drags A's folder onto
+    a library folder: "Took n blueprints into ...", inner folders kept, the hammer tab shows them; taking again gives
+    "name (2)". B's Rename, Remove and drags in A's part: refused or no green frame; B dropping a library blueprint into
+    A's part: "Blueprints are shared into your own part". Esc with the name box up closes only the box. compound.json
+    shares and takes whole. The server's `BepInEx/config/OpenKeep.SharedBlueprints/<world>/A_<id>/`
+    holds the files. An admin removes B's line. Walk 7 m away or open the inventory: the window closes; Esc closes it.
+    `Enabled = false`: the bench leaves the hammer, a built one says blueprints are off and does not open.
