@@ -1,0 +1,9 @@
+{
+    "name": "EliteBuildingPieces",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteBuildingPieces",
+    "description": "New building pieces: core wood walls (one and two stakewalls wide) and core wood single and double doors. Required on server and all clients.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}
