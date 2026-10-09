@@ -75,7 +75,7 @@ bosses:
     power:
       Reflective:   { reflect: 15 }
       Shielded:     { arrow reduction: 30 }
-      Mending:      { regen: 0.3 }
+      Mending:      { regen: 0.2 }
       Summoner:     { every: 33, count: 2, stars: 2 }
       Elementalist: { elemental bonus: 20 }
       Enraged:      { physical bonus: 20 }

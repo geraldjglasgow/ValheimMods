@@ -1,8 +1,9 @@
 namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
-    /// The static facts about each mutation the specification fixes: the display word that goes in a creature's
-    /// name, and the default star colour. Tunable per-mutation numbers live in the config classes, not here.
+    /// The static facts about each mutation: the display word that goes in a creature's name, the default star colour,
+    /// and whether a rule file that does not name it in `mutations enabled` has it on. Tunable per-mutation numbers
+    /// live in the config classes, not here.
     /// </summary>
     public static class MutationCatalog
     {
@@ -12,8 +13,16 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Mad, Mutation.Bloated, Mutation.Cloaked, Mutation.Splintering, Mutation.Leeching,
             Mutation.Warding, Mutation.Plated, Mutation.Miasmic, Mutation.Devouring, Mutation.Thieving,
             Mutation.Gilded, Mutation.Blinking, Mutation.Relentless, Mutation.Juggernaut, Mutation.Screecher,
-            Mutation.Frostbound, Mutation.Mudbound, Mutation.Corrodent, Mutation.Cloning,
+            Mutation.Frostbound, Mutation.Mudbound, Mutation.Corrodent, Mutation.Cloning, Mutation.Piercing,
+            Mutation.Howling, Mutation.Binding, Mutation.Flamebound,
         };
+
+        /// <summary>
+        /// On unless the rule file says otherwise. Piercing, Howling and Binding start off: a server owner turns them on
+        /// in `mutations enabled`, and a rule file written before they existed leaves them off.
+        /// </summary>
+        public static bool OnByDefault(Mutation mutation) =>
+            mutation != Mutation.Piercing && mutation != Mutation.Howling && mutation != Mutation.Binding;
 
         /// <summary>The mutation a rule-file name (its display word) refers to, or null for an unknown word.</summary>
         public static Mutation? FromName(string name)
@@ -50,6 +59,10 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Mudbound => "Mudbound",
             Mutation.Corrodent => "Corrodent",
             Mutation.Cloning => "Cloning",
+            Mutation.Piercing => "Piercing",
+            Mutation.Howling => "Howling",
+            Mutation.Binding => "Binding",
+            Mutation.Flamebound => "Flamebound",
             _ => "",
         };
 
@@ -75,6 +88,10 @@ namespace EliteCreaturesReborn.Traits
             Mutation.Mudbound => "#5E4A1E",    // Mud - darker and greener than Bloated's brown
             Mutation.Corrodent => "#B7410E",   // Rust - darker and redder than Relentless's orange
             Mutation.Cloning => "#B4A8FF",     // Lavender - paler than Thieving's violet
+            Mutation.Piercing => "#C2185B",    // Crimson - darker and bluer than Screecher's pink
+            Mutation.Howling => "#2E8B8B",     // Teal - darker than Blinking's cyan
+            Mutation.Binding => "#6B8E23",     // Olive - yellower than Miasmic's dark green
+            Mutation.Flamebound => "#FF4500",  // Flame - redder than Relentless's orange, brighter than Corrodent's rust
             _ => "#FFFFFF",
         };
     }

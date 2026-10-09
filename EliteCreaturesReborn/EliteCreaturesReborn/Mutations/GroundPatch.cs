@@ -20,6 +20,9 @@ namespace EliteCreaturesReborn.Mutations
         public float Slow;
         public float Grip;
 
+        /// <summary>Fire: fire a second. Roots: seconds held. 0 for ice and mud.</summary>
+        public float Strength;
+
         /// <summary>True when feet at <paramref name="feet"/> stand inside the patch.</summary>
         public bool Covers(Vector3 feet)
         {

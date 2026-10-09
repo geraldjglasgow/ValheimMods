@@ -4,16 +4,16 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 
 ## Features
 - Difficulty: Easy to Extreme; new biomes start gentle, cleared ones keep hardening.
-- Stars: beyond vanilla's two, up to eight on Extreme, or off for another mod's.
+- Stars: up to eight on Extreme, or off for another mod's.
 - World tiers: each boss's first defeat makes stars and mutations more common.
-- Mutations: one per creature, named and coloured on the nameplate (below).
-- Boss aspects: one per fight, shown at the altar with the boss's stars (below).
+- Mutations: one per creature, named on the nameplate (below).
+- Boss aspects: one per fight (below).
 - Breeding: tamed young inherit mutations and stars.
 - Loot: four drop modes, rules per creature; bosses drop a trophy for every player.
-- Boss damage board: who did how much damage.
-- Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir until found.
-- Death recap: `F10` replays the seconds before each death, hit by hit.
-- Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
+- Boss damage board: who did how much.
+- Boss hints: bosses point the way to the traders and the ancient forge.
+- Death recap: `F10` replays the seconds before each death.
+- Respawning: cleared camps, dungeons and chests can refill (off by default).
 - Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 
 ## Mutations
@@ -26,27 +26,29 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Plated: armoured while healthy, hits harder as the armour breaks.
 - Miasmic: trails poison clouds.
 - Devouring: eats weaker creatures and keeps their health and damage.
-- Thieving: steals an item with each hit; kill it to get them back.
-- Gilded: runs from you; drops triple loot and a purse of coins.
+- Thieving: steals an item each hit; kill it to get them back.
+- Gilded: runs from you; triple loot and a coin purse.
 - Blinking: reappears behind you every 30 seconds.
-- Relentless: chases until you are 150 m away; sneaking does not hide you.
+- Relentless: chases you up to 150 m; sneaking does not hide you.
 - Juggernaut: never staggers or is knocked back.
 - Screecher: a big hit makes it shriek, deafening you and stopping magic.
 - Frostbound: a chilling aura and slippery ice trails; frost heals it.
 - Mudbound: leaves slowing mud where it walks.
 - Corrodent: wears your armour down three times as fast.
 - Cloning: leaves a harmless decoy and fights on unseen.
+- Flamebound: leaves burning ground that sets you on fire.
+- Piercing, Howling and Binding (off by default): hits ignore 15% of your armour; calls nearby creatures to fight you;
+  leaves roots that hold you for a second.
 
 ## Boss aspects
-The altar shows the aspect before you offer and shifts every 15 seconds. About one fight in five has none; every
-aspect pays extra loot.
+Shown at the altar before you offer. About one fight in five has none; every aspect pays extra loot.
 - Reflective: part of each hit comes back to you.
 - Shielded: takes less damage from arrows and bolts.
 - Mending: regenerates during the fight.
 - Summoner: calls creatures of its biome as it loses health.
 - Elementalist / Enraged: more elemental / physical damage.
 - Twin: two bosses sharing one health pool.
-- Tethered: two linked bosses, faster the further apart their health is.
+- Tethered: two linked bosses, faster as their health drifts apart.
 - Phantom: splits into copies and hides among them.
 - Adaptive: resists whichever damage type hits it most.
 - Fixated: marks one player and hits them harder.
@@ -55,18 +57,16 @@ aspect pays extra loot.
 - Colossal: bigger and tougher; its shockwaves knock you down.
 - Brutal: heavy blows throw you 20 m.
 - Nightfall: a storming night with tornadoes that hunt you.
-- Echoing: a ghost of the boss repeats its every move and blow 15 seconds later.
+- Echoing: a ghost repeats its every move 15 seconds later.
 - Portalbound: the Elder and Bonemass throw through portals.
 - Bountiful: two more aspects at once, and all their loot.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put
-`EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `creature stars: false`: their
-configs are not read.
+`EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `creature stars: false`.
 
 ## Configuration
-`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` (each player's own settings) and
-`BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's rules bind every player.
+`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` and `BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's rules bind every player.
 Console: `elite tier`, `damage` and `deaths` for everyone, the other `elite` commands for admins. In detail:
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 

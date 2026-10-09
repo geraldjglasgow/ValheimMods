@@ -4,14 +4,14 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// What one trail kind's patches do to this machine's own player - the only machine that can feel them, and the one
+    /// What ice's or mud's patches do to this machine's own player - the only machine that can feel them, and the one
     /// that decides it, from the patches it has drawn itself. Standing in a patch on the ground, they wear the kind's
     /// status (<see cref="TrailStatus"/>), slowed by the strongest patch under them and, on ice, gripping only as much
     /// as the slipperiest one allows (<see cref="IceFooting"/>). Off the patches, in the air, swimming, riding, sitting
     /// or in ghost mode, they feel nothing new, and the status runs out after the kind's linger. Patches never touch a
     /// creature: only a player's own machine looks at them, and only for that player.
     /// </summary>
-    internal sealed class PatchFooting
+    internal sealed class PatchFooting : IPatchFooting
     {
         private readonly TrailKind _kind;
         private float _grip = 1f;
@@ -26,7 +26,7 @@ namespace EliteCreaturesReborn.Mutations
                 Drop();
                 return;
             }
-            if (Feels(player) && Under(player.transform.position, patches, out float slow, out float grip))
+            if (PatchContact.Feels(player) && Under(player.transform.position, patches, out float slow, out float grip))
             {
                 if (TrailStatus.Hold(player, _kind, slow) != null)
                 {
@@ -53,10 +53,6 @@ namespace EliteCreaturesReborn.Mutations
                 IceFooting.Clear();
             }
         }
-
-        private static bool Feels(Player player) =>
-            player.IsOnGround() && !player.IsSwimming() && !player.IsAttached() && !player.InGhostMode()
-            && !player.IsDebugFlying();
 
         // The strongest slow and the least grip among the patches the feet stand in; false when they stand in none.
         private static bool Under(Vector3 feet, List<GroundPatch> patches, out float slow, out float grip)

@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.22.0
+
+- New mutation Flamebound: leaves burning ground that sets you on fire.
+- New mutations, off by default (`mutations enabled`): Piercing ignores 15% of your armour, Howling calls up to 4 nearby creatures, Binding roots you briefly.
+- Mending heals 0.2% of the boss's current health a second (was 0.3% of its maximum).
+- Mending: existing rule files keep their `regen` value, now a share of current health.
+- Update the server and every client together.
+
 ## 3.21.0
 
 - New boss aspect: Echoing, a white ghost repeating the boss's every move and blow 15 s later; x1.3 loot.

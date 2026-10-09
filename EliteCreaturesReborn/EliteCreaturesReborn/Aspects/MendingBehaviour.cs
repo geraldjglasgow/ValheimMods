@@ -8,9 +8,10 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
-    /// Mending: heals a share of maximum health every second, in combat and out - unlike Leeching's regeneration it never
-    /// pauses when hit, because the aspect is a damage check, not a top-up. The game's own slow regeneration still runs
-    /// underneath. Attached on every machine, heals only while it owns the boss (a heal is an owner-only write), so the
+    /// Mending: heals a share of its current health every second, in combat and out - unlike Leeching's regeneration it
+    /// never pauses when hit, because the aspect is a damage check, not a top-up. A share of current health rather than
+    /// of maximum: the check is hardest at full health and fades as the boss falls, so stars cannot turn the last
+    /// stretch into a stalemate. The game's own slow regeneration still runs underneath. Attached on every machine, heals only while it owns the boss (a heal is an owner-only write), so the
     /// healing moves with ownership. The rate is read live, so a rule-file edit retunes a fight in progress.
     /// </summary>
     public sealed class MendingBehaviour : MonoBehaviour
@@ -39,7 +40,7 @@ namespace EliteCreaturesReborn.Aspects
                 return;
             }
             _timer -= 1f;
-            float amount = _character.GetMaxHealth() * AspectMath.Power(Aspect.Mending, Fields.Regen) / 100f;
+            float amount = _character.GetHealth() * AspectMath.Power(Aspect.Mending, Fields.Regen) / 100f;
             if (amount > 0f && _character.GetHealth() < _character.GetMaxHealth())
             {
                 _character.Heal(amount, showText: false);

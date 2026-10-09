@@ -3,7 +3,8 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// The status effect a player wears while standing in a trail's patch - "Slick ice" or "Deep mud" - made at runtime
+    /// The status effect a player wears while standing in a trail's patch - "Slick ice" or "Deep mud" - or for a moment
+    /// after roots take them ("Rooted": no movement and no jump, <see cref="Root"/>), made at runtime
     /// as a plain game <c>SE_Stats</c> so the HUD shows it as it shows any other: an icon borrowed from the game, its
     /// name, and a tooltip that, besides its own words, lists the movement it takes away. The slow is the effect's own
     /// speed modifier, so the game applies it wherever it applies any status effect's. It has no timer while the player
@@ -37,6 +38,25 @@ namespace EliteCreaturesReborn.Mutations
             }
             return status;
         }
+
+        /// <summary>
+        /// Holds <paramref name="player"/> fast for <paramref name="seconds"/>: the kind's status takes all their speed and
+        /// their jump, and the game removes it when the time is up. Null only when the game refused the effect.
+        /// </summary>
+        public static SE_Stats? Root(Player player, TrailKind kind, float seconds)
+        {
+            SE_Stats? status = player.GetSEMan().AddStatusEffect(Template(kind), resetTime: true) as SE_Stats;
+            if (status != null)
+            {
+                status.m_speedModifier = -1f;
+                status.m_jumpModifier = new Vector3(-1f, -1f, -1f); // the jump's every part cancelled: no jump at all
+                status.m_ttl = seconds;
+            }
+            return status;
+        }
+
+        /// <summary>True while roots hold <paramref name="player"/>.</summary>
+        public static bool Rooted(Player player) => player.GetSEMan().HaveStatusEffect(TrailKind.Roots.StatusHash);
 
         /// <summary>
         /// The player stepped out (or off the ground): the status stays the kind's linger longer, then goes.

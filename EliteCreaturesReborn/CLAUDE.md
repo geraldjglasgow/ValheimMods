@@ -74,7 +74,9 @@ it as before. It lasts until the game closes or the player logs out.
 
 ## Mutations
 
-Nineteen, one per creature by default, each with its own colour and its own name on the nameplate.
+Twenty-three, one per creature by default, each with its own colour and its own name on the nameplate. Piercing,
+Howling and Binding start switched off: set them to `true` under `mutations enabled` (a rule file written before them
+has no line for them and leaves them off; Flamebound, which starts on, rolls in such a file too).
 
 | Mutation | What it does |
 | --- | --- |
@@ -97,6 +99,10 @@ Nineteen, one per creature by default, each with its own colour and its own name
 | Mudbound | Leaves thick mud where it walks: in it you move 40% slower ("Deep mud"), and for a second after stepping out. Each patch lasts 10 seconds |
 | Corrodent | Your armour loses durability three times as fast under its hits, melee, thrown or shot; a line names the piece that corroded and how much is left. Shields wear as usual |
 | Cloning | When it squares up to you it leaves a decoy in its place and fights on unseen. The decoy looks exactly like it but its blows do nothing; the first blow of the unseen one that lands on you shows it, and the decoy vanishes in a puff. Kill the decoy first and it shows itself too; after 20 seconds it shows itself anyway. Once in its life |
+| Piercing | Each of its hits - melee, thrown or shot - ignores 15% of your armour. Block, parry, resistances and armour wear are as usual. Off by default |
+| Howling | When it turns on you it howls (a wolf's howl), and the 4 nearest creatures on its side within 30 m that are hostile to you come for you; again every 45 seconds while it fights you. It calls creatures already there, never new ones, and never a boss. Off by default |
+| Binding | Leaves patches of tangled roots where it walks, smaller and further apart than ice or mud (one every 3 m walked, each reaching 1.2 m), so you can step between them, each lasting 10 seconds. Step into one and the roots burst up and hold you for a second ("Rooted": no walking, running, jumping or rolling; you can still turn, block and strike), then let you go for 3 seconds, long enough to walk clear. Off by default |
+| Flamebound | Leaves burning ground where it walks: glowing embers with flames over them, a patch every 1.5 m, each lasting 10 seconds like Frostbound's ice and Mudbound's mud. Standing in it sets you on fire, the game's own Burning: 6 fire damage a second, more with stars (its star `attack` line); fire resistance, armour and being wet help |
 
 Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
 
@@ -190,6 +196,10 @@ Any mutation can also be switched off entirely with `mutations enabled`, regardl
   powers: its blows do no damage, push, stagger or poison to anything, it drops nothing, leaves no body and is never a
   Devouring creature's prey. A blocked blow from the unseen one shows it, a dodged one does not. A tamed Cloning
   creature never does it
+- **Piercing, Howling, Binding, Flamebound** - no fields: their numbers are fixed (above). Piercing's armour share,
+  Binding's hold and Flamebound's fire are enhanced on a large star (the hold at most 3 seconds); Howling's reach,
+  count and cooldown never are. Binding and Flamebound lay nothing when tamed, swimming or off the ground, and their
+  patches act on players only, never creatures
 
 ## Boss aspects
 
@@ -205,7 +215,7 @@ and aspect when it first appears.
 | none | The fight as the game ships it (about one fight in five) | x1 |
 | Reflective | 15% of each hit you land comes back to you as true damage | x1.4 |
 | Shielded | 30% less damage from arrows and bolts | x1.1 |
-| Mending | Regenerates 0.3% of its health every second, in combat too | x1.3 |
+| Mending | Regenerates 0.2% of its current health every second, in combat too, so less as it falls | x1.3 |
 | Summoner | Calls two 2-star creatures of its own biome each time it loses 33% of its health | x1.5 |
 | Elementalist | 20% more fire, frost, lightning, poison and spirit damage | x1.2 |
 | Enraged | 20% more physical damage | x1.2 |
@@ -257,7 +267,7 @@ the default day) still works when the file names only that; if both are named, `
 - **Reflective** - `reflect` % of each hit you land that comes back to you, as true damage your armour does not
   reduce (burn and poison ticks never reflect)
 - **Shielded** - `arrow reduction` % less damage from bows and crossbows
-- **Mending** - `regen` % of max health healed every second, in combat too
+- **Mending** - `regen` % of its current health healed every second, in combat too
 - **Summoner** - `every` % of max health lost per wave; `count` creatures per wave; `stars` each summoned creature has
 - **Elementalist** - `elemental bonus` % more fire, frost, lightning, poison and spirit damage
 - **Enraged** - `physical bonus` % more blunt, slash and pierce damage

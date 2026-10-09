@@ -130,7 +130,7 @@ namespace EliteCreaturesReborn.Rules
         {
             foreach (Mutation mutation in MutationCatalog.InOrder)
             {
-                set.MutationEnabled[mutation] = true;
+                set.MutationEnabled[mutation] = MutationCatalog.OnByDefault(mutation);
             }
             if (!(YamlRead.Child(root, "mutations enabled") is YamlMappingNode map))
             {

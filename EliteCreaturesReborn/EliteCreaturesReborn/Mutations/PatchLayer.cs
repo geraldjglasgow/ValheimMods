@@ -7,8 +7,9 @@ namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
     /// Every patch of one trail kind this machine has laid, from every creature: the patches themselves (where, how
-    /// wide, until when, how strong), their drawing (<see cref="PatchDecals"/>, one per decal effect in use) and what
-    /// they do to this machine's player (<see cref="PatchFooting"/>), looked at ten times a second. A patch is this
+    /// wide, until when, how strong), their drawing (<see cref="PatchDecals"/>, one per decal effect in use, and for fire
+    /// the flames over them, <see cref="PatchFlames"/>) and what they do to this machine's player (the kind's
+    /// <see cref="IPatchFooting"/>), looked at ten times a second. A patch is this
     /// machine's own from the moment it is laid, so it lasts its full life and fades out normally after the creature
     /// that laid it dies or leaves; and since a player is only ever slowed by patches their own machine has drawn,
     /// nothing slows them unseen. One per kind, made the first time a trail is drawn in a world, and gone with the
@@ -26,7 +27,8 @@ namespace EliteCreaturesReborn.Mutations
         private readonly List<GroundPatch> _patches = new List<GroundPatch>();
         private readonly Dictionary<string, PatchDecals> _decals = new Dictionary<string, PatchDecals>();
         private TrailKind _kind = null!;
-        private PatchFooting _footing = null!;
+        private IPatchFooting _footing = null!;
+        private PatchFlames? _flames;
         private Predicate<GroundPatch> _expired = null!;
         private Action _tick = null!;
         private float _now;
@@ -49,10 +51,17 @@ namespace EliteCreaturesReborn.Mutations
         private void Init(TrailKind kind)
         {
             _kind = kind;
-            _footing = new PatchFooting(kind);
+            _footing = Footing(kind);
             _expired = patch => patch.Until <= _now;
             _tick = Tick;
         }
+
+        private static IPatchFooting Footing(TrailKind kind) => kind.Feel switch
+        {
+            TrailFeel.Burn => new BurnFooting(),
+            TrailFeel.Root => new RootFooting(kind),
+            _ => new PatchFooting(kind),
+        };
 
         /// <summary>
         /// Lays one patch for drop <paramref name="id"/>, dropped at <paramref name="at"/>: on the ground below it,
@@ -68,9 +77,13 @@ namespace EliteCreaturesReborn.Mutations
             _patches.Add(new GroundPatch
             {
                 Point = point, RadiusSq = spec.Radius * spec.Radius, Until = Time.time + remaining, Slow = spec.Slow,
-                Grip = spec.Grip,
+                Grip = spec.Grip, Strength = spec.Strength,
             });
             Decals(spec.Effect).Draw(point, normal, spec.Radius * 2f, remaining, _kind.Colour, id);
+            if (_kind.Feel == TrailFeel.Burn && _flames == null)
+            {
+                _flames = PatchFlames.Build(transform);
+            }
         }
 
         private PatchDecals Decals(string effect)
@@ -92,9 +105,11 @@ namespace EliteCreaturesReborn.Mutations
                 return;
             }
             _nextCheck = Time.time + CheckEvery;
+            float elapsed = Mathf.Min(Time.time - _now, 1f);
             _now = Time.time;
             _patches.RemoveAll(_expired);
             _footing.Tick(Player.m_localPlayer, _patches);
+            _flames?.Tick(_patches, elapsed);
         }
 
         private void OnDestroy() => _footing?.Drop();

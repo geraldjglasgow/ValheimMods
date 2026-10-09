@@ -182,6 +182,21 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Mudbound: a monotonic mud-patch counter, so every patch has a unique id no trim can reissue.</summary>
         public const string MudTrailSeq = "ecr_mud_trail_seq";
 
+        /// <summary>Flamebound: the owner's newest burning-patch drops, packed, so every client lays the same trail.</summary>
+        public const string FireTrail = "ecr_fire_trail";
+
+        /// <summary>Flamebound: a monotonic burning-patch counter, so every patch has a unique id no trim can reissue.</summary>
+        public const string FireTrailSeq = "ecr_fire_trail_seq";
+
+        /// <summary>Binding: the owner's newest root-patch drops, packed, so every client lays the same trail.</summary>
+        public const string BindTrail = "ecr_bind_trail";
+
+        /// <summary>Binding: a monotonic root-patch counter, so every patch has a unique id no trim can reissue.</summary>
+        public const string BindTrailSeq = "ecr_bind_trail_seq";
+
+        /// <summary>Howling: when it last howled (shared-clock ms), written by its owner, so a new owner keeps the cooldown.</summary>
+        public const string HowlAt = "ecr_howl_at";
+
         /// <summary>Cloning: on the creature, its decoy's ZDOID while it hides behind one; absent once it shows again. Written
         /// by its owner; every machine hides or shows the body from it.</summary>
         public const string CloneDecoy = "ecr_clone_decoy";

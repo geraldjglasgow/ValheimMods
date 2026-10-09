@@ -44,6 +44,8 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Mudbound: leaves slowing mud where it walks.
 [*]Corrodent: wears your armour down three times as fast.
 [*]Cloning: leaves a harmless decoy and fights on unseen.
+[*]Flamebound: leaves burning ground that sets you on fire.
+[*]Piercing, Howling and Binding (off by default): hits ignore 15% of your armour; calls nearby creatures to fight you; leaves roots that hold you for a second.
 [/list]
 
 [size=4][b]Boss aspects[/b][/size]

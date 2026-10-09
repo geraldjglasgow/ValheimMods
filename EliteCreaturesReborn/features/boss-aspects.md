@@ -68,9 +68,11 @@ dodged. It is returned to any attacker, a player's tame included. A flash at the
 **Shielded.** Hits from bows and crossbows deal **30%** less. Melee, magic, thrown weapons and every damage-over-time
 tick are untouched. Shielded tells an archer to bring a melee weapon, which is exactly what the altar text is for.
 
-**Mending.** Heals **0.3% of its maximum health every second**, always, in combat or out (a judgement call: over a
-three-minute fight that is roughly half its health again). The game's own slow regeneration still runs underneath.
-Mending is a damage check: the group that cannot out-damage it cannot win.
+**Mending.** Heals **0.2% of its current health every second**, always, in combat or out. The game's own slow
+regeneration still runs underneath. Mending is a damage check: the group that cannot out-damage 0.2% of its full
+health a second cannot win. Until 2026-10-08 it healed 0.3% of its maximum health, which stars multiplied into a
+stalemate (a solo player could not kill a two-star Mending Elder); a share of current health is hardest at full
+health and fades as the boss falls.
 
 **Summoner.** Each time the boss loses **33%** of its maximum health it calls a wave of **2 creatures at 2 stars**
 (count and stars are judgement calls; the request said "strong creatures"). With the default 33 the waves come at
@@ -436,7 +438,7 @@ bosses:
     power:
       Reflective:   { reflect: 15 }
       Shielded:     { arrow reduction: 30 }
-      Mending:      { regen: 0.3 }
+      Mending:      { regen: 0.2 }
       Summoner:     { every: 33, count: 2, stars: 2 }
       Elementalist: { elemental bonus: 20 }
       Enraged:      { physical bonus: 20 }
@@ -490,7 +492,7 @@ Settled on 2026-09-26 with the user:
 
 Judgement calls made while building, each a default in the rule file:
 
-- Reflective returns 15% as true damage; Mending heals 0.3% per second; Summoner calls 2 two-star creatures; the
+- Reflective returns 15% as true damage; Mending heals 0.2% of current health per second; Summoner calls 2 two-star creatures; the
   per-boss summon lists; the loot ranking. None of these numbers came with the request.
 - Aspect percentages multiply the starred boss rather than adding to the star line (section 1).
 - "Arrows" means bows and crossbows.

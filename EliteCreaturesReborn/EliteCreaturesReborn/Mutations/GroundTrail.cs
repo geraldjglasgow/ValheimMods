@@ -5,7 +5,7 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// The wire form of a ground trail (Frostbound's ice, Mudbound's mud), shaped like Miasmic's: the owner keeps the
+    /// The wire form of a ground trail (ice, mud, fire or roots), shaped like Miasmic's: the owner keeps the
     /// creature's most recent patch drops in its ZDO as one small packed blob under the kind's own key, the game
     /// replicates it, and every client reads it back to lay the same patches. Each drop carries a monotonic id, so a
     /// client lays each patch exactly once, and a shared-clock timestamp, so every machine retires it at the same

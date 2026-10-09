@@ -3,10 +3,11 @@
 A mutated creature shows the mutation in its name ("Mad Greydwarf") and its stars in the mutation's colour. Bosses
 never mutate (see [Boss Aspects](wiki:Boss Aspects)).
 
-## The nineteen
+## The twenty-three
 
 Settings are under `mutation power:` in `creature_rules.yml`. **E** marks those that `large star power` boosts on
-creatures with five or more stars.
+creatures with five or more stars. Piercing, Howling and Binding are off by default: set them to `true` under
+`mutations enabled:` (a rule file from before them has no line for them; add it).
 
 | Mutation | Colour | What it does | Settings (defaults) |
 | --- | --- | --- | --- |
@@ -29,8 +30,13 @@ creatures with five or more stars.
 | Mudbound | Mud `#5E4A1E` | Leaves thick mud where it walks: 40% slower in it ("Deep mud") and for a second after. | `trail life` 10 s (0 = no trail), `patch radius` 1.5 m, `patch spacing` 1.5 m, `slow` 40% E |
 | Corrodent | Rust `#B7410E` | Your armour wears three times as fast under its hits, melee or ranged; a line names the piece and what is left. Shields wear as usual. | `durability` 3 E (1 = normal, 0 = no wear) |
 | Cloning | Lavender `#B4A8FF` | Once in its life, fighting you within 12 m, it leaves a harmless decoy in its place and fights on unseen. Its first blow that lands (a block counts, a dodge does not) shows it and the decoy vanishes; killing the decoy, or 20 s, shows it too. | `times` 1 E (0 = off), `range` 12 m, `decoy life` 20 s (0 = no limit), `cooldown` 30 s (between tricks) |
+| Piercing | Crimson `#C2185B` | Each of its hits ignores 15% of your armour (E). Off by default. | none |
+| Howling | Teal `#2E8B8B` | When it turns on you it howls, and the 4 nearest creatures on its side within 30 m come for you; again every 45 s while it fights. Never calls a boss. Off by default. | none |
+| Binding | Olive `#6B8E23` | Leaves root patches 3 m apart, 10 s each: step in one and you are held for 1 s (E, at most 3 s; "Rooted": no walking, jumping or rolling), then free for 3 s. Off by default. | none |
+| Flamebound | Flame `#FF4500` | Leaves burning ground where it walks, 10 s per patch: standing in it sets you on fire, 6 fire a second (E), more with stars. Fire resistance helps. | none |
 
-Ice and mud patches slow players only, never creatures, and always show whatever your effect density.
+Ice, mud, root and fire patches act on players only, never creatures, and always show whatever your effect density
+(the flames over fire thin with it).
 
 Effect and sound settings (`blast effect`, `cloud effect`, `tell sound`, `trail effect` and the like) name game
 prefabs; `elite effects <text>` lists them.
@@ -64,6 +70,8 @@ Tamed creatures keep their stars and mutation. Differences once tamed:
 | Screecher | Deafens no one |
 | Frostbound | Chills no one and lays no ice; frost still heals it |
 | Mudbound | Lays no mud |
+| Howling | Never howls |
+| Binding, Flamebound | Lay no roots or fire |
 | Cloning | Never hides behind a decoy |
 
 Miasmic poison and Bloated blasts still hurt players.

@@ -69,7 +69,7 @@ namespace EliteCreaturesReborn.Rules
             {
                 [Aspect.Reflective] = new Dictionary<string, float> { [Fields.Reflect] = 15f },
                 [Aspect.Shielded] = new Dictionary<string, float> { [Fields.ArrowReduction] = 30f },
-                [Aspect.Mending] = new Dictionary<string, float> { [Fields.Regen] = 0.3f },
+                [Aspect.Mending] = new Dictionary<string, float> { [Fields.Regen] = 0.2f },
                 [Aspect.Summoner] = new Dictionary<string, float>
                     { [Fields.Every] = 33f, [Fields.Count] = 2f, [Fields.Stars] = 2f },
                 [Aspect.Elementalist] = new Dictionary<string, float> { [Fields.ElementalBonus] = 20f },

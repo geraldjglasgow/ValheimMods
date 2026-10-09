@@ -15,7 +15,7 @@ mutation rules and the 3.9.0 changes to Bloated, Cloaked, Warding and Splinterin
 game. So are Devouring's two limits (prey no bigger than 125% of its own health, one meal per star), the eaten
 creatures on its nameplate, its devour tell at a fifth of its old size and Bloated's 1.7-second fuse (2026-09-28),
 and the devour and Warding tells heard with nothing drawn (2026-09-30). Frostbound, Mudbound, Corrodent and Cloning
-(2026-10-04) are built and not yet tested in game.
+(2026-10-04) are built and not yet tested in game. So are Piercing, Howling, Binding and Flamebound (2026-10-08).
 
 **Bosses never take mutations.** They take stars on their own separate table - see `SPEC-scaling.md`.
 
@@ -769,6 +769,57 @@ a harmless decoy, the real one fights on unseen.
   creature's owner. A decoy's blow is emptied where it lands and at the swing.
 - The decoy is non-persistent, so its maker owns it for good; it removes itself the moment the creature no longer
   hides behind it.
+
+## Piercing, Howling, Binding and Flamebound, in full
+
+Added with the user on 2026-10-08 (19-22): "Each hit ignores part of your armor: Piercing", "Calls the creatures around
+him for help: Howling", "Trails that root you for 1 second: Binding", "Creates areas of burning ground behind it, how
+long they stay on the ground from Miasmic, Frostbound, Mudbound: Flamebound". Flamebound starts on; the other three
+start off (`MutationCatalog.OnByDefault`), so a rule file with no line for them leaves them off. None of the four has a
+`mutation power` field: their numbers are constants (one switch per feature). Judgement calls below are mine unless
+quoted.
+
+### Piercing
+- Each hit it lands on a player - melee, thrown or shot - is weighed against the player's body armour less 15%
+  (`Piercing.Ignored` 0.15, times `large star power` on a large star, at most all of it). Block, parry, resistances and
+  the armour's wear are untouched.
+- On the struck player's own machine: `HitPatch` marks the player for the frame, `PiercingPatch` cuts
+  `Player.GetBodyArmor` while the mark lasts. The inventory's armour number never changes.
+
+### Howling
+- On its owner, twice a second: alerted, with a living player as its target, and 45 s since its last howl (`ecr_howl_at`
+  on the shared clock) - it howls. A tamed one never targets a player, so never howls.
+- The howl (`sfx_wolf_haul`) is broadcast over its ZNetView to every client holding it.
+- It calls the 4 nearest monsters (`MonsterAI`) within 30 m that are alive, wild, not bosses, not its enemies and
+  hostile to the player, through the game's own `OnNearProjectileHit` RPC to each one's owner, which alerts it and sets
+  the player as its target unless it already has one; a peaceful world (`PassiveMobs`) stays peaceful. It calls
+  creatures already there, never new ones.
+- A Howling built on 2026-10-03 was removed after a try in game ("way too crazy"); that is why each howl calls at most
+  4 creatures and the howls are 45 s apart.
+
+### Binding
+- A ground trail like ice and mud (`TrailKind.Roots`, `ecr_bind_trail`): a patch of tangled roots every 3 m walked,
+  reaching 1.2 m, so a player can step between them; each lasts 10 s.
+- Stepping into one on the ground, the player is held 1 s (times `large star power`, at most 3 s): the "Rooted" status
+  takes all their speed and their jump, `RootDodgePatch` drops a roll they ask for; they can still turn, block and
+  strike. The Elder's root burst (`fx_gdking_rootspawn`) plays at their feet on their own screen.
+- Then 3 s in which no root takes them (`RootFooting.Free`), enough to walk clear of the patch and past the next.
+
+### Flamebound
+- A ground trail like ice and mud (`TrailKind.Fire`, `ecr_fire_trail`): a patch every 1.5 m walked, reaching 1.5 m,
+  lasting 10 s - the life Frostbound's and Mudbound's patches have ("how long they stay on the ground from Miasmic,
+  Frostbound, Mudbound"; Miasmic's clouds last 6).
+- Drawn as glowing embers (its own patch texture, orange) with flames rising from it: one local copy of the game's
+  `vfx_Burning` fed by hand at the live patches (`PatchFlames`), thinned by the effect density, its light and sound off.
+- A player standing in one on the ground takes a fire hit once a second on their own machine: 6 fire times the
+  creature's star `attack` line, times `large star power` on a large star. The game turns it into its own Burning
+  (flames on the body, damage spread over the next seconds, shortened by Wet); fire resistance and armour cut it. The
+  hit names no attacker.
+
+### All four
+- Binding and Flamebound share the ground-trail mechanism: decided on the owner, laid and drawn on every machine,
+  felt only by each player's own machine from patches it drew, never by creatures; none from a tame, a swimmer, a
+  flyer or a Cloning creature hiding behind its decoy.
 
 ## Console commands
 
@@ -1676,6 +1727,13 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Cloning: decoy swap at 12 m unseen; decoy blows do nothing; the real one's landed blow (or the decoy's death, or
       20 s) shows it and the decoy vanishes; a hand-over or unload mid-trick shows it; never from a tame
 - [ ] Bats are never Mad or Cloaked on a fresh rule file
+- [ ] Piercing, Howling and Binding off on a fresh rule file and in an older file with no line for them; Flamebound on
+- [ ] Piercing: a hit takes noticeably more with heavy armour; the inventory's armour number unchanged
+- [ ] Howling: one howl when it turns on you, heard by every client near it; at most 4 creatures come; 45 s between
+      howls, kept across a hand-over; bosses and tames never come
+- [ ] Binding: root patches 3 m apart for 10 s; stepping in holds you 1 s (no walk, jump or roll), then 3 s free
+- [ ] Flamebound: burning patches for 10 s with flames over them; standing in one burns (game Burning, fire resistance
+      helps); flames thin with effect density; nothing from a tame
 
 ## Visuals
 
@@ -1713,3 +1771,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-30 | The Warding and Reflective reflect tell and Devouring's kill tell are only heard, nothing drawn (LocalEffects `SoundOnly`): the reflect tell pinned to `fx_StaffShield_Hit` at 30% volume, the kill tell `fx_aspect_death`'s sound at full volume. At the user's request: the particles cost frames and the reflect sound was too loud. Built, not tested in game. | - |
 | 2026-10-03 | Juggernaut and Screecher added at the user's request (13-14; colours iron grey, pink); Howling was built too and removed the same evening after a try in game ("way too crazy"); Gilded's curve halved; large creatures (`Traits/BodySize.cs`: capsule radius >= 1 m or length >= 3.5 m, and 300+ base health) never roll or inherit Gilded or Relentless and are never prey; bosses never prey; `max prey health` 125 -> 100; Bloated's fuse 1.5 s. Judgement calls: Juggernaut shows "Unstoppable" where it would have staggered and keeps its own attack recoil; Screecher triggers on one hit taking 15% of its max health from any source, deafens only players it is hostile to (AudioListener at 4%, a faint ringing, a "Ringing ears" status), blocks Elemental and Blood Magic weapons. Built by parallel agents, not tested in game. | - |
 | 2026-10-04 | Frostbound, Mudbound, Corrodent and Cloning added at the user's request (15-18; colours pale ice, mud, rust, lavender), with their "in full" sections; the shipped Bat entry (never Mad or Cloaked). Built by parallel agents, untested in game. | - |
+| 2026-10-08 | Piercing, Howling, Binding and Flamebound added at the user's request (19-22; colours crimson, teal, olive, flame), with their "in full" section; Flamebound on by default, the other three off (`OnByDefault`); no power fields. Built, untested in game. | - |

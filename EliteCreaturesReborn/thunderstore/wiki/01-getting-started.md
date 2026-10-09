@@ -33,7 +33,7 @@ Both are in `BepInEx/config`, created on first run; edits apply without a restar
 ## Pages
 
 - [Difficulty and World Tiers](wiki:Difficulty and World Tiers) - how many stars and mutations, what a star is worth
-- [Mutations and Breeding](wiki:Mutations and Breeding) - the nineteen mutations, tamed creatures, breeding
+- [Mutations and Breeding](wiki:Mutations and Breeding) - the twenty-three mutations, tamed creatures, breeding
 - [Boss Aspects](wiki:Boss Aspects) - the nineteen aspects, boss stars, trophies, the damage board
 - [Loot and Respawning](wiki:Loot and Respawning) - loot modes, drop rules, respawning camps and dungeons
 - [Settings and Commands](wiki:Settings and Commands) - the rule file, display settings, the death recap, console

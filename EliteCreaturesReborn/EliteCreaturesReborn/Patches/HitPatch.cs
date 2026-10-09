@@ -10,10 +10,10 @@ namespace EliteCreaturesReborn.Patches
     /// patch of its own. Before the hit: the Brutal mark (<see cref="BrutalHitPatch"/>), Warding's capture
     /// (<see cref="DamageReactionPatch"/>), the scaling (<see cref="DamageScalingPatch"/>), the devour bite
     /// (<see cref="DevourHitPatch"/>), the death recap's source (<see cref="RecapSourcePatch"/>), the Screecher's health
-    /// (<see cref="ShriekDamagePatch"/>) and the Thieving dodge test (<see cref="ThievingHitPatch"/>). After it: the
-    /// Brutal throw, the reactions (Warding, Leeching, Reflective), the forced devour, the shriek and the steal. The
-    /// parts they all ask for are looked up once a side (<see cref="Struck"/>), the attacker again after the reactions,
-    /// which can kill it. Each step keeps its own guard: the ones that never throw still swallow and report, the rest
+    /// (<see cref="ShriekDamagePatch"/>), the Thieving dodge test (<see cref="ThievingHitPatch"/>) and Piercing's mark
+    /// (<see cref="PiercingPatch"/>). After it: Piercing's mark gone, the Brutal throw, the reactions (Warding, Leeching,
+    /// Reflective), the forced devour, the shriek and the steal. The parts they all ask for are looked up once a side
+    /// (<see cref="Struck"/>), the attacker again after the reactions, which can kill it. Each step keeps its own guard: the ones that never throw still swallow and report, the rest
     /// still report and rethrow, which stops the steps after them exactly as a throwing patch stopped the patches after
     /// it. Frostbound's heal (<see cref="FrostHealPatch"/>, first before and last after) and the Cloning decoy's blow
     /// (<see cref="CloneHitPatch"/>, last before) keep their own patches, because their place is set by priority.
@@ -45,10 +45,12 @@ namespace EliteCreaturesReborn.Patches
             RecapSourcePatch.Note(__instance, hit);
             __state.ScreecherHealth = ShriekDamagePatch.Capture(struck);
             __state.Dodged = Guard.Run("Character.RPC_Damage thieving dodge", static s => ThievingHitPatch.Dodged(s), struck);
+            Guard.Run("Character.RPC_Damage piercing", static s => PiercingPatch.Arm(s), struck);
         }
 
         private static void Postfix(Character __instance, HitData hit, Before __state)
         {
+            PiercingPatch.Disarm();
             BrutalHitPatch.Throw(__instance, hit, __state.Brutal);
             Struck struck = Struck.Of(__instance, hit);
             Guard.Run("Character.RPC_Damage reaction", static (s, warding) => DamageReactionPatch.React(s, warding), struck,

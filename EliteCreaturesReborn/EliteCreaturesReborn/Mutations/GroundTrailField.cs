@@ -9,14 +9,14 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// A ground trail (Frostbound's ice, Mudbound's mud), split the way the multiplayer rule demands, as Miasmic's
-    /// clouds are: the OWNER decides where patches fall - one each time the creature has walked `patch spacing` metres
-    /// on the ground, at its feet, into its replicated ZDO (<see cref="GroundTrail"/>) - and EVERY machine with a
-    /// player lays the same patches from it, each once, into its own <see cref="PatchLayer"/>, where they are drawn and
-    /// felt and outlive the creature. It runs on every machine and gates only the drops on live ownership, so a
-    /// creature handed to a new owner keeps its trail. A creature standing still, swimming, flying, falling, tamed or
-    /// dead lays nothing; a jump further than any stride (a blink, a hand-over) is not walked ground and lays nothing
-    /// either.
+    /// A ground trail (Frostbound's ice, Mudbound's mud, Flamebound's fire, Binding's roots), split the way the
+    /// multiplayer rule demands, as Miasmic's clouds are: the OWNER decides where patches fall - one each time the
+    /// creature has walked `patch spacing` metres on the ground, at its feet, into its replicated ZDO
+    /// (<see cref="GroundTrail"/>) - and EVERY machine with a player lays the same patches from it, each once, into its
+    /// own <see cref="PatchLayer"/>, where they are drawn and felt and outlive the creature. It runs on every machine
+    /// and gates only the drops on live ownership, so a creature handed to a new owner keeps its trail. A creature
+    /// standing still, swimming, flying, falling, tamed or dead lays nothing; a jump further than any stride (a blink, a
+    /// hand-over) is not walked ground and lays nothing either.
     /// </summary>
     public abstract class GroundTrailField : MonoBehaviour
     {
@@ -119,8 +119,8 @@ namespace EliteCreaturesReborn.Mutations
             }
         }
 
-        // Tamed ones lay nothing: a patch slows every player alike, so a tame trail would turn its keepers' own base to
-        // ice or mud. Nor does anything off its feet: in the air, in water, or not a living creature any more. Nor a
+        // Tamed ones lay nothing: a patch acts on every player alike, so a tame trail would turn its keepers' own base
+        // to ice, mud, fire or roots. Nor does anything off its feet: in the air, in water, or not a living creature any more. Nor a
         // Cloning creature hiding behind its decoy: fresh ice under unseen feet would lead straight to it.
         private bool Lays() =>
             _spec.Lays && !_character.IsDead() && !_character.IsTamed() && _character.IsOnGround()

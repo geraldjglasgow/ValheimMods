@@ -53,6 +53,10 @@ mutations enabled:
   Mudbound: true
   Corrodent: true
   Cloning: true
+  Piercing: false
+  Howling: false
+  Binding: false
+  Flamebound: true
 
 defaults:
   # How much stronger a mutation is on a large star (worth 5).

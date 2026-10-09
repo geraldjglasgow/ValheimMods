@@ -8,7 +8,8 @@ namespace EliteCreaturesReborn.Runtime
     /// these owner-only vs everywhere; the multiplayer rule is instead "decide on the owner, draw on every client", so
     /// each behaviour is attached everywhere and self-gates its authoritative writes on live ownership. That makes
     /// ownership changing hands free: the machine that owns the creature at any moment is the one whose gates open.
-    /// The event-shaped mutations (Warding, Plated, Bloated, Splintering, Mad, Juggernaut, Corrodent) need no component - patches handle them.
+    /// The event-shaped mutations (Warding, Plated, Bloated, Splintering, Mad, Juggernaut, Corrodent, Piercing) need no
+    /// component - patches handle them.
     /// </summary>
     public static class BehaviourInstaller
     {
@@ -67,7 +68,24 @@ namespace EliteCreaturesReborn.Runtime
             {
                 controller.gameObject.AddComponent<MudTrail>();
             }
+            InstallNewest(controller, traits);
             InstallCloning(controller, traits);
+        }
+
+        private static void InstallNewest(EliteController controller, CreatureTraits traits)
+        {
+            if (traits.Has(Mutation.Howling))
+            {
+                controller.gameObject.AddComponent<HowlBehaviour>();
+            }
+            if (traits.Has(Mutation.Binding))
+            {
+                controller.gameObject.AddComponent<RootTrail>();
+            }
+            if (traits.Has(Mutation.Flamebound))
+            {
+                controller.gameObject.AddComponent<FireTrail>();
+            }
         }
 
         // A decoy Has no mutation, so this is all it gets: its own leaving, and the frost look its creature wore before

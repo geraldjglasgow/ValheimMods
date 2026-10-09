@@ -23,10 +23,12 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>The <c>creature stars:</c> line. False: creatures roll no stars and keep the game's level.</summary>
         public bool CreatureStars = true;
 
-        /// <summary>Per-mutation on/off switch. An entry missing here (an old file, an unlisted mutation) means enabled.</summary>
+        /// <summary>Per-mutation on/off switch. An entry missing here (an old file, an unlisted mutation) takes the
+        /// mutation's own default (<see cref="MutationCatalog.OnByDefault"/>).</summary>
         public readonly Dictionary<Mutation, bool> MutationEnabled = new Dictionary<Mutation, bool>();
 
-        public bool IsEnabled(Mutation mutation) => !MutationEnabled.TryGetValue(mutation, out bool value) || value;
+        public bool IsEnabled(Mutation mutation) =>
+            MutationEnabled.TryGetValue(mutation, out bool value) ? value : MutationCatalog.OnByDefault(mutation);
 
         /// <summary>The boss table. One for the whole world: boss stars do not follow a biome or the world's pressure.</summary>
         public BossRules Boss = new BossRules();

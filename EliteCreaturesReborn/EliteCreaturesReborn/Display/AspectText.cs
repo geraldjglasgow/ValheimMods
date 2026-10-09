@@ -22,7 +22,7 @@ namespace EliteCreaturesReborn.Display
             Aspect.None => "the fight as the game ships it",
             Aspect.Reflective => $"{N(rules, aspect, Fields.Reflect)}% of each hit you land on it comes back to you",
             Aspect.Shielded => $"takes {N(rules, aspect, Fields.ArrowReduction)}% less damage from arrows and bolts",
-            Aspect.Mending => $"regenerates {N(rules, aspect, Fields.Regen)}% of its health every second",
+            Aspect.Mending => $"regenerates {N(rules, aspect, Fields.Regen)}% of its current health every second",
             Aspect.Summoner => $"calls {N(rules, aspect, Fields.Count)} creatures each time it loses "
                 + $"{N(rules, aspect, Fields.Every)}% of its health",
             Aspect.Elementalist => $"deals {N(rules, aspect, Fields.ElementalBonus)}% more elemental damage",

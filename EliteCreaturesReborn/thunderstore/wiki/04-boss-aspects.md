@@ -18,7 +18,7 @@ Settings are under `bosses:` > `aspects:` > `power:` in `creature_rules.yml`.
 | none | The normal fight. | | x1 |
 | Reflective | Part of each hit you land comes back to you. | `reflect` 15% | x1.4 |
 | Shielded | Takes less damage from arrows and bolts. | `arrow reduction` 30% | x1.1 |
-| Mending | Regenerates health, even in combat. | `regen` 0.3%/s | x1.3 |
+| Mending | Regenerates health, even in combat; less as its health drops. | `regen` 0.2% of current health/s | x1.3 |
 | Summoner | Calls 2-star helpers from its biome as it loses health. | `every` 33% lost, `count` 2, `stars` 2 | x1.5 |
 | Elementalist | More fire, frost, lightning, poison and spirit damage. | `elemental bonus` 20% | x1.2 |
 | Enraged | More physical damage. | `physical bonus` 20% | x1.2 |
