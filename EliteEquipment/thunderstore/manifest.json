@@ -1,0 +1,9 @@
+{
+    "name": "EliteEquipment",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteEquipment",
+    "description": "Boots for every leggings in the game: the game's own leg armour split into trousers and boots worn on the feet, 80/20 stats and cost, a Feet slot with PackPanel. Required on server and all clients.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

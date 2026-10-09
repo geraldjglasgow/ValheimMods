@@ -1,0 +1,136 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>EliteEquipment</AssemblyName>
+    <RootNamespace>EliteEquipment</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Version>0.1.0</Version>
+    <Product>EliteEquipment</Product>
+    <Description>EliteEquipment: more from the game's own equipment, starting with boots split from the leggings</Description>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DebugType>none</DebugType>
+    <NoWarn>$(NoWarn);CS0649;CS0169;CS0414;CS1591</NoWarn>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!-- Paths: override with -p:GamePath=..., -p:BepInExCore=... and -p:ModLibsPath=... if your layout differs -->
+  <PropertyGroup>
+    <GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Valheim</GamePath>
+    <ManagedPath>$(GamePath)\valheim_Data\Managed</ManagedPath>
+    <BepInExCore Condition="'$(BepInExCore)' == '' AND Exists('$(GamePath)\BepInEx\core\BepInEx.dll')">$(GamePath)\BepInEx\core</BepInExCore>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(MSBuildProjectDirectory)\..\lib\BepInEx\core</BepInExCore>
+    <!-- Shared libraries (ValheimModLibs), expected as a sibling checkout -->
+    <ModLibsPath Condition="'$(ModLibsPath)' == ''">$(MSBuildProjectDirectory)\..\..\ValheimModLibs</ModLibsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.46" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SyncedConfig transitively brings Charter, ConfigReload, YamlConfig and YamlDotNet -->
+    <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <!-- ItemCopies: the leggings' split stats and icon written into the prefab and every live copy -->
+    <ProjectReference Include="$(ModLibsPath)\ItemCopies\ItemCopies.csproj" />
+    <!-- PlateColumn: EmbeddedSprite, the boots and trousers icons and the rag shoes' paint decoded from the DLL -->
+    <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
+    <!-- BundlePrefabs: PrefabBench (the boots items are copies of the leggings), SpriteCrop, readable textures -->
+    <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <!-- EliteCraftingLink: the worn pair as an EliteCrafting equipment provider, so inscriptions on boots count -->
+    <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExCore)\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_valheim" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_guiutils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_guiutils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="MagicaClothV2">
+      <HintPath>$(ManagedPath)\MagicaClothV2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedPath)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Boots: where the game's leggings are cut into trousers and boots (ValheimAssets Assets/Gear/SeparatedLegArmor/
+         NativeSplit_v001), coordinates only: EliteEquipment.assets.boots.native_split.txt -->
+    <EmbeddedResource Include="assets\boots\native_split.txt" LogicalName="EliteEquipment.assets.boots.native_split.txt" />
+    <!-- Their icons (NativeSplit_v001/Icons/v001/64): EliteEquipment.assets.boots.boots_<set>.png and pants_<set>.png; and
+         the rag shoes' own paint (Revisions/Rag_v002): EliteEquipment.assets.boots.paint_boots_rag.png -->
+    <EmbeddedResource Include="assets\boots\*.png" LogicalName="EliteEquipment.assets.boots.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->
+
+</Project>
