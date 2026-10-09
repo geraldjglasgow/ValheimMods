@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+- Store page: the trailer (YouTube) at the top.
+
 ## 0.9.0
 
 - Bone Ballista: a small ballista with spine arms that you hold with E and aim yourself; 3 Spines and 25 bone fragments.

@@ -2,6 +2,10 @@
 
 New creatures for Valheim, each with its own fight, and bone weapons made from what they drop.
 
+[![Elite Creatures Pack trailer](https://img.youtube.com/vi/75P_wgenA2w/maxresdefault.jpg)](https://www.youtube.com/watch?v=75P_wgenA2w)
+
+Watch the trailer: https://www.youtube.com/watch?v=75P_wgenA2w
+
 ## Features
 - Creatures: a mimic, a slinger, a mountain giant, a sea boss and new crypt skeletons (below).
 - Bone weapons: every weapon the skeletons carry, made at the workbench (below).
