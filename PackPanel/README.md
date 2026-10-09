@@ -13,7 +13,7 @@ A bigger, better organised inventory, with labelled slots always on screen.
 - With EliteCrafting or Epic Loot, backpacks can be magic; the stat sheet lists their effects.
 
 ## Slots
-- Head, Chest, Legs, Back: your armour and cape, worn; a Feet slot joins them for OpenKeep's boots.
+- Head, Chest, Legs, Back: your armour and cape, worn; a Feet slot joins them for EliteEquipment's boots.
 - Backpack: wear one of the eight backpacks below.
 - Utility: up to five belts, wishbones and the like, all worn at once.
 - Trinket: your worn adrenaline trinket.

@@ -15,7 +15,7 @@ The inventory shows, left to right, the grid, a column of stat boxes and the slo
 | Slot | Where | Takes |
 | --- | --- | --- |
 | Head, Chest, Legs, Back | Gear tab | Helmets, chest armour, leg armour, capes |
-| Feet | Gear tab, under Legs | OpenKeep's boots, while OpenKeep's `Separate Boots` is on |
+| Feet | Gear tab, under Legs | EliteEquipment's boots, while its `Separate Boots` is on |
 | Backpack | Gear tab | PackPanel's backpacks (other mods' backpacks fit but are not worn) |
 | Utility (up to 5) | Gear tab | Belts, the wishbone, the wisplight... |
 | Trinket | Gear tab | Trinkets |

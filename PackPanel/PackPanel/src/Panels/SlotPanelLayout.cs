@@ -7,7 +7,7 @@ namespace PackPanel.Panels
 {
     /// <summary>
     /// Where each slot is drawn in the slot panel, as (column, row) of its cells under the tab buttons. Two tabs
-    /// (<see cref="SlotTabs"/>) of the same size: Gear has Head, Chest, Legs, Feet (OpenKeep's boots, while laid out), Back
+    /// (<see cref="SlotTabs"/>) of the same size: Gear has Head, Chest, Legs, Feet (EliteEquipment's boots, while laid out), Back
     /// and the Backpack in a column on the left, the utilities and under them the Trinket slot in a column on the right
     /// (six rows with five utilities, or on the left with Feet) and the stat sheet between them (<see cref="GearStats"/>);
     /// Consumables has a row each of food, mead and ammo from the top. A kind with no slots leaves its place empty in

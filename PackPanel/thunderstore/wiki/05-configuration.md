@@ -30,7 +30,7 @@ Settings are in `BepInEx/config/milkyteam.packpanel.cfg`. Backpack and tacklebox
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| `Equipment Slots` | true | Head, Chest, Legs and Back slots, and Feet for OpenKeep's boots; off, armour is worn from the grid. |
+| `Equipment Slots` | true | Head, Chest, Legs and Back slots, and Feet for EliteEquipment's boots; off, armour is worn from the grid. |
 | `Utility Slots` | 3 (0-5) | Utility slots, all worn at once; 0 wears one utility, as in the game. |
 | `Trinket Slot` | true | A slot for your worn trinket. |
 | `Backpack Slot` | true | The Backpack slot; PackPanel's backpacks need it. |

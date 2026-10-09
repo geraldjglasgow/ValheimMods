@@ -17,7 +17,7 @@ namespace PackPanel.Core
     /// the look.
     /// The slots are cells of the game's own inventory (<see cref="InventoryLayout"/>); the game's grid draws them and
     /// <see cref="SlotElements"/> moves them into the slot panel. A changed layout setting (or FeastMaster's food count, or
-    /// OpenKeep's Separate Boots) re-lays the inventory out on the next frame.
+    /// EliteEquipment's Separate Boots) re-lays the inventory out on the next frame.
     /// </summary>
     public static class InventoryModule
     {
@@ -38,7 +38,7 @@ namespace PackPanel.Core
             CraftRecipes.Watch();
             WatchLayoutKeys();
             FoodCount.Changed += () => pending |= InventorySettings.FoodSlotsFollowEating.Value && !SlotCounts.Shared;
-            OpenKeepLink.BootsChanged += () => pending |= InventorySettings.EquipmentSlots.Value;   // the Feet slot comes or goes
+            EliteEquipmentLink.BootsChanged += () => pending |= InventorySettings.EquipmentSlots.Value;   // the Feet slot comes or goes
             InventorySettings.BrownStyle.SettingChanged += (sender, args) => PanelSize.Refresh();
             InventorySettings.PanelTheme.SettingChanged += (sender, args) => PanelSize.Refresh();
             InventorySettings.Enabled.SettingChanged += (sender, args) => PanelSize.Refresh();   // the brown look goes with it

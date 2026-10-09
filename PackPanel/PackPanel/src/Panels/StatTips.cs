@@ -54,7 +54,7 @@ namespace PackPanel.Panels
             return tip.Rest(player.GetBodyArmor() - sum, TipText.Signed).ToString();
         }
 
-        /// <summary>Helmet, chest, legs or cape: what the game's body armour and damage modifiers count (OpenKeep's boots are Legs items, so they count too).</summary>
+        /// <summary>Helmet, chest, legs or cape: what the game's body armour and damage modifiers count (EliteEquipment's boots are Legs items, so they count too).</summary>
         public static bool IsArmorPiece(ItemDrop.ItemData item)
         {
             ItemDrop.ItemData.ItemType type = item.m_shared.m_itemType;

@@ -53,18 +53,21 @@ nothing of PackPanel and counts as absent). What they share is data, documented 
 - PlateColumn is a library both merge; its copies cooperate through GameObject names (`PlateColumn_boxes`), as with
   Elite Creatures Reborn's world tier box. PackPanel moves the column into its stats panel; OpenKeep alone keeps its
   trash plate in the column.
-- Boots (2026-10-07; the user's request to OpenKeep: the game's leg armour split into legs and boots, "PackPanel needs a
-  boots slot if this boots feature is enabled"): OpenKeep owns the boots (items, stats, recipes, looks, wearing);
-  PackPanel only gives them a Feet slot. What PackPanel relies on: a boots item's prefab name starts `OpenKeep_Boots_`
-  (its type is `Legs`, so it is told by name, `OpenKeepLink.IsBoots`); OpenKeep's synced `16. Boots / Separate Boots`
-  (bool, default false) read through its config (`OpenKeepLink.SeparateBoots`, entry kept once found, its
-  `SettingChanged` re-lays the inventory, the server's value included); OpenKeep wears a pair in its own
+
+## With EliteEquipment
+
+- Boots (2026-10-07, built in OpenKeep as its section 16; moved with its boots into EliteEquipment on 2026-10-08):
+  EliteEquipment owns the boots (items, stats, recipes, looks, wearing); PackPanel only gives them a Feet slot. What
+  PackPanel relies on (`Core/EliteEquipmentLink`, GUID `milkyteam.eliteequipment` in the chainloader): a boots item's
+  prefab name starts `EE_Boots_` (its type is `Legs`, so it is told by name, `IsBoots`); EliteEquipment's synced
+  `1. Boots / Separate Boots` (bool, default true) read through its config (`SeparateBoots`, entry kept once found, its
+  `SettingChanged` re-lays the inventory, the server's value included); EliteEquipment wears a pair in its own
   `Humanoid.EquipItem` prefix (skipping the game's; the pair worn before comes off through the game's `UnequipItem`),
   answers `IsItemEquiped` for the worn pair (which carries `m_equipped`), never uses `m_legItem`, refuses boots and takes
   a worn pair off while the setting is off, and adds them to armour, set counts, modifiers and durability itself. So
   PackPanel puts boots on and off with the game's `EquipItem`/`UnequipItem` like any piece and needs no boots patch of
-  its own besides `EquipPatches.EquipBoots` (below, "Feet slot"). Without OpenKeep, with one that has no such entry, or
-  with the entry off: no Feet slot.
+  its own besides `EquipPatches.EquipBoots` (below, "Feet slot"). Without EliteEquipment, or with the entry off: no
+  Feet slot.
 
 ## With BiomeLords
 
@@ -188,8 +191,9 @@ PackPanel/PackPanel/src/
     WearGate.cs             when PlayerTick checks the backpack, tacklebox and Auto Equip: on an inventory change or a
                             new layout, else every 0.25 s (retries refused equips)
     HudTick.cs              the one Hud.Update postfix: the Food and Mead bar, Weight Under Minimap, the inventory warm-up
-    OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader); its boots (IsBoots, by prefab
-                            name) and Separate Boots (SeparateBoots, BootsChanged): the Feet slot
+    OpenKeepLink.cs         OpenKeep 1.8.0 or later present (GUID in the chainloader)
+    EliteEquipmentLink.cs   EliteEquipment present; its boots (IsBoots, by prefab name) and Separate Boots
+                            (SeparateBoots, BootsChanged): the Feet slot
     AaaCraftingLink.cs      AAA Crafting present (GUID in the chainloader): the crafting panel keeps its size
     EpicLootLink.cs         Epic Loot's active effects, totals and display texts through its public API, by reflection
     Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names (read
@@ -230,7 +234,7 @@ PackPanel/PackPanel/src/
   Slots/
     SlotKind.cs, Slot.cs, SlotRules.cs   the slot kinds (Head..Back, Utility worn; Backpack, Food, Mead, Ammo, Purse
                             carried; Retired for an old record's quick slots; Key, the ring cells; Tacklebox and
-                            Tackle, the box and its cells; Trinket, worn; Feet, worn, OpenKeep's boots, last), ids like
+                            Tackle, the box and its cells; Trinket, worn; Feet, worn, EliteEquipment's boots, last), ids like
                             food2, which item each takes (a ring cell: its own key, Accepts(Slot, item); boots by name
                             before the item type, so only into Feet)
     SlotCounts.cs           every group's count (Slots Per Group over the group keys)
@@ -424,7 +428,7 @@ All on the local player's own inventory only unless said: prefix `Player.Load` (
 `Inventory.AddItem(ItemData, Vector2i)` (slot rules), `InventoryGrid.DropItem` (`Priority.High`),
 `InventoryGui.OnSelectedItem` (prefix, postfix, finalizer), `Humanoid.EquipItem` (prefix, postfix, finalizer; the
 prefix also wears PackPanel's backpacks, on any character; a second prefix, `Priority.First`, and finalizer for
-OpenKeep's boots, a counter only), `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
+EliteEquipment's boots, a counter only), `Player.CreateTombStone` (prefix, finalizer), `Inventory.StackAll` (prefix, finalizer: the slot cells' unworn items are
 out of the list for the call), `Inventory.MoveAll` (prefix, postfix, finalizer; the key ring has its own prefix and
 postfix), `Container.RPC_TakeAllResponse` (private; prefix and finalizer: which container a granted take all comes
 from, so a grave is known without a search), `Container.Load` (prefix and postfix, graves only, any player's); the key ring: `InventoryGui.OnSelectedItem`
@@ -702,21 +706,22 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   utilities that column is six rows, and both tabs grow to six (`SlotPanelLayout.ContentRows`), the sheet with them.
   Its empty-slot icon (`assets/icon_trinket.png`, a rune pendant) is drawn by
   `artwork/slot-icons-silhouette-concept/draw.py` with the approved set.
-- Feet slot (2026-10-07, for OpenKeep's boots; the contract is under "With OpenKeep"): a worn kind like Trinket
+- Feet slot (2026-10-07, for the boots, then OpenKeep's, EliteEquipment's since 2026-10-08; the contract is under
+  "With EliteEquipment"): a worn kind like Trinket
   (`SlotKind.Feet`, appended last since the record stores ids, `feet1`; an older build reads it as retired and moves
   the boots into the grid). One slot, laid out right after Legs (Head, Chest, Legs, Feet, Back) only while `Equipment
-  Slots` and OpenKeep's `Separate Boots` are both on; the later slots' cells move one on by id, as with the trinket.
+  Slots` and EliteEquipment's `Separate Boots` are both on; the later slots' cells move one on by id, as with the trinket.
   Drawn in the Gear tab's left column under Legs; that column is then six rows and both tabs grow to six, as with five
   utilities (`SlotPanelLayout` now counts both columns). Boots are `Legs` items, so `SlotRules.WornKindOf` tells them by
   prefab name before the type switch: boots only into Feet, leggings never there. Every worn-slot path covers Feet
-  through `IsWorn`/`WornKindOf` and the game's `EquipItem`/`UnequipItem`/`IsItemEquiped`, which OpenKeep answers for
-  boots: `WornPlacement`, `DragSettle`, `GearKeep` (Auto Equip, its kind list), `ChestWear`, Instant Equip, the graves'
-  re-wear and Keep On Death's Gear group. Nothing routes armour on pickup, so nothing routes boots. OpenKeep's prefix
-  takes the old pair off and may run before PackPanel's EquipItem prefix (load order), so `EquipPatches.EquipBoots`
+  through `IsWorn`/`WornKindOf` and the game's `EquipItem`/`UnequipItem`/`IsItemEquiped`, which EliteEquipment answers
+  for boots: `WornPlacement`, `DragSettle`, `GearKeep` (Auto Equip, its kind list), `ChestWear`, Instant Equip, the graves'
+  re-wear and Keep On Death's Gear group. Nothing routes armour on pickup, so nothing routes boots. EliteEquipment's
+  prefix takes the old pair off and may run before PackPanel's EquipItem prefix (load order), so `EquipPatches.EquipBoots`
   (`Priority.First`, a counter only) starts `WornPlacement.BeginEquip` for boots: the old pair stays in Feet and swaps
   with the new one, as leggings do inside the game's EquipItem. The setting flipping (on this peer, or the server's
   value arriving) re-lays the inventory on the next frame: on, an empty Feet slot appears (boots carried stay where they
-  are until put on); off, OpenKeep takes the worn pair off (to a free cell, or in place with a full grid) and the slot
+  are until put on); off, EliteEquipment takes the worn pair off (to a free cell, or in place with a full grid) and the slot
   goes like any removed slot: what it holds moves to a free main cell, else drops with the usual message. The stat
   sheet needs nothing: it counts every `m_equipped` item, and boots as Legs items show by name in the armour and
   resistance breakdowns. Icon `assets/icon_feet.png` (a strapped boot from the side, drawn by the same `draw.py`),
@@ -1206,7 +1211,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.14.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.15.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1565,8 +1570,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     loading screen, no inventory sound plays, the cursor stays hidden, the recipe list and grid look as always, OpenKeep's
     Auto Sort Inventory does not sort at login. Relog: the same. Press Tab the moment the loading screen goes: the
     inventory opens normally. With `Enabled = false`: no warm-up.
-68. Feet slot (OpenKeep with boots): `Separate Boots = false` in OpenKeep: no Feet slot, the log has no "Feet slot"
-    line until the first layout, then `Feet slot follows OpenKeep's Separate Boots (False)`. Turn it on in game: within a
+68. Feet slot (with EliteEquipment): `Separate Boots = false` in EliteEquipment: no Feet slot, the log has no "Feet slot"
+    line until the first layout, then `Feet slot follows EliteEquipment's Separate Boots (False)`. Turn it on in game: within a
     frame the Gear tab's left column reads Head, Chest, Legs, Feet, Back, Backpack (six rows, the sheet one row taller),
     the empty Feet slot shows the boot icon and "Feet". Right click iron boots in the grid: worn, in Feet, armour up;
     right click bronze boots: they are worn in Feet and the iron pair lies where the bronze one was. Drag leggings onto
@@ -1576,5 +1581,5 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     Die (Keep On Death None): the grave's take all puts the pair back in Feet, worn; `Keep On Death = Gear`: the pair
     stays worn through death. Hover Armor on the sheet: the boots by name. Turn `Separate Boots` off with a pair worn and
     room: the pair moves to the grid, the Feet slot goes, the column is five rows again; with the grid full: the pair
-    drops with "No room for 1 items". On a dedicated server whose OpenKeep has it on and a client's local cfg off: the
-    slot appears on joining. Without OpenKeep, or `Equipment Slots = false`: no Feet slot.
+    drops with "No room for 1 items". On a dedicated server whose EliteEquipment has it on and a client's local cfg off: the
+    slot appears on joining. Without EliteEquipment, or `Equipment Slots = false`: no Feet slot.

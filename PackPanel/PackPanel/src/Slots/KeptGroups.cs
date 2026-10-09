@@ -5,7 +5,7 @@ namespace PackPanel.Slots
     /// <summary>
     /// The slot groups Keep On Death can keep (asked on GitHub 2026-10-07: "keep only food and ammunition for example"),
     /// any number at once: the .cfg takes them comma separated ("Food, Ammo"), the configuration manager a checkbox each.
-    /// Gear is the worn armour slots (head, chest, legs and back, and feet while OpenKeep's boots have that slot).
+    /// Gear is the worn armour slots (head, chest, legs and back, and feet while EliteEquipment's boots have that slot).
     /// </summary>
     [Flags]
     public enum KeptGroups

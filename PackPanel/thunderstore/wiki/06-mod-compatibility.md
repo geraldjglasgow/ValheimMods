@@ -9,8 +9,9 @@
 
 | Mod | With PackPanel |
 | --- | --- |
-| OpenKeep 1.8.0+ | Its buttons sit under the grid, and quick stack and sort never touch your slots. An `OpenKeep.Stacks.yml` entry for a key overrides `Key Stack`. With its `Separate Boots` on, its boots are worn in a Feet slot under Legs. |
+| OpenKeep 1.8.0+ | Its buttons sit under the grid, and quick stack and sort never touch your slots. An `OpenKeep.Stacks.yml` entry for a key overrides `Key Stack`. |
 | EliteCrafting 0.5.0+ | The stat sheet lists its inscriptions (0.7.0+), and inscriptions on every worn utility count. Backpacks take its runes and their inscriptions work while worn; its Deep Pockets adds 1 to 4 backpack cells by item level; magic items show their rarity colour behind them; an upgraded pack keeps its inscriptions. See [Backpacks and Tackleboxes](wiki:Backpacks and Tackleboxes). |
+| EliteEquipment | With its `Separate Boots` on, its boots are worn in a Feet slot under Legs. |
 | EarthWright | With a hoe or cultivator in hand, Z is its Snap Hold key, not the Food Key. |
 | AAA Crafting | PackPanel leaves the crafting panel's size to it; `Crafting Panel Width` and `Height` do nothing. |
 | FeastMaster | The Food slots follow its `Food Slots` setting. |

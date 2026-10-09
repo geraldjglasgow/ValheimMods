@@ -11,8 +11,8 @@ namespace PackPanel.Slots
     /// one key. <see cref="Tacklebox"/> holds a tacklebox and <see cref="Tackle"/> is one of that box's cells
     /// (<see cref="PackPanel.Tackle.Tacklebox"/>): each takes bait. New kinds go at the end: the layout record stores slot ids
     /// ("key1", "tacklebox1", "tackle1"), not numbers, so an older record still reads, and an older build reads a newer
-    /// kind's id as retired. <see cref="Feet"/> takes OpenKeep's boots, laid out only while OpenKeep wears them on their
-    /// own (<see cref="Core.OpenKeepLink.SeparateBoots"/>).
+    /// kind's id as retired. <see cref="Feet"/> takes EliteEquipment's boots, laid out only while EliteEquipment wears them on their
+    /// own (<see cref="Core.EliteEquipmentLink.SeparateBoots"/>).
     /// </summary>
     public enum SlotKind
     {

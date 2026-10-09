@@ -87,13 +87,13 @@ namespace PackPanel.Core
                 "How much a player carries before being over-encumbered, before Megingjord and other effects add to it. The game has 300. The world's carry weight modifier still scales it.",
                 acceptableValues: new AcceptableValueRange<float>(50f, 10000f));
             KeepOnDeath = synced.Bind(Section, "Keep On Death", KeptGroups.None,
-                "The slot groups whose items stay with you when you die instead of going into your grave, comma separated (e.g. Food, Ammo): Gear (head, chest, legs, back, and feet with OpenKeep's boots), Backpack, Utility, Trinket, Food, Mead, Ammo, Tacklebox. What you wore of them is worn again when you wake. A backpack's or tacklebox's own cells, the coin purse, the key ring and the grid follow the game's rules. None: everything goes to the grave.");
+                "The slot groups whose items stay with you when you die instead of going into your grave, comma separated (e.g. Food, Ammo): Gear (head, chest, legs, back, and feet with EliteEquipment's boots), Backpack, Utility, Trinket, Food, Mead, Ammo, Tacklebox. What you wore of them is worn again when you wake. A backpack's or tacklebox's own cells, the coin purse, the key ring and the grid follow the game's rules. None: everything goes to the grave.");
         }
 
         private static void BindWorn(SyncedConfiguration synced)
         {
             EquipmentSlots = synced.Bind(SlotsSection, "Equipment Slots", true,
-                "Head, Chest, Legs and Back slots, and a Feet slot for OpenKeep's boots while its Separate Boots is on. Armour you wear sits in its slot; drop a piece on its slot to wear it, drag it out to take it off.");
+                "Head, Chest, Legs and Back slots, and a Feet slot for EliteEquipment's boots while its Separate Boots is on. Armour you wear sits in its slot; drop a piece on its slot to wear it, drag it out to take it off.");
             AutoEquip = synced.Bind(SlotsSection, "Auto Equip", true,
                 "Gear in the Gear tab is worn. Right click armour, a cape, a backpack, a utility or a trinket in your inventory or in an open chest to wear it; a piece that lands in its slot any other way is put on too. Right click a worn piece to take it off: it moves into a free cell of your inventory; with none it comes off in its slot and stays off until you put it on again; it is never dropped. A piece that breaks while worn stays in its slot and goes back on once repaired. Off: a piece that lands in its slot unworn stays unworn, and a right click in a chest does nothing.");
             InstantEquip = synced.Bind(SlotsSection, "Instant Equip", false,

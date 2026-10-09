@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.15.0
+
+- The Feet slot is for EliteEquipment's boots (with its `Separate Boots` on); OpenKeep no longer has boots.
+
 ## 0.14.0
 
 - `Keep On Death` replaces `Keep Slots On Death`: pick which slot groups stay with you (e.g. `Food, Ammo`); set it again.
