@@ -80,6 +80,8 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   from `../ValheimAssets/Tools/Sfx`; which prefab to copy: `../ValheimAssets/Reference/Codex/sfx/catalogue.md`.
 - `TexturePixels.Read(texture[, region])` reads a game texture's pixels back through the GPU (game textures are not CPU
   readable): for a mod's own runtime copies of game art, never shipped. Null on a dedicated server.
+  `TexturePixels.ReadLinear(texture)` reads a data texture (normal, metal or gloss map) as stored, without the sRGB
+  conversion colours get (EliteEquipment's iron mail, 2026-10-08).
 - `SpriteCrop.Fit(source, part, name)` cuts a new square item icon out of part of a game icon at runtime (fractions of
   the icon, y from the bottom): the sprite's region read back through the GPU, the opaque pixels of the part found and
   fitted into a square with a margin. No game art goes into a bundle this way (OpenKeep's boots: the bottom of each

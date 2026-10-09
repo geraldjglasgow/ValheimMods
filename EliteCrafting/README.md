@@ -38,7 +38,7 @@ A gem's stat depends on the item (weapon, staff, or armour and shield); a full i
 - Tyr's: physical damage, summon damage, less stagger.
 - Freyja's, Odin's, Skadi's: health, eitr or stamina.
 - Heimdall's: critical hits, cast speed, avoiding hits.
-- Sleipnir's: movement speed, armour and shields only.
+- Sleipnir's: movement speed, armour, shields and backpacks only.
 
 ## Inscriptions
 A prefix is the item's core power; a suffix is everything else.

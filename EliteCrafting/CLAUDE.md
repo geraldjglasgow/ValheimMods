@@ -223,10 +223,12 @@ writes), `Essences` (5, inscription ids each, used with the Ascension Rune only,
 essence, 2-14 by biome, bosses 20-80; `IsBoss`: never taken by Sacrifice all), `TableSupply` (an `Stones/IRuneSupply`: the table's store only, stones and the essence
 pool; carried stones are used by the normal click). `EssenceItem` (`ECF_Essence`, a Wisp copy, stack 100, every peer: ZNetScene.Awake
 prefix, ObjectDB.Awake/CopyOtherDB postfixes), `TableShelf` (a tablet per held rune on the middle five of seven anchors) and
-`TableBowl` (the bowl's glowing fill, a step per 50 essence, full at 500) and `TableGems` (one of each held gem kind
+`TableBowl` (the bowl's glowing fill, a step per 50 essence, full at 500, with `BowlChamber`'s cloud chamber looping on it:
+bundle `ecf_tablefx`, effect `ecf_essence_chamber`, scaled and thinned to the surface) and `TableGems` (one of each held gem kind
 lying on the top's right-hand end) draw from the ZDO on every client, and `TableCast` plays a use: the owner's
-payment counts it (`ecf_rt_cast` int, `ecf_rt_cast_stone` id), every client near plays the workbench craft sound and
-`TableVortex` (bundle `ecf_tablefx`, effect `ecf_rune_vortex`, recoloured by `Display/ParticleRetint`) on the slab.
+payment counts it (`ecf_rt_cast` int, `ecf_rt_cast_stone` id), every client near plays `TableSound` (the game's `sfx_levelup`, made positional) and
+`TableVortex` (bundle `ecf_tablefx`, effect `ecf_rune_vortex`, recoloured by `Display/ParticleRetint`, its climb halved, its foot
+brighter and its near fade off in code) on the slab's middle glyph.
 Stones takes a supply instead of a carried stack (`StoneJob.Create(player, rune, target, supply)`, `StonesHeld`,
 `Again`), and `RollContext.Favoured` limits the draw to the chosen essence's inscriptions (`AffixDraw`), a guaranteed one. The window (`Table/Window/`) is a
 pruned copy of the game's crafting panel shown inside it over its covered parts, so it slides with the inventory
@@ -244,9 +246,9 @@ With Ascension and an essence, `EssencePills` (the roller's `AffixDraw.Candidate
 `IsGemActiveAt`; `ItemStateBuilder.SetSockets(0-3)`, `SetGem(socket, gem)` (the next empty socket or a filled one,
 replaced); `Affixes/GemRoll.cs` has the codec. `EffectRolls` = the active inscriptions then the active gems, so every
 effect, cap and total reads gems with no other change. `GemCatalog.BaseOf(ClassInfo)` → `SocketBase` (Weapon: groups
-onehand/twohand/ranged; Staff: magic; Armour: armour and offhand without `light`; None) and `StatFor(gem, base)`, the
+onehand/twohand/ranged; Staff: magic; Armour: armour, offhand without `light`, and PackPanel's `backpack` class in the jewel group; None) and `StatFor(gem, base)`, the
 roster in code. `GemRolls.Roll` (a tier the item level unlocked, whole ladder, weakest when none). `SocketDrops.Add` in
-`GearFactory` (Magic 80/15/4/1, Rare 60/25/11/4). Verbs `SocketVerb` (chisel) and `GemVerb` (`Stones/SocketVerbs.cs`);
+`GearFactory` (Magic 80/15/4/1, Rare 60/25/11/4); `SocketDrops.Cut` is the chisel's count, the same weights without the 0 (Normal as Magic). Verbs `SocketVerb` (chisel) and `GemVerb` (`Stones/SocketVerbs.cs`);
 a gem into a full item returns `StoneResult.ChooseSocket()` (`NeedsSocket`), and the click opens `GemChooser` (one
 yes/no popup per filled socket; Yes re-evaluates `StoneJob.AtSocket(player, socket)`; `Confirm(job, socket)` asks once
 for a socket already picked). `SocketSwitch` (`Gems and sockets`): `LootPlanner` skips the chisel and gems while it is
@@ -404,8 +406,8 @@ changing equipped items.
 
 ### Gems and sockets
 
-Weapons, staves, armour and shields can hold up to three sockets (shown as "Empty socket" lines and as small circles
-in the icon's lower right corner). The **Dvergr Chisel** cuts one into such an item that has none. (Dropped gear
+Weapons, staves, armour, shields and PackPanel's backpacks can hold up to three sockets (shown as "Empty socket" lines and as small circles
+in the icon's lower right corner). The **Dvergr Chisel** cuts one to three into such an item that has none (Normal and Magic one 75%, two 20%, three 5%; Rare 62.5%, 27.5%, 10%). (Dropped gear
 would carry sockets too, but no magic gear drops for now.) A **gem** clicked onto an item fills its next
 empty socket with a stat that depends on the item; its tier is rolled for the item right then (the item's level decides
 the best tier it can reach). With every socket full you pick which gem to replace; the old one is lost. Gems are
@@ -414,7 +416,7 @@ Cleansing and the other runes leave sockets and gems alone; a sealed item takes 
 tab does the same from a window: pick the gear, the chisel or a gem you carry, and (to replace a gem) the socket.
 `Gems and sockets` in `2 - Runes` turns the feature off.
 
-| Gem | Weapons | Staves | Armour and shields |
+| Gem | Weapons | Staves | Armour, shields and backpacks |
 |---|---|---|---|
 | Surtr's | added fire damage | elemental damage | fire resistance |
 | Ymir's | added frost damage | lower eitr cost | frost resistance |
@@ -447,7 +449,7 @@ panel's place, with three tabs:
   every trophy of that kind; Sacrifice all trophies (under the trophy's name) every trophy the table takes except
   the bosses'. A boss trophy gives the most (Eikthyr 20, the Elder 30, Bonemass 40, Moder 50, Yagluth 60, the Queen 70, the Fader 80) and is taken only by a press on it, so one meant
   for the Forsaken altar is never lost by accident.
-- **Sockets** (while `Gems and sockets` is on): pick a weapon, staff, armour piece or shield, then the Dvergr Chisel or
+- **Sockets** (while `Gems and sockets` is on): pick a weapon, staff, armour piece, shield or backpack, then the Dvergr Chisel or
   a gem you carry, and to replace a gem the socket it sits in; Cut socket or Set gem uses one from your inventory
   (see Gems and sockets above).
 

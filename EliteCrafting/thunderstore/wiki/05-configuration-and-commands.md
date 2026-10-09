@@ -24,7 +24,7 @@ Synced settings come from the server; player settings are your own.
 | Modify equipped items | On | Synced | Runes work on equipped items |
 | Runes from salvage | On | Synced | With OpenKeep, salvaging Magic gear may give back an Awakening Rune, Rare gear an Ascension Rune (25%) |
 | Rune Table | On | Synced | The [Rune Table](wiki:Rune Table) is in the hammer and can be used. Off: it leaves the hammer and built tables cannot be used; what they hold is kept |
-| Gems and sockets | On | Synced | Sockets on weapons, staves, armour and shields; the Dvergr Chisel and the eleven gems drop and work; the Rune Table's Sockets tab. Off: none of it; gems already set keep their stats |
+| Gems and sockets | On | Synced | Sockets on weapons, staves, armour, shields and backpacks; the Dvergr Chisel and the eleven gems drop and work; the Rune Table's Sockets tab. Off: none of it; gems already set keep their stats |
 | Confirm destructive runes | HoldShift | Player | How Cleansing and the Sealed Rune ask first: `HoldShift`, `Dialog` (yes/no) or `Off` |
 | Rune drops | On | Synced | Creatures, bosses and chests drop runes |
 | Read-only commands for everyone | On | Synced | Off: `help`, `inspect`, `stats`, `list`, `inscription`, `classes` and `ecr` become admin-only |

@@ -57,7 +57,10 @@ namespace EliteCrafting.Tables.Window
         {
             if (!StoneCatalog.IsGem(choice.Stone))
             {
-                return Words.Localize(state.Sockets > 0 ? "$ecf_table_chisel_has" : "$ecf_table_chisel_cuts");
+                return state.Sockets > 0
+                    ? Words.Localize("$ecf_table_chisel_has")
+                    : Words.Localize("$ecf_table_chisel_cuts", SocketDrops.CutChance(state.RarityId, 1),
+                        SocketDrops.CutChance(state.RarityId, 2), SocketDrops.CutChance(state.RarityId, 3));
             }
             string? stat = GemCatalog.StatFor(choice.Stone, GemCatalog.BaseOf(info));
             AffixDef? def = stat != null ? ActiveRules.Current.Affixes.Get(stat) : null;

@@ -93,8 +93,8 @@ namespace EliteCrafting.Config
                 "and applies runes to your gear; with the Ascension Rune an essence chooses the kind of inscription it adds, for " +
                 "10 essence per item level. Off: the hammer no longer offers it and tables already built cannot be used; what they hold is kept."));
             GemsAndSockets = Synced(config.Bind(Stones, "Gems and sockets", true,
-                "Weapons, staves, armour and shields can hold up to three sockets: the Dvergr Chisel cuts one into an item " +
-                "that has none, and the eleven very rare gems fill them, each giving a stat that depends on the item. Off: the " +
+                "Weapons, staves, armour, shields and backpacks can hold up to three sockets: the Dvergr Chisel cuts one to three into an " +
+                "item that has none, and the eleven very rare gems fill them, each giving a stat that depends on the item. Off: the " +
                 "chisel and the gems neither drop nor work; gems already socketed keep their stats."));
         }
 

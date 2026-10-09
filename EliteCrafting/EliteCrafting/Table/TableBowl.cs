@@ -12,8 +12,9 @@ namespace EliteCrafting.Tables
     /// the workshop model's (floor 1.09 m, rim 1.195 m above the table's foot). Its material is a whitened copy of the
     /// table's own glyph glow (the <c>glow</c> part), whose shader the game is known to draw: <c>Shader.Find("Standard")</c>
     /// returns null in the game, which left the first disc unshaded and magenta. Every client draws it from the table's
-    /// replicated ZDO, looked at when its data changes, at most twice a second; nothing is sent. Switched off on a
-    /// dedicated server and on a model without the bowl.
+    /// replicated ZDO, looked at when its data changes, at most twice a second; nothing is sent. The essence's cloud
+    /// chamber (<see cref="BowlChamber"/>) rides on the surface. Switched off on a dedicated server and on a model
+    /// without the bowl.
     /// </summary>
     internal sealed class TableBowl : MonoBehaviour
     {
@@ -33,6 +34,7 @@ namespace EliteCrafting.Tables
         private Transform? _bowl;
         private Material? _glow;
         private GameObject? _surface;
+        private GameObject? _chamber;
         private uint _seen = uint.MaxValue;
         private int _level = -1;
         private float _next;
@@ -72,16 +74,27 @@ namespace EliteCrafting.Tables
             if (level > 0 && _surface == null)
             {
                 _surface = BowlSurface.Make(_bowl!, _glow!);
+                _chamber = BowlChamber.Make(_bowl!);
             }
             if (_surface == null)
             {
                 return;
             }
-            _surface.SetActive(level > 0);
             float height = Mathf.Lerp(Lowest, Highest, (Mathf.Max(level, 1) - 1f) / (Steps - 1f));
-            float across = 2f * RadiusAt(height) * Margin;
-            _surface.transform.localPosition = new Vector3(0f, height - BowlMiddle, 0f);
-            _surface.transform.localScale = new Vector3(across, 1f, across);
+            float radius = RadiusAt(height) * Margin;
+            Place(_surface, level, height);
+            _surface.transform.localScale = new Vector3(2f * radius, 1f, 2f * radius);
+            if (_chamber != null)
+            {
+                Place(_chamber, level, height);
+                BowlChamber.Fit(_chamber, radius);
+            }
+        }
+
+        private static void Place(GameObject part, int level, float height)
+        {
+            part.SetActive(level > 0);
+            part.transform.localPosition = new Vector3(0f, height - BowlMiddle, 0f);
         }
 
         private static float RadiusAt(float height)

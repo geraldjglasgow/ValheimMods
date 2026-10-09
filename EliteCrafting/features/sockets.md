@@ -10,8 +10,9 @@ own words. One switch, `Gems and sockets` (`2 - Runes`, synced, default on).
 # 1. Which items take sockets
 
 Item classes by group (`Sockets/GemCatalog.BaseOf`): `onehand`, `twohand`, `ranged` are **weapons**; `magic` are
-**staves**; `armour` and `offhand` (shields; not the `light` class, torches) are **armour**. Tools, trinkets, utility
-items, torches and anything without a class take none.
+**staves**; `armour` and `offhand` (shields; not the `light` class, torches) are **armour**, and so are PackPanel's
+backpacks (its `backpack` class in the `jewel` group; user 2026-10-08: "you should be allowed to socket backpacks").
+Tools, trinkets, utility items, torches and anything without a class take none.
 
 # 2. Item data and drops
 
@@ -31,7 +32,7 @@ Normal item may carry both keys. The keys were retired on 2026-10-02 and came ba
 
 Fixed in code (`Sockets/GemCatalog`); the inscription's ladder, caps and `enabled` still come from the YAML.
 
-| Gem | Weapons | Staves | Armour and shields |
+| Gem | Weapons | Staves | Armour, shields and backpacks |
 |---|---|---|---|
 | Surtr's | Emberbrand | Primal Fury | Flameward |
 | Ymir's | Rimebrand | Seidr Thrift | Frostward |
@@ -65,8 +66,10 @@ Click the gem onto the item, as with a rune (same checks: own inventory, not sea
 
 # 5. The Dvergr Chisel (`verb: socket`)
 
-One socket into an item whose base takes sockets and that has none, any rarity (`no_socket_here`, `has_sockets`). A
-dropped item with sockets never gets more from the chisel.
+One to three sockets into an item whose base takes sockets and that has none, any rarity (`no_socket_here`, `has_sockets`):
+the dropped gear's weights for the item's rarity without the 0 (user 2026-10-08: "I want the dropped gear odds on the
+chisel use too"), Normal as Magic: Normal and Magic 15/4/1 (75%, 20%, 5%), Rare 25/11/4 (62.5%, 27.5%, 10%)
+(`SocketDrops.Cut`). The Sockets tab shows the item's odds. A dropped item with sockets never gets more from the chisel.
 
 # 6. Other runes, display
 
@@ -77,7 +80,7 @@ dropped item with sockets never gets more from the chisel.
 - **The Rune Table's Sockets tab** (`Table/Window/SocketTab`, `SocketPane`, `SocketText`; hidden while the switch is
   off): the gear you carry that takes sockets on the left; on the right its description (sockets and gems, what the
   chosen stone would do here, a gem's tier range at this item level), the rune row showing the Dvergr Chisel and each
-  gem you carry (as many as the row's seven slots hold), the essence row showing the item's sockets (a gem's icon, a
+  gem you carry (the row has room for the chisel and all eleven, shrinking its slots past eight), the essence row showing the item's sockets (a gem's icon, a
   faint mark for an empty one; click a filled one to aim the gem there), the cost and **Set gem** / **Cut socket**. The
   press runs the same pipeline paid from your inventory (the table stores runes only); a gem aimed at a filled socket
   asks once (`GemChooser.Confirm`), a gem onto a full item with no socket picked asks socket by socket.

@@ -28,9 +28,9 @@ its right or, without room there, its left, top edges level (user request 2026-1
 right or left of where you're hovering"): `HoverBox` with a `TipHover` per element, the game's own tooltip box, never
 the game's `UITooltip`, which follows the pointer.
 
-A use at the table (a rune, the chisel or a gem) plays for every client near it: the game's workbench craft sound and a
-vortex in the stone's colour rising from the slab and breaking into specks about a metre above (`TableCast`,
-`TableVortex`, bundle `ecf_tablefx`); the owner's payment counts the use in the ZDO (`ecf_rt_cast`,
+A use at the table (a rune, the chisel or a gem) plays for every client near it: the game's skill level-up chime, heard
+near the table only (`TableSound`), and a vortex in the stone's colour rising from the slab's middle glyph and breaking
+into specks about half a metre above (`TableCast`, `TableVortex`, bundle `ecf_tablefx`); the owner's payment counts the use in the ZDO (`ecf_rt_cast`,
 `ecf_rt_cast_stone`), so no RPC is sent.
 
 The window closes with the inventory screen (Esc, Tab, E, death), when the player walks more than 4 m away, when the
@@ -56,6 +56,14 @@ table. maybe 500+ makes it look full. it fills more and more in increments of 50
 (Standard shader, emissive, no shadows, no collider) inside the bowl, found by the model's `col_box_bowl` collider, one
 step higher per 50 essence in the pool, full at 500, none under 50; its width follows the bowl's inside (the workshop's
 lathe profile: floor 1.09 m, rim 1.195 m). Drawn by every client from the ZDO like the shelf.
+
+The essence looks like a cloud chamber (user request 2026-10-08: "can we have the essence have kinda of like a
+cloudchamber effect above it?"): `BowlChamber` loops the workshop effect `ecf_essence_chamber` (bundle `ecf_tablefx`) on the
+surface: faint vapour lying over it and rising off it, thin cyan tracks (the glyphs' colour, drawn over the essence, not
+added to it, so they show against the white) appearing at random (long straight, short thick, curly, spiralling, kinked,
+forked) in a dome up to 0.4 m over the essence, forming in a blink and fading in about a second, and droplets falling
+through it (user: "needs to extend further up out of the bowl"; "hard to notice because its the same colors as the white"). Authored for the full bowl,
+scaled to the surface's radius and thinned by its area, so a low bowl shows fewer, smaller tracks. Local on every client.
 
 The gems it holds lie on the top (user request 2026-10-07: "if you have the freya gem in table, then you see a pink gem on
 the table, if there are none, then you see no gem"): `TableGems` puts a copy of each held gem kind's own item model (no

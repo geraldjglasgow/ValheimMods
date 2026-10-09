@@ -77,8 +77,8 @@ runes:
       - { outcome: seal_only,       weight: 35 }   # sealed as it is
       - { outcome: add_inscription, weight: 35 }   # one more inscription, past the cap
       - { outcome: chaotic_reroll,  weight: 30 }   # every inscription rerolled at any tier
-  # Sockets and gems (switch `Gems and sockets`): the Dvergr Chisel cuts one socket into a weapon,
-  # staff, armour piece or shield that has none; a gem fills a socket with a stat that depends on
+  # Sockets and gems (switch `Gems and sockets`): the Dvergr Chisel cuts 1-3 sockets into a weapon,
+  # staff, armour piece, shield or backpack that has none; a gem fills a socket with a stat that depends on
   # the item (fixed in code), its tier rolled for the item when it is set.
   - { id: dvergr_chisel, verb: socket, applies_to: [normal, magic, rare] }
   - { id: gem_surtr,     verb: gem, applies_to: [normal, magic, rare] }

@@ -106,7 +106,9 @@ namespace EliteCrafting.Tables.Window
             parts.Pills = new PillStrip(parts.Description, parts.Text);
             float y = top;
             parts.RuneLabel = Label(parts, text.x, y, text.width);
-            parts.Runes = new SlotRow(parts.Description, template, Rules.StoneCatalog.BuiltInIds.Length,
+            // Room for the runes, or on the Sockets tab the Dvergr Chisel and every gem.
+            int stones = Mathf.Max(Rules.StoneCatalog.BuiltInIds.Length, 1 + Rules.StoneCatalog.GemIds.Length);
+            parts.Runes = new SlotRow(parts.Description, template, stones,
                 new Rect(text.x, y + LabelHeight, text.width, SlotSize), rune);
             y += LabelHeight + SlotSize + Gap;
             parts.EssenceLabel = Label(parts, text.x, y, text.width);

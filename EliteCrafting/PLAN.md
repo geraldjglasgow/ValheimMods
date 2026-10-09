@@ -593,6 +593,27 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   to 17%, the other runes shrunk in their old proportions; with `Gems and sockets` off the chisel's share now goes to
   the runes (rune-only draw tables) instead of dropping nothing. Judgement calls: "starting" read as 50% at every tier,
   the chisel +1% a tier, the boss chisel kept at 25%, gems still from the seven game bosses only.
+- 2026-10-08 — The chisel cuts 1-3 sockets (user: "I want the dropped gear odds on the chisel use too"): the dropped
+  gear's weights for the item's rarity (`SocketDrops.Cut`), and the Sockets tab's stone row holds the chisel and all
+  eleven gems (it showed four). Judgement calls: the 0 is left out (a chisel always cuts at least one), Normal items use
+  Magic's weights, the tab's text shows the item's odds.
+- 2026-10-08 — A use at the Rune Table (user: "some like upgrade noise, instead of that vanilla build noise"; "it needs
+  to happen like, on the center symbol that is glowing blue"): the sound is the game's skill level-up chime, made
+  positional (4-20 m) as the game plays it flat; the vortex was already on the middle glyph but its faint foot was lost
+  there and its 1.2 m climb showed over the rack, so the climb is halved and the ring and glow at the foot are stronger
+  (in code, `TableVortex.Settle`; the workshop effect is unchanged). Judgement call: the level-up chime as "upgrade
+  noise". The real cause, found later the same day with DevBridge's new studio page: the game's `Custom/Particle (Unlit)`
+  fades particles within `_SoftNearFade` (authored 0.5 m) of the surface behind them even with `_SoftParticles` off, so
+  the foot on the slab never drew; `TableVortex.Unfade` sets it to 0 (user: "that looks a lot better").
+- 2026-10-08 — Backpacks take sockets (user: "you should be allowed to socket backpacks"): PackPanel's `backpack`
+  class (jewel group) is an armour base in `GemCatalog.BaseOf`. Judgement call: the armour stats (worn on the body;
+  Sleipnir's speed fits), not a base of their own; other jewel classes (trinkets) still take none.
+- 2026-10-08 — The essence looks like a cloud chamber (user: "can we have the essence have kinda of like a cloudchamber
+  effect above it?"): workshop effect `ecf_essence_chamber` (ValheimAssets `Assets/Effects`), in bundle `ecf_tablefx` with
+  the vortex, looped on the bowl's surface by `BowlChamber`. Then (user: "needs to extend further up out of the bowl";
+  "hard to notice because its the same colors as the white"): tracks fill a dome 0.4 m tall with rising mist, and are
+  cyan and alpha blended. Judgement calls: the glyphs' cyan (not the chosen essence's colour), about twelve tracks at a
+  time over a full bowl, fewer over a low one (same density), no setting.
 
 ## Open questions
 

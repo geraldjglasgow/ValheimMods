@@ -59,6 +59,7 @@ namespace EliteCrafting.Tables.Window
                 return;
             }
             row.Show(true);
+            row.Fit(StoneCatalog.BuiltInIds.Length);
             for (int i = 0; i < row.Count && i < StoneCatalog.BuiltInIds.Length; i++)
             {
                 string id = StoneCatalog.BuiltInIds[i];

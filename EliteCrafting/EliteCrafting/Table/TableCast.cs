@@ -8,14 +8,16 @@ namespace EliteCrafting.Tables
     /// little vortex like thing colored the color of the rune go from the table up to above the table and make some like
     /// crafting noise ... it should dissipate above the table"): the table's owner counts each use in its ZDO with the
     /// stone's id (<see cref="TableStore.MarkCast"/>, from the payment); each client sees the count grow (looked at ten
-    /// times a second, one int), plays the game's workbench craft sound and the vortex (<see cref="TableVortex"/>) in the
-    /// stone's colour on the slab. A table loaded with an older count plays nothing. Off on a dedicated server.
+    /// times a second, one int), plays the game's level-up chime (<see cref="TableSound"/>) and the vortex
+    /// (<see cref="TableVortex"/>) in the stone's colour on the slab's middle glyph. A table loaded with an older count
+    /// plays nothing. Off on a dedicated server.
     /// </summary>
     internal sealed class TableCast : MonoBehaviour
     {
         private const float Every = 0.1f;
 
-        // The slab's middle on the table top, in the model's metres (ValheimAssets RuneTable: slab x -0.44..0.60, top 1.016).
+        // The slab's middle glyph on the table top, in the model's metres (ValheimAssets RuneTable: slab x -0.44..0.60,
+        // glyph at x 0.08, top 1.016).
         private static readonly Vector3 SlabTop = new Vector3(0.08f, 1.02f, 0f);
 
         private ZNetView? _view;
@@ -55,8 +57,7 @@ namespace EliteCrafting.Tables
         private void Play(string stoneId)
         {
             Vector3 at = _model != null ? _model.TransformPoint(SlabTop) : transform.position + Vector3.up;
-            GameObject? workbench = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab("piece_workbench") : null;
-            workbench?.GetComponent<CraftingStation>()?.m_craftItemEffects.Create(at, Quaternion.identity);
+            TableSound.Play(at);
             TableVortex.Spawn(at, StoneVisuals.Tint(stoneId));
         }
     }

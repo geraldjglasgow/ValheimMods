@@ -48,9 +48,13 @@ namespace EliteCrafting.Sockets
             ["gem_sleipnir"] = new GemStats(null, null, "fleetfoot"),
         };
 
+        /// <summary>PackPanel's backpacks: the class it registers through the API, in the jewel group.</summary>
+        private const string BackpackClass = "backpack";
+
         /// <summary>
-        /// The base an item class is for sockets: one- and two-handed and ranged weapons, staves, armour, and shields
-        /// (the offhand group without torches). Everything else (tools, trinkets, utility items, torches) takes none.
+        /// The base an item class is for sockets: one- and two-handed and ranged weapons, staves, armour, shields (the
+        /// offhand group without torches) and PackPanel's backpacks, worn like armour (user 2026-10-08: "you should be
+        /// allowed to socket backpacks"). Everything else (tools, trinkets, utility items, torches) takes none.
         /// </summary>
         public static SocketBase BaseOf(ClassInfo info)
         {
@@ -66,6 +70,8 @@ namespace EliteCrafting.Sockets
                     return SocketBase.Armour;
                 case "offhand":
                     return info.ClassId == "light" ? SocketBase.None : SocketBase.Armour;
+                case "jewel":
+                    return info.ClassId == BackpackClass ? SocketBase.Armour : SocketBase.None;
                 default:
                     return SocketBase.None;
             }

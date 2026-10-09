@@ -9,7 +9,7 @@ This wiki describes version 0.8.0. **Work in progress:** the config, the YAML fi
 - Each kind of item, its class (swords, bows, helmets, trinkets...), rolls its own inscriptions, and gear from later biomes rolls stronger tiers.
 - Five runes change an item's rarity or inscriptions; the Dvergr Chisel cuts sockets. Magic gear never drops: every Magic or Rare item is made with runes.
 - The Rune Table stores runes, turns trophies into essence and, with the Ascension Rune, lets an essence choose the new inscription.
-- Weapons, staves, armour and shields can carry up to three sockets; eleven gems, dropped only by bosses, fill them, each adding a stat that depends on the item.
+- Weapons, staves, armour, shields and backpacks can carry up to three sockets; eleven gems, dropped only by bosses, fill them, each adding a stat that depends on the item.
 - Creatures, bosses and world chests drop runes.
 
 ## Install

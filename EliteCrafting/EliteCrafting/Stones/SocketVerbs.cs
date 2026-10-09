@@ -1,5 +1,6 @@
 using EliteCrafting.Affixes;
 using EliteCrafting.Display;
+using EliteCrafting.Rolling;
 using EliteCrafting.Rules;
 using EliteCrafting.Sockets;
 using EliteCrafting.Text;
@@ -7,8 +8,9 @@ using EliteCrafting.Text;
 namespace EliteCrafting.Stones
 {
     /// <summary>
-    /// <c>socket</c> (the Dvergr Chisel, sockets.md section 5): one socket into a weapon, staff, armour piece or shield
-    /// that has none, any rarity. An item with sockets already (one or more, dropped or cut) refuses it.
+    /// <c>socket</c> (the Dvergr Chisel, sockets.md section 5): 1-3 sockets, by the dropped gear's odds for the item's
+    /// rarity (<see cref="SocketDrops.Cut"/>), into a weapon, staff, armour piece, shield or (PackPanel) backpack that
+    /// has none, any rarity. An item with sockets already (one or more, dropped or cut) refuses it.
     /// </summary>
     internal sealed class SocketVerb : IStoneVerb
     {
@@ -26,7 +28,9 @@ namespace EliteCrafting.Stones
             {
                 return StoneResult.Refuse("has_sockets");
             }
-            return StoneResult.Success(job.State.ToBuilder().SetSockets(1).Build(), "socket_cut", job.ItemName);
+            int count = SocketDrops.Cut(job.State.RarityId, RollRandom.Create());
+            return StoneResult.Success(job.State.ToBuilder().SetSockets(count).Build(), count == 1 ? "socket_cut" : "sockets_cut",
+                job.ItemName, count.ToString());
         }
     }
 

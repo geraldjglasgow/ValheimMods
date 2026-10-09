@@ -52,13 +52,9 @@ namespace EliteCrafting.Tables.Window
                 return;
             }
             row.Show(true);
-            for (int i = 0; i < row.Count; i++)
+            row.Fit(stones.Count);
+            for (int i = 0; i < stones.Count && i < row.Count; i++)
             {
-                if (i >= stones.Count)
-                {
-                    row[i].Clear();
-                    continue;
-                }
                 string id = stones[i];
                 int stored = view.Store.Runes(id);
                 StoneDef? def = TableIcons.Def(id);

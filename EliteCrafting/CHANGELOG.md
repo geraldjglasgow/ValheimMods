@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0
+
+- PackPanel's backpacks take sockets and gems like armour.
+- The Dvergr Chisel cuts one to three sockets (Normal and Magic 75/20/5%, Rare 62.5/27.5/10%); the Sockets tab shows the odds.
+- Rune Table: the essence in the bowl looks like a cloud chamber.
+- Rune Table: a use plays the skill level-up chime near the table, and the vortex rises from the slab's middle glyph.
+- Rune Table: the Sockets tab fits the chisel and all eleven gems.
+
 ## 0.9.2
 
 - Bosses drop a gem 50% of the time, plus 50% for one more per star (no longer one roll per nearby player).

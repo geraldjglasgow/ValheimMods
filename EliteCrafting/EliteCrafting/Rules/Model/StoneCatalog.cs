@@ -21,7 +21,7 @@ namespace EliteCrafting.Rules
             "awakening", "recasting", "ascension", "cleansing", "serpent",
         };
 
-        /// <summary>The Dvergr Chisel: one socket on an item that has none.</summary>
+        /// <summary>The Dvergr Chisel: one to three sockets on an item that has none.</summary>
         public const string ChiselId = "dvergr_chisel";
 
         /// <summary>The gems (sockets.md section 3); what each gives per base is <c>Sockets.GemCatalog</c>.</summary>

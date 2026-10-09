@@ -14,8 +14,18 @@ public static class TexturePixels
 	public static Color32[]? Read(Texture texture, out int width, out int height) =>
 		Read(texture, new Rect(0, 0, texture.width, texture.height), out width, out height);
 
+	/// <summary>
+	/// The whole texture's values as stored, bottom row first: for data textures (normal, metal and gloss maps), whose
+	/// texels are not colours and must not pass through the sRGB conversion <see cref="Read(Texture, out int, out int)"/> applies.
+	/// </summary>
+	public static Color32[]? ReadLinear(Texture texture, out int width, out int height) =>
+		Read(texture, new Rect(0, 0, texture.width, texture.height), out width, out height, RenderTextureReadWrite.Linear);
+
 	/// <summary>The pixels of a region of the texture (in pixels, y from the bottom), bottom row first.</summary>
-	public static Color32[]? Read(Texture texture, Rect region, out int width, out int height)
+	public static Color32[]? Read(Texture texture, Rect region, out int width, out int height) =>
+		Read(texture, region, out width, out height, RenderTextureReadWrite.Default);
+
+	private static Color32[]? Read(Texture texture, Rect region, out int width, out int height, RenderTextureReadWrite space)
 	{
 		width = (int)region.width;
 		height = (int)region.height;
@@ -24,13 +34,13 @@ public static class TexturePixels
 			return null;
 		}
 		RenderTexture previous = RenderTexture.active;
-		RenderTexture target = RenderTexture.GetTemporary(width, height, 0);
+		RenderTexture target = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32, space);
 		try
 		{
 			Graphics.Blit(texture, target, new Vector2(region.width / texture.width, region.height / texture.height),
 				new Vector2(region.x / texture.width, region.y / texture.height));
 			RenderTexture.active = target;
-			return ReadActive(width, height);
+			return ReadActive(width, height, space == RenderTextureReadWrite.Linear);
 		}
 		finally
 		{
@@ -39,9 +49,9 @@ public static class TexturePixels
 		}
 	}
 
-	private static Color32[] ReadActive(int width, int height)
+	private static Color32[] ReadActive(int width, int height, bool linear)
 	{
-		var readable = new Texture2D(width, height, TextureFormat.RGBA32, false);
+		var readable = new Texture2D(width, height, TextureFormat.RGBA32, false, linear);
 		try
 		{
 			readable.ReadPixels(new Rect(0, 0, width, height), 0, 0);
