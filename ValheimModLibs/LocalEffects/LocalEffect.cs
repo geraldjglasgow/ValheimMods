@@ -37,6 +37,30 @@ namespace LocalEffects
             return clone;
         }
 
+        /// <summary>
+        /// <see cref="Attach"/> drawn at <paramref name="scale"/> times its authored size, resized part by part as
+        /// <see cref="FlashScaled"/> does (scaling the copy's transform does not resize most effects), then restarted so
+        /// a looping, prewarmed effect shows at the new size from its first frame.
+        /// </summary>
+        public static GameObject? AttachScaled(GameObject? prefab, Transform parent, Vector3 position, bool endless, float scale, float density = 1f)
+        {
+            GameObject? clone = Attach(prefab, parent, position, endless, density);
+            if (clone == null || Mathf.Approximately(scale, 1f))
+            {
+                return clone;
+            }
+            ScaleParts.Apply(clone, scale);
+            foreach (ParticleSystem system in clone.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                system.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
+            foreach (ParticleSystem system in clone.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                system.Play(false);
+            }
+            return clone;
+        }
+
         /// <summary>A free-standing one-shot burst, scaled to a radius, that cleans itself up.</summary>
         public static void Flash(GameObject? prefab, Vector3 position, float radius, float density = 1f) =>
             OneShot(prefab, position, radius, Sizing.Radius, 1f, density);

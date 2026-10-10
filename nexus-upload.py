@@ -27,6 +27,7 @@ import urllib.request
 API_V1 = "https://api.nexusmods.com/v1"
 API_V3 = "https://api.nexusmods.com/v3"
 GAME = "valheim"
+INTERNAL = {"DevBridge", "AssetLab"}  # internal tools, never uploaded to a store
 
 
 def api_key():
@@ -159,6 +160,8 @@ def main():
     parser.add_argument("--list-files", action="store_true", help="list the mod page's files and exit")
     parser.add_argument("--dry-run", action="store_true", help="check everything, upload nothing")
     args = parser.parse_args()
+    if args.mod in INTERNAL:
+        sys.exit(f"{args.mod} is an internal tool and is never uploaded to a store")
 
     root = os.path.dirname(os.path.abspath(__file__))
     mod_dir = os.path.join(root, args.mod)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DevBridge.Studio;
 using DevBridge.Swap;
 using UnityEngine;
 
@@ -24,8 +25,8 @@ namespace DevBridge.Stage
             foreach (var asset in assets) asset.Placement.Destroy(now: true);
             foreach (Placement placement in swapped) Poses.Unswap(placement, keepSpec: true);
             Swaps.Release(loaded);
-            Bundles.Refresh(loaded);
             var lost = new List<string>();
+            int reattached = StudioAttach.Across(loaded.Name, () => Bundles.Refresh(loaded), lost);
             foreach (var asset in assets) Try(() => Stager.Rebuild(asset.Placement, asset.position, asset.rotation), asset.Placement, lost);
             foreach (Placement placement in swapped.Where(p => p.Alive)) Try(() => Reswap(placement), placement, lost);
             return Swaps.Restore(loaded, new Dictionary<string, object>
@@ -33,6 +34,7 @@ namespace DevBridge.Stage
                 ["replaced"] = assets.Select(a => a.Placement).Where(p => p.Alive).Select(p => p.Id).ToList(),
                 ["reswapped"] = swapped.Where(p => p.Alive && p.SwapSpec != null).Select(p => p.Id).ToList(),
                 ["dropped effects and sounds"] = dropped,
+                ["studio effects attached again"] = reattached,
                 ["lost"] = lost,
             });
         }
@@ -43,8 +45,12 @@ namespace DevBridge.Stage
                 Poses.Unswap(placement, keepSpec: false);
             int removed = Placements.Clear(p => From(p, loaded));
             int reverted = Swaps.Forget(loaded);
+            int detached = StudioAttach.Lift(loaded.Name).Count;
             Bundles.Drop(loaded);
-            return new Dictionary<string, object> { ["unloaded"] = loaded.Name, ["removed"] = removed, ["swaps reverted"] = reverted };
+            return new Dictionary<string, object>
+            {
+                ["unloaded"] = loaded.Name, ["removed"] = removed, ["swaps reverted"] = reverted, ["studio effects removed"] = detached,
+            };
         }
 
         private static bool From(Placement placement, LoadedBundle loaded) =>

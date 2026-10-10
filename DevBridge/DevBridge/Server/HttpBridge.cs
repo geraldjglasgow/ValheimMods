@@ -100,6 +100,7 @@ namespace DevBridge.Server
             try
             {
                 response.StatusCode = reply.Status;
+                foreach (KeyValuePair<string, string> header in reply.Headers) response.AddHeader(header.Key, header.Value);
                 response.ContentType = reply.ContentType + "; charset=utf-8";
                 response.ContentLength64 = body.Length;
                 response.OutputStream.Write(body, 0, body.Length);

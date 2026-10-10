@@ -85,6 +85,7 @@ namespace EliteCreaturesReborn.Runtime
             if (traits.Has(Mutation.Flamebound))
             {
                 controller.gameObject.AddComponent<FireTrail>();
+                controller.gameObject.AddComponent<FlameDemist>();
             }
         }
 

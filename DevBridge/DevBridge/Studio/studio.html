@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevBridge Studio</title>
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --bg: #15171c; --panel: #1d2027; --raised: #262a33; --line: #2f3440; --text: #e4e6ea; --dim: #959cab;
+    --accent: #5fb3ff; --pick: #2a405a; --bad: #ff8080; --good: #85d98f; --stage: #22252d;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.45 system-ui, "Segoe UI", sans-serif; display: flex; flex-direction: column; }
+  header { display: flex; align-items: center; gap: 14px; padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  #status { flex: 1; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #status.error { color: var(--bad); }
+  .hint { color: var(--dim); font-size: 12px; }
+  .tabs { display: flex; gap: 2px; padding: 2px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+  .tabs button { border: 0; background: transparent; color: var(--dim); padding: 2px 12px; }
+  .tabs button.on { background: var(--raised); color: var(--text); }
+  main { flex: 1; min-height: 0; display: grid; grid-template-columns: 270px minmax(280px, 1fr) 400px; }
+  main.items { grid-template-columns: 220px minmax(300px, 1fr) minmax(380px, 38%); }
+  main.items.workshop { grid-template-columns: 290px minmax(300px, 1fr) minmax(380px, 38%); }
+  section { display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--line); }
+  section:last-child { border-right: 0; }
+  h2 { margin: 0; padding: 10px 10px 4px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
+  .bar { display: flex; gap: 6px; padding: 6px 10px 8px; align-items: center; border-bottom: 1px solid var(--line); }
+  .bar input[type=search] { flex: 1; min-width: 0; }
+  .list { flex: 1; overflow: auto; padding: 4px 0; }
+  .row { display: flex; gap: 6px; align-items: center; padding: 3px 10px; cursor: pointer; white-space: nowrap; }
+  .row:hover { background: var(--raised); }
+  .row.selected { background: var(--pick); }
+  .row.inactive > .name { color: var(--dim); font-style: italic; }
+  .name { overflow: hidden; text-overflow: ellipsis; }
+  .dim { color: var(--dim); }
+  .grow { flex: 1; }
+  .badge { font-size: 10px; line-height: 15px; padding: 0 5px; border-radius: 3px; background: #313744; color: #b9c0cc; }
+  .badge.particles { background: #3d2f52; color: #dcbcff; }
+  .badge.mesh { background: #2c3d33; color: #a8e0b4; }
+  .badge.animator, .badge.animation { background: #4a3a24; color: #f3cb8b; }
+  .badge.sound { background: #24404a; color: #94d8ee; }
+  .badge.light { background: #4a4424; color: #f1e48d; }
+  .badge.attached { background: #1f4f80; color: #d4e9ff; }
+  .badge.moved { background: #5a2e2e; color: #ffc2c2; }
+  input, select, button { font: inherit; color: var(--text); background: var(--raised); border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; }
+  input:focus, select:focus, button:focus-visible { outline: 1px solid var(--accent); border-color: var(--accent); }
+  button { cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--accent); }
+  button:disabled { opacity: .4; cursor: default; }
+  button.primary { background: #23547f; border-color: #2e6ca3; }
+  .inspector { flex: 1; overflow: auto; padding: 4px 10px 12px; }
+  .title { font-size: 15px; font-weight: 600; margin: 6px 0 0; word-break: break-all; }
+  .path { color: var(--dim); font-size: 12px; margin-bottom: 8px; }
+  .vec { display: grid; grid-template-columns: 62px repeat(3, 1fr); gap: 4px; align-items: center; margin: 3px 0; }
+  .vec label { color: var(--dim); }
+  .axis { display: flex; min-width: 0; }
+  .axis input { width: 100%; min-width: 0; text-align: right; border-radius: 0; border-left: 0; border-right: 0; padding: 3px 4px; }
+  .axis button { padding: 2px 7px; }
+  .axis button:first-child { border-radius: 4px 0 0 4px; }
+  .axis button:last-child { border-radius: 0 4px 4px 0; }
+  .axes { display: grid; grid-template-columns: 62px repeat(3, 1fr); gap: 4px; color: var(--dim); font-size: 11px; text-align: center; }
+  .steps { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; color: var(--dim); }
+  .readout { margin: 6px 0 10px; color: var(--dim); }
+  .readout b { color: var(--text); font-weight: 500; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .empty { padding: 16px 12px; color: var(--dim); }
+  .sources { border-top: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; height: 42%; }
+  input[type=number]::-webkit-inner-spin-button { display: none; }
+
+  /* items */
+  .results { flex: 1; overflow: auto; padding: 0 14px 24px; }
+  .group h3 { position: sticky; top: 0; z-index: 1; display: flex; gap: 8px; justify-content: center; align-items: baseline; margin: 0; padding: 12px 0 8px;
+    background: var(--bg); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text); font-weight: 600; }
+  .group h3 .count { color: var(--dim); font-weight: 400; }
+  .boxes { display: grid; grid-template-columns: repeat(auto-fill, 140px); justify-content: center; gap: 10px; }
+  .box { display: flex; flex-direction: column; background: var(--stage); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; cursor: pointer; }
+  .box:hover { border-color: #4a5468; }
+  .box.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .box .tag { display: flex; justify-content: space-between; gap: 4px; padding: 5px 7px 0; font-size: 10.5px; color: var(--dim); white-space: nowrap; }
+  .box .pic { height: 138px; cursor: grab; touch-action: none; }
+  .box .pic.loading { animation: pulse 1.4s ease-in-out infinite; }
+  .box .pic img { display: block; width: 138px; height: 138px; }
+  .box .pic img:not([src]) { visibility: hidden; }
+  .box .label { padding: 0 7px 7px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes pulse { 50% { background: #292d37; } }
+  .dot { display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 50%; background: var(--biome, var(--dim)); }
+  [data-biome="Meadows"] { --biome: #8fcf6a; } [data-biome="Black Forest"] { --biome: #4fae74; } [data-biome="Swamp"] { --biome: #b29b5a; }
+  [data-biome="Ocean"] { --biome: #4fa3d9; } [data-biome="Mountain"] { --biome: #dfe9f3; } [data-biome="Plains"] { --biome: #e3c45a; }
+  [data-biome="Mistlands"] { --biome: #a98be0; } [data-biome="Ashlands"] { --biome: #ee6a52; } [data-biome="Deep North"] { --biome: #8fe0e8; }
+  .examples { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 10px; }
+  .center { text-align: center; padding-top: 40px; }
+  .viewer { display: flex; flex-direction: column; }
+  .stage { position: relative; flex: 1; min-height: 0; margin: 10px 10px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--stage);
+    overflow: hidden; cursor: grab; touch-action: none; }
+  .stage:active, .box .pic:active { cursor: grabbing; }
+  .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; user-select: none; }
+  .stage-empty { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; color: var(--dim); text-align: center; }
+  .overlay { position: absolute; top: 0; left: 0; right: 0; z-index: 1; padding: 10px 12px 18px; pointer-events: none;
+    background: linear-gradient(rgba(21, 23, 28, .94), rgba(21, 23, 28, .75) 70%, rgba(21, 23, 28, 0)); }
+  .overlay .name { font-size: 15px; font-weight: 600; }
+  .overlay .prefab { color: var(--dim); font-size: 11px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+  .chip { display: inline-flex; align-items: center; padding: 0 8px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255, 255, 255, .06);
+    font-size: 11.5px; line-height: 19px; }
+  .chip.dim { color: var(--dim); }
+  .views { border-bottom: 0; padding: 8px 10px; }
+  .pad { padding: 0 10px 10px; }
+
+  /* workshop */
+  .badge.loaded { background: #2c3d33; color: #a8e0b4; }
+  .badge.rebuilt { background: #5a2e2e; color: #ffc2c2; }
+  .badge.mod { background: #1f4f80; color: #d4e9ff; }
+  .row.opened { background: var(--pick); }
+  .folder { padding: 8px 10px; border-top: 1px solid var(--line); word-break: break-all; }
+  .bundle-bar { padding: 8px 14px; }
+  .bundle-bar .name { font-size: 14px; font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DevBridge Studio</h1>
+  <nav class="tabs"><button data-tab="objects">Objects</button><button data-tab="items">Items</button><button data-tab="workshop">Workshop</button><button data-tab="scenes">Scenes</button></nav>
+  <span id="status">Connecting to the game…</span>
+  <span id="hint" class="hint"></span>
+</header>
+<main id="objectsView">
+  <section>
+    <h2>Objects near you</h2>
+    <div class="bar">
+      <input id="targetFilter" type="search" placeholder="Filter by prefab">
+      <select id="radius" title="Radius">
+        <option value="10">10 m</option><option value="30" selected>30 m</option><option value="80">80 m</option>
+      </select>
+      <button id="refreshTargets" title="Refresh">↻</button>
+    </div>
+    <div id="targets" class="list"></div>
+  </section>
+
+  <section>
+    <h2 id="treeTitle">Parts</h2>
+    <div class="bar">
+      <input id="treeFilter" type="search" placeholder="Filter parts by name">
+      <button id="refreshTree" title="Read the parts again">↻</button>
+      <button id="playAll" title="Play everything on the object">▶ All</button>
+      <button id="resetAll" title="Put back every moved part">Reset all</button>
+    </div>
+    <div id="tree" class="list"><div class="empty">Pick an object on the left.</div></div>
+  </section>
+
+  <section>
+    <h2>Selected part</h2>
+    <div class="inspector">
+      <div id="empty" class="empty">Pick a part in the middle.</div>
+      <div id="inspector" hidden>
+        <div id="nodeName" class="title"></div>
+        <div id="nodePath" class="path"></div>
+        <div class="actions">
+          <button id="play" class="primary">▶ Play</button>
+          <button id="reset">Reset</button>
+          <button id="remove">Remove effect</button>
+        </div>
+        <div class="axes"><span></span><span>X</span><span>Y</span><span>Z</span></div>
+        <div id="vectors"></div>
+        <div class="steps">
+          <label>Move <select id="moveStep"><option>0.001</option><option>0.005</option><option selected>0.01</option><option>0.05</option><option>0.1</option><option>0.5</option></select> m</label>
+          <label>Turn <select id="turnStep"><option>1</option><option selected>5</option><option>15</option><option>45</option><option>90</option></select>°</label>
+          <label>Size <select id="sizeStep"><option>0.01</option><option selected>0.1</option><option>0.25</option></select></label>
+        </div>
+        <div class="readout">Position in the object's space: <b id="fromRoot"></b></div>
+        <div class="actions">
+          <button id="copyLocal" title="The local position as C#">Copy local</button>
+          <button id="copyRoot" title="The position in the object's space as C#">Copy from object</button>
+        </div>
+      </div>
+    </div>
+    <div class="sources">
+      <h2>Attach an effect to the selected part</h2>
+      <div class="bar">
+        <input id="sourceFilter" type="search" placeholder="Search effects, e.g. vortex, vfx_">
+        <button id="findSources">Search</button>
+      </div>
+      <div id="sources" class="list"><div class="empty">Search for a mod's effect, one of the game's, or one from a bundle opened in the Workshop tab.</div></div>
+    </div>
+  </section>
+</main>
+
+<main id="itemsView" class="items" hidden>
+  <section data-pane="items">
+    <h2>Find items</h2>
+    <div class="bar"><input id="itemSearch" type="search" placeholder="e.g. iron shield, sword, swamp"></div>
+    <div id="groupIndex" class="list"></div>
+  </section>
+  <section data-pane="workshop" hidden>
+    <h2>Workshop bundles</h2>
+    <div class="bar">
+      <input id="bundleFilter" type="search" placeholder="Filter, e.g. wand, props, ecp_">
+      <button id="refreshBundles" title="Look for new builds">↻</button>
+    </div>
+    <div id="bundles" class="list"></div>
+    <div id="workshopFolder" class="hint folder"></div>
+  </section>
+
+  <section data-pane="items">
+    <div id="results" class="results"></div>
+  </section>
+  <section data-pane="workshop" hidden>
+    <div id="bundleBar" class="bar bundle-bar" hidden>
+      <span id="bundleName" class="name"></span>
+      <span id="bundleNote" class="dim grow"></span>
+      <button id="reloadBundle" title="Read the bundle's file again after a rebuild">↻ Reload</button>
+    </div>
+    <div id="workshopResults" class="results"><div class="empty center">Pick a bundle on the left to see its models and effects.</div></div>
+  </section>
+
+  <section class="viewer">
+    <div id="stage" class="stage">
+      <div id="overlay" class="overlay" hidden>
+        <div id="infoName" class="name"></div>
+        <div id="infoPrefab" class="prefab"></div>
+        <div id="infoChips" class="chips"></div>
+      </div>
+      <img id="stageImage" alt="" draggable="false" hidden>
+      <div id="stageEmpty" class="stage-empty">Pick a box to look at it here: drag to turn it.</div>
+    </div>
+    <div class="bar views">
+      <button data-view="front">Front</button><button data-view="side">Side</button><button data-view="back">Back</button><button data-view="top">Top</button>
+      <span class="grow"></span>
+      <select id="look" title="A workshop model in the game's material, as a mod dresses it, or as the workshop built it" hidden>
+        <option value="creature">Creature &amp; item look</option><option value="piece">Building look</option><option value="workshop">As built</option>
+      </select>
+      <button id="spin">Spin</button>
+    </div>
+    <div class="hint pad">Drag to turn · wheel to zoom · double-click to reset</div>
+  </section>
+</main>
+
+<script>
+"use strict";
+const TOKEN = "__STUDIO_TOKEN__";
+const FIELDS = [["position", "Position", "moveStep"], ["rotation", "Rotation", "turnStep"], ["scale", "Scale", "sizeStep"]];
+const view = { target: null, label: "", nodes: [], path: null, listed: false };
+const $ = id => document.getElementById(id);
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+async function call(name, args = {}) {
+  const query = new URLSearchParams(args).toString();
+  const response = await fetch(`/studio/${name}?${query}`, { headers: { "X-DevBridge-Studio": TOKEN }, cache: "no-store" });
+  const text = await response.text();
+  if (!response.ok) throw new Error(text.replace(/^error: /, ""));
+  return JSON.parse(text);
+}
+
+function status(text, error = false) {
+  $("status").textContent = text;
+  $("status").className = error ? "error" : "";
+}
+
+async function run(action, message) {
+  try {
+    const result = await action();
+    if (message) status(message(result));
+    return result;
+  } catch (error) {
+    status(error.message.includes("Failed to fetch") ? "The game is not answering: is it running with DevBridge?" : error.message, true);
+    return null;
+  }
+}
+
+/* ---------- objects ---------- */
+
+async function loadTargets() {
+  const data = await run(() => call("targets", { radius: $("radius").value, filter: $("targetFilter").value }),
+    result => `${result.nearby.length} objects within ${$("radius").value} m`);
+  if (!data) return;
+  view.listed = true;
+  const list = $("targets");
+  list.replaceChildren();
+  if (data.hover) list.append(targetRow(data.hover, "crosshair"));
+  data.nearby.forEach(target => list.append(targetRow(target)));
+}
+
+function targetRow(target, note) {
+  const row = el("div", "row" + (target.target === view.target ? " selected" : ""));
+  row.append(el("span", "name grow", target.name || target.prefab), el("span", "dim", note || `${target.distance} m`));
+  row.title = `${target.prefab}  ·  ${target.target}`;
+  row.onclick = () => selectTarget(target);
+  return row;
+}
+
+async function selectTarget(target) {
+  view.target = target.target;
+  view.label = target.name || target.prefab;
+  view.path = "";
+  document.querySelectorAll("#targets .row").forEach(row => row.classList.toggle("selected", row.title.endsWith(target.target)));
+  await loadTree();
+}
+
+/* ---------- parts ---------- */
+
+async function loadTree() {
+  if (!view.target) return;
+  const data = await run(() => call("tree", { target: view.target }), result => `${view.label}: ${result.nodes.length} parts`);
+  if (!data) return;
+  view.nodes = data.nodes;
+  if (!view.nodes.some(node => node.path === view.path)) view.path = "";
+  renderTree();
+  renderInspector();
+}
+
+function renderTree() {
+  const filter = $("treeFilter").value.toLowerCase();
+  const list = $("tree");
+  list.replaceChildren();
+  $("treeTitle").textContent = view.label ? `Parts of ${view.label}` : "Parts";
+  view.nodes.filter(node => !filter || node.name.toLowerCase().includes(filter)).forEach(node => list.append(nodeRow(node)));
+}
+
+function nodeRow(node) {
+  const row = el("div", "row" + (node.path === view.path ? " selected" : "") + (node.active ? "" : " inactive"));
+  row.style.paddingLeft = `${10 + node.depth * 14}px`;
+  row.append(el("span", "name", node.name));
+  node.kinds.forEach(kind => row.append(el("span", `badge ${kind}`, kind)));
+  if (node.attached) row.append(el("span", "badge attached", "attached"));
+  if (node.moved) row.append(el("span", "badge moved", "moved"));
+  row.onclick = () => selectNode(node.path);
+  return row;
+}
+
+function selectNode(path) {
+  view.path = path;
+  renderTree();
+  renderInspector();
+}
+
+const current = () => view.nodes.find(node => node.path === view.path);
+
+/* ---------- selected part ---------- */
+
+function buildVectors() {
+  for (const [field, label] of FIELDS) {
+    const row = el("div", "vec");
+    row.append(el("label", "", label));
+    for (let axis = 0; axis < 3; axis++) row.append(axisBox(field, axis));
+    $("vectors").append(row);
+  }
+}
+
+function axisBox(field, axis) {
+  const box = el("div", "axis");
+  const minus = el("button", "", "−");
+  const plus = el("button", "", "+");
+  const input = el("input");
+  input.id = `${field}${axis}`;
+  input.type = "number";
+  input.step = "any";
+  input.onchange = () => send(field);
+  minus.onclick = () => nudge(field, axis, -1);
+  plus.onclick = () => nudge(field, axis, 1);
+  box.append(minus, input, plus);
+  return box;
+}
+
+function renderInspector() {
+  const node = current();
+  $("inspector").hidden = !node;
+  $("empty").hidden = !!node;
+  if (!node) return;
+  $("nodeName").textContent = node.name;
+  $("nodePath").textContent = `${node.path === "" ? "the object itself" : "path " + node.path}  ·  ${node.active ? "active" : "inactive"}`;
+  FIELDS.forEach(([field]) => node[field].forEach((value, axis) => { $(`${field}${axis}`).value = value; }));
+  $("fromRoot").textContent = node.fromRoot.join(",  ");
+  $("play").disabled = !node.plays;
+  $("reset").disabled = !node.moved;
+  $("remove").disabled = !node.attached;
+}
+
+const round = value => Math.round(value * 1000) / 1000;
+
+function nudge(field, axis, sign) {
+  const input = $(`${field}${axis}`);
+  const stepId = FIELDS.find(([name]) => name === field)[2];
+  input.value = round((parseFloat(input.value) || 0) + sign * parseFloat($(stepId).value));
+  send(field);
+}
+
+async function send(field) {
+  const node = current();
+  if (!node) return;
+  const value = [0, 1, 2].map(axis => parseFloat($(`${field}${axis}`).value) || 0).join(",");
+  const updated = await run(() => call("set", { target: view.target, path: node.path, [field]: value }),
+    () => `${node.name}: ${field} ${value}`);
+  if (!updated) return;
+  Object.assign(node, updated);
+  renderTree();
+  renderInspector();
+}
+
+async function play(path) {
+  if (view.target == null || path == null) return;
+  await run(() => call("play", { target: view.target, path }), result => `Played ${result.played.join(", ")}`);
+}
+
+async function reset(path) {
+  if (!view.target) return;
+  await run(() => call("reset", { target: view.target, path }), result => `Put back ${result.reset} part${result.reset === 1 ? "" : "s"}`);
+  await loadTree();
+}
+
+async function removeEffect() {
+  const node = current();
+  if (!node || !node.attached) return;
+  await run(() => call("detach", { target: view.target, path: node.path }), () => `Removed ${node.name}`);
+  view.path = node.path.includes("/") ? node.path.slice(0, node.path.lastIndexOf("/")) : "";
+  await loadTree();
+}
+
+async function copyVector(values) {
+  const text = `new Vector3(${values.map(value => `${value}f`).join(", ")})`;
+  try {
+    await navigator.clipboard.writeText(text);
+    status(`Copied ${text}`);
+  } catch {
+    status(text);
+  }
+}
+
+/* ---------- effects ---------- */
+
+async function findSources() {
+  const data = await run(() => call("sources", { filter: $("sourceFilter").value }), result => `${result.length} effects found`);
+  if (!data) return;
+  const list = $("sources");
+  list.replaceChildren();
+  if (data.length === 0) list.append(el("div", "empty", "No effect matches."));
+  data.forEach(source => list.append(sourceRow(source)));
+}
+
+function sourceRow(source) {
+  const row = el("div", "row");
+  const attach = el("button", "", "Attach");
+  attach.onclick = () => attachSource(source);
+  row.append(attach, el("span", "name grow", source.name), el("span", "dim", source.kind));
+  row.title = source.source;
+  return row;
+}
+
+async function attachSource(source) {
+  if (!view.target) return status("Pick an object first.", true);
+  const parent = current();
+  const made = await run(() => call("attach", { target: view.target, path: parent ? parent.path : "", source: source.source }),
+    () => `Attached ${source.name} to ${parent ? parent.name : "the object"}: move it, then press Play`);
+  if (!made) return;
+  view.path = made.path;
+  await loadTree();
+}
+
+/* ---------- pictures ---------- */
+
+const TURN = { yaw: 20, pitch: 10, zoom: 1 };
+const VIEWS = { front: [0, 0], side: [90, 0], back: [180, 0], top: [0, 90] };
+const BOX_PIXELS = 276;
+const pictures = { selected: null, queue: [], loading: false };
+const keyOf = subject => subject.bundle ? `${subject.bundle}/${subject.prefab}` : subject.prefab;
+
+/* A picture of one prefab (with a bundle, a workshop model), turned and zoomed; a turn asked for while one is drawn is drawn straight after. */
+class Turntable {
+  constructor(img, size) {
+    Object.assign(this, TURN, { img, size, subject: null, busy: false, again: false });
+  }
+
+  show(subject) {
+    Object.assign(this, TURN, { subject });
+    return this.draw();
+  }
+
+  turn(yaw, pitch) {
+    this.yaw = (this.yaw + yaw) % 360;
+    this.pitch = Math.max(-90, Math.min(90, this.pitch + pitch));
+    this.draw();
+  }
+
+  async draw() {
+    if (!this.subject) return;
+    if (this.busy) { this.again = true; return; }
+    this.busy = true;
+    const subject = this.subject;
+    const size = typeof this.size === "function" ? this.size() : this.size;
+    const data = await run(() => call("view", { ...subject, yaw: round(this.yaw), pitch: round(this.pitch), zoom: round(this.zoom), size }));
+    if (data && subject === this.subject) this.img.src = data.image;
+    this.busy = false;
+    if (this.again) { this.again = false; await this.draw(); }
+  }
+}
+
+const viewer = new Turntable($("stageImage"), viewerPixels);
+
+/* The two panes of picture boxes; a new search or bundle starts a new generation, and older boxes waiting for pictures are skipped. */
+const panes = {
+  items: { name: "items", results: $("results"), index: $("groupIndex"), generation: 0, none: "No item matches." },
+  workshop: { name: "workshop", results: $("workshopResults"), index: null, generation: 0, none: "Nothing here to draw: no meshes or particles." },
+};
+for (const pane of Object.values(panes)) pane.sight = new IntersectionObserver(boxesSeen, { root: pane.results, rootMargin: "200px" });
+
+function viewerPixels() {
+  const stage = $("stage");
+  const pixels = Math.max(stage.clientWidth, stage.clientHeight) * (window.devicePixelRatio || 1);
+  return Math.min(1024, Math.max(256, Math.round(pixels / 64) * 64));
+}
+
+function renderGroups(pane, groups, makeBox) {
+  pane.sight.disconnect();
+  pane.results.replaceChildren();
+  if (pane.index) pane.index.replaceChildren();
+  if (groups.length === 0) pane.results.append(el("div", "empty center", pane.none));
+  groups.forEach((group, number) => {
+    const block = groupBlock(group, `${pane.name}${number}`, makeBox, pane);
+    pane.results.append(block);
+    if (pane.index) pane.index.append(indexRow(group, block));
+  });
+}
+
+function indexRow(group, block) {
+  const row = el("div", "row");
+  row.append(el("span", "name grow", group.name), el("span", "dim", group.items.length));
+  row.onclick = () => block.scrollIntoView({ block: "start", behavior: "smooth" });
+  return row;
+}
+
+function groupBlock(group, id, makeBox, pane) {
+  const block = el("div", "group");
+  block.id = id;
+  const head = el("h3");
+  head.append(el("span", "", group.name), el("span", "count", group.items.length));
+  const boxes = el("div", "boxes");
+  for (const item of group.items) {
+    const box = makeBox(item);
+    Object.assign(box.turntable, { owner: pane, generation: pane.generation });
+    pane.sight.observe(box);
+    boxes.append(box);
+  }
+  block.append(head, boxes);
+  return block;
+}
+
+function pictureBox(subject, label, tag, onSelect) {
+  const key = keyOf(subject);
+  const box = el("div", "box" + (pictures.selected === key ? " selected" : ""));
+  const pic = el("div", "pic loading");
+  const img = el("img");
+  img.alt = label;
+  img.draggable = false;
+  img.onload = () => pic.classList.remove("loading");
+  pic.append(img);
+  box.append(tag, pic, el("div", "label", label));
+  box.dataset.key = key;
+  box.turntable = Object.assign(new Turntable(img, BOX_PIXELS), { subject });
+  box.onclick = () => box.dragged ? (box.dragged = false) : onSelect();
+  dragToTurn(pic, box.turntable, box);
+  return box;
+}
+
+/* Boxes in sight (or nearly) get their pictures, one at a time so the game draws one a frame. */
+function boxesSeen(entries, sight) {
+  for (const entry of entries.filter(entry => entry.isIntersecting)) {
+    sight.unobserve(entry.target);
+    pictures.queue.push(entry.target.turntable);
+  }
+  drawQueue();
+}
+
+async function drawQueue() {
+  if (pictures.loading) return;
+  pictures.loading = true;
+  while (pictures.queue.length) {
+    const turntable = pictures.queue.shift();
+    if (turntable.generation === turntable.owner.generation) await turntable.draw();
+  }
+  pictures.loading = false;
+}
+
+/* Dragging turns the picture; a press that does not move is a click (a drag is marked on owner, so its click can tell). */
+function dragToTurn(area, turntable, owner) {
+  let press = null;
+  area.onpointerdown = event => {
+    if (event.button !== 0) return;
+    press = { x: event.clientX, y: event.clientY, moved: false };
+    area.setPointerCapture(event.pointerId);
+  };
+  area.onpointermove = event => {
+    if (!press) return;
+    const dx = event.clientX - press.x, dy = event.clientY - press.y;
+    if (!press.moved && Math.hypot(dx, dy) < 4) return;
+    press = { x: event.clientX, y: event.clientY, moved: true };
+    turntable.turn(dx * 0.6, dy * 0.6);
+  };
+  area.onpointerup = () => { if (press?.moved && owner) owner.dragged = true; press = null; };
+  area.onpointercancel = () => { press = null; };
+}
+
+/* Shows the subject in the viewer, with its name, a line under it and chips; a workshop model with meshes offers its looks. */
+function select(subject, name, line, chips, lookable = false) {
+  pictures.selected = keyOf(subject);
+  document.querySelectorAll(".box").forEach(box => box.classList.toggle("selected", box.dataset.key === pictures.selected));
+  $("infoName").textContent = name;
+  $("infoPrefab").textContent = line;
+  $("infoChips").replaceChildren(...chips);
+  $("overlay").hidden = $("stageImage").hidden = false;
+  $("stageEmpty").hidden = true;
+  $("look").hidden = !lookable;
+  if (lookable) $("look").value = subject.look;
+  viewer.show(subject);
+}
+
+/* A workshop model drawn again in another look; the boxes keep the look its kind gets. */
+function changeLook() {
+  if (!viewer.subject?.bundle) return;
+  viewer.subject = { ...viewer.subject, look: $("look").value };
+  viewer.draw();
+}
+
+function zoomViewer(event) {
+  if (!viewer.subject) return;
+  event.preventDefault();
+  viewer.zoom = Math.max(0.3, Math.min(6, viewer.zoom * Math.exp(-event.deltaY * 0.0015)));
+  viewer.draw();
+}
+
+function viewFrom(name) {
+  [viewer.yaw, viewer.pitch] = VIEWS[name];
+  viewer.draw();
+}
+
+let spinning = false;
+
+function spin(time, last) {
+  if (!spinning) return;
+  if (last) viewer.turn((time - last) * 0.03, 0);
+  requestAnimationFrame(next => spin(next, time));
+}
+
+function toggleSpin() {
+  spinning = !spinning;
+  $("spin").classList.toggle("primary", spinning);
+  if (spinning) requestAnimationFrame(time => spin(time, 0));
+}
+
+/* ---------- items ---------- */
+
+async function searchItems() {
+  const filter = $("itemSearch").value.trim();
+  const generation = ++panes.items.generation;
+  if (!filter) return showExamples();
+  const data = await run(() => call("items", { filter }), countLine);
+  if (!data || generation !== panes.items.generation) return;
+  renderGroups(panes.items, data.groups, itemBox);
+}
+
+function countLine(result) {
+  const groups = result.groups.length;
+  const shown = result.shown < result.found ? ` · the first ${result.shown} shown` : "";
+  return `${result.found} item${result.found === 1 ? "" : "s"} in ${groups} group${groups === 1 ? "" : "s"}${shown}`;
+}
+
+function showExamples() {
+  $("groupIndex").replaceChildren(el("div", "empty", "Groups appear here."));
+  const prompt = el("div", "empty center", "Search by name, kind or biome:");
+  const examples = el("div", "examples");
+  for (const word of ["shield", "iron shield", "sword", "bow", "helmet", "mead", "swamp", "mistlands staff"]) {
+    const button = el("button", "", word);
+    button.onclick = () => { $("itemSearch").value = word; searchItems(); };
+    examples.append(button);
+  }
+  prompt.append(examples);
+  $("results").replaceChildren(prompt);
+}
+
+function itemBox(item) {
+  const tag = el("div", "tag");
+  tag.append(el("span", "", item.tier ? `Tier ${item.tier}` : "Tier ?"), biomeLabel(item));
+  const box = pictureBox({ prefab: item.prefab }, item.name, tag, () => select({ prefab: item.prefab }, item.name, item.prefab, infoChips(item)));
+  box.title = `${item.name}  ·  ${item.prefab}`;
+  return box;
+}
+
+function biomeLabel(item) {
+  const label = el("span", "", item.biome || "biome ?");
+  if (item.biome) {
+    label.dataset.biome = item.biome;
+    label.prepend(el("i", "dot"));
+  }
+  return label;
+}
+
+function infoChips(item) {
+  const biome = el("span", "chip", item.biome || "Biome unknown");
+  if (item.biome) {
+    biome.dataset.biome = item.biome;
+    biome.prepend(el("i", "dot"));
+  } else biome.classList.add("dim");
+  const chips = [el("span", "chip", item.tier ? `Tier ${item.tier}` : "Tier unknown"), biome, el("span", "chip dim", item.group)];
+  if (item.station) chips.push(el("span", "chip dim", item.station));
+  return chips;
+}
+
+/* ---------- workshop ---------- */
+
+const KIND = { Creatures: "creature", Pieces: "piece", Items: "item", "Rigged models": "rigged", Models: "model", Effects: "effect" };
+const shop = { bundles: [], opened: null, listed: false };
+
+async function loadBundles(quiet = false) {
+  const data = await run(() => call("workshop"), quiet ? null : result => `${result.bundles.length} bundles in the workshop`);
+  if (!data) return;
+  Object.assign(shop, { bundles: data.bundles, listed: true });
+  $("workshopFolder").textContent = data.folder;
+  renderBundles();
+}
+
+function renderBundles() {
+  const words = $("bundleFilter").value.toLowerCase().split(/[\s,]+/).filter(Boolean);
+  const shown = shop.bundles.filter(bundle => words.every(word => `${bundle.name} ${bundle.category || ""} ${bundle.file}`.toLowerCase().includes(word)));
+  $("bundles").replaceChildren(...shown.map(bundleRow));
+  if (shown.length === 0) $("bundles").append(el("div", "empty", shop.bundles.length ? "No bundle matches." : "No bundles built yet."));
+}
+
+function bundleRow(bundle) {
+  const row = el("div", "row" + (bundle.name === shop.opened?.name ? " opened" : ""));
+  row.append(el("span", "name grow", bundle.name));
+  if (bundle.rebuilt) row.append(el("span", "badge rebuilt", "rebuilt"));
+  else if (bundle.loaded) row.append(el("span", "badge loaded", "loaded"));
+  if (bundle.mod) row.append(el("span", "badge mod", "in a mod"));
+  row.append(el("span", "dim", shortTime(bundle.built)));
+  row.title = `${bundle.category ? bundle.category + "  ·  " : ""}${bundle.file}${bundle.copies > 1 ? `  ·  the newest of ${bundle.copies} builds` : ""}  ·  built ${bundle.built}`;
+  row.onclick = () => openBundle(bundle.name);
+  return row;
+}
+
+/* "14:05" for today, "10-02" for another day. */
+function shortTime(stamp) {
+  const now = new Date();
+  const today = [now.getFullYear(), now.getMonth() + 1, now.getDate()].map(n => String(n).padStart(2, "0")).join("-");
+  return stamp.startsWith(today) ? stamp.slice(11) : stamp.slice(5, 10);
+}
+
+/* Opens (loads) the bundle and shows its models, then lists the bundles again quietly for their badges. */
+async function openBundle(name, reload = false) {
+  const generation = ++panes.workshop.generation;
+  shop.listed = true;
+  const data = await run(() => call("workshop/open", reload ? { bundle: name, reload: 1 } : { bundle: name }), openedLine);
+  if (data && generation === panes.workshop.generation) {
+    shop.opened = data;
+    showBundle(data);
+    renderGroups(panes.workshop, data.groups, model => modelBox(model, data));
+    if (viewer.subject?.bundle === data.name) viewer.draw();
+  }
+  await loadBundles(true);
+}
+
+function openedLine(result) {
+  const counts = result.groups.map(group => `${group.items.length} ${group.items.length === 1 ? group.name.toLowerCase().replace(/s$/, "") : group.name.toLowerCase()}`);
+  const lost = result.lost?.length ? ` · could not put back: ${result.lost.join("; ")}` : "";
+  return `${"lost" in result ? "Reloaded " : ""}${result.name}: ${counts.join(", ") || "nothing to draw"}${lost}`;
+}
+
+function showBundle(data) {
+  $("bundleBar").hidden = false;
+  $("bundleName").textContent = data.name;
+  $("bundleNote").textContent = data.from === "mod"
+    ? "a mod embeds this bundle: this is the mod's copy, which only a rebuild of the mod changes"
+    : `${data.category ? data.category + "  ·  " : ""}built ${data.built}`;
+  $("bundleNote").title = data.file;
+  $("reloadBundle").disabled = data.from === "mod";
+}
+
+function modelBox(model, bundle) {
+  const tag = el("div", "tag");
+  tag.append(el("span", "", KIND[model.kind] || model.kind), el("span", "", model.triangles ? `${model.triangles.toLocaleString()} tris` : ""));
+  const subject = { prefab: model.prefab, bundle: bundle.name, look: model.look };
+  const lookable = model.kind !== "Effects";
+  const box = pictureBox(subject, model.prefab, tag, () => select(subject, model.prefab, `${bundle.name}  ·  ${bundle.file}`, modelChips(model, bundle), lookable));
+  box.title = `${model.prefab}  ·  ${bundle.name}`;
+  return box;
+}
+
+function modelChips(model, bundle) {
+  const chips = [el("span", "chip", KIND[model.kind] || model.kind)];
+  if (model.triangles) chips.push(el("span", "chip dim", `${model.triangles.toLocaleString()} triangles`));
+  chips.push(el("span", "chip dim", `${model.materials} material${model.materials === 1 ? "" : "s"}`));
+  chips.push(el("span", "chip dim", bundle.from === "mod" ? "a mod's copy" : `built ${shortTime(bundle.built)}`));
+  return chips;
+}
+
+/* ---------- tabs ---------- */
+
+const HINTS = {
+  objects: "Space plays the selected part · changes stay on this machine",
+  items: "Drag a picture to turn it · nothing is placed in the world",
+  workshop: "Bundles built in the asset workshop · Reload after a rebuild · nothing is placed in the world",
+  scenes: "Film scenes: their parts and timings · Rehearse plays one in the game · Save writes the scene file",
+};
+
+function showTab(name) {
+  $("objectsView").hidden = name !== "objects";
+  $("itemsView").hidden = name === "objects" || name === "scenes";
+  $("itemsView").classList.toggle("workshop", name === "workshop");
+  document.querySelectorAll("[data-pane]").forEach(pane => { pane.hidden = pane.dataset.pane !== name; });
+  document.querySelectorAll(".tabs button").forEach(tab => tab.classList.toggle("on", tab.dataset.tab === name));
+  $("hint").textContent = HINTS[name];
+  try { localStorage.setItem("studio.tab", name); } catch { /* no storage here */ }
+  if (name === "items") $("itemSearch").focus();
+  if (name === "workshop" && !shop.listed) loadBundles();
+  if (name === "objects" && !view.listed) loadTargets();
+}
+
+/* The tab a link names (#items, #workshop, #workshop/<bundle> opening that bundle), else the one used last. */
+function startTab() {
+  const [tab, bundle] = decodeURIComponent(location.hash.slice(1)).split("/");
+  if (tab === "workshop" && bundle) openBundle(bundle); // first, so the tab does not list the bundles a second time
+  showTab(tab in HINTS ? tab : savedTab());
+}
+
+function savedTab() {
+  try {
+    const saved = localStorage.getItem("studio.tab");
+    return saved in HINTS ? saved : "objects";
+  } catch {
+    return "objects";
+  }
+}
+
+/* ---------- wiring ---------- */
+
+function wire() {
+  $("refreshTargets").onclick = loadTargets;
+  $("radius").onchange = loadTargets;
+  $("targetFilter").oninput = debounce(loadTargets);
+  $("refreshTree").onclick = loadTree;
+  $("treeFilter").oninput = renderTree;
+  $("playAll").onclick = () => play("");
+  $("resetAll").onclick = () => reset("");
+  $("play").onclick = () => play(view.path);
+  $("reset").onclick = () => reset(view.path);
+  $("remove").onclick = removeEffect;
+  $("copyLocal").onclick = () => current() && copyVector(current().position);
+  $("copyRoot").onclick = () => current() && copyVector(current().fromRoot);
+  $("findSources").onclick = findSources;
+  $("sourceFilter").onkeydown = event => { if (event.key === "Enter") findSources(); };
+  document.addEventListener("keydown", playKey);
+  document.querySelectorAll(".tabs button").forEach(tab => { tab.onclick = () => showTab(tab.dataset.tab); });
+  wireItems();
+  wireWorkshop();
+}
+
+function wireItems() {
+  $("itemSearch").oninput = debounce(searchItems, 250);
+  $("itemSearch").onkeydown = event => { if (event.key === "Enter") searchItems(); };
+  dragToTurn($("stage"), viewer, null);
+  $("stage").addEventListener("wheel", zoomViewer, { passive: false });
+  $("stage").ondblclick = () => { Object.assign(viewer, TURN); viewer.draw(); };
+  document.querySelectorAll("[data-view]").forEach(button => { button.onclick = () => viewFrom(button.dataset.view); });
+  $("spin").onclick = toggleSpin;
+  $("look").onchange = changeLook;
+}
+
+function wireWorkshop() {
+  $("bundleFilter").oninput = renderBundles;
+  $("refreshBundles").onclick = () => loadBundles();
+  $("reloadBundle").onclick = () => shop.opened && openBundle(shop.opened.name, true);
+}
+
+function playKey(event) {
+  const typing = ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement?.tagName);
+  if (event.key !== " " || typing || $("objectsView").hidden) return;
+  event.preventDefault();
+  play(view.path);
+}
+
+function debounce(action, wait = 300) {
+  let timer;
+  return () => { clearTimeout(timer); timer = setTimeout(action, wait); };
+}
+
+buildVectors();
+wire();
+showExamples();
+startTab();
+</script>
+</body>
+</html>

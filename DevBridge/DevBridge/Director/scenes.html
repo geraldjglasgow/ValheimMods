@@ -1,0 +1,372 @@
+<!-- The Studio's Scenes tab: added to the studio page when it is served (Studio/StudioPage.cs). Uses the page's own
+     call(), run(), status(), el() and $() helpers and its token. -->
+<style>
+  main.scenes { grid-template-columns: 250px minmax(420px, 1fr) 420px; }
+  .scene-row .order { width: 22px; color: var(--dim); text-align: right; }
+  .scene-row .len { color: var(--dim); font-variant-numeric: tabular-nums; }
+  .badge.planned { background: #313744; }
+  .badge.rehearsed { background: #4a4424; color: #f1e48d; }
+  .badge.preview { background: #24404a; color: #94d8ee; }
+  .badge.final { background: #2c3d33; color: #a8e0b4; }
+  .plan-total { padding: 8px 10px; border-top: 1px solid var(--line); color: var(--dim); font-size: 12px; }
+  .timeline { flex: 1; overflow: auto; padding: 8px 10px 14px; }
+  .ruler, .lane { position: relative; margin-left: 74px; }
+  .ruler { height: 18px; border-bottom: 1px solid var(--line); color: var(--dim); font-size: 10px; }
+  .ruler span { position: absolute; top: 2px; transform: translateX(-50%); }
+  .ruler i { position: absolute; bottom: 0; width: 1px; height: 5px; background: var(--line); }
+  .lane { min-height: 30px; border-bottom: 1px dashed #262a33; }
+  .lane-name { position: absolute; left: -74px; top: 9px; width: 68px; color: var(--dim); font-size: 11px; text-align: right; }
+  .cue { position: absolute; height: 22px; min-width: 6px; padding: 0 5px; border-radius: 4px; font-size: 11px; line-height: 22px;
+         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: grab; border: 1px solid transparent; }
+  .cue.selected { outline: 2px solid var(--accent); z-index: 2; }
+  .cue.when { border-style: dashed; border-color: #c9a35a; }
+  .cue.k-camera { background: #23547f; } .cue.k-cast { background: #4a3a24; } .cue.k-sound { background: #24404a; }
+  .cue.k-picture { background: #3d2f52; } .cue.k-flow { background: #3a3f4a; }
+  .fired { position: absolute; top: 0; bottom: 0; width: 2px; background: #c9a35a; opacity: .8; }
+  .playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--bad); z-index: 3; pointer-events: none; }
+  .lanes { position: relative; }
+  .scene-form label { display: block; color: var(--dim); font-size: 11px; margin: 8px 0 2px; }
+  .scene-form input, .scene-form select { width: 100%; }
+  .scene-form textarea, .cue-json { width: 100%; font: 12px/1.4 ui-monospace, Consolas, monospace; color: var(--text); background: var(--bg);
+         border: 1px solid var(--line); border-radius: 4px; padding: 6px; resize: vertical; }
+  .run-bar { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .run-state { padding: 4px 10px 8px; color: var(--dim); font-size: 12px; min-height: 22px; }
+  .run-state.bad { color: var(--bad); }
+  .take img { width: 100%; border-radius: 4px; margin-top: 6px; }
+  .cue-help { color: var(--dim); font-size: 11px; margin-top: 4px; }
+</style>
+<main id="scenesView" class="scenes" data-pane="scenes" hidden>
+  <section>
+    <h2>Scenes</h2>
+    <div class="bar"><span id="sceneFolder" class="dim name grow" title=""></span><button id="refreshScenes">Refresh</button></div>
+    <div id="sceneList" class="list"><div class="empty">No scene files yet.</div></div>
+    <div id="planTotal" class="plan-total"></div>
+  </section>
+  <section>
+    <h2 id="sceneTitle">Timeline</h2>
+    <div class="run-bar">
+      <button id="sceneRehearse" title="Setup, then the shot live in the game, nothing recorded">Rehearse</button>
+      <button id="scenePreview" title="Setup, then the shot recorded at 1280x720">Record preview</button>
+      <button id="sceneFinal" title="Setup, then the shot recorded at 2560x1440">Record final</button>
+      <button id="sceneStop">Stop</button>
+      <span class="grow"></span>
+      <button id="sceneSave" class="primary">Save scene</button>
+    </div>
+    <div id="sceneRun" class="run-state"></div>
+    <div class="timeline">
+      <div id="sceneRuler" class="ruler"></div>
+      <div id="sceneLanes" class="lanes"></div>
+      <div class="cue-help">Drag a cue to move it in time (0.05 s steps). Dashed cues wait for a condition; amber lines mark when the last take fired them.</div>
+    </div>
+  </section>
+  <section>
+    <h2>Scene</h2>
+    <div class="inspector scene-form">
+      <label>Title</label><input id="sceneTitleInput">
+      <label>Status</label>
+      <select id="sceneStatus"><option>planned</option><option>rehearsed</option><option>preview</option><option>final</option></select>
+      <label>What happens (notes)</label><textarea id="sceneNotes" rows="5"></textarea>
+      <label>Length (s) · order</label>
+      <div class="bar" style="padding:0;border:0"><input id="sceneLength" type="number" step="0.1"><input id="sceneOrder" type="number" step="1"></div>
+      <label>Selected cue</label>
+      <textarea id="cueJson" class="cue-json" rows="9" placeholder="Click a cue on the timeline"></textarea>
+      <div class="bar" style="padding:4px 0;border:0">
+        <button id="cueApply">Apply</button><button id="cueDuplicate">Duplicate</button><button id="cueDelete">Delete</button>
+        <span class="grow"></span><button id="cueAdd">New cue</button>
+      </div>
+      <label>Setup steps (before the shot, real time)</label>
+      <textarea id="sceneSetup" class="cue-json" rows="7"></textarea>
+      <label>Last take</label>
+      <div class="take">
+        <div class="bar" style="padding:0;border:0">
+          <button id="takeSheet">Contact sheet</button><button id="openPreview">Open preview</button><button id="openFinal">Open final</button>
+        </div>
+        <img id="takeImage" alt="" hidden>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+"use strict";
+const LANES = [
+  ["camera", "Camera", ["camera"]],
+  ["cast", "Cast", ["spawn", "adopt", "extra", "act", "ai", "attack", "hero", "player", "remove", "hide"]],
+  ["sound", "Sound", ["sfx", "sound"]],
+  ["picture", "Picture", ["env", "light", "fade", "title", "vfx", "effect", "prop", "time", "shake", "clean", "world"]],
+  ["flow", "Flow", ["mark", "end", "eval", "console", "call"]],
+];
+const KINDS = LANES.flatMap(lane => lane[2]);
+const scenes = { list: [], name: null, scene: null, takes: {}, selected: -1, pps: 70, polling: null };
+
+async function sceneCall(name, args = {}, body = null) {
+  const query = new URLSearchParams(args).toString();
+  const options = { headers: { "X-DevBridge-Studio": TOKEN }, cache: "no-store" };
+  if (body != null) Object.assign(options, { method: "POST", body, headers: { "X-DevBridge-Studio": TOKEN, "Content-Type": "application/json" } });
+  const response = await fetch(`/studio/${name}?${query}`, options);
+  const text = await response.text();
+  if (!response.ok) throw new Error(text.replace(/^error: /, ""));
+  return JSON.parse(text);
+}
+
+function kindOf(cue) { return Object.keys(cue).find(k => KINDS.includes(k)) || Object.keys(cue).find(k => k !== "t" && k !== "when") || "?"; }
+function laneOf(kind) { return (LANES.find(lane => lane[2].includes(kind)) || LANES[4])[0]; }
+
+/* What a cue does, in a few words, for its block on the timeline. */
+function summary(cue) {
+  const kind = kindOf(cue), value = cue[kind];
+  const text = typeof value === "string" ? value : kind === "camera" ? cameraText(value) : kind === "title" ? `"${value.text}"`
+    : kind === "fade" ? `fade to ${value.to ?? value}` : kind === "hero" ? Object.keys(value).join(" ") : kind === "player" ? Object.keys(value).join(" ")
+    : kind === "attack" ? `${value} ${cue.item || ""}` : kind === "spawn" ? `${value} as ${cue.as || value}` : kind === "time" ? `x${value.scale ?? value}`
+    : kind === "end" ? "cut" : kind === "env" ? value.name : kind === "prop" ? value : JSON.stringify(value);
+  return `${kind}: ${text}`.replace(/_sfx_/, " ");
+}
+
+function cameraText(camera) {
+  const keys = camera.keys || [camera];
+  return `${keys.length} key${keys.length > 1 ? "s" : ""}${camera.hand ? ", handheld" : ""}`;
+}
+
+/* How long a cue lasts on the timeline: a camera move to its last key (or the next camera cue), others a tick. */
+function span(cue, index, cues) {
+  const kind = kindOf(cue);
+  if (kind !== "camera" || typeof cue.camera !== "object") return 0.15;
+  const keys = cue.camera.keys || [cue.camera];
+  const next = cues.slice(index + 1).find(other => kindOf(other) === "camera" && !other.when);
+  const end = next ? next.t : scenes.scene.length;
+  return Math.max(0.15, (next && !cue.when ? end : Math.max(end, keys[keys.length - 1].t || 0)) - (cue.t || 0));
+}
+
+async function loadScenes() {
+  const data = await run(() => sceneCall("scenes"), result => `${result.scenes.length} scenes`);
+  if (!data) return;
+  scenes.list = data.scenes;
+  $("sceneFolder").textContent = data.folder;
+  $("sceneFolder").title = data.folder;
+  renderSceneList();
+  const linked = decodeURIComponent(location.hash.slice(1)).split("/")[1]; // #scenes/<name> opens that scene
+  const first = data.scenes.find(scene => scene.name === linked) || data.scenes[0];
+  if (!scenes.name && first) openScene(first.name);
+  showRun(data.runner);
+}
+
+function renderSceneList() {
+  const list = $("sceneList");
+  list.replaceChildren();
+  scenes.list.forEach(scene => {
+    const row = el("div", "row scene-row" + (scene.name === scenes.name ? " selected" : ""));
+    row.append(el("span", "order", scene.order), el("span", "name grow", scene.title), el("span", "badge " + scene.status, scene.status),
+      el("span", "len", `${(+scene.length).toFixed(1)}s`));
+    row.title = scene.notes;
+    row.onclick = () => openScene(scene.name);
+    list.append(row);
+  });
+  const total = scenes.list.reduce((sum, scene) => sum + (+scene.length || 0), 0);
+  const done = scenes.list.filter(scene => scene.status !== "planned").length;
+  $("planTotal").textContent = `${scenes.list.length} scenes · ${total.toFixed(1)} s planned · ${done} shot`;
+}
+
+async function openScene(name) {
+  const data = await run(() => sceneCall("scene", { name }), () => `Scene ${name}`);
+  if (!data) return;
+  Object.assign(scenes, { name, scene: data.scene, takes: data.takes, selected: -1 });
+  scenes.scene.cues = scenes.scene.cues || [];
+  fillForm();
+  renderSceneList();
+  renderTimeline();
+  $("takeImage").hidden = true;
+}
+
+function fillForm() {
+  const s = scenes.scene;
+  $("sceneTitle").textContent = s.title || scenes.name;
+  $("sceneTitleInput").value = s.title || "";
+  $("sceneStatus").value = s.status || "planned";
+  $("sceneNotes").value = s.notes || "";
+  $("sceneLength").value = s.length || 0;
+  $("sceneOrder").value = s.order ?? 99;
+  $("sceneSetup").value = JSON.stringify(s.setup || [], null, 1);
+  $("cueJson").value = "";
+}
+
+function renderTimeline() {
+  const s = scenes.scene, length = Math.max(1, s.length || 1);
+  const room = ($("sceneLanes").parentElement.clientWidth || 900) - 100;
+  scenes.pps = Math.max(40, room / length);
+  const width = length * scenes.pps;
+  const ruler = $("sceneRuler");
+  ruler.replaceChildren();
+  ruler.style.width = `${width}px`;
+  for (let t = 0; t <= length + 0.001; t += 0.5) {
+    const tick = el("i"); tick.style.left = `${t * scenes.pps}px`; ruler.append(tick);
+    if (Math.abs(t - Math.round(t)) < 0.01) { const label = el("span", null, `${Math.round(t)}s`); label.style.left = `${t * scenes.pps}px`; ruler.append(label); }
+  }
+  const lanes = $("sceneLanes");
+  lanes.replaceChildren();
+  LANES.forEach(([key, label]) => {
+    const lane = el("div", "lane"); lane.dataset.lane = key; lane.style.width = `${width}px`;
+    lane.rows = [];
+    lane.append(el("span", "lane-name", label));
+    lanes.append(lane);
+  });
+  s.cues.forEach((cue, index) => placeCue(cue, index));
+  markFired();
+}
+
+/* A chip as wide as its time span or its words, on the first row of its lane where it overlaps nothing. */
+function placeCue(cue, index) {
+  const kind = kindOf(cue), lane = document.querySelector(`#sceneLanes [data-lane="${laneOf(kind)}"]`);
+  const text = (cue.when ? "⧗ " : "") + summary(cue);
+  const left = (cue.t || 0) * scenes.pps;
+  const width = Math.max(span(cue, index, scenes.scene.cues) * scenes.pps, Math.min(260, text.length * 6.2 + 12));
+  let row = lane.rows.findIndex(end => end <= left);
+  if (row < 0) { row = lane.rows.length; lane.rows.push(0); }
+  lane.rows[row] = left + width + 2;
+  lane.style.height = `${lane.rows.length * 26 + 6}px`;
+  const block = el("div", `cue k-${laneOf(kind)}` + (cue.when ? " when" : "") + (index === scenes.selected ? " selected" : ""), text);
+  Object.assign(block.style, { left: `${left}px`, width: `${width}px`, top: `${4 + row * 26}px` });
+  block.title = `t ${(+cue.t || 0).toFixed(2)} s` + (cue.when ? ` · waits for ${JSON.stringify(cue.when)}` : "") + `
+${JSON.stringify(cue)}`;
+  block.onpointerdown = event => dragCue(event, block, index);
+  lane.append(block);
+}
+
+/* The last take's record: where its waiting cues (and marks) really fired, and where it was cut. */
+function markFired() {
+  const take = scenes.takes.final || scenes.takes.preview;
+  if (!take) return;
+  const lanes = $("sceneLanes");
+  (take.fired || []).forEach(fired => {
+    const line = el("div", "fired"); line.style.left = `${74 + fired.t * scenes.pps}px`;
+    line.title = `last take: ${fired.mark || fired.kind} at ${fired.t} s`;
+    lanes.append(line);
+  });
+}
+
+function dragCue(event, block, index) {
+  selectCue(index);
+  const cue = scenes.scene.cues[index], startX = event.clientX, startT = +cue.t || 0;
+  block.setPointerCapture(event.pointerId);
+  block.onpointermove = move => {
+    const t = Math.max(0, Math.round((startT + (move.clientX - startX) / scenes.pps) * 20) / 20);
+    cue.t = t;
+    block.style.left = `${t * scenes.pps}px`;
+    status(`${summary(cue)} at ${t.toFixed(2)} s (not saved)`);
+  };
+  block.onpointerup = () => { block.onpointermove = null; selectCue(index); renderTimeline(); };
+}
+
+function selectCue(index) {
+  scenes.selected = index;
+  document.querySelectorAll("#sceneLanes .cue").forEach(block => block.classList.remove("selected"));
+  $("cueJson").value = index >= 0 ? JSON.stringify(scenes.scene.cues[index], null, 1) : "";
+}
+
+function applyCue() {
+  if (scenes.selected < 0) return status("Pick a cue first", true);
+  try {
+    scenes.scene.cues[scenes.selected] = JSON.parse($("cueJson").value);
+    sortCues();
+    renderTimeline();
+    status("Cue changed (not saved)");
+  } catch (error) { status(`Cue JSON: ${error.message}`, true); }
+}
+
+function sortCues() {
+  const chosen = scenes.scene.cues[scenes.selected];
+  scenes.scene.cues.sort((a, b) => (+a.t || 0) - (+b.t || 0));
+  scenes.selected = scenes.scene.cues.indexOf(chosen);
+}
+
+function addCue(cue) {
+  scenes.scene.cues.push(cue);
+  scenes.selected = scenes.scene.cues.length - 1;
+  sortCues();
+  renderTimeline();
+  selectCue(scenes.selected);
+}
+
+function collect() {
+  const s = scenes.scene;
+  s.title = $("sceneTitleInput").value;
+  s.status = $("sceneStatus").value;
+  s.notes = $("sceneNotes").value;
+  s.length = +$("sceneLength").value;
+  s.order = +$("sceneOrder").value;
+  s.setup = JSON.parse($("sceneSetup").value || "[]");
+  return s;
+}
+
+async function saveScene() {
+  let body;
+  try { body = JSON.stringify(collect(), null, 1); } catch (error) { return status(`Setup JSON: ${error.message}`, true); }
+  const saved = await run(() => sceneCall("scene/save", { name: scenes.name }, body), () => `Saved ${scenes.name}`);
+  if (!saved) return;
+  scenes.list = scenes.list.map(scene => scene.name === scenes.name ? saved : scene);
+  renderSceneList();
+  renderTimeline();
+}
+
+async function playScene(mode) {
+  await saveScene();
+  const state = await run(() => sceneCall("scene/play", { name: scenes.name, mode }), () => `${mode}: ${scenes.name}`);
+  if (state) watchRun();
+}
+
+function watchRun() {
+  clearInterval(scenes.polling);
+  scenes.polling = setInterval(async () => {
+    let state;
+    try { state = await sceneCall("scene/status"); } catch { return; }
+    showRun(state);
+    if (!state.busy) { clearInterval(scenes.polling); if (state.scene === scenes.name) openScene(scenes.name); }
+  }, 300);
+}
+
+function showRun(state) {
+  if (!state) return;
+  const shot = state.shot || {}, problems = (state.problems || []).concat(shot.errors || []);
+  const text = state.scene ? `${state.scene}: ${state.step}` + (shot.time != null ? ` · ${shot.time} / ${shot.length} s` : "") +
+    (shot.cuesFired ? ` · cues ${shot.cuesFired}` : "") : "Nothing playing";
+  $("sceneRun").textContent = problems.length ? `${text} · ${problems.join(" · ")}` : text;
+  $("sceneRun").classList.toggle("bad", problems.length > 0);
+  document.querySelectorAll("#sceneLanes .playhead").forEach(line => line.remove());
+  if (state.busy && state.scene === scenes.name && shot.state === "running") {
+    const head = el("div", "playhead"); head.style.left = `${74 + shot.time * scenes.pps}px`;
+    $("sceneLanes").append(head);
+  }
+}
+
+async function showSheet() {
+  const kind = scenes.takes.final ? "final" : "preview";
+  const data = await run(() => sceneCall("scene/sheet", { name: scenes.name, kind }), () => `Contact sheet of the ${kind} take`);
+  if (!data) return;
+  $("takeImage").src = `data:image/png;base64,${data.png}`;
+  $("takeImage").hidden = false;
+}
+
+function wireScenes() {
+  $("refreshScenes").onclick = loadScenes;
+  $("sceneSave").onclick = saveScene;
+  $("sceneRehearse").onclick = () => playScene("rehearse");
+  $("scenePreview").onclick = () => playScene("preview");
+  $("sceneFinal").onclick = () => playScene("final");
+  $("sceneStop").onclick = () => run(() => sceneCall("scene/stop"), () => "Stopped").then(showRun);
+  $("cueApply").onclick = applyCue;
+  $("cueDelete").onclick = () => { if (scenes.selected >= 0) { scenes.scene.cues.splice(scenes.selected, 1); selectCue(-1); renderTimeline(); } };
+  $("cueDuplicate").onclick = () => { if (scenes.selected >= 0) addCue(JSON.parse(JSON.stringify(scenes.scene.cues[scenes.selected]))); };
+  $("cueAdd").onclick = () => addCue({ t: 0, mark: "new" });
+  $("takeSheet").onclick = showSheet;
+  $("openPreview").onclick = () => run(() => sceneCall("scene/open", { name: scenes.name, kind: "preview" }), () => "Opened the preview");
+  $("openFinal").onclick = () => run(() => sceneCall("scene/open", { name: scenes.name, kind: "final" }), () => "Opened the final take");
+  const tab = document.querySelector('.tabs button[data-tab="scenes"]');
+  if (tab) tab.addEventListener("click", () => { if (!scenes.list.length) loadScenes(); else if (scenes.scene) renderTimeline(); });
+  window.addEventListener("resize", () => { if (scenes.scene && !$("scenesView").hidden) renderTimeline(); });
+  // The page picked its first tab before this part of it existed: show it now if that tab was this one.
+  if (tab && tab.classList.contains("on")) {
+    $("scenesView").hidden = false;
+    loadScenes();
+  }
+}
+
+wireScenes();
+</script>

@@ -33,5 +33,12 @@ if (Hotkey.Pressed(FoodKey) && player.TakeInput())
     EatEverything(player);
 ```
 
+- `Wheel`: the mouse wheel for a mod. `Wheel.Install(harmony)` once (one postfix on `ZInput.GetMouseScrollWheel`), then
+  `Wheel.Claim(() => held)`. While any claim holds, `Wheel.Notches()` (once a frame) gives +1 (away from the player), -1
+  or 0, small touchpad deltas adding up to the game's one-notch threshold, and the rest of the game reads the wheel as 0:
+  the camera does not zoom and nothing else scrolls. A claim is asked on every read of the wheel, so keep it cheap.
+  `Wheel.Raw()` reads the wheel past the block. EarthWright's brush has the same rule in its own `Brush/ScrollInput`.
+
 Merged into the consuming mod with ILRepack like every library here, so the registered windows are the mod's own.
-Consumer: PackPanel (Food Key, Mead Key, Mead Slot keys, and their caps on the Food and Mead bar). OpenKeep's `Core/Keys` is the same rules and is to move onto it.
+Consumer: PackPanel (Food Key, Mead Key, Mead Slot keys, and their caps on the Food and Mead bar); the EliteEquipment
+casters bench in AssetLab (`Wheel`: Left Alt + wheel picks a wand's spell). OpenKeep's `Core/Keys` is the same rules and is to move onto it.

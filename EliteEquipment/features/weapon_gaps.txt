@@ -1,0 +1,675 @@
+Valheim Weapon Asset Gaps
+
+Updated October 10, 2026
+
+Asset backlog for vanilla Valheim and the current Elite mod lineup. The sections list missing biome upgrades and unfinished integrations across all requested weapon and shield families. Bronze crossbow remains an additional Black Forest option; the bow list contains only the Plains gap.
+
+Tiers run from 1 Meadows, 2 Black Forest, 3 Swamp and 4 Mountains to 5 Plains, 6 Mistlands, 7 Ashlands and 8 Deep North. New material names are proposed asset directions. A gap means no dedicated upgrade for that biome; earlier gear remains usable. Training items, disabled recipes and enchantment variants do not add tiers. Public mod examples are references, not installed coverage.
+
+Crossbows
+
+Create the following five crossbows, including bronze as an additional Black Forest option.
+
+Asset to add
+
+Tier and biome
+
+Gap or purpose
+
+Wooden or crude crossbow
+
+1 · Meadows
+
+Fills the starter crossbow gap.
+
+Bronze crossbow
+
+2 · Black Forest
+
+Adds a bronze alternative to the existing Bone Crossbow.
+
+Iron crossbow
+
+3 · Swamp
+
+Fills the iron progression gap.
+
+Silver crossbow
+
+4 · Mountains
+
+Fills the silver progression gap.
+
+Blackmetal crossbow
+
+5 · Plains
+
+Fills the gap before the Mistlands Arbalest.
+
+Already covered: Bone Crossbow in Black Forest; Arbalest in Mistlands; Ripper and its variants in Ashlands; Nord Crossbow and its variants in Deep North.
+
+Gravebranch exists as an art kit but is not an integrated playable item, so it does not fill a progression tier.
+
+Bows
+
+The missing biome tier is Plains.
+
+Asset to add
+
+Tier and biome
+
+Gap or purpose
+
+Blackmetal bow
+
+5 · Plains
+
+Fills the progression gap between Draugr Fang and Spine Snap.
+
+Already covered: Crude Bow in Meadows; Finewood Bow and Bone Bow in Black Forest; Huntsman Bow in Swamp; Draugr Fang in Mountains; Spine Snap in Mistlands; Ashlands and Nord bow families in the final two tiers.
+
+Fletching Table
+
+Add a dedicated Fletching Table crafting station. Bows, crossbows, arrows, bolts and missiles will be crafted here. Include ballista missiles when moving the existing ammunition recipes. Ballista structures are placed with the Hammer.
+
+Swords
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Flint sword
+
+1 · Meadows
+
+New asset. Adds a Meadows combat sword.
+
+Existing coverage: Bronze and Bone Sword (2); Iron Sword (3); Silver Sword (4); Blackmetal Sword (5); Mistwalker (6); Nidhogg and Dyrnwyn (7); Nord sword family (8).
+
+Daggers
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Iron dagger
+
+3 · Swamp
+
+New asset. Adds a dedicated Swamp upgrade.
+
+Flametal dagger
+
+7 · Ashlands
+
+New asset. Fills the Ashlands gap.
+
+Existing coverage: Flint Knife (1); Copper Knife and Bone Dagger (2); Silver Knife (4); Blackmetal Knife (5); Skoll and Hati (6); Nord dagger family (8).
+
+Skoll and Hati covers the dagger family at Mistlands because it requires the Black Forge. The Abyssal Razor is an Ocean alternative, not a dedicated iron-tier model. Butcher tools and practice weapons do not fill combat gaps.
+
+Greatswords
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Flint greatsword
+
+1 · Meadows
+
+New asset. Adds the starter two-handed sword.
+
+Bronze greatsword
+
+2 · Black Forest
+
+New asset. Adds the Black Forest upgrade.
+
+Iron greatsword
+
+3 · Swamp
+
+New asset. Adds the Swamp upgrade.
+
+Silver greatsword
+
+4 · Mountains
+
+New asset. Adds the Mountains upgrade.
+
+Blackmetal greatsword
+
+5 · Plains
+
+New asset. Leads into Krom.
+
+Existing coverage: Krom (6); Slayer and its variants (7); Nord greatsword family (8).
+
+Spears
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Blackmetal spear
+
+5 · Plains
+
+New asset. Fills the Plains gap.
+
+Existing coverage: Flint Spear (1); Bronze and Bone Spear (2); Ancient Bark Spear (3); Fang Spear (4); Carapace Spear (6); Splitnir and its variants (7); Nord spear family (8).
+
+Atgeirs
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Flint atgeir
+
+1 · Meadows
+
+New asset. Adds a Meadows polearm.
+
+Silver atgeir
+
+4 · Mountains
+
+New asset. Fills the Mountains gap.
+
+Flametal atgeir
+
+7 · Ashlands
+
+New asset. Fills the Ashlands gap.
+
+Existing coverage: Bronze and Bone Atgeir (2); Iron Atgeir (3); Blackmetal Atgeir (5); Himminafl (6); Nord atgeir family (8).
+
+Maces
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Eitr or carapace mace
+
+6 · Mistlands
+
+New asset. Adds a Mistlands one-handed blunt weapon.
+
+Existing coverage: Club (1); Bronze and Bone Mace (2); Iron Mace (3); Frostner (4); Porcupine (5); Eldner and its variants (7); Nord mace family (8).
+
+Greathammers
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Stone greathammer
+
+1 · Meadows
+
+New asset. Adds a starter two-handed blunt weapon.
+
+Silver or crystal greathammer
+
+4 · Mountains
+
+New asset. Fills the Mountains gap.
+
+Blackmetal greathammer
+
+5 · Plains
+
+New asset. Fills the Plains gap.
+
+Flametal greathammer
+
+7 · Ashlands
+
+New asset. Fills the Ashlands gap.
+
+Existing coverage: Stagbreaker (2); Iron Sledge (3); Demolisher (6); Nord greathammer family (8).
+
+Stagbreaker is counted at Black Forest because its base recipe requires core wood.
+
+Pickaxes
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Silver pickaxe
+
+4 · Mountains
+
+New asset. Adds a Mountains tool upgrade.
+
+Plains pickaxe
+
+5 · Plains
+
+New asset or recipe variant. Must be craftable before Mistlands.
+
+Flametal pickaxe
+
+7 · Ashlands
+
+New asset. Adds an Ashlands tool upgrade.
+
+Bloodgold pickaxe
+
+8 · Deep North
+
+New asset. Adds a Deep North tool upgrade.
+
+Existing coverage: Antler Pickaxe (1); Bronze Pickaxe (2); Iron Pickaxe (3); Blackmetal Pickaxe (6).
+
+The vanilla Blackmetal Pickaxe requires Yggdrasil wood, so it does not fill a Plains-access gap. A Plains variant could reuse its visual design with an earlier recipe. These are lineup upgrades; extra mining gates are not implied. The unused Stone Pickaxe recipe is disabled.
+
+Punching weapons
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Flint knuckles or claws
+
+1 · Meadows
+
+New asset. Adds a Meadows fist weapon.
+
+Iron claws
+
+3 · Swamp
+
+New asset. Fills the Swamp gap.
+
+Carapace or eitr claws
+
+6 · Mistlands
+
+New asset. Fills the Mistlands gap.
+
+Flametal claws
+
+7 · Ashlands
+
+New asset. Fills the Ashlands gap.
+
+Existing coverage: Paws of the Bear (2); Flesh Rippers (4); Claws of the Vile (5); Nord fist weapon family (8).
+
+Bear claws are already represented in vanilla. Knuckles and claws here share the punching weapon progression.
+
+Dual wielded axes
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Bronze dual axes
+
+2 · Black Forest
+
+New asset. Adds the Black Forest upgrade.
+
+Iron dual axes
+
+3 · Swamp
+
+New asset. Adds the Swamp upgrade.
+
+Silver dual axes
+
+4 · Mountains
+
+New asset. Adds the Mountains upgrade.
+
+Blackmetal dual axes
+
+5 · Plains
+
+New asset. Adds the Plains upgrade.
+
+Carapace or eitr dual axes
+
+6 · Mistlands
+
+New asset. Adds the Mistlands upgrade.
+
+Bloodgold dual axes
+
+8 · Deep North
+
+New asset. Adds the Deep North upgrade.
+
+Existing coverage: The early paired axes (EarlyAxes) cover Meadows (1); Berserkir Axes and their variants cover Ashlands (7).
+
+EarlyAxes needs wood and its two axe heads to craft. Its later upgrade resource does not move the initial weapon into the Swamp tier.
+
+Axes
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Silver axe
+
+4 · Mountains
+
+New asset. Fills the one-handed Mountains gap.
+
+Flametal axe
+
+7 · Ashlands
+
+New asset. Fills the one-handed Ashlands gap.
+
+Existing coverage: Stone and Flint Axe (1); Bronze and Bone Axe (2); Iron Axe (3); Blackmetal Axe (5); Jotun Bane (6); Nord axe family (8).
+
+This section is for one-handed axes. Dual axes and two-handed greataxes have separate sections.
+
+Greataxes
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Stone or flint greataxe
+
+1 · Meadows
+
+New asset. Adds a Meadows two-handed axe.
+
+Flametal greataxe
+
+7 · Ashlands
+
+New asset. Fills the Ashlands gap.
+
+Existing coverage: Executioner's Greataxe from Elite Creatures Pack (2); Battleaxe (3); Crystal Battleaxe (4); Black Metal Battleaxe (5); Skull Splittur (6); Nord greataxe family (8).
+
+The Executioner's Greataxe already fills Black Forest, so a second bronze model is not required for tier coverage. Berserkir Axes belong to the separate dual-axe family.
+
+Tower shields
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Silver tower shield
+
+4 · Mountains
+
+New asset. Adds a dedicated Mountains tower shield.
+
+Carapace tower shield
+
+6 · Mistlands
+
+New asset. Fills the Mistlands gap.
+
+Existing coverage: Wood Tower Shield (1); Bone Tower Shield (2); Iron Tower Shield (3); Blackmetal Tower Shield (5); Flametal Tower Shield (7); Nord tower shield family (8).
+
+Serpent Scale Shield is an Ocean/iron-stage tower-style alternative and cannot parry. It does not provide a dedicated silver-tier model. The Ravenward workshop art also remains a Meadows option rather than a new tier.
+
+Round shields
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Bronze round shield
+
+2 · Black Forest
+
+New asset. Adds a Black Forest round shield.
+
+Existing coverage: Wood Shield (1); Banded Shield and the root shield (3); Silver Shield and the Elite Kraken Shield (4); Blackmetal Shield (5); Carapace Shield (6); Flametal Shield (7); Nord round shield family (8).
+
+The root shield requires Writhan roots from the Swamp. Bronze Buckler belongs to the buckler family and does not fill this round-shield slot.
+
+Bucklers
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Wood buckler
+
+1 · Meadows
+
+Existing model and AssetLab code. Test and integrate.
+
+Silver buckler
+
+4 · Mountains
+
+Existing model and AssetLab code. Test and integrate.
+
+Blackmetal buckler
+
+5 · Plains
+
+Existing model and AssetLab code. Test and integrate.
+
+Flametal buckler
+
+7 · Ashlands
+
+Existing model and AssetLab code. Test and integrate.
+
+Existing coverage: Bronze Buckler (2); Iron Buckler (3); Carapace Buckler (6); Nord buckler family (8).
+
+All four missing vanilla tiers already have workshop models and bundles. Their AssetLab implementation is a development test build; the in-game checklist and release integration remain unfinished. No replacement artwork is required by this audit.
+
+Ballista
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Wooden ballista
+
+1 · Meadows
+
+New asset. Adds a Meadows siege option.
+
+Bone Ballista
+
+2 · Black Forest
+
+Existing model and Elite Creatures Pack code. Complete in-game testing.
+
+Iron ballista
+
+3 · Swamp
+
+New asset. Adds the Swamp upgrade.
+
+Silver ballista
+
+4 · Mountains
+
+New asset. Adds the Mountains upgrade.
+
+Blackmetal ballista
+
+5 · Plains
+
+New asset. Must be craftable before Mistlands.
+
+Flametal ballista
+
+7 · Ashlands
+
+New asset. Adds the Ashlands upgrade.
+
+Bloodgold ballista
+
+8 · Deep North
+
+New asset. Adds the Deep North upgrade.
+
+Existing coverage: The vanilla Ballista covers Mistlands (6).
+
+Bone Ballista is the existing manually operated Black Forest design, with its own Bone Missiles; its game test checklist remains open. Vanilla Ballista is automatic. Control mode and ammunition compatibility for the new tiers still need design. Different missile materials alone do not create another ballista tier. Craft missiles at the Fletching Table and place the structures with the Hammer.
+
+Magic staffs
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Wood or flint magic staff
+
+1 · Meadows
+
+New asset. Adds a Meadows caster entry.
+
+Bronze or bone magic staff
+
+2 · Black Forest
+
+New asset. Adds the Black Forest upgrade.
+
+Ancient bark or iron magic staff
+
+3 · Swamp
+
+New asset. Adds the Swamp upgrade.
+
+Silver or crystal magic staff
+
+4 · Mountains
+
+New asset. Adds the Mountains upgrade.
+
+Blackmetal magic staff
+
+5 · Plains
+
+New asset. Adds the Plains upgrade.
+
+Existing coverage: Mistlands (6): Staff of Embers and Staff of Frost for elemental magic; Staff of Protection and Dead Raiser for blood magic. Ashlands (7): Staff of Fracturing, Staff of the Wild and Dundr for elemental magic; Trollstav for blood magic. Deep North (8): Lightning Strike for elemental magic; Northern Vengeance, Echo Spike and Spirit Caller for blood magic.
+
+Both magic schools lack a native progression before Mistlands. The five rows identify missing biome tiers; each new staff still needs a spell, school and balance design. Supporting both schools at every early tier would require additional variants. Early staffs also need a usable Eitr source; the existing caster gear system is a candidate for integration.
+
+Wands
+
+Asset or unfinished item
+
+Tier and biome
+
+Work remaining
+
+Gnarled Wand
+
+1 · Meadows
+
+Existing Meadows model and AssetLab caster prototype. Test and integrate.
+
+Greywood Wand
+
+2 · Black Forest
+
+Approved lineup name. New model and tier implementation needed.
+
+Rootbound Wand
+
+3 · Swamp
+
+Approved lineup name. New model and tier implementation needed.
+
+Frostsilver Wand
+
+4 · Mountains
+
+Approved lineup name. New model and tier implementation needed.
+
+Blackmetal Wand
+
+5 · Plains
+
+Approved lineup name. New model and tier implementation needed.
+
+Yggdrasil Wand
+
+6 · Mistlands
+
+Approved lineup name. New model and tier implementation needed.
+
+Ashwood Wand
+
+7 · Ashlands
+
+Approved lineup name. New model and tier implementation needed.
+
+Deep North wand
+
+8 · Deep North
+
+New tier beyond the current seven-tier plan. Name, model and spells need design.
+
+Existing coverage: Vanilla has no dedicated wand line. The local caster plan already defines the first seven wand names.
+
+The Meadows Gnarled Wand has a model, spells and supporting caster code in AssetLab, but Wands and Spells is off by default and its in-game checks remain open. Keep that prototype and extend the approved sequence. Deep North is an added gap, not an already approved wand design.
+
+Audit sources
+
+Checked October 10, 2026. Tier assignments use installed vanilla item and crafting data, including crafting-station requirements and initial recipe ingredients. Upgrade-only ingredients are excluded from initial unlocks. Local mod coverage comes from Elite Creatures Pack and the EliteEquipment and AssetLab workshop records. This is an asset and recipe audit; it does not certify in-game behavior.
+
+Workshop item inventory
+
+Elite Creatures Pack bone weapons
+
+Elite Creatures Pack Kraken shield
+
+Buckler model record
+
+Buckler integration record
+
+Bone Ballista design and test record
+
+Approved caster and wand lineup
+
+Meadows wand and caster prototype
+
+Public reference catalogs: Jotunn item list and recipe list. Installed data resolves the recipe and classification edge cases described above.
+
+Public mod examples: MoreCrossbows and Valheim Armory include early crossbow options; Warfare includes a blackmetal bow. These examples do not remove gaps from the current Elite lineup.

@@ -29,12 +29,16 @@ or a script can see the game, play it and check a mod unattended.
 - `/sync`: one question to every game and server on this machine, with the differences.
 - `/tune`: changes a value on a prefab and every live copy, printable as C#.
 - `/reload`: hot-reloads a mod's rebuilt DLL without restarting the game.
+- `/studio` (F3): a page in your browser to pick an object near you, move its parts, attach effects and play them, find
+  the game's items by name, kind or biome, grouped, with their tier, and turn each one in a viewer, or open the asset
+  workshop's built bundles and turn their models and effects in the game's own look.
 - `/swap`, `/bundle`, `/place`, `/lineup`: asset bundles staged beside the game's own prefabs.
 - `/animate`, `/effect`, `/sound`, `/frame`, `/light`: animations, effects, sounds, camera and lighting for staged models.
 
 ## Install
 For development profiles only, never a profile you play in: any program on your computer can control the game while
-it runs. Install with r2modman or the Thunderstore app, or put `DevBridge.dll` in `BepInEx/plugins`. It listens on
+it runs. It is an internal tool, never released to a store: build it (the build copies `DevBridge.dll` into the
+`LocalTesting` profile) or put the DLL in a development profile's `BepInEx/plugins`. It listens on
 127.0.0.1 only and refuses requests from web browsers. On a dedicated server most endpoints work; screenshots,
 overlays, look swaps and input do not.
 
@@ -50,6 +54,5 @@ https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version).
 ## Shout outs
 - The BepInEx and Harmony teams, for the tools every Valheim mod stands on.
 - Iron Gate Studio, for Valheim.
-- Thunderstore, for hosting this page.
 - The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game.
 - Every modder who keeps their mods open source so others can collaborate, learn and build on them.

@@ -13,6 +13,10 @@ param(
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
 
+# Internal tools, never packed or uploaded to a store
+$internal = @("DevBridge", "AssetLab")
+if ($internal -contains $Mod) { throw "$Mod is an internal tool and is never released" }
+
 if ($All -and $Version -ne "") { throw "-Version applies to a single mod, use -Mod" }
 if (-not $All -and $Mod -eq "") { throw "Give -Mod <name> or -All" }
 

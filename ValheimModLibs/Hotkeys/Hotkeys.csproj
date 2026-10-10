@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="assembly_valheim"><HintPath>$(ManagedPath)\assembly_valheim.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="assembly_utils"><HintPath>$(ManagedPath)\assembly_utils.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(ManagedPath)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
