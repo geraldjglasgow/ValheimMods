@@ -52,6 +52,8 @@ remove settings we don't need
 ShipConfig
 
 Grindstone skills
+only thing i can ask is maybe expand on the other dead end skills, for example, Sneak and Swimming being just using less stamina and nothing else.
+Obviously you're not obligated to do anything about it, especially if there's already popular mods that address this (which i do use in the case of swimming), as it's likely going to introduce mod conflict instead
 
 Feastmaster
 

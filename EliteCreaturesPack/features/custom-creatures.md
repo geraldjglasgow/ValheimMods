@@ -7,16 +7,12 @@ copy of a creature that already exists, with its own stats, behaviour, attacks, 
 custom creature wears its base creature's body (or the player's body for a human). Settled with the user on 2026-10-09.
 
 **Scope: the MVP, nothing more for now (the user, 2026-10-09).** This feature brings over everything another mod did
-for creatures and humans, except its raids, which go to Elite Creatures Reborn (section 9). The one addition is that a
-custom creature can use Elite Creatures Reborn's mutations and boss aspects (section 8). Other ideas wait until the user
-asks for them.
+for creatures and humans. The one addition is that a custom creature can use Elite Creatures Reborn's mutations and boss aspects (section 8). Other ideas wait until the user asks for them.
 
 **Status: specification only, nothing built.**
 
 **Clean room.** This file is written in our own words from a list of what the other mod does for the player. Build it
-from this file and the game's code only. Do not open the other mod's DLL, decompiled sources, config files or
-documentation, and take no names, keys, numbers or texts from it. A behaviour this file leaves open is decided with the
-user.
+from this file and the game's code only. Do not open the other mod's DLL outside of this project, decompiled sources, config files or documentation, and take no names, keys, numbers or texts from it. A behaviour this file leaves open is decided with the user.
 
 ---
 
@@ -103,7 +99,7 @@ by prefab name, and the death effects of other creatures (section 3). This featu
 # 6. Ready-made creatures
 
 The new main file ships these definitions, each with its own on/off line. They use game bodies with size and tint, no new
-textures.
+textures. They should default to off.
 
 - **A troll variant**: bigger, faster and tougher. It throws two boulders at once from range, and its ground slam hits
   harder and comes more often.
@@ -133,26 +129,58 @@ An addition on top of sections 2 to 7, never a requirement (section 1).
 
 **What a definition can ask for** (ignored without ECR):
 
-- **Mutations**: one or several of ECR's mutations by name. They replace ECR's random mutation roll for that creature;
-  its stars are still rolled by ECR as usual.
-- **Aspect** (bosses): a fixed ECR boss aspect, or a list it may roll from.
+- **Mutations**: one or several of ECR's mutations by name. Mutations apply to any custom entity - creature, boss or
+  human. They replace ECR's random mutation roll; stars are still rolled by ECR as usual.
+- **Aspect**: a fixed ECR boss aspect, or a list it may roll from. Aspects apply to any custom entity marked as a boss,
+  including a human boss. A human or creature not marked as a boss ignores this line.
+
+Mutations and aspects were kept separate in ECR (creatures roll mutations, bosses roll aspects, never both). Custom
+creatures may combine them: a custom boss can carry both an aspect and mutations, and a non-boss custom creature can
+be given an aspect if the definition marks it as a boss. ECR's architecture supports this through its API; the
+separation was a design choice, not a technical limit.
 
 Custom creatures are real prefabs, so ECR's own per-creature entries in its rule file (mutation chances, mutation power,
 drops) already reach them by name, with no work here.
 
-**What ECR needs:** a public API class, read by reflection the way GrindstoneSkills' APIs are read:
+## Ability mapping for aspects
+
+Some aspects require specific abilities to function. Portalbound redirects projectile attacks through portals - it
+needs a throw or ranged attack to redirect. Aspects that enhance or modify attacks need attacks to enhance. The
+definition must map abilities when an aspect needs them:
+
+- **Portalbound**: requires a `portal attack` field naming one or more projectile attacks the creature has. Without it
+  the aspect does nothing (no error, it simply never fires). Melee attacks cannot be portaled. The Elder uses its vine
+  throw, Bonemass its slime ball; a custom creature names its own.
+- **Summoner**: uses the creature's biome to pick what it summons, or the definition can override with `summon`:
+  a list of prefab names and optional star counts.
+- **Echoing**: replays attacks the boss performed. A creature with no attacks produces a ghost that walks but never
+  strikes.
+- **Nightfall**, **Stormbound**, **Gravitic**, **Brutal**, **Colossal**: work on any creature with no mapping needed.
+  They add effects around the boss, not tied to its own attacks.
+- **Other aspects** (Mending, Reflective, Shielded, Adaptive, etc.): passive modifiers that work on any creature.
+
+A definition that gives an aspect to a creature without the abilities it needs gets a warning at load. The creature
+still spawns; that aspect simply has no effect.
+
+## What ECR needs
+
+A public API class, read by reflection the way GrindstoneSkills' APIs are read:
 
 - the mutation and aspect names, so Elite Creatures Pack can check a definition's names when it loads;
-- registering fixed mutations or aspects per prefab at load. ECR then applies them whenever that prefab spawns, from any
-  source, so nothing races ECR's own roll;
+- registering fixed mutations per prefab at load - ECR applies them whenever that prefab spawns, from any source;
+- registering fixed aspects per prefab at load, including for non-bosses when the definition asks (ECR's `IsBoss()`
+  gate is bypassed for registered prefabs);
+- registering ability mappings per prefab (portal attacks, summon lists) so aspects that need them can find them;
 - ECR's own limits stay in force (no Gilded on large creatures, no Cloaked on deathsquitos...). A refused mutation is
   skipped with the reason in the log, as `elite spawn` already reports it.
 
-**What Elite Creatures Pack needs:** a small library in ValheimModLibs, `EliteCreaturesLink` (like `EliteCraftingLink`),
-with typed wrappers that do nothing when ECR is missing or too old (its version read from the chainloader). Renaming the
-API's methods later needs a matching change in both mods.
+## What Elite Creatures Pack needs
 
-Several mutations on one creature is new ground for ECR's balance and needs testing.
+A small library in ValheimModLibs, `EliteCreaturesLink` (like `EliteCraftingLink`), with typed wrappers that do nothing
+when ECR is missing or too old (its version read from the chainloader). Renaming the API's methods later needs a
+matching change in both mods.
+
+Several mutations on one creature, and aspects on non-bosses, are new ground for ECR's balance and need testing.
 
 # 9. Not in this feature
 
