@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using DevBridge.Logs;
 using DevBridge.Routes;
 using DevBridge.Server;
+using DevBridge.Studio;
 using HarmonyLib;
 using UnityEngine;
 
@@ -30,6 +31,8 @@ namespace DevBridge
             Instance = this;
             ConfigEntry<int> port = Config.Bind("Server", "Port", 7780,
                 "First localhost port to listen on. When it is taken (a second game or a server on this machine) the next nine are tried.");
+            StudioKey.Bind(Config);
+            WorkshopFiles.Bind(Config);
             Application.runInBackground = true;
             LogCapture.Install();
             new Harmony(PluginGuid).PatchAll(typeof(DevBridgePlugin).Assembly);
@@ -41,6 +44,7 @@ namespace DevBridge
         {
             if (!Application.runInBackground) Application.runInBackground = true;
             MainThread.Drain();
+            StudioKey.Check(Port);
         }
 
         private void OnDestroy() => server?.Stop();

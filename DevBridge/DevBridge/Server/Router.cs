@@ -33,6 +33,18 @@ namespace DevBridge.Server
             return Reply.Error(504, "the game did not answer in time: still loading, frozen, or the call needs a larger timeout=");
         }
 
+        /// <summary>
+        /// Called on the main thread (a shot's cue): runs the handler here and now and returns the request, whose reply
+        /// may come later from a coroutine.
+        /// </summary>
+        internal BridgeRequest Invoke(string path, IDictionary<string, string> args)
+        {
+            BridgeRequest request = BridgeRequest.Make(path, args);
+            if (!routes.TryGetValue(request.Path, out Handler handler)) throw new BridgeException($"no endpoint {request.Path}");
+            Run(handler, request);
+            return request;
+        }
+
         private static void Run(Handler handler, BridgeRequest request)
         {
             try

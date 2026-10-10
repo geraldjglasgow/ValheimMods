@@ -8,7 +8,7 @@ namespace DevBridge.Eval
     /// <summary>The $names an expression can start from.</summary>
     internal static class Variables
     {
-        internal const string Known = "$player $last $hover $go(\"path\") $v3(x,y,z) $prefab(\"name\") $type(\"name\") $zdo(\"id\")";
+        internal const string Known = "$player $last $hover $go(\"path\") $v3(x,y,z) $prefab(\"name\") $type(\"name\") $zdo(\"id\") $cast(\"actor\")";
 
         internal static object Get(string name, object[] args)
         {
@@ -22,6 +22,7 @@ namespace DevBridge.Eval
                 case "prefab": return Prefab(Text(args, name));
                 case "type": return new StaticRef(TypeIndex.Find(Text(args, name)) ?? throw new BridgeException($"no type {args[0]}"));
                 case "zdo": return ZdoLookup.ById(Text(args, name));
+                case "cast": return Director.Cast.Get(Text(args, name)).Go;
                 default: throw new BridgeException($"unknown variable ${name}; known: {Known}");
             }
         }

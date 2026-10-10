@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace DevBridge.Server
@@ -9,6 +10,9 @@ namespace DevBridge.Server
         internal readonly int Status;
         internal readonly string ContentType;
         internal readonly string Body;
+
+        /// <summary>Extra response headers (the /studio page's framing and content rules).</summary>
+        internal readonly Dictionary<string, string> Headers = new Dictionary<string, string>();
 
         internal Reply(int status, string contentType, string body)
         {

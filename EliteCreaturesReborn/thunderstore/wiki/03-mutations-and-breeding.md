@@ -33,7 +33,7 @@ creatures with five or more stars. Piercing, Howling and Binding are off by defa
 | Piercing | Crimson `#C2185B` | Each of its hits ignores 15% of your armour (E). Off by default. | none |
 | Howling | Teal `#2E8B8B` | When it turns on you it howls, and the 4 nearest creatures on its side within 30 m come for you; again every 45 s while it fights. Never calls a boss. Off by default. | none |
 | Binding | Olive `#6B8E23` | Leaves root patches 3 m apart, 10 s each: step in one and you are held for 1 s (E, at most 3 s; "Rooted": no walking, jumping or rolling), then free for 3 s. Off by default. | none |
-| Flamebound | Flame `#FF4500` | Leaves burning ground where it walks, 10 s per patch: standing in it sets you on fire, 6 fire a second (E), more with stars. Fire resistance helps. | none |
+| Flamebound | Flame `#FF4500` | Leaves burning ground where it walks, 10 s per patch: standing in it sets you on fire, 6 fire a second (E), more with stars. Fire resistance helps. Clears mist around it like a Wisplight. | none |
 
 Ice, mud, root and fire patches act on players only, never creatures, and always show whatever your effect density
 (the flames over fire thin with it).

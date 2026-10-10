@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Test bridge for development profiles, published on Thunderstore. The build copies it into the LocalTesting profile. -->
+  <!-- Test bridge for development profiles, internal: never released to a store. The build copies it into the LocalTesting profile. -->
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>DevBridge</AssemblyName>
@@ -30,6 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Studio\studio.html" LogicalName="DevBridge.Studio.studio.html" />
+    <EmbeddedResource Include="Director\scenes.html" LogicalName="DevBridge.Director.scenes.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="BepInEx" Private="false" HintPath="$(BepInExCore)\BepInEx.dll" />
     <Reference Include="0Harmony" Private="false" HintPath="$(BepInExCore)\0Harmony.dll" />
     <Reference Include="Mono.Cecil" Private="false" HintPath="$(BepInExCore)\Mono.Cecil.dll" />
@@ -45,6 +50,7 @@
     <Reference Include="UnityEngine.AudioModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.AudioModule.dll" />
     <Reference Include="UnityEngine.CoreModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.CoreModule.dll" />
     <Reference Include="UnityEngine.HierarchyCoreModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.HierarchyCoreModule.dll" />
+    <Reference Include="UnityEngine.InputLegacyModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.InputLegacyModule.dll" />
     <Reference Include="UnityEngine.ImageConversionModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ImageConversionModule.dll" />
     <Reference Include="UnityEngine.ParticleSystemModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.ParticleSystemModule.dll" />
     <Reference Include="UnityEngine.PhysicsModule" Private="false" HintPath="$(ManagedPath)\UnityEngine.PhysicsModule.dll" />

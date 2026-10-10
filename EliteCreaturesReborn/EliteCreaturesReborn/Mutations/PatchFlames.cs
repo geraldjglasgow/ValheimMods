@@ -7,8 +7,8 @@ namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
     /// The flames licking up from Flamebound's burning patches on this machine: one local copy of the game's own Burning
-    /// look (the flames it draws on a burning body, <see cref="CosmeticClone"/>, never networked), its particle systems
-    /// fed by hand in world space, each flame rising from a random point inside a live patch. One copy draws every
+    /// look (the flames it draws on a burning body, <see cref="CosmeticClone"/>, never networked), its flame and cinder
+    /// systems fed by hand in world space, each flame rising from a random point inside a live patch. One copy draws every
     /// creature's fire, so a long trail costs particles, never objects, and a patch stops burning the moment it is gone.
     /// Thinned by the player's effect density, and none at all at 0, as every effect of the mod; the ember patch under
     /// them still warns. Never on a dedicated server.
@@ -23,6 +23,9 @@ namespace EliteCreaturesReborn.Mutations
 
         /// <summary>How far from a patch's middle a flame may rise, as a share of its reach.</summary>
         private const float Spread = 0.75f;
+
+        /// <summary>A part of the game's effect whose particles live longer than this is not a flame.</summary>
+        private const float MaxLife = 10f;
 
         private readonly ParticleSystem[] _systems;
         private float _owed;
@@ -39,12 +42,53 @@ namespace EliteCreaturesReborn.Mutations
                 return null;
             }
             Quiet(copy);
-            ParticleSystem[] systems = copy.GetComponentsInChildren<ParticleSystem>(true);
-            foreach (ParticleSystem system in systems)
-            {
-                Settle(system);
-            }
+            ParticleSystem[] systems = Flames(copy);
             return systems.Length > 0 ? new PatchFlames(systems) : null;
+        }
+
+        // Only the flames and cinders the game itself keeps burning are fed. Its flare (one 4 m glow that never dies)
+        // and its spray of drops (which it never draws) go: fed by hand, they piled up into a glowing haze that fog
+        // turned into a bright white wall around the creature.
+        private static ParticleSystem[] Flames(GameObject copy)
+        {
+            List<ParticleSystem> flames = new List<ParticleSystem>();
+            foreach (ParticleSystem system in copy.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                if (Burns(system))
+                {
+                    Settle(system);
+                    flames.Add(system);
+                }
+                else
+                {
+                    Silence(system);
+                }
+            }
+            return flames.ToArray();
+        }
+
+        // Drawn in the game's own effect (an active part), more than one at a time, and each gone within seconds.
+        private static bool Burns(ParticleSystem system)
+        {
+            ParticleSystem.MainModule main = system.main;
+            return system.gameObject.activeInHierarchy && main.maxParticles > 1 && Longest(main.startLifetime) < MaxLife;
+        }
+
+        private static float Longest(ParticleSystem.MinMaxCurve life) => life.mode switch
+        {
+            ParticleSystemCurveMode.Constant => life.constant,
+            ParticleSystemCurveMode.TwoConstants => life.constantMax,
+            _ => life.curveMultiplier,
+        };
+
+        private static void Silence(ParticleSystem system)
+        {
+            system.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            ParticleSystemRenderer renderer = system.GetComponent<ParticleSystemRenderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
         }
 
         // Its light and crackle stay where the copy sits, far from any fire, so both go: the flames alone are drawn.

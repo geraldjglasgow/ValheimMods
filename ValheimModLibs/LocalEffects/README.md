@@ -28,6 +28,9 @@ GameObject? aura = LocalEffect.Attach(prefab, creature.transform, position, endl
   (the game recomputes the source volume every frame, so a source's own volume would not last), or a bare
   `AudioSource`'s volume.
 - `Attach(..., endless: true)` removes the effect's own timer, so it lasts as long as its parent.
+- `AttachScaled(prefab, parent, position, endless, scale, density)` is `Attach` at `scale` times the authored size,
+  resized part by part as `FlashScaled` does, then restarted so a looping, prewarmed effect shows at that size from its
+  first frame (a marker sized to a creature).
 - Scaling a copy's transform does not resize most game effects: a particle system in `Local` scaling mode ignores
   its parents' scale. `FlashWhole` switches every system to `Hierarchy` and scales the root. `FlashScaled` leaves the
   modes alone and multiplies each system's own numbers instead (start size, start speed, gravity, the velocity, force,

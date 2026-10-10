@@ -40,6 +40,8 @@ namespace DevBridge.Routes
             PerfRoute.Register(router);
             HeapRoute.Register(router);
             ReloadRoute.Register(router);
+            StudioRoute.Register(router);
+            DirectorRoute.Register(router);
             return router;
         }
     }

@@ -59,7 +59,9 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   `Hotkey.Held(entry)`, `Hotkey.KeyHeld(key)` (Shift/Ctrl/Alt through the game's `ZInput`, which lets go of keys on
   focus loss; Unity's old `Input` kept Alt stuck after Alt + Tab), `Typing.Active` (chat focus, console, the game's text input, a selected `InputField` or
   `TMP_InputField`, or a window the mod registered with `Typing.AddWindow`, such as its YAML editor),
-  `KeyNames.Short(shortcut)` (a key cap's text: `Z`, `Shift+Z`, `Ctrl+1`). Where a key works
+  `KeyNames.Short(shortcut)` (a key cap's text: `Z`, `Shift+Z`, `Ctrl+1`), `Wheel` (`Install(harmony)` once, then
+  `Claim(() => held)`: while a claim holds, `Notches()` gives +1/-1 steps and the rest of the game reads the wheel as 0,
+  so the camera does not zoom; one postfix on `ZInput.GetMouseScrollWheel`). Where a key works
   stays the mod's call. Consumer: PackPanel (Food Key, Mead Key); OpenKeep's `Core/Keys` is the same rules and is to
   move onto it.
 - `WindowInput/`: a mod's own window treated like one of the game's while open. `GameWindow.Install(harmony)` (once;

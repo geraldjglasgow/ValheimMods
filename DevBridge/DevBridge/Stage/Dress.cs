@@ -130,7 +130,7 @@ namespace DevBridge.Stage
         }
 
         /// <summary>GameMaterials.Dress, then GameMaterials.Plain when a gloss is given.</summary>
-        private static Material Dressed(Material game, Material placeholder, float? gloss)
+        internal static Material Dressed(Material game, Material placeholder, float? gloss)
         {
             var material = new Material(game) { name = placeholder.name, color = Color.white };
             if (material.HasProperty("_MainTex"))

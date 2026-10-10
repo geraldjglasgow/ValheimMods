@@ -13,6 +13,8 @@ ValheimMods/
   pack.ps1           packages one mod or all of them (calls each mod's own pack.ps1)
   EliteCreaturesReborn/ creature stars, mutations, attunements, boss aspects, loot rules, world tiers
   EliteCreaturesPack/ new creatures: the crypt mimic, the Greydwarf Slinger, the Rime Giant
+  EliteEquipment/    more from the game's own equipment: boots split from every leggings
+  EliteBuildingPieces/ new building pieces: core wood walls and doors
   FeastMaster/       food and mead values
   ShipConfig/        ship health
   Lockstep/          boss progression gated on the whole group
@@ -25,7 +27,7 @@ ValheimMods/
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
-  DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), on Thunderstore for dev profiles
+  DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), internal: never released to a store
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
 ```
 
@@ -51,6 +53,17 @@ stars and mutations on them and holds back a dormant mimic's looks (key names on
 "The skeleton arsenal" is every bone weapon in it: the bone dagger, sword, axe, mace, spear, atgeir, both bows, the
 arrow, the spine, the Bone Crossbow and its blunted bolt, and the Executioner's Greataxe (three bundles; one build,
 `../ValheimAssets/Assets/Weapons/SkeletonArsenal/ecp_skel_arsenal/build.ps1`). Design in `EliteCreaturesPack/CLAUDE.md` and `features/`.
+
+**EliteEquipment**: more from the game's own equipment. Boots first: the game's 20 leggings split into trousers and
+boots worn on the feet (80/20 stats and cost, the game's own meshes cut at runtime, no game art shipped). Built as
+OpenKeep's section 16 and moved out on 2026-10-08 after a player pointed out that a base mod should not change
+equipment: new equipment work goes here, not into OpenKeep. PackPanel gives the boots a Feet slot (prefix `EE_Boots_`
+and `1. Boots / Separate Boots`, read through the chainloader). Design in `EliteEquipment/CLAUDE.md`.
+
+**EliteBuildingPieces**: new building pieces, each a copy of the closest game piece wearing its own model from
+`ValheimAssets`. First the core wood set (2026-10-08): a wall and a wall twice as wide copied from the stakewall (its
+snap points, support and health), a door and a double door copied from the wood gate (the game's Door; the leaves swing
+from its state). Required on the server and every client. Design in `EliteBuildingPieces/CLAUDE.md`.
 
 **FeastMaster**: configure every food and mead. Global multipliers, a section per food and per mead, and a switch
 that stops food from degrading. Foods and meads are discovered from the item database.
@@ -300,6 +313,9 @@ needs a new version, and the number must match everywhere the mod records it. `p
    (one repository holds all mods, so the tag names the mod), so the released versions are discoverable next time.
 
 `.\pack.ps1 -All` at the root packs every mod that has an icon, as a consistency check across the workspace.
+
+DevBridge and AssetLab are internal tools, never released to any store: no `pack.ps1`, no `thunderstore/` folder, no
+tag, no wiki. The root `pack.ps1` and `nexus-upload.py` refuse them.
 
 ### Uploading
 

@@ -10,13 +10,13 @@ motion on one image, draws what has no look of its own (AI senses, paths, collid
 traces any method's calls, measures what each mod costs per frame, runs scripted tests, compares a client with a
 server, tunes values on live creatures, swaps a real prefab's look and hot-reloads a mod's DLL.
 
-It is published on Thunderstore (MilkyTeam/DevBridge) for modders and their agents, and installed in development
+It is an internal tool, never released to a store (the release scripts refuse it), and installed in development
 profiles only, never a play profile: no mod depends on it. In this workspace it lives in the `LocalTesting` profile.
-`README.md` is its short store page; this file is the full reference.
+`README.md` is its short overview; this file is the full reference.
 
 ## Install
 
-From Thunderstore with r2modman into a development profile, or build it:
+Build it:
 
 ```
 dotnet build DevBridge/DevBridge/DevBridge.csproj -c Release
@@ -74,6 +74,7 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/tune` | change a value on a prefab and every live copy at once (`prefab=Troll&field=Character.m_runSpeed&value=9`, a creature's attack item, a player item); `list=1`, `revert=`, `code=1` |
 | `/swap` | a real prefab and every copy of it here take a rebuilt bundle prefab's meshes, textures and clips (`clips=1`); `watch=1` swaps again on each rebuild; `revert=1`, `list=1` |
 | `/reload` | hot-reload a mod's rebuilt DLL (`mod=`, `file=`): the old copy torn down, the new one loaded beside it; `list=1`, `watch=<mod>` |
+| `/studio` | a page for your browser (or the `Open key`, F3 by default): pick a networked object near you, select its parts, move, rotate and scale them, attach effects and play them; find items, or the asset workshop's models and effects, and turn them in a viewer; this machine only. Its calls are endpoints too: `/studio/targets`, `/studio/tree?target=<zdo id>\|hover`, `/studio/set?target=&path=&position=x,y,z&rotation=&scale=`, `/studio/reset`, `/studio/play?target=&path=&state=`, `/studio/sources?filter=`, `/studio/attach?target=&path=&source=&position=`, `/studio/detach`, `/studio/items?filter=iron shield`, `/studio/workshop`, `/studio/workshop/open?bundle=&reload=1`, `/studio/view?prefab=&bundle=&look=&yaw=&pitch=&zoom=&size=&file=` |
 
 Screen coordinates are always pixels of the game window from the top-left, the same as in a full-size screenshot. When
 a screenshot is shrunk (`maxWidth`), scale by `screen / image` from its reply before clicking.
@@ -434,6 +435,62 @@ finds game sounds and effects to compare with or play through.
 
 ## Changing the running game
 
+### The studio page
+
+Press F3 in game (`Open key` under `[Studio]` in the .cfg) or open `http://127.0.0.1:7780/studio` in a browser. On the
+left are the networked objects within the radius and the one under the crosshair; pick one and its transforms fill the
+middle, each addressed by child indexes (`""` the object itself, `0/2` the first child's third child) with badges for
+what it holds (mesh, particles, animator, sound, light, collider). The right side moves, rotates and scales the picked
+part in steps or by typed values, shows its position in the object's own space (what a mod's code would place by),
+copies either position as a C# `Vector3`, and plays it from the start (Space, or Play). At the bottom, search the
+effects to attach: the effects of workshop bundles opened in the Workshop tab (or loaded with `/bundle`), mods' effect
+templates (the inactive holders mods instantiate their effects from, such as `BundlePrefabs_bench/ecf_rune_vortex_1EFF00`)
+and the game's `vfx_`/`fx_` prefabs; an attached copy is harmless and local, stays until removed and plays again on
+Play. One from a workshop bundle is hung back on from the new build, in the same place, when that bundle reloads. Nothing is saved or sent: moved parts go back on Reset or when the
+object reloads. Its calls are ordinary endpoints (`/studio/tree`, `/studio/set` and so on), usable from curl as well.
+
+The Items tab finds the game's items (every item in the object database with an icon and a mesh, mods' too). Each word
+of a search must appear in the item's name, its prefab, its group or the biome: `shield` lists every shield, `iron shield`
+the iron ones, `swamp` everything of the Swamp's tier. Results come in groups (Shields, Swords, Helmets, Food...; a group
+the search names first, then weapons, armour and the rest), each a row of boxes with a picture and the item's tier and
+biome; the groups on the left jump to theirs. A box's picture turns when dragged; clicking it shows the item in the
+viewer on the right, with its name, prefab, tier, biome, group and crafting station on top: drag to turn it, the wheel
+zooms, double-click resets, and Front, Side, Back, Top and Spin set the view.
+
+The pictures come from a booth of the studio's own: a still local copy of the prefab deep under the world, on a layer
+the game does not use, drawn by its own camera under its own light (the game's sun, ambient, fog and wetness are swapped
+out for that one render and put back before the game draws its frame), so nothing shows in the world and a picture
+looks the same at noon or at night. Flat and long things are stood up to face the viewer (a shield's face, a sword
+leaned across the picture as the game's icons show it); blockier ones stay as they lie, and creatures, pieces and
+animated rigs stand as built, facing the viewer. Particles are shown at the moment in their first two seconds when the
+most are alive. `/studio/view` draws any prefab, a piece or creature too, as a data URL or with `file=` a JPG for an
+agent to read.
+
+The tier is the biome an item is meant for, Meadows 1 to Ashlands 7, worked out from the game's data: raw materials by
+where they are found (a fixed table), creature drops by where the creature spawns, and anything made by the highest tier
+among its ingredients, its crafting station and a smelter's fuel. The ocean counts as Swamp tier. It is an estimate: an
+item made only from things the studio cannot place (a mod's own materials) shows no tier.
+
+The Workshop tab lists the bundles the asset workshop built for Windows (every `.windows` file under `ValheimAssets`:
+the assets' `out` and `Exports/Bundles` folders and the root `out`, the newest build of each name; `Workshop folder`
+under `[Studio]` in the .cfg, empty for `<user folder>\projects\ValheimAssets`), newest first, with a filter on name,
+category and path. Clicking one loads it as `/bundle?load=` does (again when the file was rebuilt since) and shows its
+models and effects as boxes in groups (Creatures, Rigged models, Models, Effects...) with their triangles; the viewer
+turns them like items. **Reload** reads the file again after a rebuild: the pictures redraw, stage objects come back
+(as `/bundle?reload=`) and attached effects are hung on again. Badges: `loaded`, `rebuilt` (the file is newer than what
+is loaded: open or reload it) and `in a mod` (a mod embeds the bundle, so it is loaded under its name already and cannot
+load twice: the tab shows the mod's copy, which only a rebuild of the mod changes, with Reload off; a `_preview` build
+under another name shows the workshop's newest).
+
+A bundle keeps plain Standard placeholder materials that a mod dresses in a game material when it loads
+(`GameMaterials`: `Plain(Dress(game, placeholder), 0.1)`), so the viewer shows a model the same way, in the look its
+kind gets: the building shader for a piece or a model under `Assets/Props`, nothing for an effect, the creature and item
+shader for the rest. The picker beside Spin switches it (`look=creature`, `piece` or `workshop`, the placeholders as
+built). Glow parts (materials named `*_glow`) and particles keep their own. A mod that dresses differently (a borrowed
+game material, a tint) shows only in the mod. `/studio/workshop` lists the bundles, `/studio/workshop/open?bundle=`
+opens one (`reload=1` reads it again), and `/studio/view?bundle=&prefab=&look=` draws a model. `#workshop/<bundle>`
+after `/studio` opens the page on that bundle; `#items` and `#workshop` pick a tab.
+
 ### Tuning values live
 
 `/tune` changes a value on a prefab and on every loaded copy of it at once, so a fight can be adjusted without a
@@ -530,4 +587,6 @@ until it reconnects, and SyncedConfig looks for YAML files beside the cache copy
 - The bridge never launches or closes the game. Starting and restarting it stays with the user.
 - Listening on 127.0.0.1 only, with no authentication: any local process can drive the game while it runs. Requests
   from a web browser (an `Origin`, `Referer` or `Sec-Fetch-Site` header) or naming another host than 127.0.0.1 or
-  localhost are refused with 403, so a web page cannot reach `/eval` or `/reload`.
+  localhost are refused with 403, so a web page cannot reach `/eval` or `/reload`. The one page answered is DevBridge's
+  own `/studio`: opened from the address bar only and never framed, its calls carry a token made fresh at each start
+  that no other page can read, and they reach the `/studio/` endpoints only.

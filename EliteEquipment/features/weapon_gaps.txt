@@ -1,0 +1,122 @@
+Weapon gaps
+Updated 2026-10-10
+
+Tiers: 1 Meadows, 2 Black Forest, 3 Swamp, 4 Mountains, 5 Plains, 6 Mistlands, 7 Ashlands, 8 Deep North.
+A gap is a biome with no dedicated item. Material names are proposals.
+
+
+CROSSBOWS
+  Add:  1 Wooden crossbow
+        2 Bronze crossbow (beside the Bone Crossbow)
+        3 Iron crossbow
+        4 Silver crossbow
+        5 Blackmetal crossbow
+  Have: 2 Bone Crossbow, 6 Arbalest, 7 Ripper, 8 Nord
+  Note: Gravebranch is art only, not a playable item.
+
+BOWS
+  Add:  5 Blackmetal bow
+  Have: 1 Crude, 2 Finewood/Bone, 3 Huntsman, 4 Draugr Fang, 6 Spine Snap, 7 Ashlands, 8 Nord
+
+FLETCHING TABLE
+  New crafting station for bows, crossbows, arrows, bolts and ballista missiles.
+  Ballistas themselves are placed with the Hammer.
+
+SWORDS
+  Add:  1 Flint sword
+  Have: 2 Bronze/Bone, 3 Iron, 4 Silver, 5 Blackmetal, 6 Mistwalker, 7 Nidhogg/Dyrnwyn, 8 Nord
+
+DAGGERS
+  Add:  3 Iron dagger
+        7 Flametal dagger
+  Have: 1 Flint, 2 Copper/Bone, 4 Silver, 5 Blackmetal, 6 Skoll and Hati, 8 Nord
+  Note: Abyssal Razor is an Ocean item, not the iron tier.
+
+GREATSWORDS
+  Add:  1 Flint, 2 Bronze, 3 Iron, 4 Silver, 5 Blackmetal greatsword
+  Have: 6 Krom, 7 Slayer, 8 Nord
+
+SPEARS
+  Add:  5 Blackmetal spear
+  Have: 1 Flint, 2 Bronze/Bone, 3 Ancient Bark, 4 Fang, 6 Carapace, 7 Splitnir, 8 Nord
+
+ATGEIRS
+  Add:  1 Flint atgeir
+        4 Silver atgeir
+        7 Flametal atgeir
+  Have: 2 Bronze/Bone, 3 Iron, 5 Blackmetal, 6 Himminafl, 8 Nord
+
+MACES
+  Add:  6 Eitr or carapace mace
+  Have: 1 Club, 2 Bronze/Bone, 3 Iron, 4 Frostner, 5 Porcupine, 7 Eldner, 8 Nord
+
+GREATHAMMERS
+  Add:  1 Stone greathammer
+        4 Silver or crystal greathammer
+        5 Blackmetal greathammer
+        7 Flametal greathammer
+  Have: 2 Stagbreaker, 3 Iron Sledge, 6 Demolisher, 8 Nord
+
+PICKAXES
+  Add:  4 Silver pickaxe
+        5 Plains pickaxe (can reuse the Blackmetal Pickaxe look with an earlier recipe)
+        7 Flametal pickaxe
+        8 Bloodgold pickaxe
+  Have: 1 Antler, 2 Bronze, 3 Iron, 6 Blackmetal (needs Yggdrasil wood)
+
+FIST WEAPONS
+  Add:  1 Flint knuckles or claws
+        3 Iron claws
+        6 Carapace or eitr claws
+        7 Flametal claws
+  Have: 2 Paws of the Bear, 4 Flesh Rippers, 5 Claws of the Vile, 8 Nord
+
+DUAL AXES
+  Add:  2 Bronze, 3 Iron, 4 Silver, 5 Blackmetal, 6 Carapace or eitr, 8 Bloodgold dual axes
+  Have: 1 EarlyAxes, 7 Berserkir Axes
+
+AXES (one-handed)
+  Add:  4 Silver axe
+        7 Flametal axe
+  Have: 1 Stone/Flint, 2 Bronze/Bone, 3 Iron, 5 Blackmetal, 6 Jotun Bane, 8 Nord
+
+GREATAXES
+  Add:  1 Stone or flint greataxe
+        7 Flametal greataxe
+  Have: 2 Executioner's Greataxe (ECP), 3 Battleaxe, 4 Crystal, 5 Blackmetal, 6 Skull Splittur, 8 Nord
+
+TOWER SHIELDS
+  Add:  4 Silver tower shield
+        6 Carapace tower shield
+  Have: 1 Wood, 2 Bone, 3 Iron, 5 Blackmetal, 7 Flametal, 8 Nord
+  Note: Serpent Scale is an Ocean item, not the silver tier.
+
+ROUND SHIELDS
+  Add:  2 Bronze round shield
+  Have: 1 Wood, 3 Banded/Root, 4 Silver/Kraken (ECP), 5 Blackmetal, 6 Carapace, 7 Flametal, 8 Nord
+
+BUCKLERS
+  Test and integrate (models and AssetLab code exist):
+        1 Wood, 4 Silver, 5 Blackmetal, 7 Flametal buckler
+  Have: 2 Bronze, 3 Iron, 6 Carapace, 8 Nord
+
+BALLISTA
+  Add:  1 Wooden, 3 Iron, 4 Silver, 5 Blackmetal, 7 Flametal, 8 Bloodgold ballista
+  Test: 2 Bone Ballista (ECP, built, in-game test open)
+  Have: 6 vanilla Ballista
+  Note: Bone Ballista is manual, vanilla is automatic. Control and ammo for new tiers need design.
+
+MAGIC STAFFS
+  Add:  1 Wood or flint, 2 Bronze or bone, 3 Ancient bark or iron, 4 Silver or crystal, 5 Blackmetal staff
+  Have: 6 Embers/Frost/Protection/Dead Raiser, 7 Fracturing/Wild/Dundr/Trollstav, 8 Lightning/Vengeance/Echo Spike/Spirit Caller
+  Note: each needs a spell, school and balance. Early staffs need an eitr source (caster gear).
+
+WANDS
+  Test: 1 Gnarled Wand (model and AssetLab prototype, off by default)
+  Add:  2 Greywood, 3 Rootbound, 4 Frostsilver, 5 Blackmetal, 6 Yggdrasil, 7 Ashwood wand (names approved)
+        8 Deep North wand (name, model and spells need design)
+  Have: none in vanilla
+
+
+Sources: installed vanilla item and recipe data, Elite Creatures Pack, EliteEquipment and AssetLab records.
+Asset and recipe audit only, not tested in game.
