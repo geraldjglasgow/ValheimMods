@@ -1,7 +1,8 @@
 # Casters: wands, robes and spells
 
 A healer, buffer and caster line for EliteEquipment, from the Meadows to the Ashlands. Designed with the user on
-2026-10-09, not built. The shape and names are decided; the numbers are to be tuned in game.
+2026-10-09; the Meadows tier is built as the AssetLab bench `Casters` (`AssetLab/AssetLab/Casters/CASTERS.md`), the
+rest is not. The shape and names are decided; the numbers are to be tuned in game.
 
 ## The idea in one paragraph
 
@@ -33,6 +34,41 @@ Meadows heal is still worth a slot in the Ashlands. Robes give the eitr that the
 
 Spell costs stay the same at every tier; more gear eitr means more casts, and the wand's heal power means bigger ones.
 
+## Eitr food before the Mistlands (agreed 2026-10-10)
+
+The game has eitr food only from the Mistlands. The user asked for eitr food in the earlier biomes too: 1 in the Meadows,
+3 in the Black Forest, 3 in the Swamp, 2 in the Mountains, 3 in the Plains, following the game's food curve.
+
+**The curve, read from the game (2026-10-10).** Every biome has a top food number: 35 Meadows, 45 Black Forest, 55 Swamp,
+65 Mountains, 75 Plains, 85 Mistlands, 95 Ashlands, 105 Deep North (its best health dish gives it in health, its best
+stamina dish in stamina). The game's eitr dishes give that number in eitr, a third of it in health and a sixth in
+stamina (Seeker Aspic 28 / 14 / 85, Marinated Greens 32 / 16 / 95, Fish Soup 37 / 18 / 105), about 12% more stats in
+all than the biome's best normal dish, and cost more: 6 to 9 ingredients a serving. A biome's one raw eitr ingredient
+gives an even third (Magecap 25 / 25 / 25, Vineberry 30 / 30 / 30, Poteitr 35 / 35 / 35); here a cooked snack takes its
+place, so no game food changes (user: candied cloudberries "instead of just cloudberries").
+
+| Biome | Food | Made from | Where | Health / stamina / eitr | Lasts | Regen |
+| --- | --- | --- | --- | --- | --- | --- |
+| Meadows | Dandelion Mash | Dandelion 3, Honey 1, Mushroom 1 | Workbench (no cauldron yet) | 12 / 6 / 35 | 25 min | 1 |
+| Black Forest | Candied Thistle | Thistle 3, Honey 1 (makes 2) | Cauldron 1 | 15 / 15 / 15 | 15 min | 1 |
+| Black Forest | Glowcap Broth | Yellow mushroom 2, Thistle 2, Carrot 1 | Cauldron 1 | 15 / 8 / 40 | 25 min | 2 |
+| Black Forest | Seer's Porridge | Blueberries 4, Thistle 2, Honey 1 | Cauldron 1 | 15 / 8 / 45 | 30 min | 2 |
+| Swamp | Turnip Crisps | Turnip 3, Thistle 1 (makes 2) | Cauldron 2 | 18 / 18 / 18 | 15 min | 1 |
+| Swamp | Blood Draught | Bloodbag 2, Thistle 2, Turnip 1 | Cauldron 2 | 18 / 9 / 50 | 25 min | 2 |
+| Swamp | Mire Stew | Turnip 3, Bloodbag 1, Yellow mushroom 1 | Cauldron 2 | 18 / 9 / 55 | 30 min | 2 |
+| Mountains | Glacier Tea | Onion 2, Freeze gland 1, Honey 1, Thistle 1 | Cauldron 3 | 22 / 11 / 60 | 25 min | 2 |
+| Mountains | Wolfheart Stew | Wolf meat 1, Onion 3, Freeze gland 2 | Cauldron 3 | 22 / 11 / 65 | 30 min | 2 |
+| Plains | Candied Cloudberries | Cloudberries 4, Honey 1 (makes 2) | Cauldron 4 | 25 / 25 / 25 | 15 min | 1 |
+| Plains | Lox Marrow Broth | Lox meat 1, Cloudberries 2, Barley flour 3 | Cauldron 4 | 25 / 12 / 70 | 25 min | 3 |
+| Plains | Sunbarley Porridge | Barley flour 4, Cloudberries 3, Honey 1 | Cauldron 4 | 25 / 12 / 75 | 30 min | 3 |
+
+Eitr a caster can carry with these (gear plus the three best eitr foods so far): 60 Meadows (its one food), 139 Black
+Forest, 200 Swamp, 241 Mountains, 285 Plains, then the game's own 315 Mistlands and 340 Ashlands. A caster on three eitr
+foods has little health (about 100 in the Plains against about 220 on normal food), as in the game.
+
+The foods live in EliteEquipment, behind the casters switch (user, 2026-10-11). Still open: whether gear eitr (25 to
+75) goes now that food carries eitr (the game's mage sets give none, only regen: see "Armour"). Models and icons for the twelve foods are workshop work: the Meadows' and the Black Forest's are made (`ee_food_meadows`, `ee_food_blackforest`, 2026-10-11) and benched in AssetLab.
+
 ## Skills
 
 The game's own two magic skills, no new skill: heals, wards and chants use **Blood Magic** (the game's support school:
@@ -53,9 +89,9 @@ mod, later (user, 2026-10-09), not part of this feature.
 | 6 | Yggdrasil Wand | Galdr table | Yggdrasil wood 6, Refined eitr 4, Royal jelly 3 | 75 |
 | 7 | Ashwood Wand | Galdr table | Ashwood 6, Flametal 3, Celestial feather 2 | 90 |
 
-Every wand holds 3 spells; a better wand makes them stronger, never more.
+Every wand holds 2 spells beside its bolt; a better wand makes them stronger, never more.
 
-- **Bolt** (middle mouse, the game's secondary attack): pierce plus spirit, about 40% of the tier's one-handed sword.
+- **Bolt** (left mouse, charged while held, for eitr; see "Controls"): pierce plus spirit, about 40% of the tier's one-handed sword.
   Spirit makes it good against skeletons, ghosts and draugr; living creatures ignore the spirit part. A healer can
   defend themselves but is not the damage dealer.
 - Upgrades like a game weapon (4 qualities); each quality adds a tenth of the heal power.
@@ -75,7 +111,23 @@ Every wand holds 3 spells; a better wand makes them stronger, never more.
 ## Armour: the Seer's robes
 
 Three pieces per tier (hood, robe, trousers), plus boots when `1. Boots / Separate Boots` is on (split 80/20 like the
-game's leggings). Armour about 40% of the tier's heavy set; eitr as in the table above.
+game's leggings). Armour follows the game's own mage sets (user, 2026-10-11: "follow pattern in late game that is
+established"), read from the game: the Eitr-weave has half the Carapace's armour (16 to 32), the Embla half the
+Flametal's (19 to 38), both +2 per level like every set, and -2% movement on the robe and trousers where the heavy set
+has -5% (hoods none). So each piece has half the biome's heavy armour, +2 per level:
+
+| Tier | Heavy set (a piece) | Seer's piece | Movement (robe, trousers) |
+| --- | --- | --- | --- |
+| 1 Meadows | Leather 2 | 1 | none (leather has none) |
+| 2 Black Forest | Bronze 8 | 4 | -2% |
+| 3 Swamp | Iron 14 | 7 | -2% |
+| 4 Mountains | Wolf 20 | 10 | -2% |
+| 5 Plains | Padded 26 | 13 | -2% |
+| 6 Mistlands | Carapace 32 | 16 | -2% |
+| 7 Ashlands | Flametal 38 | 19 | -2% |
+
+The game's mage sets give no max eitr at all, only eitr regen (Eitr-weave hood +20%, robe +40%, trousers +40%; Embla
++30%, +50%, +50%); every point of max eitr comes from food. Eitr as in the table above until the user decides.
 
 | Tier | Set | Materials | Set bonus (all pieces) |
 | --- | --- | --- | --- |
@@ -98,7 +150,7 @@ from the boss, one per player present (the game's `m_onePerPlayer` drop).
 
 | # | Spell | Tier | Kind | What it does | Eitr | Learned from |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Mend | 1 | heal | Heals one friend (never yourself) by the wand's heal power | 8 | the first wand you craft |
+| 1 | Mend | 1 | heal | Heals the highlighted friend, or yourself with none, by the wand's heal power | 8 | the first wand you craft |
 | 2 | Hearthsong | 1 | chant | Health regen x1.5 | 15 | crafted |
 | 3 | Stag's Swiftness | 1 | chant | +10% movement, running costs 20% less stamina | 15 | Eikthyr |
 | 4 | Wisplight | 2 | utility | A wisp follows you for 5 min and lights crypts and caves | 10 | crafted |
@@ -129,22 +181,34 @@ never scale, so stacking casters cannot run away with them.
 1. **Learn.** A spell is an item: a strip of hide with burnt runes (not a stone, so it never looks like
    EliteCrafting's rune tablets). Using it from the inventory teaches the spell to the character for good; a spell
    already known cannot be used, so the item can be handed to a friend. Known spells are saved on the character.
-2. **Prepare.** A wand holds 3 spells ready, at every tier: the Meadows teach exactly three, and from the Black Forest
-   on there are always more known spells than slots. With the inventory open and a wand in hand, a Spellbook button (a copy of the game's button) opens the Spellbook
+2. **Prepare.** A wand holds 2 spells ready, at every tier (user, 2026-10-11; three until then): the Meadows already
+   teach three, so from the start there are more known spells than slots. With the inventory open and a wand in hand, a Spellbook button (a copy of the game's button) opens the Spellbook
    window, anywhere: the player clicks a slot, then a known spell (built 2026-10-09: click, not drag). The loadout is saved on the wand itself, so
    two wands on the hotbar are two loadouts: swap the wand, swap the spells. A new wand starts with Mend in its first
    slot.
-3. **Pick.** While a wand is drawn, a small spell bar sits under the hotbar (the game's hotbar look): the wand's 3
-   spells, the selected one framed. **Left Alt + mouse wheel** cycles through them, wrapping round. Left Alt because the
-   game binds nothing to it (Shift is its run key, so Shift + wheel would start a run while moving); not Alt + 1-5,
-   which many mods take, PackPanel among them. While Left Alt is held with a wand drawn, the camera does not zoom: the
-   wheel reads 0 to the rest of the game (`GameCamera.UpdateCamera` zooms by `ZInput.GetMouseScrollWheel`), as
-   EarthWright's `Brush/ScrollInput` already does for its brush; that gate moves into a library so both mods share it.
-   The selected spell's icon also shows on the wand's hotbar slot. No HaloMenu.
-4. **Cast.** Left mouse casts the selected spell. Heals and wards go to the friend highlighted within 30 m (aiming
+3. **No picking.** Each slot has its own button (see "Controls"), so nothing is selected or cycled: no hotkeys of
+   ours, nothing to clash with other mods' keys. While a wand is drawn a small spell bar sits under the hotbar (the
+   game's hotbar look): the two slots, each with its spell's icon, eitr cost and button (RMB, RMB+LMB). No HaloMenu.
+   (Until 2026-10-11: three slots and Left Alt + mouse wheel picking one.)
+4. **Cast.** Right mouse casts slot 1, right mouse held + left mouse slot 2. Heals and wards go to the friend highlighted within 30 m (aiming
    inside a bubble round them is enough; a marker shows the healer who), locked on as the cast starts and flying to
-   them; the cast turns your character to them, wherever the camera looks; a heal never targets yourself (with no friend highlighted it does not cast); chants hit everyone within 10 m; strikes fly where you
-   aim. Middle mouse fires the wand's bolt.
+   them; the cast turns your character to them, wherever the camera looks; with no friend highlighted a heal goes to yourself; chants hit everyone within 10 m; strikes fly where you
+   aim. Left mouse fires the wand's bolt.
+
+### Controls (user, 2026-10-11)
+
+With a wand drawn:
+
+| Input | Does |
+| --- | --- |
+| Left mouse | the bolt, for eitr, cast on the click; clicks chain a three-move combo like a sword's swings; held, the cast turns into a charge (wand forward, the other hand streaming white energy into it until full charge at 3 s, the white spell at the tip growing) until let go: up to +30% damage and up to 2.5 times the size of a tapped one |
+| Right mouse (let go) | casts slot 1 |
+| Right mouse held + left mouse | casts slot 2 at once; letting go of right mouse then casts nothing |
+| Right mouse held + jump | dodges (a blink with a wand), casts nothing |
+| Middle mouse | casts slot 1 (the game's secondary attack) |
+| Dodge | a blink: up to 5 m, a little farther than the roll; costs the roll's stamina and half that in eitr; nothing a roll dodges hits you from the blink until 0.5 s after |
+
+Casters do not block: the block button never blocks with a wand drawn.
 
 Friends are other players and your tames, so a healer can keep the wolves and the lox alive. With Party installed,
 the crosshair prefers party members.
@@ -157,7 +221,7 @@ the crosshair prefers party members.
 - A cast is the game's `Attack` with the selected spell's settings put in for that swing: its animation, eitr cost
   and projectile or area are replicated the way a game staff's are.
 - Max eitr is computed by the player's own client, as the game does for food.
-- Known spells: player custom data `EliteEquipment.spells`. Loadout and selected spell: item custom data
+- Known spells: player custom data `EliteEquipment.spells`. Loadout (two slots): item custom data
   `EliteEquipment.loadout` on each wand. No RPC of our own for casting.
 - The mod is needed on every client (shared prefabs and status effects) and on the server (synced switch).
 
@@ -189,8 +253,8 @@ Benches in AssetLab until release.
 
 ## Phases
 
-1. Meadows to Swamp: gear eitr, three wands, three foci, three robe sets, spells 1-10, the Spellbook window, the spell
-   bar and the wheel gate library. Play it through before going on.
+1. Meadows to Swamp: gear eitr, three wands, three foci, three robe sets, spells 1-10, the Spellbook window and the spell
+   bar. Play it through before going on.
 2. Mountains and Plains: spells 11-16, two wands, Silver Talisman, Sun Disc, two sets.
 3. Mistlands and Ashlands: spells 17-22, the last wands, Eitr Lantern, Ember Heart and sets, tuned beside the game's
    staves and eitr food.
@@ -199,8 +263,8 @@ Benches in AssetLab until release.
 
 None.
 
-Decided (user, 2026-10-09): spells are prepared anywhere; no HaloMenu; a wand holds 3 spells at every tier; Left Alt +
-wheel picks one (not Alt + 1-5, which PackPanel and other mods use) and the camera does not zoom meanwhile; the game's Blood Magic and Elemental Magic, skill enhancements left to another
+Decided (user, 2026-10-09): spells are prepared anywhere; no HaloMenu; a wand holds 2 spells at every tier, cast by right
+mouse and right mouse held + left mouse (2026-10-11; before that 3 spells and Left Alt + wheel); the game's Blood Magic and Elemental Magic, skill enhancements left to another
 mod; one focus per biome; the names stand, the foci's included.
 
 ## Meadows: the build contract (2026-10-09)
@@ -232,8 +296,10 @@ unless listed otherwise; `.windows` and `.linux` bundles in the asset's `out/bun
   circle"): a wooden hand-ward about 0.30 m across, a circle with a shape cut out of it, the raven fetish (handle, black
   feathers, flint shard, thongs) lashed to its face; held on the left hand like the game's bucklers. Front +Z, up +Y,
   `grip` at the back centre.
-- **Deerhide Vestments**: the game's leather set is the base (`HelmetLeather`, `ArmorLeatherChest`, `ArmorLeatherLegs`):
-  a deer-hide hood, a hip-length robe-tunic with long sleeves and a belt, trousers ending in wrapped feet. Body paint in
+- **Deerhide Vestments** (v2, 2026-10-11, user: "robes of a wizard, look at deerhide to get an idea of the color
+  scheme"): a deep cowl, a long robe to the lower calf split at the front with bell sleeves, a cream front panel, a black
+  sash and stitched runes, built like the game's Eitr-weave robe (skirt skinned to the legs); bases `HelmetMage`,
+  `ArmorMageChest`, `ArmorLeatherLegs`, recipes at the workbench beside the leather set's. Trousers end in wrapped feet. Body paint in
   the body's layout (`_ChestTex`, `_LegsTex`, codex `models/armour.md`) plus `attach_skin` meshes on the Player armature;
   the hood an `attach` on `Helmet_attach` or an `attach_skin`. The foot wraps are separate meshes named `boots*`, so they
   can become their own boots later. Male and female bodies. A folded dropped model per piece.
@@ -249,11 +315,11 @@ unless listed otherwise; `.windows` and `.linux` bundles in the asset's `out/bun
 
 | Item | Prefab | Copy of | Recipe (Workbench 1) | Stats |
 | --- | --- | --- | --- | --- |
-| Gnarled Wand | `EE_Wand_Meadows` | `Club` | Wood 5, Resin 3, Feathers 2, Dandelion 3 | heal power 15 (+1.5 a quality), +10 eitr while wielded; bolt pierce 6 + spirit 6, 10 stamina |
+| Gnarled Wand | `EE_Wand_Meadows` | `Club` | Wood 5, Resin 3, Feathers 2, Dandelion 3 | heal power 15 (+1.5 a quality), +10 eitr while wielded; bolt pierce 6 + spirit 6, 4 eitr (charged up to +30%) |
 | Raven Fetish | `EE_Focus_Meadows` | `ShieldWood` | Feathers 4, Leather scraps 3, Flint 2 | block 2, eitr regen +10%, heal power +3 |
-| Deerhide Hood | `EE_Seer_Meadows_Hood` | `HelmetLeather` | Deer hide 2, Leather scraps 2, Dandelion 2 | armour 1, +5 eitr |
-| Deerhide Robe | `EE_Seer_Meadows_Robe` | `ArmorLeatherChest` | Deer hide 4, Leather scraps 3, Dandelion 3 | armour 1, +5 eitr |
-| Deerhide Trousers | `EE_Seer_Meadows_Trousers` | `ArmorLeatherLegs` | Deer hide 3, Leather scraps 3, Dandelion 2 | armour 1, +5 eitr |
+| Deerhide Hood | `EE_Seer_Meadows_Hood` | `HelmetLeather` | Deer hide 2, Leather scraps 2, Dandelion 2 | armour 1 (+2 a level), +5 eitr |
+| Deerhide Robe | `EE_Seer_Meadows_Robe` | `ArmorLeatherChest` | Deer hide 4, Leather scraps 3, Dandelion 3 | armour 1 (+2 a level), +5 eitr |
+| Deerhide Trousers | `EE_Seer_Meadows_Trousers` | `ArmorLeatherLegs` | Deer hide 3, Leather scraps 3, Dandelion 2 | armour 1 (+2 a level), +5 eitr |
 | Spell: Hearthsong | `EE_Spell_Hearthsong` | `Raspberry` | Raspberries 5, Honey 2, Dandelion 3 | teaches Hearthsong |
 | Spell: Stag's Swiftness | `EE_Spell_Swiftness` | `Raspberry` | none: Eikthyr drops one per player | teaches Stag's Swiftness |
 
@@ -261,7 +327,7 @@ Set bonus (all three pieces): Mend costs 25% less. Mend is known by every charac
 
 | Spell | Eitr | Effect | Status effect |
 | --- | --- | --- | --- |
-| Mend | 8 | heals the highlighted friend within 30 m (never yourself) by the heal power | none |
+| Mend | 8 | heals the highlighted friend within 30 m, or yourself with none, by the heal power | none |
 | Hearthsong | 15 | everyone within 10 m: health regen x1.5 for 60 s | `EE_SE_Hearthsong` |
 | Stag's Swiftness | 15 | everyone within 10 m: +10% movement, running costs 20% less stamina, 60 s | `EE_SE_Swiftness` |
 

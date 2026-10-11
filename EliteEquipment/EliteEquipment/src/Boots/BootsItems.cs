@@ -60,7 +60,10 @@ namespace EliteEquipment.Boots
 
         private static void Build(List<GameObject> prefabs)
         {
-            if (built || prefabs == null)
+            if (prefabs == null)
+                return;
+            BuildOwn(prefabs);
+            if (built)
                 return;
             // The main menu's database wakes with an empty list before it copies the real one in: wait for a list that
             // holds the game's leggings (the iron greaves stand for them).
@@ -69,6 +72,8 @@ namespace EliteEquipment.Boots
             built = true;
             foreach (BootSet set in BootSets.All)
             {
+                if (set.Own)
+                    continue;
                 try
                 {
                     BuildSet(set, prefabs);
@@ -95,6 +100,38 @@ namespace EliteEquipment.Boots
             Dictionary<Mesh, Mesh[]> cuts = SkinSplit.Cut(set, legs);
             LegsLook.Add(set, cuts);
             set.Item = BootsItem.Build(set, legs, cuts);
+        }
+
+        /// <summary>
+        /// Pairs that bring their own parts (<see cref="BootSet.Own"/>) are made as soon as their leggings are in a list the
+        /// game wakes or copies: the leggings are a mod's own prefab, added to the lists by that mod, maybe after these
+        /// boots first looked.
+        /// </summary>
+        private static void BuildOwn(List<GameObject> prefabs)
+        {
+            foreach (BootSet set in BootSets.All)
+            {
+                GameObject legs = set.Own && set.Item == null ? Find(prefabs, set.Legs) : null;
+                if (legs == null || legs.GetComponent<ItemDrop>() == null)
+                    continue;
+                try
+                {
+                    BuildOwnSet(set, legs);
+                }
+                catch (Exception e)
+                {
+                    Plugin.Log.LogError($"EliteEquipment: the {set.Key} boots could not be made and are not in the game: {e}");
+                }
+            }
+        }
+
+        private static void BuildOwnSet(BootSet set, GameObject legs)
+        {
+            set.LegsPrefab = legs;
+            BootSets.FoundLegs(set, legs.GetComponent<ItemDrop>().m_itemData.m_shared.m_name);
+            BootsStats.Remember(legs);
+            LegsIcons.Remember(legs);
+            set.Item = BootsItem.BuildOwn(set, legs);
         }
 
         private static GameObject Find(List<GameObject> prefabs, string name) => prefabs.Find(p => p != null && p.name == name);

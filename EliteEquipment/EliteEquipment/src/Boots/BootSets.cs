@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EliteEquipment.Core;
+using UnityEngine;
 
 namespace EliteEquipment.Boots
 {
@@ -18,13 +19,16 @@ namespace EliteEquipment.Boots
         private static readonly Dictionary<int, BootSet> byHash = new Dictionary<int, BootSet>();
         private static readonly Dictionary<int, BootSet> byLegsHash = new Dictionary<int, BootSet>();
 
+        private static bool initialized;
+
         public static IReadOnlyList<BootSet> All => all;
 
         /// <summary>Registers the sets and their words; called once from <see cref="BootsModule"/>.</summary>
         public static void Initialize()
         {
-            if (all.Count > 0)
+            if (initialized)
                 return;
+            initialized = true;
             Add("Rag", "ArmorRagsLegs", "Rag Shoes");
             Add("Leather", "ArmorLeatherLegs", "Leather Boots");
             Add("TrollLeather", "ArmorTrollLeatherLegs", "Troll Leather Boots");
@@ -74,15 +78,33 @@ namespace EliteEquipment.Boots
         /// <summary>The set whose leggings prefab has this hash, or null.</summary>
         public static BootSet ByLegsHash(int legsHash) => byLegsHash.TryGetValue(legsHash, out BootSet set) ? set : null;
 
-        private static void Add(string key, string legs, string name)
+        /// <summary>
+        /// Registers a pair that brings its own parts (the casters' Deerhide Trousers and their foot wraps): the leggings
+        /// prefab of a mod's own, made before the boots are (its worn skin keeps the boots as renderers named
+        /// <c>boots*</c>), the boots' English name, and its icons and ankle-cut paint (any may be null). Call before the game
+        /// loads a world; the boots are made when the leggings first appear in the game's lists. Returns the set, or the one
+        /// already registered for that key.
+        /// </summary>
+        public static BootSet AddOwn(string key, string legs, string name, Sprite bootsIcon, Sprite pantsIcon, Texture2D paint, Texture2D bump)
+        {
+            BootSet set = all.Find(s => s.Key == key) ?? Add(key, legs, name, own: true);
+            set.OwnBootsIcon = bootsIcon;
+            set.OwnPantsIcon = pantsIcon;
+            set.OwnPaint = paint;
+            set.OwnBump = bump;
+            return set;
+        }
+
+        private static BootSet Add(string key, string legs, string name, bool own = false)
         {
             string token = Language.Add("ee_boots_" + key.ToLowerInvariant(), name);
-            var set = new BootSet(key, legs, token);
+            var set = new BootSet(key, legs, token, own);
             all.Add(set);
             byToken[token] = set;
             byLegs[legs] = set;
             byHash[set.Hash] = set;
             byLegsHash[set.LegsHash] = set;
+            return set;
         }
     }
 }

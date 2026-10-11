@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- Boots: leggings from other mods can bring their own boots to split into.
+
 ## 0.1.0
 
 - First release: boots moved here from OpenKeep, which no longer has them.

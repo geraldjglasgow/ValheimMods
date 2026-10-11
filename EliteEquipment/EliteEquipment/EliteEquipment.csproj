@@ -6,7 +6,7 @@
     <RootNamespace>EliteEquipment</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Product>EliteEquipment</Product>
     <Description>EliteEquipment: more from the game's own equipment, starting with boots split from the leggings</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

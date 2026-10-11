@@ -20,6 +20,8 @@ namespace EliteEquipment.Boots
 
         public static Texture2D For(BootSet set, string property)
         {
+            if (set.Own)
+                return property == "_LegsBumpMap" ? set.OwnBump : null;
             if (!made.TryGetValue((set, property), out Texture2D map))
                 made[(set, property)] = map = Guarded(set, property);
             return map;

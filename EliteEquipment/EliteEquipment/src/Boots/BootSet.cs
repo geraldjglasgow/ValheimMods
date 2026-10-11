@@ -4,7 +4,7 @@ using UnityEngine;
 namespace EliteEquipment.Boots
 {
     /// <summary>
-    /// One of the game's 20 leggings and the boots split from it: the set key (<c>Iron</c>, also the workshop split's,
+    /// One of the game's 20 leggings, or a mod's own (<see cref="Own"/>), and the boots split from it: the set key (<c>Iron</c>, also the workshop split's,
     /// <see cref="NativeSplit"/>), the game's leggings prefab, the boots item prefab (<c>EE_Boots_Iron</c>,
     /// PackPanel's contract is the prefix) and its name token. The prefabs and the cut trousers are filled in when the
     /// scene or the item database first wakes (<see cref="BootsItems"/>).
@@ -13,10 +13,11 @@ namespace EliteEquipment.Boots
     {
         public const string Prefix = "EE_Boots_";
 
-        public BootSet(string key, string legs, string token)
+        public BootSet(string key, string legs, string token, bool own = false)
         {
             Key = key;
             Legs = legs;
+            Own = own;
             Prefab = Prefix + key;
             Token = token;
             Hash = Prefab.GetStableHashCode();
@@ -24,6 +25,25 @@ namespace EliteEquipment.Boots
         }
 
         public string Key { get; }
+
+        /// <summary>
+        /// A pair that brings its own parts (<see cref="BootSets.AddOwn"/>): leggings of a mod's own whose worn skin keeps
+        /// its boots as renderers named <c>boots*</c>, and the icons and ankle-cut paint the mod hands over, instead of a
+        /// game leggings cut by the workshop's data.
+        /// </summary>
+        public bool Own { get; }
+
+        /// <summary>An own pair's boots icon; null keeps a cut of the leggings' icon.</summary>
+        public Sprite OwnBootsIcon { get; set; }
+
+        /// <summary>An own pair's trousers icon while the split is on; null keeps the leggings' own.</summary>
+        public Sprite OwnPantsIcon { get; set; }
+
+        /// <summary>An own pair's trousers paint ending at the ankle (readable); null keeps the leggings' whole paint.</summary>
+        public Texture2D OwnPaint { get; set; }
+
+        /// <summary>That paint's normal map, for the body's <c>_LegsBumpMap</c>; null keeps the leggings' own.</summary>
+        public Texture2D OwnBump { get; set; }
 
         /// <summary>The game's leggings prefab.</summary>
         public string Legs { get; }

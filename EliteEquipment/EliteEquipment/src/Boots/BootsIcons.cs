@@ -15,9 +15,9 @@ namespace EliteEquipment.Boots
     {
         private static readonly Dictionary<string, Sprite> loaded = new Dictionary<string, Sprite>();
 
-        public static Sprite Boots(BootSet set) => Load("boots_" + set.Key.ToLowerInvariant());
+        public static Sprite Boots(BootSet set) => set.Own ? set.OwnBootsIcon : Load("boots_" + set.Key.ToLowerInvariant());
 
-        public static Sprite Pants(BootSet set) => Load("pants_" + set.Key.ToLowerInvariant());
+        public static Sprite Pants(BootSet set) => set.Own ? set.OwnPantsIcon : Load("pants_" + set.Key.ToLowerInvariant());
 
         private static Sprite Load(string name)
         {

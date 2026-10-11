@@ -32,7 +32,10 @@ EliteEquipment/EliteEquipment/src/
   Boots/                    section 1, Boots: the game's 20 leggings split into leggings and boots
     BootsModule.cs, BootsSettings.cs   1. Boots / Separate Boots (on by default), the ee_boots_* words
     BootSet.cs, BootSets.cs the 20 sets: key (the split's too), game leggings, EE_Boots_<Key>, name token; lookups
-                            (the boots by token, prefab hash; the leggings by prefab name, hash and name token)
+                            (the boots by token, prefab hash; the leggings by prefab name, hash and name token);
+                            `AddOwn`: a pair that brings its own parts (a mod's own leggings whose worn skin keeps the
+                            boots as renderers named boots*, its icons and ankle-cut paint), for the casters' Deerhide
+                            Trousers (2026-10-11)
     BootsItems.cs           prefix ZNetScene.Awake, ObjectDB.Awake, CopyOtherDB: builds once, adds the boots to the lists
     NativeSplit.cs          assets/boots/native_split.txt: per set the boots triangles, the paint's ankle row, the trousers' paint edits
                             (Bronze, Leather, Troll leather, Caller, Ask, Embla and Eitr-weave carried down to the ankle),
@@ -168,6 +171,16 @@ and key). Meanings are in each entry's description in the .cfg.
 - Every patch is applied whether the switch is on or off; each returns early while off (as OpenKeep's features do).
 
 ### Boots
+
+- Own pairs (2026-10-11, user: "all equipment made works with EliteEquipment, so the boots and pants need to be
+  separated"): `BootSets.AddOwn(key, legs, name, bootsIcon, pantsIcon, paint, bump)` registers leggings of a mod's own
+  (first: the casters' `EE_Seer_Meadows_Trousers`, boots `EE_Boots_SeerMeadows` "Deerhide Foot Wraps"). The boots item is
+  a copy of the leggings keeping only the `boots*` renderers (`BootsItem.BuildOwn`), made as soon as the leggings appear
+  in a list (`BootsItems.BuildOwn`, every wake or copy, since the mod adds its leggings itself); while split the leggings
+  hide those renderers (`LegsLook.HideBoots`), wear the handed-over ankle-cut paint and normal map (`PaintCut`,
+  `PaintMaps`) and icon (`BootsIcons`). Stats, weight, set size, recipe and the worn look go the same way as the 20 (the
+  worn pair is drawn by `VisEquipment.AttachArmor`). The leggings' mod must add them, and their recipe, before these
+  look in the same event (the casters' patches run at `Priority.High`) and must not rewrite the recipe's cost afterwards.
 
 - Asked for on 2026-10-07 (to OpenKeep): "chatgpt just separated the vanilla valheim armor into boot and legs, we need
   the boots to be an equipable item that goes on feet ... take the stats and split them between the boots and legs, 80%
@@ -360,7 +373,7 @@ and key). Meanings are in each entry's description in the .cfg.
 
 Never run in game as EliteEquipment (the boots ran in game as OpenKeep's section 16). With PackPanel for the Feet slot:
 
-1. Log shows `Loading [EliteEquipment 0.1.0]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
+1. Log shows `Loading [EliteEquipment 0.2.0]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
    Separate Boots = true`. With OpenKeep too, neither log mentions the other's boots.
 2. At a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron Boots 4 at the forge (the
    game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.

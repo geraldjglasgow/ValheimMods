@@ -35,6 +35,16 @@ namespace EliteEquipment.Boots
             }
         }
 
+        /// <summary>An own pair's leggings draw without their boots renderers while the split is on.</summary>
+        private static void HideBoots(GameObject skin)
+        {
+            foreach (Renderer part in skin.GetComponentsInChildren<Renderer>(true))
+            {
+                if (BootsItem.IsBoots(part))
+                    part.gameObject.SetActive(false);
+            }
+        }
+
         private static void Wear(GameObject skin, Dictionary<Mesh, Mesh> trousers)
         {
             foreach (SkinnedMeshRenderer part in skin.GetComponentsInChildren<SkinnedMeshRenderer>(true))
@@ -54,11 +64,15 @@ namespace EliteEquipment.Boots
                 if (__result == null || !BootsSettings.On || !__instance.m_isPlayer || __instance.m_isArmorStand)
                     return;
                 BootSet set = BootSets.ByLegsHash(itemHash);
-                if (set == null || set.Trousers.Count == 0)
+                if (set == null || (!set.Own && set.Trousers.Count == 0))
                     return;
                 foreach (GameObject piece in __result)
                 {
-                    if (piece != null && piece.name.StartsWith(SkinSplit.Skin, StringComparison.Ordinal))
+                    if (piece == null || !piece.name.StartsWith(SkinSplit.Skin, StringComparison.Ordinal))
+                        continue;
+                    if (set.Own)
+                        HideBoots(piece);
+                    else
                         Wear(piece, set.Trousers);
                 }
             }

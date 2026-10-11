@@ -35,6 +35,31 @@ namespace EliteEquipment.Boots
         }
 
         /// <summary>Keeps the copied skin with its boots parts, and drops every other attached piece; null without a cut.</summary>
+        /// <summary>
+        /// The boots of a pair that brings its own parts: a bench copy of its leggings whose worn skin keeps only the
+        /// renderers named <c>boots*</c>, with its own name, icon and a fifth of the stats, and a dropped look made from
+        /// those meshes as for the others.
+        /// </summary>
+        public static GameObject BuildOwn(BootSet set, GameObject legs)
+        {
+            GameObject item = PrefabBench.Copy(legs, set.Prefab);
+            Transform skin = item.transform.Find(SkinSplit.Skin);
+            if (skin != null)
+            {
+                foreach (Renderer part in skin.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (!IsBoots(part))
+                        Object.DestroyImmediate(part.gameObject);
+                }
+            }
+            Describe(item.GetComponent<ItemDrop>().m_itemData.m_shared, set, legs);
+            BootsDrop.Prepare(set, item, skin != null ? skin.gameObject : null);
+            return item;
+        }
+
+        /// <summary>A renderer of an own pair's worn skin that belongs to the boots (named <c>boots*</c>).</summary>
+        public static bool IsBoots(Renderer part) => part != null && part.name.StartsWith("boots", StringComparison.Ordinal);
+
         private static GameObject Dress(GameObject item, Dictionary<Mesh, Mesh[]> cuts)
         {
             GameObject skin = null;

@@ -35,6 +35,8 @@ namespace EliteEquipment.Boots
         {
             try
             {
+                if (set.Own)
+                    return set.OwnPaint != null ? new[] { Paint.Read(set.OwnPaint), null } : null;
                 return Make(set, NativeSplit.For(set.Key));
             }
             catch (Exception e)
