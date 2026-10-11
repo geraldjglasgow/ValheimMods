@@ -65,7 +65,7 @@ namespace EliteCreaturesReborn.Mutations
             Keywords = new[] { "tar", "mud", "blob", "splat" },
         };
 
-        /// <summary>Flamebound's fire: glowing embers with flames over them; a player in it catches fire.</summary>
+        /// <summary>Flamebound's fire: flames on the ground (embers only while effects are off); a player in it catches fire.</summary>
         public static readonly TrailKind Fire = new TrailKind
         {
             Index = 2,
@@ -76,7 +76,7 @@ namespace EliteCreaturesReborn.Mutations
             Colour = new Color(1f, 0.38f, 0.06f, 0.9f),
             Feel = TrailFeel.Burn,
             Keywords = new[] { "tar", "lava", "blob", "splat" },
-            Life = 10f, Radius = 1.5f, Spacing = 1.5f, Strength = 6f, DecalEffect = "vfx_blobtar_death",
+            Life = 7f, Radius = 1f, Spacing = 1.5f, Strength = 6f, DecalEffect = "vfx_blobtar_death",
         };
 
         /// <summary>Binding's roots: tangled roots in the ground, apart from each other; a player stepping in is held.</summary>

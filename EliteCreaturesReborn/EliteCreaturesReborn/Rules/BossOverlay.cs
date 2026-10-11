@@ -12,6 +12,8 @@ namespace EliteCreaturesReborn.Rules
         public static void Apply(BossRules boss, YamlMappingNode block, List<string> errors, List<string> warnings)
         {
             boss.Enabled = YamlRead.Bool(block, "stars", boss.Enabled, errors);
+            boss.Rewards = YamlRead.Bool(block, Fields.Rewards, boss.Rewards, errors);
+            boss.HarderEachKill = YamlRead.Bool(block, Fields.HarderEachKill, boss.HarderEachKill, errors);
             float[]? chances = YamlRead.Floats(YamlRead.Child(block, "star chances"), errors, "boss star chances");
             if (chances != null && chances.Length > 0)
             {

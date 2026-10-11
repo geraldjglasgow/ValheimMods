@@ -19,6 +19,11 @@ bosses:
     swing speed: [1]
     speed:       [1]
     # No drops line: a boss's stars pay in heads, its other drops are never multiplied by stars.
+  # Each boss also drops its biome's material (Bonemass iron scrap, Moder silver ore, ...): one roll per star
+  # plus one, times its aspect's loot.
+  rewards: true
+  # Each defeat of a boss makes more stars likelier on its next fight, counting up to 10 defeats.
+  harder each kill: true
 
   aspects:
     enabled: true

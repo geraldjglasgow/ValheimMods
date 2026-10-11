@@ -35,8 +35,12 @@ namespace EliteCreaturesReborn.Traits
         internal static bool MayRoll(Mutation mutation, RuleSet ruleSet, int barred) =>
             ruleSet.IsEnabled(mutation) && (barred & (1 << (int)mutation)) == 0;
 
-        /// <summary>A plain draw from the distribution, no tier - the boss table's roll.</summary>
+        /// <summary>A plain draw from the distribution, no tier.</summary>
         public static int RollStars(BiomeRules rules) => RollStars(rules.StarChances, 1f);
+
+        /// <summary>A draw leaned by <paramref name="boost"/> the way the tier's star boost leans it - the boss table's
+        /// roll, leaned by the boss's past defeats.</summary>
+        public static int RollStars(BiomeRules rules, float boost) => RollStars(rules.StarChances, boost);
 
         private static int RollStars(float[] chances, float boost) => PickWeighted(Boosted(chances, boost));
 

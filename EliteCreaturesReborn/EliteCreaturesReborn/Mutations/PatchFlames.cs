@@ -8,29 +8,39 @@ namespace EliteCreaturesReborn.Mutations
     /// <summary>
     /// The flames licking up from Flamebound's burning patches on this machine: one local copy of the game's own Burning
     /// look (the flames it draws on a burning body, <see cref="CosmeticClone"/>, never networked), its flame and cinder
-    /// systems fed by hand in world space, each flame rising from a random point inside a live patch. One copy draws every
-    /// creature's fire, so a long trail costs particles, never objects, and a patch stops burning the moment it is gone.
-    /// Thinned by the player's effect density, and none at all at 0, as every effect of the mod; the ember patch under
-    /// them still warns. Never on a dedicated server.
+    /// systems fed by hand in world space, each at half the game's own rate for a burning body and rising as the game
+    /// lifts them, from a random point inside a live patch (fed sparser, the game's crisp flame frames read as scattered
+    /// orange shards, not a fire). One copy draws every creature's fire, so a long trail costs particles, never objects,
+    /// and a patch stops burning the moment it is gone. Thinned by the player's effect density, and none at all at 0, as
+    /// every effect of the mod; the ember decal then shows the patch instead. Never on a dedicated server.
     /// </summary>
     internal sealed class PatchFlames
     {
         private const string Source = "vfx_Burning";
         private static readonly string[] Keywords = { "burning", "flame", "fire" };
 
-        /// <summary>Flames a second rising from each patch at full density.</summary>
-        private const float PerPatchPerSecond = 14f;
+        /// <summary>Each patch burns with this share of the flames and cinders a second the game gives a burning body.</summary>
+        private const float PatchShare = 0.5f;
 
         /// <summary>How far from a patch's middle a flame may rise, as a share of its reach.</summary>
         private const float Spread = 0.75f;
+
+        /// <summary>The flames' size as a share of the game's on a burning body (their rise shrinks with them).</summary>
+        private const float FlameSize = 0.6f;
 
         /// <summary>A part of the game's effect whose particles live longer than this is not a flame.</summary>
         private const float MaxLife = 10f;
 
         private readonly ParticleSystem[] _systems;
-        private float _owed;
+        private readonly float[] _rates;
+        private readonly float[] _owed;
 
-        private PatchFlames(ParticleSystem[] systems) => _systems = systems;
+        private PatchFlames(List<ParticleSystem> systems, List<float> rates)
+        {
+            _systems = systems.ToArray();
+            _rates = rates.ToArray();
+            _owed = new float[_systems.Length];
+        }
 
         /// <summary>The flames, copied under <paramref name="parent"/>; null when effects are off or the game has none.</summary>
         public static PatchFlames? Build(Transform parent)
@@ -42,20 +52,25 @@ namespace EliteCreaturesReborn.Mutations
                 return null;
             }
             Quiet(copy);
-            ParticleSystem[] systems = Flames(copy);
-            return systems.Length > 0 ? new PatchFlames(systems) : null;
+            copy.transform.localScale = Vector3.one * FlameSize; // every part scales with the copy (Hierarchy)
+            return Flames(copy);
         }
+
+        /// <summary>True while this player draws effects at all; at 0 there are no flames, so the decal warns instead.</summary>
+        public static bool Shown => Density() > 0f;
 
         // Only the flames and cinders the game itself keeps burning are fed. Its flare (one 4 m glow that never dies)
         // and its spray of drops (which it never draws) go: fed by hand, they piled up into a glowing haze that fog
         // turned into a bright white wall around the creature.
-        private static ParticleSystem[] Flames(GameObject copy)
+        private static PatchFlames? Flames(GameObject copy)
         {
             List<ParticleSystem> flames = new List<ParticleSystem>();
+            List<float> rates = new List<float>();
             foreach (ParticleSystem system in copy.GetComponentsInChildren<ParticleSystem>(true))
             {
                 if (Burns(system))
                 {
+                    rates.Add(GameRate(system) * PatchShare);
                     Settle(system);
                     flames.Add(system);
                 }
@@ -64,8 +79,12 @@ namespace EliteCreaturesReborn.Mutations
                     Silence(system);
                 }
             }
-            return flames.ToArray();
+            return flames.Count > 0 ? new PatchFlames(flames, rates) : null;
         }
+
+        // The game's own rate for the part: the copy's, before the effect density thinned it (Tick thins it live).
+        private static float GameRate(ParticleSystem system) =>
+            system.emission.rateOverTimeMultiplier / Mathf.Max(Density(), 0.01f);
 
         // Drawn in the game's own effect (an active part), more than one at a time, and each gone within seconds.
         private static bool Burns(ParticleSystem system)
@@ -123,31 +142,24 @@ namespace EliteCreaturesReborn.Mutations
         /// <summary>Lights the flames owed over the last <paramref name="elapsed"/> seconds, spread over the patches.</summary>
         public void Tick(List<GroundPatch> patches, float elapsed)
         {
-            if (patches.Count == 0)
+            float share = patches.Count * elapsed * Density();
+            for (int i = 0; i < _systems.Length; i++)
             {
-                _owed = 0f;
-                return;
-            }
-            _owed += patches.Count * PerPatchPerSecond * elapsed * Density();
-            for (; _owed >= 1f; _owed -= 1f)
-            {
-                GroundPatch patch = patches[Random.Range(0, patches.Count)];
-                Emit(_systems[Random.Range(0, _systems.Length)], Within(patch));
+                _owed[i] = share > 0f ? _owed[i] + _rates[i] * share : 0f;
+                for (; _owed[i] >= 1f; _owed[i] -= 1f)
+                {
+                    Emit(_systems[i], Within(patches[Random.Range(0, patches.Count)]));
+                }
             }
         }
 
+        // Only where: speed, size, life and the rise come from the game's own part.
         private static void Emit(ParticleSystem system, Vector3 at)
         {
-            if (system == null)
+            if (system != null)
             {
-                return;
+                system.Emit(new ParticleSystem.EmitParams { position = at }, 1);
             }
-            ParticleSystem.EmitParams emit = new ParticleSystem.EmitParams
-            {
-                position = at,
-                velocity = Vector3.up * Random.Range(0.3f, 0.9f),
-            };
-            system.Emit(emit, 1);
         }
 
         private static Vector3 Within(GroundPatch patch)

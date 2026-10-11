@@ -134,6 +134,8 @@ namespace EliteCreaturesReborn.Rules
         public const string Loot = "loot";
         public const string Power = "power";
         public const string PerBoss = "per boss";
+        public const string Rewards = "rewards";
+        public const string HarderEachKill = "harder each kill";
         public const string Match = "match";
         public const string Summons = "summons";
 

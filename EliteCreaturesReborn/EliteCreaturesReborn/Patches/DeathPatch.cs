@@ -80,6 +80,7 @@ namespace EliteCreaturesReborn.Patches
                 return null; // all death work is the owner's, and only on a resolved creature
             }
             AspectDeath.Capture(victim, controller, nview!); // while the ZDO still answers: a twin's fall, a copy's puff
+            BossKills.Record(victim, controller, nview!.GetZDO()); // and a boss's defeat, for `harder each kill`
             return Build(victim, controller, nview!.GetZDO());
         }
 

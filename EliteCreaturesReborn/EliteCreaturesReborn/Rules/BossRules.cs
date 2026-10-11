@@ -22,6 +22,12 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>The boss aspects - the one modifier a boss carries in place of mutations. Independent of the stars.</summary>
         public AspectRules Aspects = new AspectRules();
 
+        /// <summary>Each boss also drops its biome's material, more per star and times its aspect's loot (<c>Loot.BossRewards</c>).</summary>
+        public bool Rewards = true;
+
+        /// <summary>Each defeat of a boss leans its next stars up (<c>Runtime.BossKills</c>).</summary>
+        public bool HarderEachKill = true;
+
         /// <summary>The highest star count the boss distribution can produce.</summary>
         public int StarCeiling => Mathf.Max(0, StarChances.Length - 1);
 
@@ -30,7 +36,7 @@ namespace EliteCreaturesReborn.Rules
             return new BossRules
             {
                 Enabled = Enabled, StarChances = (float[])StarChances.Clone(), Star = Star.Clone(),
-                Aspects = Aspects.Clone(),
+                Aspects = Aspects.Clone(), Rewards = Rewards, HarderEachKill = HarderEachKill,
             };
         }
     }

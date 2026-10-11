@@ -64,7 +64,40 @@ speed never changes.
 | Damage | x1 | x1.25 | x1.55 | x1.9 |
 | Size | - | +5% | +10% | +15% |
 
-Stars add trophies only; the rest of a boss's drops is never multiplied by stars. A boss drops one trophy for every player within 100 m of it, plus one per star plus one, whatever the loot settings; Bountiful doubles that. Three players and a two-star Bountiful boss: twelve trophies.
+Stars add trophies and reward rolls (below); the rest of a boss's drops is never multiplied by stars. A boss drops one trophy for every player within 100 m of it, plus one per star plus one, whatever the loot settings; Bountiful doubles that. Three players and a two-star Bountiful boss: twelve trophies.
+
+**Harder each kill.** Every defeat of a boss makes stars likelier on its next fight, counted per boss for the whole
+world, up to 10 defeats. The altar shows "Defeated 3 times". Odds out of 100:
+
+| Defeats | Plain | 1 star | 2 stars | 3 stars |
+| --- | --- | --- | --- | --- |
+| 0 | 90 | 6 | 3 | 1 |
+| 1 | 83 | 8 | 6 | 3 |
+| 3 | 65 | 11 | 13 | 11 |
+| 5 | 47 | 11 | 19 | 23 |
+| 10 | 20 | 8 | 24 | 48 |
+
+A Twin pair counts once; of a Tethered pair, the last to fall counts. The count is a world key,
+`ecr_kills_<boss>` (`removekey ecr_kills_bonemass` resets one).
+
+## Rewards
+
+Each boss also drops a material from its biome: one roll for the plain fight plus one per star, times the aspect's
+loot multiplier and the loot settings' multipliers. The altar shows what the fight on the bowl pays.
+
+| Boss | Each roll |
+| --- | --- |
+| Eikthyr | 20-40 Coins |
+| The Elder | 5-10 Copper ore |
+| Bonemass | 5-10 Iron scrap |
+| Moder | 5-10 Silver ore |
+| Yagluth | 5-10 Black metal scrap |
+| The Queen | 5-10 Carapace |
+| Fader | 5-10 Flametal ore |
+
+A three-star Bonemass pays four rolls: 20-40 Iron scrap, 26-52 with Mending. Each Twin pays its own; of a Tethered
+pair, only the last to fall. For other rewards, set `rewards: false` and add `extra drops` to the boss's `creatures:`
+entry ([Loot and Respawning](wiki:Loot and Respawning)).
 
 ## Damage board
 
@@ -80,6 +113,8 @@ Under `bosses:`:
 | `stars` | true | false: bosses never get stars, and the altar shows none |
 | `star chances` | [90, 6, 3, 1] | % chance of 0, 1, 2, 3 stars |
 | `star power` | the table above | Boss star multipliers (no `drops` line; an old one only warns) |
+| `rewards` | true | false: bosses drop no reward |
+| `harder each kill` | true | false: past defeats do not change a boss's stars |
 | `aspects:` `enabled` | true | false: no aspects |
 | `shift seconds` | 15 | Real seconds between altar shifts (stars and aspect); 0 = never changes. An older file's `shift hours` (in-game hours, 75 s each) still works while `shift seconds` is absent |
 | `chances` | none 42, each aspect 10 | Weight of each aspect; 0 removes it |

@@ -1,5 +1,7 @@
 using EliteCreaturesReborn.Display;
+using EliteCreaturesReborn.Loot;
 using EliteCreaturesReborn.Rules;
+using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using PatchGuard;
 using UnityEngine;
@@ -34,6 +36,7 @@ namespace EliteCreaturesReborn.Aspects
         private string _hover = "";
         private uint _hoverRevision = uint.MaxValue;
         private int _hoverSecond = int.MinValue;
+        private int _hoverKills = -1;
         private RuleSet? _hoverRules;
 
         /// <summary>Added to an altar that summons a boss, on every machine, as the bowl starts.</summary>
@@ -90,7 +93,7 @@ namespace EliteCreaturesReborn.Aspects
         {
             if (StarsOn && (shift || !AspectStore.AltarStarsRolled(zdo)))
             {
-                AspectStore.SetAltarStars(zdo, BossDraw.RollStars());
+                AspectStore.SetAltarStars(zdo, BossDraw.RollStars(BossKills.StarBoost(_boss))); // leaned by past defeats
             }
             if (AspectsOn && (shift || !AspectStore.AltarRolled(zdo)))
             {
@@ -132,14 +135,31 @@ namespace EliteCreaturesReborn.Aspects
             RuleSet set = RuleState.Active;
             double seconds = SecondsToShift(zdo, set.Boss.Aspects);
             int second = seconds < 0 ? -1 : Mathf.CeilToInt((float)seconds);
-            if (zdo.DataRevision != _hoverRevision || second != _hoverSecond || !ReferenceEquals(set, _hoverRules))
+            int kills = BossKills.Count(_boss);
+            if (zdo.DataRevision != _hoverRevision || second != _hoverSecond || kills != _hoverKills
+                || !ReferenceEquals(set, _hoverRules))
             {
                 _hoverRevision = zdo.DataRevision;
                 _hoverSecond = second;
+                _hoverKills = kills;
                 _hoverRules = set;
-                _hover = DrawHover(zdo, set.Boss.Aspects, seconds);
+                _hover = DrawHover(zdo, set.Boss.Aspects, seconds) + BossLines(zdo, set, kills);
             }
             return _hover;
+        }
+
+        /// <summary>What the fight on the bowl pays beyond the boss's table, and how often the world has defeated it.</summary>
+        private string BossLines(ZDO zdo, RuleSet set, int kills)
+        {
+            int stars = StarsOn && AspectStore.AltarStarsRolled(zdo) ? AspectStore.GetAltarStars(zdo) : 0;
+            BossAspects aspects = AspectsOn && AspectStore.AltarRolled(zdo) ? AspectStore.GetAltarAspects(zdo) : BossAspects.None;
+            string reward = BossRewards.AltarLine(_boss, stars, AspectLoot.FactorOf(aspects, set.Boss.Aspects));
+            if (kills == 0 || !set.Boss.HarderEachKill)
+            {
+                return reward;
+            }
+            string times = kills >= BossKills.MaxKills ? $"{kills}+ times" : kills == 1 ? "once" : $"{kills} times";
+            return reward + $"\n<color=#A0A0A0>Defeated {times}: more stars likelier</color>";
         }
 
         private static string DrawHover(ZDO zdo, AspectRules rules, double secondsToShift)

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.24.0
+
+- Bosses: each defeat makes that boss likelier to have stars next time (`harder each kill`); the altar shows "Defeated N times".
+- Bosses drop their biome's material, one roll plus one per star (`rewards`); the altar shows what the fight pays.
+- Flamebound: creatures burn with a flame aura; their burning ground is 2 m wide and lasts 7 seconds.
+- Wiki: how the game's World Difficulty stacks with this mod.
+
 ## 3.23.0
 
 - Raids: the Raiders Chest (`Raiders Chest`, section `11 - Raids`). Fill it with gold to call a raid on your base; kill every raider to win the gold back with more.

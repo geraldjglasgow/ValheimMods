@@ -7,8 +7,8 @@ namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
     /// Every patch of one trail kind this machine has laid, from every creature: the patches themselves (where, how
-    /// wide, until when, how strong), their drawing (<see cref="PatchDecals"/>, one per decal effect in use, and for fire
-    /// the flames over them, <see cref="PatchFlames"/>) and what they do to this machine's player (the kind's
+    /// wide, until when, how strong), their drawing (<see cref="PatchDecals"/>, one per decal effect in use; for fire
+    /// the flames, <see cref="PatchFlames"/>, with the decal only while effects are off) and what they do to this machine's player (the kind's
     /// <see cref="IPatchFooting"/>), looked at ten times a second. A patch is this
     /// machine's own from the moment it is laid, so it lasts its full life and fades out normally after the creature
     /// that laid it dies or leaves; and since a player is only ever slowed by patches their own machine has drawn,
@@ -79,10 +79,20 @@ namespace EliteCreaturesReborn.Mutations
                 Point = point, RadiusSq = spec.Radius * spec.Radius, Until = Time.time + remaining, Slow = spec.Slow,
                 Grip = spec.Grip, Strength = spec.Strength,
             });
-            Decals(spec.Effect).Draw(point, normal, spec.Radius * 2f, remaining, _kind.Colour, id);
+            Draw(id, point, normal, spec, remaining);
+        }
+
+        // Fire is drawn by its flames alone; its ember decal shows only while there are no flames (effects off), so a
+        // patch that burns is never invisible.
+        private void Draw(long id, Vector3 point, Vector3 normal, TrailSpec spec, float remaining)
+        {
             if (_kind.Feel == TrailFeel.Burn && _flames == null)
             {
                 _flames = PatchFlames.Build(transform);
+            }
+            if (_flames == null || !PatchFlames.Shown)
+            {
+                Decals(spec.Effect).Draw(point, normal, spec.Radius * 2f, remaining, _kind.Colour, id);
             }
         }
 

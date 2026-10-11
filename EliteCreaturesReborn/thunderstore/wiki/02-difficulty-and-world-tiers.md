@@ -8,6 +8,14 @@ the line, or with `Custom`, the file's own biome rows apply (see the end of this
 The biome you are entering (Meadows with no bosses down, Black Forest after one, and so on) is always the gentlest.
 Each boss killed after a biome makes that biome harder, so by the end the Meadows is the hardest place.
 
+### The game's World Difficulty
+
+The world's own combat setting (Very Easy to Very Hard, set when the world is made) is separate from this mod's
+difficulty, and the two stack. The game's setting still changes how hard enemies hit and how hard you hit them. Its
+extra star chance does nothing, because this mod rolls every creature's stars itself. This mod's difficulty decides
+how many stars and mutations creatures get in each biome. With `creature stars: false` the game's stars come back,
+the world setting's star chance included.
+
 ### Most stars a creature can have
 
 | Difficulty | Biome you're entering | Each boss killed after a biome | Ocean |

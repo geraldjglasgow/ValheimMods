@@ -17,6 +17,11 @@ killed after it, so by the end of the game the Meadows is the hardest place, not
 reached match the one you're entering. Each difficulty is harder than the one below it in every biome at every
 world tier.
 
+**The game's World Difficulty** (its combat setting, Very Easy to Very Hard) is separate and stacks: it still changes
+how hard enemies hit and how hard players hit them, but its extra star chance (`Game.m_enemyLevelUpRate`) does nothing,
+because creatures are kept at the game's level 1 and roll this mod's stars. With `creature stars: false` the game's
+stars, that star chance included, apply as usual.
+
 **Stars.** The most stars a creature can have:
 
 | Difficulty | Biome you're entering | Each boss killed after a biome | Ocean |
@@ -102,7 +107,7 @@ has no line for them and leaves them off; Flamebound, which starts on, rolls in 
 | Piercing | Each of its hits - melee, thrown or shot - ignores 15% of your armour. Block, parry, resistances and armour wear are as usual. Off by default |
 | Howling | When it turns on you it howls (a wolf's howl), and the 4 nearest creatures on its side within 30 m that are hostile to you come for you; again every 45 seconds while it fights you. It calls creatures already there, never new ones, and never a boss. Off by default |
 | Binding | Leaves patches of tangled roots where it walks, smaller and further apart than ice or mud (one every 3 m walked, each reaching 1.2 m), so you can step between them, each lasting 10 seconds. Step into one and the roots burst up and hold you for a second ("Rooted": no walking, running, jumping or rolling; you can still turn, block and strike), then let you go for 3 seconds, long enough to walk clear. Off by default |
-| Flamebound | Leaves burning ground where it walks: glowing embers with flames over them, a patch every 1.5 m, each lasting 10 seconds like Frostbound's ice and Mudbound's mud. Standing in it sets you on fire, the game's own Burning: 6 fire damage a second, more with stars (its star `attack` line); fire resistance, armour and being wet help. Its heat clears mist around it as a Wisplight does |
+| Flamebound | Leaves burning ground where it walks: flames on the ground, 2 m wide, a patch every 1.5 m, each lasting 7 seconds (with effects off, glowing embers instead). Standing in it sets you on fire, the game's own Burning: 6 fire damage a second, more with stars (its star `attack` line); fire resistance, armour and being wet help. Its heat clears mist around it as a Wisplight does |
 
 Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
 
@@ -254,6 +259,20 @@ adds on top.
 rest of a boss's table drops once - no extra rolls, no star `drops` line (a `drops` line under `bosses: star power:` in
 an older file only warns) - times its aspect's loot and the global and boss multipliers. A `drops` line in the boss's
 own `creatures:` entry still applies.
+
+**Boss rewards** (`rewards: true` under `bosses:`; a GitHub player's suggestion, 2026-10-10): each boss also drops its
+biome's material, a fixed table in `Loot/BossRewards.cs` - Eikthyr 20-40 Coins, the Elder 5-10 CopperOre, Bonemass 5-10
+IronScrap, Moder 5-10 SilverOre, Yagluth 5-10 BlackMetalScrap, the Queen 5-10 Carapace, Fader 5-10 FlametalOreNew. One
+roll for the plain fight plus one per star, times its aspects' loot and (loot rules on) the global and boss
+multipliers; paid in every loot mode, Vanilla included. Each Twin pays its own; of a Tethered pair only the last to
+fall; a Phantom copy never. The altar shows the range for the fight on the bowl ("Reward: 10-20 Iron Scrap").
+
+**Harder each kill** (`harder each kill: true` under `bosses:`): each defeat leans the boss's next star roll like the
+world tier's star boost, each star count's weight times (1 + 0.5 x defeats)^stars, counting at most 10 defeats (90/6/3/1
+becomes 83/8/6/3 after one, 20/8/24/48 after ten). The count is a world global key, `ecr_kills_<prefab> N`, set by the
+dying boss's owner through the game's SetGlobalKey (the server ignores a line it holds, so a Twin pair counts once; the
+first of a Tethered pair and Phantom copies never count). The altar shows "Defeated N times"; `removekey
+ecr_kills_<prefab>` resets one. It counts with the switch off too, so turning it on uses the real history.
 
 ## Boss aspect power fields
 

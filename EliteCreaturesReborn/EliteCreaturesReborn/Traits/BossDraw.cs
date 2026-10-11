@@ -23,14 +23,15 @@ namespace EliteCreaturesReborn.Traits
         public CreatureTraits ToTraits() => Aspects.ToTraits(Stars);
 
         /// <summary>A fresh draw on the live rules, each part only while it is on: no stars with boss stars off, no aspect
-        /// with aspects off.</summary>
-        public static BossDraw Roll(string bossPrefab) => new BossDraw(RollStars(), AspectRoller.RollBoss(bossPrefab, null));
+        /// with aspects off. <paramref name="starBoost"/> leans the stars up (a boss's past defeats, <c>Runtime.BossKills</c>).</summary>
+        public static BossDraw Roll(string bossPrefab, float starBoost) =>
+            new BossDraw(RollStars(starBoost), AspectRoller.RollBoss(bossPrefab, null));
 
-        /// <summary>The boss table's star roll, or 0 when boss stars are off.</summary>
-        public static int RollStars()
+        /// <summary>The boss table's star roll leaned by <paramref name="starBoost"/>, or 0 when boss stars are off.</summary>
+        public static int RollStars(float starBoost)
         {
             BossRules boss = RuleState.Active.Boss;
-            return boss.Enabled ? TraitRoller.RollStars(BossView.For(boss)) : 0;
+            return boss.Enabled ? TraitRoller.RollStars(BossView.For(boss), starBoost) : 0;
         }
     }
 }

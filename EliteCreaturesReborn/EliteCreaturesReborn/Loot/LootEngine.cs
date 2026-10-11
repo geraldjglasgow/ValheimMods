@@ -65,18 +65,20 @@ namespace EliteCreaturesReborn.Loot
             }
             RollExtras(ctx, result);
             Multiply(ctx, result);
+            BossRewards.Pay(controller, result, rulesOn: true); // scaled by its own factor, so after the multiply
             GildedLoot.AddBonus(controller, result); // Gilded's purse, after every multiplier and scaled by none
             ctx.Held.Pay(result); // a boss's heads, likewise
         }
 
         /// <summary>Vanilla: the rules stand aside, and only what pays with them off touches the list - a boss aspect,
-        /// Gilded, and a boss's trophies. No `creatures:` entry applies here, so none can claim a trophy.</summary>
+        /// Gilded, a boss's reward and its trophies. No `creatures:` entry applies here, so none can claim a trophy.</summary>
         private static void ReworkVanilla(CharacterDrop drop, EliteController controller,
             List<KeyValuePair<GameObject, int>> result)
         {
             BossTrophies held = BossTrophies.Hold(drop, controller, result, overridden: null);
             AspectLoot.ApplyAlone(drop, controller, result); // a boss aspect pays even with the loot rules off
             GildedLoot.ApplyAlone(drop, controller, result); // and so does Gilded, the one mutation that pays
+            BossRewards.Pay(controller, result, rulesOn: false); // and a boss's reward
             held.Pay(result);
         }
 

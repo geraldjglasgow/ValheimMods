@@ -14,7 +14,8 @@ Set with `mode:` under `loot:`.
 - Trophies are not multiplied unless `multiply trophies: true`. Bosses always drop one trophy for every player
   within 100 m, plus one per star plus one (twice that when Bountiful).
 - Mutations do not add loot, except Gilded (3x loot plus coins). Thieving creatures drop what they stole.
-- Boss aspect loot multipliers apply in every mode, Vanilla included.
+- Boss aspect loot multipliers apply in every mode, Vanilla included, and so do boss rewards (a material from the
+  boss's biome, more per star; see [Boss Aspects](wiki:Boss Aspects)).
 - Other mods' drops are left alone.
 
 | Key | Default | Meaning |

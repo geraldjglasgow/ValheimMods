@@ -21,7 +21,7 @@ namespace EliteCreaturesReborn.Runtime
             if (creature.IsBoss())
             {
                 // a registered boss's aspects come through its draw (AspectRoller reads the registration)
-                return WithMutations(creature, prefab, BossDraw.Roll(prefab).ToTraits());
+                return WithMutations(creature, prefab, BossDraw.Roll(prefab, BossKills.StarBoost(prefab)).ToTraits());
             }
             RuleSet rules = RuleState.Active;
             CreatureTraits traits = TraitRoller.Roll(rules.For(biome, prefab), rules, WorldTier.Current(), biome,

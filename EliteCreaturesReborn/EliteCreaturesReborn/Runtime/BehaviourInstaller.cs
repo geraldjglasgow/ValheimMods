@@ -86,11 +86,12 @@ namespace EliteCreaturesReborn.Runtime
             {
                 controller.gameObject.AddComponent<FireTrail>();
                 controller.gameObject.AddComponent<FlameDemist>();
+                controller.gameObject.AddComponent<FlameAuraLook>();
             }
         }
 
-        // A decoy Has no mutation, so this is all it gets: its own leaving, and the frost look its creature wore before
-        // the swap, so the body the player watches does not lose its mist and light in that frame.
+        // A decoy Has no mutation, so this is all it gets: its own leaving, and the frost or fire look its creature wore
+        // before the swap, so the body the player watches does not lose its mist, flames or light in that frame.
         private static void InstallCloning(EliteController controller, CreatureTraits traits)
         {
             if (traits.Has(Mutation.Cloning))
@@ -103,6 +104,10 @@ namespace EliteCreaturesReborn.Runtime
                 if (traits.Wears(Mutation.Frostbound))
                 {
                     controller.gameObject.AddComponent<FrostAuraLook>();
+                }
+                if (traits.Wears(Mutation.Flamebound))
+                {
+                    controller.gameObject.AddComponent<FlameAuraLook>();
                 }
             }
         }

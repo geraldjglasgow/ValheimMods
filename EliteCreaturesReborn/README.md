@@ -7,9 +7,9 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Stars: up to eight on Extreme, or off for another mod's.
 - World tiers: each boss's first defeat makes stars and mutations more common.
 - Mutations: one per creature, named on the nameplate (below).
-- Boss aspects: one per fight (below).
+- Boss aspects: one per fight (below); each defeat makes a boss likelier to have stars next time.
 - Breeding: tamed young inherit mutations and stars.
-- Loot: four drop modes, rules per creature; bosses drop a trophy for every player.
+- Loot: four drop modes, rules per creature; bosses drop a trophy for every player and their biome's material.
 - Boss damage board: who did how much.
 - Boss hints: bosses point the way to the traders and the ancient forge.
 - Death recap: `F10` replays the seconds before each death.
@@ -72,7 +72,7 @@ Console: `elite tier`, `damage` and `deaths` for everyone, the other `elite` com
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
