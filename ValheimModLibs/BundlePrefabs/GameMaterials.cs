@@ -79,15 +79,14 @@ public static class GameMaterials
 	/// </summary>
 	public static Material Plain(Material material, float gloss)
 	{
-		foreach (string map in new[] { "_MetallicGlossMap", "_EmissionMap", "_StyleTex" })
+		Unstyled(material);
+		foreach (string map in new[] { "_MetallicGlossMap", "_EmissionMap" })
 		{
 			if (material.HasProperty(map))
 			{
 				material.SetTexture(map, null);
 			}
 		}
-		SetFloat(material, "_UseStyles", 0f);
-		material.DisableKeyword("_USESTYLES_ON");
 		SetFloat(material, "_Metallic", 0f);
 		SetFloat(material, "_MetalGloss", 0f);
 		SetFloat(material, "_Glossiness", gloss);
@@ -96,6 +95,43 @@ public static class GameMaterials
 			material.SetColor("_EmissionColor", Color.black);
 		}
 		material.DisableKeyword("_EMISSION");
+		return material;
+	}
+
+	/// <summary>
+	/// A game material with its style variants off (the painted designs a shield's <c>_StyleTex</c> lays over its face),
+	/// everything else kept: for a workshop model whose UVs are laid on that game item's own atlas, which wears the
+	/// game's albedo, normal map, metal mask and gloss as they are.
+	/// </summary>
+	public static Material Unstyled(Material material)
+	{
+		if (material.HasProperty("_StyleTex"))
+		{
+			material.SetTexture("_StyleTex", null);
+		}
+		SetFloat(material, "_UseStyles", 0f);
+		material.DisableKeyword("_USESTYLES_ON");
+		return material;
+	}
+
+	/// <summary>
+	/// A plain material (<see cref="Plain"/>) given back the shine of metal from the workshop model's own metal mask:
+	/// the placeholder's <c>_MetallicGlossMap</c> (red 1 on metal texels, laid out for the model's UVs), metallic on and
+	/// <paramref name="metalGloss"/> smoothness on the metal, as the game's metal gear has (the Silver Shield 0.65, the
+	/// Flametal Shield 0.77). A placeholder without a mask leaves the material matte.
+	/// </summary>
+	public static Material Metal(Material material, Material placeholder, float metalGloss)
+	{
+		Texture? mask = placeholder.HasProperty("_MetallicGlossMap") ? placeholder.GetTexture("_MetallicGlossMap") : null;
+		if (mask == null || !material.HasProperty("_MetallicGlossMap"))
+		{
+			return material;
+		}
+		material.SetTexture("_MetallicGlossMap", mask);
+		material.EnableKeyword("_METALLICGLOSSMAP");
+		SetFloat(material, "_Metallic", 1f);
+		SetFloat(material, "_MetalGloss", metalGloss);
+		SetFloat(material, "_UseGlossmap", 0f);
 		return material;
 	}
 

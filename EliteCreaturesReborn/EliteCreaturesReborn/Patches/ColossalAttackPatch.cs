@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using EliteCreaturesReborn.Aspects;
+using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 
 namespace EliteCreaturesReborn.Patches
@@ -24,9 +25,9 @@ namespace EliteCreaturesReborn.Patches
 
         private static void Postfix(Attack __instance, Humanoid ___m_character)
         {
-            if (___m_character == null || !___m_character.IsBoss())
+            if (___m_character == null || !AspectBearers.Carries(___m_character))
             {
-                return; // every creature's and player's blows come through here; only a boss can be Colossal
+                return; // every creature's and player's blows come through here; only a boss (or an aspect bearer) can be Colossal
             }
             SafeCall.Run("Attack landed (Colossal)", () => Landed(__instance, ___m_character));
         }

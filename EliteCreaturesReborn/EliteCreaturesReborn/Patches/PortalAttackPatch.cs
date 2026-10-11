@@ -1,5 +1,6 @@
 using System;
 using EliteCreaturesReborn.Aspects;
+using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 using PatchGuard;
 using UnityEngine;
@@ -10,15 +11,16 @@ namespace EliteCreaturesReborn.Patches
     /// The moment a boss's attack starts - its wind-up - handed to a Portalbound boss's behaviour, which opens the far
     /// portal for an attack the portals carry. The game starts a creature's attacks only on its owner, so this runs
     /// there and nowhere else; an attack the game refuses to start never gets here. Every character's attacks come
-    /// through, so anything that is not a boss is passed over at once. It runs inside the game's attack, so a failure
-    /// is reported and swallowed rather than cutting the attack short.
+    /// through, so anything that is not a boss (or a creature given aspects through the API, <see cref="AspectBearers"/>)
+    /// is passed over at once. It runs inside the game's attack, so a failure is reported and swallowed rather than
+    /// cutting the attack short.
     /// </summary>
     [HarmonyPatch(typeof(Attack), nameof(Attack.Start))]
     public static class PortalStartPatch
     {
         private static void Postfix(Attack __instance, bool __result, Humanoid character)
         {
-            if (!__result || character == null || !character.IsBoss())
+            if (!__result || character == null || !AspectBearers.Carries(character))
             {
                 return;
             }
@@ -40,14 +42,14 @@ namespace EliteCreaturesReborn.Patches
     /// lets go (for the release sound) and again for every projectile of every burst after it, only on the attacker's
     /// owner. For a Portalbound boss's portal-carried attack the answer is changed to the far portal and the target, so
     /// the vines or the slime - the game's own networked projectiles, with the game's own spread added after - fly from there.
-    /// Anything that is not a boss is a single check. A failure is reported and never rethrown.
+    /// Anything that is not a boss (or an aspect bearer) is a single check. A failure is reported and never rethrown.
     /// </summary>
     [HarmonyPatch(typeof(Attack), nameof(Attack.GetProjectileSpawnPoint))]
     public static class PortalSpawnPointPatch
     {
         private static void Postfix(Attack __instance, Humanoid ___m_character, ref Vector3 spawnPoint, ref Vector3 aimDir)
         {
-            if (___m_character == null || !___m_character.IsBoss())
+            if (___m_character == null || !AspectBearers.Carries(___m_character))
             {
                 return;
             }

@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Raids;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
@@ -15,12 +16,14 @@ namespace EliteCreaturesReborn.Mutations
     /// very fault that made the old build silently never split. It Instantiates the copies here, so they are owned by
     /// this machine and replicate like any spawn, and writes each copy's traits to its ZDO before the copy's own
     /// controller wakes - so the copy is born already-resolved and its owner never rolls it. Every client then reads it.
-    /// A tamed parent's copies are tamed the same way, by this owner, from the <see cref="SplinterTame"/> in the snapshot.
+    /// A tamed parent's copies are tamed the same way, by this owner, from the <see cref="SplinterTame"/> in the snapshot,
+    /// and a raider's copies are raiders of its raid with no coins of their own (<see cref="RaiderLineage"/>).
     /// </summary>
     public static class Splitter
     {
         public static void Split(Vector3 pos, Quaternion rot, int prefabHash, CreatureTraits parentTraits,
-            BiomeRules rules, int generation, string root, Heightmap.Biome biome, SplinterTame? tame)
+            BiomeRules rules, int generation, string root, Heightmap.Biome biome, SplinterTame? tame,
+            RaiderLineage? raider)
         {
             GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(prefabHash) : null;
             if (prefab == null)
@@ -40,8 +43,8 @@ namespace EliteCreaturesReborn.Mutations
                 }
                 return;
             }
-            SpawnCopy(prefab, pos, rot, parentTraits, nextGen, root, biome, tame);
-            SpawnCopy(prefab, pos, rot, parentTraits, nextGen, root, biome, tame);
+            SpawnCopy(prefab, pos, rot, parentTraits, nextGen, root, biome, tame, raider);
+            SpawnCopy(prefab, pos, rot, parentTraits, nextGen, root, biome, tame, raider);
         }
 
         private static bool Truncated(BiomeRules rules, int nextGen, string root)
@@ -56,18 +59,19 @@ namespace EliteCreaturesReborn.Mutations
         }
 
         private static void SpawnCopy(GameObject prefab, Vector3 parentPos, Quaternion rot,
-            CreatureTraits parentTraits, int gen, string root, Heightmap.Biome biome, SplinterTame? tame)
+            CreatureTraits parentTraits, int gen, string root, Heightmap.Biome biome, SplinterTame? tame,
+            RaiderLineage? raider)
         {
             int stars = SplinterTable.RollChildStars(parentTraits.Stars);
             int mask = stars == 0 ? parentTraits.Mask & ~(1 << (int)Mutation.Splintering) : parentTraits.Mask;
             Vector3 pos = parentPos + Random.insideUnitSphere * 0.5f;
             pos.y = parentPos.y;
             GameObject copy = Object.Instantiate(prefab, pos, rot);
-            Configure(copy, new CreatureTraits(stars, mask), gen, root, biome, tame);
+            Configure(copy, new CreatureTraits(stars, mask), gen, root, biome, tame, raider);
         }
 
         private static void Configure(GameObject copy, CreatureTraits traits, int gen, string root,
-            Heightmap.Biome biome, SplinterTame? tame)
+            Heightmap.Biome biome, SplinterTame? tame, RaiderLineage? raider)
         {
             ZNetView nview = copy.GetComponent<ZNetView>();
             Character character = copy.GetComponent<Character>();
@@ -83,6 +87,7 @@ namespace EliteCreaturesReborn.Mutations
             zdo.Set(TraitKeys.CascadeRoot, root);
             character.SetLevel(1);
             tame?.Apply(copy, zdo);
+            raider?.Apply(zdo); // in this frame, before the copy's AI starts and steering looks for the tag
             DescendantRegistry.Register(root, copy);
             if (Log.Diagnostics)
             {

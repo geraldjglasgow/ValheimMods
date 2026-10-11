@@ -25,7 +25,7 @@ namespace EliteCreaturesReborn.Commands
             }
             _registered = true;
             new Terminal.ConsoleCommand(Root,
-                "elite spawn <prefab> <stars> [mutation... | aspect] | elite inspect | elite purge [radius] | elite effects <text> | elite reference | elite tier",
+                "elite spawn <prefab> <stars> [mutation... | aspect] | elite inspect | elite purge [radius] | elite effects <text> | elite reference | elite tier | elite raid start <coins> [tier] | elite raid stop",
                 (Terminal.ConsoleEvent)OnElite);
         }
 
@@ -40,7 +40,7 @@ namespace EliteCreaturesReborn.Commands
             Action<Terminal.ConsoleEventArgs>? run = Find(sub);
             if (run == null)
             {
-                Reply(args, "elite: use spawn, inspect, purge, effects, reference or tier.");
+                Reply(args, "elite: use spawn, inspect, purge, effects, reference, tier or raid.");
             }
             else if (sub == "tier")
             {
@@ -62,6 +62,7 @@ namespace EliteCreaturesReborn.Commands
                 case "effects": return EffectsCommand.Run;
                 case "reference": return ReferenceCommand.Run;
                 case "tier": return TierCommand.Run;
+                case "raid": return RaidCommand.Run;
                 default: return null;
             }
         }

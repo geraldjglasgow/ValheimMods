@@ -62,7 +62,8 @@ namespace EliteCreaturesReborn.Aspects
         }
 
         /// <summary>
-        /// The copies, one per place. A copy wears the boss's aspects exactly, headline and extras, so its name is the
+        /// The copies, one per place. A copy wears the boss's aspects exactly, headline and extras, and the mutations a
+        /// registered boss carries (none of them working on a copy, <see cref="CreatureTraits.Has"/>), so its name is the
         /// boss's; what makes it a copy is its mark, which keeps Phantom's own splits, drops and death off it
         /// (<see cref="Runtime.AspectInstaller"/>), and a Bountiful boss's copies fight with its other aspects as before.
         /// </summary>
@@ -70,7 +71,11 @@ namespace EliteCreaturesReborn.Aspects
         {
             ZDOID bossId = boss.View.GetZDO().m_uid;
             float share = Mathf.Clamp01(boss.Creature.GetHealthPercentage());
-            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, boss.Traits.Aspect) { ExtraAspects = boss.Traits.ExtraAspects };
+            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, boss.Traits.Mask) // worn for the name, never working
+            {
+                Aspect = boss.Traits.Aspect,
+                ExtraAspects = boss.Traits.ExtraAspects,
+            };
             foreach (Vector3 place in places)
             {
                 Rouse(BossCopy.Make(boss, place, traits, copy => Mark(copy, bossId, share)));

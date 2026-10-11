@@ -9,8 +9,8 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Commands
 {
     /// <summary>
-    /// <c>elite inspect</c>: prints the resolved mark of the creature under the crosshair - its stars, its mutations (or a
-    /// boss's aspect), the biome it was rolled in, and the values those produced AFTER star power and any large-star enhancement (not the
+    /// <c>elite inspect</c>: prints the resolved mark of the creature under the crosshair - its stars, its mutations, a
+    /// boss's aspect (and those of a creature another mod registered aspects for), the biome it was rolled in, and the values those produced AFTER star power and any large-star enhancement (not the
     /// configured numbers). Read-only; runs on whichever machine the admin is looking from, reading the creature's
     /// already-synced traits, so it needs no ownership.
     /// </summary>
@@ -47,7 +47,7 @@ namespace EliteCreaturesReborn.Commands
                 EliteCommands.Reply(args, "  " + MutationReport.Line(r, t, m));
             }
             HoldingLines(args, controller);
-            if (c.IsBoss())
+            if (c.IsBoss() || t.AnyAspect) // a creature another mod gave aspects reports them as a boss does
             {
                 AspectReport.Lines(controller).ForEach(line => EliteCommands.Reply(args, "  " + line));
             }

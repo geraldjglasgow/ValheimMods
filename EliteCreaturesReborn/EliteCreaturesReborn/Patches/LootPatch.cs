@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EliteCreaturesReborn.Loot;
+using EliteCreaturesReborn.Raids;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 using PatchGuard;
@@ -20,8 +21,11 @@ namespace EliteCreaturesReborn.Patches
     public static class LootPatch
     {
         [HarmonyPriority(Priority.Last)]
-        private static void Postfix(CharacterDrop __instance, List<KeyValuePair<GameObject, int>> __result) =>
+        private static void Postfix(CharacterDrop __instance, List<KeyValuePair<GameObject, int>> __result)
+        {
             Guard.Run("CharacterDrop.GenerateDropList", static (drop, result) => Rework(drop, result), __instance, __result);
+            RaidLoot.Apply(__instance, __result); // a raider's drops, last: times its raid's multiplier, or none after a stop
+        }
 
         private static void Rework(CharacterDrop drop, List<KeyValuePair<GameObject, int>> result)
         {

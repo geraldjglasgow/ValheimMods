@@ -12,6 +12,8 @@ namespace EliteCreaturesReborn.Runtime
     /// moment it resolves, then takes the behaviours of the other aspects it carries (a Bountiful boss's, see
     /// <see cref="Aspects.PhantomSpawner"/>). An Echoing boss's echo carries no aspect, so nothing is attached to it here: it
     /// is veiled and stilled as it wakes (<see cref="Aspects.EchoBody"/>).
+    /// A creature that is not a boss gets the same when its traits carry aspects (another mod registered them for its
+    /// kind, <see cref="Traits.Registrations"/>), and is listed in <see cref="AspectBearers"/> so the attack hooks see it.
     /// The hit-shaped aspects (Reflective, Shielded, Elementalist, Enraged) need no component - patches handle them.
     /// Adaptive, Fixated and Tethered have both: a component for their state and look, and a hook in
     /// <see cref="Scaling.AspectDamage"/>.
@@ -21,6 +23,10 @@ namespace EliteCreaturesReborn.Runtime
         public static void Install(EliteController controller)
         {
             CreatureTraits traits = controller.Traits;
+            if (traits.AnyAspect)
+            {
+                AspectBearers.Track(controller.Creature);
+            }
             if (traits.PhantomCopy)
             {
                 PhantomBody.Hollow(controller.Creature);

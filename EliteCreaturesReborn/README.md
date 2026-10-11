@@ -14,7 +14,8 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Boss hints: bosses point the way to the traders and the ancient forge.
 - Death recap: `F10` replays the seconds before each death.
 - Respawning: cleared camps, dungeons and chests can refill (off by default).
-- Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
+- Raids: fill the Raiders Chest with gold to call a raid on your base; kill every raider to win it back with more.
+- Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack (its custom creatures take mutations and aspects).
 
 ## Mutations
 - Mad: far faster, half health.

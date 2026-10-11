@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesReborn</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>3.22.0</Version>
+    <Version>3.23.0</Version>
     <Product>Elite Creatures Reborn</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -47,11 +47,16 @@
     <ProjectReference Include="$(ModLibsPath)\PlayerGrid\PlayerGrid.csproj" />
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
     <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
+    <!-- The raids' test marker (NetPrefabs, PrefabBench); the Raiders Chest builds on it too. -->
+    <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- The world tier plate's icon, loaded by name as EliteCreaturesReborn.assets.<file>. -->
     <EmbeddedResource Include="assets\*.png" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
+    <!-- The Raiders Chest's model and icon (ValheimAssets Assets/Props/RaidersChest), one bundle per platform: Windows
+         for clients, Linux for dedicated servers. Loaded by BundlePrefabs' EmbeddedBundle. -->
+    <EmbeddedResource Include="assets\bundles\ecr_raiders_chest.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -93,6 +98,11 @@
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- The Raiders Chest's embedded bundle (AssetBundle). -->
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">

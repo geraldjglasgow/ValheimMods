@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using EliteCreaturesReborn.Aspects;
+using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 
 namespace EliteCreaturesReborn.Patches
@@ -26,9 +27,9 @@ namespace EliteCreaturesReborn.Patches
         private static void Prefix(Attack __instance, Humanoid ___m_character, out bool __state)
         {
             __state = false;
-            if (___m_character == null || !___m_character.IsBoss())
+            if (___m_character == null || !AspectBearers.Carries(___m_character))
             {
-                return; // every creature's and player's blows come through here; only a boss can be Brutal
+                return; // every creature's and player's blows come through here; only a boss (or an aspect bearer) can be Brutal
             }
             bool opened = false;
             SafeCall.Run("Attack begins (Brutal)", () => opened = BrutalBlow.Begin(__instance, ___m_character));

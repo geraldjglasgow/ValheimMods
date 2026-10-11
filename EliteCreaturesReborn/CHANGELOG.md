@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.23.0
+
+- Raids: the Raiders Chest (`Raiders Chest`, section `11 - Raids`). Fill it with gold to call a raid on your base; kill every raider to win the gold back with more.
+- Raiders hunt players first, then break in to the base's chests and crafting stations.
+- Commands: `elite raid start <coins> [tier]` and `elite raid stop`.
+- Elite Creatures Pack's custom creatures can roll mutations and boss aspects.
+- Update the server and every client together.
+
 ## 3.22.0
 
 - New mutation Flamebound: leaves burning ground that sets you on fire.

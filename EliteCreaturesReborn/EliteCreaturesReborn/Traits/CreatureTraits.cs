@@ -13,7 +13,8 @@ namespace EliteCreaturesReborn.Traits
         public int Stars;
         public int Mask;
 
-        /// <summary>A boss's aspect; always None for a creature. Rolled once with the stars and stored beside them.</summary>
+        /// <summary>A boss's aspect; None for a creature, unless another mod registered aspects for its kind
+        /// (<see cref="Registrations"/>). Rolled once with the stars and stored beside them.</summary>
         public Aspect Aspect;
 
         /// <summary>The aspects a boss carries beside its headline <see cref="Aspect"/>, packed one bit per aspect value -
@@ -48,8 +49,9 @@ namespace EliteCreaturesReborn.Traits
             Aspect = aspect;
         }
 
-        /// <summary>True when the mutation is in the set and works: false for every mutation on a <see cref="Decoy"/>.</summary>
-        public bool Has(Mutation mutation) => !Decoy && Wears(mutation);
+        /// <summary>True when the mutation is in the set and works: false for every mutation on a <see cref="Decoy"/>, and on
+        /// a <see cref="PhantomCopy"/>, which wears its boss's mutations (a registered boss may carry some) for its name only.</summary>
+        public bool Has(Mutation mutation) => !Decoy && !PhantomCopy && Wears(mutation);
 
         /// <summary>True when the mutation is in the set, working or not: what the name and the stars show, and what sets
         /// the body's health and speed, on a decoy as on its creature.</summary>
@@ -60,6 +62,9 @@ namespace EliteCreaturesReborn.Traits
         public void Remove(Mutation mutation) => Mask &= ~(1 << (int)mutation);
 
         public bool Any => Mask != 0;
+
+        /// <summary>True when it carries any aspect: a boss that is not the plain fight, or a registered creature given one.</summary>
+        public bool AnyAspect => Aspect != Aspect.None || ExtraAspects != 0;
 
         /// <summary>True when the boss carries this aspect, as its headline or beside it. Never true for None.</summary>
         public bool HasAspect(Aspect aspect) =>

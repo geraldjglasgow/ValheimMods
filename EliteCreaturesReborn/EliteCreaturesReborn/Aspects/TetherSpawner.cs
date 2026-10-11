@@ -26,8 +26,9 @@ namespace EliteCreaturesReborn.Aspects
             }
             ZDOID bossId = zdo.m_uid;
             Vector3 pos = SpawnPlace.Around(boss.transform.position, Random.Range(0f, 360f), Distance);
-            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, boss.Traits.Aspect)
+            CreatureTraits traits = new CreatureTraits(boss.Traits.Stars, boss.Traits.Mask) // a registered boss's mutations too
             {
+                Aspect = boss.Traits.Aspect,
                 ExtraAspects = boss.Traits.ExtraAspects,
             };
             Character? partner = BossCopy.Make(boss, pos, traits, copy => AspectStore.SetTether(copy, bossId));

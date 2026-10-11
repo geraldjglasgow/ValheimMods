@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Mutations;
+using EliteCreaturesReborn.Raids;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
@@ -45,6 +46,7 @@ namespace EliteCreaturesReborn.Patches
             public List<PouchStore.Entry> Pouch = new List<PouchStore.Entry>();
             public ZDOID Id;
             public SplinterTame? Tame;
+            public RaiderLineage? Raider;
         }
 
         private static Snapshot? _pending;
@@ -95,6 +97,7 @@ namespace EliteCreaturesReborn.Patches
                 MaxHealth = victim.GetMaxHealth(), Pos = victim.transform.position, Rot = victim.transform.rotation,
                 Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo), Id = zdo.m_uid,
                 Tame = SplinterTame.Read(victim, zdo), // a tamed splinterer's copies are tamed too
+                Raider = RaiderLineage.Read(zdo), // a raider's copies are raiders too, with no coins
             };
         }
 
@@ -135,7 +138,7 @@ namespace EliteCreaturesReborn.Patches
                     Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
                 }
                 Splitter.Split(snap.Pos, snap.Rot, snap.PrefabHash, snap.Traits, snap.Rules,
-                    snap.Generation, snap.ResolvedRoot, snap.Biome, snap.Tame);
+                    snap.Generation, snap.ResolvedRoot, snap.Biome, snap.Tame, snap.Raider);
             }
             if (snap.Traits.Has(Mutation.Thieving))
             {

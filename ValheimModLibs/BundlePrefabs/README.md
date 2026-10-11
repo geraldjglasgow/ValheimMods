@@ -35,7 +35,10 @@ NetPrefabs.OnSceneAwake(harmony, scene =>
   `GameMaterials.Dress(game, placeholder)` copies a game material (shader, lighting) and puts the placeholder's own
   baked albedo and normal map on it, for a workshop-textured part lit like the thing it belongs to;
   `GameMaterials.Plain(material, gloss)` then takes off the game maps it kept that fit only the game model's UVs
-  (metal and gloss, glow, style variants).
+  (metal and gloss, glow, style variants); `GameMaterials.Metal(material, placeholder, metalGloss)` puts the shine of
+  metal back from the workshop's own metal mask (the placeholder's `_MetallicGlossMap`, red 1 on metal), when it has one;
+  `GameMaterials.Unstyled(material)` only switches a shield's painted style designs off, for a workshop model whose UVs
+  are laid on that game item's own atlas and wears its material as it is.
 - `ModelBounds.In(model, space)` measures a model's meshes in another transform's axes (renderer bounds are empty on
   the inactive bench), for centring a bundle model in a copied game prefab.
 - `CreatureBody.Wear(creature, bundleBody, gloss)` puts a workshop body on a bench copy of a game creature: a body made

@@ -56,9 +56,9 @@ namespace EliteCreaturesReborn.Runtime
                 return;
             }
             _isBoss = _character.IsBoss();
-            if (_isBoss && !RuleState.Active.Boss.Enabled && !RuleState.Active.Boss.Aspects.Enabled)
+            if (LeftAsShipped())
             {
-                enabled = false; // boss stars and aspects both off: the boss is left exactly as the game ships it
+                enabled = false;
                 return;
             }
             EliteRpc.EnsureRegistered();
@@ -71,6 +71,11 @@ namespace EliteCreaturesReborn.Runtime
             }
             Apply();
         }
+
+        // Boss stars and aspects both off, and no mutations another mod fixed for it: the boss is left exactly as the game
+        // ships it.
+        private bool LeftAsShipped() => _isBoss && !RuleState.Active.Boss.Enabled && !RuleState.Active.Boss.Aspects.Enabled
+            && Registrations.MutationsOf(PrefabName) == 0;
 
         // Runs only while pending: it polls the ZDO until the owner's roll arrives (or until this machine becomes the
         // owner and rolls it itself), then applies once and stops. No flicker: the creature is plain until this fires.
@@ -95,6 +100,7 @@ namespace EliteCreaturesReborn.Runtime
             SwingRegistry.Forget(_character);
             Devourers.Forget(_character);
             ReadyElites.Forget(_character);
+            AspectBearers.Forget(_character);
         }
 
         // An edited or newly synced rule file reaches creatures already loaded: every power read from Rules as it acts
@@ -142,9 +148,10 @@ namespace EliteCreaturesReborn.Runtime
         }
 
         /// <summary>
-        /// A boss scales on the boss table; every other creature on its biome's, with its own `creatures:` entry's
-        /// mutation keys on top. Every machine resolves the same: the biome is in the ZDO, the prefab is the object's.
-        /// A creature that keeps its game level takes no star power: the game's level scales it instead.
+        /// A boss scales on the boss table (with its biome's mutation numbers when it carries fixed mutations); every other
+        /// creature on its biome's, with its own `creatures:` entry's mutation keys on top. Every machine resolves the same:
+        /// the biome is in the ZDO, the prefab is the object's. A creature that keeps its game level takes no star power:
+        /// the game's level scales it instead.
         /// </summary>
         private BiomeRules ResolveRules(Heightmap.Biome biome)
         {
@@ -152,7 +159,7 @@ namespace EliteCreaturesReborn.Runtime
             bool keeps = set.KeepsLevel(Traits.Stars, _isBoss);
             if (_isBoss)
             {
-                return BossView.For(set.Boss, unstarred: keeps);
+                return BossView.For(set.Boss, keeps, Traits.Any ? set.For(biome, PrefabName) : null);
             }
             BiomeRules rules = set.For(biome, PrefabName);
             return keeps ? set.Unstarred(rules) : rules;
@@ -179,18 +186,11 @@ namespace EliteCreaturesReborn.Runtime
             _forcedDraw = null;
         }
 
-        // A boss draws its stars from the boss distribution and an aspect - both the altar's, locked at the offering,
-        // when it was summoned at one, else its own roll - and never a mutation, so the roll cannot be shared with the
-        // creature path.
-        private CreatureTraits RollFor(Heightmap.Biome biome)
-        {
-            if (_isBoss)
-            {
-                return (_forcedDraw ?? BossDraw.Roll(PrefabName)).ToTraits(); // a Bountiful roll brings its extras with it
-            }
-            return TraitRoller.Roll(RuleState.Active.For(biome, PrefabName), RuleState.Active, WorldTier.Current(), biome,
-                MutationBars.Of(_character)); // a large body never rolls Gilded or Relentless, a Deathsquito never Cloaked
-        }
+        // The one roll every creature takes (CreatureRoll): a boss's stars and aspects - the altar's, locked at the
+        // offering, when it was summoned at one - and a creature's stars and mutations, with what another mod registered
+        // for the prefab on top. A Bountiful draw brings its extras with it.
+        private CreatureTraits RollFor(Heightmap.Biome biome) =>
+            _forcedDraw is BossDraw draw ? CreatureRoll.FromDraw(_character, draw) : CreatureRoll.For(_character, biome);
 
         /// <summary>
         /// Console-spawn hook: force exact traits and biome, bypassing every roll and cap. Called on the machine that
@@ -223,7 +223,7 @@ namespace EliteCreaturesReborn.Runtime
                 StatApplier.ApplyHealth(_character, Rules, Traits, FreshlyResolved); // owner writes s_maxHealth; others read it
             }
             _ready = true;
-            CreatureRpc.RegisterCommands(this, _isBoss); // on every machine, so a routed command reaches the owner
+            CreatureRpc.RegisterCommands(this, _isBoss || Traits.AnyAspect); // on every machine, so a routed command reaches the owner
             ReadyElites.Track(this); // so the nameplate finds it without a component search
             SwingRegistry.Track(this); // the swing speed is fixed from here on, so AnimSpeedPatch skips a creature at 1
             Devourers.Track(this); // so the enmity patch finds a devourer without a component search
@@ -240,14 +240,8 @@ namespace EliteCreaturesReborn.Runtime
         {
             StatApplier.ApplySize(_character, Rules, Traits); // local, deterministic: every machine scales its own copy
             StarLook.Apply(_character, Traits.Stars); // the game's tint for the stars, before any mutation reads materials
-            if (!_isBoss)
-            {
-                BehaviourInstaller.Install(this); // mutation behaviours; a boss has no mutations to install
-            }
-            else
-            {
-                AspectInstaller.Install(this); // a boss's aspect behaviours, and on its first roll the twin or phantoms
-            }
+            BehaviourInstaller.Install(this); // mutation behaviours: a creature's, or the fixed ones of a registered boss
+            AspectInstaller.Install(this); // aspect behaviours: a boss's or a registered creature's; on a first roll the twin or phantoms
         }
 
         /// <summary>Re-derives the creature's speeds from its captured base plus a live additive bonus (Devouring's slow).</summary>
@@ -272,7 +266,7 @@ namespace EliteCreaturesReborn.Runtime
             if (!_movementClamped)
             {
                 _movementClamped = true;
-                Log.Info($"{name}: run speed clamped to the player's ({cap:0.#}) so it stays outrunnable");
+                Log.Debug($"{name}: run speed clamped to the player's ({cap:0.#}) so it stays outrunnable");
             }
             return cap / baseRun;
         }

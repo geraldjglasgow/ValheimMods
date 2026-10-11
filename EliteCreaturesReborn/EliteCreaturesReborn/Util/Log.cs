@@ -18,6 +18,9 @@ namespace EliteCreaturesReborn.Util
 
         public static void Info(string message) => _log?.LogInfo(message);
 
+        /// <summary>Routine per-creature detail; BepInEx hides Debug unless the player turns it on in BepInEx.cfg.</summary>
+        public static void Debug(string message) => _log?.LogDebug(message);
+
         public static void Warn(string message) => _log?.LogWarning(message);
 
         public static void Error(string message) => _log?.LogError(message);

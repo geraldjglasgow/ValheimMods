@@ -88,7 +88,7 @@ namespace EliteCreaturesReborn.Loot
                 Rule = FindRule(controller),
                 Stars = controller.Traits.Stars,
                 IsBoss = controller.Creature != null && controller.Creature.IsBoss(),
-                AspectMultiplier = AspectLoot.Factor(controller),
+                AspectMultiplier = AspectLoot.Paid(controller), // a creature given an aspect through the API pays it too
                 GildedMultiplier = GildedLoot.Factor(controller),
             };
             ctx.TrophiesFollow = ctx.Rule?.MultiplyTrophies ?? loot.MultiplyTrophies;
@@ -238,12 +238,12 @@ namespace EliteCreaturesReborn.Loot
             DropRoller.Add(result, prefab, amount);
         }
 
-        /// <summary>The world-wide multiplier, after everything else; a boss takes the boss and aspect factors on top, a
-        /// Gilded creature its <c>loot</c> factor.</summary>
+        /// <summary>The world-wide multiplier, after everything else; a boss takes the boss factor on top, a boss or a
+        /// creature carrying an aspect its aspect factor, a Gilded creature its <c>loot</c> factor.</summary>
         private static void Multiply(Context ctx, List<KeyValuePair<GameObject, int>> result)
         {
-            float factor = ctx.Loot.GlobalMultiplier * ctx.GildedMultiplier
-                * (ctx.IsBoss ? ctx.Loot.BossMultiplier * ctx.AspectMultiplier : 1f);
+            float factor = ctx.Loot.GlobalMultiplier * ctx.GildedMultiplier * ctx.AspectMultiplier
+                * (ctx.IsBoss ? ctx.Loot.BossMultiplier : 1f);
             if (Mathf.Approximately(factor, 1f))
             {
                 return;

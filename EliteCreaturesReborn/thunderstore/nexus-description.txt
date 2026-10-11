@@ -20,7 +20,8 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir, until you have found them.
 [*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
-[*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
+[*]Raids: fill the Raiders Chest with gold to call a raid on your base; kill every raider to win it back with more.
+[*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack (its custom creatures take mutations and aspects).
 [/list]
 
 [size=4][b]Mutations[/b][/size]

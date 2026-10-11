@@ -58,17 +58,18 @@ namespace EliteCreaturesReborn.Rules
         public List<string> SummonsFor(string bossPrefab) =>
             Bosses.TryGetValue(bossPrefab, out BossAspectRule rule) ? rule.Summons : new List<string>();
 
-        /// <summary>Whether this boss may roll this aspect: its own list if it has one, and Summoner only with summons.</summary>
+        /// <summary>Whether this boss may roll this aspect: its own list if it has one, and Summoner only with summons -
+        /// the file's, or a list another mod registered for it.</summary>
         public bool InRotation(string bossPrefab, Aspect aspect)
         {
             Bosses.TryGetValue(bossPrefab, out BossAspectRule? rule);
-            if (aspect == Aspect.Summoner && (rule == null || rule.Summons.Count == 0))
+            if (aspect == Aspect.Summoner && (rule == null || rule.Summons.Count == 0) && Registrations.SummonsOf(bossPrefab) == null)
             {
                 return false; // a boss with nothing to call never rolls Summoner rather than rolling it and doing nothing
             }
             if (aspect == Aspect.Portalbound && !Aspects.PortalAttacks.Supports(bossPrefab))
             {
-                return false; // only a boss with an attack the portals know how to carry: the Elder and Bonemass
+                return false; // only a boss with an attack the portals know how to carry: the Elder, Bonemass, a registered one
             }
             return aspect == Aspect.None || rule?.Rotation == null || rule.Rotation.Contains(aspect);
         }

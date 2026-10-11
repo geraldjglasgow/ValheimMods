@@ -9,7 +9,8 @@ namespace EliteCreaturesReborn.Traits
     /// `none` included. An altar's shift passes the aspect it shows as <c>exclude</c>, so a shift is always a visible
     /// change - unless nothing else is left to draw, when the current one simply stays. A Bountiful draw also draws its
     /// extras, from the same rotation and weights, in the same moment, so the altar can show them and the boss carries
-    /// exactly what was shown.
+    /// exactly what was shown. A prefab another mod registered aspects for (<see cref="Registrations"/>) rolls among its
+    /// own list instead, boss or not, at the rule file's weights; the switch and the altar's exclusion still hold.
     /// </summary>
     public static class AspectRoller
     {
@@ -42,8 +43,7 @@ namespace EliteCreaturesReborn.Traits
         public static int RollExtras(string bossPrefab)
         {
             AspectRules rules = RuleState.Active.Boss.Aspects;
-            List<KeyValuePair<Aspect, float>> pool = Pool(rules, bossPrefab, Aspect.None);
-            pool.RemoveAll(entry => entry.Key == Aspect.Bountiful);
+            List<KeyValuePair<Aspect, float>> pool = ExtrasPool(rules, bossPrefab);
             int wanted = Mathf.RoundToInt(rules.PowerOf(Aspect.Bountiful, Fields.ExtraAspects));
             int mask = 0;
             for (int i = 0; i < wanted && pool.Count > 0; i++)
@@ -61,7 +61,45 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>True when an extras mask already holds an aspect that brings more bodies.</summary>
         public static bool HoldsBodies(int mask) => (BodyMask & mask) != 0;
 
-        private static List<KeyValuePair<Aspect, float>> Pool(AspectRules rules, string bossPrefab, Aspect? exclude)
+        // What Bountiful's extras are drawn from: the rotation without Bountiful. A registered list that names nothing
+        // else Bountiful can carry leaves its extras to the rule file's rotation for the prefab.
+        private static List<KeyValuePair<Aspect, float>> ExtrasPool(AspectRules rules, string bossPrefab)
+        {
+            List<KeyValuePair<Aspect, float>> pool = Pool(rules, bossPrefab, Aspect.None);
+            pool.RemoveAll(entry => entry.Key == Aspect.Bountiful);
+            if (pool.Count == 0 && Registrations.AspectsOf(bossPrefab) != null)
+            {
+                pool = RulePool(rules, bossPrefab, Aspect.None);
+                pool.RemoveAll(entry => entry.Key == Aspect.Bountiful);
+            }
+            return pool;
+        }
+
+        private static List<KeyValuePair<Aspect, float>> Pool(AspectRules rules, string bossPrefab, Aspect? exclude) =>
+            Registrations.AspectsOf(bossPrefab) is Aspect[] own ? OwnPool(rules, own, exclude) : RulePool(rules, bossPrefab, exclude);
+
+        // A registered list is the prefab's whole rotation, Portalbound and Summoner included whatever the rule file knows
+        // of the prefab: each named aspect at the rule file's weight. When the file weighs every one of them at nothing
+        // they are drawn evenly, since the list asked for one of them.
+        private static List<KeyValuePair<Aspect, float>> OwnPool(AspectRules rules, Aspect[] own, Aspect? exclude)
+        {
+            List<KeyValuePair<Aspect, float>> pool = new List<KeyValuePair<Aspect, float>>();
+            foreach (Aspect aspect in own)
+            {
+                if (aspect != exclude)
+                {
+                    pool.Add(new KeyValuePair<Aspect, float>(aspect, rules.ChanceOf(aspect)));
+                }
+            }
+            if (pool.Exists(entry => entry.Value > 0f))
+            {
+                pool.RemoveAll(entry => entry.Value <= 0f);
+                return pool;
+            }
+            return pool.ConvertAll(entry => new KeyValuePair<Aspect, float>(entry.Key, 1f));
+        }
+
+        private static List<KeyValuePair<Aspect, float>> RulePool(AspectRules rules, string bossPrefab, Aspect? exclude)
         {
             List<KeyValuePair<Aspect, float>> pool = new List<KeyValuePair<Aspect, float>>();
             foreach (Aspect aspect in AspectCatalog.Outcomes)

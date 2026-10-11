@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Commands
     /// in ten seconds. A boss takes one aspect word instead of mutations (<c>elite spawn Bonemass 2 Twin</c>), and its
     /// twin or phantom copies arrive with it exactly as they would from the altar. Bountiful also takes the aspect words
     /// after it as its extras (<c>elite spawn gd_king 2 Bountiful Enraged Mending</c>), or rolls them from the boss's
-    /// rotation as the altar would when none follow. It instantiates the prefab (the machine that runs this owns it), then hands the exact traits to
+    /// rotation as the altar would when none follow. A kind another mod registered traits for takes mutation and aspect
+    /// words together (<see cref="SpawnWords"/>). It instantiates the prefab (the machine that runs this owns it), then hands the exact traits to
     /// its controller before the controller resolves, which writes them to the ZDO as a fresh roll. A typo suggests near
     /// matches rather than failing silently.
     /// </summary>
@@ -35,12 +36,21 @@ namespace EliteCreaturesReborn.Commands
                 EliteCommands.Reply(args, $"elite spawn: '{args[3]}' is not a star count (0 or more).");
                 return;
             }
-            CreatureTraits? traits = prefab.GetComponent<Character>().IsBoss()
-                ? BossTraits(args, prefab.name, stars) : CreatureTraitsFrom(args, stars);
+            CreatureTraits? traits = TraitsFor(args, prefab, stars);
             if (traits != null)
             {
                 Place(args, prefab, traits);
             }
+        }
+
+        // A kind another mod registered traits for may carry mutations and aspects together, so its words may be either.
+        private static CreatureTraits? TraitsFor(Terminal.ConsoleEventArgs args, GameObject prefab, int stars)
+        {
+            if (Registrations.Has(prefab.name))
+            {
+                return SpawnWords.Read(args, prefab.name, stars);
+            }
+            return prefab.GetComponent<Character>().IsBoss() ? BossTraits(args, prefab.name, stars) : CreatureTraitsFrom(args, stars);
         }
 
         // A boss takes one aspect word, `none` for the plain fight; leaving it out is the plain fight too. Only Bountiful
@@ -85,7 +95,7 @@ namespace EliteCreaturesReborn.Commands
         }
 
         // Why a named word cannot ride beside Bountiful; null when it can.
-        private static string? Refusal(Aspect? extra, int mask) => extra switch
+        internal static string? Refusal(Aspect? extra, int mask) => extra switch
         {
             null => "not a boss aspect",
             Aspect.None or Aspect.Bountiful => "not an aspect Bountiful can carry",

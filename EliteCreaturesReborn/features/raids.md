@@ -7,7 +7,10 @@ players are, the harder the raid and the richer the drops. Raiders hunt players 
 go for the Raiders Chest, half for the base's chests and then its crafting stations, breaking through walls to reach
 them.
 
-**Status: specified, not built.** Nothing in this file exists in the mod.
+**Status: built, untested in game.** Every part is in the code (`Raids/`): the Raiders Chest, gear tier and heat, the
+raid's state and clock on its host, the waves, the raiders' orders, coins and loot, every ending, the messages, the HUD
+line, the setting and the two commands. Merged and reviewed on 2026-10-10; nothing has been seen working in game or on
+a dedicated server yet, so the checklist holds no `[x]`.
 
 ---
 
@@ -91,7 +94,11 @@ back and five times the raiders' loot. The numbers are judgement calls, here to 
   Warlord carrying a quarter. Each drops its share when it dies, however it dies (a player, a trap, another creature, a
   fall), except when the raid is stopped. Splintering copies carry none.
 - **Guaranteed back on a win.** Kill every raider and every coin comes back, with the heat's extra; the raiders' own
-  loot, times the heat's drops, is on top. A raider that leaves when a raid is lost takes its share with it.
+  loot, times the heat's drops, is on top. A raider that leaves when a raid is lost takes its share with it: caught
+  while it walks off, it drops only its own loot, unmultiplied.
+- **Splintering copies** of a raider are raiders too, with no coins: they go for the base, die at a stop and walk off
+  at a loss like the rest, and drop their own loot times the heat's drops. They are not counted in the waves, so the
+  raid is won when the waves are beaten, and a copy still standing then walks off.
 
 **Mid-raid:** heat is fixed when the raid starts. If a stronger player walks into the raid, the drops fall to what their
 gear would have made of the gold, from then on; the coins carried and the fight stay as they were. Bringing in a geared
@@ -208,42 +215,42 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 ## Game hooks to verify (decompile into the scratch folder)
 
-- [ ] `MonsterAI` static targets: setting a raider's target piece, and aiming the break-in at it
-- [ ] The unlocked raids and their spawn lists (`RandEventSystem.m_events`, key checks, `m_spawn` max spawned)
-- [ ] The base test (`EffectArea.GetBaseValue`), walk-off (`MonsterAI.SetEventCreature`)
-- [ ] Known materials and worn armour for the gear tier; `Container.OnDestroyed` for the robbery
-- [ ] Not starting the game's raid within 200 m of a chest raid
+- [~] `MonsterAI` static targets: setting a raider's target piece, and aiming the break-in at it (read in the decompiled game, built, untested)
+- [~] The unlocked raids and their spawn lists (`RandEventSystem.m_events`, key checks, `m_spawn` max spawned) (built, untested)
+- [~] The base test (`EffectArea.GetBaseValue`, gating the sounding); the walk-off is the raid's own - the game's flee from the host, not `MonsterAI.SetEventCreature`, whose flag sends a creature off whenever no game event runs (built, untested)
+- [~] Known materials and worn armour for the gear tier (`Player.m_knownMaterial`, `Humanoid.SetupEquipment`); the robbery from the chest's `WearNTear.m_onDestroyed`, on its owner before its ZDO goes (built, untested)
+- [~] Not starting the game's raid within 200 m of a chest raid (`RandEventSystem.GetValidEventPoints`; built, untested)
 
 ## The model
 
-- [ ] Raiders Chest model in `../ValheimAssets` (chest with a war horn, lid opening), built to the codex
-- [ ] Tested in `AssetLab`; moved into ECR with BundlePrefabs (ECR does not merge it yet) in the release that ships it
+- [~] Raiders Chest model in `../ValheimAssets` (chest with a war horn, lid opening), built to the codex (`Assets/Props/RaidersChest`; not yet seen in game)
+- [~] Tested in `AssetLab`; moved into ECR with BundlePrefabs (merged into ECR since 2026-10-10) in the release that ships it (moved in: bundle embedded, `Raids/Chest/`; not tested in AssetLab or in game)
 
 ## The raid (first, testable with `elite raid start`)
 
-- [ ] Gear tier published per player; heat and its table
-- [ ] Raid state in the chest's ZDO, run by its owner, carried on after an ownership change
-- [ ] Waves from the raid's spawn list, sized by heat and players; 20 alive at most; Warlord
-- [ ] Spawn ring outside the base, one direction per wave, never in water
-- [ ] Targets: players first, chest raiders and plunderers, break-in toward the target
-- [ ] Coins taken at the start, shared across raiders (Warlord a quarter), dropped on any death but a stop
-- [ ] Drops times the heat, lowered when a stronger player arrives
-- [ ] Every ending: won, robbed, stopped (all die, no drops, no coins), abandoned, timed out
-- [ ] HUD line and messages to players within range only
+- [~] Gear tier published per player; heat and its table (built, untested)
+- [~] Raid state in the chest's ZDO, run by its owner, carried on after an ownership change (built on the chest and the test marker, untested)
+- [~] Waves from the raid's spawn list, sized by heat and players; 20 alive at most; Warlord (built, untested)
+- [~] Spawn ring outside the base, one direction per wave, never in water (built, untested)
+- [~] Targets: players first, chest raiders and plunderers, break-in toward the target (built, untested)
+- [~] Coins taken at the start, shared across raiders (Warlord a quarter), dropped on any death but a stop; none from a raider caught walking off after a loss; Splintering copies tagged with none (built, untested)
+- [~] Drops times the heat, lowered when a stronger player arrives (built, untested)
+- [~] Every ending: won, robbed, stopped (all die, no drops, no coins), abandoned (also a dedicated server running the raid itself whose last player logs out), timed out (built, untested)
+- [~] HUD line, messages and the horn to players within range only (built, untested)
 
 ## The chest
 
-- [ ] Coins only, locked during a raid, hover with the heat now, sound / stop
-- [ ] Cooldown per chest, shared within 100 m; base test; one raid within 200 m
+- [~] Coins only, locked during a raid, hover with the heat now, sound / stop (built, untested)
+- [~] Cooldown per chest, shared within 100 m; base test; one raid within 200 m (built, untested; the base test gates sounding, not placing)
 
 ## Configuration and commands
 
-- [ ] `Raiders Chest` setting, synced and lockable
-- [ ] `elite raid stop`, `elite raid start`
+- [~] `Raiders Chest` setting, synced and lockable; the hammer and the chest read it (built, untested)
+- [~] `elite raid stop`, `elite raid start` (built, untested)
 
 ## Docs at release
 
-- [ ] `CLAUDE.md` raids section, README line, changelog, wiki page
+- [~] `CLAUDE.md` raids section and console commands (written 2026-10-10); README line, changelog, wiki page at release
 
 ## Work log
 
@@ -252,3 +259,10 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-10-09 | Specified. Revised the same day: the War Horn and its rule file block replaced by the Raiders Chest (gold against gear sets difficulty and drops), raiders' targets, stopping a raid, one .cfg setting; base raids left as the game's. Then: a raid costs its gold, the raiders carry it and a win pays it back with more; a stop loses it; the raid is random. Nothing built. | - |
+| 2026-10-10 | Foundation: `Raids/` - keys, the table and bands, gear tier published by each client and read by the host's owner, heat, the raid's state in the host's ZDO, the runner and its clock (countdown, waves, breaks, won, abandoned by absence, logout or server restart, timed out, stopped, robbed), presence reports from players the owner does not hold, the 200 m spacing, start and end messages to players within 100 m, the HUD line in the game's event bar, raider traits, the test marker (BundlePrefabs now merged), the `Raiders Chest` setting through Charter, `elite raid start/stop`. Stubs for raid-waves, raid-ai, raid-loot and raid-chest. Builds; untested in game. | - |
+| 2026-10-10 | raid-loot: `Raids/Loot/` - a raider's coin share dropped as full stacks where it dies, however it dies, once, on its owner (nothing after a stop or with the stop's mark); its own loot times the raid's drops after the loot rules, random rounding below 1, cleared after a stop; the multiplier read from the host's ZDO, else the one the raider spawned with; drops lowered mid-raid when a stronger player arrives, never raised; the game's events kept 200 m from a running chest raid. Builds; untested in game. | - |
+| 2026-10-10 | raid-waves: `Raids/Waves/` - the raid drawn from the game's events the world has unlocked (its global keys, or per player with player-based raids) and named after its commonest creature; three waves sized from the event's spawn list, heat, wave share and players, the last led by a Warlord of the toughest kind; one spot per wave on the 40-60 m ring (dry, outside the base, open sky, a new side, flat, clear way in); at most 20 alive, a few sent a tick; raiders levelled, rolled, alerted and tagged in the spawn frame; coins split as they spawn so exactly the coins back go out, the Warlord a quarter; the living counted from their ZDOIDs in the host's ZDO. Builds; untested in game. | - |
+| 2026-10-10 | raid-chest: the Raiders Chest `ECR_RaidersChest` (`Raids/Chest/`): a copy of the reinforced chest wearing the workshop model (bundle embedded, lid turned on every client), in the hammer's Misc tab at a workbench for 10 wood, 4 leather scraps and 1 hard antler while the setting is on; coins only; hover with the heat now, why not, the raid and the hold; Shift + E sounds on the owner (base test, cooldown shared within 100 m, 200 m spacing; coins taken once the raid is on); locked during a raid; hold E 3 s to stop; robbed when broken; the horn (the lox's bellow, lowered). Builds; untested in game. | - |
+| 2026-10-10 | raid-ai: `Raids/Orders/` - each tagged raider steered on its own owner, re-judged every 1.5 s from the host's ZDO: players first through the game's own hunt (its hunt-the-nearest-player and event-creature flags off, its own pick of priority pieces off), then chest raiders the Raiders Chest (plunderers on a test marker) and plunderers the nearest player-built chest of the base, then its stations, kept in the tag; the game's static target aimed at the piece on the line to the target when it is in reach or has no path. A lost raid walks raiders off (the game's flee, away from the host) to vanish with their coins once no player is within 40 m or after 30 s; a stop kills them where they stand (coin share -1 for raid-loot, Bloated, Splintering, Thieving and Gilded withheld). Orders by routed RPC to each raider's owner; a raider the order misses reads the end itself. Builds; untested in game. | - |
+| 2026-10-10 | raid-review: the parts checked against each other, the spec and the game, and fixed: the horn went to every peer on the server, now only to the players within 100 m; a dedicated server running a raid itself (a base by the world's centre) never noticed its last player log out, its clock standing still - now abandoned; the test marker vanished the tick its raid ended, so raiders that missed a stop read a loss and walked off - it stays 10 s; a raider caught walking off after a loss paid its coins and multiplied loot, so a lost raid's passive walkers were free gold - now it leaves with its coins and drops its own loot unmultiplied ("nothing else is paid at the end"); a tamed raider held its wave open for good - it leaves the roster; Splintering copies take the raider tag with no coins, off the roster. Dead code dropped, summaries that named build agents rewritten, `CLAUDE.md` raids section and both console commands written. Open for the user: a biome roll can still make a raider Gilded. Builds; untested in game. | - |
+| 2026-10-10 | lead (merging the parts): the raid is drawn among every unlocked raid wherever the base stands (decision 6), no longer preferring the base's biome; a stopped Thieving raider still drops what it stole (the players' own goods, never raid loot); raider rolls go through ECR's one creature roll, so a custom creature's fixed mutations hold in raids. Builds; untested in game. | - |

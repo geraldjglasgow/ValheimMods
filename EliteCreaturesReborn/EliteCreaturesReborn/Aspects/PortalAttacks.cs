@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EliteCreaturesReborn.Traits;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Aspects
@@ -14,6 +15,9 @@ namespace EliteCreaturesReborn.Aspects
     /// gravity, which bursts into its blobs where it lands - not its punch or its poison cloud. Only these two roll
     /// Portalbound (the user, 2026-10-04). Another boss joins by adding its prefab here with its attack items and the
     /// bones of the hands it throws with; a boss not listed never rolls it (<see cref="Supports"/>, read by the rotation).
+    /// Another mod's creature joins through the API (<see cref="Registrations.PortalAttacksOf"/>): its attack items are
+    /// carried like these, and its hands are the bones those items are let go from (<see cref="CreatureItems.Joints"/>).
+    /// A creature with neither may still carry the aspect from a registered list; it simply never throws through a portal.
     /// </summary>
     public static class PortalAttacks
     {
@@ -38,34 +42,35 @@ namespace EliteCreaturesReborn.Aspects
             ["Bonemass"] = new Entry(new[] { "bonemass_attack_throw" }, new[] { "l_hand.007", "r_hand.007" }),
         };
 
-        public static bool Supports(string bossPrefab) => ByBoss.ContainsKey(bossPrefab);
+        public static bool Supports(string bossPrefab) => ItemsOf(bossPrefab) != null;
 
         /// <summary>True when this attack is one of the boss's portal-carried projectile attacks.</summary>
         public static bool Carries(Humanoid boss, string bossPrefab, Attack attack)
         {
             ItemDrop.ItemData? weapon = attack.GetWeapon();
-            return weapon != null && attack.m_attackType == Attack.AttackType.Projectile
-                && ByBoss.TryGetValue(bossPrefab, out Entry entry)
-                && Array.IndexOf(entry.Items, ItemName(boss, weapon)) >= 0;
+            string[]? items = ItemsOf(bossPrefab);
+            return weapon != null && items != null && attack.m_attackType == Attack.AttackType.Projectile
+                && Array.IndexOf(items, ItemName(boss, weapon)) >= 0;
         }
 
-        // The item an attack came from: its drop prefab when the item database knows it, else the boss's own default
-        // item of the same name - creature attack items are not in the database, so the prefab holds the only copy.
-        private static string ItemName(Humanoid boss, ItemDrop.ItemData weapon)
+        // The listed boss's own items, else the ones another mod registered for the prefab; null for neither.
+        private static string[]? ItemsOf(string prefab) =>
+            ByBoss.TryGetValue(prefab, out Entry entry) ? entry.Items : Registrations.PortalAttacksOf(prefab);
+
+        // The item an attack came from: its drop prefab when the item database knows it, else the boss's own item of the
+        // same name - creature attack items are not in the database, so the prefab holds the only copy.
+        private static string ItemName(Humanoid boss, ItemDrop.ItemData weapon) =>
+            weapon.m_dropPrefab != null ? weapon.m_dropPrefab.name : CreatureItems.NameOf(boss, weapon.m_shared.m_name);
+
+        // The listed boss's hands, else the bones a registered creature's attack items are let go from.
+        private static string[] HandsOf(Humanoid boss, string prefab)
         {
-            if (weapon.m_dropPrefab != null)
+            if (ByBoss.TryGetValue(prefab, out Entry entry))
             {
-                return weapon.m_dropPrefab.name;
+                return entry.Hands;
             }
-            foreach (GameObject prefab in boss.m_defaultItems)
-            {
-                ItemDrop? drop = prefab != null ? prefab.GetComponent<ItemDrop>() : null;
-                if (drop != null && drop.m_itemData.m_shared.m_name == weapon.m_shared.m_name)
-                {
-                    return prefab!.name;
-                }
-            }
-            return "";
+            string[]? items = Registrations.PortalAttacksOf(prefab);
+            return items != null ? CreatureItems.Joints(boss, items) : Array.Empty<string>();
         }
 
         /// <summary>
@@ -75,13 +80,13 @@ namespace EliteCreaturesReborn.Aspects
         public static Transform? ThrowingHand(Character boss, string bossPrefab)
         {
             GameObject? visual = boss.GetVisual();
-            if (visual == null || !ByBoss.TryGetValue(bossPrefab, out Entry entry))
+            if (visual == null || !(boss is Humanoid humanoid))
             {
                 return null;
             }
             Transform? best = null;
             float furthest = float.MinValue;
-            foreach (string name in entry.Hands)
+            foreach (string name in HandsOf(humanoid, bossPrefab))
             {
                 Transform? hand = Utils.FindChild(visual.transform, name);
                 float reach = hand != null ? Vector3.Dot(hand.position - boss.transform.position, boss.transform.forward) : 0f;

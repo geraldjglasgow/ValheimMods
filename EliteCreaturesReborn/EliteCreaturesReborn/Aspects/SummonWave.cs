@@ -9,10 +9,12 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Aspects
 {
     /// <summary>
-    /// One Summoner wave, on the boss's owner: `count` creatures drawn from the boss's own summon list, each forced to
-    /// `stars` stars and no mutations, placed a few metres from the boss on the floor beneath it and alerted. They are
-    /// ordinary creatures from then on - owned here, replicated like any spawn, dropping their own loot. A name the game
-    /// does not know is skipped and logged once, so one typo in the rule file costs a creature, not the fight.
+    /// One Summoner wave, on the boss's owner: `count` creatures drawn from the boss's summon list
+    /// (<see cref="SummonPool"/>), each forced to its stars - `stars`, or what another mod's list names for it - and no
+    /// mutations but the ones its kind always carries (<see cref="CreatureRoll.FixedMutations"/>), placed a few metres
+    /// from the boss on the floor beneath it and alerted. They are ordinary creatures from then on - owned here,
+    /// replicated like any spawn, dropping their own loot. A name the game does not know is skipped and logged once, so
+    /// one typo in a list costs a creature, not the fight.
     /// </summary>
     internal static class SummonWave
     {
@@ -20,12 +22,13 @@ namespace EliteCreaturesReborn.Aspects
 
         public static void Call(Character boss, EliteController controller)
         {
-            List<string> names = RuleState.Active.Boss.Aspects.SummonsFor(Utils.GetPrefabName(boss.gameObject));
+            List<SummonPick> picks = SummonPool.For(controller);
             int count = Mathf.Clamp(Mathf.RoundToInt(AspectMath.Power(Aspect.Summoner, Fields.Count)), 0, 16);
             int stars = Mathf.Max(0, Mathf.RoundToInt(AspectMath.Power(Aspect.Summoner, Fields.Stars)));
-            for (int i = 0; i < count && names.Count > 0; i++)
+            for (int i = 0; i < count && picks.Count > 0; i++)
             {
-                Spawn(boss, controller, names[Random.Range(0, names.Count)], stars);
+                SummonPick pick = picks[Random.Range(0, picks.Count)];
+                Spawn(boss, controller, pick.Prefab, pick.StarsOr(stars));
             }
         }
 
@@ -51,13 +54,15 @@ namespace EliteCreaturesReborn.Aspects
         private static void Arrive(GameObject creature, int stars, Vector3 pos)
         {
             EliteController elite = creature.GetComponent<EliteController>();
+            Character character = creature.GetComponent<Character>();
             if (elite != null)
             {
                 bool starred = RuleState.Active.CreatureStars;
-                elite.ForceTraits(new CreatureTraits(starred ? stars : 0, 0), Heightmap.FindBiome(pos));
+                int mask = CreatureRoll.FixedMutations(character); // a registered kind keeps its fixed mutations
+                elite.ForceTraits(new CreatureTraits(starred ? stars : 0, mask), Heightmap.FindBiome(pos));
                 if (!starred)
                 {
-                    creature.GetComponent<Character>().SetLevel(stars + 1);
+                    character.SetLevel(stars + 1);
                 }
             }
             BaseAI ai = creature.GetComponent<BaseAI>();

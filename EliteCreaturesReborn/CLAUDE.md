@@ -385,6 +385,64 @@ points from where it fell. A player who has already found that place (its spot e
 travels or a cartography table) gets no hint. A Twin or Tethered pair gives one hint, a Phantom copy none, and a world
 without the place says nothing. Each player turns it off with `Boss hints` in `8 - Display (per player)`.
 
+## Raids
+
+The game's own raids still come to bases as they always have. Beside them, the **Raiders Chest** (the hammer's Misc
+tab, at a workbench: 10 wood, 4 leather scraps, 1 hard antler) sounds a raid on your own base for gold. It holds only
+coins, and its hover shows what the coins in it would make of a raid now, for the players near it: "1,000 coins -
+Deadly raid (coins back x2, drops x5)". `Shift + E` sounds the raid. It needs a base (3 base pieces - workbench, fire,
+bed - within 20 m of the chest), one raid a day per chest (chests within 100 m share the wait), and no other raid,
+the game's or a chest's, within 200 m.
+
+**Gold against gear.** Sounding takes every coin out of the chest. The raid's heat is those coins over the fair stake
+for the gear of the strongest player within 96 m: the higher of the best metal they have ever held and the armour
+they wear.
+
+| Tier | Gear | Fair stake |
+| --- | --- | --- |
+| 0 | Leather, bone, troll hide; no metal | 100 |
+| 1 | Bronze (and the Berserker set) | 200 |
+| 2 | Iron, root | 400 |
+| 3 | Silver, wolf, fenris | 600 |
+| 4 | Black metal, padded, lox | 900 |
+| 5 | Mistlands: carapace, eitr | 1,300 |
+| 6 | Flametal (and the Deep North) | 1,800 |
+
+| Heat | Raid | Raiders | Extra stars | Mutated | Coins back | Drops |
+| --- | --- | --- | --- | --- | --- | --- |
+| under 0.5 | Trivial | x0.6 | 0 | as the biome rolls | x1 | x0.1 to x0.5 |
+| 0.5 to 1.5 | Fair | x1 | 0 | as the biome rolls | x1.1 | x1 |
+| 1.5 to 3 | Hard | x1.5 | +1 | a third | x1.25 | x2 |
+| 3 to 6 | Brutal | x2 | +2 | half | x1.5 | x3.5 |
+| 6 and up | Deadly | x2.5 | +3 | 9 in 10 (never Gilded) | x2 | x5 |
+
+**The raid.** A 20 second countdown, then three waves of one of the game's raids the world has unlocked by its own
+boss rules (those the game sends to the base's biome first), each from one side 40 to 60 m out, never in water:
+about half the game's own count of each creature in the first, two thirds in the second, all of it in the third,
+times the heat's raiders and a quarter more for each player past the first. At most 20 alive at once, 20 seconds
+between waves. Raiders roll stars and mutations as the biome does, plus the heat's; the last wave is led by a
+Warlord, its toughest creature with two more stars. Players within 96 m see the raid in the event bar under the
+minimap: "Fuling raid (Brutal) - wave 2 of 3 - 5 left - 8:40". Raiders hunt players first; with none, half go for the
+Raiders Chest and half for the base's chests and then its crafting stations, breaking through what stands between.
+
+**The gold comes back.** The coins back are shared among every raider of every wave, the Warlord carrying a quarter,
+and each drops its share as it dies, however it dies, with its own loot times the heat's drops. A stronger player
+arriving mid-raid lowers the drops to what their gear would make of the gold, from then on. Splintering copies carry
+no coins.
+
+| End | When | Raiders left |
+| --- | --- | --- |
+| Won | The last wave is dead: every coin is back, with the extra | - |
+| Robbed | The Raiders Chest is broken | Walk off and vanish with their coins |
+| Stopped | Hold `E` on the chest for 3 seconds, or `elite raid stop` | All die at once and drop nothing, coins included |
+| Abandoned | No player within 96 m for 60 seconds, a logout or a server restart | Walk off and vanish with their coins |
+| Timed out | 15 minutes from the start | Walk off and vanish with their coins |
+
+The chest stays locked while the raid is on. What raiders dropped before the end is the players' to keep; one caught
+while walking off drops only its own loot. `11 - Raids` / `Raiders Chest` (on) puts the chest in the hammer; off, a
+chest already built is an ordinary coin chest. It is synced from the server and held by the rule file's
+`lock to server`. Design in `features/raids.md`.
+
 ## Console commands
 
 | Command | Does |
@@ -395,5 +453,7 @@ without the place says nothing. Each player turns it off with `Boss hints` in `8
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
 | `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the other `elite` commands are admin only |
+| `elite raid start <coins> [tier]` | Sounds a raid where you stand with that many coins and no chest, for testing: the heat is weighed against the gear tier given (0-6), or else the strongest player within 96 m. Skips the chest's base test and daily wait, not the 200 m between raids |
+| `elite raid stop` | Stops the nearest raid within 200 m, as holding `E` on its chest does: every raider dies and drops nothing |
 | `damage` | Shows the latest boss damage board again. Open to every player, and typed as `/damage` in chat |
 | `deaths` | Opens the death recap window, like its key. Open to every player, and typed as `/deaths` in chat |

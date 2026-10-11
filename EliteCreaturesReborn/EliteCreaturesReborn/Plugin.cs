@@ -10,8 +10,9 @@ namespace EliteCreaturesReborn
 {
     /// <summary>
     /// The plugin entry point. It binds the per-player display config, writes and loads the YAML rule file, wires the
-    /// server lock through Charter, applies every patch, installs error attribution, and starts the two hot reloads -
-    /// ConfigReload for the .cfg and the rule watcher for the YAML. All the behaviour lives in the patched classes.
+    /// server lock through Charter, applies every patch, registers the raids' test marker and starts their clock,
+    /// installs error attribution, and starts the two hot reloads - ConfigReload for the .cfg and the rule watcher for
+    /// the YAML. All the behaviour lives in the patched classes.
     /// </summary>
     [BepInPlugin(PluginInfo.Guid, PluginInfo.Name, PluginInfo.PluginVersion)]
     public sealed class Plugin : BaseUnityPlugin
@@ -27,6 +28,8 @@ namespace EliteCreaturesReborn
             harmony.PatchAll(typeof(Plugin).Assembly);
             Recap.RecapHost.Attach(gameObject, harmony);
             gameObject.AddComponent<Tally.TallyFlush>();
+            Raids.RaidMarker.Setup(harmony);
+            gameObject.AddComponent<Raids.RaidTicker>();
             ServerLock.Install(harmony);
             Guard.Install(harmony, Logger, typeof(Plugin).Assembly);
             ConfigReloader.Setup(Config, Logger);
