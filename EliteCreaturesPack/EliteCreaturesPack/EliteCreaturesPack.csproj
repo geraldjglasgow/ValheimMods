@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.9.1</Version>
+    <Version>0.10.0</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -45,6 +45,8 @@
     <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
     <!-- Elite Crafting's API bound by reflection (no reference to Elite Crafting): classes, item levels, creature loot -->
     <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
+    <!-- Elite Creatures Reborn's API bound by reflection (no reference to ECR): custom creatures' mutations and aspects -->
+    <ProjectReference Include="$(ModLibsPath)\EliteCreaturesLink\EliteCreaturesLink.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -71,6 +73,8 @@
          their icons (ValheimAssets Assets/Props/BoneBallista: build.ps1 -Asset ecp_bone_ballista,ecp_bone_missile
          -Bundle ecp_boneballista), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecp_boneballista.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
+    <!-- Custom creatures: the main file written when none exists (Custom/Files/CreatureFiles). -->
+    <EmbeddedResource Include="Custom\Ready\creatures.yml" LogicalName="EliteCreaturesPack.Custom.Ready.creatures.yml" />
   </ItemGroup>
 
   <ItemGroup>

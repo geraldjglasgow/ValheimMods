@@ -31,22 +31,28 @@ public sealed partial class YamlNode
 {
 	private readonly YamlModel model;
 	private readonly object? value;
+
+	/// <summary>The file's line index (path to line), shared by every node of one file; null when lines are not tracked.</summary>
+	private readonly IReadOnlyDictionary<string, int>? lines;
 	private List<KeyValuePair<string, YamlNode>>? mapEntries;
 	private Dictionary<string, YamlNode>? mapLookup;
 	private List<YamlNode>? listItems;
 	private HashSet<string>? askedKeys;
 	private bool visited;
 	private bool shapeReported;
+	private bool unknownReported;
 
-	internal YamlNode(YamlModel model, object? value, string path, YamlNodeKind kind)
+	internal YamlNode(YamlModel model, object? value, string path, YamlNodeKind kind, IReadOnlyDictionary<string, int>? lines)
 	{
 		this.model = model;
 		this.value = value;
+		this.lines = lines;
 		Path = path;
 		Kind = kind;
 	}
 
-	internal YamlNode(YamlModel model, object? value, string path) : this(model, value, path, KindOf(value))
+	internal YamlNode(YamlModel model, object? value, string path, IReadOnlyDictionary<string, int>? lines)
+		: this(model, value, path, KindOf(value), lines)
 	{
 	}
 
@@ -55,6 +61,12 @@ public sealed partial class YamlNode
 
 	/// <summary>The shape of this node.</summary>
 	public YamlNodeKind Kind { get; }
+
+	/// <summary>
+	/// The line (1-based) this value is written on: a map entry's key line, a list item's first line. 0 when unknown: the
+	/// model does not track lines (<see cref="YamlModel.TrackLines"/>), or the key is not in the file.
+	/// </summary>
+	public int Line => lines is not null && lines.TryGetValue(Path, out int line) ? line : 0;
 
 	/// <summary>The scalar text, or null for anything that is not a scalar.</summary>
 	public string? Text => Kind == YamlNodeKind.Scalar ? Convert.ToString(value, CultureInfo.InvariantCulture) : null;
@@ -77,11 +89,11 @@ public sealed partial class YamlNode
 		string childPath = string.IsNullOrEmpty(Path) ? key : Path + "." + key;
 		if (!ExpectShape(YamlNodeKind.Map, "a map"))
 		{
-			return new YamlNode(model, null, childPath, YamlNodeKind.Missing);
+			return new YamlNode(model, null, childPath, YamlNodeKind.Missing, lines);
 		}
 		visited = true;
 		AskedKeys.Add(key);
-		return MapLookup.TryGetValue(key, out YamlNode child) ? child : new YamlNode(model, null, childPath, YamlNodeKind.Missing);
+		return MapLookup.TryGetValue(key, out YamlNode child) ? child : new YamlNode(model, null, childPath, YamlNodeKind.Missing, lines);
 	}
 
 	/// <summary>The key/value pairs of a map in file order; empty for anything else. Marks every key as expected.</summary>
@@ -104,38 +116,6 @@ public sealed partial class YamlNode
 
 	/// <summary>True when this is a scalar equal to the keyword, case-insensitive (for words like <c>inherit</c>).</summary>
 	public bool Is(string keyword) => Kind == YamlNodeKind.Scalar && string.Equals(Text!.Trim(), keyword, StringComparison.OrdinalIgnoreCase);
-
-	/// <summary>Records an error at this node's path. The file set is rejected when a model has errors.</summary>
-	public void Error(string message) => model.AddError(Prefixed(message));
-
-	/// <summary>Records a warning at this node's path. Warnings are logged, the file set is still applied.</summary>
-	public void Warn(string message) => model.AddWarning(Prefixed(message));
-
-	/// <summary>
-	/// Warns about keys nobody asked for, in this map and recursively in every map below it that a model visited
-	/// through <see cref="Get"/> or <see cref="Entries"/>. Maps that were never visited are left alone.
-	/// </summary>
-	public void WarnUnknownKeys()
-	{
-		if (Kind == YamlNodeKind.Map && visited)
-		{
-			List<string> unknown = MapEntries.Select(e => e.Key).Where(k => !AskedKeys.Contains(k)).ToList();
-			if (unknown.Count > 0)
-			{
-				Warn("unknown keys " + string.Join(", ", unknown));
-			}
-			foreach (KeyValuePair<string, YamlNode> entry in MapEntries)
-			{
-				entry.Value.WarnUnknownKeys();
-			}
-		}
-		else if (Kind == YamlNodeKind.List && listItems is not null)
-		{
-			listItems.ForEach(item => item.WarnUnknownKeys());
-		}
-	}
-
-	private string Prefixed(string message) => string.IsNullOrEmpty(Path) ? message : Path + ": " + message;
 
 	private HashSet<string> AskedKeys => askedKeys ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -170,7 +150,7 @@ public sealed partial class YamlNode
 			if (listItems is null)
 			{
 				IList<object> items = (IList<object>)value!;
-				listItems = items.Select((item, i) => new YamlNode(model, item, $"{Path}[{i}]")).ToList();
+				listItems = items.Select((item, i) => new YamlNode(model, item, $"{Path}[{i}]", lines)).ToList();
 			}
 			return listItems;
 		}
@@ -184,7 +164,7 @@ public sealed partial class YamlNode
 		{
 			string key = Convert.ToString(pair.Key, CultureInfo.InvariantCulture) ?? "";
 			string childPath = string.IsNullOrEmpty(Path) ? key : Path + "." + key;
-			YamlNode child = new(model, pair.Value, childPath);
+			YamlNode child = new(model, pair.Value, childPath, lines);
 			if (mapLookup.ContainsKey(key))
 			{
 				child.Warn("duplicate key (differs only in case), ignored");

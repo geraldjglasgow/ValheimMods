@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapClicks", "MapClicks\MapC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EliteCraftingLink", "EliteCraftingLink\EliteCraftingLink.csproj", "{086ED7B7-DCA3-4B4F-A762-3E2755629F70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EliteCreaturesLink", "EliteCreaturesLink\EliteCreaturesLink.csproj", "{C3E5A1D7-4B2F-4E6A-9D18-7F0B5C2E8A41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +104,9 @@ Global
 		{086ED7B7-DCA3-4B4F-A762-3E2755629F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{086ED7B7-DCA3-4B4F-A762-3E2755629F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{086ED7B7-DCA3-4B4F-A762-3E2755629F70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3E5A1D7-4B2F-4E6A-9D18-7F0B5C2E8A41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3E5A1D7-4B2F-4E6A-9D18-7F0B5C2E8A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3E5A1D7-4B2F-4E6A-9D18-7F0B5C2E8A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3E5A1D7-4B2F-4E6A-9D18-7F0B5C2E8A41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

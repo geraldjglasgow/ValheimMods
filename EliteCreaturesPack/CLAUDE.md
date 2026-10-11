@@ -20,11 +20,13 @@ skeleton arsenal (built 2026-09-29, unreleased; `features/skeleton-arsenal.md`).
 | --- | --- |
 | GUID / name / version | `com.EliteCreaturesPack`, `Elite Creatures Pack`, `PluginVersion` in `EliteCreaturesPack.cs` |
 | Config | `com.EliteCreaturesPack.cfg` through SyncedConfig: `1 - General` (Lock Configuration), `2 - Crypt Mimic`, `3 - Greydwarf Slinger`, `4 - Rime Giant`, `5 - Kraken`, `6 - Skeleton Crossbowman` (its shot's numbers only), `7 - Bone Crossbow`, `8 - Skeleton Arsenal` (only a master `Enabled` and a spawn switch per arsenal skeleton, the crossbowman's among them, by
-the user's wish; its numbers are fixed in code), `25 - Crypt Executioner`, `26 - Executioner Greataxe`, `27 - Bear Claws` (the game's Paws of the Bear, `BearClaws/`: one switch, `Triple Strike`), `28 - Bone Ballista` (one switch, `Enabled`: the piece in the hammer and its missiles' recipe) (no apostrophe: BepInEx refuses `= \n \t \ " ' [ ]` in section and key names and the whole Awake stops); every entry synced and lockable |
+the user's wish; its numbers are fixed in code), `25 - Crypt Executioner`, `26 - Executioner Greataxe`, `27 - Bear Claws` (the game's Paws of the Bear, `BearClaws/`: one switch, `Triple Strike`), `28 - Bone Ballista` (one switch, `Enabled`: the piece in the hammer and its missiles' recipe), `29 - Custom Creatures` (one switch, `Enabled`; everything else in the YAML files below) (no apostrophe: BepInEx refuses `= \n \t \ " ' [ ]` in section and key names and the whole Awake stops); every entry synced and lockable |
 | Prefabs | `ECP_CryptMimic` (+ `_bite`, `_ragdoll`), `ECP_GreydwarfSlinger` (+ `_shot`, `_stone`), `ECP_RimeGiant` (+ `_boulder`, `_ragdoll`, `_sweep`, `_slam`, `_throw`), `ECP_Kraken` (+ `_corpse`), `ECP_SkeletonCrossbowman` (+ `_shot`) and its `ECP_SkeletonCrossbowman_bolt`; the players' Blunted Bone Bolts `ECP_BoltBoneBlunt` (+ `_projectile`); the kraken's loot items `ECP_KrakenBeak`, `ECP_KrakenMeat`, `ECP_KrakenMeatCooked`, `ECP_ShieldKraken`; the players' `ECP_BoneCrossbow`; the arsenal skeletons `ECP_Skeleton<Title>` for Cutthroat, Swordsman, Axeman, Bonebreaker, Spearman, Halberdier, Bowman (each + `_attack`; the Black Forest's kind only since 0.4.0), `ECP_SkeletonArrow_projectile`; the players' `ECP_BoneDagger`, `ECP_BoneSword`, `ECP_BoneAxe`, `ECP_BoneMace`, `ECP_BoneSpear`, `ECP_BoneAtgeir`, `ECP_BoneBow`, `ECP_Spine`, `ECP_ArrowBone` (+ `_projectile`); the Crypt Executioner `ECP_Headsman` (+ `_spawner`, `_shatter`, `_axe_hurl`, `_axe_disc`, attacks `ECP_Headsman_slam`, `_scrape`, `_spin`, `_hurl`, `_spinthrow`, `_rear`), its raised `ECP_HeadsmanSkeleton`, the players' `ECP_ExecutionerGreataxe` and `ECP_ExecutionerAxehead`, the greataxe's swing sounds `ECP_Greataxe_sfx_slash`, `_spin`, `_overhead`; the Bone Ballista piece `ECP_BoneBallista`, its `ECP_BoneMissile` (+ `_projectile`) |
 | Status effects | `ECP_KrakenInk` (the ink's screen splats; kept in every ObjectDB by `Kraken/Ink/InkStatus`) |
-| ZDO / RPC / global keys | `ecp_mimic_swap`, `ecp_mimic_chest`, `ecp_mimic_open`, `ecp_disguised`, `ecp_rime_plates`, `ecp_rime_wave`, global `ecp_rimegiant_<region>`; kraken ZDO `ecp_kraken_phase`, `ecp_kraken_ship`, `ecp_kraken_anchor`, `ecp_kraken_side`, `ecp_kraken_along`, RPCs `ecp_kraken_slam`, `ecp_kraken_bite`, `ecp_kraken_ink`, `ecp_kraken_flinch`; the Executioner's `ecp_hs_hit`, `ecp_hs_summon`, `ecp_hs_raised` (the shatter), `ecp_hs_rise` (the raised skeleton), `ecp_hs_chamber` (a burial chamber rolled), `ecp_hs_cue` (a swing sound's moment), global key `ecp_headsman_off` (never set: blocks the spawners while it is off); the Bone Ballista's ZDO `ecp_bal_user`, `_yaw`, `_pitch`, `_spring`, `_act`, `_act_at`, `_shots`, `_shot_at`, RPCs `ecp_bal_request`, `_release`, `_answer` |
+| ZDO / RPC / global keys | `ecp_mimic_swap`, `ecp_mimic_chest`, `ecp_mimic_open`, `ecp_disguised`, `ecp_rime_plates`, `ecp_rime_wave`, global `ecp_rimegiant_<region>`; kraken ZDO `ecp_kraken_phase`, `ecp_kraken_ship`, `ecp_kraken_anchor`, `ecp_kraken_side`, `ecp_kraken_along`, RPCs `ecp_kraken_slam`, `ecp_kraken_bite`, `ecp_kraken_ink`, `ecp_kraken_flinch`; the Executioner's `ecp_hs_hit`, `ecp_hs_summon`, `ecp_hs_raised` (the shatter), `ecp_hs_rise` (the raised skeleton), `ecp_hs_chamber` (a burial chamber rolled), `ecp_hs_cue` (a swing sound's moment), global key `ecp_headsman_off` (never set: blocks the spawners while it is off); the Bone Ballista's ZDO `ecp_bal_user`, `_yaw`, `_pitch`, `_spring`, `_act`, `_act_at`, `_shots`, `_shot_at`, RPCs `ecp_bal_request`, `_release`, `_answer`; custom creatures' ZDO `ecp_custom` (string, the creature's prefab name, written once by its owner: how a creature whose definition is gone is recognised and parked), `ecp_spawn_told` (bool, its spawn message dealt with), `ecp_human_look` (bool, a human's look rolled into the game's own look keys), RPCs `ecp_admin_ask`, `ecp_admin_answer` (the `ecp` command's admin check) |
 | Words | `enemy_ecp_*`, `item_ecp_*` (the kraken's loot: `item_ecp_krakenbeak`, `_krakenmeat`, `_krakenmeatcooked`, `_shieldkraken`; the crossbowman's `item_ecp_skeletoncrossbow`; the players' `item_ecp_bonecrossbow` and `_description`; the arsenal's `enemy_ecp_skeleton<title>`, `item_ecp_bone<weapon>`, `item_ecp_spine`, `item_ecp_arrowbone`, each item with `_description`; the Executioner's `enemy_ecp_headsman`, `item_ecp_headsman_<attack>`, `item_ecp_executionergreataxe`, `item_ecp_executioneraxehead` and their `_description`), `se_ecp_*`; the Bone Ballista's `piece_ecp_boneballista` (+ `_description`), `item_ecp_bonemissile` (+ `_description`), `hud_ecp_bal_hold`, `_letgo`, `_loaded`, `_empty`, `msg_ecp_bal_nomissiles`; added in each creature's `*Words` |
+| Custom creatures | Defined by server admins in `EliteCreaturesPack.Creatures.yml` and any `EliteCreaturesPack.Creatures*.yml` in the config folder and its subfolders (YamlConfig set, sync key `ecp.creatures`; a new main file is written from `Custom/Ready/creatures.yml`, the ready-made creatures, all off); the files the server built from travel in the standing Charter article `ecp.creatures.built`. Each becomes a prefab named as its `name`, with parts `<name>_<item>` (its own item copies), `<name>_ragdoll`, `<name>_young`, `<name>_overlay` (a number added when taken). `ecp export` writes `EliteCreaturesPack.Export.<prefab>.yml` (never loaded) |
+| Console command | `ecp` (admins only, checked by the server): `ecp export <prefab>`, `ecp export human` |
 | Asset bundles | `ecr_cryptmimic`, `ecr_slinger`, `ecr_rimegiant`, `ecp_kraken`, `ecp_kraken_loot` (four item models and their icon sprites), `ecp_crossbowman` (the crossbowman's kit, its bolt and five clips; the Bone Crossbow's unloaded, loaded and rigged models (`ecp_xbow_item_rig`: string halves and markers, moved by `XbowPlayerRig`), its players' reload clips `ecp_xbow_player_reload` and `_done`, and icon sprite), `ecp_skel_arsenal` (the seven bone weapons, the bow a second time in the player's hold, the arrow, the spine, nine icon sprites, and the Bone Atgeir's player attacks `ecp_atgeir_player_attack0`..`2` from ValheimAssets `Assets/BundleExtras`), `ecp_headsman` (the Executioner's kit and animator, the axe in 29 pieces, the players' held greataxe and axehead, two icon sprites), `ecp_boneballista` (the Bone Ballista, flat: mount, yaw, pitch, spine-arm vertebrae, string halves, points; its Bone Missile; two icon sprites) in `EliteCreaturesPack/assets/bundles`, one per platform. The older bundle and asset names (`ecr_sling_*`, `ecr_rime_plate_N`, ...) keep the `ecr_` prefix they were built with: nobody sees them and renaming means rebuilding in ValheimAssets |
 
 Prefab names are hashed into saved worlds: never rename one after a release.
@@ -72,6 +74,16 @@ EliteCreaturesPack/
     Sound/                cues from the game's clips by the generated HeadsmanSoundTable (sfx_table.py writes it)
     Greataxe/             the players' axehead and greataxe (skeleton arsenal): items, recipe, swing sounds, animator
                           override, left-hand grip
+  Custom/                 custom creatures (features/custom-creatures.md), see "Custom creatures" below:
+    Definitions/          the definition model, plain data, one block per area of the spec
+    Files/                the YAML set and its readers (one entry left out per mistake, file and line), the server's built files
+    Build/                when and how prefabs are built: timing, pass, base chains, shells, step runner, the step contract,
+                          lookups, the world's custom prefabs
+    Nature/ Combat/ Look/ Humans/ Elite/   the five steps (character; drops, gear, damage, attacks; effects and looks; the
+                          human body; Elite Creatures Reborn's lines) and their runtime parts
+    Saves/                the `ecp_custom` mark and the parking of creatures whose definition is gone
+    Commands/ Export/     the `ecp` command (admin check) and `ecp export`
+    Ready/                creatures.yml, the default main file
   assets/bundles/         the embedded bundles
 ```
 
@@ -199,6 +211,47 @@ first (`HarmonyPriority.First`: it is moved to where its head is seen before any
 its finalizer, which runs last, `KrakenDropSpot` sends every `ItemDrop.DropItem` to the spot its own loot is aimed at
 (the held ship's deck, or just over the water).
 
+## Custom creatures
+
+Server admins define new creatures and human enemies in YAML (`features/custom-creatures.md`, its build checklist and
+work log). Each is a real prefab, a copy of a creature that exists, so the game's `spawn`, other mods' spawners and raids
+and other creatures' death effects make it by name. Everything works without Elite Creatures Reborn.
+
+- **When.** The server (host, single player) builds at the end of `ZoneSystem.Start` (`Priority.Last`: every Awake has
+  run, ObjectDB is the world's, no object is made yet) from its own files, then assigns the standing Charter article
+  `ecp.creatures.built` with exactly those files. A joining client never builds from its own files: it builds when that
+  article arrives with Charter's first push (sent in the server's `RPC_PeerInfo` postfix, ahead of the ZDOs); a custom ZDO
+  that arrives first is only retried (a client never destroys an unknown prefab's ZDO). Each world load builds from
+  scratch (`ZNetScene.Awake` resets; the last world's prefabs and their parts are destroyed when the next is built).
+  A file changed during play applies the next time a world is loaded (the log says so).
+- **How** (`Build/BuildPass`). Names that are prefabs already are refused; each definition's bases are followed through
+  the other definitions (a loop refuses the creatures in it) to a game or mod creature, or `Human`; every shell is made
+  first (`PrefabBench.Copy` of that root, or `HumanBody.Build`), so definitions can name each other; then for each
+  definition of the chain, base-most first, the steps in order `Human`, `Character`, `Combat`, `Look`, `Elite`
+  (`Build/CreatureSteps`), each guarded (a throw fails only that creature); a creature that needs a failed one fails
+  too; the rest are registered with ZNetScene (with their networked parts) and their item copies put in ObjectDB
+  (`Combat/PartItems`); then ECR gets the elite lines (`Elite/EliteRegistrar`) or one warning says they do nothing.
+- **Chain rules.** Each pass applies only what its definition sets; relative values stack (`speed scale`, `size`); the
+  look is put on once, at the last pass, from the whole chain (`Look/LookPlan`); anything registered (a ZDO mark, an ECR
+  registration, part names) is for the creature, never for a base definition.
+- **Parts and origins.** A step never changes a game prefab: it changes the shell, and any item, ragdoll, young or
+  overlay it needs is the creature's own copy (`CreatureBuild.CopyPart`, named `<name>_<suffix>`). The build keeps each
+  part's origin (`CreatureBuild.OriginOf`, `CustomCreature.PartOrigins`), the one record the combat step, the elite step
+  (portal attacks named by the game's item) and `ecp export` read. Item copies get their prefab name as shared name.
+- **Humans.** `base: Human` is the player's body as a hostile Humanoid (`Humans/`): faction Boss, the Draugr's mind,
+  a bare kit (club and rags) that the human step takes off once when any definition of the chain gives gear, the
+  player's weapons fitted for an AI as it is armed, bows drawn and crossbows reloaded on the owner, endless ammunition,
+  a look rolled on the owner into the game's own look keys.
+- **Runtime parts** (on the prefab, every peer; decisions on the owner, state in the ZDO): `CustomTag`,
+  `CreatureMessages`, `EatHeal`, `IdleSpawns`, `HumanAppearance`, `HumanRanged`, `ItemTint`, `BodyOverlay` (drawing only,
+  nothing on a dedicated server).
+- **Removed definitions** (`Saves/ParkedCreatures`): just before each `ZNetScene.CreateObjects`, a ZDO whose prefab is
+  unknown and which carries `ecp_custom` is marked as made (memory only), so the server never deletes it and nobody makes
+  it; one warning per name per world; it comes back when its definition does.
+- **Errors.** A mistake in an entry (unknown key, value out of range, wrong word) leaves out that creature only, logged
+  with the file, the creature and the line (YamlConfig's `TrackLines`, `CollectErrors`, `ErrorUnknownKeys`); an unknown
+  prefab, item, effect or status effect fails the creature at build, at the field's path and line.
+
 ## Assets
 
 Built in `../../ValheimAssets`: `Assets/Creatures/CryptMimic/crypt_mimic` (the mimic's rig and clips), `Assets/Creatures/Slinger/ecr_slinger`,
@@ -221,5 +274,7 @@ Build, then the user restarts the LocalTesting profile (never launch or kill the
 `spawn ECP_SkeletonSwordsman` (Cutthroat, Axeman, Bonebreaker, Spearman, Halberdier, Bowman; and the kinds),
 `spawn ECP_BoneSword` (Dagger, Axe, Mace, Spear, Atgeir, Bow), `spawn ECP_Spine`, `spawn ECP_ArrowBone 20`, `spawn ECP_Headsman`, `spawn ECP_ExecutionerGreataxe`, `spawn ECP_BoneMissile 20` (then build the Bone Ballista from the hammer's Misc tab), `spawn ECP_ExecutionerAxehead`, and
 the kraken's loot `spawn ECP_KrakenBeak`, `ECP_KrakenMeat`, `ECP_KrakenMeatCooked`, `ECP_ShieldKraken`. Each
-feature file ends with its checklist. Test once without Elite
+feature file ends with its checklist. Custom creatures: switch a ready-made one on in
+`EliteCreaturesPack.Creatures.yml` (`enabled: true`), load a world, `spawn ECP_TrollBrute` (or `ECP_Outlaw`...),
+and `ecp export Troll` / `ecp export human`. Test once without Elite
 Creatures Reborn and once with it (stars and mutations, the mimic's hold-back).

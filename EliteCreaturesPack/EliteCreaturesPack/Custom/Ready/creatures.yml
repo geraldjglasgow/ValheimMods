@@ -1,0 +1,482 @@
+# Elite Creatures Pack - custom creatures
+#
+# Each entry under `creatures:` is a new creature: a copy of one that exists (`base:` - from the game, any mod, this
+# mod or another entry here, or Human for a person on the player's body) with your changes. Only `name` and `base` are
+# needed; everything you leave out keeps the base's value. The name becomes the creature's prefab name (one word):
+# `spawn <name>` spawns it, and spawner and raid mods can use it by that name. Prefab names are kept in saved worlds,
+# so renaming an entry makes a new creature; the old one's creatures stay in the save until the name comes back.
+#
+# The ready-made creatures below all start switched off. To use one, change its `enabled: false` to `enabled: true`.
+# Change any of their values, or copy an entry under a new name and make it your own. Delete the `enabled` line and a
+# creature is on. Creatures left switched off can still be the `base:` of another entry.
+#
+# More files named EliteCreaturesPack.Creatures*.yml in this folder or its subfolders are read as well, a good place
+# for your own creatures. The server's files are sent to every player. A change applies the next time a world is
+# loaded. A mistake leaves out only the creature it is in, and the log names the file, the creature and the line.
+#
+# To see every key: `ecp export <prefab>` (a console command for admins) writes any creature - the game's, a mod's or
+# one of these - as a full definition to start from, and `ecp export human` a human one. `elite:` lines (Elite
+# Creatures Reborn's mutations and boss aspects) do nothing without that mod; none of the creatures here need it.
+#
+# Damage on a hit is per type: blunt, slash, pierce, chop, pickaxe, fire, frost, lightning, poison, spirit. `total:`
+# scales an attack's own mix instead (chop and pickaxe only hit trees, rocks and buildings, so they are not counted).
+
+creatures:
+
+  # ---------------------------------------------------------------------------------------------------------------
+  # Troll Brute: a Troll grown by a fifth, faster and tougher (1000 health, the Troll's 600) that always fights
+  # bare-handed. It throws two boulders at once (the Troll's own throw, its damage each), and its ground slam hits
+  # harder (100 blunt, the Troll's 70) and comes twice as often (every 10 seconds, the Troll's 20).
+  # ---------------------------------------------------------------------------------------------------------------
+  - name: ECP_TrollBrute
+    base: Troll
+    enabled: false
+    character:
+      display name: Troll Brute
+      health: 1000
+      speed scale: 1.15
+    look:
+      size: 1.2
+      body tint: "#a08670"
+    gear:
+      replace: true                     # no log: the Troll's bare-handed set, every time
+      always: [troll_punch, troll_groundslam, troll_throw]
+    attacks:
+      - from: troll_throw
+        replace: true
+        projectiles: 2
+        spread: 6                       # degrees each boulder may stray from the aim
+      - from: troll_groundslam
+        replace: true
+        damage:
+          total: 100
+        cooldown: 10
+    drops:
+      items:                            # on top of the Troll's own drops
+        - item: TrollHide
+          amount: [1, 2]
+        - item: Coins
+          amount: [10, 25]
+          chance: 0.5
+
+  # ---------------------------------------------------------------------------------------------------------------
+  # Greydwarf Blightcaller: a Greydwarf Shaman grown by a quarter, faster and tougher (150 health, the shaman's 60),
+  # sickly green. Besides the shaman's own spray, bite and heal it fires a poisoned thorn bolt from 5 to 15 metres (the
+  # poison arrow's dart: 8 pierce, 20 poison) and, when you come close, releases a poison blast around itself (the
+  # Blob's cloud: 35 poison within 3.5 metres). Both use the shaman's own moves: the bolt its spray, the blast its
+  # healing cast.
+  # ---------------------------------------------------------------------------------------------------------------
+  - name: ECP_GreydwarfBlightcaller
+    base: Greydwarf_Shaman
+    enabled: false
+    character:
+      display name: Greydwarf Blightcaller
+      health: 150
+      speed scale: 1.2
+    look:
+      size: 1.25
+      body tint: "#a9c47e"
+    attacks:
+      - from: Greydwarf_throw           # the greydwarf's stone throw, made a thorn bolt
+        animation: spray
+        projectile: bow_projectile_poison
+        damage:
+          blunt: 0
+          pierce: 8
+          poison: 20
+        min range: 5
+        max range: 15
+        cooldown: 5
+        angle: 20
+      - from: blob_attack_aoe           # the Blob's poison cloud, around the shaman itself
+        animation: heal
+        reach: 0
+        height: 1
+        width: 3.5
+        damage:
+          poison: 35
+        min range: 0
+        max range: 3
+        cooldown: 10
+        angle: 180
+        preferred: true
+    drops:
+      items:                            # on top of the shaman's own drops
+        - item: GreydwarfEye
+          amount: [1, 2]
+        - item: AncientSeed
+          chance: 0.2
+
+  # ---------------------------------------------------------------------------------------------------------------
+  # Ember Ghost: a faster, tougher Ghost (150 health, the Ghost's 60) wreathed in flame. Its hit sets you burning:
+  # 15 slash and 20 fire (the Ghost's is 25 slash). Fire cannot hurt it; frost hurts it more.
+  # ---------------------------------------------------------------------------------------------------------------
+  - name: ECP_EmberGhost
+    base: Ghost
+    enabled: false
+    character:
+      display name: Ember Ghost
+      health: 150
+      speed scale: 1.3
+      resistances:
+        fire: immune
+        frost: weak
+    damage:
+      slash: 15
+      fire: 20
+    look:
+      body tint: "#ff9a5a"
+      overlay: flame
+    drops:
+      items:
+        - item: Coal
+          amount: [1, 3]
+          chance: 0.6
+
+  # ---------------------------------------------------------------------------------------------------------------
+  # Hostile humans: one for each stage of the game, each better equipped than the last, with the game's own armour,
+  # weapons and shields of that stage. A stage is the biome players are fighting through and the boss still ahead:
+  #
+  #   ECP_Outlaw       Outlaw         Meadows, before Eikthyr           rags and leather, flint and wood, the crude bow
+  #   ECP_Bandit       Bandit         Black Forest, before the Elder    bronze and troll hide, the fine wood bow
+  #   ECP_Marauder     Marauder       Swamp, before Bonemass            iron and root, the huntsman bow
+  #   ECP_Reaver       Reaver         Mountain, before Moder            wolf and fenris, silver, the Draugr Fang
+  #   ECP_Raider       Raider         Plains, before Yagluth            padded and lox, black metal, the Draugr Fang
+  #   ECP_MistRaider   Mist Raider    Mistlands, before the Queen       carapace, Mistlands weapons, the arbalest
+  #   ECP_AshRaider    Ash Raider     Ashlands, before Fader            flametal and ashlands, Ashlands weapons
+  #   ECP_FrostRaider  Frost Raider   Deep North, the last stage        Deep North armour, gold weapons
+  #
+  # How a human's gear works: `always` items are worn by every one; `pick one from` takes one item from each list
+  # (here a chest, legs, helmet or cape, for a mixed look); `one set from` takes one whole set (here a weapon with its
+  # shield, a two-hander, or a bow or crossbow with its ammunition and a knife for close quarters). Any gear replaces a
+  # human's bare kit (a club and rags). Humans swing the player's weapons with the player's own moves, shoot the
+  # player's bows and crossbows and never run out of arrows or bolts. Their weapons hit as hard as a player's; a bow or
+  # crossbow adds its arrow's or bolt's damage, so each one's own damage is cut below (`attacks:`) to keep a shot near
+  # the stage's melee.
+  # Armour and shields are for looks: a human's toughness is its health. Its drops are a little of the stage's
+  # materials and some coins; what it carries never drops. Each human is a man or a woman at random, with any of the
+  # game's hair and beard styles, a hair colour from its list and a skin tone in its range (0 lightest, 1 darkest);
+  # women never get a beard.
+  # ---------------------------------------------------------------------------------------------------------------
+
+  # Meadows, before Eikthyr. Melee 10-20 damage, a bow shot 22 (the wood arrow's own).
+  - name: ECP_Outlaw
+    base: Human
+    enabled: false
+    character:
+      display name: Outlaw
+      health: 60
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#e2cc96", "#b48a52", "#8a5a32", "#5a3a22", "#2a1e16", "#8e4426"]
+      skin tone: [0, 0.8]
+    gear:
+      pick one from:
+        - [ArmorRagsChest, ArmorLeatherChest]
+        - [ArmorRagsLegs, ArmorLeatherLegs]
+        - [HelmetLeather, CapeDeerHide]
+      one set from:
+        - [Club, ShieldWood]
+        - [AxeFlint, ShieldWood]
+        - [AxeStone, ShieldWoodTower]
+        - [SpearFlint]
+        - [Bow, ArrowWood, KnifeFlint]
+    attacks:
+      - from: Bow
+        replace: true
+        damage:
+          pierce: 0
+    drops:
+      items:
+        - item: Coins
+          amount: [3, 10]
+        - item: LeatherScraps
+          amount: [1, 3]
+          chance: 0.6
+        - item: Flint
+          amount: [1, 2]
+          chance: 0.5
+
+  # Black Forest, before the Elder. Melee 35-45, a bow shot 35.
+  - name: ECP_Bandit
+    base: Human
+    enabled: false
+    character:
+      display name: Bandit
+      health: 150
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#e2cc96", "#b48a52", "#8a5a32", "#5a3a22", "#2a1e16", "#8e4426"]
+      skin tone: [0, 0.8]
+    gear:
+      always: [CapeTrollHide]
+      pick one from:
+        - [ArmorBronzeChest, ArmorTrollLeatherChest]
+        - [ArmorBronzeLegs, ArmorTrollLeatherLegs]
+        - [HelmetBronze, HelmetTrollLeather]
+      one set from:
+        - [SwordBronze, ShieldBronzeBuckler]
+        - [AxeBronze, ShieldBoneTower]
+        - [MaceBronze, ShieldBronzeBuckler]
+        - [SpearBronze, ShieldBoneTower]
+        - [AtgeirBronze]
+        - [BowFineWood, ArrowFlint, KnifeCopper]
+    attacks:
+      - from: BowFineWood
+        replace: true
+        damage:
+          pierce: 8
+    drops:
+      items:
+        - item: Coins
+          amount: [5, 15]
+        - item: Copper
+          amount: [1, 2]
+          chance: 0.5
+        - item: TrollHide
+          chance: 0.25
+
+  # Swamp, before Bonemass. Melee 55-70, a bow shot 54.
+  - name: ECP_Marauder
+    base: Human
+    enabled: false
+    character:
+      display name: Marauder
+      health: 230
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#d8c08a", "#a07a48", "#7a4e2c", "#4a3020", "#241a14", "#7e3c22"]
+      skin tone: [0, 0.8]
+    gear:
+      always: [CapeTrollHide]
+      pick one from:
+        - [ArmorIronChest, ArmorRootChest]
+        - [ArmorIronLegs, ArmorRootLegs]
+        - [HelmetIron, HelmetRoot]
+      one set from:
+        - [SwordIron, ShieldBanded]
+        - [AxeIron, ShieldIronBuckler]
+        - [MaceIron, ShieldIronTower]
+        - [Battleaxe]
+        - [AtgeirIron]
+        - [BowHuntsman, ArrowIron, KnifeCopper]
+    attacks:
+      - from: BowHuntsman
+        replace: true
+        damage:
+          pierce: 12
+    drops:
+      items:
+        - item: Coins
+          amount: [10, 25]
+        - item: Iron
+          amount: [1, 2]
+          chance: 0.5
+        - item: ElderBark
+          amount: [1, 3]
+          chance: 0.4
+
+  # Mountain, before Moder. Melee 75-120, a bow shot 77.
+  - name: ECP_Reaver
+    base: Human
+    enabled: false
+    character:
+      display name: Reaver
+      health: 300
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#ece4cc", "#d8c08a", "#a07a48", "#5a3a22", "#241a14", "#9a9890"]
+      skin tone: [0, 0.6]
+    gear:
+      always: [CapeWolf]
+      pick one from:
+        - [ArmorWolfChest, ArmorFenringChest]
+        - [ArmorWolfLegs, ArmorFenringLegs]
+        - [HelmetDrake, HelmetFenring]
+      one set from:
+        - [SwordSilver, ShieldSilver]
+        - [MaceSilver, ShieldSerpentscale]
+        - [SpearWolfFang, ShieldSilver]
+        - [BattleaxeCrystal]
+        - [BowDraugrFang, ArrowObsidian, KnifeSilver]
+    attacks:
+      - from: BowDraugrFang
+        replace: true
+        damage:
+          pierce: 20
+    drops:
+      items:
+        - item: Coins
+          amount: [15, 35]
+        - item: Silver
+          amount: [1, 2]
+          chance: 0.4
+        - item: WolfPelt
+          amount: [1, 2]
+          chance: 0.5
+
+  # Plains, before Yagluth. Melee 95-110, a bow shot 97.
+  - name: ECP_Raider
+    base: Human
+    enabled: false
+    character:
+      display name: Raider
+      health: 400
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#e2cc96", "#c09a5c", "#8a5a32", "#5a3a22", "#2a1e16", "#a04c28"]
+      skin tone: [0.1, 1]
+    gear:
+      pick one from:
+        - [ArmorPaddedCuirass, ArmorLoxChest]
+        - [ArmorPaddedGreaves, ArmorLoxLegs]
+        - [HelmetPadded, HelmetLox]
+        - [CapeLinen, CapeLox]
+      one set from:
+        - [SwordBlackmetal, ShieldBlackmetal]
+        - [AxeBlackMetal, ShieldBlackmetal]
+        - [MaceNeedle, ShieldBlackmetalTower]
+        - [AtgeirBlackmetal]
+        - [BattleaxeBlackmetal]
+        - [BowDraugrFang, ArrowNeedle, KnifeBlackMetal]
+    attacks:
+      - from: BowDraugrFang
+        replace: true
+        damage:
+          pierce: 30
+    drops:
+      items:
+        - item: Coins
+          amount: [20, 45]
+        - item: BlackMetal
+          amount: [1, 2]
+          chance: 0.4
+        - item: LinenThread
+          amount: [1, 3]
+          chance: 0.5
+
+  # Mistlands, before the Queen. Melee 115-150, a crossbow bolt 117.
+  - name: ECP_MistRaider
+    base: Human
+    enabled: false
+    character:
+      display name: Mist Raider
+      health: 550
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#d8c08a", "#a07a48", "#5a3a22", "#2a1e16", "#16120e", "#7e3c22"]
+      skin tone: [0, 0.8]
+    gear:
+      always: [ArmorCarapaceLegs, CapeFeather]
+      pick one from:
+        - [ArmorCarapaceChest, ArmorMageChest]
+        - [HelmetCarapace, HelmetMage]
+      one set from:
+        - [SwordMistwalker, ShieldCarapace]
+        - [AxeJotunBane, ShieldCarapaceBuckler]
+        - [SpearCarapace, ShieldCarapace]
+        - [THSwordKrom]
+        - [AtgeirHimminAfl]
+        - [CrossbowArbalest, BoltCarapace, KnifeSkollAndHati]
+    attacks:
+      - from: CrossbowArbalest
+        replace: true
+        damage:
+          pierce: 45
+          chop: 40
+    drops:
+      items:
+        - item: Coins
+          amount: [30, 60]
+        - item: Carapace
+          amount: [1, 3]
+          chance: 0.5
+        - item: Eitr
+          chance: 0.3
+
+  # Ashlands, before Fader. Melee 135-170, a bow shot 127.
+  - name: ECP_AshRaider
+    base: Human
+    enabled: false
+    character:
+      display name: Ash Raider
+      health: 650
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#2a1e16", "#16120e", "#5a3a22", "#7e3c22", "#6e6a64", "#a8a49c"]
+      skin tone: [0.2, 1]
+    gear:
+      pick one from:
+        - [ArmorFlametalChest, ArmorAshlandsMediumChest]
+        - [ArmorFlametalLegs, ArmorAshlandsMediumlegs]
+        - [HelmetFlametal, HelmetAshlandsMediumHood]
+        - [CapeAsh, CapeAsksvin]
+      one set from:
+        - [SwordNiedhogg, ShieldFlametal]
+        - [MaceEldner, ShieldFlametalTower]
+        - [SpearSplitner, ShieldFlametal]
+        - [THSwordSlayer]
+        - [AxeBerzerkr]
+        - [BowAshlands, ArrowCharred, KnifeSkollAndHati]
+    attacks:
+      - from: BowAshlands
+        replace: true
+        damage:
+          pierce: 45
+    drops:
+      items:
+        - item: Coins
+          amount: [40, 80]
+        - item: FlametalNew
+          amount: [1, 2]
+          chance: 0.35
+        - item: AskHide
+          amount: [1, 2]
+          chance: 0.5
+
+  # Deep North, the last stage. Melee 170-190, a bow shot 170.
+  - name: ECP_FrostRaider
+    base: Human
+    enabled: false
+    character:
+      display name: Frost Raider
+      health: 800
+    human:
+      gender: random
+      beardless women: true
+      hair colours: ["#f0ead8", "#e2cc96", "#c09a5c", "#8a5a32", "#2a1e16", "#b8b6b0"]
+      skin tone: [0, 0.5]
+    gear:
+      always: [CapeDeepNorth]
+      pick one from:
+        - [ArmorDeepNorthHeavyChest, ArmorDeepNorthMediumChest]
+        - [ArmorDeepNorthHeavylegs, ArmorDeepNorthMediumlegs]
+        - [HelmetDNHeavy, HelmetDNMediumHood]
+      one set from:
+        - [SwordGold, ShieldGold]
+        - [AxeGold, ShieldGoldBuckler]
+        - [MaceGold, ShieldGoldTower]
+        - [AtgeirGold]
+        - [BattleaxeGold]
+        - [BowGold, ArrowBloodGold, KnifeGold]
+    attacks:
+      - from: BowGold
+        replace: true
+        damage:
+          pierce: 60
+    drops:
+      items:
+        - item: Coins
+          amount: [50, 100]
+        - item: Gold
+          chance: 0.3
+        - item: MooseHide
+          amount: [1, 2]
+          chance: 0.5

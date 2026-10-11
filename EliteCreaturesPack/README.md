@@ -10,6 +10,7 @@ Watch the trailer: https://www.youtube.com/watch?v=75P_wgenA2w
 - Creatures: a mimic, a slinger, a mountain giant, a sea boss and new crypt skeletons (below).
 - Bone weapons: every weapon the skeletons carry, made at the workbench (below).
 - Kraken loot: a shield that bites back and a food better than serpent meat.
+- Custom creatures: define new creatures and human enemies in YAML, each a copy of an existing one; 11 ready-made, off by default.
 - With Elite Creatures Reborn (optional) they roll stars and mutations, a dormant mimic stays disguised, and the
   kraken needs 3.12.0 or later.
 - With EliteCrafting (optional) every creature drops runes and the bone weapons roll inscriptions.

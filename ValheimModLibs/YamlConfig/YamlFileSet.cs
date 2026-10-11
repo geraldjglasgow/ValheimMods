@@ -43,6 +43,13 @@ public sealed class YamlFileSet
 	/// <summary>Whether the set is in use; when false, missing files are not warned about and models are not applied.</summary>
 	public Func<bool> Enabled { get; set; } = () => true;
 
+	/// <summary>
+	/// Also look in the subfolders of the first search folder (the config folder, for <c>SyncedConfiguration</c>), at any
+	/// depth, so files can be sorted into folders of their own. The other search folders are looked in without their
+	/// subfolders (the plugin folder can hold every other mod). Off by default.
+	/// </summary>
+	public bool SearchSubfolders { get; set; }
+
 	/// <summary>Content written as the main file when no file exists, e.g. an embedded resource.</summary>
 	public Func<byte[]?>? DefaultContent { get; set; }
 

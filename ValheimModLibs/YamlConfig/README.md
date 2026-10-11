@@ -31,9 +31,46 @@ public sealed class RuleModel : YamlModel
 }
 ```
 
-`YamlNode`: `Kind` (Scalar, List, Map, Null, Missing), `Path`, `Text`, `Get(key)` (case-insensitive), `Entries`, `Items`, `Count`, `Is("inherit")`, `TryInt`, `TryFloat`, `TryBool` (true/false, yes/no, on/off, 1/0), `TryString`, `TryEnum<T>`, `TryList<T>`, `TryStringList` (one scalar counts as a one-item list), `Error`, `Warn`. A `Missing` node reads nothing and reports nothing; a `Null` node (key without value) is an error when read.
+`YamlNode`: `Kind` (Scalar, List, Map, Null, Missing), `Path`, `Text`, `Get(key)` (case-insensitive), `Entries`, `Items`, `Count`, `Is("inherit")`, `TryInt`, `TryFloat`, `TryBool` (true/false, yes/no, on/off, 1/0), `TryString`, `TryEnum<T>`, `TryList<T>`, `TryStringList` (one scalar counts as a one-item list), `Line`, `Error`, `Warn`, `WarnUnknownKeys`, `ErrorUnknownKeys`. A `Missing` node reads nothing and reports nothing; a `Null` node (key without value) is an error when read.
 
 `ResolveGroups("Hammer")` returns the groups a name belongs to, innermost first (`Tools`, then a group containing `Tools`), safe against cycles.
+
+### Lines, one entry at a time, misspelt keys
+
+For a file of many independent entries (one creature, one rule each), three opt-in tools let a model leave out only the
+entry with a mistake and say where it is:
+
+```csharp
+public sealed class EntryModel : YamlModel
+{
+    protected override bool TrackLines => true;               // messages carry the line: "rules[3].chance (line 12): ..."
+
+    protected override void Read(YamlNode root)
+    {
+        foreach (YamlNode entry in root.Get("rules").Items)
+        {
+            List<string> problems = CollectErrors(() =>           // errors inside go here, not to Errors
+            {
+                ReadRule(entry, CurrentFile);                       // CurrentFile: the file being read (name only)
+                entry.ErrorUnknownKeys();                           // a misspelt key is an error at its own path
+            });
+            problems.ForEach(problem => entry.Warn("rule left out: " + problem));   // the rest of the files still apply
+        }
+    }
+}
+```
+
+- `TrackLines` (off by default: each file is parsed a second time, through YamlDotNet's representation model, for
+  positions; `YamlLineIndex`): `YamlNode.Line` answers (a map entry's key line, a list item's first line; 0 when unknown)
+  and every `Error`/`Warn` names it.
+- `CollectErrors(read)`: errors reported while `read` runs (typed readers, shape checks, `Error`, `ErrorUnknownKeys`)
+  are returned instead of rejecting the files; they carry the path and line but not the file, so report them again
+  through a node's `Warn` or `Error`, which adds it. Warnings are unaffected; calls nest, the innermost collects.
+- `ErrorUnknownKeys()`: like `WarnUnknownKeys`, but each unknown key in the visited maps under the node is an error at
+  its own path; maps reported this way are not warned about again by the automatic pass.
+- `YamlFileSet.SearchSubfolders`: also find the set's files in the subfolders, at any depth, of the first search folder
+  (the config folder for `SyncedConfiguration`); the other search folders are still searched without theirs. A subfolder
+  that cannot be listed leaves the search at the folder itself. The five-second watcher searches the same way.
 
 ## YamlFileSet and YamlFileHub
 

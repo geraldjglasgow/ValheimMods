@@ -17,6 +17,9 @@ public abstract class YamlModel
 
 	private string? currentFile;
 
+	/// <summary>Where errors go while <see cref="CollectErrors"/> runs; null otherwise.</summary>
+	private List<string>? errorScope;
+
 	/// <summary>Problems that reject the files, each prefixed with the file and the YAML path.</summary>
 	public List<string> Errors { get; } = new();
 
@@ -25,6 +28,15 @@ public abstract class YamlModel
 
 	/// <summary>Named groups read by <see cref="ReadGroups"/>, for models whose entries may name a group.</summary>
 	protected YamlGroupTable Groups { get; } = new();
+
+	/// <summary>
+	/// When true, each file is also read for positions: <see cref="YamlNode.Line"/> answers, and every message reported
+	/// at a node names its line (<c>rules[3].chance (line 12): ...</c>). Off by default: it parses each file twice.
+	/// </summary>
+	protected internal virtual bool TrackLines => false;
+
+	/// <summary>The name of the file being read (no folder), or null outside <see cref="Read"/>.</summary>
+	protected string? CurrentFile => currentFile;
 
 	/// <summary>Parses one text, reads it and verifies. Invalid YAML becomes one error.</summary>
 	public void Load(string yamlText)
@@ -71,7 +83,38 @@ public abstract class YamlModel
 		}
 	}
 
-	internal void AddError(string message) => Errors.Add(WithFile(message));
+	/// <summary>
+	/// Runs <paramref name="read"/> with its errors kept apart: an error reported while it runs (by a typed reader, a shape
+	/// check, <see cref="YamlNode.Error"/> or <see cref="YamlNode.ErrorUnknownKeys"/>) goes into the returned list instead of
+	/// <see cref="Errors"/>, so a model can leave out one entry and keep the rest. The messages carry the path (and line),
+	/// not the file: report them again through a node's <see cref="YamlNode.Warn"/> or <see cref="YamlNode.Error"/>, which
+	/// adds it. Warnings are not affected. Calls nest; the innermost collects.
+	/// </summary>
+	protected List<string> CollectErrors(Action read)
+	{
+		List<string>? outer = errorScope;
+		List<string> collected = new();
+		errorScope = collected;
+		try
+		{
+			read();
+		}
+		finally
+		{
+			errorScope = outer;
+		}
+		return collected;
+	}
+
+	internal void AddError(string message)
+	{
+		if (errorScope is not null)
+		{
+			errorScope.Add(message);
+			return;
+		}
+		Errors.Add(WithFile(message));
+	}
 
 	internal void AddWarning(string message) => Warnings.Add(WithFile(message));
 
@@ -88,7 +131,7 @@ public abstract class YamlModel
 			AddError("the file must be a map of keys at the top level, not " + (graph is IList<object> ? "a list" : "a single value"));
 			return;
 		}
-		YamlNode root = new(this, graph, "");
+		YamlNode root = new(this, graph, "", TrackLines ? YamlLineIndex.Build(yamlText) : null);
 		Read(root);
 		root.WarnUnknownKeys();
 	}

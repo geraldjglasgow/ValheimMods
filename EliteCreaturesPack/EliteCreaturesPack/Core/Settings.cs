@@ -6,6 +6,7 @@ using EliteCreaturesPack.Ballista;
 using EliteCreaturesPack.BearClaws;
 using EliteCreaturesPack.Core;
 using EliteCreaturesPack.Crossbow;
+using EliteCreaturesPack.Custom;
 using EliteCreaturesPack.Headsman;
 using EliteCreaturesPack.Kraken;
 using EliteCreaturesPack.Mimic;
@@ -56,6 +57,7 @@ namespace EliteCreaturesPack
             GreataxeSettings.Initialize(config);
             BearClawsSettings.Initialize(config);
             BallistaSettings.Initialize(config);
+            CustomSettings.Initialize(config);
             config.Config.SettingChanged += (sender, args) => SafeCall.Run("settings changed", Coalesce);
         }
 

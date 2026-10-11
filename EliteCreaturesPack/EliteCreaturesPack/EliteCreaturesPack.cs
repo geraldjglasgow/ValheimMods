@@ -3,9 +3,11 @@ using BepInEx;
 using EliteCreaturesPack.Arsenal;
 using EliteCreaturesPack.Ballista;
 using EliteCraftingLink;
+using EliteCreaturesLink;
 using EliteCreaturesPack.Core;
 using EliteCreaturesPack.Crafting;
 using EliteCreaturesPack.Crossbow;
+using EliteCreaturesPack.Custom;
 using EliteCreaturesPack.Headsman;
 using EliteCreaturesPack.Kraken;
 using EliteCreaturesPack.Mimic;
@@ -24,15 +26,17 @@ namespace EliteCreaturesPack
     /// <c>Crossbow</c>, <c>Arsenal</c>, <c>Headsman</c>. The skeleton arsenal, every bone weapon, is built in
     /// <c>Arsenal</c> and, for the Bone Crossbow and the Executioner's Greataxe, beside their creatures (see
     /// <see cref="Arsenal.ArsenalItems"/>). Elite Crafting is optional: loaded first when present, it is told about the
-    /// mod's gear and creatures (<see cref="CraftingHandOff"/>).
+    /// mod's gear and creatures (<see cref="CraftingHandOff"/>). Custom creatures, defined by server admins in YAML, are
+    /// built into prefabs when a world loads (<see cref="CustomCreatures"/>, folder <c>Custom</c>).
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency(CraftingLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(EliteLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
     public class EliteCreaturesPack : BaseUnityPlugin
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.9.1";
+        public const string PluginVersion = "0.10.0";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 
@@ -45,6 +49,8 @@ namespace EliteCreaturesPack
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             InstallCreatures(harmony);
+            // Custom creatures: their YAML file set and the server's built files exist before Finish loads anything.
+            CustomCreatures.Install(Synced);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
             Synced.Finish(harmony);

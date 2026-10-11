@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0
+
+- Custom creatures (section `29 - Custom Creatures`): define new creatures and human enemies in YAML, each a copy of an existing creature with its own stats, attacks, gear, drops and look.
+- Eleven ready-made custom creatures to switch on, all off by default.
+- `ecp export <prefab>` and `ecp export human` write a starting definition.
+- With Elite Creatures Reborn, custom creatures can roll its mutations and boss aspects.
+
 ## 0.9.1
 
 - Store page: the trailer (YouTube) at the top.

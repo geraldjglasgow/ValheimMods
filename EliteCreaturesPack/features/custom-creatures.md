@@ -9,7 +9,10 @@ custom creature wears its base creature's body (or the player's body for a human
 **Scope: the MVP, nothing more for now (the user, 2026-10-09).** This feature brings over everything another mod did
 for creatures and humans. The one addition is that a custom creature can use Elite Creatures Reborn's mutations and boss aspects (section 8). Other ideas wait until the user asks for them.
 
-**Status: specification only, nothing built.**
+**Status: built, never run in game.** Every part of sections 2 to 8 is built and compiles: the foundation (switch, files,
+definition model, build pipeline, saves, `ecp` command), every step (character, combat, look, humans, the ECR link), the
+export command and the ready-made creatures; reviewed across the seams and read back offline through the real reader. Not
+one of them has been seen in a game yet. See the build checklist at the end.
 
 **Clean room.** This file is written in our own words from a list of what the other mod does for the player. Build it
 from this file and the game's code only. Do not open the other mod's DLL outside of this project, decompiled sources, config files or documentation, and take no names, keys, numbers or texts from it. A behaviour this file leaves open is decided with the user.
@@ -197,3 +200,56 @@ Several mutations on one creature, and aspects on non-bosses, are new ground for
 - Removing a definition leaves its creatures in the save, and restoring it brings them back.
 - With ECR: fixed mutations and a custom boss's aspect apply. Uninstalling ECR leaves every creature working, with the
   single warning.
+
+# Build checklist
+
+`[ ]` not started, `[~]` partly (built, never run in game), `[x]` built and seen working on a dedicated server. Tick
+from observed behaviour, never from the `Status:` line. Code in `EliteCreaturesPack/Custom/`.
+
+## Foundation
+
+- [~] `29 - Custom Creatures` / `Enabled`, synced and lockable (`CustomSettings`)
+- [~] Files: main `EliteCreaturesPack.Creatures.yml` + `EliteCreaturesPack.Creatures*.yml` in the config folder and its
+  subfolders, one set through YamlConfig; default written from `Custom/Ready/creatures.yml`
+- [~] Definition model for every field of sections 3, 4 and 8 (`Custom/Definitions`), read and checked
+  (`Custom/Files`); a mistake leaves out that creature only, logged with file, creature and line (read offline)
+- [~] Build pipeline (`Custom/Build`): name refused if already a prefab, base chains (custom on custom, loops refused),
+  every shell made before any step, steps per chain definition, guarded, dependents of a failed creature left out
+- [~] Timing: server/host/single player build at `ZoneSystem.Start` from local files; a joining client builds from the
+  files the server built from (standing Charter article, first push); file change during play logged, applies next load
+- [~] Removed definitions: `ecp_custom` ZDO mark, unknown custom ZDOs parked (never destroyed), one warning per name
+- [~] ECR absent: one warning per build naming creatures with elite lines (`EliteNotice`)
+- [~] `ecp` console command, admin-gated by the server (`Custom/Commands`)
+
+## Steps (one per folder)
+
+- [~] Character, progress, senses, movement, behaviour, taming, sounds (`Custom/Nature`)
+- [~] Drops, gear, damage, projectile swap, new attacks (`Custom/Combat`)
+- [~] Effects (creature spawns, loops), look, texture (`Custom/Look`)
+- [~] Humans: shell from `HumanBody.Build` each world, `HumanStep` lays each definition's look on it (later keys win,
+  hair and beard names checked) and drops the bare kit when the chain gives gear; the body itself (`Custom/Humans`)
+- [~] ECR mutations, aspects, portal attacks, summons through EliteCreaturesLink (`Custom/Elite`)
+- [~] `ecp export <prefab>`, `ecp export human` (`Custom/Export`)
+- [~] The ready-made creatures of section 6 (`Custom/Ready/creatures.yml`, all switched off; read offline, every name
+  found among the game's prefabs)
+
+## Docs at release
+
+- [~] `CLAUDE.md` section (written 2026-10-10)
+- [ ] README line, changelog, wiki page
+
+## Work log
+
+Newest last. One row per session that changed something: what moved, and the commit it landed in.
+
+| Date | What changed | Commit |
+| --- | --- | --- |
+| 2026-10-10 | Foundation built (never run in game): switch, files, definition model and reader, build pipeline and timing, ZDO mark and parking, ECR notice, `ecp` command with export stub, step stubs. YamlConfig gained line numbers, error scopes, unknown keys as errors and subfolder search. | - |
+| 2026-10-10 | cc-elite: the elite step (never run in game): `elite:` lines merged over the chain, checked on the creature's own pass against ECR's names and the finished creature (unknown names, aspect on a non-boss, portal attacks by item, copy origin or name and thrown only, summons; Portalbound/Echoing warnings), registered with ECR after the build (last world's registrations cleared first), ECR's answers logged at the line; the notice uses EliteLink (too old said so); soft dependency on ECR; `CreatureBuild.OriginOf`. | - |
+| 2026-10-10 | cc-humans: humans fitted to the pipeline (built per world, nothing kept per process); `human:` keys left out keep the base's look (nullable `HumanLook`, overlaid per chain definition), hair/beard names checked at build, one `[r, g, b]` hair colour reads as one; bare kit dropped when the chain gives gear; AI fitting keeps a definition's angle; no-hair/no-beard marks, no random body model, never a distant object, other mods' Player parts left off. | - |
+| 2026-10-10 | cc-character: the character step (`Custom/Nature`, never run in game): character, speeds, resistances, boss fight; key on death (the game's defeat key); spawn/death messages to players within 100 m (ZDO `ecp_spawn_told`); senses, movement, behaviour, eating (`EatHeal`); taming from the Wolf's values, born tame, breeding with its own `<name>_young`; muted sounds. | - |
+| 2026-10-10 | cc-look: effects (hit/death/alert lists replaced; saved objects in the idle list spawned on the owner by `IdleSpawns`), size at the root (stacking along the chain, sized corpse copies), body tint and texture (shared material copies, client only; image from the config folder, missing = warning), item tint (`VisEquipment` attach patches), smoke or flame overlay (the Burning/Smoked look, local, recoloured). Never run in game. | - |
+| 2026-10-10 | cc-combat: the combat step built (never run in game): drop rows (amount range inclusive), gear (picks and sets rolled as the game's random sets; a human's stand-in kit goes with any gear), creature-wide damage and projectile, new attacks; every changed item is the creature's own copy with its own shared name, put in the world's ObjectDB once built; attacks from a bone the body lacks come from the creature itself. Attack keys added: `replace` (change the attack it already has), `projectiles`, `spread`; `angle` now 1-360. | - |
+| 2026-10-10 | cc-export: `ecp export <prefab>` writes any creature (game, mod, custom) as a full definition and `ecp export human` a human to start from, to `EliteCreaturesPack.Export.<name>.yml` in the config folder of the machine that ran it (never loaded); a value a definition cannot say is a comment with the reason; YAML read back through the readers offline. Custom parts traced through the build's part origins (`CustomCreature.PartOrigins`); `FieldReader.ColourOf` no longer errors on a missing colour. | - |
+| 2026-10-10 | cc-ready: the ready-made creatures (never run in game), all `enabled: false`: Troll Brute (always bare-handed, two boulders per throw, slam 100 blunt every 10 s), Greydwarf Blightcaller (poison thorn bolt from the greydwarf's throw with the poison arrow's dart on the shaman's spray move; the Blob's poison cloud on its heal move), Ember Ghost (slash and fire, flame overlay, immune to fire), and eight hostile humans, one per boss stage from Meadows to the Deep North (`ECP_Outlaw` ... `ECP_FrostRaider`): that stage's armour as picks, weapon sets with shields or bow, arrows and knife, bows' own damage cut so a shot stays near the stage's melee, health 60 to 800, coins and a little of the stage's materials. Header comment rewritten. | - |
+| 2026-10-10 | cc-review: the seams reviewed and fixed (never run in game): one record of a copy's origin (the build's part origins; `OwnItems`' own table and the unused `CarriedAs` gone, the elite step reads the combat step's `CarriedItems`); the human kit taken off once, by the human step (the combat step no longer empties a human's gear); gear combinations counted without overflow; `ecp export` reads back as the same creature (drop amounts one below the game's top, attack `angle` from 1, projectile/projectiles/spread on projectile attacks only, every damage type of a copy, changed set copies as `replace: true`, a status effect on some hits only and flyer/eating/command lines a creature cannot use left as notes); ready-made file and error cases read through the real reader offline; `CLAUDE.md` section, YamlConfig docs. | - |

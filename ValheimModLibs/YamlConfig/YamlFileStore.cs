@@ -28,19 +28,43 @@ internal sealed class YamlFileStore
 	/// <summary>Where files are looked for, in order; defaults are written to the first.</summary>
 	public IReadOnlyList<string> SearchFolders => searchFolders;
 
-	/// <summary>Full paths of the set's files in every search folder: the main file first, then by name.</summary>
+	/// <summary>
+	/// Full paths of the set's files in every search folder (the first one with its subfolders when the set asks):
+	/// the main file first, then by name.
+	/// </summary>
 	public List<string> Discover(YamlFileSet set)
 	{
 		Regex nameFilter = set.NameFilter;
 		List<string> found = new();
-		foreach (string folder in searchFolders.Where(Directory.Exists))
+		for (int i = 0; i < searchFolders.Count; i++)
 		{
-			found.AddRange(Directory.GetFiles(folder, set.FilePattern).Where(p => nameFilter.IsMatch(Path.GetFileName(p))));
+			bool deep = set.SearchSubfolders && i == 0;
+			found.AddRange(FilesIn(searchFolders[i], set.FilePattern, deep).Where(p => nameFilter.IsMatch(Path.GetFileName(p))));
 		}
 		return found
 			.OrderBy(p => string.Equals(Path.GetFileName(p), set.MainFileName, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
 			.ThenBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
 			.ToList();
+	}
+
+	/// <summary>
+	/// The files matching the pattern in a folder that exists, with its subfolders when <paramref name="deep"/>. A
+	/// subfolder that cannot be listed (no access) leaves the search at the folder itself rather than failing it.
+	/// </summary>
+	private static string[] FilesIn(string folder, string pattern, bool deep)
+	{
+		if (!Directory.Exists(folder))
+		{
+			return Array.Empty<string>();
+		}
+		try
+		{
+			return Directory.GetFiles(folder, pattern, deep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+		}
+		catch (Exception) when (deep)
+		{
+			return Directory.GetFiles(folder, pattern);
+		}
 	}
 
 	/// <summary>Reads the given files; a file that cannot be read is logged and left out.</summary>
