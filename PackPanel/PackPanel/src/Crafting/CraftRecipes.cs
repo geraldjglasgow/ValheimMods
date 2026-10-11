@@ -12,7 +12,8 @@ namespace PackPanel.Crafting
     /// once the items exist, and brought up to date whenever an item file or a switch changes (a server's values arriving
     /// included): the station (found through the game's own recipes, so it is the same station object as theirs; an
     /// unknown name falls back to the item's default), its level, the cost (<see cref="CostText"/>; a cost with nothing
-    /// usable falls back to the default) and whether it can be crafted at all.
+    /// usable falls back to the default; a backpack's upgrades priced from it, <see cref="BackpackLevels"/>) and whether
+    /// it can be crafted at all.
     /// </summary>
     public static class CraftRecipes
     {
@@ -99,6 +100,8 @@ namespace PackPanel.Crafting
             recipe.m_minStationLevel = kind.Recipe.Level;
             Piece.Requirement[] cost = CostText.Parse(db, kind.Recipe.Cost, kind.Name);
             recipe.m_resources = cost.Length > 0 ? cost : CostText.Parse(db, kind.DefaultRecipe.Cost, kind.Name);
+            if (kind is BackpackKind)
+                BackpackLevels.PriceUpgrades(recipe.m_resources);
             if (station == null)
                 Plugin.Log.LogWarning($"{kind.Name}: no crafting station named \"{kind.Recipe.Station}\"; it cannot be crafted");
         }

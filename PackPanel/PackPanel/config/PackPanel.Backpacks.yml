@@ -13,6 +13,10 @@
 #   carry:   carry weight it adds while worn, 0 to 1000
 #   portal:  true lets the items in its slots through portals, but only while Backpack Portal Pass is on in the .cfg
 #
+# Every pack has levels 1 to 4, upgraded at its station in the game's upgrade tab. Each level's upgrade costs a fifth of
+# its cost (rounded up), and the last costs double. Worn, a pack slows you by 8, 6, 4 or 2 %, and what lies in its
+# slots weighs 100, 95, 90 or 85 %.
+#
 # The file is synced from the server, reloaded a few seconds after it is saved and can be edited in game
 # (Configuration Manager, "Edit YAML"). Extra files named PackPanel.Backpacks<anything>.yml are read as well.
 backpacks:

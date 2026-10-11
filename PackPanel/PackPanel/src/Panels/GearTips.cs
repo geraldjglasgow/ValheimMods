@@ -6,7 +6,7 @@ namespace PackPanel.Panels
 {
     /// <summary>
     /// The breakdowns of the stat sheet's gear lines (<see cref="StatTips"/> has the first numbers'). Movement: each worn
-    /// piece's movement modifier, then each status effect's speed modifier. Durability: every equipped item that wears
+    /// piece's movement modifier, the worn backpack's level, then each status effect's speed modifier. Durability: every equipped item that wears
     /// out, most worn first. A resistance: each armour piece (the game's <c>ApplyArmorDamageMods</c>: helmet, chest, legs,
     /// cape; a shield's count only in a block, <see cref="HeldStatLines"/>) and each status effect that changes that
     /// damage type, with what it makes of it. The other equipment modifiers: each worn piece's value of the game's own source field
@@ -24,6 +24,9 @@ namespace PackPanel.Panels
                 if (Mathf.Abs(modifier) >= 0.005f)
                     tip.Part(item.m_shared.m_name, TipText.Percent(modifier));
             }
+            ItemDrop.ItemData pack = Backpacks.Backpack.WornItem(player);
+            if (pack != null)
+                tip.Part(pack.m_shared.m_name, TipText.Percent(Backpacks.BackpackLevels.Speed(pack.m_quality)));
             foreach (StatusEffect effect in player.GetSEMan().GetStatusEffects())
             {
                 if (effect is SE_Stats stats && Mathf.Abs(stats.m_speedModifier) >= 0.005f)

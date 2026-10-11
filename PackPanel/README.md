@@ -25,7 +25,8 @@ A bigger, better organised inventory, with labelled slots always on screen.
 - Tacklebox: holds a tacklebox, whose cells keep your bait.
 
 ## Backpacks
-Worn on your back for every player to see. Their cells join the bottom of your grid.
+Worn on your back for every player to see. Their cells join the bottom of your grid. Each has levels 1 to 4, upgraded
+at its station: a worn pack slows you by 8, 6, 4 or 2 %, and what it holds weighs 100, 95, 90 or 85 %.
 - Deerhide Satchel (Meadows): +4 slots.
 - Trollhide Backpack (Black Forest): +4 slots, +50 carry weight.
 - Rootbound Pack (Swamp): +8 slots, +50 carry weight.
@@ -56,7 +57,7 @@ setting is described in the file and applies without a restart; the server's val
 look and keys.
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

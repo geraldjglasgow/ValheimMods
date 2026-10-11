@@ -35,6 +35,9 @@ namespace PackPanel.Crafting
 
         public float Weight { get; }
 
+        /// <summary>The game's highest quality of the item: 1, no upgrades (a backpack has levels, <see cref="Backpacks.BackpackLevels"/>).</summary>
+        public virtual int MaxQuality => 1;
+
         public GameObject Item { get; internal set; }
 
         /// <summary>The game's item type of the item: a Misc item, which the game neither equips nor uses.</summary>

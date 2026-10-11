@@ -5,6 +5,7 @@ using PackPanel.Core;
 using PackPanel.Layout;
 using PackPanel.Slots;
 using PackPanel.Tackle;
+using PackPanel.Worn;
 
 namespace PackPanel.Crafting
 {
@@ -19,6 +20,10 @@ namespace PackPanel.Crafting
     /// grid). One that was not consumed (the craft stopped, or the game took a spare copy from the grid)
     /// goes back into the slot, or into a free cell when the new one is there. Not for multi-crafting or crafting
     /// without cost, which consume no or several old ones.
+    /// The game's own quality upgrade of the worn pack (its levels, <see cref="BackpackLevels"/>) takes the pack off,
+    /// removes it and adds the new one at its cell. Taken off, the pack would move out of its slot to a main cell
+    /// (<see cref="WornPlacement"/>), and with a full grid the new one would find no free cell and be lost with the old:
+    /// so the placement waits for the craft, and the emptied slot is the free cell.
     /// </summary>
     public static class InPlaceUpgrade
     {
@@ -31,6 +36,9 @@ namespace PackPanel.Crafting
         /// <summary>The old item set aside during the game's craft, and the slot cell it came from.</summary>
         private static ItemDrop.ItemData old;
         private static Vector2i slot;
+
+        /// <summary>Inside the game's quality upgrade of the worn pack, whose slot is <see cref="slot"/>.</summary>
+        private static bool upgrading;
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.OnCraftPressed))]
         public static class Press
@@ -49,6 +57,8 @@ namespace PackPanel.Crafting
             public static void Prefix(InventoryGui __instance, Player player)
             {
                 crafting = true;
+                if (LevelUp(__instance, player))
+                    return;
                 ItemDrop.ItemData there = Upgraded(__instance, player, out slot);
                 if (there == null)
                     return;
@@ -61,6 +71,11 @@ namespace PackPanel.Crafting
             public static void Finalizer(Player player)
             {
                 crafting = false;
+                if (upgrading)
+                {
+                    upgrading = false;
+                    WornPlacement.Resume();
+                }
                 ItemDrop.ItemData leftover = old;
                 old = null;
                 if (leftover != null && player.GetInventory().ContainsItem(leftover))
@@ -82,7 +97,22 @@ namespace PackPanel.Crafting
         public static bool FreeSlot(Inventory inventory, out Vector2i cell)
         {
             cell = slot;
-            return old != null && inventory.GetItemAt(slot.x, slot.y) == null;
+            return (old != null || upgrading) && inventory.GetItemAt(slot.x, slot.y) == null;
+        }
+
+        /// <summary>The game's quality upgrade of the pack in the Backpack slot: the placement waits, the slot is noted.</summary>
+        private static bool LevelUp(InventoryGui gui, Player player)
+        {
+            ItemDrop.ItemData item = gui.m_craftUpgradeItem;
+            if (item == null || BackpackCatalog.Of(item) == null || !InventoryState.IsLocal(player) || !InventoryState.Active)
+                return false;
+            IReadOnlyList<Vector2i> cells = InventoryState.CellsOf(SlotKind.Backpack);
+            if (cells.Count == 0 || player.GetInventory().GetItemAt(cells[0].x, cells[0].y) != item)
+                return false;
+            slot = cells[0];
+            upgrading = true;
+            WornPlacement.Suspend();
+            return true;
         }
 
         /// <summary>The item in the Backpack or Tacklebox slot that the craft under way takes as a cost, or null.</summary>

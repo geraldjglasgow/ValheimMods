@@ -311,6 +311,13 @@ PackPanel/PackPanel/src/
     CapeHold.cs             on the mount: the worn cape's MagicaCloth gets a max distance that holds its top under the
                             pack; the cape's own settings back when the pack comes down or the cape changes
     BackpackPortal.cs       Inventory.IsTeleportable prefix: Backpack Portal Pass for the worn pack's slots
+    BackpackLevels.cs       levels 1-4 (the game's quality): speed -8/-6/-4/-2 %, what its slots hold 100/95/90/85 %,
+                            each level's upgrade a fifth of the cost (rounded up; another pack in the cost not again)
+    PackLoad.cs             Inventory.UpdateTotalWeight postfix: the worn pack's slots weigh its level's share
+    UpgradeStation.cs       Recipe.GetRequiredStationLevel postfix: a pack's upgrade never asks more than its station
+                            can reach (1 + each kind of StationExtension; the Moosehide's last level)
+    BackpackTooltip.cs      ItemData.GetTooltip postfix: the level's movement and weight lines (the next level's in
+                            the upgrade tab)
   Crafting/                 what the backpacks and the tackleboxes share
     CraftedKind.cs, CraftStats.cs   a crafted item: prefab id, group and word (its words, icon, bundle asset), English
                             name and look, weight, the item; station, level and cost
@@ -321,7 +328,8 @@ PackPanel/PackPanel/src/
                             model from an embedded bundle dressed in the troll hide cape's material
     RecipeYaml.cs           station, level, cost and range checks for the item files
     InPlaceUpgrade.cs       a recipe that takes the pack in the Backpack slot (the box in the Tacklebox slot) crafts the
-                            new one into that slot: the old one set aside for the game's craft, the slot its free cell
+                            new one into that slot: the old one set aside for the game's craft, the slot its free cell;
+                            the game's quality upgrade of the worn pack keeps it in its slot (placement waits)
   Tackle/
     TackleboxKind.cs, TackleboxStats.cs, TackleboxCatalog.cs   the four boxes: default and current stats (cells);
                             lookups by shared name and id
@@ -453,6 +461,9 @@ inventory, Backpack Portal Pass only); postfix
 `InventoryGui.Show` and `InventoryGui.Hide`; the recipes and prefabs through the same patches as the backpacks'.
 Both, upgraded in their slot (`Crafting/InPlaceUpgrade`): prefix and finalizer `InventoryGui.OnCraftPressed` and
 `InventoryGui.DoCrafting` (both private), read by the `Inventory.FindEmptySlot` and `Inventory.CanAddItem` prefixes.
+Backpack levels: postfix `Inventory.UpdateTotalWeight` (private; the local player's inventory, `PackLoad`),
+`Recipe.GetRequiredStationLevel` (pack recipes, quality 2+, `UpgradeStation`), the static `ItemDrop.ItemData.GetTooltip`
+(packs, `BackpackTooltip`); the speed rides the existing `Player.UpdateModifiers` postfix (index 0, movement).
 `Inventory.MoveAll`'s key ring prefix and postfix became `TakeAllRouting`, for keys and bait.
 Auto Equip: a third prefix on `Humanoid.UseItem` (local player, from the inventory screen, an item in an open chest;
 `Worn/ChestWear`); the rest runs in the existing `Player.Update` and `Humanoid.UnequipItem` postfixes. Broken pieces stay
@@ -499,6 +510,15 @@ to a cost) upgrades the one in the Backpack slot in place: no free cell needed, 
 | Deep North | Moosehide Pack | Black forge, level 4 | 10 Moose hide, 4 Moose sinew, 5 Gold | +16 | +200 |
 
 Every pack's station, level, cost, slots and carry weight can be changed in `PackPanel.Backpacks.yml` (below).
+
+Backpack levels (a player's suggestion; the user's calls 2026-10-11: the speed penalty on by default, as the con for what
+packs add beyond the game, and no setting or YAML key): every pack is the game's quality 1 to 4, upgraded in the game's
+upgrade tab at its own station, one station level more per level as the game asks, capped at what the station can reach.
+Worn, a pack slows its wearer by 8, 6, 4 and 2 % at levels 1 to 4, and what lies in its slots weighs 100, 95, 90 and
+85 %. Each level's upgrade costs a fifth of the pack's cost, rounded up, times the game's step (1, 2, then 4 for the
+last): the Deerhide Satchel 2/4/8 Deer hide and Leather scraps, the Trollhide Backpack 4/8/16 Troll hide and 1/2/4
+Bronze. A pack named in a server's cost is not asked again. Upgrading the worn pack keeps it in its slot with its rows
+and what they hold, also with a full grid. A pack made by a recipe that takes another starts again at level 1.
 
 | Biome | Tacklebox | Crafted at | Cost | Cells |
 | --- | --- | --- | --- | --- |
@@ -1211,7 +1231,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.15.0]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.16.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;

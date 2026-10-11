@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using PackPanel.Backpacks;
 using PackPanel.Core;
 
 namespace PackPanel.Worn
@@ -8,7 +9,8 @@ namespace PackPanel.Worn
     /// Every game rule that reads the one utility field also counts the extra utilities (<see cref="ExtraUtilities"/>):
     /// the equipment status effects, set counts, eitr regen, the equipment modifiers (movement, heat resistance, jump,
     /// attack stamina and the rest of the game's list), equipment weight and durability drain. Local player only; the
-    /// lists are empty for everyone else.
+    /// lists are empty for everyone else. The worn backpack's level speed joins the movement modifier here too, one
+    /// postfix on the hot method.
     /// </summary>
     public static class UtilityEffectPatches
     {
@@ -50,17 +52,30 @@ namespace PackPanel.Worn
             }
         }
 
+        /// <summary>
+        /// The extra utilities' modifiers, and the worn backpack's level speed (<see cref="BackpackLevels"/>) into the
+        /// movement modifier, the game's first value (<c>GetEquipmentMovementModifier</c> reads index 0).
+        /// </summary>
         [HarmonyPatch(typeof(Player), nameof(Player.UpdateModifiers))]
         public static class Modifiers
         {
             [HarmonyPostfix]
             public static void Postfix(Player __instance)
             {
+                if (Player.s_equipmentModifierSourceFields == null || !InventoryState.IsLocal(__instance))
+                    return;
+                float[] values = __instance.m_equipmentModifierValues;
+                AddUtilities(values);
+                if (values.Length > 0)
+                    values[0] += BackpackLevels.WornSpeed(__instance);
+            }
+
+            private static void AddUtilities(float[] values)
+            {
                 IReadOnlyList<ItemDrop.ItemData> worn = ExtraUtilities.Worn;
-                if (worn.Count == 0 || Player.s_equipmentModifierSourceFields == null || !InventoryState.IsLocal(__instance))
+                if (worn.Count == 0)
                     return;
                 AccessTools.FieldRef<ItemDrop.ItemData.SharedData, float>[] fields = ModifierFields.Get();
-                float[] values = __instance.m_equipmentModifierValues;
                 int count = System.Math.Min(values.Length, fields.Length);
                 // Item by item, each value in the game's order: every value gets the same sum, in the same order, as before.
                 for (int w = 0; w < worn.Count; w++)

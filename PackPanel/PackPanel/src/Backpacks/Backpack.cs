@@ -20,6 +20,7 @@ namespace PackPanel.Backpacks
         private static readonly InventoryWatch wornWatch = new InventoryWatch();
         private static InventoryLayout wornLayout;
         private static BackpackKind wornKind;
+        private static ItemDrop.ItemData wornItem;
 
         /// <summary>The kind the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
         public static BackpackKind Worn(Player player) => BackpackCatalog.Of(WornItem(player));
@@ -29,18 +30,25 @@ namespace PackPanel.Backpacks
         /// slot is looked at again only after the inventory changed (<see cref="InventoryWatch"/>) or the layout did,
         /// rather than the inventory searched on every call. The settings are read every time.
         /// </summary>
-        public static BackpackKind WornNow(Player player)
+        public static BackpackKind WornNow(Player player) => Looked(player) ? wornKind : null;
+
+        /// <summary><see cref="WornItem"/> kept the same way, for the movement modifier the game sums in every physics step.</summary>
+        public static ItemDrop.ItemData WornItemNow(Player player) => Looked(player) ? wornItem : null;
+
+        private static bool Looked(Player player)
         {
             if (!InventoryState.IsLocal(player) || !InventoryState.Active || !BackpackSettings.Active)
-                return null;
+                return false;
             Inventory inventory = player.GetInventory();
             InventoryLayout layout = InventoryState.Layout;
             if (wornWatch.Changed(inventory) || !ReferenceEquals(layout, wornLayout))
             {
                 wornLayout = layout;
-                wornKind = BackpackCatalog.Of(ItemInSlot(inventory, layout));
+                ItemDrop.ItemData item = ItemInSlot(inventory, layout);
+                wornKind = BackpackCatalog.Of(item);
+                wornItem = wornKind != null ? item : null;
             }
-            return wornKind;
+            return true;
         }
 
         /// <summary>The pack the local player wears now, or null (also while PackPanel or the backpacks are off).</summary>
@@ -48,7 +56,15 @@ namespace PackPanel.Backpacks
         {
             if (!InventoryState.IsLocal(player) || !InventoryState.Active || !BackpackSettings.Active)
                 return null;
-            ItemDrop.ItemData item = ItemInSlot(player.GetInventory(), InventoryState.Layout);
+            return InSlot(player.GetInventory());
+        }
+
+        /// <summary>The pack in the Backpack slot of the local player's inventory, looked up now; null for any other inventory.</summary>
+        public static ItemDrop.ItemData InSlot(Inventory inventory)
+        {
+            if (!InventoryState.Manages(inventory) || !BackpackSettings.Active)
+                return null;
+            ItemDrop.ItemData item = ItemInSlot(inventory, InventoryState.Layout);
             return BackpackCatalog.Of(item) != null ? item : null;
         }
 

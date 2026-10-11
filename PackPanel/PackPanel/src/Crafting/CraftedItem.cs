@@ -54,7 +54,7 @@ namespace PackPanel.Crafting
             shared.m_description = kind.DescriptionToken;
             shared.m_itemType = kind.ItemType;
             shared.m_maxStackSize = 1;
-            shared.m_maxQuality = 1;
+            shared.m_maxQuality = kind.MaxQuality;
             shared.m_weight = kind.Weight;
             shared.m_value = 0;
             shared.m_teleportable = true;

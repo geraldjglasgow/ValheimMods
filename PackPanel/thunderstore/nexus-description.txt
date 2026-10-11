@@ -34,7 +34,7 @@ A bigger, better organised inventory, with labelled slots always on screen.
 [/list]
 
 [size=4][b]Backpacks[/b][/size]
-Worn on your back for every player to see. Their cells join the bottom of your grid.
+Worn on your back for every player to see. Their cells join the bottom of your grid. Each has levels 1 to 4, upgraded at its station: a worn pack slows you by 8, 6, 4 or 2 %, and what it holds weighs 100, 95, 90 or 85 %.
 [list]
 [*]Deerhide Satchel (Meadows): +4 slots.
 [*]Trollhide Backpack (Black Forest): +4 slots, +50 carry weight.
@@ -66,7 +66,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 BepInEx/config/milkyteam.packpanel.cfg, plus PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml ([url=https://github.com/geraldjglasgow/ValheimMods/blob/main/PackPanel/CLAUDE.md#backpack-and-tacklebox-yaml-files]format[/url]). Every setting is described in the file and applies without a restart; the server's values bind every player, except your look and keys.
 
 [size=4][b]Links[/b][/size]
-Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
+Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/PackPanel. Licence: GPL-3.0.
 
 [size=4][b]Tips[/b][/size]

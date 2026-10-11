@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.16.0
+
+- Backpacks have levels 1 to 4, upgraded at their station: a worn pack slows you 8, 6, 4 or 2 %, and what it holds weighs 100, 95, 90 or 85 %.
+- A pack's tooltip shows its level's speed and weight; upgrading the worn pack keeps it on your back.
+
 ## 0.15.0
 
 - The Feet slot is for EliteEquipment's boots (with its `Separate Boots` on); OpenKeep no longer has boots.
