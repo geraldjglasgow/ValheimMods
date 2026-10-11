@@ -51,7 +51,7 @@ the server's values bind every player. Console: `charter status`. Epic Loot need
 the mimic magic items. Prefab names: https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesPack/CLAUDE.md
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

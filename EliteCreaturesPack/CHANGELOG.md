@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.1
+
+- Fixed: the Kraken measured every ship two metres long and missed most of the crew aboard.
+
 ## 0.10.0
 
 - Custom creatures (section `29 - Custom Creatures`): define new creatures and human enemies in YAML, each a copy of an existing creature with its own stats, attacks, gear, drops and look.

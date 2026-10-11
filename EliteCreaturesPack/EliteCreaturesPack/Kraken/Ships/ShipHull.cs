@@ -118,8 +118,13 @@ namespace EliteCreaturesPack.Kraken
                 Vector3 corner = own.center + Vector3.Scale(own.extents, new Vector3((i & 1) * 2 - 1, (i & 2) - 1, (i & 4) / 2 - 1));
                 corners.Add(ship.InverseTransformPoint(part.TransformPoint(corner)));
             }
+            // A loop, not corners.ForEach(bounds.Encapsulate): that delegate grows a boxed copy of the struct and leaves
+            // the box a single point, so every ship measured two metres long and most of its crew were never aboard.
             var bounds = new Bounds(corners[0], Vector3.zero);
-            corners.ForEach(bounds.Encapsulate);
+            foreach (Vector3 corner in corners)
+            {
+                bounds.Encapsulate(corner);
+            }
             return bounds;
         }
 
