@@ -38,6 +38,7 @@ EliteEquipmentPack
 create belt item
 create ring slot
 create 2nd ring slot
+every 20% durability loss item model changes to look more worn. when item breaks the material its made of particle effects occur. 
 
 Openkeep
 config file decluttering

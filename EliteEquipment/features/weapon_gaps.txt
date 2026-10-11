@@ -14,41 +14,10 @@ CROSSBOWS
   Have: 2 Bone Crossbow, 6 Arbalest, 7 Ripper, 8 Nord
   Note: Gravebranch is art only, not a playable item.
 
-BOWS
-  Add:  5 Blackmetal bow
-  Have: 1 Crude, 2 Finewood/Bone, 3 Huntsman, 4 Draugr Fang, 6 Spine Snap, 7 Ashlands, 8 Nord
-
 FLETCHING TABLE
   New crafting station for bows, crossbows, arrows, bolts and ballista missiles.
   Ballistas themselves are placed with the Hammer.
 
-SWORDS
-  Add:  1 Flint sword
-  Have: 2 Bronze/Bone, 3 Iron, 4 Silver, 5 Blackmetal, 6 Mistwalker, 7 Nidhogg/Dyrnwyn, 8 Nord
-
-DAGGERS
-  Add:  3 Iron dagger
-        7 Flametal dagger
-  Have: 1 Flint, 2 Copper/Bone, 4 Silver, 5 Blackmetal, 6 Skoll and Hati, 8 Nord
-  Note: Abyssal Razor is an Ocean item, not the iron tier.
-
-GREATSWORDS
-  Add:  1 Flint, 2 Bronze, 3 Iron, 4 Silver, 5 Blackmetal greatsword
-  Have: 6 Krom, 7 Slayer, 8 Nord
-
-SPEARS
-  Add:  5 Blackmetal spear
-  Have: 1 Flint, 2 Bronze/Bone, 3 Ancient Bark, 4 Fang, 6 Carapace, 7 Splitnir, 8 Nord
-
-ATGEIRS
-  Add:  1 Flint atgeir
-        4 Silver atgeir
-        7 Flametal atgeir
-  Have: 2 Bronze/Bone, 3 Iron, 5 Blackmetal, 6 Himminafl, 8 Nord
-
-MACES
-  Add:  6 Eitr or carapace mace
-  Have: 1 Club, 2 Bronze/Bone, 3 Iron, 4 Frostner, 5 Porcupine, 7 Eldner, 8 Nord
 
 GREATHAMMERS
   Add:  1 Stone greathammer
@@ -59,46 +28,9 @@ GREATHAMMERS
 
 PICKAXES
   Add:  4 Silver pickaxe
-        5 Plains pickaxe (can reuse the Blackmetal Pickaxe look with an earlier recipe)
         7 Flametal pickaxe
         8 Bloodgold pickaxe
   Have: 1 Antler, 2 Bronze, 3 Iron, 6 Blackmetal (needs Yggdrasil wood)
-
-FIST WEAPONS
-  Add:  1 Flint knuckles or claws
-        3 Iron claws
-        6 Carapace or eitr claws
-        7 Flametal claws
-  Have: 2 Paws of the Bear, 4 Flesh Rippers, 5 Claws of the Vile, 8 Nord
-
-DUAL AXES
-  Add:  2 Bronze, 3 Iron, 4 Silver, 5 Blackmetal, 6 Carapace or eitr, 8 Bloodgold dual axes
-  Have: 1 EarlyAxes, 7 Berserkir Axes
-
-AXES (one-handed)
-  Add:  4 Silver axe
-        7 Flametal axe
-  Have: 1 Stone/Flint, 2 Bronze/Bone, 3 Iron, 5 Blackmetal, 6 Jotun Bane, 8 Nord
-
-GREATAXES
-  Add:  1 Stone or flint greataxe
-        7 Flametal greataxe
-  Have: 2 Executioner's Greataxe (ECP), 3 Battleaxe, 4 Crystal, 5 Blackmetal, 6 Skull Splittur, 8 Nord
-
-TOWER SHIELDS
-  Add:  4 Silver tower shield
-        6 Carapace tower shield
-  Have: 1 Wood, 2 Bone, 3 Iron, 5 Blackmetal, 7 Flametal, 8 Nord
-  Note: Serpent Scale is an Ocean item, not the silver tier.
-
-ROUND SHIELDS
-  Add:  2 Bronze round shield
-  Have: 1 Wood, 3 Banded/Root, 4 Silver/Kraken (ECP), 5 Blackmetal, 6 Carapace, 7 Flametal, 8 Nord
-
-BUCKLERS
-  Test and integrate (models and AssetLab code exist):
-        1 Wood, 4 Silver, 5 Blackmetal, 7 Flametal buckler
-  Have: 2 Bronze, 3 Iron, 6 Carapace, 8 Nord
 
 BALLISTA
   Add:  1 Wooden, 3 Iron, 4 Silver, 5 Blackmetal, 7 Flametal, 8 Bloodgold ballista

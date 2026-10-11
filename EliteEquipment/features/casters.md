@@ -98,7 +98,7 @@ from the boss, one per player present (the game's `m_onePerPlayer` drop).
 
 | # | Spell | Tier | Kind | What it does | Eitr | Learned from |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Mend | 1 | heal | Heals one friend by the wand's heal power | 8 | the first wand you craft |
+| 1 | Mend | 1 | heal | Heals one friend (never yourself) by the wand's heal power | 8 | the first wand you craft |
 | 2 | Hearthsong | 1 | chant | Health regen x1.5 | 15 | crafted |
 | 3 | Stag's Swiftness | 1 | chant | +10% movement, running costs 20% less stamina | 15 | Eikthyr |
 | 4 | Wisplight | 2 | utility | A wisp follows you for 5 min and lights crypts and caves | 10 | crafted |
@@ -143,7 +143,7 @@ never scale, so stacking casters cannot run away with them.
    The selected spell's icon also shows on the wand's hotbar slot. No HaloMenu.
 4. **Cast.** Left mouse casts the selected spell. Heals and wards go to the friend highlighted within 30 m (aiming
    inside a bubble round them is enough; a marker shows the healer who), locked on as the cast starts and flying to
-   them, or to yourself when there is none; chants hit everyone within 10 m; strikes fly where you
+   them; the cast turns your character to them, wherever the camera looks; a heal never targets yourself (with no friend highlighted it does not cast); chants hit everyone within 10 m; strikes fly where you
    aim. Middle mouse fires the wand's bolt.
 
 Friends are other players and your tames, so a healer can keep the wolves and the lox alive. With Party installed,
@@ -227,8 +227,11 @@ unless listed otherwise; `.windows` and `.linux` bundles in the asset's `out/bun
 - **Gnarled Wand**: about 0.55 m, a crooked branch of pale wood, leather wrapped at the grip, a dandelion-yellow
   feather or two bound below the head, a bead of amber resin set in the head (`glow_tip`, faint warm glow). `grip`
   where the right hand closes, `tip` at the head where spells leave. Held like the game's club, one-handed.
-- **Raven Fetish**: about 0.35 m, a short wooden handle with black raven feathers and a flint shard bound by leather
-  thongs, held in the left hand (the shield hand) like a torch. `grip` where the hand closes.
+- **Raven Fetish** (redesigned 2026-10-10, user: "a wooden base almost shield looking thing that is a little bigger than
+  your hand ... attach the current focus item to the outside of it ... not circular, cut some interesting shape out of a
+  circle"): a wooden hand-ward about 0.30 m across, a circle with a shape cut out of it, the raven fetish (handle, black
+  feathers, flint shard, thongs) lashed to its face; held on the left hand like the game's bucklers. Front +Z, up +Y,
+  `grip` at the back centre.
 - **Deerhide Vestments**: the game's leather set is the base (`HelmetLeather`, `ArmorLeatherChest`, `ArmorLeatherLegs`):
   a deer-hide hood, a hip-length robe-tunic with long sleeves and a belt, trousers ending in wrapped feet. Body paint in
   the body's layout (`_ChestTex`, `_LegsTex`, codex `models/armour.md`) plus `attach_skin` meshes on the Player armature;
@@ -258,7 +261,7 @@ Set bonus (all three pieces): Mend costs 25% less. Mend is known by every charac
 
 | Spell | Eitr | Effect | Status effect |
 | --- | --- | --- | --- |
-| Mend | 8 | heals one friend (the one nearest the crosshair within 30 m, or yourself) by the heal power | none |
+| Mend | 8 | heals the highlighted friend within 30 m (never yourself) by the heal power | none |
 | Hearthsong | 15 | everyone within 10 m: health regen x1.5 for 60 s | `EE_SE_Hearthsong` |
 | Stag's Swiftness | 15 | everyone within 10 m: +10% movement, running costs 20% less stamina, 60 s | `EE_SE_Swiftness` |
 
