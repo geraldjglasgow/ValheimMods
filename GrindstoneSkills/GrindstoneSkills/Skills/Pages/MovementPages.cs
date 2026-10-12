@@ -7,7 +7,8 @@ namespace GrindstoneSkills
     /// the game's code does with the level (Player.CheckRun and GetRunSpeedFactor, OnSwimming, Character.Jump,
     /// Player.OnSneaking and UpdateStealth, GetDodgeStaminaUse, Sadle.UpdateRiding and Character.GetRunSpeedFactor).
     /// Stamina costs come from the player's own prefab fields and the world's movement stamina rate where the game
-    /// applies it, before gear and status effects. GrindstoneSkills changes none of these skills.
+    /// applies it, before gear and status effects. What GrindstoneSkills adds follows on each skill's own page writer
+    /// (Running, Jumping, Sneaking, Swimming, Dodging and Riding).
     /// </summary>
     public static class MovementPages
     {

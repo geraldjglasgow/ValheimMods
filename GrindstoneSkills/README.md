@@ -1,13 +1,14 @@
 # GrindstoneSkills
 
-Deeper skills for Valheim: five of the game's skills do more, and four new skills join them.
+Deeper skills for Valheim: every one of the game's skills does more, and four new skills join them.
 
 ## Features
 - Skills: the game's keep your levels; perks grow from nothing at 0 to full at 100 (below).
 - Milestones: abilities that unlock at set levels (below).
 - Finds and snags: felled trees, broken rock and fishing lines can hide loot.
 - Skill book: the Skills window shows each skill's page at your level.
-- Skill loss on death: configurable for every skill.
+- Skill loss on death: configurable for every skill; Catch Up trains a skill twice as fast back to its best.
+- Icons: every skill has its own.
 - Works with Elite Creatures Reborn, FeastMaster, OpenKeep and ShipConfig.
 
 ## Skills
@@ -20,27 +21,25 @@ Deeper skills for Valheim: five of the game's skills do more, and four new skill
 - Husbandry (new): faster taming and breeding, starred young, twins, produce, extra honey, tougher wolves.
 - Defense (new): more health, less damage, regeneration, poise, longer parries; shield Reflex, Bash and Thorns.
 - Farming: faster growth, closer planting, bonus crops, seeds back, giant crops, tending and a compost bin.
+- Running: more carry weight, half the overloaded drain.
+- Jumping: cheaper jumps, safer and softer falls.
+- Sneaking: faster, quieter crouching and stronger backstabs.
+- Swimming: dry off faster, longer breath, a wider pickup in water.
+- Dodging: longer invulnerable rolls.
+- Riding: a faster gallop and a tougher mount.
+- Crafting: sturdier crafted gear and built pieces, a chance of a material back.
+- Weapons: a skill behind your best weapon skill trains faster; a trait per weapon at 50.
 
 ## Milestones
-- Wind Call (Sailing 25): `K` at the helm turns the wind to blow where you look.
-- Lookout (Sailing 50): `O` aboard shows enemy name tags around the ship.
-- Read the rock (Pickaxes 25): an ore deposit shows its vein stars and chunks left.
-- Echo (Pickaxes 50): a swing on rock points to the nearest ore deposit.
-- Unbroken (Pickaxes 100): clean strikes in a row hit harder.
-- Sweep (Foraging 25): picking a plant also picks the same kind around it.
-- Species, Size and Water Sense (Fishing 25 to 75): nibbles and casts name the fish and its size.
-- Legendary fish (Fishing 50): glowing giants take your bait.
-- Grace (Fishing 75): running out of stamina no longer loses the fish at once.
-- Animal Lore (Husbandry 20): hovers show feeding, breeding, growing and hatching timers.
-- Animal Feeder (Husbandry 25): a feeder hungry tamed animals eat from.
-- Calm (Husbandry 50): a creature you are taming neither flees from nor attacks you.
-- Riposte (Defense 25): after a parry, your next melee attack deals more damage.
-- Shield Wall (Defense 50): players behind your raised shield take less damage.
-- Hardened (Defense 75): each hit that hurts you adds damage reduction.
-- Last Stand (Defense 100): a killing blow leaves you at 1 health instead.
-- Rows (Farming 25 and 50): a seed plants a row of three, then five.
-- Auto Replant (Farming 50): picking a crop replants it from your seeds.
-- Heat and Cold Tolerance (Farming 75 and 100): crops grow in the Ashlands, then the Mountain and Deep North.
+- Sailing 25 and 50: Wind Call (`K` at the helm turns the wind), Lookout (`O` shows enemy name tags).
+- Pickaxes 25 to 100: Read the Rock (a deposit's stars), Echo (points to ore), Unbroken (clean-strike streaks).
+- Foraging 25: Sweep picks the same plants around you.
+- Fishing 25 to 75: Species, Size and Water Sense name the fish; Legendary fish; Grace keeps a tired line.
+- Husbandry 20 to 50: Animal Lore timers, the Animal Feeder, Calm while taming.
+- Defense 25 to 100: Riposte, Shield Wall, Hardened, Last Stand (a killing blow leaves you at 1 health).
+- Farming 25 to 100: Rows of three then five, Auto Replant, Heat and Cold Tolerance for crops.
+- Running 75: Second Wind when you run dry. Jumping 50: a Roll on hard landings.
+- Sneaking 75: Vanish from hunters. Dodging 50 and 75: Counter, Heavy Roll. Crafting 75: Journeyman stations.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `GrindstoneSkills.dll`
@@ -53,7 +52,7 @@ Compost bins first.
 applies without a restart; the server's values bind every player. Console: `fishlog` lists your catches.
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

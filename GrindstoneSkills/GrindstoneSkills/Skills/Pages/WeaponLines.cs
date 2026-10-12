@@ -1,8 +1,8 @@
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// The lines the game's weapon skills share on their pages, from the game's own formulas (GrindstoneSkills leaves
-    /// these skills as the game has them): the share of a weapon's damage a hit rolls (Skills.GetRandomSkillRange: 25–55%
+    /// The lines the game's weapon skills share on their pages, from the game's own formulas (Weapon Mastery adds to
+    /// these, on its own page writers, and leaves the formulas as the game has them): the share of a weapon's damage a hit rolls (Skills.GetRandomSkillRange: 25–55%
     /// at level 0 up to 85–100% at 100) and the cut in what an attack costs (Attack.GetAttackStamina, GetAttackEitr and
     /// GetAttackHealth, ItemData.GetDrawStaminaDrain: 33% at level 100, linear from 0).
     /// </summary>

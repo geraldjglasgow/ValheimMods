@@ -164,5 +164,17 @@ namespace GrindstoneSkills
         public const string CompostPrefab = "grindstone_compost_bin";
         /// <summary>float on a compost bin's ZDO: its compost points.</summary>
         public const string CompostPoints = "grindstone_compost";
+
+        // The game's other skills (sections 36 to 43, and Catch Up in section 6).
+        /// <summary>Item custom data: the maker's Crafting level when the item was crafted or last upgraded (Maker's Mark).</summary>
+        public const string MakerLevel = "grindstone_maker";
+        /// <summary>float on a placed piece's ZDO: the builder's Crafting level at placement (Sturdy Build).</summary>
+        public const string BuilderLevel = "grindstone_builder";
+        /// <summary>Player custom data: the best level each skill ever reached, "type:level" pairs joined by commas (Catch Up).</summary>
+        public const string BestLevels = "grindstone_best_levels";
+        /// <summary>On a creature, to its owner: (ZDOID player) - that player vanished; stop hunting them.</summary>
+        public const string RpcVanish = "grindstone_Vanish";
+        /// <summary>To a blood magic caster's peer: (float experience) - a shield they cast absorbed damage.</summary>
+        public const string RpcShieldXp = "grindstone_ShieldXp";
     }
 }

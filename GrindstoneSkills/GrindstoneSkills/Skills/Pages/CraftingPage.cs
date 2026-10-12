@@ -6,7 +6,8 @@ namespace GrindstoneSkills
     /// Crafting's page in the info pane, from the game's code: shorter crafts and a chance of one more item at stations
     /// that train Crafting (InventoryGui.UpdateRecipe and DoCrafting, with the live InventoryGui's timings and chances),
     /// and cheaper building with a tool whose pieces train Crafting (Player.GetBuildStamina and GetPlaceDurability):
-    /// the tool in hand when it is one, else the first such item in ObjectDB. GrindstoneSkills changes none of it.
+    /// the tool in hand when it is one, else the first such item in ObjectDB. What GrindstoneSkills adds follows in
+    /// <see cref="CraftingPerksPage"/>.
     /// </summary>
     public static class CraftingPage
     {

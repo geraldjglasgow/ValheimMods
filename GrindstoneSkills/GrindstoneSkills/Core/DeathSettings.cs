@@ -13,6 +13,7 @@ namespace GrindstoneSkills
 
         public static ConfigEntry<float> SkillLoss { get; private set; }
         public static ConfigEntry<bool> LoseProgress { get; private set; }
+        public static ConfigEntry<bool> CatchUp { get; private set; }
 
         public static void Initialize(SyncedConfiguration config)
         {
@@ -22,6 +23,8 @@ namespace GrindstoneSkills
                 acceptableValues: Settings.UpTo(100f));
             LoseProgress = config.Bind(Section, "Lose Progress On Death", true,
                 "Whether dying also loses the experience gathered toward each skill's next level, as in the game. Off keeps it.");
+            CatchUp = config.Bind(Section, "Catch Up", true,
+                "A skill below the best level it ever reached (after dying, for one) trains twice as fast until it is back there. The best levels are kept with the character. Off, every skill trains at the game's pace.");
         }
     }
 }

@@ -1830,6 +1830,295 @@ is `assets/skill_sailing.png` since 0.8.2, the Karve's only as a fallback.
 - [ ] **Dedicated server with two clients:** A plants, B picks. Giants and growth follow A's level, bonus and seed
       return follow B's. The bin works when owned by the other player. Hovers agree on both clients.
 
+## The rest of the game's skills (2026-10-11, being built)
+
+### The request
+
+A player: "maybe expand on the other dead end skills, for example, Sneak and Swimming being just using less stamina
+and nothing else. [...] especially if there's already popular mods that address this (which i do use in the case of
+swimming), as it's likely going to introduce mod conflict instead." The user asked for a plan for every game skill
+GrindstoneSkills does not deepen yet, with ideas taken from Thunderstore's skill mods and weighted by total downloads.
+
+### What is left, and what the game already does (decompiled 2026-10-11)
+
+| Skill | The game at level 100 | Trained by |
+| --- | --- | --- |
+| Run | run stamina -50%, run speed +25% | each second running with stamina |
+| Jump | jump force +40%; no stamina or fall change | each jump |
+| Sneak | sneak stamina -75% (square-root curve), and much harder to see (stealth 0.5+0.5×light down to 0.2+0.4×light) | each second crouched; 1 near an enemy, 0.1 elsewhere |
+| Swim | swim stamina lower; speed untouched | each second swimming |
+| Dodge | dodge stamina -50% (Defense adds -10%) | 0.1 per dodge, 1 per perfect dodge |
+| Ride | the mount's stamina (the rider's level rides the saddle's `Controls` RPC) | each second at a gallop |
+| Crafting | shorter craft time, 25% chance of +1 on stackable crafts, build stamina -50% | station crafts, building, repairing |
+| Blocking | block power | 1 per block, 2 per parry |
+| Weapons (11) | damage range, stamina/eitr/health cost -33%, bow draw time down to 20% | hits |
+
+The skill book already shows all of this (`Skills/Pages/MovementPages.cs` and the rest), including Sneak's stealth half.
+Fall damage starts above 4 m and reaches 100 at 20 m (`Character.UpdateGroundContact`).
+
+### What Thunderstore's skill mods do, by total downloads (all versions, 2026-10-11)
+
+| Idea | Mods (total downloads) | Sum | Here |
+| --- | --- | --- | --- |
+| Crafted gear lasts longer, pieces stronger, station counts higher | Blacksmithing 552k, Building 387k, BlacksmithingExpanded 41k, ImpactfulSkills' Forging | ~980k | Crafting |
+| Gear and weapons in water | UseEquipmentInWater 466k, WieldEquipmentWhileSwimming 338k | ~804k | not ours |
+| Carry weight from skills | PackHorse 375k, SkilledCarryWeight 102k, Skills_Give_More_Carry_Weight 65k, Skillful 47k, SkillBasedCarryweight 46k, FascinatingCarryWeight 12k | ~647k | Run |
+| Swim speed, swim stamina, diving | VikingsDoSwim 465k, UnderTheSea 57k + 9k, Dive_In 33k | ~564k | not ours |
+| Faster on paths | SpeedyPaths 466k, UsefulPaths 96k | ~562k | not a skill; not ours |
+| Sneak speed | ImpactfulSkills 254k, SNEAKer 141k, Skillful 47k | ~442k | Sneak |
+| Jump higher, softer falls | ImpactfulSkills 254k, Agility 91k, VitalityRewrite 57k, MoreSkills 22k | ~424k | Jump |
+| Lost or new skills catch up faster | ImpactfulSkills 254k, SmartSkills 121k | ~375k | all skills |
+| Mount attacks, flying, mount jump | BetterRiding 232k, balrond_mountjump 40k, Better_Riding 13k (+ZenCombat) | ~285k | not ours |
+| Dodge stamina | Evasion 275k | 275k | the game and Defense do it |
+| Stamina and regen from skills | Endurance 150k, StaminaExtended 64k, VitalityRewrite 57k | ~271k | FeastMaster/Defense ground |
+| Sneak noise | ImpactfulSkills 254k | 254k | Sneak |
+| Backstab from Sneak, backstab XP | SmartSkills 121k | 121k | Sneak |
+| Uphill stamina | Climbing 24k | 24k | skipped |
+
+### Rules for these modules
+
+- **Other mods are not designed around (user, 2026-10-11):** "if someone is using another mod they should uninstall
+  it to use this mod". Prowl is built although SNEAKer and ImpactfulSkills also speed up sneaking. Swim speed, swim
+  stamina, diving, gear in water, mount attacks, flying and path speed were left out of this plan and stay out unless
+  the user asks.
+- **Add, never replace.** Postfix the game's own methods and multiply after the game; the game's effects stay as they
+  are, so another mod's change to the same formula still applies.
+- **One switch per skill** (`Running Enabled`, ...), on by default; every number below is a constant in the setting's
+  description (the user's one-setting-per-feature rule). Linear from level 0, milestones at the listed level.
+- **Multiplayer:** each perk names where it runs. Most run on the player's own client, which owns the player.
+- Each skill gets its page lines and perks in the skill book, a test checklist with a dedicated server, and the
+  offline patch check before release.
+
+### Running (section 36)
+
+- **Pack Mule:** +50 carry weight at 100 (`Player.GetMaxCarryWeight` postfix, the player's client). The most
+  downloaded movement idea.
+- **Burden (50):** the encumbered stamina drain (`m_encumberedStaminaDrain`, 10/s) is halved.
+- **Second Wind (75):** running out of stamina while running gives 30 stamina back; 3-minute cooldown; "Second wind!".
+
+### Jumping (section 37)
+
+- **Light Feet:** jump stamina -50% at 100 (`Player.OnJump`; the game has none).
+- **Soft Landing:** falls are safe up to 4 m higher at 100 and fall damage -50% (`SEMan.ModifyFallDamage` postfix
+  for the local player, the player's client).
+- **Roll (50):** landing while moving forward from a fall the game would hurt plays the dodge roll and takes no damage
+  up to twice the safe height; above that the roll halves it once more.
+
+### Sneaking (section 38)
+
+- **Prowl:** crouched speed +50% at 100 (the crouch speed, the player's client). Stacks with SNEAKer or ImpactfulSkills
+  if a player runs one of them (open decision).
+- **Soft Steps:** the noise the player makes while crouched -50% at 100 (`Character.AddNoise` prefix).
+- **Assassin:** backstab damage +50% at 100, on top of the weapon's own bonus: the attacker raises
+  `HitData.m_backstabBonus` before the hit leaves, so the target's owner applies it by the game's own rules
+  (`Character.RPC_Damage`, unalerted, 300 s per target). A backstab gives 5 Sneak experience.
+- **Vanish (75):** while crouched and unseen for 3 s, creatures hunting the player lose the target; once a minute. Sent
+  to each creature's owner (`BaseAI`) as a `NearbyRpc`.
+
+### Swimming (section 39), kept small on purpose
+
+None of these touch what the swim mods change (speed, stamina, diving, gear in water):
+
+- **Quick Dry:** Wet lasts -50% at 100 (the status effect's time when added, the player's client).
+- **Long Breath:** out of stamina in water, drowning starts 3 s later and hurts 50% less at 100 (`Player.OnSwimming`'s
+  drown timer).
+- **Salvage:** floating items are picked up from twice as far while swimming (`m_autoPickupRange`, only in water).
+
+### Dodging (section 40)
+
+- **Long Roll:** the roll's invulnerability lasts 30% longer at 100 (`OnDodgeMortal` delayed, the player's client).
+- **Counter (50):** a perfect dodge (hit while rolling) makes the next melee hit within 2 s deal +25%; "Counter!". Not
+  Defense's Riposte, which is the parry's.
+- **Heavy Roll (75):** dodging while encumbered (the game forbids it), at double stamina.
+
+### Riding (section 41)
+
+- **Gallop:** mount run speed +15% at 100. The mount's owner applies it from the level the game already sends in
+  `Controls`, so it works for any rider on any peer.
+- **Steady Seat:** a ridden mount takes 25% less damage at 100 (the mount's owner, same level).
+
+### Crafting (section 42), the most asked for
+
+- **Maker's Mark:** weapons, armour, shields and tools crafted or upgraded get +25% max durability at 100, from the
+  maker's level at that moment, kept in the item's custom data so it follows the item to any player. Multiplies with
+  EliteCrafting's durability property.
+- **Sturdy Build:** placed pieces get +25% health at 100 from the builder's level, kept in the piece's ZDO at
+  placement (as Sailing does for ship health), so every peer and the server agree.
+- **Thrifty:** 10% chance at 100 to refund one material of a station craft. Not for building: the piece would
+  still give the full cost back when removed.
+- **Journeyman (75):** the workbench and forge count one level higher for the player using them
+  (`CraftingStation.GetLevel` while the player's crafting window reads it).
+- Not repairing from the inventory: OpenKeep already repairs gear when a station opens.
+
+### Weapons, Blocking and every skill (section 6, Death, and section 43)
+
+- **Catch Up** (every skill, section 6): a skill below the best level it ever had trains twice as fast until it gets
+  back there; the best level is kept in the player's custom data. Softens the death loss without changing it.
+- **Weapon Switch** (section 43): a weapon skill below the player's best weapon skill trains 50% faster.
+- **Blood Magic:** experience when a cast shield absorbs damage, not only when it breaks.
+- **Crossbows (50):** sprinting, jumping or dodging pauses a reload instead of restarting it.
+- **Blocking:** nothing new; Defense already covers the guard (parry window, block stamina, bash, thorns).
+- Per-weapon milestones (one identity each at 50) only if the user wants them: weapons are not dead ends.
+
+### Order
+
+1. Crafting (most downloads behind its ideas, and no live conflict but Building).
+2. Running and Jumping (small code each; carry weight and falls together ~1M downloads of interest).
+3. Sneaking (the player's own example).
+4. Catch Up and Weapon Switch, Blood Magic, Crossbows.
+5. Dodging, Riding, Swimming.
+
+One minor release per step.
+
+### Decided (user, 2026-10-11: "make all of it")
+
+- Everything above is built, Prowl and Journeyman included, Swimming as small as listed.
+- Per-weapon milestones, one at level 50 each: Swords Edge (+25% to a staggered foe), Knives Bleed (poison worth 20% of
+  the hit), Clubs Crush (+30% stagger), Polearms Sweep (+30% knockback), Spears Long Throw (thrown +25%), Axes Rend
+  (+5% per hit on the same foe within 3 s, up to 25%), Unarmed Brawler (+50%), Bows Recover (25% no arrow used),
+  Crossbows Steady Reload, Elemental Magic Attunement (+25% eitr regeneration holding a staff), Blood Magic Life Tap
+  (25% less health cost).
+- Settings: one switch per skill, `Running Enabled` ... `Weapon Mastery Enabled` (sections 36 to 43,
+  `Core/GameSkillSettings.cs`), and `Catch Up` in section 6. Code: `Running/`, `Jumping/`, `Sneaking/`, `Swimming/`,
+  `Dodging/`, `Riding/`, `Crafting/`, `Mastery/CatchUp`, `Mastery/Melee`, `Mastery/Ranged`; shared `Core/LocalSkill.cs`
+  and `Core/OutgoingHits.cs` (one Character.Damage prefix for every perk that changes the local player's hits).
+- Icons of our own for every game skill (user, 2026-10-11): the 19 skills without one got icons painted in the
+  skill-icons-v2 style (`artwork/skill-icons-v2`, `Skills/GameSkillIcons.cs`).
+
+### Decisions made while building (2026-10-11), for the user to confirm
+
+Built by eight agents in worktrees from a shared foundation, merged, compile clean, offline patch check clean. Nothing
+has run in game.
+
+**Running and Jumping**
+- Pack Mule follows the world's carry weight setting like the base and the belt: +50 on a normal world, +75 at 1.5x.
+- Light Feet also covers the grappling pull and launches by an Aoe, a catapult or a grappling point, which the game
+  charges as jumps.
+- Soft Landing keeps the game's 16 m from first harm to full damage: at 100 falls hurt from 8 m, and the most a fall can
+  do is 50 (from 24 m), or 25 with a roll.
+- Roll costs no stamina, gives no Dodge experience and no invulnerability (no perfect dodge, adrenaline or Counter). It
+  happens only when the fall would still hurt (not under the feather cape) and when the game would let the player dodge
+  (not over-encumbered, attacking, staggering or knocked back), Heavy Roll or not. Forward is move input within 60
+  degrees of the look direction; autorun counts. No callout.
+- Second Wind keeps the run going on the tick stamina ran out; its 3-minute cooldown lasts the game session (it
+  survives death and relogging).
+
+**Sneaking**
+- Prowl does not apply while over-encumbered (the game walks an encumbered player at crouch speed anyway).
+- Crouched walking makes no noise in the game, so Soft Steps quietens what does: attacks, dodges, building and mining
+  from a crouch (Character.RPC_AddNoise, since Pickaxes already prefixes AddNoise). Projectile impact noise stays the
+  game's.
+- Assassin experience (5) only for creatures hostile to the player, judged on the attacker's client: not alerted (as
+  replicated), the game's 300 s timer where this client owns the creature, and a 300 s timer of its own per creature.
+  It can be off once when the alert has not replicated yet, after another player's sneak attack, or after a change of
+  owner. Area hits count too (the game backstabs them: a bile bomb into a sleeping group gives 5 per creature, each
+  once per 5 minutes).
+- Vanish ignores bosses, needs the game's "you are targeted" signal, and spends its cooldown only when at least one
+  creature was told. Hostile means MonsterAI (deer do not block it). Creatures lose track the game's own way (no alert,
+  no target, 5 s before they look again); raiders re-alert at once. For creatures another machine runs, "hunting you"
+  is guessed as alerted with a target; the owner checks the real target, so a creature hunting a teammate is left
+  alone, but the callout and cooldown are spent.
+
+**Swimming and Riding**
+- Quick Dry shortens Wet from rain too (one Wet effect for both); the time is fixed from the Swim level when Wet starts.
+- Long Breath holds the game's drowning count still, so the delay is exactly 3 s at 100; a new spell (and delay) starts
+  once stamina returns or after 1 s without swimming breathless. Its damage cut applies to every drowning hit on the
+  player.
+- Salvage widens the pickup range only while the game counts the player as swimming.
+- Gallop multiplies the game's bonus (1.25 x 1.15 at 100, about +44% in all) and changes only the gallop.
+- Steady Seat covers every hit while the mount has a rider, its own drowning included. Both use the Ride level the game
+  already sends in the saddle's Controls RPC; taking the saddle makes the rider the mount's owner.
+
+**Dodging**
+- Long Roll measures the game's window on every roll (start to the DodgeMortal event, about 0.41 s) and keeps the flag
+  on for 30% of it at 100 (about 0.53 s); the game still ends invulnerability with the roll animation. It extends only
+  a roll the game made untouchable (never Jumping's landing roll). It makes perfect dodges slightly more likely.
+- Counter: the first melee attack (horizontal, vertical or area) started within 2 s of a perfect dodge; every hit it
+  lands deals +25%; ranged attacks neither use it up nor gain; a chain's next swing is not the counter. It stacks with
+  Riposte.
+- Heavy Roll lifts the encumbrance check only inside Player.Dodge and UpdateDodge; a perfect dodge under a heavy load
+  refunds the game's share of the ordinary cost; a heavy dodge gives the game's 0.1 experience.
+
+**Crafting**
+- Maker's Mark and Thrifty count only at a station that trains Crafting, the one the player stands at (the test the
+  game uses for its extra-item roll): things made by hand get no mark.
+- The mark stores the maker's level with food and mead bonuses, capped at 100 when read; marked items and pieces keep
+  their bonus while the module is off. The crafting panel shows the mark a craft would give; the tooltip line follows
+  the durability line. Upgrades are marked again with the upgrader's level; each item of a multi-craft is marked.
+- Thrifty rolls once per batch of a multi-craft and gives back a fresh unit of one paid material, picked at random.
+- Sturdy Build covers any piece placed with a tool whose pieces train Crafting, carts included; only ships are skipped.
+- Journeyman shows the raised level in the crafting panel and also allows repairs one level early. Station discovery
+  keeps the real level, so new recipes still need the level to have been seen.
+- `ItemData.GetTooltip` now has three GrindstoneSkills postfixes (egg stars, fish, Maker's Mark): one to merge later.
+
+**Catch Up and Weapon Switch**
+- Best levels are whole levels (the stored level without food or mead, rounded down), recorded even while Catch Up is
+  off. A character's first load with this version starts them from its current levels: an earlier death is not caught
+  up.
+- raiseskill raises best levels and never lowers them (a negative amount is the way to try Catch Up); resetskill and
+  resetcharacter forget the best levels they reset. A world that resets skills on death keeps the best levels.
+- Catch Up (x2) wins over Weapon Switch (x1.5), never both; both multiply with Rested and every module's own
+  experience scaling. Weapon Switch compares with the highest of the 11 weapon skills (not Blocking, Pickaxes or
+  Woodcutting).
+
+**Weapon Mastery**
+- Melee milestones are keyed on the skill the hit trains at level 50; Long Throw also asks for a ranged hit.
+- Brawler counts the game's claws (Flesh Rippers and the other fist weapons train Unarmed). Bare fists only would be
+  one line (the game's fist mark, status effect hash 99999).
+- Edge reads the stagger on the attacker's client (replicated by the game's stagger trigger) and also applies to
+  staggered players in PvP, where the game's own double damage does not.
+- Bleed's poison is 20% of every damage type but chop and pickaxe, after Assassin and Counter. The game's poison does
+  not stack: a new dose replaces the running one only when bigger.
+- Crush never lifts a hit to the game's always-stagger mark (multiplier 100). Rend remembers 8 foes on the attacker's
+  client; every axe hit sent counts. Damage milestones also add stagger, as any stronger hit does.
+- Recover skips the arrow's removal (it never leaves its slot); consumable ammo is never spared; no callout.
+- Steady Reload keeps a reload's progress for 0.5 s for the same crossbow; a weapon change or a shot restarts it.
+- Attunement adds +25% to the eitr regeneration multiplier the way meads do, only while the staff is the current weapon.
+  Life Tap multiplies the health cost by 0.75 after the game's cut, for Blood Magic weapons.
+- Shield Training: 1 Blood Magic experience per 40 damage a cast shield absorbs, at most 2 per hit and the shield's
+  capacity / 40 in all, only from untamed creatures other than the wearer; sent to the caster's machine. The game's own
+  break experience still goes to the wearer, not the caster.
+
+A review of the merged code found one bug, fixed: Light Feet, Burden, Prowl and Salvage scale a game field for one call
+and put it back in a finalizer, as FeastMaster does with the jump cost and the encumbered drain; Harmony runs
+finalizers in prefix order, so two such mods left the field scaled for good. Ours now save last and restore first.
+
+### Test checklist (LocalTesting, then a dedicated server with two clients)
+
+- [ ] Every switch off (sections 36 to 43, Catch Up): running, jumping, falls, sneaking, swimming, dodging, riding,
+      crafting, building, experience and every weapon's hits exactly the game's; the pages show only the game's lines.
+- [ ] Run page: Pack Mule, Burden 50, Second Wind 75. Carry 300 + 50 x Run/100; encumbered drain 5/s at 50+; sprinting
+      empty at 75+ gives +30 and "Second wind!", not again within 3 minutes.
+- [ ] Jump page: Light Feet, Soft Landing, Roll 50. A jump costs 5 at 100 (a full jump with 6 stamina); falls of 8, 16
+      and 24 m do 0, 25 and 50 at 100; a 15 m fall holding forward rolls with no damage; no roll standing still.
+- [ ] Sneak: crouched walking 50% faster at 100 (not encumbered); a dagger sneak attack about 1.5x the Sneak 0 one, 5
+      experience once per creature per 5 minutes, none on a tame; Vanish at 75 makes a chasing greydwarf give up,
+      "Vanished", not again for 60 s, never a boss.
+- [ ] Swim: Wet counts down from half its time at 100; out of stamina, no drowning hit for 3 s, then about half; floating
+      items pulled from about 4 m while swimming, 2 m on land.
+- [ ] Ride: a ridden lox gallops about 15% faster at 100 and takes about 25% less damage; dismounting ends both.
+- [ ] Dodge: Long Roll tip shows the last roll (about 0.41 s, 0.53 s with it); Counter at 50 ("Counter!", +25% on every
+      target of the first swing); Heavy Roll at 75 rolls over-encumbered for twice the stamina.
+- [ ] Crafting at 50: a bronze sword from the workbench shows "Maker's Mark: +12.5% durability", starts full, keeps it
+      in a chest, on the ground and with another player; a wood wall at 100 has +25% health after a reload (ships
+      unchanged); about 1 in 10 crafts at 100 gives a material back ("Thrifty"), never when building; Journeyman at 75
+      shows workbench level 2 as 3 and allows known level-3 recipes and upgrades.
+- [ ] Catch Up: die at Run 30, the page shows "Catching up: x2 until level 30" and running gains twice the experience
+      until 30; Swords 40 and Axes 10 shows "Weapon Switch: +50% experience" on Axes.
+- [ ] Weapon milestones at 50 (49 unchanged): Edge x2.5 on a staggered greydwarf, Bleed poison on a boar (none on a
+      skeleton), Crush staggers sooner, Sweep pushes further, thrown spears +25%, Rend climbs to +25%, fists +50%,
+      40 bow shots use about 30 arrows, a crossbow reload survives a sprint, eitr refills 25% faster holding a staff,
+      Blood Magic health costs 25% less, a shield you cast trains you when creatures hit it.
+- [ ] DevBridge: read the Staff of Protection shield's `m_levelUpSkillOnBreak` ("Staff_shield").
+- [ ] With FeastMaster's Jump Cost and Encumbered Cost changed: `m_jumpStaminaUsage` and `m_encumberedStaminaDrain`
+      read their prefab values again after jumping and walking over-encumbered.
+- [ ] Every skill shows its own icon in the skills window and in level-up messages.
+- [ ] **Dedicated server with two clients:** each player's perks follow their own levels; A's sneak attack, counter and
+      weapon milestones on creatures B owns apply; A's Vanish makes a creature B owns lose track of A, not of B; A rides
+      a lox B owned and the perks follow A; A casts a shield on B and creatures hitting B train A; B sees A's landing
+      roll and heavy roll; B sees and damages A's wall at its raised health, also after a server restart; nothing in
+      either client log or the server log.
+
 ## Status (2026-09-27)
 
 0.1.0 released to Thunderstore 2026-09-27 (tag GrindstoneSkills-v0.1.0), before any in-game test. Every feature is

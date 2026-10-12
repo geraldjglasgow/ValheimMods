@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0
+
+- Every remaining game skill grows perks: Running, Jumping, Sneaking, Swimming, Dodging, Riding and Crafting, each with its own switch.
+- Weapons: a skill behind your best weapon skill trains faster; each weapon skill gets a trait at 50.
+- `Catch Up`: a skill below its best level trains twice as fast until it is back.
+- Blood Magic trains when a cast shield absorbs damage; crossbow reloads pause instead of restarting.
+- Icons for every game skill.
+
 ## 0.17.0
 
 - The skills window lists skills in the game's order again.

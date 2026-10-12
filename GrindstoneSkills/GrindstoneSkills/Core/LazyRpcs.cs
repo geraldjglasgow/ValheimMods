@@ -5,7 +5,7 @@ using HarmonyLib;
 namespace GrindstoneSkills
 {
     /// <summary>
-    /// GrindstoneSkills' RPCs on the game's most numerous objects (plants, pickables, chunked rocks, tameables), registered on an
+    /// GrindstoneSkills' RPCs on the game's most numerous objects (plants, pickables, chunked rocks, tameables, monsters), registered on an
     /// object's view when the first one arrives for it rather than on every one that wakes. Thousands of those wake on
     /// every machine, a dedicated server included, and almost none ever receives one; a registration each was a closure,
     /// a handler and a dictionary entry per object for nothing.
@@ -26,6 +26,7 @@ namespace GrindstoneSkills
             { Keys.RpcFertilize.GetStableHashCode(), PlantRpcs.RegisterOn },
             { Keys.RpcCleanStrike.GetStableHashCode(), CleanStrikeMarks.RegisterOn },
             { Keys.RpcPet.GetStableHashCode(), Petting.RegisterOn },
+            { Keys.RpcVanish.GetStableHashCode(), VanishRpc.RegisterOn },
         };
 
         /// <summary>Whether the view already has a handler for this RPC.</summary>

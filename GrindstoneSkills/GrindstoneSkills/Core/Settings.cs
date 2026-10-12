@@ -32,6 +32,7 @@ namespace GrindstoneSkills
             ForagingSettings.Initialize(config);
             FishingSettings.Initialize(config);
             FarmingSettings.Initialize(config);
+            GameSkillSettings.Initialize(config);
         }
 
         /// <summary>A range from 0 to the given maximum, for percent and multiplier settings.</summary>
