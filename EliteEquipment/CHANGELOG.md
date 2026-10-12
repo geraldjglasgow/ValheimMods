@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Fixed: the Gnarled Wand, Spell: Hearthsong and Dandelion Mash can be crafted at the workbench (`Wands and Spells` on).
+
 ## 0.3.0
 
 - Shields: Wood, Silver, Black Metal and Flametal Bucklers, a Bronze Shield, Silver and Carapace Tower Shields (`Shields`).

@@ -8,7 +8,7 @@ namespace EliteEquipment.Casters
 {
     /// <summary>
     /// A recipe per caster item, beside the game item it copies (same station, station level, repair station and order),
-    /// costing its own materials (<see cref="CasterGear"/>); the spell items with a recipe (Hearthsong) beside the club.
+    /// costing its own materials (<see cref="CasterGear"/>); the spell items with a recipe (Hearthsong) beside the wand's (the flint axe).
     /// In every database the game builds or copies once the items exist. Enabled while the switch is on and the game's own
     /// recipe is; an item whose game recipe or station is missing is never enabled. A recipe's cost is written once, when
     /// it is made (EliteEquipment's boots keep the Deerhide Trousers' whole cost and swap in four fifths while split), and

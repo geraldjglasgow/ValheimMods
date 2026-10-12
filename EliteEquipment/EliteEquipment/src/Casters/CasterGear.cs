@@ -69,7 +69,7 @@ namespace EliteEquipment.Casters
         public static readonly GearPiece Wand = new GearPiece
         {
             Prefab = "EE_Wand_Meadows", Base = "Club", Bundle = "ee_wand_meadows", Asset = "ee_wand_meadows",
-            Word = "ee_wand_meadows", Name = "Gnarled Wand", Eitr = 10f, HealPower = 15f, Bolt = 6f, RecipeBeside = "Club",
+            Word = "ee_wand_meadows", Name = "Gnarled Wand", Eitr = 10f, HealPower = 15f, Bolt = 6f, RecipeBeside = "AxeFlint",
             Description = "A crooked branch with a bead of amber resin, holding two spells. Left mouse fires a small spirit bolt " +
                 "for eitr (hold to charge it, up to +30% damage at 3 s); right mouse casts the first spell, right mouse held " +
                 "and left mouse the second. A caster does not block: right mouse held and jump blinks. Set the spells with the " +

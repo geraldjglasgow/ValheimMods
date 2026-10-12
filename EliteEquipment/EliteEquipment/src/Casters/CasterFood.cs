@@ -41,8 +41,8 @@ namespace EliteEquipment.Casters
             Word = "ee_food_dandelionmash", Name = "Dandelion Mash",
             Description = "Dandelion greens and flowers mashed with honey and mushroom. Little to fill you, but eitr for the wand.",
             Health = 12f, Stamina = 6f, Eitr = 35f, Seconds = 1500f, Regen = 1f,
-            // The workbench, as the club is made: the Meadows have no cauldron yet.
-            RecipeBeside = "Club",
+            // The workbench, beside the flint axe (the club is made by hand, at no station): the Meadows have no cauldron yet.
+            RecipeBeside = "AxeFlint",
             Cost = new[] { new GearCost("Dandelion", 3, 0), new GearCost("Honey", 1, 0), new GearCost("Mushroom", 1, 0) },
         };
 
