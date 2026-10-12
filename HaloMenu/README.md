@@ -37,7 +37,7 @@ Needed on each client only. Install with r2modman or the Thunderstore app, or pu
 sections. Every setting is described in the file and applies the next time a ring opens, no restart.
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

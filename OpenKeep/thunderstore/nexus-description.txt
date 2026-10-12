@@ -75,7 +75,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 BepInEx/config/milkyteam.openkeep.cfg and seven OpenKeep.*.yml files. Every setting is described in the file and applies without a restart; the server's values bind every player. Console: [b]openkeep help[/b].
 
 [size=4][b]Links[/b][/size]
-Discord: [url=https://discord.gg/DrFUyfuXzT]discord.gg/DrFUyfuXzT[/url]
+Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]
 Bugs and ideas: [url=https://github.com/geraldjglasgow/ValheimMods/issues]github.com/geraldjglasgow/ValheimMods/issues[/url] (name the mod and version). Also on Thunderstore as MilkyTeam/OpenKeep. Tips: [url=https://ko-fi.com/milkeyman]ko-fi.com/milkeyman[/url]. Licence: GPL-3.0.
 
 [size=4][b]Shout outs[/b][/size]

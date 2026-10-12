@@ -35,7 +35,7 @@ files are not read.
 values bind every player (`Lock Configuration`). The Wiki tab has the details.
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

@@ -41,7 +41,7 @@ Needed on the server and every client, with GrindstoneSkills. Install with r2mod
 apply without a restart, and the server's values bind every player (`Lock Configuration`).
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 

@@ -34,7 +34,7 @@ ValheimMods/
 Beside this repository, in `..\ValheimAssets` (its own git repository, moved out of here on 2026-10-02 when it was
 `AssetWorkshop`): the asset workshop - 3D assets, effects and sounds from scripts, built to its codex (the game's art,
 measured). Its assets sit in `Assets\<category>\<family>\<name>` (Creatures, Weapons, Gear, ...), its tools in `Tools\`,
-the codex in `Reference\Codex`; its `README.md` has the layout.
+the codex in `Reference\Codex`; its `README.md` has the layout and indexes the guides in `Documentation\Guides`.
 
 ### The mods
 
@@ -273,8 +273,10 @@ While it exists, mods are developed black-box, the way Elite Creatures Reborn wa
   `Reference/Codex/` there (the game's own art measured: budgets, paint, palettes, shaders, rigs, effects, sounds;
   `look.md` first) from a filled-in `Reference/Codex/BRIEF.md`, then checked with the style check and a lineup beside
   the game's own. Build with `..\ValheimAssets\build.ps1 -Asset <name>` (an asset is found by its folder name wherever
-  it sits under `Assets`) and check a model by reading its `out\preview.png` and `out\lineup\`. The workshop's
-  `README.md` has the conventions and what is not built yet.
+  it sits under `Assets`) and check a model by reading its `out\preview.png` and `out\lineup\sheet.png` (both small;
+  the full-size views only for detail). The workshop's `README.md` indexes its guides (`Documentation\Guides`, the
+  conventions in `making-an-asset.md`); read only the guide for the job. Keeping asset work cheap in tokens: the
+  `valheim-asset` skill, "Keep token use low".
 - Test in the running game through `DevBridge` (here installed in `LocalTesting` only): once the user has started the
   profile, `curl -s http://127.0.0.1:7780/help` lists endpoints for screenshots, the UI tree, clicks, keys, mouse,
   console commands, the log, reflection and ZDOs. `DevBridge/REFERENCE.md` has the test loop and the limits. A rebuilt

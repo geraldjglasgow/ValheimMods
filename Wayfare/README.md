@@ -48,7 +48,7 @@ values bind every player, display settings stay your own. Console: `charter stat
 your settings.
 
 ## Links
-Discord: https://discord.gg/DrFUyfuXzT
+Discord: https://discord.gg/Q2sMPGQ4T3
 
 Bugs and ideas: https://github.com/geraldjglasgow/ValheimMods/issues (name the mod and version). Licence: GPL-3.0.
 
