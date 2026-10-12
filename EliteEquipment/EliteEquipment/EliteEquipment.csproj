@@ -6,9 +6,9 @@
     <RootNamespace>EliteEquipment</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Product>EliteEquipment</Product>
-    <Description>EliteEquipment: more from the game's own equipment, starting with boots split from the leggings</Description>
+    <Description>EliteEquipment: boots split from the leggings, new shields and weapons, and a caster class</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DebugType>none</DebugType>
@@ -45,6 +45,8 @@
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
     <!-- EliteCraftingLink: the worn pair as an EliteCrafting equipment provider, so inscriptions on boots count -->
     <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
+    <!-- LocalEffects: the casters' cast and heal effects, local cosmetic copies of the game's -->
+    <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -92,6 +94,10 @@
       <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>$(ManagedPath)\UnityEngine.AudioModule.dll</HintPath>
       <Private>false</Private>
@@ -129,6 +135,14 @@
     <!-- Their icons (NativeSplit_v001/Icons/v001/64): EliteEquipment.assets.boots.boots_<set>.png and pants_<set>.png; and
          the rag shoes' own paint (Revisions/Rag_v002): EliteEquipment.assets.boots.paint_boots_rag.png -->
     <EmbeddedResource Include="assets\boots\*.png" LogicalName="EliteEquipment.assets.boots.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The workshop's bundles (ValheimAssets), per platform: EliteEquipment.assets.<name>.windows and .linux, the names
+         EmbeddedBundle.Load(assembly, name) looks for. Shields: Assets/Gear/Shields (ee_shields). Weapons: Assets/Weapons/*
+         and WeaponIcons (ee_weapons). Casters: Assets/Weapons/Wands, Assets/Gear/Foci and SeerRobes, the spells, effects,
+         wand clips and eitr foods (ee_wand_*, ee_focus_*, ee_seer_*, ee_spells_*, ee_casterfx_*, ee_casteranim, ee_food_*) -->
+    <EmbeddedResource Include="assets\bundles\ee_*.windows;assets\bundles\ee_*.linux" LogicalName="EliteEquipment.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

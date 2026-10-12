@@ -1,8 +1,12 @@
 # CLAUDE.md - EliteEquipment
 
-More from the game's own equipment, version 0.1.0. Its one feature so far is Boots: the game's 20 player leggings
-split into trousers and boots worn on the feet, 80/20 stats and cost. Boots were built as OpenKeep's section 16
-(2026-10-07) and moved here on 2026-10-08 (see "Why its own mod"). This file is the code map, the patched methods, the
+More from the game's own equipment. Four sections: 1 Boots (the game's 20 player leggings split into trousers and boots
+worn on the feet, 80/20 stats and cost; built as OpenKeep's section 16 on 2026-10-07, moved here on 2026-10-08, see "Why
+its own mod"), 2 Shields (new bucklers, round and tower shields, the game's shield icons remade), 3 Weapons (22 new
+weapons filling the game's gaps, the game's weapon icons remade) and 4 Casters (wands, foci, seer's robes, spells and
+eitr foods; off by default). Shields, Weapons and Casters were tried and balanced as AssetLab benches and moved in on
+2026-10-12; each keeps its own notes beside its code (`src/Shields/SHIELDS.md`, `src/Weapons/WEAPONS.md`,
+`src/Casters/CASTERS.md`, the casters' design in `features/casters.md`): numbers, recipes, models, holds and checklists. This file is the code map, the patched methods, the
 decisions and the in-game test checklist; the README is the store page.
 
 Rules that still apply to every change:
@@ -24,11 +28,13 @@ Rules that still apply to every change:
 
 ```
 EliteEquipment/EliteEquipment/src/
-  Plugin.cs                 entry: Lock Configuration, BootsModule.Initialize, patches per class, Synced.Finish,
-                            Guard.Install last
+  Plugin.cs                 entry: Lock Configuration, each module's Initialize (Boots, Shields, Weapons, Casters),
+                            patches per class, Synced.Finish, Guard.Install last
   Core/
     Language.cs             the ee_* words, handed to the game's localization (Localization.SetupLanguage postfix)
     InventoryChanges.cs     the count of every Inventory.Changed (prefix); WornBoots keeps its answer on it
+    RecipeBeside.cs         a recipe placed beside a game item's (its station, level, upgrade kit); Shields, Weapons
+    GameIcons.cs            the game's own items' icons swapped for remade ones and back (ItemCopies); Shields, Weapons
   Boots/                    section 1, Boots: the game's 20 leggings split into leggings and boots
     BootsModule.cs, BootsSettings.cs   1. Boots / Separate Boots (on by default), the ee_boots_* words
     BootSet.cs, BootSets.cs the 20 sets: key (the split's too), game leggings, EE_Boots_<Key>, name token; lookups
@@ -91,6 +97,18 @@ EliteEquipment/EliteEquipment/src/
     ClothColliders.cs       destroys the colliders a cloth made on the bones with its holder
     BodyEnvelope.cs         the body's hips and legs as seen from the hips' axis: reach per height and direction
     BoneBlend.cs            skin weights mixed, the four strongest kept
+  Shields/                  section 2, Shields (SHIELDS.md): bucklers for the Meadows, Mountains, Plains and Ashlands, the
+                            Bronze Shield, Silver and Carapace Tower Shields; copies of a game shield wearing a workshop
+                            model (bundle ee_shields), recipes beside the biome's shield, the game's shield icons remade
+  Weapons/                  section 3, Weapons (WEAPONS.md): 22 weapons (greatswords, dual axes, claws, daggers, atgeirs,
+                            axes, a greataxe, a bow, a spear); copies of a game weapon wearing a workshop model (bundle
+                            ee_weapons; dual axes and claws skinned to the hand at runtime, HandSkin), recipes beside a
+                            same-tier game weapon, the game's weapon icons of these lines remade
+  Casters/                  section 4, Casters (CASTERS.md, features/casters.md): wands (bolt, two spell slots, blink),
+                            foci, seer's robes per biome (trousers split by Boots' AddOwn, CasterBoots), spells learned from
+                            scrolls (Eikthyr drops one), the Spellbook, heals and party buffs sent to the players near
+                            (NearbyCast), eitr foods; bundles ee_wand_*, ee_focus_*, ee_seer_*, ee_spells_meadows,
+                            ee_casterfx_meadows, ee_casteranim, ee_food_*
 EliteEquipment/EliteEquipment/assets/boots/
                             native_split.txt: where the game's leggings are cut into trousers and boots (ValheimAssets
                             Assets/Gear/SeparatedLegArmor/NativeSplit_v001, coordinates only); the trousers' and boots'
@@ -101,11 +119,15 @@ EliteEquipment/EliteEquipment/assets/boots/
                             Assets/Gear/FittedLegs/ee_fitted_legs/Icons/64) and the
                             rag shoes' paint paint_boots_rag.png (256 px, Revisions/Rag_v002); embedded as
                             EliteEquipment.assets.boots.<file>
+EliteEquipment/EliteEquipment/assets/bundles/
+                            the workshop bundles of Shields, Weapons and Casters (ValheimAssets builds, .windows and
+                            .linux), embedded as EliteEquipment.assets.<name>.<platform>
 ```
 
 Libraries merged: SyncedConfig (with Charter, ConfigReload, YamlConfig, YamlDotNet), PatchGuard, ItemCopies (the split
 stats and icons into the prefab and every live copy), PlateColumn (`EmbeddedSprite`), BundlePrefabs (`PrefabBench`,
-`SpriteCrop`, `TexturePixels`: `ReadLinear` added for the fitted looks' normal and metal maps) and EliteCraftingLink.
+`SpriteCrop`, `TexturePixels`: `ReadLinear` added for the fitted looks' normal and metal maps; `EmbeddedBundle`,
+`NetPrefabs`, `GameMaterials` for the new items), EliteCraftingLink and LocalEffects (the casters' effects).
 The game's `MagicaClothV2.dll` is referenced (not merged) for the chest cloth's simulation.
 
 ## Patched game methods
@@ -124,12 +146,15 @@ postfix `Humanoid.SetupVisEquipment` and `VisEquipment.UpdateEquipmentVisuals` (
 leg paint and the fitted leggings' check on every client); postfix `VisEquipment.SetLegEquipped` (private: fitted
 leggings put on or taken off when the leggings change); postfix `VisEquipment.SetChestEquipped` (private: a new chest
 drawn in over fitted leggings at once). Core: prefix `Inventory.Changed` (private: the change count), postfix
-`Localization.SetupLanguage` (the words).
+`Localization.SetupLanguage` (the words). Shields, Weapons and Casters: their patches are listed in their notes (each
+builds its items in prefixes on `ZNetScene.Awake`, `ObjectDB.Awake` and `CopyOtherDB`, the casters' at `Priority.High` so
+the seer's trousers are in the lists before the boots look for them).
 
 ## Config sections and keys
 
 `General` (`Lock Configuration` true), `1. Boots` (`Separate Boots` true, synced; PackPanel reads this entry by section
-and key). Meanings are in each entry's description in the .cfg.
+and key), `2. Shields` (`Shields` true), `3. Weapons` (`Weapons` true), `4. Casters` (`Wands and Spells` false; it was
+`3. Casters` while an AssetLab bench), all synced. Meanings are in each entry's description in the .cfg.
 
 ## Network and file names
 
@@ -148,6 +173,13 @@ and key). Meanings are in each entry's description in the .cfg.
   (a SkinnedMeshRenderer, mesh `<chest mesh>_ee_cloth`) under the player's `Visual`, its MagicaCloth on a child
   `EE_ChestCloth_Cloth`, its colliders `EE_ChestClothThigh` under the thigh bones, paint map `EE_ChestClothPaint`; all per
   client, nothing networked or saved.
+
+- Shields `EE_Buckler<Tier>`, `EE_ShieldBronze`, `EE_Tower<Tier>`; weapons `EE_` + the asset name without `ee_`
+  (`EE_greatsword_bronze`; WEAPONS.md lists every asset), a thrown spear's projectile `EE_projectile_` + the same; casters `EE_Wand_<Biome>`, `EE_Focus_<Biome>`, `EE_Seer_<Biome>_<Piece>`, `EE_Spell_<Name>`, `EE_Food_<Name>`,
+  `EE_WandBolt`, status effects `EE_SE_*`. Words `$ee_<asset>` and `_desc`, `$ee_wand_*`, `$ee_focus_*`, `$ee_seer_*`,
+  `$ee_spell*`. Player custom data `EliteEquipment.spells` (known spells), item custom data `EliteEquipment.loadout` (a
+  wand's two slots); routed RPC `EliteEquipment_CasterFx` (effects, to the players near). Every item is a networked
+  prefab registered on every peer.
 
 ## Decisions
 
@@ -373,7 +405,7 @@ and key). Meanings are in each entry's description in the .cfg.
 
 Never run in game as EliteEquipment (the boots ran in game as OpenKeep's section 16). With PackPanel for the Feet slot:
 
-1. Log shows `Loading [EliteEquipment 0.2.0]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
+1. Log shows `Loading [EliteEquipment 0.3.0]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
    Separate Boots = true`. With OpenKeep too, neither log mentions the other's boots.
 2. At a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron Boots 4 at the forge (the
    game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.

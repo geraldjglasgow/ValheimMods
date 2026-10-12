@@ -4,6 +4,9 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using EliteEquipment.Boots;
+using EliteEquipment.Casters;
+using EliteEquipment.Shields;
+using EliteEquipment.Weapons;
 using HarmonyLib;
 using PatchGuard;
 using SyncedConfig;
@@ -20,7 +23,7 @@ namespace EliteEquipment
     {
         public const string PluginGuid = "milkyteam.eliteequipment";
         public const string PluginName = "EliteEquipment";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.3.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -33,6 +36,9 @@ namespace EliteEquipment
             LockConfiguration = Synced.BindLocking("General", "Lock Configuration", true,
                 "[Server Only] Clients cannot change synced settings while connected to a server that has this on.");
             BootsModule.Initialize(Synced);
+            ShieldsModule.Initialize(Synced);
+            WeaponsModule.Initialize(Synced);
+            CastersModule.Initialize(Synced);
 
             Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);

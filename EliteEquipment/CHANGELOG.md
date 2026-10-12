@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- Shields: Wood, Silver, Black Metal and Flametal Bucklers, a Bronze Shield, Silver and Carapace Tower Shields (`Shields`).
+- Weapons: 22 new greatswords, dual axes, claws, daggers, atgeirs, axes, a greataxe, a bow and a spear (`Weapons`).
+- New icons for the game's own shields and for its weapons in those lines.
+- Casters: wands, a focus, seer's robes for every biome, three spells and twelve eitr foods (`Wands and Spells`, off by default).
+- Seer's trousers split into trousers and boots like every leggings.
+
 ## 0.2.0
 
 - Boots: leggings from other mods can bring their own boots to split into.

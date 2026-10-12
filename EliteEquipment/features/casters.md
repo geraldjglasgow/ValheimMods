@@ -1,7 +1,7 @@
 # Casters: wands, robes and spells
 
 A healer, buffer and caster line for EliteEquipment, from the Meadows to the Ashlands. Designed with the user on
-2026-10-09; the Meadows tier is built as the AssetLab bench `Casters` (`AssetLab/AssetLab/Casters/CASTERS.md`), the
+2026-10-09; the Meadows tier was built as an AssetLab bench and moved into EliteEquipment on 2026-10-12 (`EliteEquipment/src/Casters/CASTERS.md`), the
 rest is not. The shape and names are decided; the numbers are to be tuned in game.
 
 ## The idea in one paragraph
@@ -236,7 +236,7 @@ The Spellbook window and the spell bar use the game's own UI look (only PackPane
 
 ## Settings
 
-One switch, `3. Casters / Wands and Spells` (off by default, user 2026-10-09; synced, locked by `Lock Configuration`). All numbers above
+One switch, `4. Casters / Wands and Spells` (off by default, user 2026-10-09; synced, locked by `Lock Configuration`). All numbers above
 are constants in code, named in the setting's description where a player would ask.
 
 ## Names
@@ -249,7 +249,7 @@ Prefabs `EE_Wand_<Tier>`, `EE_Focus_<Tier>`, `EE_Seer_<Tier>_<Piece>`, spell ite
 7 wands, 7 foci, 7 robe sets (hood, robe, trousers, boots), one spell item model in 7 tier colours, 22 spell icons, and
 effects: heal glow, chant ring, ward bubble, wisp, roots, frost cone, sanctuary dome. Game effects first (the healing
 mead, the Staff of Protection bubble, the wisp, the frost staff) through LocalEffects; sounds from the game's clips.
-Benches in AssetLab until release.
+Built in AssetLab, moved into EliteEquipment on 2026-10-12.
 
 ## Phases
 
@@ -270,9 +270,8 @@ mod; one focus per biome; the names stand, the foci's included.
 ## Meadows: the build contract (2026-10-09)
 
 The user: "everything will be custom made, I want to start with medows first completely". Built as an AssetLab bench
-(`AssetLab/AssetLab/Casters/`, namespace `EliteEquipment.Casters`, EliteEquipment's section `3. Casters`; the bucklers
-bench is section 2) until the user releases it in EliteEquipment. Models, icons and effects are made in
-`..\ValheimAssets`; sounds are the game's own clips. The names below must not move: the bench code is written from them
+(namespace `EliteEquipment.Casters`), moved into EliteEquipment on 2026-10-12 (`src/Casters/`, section `4. Casters`). Models, icons and effects are made in
+`..\ValheimAssets`; sounds are the game's own clips. The names below must not move: the code is written from them
 at the same time as the models.
 
 ### Bundles and what each holds
