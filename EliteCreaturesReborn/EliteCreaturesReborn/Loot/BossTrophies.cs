@@ -27,9 +27,9 @@ namespace EliteCreaturesReborn.Loot
         /// <summary>Nothing held: not a boss, or no trophy in its table left to this rule.</summary>
         public static readonly BossTrophies None = new BossTrophies(new List<GameObject>(), 0);
 
-        /// <summary>Metres from the boss within which a player earns a head of their own. The count is taken on the
-        /// boss's owner, who is in the fight, so every player that close is loaded there.</summary>
-        private const float PlayerRange = 100f;
+        /// <summary>Metres from the boss within which a player earns a head (and a reward share) of their own. The count
+        /// is taken on the boss's owner, who is in the fight, so every player that close is loaded there.</summary>
+        internal const float PlayerRange = 100f;
 
         private readonly List<GameObject> _heads;
         private readonly int _count;

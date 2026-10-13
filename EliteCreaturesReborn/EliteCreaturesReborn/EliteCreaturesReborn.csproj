@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesReborn</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>3.24.0</Version>
+    <Version>3.25.0</Version>
     <Product>Elite Creatures Reborn</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -57,6 +57,14 @@
     <!-- The Raiders Chest's model and icon (ValheimAssets Assets/Props/RaidersChest), one bundle per platform: Windows
          for clients, Linux for dedicated servers. Loaded by BundlePrefabs' EmbeddedBundle. -->
     <EmbeddedResource Include="assets\bundles\ecr_raiders_chest.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
+    <!-- Hel's hall (features/arena.md section 1; ValheimAssets Assets/Locations/HelHall): floor, walls, throne and
+         ceiling, one bundle each per platform, built on every peer by Arena/Hall/HallBundles. -->
+    <EmbeddedResource Include="assets\bundles\ecr_helhall_*.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
+    <!-- Hel on her throne and her spear (ValheimAssets Assets/Creatures/Hel/ecp_hel, bundle ecr_hel). -->
+    <EmbeddedResource Include="assets\bundles\ecr_hel.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
+    <!-- Helgrind, Hel's gate (ValheimAssets Assets/Props/HelGate/ecr_helgate, bundle ecr_helgate) and its swirl
+         (Assets/Effects/ecr_helgate_swirl, bundle ecr_helgatefx), built on every peer by Arena/Gate. -->
+    <EmbeddedResource Include="assets\bundles\ecr_helgate*.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

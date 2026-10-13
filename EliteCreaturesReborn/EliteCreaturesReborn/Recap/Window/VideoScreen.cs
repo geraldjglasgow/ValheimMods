@@ -53,7 +53,7 @@ namespace EliteCreaturesReborn.Recap.Window
         {
             bool video = recap != null && recap.HasVideo;
             _image.enabled = video;
-            _message.text = recap == null ? "" : video ? "" : "No video of this death: recording was off or not possible.";
+            _message.text = recap == null ? "" : video ? "" : "No video of this death: recording was off (Record deaths in the .cfg) or not possible.";
         }
     }
 }

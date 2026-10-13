@@ -71,7 +71,7 @@ game treats it like its own windows: free cursor, no attacks or hotbar, no camer
 # 5. Configuration
 
 `10 - Death Recap (per player)` in the .cfg, all client side and never locked (they change only what this player
-records and sees): `Record deaths` (on), `Recap key` (F10), `Death notice` (on), `Deaths kept` (5),
+records and sees): `Record deaths` (off), `Recap key` (F10), `Death notice` (on), `Deaths kept` (5),
 `Seconds before death` (15), `Video frames per second` (15), `Video height` (360).
 
 Judgement calls, open to argument: F10 because EarthWright already uses F6 to F9; two seconds after the death so

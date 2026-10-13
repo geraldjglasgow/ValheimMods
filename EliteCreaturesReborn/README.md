@@ -7,60 +7,60 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Stars: up to eight on Extreme, or off for another mod's.
 - World tiers: each boss's first defeat makes stars and mutations more common.
 - Mutations: one per creature, named on the nameplate (below).
-- Boss aspects: one per fight (below); each defeat makes a boss likelier to have stars next time.
+- Boss aspects: one per fight (below); bosses gain stars with each defeat.
 - Breeding: tamed young inherit mutations and stars.
-- Loot: four drop modes, rules per creature; bosses drop a trophy for every player and their biome's material.
+- Loot: four drop modes, rules per creature; bosses drop trophies and materials for every player.
 - Boss damage board: who did how much.
-- Boss hints: bosses point the way to the traders and the ancient forge.
+- Boss hints: bosses point to the traders and the ancient forge.
 - Death recap: `F10` replays the seconds before each death.
 - Respawning: cleared camps, dungeons and chests can refill (off by default).
-- Raids: fill the Raiders Chest with gold to call a raid on your base; kill every raider to win it back with more.
-- Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack (its custom creatures take mutations and aspects).
+- Raids: stake gold in the Raiders Chest to call a raid and win it back with more.
+- Hel's Arena (off by default): through Helgrind, Hel's gate, endless waves and a boss every tenth. Subject to change without warning: it works and is tested, but its final shape is still being decided.
+- Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 
 ## Mutations
 - Mad: far faster, half health.
 - Bloated: double health, explodes after it dies.
-- Cloaked: invisible until you are within 10 m.
+- Cloaked: invisible beyond 10 m.
 - Splintering: splits into two weaker copies when killed.
-- Leeching: regenerates and heals from the damage it deals.
+- Leeching: regenerates and heals by hitting.
 - Warding: reflects part of each hit and knocks you back.
-- Plated: armoured while healthy, hits harder as the armour breaks.
+- Plated: armoured while healthy, hitting harder as it breaks.
 - Miasmic: trails poison clouds.
-- Devouring: eats weaker creatures and keeps their health and damage.
-- Thieving: steals an item each hit; kill it to get them back.
+- Devouring: eats weaker creatures and grows stronger.
+- Thieving: steals items; kill it to get them back.
 - Gilded: runs from you; triple loot and a coin purse.
 - Blinking: reappears behind you every 30 seconds.
-- Relentless: chases you up to 150 m; sneaking does not hide you.
+- Relentless: chases you up to 150 m, sneaking or not.
 - Juggernaut: never staggers or is knocked back.
-- Screecher: a big hit makes it shriek, deafening you and stopping magic.
-- Frostbound: a chilling aura and slippery ice trails; frost heals it.
-- Mudbound: leaves slowing mud where it walks.
-- Corrodent: wears your armour down three times as fast.
+- Screecher: shrieks when hit hard, deafening you and stopping magic.
+- Frostbound: chilling aura, slippery ice trails; frost heals it.
+- Mudbound: leaves slowing mud.
+- Corrodent: wears armour down three times as fast.
 - Cloning: leaves a harmless decoy and fights on unseen.
-- Flamebound: leaves burning ground that sets you on fire.
-- Piercing, Howling and Binding (off by default): hits ignore 15% of your armour; calls nearby creatures to fight you;
-  leaves roots that hold you for a second.
+- Flamebound: leaves burning ground.
+- Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots that hold you.
 
 ## Boss aspects
-Shown at the altar before you offer. About one fight in five has none; every aspect pays extra loot.
+Shown at the altar; about one fight in five has none, and each pays extra loot.
 - Reflective: part of each hit comes back to you.
 - Shielded: takes less damage from arrows and bolts.
 - Mending: regenerates during the fight.
-- Summoner: calls creatures of its biome as it loses health.
+- Summoner: calls its biome's creatures as it loses health.
 - Elementalist / Enraged: more elemental / physical damage.
 - Twin: two bosses sharing one health pool.
 - Tethered: two linked bosses, faster as their health drifts apart.
 - Phantom: splits into copies and hides among them.
-- Adaptive: resists whichever damage type hits it most.
+- Adaptive: resists the damage type hitting it most.
 - Fixated: marks one player and hits them harder.
 - Stormbound: lightning strikes circles under every player.
 - Gravitic: drags everyone in, then slams.
-- Colossal: bigger and tougher; its shockwaves knock you down.
+- Colossal: bigger, tougher, with knockdown shockwaves.
 - Brutal: heavy blows throw you 20 m.
-- Nightfall: a storming night with tornadoes that hunt you.
-- Echoing: a ghost repeats its every move 15 seconds later.
+- Nightfall: a stormy night with hunting tornadoes.
+- Echoing: a ghost repeats its moves 15 seconds later.
 - Portalbound: the Elder and Bonemass throw through portals.
-- Bountiful: two more aspects at once, and all their loot.
+- Bountiful: two more aspects, and all their loot.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put
@@ -68,7 +68,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 
 ## Configuration
 `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` and `BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's rules bind every player.
-Console: `elite tier`, `damage` and `deaths` for everyone, the other `elite` commands for admins. In detail:
+Console: `elite tier`, `damage`, `deaths` for everyone; other `elite` commands for admins. Details:
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 
 ## Links

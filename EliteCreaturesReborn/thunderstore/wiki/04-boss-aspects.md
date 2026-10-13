@@ -82,12 +82,13 @@ A Twin pair counts once; of a Tethered pair, the last to fall counts. The count 
 
 ## Rewards
 
-Each boss also drops a material from its biome: one roll for the plain fight plus one per star, times the aspect's
-loot multiplier and the loot settings' multipliers. The altar shows what the fight on the bowl pays.
+Each boss also drops a material from its biome: one roll for the plain fight plus one per star, for every player
+within 100 m of it, times the aspect's loot multiplier and the loot settings' multipliers, up to 100 per boss. The
+altar shows what the fight on the bowl pays each player.
 
 | Boss | Each roll |
 | --- | --- |
-| Eikthyr | 20-40 Coins |
+| Eikthyr | 2-4 Flint |
 | The Elder | 5-10 Copper ore |
 | Bonemass | 5-10 Iron scrap |
 | Moder | 5-10 Silver ore |
@@ -95,7 +96,8 @@ loot multiplier and the loot settings' multipliers. The altar shows what the fig
 | The Queen | 5-10 Carapace |
 | Fader | 5-10 Flametal ore |
 
-A three-star Bonemass pays four rolls: 20-40 Iron scrap, 26-52 with Mending. Each Twin pays its own; of a Tethered
+A three-star Bonemass pays four rolls per player: 20-40 Iron scrap alone, 40-80 for two players, 26-52 alone with
+Mending. Each Twin pays its own; of a Tethered
 pair, only the last to fall. For other rewards, set `rewards: false` and add `extra drops` to the boss's `creatures:`
 entry ([Loot and Respawning](wiki:Loot and Respawning)).
 

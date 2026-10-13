@@ -81,7 +81,7 @@ the F5 console opens the recap window any time in a world, alive or dead; Esc or
 - **Deaths**, newest first: a picture of the moment, the killer, the day and the clip's length. Kept until the game
   closes, on your machine only.
 - **Killer and summary**: its mutations, aspect and stars; the damage you took, over how long, by type.
-- **Video** of your own screen: the 15 seconds before the death and 2 after. Play or pause, speeds 0.25x, 0.5x, 1x and
+- **Video** of your own screen, with `Record deaths` on: the 15 seconds before the death and 2 after. Play or pause, speeds 0.25x, 0.5x, 1x and
   2x, and a timeline to drag, marked at every hit and the death; hover it for a preview. Space plays or pauses, the
   arrow keys step one frame.
 - **Hits**: time, who or what, damage by type, health left. Click one to play from just before it.
@@ -90,7 +90,7 @@ Settings, in the section `10 - Death Recap (per player)`:
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
-| Record deaths | true | Record the video; off keeps only the hit list |
+| Record deaths | false | Record the video; off keeps only the hit list |
 | Recap key | F10 | Opens and closes the window |
 | Death notice | true | The line naming the killer after a death |
 | Deaths kept | 5 | Deaths the window keeps (1 to 10) |

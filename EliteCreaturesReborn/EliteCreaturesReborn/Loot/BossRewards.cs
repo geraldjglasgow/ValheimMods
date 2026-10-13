@@ -9,7 +9,8 @@ namespace EliteCreaturesReborn.Loot
     /// <summary>
     /// What a boss pays beyond its own table (`rewards`): its biome's material, so a boss is still worth fighting once its
     /// trophy and key item are spent (a player's suggestion on GitHub, 2026-10-10). One roll of the amount for the plain
-    /// fight and one more per star, times its aspects' loot (a Bountiful boss pays every aspect's) and, while the loot
+    /// fight and one more per star, for every player near the boss (each earns a solo share, as with the trophies; at
+    /// least one), times its aspects' loot (a Bountiful boss pays every aspect's) and, while the loot
     /// rules are on, the global and boss multipliers. Paid in every loot mode, Vanilla included, as a boss's trophies and
     /// aspect are, and added after the engine's own multiply so nothing scales it twice. Each Twin pays its own; of a
     /// Tethered pair only the last to fall (the first drops nothing); a Phantom copy never. A boss with no row here
@@ -35,7 +36,7 @@ namespace EliteCreaturesReborn.Loot
         private static readonly Dictionary<string, Reward> Table =
             new Dictionary<string, Reward>(StringComparer.OrdinalIgnoreCase)
             {
-                ["Eikthyr"] = new Reward("Coins", 20, 40), // the Meadows has no metal: coins for the trader
+                ["Eikthyr"] = new Reward("Flint", 2, 4), // the Meadows has no metal: flint, its scarce early material
                 ["gd_king"] = new Reward("CopperOre", 5, 10),
                 ["Bonemass"] = new Reward("IronScrap", 5, 10),
                 ["Dragon"] = new Reward("SilverOre", 5, 10),
@@ -51,15 +52,17 @@ namespace EliteCreaturesReborn.Loot
             {
                 return;
             }
+            int rolls = (controller.Traits.Stars + 1) * PlayersNear(controller);
             int amount = 0;
-            for (int roll = 0; roll <= controller.Traits.Stars; roll++)
+            for (int roll = 0; roll < rolls; roll++)
             {
                 amount += UnityEngine.Random.Range(reward.Min, reward.Max + 1);
             }
             DropRoller.Add(result, prefab, DropRoller.Scaled(amount, AspectLoot.Factor(controller) * Multiplier(rulesOn)));
         }
 
-        /// <summary>The altar's line for the fight on the bowl, "Reward: 10-20 Iron Scrap", or "" when it pays none.</summary>
+        /// <summary>The altar's line for the fight on the bowl, "Reward: 10-20 Iron Scrap per player", or "" when it pays
+        /// none.</summary>
         public static string AltarLine(string bossPrefab, int stars, float aspectLoot)
         {
             if (!RuleState.Active.Boss.Rewards || !Table.TryGetValue(bossPrefab, out Reward reward)
@@ -71,7 +74,7 @@ namespace EliteCreaturesReborn.Loot
             int rolls = stars + 1;
             int min = DropRoller.Scaled(reward.Min * rolls, factor);
             int max = DropRoller.Scaled(reward.Max * rolls, factor);
-            return $"\n<color=orange>Reward: {min}-{max} {ItemName(prefab)}</color>";
+            return $"\n<color=orange>Reward: {min}-{max} {ItemName(prefab)} per player</color>";
         }
 
         private static bool Pays(EliteController controller, out Reward reward)
@@ -81,6 +84,10 @@ namespace EliteCreaturesReborn.Loot
             return RuleState.Active.Boss.Rewards && boss != null && boss.IsBoss() && !controller.Traits.PhantomCopy
                 && Table.TryGetValue(Utils.GetPrefabName(controller.gameObject), out reward);
         }
+
+        /// <summary>The players sharing the fight: those within a trophy's range of the boss, at least one.</summary>
+        private static int PlayersNear(EliteController controller) =>
+            Mathf.Max(1, Player.GetPlayersInRangeXZ(controller.transform.position, BossTrophies.PlayerRange));
 
         private static float Multiplier(bool rulesOn)
         {

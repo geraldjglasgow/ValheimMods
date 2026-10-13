@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.25.0
+
+- Hel's Arena (`Arena`, section `12 - Arena`, off by default): build Helgrind, Hel's gate, to enter her hall and fight endless waves, a boss every tenth. Subject to change without warning.
+- Commands: `elite arena` (in and out) and `elite arena stop`.
+- Eikthyr's boss reward is 2-4 Flint instead of 20-40 Coins.
+- Boss rewards pay a full share to every player within 100 m of the boss; the altar says "per player".
+- Death recap: the video is off by default (`Record deaths`); the hit list stays. Existing configs keep their value.
+- Update the server and every client together.
+
 ## 3.24.0
 
 - Bosses: each defeat makes that boss likelier to have stars next time (`harder each kill`); the altar shows "Defeated N times".

@@ -15,13 +15,14 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Mutations: one per creature, named and coloured on the nameplate (below).
 [*]Boss aspects: one per fight, shown at the altar with the boss's stars (below); each defeat makes a boss likelier to have stars next time.
 [*]Breeding: tamed young inherit a mutation and stars.
-[*]Loot: four drop modes, rules per creature; bosses drop a trophy for every player and their biome's material.
+[*]Loot: four drop modes, rules per creature; bosses drop trophies and materials for every player.
 [*]Boss damage board: who did how much damage.
 [*]Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir, until you have found them.
 [*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
-[*]Raids: fill the Raiders Chest with gold to call a raid on your base; kill every raider to win it back with more.
-[*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack (its custom creatures take mutations and aspects).
+[*]Raids: stake gold in the Raiders Chest to call a raid and win it back with more.
+[*]Hel's Arena (off by default): through Helgrind, Hel's gate, endless waves and a boss every tenth. Subject to change without warning: it works and is tested, but its final shape is still being decided.
+[*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 [/list]
 
 [size=4][b]Mutations[/b][/size]

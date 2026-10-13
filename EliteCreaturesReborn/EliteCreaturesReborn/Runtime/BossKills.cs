@@ -14,7 +14,8 @@ namespace EliteCreaturesReborn.Runtime
     /// save and sends it to every client, so whoever owns an altar reads the same count without a message of the mod's
     /// own. The dying boss's owner records a kill by asking the server for the next count; the server ignores a line it
     /// already holds, so a Twin pair falling together counts once. The first of a Tethered pair to fall and a Phantom
-    /// copy never count. Counting stops at <see cref="MaxKills"/>, which also bounds the key lines a world ever sees.
+    /// copy never count, nor does a boss of Hel's Trial. Counting stops at <see cref="MaxKills"/>, which also bounds the
+    /// key lines a world ever sees.
     /// </summary>
     public static class BossKills
     {
@@ -60,8 +61,9 @@ namespace EliteCreaturesReborn.Runtime
             }
         }
 
+        // An arena boss (Hel's Trial) never counts: the world's own fights are what lean the next one.
         private static bool Counts(Character victim, CreatureTraits traits, ZDO zdo) =>
-            victim.IsBoss() && !traits.PhantomCopy
+            victim.IsBoss() && !traits.PhantomCopy && !Arena.Trial.ArenaTag.IsArena(zdo)
             && !(traits.HasAspect(Aspect.Tethered) && TetherPair.Standing(AspectStore.GetTether(zdo)));
 
         private static void Write(string bossPrefab)

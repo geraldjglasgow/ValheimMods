@@ -6,8 +6,9 @@ behaviour document they are all drawn from.
 This file covers the mod's console commands and who is allowed to run them. The settings they read and reload are
 `configuration.md`; the access levels are enforced through `server-enforcement.md`.
 
-**Status: partly built.** Seven sub-commands exist: `spawn`, `inspect`, `purge`, `effects`, `reference`, `tier` and
-`raid` (`raids.md`, built 2026-10-10, untested), plus the top-level `damage` (3.9.0, section 1). Three specified ones do not: `pressure`, `zones` and `reload` -
+**Status: partly built.** Eight sub-commands exist: `spawn`, `inspect`, `purge`, `effects`, `reference`, `tier`,
+`raid` (`raids.md`, built 2026-10-10, untested) and `arena` (`arena.md`, built 2026-10-12, untested), plus the
+top-level `damage` (3.9.0, section 1). Three specified ones do not: `pressure`, `zones` and `reload` -
 each blocked on its own feature. **The built names and the specified names disagree**, which is the open decision
 at the end of this file and should be settled before anything else is added.
 
@@ -32,6 +33,7 @@ sub-commands discoverable, and a `help` sub-command lists them.
 | **Reload** | Re-reads the settings and rule files from disk |
 | **Reference** | Writes `creature_reference.yml` - every registered creature, grouped by biome, with its vanilla drop table (`loot.md`) |
 | **Raid** | `elite raid start <coins> [tier]` sounds a raid where the admin stands with that stake and no Raiders Chest, the heat weighed against the tier given (0-6) or else the strongest player within 96 m - the chest's base test and daily wait skipped, the 200 m between raids kept; `elite raid stop` stops the nearest raid within 200 m as holding E on its chest does: every raider dies and drops nothing (`raids.md`) |
+| **Arena** | `elite arena` jumps the admin into Hel's hall at once (no loading screen), keeping where they stood in their own character data, or from the hall back there with the game's loading (to their bed or the world's spawn when nothing was kept); refused on the way in while `Arena` is off or the hall is not built, never on the way out. `elite arena stop` ends the running Hel's Trial as an empty hall does: its creatures vanish dropping nothing, and every player of the trial reads where it ended (`arena.md` sections 2 and 3) |
 
 The separate settings command is `charter`, provided by the workspace library of the same name, with `status`,
 `diff` and `versions` (`server-enforcement.md`). It is not redesigned here.
@@ -83,8 +85,9 @@ The split follows one line: **read-only or world-changing.**
 - **Inspect and Pressure are read-only and safe to open up.** They tell a player about a world they are already
   standing in. Opening them costs a server nothing and makes the mod explain itself to everyone rather than to
   admins.
-- **Summon, Purge and Raid change the world and are not.** Summon creates creatures, Purge deletes them and Raid
-  sends or stops a raid. These are admin tools on any server that locks anything.
+- **Summon, Purge, Raid and Arena change the world and are not.** Summon creates creatures, Purge deletes them, Raid
+  sends or stops a raid, and Arena moves the admin to Hel's hall and back or ends a trial. These are admin tools on
+  any server that locks anything.
 - **Tier is read-only too.** It was once meant to set the tier under a Manual source; the tier is now always
   derived from the world's boss defeats (`world-tiers.md`), so it only reports, and it is open to every player.
 
@@ -114,6 +117,10 @@ sits with the read-only group; a server that dislikes even that can restrict it,
   machine owns it and runs the raid exactly as a Raiders Chest's owner runs its own (`raids.md` section 5); the raid
   then lives in the marker's ZDO and carries on with whoever owns it next. `stop` finds the raid by its host's ZDO and
   asks that host's owner, wherever it is.
+- **`elite arena` runs on the admin's own machine.** The jump is the admin's own player's teleport, and the point to
+  come back to is kept in that player's own custom data (`ecr_arena_return`). `stop` asks the arena core's owner, which
+  runs the trial (`arena.md` section 4): straight to it when the core is loaded on this machine, else through the
+  server, which holds every ZDO and passes the stop on.
 - **Reload re-reads the server's files and re-sends them**, so one admin's reload reaches every connected player -
   which is the point of it, and also why it is not a read-only command.
 - **`damage` is answered locally** from the latest board this machine received. Only a machine with none - a
@@ -147,6 +154,7 @@ This must work on a dedicated server the first time it is built, not in a later 
 | - | `effects` | Built, unspecified |
 | - | `damage` | Built in 3.9.0 at the user's request; top level, not under `elite`, open to every player |
 | - | `raid` | Built 2026-10-10 from `raids.md` (start and stop); admin only |
+| - | `arena` | Built 2026-10-12 from `arena.md` (bare: in and out; `stop`); admin only |
 
 Two things to settle:
 
@@ -181,6 +189,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [~] `damage` (and `/damage` in chat) shows the latest boss board again, for any player, even with the board off;
   a late joiner gets it from the server - built in 3.9.0, not tested in game
 - [~] `raid start <coins> [tier]` and `raid stop` (`raids.md`), admin only - built 2026-10-10, not tested in game
+- [~] `arena` and `arena stop` (`arena.md`), admin only - built 2026-10-12, not tested in game
 - [ ] The two specified but missing sub-commands (Pressure, Zones), and Reload
 - [ ] Inspect, Pressure and Tier are read-only; Summon and Purge change the world
 
@@ -209,3 +218,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-27 | `damage` built as a top-level, player-facing command (`/damage` in chat): replays the latest boss board, open to everyone, late joiners served by the server. `elite inspect` lists a Thieving creature's whole pouch. | - |
 | 2026-09-27 | `elite spawn <boss> <stars> <aspect>` takes the five new aspect words (Adaptive, Fixated, Stormbound, Gravitic, Colossal); `elite inspect` shows an Adaptive boss's resisted type and a Fixated boss's mark. | - |
 | 2026-10-10 | `elite raid start <coins> [tier]` and `elite raid stop` added with the raids (`raids.md`): admin only, run on the admin's machine, which owns the test raid's marker. | - |
+| 2026-10-12 | `elite arena` and `elite arena stop` added with Hel's Trial (`arena.md`): admin only; the jump runs on the admin's machine, the stop goes to the arena core's owner (through the server when the core is not loaded there). | - |

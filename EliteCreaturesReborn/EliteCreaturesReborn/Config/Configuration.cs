@@ -6,8 +6,9 @@ namespace EliteCreaturesReborn.Config
     /// <summary>
     /// The .cfg holds only what the rule file does not: per-player display preferences, none of which the server ever
     /// locks, because they change only what one player sees. Everything that changes what the game does - star chances,
-    /// star power, mutation chances and power, and the lock switch itself - lives in the YAML rule file instead. The one
-    /// exception is the raids' on/off (<see cref="RaidSettings"/>), which the spec puts in the .cfg and the server binds.
+    /// star power, mutation chances and power, and the lock switch itself - lives in the YAML rule file instead. The
+    /// exceptions are the raids' and the arena's on/off (<see cref="RaidSettings"/>, <see cref="ArenaSettings"/>), which
+    /// their specs put in the .cfg and the server binds.
     /// </summary>
     public static class Configuration
     {
@@ -52,6 +53,7 @@ namespace EliteCreaturesReborn.Config
             PaletteSettings.Bind(config);
             Recap.RecapSettings.Bind(config);
             RaidSettings.Bind(config);
+            ArenaSettings.Bind(config);
             BindDiagnostics(config);
         }
 

@@ -24,6 +24,14 @@ One section per feature, matching one file per feature in this folder. A player 
 able to guess which section it is in from what they want to change, and an implementer should never have to ask
 where a new setting goes.
 
+**The .cfg's two gameplay switches.** The .cfg holds the per-player display settings, and two switches that change
+the game and so are held by the server like the rule file (a Charter clause each: while the server binds its players
+through `lock to server`, the server's value holds for everyone): `11 - Raids` / `Raiders Chest` (on; `raids.md`) and
+`12 - Arena` / `Arena` (off; `arena.md`), which builds Hel's hall over the world centre on every peer, lets Hel's
+Trial be run, and puts Helgrind, the gate into the hall, in the hammer (built at the Black Forge). A change to either
+applies at once, without a restart: the hall builds or goes and Helgrind enters or leaves the hammer as the value
+arrives.
+
 **Two optional rule files** - one for creatures, one for items - for anything too structured for a flat settings
 file. The creature file is `creature_rules.yml` and holds the per-biome, per-tier and per-creature tables.
 
@@ -158,3 +166,5 @@ Newest last. One row per session that changed something: what moved, and the com
 | Date | What changed | Commit |
 | --- | --- | --- |
 | 2026-09-16 | Build checklist and work log added; `README.md` written to define the convention. | bfd5d8f |
+| 2026-10-12 | `12 - Arena` / `Arena` added (off, a Charter clause like the raids' switch); the .cfg's gameplay switches described. | uncommitted |
+| 2026-10-12 | `Arena`'s description names Helgrind, its recipe and the way out of the hall. | uncommitted |

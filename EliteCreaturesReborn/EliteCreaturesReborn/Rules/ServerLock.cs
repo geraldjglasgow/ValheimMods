@@ -11,8 +11,9 @@ namespace EliteCreaturesReborn.Rules
     /// server` into Charter's binding switch and pushes the file's text as an article; a bound player adopts that text
     /// and ignores its own, and gets its own back the moment it disconnects. Charter also refuses a player whose mod
     /// version does not match. This class owns the decision of which rule set is active; it never parses YAML itself.
-    /// The .cfg's one gameplay setting, the raids' Raiders Chest (<see cref="RaidSettings"/>), rides the same binding as a
-    /// clause: while the server binds, its value holds for every player.
+    /// The .cfg's two gameplay settings, the raids' Raiders Chest (<see cref="RaidSettings"/>) and the Arena
+    /// (<see cref="ArenaSettings"/>), ride the same binding as clauses: while the server binds, their values hold for
+    /// every player.
     /// </summary>
     internal static class ServerLock
     {
@@ -28,6 +29,7 @@ namespace EliteCreaturesReborn.Rules
                 "Mirrors the rule file's 'lock to server'. The server governs this; a player's own copy is ignored while bound.");
             _charter.Binding(_binding);
             _charter.Clause(RaidSettings.RaidersChest);
+            _charter.Clause(ArenaSettings.Arena);
             _rules = new Article<string>(_charter, ArticleName, RuleFile.LocalText);
             _rules.Changed += () => Guard("rule push", Recompute);
             _charter.BindingChanged += () => Guard("binding change", OnBindingChanged);

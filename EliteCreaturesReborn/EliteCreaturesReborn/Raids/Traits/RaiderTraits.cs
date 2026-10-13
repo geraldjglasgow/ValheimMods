@@ -19,7 +19,16 @@ namespace EliteCreaturesReborn.Raids
     {
         /// <summary>Rolls the raider and forces the roll on it; null for a creature the mod does not roll (a boss, or one
         /// without the mod's controller), which is left as it is.</summary>
-        public static CreatureTraits? Roll(Character creature, Heightmap.Biome biome, RaidBand band, bool warlord)
+        public static CreatureTraits? Roll(Character creature, Heightmap.Biome biome, RaidBand band, bool warlord) =>
+            Roll(creature, biome, band.ExtraStars + (warlord ? RaidTable.WarlordExtraStars : 0), band.MutatedPercent, 0);
+
+        /// <summary>
+        /// The same roll with the extra stars and the mutated share given outright, and the mutations in
+        /// <paramref name="barredMask"/> struck from the base roll: Hel's Trial rolls its creatures through here
+        /// (Arena/Trial/ArenaRoll), with its wave's stars and mutation chance and no Gilded. A raid bars nothing.
+        /// </summary>
+        public static CreatureTraits? Roll(Character creature, Heightmap.Biome biome, int extraStars, float mutatedPercent,
+            int barredMask)
         {
             EliteController? elite = creature != null ? creature.GetComponent<EliteController>() : null;
             if (elite == null || creature!.IsBoss())
@@ -27,9 +36,9 @@ namespace EliteCreaturesReborn.Raids
                 return null;
             }
             CreatureTraits traits = BaseRoll(creature, biome);
-            int extra = band.ExtraStars + (warlord ? RaidTable.WarlordExtraStars : 0);
-            AddStars(creature, traits, extra);
-            if (traits.Mask == 0 && band.MutatedPercent > 0f && Util.Dice.Percent(band.MutatedPercent))
+            traits.Mask &= ~barredMask;
+            AddStars(creature, traits, extraStars);
+            if (traits.Mask == 0 && mutatedPercent > 0f && Util.Dice.Percent(mutatedPercent))
             {
                 traits.Mask = RaiderMutation.Pick(creature, biome, traits.Stars);
             }

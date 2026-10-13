@@ -21,7 +21,7 @@ namespace EliteCreaturesReborn.Recap
 
         public static void Bind(ConfigFile config)
         {
-            Record = config.Bind(Section, "Record deaths", true,
+            Record = config.Bind(Section, "Record deaths", false,
                 "Keep a small video of the last seconds on screen, in memory only, so every death can be watched again "
                 + "in the death recap window. Off records nothing and costs nothing; the hits are still listed. Client "
                 + "side; never locked.");
