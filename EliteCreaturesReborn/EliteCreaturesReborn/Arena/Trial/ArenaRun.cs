@@ -4,20 +4,17 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
-    /// One step of the trial on the core's owner, twice a second (features/arena.md section 3), as
+    /// One step of the trial on the core's owner, four times a second (features/arena.md section 3), as
     /// <see cref="Raids.RaidPhases"/> steps a raid: first who is in the hall (they join the trial), then the ends that can
-    /// come at any time, then the clock. In the countdown the first wave waits for its moment; in a wave the creatures
-    /// still to come are sent while fewer than 20 live (<see cref="ArenaSpawn"/>), the creatures left are counted for the
-    /// HUD line, and the next wave comes when two or fewer are left or the wave's timer runs out - or, in a boss wave,
-    /// once its boss and everything its death brings in its place is gone. Everything read and written is in the core's
+    /// come at any time, then the clock. The countdown and each break wait for their moment and then the next wave
+    /// begins (<see cref="ArenaWaves"/>). In a wave, each archway sends its next creature at its own pace while fewer
+    /// than 20 live (<see cref="ArenaSpawn"/>), the creatures left and the open portals are written for every client, and
+    /// the wave ends once nothing of it is alive or still to come (held for a moment, for a boss's next phase or a
+    /// Splintering creature's copies), or when its three minutes are up. Everything read and written is in the core's
     /// ZDO, so a machine that has just taken the core over picks up where the last one stopped.
     /// </summary>
     internal static class ArenaRun
     {
-        /// <summary>A wave lasts at least this long, so one that brought nobody (a biome whose creatures this game does
-        /// not know) never sends the next ones in a blink.</summary>
-        private const float ShortestWaveSeconds = 5f;
-
         public static void Step(ArenaCore core, long now)
         {
             ArenaState state = core.State;
@@ -33,11 +30,11 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
             if (state.Phase == ArenaPhase.Fighting)
             {
-                Fight(core, state, inHall.Count, now);
+                Fight(core, state, now);
             }
             else if (now >= state.Next)
             {
-                ArenaWaves.Begin(core, 1, inHall.Count, now); // the countdown is over
+                ArenaWaves.Begin(core, state.Wave + 1, inHall.Count, now); // the countdown or the break is over
             }
         }
 
@@ -76,37 +73,25 @@ namespace EliteCreaturesReborn.Arena.Trial
             return empty || now - state.SeenAt > ArenaState.Ms(ArenaTable.EmptySeconds);
         }
 
-        private static void Fight(ArenaCore core, ArenaState state, int players, long now)
+        private static void Fight(ArenaCore core, ArenaState state, long now)
         {
-            ZDO zdo = core.Zdo!;
-            long trial = state.TrialId;
-            int alive = ArenaFighters.Alive(trial);
-            ArenaQueue queue = ArenaQueue.Read(zdo);
-            if (queue.Count > 0 && alive < ArenaTable.MaxAlive)
+            int alive = ArenaFighters.Alive(state.TrialId);
+            ArenaQueue queue = ArenaQueue.Read(core.Zdo!);
+            if (queue.Count > 0)
             {
-                alive += ArenaSpawn.Send(core, queue, ArenaTable.MaxAlive - alive);
+                alive += ArenaSpawn.Send(core, queue, alive);
             }
             state.Left = alive + queue.Count;
-            if (WaveDone(core, state, queue, now))
+            state.Portals = queue.LaneMask();
+            if (state.Left > 0)
             {
-                ArenaWaves.Begin(core, state.Wave + 1, players, now);
+                core.BusyAt = Time.time;
             }
-        }
-
-        private static bool WaveDone(ArenaCore core, ArenaState state, ArenaQueue queue, long now)
-        {
-            if (!ArenaTable.IsBossWave(state.Wave))
+            bool cleared = state.Left == 0 && Time.time - core.BusyAt >= ArenaTable.ClearedSeconds;
+            if (cleared || now >= state.Next)
             {
-                long began = state.Next - ArenaState.Ms(ArenaTable.WaveSeconds(state.Wave));
-                bool cleared = state.Left <= ArenaTable.NextWaveAtLeft;
-                return now - began >= ArenaState.Ms(ShortestWaveSeconds) && (cleared || now >= state.Next);
+                ArenaWaves.Rest(core, now, swept: !cleared);
             }
-            if (queue.BossDue || ArenaFighters.Bosses(state.TrialId) > 0)
-            {
-                core.BossSeenAt = Time.time;
-                return false;
-            }
-            return Time.time - core.BossSeenAt >= ArenaTable.BossGoneSeconds;
         }
     }
 }

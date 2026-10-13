@@ -8,9 +8,9 @@ using Object = UnityEngine.Object;
 namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
-    /// The arena core's prefab, <c>ECR_ArenaCore</c>: an invisible networked object with nothing but a persistent ZNetView
-    /// and an <see cref="ArenaCore"/>, as the raids' test marker is built (<see cref="Raids.RaidMarker"/>). Built once
-    /// under BundlePrefabs' inactive bench and added to ZNetScene's prefab list on every peer before the scene wakes, so
+    /// The arena core's prefab, <c>ECR_ArenaCore</c>: an invisible networked object with nothing but a persistent ZNetView,
+    /// an <see cref="ArenaCore"/> and the clients' <see cref="ArenaPortals"/>, as the raids' test marker is built
+    /// (<see cref="Raids.RaidMarker"/>). Built once under BundlePrefabs' inactive bench and added to ZNetScene's prefab list on every peer before the scene wakes, so
     /// the core's ZDO loads into the same prefab on the server and every client, whatever the Arena setting says (a world
     /// saved with a core must always load it). Nothing may leave the prefix: a ZNetScene whose Awake throws makes no world
     /// object at all, and the game waits on its loading screen for ever.
@@ -66,6 +66,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             core.transform.SetParent(PrefabBench.Root, false); // inactive parent: no Awake, no ZDO, until placed
             core.AddComponent<ZNetView>().m_persistent = true;
             core.AddComponent<ArenaCore>();
+            core.AddComponent<ArenaPortals>(); // the archways' portals, on clients
             _prefab = core;
             return core;
         }

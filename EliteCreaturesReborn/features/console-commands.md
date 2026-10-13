@@ -145,7 +145,7 @@ This must work on a dedicated server the first time it is built, not in a later 
 | Specified | Built | |
 | --- | --- | --- |
 | Summon | `spawn` | Different word for the same thing |
-| Inspect | `inspect` | Agrees |
+| Inspect | `inspect` | Agrees; read-only, open to every player since 2026-10-13 |
 | Purge | `purge` | Agrees |
 | Pressure | - | Blocked on `pressure.md` |
 | Zones | - | Blocked on `retaliation-zones.md` |
@@ -219,3 +219,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-27 | `elite spawn <boss> <stars> <aspect>` takes the five new aspect words (Adaptive, Fixated, Stormbound, Gravitic, Colossal); `elite inspect` shows an Adaptive boss's resisted type and a Fixated boss's mark. | - |
 | 2026-10-10 | `elite raid start <coins> [tier]` and `elite raid stop` added with the raids (`raids.md`): admin only, run on the admin's machine, which owns the test raid's marker. | - |
 | 2026-10-12 | `elite arena` and `elite arena stop` added with Hel's Trial (`arena.md`): admin only; the jump runs on the admin's machine, the stop goes to the arena core's owner (through the server when the core is not loaded there). | - |
+| 2026-10-13 | `elite inspect` opened to every player, as section 2 always said (user's call: no reason to guard it). | - |

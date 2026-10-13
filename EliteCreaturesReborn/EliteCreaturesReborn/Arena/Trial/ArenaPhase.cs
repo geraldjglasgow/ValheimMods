@@ -9,7 +9,10 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>Hel has woken: the doors close and the first wave comes in ten seconds.</summary>
         Countdown = 1,
 
-        /// <summary>The waves are coming.</summary>
+        /// <summary>A wave is on: its creatures come out of the archways and fight until none is left.</summary>
         Fighting = 2,
+
+        /// <summary>A wave is cleared: a short break before the next one (15 s, 20 s after a boss wave).</summary>
+        Break = 3,
     }
 }

@@ -33,8 +33,13 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The trial in the core's ZDO. Only while <see cref="Zdo"/> is not null.</summary>
         public ArenaState State => new ArenaState(_nview.GetZDO());
 
-        /// <summary>The owner's own memory of the step, never in the ZDO: when the boss wave last had a boss alive.</summary>
-        internal float BossSeenAt { get; set; }
+        /// <summary>The owner's own memory of the step, never in the ZDO: when the wave last had anything alive or still
+        /// to come (it is cleared after <see cref="ArenaTable.ClearedSeconds"/> with nothing).</summary>
+        internal float BusyAt { get; set; }
+
+        /// <summary>The owner's own memory: when each archway sends its next creature (<see cref="Time.time"/>). A new
+        /// owner starts with none set, so each archway sends at once and keeps its pace from there.</summary>
+        internal float[] ArchwayNext { get; } = new float[ArenaTable.Archways];
 
         private void Awake() => Guard.Run("ArenaCore.Awake", Setup);
 

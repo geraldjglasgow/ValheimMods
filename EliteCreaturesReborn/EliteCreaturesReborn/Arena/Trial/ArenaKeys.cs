@@ -19,8 +19,21 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>Server clock, ms, when the trial began: also the trial's id in its creatures' tags.</summary>
         public const string TrialId = "ecr_arena_trial";
 
-        /// <summary>The wave running (0 during the countdown); after the end, the wave it ended at.</summary>
+        /// <summary>The wave running (0 during the countdown), or the one just cleared during a break; after the end, the
+        /// wave it ended at.</summary>
         public const string Wave = "ecr_arena_wave";
+
+        /// <summary>The last wave cleared (or swept after its time ran out): an arena creature of that wave or an earlier
+        /// one vanishes on its owner. 0 at the start.</summary>
+        public const string Swept = "ecr_arena_swept";
+
+        /// <summary>The boss waves beaten (their boss killed, not swept), one bit each: bit k-1 for wave 10k. Each pays an
+        /// idol at the trial's end.</summary>
+        public const string BossesBeaten = "ecr_arena_bosses";
+
+        /// <summary>The archways with creatures still to come, one bit each (bit k for <c>portal_k</c>): the open portals
+        /// every client draws.</summary>
+        public const string Portals = "ecr_arena_portals";
 
         /// <summary>The trial's score so far (or its final score once it has ended).</summary>
         public const string Score = "ecr_arena_score";
@@ -31,13 +44,13 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The creatures still to beat: alive plus still to come. The HUD's "7 left".</summary>
         public const string Left = "ecr_arena_left";
 
-        /// <summary>Server clock, ms: the end of the countdown, or of the running wave's timer.</summary>
+        /// <summary>Server clock, ms: the end of the countdown, the running wave's time limit, or the end of the break.</summary>
         public const string Next = "ecr_arena_next";
 
         /// <summary>Server clock, ms: the last time a living player was in the hall, stamped every second or so.</summary>
         public const string SeenAt = "ecr_arena_seen";
 
-        /// <summary>The spawn point the next creature comes out of, 0 to 3 in turn.</summary>
+        /// <summary>The archway the next wave's first creature is given to, 0 to 3, so the archways take turns.</summary>
         public const string SpawnTurn = "ecr_arena_turn";
 
         /// <summary>The creatures still to come (<see cref="ArenaQueue"/>): kind, wave and count, so a new owner sends the
@@ -58,6 +71,9 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         /// <summary>The biome number (1 Meadows to 8 Deep North) of the wave it came in: its kill's score multiplier.</summary>
         public const string CreatureTier = "ecr_arena_tier";
+
+        /// <summary>The wave it fights in: once that wave is cleared or swept (<see cref="Swept"/>), it vanishes.</summary>
+        public const string CreatureWave = "ecr_arena_wave_of";
 
         // ---- The player's own custom data (Player.m_customData), written by the player's own client. ----
 
@@ -80,6 +96,9 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>On the core's ZNetView, to its owner: an arena creature died (trial id, points, counts as a kill).</summary>
         public const string KillRpc = "ecr_arena_kill";
 
+        /// <summary>Routed, to one player of the trial as it ends: their reward (a package, <c>RewardList</c>).</summary>
+        public const string RewardRpc = "ecr_arena_reward";
+
         /// <summary>Routed, to one player of the trial: a message (word key and up to three words to put in it).</summary>
         public const string MessageRpc = "ecr_arena_message";
 
@@ -89,8 +108,13 @@ namespace EliteCreaturesReborn.Arena.Trial
         public static readonly int CreatureTrialHash = CreatureTrial.GetStableHashCode();
         public static readonly int CreatureBossHash = CreatureBoss.GetStableHashCode();
         public static readonly int CreatureTierHash = CreatureTier.GetStableHashCode();
+        public static readonly int CreatureWaveHash = CreatureWave.GetStableHashCode();
+        public static readonly int SweptHash = Swept.GetStableHashCode();
+        public static readonly int PortalsHash = Portals.GetStableHashCode();
+        public static readonly int BossesBeatenHash = BossesBeaten.GetStableHashCode();
 
-        /// <summary>Spawn point names in the walls' bundle, in the order the waves use them.</summary>
-        public static readonly IReadOnlyList<string> SpawnPoints = new[] { "spawn_0", "spawn_1", "spawn_2", "spawn_3" };
+        /// <summary>The archways' portal points in the walls' bundle (each on its recess's back face, 2.5 m up, facing the
+        /// hall): where creatures come out, one archway per bit of <see cref="Portals"/>.</summary>
+        public static readonly IReadOnlyList<string> PortalPoints = new[] { "portal_0", "portal_1", "portal_2", "portal_3" };
     }
 }

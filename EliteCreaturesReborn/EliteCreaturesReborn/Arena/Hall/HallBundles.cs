@@ -18,6 +18,7 @@ namespace EliteCreaturesReborn.Arena.Hall
         public const string Walls = "ecr_helhall_walls";
         public const string Throne = "ecr_helhall_throne";
         public const string Ceiling = "ecr_helhall_ceiling";
+        public const string Cover = "ecr_helhall_cover";
         public const string Hel = "ecr_hel";
         public const string Spear = "ecr_hel_spear";
 

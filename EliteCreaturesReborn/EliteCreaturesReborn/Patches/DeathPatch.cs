@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using EliteCreaturesReborn.Aspects;
+using EliteCreaturesReborn.Horde;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Raids;
 using EliteCreaturesReborn.Rules;
@@ -47,6 +48,7 @@ namespace EliteCreaturesReborn.Patches
             public ZDOID Id;
             public SplinterTame? Tame;
             public RaiderLineage? Raider;
+            public bool Wild;
         }
 
         private static Snapshot? _pending;
@@ -99,6 +101,7 @@ namespace EliteCreaturesReborn.Patches
                 Devourer = TraitStore.GetDevouredBy(zdo), Pouch = PouchStore.Load(zdo), Id = zdo.m_uid,
                 Tame = SplinterTame.Read(victim, zdo), // a tamed splinterer's copies are tamed too
                 Raider = RaiderLineage.Read(zdo), // a raider's copies are raiders too, with no coins
+                Wild = WildTag.Is(zdo), // and a wild one's copies are wild, for the horde
             };
         }
 
@@ -134,18 +137,32 @@ namespace EliteCreaturesReborn.Patches
             }
             if (snap.Traits.Has(Mutation.Splintering))
             {
-                if (Log.Diagnostics)
-                {
-                    Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
-                }
-                Splitter.Split(snap.Pos, snap.Rot, snap.PrefabHash, snap.Traits, snap.Rules,
-                    snap.Generation, snap.ResolvedRoot, snap.Biome, snap.Tame, snap.Raider);
+                Splinter(snap);
             }
             if (snap.Traits.Has(Mutation.Thieving))
             {
                 // Splintering copies never inherit the pouch (Splitter.Configure never touches TraitKeys.Pouch), so a
                 // Thieving+Splintering death both empties this parent's pouch here AND is born-empty as two copies.
                 PouchDrop.DropAll(snap.Pouch, snap.Pos);
+            }
+        }
+
+        // The copies wake inside the split, so a wild parent's are tagged wild as they wake (WildSpawn).
+        private static void Splinter(Snapshot snap)
+        {
+            if (Log.Diagnostics)
+            {
+                Log.Diag($"{snap.Victim.name}: splintering stars={snap.Traits.Stars} gen={snap.Generation}");
+            }
+            bool was = WildSpawn.Begin(snap.Wild);
+            try
+            {
+                Splitter.Split(snap.Pos, snap.Rot, snap.PrefabHash, snap.Traits, snap.Rules,
+                    snap.Generation, snap.ResolvedRoot, snap.Biome, snap.Tame, snap.Raider);
+            }
+            finally
+            {
+                WildSpawn.End(was);
             }
         }
 

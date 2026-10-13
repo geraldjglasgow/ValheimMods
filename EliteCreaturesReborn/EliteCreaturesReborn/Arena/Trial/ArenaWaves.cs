@@ -5,15 +5,20 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
-    /// A wave begins (features/arena.md section 3, "Waves" and "Bosses"), on the core's owner: its number, its timer and
-    /// its creatures go into the core's ZDO. A regular wave queues its biome's creatures (<see cref="ArenaCreatures"/>) -
-    /// 4 in the first wave of a biome, one more each wave within it, a quarter more for each player in the hall past the
-    /// first - its kinds drawn by weight; whatever the last wave left waiting comes first. A boss wave queues the biome's
-    /// boss alone (<see cref="ArenaBosses"/>), and every player of the trial reads which boss Hel sends.
+    /// A wave begins and a wave ends (features/arena.md section 3, "Waves", "Bosses" and "Breaks"), on the core's owner;
+    /// a wave is a round. As it begins, its number, its three-minute limit and its creatures go into the core's ZDO. A
+    /// regular wave queues its biome's creatures (<see cref="ArenaCreatures"/>) - 4 in the first wave of a biome, one more
+    /// each wave within it, a quarter more for each player in the hall past the first - its kinds drawn by weight, each
+    /// given to an archway in turn (the next wave starts where this one stopped), and every archway with creatures to send
+    /// opens its portal a moment before its first. A boss wave queues the biome's boss alone, for the rune circle
+    /// (<see cref="ArenaBosses"/>), and every player of the trial reads which boss Hel sends. As it ends - cleared, or
+    /// swept when its time ran out - its creatures still standing vanish, scoring nothing, the players read that it is
+    /// cleared, and the break before the next one begins.
     /// </summary>
     internal static class ArenaWaves
     {
-        private static readonly Dictionary<int, int> Picked = new Dictionary<int, int>();
+        /// <summary>The kinds drawn for a wave and the archway each goes to, counted: (kind hash, archway) packed.</summary>
+        private static readonly Dictionary<long, int> Picked = new Dictionary<long, int>();
 
         public static void Begin(ArenaCore core, int wave, int players, long now)
         {
@@ -21,17 +26,44 @@ namespace EliteCreaturesReborn.Arena.Trial
             ArenaState state = core.State;
             state.Wave = wave;
             state.Phase = ArenaPhase.Fighting;
-            state.Next = now + ArenaState.Ms(ArenaTable.WaveSeconds(wave));
+            state.Next = now + ArenaState.Ms(ArenaTable.WaveLimitSeconds);
             ArenaQueue queue = ArenaQueue.Read(zdo);
-            int planned = ArenaTable.IsBossWave(wave) ? PlanBoss(zdo, queue, wave) : PlanWave(queue, wave, players);
+            queue.Clear(); // a round: nothing of the last wave waits
+            int planned = ArenaTable.IsBossWave(wave) ? PlanBoss(zdo, queue, wave) : PlanWave(state, queue, wave, players);
             queue.Write(zdo);
-            state.Left = Mathf.Max(state.Left, queue.Count);
-            core.BossSeenAt = Time.time;
+            state.Portals = queue.LaneMask();
+            state.Left = queue.Count;
+            OpenArchways(core);
+            core.BusyAt = Time.time;
             Log.Info($"Hel's Trial: wave {wave} ({ArenaCreatures.Biome(ArenaTable.BiomeIndex(wave))}), {planned} coming, "
-                + $"{queue.Count} waiting in all, {players} player(s) in the hall");
+                + $"{players} player(s) in the hall");
         }
 
-        private static int PlanWave(ArenaQueue queue, int wave, int players)
+        /// <summary>The wave is over: <paramref name="swept"/> when its time ran out with creatures still standing. They
+        /// vanish (those this machine owns at once, the rest on their owners as they read the swept wave), and the break
+        /// begins.</summary>
+        public static void Rest(ArenaCore core, long now, bool swept)
+        {
+            ZDO zdo = core.Zdo!;
+            ArenaState state = core.State;
+            int wave = state.Wave;
+            float rest = ArenaTable.BreakAfter(wave);
+            state.Swept = wave;
+            if (!swept && ArenaTable.IsBossWave(wave))
+            {
+                state.BossesBeaten |= ArenaState.BossBit(wave); // its boss fell: an idol at the end
+            }
+            new ArenaQueue().Write(zdo);
+            state.Portals = 0;
+            state.Left = 0;
+            state.Next = now + ArenaState.Ms(rest);
+            state.Phase = ArenaPhase.Break;
+            ArenaFighters.VanishOwned(state.TrialId);
+            ArenaNet.Tell(zdo, ArenaWords.Cleared, wave.ToString(), Mathf.RoundToInt(rest).ToString());
+            Log.Info($"Hel's Trial: wave {wave} {(swept ? "swept after its time ran out" : "cleared")}; {rest:0} s break");
+        }
+
+        private static int PlanWave(ArenaState state, ArenaQueue queue, int wave, int players)
         {
             List<ArenaCreatures.Kind> kinds = ArenaCreatures.For(ArenaTable.BiomeIndex(wave));
             if (kinds.Count == 0)
@@ -39,17 +71,19 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return 0;
             }
             int count = ArenaTable.CountFor(wave, players);
+            int first = Mathf.Abs(state.SpawnTurn) % ArenaTable.Archways;
             Picked.Clear();
             for (int i = 0; i < count; i++)
             {
-                int kind = ArenaCreatures.Draw(kinds);
-                Picked[kind] = (Picked.TryGetValue(kind, out int had) ? had : 0) + 1;
+                long key = (long)ArenaCreatures.Draw(kinds) << 8 | (long)((first + i) % ArenaTable.Archways);
+                Picked[key] = (Picked.TryGetValue(key, out int had) ? had : 0) + 1;
             }
-            foreach (KeyValuePair<int, int> pick in Picked)
+            foreach (KeyValuePair<long, int> pick in Picked)
             {
-                queue.Add(pick.Key, wave, pick.Value);
+                queue.Add((int)(pick.Key >> 8), wave, (int)(pick.Key & 0xFF), pick.Value);
             }
             Picked.Clear();
+            state.SpawnTurn = (first + count) % ArenaTable.Archways;
             return count;
         }
 
@@ -63,9 +97,19 @@ namespace EliteCreaturesReborn.Arena.Trial
                 Log.Warn($"Hel's Trial: the game has no boss '{name}' for wave {wave}; the wave is skipped");
                 return 0;
             }
-            queue.Add(name.GetStableHashCode(), wave, 1);
+            queue.Add(name.GetStableHashCode(), wave, ArenaQueue.BossLane, 1);
             ArenaNet.Tell(zdo, ArenaWords.Boss, boss.m_name);
             return 1;
+        }
+
+        // Each archway sends its first creature a moment after its portal opens, the four a little apart.
+        private static void OpenArchways(ArenaCore core)
+        {
+            float now = Time.time;
+            for (int i = 0; i < core.ArchwayNext.Length; i++)
+            {
+                core.ArchwayNext[i] = now + ArenaTable.PortalLead + Random.Range(0f, ArenaTable.ArchwayStagger);
+            }
         }
     }
 }

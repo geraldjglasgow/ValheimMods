@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Horde;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace EliteCreaturesReborn.Scaling
     /// figures here are the whole story. A creature that keeps its game level (this mod's stars off for its kind) is
     /// the exception: its health starts from the game's figure for that level, and its size from the game's own look.
     /// A boss's aspect multiplies the starred health (Twin), or replaces it outright
-    /// on a Phantom copy. Movement and swing speed are live and handled by the controller and a patch.
+    /// on a Phantom copy; the horde (<see cref="HordeFactors"/>) multiplies a wild creature's while it is on. Movement and swing speed are live and handled by the controller and a patch.
     /// </summary>
     public static class StatApplier
     {
@@ -35,7 +36,8 @@ namespace EliteCreaturesReborn.Scaling
             float levelled = LevelledBase(character, traits);
             float max = traits.PhantomCopy
                 ? AspectMath.PhantomHealth()
-                : levelled * StatMath.HealthMultiplier(rules, traits) * AspectMath.HealthFactor(traits) + devoured;
+                : levelled * StatMath.HealthMultiplier(rules, traits) * AspectMath.HealthFactor(traits)
+                    * HordeFactors.Health(character, zdo) + devoured;
             if (!RuleState.Active.KeepsLevel(traits.Stars, character.IsBoss()) || !Mathf.Approximately(max, levelled))
             {
                 character.SetMaxHealth(max);

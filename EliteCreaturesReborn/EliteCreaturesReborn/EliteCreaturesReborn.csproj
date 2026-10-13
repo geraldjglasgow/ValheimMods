@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesReborn</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>3.25.0</Version>
+    <Version>3.26.0</Version>
     <Product>Elite Creatures Reborn</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -49,6 +49,8 @@
     <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
     <!-- The raids' test marker (NetPrefabs, PrefabBench); the Raiders Chest builds on it too. -->
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <!-- EliteCraftingLink: Hel's Trial pays EliteCrafting's runes and essence only where it is installed (reflection, no reference). -->
+    <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,7 +60,8 @@
          for clients, Linux for dedicated servers. Loaded by BundlePrefabs' EmbeddedBundle. -->
     <EmbeddedResource Include="assets\bundles\ecr_raiders_chest.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
     <!-- Hel's hall (features/arena.md section 1; ValheimAssets Assets/Locations/HelHall): floor, walls, throne and
-         ceiling, one bundle each per platform, built on every peer by Arena/Hall/HallBundles. -->
+         ceiling, one bundle each per platform, built on every peer by Arena/Hall/HallBundles; and the archways' portal
+         (Assets/Effects/ecr_helhall_portal, bundle ecr_helhall_portalfx), drawn on clients by Arena/Trial/ArenaPortalLook. -->
     <EmbeddedResource Include="assets\bundles\ecr_helhall_*.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />
     <!-- Hel on her throne and her spear (ValheimAssets Assets/Creatures/Hel/ecp_hel, bundle ecr_hel). -->
     <EmbeddedResource Include="assets\bundles\ecr_hel.*" LogicalName="EliteCreaturesReborn.assets.%(Filename)%(Extension)" />

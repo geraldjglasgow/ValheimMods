@@ -406,6 +406,25 @@ points from where it fell. A player who has already found that place (its spot e
 travels or a cartography table) gets no hint. A Twin or Tethered pair gives one hint, a Phantom copy none, and a world
 without the place says nothing. Each player turns it off with `Boss hints` in `8 - Display (per player)`.
 
+## Compendium
+
+The game's compendium (the inventory's Compendium button) gets four pages after its own Active effects and Message
+log, written each time it opens from the rules the server sent and the world's keys (`Compendium/`, one
+`TextsDialog.UpdateTextsList` postfix, `Patches/CompendiumPatch.cs`; a player request for an in-game bestiary,
+2026-10-13). Each player turns them off with `Compendium pages` in `8 - Display (per player)`.
+
+- **Elite: World difficulty** - the difficulty and world tier, every counted boss as defeated or not yet, what the
+  difficulty means, a table of every biome at this tier (most stars, the share with stars, the share of creatures with
+  no stars that are mutated, the player's biome in orange; on Custom from the biome's rows and the tier's boosts), the
+  five difficulties side by side, and the game's own World Difficulty: its enemy and player damage on this world and
+  that it stacks.
+- **Elite: Stars** - health, damage, attack speed, move speed, size and loot for each star count, up to the most this
+  difficulty can give anywhere, for the biome the player stands in and any biome whose `star power` differs; then the
+  bosses' table with each star count's chance.
+- **Elite: Mutations** - each mutation that rolls on this server, its star in the player's colour for it, what it does
+  with the numbers of the player's biome for a creature with no stars; the ones switched off by name.
+- **Elite: Boss aspects** - each aspect with its loot and the altar's own line for it (`AspectText.Describe`).
+
 ## Raids
 
 The game's own raids still come to bases as they always have. Beside them, the **Raiders Chest** (the hammer's Misc
@@ -464,6 +483,18 @@ while walking off drops only its own loot. `11 - Raids` / `Raiders Chest` (on) p
 chest already built is an ordinary coin chest. It is synced from the server and held by the rule file's
 `lock to server`. Design in `features/raids.md`.
 
+## Horde
+
+More creatures in the wild, each weaker. With `13 - Horde` / `Horde` on (off by default), the world's own spawns
+come in groups `Spawn Multiplier` times larger (2, from 1 to 3; fractions round at random), with that many more of
+each kind allowed around the players. Every wild creature has `Creature Health Multiplier` (0.65) on its health and
+`Creature Attack Multiplier` (0.75) on its damage, and drops 1 / the spawn multiplier of its own loot (half at 2).
+Each still rolls its own stars and mutations. Wild means made by the world's spawning (or split from such a creature
+by Splintering), tagged in its ZDO whatever the setting, so turning the horde on or off reaches creatures already out
+there: health on their next load, attack and loot at once. Bosses, the game's raids, this mod's raids and arena,
+creature spawners in camps and dungeons, command spawns and tamed creatures are left as they are. All four settings
+are synced from the server and held by the rule file's `lock to server`. Design in `features/horde.md`.
+
 ## Arena: Hel's hall
 
 Built 2026-10-12, not seen in game. The hall half of the Arena (Hel's Trial): `features/arena.md` section 1 and the
@@ -484,26 +515,27 @@ doors; the look (materials, runes, fire, lights, the environment, Hel's animatio
 | `ecr_helhall_walls` | the wall ring, origin; doors `door_left`, `door_right`; the points spawn, portal, arrive, gate_inside, flame | 2,475,826 + 2,636,279 |
 | `ecr_helhall_throne` | the throne, (0, 0, -14.731); `glow_brazier_0`, `_1`; the points seat_root ... fire_1 | 2,201,082 + 2,370,992 |
 | `ecr_helhall_ceiling` | the drum and dome, origin; `glow_oculus`; the point light_oculus | 2,528,776 + 2,672,239 |
+| `ecr_helhall_cover` | four broken pillars wrapped in roots and four low walls (cover from the archways), origin; 70 box colliders, no glow, no points (added 2026-10-13) | 1,053,057 + 1,187,308 |
 | `ecr_hel` | `ecr_hel` on seat_root; `ecr_hel_spear` from spear_rest to spear_top | 905,905 + 1,077,353 |
 
-Together 22,679,454 bytes (21.6 MB) added to the DLL.
+Together 24,919,819 bytes (23.8 MB) added to the DLL.
 
 | File (`Arena/Hall/`) | Does |
 | --- | --- |
 | `HallHost.cs` | One host per world, made by a `ZNetScene.Awake` postfix (`HallScenePatch`) in the world's scene; builds on its first frame, removes and rebuilds on the setting's change; clears `Built` and the hall's forced sky when it goes |
-| `HallBuilder.cs` | The four pieces under the host, every part on `static_solid`, the points indexed, the doors, Hel, and on clients the runes, fires and environment |
+| `HallBuilder.cs` | The four pieces under the host, every part on `static_solid`, the points indexed, the cover (stone-dressed, on every peer for its colliders; the hall stands without it if it fails to load), the doors, Hel, and on clients the runes, fires and environment |
 | `HallBundles.cs` | The five embedded bundles through BundlePrefabs' `EmbeddedBundle`; a failure logged once and no hall |
 | `HallPoints.cs` | Every part of the four pieces by name, read by `ArenaHall.TryPoint` |
 | `HallMaterials.cs` | Stone: `Custom/Piece` from `stone_wall_4x2`'s body `New/stone` (`stone_mat_4x2`; never its first child, the snow overlay), white, gloss 0.15, the pieces' own albedo and normal map. Hel and the spear: `Custom/Creature` from the Draugr's body (`Draugr_mat`), gloss 0.15, her metal mask at 0.65. Anything under a `glow*` child keeps the bundle's emissive material, `_EMISSION` on |
 | `HallEnvironment.cs` | `ECR_HelHall`: a copy of `Morkhalla`, fog 0.015 (was 0.1) so the far wall shows from the gate, not cold, freezing or wet; forced by the game's `EnvZone` on a 62 x 34 x 62 m trigger on `character_trigger` |
 | `HallFires.cs` | Blue fire and flickering light from `MountainKit_brazier_blue` at the sconces and the throne's braziers, local copies through LocalEffects; a cold spot light in the oculus (table below) |
-| `HallRunes.cs`, `RuneLight.cs` | The floor's runes, each its own material: one to three at a time between trials, more and faster in a trial, all flaring on a boss wave; only changing runes are touched |
+| `HallRunes.cs`, `RuneLight.cs` | The floor's runes, each its own material: one to three at a time between trials and in the breaks between waves (`ArenaTrial.Break`), more and faster while a wave is fought, all flaring on a boss wave; only changing runes are touched |
 | `HallDoors.cs` | The gate's leaves, every peer: open (left -90, right +90 about Y) between trials, shut in one, eased over 1.5 s |
 | `HelSeat.cs` | Hel on `seat_root` with the player's `Player_animator` and avatar (`attach_throne`, `onGround`: Sit_Throne_Idle), a 3 x 5.2 x 2.6 m box round her seated body, her spear |
 | `HelHover.cs` | "Hel"; "[E] Begin the trial" while no trial runs and you stand in the hall, calling `ArenaTrial.RequestStart`; 3 m more reach than usual |
 | `HallWords.cs` | `ecr_arena_hel` "Hel", `hud_ecr_arena_begin` "Begin the trial" |
 | `HallNoBuild.cs` | Placing a piece within 40 m (across) of the origin above 4,900 m: the game's no-build status and message (`$msg_nobuildzone`) |
-| `TrialView.cs` | `ArenaTrial`'s three values read at most four times a second, shared by the doors, the runes and the hover |
+| `TrialView.cs` | `ArenaTrial`'s values (`Running`, `Wave`, `BossWave`, `Break`, giving `Fighting`) read at most four times a second, shared by the doors, the runes and the hover |
 
 Lights and fire (clients only; the brazier's own light is `(0.75, 1, 1)`, intensity 2, range 5, with LightLod (50 m)
 and LightFlicker):
@@ -528,16 +560,19 @@ floor, and a dedicated server building the colliders.
 
 ## Arena: Hel's Trial
 
-Built 2026-10-12, not seen in game. The trial and travel half of the Arena: `features/arena.md` sections 2 to 4, the
-`elite arena` and `elite arena stop` commands. It reads the hall only through `ArenaHall` and fills `ArenaTrial`.
+Built 2026-10-12, released in 3.25.0; rounds with breaks, archway portals, no skill loss in the hall and rewards
+added 2026-10-13 after the user's first games, not seen in game. The trial and travel half of the Arena: `features/arena.md`
+sections 2 to 4, the `elite arena` and `elite arena stop` commands. It reads the hall only through `ArenaHall` and
+fills `ArenaTrial` (`Running`, `Break`, `Wave`, `BossWave`, `RequestStart`).
 
 **The core.** The trial lives in one hidden, persistent networked object, `ECR_ArenaCore`, at the hall's origin: its
 prefab is added to `ZNetScene`'s list in a `ZNetScene.Awake` prefix on every peer whatever the setting says, and the
 server places one when the world has none (it holds every ZDO: one lookup of the core it knows, else a search of the
 one zone at the world's centre; an extra is removed). Its ZDO holds the trial (`ecr_arena_*`, `Arena/Trial/ArenaKeys.cs`):
-phase, trial id (server ms at the start), wave, score, kills, creatures left, the wave timer, the last time a player
-was in the hall, the next archway, the creatures still to come and the trial's players. Its owner steps the trial twice
-a second; on a dedicated server that is the server itself (its reference point is the world's centre, where the hall
+phase (idle, countdown, fighting, break), trial id (server ms at the start), wave, the last wave cleared or swept,
+score, kills, creatures left, the end of the countdown, the wave's 3 minutes or the break, the last time a player was in
+the hall, the archway the next wave starts at, the creatures still to come by archway, the archways with portals open,
+and the trial's players. Its owner steps the trial four times a second; on a dedicated server that is the server itself (its reference point is the world's centre, where the hall
 lies), elsewhere whoever holds the centre zone, and a new owner carries on from the ZDO. Every client reads
 `ArenaTrial` from `ArenaCore.Current`, kept as the core wakes: one or two ZDO lookups.
 
@@ -552,9 +587,11 @@ and every player in the hall is in it; whoever enters later joins. Waves, number
 | Creatures in a wave | 4 in the first of a biome, +1 each wave in it, x(1 + 0.25 per player past the first) |
 | Extra stars | +1 from a biome's 4th wave, +2 from its 8th, +1 more per ten waves past 80; at most 8 (ECR's maximum) |
 | Mutation chance | 5% in wave 1, +3% a wave, at most 60%, for a creature that rolled none; never Gilded (stripped from the base roll too) |
-| Alive at once | 20; a few made per step, out of `spawn_0`..`3` in turn, with the game's `vfx_spawn` and `sfx_spawn` |
-| Next wave | when 2 or fewer are left (alive and to come), or the timer (45 s, -1 s a wave, at least 20 s); a wave lasts at least 5 s |
-| Boss wave | every 10th: the boss alone on the rune circle at the floor's centre; the next wave 2 s after no boss of it lives |
+| Archways | each wave's creatures given to the 4 archways in turn; each sends one at a time, 0.8-1.2 s apart, the first 0.6-1.0 s after its portal opens; out of its recess, 0.8 m off the `portal_N` back face, on the recess floor, with `sfx_spawn` |
+| Alive at once | 20; the archways wait while 20 live |
+| Next wave | only when the wave is cleared (nothing alive or to come, held 2 s), after a break of 15 s (20 s after a boss wave) |
+| Swept | a wave not cleared in 180 s: its creatures vanish (no drops, no score) and the break begins |
+| Boss wave | every 10th: the boss alone on the rune circle at the floor's centre, with `vfx_spawn` and `sfx_spawn`, no portal |
 | Score | a kill 10 x (stars + 1) x biome number (1-8), a boss 500 x biome number |
 | End | no living player in the hall for 5 s (or a dedicated server with nobody connected) |
 
@@ -573,27 +610,67 @@ Morgen_NonSleeping, FallenValkyrie, Volture, BlobLava; Deep North Greydwarf_Froz
 Elaking, ElakingLantern, ShadowPerson, Barka, Moose, JotunWarrior, JotunWitch. Bosses: Eikthyr, gd_king, Bonemass,
 Dragon, GoblinKing, SeekerQueen, Fader, FrozenKing, then again from wave 90.
 
-**Arena creatures.** Tagged in their ZDO (`ecr_arena_of` trial id, `ecr_arena_boss`, `ecr_arena_tier` biome number) in
-the frame they are made, rolled through `CreatureRoll.For` (via the raids' `RaiderTraits.Roll`, with the wave's stars,
+**Arena creatures.** Tagged in their ZDO (`ecr_arena_of` trial id, `ecr_arena_wave_of` wave, `ecr_arena_boss`,
+`ecr_arena_tier` biome number) in the frame they are made, rolled through `CreatureRoll.For` (via the raids' `RaiderTraits.Roll`, with the wave's stars,
 mutation chance and Gilded barred; a boss through its own draw and aspects, plus the stars past 80), set hunting
 (`SetHuntPlayer`, no despawn in daylight, target the nearest player in the hall). Every creature that starts inside the
 hall gets an `ArenaFighter` on every machine (`MonsterAI.Start` postfix); on its owner, every second: an untagged one
 appearing in the hall while a trial runs is adopted (Kall's `FrozenKing_p2` and `_p3`, which his death effects make,
-become the wave's boss this way; so do a Summoner's adds, Splintering copies, Twin, Phantom and Echo copies), a tamed
-one loses its tag, a tagged one whose trial is over (ended, another, Arena off, no core for 10 s) vanishes with no
-death, dropping only what a Thieving one stole, and one with no target is set on the nearest player. Once tagged, on
+become the wave's boss this way; so do a Summoner's adds, Splintering copies, Twin, Phantom and Echo copies; in the
+countdown or a break one joins the coming wave), a tamed one loses its tag, a tagged one whose trial is over (ended,
+another, Arena off, no core for 10 s) or whose wave is cleared or swept (`ecr_arena_swept`) vanishes with no death, dropping only what a Thieving one stole, and one with no target is set on the nearest player. Once tagged, on
 every machine: the group `ecr_arena` (so one wave's factions never fight each other), and no `m_defeatSetGlobalKey` or
 dream (an arena boss sets no world key). Drops: the drop list is emptied last in `LootPatch` (the game's table, the
 loot rules, boss rewards and trophies, Gilded's purse, a corpse's loot). A death on its owner sends the score to the
 core's owner (an RPC): a copy (Phantom, Echo, decoy) and a boss phase whose death brings the next score nothing. An
 arena boss counts for neither `harder each kill` nor the boss hints.
 
-**Messages and HUD.** Start, boss and end go by routed RPC to the trial's players only, as a word key and up to three
-words (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
-`ecr_arena_ended` "Hel's Trial ends at wave $1: $2 kills, score $3.", `ecr_arena_line` "Hel's Trial - wave $1 - $2 left
-- $3", `ecr_arena_countdown` "Hel's Trial - the first wave in $1", `ecr_arena_name` "Hel's Trial"). The line is the
-game's event bar for a living player in the hall, drawn from the core's ZDO by the raids' one `Hud.UpdateEvent` hook,
-which asks the trial first.
+**Portals.** While an archway has creatures to send, the core's ZDO (`ecr_arena_portals`, a bit per archway) says so,
+and every client opens a portal there (`ArenaPortals` on the core's object, switched off without a screen;
+`ArenaPortal` per archway): the workshop's `ecr_helhall_portal` (bundle `ecr_helhall_portalfx`, both platforms, embedded
+by the csproj's `ecr_helhall_*` line) as a local copy through LocalEffects on the walls' `portal_N` point, facing the
+hall, with a point light #80ebe0 intensity 1.8, range 7, no shadows, 0.8 m in front, faded in over 0.5 s and out over
+1.5 s. A second after the bit clears (the last creature out) the loop's emission stops (it fades by itself, destroyed
+after 3 s) and the one-shot `ecr_helhall_portal_close` plays. The effect is one line in `ArenaPortalLook.cs`.
+
+**Death.** A player who dies inside the built hall loses no skill levels: a `Player.OnDeath` prefix on the dying
+player's own machine sets the game's time since the last death to 0, so the game gives its own soft death (no
+`Skills.OnDeath`, "The Gods are merciful"), and a `Skills.Clear` prefix skips a world's reset-on-death during it.
+GrindstoneSkills applies its own skill loss inside `Skills.OnDeath`, so it takes nothing either, with no change there.
+After the respawn (`Player.OnSpawned` postfix): "Hel spares your skills." The tombstone stays in the hall as ever.
+
+**Rewards** (`Arena/Rewards/`, `features/arena.md` section 3, "Rewards"). As the trial ends, the core's owner plans one
+reward from its ZDO (`RewardPlan`: the waves cleared `ecr_arena_swept`, the boss waves beaten `ecr_arena_bosses`, a bit
+per boss wave whose boss fell, the score) and sends it to every player of the trial, dead or alive, one routed RPC
+`ecr_arena_reward` each (`RewardSend`; a player offline then gets nothing). Numbers in `RewardTable.cs`:
+
+| Reward | How much |
+| --- | --- |
+| Idols | per boss wave beaten, the k-th boss's `Upgrader<min(k-1,7)>` `Weapon` (k odd) or `Armor` (k even): Eikthyr Wooden Battle, the Elder Bronze Protection ... Kall Bloodgold, then Bloodgold again |
+| Coins | score / 10 (`Coins`) |
+| Skill XP | each skill's raises in the hall during the trial again, x (waves cleared / 20), at most x2 |
+| Runes (EliteCrafting) | per regular wave cleared 1, 2, 2, 2, 2, 2, 3, 3 by biome; per boss wave beaten 5, 3, 4, 4, 5, 6, 7, 7; drawn by EliteCrafting's default `drops.runes` weights at the wave's tier, chisel left out |
+| Essence (EliteCrafting) | per regular wave cleared 2, 4, 6, 8, 10, 12, 14, 16; per boss wave beaten 20, 30, 40, 50, 60, 70, 80, 90 |
+
+EliteCrafting is detected by ValheimModLibs' EliteCraftingLink (`CraftingLink.Present`: its plugin `com.EliteCrafting` in
+the chainloader with API version 1 or later; nothing referenced), now merged into ECR; its item names are the link's
+`CraftingPrefabs` constants. Every item is looked up in `ObjectDB` and left out when missing. On the player's machine
+(`RewardGrant`) items go into the inventory, what does not fit falls at their feet; a dead player's reward waits for the
+respawn (`ArenaDeath`'s `Player.OnSpawned` postfix). The XP bonus (`SkillBonus`) comes from what that machine recorded
+(`SkillLedger`, a `Skills.RaiseSkill` prefix at `Priority.First`, before any mod scales the factor: each skill's factors
+summed and its raises counted while the local player was in the hall during the running trial) and goes back through
+`Skills.RaiseSkill` in steps of the trial's average raise (at most 2000 per skill), since the game drops what one raise
+earns past the next level. The message `ecr_arena_reward` "Hel rewards you: $1." with the game's item names and
+`ecr_arena_reward_coins`, `_runes`, `_essence`, `_xp` ("$1 coins", "$1 runes", "$1 essence", "+$1% skill XP") comes
+four seconds after the end message (`RewardText`).
+
+**Messages and HUD.** Start, boss, cleared and end go by routed RPC to the trial's players only, as a word key and up
+to three words (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
+`ecr_arena_cleared` "Wave $1 cleared. The next comes in $2 seconds.", `ecr_arena_ended` "Hel's Trial ends at wave $1:
+$2 kills, score $3.", `ecr_arena_line` "Hel's Trial - wave $1 - $2 left - $3", `ecr_arena_break_line` "Hel's Trial -
+wave $1 cleared - next wave in $2 - $3", `ecr_arena_countdown` "Hel's Trial - the first wave in $1", `ecr_arena_spared`
+"Hel spares your skills.", `ecr_arena_name` "Hel's Trial"). The line is the game's event bar for a living player in the
+hall, drawn from the core's ZDO by the raids' one `Hud.UpdateEvent` hook, which asks the trial first.
 
 **Travel.** `ArenaTravel.Enter` and `Leave`, for Helgrind (below) and `elite arena` (admin; the host in single player):
 in, the return point goes into the player's custom data `ecr_arena_return` (`x,y,z,yaw`; an older `x,y,z` still reads)
@@ -604,13 +681,17 @@ core is not loaded here; it ends the trial as an empty hall does.
 
 | File (`Arena/Trial/`, `Arena/Travel/`) | Does |
 | --- | --- |
-| `ArenaKeys.cs`, `ArenaTable.cs`, `ArenaPhase.cs` | Keys and RPC names; every fixed number and the sums from them; Idle, Countdown, Fighting |
+| `ArenaKeys.cs`, `ArenaTable.cs`, `ArenaPhase.cs` | Keys and RPC names; every fixed number and the sums from them; Idle, Countdown, Fighting, Break |
 | `ArenaState.cs` | The trial in the core's ZDO (as `RaidState`) |
 | `ArenaCore.cs`, `ArenaCorePrefab.cs`, `ArenaCoreKeeper.cs` | The core (RPCs, the owner's step, `Current`); its prefab and `ZNetScene.Awake` prefix; the server keeping exactly one (`ZoneSystem.Start` postfix) |
-| `ArenaStart.cs`, `ArenaRun.cs`, `ArenaWaves.cs`, `ArenaEnd.cs` | Hel wakes; one step (presence, ends, countdown, waves); a wave planned; the end |
-| `ArenaQueue.cs`, `TrialPlayers.cs`, `HallPlayers.cs` | The creatures to come and the trial's players in the ZDO (decoded once per write); the living players in the hall |
+| `ArenaStart.cs`, `ArenaRun.cs`, `ArenaWaves.cs`, `ArenaEnd.cs` | Hel wakes; one step (presence, ends, countdown and breaks, a wave and its clear); a wave planned, a wave over (cleared or swept) and the break; the end |
+| `ArenaQueue.cs`, `TrialPlayers.cs`, `HallPlayers.cs` | The creatures to come by archway and the trial's players in the ZDO (decoded once per write); the living players in the hall |
 | `ArenaCreatures.cs`, `ArenaSpawnLists.cs`, `ArenaFallback.cs`, `ArenaBosses.cs` | Biome lists and weights; homes from the spawn lists; the fixed lists; the bosses and Kall's next phase |
-| `ArenaSpawn.cs`, `ArenaRoll.cs`, `ArenaHunt.cs`, `ArenaTag.cs` | Making one (archway, effect, tag, roll, hunt); the roll; hunting; the tag |
+| `ArenaSpawn.cs`, `ArenaSpots.cs`, `ArenaRoll.cs`, `ArenaHunt.cs`, `ArenaTag.cs` | Each archway's next creature, a boss (spot, sound or effect, tag, roll, hunt); the recess and rune circle spots; the roll; hunting; the tag |
+| `ArenaPortals.cs`, `ArenaPortal.cs`, `ArenaPortalLook.cs` | The clients' portals from the core's ZDO; one archway's portal and light; the effect, its close and the light |
+| `ArenaDeath.cs` | No skill loss in the hall: `Player.OnDeath` prefix and finalizer, `Skills.Clear` prefix, `Player.OnSpawned` postfix (also pays a reward waiting for the respawn) |
+| `Arena/Rewards/RewardTable.cs`, `RewardList.cs`, `RewardPlan.cs`, `RewardRunes.cs`, `RewardSend.cs` | The numbers; the reward as a package; planning it on the core's owner; EliteCrafting's runes and essence; sending it |
+| `Arena/Rewards/RewardGrant.cs`, `RewardText.cs`, `SkillLedger.cs`, `SkillBonus.cs` | On the player's machine: adding it, its message, the XP recorded in the trial (`Skills.RaiseSkill` prefix), the XP bonus |
 | `ArenaFighter.cs`, `ArenaFighters.cs`, `ArenaOrders.cs`, `ArenaAttachPatch.cs` | The hall's hold on a creature; the list the owner counts; adopt, release, vanish, keep hunting; the `MonsterAI.Start` postfix |
 | `ArenaScore.cs`, `ArenaLoot.cs` | The score at death (`Character.OnDeath` prefix `ArenaDeathPatch`); the emptied drop list |
 | `ArenaNet.cs`, `ArenaWords.cs`, `ArenaHudLine.cs` | Messages and the stop relay (`ZoneSystem.Start` postfix); the words (`Localization.SetupLanguage` postfix); the HUD line |
@@ -621,11 +702,16 @@ given outright; the raid's own calls it unchanged), `Raids/Hud/RaidHudPatch.cs` 
 `Patches/LootPatch.cs` calls `ArenaLoot` last, `Runtime/BossKills.cs` and `Patches/BossHintPatch.cs` skip arena bosses,
 `Commands/EliteCommands.cs` routes `arena`. New patches (all passed the offline patch check): `ZNetScene.Awake`
 prefix, `ZoneSystem.Start` postfixes (keeper, messages), `MonsterAI.Start` postfix, `Character.OnDeath` prefix,
-`Localization.SetupLanguage` postfix.
+`Localization.SetupLanguage` postfix, and (2026-10-13) `Player.OnDeath` prefix and finalizer, `Skills.Clear` prefix,
+`Player.OnSpawned` postfix, `Skills.RaiseSkill` prefix. The csproj and `ILRepack.targets` merge EliteCraftingLink.
 
 Not seen yet: everything. In particular a dedicated server owning and running the trial, the creatures' paths on the
 hall floor, Moder flying under the dome, the Queen and Kall's phases being adopted in time, the spawn effect, the HUD
-line, the messages, the travel's no-loading jump in and the return.
+line, the messages, the travel's no-loading jump in and the return; and from 2026-10-13: the breaks and their line,
+the 3-minute sweep, large creatures (Troll, Lox, Morgen, Gjall) made in a 1.4 m deep recess, the portals' look, light
+and timing against the creatures, and an arena death keeping every skill level (GrindstoneSkills' too); the rewards
+(the idols' names in the message, the items given or dropped, the reward at the respawn, the XP bonus's size with
+GrindstoneSkills' rates, EliteCrafting's runes and essence present and absent).
 
 ## Arena: Helgrind
 
@@ -668,11 +754,11 @@ back wall, the trigger boxes, the jump in and the return to the gate, the closed
 | Command | Does |
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin`; Bountiful takes its extras after it, or rolls them when none follow: `elite spawn gd_king 2 Bountiful Enraged Mending` |
-| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair, with what a Thieving creature carries and what a Devouring creature has eaten ("devoured 1 of 2: Boar") |
+| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair, with what a Thieving creature carries and what a Devouring creature has eaten ("devoured 1 of 2: Boar"). Open to every player |
 | `elite purge [radius]` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first). With a radius in metres, only those that close to you: `elite purge 30` |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |
-| `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the other `elite` commands are admin only |
+| `elite tier` | Shows the world tier, what it does to the rolls, and which bosses count. Open to every player; the other `elite` commands but `inspect` are admin only |
 | `elite raid start <coins> [tier]` | Sounds a raid where you stand with that many coins and no chest, for testing: the heat is weighed against the gear tier given (0-6), or else the strongest player within 96 m. Skips the chest's base test and daily wait, not the 200 m between raids |
 | `elite raid stop` | Stops the nearest raid within 200 m, as holding `E` on its chest does: every raider dies and drops nothing |
 | `damage` | Shows the latest boss damage board again. Open to every player, and typed as `/damage` in chat |

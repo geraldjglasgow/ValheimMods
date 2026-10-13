@@ -106,9 +106,9 @@ namespace EliteCreaturesReborn.Commands
         }
 
         private static string Refusal(string id) => id.Length == 0
-            ? "elite: requires admin rights on this server (elite tier is open to everyone). The server could not "
+            ? "elite: requires admin rights on this server (elite tier and elite inspect are open to everyone). The server could not "
                 + "identify your connection."
-            : "elite: requires admin rights on this server (elite tier is open to everyone). The server knows you as "
+            : "elite: requires admin rights on this server (elite tier and elite inspect are open to everyone). The server knows you as "
                 + $"'{id}' and that ID is not in its adminlist.txt. Add it on a line of its own; the server reads the "
                 + "file again within 10 seconds, no restart or reconnect needed.";
     }

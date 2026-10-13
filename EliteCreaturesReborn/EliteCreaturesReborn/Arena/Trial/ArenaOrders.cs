@@ -7,8 +7,10 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// (<see cref="ArenaFighter"/>; features/arena.md section 4). Untagged, inside the hall while a trial runs and not a
     /// pet: it joins the trial (adopted - a boss's next phase, a Summoner's adds, a Splintering creature's copies, which
     /// the game or the mod made on the dying creature's owner), and hunts. Tagged and tamed: the players' now, the tag
-    /// comes off. Tagged, with its trial over (ended, another begun, Arena off, or no core to read for ten seconds): it
-    /// vanishes, dropping nothing but what a Thieving creature stole from the players. Otherwise it keeps hunting.
+    /// comes off. Tagged, with its trial over (ended, another begun, Arena off, or no core to read for ten seconds) or its
+    /// wave over (cleared, or swept when its three minutes ran out): it vanishes, dropping nothing but what a Thieving
+    /// creature stole from the players. Otherwise it keeps hunting. A creature adopted in the countdown or a break joins
+    /// the coming wave.
     /// </summary>
     internal static class ArenaOrders
     {
@@ -31,7 +33,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 Release(fighter, zdo);
             }
-            else if (Over(fighter, trial, now))
+            else if (Over(fighter, zdo, trial, now))
             {
                 Vanish(fighter);
             }
@@ -73,12 +75,13 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 return;
             }
-            ArenaTag.Write(zdo, running, body.IsBoss(), ArenaTable.BiomeNumber(core!.GetInt(ArenaKeys.WaveHash)));
+            int wave = new ArenaState(core!).JoiningWave;
+            ArenaTag.Write(zdo, running, body.IsBoss(), ArenaTable.BiomeNumber(wave), wave);
             ArenaHunt.Begin(body);
             fighter.Refresh();
         }
 
-        private static bool Over(ArenaFighter fighter, long trial, float now)
+        private static bool Over(ArenaFighter fighter, ZDO zdo, long trial, float now)
         {
             if (!Config.ArenaSettings.Enabled)
             {
@@ -91,7 +94,7 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return now - fighter.NoCoreSince >= NoCoreSeconds;
             }
             fighter.NoCoreSince = -1f;
-            return ArenaState.RunningTrial(core) != trial;
+            return ArenaState.RunningTrial(core) != trial || ArenaTag.Wave(zdo) <= core.GetInt(ArenaKeys.SweptHash);
         }
 
         private static ZDO? CoreZdo()

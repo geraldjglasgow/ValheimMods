@@ -1,5 +1,6 @@
 using EliteCreaturesReborn.Aspects;
 using EliteCreaturesReborn.Breeding;
+using EliteCreaturesReborn.Horde;
 using EliteCreaturesReborn.Runtime;
 using HarmonyLib;
 using PatchGuard;
@@ -10,6 +11,7 @@ namespace EliteCreaturesReborn.Patches
     /// Gives every non-player creature an <see cref="EliteController"/> as it wakes. The controller does the rest on
     /// its own first frame - by then any spawner has already set the vanilla star level, so nothing is lost. Players
     /// are filtered inside the controller, and a boss resolves there on the boss table, so this stays a cheap attach.
+    /// A creature the world's own spawning is making right now is tagged wild here, for the horde (<see cref="WildSpawn"/>).
     /// </summary>
     [HarmonyPatch(typeof(Character), "Awake")]
     public static class CharacterLifecyclePatch
@@ -24,6 +26,7 @@ namespace EliteCreaturesReborn.Patches
                 return;
             }
             EliteController controller = character.gameObject.AddComponent<EliteController>();
+            WildSpawn.Notice(character); // a creature the world's spawning is making right now is tagged wild
             EchoBody.VeilIfEcho(character); // an Echoing boss's echo, waking from its ZDO here: veiled before it is ever drawn
             if (character.IsBoss())
             {

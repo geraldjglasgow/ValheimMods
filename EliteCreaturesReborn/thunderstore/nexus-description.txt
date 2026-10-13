@@ -18,10 +18,12 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Loot: four drop modes, rules per creature; bosses drop trophies and materials for every player.
 [*]Boss damage board: who did how much damage.
 [*]Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir, until you have found them.
+[*]Compendium: pages in the game's compendium on the difficulty, stars, mutations and boss aspects, with your server's numbers.
 [*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
-[*]Raids: stake gold in the Raiders Chest to call a raid and win it back with more.
-[*]Hel's Arena (off by default): through Helgrind, Hel's gate, endless waves and a boss every tenth. Subject to change without warning: it works and is tested, but its final shape is still being decided.
+[*]Raids: stake gold in the Raiders Chest to call a raid and win it back with more (below).
+[*]Horde (off by default): more creatures in the wild, each weaker; the extra creatures pay no extra loot.
+[*]Hel's Arena (off by default): through Helgrind, Hel's gate, endless waves and a boss every tenth; rewarded with Forge of Potential idols, coins, skill XP and (with EliteCrafting) runes and essence by how far you get. Subject to change without warning: it works and is tested, but its final shape is still being decided.
 [*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 [/list]
 
@@ -72,6 +74,43 @@ The altar shows the aspect before you offer and shifts every 15 seconds. About o
 [*]Portalbound: the Elder and Bonemass throw through portals.
 [*]Bountiful: two more aspects at once, and all their loot.
 [/list]
+
+[size=4][b]Raids: the Raiders Chest[/b][/size]
+The game's own raids still come as usual. The Raiders Chest calls one on your own base, for gold.
+[list]
+[*][b]Build it:[/b] hammer, Misc tab, at a workbench: 10 Wood, 4 Leather Scraps, 1 Hard Antler. It holds only coins.
+[*][b]Sound the raid:[/b] fill it with coins and press [b]Shift + E[/b]. Its hover shows what the coins would make of a raid now, for example "1,000 coins - Deadly raid (coins back x2, drops x5)".
+[*][b]Where and when:[/b] the chest must stand in a base (3 base pieces such as a workbench, fire or bed within 20 m). One raid a day per chest (chests within 100 m share the wait), and none within 200 m of another raid, the game's or a chest's.
+[*][b]Gold against gear:[/b] sounding takes every coin in the chest. The raid's heat is those coins against a fair stake for the strongest player within 96 m (the best metal they have ever held or the armour they wear, whichever is higher): 100 coins for leather and bone, 200 bronze, 400 iron, 600 silver, 900 black metal, 1,300 Mistlands, 1,800 Flametal.
+[/list]
+
+Heat (coins divided by the fair stake):
+[list]
+[*][b]Trivial[/b] (under 0.5): fewer raiders (x0.6); coins back x1; drops x0.1 to x0.5.
+[*][b]Fair[/b] (0.5 to 1.5): the normal count; coins back x1.1; drops x1.
+[*][b]Hard[/b] (1.5 to 3): x1.5 raiders, +1 star, a third mutated; coins back x1.25; drops x2.
+[*][b]Brutal[/b] (3 to 6): x2 raiders, +2 stars, half mutated; coins back x1.5; drops x3.5.
+[*][b]Deadly[/b] (6 and up): x2.5 raiders, +3 stars, 9 in 10 mutated; coins back x2; drops x5.
+[/list]
+
+The raid:
+[list]
+[*]A 20 second countdown, then three waves of one of the game's raids your world has unlocked, each from one side, 40 to 60 m out: half the game's count, then two thirds, then all of it, times the heat's raiders and a quarter more for each player past the first. At most 20 alive at once.
+[*]Raiders roll stars and mutations as their biome does, plus the heat's. A Warlord leads the last wave: its toughest creature, with two more stars.
+[*]Raiders hunt players first. With no one to fight, half go for the Raiders Chest and half for your chests and crafting stations, breaking through whatever stands in the way.
+[*]The coins back are split among every raider (the Warlord carries a quarter); each drops its share as it dies, with its own loot times the heat's drops. A stronger player arriving mid-raid lowers the drops to match their gear.
+[*]Players within 96 m see the raid in the event bar under the minimap: wave, raiders left and time left.
+[/list]
+
+How it ends:
+[list]
+[*][b]Won:[/b] the last wave is dead; every coin is back, with the extra.
+[*][b]Robbed:[/b] the Raiders Chest is broken; the raiders walk off with their coins.
+[*][b]Stopped:[/b] hold [b]E[/b] on the chest for 3 seconds; every raider dies and drops nothing, coins included.
+[*][b]Abandoned:[/b] no player within 96 m for 60 seconds, a logout or a server restart; the raiders walk off with their coins.
+[*][b]Timed out:[/b] 15 minutes after the start; the raiders walk off with their coins.
+[/list]
+The chest stays locked during the raid, and whatever raiders dropped before the end is yours to keep. [b]Raiders Chest[/b] in section [b]11 - Raids[/b] (on by default, set by the server) takes the chest out of the hammer.
 
 [size=4][b]Install[/b][/size]
 Needed on the server and every client. Install BepInExPack for Valheim, then put EliteCreaturesReborn.dll in BepInEx/plugins (or use a mod manager). Remove other star mods, or set creature stars: false: their configs are not read.

@@ -8,11 +8,11 @@ namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
     /// The trial's line under the minimap for every living player in the hall while it runs (features/arena.md section 3,
-    /// "Score"): "Hel's Trial - wave 12 - 7 left - 3,420", or "Hel's Trial - the first wave in 0:07" in the countdown. It
-    /// is the game's own event bar, drawn the way the raids draw theirs (<see cref="Raids.RaidHudLine"/>), from the core's
-    /// ZDO alone; nothing is sent for it. The one hook on <c>Hud.UpdateEvent</c> asks here first, then the raids
-    /// (<see cref="Raids.RaidHudPatch"/>). The text is rebuilt only when a number in it changes; a boss's health bar hides
-    /// it as it hides the game's own line.
+    /// "Score"): "Hel's Trial - wave 12 - 7 left - 3,420", "Hel's Trial - wave 7 cleared - next wave in 12 - 3,420" in a
+    /// break, or "Hel's Trial - the first wave in 0:07" in the countdown. It is the game's own event bar, drawn the way
+    /// the raids draw theirs (<see cref="Raids.RaidHudLine"/>), from the core's ZDO alone; nothing is sent for it. The one
+    /// hook on <c>Hud.UpdateEvent</c> asks here first, then the raids (<see cref="Raids.RaidHudPatch"/>). The text is
+    /// rebuilt only when a number in it changes; a boss's health bar hides it as it hides the game's own line.
     /// </summary>
     internal static class ArenaHudLine
     {
@@ -52,26 +52,37 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         private static void Write(Hud hud, ArenaState state)
         {
-            bool countdown = state.Phase == ArenaPhase.Countdown;
-            int seconds = Seconds(state.Next - NetTime.NowMs());
-            int wave = state.Wave, left = state.Left;
+            ArenaPhase phase = state.Phase;
+            int wave = state.Wave;
+            int count = phase == ArenaPhase.Fighting ? state.Left : Seconds(state.Next - NetTime.NowMs());
             long score = state.Score;
-            long key = countdown ? -2L - seconds : Key(wave, left, score);
+            long key = Key(phase, wave, count, score);
             if (_shown && key == _shownKey)
             {
                 return;
             }
             _shown = true;
             _shownKey = key;
-            hud.m_eventName.text = countdown
-                ? ArenaWords.HudCountdown(Raids.RaidText.Clock(seconds))
-                : ArenaWords.HudLine(wave, left, score.ToString("N0", CultureInfo.InvariantCulture));
+            hud.m_eventName.text = Text(phase, wave, count, score);
+        }
+
+        // The countdown's clock, a break's seconds to the next wave, or a wave's creatures left.
+        private static string Text(ArenaPhase phase, int wave, int count, long score)
+        {
+            string points = score.ToString("N0", CultureInfo.InvariantCulture);
+            switch (phase)
+            {
+                case ArenaPhase.Countdown: return ArenaWords.HudCountdown(Raids.RaidText.Clock(count));
+                case ArenaPhase.Break: return ArenaWords.HudBreak(wave, count, points);
+                default: return ArenaWords.HudLine(wave, count, points);
+            }
         }
 
         private static int Seconds(long ms) => ms <= 0L ? 0 : (int)((ms + 999L) / 1000L);
 
         // Every number the line shows, packed into one value so a frame with nothing new costs one comparison.
-        private static long Key(int wave, int left, long score) =>
-            (long)Mathf.Clamp(wave, 0, 4095) | (long)Mathf.Clamp(left, 0, 1023) << 12 | Math.Min(score, 1L << 40) << 22;
+        private static long Key(ArenaPhase phase, int wave, int count, long score) =>
+            ((long)phase & 3L) | (long)Mathf.Clamp(wave, 0, 4095) << 2 | (long)Mathf.Clamp(count, 0, 1023) << 14
+            | Math.Min(Math.Max(score, 0L), 1L << 38) << 24;
     }
 }

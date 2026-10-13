@@ -5,39 +5,41 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 ## Features
 - Difficulty: Easy to Extreme; new biomes start gentle, cleared ones keep hardening.
 - Stars: up to eight on Extreme, or off for another mod's.
-- World tiers: each boss's first defeat makes stars and mutations more common.
+- World tiers: each first boss defeat raises stars and mutations.
 - Mutations: one per creature, named on the nameplate (below).
 - Boss aspects: one per fight (below); bosses gain stars with each defeat.
 - Breeding: tamed young inherit mutations and stars.
-- Loot: four drop modes, rules per creature; bosses drop trophies and materials for every player.
+- Loot: four drop modes, rules per creature; bosses pay every player.
 - Boss damage board: who did how much.
 - Boss hints: bosses point to the traders and the ancient forge.
+- Compendium: in-game pages on difficulty, stars, mutations and aspects.
 - Death recap: `F10` replays the seconds before each death.
 - Respawning: cleared camps, dungeons and chests can refill (off by default).
+- Horde (off by default): more creatures in the wild, each weaker.
 - Raids: stake gold in the Raiders Chest to call a raid and win it back with more.
-- Hel's Arena (off by default): through Helgrind, Hel's gate, endless waves and a boss every tenth. Subject to change without warning: it works and is tested, but its final shape is still being decided.
+- Hel's Arena (off by default): through Helgrind, endless waves and a boss every tenth; idols, coins, skill XP and EliteCrafting runes by how far you get. Subject to change without warning: it works and is tested, but its final shape is still being decided.
 - Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 
 ## Mutations
 - Mad: far faster, half health.
 - Bloated: double health, explodes after it dies.
 - Cloaked: invisible beyond 10 m.
-- Splintering: splits into two weaker copies when killed.
+- Splintering: splits into weaker copies when killed.
 - Leeching: regenerates and heals by hitting.
-- Warding: reflects part of each hit and knocks you back.
+- Warding: reflects hits and knocks you back.
 - Plated: armoured while healthy, hitting harder as it breaks.
 - Miasmic: trails poison clouds.
 - Devouring: eats weaker creatures and grows stronger.
 - Thieving: steals items; kill it to get them back.
-- Gilded: runs from you; triple loot and a coin purse.
-- Blinking: reappears behind you every 30 seconds.
+- Gilded: runs from you; triple loot.
+- Blinking: reappears behind you.
 - Relentless: chases you up to 150 m, sneaking or not.
-- Juggernaut: never staggers or is knocked back.
+- Juggernaut: never staggers.
 - Screecher: shrieks when hit hard, deafening you and stopping magic.
 - Frostbound: chilling aura, slippery ice trails; frost heals it.
 - Mudbound: leaves slowing mud.
 - Corrodent: wears armour down three times as fast.
-- Cloning: leaves a harmless decoy and fights on unseen.
+- Cloning: leaves a decoy and fights on unseen.
 - Flamebound: leaves burning ground.
 - Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots that hold you.
 
@@ -53,7 +55,7 @@ Shown at the altar; about one fight in five has none, and each pays extra loot.
 - Phantom: splits into copies and hides among them.
 - Adaptive: resists the damage type hitting it most.
 - Fixated: marks one player and hits them harder.
-- Stormbound: lightning strikes circles under every player.
+- Stormbound: lightning strikes under every player.
 - Gravitic: drags everyone in, then slams.
 - Colossal: bigger, tougher, with knockdown shockwaves.
 - Brutal: heavy blows throw you 20 m.

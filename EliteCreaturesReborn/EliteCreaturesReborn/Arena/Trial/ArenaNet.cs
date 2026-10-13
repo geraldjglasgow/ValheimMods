@@ -29,6 +29,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             _registeredOn = bus;
             bus.Register<string, string, string, string>(ArenaKeys.MessageRpc, OnMessage);
             bus.Register(ArenaKeys.StopFindRpc, OnStopFind);
+            bus.Register<ZPackage>(ArenaKeys.RewardRpc, Rewards.RewardSend.OnReward);
         }
 
         /// <summary>Core's owner: every player of the trial reads the message under <paramref name="key"/>.</summary>

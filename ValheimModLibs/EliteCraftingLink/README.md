@@ -45,6 +45,7 @@ under the endpoint's name and the call answers `false`.
 | `CraftingInscriptions` | `RegisterInscription`, `AddToPool`, `RegisterExternalEffect`, `GetPlayerTotal`, `GetItemTotal`, `GetPlayerInscriptionsJson` (EliteCrafting 0.7.0+: ask `CraftingLink.HasEndpoint` first) |
 | `CraftingItems` | `IsMagic`, `GetRarity`, `GetRarityColor`, `GetInscriptionsJson`, `GetDecoratedName`, `CanBeMagic`, `RollMagic`, `Cleanse`, `GetSalvageRune` / `GetSalvageRuneChance`, `DecorateIcon` (EliteCrafting 0.8.0+; OpenKeep's Salvage) |
 | `CraftingHooks` | `RegisterEquipmentProvider` / `Unregister...`, `InvalidatePlayer`, `RegisterMagicBaseFilter` / `Unregister...`, `Add/RemoveItemChangedListener`, `Add/RemoveLootGeneratedListener`, `SetCreatureLoot` |
+| `CraftingPrefabs` | Constants, no call: the published prefab names of the five runes (`ECF_Awakening`, `ECF_Recasting`, `ECF_Ascension`, `ECF_Cleansing`, `ECF_Serpent`) and `ECF_Essence`, for a mod that hands them out (ECR's Hel's Trial rewards); look each up in `ObjectDB` first |
 
 ## Internals
 

@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Horde;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
@@ -61,8 +62,10 @@ namespace EliteCreaturesReborn.Patches
                 return;
             }
             CreatureTraits traits = controller.Traits;
-            hit.ApplyModifier(DamageMath.OutgoingMultiplier(controller.Rules, traits, attacker.GetHealthPercentage()));
-            hit.m_damage.m_blunt += DamageMath.DevouredFlatDamage(traits, controller.View.GetZDO());
+            ZDO zdo = controller.View.GetZDO();
+            hit.ApplyModifier(DamageMath.OutgoingMultiplier(controller.Rules, traits, attacker.GetHealthPercentage())
+                * HordeFactors.Attack(attacker, zdo)); // a horde creature's attack multiplier while the horde is on
+            hit.m_damage.m_blunt += DamageMath.DevouredFlatDamage(traits, zdo);
             AspectDamage.Outgoing(controller, struck.Victim, hit); // after the stars, so an aspect multiplies the starred hit
         }
 

@@ -6,10 +6,10 @@ namespace EliteCreaturesReborn.Arena.Hall
     /// <summary>
     /// The floor's 24 runes lighting at random (features/arena.md section 1, "The runes"), clients only, on the floor.
     /// Each rune (<c>glow_rune_00</c>..<c>23</c>) gets its own copy of the shared rune material, dark at rest. Between
-    /// trials one to three at a time fade in, hold one or two seconds and fade out; during a trial more of them at once
-    /// and faster as the waves rise; on a boss wave every rune flares and stays lit until the wave ends. Only runes that
-    /// are changing are touched each frame (a short list, swap-removed); nothing is allocated after setup, and nothing
-    /// runs while the local player is far from the hall. The trial's state comes through <see cref="TrialView"/>.
+    /// trials one to three at a time fade in, hold one or two seconds and fade out; while a wave is fought more of them at
+    /// once and faster as the waves rise, calm again in the break between waves; on a boss wave every rune flares and
+    /// stays lit until the wave ends. Only runes that are changing are touched each frame (a short list, swap-removed);
+    /// nothing is allocated after setup, and nothing runs while the local player is far from the hall. The trial's state comes through <see cref="TrialView"/>.
     /// </summary>
     internal sealed class HallRunes : MonoBehaviour
     {
@@ -93,11 +93,11 @@ namespace EliteCreaturesReborn.Arena.Hall
             return new RuneLight(material, lit.maxColorComponent > 0.01f ? lit : Fallback);
         }
 
-        // More runes at once as the waves rise: one to three between trials (drawn again as each one lights), then
-        // 3 + a third of the wave during one (at most 12).
+        // More runes at once as the waves rise: one to three between trials and in a break between waves (drawn again as
+        // each one lights), then 3 + a third of the wave while one is fought (at most 12).
         private void StartMore()
         {
-            int wanted = TrialView.Running ? Mathf.Min(12, 3 + TrialView.Wave / 3) : _quiet;
+            int wanted = TrialView.Fighting ? Mathf.Min(12, 3 + TrialView.Wave / 3) : _quiet;
             if (_count >= wanted || Time.time < _nextStart)
             {
                 return;
@@ -113,8 +113,8 @@ namespace EliteCreaturesReborn.Arena.Hall
             _nextStart = Time.time + Random.Range(0.2f, 0.8f) / Pace();
         }
 
-        // Faster as the waves rise: 1 between trials, 3% quicker per wave, at most two and a half times.
-        private static float Pace() => TrialView.Running ? Mathf.Min(2.5f, 1f + 0.03f * TrialView.Wave) : 1f;
+        // Faster as the waves rise: 1 between trials and in breaks, 3% quicker per wave fought, at most two and a half times.
+        private static float Pace() => TrialView.Fighting ? Mathf.Min(2.5f, 1f + 0.03f * TrialView.Wave) : 1f;
 
         private int IdleRune()
         {

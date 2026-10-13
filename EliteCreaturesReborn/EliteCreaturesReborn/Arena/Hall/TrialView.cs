@@ -25,6 +25,10 @@ namespace EliteCreaturesReborn.Arena.Hall
         /// <summary>The running wave is a boss wave.</summary>
         public static bool BossWave { get; private set; }
 
+        /// <summary>A trial runs and is not in a break between waves (<see cref="ArenaTrial.Break"/>): a wave is being
+        /// fought, or the countdown runs. The runes are calm otherwise.</summary>
+        public static bool Fighting { get; private set; }
+
         public static void Refresh()
         {
             if (Time.time < _next)
@@ -37,10 +41,11 @@ namespace EliteCreaturesReborn.Arena.Hall
                 Running = ArenaTrial.Running;
                 Wave = Running ? ArenaTrial.Wave : 0;
                 BossWave = Running && ArenaTrial.BossWave;
+                Fighting = Running && !ArenaTrial.Break;
             }
             catch (Exception e)
             {
-                Running = BossWave = false;
+                Running = BossWave = Fighting = false;
                 Wave = 0;
                 Report(e);
             }

@@ -4,7 +4,8 @@ namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
     /// Every fixed number of Hel's Trial (features/arena.md section 3: "all fixed numbers in the code"), and the sums made
-    /// from them: the wave's biome, how many come, their extra stars and mutation chance, the wave timer and the score.
+    /// from them: the wave's biome, how many come, their extra stars and mutation chance, the pace out of the archways,
+    /// the break after a wave and the score.
     /// </summary>
     public static class ArenaTable
     {
@@ -14,14 +15,29 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>Arena creatures alive at once at most; the rest wait.</summary>
         public const int MaxAlive = 20;
 
-        /// <summary>The next wave comes when this many or fewer are left (alive and still to come).</summary>
-        public const int NextWaveAtLeft = 2;
+        /// <summary>The break after a cleared wave, before the next one comes; longer after a boss wave.</summary>
+        public const float BreakSeconds = 15f;
+        public const float BossBreakSeconds = 20f;
 
-        /// <summary>The first wave's timer; each wave's is one second shorter, never under
-        /// <see cref="MinWaveSeconds"/>.</summary>
-        public const float FirstWaveSeconds = 45f;
+        /// <summary>A wave not cleared within three minutes counts as cleared: its stragglers vanish, scoring nothing.</summary>
+        public const float WaveLimitSeconds = 180f;
 
-        public const float MinWaveSeconds = 20f;
+        /// <summary>Seconds with nothing of the wave alive or still to come before it counts as cleared: a boss whose death
+        /// brings its next phase (Kall Fimbulbringer), or a Splintering creature's copies, are gone for a moment before
+        /// the next ones join the wave.</summary>
+        public const float ClearedSeconds = 2f;
+
+        /// <summary>The archways creatures come out of; each sends one at a time.</summary>
+        public const int Archways = 4;
+
+        /// <summary>Seconds between two creatures out of the same archway: a random pace between these.</summary>
+        public const float ArchwayPaceMin = 0.8f;
+        public const float ArchwayPaceMax = 1.2f;
+
+        /// <summary>Seconds a portal is open before its first creature comes out (it fades in meanwhile), plus up to
+        /// <see cref="ArchwayStagger"/> so the four do not send their first at the same instant.</summary>
+        public const float PortalLead = 0.6f;
+        public const float ArchwayStagger = 0.4f;
 
         /// <summary>Waves per biome; the last of each is the boss wave.</summary>
         public const int WavesPerBiome = 10;
@@ -47,11 +63,8 @@ namespace EliteCreaturesReborn.Arena.Trial
         public const int KillPoints = 10;
         public const int BossPoints = 500;
 
-        /// <summary>Seconds of the owner's clock between steps of the trial.</summary>
-        public const float TickSeconds = 0.5f;
-
-        /// <summary>Creatures made in one step at most, so a wave arrives over a few seconds rather than in one frame.</summary>
-        public const int MostPerTick = 3;
+        /// <summary>Seconds of the owner's clock between steps of the trial: fine enough for the archways' pace.</summary>
+        public const float TickSeconds = 0.25f;
 
         /// <summary>Seconds with no living player in the hall before the trial ends: a hand-over to a new owner, which may
         /// need a moment to see the players, never ends it.</summary>
@@ -59,10 +72,6 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         /// <summary>Seconds between stamps of <see cref="ArenaKeys.SeenAt"/> while players are in the hall.</summary>
         public const float SeenStampSeconds = 1f;
-
-        /// <summary>Seconds with no boss of the boss wave alive before the next wave comes: a boss whose death brings its
-        /// next phase (Kall Fimbulbringer) is gone for a frame before the next one starts.</summary>
-        public const float BossGoneSeconds = 2f;
 
         /// <summary>Creatures waiting at most; a wave planned past this brings fewer.</summary>
         public const int MaxQueued = 120;
@@ -108,8 +117,11 @@ namespace EliteCreaturesReborn.Arena.Trial
             return Mathf.Max(1, Mathf.RoundToInt(baseCount * scale));
         }
 
-        /// <summary>The wave's timer in seconds.</summary>
-        public static float WaveSeconds(int wave) => Mathf.Max(MinWaveSeconds, FirstWaveSeconds - (Mathf.Max(1, wave) - 1));
+        /// <summary>The break after a wave is cleared, in seconds.</summary>
+        public static float BreakAfter(int wave) => IsBossWave(wave) ? BossBreakSeconds : BreakSeconds;
+
+        /// <summary>The time until an archway sends its next creature.</summary>
+        public static float ArchwayPace() => Random.Range(ArchwayPaceMin, ArchwayPaceMax);
 
         /// <summary>A kill's score.</summary>
         public static int PointsFor(int stars, int biomeNumber, bool boss) =>

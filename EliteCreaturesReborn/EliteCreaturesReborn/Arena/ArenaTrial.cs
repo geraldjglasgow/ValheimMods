@@ -12,10 +12,23 @@ namespace EliteCreaturesReborn.Arena
     /// </summary>
     public static class ArenaTrial
     {
-        /// <summary>True while a trial runs (from the countdown to its end), as this client sees the core's ZDO.</summary>
+        /// <summary>True while a trial runs (from the countdown to its end, breaks included), as this client sees the core's
+        /// ZDO.</summary>
         public static bool Running => ArenaState.IsRunning(CoreZdo());
 
-        /// <summary>The wave running, 0 during the countdown or with no trial.</summary>
+        /// <summary>True during the short break after a cleared wave, before the next one comes (15 s, 20 s after a boss
+        /// wave): a trial runs, but nothing fights. Not during the countdown.</summary>
+        public static bool Break
+        {
+            get
+            {
+                ZDO? zdo = CoreZdo();
+                return zdo != null && (ArenaPhase)zdo.GetInt(ArenaKeys.PhaseHash) == ArenaPhase.Break;
+            }
+        }
+
+        /// <summary>The wave running (during a break, the one just cleared), 0 during the countdown or with no
+        /// trial.</summary>
         public static int Wave
         {
             get

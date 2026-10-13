@@ -7,9 +7,10 @@ grow stronger until every player has fallen or left. Requested on Discord (an "I
 realm as its setting and ECR as its home. The hall's art is made in `..\ValheimAssets\Assets\Locations\HelHall` and
 `Assets\Creatures\Hel`.
 
-The entrance is decided (section 2): **Helgrind**, Hel's gate, a craftable endgame portal piece. Open, decided later
-with the user (do not build): **rewards** (reward chest, leaderboard, any extra skill XP; until then arena creatures
-drop nothing).
+The entrance is decided (section 2): **Helgrind**, Hel's gate, a craftable endgame portal piece. The rewards are
+decided (section 3, "Rewards"): idols, coins and skill XP by how far a trial got, and EliteCrafting's runes and essence
+where it is installed; arena creatures themselves still drop nothing. Open, decided later with the user (do not build):
+a leaderboard.
 
 ---
 
@@ -71,16 +72,27 @@ drop nothing).
   was kept.
 - `elite arena` (admin, or devcommands in single player) stays: in the world, keeps where you stand and jumps you to
   `arrive`; in the hall, jumps you back as the way out does.
-- Dying in the hall is the game's own death: your tombstone stays in the hall, skills drop as usual, and you go back in
-  to fetch it.
+- Dying in the hall costs no skill levels (section 3, "Death"); otherwise it is the game's own death: your tombstone
+  stays in the hall, and you go back in to fetch it.
 
 # 3. The trial
 
 - **Start:** a player in the hall interacts with Hel when no trial is running. Every player in the hall then is in it;
   players who arrive during it join it. A countdown of 10 seconds, the doors close, the first wave comes.
-- **Waves** come out of the four archways (`spawn_0` to `_3`, in turn), each creature with a spawn effect, hunting the
-  players at once. Never more than 20 arena creatures alive; the rest wait. The next wave comes when two or fewer are
-  left, or after a wave timer (45 s, one second shorter each wave, never under 20 s).
+- **Waves** come out of the four archways, each wave's creatures given to the archways in turn. An archway with
+  creatures to send opens a **portal** in its recess (the workshop's `ecr_helhall_portal`, standing on the walls'
+  `portal_N` point, with a cold light #80ebe0, intensity 1.8, range 7, faded in over 0.5 s and out over 1.5 s): about
+  half a second later its first creature steps out of the recess, and the rest follow **one at a time**, 0.8 to 1.2 s
+  apart, each archway at its own pace, each creature with the game's spawn sound, hunting the players at once (they
+  come in near the walls, so the middle of the hall stays the players'). The portal closes a second after its last
+  creature (the loop stops and fades, the closing one-shot `ecr_helhall_portal_close` plays). Never more than 20 arena
+  creatures alive; the rest wait. Portals are drawn on clients only, local copies; which archways are open comes from
+  the core's ZDO, so every client sees the same.
+- **A wave is a round:** the next wave comes only when the current one is **cleared** - nothing of it alive or still
+  to come, held for 2 s (a boss's next phase, a Splintering creature's copies). Then a **break**: 15 s, 20 s after a boss
+  wave; every player of the trial reads "Wave 7 cleared. The next comes in 15 seconds.", and the event bar shows
+  "Hel's Trial - wave 7 cleared - next wave in 12 - 3,420". A wave not cleared within **3 minutes** counts as cleared:
+  its stragglers vanish with no drops, scoring nothing, and the break begins.
 - **Getting harder** (all fixed numbers in the code):
   - **Biome by wave:** waves 1-10 Meadows, 11-20 Black Forest, 21-30 Swamp, 31-40 Mountains, 41-50 Plains, 51-60
     Mistlands, 61-70 Ashlands, 71-80 Deep North; after 80 it stays in the Deep North and only the stars and mutations
@@ -94,29 +106,64 @@ drop nothing).
     a mutation chance that rises from 5% by 3% a wave (at most 60%).
 - **Bosses:** every 10th wave is a boss wave instead: the biome's boss alone on the rune circle (Eikthyr, the Elder,
   Bonemass, Moder, Yagluth, the Queen, Fader, Kall Fimbulbringer; after 80 the cycle starts again with more stars),
-  rolling ECR's boss aspects as any boss does. The runes flare as it appears. The next wave comes when it dies.
+  rolling ECR's boss aspects as any boss does, with the game's spawn effect (no portal). The runes flare as it appears.
+  The wave is cleared when it and everything it brought are dead.
 - **Score:** each kill scores 10 x (stars + 1) x (biome number), a boss 500 x (biome number); the score, wave and
   creatures left show in the event bar under the minimap for every player in the hall:
   "Hel's Trial - wave 12 - 7 left - 3,420".
 - **End:** when no player of the trial is alive in the hall (dead, left, logged out). The arena creatures left
   vanish; the doors open; every player of the trial reads "Hel's Trial ends at wave 14: 132 kills, score 18,420."
   `elite arena stop` (admin) ends it the same way.
-- **Arena creatures drop nothing** (no loot, trophies or coins) until rewards are designed. Skills rise from the
-  fighting as always.
+- **Arena creatures drop nothing** (no loot, trophies or coins). Skills rise from the fighting as always.
+- **Rewards** (the user, 2026-10-13: "reward players with Potential Forge Totems, XP, or something else depending on
+  how far they managed to progress"; "if EliteCrafting is installed, runes and essence drop from the arena depending
+  on how far you get"). Paid when the trial ends to **every player of it, dead or alive** (it ends only when nobody is
+  left standing, so dying forfeits nothing); a player offline at the end gets nothing. Fixed numbers
+  (`Arena/Rewards/RewardTable.cs`); "waves cleared" counts swept waves too, "boss waves beaten" only those whose boss
+  fell:
+
+  | Reward | How much |
+  | --- | --- |
+  | Idols | one Forge of Potential idol per boss wave beaten, at the boss's tier: Eikthyr 0 (Wooden), the Elder 1 (Bronze), Bonemass 2 (Iron), Moder 3 (Silver), Yagluth 4 (Black Metal), the Queen 5 (Black Marble), Fader 6 (Flametal), Kall 7 (Bloodgold), every boss after wave 80 another 7; Battle (`Upgrader<t>Weapon`) and Protection (`Upgrader<t>Armor`) in turn, Battle first |
+  | Coins | the score / 10 |
+  | Skill XP | each skill the player raised during the trial (in the hall, while it ran) raised again by that gain x (waves cleared / 20), at most x2 |
+  | Runes (EliteCrafting) | per regular wave cleared 1, 2, 2, 2, 2, 2, 3, 3 (Meadows ... Deep North); per boss wave beaten 5, 3, 4, 4, 5, 6, 7, 7 (Eikthyr ... Kall, then 7); each drawn by EliteCrafting's default weights at the wave's tier (Awakening, Recasting, Ascension from the Black Forest, Cleansing, Sealed from the Swamp) |
+  | Essence (EliteCrafting) | per regular wave cleared a trophy of its biome at the Rune Table: 2, 4, 6, 8, 10, 12, 14, 16; per boss wave beaten its trophy: 20, 30, 40, 50, 60, 70, 80, 90 |
+
+  The runes are about half EliteCrafting's open-world rate for the same kills (its 35-70% a kill would be 3-6 for a
+  wave's 8 creatures), since every player of the trial gets the whole reward and the trial can be run again at once.
+  So a solo trial that ends at wave 23 (two bosses beaten) pays a Wooden Battle Idol, a Bronze Protection Idol, its
+  score in coins, +110% skill XP and, with EliteCrafting, 39 runes and 116 essence.
+  Items go into the inventory, what does not fit falls at the player's feet; a dead player gets theirs at the respawn,
+  where they respawn. Four seconds after the end message: "Hel rewards you: Wooden Battle Idol, Bronze Protection Idol,
+  412 coins, 39 runes, 116 essence, +110% skill XP." Items the game does not have are left out; EliteCrafting's only
+  where it is installed.
+- **Death:** a player who dies inside the hall loses no skill levels: on the dying player's machine the death is the
+  game's own soft death (the one it gives within ten minutes of the last; the game says "The Gods are merciful"), so the
+  game's skill loss never runs, and a world that resets skills on death does not reset them there. GrindstoneSkills
+  applies its own loss inside that same game step, so it takes nothing either. After the respawn: "Hel spares your
+  skills." Everything else is the game's own death: the tombstone stays in the hall.
 
 # 4. Multiplayer
 
 Built for a dedicated server first.
 
 - **The trial lives in one networked object:** a hidden, persistent `ECR_ArenaCore` at the hall origin, placed by the
-  server when the world has none. Its ZDO holds the trial: running or not, wave, score, kills, creatures left, the
-  wave's spawn plan, end time of the wave timer (server clock), and the trial's id. Its owner runs the trial; if the
-  owner leaves, the new owner carries on from the ZDO.
+  server when the world has none. Its ZDO holds the trial: its phase (countdown, wave, break), wave, score, kills,
+  creatures left, the wave's creatures still to come by archway, the archways with open portals, the last wave cleared,
+  the end of the countdown, the wave's 3 minutes or the break (server clock), and the trial's id. Its owner runs the
+  trial; if the owner leaves, the new owner carries on from the ZDO (each archway's pace starts afresh).
 - **Starting** sends an RPC from the player's client to the core's owner.
-- **Arena creatures** are tagged in their ZDO with the trial's id; a tagged creature with no running trial behind it
-  vanishes when it loads. Their owners skip their drops.
-- **Every client** draws the doors, the runes and the event bar from the core's ZDO.
+- **Arena creatures** are tagged in their ZDO with the trial's id and their wave; a tagged creature with no running
+  trial behind it, or whose wave has been cleared or swept, vanishes on its owner. Their owners skip their drops.
+- **Every client** draws the doors, the runes, the portals and the event bar from the core's ZDO.
+- **A death in the hall** is decided on the dying player's own machine, where the game takes the skill levels.
 - **Messages** (start, boss, end) go by RPC to the players of the trial only.
+- **Rewards:** the core's owner plans the reward once as the trial ends (the same for every player of it) and sends
+  each player of the trial one RPC with the list (items and counts, coins, EliteCrafting's items, the XP factor); the
+  player's own machine adds it, and applies the XP bonus from what it recorded itself: each raise through the game's
+  `Skills.RaiseSkill` while the local player was in the hall during that trial, raised again through the same path so
+  other mods see it.
 
 # 5. Configuration
 
@@ -136,10 +183,21 @@ Settled with the user on 2026-10-12:
 2. **Full arena** in the first build: the hall, Hel on her throne, endless waves, bosses, score.
 3. **Normal death:** the tombstone stays in the hall.
 4. **One hall, always loaded** on every peer, at a fixed point (not an instance per gate), so jumps in are instant.
-5. **Rewards wait** for the user (see the top).
+5. **Rewards wait** for the user (see the top) - decided on 2026-10-13, decision 10.
 6. **The entrance is Helgrind** (decided 2026-10-12): a craftable endgame portal piece at the Black Forge (1 Sacrificial
    Blood, 2 Frostcore, 10 Bloodgold, 5 Memorial Coal), without the game's tag pairing; the way back is the wall at the
    end of the hall's gate passage, to the gate you came in by. `elite arena` stays for admins.
+7. **Rounds with breaks** (the user, 2026-10-13, after playing): "a short waiting period between rounds ... a brief
+   moment to prepare". The next wave comes only when the last is cleared, after 15 s (20 s after a boss); no early
+   trigger and no timer pushing waves in; a wave not cleared in 3 minutes is swept.
+8. **Creatures come out at the walls, one at a time, through portals** (the user, 2026-10-13): "a little closer to the
+   arena walls, giving players more space in the centre", "run out of the portal one at a time", "show a portal
+   animation at the walls".
+9. **No skill loss in the hall** (the user, 2026-10-13): "it should feel like a dedicated challenge rather than a
+   punishing death". Decision 3 (normal death, the tombstone in the hall) stands for everything but the skills.
+10. **Rewards by progress** (the user, 2026-10-13): Forge of Potential idols per boss beaten, coins from the score,
+    bonus skill XP, and EliteCrafting's runes and essence when it is installed, paid at the end to every player of the
+    trial, dead or alive; arena creatures still drop nothing and the score is unchanged. Section 3, "Rewards".
 
 ---
 
@@ -219,3 +277,28 @@ Settled with the user on 2026-10-12:
   close Helgrind (the way out comes back to the same gate, so it is no shortcut); the gate has a hover (name and open
   or closed). Builds clean; offline patch check passes; nothing seen in game. Code map in `CLAUDE.md`, "Arena:
   Helgrind".
+- 2026-10-13, the trial after the user's first games (ECR 3.25.0): **rounds with breaks** - the next wave only when
+  the last is cleared (nothing alive or to come, held 2 s), then 15 s (20 s after a boss) with "Wave N cleared" and the
+  break's line in the event bar; the "2 or fewer" trigger and the wave timer are gone; a wave not cleared in 3 minutes
+  is swept (its creatures, tagged with their wave now, vanish on their owners once the core's last swept wave reaches
+  theirs, scoring nothing). **Archways**: each wave's creatures are given to the four archways in turn and each sends
+  one at a time, 0.8 to 1.2 s apart, out of its recess (0.8 m off the `portal_N` back face, on the recess floor), the
+  first about 0.6 s after its portal opens; bosses keep the rune circle. **Portals**: the core's ZDO carries which
+  archways have creatures to come; every client opens the workshop's `ecr_helhall_portal` (bundle
+  `ecr_helhall_portalfx`, both platforms, embedded) on that `portal_N` point with its light, and a second after the last
+  creature stops the loop and plays `ecr_helhall_portal_close` (`Arena/Trial/ArenaPortals.cs`, `ArenaPortal.cs`,
+  `ArenaPortalLook.cs`). **Death**: a death inside the built hall is the game's own soft death on the dying player's
+  machine (no `Skills.OnDeath`, so no GrindstoneSkills loss either, no change there), `Skills.Clear` skipped during it,
+  "Hel spares your skills." after the respawn (`ArenaDeath.cs`). `ArenaTrial.Break` added for the hall's runes. The
+  core steps four times a second. Builds clean; offline patch check passes; nothing seen in game.
+- 2026-10-13, rewards (`Arena/Rewards/`): paid at the trial's end to every player of it, dead or alive, one RPC each
+  from the core's owner (`RewardPlan`, `RewardSend`); on the player's machine (`RewardGrant`, `RewardText`) items into
+  the inventory or at the feet, the XP bonus (`SkillLedger`, a `Skills.RaiseSkill` prefix at `Priority.First`, records
+  each skill's raises in the hall during the trial; `SkillBonus` raises them again in steps of the trial's average raise,
+  at most 2000 per skill, since the game drops what one raise earns past a level), then "Hel rewards you: ..." four
+  seconds after the end message; a dead player's at the respawn. Idols per boss wave beaten (the core keeps
+  `ecr_arena_bosses`, a bit per boss wave whose boss fell); coins = score / 10; XP x (cleared / 20), at most 2. With
+  EliteCrafting (`CraftingLink.Present`, ValheimModLibs' EliteCraftingLink, now merged into ECR; its new
+  `CraftingPrefabs` holds the published item names) runes and essence per wave as in the table. Idol prefab names
+  checked against the game's item reference (`Upgrader0Weapon` ... `Upgrader7Armor`); every item is looked up in
+  `ObjectDB` and skipped when missing. Builds clean; offline patch check passes; nothing seen in game.

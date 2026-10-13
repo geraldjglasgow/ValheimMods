@@ -7,8 +7,8 @@ namespace EliteCreaturesReborn.Config
     /// The .cfg holds only what the rule file does not: per-player display preferences, none of which the server ever
     /// locks, because they change only what one player sees. Everything that changes what the game does - star chances,
     /// star power, mutation chances and power, and the lock switch itself - lives in the YAML rule file instead. The
-    /// exceptions are the raids' and the arena's on/off (<see cref="RaidSettings"/>, <see cref="ArenaSettings"/>), which
-    /// their specs put in the .cfg and the server binds.
+    /// exceptions are the raids' and the arena's on/off and the horde's four settings (<see cref="RaidSettings"/>,
+    /// <see cref="ArenaSettings"/>, <see cref="HordeSettings"/>), which their specs put in the .cfg and the server binds.
     /// </summary>
     public static class Configuration
     {
@@ -31,6 +31,7 @@ namespace EliteCreaturesReborn.Config
         public static ConfigEntry<bool> ShowWorldTier = null!;
         public static ConfigEntry<bool> ShowWorldTierOnHud = null!;
         public static ConfigEntry<bool> BossHints = null!;
+        public static ConfigEntry<bool> ShowCompendium = null!;
 
         public static void BindAll(ConfigFile config)
         {
@@ -54,6 +55,7 @@ namespace EliteCreaturesReborn.Config
             Recap.RecapSettings.Bind(config);
             RaidSettings.Bind(config);
             ArenaSettings.Bind(config);
+            HordeSettings.Bind(config);
             BindDiagnostics(config);
         }
 
@@ -103,6 +105,9 @@ namespace EliteCreaturesReborn.Config
                 "When Bonemass, Moder, Yagluth or the Elder dies, every player within 100 m feels a pull: the compass "
                 + "direction from the boss's altar to the Bog Witch (Bonemass), the ancient forge (Moder), Haldor "
                 + "(Yagluth) or Hildir (the Elder), until that place is explored on your map. Client side; never locked.");
+            ShowCompendium = config.Bind(Display, "Compendium pages", true,
+                "Add Elite pages to the game's compendium (the inventory's Compendium button): the world difficulty, what "
+                + "each star does, every mutation and every boss aspect, with this server's numbers. Client side; never locked.");
         }
 
         // Not a display preference and never locked: a switch that makes the death/split/absorb chain log every step, so

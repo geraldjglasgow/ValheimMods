@@ -27,7 +27,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.Begin(NetTime.NowMs());
             new ArenaQueue().Write(zdo);
             TrialPlayers.Reset(zdo, inHall);
-            core.BossSeenAt = 0f;
+            core.BusyAt = UnityEngine.Time.time;
             ArenaNet.Tell(zdo, ArenaWords.Started);
             Log.Info($"Hel's Trial begins for {inHall.Count} player(s), asked by peer {asker}");
         }

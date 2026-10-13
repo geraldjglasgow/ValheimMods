@@ -6,9 +6,10 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// <summary>
     /// The trial ends (features/arena.md section 3, "End"), on the core's owner: when no player of the trial is alive in
     /// the hall, when `elite arena stop` asks, or when Arena is turned off. The core goes idle in its ZDO - which is what
-    /// opens the doors on every client and tells every arena creature its trial is over - the creatures still waiting are
-    /// dropped, those this machine owns vanish at once (the rest on their own owners within a second), and every player
-    /// of the trial reads at which wave it ended, with the kills and the score. The wave, kills and score stay in the ZDO
+    /// opens the doors and closes the portals on every client and tells every arena creature its trial is over - the
+    /// creatures still waiting are dropped, those this machine owns vanish at once (the rest on their own owners within a
+    /// second), and every player of the trial reads at which wave it ended, with the kills and the score, and is paid
+    /// the trial's reward (Arena/Rewards). The wave, kills and score stay in the ZDO
     /// until the next trial begins.
     /// </summary>
     internal static class ArenaEnd
@@ -29,9 +30,11 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.Phase = ArenaPhase.Idle;
             state.Left = 0;
             state.Next = 0L;
+            state.Portals = 0;
             new ArenaQueue().Write(zdo);
             ArenaFighters.VanishOwned(trial);
             ArenaNet.Tell(zdo, ArenaWords.Ended, Number(state.Wave), Number(state.Kills), Number(state.Score));
+            Rewards.RewardSend.Pay(zdo, state); // to every player of the trial, dead or alive
             Log.Info($"Hel's Trial {(stopped ? "stopped" : "ended")} at wave {state.Wave}: {state.Kills} kills, "
                 + $"score {state.Score}");
         }

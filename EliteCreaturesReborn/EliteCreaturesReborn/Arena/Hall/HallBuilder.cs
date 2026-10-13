@@ -7,12 +7,14 @@ namespace EliteCreaturesReborn.Arena.Hall
 {
     /// <summary>
     /// Builds Hel's hall (features/arena.md section 1) under its host, as plain local scene objects with no ZNetView or
-    /// ZDO: the floor, walls and ceiling at the hall's origin, the throne at (0, 0, -14.731), Hel on its seat. Every
-    /// piece and every collider on <c>static_solid</c> (players stand on the floor, the walls and dome stop them, the
-    /// game's pathfinding takes the floor: its tiles reach from -500 m to 5,500 m). On every peer, the dedicated server
-    /// included (the bundles' Linux build), with the doors (<see cref="HallDoors"/>) everywhere because their colliders
-    /// count; the look (materials, runes, fire and light, the environment, Hel's animation and hover) only where there is
-    /// a screen. A missing piece builds nothing and says so.
+    /// ZDO: the floor, walls and ceiling at the hall's origin, the throne at (0, 0, -14.731), Hel on its seat, and the
+    /// cover (four broken pillars and four low walls, also at the origin). Every piece and every collider on
+    /// <c>static_solid</c> (players stand on the floor, the walls, dome and cover stop players and creatures, the game's
+    /// pathfinding takes them: its tiles reach from -500 m to 5,500 m). On every peer, the dedicated server included (the
+    /// bundles' Linux build), with the doors (<see cref="HallDoors"/>) everywhere because their colliders count; the look
+    /// (materials, runes, fire and light, the environment, Hel's animation and hover) only where there is a screen. A
+    /// missing floor, wall, throne or ceiling builds nothing and says so; missing cover is logged and the hall stands
+    /// without it.
     /// </summary>
     internal static class HallBuilder
     {
@@ -38,6 +40,7 @@ namespace EliteCreaturesReborn.Arena.Hall
                 return null;
             }
             HallPoints.Index(pieces);
+            Piece(hall.transform, HallBundles.Cover, Vector3.zero, layer, visuals);
             pieces[1].AddComponent<HallDoors>();
             HelSeat.Seat(hall.transform, layer, visuals);
             if (visuals)

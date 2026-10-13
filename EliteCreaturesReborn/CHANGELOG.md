@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.26.0
+
+- Hel's Arena: a short break between waves; creatures come out of portals in the archways, one at a time.
+- Hel's Arena: dying in the hall costs no skill levels.
+- Hel's Arena: four broken pillars and four low walls give cover.
+- Hel's Arena: rewards by how far you get: Forge of Potential idols, coins, bonus skill XP, and runes and essence with EliteCrafting.
+- Horde (`Horde`, section `13 - Horde`, off by default): more creatures in the wild, each weaker; the extra creatures pay no extra loot.
+- Compendium: the game's compendium has pages on difficulty, stars, mutations and boss aspects, with your server's numbers (`Compendium pages`).
+- `elite inspect` works for every player, not only admins.
+- Update the server and every client together.
+
 ## 3.25.0
 
 - Hel's Arena (`Arena`, section `12 - Arena`, off by default): build Helgrind, Hel's gate, to enter her hall and fight endless waves, a boss every tenth. Subject to change without warning.

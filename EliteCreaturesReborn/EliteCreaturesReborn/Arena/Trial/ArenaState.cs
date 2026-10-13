@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
@@ -27,13 +29,29 @@ namespace EliteCreaturesReborn.Arena.Trial
             set => Zdo.Set(ArenaKeys.PhaseHash, (int)value);
         }
 
-        /// <summary>True from Hel's waking to the trial's end.</summary>
+        /// <summary>True from Hel's waking to the trial's end, breaks included.</summary>
         public bool Running => IsRunning(Phase);
 
         /// <summary>The trial's id: when it began. Arena creatures carry it in their tags.</summary>
         public long TrialId { get => Zdo.GetLong(ArenaKeys.TrialHash); set => Zdo.Set(ArenaKeys.TrialHash, value); }
 
         public int Wave { get => Zdo.GetInt(ArenaKeys.WaveHash); set => Zdo.Set(ArenaKeys.WaveHash, value); }
+
+        /// <summary>The last wave cleared or swept: its creatures, and any of an earlier wave, vanish.</summary>
+        public int Swept { get => Zdo.GetInt(ArenaKeys.SweptHash); set => Zdo.Set(ArenaKeys.SweptHash, value); }
+
+        /// <summary>The boss waves beaten, a bit each (bit k-1 for wave 10k): the idols the trial pays.</summary>
+        public long BossesBeaten
+        {
+            get => Zdo.GetLong(ArenaKeys.BossesBeatenHash);
+            set => Zdo.Set(ArenaKeys.BossesBeatenHash, value);
+        }
+
+        /// <summary>The bit of a boss wave in <see cref="BossesBeaten"/>.</summary>
+        public static long BossBit(int wave) => 1L << Mathf.Clamp(wave / ArenaTable.WavesPerBiome - 1, 0, 62);
+
+        /// <summary>The archways with creatures still to come, a bit each: the open portals.</summary>
+        public int Portals { get => Zdo.GetInt(ArenaKeys.PortalsHash); set => Zdo.Set(ArenaKeys.PortalsHash, value); }
 
         public long Score { get => Zdo.GetLong(ScoreKey); set => Zdo.Set(ScoreKey, value); }
 
@@ -50,7 +68,12 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>True while the running wave is a boss wave.</summary>
         public bool BossWave => Phase == ArenaPhase.Fighting && ArenaTable.IsBossWave(Wave);
 
-        public static bool IsRunning(ArenaPhase phase) => phase == ArenaPhase.Countdown || phase == ArenaPhase.Fighting;
+        /// <summary>The wave a creature appearing in the hall now joins: the one on, or during the countdown or a break
+        /// the one coming.</summary>
+        public int JoiningWave => Phase == ArenaPhase.Fighting ? Wave : Wave + 1;
+
+        public static bool IsRunning(ArenaPhase phase) =>
+            phase == ArenaPhase.Countdown || phase == ArenaPhase.Fighting || phase == ArenaPhase.Break;
 
         /// <summary>True when the ZDO carries a running trial; a cheap test for every frame.</summary>
         public static bool IsRunning(ZDO? zdo) => zdo != null && IsRunning((ArenaPhase)zdo.GetInt(ArenaKeys.PhaseHash));
@@ -63,6 +86,9 @@ namespace EliteCreaturesReborn.Arena.Trial
         {
             TrialId = now;
             Wave = 0;
+            Swept = 0;
+            Portals = 0;
+            BossesBeaten = 0L;
             Score = 0L;
             Kills = 0;
             Left = 0;

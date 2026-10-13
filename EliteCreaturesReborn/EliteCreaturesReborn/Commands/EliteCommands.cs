@@ -6,9 +6,10 @@ namespace EliteCreaturesReborn.Commands
     /// <summary>
     /// Registers the single <c>elite</c> console command and routes its subcommands. Nothing in the mod can be
     /// tested without these - mutations are rare by design, so every rule needs a way to be produced on demand. All
-    /// of them but <c>tier</c> are admin-gated: on a server they run only for the host or a player the server confirms
-    /// as admin (<see cref="CommandAccess"/>), and anyone else gets a message naming the ID the server knows them by.
-    /// <c>tier</c> only reads the world's keys, so everyone may use it.
+    /// of them but <c>tier</c> and <c>inspect</c> are admin-gated: on a server they run only for the host or a player
+    /// the server confirms as admin (<see cref="CommandAccess"/>), and anyone else gets a message naming the ID the
+    /// server knows them by. <c>tier</c> and <c>inspect</c> only read what every machine already has, so everyone may
+    /// use them.
     /// Registration is idempotent and driven from Terminal init, so the console and chat terminals both coming up does
     /// not double-register.
     /// </summary>
@@ -42,7 +43,7 @@ namespace EliteCreaturesReborn.Commands
             {
                 Reply(args, "elite: use spawn, inspect, purge, effects, reference, tier, raid or arena.");
             }
-            else if (sub == "tier")
+            else if (sub == "tier" || sub == "inspect")
             {
                 run(args);
             }
