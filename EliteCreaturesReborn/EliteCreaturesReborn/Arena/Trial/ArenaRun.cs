@@ -10,7 +10,7 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// in the arena has pressed F (<see cref="ArenaReady"/>), and then the next wave begins (<see cref="ArenaWaves"/>). In a wave, each archway sends its next creature at its own pace while fewer
     /// than 24 live (<see cref="ArenaSpawn"/>), the creatures left and the open portals are written for every client, and
     /// each wave fighting ends once nothing of it is alive or still to come (<see cref="ArenaClears"/>), or all of them
-    /// when the five minutes of the latest are up. Everything read and written is in the core's
+    /// a minute after Hel marked their last few (<see cref="ArenaRecall"/>) or when the five minutes of the latest are up. Everything read and written is in the core's
     /// ZDO, so a machine that has just taken the core over picks up where the last one stopped.
     /// </summary>
     internal static class ArenaRun
@@ -94,6 +94,10 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.Left = alive + queue.Count;
             state.Portals = queue.LaneMask();
             ArenaClears.Step(core, state, queue); // each wave fighting cleared by its own creatures; the break after the last
+            if (state.Phase == ArenaPhase.Fighting)
+            {
+                ArenaRecall.Step(core, state, queue, alive, now); // the last few marked, then recalled
+            }
             if (state.Phase == ArenaPhase.Fighting && now >= state.Next)
             {
                 ArenaWaves.Rest(core, now, swept: true, state.Wave);

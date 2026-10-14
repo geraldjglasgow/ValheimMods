@@ -5,8 +5,8 @@ namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
     /// The trial's words in the game's translation table, as the Raiders Chest keeps its own
-    /// (<see cref="Raids.ChestWords"/>): the HUD lines, the start, boss, cleared and end messages, and the word after an
-    /// arena death, with "$1" to "$3" for the words put in them. English for every language until translations exist;
+    /// (<see cref="Raids.ChestWords"/>): the HUD lines, the start, boss, cleared, recall and end messages (the end also
+    /// in the chat window), and the word after an arena death, with "$1" to "$3" for the words put in them. English for every language until translations exist;
     /// added after each language setup, which rebuilds the table. A message travels as its key and its words, so each
     /// player reads it in their own language (<see cref="Show"/>).
     /// </summary>
@@ -41,6 +41,9 @@ namespace EliteCreaturesReborn.Arena.Trial
         public const string Called = "ecr_arena_called";
         public const string BossWaits = "ecr_arena_boss_waits";
         public const string WaveDone = "ecr_arena_wave_done";
+        public const string ClearedFirst = "ecr_arena_cleared_first";
+        public const string Recall = "ecr_arena_recall";
+        public const string RecallLine = "ecr_arena_recall_line";
 
         public static void Add(Localization? localization)
         {
@@ -65,6 +68,15 @@ namespace EliteCreaturesReborn.Arena.Trial
             AnvilWords(localization);
             ReadyWords(localization);
             CallWords(localization);
+            RecallWords(localization);
+        }
+
+        private static void RecallWords(Localization localization)
+        {
+            localization.AddWord(ClearedFirst,
+                "Wave $1 cleared. The next comes in $2 seconds. Hel pays your reward when her trial ends.");
+            localization.AddWord(Recall, "Hel marks the last of the dead on your map. She recalls them in $1 seconds.");
+            localization.AddWord(RecallLine, "Hel's Trial - $1, wave $2 - $3 left, recalled in $4 - $5 souls");
         }
 
         private static void CallWords(Localization localization)
@@ -104,12 +116,35 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
             string text = words.Localize("$" + key, words.Localize(first), words.Localize(second), words.Localize(third));
             MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, text);
+            if (key == Ended)
+            {
+                ToChat(text);
+            }
+        }
+
+        /// <summary>A line in the chat window, which opens for a moment as it does for a new chat message, so the end and
+        /// the reward can be read again after the centre message fades.</summary>
+        public static void ToChat(string text)
+        {
+            Chat chat = Chat.instance;
+            if (chat == null || Localization.instance == null)
+            {
+                return;
+            }
+            chat.AddString("<color=#80ebe0>" + Localization.instance.Localize("$" + Name) + "</color>: " + text);
+            chat.m_hideTimer = 0f;
         }
 
         /// <summary>The HUD line, with its numbers put in. Called only when a number in it changes.</summary>
         public static string HudLine(string biome, int wave, int left, string souls) => Localization.instance != null
             ? Localization.instance.Localize("$" + Line, biome, wave.ToString(), left.ToString(), souls)
             : "";
+
+        /// <summary>The HUD line while Hel's recall of the stragglers runs: its clock after the creatures left.</summary>
+        public static string HudRecall(string biome, int wave, int left, string clock, string souls) =>
+            Localization.instance != null
+                ? Localization.instance.Localize("$" + RecallLine, biome, wave.ToString(), left.ToString(), clock, souls)
+                : "";
 
         /// <summary>The HUD line during a break: the wave just cleared and the seconds to the next.</summary>
         public static string HudBreak(string biome, int wave, int seconds, string souls) => Localization.instance != null

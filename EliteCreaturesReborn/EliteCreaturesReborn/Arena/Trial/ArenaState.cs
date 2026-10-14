@@ -17,6 +17,7 @@ namespace EliteCreaturesReborn.Arena.Trial
         private static readonly int NextKey = ArenaKeys.Next.GetStableHashCode();
         private static readonly int SeenKey = ArenaKeys.SeenAt.GetStableHashCode();
         private static readonly int TurnKey = ArenaKeys.SpawnTurn.GetStableHashCode();
+        private static readonly int SizeKey = ArenaKeys.WaveSize.GetStableHashCode();
 
         public ArenaState(ZDO zdo) => Zdo = zdo;
 
@@ -87,6 +88,12 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         public int SpawnTurn { get => Zdo.GetInt(TurnKey); set => Zdo.Set(TurnKey, value); }
 
+        /// <summary>When Hel recalls the waves' last few creatures; 0 while no recall runs.</summary>
+        public long RecallAt { get => Zdo.GetLong(ArenaKeys.RecallAtHash); set => Zdo.Set(ArenaKeys.RecallAtHash, value); }
+
+        /// <summary>The creatures the waves fighting had as the latest began.</summary>
+        public int WaveSize { get => Zdo.GetInt(SizeKey); set => Zdo.Set(SizeKey, value); }
+
         /// <summary>True while the running wave is a boss wave.</summary>
         public bool BossWave => Phase == ArenaPhase.Fighting && ArenaTable.IsBossWave(Wave);
 
@@ -127,6 +134,8 @@ namespace EliteCreaturesReborn.Arena.Trial
             Kills = 0;
             Left = 0;
             SpawnTurn = 0;
+            RecallAt = 0L;
+            WaveSize = 0;
             SeenAt = now;
             Next = now + Ms(ArenaTable.CountdownSeconds);
             Phase = ArenaPhase.Countdown;

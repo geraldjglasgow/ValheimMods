@@ -25,6 +25,17 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// centre, and a slow one (a Blob, an Abomination) takes half a minute to get there.</summary>
         public const float WaveLimitSeconds = 300f;
 
+        /// <summary>Hel's recall of a wave's stragglers (<see cref="ArenaRecall"/>): once every creature of the waves
+        /// fighting has come out and no more than this share of them is left, the last ones are marked for the players and
+        /// vanish after <see cref="RecallSeconds"/>, scoring nothing. Asked 2026-10-14 after a player walked the arena for
+        /// a slow, hard to see first-wave Ghost.</summary>
+        public const float StragglerShare = 0.25f;
+        public const float RecallSeconds = 60f;
+
+        /// <summary>The most creatures left that Hel recalls, for waves of <paramref name="size"/>: a quarter, rounded, at
+        /// least one (6 leave 2, 8 leave 2, 10 leave 3, 12 leave 3).</summary>
+        public static int Stragglers(int size) => Mathf.Max(1, Mathf.FloorToInt(size * StragglerShare + 0.5f));
+
         /// <summary>Seconds with nothing of the wave alive or still to come before it counts as cleared: a boss whose death
         /// brings its next phase (Kall Fimbulbringer), or a Splintering creature's copies, are gone for a moment before
         /// the next ones join the wave.</summary>

@@ -129,6 +129,17 @@ throne is used.
   in 14 - 342 souls" (the biome of the wave; "Hel's Trial - Swamp - the first wave in 0:07" in the countdown). A wave not cleared within **5 minutes** (3 in the indoor
   hall: creatures now run about 60 m in, a slow one for half a minute) counts as cleared:
   its stragglers vanish with no drops, scoring nothing, and the break begins.
+- **Stragglers** (a player's report, 2026-10-14: a first-wave Ghost, slow and hard to see in the dark, took a long
+  walk to find; the user chose a recall with marks): once every creature of the waves fighting has come out and no more
+  than a quarter of them is left (rounded, at least 1: 6 leave 2, 8 leave 2, 10 leave 3, 12 leave 3), Hel recalls them a
+  minute later. Every player of the trial reads "Hel marks the last of the dead on your map. She recalls them in 60
+  seconds."; on every client each straggler flares once in cold soul-fire, carries the hall's cold light (range 8 m,
+  seen across the arena) and shows on the map as the game's event marker with its name; the event bar reads "Hel's
+  Trial - Swamp, wave 7 - 2 left, recalled in 0:45 - 342 souls". When the minute is up the waves fighting end as a
+  swept wave does (the stragglers vanish, scoring nothing, the break begins, "Wave 7 cleared."). Never while a boss
+  lives or is still to come; a wave called early calls it off; creatures joining after it started (Splintering copies)
+  are marked too. Kept in the core's ZDO (`ecr_arena_recall`, `ecr_arena_size`); the marks are drawn locally, nothing
+  is sent for them.
 - **Getting harder** (all fixed numbers in the code; the user, 2026-10-13: "the difficulty needs to scale up a bit. I am
   on wave 6 now still fighting neck, boar, greyling"):
   - **First biome from the players' gear:** as Hel wakes, the core's owner reads the strongest gear among the players
@@ -226,9 +237,13 @@ throne is used.
   a Bronze Protection Idol, half its unspent souls in coins, +110% skill XP and, with EliteCrafting, 22 runes and 80
   essence; begun in the Mistlands, its first boss (the Queen) pays a Black Marble Battle Idol.
   Items go into the inventory, what does not fit falls at the player's feet; a dead player gets theirs at the respawn,
-  where they respawn. Four seconds after the end message: "Hel rewards you: Wooden Battle Idol, Bronze Protection Idol,
-  412 coins, 22 runes, 80 essence, +110% skill XP." Items the game does not have are left out; EliteCrafting's only
-  where it is installed.
+  where they respawn. Each item shows at the top left with its icon as it arrives, as the game shows an item picked up
+  ("Added", or "Dropped" when it fell at the player's feet). Four seconds after the end message: "Hel rewards you:
+  Wooden Battle Idol, Bronze Protection Idol, 412 coins, 22 runes, 80 essence, +110% skill XP.", in the centre and in
+  the chat window (which opens for a moment), where the end message goes too (a player's report, 2026-10-14: the
+  reward was hard to make out). The trial's first cleared wave says when it is paid: "Wave 1 cleared. The next comes
+  in 20 seconds. Hel pays your reward when her trial ends." Items the game does not have are left out; EliteCrafting's
+  only where it is installed.
 - **Death:** a player who dies inside the hall loses no skill levels: on the dying player's machine the death is the
   game's own soft death (the one it gives within ten minutes of the last; the game says "The Gods are merciful"), so the
   game's skill loss never runs, and a world that resets skills on death does not reset them there. GrindstoneSkills
@@ -527,3 +542,10 @@ Settled with the user on 2026-10-12:
   with read-only `/eval` in the running game for the list above; `ArenaTable.EliteCap`; `ArenaWaves.Pick` draws an
   elite only while the wave has room and its archway has none. Builds clean; offline patch check passes; nothing seen in
   game.
+- 2026-10-14, stragglers and the reward shown (a player's report: a slow, pale first-wave Ghost hunted for a long walk;
+  the reward hard to make out): `ArenaRecall` (the owner starts the recall at a quarter left, rounded, at least 1, and
+  ends the waves fighting a minute later; `ArenaTable.StragglerShare`, `RecallSeconds`, `Stragglers`),
+  `ecr_arena_recall` and `ecr_arena_size` on the core, `StragglerMark` (each `ArenaFighter`'s tick on every client:
+  flare, cold light, the game's event pin), the event bar's "recalled in 0:45", `ecr_arena_cleared_first`;
+  `RewardGrant` shows each item at the top left and the reward in chat, `ArenaWords.ToChat` the end too. Builds clean;
+  nothing seen in game.

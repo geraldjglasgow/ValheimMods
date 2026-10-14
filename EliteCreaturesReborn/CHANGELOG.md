@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.28.0
+
+- Hel's Arena: when a quarter of a wave is left, Hel marks the last ones on the map and makes them glow, then recalls them a minute later.
+- Hel's Arena: reward items pop up with their icons, and the reward and the trial's end are written to chat.
+- Hel's Arena: the first cleared wave says the reward comes when the trial ends.
+- Update the server and every client together.
+
 ## 3.27.0
 
 - Hel's Arena moves outdoors: 130 m across, eight archways, a cavern roof, and a black lake that kills.

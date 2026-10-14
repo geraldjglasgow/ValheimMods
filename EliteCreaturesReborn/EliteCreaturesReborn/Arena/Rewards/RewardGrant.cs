@@ -7,9 +7,10 @@ namespace EliteCreaturesReborn.Arena.Rewards
 {
     /// <summary>
     /// A player's reward arriving (features/arena.md section 3, "Rewards"), on their own machine: every item into their
-    /// inventory, what does not fit dropped at their feet (the stacks the game would make), the skill XP bonus
-    /// (<see cref="SkillBonus"/>), and a moment later, after the trial's end message, "Hel rewards you: ..." with the
-    /// names in the player's language. A player who is dead when it arrives gets it as they respawn, where they respawn;
+    /// inventory, what does not fit dropped at their feet (the stacks the game would make), each shown at the top left
+    /// with its icon as the game shows an item picked up, the skill XP bonus (<see cref="SkillBonus"/>), and a moment
+    /// later, after the trial's end message, "Hel rewards you: ..." with the names in the player's language, in the
+    /// centre and in the chat window (a player's report 2026-10-14: the reward was hard to make out). A player who is dead when it arrives gets it as they respawn, where they respawn;
     /// one who is offline at the end gets nothing.
     /// </summary>
     internal static class RewardGrant
@@ -59,14 +60,25 @@ namespace EliteCreaturesReborn.Arena.Rewards
             }
             Inventory inventory = player.GetInventory();
             int stack = Mathf.Max(1, item.m_itemData.m_shared.m_maxStackSize);
+            bool dropped = false;
             for (int left = count; left > 0; left -= stack)
             {
                 int amount = Mathf.Min(left, stack);
                 if (!inventory.CanAddItem(prefab, amount) || !inventory.AddItem(prefab, amount))
                 {
                     Drop(prefab!, amount, player.transform.position);
+                    dropped = true;
                 }
             }
+            Show(player, item.m_itemData, count, dropped);
+        }
+
+        // The item's own line at the top left with its icon, as the game shows an item picked up: added, or dropped at
+        // the player's feet when it did not all fit.
+        private static void Show(Player player, ItemDrop.ItemData item, int count, bool dropped)
+        {
+            string words = (dropped ? "$msg_dropped " : "$msg_added ") + item.m_shared.m_name;
+            player.Message(MessageHud.MessageType.TopLeft, words, count, item.GetIcon());
         }
 
         // One stack at the player's feet, as the game drops an item: a networked item this machine owns until picked up.
@@ -94,6 +106,7 @@ namespace EliteCreaturesReborn.Arena.Rewards
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, text);
             }
+            ArenaWords.ToChat(text);
         }
     }
 }

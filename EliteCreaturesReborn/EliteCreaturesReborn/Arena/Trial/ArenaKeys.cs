@@ -75,6 +75,14 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>Server clock, ms: the last time a living player was in the hall, stamped every second or so.</summary>
         public const string SeenAt = "ecr_arena_seen";
 
+        /// <summary>Server clock, ms, when Hel recalls the last few creatures of the waves fighting (<see cref="ArenaRecall"/>);
+        /// 0 while no recall runs. Every client marks the stragglers while it is set.</summary>
+        public const string RecallAt = "ecr_arena_recall";
+
+        /// <summary>The creatures the waves fighting had when the latest began, alive and still to come: what a quarter
+        /// left is counted from (<see cref="ArenaRecall"/>).</summary>
+        public const string WaveSize = "ecr_arena_size";
+
         /// <summary>The archway the next wave's first creature is given to, 0 to 3, so the archways take turns.</summary>
         public const string SpawnTurn = "ecr_arena_turn";
 
@@ -154,6 +162,7 @@ namespace EliteCreaturesReborn.Arena.Trial
         public static readonly int StartBiomeHash = StartBiome.GetStableHashCode();
         public static readonly int PortalsHash = Portals.GetStableHashCode();
         public static readonly int BossesBeatenHash = BossesBeaten.GetStableHashCode();
+        public static readonly int RecallAtHash = RecallAt.GetStableHashCode();
 
         /// <summary>The archways' portal points in the walls' bundle (each on its recess's back face, 2.5 m up, facing the
         /// hall): where creatures come out, one archway per bit of <see cref="Portals"/>.</summary>

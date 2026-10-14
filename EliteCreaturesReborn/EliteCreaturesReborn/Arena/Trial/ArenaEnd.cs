@@ -45,6 +45,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.Phase = ArenaPhase.Idle;
             state.Left = 0;
             state.Next = 0L;
+            state.RecallAt = 0L;
             state.Portals = 0;
             new ArenaQueue().Write(zdo);
             TellEach(zdo, state);

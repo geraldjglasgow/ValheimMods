@@ -660,6 +660,7 @@ and every player in the hall is in it; whoever enters later joins. Waves, number
 | Alive at once | 24 (20 indoors); the archways wait while 24 live |
 | Next wave | only when the wave is cleared (nothing alive or to come, held 2 s), after a break of 20 s (25 s after a boss wave) |
 | Swept | a wave not cleared in 300 s (180 indoors): its creatures vanish (no drops, no souls) and the break begins |
+| Stragglers | once all of the waves fighting are out and a quarter or fewer are left (rounded, at least 1), Hel recalls them 60 s later as a swept wave (`ArenaRecall`, `ecr_arena_recall`, `ecr_arena_size`): "Hel marks the last of the dead on your map..."; each flares, glows in cold light and shows as the game's event pin with its name on every client (`StragglerMark`); the event bar adds "recalled in 0:45"; never while a boss lives or is to come, a called wave calls it off |
 | Boss wave | every 5th: the biome's boss alone on the rune circle at the floor's centre, with `vfx_spawn` and `sfx_spawn`, no portal |
 | Souls | a kill 2 x tier (1-8) x (stars + 1) x 1.5 per mutation; a boss 50 x tier x (stars + 1) x `AspectLoot.Factor` (its aspects' loot multiplier); every player of the trial gets each kill's souls in full (`SoulWallets`: the total less what was earned before they joined and what they spent) |
 | Ready (F) | in the countdown and breaks, F (fixed; Hotkeys' `Pressed(KeyCode)` and the game's `TakeInput`) toggles the player's vote (`ecr_arena_ready_vote` to the core's owner, the set in `ecr_arena_ready`); when every player alive in the arena is ready the rest ends at once ("Ready: 2 of 3", "All ready - the dead come!"; the bar ends "- F: ready (1/3)" or "- (ready) 1/3") |
@@ -743,7 +744,10 @@ summed and its raises counted while the local player was in the hall during the 
 `Skills.RaiseSkill` in steps of the trial's average raise (at most 2000 per skill), since the game drops what one raise
 earns past the next level. The message `ecr_arena_reward` "Hel rewards you: $1." with the game's item names and
 `ecr_arena_reward_coins`, `_runes`, `_essence`, `_xp` ("$1 coins", "$1 runes", "$1 essence", "+$1% skill XP") comes
-four seconds after the end message (`RewardText`).
+four seconds after the end message (`RewardText`), in the centre and in the chat window (`ArenaWords.ToChat`, which
+the end message also goes to); each item shows at the top left with its icon as it is added ("$msg_added", or
+"$msg_dropped" when it fell at the feet). The trial's first cleared wave reads `ecr_arena_cleared_first` ("... Hel pays
+your reward when her trial ends.").
 
 **Messages and HUD.** Start, boss, cleared and end go by routed RPC to the trial's players only, as a word key and up
 to three words (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
@@ -771,6 +775,7 @@ core is not loaded here; it ends the trial as an empty hall does.
 | `ArenaCore.cs`, `ArenaCorePrefab.cs`, `ArenaCoreKeeper.cs` | The core (RPCs, the owner's step, `Current`); its prefab and `ZNetScene.Awake` prefix; the server keeping exactly one (`ZoneSystem.Start` postfix) |
 | `ArenaOrphanWatch.cs`, `ArenaLegacy.cs`, `ArenaZdos.cs` | The server ending a trial nobody is at; removing an older world's arena at (0, 5000, 0); removing ZDOs round a point |
 | `ArenaCalls.cs`, `ArenaClears.cs` | Calling the next wave (the client's ask, the owner's checks); which waves fighting are cleared, the break after the last |
+| `ArenaRecall.cs`, `StragglerMark.cs` | Hel's recall of a wave's last quarter a minute after it starts (owner); each straggler's flare, light and map pin (every client) |
 | `ArenaStart.cs`, `ArenaRun.cs`, `ArenaWaves.cs`, `ArenaEnd.cs` | Hel wakes; one step (presence, ends, countdown and breaks, a wave and its clear); a wave planned, a wave over (cleared or swept) and the break; the end |
 | `ArenaQueue.cs`, `TrialPlayers.cs`, `HallPlayers.cs` | The creatures to come by archway and the trial's players in the ZDO (decoded once per write); the living players in the hall |
 | `ArenaCreatures.cs`, `ArenaSpawnLists.cs`, `ArenaFallback.cs`, `ArenaBosses.cs` | Biome lists and weights; homes from the spawn lists; the fixed lists; the bosses and Kall's next phase |

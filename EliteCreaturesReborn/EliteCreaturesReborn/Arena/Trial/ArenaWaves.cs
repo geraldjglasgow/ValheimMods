@@ -13,7 +13,8 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// this one stopped, so no side is favoured and players in the middle are come at from every side), and every
     /// archway with creatures to send opens its portal a moment before its first. A boss wave queues the biome's boss alone, for the rune circle
     /// (<see cref="ArenaBosses"/>), and every player of the trial reads which boss Hel sends. As it ends - cleared, or
-    /// swept when its time ran out - its creatures still standing vanish, scoring nothing, the players read that it is
+    /// swept when its time ran out or Hel recalled its stragglers (<see cref="ArenaRecall"/>) - its creatures still
+    /// standing vanish, scoring nothing, the players read that it is
     /// cleared, and the break before the next one begins. A wave called early (<see cref="ArenaCalls"/>) begins on top of
     /// the one fighting; the break waits for the last of them (<see cref="ArenaClears"/>).
     /// </summary>
@@ -48,21 +49,25 @@ namespace EliteCreaturesReborn.Arena.Trial
             queue.Write(zdo);
             state.Portals = queue.LaneMask();
             state.Left = ArenaFighters.Alive(state.TrialId) + queue.Count;
+            state.WaveSize = state.Left;
+            state.RecallAt = 0L;
             OpenArchways(core);
             Heightmap.Biome biome = ArenaCreatures.Biome(ArenaTable.BiomeIndex(state.StartBiome, wave));
             Log.Info($"Hel's Trial: wave {wave} ({biome}), {planned} coming, {players} player(s) in the hall");
         }
 
-        /// <summary>Every wave fighting is over: <paramref name="swept"/> when the time ran out with creatures still
-        /// standing. They vanish (those this machine owns at once, the rest on their owners as they read the swept wave),
-        /// the break begins, and the players read that wave <paramref name="told"/> (the last to clear) is
-        /// cleared.</summary>
+        /// <summary>Every wave fighting is over: <paramref name="swept"/> when the time ran out, or Hel recalled the
+        /// stragglers, with creatures still standing. They vanish (those this machine owns at once, the rest on their
+        /// owners as they read the swept wave), the break begins, and the players read that wave <paramref name="told"/>
+        /// (the last to clear) is cleared; after the trial's first, that Hel pays when the trial ends.</summary>
         public static void Rest(ArenaCore core, long now, bool swept, int told)
         {
             ZDO zdo = core.Zdo!;
             ArenaState state = core.State;
             float rest = ArenaTable.BreakAfter(told);
+            string words = state.Swept == 0 ? ArenaWords.ClearedFirst : ArenaWords.Cleared;
             state.Swept = state.Wave;
+            state.RecallAt = 0L;
             state.Done = 0;
             new ArenaQueue().Write(zdo);
             core.WaveBusyAt.Clear();
@@ -71,8 +76,8 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.Next = now + ArenaState.Ms(rest);
             state.Phase = ArenaPhase.Break;
             ArenaFighters.VanishOwned(state.TrialId);
-            ArenaNet.Tell(zdo, ArenaWords.Cleared, told.ToString(), Mathf.RoundToInt(rest).ToString());
-            Log.Info($"Hel's Trial: wave {told} {(swept ? "swept after its time ran out" : "cleared")}; {rest:0} s break");
+            ArenaNet.Tell(zdo, words, told.ToString(), Mathf.RoundToInt(rest).ToString());
+            Log.Info($"Hel's Trial: wave {told} {(swept ? "swept, its stragglers gone" : "cleared")}; {rest:0} s break");
         }
 
         private static int PlanWave(ArenaState state, ArenaQueue queue, int wave, int players)

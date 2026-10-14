@@ -11,7 +11,8 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// without a search. Once tagged, on every machine, it is made one of Hel's (<see cref="Refresh"/>). Every second, on
     /// the creature's owner only, it judges (<see cref="ArenaOrders"/>): a creature that appeared in the hall during a
     /// trial joins it, a tagged one whose trial is over vanishes, a tamed one is the players' now, and one left with no
-    /// target is set on the nearest player. Ownership may move between machines; the next owner's copy picks up from the
+    /// target is set on the nearest player; on every machine, a straggler of Hel's recall is marked
+    /// (<see cref="StragglerMark"/>). Ownership may move between machines; the next owner's copy picks up from the
     /// tag in the ZDO.
     /// </summary>
     internal sealed class ArenaFighter : MonoBehaviour
@@ -29,6 +30,7 @@ namespace EliteCreaturesReborn.Arena.Trial
         private string _defeatKey = "";
         private string _dream = "";
         private bool _faultReported;
+        private StragglerMark? _mark;
 
         public Character Body { get; private set; } = null!;
 
@@ -58,7 +60,11 @@ namespace EliteCreaturesReborn.Arena.Trial
             Refresh();
         }
 
-        private void OnDestroy() => ArenaFighters.Remove(this);
+        private void OnDestroy()
+        {
+            ArenaFighters.Remove(this);
+            _mark?.Remove();
+        }
 
         private void Update()
         {
@@ -72,6 +78,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 Refresh();
                 ArenaOrders.Judge(this, now);
+                _mark = StragglerMark.Step(this, _mark);
             }
             catch (Exception e)
             {

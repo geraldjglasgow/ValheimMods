@@ -45,6 +45,9 @@ last one.
 - **A wave is a round:** the next one comes only when every creature of it is dead, after a short break - 20 seconds,
   25 after a boss - to catch your breath and reach an anvil ("Wave 7 cleared"). A wave not cleared within 5 minutes
   counts as cleared: its last creatures vanish and are worth nothing.
+- **Stragglers:** once a wave's creatures are all out and only a quarter of them are left, Hel marks the last ones -
+  they glow and show on your map - and recalls them a minute later (no boss wave). Kill them in that minute for their
+  souls; recalled, they are worth nothing.
 - **Stars and mutations** rise with the waves: +1 star from a biome's 3rd wave, one more for every five waves after
   the Deep North's boss; a 15% mutation chance in wave 1, 4% more each wave, up to 60%. No Gilded in the arena.
 - **Every 5th wave** is the biome's boss on the rune circle: Eikthyr, the Elder, Bonemass, Moder, Yagluth, the Queen,
@@ -78,5 +81,6 @@ last one.
     essence (a trophy's worth a wave, a boss trophy's for each boss).
 
   The arena creatures themselves drop nothing, but for a boss's meads. Items that don't fit in your inventory fall at your feet.
+  Each item shows at the top left as it arrives, and the whole reward ("Hel rewards you: ...") is written in the chat.
 
 `elite arena stop` (admin) ends a trial.
