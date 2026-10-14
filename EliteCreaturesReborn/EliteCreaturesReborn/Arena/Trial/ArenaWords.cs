@@ -44,6 +44,8 @@ namespace EliteCreaturesReborn.Arena.Trial
         public const string ClearedFirst = "ecr_arena_cleared_first";
         public const string Recall = "ecr_arena_recall";
         public const string RecallLine = "ecr_arena_recall_line";
+        public const string RewardNow = "ecr_arena_reward_now";
+        public const string RewardNone = "ecr_arena_reward_none";
 
         public static void Add(Localization? localization)
         {
@@ -59,16 +61,23 @@ namespace EliteCreaturesReborn.Arena.Trial
             localization.AddWord(Ended, "Hel's Trial ends at wave $1: $2 kills, $3 souls.");
             localization.AddWord(BreakLine, "Hel's Trial - $1, wave $2 cleared - next wave in $3 - $4 souls");
             localization.AddWord(Cleared, "Wave $1 cleared. The next comes in $2 seconds.");
-            localization.AddWord(Spared, "Hel spares your skills.");
+            localization.AddWord(Spared, "Hel spares your skills and your gear.");
+            RewardWords(localization);
+            AnvilWords(localization);
+            ReadyWords(localization);
+            CallWords(localization);
+            RecallWords(localization);
+        }
+
+        private static void RewardWords(Localization localization)
+        {
             localization.AddWord(Reward, "Hel rewards you: $1.");
             localization.AddWord(RewardCoins, "$1 coins");
             localization.AddWord(RewardRunes, "$1 runes");
             localization.AddWord(RewardEssence, "$1 essence");
             localization.AddWord(RewardXp, "+$1% skill XP");
-            AnvilWords(localization);
-            ReadyWords(localization);
-            CallWords(localization);
-            RecallWords(localization);
+            localization.AddWord(RewardNow, "Current rewards: $1");
+            localization.AddWord(RewardNone, "none yet");
         }
 
         private static void RecallWords(Localization localization)

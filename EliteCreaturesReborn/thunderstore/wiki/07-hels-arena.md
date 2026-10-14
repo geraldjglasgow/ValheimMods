@@ -65,9 +65,9 @@ last one.
 - **Boss cache:** a fallen boss leaves healing meads 60% of the time - 1 to 3 for each player, minor to lingering by
   the boss's biome - on the rune circle.
 - **The trial ends** when no player of it is alive in the hall.
-- **Dying in the hall costs no skill levels:** "Hel spares your skills." That holds for GrindstoneSkills' skill loss
-  too, and in a world that resets skills on death. The rest is the game's own death: your tombstone stays in the hall;
-  go back in to fetch it.
+- **Dying in the hall costs nothing:** no skill levels and no tombstone - you respawn with all your gear. "Hel spares
+  your skills and your gear." That holds for GrindstoneSkills' skill loss too, and in a world that resets skills on
+  death.
 - **The arena is open above its walls, and Hel's river kills:** anyone who escapes over the wall into the black lake
   round it dies at once, with the game's usual skill loss; the tombstone appears just inside the arena's gate.
 - **Rewards**, when the trial ends, for every player of it, dead or alive (be online at the end):
@@ -82,5 +82,6 @@ last one.
 
   The arena creatures themselves drop nothing, but for a boss's meads. Items that don't fit in your inventory fall at your feet.
   Each item shows at the top left as it arrives, and the whole reward ("Hel rewards you: ...") is written in the chat.
+  During a trial, look at Hel to see your **Current rewards**.
 
 `elite arena stop` (admin) ends a trial.

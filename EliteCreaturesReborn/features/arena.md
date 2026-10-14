@@ -99,8 +99,8 @@ throne is used.
   was kept.
 - `elite arena` (admin, or devcommands in single player) stays: in the world, keeps where you stand and jumps you to
   `arrive`; in the hall, jumps you back as the way out does.
-- Dying in the hall costs no skill levels (section 3, "Death"); otherwise it is the game's own death: your tombstone
-  stays in the hall, and you go back in to fetch it.
+- Dying in the hall costs no skill levels and no gear (section 3, "Death"): no tombstone, you respawn with everything
+  you carried.
 
 # 3. The trial
 
@@ -242,13 +242,18 @@ throne is used.
   Wooden Battle Idol, Bronze Protection Idol, 412 coins, 22 runes, 80 essence, +110% skill XP.", in the centre and in
   the chat window (which opens for a moment), where the end message goes too (a player's report, 2026-10-14: the
   reward was hard to make out). The trial's first cleared wave says when it is paid: "Wave 1 cleared. The next comes
-  in 20 seconds. Hel pays your reward when her trial ends." Items the game does not have are left out; EliteCrafting's
+  in 20 seconds. Hel pays your reward when her trial ends." While a trial runs, Hel's hover lists what it would pay
+  this player now: "Current rewards: Bronze Battle Idol, 120 coins, 6 runes, 20 essence, +30% skill XP" ("none yet"
+  before anything is earned; a player's question, 2026-10-14). Items the game does not have are left out; EliteCrafting's
   only where it is installed.
 - **Death:** a player who dies inside the hall loses no skill levels: on the dying player's machine the death is the
   game's own soft death (the one it gives within ten minutes of the last; the game says "The Gods are merciful"), so the
   game's skill loss never runs, and a world that resets skills on death does not reset them there. GrindstoneSkills
   applies its own loss inside that same game step, so it takes nothing either. After the respawn: "Hel spares your
-  skills." Everything else is the game's own death: the tombstone stays in the hall.
+  skills and your gear." No tombstone is made (the user, 2026-10-14: "they shouldn't have a tombstone for dying in the
+  arena. this is an endgame challenge, you're kinda supposed to keep going until you die for maximum reward"): the
+  player respawns with everything they carried, still worn, as with the game's own "keep inventory" world setting.
+  Everything else is the game's own death (food lost, effects cleared).
 
 # 4. Multiplayer
 
@@ -321,7 +326,7 @@ Settled with the user on 2026-10-12:
 
 1. The arena is in **Elite Creatures Reborn**, behind one setting `Arena`, off by default.
 2. **Full arena** in the first build: the hall, Hel on her throne, endless waves, bosses, score.
-3. **Normal death:** the tombstone stays in the hall.
+3. **Normal death:** the tombstone stays in the hall. (Replaced 2026-10-14: no tombstone, gear kept.)
 4. **One hall, always loaded** on every peer, at a fixed point (not an instance per gate), so jumps in are instant.
 5. **Rewards wait** for the user (see the top) - decided on 2026-10-13, decision 10.
 6. **The entrance is Helgrind** (decided 2026-10-12): a craftable endgame portal piece at the Black Forge (1 Sacrificial
@@ -549,3 +554,7 @@ Settled with the user on 2026-10-12:
   flare, cold light, the game's event pin), the event bar's "recalled in 0:45", `ecr_arena_cleared_first`;
   `RewardGrant` shows each item at the top left and the reward in chat, `ArenaWords.ToChat` the end too. Builds clean;
   nothing seen in game.
+- 2026-10-14, current rewards and gear kept: `RewardPreview` ("Current rewards: ..." on Hel's hover, the end's plan for
+  this player, cached on the trial, waves cleared, bosses beaten and souls; `RewardText.Items`), `ArenaDeath.KeepGear`
+  (a `Player.CreateTombStone` prefix skipping the tombstone during an arena death; PackPanel's finalizer still returns
+  its kept items). Builds clean; nothing seen in game.

@@ -718,7 +718,8 @@ after 3 s) and the one-shot `ecr_helhall_portal_close` plays. The effect is one 
 player's own machine sets the game's time since the last death to 0, so the game gives its own soft death (no
 `Skills.OnDeath`, "The Gods are merciful"), and a `Skills.Clear` prefix skips a world's reset-on-death during it.
 GrindstoneSkills applies its own skill loss inside `Skills.OnDeath`, so it takes nothing either, with no change there.
-After the respawn (`Player.OnSpawned` postfix): "Hel spares your skills." The tombstone stays in the hall as ever.
+A `Player.CreateTombStone` prefix (`ArenaDeath.KeepGear`) skips the tombstone during that death, so the player keeps
+everything, still worn. After the respawn (`Player.OnSpawned` postfix): "Hel spares your skills and your gear."
 
 **Rewards** (`Arena/Rewards/`, `features/arena.md` section 3, "Rewards"). As the trial ends, the core's owner plans one
 reward from its ZDO (`RewardPlan`: the waves cleared `ecr_arena_swept`, the boss waves beaten `ecr_arena_bosses`, a bit
@@ -747,7 +748,9 @@ earns past the next level. The message `ecr_arena_reward` "Hel rewards you: $1."
 four seconds after the end message (`RewardText`), in the centre and in the chat window (`ArenaWords.ToChat`, which
 the end message also goes to); each item shows at the top left with its icon as it is added ("$msg_added", or
 "$msg_dropped" when it fell at the feet). The trial's first cleared wave reads `ecr_arena_cleared_first` ("... Hel pays
-your reward when her trial ends.").
+your reward when her trial ends."). While a trial runs, Hel's hover adds `ecr_arena_reward_now` "Current rewards: $1"
+(`RewardPreview`: the end's plan for this player from the core's ZDO, rebuilt when the waves cleared, bosses beaten or
+their souls change; runes as a count; "none yet").
 
 **Messages and HUD.** Start, boss, cleared and end go by routed RPC to the trial's players only, as a word key and up
 to three words (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
@@ -757,7 +760,7 @@ game's `$biome_*` word), `ecr_arena_break_line` "Hel's Trial - $1, wave $2 clear
 `_anvil_cold`, `_anvil_done`, `_anvil_nothing`, `ecr_arena_call_hint` "Call the next wave", `ecr_arena_called` "$1 calls
 the next wave!", `ecr_arena_boss_waits` "Hel waits until $1 falls.", `ecr_arena_wave_done` "Wave $1 cleared.",
 `ecr_arena_countdown` "Hel's Trial - $1 - the first wave in $2", `ecr_arena_spared`
-"Hel spares your skills.", `ecr_arena_name` "Hel's Trial"). The line is the game's event bar for a living player in the
+"Hel spares your skills and your gear.", `ecr_arena_name` "Hel's Trial"). The line is the game's event bar for a living player in the
 hall, drawn from the core's ZDO by the raids' one `Hud.UpdateEvent` hook, which asks the trial first.
 
 **Travel.** `ArenaTravel.Enter` and `Leave`, for Helgrind (below) and `elite arena` (admin; the host in single player):

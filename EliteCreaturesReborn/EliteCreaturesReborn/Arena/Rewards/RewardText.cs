@@ -9,13 +9,22 @@ namespace EliteCreaturesReborn.Arena.Rewards
     /// The reward's message, in the player's own language: "Hel rewards you: Bronze Battle Idol, Iron Protection Idol, 412
     /// coins, 6 runes, 3 essence, +18% skill XP." Named items by the game's own names (a count after the name when more
     /// than one), then the coins, the runes and the essence as counts, and the skill XP bonus as a percent. Empty for an
-    /// empty reward.
+    /// empty reward. <see cref="Items"/> is the list alone, for Hel's "Current rewards: ..." (<see cref="RewardPreview"/>).
     /// </summary>
     internal static class RewardText
     {
         private static readonly List<string> Parts = new List<string>();
 
         public static string For(RewardList list)
+        {
+            string items = Items(list);
+            return items.Length > 0 && Localization.instance != null
+                ? Localization.instance.Localize("$" + ArenaWords.Reward, items) : "";
+        }
+
+        /// <summary>The reward's parts alone, comma separated: "Bronze Battle Idol, 412 coins, +18% skill XP"; empty for
+        /// an empty reward.</summary>
+        public static string Items(RewardList list)
         {
             Localization? words = Localization.instance;
             if (words == null || list.Empty)
@@ -32,7 +41,7 @@ namespace EliteCreaturesReborn.Arena.Rewards
             {
                 Parts.Add(words.Localize("$" + ArenaWords.RewardXp, percent.ToString(CultureInfo.InvariantCulture)));
             }
-            string text = Parts.Count > 0 ? words.Localize("$" + ArenaWords.Reward, string.Join(", ", Parts)) : "";
+            string text = string.Join(", ", Parts);
             Parts.Clear();
             return text;
         }

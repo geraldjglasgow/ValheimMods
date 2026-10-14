@@ -6,7 +6,8 @@ namespace EliteCreaturesReborn.Arena.Hall
     /// Looking at Hel (features/arena.md section 1, "Hel"), clients only: her hover shows "Hel" and, while no trial runs
     /// and the local player stands in the hall, "[E] Begin the trial"; E then asks the trial to start
     /// (<see cref="ArenaTrial.RequestStart"/>, which sends it to the arena core's owner). During a wave whose creatures
-    /// have all come out, "[E] Call the next wave" (<see cref="ArenaTrial.RequestNextWave"/>). Her box collider is on this
+    /// have all come out, "[E] Call the next wave" (<see cref="ArenaTrial.RequestNextWave"/>). While a trial runs, what it
+    /// would pay this player now: "Current rewards: ..." (<see cref="Rewards.RewardPreview"/>). Her box collider is on this
     /// object. The game asks for the text every frame the player looks at her, so it is rebuilt and localized at most
     /// four times a second. She is 6 m tall on a 1.76 m dais, so she can be hovered from 3 m further than the game's
     /// usual reach: from the foot of the dais.
@@ -33,6 +34,8 @@ namespace EliteCreaturesReborn.Arena.Hall
             _name = Localization.instance.Localize("$" + HallWords.Hel);
             _text = CanBegin(TrialView.Running) ? _name + Localization.instance.Localize(BeginLine)
                 : ArenaTrial.CanCallNext ? _name + Localization.instance.Localize(CallLine) : _name;
+            string rewards = TrialView.Running ? Rewards.RewardPreview.Line() : "";
+            _text += rewards.Length > 0 ? "\n" + rewards : "";
             return _text;
         }
 

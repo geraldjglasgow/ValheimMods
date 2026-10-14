@@ -4,11 +4,13 @@ using HarmonyLib;
 namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
-    /// A death in Hel's hall costs no skill levels (features/arena.md section 3, "Death"): a dedicated challenge, not a
-    /// punishing death. Decided on the dying player's own machine, where the game takes the levels: a player who dies
+    /// A death in Hel's hall costs no skill levels and no gear (features/arena.md section 3, "Death"): a dedicated
+    /// challenge, fought until death for the most reward (the user, 2026-10-14), not a punishing death. Decided on the dying player's own machine, where the game takes the levels: a player who dies
     /// inside the built hall dies the game's own soft death - the death it gives within ten minutes of the last, which
     /// never calls <c>Skills.OnDeath</c> (the game says "The Gods are merciful") - and a world that resets skills on death
-    /// does not reset them there. Everything else is the game's own death: the tombstone stays in the hall. Because the
+    /// does not reset them there. No tombstone is made either (<c>Player.CreateTombStone</c> skipped, as the game's own
+    /// "keep inventory" world setting skips its body): the player respawns with everything they carried, still worn.
+    /// The rest is the game's own death (food lost, effects cleared). Because the
     /// game's skill loss never runs, nothing that hooks it takes a level either: GrindstoneSkills' own loss (its "Skill
     /// Loss On Death", its own skills included) is applied inside <c>Skills.OnDeath</c> and so never happens, with no
     /// change on its side. After the respawn the player reads "Hel spares your skills." The same respawn pays a
@@ -41,6 +43,14 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
 
             private static void Finalizer() => _dying = false;
+        }
+
+        /// <summary>No tombstone in the hall: everything stays in the player's inventory. Other mods' prefixes and
+        /// finalizers still run (PackPanel puts its kept items back in its finalizer).</summary>
+        [HarmonyPatch(typeof(Player), nameof(Player.CreateTombStone))]
+        private static class KeepGear
+        {
+            private static bool Prefix() => !_dying;
         }
 
         /// <summary>A world that resets skills on death clears them inside the death; not in the hall.</summary>
