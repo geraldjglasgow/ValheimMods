@@ -6,18 +6,17 @@ namespace EliteCrafting.Effects
     /// <summary>One channel of the local player's last rebuild, for <c>ecraft stats</c> (console-commands.md).</summary>
     public readonly struct EffectChannelTotal
     {
-        public EffectChannelTotal(ChannelDef channel, float sum, float applied, bool active, string sources)
+        public EffectChannelTotal(ChannelDef channel, float sum, float applied, string sources)
         {
             Channel = channel;
             Sum = sum;
             Applied = applied;
-            Active = active;
             Sources = sources;
         }
 
         public ChannelDef Channel { get; }
 
-        /// <summary><c>effect</c>, <c>effect:param</c>, with <c>@health_critical</c> for the conditional channel.</summary>
+        /// <summary><c>effect</c> or <c>effect:param</c>.</summary>
         public string Key => Channel.Key;
 
         /// <summary>Raw sum of the stored values over every counted item (percent points or flat units).</summary>
@@ -34,9 +33,6 @@ namespace EliteCrafting.Effects
 
         /// <summary>Item-local (applies to the item it sits on) rather than player-global.</summary>
         public bool ItemLocal => EffectKinds.IsItemLocal(EffectKinds.Of(Channel.Effect.Id));
-
-        /// <summary>False for a health-critical channel while the player is not critical.</summary>
-        public bool Active { get; }
 
         /// <summary>The equipment positions that feed it: <c>right</c>, <c>left</c>, <c>head</c>, <c>chest</c>, <c>legs</c>, <c>cape</c>, <c>utility</c>.</summary>
         public string Sources { get; }
@@ -58,9 +54,6 @@ namespace EliteCrafting.Effects
 
         /// <summary>Seconds since the last rebuild; negative when there has been none.</summary>
         public float SecondsSinceRebuild { get; internal set; }
-
-        public bool HealthCritical { get; internal set; }
-        public float ThresholdPercent { get; internal set; }
 
         /// <summary>Every channel with a non-zero sum, in channel order (Phase 1 and Phase 2 effects alike).</summary>
         public IReadOnlyList<EffectChannelTotal> Channels { get; }
@@ -91,8 +84,6 @@ namespace EliteCrafting.Effects
                 MagicItemsEquipped = AggregateBuilder.MagicItemCount,
                 ActiveAffixes = AggregateBuilder.ActiveAffixCount,
                 SecondsSinceRebuild = at < 0f ? -1f : UnityEngine.Time.time - at,
-                HealthCritical = Effects.HealthCritical.Active,
-                ThresholdPercent = Effects.HealthCritical.Threshold * 100f,
                 States = CurrentStates(),
             };
         }
@@ -133,8 +124,7 @@ namespace EliteCrafting.Effects
                 ChannelDef channel = plan.Channels[c];
                 bool itemLocal = EffectKinds.IsItemLocal(plan.Kinds[c]);
                 float applied = itemLocal ? sums[c] : plan.Clamp(c, sums[c]);
-                bool active = channel.Condition == AffixCondition.None || Effects.HealthCritical.Active;
-                into.Add(new EffectChannelTotal(channel, sums[c], applied, active, EquipPositions.Describe(sources[c])));
+                into.Add(new EffectChannelTotal(channel, sums[c], applied, EquipPositions.Describe(sources[c])));
             }
         }
     }

@@ -14,8 +14,6 @@ Rules for every effect (effects-runtime.md and the workspace CLAUDE.md apply):
 - **Read the summed value, never the YAML.** Player-global effects read `EffectTotals` / the aggregate channel; item-local
   effects read the item's own sum (`ItemLocalSums`). Caps are applied by the channel layer; a hook clamps only what it
   must (a probability to 100%).
-- **Health-critical variants** (`condition: health_critical`) of an existing effect must keep working: the conditional
-  channel is a separate channel of the same effect.
 - Small units (24-line methods, 300-line classes), PatchGuard on patches, no transpilers unless no prefix/postfix can do it.
 - Game signatures come from decompiling `assembly_valheim.dll` into the scratch folder. Other mods' code may be read to
   learn how something can be done; never copy it.
@@ -24,7 +22,7 @@ Rules for every effect (effects-runtime.md and the workspace CLAUDE.md apply):
 |---|---|---|---|
 | **Combat** | | | |
 | `added_damage` | Hook, ItemLocal, Flat, DamageType, Raise | This weapon's hits deal X more of the param type (postfix `ItemData.GetDamage`, like `brand_damage`, after quality). Fire and poison land partly over time, as the game does. | emberbrand, rimebrand, stormbrand, venombrand, spiritbrand, bonebreaker, keen_edge, needlepoint |
-| `attack_speed` | Hook, ItemLocal, Percent, None, Raise, 15 | Attacks with this weapon play X% faster (animation and the attack's timing). Must look the same to other players. Health-critical variant. | quickened, quickened_hc |
+| `attack_speed` | Hook, ItemLocal, Percent, None, Raise, 15 | Attacks with this weapon play X% faster (animation and the attack's timing). Must look the same to other players. | quickened |
 | `cast_speed` | Hook, ItemLocal, Percent, None, Raise, 25 | The same for a staff's attacks. | swift_casting |
 | `chain_lightning` | Hook, ItemLocal, Percent, None, Raise, 100 | A hit has a 15% chance to arc to up to 3 other enemies within 8 m, each taking X% of the hit's damage as lightning, with a lightning visual every client sees. | thors_chain |
 | `explosive_shot` | Hook, ItemLocal, Percent, None, Raise, 100 | A projectile from this bow or crossbow also hits every other enemy within 3 m of its impact for X% of its damage, with an impact visual. | bursting_shot |
@@ -65,6 +63,4 @@ Rules for every effect (effects-runtime.md and the workspace CLAUDE.md apply):
 | `recall` | Hook, ItemLocal, Flag, None, Raise | When this thrown weapon lands, it returns to the thrower's inventory (and slot) instead of lying on the ground. Spears too. | returning |
 | `apportation` | Hook, ItemLocal, Flag, None, Raise | When this thrown weapon hits an enemy, the thrower teleports to the impact point. | bifrost_step |
 
-Existing effects the new inscriptions reuse (no new code): `damage_dealt:all` (wrath), `stamina_recovery@health_critical`,
-`eitr_recovery@health_critical`, `item_block@health_critical`, `parry_bonus@health_critical`, `damage_taken:spirit`,
-`leech:stamina`.
+Existing effects the new inscriptions reuse (no new code): `damage_dealt:all` (wrath), `damage_taken:spirit`, `leech:stamina`.

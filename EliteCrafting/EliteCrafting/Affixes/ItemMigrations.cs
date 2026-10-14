@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EliteCrafting.Rules;
 
 namespace EliteCrafting.Affixes
@@ -13,6 +14,11 @@ namespace EliteCrafting.Affixes
     /// tiers. <c>grade' = clamp(round(grade * k / 7), 1, k)</c> for every roll whose id is defined; values are kept. It
     /// needs the rules (k), so <see cref="Upgrade"/> only marks the state and <see cref="ResolveGrades"/> converts it
     /// each time it is resolved; an orphaned roll keeps its grade until its id is defined again.
+    /// </para>
+    /// <para>
+    /// Retired ids: the health-critical inscriptions (removed in 0.11.0) read as their plain twin, the same effect always
+    /// on, and Berserkergang's old values held in its new ladder (<see cref="MergeRetired"/>), also against the rules, after
+    /// the grades.
     /// </para>
     /// </summary>
     internal static class ItemMigrations
@@ -59,6 +65,64 @@ namespace EliteCrafting.Affixes
 
         private static AffixRoll Convert(AffixRoll roll, int k) =>
             k <= 0 ? roll : new AffixRoll(roll.Id, ConvertGrade(roll.Tier, k), roll.Value);
+
+        /// <summary>Each removed health-critical inscription and the plain twin it reads as.</summary>
+        private static readonly Dictionary<string, string> MergedIds = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["quickened_hc"] = "quickened", ["blood_drinker_hc"] = "blood_drinker", ["stalwart_hc"] = "stalwart",
+            ["perfect_guard_hc"] = "perfect_guard", ["mist_veil_hc"] = "mist_veil", ["troll_blood_hc"] = "troll_blood",
+            ["second_wind_hc"] = "second_wind", ["seidr_flow_hc"] = "seidr_flow", ["hardened_hc"] = "hardened",
+            ["fleetfoot_hc"] = "fleetfoot",
+        };
+
+        /// <summary>Kept ids whose ladder shrank when they lost the condition: a stored value is held inside the new row.</summary>
+        private static readonly HashSet<string> RescaledIds = new HashSet<string>(StringComparer.Ordinal) { "berserkergang" };
+
+        /// <summary>
+        /// The state with every retired roll read as its twin under these rules: the same grade on the twin's ladder,
+        /// the value held inside the twin's row for it (a rescaled id the same way, on its own ladder). A roll whose own
+        /// id the rules still define, or whose twin they do not, is kept. The state itself when nothing changes.
+        /// </summary>
+        public static StateData MergeRetired(StateData state, AffixRules rules)
+        {
+            StateData? merged = null;
+            for (int i = 0; i < state.Segments.Length; i++)
+            {
+                ItemSegment segment = state.Segments[i];
+                AffixDef? twin = segment.IsRoll ? TwinOf(segment.Roll.Id, rules) : null;
+                AffixRoll moved = twin != null ? AsTwin(segment.Roll, twin) : segment.Roll;
+                if (!moved.Equals(segment.Roll))
+                {
+                    merged ??= CopySegments(state);
+                    merged.Segments[i] = new ItemSegment(moved);
+                }
+            }
+            return merged ?? state;
+        }
+
+        private static AffixDef? TwinOf(string id, AffixRules rules)
+        {
+            if (RescaledIds.Contains(id))
+            {
+                return rules.Get(id);
+            }
+            return MergedIds.TryGetValue(id, out string twin) && rules.Get(id) == null ? rules.Get(twin) : null;
+        }
+
+        private static AffixRoll AsTwin(AffixRoll roll, AffixDef twin)
+        {
+            int grade = Math.Max(1, Math.Min(twin.TierCount, roll.Tier));
+            AffixTierDef? row = twin.TierRow(grade);
+            float value = row == null ? roll.Value : Math.Max(row.Min, Math.Min(row.Max, roll.Value));
+            return new AffixRoll(twin.Id, grade, value);
+        }
+
+        private static StateData CopySegments(StateData state)
+        {
+            StateData copy = state.Copy();
+            copy.Segments = (ItemSegment[])state.Segments.Clone();
+            return copy;
+        }
 
         /// <summary>
         /// The six built-in rarities before the runes (2026-10-02) in today's three: Uncommon is Magic, Epic,

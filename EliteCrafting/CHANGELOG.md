@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0
+
+- The ten "at low health" inscriptions (Desperate Haste, Cornered Hide, ...) are merged into their plain twins; items keep the plain one.
+- Berserkergang is +0.5-6% damage, always on (existing rolls come down into that range); Swift Draught makes healing meads heal at once, always.
+- Reflex Draught and Valhalla's Edge are removed.
+- The inscriptions YAML is format 4: an older one is saved as `.v3.bak` and written fresh. The economy YAML is kept.
+
 ## 0.10.0
 
 - PackPanel's backpacks take sockets and gems like armour.

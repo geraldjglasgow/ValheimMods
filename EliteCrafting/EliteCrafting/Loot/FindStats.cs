@@ -45,9 +45,7 @@ namespace EliteCrafting.Loot
 
     /// <summary>
     /// The affix channels of one rules generation that feed a find stat, resolved once per generation so neither the
-    /// publisher nor the death roll compares effect ids as strings. Only unconditional channels count: a
-    /// health-critical find affix would depend on the killer's health at the moment of the kill, which the creature's
-    /// owner cannot see (judgement call, DECISIONS IMP-73). Main thread only.
+    /// publisher nor the death roll compares effect ids as strings. Main thread only.
     /// </summary>
     internal sealed class FindChannels
     {
@@ -62,7 +60,7 @@ namespace EliteCrafting.Loot
             for (int i = 0; i < channels.Count; i++)
             {
                 ChannelDef channel = channels[i];
-                int stat = channel.Condition == AffixCondition.None ? FindKeys.StatOf(channel.Effect.Id) : -1;
+                int stat = FindKeys.StatOf(channel.Effect.Id);
                 StatOf[i] = stat;
                 if (stat >= 0)
                 {

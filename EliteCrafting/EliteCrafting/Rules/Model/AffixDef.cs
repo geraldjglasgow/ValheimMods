@@ -49,7 +49,6 @@ namespace EliteCrafting.Rules
 
         public AffixRequirements Requires { get; internal set; } = AffixRequirements.Any;
         public AffixCategory Category { get; internal set; }
-        public AffixCondition Condition { get; internal set; }
         public string? ExclusionGroup { get; internal set; }
         public float Weight { get; internal set; } = 100f;
         public bool Enabled { get; internal set; } = true;

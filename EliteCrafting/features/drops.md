@@ -302,8 +302,7 @@ rune chance),
   effects` switch flips - and only when a value changed, so normal play sends nothing. The owner reads four floats.
   No inventory inspection, no RPC.
 - **The owner trusts the rules, not the number**: each value read is clamped to 0 .. the running rules' cap for its
-  channel, and a stat that no affix in the running rules feeds reads as 0. Only unconditional affixes count (a
-  health-critical find affix would depend on the killer's health at the kill). With the `Affix effects` switch off
+  channel, and a stat that no affix in the running rules feeds reads as 0. With the `Affix effects` switch off
   there is no bonus. (`../DECISIONS.md` IMP-73.)
 - **Fateweaver +F%**: the rune chance `p` is multiplied by `1 + F/100`. Gear chance untouched.
 - **Norns' Favour +L%**: every rarity weight above Magic (above the first magic rung of the ladder, IMP-74) - by

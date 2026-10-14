@@ -5,9 +5,8 @@ namespace EliteCrafting.Effects
 {
     /// <summary>
     /// One complete set of player-global totals, already capped, in the units the game wants: a fraction for a
-    /// percent affix (12% → 0.12), the raw number for a flat one. The rebuild fills two of these, without and with the
-    /// health-critical channels; the aggregate status effect swaps between them. Local player only. Reused across
-    /// rebuilds, so a rebuild allocates nothing.
+    /// percent affix (12% → 0.12), the raw number for a flat one. The rebuild fills one, which the aggregate status
+    /// effect reads. Local player only. Reused across rebuilds, so a rebuild allocates nothing.
     /// </summary>
     internal sealed partial class AggregateValues
     {

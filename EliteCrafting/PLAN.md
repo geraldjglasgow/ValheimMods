@@ -66,8 +66,8 @@ Everything data-driven, server-synced, hot-reloaded.
 
 - Pool of ~170 effects (see scratch draft; grows over time). Each affix definition carries:
   own `id`, display name, **slots**, category (`offense` / `defense` / `utility`), value type,
-  tiers (range + biome gate + weight per tier), exclusion group, hook-difficulty tag, and for
-  conditional variants the condition (e.g. health-critical, default threshold 30%).
+  tiers (range + biome gate + weight per tier), exclusion group and hook-difficulty tag. No
+  inscription is conditional (the health-critical variants were removed on 2026-10-13).
 - **Slot taxonomy:** `melee_weapon`, `ranged_weapon`, `magic_weapon`, `shield`, `head`, `chest`,
   `legs`, `cape`, `utility_item`, `tool`. An affix lists the slots it can roll on.
 - **Slot sanity rules** (Phase 0 assigns the full matrix from these):
@@ -614,6 +614,15 @@ YAML changes, per workspace CLAUDE.md. Release via `pack.ps1` + tcli, same as ev
   "hard to notice because its the same colors as the white"): tracks fill a dome 0.4 m tall with rising mist, and are
   cyan and alpha blended. Judgement calls: the glyphs' cyan (not the chosen essence's colour), about twelve tracks at a
   time over a full bowl, fewer over a low one (same density), no setting.
+- 2026-10-13 — No "at low health" inscriptions (user: "+5% attack speed at low health ... instead just do +5% attack
+  speed"; then picked from options): the ten health-critical twins (Desperate Haste, Cornered Thirst, Last Stand,
+  Desperate Guard, Cornered Veil, Cornered Blood, Last Breath, Seidr Surge, Cornered Hide, Cornered Flight) are merged
+  into their plain inscription (an item that has one reads it as the plain one, value held in the plain tier's range);
+  Berserkergang is +X% damage always at Wrath's ladder (0.5-6); Swift Draught makes healing meads heal at once always;
+  Reflex Draught and Valhalla's Edge are removed. The `condition` field, the `health_critical` block, `@health_critical`
+  cap keys and the second value set are gone; the inscriptions YAML is format 4 (format is now per family, so the
+  economy file keeps format 3 and its edits). Judgement calls: grade kept on the merge, the four exclusion groups left
+  with one member stay in the YAML (harmless).
 
 ## Open questions
 

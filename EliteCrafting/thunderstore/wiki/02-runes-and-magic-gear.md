@@ -69,7 +69,6 @@ PackPanel adds a Backpacks class.
 - A value is rolled once and never changes. Upgrading the item keeps everything.
 - Only equipped gear counts, not a weapon on your back.
 - The same effect on several pieces adds up, to a cap on the total across everything you wear: for example move speed 15%, attack speed 15%, chance to avoid a hit 15%, leech 5%, critical hit chance 25%, damage taken 50% less per damage type, stamina, eitr and health costs 30% less, cooldowns 30% shorter. The [Inscription List](wiki:Inscription List) gives every cap; `ecraft stats` shows your totals.
-- **Health-critical** means at or below 30% health; "while health-critical" inscriptions work only then. Valhalla's Edge raises the line, up to 50%.
 - One item never has the same inscription twice or two of one group (listed on the [Inscription List](wiki:Inscription List)).
 - An inscription the server switches off stays on the item greyed as `(dormant)`. It does nothing but still takes a place until Recasting rerolls it, or Cleansing or a Sealed Rune reroll clears it.
 

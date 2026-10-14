@@ -15,7 +15,7 @@ namespace EliteCrafting.Rules
         private static readonly string[] Keys =
         {
             "id", "name", "effect", "param", "value", "unit", "affix", "family", "classes", "scaled", "requires", "category",
-            "condition", "exclusion_group", "weight", "enabled", "hook", "tiers", RemovedSlots,
+            "exclusion_group", "weight", "enabled", "hook", "tiers", RemovedSlots,
         };
 
         /// <summary>The format-1 key <c>classes</c> replaced: read nowhere, a warning where a user file still has it.</summary>
@@ -90,7 +90,6 @@ namespace EliteCrafting.Rules
             def.Requires = RequirementsParser.Parse(r);
             def.Category = r.Enum("category", AffixCategory.Utility);
             Required(r, "category");
-            def.Condition = r.Enum("condition", AffixCondition.None);
             if (r.Has(RemovedSlots))
             {
                 r.Warn(RemovedSlots, "is no longer read: item classes replaced slots (classes: { best: [...], allowed: [...] })");

@@ -39,7 +39,6 @@ namespace EliteCrafting.Effects
             Add("coin_damage", Aggregate, PlayerGlobal, ValueTypes.Percent, None, Raise, null, E, "aggregate SE ModifyAttack: per 999 coins carried");
             Add("resist_modifier", Aggregate, PlayerGlobal, ValueTypes.Flag, Element, Raise, null, E, "aggregate SE ModifyDamageMods: Resistant to the element");
             Add("freeze_immunity", Aggregate, PlayerGlobal, ValueTypes.Flag, None, Raise, null, E, "never Freezing: the environment update's Freezing becomes Cold");
-            Add("hc_threshold", Aggregate, PlayerGlobal, ValueTypes.Percent, None, Raise, 20, E, "health-critical threshold, percentage points");
             Add("health_recovery_flat", Aggregate, PlayerGlobal, ValueTypes.Flat, None, Raise, null, E, "aggregate SE tick: heal X every 10 s");
             Add("health_for_regen", Hook, PlayerGlobal, ValueTypes.Flat, None, Raise, null, E, "composite: +X max health, -X% health regeneration");
             Add("eitr_for_regen", Hook, PlayerGlobal, ValueTypes.Percent, None, Raise, null, E, "composite: +X% eitr regeneration, -X/2 % max eitr");
@@ -88,8 +87,7 @@ namespace EliteCrafting.Effects
 
         private static void RegisterSustainP2()
         {
-            Add("auto_mead", Hook, PlayerGlobal, ValueTypes.Flag, None, Raise, null, M, "becoming health-critical drinks the best healing mead");
-            Add("mead_burst", Hook, PlayerGlobal, ValueTypes.Flag, None, Raise, null, M, "while health-critical a healing mead heals at once");
+            Add("mead_burst", Hook, PlayerGlobal, ValueTypes.Flag, None, Raise, null, M, "a healing mead heals at once");
             Add("mead_cooldown", Hook, PlayerGlobal, ValueTypes.Percent, None, Lower, 50, M, "shorter restoring-mead status (the mead cooldown)");
             Add("rain_shield", Hook, PlayerGlobal, ValueTypes.Flag, None, Raise, null, M, "the environment update never applies Wet from rain");
             Add("ignore_wet", Hook, PlayerGlobal, ValueTypes.Flag, None, Raise, null, M, "the Wet status keeps its regeneration at 100%");

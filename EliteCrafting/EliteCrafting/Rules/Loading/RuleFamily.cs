@@ -137,7 +137,7 @@ namespace EliteCrafting.Rules
 
         private void AdoptPushed()
         {
-            List<SourceText> files = RuleFormat.KeepCurrent(Unpack(_article.Value), "the server");
+            List<SourceText> files = RuleFormat.KeepCurrent(Unpack(_article.Value), "the server", _spec.Format);
             T? model = Build(files, "the server's files", out bool defaults);
             if (model != null)
             {

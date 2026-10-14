@@ -5,8 +5,8 @@ namespace EliteCrafting.Effects.Combat3
 {
     /// <summary>
     /// The most another peer accepts from a hit or a player's ZDO for the item-local combat values it applies (the
-    /// target's owner: penetration, paralysis length), from the running, server-synced rules: the largest unconditional
-    /// cap plus the largest health-critical cap among the channels of the effect, in the applied unit. 0 when the rules
+    /// target's owner: penetration, paralysis length), from the running, server-synced rules: the largest cap among the
+    /// channels of the effect, in the applied unit. 0 when the rules
     /// define no inscription on it, so a value the server does not allow is never applied. Refreshed once per rules
     /// generation.
     /// </summary>
@@ -49,25 +49,16 @@ namespace EliteCrafting.Effects.Combat3
 
         private static float CapOf(ChannelPlan plan, EffectKind kind)
         {
-            float normal = 0f, critical = 0f;
+            float largest = 0f;
             for (int c = 0; c < plan.Count; c++)
             {
-                if (plan.Kinds[c] != kind)
+                if (plan.Kinds[c] == kind)
                 {
-                    continue;
-                }
-                ChannelDef channel = plan.Channels[c];
-                float cap = AggregateBuilder.Scale(channel, channel.Cap);
-                if (channel.Condition == AffixCondition.HealthCritical)
-                {
-                    critical = Math.Max(critical, cap);
-                }
-                else
-                {
-                    normal = Math.Max(normal, cap);
+                    ChannelDef channel = plan.Channels[c];
+                    largest = Math.Max(largest, AggregateBuilder.Scale(channel, channel.Cap));
                 }
             }
-            return normal + critical;
+            return largest;
         }
     }
 }

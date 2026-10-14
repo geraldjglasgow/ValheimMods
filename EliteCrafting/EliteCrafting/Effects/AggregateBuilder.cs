@@ -7,15 +7,13 @@ namespace EliteCrafting.Effects
     /// <summary>
     /// The rebuild: walk the local player's counted items (<see cref="ItemEffects.CollectLocal"/>), sum every active
     /// affix into its channel, clamp each channel to its cap (on the sum, never per item), and fold the player-global
-    /// channels into two value sets: <see cref="Normal"/> (unconditional channels) and <see cref="Critical"/>
-    /// (unconditional plus health-critical, each conditional channel capped on its own). Runs on events only, at most
+    /// channels into <see cref="Values"/>. Runs on events only, at most
     /// once per frame (<see cref="EffectRuntime"/>); reuses every buffer, so it allocates nothing in steady state.
     /// Local player only: an empty result when there is no local player or effects are off.
     /// </summary>
     internal static class AggregateBuilder
     {
-        public static readonly AggregateValues Normal = new AggregateValues();
-        public static readonly AggregateValues Critical = new AggregateValues();
+        public static readonly AggregateValues Values = new AggregateValues();
 
         private static readonly List<ActiveAffix> Affixes = new List<ActiveAffix>();
         private static readonly List<ItemDrop.ItemData> Items = new List<ItemDrop.ItemData>();
@@ -34,14 +32,11 @@ namespace EliteCrafting.Effects
         public static void Build(Player? player)
         {
             ChannelPlan plan = ChannelPlan.Current;
-            HealthCritical.Refresh(ActiveRules.Current.Affixes);
             ItemEffects.CollectLocal(Affixes, Items);
             Indicators.ClearIcons();
             Sum(plan, player);
-            Normal.Clear();
-            Critical.Clear();
+            Values.Clear();
             Fold(plan);
-            HealthCritical.AddThresholdBonus(ActiveRules.Current.Affixes, Normal[EffectKind.HcThreshold]);
             LastPlan = plan;
             ActiveAffixCount = Affixes.Count;
             MagicItemCount = CountMagic(Items);
@@ -79,12 +74,7 @@ namespace EliteCrafting.Effects
                     continue;
                 }
                 ChannelDef channel = plan.Channels[c];
-                float amount = Scale(channel, plan.Clamp(c, Sums[c]));
-                Critical.Add(kind, channel, amount);
-                if (channel.Condition == AffixCondition.None)
-                {
-                    Normal.Add(kind, channel, amount);
-                }
+                Values.Add(kind, channel, Scale(channel, plan.Clamp(c, Sums[c])));
             }
         }
 

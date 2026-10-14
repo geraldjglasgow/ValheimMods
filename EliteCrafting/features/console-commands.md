@@ -95,7 +95,6 @@ ecraft stats: 4 magic items equipped, 9 active affixes, rebuilt 2.3 s ago
   move_speed          sum 11   cap 25   applied 11   (legs, cape)
   carry_capacity      sum 85   cap -    applied 85   (chest, utility)
   skill_level:Swords  sum 6    cap -    applied 6    (right)
-  health critical: no (threshold 30%)
   active now: ward 12 left, momentum
 ```
 

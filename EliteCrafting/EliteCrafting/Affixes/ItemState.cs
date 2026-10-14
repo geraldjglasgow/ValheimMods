@@ -28,9 +28,10 @@ namespace EliteCrafting.Affixes
 
         internal ItemState(StateData data, RuleSet rules)
         {
-            // Format-1 grades need each inscription's ladder: converted here, against these rules, from the source.
+            // Format-1 grades and retired ids need the inscriptions' ladders: converted here, against these rules, from
+            // the source.
             _source = data;
-            data = ItemMigrations.ResolveGrades(data, rules.Affixes);
+            data = ItemMigrations.MergeRetired(ItemMigrations.ResolveGrades(data, rules.Affixes), rules.Affixes);
             Data = data;
             Generation = rules.Generation;
             _rolls = Rolls(data.Segments, out _unreadable);

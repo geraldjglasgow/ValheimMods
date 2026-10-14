@@ -67,13 +67,12 @@ namespace EliteCrafting.Effects
 
         /// <summary>
         /// The per-frame parts of the Phase 2 effects that need the local player: timed windows and the ward, the path
-        /// check, a pending Reflex Draught, the durability top-up. Each returns at once when its affix is absent.
+        /// check, the durability top-up. Each returns at once when its affix is absent.
         /// </summary>
         private static void TickLocal(Player player)
         {
             CombatWindows.Tick(player);
             PathGround.Tick(player);
-            Meads.Tick(player);
             Equipment.Tick(player);
         }
 
@@ -118,7 +117,7 @@ namespace EliteCrafting.Effects
                 _dirty = true;
                 return;
             }
-            AttackBonuses.RefreshCoins(player, AggregateBuilder.Critical[EffectKind.CoinDamage] > 0f);
+            AttackBonuses.RefreshCoins(player, AggregateBuilder.Values[EffectKind.CoinDamage] > 0f);
         }
 
         private static void OnPlayerChanged(Player? player)
@@ -133,7 +132,6 @@ namespace EliteCrafting.Effects
             {
                 _inventory.m_onChanged += OnInventoryChanged;
             }
-            HealthCritical.Reset();
             CombatWindows.Reset();
             _dirty = true;
         }
@@ -176,7 +174,7 @@ namespace EliteCrafting.Effects
         {
             StatusEffectTweaks.Refresh(player);
             Equipment.Refresh(player);
-            AttackBonuses.RefreshCoins(player, AggregateBuilder.Critical[EffectKind.CoinDamage] > 0f);
+            AttackBonuses.RefreshCoins(player, AggregateBuilder.Values[EffectKind.CoinDamage] > 0f);
             PlayerStats.Publish(player);
             Rebuilt?.Invoke();
         }

@@ -85,9 +85,6 @@ then applies it at native cost, tick after tick, with no code of ours running pe
 - **Presence is maintained**, not assumed: `AddStatusEffect` returns null when one with the same hash exists, so
   the rebuild looks it up with `GetStatusEffect(hash)` and re-adds it only if missing. `Player.OnDeath` removes all
   status effects and respawn creates a new `Player`, so a postfix on `Player.OnSpawned` re-adds it.
-- **Health-critical channels**: the rebuild prepares two sets of field values, without and with the conditional
-  channels. The subclass's per-tick `UpdateStatusEffect` compares the player's health with the threshold and swaps
-  sets only when the state flips: one comparison per tick, no allocation.
 
 ## When it is rebuilt
 
@@ -172,12 +169,10 @@ fit a status effect and goes through a prefix or postfix on the game method that
 
 # 5. Summing and capping
 
-- **Channel** = `(effect id, param, condition)`. Two affixes with different ids but the same effect, param and
-  condition feed the same channel and sum. A `health_critical` affix feeds its own channel, summed and capped apart
-  from the unconditional one and switched on only while the player is at or below the threshold (`affixes.md`).
+- **Channel** = `(effect id, param)`. Two affixes with different ids but the same effect and param feed the same
+  channel and sum.
 - **Sum** every active affix value in the channel across all counted items. Flag channels are OR (any copy on).
-- **Cap** the sum: the YAML `caps:` map in the affix family (keys `effect`, `effect:param`, with `@health_critical`
-  for the conditional channel) overrides the registry default; no entry and no default
+- **Cap** the sum: the YAML `caps:` map in the affix family (keys `effect`, `effect:param`) overrides the registry default; no entry and no default
   means uncapped. A cap is on the **sum**, never per item. Caps are for the effects that break the game past a point
   (movement speed, stamina cost reductions near 100%, fall damage). Default caps are judgement calls set with the
   catalog in `affixes.md`.
@@ -221,7 +216,7 @@ release.
 | Damage taken (armor, resists) | the victim player's own client | Player damage is resolved on the player's owner |
 | Loot-find effects (Phase 2) | the dying creature's ZDO owner (often a nearby client on a dedicated server) | Reads the killer's totals from a small per-player ZDO value the killer publishes (`drops.md`); the owner cannot inspect a remote inventory |
 | Kill restore (Reaper, Soul Reaper, Phase 2) | seen on the dying creature's owner, applied on the killer's client | one routed RPC, `ECF_KillRestore`, to the killer's peer only (IMP-85) |
-| Leech (Blood Drinker, Seidr Siphon, Cornered Thirst, Phase 2) | the attacker's client | computed from the outgoing hit, capped by the target's current health (IMP-86) |
+| Leech (Blood Drinker, Seidr Siphon, Phase 2) | the attacker's client | computed from the outgoing hit, capped by the target's current health (IMP-86) |
 | Evader's Fury trigger (Phase 2) | the attacker's peer decides the dodge; the dodger's client starts the window | routed RPC `ECF_MeleeDodged` (IMP-117) |
 | Hamstring, stagger length, taming, sailing, gathering, summons (Phase 2) | the owner of the creature, ship, rock, tree or pickable | reads the acting player's published ZDO value below, or the status the hit carries (IMP-94-97) |
 | Hearthlight, Mistbane (Phase 2) | every client | draws from the player's published ZDO value |

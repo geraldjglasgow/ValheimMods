@@ -63,7 +63,7 @@ namespace EliteCrafting.Rules
             {
                 string name = Path.GetFileName(path);
                 string? text = ReadText(path);
-                text = text == null || RuleFormat.IsCurrent(text) ? text : OldFormat(path, name, text);
+                text = text == null || RuleFormat.IsCurrent(text, _spec.Format) ? text : OldFormat(path, name, text);
                 if (text != null)
                 {
                     texts.Add(new SourceText(name, text));
@@ -99,11 +99,11 @@ namespace EliteCrafting.Rules
         private string? OldFormat(string path, string name, string text)
         {
             bool main = string.Equals(name, _spec.MainFile, StringComparison.OrdinalIgnoreCase);
-            if (main && RuleFormat.Of(text) < RuleFormat.Current)
+            if (main && RuleFormat.Of(text) < _spec.Format)
             {
                 return RuleFormat.ReplaceOldMain(path, text, FamilyBuilder.DefaultText(_spec));
             }
-            Log.Warn($"{name} is {RuleFormat.Describe(text)}: skipped (this version reads format {RuleFormat.Current}; add 'format: {RuleFormat.Current}' once it is updated)");
+            Log.Warn($"{name} is {RuleFormat.Describe(text, _spec.Format)}: skipped (this version reads format {_spec.Format}; add 'format: {_spec.Format}' once it is updated)");
             return null;
         }
 

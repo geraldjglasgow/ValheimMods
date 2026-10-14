@@ -8,14 +8,14 @@ namespace EliteCrafting.Effects
     /// the pattern of the loot-find keys): the creature's owner reads Dazing Blows and Beast Whisperer, the ship's
     /// owner Fair Winds and Sea Ward, the hit target's owner Lingering Wounds, the resource's owner Deep Vein, Heartwood and Harvester, the dying animal's owner
     /// Butcher's Cut, and every client Hearthlight and Mistbane. Written by the player's own client (it owns its player
-    /// ZDO) at the end of a rebuild, only when a value changed, so normal play sends nothing. The unconditional totals
-    /// only: a health-critical copy would depend on health the reader cannot see. A reader clamps what it reads to the running rules' cap (a client cannot
+    /// ZDO) at the end of a rebuild, only when a value changed, so normal play sends nothing. A reader clamps what it
+    /// reads to the running rules' cap (a client cannot
     /// publish more than the server's rules allow), and a player without the key reads 0.
     /// <para>
     /// Beside the floats, the int <c>ecf_wants</c> (<see cref="WantsKillRestore"/>, <see cref="WantsDodgeFury"/>): which
     /// of the argument-less routed RPCs this player's client acts on, so their senders (the creature's owner at a kill,
-    /// the attacker's peer at a dodged melee hit) send one only to a player who has the inscription. Taken from the
-    /// health-critical set, which holds the unconditional totals too. A player without the key wants nothing.
+    /// the attacker's peer at a dodged melee hit) send one only to a player who has the inscription. A player without
+    /// the key wants nothing.
     /// </para>
     /// </summary>
     internal static class PlayerStats
@@ -54,7 +54,7 @@ namespace EliteCrafting.Effects
             {
                 return;
             }
-            AggregateValues v = AggregateBuilder.Normal;
+            AggregateValues v = AggregateBuilder.Values;
             for (int i = 0; i < Kinds.Length; i++)
             {
                 float value = ItemEffects.Enabled ? v[Kinds[i]] : 0f;
@@ -68,7 +68,7 @@ namespace EliteCrafting.Effects
 
         private static void PublishWants(ZDO zdo)
         {
-            int wants = ItemEffects.Enabled ? WantedBits(AggregateBuilder.Critical) : 0;
+            int wants = ItemEffects.Enabled ? WantedBits(AggregateBuilder.Values) : 0;
             if (zdo.GetInt(WantsHash, 0) != wants)
             {
                 zdo.Set(WantsHash, wants);
@@ -128,7 +128,7 @@ namespace EliteCrafting.Effects
             {
                 int stat = Array.IndexOf(Kinds, plan.Kinds[c]);
                 ChannelDef channel = plan.Channels[c];
-                if (stat >= 0 && channel.Condition == AffixCondition.None)
+                if (stat >= 0)
                 {
                     Caps[stat] = Math.Max(Caps[stat], AggregateBuilder.Scale(channel, channel.Cap));
                 }

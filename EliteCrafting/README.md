@@ -7,7 +7,7 @@ inscriptions or sockets.
 
 ## Features
 - Rarities: Normal, Magic and Rare, named and coloured (below).
-- Inscriptions: 209 magic properties; each kind of item rolls its own (below).
+- Inscriptions: 197 magic properties; each kind of item rolls its own (below).
 - Tiers: later biomes roll stronger inscriptions; T1 is the strongest.
 - Runes: six, clicked onto an item from your inventory or an open chest (below).
 - Rune Table: stores runes and turns trophies into essence, which chooses what Ascension adds.
@@ -45,16 +45,16 @@ A prefix is the item's core power; a suffix is everything else.
 - Weapon damage (18): more damage, critical hits, slayers.
 - Elemental brands (6): flat fire, frost, lightning, poison or spirit damage.
 - On hit (10): chain lightning, paralysis, stagger, hamstring.
-- Attack speed and cost (10): faster, cheaper swings.
-- Leech (6): health, eitr or stamina from hits and kills.
+- Attack speed and cost (9): faster, cheaper swings.
+- Leech (5): health, eitr or stamina from hits and kills.
 - Ranged and magic (12): draw speed, Volley, Twincast, summons.
 - Throwing (3): throw a melee weapon, recall it, leap to it.
-- Blocking and parry (14): stronger blocks and parries, avoiding hits, thorns.
-- Health, stamina and eitr (14): more of each, faster regeneration.
-- Armour and resistances (25): armour, less damage by type, less stagger.
-- Movement (23): run, sprint and swim faster, double jump, glide, sail.
+- Blocking and parry (11): stronger blocks and parries, avoiding hits, thorns.
+- Health, stamina and eitr (10): more of each, faster regeneration.
+- Armour and resistances (24): armour, less damage by type, less stagger.
+- Movement (22): run, sprint and swim faster, double jump, glide, sail.
 - Weather, food and meads (16): never Cold or Wet, longer food, a light.
-- Fortune and insight (15): carry more; more runes, coins and trophies.
+- Fortune and insight (14): carry more; more runes, coins and trophies.
 - Gathering and building (15): extra ore, wood and harvest; free builds.
 - Skill masteries (18): extra skill levels.
 - Item properties (4): durability, weight.

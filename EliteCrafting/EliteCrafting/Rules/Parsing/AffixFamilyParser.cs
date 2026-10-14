@@ -12,7 +12,7 @@ namespace EliteCrafting.Rules
     {
         private static readonly string[] RootKeys =
         {
-            RuleFormat.Key, FamilyBuilder.UseDefaultsKey, "health_critical", "caps", "inscriptions",
+            RuleFormat.Key, FamilyBuilder.UseDefaultsKey, "caps", "inscriptions",
         };
 
         public static AffixRules? Parse(YamlMappingNode root, RuleIssues issues)
@@ -20,7 +20,6 @@ namespace EliteCrafting.Rules
             MapReader r = new MapReader(root, "", issues);
             r.Unknown(RootKeys);
             AffixRules rules = new AffixRules();
-            ReadHealthCritical(r, rules);
             rules.Caps = ReadCaps(r);
             rules.Affixes = ReadAffixes(r);
             if (issues.HasErrors)
@@ -30,22 +29,6 @@ namespace EliteCrafting.Rules
             CodeLayer.ApplyPools(rules.Affixes, issues);
             AffixIndex.Build(rules, issues);
             return issues.HasErrors ? null : rules;
-        }
-
-        private static void ReadHealthCritical(MapReader r, AffixRules rules)
-        {
-            MapReader? hc = r.Sub("health_critical");
-            if (hc == null)
-            {
-                return;
-            }
-            hc.Value.Unknown("threshold", "max_threshold");
-            rules.HealthCriticalThreshold = hc.Value.Float("threshold", 30f, 0f, 100f);
-            rules.HealthCriticalMaxThreshold = hc.Value.Float("max_threshold", 50f, 0f, 100f);
-            if (rules.HealthCriticalThreshold <= 0f || rules.HealthCriticalThreshold > rules.HealthCriticalMaxThreshold)
-            {
-                hc.Value.Error("threshold", "needs 0 < threshold <= max_threshold <= 100");
-            }
         }
 
         private static Dictionary<string, float> ReadCaps(MapReader r)

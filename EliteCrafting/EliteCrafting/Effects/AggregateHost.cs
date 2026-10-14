@@ -15,8 +15,8 @@ namespace EliteCrafting.Effects
     {
         private static EcfAggregate? _template;
 
-        /// <summary>The value set the overrides read: <see cref="AggregateBuilder.Normal"/> or, while health-critical, <see cref="AggregateBuilder.Critical"/>.</summary>
-        public static AggregateValues Current { get; private set; } = AggregateBuilder.Normal;
+        /// <summary>The value set the overrides read: <see cref="AggregateBuilder.Values"/>.</summary>
+        public static AggregateValues Current => AggregateBuilder.Values;
 
         public static bool IsPresent(Player player) => player.GetSEMan().HaveStatusEffect(EcfAggregate.Hash);
 
@@ -26,40 +26,14 @@ namespace EliteCrafting.Effects
             if (player.IsDead())
             {
                 // Death removed every status effect; the respawned Player gets a fresh one.
-                HealthCritical.Reset();
-                SelectCurrent();
                 return;
             }
-            SelectCurrent();
             EcfAggregate? effect = Find(player) ?? player.GetSEMan().AddStatusEffect(Template) as EcfAggregate;
             effect?.ApplyFields(Current);
         }
 
-        /// <summary>Effects switched off: take the status effect away (quietly) and forget the condition.</summary>
-        public static void Remove(Player player)
-        {
-            player.GetSEMan().RemoveStatusEffect(EcfAggregate.Hash, quiet: true);
-            HealthCritical.Reset();
-            SelectCurrent();
-        }
-
-        /// <summary>The health-critical state flipped (from the effect's own tick): swap sets, rewrite fields.</summary>
-        public static void OnCriticalFlip(EcfAggregate effect)
-        {
-            SelectCurrent();
-            if (HealthCritical.Active)
-            {
-                Meads.OnBecameCritical();
-            }
-            effect.ApplyFields(Current);
-            if (effect.m_character is Player player)
-            {
-                FieldWrites.Apply(player, Current);
-            }
-        }
-
-        private static void SelectCurrent() =>
-            Current = HealthCritical.Active ? AggregateBuilder.Critical : AggregateBuilder.Normal;
+        /// <summary>Effects switched off: take the status effect away (quietly).</summary>
+        public static void Remove(Player player) => player.GetSEMan().RemoveStatusEffect(EcfAggregate.Hash, quiet: true);
 
         private static EcfAggregate? Find(Player player) =>
             player.GetSEMan().GetStatusEffect(EcfAggregate.Hash) as EcfAggregate;

@@ -8,10 +8,6 @@ namespace EliteCrafting.Effects
     /// Heart's health and Restless Mind's percentage eitr loss, applied after the flat eitr): added to
     /// the food totals in a postfix on <c>Player.GetTotalFoodValue</c>, which the game calls once per food tick and turns
     /// into the maximum pools. Local player only (the pools of a player are computed on its own client).
-    /// <para>
-    /// The pools read the unconditional set only: a health-critical max-health bonus would move the threshold it is
-    /// gated on and flicker. No Phase 1 affix has one; an owner-made one sums but is not applied (judgement call).
-    /// </para>
     /// </summary>
     internal static class MaxPools
     {
@@ -37,7 +33,7 @@ namespace EliteCrafting.Effects
 
         public static Snapshot Take()
         {
-            AggregateValues v = AggregateBuilder.Normal;
+            AggregateValues v = AggregateBuilder.Values;
             return new Snapshot(v[EffectKind.MaxHealth], v[EffectKind.MaxStamina], v[EffectKind.MaxEitr], v[EffectKind.EitrForRegen]);
         }
 
@@ -62,7 +58,7 @@ namespace EliteCrafting.Effects
                 return;
             }
             FoodValues.AddTo(player, ref hp, ref stamina, ref eitr);
-            AggregateValues v = AggregateBuilder.Normal;
+            AggregateValues v = AggregateBuilder.Values;
             hp += v[EffectKind.MaxHealth];
             stamina += v[EffectKind.MaxStamina];
             eitr = (eitr + v[EffectKind.MaxEitr]) * Math.Max(0f, 1f - v[EffectKind.EitrForRegen]);

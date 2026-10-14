@@ -10,8 +10,6 @@ namespace EliteCrafting.Rules
 
     public enum AffixCategory { Offense, Defense, Utility }
 
-    public enum AffixCondition { None, HealthCritical }
-
     /// <summary>An inscription's <c>affix</c>: prefixes are an item's core power, suffixes everything else.</summary>
     public enum AffixKind { Prefix, Suffix }
 

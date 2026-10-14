@@ -6,8 +6,8 @@ using EliteCrafting.Effects;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// The affix family's cross-entry work, done once per load: the id table, the channel table (one per effect, param
-    /// and condition of the enabled affixes, with its cap resolved per channel: see <see cref="ResolveCap"/>), the
+    /// The affix family's cross-entry work, done once per load: the id table, the channel table (one per effect and
+    /// param of the enabled affixes, with its cap resolved per channel: see <see cref="ResolveCap"/>), the
     /// rollable pools per item class with their fit, and the load warnings (never-rolling affixes; unknown cap effects
     /// are errors).
     /// </summary>
@@ -65,15 +65,11 @@ namespace EliteCrafting.Rules
 
         private static string EffectPart(string key)
         {
-            int cut = key.IndexOfAny(new[] { ':', '@' });
+            int cut = key.IndexOf(':');
             return cut < 0 ? key : key.Substring(0, cut);
         }
 
-        public static string ChannelKey(AffixDef def)
-        {
-            string key = def.Param == null ? def.Effect : def.Effect + ":" + def.Param;
-            return def.Condition == AffixCondition.HealthCritical ? key + "@health_critical" : key;
-        }
+        public static string ChannelKey(AffixDef def) => def.Param == null ? def.Effect : def.Effect + ":" + def.Param;
 
         private static List<ChannelDef> BuildChannels(AffixRules rules)
         {
@@ -105,7 +101,6 @@ namespace EliteCrafting.Rules
                 Key = key,
                 Effect = def.EffectDef,
                 Param = def.Param,
-                Condition = def.Condition,
                 Cap = ResolveCap(rules, def, key),
                 Sample = def,
             };
@@ -113,32 +108,16 @@ namespace EliteCrafting.Rules
 
         /// <summary>
         /// The cap of one channel (classes-and-tiers.md section 8): the most specific <c>caps:</c> key wins, each
-        /// channel capped on its own. <c>effect:param@health_critical</c>, then <c>effect@health_critical</c> (the
-        /// conditional channels only), then <c>effect:param</c>, then <c>effect</c> (so <c>damage_taken: 50</c> caps every
+        /// channel capped on its own. <c>effect:param</c>, then <c>effect</c> (so <c>damage_taken: 50</c> caps every
         /// damage type separately), then the registry default.
         /// </summary>
         private static float ResolveCap(AffixRules rules, AffixDef def, string key)
         {
-            foreach (string candidate in CapKeys(def, key))
+            if (rules.Caps.TryGetValue(key, out float cap) || rules.Caps.TryGetValue(def.Effect, out cap))
             {
-                if (rules.Caps.TryGetValue(candidate, out float cap))
-                {
-                    return cap;
-                }
+                return cap;
             }
             return def.EffectDef.DefaultCap ?? float.PositiveInfinity;
-        }
-
-        private static IEnumerable<string> CapKeys(AffixDef def, string key)
-        {
-            yield return key;
-            string plain = def.Param == null ? def.Effect : def.Effect + ":" + def.Param;
-            if (def.Condition == AffixCondition.HealthCritical)
-            {
-                yield return def.Effect + "@health_critical";
-                yield return plain;
-            }
-            yield return def.Effect;
         }
 
         // One pool per class id any affix names, in file order; unknown ids get a pool no item reaches (ClassChecks warns).

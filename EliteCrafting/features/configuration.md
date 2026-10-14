@@ -17,7 +17,7 @@ U-11); section 1 says which parts carry over and what changes for two families o
 | File | Holds | Synced |
 |---|---|---|
 | `BepInEx/config/com.EliteCrafting.cfg` | global switches, confirm gate, display and glow preferences, diagnostics | gameplay keys yes and lockable; display, glow, confirm, diagnostics never |
-| `EliteCrafting_inscriptions*.yml` | every affix, the effect caps, the health-critical threshold | yes |
+| `EliteCrafting_inscriptions*.yml` | every affix, the effect caps | yes |
 | `EliteCrafting_economy*.yml` | rarities (palette, glow, affix counts), rolling rules, runes, item tiers, biomes, drop tables (`economy-yaml.md`) | yes |
 
 **Libraries.** `Charter` (server binding, version check, the pushed file texts), `ConfigReload` (the `.cfg`: save and
@@ -147,7 +147,7 @@ merges **by id, field by field** (`../DECISIONS.md` CFG-3):
   ```
 
 - **List-valued fields** (`slots`, `tiers`, `applies_to`, `outcomes`) are replaced whole, never merged item by item.
-- **Map-valued fields** (`caps`, `health_critical`, a rune's `cost`) merge by key.
+- **Map-valued fields** (`caps`, a rune's `cost`) merge by key.
 - The **same id twice in one file** is an error (almost always a copy-paste mistake).
 - An override in a later file is logged at info level ("affix `fleetfoot` overridden by
   `EliteCrafting_inscriptions_custom.yml`: enabled"), so an owner can see what their files did.
@@ -243,7 +243,7 @@ later phase as our own code over the same readers; it is not specified.
 # 6. The affix YAML schema
 
 This is the **canonical affix schema**: the conventions' baseline fields plus everything the catalog needs
-(`weight`, `requires`, `unit`, flag tiers, skill lists, condition-aware caps, `health_critical`). `affixes.md`
+(`weight`, `requires`, `unit`, flag tiers, skill lists, caps). `affixes.md`
 supplies every default value; this section is the format and its validation. What lives in code rather than YAML
 (an effect's param kind, polarity, `better: lower`, default cap and phase) is the effect registry's
 (`effects-runtime.md` section 1). An affix's tooltip sentence is the localization key `$ecf_affix_<id>_line`
@@ -254,8 +254,7 @@ supplies every default value; this section is the format and its validation. Wha
 | Key | Type | Required | Meaning |
 |---|---|---|---|
 | `use_defaults` | bool | no, default `true` | Main file only (section 3) |
-| `health_critical` | map `{threshold, max_threshold}` | no, defaults 30 / 50 | Percent of max health at or below which `condition: health_critical` affixes apply; the threshold affix raises it up to `max_threshold`. `0 < threshold <= max_threshold <= 100` or error. Merges by key |
-| `caps` | map: channel key → number | no | Cap on a channel's sum (`effects-runtime.md` section 5). A channel is `(effect, param, condition)`, so the keys are `effect`, `effect:param`, `effect@health_critical`, `effect:param@health_critical`. Merges by key across layers; a key naming no registered effect, or a cap `<= 0`, is an error; `null` removes a default cap |
+| `caps` | map: channel key → number | no | Cap on a channel's sum (`effects-runtime.md` section 5). A channel is `(effect, param)`, so the keys are `effect` and `effect:param`. Merges by key across layers; a key naming no registered effect, or a cap `<= 0`, is an error; `null` removes a default cap |
 | `inscriptions` | list of affix entries | no | Merged by `id` (section 3) |
 
 ## Affix entry
@@ -271,7 +270,6 @@ supplies every default value; this section is the format and its validation. Wha
 | `slots` | list of slot ids (one id accepted) | yes | | Non-empty; each one of `melee_weapon`, `ranged_weapon`, `magic_weapon`, `shield`, `head`, `chest`, `legs`, `cape`, `utility_item`, `tool` |
 | `requires` | map | no | none | Narrower item filter, every key must hold: `skill: [SkillType...]` (any of, against the item's governing skills), `hands: one|two`, `traits: [wears_out|movement_penalty|builds|projectile|ammo|can_parry...]` (all of). Unknown names are errors; an affix no item in its slots can satisfy is a warning |
 | `category` | enum `offense` / `defense` / `utility` | yes | | A grouping for the catalog and the `ecraft list inscriptions <category>` filter |
-| `condition` | enum `none` / `health_critical` | no | `none` | `health_critical`: applies only at or below the threshold; its channel sums and caps apart from the unconditional one |
 | `exclusion_group` | string | no | none | snake_case. At most one affix of a group per item; an affix is always exclusive with itself |
 | `weight` | number | no | `100` | `>= 0`. The affix's share of the first-stage draw (`rarity.md`). 0 stops new rolls; existing copies keep working |
 | `enabled` | bool | no | `true` | `false`: never rolls, and existing copies are dormant (`item-data.md` section 6) |

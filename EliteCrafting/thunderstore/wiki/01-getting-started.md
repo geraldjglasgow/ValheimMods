@@ -5,7 +5,7 @@ This wiki describes version 0.8.0. **Work in progress:** the config, the YAML fi
 ## What it does
 
 - Gear comes in three rarities: Normal (plain), Magic (2 inscriptions) and Rare (3); the Sealed Rune can add one more.
-- An inscription is a magic property such as +damage or faster movement. There are 209. Each is a prefix (the item's core power: damage, health, armour, blocking, leech) or a suffix (everything else).
+- An inscription is a magic property such as +damage or faster movement. There are 197. Each is a prefix (the item's core power: damage, health, armour, blocking, leech) or a suffix (everything else).
 - Each kind of item, its class (swords, bows, helmets, trinkets...), rolls its own inscriptions, and gear from later biomes rolls stronger tiers.
 - Five runes change an item's rarity or inscriptions; the Dvergr Chisel cuts sockets. Magic gear never drops: every Magic or Rare item is made with runes.
 - The Rune Table stores runes, turns trophies into essence and, with the Ascension Rune, lets an essence choose the new inscription.
@@ -42,7 +42,7 @@ Install on the server **and** every client, same version, with r2modman, the Thu
 ## Pages
 
 - [Runes and Magic Gear](wiki:Runes and Magic Gear): rarities, runes, item classes, item levels and tiers
-- [Inscription List](wiki:Inscription List): all 209 inscriptions
+- [Inscription List](wiki:Inscription List): all 197 inscriptions
 - [Drops and Loot](wiki:Drops and Loot): what drops where
 - [Configuration and Commands](wiki:Configuration and Commands): settings, YAML files, commands
 - [Gems and Sockets](wiki:Gems and Sockets): sockets, the Dvergr Chisel and the eleven gems

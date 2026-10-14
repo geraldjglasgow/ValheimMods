@@ -10,8 +10,8 @@ namespace EliteCrafting.Api
     /// <summary>
     /// <c>GetPlayerTotal</c> and <c>GetItemTotal</c> (api.md section 3), in the inscriptions' own unit (percent points or
     /// flat numbers). A player total is the capped sum of every player-global channel of the effect and param: for the
-    /// local player read from the last effects rebuild (the channels this peer sums anyway, external effects included),
-    /// the health-critical channels only while critical; for another player the value it publishes on its ZDO, for the
+    /// local player read from the last effects rebuild (the channels this peer sums anyway, external effects included);
+    /// for another player the value it publishes on its ZDO, for the
     /// effects that publish one (the loot-find effects and the shared stats), else 0. An item total sums the item's own
     /// active inscriptions of the effect, each channel capped on the item. Both are 0 while inscription effects are
     /// switched off. Allocation-free after the first call per rules generation, for callers that read every frame.
@@ -43,7 +43,7 @@ namespace EliteCrafting.Api
             for (int i = 0; i < rolls.Count; i++)
             {
                 int c = rolls[i].Def.ChannelIndex;
-                if (Matches(rolls[i].Def, effect!, param) && FirstOfChannel(rolls, i) && c >= 0 && c < channels.Count && Counts(channels[c]))
+                if (Matches(rolls[i].Def, effect!, param) && FirstOfChannel(rolls, i) && c >= 0 && c < channels.Count)
                 {
                     total += Math.Min(ChannelSum(rolls, c), channels[c].Cap);
                 }
@@ -58,7 +58,7 @@ namespace EliteCrafting.Api
             float total = 0f;
             foreach (int c in plan == null ? Array.Empty<int>() : ChannelsOf(plan, effect, param))
             {
-                if (c < sums.Length && !EffectKinds.IsItemLocal(plan!.Kinds[c]) && Counts(plan.Channels[c]))
+                if (c < sums.Length && !EffectKinds.IsItemLocal(plan!.Kinds[c]))
                 {
                     total += plan.Clamp(c, sums[c]);
                 }
@@ -88,7 +88,7 @@ namespace EliteCrafting.Api
         {
             foreach (ChannelDef channel in ActiveRules.Current.Affixes.Channels)
             {
-                if (channel.Effect.Id == effect && channel.Condition == AffixCondition.None)
+                if (channel.Effect.Id == effect)
                 {
                     return channel.Sample.Value == AffixValueType.Percent;
                 }
@@ -121,8 +121,6 @@ namespace EliteCrafting.Api
         }
 
         private static bool Matches(AffixDef def, string effect, string? param) => def.Effect == effect && def.Param == param;
-
-        private static bool Counts(ChannelDef channel) => channel.Condition == AffixCondition.None || HealthCritical.Active;
 
         private static bool FirstOfChannel(IReadOnlyList<EffectRoll> rolls, int index)
         {

@@ -48,7 +48,6 @@ namespace EliteCrafting.Effects
         StaggerPower,
         CoinDamage,
         ResistModifier,
-        HcThreshold,
         HealthRecoveryFlat,
 
         // player-global hooks and field writes (summed with the aggregate, applied elsewhere)
@@ -88,7 +87,6 @@ namespace EliteCrafting.Effects
         FrostSlowTaken,
         StaggerRecovery,
         ParryRestore,
-        AutoMead,
         MeadBurst,
         MeadCooldown,
         RainShield,

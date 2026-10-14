@@ -1,6 +1,5 @@
 using EliteCrafting.Core;
 using EliteCrafting.Effects;
-using EliteCrafting.Rules;
 
 namespace EliteCrafting.Commands
 {
@@ -9,7 +8,7 @@ namespace EliteCrafting.Commands
     /// effects-runtime.md section 5), read from the effects runtime's last rebuild (<see cref="EffectTotals.Snapshot"/>),
     /// so it shows what the game is actually given. Every non-zero channel with its raw sum, cap, applied value and the
     /// equipment positions feeding it; player-global channels first, then item-local ones (which apply per item); then the
-    /// health-critical state and the Phase 2 runtime states in force (<see cref="EffectSnapshot.States"/>).
+    /// Phase 2 runtime states in force (<see cref="EffectSnapshot.States"/>).
     /// Local player only; a dedicated server has none.
     /// </summary>
     internal static class StatsCommand
@@ -31,8 +30,6 @@ namespace EliteCrafting.Commands
             }
             WriteChannels(call, snapshot, itemLocal: false);
             WriteChannels(call, snapshot, itemLocal: true);
-            string critical = snapshot.HealthCritical ? "yes" : "no";
-            call.Detail($"health critical: {critical} (threshold {Numbers.Format(snapshot.ThresholdPercent)}%)");
             if (snapshot.States.Count > 0)
             {
                 call.Detail("active now: " + string.Join(", ", snapshot.States));
@@ -54,10 +51,8 @@ namespace EliteCrafting.Commands
         {
             string cap = float.IsPositiveInfinity(total.Cap) ? "-" : Numbers.Format(total.Cap);
             string scope = total.ItemLocal ? " item-local" : "";
-            string inactive = total.Active ? "" : " (inactive: not health critical)";
-            string condition = total.Channel.Condition == AffixCondition.HealthCritical ? " when health critical" : "";
             return $"{total.Key,-26} sum {Numbers.Format(total.Sum),-6} cap {cap,-6} applied {Numbers.Format(total.Applied),-6} "
-                + $"({total.Sources}){scope}{condition}{inactive}";
+                + $"({total.Sources}){scope}";
         }
     }
 }

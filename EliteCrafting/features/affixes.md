@@ -12,12 +12,12 @@ written so the YAML defaults can be generated from them, and so they can be argu
 especially arguable carry a *Judgement* line. The display names are adopted defaults (`../DECISIONS.md` AFX-13); any
 of them can be renamed in the English file without touching an id.
 
-**Status: specified; the Phase 1 set (section 6) built, not tested in game** (2026-09-23). 169 regular affixes,
-131 effects (the 13 Mythic-only affixes went with the Mythic rarity on 2026-10-02). Phase 1 builds the set in section 6.
+**Status: specified; the Phase 1 set (section 6) built, not tested in game** (2026-09-23). 157 regular affixes,
+129 effects (the 13 Mythic-only affixes went with the Mythic rarity on 2026-10-02). Phase 1 builds the set in section 6.
 
 Contents:
 
-1. What an affix is - fields, value types, tiers, weights, exclusion, requirements, health-critical, dedupe
+1. What an affix is - fields, value types, tiers, weights, exclusion, requirements, dedupe
 2. Slot sanity matrix
 3. The effect registry
 4. The catalog
@@ -50,7 +50,6 @@ The complete schema, with types and validation, is `configuration.md` section 6.
 | `slots` | slot ids it may roll on (section 2) |
 | `requires` | narrower item filter: governing skill, hands, item traits (below) |
 | `category` | `offense`, `defense` or `utility`: a grouping `ecraft list` shows and filters by |
-| `condition` | `none` or `health_critical` |
 | `exclusion_group` | near-duplicates share a group; one per item |
 | `weight` | how likely the affix is to be picked (the first stage of `rarity.md`'s two-stage draw) |
 | `tiers` | `[{tier, min, max, weight}]`, one row per biome tier the affix exists at |
@@ -114,15 +113,15 @@ The affix `weight` is its share of the first-stage draw (`rarity.md` section 4).
 weight makes an affix rarer by design.
 
 Everything not listed here weighs 100. Roughly: 15-30 are build-changing behaviours, 40-60 strong or niche
-effects and the health-critical variants, 70 situational ones.
+effects, 70 situational ones.
 
 - **15**: `gungnir_path`
 - **20**: `faithful_throw`, `gossamer`, `twincast`, `volley`
 - **25**: `everlasting`, `hurler`, `shatterhead`, `winterborn`
-- **30**: `anchored_guard`, `blood_price`, `bulwark_fire`, `bulwark_frost`, `bulwark_lightning`, `bulwark_poison`, `ravens_glide`, `reflex_draught`, `rune_edge`, `swift_draught`, `thors_arc`
+- **30**: `anchored_guard`, `blood_price`, `bulwark_fire`, `bulwark_frost`, `bulwark_lightning`, `bulwark_poison`, `ravens_glide`, `rune_edge`, `swift_draught`, `thors_arc`
 - **40**: `emberheart`, `fafnirs_greed`, `hearthlight`, `lone_blade`, `oilskin`, `sealegs`, `steel_rhythm`, `supple_fit`
-- **50**: `blood_drinker_hc`, `fateweaver`, `flowing_seidr`, `godslayer`, `mist_veil_hc`, `norns_favour`, `quickened_blows`, `valhallas_edge`
-- **60**: `berserkergang`, `blood_drinker`, `cruel_opening`, `elemental_ward`, `evaders_fury`, `farming_mastery`, `fleetfoot_hc`, `hardened_hc`, `hearthbound`, `ironclad`, `keen_guard`, `marshstrider`, `mist_veil`, `mountain_goat`, `pathfinder`, `restless_mind`, `seidr_riposte`, `seidr_siphon`, `stout_heart`, `swift_string`, `troll_blood_hc`
+- **50**: `fateweaver`, `flowing_seidr`, `godslayer`, `norns_favour`, `quickened_blows`
+- **60**: `berserkergang`, `blood_drinker`, `cruel_opening`, `elemental_ward`, `evaders_fury`, `farming_mastery`, `hearthbound`, `ironclad`, `keen_guard`, `marshstrider`, `mist_veil`, `mountain_goat`, `pathfinder`, `restless_mind`, `seidr_riposte`, `seidr_siphon`, `stout_heart`, `swift_string`
 - **70**: `arrowward`, `beast_whisperer`, `bramblehide`, `brewers_haste`, `coldblood`, `dazing_blows`, `deep_vein`, `fair_winds`, `forsaken_favour`, `hamstring`, `heartwood`, `hoardfinder`, `mistbane`, `momentum`, `pack_mule`, `purity`, `quick_recovery`, `runic_ward`, `skirmisher`, `soulbound`, `spiritbrand`, `strong_swimmer`, `thrifty_quiver`, `trophy_taker`
 
 ## Exclusion
@@ -135,10 +134,9 @@ effects and the health-critical variants, 70 situational ones.
 |---|---|
 | `damage_physical` | `honed_might` |
 | `damage_elemental` | `primal_fury` |
-| `damage_critical` | `berserkergang` |
 | `slayer` | `slayer_undead`, `slayer_beasts`, `slayer_sea` |
 | `on_kill` | `reaper`, `soul_reaper` |
-| `leech_health` | `blood_drinker`, `blood_drinker_hc` |
+| `leech_health` | `blood_drinker` |
 | `brand_elemental` | `emberbrand`, `rimebrand`, `stormbrand`, `venombrand`, `spiritbrand` |
 | `brand_physical` | `bonebreaker`, `keen_edge`, `needlepoint` |
 | `swing_speed` | `quickened_blows`, `flowing_seidr` |
@@ -150,15 +148,14 @@ effects and the health-critical variants, 70 situational ones.
 | `item_lighten` | `lightened`, `gossamer` |
 | `max_health` | `vigor`, `stout_heart` |
 | `max_eitr` | `wellspring` |
-| `health_recovery` | `troll_blood`, `troll_blood_hc` |
+| `health_recovery` | `troll_blood` |
 | `eitr_recovery` | `seidr_flow`, `restless_mind` |
-| `item_armor` | `hardened`, `hardened_hc` |
+| `item_armor` | `hardened` |
 | `elemental_bulwark` | `bulwark_fire`, `bulwark_frost`, `bulwark_lightning`, `bulwark_poison` |
-| `avoid_hit` | `mist_veil`, `mist_veil_hc` |
-| `move_speed` | `fleetfoot`, `fleetfoot_hc`, `stride` |
+| `avoid_hit` | `mist_veil` |
+| `move_speed` | `fleetfoot`, `stride` |
 | `fall` | `soft_landing`, `ravens_glide` |
 | `wet` | `oilskin`, `sealegs` |
-| `mead_critical` | `reflex_draught`, `swift_draught` |
 | `party_aura` | `warbanner`, `aegis` |
 | `element_pact` | `pact_fire`, `pact_frost`, `pact_lightning`, `pact_poison` |
 
@@ -188,37 +185,6 @@ Swim, Sneak) on legs and capes, Artisan's Mastery (Crafting, Cooking) on helmets
 verified in the decompile), so a skill affix on a player already at 100 shows a higher number and changes nothing.
 The pool asked for "may exceed 100"; this file does not patch the clamp (`../DECISIONS.md` AFX-5).
 
-## Health-critical
-
-**Health-critical** is a condition: current health at or below the **threshold** share of maximum health.
-
-- **Default threshold 30%.** Valhalla's Edge adds percentage points **additively** (two pieces at +5 make 40%).
-- **The threshold cannot pass 50%** (the `hc_threshold` channel caps at +20). Past half health the condition stops
-  being a crisis and the conditional affixes become flat stat boosts with a bigger number.
-- Evaluated on the player's own client from its own health. The aggregate status effect reads it every tick (one
-  comparison); hooks read the same cached flag. Nothing extra is synced.
-- A health-critical affix and its unconditional twin share an exclusion group (one per item) but feed **separate
-  channels**: the conditional channel is summed and capped on its own and switched on only while critical. The
-  channel key therefore includes the condition (`configuration.md` section 6, `caps`).
-
-**Which stats have a health-critical variant - a sensible handful, judgement call** (`../DECISIONS.md` AFX-1). The pool listed eleven stat variants and two mead behaviours. Kept:
-
-| Affix | What it does when critical | Twin |
-|---|---|---|
-| `berserkergang` | +X% all damage dealt | none (the uncritical versions are split by type) |
-| `blood_drinker_hc` | heal X% of damage dealt | `blood_drinker` |
-| `troll_blood_hc` | health regenerates X% faster | `troll_blood` |
-| `hardened_hc` | +X% armor on this piece | `hardened` |
-| `mist_veil_hc` | X% chance to avoid a hit | `mist_veil` |
-| `fleetfoot_hc` | move X% faster | `fleetfoot` |
-
-Plus two affixes that exist only because of the condition: `reflex_draught` (drink a mead on becoming critical) and
-`swift_draught` (meads heal at once while critical), and the threshold affix `valhallas_edge`.
-
-Dropped: swing speed (two hard hooks for one line), block and parry (a player blocking at low health is covered by
-the armor variant), stamina and eitr regeneration (overlap the health one; a critical player needs health). That is
-six variants, one per role: hit harder, heal, regenerate, soak, dodge, run.
-
 ## Dedupe decisions from the pool
 
 1. **Slow fall versus rollable fall damage.** Both kept, one group (`fall`). `soft_landing` is the rollable one,
@@ -236,7 +202,7 @@ six variants, one per role: hit harder, heal, regenerate, soak, dodge, run.
    single-type numbers) and fewer slots (chest, cape).
 4. **Weight reduction versus zero weight**: group `item_lighten`. **Durability versus never breaking**: group
    `item_wear`.
-5. **The movement-speed variants PLAN.md names**: `fleetfoot`, `fleetfoot_hc` and `stride` share group
+5. **The movement-speed variants PLAN.md names**: `fleetfoot` and `stride` share group
    `move_speed`. The situational ones (sneaking, encumbered, after a dodge, on roads) stay ungrouped.
 6. **Attack cost rewrites**: `balanced_grip`, `blood_price` and `rune_edge` all rewrite the same stamina cost, so
    one per item (group `attack_cost`, which also holds the staff's `seidr_thrift`).
@@ -301,7 +267,6 @@ utility = `utility_item`.
 | `press_the_advantage` | x | x |  |  |  |  |  |  |  |  |  |
 | `reaper` | x | x |  |  |  |  |  |  |  |  |  |
 | `blood_drinker` | x | x |  |  |  |  |  |  |  |  |  |
-| `blood_drinker_hc` | x | x |  |  |  |  |  |  |  |  |  |
 | `evaders_fury` | x | x |  |  |  |  |  |  |  |  |  |
 | `fafnirs_greed` | x |  |  |  |  |  |  |  |  |  |  |
 | `emberbrand` | x | x |  |  |  |  |  |  |  |  |  |
@@ -378,15 +343,12 @@ utility = `utility_item`.
 | `endurance` |  |  |  |  |  | x | x |  |  |  |  |
 | `wellspring` |  |  |  |  | x |  |  | x |  |  |  |
 | `troll_blood` |  |  |  |  |  | x | x |  |  |  |  |
-| `troll_blood_hc` |  |  |  |  |  | x |  |  |  |  |  |
 | `mending` |  |  |  |  | x | x |  |  |  |  |  |
 | `stout_heart` |  |  |  |  |  | x |  |  |  |  |  |
 | `second_wind` |  |  |  |  | x |  | x |  |  |  |  |
 | `seidr_flow` |  |  |  |  | x |  |  | x |  |  |  |
 | `restless_mind` |  |  |  |  | x |  |  |  |  |  |  |
-| `valhallas_edge` |  |  |  |  | x |  |  |  |  |  |  |
 | `hardened` |  |  |  |  | x | x | x | x |  |  |  |
-| `hardened_hc` |  |  |  |  |  | x | x |  |  |  |  |
 | `padded` |  |  |  |  |  | x | x |  |  |  |  |
 | `mailed` |  |  |  |  |  | x | x |  |  |  |  |
 | `riveted` |  |  |  |  |  | x | x |  |  |  |  |
@@ -402,7 +364,6 @@ utility = `utility_item`.
 | `bulwark_poison` |  |  |  |  |  |  |  | x |  |  |  |
 | `arrowward` |  |  |  |  |  | x |  |  |  |  |  |
 | `mist_veil` |  |  |  |  |  |  | x | x |  |  |  |
-| `mist_veil_hc` |  |  |  |  |  |  |  | x |  |  |  |
 | `bramblehide` |  |  |  |  |  | x |  |  |  |  |  |
 | `runic_ward` |  |  |  |  |  | x |  |  |  |  |  |
 | `resolute` |  |  |  |  |  | x | x |  |  |  |  |
@@ -411,7 +372,6 @@ utility = `utility_item`.
 | `purity` |  |  |  |  | x | x |  |  |  |  |  |
 | `coldblood` |  |  |  |  |  |  | x | x |  |  |  |
 | `fleetfoot` |  |  |  |  |  |  | x |  |  |  |  |
-| `fleetfoot_hc` |  |  |  |  |  |  | x |  |  |  |  |
 | `stride` |  |  |  |  |  |  | x |  |  |  |  |
 | `ghostwalk` |  |  |  |  |  |  |  | x |  |  |  |
 | `pack_mule` |  |  |  |  |  |  | x | x |  |  |  |
@@ -444,7 +404,6 @@ utility = `utility_item`.
 | `mimirs_insight` |  |  |  |  | x |  |  |  | x |  |  |
 | `brewers_haste` |  |  |  |  | x |  |  |  | x |  |  |
 | `forsaken_favour` |  |  |  |  | x |  |  |  | x |  |  |
-| `reflex_draught` |  |  |  |  |  | x |  |  | x |  |  |
 | `swift_draught` |  |  |  |  |  |  |  |  | x |  |  |
 | `norns_favour` |  |  |  |  | x |  |  |  | x |  |  |
 | `fateweaver` |  |  |  |  | x |  |  |  | x |  |  |
@@ -534,11 +493,11 @@ effects are never summed, so they have none. The cap values are judgement calls.
 
 | effect | param | values | route | polarity | cap | hook | phase | what the code hooks | used by |
 |---|---|---|---|---|---|---|---|---|---|
-| `health_recovery` | none | percent | aggregate | raise | 150 | easy | 1 | aggregate SE `ModifyHealthRegen`: multiplier on health regeneration | `troll_blood`, `troll_blood_hc` |
+| `health_recovery` | none | percent | aggregate | raise | 150 | easy | 1 | aggregate SE `ModifyHealthRegen`: multiplier on health regeneration | `troll_blood` |
 | `stamina_recovery` | none | percent | aggregate | raise | 100 | easy | 1 | aggregate SE `ModifyStaminaRegen` | `second_wind` |
 | `eitr_recovery` | none | percent | aggregate | raise | 100 | easy | 1 | aggregate SE `ModifyEitrRegen` | `seidr_flow` |
 | `health_recovery_flat` | none | flat | aggregate | raise | - | easy | 2 | aggregate SE `UpdateStatusEffect`: heal X every 10 s on its own timer, food or not | `mending` |
-| `move_speed` | none | percent | aggregate | raise | 25 | easy | 1 | aggregate SE `ModifySpeed`: all ground movement | `fleetfoot`, `fleetfoot_hc` |
+| `move_speed` | none | percent | aggregate | raise | 25 | easy | 1 | aggregate SE `ModifySpeed`: all ground movement | `fleetfoot` |
 | `move_speed_sprint` | none | percent | aggregate | raise | 30 | easy | 2 | aggregate SE `ModifySpeed`, only while running | `stride` |
 | `move_speed_sneak` | none | percent | aggregate | raise | 50 | easy | 1 | aggregate SE `ModifySpeed`, only while crouched | `ghostwalk` |
 | `move_speed_encumbered` | none | percent | aggregate | raise | 50 | easy | 2 | aggregate SE `ModifySpeed`, only while encumbered | `pack_mule` |
@@ -570,13 +529,12 @@ effects are never summed, so they have none. The cap values are judgement calls.
 | `coin_damage` | none | percent | aggregate | raise | - | easy | 2 | aggregate SE `ModifyAttack`; coin count cached on inventory change, never counted per hit | `fafnirs_greed` |
 | `resist_modifier` | element | flag | aggregate | raise | - | easy | 2 | aggregate SE `ModifyDamageMods`: the game's own Resistant modifier for the param element (best-of, like capes) | `bulwark_fire`, `bulwark_frost`, `bulwark_lightning`, `bulwark_poison` |
 | `freeze_immunity` | none | flag | aggregate | raise | - | easy | 2 | aggregate SE carries the game's `ColdResistance` status attribute (the frost-mead flag) | `winterborn` |
-| `hc_threshold` | none | percent | aggregate | raise | 20 | easy | 2 | read by the health-critical condition evaluator; no game hook | `valhallas_edge` |
 | `max_health` | none | flat | hook | raise | - | easy | 1 | postfix `Player.GetTotalFoodValue` (hp) | `vigor` |
 | `max_stamina` | none | flat | hook | raise | - | easy | 1 | postfix `Player.GetTotalFoodValue` (stamina) | `endurance` |
 | `max_eitr` | none | flat | hook | raise | - | easy | 1 | postfix `Player.GetTotalFoodValue` (eitr) | `wellspring` |
 | `health_for_regen` | none | flat | hook | raise | - | easy | 2 | composite: +X on the `max_health` channel and -X on the `health_recovery` channel | `stout_heart` |
 | `eitr_for_regen` | none | percent | hook | raise | - | easy | 2 | composite: +X on `eitr_recovery`, and max eitr -X/2 % (postfix `GetTotalFoodValue`, eitr) | `restless_mind` |
-| `item_armor` | none | percent | hook | raise | - | easy | 1 | postfix `ItemData.GetArmor(int, float)` on this item | `hardened`, `hardened_hc` |
+| `item_armor` | none | percent | hook | raise | - | easy | 1 | postfix `ItemData.GetArmor(int, float)` on this item | `hardened` |
 | `item_block` | none | percent | hook | raise | - | easy | 1 | postfix `ItemData.GetBaseBlockPower(int)` on this item | `stalwart` |
 | `item_deflection` | none | percent | hook | raise | - | easy | 1 | postfix `ItemData.GetDeflectionForce(int)` on this item | `repelling_guard` |
 | `item_durability` | none | percent | hook | raise | - | easy | 1 | postfix `ItemData.GetMaxDurability(int)` on this item | `well_forged` |
@@ -603,7 +561,7 @@ effects are never summed, so they have none. The cap values are judgement calls.
 | `food_duration` | none | percent | hook | raise | 100 | easy | 2 | postfix on the eat-food path: extend the new food's remaining time | `gourmand` |
 | `damage_taken` | damage_type | percent | hook | lower | 60 | easy | 2 | prefix `Character.RPC_Damage` on the local player: scale the param damage types of the incoming hit (verify ordering vs armor) | 9 affixes (`padded`, `mailed`, ...) |
 | `ranged_damage_taken` | none | percent | hook | lower | 60 | easy | 2 | same prefix, only when `HitData.m_ranged` | `arrowward` |
-| `avoid_hit` | none | percent | hook | raise | 25 | easy | 2 | same prefix: chance to discard the whole hit | `mist_veil`, `mist_veil_hc` |
+| `avoid_hit` | none | percent | hook | raise | 25 | easy | 2 | same prefix: chance to discard the whole hit | `mist_veil` |
 | `knockback_taken` | none | percent | hook | lower | 75 | easy | 2 | prefix `Character.ApplyPushback(HitData)` on the local player | `ironroot` |
 | `forsaken_cooldown` | none | percent | hook | lower | 50 | easy | 2 | postfix on forsaken power activation: shorten the cooldown just set | `forsaken_favour` |
 | `slayer` | creature_family | percent | hook | raise | - | easy | 2 | prefix `Character.Damage(HitData)` on the attacking client (target known): scale when the target is in the param family | `slayer_undead`, `slayer_beasts`, `slayer_sea`, `godslayer` |
@@ -625,7 +583,7 @@ effects are never summed, so they have none. The cap values are judgement calls.
 | `lone_blade` | none | percent | hook | raise | - | medium | 2 | with the off-hand empty: block armor +X% of the weapon's attack power, parry force +X/2 % | `lone_blade` |
 | `dodge_fury` | none | percent | hook | raise | - | medium | 2 | dodging through a melee hit (i-frames) grants +X% damage for 10 s, no refresh while active | `evaders_fury` |
 | `on_kill_restore` | resource | flat | hook | raise | - | medium | 2 | kill attribution: restore X of the param resource to the killer (kill credited on the attacker's client) | `reaper`, `soul_reaper` |
-| `leech` | resource | percent | hook | raise | - | medium | 2 | heal/restore X% of damage dealt, attacker-side estimate from the outgoing hit (armor not known there) | `blood_drinker`, `blood_drinker_hc`, `seidr_siphon` |
+| `leech` | resource | percent | hook | raise | - | medium | 2 | heal/restore X% of damage dealt, attacker-side estimate from the outgoing hit (armor not known there) | `blood_drinker`, `seidr_siphon` |
 | `thorns` | none | percent | hook | raise | - | medium | 2 | on being hit in melee, return X% of the hit to the attacker (routed damage RPC to the attacker's owner) | `bramblehide` |
 | `calm_ward` | none | flat | hook | raise | - | medium | 2 | after 10 s without taking damage, a ward absorbs the next X damage (own status effect) | `runic_ward` |
 | `debuff_decay` | none | percent | hook | raise | 75 | medium | 2 | burning/poison/frost status effects on you expire X% faster (shorten their ttl on add) | `purity` |
@@ -636,8 +594,7 @@ effects are never summed, so they have none. The cap values are judgement calls.
 | `parry_restore` | resource | flat | hook | raise | - | medium | 2 | postfix `Humanoid.BlockAttack` on a perfect block: restore X of the param resource | `seidr_riposte` |
 | `summon_damage` | none | percent | hook | raise | - | medium | 2 | creatures summoned by this staff deal +X% (tag them at spawn) | `grave_command` |
 | `summon_health` | none | percent | hook | raise | - | medium | 2 | creatures summoned by this staff get +X% health | `grave_vigor` |
-| `auto_mead` | none | flag | hook | raise | - | medium | 2 | entering health-critical drinks the best healing mead from your inventory (respects the game's mead cooldown) | `reflex_draught` |
-| `mead_burst` | none | flag | hook | raise | - | medium | 2 | while health-critical, healing meads deliver their whole heal at once | `swift_draught` |
+| `mead_burst` | none | flag | hook | raise | - | medium | 2 | healing meads deliver their whole heal at once | `swift_draught` |
 | `mead_cooldown` | none | percent | hook | lower | 50 | medium | 2 | shorten the shared mead cooldown after drinking | `brewers_haste` |
 | `light_aura` | none | flag | hook | raise | - | medium | 2 | a soft light on the player; visible to others needs a synced player flag (other clients do not see your items' custom data) | `hearthlight` |
 | `rain_shield` | none | flag | hook | raise | - | medium | 2 | rain never applies Wet; water immersion still does (environment status update) | `oilskin` |
@@ -679,7 +636,7 @@ effects are never summed, so they have none. The cap values are judgement calls.
 One entry per affix:
 
 - **`id`** Name — behaviour, with X the rolled value.
-  effect `param` · value type (unit) · slots · category · [condition] · exclusion group · hook · phase · affix weight
+  effect `param` · value type (unit) · slots · category · exclusion group · hook · phase · affix weight
   tier table · requirements
 
 `P1`, `P2`, `P3` is the phase that builds the affix: P1 is section 6; P2 is every other easy or medium effect;
@@ -695,9 +652,9 @@ Offense that follows the player, not the item, lives on weapons only (PLAN.md sl
 - **`primal_fury`** Primal Fury — The fire, frost, lightning and poison parts of your hits are +X%, including parts added by other affixes.  
   `damage_dealt` `elemental` · percent · melee, ranged, magic · offense · group `damage_elemental` · easy · P1 · w 100  
   T7–T1: 2–3 / 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15
-- **`berserkergang`** Berserkergang — While health-critical, all damage you deal is +X%.  
-  `damage_dealt` `all` · percent · melee, ranged, magic · offense · **health-critical** · group `damage_critical` · easy · P2 · w 60  
-  T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
+- **`berserkergang`** Berserkergang — All damage you deal is +X%.  
+  `damage_dealt` `all` · percent · melee, ranged, magic · offense · no group · easy · P2 · w 60  
+  ladder of 8 steps, 0.5 to 6 (as Wrath)
 - **`slayer_undead`** Undead Slayer — +X% damage against the undead family.  
   `slayer` `undead` · percent · melee, ranged, magic · offense · group `slayer` · easy · P2 · w 100  
   T7–T1: 4–6 / 6–9 / 9–12 / 12–15 / 15–18 / 18–22 / 22–26
@@ -732,9 +689,6 @@ Offense that follows the player, not the item, lives on weapons only (PLAN.md sl
 - **`blood_drinker`** Blood Drinker — Heal X% of the damage your hits deal.  
   `leech` `health` · percent · melee, ranged · offense · group `leech_health` · medium · P2 · w 60  
   T7–T1: 1–1.5 / 1.5–2 / 2–2.5 / 2.5–3 / 3–3.5 / 3.5–4 / 4–5
-- **`blood_drinker_hc`** Cornered Thirst — While health-critical, heal X% of the damage your hits deal.  
-  `leech` `health` · percent · melee, ranged · offense · **health-critical** · group `leech_health` · medium · P2 · w 50  
-  T7–T1: 3–4 / 4–5 / 5–6 / 6–7 / 7–8 / 8–9 / 9–10
 - **`evaders_fury`** Evader's Fury — Dodging through a melee attack grants +X% damage for 10 s; does not refresh while active.  
   `dodge_fury` · percent · melee, ranged · offense · no group · medium · P2 · w 60  
   T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
@@ -1005,9 +959,6 @@ Block and parry stats stay on shields in v1 (`../DECISIONS.md` AFX-3). Parry aff
 - **`troll_blood`** Troll Blood — Health regenerates X% faster.  
   `health_recovery` · percent · chest, legs · defense · group `health_recovery` · easy · P1 · w 100  
   T7–T1: 3–5 / 5–8 / 8–11 / 11–14 / 14–17 / 17–20 / 20–25
-- **`troll_blood_hc`** Cornered Blood — While health-critical, health regenerates X% faster.  
-  `health_recovery` · percent · chest · defense · **health-critical** · group `health_recovery` · easy · P2 · w 60  
-  T7–T1: 10–15 / 15–20 / 20–28 / 28–36 / 36–44 / 44–52 / 52–60
 - **`mending`** Mending — Heal X every 10 seconds, with or without food.  
   `health_recovery_flat` · flat · head, chest · defense · no group · easy · P2 · w 100  
   T7–T1: 1 / 1–2 / 2 / 2–3 / 3 / 3–4 / 4–5  
@@ -1025,9 +976,6 @@ Block and parry stats stay on shields in v1 (`../DECISIONS.md` AFX-3). Parry aff
 - **`restless_mind`** Restless Mind — Eitr regenerates X% faster, but maximum eitr is X/2 % lower.  
   `eitr_for_regen` · percent · head · defense · group `eitr_recovery` · easy · P2 · w 60  
   T3–T1: 28–34 / 34–40 / 40–50
-- **`valhallas_edge`** Valhalla's Edge — Health-critical starts X percentage points higher (adds to the 30% default).  
-  `hc_threshold` · percent · head · defense · no group · easy · P2 · w 50  
-  T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
 
 ## Armor: protection
 
@@ -1036,9 +984,6 @@ Resistances are spread so that covering every element takes several pieces. Spir
 - **`hardened`** Hardened — This piece's armor is +X%. **[Phase 1 pick]**  
   `item_armor` · percent · head, chest, legs, cape · defense · group `item_armor` · easy · P1 · w 100  
   T7–T1: 4–6 / 6–9 / 9–12 / 12–16 / 16–20 / 20–25 / 25–30
-- **`hardened_hc`** Cornered Hide — While health-critical, this piece's armor is +X%.  
-  `item_armor` · percent · chest, legs · defense · **health-critical** · group `item_armor` · easy · P2 · w 60  
-  T7–T1: 10–15 / 15–22 / 22–30 / 30–38 / 38–46 / 46–54 / 54–62
 - **`padded`** Padded — Reduces the blunt part of every hit you take by X%.  
   `damage_taken` `blunt` · percent · chest, legs · defense · no group · easy · P2 · w 100  
   T7–T1: 2–4 / 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16
@@ -1084,9 +1029,6 @@ Resistances are spread so that covering every element takes several pieces. Spir
 - **`mist_veil`** Mist Veil — X% chance to avoid all damage from a hit.  
   `avoid_hit` · percent · legs, cape · defense · group `avoid_hit` · easy · P2 · w 60  
   T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
-- **`mist_veil_hc`** Cornered Veil — While health-critical, X% chance to avoid all damage from a hit.  
-  `avoid_hit` · percent · cape · defense · **health-critical** · group `avoid_hit` · easy · P2 · w 50  
-  T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
 - **`bramblehide`** Bramblehide — Melee attackers take X% of the damage they deal to you.  
   `thorns` · percent · chest · defense · no group · medium · P2 · w 70  
   T7–T1: 5–8 / 8–12 / 12–16 / 16–20 / 20–25 / 25–30 / 30–35
@@ -1116,9 +1058,6 @@ Legs are the movement slot; capes take the situational ones so the legs do not h
 - **`fleetfoot`** Fleetfoot — You move X% faster. **[Phase 1 pick]**  
   `move_speed` · percent · legs · utility · group `move_speed` · easy · P1 · w 100  
   T7–T1: 1–2 / 2–3 / 3–4 / 4–5 / 5–6 / 6–7 / 7–8
-- **`fleetfoot_hc`** Cornered Flight — While health-critical, you move X% faster.  
-  `move_speed` · percent · legs · utility · **health-critical** · group `move_speed` · easy · P2 · w 60  
-  T7–T1: 4–6 / 6–8 / 8–10 / 10–12 / 12–14 / 14–16 / 16–20
 - **`stride`** Stride — You sprint X% faster (sprinting only).  
   `move_speed_sprint` · percent · legs · utility · group `move_speed` · easy · P2 · w 100  
   T7–T1: 3–5 / 5–7 / 7–9 / 9–11 / 11–13 / 13–15 / 15–18
@@ -1226,11 +1165,8 @@ Carry, pickup, discovery, comfort and the economy affixes. Utility items (belts 
 - **`forsaken_favour`** Forsaken Favour — Your forsaken power recharges X% faster.  
   `forsaken_cooldown` · percent · head, utility · utility · no group · easy · P2 · w 70  
   T7–T1: 5–10 / 10–15 / 15–20 / 20–25 / 25–30 / 30–40 / 40–50
-- **`reflex_draught`** Reflex Draught — When you become health-critical you drink your best healing mead automatically.  
-  `auto_mead` · flag · chest, utility · defense · **health-critical** · group `mead_critical` · medium · P2 · w 30  
-  gate T6 (rolls at T6–T1, no value)
-- **`swift_draught`** Swift Draught — While health-critical, healing meads heal all at once instead of over time.  
-  `mead_burst` · flag · utility · defense · **health-critical** · group `mead_critical` · medium · P2 · w 30  
+- **`swift_draught`** Swift Draught — Healing meads heal all at once instead of over time.  
+  `mead_burst` · flag · utility · defense · no group · medium · P2 · w 30  
   gate T5 (rolls at T5–T1, no value)
 - **`norns_favour`** Norns' Favour — Magic gear dropped by enemies you kill rolls a higher rarity X% more often.  
   `find_rarity` · percent · head, utility · utility · no group · medium · P2 · w 50  
@@ -1334,8 +1270,6 @@ effect (its `ModifyAttack`, `ModifySpeed`, `ModifySkillLevel`, `ModifyRaiseSkill
 writes on rebuild (build range, pickup radius, explore radius). The coverage table in section 2 shows every weapon,
 shield and armor class reaching Rare's six in Phase 1; tools stay short (`../DECISIONS.md` AFX-4).
 
-No Phase 1 affix is health-critical: the condition evaluator arrives with Phase 2.
-
 ---
 
 # 7. Decisions
@@ -1358,6 +1292,6 @@ without the Party mod, is **BLOCKING for Phase 3**. The schema additions this ca
 
 | Date | What changed | Commit |
 | --- | --- | --- |
-| 2026-09-23 | Specified in Phase 0: 169 regular affixes, 13 Mythic, 131 effects, Phase 1 set. | pending |
+| 2026-09-23 | Specified in Phase 0: 157 regular affixes, 13 Mythic, 131 effects, Phase 1 set. | pending |
 | 2026-09-23 | Reconciled: open questions moved to `../DECISIONS.md`; schema additions folded into `configuration.md`. | pending |
 | 2026-10-02 | Six runes and three rarities: the Mythic-only pool, sigil steering and `mythic_only` removed. | pending |

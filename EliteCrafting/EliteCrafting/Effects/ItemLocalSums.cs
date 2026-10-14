@@ -7,37 +7,29 @@ namespace EliteCrafting.Effects
 {
     /// <summary>
     /// The item-local numbers of one item, precomputed from its state so the hot getters (GetDamage, GetWeight,
-    /// GetArmor, GetMaxDurability) only read floats. Values are fractions (12% → 0.12). Per effect: the unconditional
-    /// sum and the health-critical sum, each clamped to its channel cap on this item (item-local effects are never
-    /// summed across items). Brands are kept per damage type.
+    /// GetArmor, GetMaxDurability) only read floats. Values are fractions (12% → 0.12). Per effect: the sum, clamped to
+    /// its channel cap on this item (item-local effects are never summed across items). Brands are kept per damage type.
     /// </summary>
     internal sealed class ItemLocalSums
     {
         private const int KindSpan = EffectKind.SummonHealth - EffectKind.ItemArmor + 1;
 
-        private readonly float[] _normal = new float[KindSpan];
-        private readonly float[] _critical = new float[KindSpan];
+        private readonly float[] _byKind = new float[KindSpan];
 
         /// <summary>Per damage type: the share of the item's own combat damage added again as that type.</summary>
         public readonly float[] Brand = new float[DamageSlots.Count];
-        public readonly float[] BrandCritical = new float[DamageSlots.Count];
         public bool HasBrand;
 
         /// <summary>Per damage type: the flat damage <c>added_damage</c> adds to the item's hits (Combat3/AddedDamage).</summary>
         public readonly float[] Added = new float[DamageSlots.Count];
-        public readonly float[] AddedCritical = new float[DamageSlots.Count];
         public bool HasAdded;
 
-        /// <summary>The fraction for an item-local kind, with the health-critical part while the local player is critical.</summary>
-        public float Get(EffectKind kind)
-        {
-            int i = kind - EffectKind.ItemArmor;
-            return HealthCritical.Active ? _normal[i] + _critical[i] : _normal[i];
-        }
+        /// <summary>The fraction for an item-local kind.</summary>
+        public float Get(EffectKind kind) => _byKind[kind - EffectKind.ItemArmor];
 
-        public float BrandShare(int type) => HealthCritical.Active ? Brand[type] + BrandCritical[type] : Brand[type];
+        public float BrandShare(int type) => Brand[type];
 
-        public float AddedFlat(int type) => HealthCritical.Active ? Added[type] + AddedCritical[type] : Added[type];
+        public float AddedFlat(int type) => Added[type];
 
         // ---- building (on a cache miss: a new item object, a write, a rules reload; never per frame)
 
@@ -88,18 +80,17 @@ namespace EliteCrafting.Effects
 
         private void Add(EffectKind kind, ChannelDef channel, float amount)
         {
-            bool critical = channel.Condition == AffixCondition.HealthCritical;
             if (kind == EffectKind.BrandDamage)
             {
-                HasBrand |= Split(channel, amount, critical ? BrandCritical : Brand);
+                HasBrand |= Split(channel, amount, Brand);
             }
             else if (kind == EffectKind.AddedDamage)
             {
-                HasAdded |= Split(channel, amount, critical ? AddedCritical : Added);
+                HasAdded |= Split(channel, amount, Added);
             }
             else
             {
-                (critical ? _critical : _normal)[kind - EffectKind.ItemArmor] += amount;
+                _byKind[kind - EffectKind.ItemArmor] += amount;
             }
         }
 

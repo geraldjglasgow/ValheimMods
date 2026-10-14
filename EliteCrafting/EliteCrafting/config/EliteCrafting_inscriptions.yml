@@ -1,5 +1,5 @@
 # EliteCrafting - inscriptions
-format: 3
+format: 4
 #
 # Every inscription the mod can roll, which item classes it rolls on, and its tier ladder.
 # Written once, on first run, as a full copy of the built-in defaults; the mod never
@@ -16,7 +16,7 @@ format: 3
 # Fields: id, name, effect, param, value (percent | flat | flag), unit (ms | deg | m | min,
 # flat only), affix (prefix | suffix), family, category (offense | defense | utility),
 # classes { best: [...], allowed: [...] } (item class ids, see `classes` in the economy file),
-# requires { skill, hands, traits }, condition (none | health_critical), exclusion_group,
+# requires { skill, hands, traits }, exclusion_group,
 # scaled (true: the value is multiplied by the item class's damage_scale when it rolls),
 # weight (default 100), enabled, hook (easy | medium | hard), tiers.
 #
@@ -34,14 +34,8 @@ format: 3
 # Rarity limits (economy file): Magic holds 2 (1 prefix and 1 suffix), Rare 3 (at most 2 of each);
 # the Serpent Rune can add one more, to 4 at most.
 
-# Health-critical: at or below this percent of maximum health the health_critical
-# inscriptions apply. The threshold inscription raises it, never past max_threshold.
-health_critical:
-  threshold: 30
-  max_threshold: 50
-
 # Caps on the summed total of a channel across everything you wear. Keys: effect,
-# effect:param, effect@health_critical, effect:param@health_critical. `null` removes a cap.
+# effect:param. `null` removes a cap.
 caps:
   health_recovery: 150
   stamina_recovery: 100
@@ -77,7 +71,6 @@ caps:
   noise_made: 75
   stealth: 75
   stagger_taken: 75
-  hc_threshold: 20
   damage_taken: 50
   ranged_damage_taken: 60
   avoid_hit: 15
@@ -368,21 +361,6 @@ inscriptions:
       allowed: []
     tiers: { count: 1, from: 5 }
 
-  - id: fleetfoot_hc
-    effect: move_speed
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: movement
-    category: utility
-    exclusion_group: move_speed
-    weight: 60
-    hook: easy
-    classes:
-      best: [legs]
-      allowed: [trinket]
-    tiers: { count: 8, from: 1, min: 1, max: 21 }
-
   - id: sea_ward
     effect: ship_damage_taken
     value: percent
@@ -648,17 +626,15 @@ inscriptions:
     effect: damage_dealt
     param: all
     value: percent
-    condition: health_critical
     affix: suffix
     family: weapon_damage
     category: offense
-    exclusion_group: damage_critical
     weight: 60
     hook: easy
     classes:
       best: []
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist, bow, crossbow, staff_elemental, staff_blood]
-    tiers: { count: 8, from: 1, min: 4, max: 24 }
+    tiers: { count: 8, from: 1, min: 0.5, max: 6 }
 
   - id: deathblow
     effect: low_health_opener
@@ -920,45 +896,6 @@ inscriptions:
       allowed: [shield, cape]
     tiers: { count: 8, from: 1, min: 2, max: 14 }
 
-  - id: stalwart_hc
-    effect: item_block
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: blocking_parry
-    category: defense
-    classes:
-      best: [buckler, shield, tower]
-      allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
-    tiers: { count: 8, from: 1, min: 4, max: 24 }
-
-  - id: perfect_guard_hc
-    effect: parry_bonus
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: blocking_parry
-    category: defense
-    classes:
-      best: [buckler, shield]
-      allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
-    tiers: { count: 8, from: 1, min: 4, max: 24 }
-
-  - id: mist_veil_hc
-    effect: avoid_hit
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: blocking_parry
-    category: defense
-    exclusion_group: avoid_hit
-    weight: 50
-    hook: easy
-    classes:
-      best: [buckler]
-      allowed: [chest, cape]
-    tiers: { count: 8, from: 1, min: 4, max: 27 }
-
   - id: lone_blade
     effect: lone_blade
     value: percent
@@ -1173,21 +1110,6 @@ inscriptions:
       best: [chest]
       allowed: [tower]
     tiers: { count: 4, from: 5, min: 2, max: 14 }
-
-  - id: hardened_hc
-    effect: item_armor
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: armour_resistances
-    category: defense
-    exclusion_group: item_armor
-    weight: 60
-    hook: easy
-    classes:
-      best: [chest]
-      allowed: [legs, trinket]
-    tiers: { count: 8, from: 1, min: 4, max: 24 }
 
   - id: forsaken_ward
     effect: boss_damage_taken
@@ -1566,19 +1488,6 @@ inscriptions:
       allowed: [chest, legs, cape, trinket]
     tiers: { count: 8, from: 1, min: 2, max: 24 }
 
-  - id: valhallas_edge
-    effect: hc_threshold
-    value: percent
-    affix: suffix
-    family: life_regeneration
-    category: defense
-    weight: 50
-    hook: easy
-    classes:
-      best: [trinket]
-      allowed: [helmet]
-    tiers: { count: 8, from: 1, min: 2, max: 24 }
-
   - id: mending
     effect: health_recovery_flat
     value: flat
@@ -1590,21 +1499,6 @@ inscriptions:
       best: [chest]
       allowed: [helmet, legs, cape]
     tiers: { count: 8, from: 1, min: 0.2, max: 14 }
-
-  - id: troll_blood_hc
-    effect: health_recovery
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: life_regeneration
-    category: defense
-    exclusion_group: health_recovery
-    weight: 60
-    hook: easy
-    classes:
-      best: [helmet]
-      allowed: [chest, cape]
-    tiers: { count: 8, from: 1, min: 4, max: 33 }
 
   - id: stout_heart
     effect: health_for_regen
@@ -1779,30 +1673,6 @@ inscriptions:
       allowed: [chest, legs, cape, trinket]
     tiers: { count: 8, from: 1, min: 3, max: 36 }
 
-  - id: second_wind_hc
-    effect: stamina_recovery
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: stamina_eitr
-    category: defense
-    classes:
-      best: [legs]
-      allowed: [trinket]
-    tiers: { count: 8, from: 1, min: 4, max: 33 }
-
-  - id: seidr_flow_hc
-    effect: eitr_recovery
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: stamina_eitr
-    category: defense
-    classes:
-      best: [helmet]
-      allowed: [cape, staff_elemental, staff_blood]
-    tiers: { count: 8, from: 1, min: 4, max: 50 }
-
   - id: restless_mind
     effect: eitr_for_regen
     value: percent
@@ -1848,26 +1718,9 @@ inscriptions:
   - id: swift_draught
     effect: mead_burst
     value: flag
-    condition: health_critical
     affix: suffix
     family: charms_fortune
     category: utility
-    exclusion_group: mead_critical
-    weight: 30
-    hook: medium
-    classes:
-      best: [trinket]
-      allowed: [utility]
-    tiers: { count: 1, from: 3 }
-
-  - id: reflex_draught
-    effect: auto_mead
-    value: flag
-    condition: health_critical
-    affix: suffix
-    family: charms_fortune
-    category: utility
-    exclusion_group: mead_critical
     weight: 30
     hook: medium
     classes:
@@ -2283,18 +2136,6 @@ inscriptions:
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
     tiers: { count: 8, from: 1, min: 15, max: 45 }
 
-  - id: quickened_hc
-    effect: attack_speed
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: attack_speed_cost
-    category: offense
-    classes:
-      best: []
-      allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
-    tiers: { count: 8, from: 1, min: 4, max: 24 }
-
   - id: rune_edge
     effect: rune_edge
     value: percent
@@ -2364,22 +2205,6 @@ inscriptions:
       best: []
       allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
     tiers: { count: 8, from: 3, min: 0.5, max: 4 }
-
-  - id: blood_drinker_hc
-    effect: leech
-    param: health
-    value: percent
-    condition: health_critical
-    affix: suffix
-    family: leech
-    category: offense
-    exclusion_group: leech_health
-    weight: 50
-    hook: medium
-    classes:
-      best: []
-      allowed: [sword_1h, axe_1h, mace_1h, knife, spear, greatsword, battleaxe, dual_axe, sledge, atgeir, fist]
-    tiers: { count: 8, from: 3, min: 1, max: 5 }
 
   - id: wind_siphon
     effect: leech

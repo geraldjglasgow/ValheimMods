@@ -10,8 +10,7 @@ namespace EliteCrafting.Effects
     /// Stats the game already has a field for are written into the <see cref="SE_Stats"/> fields and applied by the
     /// game's own code. The rest are overrides reading <see cref="AggregateHost.Current"/>: per-skill levels and gains
     /// (SE_Stats has two skill slots only), damage by type and at night, and sneaking speed. Every override is a few
-    /// float reads; nothing allocates. <see cref="UpdateStatusEffect"/> evaluates the health-critical condition once
-    /// per tick and swaps value sets only when it flips.
+    /// float reads; nothing allocates.
     /// </para>
     /// </summary>
     public sealed class EcfAggregate : SE_Stats
@@ -20,15 +19,6 @@ namespace EliteCrafting.Effects
         public const string EffectName = "ECF_Aggregate";
 
         public static readonly int Hash = EffectName.GetStableHashCode();
-
-        public override void UpdateStatusEffect(float dt)
-        {
-            base.UpdateStatusEffect(dt);
-            if (HealthCritical.Evaluate(m_character))
-            {
-                AggregateHost.OnCriticalFlip(this);
-            }
-        }
 
         public override void ModifySkillLevel(Skills.SkillType skill, ref float level)
         {

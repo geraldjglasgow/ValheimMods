@@ -9,16 +9,14 @@ namespace EliteCrafting.Effects
     /// <summary>
     /// Hearty Appetite (<c>food_values</c>): the foods' part of maximum health, stamina and eitr is X% larger (the base
     /// values are not). Called first by <see cref="MaxPoolsPatch"/> (the one GetTotalFoodValue postfix), so Restless
-    /// Mind's eitr loss applies to the whole. Reads the unconditional totals, like the other pool bonuses (a pool that
-    /// followed the health-critical state would move the threshold it depends on). A change shows at the next food
-    /// tick, within a second.
+    /// Mind's eitr loss applies to the whole. A change shows at the next food tick, within a second.
     /// </summary>
     internal static class FoodValues
     {
         /// <summary>The local player's foods, effects on (tested by the caller).</summary>
         public static void AddTo(Player player, ref float hp, ref float stamina, ref float eitr)
         {
-            float more = AggregateBuilder.Normal[EffectKind.FoodValues];
+            float more = AggregateBuilder.Values[EffectKind.FoodValues];
             if (more <= 0f)
             {
                 return;

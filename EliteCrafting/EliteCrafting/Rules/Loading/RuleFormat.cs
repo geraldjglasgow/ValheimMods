@@ -7,9 +7,10 @@ using EliteCrafting.Core;
 namespace EliteCrafting.Rules
 {
     /// <summary>
-    /// The YAML file format (classes-and-tiers.md section 7). Both families carry a root <c>format: 3</c> line (format 2
-    /// had six inscriptions on Rare, thirteen-tier ladders and the Shaping and Consecrated Runes; format 1, no line, slots
-    /// and a seven-tier window). An older text is never merged: an old main file on disk is renamed to
+    /// The YAML file format (classes-and-tiers.md section 7), one number per family (<see cref="FamilySpec.Format"/>):
+    /// the inscriptions carry <c>format: 4</c> (format 3 had the health-critical inscriptions), the economy
+    /// <c>format: 3</c> (format 2 had six inscriptions on Rare, thirteen-tier ladders and the Shaping and Consecrated
+    /// Runes; format 1, no line, slots and a seven-tier window). An older text is never merged: an old main file on disk is renamed to
     /// <c>&lt;name&gt;.v&lt;old format&gt;.bak</c> and the new default written in its place, an old extra file and any old
     /// text the server pushes are skipped, each with a warning. Read from the raw text, so a file with a syntax error
     /// elsewhere still has its format known.
@@ -17,7 +18,6 @@ namespace EliteCrafting.Rules
     internal static class RuleFormat
     {
         public const string Key = "format";
-        public const int Current = 3;
 
         private static readonly Regex Line = new Regex(@"^format[ \t]*:[ \t]*['""]?(\d+)['""]?[ \t]*(#[^\r\n]*)?\r?$",
             RegexOptions.Multiline | RegexOptions.CultureInvariant);
@@ -29,31 +29,31 @@ namespace EliteCrafting.Rules
             return match.Success && Numbers.TryInt(match.Groups[1].Value, out int format) ? format : 0;
         }
 
-        public static bool IsCurrent(string text) => Of(text) == Current;
+        public static bool IsCurrent(string text, int current) => Of(text) == current;
 
         /// <summary>The texts in the current format; every other one is logged and left out.</summary>
-        public static List<SourceText> KeepCurrent(IEnumerable<SourceText> files, string origin)
+        public static List<SourceText> KeepCurrent(IEnumerable<SourceText> files, string origin, int current)
         {
             List<SourceText> kept = new List<SourceText>();
             foreach (SourceText file in files)
             {
-                if (IsCurrent(file.Text))
+                if (IsCurrent(file.Text, current))
                 {
                     kept.Add(file);
                 }
                 else
                 {
-                    Log.Warn($"{file.Name} from {origin} is {Describe(file.Text)}: skipped (this version reads format {Current})");
+                    Log.Warn($"{file.Name} from {origin} is {Describe(file.Text, current)}: skipped (this version reads format {current})");
                 }
             }
             return kept;
         }
 
-        /// <summary>"format 1 (an older EliteCrafting)" or "format 3 (a newer EliteCrafting)".</summary>
-        public static string Describe(string text)
+        /// <summary>"format 1 (an older EliteCrafting)" or "format 5 (a newer EliteCrafting)".</summary>
+        public static string Describe(string text, int current)
         {
             int format = Of(text);
-            return format > Current ? $"format {format} (a newer EliteCrafting)" : $"format {Math.Max(format, 1)} (an older EliteCrafting)";
+            return format > current ? $"format {format} (a newer EliteCrafting)" : $"format {Math.Max(format, 1)} (an older EliteCrafting)";
         }
 
         /// <summary>

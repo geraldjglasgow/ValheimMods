@@ -101,8 +101,7 @@ are split by section: `CraftingLink` (Present, versions, endpoints, `Guid`), `Cr
 - **Totals.** `GetPlayerTotal` is 0 for an item-scope effect. For another player only the effects that publish on the
   player's ZDO answer (the loot-find effects and the shared stats of effects-runtime.md section 7), and only without a
   param; external effects never publish. `GetItemTotal` works for any effect (the item's own active inscriptions of that
-  effect and param, each channel capped on the item); a health-critical channel counts only while the local player is
-  critical. Both are 0 while `Affix effects` is off.
+  effect and param, each channel capped on the item). Both are 0 while `Affix effects` is off.
 - **Item levels and loot** sit under the YAML whole, not field by field: an `item_tiers.items` entry for the prefab wins
   over `SetItemLevel` (`ecraft tiers` shows the API's levels as source `api`), and a `drops.bosses` or `drops.creatures`
   entry for the prefab wins over that kind of `SetCreatureLoot` entry. `SetCreatureLoot` also takes `gear_multiplier`;

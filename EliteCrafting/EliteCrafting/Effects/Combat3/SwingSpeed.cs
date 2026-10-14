@@ -3,7 +3,7 @@ using HarmonyLib;
 namespace EliteCrafting.Effects.Combat3
 {
     /// <summary>
-    /// <c>attack_speed</c> (Quickened, and Desperate Haste while health-critical) and <c>cast_speed</c> (Swift Casting):
+    /// <c>attack_speed</c> (Quickened) and <c>cast_speed</c> (Swift Casting):
     /// the local player's swing or cast with this weapon plays X% faster. A swing's timing in Valheim is its animation:
     /// the hit, the chain window and the end of the attack are animation events, so a faster animator is a faster
     /// attack; a burst attack's interval (staffs) is divided by the same factor. Heavy Hand (<c>heavy_hand</c>, X%) is
@@ -13,8 +13,7 @@ namespace EliteCrafting.Effects.Combat3
     /// the player ZDO, which every other client applies, so everyone sees the same swing speed. The game resets the
     /// speed to 1 when no attack plays (CharacterAnimEvent's fixed update, after which this applies the factor once the
     /// attack state is entered) and an attack clip may set its own speed by an animation event (scaled here too). A
-    /// hit's freeze frame keeps the scaled speed to come back to. The factor is fixed at the swing's start, so the
-    /// health-critical part counts when the player is critical as the swing begins.
+    /// hit's freeze frame keeps the scaled speed to come back to. The factor is fixed at the swing's start.
     /// </para>
     /// </summary>
     internal static class SwingSpeed
