@@ -36,7 +36,6 @@ Watch the trailer: https://www.youtube.com/watch?v=75P_wgenA2w
 - Executioner's Greataxe: made from the Executioner's axehead; its combo spins to hit all round you.
 - Kraken shield: better than the serpent scale shield, and a parry makes its beak bite back.
 - Cooked kraken tentacle: cooks like serpent meat, more health and stamina for longer.
-- Paws of the Bear (the game's bear claws): each punch is three fast swipes, about a third of the damage each.
 - Bone Ballista: a small ballista with spine arms that you hold and aim yourself (90 degrees of turn); it reloads
   from Bone Missiles in your pack.
 

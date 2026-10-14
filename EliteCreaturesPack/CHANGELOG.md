@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0
+
+- Removed: Paws of the Bear's Triple Strike (section `27 - Bear Claws`); the bear claws punch as in the game again.
+
 ## 0.10.1
 
 - Fixed: the Kraken measured every ship two metres long and missed most of the crew aboard.
