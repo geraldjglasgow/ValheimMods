@@ -34,10 +34,28 @@ namespace EliteCreaturesReborn.Arena.Trial
         }
 
         /// <summary>The creatures of trial <paramref name="trial"/> alive here now: not dead, not tamed.</summary>
-        public static int Alive(long trial) => Count(trial, bossesOnly: false);
+        public static int Alive(long trial) => Count(trial, bossesOnly: false, 0);
+
+        /// <summary>The creatures of one wave of the trial alive here now.</summary>
+        public static int Alive(long trial, int wave) => Count(trial, bossesOnly: false, wave);
 
         /// <summary>The bosses of trial <paramref name="trial"/> alive here now.</summary>
-        public static int Bosses(long trial) => Count(trial, bossesOnly: true);
+        public static int Bosses(long trial) => Count(trial, bossesOnly: true, 0);
+
+        /// <summary>The name key of a boss of the trial alive here now ("$enemy_dragon"); null when none lives.</summary>
+        public static string? BossName(long trial)
+        {
+            for (int i = 0; i < Live.Count; i++)
+            {
+                ArenaFighter fighter = Live[i];
+                ZDO? zdo = fighter != null ? fighter.Zdo : null;
+                if (zdo != null && Counts(fighter!, zdo, trial, 0) && ArenaTag.IsBoss(zdo))
+                {
+                    return fighter!.Body.m_name;
+                }
+            }
+            return null;
+        }
 
         /// <summary>
         /// The trial has ended: each of its creatures this machine owns vanishes now, dropping nothing
@@ -58,20 +76,25 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
         }
 
-        private static int Count(long trial, bool bossesOnly)
+        // Wave 0: any wave.
+        private static int Count(long trial, bool bossesOnly, int wave)
         {
             int count = 0;
             for (int i = 0; i < Live.Count; i++)
             {
                 ArenaFighter fighter = Live[i];
                 ZDO? zdo = fighter != null ? fighter.Zdo : null;
-                if (zdo == null || ArenaTag.Trial(zdo) != trial || fighter!.Body.IsDead() || fighter.Body.IsTamed())
+                if (zdo != null && Counts(fighter!, zdo, trial, wave) && (!bossesOnly || ArenaTag.IsBoss(zdo)))
                 {
-                    continue;
+                    count++;
                 }
-                count += !bossesOnly || ArenaTag.IsBoss(zdo) ? 1 : 0;
             }
             return count;
         }
+
+        // Alive, not tamed, of the trial and (wave 0: any) of the wave.
+        private static bool Counts(ArenaFighter fighter, ZDO zdo, long trial, int wave) =>
+            ArenaTag.Trial(zdo) == trial && (wave == 0 || ArenaTag.Wave(zdo) == wave) && !fighter.Body.IsDead()
+            && !fighter.Body.IsTamed();
     }
 }

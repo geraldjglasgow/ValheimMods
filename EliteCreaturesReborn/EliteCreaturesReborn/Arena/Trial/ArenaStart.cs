@@ -24,10 +24,12 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 return;
             }
-            state.Begin(NetTime.NowMs());
+            state.Begin(NetTime.NowMs(), ArenaPower.StartBiome());
             new ArenaQueue().Write(zdo);
             TrialPlayers.Reset(zdo, inHall);
-            core.BusyAt = UnityEngine.Time.time;
+            SoulWallets.Reset(zdo, inHall);
+            ArenaReady.Clear(zdo);
+            core.WaveBusyAt.Clear();
             ArenaNet.Tell(zdo, ArenaWords.Started);
             Log.Info($"Hel's Trial begins for {inHall.Count} player(s), asked by peer {asker}");
         }

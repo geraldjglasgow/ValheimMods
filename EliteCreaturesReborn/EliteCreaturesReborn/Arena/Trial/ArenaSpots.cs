@@ -5,8 +5,8 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// <summary>
     /// Where the trial's creatures come in, read from the built hall (features/arena.md section 3, "Waves"): each archway's
     /// recess, under the portal at its <c>portal_k</c> point (the recess's back face, 2.5 m up, facing the hall; the
-    /// recess is about 1.4 m deep, 4 m wide and 5 m tall, with a floor of its own), and the rune circle at the floor's
-    /// centre for a boss. Positions sit on the floor the game finds there, so they hold on the dedicated server, which
+    /// recess is about 1.4 m deep, 4 m wide and 5 m tall, with a floor of its own; the outdoor arena's eight stand about
+    /// 67 m from the centre), and the rune circle at the floor's centre (22 m across outdoors) for a boss. Positions sit on the floor the game finds there, so they hold on the dedicated server, which
     /// builds the hall's colliders too; the portals stand on the <c>portal_N</c> points themselves.
     /// </summary>
     internal static class ArenaSpots
@@ -41,6 +41,18 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return RuneCircle();
             }
             return new Spot(OnFloor(back + facing * Vector3.forward * InRecess), facing);
+        }
+
+        /// <summary>How many archways the built hall has: its <c>portal_0</c>, <c>portal_1</c> ... in a row, at most
+        /// <see cref="ArenaTable.Archways"/>; at least 1 (a hall with none sends everything onto the rune circle).</summary>
+        public static int ArchwayCount()
+        {
+            int count = 0;
+            while (count < ArenaKeys.PortalPoints.Count && ArenaHall.TryPoint(ArenaKeys.PortalPoints[count], out _, out _))
+            {
+                count++;
+            }
+            return Mathf.Max(1, count);
         }
 
         /// <summary>The rune circle at the floor's centre, facing the gate: a boss's spot (the throne's own boss_stand is up

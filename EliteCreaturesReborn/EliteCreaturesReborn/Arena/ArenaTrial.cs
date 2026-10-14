@@ -5,7 +5,7 @@ namespace EliteCreaturesReborn.Arena
 {
     /// <summary>
     /// The trial's shared face (features/arena.md sections 3 and 4): what every client may read about the running trial,
-    /// and the one request a client makes. Written by the trial (Arena/Trial), read by the hall (doors, runes, Hel's hover).
+    /// and the two requests a client makes. Written by the trial (Arena/Trial), read by the hall (doors, runes, Hel's hover).
     /// The reads come straight from the arena core's ZDO on this machine (<see cref="ArenaCore.Current"/>, kept as the core
     /// wakes, never searched for): one or two ZDO lookups, cheap enough for every frame. Where the core is not loaded (far
     /// from the world's centre) no trial is running as far as this machine can see.
@@ -47,6 +47,24 @@ namespace EliteCreaturesReborn.Arena
                 return zdo != null && new ArenaState(zdo).BossWave;
             }
         }
+
+        /// <summary>The word key of Hel's hover line for calling the next wave ("Call the next wave").</summary>
+        public const string CallNextWord = ArenaWords.CallHint;
+
+        /// <summary>True when the local player, alive in the arena during a wave whose creatures have all come out, may
+        /// call the next wave now (Hel's hover). The core's owner checks again, and refuses past a living boss.</summary>
+        public static bool CanCallNext => ArenaCalls.CanCall(CoreZdo());
+
+        /// <summary>Asks the core's owner to begin the next wave now, on top of the one fighting (Hel's E during a wave;
+        /// features/arena.md section 3, "Calling the next wave"). Nothing happens when the call is not allowed.</summary>
+        public static void RequestNextWave() => Guard.Run("ArenaTrial.RequestNextWave", () =>
+        {
+            ArenaCore? core = ArenaCore.Current;
+            if (core != null && core.Zdo != null && CanCallNext)
+            {
+                ArenaCalls.Ask(core);
+            }
+        });
 
         /// <summary>Asks the core's owner to start a trial for the players in the hall (from Hel's interaction). Does
         /// nothing when a trial runs, the hall is not built, or the local player is not in the hall.</summary>

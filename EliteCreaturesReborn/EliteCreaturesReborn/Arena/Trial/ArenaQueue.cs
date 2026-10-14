@@ -55,6 +55,17 @@ namespace EliteCreaturesReborn.Arena.Trial
             return mask;
         }
 
+        /// <summary>The creatures of one wave still to come.</summary>
+        public int Of(int wave)
+        {
+            int count = 0;
+            foreach (Run run in _runs)
+            {
+                count += run.Wave == wave ? run.Count : 0;
+            }
+            return count;
+        }
+
         /// <summary>The creatures still to come out of one lane.</summary>
         public int In(int lane)
         {

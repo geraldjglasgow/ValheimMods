@@ -9,7 +9,8 @@ namespace EliteCreaturesReborn.Arena.Hall
     /// trials one to three at a time fade in, hold one or two seconds and fade out; while a wave is fought more of them at
     /// once and faster as the waves rise, calm again in the break between waves; on a boss wave every rune flares and
     /// stays lit until the wave ends. Only runes that are changing are touched each frame (a short list, swap-removed);
-    /// nothing is allocated after setup, and nothing runs while the local player is far from the hall. The trial's state comes through <see cref="TrialView"/>.
+    /// nothing is allocated after setup, and nothing runs while the local player is far from the hall. The trial's
+    /// state comes through <see cref="TrialView"/>.
     /// </summary>
     internal sealed class HallRunes : MonoBehaviour
     {

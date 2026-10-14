@@ -9,10 +9,11 @@ namespace EliteCreaturesReborn.Arena.Travel
     /// gate piece and the way out at the end of the hall's gate passage, Arena/Gate) and for `elite arena`. Going in, the
     /// point to come back to is kept in the player's own custom data (<see cref="ArenaKeys.ReturnPoint"/>, saved with their
     /// character: the gate's exit point, or where the admin stood) and they are jumped to the hall's <c>arrive</c> point at
-    /// once - a teleport with no loading screen, since the hall is already built on this machine. Going out, they are
+    /// once - a teleport with no loading screen, since the hall is built on this machine just before. Going out, they are
     /// jumped back to the kept point, facing as kept, with the game's normal loading, or to their bed or the world's spawn
-    /// when nothing was kept. The way in is refused while Arena is off or the hall is not built here; the way out never
-    /// is, so nobody is left standing where a hall was. The console's cases answer in words.
+    /// when nothing was kept. The way in is refused while Arena is off; the arena far out over the ocean is built on a
+    /// machine only while its player is there, so the jump in builds it first (the hall's part of <c>Enter</c>). The
+    /// way out never is refused, so nobody is left standing where a hall was. The console's cases answer in words.
     /// </summary>
     internal static class ArenaTravel
     {
@@ -27,11 +28,13 @@ namespace EliteCreaturesReborn.Arena.Travel
         }
 
         /// <summary>Into the hall at once, keeping <paramref name="back"/> and <paramref name="facing"/> as where the way
-        /// out brings the player; false when the hall has no arrival point or the game will not start the jump (one under
-        /// way, or the game's two seconds between jumps). The caller has checked Arena and the hall.</summary>
+        /// out brings the player; false when the hall cannot be built here, has no arrival point, or the game will not
+        /// start the jump (one under way, or the game's two seconds between jumps). The hall is built here first when it
+        /// is not yet (<see cref="ArenaHall.Ensure"/>, a frame or two), so the jump lands on a floor. The caller has checked
+        /// Arena.</summary>
         public static bool Enter(Player player, Vector3 back, Quaternion facing)
         {
-            if (!ArenaHall.TryPoint("arrive", out Vector3 arrive, out Quaternion inward)
+            if (!ArenaHall.Ensure() || !ArenaHall.TryPoint("arrive", out Vector3 arrive, out Quaternion inward)
                 || !player.TeleportTo(arrive, inward, distantTeleport: false))
             {
                 return false;
@@ -66,15 +69,7 @@ namespace EliteCreaturesReborn.Arena.Travel
             {
                 return "elite arena: the arena is off on this server (12 - Arena / Arena).";
             }
-            if (!ArenaHall.Built)
-            {
-                return "elite arena: Hel's hall is not built yet; wait for the world to finish loading.";
-            }
-            if (!ArenaHall.TryPoint("arrive", out _, out _))
-            {
-                return "elite arena: the hall has no arrival point.";
-            }
-            return Enter(player, player.transform.position, player.transform.rotation)
+            return Enter(player, player.transform.position, player.transform.rotation) // builds the arena here first
                 ? "elite arena: into Hel's hall. Type it again to go back."
                 : "elite arena: you cannot travel right now.";
         }

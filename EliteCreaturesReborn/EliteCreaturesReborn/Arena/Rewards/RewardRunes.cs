@@ -17,13 +17,13 @@ namespace EliteCreaturesReborn.Arena.Rewards
     {
         private static readonly Dictionary<string, int> Drawn = new Dictionary<string, int>();
 
-        public static void Add(RewardList list, int cleared, long beaten)
+        public static void Add(RewardList list, int start, int cleared, long beaten)
         {
             Drawn.Clear();
             int essence = 0;
             for (int wave = 1; wave <= cleared; wave++)
             {
-                essence += Wave(wave, beaten);
+                essence += Wave(start, wave, beaten);
             }
             foreach (KeyValuePair<string, int> rune in Drawn)
             {
@@ -34,9 +34,9 @@ namespace EliteCreaturesReborn.Arena.Rewards
         }
 
         // One wave's runes (drawn into Drawn) and its essence (returned).
-        private static int Wave(int wave, long beaten)
+        private static int Wave(int start, int wave, long beaten)
         {
-            int index = RewardTable.Index(ArenaTable.BiomeNumber(wave));
+            int index = RewardTable.Index(ArenaTable.BiomeNumber(start, wave));
             if (!ArenaTable.IsBossWave(wave))
             {
                 Draw(index, RewardTable.RunesPerWave[index]);
@@ -47,9 +47,8 @@ namespace EliteCreaturesReborn.Arena.Rewards
             {
                 return 0;
             }
-            int bossIndex = RewardTable.Index(boss);
-            Draw(index, RewardTable.BossRunes[bossIndex]);
-            return RewardTable.BossEssence[bossIndex];
+            Draw(index, RewardTable.BossRunes[index]); // the boss of the wave's biome
+            return RewardTable.BossEssence[index];
         }
 
         private static void Draw(int index, int count)

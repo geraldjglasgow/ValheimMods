@@ -10,7 +10,7 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// comes off. Tagged, with its trial over (ended, another begun, Arena off, or no core to read for ten seconds) or its
     /// wave over (cleared, or swept when its three minutes ran out): it vanishes, dropping nothing but what a Thieving
     /// creature stole from the players. Otherwise it keeps hunting. A creature adopted in the countdown or a break joins
-    /// the coming wave.
+    /// the coming wave; a boss (Kall's next phase) the boss wave still fighting, even when the next was called early.
     /// </summary>
     internal static class ArenaOrders
     {
@@ -75,8 +75,9 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 return;
             }
-            int wave = new ArenaState(core!).JoiningWave;
-            ArenaTag.Write(zdo, running, body.IsBoss(), ArenaTable.BiomeNumber(wave), wave);
+            ArenaState state = new ArenaState(core!);
+            int wave = state.JoiningWaveOf(body.IsBoss());
+            ArenaTag.Write(zdo, running, body.IsBoss(), state.TierOf(wave), wave);
             ArenaHunt.Begin(body);
             fighter.Refresh();
         }

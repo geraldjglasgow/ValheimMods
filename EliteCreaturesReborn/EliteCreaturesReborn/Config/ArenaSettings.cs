@@ -24,8 +24,9 @@ namespace EliteCreaturesReborn.Config
             Arena = config.Bind(Section, "Arena", false,
                 "Hel's Arena is subject to change without warning: it works and is tested, but its final shape is still "
                 + "being decided. "
-                + "Hel's hall stands high above the world centre and Hel's Trial can be run there: wake Hel on her throne "
-                + "and fight endless waves of the dead, stronger each wave, with a boss every tenth, until every player "
+                + "Hel's arena stands far out over the western ocean, loaded only for players who go there, and Hel's "
+                + "Trial can be run in it: wake Hel on her throne and fight endless waves of the dead, starting at the "
+                + "biome of the strongest player's gear, stronger each wave, with a boss every fifth, until every player "
                 + "has fallen or left. Players get in through Helgrind, Hel's gate, a portal piece in the hammer's Misc "
                 + "tab (Black Forge: 1 Sacrificial Blood, 2 Frostcore, 10 Bloodgold, 5 Memorial Coal), and out through "
                 + "the swirl at the end of the hall's gate passage; 'elite arena' (admin) takes you in and out too. With "

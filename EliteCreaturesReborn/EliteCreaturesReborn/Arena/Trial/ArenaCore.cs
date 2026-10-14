@@ -33,9 +33,11 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The trial in the core's ZDO. Only while <see cref="Zdo"/> is not null.</summary>
         public ArenaState State => new ArenaState(_nview.GetZDO());
 
-        /// <summary>The owner's own memory of the step, never in the ZDO: when the wave last had anything alive or still
-        /// to come (it is cleared after <see cref="ArenaTable.ClearedSeconds"/> with nothing).</summary>
-        internal float BusyAt { get; set; }
+        /// <summary>The owner's own memory of the step, never in the ZDO: when each wave fighting last had anything alive
+        /// or still to come (it is cleared after <see cref="ArenaTable.ClearedSeconds"/> with nothing;
+        /// <see cref="ArenaClears"/>).</summary>
+        internal System.Collections.Generic.Dictionary<int, float> WaveBusyAt { get; } =
+            new System.Collections.Generic.Dictionary<int, float>();
 
         /// <summary>The owner's own memory: when each archway sends its next creature (<see cref="Time.time"/>). A new
         /// owner starts with none set, so each archway sends at once and keeps its pace from there.</summary>
@@ -54,6 +56,9 @@ namespace EliteCreaturesReborn.Arena.Trial
             _nview.Register(ArenaKeys.StartRpc, OnStart);
             _nview.Register(ArenaKeys.StopRpc, OnStop);
             _nview.Register<long, int, bool>(ArenaKeys.KillRpc, OnKill);
+            _nview.Register<Vector3>(ArenaKeys.RepairRpc, OnRepair);
+            _nview.Register(ArenaKeys.ReadyRpc, OnReady);
+            _nview.Register<string>(ArenaKeys.CallRpc, OnCall);
             Current = this;
         }
 
@@ -79,6 +84,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
             try
             {
+                ArenaGuardians.Step(this); // the first time anyone is in the hall: its three guardians
                 ArenaRun.Step(this, NetTime.NowMs());
             }
             catch (Exception e)
@@ -107,7 +113,31 @@ namespace EliteCreaturesReborn.Arena.Trial
         {
             if (IsOwner)
             {
-                ArenaScore.Add(this, trial, points, kill);
+                ArenaSouls.Add(this, trial, points, kill);
+            }
+        });
+
+        private void OnReady(long sender) => Guard.Run("ArenaCore.OnReady", () =>
+        {
+            if (IsOwner)
+            {
+                ArenaReady.Toggle(this, sender);
+            }
+        });
+
+        private void OnCall(long sender, string name) => Guard.Run("ArenaCore.OnCall", () =>
+        {
+            if (IsOwner)
+            {
+                ArenaCalls.Call(this, sender, name);
+            }
+        });
+
+        private void OnRepair(long sender, Vector3 anvil) => Guard.Run("ArenaCore.OnRepair", () =>
+        {
+            if (IsOwner)
+            {
+                AnvilOwner.Repair(this, sender, anvil);
             }
         });
 

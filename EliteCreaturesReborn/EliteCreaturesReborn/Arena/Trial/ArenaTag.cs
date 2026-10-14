@@ -3,7 +3,7 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// <summary>
     /// The tag that makes a creature an arena creature, in its own ZDO (features/arena.md section 4: "arena creatures are
     /// tagged in their ZDO with the trial's id"), as <see cref="Raids.RaiderTag"/> tags a raider: the trial it fights in,
-    /// the wave it fights in, whether it is the wave's boss, and the biome number its kill scores at. Written by its
+    /// the wave it fights in, whether it is the wave's boss, and the biome tier its kill's souls go by. Written by its
     /// owner in the frame it is made (<see cref="ArenaSpawn"/>) or as it is adopted (<see cref="ArenaFighter"/>: whatever appears in the hall during
     /// a trial - a boss's next phase, a Summoner's adds, a Splintering creature's copies), so it travels with the creature
     /// to whichever machine owns it next. Every read is one ZDO lookup.
@@ -33,7 +33,7 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The wave it fights in; once the trial has cleared or swept that wave, it vanishes.</summary>
         public static int Wave(ZDO zdo) => zdo.GetInt(ArenaKeys.CreatureWaveHash);
 
-        /// <summary>The biome number its kill scores at, at least 1.</summary>
+        /// <summary>The biome tier its kill's souls go by, at least 1.</summary>
         public static int Tier(ZDO zdo) => UnityEngine.Mathf.Max(1, zdo.GetInt(ArenaKeys.CreatureTierHash));
     }
 }

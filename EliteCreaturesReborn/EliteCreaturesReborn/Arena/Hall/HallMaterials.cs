@@ -33,12 +33,17 @@ namespace EliteCreaturesReborn.Arena.Hall
         private static Material? _creature;
 
         /// <summary>A hall piece in the game's stone; its glow parts keep their own.</summary>
-        public static void DressStone(GameObject piece) => Dress(piece, Stone(), StoneGloss, metal: false);
+        public static void DressStone(GameObject piece) => Dress(piece, Stone(), StoneGloss, 0f);
+
+        /// <summary>A piece in the game's stone whose metal (its bundle's metal mask: iron, Bloodgold) shines at
+        /// <paramref name="metalGloss"/>, as Helgrind's does (Hel's Anvil: 0.72); its glow parts keep their own.</summary>
+        public static void DressStoneMetal(GameObject piece, float metalGloss) => Dress(piece, Stone(), StoneGloss, metalGloss);
 
         /// <summary>Hel or her spear in the game's creature shader; her glowing eye keeps its own.</summary>
-        public static void DressCreature(GameObject model) => Dress(model, Creature(), CreatureGloss, metal: true);
+        public static void DressCreature(GameObject model) => Dress(model, Creature(), CreatureGloss, MetalGloss);
 
-        private static void Dress(GameObject root, Material? game, float gloss, bool metal)
+        // metalGloss 0: matte, the metal mask unused.
+        private static void Dress(GameObject root, Material? game, float gloss, float metalGloss)
         {
             foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
             {
@@ -48,7 +53,7 @@ namespace EliteCreaturesReborn.Arena.Hall
                 {
                     if (materials[i] != null)
                     {
-                        materials[i] = glow ? Glowing(materials[i]) : Worn(materials[i], game, gloss, metal);
+                        materials[i] = glow ? Glowing(materials[i]) : Worn(materials[i], game, gloss, metalGloss);
                     }
                 }
                 renderer.sharedMaterials = materials;
@@ -80,7 +85,7 @@ namespace EliteCreaturesReborn.Arena.Hall
         }
 
         // Without the game's material (logged by Stone or Creature) a part keeps the bundle's own.
-        private static Material Worn(Material placeholder, Material? game, float gloss, bool metal)
+        private static Material Worn(Material placeholder, Material? game, float gloss, float metalGloss)
         {
             if (game == null)
             {
@@ -89,9 +94,9 @@ namespace EliteCreaturesReborn.Arena.Hall
             if (!Dressed.TryGetValue(placeholder, out Material material))
             {
                 material = GameMaterials.Plain(GameMaterials.Dress(game, placeholder), gloss);
-                if (metal)
+                if (metalGloss > 0f)
                 {
-                    material = GameMaterials.Metal(material, placeholder, MetalGloss);
+                    material = GameMaterials.Metal(material, placeholder, metalGloss);
                 }
                 Dressed.Add(placeholder, material);
             }

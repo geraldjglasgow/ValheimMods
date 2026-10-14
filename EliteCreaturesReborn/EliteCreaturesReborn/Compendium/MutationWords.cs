@@ -21,7 +21,8 @@ namespace EliteCreaturesReborn.Compendium
             Mutation.Cloaked => $"Invisible until you are within {N(r, m, Fields.RevealDistance)} m. Drakes, bats and "
                 + "deathsquitos are never Cloaked.",
             Mutation.Splintering => "Splits into weaker copies when killed, each dealing "
-                + $"{r.PowerOf(m, Fields.Damage) * 100f:0}% of its damage, and they can split again.",
+                + $"{r.PowerOf(m, Fields.Damage) * 100f:0}% of its damage, and they can split again. Oozers are never "
+                + "Splintering.",
             Mutation.Leeching => $"Regenerates {N(r, m, Fields.Regen)}% of its health a second (at most "
                 + $"{N(r, m, Fields.RegenCap)} a second) once {S(r, m, Fields.CombatCooldown)} pass without a hit, "
                 + $"and heals {N(r, m, Fields.Lifesteal)}% of the damage it deals.",

@@ -8,6 +8,8 @@ A mod's hotkeys, read the same way in every mod of the workspace.
   only with no Shift, Ctrl or Alt held, so `Z` never fires together with `LeftControl + Z`. `None` never fires.
   Mods read their keys many times a frame, so the main key is tested first; the modifiers and `Typing.Active` are
   read only on the frame it goes down (for `Held` and `ModifiersHeld`, only while the keys are held).
+- `Hotkey.Pressed(KeyCode)`: a fixed key with no setting behind it (ECR's F to say "ready" in Hel's Trial), read as a
+  single-key shortcut: down this frame, no Shift, Ctrl or Alt held, nothing being typed.
 - `Hotkey.Held(entry)`: the main key and its modifiers are held (for modifier settings such as `LeftShift`).
 - `Hotkey.ModifiersHeld(entry)`: a set shortcut's modifiers are all held, its main key or not; false without modifiers
   (PackPanel holds the game's hotbar back while Alt, its Mead Slot keys' modifier, is held).

@@ -88,7 +88,7 @@ has no line for them and leaves them off; Flamebound, which starts on, rolls in 
 | Mad | Far faster, half health; never on bats |
 | Bloated | Double health, explodes 1.5 seconds after it dies |
 | Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes, bats and deathsquitos are never Cloaked |
-| Splintering | Splits into two weaker copies when killed, which can split again |
+| Splintering | Splits into two weaker copies when killed, which can split again. Never on a creature that releases creatures as it dies (the Oozer, into Blobs) |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
 | Plated | Armoured while healthy, hits harder as that armour goes |
@@ -359,7 +359,10 @@ creatures:
 entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with five: Troll,
 Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
 never Cloaked, and Bat sets Mad and Cloaked to `[0]`, so bats are never either. A Deathsquito is never Cloaked
-whatever the file says (a rule in the mod, not the file), and one a world saved Cloaked loads without it.
+whatever the file says (a rule in the mod, not the file), and one a world saved Cloaked loads without it. Likewise a
+creature that releases creatures as it dies is never Splintering (`Traits/DeathBrood.cs`, read from its prefab: a
+creature among its death effects, its ragdoll's removal effects or its drops; the Oozer, a player's report 2026-10-13),
+and one saved Splintering loads without it.
 
 ## Respawning
 
@@ -497,83 +500,146 @@ are synced from the server and held by the rule file's `lock to server`. Design 
 
 ## Arena: Hel's hall
 
-Built 2026-10-12, not seen in game. The hall half of the Arena (Hel's Trial): `features/arena.md` section 1 and the
-`Arena` setting (section 5); the trial and the travel have their own code in `Arena/Trial` and `Arena/Travel`. The two
-halves meet only in `Arena/ArenaHall.cs` (the hall's origin, `Built`, `TryPoint`, `Contains`) and `Arena/ArenaTrial.cs`
-(`Running`, `Wave`, `BossWave`, `RequestStart`), which the hall reads for its doors, runes and Hel's hover.
+Built 2026-10-12 indoors; since 2026-10-13 an arena 2.5 times as wide, open above but under a cave's roof, on an
+island in Hel's river of portal liquid (ValheimAssets
+`Assets/Locations/HelArena`, its `CONTRACT.md`); not seen in game. The hall half of the Arena (Hel's Trial):
+`features/arena.md` section 1 and the `Arena` setting (section 5); the trial and the travel have their own code in
+`Arena/Trial` and `Arena/Travel`. The two halves meet only in `Arena/ArenaHall.cs` (the origin, `Built`, `TryPoint`,
+`Contains`: within r 66, the wall's inner face, from y -5 to 40) and `Arena/ArenaTrial.cs` (`Running`, `Wave`,
+`BossWave`, `Break`, `RequestStart`), which the hall reads for its doors, runes and Hel's hover. The indoor hall's own
+pieces stay in the workshop (`Assets/Locations/HelHall`); the mod keeps only its throne.
 
 `12 - Arena` / `Arena` (false) is a Charter clause like the raids' switch (`Config/ArenaSettings.cs`, `Rules/ServerLock.cs`).
-While it is on, every peer, the dedicated server included, builds the hall at (0, 5000, 0) as plain local scene objects
-(no ZNetView, no ZDO), on the first frame after the world's scene wakes, and removes or rebuilds it when the setting
-changes (the server's value through Charter, or the .cfg's hot reload). Everything is on `static_solid`, so players
-stand on the floor and the game's pathfinding tiles (y -500 to 5,500) take it. The server builds the colliders and the
-doors; the look (materials, runes, fire, lights, the environment, Hel's animation and hover) is built on clients only.
+**Where:** `ArenaHall.Origin` (the one place it is defined) is (-10304, 5000, 0): due west, 10,304 m from the world's
+centre, 5,000 m up, over the far ocean, on a zone's centre (-161 x 64; the game's zone index is floor((x + 32) / 64),
+its centre index x 64), so the arena spans exactly 3 x 3 zones; until 3.26 it was (0, 5000, 0), over the world's spawn. The game's edge rules
+(decompiled 2026-10-13): `Player.EdgeOfWorldKill` pushes a player outward beyond r 10,420 only while swimming or below
+y 30, and kills only below y -10; ships the same at sea level; the edge wind skips anyone `InInterior` (y over 3,000).
+Land: `WorldGenerator.GetBaseHeight` fades the land toward deep water from r 10,000 and drops to the abyss from 10,490,
+so this far out it is nearly always deep water, with no location or dungeon near. Everything solid (to r 77) stays
+inside 10,420; the mountains and cave (to r 1,040) are visual only and lie past the edge, where nothing acts on a
+player 5,000 m up (everything solid lies between r 10,227 and 10,381). ZDO sectors reach 16,384 m and the map
+12,288 m. Old worlds (3.25, 3.26): `HallLegacyGraves` moves, once per world on the server while `Arena` is on, every
+player tombstone within 100 m across of (0, 5000, 0) and above 4,900 m to just inside the new arena's gate
+(`gate_inside` a metre up; the walls' plan's (0, 0, 64) while the hall is not built there), its spawn point too, the
+server taking ownership first; the trial removes the old core and creatures (`Trial/ArenaLegacy`) and places its core
+through the same `ArenaHall.Origin`.
+
+**Built on demand** (the user, 2026-10-13: "the only way it's loaded is if players teleport to it"), while `Arena` is
+on, as plain local scene objects (no ZNetView, no ZDO), by `HallHost`:
+- a client, a host or single player builds the whole arena when its local player goes there (`ArenaHall.Ensure()`,
+  called by `ArenaTravel.Enter` before the jump, for Helgrind and `elite arena`) or is found in its area
+  (`ArenaHall.Near`: 1,200 m across, 600 m up or down; tested every frame while not built, so a player who logs in
+  there has a floor at once), and removes it a minute after the player last was there;
+- a dedicated server builds the colliders, the doors and the river's kill (no look) while any connected peer's position
+  is in the area (tested once a second; the server may own creatures there), and removes them a minute after the last.
+The setting turning off removes it at once. A player who never goes there never has it built and its bundles are never
+read (about 19 MB of bundle data per platform, some 30 to 40 MB of meshes and textures unpacked, and the scene objects
+and effects); the DLL with the bundles in it is still loaded. After a visit the bundles' assets stay loaded until the
+game closes (unloading them would need EmbeddedBundle to unload, a library change). Everything is on `static_solid`,
+so players stand on the floor and the game's pathfinding tiles (y -500 to 5,500) take it. `ArenaHall.Built` is true only
+while it stands here; the gate (`GateTrigger`, `GateHover`) is closed only while `Arena` is off.
 
 | Bundle (both platforms, `assets/bundles`) | Prefab, where | Bytes (Windows + Linux) |
 | --- | --- | --- |
-| `ecr_helhall_floor` | the floor, origin; runes `glow_rune_00`..`23` | 2,832,430 + 2,978,572 |
-| `ecr_helhall_walls` | the wall ring, origin; doors `door_left`, `door_right`; the points spawn, portal, arrive, gate_inside, flame | 2,475,826 + 2,636,279 |
-| `ecr_helhall_throne` | the throne, (0, 0, -14.731); `glow_brazier_0`, `_1`; the points seat_root ... fire_1 | 2,201,082 + 2,370,992 |
-| `ecr_helhall_ceiling` | the drum and dome, origin; `glow_oculus`; the point light_oculus | 2,528,776 + 2,672,239 |
-| `ecr_helhall_cover` | four broken pillars wrapped in roots and four low walls (cover from the archways), origin; 70 box colliders, no glow, no points (added 2026-10-13) | 1,053,057 + 1,187,308 |
+| `ecr_helarena_floor` | the floor (r 62.5, kerb to 65.6), origin, every peer; runes `glow_rune_00`..`23` (material `ecr_helarena_floor_glow_runes`), 12 box colliders | 4,395,592 + 4,538,532 |
+| `ecr_helarena_walls` | the ring (inner face r 66, 10 m, 16 m behind the throne), origin, every peer; doors `door_left`, `door_right`; points `spawn_0`..`7`, `portal_0`..`7`, `arrive` (0, 0, 68.4), `gate_inside`, `flame_0`..`15`; 172 box colliders, 61 of them the invisible sky ring `col_box_sky_00`..`59` and `col_box_sky_cap` (no renderer): since 2026-10-13 (the user: "get rid of the invisible boundary") their colliders are destroyed on every peer as the walls are built, so the arena is open above its walls | 3,875,123 + 4,026,572 |
+| `ecr_helarena_cover` | ten broken pillars and ten low walls, origin, every peer; 174 box colliders, no glow, no points | 1,518,058 + 1,653,658 |
+| `ecr_helarena_land` | the ground outside (plateau to r 92, its foot and stacks standing out of the liquid), the mountain ring (r 400 to 990, peaks to 468 m), boulders and roots, origin, every peer for its 16 `col_box_plateau_*` (a net under the plateau); dressed in the stone, glow `glow_vein`, `glow_beacon` kept; points `mist_00`..`35` (on the liquid at y -8), `beacon`; rebuilt 2026-10-13 for the river and the cave | 4,023,791 + 4,160,120 |
+| `ecr_helarena_cave` | the cavern roof about 400 m up (376 to 503 m), coming down behind the mountains to r 1040, stalactites and root strands, glow `glow_crystal`, `glow_crack` kept; origin, clients only; dressed in the stone, no colliders, **casts no shadow** (it stands between the sun and the arena) | 415,810 + 558,897 |
+| `ecr_helarena_river` | Hel's river: a flat ring of portal liquid at y -8 from r 70 to 470 in its own Standard material (not dressed), no shadows, flowing; and two effects, `ecr_helarena_bubble` (one-shot, 51 particles at most) and `ecr_helarena_rivermist` (looping, 14 at most), dressed by BundleEffects; origin, clients only | 282,887 + 432,178 |
+| `ecr_helhall_throne` | the indoor hall's throne, (0, 0, -55.6) (its dais's back edge at r 65.5); `glow_brazier_0`, `_1`; the points seat_root ... fire_1 | 3,820,006 + 3,992,461 |
+| `ecr_helarena_anvil` | Hel's Anvil, two: (+-11.5, 0, -56), each facing the arena's centre (its `use` side toward the floor), every peer for its four colliders; on clients dressed in the stone with its iron and Bloodgold through the metal mask at 0.72, `glow_souls` kept, a small blue flame at `fire` (no light), and the trial's `HelAnvil` on its root | 282,669 + 456,479 |
 | `ecr_hel` | `ecr_hel` on seat_root; `ecr_hel_spear` from spear_rest to spear_top | 905,905 + 1,077,353 |
 
-Together 24,919,819 bytes (23.8 MB) added to the DLL.
+Together 40,416,091 bytes (38.5 MB; 19.5 MB per platform); the DLL is 44,029,952 bytes. Removed 2026-10-13 with the indoor hall:
+`ecr_helhall_floor`, `_walls`, `_ceiling`, `_cover` (19,291,623 bytes).
 
 | File (`Arena/Hall/`) | Does |
 | --- | --- |
-| `HallHost.cs` | One host per world, made by a `ZNetScene.Awake` postfix (`HallScenePatch`) in the world's scene; builds on its first frame, removes and rebuilds on the setting's change; clears `Built` and the hall's forced sky when it goes |
-| `HallBuilder.cs` | The four pieces under the host, every part on `static_solid`, the points indexed, the cover (stone-dressed, on every peer for its colliders; the hall stands without it if it fails to load), the doors, Hel, and on clients the runes, fires and environment |
-| `HallBundles.cs` | The five embedded bundles through BundlePrefabs' `EmbeddedBundle`; a failure logged once and no hall |
-| `HallPoints.cs` | Every part of the four pieces by name, read by `ArenaHall.TryPoint` |
-| `HallMaterials.cs` | Stone: `Custom/Piece` from `stone_wall_4x2`'s body `New/stone` (`stone_mat_4x2`; never its first child, the snow overlay), white, gloss 0.15, the pieces' own albedo and normal map. Hel and the spear: `Custom/Creature` from the Draugr's body (`Draugr_mat`), gloss 0.15, her metal mask at 0.65. Anything under a `glow*` child keeps the bundle's emissive material, `_EMISSION` on |
-| `HallEnvironment.cs` | `ECR_HelHall`: a copy of `Morkhalla`, fog 0.015 (was 0.1) so the far wall shows from the gate, not cold, freezing or wet; forced by the game's `EnvZone` on a 62 x 34 x 62 m trigger on `character_trigger` |
-| `HallFires.cs` | Blue fire and flickering light from `MountainKit_brazier_blue` at the sconces and the throne's braziers, local copies through LocalEffects; a cold spot light in the oculus (table below) |
+| `HallAnvils.cs` | Hel's two anvils beside the dais, placed against CONTRACT.md's clear zones: 5.2 m clear of the dais's side and outside the 6 m before it, 10.8 m from the 157.5 and 202.5 degree archway lanes' lines, 17 m from the throne path's pillars, 8 m inside the wall |
+| `HallLegacyGraves.cs` | Once per world on the server: graves from the old hall at (0, 5000, 0) moved to the new arena's gate |
+| `HallHost.cs` | One host per world, made by a `ZNetScene.Awake` postfix (`HallScenePatch`) in the world's scene; builds on demand (`Ensure`, the local player or, on a dedicated server, any peer in the area) and removes a minute after it was last wanted, at once when the setting turns off; clears `Built` and the arena's forced sky when it goes |
+| `HallBuilder.cs` | Floor, walls and throne under the host (any missing: no arena), every part on `static_solid`; the land and the cover (every peer, the arena stands without them); the points of floor, walls, throne and land indexed; the doors, Hel; on clients the cave and river (`HallOutside`), runes, bubbles, fires, mist, the cave's light and view, and Helgrind's way out |
+| `HallBundles.cs` | The arena's bundles through BundlePrefabs' `EmbeddedBundle`, a failure logged once; `Embedded` tells a bundle not shipped yet |
+| `HallPoints.cs` | Every part of the floor, walls, throne and land by name, read by `ArenaHall.TryPoint` |
+| `HallMist.cs` | Mist on the liquid, clients: the river bundle's `ecr_helarena_rivermist` at all 36 `mist_*` points, local copies through LocalEffects (504 particles at most). Replaced the game's Swamp ground fog of the first land |
+| `HallOutside.cs` | The cave (stone-dressed, shadow casting off on every renderer) and the river surface (its own material, no shadows) at the origin, clients |
+| `HallRiver.cs` | The river flowing: its material instance's `_MainTex` offset +(0.010, 0.004) and `_DetailAlbedoMap` +(-0.007, 0.006) a second, every frame only while the player is in the zone, no allocations |
+| `HallRiverFx.cs` | The bubble and mist effects prepared once per process by BundleEffects (game particle shaders) |
+| `HallBubbles.cs` | 28 bubble clusters near `mist_00`..`27` (2 to 8 m off each, turned within 80 degrees of straight away from the arena, on the surface at y -8), each replayed with `Play()` every 4 to 15 s at random, only while the player is in the zone |
+| `HallView.cs` | While the local player is in the zone: the camera's far clip raised to 1,300 m (only when shorter; the game sets no far clip in code: GameCamera moves only the near plane, the far plane is the main scene's camera, not read here) and **the sky off**: `GameCamera.m_skyCamera` (the game's sky dome, stars, moon, sun disc, aurora) disabled and the main camera cleared to a near-black (0.035, 0.05, 0.055). Everything given back as found when they leave or the arena goes |
+| `HallMaterials.cs` | Stone: `Custom/Piece` from `stone_wall_4x2`'s body `New/stone` (`stone_mat_4x2`; never its first child, the snow overlay), white, gloss 0.15, the pieces' own albedo and normal map; renderers only, so collider-only children are untouched. Hel and the spear: `Custom/Creature` from the Draugr's body (`Draugr_mat`), gloss 0.15, her metal mask at 0.65. Anything under a `glow*` child keeps the bundle's emissive material, `_EMISSION` on |
+| `HallEnvironment.cs` | `ECR_HelArena`, Hel's realm in a cave: a copy of `Twilight_Clear` (a weak cold sun) the same at every hour, always dark, sun (0.58, 0.8, 0.82) at 0.55 (the dim cold light the arena reads by), ambient (0.33, 0.41, 0.44), fog #263439 at 0.0018 (half gone at 385 m), no clouds, no aurora, no weather particles, not cold, freezing or wet, with `Morkhalla`'s ambience and music; forced by the game's `EnvZone` on a 160 x 60 x 160 m trigger (centre y 20) on `character_trigger`; `PlayerInZone` (cached, twice a second) shared by the view, the river and the bubbles |
+| `HallFires.cs` | Blue fire and flickering light from `MountainKit_brazier_blue` at the 16 sconces and the throne's 2 braziers, local copies through LocalEffects (table below); `Flame` puts a small one with no light at a point (the anvils) |
 | `HallRunes.cs`, `RuneLight.cs` | The floor's runes, each its own material: one to three at a time between trials and in the breaks between waves (`ArenaTrial.Break`), more and faster while a wave is fought, all flaring on a boss wave; only changing runes are touched |
-| `HallDoors.cs` | The gate's leaves, every peer: open (left -90, right +90 about Y) between trials, shut in one, eased over 1.5 s |
+| `HallDoors.cs` | The gate's leaves (hinges at (+-3, 0, 66.3)), every peer: open (left -90, right +90 about Y) between trials, shut in one, eased over 1.5 s |
 | `HelSeat.cs` | Hel on `seat_root` with the player's `Player_animator` and avatar (`attach_throne`, `onGround`: Sit_Throne_Idle), a 3 x 5.2 x 2.6 m box round her seated body, her spear |
-| `HelHover.cs` | "Hel"; "[E] Begin the trial" while no trial runs and you stand in the hall, calling `ArenaTrial.RequestStart`; 3 m more reach than usual |
-| `HallWords.cs` | `ecr_arena_hel` "Hel", `hud_ecr_arena_begin` "Begin the trial" |
-| `HallNoBuild.cs` | Placing a piece within 40 m (across) of the origin above 4,900 m: the game's no-build status and message (`$msg_nobuildzone`) |
+| `HelHover.cs` | "Hel"; "[E] Begin the trial" while no trial runs and you stand in the arena, calling `ArenaTrial.RequestStart`; 3 m more reach than usual |
+| `HallWords.cs` | `ecr_arena_hel` "Hel", `hud_ecr_arena_begin` "Begin the trial", `msg_ecr_arena_river` "Hel's river takes you." |
+| `HallLake.cs` | Hel's river kills (the user, 2026-10-13): four times a second on every peer, each loaded character in the band under the river's surface (y -8 to -408, within 1,200 m) is taken once: its owner deals 10,000,000 damage through `Character.Damage` (hit type Drowning, not blockable or dodgeable), so it is the game's own death with every hook; the local player first reads "Hel's river takes you." (`msg_ecr_arena_river`); a creature's drops are switched off. Every client splashes there: the river's `ecr_helarena_bubble` and the game's `fx_WaterImpact_Big`. Not an arena death (`ArenaHall.Contains` is false below y -5, so `Trial/ArenaDeath` does not spare skills): the game's skill loss. Dungeon interiors stand 5,000 m over their entrances (5,030 m and up near the centre), above the band |
+| `HallLakeGrave.cs` | A river death's grave on the arena floor: a `Player.CreateTombStone` prefix marks the local player's grave made under the river (finalizer clears it), and a `TombStone.Awake` prefix moves that new tombstone, and its fresh ZDO, to the walls' `gate_inside` a metre up, before its Awake records the spawn point it returns to |
+| `HallNoBuild.cs` | Placing a piece within 75 m (across) of the origin above 4,900 m: the game's no-build status and message (`$msg_nobuildzone`) |
 | `TrialView.cs` | `ArenaTrial`'s values (`Running`, `Wave`, `BossWave`, `Break`, giving `Fighting`) read at most four times a second, shared by the doors, the runes and the hover |
 
+`Arena/Gate/GateWayOut.cs` (Helgrind's way out, clients) stands on the gate passage's back wall: one ray from `arrive`
+back along the passage finds the walls' `col_box_gate_back` (face at z 70.8, 2.4 m behind `arrive`; the plan's 2.4 m
+if the ray misses), its swirl's sill on the passage floor, its trigger 0.7 m deep (1.7 m clear of `arrive`).
+
 Lights and fire (clients only; the brazier's own light is `(0.75, 1, 1)`, intensity 2, range 5, with LightLod (50 m)
-and LightFlicker):
+and LightFlicker). 18 point lights, 2 with shadows, plus the cave's dim directional light; each lit within 90 m of the player (LightLod),
+nearest first up to the game's light limit:
 
 | What | Where | Source | Colour | Range | Intensity | Shadows |
 | --- | --- | --- | --- | --- | --- | --- |
-| Sconce fire | `flame_0`..`7` | `MountainKit_brazier_blue` `_enabled_high/fx_Brazier_flames`, x0.55 | the game's blue flames | | | |
-| Sconce light | 0.22 m over each | its `_enabled_high/Point light`, x1.4 | (0.5, 0.92, 0.88) | 7 m | 2, flickering | none |
+| Sconce fire | `flame_0`..`15` (4.5 m up) | `MountainKit_brazier_blue` `_enabled_high/fx_Brazier_flames`, x0.55 | the game's blue flames | | | |
+| Sconce light | 0.22 m over each | its `_enabled_high/Point light`, x1.6 | (0.5, 0.92, 0.88) | 8 m | 2, flickering | none |
 | Brazier fire | `fire_0`, `_1` | the same flames, x1.35 | the game's blue flames | | | |
 | Brazier light | 0.54 m over each | the same light, x1.8 | (0.5, 0.92, 0.88) | 9 m | 2, flickering | soft, 0.7, within 25 m (LightLod) |
-| Oculus light | `light_oculus`, pointing down | made in code, spot 70 degrees, with a LightLod (80 m) | (0.62, 0.8, 1) | 34 m | 1.4 | soft, 0.7 |
+| Anvil fire | each anvil's `fire` | `MountainKit_brazier_blue` `_enabled_high/fx_Brazier_flames`, x0.4 | the game's blue flames | | no light | |
+| Anvil souls | `glow_souls` | the anvil bundle's emissive material | as built (#2a978b x 1.3) | | | |
 | Ember glow | `glow_brazier_0`, `_1` | the throne bundle's emissive material | as built (#3aa89a x 0.6) | | | |
-| Oculus glow | `glow_oculus` | the ceiling bundle's emissive material | as built (#2a978b x 1.6) | | | |
 | Runes | `glow_rune_00`..`23` | the floor bundle's rune material, one copy each | its emission x2.5 lit, x3.5 flaring | | | |
+| Land glow | `glow_vein`, `glow_beacon` | the land bundle's emissive materials | as built (#2a978b, dim) | | | |
+| Cave glow | `glow_crystal`, `glow_crack` | the cave bundle's emissive materials | as built (#2a978b x 0.6, x 0.5) | | | |
+| River | the surface, y -8, r 70 to 470 | its own Standard material, emission #2a978b-lined swirls x 0.22 | as built | | | none |
+| River mist | `mist_00`..`35` | `ecr_helarena_rivermist`, local copies | cold blue-grey, alpha 0.14 | 50 x 50 m patches | 14 particles at most each, 504 in all | |
+| Bubbles | 28 spots near `mist_00`..`27` | `ecr_helarena_bubble`, local copies, replayed every 4 to 15 s | blue-green | 2.2 m clusters | 51 particles at most each (1,428 if all at once; about a third of that on average) | |
 
 Patches: `ZNetScene.Awake` postfix (`HallScenePatch`), `Localization.SetupLanguage` postfix (`HallWords`),
-`Player.UpdatePlacementGhost` postfix (`HallNoBuild`); all three passed the offline patch check.
+`Player.UpdatePlacementGhost` postfix (`HallNoBuild`), `Player.CreateTombStone` prefix and finalizer and
+`TombStone.Awake` prefix (`HallLakeGrave`); all passed the offline patch check.
 
-Not seen yet: the materials and their gloss, the fog, every light's colour and reach, the runes' brightness, Hel on the
-throne and her spear's lean, her hover box's size and reach, the doors' swing, the colliders and the pathfinding on the
-floor, and a dedicated server building the colliders.
+Not seen yet: the whole outdoor arena - materials and gloss, the sky (inside the arena the game counts the player as
+indoors, y over 3,000 m, and lights the sun per vertex), the fog, every light's colour and reach, the runes' brightness,
+Hel on the throne at its new place and her spear's lean, her hover, the doors' swing, the river's kill, splash and grave, the
+colliders and pathfinding, the way out on the new passage, the land's and the cave's look in the stone material, the
+cave with the sky camera off (no sky, no gap), the river's flow, the bubbles' spots (none should sit on a stack or the
+shore) and the mist on the liquid, the far clip, and a dedicated server building the colliders.
 
 ## Arena: Hel's Trial
 
 Built 2026-10-12, released in 3.25.0; rounds with breaks, archway portals, no skill loss in the hall and rewards
 added 2026-10-13 after the user's first games, not seen in game. The trial and travel half of the Arena: `features/arena.md`
 sections 2 to 4, the `elite arena` and `elite arena stop` commands. It reads the hall only through `ArenaHall` and
-fills `ArenaTrial` (`Running`, `Break`, `Wave`, `BossWave`, `RequestStart`).
+fills `ArenaTrial` (`Running`, `Break`, `Wave`, `BossWave`, `RequestStart`, `CanCallNext`, `CallNextWord`,
+`RequestNextWave`; the hall's `HelHover` shows "[E] Call the next wave" from them).
 
-**The core.** The trial lives in one hidden, persistent networked object, `ECR_ArenaCore`, at the hall's origin: its
-prefab is added to `ZNetScene`'s list in a `ZNetScene.Awake` prefix on every peer whatever the setting says, and the
-server places one when the world has none (it holds every ZDO: one lookup of the core it knows, else a search of the
-one zone at the world's centre; an extra is removed). Its ZDO holds the trial (`ecr_arena_*`, `Arena/Trial/ArenaKeys.cs`):
+**The core.** The trial lives in one hidden, persistent networked object, `ECR_ArenaCore`, at the arena's origin (far
+out over the ocean since 2026-10-13, loaded only by players who jump there): its prefab is added to `ZNetScene`'s list in
+a `ZNetScene.Awake` prefix on every peer whatever the setting says, and the server places one when the world has none
+(it holds every ZDO: one lookup of the core it knows, else a search of the one zone at the arena's origin; an extra is
+removed; the ZDO is made without the zone loaded). Once a session it first removes an older world's core and arena
+creatures at the old origin (0, 5000, 0) (`ArenaLegacy`, by their ZDOs, no drops). Its ZDO holds the trial (`ecr_arena_*`, `Arena/Trial/ArenaKeys.cs`):
 phase (idle, countdown, fighting, break), trial id (server ms at the start), wave, the last wave cleared or swept,
-score, kills, creatures left, the end of the countdown, the wave's 3 minutes or the break, the last time a player was in
+the souls earned (`ecr_arena_souls`) and each player's wallet (`ecr_arena_wallets`), kills, creatures left, the end of
+the countdown, the wave's 5 minutes or the break, the last time a player was in
 the hall, the archway the next wave starts at, the creatures still to come by archway, the archways with portals open,
-and the trial's players. Its owner steps the trial four times a second; on a dedicated server that is the server itself (its reference point is the world's centre, where the hall
-lies), elsewhere whoever holds the centre zone, and a new owner carries on from the ZDO. Every client reads
+and the trial's players. Its owner steps the trial four times a second: a player at the arena, by the game's own ownership (the server never
+has it in its area); a new owner carries on from the ZDO, and an owner whose hall is not built (just left) does
+nothing. When the last player jumps or logs out, the server (`ArenaOrphanWatch`, in the keeper's 5 s check) sees no
+machine with the arena in its area for 10 s, takes the core, ends the trial (`ArenaEnd.Close`: told and paid as
+usual) and removes its creatures by their ZDOs (`ArenaZdos`). Every client reads
 `ArenaTrial` from `ArenaCore.Current`, kept as the core wakes: one or two ZDO lookups.
 
 **The trial.** Hel's hover calls `ArenaTrial.RequestStart`, an RPC to the core's owner (a direct call when it is that
@@ -583,16 +649,23 @@ and every player in the hall is in it; whoever enters later joins. Waves, number
 | What | Number |
 | --- | --- |
 | Countdown | 10 s |
-| Biomes | waves 1-10 Meadows, 11-20 Black Forest ... 71-80 Deep North, then the Deep North |
-| Creatures in a wave | 4 in the first of a biome, +1 each wave in it, x(1 + 0.25 per player past the first) |
-| Extra stars | +1 from a biome's 4th wave, +2 from its 8th, +1 more per ten waves past 80; at most 8 (ECR's maximum) |
-| Mutation chance | 5% in wave 1, +3% a wave, at most 60%, for a creature that rolled none; never Gilded (stripped from the base roll too) |
-| Archways | each wave's creatures given to the 4 archways in turn; each sends one at a time, 0.8-1.2 s apart, the first 0.6-1.0 s after its portal opens; out of its recess, 0.8 m off the `portal_N` back face, on the recess floor, with `sfx_spawn` |
-| Alive at once | 20; the archways wait while 20 live |
-| Next wave | only when the wave is cleared (nothing alive or to come, held 2 s), after a break of 15 s (20 s after a boss wave) |
-| Swept | a wave not cleared in 180 s: its creatures vanish (no drops, no score) and the break begins |
-| Boss wave | every 10th: the boss alone on the rune circle at the floor's centre, with `vfx_spawn` and `sfx_spawn`, no portal |
-| Score | a kill 10 x (stars + 1) x biome number (1-8), a boss 500 x biome number |
+| First biome | the strongest gear among the players alive in the arena as Hel wakes (`ArenaPower`, the raids' `GearTier.Full`): 0 no metal Meadows, 1 Bronze Black Forest, 2 Iron Swamp, 3 Silver Mountains, 4 Black metal Plains, 5 Mistlands gear Mistlands, 6 Flametal Ashlands, 7 Bloodgold (`Gold`) or a Deep North set Deep North; in `ecr_arena_start_biome`, later joiners change nothing |
+| Biomes | five waves each from the first biome (the 5th its boss), then the next; after the Deep North's boss the Deep North |
+| Creatures in a wave | 6, 8, 10, 12 in a biome's four waves, x(1 + 0.25 per player past the first) |
+| Extra stars | +1 from a biome's 3rd wave, +1 more per five waves past the Deep North's boss; at most 8 (ECR's maximum) |
+| Mutation chance | 15% in wave 1, +4% a wave, at most 60%, for a creature that rolled none; never Gilded (stripped from the base roll too) |
+| Elites | a kind `BodySize.IsLarge` finds large or with base health over 2.5 x its biome's middle kind's (`ArenaCreatures.Kind.Elite`); a wave at most none (a biome's waves 1-2), 1 (wave 3), 2 (wave 4), past the Deep North's boss 3 +1 per 10 waves (at most 6); +1 per two players past the first (`ArenaTable.EliteCap`); an elite drawn past that is redrawn from the rest, never two from one archway in a wave |
+| Call the next wave | E at Hel in a wave whose creatures are all out (`ArenaTrial.RequestNextWave`, `ecr_arena_call_next` to the core's owner; `ArenaCalls`): the next wave on top at once, none past a living boss; each wave cleared by its own creatures (`ArenaClears`, `ecr_arena_done`), the break after the last; the 5 minutes restart with each call |
+| Archways | every `portal_N` the built hall has, up to 8 (the outdoor arena's, about 67 m out; `ArenaSpots.ArchwayCount`); each wave's creatures given to all of them in turn; each sends one at a time, 0.8-1.2 s apart, the first 0.6-1.0 s after its portal opens; out of its recess, 0.8 m off the `portal_N` back face, on the recess floor, with `sfx_spawn` |
+| Alive at once | 24 (20 indoors); the archways wait while 24 live |
+| Next wave | only when the wave is cleared (nothing alive or to come, held 2 s), after a break of 20 s (25 s after a boss wave) |
+| Swept | a wave not cleared in 300 s (180 indoors): its creatures vanish (no drops, no souls) and the break begins |
+| Boss wave | every 5th: the biome's boss alone on the rune circle at the floor's centre, with `vfx_spawn` and `sfx_spawn`, no portal |
+| Souls | a kill 2 x tier (1-8) x (stars + 1) x 1.5 per mutation; a boss 50 x tier x (stars + 1) x `AspectLoot.Factor` (its aspects' loot multiplier); every player of the trial gets each kill's souls in full (`SoulWallets`: the total less what was earned before they joined and what they spent) |
+| Ready (F) | in the countdown and breaks, F (fixed; Hotkeys' `Pressed(KeyCode)` and the game's `TakeInput`) toggles the player's vote (`ecr_arena_ready_vote` to the core's owner, the set in `ecr_arena_ready`); when every player alive in the arena is ready the rest ends at once ("Ready: 2 of 3", "All ready - the dead come!"; the bar ends "- F: ready (1/3)" or "- (ready) 1/3") |
+| Hel's Anvil | in the countdown and breaks: 10 x the tier of the wave coming x 1.5 per repair the player made this trial; mends every worn item |
+| Boss cache | a boss falls (Kall's last phase): 60%, per player of the trial 1-3 healing meads of its tier on the rune circle (`MeadHealthMinor`, `Medium`, `Major`, `Lingering` for tiers 1-2, 3-4, 5-6, 7-8) |
+| Guardians | once per world, the first time anyone is in the hall and no trial runs: 3 Bat-fiends on the rune circle facing the gate, spawned by the core's owner, the core's `ecr_arena_guardians` set so never again; each keeps the Bat-fiend's drops plus a Recasting and a Sealed Rune with EliteCrafting (`ArenaGuardians`, its ZDO's `ecr_arena_guardian`) |
 | End | no living player in the hall for 5 s (or a dedicated server with nobody connected) |
 
 The creatures of a biome are read from the game's own spawn lists once a session (`ArenaSpawnLists.cs`): each
@@ -607,12 +680,15 @@ Forest Greydwarf, Elite, Shaman, Troll, Bjorn; Swamp Draugr, Draugr Elite, Skele
 Abomination, Writhan; Mountains Fenring, Wolf, Hatchling, StoneGolem; Plains Goblin, GoblinBrute, Lox, Deathsquito,
 Unbjorn; Mistlands Seeker, SeekerBrute, Gjall, SeekerBrood, Tick; Ashlands Charred (melee, archer, twitcher), Asksvin,
 Morgen_NonSleeping, FallenValkyrie, Volture, BlobLava; Deep North Greydwarf_Frozen, its Shaman, Skeleton_DeepNorth,
-Elaking, ElakingLantern, ShadowPerson, Barka, Moose, JotunWarrior, JotunWitch. Bosses: Eikthyr, gd_king, Bonemass,
-Dragon, GoblinKing, SeekerQueen, Fader, FrozenKing, then again from wave 90.
+Elaking, ElakingLantern, ShadowPerson, Barka, Moose, JotunWarrior, JotunWitch. Their elites (measured with read-only
+`/eval` 2026-10-13; the log's lines mark them "(elite)"): Bjorn, Troll; Abomination, Writhan; StoneGolem, ECP_RimeGiant;
+Unbjorn, GoblinBrute, Lox; Gjall, SeekerBrute; FallenValkyrie, Morgen_NonSleeping, Asksvin; Barka, Moose, JotunWarrior
+(the Wraith has 100 health, the Swamp's middle, so it is none). Bosses: Eikthyr, gd_king, Bonemass,
+Dragon, GoblinKing, SeekerQueen, Fader, FrozenKing from the first biome's, then again from the first biome's.
 
 **Arena creatures.** Tagged in their ZDO (`ecr_arena_of` trial id, `ecr_arena_wave_of` wave, `ecr_arena_boss`,
 `ecr_arena_tier` biome number) in the frame they are made, rolled through `CreatureRoll.For` (via the raids' `RaiderTraits.Roll`, with the wave's stars,
-mutation chance and Gilded barred; a boss through its own draw and aspects, plus the stars past 80), set hunting
+mutation chance and Gilded barred; a boss through its own draw and aspects, plus the stars past the Deep North), set hunting
 (`SetHuntPlayer`, no despawn in daylight, target the nearest player in the hall). Every creature that starts inside the
 hall gets an `ArenaFighter` on every machine (`MonsterAI.Start` postfix); on its owner, every second: an untagged one
 appearing in the hall while a trial runs is adopted (Kall's `FrozenKing_p2` and `_p3`, which his death effects make,
@@ -621,8 +697,11 @@ countdown or a break one joins the coming wave), a tamed one loses its tag, a ta
 another, Arena off, no core for 10 s) or whose wave is cleared or swept (`ecr_arena_swept`) vanishes with no death, dropping only what a Thieving one stole, and one with no target is set on the nearest player. Once tagged, on
 every machine: the group `ecr_arena` (so one wave's factions never fight each other), and no `m_defeatSetGlobalKey` or
 dream (an arena boss sets no world key). Drops: the drop list is emptied last in `LootPatch` (the game's table, the
-loot rules, boss rewards and trophies, Gilded's purse, a corpse's loot). A death on its owner sends the score to the
-core's owner (an RPC): a copy (Phantom, Echo, decoy) and a boss phase whose death brings the next score nothing. An
+loot rules, boss rewards and trophies, Gilded's purse, a corpse's loot); the boss cache's meads are the one exception
+(`BossCache`, made by the boss's owner). A death on its owner sends its souls to the core's owner (`ArenaSouls`, an
+RPC): a copy (Phantom, Echo, decoy), a boss phase whose death brings the next, and a creature the river under the
+arena drowned (a drowning hit, or dead below its surface 8 m under the floor) are worth no souls, though the last is gone
+from its wave. An
 arena boss counts for neither `harder each kill` nor the boss hints.
 
 **Portals.** While an archway has creatures to send, the core's ZDO (`ecr_arena_portals`, a bit per archway) says so,
@@ -630,7 +709,8 @@ and every client opens a portal there (`ArenaPortals` on the core's object, swit
 `ArenaPortal` per archway): the workshop's `ecr_helhall_portal` (bundle `ecr_helhall_portalfx`, both platforms, embedded
 by the csproj's `ecr_helhall_*` line) as a local copy through LocalEffects on the walls' `portal_N` point, facing the
 hall, with a point light #80ebe0 intensity 1.8, range 7, no shadows, 0.8 m in front, faded in over 0.5 s and out over
-1.5 s. A second after the bit clears (the last creature out) the loop's emission stops (it fades by itself, destroyed
+1.5 s, drawn up to 140 m from the camera (the game's light LOD, 40 by default). A second after the bit clears (the last
+creature out) the loop's emission stops (it fades by itself, destroyed
 after 3 s) and the one-shot `ecr_helhall_portal_close` plays. The effect is one line in `ArenaPortalLook.cs`.
 
 **Death.** A player who dies inside the built hall loses no skill levels: a `Player.OnDeath` prefix on the dying
@@ -641,15 +721,16 @@ After the respawn (`Player.OnSpawned` postfix): "Hel spares your skills." The to
 
 **Rewards** (`Arena/Rewards/`, `features/arena.md` section 3, "Rewards"). As the trial ends, the core's owner plans one
 reward from its ZDO (`RewardPlan`: the waves cleared `ecr_arena_swept`, the boss waves beaten `ecr_arena_bosses`, a bit
-per boss wave whose boss fell, the score) and sends it to every player of the trial, dead or alive, one routed RPC
+per boss wave whose boss fell), adds each player's own coins, and sends it to every player of the trial, dead or alive,
+one routed RPC
 `ecr_arena_reward` each (`RewardSend`; a player offline then gets nothing). Numbers in `RewardTable.cs`:
 
 | Reward | How much |
 | --- | --- |
-| Idols | per boss wave beaten, the k-th boss's `Upgrader<min(k-1,7)>` `Weapon` (k odd) or `Armor` (k even): Eikthyr Wooden Battle, the Elder Bronze Protection ... Kall Bloodgold, then Bloodgold again |
-| Coins | score / 10 (`Coins`) |
-| Skill XP | each skill's raises in the hall during the trial again, x (waves cleared / 20), at most x2 |
-| Runes (EliteCrafting) | per regular wave cleared 1, 2, 2, 2, 2, 2, 3, 3 by biome; per boss wave beaten 5, 3, 4, 4, 5, 6, 7, 7; drawn by EliteCrafting's default `drops.runes` weights at the wave's tier, chisel left out |
+| Idols | per boss wave beaten, `Upgrader<biome tier - 1>` of that boss's biome (Meadows Wooden ... Deep North Bloodgold, then Bloodgold again), `Weapon` for the trial's odd bosses, `Armor` for the even |
+| Coins | the player's unspent souls / 2 (`Coins`; `RewardPlan.CoinsFor`) |
+| Skill XP | each skill's raises in the hall during the trial again, x (waves cleared / 10), at most x2 |
+| Runes (EliteCrafting) | per regular wave cleared 1, 2, 2, 2, 2, 2, 3, 3 by the wave's biome; per boss wave beaten 5, 3, 4, 4, 5, 6, 7, 7; drawn by EliteCrafting's default `drops.runes` weights at the wave's tier, chisel left out |
 | Essence (EliteCrafting) | per regular wave cleared 2, 4, 6, 8, 10, 12, 14, 16; per boss wave beaten 20, 30, 40, 50, 60, 70, 80, 90 |
 
 EliteCrafting is detected by ValheimModLibs' EliteCraftingLink (`CraftingLink.Present`: its plugin `com.EliteCrafting` in
@@ -667,8 +748,11 @@ four seconds after the end message (`RewardText`).
 **Messages and HUD.** Start, boss, cleared and end go by routed RPC to the trial's players only, as a word key and up
 to three words (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
 `ecr_arena_cleared` "Wave $1 cleared. The next comes in $2 seconds.", `ecr_arena_ended` "Hel's Trial ends at wave $1:
-$2 kills, score $3.", `ecr_arena_line` "Hel's Trial - wave $1 - $2 left - $3", `ecr_arena_break_line` "Hel's Trial -
-wave $1 cleared - next wave in $2 - $3", `ecr_arena_countdown` "Hel's Trial - the first wave in $1", `ecr_arena_spared`
+$2 kills, $3 souls.", `ecr_arena_line` "Hel's Trial - $1, wave $2 - $3 left - $4 souls" ($1 the wave's biome, the
+game's `$biome_*` word), `ecr_arena_break_line` "Hel's Trial - $1, wave $2 cleared - next wave in $3 - $4 souls", the anvil's `ecr_arena_anvil`, `_anvil_repair`, `_anvil_poor`,
+`_anvil_cold`, `_anvil_done`, `_anvil_nothing`, `ecr_arena_call_hint` "Call the next wave", `ecr_arena_called` "$1 calls
+the next wave!", `ecr_arena_boss_waits` "Hel waits until $1 falls.", `ecr_arena_wave_done` "Wave $1 cleared.",
+`ecr_arena_countdown` "Hel's Trial - $1 - the first wave in $2", `ecr_arena_spared`
 "Hel spares your skills.", `ecr_arena_name` "Hel's Trial"). The line is the game's event bar for a living player in the
 hall, drawn from the core's ZDO by the raids' one `Hud.UpdateEvent` hook, which asks the trial first.
 
@@ -682,8 +766,11 @@ core is not loaded here; it ends the trial as an empty hall does.
 | File (`Arena/Trial/`, `Arena/Travel/`) | Does |
 | --- | --- |
 | `ArenaKeys.cs`, `ArenaTable.cs`, `ArenaPhase.cs` | Keys and RPC names; every fixed number and the sums from them; Idle, Countdown, Fighting, Break |
+| `ArenaPower.cs` | The first biome from the strongest gear in the arena (`Raids/Heat/GearTier.Full`, 0-7) |
 | `ArenaState.cs` | The trial in the core's ZDO (as `RaidState`) |
 | `ArenaCore.cs`, `ArenaCorePrefab.cs`, `ArenaCoreKeeper.cs` | The core (RPCs, the owner's step, `Current`); its prefab and `ZNetScene.Awake` prefix; the server keeping exactly one (`ZoneSystem.Start` postfix) |
+| `ArenaOrphanWatch.cs`, `ArenaLegacy.cs`, `ArenaZdos.cs` | The server ending a trial nobody is at; removing an older world's arena at (0, 5000, 0); removing ZDOs round a point |
+| `ArenaCalls.cs`, `ArenaClears.cs` | Calling the next wave (the client's ask, the owner's checks); which waves fighting are cleared, the break after the last |
 | `ArenaStart.cs`, `ArenaRun.cs`, `ArenaWaves.cs`, `ArenaEnd.cs` | Hel wakes; one step (presence, ends, countdown and breaks, a wave and its clear); a wave planned, a wave over (cleared or swept) and the break; the end |
 | `ArenaQueue.cs`, `TrialPlayers.cs`, `HallPlayers.cs` | The creatures to come by archway and the trial's players in the ZDO (decoded once per write); the living players in the hall |
 | `ArenaCreatures.cs`, `ArenaSpawnLists.cs`, `ArenaFallback.cs`, `ArenaBosses.cs` | Biome lists and weights; homes from the spawn lists; the fixed lists; the bosses and Kall's next phase |
@@ -693,7 +780,9 @@ core is not loaded here; it ends the trial as an empty hall does.
 | `Arena/Rewards/RewardTable.cs`, `RewardList.cs`, `RewardPlan.cs`, `RewardRunes.cs`, `RewardSend.cs` | The numbers; the reward as a package; planning it on the core's owner; EliteCrafting's runes and essence; sending it |
 | `Arena/Rewards/RewardGrant.cs`, `RewardText.cs`, `SkillLedger.cs`, `SkillBonus.cs` | On the player's machine: adding it, its message, the XP recorded in the trial (`Skills.RaiseSkill` prefix), the XP bonus |
 | `ArenaFighter.cs`, `ArenaFighters.cs`, `ArenaOrders.cs`, `ArenaAttachPatch.cs` | The hall's hold on a creature; the list the owner counts; adopt, release, vanish, keep hunting; the `MonsterAI.Start` postfix |
-| `ArenaScore.cs`, `ArenaLoot.cs` | The score at death (`Character.OnDeath` prefix `ArenaDeathPatch`); the emptied drop list |
+| `ArenaSouls.cs`, `SoulWallets.cs`, `ArenaLoot.cs` | A kill's souls at death (`Character.OnDeath` prefix `ArenaDeathPatch`); each player's wallet; the emptied drop list |
+| `ArenaReady.cs`, `ArenaReadyKey.cs` | The ready set on the core's owner and the go; F on clients (on the core's object) |
+| `HelAnvil.cs`, `AnvilText.cs`, `AnvilUse.cs`, `AnvilOwner.cs`, `BossCache.cs` | The anvil component the hall adds (Hoverable, Interactable); its hover; the player's ask and mend; the owner's check and charge; the boss's meads |
 | `ArenaNet.cs`, `ArenaWords.cs`, `ArenaHudLine.cs` | Messages and the stop relay (`ZoneSystem.Start` postfix); the words (`Localization.SetupLanguage` postfix); the HUD line |
 | `Arena/Travel/ArenaTravel.cs`, `Commands/ArenaCommand.cs` | In and out; `elite arena [stop]` |
 
@@ -711,7 +800,10 @@ line, the messages, the travel's no-loading jump in and the return; and from 202
 the 3-minute sweep, large creatures (Troll, Lox, Morgen, Gjall) made in a 1.4 m deep recess, the portals' look, light
 and timing against the creatures, and an arena death keeping every skill level (GrindstoneSkills' too); the rewards
 (the idols' names in the message, the items given or dropped, the reward at the respawn, the XP bonus's size with
-GrindstoneSkills' rates, EliteCrafting's runes and essence present and absent).
+GrindstoneSkills' rates, EliteCrafting's runes and essence present and absent); the first biome read from gear (a
+player's tier is published by their own machine every few seconds), five waves a biome and the biome on the event bar;
+calling the next wave (two or more waves at once, their clears and the break after the last, Kall's phases during a
+call) and the elites per wave.
 
 ## Arena: Helgrind
 
@@ -748,6 +840,81 @@ Outside `Arena/Gate/`: `Arena/Hall/HallBuilder.cs` calls `GateWayOut.Build` in `
 
 Not seen yet: the gate's look and stone, its glow, the swirl's size and direction in the opening and on the passage's
 back wall, the trigger boxes, the jump in and the return to the gate, the closed and no-teleport messages.
+
+## Hel's creatures: the Bat-fiend
+
+Put in 2026-10-13 for the user to test; unreleased (no changelog or README line), not seen in game. One of Hel's
+creatures, meant for Hel's Arena but in no arena wave, raid or spawn list: it comes only from the console
+(`devcommands`, then `spawn ECR_BatFiend` or `elite spawn ECR_BatFiend 2 Mad`). Prefab `ECR_BatFiend`, "Bat-fiend": a
+copy of the game's `Wolf` (its character, senses, hit and footstep effects, AI) wearing the workshop's v004 Bat-fiend
+(ValheimAssets `Assets/Creatures/HelsCreatures/BatFiend`: its own 39-bone rig, 5,892 triangles, twelve clips with no
+root motion). Code in `Creatures/BatFiend/` (namespace `EliteCreaturesReborn.Creatures.BatFiend`), wired by one line
+in `Plugin.Awake` (`BatFiendPrefabs.Install`) and one embed line in the csproj.
+
+| Bundle (both platforms, `assets/bundles`) | What | Bytes (Windows + Linux) |
+| --- | --- | --- |
+| `ecr_batfiend` | prefab `ecr_batfiend`: the model root with its Animator (controller `ecr_batfiend_animator`, Generic, the imported clips: `Movement` a 2D blend on `turn_speed`/`forward_speed` with idle, walk at 1.68, run at 6.6 m/s, turns at -/+90 deg/s; `RakingPounce`, `BloodlettingBite`, `WingGuillotine`, `GravewindBlast`, `ShatteringScreech` tagged `attack` on triggers of their names, `OnAttackTrigger` at 0.533, 0.433, 0.467, 0.567, 0.70 s; `Stagger` tagged `stagger`; `Death` on `dead`; a footstep curve on the walk and run), the armature node `Visual` and its bones, the body on the placeholder `ecr_batfiend_skin` | 760,535 + 898,283 |
+
+Built by the asset's `Tools/v004/build_bundle_v004.ps1` (Unity script `HCBatFiendBundleV004.cs` beside it) into its
+`out/bundles/ecr_batfiend`; `-Project <folder>` builds in a small Unity project of its own while the workshop's
+`Tools\Unity` is open in the editor (as it was on 2026-10-13). The blend tree's walk and run sit at the clips' 1.4 and
+5.5 m/s times the creature's scale (`GameScale` there, `BatFiendNumbers.Scale` here): change both together.
+
+**Numbers** (`BatFiendNumbers.cs`, untuned): root scale 1.2 (head 1.14 m up, wing tips 2.9 m, 2.6 m long: bigger than a
+wolf, much smaller than a troll); 800 health (the Asksvin's; the Charred warrior 600); faction Undead (Hel's dead:
+friends with the Demon faction, foes of the living); no armour or resistance, only weak to spirit (the user, 2026-10-13: "0 armor"); walk 1.68, run 6.6 m/s
+(the clips' own speeds at 1.2, so the feet stay planted), turn 90 deg/s (160 on the run); view 30 m, alert 14 m, an
+attack every 2.2 s at most (the user: a second more); never flees, no fire fear, eats nothing, untameable, paths as `HorseSize`; capsule 0.5 x
+1.3 m and a 1.15 x 1.0 x 2.2 m hit box over the trunk without wings or ears (model scale, measured), four times the Wolf's mass. Drops `BatWing` 2-3 and
+half the time `Bloodbag` 1-2 (placeholder loot). Its voice is the game Bat's alert, idle, hurt, death and attack sounds
+at half pitch (`SfxPrefabs.Variant`, `ECR_BatFiend_sfx_<key>`); the screech's scream is three layers at full
+volume played at its hit: the bat's alert, a deeper copy and the game Wraith's alert at 0.8 pitch (`scream_low`,
+`scream_wraith`).
+
+| Attack (item `ECR_BatFiend_<key>`) | Clip, hit | AI range, angle, every | Hit (game melee sweep from its root) | Damage |
+| --- | --- | --- | --- | --- |
+| `pounce` | RakingPounce, 0.533 s | 2.4-4 m, 20 deg, 7 s | from the `Chest` bone: 1.7 m, 100 deg, 0.2 m below it, after a 2.88 m leap (0.37-0.60 s) | slash 55, pierce 25, push 30, stagger x1.5 |
+| `bite` | BloodlettingBite, 0.433 s | 2.6 m, 15 deg, 3 s | from the `Head` bone: 1.1 m, 30 deg, 0.25 m below it, after a 1.44 m lunge (0.22-0.47 s) | pierce 50, slash 15, push 10; heals it 20 a hit |
+| `wing` | WingGuillotine, 0.467 s | 2.4 m, 15 deg, 6 s | 2.4 m, 100 deg turned 35 deg left (`BatFiendAim`), 1.55 m up | slash 80, push 30 |
+| `gravewind` | GravewindBlast, 0.567 s | 2-5.5 m, 10 deg, 12 s | 6 m, 30 deg, 0.5 m wide (a gust) | blunt 55, push 60; 5 s of the game's Frost (`BatFiendChill`), no frost damage |
+| `screech` | ShatteringScreech, 0.70 s | 7.5 m, 8 deg, 16 s | 8 m, 20 deg, 0.5 m wide, unblockable; deafens 7 s (`BatFiendScreech`) | blunt 25, stagger x6, no push |
+
+The hit fans match the body at the hit: each striking part's reach, sweep and height, measured on the model over the
+frames round the hit (`out/v003/reach`, `out/v004/reach_bite_v004.json` in the asset) times 1.2. The pounce and the
+bite are cast from a bone (`m_attackOriginJoint`), so the fan travels with the leap or lunge and starts at the chest or
+head (the user, 2026-10-13: from the root it sat in the middle of the body and fell short of the teeth); they reach
+0.5 m past the claws or teeth, since the two bodies meet before the teeth cross into the target. The
+game sweeps a fan from the root centred on forward, its spheres' far edge at the range; the wing's left-side sweep is
+turned by a postfix on `Attack.GetMeleeAttackDir` (owner side, by item name). The pounce's leap and the bite's lunge
+are the clips' travel curves (`BatFiendNumbers.PounceTravel`, `BiteTravel`) carried by `BatFiendLeap` through
+`Character.AddRootMotion` on the owner. The screech's item carries the status effect `ecr_batfiend_screech` (in every
+ObjectDB), which the game adds on the hit player's own machine; 0.45 s later, so the scream is heard, it deafens them
+for 7 s with the Shriek mutation's `ShriekDeafness` (near-silence under a ringing, "Ringing ears", no spells). The
+gravewind's item carries `ecr_batfiend_chill` instead of frost damage (whose freeze is a share of the victim's health):
+on the victim's owner it puts the game's `SE_Frost` on for 5 s, times the frost modifier's share (resistant half,
+immune none), never shortening a longer one. `BatFiendStatuses` puts both effects in every ObjectDB.
+
+| File (`Creatures/BatFiend/`) | Does |
+| --- | --- |
+| `BatFiendPrefabs.cs` | `Install(harmony)`: `NetPrefabs.OnSceneAwake`, guarded (`SafeCall`); builds once from the game's `Wolf` and `Bat`, then registers the creature, corpse and voices on every scene wake, every peer; the attacks into every ObjectDB (`ItemPrefabs`) |
+| `BatFiendModel.cs` | The embedded bundle; the model copied to an inactive template, animator checked (root motion off, always animated), `ecr_batfiend_skin` dressed in the Wolf's body material (`GameMaterials.Dress` + `Plain`), on the Wolf's Visual layer |
+| `BatFiendBody.cs` | The Wolf's `Visual` replaced: the model as `Visual` with `CharacterAnimEvent` (no foot IK, no head turn) and a `LevelEffects` with the Wolf's star looks, `EyePos` on `Head`, `FootStep` on `Foot.L/R` and `Hand.L/R`, the equipment joints on `Chest`, the capsule and `body_shell` box, the mass |
+| `BatFiendCreature.cs` | The Wolf copy at scale 1.2: arms, body (name, health, speeds, Undead, modifiers), mind, untamed, the locomotion floats synced (`ZSyncAnimation`), loot, voice, death (the Wolf's corpse out, ours in), `BatFiendLeap` |
+| `BatFiendAttacks.cs`, `BatFiendAim.cs`, `BatFiendLeap.cs`, `BatFiendScreech.cs`, `BatFiendChill.cs`, `BatFiendStatuses.cs` | The five attack items (the table above); the wing's turned fan; the pounce's and bite's travel; the screech's deafness; the gravewind's 5 s frost; both effects in every ObjectDB |
+| `BatFiendEffects.cs`, `BatFiendFx.cs`, `BatFiendFxParts.cs` | Cosmetic attack effects on every client from its own Animator state and clip time (no network): local copies of game effects (`LocalEffects`, ECR's effect density), tinted to Hel's palette and fitted to the hit shapes: dust on the pounce and the bite's push-off and landing, a blood wisp when the bite heals (health read from the ZDO), Morgen's swipe as a 100 deg frost arc for the wing, Moder's cold breath cut to one 6 m, 30 deg gust, Fader's roar ripple and three Eikthyr shockwave fronts along the screech's 8 m beam; off on a dedicated server, beyond 60 m |
+| `BatFiendCorpse.cs` | `ECR_BatFiend_corpse`: unsaved network object at scale 1.2, a model copy holding the death clip (`BatFiendCorpsePose`), the game's `Ragdoll` (no physics bodies) that takes the loot and tint and, after the 2.2 s fall and the Wolf corpse's wait, plays its removal puff and drops the loot |
+| `BatFiendVoice.cs`, `BatFiendLoot.cs`, `BatFiendWords.cs`, `BatFiendNumbers.cs` | The voices, the drops, the words (`enemy_ecr_batfiend`, `item_ecr_batfiend_<key>`), every number |
+
+Multiplayer: every peer (the Linux bundle on a dedicated server) builds and registers the same prefabs, so its ZDOs
+load everywhere; its owner runs the game's AI, the attacks and hits (the game routes damage to each victim) and the
+pounce's and bite's travel (synced by the game's transform sync); the clips play on every peer from `ZSyncAnimation` (attack and
+stagger triggers, the three locomotion floats); the corpse is networked and never saved. Patches: `Localization.SetupLanguage`
+postfix (`BatFiendWords`); from the libraries `ZNetScene.Awake` (NetPrefabs) and `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`
+(ItemPrefabs) postfixes. The offline patch check passes.
+
+Not seen in game yet: all of it. The look in the Wolf's creature shader (gloss, star tint), the size, the blend of
+walk, run and turns and whether the feet hold, the footsteps, each attack's reach, angle and timing against the clips,
+the pounce's leap, the voice, the corpse and its loot, ECR's stars and mutations on it, a dedicated server.
 
 ## Console commands
 

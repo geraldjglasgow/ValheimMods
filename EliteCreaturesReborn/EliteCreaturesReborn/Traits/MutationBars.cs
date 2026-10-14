@@ -5,7 +5,8 @@ namespace EliteCreaturesReborn.Traits
     /// <summary>
     /// The mutations a creature never takes, whatever the rule file says, packed like a trait mask: what its body rules
     /// out (<see cref="BodySize.Barred"/>) and what its kind does, by prefab name. A Deathsquito is never Cloaked: an
-    /// invisible needle out of nowhere is no fight. A kind's bars also come off a creature rolled before them as it
+    /// invisible needle out of nowhere is no fight. A kind that releases creatures as it dies (the Oozer) is never
+    /// Splintering (<see cref="DeathBrood"/>). A kind's bars also come off a creature rolled before them as it
     /// loads, the same on every machine, so no saved world keeps one.
     /// </summary>
     public static class MutationBars
@@ -20,6 +21,7 @@ namespace EliteCreaturesReborn.Traits
             BodySize.Barred(creature) | OfKind(Utils.GetPrefabName(creature.gameObject));
 
         /// <summary>What a kind never carries, by prefab name; 0 for most.</summary>
-        public static int OfKind(string prefab) => KindBars.TryGetValue(prefab, out int bars) ? bars : 0;
+        public static int OfKind(string prefab) =>
+            (KindBars.TryGetValue(prefab, out int bars) ? bars : 0) | DeathBrood.BarsOf(prefab);
     }
 }

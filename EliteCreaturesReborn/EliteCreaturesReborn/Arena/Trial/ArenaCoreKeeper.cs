@@ -10,10 +10,13 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// <summary>
     /// Keeps exactly one arena core in the world (features/arena.md section 4: "placed by the server when the world has
     /// none"). It lives on the world's ZoneSystem object, so it comes and goes with the world, and does anything only on
-    /// the server, which holds every ZDO of the world: every few seconds while Arena is on, it looks for the core it
-    /// knows (one ZDO lookup); not finding it, it searches the one zone at the world's centre for core ZDOs, places a new
-    /// core at the hall's origin when there is none, and removes any extra a race could have left. The core is
-    /// persistent, so it is found again after every restart and never placed twice.
+    /// the server, which holds every ZDO of the world: every few seconds it looks for the core it knows (one ZDO lookup);
+    /// not finding it, it searches the one zone at the arena's origin for core ZDOs, places a new core there when there
+    /// is none and Arena is on (the server makes its ZDO without the zone being loaded: the object it instantiates is
+    /// dropped again at once, the persistent ZDO stays), and removes any extra a race could have left. The core is
+    /// persistent, so it is found again after every restart and never placed twice. The same check removes an older
+    /// world's arena once (<see cref="ArenaLegacy"/>) and ends a trial nobody is at any more
+    /// (<see cref="ArenaOrphanWatch"/>). The core is owned, as any object, by a player at the arena.
     /// </summary>
     internal sealed class ArenaCoreKeeper : MonoBehaviour
     {
@@ -59,7 +62,17 @@ namespace EliteCreaturesReborn.Arena.Trial
         private void Check()
         {
             ZNet net = ZNet.instance;
-            if (net != null && net.IsServer() && Config.ArenaSettings.Enabled && KnownCore() == null)
+            if (net == null || !net.IsServer() || ZDOMan.instance == null)
+            {
+                return;
+            }
+            ArenaLegacy.SweepOnce(); // an older world's core and creatures over the world's centre
+            ZDO? core = KnownCore();
+            if (core != null)
+            {
+                ArenaOrphanWatch.Check(core, Time.time);
+            }
+            else if (Config.ArenaSettings.Enabled)
             {
                 _known = Place();
             }

@@ -66,7 +66,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             ArenaSpots.Spot spot = boss ? ArenaSpots.RuneCircle() : ArenaSpots.Archway(lane);
             try
             {
-                Make(prefab, spot, state.TrialId, wave, boss);
+                Make(prefab, spot, state, wave, boss);
             }
             catch (Exception e)
             {
@@ -89,7 +89,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             return prefab;
         }
 
-        private static void Make(GameObject prefab, ArenaSpots.Spot spot, long trial, int wave, bool boss)
+        private static void Make(GameObject prefab, ArenaSpots.Spot spot, ArenaState state, int wave, bool boss)
         {
             GameObject made = Object.Instantiate(prefab, spot.Position, spot.Facing);
             Character? body = made.GetComponent<Character>();
@@ -102,8 +102,8 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
             try
             {
-                ArenaTag.Write(zdo, trial, boss, ArenaTable.BiomeNumber(wave), wave);
-                ArenaRoll.Roll(body, wave);
+                ArenaTag.Write(zdo, state.TrialId, boss, state.TierOf(wave), wave);
+                ArenaRoll.Roll(body, state.StartBiome, wave);
                 ArenaHunt.Begin(body);
                 made.AddComponent<ArenaFighter>();
             }

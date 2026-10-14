@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using EliteCreaturesReborn.Patches;
 using HarmonyLib;
 using PatchGuard;
+using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Trial
 {
@@ -30,6 +31,34 @@ namespace EliteCreaturesReborn.Arena.Trial
             bus.Register<string, string, string, string>(ArenaKeys.MessageRpc, OnMessage);
             bus.Register(ArenaKeys.StopFindRpc, OnStopFind);
             bus.Register<ZPackage>(ArenaKeys.RewardRpc, Rewards.RewardSend.OnReward);
+            bus.Register<bool, int>(ArenaKeys.RepairedRpc, AnvilUse.OnAnswer);
+            bus.Register<Vector3, float>(ArenaKeys.FlareRpc, OnFlare);
+        }
+
+        /// <summary>Every player of the trial sees a burst of cold soul-fire at <paramref name="at"/> (a boss cache, a
+        /// repair at Hel's Anvil). Any machine holding the core.</summary>
+        public static void Flare(ZDO core, Vector3 at, float size)
+        {
+            EnsureRegistered();
+            if (ZRoutedRpc.instance == null)
+            {
+                return;
+            }
+            List<long> players = TrialPlayers.All(core);
+            for (int i = 0; i < players.Count; i++)
+            {
+                ZRoutedRpc.instance.InvokeRoutedRPC(players[i], ArenaKeys.FlareRpc, at, size);
+            }
+        }
+
+        /// <summary>One player reads the message under <paramref name="key"/>.</summary>
+        public static void TellOne(long peer, string key, string first = "", string second = "", string third = "")
+        {
+            EnsureRegistered();
+            if (ZRoutedRpc.instance != null)
+            {
+                ZRoutedRpc.instance.InvokeRoutedRPC(peer, ArenaKeys.MessageRpc, key, first, second, third);
+            }
         }
 
         /// <summary>Core's owner: every player of the trial reads the message under <paramref name="key"/>.</summary>
@@ -70,6 +99,9 @@ namespace EliteCreaturesReborn.Arena.Trial
                 ZRoutedRpc.instance.InvokeRoutedRPC(core.GetOwner(), core.m_uid, ArenaKeys.StopRpc);
             }
         }
+
+        private static void OnFlare(long sender, Vector3 at, float size) =>
+            Guard.Run("ArenaNet.OnFlare", () => ArenaPortalLook.Flare(at, size));
 
         private static void OnMessage(long sender, string key, string first, string second, string third) =>
             Guard.Run("ArenaNet.OnMessage", () => ArenaWords.Show(key, first, second, third));

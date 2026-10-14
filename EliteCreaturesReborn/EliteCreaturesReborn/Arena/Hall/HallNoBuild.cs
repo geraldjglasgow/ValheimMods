@@ -4,16 +4,16 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Arena.Hall
 {
     /// <summary>
-    /// No building in the hall (features/arena.md section 1): while the hall stands, a piece whose ghost is within 40 m
-    /// (across) of the hall's origin and above 4,900 m is refused as the game refuses a piece in a no-build location: the
-    /// ghost turns red and placing it shows the game's own centre message (<c>$msg_nobuildzone</c>). The hoe's and the
+    /// No building in the arena (features/arena.md section 1): while the arena stands, a piece whose ghost is within 75 m
+    /// (across: the wall's outer face and gatehouse, about 71 m) of the arena's origin and above 4,900 m is refused as
+    /// the game refuses a piece in a no-build location: the ghost turns red and placing it shows the game's own centre message (<c>$msg_nobuildzone</c>). The hoe's and the
     /// cultivator's ground work are pieces too. A postfix on the placement ghost's update, which runs every frame in
-    /// build mode: it ends at a flag test while no hall stands, and costs a few comparisons while one does.
+    /// build mode: it ends at a flag test while no arena stands, and costs a few comparisons while one does.
     /// </summary>
     [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
     internal static class HallNoBuild
     {
-        private const float Radius = 40f;
+        private const float Radius = 75f;
         private const float Above = 4900f;
 
         [HarmonyPostfix]

@@ -33,6 +33,9 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         private const float Range = 7f;
 
+        /// <summary>Metres from the camera within which a portal's light shines (the game's light LOD; 40 by default).</summary>
+        private const float SeenFrom = 140f;
+
         /// <summary>The light's place from the anchor: inside the recess.</summary>
         private static readonly Vector3 LightAt = new Vector3(0f, 0f, 0.8f);
 
@@ -67,6 +70,16 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The closing one-shot at the anchor; it removes itself.</summary>
         public static void Closing(Transform anchor) => Facing(Attach(Prepared() ? _close : null, anchor, false), anchor);
 
+        /// <summary>A burst of cold soul-fire at a point, on this machine only: the closing one-shot, at
+        /// <paramref name="size"/> times its archway size (a boss cache, a repair at Hel's Anvil).</summary>
+        public static void Flare(Vector3 at, float size)
+        {
+            if (Prepared() && _close != null)
+            {
+                LocalEffect.FlashScaled(_close, at, 1f, size * Current.Scale);
+            }
+        }
+
         /// <summary>The portal's light under the anchor, dark until the portal opens.</summary>
         public static Light Light(Transform anchor)
         {
@@ -79,7 +92,8 @@ namespace EliteCreaturesReborn.Arena.Trial
             light.intensity = 0f;
             light.range = Range;
             light.shadows = LightShadows.None; // four may burn at once: the hall's braziers cast the shadows
-            glow.AddComponent<LightLod>(); // the game's light limit and distance fade; it reads the range above
+            LightLod lod = glow.AddComponent<LightLod>(); // the game's light limit and distance fade; it reads the range above
+            lod.m_lightDistance = SeenFrom; // the arena is 130 m across: a portal across it still glows
             return light;
         }
 

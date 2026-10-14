@@ -6,11 +6,11 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// <summary>
     /// One step of the trial on the core's owner, four times a second (features/arena.md section 3), as
     /// <see cref="Raids.RaidPhases"/> steps a raid: first who is in the hall (they join the trial), then the ends that can
-    /// come at any time, then the clock. The countdown and each break wait for their moment and then the next wave
-    /// begins (<see cref="ArenaWaves"/>). In a wave, each archway sends its next creature at its own pace while fewer
-    /// than 20 live (<see cref="ArenaSpawn"/>), the creatures left and the open portals are written for every client, and
-    /// the wave ends once nothing of it is alive or still to come (held for a moment, for a boss's next phase or a
-    /// Splintering creature's copies), or when its three minutes are up. Everything read and written is in the core's
+    /// come at any time, then the clock. The countdown and each break wait for their moment, or until every player alive
+    /// in the arena has pressed F (<see cref="ArenaReady"/>), and then the next wave begins (<see cref="ArenaWaves"/>). In a wave, each archway sends its next creature at its own pace while fewer
+    /// than 24 live (<see cref="ArenaSpawn"/>), the creatures left and the open portals are written for every client, and
+    /// each wave fighting ends once nothing of it is alive or still to come (<see cref="ArenaClears"/>), or all of them
+    /// when the five minutes of the latest are up. Everything read and written is in the core's
     /// ZDO, so a machine that has just taken the core over picks up where the last one stopped.
     /// </summary>
     internal static class ArenaRun
@@ -32,21 +32,30 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 Fight(core, state, now);
             }
-            else if (now >= state.Next)
+            else if (now >= state.Next || ArenaReady.GoIfAll(core, inHall))
             {
                 ArenaWaves.Begin(core, state.Wave + 1, inHall.Count, now); // the countdown or the break is over
             }
         }
 
-        // Arena turned off (or the hall gone from this machine) stops the trial; an empty hall ends it.
+        // Arena turned off stops the trial and an empty arena ends it. With the hall not built here (this machine's player
+        // has just left it) nothing is done: the core passes to a player who is there, or the server ends the trial.
         private static bool EndsNow(ArenaCore core, ArenaState state, long now)
         {
-            bool off = !Config.ArenaSettings.Enabled || !ArenaHall.Built;
-            if (!off && !Deserted(state, now))
+            if (!Config.ArenaSettings.Enabled)
+            {
+                ArenaEnd.End(core, stopped: true);
+                return true;
+            }
+            if (!ArenaHall.Built)
+            {
+                return true;
+            }
+            if (!Deserted(state, now))
             {
                 return false;
             }
-            ArenaEnd.End(core, stopped: off);
+            ArenaEnd.End(core, stopped: false);
             return true;
         }
 
@@ -58,6 +67,7 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return;
             }
             TrialPlayers.Join(core.Zdo!, inHall);
+            SoulWallets.Join(core.Zdo!, inHall, state.Souls);
             if (now - state.SeenAt >= ArenaState.Ms(ArenaTable.SeenStampSeconds))
             {
                 state.SeenAt = now;
@@ -83,14 +93,10 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
             state.Left = alive + queue.Count;
             state.Portals = queue.LaneMask();
-            if (state.Left > 0)
+            ArenaClears.Step(core, state, queue); // each wave fighting cleared by its own creatures; the break after the last
+            if (state.Phase == ArenaPhase.Fighting && now >= state.Next)
             {
-                core.BusyAt = Time.time;
-            }
-            bool cleared = state.Left == 0 && Time.time - core.BusyAt >= ArenaTable.ClearedSeconds;
-            if (cleared || now >= state.Next)
-            {
-                ArenaWaves.Rest(core, now, swept: !cleared);
+                ArenaWaves.Rest(core, now, swept: true, state.Wave);
             }
         }
     }

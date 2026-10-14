@@ -28,6 +28,7 @@ namespace EliteCreaturesReborn.Patches
             Guard.Run("CharacterDrop.GenerateDropList", static (drop, result) => Rework(drop, result), __instance, __result);
             RaidLoot.Apply(__instance, __result); // a raider's drops, last: times its raid's multiplier, or none after a stop
             ArenaLoot.Apply(__instance, __result); // and an arena creature's: none at all, until rewards are designed
+            ArenaGuardians.Drops(__instance, __result); // and a hall guardian's two runes
             HordeLoot.Apply(__instance, __result); // and a horde creature's: 1 / the spawn multiplier of its own loot
         }
 

@@ -4,10 +4,10 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Arena.Hall
 {
     /// <summary>
-    /// The built hall's named children by name, gathered once as the hall is built and emptied as it is removed: the
-    /// points the workshop put in the pieces (spawn_0..3, portal_0..3, arrive, gate_inside, flame_0..7 in the walls;
-    /// seat_root, seat, spear_rest, spear_top, boss_stand, fire_0..1 in the throne; light_oculus in the ceiling), and
-    /// every other part of the four pieces (door_left, glow_rune_00, ...), so nothing is ever retyped from the briefs.
+    /// The built arena's named children by name, gathered once as the arena is built and emptied as it is removed: the
+    /// points the workshop put in the pieces (spawn_0..7, portal_0..7, arrive, gate_inside, flame_0..15 in the walls;
+    /// seat_root, seat, spear_rest, spear_top, boss_stand, fire_0..1 in the throne), and every other part of the floor,
+    /// walls and throne (door_left, glow_rune_00, ...), so nothing is ever retyped from the briefs.
     /// The first of a name wins. <see cref="ArenaHall.TryPoint"/> is the public face; the builder reads it before the
     /// hall is marked built.
     /// </summary>

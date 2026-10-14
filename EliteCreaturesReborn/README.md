@@ -3,7 +3,7 @@
 Creatures spawn with more stars and mutations, traits that change how a fight goes; bosses take an aspect instead.
 
 ## Features
-- Difficulty: Easy to Extreme; new biomes start gentle, cleared ones keep hardening.
+- Difficulty: Easy to Extreme; new biomes start gentle, cleared ones harden.
 - Stars: up to eight on Extreme, or off for another mod's.
 - World tiers: each first boss defeat raises stars and mutations.
 - Mutations: one per creature, named on the nameplate (below).
@@ -11,14 +11,14 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Breeding: tamed young inherit mutations and stars.
 - Loot: four drop modes, rules per creature; bosses pay every player.
 - Boss damage board: who did how much.
-- Boss hints: bosses point to the traders and the ancient forge.
+- Boss hints: bosses point to traders and the forge.
 - Compendium: in-game pages on difficulty, stars, mutations and aspects.
 - Death recap: `F10` replays the seconds before each death.
 - Respawning: cleared camps, dungeons and chests can refill (off by default).
 - Horde (off by default): more creatures in the wild, each weaker.
-- Raids: stake gold in the Raiders Chest to call a raid and win it back with more.
-- Hel's Arena (off by default): through Helgrind, endless waves and a boss every tenth; idols, coins, skill XP and EliteCrafting runes by how far you get. Subject to change without warning: it works and is tested, but its final shape is still being decided.
-- Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
+- Raids: stake gold in the Raiders Chest, call a raid, win back more.
+- Hel's Arena (off by default): an outdoor arena through Helgrind, three Bat-fiends guarding it on the first visit; endless waves from your gear's biome, a boss every fifth, souls to mend gear; idols, coins, skill XP and runes by progress. Subject to change without warning: works and tested, final shape undecided.
+- Works with PackPanel, GrindstoneSkills and Elite Creatures Pack.
 
 ## Mutations
 - Mad: far faster, half health.
@@ -41,10 +41,10 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Corrodent: wears armour down three times as fast.
 - Cloning: leaves a decoy and fights on unseen.
 - Flamebound: leaves burning ground.
-- Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots that hold you.
+- Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots you.
 
 ## Boss aspects
-Shown at the altar; about one fight in five has none, and each pays extra loot.
+Shown at the altar; each pays extra loot.
 - Reflective: part of each hit comes back to you.
 - Shielded: takes less damage from arrows and bolts.
 - Mending: regenerates during the fight.
@@ -60,7 +60,7 @@ Shown at the altar; about one fight in five has none, and each pays extra loot.
 - Colossal: bigger, tougher, with knockdown shockwaves.
 - Brutal: heavy blows throw you 20 m.
 - Nightfall: a stormy night with hunting tornadoes.
-- Echoing: a ghost repeats its moves 15 seconds later.
+- Echoing: a ghost repeats its moves later.
 - Portalbound: the Elder and Bonemass throw through portals.
 - Bountiful: two more aspects, and all their loot.
 
@@ -69,7 +69,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 `EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `creature stars: false`.
 
 ## Configuration
-`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` and `BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's rules bind every player.
+`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` and `BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's bind every player.
 Console: `elite tier`, `damage`, `deaths` for everyone; other `elite` commands for admins. Details:
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 

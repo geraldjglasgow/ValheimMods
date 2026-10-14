@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using EliteCreaturesReborn.Util;
 using PatchGuard;
@@ -8,15 +9,18 @@ namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
     /// The trial's line under the minimap for every living player in the hall while it runs (features/arena.md section 3,
-    /// "Score"): "Hel's Trial - wave 12 - 7 left - 3,420", "Hel's Trial - wave 7 cleared - next wave in 12 - 3,420" in a
-    /// break, or "Hel's Trial - the first wave in 0:07" in the countdown. It is the game's own event bar, drawn the way
-    /// the raids draw theirs (<see cref="Raids.RaidHudLine"/>), from the core's ZDO alone; nothing is sent for it. The one
+    /// "Souls"): "Hel's Trial - Ashlands, wave 12 - 7 left - 342 souls", "Hel's Trial - Ashlands, wave 12 cleared - next
+    /// wave in 14 - 342 souls" in a break (the player's own souls), or "Hel's Trial - Ashlands - the first wave in 0:07"
+    /// in the countdown; in a break
+    /// or the countdown "- F: ready (1/3)" after it, "- (ready) 1/3" once this player has pressed F
+    /// (<see cref="ArenaReady"/>). It is the game's own event bar, drawn the way the raids draw theirs (<see cref="Raids.RaidHudLine"/>), from the core's ZDO alone; nothing is sent for it. The one
     /// hook on <c>Hud.UpdateEvent</c> asks here first, then the raids (<see cref="Raids.RaidHudPatch"/>). The text is
     /// rebuilt only when a number in it changes; a boss's health bar hides it as it hides the game's own line.
     /// </summary>
     internal static class ArenaHudLine
     {
         private static long _shownKey = -1L;
+        private static int _shownReady = -1;
         private static bool _shown;
         private static bool _broken;
 
@@ -55,34 +59,51 @@ namespace EliteCreaturesReborn.Arena.Trial
             ArenaPhase phase = state.Phase;
             int wave = state.Wave;
             int count = phase == ArenaPhase.Fighting ? state.Left : Seconds(state.Next - NetTime.NowMs());
-            long score = state.Score;
-            long key = Key(phase, wave, count, score);
-            if (_shown && key == _shownKey)
+            long souls = SoulWallets.Souls(state.Zdo, ZDOMan.GetSessionID()); // this player's own
+            long key = Key(phase, wave, count, souls);
+            int start = state.StartBiome;
+            int ready = (phase == ArenaPhase.Fighting ? 0 : Ready(state.Zdo)) | (start & 7) << 20;
+            if (_shown && key == _shownKey && ready == _shownReady)
             {
                 return;
             }
             _shown = true;
             _shownKey = key;
-            hud.m_eventName.text = Text(phase, wave, count, score);
+            _shownReady = ready;
+            string biome = ArenaWords.BiomeName(ArenaCreatures.Biome(ArenaTable.BiomeIndex(start, Math.Max(1, wave))));
+            string text = Text(phase, biome, wave, count, souls);
+            hud.m_eventName.text = phase == ArenaPhase.Fighting ? text
+                : text + " - " + ArenaWords.HudReady((ready & 0x10000) != 0, ready & 0xFF, ready >> 8 & 0xFF);
+        }
+
+        // In a rest, who is ready, packed: those ready among the players alive in the arena, how many those are, and
+        // whether this player is one of the ready.
+        private static int Ready(ZDO zdo)
+        {
+            List<long> inHall = HallPlayers.PeersNow();
+            int ready = Mathf.Min(ArenaReady.Count(zdo, inHall), 255);
+            int players = Mathf.Min(inHall.Count, 255);
+            bool mine = ArenaReady.Has(zdo, ZDOMan.GetSessionID());
+            return ready | players << 8 | (mine ? 0x10000 : 0);
         }
 
         // The countdown's clock, a break's seconds to the next wave, or a wave's creatures left.
-        private static string Text(ArenaPhase phase, int wave, int count, long score)
+        private static string Text(ArenaPhase phase, string biome, int wave, int count, long souls)
         {
-            string points = score.ToString("N0", CultureInfo.InvariantCulture);
+            string points = souls.ToString("N0", CultureInfo.InvariantCulture);
             switch (phase)
             {
-                case ArenaPhase.Countdown: return ArenaWords.HudCountdown(Raids.RaidText.Clock(count));
-                case ArenaPhase.Break: return ArenaWords.HudBreak(wave, count, points);
-                default: return ArenaWords.HudLine(wave, count, points);
+                case ArenaPhase.Countdown: return ArenaWords.HudCountdown(biome, Raids.RaidText.Clock(count));
+                case ArenaPhase.Break: return ArenaWords.HudBreak(biome, wave, count, points);
+                default: return ArenaWords.HudLine(biome, wave, count, points);
             }
         }
 
         private static int Seconds(long ms) => ms <= 0L ? 0 : (int)((ms + 999L) / 1000L);
 
         // Every number the line shows, packed into one value so a frame with nothing new costs one comparison.
-        private static long Key(ArenaPhase phase, int wave, int count, long score) =>
+        private static long Key(ArenaPhase phase, int wave, int count, long souls) =>
             ((long)phase & 3L) | (long)Mathf.Clamp(wave, 0, 4095) << 2 | (long)Mathf.Clamp(count, 0, 1023) << 14
-            | Math.Min(Math.Max(score, 0L), 1L << 38) << 24;
+            | Math.Min(Math.Max(souls, 0L), 1L << 38) << 24;
     }
 }

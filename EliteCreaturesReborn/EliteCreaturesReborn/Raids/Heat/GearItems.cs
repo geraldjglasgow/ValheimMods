@@ -15,8 +15,10 @@ namespace EliteCreaturesReborn.Raids
     /// <item>3 - metal Silver; armour wolf with the drake helmet, and fenris (the Mountain)</item>
     /// <item>4 - metal Black metal; armour padded, lox and vilebone (the Plains)</item>
     /// <item>5 - Mistlands: carapace and refined eitr held; armour carapace and eitr-weave (Mage)</item>
-    /// <item>6 - Flametal (new and old) held; armour flametal, Ask, Embla (Ashlands Mage); and the Deep North's gold
-    /// and its three sets, which the table does not reach beyond Flametal</item>
+    /// <item>6 - Flametal (new and old) held; armour flametal, Ask, Embla (Ashlands Mage)</item>
+    /// <item>7 - the Deep North: Bloodgold (<c>Gold</c>) held, or one of its three sets worn. Hel's Trial starts there
+    /// (Arena/Trial/ArenaPower); the raids' table does not reach beyond Flametal, so for a raid it counts as 6
+    /// (<see cref="GearTier.Of"/>)</item>
     /// </list>
     /// Built from ObjectDB the first time it is asked, and again when the game builds a new ObjectDB (a new world).
     /// </summary>
@@ -30,7 +32,8 @@ namespace EliteCreaturesReborn.Raids
             new[] { "Silver" },
             new[] { "BlackMetal" },
             new[] { "Carapace", "Eitr" },
-            new[] { "FlametalNew", "Flametal", "Gold" },
+            new[] { "FlametalNew", "Flametal" },
+            new[] { "Gold" },
         };
 
         private static readonly string[][] Armour =
@@ -48,9 +51,10 @@ namespace EliteCreaturesReborn.Raids
                 "ArmorMageLegs" },
             new[] { "HelmetFlametal", "ArmorFlametalChest", "ArmorFlametalLegs", "HelmetAshlandsMediumHood",
                 "ArmorAshlandsMediumChest", "ArmorAshlandsMediumlegs", "HelmetMage_Ashlands", "ArmorMageChest_Ashlands",
-                "ArmorMageLegs_Ashlands", "HelmetDNHeavy", "ArmorDeepNorthHeavyChest", "ArmorDeepNorthHeavylegs",
-                "HelmetDNMediumHood", "ArmorDeepNorthMediumChest", "ArmorDeepNorthMediumlegs", "HelmetDNMage",
-                "ArmorDeepNorthMageChest", "ArmorDeepNorthMagelegs" },
+                "ArmorMageLegs_Ashlands" },
+            new[] { "HelmetDNHeavy", "ArmorDeepNorthHeavyChest", "ArmorDeepNorthHeavylegs", "HelmetDNMediumHood",
+                "ArmorDeepNorthMediumChest", "ArmorDeepNorthMediumlegs", "HelmetDNMage", "ArmorDeepNorthMageChest",
+                "ArmorDeepNorthMagelegs" },
         };
 
         private static readonly Dictionary<string, int> MetalTiers = new Dictionary<string, int>();

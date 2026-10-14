@@ -52,6 +52,13 @@ namespace Hotkeys
             return chord && !Typing.Active;
         }
 
+        /// <summary>
+        /// A fixed key with no setting behind it (ECR's F to say "ready" in Hel's Trial), read as a single-key shortcut is:
+        /// down this frame, no Shift, Ctrl or Alt held, nothing being typed. None never fires.
+        /// </summary>
+        public static bool Pressed(KeyCode key) =>
+            key != KeyCode.None && Input.GetKeyDown(key) && !ModifierHeld(key) && !Typing.Active;
+
         /// <summary>The main key held with its modifiers (for modifier settings such as LeftShift), nothing being typed.</summary>
         public static bool Held(ConfigEntry<KeyboardShortcut>? key)
         {

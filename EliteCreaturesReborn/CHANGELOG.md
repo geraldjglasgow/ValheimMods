@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.27.0
+
+- Hel's Arena moves outdoors: 130 m across, eight archways, a cavern roof, and a black lake that kills.
+- Hel's Arena: starts at your gear's biome, five waves per biome ending in its boss; big creatures come late and few.
+- Hel's Arena: kills pay souls, spent at Hel's Anvil to mend gear; a fallen boss may leave healing meads.
+- Hel's Arena: F when everyone is ready starts the next wave; E on Hel calls it early.
+- Hel's Arena: three Bat-fiends guard it on the first visit and drop runes.
+- Fixed: Oozers no longer roll Splintering.
+- Update the server and every client together.
+
 ## 3.26.0
 
 - Hel's Arena: a short break between waves; creatures come out of portals in the archways, one at a time.

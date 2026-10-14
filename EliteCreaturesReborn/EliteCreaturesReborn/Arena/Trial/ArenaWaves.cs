@@ -7,89 +7,118 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// <summary>
     /// A wave begins and a wave ends (features/arena.md section 3, "Waves", "Bosses" and "Breaks"), on the core's owner;
     /// a wave is a round. As it begins, its number, its three-minute limit and its creatures go into the core's ZDO. A
-    /// regular wave queues its biome's creatures (<see cref="ArenaCreatures"/>) - 4 in the first wave of a biome, one more
-    /// each wave within it, a quarter more for each player in the hall past the first - its kinds drawn by weight, each
-    /// given to an archway in turn (the next wave starts where this one stopped), and every archway with creatures to send
-    /// opens its portal a moment before its first. A boss wave queues the biome's boss alone, for the rune circle
+    /// regular wave queues its biome's creatures (<see cref="ArenaCreatures"/>) - 6 in the first wave of a biome, two more
+    /// each wave within it (6, 8, 10, 12 alone), a quarter more for each player in the hall past the first - its kinds drawn
+    /// by weight, each given to an archway in turn, all of the hall's archways round the wall (the next wave starts where
+    /// this one stopped, so no side is favoured and players in the middle are come at from every side), and every
+    /// archway with creatures to send opens its portal a moment before its first. A boss wave queues the biome's boss alone, for the rune circle
     /// (<see cref="ArenaBosses"/>), and every player of the trial reads which boss Hel sends. As it ends - cleared, or
     /// swept when its time ran out - its creatures still standing vanish, scoring nothing, the players read that it is
-    /// cleared, and the break before the next one begins.
+    /// cleared, and the break before the next one begins. A wave called early (<see cref="ArenaCalls"/>) begins on top of
+    /// the one fighting; the break waits for the last of them (<see cref="ArenaClears"/>).
     /// </summary>
     internal static class ArenaWaves
     {
         /// <summary>The kinds drawn for a wave and the archway each goes to, counted: (kind hash, archway) packed.</summary>
         private static readonly Dictionary<long, int> Picked = new Dictionary<long, int>();
 
+        /// <summary>The countdown or a break is over: the next wave begins, a round of its own.</summary>
         public static void Begin(ArenaCore core, int wave, int players, long now)
+        {
+            ArenaQueue queue = ArenaQueue.Read(core.Zdo!);
+            queue.Clear(); // a round: nothing of the last wave waits
+            core.WaveBusyAt.Clear();
+            Open(core, queue, wave, players, now);
+        }
+
+        /// <summary>A player called the next wave (<see cref="ArenaCalls"/>): it begins now, on top of the one fighting,
+        /// whose creatures have all come out. Its five minutes are the time left for every wave fighting.</summary>
+        public static void Call(ArenaCore core, int players, long now) =>
+            Open(core, ArenaQueue.Read(core.Zdo!), core.State.Wave + 1, players, now);
+
+        private static void Open(ArenaCore core, ArenaQueue queue, int wave, int players, long now)
         {
             ZDO zdo = core.Zdo!;
             ArenaState state = core.State;
             state.Wave = wave;
             state.Phase = ArenaPhase.Fighting;
+            ArenaReady.Clear(zdo);
             state.Next = now + ArenaState.Ms(ArenaTable.WaveLimitSeconds);
-            ArenaQueue queue = ArenaQueue.Read(zdo);
-            queue.Clear(); // a round: nothing of the last wave waits
             int planned = ArenaTable.IsBossWave(wave) ? PlanBoss(zdo, queue, wave) : PlanWave(state, queue, wave, players);
             queue.Write(zdo);
             state.Portals = queue.LaneMask();
-            state.Left = queue.Count;
+            state.Left = ArenaFighters.Alive(state.TrialId) + queue.Count;
             OpenArchways(core);
-            core.BusyAt = Time.time;
-            Log.Info($"Hel's Trial: wave {wave} ({ArenaCreatures.Biome(ArenaTable.BiomeIndex(wave))}), {planned} coming, "
-                + $"{players} player(s) in the hall");
+            Heightmap.Biome biome = ArenaCreatures.Biome(ArenaTable.BiomeIndex(state.StartBiome, wave));
+            Log.Info($"Hel's Trial: wave {wave} ({biome}), {planned} coming, {players} player(s) in the hall");
         }
 
-        /// <summary>The wave is over: <paramref name="swept"/> when its time ran out with creatures still standing. They
-        /// vanish (those this machine owns at once, the rest on their owners as they read the swept wave), and the break
-        /// begins.</summary>
-        public static void Rest(ArenaCore core, long now, bool swept)
+        /// <summary>Every wave fighting is over: <paramref name="swept"/> when the time ran out with creatures still
+        /// standing. They vanish (those this machine owns at once, the rest on their owners as they read the swept wave),
+        /// the break begins, and the players read that wave <paramref name="told"/> (the last to clear) is
+        /// cleared.</summary>
+        public static void Rest(ArenaCore core, long now, bool swept, int told)
         {
             ZDO zdo = core.Zdo!;
             ArenaState state = core.State;
-            int wave = state.Wave;
-            float rest = ArenaTable.BreakAfter(wave);
-            state.Swept = wave;
-            if (!swept && ArenaTable.IsBossWave(wave))
-            {
-                state.BossesBeaten |= ArenaState.BossBit(wave); // its boss fell: an idol at the end
-            }
+            float rest = ArenaTable.BreakAfter(told);
+            state.Swept = state.Wave;
+            state.Done = 0;
             new ArenaQueue().Write(zdo);
+            core.WaveBusyAt.Clear();
             state.Portals = 0;
             state.Left = 0;
             state.Next = now + ArenaState.Ms(rest);
             state.Phase = ArenaPhase.Break;
             ArenaFighters.VanishOwned(state.TrialId);
-            ArenaNet.Tell(zdo, ArenaWords.Cleared, wave.ToString(), Mathf.RoundToInt(rest).ToString());
-            Log.Info($"Hel's Trial: wave {wave} {(swept ? "swept after its time ran out" : "cleared")}; {rest:0} s break");
+            ArenaNet.Tell(zdo, ArenaWords.Cleared, told.ToString(), Mathf.RoundToInt(rest).ToString());
+            Log.Info($"Hel's Trial: wave {told} {(swept ? "swept after its time ran out" : "cleared")}; {rest:0} s break");
         }
 
         private static int PlanWave(ArenaState state, ArenaQueue queue, int wave, int players)
         {
-            List<ArenaCreatures.Kind> kinds = ArenaCreatures.For(ArenaTable.BiomeIndex(wave));
+            List<ArenaCreatures.Kind> kinds = ArenaCreatures.For(ArenaTable.BiomeIndex(state.StartBiome, wave));
             if (kinds.Count == 0)
             {
                 return 0;
             }
             int count = ArenaTable.CountFor(wave, players);
-            int first = Mathf.Abs(state.SpawnTurn) % ArenaTable.Archways;
+            int archways = ArenaSpots.ArchwayCount();
+            int first = Mathf.Abs(state.SpawnTurn) % archways;
             Picked.Clear();
-            for (int i = 0; i < count; i++)
-            {
-                long key = (long)ArenaCreatures.Draw(kinds) << 8 | (long)((first + i) % ArenaTable.Archways);
-                Picked[key] = (Picked.TryGetValue(key, out int had) ? had : 0) + 1;
-            }
+            Pick(kinds, count, first, archways, ArenaTable.EliteCap(state.StartBiome, wave, players));
             foreach (KeyValuePair<long, int> pick in Picked)
             {
                 queue.Add((int)(pick.Key >> 8), wave, (int)(pick.Key & 0xFF), pick.Value);
             }
             Picked.Clear();
-            state.SpawnTurn = (first + count) % ArenaTable.Archways;
+            state.SpawnTurn = (first + count) % archways;
             return count;
+        }
+
+        // The wave's kinds drawn, each given to the next archway in turn. Elites only while the wave has room for one and
+        // never two out of one archway: an elite drawn past that is drawn again from the biome's other kinds.
+        private static void Pick(List<ArenaCreatures.Kind> kinds, int count, int first, int archways, int elites)
+        {
+            int eliteLanes = 0;
+            for (int i = 0; i < count; i++)
+            {
+                int lane = (first + i) % archways;
+                bool room = elites > 0 && (eliteLanes & 1 << lane) == 0;
+                int prefab = ArenaCreatures.Draw(kinds, room, out bool elite);
+                if (elite && room)
+                {
+                    elites--;
+                    eliteLanes |= 1 << lane;
+                }
+                long key = (long)prefab << 8 | (long)lane;
+                Picked[key] = (Picked.TryGetValue(key, out int had) ? had : 0) + 1;
+            }
         }
 
         private static int PlanBoss(ZDO zdo, ArenaQueue queue, int wave)
         {
-            string name = ArenaBosses.For(wave);
+            string name = ArenaBosses.For(new ArenaState(zdo).StartBiome, wave);
             GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(name) : null;
             Character? boss = prefab != null ? prefab.GetComponent<Character>() : null;
             if (boss == null)

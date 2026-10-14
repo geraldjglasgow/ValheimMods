@@ -67,6 +67,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             core.AddComponent<ZNetView>().m_persistent = true;
             core.AddComponent<ArenaCore>();
             core.AddComponent<ArenaPortals>(); // the archways' portals, on clients
+            core.AddComponent<ArenaReadyKey>(); // F for ready, on clients
             _prefab = core;
             return core;
         }

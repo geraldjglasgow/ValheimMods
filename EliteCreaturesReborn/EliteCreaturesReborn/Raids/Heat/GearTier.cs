@@ -4,19 +4,29 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
-    /// A player's gear tier, 0-6 (features/raids.md section 3): the higher of the best metal they have ever held - the
-    /// game's known materials - and the tier of the armour they wear (<see cref="GearItems"/> lists both). The known
+    /// A player's gear tier, 0-6 for a raid (features/raids.md section 3), 0-7 for Hel's Trial (7 the Deep North's
+    /// Bloodgold): the higher of the best metal they have ever held - the game's known materials - and the tier of the
+    /// armour they wear (<see cref="GearItems"/> lists both). The known
     /// materials and the worn items live only on that player's own client, so each client works its own player's tier out
     /// when it can change (<see cref="GearTierPatch"/>: equipment set up, a new item known, spawning) and writes it into
     /// its player's ZDO when it differs; the raid's owner then reads it from there for every player near (<see cref="Of"/>).
     /// </summary>
     public static class GearTier
     {
-        /// <summary>The tier a player published; 0 for one that has not (yet).</summary>
-        public static int Of(Player player)
+        /// <summary>The tier a player published, as the raids count it (0-6: the Deep North's counts as Flametal's); 0 for
+        /// one that has not (yet).</summary>
+        public static int Of(Player player) => Mathf.Clamp(Published(player), 0, RaidTable.MaxTier);
+
+        /// <summary>The tier a player published, the Deep North's included (0-7), for Hel's Trial.</summary>
+        public static int Full(Player player) => Mathf.Clamp(Published(player), 0, TopTier);
+
+        /// <summary>The highest tier: Bloodgold, the Deep North's.</summary>
+        public const int TopTier = 7;
+
+        private static int Published(Player player)
         {
             ZDO? zdo = player.m_nview != null ? player.m_nview.GetZDO() : null;
-            return zdo != null ? Mathf.Clamp(zdo.GetInt(RaidKeys.GearTierHash), 0, RaidTable.MaxTier) : 0;
+            return zdo != null ? zdo.GetInt(RaidKeys.GearTierHash) : 0;
         }
 
         /// <summary>The local player's client: works the tier out and writes it when it changed.</summary>

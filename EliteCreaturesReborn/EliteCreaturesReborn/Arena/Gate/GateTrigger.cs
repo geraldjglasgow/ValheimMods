@@ -12,7 +12,8 @@ namespace EliteCreaturesReborn.Arena.Gate
     /// <see cref="GateModel.Opening"/>), in place of the game's trigger.
     /// The local player is jumped into Hel's hall through <see cref="ArenaTravel.Enter"/>, keeping the gate's <c>exit</c>
     /// point (1 m up, as the game's portals put an arriving player, facing away from the gate) as where the way out brings
-    /// them back. While Arena is off or the hall is not built here, a centre message says the gate is closed; carrying
+    /// them back. While Arena is off a centre message says the gate is closed (the hall itself is built on the way in,
+    /// on demand); carrying
     /// what the game will not let through a portal (ores, metals and the like), the game's own message, as its portals
     /// do. A placement ghost (no ZDO) does nothing.
     /// </summary>
@@ -43,7 +44,7 @@ namespace EliteCreaturesReborn.Arena.Gate
             {
                 return;
             }
-            if (!ArenaSettings.Enabled || !ArenaHall.Built)
+            if (!ArenaSettings.Enabled) // the arena is built on demand: the jump in builds it (ArenaTravel.Enter)
             {
                 player.Message(MessageHud.MessageType.Center, "$" + GateWords.Closed);
                 return;

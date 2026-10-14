@@ -45,7 +45,7 @@ here.
 | Mad | Moves and attacks far faster - +60% movement, +50% attack speed | Half health |
 | Bloated | Double health. On death it smokes for 1.5 seconds, then explodes | None |
 | Cloaked | Invisible at more than 10 metres (15 for trolls, lox and the Rime Giant), nameplate included. Never rolled by a drake or a deathsquito | None |
-| Splintering | Splits into two copies when killed, each a star weaker or more | Deals 40% less damage |
+| Splintering | Splits into two copies when killed, each a star weaker or more. Never on a creature that releases creatures as it dies (the Oozer) | Deals 40% less damage |
 | Leeching | Regenerates 0.5% of max health per second once it has taken no hit for 5 seconds, hard-capped at 20 hp/s, and heals 10% of damage it deals | None |
 | Warding | Reflects 30% of each hit's base damage back at the attacker, never more than 7.5% of the attacker's maximum health in any one second, and knocks them back on any melee hit | None |
 | Plated | Cuts incoming damage by a flat, capped percentage at full health | Sheds that cut as it is hurt, and its damage rises as it does |
@@ -338,6 +338,13 @@ a server once, be talked about, and not be the norm.
 Two safety knobs exist and are **off by default**: a cap on how many generations deep a cascade may
 go, and a cap on how many live descendants one cascade may have at once. Turning either on
 truncates a cascade rather than preventing the mutation.
+
+**Never on a creature that releases creatures as it dies** (2026-10-13, a player's report). An Oozer bursts into
+Blobs; a Splintering Oozer's every copy is a whole Oozer that bursts again, so one kill became dozens of creatures,
+worst in a raid's extra stars. Such a kind never rolls or inherits Splintering, and one saved with it loads without it
+(a kind bar, like the Deathsquito's Cloaked). It is read from the prefab, not a list (`Traits/DeathBrood.cs`): a
+creature among its death effects, its ragdoll's removal effects or its drops, so a modded creature built the same way
+is covered. The Blobs themselves are ordinary creatures and may still be Splintering.
 
 ### Investigated: "copies despawn when kited" (Roman6Migrish) - not reproduced, no defect found
 

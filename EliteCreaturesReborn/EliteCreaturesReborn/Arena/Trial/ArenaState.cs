@@ -11,7 +11,7 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// </summary>
     public readonly struct ArenaState
     {
-        private static readonly int ScoreKey = ArenaKeys.Score.GetStableHashCode();
+        private static readonly int SoulsKey = ArenaKeys.Souls.GetStableHashCode();
         private static readonly int KillsKey = ArenaKeys.Kills.GetStableHashCode();
         private static readonly int LeftKey = ArenaKeys.Left.GetStableHashCode();
         private static readonly int NextKey = ArenaKeys.Next.GetStableHashCode();
@@ -37,10 +37,31 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         public int Wave { get => Zdo.GetInt(ArenaKeys.WaveHash); set => Zdo.Set(ArenaKeys.WaveHash, value); }
 
+        /// <summary>The trial's first biome, 0 (Meadows) to 7 (the Deep North).</summary>
+        public int StartBiome
+        {
+            get => Zdo.GetInt(ArenaKeys.StartBiomeHash);
+            set => Zdo.Set(ArenaKeys.StartBiomeHash, value);
+        }
+
+        /// <summary>The biome tier, 1-8, of a wave of this trial.</summary>
+        public int TierOf(int wave) => ArenaTable.BiomeNumber(StartBiome, wave);
+
         /// <summary>The last wave cleared or swept: its creatures, and any of an earlier wave, vanish.</summary>
         public int Swept { get => Zdo.GetInt(ArenaKeys.SweptHash); set => Zdo.Set(ArenaKeys.SweptHash, value); }
 
-        /// <summary>The boss waves beaten, a bit each (bit k-1 for wave 10k): the idols the trial pays.</summary>
+        /// <summary>The waves above <see cref="Swept"/> already cleared while an earlier one still fights, a bit each
+        /// (<see cref="DoneBit"/>).</summary>
+        public int Done { get => Zdo.GetInt(ArenaKeys.DoneHash); set => Zdo.Set(ArenaKeys.DoneHash, value); }
+
+        /// <summary>A wave's bit in <see cref="Done"/>: bit 0 for wave Swept + 1; 0 for a wave out of its reach.</summary>
+        public int DoneBit(int wave)
+        {
+            int at = wave - Swept - 1;
+            return at >= 0 && at <= ArenaTable.MaxWavesAtOnce ? 1 << at : 0;
+        }
+
+        /// <summary>The boss waves beaten, a bit each (bit k-1 for wave 5k): the idols the trial pays.</summary>
         public long BossesBeaten
         {
             get => Zdo.GetLong(ArenaKeys.BossesBeatenHash);
@@ -53,7 +74,8 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The archways with creatures still to come, a bit each: the open portals.</summary>
         public int Portals { get => Zdo.GetInt(ArenaKeys.PortalsHash); set => Zdo.Set(ArenaKeys.PortalsHash, value); }
 
-        public long Score { get => Zdo.GetLong(ScoreKey); set => Zdo.Set(ScoreKey, value); }
+        /// <summary>The souls the trial has earned: what a player there from the start has earned.</summary>
+        public long Souls { get => Zdo.GetLong(SoulsKey); set => Zdo.Set(SoulsKey, value); }
 
         public int Kills { get => Zdo.GetInt(KillsKey); set => Zdo.Set(KillsKey, value); }
 
@@ -72,6 +94,15 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// the one coming.</summary>
         public int JoiningWave => Phase == ArenaPhase.Fighting ? Wave : Wave + 1;
 
+        /// <summary>The wave a creature appearing now joins, a boss (Kall's next phase) the boss wave still fighting when
+        /// the next was called before it.</summary>
+        public int JoiningWaveOf(bool boss)
+        {
+            int bossWave = Wave - Wave % ArenaTable.WavesPerBiome;
+            bool open = boss && Phase == ArenaPhase.Fighting && bossWave > Swept && (Done & DoneBit(bossWave)) == 0;
+            return open ? bossWave : JoiningWave;
+        }
+
         public static bool IsRunning(ArenaPhase phase) =>
             phase == ArenaPhase.Countdown || phase == ArenaPhase.Fighting || phase == ArenaPhase.Break;
 
@@ -81,15 +112,18 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The running trial's id in the ZDO; 0 when none runs.</summary>
         public static long RunningTrial(ZDO? zdo) => IsRunning(zdo) ? zdo!.GetLong(ArenaKeys.TrialHash) : 0L;
 
-        /// <summary>The owner, as Hel wakes: a new trial with its countdown. Everything the last one left is cleared.</summary>
-        public void Begin(long now)
+        /// <summary>The owner, as Hel wakes: a new trial with its countdown, from biome <paramref name="startBiome"/>.
+        /// Everything the last one left is cleared.</summary>
+        public void Begin(long now, int startBiome)
         {
             TrialId = now;
+            StartBiome = startBiome;
             Wave = 0;
             Swept = 0;
+            Done = 0;
             Portals = 0;
             BossesBeaten = 0L;
-            Score = 0L;
+            Souls = 0L;
             Kills = 0;
             Left = 0;
             SpawnTurn = 0;

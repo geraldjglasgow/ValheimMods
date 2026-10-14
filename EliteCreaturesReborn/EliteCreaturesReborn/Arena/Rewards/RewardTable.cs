@@ -6,9 +6,10 @@ namespace EliteCreaturesReborn.Arena.Rewards
     /// <summary>
     /// Every fixed number of Hel's rewards (features/arena.md section 3, "Rewards"), paid at a trial's end to every player
     /// of it. Idols: one per boss wave beaten, the Forge of Potential's own (the game's <c>Upgrader0</c> ... <c>7</c>
-    /// <c>Weapon</c>/<c>Armor</c>, Battle and Protection Idols), at the boss's biome's tier (Eikthyr 0, Wooden ... Kall 7,
-    /// Bloodgold; every boss after wave 80 another 7), Battle and Protection in turn from the first boss. Coins: the score
-    /// over 10. Skill XP: what the player gained in the trial again times the waves cleared over 20, at most twice.
+    /// <c>Weapon</c>/<c>Armor</c>, Battle and Protection Idols), at the boss's biome's tier (Meadows 0, Wooden ... Deep
+    /// North 7, Bloodgold; every boss after Kall another 7), Battle and Protection in turn from the first boss. Coins:
+    /// the player's unspent souls over 2. Skill XP: what the player gained in the trial again times the waves cleared
+    /// over 10, at most twice.
     /// With EliteCrafting, for each wave cleared: runes drawn from EliteCrafting's own default weights at the wave's tier
     /// (its tiers are the biomes, Meadows 1 to the Deep North 8, as the trial's are), about half its open-world rate for the
     /// same kills (its 35-70% a kill would be 3-6 for a wave's 8 creatures; every player of the trial gets the whole
@@ -21,11 +22,11 @@ namespace EliteCreaturesReborn.Arena.Rewards
         /// <summary>The highest idol tier: Bloodgold, Kall's; every boss after him gives it again.</summary>
         public const int TopIdolTier = 7;
 
-        /// <summary>Coins: the score over this.</summary>
-        public const int ScorePerCoin = 10;
+        /// <summary>Coins: the player's unspent souls over this.</summary>
+        public const int SoulsPerCoin = 2;
 
         /// <summary>Skill XP: the gain again times the waves cleared over this, at most <see cref="MaxXpFactor"/>.</summary>
-        public const float WavesForFullXp = 20f;
+        public const float WavesForFullXp = 10f;
         public const float MaxXpFactor = 2f;
 
         /// <summary>Runes for a regular wave cleared, by tier 1-8 (index 0 = Meadows).</summary>
@@ -60,12 +61,13 @@ namespace EliteCreaturesReborn.Arena.Rewards
             new[] { 0, 0, 2, 3, 4, 5, 6, 7 },
         };
 
-        /// <summary>The idol of the <paramref name="boss"/>-th boss (1 for Eikthyr's wave 10): Battle on the odd ones,
-        /// Protection on the even ones, at the boss's tier.</summary>
-        public static string IdolFor(int boss)
+        /// <summary>The idol of the trial's <paramref name="boss"/>-th boss (1 for its first): Battle on the odd ones,
+        /// Protection on the even ones, at the boss's biome tier (<paramref name="tier"/> 1 Meadows ... 8 Deep North:
+        /// idol 0 Wooden ... 7 Bloodgold).</summary>
+        public static string IdolFor(int boss, int tier)
         {
-            int tier = Mathf.Clamp(boss - 1, 0, TopIdolTier);
-            return "Upgrader" + tier + (boss % 2 == 1 ? "Weapon" : "Armor");
+            int idol = Mathf.Clamp(tier - 1, 0, TopIdolTier);
+            return "Upgrader" + idol + (boss % 2 == 1 ? "Weapon" : "Armor");
         }
 
         /// <summary>A table index from a tier 1-8.</summary>

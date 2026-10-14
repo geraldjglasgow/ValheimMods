@@ -29,6 +29,7 @@ namespace EliteCreaturesReborn
             Recap.RecapHost.Attach(gameObject, harmony);
             gameObject.AddComponent<Tally.TallyFlush>();
             Raids.RaidMarker.Setup(harmony);
+            Creatures.BatFiend.BatFiendPrefabs.Install(harmony);
             gameObject.AddComponent<Raids.RaidTicker>();
             ServerLock.Install(harmony);
             Guard.Install(harmony, Logger, typeof(Plugin).Assembly);

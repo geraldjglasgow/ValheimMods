@@ -68,6 +68,14 @@ namespace EliteCreaturesReborn.Arena.Rewards
             }
         }
 
+        /// <summary>A copy, for one player's own additions.</summary>
+        public RewardList Copy()
+        {
+            RewardList copy = new RewardList { Trial = Trial, XpFactor = XpFactor };
+            copy._entries.AddRange(_entries);
+            return copy;
+        }
+
         public ZPackage Pack()
         {
             ZPackage pkg = new ZPackage();
