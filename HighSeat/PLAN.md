@@ -59,7 +59,7 @@ creatures froze for 20-30 seconds or moved "like they have ping" while players m
 ## Settings (one per feature)
 
 - `Server runs creatures` (true/false, synced, server side).
-- `Send rate KB/s` (the game's 150 by default; recommend 600).
+- Send rate: fixed at 500 KB/s, never lowered below what another mod set (no setting, user 2026-10-15).
 - `Server frame budget ms` (the CPU guard's limit).
 - `Server runs building integrity` (true/false, synced, off by default).
 

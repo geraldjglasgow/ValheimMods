@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+
+- Fixed: creatures near players no longer float over dug-out ground or sink into raised ground.
+- Send rate is now 500 KB/s with no setting, never lowered below what another mod set; `Send rate KB/s` removed.
+
 ## 0.1.0
 
 - First release.

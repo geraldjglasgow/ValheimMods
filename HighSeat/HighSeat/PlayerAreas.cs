@@ -9,7 +9,10 @@ namespace HighSeat
     /// and remove. Distant objects (seen from afar, never simulated) are kept for a hosting player's own view only; a
     /// dedicated server draws nothing. The lists are the game's own (m_tempCurrentObjects, m_tempCurrentDistantObjects),
     /// filled as the game fills them and left filled after, because AreaLoading (Wayfare's quick jumps, OpenKeep's bed
-    /// respawn) reads them in a postfix on the same method to load a hosting player's arrival faster.
+    /// respawn) reads them in a postfix on the same method to load a hosting player's arrival faster. Around a player only
+    /// sectors whose ground is already built count: the game waits for the ground around its own position before making
+    /// anything there, but not around anyone else's, and a terrain edit made before its ground gives up for good (the
+    /// ground stays as the world first made it: creatures float over dug-out ground and sink into raised ground).
     /// </summary>
     [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.CreateDestroyObjects))]
     internal static class PlayerAreas
@@ -39,12 +42,12 @@ namespace HighSeat
             Visited.Clear();
             SimulationDistance sim = ZNet.instance.GetSyncedSimulationDistance();
             Vector2s own = ZoneSystem.GetZone(ZNet.instance.GetReferencePosition());
-            AddNear(own, sim);
+            AddNear(own, sim, false);
             foreach (ZNetPeer peer in ZNet.instance.GetPeers())
             {
                 if (peer.IsReady())
                 {
-                    AddNear(ZoneSystem.GetZone(peer.GetRefPos()), sim);
+                    AddNear(ZoneSystem.GetZone(peer.GetRefPos()), sim, true);
                 }
             }
             if (!ZNet.instance.IsDedicated())
@@ -53,7 +56,7 @@ namespace HighSeat
             }
         }
 
-        private static void AddNear(Vector2s center, SimulationDistance sim)
+        private static void AddNear(Vector2s center, SimulationDistance sim, bool groundFirst)
         {
             int n = sim.NearSimulationDistance;
             for (int dy = -n; dy <= n; dy++)
@@ -61,7 +64,8 @@ namespace HighSeat
                 for (int dx = -n; dx <= n; dx++)
                 {
                     Vector2s sector = new Vector2s(center.x + dx, center.y + dy);
-                    if ((dx == 0 && dy == 0) || sim.IsClassic || ZoneSystem.instance.ZonesWithinRadius(center, sector, n))
+                    bool inside = (dx == 0 && dy == 0) || sim.IsClassic || ZoneSystem.instance.ZonesWithinRadius(center, sector, n);
+                    if (inside && (!groundFirst || ZoneSystem.instance.m_zones.ContainsKey(sector)))
                     {
                         ZDOMan.instance.FindObjects(sector, Near, Visited);
                     }

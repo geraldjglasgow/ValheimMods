@@ -9,11 +9,9 @@ namespace HighSeat
     internal static class Settings
     {
         private const string General = "1 - General";
-        private const string Network = "2 - Network";
 
         public static ConfigEntry<bool> ServerRunsCreatures = null!;
         public static ConfigEntry<int> FrameBudgetMs = null!;
-        public static ConfigEntry<int> SendRateKBs = null!;
 
         public static void Bind(ConfigFile config)
         {
@@ -23,9 +21,6 @@ namespace HighSeat
             FrameBudgetMs = config.Bind(General, "Server frame budget ms", 50,
                 new ConfigDescription("While the server's frames take longer than this, creatures it does not run yet are " +
                     "left to players as the game does; those it runs stay with it.", new AcceptableValueRange<int>(20, 500)));
-            SendRateKBs = config.Bind(Network, "Send rate KB/s", 150,
-                new ConfigDescription("Most data the server sends each player per second. The game's own is 150; 600 suits " +
-                    "a server with a good upload. Takes effect on the next start.", new AcceptableValueRange<int>(50, 4000)));
         }
     }
 }

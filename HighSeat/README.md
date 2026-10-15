@@ -12,20 +12,20 @@ group. HighSeat makes the server run them instead, the way most survival games d
   creature starts there and never changes hands. Only a console spawn begins on a player's game, handed over within
   two seconds.
 - Frame budget: a server that falls behind leaves new creatures to players, as the game does, until it recovers.
-- Send rate: an optional higher limit than the game's 150 KB/s per player.
+- Send rate: raised to 500 KB/s per player from the game's 150, never lowered below what another mod set.
 
 ## Install
 
 Needed on the server only: a dedicated server, or the player who hosts. Players need nothing. Install with r2modman
-or the Thunderstore app, or put `HighSeat.dll` in `BepInEx/plugins`. A server-side network mod that sets the send rate
-(such as Better Networking) can stay: leave HighSeat's `Send rate KB/s` at 150 and it is left alone.
+or the Thunderstore app, or put `HighSeat.dll` in `BepInEx/plugins`. A network mod that sets a higher send rate (such as
+Better Networking) can stay: HighSeat keeps the higher one.
 
 The server does more work: give it a good CPU, especially when players spread out across the map.
 
 ## Configuration
 
-`BepInEx/config/com.HighSeat.cfg`: `Server runs creatures`, `Server frame budget ms`, `Send rate KB/s`. Every setting
-is described in the file and applies without a restart, except the send rate.
+`BepInEx/config/com.HighSeat.cfg`: `Server runs creatures`, `Server frame budget ms`. Both are described in the file and
+apply without a restart.
 
 ## Links
 
