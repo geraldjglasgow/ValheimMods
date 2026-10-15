@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Fixed: a dedicated server running 0.2.0 never accepted players (connections timed out).
+
 ## 0.2.0
 
 - Fixed: creatures near players no longer float over dug-out ground or sink into raised ground.
