@@ -26,6 +26,7 @@ ValheimMods/
   GrindstoneSkills/  deeper skills: game skills (Cooking, Farming, Fishing, ...) and new ones (Sailing, Husbandry, ...)
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
+  HighSeat/          server-run creatures: the server loads every player's area and owns creatures and spawners (server only)
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), internal: never released to a store
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
