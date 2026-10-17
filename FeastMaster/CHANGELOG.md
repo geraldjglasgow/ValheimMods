@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.7.6
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 4.7.5
 
 - Store page: a fuller overview of what the mod does.
