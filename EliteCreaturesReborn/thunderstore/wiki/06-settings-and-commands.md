@@ -46,7 +46,7 @@ creatures:
 ```
 
 A new file already makes trolls, lox and Elite Creatures Pack's Rime Giant reveal Cloaked at 15 m, keeps drakes from
-being Cloaked and keeps bats from being Mad or Cloaked. Deathsquitos are never Cloaked, whatever the file says.
+being Cloaked, keeps bats from being Mad or Cloaked and keeps gjall from being Cloaked. Deathsquitos are never Cloaked, whatever the file says.
 
 ## Your own settings
 

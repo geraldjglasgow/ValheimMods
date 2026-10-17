@@ -5,11 +5,12 @@ namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
     /// What Flamebound's burning patches do to this machine's own player: once a second while they stand in one, on the
-    /// ground, a fire hit as strong as the hottest patch under them. The game turns it into its own Burning - the
-    /// flames on the body, the icon, the damage spread over the next seconds, shortened by Wet - and fire resistance
-    /// and armour cut it as they cut any fire. The hit names no attacker, so it neither scales again with the creature's
-    /// mutations nor feeds Leeching. Decided on the player's own machine from the patches it has drawn, like every trail,
-    /// so nothing burns them unseen; a jump over a patch clears it.
+    /// ground, as much fire as the hottest patch under them, added to the game's own Burning - the flames on the body,
+    /// the icon, the damage spread over the next seconds, shortened by Wet. Fire resistance cuts it; armour does not,
+    /// as it does not cut the game's own burning ticks. Sent as a hit, armour cut a 6 fire hit below the least burn the
+    /// game starts (1 fire over Burning's 5 s), so the patches did nothing past 9 armour. Names no attacker, so it
+    /// neither scales again with the creature's mutations nor feeds Leeching. Decided on the player's own machine from
+    /// the patches it has drawn, like every trail, so nothing burns them unseen; a jump over a patch clears it.
     /// </summary>
     internal sealed class BurnFooting : IPatchFooting
     {
@@ -27,7 +28,7 @@ namespace EliteCreaturesReborn.Mutations
             if (PatchContact.Strongest(player.transform.position, patches, out float fire))
             {
                 _nextBurn = Time.time + Every;
-                player.Damage(Burn(player, fire));
+                Burn(player, fire);
             }
         }
 
@@ -35,13 +36,13 @@ namespace EliteCreaturesReborn.Mutations
         {
         }
 
-        private static HitData Burn(Player player, float fire)
+        // The player's own fire resistance (gear, meads), then straight into Burning; immune leaves nothing to add.
+        private static void Burn(Player player, float fire)
         {
             HitData hit = new HitData();
             hit.m_damage.m_fire = fire;
-            hit.m_point = player.transform.position;
-            hit.m_hitType = HitData.HitType.Burning;
-            return hit;
+            hit.ApplyResistance(player.GetDamageModifiers(), out _);
+            player.AddFireDamage(hit.m_damage.m_fire, hit.m_variant);
         }
     }
 }

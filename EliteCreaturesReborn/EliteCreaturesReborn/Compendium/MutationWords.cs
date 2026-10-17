@@ -18,8 +18,8 @@ namespace EliteCreaturesReborn.Compendium
                 + $"with {Pct(r, m, Fields.Health)} less health. Never on bats.",
             Mutation.Bloated => $"{N(r, m, Fields.Health)} times its usual health. {S(r, m, Fields.Delay)} after it dies it "
                 + $"explodes: {N(r, m, Fields.Damage)} damage within {N(r, m, Fields.Radius)} m, more for each star.",
-            Mutation.Cloaked => $"Invisible until you are within {N(r, m, Fields.RevealDistance)} m. Drakes, bats and "
-                + "deathsquitos are never Cloaked.",
+            Mutation.Cloaked => $"Invisible until you are within {N(r, m, Fields.RevealDistance)} m. Drakes, bats, gjall "
+                + "and deathsquitos are never Cloaked.",
             Mutation.Splintering => "Splits into weaker copies when killed, each dealing "
                 + $"{r.PowerOf(m, Fields.Damage) * 100f:0}% of its damage, and they can split again. Oozers are never "
                 + "Splintering.",
@@ -145,8 +145,8 @@ namespace EliteCreaturesReborn.Compendium
         {
             TrailSpec fire = TrailSpec.Of(r, t, TrailKind.Fire);
             return $"Leaves burning ground where it walks, each patch lasting {PageText.Seconds(fire.Life)}. Standing in "
-                + $"it sets you on fire: {fire.Strength:0.#} fire damage a second, more with stars. Fire resistance, armour "
-                + "and being wet help.";
+                + $"it sets you on fire: {fire.Strength:0.#} fire damage a second, more with stars. Fire resistance and "
+                + "being wet help; armour does not.";
         }
 
         // An item's name in the player's language, lower case for the middle of a sentence; the prefab for an unknown item.

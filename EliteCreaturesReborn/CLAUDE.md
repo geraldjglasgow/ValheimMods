@@ -87,7 +87,7 @@ has no line for them and leaves them off; Flamebound, which starts on, rolls in 
 | --- | --- |
 | Mad | Far faster, half health; never on bats |
 | Bloated | Double health, explodes 1.5 seconds after it dies |
-| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes, bats and deathsquitos are never Cloaked |
+| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes, bats, gjall and deathsquitos are never Cloaked |
 | Splintering | Splits into two weaker copies when killed, which can split again. Never on a creature that releases creatures as it dies (the Oozer, into Blobs) |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
@@ -107,7 +107,7 @@ has no line for them and leaves them off; Flamebound, which starts on, rolls in 
 | Piercing | Each of its hits - melee, thrown or shot - ignores 15% of your armour. Block, parry, resistances and armour wear are as usual. Off by default |
 | Howling | When it turns on you it howls (a wolf's howl), and the 4 nearest creatures on its side within 30 m that are hostile to you come for you; again every 45 seconds while it fights you. It calls creatures already there, never new ones, and never a boss. Off by default |
 | Binding | Leaves patches of tangled roots where it walks, smaller and further apart than ice or mud (one every 3 m walked, each reaching 1.2 m), so you can step between them, each lasting 10 seconds. Step into one and the roots burst up and hold you for a second ("Rooted": no walking, running, jumping or rolling; you can still turn, block and strike), then let you go for 3 seconds, long enough to walk clear. Off by default |
-| Flamebound | Leaves burning ground where it walks: flames on the ground, 2 m wide, a patch every 1.5 m, each lasting 7 seconds (with effects off, glowing embers instead). Standing in it sets you on fire, the game's own Burning: 6 fire damage a second, more with stars (its star `attack` line); fire resistance, armour and being wet help. Its heat clears mist around it as a Wisplight does |
+| Flamebound | Leaves burning ground where it walks: flames on the ground, 2 m wide, a patch every 1.5 m, each lasting 7 seconds (with effects off, glowing embers instead). Standing in it sets you on fire, the game's own Burning: 6 fire damage a second, more with stars (its star `attack` line); fire resistance and being wet help, armour does not (as with the game's own burning ticks). Its heat clears mist around it as a Wisplight does |
 
 Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
 
@@ -356,9 +356,10 @@ creatures:
 `mutation chance` replaces the creature's default curve, but any mutation with its own curve in the biome (or in
 `defaults`, like Devouring and Gilded) keeps it, so set that mutation to `[0]` under `mutation chances` to stop it.
 `mutations enabled` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
-entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with five: Troll,
+entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with six: Troll,
 Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
-never Cloaked, and Bat sets Mad and Cloaked to `[0]`, so bats are never either. A Deathsquito is never Cloaked
+never Cloaked, Bat sets Mad and Cloaked to `[0]`, so bats are never either, and Gjall sets Cloaked to `[0]` (a
+player's report 2026-10-15: one high in the air could not be seen from the ground). A Deathsquito is never Cloaked
 whatever the file says (a rule in the mod, not the file), and one a world saved Cloaked loads without it. Likewise a
 creature that releases creatures as it dies is never Splintering (`Traits/DeathBrood.cs`, read from its prefab: a
 creature among its death effects, its ragdoll's removal effects or its drops; the Oozer, a player's report 2026-10-13),

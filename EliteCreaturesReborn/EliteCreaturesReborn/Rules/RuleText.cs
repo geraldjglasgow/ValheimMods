@@ -151,6 +151,10 @@ creatures:
     mutation chances:
       Mad:         [0]
       Cloaked:     [0]
+  # Gjall are never Cloaked.
+  - match: Gjall
+    mutation chances:
+      Cloaked:     [0]
 #  - match: Troll
 #    drops: [1, 1.5, 2, 3, 4, 5]
 #    multiply trophies: true

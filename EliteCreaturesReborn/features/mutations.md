@@ -820,8 +820,10 @@ quoted.
   `vfx_Burning` fed by hand at the live patches (`PatchFlames`), thinned by the effect density, its light and sound off.
 - A player standing in one on the ground takes a fire hit once a second on their own machine: 6 fire times the
   creature's star `attack` line, times `large star power` on a large star. The game turns it into its own Burning
-  (flames on the body, damage spread over the next seconds, shortened by Wet); fire resistance and armour cut it. The
-  hit names no attacker.
+  (flames on the body, damage spread over the next seconds, shortened by Wet); fire resistance cuts it, armour does
+  not: added straight to Burning, as the game's own burning ticks skip armour. Sent through `RPC_Damage` until
+  2026-10-17, armour cut a 6 fire hit below the least burn the game starts (1 fire over Burning's 5 s), so above 9
+  armour the patches did nothing (a player's report). Names no attacker.
 
 ### All four
 - Binding and Flamebound share the ground-trail mechanism: decided on the owner, laid and drawn on every machine,
@@ -1459,9 +1461,10 @@ The same entries carry the per-creature loot rules (`loot.md`), and one entry ma
 - **Two entries with the same `match` merge** rather than the later silently replacing the earlier: later keys win
   and drop rows add up. Uncommenting an example for a creature that already has an entry never loses the one above
   it.
-- **The shipped file has four**: Troll, Lox and ECP_RimeGiant with `mutation power: Cloaked: { reveal distance: 15 }`, because
+- **The shipped file has six**: Troll, Lox and ECP_RimeGiant with `mutation power: Cloaked: { reveal distance: 15 }`, because
   big bodies are hard to hide, and Hatchling (the drake) with `mutation chances: Cloaked: [0]`, because an invisible
-  flyer spitting frost from above is no fight. Deathsquitos are never Cloaked by a rule in the mod, not the file:
+  flyer spitting frost from above is no fight; Bat with Mad and Cloaked at `[0]`, and Gjall with Cloaked at `[0]`
+  because one high in the air cannot be seen from the ground at all (a player's report, 2026-10-15). Deathsquitos are never Cloaked by a rule in the mod, not the file:
   an invisible needle out of nowhere is no fight either, and a world saved with one loads it without the cloak.
 
 ### Locking clients to the server
@@ -1734,6 +1737,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Cloning: decoy swap at 12 m unseen; decoy blows do nothing; the real one's landed blow (or the decoy's death, or
       20 s) shows it and the decoy vanishes; a hand-over or unload mid-trick shows it; never from a tame
 - [ ] Bats are never Mad or Cloaked on a fresh rule file
+- [ ] Gjall are never Cloaked on a fresh rule file; an older file's Gjall still can until the entry is added
 - [ ] Piercing, Howling and Binding off on a fresh rule file and in an older file with no line for them; Flamebound on
 - [ ] Piercing: a hit takes noticeably more with heavy armour; the inventory's armour number unchanged
 - [ ] Howling: one howl when it turns on you, heard by every client near it; at most 4 creatures come; 45 s between
@@ -1779,3 +1783,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-10-03 | Juggernaut and Screecher added at the user's request (13-14; colours iron grey, pink); Howling was built too and removed the same evening after a try in game ("way too crazy"); Gilded's curve halved; large creatures (`Traits/BodySize.cs`: capsule radius >= 1 m or length >= 3.5 m, and 300+ base health) never roll or inherit Gilded or Relentless and are never prey; bosses never prey; `max prey health` 125 -> 100; Bloated's fuse 1.5 s. Judgement calls: Juggernaut shows "Unstoppable" where it would have staggered and keeps its own attack recoil; Screecher triggers on one hit taking 15% of its max health from any source, deafens only players it is hostile to (AudioListener at 4%, a faint ringing, a "Ringing ears" status), blocks Elemental and Blood Magic weapons. Built by parallel agents, not tested in game. | - |
 | 2026-10-04 | Frostbound, Mudbound, Corrodent and Cloning added at the user's request (15-18; colours pale ice, mud, rust, lavender), with their "in full" sections; the shipped Bat entry (never Mad or Cloaked). Built by parallel agents, untested in game. | - |
 | 2026-10-08 | Piercing, Howling, Binding and Flamebound added at the user's request (19-22; colours crimson, teal, olive, flame), with their "in full" section; Flamebound on by default, the other three off (`OnByDefault`); no power fields. Built, untested in game. | - |
+| 2026-10-17 | The shipped Gjall entry (never Cloaked), after a player's report that a Cloaked Gjall cannot be seen from the ground. Built, untested in game. | - |

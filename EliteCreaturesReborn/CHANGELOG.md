@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.28.2
+
+- Fixed: Flamebound's burning ground now burns you; armour no longer stops it (fire resistance and being wet still help).
+- New rule files: Gjall are never Cloaked. On an existing file, add a `Gjall` entry with `mutation chances: Cloaked: [0]`.
+
 ## 3.28.1
 
 - Fixed: eggs from starred hens count for cooking recipes.
