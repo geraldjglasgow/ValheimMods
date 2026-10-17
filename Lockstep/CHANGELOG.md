@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.5.0
 
 - Every gated altar's hover says whether it is open or which players the group is waiting for.
