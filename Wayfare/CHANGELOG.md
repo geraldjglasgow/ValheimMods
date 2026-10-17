@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.4.0
 
 - `Teleport Mode` (General): `Map` (as before), `TargetTeleport` or `Default` (the game's tag pairing).
