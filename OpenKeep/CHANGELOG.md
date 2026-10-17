@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 5.0.0
 
 - Boots moved to the new mod EliteEquipment: section `16. Boots` is gone and boots made with OpenKeep disappear. Install EliteEquipment to wear boots.
