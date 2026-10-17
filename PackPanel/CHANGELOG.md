@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.16.0
 
 - Backpacks have levels 1 to 4, upgraded at their station: a worn pack slows you 8, 6, 4 or 2 %, and what it holds weighs 100, 95, 90 or 85 %.
