@@ -76,7 +76,8 @@ So at kitchens both fields are replaced for the one call (`OnInteract`, `DoCraft
     would merge them. It is patched for star items, and `InventoryGrid.DropItem` swaps them instead.
   - `Inventory.CanAddItem` counts room in stacks of any quality; for star items only stacks with the same stars count.
   - `Player.HaveRequirementItems` counts each ingredient as the highest count of any single quality from 1 to
-    `m_maxQuality`, so starred eggs would not count. A scope makes quality-1 counts of star items count every quality.
+    `m_maxQuality`, so starred eggs would not count. The RecipeCounts library (`AnyQuality`, shared with Elite
+    Creatures Reborn) makes quality-1 counts of any item whose maximum quality is 1 count every quality.
     Recipes consume with `itemQuality = -1` (any quality).
 - **Colours:** one star bronze, two silver, three gold (`StarText.Tier`, the icon star's face tinted the same).
 - **Other mods' star items:** `StarsApi.AddStarItem` (below) makes any stackable item a star item with all of the
@@ -195,7 +196,7 @@ These are in addition to what the game already gives (shorter craft time):
 
 Planned units, each within the size limits:
 
-- `Stars/`: egg stars: display, stacking, recipe counting.
+- `Stars/`: egg stars: display, stacking (recipe counting is the RecipeCounts library).
 - `Kitchen/`: stations, cauldron, fermenter and perks, each separate.
 - `Experience/`: tier multiplier, fermenter XP, discovery.
 - `Sailing/`: skill registration and cheats, the three perks, experience; `Sailing/Lookout/` and `Sailing/WindCall/` the two actives.
@@ -1473,7 +1474,8 @@ Everything runs on the parent's (or young animal's, or egg's) ZDO owner, at the 
   OpenKeep's hive settings only change how much honey there is, so they add up.
 - **Starred eggs (`YieldStarItems`):** every item with `EggGrow` joins the star items (`Stars`) while Husbandry is on
   (the game already stores the laying hen's level in the egg's quality): eggs from starred hens show their star, stack
-  apart and count in recipes (the game's own recipe count ignores quality-2 eggs). See "Egg stars" in the Cooking part.
+  apart; they count in recipes with Husbandry on or off (RecipeCounts; the game's own recipe count ignores quality-2
+  eggs). See "Egg stars" in the Cooking part.
 
 ### Companions (`Husbandry/Companions`)
 

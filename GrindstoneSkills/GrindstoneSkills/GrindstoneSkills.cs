@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using PatchGuard;
+using RecipeCounts;
 using SyncedConfig;
 
 namespace GrindstoneSkills
@@ -12,7 +13,7 @@ namespace GrindstoneSkills
     {
         public const string PluginGuid = "com.GrindstoneSkills";
         public const string PluginName = "GrindstoneSkills";
-        public const string PluginVersion = "0.18.0";
+        public const string PluginVersion = "0.18.1";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -26,6 +27,8 @@ namespace GrindstoneSkills
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            // Starred eggs and starred food count for recipes.
+            AnyQuality.Install(harmony);
             // The mod's own skills (not in the game's enum): one entry per skill.
             CustomSkills.Initialize(SailingSkill.Skill, ForagingSkill.Skill, HusbandrySkill.Skill, DefenseSkill.Skill);
 

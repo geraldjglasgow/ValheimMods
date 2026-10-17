@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.18.1
+
+- Fixed: starred eggs count for recipes with Husbandry off too.
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.18.0
 
 - Every remaining game skill grows perks: Running, Jumping, Sneaking, Swimming, Dodging, Riding and Crafting, each with its own switch.
