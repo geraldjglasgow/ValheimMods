@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.11.0
 
 - Removed: Paws of the Bear's Triple Strike (section `27 - Bear Claws`); the bear claws punch as in the game again.
