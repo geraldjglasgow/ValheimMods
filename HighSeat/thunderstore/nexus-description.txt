@@ -1,0 +1,28 @@
+Summary (at most 350 characters):
+The server runs every creature near any player, instead of the nearest player's game. One laggy, far-away or cloud-PC player no longer makes creatures freeze or move "like they have ping" for the whole group. Spawners and raids run on the server too. Server only: players install nothing.
+
+[size=4][b]Description[/b][/size]
+In Valheim the nearest player's game runs every creature, and everyone else sees it through that player's connection. One player far away, on a slow connection or on a cloud PC, and creatures freeze or move "like they have ping" for the whole group. HighSeat makes the server run them instead, the way most survival games do.
+
+[size=4][b]Installation[/b][/size]
+Install on the server only: a dedicated server, or the player who hosts. Players need nothing. Put HighSeat.dll in BepInEx/plugins, or install with r2modman or the Thunderstore app. Restart the server.
+
+[size=4][b]Main features[/b][/size]
+[list]
+[*][b]Server-run creatures[/b]: the server loads every player's area and runs every creature in it, monsters, animals, tamed creatures and bosses alike.
+[*][b]Server-run spawners[/b]: wild spawns, the game's raids, nests, spawn points and boss altars spawn on the server, so creatures start there and never change hands.
+[*][b]Frame budget[/b]: a server that falls behind leaves new creatures to players, as the game does, until it recovers.
+[*][b]Higher send rate[/b]: 500 KB/s per player instead of the game's 150, never lowered below what another mod set.
+[*]One setting to turn it off: Server runs creatures, in BepInEx/config/com.HighSeat.cfg.
+[/list]
+
+[size=4][b]Requirements[/b][/size]
+BepInExPack Valheim on the server. The server does more work, so give it a good CPU, especially when players spread out across the map.
+
+[size=4][b]Shout outs[/b][/size]
+[list]
+[*]The BepInEx and Harmony teams, for the tools every Valheim mod stands on.
+[*]Iron Gate Studio, for Valheim.
+[*]The Valheim modding community, for the hard work and dedication that keeps enhancing an already great game.
+[*]Every modder who keeps their mods open source so others can collaborate, learn and build on them.
+[/list]
