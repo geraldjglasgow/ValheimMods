@@ -42,6 +42,14 @@ internal static class FamilyCheck
 		return client.Any(c => c.Mandatory && server.All(s => s.Guid != c.Guid));
 	}
 
+	/// <summary>The lines for a player that never answered: it may lack the mods, or its connection may be too slow.</summary>
+	public static List<string> NoAnswer(List<FamilyEntry> server, float seconds)
+	{
+		List<string> lines = new() { $"Your game did not answer this server's mod check in {seconds:0} seconds (mods missing, or a very slow connection)." };
+		lines.AddRange(server.Where(e => e.Mandatory).Select(e => $"This server runs {e.Title} {e.Version}."));
+		return lines;
+	}
+
 	public static string Message(List<string> lines, string id)
 	{
 		return string.Join("\n", lines) + $"\nRefusal code {id}; the same code is in the server's log.";

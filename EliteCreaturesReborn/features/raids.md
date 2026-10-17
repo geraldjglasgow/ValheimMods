@@ -120,7 +120,8 @@ friend saves the base, not the loot.
    alive at once; the rest arrive as others die. 20 seconds between waves.
 4. **Stars and mutations.** Raiders roll as any creature in the base's biome does (difficulty, world tier), plus the
    heat's extra stars and mutations. The last wave is led by a **Warlord**, the toughest creature in the list with two
-   more stars again.
+   more stars again. Extra stars stop at the most a creature of the biome can roll at the world tier (the difficulty's
+   cap, or the last entry of `star chances` under Custom): a raid never brings more stars than the difficulty allows.
 5. **Players see** one line under the minimap while within 96 m: "Fuling raid (Brutal) - wave 2 of 3 - 5 left - 8:40".
 
 ## What raiders go for

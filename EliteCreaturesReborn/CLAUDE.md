@@ -464,7 +464,8 @@ boss rules (those the game sends to the base's biome first), each from one side 
 about half the game's own count of each creature in the first, two thirds in the second, all of it in the third,
 times the heat's raiders and a quarter more for each player past the first. At most 20 alive at once, 20 seconds
 between waves. Raiders roll stars and mutations as the biome does, plus the heat's; the last wave is led by a
-Warlord, its toughest creature with two more stars. Players within 96 m see the raid in the event bar under the
+Warlord, its toughest creature with two more stars. The extra stars never go past the difficulty's star cap for the
+biome at the world tier (Very Hard: 5). Players within 96 m see the raid in the event bar under the
 minimap: "Fuling raid (Brutal) - wave 2 of 3 - 5 left - 8:40". Raiders hunt players first; with none, half go for the
 Raiders Chest and half for the base's chests and then its crafting stations, breaking through what stands between.
 

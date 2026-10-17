@@ -49,8 +49,10 @@ Console: `charter` / `charter status`, `charter diff [title]`, `charter versions
   reverted; a steward's edit is sent to the author, which sets and saves its entry and pushes it back. When the
   connection ends the entries return to the player's own values.
 - The family join check: every charter registers in `AppDomain` data under `"Charter.Family"`; the first copy to
-  `Install` leads, sends `Charter_Family` to a new peer, compares the answer, refuses with `Charter_Refuse` (a
-  six-character refusal code in both logs) and disconnects a second later. The player shows the message on the
+  `Install` leads; the player's lead sends `Charter_Family` as soon as it connects, the server's when the game
+  accepts the peer, both compare, the server refuses with `Charter_Refuse` (a six-character refusal code in both
+  logs) and disconnects a second later. A peer that never answers is refused a minute after the line to it clears
+  (five minutes at most), so a slow connection on a large mod list is not mistaken for a missing mod. The player shows the message on the
   connection-failed panel through a `FejdStartup.ShowConnectError` postfix.
 
 ## Decisions the specification left open

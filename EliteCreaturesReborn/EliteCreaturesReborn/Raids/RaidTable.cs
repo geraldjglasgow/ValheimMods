@@ -41,7 +41,8 @@ namespace EliteCreaturesReborn.Raids
         /// <summary>The Warlord's share of every coin the raiders carry.</summary>
         public const float WarlordCoinShare = 0.25f;
 
-        /// <summary>No raider is given more stars than this (the most the mod's own Extreme difficulty draws).</summary>
+        /// <summary>No Hel's Trial creature is given more stars than this (the most the mod's own Extreme difficulty draws); a
+        /// raider's stop at the difficulty's cap where the raid is (Traits/StarCap).</summary>
         public const int MaxRaiderStars = 8;
 
         // ---- How it ends (section 4). ----

@@ -125,7 +125,10 @@ namespace EliteCreaturesReborn.Runtime
             Apply();
         }
 
-        /// <summary>Owner rolls if unrolled; every machine then loads. False when a non-owner meets it before the roll.</summary>
+        /// <summary>
+        /// Owner rolls if unrolled; every machine then loads. False when a non-owner meets it before the roll, or when the
+        /// owner is a player whose server rules have not arrived yet (it would roll by its own file).
+        /// </summary>
         private bool TryResolve()
         {
             ZDO zdo = _nview.GetZDO();
@@ -133,7 +136,7 @@ namespace EliteCreaturesReborn.Runtime
             {
                 return false;
             }
-            if (_nview.IsOwner() && !TraitStore.IsResolved(zdo))
+            if (_nview.IsOwner() && !TraitStore.IsResolved(zdo) && ServerLock.RulesArrived)
             {
                 RollFresh(zdo);
             }

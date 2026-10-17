@@ -57,6 +57,13 @@ public sealed class Charter
 	/// <summary>On the server's admin list, or the host / single player.</summary>
 	public bool IsSteward => Side.IsServer || Receiver.Steward;
 
+	/// <summary>
+	/// The server's values are in: true on the server and outside a game, and on a player once the first push of this
+	/// connection has been applied. Until then a player holds its own values, so a mod waits before deciding anything
+	/// that lasts (a roll written to the world) by them.
+	/// </summary>
+	public bool Received => Side.IsServer || Receiver.PushCount > 0;
+
 	/// <summary>Local time of the last push received; null on the author.</summary>
 	public DateTime? LastPush => Side.IsServer ? null : Receiver.LastPush;
 

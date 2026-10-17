@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.28.1
+
+- Fixed: eggs from starred hens count for cooking recipes.
+- Fixed: a player who just joined no longer rolls nearby creatures by their own rules before the server's arrive.
+- Raids: extra stars never go past the difficulty's star cap for the biome.
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 3.28.0
 
 - Hel's Arena: when a quarter of a wave is left, Hel marks the last ones on the map and makes them glow, then recalls them a minute later.

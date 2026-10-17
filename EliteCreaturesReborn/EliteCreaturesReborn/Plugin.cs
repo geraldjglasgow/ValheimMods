@@ -5,6 +5,7 @@ using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Util;
 using HarmonyLib;
 using PatchGuard;
+using RecipeCounts;
 
 namespace EliteCreaturesReborn
 {
@@ -26,6 +27,7 @@ namespace EliteCreaturesReborn
             ServerLock.Setup(Config, PluginInfo.Guid, PluginInfo.Name, PluginInfo.PluginVersion);
             Harmony harmony = new Harmony(PluginInfo.Guid);
             harmony.PatchAll(typeof(Plugin).Assembly);
+            AnyQuality.Install(harmony); // starred eggs count for recipes
             Recap.RecapHost.Attach(gameObject, harmony);
             gameObject.AddComponent<Tally.TallyFlush>();
             Raids.RaidMarker.Setup(harmony);

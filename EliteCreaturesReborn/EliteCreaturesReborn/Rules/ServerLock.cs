@@ -44,6 +44,12 @@ namespace EliteCreaturesReborn.Rules
 
         public static void Install(Harmony harmony) => Charter.Charter.Install(harmony);
 
+        /// <summary>
+        /// The server's rules are in (always, on the server and in single player). A player that just joined holds its own
+        /// file until the first push, which on a slow connection can take minutes: nothing is rolled by it before then.
+        /// </summary>
+        public static bool RulesArrived => _charter == null || _charter.Received;
+
         /// <summary>Called after this machine's own file reloads: the server re-mirrors the lock and re-pushes the text.</summary>
         public static void OnLocalReloaded()
         {
