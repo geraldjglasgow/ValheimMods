@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.1.0
 
 - First release: stars on forage, honey, sap, crops, meat, fish, dishes and meads, shown bronze, silver and gold.
