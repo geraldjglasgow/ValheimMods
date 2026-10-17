@@ -23,15 +23,17 @@ namespace DevBridge.Stage
         /// <summary>
         /// A still copy: what the prefab looks like and nothing else. The creature, AI, piece, item and network scripts,
         /// the bodies, joints and colliders go before it wakes, so it neither moves, thinks, falls, blocks nor syncs.
+        /// A solid copy keeps its own static colliders (<see cref="Solid"/>), so it blocks and can be walked on.
         /// Its animators keep their controller, play from the default state and fire no animation events.
         /// </summary>
-        internal static GameObject Still(GameObject prefab, Vector3 position, Quaternion rotation)
+        internal static GameObject Still(GameObject prefab, Vector3 position, Quaternion rotation, bool solid = false)
         {
             GameObject copy = OnBench(prefab, position, rotation);
             Purge(copy.GetComponentsInChildren<MonoBehaviour>(true).Where(b => b != null && !Drawing(b)));
             Purge(copy.GetComponentsInChildren<Joint>(true));
             Park(Purge(copy.GetComponentsInChildren<Rigidbody>(true)));
-            Park(Purge(copy.GetComponentsInChildren<Collider>(true)));
+            Park(Purge(copy.GetComponentsInChildren<Collider>(true).Where(c => !solid || !Solid.Keeps(c))));
+            if (solid) Solid.Lay(copy);
             foreach (Animator animator in copy.GetComponentsInChildren<Animator>(true)) Hold(animator);
             Wake(copy);
             foreach (Animator animator in copy.GetComponentsInChildren<Animator>().Where(a => a.isActiveAndEnabled && a.runtimeAnimatorController))

@@ -77,10 +77,24 @@ namespace DevBridge.Stage
                 ["materials"] = AssetInfo.Materials(placement.Root),
             };
             if (placement.Spec?.On != null) info["on"] = placement.Spec.On + (placement.Spec.Bone != null ? " at " + placement.Spec.Bone : "");
-            if (placement.Dresses.Count > 0)
-                info["dress"] = placement.Dresses.Select(d => $"{d.With}{(d.Child != null ? "/" + d.Child : "")}{(d.Only != null ? " on " + d.Only : "")}{(d.Gloss.HasValue ? $" plain {d.Gloss:0.##}" : "")}").ToList();
+            if (placement.Dresses.Count > 0) info["dress"] = placement.Dresses.Select(Line).ToList();
+            List<string> glow = Glow.Left(placement);
+            if (glow.Count > 0) info["left as glow"] = glow;
             if (placement.SwapSpec != null) info["swap"] = placement.SwapSpec;
+            Colliders(placement.Root, info);
             return info;
+        }
+
+        private static string Line(DressSpec d) =>
+            $"{d.With}{(d.Child != null ? "/" + d.Child : "")}{(d.Only != null ? " on " + d.Only : "")}" +
+            $"{(d.Gloss.HasValue ? $" plain {d.Gloss:0.##}" : "")}{(d.Glow && !d.Undress ? " glow too" : "")}";
+
+        // How many colliders it kept that collide now, and on which layers.
+        private static void Colliders(GameObject root, Dictionary<string, object> info)
+        {
+            List<Collider> solid = Solid.Of(root);
+            info["colliders"] = solid.Count;
+            if (solid.Count > 0) info["collider layers"] = solid.Select(c => LayerMask.LayerToName(c.gameObject.layer)).Distinct().ToList();
         }
 
         /// <summary>The box round the placements' drawn meshes; false when there is nothing to frame.</summary>

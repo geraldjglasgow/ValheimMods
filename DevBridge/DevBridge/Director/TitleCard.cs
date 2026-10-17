@@ -93,7 +93,7 @@ namespace DevBridge.Director
             veil = Child<Image>("veil");
             veil.color = new Color(0f, 0f, 0f, 0f);
             text = Child<TextMeshProUGUI>("text");
-            (text.alignment, text.alpha, text.enableWordWrapping) = (TextAlignmentOptions.Center, 0f, false);
+            (text.alignment, text.alpha, text.textWrappingMode) = (TextAlignmentOptions.Center, 0f, TextWrappingModes.NoWrap);
         }
 
         private static T Child<T>(string name) where T : Graphic

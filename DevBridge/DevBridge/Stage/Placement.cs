@@ -71,6 +71,9 @@ namespace DevBridge.Stage
         internal string Gear;
 
         internal float Scale = 1f;
+
+        /// <summary>colliders=1: it keeps its own static colliders and can be walked on (<see cref="Solid"/>).</summary>
+        internal bool Colliders;
     }
 
     /// <summary>A dress: which game material (Creature, Piece, a prefab's), for which placeholder materials, how plain.</summary>
@@ -82,6 +85,9 @@ namespace DevBridge.Stage
 
         /// <summary>When set, the game maps laid out for the game model's UVs come off and the gloss is this.</summary>
         internal float? Gloss;
+
+        /// <summary>glow=1: the glow parts are dressed too; by default they keep the bundle's material (<see cref="DevBridge.Stage.Glow"/>).</summary>
+        internal bool Glow;
 
         internal bool Undress => string.Equals(With, "none", System.StringComparison.OrdinalIgnoreCase);
     }

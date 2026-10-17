@@ -17,7 +17,8 @@ namespace DevBridge.Routes
             "/bundle?load=<file>     load an asset bundle (e.g. .../ValheimAssets/out/bundles/ecp_swamp.windows; a folder or a path\n" +
             "                       without .windows finds the Windows build); loading a file already loaded reloads it\n" +
             "/bundle?reload=<name>   after a rebuild: destroy what was placed from it, unload it with everything loaded from it,\n" +
-            "                       read the file again and put each placed asset back (same place, id and dress)\n" +
+            "                       read the file again and put each placed asset back (same place, id, dress and colliders,\n" +
+            "                       in one frame, so a player standing on a solid one stays up)\n" +
             "                       and apply its /swap swaps again\n" +
             "/bundle?unload=<name>|all   remove what was placed from it, then unload it\n" +
             "/bundle?assets=<name>&type=GameObject&filter=text   its assets by type: triangles, textures, clip lengths",

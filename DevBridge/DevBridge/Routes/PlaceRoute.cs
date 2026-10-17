@@ -18,22 +18,25 @@ namespace DevBridge.Routes
         internal static void Register(Router router)
         {
             router.Add("/place",
-                "/place?asset=<prefab>&bundle=<name>&dress=Creature|Piece|<game prefab>|none&child=&only=&plain=0.1|off\n" +
-                "       " + RowArgs + "&at=x,y,z&on=<game prefab>&bone=<bone>&gear=1|0|<items>\n" +
-                "                       a still, local copy of a bundle prefab (no AI, physics, colliders or network): the first starts a\n" +
+                "/place?asset=<prefab>&bundle=<name>&dress=Creature|Piece|<game prefab>|none&child=&only=&plain=0.1|off&glow=1\n" +
+                "       " + RowArgs + "&at=x,y,z&colliders=1&on=<game prefab>&bone=<bone>&gear=1|0|<items>\n" +
+                "                       a still, local copy of a bundle prefab (no AI, physics or network): the first starts a\n" +
                 "                       row `distance` m in front of the player facing them, later ones go beside it (gap between meshes,\n" +
                 "                       sit=1 stands the lowest point on the ground); dress puts its placeholder materials into a game\n" +
-                "                       material; on= has a game creature wear it (a kit by bone names, or whole on bone=)",
+                "                       material, leaving glow parts (emission on, or under a glow* child) as built unless glow=1;\n" +
+                "                       colliders=1 keeps its own static colliders, Default ones on static_solid, to walk on (kept\n" +
+                "                       through /bundle?reload); on= has a game creature wear it (a kit by bone names, or whole on bone=)",
                 Place);
             router.Add("/lineup",
                 "/lineup?prefabs=Skeleton,Draugr,AxeBronze&gear=1|0|<items>" + RowArgs + "\n" +
                 "                       still, local copies of the game's own prefabs beside the row, alternating sides by default;\n" +
                 "                       gear=1 shows what a creature carries, gear=Battleaxe,ShieldWood puts those game items on it",
                 Lineup);
-            router.Add("/placed", "/placed?id=N           everything placed: size, triangles, materials and shaders, dress", List);
+            router.Add("/placed", "/placed?id=N           everything placed: size, triangles, materials and shaders, dress, glow left, colliders", List);
             router.Add("/dress",
-                "/dress?id=N&dress=Creature|Piece|<game prefab>|none&child=&only=<material text>&plain=0.1|off\n" +
-                "                       dress a placed asset again (from its original placeholders); only= limits it to some materials",
+                "/dress?id=N&dress=Creature|Piece|<game prefab>|none&child=&only=<material text>&plain=0.1|off&glow=1\n" +
+                "                       dress a placed asset again (from its original placeholders); only= limits it to some materials;\n" +
+                "                       glow parts keep the bundle's material unless glow=1 (the reply lists them); none undresses all",
                 Redress);
             router.Add("/clear", "/clear?id=1,2|kind=asset|game|effect|sound|bundle=<name>   remove placed things (all by default)", Clear);
         }
@@ -43,7 +46,7 @@ namespace DevBridge.Routes
             var spec = new PlaceSpec
             {
                 Asset = request.Require("asset"), Bundle = request.Get("bundle"), On = request.Get("on"), Bone = request.Get("bone"),
-                Gear = request.Get("gear"), Scale = request.Float("scale", 1f),
+                Gear = request.Get("gear"), Scale = request.Float("scale", 1f), Colliders = request.Flag("colliders"),
             };
             var notes = new Dictionary<string, object>();
             Placement placement = Stager.Asset(spec, Vector3.zero, Quaternion.identity, notes);
@@ -76,17 +79,23 @@ namespace DevBridge.Routes
             request.Json(placed);
         }
 
-        /// <summary>Into the row (begun anew with new=1 or when empty), or at an exact at=x,y,z outside it.</summary>
+        /// <summary>
+        /// Into the row (begun anew with new=1 or when empty), or at an exact at=x,y,z outside it. A solid copy's own
+        /// colliders are off meanwhile, so the ground found under it is not itself.
+        /// </summary>
         private static string Arrange(Placement placement, BridgeRequest request, string side)
         {
             Slot slot = Slot.From(request, side);
-            if (request.Has("at"))
+            using (Solid.Aside(placement.Root))
             {
-                Row.PutAt(placement.Root, Fmt.ParseV3(request.Get("at"), "at"), slot);
-                return "at";
+                if (request.Has("at"))
+                {
+                    Row.PutAt(placement.Root, Fmt.ParseV3(request.Get("at"), "at"), slot);
+                    return "at";
+                }
+                if (!Row.Started || request.Flag("new")) Row.Begin(request.Float("distance", 4f));
+                return Row.Put(placement.Root, slot);
             }
-            if (!Row.Started || request.Flag("new")) Row.Begin(request.Float("distance", 4f));
-            return Row.Put(placement.Root, slot);
         }
 
         private static Dictionary<string, object> Reply(Placement placement, Dictionary<string, object> notes)

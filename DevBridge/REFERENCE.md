@@ -53,9 +53,9 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/zdo` | every value a ZDO stores (`id=`, `hover=1`, `nearest=Troll`), key names recovered from the game's and plugins' strings (read on the first `/zdo`, kept in `BepInEx/cache/DevBridge.zdonames`, read again only for a changed file); owner id and revisions; `full=1` leaves strings uncut |
 | `/bundle` | load an asset bundle from a file (`load=`), list its assets by type (`assets=`), `reload=` it after a rebuild, `unload=` |
 | `/prefabs` | the game's prefabs by name text and kind (`filter=sfx_`, `kind=creature`, `piece`, `item`, `sfx`, `vfx`) |
-| `/place` | a still, local copy of a bundle prefab in a row in front of the player, dressed in a game material or worn by a game creature |
+| `/place` | a still, local copy of a bundle prefab in a row in front of the player, dressed in a game material (glow parts kept) or worn by a game creature; `colliders=1` makes it solid to walk on |
 | `/lineup` | still, local copies of the game's own prefabs beside it (`prefabs=Skeleton,Battleaxe`), creatures with their gear |
-| `/placed`, `/dress`, `/clear` | what is placed (size, triangles, materials, shaders); dress one again; remove them |
+| `/placed`, `/dress`, `/clear` | what is placed (size, triangles, materials, shaders, glow left, colliders); dress one again; remove them |
 | `/animate` | a placed object's Animator: its clips and parameters; play a state, triggers, parameters, speed, swap in a bundle's clips |
 | `/effect`, `/sound` | a bundle or game particle effect at the row; a game sound, or a bundle clip played through a game sound |
 | `/frame` | the game's free camera framing the row (or one placed object, or a point) from a set angle; HUD off |
@@ -321,8 +321,9 @@ machine: nothing is networked, saved or seen by other players, and logging out r
 then wake it with `ZNetView.m_forceDisableInit` set, the way the game makes its own local copies (a network view that
 wakes under it removes itself, so no ZDO is ever made; never "ghost init"). A still copy keeps what draws and sounds
 (renderers, level of detail, animators, particles, lights, audio, `VisEquipment`, `LightLod`, `LightFlicker`, `ZSFX`)
-and loses the rest: creature, AI, piece, item and network scripts, rigidbodies, joints and colliders. It does not
-move, think, fall, block, take hits or show a health bar. Its animator plays the controller's default state (no root
+and loses the rest: creature, AI, piece, item and network scripts, rigidbodies, joints and colliders (a bundle asset
+keeps its colliders with `colliders=1`: "Solid copies" below). It does not move, think, fall, block, take hits or show
+a health bar. Its animator plays the controller's default state (no root
 motion, no animation events) until `/animate` says otherwise. A game creature is sized as the game sizes it (world
 enemy size and world level), and with `gear=1` (the default) carries its default items and the first of its random
 weapon, shield, armour and set.
@@ -333,6 +334,17 @@ right, `/lineup` alternating right and left so the new asset stays in the middle
 on the ground under it with its lowest drawn point on the ground (`sit=1`, the default; `sit=0` puts the pivot there),
 raised by `height`, turned by `yaw`, sized by `scale`. `new=1` starts a new row where the player now looks; `at=x,y,z`
 puts one object at an exact point outside the row. Clearing everything resets the row.
+
+**Solid copies.** `/place?...&colliders=1` keeps the bundle prefab's own non-trigger colliders: the workshop's `col_*`
+boxes and any box, sphere, capsule or mesh collider the prefab has (no mesh collider is made for it). They stay on the
+layer each has in the prefab, or go on `static_solid` (the game's rocks and dungeon walls) where that is Default, so
+the player walks on the copy, creatures and the game's pathfinding see it, and later copies in the row stand on it.
+Everything else is as on any still copy: no rigidbody, network view or ZDO, nothing saved, this machine only.
+`/placed` counts each object's `colliders` and names their layers. `/bundle?reload=` puts it back solid within the same
+frame, so a player standing on it does not drop. It is not the default with `at=`, although location pieces are placed
+with it: `at=` says where an object goes, not what it is, and a solid copy changes the world round it (it blocks the
+player and creatures, traps or shoves a player it is placed on, and becomes the ground later copies stand on), so it
+is asked for by name. An asset worn with `on=` cannot be solid.
 
 **Dressing.** A workshop bundle keeps plain Standard placeholder materials; a mod dresses them in the game's own at
 runtime (ValheimModLibs' `GameMaterials`). `dress=` does the same here, always starting from the materials the asset
@@ -352,6 +364,11 @@ gloss, as `GameMaterials.Plain` does (plus the building shader's `_MetallicTex`)
 dresses only the placeholder materials whose name contains the text, so one asset can wear several game materials
 (one `/dress` per part). A bundle particle effect can be dressed from a game effect (`dress=vfx_...`): its texture
 goes onto a copy of that effect's particle material.
+
+Glow parts keep the bundle's own material, as the mods keep it (its Standard shader draws correctly in game): a
+placeholder with emission on in a colour that is not black, and every material on a renderer under a child named
+`glow*` (the workshop's GLOW parts, which may start dark for a mod to light). `glow=1` dresses them too. The reply and
+`/placed` list them under `left as glow`. `dress=none` puts every material back to its placeholder.
 
 **Wearing.** `/place?asset=<kit>&on=Skeleton` puts the asset on a still copy of a game creature, the way the mods
 hang the workshop's kits: each top-level child named after a bone (`l_hand`, `RightHand`, `root`) hangs on that bone
@@ -415,15 +432,18 @@ finds game sounds and effects to compare with or play through.
   `load=` takes the `.windows` build (a folder, or a path without the extension, finds it). Bundles are read into
   memory, so the file stays free for the next build to overwrite. If a rebuilt bundle fails to load, what was placed
   from it is gone: fix the build and `load=` again.
-- **Reload puts assets back at the same pivot** with the same id and dresses, and clip swaps that used the bundle are
-  applied again; a new version's size does not move it (place it again to re-sit it). Effects and sounds from the
-  bundle are dropped, not replayed.
+- **Reload puts assets back at the same pivot** with the same id, dresses and colliders, and clip swaps that used the
+  bundle are applied again; a new version's size does not move it (place it again to re-sit it). Effects and sounds
+  from the bundle are dropped, not replayed. The old copy goes and the new one comes within one frame, so a player
+  standing on a solid copy stays up. Only when the new build does not load, or no longer has the asset, is the copy
+  gone with its colliders: a player on it then falls (god mode keeps them alive).
 - **What a dress reproduces:** the game material's shader and everything the shader does with light, fog, rain and
   snow, its settings (gloss, normal strength, culling, cutout), and the asset's own baked albedo and normal map.
   **What it does not:** any other map of the asset's own (a metal mask, a glow map, style variants: the dress uses the
   game's, or with `plain` none); anything the game's scripts set on a live object (creature level colours, a player's
   skin and hair, hit flashes, burning and wet looks, snow on pieces, wear and damage states); and any look a mod builds
-  in its own code beyond Dress and Plain (a glow on some parts, a tint, a scale), which only the mod shows. Particle
+  in its own code beyond Dress, Plain and keeping the glow parts (a glow lit or tinted at runtime, a tint, a scale),
+  which only the mod shows. Particle
   effects keep their own colours, sizes and timings; a dress only moves the texture onto a game particle material.
 - **Still copies are not live.** No IK, head look, footsteps, level stars or random looks; animation events do not
   fire, so effects and sounds tied to an attack's frames are not played (use `/effect` and `/sound` alongside). Gear is

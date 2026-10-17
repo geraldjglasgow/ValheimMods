@@ -11,7 +11,8 @@ namespace DevBridge.Stage
     /// Puts a bundle model's placeholder materials into the game's own, the way ValheimModLibs' GameMaterials does in the
     /// mods: a copy of a game material (its shader, lighting and settings) wearing the placeholder's baked albedo and
     /// normal map (Dress), optionally without the game maps laid out for the game model's UVs (Plain). Every dress starts
-    /// from the materials the model had when placed, so dresses can be tried one after another.
+    /// from the materials the model had when placed, so dresses can be tried one after another. Glow parts keep the
+    /// bundle's own material unless the dress says glow=1, as the mods keep it (<see cref="Glow"/>).
     /// </summary>
     internal static class Dress
     {
@@ -41,14 +42,14 @@ namespace DevBridge.Stage
             Apply(placement);
         }
 
-        /// <summary>A dress spec from with=/dress=, child=, only= and plain= (a gloss, or off).</summary>
+        /// <summary>A dress spec from with=/dress=, child=, only=, plain= (a gloss, or off) and glow=1.</summary>
         internal static DressSpec Spec(BridgeRequest request, string with)
         {
             string plain = request.Get("plain");
             float? gloss = Shorthands.TryGetValue(with, out var shorthand) ? shorthand.Gloss : (float?)null;
             if (plain == "off") gloss = null;
             else if (plain != null) gloss = request.Float("plain", 0.1f);
-            return new DressSpec { With = with, Child = request.Get("child"), Only = request.Get("only"), Gloss = gloss };
+            return new DressSpec { With = with, Child = request.Get("child"), Only = request.Get("only"), Gloss = gloss, Glow = request.Flag("glow") };
         }
 
         private static void Restore(Placement placement)
@@ -69,7 +70,7 @@ namespace DevBridge.Stage
                 for (int i = 0; i < pair.Value.Length && i < current.Length; i++)
                 {
                     Material placeholder = pair.Value[i];
-                    if (!placeholder || !Matches(placeholder, spec.Only)) continue;
+                    if (!Takes(spec, pair.Key, placeholder, placement.Root.transform)) continue;
                     if (!dressed.TryGetValue(placeholder, out Material material))
                         dressed[placeholder] = material = Made(placement, Dressed(game, placeholder, spec.Gloss));
                     current[i] = material;
@@ -78,7 +79,11 @@ namespace DevBridge.Stage
             }
         }
 
-        private static bool Matches(Material placeholder, string only) =>
+        // The placeholders the dress is for: those only= names, glow parts only with glow=1.
+        private static bool Takes(DressSpec spec, Renderer renderer, Material placeholder, Transform root) =>
+            placeholder && Matches(placeholder, spec.Only) && (spec.Glow || !Glow.Is(renderer, placeholder, root));
+
+        internal static bool Matches(Material placeholder, string only) =>
             only == null || placeholder.name.IndexOf(only, StringComparison.OrdinalIgnoreCase) >= 0;
 
         private static Material Made(Placement placement, Material material)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DevBridge.Server;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -18,8 +19,9 @@ namespace DevBridge.Stage
         }
 
         /// <summary>
-        /// After its bundle is reloaded, an asset is made again at the same pivot from its spec, keeping its id and its
-        /// dresses (a new version's size does not move it).
+        /// After its bundle is reloaded, an asset is made again at the same pivot from its spec, keeping its id, its
+        /// dresses and its colliders (a new version's size does not move it). The reload runs inside one frame, so the
+        /// physics never steps between the old copy going and this one coming: a player standing on it stays up.
         /// </summary>
         internal static void Rebuild(Placement placement, Vector3 position, Quaternion rotation)
         {
@@ -31,9 +33,10 @@ namespace DevBridge.Stage
 
         private static GameObject Make(PlaceSpec spec, Vector3 position, Quaternion rotation, Dictionary<string, object> notes, out Renderer[] own)
         {
+            if (spec.Colliders && spec.On != null) throw new BridgeException("colliders=1 is for an asset standing by itself, not one worn with on=");
             GameObject prefab = Bundles.Asset<GameObject>(spec.Asset, spec.Bundle, out LoadedBundle from);
             (spec.Asset, spec.Bundle) = (prefab.name, from.Name);
-            GameObject asset = LocalCopy.Still(prefab, position, rotation);
+            GameObject asset = LocalCopy.Still(prefab, position, rotation, spec.Colliders);
             own = asset.GetComponentsInChildren<Renderer>(true);
             GameObject root = spec.On == null ? asset : Body(asset, spec, notes);
             root.transform.localScale *= spec.Scale;
