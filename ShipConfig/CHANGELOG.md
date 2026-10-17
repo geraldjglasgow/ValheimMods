@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 1.4.2
 
 - Store page: a fuller overview of what the mod does.
