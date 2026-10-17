@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.11.0
 
 - The ten "at low health" inscriptions (Desperate Haste, Cornered Hide, ...) are merged into their plain twins; items keep the plain one.
