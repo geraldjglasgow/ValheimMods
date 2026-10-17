@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.3.1
 
 - Fixed: the Gnarled Wand, Spell: Hearthsong and Dandelion Mash can be crafted at the workbench (`Wands and Spells` on).

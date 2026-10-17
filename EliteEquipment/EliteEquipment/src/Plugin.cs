@@ -23,7 +23,7 @@ namespace EliteEquipment
     {
         public const string PluginGuid = "milkyteam.eliteequipment";
         public const string PluginName = "EliteEquipment";
-        public const string PluginVersion = "0.3.1";
+        public const string PluginVersion = "0.3.2";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
