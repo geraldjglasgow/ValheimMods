@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- Fixed: players on a slow connection with many mods are no longer refused when joining a server.
+
 ## 0.4.1
 
 - Fixed: after Alt + Tab, hotkeys could stop working or act as if Shift, Ctrl or Alt were held.
