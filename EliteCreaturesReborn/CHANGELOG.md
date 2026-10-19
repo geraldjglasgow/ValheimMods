@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.30.1
+
+- Vietnamese translation, by QuânKha (Zono) [VLHM], used while the game's language is Vietnamese.
+
 ## 3.30.0
 
 - Translations: every word you read is in `translations/English.yml`; an `EliteCreaturesReborn.translations.<Language>.yml` in `BepInEx/config` translates it.

@@ -1,0 +1,474 @@
+# Elite Creatures Reborn - Vietnamese words (Tiếng Việt), translated by QuânKha (Zono) [VLHM], 2026-10-19
+#
+# Used while the game's language is Vietnamese, which a language mod adds (the game ships no Vietnamese). A language
+# mod that writes Vietnamese into the game's English instead needs this file copied as
+# BepInEx/config/EliteCreaturesReborn.translations.English.yml.
+# The keys are the ones in English.yml beside this file; a key left out stays English. "$1 $2" patterns set the word
+# order (ecr_name_decorated: $1 the mutation and aspect words, $2 the creature's name).
+
+# Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
+ecr_mut_mad: "Điên Cuồng"
+ecr_mut_bloated: "Trương Phình"
+ecr_mut_cloaked: "Ẩn Thần"
+ecr_mut_splintering: "Tách Phân"
+ecr_mut_leeching: "Hút Máu"
+ecr_mut_warding: "Phản Lực"
+ecr_mut_plated: "Bọc Giáp"
+ecr_mut_miasmic: "Chướng Khí"
+ecr_mut_devouring: "Thôn Phệ"
+ecr_mut_thieving: "Đạo Tặc"
+ecr_mut_gilded: "Mạ Vàng"
+ecr_mut_blinking: "Tốc Biến"
+ecr_mut_relentless: "Ngoan Cường"
+ecr_mut_juggernaut: "Bá Vương"
+ecr_mut_screecher: "Rú Tinh"
+ecr_mut_frostbound: "Băng Bắt"
+ecr_mut_mudbound: "Bùn Lầy"
+ecr_mut_corrodent: "Ăn Mòn"
+ecr_mut_cloning: "Thế Thân"
+ecr_mut_piercing: "Xuyên Giáp"
+ecr_mut_howling: "Gầm Hú"
+ecr_mut_binding: "Trói Rễ"
+ecr_mut_flamebound: "Hỏa Bắt"
+
+# Creature names: $1 its mutation and aspect words, $2 its own name ("Mad Greydwarf")
+ecr_name_decorated: "$1 $2"
+# Two words of a creature's name side by side, joined left to right ("Bloated Warding", then "Bloated Warding Miasmic")
+ecr_name_words: "$1 $2"
+
+# Mutations, told to the player they happen to
+# $1 the creature, $2 the item, $3 how many
+ecr_mut_msg_stole: "$1 đã trộm $2 x$3"
+# $1 the item, $2 how many
+ecr_mut_msg_not_stolen: "$1 x$2 không bị trộm"
+ecr_mut_msg_stolen_late: "$1 x$2 cuối cùng vẫn bị trộm"
+# $1 the armour piece, $2 the percent of it left
+ecr_mut_msg_corrodes: "$1 của bạn bị ăn mòn (còn $2%)"
+
+# Over a creature, where damage numbers show
+ecr_display_unstoppable: "Không Thể Cản Phá"
+# A Frostbound creature healed by frost: $1 the health it healed (the game puts + before it)
+ecr_display_frost_heal: "$1 băng"
+
+# Status effects
+ecr_se_chilled: "Lạnh Giá"
+ecr_se_chilled_tooltip: "Hào quang đóng băng của sinh vật Băng Bắt: thể lực của bạn hồi phục chậm khi ở gần nó."
+ecr_se_ringing_ears: "Úa Tai"
+ecr_se_ringing_ears_tooltip: "Tiếng rú khiến tai bạn ù đi: thế giới trở nên mờ mịt và không thể thi triển phép thuật."
+ecr_se_ringing_ears_start: "Tai bạn ù đi - thế giới trở nên tĩnh lặng"
+ecr_se_ringing_ears_no_cast: "Tai bạn ù đi - không thể thi triển phép"
+ecr_se_slick_ice: "Băng Trơn"
+ecr_se_slick_ice_tooltip: "Băng do sinh vật Băng Bắt tạo ra dưới chân: chân bạn bị trượt, khiến việc bắt đầu, quay người và dừng lại mất nhiều thời gian hơn."
+ecr_se_deep_mud: "Bùn Sâu"
+ecr_se_deep_mud_tooltip: "Bùn lầy do sinh vật Bùn Lầy tạo ra dưới chân: dày và sâu, níu kéo từng bước chân và bám chặt một lúc sau đó."
+ecr_se_rooted: "Bị Trói Rễ"
+ecr_se_rooted_tooltip: "Rễ cây giữ chặt chân bạn: bạn không thể đi, chạy, nhảy hoặc lăn cho đến khi chúng buông ra."
+
+# Eggs: what an egg will hatch. $1 the number of stars, $2 its mutations (each in its star colour)
+ecr_egg_plain: "Nở ra sinh vật thường"
+ecr_egg_stars_one: "Nở ra sinh vật $1 sao"
+ecr_egg_stars_many: "Nở ra sinh vật $1 sao"
+ecr_egg_stars_one_mutations: "Nở ra sinh vật $1 sao, $2"
+ecr_egg_stars_many_mutations: "Nở ra sinh vật $1 sao, $2"
+# Two mutations in an egg's list, joined left to right ("Leeching, Mad", then "Leeching, Mad, Gilded")
+ecr_egg_list: "$1, $2"
+
+# World tier: the inventory plate's tooltip ($1 the number of tiers) and the message when it rises
+ecr_tier_topic: "Cấp độ thế giới"
+ecr_tier_tip: "Có tổng cộng $1 cấp độ thế giới. Cấp độ tăng lên lần đầu tiên khi mỗi trùm bị đánh bại, và mỗi cấp độ khiến sao và đột biến xuất hiện phổ biến hơn trong mọi vùng đất."
+# $1 the new tier, $2 the number of tiers
+ecr_tier_risen: "Thế giới trở nên khắc nghiệt hơn: cấp độ $1/$2"
+
+# Boss hints: a defeated boss points toward a place. $1 one of the directions below
+ecr_hint_pull: "Bạn cảm thấy một thế lực đang kéo bạn về phía... $1"
+ecr_hint_north: "bắc"
+ecr_hint_northeast: "đông bắc"
+ecr_hint_east: "đông"
+ecr_hint_southeast: "đông nam"
+ecr_hint_south: "nam"
+ecr_hint_southwest: "Tây nam"
+ecr_hint_west: "tây"
+ecr_hint_northwest: "tây bắc"
+
+# Boss rewards, on a boss altar's hover: $1-$2 the amount, $3 the item
+ecr_loot_altar_reward: "Phần thưởng: $1-$2 $3 cho mỗi người chơi"
+
+# The Bat-fiend: its name and its attacks' names (the death recap and the damage log)
+enemy_ecr_batfiend: "Ác Dơi"
+item_ecr_batfiend_pounce: "Vồ Xé"
+item_ecr_batfiend_bite: "Cắn Rút Máu"
+item_ecr_batfiend_wing: "Cánh Máy Chém"
+item_ecr_batfiend_gravewind: "Cơn Gió Mộ Chí"
+item_ecr_batfiend_screech: "Tiếng Rú Bể Hộp Sọ"
+
+# Elite Creatures Reborn: the compendium pages, boss aspects, boss altars and the boss damage board.
+# $1, $2 ... are values the mod fills in (numbers, names). Colours and layout stay in the code.
+
+# Boss aspects: each aspect's name, put before a boss's own name ("none" is the fight as the game ships it)
+ecr_aspect_none: "không"
+ecr_aspect_reflective: "Phản Đòn"
+ecr_aspect_shielded: "Khiên Chắn"
+ecr_aspect_mending: "Trị Liệu"
+ecr_aspect_summoner: "Triệu Hồi Sư"
+ecr_aspect_elementalist: "Thuật Sĩ Nguyên Tố"
+ecr_aspect_enraged: "Cuồng Nộ"
+ecr_aspect_twin: "Song Sinh"
+ecr_aspect_phantom: "Ảo Ảnh"
+ecr_aspect_adaptive: "Thích Ứng"
+ecr_aspect_fixated: "Mục Tiêu Cố Định"
+ecr_aspect_stormbound: "Bão Tố"
+ecr_aspect_gravitic: "Trọng Lực"
+ecr_aspect_colossal: "Khổng Lồ"
+ecr_aspect_tethered: "Ràng Buộc"
+ecr_aspect_bountiful: "Dồi Dào"
+ecr_aspect_portalbound: "Cổng Dịch Chuyển"
+ecr_aspect_nightfall: "Bóng Đêm Hạ Xuống"
+ecr_aspect_brutal: "Tàn Bạo"
+ecr_aspect_echoing: "Vang Vọng"
+
+# Boss aspects: what each does. Lower case and no full stop: the altar shows it on the line under the aspect's name,
+# the compendium and the altar window give it a capital and ecr_aspect_sentence.
+ecr_aspect_does_none: "trận chiến như mặc định của trò chơi"
+ecr_aspect_does_reflective: "$1% mỗi đòn đánh bạn gây ra cho nó sẽ phản lại bạn"
+ecr_aspect_does_shielded: "chịu ít hơn $1% sát thương từ mũi tên và tên nỏ"
+ecr_aspect_does_mending: "hồi phục $1% máu hiện tại mỗi giây"
+ecr_aspect_does_summoner: "triệu hồi $1 sinh vật mỗi khi mất $2% máu"
+ecr_aspect_does_elementalist: "gây thêm $1% sát thương nguyên tố"
+ecr_aspect_does_enraged: "gây thêm $1% sát thương vật lý"
+ecr_aspect_does_twin: "xuất hiện thành hai thể chia sẻ chung một bể máu, mỗi thể chịu giảm $1% máu và $2% sát thương"
+ecr_aspect_does_phantom: "khi còn $1 máu sẽ tách ra các bản sao ảo ảnh, $2 bản sao cho mỗi người chơi trực tuyến, với $3 máu và giảm $4% sát thương"
+ecr_aspect_does_adaptive: "chịu ít hơn $1% loại sát thương gây ra cho nó nhiều nhất trong $2 giây qua"
+ecr_aspect_does_fixated: "đánh dấu một người chơi và đánh họ mạnh hơn $1%, những người khác nhẹ hơn $2%; dấu ấn chuyển sang người gây sát thương nhiều nhất mỗi $3 giây"
+ecr_aspect_does_stormbound: "mỗi $1 giây gọi sét xuống một vòng tròn dưới chân mỗi người chơi, $2 giây sau khi vòng tròn xuất hiện"
+ecr_aspect_does_gravitic: "mỗi $1 giây kéo mọi người chơi trong bán kính $2 m về phía nó, sau đó nện xuống: $3% máu tối đa cho người chơi trong bán kính $4 m"
+ecr_aspect_does_colossal: "to hơn $1%, thêm $2% máu, chậm hơn $3%; các đòn đánh nặng tạo ra sóng xung kích $4 m làm ngã người chơi (lăn né hoặc nhảy qua)"
+ecr_aspect_does_tethered: "xuất hiện thành hai thể liên kết với nhau, mỗi thể giảm $1% máu; mức chênh lệch máu giữa hai thể càng lớn, cả hai tấn công càng nhanh (lên đến $2%) và thể yếu hơn chịu ít sát thương hơn (lên đến $3%)"
+ecr_aspect_does_bountiful: "mang thêm $1 thuộc tính cùng lúc"
+ecr_aspect_does_portalbound: "ném đòn qua các cổng dịch chuyển (Elder dùng rễ cây, Bonemass dùng chất nhầy): một cổng mở ra ở tay nó, cổng còn lại mở ra đâu đó phía trên bạn"
+ecr_aspect_does_nightfall: "biến bầu trời thành đêm bão bùng trong bán kính $1 m xung quanh nó; mỗi $2-$3 giây một lốc xoáy nổi lên cạnh mỗi người chơi ở đó và đuổi theo họ trong $4 giây: gây $5 sát thương mỗi giây bên trong lốc"
+ecr_aspect_does_brutal: "các đòn đánh nặng văng người chơi bị trúng ra xa $1 m; đỡ đòn thành công hoặc đỡ đòn chuẩn xác (parry) sẽ giúp bạn đứng vững, và khi rơi xuống không bao giờ bị thương"
+ecr_aspect_does_echoing: "$1 giây sau khi bắt đầu trận chiến, một bóng ma màu trắng của nó nổi lên và làm lại mọi thứ nó đã làm $1 giây trước, bao gồm cả các đòn đánh và ném, cho đến khi nó chết"
+# What an aspect does as a sentence of its own ($1 already starts with a capital)
+ecr_aspect_sentence: "$1."
+# Phantom splits at no health marks at all ("at no health splits off ...")
+ecr_aspect_marks_none: "không còn"
+
+# Fixated: the chat line when its mark lands ($1 the boss, $2 a player)
+ecr_aspect_fixates_on: "$1 nhắm cố định vào $2!"
+ecr_aspect_fixates_you: "$1 nhắm cố định vào bạn!"
+ecr_aspect_fixated_gone: "một người chơi đã rời đi"
+
+# Boss altar: the bowl's hover lines
+ecr_altar_choose: "Chọn trận chiến"
+ecr_altar_stars_line: "Số sao: $1"
+ecr_altar_stars_none: "không"
+ecr_altar_aspect_line: "Thuộc tính: $1"
+ecr_altar_chosen: "(đã chọn)"
+ecr_altar_loot_paren: "(vật phẩm rơi x$1)"
+ecr_altar_extra_line: "$1: $2"
+ecr_altar_shifting: "Đang thay đổi..."
+ecr_altar_shifts_in: "Thay đổi sau $1"
+ecr_altar_defeated_once: "Đã đánh bại 1 lần: dễ có nhiều sao hơn"
+ecr_altar_defeated_many: "Đã đánh bại $1 lần: dễ có nhiều sao hơn"
+ecr_altar_defeated_most: "Đã đánh bại $1+ lần: dễ có nhiều sao hơn"
+
+# Boss altar: the window where a player chooses the fight
+ecr_altar_title: "Chọn Trận Chiến"
+ecr_altar_now: "Đang có trên bàn thờ"
+ecr_altar_stars: "Số sao"
+ecr_altar_stars_off: "Số sao: đã tắt trong tệp quy tắc"
+ecr_altar_aspect_off: "Thuộc tính: đã tắt trong tệp quy tắc"
+ecr_altar_random: "Ngẫu nhiên"
+ecr_altar_none: "Không có"
+ecr_altar_random_text: "Được xoay ngẫu nhiên từ các thuộc tính của trùm này mỗi khi bàn thờ thay đổi."
+ecr_altar_bountiful_text: "Các thuộc tính bổ sung được xoay ngẫu nhiên mỗi khi bàn thờ thay đổi."
+ecr_altar_loot: "Vật phẩm rơi x$1"
+
+# Boss damage board ($1 the boss)
+ecr_tally_defeated: "Đã đánh bại $1"
+
+# Difficulties, as a player reads them
+ecr_difficulty_custom: "Tùy chỉnh"
+ecr_difficulty_easy: "Dễ"
+ecr_difficulty_medium: "Trung bình"
+ecr_difficulty_hard: "Khó"
+ecr_difficulty_veryhard: "Rất khó"
+ecr_difficulty_extreme: "Cực khó"
+
+# Compendium: shared words
+ecr_book_seconds_one: "$1 giây"
+ecr_book_seconds_many: "$1 giây"
+ecr_book_list_comma: ", "
+ecr_book_list_and: "$1 và $2"
+
+# Compendium: World difficulty page
+ecr_book_difficulty_topic: "Elite: Độ khó thế giới"
+ecr_book_difficulty: "Độ khó: $1"
+ecr_book_tier: "Cấp độ thế giới $1/$2: một cấp độ cho mỗi trùm bên dưới đã gục ngã. Mỗi cấp độ làm sinh vật mạnh hơn."
+ecr_book_tier_off: "Cấp độ thế giới đã tắt trên máy chủ này: thế giới duy trì ở cấp độ 0."
+ecr_book_creature_stars_off: "Số sao của sinh vật đã tắt trên máy chủ này: sinh vật giữ nguyên số sao gốc của game, và chỉ có đột biến đến từ Elite Creatures."
+ecr_book_bosses: "Trùm"
+ecr_book_boss_defeated: "đã đánh bại"
+ecr_book_boss_not_yet: "chưa đánh bại"
+ecr_book_meaning: "Ý nghĩa"
+ecr_book_meaning_custom: "$1: máy chủ này tự thiết lập tỷ lệ sao và đột biến cho từng vùng đất. Mỗi cấp độ thế giới gia tăng chúng; hiện tại sao x$2 và đột biến x$3."
+ecr_book_meaning_preset: "Độ khó quyết định sinh vật nhận được bao nhiêu sao và đột biến khi các trùm của thế giới bị hạ gục. Vùng đất bạn mới bước vào là nhẹ nhàng nhất. Vùng đất bạn đã dọn dẹp sẽ trở nên khó hơn với mỗi trùm bị tiêu diệt sau đó, vì vậy đến cuối game Vùng Đầm Cỏ sẽ là nơi khó nhất. Các vùng đất bạn chưa tới sẽ tương ứng với vùng đất bạn đang bước vào.\nDưới mức sao tối đa cho phép, hầu hết sinh vật là bình thường và mỗi sao bổ sung sẽ hiếm hơn sao trước đó. Mỗi sao sinh vật sở hữu sẽ cộng thêm một phần tư vào tỷ lệ xuất hiện đột biến."
+ecr_book_biomes: "Mỗi vùng đất ở cấp độ thế giới $1"
+ecr_book_col_biome: "Vùng đất"
+ecr_book_col_most_stars: "Số sao tối đa"
+ecr_book_col_with_stars: "Có sao"
+ecr_book_col_mutated: "Đột biến"
+ecr_book_biomes_note: "Vùng đất của bạn có màu cam. Đột biến: sinh vật không có sao nhưng mang đột biến."
+ecr_book_ladder: "Cấp độ khó"
+ecr_book_ladder_line: "$1: $2"
+ecr_book_ladder_easy: "1 sao ở vùng đất khởi đầu, thêm 1 sao cho mỗi trùm bị tiêu diệt sau vùng đất đó, tối đa 4; 10% đột biến, tăng lên 35% khi trùm gục ngã"
+ecr_book_ladder_medium: "2 sao, tối đa 5; 25% đột biến, tăng lên 55%"
+ecr_book_ladder_hard: "3 sao, tối đa 5; 30% đột biến, tăng lên 65%"
+ecr_book_ladder_veryhard: "4 sao, tối đa 5; đột biến ở mức giữa $1 và $2"
+ecr_book_ladder_extreme: "5 sao ở mọi vùng đất bạn đã tới, 6 đến 8 sao khi có thêm trùm gục ngã; 45% đột biến, tăng lên 98%"
+ecr_book_ladder_custom: "$1: tỷ lệ riêng của máy chủ cho từng vùng đất, được nâng lên bởi mỗi cấp độ thế giới."
+ecr_book_ladder_note: "Số sao: số sao tối đa một sinh vật có thể có. Đột biến: sinh vật không có sao nhưng mang đột biến."
+ecr_book_game: "Độ khó thế giới gốc của game"
+ecr_book_game_rates: "Tách biệt với tất cả những điều này, và nó cộng dồn: trên thế giới này kẻ thù gây $1% sát thương bình thường của chúng và bạn gây $2% sát thương của bạn."
+ecr_book_game_stars_ours: "Tỷ lệ sao bổ sung của nó không có hiệu lực khi Elite Creatures cung cấp sao."
+ecr_book_game_stars_game: "Tỷ lệ sao bổ sung của nó áp dụng như bình thường, vì game cung cấp sao ở đây."
+
+# Compendium: Stars page
+ecr_book_stars_topic: "Elite: Số sao"
+ecr_book_stars_off_heading: "Số sao của sinh vật đã tắt"
+ecr_book_stars_off: "Sinh vật giữ nguyên số sao gốc của game trên máy chủ này, với chỉ số gốc của game."
+ecr_book_stars_here: "Số sao ở $1 (nơi bạn đang ở)"
+ecr_book_stars_in: "Số sao ở $1"
+ecr_book_col_stars: "Số sao"
+ecr_book_col_health: "Máu"
+ecr_book_col_damage: "Sát thương"
+ecr_book_col_attack: "Tốc độ đánh"
+ecr_book_col_speed: "Tốc độ di chuyển"
+ecr_book_col_size: "Kích thước"
+ecr_book_col_loot: "Vật phẩm rơi"
+ecr_book_col_chance: "Tỷ lệ"
+ecr_book_stars_note: "Mỗi chỉ số nhân với sinh vật gốc của game. Tốc độ di chuyển là tốc độ nó di chuyển, tốc độ đánh là tốc độ nó ra đòn. Một sao lớn trên bảng tên được tính là 5 sao."
+ecr_book_boss_stars: "Số sao của trùm"
+ecr_book_boss_stars_off: "Đã tắt trên máy chủ này: trùm giữ nguyên cấp độ gốc của game."
+ecr_book_boss_stars_note: "Bàn thờ hiển thị số sao của trùm trước khi bạn triệu hồi. Số sao của trùm không bao giờ nhân thêm vật phẩm rơi ra."
+ecr_book_boss_stars_again: "Mỗi lần trùm bị tiêu diệt, trận chiến tiếp theo của nó sẽ nghiêng về nhiều sao hơn."
+
+# Compendium: Mutations page ($1 in the intro is the Gilded mutation's name)
+ecr_book_mutations_topic: "Elite: Các đột biến"
+ecr_book_mutations_intro: "Một sinh vật đột biến mang tên của đột biến trước tên của nó, và các sao của nó có màu của đột biến, màu của sao trước mỗi tên bên dưới. $1 là hiếm nhất và là đột biến duy nhất có lợi cho bạn."
+ecr_book_mutations_numbers: "Chỉ số cho một sinh vật không có sao ở $1, nơi bạn đang ở."
+ecr_book_mutations_large: "Đột biến trên một sao lớn sẽ mạnh hơn: những gì nó nhận được là x$1."
+ecr_book_mutations_off: "Đã tắt trên máy chủ này"
+
+# Compendium: what each mutation does (a $n that names a mutation is that mutation's own name)
+ecr_book_mut_mad: "Di chuyển nhanh hơn $1 và tấn công nhanh hơn $2, nhưng chịu ít hơn $3 máu. Không bao giờ xuất hiện trên dơi."
+ecr_book_mut_bloated: "Máu gấp $1 lần bình thường. $2 sau khi chết nó sẽ phát nổ: gây $3 sát thương trong bán kính $4 m, nhiều hơn theo từng sao."
+ecr_book_mut_cloaked: "Tàng hình cho đến khi bạn ở trong bán kính $1 m. Drake, dơi, gjall và muỗi sát thủ không bao giờ bị $2."
+ecr_book_mut_splintering: "Tách thành các bản sao yếu hơn khi bị tiêu diệt, mỗi bản sao gây $1% sát thương của nó, và chúng có thể tiếp tục phân tách. Oozer không bao giờ bị $2."
+ecr_book_mut_leeching: "Hồi phục $1% máu mỗi giây (tối đa $2 mỗi giây) sau khi trôi qua $3 không bị trúng đòn, và hồi máu bằng $4% sát thương nó gây ra."
+ecr_book_mut_warding: "Phản lại $1% mỗi đòn đánh về phía bạn và đẩy lùi bạn, không bao giờ vượt quá $2% máu tối đa của bạn trong bất kỳ giây nào."
+ecr_book_mut_plated: "Bỏ qua $1% sát thương nhận vào khi đầy máu, giảm dần khi bị thương, và đánh mạnh hơn lên đến $2% khi lớp giáp đó mất đi."
+ecr_book_mut_miasmic: "Để lại các đám mây độc đằng sau, rộng $1 m, mỗi đám tồn tại $2. Chúng làm độc người chơi, không bao giờ tác động đến sinh vật."
+ecr_book_mut_devouring: "Tiêu diệt các sinh vật nhỏ hơn trong một vết cắn và giữ lại $1% máu cùng $2% sát thương của chúng, chậm dần khi lớn lên: một bữa ăn cho mỗi sao trong đời nó (ít nhất $3), một bữa ăn mỗi $4, không bao giờ nuốt trùm hoặc sinh vật lớn. Bảng tên của nó hiển thị những gì nó đã ăn."
+ecr_book_mut_thieving: "Trộm một vật phẩm với mỗi đòn cận chiến trúng đích, tối đa một vật phẩm mỗi sao (ít nhất $1), và mang chúng trên bảng tên. Tiêu diệt nó để lấy lại mọi thứ."
+ecr_book_mut_gilded: "Lấp lánh ánh vàng, không bao giờ tấn công người chơi và bỏ chạy khỏi bất kỳ ai trong bán kính $1 m. Rơi ra $2 lần vật phẩm cùng $3 $4, nhiều hơn theo từng sao. Không bao giờ xuất hiện trên sinh vật khổng lồ."
+ecr_book_mut_blinking: "Mỗi $1 trong trận chiến, nó xuất hiện lại $2 m phía sau mục tiêu, sau một luồng sáng và tiếng chuông tại điểm đó. Chịu ít hơn $3 máu."
+ecr_book_mut_blinking_never: "Chịu ít hơn $1 máu. Nó không bao giờ tốc biến trên máy chủ này."
+ecr_book_mut_relentless: "Một khi đã nhắm vào bạn, nó sẽ tiếp tục lao tới, dù nhìn thấy hay không, cho đến khi bạn ở cách xa $1 m; lén lút không thể giấu bạn. Không bao giờ di chuyển nhanh hơn tốc độ bình thường, không bao giờ xuất hiện trên sinh vật khổng lồ."
+ecr_book_mut_juggernaut: "Không bao giờ bị choáng hoặc bị đẩy lùi: đòn đánh, đỡ đòn chuẩn xác, vụ nổ và bẫy không thể cản nó. Chữ \"Không Thể Cản Phá\" sẽ hiển thị trên đầu nó."
+ecr_book_mut_screecher: "Khi một đòn đánh lấy đi $1% máu của nó, nó sẽ rú lên: người chơi trong bán kính $2 m bị điếc trong $3, và vũ khí Phép Thuật Nguyên Tố và Phép Thuật Máu sẽ không thể thi triển. Tối đa một lần mỗi $4; đòn kết liễu không tạo ra tiếng rú."
+ecr_book_mut_frostbound: "Người chơi trong bán kính $1 m hồi phục thể lực chậm hơn $2% (\"Lạnh Giá\"). Sát thương Băng $3 sẽ hồi máu cho nó thay vì làm nó bị thương."
+ecr_book_mut_frostbound_ice: "Để lại băng trơn nơi nó đi qua: đứng trên đó bạn bị trượt và di chuyển chậm hơn $1%; mỗi mảng tồn tại $2."
+ecr_book_mut_frostbound_no_ice: "Nó không tạo băng trên máy chủ này."
+ecr_book_mut_mudbound: "Để lại bùn dày nơi nó đi qua: đứng trong đó bạn di chuyển chậm hơn $1%, và duy trì $2 sau khi bước ra ngoài. Mỗi mảng tồn tại $3."
+ecr_book_mut_mudbound_none: "Nó không tạo bùn trên máy chủ này."
+ecr_book_mut_corrodent: "Trang bị giáp của bạn giảm độ bền nhanh gấp $1 lần dưới các đòn đánh của nó. Khiên giảm độ bền như bình thường."
+ecr_book_mut_cloning: "Khi nó đối đầu với bạn trong bán kính $1 m, nó để lại một hình nhân thế thân vô hại tại chỗ và tiếp tục chiến đấu tàng hình. Đòn đánh đầu tiên trúng đích sẽ làm lộ diện nó, tiêu diệt hình nhân thế thân cũng vậy. $2"
+ecr_book_mut_cloning_late: "Khi nó đối đầu với bạn trong bán kính $1 m, nó để lại một hình nhân thế thân vô hại tại chỗ và tiếp tục chiến đấu tàng hình. Đòn đánh đầu tiên trúng đích sẽ làm lộ diện nó, tiêu diệt hình nhân thế thân cũng vậy, và sau $2 nó cũng sẽ tự hiện hình. $3"
+ecr_book_mut_cloning_once: "Một lần trong đời."
+ecr_book_mut_cloning_times: "$1 lần trong đời."
+ecr_book_mut_piercing: "Các đòn đánh của nó bỏ qua $1% giáp của bạn."
+ecr_book_mut_howling: "Khi nó quay sang bạn, nó gầm hú, và $1 sinh vật đồng minh gần nhất trong bán kính $2 m sẽ lao đến chỗ bạn; lặp lại mỗi $3 khi nó chiến đấu với bạn. Không bao giờ gọi trùm."
+ecr_book_mut_binding: "Để lại các mảng rễ cây chằng chịt nơi nó đi qua, một mảng mỗi $1 m, mỗi mảng tồn tại $2. Bước vào đó và rễ cây sẽ giữ bạn lại trong $3 (\"Bị Trói Rễ\": bạn vẫn có thể xoay người, đỡ đòn và đánh), sau đó thả bạn ra trong $4."
+ecr_book_mut_flamebound: "Để lại mặt đất rực cháy nơi nó đi qua, mỗi mảng tồn tại $1. Đứng trong đó khiến bạn bị bốc cháy: $2 sát thương lửa mỗi giây, nhiều hơn theo từng sao. Kháng lửa và bị ướt sẽ giúp giảm sát thương; giáp không có tác dụng."
+
+# Compendium: Boss aspects page
+ecr_book_aspects_topic: "Elite: Thuộc tính trùm"
+ecr_book_aspects_off: "Thuộc tính trùm đã tắt trên máy chủ này: mọi trùm chiến đấu theo mặc định của game."
+ecr_book_aspects_intro: "Trùm được triệu hồi tại bàn thờ có thể đi kèm với một thuộc tính: một điểm biến tấu trong trận chiến, được đặt tên trước tên của trùm. Bàn thờ hiển thị thuộc tính trước khi bạn triệu hồi, và nó thay đổi theo thời gian. Thuộc tính làm trận chiến khó hơn và phần thưởng phong phú hơn."
+ecr_book_loot: "vật phẩm rơi x$1"
+
+# Hel's hall
+ecr_arena_hel: "Hel"
+hud_ecr_arena_begin: "Bắt đầu thử thách"
+msg_ecr_arena_river: "Dòng sông của Hel cuốn lấy bạn."
+
+# Helgrind, Hel's gate
+piece_ecr_helgrind: "Helgrind"
+piece_ecr_helgrind_description: "Cổng của Hel, dẫn đến đại sảnh và thử thách của bà. Bước qua đó để đi vào; luồng xoáy ở cuối hành lang cổng đại sảnh sẽ đưa bạn trở lại đây."
+ecr_helgrind_open: "Bước qua để vào đại sảnh của Hel"
+ecr_helgrind_closed: "Cổng của Hel đã đóng."
+
+# Hel's Trial: the line under the minimap ($1 the biome, $2 the wave, then creatures left or seconds, then souls)
+ecr_arena_name: "Thử Thách Của Hel"
+ecr_arena_line: "Thử Thách Của Hel - $1, đợt $2 - còn lại $3 - $4 linh hồn"
+ecr_arena_countdown: "Thử Thách Của Hel - $1 - đợt đầu tiên sau $2"
+ecr_arena_break_line: "Thử Thách Của Hel - $1, đợt $2 hoàn thành - đợt tiếp theo sau $3 - $4 linh hồn"
+ecr_arena_recall_line: "Thử Thách Của Hel - $1, đợt $2 - còn lại $3, thu hồi sau $4 - $5 linh hồn"
+# A rest's line ($1) with who is ready after it ($2: ecr_arena_ready_hint or ecr_arena_ready_mine)
+ecr_arena_line_ready: "$1 - $2"
+ecr_arena_ready_hint: "F: sẵn sàng ($1/$2)"
+ecr_arena_ready_mine: "(sẵn sàng) $1/$2"
+
+# Hel's Trial: centre messages
+ecr_arena_started: "Hel thức giấc. Thử thách của bà bắt đầu!"
+ecr_arena_boss: "Hel cử $1 đến!"
+ecr_arena_ended: "Thử Thách Của Hel kết thúc ở đợt $1: tiêu diệt $2, $3 linh hồn."
+ecr_arena_cleared: "Đợt $1 đã dọn dẹp. Đợt tiếp theo bắt đầu sau $2 giây."
+ecr_arena_cleared_first: "Đợt $1 đã dọn dẹp. Đợt tiếp theo bắt đầu sau $2 giây. Hel trao phần thưởng khi thử thách kết thúc."
+ecr_arena_wave_done: "Đợt $1 đã dọn dẹp."
+ecr_arena_recall: "Hel đánh dấu những kẻ đã chết cuối cùng trên bản đồ. Bà sẽ thu hồi chúng sau $1 giây."
+ecr_arena_spared: "Hel miễn trừ tổn thất kỹ năng và trang bị của bạn."
+ecr_arena_ready_vote: "Sẵn sàng: $1/$2"
+ecr_arena_all_ready: "Tất cả đã sẵn sàng - quân đoàn cõi chết đang kéo đến!"
+ecr_arena_call_hint: "Gọi đợt tiếp theo"
+ecr_arena_called: "$1 gọi đợt tiếp theo!"
+ecr_arena_boss_waits: "Hel chờ cho đến khi $1 gục ngã."
+# The end and the reward again in the chat window: $1 the trial's name (coloured), $2 the message
+ecr_arena_chat_line: "$1: $2"
+
+# Hel's Trial: the reward (the end message and Hel's hover while a trial runs)
+ecr_arena_reward: "Hel ban thưởng cho bạn: $1."
+ecr_arena_reward_now: "Phần thưởng hiện tại: $1"
+ecr_arena_reward_none: "chưa có"
+# A named item given more than once: $1 the item, $2 how many
+ecr_arena_reward_item: "$1 x$2"
+# The reward's parts one after another: $1 the parts so far, $2 the next
+ecr_arena_reward_list: "$1, $2"
+ecr_arena_reward_coins: "$1 tiền vàng"
+ecr_arena_reward_runes: "$1 ký tự rune"
+ecr_arena_reward_essence: "$1 tinh hoa"
+ecr_arena_reward_xp: "+$1% kinh nghiệm kỹ năng"
+
+# Hel's Anvil
+ecr_arena_anvil: "Đe Của Hel"
+ecr_arena_anvil_repair: "Sửa chữa trang bị ($1 linh hồn)"
+ecr_arena_anvil_poor: "Không đủ linh hồn ($1)"
+ecr_arena_anvil_cold: "Đe nguội đi khi quân đoàn cõi chết kéo đến"
+ecr_arena_anvil_done: "Đe Của Hel sửa chữa trang bị của bạn với giá $1 linh hồn."
+ecr_arena_anvil_nothing: "Không có trang bị nào bạn mang theo cần sửa chữa."
+
+# Raids: the Raiders Chest, the messages as a raid starts and ends, the line under the minimap, and the death recap.
+# $1, $2 ... are values the mod fills in (names, numbers, key hints). "$1 raid" names a raid after its creature.
+
+# The Raiders Chest
+piece_ecr_raiderschest: "Rương Kẻ Cướp"
+piece_ecr_raiderschest_description: "Thùng rương bọc sắt có tù bản chiến tranh trên nắp. Bỏ đầy vàng vào và thổi tù và: kẻ cướp sẽ kéo đến vì vàng, đánh bại chúng sẽ thu lại vàng cùng nhiều lợi lộc hơn. Càng nhiều vàng đặt cược, cuộc đột kích càng khó và phần thưởng càng dồi dào. Chỉ sử dụng tại căn cứ, mỗi ngày một lần."
+hud_ecr_raid_sound: "Thổi tù và mở cuộc đột kích"
+ecr_raid_horn: "Tù và chiến tranh"
+
+# The Raiders Chest's hover ($1 of the stake line is the coins, $2 the difficulty)
+ecr_raid_coins_one: "$1 tiền vàng"
+ecr_raid_coins_many: "$1 tiền vàng"
+ecr_raid_stake_line: "$1 - Cuộc đột kích $2 (hoàn vàng x$3, vật phẩm rơi x$4)"
+ecr_raid_empty: "Bỏ tiền vàng vào để khởi động cuộc đột kích."
+ecr_raid_hold_to_stop: "Giữ $1 để dừng cuộc đột kích (vàng cược sẽ bị mất)"
+ecr_raid_stopping: "Đang dừng cuộc đột kích... $1%"
+ecr_raid_locked: "Rương Kẻ Cướp bị khóa khi cuộc đột kích đang diễn ra. Giữ để dừng cuộc đột kích."
+
+# Why no raid is sounded
+ecr_raid_off: "Các cuộc đột kích từ Rương Kẻ Cướp đã bị tắt trên máy chủ này."
+ecr_raid_not_in_base: "Không ở trong căn cứ: cuộc đột kích cần một căn cứ để tấn công."
+ecr_raid_resting: "Tù và cần nghỉ ngơi: sẵn sàng sau $1"
+ecr_raid_game_raid_near: "Một cuộc đột kích khác đang diễn ra gần đây."
+ecr_raid_chest_raid_near: "Một cuộc đột kích khác đang diễn ra trong bán kính 200 m."
+ecr_raid_in_use: "Có người đang mở Rương Kẻ Cướp."
+ecr_raid_no_gold: "Không có vàng, không có đột kích."
+ecr_raid_moved: "Rương Kẻ Cướp vừa đổi chủ: hãy thử lại."
+ecr_raid_no_host: "Nơi này không thể tổ chức đột kích."
+ecr_raid_not_owner: "Chỉ có thiết bị sở hữu nó mới có thể thổi tù và đột kích tại đây."
+ecr_raid_already_on: "Một cuộc đột kích đang diễn ra tại đây."
+ecr_raid_none_unlocked: "Chưa có cuộc đột kích nào được mở khóa trong thế giới này."
+
+# A raid starts and ends ($1 the raid's creature, $2 the difficulty)
+ecr_raid_started: "Kẻ cướp đang kéo đến vì vàng của bạn!\nĐột kích $1 ($2)"
+ecr_raid_won: "Cuộc đột kích $1 đã bị đánh bại! Vàng của bạn lại thuộc về bạn."
+ecr_raid_robbed: "Rương Kẻ Cướp đã bị phá hủy: kẻ cướp tẩu thoát cùng số vàng của bạn."
+ecr_raid_stopped: "Cuộc đột kích $1 đã bị hủy. Kẻ cướp gục ngã, và vàng của bạn cũng mất theo."
+ecr_raid_abandoned: "Cuộc đột kích bị bỏ dở: kẻ cướp bỏ đi cùng số vàng của bạn."
+ecr_raid_timed_out: "Đã hết thời gian: kẻ cướp bỏ đi cùng số vàng của bạn."
+
+# The raid's line under the minimap ($1 the raid's creature, $2 the difficulty; times as m:ss)
+ecr_raid_line_countdown: "Đột kích $1 ($2) - đợt đầu tiên sau $3"
+ecr_raid_line_break: "Đột kích $1 ($2) - đợt $3/$4 sau $5 - $6"
+ecr_raid_line_wave: "Đột kích $1 ($2) - đợt $3/$4 - còn lại $5 - $6"
+
+# Raid difficulty
+ecr_raid_band_trivial: "Không đáng kể"
+ecr_raid_band_fair: "Vừa sức"
+ecr_raid_band_hard: "Thử thách"
+ecr_raid_band_brutal: "Tàn khốc"
+ecr_raid_band_deadly: "Chết chóc"
+
+# Death recap: the window
+ecr_recap_topic: "Nhật Ký Tật Vong"
+ecr_recap_play: "Phát"
+ecr_recap_pause: "Tạm dừng"
+ecr_recap_none: "Chưa có lượt tử vong nào"
+ecr_recap_none_help: "Nhật ký tử vong được lưu tại đây cho đến khi thoát game. Bấm $1 để mở và đóng cửa sổ này."
+ecr_recap_no_video: "Không có video về lượt tử vong này: tính năng ghi hình đã tắt ($1 trong tệp .cfg) hoặc không thể thực hiện."
+
+# Death recap: the killer, the summary and the hit rows
+ecr_recap_died: "Tử vong: $1"
+ecr_recap_killed_by: "Bị tiêu diệt bởi $1"
+ecr_recap_killed_by_how: "Bị tiêu diệt bởi $1 $2"
+ecr_recap_when: "Ngày $1, $2"
+ecr_recap_no_hits: "không có đòn đánh nào được ghi lại"
+ecr_recap_damage: "$1 sát thương trong $2 gi"
+ecr_recap_damage_shares: "$1 sát thương trong $2 gi: $3"
+ecr_recap_share: "$1 $2%"
+ecr_recap_part: "$1 $2"
+ecr_recap_hp: "Máu $1/$2"
+
+# Death recap: the line at the top left after a death ($2 the recap key)
+ecr_recap_notice_killed: "Bị tiêu diệt bởi $1. $2: nhật ký tử vong"
+ecr_recap_notice_died: "Tử vong: $1. $2: nhật ký tử vong"
+
+# Death recap: how a hit came
+ecr_recap_type_hit: "đòn đánh"
+ecr_recap_type_ranged: "tầm xa"
+ecr_recap_type_burning: "bỏng ngọn lửa"
+ecr_recap_type_poison: "trúng độc"
+ecr_recap_type_freezing: "đóng băng"
+ecr_recap_type_fall: "ngã từ trên cao"
+ecr_recap_type_drowning: "đuối nước"
+ecr_recap_type_edge_of_world: "rìa thế giới"
+ecr_recap_type_falling_tree: "cây đổ"
+ecr_recap_type_falling_building: "công trình sập"
+ecr_recap_type_ship: "thuyền"
+ecr_recap_type_boiling_sea: "biển sôi"
+ecr_recap_type_lava: "dung nham"
+ecr_recap_type_cinder_fire: "cháy tàn tro"
+ecr_recap_type_water: "nước"
+ecr_recap_type_smoke: "khói độc"
+ecr_recap_type_impact: "va đập"
+ecr_recap_type_cart: "xe kéo"
+ecr_recap_type_self: "tự gây ra"
+ecr_recap_type_turret: "tháp pháo"
+ecr_recap_type_stalagtite: "nhũ đá rơi"
+ecr_recap_type_catapult: "máy bắn đá"
+ecr_recap_type_incinerator: "lò đốt"
+ecr_recap_type_drawbridge: "cầu nâng"
+ecr_recap_type_unknown: "không xác định"
+
+# Death recap: damage types
+ecr_recap_type_true: "sát thương chuẩn"
+ecr_recap_type_blunt: "sát thương va đập"
+ecr_recap_type_slash: "sát thương chém"
+ecr_recap_type_pierce: "sát thương đâm"
+ecr_recap_type_chop: "sát thương đốn"
+ecr_recap_type_pickaxe: "sát thương cuốc"
+ecr_recap_type_fire: "sát thương lửa"
+ecr_recap_type_frost: "sát thương băng"
+ecr_recap_type_lightning: "sát thương sét"
+ecr_recap_type_spirit: "sát thương tâm linh"
