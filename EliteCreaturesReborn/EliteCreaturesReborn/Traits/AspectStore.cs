@@ -4,7 +4,7 @@ namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
     /// The boss-aspect state that is not part of the rolled traits: an altar's current stars and aspect (with a Bountiful
-    /// one's extras) and shift time, a twin's or tethered boss's partner, a phantom copy's or an echo's boss, a phantom boss's split
+    /// one's extras), shift time and the stars and aspect a player chose there, a twin's or tethered boss's partner, a phantom copy's or an echo's boss, a phantom boss's split
     /// count and a summoner's wave count. The single seam between that state and the ZDO, as <see cref="TraitStore"/> is
     /// for the traits. Reads work anywhere; every write is made by the object's owner.
     /// </summary>
@@ -14,6 +14,8 @@ namespace EliteCreaturesReborn.Traits
         private static readonly int AltarExtraHash = TraitKeys.AltarExtra.GetStableHashCode();
         private static readonly int AltarShiftAtHash = TraitKeys.AltarShiftAt.GetStableHashCode();
         private static readonly int AltarStarsHash = TraitKeys.AltarStars.GetStableHashCode();
+        private static readonly int AltarPickStarsHash = TraitKeys.AltarPickStars.GetStableHashCode();
+        private static readonly int AltarPickAspectHash = TraitKeys.AltarPickAspect.GetStableHashCode();
         private static readonly int SummonWavesHash = TraitKeys.SummonWaves.GetStableHashCode();
         private static readonly int PhantomOrderHash = TraitKeys.PhantomOrder.GetStableHashCode();
         private static readonly int PhantomSplitsHash = TraitKeys.PhantomSplits.GetStableHashCode();
@@ -60,6 +62,18 @@ namespace EliteCreaturesReborn.Traits
         }
 
         public static void SetAltarStars(ZDO zdo, int stars) => zdo.Set(TraitKeys.AltarStars, stars);
+
+        /// <summary>The star count a player chose at the altar, as stored; -1 for Random. Not checked against the rules.</summary>
+        public static int GetPickedStars(ZDO zdo) => zdo.GetInt(AltarPickStarsHash, Unrolled);
+
+        /// <summary>The aspect a player chose at the altar, as stored (its value); -1 for Random.</summary>
+        public static int GetPickedAspect(ZDO zdo) => zdo.GetInt(AltarPickAspectHash, Unrolled);
+
+        public static void SetPicks(ZDO zdo, int stars, int aspect)
+        {
+            zdo.Set(TraitKeys.AltarPickStars, stars);
+            zdo.Set(TraitKeys.AltarPickAspect, aspect);
+        }
 
         public static ZDOID GetTwin(ZDO zdo) => zdo.GetZDOID(TwinPartnerKey);
 

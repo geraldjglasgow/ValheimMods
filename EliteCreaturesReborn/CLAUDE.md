@@ -215,6 +215,13 @@ aspect changes to a different one, so a group can wait for the fight it wants. T
 you make the offering are the ones you fight. A boss with no altar - the Queen, or a console spawn - rolls its stars
 and aspect when it first appears.
 
+Or choose the fight: **E on the bowl** (Shift+E on Fader's altar, whose E makes the offering) opens the altar window,
+with Random and every aspect the boss can roll on the left and Random and every star count it can roll on the right.
+A chosen part stays on the altar for everyone (marked "(chosen)") until someone changes it; a part left on Random
+rolls at every shift as before, and so do a chosen Bountiful's extras. The fight pays for what it is, chosen or rolled.
+`14 - Boss Altars` / `Altar Choice` (true) in the .cfg switches it, set by the server like the arena's switch
+(`Config/AltarSettings.cs`; `Aspects/AltarPicks.cs`, `AltarRoller.cs`; the window in `Altars/`).
+
 | Aspect | What it does | Loot |
 | --- | --- | --- |
 | none | The fight as the game ships it (about one fight in five) | x1 |

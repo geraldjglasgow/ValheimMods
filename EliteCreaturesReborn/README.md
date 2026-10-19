@@ -7,7 +7,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Stars: up to eight on Extreme, or off for another mod's.
 - World tiers: each first boss defeat raises stars and mutations.
 - Mutations: one per creature, named on the nameplate (below).
-- Boss aspects: one per fight (below); bosses gain stars with each defeat.
+- Boss aspects: one per fight (below), or choose the aspect and stars at the altar; bosses gain stars with each defeat.
 - Breeding: tamed young inherit mutations and stars.
 - Loot: four drop modes, rules per creature; bosses pay every player.
 - Boss damage board: who did how much.
@@ -44,7 +44,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots you.
 
 ## Boss aspects
-Shown at the altar; each pays extra loot.
+Shown at the altar, or chosen there with E; each pays extra loot.
 - Reflective: part of each hit comes back to you.
 - Shielded: takes less damage from arrows and bolts.
 - Mending: regenerates during the fight.

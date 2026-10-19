@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.29.0
+
+- Boss altars: E on the bowl (Shift+E on Fader's) opens a window to choose the boss's stars and aspect.
+- Boss altars: either can stay on Random and keeps rolling at every shift; a choice stays on the altar for everyone.
+- New setting `Altar Choice` (on) under `14 - Boss Altars`, set by the server.
+- Update the server and every client together.
+
 ## 3.28.2
 
 - Fixed: Flamebound's burning ground now burns you; armour no longer stops it (fire resistance and being wet still help).

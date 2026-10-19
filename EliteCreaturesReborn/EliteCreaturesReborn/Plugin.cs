@@ -29,6 +29,7 @@ namespace EliteCreaturesReborn
             harmony.PatchAll(typeof(Plugin).Assembly);
             AnyQuality.Install(harmony); // starred eggs count for recipes
             Recap.RecapHost.Attach(gameObject, harmony);
+            WindowInput.GameWindow.Add(() => Altars.AltarWindow.IsOpen, Altars.AltarWindow.Close);
             gameObject.AddComponent<Tally.TallyFlush>();
             Raids.RaidMarker.Setup(harmony);
             Creatures.BatFiend.BatFiendPrefabs.Install(harmony);

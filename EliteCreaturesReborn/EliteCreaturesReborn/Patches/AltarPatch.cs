@@ -42,6 +42,32 @@ namespace EliteCreaturesReborn.Patches
     }
 
     /// <summary>
+    /// E on a boss altar opens the altar window (Altars/AltarWindow), where a player chooses the boss's stars and aspect;
+    /// on an altar of item stands, whose E makes the offering, Shift+E does. Held keys and anything that cannot be chosen
+    /// fall through to the game.
+    /// </summary>
+    [HarmonyPatch(typeof(OfferingBowl), nameof(OfferingBowl.Interact))]
+    public static class AltarChoosePatch
+    {
+        private static bool _opened;
+
+        private static bool Prefix(OfferingBowl __instance, bool hold, bool alt, ref bool __result)
+        {
+            if (hold || (__instance.m_useItemStands && !alt))
+            {
+                return true;
+            }
+            _opened = false;
+            SafeCall.Run("OfferingBowl.Interact choice", static bowl => _opened = Altars.AltarWindow.Open(bowl), __instance);
+            if (_opened)
+            {
+                __result = true;
+            }
+            return !_opened;
+        }
+    }
+
+    /// <summary>
     /// The offering: the game has accepted it and is about to count down to the boss, on the bowl's owner. The stars and
     /// aspects on the bowl right now are the fight - locked here, before the countdown gives the altar a chance to shift.
     /// </summary>

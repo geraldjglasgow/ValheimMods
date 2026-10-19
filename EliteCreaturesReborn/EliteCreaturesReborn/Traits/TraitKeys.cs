@@ -93,6 +93,13 @@ namespace EliteCreaturesReborn.Traits
         /// again at every shift; -1 (absent) until first rolled - as on an altar rolled before stars came to altars.</summary>
         public const string AltarStars = "ecr_altar_stars";
 
+        /// <summary>Boss altars: the star count a player chose at the altar, on the altar's own ZDO; -1 (absent) for
+        /// Random, which rolls at every shift as before.</summary>
+        public const string AltarPickStars = "ecr_altar_pick_stars";
+
+        /// <summary>Boss altars: the aspect a player chose at the altar, on the altar's own ZDO; -1 (absent) for Random.</summary>
+        public const string AltarPickAspect = "ecr_altar_pick_aspect";
+
         /// <summary>Twin: the partner boss's ZDOID, on each of the two, so either can find the other to share its health.</summary>
         public const string TwinPartner = "ecr_twin";
 

@@ -28,6 +28,14 @@ namespace EliteCreaturesReborn.Traits
             return pool.Count == 0 ? exclude ?? Aspect.None : Pick(pool);
         }
 
+        /// <summary>Every aspect <see cref="Roll"/> could draw for this boss, in catalog order (`none` among them while it
+        /// has a chance): what a player may choose at its altar. Empty while aspects are off.</summary>
+        public static List<Aspect> Choices(string bossPrefab)
+        {
+            AspectRules rules = RuleState.Active.Boss.Aspects;
+            return rules.Enabled ? Pool(rules, bossPrefab, null).ConvertAll(entry => entry.Key) : new List<Aspect>();
+        }
+
         /// <summary>A boss's whole draw: its aspect as <see cref="Roll"/> draws it, and Bountiful's extras drawn with it.</summary>
         public static BossAspects RollBoss(string bossPrefab, Aspect? exclude)
         {

@@ -13,7 +13,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Stars: beyond vanilla's two, up to eight on Extreme, or off for another mod's.
 [*]World tiers: each boss's first defeat makes stars and mutations more common.
 [*]Mutations: one per creature, named and coloured on the nameplate (below).
-[*]Boss aspects: one per fight, shown at the altar with the boss's stars (below); each defeat makes a boss likelier to have stars next time.
+[*]Boss aspects: one per fight, shown at the altar with the boss's stars (below), or chosen there with E; each defeat makes a boss likelier to have stars next time.
 [*]Breeding: tamed young inherit a mutation and stars.
 [*]Loot: four drop modes, rules per creature; bosses drop trophies and materials for every player.
 [*]Boss damage board: who did how much damage.
@@ -53,7 +53,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [/list]
 
 [size=4][b]Boss aspects[/b][/size]
-The altar shows the aspect before you offer and shifts every 15 seconds. About one fight in five has none; every aspect pays extra loot.
+The altar shows the aspect before you offer and shifts every 15 seconds; press E on the bowl to choose the aspect and stars yourself, or leave either on Random. About one fight in five has none; every aspect pays extra loot.
 [list]
 [*]Reflective: part of each hit comes back to you.
 [*]Shielded: takes less damage from arrows and bolts.

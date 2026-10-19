@@ -93,26 +93,35 @@ namespace EliteCreaturesReborn.Display
         }
 
         /// <summary>The lines under the bowl's own hover text: the boss's stars, the aspect, a Bountiful one's extras each
-        /// with what it does, what the whole fight pays, and when it shifts. A part that is off (null) is left out.</summary>
-        public static string AltarLines(int? stars, BossAspects? aspects, AspectRules rules, double secondsToShift)
+        /// with what it does, what the whole fight pays, and when it shifts. A part that is off (null) is left out; a part
+        /// a player chose at the altar says so.</summary>
+        public static string AltarLines(int? stars, BossAspects? aspects, AspectRules rules, double secondsToShift,
+            bool starsChosen = false, bool aspectChosen = false)
         {
-            string starLine = stars is int count ? StarLine(count) : "";
-            string aspectLines = aspects is BossAspects drawn ? AspectLines(drawn, rules) : "";
+            string starLine = stars is int count ? StarLine(count) + (starsChosen ? ChosenMark : "") : "";
+            string aspectLines = aspects is BossAspects drawn ? AspectLines(drawn, rules, aspectChosen) : "";
             return starLine + aspectLines + Shift(secondsToShift);
         }
 
+        private const string ChosenMark = " <color=#A0A0A0>(chosen)</color>";
+
         /// <summary>"Stars: " and one star glyph per star, or "Stars: none". The game's fonts draw the glyph from their
         /// Noto JP fallback, as they draw every Japanese character.</summary>
-        private static string StarLine(int stars) =>
-            $"\n<color=orange>Stars: {(stars > 0 ? new string(StarGlyph, stars) : "none")}</color>";
+        private static string StarLine(int stars) => $"\n<color=orange>Stars: {Stars(stars)}</color>";
 
-        private static string AspectLines(BossAspects aspects, AspectRules rules)
+        /// <summary>One star glyph per star, or "none".</summary>
+        public static string Stars(int stars) => stars > 0 ? new string(StarGlyph, stars) : "none";
+
+        /// <summary>The aspect's word, or "none" for the fight as the game ships it.</summary>
+        public static string Name(Aspect aspect) => aspect == Aspect.None ? "none" : AspectCatalog.Word(aspect);
+
+        private static string AspectLines(BossAspects aspects, AspectRules rules, bool chosen)
         {
             Aspect aspect = aspects.Headline;
-            string name = aspect == Aspect.None ? "none" : AspectCatalog.Word(aspect);
             float loot = AspectLoot.FactorOf(aspects, rules);
             string pays = Mathf.Approximately(loot, 1f) ? "" : $" <color=#A0A0A0>(loot x{loot:0.##})</color>";
-            return $"\n<color=orange>Aspect: {name}</color>{pays}\n{Describe(aspect, rules)}" + ExtraLines(aspects, rules);
+            return $"\n<color=orange>Aspect: {Name(aspect)}</color>{(chosen ? ChosenMark : "")}{pays}\n{Describe(aspect, rules)}"
+                + ExtraLines(aspects, rules);
         }
 
         /// <summary>One line per extra aspect a Bountiful altar will add: "+ Enraged: deals 20% more physical damage".</summary>

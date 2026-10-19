@@ -12,7 +12,8 @@ namespace EliteCreaturesReborn.Rules
     /// and ignores its own, and gets its own back the moment it disconnects. Charter also refuses a player whose mod
     /// version does not match. This class owns the decision of which rule set is active; it never parses YAML itself.
     /// The .cfg's gameplay settings, the raids' Raiders Chest (<see cref="RaidSettings"/>), the Arena
-    /// (<see cref="ArenaSettings"/>) and the horde's four (<see cref="HordeSettings"/>), ride the same binding as
+    /// (<see cref="ArenaSettings"/>), the Altar Choice (<see cref="AltarSettings"/>) and the horde's four
+    /// (<see cref="HordeSettings"/>), ride the same binding as
     /// clauses: while the server binds, their values hold for every player.
     /// </summary>
     internal static class ServerLock
@@ -30,6 +31,7 @@ namespace EliteCreaturesReborn.Rules
             _charter.Binding(_binding);
             _charter.Clause(RaidSettings.RaidersChest);
             _charter.Clause(ArenaSettings.Arena);
+            _charter.Clause(AltarSettings.Choice);
             _charter.Clause(HordeSettings.Horde);
             _charter.Clause(HordeSettings.SpawnMultiplier);
             _charter.Clause(HordeSettings.HealthMultiplier);

@@ -302,6 +302,27 @@ The rules that make this work:
 The reroll interval is configurable, **including to zero**, which fixes an altar's aspect permanently for servers
 that want the choice taken away.
 
+## Choosing the fight
+
+Since 2026-10-18 (the user: "press E on a boss altar you can choose the star level and attunement the boss will
+have", "also have a 'random' option where anything not selected will roll random"), **E on the bowl opens the altar
+window** (Shift+E on an altar of item stands, whose E makes the offering). On the left: Random and every aspect the
+boss can roll; on the right: Random and every star count the boss table can roll (a chance above 0), what the chosen
+aspect does and pays, and the altar's own lines as the bowl shows them. A click is the choice: no confirm button.
+
+- **Random is each part's default** and rolls at every shift as before. A chosen part stays on the bowl (marked
+  "(chosen)"); once both are chosen the count-down goes, unless the chosen aspect is Bountiful, whose extras nobody
+  chose and so still roll at each shift.
+- **The choice belongs to the altar**, not to a player: kept in the altar ZDO (`ecr_altar_pick_stars`,
+  `ecr_altar_pick_aspect`, -1 for Random), the same for everyone at the bowl and across restarts, and changed by
+  whoever chooses next. It stays after the boss is summoned. Sent to the bowl's owner as `ECR_AltarPick`; the owner
+  checks it against its own rules, stores it and shows it at once; a part set back to Random rolls at once.
+- **The rules bound the choice.** Only what the boss could roll can be chosen; a stored choice the rules no longer
+  allow (a reloaded file, boss stars or aspects off) counts as Random. Nothing can be chosen once the offering is
+  made. The fight pays for what it is, chosen or rolled; past defeats lean only rolled stars.
+- **One switch**, `14 - Boss Altars` / `Altar Choice` (true), a Charter clause like the arena's: with false nobody
+  can choose, the stored choices are ignored, and the bowl has no "Choose the fight" line.
+
 ## Bosses without an altar
 
 Decided 2026-09-26. **A boss that appears without an offering rolls its aspect the moment it first exists**, from
@@ -734,6 +755,12 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] Every altar rolls independently
 - [ ] A boss without an altar (the Queen, a console spawn) rolls when it appears
 - [ ] Loot scales with the aspect, Vanilla loot mode included
+- [ ] E opens the altar window (Shift+E on Fader's altar of item stands; plain E still offers there); Esc, Close and
+  walking away close it; nothing opens once the offering is made
+- [ ] A chosen star count and aspect show on the bowl as "(chosen)" for every player, survive a shift and a restart,
+  and are the fight; Random parts still shift; both chosen hides the count-down (not with Bountiful)
+- [ ] A client who does not own the bowl can choose (dedicated server); another player's choice shows in an open window
+- [ ] `Altar Choice` false: no hint, no window, stored choices ignored
 
 ## Multiplayer
 

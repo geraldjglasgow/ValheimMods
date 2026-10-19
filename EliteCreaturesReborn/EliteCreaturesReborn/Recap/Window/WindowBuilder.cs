@@ -24,8 +24,8 @@ namespace EliteCreaturesReborn.Recap.Window
             {
                 return null;
             }
-            RectTransform root = CanvasRoot(gui);
-            WindowParts? parts = Copy(gui.m_textsDialog, root.gameObject);
+            RectTransform root = CanvasRoot(gui, "ECR_DeathRecap");
+            WindowParts? parts = Copy(gui.m_textsDialog, root.gameObject, "ecr_recap");
             if (parts == null)
             {
                 Object.Destroy(root.gameObject);
@@ -38,9 +38,11 @@ namespace EliteCreaturesReborn.Recap.Window
             return view;
         }
 
-        private static RectTransform CanvasRoot(InventoryGui gui)
+        /// <summary>A canvas of its own beside the game's screens, sorted just above the inventory, scaled by the game's
+        /// GUI scale. The altar window (<c>Altars.AltarWindowBuilder</c>) is built on one too.</summary>
+        public static RectTransform CanvasRoot(InventoryGui gui, string name)
         {
-            RectTransform root = UiParts.Node("ECR_DeathRecap", gui.transform.parent);
+            RectTransform root = UiParts.Node(name, gui.transform.parent);
             Canvas source = gui.GetComponent<Canvas>();
             Canvas canvas = root.gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -59,12 +61,14 @@ namespace EliteCreaturesReborn.Recap.Window
             return root;
         }
 
-        private static WindowParts? Copy(TextsDialog source, GameObject root)
+        /// <summary>A copy of the compendium window under <paramref name="root"/>, its dialog script removed, and its parts;
+        /// null (and nothing left behind but the root) when the game's window is not shaped as expected.</summary>
+        public static WindowParts? Copy(TextsDialog source, GameObject root, string name)
         {
-            GameObject holder = new GameObject("ecr_recap_holder");
+            GameObject holder = new GameObject(name + "_holder");
             holder.SetActive(false);
             GameObject copy = Object.Instantiate(source.gameObject, holder.transform, false);
-            copy.name = "ecr_recap_window";
+            copy.name = name + "_window";
             TextsDialog dialog = copy.GetComponent<TextsDialog>();
             WindowParts? parts = WindowParts.From(root, dialog);
             Object.DestroyImmediate(dialog);

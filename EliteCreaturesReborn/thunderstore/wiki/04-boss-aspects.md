@@ -9,6 +9,13 @@ seconds the altar shifts: the stars roll again and the aspect changes to a diffe
 you want. What the bowl shows when you make the offering is what you fight. Bosses without an altar (the Queen, a
 console spawn) roll both when they appear.
 
+Or choose the fight: press **E** on the bowl (**Shift+E** on Fader's altar, where E makes the offering). The window
+lists every aspect that boss can roll and every star count it can have, each with **Random**. A part left on Random
+keeps rolling at every shift; a chosen part stays on the altar for everyone, marked "(chosen)", until someone changes
+it. A chosen Bountiful's extra aspects still roll. The fight pays for what it is, chosen or rolled. Nothing can be
+changed once the offering is made. The server's `.cfg` setting `14 - Boss Altars` / `Altar Choice` (true) switches
+choosing off for everyone with false.
+
 ## The aspects
 
 Settings are under `bosses:` > `aspects:` > `power:` in `creature_rules.yml`.
