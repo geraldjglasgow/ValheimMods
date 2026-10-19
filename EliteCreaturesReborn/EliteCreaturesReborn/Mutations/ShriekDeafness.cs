@@ -1,4 +1,5 @@
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
@@ -15,8 +16,6 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     public sealed class ShriekDeafness : MonoBehaviour
     {
-        private const string CastRefused = "Your ears ring - you cannot cast";
-
         /// <summary>Seconds between two refusal messages, since a held attack button asks again every physics step.</summary>
         private const float WarnEvery = 2f;
 
@@ -101,7 +100,7 @@ namespace EliteCreaturesReborn.Mutations
             if (Time.time - _warnedAt >= WarnEvery)
             {
                 _warnedAt = Time.time;
-                _player.Message(MessageHud.MessageType.Center, CastRefused);
+                _player.Message(MessageHud.MessageType.Center, Lang.Get("ecr_se_ringing_ears_no_cast"));
             }
         }
 

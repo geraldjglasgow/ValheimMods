@@ -72,6 +72,30 @@ mod's creature stars off, for playing beside another mod that gives creatures st
 Bosses have their own switch, `stars:` under `bosses:`; with it off a boss keeps its level the same way. `elite tier`
 says when creature stars are off, and `elite inspect` shows a kept level.
 
+## Tamed creatures
+
+`15 - Tamed` in the .cfg (`Config/TamedSettings.cs`; both true by default, synced from the server and held by the rule
+file's `lock to server`) decides what a tamed creature keeps (the user, 2026-10-19):
+
+- **Stars** false: a tame has the game's stars only - the level the game, a spawner or another mod gave it before this
+  mod's roll, with the game's health, damage, look, nameplate badges and loot for it, as under `creature stars: false`.
+  A fresh roll keeps that level in the ZDO (`ecr_game_level`, only above 1) before setting level 1; a creature that
+  appeared before this existed has none kept and is level 1. Its young take no stars of this mod: the game passes the
+  parent's level on, and GrindstoneSkills' better-offspring star is declined.
+- **Mutations** false: a tame carries no mutation - no name word, star colour, behaviour or stat, Devouring's eaten
+  health included; a Thieving one drops what it stole at its feet. Its young inherit none.
+
+The creature's owner decides, as it loads (`EliteController.Decide`) and once a second (`Taming/TameWatch.cs`, on the
+plugin's `TameTicker`), so the moment it is tamed or a setting changes: it writes what is taken to the ZDO
+(`ecr_tame_strip`, 1 stars, 2 mutations; `Taming/TameStrip.cs`), gives the game's level back or parks it again
+(`Taming/GameLevel.cs`) and drops a thief's pouch (`Taming/TameSettle.cs`). Every machine reads the bits, never its own
+settings. The stored stars and mask stay, so a setting turned back on gives them back; young born meanwhile keep what
+they were born with. A loaded copy whose stars, mutations or level no longer match its ZDO is loaded again on that
+machine (`Taming/LocalReload.cs`: let go and destroyed as when a player walks away, made again by the scene a frame
+later), since the star look, size, health and behaviours are set up only as a creature loads; a ridden one waits for
+its rider to get off. Only kinds with a Tameable are watched, never a boss. EliteCrafting reads `ecr_stars` straight
+from the ZDO for its drops, so it still counts a tame's hidden stars. Not seen in game yet.
+
 ## Loaded crossbows
 
 A crossbow put away loaded - a weapon swap, a swim - is still loaded when drawn again, with no reload. Firing empties
@@ -585,7 +609,7 @@ Together 40,416,091 bytes (38.5 MB; 19.5 MB per platform); the DLL is 44,029,952
 | `HallDoors.cs` | The gate's leaves (hinges at (+-3, 0, 66.3)), every peer: open (left -90, right +90 about Y) between trials, shut in one, eased over 1.5 s |
 | `HelSeat.cs` | Hel on `seat_root` with the player's `Player_animator` and avatar (`attach_throne`, `onGround`: Sit_Throne_Idle), a 3 x 5.2 x 2.6 m box round her seated body, her spear |
 | `HelHover.cs` | "Hel"; "[E] Begin the trial" while no trial runs and you stand in the arena, calling `ArenaTrial.RequestStart`; 3 m more reach than usual |
-| `HallWords.cs` | `ecr_arena_hel` "Hel", `hud_ecr_arena_begin` "Begin the trial", `msg_ecr_arena_river` "Hel's river takes you." |
+| `HallWords.cs` | The keys `ecr_arena_hel` "Hel", `hud_ecr_arena_begin` "Begin the trial", `msg_ecr_arena_river` "Hel's river takes you." (English in `translations/English.yml`) |
 | `HallLake.cs` | Hel's river kills (the user, 2026-10-13): four times a second on every peer, each loaded character in the band under the river's surface (y -8 to -408, within 1,200 m) is taken once: its owner deals 10,000,000 damage through `Character.Damage` (hit type Drowning, not blockable or dodgeable), so it is the game's own death with every hook; the local player first reads "Hel's river takes you." (`msg_ecr_arena_river`); a creature's drops are switched off. Every client splashes there: the river's `ecr_helarena_bubble` and the game's `fx_WaterImpact_Big`. Not an arena death (`ArenaHall.Contains` is false below y -5, so `Trial/ArenaDeath` does not spare skills): the game's skill loss. Dungeon interiors stand 5,000 m over their entrances (5,030 m and up near the centre), above the band |
 | `HallLakeGrave.cs` | A river death's grave on the arena floor: a `Player.CreateTombStone` prefix marks the local player's grave made under the river (finalizer clears it), and a `TombStone.Awake` prefix moves that new tombstone, and its fresh ZDO, to the walls' `gate_inside` a metre up, before its Awake records the spawn point it returns to |
 | `HallNoBuild.cs` | Placing a piece within 75 m (across) of the origin above 4,900 m: the game's no-build status and message (`$msg_nobuildzone`) |
@@ -615,7 +639,7 @@ nearest first up to the game's light limit:
 | River mist | `mist_00`..`35` | `ecr_helarena_rivermist`, local copies | cold blue-grey, alpha 0.14 | 50 x 50 m patches | 14 particles at most each, 504 in all | |
 | Bubbles | 28 spots near `mist_00`..`27` | `ecr_helarena_bubble`, local copies, replayed every 4 to 15 s | blue-green | 2.2 m clusters | 51 particles at most each (1,428 if all at once; about a third of that on average) | |
 
-Patches: `ZNetScene.Awake` postfix (`HallScenePatch`), `Localization.SetupLanguage` postfix (`HallWords`),
+Patches: `ZNetScene.Awake` postfix (`HallScenePatch`),
 `Player.UpdatePlacementGhost` postfix (`HallNoBuild`), `Player.CreateTombStone` prefix and finalizer and
 `TombStone.Awake` prefix (`HallLakeGrave`); all passed the offline patch check.
 
@@ -761,8 +785,8 @@ your reward when her trial ends."). While a trial runs, Hel's hover adds `ecr_ar
 (`RewardPreview`: the end's plan for this player from the core's ZDO, rebuilt when the waves cleared, bosses beaten or
 their souls change; runes as a count; "none yet").
 
-**Messages and HUD.** Start, boss, cleared and end go by routed RPC to the trial's players only, as a word key and up
-to three words (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
+**Messages and HUD.** Start, boss, cleared and end go by routed RPC to the trial's players only, as one `LangWire` message,
+a word key and its values read in each player's language (`ArenaWords.cs`: `ecr_arena_started` "Hel wakes. Her trial begins!", `ecr_arena_boss` "Hel sends $1!",
 `ecr_arena_cleared` "Wave $1 cleared. The next comes in $2 seconds.", `ecr_arena_ended` "Hel's Trial ends at wave $1:
 $2 kills, $3 souls.", `ecr_arena_line` "Hel's Trial - $1, wave $2 - $3 left - $4 souls" ($1 the wave's biome, the
 game's `$biome_*` word), `ecr_arena_break_line` "Hel's Trial - $1, wave $2 cleared - next wave in $3 - $4 souls", the anvil's `ecr_arena_anvil`, `_anvil_repair`, `_anvil_poor`,
@@ -800,7 +824,7 @@ core is not loaded here; it ends the trial as an empty hall does.
 | `ArenaSouls.cs`, `SoulWallets.cs`, `ArenaLoot.cs` | A kill's souls at death (`Character.OnDeath` prefix `ArenaDeathPatch`); each player's wallet; the emptied drop list |
 | `ArenaReady.cs`, `ArenaReadyKey.cs` | The ready set on the core's owner and the go; F on clients (on the core's object) |
 | `HelAnvil.cs`, `AnvilText.cs`, `AnvilUse.cs`, `AnvilOwner.cs`, `BossCache.cs` | The anvil component the hall adds (Hoverable, Interactable); its hover; the player's ask and mend; the owner's check and charge; the boss's meads |
-| `ArenaNet.cs`, `ArenaWords.cs`, `ArenaHudLine.cs` | Messages and the stop relay (`ZoneSystem.Start` postfix); the words (`Localization.SetupLanguage` postfix); the HUD line |
+| `ArenaNet.cs`, `ArenaWords.cs`, `ArenaHudLine.cs` | Messages and the stop relay (`ZoneSystem.Start` postfix); the word keys; the HUD line |
 | `Arena/Travel/ArenaTravel.cs`, `Commands/ArenaCommand.cs` | In and out; `elite arena [stop]` |
 
 Outside `Arena/`: `Raids/Traits/RaiderTraits.cs` has a second `Roll` (extra stars, mutated share, barred mutations
@@ -808,7 +832,7 @@ given outright; the raid's own calls it unchanged), `Raids/Hud/RaidHudPatch.cs` 
 `Patches/LootPatch.cs` calls `ArenaLoot` last, `Runtime/BossKills.cs` and `Patches/BossHintPatch.cs` skip arena bosses,
 `Commands/EliteCommands.cs` routes `arena`. New patches (all passed the offline patch check): `ZNetScene.Awake`
 prefix, `ZoneSystem.Start` postfixes (keeper, messages), `MonsterAI.Start` postfix, `Character.OnDeath` prefix,
-`Localization.SetupLanguage` postfix, and (2026-10-13) `Player.OnDeath` prefix and finalizer, `Skills.Clear` prefix,
+and (2026-10-13) `Player.OnDeath` prefix and finalizer, `Skills.Clear` prefix,
 `Player.OnSpawned` postfix, `Skills.RaiseSkill` prefix. The csproj and `ILRepack.targets` merge EliteCraftingLink.
 
 Not seen yet: everything. In particular a dedicated server owning and running the trial, the creatures' paths on the
@@ -847,13 +871,13 @@ the ground, an arched opening 2.44 x 3.22 m whose centre is 1.73 m over its sill
 | `GateSwirl.cs` | The swirl, dressed once (BundleEffects) and copied local-only (LocalEffects), facing its anchor; its point light #80ebe0, intensity 2, range 6, soft shadows, with a LightLod |
 | `GateWayOut.cs`, `WayOutTrigger.cs` | The way out, clients only, built with the hall: at 1.6 m behind `arrive` (the walls' back wall, r 29.5; no point in the bundle), facing into the passage, the swirl seated as in the gate with its sill on the passage floor: centre at `portal_center`'s height (1.73 m) and 0.15 m off the wall, its light `light`'s 0.2475 m further out (both read from the gate prefab), range 6; a 2.24 x 3.12 x 0.7 m trigger on `character_trigger` on the same centre (0.9 m clear of `arrive`) calling `ArenaTravel.Leave` |
 | `GateHover.cs` | "Helgrind" and "Walk through into Hel's hall" or "Hel's gate is closed." |
-| `GateWords.cs` | `piece_ecr_helgrind`, `_description`, `ecr_helgrind_open`, `ecr_helgrind_closed` (`Localization.SetupLanguage` postfix) |
+| `GateWords.cs` | `piece_ecr_helgrind`, `_description`, `ecr_helgrind_open`, `ecr_helgrind_closed` (keys; English in `translations/English.yml`) |
 
 Outside `Arena/Gate/`: `Arena/Hall/HallBuilder.cs` calls `GateWayOut.Build` in `Look` (one line);
 `Arena/Travel/ArenaTravel.cs` has `Enter` and `Leave`; `Arena/Trial/ArenaKeys.cs` documents the return point's yaw;
 `Config/ArenaSettings.cs` names Helgrind. Patches: `ZNetScene.Awake` prefix (`GatePrefab`), `ObjectDB.Awake`,
-`ObjectDB.CopyOtherDB` and `ZNetScene.Awake` postfixes (`GateHammer`, the Raiders Chest's targets), and
-`Localization.SetupLanguage` postfix (`GateWords`); the offline patch check passes.
+`ObjectDB.CopyOtherDB` and `ZNetScene.Awake` postfixes (`GateHammer`, the Raiders Chest's targets); the offline
+patch check passes.
 
 Not seen yet: the gate's look and stone, its glow, the swirl's size and direction in the opening and on the passage's
 back wall, the trigger boxes, the jump in and the return to the gate, the closed and no-teleport messages.
@@ -920,18 +944,36 @@ immune none), never shortening a longer one. `BatFiendStatuses` puts both effect
 | `BatFiendAttacks.cs`, `BatFiendAim.cs`, `BatFiendLeap.cs`, `BatFiendScreech.cs`, `BatFiendChill.cs`, `BatFiendStatuses.cs` | The five attack items (the table above); the wing's turned fan; the pounce's and bite's travel; the screech's deafness; the gravewind's 5 s frost; both effects in every ObjectDB |
 | `BatFiendEffects.cs`, `BatFiendFx.cs`, `BatFiendFxParts.cs` | Cosmetic attack effects on every client from its own Animator state and clip time (no network): local copies of game effects (`LocalEffects`, ECR's effect density), tinted to Hel's palette and fitted to the hit shapes: dust on the pounce and the bite's push-off and landing, a blood wisp when the bite heals (health read from the ZDO), Morgen's swipe as a 100 deg frost arc for the wing, Moder's cold breath cut to one 6 m, 30 deg gust, Fader's roar ripple and three Eikthyr shockwave fronts along the screech's 8 m beam; off on a dedicated server, beyond 60 m |
 | `BatFiendCorpse.cs` | `ECR_BatFiend_corpse`: unsaved network object at scale 1.2, a model copy holding the death clip (`BatFiendCorpsePose`), the game's `Ragdoll` (no physics bodies) that takes the loot and tint and, after the 2.2 s fall and the Wolf corpse's wait, plays its removal puff and drops the loot |
-| `BatFiendVoice.cs`, `BatFiendLoot.cs`, `BatFiendWords.cs`, `BatFiendNumbers.cs` | The voices, the drops, the words (`enemy_ecr_batfiend`, `item_ecr_batfiend_<key>`), every number |
+| `BatFiendVoice.cs`, `BatFiendLoot.cs`, `BatFiendNumbers.cs` | The voices, the drops, every number (its words `enemy_ecr_batfiend`, `item_ecr_batfiend_<key>` are in `translations/English.yml`) |
 
 Multiplayer: every peer (the Linux bundle on a dedicated server) builds and registers the same prefabs, so its ZDOs
 load everywhere; its owner runs the game's AI, the attacks and hits (the game routes damage to each victim) and the
 pounce's and bite's travel (synced by the game's transform sync); the clips play on every peer from `ZSyncAnimation` (attack and
-stagger triggers, the three locomotion floats); the corpse is networked and never saved. Patches: `Localization.SetupLanguage`
-postfix (`BatFiendWords`); from the libraries `ZNetScene.Awake` (NetPrefabs) and `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`
+stagger triggers, the three locomotion floats); the corpse is networked and never saved. Patches: from the
+libraries `ZNetScene.Awake` (NetPrefabs) and `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`
 (ItemPrefabs) postfixes. The offline patch check passes.
 
 Not seen in game yet: all of it. The look in the Wolf's creature shader (gloss, star tint), the size, the blend of
 walk, run and turns and whether the feet hold, the footsteps, each attack's reach, angle and timing against the clips,
 the pounce's leap, the voice, the corpse and its loot, ECR's stars and mutations on it, a dedicated server.
+
+## Translations
+
+Every word a player reads is in `EliteCreaturesReborn/translations/English.yml` (flat `key: "text"`, one line each, `$1`,
+`$2` ... for values), embedded and written into the game's word table in the player's language by the `Translations`
+library (`Lang.Install` in Awake). A translation is `EliteCreaturesReborn.translations.<Language>.yml` (the game's own
+name for the language) in `BepInEx/config` or anywhere under `BepInEx/plugins`, or `translations/<Language>.yml`
+shipped in the mod; what it leaves out stays English. Code reads words with `Lang.Get`, `Format` and `Token`. Text built
+on one machine for another travels as `LangWire.Message` and is read in the receiver's language: the arena's messages
+(`ecr_arena_message`), the raids' messages and refusals (`ecr_raid_message`, `ecr_raid_sound_reply`), and Frostbound's
+heal number through the game's damage text (`Patches/DamageWordsPatch`, a prefix on `DamageText.AddInworldText`); the
+raid's ZDO name is the creature's name token. Caches of built text (`NameMemo`, the egg text, the tier plate's tip, the
+altar hover, the arena HUD line, anvil and reward preview, the raid chest hover and HUD line, the recap window) rebuild
+when `Lang.Version` changes; recap records keep ids and name parts, never finished text. Names: mutations
+`ecr_mut_<enum>`, aspects `ecr_aspect_<enum>` and what they do `ecr_aspect_does_<enum>` (a new mutation or aspect needs
+its keys); a creature's name is the pattern `ecr_name_decorated` ("$1 $2": its words, then its own name). Never
+translated: logs, console command output, .cfg text, rule file keys, values and errors, and `MutationCatalog.Word` and
+`AspectCatalog.Word` (rule files, console, API).
 
 ## Console commands
 

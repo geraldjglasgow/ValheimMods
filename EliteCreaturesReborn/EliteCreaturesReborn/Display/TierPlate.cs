@@ -2,6 +2,7 @@ using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Util;
 using PlateColumn;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Display
@@ -14,15 +15,12 @@ namespace EliteCreaturesReborn.Display
     /// when the plate is hidden - with world tiers off, or by the player's display setting. Only with PackPanel, whose
     /// look the column is (<see cref="Column.Active"/>); without it the inventory stays as the game draws it. The plate is made the first
     /// time the inventory is open with a tier to show. Read from the world's boss keys, which the server already sends
-    /// every player; nothing is sent.
+    /// every player; nothing is sent. The tooltip is in the player's language, written again when the language changes.
     /// </summary>
     internal static class TierPlate
     {
         private const string Id = "elitecreaturesreborn_world_tier";
         private const int Rank = Column.WeightRank + 100;
-        private const string Topic = "World tier";
-        private const string Tip = "The tier rises the first time each boss is defeated, and each tier makes stars and "
-            + "mutations more common in every biome.";
         private const string GlobeResource = "EliteCreaturesReborn.assets.globe.png";
 
         private static Plate? _plate;
@@ -31,6 +29,7 @@ namespace EliteCreaturesReborn.Display
         private static InventoryGui? _failedOn;
         private static int _shownTier = -1;
         private static int _shownCeiling = -1;
+        private static int _shownWords = -1;
 
         /// <summary>Each frame the inventory is open, after the game has written the weight.</summary>
         public static void Refresh(InventoryGui gui)
@@ -101,28 +100,30 @@ namespace EliteCreaturesReborn.Display
         }
 
         /// <summary>The plate's spec; its tooltip names the number of tiers, which the rule file sets.</summary>
-        private static PlateSpec Spec(int ceiling)
-        {
-            string total = $"There are {ceiling} world tiers in total. ";
-            return new PlateSpec(Id, Rank, _globe, withText: true, Topic, total + Tip);
-        }
+        private static PlateSpec Spec(int ceiling) =>
+            new PlateSpec(Id, Rank, _globe, withText: true, Lang.Get("ecr_tier_topic"), Lang.Format("ecr_tier_tip", ceiling));
 
-        /// <summary>The tier when it changes; when the number of tiers changes, adding the plate again rewrites its tooltip.</summary>
+        /// <summary>
+        /// The tier when it changes; when the number of tiers or the language changes, adding the plate again rewrites its
+        /// tooltip.
+        /// </summary>
         private static void Write(InventoryGui gui)
         {
             int tier = WorldTier.Current();
             int ceiling = WorldTier.Ceiling();
-            if (_plate?.Text == null || (tier == _shownTier && ceiling == _shownCeiling))
+            bool sameTip = ceiling == _shownCeiling && Lang.Version == _shownWords;
+            if (_plate?.Text == null || (tier == _shownTier && sameTip))
             {
                 return;
             }
-            if (_shownCeiling >= 0 && ceiling != _shownCeiling)
+            if (_shownCeiling >= 0 && !sameTip)
             {
                 Column.Add(gui, Spec(ceiling));
             }
             _plate.Text.text = tier.ToString();
             _shownTier = tier;
             _shownCeiling = ceiling;
+            _shownWords = Lang.Version;
         }
     }
 }

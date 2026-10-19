@@ -18,6 +18,7 @@
       <InputAssemblies Include="$(OutDir)RecipeCounts.dll" />
       <InputAssemblies Include="$(OutDir)BundlePrefabs.dll" />
       <InputAssemblies Include="$(OutDir)EliteCraftingLink.dll" />
+      <InputAssemblies Include="$(OutDir)Translations.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

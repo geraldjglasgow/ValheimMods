@@ -1,3 +1,5 @@
+using Translations;
+
 namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
@@ -26,8 +28,18 @@ namespace EliteCreaturesReborn.Traits
             Aspect.Echoing,
         };
 
-        /// <summary>The word placed before the boss's own name, e.g. "Enraged" in "Enraged Eikthyr"; empty for None.</summary>
+        /// <summary>
+        /// The aspect's English word, as rule files, the console and the log name it, e.g. "Enraged"; empty for None.
+        /// Players see <see cref="Name"/>.
+        /// </summary>
         public static string Word(Aspect aspect) => aspect == Aspect.None ? "" : aspect.ToString();
+
+        /// <summary>
+        /// The word placed before the boss's own name in the player's language, e.g. "Enraged" in "Enraged Eikthyr"
+        /// (the shared <c>ecr_aspect_</c> keys); empty for None.
+        /// </summary>
+        public static string Name(Aspect aspect) =>
+            aspect == Aspect.None ? "" : Lang.Get("ecr_aspect_" + aspect.ToString().ToLowerInvariant());
 
         /// <summary>The rule-file key: the aspect's word, or <c>none</c> for the plain fight.</summary>
         public static string Key(Aspect aspect) => aspect == Aspect.None ? "none" : aspect.ToString();

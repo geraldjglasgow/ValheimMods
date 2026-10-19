@@ -1,5 +1,6 @@
 using System;
 using EliteCreaturesReborn.Traits;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
@@ -37,8 +38,8 @@ namespace EliteCreaturesReborn.Mutations
             SeqKey = TraitKeys.FrostTrailSeq,
             Colour = new Color(0.78f, 0.91f, 1f, 0.8f),
             StatusKey = "ecr_slick_ice",
-            StatusName = "Slick ice",
-            Tooltip = "Frostbound ice underfoot: your feet slide, so starting, turning and stopping all take longer.",
+            StatusName = Lang.Token("ecr_se_slick_ice"),
+            Tooltip = Lang.Token("ecr_se_slick_ice_tooltip"),
             IconEffects = Array.Empty<string>(),
             IconItems = new[] { "Ice", "Crystal", "FreezeGland" },
             Linger = 0.3f,
@@ -56,8 +57,8 @@ namespace EliteCreaturesReborn.Mutations
             SeqKey = TraitKeys.MudTrailSeq,
             Colour = new Color(0.2f, 0.14f, 0.07f, 0.93f),
             StatusKey = "ecr_deep_mud",
-            StatusName = "Deep mud",
-            Tooltip = "Mudbound mud underfoot: thick and deep, it drags at every step and clings a moment after.",
+            StatusName = Lang.Token("ecr_se_deep_mud"),
+            Tooltip = Lang.Token("ecr_se_deep_mud_tooltip"),
             IconEffects = new[] { "Tared" },
             IconItems = new[] { "Tar", "Guck" },
             Linger = 1f,
@@ -89,8 +90,8 @@ namespace EliteCreaturesReborn.Mutations
             SeqKey = TraitKeys.BindTrailSeq,
             Colour = new Color(0.33f, 0.4f, 0.13f, 0.95f),
             StatusKey = "ecr_rooted",
-            StatusName = "Rooted",
-            Tooltip = "Binding roots hold your feet: you cannot walk, run, jump or roll until they let go.",
+            StatusName = Lang.Token("ecr_se_rooted"),
+            Tooltip = Lang.Token("ecr_se_rooted_tooltip"),
             IconItems = new[] { "Root", "ElderBark", "RoundLog" },
             Feel = TrailFeel.Root,
             Keywords = new[] { "tar", "mud", "blob", "splat" },
@@ -130,6 +131,10 @@ namespace EliteCreaturesReborn.Mutations
         /// <summary>The status effect's object name, from which the game takes its identity hash.</summary>
         public string StatusKey { get; private set; } = "";
 
+        /// <summary>
+        /// The status effect's name and tooltip as word tokens (<c>$ecr_se_...</c>), which the game words in the player's
+        /// language wherever it shows them.
+        /// </summary>
         public string StatusName { get; private set; } = "";
         public string Tooltip { get; private set; } = "";
 

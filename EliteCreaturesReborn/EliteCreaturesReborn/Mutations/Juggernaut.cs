@@ -16,8 +16,11 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     public static class Juggernaut
     {
-        /// <summary>The tell, in the colour the game gives an immune hit (grey, like the mutation's own iron grey).</summary>
-        private const string Tell = "Unstoppable";
+        /// <summary>
+        /// The tell, in the colour the game gives an immune hit (grey, like the mutation's own iron grey): a word token,
+        /// which each machine that shows it words in its own player's language.
+        /// </summary>
+        private const string Tell = "$ecr_display_unstoppable";
 
         /// <summary>
         /// The game's mark for a hit that staggers outright (RPC_Damage staggers at once from 100 up); such a hit has

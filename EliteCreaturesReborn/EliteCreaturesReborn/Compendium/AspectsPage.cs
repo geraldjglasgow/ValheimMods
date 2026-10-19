@@ -2,6 +2,7 @@ using System.Text;
 using EliteCreaturesReborn.Display;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Compendium
@@ -12,7 +13,7 @@ namespace EliteCreaturesReborn.Compendium
     /// </summary>
     internal static class AspectsPage
     {
-        public const string Topic = "Elite: Boss aspects";
+        public static string Topic => Lang.Get("ecr_book_aspects_topic");
 
         public static string Text(RuleSet set)
         {
@@ -20,12 +21,10 @@ namespace EliteCreaturesReborn.Compendium
             AspectRules rules = set.Boss.Aspects;
             if (!rules.Enabled)
             {
-                text.Append("Boss aspects are off on this server: every boss fights as the game ships it.\n");
+                text.Append(Lang.Get("ecr_book_aspects_off")).Append('\n');
                 return text.ToString();
             }
-            text.Append("A boss summoned at its altar may come with an aspect: a twist on the fight, named before the "
-                + "boss's own name. The altar shows it before you summon, and it changes again from time to time. An "
-                + "aspect makes the fight harder and the loot richer.\n");
+            text.Append(Lang.Get("ecr_book_aspects_intro")).Append('\n');
             foreach (Aspect aspect in AspectCatalog.InOrder)
             {
                 Entry(text, aspect, rules);
@@ -33,16 +32,14 @@ namespace EliteCreaturesReborn.Compendium
             return text.ToString();
         }
 
+        // The altar's lines start in lower case, after the aspect's name; here each stands as a sentence of its own.
         private static void Entry(StringBuilder text, Aspect aspect, AspectRules rules)
         {
             float loot = rules.LootOf(aspect);
-            string pays = Mathf.Approximately(loot, 1f) ? "" : " " + PageText.Grey($"loot x{loot:0.##}");
-            text.Append($"\n<color=orange>{AspectCatalog.Word(aspect)}</color>{pays}\n")
-                .Append(Capital(AspectText.Describe(aspect, rules))).Append(".\n");
+            string pays = Mathf.Approximately(loot, 1f) ? ""
+                : " " + PageText.Grey(Lang.Format("ecr_book_loot", loot.ToString("0.##")));
+            text.Append($"\n<color=orange>{AspectText.Name(aspect)}</color>{pays}\n")
+                .Append(AspectText.Sentence(aspect, rules)).Append('\n');
         }
-
-        // The altar's lines start in lower case, after the aspect's name; here each stands as a sentence of its own.
-        private static string Capital(string line) =>
-            line.Length == 0 ? line : char.ToUpperInvariant(line[0]) + line.Substring(1);
     }
 }

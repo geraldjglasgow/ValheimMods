@@ -147,7 +147,7 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>Routed, to one player of the trial as it ends: their reward (a package, <c>RewardList</c>).</summary>
         public const string RewardRpc = "ecr_arena_reward";
 
-        /// <summary>Routed, to one player of the trial: a message (word key and up to three words to put in it).</summary>
+        /// <summary>Routed, to one player of the trial: a message, its word key and values as one string (LangWire).</summary>
         public const string MessageRpc = "ecr_arena_message";
 
         public static readonly int PhaseHash = Phase.GetStableHashCode();

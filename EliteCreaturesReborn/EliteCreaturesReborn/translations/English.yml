@@ -1,0 +1,477 @@
+# Elite Creatures Reborn - English words
+#
+# To translate: copy this file as EliteCreaturesReborn.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the game), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it). Patterns such as "$1 $2" set the word order: a creature's
+# name is ecr_name_decorated, so a language that puts its words after the name writes "$2 $1".
+
+# Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
+ecr_mut_mad: "Mad"
+ecr_mut_bloated: "Bloated"
+ecr_mut_cloaked: "Cloaked"
+ecr_mut_splintering: "Splintering"
+ecr_mut_leeching: "Leeching"
+ecr_mut_warding: "Warding"
+ecr_mut_plated: "Plated"
+ecr_mut_miasmic: "Miasmic"
+ecr_mut_devouring: "Devouring"
+ecr_mut_thieving: "Thieving"
+ecr_mut_gilded: "Gilded"
+ecr_mut_blinking: "Blinking"
+ecr_mut_relentless: "Relentless"
+ecr_mut_juggernaut: "Juggernaut"
+ecr_mut_screecher: "Screecher"
+ecr_mut_frostbound: "Frostbound"
+ecr_mut_mudbound: "Mudbound"
+ecr_mut_corrodent: "Corrodent"
+ecr_mut_cloning: "Cloning"
+ecr_mut_piercing: "Piercing"
+ecr_mut_howling: "Howling"
+ecr_mut_binding: "Binding"
+ecr_mut_flamebound: "Flamebound"
+
+# Creature names: $1 its mutation and aspect words, $2 its own name ("Mad Greydwarf")
+ecr_name_decorated: "$1 $2"
+# Two words of a creature's name side by side, joined left to right ("Bloated Warding", then "Bloated Warding Miasmic")
+ecr_name_words: "$1 $2"
+
+# Mutations, told to the player they happen to
+# $1 the creature, $2 the item, $3 how many
+ecr_mut_msg_stole: "$1 stole $2 x$3"
+# $1 the item, $2 how many
+ecr_mut_msg_not_stolen: "$1 x$2 was not stolen"
+ecr_mut_msg_stolen_late: "$1 x$2 was stolen after all"
+# $1 the armour piece, $2 the percent of it left
+ecr_mut_msg_corrodes: "Your $1 corrodes ($2% left)"
+
+# Over a creature, where damage numbers show
+ecr_display_unstoppable: "Unstoppable"
+# A Frostbound creature healed by frost: $1 the health it healed (the game puts + before it)
+ecr_display_frost_heal: "$1 frost"
+
+# Status effects
+ecr_se_chilled: "Chilled"
+ecr_se_chilled_tooltip: "A Frostbound creature's freezing aura: your stamina recovers slowly while you stay near it."
+ecr_se_ringing_ears: "Ringing ears"
+ecr_se_ringing_ears_tooltip: "A shriek left your ears ringing: the world is muffled and spells will not cast."
+ecr_se_ringing_ears_start: "Your ears ring - the world goes quiet"
+ecr_se_ringing_ears_no_cast: "Your ears ring - you cannot cast"
+ecr_se_slick_ice: "Slick ice"
+ecr_se_slick_ice_tooltip: "Frostbound ice underfoot: your feet slide, so starting, turning and stopping all take longer."
+ecr_se_deep_mud: "Deep mud"
+ecr_se_deep_mud_tooltip: "Mudbound mud underfoot: thick and deep, it drags at every step and clings a moment after."
+ecr_se_rooted: "Rooted"
+ecr_se_rooted_tooltip: "Binding roots hold your feet: you cannot walk, run, jump or roll until they let go."
+
+# Eggs: what an egg will hatch. $1 the number of stars, $2 its mutations (each in its star colour)
+ecr_egg_plain: "Hatches plain"
+ecr_egg_stars_one: "Hatches with $1 star"
+ecr_egg_stars_many: "Hatches with $1 stars"
+ecr_egg_stars_one_mutations: "Hatches with $1 star, $2"
+ecr_egg_stars_many_mutations: "Hatches with $1 stars, $2"
+# Two mutations in an egg's list, joined left to right ("Leeching, Mad", then "Leeching, Mad, Gilded")
+ecr_egg_list: "$1, $2"
+
+# World tier: the inventory plate's tooltip ($1 the number of tiers) and the message when it rises
+ecr_tier_topic: "World tier"
+ecr_tier_tip: "There are $1 world tiers in total. The tier rises the first time each boss is defeated, and each tier makes stars and mutations more common in every biome."
+# $1 the new tier, $2 the number of tiers
+ecr_tier_risen: "The world hardens: tier $1 of $2"
+
+# Boss hints: a defeated boss points toward a place. $1 one of the directions below
+ecr_hint_pull: "You feel a presence pulling you... $1"
+ecr_hint_north: "north"
+ecr_hint_northeast: "northeast"
+ecr_hint_east: "east"
+ecr_hint_southeast: "southeast"
+ecr_hint_south: "south"
+ecr_hint_southwest: "southwest"
+ecr_hint_west: "west"
+ecr_hint_northwest: "northwest"
+
+# Boss rewards, on a boss altar's hover: $1-$2 the amount, $3 the item
+ecr_loot_altar_reward: "Reward: $1-$2 $3 per player"
+
+# The Bat-fiend: its name and its attacks' names (the death recap and the damage log)
+enemy_ecr_batfiend: "Bat-fiend"
+item_ecr_batfiend_pounce: "Raking Pounce"
+item_ecr_batfiend_bite: "Bloodletting Bite"
+item_ecr_batfiend_wing: "Wing Guillotine"
+item_ecr_batfiend_gravewind: "Gravewind Blast"
+item_ecr_batfiend_screech: "Shattering Screech"
+
+# Elite Creatures Reborn: the compendium pages, boss aspects, boss altars and the boss damage board.
+# $1, $2 ... are values the mod fills in (numbers, names). Colours and layout stay in the code.
+
+# Boss aspects: each aspect's name, put before a boss's own name ("none" is the fight as the game ships it)
+ecr_aspect_none: "none"
+ecr_aspect_reflective: "Reflective"
+ecr_aspect_shielded: "Shielded"
+ecr_aspect_mending: "Mending"
+ecr_aspect_summoner: "Summoner"
+ecr_aspect_elementalist: "Elementalist"
+ecr_aspect_enraged: "Enraged"
+ecr_aspect_twin: "Twin"
+ecr_aspect_phantom: "Phantom"
+ecr_aspect_adaptive: "Adaptive"
+ecr_aspect_fixated: "Fixated"
+ecr_aspect_stormbound: "Stormbound"
+ecr_aspect_gravitic: "Gravitic"
+ecr_aspect_colossal: "Colossal"
+ecr_aspect_tethered: "Tethered"
+ecr_aspect_bountiful: "Bountiful"
+ecr_aspect_portalbound: "Portalbound"
+ecr_aspect_nightfall: "Nightfall"
+ecr_aspect_brutal: "Brutal"
+ecr_aspect_echoing: "Echoing"
+
+# Boss aspects: what each does. Lower case and no full stop: the altar shows it on the line under the aspect's name,
+# the compendium and the altar window give it a capital and ecr_aspect_sentence.
+ecr_aspect_does_none: "the fight as the game ships it"
+ecr_aspect_does_reflective: "$1% of each hit you land on it comes back to you"
+ecr_aspect_does_shielded: "takes $1% less damage from arrows and bolts"
+ecr_aspect_does_mending: "regenerates $1% of its current health every second"
+ecr_aspect_does_summoner: "calls $1 creatures each time it loses $2% of its health"
+ecr_aspect_does_elementalist: "deals $1% more elemental damage"
+ecr_aspect_does_enraged: "deals $1% more physical damage"
+ecr_aspect_does_twin: "comes as two sharing one health pool, each with $1% less health and $2% less damage"
+ecr_aspect_does_phantom: "at $1 health splits off phantom copies, $2 per player online, with $3 health and $4% less damage"
+ecr_aspect_does_adaptive: "takes $1% less of whichever damage type hit it most in the last $2 seconds"
+ecr_aspect_does_fixated: "marks one player and hits them $1% harder, everyone else $2% softer; the mark moves every $3 seconds to whoever hurt it most"
+ecr_aspect_does_stormbound: "every $1 seconds calls lightning down on a circle under each player, $2 seconds after it appears"
+ecr_aspect_does_gravitic: "every $1 seconds pulls every player within $2 m toward it, then slams: $3% of max health to players within $4 m of it"
+ecr_aspect_does_colossal: "$1% bigger, $2% more health, $3% slower; its heavy attacks send a $4 m shockwave that knocks players down (roll through it or jump it)"
+ecr_aspect_does_tethered: "comes as two bound by a tether, each with $1% less health; the further apart their health, the faster both attack (up to $2%) and the less damage the weaker one takes (up to $3%)"
+ecr_aspect_does_bountiful: "carries $1 more aspects at once"
+ecr_aspect_does_portalbound: "throws through portals (the Elder its vines, Bonemass its slime): one opens at its hand, the other somewhere above you"
+ecr_aspect_does_nightfall: "turns the sky to a storming midnight within $1 m of it; every $2-$3 seconds a tornado rises by each player there and hunts them for $4 seconds: $5 damage a second inside it"
+ecr_aspect_does_brutal: "its heavy blows throw the players they hit $1 m away; a block that holds or a parry keeps you on your feet, and the landing never hurts"
+ecr_aspect_does_echoing: "$1 seconds into the fight a white ghost of it rises and does everything it did $1 seconds before, blows and throws included, until it dies"
+# What an aspect does as a sentence of its own ($1 already starts with a capital)
+ecr_aspect_sentence: "$1."
+# Phantom splits at no health marks at all ("at no health splits off ...")
+ecr_aspect_marks_none: "no"
+
+# Fixated: the chat line when its mark lands ($1 the boss, $2 a player)
+ecr_aspect_fixates_on: "$1 fixes on $2!"
+ecr_aspect_fixates_you: "$1 fixes on you!"
+ecr_aspect_fixated_gone: "a player who has left"
+
+# Boss altar: the bowl's hover lines
+ecr_altar_choose: "Choose the fight"
+ecr_altar_stars_line: "Stars: $1"
+ecr_altar_stars_none: "none"
+ecr_altar_aspect_line: "Aspect: $1"
+ecr_altar_chosen: "(chosen)"
+ecr_altar_loot_paren: "(loot x$1)"
+ecr_altar_extra_line: "$1: $2"
+ecr_altar_shifting: "Shifting..."
+ecr_altar_shifts_in: "Shifts in $1"
+ecr_altar_defeated_once: "Defeated once: more stars likelier"
+ecr_altar_defeated_many: "Defeated $1 times: more stars likelier"
+ecr_altar_defeated_most: "Defeated $1+ times: more stars likelier"
+
+# Boss altar: the window where a player chooses the fight
+ecr_altar_title: "Choose the Fight"
+ecr_altar_now: "On the altar now"
+ecr_altar_stars: "Stars"
+ecr_altar_stars_off: "Stars: off in the rule file"
+ecr_altar_aspect_off: "Aspect: off in the rule file"
+ecr_altar_random: "Random"
+ecr_altar_none: "None"
+ecr_altar_random_text: "Rolled from this boss's aspects at every shift of the altar."
+ecr_altar_bountiful_text: "Its extra aspects roll at every shift of the altar."
+ecr_altar_loot: "Loot x$1"
+
+# Boss damage board ($1 the boss)
+ecr_tally_defeated: "$1 defeated"
+
+# Difficulties, as a player reads them
+ecr_difficulty_custom: "Custom"
+ecr_difficulty_easy: "Easy"
+ecr_difficulty_medium: "Medium"
+ecr_difficulty_hard: "Hard"
+ecr_difficulty_veryhard: "Very Hard"
+ecr_difficulty_extreme: "Extreme"
+
+# Compendium: shared words
+ecr_book_seconds_one: "$1 second"
+ecr_book_seconds_many: "$1 seconds"
+ecr_book_list_comma: ", "
+ecr_book_list_and: "$1 and $2"
+
+# Compendium: World difficulty page
+ecr_book_difficulty_topic: "Elite: World difficulty"
+ecr_book_difficulty: "Difficulty: $1"
+ecr_book_tier: "World tier $1 of $2: one tier for every boss below that has fallen. Each tier makes creatures stronger."
+ecr_book_tier_off: "World tiers are off on this server: the world stays at tier 0."
+ecr_book_creature_stars_off: "Creature stars are off on this server: creatures keep the game's own stars, and only their mutations come from Elite Creatures."
+ecr_book_bosses: "Bosses"
+ecr_book_boss_defeated: "defeated"
+ecr_book_boss_not_yet: "not yet"
+ecr_book_meaning: "What it means"
+ecr_book_meaning_custom: "$1: this server sets each biome's star and mutation chances itself. Each world tier raises them; now stars x$2 and mutations x$3."
+ecr_book_meaning_preset: "The difficulty decides how many stars and mutations creatures get as the world's bosses fall. The biome you're entering is the gentlest. A biome you've cleared gets harder with every boss killed after it, so by the end of the game the Meadows is the hardest place. Biomes you haven't reached match the one you're entering.\nUnder the most stars allowed, most creatures are plain and each extra star is rarer than the one before. Each star a creature has adds a quarter to its chance of a mutation."
+ecr_book_biomes: "Each biome at world tier $1"
+ecr_book_col_biome: "Biome"
+ecr_book_col_most_stars: "Most stars"
+ecr_book_col_with_stars: "With stars"
+ecr_book_col_mutated: "Mutated"
+ecr_book_biomes_note: "Your biome is in orange. Mutated: creatures with no stars that carry a mutation."
+ecr_book_ladder: "The difficulties"
+ecr_book_ladder_line: "$1: $2"
+ecr_book_ladder_easy: "1 star where you're entering, one more for every boss killed after a biome, up to 4; 10% mutated, rising to 35% as bosses fall after a biome"
+ecr_book_ladder_medium: "2 stars, up to 5; 25% mutated, rising to 55%"
+ecr_book_ladder_hard: "3 stars, up to 5; 30% mutated, rising to 65%"
+ecr_book_ladder_veryhard: "4 stars, up to 5; mutations halfway between $1 and $2"
+ecr_book_ladder_extreme: "5 stars in every biome you've reached, 6 to 8 as more bosses fall; 45% mutated, rising to 98%"
+ecr_book_ladder_custom: "$1: the server's own chances for each biome, raised by each world tier."
+ecr_book_ladder_note: "Stars: the most a creature can have. Mutated: creatures with no stars that carry one."
+ecr_book_game: "The game's own World Difficulty"
+ecr_book_game_rates: "Separate from all this, and it stacks: on this world enemies deal $1% of their normal damage and you deal $2% of yours."
+ecr_book_game_stars_ours: "Its extra star chance does nothing while Elite Creatures gives the stars."
+ecr_book_game_stars_game: "Its extra star chance applies as usual, since the game gives the stars here."
+
+# Compendium: Stars page
+ecr_book_stars_topic: "Elite: Stars"
+ecr_book_stars_off_heading: "Creature stars are off"
+ecr_book_stars_off: "Creatures keep the game's own stars on this server, with the game's own numbers for them."
+ecr_book_stars_here: "Stars in the $1 (where you are)"
+ecr_book_stars_in: "Stars in the $1"
+ecr_book_col_stars: "Stars"
+ecr_book_col_health: "Health"
+ecr_book_col_damage: "Damage"
+ecr_book_col_attack: "Attack"
+ecr_book_col_speed: "Speed"
+ecr_book_col_size: "Size"
+ecr_book_col_loot: "Loot"
+ecr_book_col_chance: "Chance"
+ecr_book_stars_note: "Each number multiplies the game's own creature. Speed is how fast it moves, attack how fast it swings. A large star on a nameplate counts as five."
+ecr_book_boss_stars: "Boss stars"
+ecr_book_boss_stars_off: "Off on this server: bosses keep the game's own level."
+ecr_book_boss_stars_note: "The altar shows a boss's stars before you summon it. A boss's stars never multiply its drops."
+ecr_book_boss_stars_again: "Each time a boss is killed, its next fight leans toward more stars."
+
+# Compendium: Mutations page ($1 in the intro is the Gilded mutation's name)
+ecr_book_mutations_topic: "Elite: Mutations"
+ecr_book_mutations_intro: "A mutated creature wears its mutation's name before its own, and its stars take the mutation's colour, the colour of the star before each name below. $1 is the rarest and the only one in your favour."
+ecr_book_mutations_numbers: "Numbers for a creature with no stars in the $1, where you are."
+ecr_book_mutations_large: "A mutation on a large star is stronger: what it gains is x$1."
+ecr_book_mutations_off: "Off on this server"
+
+# Compendium: what each mutation does (a $n that names a mutation is that mutation's own name)
+ecr_book_mut_mad: "Moves $1 faster and attacks $2 faster, with $3 less health. Never on bats."
+ecr_book_mut_bloated: "$1 times its usual health. $2 after it dies it explodes: $3 damage within $4 m, more for each star."
+ecr_book_mut_cloaked: "Invisible until you are within $1 m. Drakes, bats, gjall and deathsquitos are never $2."
+ecr_book_mut_splintering: "Splits into weaker copies when killed, each dealing $1% of its damage, and they can split again. Oozers are never $2."
+ecr_book_mut_leeching: "Regenerates $1% of its health a second (at most $2 a second) once $3 pass without a hit, and heals $4% of the damage it deals."
+ecr_book_mut_warding: "Reflects $1% of each hit back at you and knocks you back, never more than $2% of your maximum health in any second."
+ecr_book_mut_plated: "Shrugs off $1% of the damage it takes at full health, less as it is hurt, and hits up to $2% harder as that armour goes."
+ecr_book_mut_miasmic: "Leaves poison clouds behind it, $1 m wide, each lasting $2. They poison players, never creatures."
+ecr_book_mut_devouring: "Kills smaller creatures in one bite and keeps $1% of their health and $2% of their damage, slowing as it grows: one meal per star in its life (at least $3), one every $4, never a boss or a large creature. Once it is big enough it hunts players too. Its nameplate shows what it ate."
+ecr_book_mut_thieving: "Steals an item with each melee hit that lands, up to one per star (at least $1), and carries them on its nameplate. Kill it to get everything back."
+ecr_book_mut_gilded: "Glitters gold, never attacks a player and runs from any within $1 m. Drops $2 times its loot plus $3 $4, more for each star. Never on large creatures."
+ecr_book_mut_blinking: "Every $1 of a fight it reappears $2 m behind its target, after a flash and a chime at the spot. $3 less health."
+ecr_book_mut_blinking_never: "$1 less health. It never blinks on this server."
+ecr_book_mut_relentless: "Once it picks you it keeps coming, seen or not, until you are $1 m away; sneaking does not hide you. Never faster than its usual speed, never on large creatures."
+ecr_book_mut_juggernaut: "Never staggers or is knocked back: hits, parries, blasts and traps don't stop it. \"Unstoppable\" shows over it instead."
+ecr_book_mut_screecher: "When one hit takes $1% of its health it shrieks: players within $2 m are deafened for $3, and Elemental and Blood Magic weapons will not cast. At most once every $4; a killing blow makes no shriek."
+ecr_book_mut_frostbound: "Players within $1 m recover stamina $2% slower (\"Chilled\"). $3 Frost heals it instead of hurting it."
+ecr_book_mut_frostbound_ice: "Leaves slick ice where it walks: on it you slide and move $1% slower; each patch lasts $2."
+ecr_book_mut_frostbound_no_ice: "It lays no ice on this server."
+ecr_book_mut_mudbound: "Leaves thick mud where it walks: in it you move $1% slower, and for $2 after stepping out. Each patch lasts $3."
+ecr_book_mut_mudbound_none: "It lays no mud on this server."
+ecr_book_mut_corrodent: "Your armour loses durability $1 times as fast under its hits. Shields wear as usual."
+ecr_book_mut_cloning: "When it squares up to you within $1 m it leaves a harmless decoy in its place and fights on unseen. Its first blow that lands shows it, so does killing the decoy. $2"
+ecr_book_mut_cloning_late: "When it squares up to you within $1 m it leaves a harmless decoy in its place and fights on unseen. Its first blow that lands shows it, so does killing the decoy, and after $2 it shows itself anyway. $3"
+ecr_book_mut_cloning_once: "Once in its life."
+ecr_book_mut_cloning_times: "$1 times in its life."
+ecr_book_mut_piercing: "Its hits ignore $1% of your armour."
+ecr_book_mut_howling: "When it turns on you it howls, and the $1 nearest creatures on its side within $2 m come for you; again every $3 while it fights you. Never calls a boss."
+ecr_book_mut_binding: "Leaves patches of tangled roots where it walks, one every $1 m, each lasting $2. Step into one and the roots hold you for $3 (\"Rooted\": you can still turn, block and strike), then let you go for $4."
+ecr_book_mut_flamebound: "Leaves burning ground where it walks, each patch lasting $1. Standing in it sets you on fire: $2 fire damage a second, more with stars. Fire resistance and being wet help; armour does not."
+
+# Compendium: Boss aspects page
+ecr_book_aspects_topic: "Elite: Boss aspects"
+ecr_book_aspects_off: "Boss aspects are off on this server: every boss fights as the game ships it."
+ecr_book_aspects_intro: "A boss summoned at its altar may come with an aspect: a twist on the fight, named before the boss's own name. The altar shows it before you summon, and it changes again from time to time. An aspect makes the fight harder and the loot richer."
+ecr_book_loot: "loot x$1"
+
+# Hel's hall
+ecr_arena_hel: "Hel"
+hud_ecr_arena_begin: "Begin the trial"
+msg_ecr_arena_river: "Hel's river takes you."
+
+# Helgrind, Hel's gate
+piece_ecr_helgrind: "Helgrind"
+piece_ecr_helgrind_description: "Hel's gate, which leads to her hall and her trial. Walk through it to go in; the swirl at the end of the hall's gate passage brings you back out here."
+ecr_helgrind_open: "Walk through into Hel's hall"
+ecr_helgrind_closed: "Hel's gate is closed."
+
+# Hel's Trial: the line under the minimap ($1 the biome, $2 the wave, then creatures left or seconds, then souls)
+ecr_arena_name: "Hel's Trial"
+ecr_arena_line: "Hel's Trial - $1, wave $2 - $3 left - $4 souls"
+ecr_arena_countdown: "Hel's Trial - $1 - the first wave in $2"
+ecr_arena_break_line: "Hel's Trial - $1, wave $2 cleared - next wave in $3 - $4 souls"
+ecr_arena_recall_line: "Hel's Trial - $1, wave $2 - $3 left, recalled in $4 - $5 souls"
+# A rest's line ($1) with who is ready after it ($2: ecr_arena_ready_hint or ecr_arena_ready_mine)
+ecr_arena_line_ready: "$1 - $2"
+ecr_arena_ready_hint: "F: ready ($1/$2)"
+ecr_arena_ready_mine: "(ready) $1/$2"
+
+# Hel's Trial: centre messages
+ecr_arena_started: "Hel wakes. Her trial begins!"
+ecr_arena_boss: "Hel sends $1!"
+ecr_arena_ended: "Hel's Trial ends at wave $1: $2 kills, $3 souls."
+ecr_arena_cleared: "Wave $1 cleared. The next comes in $2 seconds."
+ecr_arena_cleared_first: "Wave $1 cleared. The next comes in $2 seconds. Hel pays your reward when her trial ends."
+ecr_arena_wave_done: "Wave $1 cleared."
+ecr_arena_recall: "Hel marks the last of the dead on your map. She recalls them in $1 seconds."
+ecr_arena_spared: "Hel spares your skills and your gear."
+ecr_arena_ready_vote: "Ready: $1 of $2"
+ecr_arena_all_ready: "All ready - the dead come!"
+ecr_arena_call_hint: "Call the next wave"
+ecr_arena_called: "$1 calls the next wave!"
+ecr_arena_boss_waits: "Hel waits until $1 falls."
+# The end and the reward again in the chat window: $1 the trial's name (coloured), $2 the message
+ecr_arena_chat_line: "$1: $2"
+
+# Hel's Trial: the reward (the end message and Hel's hover while a trial runs)
+ecr_arena_reward: "Hel rewards you: $1."
+ecr_arena_reward_now: "Current rewards: $1"
+ecr_arena_reward_none: "none yet"
+# A named item given more than once: $1 the item, $2 how many
+ecr_arena_reward_item: "$1 x$2"
+# The reward's parts one after another: $1 the parts so far, $2 the next
+ecr_arena_reward_list: "$1, $2"
+ecr_arena_reward_coins: "$1 coins"
+ecr_arena_reward_runes: "$1 runes"
+ecr_arena_reward_essence: "$1 essence"
+ecr_arena_reward_xp: "+$1% skill XP"
+
+# Hel's Anvil
+ecr_arena_anvil: "Hel's Anvil"
+ecr_arena_anvil_repair: "Repair your gear ($1 souls)"
+ecr_arena_anvil_poor: "Not enough souls ($1)"
+ecr_arena_anvil_cold: "The anvil is cold while the dead come"
+ecr_arena_anvil_done: "Hel's Anvil mends your gear for $1 souls."
+ecr_arena_anvil_nothing: "Nothing you carry needs mending."
+
+# Raids: the Raiders Chest, the messages as a raid starts and ends, the line under the minimap, and the death recap.
+# $1, $2 ... are values the mod fills in (names, numbers, key hints). "$1 raid" names a raid after its creature.
+
+# The Raiders Chest
+piece_ecr_raiderschest: "Raiders Chest"
+piece_ecr_raiderschest_description: "An iron-bound chest with a war horn on its lid. Fill it with gold and sound the horn: raiders come for the gold, and beating them brings it back with more. The more gold for your gear, the harder the raid and the richer the loot. Only in a base, once a day."
+hud_ecr_raid_sound: "Sound the raid"
+ecr_raid_horn: "War horn"
+
+# The Raiders Chest's hover ($1 of the stake line is the coins, $2 the difficulty)
+ecr_raid_coins_one: "$1 coin"
+ecr_raid_coins_many: "$1 coins"
+ecr_raid_stake_line: "$1 - $2 raid (coins back x$3, drops x$4)"
+ecr_raid_empty: "Put gold coins in to sound a raid."
+ecr_raid_hold_to_stop: "Hold $1 to stop the raid (the raiders' gold is lost)"
+ecr_raid_stopping: "Stopping the raid... $1%"
+ecr_raid_locked: "The Raiders Chest is locked while the raid is on. Hold to stop the raid."
+
+# Why no raid is sounded
+ecr_raid_off: "Raids from the Raiders Chest are off on this server."
+ecr_raid_not_in_base: "Not in a base: a raid needs a base to attack."
+ecr_raid_resting: "The horn must rest: ready in $1"
+ecr_raid_game_raid_near: "Another raid is already on nearby."
+ecr_raid_chest_raid_near: "Another raid is already on within 200 m."
+ecr_raid_in_use: "Someone has the Raiders Chest open."
+ecr_raid_no_gold: "No gold, no raid."
+ecr_raid_moved: "The Raiders Chest changed hands just then: try again."
+ecr_raid_no_host: "This cannot hold a raid."
+ecr_raid_not_owner: "Only the machine that owns it can sound a raid here."
+ecr_raid_already_on: "A raid is already on here."
+ecr_raid_none_unlocked: "No raid has been unlocked in this world yet."
+
+# A raid starts and ends ($1 the raid's creature, $2 the difficulty)
+ecr_raid_started: "Raiders are coming for your gold!\n$1 raid ($2)"
+ecr_raid_won: "$1 raid beaten! Your gold is yours again."
+ecr_raid_robbed: "The Raiders Chest is broken: the raiders make off with your gold."
+ecr_raid_stopped: "$1 raid called off. The raiders fall, and your gold with them."
+ecr_raid_abandoned: "The raid is abandoned: the raiders leave with your gold."
+ecr_raid_timed_out: "Time is up: the raiders leave with your gold."
+
+# The raid's line under the minimap ($1 the raid's creature, $2 the difficulty; times as m:ss)
+ecr_raid_line_countdown: "$1 raid ($2) - first wave in $3"
+ecr_raid_line_break: "$1 raid ($2) - wave $3 of $4 in $5 - $6"
+ecr_raid_line_wave: "$1 raid ($2) - wave $3 of $4 - $5 left - $6"
+
+# Raid difficulty
+ecr_raid_band_trivial: "Trivial"
+ecr_raid_band_fair: "Fair"
+ecr_raid_band_hard: "Hard"
+ecr_raid_band_brutal: "Brutal"
+ecr_raid_band_deadly: "Deadly"
+
+# Death recap: the window
+ecr_recap_topic: "Death Recap"
+ecr_recap_play: "Play"
+ecr_recap_pause: "Pause"
+ecr_recap_none: "No deaths yet"
+ecr_recap_none_help: "Deaths are kept here until the game closes. $1 opens and closes this window."
+ecr_recap_no_video: "No video of this death: recording was off ($1 in the .cfg) or not possible."
+
+# Death recap: the killer, the summary and the hit rows
+ecr_recap_died: "Died: $1"
+ecr_recap_killed_by: "Killed by $1"
+ecr_recap_killed_by_how: "Killed by $1 $2"
+ecr_recap_when: "Day $1, $2"
+ecr_recap_no_hits: "no hits recorded"
+ecr_recap_damage: "$1 damage in $2 s"
+ecr_recap_damage_shares: "$1 damage in $2 s: $3"
+ecr_recap_share: "$1 $2%"
+ecr_recap_part: "$1 $2"
+ecr_recap_hp: "HP $1/$2"
+
+# Death recap: the line at the top left after a death ($2 the recap key)
+ecr_recap_notice_killed: "Killed by $1. $2: death recap"
+ecr_recap_notice_died: "Died: $1. $2: death recap"
+
+# Death recap: how a hit came
+ecr_recap_type_hit: "hit"
+ecr_recap_type_ranged: "ranged"
+ecr_recap_type_burning: "burning"
+ecr_recap_type_poison: "poison"
+ecr_recap_type_freezing: "freezing"
+ecr_recap_type_fall: "fall"
+ecr_recap_type_drowning: "drowning"
+ecr_recap_type_edge_of_world: "edge of the world"
+ecr_recap_type_falling_tree: "falling tree"
+ecr_recap_type_falling_building: "falling building"
+ecr_recap_type_ship: "ship"
+ecr_recap_type_boiling_sea: "boiling sea"
+ecr_recap_type_lava: "lava"
+ecr_recap_type_cinder_fire: "cinder fire"
+ecr_recap_type_water: "water"
+ecr_recap_type_smoke: "smoke"
+ecr_recap_type_impact: "impact"
+ecr_recap_type_cart: "cart"
+ecr_recap_type_self: "self"
+ecr_recap_type_turret: "turret"
+ecr_recap_type_stalagtite: "stalagtite"
+ecr_recap_type_catapult: "catapult"
+ecr_recap_type_incinerator: "incinerator"
+ecr_recap_type_drawbridge: "drawbridge"
+ecr_recap_type_unknown: "unknown"
+
+# Death recap: damage types
+ecr_recap_type_true: "true"
+ecr_recap_type_blunt: "blunt"
+ecr_recap_type_slash: "slash"
+ecr_recap_type_pierce: "pierce"
+ecr_recap_type_chop: "chop"
+ecr_recap_type_pickaxe: "pickaxe"
+ecr_recap_type_fire: "fire"
+ecr_recap_type_frost: "frost"
+ecr_recap_type_lightning: "lightning"
+ecr_recap_type_spirit: "spirit"

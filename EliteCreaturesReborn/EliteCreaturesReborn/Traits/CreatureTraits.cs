@@ -37,6 +37,10 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>The world tier a wild creature was rolled at; 0 for tier 0, and for a newborn, boss or console spawn.</summary>
         public int Tier;
 
+        /// <summary>True on a tame whose stars are the game's own (`15 - Tamed` / Stars off): <see cref="Stars"/> reads 0 and
+        /// it keeps its game level (<see cref="Rules.RuleSet.KeepsLevel(CreatureTraits, bool)"/>). Never stored.</summary>
+        public bool GameStars;
+
         public CreatureTraits(int stars, int mask)
         {
             Stars = stars;

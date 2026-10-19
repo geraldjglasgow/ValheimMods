@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Compendium
@@ -13,7 +14,7 @@ namespace EliteCreaturesReborn.Compendium
     /// </summary>
     internal static class DifficultyPage
     {
-        public const string Topic = "Elite: World difficulty";
+        public static string Topic => Lang.Get("ecr_book_difficulty_topic");
 
         private static readonly int[] TableEdges = { 0, 36, 56, 78 };
         private static readonly int[] MutationEdges = { 0, 50 };
@@ -33,15 +34,13 @@ namespace EliteCreaturesReborn.Compendium
 
         private static void Summary(StringBuilder text, RuleSet set, int tier)
         {
-            PageText.Heading(text, "Difficulty: " + DifficultyNames.Name(set.Difficulty));
+            PageText.Heading(text, Lang.Format("ecr_book_difficulty", DifficultyNames.Shown(set.Difficulty)));
             text.Append(set.Tiers.Enabled
-                ? $"World tier {tier} of {WorldTier.Ceiling()}: one tier for every boss below that has fallen. Each tier "
-                    + "makes creatures stronger.\n"
-                : "World tiers are off on this server: the world stays at tier 0.\n");
+                ? Lang.Format("ecr_book_tier", tier, WorldTier.Ceiling())
+                : Lang.Get("ecr_book_tier_off")).Append('\n');
             if (!set.CreatureStars)
             {
-                text.Append("Creature stars are off on this server: creatures keep the game's own stars, and only their "
-                    + "mutations come from Elite Creatures.\n");
+                text.Append(Lang.Get("ecr_book_creature_stars_off")).Append('\n');
             }
         }
 
@@ -51,11 +50,12 @@ namespace EliteCreaturesReborn.Compendium
             {
                 return;
             }
-            PageText.Heading(text, "Bosses");
+            PageText.Heading(text, Lang.Get("ecr_book_bosses"));
             Dictionary<string, string> known = WorldTier.KnownBosses();
             foreach (string key in tiers.BossKeys)
             {
-                string state = WorldTier.IsDefeated(key) ? "<color=#7CC36E>defeated</color>" : PageText.Grey("not yet");
+                string state = WorldTier.IsDefeated(key) ? "<color=#7CC36E>" + Lang.Get("ecr_book_boss_defeated") + "</color>"
+                    : PageText.Grey(Lang.Get("ecr_book_boss_not_yet"));
                 PageText.Row(text, BossEdges, BossName(key, known), state);
             }
         }
@@ -74,39 +74,35 @@ namespace EliteCreaturesReborn.Compendium
 
         private static void Meaning(StringBuilder text, RuleSet set, int tier)
         {
-            PageText.Heading(text, "What it means");
+            PageText.Heading(text, Lang.Get("ecr_book_meaning"));
             if (set.Difficulty == Difficulty.Custom)
             {
-                text.Append("Custom: this server sets each biome's star and mutation chances itself. Each world tier raises "
-                    + $"them; now stars x{set.Tiers.StarBoostAt(tier):0.##} and mutations "
-                    + $"x{set.Tiers.MutationBoostAt(tier):0.##}.\n");
+                text.Append(Lang.Format("ecr_book_meaning_custom", DifficultyNames.Shown(Difficulty.Custom),
+                    set.Tiers.StarBoostAt(tier).ToString("0.##"), set.Tiers.MutationBoostAt(tier).ToString("0.##")))
+                    .Append('\n');
                 return;
             }
-            text.Append("The difficulty decides how many stars and mutations creatures get as the world's bosses fall. The "
-                + "biome you're entering is the gentlest. A biome you've cleared gets harder with every boss killed after "
-                + "it, so by the end of the game the Meadows is the hardest place. Biomes you haven't reached match the one "
-                + "you're entering.\nUnder the most stars allowed, most creatures are plain and each extra star is rarer "
-                + "than the one before. Each star a creature has adds a quarter to its chance of a mutation.\n");
+            text.Append(Lang.Get("ecr_book_meaning_preset")).Append('\n');
         }
 
         private static void BiomeTable(StringBuilder text, RuleSet set, int tier, Heightmap.Biome here)
         {
-            PageText.Heading(text, $"Each biome at world tier {tier}");
+            PageText.Heading(text, Lang.Format("ecr_book_biomes", tier));
             bool stars = set.CreatureStars;
             if (stars)
             {
-                PageText.Row(text, TableEdges, "Biome", "Most stars", "With stars", "Mutated");
+                PageText.Row(text, TableEdges, Lang.Get("ecr_book_col_biome"), Lang.Get("ecr_book_col_most_stars"),
+                    Lang.Get("ecr_book_col_with_stars"), Lang.Get("ecr_book_col_mutated"));
             }
             else
             {
-                PageText.Row(text, MutationEdges, "Biome", "Mutated");
+                PageText.Row(text, MutationEdges, Lang.Get("ecr_book_col_biome"), Lang.Get("ecr_book_col_mutated"));
             }
             foreach (Heightmap.Biome biome in PageText.Biomes)
             {
                 BiomeRow(text, BiomeOdds.For(set, tier, biome), biome, biome == here, stars);
             }
-            text.Append(PageText.Grey("Your biome is in orange. Mutated: creatures with no stars that carry a mutation."))
-                .Append('\n');
+            text.Append(PageText.Grey(Lang.Get("ecr_book_biomes_note"))).Append('\n');
         }
 
         private static void BiomeRow(StringBuilder text, BiomeOdds odds, Heightmap.Biome biome, bool here, bool stars)
@@ -133,13 +129,10 @@ namespace EliteCreaturesReborn.Compendium
 
         private static void GameDifficulty(StringBuilder text, bool creatureStars)
         {
-            PageText.Heading(text, "The game's own World Difficulty");
-            text.Append("Separate from all this, and it stacks: on this world enemies deal "
-                + $"{Game.m_enemyDamageRate * 100f:0}% of their normal damage and you deal "
-                + $"{Game.m_playerDamageRate * 100f:0}% of yours. ");
-            text.Append(creatureStars
-                ? "Its extra star chance does nothing while Elite Creatures gives the stars.\n"
-                : "Its extra star chance applies as usual, since the game gives the stars here.\n");
+            PageText.Heading(text, Lang.Get("ecr_book_game"));
+            text.Append(Lang.Format("ecr_book_game_rates", (Game.m_enemyDamageRate * 100f).ToString("0"),
+                (Game.m_playerDamageRate * 100f).ToString("0"))).Append(' ');
+            text.Append(Lang.Get(creatureStars ? "ecr_book_game_stars_ours" : "ecr_book_game_stars_game")).Append('\n');
         }
     }
 }

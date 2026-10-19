@@ -16,7 +16,7 @@ namespace EliteCreaturesReborn.Rules
         Extreme,
     }
 
-    /// <summary>The words a rule file and the console use for a difficulty.</summary>
+    /// <summary>The words a rule file and the console use for a difficulty, and the name a player reads.</summary>
     public static class DifficultyNames
     {
         public const string Choices = "Easy, Medium, Hard, Very Hard, Extreme or Custom";
@@ -37,6 +37,11 @@ namespace EliteCreaturesReborn.Rules
             }
         }
 
+        /// <summary>The rule file's and the console's word for it, always English: "Very Hard".</summary>
         public static string Name(Difficulty difficulty) => difficulty == Difficulty.VeryHard ? "Very Hard" : difficulty.ToString();
+
+        /// <summary>Its name in the player's language, for the compendium (<c>ecr_difficulty_&lt;difficulty&gt;</c>).</summary>
+        public static string Shown(Difficulty difficulty) =>
+            Translations.Lang.Get("ecr_difficulty_" + difficulty.ToString().ToLowerInvariant());
     }
 }

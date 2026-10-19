@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Util;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Raids
@@ -26,17 +27,17 @@ namespace EliteCreaturesReborn.Raids
 
         private static readonly List<ZDO> Hosts = new List<ZDO>();
 
-        /// <summary>Why this chest cannot sound a raid now; null when it can. Any machine.</summary>
+        /// <summary>Why this chest cannot sound a raid now, as a <c>LangWire</c> message; null when it can. Any machine.</summary>
         public static string? Refusal(RaidChest chest)
         {
             if (!RaidSettings.ChestEnabled)
             {
-                return ChestText.Off;
+                return LangWire.Message(RaidWords.Off);
             }
             Vector3 at = chest.transform.position;
             if (EffectArea.GetBaseValue(at, BaseRange) < BasePieces)
             {
-                return ChestText.NotInBase;
+                return LangWire.Message(RaidWords.NotInBase);
             }
             ZDO self = chest.View.GetZDO();
             RaidZdos.Near(at, RaidTable.RaidSpacing, Hosts);
@@ -67,13 +68,13 @@ namespace EliteCreaturesReborn.Raids
         {
             if (RaidSpacing.GameRaidNear(at))
             {
-                return ChestText.GameRaidNear;
+                return LangWire.Message(RaidWords.GameRaidNear);
             }
             foreach (ZDO zdo in Hosts)
             {
                 if (zdo.m_uid != self && RaidState.IsRunning(zdo))
                 {
-                    return ChestText.ChestRaidNear;
+                    return LangWire.Message(RaidWords.ChestRaidNear);
                 }
             }
             return null;

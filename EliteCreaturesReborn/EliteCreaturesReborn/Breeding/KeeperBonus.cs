@@ -1,3 +1,4 @@
+using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace EliteCreaturesReborn.Breeding
     /// that mod writes the int <see cref="StarUpKey"/> (1) on the pregnant parent's ZDO just before the game's birth call
     /// and clears it right after, on the same machine this birth runs on. The newborn then gets that many stars more than
     /// its inheritance roll, up to one above the stronger parent. When that cap leaves no room, the key is set to 0, which
-    /// tells GrindstoneSkills no star was added; with `creature stars: false` it is always declined, since this mod adds
-    /// no stars. Only the key name is shared: neither mod references the other, and
+    /// tells GrindstoneSkills no star was added; with `creature stars: false` or a tame's stars off (`15 - Tamed`) it is
+    /// always declined, since this mod adds no stars. Only the key name is shared: neither mod references the other, and
     /// without GrindstoneSkills the key is never set.
     /// </summary>
     internal static class KeeperBonus
@@ -24,7 +25,8 @@ namespace EliteCreaturesReborn.Breeding
             {
                 return child;
             }
-            int cap = RuleState.Active.CreatureStars ? Mathf.Max(mother.Stars, sire?.Stars ?? 0) + 1 : 0; // off: declined
+            bool starred = RuleState.Active.CreatureStars && TamedSettings.StarsKept; // a newborn of tamed parents is tamed
+            int cap = starred ? Mathf.Max(mother.Stars, sire?.Stars ?? 0) + 1 : 0; // off: declined
             int stars = Mathf.Min(child.Stars + bonus, cap);
             if (stars <= child.Stars)
             {

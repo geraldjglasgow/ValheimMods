@@ -14,8 +14,9 @@ namespace EliteCreaturesReborn.Raids
     /// on the host's owner, as the raid is sounded (<see cref="RaidStart"/>), before anything is written; never throws.
     /// <para>
     /// The name players read is made from the raid's creatures rather than from a table, so another mod's raid is named
-    /// too: the creature that comes most, in this machine's language, and "raid" ("Fuling raid"). The game's own start
-    /// messages are mood lines ("The forest is moving..."), not names.
+    /// too: the creature that comes most, and "raid" ("Fuling raid"). The creature is kept as its name word, so every
+    /// machine reads it in its own language (<see cref="RaidChoice.Face"/>). The game's own start messages are mood lines
+    /// ("The forest is moving..."), not names.
     /// </para>
     /// </summary>
     public static class RaidPick
@@ -51,7 +52,7 @@ namespace EliteCreaturesReborn.Raids
                 Log.Diag($"raid draw at {at:F0}: {Unlocked.Count} unlocked; drew {ev?.m_name ?? "none"}");
             }
             Unlocked.Clear();
-            return ev != null ? new RaidChoice(ev.m_name, NameOf(ev)) : null;
+            return ev != null ? new RaidChoice(ev.m_name, FaceOf(ev)) : null;
         }
 
         // Each event once, by name: another mod may list a second event under a name already taken, which the waves would
@@ -69,18 +70,20 @@ namespace EliteCreaturesReborn.Raids
             }
         }
 
-        // "Fuling raid": the creature that comes most, localized; its prefab's name where it has no name of its own.
-        private static string NameOf(RandomEvent ev)
+        // "Fuling raid": the creature that comes most, by its name word ("$enemy_goblin"); its prefab's name where it has
+        // no name of its own here; the event's name in the last resort (every entry that comes has a prefab, so never).
+        private static string FaceOf(RandomEvent ev)
         {
             RaidCreatures.Entries(ev, Entries);
             SpawnSystem.SpawnData? face = Entries.Count > 0 ? ev.m_spawn[Entries[RaidCreatures.Commonest(ev, Entries)]] : null;
             Character? creature = face != null ? RaidCreatures.Creature(face) : null;
-            string name = creature != null && Localization.instance != null ? Localization.instance.Localize(creature.m_name) : "";
-            if (string.IsNullOrEmpty(name) || name.StartsWith("$", StringComparison.Ordinal))
+            string word = creature != null ? creature.m_name : "";
+            string shown = Localization.instance != null ? Localization.instance.Localize(word) : word;
+            if (string.IsNullOrEmpty(shown) || shown.StartsWith("$", StringComparison.Ordinal))
             {
-                name = face != null && face.m_prefab != null ? face.m_prefab.name : "";
+                word = face != null && face.m_prefab != null ? face.m_prefab.name : "";
             }
-            return string.IsNullOrEmpty(name) ? "Raid" : name + " raid";
+            return string.IsNullOrEmpty(word) ? ev.m_name : word;
         }
     }
 }

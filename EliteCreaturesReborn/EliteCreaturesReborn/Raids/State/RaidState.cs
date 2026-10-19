@@ -70,7 +70,12 @@ namespace EliteCreaturesReborn.Raids
 
         public string EventName { get => Zdo.GetString(EventKey); set => Zdo.Set(EventKey, value); }
 
-        public string DisplayName { get => Zdo.GetString(NameKey); set => Zdo.Set(NameKey, value); }
+        /// <summary>The creature the raid is named after, as a word each machine reads in its own language
+        /// (<see cref="RaidChoice.Face"/>); the players' texts name the raid with it (<see cref="RaidText"/>).</summary>
+        public string Face { get => Zdo.GetString(NameKey); set => Zdo.Set(NameKey, value); }
+
+        /// <summary>The raid's name for the log and the console: "Fuling raid".</summary>
+        public string DisplayName => RaidText.LogName(Face);
 
         public int Alive { get => Zdo.GetInt(AliveKey); set => Zdo.Set(AliveKey, value); }
 
@@ -105,7 +110,7 @@ namespace EliteCreaturesReborn.Raids
         {
             BeginPurse(heat, stake);
             EventName = choice.EventName;
-            DisplayName = choice.DisplayName;
+            Face = choice.Face;
             Wave = 0;
             Alive = 0;
             Left = 0;

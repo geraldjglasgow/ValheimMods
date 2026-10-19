@@ -1,4 +1,6 @@
 using Hotkeys;
+using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +17,7 @@ namespace EliteCreaturesReborn.Recap.Window
         public readonly Playback Playback = new Playback();
 
         private Pane _pane = null!;
+        private TMP_Text _topic = null!;
         private DeathList _deaths = null!;
         private HitList _hits = null!;
         private DeathRecap? _selected;
@@ -23,6 +26,7 @@ namespace EliteCreaturesReborn.Recap.Window
         public void Init(WindowParts parts, Slider sliderTemplate)
         {
             _pane = PaneBuilder.Build(parts, sliderTemplate, this);
+            _topic = parts.Topic;
             ElementList deaths = new ElementList(parts.ListRoot, parts.Element, parts.ListScroll, DeathList.RowHeight, DeathList.RowSpacing);
             _deaths = new DeathList(deaths) { Clicked = Select };
             ElementList hits = new ElementList(parts.AreaContent, parts.Element, parts.AreaScroll, HitList.Height, HitList.Spacing);
@@ -31,10 +35,11 @@ namespace EliteCreaturesReborn.Recap.Window
             _ready = true;
         }
 
-        /// <summary>Shown with the newest death selected and playing from its start.</summary>
+        /// <summary>Shown with the newest death selected and playing from its start, its words in the language shown.</summary>
         public void Show()
         {
             gameObject.SetActive(true);
+            _topic.text = Lang.Get("ecr_recap_topic");
             _deaths.Fill(RecapStore.Deaths);
             Select(RecapStore.Deaths.Count > 0 ? 0 : -1);
         }
@@ -132,8 +137,8 @@ namespace EliteCreaturesReborn.Recap.Window
         {
             if (recap == null)
             {
-                _pane.Title.text = "No deaths yet";
-                _pane.Summary.text = "Deaths are kept here until the game closes. " + RecapNotice.OpenWith() + " opens and closes this window.";
+                _pane.Title.text = Lang.Get("ecr_recap_none");
+                _pane.Summary.text = Lang.Format("ecr_recap_none_help", RecapNotice.OpenWith());
                 return;
             }
             _pane.Title.text = RecapText.Killer(recap);

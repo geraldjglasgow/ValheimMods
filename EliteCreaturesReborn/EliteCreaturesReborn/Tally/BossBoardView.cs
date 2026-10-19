@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text;
 using EliteCreaturesReborn.Config;
 using TMPro;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Tally
@@ -12,7 +13,8 @@ namespace EliteCreaturesReborn.Tally
     /// so it wears the game's font and outline. It shows the boss's name and every player who hurt it, most damage first,
     /// for the configured number of seconds, then hides. One board at a time: a new boss replaces it (a Twin's partner
     /// repeating the fight never reaches here, <see cref="BossBoard.Remember"/> drops it), and <c>damage</c> shows the
-    /// latest again from the start, whether it is still up or has gone.
+    /// latest again from the start, whether it is still up or has gone. The board carries the boss's name as the game's
+    /// token, so each machine writes the board in its own player's language.
     /// </summary>
     internal sealed class BossBoardView : MonoBehaviour
     {
@@ -102,7 +104,7 @@ namespace EliteCreaturesReborn.Tally
         {
             string boss = Localization.instance != null ? Localization.instance.Localize(board.BossName) : board.BossName;
             StringBuilder text = new StringBuilder();
-            text.Append("<b>").Append(boss).Append(" defeated</b>");
+            text.Append("<b>").Append(Lang.Format("ecr_tally_defeated", boss)).Append("</b>");
             foreach (DamageTally.Entry entry in board.Entries.OrderByDescending(e => e.Damage))
             {
                 text.Append("\n<noparse>").Append(entry.Name).Append("</noparse>   ")

@@ -7,9 +7,9 @@ namespace EliteCreaturesReborn.Config
     /// The .cfg holds only what the rule file does not: per-player display preferences, none of which the server ever
     /// locks, because they change only what one player sees. Everything that changes what the game does - star chances,
     /// star power, mutation chances and power, and the lock switch itself - lives in the YAML rule file instead. The
-    /// exceptions are the raids', the arena's and the altar choice's on/off and the horde's four settings
-    /// (<see cref="RaidSettings"/>, <see cref="ArenaSettings"/>, <see cref="AltarSettings"/>, <see cref="HordeSettings"/>),
-    /// which their specs put in the .cfg and the server binds.
+    /// exceptions are the raids', the arena's and the altar choice's on/off, the horde's four settings and what tamed
+    /// creatures keep (<see cref="RaidSettings"/>, <see cref="ArenaSettings"/>, <see cref="AltarSettings"/>,
+    /// <see cref="HordeSettings"/>, <see cref="TamedSettings"/>), which their specs put in the .cfg and the server binds.
     /// </summary>
     public static class Configuration
     {
@@ -58,6 +58,7 @@ namespace EliteCreaturesReborn.Config
             ArenaSettings.Bind(config);
             HordeSettings.Bind(config);
             AltarSettings.Bind(config);
+            TamedSettings.Bind(config);
             BindDiagnostics(config);
         }
 

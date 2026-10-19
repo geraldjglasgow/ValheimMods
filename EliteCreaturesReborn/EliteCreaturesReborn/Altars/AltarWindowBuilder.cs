@@ -7,6 +7,8 @@ namespace EliteCreaturesReborn.Altars
     /// <summary>What the right side of the altar window is made of, for the view to drive.</summary>
     internal sealed class AltarPane
     {
+        public TMP_Text Title = null!;
+        public TMP_Text NowTitle = null!;
         public TMP_Text Boss = null!;
         public TMP_Text StarsTitle = null!;
         public RectTransform StarRow = null!;
@@ -50,11 +52,10 @@ namespace EliteCreaturesReborn.Altars
         }
 
         // The frame shrinks to the picker's size; the aspect list keeps the left, the close button sits under it, and the
-        // right text area is not used: the right side's texts are placed on the frame.
+        // right text area is not used: the right side's texts are placed on the frame. The words are written as it opens.
         private static void Arrange(WindowParts parts)
         {
             parts.Frame.sizeDelta = new Vector2(Width, Height);
-            parts.Topic.text = "Choose the Fight";
             UiParts.Place(parts.List, 20f, 51f, 280f, 470f);
             UiParts.Place((RectTransform)parts.Close.transform, 60f, 535f, 200f, 46f);
             UiParts.Rewire(parts.Close, AltarWindow.Close);
@@ -66,13 +67,14 @@ namespace EliteCreaturesReborn.Altars
         {
             AltarPane pane = new AltarPane
             {
+                Title = parts.Topic,
                 Boss = Line(parts, "ecr_altar_boss", 50f, 34f, 24f, false),
                 StarsTitle = Line(parts, "ecr_altar_stars", 94f, 26f, 18f, false),
                 AspectTitle = Line(parts, "ecr_altar_aspect", 186f, 28f, 20f, false),
                 Description = Line(parts, "ecr_altar_text", 218f, 112f, 16f, true),
                 Now = Line(parts, "ecr_altar_now", 376f, 200f, 16f, true),
+                NowTitle = Line(parts, "ecr_altar_now_title", 344f, 26f, 18f, false),
             };
-            Line(parts, "ecr_altar_now_title", 344f, 26f, 18f, false).text = "<color=orange>On the altar now</color>";
             pane.StarRow = UiParts.Node("ecr_altar_star_row", parts.Frame);
             UiParts.Place(pane.StarRow, Left, 124f, Wide, 40f);
             return pane;

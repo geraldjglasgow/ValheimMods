@@ -25,7 +25,7 @@ namespace EliteCreaturesReborn.Raids
             state.EndedAt = NetTime.NowMs();
             state.Phase = RaidPhase.Ended;
             Dismiss(runner, how);
-            RaidNet.Tell(runner, RaidText.Ended(state.DisplayName, how));
+            RaidNet.Tell(runner, RaidText.Ended(state.Face, how));
             Log.Info($"raid at {runner.Position:F0} ({state.DisplayName}, {RaidTable.Band(state.Band).Name}) ended: {how}");
         }
 

@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using PatchGuard;
+using Translations;
 
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
     /// The raids' messages, over the game's routed-RPC bus to each player within 100 m of the host and to nobody else
     /// (features/raids.md section 5): the host's owner names the peers - those of the players it holds and those that
-    /// reported in from the raid - and sends each one the text; each client shows it in the middle of its own screen. A
-    /// dedicated server has no screen and simply never shows one. Registered on every machine at world start, so a message
-    /// never arrives before its handler.
+    /// reported in from the raid - and sends each one the text, a <c>LangWire</c> message (<see cref="RaidText"/>); each
+    /// client reads it in its own language and shows it in the middle of its own screen. A dedicated server has no screen
+    /// and simply never shows one. Registered on every machine at world start, so a message never arrives before its
+    /// handler.
     /// </summary>
     internal static class RaidNet
     {
@@ -28,7 +30,8 @@ namespace EliteCreaturesReborn.Raids
             RaiderOrders.Register(bus);
         }
 
-        /// <summary>Host's owner: shows <paramref name="text"/> to every player within the message range of the raid.</summary>
+        /// <summary>Host's owner: shows <paramref name="text"/>, a <c>LangWire</c> message, to every player within the
+        /// message range of the raid.</summary>
         public static void Tell(RaidRunner runner, string text)
         {
             EnsureRegistered();
@@ -57,7 +60,7 @@ namespace EliteCreaturesReborn.Raids
         {
             if (MessageHud.instance != null)
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, text);
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, LangWire.Read(text));
             }
         });
     }

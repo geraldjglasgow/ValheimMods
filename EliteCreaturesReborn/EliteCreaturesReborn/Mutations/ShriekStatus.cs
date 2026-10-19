@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
@@ -48,9 +49,9 @@ namespace EliteCreaturesReborn.Mutations
             {
                 _template = ScriptableObject.CreateInstance<StatusEffect>();
                 _template.name = Key;
-                _template.m_name = "Ringing ears";
-                _template.m_tooltip = "A shriek left your ears ringing: the world is muffled and spells will not cast.";
-                _template.m_startMessage = "Your ears ring - the world goes quiet";
+                _template.m_name = Lang.Token("ecr_se_ringing_ears"); // tokens: the game words them in the player's language
+                _template.m_tooltip = Lang.Token("ecr_se_ringing_ears_tooltip");
+                _template.m_startMessage = Lang.Token("ecr_se_ringing_ears_start");
                 _template.hideFlags = HideFlags.DontUnloadUnusedAsset;
             }
             if (_template.m_icon == null)

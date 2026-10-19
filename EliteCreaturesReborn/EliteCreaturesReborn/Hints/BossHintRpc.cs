@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Util;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Hints
@@ -12,10 +13,10 @@ namespace EliteCreaturesReborn.Hints
     /// world knows where every location is - naming the boss and where it fell. The server takes that boss's altar nearest
     /// the fall (the one it was summoned at; the fall itself when no altar of its kind is near, as for a boss spawned by
     /// command), finds the target nearest that altar, and sends the compass direction between the two, with the target's
-    /// place, to every machine. Each player near the fall with hints on who has not yet found the target (its spot is
-    /// still unexplored on their map, their own exploring and a cartography table's both count) shows it a few seconds
-    /// later, after the game's and the tier's messages. A world without the target (one generated before that place came
-    /// to the game) says nothing.
+    /// place, to every machine, as numbers each machine words in its own language. Each player near the fall with hints
+    /// on who has not yet found the target (its spot is still unexplored on their map, their own exploring and a
+    /// cartography table's both count) shows it a few seconds later, after the game's and the tier's messages. A world
+    /// without the target (one generated before that place came to the game) says nothing.
     /// </summary>
     internal static class BossHintRpc
     {
@@ -118,7 +119,7 @@ namespace EliteCreaturesReborn.Hints
             {
                 return;
             }
-            string text = $"You feel a presence pulling you... {BossHintTable.Word(sector)}";
+            string text = Lang.Format("ecr_hint_pull", BossHintTable.Word(sector));
             MessageHud.instance.StartCoroutine(ShowLater(text));
         }
 

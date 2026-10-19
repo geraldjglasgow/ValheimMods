@@ -21,9 +21,9 @@ namespace EliteCreaturesReborn.Breeding
             egg.m_itemData.m_customData[TraitKeys.EggTraits] = string.Join(",",
                 t.Stars.ToString(CultureInfo.InvariantCulture), t.Mask.ToString(CultureInfo.InvariantCulture),
                 ((int)born.Biome).ToString(CultureInfo.InvariantCulture));
-            if (!RuleState.Active.KeepsLevel(t.Stars, isBoss: false))
+            if (!RuleState.Active.KeepsLevel(t, isBoss: false))
             {
-                egg.SetQuality(t.Stars + 1); // with this mod's stars off the game's quality, the parent's level, stays
+                egg.SetQuality(t.Stars + 1); // this mod's stars off (or a tame's): the game's quality, the parent's level
             }
             if (Log.Diagnostics)
             {

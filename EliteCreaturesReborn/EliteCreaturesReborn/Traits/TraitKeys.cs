@@ -234,5 +234,14 @@ namespace EliteCreaturesReborn.Traits
 
         /// <summary>Echoing: on an echo, the ZDOID of the boss it replays. Its presence is what makes an echo an echo.</summary>
         public const string EchoOf = "ecr_echo_of";
+
+        /// <summary>Taming: what the owner has taken from a tamed creature under the .cfg's `15 - Tamed` (1 its stars, 2 its
+        /// mutations), so every machine loads it the same. The rolled stars and mask stay beside it and come back with
+        /// the setting. Absent on every creature it takes nothing from.</summary>
+        public const string TameStrip = "ecr_tame_strip";
+
+        /// <summary>The level the game gave a creature before this mod's stars put it at 1, kept while it is at 1 and only
+        /// when above 1, so a tame that takes the game's stars (`15 - Tamed`) gets that level back.</summary>
+        public const string GameLevel = "ecr_game_level";
     }
 }

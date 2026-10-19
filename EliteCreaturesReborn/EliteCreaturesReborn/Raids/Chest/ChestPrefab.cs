@@ -22,7 +22,8 @@ namespace EliteCreaturesReborn.Raids
     {
         public const string PrefabName = "ECR_RaidersChest";
 
-        /// <summary>The piece's word in the game's translation table (<see cref="ChestWords"/>).</summary>
+        /// <summary>The piece's word in the game's translation table (<c>translations/English.yml</c>, with its
+        /// <c>_description</c>).</summary>
         public const string Word = "piece_ecr_raiderschest";
 
         /// <summary>The piece's and the container's name; also how the chest's inventory is known (<see cref="ChestCoins"/>).</summary>
@@ -54,7 +55,7 @@ namespace EliteCreaturesReborn.Raids
         public static GameObject? Find(List<GameObject> prefabs, string name) =>
             prefabs.Find(p => p != null && p.name == name);
 
-        // The chest first: its sound and words are extras a failure must not cost it.
+        // The chest first: its sound is an extra a failure must not cost it.
         private static void AddTo(List<GameObject> prefabs)
         {
             RaidHosts.AddHostPrefab(PrefabName);
@@ -67,7 +68,6 @@ namespace EliteCreaturesReborn.Raids
                 prefabs.Add(Prefab);
             }
             SafeCall.Run("Raiders Chest horn sound", static list => RaidHorn.Prepare(list), prefabs);
-            SafeCall.Run("Raiders Chest words", static () => ChestWords.Add(Localization.instance));
         }
 
         private static GameObject? Build(GameObject? chest)

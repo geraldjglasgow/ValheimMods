@@ -1,4 +1,5 @@
 using Hotkeys;
+using Translations;
 
 namespace EliteCreaturesReborn.Recap
 {
@@ -14,11 +15,12 @@ namespace EliteCreaturesReborn.Recap
             {
                 return;
             }
-            string what = recap.Dealt ? "Killed by" : "Died:";
+            string key = recap.Dealt ? "ecr_recap_notice_killed" : "ecr_recap_notice_died";
             MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft,
-                $"{what} <noparse>{recap.Killer}</noparse>. {OpenWith()}: death recap");
+                Lang.Format(key, "<noparse>" + recap.Killer + "</noparse>", OpenWith()));
         }
 
+        /// <summary>The recap key's short name, or the chat command where no key is set; never translated.</summary>
         public static string OpenWith()
         {
             string key = KeyNames.Short(RecapSettings.Key.Value);

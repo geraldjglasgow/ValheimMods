@@ -1,41 +1,55 @@
+using Translations;
+
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
     /// The words players read about a raid: the message as it is sounded, the one as it ends, and the line under the
-    /// minimap. In English, like the rest of the mod's own texts; one place, so they read alike.
+    /// minimap; one place, so they read alike (keys in <see cref="RaidWords"/>). A raid is named after its creature
+    /// (<see cref="RaidState.Face"/>), a word every machine reads in its own language. The start and the end are made on
+    /// the host's owner and shown on other machines, so they leave here as <c>LangWire</c> messages that
+    /// <see cref="RaidNet"/> reads on arrival; the line is drawn by each machine for itself.
     /// </summary>
     internal static class RaidText
     {
-        /// <summary>"Raiders are coming for your gold!" with the raid's name and its difficulty.</summary>
-        public static string Started(string name, RaidBand band) =>
-            $"Raiders are coming for your gold!\n{name} ({band.Name})";
+        /// <summary>"Raiders are coming for your gold!" with the raid's name and its difficulty, for the wire.</summary>
+        public static string Started(string face, RaidBand band) =>
+            LangWire.Message(RaidWords.Started, face, Lang.Token(band.Word));
 
-        public static string Ended(string name, RaidEnd how)
+        /// <summary>How the raid ended, for the wire; empty for none.</summary>
+        public static string Ended(string face, RaidEnd how)
         {
             switch (how)
             {
-                case RaidEnd.Won: return $"{name} beaten! Your gold is yours again.";
-                case RaidEnd.Robbed: return "The Raiders Chest is broken: the raiders make off with your gold.";
-                case RaidEnd.Stopped: return $"{name} called off. The raiders fall, and your gold with them.";
-                case RaidEnd.Abandoned: return "The raid is abandoned: the raiders leave with your gold.";
-                case RaidEnd.TimedOut: return "Time is up: the raiders leave with your gold.";
+                case RaidEnd.Won: return LangWire.Message(RaidWords.Won, face);
+                case RaidEnd.Robbed: return LangWire.Message(RaidWords.Robbed);
+                case RaidEnd.Stopped: return LangWire.Message(RaidWords.Stopped, face);
+                case RaidEnd.Abandoned: return LangWire.Message(RaidWords.Abandoned);
+                case RaidEnd.TimedOut: return LangWire.Message(RaidWords.TimedOut);
                 default: return "";
             }
         }
 
-        /// <summary>The line under the minimap: "Fuling raid (Brutal) - wave 2 of 3 - 5 left - 8:40".</summary>
-        public static string Line(string name, RaidBand band, RaidPhase phase, int wave, int left, int secondsLeft,
+        /// <summary>The line under the minimap, in this machine's language: "Fuling raid (Brutal) - wave 2 of 3 - 5 left - 8:40".</summary>
+        public static string Line(string face, RaidBand band, RaidPhase phase, int wave, int left, int secondsLeft,
             int secondsToNext)
         {
-            string head = $"{name} ({band.Name})";
+            string name = Name(face);
             string clock = Clock(secondsLeft);
             switch (phase)
             {
-                case RaidPhase.Countdown: return $"{head} - first wave in {Clock(secondsToNext)}";
-                case RaidPhase.Break: return $"{head} - wave {wave + 1} of {RaidTable.Waves} in {Clock(secondsToNext)} - {clock}";
-                default: return $"{head} - wave {wave} of {RaidTable.Waves} - {left} left - {clock}";
+                case RaidPhase.Countdown: return Lang.Format(RaidWords.LineCountdown, name, band.Title, Clock(secondsToNext));
+                case RaidPhase.Break:
+                    return Lang.Format(RaidWords.LineBreak, name, band.Title, wave + 1, RaidTable.Waves, Clock(secondsToNext), clock);
+                default: return Lang.Format(RaidWords.LineWave, name, band.Title, wave, RaidTable.Waves, left, clock);
             }
         }
+
+        /// <summary>The raid's creature in this machine's language: "Fuling".</summary>
+        public static string Name(string face) =>
+            Localization.instance != null && face.IndexOf('$') >= 0 ? Localization.instance.Localize(face) : face;
+
+        /// <summary>The raid's name for the log and the console, which stay English: "Fuling raid".</summary>
+        public static string LogName(string face) => Name(face) + " raid";
 
         /// <summary>Whole seconds as m:ss.</summary>
         public static string Clock(int seconds)

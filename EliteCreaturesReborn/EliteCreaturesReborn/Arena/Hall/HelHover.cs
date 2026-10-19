@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Hall
@@ -20,7 +21,6 @@ namespace EliteCreaturesReborn.Arena.Hall
         private const float Reach = 3f;
 
         private string _text = "";
-        private string _name = "";
         private float _builtAt = float.NegativeInfinity;
 
         public string GetHoverText()
@@ -31,22 +31,15 @@ namespace EliteCreaturesReborn.Arena.Hall
             }
             _builtAt = Time.time;
             TrialView.Refresh();
-            _name = Localization.instance.Localize("$" + HallWords.Hel);
-            _text = CanBegin(TrialView.Running) ? _name + Localization.instance.Localize(BeginLine)
-                : ArenaTrial.CanCallNext ? _name + Localization.instance.Localize(CallLine) : _name;
+            string name = Lang.Get(HallWords.Hel);
+            _text = CanBegin(TrialView.Running) ? name + Localization.instance.Localize(BeginLine)
+                : ArenaTrial.CanCallNext ? name + Localization.instance.Localize(CallLine) : name;
             string rewards = TrialView.Running ? Rewards.RewardPreview.Line() : "";
             _text += rewards.Length > 0 ? "\n" + rewards : "";
             return _text;
         }
 
-        public string GetHoverName()
-        {
-            if (_name.Length == 0)
-            {
-                _name = Localization.instance.Localize("$" + HallWords.Hel);
-            }
-            return _name;
-        }
+        public string GetHoverName() => Lang.Get(HallWords.Hel);
 
         public float GetHoverOffset() => Reach;
 

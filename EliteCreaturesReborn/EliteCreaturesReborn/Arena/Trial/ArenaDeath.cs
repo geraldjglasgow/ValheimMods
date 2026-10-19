@@ -1,5 +1,6 @@
 using EliteCreaturesReborn.Patches;
 using HarmonyLib;
+using Translations;
 
 namespace EliteCreaturesReborn.Arena.Trial
 {
@@ -72,7 +73,7 @@ namespace EliteCreaturesReborn.Arena.Trial
                 if (_spared)
                 {
                     _spared = false;
-                    SafeCall.Run("Hel spares your skills", static () => ArenaWords.Show(ArenaWords.Spared, "", "", ""));
+                    SafeCall.Run("Hel spares your skills", static () => ArenaWords.Show(Lang.Get(ArenaWords.Spared)));
                 }
                 SafeCall.Run("Hel's Trial reward at respawn", Rewards.RewardGrant.GrantPending);
             }

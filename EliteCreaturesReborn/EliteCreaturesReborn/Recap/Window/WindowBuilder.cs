@@ -84,7 +84,6 @@ namespace EliteCreaturesReborn.Recap.Window
         private static void Arrange(WindowParts parts)
         {
             parts.Frame.sizeDelta = new Vector2(Width, Height);
-            parts.Topic.text = "Death Recap";
             UiParts.Place(parts.List, 20f, 51f, 300f, 680f);
             UiParts.Place((RectTransform)parts.Close.transform, 70f, 745f, 200f, 46f);
             UiParts.Place(parts.Area, 340f, 648f, 920f, 142f);

@@ -1,11 +1,13 @@
 using System.Text;
 using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Util;
+using Translations;
 
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
-    /// Builds the Raiders Chest's hover (features/raids.md section 2), not yet localized, for <see cref="ChestHover"/>:
+    /// Builds the Raiders Chest's hover (features/raids.md section 2) for <see cref="ChestHover"/>: its own words in this
+    /// machine's language, the game's tokens (the chest's name, the key names) not yet localized:
     /// <code>
     /// Raiders Chest
     /// 1,000 coins - Deadly raid (coins back x2, drops x5)
@@ -44,10 +46,10 @@ namespace EliteCreaturesReborn.Raids
         private static void Raiding(RaidState state, int holdStep)
         {
             long now = NetTime.NowMs();
-            string line = RaidText.Line(state.DisplayName, RaidTable.Band(state.Band), state.Phase, state.Wave, state.Left,
+            string line = RaidText.Line(state.Face, RaidTable.Band(state.Band), state.Phase, state.Wave, state.Left,
                 Seconds(state.Deadline - now), Seconds(state.PhaseUntil - now));
             Text.Append('\n').Append(line);
-            Text.Append('\n').Append(holdStep >= 0 ? ChestText.Stopping(holdStep) : ChestText.HoldToStop);
+            Text.Append('\n').Append(holdStep >= 0 ? ChestText.Stopping(holdStep) : ChestText.HoldToStop());
         }
 
         private static void Idle(RaidChest chest)
@@ -64,10 +66,10 @@ namespace EliteCreaturesReborn.Raids
             {
                 Text.Append('\n').Append(ChestText.Stake(coins, RaidHeat.Measure(chest.transform.position, coins)));
             }
-            refusal ??= coins > 0 ? null : ChestText.Empty;
+            refusal ??= coins > 0 ? null : LangWire.Message(RaidWords.Empty);
             if (refusal != null)
             {
-                Text.Append('\n').Append(refusal);
+                Text.Append('\n').Append(LangWire.Read(refusal));
             }
             Text.Append('\n').Append(ChestText.Keys(refusal == null, GamepadKeys()));
         }

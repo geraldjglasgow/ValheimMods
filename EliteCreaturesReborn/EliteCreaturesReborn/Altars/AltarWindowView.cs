@@ -6,6 +6,7 @@ using EliteCreaturesReborn.Recap.Window;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -53,6 +54,8 @@ namespace EliteCreaturesReborn.Altars
             _altar = altar;
             _shownNow = null;
             gameObject.SetActive(true);
+            _pane.Title.text = Lang.Get("ecr_altar_title");
+            _pane.NowTitle.text = "<color=orange>" + Lang.Get("ecr_altar_now") + "</color>";
             _pane.Boss.text = BossName(altar.Bowl);
             StarButtons(AltarPicks.StarChoices());
             AspectRows(AltarPicks.AspectChoices(altar.Boss));
@@ -131,7 +134,8 @@ namespace EliteCreaturesReborn.Altars
             }
             _starValues.Clear();
             _starLabels.Clear();
-            _pane.StarsTitle.text = choices.Count > 0 ? "<color=orange>Stars</color>" : "<color=orange>Stars: off in the rule file</color>";
+            string title = Lang.Get(choices.Count > 0 ? "ecr_altar_stars" : "ecr_altar_stars_off");
+            _pane.StarsTitle.text = "<color=orange>" + title + "</color>";
             if (choices.Count == 0)
             {
                 return;
@@ -147,7 +151,8 @@ namespace EliteCreaturesReborn.Altars
 
         private void StarButton(int stars, float x, float width)
         {
-            string label = stars == AltarPicks.Random ? "Random" : stars == 0 ? "None" : AspectText.Stars(stars);
+            string label = stars == AltarPicks.Random ? Lang.Get("ecr_altar_random") : stars == 0 ? Lang.Get("ecr_altar_none")
+                : AspectText.Stars(stars);
             Button button = UiParts.Button(_buttonTemplate, _pane.StarRow, "ecr_altar_star", label, () => PickStars(stars));
             UiParts.Place((RectTransform)button.transform, x, 0f, width, 40f);
             _starLabels.Add(button.GetComponentInChildren<TMP_Text>(true));
@@ -161,7 +166,7 @@ namespace EliteCreaturesReborn.Altars
             {
                 return;
             }
-            _list.Add("Random", 18f);
+            _list.Add(Lang.Get("ecr_altar_random"), 18f);
             foreach (Aspect aspect in choices)
             {
                 _list.Add(Capital(AspectText.Name(aspect)), 18f);
@@ -205,26 +210,28 @@ namespace EliteCreaturesReborn.Altars
         {
             if (_aspects.Count == 0)
             {
-                _pane.AspectTitle.text = "<color=orange>Aspect: off in the rule file</color>";
+                _pane.AspectTitle.text = "<color=orange>" + Lang.Get("ecr_altar_aspect_off") + "</color>";
                 _pane.Description.text = "";
                 return;
             }
             if (_aspect == AltarPicks.Random)
             {
-                _pane.AspectTitle.text = "<color=orange>Aspect: Random</color>";
-                _pane.Description.text = "Rolled from this boss's aspects at every shift of the altar.";
+                _pane.AspectTitle.text = Title(Lang.Get("ecr_altar_random"));
+                _pane.Description.text = Lang.Get("ecr_altar_random_text");
                 return;
             }
             Aspect aspect = (Aspect)_aspect;
             AspectRules rules = RuleState.Active.Boss.Aspects;
-            _pane.AspectTitle.text = $"<color=orange>Aspect: {Capital(AspectText.Name(aspect))}</color>";
-            _pane.Description.text = Capital(AspectText.Describe(aspect, rules)) + "."
-                + (aspect == Aspect.Bountiful ? " Its extra aspects roll at every shift of the altar." : "")
+            _pane.AspectTitle.text = Title(Capital(AspectText.Name(aspect)));
+            _pane.Description.text = AspectText.Sentence(aspect, rules)
+                + (aspect == Aspect.Bountiful ? " " + Lang.Get("ecr_altar_bountiful_text") : "")
                 + Loot(AspectLoot.FactorOf(new BossAspects(aspect, 0), rules));
         }
 
-        private static string Loot(float factor) =>
-            Mathf.Approximately(factor, 1f) ? "" : $"\n<color=#A0A0A0>Loot x{factor:0.##}</color>";
+        private static string Title(string aspect) => "<color=orange>" + Lang.Format("ecr_altar_aspect_line", aspect) + "</color>";
+
+        private static string Loot(float factor) => Mathf.Approximately(factor, 1f) ? ""
+            : "\n<color=#A0A0A0>" + Lang.Format("ecr_altar_loot", factor.ToString("0.##")) + "</color>";
 
         private static string BossName(OfferingBowl bowl)
         {

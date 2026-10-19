@@ -34,7 +34,6 @@ namespace EliteCreaturesReborn.Arena.Trial
             {
                 Guard.Report(e, "arena core prefab (Hel's Trial is unavailable this session)");
             }
-            Patches.SafeCall.Run("Hel's Trial words", static () => ArenaWords.Add(Localization.instance));
         }
 
         /// <summary>Puts a new core at <paramref name="at"/>; this machine owns it. Null before the scene is up.</summary>

@@ -15,8 +15,8 @@ namespace EliteCreaturesReborn.Recap
         private const float Slack = 5f;
 
         private static readonly List<HitRecord> _hits = new List<HitRecord>();
-        private static string _burnedBy = "";
-        private static string _poisonedBy = "";
+        private static AttackerName? _burnedBy;
+        private static AttackerName? _poisonedBy;
 
         /// <summary>From <c>RPC_Damage</c>, before the game splits a hit's fire, spirit and poison off into ticks.</summary>
         public static void NoteSource(HitData hit)
@@ -28,11 +28,11 @@ namespace EliteCreaturesReborn.Recap
             HitData.DamageTypes d = hit.m_damage;
             if (d.m_fire > 0f || d.m_spirit > 0f)
             {
-                _burnedBy = HitDescribe.Attacker(hit.GetAttacker());
+                _burnedBy = AttackerName.Of(hit.GetAttacker());
             }
             if (d.m_poison > 0f)
             {
-                _poisonedBy = HitDescribe.Attacker(hit.GetAttacker());
+                _poisonedBy = AttackerName.Of(hit.GetAttacker());
             }
         }
 
@@ -68,21 +68,21 @@ namespace EliteCreaturesReborn.Recap
         public static void Clear()
         {
             _hits.Clear();
-            _burnedBy = "";
-            _poisonedBy = "";
+            _burnedBy = null;
+            _poisonedBy = null;
         }
 
-        private static string AttackerOf(HitData hit, string source)
+        private static AttackerName? AttackerOf(HitData hit, string source)
         {
             if (hit.HaveAttacker())
             {
-                return HitDescribe.Attacker(hit.GetAttacker());
+                return AttackerName.Of(hit.GetAttacker());
             }
             return source switch
             {
                 "burning" => _burnedBy,
                 "poison" => _poisonedBy,
-                _ => "",
+                _ => null,
             };
         }
 

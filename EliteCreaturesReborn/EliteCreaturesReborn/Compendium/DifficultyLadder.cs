@@ -1,5 +1,6 @@
 using System.Text;
 using EliteCreaturesReborn.Rules;
+using Translations;
 
 namespace EliteCreaturesReborn.Compendium
 {
@@ -15,26 +16,21 @@ namespace EliteCreaturesReborn.Compendium
 
         public static void Append(StringBuilder text, Difficulty current)
         {
-            PageText.Heading(text, "The difficulties");
+            PageText.Heading(text, Lang.Get("ecr_book_ladder"));
             foreach (Difficulty difficulty in Order)
             {
-                string line = $"{DifficultyNames.Name(difficulty)}: {Words(difficulty)}";
+                string line = Lang.Format("ecr_book_ladder_line", DifficultyNames.Shown(difficulty), Words(difficulty));
                 text.Append(difficulty == current ? $"<color=orange>{line}</color>" : line).Append('\n');
             }
             text.Append(current == Difficulty.Custom
-                ? "Custom: the server's own chances for each biome, raised by each world tier.\n"
-                : PageText.Grey("Stars: the most a creature can have. Mutated: creatures with no stars that carry one.")
-                    + "\n");
+                ? Lang.Format("ecr_book_ladder_custom", DifficultyNames.Shown(Difficulty.Custom)) + "\n"
+                : PageText.Grey(Lang.Get("ecr_book_ladder_note")) + "\n");
         }
 
-        private static string Words(Difficulty difficulty) => difficulty switch
-        {
-            Difficulty.Easy => "1 star where you're entering, one more for every boss killed after a biome, up to 4; "
-                + "10% mutated, rising to 35% as bosses fall after a biome",
-            Difficulty.Medium => "2 stars, up to 5; 25% mutated, rising to 55%",
-            Difficulty.Hard => "3 stars, up to 5; 30% mutated, rising to 65%",
-            Difficulty.VeryHard => "4 stars, up to 5; mutations halfway between Hard and Extreme",
-            _ => "5 stars in every biome you've reached, 6 to 8 as more bosses fall; 45% mutated, rising to 98%",
-        };
+        /// <summary>The difficulty's line: <c>ecr_book_ladder_easy</c> ... <c>ecr_book_ladder_extreme</c>. Very Hard's
+        /// names two others: Hard is <c>$1</c>, Extreme <c>$2</c>.</summary>
+        private static string Words(Difficulty difficulty) =>
+            Lang.Format("ecr_book_ladder_" + difficulty.ToString().ToLowerInvariant(),
+                DifficultyNames.Shown(Difficulty.Hard), DifficultyNames.Shown(Difficulty.Extreme));
     }
 }

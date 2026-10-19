@@ -55,7 +55,9 @@ namespace EliteCreaturesReborn.Raids
         /// <summary>The game event the raid was drawn from (<c>RandomEvent.m_name</c>), whose spawn list it brings.</summary>
         public const string Event = "ecr_raid_event";
 
-        /// <summary>The raid's name as players read it, "Fuling raid".</summary>
+        /// <summary>The creature the raid is named after, as a word every machine localizes: "$enemy_goblin" (read
+        /// "Fuling raid"). Older versions kept the whole name in the host's language here, so a raid saved mid-way by one
+        /// reads "Fuling raid raid" until it ends.</summary>
         public const string Name = "ecr_raid_name";
 
         /// <summary>The raiders of this raid alive now, as <see cref="RaidRoster"/> counted them on the last tick.</summary>

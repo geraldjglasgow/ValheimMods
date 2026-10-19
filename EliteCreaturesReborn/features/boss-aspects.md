@@ -653,9 +653,8 @@ Added with the user on 2026-10-04: **altar stars and a 15 s shift**, and **Night
 
 Still open:
 
-- **Translation.** `creature-naming.md` asks for every on-screen string to come from a replaceable file. The mod has
-  no translation file yet for any of its text; the altar lines and aspect names are English in code alongside the
-  mutation names, and move when that feature is built.
+- **Translation.** Built 2026-10-19, not seen in game: aspect names (`ecr_aspect_<enum>`), what they do
+  (`ecr_aspect_does_<enum>`), the altar lines and window are in `translations/English.yml`.
 
 ---
 

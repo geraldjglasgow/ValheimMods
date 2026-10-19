@@ -24,7 +24,7 @@ namespace EliteCreaturesReborn.Raids
     /// </summary>
     public static class RaidHorn
     {
-        /// <summary>The caption's word in the translation table (<see cref="ChestWords"/>).</summary>
+        /// <summary>The caption's word in the translation table (<c>translations/English.yml</c>).</summary>
         public const string CaptionWord = "ecr_raid_horn";
 
         private const string GameSound = "sfx_lox_shout";

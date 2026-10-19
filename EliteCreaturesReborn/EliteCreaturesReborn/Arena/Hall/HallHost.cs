@@ -42,7 +42,6 @@ namespace EliteCreaturesReborn.Arena.Hall
             SceneManager.MoveGameObjectToScene(host, scene.gameObject.scene);
             host.transform.SetPositionAndRotation(ArenaHall.Origin, Quaternion.identity);
             host.AddComponent<HallHost>();
-            HallWords.Add(Localization.instance);
         }
 
         /// <summary>Builds the arena now when the setting is on (a way in, before its jump); true when it stands.</summary>

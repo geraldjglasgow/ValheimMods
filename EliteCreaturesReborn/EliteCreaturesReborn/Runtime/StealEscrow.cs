@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using EliteCreaturesReborn.Util;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Runtime
@@ -128,7 +129,7 @@ namespace EliteCreaturesReborn.Runtime
                 return false;
             }
             held.GivenBackAt = Time.time;
-            string text = $"{held.Item.m_shared.m_name} x{held.Item.m_stack} was not stolen";
+            string text = Lang.Format("ecr_mut_msg_not_stolen", ItemName(held.Item), held.Item.m_stack);
             Return(player, held.Item, held.Cell);
             Announce(text);
             return true;
@@ -152,7 +153,7 @@ namespace EliteCreaturesReborn.Runtime
             if (inventory != null && inventory.ContainsItem(held.Item))
             {
                 inventory.RemoveItem(held.Item);
-                Announce($"{held.Item.m_shared.m_name} x{held.Item.m_stack} was stolen after all");
+                Announce(Lang.Format("ecr_mut_msg_stolen_late", ItemName(held.Item), held.Item.m_stack));
             }
         }
 
@@ -171,6 +172,8 @@ namespace EliteCreaturesReborn.Runtime
                 Waiting.Remove(id);
             }
         }
+
+        private static string ItemName(ItemDrop.ItemData item) => Localization.instance.Localize(item.m_shared.m_name);
 
         private static void Announce(string text)
         {

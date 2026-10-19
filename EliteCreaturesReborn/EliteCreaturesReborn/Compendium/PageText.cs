@@ -1,11 +1,12 @@
 using System.Text;
+using Translations;
 
 namespace EliteCreaturesReborn.Compendium
 {
     /// <summary>
     /// The compendium pages' shared formatting: headings in the orange the game's own pages use, table columns placed
     /// with TextMeshPro's pos tag, biome names in the player's language, and multipliers, percents and seconds written
-    /// one way.
+    /// one way. The pages' words are keys (<c>ecr_book_...</c>) in the player's language, read each time a page is written.
     /// </summary>
     internal static class PageText
     {
@@ -47,7 +48,7 @@ namespace EliteCreaturesReborn.Compendium
         public static string Seconds(float value)
         {
             string number = value.ToString("0.#");
-            return number == "1" ? "1 second" : number + " seconds";
+            return Lang.Format(number == "1" ? "ecr_book_seconds_one" : "ecr_book_seconds_many", number);
         }
 
         /// <summary>The share a multiplier adds or takes away, as a whole percent: 1.6 and 0.4 are both "60%".</summary>

@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -106,7 +107,7 @@ namespace EliteCreaturesReborn.Recap.Window
 
         private static ControlRow Controls(WindowParts parts, WindowView view)
         {
-            Button play = UiParts.Button(parts.Close, parts.Frame, "ecr_recap_play", "Play", view.TogglePlay);
+            Button play = UiParts.Button(parts.Close, parts.Frame, "ecr_recap_play", Lang.Get("ecr_recap_play"), view.TogglePlay);
             UiParts.Place((RectTransform)play.transform, VideoX, ControlsY, 130f, 40f);
             Button[] speeds = new Button[Playback.Speeds.Length];
             for (int i = 0; i < speeds.Length; i++)

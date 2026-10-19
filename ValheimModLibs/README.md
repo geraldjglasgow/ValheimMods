@@ -16,6 +16,7 @@ Small, focused libraries for Valheim BepInEx mods, extracted from Elite Creature
 | [PlayerGrid](PlayerGrid/) | Which cells of the local player's inventory are the main grid and which are PackPanel's slots, as PackPanel publishes it in the character's custom data; the writer and the readers in one place, trusted only while PackPanel is loaded and on | BepInEx, game |
 | [Hotkeys](Hotkeys/) | A mod's hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types | BepInEx, game, Unity |
 | [WindowInput](WindowInput/) | A mod's own window treated like the game's while open: free cursor, no attacks or mouse look or zoom, Esc closes it | Harmony, game, Unity |
+| [Translations](Translations/) | A mod's player-facing words in the game's language: English embedded as YAML, translations embedded or dropped in as files, written into the game's word table on every language setup; text for other peers sent as keys | YamlDotNet, BepInEx, Harmony, game |
 
 ## Building
 

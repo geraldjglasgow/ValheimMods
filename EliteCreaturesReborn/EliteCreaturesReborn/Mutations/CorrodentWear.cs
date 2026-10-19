@@ -2,6 +2,7 @@ using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
@@ -101,7 +102,7 @@ namespace EliteCreaturesReborn.Mutations
             _toldAt = Time.time;
             string name = Localization.instance != null ? Localization.instance.Localize(item.m_shared.m_name) : item.m_shared.m_name;
             int left = Mathf.FloorToInt(item.GetDurabilityPercentage() * 100f);
-            player.Message(MessageHud.MessageType.TopLeft, $"Your {name} corrodes ({left}% left)", 0, item.GetIcon());
+            player.Message(MessageHud.MessageType.TopLeft, Lang.Format("ecr_mut_msg_corrodes", name, left), 0, item.GetIcon());
         }
     }
 }

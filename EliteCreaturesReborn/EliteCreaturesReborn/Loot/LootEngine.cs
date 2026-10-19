@@ -95,7 +95,7 @@ namespace EliteCreaturesReborn.Loot
             };
             ctx.TrophiesFollow = ctx.Rule?.MultiplyTrophies ?? loot.MultiplyTrophies;
             ctx.DropsMultiplier = StarDrops.Multiplier(ctx.Rule, controller, ctx.IsBoss, ctx.Stars);
-            ctx.ExtraRolls = StarDrops.ExtraRolls(loot, ctx.IsBoss, ctx.Stars);
+            ctx.ExtraRolls = StarDrops.ExtraRolls(loot, controller, ctx.IsBoss);
             if (ctx.Rule != null)
             {
                 foreach (DropRule row in ctx.Rule.Overrides)

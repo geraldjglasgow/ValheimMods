@@ -14,7 +14,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]World tiers: each boss's first defeat makes stars and mutations more common.
 [*]Mutations: one per creature, named and coloured on the nameplate (below).
 [*]Boss aspects: one per fight, shown at the altar with the boss's stars (below), or chosen there with E; each defeat makes a boss likelier to have stars next time.
-[*]Breeding: tamed young inherit a mutation and stars.
+[*]Taming: young inherit a mutation and stars; tames can keep only the game's stars, or no mutations.
 [*]Loot: four drop modes, rules per creature; bosses drop trophies and materials for every player.
 [*]Boss damage board: who did how much damage.
 [*]Boss hints: four bosses point the way to the Bog Witch, the ancient forge, Haldor and Hildir, until you have found them.
@@ -116,7 +116,7 @@ The chest stays locked during the raid, and whatever raiders dropped before the 
 Needed on the server and every client. Install BepInExPack for Valheim, then put EliteCreaturesReborn.dll in BepInEx/plugins (or use a mod manager). Remove other star mods, or set creature stars: false: their configs are not read.
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/gglasgow.elitecreaturesreborn.cfg (each player's own settings) and BepInEx/config/creature_rules.yml (the rules). Both apply without a restart; the server's rules bind every player. Console: [b]elite tier[/b], [b]damage[/b] and [b]deaths[/b] for everyone, the other [b]elite[/b] commands for admins. In detail: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md]the reference on GitHub[/url].
+BepInEx/config/gglasgow.elitecreaturesreborn.cfg (each player's own settings) and BepInEx/config/creature_rules.yml (the rules). Both apply without a restart; the server's rules bind every player. Console: [b]elite tier[/b], [b]damage[/b] and [b]deaths[/b] for everyone, the other [b]elite[/b] commands for admins. In detail: [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md]the reference on GitHub[/url]. Translate: save a copy of [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/EliteCreaturesReborn/translations/English.yml]English.yml[/url] as EliteCreaturesReborn.translations.<Language>.yml in BepInEx/config.
 
 [size=4][b]Links[/b][/size]
 Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]

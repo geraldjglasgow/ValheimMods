@@ -1,13 +1,15 @@
 using EliteCreaturesReborn.Util;
 using PatchGuard;
+using Translations;
 
 namespace EliteCreaturesReborn.Runtime
 {
     /// <summary>
     /// Tells every player when the world tier rises, because a world that silently got harder looks like bad luck. The
     /// server decides: the game routes every new global key to it, and it compares the tier before and after the key
-    /// lands. A rise goes out over the game's routed-RPC bus to <c>Everybody</c>, the host included, and each client
-    /// shows it on its own screen. A tier that falls (an admin's removekey) is not announced; `elite tier` reports it.
+    /// lands. A rise goes out over the game's routed-RPC bus to <c>Everybody</c>, the host included, as two numbers, and
+    /// each client words it in its own language on its own screen. A tier that falls (an admin's removekey) is not
+    /// announced; `elite tier` reports it.
     /// </summary>
     public static class TierAnnounce
     {
@@ -48,8 +50,7 @@ namespace EliteCreaturesReborn.Runtime
         {
             if (MessageHud.instance != null)
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    $"The world hardens: tier {tier} of {ceiling}");
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, Lang.Format("ecr_tier_risen", tier, ceiling));
             }
         }
     }

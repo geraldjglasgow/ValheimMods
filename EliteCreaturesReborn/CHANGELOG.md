@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.30.0
+
+- Translations: every word you read is in `translations/English.yml`; an `EliteCreaturesReborn.translations.<Language>.yml` in `BepInEx/config` translates it.
+- Messages sent to other players show in each player's own language.
+- New section `15 - Tamed`: `Stars` (off: tamed creatures have the game's stars only) and `Mutations` (off: none), set by the server.
+- Update the server and every client together.
+
 ## 3.29.0
 
 - Boss altars: E on the bowl (Shift+E on Fader's) opens a window to choose the boss's stars and aspect.

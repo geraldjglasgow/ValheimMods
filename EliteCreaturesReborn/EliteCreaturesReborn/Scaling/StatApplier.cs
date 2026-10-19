@@ -32,13 +32,14 @@ namespace EliteCreaturesReborn.Scaling
         public static void ApplyHealth(Character character, BiomeRules rules, CreatureTraits traits, bool freshlyResolved)
         {
             ZDO zdo = character.GetComponent<ZNetView>().GetZDO();
-            float devoured = zdo != null ? TraitStore.GetDevouredHealth(zdo) : 0f;
+            // a tame whose mutations were taken (15 - Tamed) keeps none of what it ate
+            float devoured = zdo != null && traits.Wears(Mutation.Devouring) ? TraitStore.GetDevouredHealth(zdo) : 0f;
             float levelled = LevelledBase(character, traits);
             float max = traits.PhantomCopy
                 ? AspectMath.PhantomHealth()
                 : levelled * StatMath.HealthMultiplier(rules, traits) * AspectMath.HealthFactor(traits)
                     * HordeFactors.Health(character, zdo) + devoured;
-            if (!RuleState.Active.KeepsLevel(traits.Stars, character.IsBoss()) || !Mathf.Approximately(max, levelled))
+            if (!RuleState.Active.KeepsLevel(traits, character.IsBoss()) || !Mathf.Approximately(max, levelled))
             {
                 character.SetMaxHealth(max);
             }

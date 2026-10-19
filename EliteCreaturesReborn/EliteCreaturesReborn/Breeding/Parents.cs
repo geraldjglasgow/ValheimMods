@@ -1,5 +1,6 @@
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
+using EliteCreaturesReborn.Taming;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
 using UnityEngine;
@@ -105,7 +106,9 @@ namespace EliteCreaturesReborn.Breeding
                 return controller.Traits;
             }
             ZDO? zdo = creature.m_nview != null && creature.m_nview.IsValid() ? creature.m_nview.GetZDO() : null;
-            return zdo != null && TraitStore.IsResolved(zdo) ? TraitStore.Load(zdo) : new CreatureTraits(0, 0);
+            return zdo != null && TraitStore.IsResolved(zdo)
+                ? TameStrip.View(TraitStore.Load(zdo), TameStrip.Of(zdo)) // what it keeps as a tame (15 - Tamed)
+                : new CreatureTraits(0, 0);
         }
 
         private static Heightmap.Biome BiomeOf(ZDO zdo, Vector3 position)

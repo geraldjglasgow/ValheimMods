@@ -2,6 +2,7 @@ using EliteCreaturesReborn.Display;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Scaling;
+using EliteCreaturesReborn.Taming;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
 using EliteCreaturesReborn.Visuals;
@@ -16,7 +17,7 @@ namespace EliteCreaturesReborn.Runtime
     /// and applies. A machine that meets a creature its owner has not rolled yet stays pending and keeps checking, so it
     /// updates itself exactly once, cleanly, the moment the state arrives - and a creature handed to a machine before it
     /// was ever rolled is rolled by that new owner. It keeps the creature at vanilla level 1 (unless this mod's stars are
-    /// off for its kind, <see cref="RuleSet.KeepsLevel"/>), applies the fixed scaling,
+    /// off for its kind or a tame's, <see cref="RuleSet.KeepsLevel(CreatureTraits, bool)"/>), applies the fixed scaling,
     /// and installs the per-frame behaviours (which self-gate on ownership). Patches read the traits and rules from here.
     /// </summary>
     public sealed class EliteController : MonoBehaviour
@@ -101,6 +102,7 @@ namespace EliteCreaturesReborn.Runtime
             Devourers.Forget(_character);
             ReadyElites.Forget(_character);
             AspectBearers.Forget(_character);
+            TameWatch.Forget(this);
         }
 
         // An edited or newly synced rule file reaches creatures already loaded: every power read from Rules as it acts
@@ -125,10 +127,8 @@ namespace EliteCreaturesReborn.Runtime
             Apply();
         }
 
-        /// <summary>
-        /// Owner rolls if unrolled; every machine then loads. False when a non-owner meets it before the roll, or when the
-        /// owner is a player whose server rules have not arrived yet (it would roll by its own file).
-        /// </summary>
+        /// <summary>Owner rolls if unrolled and settles what a tame keeps; every machine then loads. False when a non-owner
+        /// meets it before the roll, or when the owner is a player whose server rules have not arrived yet.</summary>
         private bool TryResolve()
         {
             ZDO zdo = _nview.GetZDO();
@@ -136,15 +136,15 @@ namespace EliteCreaturesReborn.Runtime
             {
                 return false;
             }
-            if (_nview.IsOwner() && !TraitStore.IsResolved(zdo) && ServerLock.RulesArrived)
+            if (_nview.IsOwner() && ServerLock.RulesArrived)
             {
-                RollFresh(zdo);
+                Decide(zdo);
             }
             if (!TraitStore.IsResolved(zdo))
             {
                 return false;
             }
-            Traits = TraitStore.Load(zdo);
+            Traits = TameStrip.View(TraitStore.Load(zdo), TameStrip.Of(zdo)); // what a tame keeps (15 - Tamed)
             Traits.Mask &= ~MutationBars.OfKind(PrefabName); // a cloaked Deathsquito saved before the bar loads plain
             Rules = ResolveRules(TraitStore.GetBiome(zdo));
             return true;
@@ -159,7 +159,7 @@ namespace EliteCreaturesReborn.Runtime
         private BiomeRules ResolveRules(Heightmap.Biome biome)
         {
             RuleSet set = RuleState.Active;
-            bool keeps = set.KeepsLevel(Traits.Stars, _isBoss);
+            bool keeps = set.KeepsLevel(Traits, _isBoss);
             if (_isBoss)
             {
                 return BossView.For(set.Boss, keeps, Traits.Any ? set.For(biome, PrefabName) : null);
@@ -170,19 +170,29 @@ namespace EliteCreaturesReborn.Runtime
 
         private string PrefabName => Utils.GetPrefabName(gameObject);
 
+        // OWNER ONLY: the roll when it was never rolled, then what `15 - Tamed` takes from it when it is tamed.
+        private void Decide(ZDO zdo)
+        {
+            if (!TraitStore.IsResolved(zdo))
+            {
+                RollFresh(zdo);
+            }
+            TameSettle.Settle(_character, zdo);
+        }
+
         // OWNER ONLY: the single roll, written to the ZDO for everyone. Reached here only when this machine owns it. When
         // a console spawn has forced exact traits, those are written verbatim instead - bypassing every chance and cap.
-        // This mod's stars replace the game's level, so it goes back to 1 - unless they are off for this kind and it has
-        // none, when the level the game or another mod gave it stays.
+        // This mod's stars replace the game's level, so it goes back to 1, the level kept aside (GameLevel) - unless they
+        // are off for this kind and it has none, when the level the game or another mod gave it stays.
         private void RollFresh(ZDO zdo)
         {
             Heightmap.Biome biome = _forced != null ? _forcedBiome : Heightmap.FindBiome(_character.transform.position);
             CreatureTraits fresh = _forced ?? RollFor(biome);
             TraitStore.Save(zdo, fresh);
             TraitStore.SetBiome(zdo, biome);
-            if (!RuleState.Active.KeepsLevel(fresh.Stars, _isBoss))
+            if (!RuleState.Active.KeepsLevel(fresh, _isBoss))
             {
-                _character.SetLevel(1);
+                GameLevel.Park(_character, zdo);
             }
             FreshlyResolved = true;
             _forced = null;
@@ -228,6 +238,7 @@ namespace EliteCreaturesReborn.Runtime
             _ready = true;
             CreatureRpc.RegisterCommands(this, _isBoss || Traits.AnyAspect); // on every machine, so a routed command reaches the owner
             ReadyElites.Track(this); // so the nameplate finds it without a component search
+            TameWatch.Track(this); // a tameable kind is loaded again when taming changes what it keeps
             SwingRegistry.Track(this); // the swing speed is fixed from here on, so AnimSpeedPatch skips a creature at 1
             Devourers.Track(this); // so the enmity patch finds a devourer without a component search
             if (Disguise.Holds(_character))

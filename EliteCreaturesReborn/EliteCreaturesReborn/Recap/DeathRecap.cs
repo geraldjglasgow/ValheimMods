@@ -18,8 +18,10 @@ namespace EliteCreaturesReborn.Recap
         public float Died;
         public float End;
 
-        /// <summary>The killing blow's dealer (or its cause when nobody dealt it) and how it came.</summary>
-        public string Killer = "";
+        /// <summary>The killing blow's dealer; null when nobody dealt it.</summary>
+        public AttackerName? KilledBy;
+
+        /// <summary>How the killing blow came, as an id (<see cref="HitDescribe.Source"/>); empty when not known.</summary>
         public string Cause = "";
 
         /// <summary>A creature or player dealt the killing blow (false: a fall, drowning, the game's other causes).</summary>
@@ -30,6 +32,10 @@ namespace EliteCreaturesReborn.Recap
 
         /// <summary>The picture at the moment of death, for the list; null without video.</summary>
         public Texture2D? Thumbnail;
+
+        /// <summary>The killing blow's dealer in the language shown, or how it came when nobody dealt it ("Fall").</summary>
+        public string Killer => Dealt ? AttackerName.TextOf(KilledBy)
+            : Window.RecapText.Capital(Window.RecapText.Word(Cause.Length > 0 ? Cause : "unknown"));
 
         public float Duration => Mathf.Max(0.01f, End - Start);
         public float DeathAt => Died - Start;

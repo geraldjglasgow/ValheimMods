@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,8 @@ namespace EliteCreaturesReborn.Recap.Window
 {
     /// <summary>
     /// The video: one texture filled with the frame showing at the playback time, decoded only when the frame changes
-    /// (a few milliseconds for a small JPEG), kept in the screen's shape inside its box. Without video a line says why.
+    /// (a few milliseconds for a small JPEG), kept in the screen's shape inside its box. Without video a line says why,
+    /// in the language shown (the setting's name as the .cfg has it).
     /// </summary>
     internal sealed class VideoScreen
     {
@@ -16,6 +18,7 @@ namespace EliteCreaturesReborn.Recap.Window
         private readonly Texture2D _texture = RecapPictures.NewTexture("ecr_recap_video");
         private DeathRecap? _recap;
         private int _shown = -1;
+        private int _version = -1;
 
         public VideoScreen(RawImage image, TMP_Text message)
         {
@@ -33,6 +36,10 @@ namespace EliteCreaturesReborn.Recap.Window
             {
                 _recap = recap;
                 _shown = -1;
+                Message(recap);
+            }
+            else if (_version != Lang.Version)
+            {
                 Message(recap);
             }
             if (recap == null || !recap.HasVideo)
@@ -53,7 +60,8 @@ namespace EliteCreaturesReborn.Recap.Window
         {
             bool video = recap != null && recap.HasVideo;
             _image.enabled = video;
-            _message.text = recap == null ? "" : video ? "" : "No video of this death: recording was off (Record deaths in the .cfg) or not possible.";
+            _version = Lang.Version;
+            _message.text = recap == null || video ? "" : Lang.Format("ecr_recap_no_video", RecapSettings.Record.Definition.Key);
         }
     }
 }

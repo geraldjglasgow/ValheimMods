@@ -1,3 +1,5 @@
+using Translations;
+
 namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
@@ -37,7 +39,18 @@ namespace EliteCreaturesReborn.Traits
             return null;
         }
 
-        /// <summary>The word placed before the creature's own name, e.g. "Mad" in "Mad Greydwarf".</summary>
+        /// <summary>
+        /// The mutation's display name in the player's language, the word placed before the creature's own name, e.g.
+        /// "Mad" in "Mad Greydwarf" (its English is <see cref="Word"/>, in the creatures word file).
+        /// </summary>
+        public static string Name(Mutation mutation) => Lang.Get(NameKey(mutation));
+
+        /// <summary>The word key of the mutation's display name: <c>ecr_mut_</c> and its enum name in lower case.</summary>
+        public static string NameKey(Mutation mutation) => "ecr_mut_" + mutation.ToString().ToLowerInvariant();
+
+        /// <summary>
+        /// The mutation's English word, as rule files, the console and the log name it; players see <see cref="Name"/>.
+        /// </summary>
         public static string Word(Mutation mutation) => mutation switch
         {
             Mutation.Mad => "Mad",

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Trial
@@ -35,7 +36,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             string? refusal = Refusal(zdo, me, cost, player);
             if (refusal != null)
             {
-                ArenaWords.Show(refusal, cost.ToString(), "", "");
+                ArenaWords.Show(Lang.Format(refusal, cost.ToString()));
                 return true;
             }
             _askedAt = anvil;
@@ -53,12 +54,12 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
             if (!paid)
             {
-                ArenaWords.Show(ArenaWords.AnvilPoor, cost.ToString(), "", "");
+                ArenaWords.Show(Lang.Format(ArenaWords.AnvilPoor, cost.ToString()));
                 return;
             }
             MendAll(player);
             RepairEffect(_askedAt);
-            ArenaWords.Show(ArenaWords.AnvilDone, cost.ToString(), "", "");
+            ArenaWords.Show(Lang.Format(ArenaWords.AnvilDone, cost.ToString()));
         });
 
         // Why the anvil will not mend for this player now (too few souls, nothing worn); null when it will.

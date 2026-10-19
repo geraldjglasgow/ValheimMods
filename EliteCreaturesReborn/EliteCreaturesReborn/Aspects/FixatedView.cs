@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -80,9 +81,11 @@ namespace EliteCreaturesReborn.Aspects
                 return;
             }
             Player local = Player.m_localPlayer;
-            string who = local != null && local.GetZDOID() == mark ? "you" : FixatedMark.NameOf(mark);
             string boss = Localization.instance != null ? Localization.instance.Localize(_boss.m_name) : _boss.m_name;
-            chat.AddString($"<color=#FF5A45>{boss} fixes on <noparse>{who}</noparse>!</color>");
+            string line = local != null && local.GetZDOID() == mark ? Lang.Format("ecr_aspect_fixates_you", boss)
+                : Lang.Format("ecr_aspect_fixates_on", boss,
+                    "<noparse>" + FixatedMark.NameOf(mark, Lang.Get("ecr_aspect_fixated_gone")) + "</noparse>");
+            chat.AddString("<color=#FF5A45>" + line + "</color>");
             chat.m_hideTimer = 0f; // open the chat window the way a spoken line does
         }
 

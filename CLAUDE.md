@@ -160,6 +160,7 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | MapClicks | a click on a mod's own map icon waits out the double click window; the game's pins under it can still be placed and removed |
 | EliteCraftingLink | EliteCrafting's public API by reflection: typed wrappers (classes, inscriptions, items, hooks) that do nothing without EliteCrafting |
 | RecipeCounts | starred eggs (and any single-quality item) count for recipes: the game counted an egg only at quality 1 |
+| Translations | a mod's words in the game's language: English embedded as YAML, translations as `<Mod>.translations.<Language>.yml` |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs

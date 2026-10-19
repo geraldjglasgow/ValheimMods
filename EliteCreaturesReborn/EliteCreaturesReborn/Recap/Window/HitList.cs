@@ -1,9 +1,11 @@
+using Translations;
+
 namespace EliteCreaturesReborn.Recap.Window
 {
     /// <summary>
     /// Every hit of the selected death under the video, one row each: when, who, how much, of what, and the health left.
     /// The latest hit by the playback time is highlighted and kept in view while playing; clicking a hit plays from a
-    /// second before it.
+    /// second before it. The rows are made again when the language changes.
     /// </summary>
     internal sealed class HitList
     {
@@ -13,6 +15,7 @@ namespace EliteCreaturesReborn.Recap.Window
 
         private readonly ElementList _list;
         private DeathRecap? _recap;
+        private int _version = -1;
 
         public HitList(ElementList list)
         {
@@ -24,7 +27,7 @@ namespace EliteCreaturesReborn.Recap.Window
 
         public void Sync(DeathRecap? recap, float time, bool playing)
         {
-            if (recap != _recap)
+            if (recap != _recap || _version != Lang.Version)
             {
                 Fill(recap);
             }
@@ -34,6 +37,7 @@ namespace EliteCreaturesReborn.Recap.Window
         private void Fill(DeathRecap? recap)
         {
             _recap = recap;
+            _version = Lang.Version;
             _list.Clear();
             if (recap == null)
             {

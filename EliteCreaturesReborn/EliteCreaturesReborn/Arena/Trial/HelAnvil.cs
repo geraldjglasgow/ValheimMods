@@ -1,4 +1,5 @@
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Trial
@@ -13,8 +14,7 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// </summary>
     public sealed class HelAnvil : MonoBehaviour, Hoverable, Interactable
     {
-        public string GetHoverName() =>
-            Localization.instance != null ? Localization.instance.Localize("$" + ArenaWords.Anvil) : "";
+        public string GetHoverName() => Lang.Get(ArenaWords.Anvil);
 
         public string GetHoverText()
         {

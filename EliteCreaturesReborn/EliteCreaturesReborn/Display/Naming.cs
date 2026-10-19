@@ -1,5 +1,5 @@
-using System.Text;
 using EliteCreaturesReborn.Traits;
+using Translations;
 
 namespace EliteCreaturesReborn.Display
 {
@@ -7,7 +7,9 @@ namespace EliteCreaturesReborn.Display
     /// Builds the authoritative tell: a creature's mutations as words before its own name, in specification order.
     /// "Mad Greydwarf"; "Bloated Warding Miasmic Troll". A boss's aspects are its words the same way, headline first:
     /// "Twin Bonemass"; "Bountiful Enraged Mending Eikthyr". The name is always complete even when there are more
-    /// mutations than stars, so it, not the colour, is what a player reads.
+    /// mutations than stars, so it, not the colour, is what a player reads. The words are in the player's language, put
+    /// together by two patterns of the word file: <c>ecr_name_words</c> joins two words, <c>ecr_name_decorated</c> sets
+    /// the words beside the name, so a language may put them after it.
     /// </summary>
     public static class Naming
     {
@@ -18,17 +20,19 @@ namespace EliteCreaturesReborn.Display
             {
                 return baseName;
             }
-            StringBuilder builder = new StringBuilder();
+            string? words = null;
             foreach (Aspect aspect in traits.Aspects())
             {
-                builder.Append(AspectCatalog.Word(aspect)).Append(' '); // a boss: "Bountiful Enraged Mending Eikthyr"
+                words = Join(words, AspectCatalog.Name(aspect)); // a boss: "Bountiful Enraged Mending Eikthyr"
             }
             foreach (Mutation mutation in traits.Active())
             {
-                builder.Append(MutationCatalog.Word(mutation)).Append(' ');
+                words = Join(words, MutationCatalog.Name(mutation));
             }
-            builder.Append(baseName);
-            return builder.ToString();
+            return words == null ? baseName : Lang.Format("ecr_name_decorated", words, baseName);
         }
+
+        private static string Join(string? words, string word) =>
+            words == null ? word : Lang.Format("ecr_name_words", words, word);
     }
 }

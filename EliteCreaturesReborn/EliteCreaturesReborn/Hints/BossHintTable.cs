@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Hints
@@ -30,8 +31,12 @@ namespace EliteCreaturesReborn.Hints
             ["gd_king"] = new Entry("GDKing", "Hildir_camp"),
         };
 
+        /// <summary>The word keys of the eight directions, clockwise from north.</summary>
         private static readonly string[] Words =
-            { "north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest" };
+        {
+            "ecr_hint_north", "ecr_hint_northeast", "ecr_hint_east", "ecr_hint_southeast",
+            "ecr_hint_south", "ecr_hint_southwest", "ecr_hint_west", "ecr_hint_northwest",
+        };
 
         public static bool TryGet(string boss, out Entry entry) => Entries.TryGetValue(boss, out entry);
 
@@ -43,7 +48,8 @@ namespace EliteCreaturesReborn.Hints
             return Wrap(Mathf.RoundToInt(degrees / 45f));
         }
 
-        public static string Word(int sector) => Words[Wrap(sector)];
+        /// <summary>The direction's word in the player's language, "north".</summary>
+        public static string Word(int sector) => Lang.Get(Words[Wrap(sector)]);
 
         private static int Wrap(int sector) => ((sector % 8) + 8) % 8;
     }

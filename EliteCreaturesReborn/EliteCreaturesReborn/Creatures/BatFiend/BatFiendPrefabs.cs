@@ -42,7 +42,6 @@ namespace EliteCreaturesReborn.Creatures.BatFiend
             {
                 NetPrefabs.Register(scene, prefab);
             }
-            BatFiendWords.Add(Localization.instance);
         }
 
         /// <summary>Builds every prefab, or logs what is missing and builds none (once: a missing bundle stays missing).</summary>

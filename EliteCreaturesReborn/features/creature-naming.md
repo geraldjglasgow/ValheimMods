@@ -8,8 +8,8 @@ stars are drawn in belong to mutations (`mutations.md`) and attunements (`attune
 can change is `display-preferences.md`.
 
 **Status: built, not tested in game.** Naming and the star row are built and shipping for stars and mutations.
-Attunements are not built, so the attunement slot in the name is specified and unused. The **translation file does
-not exist** - see the last section.
+Attunements are not built, so the attunement slot in the name is specified and unused. The translation file exists
+since 2026-10-19 (`translations/English.yml`) - see the last section.
 
 ---
 
@@ -96,10 +96,9 @@ The full list and the reasoning for why none of it is lockable are in `display-p
 
 # 6. Open decisions
 
-**The translation file does not exist.** No localisation system is built: the mod's on-screen text is currently in
-the code. Nothing about the shipped behaviour is wrong, but the specification's promise - that the mod can be
-played in another language without editing it - is not yet true, and every string added between now and then is
-one more to retrofit. Worth doing before the text grows much further.
+**Translation (built 2026-10-19, not tested in game).** Every word a player reads in game comes from
+`translations/English.yml`, replaced key by key by `EliteCreaturesReborn.translations.<Language>.yml` (see "Translations"
+in `CLAUDE.md`). Decided against section 3: console command output and setting descriptions stay English, as admin text.
 
 **What happens when a name gets very long.** A creature carrying four mutations and an attunement reads as six
 words before the creature's own name, and the specification caps mutations at four with no cap on the resulting
@@ -120,7 +119,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 
 - [ ] Order is mutations in colour order, then attunement, then the creature's own name
 - [ ] Stars are always drawn individually, never collapsed into a count
-- [ ] All on-screen text is translatable
+- [~] All on-screen text is translatable (built 2026-10-19, not seen in game; console output and setting descriptions stay English)
 
 ## Multiplayer
 

@@ -100,9 +100,8 @@ namespace EliteCreaturesReborn.Recap
             HitRecord? last = recap.Hits.Count > 0 ? recap.Hits[recap.Hits.Count - 1] : null;
             HitData? gameHit = player.m_lastHit;
             recap.Cause = last != null ? last.Source : gameHit != null ? HitDescribe.Source(gameHit) : "";
-            string dealer = last != null ? last.Attacker : HitDescribe.Attacker(gameHit?.GetAttacker());
-            recap.Dealt = dealer.Length > 0;
-            recap.Killer = recap.Dealt ? dealer : Window.RecapText.Capital(recap.Cause.Length > 0 ? recap.Cause : "unknown");
+            recap.KilledBy = last != null ? last.Attacker : AttackerName.Of(gameHit?.GetAttacker());
+            recap.Dealt = AttackerName.TextOf(recap.KilledBy).Length > 0;
         }
     }
 }

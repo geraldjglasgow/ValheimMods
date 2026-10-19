@@ -3,6 +3,7 @@ using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using PlayerGrid;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Patches
@@ -154,7 +155,9 @@ namespace EliteCreaturesReborn.Patches
             MessageHud hud = MessageHud.instance;
             if (hud != null)
             {
-                hud.ShowMessage(MessageHud.MessageType.TopLeft, $"{thief.Creature.GetHoverName()} stole {itemName} x{stack}");
+                string item = Localization.instance.Localize(itemName);
+                hud.ShowMessage(MessageHud.MessageType.TopLeft,
+                    Lang.Format("ecr_mut_msg_stole", thief.Creature.GetHoverName(), item, stack));
             }
         }
     }

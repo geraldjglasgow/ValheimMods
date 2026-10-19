@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using EliteCreaturesReborn.Arena.Trial;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Rewards
@@ -18,8 +19,7 @@ namespace EliteCreaturesReborn.Arena.Rewards
         public static string For(RewardList list)
         {
             string items = Items(list);
-            return items.Length > 0 && Localization.instance != null
-                ? Localization.instance.Localize("$" + ArenaWords.Reward, items) : "";
+            return items.Length > 0 ? Lang.Format(ArenaWords.Reward, items) : "";
         }
 
         /// <summary>The reward's parts alone, comma separated: "Bronze Battle Idol, 412 coins, +18% skill XP"; empty for
@@ -33,16 +33,27 @@ namespace EliteCreaturesReborn.Arena.Rewards
             }
             Parts.Clear();
             Named(words, list);
-            Counted(words, list, RewardList.Kind.Coins, ArenaWords.RewardCoins);
-            Counted(words, list, RewardList.Kind.Rune, ArenaWords.RewardRunes);
-            Counted(words, list, RewardList.Kind.Essence, ArenaWords.RewardEssence);
+            Counted(list, RewardList.Kind.Coins, ArenaWords.RewardCoins);
+            Counted(list, RewardList.Kind.Rune, ArenaWords.RewardRunes);
+            Counted(list, RewardList.Kind.Essence, ArenaWords.RewardEssence);
             int percent = Mathf.RoundToInt(list.XpFactor * 100f);
             if (percent > 0)
             {
-                Parts.Add(words.Localize("$" + ArenaWords.RewardXp, percent.ToString(CultureInfo.InvariantCulture)));
+                Parts.Add(Lang.Format(ArenaWords.RewardXp, percent.ToString(CultureInfo.InvariantCulture)));
             }
-            string text = string.Join(", ", Parts);
+            string text = Joined();
             Parts.Clear();
+            return text;
+        }
+
+        // The parts one after another by the language's own list pattern ("$1, $2" in English).
+        private static string Joined()
+        {
+            string text = Parts.Count > 0 ? Parts[0] : "";
+            for (int i = 1; i < Parts.Count; i++)
+            {
+                text = Lang.Format(ArenaWords.RewardJoin, text, Parts[i]);
+            }
             return text;
         }
 
@@ -56,12 +67,12 @@ namespace EliteCreaturesReborn.Arena.Rewards
                 if (item != null)
                 {
                     string name = words.Localize(item.m_itemData.m_shared.m_name);
-                    Parts.Add(entry.Count > 1 ? name + " x" + entry.Count : name);
+                    Parts.Add(entry.Count > 1 ? Lang.Format(ArenaWords.RewardItem, name, entry.Count.ToString()) : name);
                 }
             }
         }
 
-        private static void Counted(Localization words, RewardList list, RewardList.Kind kind, string key)
+        private static void Counted(RewardList list, RewardList.Kind kind, string key)
         {
             int count = 0;
             foreach (RewardList.Entry entry in list.Entries)
@@ -70,7 +81,7 @@ namespace EliteCreaturesReborn.Arena.Rewards
             }
             if (count > 0)
             {
-                Parts.Add(words.Localize("$" + key, count.ToString("N0", CultureInfo.InvariantCulture)));
+                Parts.Add(Lang.Format(key, count.ToString("N0", CultureInfo.InvariantCulture)));
             }
         }
     }

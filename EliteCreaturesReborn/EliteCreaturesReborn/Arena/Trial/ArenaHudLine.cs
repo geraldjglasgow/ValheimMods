@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using EliteCreaturesReborn.Util;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Trial
@@ -16,12 +17,14 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// or the countdown "- F: ready (1/3)" after it, "- (ready) 1/3" once this player has pressed F
     /// (<see cref="ArenaReady"/>). It is the game's own event bar, drawn the way the raids draw theirs (<see cref="Raids.RaidHudLine"/>), from the core's ZDO alone; nothing is sent for it. The one
     /// hook on <c>Hud.UpdateEvent</c> asks here first, then the raids (<see cref="Raids.RaidHudPatch"/>). The text is
-    /// rebuilt only when a number in it changes; a boss's health bar hides it as it hides the game's own line.
+    /// rebuilt only when a number in it or the player's language changes; a boss's health bar hides it as it hides the
+    /// game's own line.
     /// </summary>
     internal static class ArenaHudLine
     {
         private static long _shownKey = -1L;
         private static int _shownExtra = -1;
+        private static int _shownLanguage = -1;
         private static bool _shown;
         private static bool _broken;
 
@@ -65,17 +68,18 @@ namespace EliteCreaturesReborn.Arena.Trial
             long key = Key(phase, wave, count, souls);
             int start = state.StartBiome;
             int extra = (phase == ArenaPhase.Fighting ? Recall(state, now) : Ready(state.Zdo)) | (start & 7) << 20;
-            if (_shown && key == _shownKey && extra == _shownExtra)
+            if (_shown && key == _shownKey && extra == _shownExtra && _shownLanguage == Lang.Version)
             {
                 return;
             }
             _shown = true;
             _shownKey = key;
             _shownExtra = extra;
+            _shownLanguage = Lang.Version;
             string biome = ArenaWords.BiomeName(ArenaCreatures.Biome(ArenaTable.BiomeIndex(start, Math.Max(1, wave))));
             string text = Text(phase, biome, wave, count, souls, extra & 0xFFFF);
             hud.m_eventName.text = phase == ArenaPhase.Fighting ? text
-                : text + " - " + ArenaWords.HudReady((extra & 0x10000) != 0, extra & 0xFF, extra >> 8 & 0xFF);
+                : ArenaWords.HudReady(text, (extra & 0x10000) != 0, extra & 0xFF, extra >> 8 & 0xFF);
         }
 
         // In a wave, Hel's recall of the stragglers, packed: its seconds left plus one; 0 while none runs.

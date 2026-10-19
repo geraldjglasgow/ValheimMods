@@ -68,6 +68,11 @@ namespace EliteCreaturesReborn.Rules
         /// </summary>
         public bool KeepsLevel(int stars, bool isBoss) => stars == 0 && !(isBoss ? Boss.Enabled : CreatureStars);
 
+        /// <summary>As <see cref="KeepsLevel(int, bool)"/>, and true too for a tame whose stars are the game's
+        /// (<see cref="CreatureTraits.GameStars"/>).</summary>
+        public bool KeepsLevel(CreatureTraits traits, bool isBoss) =>
+            traits.Stars == 0 && (traits.GameStars || KeepsLevel(0, isBoss));
+
         /// <summary>The rules with neutral star power, for a creature that keeps its level: its mutations still apply.</summary>
         public BiomeRules Unstarred(BiomeRules rules)
         {

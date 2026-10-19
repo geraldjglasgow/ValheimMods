@@ -1,6 +1,7 @@
 using System;
 using EliteCreaturesReborn.Util;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Raids
@@ -8,16 +9,18 @@ namespace EliteCreaturesReborn.Raids
     /// <summary>
     /// The raid's line under the minimap while a player is within its 96 m (features/raids.md section 4.5): "Fuling raid
     /// (Brutal) - wave 2 of 3 - 5 left - 8:40". It is the game's own event line - the bar the game shows its raids in,
-    /// in the game's look - so the mod adds no HUD element of its own. Each client draws it from the host's ZDO alone;
-    /// nothing is sent for it. The nearest running host comes from <see cref="RaidHosts"/> (never a scene search) and
-    /// the text is rebuilt only when a number in it changes, about once a second; the game's own event takes the line
-    /// back the moment the player leaves the raid, and a boss's health bar hides it as it hides the game's.
+    /// in the game's look - so the mod adds no HUD element of its own. Each client draws it from the host's ZDO alone, in
+    /// its own language; nothing is sent for it. The nearest running host comes from <see cref="RaidHosts"/> (never a
+    /// scene search) and the text is rebuilt only when a number in it or the language changes, about once a second; the
+    /// game's own event takes the line back the moment the player leaves the raid, and a boss's health bar hides it as it
+    /// hides the game's.
     /// </summary>
     internal static class RaidHudLine
     {
         private static RaidRunner? _shown;
-        private static string? _shownName;
+        private static string? _shownFace;
         private static long _shownKey = -1L;
+        private static int _shownVersion = -1;
         private static bool _broken;
 
         /// <summary>Draws the raid's line when the player is at a raid; true when it did (the game's line is skipped).</summary>
@@ -56,16 +59,18 @@ namespace EliteCreaturesReborn.Raids
             int secondsLeft = Seconds(state.Deadline - now), secondsToNext = Seconds(state.PhaseUntil - now);
             RaidPhase phase = state.Phase;
             int wave = state.Wave, left = state.Left, band = state.Band;
-            string name = state.DisplayName;
+            string face = state.Face;
             long key = Key(phase, wave, left, band, secondsLeft, secondsToNext);
-            if (ReferenceEquals(host, _shown) && ReferenceEquals(name, _shownName) && key == _shownKey)
+            if (ReferenceEquals(host, _shown) && ReferenceEquals(face, _shownFace) && key == _shownKey
+                && Lang.Version == _shownVersion)
             {
                 return;
             }
             _shown = host;
-            _shownName = name;
+            _shownFace = face;
             _shownKey = key;
-            hud.m_eventName.text = RaidText.Line(name, RaidTable.Band(band), phase, wave, left, secondsLeft, secondsToNext);
+            _shownVersion = Lang.Version;
+            hud.m_eventName.text = RaidText.Line(face, RaidTable.Band(band), phase, wave, left, secondsLeft, secondsToNext);
         }
 
         private static int Seconds(long ms) => ms <= 0L ? 0 : (int)((ms + 999L) / 1000L);

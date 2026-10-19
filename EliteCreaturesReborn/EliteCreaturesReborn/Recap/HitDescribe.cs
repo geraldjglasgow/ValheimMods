@@ -1,36 +1,15 @@
 using System.Collections.Generic;
-using EliteCreaturesReborn.Display;
-using EliteCreaturesReborn.Runtime;
 
 namespace EliteCreaturesReborn.Recap
 {
     /// <summary>
-    /// A hit in words: who dealt it (a creature's whole name with its mutation words and stars, read the moment it hit,
-    /// since the creature may be gone when the recap is watched), how it came, and its damage by type. Plain facts only.
+    /// A hit in plain facts: how it came and its damage by type, each as an id ("burning", "slash", "edge_of_world") that
+    /// the window turns into words when shown (<see cref="Window.RecapText.Word"/>); who dealt it is an
+    /// <see cref="AttackerName"/>, read the moment it hit, since the creature may be gone when the recap is watched.
     /// </summary>
     internal static class HitDescribe
     {
-        /// <summary>A creature's name with its mutation and aspect words and stars ("Mad Greydwarf 2★"), or a player's name.</summary>
-        public static string Attacker(Character? attacker)
-        {
-            if (attacker == null)
-            {
-                return "";
-            }
-            if (attacker is Player player)
-            {
-                return player.GetPlayerName();
-            }
-            string name = Localization.instance != null ? Localization.instance.Localize(attacker.m_name) : attacker.m_name;
-            EliteController controller = attacker.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready)
-            {
-                return name + Stars(attacker.GetLevel() - 1);
-            }
-            int stars = controller.Traits.Stars > 0 ? controller.Traits.Stars : attacker.GetLevel() - 1; // a kept level's
-            return Naming.Decorate(controller.Traits, name) + Stars(stars);
-        }
-
+        /// <summary>A creature's stars after its name, " 2★"; empty for none.</summary>
         public static string Stars(int stars) => stars > 0 ? " " + stars + "★" : "";
 
         /// <summary>How the hit came, in the game's own causes; a creature's or player's hit is "ranged" or "hit".</summary>
@@ -41,13 +20,13 @@ namespace EliteCreaturesReborn.Recap
             HitData.HitType.Freezing => "freezing",
             HitData.HitType.Fall => "fall",
             HitData.HitType.Drowning => "drowning",
-            HitData.HitType.EdgeOfWorld => "edge of the world",
-            HitData.HitType.Tree => "falling tree",
-            HitData.HitType.Structural => "falling building",
+            HitData.HitType.EdgeOfWorld => "edge_of_world",
+            HitData.HitType.Tree => "falling_tree",
+            HitData.HitType.Structural => "falling_building",
             HitData.HitType.Boat => "ship",
-            HitData.HitType.AshlandsOcean => "boiling sea",
+            HitData.HitType.AshlandsOcean => "boiling_sea",
             HitData.HitType.AshlandsLava => "lava",
-            HitData.HitType.CinderFire => "cinder fire",
+            HitData.HitType.CinderFire => "cinder_fire",
             HitData.HitType.Undefined or HitData.HitType.EnemyHit or HitData.HitType.PlayerHit => hit.m_ranged ? "ranged" : "hit",
             _ => hit.m_hitType.ToString().ToLowerInvariant(),
         };

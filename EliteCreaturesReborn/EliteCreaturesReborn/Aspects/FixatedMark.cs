@@ -36,8 +36,9 @@ namespace EliteCreaturesReborn.Aspects
             return go != null ? go.GetComponent<Player>() : null;
         }
 
-        /// <summary>The marked player's name: from their character when it is loaded, else from the server's player list.</summary>
-        public static string NameOf(ZDOID id)
+        /// <summary>The marked player's name: from their character when it is loaded, else from the server's player list,
+        /// else <paramref name="gone"/>.</summary>
+        public static string NameOf(ZDOID id, string gone = "a player who has left")
         {
             Player? player = Resolve(id);
             if (player != null)
@@ -54,7 +55,7 @@ namespace EliteCreaturesReborn.Aspects
                     }
                 }
             }
-            return "a player who has left";
+            return gone;
         }
 
         /// <summary>The line `elite inspect` prints for a Fixated boss.</summary>

@@ -3,6 +3,7 @@ using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Scaling;
 using EliteCreaturesReborn.Traits;
+using Translations;
 
 namespace EliteCreaturesReborn.Mutations
 {
@@ -51,8 +52,9 @@ namespace EliteCreaturesReborn.Mutations
             DamageText text = DamageText.instance;
             if (text != null && ZRoutedRpc.instance != null)
             {
+                // sent as words, worded by each machine that shows it (DamageWordsPatch)
                 text.ShowText(DamageText.TextType.Heal, victim.GetTopPoint(),
-                    heal.ToString("0.#", CultureInfo.InvariantCulture) + " frost");
+                    LangWire.Message("ecr_display_frost_heal", heal.ToString("0.#", CultureInfo.InvariantCulture)));
             }
         }
 

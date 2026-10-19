@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
 using EliteCreaturesReborn.Util;
@@ -12,8 +13,9 @@ namespace EliteCreaturesReborn.Breeding
     /// of the parents' own, picked at random from both, whenever either has one (at the rule file's chance, 100 by
     /// default); a mutation switched off in `mutations enabled` is never passed on, and neither is one the species' body
     /// rules out (Gilded and Relentless for a large kind, <see cref="BodySize.Barred"/>), which a parent rolled before
-    /// that rule may still carry. A newborn never rolls anything new. With `creature stars: false` it inherits no stars of
-    /// this mod: it keeps the level the game gives it, its parent's.
+    /// that rule may still carry. A newborn never rolls anything new. With `creature stars: false`, or a tame's stars off
+    /// (`15 - Tamed`, since a newborn of tamed parents is tamed too), it inherits no stars of this mod: it keeps the level
+    /// the game gives it, its parent's. With a tame's mutations off it inherits none.
     /// </summary>
     internal static class Inheritance
     {
@@ -21,9 +23,10 @@ namespace EliteCreaturesReborn.Breeding
         public static CreatureTraits Offspring(CreatureTraits mother, CreatureTraits? sire, RuleSet rules, int barred = 0)
         {
             int cap = Mathf.Max(mother.Stars, sire?.Stars ?? 0);
-            int stars = rules.CreatureStars ? Random.Range(0, cap + 1) : 0; // off: the game passes the parent's level on
-            int mask = PickMutation((mother.Mask | (sire?.Mask ?? 0)) & ~barred, rules);
-            return new CreatureTraits(stars, mask);
+            bool starred = rules.CreatureStars && TamedSettings.StarsKept;
+            int stars = starred ? Random.Range(0, cap + 1) : 0; // off: the game passes the parent's level on
+            int mask = TamedSettings.MutationsKept ? PickMutation((mother.Mask | (sire?.Mask ?? 0)) & ~barred, rules) : 0;
+            return new CreatureTraits(stars, mask) { GameStars = !TamedSettings.StarsKept };
         }
 
         private static int PickMutation(int pool, RuleSet rules)

@@ -3,6 +3,7 @@ using System.Text;
 using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Traits;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Compendium
@@ -14,7 +15,7 @@ namespace EliteCreaturesReborn.Compendium
     /// </summary>
     internal static class MutationsPage
     {
-        public const string Topic = "Elite: Mutations";
+        public static string Topic => Lang.Get("ecr_book_mutations_topic");
 
         public static string Text(RuleSet set, Heightmap.Biome here)
         {
@@ -31,38 +32,39 @@ namespace EliteCreaturesReborn.Compendium
                 }
                 else
                 {
-                    off.Add(MutationCatalog.Word(mutation));
+                    off.Add(Name(mutation));
                 }
             }
             Off(text, off);
             return text.ToString();
         }
 
+        /// <summary>The mutation's name in the player's language (<c>ecr_mut_&lt;mutation&gt;</c>).</summary>
+        public static string Name(Mutation mutation) => Lang.Get("ecr_mut_" + mutation.ToString().ToLowerInvariant());
+
         private static void Off(StringBuilder text, List<string> off)
         {
             if (off.Count > 0)
             {
-                PageText.Heading(text, "Off on this server");
-                text.Append(string.Join(", ", off)).Append('\n');
+                PageText.Heading(text, Lang.Get("ecr_book_mutations_off"));
+                text.Append(string.Join(Lang.Get("ecr_book_list_comma"), off)).Append('\n');
             }
         }
 
         private static void Intro(StringBuilder text, BiomeRules rules, Heightmap.Biome here)
         {
-            text.Append("A mutated creature wears its mutation's name before its own, and its stars take the mutation's "
-                + "colour, the colour of the star before each name below. Gilded is the rarest and the only one in your "
-                + "favour.\n");
+            text.Append(Lang.Format("ecr_book_mutations_intro", Name(Mutation.Gilded))).Append('\n');
             string large = Mathf.Approximately(rules.LargeStarPower, 1f) ? ""
-                : $" A mutation on a large star is stronger: what it gains is x{rules.LargeStarPower:0.##}.";
-            text.Append(PageText.Grey($"Numbers for a creature with no stars in the {PageText.BiomeName(here)}, where you "
-                + "are." + large)).Append('\n');
+                : " " + Lang.Format("ecr_book_mutations_large", rules.LargeStarPower.ToString("0.##"));
+            text.Append(PageText.Grey(Lang.Format("ecr_book_mutations_numbers", PageText.BiomeName(here)) + large))
+                .Append('\n');
         }
 
         private static void Entry(StringBuilder text, Mutation mutation, string words)
         {
             string colour = ColorUtility.ToHtmlStringRGB(PaletteSettings.Of(mutation));
             text.Append($"\n<color=#{colour}>{PageText.Star}</color> ")
-                .Append($"<color=orange>{MutationCatalog.Word(mutation)}</color>\n").Append(words).Append('\n');
+                .Append($"<color=orange>{Name(mutation)}</color>\n").Append(words).Append('\n');
         }
     }
 }

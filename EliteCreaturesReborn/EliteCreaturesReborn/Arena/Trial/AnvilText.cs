@@ -1,17 +1,19 @@
 using System;
 using PatchGuard;
+using Translations;
 
 namespace EliteCreaturesReborn.Arena.Trial
 {
     /// <summary>
     /// Hel's Anvil's hover text (<see cref="HelAnvil"/>), which the game asks for every frame the anvil is looked at: what
     /// it shows - the trial's phase, whether this player is one of the trial's in the hall, the repair's cost and whether
-    /// their souls cover it - is packed into one number, and the text is built again only when that number changes. A
-    /// failure is reported once and the anvil shows its name alone from then on.
+    /// their souls cover it - is packed into one number, and the text is built again only when that number or the
+    /// player's language changes. A failure is reported once and the anvil shows its name alone from then on.
     /// </summary>
     internal static class AnvilText
     {
         private static long _key = long.MinValue;
+        private static int _language = -1;
         private static string _text = "";
         private static bool _broken;
 
@@ -19,12 +21,13 @@ namespace EliteCreaturesReborn.Arena.Trial
         {
             if (_broken)
             {
-                return Word(ArenaWords.Anvil);
+                return Lang.Get(ArenaWords.Anvil);
             }
             long key = Key(out int cost, out int line);
-            if (key != _key)
+            if (key != _key || _language != Lang.Version)
             {
                 _key = key;
+                _language = Lang.Version;
                 _text = Build(line, cost);
             }
             return _text;
@@ -59,27 +62,19 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         private static string Build(int line, int cost)
         {
-            string name = Word(ArenaWords.Anvil);
+            string name = Lang.Get(ArenaWords.Anvil);
             switch (line)
             {
-                case 1: return name + "\n" + Word(ArenaWords.AnvilCold);
-                case 2: return name + "\n" + Keys("[<color=yellow><b>$KEY_Use</b></color>] ") + Word(ArenaWords.AnvilRepair, cost);
-                case 3: return name + "\n" + Word(ArenaWords.AnvilPoor, cost);
+                case 1: return name + "\n" + Lang.Get(ArenaWords.AnvilCold);
+                case 2:
+                    return name + "\n" + Keys("[<color=yellow><b>$KEY_Use</b></color>] ")
+                        + Lang.Format(ArenaWords.AnvilRepair, cost.ToString());
+                case 3: return name + "\n" + Lang.Format(ArenaWords.AnvilPoor, cost.ToString());
                 default: return name;
             }
         }
 
         // The game's key names, as the player has them bound.
         private static string Keys(string text) => Localization.instance != null ? Localization.instance.Localize(text) : text;
-
-        private static string Word(string key, int number = -1)
-        {
-            Localization? words = Localization.instance;
-            if (words == null)
-            {
-                return "";
-            }
-            return number >= 0 ? words.Localize("$" + key, number.ToString()) : words.Localize("$" + key);
-        }
     }
 }

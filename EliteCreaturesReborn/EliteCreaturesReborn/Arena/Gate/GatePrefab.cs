@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using BundlePrefabs;
-using EliteCreaturesReborn.Patches;
 using EliteCreaturesReborn.Raids;
 using EliteCreaturesReborn.Util;
 using HarmonyLib;
@@ -58,7 +57,6 @@ namespace EliteCreaturesReborn.Arena.Gate
             {
                 prefabs.Add(Prefab);
             }
-            SafeCall.Run("Helgrind words", static () => GateWords.Add(Localization.instance));
         }
 
         private static GameObject? Build(List<GameObject> prefabs, GameObject? portal)

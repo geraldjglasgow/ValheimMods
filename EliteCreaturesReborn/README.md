@@ -8,7 +8,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - World tiers: each first boss defeat raises stars and mutations.
 - Mutations: one per creature, named on the nameplate (below).
 - Boss aspects: one per fight (below), or choose the aspect and stars at the altar; bosses gain stars with each defeat.
-- Breeding: tamed young inherit mutations and stars.
+- Taming: young inherit mutations and stars; tames can keep only the game's stars, or no mutations.
 - Loot: four drop modes, rules per creature; bosses pay every player.
 - Boss damage board: who did how much.
 - Boss hints: bosses point to traders and the forge.
@@ -72,6 +72,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 `BepInEx/config/gglasgow.elitecreaturesreborn.cfg` and `BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's bind every player.
 Console: `elite tier`, `damage`, `deaths` for everyone; other `elite` commands for admins. Details:
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/EliteCreaturesReborn/translations/English.yml) as `EliteCreaturesReborn.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

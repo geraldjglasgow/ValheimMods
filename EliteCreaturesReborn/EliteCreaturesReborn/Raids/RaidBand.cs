@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Raids
@@ -14,6 +15,7 @@ namespace EliteCreaturesReborn.Raids
         {
             Index = index;
             Name = name;
+            Word = "ecr_raid_band_" + name.ToLowerInvariant();
             FromHeat = fromHeat;
             ToHeat = toHeat;
             RaiderFactor = raiders;
@@ -27,8 +29,14 @@ namespace EliteCreaturesReborn.Raids
         /// <summary>The row's place, 0 (Trivial) to 4 (Deadly); what the host's ZDO stores.</summary>
         public int Index { get; }
 
-        /// <summary>What players read: "Brutal".</summary>
+        /// <summary>The row's English name, for the log and the console: "Brutal".</summary>
         public string Name { get; }
+
+        /// <summary>The key of the name players read, <c>ecr_raid_band_brutal</c>.</summary>
+        public string Word { get; }
+
+        /// <summary>What players read, in this machine's language: "Brutal".</summary>
+        public string Title => Lang.Get(Word);
 
         /// <summary>The lowest heat in the row.</summary>
         public float FromHeat { get; }

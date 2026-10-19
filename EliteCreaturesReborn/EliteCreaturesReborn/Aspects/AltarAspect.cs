@@ -5,6 +5,7 @@ using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Aspects
@@ -36,8 +37,8 @@ namespace EliteCreaturesReborn.Aspects
         private float _timer;
         private BossDraw? _locked;
 
-        // The hover lines as last drawn, kept while the bowl's ZDO, the whole second of the shift count-down and the
-        // rule set (a reload replaces it) are the ones they were drawn from: the hover is asked for every frame.
+        // The hover lines as last drawn, kept while the bowl's ZDO, the whole second of the shift count-down, the rule set
+        // (a reload replaces it) and the language are the ones they were drawn from: the hover is asked for every frame.
         private string _hover = "";
         private string _state = "";
         private uint _hoverRevision = uint.MaxValue;
@@ -45,6 +46,7 @@ namespace EliteCreaturesReborn.Aspects
         private int _hoverKills = -1;
         private RuleSet? _hoverRules;
         private bool _hoverChoice;
+        private int _hoverLang = -1;
 
         /// <summary>Added to an altar that summons a boss, on every machine, as the bowl starts.</summary>
         public static void Attach(OfferingBowl bowl)
@@ -191,19 +193,30 @@ namespace EliteCreaturesReborn.Aspects
             double seconds = SecondsToShift(zdo, set.Boss.Aspects);
             int second = seconds < 0 ? -1 : Mathf.CeilToInt((float)seconds);
             int kills = BossKills.Count(_boss);
-            bool choice = AltarSettings.Enabled;
-            if (zdo.DataRevision != _hoverRevision || second != _hoverSecond || kills != _hoverKills
-                || !ReferenceEquals(set, _hoverRules) || choice != _hoverChoice)
+            if (Changed(zdo.DataRevision, second, kills, set, AltarSettings.Enabled))
             {
-                _hoverRevision = zdo.DataRevision;
-                _hoverSecond = second;
-                _hoverKills = kills;
-                _hoverRules = set;
-                _hoverChoice = choice;
                 _state = DrawHover(zdo, set.Boss.Aspects, seconds) + BossLines(zdo, set, kills);
                 _hover = ChoiceHint() + _state;
             }
             return _hover;
+        }
+
+        // Whether anything the hover lines show has changed since they were drawn, the words' language included; if so,
+        // the new state is kept.
+        private bool Changed(uint revision, int second, int kills, RuleSet set, bool choice)
+        {
+            if (revision == _hoverRevision && second == _hoverSecond && kills == _hoverKills
+                && ReferenceEquals(set, _hoverRules) && choice == _hoverChoice && Lang.Version == _hoverLang)
+            {
+                return false;
+            }
+            _hoverRevision = revision;
+            _hoverSecond = second;
+            _hoverKills = kills;
+            _hoverRules = set;
+            _hoverChoice = choice;
+            _hoverLang = Lang.Version;
+            return true;
         }
 
         /// <summary>The hover lines without the "Choose the fight" hint, for the altar window; the same string instance
@@ -222,7 +235,7 @@ namespace EliteCreaturesReborn.Aspects
                 return "";
             }
             string key = _bowl.m_useItemStands ? "$KEY_AltPlace + $KEY_Use" : "$KEY_Use";
-            return Localization.instance.Localize($"\n[<color=yellow><b>{key}</b></color>] Choose the fight");
+            return Localization.instance.Localize($"\n[<color=yellow><b>{key}</b></color>] ") + Lang.Get("ecr_altar_choose");
         }
 
         /// <summary>What the fight on the bowl pays beyond the boss's table, and how often the world has defeated it.</summary>
@@ -235,8 +248,9 @@ namespace EliteCreaturesReborn.Aspects
             {
                 return reward;
             }
-            string times = kills >= BossKills.MaxKills ? $"{kills}+ times" : kills == 1 ? "once" : $"{kills} times";
-            return reward + $"\n<color=#A0A0A0>Defeated {times}: more stars likelier</color>";
+            string defeated = kills >= BossKills.MaxKills ? Lang.Format("ecr_altar_defeated_most", kills)
+                : kills == 1 ? Lang.Get("ecr_altar_defeated_once") : Lang.Format("ecr_altar_defeated_many", kills);
+            return reward + "\n<color=#A0A0A0>" + defeated + "</color>";
         }
 
         // A part a player chose is marked so; the shift count-down is left out once the choices leave nothing to roll.

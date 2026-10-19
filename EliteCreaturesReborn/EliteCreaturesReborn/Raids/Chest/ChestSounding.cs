@@ -1,21 +1,23 @@
+using Translations;
+
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
     /// Sounding a raid from a Raiders Chest (features/raids.md section 4.1). The player's Shift + E goes to the chest's
     /// owner as one RPC (this machine when it owns it: the game routes it to itself, one code path). The owner decides:
-    /// the chest's own rules (<see cref="ChestRules"/>), the raid's (<see cref="Raid.Check"/>: no raid on here, none within
-    /// 200 m), the chest not open, coins in it. Then the raid is sounded with every coin as the stake
-    /// (<see cref="Raid.Start"/>, which tells the players near and blows the horn) and, only once it is on, every coin is
-    /// taken out of the chest in the same frame, so a refused raid never costs a coin and nothing can slip in between. A
-    /// refusal goes back to the player who asked, and only to them; the owner always answers, even when ownership moved
-    /// while the ask was on its way.
+    /// the chest's own rules (<see cref="ChestRules"/>), the raid's (<see cref="RaidStart.Refusal"/>: no raid on here,
+    /// none within 200 m), the chest not open, coins in it. Then the raid is sounded with every coin as the stake
+    /// (<see cref="RaidStart.Start"/>, which tells the players near and blows the horn) and, only once it is on, every coin
+    /// is taken out of the chest in the same frame, so a refused raid never costs a coin and nothing can slip in between.
+    /// A refusal goes back to the player who asked, and only to them, as a <c>LangWire</c> message read in that player's
+    /// language; the owner always answers, even when ownership moved while the ask was on its way.
     /// </summary>
     internal static class ChestSounding
     {
         /// <summary>On the chest's ZNetView, to its owner: a player asks to sound the raid.</summary>
         public const string AskRpc = "ecr_raid_sound_ask";
 
-        /// <summary>On the chest's ZNetView, to the asker: why the raid was not sounded (string).</summary>
+        /// <summary>On the chest's ZNetView, to the asker: why the raid was not sounded (a <c>LangWire</c> message).</summary>
         public const string ReplyRpc = "ecr_raid_sound_reply";
 
         /// <summary>The local player's Shift + E: past the ward, the chest's owner is asked.</summary>
@@ -35,39 +37,39 @@ namespace EliteCreaturesReborn.Raids
             {
                 return;
             }
-            string? refusal = chest.View.IsOwner() ? Sound(chest) : ChestText.Moved;
+            string? refusal = chest.View.IsOwner() ? Sound(chest) : LangWire.Message(RaidWords.Moved);
             if (refusal != null)
             {
                 chest.View.InvokeRPC(asker, ReplyRpc, refusal);
             }
         }
 
-        /// <summary>The asker's side of a refusal: the reason in the middle of the screen.</summary>
-        public static void Show(string text)
+        /// <summary>The asker's side of a refusal: the reason in the middle of the screen, in this player's language.</summary>
+        public static void Show(string message)
         {
             Player player = Player.m_localPlayer;
             if (player != null)
             {
-                player.Message(MessageHud.MessageType.Center, text);
+                player.Message(MessageHud.MessageType.Center, LangWire.Read(message));
             }
         }
 
         private static string? Sound(RaidChest chest)
         {
-            string? refusal = ChestRules.Refusal(chest) ?? Raid.Check(chest.View);
+            string? refusal = ChestRules.Refusal(chest) ?? RaidStart.Refusal(chest.View);
             Container container = chest.Container;
             if (refusal != null || container.IsInUse())
             {
-                return refusal ?? ChestText.InUse;
+                return refusal ?? LangWire.Message(RaidWords.InUse);
             }
             container.Load(); // the contents as last saved, should ownership have only just come here
             Inventory inventory = container.GetInventory();
             int stake = ChestCoins.Count(inventory);
             if (stake <= 0)
             {
-                return ChestText.NoGold;
+                return LangWire.Message(RaidWords.NoGold);
             }
-            refusal = Raid.Start(chest.View, stake);
+            refusal = RaidStart.Start(chest.View, stake, -1);
             if (refusal == null)
             {
                 ChestCoins.Take(inventory, stake);

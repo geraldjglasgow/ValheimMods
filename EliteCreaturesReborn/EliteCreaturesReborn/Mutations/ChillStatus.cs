@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
@@ -42,8 +43,8 @@ namespace EliteCreaturesReborn.Mutations
             {
                 _template = ScriptableObject.CreateInstance<ChillEffect>();
                 _template.name = Key;
-                _template.m_name = "Chilled";
-                _template.m_tooltip = "A Frostbound creature's freezing aura: your stamina recovers slowly while you stay near it.";
+                _template.m_name = Lang.Token("ecr_se_chilled"); // tokens: the game words them in the player's language
+                _template.m_tooltip = Lang.Token("ecr_se_chilled_tooltip");
                 _template.hideFlags = HideFlags.DontUnloadUnusedAsset;
             }
             if (_template.m_icon == null)

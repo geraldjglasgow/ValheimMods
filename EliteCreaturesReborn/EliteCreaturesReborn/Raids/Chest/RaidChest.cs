@@ -114,7 +114,7 @@ namespace EliteCreaturesReborn.Raids
         {
             if (!hold)
             {
-                user.Message(MessageHud.MessageType.Center, ChestText.Locked);
+                user.Message(MessageHud.MessageType.Center, ChestText.Locked());
             }
             if (!Hold.Held(hold) || !Allowed())
             {

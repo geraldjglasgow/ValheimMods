@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using EliteCreaturesReborn.Patches;
 using HarmonyLib;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Arena.Trial
@@ -10,10 +11,10 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// The trial's messages and the stop that may come from anywhere (features/arena.md section 4), over the game's
     /// routed-RPC bus, as the raids send theirs (<see cref="Raids.RaidNet"/>). A message - Hel waking, the boss she sends,
     /// the end - goes from the core's owner to the players of the trial only (<see cref="TrialPlayers"/>), each its own
-    /// client, as a word key with up to three words to put in it, so every player reads it in their own language; a
-    /// dedicated server has no screen and never shows one. `elite arena stop` typed where the core is not loaded goes to
-    /// the server, which holds every ZDO and passes it on to the core's owner. Registered on every machine at world
-    /// start, so nothing arrives before its handler.
+    /// client, as a word key with the values to put in it (<see cref="LangWire"/>), so every player reads it in their own
+    /// language; a dedicated server has no screen and never shows one. `elite arena stop` typed where the core is not
+    /// loaded goes to the server, which holds every ZDO and passes it on to the core's owner. Registered on every machine
+    /// at world start, so nothing arrives before its handler.
     /// </summary>
     internal static class ArenaNet
     {
@@ -28,7 +29,7 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return;
             }
             _registeredOn = bus;
-            bus.Register<string, string, string, string>(ArenaKeys.MessageRpc, OnMessage);
+            bus.Register<string>(ArenaKeys.MessageRpc, OnMessage);
             bus.Register(ArenaKeys.StopFindRpc, OnStopFind);
             bus.Register<ZPackage>(ArenaKeys.RewardRpc, Rewards.RewardSend.OnReward);
             bus.Register<bool, int>(ArenaKeys.RepairedRpc, AnvilUse.OnAnswer);
@@ -51,28 +52,30 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
         }
 
-        /// <summary>One player reads the message under <paramref name="key"/>.</summary>
-        public static void TellOne(long peer, string key, string first = "", string second = "", string third = "")
+        /// <summary>One player reads the message under <paramref name="key"/>, the values put in it.</summary>
+        public static void TellOne(long peer, string key, params string[] values)
         {
             EnsureRegistered();
             if (ZRoutedRpc.instance != null)
             {
-                ZRoutedRpc.instance.InvokeRoutedRPC(peer, ArenaKeys.MessageRpc, key, first, second, third);
+                ZRoutedRpc.instance.InvokeRoutedRPC(peer, ArenaKeys.MessageRpc, LangWire.Message(key, values));
             }
         }
 
-        /// <summary>Core's owner: every player of the trial reads the message under <paramref name="key"/>.</summary>
-        public static void Tell(ZDO core, string key, string first = "", string second = "", string third = "")
+        /// <summary>Core's owner: every player of the trial reads the message under <paramref name="key"/>, the values
+        /// put in it.</summary>
+        public static void Tell(ZDO core, string key, params string[] values)
         {
             EnsureRegistered();
             if (ZRoutedRpc.instance == null)
             {
                 return;
             }
+            string message = LangWire.Message(key, values);
             List<long> players = TrialPlayers.All(core);
             for (int i = 0; i < players.Count; i++)
             {
-                ZRoutedRpc.instance.InvokeRoutedRPC(players[i], ArenaKeys.MessageRpc, key, first, second, third);
+                ZRoutedRpc.instance.InvokeRoutedRPC(players[i], ArenaKeys.MessageRpc, message);
             }
         }
 
@@ -103,8 +106,8 @@ namespace EliteCreaturesReborn.Arena.Trial
         private static void OnFlare(long sender, Vector3 at, float size) =>
             Guard.Run("ArenaNet.OnFlare", () => ArenaPortalLook.Flare(at, size));
 
-        private static void OnMessage(long sender, string key, string first, string second, string third) =>
-            Guard.Run("ArenaNet.OnMessage", () => ArenaWords.Show(key, first, second, third));
+        private static void OnMessage(long sender, string message) =>
+            Guard.Run("ArenaNet.OnMessage", () => ArenaWords.Receive(message));
 
         // On the server: the core it keeps (it holds every ZDO), told to stop by its owner.
         private static void OnStopFind(long sender) => Guard.Run("ArenaNet.OnStopFind", () =>

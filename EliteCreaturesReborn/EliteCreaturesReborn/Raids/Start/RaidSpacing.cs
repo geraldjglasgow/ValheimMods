@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Raids
@@ -11,15 +12,15 @@ namespace EliteCreaturesReborn.Raids
     /// </summary>
     public static class RaidSpacing
     {
-        /// <summary>Why no raid may start at <paramref name="at"/> now; null when it may. <paramref name="self"/> is the
-        /// host asking, which never blocks itself.</summary>
+        /// <summary>Why no raid may start at <paramref name="at"/> now, as a <c>LangWire</c> message; null when it may.
+        /// <paramref name="self"/> is the host asking, which never blocks itself.</summary>
         public static string? Refusal(Vector3 at, ZDOID self)
         {
             if (GameRaidNear(at))
             {
-                return "Another raid is already on nearby.";
+                return LangWire.Message(RaidWords.GameRaidNear);
             }
-            return ChestRaidNear(at, self) ? "Another raid is already on within 200 m." : null;
+            return ChestRaidNear(at, self) ? LangWire.Message(RaidWords.ChestRaidNear) : null;
         }
 
         /// <summary>True when the game's own raid is on within the spacing of <paramref name="at"/>.</summary>

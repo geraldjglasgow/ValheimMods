@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,7 @@ namespace EliteCreaturesReborn.Recap.Window
 {
     /// <summary>
     /// The row under the timeline: Play/Pause, the four speeds (the chosen one's label in the game's highlight orange),
-    /// and the time into the clip over its length. Texts change only when what they show changes.
+    /// and the time into the clip over its length. Texts change only when what they show or the language changes.
     /// </summary>
     internal sealed class ControlRow
     {
@@ -20,6 +21,7 @@ namespace EliteCreaturesReborn.Recap.Window
         private readonly TMP_Text _time;
         private int _shownTenths = -1;
         private int _shownState = -1;
+        private int _shownVersion = -1;
 
         public ControlRow(Button play, Button[] speeds, TMP_Text time)
         {
@@ -39,9 +41,10 @@ namespace EliteCreaturesReborn.Recap.Window
         {
             DeathRecap? recap = playback.Recap;
             int state = (recap != null ? 1 : 0) + (playback.Playing ? 2 : 0) + 4 * System.Array.IndexOf(Playback.Speeds, playback.Speed);
-            if (state != _shownState)
+            if (state != _shownState || _shownVersion != Lang.Version)
             {
                 _shownState = state;
+                _shownVersion = Lang.Version;
                 Buttons(playback);
             }
             int tenths = recap != null ? Mathf.FloorToInt(playback.Time * 10f) : -2;
@@ -58,7 +61,7 @@ namespace EliteCreaturesReborn.Recap.Window
             _play.interactable = loaded;
             if (_playLabel != null)
             {
-                _playLabel.text = playback.Playing ? "Pause" : "Play";
+                _playLabel.text = Lang.Get(playback.Playing ? "ecr_recap_pause" : "ecr_recap_play");
             }
             for (int i = 0; i < _speeds.Length; i++)
             {

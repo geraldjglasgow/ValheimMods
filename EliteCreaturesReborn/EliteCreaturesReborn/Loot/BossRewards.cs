@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
+using Translations;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Loot
@@ -62,7 +63,7 @@ namespace EliteCreaturesReborn.Loot
         }
 
         /// <summary>The altar's line for the fight on the bowl, "Reward: 10-20 Iron Scrap per player", or "" when it pays
-        /// none.</summary>
+        /// none. In the player's language: a hover that keeps it builds it again when <c>Lang.Version</c> changes.</summary>
         public static string AltarLine(string bossPrefab, int stars, float aspectLoot)
         {
             if (!RuleState.Active.Boss.Rewards || !Table.TryGetValue(bossPrefab, out Reward reward)
@@ -74,7 +75,7 @@ namespace EliteCreaturesReborn.Loot
             int rolls = stars + 1;
             int min = DropRoller.Scaled(reward.Min * rolls, factor);
             int max = DropRoller.Scaled(reward.Max * rolls, factor);
-            return $"\n<color=orange>Reward: {min}-{max} {ItemName(prefab)} per player</color>";
+            return $"\n<color=orange>{Lang.Format("ecr_loot_altar_reward", min, max, ItemName(prefab))}</color>";
         }
 
         private static bool Pays(EliteController controller, out Reward reward)
