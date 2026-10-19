@@ -65,7 +65,7 @@ namespace GrindstoneSkills
                 return;
             hit.ApplyModifier(1f + Mathf.Max(0f, DefenseMilestoneSettings.RiposteDamage.Value) / 100f);
             if (!calledOut)
-                DefenseCallout.Show(hit.m_point, "Riposte!");
+                DefenseCallout.Show(hit.m_point, DefenseCallout.Perk("gs_perk_riposte"));
             calledOut = true;
         }
     }

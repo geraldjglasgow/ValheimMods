@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -16,7 +17,7 @@ namespace GrindstoneSkills
     /// empty name, and gets the lines on their own.</item>
     /// <item><b>Cost:</b> the lines are built at most every 0.25 s for the object being looked at and reused in between
     /// (one entry: the last hover source), so the per-frame work is a reference compare; that also covers a level or
-    /// setting change within a quarter second.</item>
+    /// setting change within a quarter second. A language change rebuilds them at once.</item>
     /// <item><b>Never throws:</b> building the lines runs inside <see cref="HookGuard"/>; a failure shows the game's text
     /// alone until the next refresh.</item>
     /// </list>
@@ -26,6 +27,7 @@ namespace GrindstoneSkills
         private const float RefreshSeconds = 0.25f;
 
         private static Component lastSource;
+        private static int lastLanguage = -1;
         private static string lastLines = "";
         private static float refreshAt;
 
@@ -59,13 +61,14 @@ namespace GrindstoneSkills
                 text = string.IsNullOrEmpty(text) ? lines : text + "\n" + lines;
         }
 
-        /// <summary>The lines for this hover source, rebuilt when the source changed or the refresh time passed.</summary>
+        /// <summary>The lines for this hover source, rebuilt when the source or the language changed or the refresh time passed.</summary>
         private static string Cached(Component source)
         {
             float now = Time.time;
-            if (ReferenceEquals(source, lastSource) && now < refreshAt)
+            if (ReferenceEquals(source, lastSource) && lastLanguage == Lang.Version && now < refreshAt)
                 return lastLines;
             lastSource = source;
+            lastLanguage = Lang.Version;
             refreshAt = now + RefreshSeconds;
             lastLines = "";
             lastLines = HookGuard.Run("read the rock", static rock => Build(rock), source, "") ?? "";

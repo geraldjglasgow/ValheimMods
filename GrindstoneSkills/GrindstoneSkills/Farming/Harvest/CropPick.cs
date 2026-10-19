@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -84,10 +85,13 @@ namespace GrindstoneSkills
         private static void AfterPick(Player player, Pickable pickable, State state)
         {
             if (state.Giant)
-                FarmCallout.Show(pickable.transform.position, "Giant " + state.Crop.CropName().ToLowerInvariant() + "!");
+                FarmCallout.Show(pickable.transform.position, GiantCallout(state.Crop.CropName()));
             SeedReturn.Roll(player, pickable, state.Crop);
             AutoReplant.After(player, pickable, state.Crop);
         }
+
+        /// <summary>"Giant turnip!": the word gets the crop's name in lower case ($1) and as the game writes it ($2).</summary>
+        private static string GiantCallout(string crop) => Lang.Format("gs_farm_giant_callout", crop.ToLowerInvariant(), crop);
 
         /// <summary>Puts the bonus chance back and closes the experience scope, once.</summary>
         private static void Finish(State state)

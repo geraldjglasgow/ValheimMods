@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Linq;
 using HarmonyLib;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -24,17 +25,18 @@ namespace GrindstoneSkills
 
         private static string Lines(ItemDrop.ItemData item)
         {
-            string lines = FishInfo.IsLegendary(item.m_quality) ? "\n<color=#8cffd9>Legendary</color>" : "";
+            string lines = FishInfo.IsLegendary(item.m_quality) ? "\n<color=#8cffd9>" + Lang.Get("gs_fish_tip_legendary") + "</color>" : "";
             Player player = Player.m_localPlayer;
             if (player == null)
                 return lines;
             string prefab = item.m_dropPrefab.name;
             int levels = AnglerLog.Levels(player, prefab);
             if (levels == 0)
-                return lines + "\nNot in your angler's log yet";
-            lines += "\nLanded levels: " + string.Join(" ", AnglerLog.LevelsIn(levels).Select(level => level.ToString(CultureInfo.InvariantCulture)));
+                return lines + "\n" + Lang.Get("gs_fish_tip_not_logged");
+            string landed = string.Join(" ", AnglerLog.LevelsIn(levels).Select(level => level.ToString(CultureInfo.InvariantCulture)));
+            lines += "\n" + Lang.Format("gs_fish_tip_levels", landed);
             if (AnglerLog.Best(player, prefab, out float weight, out int best))
-                lines += $"\nYour record: {weight.ToString("0.0", CultureInfo.InvariantCulture)} kg (level {best})";
+                lines += "\n" + Lang.Format("gs_fish_tip_record", weight.ToString("0.0", CultureInfo.InvariantCulture), best);
             return lines;
         }
     }

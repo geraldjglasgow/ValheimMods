@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -35,7 +36,7 @@ namespace GrindstoneSkills
 
         /// <summary>The perk's tip on the Blood Magic page.</summary>
         public static string Tip =>
-            $"A blood magic shield you cast, on yourself or anyone else, trains your Blood Magic as it absorbs hits from creatures: 1 experience per {DamagePerExperience:0} damage (a spell that hits gives 1), at most {SkillPage.Number(MaxPerHit)} per hit. Falls, fire and players' hits train nothing. The game's own experience when a shield breaks still goes to whoever wears it.";
+            Lang.Format("gs_mastery_shieldtraining_tip", DamagePerExperience.ToString("0"), SkillPage.Number(MaxPerHit));
 
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
         private static class NetAwake

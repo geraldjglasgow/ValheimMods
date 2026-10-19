@@ -1,5 +1,6 @@
 using HarmonyLib;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -9,7 +10,8 @@ namespace GrindstoneSkills
     /// ZDO, in Ship.Awake, and sent to everybody: each machine that has the ship loaded handles it once, the caller
     /// included. The ship's owner stores the called wind in the ship's ZDO (<see cref="WindCallState"/>), which a
     /// ship's owner always has, since the game hands a ship to a player aboard; every client aboard that ship is told
-    /// who turned the wind, which way and for how long. A dedicated server that owns the ship stores it and says nothing.
+    /// who turned the wind, which way and for how long, in their own language (each client words its own message). A
+    /// dedicated server that owns the ship stores it and says nothing.
     /// </summary>
     public static class WindCallReceive
     {
@@ -38,17 +40,18 @@ namespace GrindstoneSkills
             Player player = Player.m_localPlayer;
             if (player == null || Ship.GetLocalShip() != ship)
                 return;
-            string which = $"toward the {WindCallState.Compass(direction)} for {SkillPage.Duration(seconds)}";
-            player.Message(MessageHud.MessageType.Center, Announcement(ship, player, caller, which));
+            string toward = WindCallState.Compass(direction);
+            player.Message(MessageHud.MessageType.Center, Announcement(ship, player, caller, toward, SkillPage.Duration(seconds)));
         }
 
         /// <summary>"You turn the wind toward the east for 60 s", or the caller's name, or no name when they left the ship.</summary>
-        private static string Announcement(Ship ship, Player local, long caller, string which)
+        private static string Announcement(Ship ship, Player local, long caller, string toward, string time)
         {
             if (caller == local.GetPlayerID())
-                return $"You turn the wind {which}";
+                return Lang.Format("gs_sail_windcall_you", toward, time);
             Player who = ship.m_players.Find(player => player != null && player.GetPlayerID() == caller);
-            return who != null ? $"{who.GetPlayerName()} turns the wind {which}" : $"The wind turns {which}";
+            return who != null ? Lang.Format("gs_sail_windcall_other", who.GetPlayerName(), toward, time)
+                : Lang.Format("gs_sail_windcall_nobody", toward, time);
         }
     }
 }

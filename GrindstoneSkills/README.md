@@ -50,6 +50,7 @@ Compost bins first.
 `BepInEx/config/com.GrindstoneSkills.cfg`, plus `GrindstoneSkills.Finds.yml`, `GrindstoneSkills.MineFinds.yml`,
 `GrindstoneSkills.Forage.yml` and `GrindstoneSkills.Snags.yml` beside it. Every setting is described in its file and
 applies without a restart; the server's values bind every player. Console: `fishlog` lists your catches.
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/GrindstoneSkills/GrindstoneSkills/translations/English.yml) as `GrindstoneSkills.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

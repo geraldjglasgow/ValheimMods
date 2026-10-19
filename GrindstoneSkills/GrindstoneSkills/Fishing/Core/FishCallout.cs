@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -14,8 +15,9 @@ namespace GrindstoneSkills
     /// <item><see cref="Announce"/>: a line top left for every player on the server (<see cref="Keys.RpcFishAnnounce"/>),
     /// for a legendary catch. A dedicated server shows nothing.</item>
     /// </list>
-    /// Send the English text; it is shown as given. The routed RPCs are registered in a ZNet.Awake postfix, where the game
-    /// creates a fresh ZRoutedRpc for each session.
+    /// A broadcast or an announcement travels as a word key and its values (<see cref="LangWire"/>), so each player reads
+    /// it in their own language. The routed RPCs are registered in a ZNet.Awake postfix, where the game creates a fresh
+    /// ZRoutedRpc for each session.
     /// </summary>
     public static class FishCallout
     {
@@ -30,31 +32,31 @@ namespace GrindstoneSkills
             }
         }
 
-        /// <summary>Shows <paramref name="text"/> at <paramref name="position"/> on this client only.</summary>
+        /// <summary>Shows <paramref name="text"/>, in this player's language, at <paramref name="position"/> on this client only.</summary>
         public static void ShowLocal(Vector3 position, string text)
         {
             if (FishingSettings.ShowCallouts.Value)
                 FloatingText.Show(position, text);
         }
 
-        /// <summary>Shows <paramref name="text"/> at <paramref name="position"/> to every player near it, this one included.</summary>
-        public static void Broadcast(Vector3 position, string text)
+        /// <summary>Shows the word <paramref name="key"/> with its values at <paramref name="position"/> to every player near it, this one included.</summary>
+        public static void Broadcast(Vector3 position, string key, params string[] values)
         {
-            if (!string.IsNullOrEmpty(text))
-                NearbyRpc.Send(position, FloatingText.Range, Keys.RpcFishCallout, position, text);
+            if (!string.IsNullOrEmpty(key))
+                NearbyRpc.Send(position, FloatingText.Range, Keys.RpcFishCallout, position, LangWire.Message(key, values));
         }
 
-        /// <summary>Shows <paramref name="text"/> top left to every player on the server, this one included.</summary>
-        public static void Announce(string text)
+        /// <summary>Shows the word <paramref name="key"/> with its values top left to every player on the server, this one included.</summary>
+        public static void Announce(string key, params string[] values)
         {
-            if (ZRoutedRpc.instance != null && !string.IsNullOrEmpty(text))
-                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcFishAnnounce, text);
+            if (ZRoutedRpc.instance != null && !string.IsNullOrEmpty(key))
+                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, Keys.RpcFishAnnounce, LangWire.Message(key, values));
         }
 
         private static void Receive(long sender, Vector3 position, string text) =>
-            HookGuard.Run("fish callout", () => ShowLocal(position, text));
+            HookGuard.Run("fish callout", () => ShowLocal(position, LangWire.Read(text)));
 
         private static void ReceiveAnnouncement(long sender, string text) =>
-            HookGuard.Run("fish announcement", () => Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, text));
+            HookGuard.Run("fish announcement", () => Player.m_localPlayer?.Message(MessageHud.MessageType.TopLeft, LangWire.Read(text)));
     }
 }

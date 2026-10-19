@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -48,7 +49,7 @@ namespace GrindstoneSkills
             fight.GraceUsed = true;
             fight.GraceUntil = Time.time + Mathf.Max(1f, FishingFightSettings.GraceSeconds.Value);
             fight.Tension = 0f;
-            fishingFloat.Message("It takes line - catch your breath!", prioritized: true);
+            fishingFloat.Message(Lang.Get("gs_fish_grace"), prioritized: true);
             TensionBar.Show(fight);
         }
 

@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -32,11 +33,13 @@ namespace GrindstoneSkills
             Player player = page.Player;
             float drain = player.m_runStaminaDrain * Game.m_moveStaminaRate;
             float speed = player.m_runSpeed;
-            page.About = "Run faster and longer. Trained by running.";
-            page.Line($"Run stamina -{SkillPage.Percent(RunStaminaAt100 * page.Factor)}", "Run stamina",
-                $"{Rate(drain * (1f - RunStaminaAt100 * page.Factor))} at your level, {Rate(drain)} untrained, before gear. -{SkillPage.Percent(RunStaminaAt100)} at level 100.");
-            page.Line($"Run speed +{SkillPage.Percent(RunSpeedAt100 * page.Factor)}", "Run speed",
-                $"{SkillPage.Number(speed * (1f + RunSpeedAt100 * page.Factor))} m/s at your level, {SkillPage.Number(speed)} untrained, before gear. +{SkillPage.Percent(RunSpeedAt100)} at level 100.");
+            page.About = Lang.Get("gs_page_movement_run_about");
+            Term(page, "gs_page_movement_run_stamina", "gs_page_movement_run_stamina_line",
+                Lang.Format("gs_page_movement_run_stamina_tip", Rate(drain * (1f - RunStaminaAt100 * page.Factor)), Rate(drain), SkillPage.Percent(RunStaminaAt100)),
+                SkillPage.Percent(RunStaminaAt100 * page.Factor));
+            Term(page, "gs_page_movement_run_speed", "gs_page_movement_run_speed_line",
+                Lang.Format("gs_page_movement_run_speed_tip", SkillPage.Number(speed * (1f + RunSpeedAt100 * page.Factor)), SkillPage.Number(speed), SkillPage.Percent(RunSpeedAt100)),
+                SkillPage.Percent(RunSpeedAt100 * page.Factor));
         }
 
         public static void Swim(SkillPage page)
@@ -46,53 +49,71 @@ namespace GrindstoneSkills
             float master = player.m_swimStaminaDrainMaxSkill * Game.m_moveStaminaRate;
             float now = Mathf.Lerp(untrained, master, page.Factor);
             float saving = untrained > 0f ? 1f - now / untrained : 0f;
-            page.About = "Swimming costs less stamina. Trained by swimming.";
-            page.Line($"Swim stamina -{SkillPage.Percent(saving)}", "Swim stamina",
-                $"{Rate(now)} at your level, {Rate(untrained)} untrained, {Rate(master)} at level 100, before gear. Out of stamina you drown: 5% of max health a second.");
+            page.About = Lang.Get("gs_page_movement_swim_about");
+            Term(page, "gs_page_movement_swim_stamina", "gs_page_movement_swim_stamina_line",
+                Lang.Format("gs_page_movement_swim_stamina_tip", Rate(now), Rate(untrained), Rate(master)), SkillPage.Percent(saving));
         }
 
         public static void Jump(SkillPage page)
         {
-            page.About = "Jump higher and farther. Trained by jumping.";
-            page.Line($"Jump force +{SkillPage.Percent(JumpAt100 * page.Factor)}", "Jump force",
-                $"Both the upward and the forward push of a jump. +{SkillPage.Percent(JumpAt100)} at level 100. A jump costs the same stamina.");
+            page.About = Lang.Get("gs_page_movement_jump_about");
+            Term(page, "gs_page_movement_jump_force", "gs_page_movement_jump_force_line",
+                Lang.Format("gs_page_movement_jump_force_tip", SkillPage.Percent(JumpAt100)), SkillPage.Percent(JumpAt100 * page.Factor));
         }
 
         public static void Sneak(SkillPage page)
         {
             Player player = page.Player;
             float share = 1f - SneakStaminaAt100 * Mathf.Sqrt(page.Factor);
-            page.About = "Sneak unseen and for longer. Trained by sneaking near enemies that have not noticed you.";
-            page.Line($"Sneak stamina -{SkillPage.Percent(1f - share)}", "Sneak stamina",
-                $"{Rate(player.m_sneakStaminaDrain * share)} at your level, {Rate(player.m_sneakStaminaDrain)} untrained, before gear. -{SkillPage.Percent(SneakStaminaAt100)} at level 100; the first levels help most.");
+            page.About = Lang.Get("gs_page_movement_sneak_about");
+            Term(page, "gs_page_movement_sneak_stamina", "gs_page_movement_sneak_stamina_line",
+                Lang.Format("gs_page_movement_sneak_stamina_tip", Rate(player.m_sneakStaminaDrain * share), Rate(player.m_sneakStaminaDrain), SkillPage.Percent(SneakStaminaAt100)),
+                SkillPage.Percent(1f - share));
             float dark = Mathf.Lerp(SeenDark, SeenDarkAt100, page.Factor);
             float lit = Mathf.Lerp(SeenLit, SeenLitAt100, page.Factor);
-            page.Line($"Enemy sight {SkillPage.Percent(dark)} to {SkillPage.Percent(lit)}", "Enemy sight",
-                $"While you crouch, enemies see you and are alerted by you only within that share of their range: the low end in the dark, the high end in full light. {SkillPage.Percent(SeenDarkAt100)} to {SkillPage.Percent(SeenLitAt100)} at level 100.");
+            Term(page, "gs_page_movement_sneak_sight", "gs_page_movement_sneak_sight_line",
+                Lang.Format("gs_page_movement_sneak_sight_tip", SkillPage.Percent(SeenDarkAt100), SkillPage.Percent(SeenLitAt100)),
+                SkillPage.Percent(dark), SkillPage.Percent(lit));
         }
 
         public static void Dodge(SkillPage page)
         {
             Player player = page.Player;
             float cost = player.m_dodgeStaminaUsage * (1f - DodgeStaminaAt100 * page.Factor);
-            page.About = "Dodging costs less stamina. Trained by dodging, most by dodging through a hit.";
-            page.Line($"Dodge stamina -{SkillPage.Percent(DodgeStaminaAt100 * page.Factor)}", "Dodge stamina",
-                $"{SkillPage.Number(cost)} a dodge at your level, {SkillPage.Number(player.m_dodgeStaminaUsage)} untrained, before gear. -{SkillPage.Percent(DodgeStaminaAt100)} at level 100.");
+            page.About = Lang.Get("gs_page_movement_dodge_about");
+            Term(page, "gs_page_movement_dodge_stamina", "gs_page_movement_dodge_stamina_line",
+                Lang.Format("gs_page_movement_dodge_stamina_tip", SkillPage.Number(cost), SkillPage.Number(player.m_dodgeStaminaUsage), SkillPage.Percent(DodgeStaminaAt100)),
+                SkillPage.Percent(DodgeStaminaAt100 * page.Factor));
             float refund = player.m_perfectDodgeStaminaReturnMultiplier;
             if (refund > 0f)
-                page.Line($"Perfect dodge refund {SkillPage.Number(cost * refund)} stamina", "Perfect dodge",
-                    $"Dodging through an attack gives back {SkillPage.Percent(refund)} of the dodge's stamina and {SkillPage.Number(player.m_perfectDodgeAdrenaline)} adrenaline.");
+                Term(page, "gs_page_movement_dodge_perfect", "gs_page_movement_dodge_perfect_line",
+                    Lang.Format("gs_page_movement_dodge_perfect_tip", SkillPage.Percent(refund), SkillPage.Number(player.m_perfectDodgeAdrenaline)),
+                    SkillPage.Number(cost * refund));
         }
 
         public static void Ride(SkillPage page)
         {
-            page.About = "Your mount gallops faster and longer. Trained by riding at a gallop.";
-            page.Line($"Gallop speed +{SkillPage.Percent(MountSpeedAt100 * page.Factor)}", "Gallop speed",
-                $"How much faster a mount you ride runs. +{SkillPage.Percent(MountSpeedAt100)} at level 100.");
-            page.Line($"Mount stamina -{SkillPage.Percent(MountStaminaAt100 * page.Factor)}", "Mount stamina",
-                $"Your mount spends that much less stamina galloping and swimming. -{SkillPage.Percent(MountStaminaAt100)} at level 100.");
+            page.About = Lang.Get("gs_page_movement_ride_about");
+            Term(page, "gs_page_movement_ride_gallop", "gs_page_movement_ride_gallop_line",
+                Lang.Format("gs_page_movement_ride_gallop_tip", SkillPage.Percent(MountSpeedAt100)), SkillPage.Percent(MountSpeedAt100 * page.Factor));
+            Term(page, "gs_page_movement_ride_stamina", "gs_page_movement_ride_stamina_line",
+                Lang.Format("gs_page_movement_ride_stamina_tip", SkillPage.Percent(MountStaminaAt100)), SkillPage.Percent(MountStaminaAt100 * page.Factor));
         }
 
-        private static string Rate(float perSecond) => $"{SkillPage.Number(perSecond)} stamina/s";
+        /// <summary>
+        /// A line about one term: the term's own word (<paramref name="termKey"/>) goes into the line's sentence
+        /// (<paramref name="lineKey"/>) as $1, the values after it as $2, $3 ..., so the hovered term is in the line in
+        /// every language.
+        /// </summary>
+        private static void Term(SkillPage page, string termKey, string lineKey, string tip, params string[] values)
+        {
+            string term = Lang.Get(termKey);
+            object[] all = new object[values.Length + 1];
+            all[0] = term;
+            values.CopyTo(all, 1);
+            page.Line(Lang.Format(lineKey, all), term, tip);
+        }
+
+        private static string Rate(float perSecond) => Lang.Format("gs_page_movement_rate", SkillPage.Number(perSecond));
     }
 }

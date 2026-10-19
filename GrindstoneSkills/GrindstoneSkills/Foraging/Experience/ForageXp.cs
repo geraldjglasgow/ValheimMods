@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -59,7 +60,7 @@ namespace GrindstoneSkills
             float scale = Mathf.Max(0f, ForagingSettings.ExperiencePerPick.Value) * forage.Experience * BiomeScale(spot);
             if (scale <= 0f || !ForageDiscovery.TryRecord(player, forage.Item))
                 return scale;
-            ForageCallout.Show(spot, $"Discovered {Forage.ItemName(pickable)}!");
+            ForageCallout.Show(spot, Lang.Format("gs_forage_discovered", Forage.ItemName(pickable)));
             return scale * Mathf.Max(1f, ForagingSettings.DiscoveryMultiplier.Value);
         }
 

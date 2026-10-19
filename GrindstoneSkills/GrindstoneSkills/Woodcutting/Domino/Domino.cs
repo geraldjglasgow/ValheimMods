@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -53,7 +54,7 @@ namespace GrindstoneSkills
         {
             if (player == null || kind != WoodCreditKind.Fell || chain < 1 || !WoodSkill.Active)
                 return;
-            player.Message(MessageHud.MessageType.Center, $"Chain ×{chain + 1}!");
+            player.Message(MessageHud.MessageType.Center, Lang.Format("gs_wood_chain", chain + 1));
         }
 
         /// <summary>The extra impact damage for this woodcutter at this depth: 0 for the game's own, 2 for three times.</summary>

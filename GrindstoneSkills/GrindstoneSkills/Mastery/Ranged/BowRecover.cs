@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -22,7 +23,7 @@ namespace GrindstoneSkills
         private static bool sparing;
 
         /// <summary>The perk's tip on the Bows page.</summary>
-        public static string Tip => $"Each bow shot has a {SkillPage.Percent(FreeShotChance)} chance to use no arrow: it stays in your inventory.";
+        public static string Tip => Lang.Format("gs_mastery_recover_tip", SkillPage.Percent(FreeShotChance));
 
         [HarmonyPatch(typeof(Attack), nameof(Attack.UseAmmo))]
         private static class Shot

@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -11,18 +13,18 @@ namespace GrindstoneSkills
         {
             if (!GameSkillSettings.Running.Value)
                 return;
-            page.Perk("Pack Mule", 0f,
-                $"You can carry {SkillPage.Number(PackMule.Bonus(page.Factor))} more at your level, {SkillPage.Number(PackMule.Bonus(1f))} at level 100.");
-            page.Perk("Burden", Burden.Level,
-                $"While over-encumbered, moving drains {SkillPage.Number(Burden.Drain(page.Player))} stamina/s instead of {SkillPage.Number(page.Player.m_encumberedStaminaDrain)}.");
-            page.Perk("Second Wind", SecondWind.Level, SecondWindTip());
+            page.Perk(Lang.Get("gs_perk_packmule"), 0f,
+                Lang.Format("gs_run_packmule_tip", SkillPage.Number(PackMule.Bonus(page.Factor)), SkillPage.Number(PackMule.Bonus(1f))));
+            page.Perk(Lang.Get("gs_perk_burden"), Burden.Level,
+                Lang.Format("gs_run_burden_tip", SkillPage.Number(Burden.Drain(page.Player)), SkillPage.Number(page.Player.m_encumberedStaminaDrain)));
+            page.Perk(Lang.Get("gs_perk_secondwind"), SecondWind.Level, SecondWindTip());
         }
 
         private static string SecondWindTip()
         {
-            string tip = $"Running out of stamina while you run gives {SkillPage.Number(SecondWind.Stamina)} stamina back at once, and you keep running. Once every {SkillPage.Duration(SecondWind.Rest)}.";
+            string tip = Lang.Format("gs_run_secondwind_tip", SkillPage.Number(SecondWind.Stamina), SkillPage.Duration(SecondWind.Rest));
             float wait = SecondWind.ReadyIn;
-            return wait > 0f ? $"{tip} Ready again in {SkillPage.Duration(wait)}." : tip;
+            return wait > 0f ? tip + " " + Lang.Format("gs_run_secondwind_ready", SkillPage.Duration(wait)) : tip;
         }
     }
 }

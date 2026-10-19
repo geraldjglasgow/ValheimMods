@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -37,10 +38,8 @@ namespace GrindstoneSkills
         {
             if (fish == null || !FishSkill.Reached(fight.Level, FishingBiteSettings.SpeciesSenseLevel.Value))
                 return;
-            string what = FishInfo.WithArticle(FishInfo.Name(fish));
-            if (FishSkill.Reached(fight.Level, FishingBiteSettings.SizeSenseLevel.Value))
-                what = SizedName(fish);
-            angler.Message(MessageHud.MessageType.Center, char.ToUpperInvariant(what[0]) + what.Substring(1) + " nibbles!");
+            string message = FishSkill.Reached(fight.Level, FishingBiteSettings.SizeSenseLevel.Value) ? SizedNibble(fish) : Nibble(FishInfo.Name(fish));
+            angler.Message(MessageHud.MessageType.Center, message);
         }
 
         /// <summary>Called by <see cref="FloatScope"/> every step of the local player's float; reads the water once, when it lands in it.</summary>
@@ -55,20 +54,24 @@ namespace GrindstoneSkills
                 angler.Message(MessageHud.MessageType.TopLeft, ReadWater(fishingFloat));
         }
 
-        /// <summary>"a level 4 Pike", "a legendary Pike".</summary>
-        private static string SizedName(Fish fish)
+        /// <summary>"A Pike nibbles!", "An Anglerfish nibbles!": a word key for each English article.</summary>
+        private static string Nibble(string name) =>
+            Lang.Format(FishInfo.TakesAn(name) ? "gs_fish_nibble_an" : "gs_fish_nibble_a", name);
+
+        /// <summary>"A level 4 Pike nibbles!", "A legendary Pike nibbles!".</summary>
+        private static string SizedNibble(Fish fish)
         {
             int level = FishInfo.Level(fish);
             string name = FishInfo.Name(fish);
-            return FishInfo.IsLegendary(level) ? "a legendary " + name : $"a level {level} {name}";
+            return FishInfo.IsLegendary(level) ? Lang.Format("gs_fish_nibble_legendary", name) : Lang.Format("gs_fish_nibble_level", level, name);
         }
 
         private static string HoverText(Fish fish, string text)
         {
             int level = FishInfo.Level(fish);
             if (FishInfo.IsLegendary(level))
-                return "Legendary " + text;
-            return FishSkill.Reached(FishSkill.Local(), FishingBiteSettings.SizeSenseLevel.Value) ? $"{text} (level {level})" : text;
+                return Lang.Format("gs_fish_hover_legendary", text);
+            return FishSkill.Reached(FishSkill.Local(), FishingBiteSettings.SizeSenseLevel.Value) ? Lang.Format("gs_fish_hover_level", text, level) : text;
         }
 
         private static string ReadWater(FishingFloat fishingFloat)
@@ -82,9 +85,9 @@ namespace GrindstoneSkills
                 if (TakesBait(fish, bait))
                     biting[FishInfo.Name(fish)] = biting.TryGetValue(FishInfo.Name(fish), out int count) ? count + 1 : 1;
             }
-            string text = biting.Count == 0 ? "Nothing in reach takes this bait."
-                : "In reach for this bait: " + string.Join(", ", biting.Select(pair => pair.Value + " " + pair.Key)) + ".";
-            return lurks ? text + " Something big lurks here..." : text;
+            string text = biting.Count == 0 ? Lang.Get("gs_fish_reach_none")
+                : Lang.Format("gs_fish_reach_some", string.Join(", ", biting.Select(pair => Lang.Format("gs_fish_reach_count", pair.Value, pair.Key))));
+            return lurks ? Lang.Format("gs_fish_reach_lurks", text) : text;
         }
 
         /// <summary>Loaded fish swimming within the float's reach.</summary>

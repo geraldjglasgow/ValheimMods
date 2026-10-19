@@ -16,6 +16,7 @@
       <InputAssemblies Include="$(OutDir)PlateColumn.dll" />
       <InputAssemblies Include="$(OutDir)Hotkeys.dll" />
       <InputAssemblies Include="$(OutDir)RecipeCounts.dll" />
+      <InputAssemblies Include="$(OutDir)Translations.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

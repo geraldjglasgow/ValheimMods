@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Translations;
 using UnityEngine;
 using Valheim.SettingsGui;
 
@@ -13,8 +14,9 @@ namespace GrindstoneSkills
     /// tooltip and handlers, and shrinks to the height of the "Sort by" line, its caption in the same size of text. It
     /// shows the order chosen last; choosing one saves it and lays the list out again. Measured from the game's layout
     /// (2026-10-08): the settings dropdown is 120 x 38, its caption a "Label" inside it (10 in from every edge, sized to
-    /// fit), and the setting's name a second "Label", 20 high in 14 point text, right-aligned 16 left of it. Local UI
-    /// only; nothing is sent.
+    /// fit), and the setting's name a second "Label", 20 high in 14 point text, right-aligned 16 left of it. The bar's
+    /// words are written again as the window opens after a language change (<see cref="Refresh"/>). Local UI only;
+    /// nothing is sent.
     /// </summary>
     internal static class SortBar
     {
@@ -26,7 +28,11 @@ namespace GrindstoneSkills
         private const float LineHeight = 20f;
         private const float TextSize = 14f;
         private const string Preferred = "Radial Size";
-        private static readonly List<string> Orders = new List<string> { "Default", "Name", "Level" };
+
+        // The bar built last, its "Sort by" text and the version of the words written on it.
+        private static TMP_Dropdown built;
+        private static TMP_Text builtLabel;
+        private static int wordsVersion = -1;
 
         /// <summary>The game's settings dropdown to copy, or null when the menu has none.</summary>
         public static TMP_Dropdown Source()
@@ -46,9 +52,18 @@ namespace GrindstoneSkills
             dropdown.name = "dropdown";
             Strip(dropdown);
             Place((RectTransform)dropdown.transform);
-            Fit(dropdown.captionText, Label(dropdown));
-            Fill(dropdown, dialog);
+            built = dropdown;
+            builtLabel = Label(dropdown);
+            Fit(dropdown.captionText, builtLabel);
+            Fill(dropdown, builtLabel, dialog);
             bar.gameObject.SetActive(true);
+        }
+
+        /// <summary>As the window opens: writes the bar's words again when the language changed since they were written.</summary>
+        public static void Refresh()
+        {
+            if (built != null && wordsVersion != Lang.Version)
+                Words(built, builtLabel);
         }
 
         /// <summary>The bar's box over the list's top edge, made inactive so the copy wakes only once it is stripped.</summary>
@@ -83,16 +98,14 @@ namespace GrindstoneSkills
             rect.sizeDelta = new Vector2(BoxWidth, LineHeight);
         }
 
-        /// <summary>Renames the setting's name beside the dropdown, the text that is not its caption; null when it has none.</summary>
+        /// <summary>The setting's name beside the dropdown, the text that is not its caption; null when it has none.</summary>
         private static TMP_Text Label(TMP_Dropdown dropdown)
         {
             foreach (Transform child in dropdown.transform)
             {
                 TMP_Text text = child.GetComponent<TMP_Text>();
-                if (text == null || text == dropdown.captionText)
-                    continue;
-                text.text = "Sort by";
-                return text;
+                if (text != null && text != dropdown.captionText)
+                    return text;
             }
             return null;
         }
@@ -107,13 +120,30 @@ namespace GrindstoneSkills
             caption.fontSize = label != null ? label.fontSize : TextSize;
         }
 
-        private static void Fill(TMP_Dropdown dropdown, SkillsDialog dialog)
+        private static void Fill(TMP_Dropdown dropdown, TMP_Text label, SkillsDialog dialog)
         {
-            dropdown.ClearOptions();
-            dropdown.AddOptions(Orders);
-            dropdown.SetValueWithoutNotify((int)SkillOrder.Current);
+            Words(dropdown, label);
             dropdown.onValueChanged.AddListener(index => HookGuard.Run("skill sort", () => Chosen(dialog, (SkillSort)index)));
         }
+
+        /// <summary>"Sort by" and the orders in the current language, the chosen order shown.</summary>
+        private static void Words(TMP_Dropdown dropdown, TMP_Text label)
+        {
+            if (label != null)
+                label.text = Lang.Get("gs_book_sort_by");
+            dropdown.ClearOptions();
+            dropdown.AddOptions(Orders());
+            dropdown.SetValueWithoutNotify((int)SkillOrder.Current);
+            wordsVersion = Lang.Version;
+        }
+
+        /// <summary>The orders' names, in the order of <see cref="SkillSort"/>.</summary>
+        private static List<string> Orders() => new List<string>
+        {
+            Lang.Get("gs_book_sort_default"),
+            Lang.Get("gs_book_sort_name"),
+            Lang.Get("gs_book_sort_level"),
+        };
 
         /// <summary>Saves the order and lays the open window out again in it (the pane keeps its skill).</summary>
         private static void Chosen(SkillsDialog dialog, SkillSort sort)

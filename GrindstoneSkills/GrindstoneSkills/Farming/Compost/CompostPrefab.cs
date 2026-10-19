@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -17,8 +18,8 @@ namespace GrindstoneSkills
     {
         private const string Barrel = "piece_chest_barrel";
         private const string Workbench = "piece_workbench";
-        private const string Name = "Compost bin";
-        private const string Description = "Turns food scraps and spare crops into compost that feeds the crops around it: they grow faster.";
+        private const string NameKey = "gs_farm_compost_bin";
+        private const string DescriptionKey = "gs_farm_compost_bin_desc";
 
         private static GameObject holder;
 
@@ -63,8 +64,8 @@ namespace GrindstoneSkills
         private static void Dress(GameObject clone, List<GameObject> prefabs)
         {
             Piece piece = clone.GetComponent<Piece>();
-            piece.m_name = Name;
-            piece.m_description = Description;
+            piece.m_name = Lang.Token(NameKey);
+            piece.m_description = Lang.Token(DescriptionKey);
             piece.m_category = Piece.PieceCategory.Misc;
             piece.m_enabled = true;
             if (piece.m_craftingStation == null)
@@ -73,7 +74,7 @@ namespace GrindstoneSkills
                 .Where(requirement => requirement.m_resItem != null).ToArray();
             Container container = clone.GetComponentInChildren<Container>(true);
             if (container != null)
-                container.m_name = Name;
+                container.m_name = Lang.Token(NameKey);
         }
 
         private static GameObject Find(List<GameObject> prefabs, string name) => prefabs.Find(prefab => prefab != null && prefab.name == name);

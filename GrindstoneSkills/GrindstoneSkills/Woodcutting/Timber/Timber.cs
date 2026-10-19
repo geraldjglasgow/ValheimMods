@@ -35,8 +35,8 @@ namespace GrindstoneSkills
     /// </summary>
     public static class Timber
     {
-        /// <summary>What floats above a tree that falls to a woodcutter.</summary>
-        public const string Callout = "Timber!";
+        /// <summary>The word key of what floats above a tree that falls to a woodcutter ("Timber!").</summary>
+        public const string Callout = "gs_wood_timber";
 
         /// <summary>How high above the foot of the tree the callout floats, in metres for a tree of scale 1.</summary>
         private const float CalloutHeight = 3f;

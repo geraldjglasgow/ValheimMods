@@ -1,5 +1,6 @@
 using Hotkeys;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -49,11 +50,11 @@ namespace GrindstoneSkills
         {
             float level = LookoutSettings.Level.Value;
             if (SailingSkill.Local() < level)
-                return $"The lookout needs Sailing {level:0}";
+                return Lang.Format("gs_sail_lookout_needs", level.ToString("0"));
             if (ship == null || ship.m_nview == null || !ship.m_nview.IsValid())
-                return "The lookout works aboard a ship";
+                return Lang.Get("gs_sail_lookout_aboard");
             float wait = readyAt - Time.time;
-            return wait > 0f ? $"Lookout ready in {Mathf.CeilToInt(wait)} s" : null;
+            return wait > 0f ? Lang.Format("gs_sail_lookout_wait", Mathf.CeilToInt(wait)) : null;
         }
     }
 }

@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -31,7 +32,7 @@ namespace GrindstoneSkills
         public static void OnBlocked(Player player)
         {
             if (raised)
-                DefenseCallout.OverPlayer("Reflex!");
+                DefenseCallout.OverPlayer(Lang.Get("gs_defense_reflex"));
         }
 
         public static void After(Player player)

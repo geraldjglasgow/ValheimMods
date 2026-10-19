@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -17,36 +18,36 @@ namespace GrindstoneSkills
 
         public static void Bows(SkillPage page)
         {
-            page.About = "Bows draw faster and hit harder. Trained by hitting creatures with arrows.";
-            WeaponLines.Damage(page, "bow and arrow", " At full draw; a partial draw scales it down.");
-            string bow = HeldTime(page, a => a.m_bowDraw ? a.m_drawDurationMin : 0f, DrawCut);
-            page.Line($"Draw time -{SkillPage.Percent(DrawCut * page.Factor)}", "Draw time",
-                $"Time to a full draw: the shot that hits hardest, flies fastest and strays least. At 100: a fifth of the bow's own.{bow}");
-            WeaponLines.Cost(page, "Draw stamina",
-                "Drained while you hold the draw, half as fast once fully drawn. Any cost of the shot itself drops the same.");
+            page.About = Lang.Get("gs_page_bows_about");
+            WeaponLines.Damage(page, "gs_page_bows_damage_line", "gs_page_bows_damage_tip");
+            string term = Lang.Get("gs_page_bows_draw");
+            string tip = WithHeldTime(page, Lang.Get("gs_page_bows_draw_tip"), a => a.m_bowDraw ? a.m_drawDurationMin : 0f, DrawCut);
+            page.Line(Lang.Format("gs_page_bows_draw_line", term, SkillPage.Percent(DrawCut * page.Factor)), term, tip);
+            WeaponLines.Cost(page, "gs_page_bows_stamina", "gs_page_bows_stamina_tip");
         }
 
         public static void Crossbows(SkillPage page)
         {
-            page.About = "Crossbows reload faster and hit harder. Trained by hitting creatures with bolts.";
-            WeaponLines.Damage(page, "crossbow and bolt", "");
-            string crossbow = HeldTime(page, a => a.m_requiresReload ? a.m_reloadTime : 0f, ReloadCut);
-            page.Line($"Reload time -{SkillPage.Percent(ReloadCut * page.Factor)}", "Reload time",
-                $"At 100: half the crossbow's own, and so half the stamina reloading drains.{crossbow}");
+            page.About = Lang.Get("gs_page_crossbows_about");
+            WeaponLines.Damage(page, "gs_page_crossbows_damage_line");
+            string term = Lang.Get("gs_page_crossbows_reload");
+            string tip = WithHeldTime(page, Lang.Get("gs_page_crossbows_reload_tip"), a => a.m_requiresReload ? a.m_reloadTime : 0f, ReloadCut);
+            page.Line(Lang.Format("gs_page_crossbows_reload_line", term, SkillPage.Percent(ReloadCut * page.Factor)), term, tip);
         }
 
         /// <summary>
-        /// " Your Arbalest: 2.9 s (from 4 s).": the held weapon's time at the player's level, the game's lerp from its own
-        /// time down by <paramref name="cut"/> at level 100; empty with no such weapon in hand.
+        /// The tip and then " Your Arbalest: 2.9 s (from 4 s).": the held weapon's time at the player's level, the game's
+        /// lerp from its own time down by <paramref name="cut"/> at level 100; the tip alone with no such weapon in hand.
         /// </summary>
-        private static string HeldTime(SkillPage page, System.Func<Attack, float> baseTime, float cut)
+        private static string WithHeldTime(SkillPage page, string tip, System.Func<Attack, float> baseTime, float cut)
         {
             ItemDrop.ItemData weapon = WeaponLines.Held(page);
             float full = weapon == null ? 0f : baseTime(weapon.m_shared.m_attack);
             if (full <= 0f)
-                return "";
+                return tip;
             float now = Mathf.Lerp(full, full * (1f - cut), page.Factor);
-            return $" Your {WeaponLines.Name(weapon.m_shared.m_name)}: {WeaponLines.Seconds(now)} (from {WeaponLines.Seconds(full)}).";
+            return Lang.Format("gs_page_ranged_held", tip, WeaponLines.Name(weapon.m_shared.m_name), WeaponLines.Seconds(now),
+                WeaponLines.Seconds(full));
         }
     }
 }

@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -17,7 +18,7 @@ namespace GrindstoneSkills
             Vector3 position = pickable.transform.position + Vector3.up * 0.5f;
             Spawn(crop.Seed, position);
             string name = Localization.instance.Localize(crop.Seed.m_itemData.m_shared.m_name);
-            FarmCallout.Show(pickable.transform.position, "+1 " + name);
+            FarmCallout.Show(pickable.transform.position, Lang.Format("gs_farm_seed_return", name));
         }
 
         private static void Spawn(ItemDrop seed, Vector3 position)

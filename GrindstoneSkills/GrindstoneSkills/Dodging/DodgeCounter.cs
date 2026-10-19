@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -74,7 +75,7 @@ namespace GrindstoneSkills
                 return;
             hit.ApplyModifier(1f + Bonus);
             if (!calledOut)
-                FloatingText.Show(hit.m_point, "Counter!");
+                FloatingText.Show(hit.m_point, Lang.Get("gs_dodge_counter_callout"));
             calledOut = true;
         }
 

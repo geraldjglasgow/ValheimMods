@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -24,9 +25,9 @@ namespace GrindstoneSkills
         {
             long pregnant = zdo.GetLong(ZDOVars.s_pregnant);
             if (pregnant == 0L)
-                return $"Love {zdo.GetInt(ZDOVars.s_lovePoints)} of {procreation.m_requiredLovePoints}";
+                return Lang.Format("gs_herd_love", zdo.GetInt(ZDOVars.s_lovePoints), procreation.m_requiredLovePoints);
             double left = procreation.m_pregnancyDuration / BreedingPace.SpeedFactor(procreation.m_nview, level) - Herd.SecondsSince(pregnant);
-            return left > 0.0 ? $"Pregnant, due in {LoreText.Duration(left)}" : "Pregnant, due any moment";
+            return left > 0.0 ? Lang.Format("gs_herd_pregnant_due", LoreText.Duration(left)) : Lang.Get("gs_herd_pregnant_any_moment");
         }
 
         private static string HerdLine(Procreation procreation, ZDO zdo, float level)
@@ -36,7 +37,7 @@ namespace GrindstoneSkills
             int count = Count(ZNetScene.instance.GetPrefab(zdo.GetPrefab()), position, range)
                 + Count(procreation.m_offspring, position, range);
             int room = procreation.m_maxCreatures + (HusbandrySkill.Active ? BreedingPace.ExtraRoom(level) : 0);
-            return count >= room ? $"Herd full ({count} of {room} within {range:0} m)" : $"Herd {count} of {room}";
+            return count >= room ? Lang.Format("gs_herd_full", count, room, range.ToString("0")) : Lang.Format("gs_herd_count", count, room);
         }
 
         private static int Count(GameObject prefab, Vector3 position, float range)

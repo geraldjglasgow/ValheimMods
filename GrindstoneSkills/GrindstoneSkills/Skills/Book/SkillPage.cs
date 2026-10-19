@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -62,12 +63,14 @@ namespace GrindstoneSkills
         /// <summary>A number with at most one decimal.</summary>
         public static string Number(float value) => value.ToString("0.#");
 
-        /// <summary>A time in the largest unit that keeps it readable: "45 s", "10 min", "1.5 h".</summary>
+        /// <summary>A time in the largest unit that keeps it readable: "45 s", "10 min", "1.5 h" (the units are words).</summary>
         public static string Duration(float seconds)
         {
             if (seconds < 120f)
-                return $"{Number(seconds)} s";
-            return seconds < 7200f ? $"{Number(seconds / 60f)} min" : $"{Number(seconds / 3600f)} h";
+                return Lang.Format("gs_book_seconds", Number(seconds));
+            return seconds < 7200f
+                ? Lang.Format("gs_book_minutes", Number(seconds / 60f))
+                : Lang.Format("gs_book_hours", Number(seconds / 3600f));
         }
     }
 }

@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace GrindstoneSkills
             if (growup == null || ai == null || !young.IsTamed())
                 return "";
             double left = growup.m_growTime / GrowingUp.Factor(young.transform.position) - ai.GetTimeSinceSpawned().TotalSeconds;
-            return left > 0.0 ? $"Grows up in {LoreText.Duration(left)}" : "Grows up any moment";
+            return left > 0.0 ? Lang.Format("gs_herd_grows_up_in", LoreText.Duration(left)) : Lang.Get("gs_herd_grows_up_any_moment");
         }
 
         public static string EggLine(EggGrow egg)
@@ -26,7 +28,7 @@ namespace GrindstoneSkills
             if (start <= 0f)
                 return "";
             double left = start + egg.m_growTime / GrowingUp.Factor(egg.transform.position) - ZNet.instance.GetTimeSeconds();
-            return left > 0.0 ? $"Hatches in {LoreText.Duration(left)}" : "Hatches any moment";
+            return left > 0.0 ? Lang.Format("gs_herd_hatches_in", LoreText.Duration(left)) : Lang.Get("gs_herd_hatches_any_moment");
         }
     }
 }

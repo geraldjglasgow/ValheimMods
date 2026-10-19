@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -14,9 +16,10 @@ namespace GrindstoneSkills
 
         public static void Write(SkillPage page)
         {
-            page.About = "Makes your blocks stronger. Trained by blocking hits, a parry counts double.";
-            page.Line($"Block armor +{SkillPage.Percent(ArmorAt100 * page.Factor)}", "Block armor",
-                $"How much damage a block stops, the number in brackets on a shield's tooltip. A block costs stamina by the share of block armor it used, so a stronger block costs less. +{SkillPage.Percent(ArmorAt100)} at level 100.");
+            page.About = Lang.Get("gs_page_blocking_about");
+            string term = Lang.Get("gs_page_blocking_armor");
+            page.Line(Lang.Format("gs_page_blocking_armor_line", term, SkillPage.Percent(ArmorAt100 * page.Factor)), term,
+                Lang.Format("gs_page_blocking_armor_tip", SkillPage.Percent(ArmorAt100)));
             ItemDrop.ItemData blocker = page.Player.GetCurrentBlocker();
             if (blocker != null)
                 Held(page, blocker);
@@ -28,13 +31,14 @@ namespace GrindstoneSkills
             float armor = blocker.GetBlockPower(page.Factor);
             float untrained = blocker.GetBaseBlockPower();
             string name = Localized(blocker.m_shared.m_name);
-            page.Line($"{name}: block armor {armor:0}", name,
-                $"{untrained:0} untrained, {untrained * (1f + ArmorAt100):0} at level 100.");
+            page.Line(Lang.Format("gs_page_blocking_held_line", name, armor.ToString("0")), name,
+                Lang.Format("gs_page_blocking_held_tip", untrained.ToString("0"), (untrained * (1f + ArmorAt100)).ToString("0")));
             float bonus = blocker.m_shared.m_timedBlockBonus;
             if (bonus <= 1f)
                 return;
-            page.Line($"Parry: block armor {armor * bonus:0}", "Parry",
-                $"A block raised less than {ParryWindow:0.00} s before the hit multiplies block armor by the parry bonus (x{SkillPage.Number(bonus)}) and can stagger the attacker.");
+            string parry = Lang.Get("gs_page_blocking_parry");
+            page.Line(Lang.Format("gs_page_blocking_parry_line", parry, (armor * bonus).ToString("0")), parry,
+                Lang.Format("gs_page_blocking_parry_tip", ParryWindow.ToString("0.00"), SkillPage.Number(bonus)));
             ParryEffect(page, blocker);
         }
 
@@ -52,9 +56,9 @@ namespace GrindstoneSkills
                 absorb += shield.m_absorbDamageWorldLevel * Game.m_worldLevel;
             string name = Localized(shield.m_name);
             if (name.Length == 0)
-                name = "Parry shield";
-            page.Line($"{name}: absorbs {absorb:0} damage", name,
-                $"Given by a parry. It absorbs {shield.m_absorbDamagePerSkillLevel:0.##} more damage per Blocking level.");
+                name = Lang.Get("gs_page_blocking_shield");
+            page.Line(Lang.Format("gs_page_blocking_shield_line", name, absorb.ToString("0")), name,
+                Lang.Format("gs_page_blocking_shield_tip", shield.m_absorbDamagePerSkillLevel.ToString("0.##")));
         }
 
         private static string Localized(string token) =>

@@ -8,7 +8,9 @@ namespace GrindstoneSkills
     /// position is their character ZDO's, on whichever machine has that ZDO (every machine near them), and the RPC goes
     /// to that ZDO's owner (a player always owns their own). A player whose ZDO this machine does not have is far away.
     /// The sending machine always gets it too, at once and without a send. Players up to <see cref="Margin"/> past the
-    /// range are included: the receiver tests its camera, which can sit away from the character.
+    /// range are included: the receiver tests its camera, which can sit away from the character. Words sent this way
+    /// travel as a Translations LangWire message, so each receiver reads them in its own language (<see cref="FloatingText"/>
+    /// reads one it is handed).
     /// </summary>
     public static class NearbyRpc
     {

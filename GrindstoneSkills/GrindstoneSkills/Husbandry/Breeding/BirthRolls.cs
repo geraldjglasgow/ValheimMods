@@ -18,8 +18,8 @@ namespace GrindstoneSkills
     /// </summary>
     public static class BirthRolls
     {
-        public const string StrongText = "Strong offspring!";
-        public const string TwinsText = "Twins!";
+        public const string StrongKey = "gs_herd_strong_offspring";
+        public const string TwinsKey = "gs_herd_twins";
 
         private static readonly int BirthsHash = Keys.Births.GetStableHashCode();
 
@@ -44,9 +44,9 @@ namespace GrindstoneSkills
             if (call.WasTwin)
                 TwinPregnancy.Clear(zdo);
             if (OffspringStar.Added(parent, call.Star))
-                HerdCallout.Send(Above(parent, 0f), StrongText);
+                HerdCallout.Send(Above(parent, 0f), StrongKey);
             if (call.Twins && TwinPregnancy.Conceive(parent, call.PregnancyDuration))
-                HerdCallout.Send(Above(parent, 0.6f), TwinsText);
+                HerdCallout.Send(Above(parent, 0.6f), TwinsKey);
         }
 
         /// <summary>The parent's birth count so far (<see cref="Keys.Births"/>), readable on any machine.</summary>

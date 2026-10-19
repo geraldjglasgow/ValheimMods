@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -14,9 +15,9 @@ namespace GrindstoneSkills
         public static string Duration(double seconds)
         {
             if (seconds < 60.0)
-                return $"{Mathf.Max(1, Mathf.CeilToInt((float)seconds))} s";
+                return Lang.Format("gs_herd_seconds", Mathf.Max(1, Mathf.CeilToInt((float)seconds)));
             int minutes = Mathf.CeilToInt((float)(seconds / 60.0));
-            return minutes < 60 ? $"{minutes} min" : $"{minutes / 60} h {minutes % 60} min";
+            return minutes < 60 ? Lang.Format("gs_herd_minutes", minutes) : Lang.Format("gs_herd_hours", minutes / 60, minutes % 60);
         }
 
         /// <summary>Adds <paramref name="line"/> on a new line; an empty line is skipped.</summary>

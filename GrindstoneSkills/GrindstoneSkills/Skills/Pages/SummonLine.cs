@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -24,12 +25,15 @@ namespace GrindstoneSkills
             page.Line(Text(name, stars, damage), name, Tip(staff, summon, steps, step));
         }
 
+        /// <summary>The line's text, the creature's name in it: with its stars, its extra damage, both, or "no stars yet".</summary>
         private static string Text(string name, int stars, float damage)
         {
-            if (stars <= 0 && damage <= 0f)
-                return $"{name}: no stars yet";
-            string starText = stars > 0 ? $" {stars}★" : "";
-            return damage > 0f ? $"{name}{starText}, damage +{SkillPage.Percent(damage)}" : name + starText;
+            if (damage <= 0f)
+                return stars > 0 ? Lang.Format("gs_page_summon_stars", name, stars) : Lang.Format("gs_page_summon_no_stars", name);
+            string bonus = SkillPage.Percent(damage);
+            return stars > 0
+                ? Lang.Format("gs_page_summon_stars_damage", name, stars, bonus)
+                : Lang.Format("gs_page_summon_damage", name, bonus);
         }
 
         /// <summary>The extra damage share at the player's level, as SpawnAbility writes it into the creature's random skill factor.</summary>
@@ -66,12 +70,12 @@ namespace GrindstoneSkills
 
         private static string Tip(string staff, SpawnAbility summon, List<SpawnAbility.LevelUpSettings> steps, SpawnAbility.LevelUpSettings step)
         {
-            List<string> parts = new List<string> { $"Summoned with the {staff}." };
+            List<string> parts = new List<string> { Lang.Format("gs_page_summon_with", staff) };
             string stars = StarSteps(steps);
             if (stars.Length > 0)
                 parts.Add(stars);
             if (summon.m_copySkill != Skills.SkillType.None && summon.m_copySkillToRandomFactor > 0f)
-                parts.Add($"Damage +{SkillPage.Percent(summon.m_copySkillToRandomFactor * 100f)} at level 100.");
+                parts.Add(Lang.Format("gs_page_summon_damage_at100", SkillPage.Percent(summon.m_copySkillToRandomFactor * 100f)));
             string follow = Followers(summon, step);
             if (follow.Length > 0)
                 parts.Add(follow);
@@ -85,9 +89,9 @@ namespace GrindstoneSkills
             foreach (SpawnAbility.LevelUpSettings step in steps)
             {
                 if (step.m_setLevel > 1)
-                    texts.Add($"{step.m_setLevel - 1}★ from level {step.m_skillLevel}");
+                    texts.Add(Lang.Format("gs_page_summon_star_step", step.m_setLevel - 1, step.m_skillLevel));
             }
-            return texts.Count == 0 ? "" : string.Join(", ", texts) + ". A star adds its base health again and half its damage.";
+            return texts.Count == 0 ? "" : Lang.Format("gs_page_summon_star_steps", string.Join(", ", texts));
         }
 
         /// <summary>How many may follow the caster at the step reached, or "" when the step sets no limit.</summary>
@@ -96,8 +100,8 @@ namespace GrindstoneSkills
             if (step == null)
                 return "";
             if (summon.m_setMaxInstancesFromWeaponLevel)
-                return "As many follow you at once as the staff's quality level; a new one sends the oldest away.";
-            return step.m_maxSpawns > 0 ? $"At most {step.m_maxSpawns} follow you at once; a new one sends the oldest away." : "";
+                return Lang.Get("gs_page_summon_follow_quality");
+            return step.m_maxSpawns > 0 ? Lang.Format("gs_page_summon_follow_max", step.m_maxSpawns) : "";
         }
 
         /// <summary>The summoned creature's name in the player's language (the first of its prefabs).</summary>
@@ -105,7 +109,7 @@ namespace GrindstoneSkills
         {
             GameObject prefab = summon.m_spawnPrefab != null && summon.m_spawnPrefab.Length > 0 ? summon.m_spawnPrefab[0] : null;
             if (prefab == null)
-                return "Summon";
+                return Lang.Get("gs_page_summon_fallback");
             Character creature = prefab.GetComponent<Character>();
             return creature != null ? WeaponLines.Name(creature.m_name) : prefab.name;
         }

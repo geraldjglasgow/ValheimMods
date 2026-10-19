@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -12,30 +14,25 @@ namespace GrindstoneSkills
         {
             if (!GameSkillSettings.Jumping.Value)
                 return;
-            page.Perk("Light Feet", 0f, LightFeetTip(page));
-            page.Perk("Soft Landing", 0f, SoftLandingTip(page.Factor));
-            page.Perk("Roll", LandingRoll.Level, RollTip(page.Factor));
+            page.Perk(Lang.Get("gs_perk_lightfeet"), 0f, LightFeetTip(page));
+            page.Perk(Lang.Get("gs_perk_softlanding"), 0f, SoftLandingTip(page.Factor));
+            page.Perk(Lang.Get("gs_perk_roll"), LandingRoll.Level, RollTip(page.Factor));
         }
 
         private static string LightFeetTip(SkillPage page)
         {
             float cost = page.Player.m_jumpStaminaUsage * Game.m_moveStaminaRate;
             float share = LightFeet.CostShare(page.Factor);
-            return $"A jump costs {SkillPage.Number(cost * share)} stamina at your level instead of {SkillPage.Number(cost)}, before gear: -{SkillPage.Percent(1f - share)}. "
-                + $"-{SkillPage.Percent(1f - LightFeet.CostShare(1f))} at level 100.";
+            return Lang.Format("gs_jump_lightfeet_tip", SkillPage.Number(cost * share), SkillPage.Number(cost),
+                SkillPage.Percent(1f - share), SkillPage.Percent(1f - LightFeet.CostShare(1f)));
         }
 
-        private static string SoftLandingTip(float factor)
-        {
-            string safe = $"Falls up to {SkillPage.Number(SoftLanding.SafeHeight(factor))} m do you no harm at your level ({SkillPage.Number(SoftLanding.SafeHeight(0f))} m untrained, {SkillPage.Number(SoftLanding.SafeHeight(1f))} m at level 100).";
-            string damage = $" Longer falls hurt {SkillPage.Percent(1f - SoftLanding.DamageShare(factor))} less ({SkillPage.Percent(1f - SoftLanding.DamageShare(1f))} at level 100):"
-                + $" at most {SkillPage.Number(SoftLanding.MaxDamage(factor))} damage, from {SkillPage.Number(SoftLanding.FullDamageHeight(factor))} m.";
-            return safe + damage;
-        }
+        private static string SoftLandingTip(float factor) => Lang.Format("gs_jump_softlanding_tip",
+            SkillPage.Number(SoftLanding.SafeHeight(factor)), SkillPage.Number(SoftLanding.SafeHeight(0f)), SkillPage.Number(SoftLanding.SafeHeight(1f)),
+            SkillPage.Percent(1f - SoftLanding.DamageShare(factor)), SkillPage.Percent(1f - SoftLanding.DamageShare(1f)),
+            SkillPage.Number(SoftLanding.MaxDamage(factor)), SkillPage.Number(SoftLanding.FullDamageHeight(factor)));
 
-        private static string RollTip(float factor) =>
-            $"Land from a fall that would hurt while moving forward and you roll: no damage from falls up to {SkillPage.Number(LandingRoll.FreeHeight(factor))} m"
-            + $" ({SkillPage.Number(LandingRoll.FreeHeight(1f))} m at level 100), {SkillPage.Percent(LandingRoll.Share)} of the damage above that."
-            + " The roll costs no stamina and does not shield you from hits.";
+        private static string RollTip(float factor) => Lang.Format("gs_jump_roll_tip",
+            SkillPage.Number(LandingRoll.FreeHeight(factor)), SkillPage.Number(LandingRoll.FreeHeight(1f)), SkillPage.Percent(LandingRoll.Share));
     }
 }

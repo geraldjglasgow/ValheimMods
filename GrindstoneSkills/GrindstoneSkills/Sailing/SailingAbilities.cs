@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using Hotkeys;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -8,7 +9,7 @@ namespace GrindstoneSkills
     /// <summary>
     /// Sailing's actives as other mods see them through <see cref="Api.SailingApi"/>: Wind Call (level 25) and the
     /// lookout (level 50), by id, with the local player's key, unlock and cooldown, and a line on what each does with
-    /// the current settings.
+    /// the current settings. Names and lines are in the local player's language, built when asked.
     /// </summary>
     public static class SailingAbilities
     {
@@ -27,7 +28,8 @@ namespace GrindstoneSkills
             return ids.ToArray();
         }
 
-        public static string Name(string id) => id == WindCall ? "Wind Call" : id == Lookout ? "Lookout" : "";
+        public static string Name(string id) =>
+            id == WindCall ? Lang.Get("gs_sail_ability_windcall") : id == Lookout ? Lang.Get("gs_sail_ability_lookout") : "";
 
         /// <summary>The player's key for it, short: "K", "Shift+O"; empty when unbound.</summary>
         public static string Key(string id)
@@ -45,19 +47,18 @@ namespace GrindstoneSkills
         public static string Description(string id)
         {
             if (id == WindCall)
-                return $"Turns the wind to blow the way you look for {WindCallSettings.Duration.Value:0} s, for everyone " +
-                    $"aboard. Use it while you steer. Cooldown {Seconds(WindCallSettings.Cooldown.Value)}.";
+                return Lang.Format("gs_sail_ability_windcall_description", WindCallSettings.Duration.Value.ToString("0"),
+                    Seconds(WindCallSettings.Cooldown.Value));
             if (id == Lookout)
-                return $"Sends a pulse {LookoutSettings.Radius.Value:0} m out from the ship: everyone aboard sees the name " +
-                    $"tags of the enemies it reaches for {LookoutSettings.Duration.Value:0} s. " +
-                    $"Cooldown {Seconds(LookoutSettings.Cooldown.Value)}.";
+                return Lang.Format("gs_sail_ability_lookout_description", LookoutSettings.Radius.Value.ToString("0"),
+                    LookoutSettings.Duration.Value.ToString("0"), Seconds(LookoutSettings.Cooldown.Value));
             return "";
         }
 
         private static string Seconds(float seconds)
         {
             int whole = Mathf.CeilToInt(Mathf.Max(0f, seconds));
-            return whole >= 60 && whole % 60 == 0 ? $"{whole / 60} min" : $"{whole} s";
+            return whole >= 60 && whole % 60 == 0 ? Lang.Format("gs_sail_minutes", whole / 60) : Lang.Format("gs_sail_seconds", whole);
         }
     }
 }

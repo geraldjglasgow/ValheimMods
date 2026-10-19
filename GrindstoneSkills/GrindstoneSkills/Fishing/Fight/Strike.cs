@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -72,7 +73,7 @@ namespace GrindstoneSkills
             fishingFloat.m_nibbler = null;
             Game.instance.IncrementPlayerStat(PlayerStatType.FishHooked);
             if (perfect)
-                FishCallout.ShowLocal(fishingFloat.transform.position + Vector3.up, "Perfect strike!");
+                FishCallout.ShowLocal(fishingFloat.transform.position + Vector3.up, Lang.Get("gs_fish_perfect_strike"));
             HookGuard.Run("big one", () => BigOne.OnHooked(fishingFloat, fight, nibbler));
             return true;
         }

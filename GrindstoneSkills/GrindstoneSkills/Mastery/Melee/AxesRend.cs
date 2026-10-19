@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -65,7 +66,7 @@ namespace GrindstoneSkills
             return oldest;
         }
 
-        public static void Perk(SkillPage page) => page.Perk("Rend", MeleeMastery.Level,
-            $"Each axe hit on the same foe within {SkillPage.Duration(Window)} of the last deals {SkillPage.Percent(Step)} more than the one before, up to {SkillPage.Percent(Step * MaxSteps)} once {MaxSteps} hits have landed in a row.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_rend"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_rend_tip", SkillPage.Duration(Window), SkillPage.Percent(Step), SkillPage.Percent(Step * MaxSteps), MaxSteps));
     }
 }

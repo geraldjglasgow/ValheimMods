@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.0
+
+- Translations: every word you read is in `translations/English.yml`; a `GrindstoneSkills.translations.<Language>.yml` in `BepInEx/config` translates it.
+- Callouts to nearby players (fish, wood, herd, mine) show in each player's own language.
+- Update the server and every client together.
+
 ## 0.18.1
 
 - Fixed: starred eggs count for recipes with Husbandry off too.

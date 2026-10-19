@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -9,7 +10,8 @@ namespace GrindstoneSkills
     /// refresh, and the hovered item's tooltip every frame. Items with no custom data, nearly all of them, stop at the
     /// first test. Otherwise the custom data is parsed the first time it is read and the result kept beside the item
     /// (a weak table, so nothing outlives the item), with the dictionary it came from and its size: a new dictionary or
-    /// one with a key added is parsed again, and every other read allocates nothing. Runs on every machine that asks.
+    /// one with a key added is parsed again, and every other read allocates nothing. The tooltip line is built on first
+    /// use and again after a change of language (<see cref="Lang.Version"/>). Runs on every machine that asks.
     /// </summary>
     public static class MarkReader
     {
@@ -17,8 +19,10 @@ namespace GrindstoneSkills
         {
             public Dictionary<string, string> Source;
             public int Count;
+            public float Share;
             public float Factor = 1f;
             public string Line;
+            public int LineVersion = -1;
         }
 
         private static readonly ConditionalWeakTable<ItemDrop.ItemData, Mark> marks = new ConditionalWeakTable<ItemDrop.ItemData, Mark>();
@@ -35,7 +39,15 @@ namespace GrindstoneSkills
         public static string Line(ItemDrop.ItemData item)
         {
             Dictionary<string, string> data = item.m_customData;
-            return data == null || data.Count == 0 ? null : Read(item, data).Line;
+            Mark mark = data == null || data.Count == 0 ? null : Read(item, data);
+            if (mark == null || mark.Share <= 0f)
+                return null;
+            if (mark.LineVersion != Lang.Version)
+            {
+                mark.Line = MakersMark.LineFor(mark.Share);
+                mark.LineVersion = Lang.Version;
+            }
+            return mark.Line;
         }
 
         private static Mark Read(ItemDrop.ItemData item, Dictionary<string, string> data)
@@ -54,8 +66,10 @@ namespace GrindstoneSkills
                 && float.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out float level)
                 ? MakersMark.Share(level)
                 : 0f;
+            mark.Share = share;
             mark.Factor = 1f + share;
-            mark.Line = share > 0f ? MakersMark.LineFor(share) : null;
+            mark.Line = null;
+            mark.LineVersion = -1;
         }
     }
 }

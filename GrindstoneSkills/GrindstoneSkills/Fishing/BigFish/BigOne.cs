@@ -30,7 +30,7 @@ namespace GrindstoneSkills
                 return;
             item.SetQuality(grown);
             ItemDrop.SaveToZDO(item.m_itemData, fish.m_nview.GetZDO());
-            FishCallout.Broadcast(fishingFloat.transform.position + Vector3.up, grown - level > 1 ? "It's a monster!" : "It's a big one!");
+            FishCallout.Broadcast(fishingFloat.transform.position + Vector3.up, grown - level > 1 ? "gs_fish_monster" : "gs_fish_big_one");
         }
     }
 }

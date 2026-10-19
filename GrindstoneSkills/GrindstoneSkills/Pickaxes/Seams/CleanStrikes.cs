@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -43,6 +44,7 @@ namespace GrindstoneSkills
             return multiplier * (1f + Mathf.Max(0f, SeamSettings.UnbrokenBonus.Value) / 100f * links);
         }
 
-        private static string Callout(int link) => link < 2 ? "Clean strike!" : $"Clean strike ×{link}!";
+        private static string Callout(int link) =>
+            link < 2 ? Lang.Get("gs_mine_clean_strike") : Lang.Format("gs_mine_clean_strike_chain", link);
     }
 }

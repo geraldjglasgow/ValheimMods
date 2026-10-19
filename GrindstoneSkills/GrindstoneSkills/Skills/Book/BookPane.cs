@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using PlateColumn;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -79,13 +80,13 @@ namespace GrindstoneSkills
         private static string LevelLine(Skills.Skill skill, float level)
         {
             int own = Mathf.FloorToInt(skill.m_level);
-            string line = $"Level {own}";
+            string line = Lang.Format("gs_book_level", own);
             int bonus = Mathf.FloorToInt(level) - own;
             if (bonus != 0)
                 line += $" <color={BonusColour}>{bonus:+0;-0}</color>";
             if (skill.m_level >= CustomSkill.MaxLevel)
-                return line + "  ·  highest level";
-            return line + $"  ·  {skill.GetLevelPercentage() * 100f:0}% to level {own + 1}";
+                return line + "  ·  " + Lang.Get("gs_book_level_highest");
+            return line + "  ·  " + Lang.Format("gs_book_level_progress", (skill.GetLevelPercentage() * 100f).ToString("0"), own + 1);
         }
 
         private void Mark(int index)

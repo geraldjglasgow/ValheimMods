@@ -39,7 +39,7 @@ namespace GrindstoneSkills
         {
             invulnerableUntil = Time.time + Mathf.Max(0f, DefenseMilestoneSettings.LastStandInvulnerability.Value);
             readyAt = Time.time + DefenseMilestoneSettings.LastStandCooldown.Value;
-            player.Message(MessageHud.MessageType.Center, "Last Stand!");
+            player.Message(MessageHud.MessageType.Center, DefenseCallout.Perk("gs_perk_laststand"));
             DefenseEffects.Refresh();
         }
     }

@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -11,26 +13,36 @@ namespace GrindstoneSkills
         /// <summary>The cut in an attack's stamina, eitr and health cost, and in a bow's draw drain, at level 100.</summary>
         public const float CostCut = 0.33f;
 
-        /// <summary>A melee skill's page: what it is, the damage a hit rolls and the attack stamina.</summary>
-        public static void Melee(SkillPage page, string about)
+        /// <summary>A melee skill's page: what it is (the key of its sentence), the damage a hit rolls and the attack stamina.</summary>
+        public static void Melee(SkillPage page, string aboutKey)
         {
-            page.About = about;
-            Damage(page, "the weapon's", "");
-            Cost(page, "Attack stamina", "Any eitr or health an attack costs drops by the same share.");
+            page.About = Lang.Get(aboutKey);
+            Damage(page, "gs_page_weapon_damage_line");
+            Cost(page, "gs_page_weapon_stamina", "gs_page_weapon_stamina_tip");
         }
 
-        /// <summary>"Damage 47–77% of the weapon's": the range a hit rolls in at this level, the range at 100 in the tip.</summary>
-        public static void Damage(SkillPage page, string whose, string more)
+        /// <summary>
+        /// "Damage 47–77% of the weapon's": the range a hit rolls in at this level, the range at 100 in the tip.
+        /// <paramref name="lineKey"/> is the line (the word as $1, the range as $2); <paramref name="tipKey"/>, when given,
+        /// a tip that adds to the shared one (that one as $1).
+        /// </summary>
+        public static void Damage(SkillPage page, string lineKey, string tipKey = null)
         {
             Roll(page, out float low, out float high);
-            page.Line($"Damage {SkillPage.Range(low, high)} of {whose}", "Damage",
-                $"Each hit rolls its damage and knockback in this share of the full amount: the yellow range on the weapon's tooltip. At 100: 85–100%.{more}");
+            string term = Lang.Get("gs_page_weapon_damage");
+            string tip = Lang.Get("gs_page_weapon_damage_tip");
+            page.Line(Lang.Format(lineKey, term, SkillPage.Range(low, high)), term, tipKey == null ? tip : Lang.Format(tipKey, tip));
         }
 
-        /// <summary>"Attack stamina -12.2%": a cost the skill cuts by up to <see cref="CostCut"/>, the thing itself explained on hover.</summary>
-        public static void Cost(SkillPage page, string what, string more)
+        /// <summary>
+        /// "Attack stamina -12.2%": a cost the skill cuts by up to <see cref="CostCut"/>, the thing itself explained on hover.
+        /// <paramref name="termKey"/> names the cost, <paramref name="moreKey"/> is the sentence after the cut at 100 in the tip.
+        /// </summary>
+        public static void Cost(SkillPage page, string termKey, string moreKey)
         {
-            page.Line($"{what} -{SkillPage.Percent(CostCut * page.Factor)}", what, $"At 100: -{SkillPage.Percent(CostCut)}. {more}");
+            string term = Lang.Get(termKey);
+            page.Line(Lang.Format("gs_page_weapon_cost_line", term, SkillPage.Percent(CostCut * page.Factor)), term,
+                Lang.Format("gs_page_weapon_cost_tip", SkillPage.Percent(CostCut), Lang.Get(moreKey)));
         }
 
         /// <summary>The share of a weapon's damage a hit rolls at the player's level, lowest and highest: the game's own range.</summary>
@@ -49,6 +61,6 @@ namespace GrindstoneSkills
             Localization.instance != null ? Localization.instance.Localize(token) : token;
 
         /// <summary>A short time with up to two decimals: "0.64 s".</summary>
-        public static string Seconds(float seconds) => $"{seconds:0.##} s";
+        public static string Seconds(float seconds) => Lang.Format("gs_page_weapon_seconds", seconds.ToString("0.##"));
     }
 }

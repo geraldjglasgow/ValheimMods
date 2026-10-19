@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -17,9 +18,7 @@ namespace GrindstoneSkills
         public static void Write(SkillPage page)
         {
             ItemDrop.ItemData tool = BuildTool(page.Player);
-            page.About = tool != null
-                ? "Craft faster and build for less. Trained by crafting, repairing gear and building."
-                : "Craft faster. Trained by crafting and repairing gear.";
+            page.About = Lang.Get(tool != null ? "gs_page_crafting_about_build" : "gs_page_crafting_about");
             if (InventoryGui.instance != null)
                 Stations(page, InventoryGui.instance);
             if (tool != null)
@@ -29,10 +28,13 @@ namespace GrindstoneSkills
         private static void Stations(SkillPage page, InventoryGui gui)
         {
             float time = 1f - page.Factor * gui.m_craftDurationSkillMaxDecrease;
-            page.Line($"Craft time -{SkillPage.Percent(1f - time)}", "Craft time",
-                $"At stations that train Crafting: {SkillPage.Duration(gui.m_craftDuration * time)} a craft instead of {SkillPage.Duration(gui.m_craftDuration)}, {SkillPage.Duration(gui.m_multiCraftDuration * time)} for {gui.m_multiCraftAmount} at once. -{SkillPage.Percent(gui.m_craftDurationSkillMaxDecrease)} at level 100.");
-            page.Line($"Extra item {SkillPage.Percent(page.Factor * gui.m_craftBonusChance)}", "Extra item",
-                $"Each craft of a stackable item, such as arrows, has that chance to give {gui.m_craftBonusAmount} more. {SkillPage.Percent(gui.m_craftBonusChance)} at level 100.");
+            string craftTime = Lang.Get("gs_page_crafting_time");
+            page.Line(Lang.Format("gs_page_crafting_time_line", craftTime, SkillPage.Percent(1f - time)), craftTime,
+                Lang.Format("gs_page_crafting_time_tip", SkillPage.Duration(gui.m_craftDuration * time), SkillPage.Duration(gui.m_craftDuration),
+                    SkillPage.Duration(gui.m_multiCraftDuration * time), gui.m_multiCraftAmount, SkillPage.Percent(gui.m_craftDurationSkillMaxDecrease)));
+            string extra = Lang.Get("gs_page_crafting_extra");
+            page.Line(Lang.Format("gs_page_crafting_extra_line", extra, SkillPage.Percent(page.Factor * gui.m_craftBonusChance)), extra,
+                Lang.Format("gs_page_crafting_extra_tip", gui.m_craftBonusAmount, SkillPage.Percent(gui.m_craftBonusChance)));
         }
 
         /// <summary>The tool's stamina for building, removing and repairing, and its wear when its wear follows Crafting.</summary>
@@ -42,13 +44,13 @@ namespace GrindstoneSkills
             string stamina = SkillPage.Percent(BuildStaminaAt100 * page.Factor);
             if (tool.m_shared.m_placementDurabilitySkill != Skills.SkillType.Crafting)
             {
-                page.Line($"{name}: stamina -{stamina}", name,
-                    $"For building, removing and repairing pieces with it. -{SkillPage.Percent(BuildStaminaAt100)} at level 100.");
+                page.Line(Lang.Format("gs_page_crafting_tool_line", name, stamina), name,
+                    Lang.Format("gs_page_crafting_tool_tip", SkillPage.Percent(BuildStaminaAt100)));
                 return;
             }
             float wear = tool.m_shared.m_placementDurabilityMax;
-            page.Line($"{name}: stamina -{stamina}, wear -{SkillPage.Percent(wear * page.Factor)}", name,
-                $"Stamina for building, removing and repairing pieces with it, wear for building and removing. -{SkillPage.Percent(BuildStaminaAt100)} and -{SkillPage.Percent(wear)} at level 100.");
+            page.Line(Lang.Format("gs_page_crafting_tool_wear_line", name, stamina, SkillPage.Percent(wear * page.Factor)), name,
+                Lang.Format("gs_page_crafting_tool_wear_tip", SkillPage.Percent(BuildStaminaAt100), SkillPage.Percent(wear)));
         }
 
         /// <summary>The build tool whose pieces train Crafting: the one in hand when it is one, else the first in ObjectDB.</summary>

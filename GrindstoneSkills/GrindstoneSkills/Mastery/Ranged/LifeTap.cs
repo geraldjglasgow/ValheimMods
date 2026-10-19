@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -17,8 +18,7 @@ namespace GrindstoneSkills
         private const float HealthCut = 0.25f;
 
         /// <summary>The perk's tip on the Blood Magic page.</summary>
-        public static string Tip =>
-            $"Blood magic spells that cost health cost {SkillPage.Percent(HealthCut)} less health, on top of the skill's own cut.";
+        public static string Tip => Lang.Format("gs_mastery_lifetap_tip", SkillPage.Percent(HealthCut));
 
         [HarmonyPatch(typeof(Attack), nameof(Attack.GetAttackHealth))]
         private static class Cost

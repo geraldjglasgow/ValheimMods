@@ -1,4 +1,5 @@
 using BepInEx.Configuration;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -6,7 +7,8 @@ namespace GrindstoneSkills
     /// <summary>
     /// Sailing's page in the info pane: ship health, helm speed and the map reveal at the player's level, how the skill
     /// trains, and the Wind Call and lookout milestones. The numbers are the synced settings scaled by the level exactly as the
-    /// features scale them (<see cref="ShipwrightHealth.Factor"/>, <see cref="SailingSkill.Share"/>).
+    /// features scale them (<see cref="ShipwrightHealth.Factor"/>, <see cref="SailingSkill.Share"/>). The two abilities'
+    /// names are the Sailing feature's own words (gs_sail_ability_*).
     /// </summary>
     public static class SailingPage
     {
@@ -15,10 +17,10 @@ namespace GrindstoneSkills
 
         public static void Write(SkillPage page)
         {
-            page.About = "Tougher, faster ships. Trained by sailing them.";
+            page.About = Lang.Get("gs_page_sailing_about");
             if (!SailingSkill.Active)
             {
-                page.Line("Turned off on this server.");
+                page.Line(Lang.Get("gs_page_sailing_off"));
                 return;
             }
             Ships(page);
@@ -30,14 +32,17 @@ namespace GrindstoneSkills
         private static void Ships(SkillPage page)
         {
             float level = page.Level;
-            page.Line($"Ships you build: health +{SkillPage.Percent(ShipwrightHealth.Factor(level) - 1f)}", "Ships you build",
-                "Fixed by your level when you place the ship. Ships built before keep their health.");
-            page.Line($"Ship speed at the helm +{Share(SailingSettings.ShipSpeed.Value, level)}", "at the helm",
-                "Top speed of any ship you steer, under sail and at the oars.");
+            string built = Lang.Get("gs_page_sailing_built");
+            page.Line(Lang.Format("gs_page_sailing_built_line", built, SkillPage.Percent(ShipwrightHealth.Factor(level) - 1f)), built,
+                Lang.Get("gs_page_sailing_built_tip"));
+            string helm = Lang.Get("gs_page_sailing_helm");
+            page.Line(Lang.Format("gs_page_sailing_helm_line", helm, Share(SailingSettings.ShipSpeed.Value, level)), helm,
+                Lang.Get("gs_page_sailing_helm_tip"));
             float share = SailingSkill.Share(SailingSettings.ExploreRadius.Value, level);
             float ashore = ExploreRadius();
-            page.Line($"Map reveal aboard {ashore * (1f + share):0} m (+{SkillPage.Percent(share)})", "Map reveal",
-                $"How far around you the map uncovers while you are aboard a ship. Ashore it is {ashore:0} m.");
+            string reveal = Lang.Get("gs_page_sailing_reveal");
+            page.Line(Lang.Format("gs_page_sailing_reveal_line", reveal, (ashore * (1f + share)).ToString("0"), SkillPage.Percent(share)), reveal,
+                Lang.Format("gs_page_sailing_reveal_tip", ashore.ToString("0")));
         }
 
         private static void Training(SkillPage page)
@@ -46,29 +51,36 @@ namespace GrindstoneSkills
             if (perKilometre <= 0f)
                 return;
             float crew = Mathf.Clamp01(SailingSettings.CrewShare.Value / 100f);
-            string crewText = crew > 0f ? $"Crew aboard earn {SkillPage.Percent(crew)} of it" : "Crew aboard earn none";
-            page.Line($"Experience {SkillPage.Number(perKilometre)} per km at the helm", "Experience",
-                $"For the distance a ship moves while you steer it. {crewText}; a ship nobody steers earns nothing.");
+            string tip = crew > 0f
+                ? Lang.Format("gs_page_sailing_xp_tip_crew", SkillPage.Percent(crew))
+                : Lang.Get("gs_page_sailing_xp_tip_nocrew");
+            string experience = Lang.Get("gs_page_sailing_xp");
+            page.Line(Lang.Format("gs_page_sailing_xp_line", experience, SkillPage.Number(perKilometre)), experience, tip);
         }
 
         private static void WindCall(SkillPage page)
         {
-            page.Perk("Wind Call", WindCallSettings.Level.Value,
-                $"Press {KeyText(WindCallSettings.Key, "Wind Call Key")} while steering a ship: the wind turns to blow the way you look, for everyone aboard, for {SkillPage.Duration(WindCallSettings.Duration.Value)}.{Again(WindCallSettings.Cooldown.Value)}");
+            string tip = Lang.Format("gs_page_sailing_windcall_tip", KeyText(WindCallSettings.Key),
+                SkillPage.Duration(WindCallSettings.Duration.Value));
+            page.Perk(Lang.Get("gs_sail_ability_windcall"), WindCallSettings.Level.Value, tip + Again(WindCallSettings.Cooldown.Value));
         }
 
         private static void Lookout(SkillPage page)
         {
-            page.Perk("Lookout", LookoutSettings.Level.Value,
-                $"Press {KeyText(LookoutSettings.Key, "Lookout Key")} aboard a ship: everyone aboard sees the name tags of enemies (not bosses) within {LookoutSettings.Radius.Value:0} m for {SkillPage.Duration(LookoutSettings.Duration.Value)}.{Again(LookoutSettings.Cooldown.Value)}");
+            string tip = Lang.Format("gs_page_sailing_lookout_tip", KeyText(LookoutSettings.Key),
+                LookoutSettings.Radius.Value.ToString("0"), SkillPage.Duration(LookoutSettings.Duration.Value));
+            page.Perk(Lang.Get("gs_sail_ability_lookout"), LookoutSettings.Level.Value, tip + Again(LookoutSettings.Cooldown.Value));
         }
 
-        private static string Again(float cooldown) => cooldown > 0f ? $" Once every {SkillPage.Duration(cooldown)}." : "";
+        /// <summary>" Once every 5 min." after a tip, or "" without a cooldown.</summary>
+        private static string Again(float cooldown) =>
+            cooldown > 0f ? " " + Lang.Format("gs_page_sailing_again", SkillPage.Duration(cooldown)) : "";
 
-        private static string KeyText(ConfigEntry<KeyboardShortcut> entry, string setting)
+        /// <summary>The ability's key, or "the Wind Call Key (not set)": the .cfg setting's own name, which stays English.</summary>
+        private static string KeyText(ConfigEntry<KeyboardShortcut> entry)
         {
             KeyboardShortcut key = entry.Value;
-            return key.MainKey == KeyCode.None ? $"the {setting} (not set)" : key.ToString();
+            return key.MainKey == KeyCode.None ? Lang.Format("gs_page_sailing_key_unset", entry.Definition.Key) : key.ToString();
         }
 
         private static float ExploreRadius() => Minimap.instance != null ? Minimap.instance.m_exploreRadius : GameExploreRadius;

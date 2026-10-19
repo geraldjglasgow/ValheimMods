@@ -1,5 +1,6 @@
 using Hotkeys;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -48,9 +49,9 @@ namespace GrindstoneSkills
         {
             float level = WindCallSettings.Level.Value;
             if (SailingSkill.Local() < level)
-                return $"Wind Call needs Sailing {level:0}";
+                return Lang.Format("gs_sail_windcall_needs", level.ToString("0"));
             float wait = readyAt - Time.time;
-            return wait > 0f ? $"Wind Call ready in {Mathf.CeilToInt(wait)} s" : null;
+            return wait > 0f ? Lang.Format("gs_sail_windcall_wait", Mathf.CeilToInt(wait)) : null;
         }
 
         /// <summary>The way the camera looks, flat: its yaw alone, so looking up or down still gives a direction.</summary>

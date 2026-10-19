@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -14,7 +15,7 @@ namespace GrindstoneSkills
         public const float MaxLevel = CustomSkill.MaxLevel;
 
         public static readonly CustomSkill Skill = new CustomSkill(Keys.ForagingSkillName, Name,
-            "Picking wild berries, mushrooms, herbs and stones: extra yield, sweep picking.",
+            Lang.Token("gs_forage_skill_desc"),
             Keys.ForagingLevel, ForagingIcon.Find);
 
         public static Skills.SkillType Type => Skill.Type;

@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -25,7 +27,7 @@ namespace GrindstoneSkills
                 return "";
             float required = TamingLevels.Required(Herd.PrefabName(tameable));
             return required > 0f && TamingSpeed.Factor(tameable) <= 0f
-                ? $"Needs a Husbandry {required:0} keeper within {tameable.m_tamingSpeedMultiplierRange:0} m to tame" : "";
+                ? Lang.Format("gs_herd_needs_keeper", required.ToString("0"), tameable.m_tamingSpeedMultiplierRange.ToString("0")) : "";
         }
 
         private static string TamingLine(Tameable tameable)
@@ -33,7 +35,7 @@ namespace GrindstoneSkills
             if (!Herd.IsBeingTamed(tameable))
                 return "";
             float factor = TamingSpeed.Factor(tameable);
-            return factor > 0f ? $"Tamed in about {LoreText.Duration(Herd.TamingLeft(tameable) / factor)} while fed and calm" : "";
+            return factor > 0f ? Lang.Format("gs_herd_tamed_in", LoreText.Duration(Herd.TamingLeft(tameable) / factor)) : "";
         }
 
         private static string FedLine(Tameable tameable)
@@ -41,7 +43,7 @@ namespace GrindstoneSkills
             if (tameable.m_character == null || !(tameable.IsTamed() || Herd.IsBeingTamed(tameable)) || tameable.IsHungry())
                 return "";
             double left = tameable.m_fedDuration - Herd.SecondsSince(tameable.m_nview.GetZDO().GetLong(ZDOVars.s_tameLastFeeding));
-            return left > 0.0 ? $"Fed for {LoreText.Duration(left)}" : "";
+            return left > 0.0 ? Lang.Format("gs_herd_fed_for", LoreText.Duration(left)) : "";
         }
 
         private static string ContentLine(Tameable tameable)
@@ -49,7 +51,7 @@ namespace GrindstoneSkills
             if (!tameable.IsTamed() || !BreedingPace.IsContent(tameable.m_nview))
                 return "";
             double left = -Herd.SecondsSince(tameable.m_nview.GetZDO().GetLong(Keys.ContentUntil));
-            return $"Content for {LoreText.Duration(left)}";
+            return Lang.Format("gs_herd_content_for", LoreText.Duration(left));
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -33,8 +34,7 @@ namespace GrindstoneSkills
         private static float keptAt;
 
         /// <summary>The perk's tip on the Crossbows page.</summary>
-        public static string Tip =>
-            "Sprinting, jumping or dodging pauses a crossbow reload instead of restarting it: it goes on from where it was once you stop.";
+        public static string Tip => Lang.Get("gs_mastery_steadyreload_tip");
 
         [HarmonyPatch(typeof(Player), nameof(Player.ClearActionQueue))]
         private static class Cleared

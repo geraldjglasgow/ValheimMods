@@ -1,5 +1,6 @@
 using System.Globalization;
 using HarmonyLib;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -66,8 +67,8 @@ namespace GrindstoneSkills
             HookGuard.Run("legendary catch", () => LegendaryCatch.OnCatch(info));
             if (info.Weight <= 0f)
                 return message;
-            string weight = info.Weight.ToString("0.0", CultureInfo.InvariantCulture) + " kg";
-            return message + " (" + weight + (info.NewRecord ? ", new record!)" : ")");
+            string weight = info.Weight.ToString("0.0", CultureInfo.InvariantCulture);
+            return Lang.Format(info.NewRecord ? "gs_fish_catch_record" : "gs_fish_catch_weight", message, weight);
         }
     }
 }

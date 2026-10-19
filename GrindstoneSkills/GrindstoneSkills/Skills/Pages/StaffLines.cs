@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -117,8 +118,10 @@ namespace GrindstoneSkills
             float absorb = shield.m_absorbDamage + fromLevel;
             if (Game.m_worldLevel > 0)
                 absorb += shield.m_absorbDamageWorldLevel * Game.m_worldLevel;
-            page.Line($"Shield absorbs {absorb:0} damage", "Shield",
-                $"The {staff}'s shield takes hits until it has soaked up this much: {shield.m_absorbDamage:0} plus {SkillPage.Number(shield.m_absorbDamagePerSkillLevel)} per level, +{fromLevel:0} at yours.");
+            string term = Lang.Get("gs_page_staff_shield");
+            page.Line(Lang.Format("gs_page_staff_shield_line", term, absorb.ToString("0")), term,
+                Lang.Format("gs_page_staff_shield_tip", staff, shield.m_absorbDamage.ToString("0"),
+                    SkillPage.Number(shield.m_absorbDamagePerSkillLevel), fromLevel.ToString("0")));
         }
     }
 }

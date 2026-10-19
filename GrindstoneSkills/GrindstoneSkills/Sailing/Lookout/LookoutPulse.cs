@@ -1,5 +1,6 @@
 using HarmonyLib;
 using PatchGuard;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -42,9 +43,10 @@ namespace GrindstoneSkills
 
         private static string Report(int found, float radius)
         {
+            string metres = radius.ToString("0");
             if (found == 0)
-                return $"Lookout: no enemies within {radius:0} m";
-            return found == 1 ? $"Lookout: 1 enemy within {radius:0} m" : $"Lookout: {found} enemies within {radius:0} m";
+                return Lang.Format("gs_sail_lookout_none", metres);
+            return found == 1 ? Lang.Format("gs_sail_lookout_one", metres) : Lang.Format("gs_sail_lookout_many", found, metres);
         }
     }
 }

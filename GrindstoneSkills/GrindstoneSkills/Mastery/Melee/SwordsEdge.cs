@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -24,7 +26,7 @@ namespace GrindstoneSkills
                 hit.ApplyModifier(1f + Damage);
         }
 
-        public static void Perk(SkillPage page) => page.Perk("Edge", MeleeMastery.Level,
-            $"Sword hits on a staggered foe deal {SkillPage.Percent(Damage)} more damage, on top of the double damage the game already gives a staggered creature.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_edge"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_edge_tip", SkillPage.Percent(Damage)));
     }
 }

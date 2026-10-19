@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -17,7 +18,7 @@ namespace GrindstoneSkills
             if (Random.value >= DefenseSkill.LocalShare(DefenseGuardSettings.BashChance.Value))
                 return;
             attacker.Stagger(-hit.m_dir);
-            DefenseCallout.Show(attacker.GetTopPoint(), "Bash!");
+            DefenseCallout.Show(attacker.GetTopPoint(), Lang.Get("gs_defense_bash"));
         }
     }
 }

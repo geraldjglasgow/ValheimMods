@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -34,17 +35,17 @@ namespace GrindstoneSkills
         public static float BigOneFactor() =>
             EnvMan.IsNight() ? 1f + FishSkill.Percent(FishingBigFishSettings.NightBonus.Value) : 1f;
 
-        /// <summary>"Good fishing: dusk, rain" or "Quiet water", for the angler's species sense.</summary>
+        /// <summary>"Good fishing: dusk, rain." or "Quiet water.", for the angler's species sense, in the player's language.</summary>
         public static string Describe()
         {
             List<string> good = new List<string>();
             if (DawnDusk() >= 0.5f && EnvMan.instance != null)
-                good.Add(EnvMan.instance.GetDayFraction() < 0.5f ? "dawn" : "dusk");
+                good.Add(Lang.Get(EnvMan.instance.GetDayFraction() < 0.5f ? "gs_fish_condition_dawn" : "gs_fish_condition_dusk"));
             if (EnvMan.IsWet())
-                good.Add("rain");
+                good.Add(Lang.Get("gs_fish_condition_rain"));
             if (EnvMan.IsNight())
-                good.Add("night, when the big ones feed");
-            return good.Count == 0 ? "Quiet water." : "Good fishing: " + string.Join(", ", good) + ".";
+                good.Add(Lang.Get("gs_fish_condition_night"));
+            return good.Count == 0 ? Lang.Get("gs_fish_conditions_quiet") : Lang.Format("gs_fish_conditions_good", string.Join(", ", good));
         }
     }
 }

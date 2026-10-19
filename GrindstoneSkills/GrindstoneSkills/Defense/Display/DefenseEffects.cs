@@ -1,4 +1,5 @@
 using System;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -9,7 +10,8 @@ namespace GrindstoneSkills
     /// cooldown) and Desperation. Each is a <see cref="DefenseStatus"/> added to the player's SEMan while its state
     /// holds and gone as soon as it ends. They are added four times a second, and at once by the feature that just
     /// started one (<see cref="Refresh"/>), so a death that cleared them brings back those still running. Icons are item
-    /// icons from the game's own items, else the Defense icon.
+    /// icons from the game's own items, else the Defense icon. Names are word tokens the HUD localizes as it draws them
+    /// (a perk's own name where the state is a perk), so a language change applies to the icons already showing.
     /// </summary>
     public static class DefenseEffects
     {
@@ -17,17 +19,17 @@ namespace GrindstoneSkills
 
         private static readonly DefenseEffect[] Effects =
         {
-            new DefenseEffect("grindstone_defense_riposte", "Riposte", "SwordIron",
+            new DefenseEffect("grindstone_defense_riposte", Lang.Token("gs_perk_riposte"), "SwordIron",
                 () => Riposte.ArmedFor > 0f, () => Seconds(Riposte.ArmedFor)),
-            new DefenseEffect("grindstone_defense_shieldwall", "Shield Wall", "ShieldWood",
+            new DefenseEffect("grindstone_defense_shieldwall", Lang.Token("gs_perk_shieldwall"), "ShieldWood",
                 () => ShieldWall.Sheltered(Player.m_localPlayer), null),
-            new DefenseEffect("grindstone_defense_hardened", "Hardened", "ArmorIronChest",
-                () => Hardened.Stacks > 0, () => $"{Hardened.Stacks}x"),
-            new DefenseEffect("grindstone_defense_laststand", "Last Stand", "HelmetDrake",
+            new DefenseEffect("grindstone_defense_hardened", Lang.Token("gs_perk_hardened"), "ArmorIronChest",
+                () => Hardened.Stacks > 0, () => Lang.Format("gs_defense_stacks", Hardened.Stacks)),
+            new DefenseEffect("grindstone_defense_laststand", Lang.Token("gs_perk_laststand"), "HelmetDrake",
                 () => LastStand.Invulnerable, () => Seconds(LastStand.InvulnerableFor)),
-            new DefenseEffect("grindstone_defense_recovering", "Last Stand recovering", "HelmetDrake",
+            new DefenseEffect("grindstone_defense_recovering", Lang.Token("gs_defense_laststand_recovering"), "HelmetDrake",
                 () => LastStand.Unlocked && LastStand.CooldownLeft > 0f, () => StatusEffect.GetTimeString(LastStand.CooldownLeft), true),
-            new DefenseEffect("grindstone_defense_desperation", "Desperation", "Bloodbag",
+            new DefenseEffect("grindstone_defense_desperation", Lang.Token("gs_defense_desperation"), "Bloodbag",
                 () => Desperation.Holds(Player.m_localPlayer), null),
         };
 
@@ -57,7 +59,7 @@ namespace GrindstoneSkills
             }
         }
 
-        private static string Seconds(float seconds) => $"{Mathf.CeilToInt(seconds)}s";
+        private static string Seconds(float seconds) => Lang.Format("gs_defense_seconds", Mathf.CeilToInt(seconds));
 
         private sealed class DefenseEffect
         {

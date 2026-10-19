@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -14,17 +16,17 @@ namespace GrindstoneSkills
             switch (page.Type)
             {
                 case Skills.SkillType.Bows:
-                    page.Perk("Recover", RangedMastery.Level, BowRecover.Tip);
+                    page.Perk(Lang.Get("gs_perk_recover"), RangedMastery.Level, BowRecover.Tip);
                     break;
                 case Skills.SkillType.Crossbows:
-                    page.Perk("Steady Reload", RangedMastery.Level, SteadyReload.Tip);
+                    page.Perk(Lang.Get("gs_perk_steadyreload"), RangedMastery.Level, SteadyReload.Tip);
                     break;
                 case Skills.SkillType.ElementalMagic:
-                    page.Perk("Attunement", RangedMastery.Level, Attunement.Tip);
+                    page.Perk(Lang.Get("gs_perk_attunement"), RangedMastery.Level, Attunement.Tip);
                     break;
                 case Skills.SkillType.BloodMagic:
-                    page.Perk("Life Tap", RangedMastery.Level, LifeTap.Tip);
-                    page.Perk("Shield Training", 0f, ShieldXp.Tip);
+                    page.Perk(Lang.Get("gs_perk_lifetap"), RangedMastery.Level, LifeTap.Tip);
+                    page.Perk(Lang.Get("gs_perk_shieldtraining"), 0f, ShieldXp.Tip);
                     break;
             }
         }

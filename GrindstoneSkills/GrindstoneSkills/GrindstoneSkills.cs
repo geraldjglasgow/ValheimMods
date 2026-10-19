@@ -13,7 +13,7 @@ namespace GrindstoneSkills
     {
         public const string PluginGuid = "com.GrindstoneSkills";
         public const string PluginName = "GrindstoneSkills";
-        public const string PluginVersion = "0.18.1";
+        public const string PluginVersion = "0.19.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -27,6 +27,8 @@ namespace GrindstoneSkills
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            // The player-facing words, in the game's language (translations/English.yml and any translation files).
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "GrindstoneSkills", Logger);
             // Starred eggs and starred food count for recipes.
             AnyQuality.Install(harmony);
             // The mod's own skills (not in the game's enum): one entry per skill.

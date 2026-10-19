@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -15,30 +17,33 @@ namespace GrindstoneSkills
             if (!GameSkillSettings.Swimming.Value)
                 return;
             float factor = page.Factor;
-            page.Perk("Quick Dry", 0f, QuickDryTip(factor));
-            page.Perk("Long Breath", 0f, LongBreathTip(factor));
-            page.Perk("Salvage", 0f, SalvageTip(page.Player, factor));
+            page.Perk(Lang.Get("gs_perk_quickdry"), 0f, QuickDryTip(factor));
+            page.Perk(Lang.Get("gs_perk_longbreath"), 0f, LongBreathTip(factor));
+            page.Perk(Lang.Get("gs_perk_salvage"), 0f, SalvageTip(page.Player, factor));
         }
 
         private static string QuickDryTip(float factor)
         {
-            string sooner = $"Wet ends {SkillPage.Percent(1f - QuickDry.Kept(factor))} sooner after you leave the water or the rain";
+            string sooner = SkillPage.Percent(1f - QuickDry.Kept(factor));
             float wet = WetTime();
             if (wet <= 0f)
-                return $"{sooner}. {SkillPage.Percent(1f - QuickDry.Kept(1f))} at level 100.";
-            return $"{sooner}: {SkillPage.Duration(wet * QuickDry.Kept(factor))} at your level, {SkillPage.Duration(wet)} untrained, {SkillPage.Duration(wet * QuickDry.Kept(1f))} at level 100.";
+                return Lang.Format("gs_swim_quickdry_tip", sooner, SkillPage.Percent(1f - QuickDry.Kept(1f)));
+            return Lang.Format("gs_swim_quickdry_tip_times", sooner, SkillPage.Duration(wet * QuickDry.Kept(factor)),
+                SkillPage.Duration(wet), SkillPage.Duration(wet * QuickDry.Kept(1f)));
         }
 
         private static string LongBreathTip(float factor)
         {
             float hurt = DrownShare * LongBreath.Kept(factor);
-            return $"Out of stamina in water, drowning starts {SkillPage.Number(LongBreath.Delay(factor))} s later and hurts {SkillPage.Percent(1f - LongBreath.Kept(factor))} less: {SkillPage.Percent(hurt)} of max health a second instead of {SkillPage.Percent(DrownShare)}. {SkillPage.Number(LongBreath.Delay(1f))} s later and {SkillPage.Percent(1f - LongBreath.Kept(1f))} less at level 100.";
+            return Lang.Format("gs_swim_longbreath_tip", SkillPage.Number(LongBreath.Delay(factor)), SkillPage.Percent(1f - LongBreath.Kept(factor)),
+                SkillPage.Percent(hurt), SkillPage.Percent(DrownShare), SkillPage.Number(LongBreath.Delay(1f)), SkillPage.Percent(1f - LongBreath.Kept(1f)));
         }
 
         private static string SalvageTip(Player player, float factor)
         {
             float range = player.m_autoPickupRange;
-            return $"While you swim, loose items are picked up from {SkillPage.Number(range * Salvage.Reach(factor))} m instead of {SkillPage.Number(range)} m. {SkillPage.Number(range * Salvage.Reach(1f))} m at level 100.";
+            return Lang.Format("gs_swim_salvage_tip", SkillPage.Number(range * Salvage.Reach(factor)), SkillPage.Number(range),
+                SkillPage.Number(range * Salvage.Reach(1f)));
         }
 
         /// <summary>The game's Wet time in seconds, or 0 when it cannot be read.</summary>

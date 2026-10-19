@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -56,7 +57,7 @@ namespace GrindstoneSkills
             Vector3 spot = chest + Vector3.ClampMagnitude(deposit.Position - chest, PingDistance);
             WishbonePing.Play(spot);
             int metres = Mathf.RoundToInt(Vector3.Distance(player.transform.position, deposit.Position));
-            FloatingText.Show(spot, $"{deposit.DisplayName}, {metres} m");
+            FloatingText.Show(spot, Lang.Format("gs_mine_echo", deposit.DisplayName, metres));
         }
     }
 }

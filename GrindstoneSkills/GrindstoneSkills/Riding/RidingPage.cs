@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -13,10 +15,10 @@ namespace GrindstoneSkills
             if (!GameSkillSettings.Riding.Value)
                 return;
             float factor = page.Factor;
-            page.Perk("Gallop", 0f,
-                $"A mount you ride runs {SkillPage.Percent(Gallop.Boost(factor) - 1f)} faster, on top of the game's gallop speed above. +{SkillPage.Percent(Gallop.Boost(1f) - 1f)} at level 100.");
-            page.Perk("Steady Seat", 0f,
-                $"A mount takes {SkillPage.Percent(1f - SteadySeat.Kept(factor))} less damage while you ride it, drowning included. {SkillPage.Percent(1f - SteadySeat.Kept(1f))} at level 100.");
+            page.Perk(Lang.Get("gs_perk_gallop"), 0f,
+                Lang.Format("gs_ride_gallop_tip", SkillPage.Percent(Gallop.Boost(factor) - 1f), SkillPage.Percent(Gallop.Boost(1f) - 1f)));
+            page.Perk(Lang.Get("gs_perk_steadyseat"), 0f,
+                Lang.Format("gs_ride_steadyseat_tip", SkillPage.Percent(1f - SteadySeat.Kept(factor)), SkillPage.Percent(1f - SteadySeat.Kept(1f))));
         }
     }
 }

@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -7,7 +8,8 @@ namespace GrindstoneSkills
     /// stable hash of <see cref="Keys.SailingSkillName"/>. Levels live with the character like every skill
     /// (client-side); each player's client also publishes its level to the player's own ZDO under
     /// <see cref="Keys.SailingLevel"/>, so a ship's owner can read the helmsman's level. The icon is
-    /// <c>assets/skill_sailing.png</c> (<see cref="EmbeddedIcon"/>), else the Karve's.
+    /// <c>assets/skill_sailing.png</c> (<see cref="EmbeddedIcon"/>), else the Karve's. Its description is a word token,
+    /// which the game's skills panel and the skill book read in the player's language when they show it.
     /// </summary>
     public static class SailingSkill
     {
@@ -17,7 +19,7 @@ namespace GrindstoneSkills
         private static readonly string[] IconShips = { "Karve", "VikingShip", "Raft" };
 
         public static readonly CustomSkill Skill = new CustomSkill(Keys.SailingSkillName, Name,
-            "Health of the ships you build, speed of the ships you steer, and how far you explore at sea.",
+            Lang.Token("gs_sail_skill_description"),
             Keys.SailingLevel, ShipIcon);
 
         public static Skills.SkillType Type => Skill.Type;

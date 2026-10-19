@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -15,10 +16,10 @@ namespace GrindstoneSkills
 
         public static void Write(SkillPage page)
         {
-            page.About = "Better wild picks. Trained by picking berries, mushrooms and herbs.";
+            page.About = Lang.Get("gs_page_foraging_about");
             if (!ForagingSkill.Active)
             {
-                page.Line("Turned off on this server.");
+                page.Line(Lang.Get("gs_page_foraging_off"));
                 return;
             }
             Yield(page);
@@ -29,8 +30,9 @@ namespace GrindstoneSkills
         private static void Yield(SkillPage page)
         {
             float atHundred = Mathf.Clamp01(ForagePerkSettings.ExtraYieldAt100.Value / 100f);
-            page.Line($"Extra yield {SkillPage.Percent(page.Factor * atHundred)}", "Extra yield",
-                $"Chance that a pick gives one more. {SkillPage.Percent(atHundred)} at level 100.");
+            string term = Lang.Get("gs_page_foraging_yield");
+            page.Line(Lang.Format("gs_page_foraging_yield_line", term, SkillPage.Percent(page.Factor * atHundred)), term,
+                Lang.Format("gs_page_foraging_yield_tip", SkillPage.Percent(atHundred)));
         }
 
         private static void Experience(SkillPage page)
@@ -40,28 +42,30 @@ namespace GrindstoneSkills
                 return;
             float step = Mathf.Max(0f, ForagingSettings.BiomeStep.Value) / 100f;
             float most = perPick * (1f + step * LastBiomeStep);
-            string range = most > perPick ? $"{SkillPage.Number(perPick)} to {SkillPage.Number(most)}" : SkillPage.Number(perPick);
-            page.Line($"Experience {range} per pick", "Experience",
-                $"{SkillPage.Number(perPick)} in the Meadows, +{SkillPage.Percent(step)} for each biome beyond, up to {SkillPage.Number(most)} in the Ashlands. Crops, even wild ones, train Farming.");
+            string term = Lang.Get("gs_page_foraging_xp");
+            string line = most > perPick
+                ? Lang.Format("gs_page_foraging_xp_range_line", term, SkillPage.Number(perPick), SkillPage.Number(most))
+                : Lang.Format("gs_page_foraging_xp_line", term, SkillPage.Number(perPick));
+            page.Line(line, term,
+                Lang.Format("gs_page_foraging_xp_tip", SkillPage.Number(perPick), SkillPage.Percent(step), SkillPage.Number(most)));
         }
 
         private static void Perks(SkillPage page)
         {
             float discovery = ForagingSettings.DiscoveryMultiplier.Value;
             if (discovery > 1f)
-                page.Perk("Discovery", 0f,
-                    $"The first pick of each kind of forage earns {SkillPage.Number(discovery)}x the experience, once per character.");
+                page.Perk(Lang.Get("gs_perk_discovery"), 0f, Lang.Format("gs_page_foraging_discovery_tip", SkillPage.Number(discovery)));
             float reach = Mathf.Max(0f, ForagePerkSettings.SweepRadiusAt100.Value);
             float unlock = reach > 0f ? ForagePerkSettings.SweepLevel.Value : CustomSkill.MaxLevel + 1f;
-            page.Perk("Sweep", unlock, SweepTip(page.Level, unlock, reach));
+            page.Perk(Lang.Get("gs_perk_sweep"), unlock, SweepTip(page.Level, unlock, reach));
         }
 
         private static string SweepTip(float level, float unlock, float reachAt100)
         {
-            const string What = "Picking a plant also picks every plant of the same kind within";
             if (level >= unlock)
-                return $"{What} {SkillPage.Number(ForageSweep.Radius(level))} m of it. {SkillPage.Number(reachAt100)} m at level 100.";
-            return $"{What} {SkillPage.Number(ForageSweep.Radius(unlock))} m of it at level {unlock:0}, {SkillPage.Number(reachAt100)} m at level 100.";
+                return Lang.Format("gs_page_foraging_sweep_tip", SkillPage.Number(ForageSweep.Radius(level)), SkillPage.Number(reachAt100));
+            return Lang.Format("gs_page_foraging_sweep_locked_tip", SkillPage.Number(ForageSweep.Radius(unlock)), unlock.ToString("0"),
+                SkillPage.Number(reachAt100));
         }
     }
 }

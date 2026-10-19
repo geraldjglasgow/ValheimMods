@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -18,7 +20,7 @@ namespace GrindstoneSkills
 
         public static void OnHit(HitData hit) => hit.ApplyModifier(1f + Damage);
 
-        public static void Perk(SkillPage page) => page.Perk("Brawler", MeleeMastery.Level,
-            $"Unarmed hits, bare fists and claws alike, deal {SkillPage.Percent(Damage)} more damage.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_brawler"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_brawler_tip", SkillPage.Percent(Damage)));
     }
 }

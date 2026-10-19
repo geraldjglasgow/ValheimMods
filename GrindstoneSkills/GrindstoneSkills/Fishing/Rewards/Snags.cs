@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -40,7 +41,7 @@ namespace GrindstoneSkills
                 return;
             fight.Snagged = true;
             fight.SnagBiome = BiomeAt(fishingFloat.transform.position);
-            angler.Message(MessageHud.MessageType.Center, "Snagged something heavy!");
+            angler.Message(MessageHud.MessageType.Center, Lang.Get("gs_fish_snagged"));
         }
 
         /// <summary>The chance, 0..1, that a cast snags, at the angler's level.</summary>
@@ -75,11 +76,11 @@ namespace GrindstoneSkills
             FindEntry find = SnagFile.Pick(biome);
             if (find == null || SnagLoot.Give(angler, find) == 0)
             {
-                angler.Message(MessageHud.MessageType.Center, "Only weeds.");
+                angler.Message(MessageHud.MessageType.Center, Lang.Get("gs_fish_snag_weeds"));
                 return;
             }
-            angler.Message(MessageHud.MessageType.Center, "Landed " + find.Name + "!");
-            FishCallout.Broadcast(angler.transform.position + Vector3.up * 2f, "Found " + find.Name + "!");
+            angler.Message(MessageHud.MessageType.Center, Lang.Format("gs_fish_snag_landed", find.Name));
+            FishCallout.Broadcast(angler.transform.position + Vector3.up * 2f, "gs_fish_snag_found", find.Name);
         }
     }
 }

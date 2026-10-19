@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using PlateColumn;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -54,7 +55,7 @@ namespace GrindstoneSkills
         {
             if (page.Perks.Count == 0)
                 return;
-            Heading("Perks");
+            Heading(Lang.Get("gs_book_perks"));
             foreach (PagePerk perk in page.Perks)
                 Bullet(Link(perk.Name, perk.Name, perk.Tip) + State(perk, page.Level));
         }
@@ -64,8 +65,8 @@ namespace GrindstoneSkills
             if (perk.Level <= 0f)
                 return "";
             return level >= perk.Level
-                ? $"  <color={UnlockedColour}>unlocked</color>"
-                : $"  <color={LockedColour}>at level {perk.Level:0}</color>";
+                ? $"  <color={UnlockedColour}>{Lang.Get("gs_book_perk_unlocked")}</color>"
+                : $"  <color={LockedColour}>{Lang.Format("gs_book_perk_at_level", perk.Level.ToString("0"))}</color>";
         }
 
         private void Heading(string words)

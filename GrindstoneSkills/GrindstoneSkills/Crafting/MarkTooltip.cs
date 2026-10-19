@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -20,6 +21,7 @@ namespace GrindstoneSkills
         private const string DurabilityKey = "\n$item_durability:";
 
         private static float previewShare = -1f;
+        private static int previewVersion = -1;
         private static string previewLine;
 
         [HarmonyPostfix]
@@ -34,7 +36,7 @@ namespace GrindstoneSkills
 
         private static string LineFor(ItemDrop.ItemData item, bool crafting) => crafting ? Preview(item) : MarkReader.Line(item);
 
-        /// <summary>The mark a craft of this recipe item would get now, kept per share so it is built once.</summary>
+        /// <summary>The mark a craft of this recipe item would get now, kept per share and language so it is built once.</summary>
         private static string Preview(ItemDrop.ItemData item)
         {
             if (!CraftingPerks.Enabled || !MakersMark.Qualifies(item) || CraftingPerks.Station(Player.m_localPlayer) == null)
@@ -42,9 +44,10 @@ namespace GrindstoneSkills
             float share = MakersMark.Share(LocalSkill.Level(Skills.SkillType.Crafting));
             if (share <= 0f)
                 return null;
-            if (share != previewShare)
+            if (share != previewShare || previewVersion != Lang.Version)
             {
                 previewShare = share;
+                previewVersion = Lang.Version;
                 previewLine = MakersMark.LineFor(share);
             }
             return previewLine;

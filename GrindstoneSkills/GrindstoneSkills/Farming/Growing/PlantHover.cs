@@ -1,5 +1,6 @@
 using System.Text;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -12,7 +13,7 @@ namespace GrindstoneSkills
     /// <item>for a plant a player planted, "[E] Tend" or "Tended today" while tending is on.</item>
     /// </list>
     /// Everything is read from the plant's ZDO on the viewing client. The lines are kept for the plant in view and
-    /// rebuilt after 0.25 s, or at once when its ZDO changes (tended, fertilized).
+    /// rebuilt after 0.25 s, or at once when its ZDO changes (tended, fertilized) or the language does.
     /// </summary>
     [HarmonyPatch(typeof(Plant), nameof(Plant.GetHoverText))]
     public static class PlantHover
@@ -22,6 +23,7 @@ namespace GrindstoneSkills
         private static readonly StringBuilder text = new StringBuilder();
         private static Plant lastPlant;
         private static uint lastRevision;
+        private static int lastLanguage = -1;
         private static string lastLines = "";
         private static float refreshAt;
 
@@ -32,17 +34,18 @@ namespace GrindstoneSkills
                 __result += HookGuard.Run("Farming plant hover", static plant => Cached(plant), __instance, "");
         }
 
-        /// <summary>The lines for this plant, rebuilt when the plant or its ZDO changed or the refresh time passed.</summary>
+        /// <summary>The lines for this plant, rebuilt when the plant, its ZDO or the language changed or the refresh time passed.</summary>
         private static string Cached(Plant plant)
         {
             ZDO zdo = PlantKeys.Of(plant);
             if (zdo == null)
                 return "";
             float now = Time.time;
-            if (ReferenceEquals(plant, lastPlant) && zdo.DataRevision == lastRevision && now < refreshAt)
+            if (ReferenceEquals(plant, lastPlant) && zdo.DataRevision == lastRevision && lastLanguage == Lang.Version && now < refreshAt)
                 return lastLines;
             lastPlant = plant;
             lastRevision = zdo.DataRevision;
+            lastLanguage = Lang.Version;
             refreshAt = now + RefreshSeconds;
             lastLines = "";
             lastLines = Lines(plant, zdo);
@@ -55,7 +58,7 @@ namespace GrindstoneSkills
             if (plant.GetStatus() == Plant.Status.Healthy)
                 text.Append('\n').Append(Ripening(PlantClock.Left(plant)));
             if (PlantKeys.Fed(zdo))
-                text.Append("\nFertilized");
+                text.Append('\n').Append(Lang.Get("gs_farm_fertilized"));
             string tend = Tending.Enabled && PlantKeys.IsPlanted(zdo) ? TendLine(plant, zdo) : "";
             if (tend.Length > 0)
                 text.Append('\n').Append(tend);
@@ -65,19 +68,19 @@ namespace GrindstoneSkills
         private static string Ripening(double seconds)
         {
             if (seconds <= 0.0)
-                return "Ripe soon";
+                return Lang.Get("gs_farm_ripe_soon");
             if (seconds < 60.0)
-                return "Ripe in under a minute";
+                return Lang.Get("gs_farm_ripe_under_minute");
             int minutes = Mathf.CeilToInt((float)(seconds / 60.0));
-            return minutes < 60 ? $"Ripe in {minutes} min" : $"Ripe in {minutes / 60} h {minutes % 60} min";
+            return minutes < 60 ? Lang.Format("gs_farm_ripe_minutes", minutes) : Lang.Format("gs_farm_ripe_hours", minutes / 60, minutes % 60);
         }
 
         private static string TendLine(Plant plant, ZDO zdo)
         {
             int day = EnvMan.instance != null ? EnvMan.instance.GetDay() : 0;
             if (PlantKeys.TendedDay(zdo) >= day)
-                return "Tended today";
-            return Tending.CanTend(plant, zdo, day) ? Localization.instance.Localize("[<color=yellow><b>$KEY_Use</b></color>] Tend") : "";
+                return Lang.Get("gs_farm_tended_today");
+            return Tending.CanTend(plant, zdo, day) ? Localization.instance.Localize("[<color=yellow><b>$KEY_Use</b></color>] $gs_farm_tend") : "";
         }
     }
 }

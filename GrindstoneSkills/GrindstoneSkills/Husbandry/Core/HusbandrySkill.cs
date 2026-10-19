@@ -1,4 +1,5 @@
 using PlateColumn;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -21,7 +22,7 @@ namespace GrindstoneSkills
         private static bool triedEmbedded;
 
         public static readonly CustomSkill Skill = new CustomSkill(Keys.HusbandrySkillName, Name,
-            "Taming, breeding and keeping animals: faster taming, calm creatures, better offspring and more from your herd.",
+            Lang.Token("gs_herd_skill_desc"),
             Keys.HusbandryLevel, Icon);
 
         public static Skills.SkillType Type => Skill.Type;

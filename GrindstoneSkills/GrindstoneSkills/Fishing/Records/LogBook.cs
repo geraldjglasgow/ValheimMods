@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -34,14 +36,15 @@ namespace GrindstoneSkills
             FishXp.OnDiscovery(info, true);
             int known = AnglerLog.SpeciesCount(info.Player);
             int total = System.Math.Max(known, FishInfo.Species().Count);
-            info.Player.Message(MessageHud.MessageType.TopLeft, $"New in your angler's log: {info.Name} ({known} of {total} species)");
+            info.Player.Message(MessageHud.MessageType.TopLeft, Lang.Format("gs_fish_log_new_species", info.Name, known, total));
         }
 
         private static void NewSize(CatchInfo info)
         {
             FishXp.OnDiscovery(info, false);
-            string size = info.Legendary ? "a legendary " + info.Name : $"a level {info.Level} {info.Name}";
-            info.Player.Message(MessageHud.MessageType.TopLeft, "New size in your angler's log: " + size);
+            string message = info.Legendary ? Lang.Format("gs_fish_log_new_size_legendary", info.Name)
+                : Lang.Format("gs_fish_log_new_size_level", info.Level, info.Name);
+            info.Player.Message(MessageHud.MessageType.TopLeft, message);
         }
     }
 }

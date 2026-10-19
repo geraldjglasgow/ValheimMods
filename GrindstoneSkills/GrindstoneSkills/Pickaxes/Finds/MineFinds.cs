@@ -47,7 +47,7 @@ namespace GrindstoneSkills
             Vector3 away = Away(broken);
             Vector3 spot = broken.Position + away * Offset + Vector3.up * Lift;
             if (FindSpawner.Spawn(find, spot, away) > 0)
-                MineCallout.Broadcast(spot, "Found " + find.Name + "!");
+                MineCallout.Broadcast(spot, "gs_mine_found", find.Name);
         }
 
         /// <summary>The chance of a find, 0..1, for a miner at this Pickaxes level.</summary>

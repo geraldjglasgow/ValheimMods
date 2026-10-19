@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -14,7 +15,8 @@ namespace GrindstoneSkills
     /// <item>Skills.Load keeps only types the game's enum defines (IsSkillValid), so a saved level would be dropped
     /// without the second patch.</item>
     /// <item>The skills panel and the level-up message name a skill "$skill_" + the type's name in lower case; the
-    /// word reaches the game's localization whenever a language is set up.</item>
+    /// names are words of <c>translations/English.yml</c>, which the Translations library writes into the game's
+    /// localization whenever a language is set up.</item>
     /// <item>Icons are looked up when ZNetScene wakes, once the prefabs are loaded.</item>
     /// </list>
     /// The death penalty, the skills panel, the world's skill-gain modifier and the level-up message then work
@@ -27,20 +29,22 @@ namespace GrindstoneSkills
         public static IReadOnlyList<CustomSkill> All => skills;
 
         /// <summary>
-        /// Registers the mod's own skills, in the plugin's Awake. Also names them in a language the game set up before
-        /// the plugin loaded; that reads the instance field, since Localization.instance would create the
-        /// localization before the platform knows the locale.
+        /// Registers the mod's own skills, in the plugin's Awake, after the words are installed. A skill whose name is
+        /// missing from the words (its type number changed) still gets its English name, with a warning.
         /// </summary>
         public static void Initialize(params CustomSkill[] own)
         {
             foreach (CustomSkill skill in own)
             {
-                if (skill != null && Find(skill.Type) == null)
-                    skills.Add(skill);
+                if (skill == null || Find(skill.Type) != null)
+                    continue;
+                skills.Add(skill);
+                if (!Lang.Has(skill.LocalizationKey))
+                {
+                    GrindstoneSkills.Log.LogWarning($"No word {skill.LocalizationKey} for the skill {skill.Name}; its English name is used.");
+                    Lang.Add(skill.LocalizationKey, skill.Name);
+                }
             }
-            Localization localization = Localization.m_instance;
-            if (localization != null)
-                AddNames.Postfix(localization);
         }
 
         public static CustomSkill Find(Skills.SkillType type) => skills.Find(skill => skill.Type == type);
@@ -71,18 +75,6 @@ namespace GrindstoneSkills
         {
             [HarmonyPostfix]
             private static void Postfix(Skills.SkillType type, ref bool __result) => __result |= Find(type) != null;
-        }
-
-        [HarmonyPatch(typeof(Localization), nameof(Localization.SetupLanguage))]
-        private static class AddNames
-        {
-            [HarmonyPostfix]
-            internal static void Postfix(Localization __instance)
-            {
-                foreach (CustomSkill skill in skills)
-                    __instance.AddWord(skill.LocalizationKey, skill.Name);
-                __instance.m_cache.EvictAll();
-            }
         }
 
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]

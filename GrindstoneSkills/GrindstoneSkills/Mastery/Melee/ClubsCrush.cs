@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -24,7 +26,7 @@ namespace GrindstoneSkills
                 hit.m_staggerMultiplier = raised;
         }
 
-        public static void Perk(SkillPage page) => page.Perk("Crush", MeleeMastery.Level,
-            $"Club hits build {SkillPage.Percent(Stagger)} more stagger, so foes are knocked off balance sooner.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_crush"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_crush_tip", SkillPage.Percent(Stagger)));
     }
 }

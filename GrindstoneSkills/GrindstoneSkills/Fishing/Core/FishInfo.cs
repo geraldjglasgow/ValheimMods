@@ -67,9 +67,8 @@ namespace GrindstoneSkills
         /// </summary>
         public static IReadOnlyList<GameObject> Species() => PrefabIndex.Items().Fish;
 
-        /// <summary>"a Pike", "an Anglerfish": the name with its English article.</summary>
-        public static string WithArticle(string name) =>
-            (name.Length > 0 && "AEIOUaeiou".IndexOf(name[0]) >= 0 ? "an " : "a ") + name;
+        /// <summary>Whether English says "an" before the name ("an Anglerfish"); messages pick their word key by it.</summary>
+        public static bool TakesAn(string name) => name.Length > 0 && "AEIOUaeiou".IndexOf(name[0]) >= 0;
 
         public static string Localize(string token) =>
             Localization.instance == null ? token : Localization.instance.Localize(token);

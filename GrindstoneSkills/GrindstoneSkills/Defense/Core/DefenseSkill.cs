@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -15,7 +16,7 @@ namespace GrindstoneSkills
         public const float MaxLevel = CustomSkill.MaxLevel;
 
         public static readonly CustomSkill Skill = new CustomSkill(Keys.DefenseSkillName, Name,
-            "More health, more health from food and less damage taken; regeneration out of combat, poise, a wider parry window and cheaper blocks and dodges. Trained by blocking and by taking hits.",
+            Lang.Token("gs_defense_skill_desc"),
             Keys.DefenseLevel, DefenseIcon.Find);
 
         public static Skills.SkillType Type => Skill.Type;

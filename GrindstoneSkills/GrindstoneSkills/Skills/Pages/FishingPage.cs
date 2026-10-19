@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -20,10 +21,10 @@ namespace GrindstoneSkills
             Game(page);
             if (!FishSkill.Active)
             {
-                page.Line("GrindstoneSkills' Fishing is off on this server.");
+                page.Line(Lang.Get("gs_page_fishing_off"));
                 return;
             }
-            page.About = "Hook more fish and land bigger ones. Trained by fighting and landing them.";
+            page.About = Lang.Get("gs_page_fishing_about");
             Fight(page);
             Catch(page);
             Perks(page);
@@ -37,114 +38,116 @@ namespace GrindstoneSkills
                 return;
             float factor = page.Factor;
             float speed = Mathf.Lerp(prefab.m_pullLineSpeed, prefab.m_pullLineSpeedMaxSkill, factor);
-            page.Line($"Reel speed {speed:0.#} m/s", "Reel speed",
-                "The game's own: how fast the line comes in while you reel (hold block). Half as fast while the fish thrashes.");
+            Line(page, "gs_page_fishing_reel_speed", "gs_page_fishing_reel_speed_line", Lang.Get("gs_page_fishing_reel_speed_tip"),
+                speed.ToString("0.#"));
             float saved = 1f - Mathf.Lerp(1f, prefab.m_pullStaminaUseMaxSkillMultiplier, factor);
             float hold = Mathf.Lerp(prefab.m_hookedStaminaPerSec, prefab.m_hookedStaminaPerSecMaxSkill, factor);
-            page.Line($"Reel stamina -{SkillPage.Percent(saved)}", "Reel stamina",
-                $"The game's own: reeling costs that much less. A fish on the line also drains {hold:0.##} stamina per second.");
+            Line(page, "gs_page_fishing_reel_stamina", "gs_page_fishing_reel_stamina_line",
+                Lang.Format("gs_page_fishing_reel_stamina_tip", hold.ToString("0.##")), SkillPage.Percent(saved));
         }
 
         private static void Fight(SkillPage page)
         {
             float level = page.Level;
-            page.Line($"Bite chance +{Share(FishingBiteSettings.BiteChanceAt100.Value, level)}", "Bite chance", BiteTip());
-            page.Heading("The fight");
-            page.Line($"Strike window {Strike.Window(level):0.##} s", "Strike window",
-                "Time after a nibble in which reeling sets the hook. The game's own is 0.5 s.");
+            Line(page, "gs_page_fishing_bite", "gs_page_fishing_bite_line", BiteTip(), Share(FishingBiteSettings.BiteChanceAt100.Value, level));
+            page.Heading(Lang.Get("gs_page_fishing_heading_fight"));
+            Line(page, "gs_page_fishing_strike", "gs_page_fishing_strike_line", Lang.Get("gs_page_fishing_strike_tip"),
+                Strike.Window(level).ToString("0.##"));
             if (FishingFightSettings.TensionEnabled.Value)
-                page.Line($"Line tension {SkillPage.Percent(Tension.Change(true, true, level))}/s", "Line tension", TensionTip());
+                Line(page, "gs_page_fishing_tension", "gs_page_fishing_tension_line", TensionTip(),
+                    SkillPage.Percent(Tension.Change(true, true, level)));
         }
 
         private static void Catch(SkillPage page)
         {
             float level = page.Level;
-            page.Heading("The catch");
+            page.Heading(Lang.Get("gs_page_fishing_heading_catch"));
             if (FishingBigFishSettings.BigOneChanceAt100.Value > 0f)
-                page.Line($"Big one {Share(FishingBigFishSettings.BigOneChanceAt100.Value, level)}", "Big one", BigOneTip());
+                Line(page, "gs_page_fishing_big_one", "gs_page_fishing_big_one_line", BigOneTip(),
+                    Share(FishingBigFishSettings.BigOneChanceAt100.Value, level));
             string bonus = BonusChance(level);
             if (bonus.Length > 0)
-                page.Line($"Bonus item {bonus}", "Bonus item", "Chance a landed fish also brings its own bonus item. A legendary fish always does.");
+                Line(page, "gs_page_fishing_bonus", "gs_page_fishing_bonus_line", Lang.Get("gs_page_fishing_bonus_tip"), bonus);
             if (FishingCatchSettings.BaitSaverAt100.Value > 0f)
-                page.Line($"Bait saver {Share(FishingCatchSettings.BaitSaverAt100.Value, level)}", "Bait saver",
-                    "Chance a landed fish gives your bait back.");
+                Line(page, "gs_page_fishing_bait", "gs_page_fishing_bait_line", Lang.Get("gs_page_fishing_bait_tip"),
+                    Share(FishingCatchSettings.BaitSaverAt100.Value, level));
             float snag = Snags.Chance(level);
             if (snag > 0f)
-                page.Line($"Snag {SkillPage.Percent(snag)}", "Snag", SnagTip());
+                Line(page, "gs_page_fishing_snag", "gs_page_fishing_snag_line", SnagTip(), SkillPage.Percent(snag));
             if (FishingCatchSettings.CastDistanceAt100.Value > 0f || FishingCatchSettings.LineLengthAt100.Value > 0f)
-                page.Line($"Cast +{Share(FishingCatchSettings.CastDistanceAt100.Value, level)}, line +{Share(FishingCatchSettings.LineLengthAt100.Value, level)}",
-                    "line", LineTip(level));
+                Line(page, "gs_page_fishing_line", "gs_page_fishing_cast_line", LineTip(level),
+                    Share(FishingCatchSettings.CastDistanceAt100.Value, level), Share(FishingCatchSettings.LineLengthAt100.Value, level));
         }
 
         private static void Perks(SkillPage page)
         {
             float perfect = FishingFightSettings.PerfectStrikeWindow.Value;
             if (perfect > 0f)
-                page.Perk("Perfect Strike", 0f, $"Start reeling within {perfect:0.##} s of a nibble, when you were not reeling already, and the fish skips its first thrash.");
-            page.Perk("Angler's Log", 0f, LogTip());
-            page.Perk("Species Sense", FishingBiteSettings.SpeciesSenseLevel.Value,
-                "A nibble names the fish, and a cast that lands tells the fishing conditions: dawn, dusk, rain, night.");
-            page.Perk("Size Sense", FishingBiteSettings.SizeSenseLevel.Value,
-                "A nibble also tells the fish's level, and so does looking at a fish in the water.");
-            page.Perk("Double Bonus", FishingCatchSettings.DoubleBonusLevel.Value, "A landed fish's bonus roll can bring two items instead of one.");
+                page.Perk(Lang.Get("gs_perk_perfectstrike"), 0f, Lang.Format("gs_page_fishing_perfect_tip", perfect.ToString("0.##")));
+            page.Perk(Lang.Get("gs_perk_anglerslog"), 0f, LogTip());
+            page.Perk(Lang.Get("gs_perk_speciessense"), FishingBiteSettings.SpeciesSenseLevel.Value, Lang.Get("gs_page_fishing_species_tip"));
+            page.Perk(Lang.Get("gs_perk_sizesense"), FishingBiteSettings.SizeSenseLevel.Value, Lang.Get("gs_page_fishing_size_tip"));
+            page.Perk(Lang.Get("gs_perk_doublebonus"), FishingCatchSettings.DoubleBonusLevel.Value, Lang.Get("gs_page_fishing_double_tip"));
             float legendary = FishingBigFishSettings.LegendaryChance.Value > 0f ? FishingBigFishSettings.LegendaryLevel.Value : FishSkill.MaxLevel + 1f;
-            page.Perk("Legendary Fish", legendary, LegendaryTip());
-            page.Perk("Grace", FishingFightSettings.GraceLevel.Value,
-                $"Once per fish, running out of stamina does not lose it at once: for {SkillPage.Duration(FishingFightSettings.GraceSeconds.Value)} it takes line while your stamina comes back. Still empty after that, it gets away.");
-            page.Perk("Water Sense", FishingBiteSettings.WaterSenseLevel.Value,
-                "A cast that lands tells which fish in reach take your bait, and whether a legendary one lurks.");
+            page.Perk(Lang.Get("gs_perk_legendaryfish"), legendary, LegendaryTip());
+            page.Perk(Lang.Get("gs_perk_grace"), FishingFightSettings.GraceLevel.Value,
+                Lang.Format("gs_page_fishing_grace_tip", SkillPage.Duration(FishingFightSettings.GraceSeconds.Value)));
+            page.Perk(Lang.Get("gs_perk_watersense"), FishingBiteSettings.WaterSenseLevel.Value, Lang.Get("gs_page_fishing_water_tip"));
         }
 
         private static string BiteTip()
         {
-            string tip = $"More fish go for your float. Bites also rise {SkillPage.Number(FishingBiteSettings.DawnDuskBonus.Value)}% at dawn and dusk";
-            string rain = $"{SkillPage.Number(FishingBiteSettings.RainBonus.Value)}% in rain";
+            string dawn = SkillPage.Number(FishingBiteSettings.DawnDuskBonus.Value);
+            string rain = SkillPage.Number(FishingBiteSettings.RainBonus.Value);
             string chum = ChumNames();
             if (chum.Length == 0)
-                return tip + $" and {rain}.";
-            return tip + $", {rain}, and {SkillPage.Number(FishingBiteSettings.ChumBonus.Value)}% within {SkillPage.Number(FishingBiteSettings.ChumRadius.Value)} m of chum ({chum}) floating in the water.";
+                return Lang.Format("gs_page_fishing_bite_tip", dawn, rain);
+            return Lang.Format("gs_page_fishing_bite_tip_chum", dawn, rain, SkillPage.Number(FishingBiteSettings.ChumBonus.Value),
+                SkillPage.Number(FishingBiteSettings.ChumRadius.Value), chum);
         }
 
         private static string TensionTip()
         {
             string ease = SkillPage.Percent(FishSkill.Percent(FishingFightSettings.TensionEase.Value));
-            string tip = $"Reeling while the fish thrashes fills the bar under the crosshair at this rate, and a full bar snaps the line. Letting go eases it {ease}/s.";
+            string tip = Lang.Format("gs_page_fishing_tension_tip", ease);
             int thrashes = FishingFightSettings.ThrashesToTire.Value;
             return thrashes > 0
-                ? tip + $" After {thrashes} thrashes the fish is spent and comes in {SkillPage.Number(FishingFightSettings.SpentReelSpeed.Value)}% faster."
+                ? tip + " " + Lang.Format("gs_page_fishing_tension_tip_spent", thrashes, SkillPage.Number(FishingFightSettings.SpentReelSpeed.Value))
                 : tip;
         }
 
         private static string BigOneTip() =>
-            $"Chance a hooked fish grows a level, rolled again up to level {FishInfo.MaxNaturalLevel}: +{SkillPage.Number(FishingBigFishSettings.NightBonus.Value)}% at night.";
+            Lang.Format("gs_page_fishing_big_one_tip", FishInfo.MaxNaturalLevel, SkillPage.Number(FishingBigFishSettings.NightBonus.Value));
 
         private static string SnagTip() =>
-            $"Once per cast, after {SkillPage.Duration(FishingCatchSettings.SnagWait.Value)} in the water without a bite, the line can catch a find from the biome's snag list. "
-            + "It reels in slow and heavy, and gives no experience.";
+            Lang.Format("gs_page_fishing_snag_tip", SkillPage.Duration(FishingCatchSettings.SnagWait.Value));
 
         private static string LineTip(float level)
         {
             FishingFloat prefab = FloatPrefab();
             if (prefab == null)
-                return "Casts fly farther, and the line snaps further from the rod.";
+                return Lang.Get("gs_page_fishing_line_tip");
             float reach = prefab.m_maxDistance * (1f + FishSkill.Share(FishingCatchSettings.LineLengthAt100.Value, level));
-            return $"Casts fly farther, and the line snaps only once the float is {SkillPage.Number(reach)} m from the rod.";
+            return Lang.Format("gs_page_fishing_line_tip_reach", SkillPage.Number(reach));
         }
 
+        /// <summary>The Angler's Log tip; /fishlog is a chat command, so it stays as typed in every language.</summary>
         private static string LogTip()
         {
-            string tip = "Every species and size you land is logged with your heaviest catch. Type /fishlog in chat, or read a fish's tooltip.";
+            string tip = Lang.Format("gs_page_fishing_log_tip", "/fishlog");
             return FishingExperienceSettings.Discovery.Value > 0f || FishingExperienceSettings.NewSize.Value > 0f
-                ? tip + " Each new species or size gives bonus experience."
+                ? tip + " " + Lang.Get("gs_page_fishing_log_tip_bonus")
                 : tip;
         }
 
         private static string LegendaryTip()
         {
             int thrashes = FishingBigFishSettings.LegendaryThrashes.Value;
-            string tires = thrashes > 0 ? $"tire after {thrashes} thrashes" : "never tire";
-            return $"{SkillPage.Number(FishingBigFishSettings.LegendaryChance.Value)}% of spawned fish are legendary: level {FishInfo.LegendaryLevel}, glowing, and they {tires}. "
-                + "From this level they take your bait, and they always bring a bonus item.";
+            string chance = SkillPage.Number(FishingBigFishSettings.LegendaryChance.Value);
+            string first = thrashes > 0
+                ? Lang.Format("gs_page_fishing_legendary_tip_tire", chance, FishInfo.LegendaryLevel, thrashes)
+                : Lang.Format("gs_page_fishing_legendary_tip_never", chance, FishInfo.LegendaryLevel);
+            return first + " " + Lang.Get("gs_page_fishing_legendary_tip_bait");
         }
 
         /// <summary>
@@ -168,7 +171,9 @@ namespace GrindstoneSkills
             }
             if (high < low)
                 return "";
-            return Mathf.Approximately(low, high) ? SkillPage.Percent(low) : $"{SkillPage.Percent(low)}-{SkillPage.Percent(high)}";
+            return Mathf.Approximately(low, high)
+                ? SkillPage.Percent(low)
+                : Lang.Format("gs_page_fishing_bonus_range", SkillPage.Percent(low), SkillPage.Percent(high));
         }
 
         /// <summary>The Chum Items setting as item names players read ("Entrails, Blood bag"); "" when chum is off.</summary>
@@ -208,6 +213,19 @@ namespace GrindstoneSkills
                     break;
             }
             return floatPrefab;
+        }
+
+        /// <summary>
+        /// A line that explains its term: the term is its own word, filled into the line's sentence as $1 before the
+        /// values, so the hover finds it in the line in every language.
+        /// </summary>
+        private static void Line(SkillPage page, string termKey, string lineKey, string tip, params object[] values)
+        {
+            string term = Lang.Get(termKey);
+            object[] filled = new object[values.Length + 1];
+            filled[0] = term;
+            values.CopyTo(filled, 1);
+            page.Line(Lang.Format(lineKey, filled), term, tip);
         }
 
         private static string Share(float percentAt100, float level) => SkillPage.Percent(FishSkill.Share(percentAt100, level));

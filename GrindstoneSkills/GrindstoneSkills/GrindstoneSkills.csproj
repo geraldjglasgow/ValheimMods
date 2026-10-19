@@ -5,7 +5,7 @@
     <AssemblyName>GrindstoneSkills</AssemblyName>
     <RootNamespace>GrindstoneSkills</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.18.1</Version>
+    <Version>0.19.0</Version>
     <Product>GrindstoneSkills</Product>
     <Description>GrindstoneSkills: deeper skills for Valheim, cooking and sailing</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -46,6 +46,8 @@
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
     <ProjectReference Include="$(ModLibsPath)\RecipeCounts\RecipeCounts.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files. -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -106,6 +108,8 @@
   <ItemGroup>
     <!-- Embedded default YAML files: GrindstoneSkills.config.<file> -->
     <EmbeddedResource Include="config\*.yml" LogicalName="GrindstoneSkills.config.%(Filename)%(Extension)" />
+    <!-- The words, read by the Translations library as GrindstoneSkills.translations.<Language>[.<part>].yml. -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="GrindstoneSkills.translations.%(Filename)%(Extension)" />
     <!-- Embedded images (skill and plate icons): GrindstoneSkills.assets.<file> -->
     <EmbeddedResource Include="assets\*.png" LogicalName="GrindstoneSkills.assets.%(Filename)%(Extension)" />
   </ItemGroup>

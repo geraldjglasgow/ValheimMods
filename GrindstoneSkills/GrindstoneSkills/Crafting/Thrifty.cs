@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -52,7 +53,7 @@ namespace GrindstoneSkills
             if (player.GetInventory().AddItem(material.Prefab.gameObject.name, 1, quality, shown.m_variant, 0L, "", false) == null)
                 return;
             string name = Localization.instance.Localize(shown.m_shared.m_name);
-            player.Message(MessageHud.MessageType.TopLeft, "Thrifty: 1 " + name + " saved", 0, shown.GetIcon());
+            player.Message(MessageHud.MessageType.TopLeft, Lang.Format("gs_craft_thrifty_saved", Lang.Get("gs_perk_thrifty"), name), 0, shown.GetIcon());
         }
     }
 }

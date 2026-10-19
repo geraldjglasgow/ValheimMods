@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -6,31 +8,26 @@ namespace GrindstoneSkills
     /// </summary>
     public static class MeleePages
     {
-        public static void Swords(SkillPage page) =>
-            WeaponLines.Melee(page, "Swords hit harder and cost less stamina. Trained by hitting creatures with a sword.");
+        public static void Swords(SkillPage page) => WeaponLines.Melee(page, "gs_page_swords_about");
 
-        public static void Knives(SkillPage page) =>
-            WeaponLines.Melee(page, "Knives hit harder and cost less stamina. Trained by hitting creatures with a knife.");
+        public static void Knives(SkillPage page) => WeaponLines.Melee(page, "gs_page_knives_about");
 
-        public static void Clubs(SkillPage page) =>
-            WeaponLines.Melee(page, "Clubs, maces and sledges hit harder and cost less stamina. Trained by hitting creatures with one.");
+        public static void Clubs(SkillPage page) => WeaponLines.Melee(page, "gs_page_clubs_about");
 
-        public static void Polearms(SkillPage page) =>
-            WeaponLines.Melee(page, "Atgeirs hit harder and cost less stamina. Trained by hitting creatures with one.");
+        public static void Polearms(SkillPage page) => WeaponLines.Melee(page, "gs_page_polearms_about");
 
-        public static void Spears(SkillPage page) =>
-            WeaponLines.Melee(page, "Spears hit harder, thrown or held, and cost less stamina. Trained by hitting creatures with a spear.");
+        public static void Spears(SkillPage page) => WeaponLines.Melee(page, "gs_page_spears_about");
 
         public static void Axes(SkillPage page)
         {
-            WeaponLines.Melee(page, "Axes and battleaxes hit harder and cost less stamina. Trained by hitting creatures with an axe.");
-            page.Line("Trees use Woodcutting instead", "Woodcutting",
-                "Most axes roll their damage on trees, logs and stumps from Woodcutting and train it there, not Axes. Axes still cuts the swing's stamina.");
+            WeaponLines.Melee(page, "gs_page_axes_about");
+            string term = Lang.Get("gs_page_axes_woodcutting");
+            page.Line(Lang.Format("gs_page_axes_trees_line", term), term, Lang.Get("gs_page_axes_trees_tip"));
         }
 
         public static void Unarmed(SkillPage page)
         {
-            WeaponLines.Melee(page, "Fists hit harder and cost less stamina. Trained by hitting creatures unarmed.");
+            WeaponLines.Melee(page, "gs_page_unarmed_about");
             Fists(page);
         }
 
@@ -44,8 +41,9 @@ namespace GrindstoneSkills
             if (damage <= 0f)
                 return;
             WeaponLines.Roll(page, out float low, out float high);
-            page.Line($"Bare fists hit for {damage * low:0}–{damage * high:0}", "Bare fists",
-                "Damage of a punch before the target's armour and resistances.");
+            string term = Lang.Get("gs_page_unarmed_fists");
+            page.Line(Lang.Format("gs_page_unarmed_fists_line", term, (damage * low).ToString("0"), (damage * high).ToString("0")), term,
+                Lang.Get("gs_page_unarmed_fists_tip"));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace GrindstoneSkills
             Vector3 away = Away(fell.HitDir);
             Vector3 spot = fell.Position + Vector3.up * (Height * fell.Scale.y) + away * (Offset * fell.Scale.x);
             if (FindSpawner.Spawn(find, spot, away) > 0)
-                WoodCallout.Broadcast(spot, "Found " + find.Name + "!");
+                WoodCallout.Broadcast(spot, "gs_wood_found", find.Name);
         }
 
         /// <summary>The chance of a find, 0..1, for a woodcutter at this share of level 100.</summary>

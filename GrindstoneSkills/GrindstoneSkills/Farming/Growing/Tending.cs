@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -93,11 +94,12 @@ namespace GrindstoneSkills
             {
                 ZDO zdo = PlantKeys.Of(center);
                 if (PlantKeys.TendedDay(zdo) >= day || (zdo != null && sentToday.Contains(zdo.m_uid)))
-                    player.Message(MessageHud.MessageType.Center, "Already tended today");
+                    player.Message(MessageHud.MessageType.Center, Lang.Get("gs_farm_already_tended"));
                 return;
             }
             player.DoInteractAnimation(center.gameObject);
-            player.Message(MessageHud.MessageType.Center, tended == 1 ? "Tended 1 plant" : $"Tended {tended} plants");
+            player.Message(MessageHud.MessageType.Center,
+                tended == 1 ? Lang.Get("gs_farm_tended_one") : Lang.Format("gs_farm_tended_many", tended));
             FarmXp.RaiseScaled(player, Mathf.Max(0f, FarmingExperienceSettings.TendingExperience.Value) * tended);
         }
     }

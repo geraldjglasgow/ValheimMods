@@ -1,5 +1,6 @@
 using System.Globalization;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -7,7 +8,7 @@ namespace GrindstoneSkills
     /// <summary>
     /// A compost bin's hover (the game's container hover: its name and the open key) also shows its compost, e.g.
     /// "Compost 23 / 100", read from the bin's ZDO on the viewing client. The hover runs every frame: the bin of the
-    /// container last looked at is found once, and its line is rebuilt only when the numbers change.
+    /// container last looked at is found once, and its line is rebuilt only when the numbers or the language change.
     /// </summary>
     [HarmonyPatch(typeof(Container), nameof(Container.GetHoverText))]
     public static class CompostHover
@@ -17,6 +18,7 @@ namespace GrindstoneSkills
         private static int lastPoints = -1;
         private static int lastCapacity = -1;
         private static bool lastWorking;
+        private static int lastLanguage = -1;
         private static string lastLine = "";
 
         [HarmonyPostfix]
@@ -40,13 +42,14 @@ namespace GrindstoneSkills
 
         private static string Line(int points, int capacity, bool working)
         {
-            if (points == lastPoints && capacity == lastCapacity && working == lastWorking)
+            if (points == lastPoints && capacity == lastCapacity && working == lastWorking && lastLanguage == Lang.Version)
                 return lastLine;
             lastPoints = points;
             lastCapacity = capacity;
             lastWorking = working;
-            lastLine = "\nCompost " + points.ToString(CultureInfo.InvariantCulture) + " / " + capacity.ToString(CultureInfo.InvariantCulture)
-                + (working ? "" : " (resting)");
+            lastLanguage = Lang.Version;
+            lastLine = "\n" + Lang.Format(working ? "gs_farm_compost_points" : "gs_farm_compost_resting",
+                points.ToString(CultureInfo.InvariantCulture), capacity.ToString(CultureInfo.InvariantCulture));
             return lastLine;
         }
     }

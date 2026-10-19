@@ -19,7 +19,8 @@ namespace GrindstoneSkills
         private readonly int levelHash;
 
         /// <param name="identity">The name whose stable hash is the type number. Never change it: saved levels use it.</param>
-        /// <param name="name">The name shown in the skills panel, and the word raiseskill and resetskill take.</param>
+        /// <param name="name">The English name: the word raiseskill, resetskill and the API take. The panel shows the word
+        /// <see cref="LocalizationKey"/> (translations/English.yml), this name only when that word is missing.</param>
         /// <param name="levelKey">The float key on the player's own ZDO the level is published under.</param>
         /// <param name="icon">Returns the skill's icon; called when ZNetScene wakes, until it returns one.</param>
         public CustomSkill(string identity, string name, string description, string levelKey, Func<Sprite> icon, float increaseStep = 1f)
@@ -36,7 +37,8 @@ namespace GrindstoneSkills
         public string Name { get; }
         public Skills.SkillType Type { get; }
 
-        /// <summary>The word the game looks up for the skill's name: "skill_" + the type's name in lower case, a number here.</summary>
+        /// <summary>The word the game looks up for the skill's name: "skill_" + the type's name in lower case, a number here.
+        /// The English names are in translations/English.yml under these keys.</summary>
         public string LocalizationKey { get; }
 
         public string LevelKey { get; }

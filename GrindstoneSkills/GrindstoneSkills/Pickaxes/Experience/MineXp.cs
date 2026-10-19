@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -69,7 +70,7 @@ namespace GrindstoneSkills
             if (amount <= 0f || !MineDiscovery.TryRecord(player, identity))
                 return;
             MineSwing.RaiseUnscoped(player, amount);
-            MineCallout.ShowLocal(hit.m_point, $"Discovered {rock.DisplayName}!");
+            MineCallout.ShowLocal(hit.m_point, Lang.Format("gs_mine_discovered", rock.DisplayName));
         }
 
         /// <summary>

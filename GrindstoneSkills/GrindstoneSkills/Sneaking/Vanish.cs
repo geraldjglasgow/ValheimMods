@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -76,7 +77,7 @@ namespace GrindstoneSkills
         {
             readyAt = Time.time + Cooldown;
             quiet = 0f;
-            FloatingText.Show(player.GetTopPoint(), "Vanished");
+            FloatingText.Show(player.GetTopPoint(), Lang.Get("gs_sneak_vanish_callout"));
         }
     }
 }

@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -21,7 +23,7 @@ namespace GrindstoneSkills
                 hit.ApplyModifier(1f + Damage);
         }
 
-        public static void Perk(SkillPage page) => page.Perk("Long Throw", MeleeMastery.Level,
-            $"Thrown spears deal {SkillPage.Percent(Damage)} more damage. Held spear thrusts are unchanged.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_longthrow"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_longthrow_tip", SkillPage.Percent(Damage)));
     }
 }

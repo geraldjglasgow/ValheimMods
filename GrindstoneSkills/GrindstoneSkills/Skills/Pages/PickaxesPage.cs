@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -8,7 +9,9 @@ namespace GrindstoneSkills
     /// splash, extra ore, wear, finds, experience) and its three milestones, each left out while its setting turns it off.
     /// The numbers are the synced settings scaled by the level exactly as the features scale them
     /// (<see cref="PickSkill.Share"/>, <see cref="PickSkill.Between"/>, <see cref="CleanStrikes.Multiplier"/>,
-    /// <see cref="Splash.Amount"/>, <see cref="MineFinds.Chance"/>, <see cref="MineXp.BiomeStep"/>).
+    /// <see cref="Splash.Amount"/>, <see cref="MineFinds.Chance"/>, <see cref="MineXp.BiomeStep"/>). The words are the
+    /// <c>gs_page_pickaxes_*</c> and perk name <c>gs_perk_*</c> keys (translations/English.yml); a line's hovered
+    /// word has its own key and goes into the line's sentence as <c>$1</c>.
     /// </summary>
     public static class PickaxesPage
     {
@@ -17,11 +20,11 @@ namespace GrindstoneSkills
 
         public static void Write(SkillPage page)
         {
-            page.About = "Mine faster and get more out of the rock. Trained by hitting rock.";
+            page.About = Lang.Get("gs_page_pickaxes_about");
             GameLines(page);
             if (!PickSkill.Active)
             {
-                page.Line("GrindstoneSkills extras are off on this server.");
+                page.Line(Lang.Get("gs_page_pickaxes_off"));
                 return;
             }
             SeamLines(page);
@@ -38,10 +41,11 @@ namespace GrindstoneSkills
         private static void GameLines(SkillPage page)
         {
             page.Player.GetSkills().GetRandomSkillRange(out float min, out float max, page.Type);
-            page.Line($"Mining damage {SkillPage.Range(min, max)}", "Mining damage",
-                "The game's own: each pickaxe hit deals this share of the pickaxe's damage, rolled per hit (85–100% at level 100).");
-            page.Line($"Swing stamina -{SkillPage.Percent(StaminaCut * page.Factor)}", "Swing stamina",
-                $"The game's own, for every pickaxe swing: -{SkillPage.Percent(StaminaCut)} at level 100.");
+            string damage = Lang.Get("gs_page_pickaxes_damage");
+            page.Line(Lang.Format("gs_page_pickaxes_damage_line", damage, SkillPage.Range(min, max)), damage, Lang.Get("gs_page_pickaxes_damage_tip"));
+            string stamina = Lang.Get("gs_page_pickaxes_stamina");
+            page.Line(Lang.Format("gs_page_pickaxes_stamina_line", stamina, SkillPage.Percent(StaminaCut * page.Factor)), stamina,
+                Lang.Format("gs_page_pickaxes_stamina_tip", SkillPage.Percent(StaminaCut)));
         }
 
         private static void SeamLines(SkillPage page)
@@ -51,16 +55,19 @@ namespace GrindstoneSkills
             float level = page.Level;
             float chance = PickSkill.Between(SeamSettings.ChanceAt0.Value, SeamSettings.ChanceAt100.Value, level) / 100f;
             float window = Mathf.Max(0.1f, PickSkill.Between(SeamSettings.WindowAt0.Value, SeamSettings.WindowAt100.Value, level));
-            page.Line($"Seams {SkillPage.Percent(chance)}, open {SkillPage.Duration(window)}", "Seams",
-                "Chance a swing on a rock of many chunks makes one chunk within reach glow, for you alone, for that long. Hit it in time for a clean strike.");
-            page.Line($"Clean strike ×{SkillPage.Number(CleanStrikes.Multiplier(1, level))} damage", "Clean strike", CleanStrikeTip());
+            string seams = Lang.Get("gs_page_pickaxes_seams");
+            page.Line(Lang.Format("gs_page_pickaxes_seams_line", seams, SkillPage.Percent(chance), SkillPage.Duration(window)), seams,
+                Lang.Get("gs_page_pickaxes_seams_tip"));
+            string clean = Lang.Get("gs_page_pickaxes_clean");
+            page.Line(Lang.Format("gs_page_pickaxes_clean_line", clean, SkillPage.Number(CleanStrikes.Multiplier(1, level))), clean, CleanStrikeTip());
         }
 
         private static string CleanStrikeTip()
         {
             float experience = Mathf.Max(0f, PickaxeExperienceSettings.CleanStrike.Value) * MineXp.Multiplier;
-            string earns = experience > 0f ? $", +{SkillPage.Number(experience)} experience (more in later biomes and on ore)" : "";
-            return $"A hit on the glowing chunk: that damage, one more drop roll when an ore chunk breaks{earns}, and the next seam opens at once. A hit elsewhere on the rock ends the chain.";
+            return experience > 0f
+                ? Lang.Format("gs_page_pickaxes_clean_tip_xp", SkillPage.Number(experience))
+                : Lang.Get("gs_page_pickaxes_clean_tip");
         }
 
         private static void SplashLine(SkillPage page)
@@ -69,8 +76,9 @@ namespace GrindstoneSkills
             if (at100 <= 0f)
                 return;
             float amount = Splash.Amount(new Miner(0L, page.Level, ZDOID.None));
-            page.Line($"Splash {SkillPage.Number(amount)} damage", "Splash",
-                $"Each swing's first hit on a chunk also deals this much, shared by the chunks touching it. It grows every 10 levels, to {SkillPage.Number(at100)} at level 100.");
+            string splash = Lang.Get("gs_page_pickaxes_splash");
+            page.Line(Lang.Format("gs_page_pickaxes_splash_line", splash, SkillPage.Number(amount)), splash,
+                Lang.Format("gs_page_pickaxes_splash_tip", SkillPage.Number(at100)));
         }
 
         private static void PerkLines(SkillPage page)
@@ -78,56 +86,62 @@ namespace GrindstoneSkills
             float level = page.Level;
             float ore = PickaxePerkSettings.ExtraOreChance.Value;
             if (ore > 0f)
-                page.Line($"Extra ore {Share(ore, level)}", "Extra ore",
-                    $"Chance each chunk of an ore deposit you break drops its loot once more. {Share(ore, PickSkill.MaxLevel)} at level 100.");
+            {
+                string extra = Lang.Get("gs_page_pickaxes_ore");
+                page.Line(Lang.Format("gs_page_pickaxes_ore_line", extra, Share(ore, level)), extra,
+                    Lang.Format("gs_page_pickaxes_ore_tip", Share(ore, PickSkill.MaxLevel)));
+            }
             float wear = PickaxePerkSettings.WearReduction.Value;
-            if (wear > 0f)
-                page.Line($"Pickaxe wear -{Share(wear, level)} on rock", "Pickaxe wear",
-                    $"Less durability lost by swings that hit rock: -{Share(wear, PickSkill.MaxLevel)} at level 100.");
+            if (wear <= 0f)
+                return;
+            string pickWear = Lang.Get("gs_page_pickaxes_wear");
+            page.Line(Lang.Format("gs_page_pickaxes_wear_line", pickWear, Share(wear, level)), pickWear,
+                Lang.Format("gs_page_pickaxes_wear_tip", Share(wear, PickSkill.MaxLevel)));
         }
 
         private static void FindsLine(SkillPage page)
         {
             if (MineFindSettings.ChanceAt0.Value <= 0f && MineFindSettings.ChanceAt100.Value <= 0f)
                 return;
-            page.Line($"Finds {SkillPage.Percent(MineFinds.Chance(page.Level))} per chunk", "Finds",
-                $"Chance a chunk you break hides a valuable, such as amber or a ruby; chunks under 50 health get a share (a mud pile's a tenth). {SkillPage.Percent(MineFinds.Chance(PickSkill.MaxLevel))} at level 100.");
+            string finds = Lang.Get("gs_page_pickaxes_finds");
+            page.Line(Lang.Format("gs_page_pickaxes_finds_line", finds, SkillPage.Percent(MineFinds.Chance(page.Level))), finds,
+                Lang.Format("gs_page_pickaxes_finds_tip", SkillPage.Percent(MineFinds.Chance(PickSkill.MaxLevel))));
         }
 
         private static void ExperienceLine(SkillPage page)
         {
             float step = Mathf.Max(0f, PickaxeExperienceSettings.BiomeStep.Value);
             float ore = 1f + Mathf.Max(0f, PickaxeExperienceSettings.OreBonus.Value) / 100f;
-            page.Line($"Experience +{SkillPage.Number(step)}% per biome, ×{SkillPage.Number(ore)} on ore", "Experience", ExperienceTip(step));
+            string term = Lang.Get("gs_page_pickaxes_xp");
+            page.Line(Lang.Format("gs_page_pickaxes_xp_line", term, SkillPage.Number(step), SkillPage.Number(ore)), term, ExperienceTip(step));
         }
 
+        /// <summary>Experience's tip: one sentence, then one more for each setting that adds to what rock teaches.</summary>
         private static string ExperienceTip(float step)
         {
             string forest = SkillPage.Number(1f + step / 100f * MineXp.BiomeStep(Heightmap.Biome.BlackForest));
             string ashlands = SkillPage.Number(1f + step / 100f * MineXp.BiomeStep(Heightmap.Biome.AshLands));
-            string tip = $"Swings that hit rock teach more in later biomes: ×{forest} in the Black Forest up to ×{ashlands} in the Ashlands.";
+            string tip = Lang.Format("gs_page_pickaxes_xp_tip", forest, ashlands);
             float discovery = Mathf.Max(0f, PickaxeExperienceSettings.Discovery.Value);
             if (discovery > 0f)
-                tip += $" The first hit on each kind of ore deposit gives +{SkillPage.Number(discovery)}, times the same scale.";
+                tip += " " + Lang.Format("gs_page_pickaxes_xp_tip_discovery", SkillPage.Number(discovery));
             if (MineXp.Multiplier != 1f)
-                tip += $" All of it ×{SkillPage.Number(MineXp.Multiplier)} on this server.";
+                tip += " " + Lang.Format("gs_page_pickaxes_xp_tip_server", SkillPage.Number(MineXp.Multiplier));
             return tip;
         }
 
         private static void Milestones(SkillPage page)
         {
-            page.Perk("Read the rock", VeinSettings.ReadTheRockLevel.Value, ReadTheRockTip());
-            page.Perk("Echo", VeinSettings.EchoLevel.Value,
-                $"A swing that hits rock pings the nearest ore deposit within {SkillPage.Number(VeinSettings.EchoRadius.Value)} m: a sound from its direction, its name and distance. At most every {SkillPage.Duration(VeinSettings.EchoCooldown.Value)}; deposits the Wishbone finds are left to it.");
+            page.Perk(Lang.Get("gs_perk_readtherock"), VeinSettings.ReadTheRockLevel.Value, ReadTheRockTip());
+            page.Perk(Lang.Get("gs_perk_echo"), VeinSettings.EchoLevel.Value,
+                Lang.Format("gs_page_pickaxes_echo_tip", SkillPage.Number(VeinSettings.EchoRadius.Value), SkillPage.Duration(VeinSettings.EchoCooldown.Value)));
             if (SeamsOn)
-                page.Perk("Unbroken", SeamSettings.UnbrokenLevel.Value, UnbrokenTip());
+                page.Perk(Lang.Get("gs_perk_unbroken"), SeamSettings.UnbrokenLevel.Value, UnbrokenTip());
         }
 
-        private static string ReadTheRockTip()
-        {
-            string stars = $"1 star {Setting(VeinSettings.Chance1.Value)}, 2 stars {Setting(VeinSettings.Chance2.Value)}, 3 stars {Setting(VeinSettings.Chance3.Value)}";
-            return $"Hovering an ore deposit shows its vein stars and the chunks left. Rich veins: {stars} of deposits; each star gives +{Setting(VeinSettings.BonusPerStar.Value)} drop rolls to whoever mines it.";
-        }
+        private static string ReadTheRockTip() =>
+            Lang.Format("gs_page_pickaxes_readtherock_tip", Setting(VeinSettings.Chance1.Value), Setting(VeinSettings.Chance2.Value),
+                Setting(VeinSettings.Chance3.Value), Setting(VeinSettings.BonusPerStar.Value));
 
         private static string UnbrokenTip()
         {
@@ -135,7 +149,7 @@ namespace GrindstoneSkills
             float first = CleanStrikes.Multiplier(1, level);
             float second = CleanStrikes.Multiplier(2, level);
             float top = CleanStrikes.Multiplier(Mathf.Max(0, SeamSettings.UnbrokenMaxLinks.Value) + 1, level);
-            return $"Clean strikes in a row hit harder: ×{SkillPage.Number(second)} for the second, +{SkillPage.Number(second - first)} for each after, up to ×{SkillPage.Number(top)}.";
+            return Lang.Format("gs_page_pickaxes_unbroken_tip", SkillPage.Number(second), SkillPage.Number(second - first), SkillPage.Number(top));
         }
 
         /// <summary>A perk's share at this level as a percent, held to 0..1 as the perks hold it.</summary>

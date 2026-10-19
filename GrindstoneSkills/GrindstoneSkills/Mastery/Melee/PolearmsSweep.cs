@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -15,7 +17,7 @@ namespace GrindstoneSkills
 
         public static void OnHit(HitData hit) => hit.m_pushForce *= 1f + Knockback;
 
-        public static void Perk(SkillPage page) => page.Perk("Sweep", MeleeMastery.Level,
-            $"Atgeir hits knock foes back {SkillPage.Percent(Knockback)} harder. Heavy foes still barely move.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_polearmsweep"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_sweep_tip", SkillPage.Percent(Knockback)));
     }
 }

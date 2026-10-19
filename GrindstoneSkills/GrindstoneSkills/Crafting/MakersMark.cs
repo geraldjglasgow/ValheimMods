@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -40,8 +41,14 @@ namespace GrindstoneSkills
             item.m_durability = item.GetMaxDurability();
         }
 
-        /// <summary>The tooltip line for a share, before localization: "Maker's Mark: +14.3% durability".</summary>
-        public static string LineFor(float share) =>
-            "\nMaker's Mark: <color=orange>+" + (share * 100f).ToString("0.#", CultureInfo.InvariantCulture) + "% durability</color>";
+        /// <summary>
+        /// The tooltip line for a share, in the player's language, before the game localizes the tooltip: "Maker's Mark:
+        /// +14.3% durability". Callers that keep it build it again when <see cref="Lang.Version"/> changes.
+        /// </summary>
+        public static string LineFor(float share)
+        {
+            string bonus = Lang.Format("gs_craft_mark_durability", (share * 100f).ToString("0.#", CultureInfo.InvariantCulture));
+            return "\n" + Lang.Format("gs_craft_mark_line", Lang.Get("gs_perk_makersmark"), "<color=orange>" + bonus + "</color>");
+        }
     }
 }

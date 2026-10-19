@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -16,7 +17,7 @@ namespace GrindstoneSkills
             if (FloatFight.Of(fishingFloat) == null || Random.value >= FishSkill.Share(FishingCatchSettings.BaitSaverAt100.Value, FishSkill.Of(info.Player)))
                 return;
             if (Give(info.Player, fishingFloat.GetBait()))
-                info.Player.Message(MessageHud.MessageType.TopLeft, "Bait saved");
+                info.Player.Message(MessageHud.MessageType.TopLeft, Lang.Get("gs_fish_bait_saved"));
         }
 
         /// <summary>

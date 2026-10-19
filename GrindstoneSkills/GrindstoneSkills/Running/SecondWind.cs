@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -59,7 +60,7 @@ namespace GrindstoneSkills
                 return false;
             readyAt = Time.time + Cooldown;
             player.AddStamina(StaminaBack);
-            FloatingText.Show(player.GetTopPoint() + Vector3.up * 0.3f, "Second wind!");
+            FloatingText.Show(player.GetTopPoint() + Vector3.up * 0.3f, Lang.Get("gs_run_secondwind_callout"));
             return true;
         }
     }

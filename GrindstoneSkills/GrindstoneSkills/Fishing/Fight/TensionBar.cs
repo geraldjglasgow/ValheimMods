@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,8 @@ namespace GrindstoneSkills
     /// "Spent! Reel it in", "Catch your breath 3"). It hangs under the game's HUD root, so it hides with the HUD, and is
     /// built on first use from plain UI images and the HUD's own font. <see cref="Show"/> is called every step of the
     /// fight; the bar hides itself a moment after the calls stop (the fish landed, got away or the line snapped). Each
-    /// step writes only what changed: the fill when it moved by a visible amount, the word when it differs.
+    /// step writes only what changed: the fill when it moved by a visible amount, the word when it differs. The words are
+    /// built once per language (<see cref="Lang.Version"/>), not every step.
     /// </summary>
     public sealed class TensionBar : MonoBehaviour
     {
@@ -30,6 +32,10 @@ namespace GrindstoneSkills
         private static TensionBar instance;
         private static int breathShown = -1;
         private static string breathText = "";
+        private static int wordsVersion = -1;
+        private static string lineWord;
+        private static string thrashingWord;
+        private static string spentWord;
 
         private RectTransform fill;
         private Image fillImage;
@@ -76,20 +82,33 @@ namespace GrindstoneSkills
 
         private static string State(FloatFight fight)
         {
+            Words();
             if (fight.InGrace)
                 return Breath(Mathf.CeilToInt(fight.GraceUntil - Time.time));
             if (fight.Spent)
-                return "<color=#9be07a>Spent! Reel it in</color>";
-            return fight.Thrashing ? "<color=#ff6a50>Thrashing! Ease off</color>" : "Line";
+                return spentWord;
+            return fight.Thrashing ? thrashingWord : lineWord;
         }
 
-        /// <summary>"Catch your breath N", built only when N changes.</summary>
+        /// <summary>The state words in the player's language, built again only when the language changed.</summary>
+        private static void Words()
+        {
+            if (wordsVersion == Lang.Version)
+                return;
+            wordsVersion = Lang.Version;
+            lineWord = Lang.Get("gs_fish_bar_line");
+            thrashingWord = "<color=#ff6a50>" + Lang.Get("gs_fish_bar_thrashing") + "</color>";
+            spentWord = "<color=#9be07a>" + Lang.Get("gs_fish_bar_spent") + "</color>";
+            breathShown = -1;
+        }
+
+        /// <summary>"Catch your breath N", built only when N (or the language) changes.</summary>
         private static string Breath(int seconds)
         {
             if (seconds != breathShown)
             {
                 breathShown = seconds;
-                breathText = "Catch your breath " + seconds;
+                breathText = Lang.Format("gs_fish_bar_breath", seconds);
             }
             return breathText;
         }

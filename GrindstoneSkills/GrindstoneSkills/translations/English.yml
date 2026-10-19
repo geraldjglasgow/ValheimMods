@@ -1,0 +1,879 @@
+# GrindstoneSkills - English words
+#
+# To translate: copy this file as GrindstoneSkills.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the game), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it). In the skills window a word you can hover (a "term") is its own
+# key and goes into its line as $1: translate the term once and the line keeps it.
+
+# GrindstoneSkills: the skills window (sort bar, info pane, page helpers) and the names of the mod's own skills.
+# One line per word, the text double-quoted; $1, $2 ... are values filled in by the mod.
+
+# The mod's own skills, named the way the game names a skill: skill_ + its type number (the stable hash of its identity)
+skill_2060925741: "Sailing"
+skill_585068027: "Foraging"
+skill_1869457860: "Husbandry"
+skill_1650628550: "Defense"
+
+# Sort bar above the skills list
+gs_book_sort_by: "Sort by"
+gs_book_sort_default: "Default"
+gs_book_sort_name: "Name"
+gs_book_sort_level: "Level"
+
+# Info pane: the level line under the skill's name
+gs_book_level: "Level $1"
+gs_book_level_progress: "$1% to level $2"
+gs_book_level_highest: "highest level"
+
+# Info pane: the perks
+gs_book_perks: "Perks"
+gs_book_perk_unlocked: "unlocked"
+gs_book_perk_at_level: "at level $1"
+
+# Times on the pages ($1 is the number)
+gs_book_seconds: "$1 s"
+gs_book_minutes: "$1 min"
+gs_book_hours: "$1 h"
+
+# The skills window's info pages: Cooking, Fishing and Husbandry, and the names of their perks.
+# A line's hovered word is its own key, filled into the line as $1, so the hover finds it in every language.
+
+# Cooking page
+gs_page_cooking_about: "A faster, more generous kitchen. Trained by cooking."
+gs_page_cooking_heading_kitchen: "Kitchen"
+gs_page_cooking_speed: "Cooking speed"
+gs_page_cooking_speed_line: "$1 +$2"
+gs_page_cooking_speed_tip: "On cooking stations and the oven, for the food you put on."
+gs_page_cooking_burn: "Burn delay"
+gs_page_cooking_burn_line: "$1 +$2"
+gs_page_cooking_burn_tip: "A done dish takes that much longer to burn. The game burns it one cook time after it is done."
+gs_page_cooking_craft: "Craft time"
+gs_page_cooking_craft_line: "$1 -$2"
+gs_page_cooking_craft_tip: "At the cauldron, mead cauldron and prep table. The game's own Cooking bonus."
+gs_page_cooking_ferment: "Fermenting speed"
+gs_page_cooking_ferment_line: "$1 +$2"
+gs_page_cooking_ferment_tip: "For the mead bases you put in a fermenter."
+gs_page_cooking_extra_food: "Extra food"
+gs_page_cooking_extra_food_line: "$1: $2 chance of +$3"
+gs_page_cooking_extra_food_tip: "At every kitchen: cooking stations, oven, cauldron, mead cauldron and prep table. Replaces the game's own bonus food there."
+gs_page_cooking_ingredient: "Ingredient saved"
+gs_page_cooking_ingredient_line: "$1: $2"
+gs_page_cooking_ingredient_tip: "Chance per craft at the cauldron, mead cauldron or prep table to get one used ingredient back."
+gs_page_cooking_heading_experience: "Experience"
+gs_page_cooking_rich: "Rich dishes"
+gs_page_cooking_rich_line: "$1: up to x$2"
+gs_page_cooking_rich_tip: "Experience grows with a dish's health + stamina + eitr: x1 up to $1, x$2 from $3."
+gs_page_cooking_new_dish: "New dish"
+gs_page_cooking_new_dish_line: "$1: x$2"
+gs_page_cooking_new_dish_tip: "The first time you make each dish."
+gs_page_cooking_experience_line: "Kitchen experience x$1"
+
+# Fishing page
+gs_page_fishing_about: "Hook more fish and land bigger ones. Trained by fighting and landing them."
+gs_page_fishing_off: "GrindstoneSkills' Fishing is off on this server."
+gs_page_fishing_reel_speed: "Reel speed"
+gs_page_fishing_reel_speed_line: "$1 $2 m/s"
+gs_page_fishing_reel_speed_tip: "The game's own: how fast the line comes in while you reel (hold block). Half as fast while the fish thrashes."
+gs_page_fishing_reel_stamina: "Reel stamina"
+gs_page_fishing_reel_stamina_line: "$1 -$2"
+gs_page_fishing_reel_stamina_tip: "The game's own: reeling costs that much less. A fish on the line also drains $1 stamina per second."
+gs_page_fishing_bite: "Bite chance"
+gs_page_fishing_bite_line: "$1 +$2"
+gs_page_fishing_bite_tip: "More fish go for your float. Bites also rise $1% at dawn and dusk and $2% in rain."
+gs_page_fishing_bite_tip_chum: "More fish go for your float. Bites also rise $1% at dawn and dusk, $2% in rain, and $3% within $4 m of chum ($5) floating in the water."
+gs_page_fishing_heading_fight: "The fight"
+gs_page_fishing_strike: "Strike window"
+gs_page_fishing_strike_line: "$1 $2 s"
+gs_page_fishing_strike_tip: "Time after a nibble in which reeling sets the hook. The game's own is 0.5 s."
+gs_page_fishing_tension: "Line tension"
+gs_page_fishing_tension_line: "$1 $2/s"
+gs_page_fishing_tension_tip: "Reeling while the fish thrashes fills the bar under the crosshair at this rate, and a full bar snaps the line. Letting go eases it $1/s."
+gs_page_fishing_tension_tip_spent: "After $1 thrashes the fish is spent and comes in $2% faster."
+gs_page_fishing_heading_catch: "The catch"
+gs_page_fishing_big_one: "Big one"
+gs_page_fishing_big_one_line: "$1 $2"
+gs_page_fishing_big_one_tip: "Chance a hooked fish grows a level, rolled again up to level $1: +$2% at night."
+gs_page_fishing_bonus: "Bonus item"
+gs_page_fishing_bonus_line: "$1 $2"
+gs_page_fishing_bonus_range: "$1-$2"
+gs_page_fishing_bonus_tip: "Chance a landed fish also brings its own bonus item. A legendary fish always does."
+gs_page_fishing_bait: "Bait saver"
+gs_page_fishing_bait_line: "$1 $2"
+gs_page_fishing_bait_tip: "Chance a landed fish gives your bait back."
+gs_page_fishing_snag: "Snag"
+gs_page_fishing_snag_line: "$1 $2"
+gs_page_fishing_snag_tip: "Once per cast, after $1 in the water without a bite, the line can catch a find from the biome's snag list. It reels in slow and heavy, and gives no experience."
+gs_page_fishing_line: "line"
+gs_page_fishing_cast_line: "Cast +$2, $1 +$3"
+gs_page_fishing_line_tip: "Casts fly farther, and the line snaps further from the rod."
+gs_page_fishing_line_tip_reach: "Casts fly farther, and the line snaps only once the float is $1 m from the rod."
+gs_page_fishing_perfect_tip: "Start reeling within $1 s of a nibble, when you were not reeling already, and the fish skips its first thrash."
+gs_page_fishing_log_tip: "Every species and size you land is logged with your heaviest catch. Type $1 in chat, or read a fish's tooltip."
+gs_page_fishing_log_tip_bonus: "Each new species or size gives bonus experience."
+gs_page_fishing_species_tip: "A nibble names the fish, and a cast that lands tells the fishing conditions: dawn, dusk, rain, night."
+gs_page_fishing_size_tip: "A nibble also tells the fish's level, and so does looking at a fish in the water."
+gs_page_fishing_double_tip: "A landed fish's bonus roll can bring two items instead of one."
+gs_page_fishing_legendary_tip_tire: "$1% of spawned fish are legendary: level $2, glowing, and they tire after $3 thrashes."
+gs_page_fishing_legendary_tip_never: "$1% of spawned fish are legendary: level $2, glowing, and they never tire."
+gs_page_fishing_legendary_tip_bait: "From this level they take your bait, and they always bring a bonus item."
+gs_page_fishing_grace_tip: "Once per fish, running out of stamina does not lose it at once: for $1 it takes line while your stamina comes back. Still empty after that, it gets away."
+gs_page_fishing_water_tip: "A cast that lands tells which fish in reach take your bait, and whether a legendary one lurks."
+
+# Husbandry page
+gs_page_husbandry_about: "Tame faster and raise better animals. Trained by taming, feeding and breeding."
+gs_page_husbandry_off: "Turned off on this server."
+gs_page_husbandry_heading_taming: "Taming"
+gs_page_husbandry_taming: "Taming speed"
+gs_page_husbandry_taming_line: "$1 +$2"
+gs_page_husbandry_taming_tip: "The best level within the creature's taming range counts. Stacks with the game's taming boost."
+gs_page_husbandry_taming_tip_boar: "The best level within the creature's taming range counts: a boar's $1 become $2. Stacks with the game's taming boost."
+gs_page_husbandry_gates: "Level gates"
+gs_page_husbandry_gates_line: "$1: you pass $2 of $3"
+gs_page_husbandry_gates_tip: "These make taming progress only with a player of that level within their taming range: $1."
+gs_page_husbandry_gate: "$1 $2"
+gs_page_husbandry_fed: "Fed time"
+gs_page_husbandry_fed_line: "$1 +$2"
+gs_page_husbandry_fed_tip: "For animals that eat within $1 m of you. They tame, breed and heal only while fed."
+gs_page_husbandry_fed_tip_boar: "For animals that eat within $1 m of you: a boar's $2 become $3. They tame, breed and heal only while fed."
+gs_page_husbandry_pack: "Pack leader"
+gs_page_husbandry_pack_line: "$1: damage +$2, taken -$3"
+gs_page_husbandry_pack_tip: "A tamed wolf that follows you deals that much more damage and takes that much less."
+gs_page_husbandry_heading_breeding: "Breeding"
+gs_page_husbandry_breeding: "Breeding speed"
+gs_page_husbandry_breeding_line: "$1 +$2"
+gs_page_husbandry_breeding_tip: "Shorter pregnancies and fewer skipped love checks for animals within $1 m of you. The best level near them counts."
+gs_page_husbandry_herd: "Herd size"
+gs_page_husbandry_herd_line: "$1 +$2"
+gs_page_husbandry_herd_tip: "More animals of a kind may crowd together before breeding stops. The game allows 4 to 10 by kind."
+gs_page_husbandry_offspring: "Better offspring"
+gs_page_husbandry_offspring_line: "$1 $2"
+gs_page_husbandry_offspring_tip_ecr: "Chance that a newborn gets one star more than Elite Creatures Reborn rolls, up to one above the stronger parent."
+gs_page_husbandry_offspring_tip_one: "Chance that a newborn or a laid egg is one star above its parent, up to $1 star."
+gs_page_husbandry_offspring_tip_many: "Chance that a newborn or a laid egg is one star above its parent, up to $1 stars."
+gs_page_husbandry_twins: "Twins"
+gs_page_husbandry_twins_line: "$1 $2"
+gs_page_husbandry_twins_tip: "Chance that a birth is followed by a second one (a second egg for hens) half a minute later. A twin never has twins."
+gs_page_husbandry_growth: "Growth speed"
+gs_page_husbandry_growth_line: "$1 +$2"
+gs_page_husbandry_growth_tip: "Tamed young grow up and warm eggs hatch sooner within $1 m of you."
+gs_page_husbandry_growth_tip_piglet: "Tamed young grow up and warm eggs hatch sooner within $1 m of you: a piglet's $2 become $3."
+gs_page_husbandry_heading_yield: "Yield"
+gs_page_husbandry_butcher: "Butcher yield"
+gs_page_husbandry_butcher_line: "$1 +$2"
+gs_page_husbandry_butcher_tip: "More meat, hides and feathers from tamed animals you kill, never trophies. A fraction is a chance of one more."
+gs_page_husbandry_produce: "Produce"
+gs_page_husbandry_produce_line: "$1 $2 every $3"
+gs_page_husbandry_produce_tip: "Chance that a fed tamed animal within $1 m of you drops feathers, scraps, pelts or hides without being killed. The best level near it counts."
+gs_page_husbandry_honey: "Extra honey"
+gs_page_husbandry_honey_line: "$1 $2 per honey"
+gs_page_husbandry_honey_tip: "Chance of one more for each honey you take from a beehive."
+gs_page_husbandry_petting_tip: "Use a tamed animal you cannot command (not a wolf): it is content for $1. Only petting one that is not content yet trains the skill."
+gs_page_husbandry_petting_tip_breeds: "Use a tamed animal you cannot command (not a wolf): it is content for $1 and breeds $2% faster. Only petting one that is not content yet trains the skill."
+gs_page_husbandry_eggs_tip: "Eggs keep their hen's stars: they show them, stack apart and hatch starred chicks."
+gs_page_husbandry_lore_tip: "Hovering an animal or an egg shows its timers: fed, taming, love or pregnancy, herd room, contentment, growing up, hatching."
+gs_page_husbandry_feeder_build: "Hammer, Misc, at a workbench."
+gs_page_husbandry_feeder_build_cost: "Hammer, Misc, at a workbench: $1."
+gs_page_husbandry_feeder_cost_item: "$1 $2"
+gs_page_husbandry_feeder_walk: "Hungry tamed animals, and animals being tamed, within $1 m walk to it and eat its food."
+gs_page_husbandry_calm_tip: "A creature you have started taming neither flees from nor attacks you, so taming goes on beside you. Hurt it and it fights you for $1."
+
+# Perk names (also used by the features' messages)
+gs_perk_perfectstrike: "Perfect Strike"
+gs_perk_anglerslog: "Angler's Log"
+gs_perk_speciessense: "Species Sense"
+gs_perk_sizesense: "Size Sense"
+gs_perk_doublebonus: "Double Bonus"
+gs_perk_legendaryfish: "Legendary Fish"
+gs_perk_grace: "Grace"
+gs_perk_watersense: "Water Sense"
+gs_perk_petting: "Petting"
+gs_perk_starredeggs: "Starred Eggs"
+gs_perk_animallore: "Animal Lore"
+gs_perk_animalfeeder: "Animal Feeder"
+gs_perk_calm: "Calm"
+
+# GrindstoneSkills - English words: the skills window's pages for Farming, Woodcutting and Pickaxes
+#
+# A line's hovered word (Bonus crop, Chop damage ...) is its own key and goes into the line's sentence (the key ending
+# in _line) as $1: keep $1 in that sentence, in the order your language puts it. Perk names are the gs_perk_ keys; the
+# messages that name a perk use them too. Keep $1, $2 ... and each text on one line between double quotes.
+
+# Perk names (the info pane's Perks list, and the messages that name a perk)
+gs_perk_tending: "Tending"
+gs_perk_compostbin: "Compost Bin"
+gs_perk_rowofthree: "Row of Three"
+gs_perk_rowoffive: "Row of Five"
+gs_perk_autoreplant: "Auto Replant"
+gs_perk_heattolerance: "Heat Tolerance"
+gs_perk_coldtolerance: "Cold Tolerance"
+gs_perk_readtherock: "Read the rock"
+gs_perk_echo: "Echo"
+gs_perk_unbroken: "Unbroken"
+
+# Farming page
+gs_page_farming_about: "Grow more crops, faster. Trained by planting and picking them."
+gs_page_farming_off: "GrindstoneSkills' Farming is off on this server."
+gs_page_farming_stamina: "Planting stamina"
+gs_page_farming_stamina_line: "$1 -$2"
+gs_page_farming_stamina_tip: "The game's own: each use of the cultivator costs less stamina, down to half at level 100."
+gs_page_farming_scythe: "Scythe"
+gs_page_farming_scythe_line: "$1 reach grows with level"
+gs_page_farming_scythe_tip: "The game's own: one swing of a scythe picks every ripe crop in a radius that grows with your level."
+gs_page_farming_reach_line: "$1 reach $2 m"
+gs_page_farming_reach_tip: "The game's own: one swing picks every ripe crop within this radius."
+gs_page_farming_bonus: "Bonus crop"
+gs_page_farming_bonus_game_line: "$1 chance grows with level"
+gs_page_farming_bonus_game_tip: "The game's own: a crop you pick sometimes gives a bonus."
+gs_page_farming_bonus_line: "$1 $2"
+gs_page_farming_bonus_tip: "Chance each crop you pick gives its bonus yield on top."
+gs_page_farming_seed: "Seed return"
+gs_page_farming_seed_line: "$1 $2"
+gs_page_farming_seed_tip: "Chance a pick also gives back the seed the plant grew from."
+gs_page_farming_growth: "Growth"
+gs_page_farming_growth_line: "$1 +$2"
+gs_page_farming_growth_tip: "Everything you plant grows this much faster, saplings too."
+gs_page_farming_growth_tip_rain: "Everything you plant grows this much faster, saplings too; rain adds $1% while it falls."
+gs_page_farming_growth_tip_compost: "Everything you plant grows this much faster, saplings too; compost $1%."
+gs_page_farming_growth_tip_both: "Everything you plant grows this much faster, saplings too; rain adds $1% while it falls, compost $2%."
+gs_page_farming_spacing: "Crop spacing"
+gs_page_farming_spacing_line: "$1 -$2"
+gs_page_farming_spacing_tip: "Crops you plant need that much less room around them, so they can stand closer."
+gs_page_farming_ripening: "Ripening"
+gs_page_farming_giant: "Giant crop"
+gs_page_farming_giant_line: "$1 $2"
+gs_page_farming_giant_tip: "A crop you plant may ripen giant: $1x the size and $2x the crop. Picking one gives $3x the experience."
+gs_page_farming_tending_tip: "Press $1 on a growing plant: it gains $2% of the grow time, once per in-game day."
+gs_page_farming_tending_tip_area: "Press $1 on a growing plant: it and every growing plant within $2 m gain $3% of the grow time, once per in-game day."
+gs_page_farming_compost_tip: "A barrel in the cultivator's menu. Scraps and spare crops in it become a point of compost every $1, and each growing crop within $2 m takes one: +$3% growth."
+gs_page_farming_row_tip: "Placing a seed plants a row of $1 across your view, each paying its own seed. Hold $2 to plant one."
+gs_page_farming_replant_tip: "Picking a crop puts its plant back in the same spot, paid with a seed from your inventory."
+gs_page_farming_heat_tip: "Crops you plant grow in the Ashlands without a shield."
+gs_page_farming_cold_tip: "Crops you plant that grow in the Meadows also grow in the Mountain and Deep North."
+# After a perk's tip when the player switched it off in their own .cfg; $1 is the setting's name as the .cfg writes it
+gs_page_farming_own_off: "Off in your config ($1)."
+
+# Woodcutting page
+gs_page_woodcutting_about: "Fell trees faster and get more wood from them. Trained by chopping wood."
+gs_page_woodcutting_off: "GrindstoneSkills extras are off on this server."
+gs_page_woodcutting_felling: "Felling"
+gs_page_woodcutting_damage: "Chop damage"
+gs_page_woodcutting_damage_line: "$1 $2"
+gs_page_woodcutting_damage_tip: "The game's own: each axe hit on wood deals this share of the axe's damage, rolled per hit (85–100% at level 100). Swing stamina follows the Axes skill."
+gs_page_woodcutting_refund: "Stamina refund"
+gs_page_woodcutting_refund_line: "$1 $2, axe wear -$3"
+gs_page_woodcutting_refund_tip: "A swing that hits wood gives back that share of its stamina and wears the axe that much less. $1 and -$2 at level 100."
+gs_page_woodcutting_split: "Clean split"
+gs_page_woodcutting_split_line: "$1 $2, +$3 wood"
+gs_page_woodcutting_split_tip: "Chance an axe hit on a log splits it at once, if the axe can cut that wood; that log gives $1 more wood. $2 at level 100."
+gs_page_woodcutting_oldgrowth: "Old growth"
+gs_page_woodcutting_oldgrowth_line: "$1 up to +$2 wood"
+gs_page_woodcutting_oldgrowth_tip: "Logs of big trees give more wood, measured against their own kind: nothing up to $1% of its size range, all of it from $2%. Follows the level of whoever breaks the log; +$3 at level 100."
+gs_page_woodcutting_xp: "Experience"
+gs_page_woodcutting_xp_line: "$1 +$2 per tree, +$3 per log"
+gs_page_woodcutting_xp_tip: "For each tree you fell and each log you break into wood, plus $1 per swing that hits wood."
+gs_page_woodcutting_xp_tip_tiers: "Birch and oak teach ×$1, Yggdrasil ×$2."
+gs_page_woodcutting_xp_tip_small: "Saplings and small trees (under $1 health) teach $2."
+gs_page_woodcutting_xp_tip_discovery: "Your first tree of each kind counts ×$1."
+gs_page_woodcutting_timber: "Timber!"
+gs_page_woodcutting_timber_line: "$1 push +$2, log safety $3"
+gs_page_woodcutting_timber_tip: "A tree you fell tips away from you, pushed ×$1 as hard as in the game, and its logs do you that much less damage (others take the game's). ×$2 and $3 at level 100."
+gs_page_woodcutting_domino: "Domino"
+gs_page_woodcutting_domino_line: "$1 impact +$2"
+gs_page_woodcutting_domino_tip: "Logs of trees you fell hit other trees, logs and stumps ×$1 as hard, so one tree can knock over the next, up to $2 down a chain. ×$3 at level 100."
+gs_page_woodcutting_cleanfell: "Clean fell"
+gs_page_woodcutting_cleanfell_line: "$1 $2"
+gs_page_woodcutting_cleanfell_tip: "Chance a tree you fell takes its stump with it; the stump drops its wood. $1 at level 100."
+gs_page_woodcutting_replanting: "Replanting"
+gs_page_woodcutting_replanting_line: "$1 $2"
+gs_page_woodcutting_replanting_tip: "Chance a free sapling of the same kind takes root where a tree you felled stood, if it can grow there. Not every tree has a sapling. $1 at level 100."
+gs_page_woodcutting_finds: "Finds"
+gs_page_woodcutting_finds_line: "$1 $2 per tree"
+gs_page_woodcutting_finds_tip: "Chance a tree you fell hides something, such as a bird's nest or a wild hive. $1 at level 100."
+
+# Pickaxes page
+gs_page_pickaxes_about: "Mine faster and get more out of the rock. Trained by hitting rock."
+gs_page_pickaxes_off: "GrindstoneSkills extras are off on this server."
+gs_page_pickaxes_damage: "Mining damage"
+gs_page_pickaxes_damage_line: "$1 $2"
+gs_page_pickaxes_damage_tip: "The game's own: each pickaxe hit deals this share of the pickaxe's damage, rolled per hit (85–100% at level 100)."
+gs_page_pickaxes_stamina: "Swing stamina"
+gs_page_pickaxes_stamina_line: "$1 -$2"
+gs_page_pickaxes_stamina_tip: "The game's own, for every pickaxe swing: -$1 at level 100."
+gs_page_pickaxes_seams: "Seams"
+gs_page_pickaxes_seams_line: "$1 $2, open $3"
+gs_page_pickaxes_seams_tip: "Chance a swing on a rock of many chunks makes one chunk within reach glow, for you alone, for that long. Hit it in time for a clean strike."
+gs_page_pickaxes_clean: "Clean strike"
+gs_page_pickaxes_clean_line: "$1 ×$2 damage"
+gs_page_pickaxes_clean_tip: "A hit on the glowing chunk: that damage, one more drop roll when an ore chunk breaks, and the next seam opens at once. A hit elsewhere on the rock ends the chain."
+gs_page_pickaxes_clean_tip_xp: "A hit on the glowing chunk: that damage, one more drop roll when an ore chunk breaks, +$1 experience (more in later biomes and on ore), and the next seam opens at once. A hit elsewhere on the rock ends the chain."
+gs_page_pickaxes_splash: "Splash"
+gs_page_pickaxes_splash_line: "$1 $2 damage"
+gs_page_pickaxes_splash_tip: "Each swing's first hit on a chunk also deals this much, shared by the chunks touching it. It grows every 10 levels, to $1 at level 100."
+gs_page_pickaxes_ore: "Extra ore"
+gs_page_pickaxes_ore_line: "$1 $2"
+gs_page_pickaxes_ore_tip: "Chance each chunk of an ore deposit you break drops its loot once more. $1 at level 100."
+gs_page_pickaxes_wear: "Pickaxe wear"
+gs_page_pickaxes_wear_line: "$1 -$2 on rock"
+gs_page_pickaxes_wear_tip: "Less durability lost by swings that hit rock: -$1 at level 100."
+gs_page_pickaxes_finds: "Finds"
+gs_page_pickaxes_finds_line: "$1 $2 per chunk"
+gs_page_pickaxes_finds_tip: "Chance a chunk you break hides a valuable, such as amber or a ruby; chunks under 50 health get a share (a mud pile's a tenth). $1 at level 100."
+gs_page_pickaxes_xp: "Experience"
+gs_page_pickaxes_xp_line: "$1 +$2% per biome, ×$3 on ore"
+gs_page_pickaxes_xp_tip: "Swings that hit rock teach more in later biomes: ×$1 in the Black Forest up to ×$2 in the Ashlands."
+gs_page_pickaxes_xp_tip_discovery: "The first hit on each kind of ore deposit gives +$1, times the same scale."
+gs_page_pickaxes_xp_tip_server: "All of it ×$1 on this server."
+gs_page_pickaxes_readtherock_tip: "Hovering an ore deposit shows its vein stars and the chunks left. Rich veins: 1 star $1, 2 stars $2, 3 stars $3 of deposits; each star gives +$4 drop rolls to whoever mines it."
+gs_page_pickaxes_echo_tip: "A swing that hits rock pings the nearest ore deposit within $1 m: a sound from its direction, its name and distance. At most every $2; deposits the Wishbone finds are left to it."
+gs_page_pickaxes_unbroken_tip: "Clean strikes in a row hit harder: ×$1 for the second, +$2 for each after, up to ×$3."
+
+# GrindstoneSkills - the skills window's info pages: staff summons and shields, the movement skills, Sailing, Crafting.
+# $1, $2 ... are values filled in by the code (numbers, names, the hovered term).
+# A line's hovered term is its own key and goes into the line as $1: a translation keeps $1 in the line.
+# The Sailing abilities' names (the Wind Call and Lookout perks) are the Sailing feature's gs_sail_ability_* words.
+
+# Staff lines (magic skills)
+gs_page_staff_shield: "Shield"
+gs_page_staff_shield_line: "$1 absorbs $2 damage"
+gs_page_staff_shield_tip: "The $1's shield takes hits until it has soaked up this much: $2 plus $3 per level, +$4 at yours."
+
+# Summon line (magic skills)
+gs_page_summon_no_stars: "$1: no stars yet"
+gs_page_summon_stars: "$1 $2★"
+gs_page_summon_damage: "$1, damage +$2"
+gs_page_summon_stars_damage: "$1 $2★, damage +$3"
+gs_page_summon_with: "Summoned with the $1."
+gs_page_summon_star_step: "$1★ from level $2"
+gs_page_summon_star_steps: "$1. A star adds its base health again and half its damage."
+gs_page_summon_damage_at100: "Damage +$1 at level 100."
+gs_page_summon_follow_quality: "As many follow you at once as the staff's quality level; a new one sends the oldest away."
+gs_page_summon_follow_max: "At most $1 follow you at once; a new one sends the oldest away."
+gs_page_summon_fallback: "Summon"
+
+# Movement skills
+gs_page_movement_rate: "$1 stamina/s"
+
+# Movement: Run
+gs_page_movement_run_about: "Run faster and longer. Trained by running."
+gs_page_movement_run_stamina: "Run stamina"
+gs_page_movement_run_stamina_line: "$1 -$2"
+gs_page_movement_run_stamina_tip: "$1 at your level, $2 untrained, before gear. -$3 at level 100."
+gs_page_movement_run_speed: "Run speed"
+gs_page_movement_run_speed_line: "$1 +$2"
+gs_page_movement_run_speed_tip: "$1 m/s at your level, $2 untrained, before gear. +$3 at level 100."
+
+# Movement: Swim
+gs_page_movement_swim_about: "Swimming costs less stamina. Trained by swimming."
+gs_page_movement_swim_stamina: "Swim stamina"
+gs_page_movement_swim_stamina_line: "$1 -$2"
+gs_page_movement_swim_stamina_tip: "$1 at your level, $2 untrained, $3 at level 100, before gear. Out of stamina you drown: 5% of max health a second."
+
+# Movement: Jump
+gs_page_movement_jump_about: "Jump higher and farther. Trained by jumping."
+gs_page_movement_jump_force: "Jump force"
+gs_page_movement_jump_force_line: "$1 +$2"
+gs_page_movement_jump_force_tip: "Both the upward and the forward push of a jump. +$1 at level 100. A jump costs the same stamina."
+
+# Movement: Sneak
+gs_page_movement_sneak_about: "Sneak unseen and for longer. Trained by sneaking near enemies that have not noticed you."
+gs_page_movement_sneak_stamina: "Sneak stamina"
+gs_page_movement_sneak_stamina_line: "$1 -$2"
+gs_page_movement_sneak_stamina_tip: "$1 at your level, $2 untrained, before gear. -$3 at level 100; the first levels help most."
+gs_page_movement_sneak_sight: "Enemy sight"
+gs_page_movement_sneak_sight_line: "$1 $2 to $3"
+gs_page_movement_sneak_sight_tip: "While you crouch, enemies see you and are alerted by you only within that share of their range: the low end in the dark, the high end in full light. $1 to $2 at level 100."
+
+# Movement: Dodge
+gs_page_movement_dodge_about: "Dodging costs less stamina. Trained by dodging, most by dodging through a hit."
+gs_page_movement_dodge_stamina: "Dodge stamina"
+gs_page_movement_dodge_stamina_line: "$1 -$2"
+gs_page_movement_dodge_stamina_tip: "$1 a dodge at your level, $2 untrained, before gear. -$3 at level 100."
+gs_page_movement_dodge_perfect: "Perfect dodge"
+gs_page_movement_dodge_perfect_line: "$1 refund $2 stamina"
+gs_page_movement_dodge_perfect_tip: "Dodging through an attack gives back $1 of the dodge's stamina and $2 adrenaline."
+
+# Movement: Ride
+gs_page_movement_ride_about: "Your mount gallops faster and longer. Trained by riding at a gallop."
+gs_page_movement_ride_gallop: "Gallop speed"
+gs_page_movement_ride_gallop_line: "$1 +$2"
+gs_page_movement_ride_gallop_tip: "How much faster a mount you ride runs. +$1 at level 100."
+gs_page_movement_ride_stamina: "Mount stamina"
+gs_page_movement_ride_stamina_line: "$1 -$2"
+gs_page_movement_ride_stamina_tip: "Your mount spends that much less stamina galloping and swimming. -$1 at level 100."
+
+# Sailing
+gs_page_sailing_about: "Tougher, faster ships. Trained by sailing them."
+gs_page_sailing_off: "Turned off on this server."
+gs_page_sailing_built: "Ships you build"
+gs_page_sailing_built_line: "$1: health +$2"
+gs_page_sailing_built_tip: "Fixed by your level when you place the ship. Ships built before keep their health."
+gs_page_sailing_helm: "at the helm"
+gs_page_sailing_helm_line: "Ship speed $1 +$2"
+gs_page_sailing_helm_tip: "Top speed of any ship you steer, under sail and at the oars."
+gs_page_sailing_reveal: "Map reveal"
+gs_page_sailing_reveal_line: "$1 aboard $2 m (+$3)"
+gs_page_sailing_reveal_tip: "How far around you the map uncovers while you are aboard a ship. Ashore it is $1 m."
+gs_page_sailing_xp: "Experience"
+gs_page_sailing_xp_line: "$1 $2 per km at the helm"
+gs_page_sailing_xp_tip_crew: "For the distance a ship moves while you steer it. Crew aboard earn $1 of it; a ship nobody steers earns nothing."
+gs_page_sailing_xp_tip_nocrew: "For the distance a ship moves while you steer it. Crew aboard earn none; a ship nobody steers earns nothing."
+gs_page_sailing_windcall_tip: "Press $1 while steering a ship: the wind turns to blow the way you look, for everyone aboard, for $2."
+gs_page_sailing_lookout_tip: "Press $1 aboard a ship: everyone aboard sees the name tags of enemies (not bosses) within $2 m for $3."
+gs_page_sailing_again: "Once every $1."
+gs_page_sailing_key_unset: "the $1 (not set)"
+
+# Crafting
+gs_page_crafting_about: "Craft faster. Trained by crafting and repairing gear."
+gs_page_crafting_about_build: "Craft faster and build for less. Trained by crafting, repairing gear and building."
+gs_page_crafting_time: "Craft time"
+gs_page_crafting_time_line: "$1 -$2"
+gs_page_crafting_time_tip: "At stations that train Crafting: $1 a craft instead of $2, $3 for $4 at once. -$5 at level 100."
+gs_page_crafting_extra: "Extra item"
+gs_page_crafting_extra_line: "$1 $2"
+gs_page_crafting_extra_tip: "Each craft of a stackable item, such as arrows, has that chance to give $1 more. $2 at level 100."
+gs_page_crafting_tool_line: "$1: stamina -$2"
+gs_page_crafting_tool_tip: "For building, removing and repairing pieces with it. -$1 at level 100."
+gs_page_crafting_tool_wear_line: "$1: stamina -$2, wear -$3"
+gs_page_crafting_tool_wear_tip: "Stamina for building, removing and repairing pieces with it, wear for building and removing. -$1 and -$2 at level 100."
+
+# GrindstoneSkills: the skills window's pages for Defense, Foraging, Blocking and the game's weapon and magic skills.
+# A line with a hover word: key = the word, key_line = the line ($1 is the word), key_tip = the hover.
+
+# Defense
+gs_page_defense_about: "Makes you tougher. Trained by blocking and by taking hits."
+gs_page_defense_off: "Turned off on this server."
+gs_page_defense_health: "Max health +$1"
+gs_page_defense_food: "Health from food +$1"
+gs_page_defense_damage: "Damage taken -$1"
+gs_page_defense_outofcombat: "Out of combat"
+gs_page_defense_outofcombat_line: "$1: heal $2 of max health every $3"
+gs_page_defense_outofcombat_tip: "After $1 without attacking, blocking or taking damage."
+gs_page_defense_poise: "Poise"
+gs_page_defense_poise_line: "$1 +$2"
+gs_page_defense_poise_tip: "It takes that much more stagger damage to stagger you, or to break your guard while you block."
+gs_page_defense_parry: "Parry window"
+gs_page_defense_parry_line: "$1 +$2 s"
+gs_page_defense_parry_tip: "Added to the game's 0.25 s, so a block raised a little early still parries."
+gs_page_defense_stamina: "Block stamina -$1, dodge stamina -$2"
+
+# Defense: guard
+gs_page_defense_guard: "Guard"
+gs_page_defense_reflex: "Reflex"
+gs_page_defense_reflex_line: "$1 $2"
+gs_page_defense_reflex_tip: "Chance that a hit from the front is blocked by your shield although you were not blocking. Costs stamina like a block, never parries."
+gs_page_defense_bash: "Shield bash"
+gs_page_defense_bash_line: "$1 $2"
+gs_page_defense_bash_tip: "Chance that an ordinary shield block staggers the attacker, as a parry does."
+gs_page_defense_thorns: "Thorns"
+gs_page_defense_thorns_line: "$1 $2"
+gs_page_defense_thorns_tip: "Share of the damage your block stopped that goes back to a melee attacker."
+gs_page_defense_adrenaline: "Adrenaline"
+gs_page_defense_adrenaline_line: "$1 +$2"
+gs_page_defense_adrenaline_tip: "More adrenaline from blocks and parries, and that much less lost to hits you did not block."
+gs_page_defense_wear: "Block wear -$1, knockback on blocks -$2"
+gs_page_defense_desperation: "Desperation: below $1% health, damage reduction x$2"
+
+# Defense: perks (the names are used by the Defense features too)
+gs_perk_riposte: "Riposte"
+gs_page_defense_riposte_tip: "For $1 after a parry, your next melee attack deals $2% more damage."
+gs_perk_shieldwall: "Shield Wall"
+gs_page_defense_shieldwall_tip: "While you block with a shield, players within $1 m behind you take $2% less damage. Several blockers do not add up."
+gs_perk_hardened: "Hardened"
+gs_page_defense_hardened_tip: "Each hit that hurts you adds a stack: $1% less damage per stack, up to $2 stacks ($3%). They last $4 after the last hit."
+gs_perk_laststand: "Last Stand"
+gs_page_defense_laststand_tip: "A blow that would kill you leaves you at 1 health, and you take no damage for $1. Once every $2."
+
+# Foraging
+gs_page_foraging_about: "Better wild picks. Trained by picking berries, mushrooms and herbs."
+gs_page_foraging_off: "Turned off on this server."
+gs_page_foraging_yield: "Extra yield"
+gs_page_foraging_yield_line: "$1 $2"
+gs_page_foraging_yield_tip: "Chance that a pick gives one more. $1 at level 100."
+gs_page_foraging_xp: "Experience"
+gs_page_foraging_xp_line: "$1 $2 per pick"
+gs_page_foraging_xp_range_line: "$1 $2 to $3 per pick"
+gs_page_foraging_xp_tip: "$1 in the Meadows, +$2 for each biome beyond, up to $3 in the Ashlands. Crops, even wild ones, train Farming."
+
+# Foraging: perks
+gs_perk_discovery: "Discovery"
+gs_page_foraging_discovery_tip: "The first pick of each kind of forage earns $1x the experience, once per character."
+gs_perk_sweep: "Sweep"
+gs_page_foraging_sweep_tip: "Picking a plant also picks every plant of the same kind within $1 m of it. $2 m at level 100."
+gs_page_foraging_sweep_locked_tip: "Picking a plant also picks every plant of the same kind within $1 m of it at level $2, $3 m at level 100."
+
+# Blocking ($1 of the held lines is the blocker's or the parry effect's name from the game)
+gs_page_blocking_about: "Makes your blocks stronger. Trained by blocking hits, a parry counts double."
+gs_page_blocking_armor: "Block armor"
+gs_page_blocking_armor_line: "$1 +$2"
+gs_page_blocking_armor_tip: "How much damage a block stops, the number in brackets on a shield's tooltip. A block costs stamina by the share of block armor it used, so a stronger block costs less. +$1 at level 100."
+gs_page_blocking_held_line: "$1: block armor $2"
+gs_page_blocking_held_tip: "$1 untrained, $2 at level 100."
+gs_page_blocking_parry: "Parry"
+gs_page_blocking_parry_line: "$1: block armor $2"
+gs_page_blocking_parry_tip: "A block raised less than $1 s before the hit multiplies block armor by the parry bonus (x$2) and can stagger the attacker."
+gs_page_blocking_shield: "Parry shield"
+gs_page_blocking_shield_line: "$1: absorbs $2 damage"
+gs_page_blocking_shield_tip: "Given by a parry. It absorbs $1 more damage per Blocking level."
+
+# Weapon skills: the lines they share ($1 of a cost line is the cost's name, $2 of its tip the cost's own sentence)
+gs_page_weapon_damage: "Damage"
+gs_page_weapon_damage_line: "$1 $2 of the weapon's"
+gs_page_weapon_damage_tip: "Each hit rolls its damage and knockback in this share of the full amount: the yellow range on the weapon's tooltip. At 100: 85–100%."
+gs_page_weapon_cost_line: "$1 -$2"
+gs_page_weapon_cost_tip: "At 100: -$1. $2"
+gs_page_weapon_stamina: "Attack stamina"
+gs_page_weapon_stamina_tip: "Any eitr or health an attack costs drops by the same share."
+gs_page_weapon_seconds: "$1 s"
+
+# Melee skills
+gs_page_swords_about: "Swords hit harder and cost less stamina. Trained by hitting creatures with a sword."
+gs_page_knives_about: "Knives hit harder and cost less stamina. Trained by hitting creatures with a knife."
+gs_page_clubs_about: "Clubs, maces and sledges hit harder and cost less stamina. Trained by hitting creatures with one."
+gs_page_polearms_about: "Atgeirs hit harder and cost less stamina. Trained by hitting creatures with one."
+gs_page_spears_about: "Spears hit harder, thrown or held, and cost less stamina. Trained by hitting creatures with a spear."
+gs_page_axes_about: "Axes and battleaxes hit harder and cost less stamina. Trained by hitting creatures with an axe."
+gs_page_axes_woodcutting: "Woodcutting"
+gs_page_axes_trees_line: "Trees use $1 instead"
+gs_page_axes_trees_tip: "Most axes roll their damage on trees, logs and stumps from Woodcutting and train it there, not Axes. Axes still cuts the swing's stamina."
+gs_page_unarmed_about: "Fists hit harder and cost less stamina. Trained by hitting creatures unarmed."
+gs_page_unarmed_fists: "Bare fists"
+gs_page_unarmed_fists_line: "$1 hit for $2–$3"
+gs_page_unarmed_fists_tip: "Damage of a punch before the target's armour and resistances."
+
+# Ranged skills ($1 of the held sentence is the tip before it, $2 the weapon in hand)
+gs_page_ranged_held: "$1 Your $2: $3 (from $4)."
+gs_page_bows_about: "Bows draw faster and hit harder. Trained by hitting creatures with arrows."
+gs_page_bows_damage_line: "$1 $2 of bow and arrow"
+gs_page_bows_damage_tip: "$1 At full draw; a partial draw scales it down."
+gs_page_bows_draw: "Draw time"
+gs_page_bows_draw_line: "$1 -$2"
+gs_page_bows_draw_tip: "Time to a full draw: the shot that hits hardest, flies fastest and strays least. At 100: a fifth of the bow's own."
+gs_page_bows_stamina: "Draw stamina"
+gs_page_bows_stamina_tip: "Drained while you hold the draw, half as fast once fully drawn. Any cost of the shot itself drops the same."
+gs_page_crossbows_about: "Crossbows reload faster and hit harder. Trained by hitting creatures with bolts."
+gs_page_crossbows_damage_line: "$1 $2 of crossbow and bolt"
+gs_page_crossbows_reload: "Reload time"
+gs_page_crossbows_reload_line: "$1 -$2"
+gs_page_crossbows_reload_tip: "At 100: half the crossbow's own, and so half the stamina reloading drains."
+
+# Magic skills
+gs_page_magic_elemental_about: "Elemental staves hit harder and cost less eitr. Trained by hitting creatures with their spells."
+gs_page_magic_damage_line: "$1 $2 of the staff's"
+gs_page_magic_eitr: "Eitr cost"
+gs_page_magic_eitr_tip: "Also any eitr drained while holding a charge, and any stamina or health a spell costs."
+gs_page_magic_blood_about: "Stronger summons and shields, cheaper spells. Trained by using blood magic."
+gs_page_magic_bloodcost: "Eitr and health cost"
+gs_page_magic_bloodcost_tip: "Also any stamina a spell costs."
+gs_page_magic_grow: "grow with level"
+gs_page_magic_grow_line: "Summons and shields $1"
+gs_page_magic_grow_tip: "Have a blood magic staff in your inventory once to see its numbers here."
+
+# GrindstoneSkills words: Fishing, Crafting, Kitchen, Sailing and Woodcutting.
+# One line per word, key: "text". $1, $2 ... are values the code fills in (numbers, names); keep them in the text.
+
+# Fishing: callouts floating over the water
+gs_fish_big_one: "It's a big one!"
+gs_fish_monster: "It's a monster!"
+gs_fish_perfect_strike: "Perfect strike!"
+gs_fish_spent: "Spent!"
+gs_fish_snag_found: "Found $1!"
+
+# Fishing: a legendary catch, top left for every player ($1 the angler, $2 the fish, $3 its weight)
+gs_fish_legendary_announce: "$1 landed a legendary $2 ($3 kg)!"
+
+# Fishing: the angler's senses (fishing conditions; $1 is the list of conditions)
+gs_fish_conditions_quiet: "Quiet water."
+gs_fish_conditions_good: "Good fishing: $1."
+gs_fish_condition_dawn: "dawn"
+gs_fish_condition_dusk: "dusk"
+gs_fish_condition_rain: "rain"
+gs_fish_condition_night: "night, when the big ones feed"
+
+# Fishing: what nibbles ($1 the fish; English picks "A" or "An" by the name's first letter; level: $1 level, $2 fish)
+gs_fish_nibble_a: "A $1 nibbles!"
+gs_fish_nibble_an: "An $1 nibbles!"
+gs_fish_nibble_level: "A level $1 $2 nibbles!"
+gs_fish_nibble_legendary: "A legendary $1 nibbles!"
+
+# Fishing: a fish in the water, looked at ($1 the game's hover text, $2 the level)
+gs_fish_hover_legendary: "Legendary $1"
+gs_fish_hover_level: "$1 (level $2)"
+
+# Fishing: the fish in reach of a cast ($1 of reach_some is a list of reach_count: $1 how many, $2 the fish)
+gs_fish_reach_none: "Nothing in reach takes this bait."
+gs_fish_reach_some: "In reach for this bait: $1."
+gs_fish_reach_count: "$1 $2"
+gs_fish_reach_lurks: "$1 Something big lurks here..."
+
+# Fishing: the fight and the tension bar
+gs_fish_grace: "It takes line - catch your breath!"
+gs_fish_bar_line: "Line"
+gs_fish_bar_thrashing: "Thrashing! Ease off"
+gs_fish_bar_spent: "Spent! Reel it in"
+gs_fish_bar_breath: "Catch your breath $1"
+
+# Fishing: the catch ($1 the game's catch message, $2 the weight) and the angler's log
+gs_fish_catch_weight: "$1 ($2 kg)"
+gs_fish_catch_record: "$1 ($2 kg, new record!)"
+gs_fish_bait_saved: "Bait saved"
+gs_fish_log_new_species: "New in your angler's log: $1 ($2 of $3 species)"
+gs_fish_log_new_size_level: "New size in your angler's log: a level $1 $2"
+gs_fish_log_new_size_legendary: "New size in your angler's log: a legendary $1"
+
+# Fishing: a fish's tooltip ($1 the levels landed; record: $1 weight, $2 level)
+gs_fish_tip_legendary: "Legendary"
+gs_fish_tip_not_logged: "Not in your angler's log yet"
+gs_fish_tip_levels: "Landed levels: $1"
+gs_fish_tip_record: "Your record: $1 kg (level $2)"
+
+# Fishing: snags ($1 the find's name, from the snags file)
+gs_fish_snagged: "Snagged something heavy!"
+gs_fish_snag_weeds: "Only weeds."
+gs_fish_snag_landed: "Landed $1!"
+
+# Crafting: perk names (skills window, tooltips, messages)
+gs_perk_makersmark: "Maker's Mark"
+gs_perk_sturdybuild: "Sturdy Build"
+gs_perk_thrifty: "Thrifty"
+gs_perk_journeyman: "Journeyman"
+
+# Crafting: perk tips in the skills window ($1 at your level, $2 at level 100)
+gs_craft_makersmark_tip: "Weapons, armour, shields and tools you craft or upgrade at a station that trains Crafting get +$1 max durability (+$2 at level 100). The mark stays on the item for whoever uses it; an upgrade marks it again with the upgrader's level."
+gs_craft_sturdybuild_tip: "Pieces you place with the hammer get +$1 max health (+$2 at level 100), kept on the piece for everyone. Ships keep Sailing's health."
+gs_craft_thrifty_tip: "Each craft or upgrade at the workbench, forge or another station that trains Crafting has a $1 chance ($2 at level 100) to give back one of the materials it used. Building never does: a removed piece already gives its full cost back."
+gs_craft_journeyman_tip: "The workbench and the forge count one level higher for you: craft, upgrade and repair what needs one station level more than they have. New recipes still appear at the station levels you have seen."
+
+# Crafting: the Maker's Mark tooltip line ($1 the perk's name, $2 the coloured bonus) and Thrifty's message ($1 the perk, $2 the item)
+gs_craft_mark_line: "$1: $2"
+gs_craft_mark_durability: "+$1% durability"
+gs_craft_thrifty_saved: "$1: 1 $2 saved"
+
+# Kitchen: an ingredient saved ($1 the item)
+gs_kitchen_saved: "Saved: 1 $1"
+
+# Sailing: the skill's description (skills panel and skill book)
+gs_sail_skill_description: "Health of the ships you build, speed of the ships you steer, and how far you explore at sea."
+
+# Sailing: the abilities, also shown by ShipConfig's ship panel (windcall: $1 seconds, $2 cooldown; lookout: $1 metres, $2 seconds, $3 cooldown)
+gs_sail_ability_windcall: "Wind Call"
+gs_sail_ability_lookout: "Lookout"
+gs_sail_ability_windcall_description: "Turns the wind to blow the way you look for $1 s, for everyone aboard. Use it while you steer. Cooldown $2."
+gs_sail_ability_lookout_description: "Sends a pulse $1 m out from the ship: everyone aboard sees the name tags of the enemies it reaches for $2 s. Cooldown $3."
+gs_sail_seconds: "$1 s"
+gs_sail_minutes: "$1 min"
+
+# Sailing: Wind Call ($1 the level or seconds; announcements: the compass point and the duration, other: $1 the player)
+gs_sail_windcall_needs: "Wind Call needs Sailing $1"
+gs_sail_windcall_wait: "Wind Call ready in $1 s"
+gs_sail_windcall_you: "You turn the wind toward the $1 for $2"
+gs_sail_windcall_other: "$1 turns the wind toward the $2 for $3"
+gs_sail_windcall_nobody: "The wind turns toward the $1 for $2"
+gs_sail_compass_north: "north"
+gs_sail_compass_north_east: "north-east"
+gs_sail_compass_east: "east"
+gs_sail_compass_south_east: "south-east"
+gs_sail_compass_south: "south"
+gs_sail_compass_south_west: "south-west"
+gs_sail_compass_west: "west"
+gs_sail_compass_north_west: "north-west"
+
+# Sailing: the lookout ($1 the level, seconds or metres; many: $1 how many, $2 metres)
+gs_sail_lookout_needs: "The lookout needs Sailing $1"
+gs_sail_lookout_aboard: "The lookout works aboard a ship"
+gs_sail_lookout_wait: "Lookout ready in $1 s"
+gs_sail_lookout_none: "Lookout: no enemies within $1 m"
+gs_sail_lookout_one: "Lookout: 1 enemy within $1 m"
+gs_sail_lookout_many: "Lookout: $1 enemies within $2 m"
+
+# Woodcutting: callouts floating over a tree or a log ($1 the find's name, from the finds file)
+gs_wood_timber: "Timber!"
+gs_wood_clean_split: "Clean split!"
+gs_wood_found: "Found $1!"
+gs_wood_find_something: "something"
+
+# Woodcutting: a domino chain ($1 how many trees)
+gs_wood_chain: "Chain ×$1!"
+
+# GrindstoneSkills: Farming, Foraging, Husbandry, Pickaxes and Defense (messages, callouts, hovers, pieces, status effects)
+
+# Farming: the compost bin piece and its hover
+gs_farm_compost_bin: "Compost bin"
+gs_farm_compost_bin_desc: "Turns food scraps and spare crops into compost that feeds the crops around it: they grow faster."
+gs_farm_compost_points: "Compost $1 / $2"
+gs_farm_compost_resting: "Compost $1 / $2 (resting)"
+
+# Farming: a plant's hover
+gs_farm_fertilized: "Fertilized"
+gs_farm_ripe_soon: "Ripe soon"
+gs_farm_ripe_under_minute: "Ripe in under a minute"
+gs_farm_ripe_minutes: "Ripe in $1 min"
+gs_farm_ripe_hours: "Ripe in $1 h $2 min"
+gs_farm_tended_today: "Tended today"
+gs_farm_tend: "Tend"
+
+# Farming: tending messages
+gs_farm_already_tended: "Already tended today"
+gs_farm_tended_one: "Tended 1 plant"
+gs_farm_tended_many: "Tended $1 plants"
+
+# Farming: giant crops ($1 the crop's hover name) and callouts ($1 the crop in lower case, $2 as the game writes it)
+gs_farm_giant_name: "Giant $1"
+gs_farm_giant_callout: "Giant $1!"
+gs_farm_seed_return: "+1 $1"
+
+# Foraging
+gs_forage_skill_desc: "Picking wild berries, mushrooms, herbs and stones: extra yield, sweep picking."
+gs_forage_discovered: "Discovered $1!"
+
+# Husbandry: the skill and the Animal Feeder piece
+gs_herd_skill_desc: "Taming, breeding and keeping animals: faster taming, calm creatures, better offspring and more from your herd."
+gs_herd_feeder: "Animal Feeder"
+gs_herd_feeder_desc: "Hungry tamed animals, and animals being tamed, come to eat the food you put in it."
+
+# Husbandry: callouts over animals
+gs_herd_strong_offspring: "Strong offspring!"
+gs_herd_twins: "Twins!"
+
+# Husbandry: how a time span reads in the animal lore lines
+gs_herd_seconds: "$1 s"
+gs_herd_minutes: "$1 min"
+gs_herd_hours: "$1 h $2 min"
+
+# Husbandry: animal lore lines ($1 a time span where there is one)
+gs_herd_needs_keeper: "Needs a Husbandry $1 keeper within $2 m to tame"
+gs_herd_tamed_in: "Tamed in about $1 while fed and calm"
+gs_herd_fed_for: "Fed for $1"
+gs_herd_content_for: "Content for $1"
+gs_herd_love: "Love $1 of $2"
+gs_herd_pregnant_due: "Pregnant, due in $1"
+gs_herd_pregnant_any_moment: "Pregnant, due any moment"
+gs_herd_full: "Herd full ($1 of $2 within $3 m)"
+gs_herd_count: "Herd $1 of $2"
+gs_herd_grows_up_in: "Grows up in $1"
+gs_herd_grows_up_any_moment: "Grows up any moment"
+gs_herd_hatches_in: "Hatches in $1"
+gs_herd_hatches_any_moment: "Hatches any moment"
+
+# Pickaxes: callouts ($1 a deposit's or a find's name)
+gs_mine_discovered: "Discovered $1!"
+gs_mine_found: "Found $1!"
+gs_mine_echo: "$1, $2 m"
+gs_mine_clean_strike: "Clean strike!"
+gs_mine_clean_strike_chain: "Clean strike ×$1!"
+
+# Pickaxes: Read the rock, under an ore deposit's hover ($1 the gold stars)
+gs_mine_rich_vein: "Rich vein $1"
+gs_mine_plain_vein: "Plain vein"
+gs_mine_chunks_left: "$1 of $2 chunks left"
+
+# Defense: the skill
+gs_defense_skill_desc: "More health, more health from food and less damage taken; regeneration out of combat, poise, a wider parry window and cheaper blocks and dodges. Trained by blocking and by taking hits."
+
+# Defense: status effects in the HUD (the others are named by their perk's name)
+gs_defense_laststand_recovering: "Last Stand recovering"
+gs_defense_desperation: "Desperation"
+gs_defense_seconds: "$1s"
+gs_defense_stacks: "$1x"
+
+# Defense: callouts and messages ($1 a perk's name, or the creature's name)
+gs_defense_perk_callout: "$1!"
+gs_defense_reflex: "Reflex!"
+gs_defense_bash: "Bash!"
+gs_defense_first_block: "First block: $1"
+
+# GrindstoneSkills: the movement skills' perks (Running, Jumping, Swimming, Sneaking, Dodging, Riding) and Weapon Mastery
+# with Catch Up: perk names (gs_perk_), their tips, callouts and lines.
+
+# Running
+gs_perk_packmule: "Pack Mule"
+gs_perk_burden: "Burden"
+gs_perk_secondwind: "Second Wind"
+gs_run_secondwind_callout: "Second wind!"
+gs_run_packmule_tip: "You can carry $1 more at your level, $2 at level 100."
+gs_run_burden_tip: "While over-encumbered, moving drains $1 stamina/s instead of $2."
+gs_run_secondwind_tip: "Running out of stamina while you run gives $1 stamina back at once, and you keep running. Once every $2."
+gs_run_secondwind_ready: "Ready again in $1."
+
+# Jumping
+gs_perk_lightfeet: "Light Feet"
+gs_perk_softlanding: "Soft Landing"
+gs_perk_roll: "Roll"
+gs_jump_lightfeet_tip: "A jump costs $1 stamina at your level instead of $2, before gear: -$3. -$4 at level 100."
+gs_jump_softlanding_tip: "Falls up to $1 m do you no harm at your level ($2 m untrained, $3 m at level 100). Longer falls hurt $4 less ($5 at level 100): at most $6 damage, from $7 m."
+gs_jump_roll_tip: "Land from a fall that would hurt while moving forward and you roll: no damage from falls up to $1 m ($2 m at level 100), $3 of the damage above that. The roll costs no stamina and does not shield you from hits."
+
+# Swimming
+gs_perk_quickdry: "Quick Dry"
+gs_perk_longbreath: "Long Breath"
+gs_perk_salvage: "Salvage"
+gs_swim_quickdry_tip: "Wet ends $1 sooner after you leave the water or the rain. $2 at level 100."
+gs_swim_quickdry_tip_times: "Wet ends $1 sooner after you leave the water or the rain: $2 at your level, $3 untrained, $4 at level 100."
+gs_swim_longbreath_tip: "Out of stamina in water, drowning starts $1 s later and hurts $2 less: $3 of max health a second instead of $4. $5 s later and $6 less at level 100."
+gs_swim_salvage_tip: "While you swim, loose items are picked up from $1 m instead of $2 m. $3 m at level 100."
+
+# Sneaking
+gs_perk_prowl: "Prowl"
+gs_perk_softsteps: "Soft Steps"
+gs_perk_assassin: "Assassin"
+gs_perk_vanish: "Vanish"
+gs_sneak_vanish_callout: "Vanished"
+gs_sneak_prowl_tip: "Crouched walking $1 m/s at your level (+$2), $3 untrained, before gear. +$4 at level 100. Not while over-encumbered."
+gs_sneak_softsteps_tip: "Attacking, dodging, mining and building from a crouch make $1 less noise at your level, $2 less at level 100. Creatures hear you only within your noise; crouched walking makes none."
+gs_sneak_assassin_tip: "A sneak attack, on a creature that has not noticed you, deals $1 more at your level, $2 more at level 100, on top of the weapon's own bonus, and gives $3 Sneak experience. One per creature every $4, as in the game."
+gs_sneak_vanish_tip: "Crouch for $1 with no enemy within $2 m while creatures hunt you, and every one within $3 m loses track of you. Not bosses. Once every $4."
+
+# Dodging
+gs_perk_longroll: "Long Roll"
+gs_perk_counter: "Counter"
+gs_perk_heavyroll: "Heavy Roll"
+gs_dodge_counter_callout: "Counter!"
+gs_dodge_longroll_tip: "Your roll keeps you untouchable $1 longer at your level, $2 at level 100."
+gs_dodge_longroll_last: "Your last roll: $1 s untouchable without it, $2 s with it."
+gs_dodge_counter_tip: "Dodging through an attack readies a counter for $1: the next melee attack you start deals $2 more damage with every hit it lands. Bows, staffs and throws neither use it up nor gain from it."
+gs_dodge_heavyroll_tip: "You can dodge while over-encumbered, at x$1 stamina: $2 a roll now, against $3 for an ordinary one."
+
+# Riding
+gs_perk_gallop: "Gallop"
+gs_perk_steadyseat: "Steady Seat"
+gs_ride_gallop_tip: "A mount you ride runs $1 faster, on top of the game's gallop speed above. +$2 at level 100."
+gs_ride_steadyseat_tip: "A mount takes $1 less damage while you ride it, drowning included. $2 at level 100."
+
+# Weapon Mastery: Catch Up and Weapon Switch lines on every skill's page
+gs_mastery_catchup_term: "Catching up"
+gs_mastery_catchup_line: "$1: x$2 until level $3"
+gs_mastery_catchup_tip: "Catch Up: this skill is below level $1, the best it ever reached, so it gains x$2 experience until it is back there. Every skill's best level is kept with the character."
+gs_mastery_switch_term: "Weapon Switch"
+gs_mastery_switch_line: "$1: +$2 experience"
+gs_mastery_switch_tip: "A weapon skill below your best weapon skill gains $1 more experience, until it reaches your best weapon skill, level $2."
+
+# Weapon Mastery: melee milestones
+gs_perk_edge: "Edge"
+gs_perk_bleed: "Bleed"
+gs_perk_crush: "Crush"
+gs_perk_polearmsweep: "Sweep"
+gs_perk_longthrow: "Long Throw"
+gs_perk_rend: "Rend"
+gs_perk_brawler: "Brawler"
+gs_mastery_edge_tip: "Sword hits on a staggered foe deal $1 more damage, on top of the double damage the game already gives a staggered creature."
+gs_mastery_bleed_tip: "Knife hits also poison the foe for $1 of the hit's damage, before its resistances; foes immune to poison take none. Poison does not stack: a new dose replaces the one running only when it is bigger."
+gs_mastery_crush_tip: "Club hits build $1 more stagger, so foes are knocked off balance sooner."
+gs_mastery_sweep_tip: "Atgeir hits knock foes back $1 harder. Heavy foes still barely move."
+gs_mastery_longthrow_tip: "Thrown spears deal $1 more damage. Held spear thrusts are unchanged."
+gs_mastery_rend_tip: "Each axe hit on the same foe within $1 of the last deals $2 more than the one before, up to $3 once $4 hits have landed in a row."
+gs_mastery_brawler_tip: "Unarmed hits, bare fists and claws alike, deal $1 more damage."
+
+# Weapon Mastery: ranged and magic milestones
+gs_perk_recover: "Recover"
+gs_perk_steadyreload: "Steady Reload"
+gs_perk_attunement: "Attunement"
+gs_perk_lifetap: "Life Tap"
+gs_perk_shieldtraining: "Shield Training"
+gs_mastery_recover_tip: "Each bow shot has a $1 chance to use no arrow: it stays in your inventory."
+gs_mastery_steadyreload_tip: "Sprinting, jumping or dodging pauses a crossbow reload instead of restarting it: it goes on from where it was once you stop."
+gs_mastery_attunement_tip: "+$1 eitr regeneration while you hold an Elemental Magic staff. Adds up with the regeneration bonuses of meads and gear."
+gs_mastery_lifetap_tip: "Blood magic spells that cost health cost $1 less health, on top of the skill's own cut."
+gs_mastery_shieldtraining_tip: "A blood magic shield you cast, on yourself or anyone else, trains your Blood Magic as it absorbs hits from creatures: 1 experience per $1 damage (a spell that hits gives 1), at most $2 per hit. Falls, fire and players' hits train nothing. The game's own experience when a shield breaks still goes to whoever wears it."

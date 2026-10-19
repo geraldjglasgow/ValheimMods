@@ -50,6 +50,7 @@ namespace GrindstoneSkills
                 return;
             Silence(dialog);
             BookLayout.PaneOf(dialog)?.Open(player);
+            SortBar.Refresh();
         }
 
         /// <summary>The pane once the window has one (the window makes it as it opens), remembered per window.</summary>

@@ -26,7 +26,8 @@ namespace GrindstoneSkills
     /// </summary>
     public static class CleanSplits
     {
-        public const string Callout = "Clean split!";
+        /// <summary>The word key of what floats above a cleanly split log ("Clean split!").</summary>
+        public const string Callout = "gs_wood_clean_split";
 
         /// <summary>
         /// Damage on top of the remaining health, so float rounding in the game's own sum never leaves a sliver of

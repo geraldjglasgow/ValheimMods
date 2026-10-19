@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -22,8 +23,8 @@ namespace GrindstoneSkills
         public const string SourcePrefab = "piece_chest_barrel";
         public const string WorkbenchPrefab = "piece_workbench";
         public const string HammerItem = "Hammer";
-        public const string DisplayName = "Animal Feeder";
-        public const string Description = "Hungry tamed animals, and animals being tamed, come to eat the food you put in it.";
+        public const string NameKey = "gs_herd_feeder";
+        public const string DescriptionKey = "gs_herd_feeder_desc";
         public const int Width = 4;
         public const int Height = 2;
 
@@ -86,14 +87,14 @@ namespace GrindstoneSkills
 
         private static void Configure(Piece piece, Container container, ZNetScene scene)
         {
-            piece.m_name = DisplayName;
-            piece.m_description = Description;
+            piece.m_name = Lang.Token(NameKey);
+            piece.m_description = Lang.Token(DescriptionKey);
             piece.m_category = Piece.PieceCategory.Misc;
             piece.m_enabled = true;
             if (piece.m_craftingStation == null)
                 piece.m_craftingStation = Workbench(scene);
             piece.m_resources = FeederRecipe.Parse(HusbandryCompanionSettings.FeederRecipe.Value);
-            container.m_name = DisplayName;
+            container.m_name = Lang.Token(NameKey);
             container.m_width = Width;
             container.m_height = Height;
         }

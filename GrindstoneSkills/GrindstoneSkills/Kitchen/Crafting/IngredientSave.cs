@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -62,7 +63,7 @@ namespace GrindstoneSkills
             string name = Localization.instance.Localize(unit.m_shared.m_name);
             if (!player.GetInventory().AddItem(unit))
                 CraftDrop.AtFeet(player, unit, 1);
-            player.Message(MessageHud.MessageType.TopLeft, $"Saved: 1 {name}", 0, unit.GetIcon());
+            player.Message(MessageHud.MessageType.TopLeft, Lang.Format("gs_kitchen_saved", name), 0, unit.GetIcon());
         }
     }
 }

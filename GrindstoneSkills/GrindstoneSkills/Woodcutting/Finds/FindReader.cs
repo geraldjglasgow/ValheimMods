@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using YamlConfig;
 
 namespace GrindstoneSkills
@@ -50,13 +51,14 @@ namespace GrindstoneSkills
             return null;
         }
 
+        /// <summary>The find's name as the file gives it; without one, the word token for "something", read in each player's language.</summary>
         private static string ReadName(YamlNode node)
         {
             if (node.TryString(out string name) && name.Trim().Length > 0)
                 return name.Trim();
             if (node.Kind == YamlNodeKind.Missing)
                 node.Warn("no name; the callout says 'Found something!'");
-            return "something";
+            return Lang.Token("gs_wood_find_something");
         }
 
         /// <summary>1 when not given; a negative weight is an error, 0 keeps the find but never picks it.</summary>

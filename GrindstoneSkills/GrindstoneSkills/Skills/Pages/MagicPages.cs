@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -9,19 +11,20 @@ namespace GrindstoneSkills
     {
         public static void ElementalMagic(SkillPage page)
         {
-            page.About = "Elemental staves hit harder and cost less eitr. Trained by hitting creatures with their spells.";
-            WeaponLines.Damage(page, "the staff's", "");
-            WeaponLines.Cost(page, "Eitr cost", "Also any eitr drained while holding a charge, and any stamina or health a spell costs.");
+            page.About = Lang.Get("gs_page_magic_elemental_about");
+            WeaponLines.Damage(page, "gs_page_magic_damage_line");
+            WeaponLines.Cost(page, "gs_page_magic_eitr", "gs_page_magic_eitr_tip");
             StaffLines.Write(page);
         }
 
         public static void BloodMagic(SkillPage page)
         {
-            page.About = "Stronger summons and shields, cheaper spells. Trained by using blood magic.";
-            WeaponLines.Cost(page, "Eitr and health cost", "Also any stamina a spell costs.");
-            if (!StaffLines.Write(page))
-                page.Line("Summons and shields grow with level", "grow with level",
-                    "Have a blood magic staff in your inventory once to see its numbers here.");
+            page.About = Lang.Get("gs_page_magic_blood_about");
+            WeaponLines.Cost(page, "gs_page_magic_bloodcost", "gs_page_magic_bloodcost_tip");
+            if (StaffLines.Write(page))
+                return;
+            string term = Lang.Get("gs_page_magic_grow");
+            page.Line(Lang.Format("gs_page_magic_grow_line", term), term, Lang.Get("gs_page_magic_grow_tip"));
         }
     }
 }

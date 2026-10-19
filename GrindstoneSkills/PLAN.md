@@ -189,8 +189,23 @@ These are in addition to what the game already gives (shorter craft time):
 
 - Plugin GUID `com.GrindstoneSkills`.
 - ZDO keys, RPC names and custom-data keys prefixed `grindstone_`.
-- Localization keys `$grindstone_*`; the Sailing skill's name is the game's own pattern, `$skill_<type number>`.
+- Word keys `gs_<area>_*` in `translations/English.yml` (perk names `gs_perk_<name>`, info pages `gs_page_<skill>_*`);
+  the custom skills' names are the game's own pattern, `$skill_<type number>`.
 - Sailing's `SkillType` number is the stable hash of `grindstone_sailing`, masked positive.
+
+## Translations (2026-10-19)
+
+Every word a player reads in game is in `GrindstoneSkills/translations/English.yml` (flat `key: "text"`, one line each,
+`$1`, `$2` ... for values), embedded and written into the game's word table in the player's language by the
+`Translations` library (`Lang.Install` in Awake). A translation is `GrindstoneSkills.translations.<Language>.yml` (the
+game's own name for the language) in `BepInEx/config` or anywhere under `BepInEx/plugins`; what it leaves out stays
+English. Code reads words with `Lang.Get`, `Format` and `Token`. In the skills window a hovered term is its own key and
+goes into its line as a value, so the hover finds it in any language. Callouts sent to nearby players (fish, wood,
+herd, mine) and the legendary fish announcement travel as `LangWire` messages and are worded on each receiver;
+`FloatingText.Show` reads one too. Hovers that cache text (compost, plant, lore, vein, the tension bar, the maker's
+mark) rebuild when `Lang.Version` changes. `SailingApi`'s ability names and descriptions are in the local player's
+language. Never translated: logs, console command output, .cfg text, YAML keys and errors, and the names in the finds,
+forage, mine finds and snags files (shown as the file gives them).
 
 ## Layout (standard mod layout, copied from ShipConfig)
 
@@ -233,7 +248,7 @@ Planned units, each within the size limits:
   on/off.
 - **The ★ glyph:** the game's Averia and Norse fonts lack U+2605, but their TMP fallbacks (Noto Sans/Serif JP) have
   it. Text uses ★; icons use the game's creature-star sprite (`EnemyHud` `m_baseHud`, `level_2/star`).
-- **Messages are plain English** ("Saved:"). No localization keys yet.
+- **Messages are words from `translations/English.yml`** ("Saved: 1 $1"), in the player's language (2026-10-19).
 - **Known gap (nothing is lost):** `Tombstone.EasyFitInInventory` and OpenKeep's `ReachPull` room estimate ignore egg
   quality.
 
@@ -258,7 +273,7 @@ a circle and reveals the name tags of the enemies near. Installed on the server,
   - `Skills.Load` keeps only types the enum defines (`IsSkillValid`), so without a patch a saved Sailing level is
     dropped at load and lost at the next save.
   - The skills panel and the level-up message name a skill `$skill_` + the type's name in lower case: the number
-    here. The word goes to the game's localization in `Localization.SetupLanguage`.
+    here. Its English is in `translations/English.yml` (`skill_<n>`), written into the game's table by the Translations library.
   - The icon is the Karve's piece icon, read when `ZNetScene` wakes.
   - The death penalty (`LowerAllSkills`), the skills panel and the world's skill-gain modifier work unchanged.
 - **Console:** `raiseskill` and `resetskill` match the enum's names, so "sailing" is handled by a patch and "all"
@@ -905,7 +920,7 @@ Read from the prefab bundles (UnityPy) and the decompiled assembly, 2026-09-27:
 ### Known gaps
 
 - A vanilla client's picks train Farming, as without the mod.
-- All texts are English.
+- Its texts are words from `translations/English.yml` (2026-10-19).
 
 ### Test checklist
 
@@ -1815,7 +1830,7 @@ is `assets/skill_sailing.png` since 0.8.2, the Karve's only as a fallback.
 - Crops placed by other mods have no planter.
 - A plant placed close to a lower-level planter's crop can take its room, as in the game.
 - The compost bin's feeding RPC can be lost if the plant unloads first; the point is then spent.
-- All texts are English.
+- Its texts are words from `translations/English.yml` (2026-10-19).
 
 ### Test checklist
 

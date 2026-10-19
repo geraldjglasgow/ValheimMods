@@ -1,3 +1,5 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
@@ -25,7 +27,7 @@ namespace GrindstoneSkills
                 hit.m_damage.m_poison += damage * Poison;
         }
 
-        public static void Perk(SkillPage page) => page.Perk("Bleed", MeleeMastery.Level,
-            $"Knife hits also poison the foe for {SkillPage.Percent(Poison)} of the hit's damage, before its resistances; foes immune to poison take none. Poison does not stack: a new dose replaces the one running only when it is bigger.");
+        public static void Perk(SkillPage page) => page.Perk(Lang.Get("gs_perk_bleed"), MeleeMastery.Level,
+            Lang.Format("gs_mastery_bleed_tip", SkillPage.Percent(Poison)));
     }
 }

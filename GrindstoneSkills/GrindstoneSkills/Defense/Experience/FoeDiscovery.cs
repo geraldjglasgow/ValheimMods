@@ -1,4 +1,5 @@
 using System;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -21,7 +22,7 @@ namespace GrindstoneSkills
                 return false;
             player.m_customData.TryGetValue(Keys.BlockedFoes, out string blocked);
             player.m_customData[Keys.BlockedFoes] = string.IsNullOrEmpty(blocked) ? identity : blocked + Separator + identity;
-            DefenseCallout.Show(foe.GetTopPoint(), $"First block: {Localization.instance.Localize(identity)}");
+            DefenseCallout.Show(foe.GetTopPoint(), Lang.Format("gs_defense_first_block", Localization.instance.Localize(identity)));
             return true;
         }
 

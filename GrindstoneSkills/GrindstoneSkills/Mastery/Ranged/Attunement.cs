@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 
 namespace GrindstoneSkills
 {
@@ -17,8 +18,7 @@ namespace GrindstoneSkills
         private const float EitrRegenBonus = 0.25f;
 
         /// <summary>The perk's tip on the Elemental Magic page.</summary>
-        public static string Tip =>
-            $"+{SkillPage.Percent(EitrRegenBonus)} eitr regeneration while you hold an Elemental Magic staff. Adds up with the regeneration bonuses of meads and gear.";
+        public static string Tip => Lang.Format("gs_mastery_attunement_tip", SkillPage.Percent(EitrRegenBonus));
 
         [HarmonyPatch(typeof(SEMan), nameof(SEMan.ModifyEitrRegen))]
         private static class Regen

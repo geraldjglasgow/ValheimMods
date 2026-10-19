@@ -16,6 +16,7 @@ namespace GrindstoneSkills
             Float = fishingFloat;
             Prefab = FishInfo.Prefab(fish);
             Name = FishInfo.Name(fish);
+            NameToken = fish.m_name;
             Level = FishInfo.Level(fish);
             SpeciesScale = FishInfo.SpeciesScale(fish);
             Position = fish.transform.position;
@@ -31,6 +32,10 @@ namespace GrindstoneSkills
 
         public string Prefab { get; }
         public string Name { get; }
+
+        /// <summary>The fish's name as the game keeps it (Fish.m_name, a word token), for a message read on another machine.</summary>
+        public string NameToken { get; }
+
         public int Level { get; }
         public float SpeciesScale { get; }
         public float Weight { get; }

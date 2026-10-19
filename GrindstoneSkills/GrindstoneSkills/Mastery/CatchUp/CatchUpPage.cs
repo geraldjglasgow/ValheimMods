@@ -1,16 +1,16 @@
+using Translations;
+
 namespace GrindstoneSkills
 {
     /// <summary>
     /// Every skill's page in the info pane: one line while the skill trains faster (<see cref="CatchUpXp"/>), Catch Up
     /// (section 6) while it is below the best level it reached, else Weapon Switch (section 43) while a weapon skill is
     /// below the player's best weapon skill. Nothing while neither applies or its switch is off. The page is the local
-    /// player's own, written on their client from their own skills.
+    /// player's own, written on their client from their own skills. The hovered term is a word of its own, filled into
+    /// the line, so the line holds it in every language.
     /// </summary>
     public static class CatchUpPage
     {
-        private const string CatchUpTerm = "Catching up";
-        private const string WeaponSwitchTerm = "Weapon Switch";
-
         public static void Write(SkillPage page)
         {
             if (!LocalSkill.IsLocal(page.Player))
@@ -18,19 +18,26 @@ namespace GrindstoneSkills
             switch (CatchUpXp.Find(page.Player.GetSkills(), page.Type, out float rate, out int until))
             {
                 case CatchUpXp.Boost.CatchUp:
-                    page.Line($"{CatchUpTerm}: x{SkillPage.Number(rate)} until level {until}", CatchUpTerm, CatchUpTip(rate, until));
+                    CatchUpLine(page, rate, until);
                     break;
                 case CatchUpXp.Boost.WeaponSwitch:
-                    page.Line($"{WeaponSwitchTerm}: +{SkillPage.Percent(rate - 1f)} experience", WeaponSwitchTerm, WeaponSwitchTip(rate, until));
+                    WeaponSwitchLine(page, rate, until);
                     break;
             }
         }
 
-        private static string CatchUpTip(float rate, int until) =>
-            $"Catch Up: this skill is below level {until}, the best it ever reached, so it gains x{SkillPage.Number(rate)} experience until it is back there. " +
-            "Every skill's best level is kept with the character.";
+        private static void CatchUpLine(SkillPage page, float rate, int until)
+        {
+            string term = Lang.Get("gs_mastery_catchup_term");
+            string times = SkillPage.Number(rate);
+            page.Line(Lang.Format("gs_mastery_catchup_line", term, times, until), term, Lang.Format("gs_mastery_catchup_tip", until, times));
+        }
 
-        private static string WeaponSwitchTip(float rate, int until) =>
-            $"A weapon skill below your best weapon skill gains {SkillPage.Percent(rate - 1f)} more experience, until it reaches your best weapon skill, level {until}.";
+        private static void WeaponSwitchLine(SkillPage page, float rate, int until)
+        {
+            string term = Lang.Get("gs_mastery_switch_term");
+            string bonus = SkillPage.Percent(rate - 1f);
+            page.Line(Lang.Format("gs_mastery_switch_line", term, bonus), term, Lang.Format("gs_mastery_switch_tip", bonus, until));
+        }
     }
 }

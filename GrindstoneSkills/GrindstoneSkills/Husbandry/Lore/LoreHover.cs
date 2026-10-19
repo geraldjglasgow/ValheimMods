@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -11,7 +12,8 @@ namespace GrindstoneSkills
     /// creature's is <c>Tameable.GetHoverText</c> (<c>Character.GetHoverText</c> forwards to it). A young animal has no
     /// Tameable, so the game shows nothing for it; with lore it gets its name and the growing line. An egg's is
     /// <c>EggGrow.GetHoverText</c>.</item>
-    /// <item><b>Cost:</b> the lines are rebuilt at most every 0.25 s for the object looked at, as the vein hover does.</item>
+    /// <item><b>Cost:</b> the lines are rebuilt at most every 0.25 s for the object looked at, as the vein hover does,
+    /// and at once after a language change.</item>
     /// <item><b>Never throws:</b> building runs inside <see cref="HookGuard"/>; a failure shows the game's text alone.</item>
     /// </list>
     /// </summary>
@@ -22,6 +24,7 @@ namespace GrindstoneSkills
         private static Component lastSource;
         private static Character lastCharacter;
         private static bool lastYoung;
+        private static int lastLanguage = -1;
         private static string lastLines = "";
         private static float refreshAt;
 
@@ -76,9 +79,10 @@ namespace GrindstoneSkills
         private static string Cached(Component source)
         {
             float now = Time.time;
-            if (ReferenceEquals(source, lastSource) && now < refreshAt)
+            if (ReferenceEquals(source, lastSource) && lastLanguage == Lang.Version && now < refreshAt)
                 return lastLines;
             lastSource = source;
+            lastLanguage = Lang.Version;
             refreshAt = now + RefreshSeconds;
             lastLines = HookGuard.Run("animal lore", static lore => Build(lore), source, "") ?? "";
             return lastLines;

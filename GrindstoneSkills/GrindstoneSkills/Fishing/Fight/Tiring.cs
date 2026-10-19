@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace GrindstoneSkills
@@ -66,7 +67,7 @@ namespace GrindstoneSkills
             if (fight.Spent)
                 return;
             fight.Spent = true;
-            FishCallout.ShowLocal(fish.transform.position + Vector3.up, "Spent!");
+            FishCallout.ShowLocal(fish.transform.position + Vector3.up, Lang.Get("gs_fish_spent"));
         }
 
         private static void Shorten(Fish fish, float share)
