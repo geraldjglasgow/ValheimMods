@@ -94,7 +94,10 @@ namespace EliteCreaturesPack.Arsenal
             return item;
         }
 
-        /// <summary>The item's own name, description and icon (the game item's icon when the bundle lacks one).</summary>
+        /// <summary>
+        /// The item's own name, description and icon (the game item's icon when the bundle lacks one). The name and
+        /// description are the tokens of its words, whose English is in <c>translations/English.yml</c>.
+        /// </summary>
         public static void Describe(ItemDrop drop, string word, Sprite? icon)
         {
             ItemDrop.ItemData.SharedData shared = drop.m_itemData.m_shared;

@@ -36,7 +36,7 @@ namespace EliteCreaturesPack
     {
         public const string PluginGuid = "com.EliteCreaturesPack";
         public const string PluginName = "Elite Creatures Pack";
-        public const string PluginVersion = "0.11.1";
+        public const string PluginVersion = "0.12.0";
 
         public static SyncedConfiguration Synced { get; private set; } = null!;
 
@@ -48,6 +48,7 @@ namespace EliteCreaturesPack
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "EliteCreaturesPack", Logger);
             InstallCreatures(harmony);
             // Custom creatures: their YAML file set and the server's built files exist before Finish loads anything.
             CustomCreatures.Install(Synced);

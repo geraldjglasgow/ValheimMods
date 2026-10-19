@@ -46,7 +46,6 @@ namespace EliteCreaturesPack.Slinger
             NetPrefabs.Register(scene, stone!);
             NetPrefabs.Register(scene, shot!);
             NetPrefabs.Register(scene, Prefab!);
-            SlingerWords.Add(Localization.instance);
             Log.Info($"Greydwarf slinger ready: {Creature}, {Shot}, {Stone}.");
         }
 

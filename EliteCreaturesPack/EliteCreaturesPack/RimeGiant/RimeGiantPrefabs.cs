@@ -49,7 +49,6 @@ namespace EliteCreaturesPack.RimeGiant
             NetPrefabs.Register(scene, corpse!);
             NetPrefabs.Register(scene, Prefab!);
             RimeGiantSpawns.Refresh();
-            RimeGiantWords.Add(Localization.instance);
             Log.Info($"Rime giant ready: {Creature}, {Boulder}, {Corpse}.");
         }
 

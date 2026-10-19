@@ -1,0 +1,101 @@
+# Elite Creatures Pack - English words
+#
+# To translate: copy this file as EliteCreaturesPack.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the game), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# The kraken
+enemy_ecp_kraken: "Kraken"
+se_ecp_inked: "Inked"
+se_ecp_inked_tooltip: "Ink in your eyes."
+item_ecp_krakenbeak: "Kraken beak"
+item_ecp_krakenbeak_description: "The kraken's hooked beak: dark horn with an amber edge that could shear through a hull. A smith could set it in a shield."
+item_ecp_krakenmeat: "Raw kraken tentacle"
+item_ecp_krakenmeat_description: "A thick cut of kraken arm, suckers and all. Cook it on an iron cooking station."
+item_ecp_krakenmeatcooked: "Cooked kraken tentacle"
+item_ecp_krakenmeatcooked_description: "Seared tentacle, rich and chewy. Keeps a crew rowing through the longest night."
+item_ecp_shieldkraken: "Kraken shield"
+item_ecp_shieldkraken_description: "Fine wood and silver bound round the kraken's beak. Parry a blow with it and the beak bites back."
+
+# The Crypt Executioner
+enemy_ecp_headsman: "Crypt Executioner"
+# Its attacks (never shown)
+item_ecp_headsman_slam: "Executioner's axe"
+item_ecp_headsman_scrape: "Executioner's axe"
+item_ecp_headsman_spin: "Executioner's axe"
+item_ecp_headsman_hurl: "Executioner's axe"
+item_ecp_headsman_spinthrow: "Executioner's axe"
+item_ecp_headsman_rear: "Executioner's axe"
+# The players' greataxe and its axehead
+item_ecp_executionergreataxe: "Executioner's Greataxe"
+item_ecp_executionergreataxe_description: "The Crypt Executioner's greataxe, its haft strung from vertebrae. It slashes, whirls all the way round, then falls from overhead; the last blow is slow to recover from."
+item_ecp_executioneraxehead: "Executioner's axehead"
+item_ecp_executioneraxehead_description: "The bone head of the Crypt Executioner's axe. Set on a haft of spines at the workbench, it swings again."
+
+# The Rime Giant
+enemy_ecp_rimegiant: "Rime Giant"
+# Its attacks
+item_ecp_rimegiant_sweep: "Rime fist"
+item_ecp_rimegiant_slam: "Avalanche"
+item_ecp_rimegiant_throw: "Ice boulder"
+
+# The crypt mimic (while it sleeps it shows the game's own chest words)
+enemy_ecp_cryptmimic: "Crypt Mimic"
+item_ecp_cryptmimic_bite: "Mimic bite"
+
+# The Greydwarf Slinger
+enemy_ecp_greydwarfslinger: "Greydwarf Slinger"
+item_ecp_slinger_shot: "Slingshot stone"
+
+# The arsenal skeletons
+enemy_ecp_skeletoncutthroat: "Skeleton Cutthroat"
+enemy_ecp_skeletonswordsman: "Skeleton Swordsman"
+enemy_ecp_skeletonaxeman: "Skeleton Axeman"
+enemy_ecp_skeletonbonebreaker: "Skeleton Bonebreaker"
+enemy_ecp_skeletonspearman: "Skeleton Spearman"
+enemy_ecp_skeletonhalberdier: "Skeleton Halberdier"
+enemy_ecp_skeletonbowman: "Skeleton Bowman"
+# The bone weapons
+item_ecp_bonedagger: "Bone Dagger"
+item_ecp_bonedagger_description: "Its blade is the spine of a single vertebra, its grip a tail of small ones. Quick, quiet and cruel."
+item_ecp_bonesword: "Bone Sword"
+item_ecp_bonesword_description: "A blade of bone with a spine running down its middle, a vertebra for a guard and more for a grip."
+item_ecp_boneaxe: "Bone Axe"
+item_ecp_boneaxe_description: "A bone blade set in a vertebra, on a haft of spine. It bites flesh and wood alike."
+item_ecp_bonemace: "Bone Mace"
+item_ecp_bonemace_description: "A knot of vertebrae on a haft of spine. Heavy enough to crack whatever it meets."
+item_ecp_bonespear: "Bone Spear"
+item_ecp_bonespear_description: "Long bones for the lower shaft, a spine for the upper, a leaf of bone for a point."
+item_ecp_boneatgeir: "Bone Atgeir"
+item_ecp_boneatgeir_description: "Half long bones, half spine, ending in a curved bone blade and a hooked fang. It keeps the dead at a distance."
+item_ecp_bonebow: "Bone Bow"
+item_ecp_bonebow_description: "Ribs for limbs and a backbone for a grip. The dead draw it well enough; so can you."
+# The spine and the bone arrows
+item_ecp_spine: "Spine"
+item_ecp_spine_description: "A length of an old spine, still hard as stone. The skeletons build their weapons around it."
+item_ecp_arrowbone: "Bone Arrow"
+item_ecp_arrowbone_description: "A shaft of bone tipped with a sharpened vertebra. Better than wood, not as good as flint."
+# The Skeleton Crossbowman and the Bone Crossbow
+enemy_ecp_skeletoncrossbowman: "Skeleton Crossbowman"
+item_ecp_skeletoncrossbow: "Crossbow"
+item_ecp_bonecrossbow: "Bone Crossbow"
+item_ecp_bonecrossbow_description: "A crossbow of bones, made the way the dead make theirs: a femur for a stock, a spine for a tiller, ribs for a prod. It hits like a club, whatever bolt it looses."
+item_ecp_boltboneblunt: "Blunted Bone Bolt"
+item_ecp_boltboneblunt_description: "A bolt of bone with its head ground blunt and no fletching, for the bone crossbow. It breaks bones rather than piercing them."
+# The Bone Ballista
+piece_ecp_boneballista: "Bone Ballista"
+piece_ecp_boneballista_description: "A small ballista of bones, its arms two spines. Hold it to aim and shoot; it reloads from the bone missiles you carry, a turn of 45 degrees either way."
+item_ecp_bonemissile: "Bone Missile"
+item_ecp_bonemissile_description: "A missile for the bone ballista: a long bone shaft with a fang for a head and bone plates for fletching."
+# The Bone Ballista's hover: its name, then "(loaded)" or "(empty)", then [E] Hold or Let go
+hud_ecp_bal_hold: "Hold"
+hud_ecp_bal_letgo: "Let go"
+hud_ecp_bal_loaded: "loaded"
+hud_ecp_bal_empty: "empty"
+# The Bone Ballista's messages to its holder
+msg_ecp_bal_nomissiles: "No bone missiles"
+msg_ecp_bal_behind: "Stand behind it to hold it"

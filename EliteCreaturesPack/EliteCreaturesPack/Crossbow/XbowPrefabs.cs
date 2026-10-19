@@ -49,7 +49,6 @@ namespace EliteCreaturesPack.Crossbow
             {
                 NetPrefabs.Register(scene, item);
             }
-            XbowWords.Add(Localization.instance);
             Log.Info($"Skeleton crossbowmen ready: {string.Join(", ", XbowKind.All.Where(k => k.Prefab != null).Select(k => k.Creature))}.");
         }
 

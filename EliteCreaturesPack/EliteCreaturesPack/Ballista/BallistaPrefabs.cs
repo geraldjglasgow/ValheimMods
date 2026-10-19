@@ -37,7 +37,6 @@ namespace EliteCreaturesPack.Ballista
             {
                 NetPrefabs.Register(scene, prefab);
             }
-            BallistaWords.Add(Localization.instance);
             BallistaCrafting.Refresh(ObjectDB.instance);
         }
 

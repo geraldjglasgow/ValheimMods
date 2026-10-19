@@ -45,7 +45,6 @@ namespace EliteCreaturesPack.Mimic
             NetPrefabs.Register(scene, bite!);
             NetPrefabs.Register(scene, corpse!);
             NetPrefabs.Register(scene, creature!);
-            MimicWords.Add(Localization.instance);
             Log.Info($"Crypt mimic ready: {Creature}, {Bite}, {Corpse}.");
         }
 

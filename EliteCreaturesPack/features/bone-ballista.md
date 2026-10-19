@@ -71,7 +71,7 @@ offline patch check passes.
 | `BallistaTimeline`, `BallistaState` | the reload's moments and the shot's spring; the ZDO keys and one read of them |
 | `BallistaLook`, `BallistaHands`, `BallistaRig` | the drawing; the holder's arms (two-bone IK) and lean |
 | `BallistaPatches` | `Player.SetControls` prefix (attack shoots, nothing else lets go) and postfix (steer), `Character.UpdateRotation` prefix (holder keeps facing the ballista), `Player.SetMouseLook` postfix (the view held to the ballista's turn) |
-| `BallistaWords`, `BallistaSettings` | words; section `28 - Bone Ballista`, one switch `Enabled` |
+| `BallistaSettings` | section `28 - Bone Ballista`, one switch `Enabled`; the words are in `translations/English.yml` |
 
 ## Decisions made without the user (overturn freely)
 

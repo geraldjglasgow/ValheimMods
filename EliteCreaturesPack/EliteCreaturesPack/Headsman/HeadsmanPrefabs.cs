@@ -43,7 +43,6 @@ namespace EliteCreaturesPack.Headsman
                 NetPrefabs.Register(scene, prefab);
             }
             HeadsmanSounds.Load(scene);
-            HeadsmanWords.Add(Localization.instance);
             Log.Info($"Crypt Executioner ready: {string.Join(", ", net.Select(p => p.name))}.");
         }
 

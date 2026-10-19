@@ -46,7 +46,6 @@ namespace EliteCreaturesPack.Kraken
             NetPrefabs.Register(scene, corpse!);
             NetPrefabs.Register(scene, Prefab!);
             KrakenSpawns.Refresh();
-            KrakenWords.Add(Localization.instance);
             Log.Info($"Kraken ready: {Creature}, {Corpse}.");
         }
 

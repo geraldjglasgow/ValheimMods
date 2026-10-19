@@ -37,7 +37,6 @@ namespace EliteCreaturesPack.Arsenal
             {
                 NetPrefabs.Register(scene, prefab);
             }
-            ArsenalWords.Add(Localization.instance);
             Log.Info($"Skeleton arsenal ready: {Creatures().Count()} skeletons, {Items().Count()} items.");
         }
 

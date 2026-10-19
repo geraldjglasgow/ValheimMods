@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.11.1</Version>
+    <Version>0.12.0</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -47,6 +47,8 @@
     <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
     <!-- Elite Creatures Reborn's API bound by reflection (no reference to ECR): custom creatures' mutations and aspects -->
     <ProjectReference Include="$(ModLibsPath)\EliteCreaturesLink\EliteCreaturesLink.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files. -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -74,6 +76,8 @@
          -Bundle ecp_boneballista), one bundle per platform. -->
     <EmbeddedResource Include="assets\bundles\ecp_boneballista.*" LogicalName="EliteCreaturesPack.assets.%(Filename)%(Extension)" />
     <!-- Custom creatures: the main file written when none exists (Custom/Files/CreatureFiles). -->
+    <!-- The words, read by the Translations library as EliteCreaturesPack.translations.<Language>[.<part>].yml. -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="EliteCreaturesPack.translations.%(Filename)%(Extension)" />
     <EmbeddedResource Include="Custom\Ready\creatures.yml" LogicalName="EliteCreaturesPack.Custom.Ready.creatures.yml" />
   </ItemGroup>
 

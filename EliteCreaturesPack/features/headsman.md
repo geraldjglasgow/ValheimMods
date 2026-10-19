@@ -108,7 +108,7 @@ the rest 30).
 `EliteCreaturesPack/Headsman`, by folder:
 
 - `HeadsmanPrefabs` builds everything on each ZNetScene wake (the bundle `ecp_headsman` loaded once) and reapplies
-  the settings; `HeadsmanSettings` (25), `Greataxe/GreataxeSettings` (26); `HeadsmanWords`; `HeadsmanChambers`.
+  the settings; `HeadsmanSettings` (25), `Greataxe/GreataxeSettings` (26); words in `translations/English.yml`; `HeadsmanChambers`.
 - `Motion/`: the moves' table with their clip times and sound cues (`HeadsmanMoves`, the numbers of the workshop's
   `HeadsmanMelee`/`HeadsmanRanged`), the animator clock every peer reads the clip time from (`HeadsmanClock`), the
   world clock for ZDO moments (`HeadsmanTime`), the axe's shape (`HeadsmanAxe`), `TwoBoneIk`.

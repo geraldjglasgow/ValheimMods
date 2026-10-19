@@ -48,6 +48,7 @@ gone. On macOS the models may not show. Texts are English only for now.
 `BepInEx/config/com.EliteCreaturesPack.cfg`. Every setting is described in the file and reloads while the game runs;
 the server's values bind every player. Console: `charter status`. Epic Loot needs an `ECP_CryptMimic` entry to give
 the mimic magic items. Prefab names: https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesPack/CLAUDE.md
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesPack/EliteCreaturesPack/translations/English.yml) as `EliteCreaturesPack.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3
