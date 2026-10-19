@@ -1,0 +1,98 @@
+# Elite Creatures Pack - Vietnamese words (Tiếng Việt), translated by QuânKha (Zono) [VLHM], 2026-10-19
+#
+# Used while the game's language is Vietnamese, which a language mod adds (the game ships no Vietnamese). A language
+# mod that writes Vietnamese into the game's English instead needs this file copied as
+# BepInEx/config/EliteCreaturesPack.translations.English.yml.
+# The keys are the ones in English.yml beside this file; a key left out stays English.
+
+# The kraken
+enemy_ecp_kraken: "Kraken"
+se_ecp_inked: "Dính Mực"
+se_ecp_inked_tooltip: "Mực bắn vào mắt bạn."
+item_ecp_krakenbeak: "Mỏ Kraken"
+item_ecp_krakenbeak_description: "Chiếc mỏ quặp của Kraken: sừng tối màu với viền hổ phách có thể xé tạc thân tàu. Thợ rèn có thể gắn nó vào một chiếc khiên."
+item_ecp_krakenmeat: "Xúc Tua Kraken Sống"
+item_ecp_krakenmeat_description: "Một miếng xúc tua Kraken dày, nguyên cả các giác hút. Nướng nó trên trạm nấu ăn bằng sắt."
+item_ecp_krakenmeatcooked: "Xúc Tua Kraken Chín"
+item_ecp_krakenmeatcooked_description: "Xúc tua nướng xém, đậm đà và dai ngon. Giúp thủy thủ đoàn chèo thuyền qua đêm dài nhất."
+item_ecp_shieldkraken: "Khiên Kraken"
+item_ecp_shieldkraken_description: "Gỗ tốt và bạc bọc quanh mỏ Kraken. Đỡ đòn chuẩn xác bằng chiếc khiên này và chiếc mỏ sẽ cắn trả."
+
+# The Crypt Executioner
+enemy_ecp_headsman: "Đao Phủ Hầm Mộ"
+# Its attacks (never shown)
+item_ecp_headsman_slam: "Rìu Đao Phủ"
+item_ecp_headsman_scrape: "Rìu Đao Phủ"
+item_ecp_headsman_spin: "Rìu Đao Phủ"
+item_ecp_headsman_hurl: "Rìu Đao Phủ"
+item_ecp_headsman_spinthrow: "Rìu Đao Phủ"
+item_ecp_headsman_rear: "Rìu Đao Phủ"
+# The players' greataxe and its axehead
+item_ecp_executionergreataxe: "Đại Rìu Đao Phủ"
+item_ecp_executionergreataxe_description: "Đại rìu của Đao Phủ Hầm Mộ, cán rìu được xâu từ các đốt sống. Nó chém, xoay tròn một vòng rồi giội xuống từ trên đầu; đòn đánh cuối cùng tốn thời gian để hồi phục."
+item_ecp_executioneraxehead: "Lưỡi Rìu Đao Phủ"
+item_ecp_executioneraxehead_description: "Đầu rìu bằng xương của Đao Phủ Hầm Mộ. Gắn vào cán bằng cột sống tại bàn chế tạo, nó lại tiếp tục vung đòn."
+
+# The Rime Giant
+enemy_ecp_rimegiant: "Gã Khổng Lồ Băng Giá"
+# Its attacks
+item_ecp_rimegiant_sweep: "Nắm Đấm Băng"
+item_ecp_rimegiant_slam: "Tuyết Lở"
+item_ecp_rimegiant_throw: "Tảng Băng"
+
+# The crypt mimic (while it sleeps it shows the game's own chest words)
+enemy_ecp_cryptmimic: "Rương Ma Hầm Mộ"
+item_ecp_cryptmimic_bite: "Cú Cắn Của Rương Ma"
+
+# The Greydwarf Slinger
+enemy_ecp_greydwarfslinger: "Lính Bắn Dây Greydwarf"
+item_ecp_slinger_shot: "Đá Bắn Dây"
+
+# The arsenal skeletons
+enemy_ecp_skeletoncutthroat: "Bộ Xương Sát Thủ"
+enemy_ecp_skeletonswordsman: "Bộ Xương Kiếm Sĩ"
+enemy_ecp_skeletonaxeman: "Bộ Xương Tiều Phu"
+enemy_ecp_skeletonbonebreaker: "Bộ Xương Đập Xương"
+enemy_ecp_skeletonspearman: "Bộ Xương Thương Sĩ"
+enemy_ecp_skeletonhalberdier: "Bộ Xương Trường Đao Thủ"
+enemy_ecp_skeletonbowman: "Bộ Xương Cung Thủ"
+# The bone weapons
+item_ecp_bonedagger: "Dao Găm Xương"
+item_ecp_bonedagger_description: "Lưỡi dao là mỏm gai của một đốt sống, chuôi dao là chuỗi đốt sống nhỏ. Nhanh, êm và tàn nhẫn."
+item_ecp_bonesword: "Kiếm Xương"
+item_ecp_bonesword_description: "Lưỡi kiếm bằng xương có cột sống chạy dọc ở giữa, một đốt sống làm quai bảo vệ và nhiều đốt sống khác làm chuôi."
+item_ecp_boneaxe: "Rìu Xương"
+item_ecp_boneaxe_description: "Lưỡi xương gắn vào một đốt sống, trên cán bằng cột sống. Nó bổ vào thịt hay gỗ đều như nhau."
+item_ecp_bonemace: "Chùy Xương"
+item_ecp_bonemace_description: "Một khối đốt sống gồ ghề trên cán bằng cột sống. Đủ nặng để đập nát bất cứ thứ gì nó đụng phải."
+item_ecp_bonespear: "Giáo Xương"
+item_ecp_bonespear_description: "Xương dài làm cán dưới, cột sống làm cán trên, lá xương làm mũi giáo."
+item_ecp_boneatgeir: "Trường Đao Xương"
+item_ecp_boneatgeir_description: "Nửa xương dài, nửa cột sống, kết thúc bằng lưỡi xương cong và răng nanh móc. Nó giữ kẻ chết ở một khoảng cách an toàn."
+item_ecp_bonebow: "Cung Xương"
+item_ecp_bonebow_description: "Xương sườn làm cánh cung và cột sống làm tay cầm. Kẻ chết kéo cung rất cừ; bạn cũng có thể làm vậy."
+# The spine and the bone arrows
+item_ecp_spine: "Cột Sống"
+item_ecp_spine_description: "Một đoạn cột sống cũ, vẫn cứng như đá. Bộ xương chế tạo vũ khí của chúng xung quanh nó."
+item_ecp_arrowbone: "Tên Xương"
+item_ecp_arrowbone_description: "Thân tên bằng xương có đầu là đốt sống mài nhọn. Tốt hơn gỗ, không bằng đá lửa."
+# The Skeleton Crossbowman and the Bone Crossbow
+enemy_ecp_skeletoncrossbowman: "Bộ Xương Nỏ Thủ"
+item_ecp_skeletoncrossbow: "Nỏ"
+item_ecp_bonecrossbow: "Nỏ Xương"
+item_ecp_bonecrossbow_description: "Khẩu nỏ bằng xương, làm theo cách kẻ chết tạo ra: xương đùi làm báng, cột sống làm thân nỏ, xương sườn làm cánh nỏ. Nó đánh như chùy, dù bắn ra bất kỳ loại tên nỏ nào."
+item_ecp_boltboneblunt: "Tên Nỏ Xương Tù"
+item_ecp_boltboneblunt_description: "Mũi tên nỏ bằng xương có đầu mài tù và không có lông vũ, dùng cho nỏ xương. Nó làm gãy xương hơn là đâm xuyên."
+# The Bone Ballista
+piece_ecp_boneballista: "Súng Bắn Tên Xương Ballista"
+piece_ecp_boneballista_description: "Một súng bắn tên nhỏ bằng xương, hai cánh cung là hai cột sống. Giữ để nhắm và bắn; nó nạp lại từ tên đạn xương bạn mang theo, xoay 45 độ mỗi bên."
+item_ecp_bonemissile: "Tên Đạn Xương"
+item_ecp_bonemissile_description: "Đạn tên cho súng bắn tên xương: thân xương dài với đầu là răng nanh và các tấm xương làm cánh đuôi."
+# The Bone Ballista's hover: its name, then "(loaded)" or "(empty)", then [E] Hold or Let go
+hud_ecp_bal_hold: "Giữ"
+hud_ecp_bal_letgo: "Thả"
+hud_ecp_bal_loaded: "đã nạp đạn"
+hud_ecp_bal_empty: "hết đạn"
+# The Bone Ballista's messages to its holder
+msg_ecp_bal_nomissiles: "Không có tên đạn xương"
+msg_ecp_bal_behind: "Đứng phía sau để giữ"
