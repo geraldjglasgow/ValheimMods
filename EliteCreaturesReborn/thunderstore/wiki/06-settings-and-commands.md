@@ -106,7 +106,7 @@ Press F5. `elite tier`, `damage` and `deaths` work for everyone; the rest need a
 | Command | What it does |
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation or aspect...]` | Spawns a creature with exactly those stars and mutations, or a boss with that aspect |
-| `elite inspect` | Shows the stars, mutations and numbers of the creature you look at |
+| `elite inspect` | Shows the stars, mutations and numbers of the creature you look at, its game stars (what a tame keeps with `15 - Tamed` Stars false), and for a tame what was taken |
 | `elite purge [radius]` | Removes all loaded starred and mutated creatures, or only those within the radius, without drops |
 | `elite effects <text>` | Lists and plays game effects and sounds matching the text |
 | `elite reference` | Writes `creature_reference.yml`: every creature's prefab name, health and drops |

@@ -70,7 +70,7 @@ mod's creature stars off, for playing beside another mod that gives creatures st
   still gives the stars it names.
 
 Bosses have their own switch, `stars:` under `bosses:`; with it off a boss keeps its level the same way. `elite tier`
-says when creature stars are off, and `elite inspect` shows a kept level.
+says when creature stars are off, and `elite inspect` shows the game's stars: the level it has, or the one kept aside.
 
 ## Tamed creatures
 
@@ -93,7 +93,8 @@ settings. The stored stars and mask stay, so a setting turned back on gives them
 they were born with. A loaded copy whose stars, mutations or level no longer match its ZDO is loaded again on that
 machine (`Taming/LocalReload.cs`: let go and destroyed as when a player walks away, made again by the scene a frame
 later), since the star look, size, health and behaviours are set up only as a creature loads; a ridden one waits for
-its rider to get off. Only kinds with a Tameable are watched, never a boss. EliteCrafting reads `ecr_stars` straight
+its rider to get off. Every creature but a boss is watched, Tameable or not: another mod can tame one after it loads (a
+summon), which unwatched kept this mod's stars on its nameplate (Discord, 2026-10-20). EliteCrafting reads `ecr_stars` straight
 from the ZDO for its drops, so it still counts a tame's hidden stars. Not seen in game yet.
 
 ## Loaded crossbows
@@ -1015,7 +1016,7 @@ translated: logs, console command output, .cfg text, rule file keys, values and 
 | Command | Does |
 | --- | --- |
 | `elite spawn <prefab> <stars> [mutation...]` | Spawns exactly that creature, bypassing every roll, for testing. A boss takes one aspect instead: `elite spawn Bonemass 2 Twin`; Bountiful takes its extras after it, or rolls them when none follow: `elite spawn gd_king 2 Bountiful Enraged Mending` |
-| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair, with what a Thieving creature carries and what a Devouring creature has eaten ("devoured 1 of 2: Boar"). Open to every player |
+| `elite inspect` | Prints the resolved stars, mutations or aspect, and numbers for the creature under your crosshair, with what a Thieving creature carries and what a Devouring creature has eaten ("devoured 1 of 2: Boar"), its game stars (the level kept aside under this mod's stars), and for a tame what `15 - Tamed` took. Open to every player |
 | `elite purge [radius]` | Removes the loaded creatures this mod has marked, with no drops (a Thieving creature's stolen goods drop first). With a radius in metres, only those that close to you: `elite purge 30` |
 | `elite effects <text>` | Lists loaded effect prefabs matching the text and plays one, for building visuals |
 | `elite reference` | Writes `creature_reference.yml`: every creature the game knows, by biome, with its drop table |

@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Mutations;
 using EliteCreaturesReborn.Rules;
 using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Scaling;
+using EliteCreaturesReborn.Taming;
 using EliteCreaturesReborn.Traits;
 using UnityEngine;
 
@@ -39,7 +41,8 @@ namespace EliteCreaturesReborn.Commands
             CreatureTraits t = controller.Traits;
             BiomeRules r = controller.Rules;
             EliteCommands.Reply(args, $"elite inspect: {c.GetHoverName()}");
-            EliteCommands.Reply(args, $"  stars {t.Stars} ({t.LargeGlyphs} large, {t.Stars % 5} small), biome {TraitStore.GetBiome(controller.View.GetZDO())}{(t.Tier > 0 ? $", rolled at world tier {t.Tier}" : "")}{(t.Stars == 0 && c.GetLevel() > 1 ? $", game level {c.GetLevel()} kept" : "")}");
+            EliteCommands.Reply(args, $"  stars {t.Stars} ({t.LargeGlyphs} large, {t.Stars % 5} small), biome {TraitStore.GetBiome(controller.View.GetZDO())}{(t.Tier > 0 ? $", rolled at world tier {t.Tier}" : "")}");
+            TameLines(args, controller);
             EliteCommands.Reply(args, $"  health x{StatMath.HealthMultiplier(r, t) * AspectMath.HealthFactor(t):0.00}, size x{StatMath.SizeMultiplier(r, t) * AspectMath.SizeFactor(t):0.00}, move x{StatMath.MoveMultiplier(r, t, 0f):0.00}, swing x{StatMath.SwingSpeedMultiplier(r, t):0.00}, attack x{DamageMath.OutgoingMultiplier(r, t, 1f):0.00}");
             EliteCommands.Reply(args, $"  max health {c.GetMaxHealth():0}");
             foreach (Mutation m in t.Active())
@@ -51,6 +54,42 @@ namespace EliteCreaturesReborn.Commands
             {
                 AspectReport.Lines(controller).ForEach(line => EliteCommands.Reply(args, "  " + line));
             }
+        }
+
+        // A creature's game stars and, once tamed, what `15 - Tamed` takes from it. Bosses keep this mod's stars when tamed.
+        private static void TameLines(Terminal.ConsoleEventArgs args, EliteController controller)
+        {
+            if (controller.Creature.IsBoss())
+            {
+                return;
+            }
+            EliteCommands.Reply(args, "  " + GameStarsLine(controller));
+            if (controller.Creature.IsTamed())
+            {
+                EliteCommands.Reply(args, "  " + TakenLine(controller.View.GetZDO()));
+            }
+        }
+
+        // The game's own stars (a player asked to see them, 2026-10-20): its level now when it has the game's level,
+        // else the level kept aside under this mod's stars, which it takes back as a tame while `15 - Tamed` Stars is false.
+        private static string GameStarsLine(EliteController controller)
+        {
+            Character c = controller.Creature;
+            if (RuleState.Active.KeepsLevel(controller.Traits, isBoss: false))
+            {
+                return $"game stars {c.GetLevel() - 1} (level {c.GetLevel()}), the stars it has now";
+            }
+            int level = Mathf.Max(1, GameLevel.Kept(controller.View.GetZDO()));
+            return $"game stars {level - 1} (level {level}), kept aside: a tame has them while '{TamedSettings.Section}' Stars is false";
+        }
+
+        // What the owner has taken, from the ZDO every machine follows, and the stars it rolled, which stay stored.
+        private static string TakenLine(ZDO zdo)
+        {
+            int strip = TameStrip.Of(zdo);
+            string stars = (strip & TameStrip.Stars) != 0 ? $"taken ({TraitStore.Load(zdo).Stars} rolled, stored)" : "kept";
+            string mutations = (strip & TameStrip.Mutations) != 0 ? "taken" : "kept";
+            return $"tamed: this mod's stars {stars}, mutations {mutations}";
         }
 
         // What it holds on its ZDO: a thief's pouch, a devourer's meals.

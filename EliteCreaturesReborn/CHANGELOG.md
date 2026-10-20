@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.31.1
+
+- Fixed: a creature another mod tames (a summon) loses this mod's stars too while `15 - Tamed` Stars is false.
+- `elite inspect` shows a creature's game stars and, for a tame, what `15 - Tamed` took.
+
 ## 3.31.0
 
 - Rendering Table: renders trophies into ores or ingredients of their biome, or five into a Forge idol (`Rendering Table`).

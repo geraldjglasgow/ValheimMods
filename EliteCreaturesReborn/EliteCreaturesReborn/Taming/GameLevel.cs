@@ -13,6 +13,10 @@ namespace EliteCreaturesReborn.Taming
     {
         private static readonly int Hash = TraitKeys.GameLevel.GetStableHashCode();
 
+        /// <summary>The game's level kept aside, read on any machine; 0 when none is kept (it was 1, or appeared before this
+        /// was kept).</summary>
+        public static int Kept(ZDO zdo) => zdo.GetInt(Hash);
+
         /// <summary>OWNER: this mod's stars take over; a level above 1 is kept aside and the creature goes to level 1.</summary>
         public static void Park(Character creature, ZDO zdo)
         {

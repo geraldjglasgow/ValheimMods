@@ -6,12 +6,13 @@ using EliteCreaturesReborn.Traits;
 namespace EliteCreaturesReborn.Taming
 {
     /// <summary>
-    /// Every loaded creature of a kind the game can tame, checked once a second (<see cref="TameTicker"/>): its owner
+    /// Every loaded creature but a boss, checked once a second (<see cref="TameTicker"/>): its owner
     /// settles what `15 - Tamed` takes from it (<see cref="TameSettle"/>) the moment it is tamed or a setting changes,
     /// and every machine whose copy no longer matches its ZDO - other stars or mutations, or another level - loads it
     /// again (<see cref="LocalReload"/>). A copy has to be made again: its stars' look, size, health and mutation
     /// behaviours are set up once as it loads, and the game reads a level only as it loads. A ridden creature waits
-    /// until its rider gets off. Kinds without a Tameable are never tamed by the game and never watched.
+    /// until its rider gets off. A kind without a Tameable is watched too: another mod can tame it after it loads (a
+    /// summon), and unwatched it kept this mod's stars on its nameplate (Discord, 2026-10-20).
     /// </summary>
     internal static class TameWatch
     {
@@ -24,7 +25,7 @@ namespace EliteCreaturesReborn.Taming
         public static void Track(EliteController controller)
         {
             Character creature = controller.Creature;
-            if (!creature.IsBoss() && creature.GetComponent<Tameable>() != null)
+            if (!creature.IsBoss())
             {
                 Applied[controller] = TameStrip.Of(controller.View.GetZDO());
             }
