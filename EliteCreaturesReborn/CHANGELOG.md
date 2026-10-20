@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.30.2
+
+- Fixed: Hel's Arena no longer sends the Deep North villages' spirits, which could not be killed (#37).
+
 ## 3.30.1
 
 - Vietnamese translation, by QuânKha (Zono) [VLHM], used while the game's language is Vietnamese.

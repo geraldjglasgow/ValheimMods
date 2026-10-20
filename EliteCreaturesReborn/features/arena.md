@@ -152,7 +152,7 @@ throne is used.
   - **Biome by wave:** five waves a biome from the first: waves 1-4 its creatures, wave 5 its boss, then the next
     biome. After the Deep North's boss it stays in the Deep North and only the stars and mutations keep rising.
   - **Creatures:** each biome's hostile land creatures, read at runtime from the game's own spawn lists (so other mods'
-    creatures can appear too), with no bosses, no water-only creatures and nothing passive.
+    creatures can appear too), with no bosses, no water-only creatures, nothing passive and nothing a player cannot hurt.
   - **How many:** 6, 8, 10 and 12 in a biome's four waves (alone), then its boss; a quarter more for each player
     past the first.
   - **Elites** (the user, 2026-10-13: "bears/trolls should spawn at the later waves of this category, and we need to

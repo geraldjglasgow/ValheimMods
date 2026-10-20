@@ -706,7 +706,9 @@ The creatures of a biome are read from the game's own spawn lists once a session
 creature's home is the first biome of the trial that a keyless entry names it in, or else a single-biome keyed entry
 (the Ticks and Brood after the Queen, the Jotun); entries naming every biome are skipped, so the late invasions of the
 Meadows stay in their own biome. Fit: a monster AI, no boss, not water-only (`m_avoidLand`), not provoked-only
-(`m_aggravatable`), of a faction hostile to players. A kind as tough as the middle of its biome or weaker comes as often
+(`m_aggravatable`), of a faction hostile to players, able to target (`m_aiCannotTargetOthers` off) and hurt by a
+player's damage (not every type Immune or Ignore; GitHub #37: the Deep North villages' invulnerable ShadowPerson
+spirits locked the trial up). A kind as tough as the middle of its biome or weaker comes as often
 as any; a tougher one by the square root of the health ratio. When the lists give a biome nothing, the fixed list in
 `ArenaFallback.cs` (checked in game 2026-10-12) is used. By that rule this game's lists give (worked out from them on
 2026-10-12; the log prints each biome's list at the first wave): Meadows Boar, Neck, Greyling; Black
@@ -714,7 +716,7 @@ Forest Greydwarf, Elite, Shaman, Troll, Bjorn; Swamp Draugr, Draugr Elite, Skele
 Abomination, Writhan; Mountains Fenring, Wolf, Hatchling, StoneGolem; Plains Goblin, GoblinBrute, Lox, Deathsquito,
 Unbjorn; Mistlands Seeker, SeekerBrute, Gjall, SeekerBrood, Tick; Ashlands Charred (melee, archer, twitcher), Asksvin,
 Morgen_NonSleeping, FallenValkyrie, Volture, BlobLava; Deep North Greydwarf_Frozen, its Shaman, Skeleton_DeepNorth,
-Elaking, ElakingLantern, ShadowPerson, Barka, Moose, JotunWarrior, JotunWitch. Their elites (measured with read-only
+Elaking, ElakingLantern, Barka, Moose, JotunWarrior, JotunWitch. Their elites (measured with read-only
 `/eval` 2026-10-13; the log's lines mark them "(elite)"): Bjorn, Troll; Abomination, Writhan; StoneGolem, ECP_RimeGiant;
 Unbjorn, GoblinBrute, Lox; Gjall, SeekerBrute; FallenValkyrie, Morgen_NonSleeping, Asksvin; Barka, Moose, JotunWarrior
 (the Wraith has 100 health, the Swamp's middle, so it is none). Bosses: Eikthyr, gd_king, Bonemass,

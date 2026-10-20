@@ -45,18 +45,33 @@ namespace EliteCreaturesReborn.Arena.Trial
         }
 
         /// <summary>A creature that fights players on land: a monster's mind (no animal that flees), no boss, not a
-        /// water dweller, not one that waits to be provoked, and of a faction hostile to players.</summary>
+        /// water dweller, not one that waits to be provoked, of a faction hostile to players, one that picks targets at
+        /// all, and one a player's blows can hurt. The Deep North villages' spirits (ShadowPerson) fail the last two: a
+        /// decoration that wanders, ignores every damage and never fights (GitHub #37).</summary>
         public static bool Fits(GameObject prefab)
         {
             Character? body = prefab.GetComponent<Character>();
             MonsterAI? ai = prefab.GetComponent<MonsterAI>();
-            if (body == null || ai == null || body.m_boss || ai.m_avoidLand || ai.m_aggravatable)
+            if (body == null || ai == null || body.m_boss || ai.m_avoidLand || ai.m_aggravatable
+                || body.m_aiCannotTargetOthers || Unhurt(body.m_damageModifiers))
             {
                 return false;
             }
             Character.Faction faction = body.m_faction;
             return faction != Character.Faction.Players && faction != Character.Faction.Dverger
                 && faction != Character.Faction.PlayerSpawned && faction != Character.Faction.TrainingDummy;
+        }
+
+        // Every damage a player's weapon or staff deals to a creature ignored or shrugged off: only the console kills it.
+        private static bool Unhurt(HitData.DamageModifiers mods)
+        {
+            HitData.DamageModifier[] taken =
+            {
+                mods.m_blunt, mods.m_slash, mods.m_pierce, mods.m_fire, mods.m_frost, mods.m_lightning, mods.m_poison,
+                mods.m_spirit,
+            };
+            return System.Array.TrueForAll(taken,
+                m => m == HitData.DamageModifier.Immune || m == HitData.DamageModifier.Ignore);
         }
 
         private static void Note(SpawnSystem.SpawnData data, Heightmap.Biome all, Dictionary<string, Heightmap.Biome> open,
