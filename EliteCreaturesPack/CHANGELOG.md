@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.2
+
+- Vietnamese translation updated by QuânKha (Zono) [VLHM].
+
 ## 0.12.1
 
 - Vietnamese translation, by QuânKha (Zono) [VLHM], used while the game's language is Vietnamese.
