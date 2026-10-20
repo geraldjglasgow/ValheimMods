@@ -7,17 +7,18 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Stars: up to eight on Extreme, or off for another mod's.
 - World tiers: each first boss defeat raises stars and mutations.
 - Mutations: one per creature, named on the nameplate (below).
-- Boss aspects: one per fight (below), or choose the aspect and stars at the altar; bosses gain stars with each defeat.
-- Taming: young inherit mutations and stars; tames can keep only the game's stars, or no mutations.
+- Boss aspects: one per fight (below), or chosen at the altar with E; bosses gain stars each defeat.
+- Taming: young inherit mutations and stars.
 - Loot: four drop modes, rules per creature; bosses pay every player.
 - Boss damage board: who did how much.
 - Boss hints: bosses point to traders and the forge.
-- Compendium: in-game pages on difficulty, stars, mutations and aspects.
+- Compendium: in-game pages on all of it.
 - Death recap: `F10` replays the seconds before each death.
-- Respawning: cleared camps, dungeons and chests can refill (off by default).
+- Respawning (off by default): cleared camps, dungeons and chests refill.
 - Horde (off by default): more creatures in the wild, each weaker.
 - Raids: stake gold in the Raiders Chest, call a raid, win back more.
-- Hel's Arena (off by default): an outdoor arena through Helgrind, three Bat-fiends guarding it on the first visit; endless waves from your gear's biome, a boss every fifth, souls to mend gear; idols, coins, skill XP and runes by progress. Subject to change without warning: works and tested, final shape undecided.
+- Rendering Table: trophies into ores or ingredients of their biome, or five into a Forge idol.
+- Hel's Arena (off by default): an outdoor arena through Helgrind; endless waves from your gear's biome, a boss every fifth, rewards by progress. Subject to change.
 - Works with PackPanel, GrindstoneSkills and Elite Creatures Pack.
 
 ## Mutations
@@ -44,7 +45,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots you.
 
 ## Boss aspects
-Shown at the altar, or chosen there with E; each pays extra loot.
+Each pays extra loot.
 - Reflective: part of each hit comes back to you.
 - Shielded: takes less damage from arrows and bolts.
 - Mending: regenerates during the fight.

@@ -13,7 +13,8 @@ namespace EliteCreaturesReborn.Rules
     /// version does not match. This class owns the decision of which rule set is active; it never parses YAML itself.
     /// The .cfg's gameplay settings, the raids' Raiders Chest (<see cref="RaidSettings"/>), the Arena
     /// (<see cref="ArenaSettings"/>), the Altar Choice (<see cref="AltarSettings"/>), the horde's four
-    /// (<see cref="HordeSettings"/>) and what tamed creatures keep (<see cref="TamedSettings"/>), ride the same binding as
+    /// (<see cref="HordeSettings"/>), what tamed creatures keep (<see cref="TamedSettings"/>) and the Rendering Table
+    /// (<see cref="TableSettings"/>), ride the same binding as
     /// clauses: while the server binds, their values hold for every player.
     /// </summary>
     internal static class ServerLock
@@ -38,6 +39,7 @@ namespace EliteCreaturesReborn.Rules
             _charter.Clause(HordeSettings.AttackMultiplier);
             _charter.Clause(TamedSettings.Stars);
             _charter.Clause(TamedSettings.Mutations);
+            _charter.Clause(TableSettings.RenderingTable);
             _rules = new Article<string>(_charter, ArticleName, RuleFile.LocalText);
             _rules.Changed += () => Guard("rule push", Recompute);
             _charter.BindingChanged += () => Guard("binding change", OnBindingChanged);

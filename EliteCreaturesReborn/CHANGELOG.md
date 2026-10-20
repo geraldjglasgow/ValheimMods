@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.31.0
+
+- Rendering Table: renders trophies into ores or ingredients of their biome, or five into a Forge idol (`Rendering Table`).
+- Fixed: creatures turn at the game's own rate again (Eikthyr turned slowly).
+- Vietnamese translation updated by QuânKha (Zono) [VLHM].
+
 ## 3.30.2
 
 - Fixed: Hel's Arena no longer sends the Deep North villages' spirits, which could not be killed (#37).

@@ -475,3 +475,23 @@ ecr_recap_type_fire: "fire"
 ecr_recap_type_frost: "frost"
 ecr_recap_type_lightning: "lightning"
 ecr_recap_type_spirit: "spirit"
+
+# The Rendering Table: renders trophies into ores, ingredients or a Forge idol of the trophy's biome
+piece_ecr_renderingtable: "Rendering Table"
+piece_ecr_renderingtable_description: "A narrow bench for rendering trophies down. Each trophy gives ores or ingredients of its own biome; five of one biome make a Forge idol of its tier. A boss trophy counts as five: use it from the hotbar."
+ecr_render_ores: "Ores"
+ecr_render_ingredients: "Ingredients"
+ecr_render_idols: "Idols"
+
+# The Rendering Table's hover ($1 of the first line is Ores, Ingredients or Idols)
+ecr_render_makes: "Makes: $1"
+ecr_render_one: "Render a trophy (hold for more)"
+ecr_render_five: "Render 5 trophies of one biome into an idol (hold for more)"
+ecr_render_change: "Change what it makes"
+
+# Why the Rendering Table renders nothing
+ecr_render_off: "The Rendering Table is switched off."
+ecr_render_none: "No trophies to render. Boss trophies render only from the hotbar."
+ecr_render_need_five: "An idol takes 5 trophies of one biome, or one boss trophy from the hotbar."
+ecr_render_unknown: "The Rendering Table cannot render this trophy."
+ecr_render_nothing_made: "This game has nothing of that biome to make."

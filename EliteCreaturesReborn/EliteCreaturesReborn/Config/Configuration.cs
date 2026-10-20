@@ -59,6 +59,7 @@ namespace EliteCreaturesReborn.Config
             HordeSettings.Bind(config);
             AltarSettings.Bind(config);
             TamedSettings.Bind(config);
+            TableSettings.Bind(config);
             BindDiagnostics(config);
         }
 

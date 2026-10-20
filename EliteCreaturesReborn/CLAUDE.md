@@ -519,6 +519,39 @@ while walking off drops only its own loot. `11 - Raids` / `Raiders Chest` (on) p
 chest already built is an ordinary coin chest. It is synced from the server and held by the rule file's
 `lock to server`. Design in `features/raids.md`.
 
+## Rendering Table
+
+A narrow bench that renders creature trophies into what their biome gives. It is the game's workbench squeezed to half
+its width (1.53 m wide, as tall and deep as the workbench), in the hammer's Crafting tab right after the workbench, built
+at a workbench: 10 wood, 5 flint, 2 leather scraps. It is not a crafting station (no build circle, no base, no roof
+check). Prefab `ECR_RenderingTable` (`Rendering/`).
+
+`Shift + E` changes what it makes, Ores, Ingredients or Idols in turn (anyone a ward lets in; kept in the table's ZDO,
+so everyone sees the same). `E` renders the first trophy in the inventory (grid order); held, one every 0.2 s. A trophy
+used on the table from the hotbar renders that one. Boss trophies are never taken by `E`, only from the hotbar.
+
+| Makes | One trophy | Boss trophy |
+| --- | --- | --- |
+| Ores | 2-4 of a random ore of its biome | five such rolls |
+| Ingredients | 2-4 of a random ingredient of its biome | five such rolls |
+| Idols | five of one biome make one Forge idol of its tier (Battle or Protection at random) | one idol |
+
+| Tier | Trophies | Ores | Idol |
+| --- | --- | --- | --- |
+| 0 Meadows | boar, neck, deer, Eikthyr | flint, stone | Wooden |
+| 1 Black Forest | greydwarfs, trolls, skeletons, ghost, bjorn, the Elder | copper, tin | Bronze |
+| 2 Swamp and sea | surtling, blob, leech, abomination, wraith, draugr, serpent, writhan, Bonemass | iron scrap | Iron |
+| 3 Mountains | wolf, drake, ulv, fenring, cultist, stone golem, Moder | silver, obsidian | Silver |
+| 4 Plains | lox, fulings, deathsquito, growth, vile, Yagluth | black metal scrap | Black Metal |
+| 5 Mistlands | hare, seekers, gjall, tick, dvergr, the Queen | black marble, soft tissue | Black Marble |
+| 6 Ashlands | asksvin, volture, morgen, the Charred, fallen valkyrie, lava blob, bonemaw, Fader | flametal ore, grausten | Flametal |
+| 7 Deep North | barka, elaking, eyeless one, moose, seal, frost blob, pulp, krigen, hexen | petrified tissue | Bloodgold |
+
+Ingredients are the biome's creature parts and plants (`Rendering/RenderTiers.cs` has every list). Hildir's quest
+trophies, the Bog Witch's Kvastur and other mods' trophies are never taken. What does not fit in the inventory drops at
+the player's feet. `16 - Rendering Table` / `Rendering Table` (on) puts the table in the hammer; off, a table already
+built renders nothing. It is synced from the server and held by the rule file's `lock to server`.
+
 ## Horde
 
 More creatures in the wild, each weaker. With `13 - Horde` / `Horde` on (off by default), the world's own spawns
