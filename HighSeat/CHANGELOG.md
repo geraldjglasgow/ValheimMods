@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Fixed: wild creatures spawn near players again; the server's spawner threw errors instead.
+
 ## 0.2.1
 
 - Fixed: a dedicated server running 0.2.0 never accepted players (connections timed out).

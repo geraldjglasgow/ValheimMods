@@ -1,6 +1,6 @@
 {
     "name": "HighSeat",
-    "version_number": "0.2.1",
+    "version_number": "0.2.2",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/HighSeat",
     "description": "The server runs every creature near any player, so one laggy player no longer freezes creatures for everyone. Server only.",
     "dependencies": [

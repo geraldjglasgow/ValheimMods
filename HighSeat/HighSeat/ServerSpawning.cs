@@ -15,7 +15,8 @@ namespace HighSeat
     [HarmonyPatch(typeof(SpawnSystem), nameof(SpawnSystem.UpdateSpawning))]
     internal static class ServerSpawning
     {
-        private static readonly List<Player> InZone = new List<Player>();
+        // The game's own list: UpdateSpawnList picks the player to spawn around from it, so it must hold this zone's players.
+        private static List<Player> InZone => SpawnSystem.m_tempNearPlayers;
 
         private static bool Prefix(SpawnSystem __instance)
         {
