@@ -1,4 +1,5 @@
 using System.Collections;
+using Translations;
 using UnityEngine;
 
 namespace Lockstep
@@ -11,8 +12,8 @@ namespace Lockstep
     /// </summary>
     public static class ServerCheck
     {
+        /// <summary>English, for the log and the console; the player reads it as <c>lockstep_not_running</c> in their language.</summary>
         public const string NotRunning = "This server does not run Lockstep, so boss altars are not sealed. Install Lockstep on the server.";
-        public const string NotRunningHover = "Not sealed: this server does not run Lockstep";
         private const float Wait = 10f;
 
         private static bool heard, started;
@@ -40,8 +41,9 @@ namespace Lockstep
                 yield break;
             Silent = true;
             Lockstep.Log.LogWarning(NotRunning);
-            MessageHud.instance?.ShowMessage(MessageHud.MessageType.Center, NotRunning);
-            Chat.instance?.AddString("Lockstep: " + NotRunning);
+            string text = Lang.Get("lockstep_not_running");
+            MessageHud.instance?.ShowMessage(MessageHud.MessageType.Center, text);
+            Chat.instance?.AddString("Lockstep: " + text);
         }
 
         /// <summary>The connection ended: the next one is checked afresh.</summary>

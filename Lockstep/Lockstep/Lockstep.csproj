@@ -5,7 +5,7 @@
     <AssemblyName>Lockstep</AssemblyName>
     <RootNamespace>Lockstep</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.5.1</Version>
+    <Version>0.6.0</Version>
     <Product>Lockstep</Product>
     <Description>Lockstep: boss progression gated on the whole group</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -36,6 +36,8 @@
     <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,6 +57,10 @@
       <HintPath>$(ManagedPath)\assembly_utils.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="assembly_guiutils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_guiutils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
       <Private>false</Private>
@@ -67,6 +73,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="config/LockstepChain.yml" LogicalName="Lockstep.LockstepChain.yml" />
+    <!-- The words, read by the Translations library as Lockstep.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="Lockstep.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

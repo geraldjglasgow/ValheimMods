@@ -36,7 +36,7 @@ The next boss stays sealed until every player on the server has defeated the pre
 Needed on the server and every client; the server refuses clients without it, and a player on a server without it is told so. Install BepInExPack for Valheim, then put Lockstep.dll in BepInEx/plugins (or use a mod manager). Replaces OathBound (up to 0.1.2): remove it, its config files are not read.
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/com.Lockstep.cfg and LockstepChain.yml; the server keeps its roster in Lockstep.<world>.roster.yml. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Details: [url=https://thunderstore.io/c/valheim/p/MilkyTeam/Lockstep/wiki/]the Lockstep wiki[/url].
+BepInEx/config/com.Lockstep.cfg and LockstepChain.yml; the server keeps its roster in Lockstep.<world>.roster.yml. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Details: [url=https://thunderstore.io/c/valheim/p/MilkyTeam/Lockstep/wiki/]the Lockstep wiki[/url]. Translate: save a copy of [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/Lockstep/Lockstep/translations/English.yml]English.yml[/url] as Lockstep.translations.<Language>.yml in BepInEx/config.
 
 [size=4][b]Links[/b][/size]
 Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]

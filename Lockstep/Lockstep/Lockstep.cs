@@ -12,7 +12,7 @@ namespace Lockstep
     {
         public const string PluginGuid = "com.Lockstep";
         public const string PluginName = "Lockstep";
-        public const string PluginVersion = "0.5.1";
+        public const string PluginVersion = "0.6.0";
 
         public static Lockstep Instance { get; private set; }
         public static ManualLogSource Log { get; private set; }
@@ -31,6 +31,8 @@ namespace Lockstep
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            // The player-facing words, in the game's language (translations/English.yml and any translation files).
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "Lockstep", Logger);
 
             // Writes the .cfg, hot reloads it on edit, installs the YAML hooks; Charter pushes values to clients.
             Synced.Finish(harmony);

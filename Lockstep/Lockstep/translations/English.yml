@@ -1,0 +1,23 @@
+# Lockstep - English words
+#
+# To translate: copy this file as Lockstep.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the mod), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# joining a server that does not run Lockstep (on screen and in chat)
+lockstep_not_running: "This server does not run Lockstep, so boss altars are not sealed. Install Lockstep on the server."
+
+# the boss altar's hover (the names of the missing players and of the bosses are filled in)
+lockstep_hover_not_running: "Not sealed: this server does not run Lockstep"
+lockstep_hover_open_first: "Open: the first boss"
+lockstep_hover_open: "Open: everyone has defeated $1"
+lockstep_hover_sealed: "Sealed: waiting for $1 to defeat $2"
+lockstep_hover_sealed_group: "Sealed: waiting for the group to defeat $1"
+
+# using a sealed altar ($1 is the altar's boss)
+lockstep_closed: "$1 will not answer. Waiting for $2 to defeat $3."
+lockstep_closed_group: "$1 will not answer. Waiting for the group to defeat $2."

@@ -33,6 +33,7 @@ files are not read.
 `BepInEx/config/com.Lockstep.cfg` and `LockstepChain.yml`; the server keeps its roster in
 `Lockstep.<world>.roster.yml`. Every setting is described in the file and applies without a restart; the server's
 values bind every player (`Lock Configuration`). The Wiki tab has the details.
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/Lockstep/Lockstep/translations/English.yml) as `Lockstep.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

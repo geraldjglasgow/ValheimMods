@@ -139,6 +139,11 @@ conveniences over the same file. This replaces the separate JSON credit table de
   which is required because the gate runs on the interacting client.
 - The chain itself is YAML through `YamlConfig`: a list of stages with the boss key and the altar prefab names,
   defaulting to the vanilla seven. Modded bosses and reordered chains are then a config edit, not a code change.
+- The words: the summary carries names, never text, so each client builds the altar hover and message in its own
+  language from `translations/English.yml` (the Translations library; a translation is
+  `Lockstep.translations.<Language>.yml`). Player names and the chain's stage names fill the `$1`, `$2` ...; a stage
+  name written as a game token (`$enemy_eikthyr`) is shown in the player's language. Console output, the log and the
+  chain's validation messages stay English.
 
 ### Mod interaction
 
@@ -227,4 +232,6 @@ Lockstep/
     ProgressState.cs            the per-stage summary as every client sees it
     AltarGate.cs                OfferingBowl patches and message, plus the spawn RPC safety net
     KillReporter.cs             Character.OnDeath prefix reporting the attackers to the server
+  translations/
+    English.yml                 the words players read (altar hover and message, the server-without-Lockstep notice)
 ```

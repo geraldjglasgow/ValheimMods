@@ -1,10 +1,11 @@
 using HarmonyLib;
+using Translations;
 
 namespace Lockstep
 {
     /// <summary>
-    /// The altar's hover names its gate: open, or who the group still waits for. The line is built once per altar and
-    /// state, the joined text once per vanilla text, so a hovered altar costs a string compare per frame.
+    /// The altar's hover names its gate: open, or who the group still waits for. The line is built once per altar, state
+    /// and language, the joined text once per vanilla text, so a hovered altar costs a string compare per frame.
     /// </summary>
     public static class AltarHover
     {
@@ -14,7 +15,7 @@ namespace Lockstep
         private const string End = "</color>";
 
         private static OfferingBowl lastBowl;
-        private static int lastRevision = -1;
+        private static int lastRevision = -1, lastWords = -1;
         private static bool lastNamed, lastSilent;
         private static string line, lastVanilla, lastText;
 
@@ -31,14 +32,16 @@ namespace Lockstep
             return lastText;
         }
 
-        /// <summary>Rebuilds the line when the altar, the server's summary or a setting it shows has changed.</summary>
+        /// <summary>Rebuilds the line when the altar, the server's summary, a setting it shows or the language has changed.</summary>
         private static void Refresh(OfferingBowl bowl)
         {
             bool named = LockstepConfiguration.NameMissingPlayers.Value, silent = ServerCheck.Silent;
-            if (ReferenceEquals(bowl, lastBowl) && lastRevision == ProgressState.Revision && lastNamed == named && lastSilent == silent)
+            if (ReferenceEquals(bowl, lastBowl) && lastRevision == ProgressState.Revision && lastWords == Lang.Version
+                && lastNamed == named && lastSilent == silent)
                 return;
             lastBowl = bowl;
             lastRevision = ProgressState.Revision;
+            lastWords = Lang.Version;
             lastNamed = named;
             lastSilent = silent;
             line = Line(bowl);
@@ -51,16 +54,22 @@ namespace Lockstep
                 return null;
             string boss = bowl.m_bossPrefab.name;
             if (ServerCheck.Silent)
-                return Chain.ByBoss(boss) != null ? Warning + ServerCheck.NotRunningHover + End : null;
+                return Chain.ByBoss(boss) != null ? Warning + Lang.Get("lockstep_hover_not_running") + End : null;
             ProgressState.StageStatus status = ProgressState.ForBoss(boss);
             if (status == null)
                 return null;
             if (!status.Open)
-                return Sealed + "Sealed: waiting for " + ProgressState.Who(status) + " to defeat " + status.PreviousName + End;
+                return Sealed + SealedText(status) + End;
             if (status.PreviousName.Length == 0)
-                return Open + "Open: the first boss" + End;
-            return Open + "Open: everyone has defeated " + status.PreviousName + End;
+                return Open + Lang.Get("lockstep_hover_open_first") + End;
+            return Open + Lang.Format("lockstep_hover_open", ProgressState.Shown(status.PreviousName)) + End;
         }
+
+        /// <summary>Who a sealed altar waits for: the missing players by name, or the group when names are hidden.</summary>
+        private static string SealedText(ProgressState.StageStatus status) =>
+            LockstepConfiguration.NameMissingPlayers.Value
+                ? Lang.Format("lockstep_hover_sealed", status.Waiting, ProgressState.Shown(status.PreviousName))
+                : Lang.Format("lockstep_hover_sealed_group", ProgressState.Shown(status.PreviousName));
     }
 
     [HarmonyPatch(typeof(OfferingBowl), nameof(OfferingBowl.GetHoverText))]

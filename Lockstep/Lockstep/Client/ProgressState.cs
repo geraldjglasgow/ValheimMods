@@ -4,6 +4,7 @@ using System.Linq;
 using PatchGuard;
 using Charter;
 using SyncedConfig;
+using Translations;
 
 namespace Lockstep
 {
@@ -60,15 +61,18 @@ namespace Lockstep
         public static StageStatus ForBoss(string bossPrefab) =>
             bossPrefab != null && byBoss.TryGetValue(bossPrefab, out StageStatus status) ? status : null;
 
-        /// <summary>The message shown at a closed altar.</summary>
-        public static string ClosedMessage(StageStatus status)
-        {
-            return $"{status.Name} will not answer. Waiting for {Who(status)} to defeat {status.PreviousName}.";
-        }
+        /// <summary>The message shown at a closed altar: the missing players by name, or the group when names are hidden.</summary>
+        public static string ClosedMessage(StageStatus status) =>
+            LockstepConfiguration.NameMissingPlayers.Value
+                ? Lang.Format("lockstep_closed", Shown(status.Name), status.Waiting, Shown(status.PreviousName))
+                : Lang.Format("lockstep_closed_group", Shown(status.Name), Shown(status.PreviousName));
 
-        /// <summary>The players a closed stage waits for, or "the group" when names are hidden.</summary>
-        public static string Who(StageStatus status) =>
-            LockstepConfiguration.NameMissingPlayers.Value ? status.Waiting : "the group";
+        /// <summary>
+        /// A stage name from the chain as this player reads it: shown as the server owner wrote it, or, when it is a game
+        /// token such as <c>$enemy_eikthyr</c>, in this player's language.
+        /// </summary>
+        public static string Shown(string name) =>
+            string.IsNullOrEmpty(name) || name.IndexOf('$') < 0 ? name : Localization.instance.Localize(name);
 
         public static string Summary()
         {
