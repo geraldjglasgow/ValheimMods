@@ -1,5 +1,4 @@
 using BepInEx.Configuration;
-using EliteBuildingPieces.Core;
 using SyncedConfig;
 
 namespace EliteBuildingPieces.CoreWood
@@ -23,26 +22,16 @@ namespace EliteBuildingPieces.CoreWood
         }
     }
 
-    /// <summary>The core wood pieces: settings, words, and the hammer kept in step with the switch.</summary>
+    /// <summary>
+    /// The core wood pieces: settings and the hammer kept in step with the switch. Their words are in
+    /// translations/English.yml (<see cref="CoreWoodPiece.Word"/>).
+    /// </summary>
     public static class CoreWoodModule
     {
         public static void Initialize(SyncedConfiguration synced)
         {
             CoreWoodSettings.Initialize(synced);
             CoreWoodSettings.Enabled.SettingChanged += (_, _) => CoreWoodHammer.Refresh();
-            AddWords();
-        }
-
-        private static void AddWords()
-        {
-            Language.Add("ebp_corewood_wall", "Core wood wall");
-            Language.Add("ebp_corewood_wall_desc", "Core wood logs laid between two posts. Snaps like the stakewall.");
-            Language.Add("ebp_corewood_wall_large", "Large core wood wall");
-            Language.Add("ebp_corewood_wall_large_desc", "A core wood wall twice as wide, in one piece.");
-            Language.Add("ebp_corewood_door", "Core wood door");
-            Language.Add("ebp_corewood_door_desc", "A core wood gate the width of a core wood wall. Opens away from you.");
-            Language.Add("ebp_corewood_door_double", "Core wood double door");
-            Language.Add("ebp_corewood_door_double_desc", "Two core wood gates that open together, the width of a large core wood wall.");
         }
     }
 }

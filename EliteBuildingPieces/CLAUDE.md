@@ -38,9 +38,14 @@ All four sit in the hammer's Building tab right after the wood gate, at the work
   course overlapping it along the line (the game alone only stops the same prefab at the same spot, so a stakewall
   snapped into a core wood wall).
 
-Words: `$ebp_corewood_wall`, `_wall_large`, `_door`, `_door_double`, each with `_desc` (`CoreWood/CoreWoodModule.cs`).
+Words: every player-facing word is in `EliteBuildingPieces/translations/English.yml`, read by the workspace's
+Translations library (`Translations.Lang.Install` in `Plugin.Awake`, before the modules); a translation is that file
+copied as `EliteBuildingPieces.translations.<Language>.yml`. Keys `ebp_corewood_wall`, `_wall_large`, `_door`,
+`_door_double`, each with `_desc`; `CoreWoodPiece.Word` holds the key and the prefabs carry `$` tokens
+(`Lang.Token`), so the game translates them at display time. Never translate prefab names or config keys.
 Patched: `ZNetScene.Awake` (prefix: build and add prefabs; postfix: hammer), `ObjectDB.Awake` (postfix, last: hammer),
-`Door.SetState` (postfix), `Player.IsOverlappingOtherPiece` (postfix), `Localization.SetupLanguage` (postfix: words).
+`Door.SetState` (postfix), `Player.IsOverlappingOtherPiece` (postfix); the Translations library adds its own postfix on
+`Localization.SetupLanguage` (the words).
 
 ## Not checked yet
 

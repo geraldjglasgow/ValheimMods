@@ -6,7 +6,7 @@
     <RootNamespace>EliteBuildingPieces</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Product>EliteBuildingPieces</Product>
     <Description>EliteBuildingPieces: new building pieces, starting with core wood walls and doors</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -39,6 +39,8 @@
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <!-- BundlePrefabs: PrefabBench (each piece is a copy of the game's), EmbeddedBundle (the models) -->
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -89,6 +91,8 @@
          Assets/Props/CoreWoodGate v002 Single and Double), one bundle per platform:
          EliteBuildingPieces.assets.<bundle>.windows and .linux -->
     <EmbeddedResource Include="assets\bundles\*.windows;assets\bundles\*.linux" LogicalName="EliteBuildingPieces.assets.%(Filename)%(Extension)" />
+    <!-- The words, read by the Translations library as EliteBuildingPieces.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="EliteBuildingPieces.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->

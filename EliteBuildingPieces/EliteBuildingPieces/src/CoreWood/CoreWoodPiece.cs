@@ -1,10 +1,12 @@
+using Translations;
 using UnityEngine;
 
 namespace EliteBuildingPieces.CoreWood
 {
     /// <summary>
     /// One core wood piece: its prefab name (a save key: never renamed), the game piece it copies, the embedded bundle
-    /// holding its model, its word key, its core wood cost and its width in stakewalls (its health scales with it).
+    /// holding its model, its word key (translations/English.yml: the name, and the description as the key + "_desc"),
+    /// its core wood cost and its width in stakewalls (its health scales with it).
     /// </summary>
     public sealed class CoreWoodPiece
     {
@@ -29,8 +31,8 @@ namespace EliteBuildingPieces.CoreWood
         public GameObject Built { get; set; }
 
         public bool IsDoor => Source == CoreWoodPieces.Gate;
-        public string NameToken => "$ebp_" + Word;
-        public string DescriptionToken => "$ebp_" + Word + "_desc";
+        public string NameToken => Lang.Token(Word);
+        public string DescriptionToken => Lang.Token(Word + "_desc");
     }
 
     /// <summary>
@@ -45,10 +47,10 @@ namespace EliteBuildingPieces.CoreWood
 
         public static readonly CoreWoodPiece[] All =
         {
-            new CoreWoodPiece("EBP_CoreWoodWall", Wall, "va_corewoodwall_v002", "corewood_wall", 4, 1),
-            new CoreWoodPiece("EBP_CoreWoodWallLarge", Wall, "va_corewoodwall_double_v003", "corewood_wall_large", 8, 2),
-            new CoreWoodPiece("EBP_CoreWoodDoor", Gate, "va_corewoodgate_single_v002", "corewood_door", 6, 1),
-            new CoreWoodPiece("EBP_CoreWoodDoubleDoor", Gate, "va_corewoodgate_double_v002", "corewood_door_double", 12, 2),
+            new CoreWoodPiece("EBP_CoreWoodWall", Wall, "va_corewoodwall_v002", "ebp_corewood_wall", 4, 1),
+            new CoreWoodPiece("EBP_CoreWoodWallLarge", Wall, "va_corewoodwall_double_v003", "ebp_corewood_wall_large", 8, 2),
+            new CoreWoodPiece("EBP_CoreWoodDoor", Gate, "va_corewoodgate_single_v002", "ebp_corewood_door", 6, 1),
+            new CoreWoodPiece("EBP_CoreWoodDoubleDoor", Gate, "va_corewoodgate_double_v002", "ebp_corewood_door_double", 12, 2),
         };
     }
 }

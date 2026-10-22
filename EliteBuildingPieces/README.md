@@ -19,6 +19,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 ## Configuration
 `BepInEx/config/milkyteam.elitebuildingpieces.cfg`: one switch puts the core wood pieces in the hammer or takes them
 out (pieces already built stay). It applies without a restart; the server's values bind every player.
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteBuildingPieces/EliteBuildingPieces/translations/English.yml) as `EliteBuildingPieces.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

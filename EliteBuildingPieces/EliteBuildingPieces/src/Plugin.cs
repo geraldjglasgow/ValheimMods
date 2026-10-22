@@ -11,15 +11,16 @@ using SyncedConfig;
 namespace EliteBuildingPieces
 {
     /// <summary>
-    /// Plugin entry. Every feature has an Initialize(SyncedConfiguration) that binds its settings and registers its words;
-    /// patches are applied per class afterwards, Guard.Install goes last.
+    /// Plugin entry. The words (translations/English.yml) are installed first; every feature has an
+    /// Initialize(SyncedConfiguration) that binds its settings; patches are applied per class afterwards, Guard.Install
+    /// goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "milkyteam.elitebuildingpieces";
         public const string PluginName = "EliteBuildingPieces";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "0.2.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -31,9 +32,11 @@ namespace EliteBuildingPieces
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             LockConfiguration = Synced.BindLocking("General", "Lock Configuration", true,
                 "[Server Only] Clients cannot change synced settings while connected to a server that has this on.");
-            CoreWoodModule.Initialize(Synced);
 
             Harmony harmony = new Harmony(PluginGuid);
+            // The player-facing words, in the game's language (translations/English.yml and any translation files).
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "EliteBuildingPieces", Logger);
+            CoreWoodModule.Initialize(Synced);
             int failed = PatchEverything(harmony);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
