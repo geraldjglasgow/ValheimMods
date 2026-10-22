@@ -5,7 +5,7 @@
     <AssemblyName>ShipConfig</AssemblyName>
     <RootNamespace>ShipConfig</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>1.4.3</Version>
+    <Version>1.5.0</Version>
     <Product>ShipConfig</Product>
     <Description>ShipConfig: configure every ship in Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -36,6 +36,13 @@
     <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The words, read by the Translations library as ShipConfig.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="ShipConfig.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

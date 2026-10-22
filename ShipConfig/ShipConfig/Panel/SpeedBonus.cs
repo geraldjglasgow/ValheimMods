@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace ShipConfig
@@ -49,9 +50,9 @@ namespace ShipConfig
         /// <summary>A short account of the factor for the tooltip, built only when its numbers changed.</summary>
         public static string Account(bool rowing, float settings, float skill)
         {
-            string account = $"Top speed against a vanilla ship of this kind, {(rowing ? "rowing" : "under sail")}.\n" +
-                $"Ship settings: x{settings:0.00}";
-            return GrindstoneLink.Present ? account + $"\nHelmsman's Sailing skill: x{skill:0.00}" : account;
+            string account = Lang.Get(rowing ? "sc_multiplier_tip_rowing" : "sc_multiplier_tip_sailing") + "\n" +
+                Lang.Format("sc_multiplier_settings", settings.ToString("0.00"));
+            return GrindstoneLink.Present ? account + "\n" + Lang.Format("sc_multiplier_skill", skill.ToString("0.00")) : account;
         }
 
         private static string PrefabName(Ship ship)

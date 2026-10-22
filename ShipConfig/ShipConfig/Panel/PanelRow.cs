@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,7 @@ namespace ShipConfig
         private int shownB = int.MinValue;
         private string shownName;
         private string shownKey;
+        private int shownWords = -1;
 
         public float Height { get; }
         public UITooltip Tip { get; }
@@ -59,13 +61,15 @@ namespace ShipConfig
 
         /// <summary>
         /// Whether the line's inputs differ from the last ones drawn (numbers already rounded to what the line shows,
-        /// plus up to two strings); records them when they do, so the caller formats only then.
+        /// plus up to two strings), or the words changed since (a language set up); records them when they do, so the
+        /// caller formats only then.
         /// </summary>
         public bool Changed(int a, int b, string name = null, string key = null)
         {
-            if (a == shownA && b == shownB && shownName == name && shownKey == key)
+            int words = Lang.Version;
+            if (a == shownA && b == shownB && shownName == name && shownKey == key && shownWords == words)
                 return false;
-            (shownA, shownB, shownName, shownKey) = (a, b, name, key);
+            (shownA, shownB, shownName, shownKey, shownWords) = (a, b, name, key, words);
             return true;
         }
 

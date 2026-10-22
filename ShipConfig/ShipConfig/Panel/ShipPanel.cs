@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -87,7 +88,8 @@ namespace ShipConfig
         {
             int tenths = Mathf.RoundToInt(metresPerSecond * 36f);   // 0.1 km/h, as shown
             if (speed.Changed(tenths, 0))
-                speed.Set("Speed", $"{tenths / 10f:0.0} km/h", "Speed", "How fast the ship moves over the water, in kilometres per hour.");
+                speed.Set(Lang.Get("sc_speed"), Lang.Format("sc_speed_value", (tenths / 10f).ToString("0.0")), Lang.Get("sc_speed"),
+                    Lang.Get("sc_speed_tip"));
             RefreshMultiplier(ship);
             RefreshExplore();
             string[] ids = GrindstoneLink.Abilities();
@@ -103,7 +105,8 @@ namespace ShipConfig
             SpeedBonus.Parts(ship, out bool rowing, out float settings, out float skill);
             int settingsShown = Mathf.RoundToInt(settings * 100f), skillShown = Mathf.RoundToInt(skill * 100f);
             if (multiplier.Changed(settingsShown, skillShown * 2 + (rowing ? 1 : 0)))
-                multiplier.Set("Speed multiplier", Multiplier(settings * skill), "Speed multiplier", SpeedBonus.Account(rowing, settings, skill));
+                multiplier.Set(Lang.Get("sc_multiplier"), Multiplier(settings * skill), Lang.Get("sc_multiplier"),
+                    SpeedBonus.Account(rowing, settings, skill));
         }
 
         /// <summary>"x1.32", orange above vanilla, red below.</summary>
@@ -121,10 +124,11 @@ namespace ShipConfig
             float radius = Minimap.instance != null ? Minimap.instance.m_exploreRadius : VanillaExploreRadius;
             if (!explore.Changed(Mathf.RoundToInt(radius * factor), Mathf.RoundToInt(factor * 100f) * 2 + (GrindstoneLink.Present ? 1 : 0)))
                 return;
-            string account = $"How far around you the map uncovers as you sail. Vanilla {VanillaExploreRadius:0} m.";
+            string account = Lang.Format("sc_explore_tip", VanillaExploreRadius.ToString("0"));
             if (GrindstoneLink.Present)
-                account += $"\nYour Sailing skill: x{factor:0.00}";
-            explore.Set("Explore radius", $"{radius * factor:0} m", "Explore radius", account);
+                account += "\n" + Lang.Format("sc_explore_skill", factor.ToString("0.00"));
+            explore.Set(Lang.Get("sc_explore"), Lang.Format("sc_explore_value", (radius * factor).ToString("0")), Lang.Get("sc_explore"),
+                account);
         }
 
         private static void RefreshAbility(PanelRow row, string id)
@@ -145,8 +149,8 @@ namespace ShipConfig
         {
             int left = Mathf.CeilToInt(seconds);
             if (left <= 0)
-                return $"<color={PanelLook.Orange}>Ready</color>";
-            string time = left < 60 ? $"{left} s" : $"{left / 60}:{left % 60:00}";
+                return $"<color={PanelLook.Orange}>{Lang.Get("sc_ability_ready")}</color>";
+            string time = left < 60 ? Lang.Format("sc_ability_seconds", left) : $"{left / 60}:{left % 60:00}";
             return $"<color=#B8B8B8>{time}</color>";
         }
 

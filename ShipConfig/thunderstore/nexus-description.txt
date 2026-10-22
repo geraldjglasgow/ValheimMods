@@ -43,7 +43,7 @@ Raft, Karve, Longship, Drakkar and every modded ship each get:
 Needed on the server and every client. Install BepInExPack for Valheim, then put ShipConfig.dll in BepInEx/plugins (or use a mod manager).
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/com.ShipConfig.cfg; the ship entries appear after the first world load. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]charter status[/b] shows whether the server binds your settings.
+BepInEx/config/com.ShipConfig.cfg; the ship entries appear after the first world load. Every setting is described in the file and applies without a restart; the server's values bind every player (Lock Configuration). Console: [b]charter status[/b] shows whether the server binds your settings. Translate: save a copy of [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/ShipConfig/ShipConfig/translations/English.yml]English.yml[/url] as ShipConfig.translations.<Language>.yml in BepInEx/config.
 
 [size=4][b]Links[/b][/size]
 Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]

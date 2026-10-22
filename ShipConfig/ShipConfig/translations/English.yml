@@ -1,0 +1,31 @@
+# ShipConfig - English words
+#
+# To translate: copy this file as ShipConfig.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the mod), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# Ship panel under the minimap: the speed line, its value and its tooltip
+sc_speed: "Speed"
+sc_speed_value: "$1 km/h"
+sc_speed_tip: "How fast the ship moves over the water, in kilometres per hour."
+
+# Ship panel: the speed multiplier line's tooltip (the value is shown as x1.32)
+sc_multiplier: "Speed multiplier"
+sc_multiplier_tip_sailing: "Top speed against a vanilla ship of this kind, under sail."
+sc_multiplier_tip_rowing: "Top speed against a vanilla ship of this kind, rowing."
+sc_multiplier_settings: "Ship settings: x$1"
+sc_multiplier_skill: "Helmsman's Sailing skill: x$1"
+
+# Ship panel: the explore radius line, its value in metres and its tooltip
+sc_explore: "Explore radius"
+sc_explore_value: "$1 m"
+sc_explore_tip: "How far around you the map uncovers as you sail. Vanilla $1 m."
+sc_explore_skill: "Your Sailing skill: x$1"
+
+# Ship panel: a Sailing ability's cooldown (the ability names come from GrindstoneSkills; over a minute shows as 2:05)
+sc_ability_ready: "Ready"
+sc_ability_seconds: "$1 s"
