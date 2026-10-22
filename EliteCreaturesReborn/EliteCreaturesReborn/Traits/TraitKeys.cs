@@ -10,11 +10,12 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Set once a creature's traits have been rolled, so it is never re-rolled on the owner.</summary>
         public const string Resolved = "ecr_resolved";
 
-        /// <summary>The rolled star count (0..ceiling). Vanilla level stays 1; the game's look for the stars is drawn
-        /// separately (see <c>Visuals.StarLook</c>).</summary>
+        /// <summary>The star count the creature has now (0..ceiling): the rolled count, or 0 while a tame's are held in
+        /// <see cref="TameStars"/>. Vanilla level stays 1; the game's look for the stars is drawn separately (see
+        /// <c>Visuals.StarLook</c>). Other mods read it straight from the ZDO (SeneaL UI, Elite Crafting).</summary>
         public const string Stars = "ecr_stars";
 
-        /// <summary>The mutation set as a bitmask.</summary>
+        /// <summary>The mutation set the creature has now, as a bitmask; 0 while a tame's are held in <see cref="TameMask"/>.</summary>
         public const string Mask = "ecr_mask";
 
         /// <summary>The biome the creature was rolled in, so its rules stay fixed as it wanders. Stored as the flag value.</summary>
@@ -236,9 +237,15 @@ namespace EliteCreaturesReborn.Traits
         public const string EchoOf = "ecr_echo_of";
 
         /// <summary>Taming: what the owner has taken from a tamed creature under the .cfg's `15 - Tamed` (1 its stars, 2 its
-        /// mutations), so every machine loads it the same. The rolled stars and mask stay beside it and come back with
-        /// the setting. Absent on every creature it takes nothing from.</summary>
+        /// mutations), so every machine loads it the same. The rolled stars and mask wait in <see cref="TameStars"/> and
+        /// <see cref="TameMask"/> and come back with the setting. Absent on every creature it takes nothing from.</summary>
         public const string TameStrip = "ecr_tame_strip";
+
+        /// <summary>Taming: a tame's rolled stars, held here while `15 - Tamed` takes them (<see cref="Stars"/> reads 0).</summary>
+        public const string TameStars = "ecr_tame_stars";
+
+        /// <summary>Taming: a tame's rolled mutation set, held here while `15 - Tamed` takes them (<see cref="Mask"/> reads 0).</summary>
+        public const string TameMask = "ecr_tame_mask";
 
         /// <summary>The level the game gave a creature before this mod's stars put it at 1, kept while it is at 1 and only
         /// when above 1, so a tame that takes the game's stars (`15 - Tamed`) gets that level back.</summary>

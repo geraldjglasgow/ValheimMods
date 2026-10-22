@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.32.1
+
+- Fixed: a tame whose stars `15 - Tamed` took no longer shows them on nameplate mods such as SeneaL UI.
+
 ## 3.32.0
 
 - `Lock to server`, `Difficulty`, `Creature stars`, `Max mutations`, each mutation's on/off and respawning moved from `creature_rules.yml` into the .cfg, so a configuration manager shows them.

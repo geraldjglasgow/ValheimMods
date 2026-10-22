@@ -7,7 +7,7 @@ namespace EliteCreaturesReborn.Taming
     /// What `15 - Tamed` takes from a creature, as bits: its stars (<see cref="Stars"/>) and its mutations
     /// (<see cref="Mutations"/>). The owner decides from the settings and writes the bits to the ZDO
     /// (<see cref="TameSettle"/>); every machine reads the bits, never its own settings, so every player loads the
-    /// creature alike. The rolled stars and mask stay stored beside them: the bits only hide them.
+    /// creature alike. The rolled stars and mask wait beside them (<see cref="TameHold"/>) until the bits clear.
     /// </summary>
     internal static class TameStrip
     {

@@ -87,7 +87,7 @@ namespace EliteCreaturesReborn.Commands
         private static string TakenLine(ZDO zdo)
         {
             int strip = TameStrip.Of(zdo);
-            string stars = (strip & TameStrip.Stars) != 0 ? $"taken ({TraitStore.Load(zdo).Stars} rolled, stored)" : "kept";
+            string stars = (strip & TameStrip.Stars) != 0 ? $"taken ({TameHold.Rolled(zdo).Stars} rolled, stored)" : "kept";
             string mutations = (strip & TameStrip.Mutations) != 0 ? "taken" : "kept";
             return $"tamed: this mod's stars {stars}, mutations {mutations}";
         }

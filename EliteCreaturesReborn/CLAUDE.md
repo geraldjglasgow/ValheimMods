@@ -97,13 +97,15 @@ The creature's owner decides, as it loads (`EliteController.Decide`) and once a 
 plugin's `TameTicker`), so the moment it is tamed or a setting changes: it writes what is taken to the ZDO
 (`ecr_tame_strip`, 1 stars, 2 mutations; `Taming/TameStrip.cs`), gives the game's level back or parks it again
 (`Taming/GameLevel.cs`) and drops a thief's pouch (`Taming/TameSettle.cs`). Every machine reads the bits, never its own
-settings. The stored stars and mask stay, so a setting turned back on gives them back; young born meanwhile keep what
-they were born with. A loaded copy whose stars, mutations or level no longer match its ZDO is loaded again on that
+settings. The rolled stars and mask move aside to `ecr_tame_stars` and `ecr_tame_mask` (`Taming/TameHold.cs`), so
+`ecr_stars` and `ecr_mask` always say what the creature has now, and a setting turned back on moves them back; young born
+meanwhile keep what they were born with. A loaded copy whose stars, mutations or level no longer match its ZDO is loaded again on that
 machine (`Taming/LocalReload.cs`: let go and destroyed as when a player walks away, made again by the scene a frame
 later), since the star look, size, health and behaviours are set up only as a creature loads; a ridden one waits for
 its rider to get off. Every creature but a boss is watched, Tameable or not: another mod can tame one after it loads (a
-summon), which unwatched kept this mod's stars on its nameplate (Discord, 2026-10-20). EliteCrafting reads `ecr_stars` straight
-from the ZDO for its drops, so it still counts a tame's hidden stars. Not seen in game yet.
+summon), which unwatched kept this mod's stars on its nameplate (Discord, 2026-10-20). Other mods read `ecr_stars` and
+`ecr_mask` straight from the ZDO: SeneaL UI draws the star count on its own nameplate (it drew a tame's five taken stars
+while they stayed in place, Discord, 2026-10-22) and EliteCrafting rolls its drops from it. Not seen in game yet.
 
 ## Loaded crossbows
 

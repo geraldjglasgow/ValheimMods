@@ -61,7 +61,7 @@ namespace EliteCreaturesReborn.Breeding
             {
                 return null;
             }
-            return new Lineage.Newborn(TraitStore.Load(zdo), BiomeOf(zdo, young.transform.position));
+            return new Lineage.Newborn(TameHold.Rolled(zdo), BiomeOf(zdo, young.transform.position)); // a tame's held ones too
         }
 
         // The pregnancy check counts partners of the partner prefab (the parent's own, unless the species pairs with a

@@ -6,9 +6,10 @@ namespace EliteCreaturesReborn.Taming
     /// <summary>
     /// The owner's half of `15 - Tamed`: when what the settings take from a creature differs from what its ZDO says was
     /// taken (it was just tamed, a setting changed, or it loads tamed from before), the ZDO is brought in line - the new
-    /// bits (<see cref="TameStrip"/>), the game's level given back or parked again (<see cref="GameLevel"/>), and a
-    /// Thieving creature's stolen goods dropped at its feet, since a creature with no mutation drops no pouch when it
-    /// dies. Every machine then loads it again from the ZDO (<see cref="TameWatch"/>).
+    /// bits (<see cref="TameStrip"/>), the rolled stars and mutations moved aside or back (<see cref="TameHold"/>), the
+    /// game's level given back or parked again (<see cref="GameLevel"/>), and a Thieving creature's stolen goods dropped
+    /// at its feet, since a creature with no mutation drops no pouch when it dies. Every machine then loads it again from
+    /// the ZDO (<see cref="TameWatch"/>).
     /// </summary>
     internal static class TameSettle
     {
@@ -17,9 +18,10 @@ namespace EliteCreaturesReborn.Taming
         {
             int wanted = TameStrip.Wanted(creature);
             int had = TameStrip.Of(zdo);
+            bool moved = (wanted | had) != 0 && TameHold.Align(zdo, wanted); // before Follow, which reads the stars back
             if (wanted == had)
             {
-                return false;
+                return moved;
             }
             TameStrip.Set(zdo, wanted);
             if ((wanted & ~had & TameStrip.Mutations) != 0)
