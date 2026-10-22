@@ -1,0 +1,472 @@
+# Elite Creatures Reborn - Polish words (Polski), 2026-10-22
+#
+# Used while the game's language is Polish. The keys are the ones in English.yml beside this file; a key left out
+# stays English. "$1 $2" patterns set the word order (ecr_name_decorated: $1 the mutation and aspect
+# words, $2 the creature's name).
+
+# Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
+ecr_mut_mad: "Szalony"
+ecr_mut_bloated: "Nabrzmiały"
+ecr_mut_cloaked: "Zamaskowany"
+ecr_mut_splintering: "Rozszczepiający się"
+ecr_mut_leeching: "Wysysający"
+ecr_mut_warding: "Ochronny"
+ecr_mut_plated: "Opancerzony"
+ecr_mut_miasmic: "Trujący"
+ecr_mut_devouring: "Pożerający"
+ecr_mut_thieving: "Złodziejski"
+ecr_mut_gilded: "Pozłacany"
+ecr_mut_blinking: "Teleportujący się"
+ecr_mut_relentless: "Nieustępliwy"
+ecr_mut_juggernaut: "Niepowstrzymany"
+ecr_mut_screecher: "Wrzeszczący"
+ecr_mut_frostbound: "Związany z mrozem"
+ecr_mut_mudbound: "Ugrzęzły w błocie"
+ecr_mut_corrodent: "Żrący"
+ecr_mut_cloning: "Klonujący"
+ecr_mut_piercing: "Przebijający"
+ecr_mut_howling: "Wyjący"
+ecr_mut_binding: "Krępujący"
+ecr_mut_flamebound: "Ognisty"
+
+# Creature names: $1 its mutation and aspect words, $2 its own name ("Mad Greydwarf")
+ecr_name_decorated: "$1 $2"
+# Two words of a creature's name side by side, joined left to right ("Bloated Warding", then "Bloated Warding Miasmic")
+ecr_name_words: "$1 $2"
+
+# Mutations, told to the player they happen to
+# $1 the creature, $2 the item, $3 how many
+ecr_mut_msg_stole: "$1 kradnie: $2 x$3"
+# $1 the item, $2 how many
+ecr_mut_msg_not_stolen: "Nie skradziono: $1 x$2"
+ecr_mut_msg_stolen_late: "Jednak skradziono: $1 x$2"
+# $1 the armour piece, $2 the percent of it left
+ecr_mut_msg_corrodes: "Twój element $1 koroduje (pozostało $2%)"
+
+# Over a creature, where damage numbers show
+ecr_display_unstoppable: "Niepowstrzymany"
+# A Frostbound creature healed by frost: $1 the health it healed (the game puts + before it)
+ecr_display_frost_heal: "$1 — mróz"
+
+# Status effects
+ecr_se_chilled: "Wychłodzenie"
+ecr_se_chilled_tooltip: "Mroźna aura stworzenia związanego z mrozem: gdy jesteś blisko niego, twoja wytrzymałość odnawia się wolniej."
+ecr_se_ringing_ears: "Dzwonienie w uszach"
+ecr_se_ringing_ears_tooltip: "Przeraźliwy pisk dzwoni ci w uszach: dźwięki świata są stłumione, a zaklęć nie można rzucać."
+ecr_se_ringing_ears_start: "Dzwoni ci w uszach — świat cichnie"
+ecr_se_ringing_ears_no_cast: "Dzwoni ci w uszach — nie możesz rzucać zaklęć"
+ecr_se_slick_ice: "Śliski lód"
+ecr_se_slick_ice_tooltip: "Lód pozostawiony przez stworzenie związane z mrozem sprawia, że się ślizgasz, a ruszanie, skręcanie i zatrzymywanie trwa dłużej."
+ecr_se_deep_mud: "Głębokie błoto"
+ecr_se_deep_mud_tooltip: "Gęste, głębokie błoto pozostawione przez stworzenie ugrzęzłe w błocie utrudnia każdy krok i jeszcze przez chwilę oblepia ci stopy."
+ecr_se_rooted: "Unieruchomienie"
+ecr_se_rooted_tooltip: "Splątane korzenie krępują twoje nogi: nie możesz chodzić, biegać, skakać ani wykonywać uników, dopóki cię nie puszczą."
+
+# Eggs: what an egg will hatch. $1 the number of stars, $2 its mutations (each in its star colour)
+ecr_egg_plain: "Wykluwa się bez mutacji"
+ecr_egg_stars_one: "Wykluwa się z $1 gwiazdką"
+ecr_egg_stars_many: "Wykluwa się z $1 gwiazdkami"
+ecr_egg_stars_one_mutations: "Wykluwa się z $1 gwiazdką: $2"
+ecr_egg_stars_many_mutations: "Wykluwa się z $1 gwiazdkami: $2"
+# Two mutations in an egg's list, joined left to right ("Leeching, Mad", then "Leeching, Mad, Gilded")
+ecr_egg_list: "$1, $2"
+
+# World tier: the inventory plate's tooltip ($1 the number of tiers) and the message when it rises
+ecr_tier_topic: "Poziom świata"
+ecr_tier_tip: "Świat ma łącznie $1 poziomów. Poziom wzrasta po pierwszym pokonaniu każdego bossa. Każdy kolejny poziom zwiększa częstotliwość występowania gwiazdek i mutacji we wszystkich biomach."
+# $1 the new tier, $2 the number of tiers
+ecr_tier_risen: "Świat staje się groźniejszy: poziom $1 z $2"
+
+# Boss hints: a defeated boss points toward a place. $1 one of the directions below
+ecr_hint_pull: "Czujesz, że jakaś siła cię przyciąga... $1"
+ecr_hint_north: "na północ"
+ecr_hint_northeast: "na północny wschód"
+ecr_hint_east: "na wschód"
+ecr_hint_southeast: "na południowy wschód"
+ecr_hint_south: "na południe"
+ecr_hint_southwest: "na południowy zachód"
+ecr_hint_west: "na zachód"
+ecr_hint_northwest: "na północny zachód"
+
+# Boss rewards, on a boss altar's hover: $1-$2 the amount, $3 the item
+ecr_loot_altar_reward: "Nagroda: $1–$2 $3 na gracza"
+
+# The Bat-fiend: its name and its attacks' names (the death recap and the damage log)
+enemy_ecr_batfiend: "Nietoperzoczart"
+item_ecr_batfiend_pounce: "Rozdzierający skok"
+item_ecr_batfiend_bite: "Krwiożercze ugryzienie"
+item_ecr_batfiend_wing: "Skrzydłowa gilotyna"
+item_ecr_batfiend_gravewind: "Podmuch grobowego wiatru"
+item_ecr_batfiend_screech: "Roztrzaskujący pisk"
+
+# Elite Creatures Reborn: the compendium pages, boss aspects, boss altars and the boss damage board.
+# $1, $2 ... are values the mod fills in (numbers, names). Colours and layout stay in the code.
+
+# Boss aspects: each aspect's name, put before a boss's own name ("none" is the fight as the game ships it)
+ecr_aspect_none: "brak"
+ecr_aspect_reflective: "Odbijający"
+ecr_aspect_shielded: "Osłonięty"
+ecr_aspect_mending: "Regenerujący"
+ecr_aspect_summoner: "Przywołujący"
+ecr_aspect_elementalist: "Władający żywiołami"
+ecr_aspect_enraged: "Rozwścieczony"
+ecr_aspect_twin: "Bliźniaczy"
+ecr_aspect_phantom: "Widmowy"
+ecr_aspect_adaptive: "Adaptacyjny"
+ecr_aspect_fixated: "Skupiony"
+ecr_aspect_stormbound: "Burzowy"
+ecr_aspect_gravitic: "Grawitacyjny"
+ecr_aspect_colossal: "Kolosalny"
+ecr_aspect_tethered: "Połączony"
+ecr_aspect_bountiful: "Obfity"
+ecr_aspect_portalbound: "Portalowy"
+ecr_aspect_nightfall: "Nocny mrok"
+ecr_aspect_brutal: "Okrutny"
+ecr_aspect_echoing: "Powielający"
+
+# Boss aspects: what each does. Lower case and no full stop: the altar shows it on the line under the aspect's name,
+# the compendium and the altar window give it a capital and ecr_aspect_sentence.
+ecr_aspect_does_none: "walczy tak jak w podstawowej wersji gry"
+ecr_aspect_does_reflective: "$1% każdych zadanych mu obrażeń wraca do ciebie"
+ecr_aspect_does_shielded: "otrzymuje o $1% mniej obrażeń od strzał i bełtów"
+ecr_aspect_does_mending: "co sekundę regeneruje $1% aktualnego zdrowia"
+ecr_aspect_does_summoner: "przywołuje $1 stworzeń za każdym razem, gdy straci $2% zdrowia"
+ecr_aspect_does_elementalist: "zadaje o $1% więcej obrażeń od żywiołów"
+ecr_aspect_does_enraged: "zadaje o $1% więcej obrażeń fizycznych"
+ecr_aspect_does_twin: "występuje w parze ze wspólnym paskiem zdrowia; każde stworzenie ma o $1% mniej zdrowia i zadaje o $2% mniej obrażeń"
+ecr_aspect_does_phantom: "przy $1 punktach zdrowia tworzy widmowe kopie — $2 na każdego gracza online; kopie mają $3 punktów zdrowia i zadają o $4% mniej obrażeń"
+ecr_aspect_does_adaptive: "otrzymuje o $1% mniej obrażeń tego typu, który zadawał mu najwięcej obrażeń w ciągu ostatnich $2 sekund"
+ecr_aspect_does_fixated: "oznacza jednego gracza i zadaje mu o $1% więcej obrażeń, a pozostałym o $2% mniej; co $3 sekundy oznaczenie przechodzi na osobę, która zadała mu najwięcej obrażeń"
+ecr_aspect_does_stormbound: "co $1 sekund przywołuje piorun w okręgu pod każdym graczem; uderzenie następuje $2 sekundy po pojawieniu się okręgu"
+ecr_aspect_does_gravitic: "co $1 sekund przyciąga graczy w promieniu $2 m, a następnie uderza; zadaje obrażenia równe $3% maksymalnego zdrowia graczom w promieniu $4 m"
+ecr_aspect_does_colossal: "jest większy o $1%, ma o $2% więcej zdrowia i porusza się o $3% wolniej; ciężkie ataki wywołują falę uderzeniową o zasięgu $4 m, która przewraca graczy (przetocz się przez nią lub przeskocz ją)"
+ecr_aspect_does_tethered: "występuje w parze połączonej więzią; każde stworzenie ma o $1% mniej zdrowia. Im większa różnica zdrowia między nimi, tym szybciej atakują (maks. o $2%) i tym mniej obrażeń otrzymuje słabsze z nich (maks. o $3%)"
+ecr_aspect_does_bountiful: "ma jednocześnie o $1 więcej aspektów"
+ecr_aspect_does_portalbound: "atakuje przez portale (Starszy używa pnączy, a Masa Kości — szlamu): jeden portal otwiera się przy jego dłoni, a drugi gdzieś nad tobą"
+ecr_aspect_does_nightfall: "w promieniu $1 m sprowadza burzową północ; co $2–$3 sekundy obok każdego gracza pojawia się tornado i ściga go przez $4 sekundy. Wewnątrz zadaje $5 obrażeń na sekundę"
+ecr_aspect_does_brutal: "ciężkie ciosy odrzucają trafionych graczy na $1 m; udany blok lub parowanie pozwala utrzymać się na nogach, a upadek nie zadaje obrażeń"
+ecr_aspect_does_echoing: "po $1 sekundach walki pojawia się jego biały duch, który powtarza wszystkie jego działania sprzed $1 sekund, włącznie z ciosami i odrzucaniem, aż do śmierci"
+# What an aspect does as a sentence of its own ($1 already starts with a capital)
+ecr_aspect_sentence: "$1."
+# Phantom splits at no health marks at all ("at no health splits off ...")
+ecr_aspect_marks_none: "brak"
+
+# Fixated: the chat line when its mark lands ($1 the boss, $2 a player)
+ecr_aspect_fixates_on: "$1 skupia się na graczu $2!"
+ecr_aspect_fixates_you: "$1 skupia się na tobie!"
+ecr_aspect_fixated_gone: "gracz, który opuścił grę"
+
+# Boss altar: the bowl's hover lines
+ecr_altar_choose: "Wybierz walkę"
+ecr_altar_stars_line: "Gwiazdki: $1"
+ecr_altar_stars_none: "brak"
+ecr_altar_aspect_line: "Aspekt: $1"
+ecr_altar_chosen: "(wybrano)"
+ecr_altar_loot_paren: "(łup x$1)"
+ecr_altar_extra_line: "$1: $2"
+ecr_altar_shifting: "Zmiana..."
+ecr_altar_shifts_in: "Zmiana za $1"
+ecr_altar_defeated_once: "Pokonany raz: większa szansa na więcej gwiazdek"
+ecr_altar_defeated_many: "Pokonany $1 razy: większa szansa na więcej gwiazdek"
+ecr_altar_defeated_most: "Pokonany $1+ razy: większa szansa na więcej gwiazdek"
+
+# Boss altar: the window where a player chooses the fight
+ecr_altar_title: "Wybierz walkę"
+ecr_altar_now: "Aktualnie na ołtarzu"
+ecr_altar_stars: "Gwiazdki"
+ecr_altar_stars_off: "Gwiazdki: wyłączone w pliku reguł"
+ecr_altar_aspect_off: "Aspekt: wyłączony w pliku reguł"
+ecr_altar_random: "Losowy"
+ecr_altar_none: "Brak"
+ecr_altar_random_text: "Aspekt jest losowany spośród aspektów tego bossa przy każdej zmianie na ołtarzu."
+ecr_altar_bountiful_text: "Dodatkowe aspekty są losowane przy każdej zmianie na ołtarzu."
+ecr_altar_loot: "Łup x$1"
+
+# Boss damage board ($1 the boss)
+ecr_tally_defeated: "Pokonano: $1"
+
+# Difficulties, as a player reads them
+ecr_difficulty_custom: "Niestandardowy"
+ecr_difficulty_easy: "Łatwy"
+ecr_difficulty_medium: "Średni"
+ecr_difficulty_hard: "Trudny"
+ecr_difficulty_veryhard: "Bardzo trudny"
+ecr_difficulty_extreme: "Ekstremalny"
+
+# Compendium: shared words
+ecr_book_seconds_one: "$1 s"
+ecr_book_seconds_many: "$1 s"
+ecr_book_list_comma: ", "
+ecr_book_list_and: "$1 i $2"
+
+# Compendium: World difficulty page
+ecr_book_difficulty_topic: "Elitarne stworzenia: trudność świata"
+ecr_book_difficulty: "Poziom trudności: $1"
+ecr_book_tier: "Poziom świata $1 z $2: każdy pokonany boss zwiększa poziom o jeden. Każdy poziom wzmacnia stworzenia."
+ecr_book_tier_off: "Poziomy świata są wyłączone na tym serwerze — świat pozostaje na poziomie 0."
+ecr_book_creature_stars_off: "Gwiazdki stworzeń są wyłączone na tym serwerze. Stworzenia zachowują gwiazdki z podstawowej gry, a mod Elite Creatures odpowiada tylko za ich mutacje."
+ecr_book_bosses: "Bossowie"
+ecr_book_boss_defeated: "pokonany"
+ecr_book_boss_not_yet: "jeszcze nie"
+ecr_book_meaning: "Co to oznacza"
+ecr_book_meaning_custom: "$1: serwer sam ustala szanse na gwiazdki i mutacje w każdym biomie. Każdy poziom świata je zwiększa; obecnie: gwiazdki x$2, mutacje x$3."
+ecr_book_meaning_preset: "Poziom trudności określa liczbę gwiazdek i mutacji stworzeń w miarę pokonywania bossów. Biom, do którego właśnie wchodzisz, jest najłatwiejszy. Każdy biom, który już oczyściłeś, staje się trudniejszy po pokonaniu kolejnego bossa, więc pod koniec gry Łąki będą najtrudniejszym miejscem. Biomy, do których jeszcze nie dotarłeś, mają trudność taką jak biom, do którego właśnie wchodzisz.\nPrzy maksymalnej dozwolonej liczbie gwiazdek większość stworzeń nie ma mutacji, a każda kolejna gwiazdka jest rzadsza od poprzedniej. Każda gwiazdka zwiększa szansę na mutację o jedną czwartą."
+ecr_book_biomes: "Każdy biom na poziomie świata $1"
+ecr_book_col_biome: "Biom"
+ecr_book_col_most_stars: "Maks. gwiazdek"
+ecr_book_col_with_stars: "Z gwiazdkami"
+ecr_book_col_mutated: "Zmutowane"
+ecr_book_biomes_note: "Twój biom oznaczono na pomarańczowo. „Zmutowane” oznacza stworzenia bez gwiazdek, które mają mutację."
+ecr_book_ladder: "Poziomy trudności"
+ecr_book_ladder_line: "$1: $2"
+ecr_book_ladder_easy: "1 gwiazdka w nowym biomie, a za każdego pokonanego później bossa kolejna, maksymalnie 4; 10% stworzeń z mutacją, wzrastające do 35% po pokonaniu bossów"
+ecr_book_ladder_medium: "2 gwiazdki, maksymalnie 5; 25% stworzeń z mutacją, wzrastające do 55%"
+ecr_book_ladder_hard: "3 gwiazdki, maksymalnie 5; 30% stworzeń z mutacją, wzrastające do 65%"
+ecr_book_ladder_veryhard: "4 gwiazdki, maksymalnie 5; szansa na mutacje znajduje się w połowie między $1 a $2"
+ecr_book_ladder_extreme: "5 gwiazdek w każdym odkrytym biomie, od 6 do 8 po pokonaniu kolejnych bossów; 45% stworzeń z mutacją, wzrastające do 98%"
+ecr_book_ladder_custom: "$1: własne szanse serwera dla każdego biomu, zwiększane na każdym poziomie świata."
+ecr_book_ladder_note: "Gwiazdki: maksymalna liczba gwiazdek stworzenia. Zmutowane: stworzenia bez gwiazdek, które mają mutację."
+ecr_book_game: "Podstawowy poziom trudności świata w grze"
+ecr_book_game_rates: "To ustawienie działa niezależnie od powyższych i kumuluje się z nimi: w tym świecie przeciwnicy zadają $1% normalnych obrażeń, a ty zadajesz $2% swoich normalnych obrażeń."
+ecr_book_game_stars_ours: "Dodatkowa szansa na gwiazdkę z gry nie działa, gdy gwiazdki przyznaje Elite Creatures."
+ecr_book_game_stars_game: "Dodatkowa szansa na gwiazdkę działa normalnie, ponieważ w tym przypadku gwiazdki przyznaje sama gra."
+
+# Compendium: Stars page
+ecr_book_stars_topic: "Elitarne stworzenia: gwiazdki"
+ecr_book_stars_off_heading: "Gwiazdki stworzeń są wyłączone"
+ecr_book_stars_off: "Stworzenia zachowują gwiazdki z podstawowej gry, wraz z jej wartościami."
+ecr_book_stars_here: "Gwiazdki w biomie $1 (twoja lokalizacja)"
+ecr_book_stars_in: "Gwiazdki w biomie $1"
+ecr_book_col_stars: "Gwiazdki"
+ecr_book_col_health: "Zdrowie"
+ecr_book_col_damage: "Obrażenia"
+ecr_book_col_attack: "Atak"
+ecr_book_col_speed: "Szybkość"
+ecr_book_col_size: "Rozmiar"
+ecr_book_col_loot: "Łup"
+ecr_book_col_chance: "Szansa"
+ecr_book_stars_note: "Każda wartość mnoży statystyki stworzenia z podstawowej gry. Szybkość oznacza tempo poruszania się, a atak — częstotliwość wyprowadzania ciosów. Duża gwiazdka na tabliczce stworzenia liczy się jako pięć."
+ecr_book_boss_stars: "Gwiazdki bossów"
+ecr_book_boss_stars_off: "Wyłączone na tym serwerze: bossowie zachowują poziom z podstawowej gry."
+ecr_book_boss_stars_note: "Ołtarz pokazuje liczbę gwiazdek bossa przed jego przywołaniem. Gwiazdki bossa nie zwiększają ilości upuszczanych przez niego przedmiotów."
+ecr_book_boss_stars_again: "Po każdym pokonaniu bossa jego następna walka ma większą szansę na większą liczbę gwiazdek."
+
+# Compendium: Mutations page ($1 in the intro is the Gilded mutation's name)
+ecr_book_mutations_topic: "Elitarne stworzenia: mutacje"
+ecr_book_mutations_intro: "Zmutowane stworzenie ma nazwę mutacji przed własną nazwą, a jego gwiazdki przyjmują kolor mutacji — taki jak kolor gwiazdki przed każdą nazwą poniżej. $1 to najrzadsza mutacja i jedyna, która działa na twoją korzyść."
+ecr_book_mutations_numbers: "Wartości dla stworzenia bez gwiazdek w biomie $1, w którym się znajdujesz."
+ecr_book_mutations_large: "Mutacja na dużej gwiazdce jest silniejsza: jej efekt mnoży się przez x$1."
+ecr_book_mutations_off: "Wyłączone na tym serwerze"
+
+# Compendium: what each mutation does (a $n that names a mutation is that mutation's own name)
+ecr_book_mut_mad: "Porusza się o $1 szybciej i atakuje o $2 szybciej, ale ma o $3 mniej zdrowia. Ta mutacja nie występuje u nietoperzy."
+ecr_book_mut_bloated: "Ma $1-krotność zwykłego zdrowia. Po śmierci eksploduje po $2, zadając $3 obrażeń w promieniu $4 m; każda gwiazdka zwiększa obrażenia."
+ecr_book_mut_cloaked: "Pozostaje niewidzialne, dopóki nie zbliżysz się na odległość $1 m. Ta mutacja ($2) nie występuje u draków, nietoperzy, gjalli ani komarów śmierci."
+ecr_book_mut_splintering: "Po śmierci rozpada się na słabsze kopie, z których każda zadaje $1% jego obrażeń; kopie również mogą się rozdzielać. Ta mutacja ($2) nie występuje u glutów."
+ecr_book_mut_leeching: "Regeneruje $1% zdrowia na sekundę (maksymalnie $2 na sekundę), jeśli przez $3 nie otrzyma obrażeń, a ponadto leczy się o $4% zadanych przez siebie obrażeń."
+ecr_book_mut_warding: "Odbija w twoją stronę $1% każdego otrzymanego ciosu i odrzuca cię, ale w ciągu sekundy nie może zadać w ten sposób więcej niż $2% twojego maksymalnego zdrowia."
+ecr_book_mut_plated: "Przy pełnym zdrowiu ignoruje $1% otrzymywanych obrażeń; efekt słabnie wraz z utratą zdrowia. Jednocześnie zadaje do $2% większe obrażenia, gdy jego pancerz jest nienaruszony."
+ecr_book_mut_miasmic: "Pozostawia za sobą chmury trucizny o szerokości $1 m, z których każda utrzymuje się przez $2. Zatruwają graczy, ale nie inne stworzenia."
+ecr_book_mut_devouring: "Pożera mniejsze stworzenia jednym kęsem, przejmując $1% ich zdrowia i $2% ich obrażeń, ale z czasem zwalnia. W ciągu życia zjada jedno stworzenie na każdą gwiazdkę (co najmniej $3), raz na $4; nie pożera bossów ani dużych stworzeń. Gdy urośnie wystarczająco, zaczyna polować również na graczy. Tabliczka z nazwą pokazuje, co zjadło."
+ecr_book_mut_thieving: "Każdy udany atak wręcz kradnie przedmiot — maksymalnie jeden na gwiazdkę (co najmniej $1). Skradzione przedmioty są widoczne na tabliczce stworzenia. Zabij je, aby odzyskać wszystko."
+ecr_book_mut_gilded: "Mieni się złotem, nie atakuje graczy i ucieka od każdego, kto zbliży się na $1 m. Upuszcza łup o wartości $2 razy większej oraz dodatkowo $3 $4; każda gwiazdka zwiększa nagrodę. Nie występuje u dużych stworzeń."
+ecr_book_mut_blinking: "Co $1 podczas walki pojawia się ponownie $2 m za swoim celem, czemu towarzyszą błysk i dźwięk w miejscu teleportacji. Ma o $3 mniej zdrowia."
+ecr_book_mut_blinking_never: "Ma o $1 mniej zdrowia. Na tym serwerze nie teleportuje się."
+ecr_book_mut_relentless: "Gdy raz cię wybierze, nie przestaje cię ścigać — nawet jeśli znikniesz mu z pola widzenia — dopóki nie oddalisz się na $1 m. Skradanie się nie ukryje cię przed nim. Nie porusza się szybciej niż zwykle i nie występuje u dużych stworzeń."
+ecr_book_mut_juggernaut: "Nie traci równowagi ani nie daje się odrzucić: ciosy, parowanie, eksplozje i pułapki go nie powstrzymują. Nad stworzeniem wyświetla się napis „Niepowstrzymany”."
+ecr_book_mut_screecher: "Gdy pojedynczy cios odbierze mu $1% zdrowia, wydaje przeraźliwy pisk. Gracze w promieniu $2 m zostają ogłuszeni słuchowo na $3, a broń magii żywiołów i krwi nie może rzucać zaklęć. Efekt występuje najwyżej raz na $4; śmiertelny cios nie wywołuje pisku."
+ecr_book_mut_frostbound: "Gracze w promieniu $1 m odzyskują wytrzymałość o $2% wolniej („Wychłodzenie”). Mróz ($3) leczy to stworzenie zamiast zadawać mu obrażenia."
+ecr_book_mut_frostbound_ice: "Pozostawia śliski lód na swojej drodze. Na lodzie ślizgasz się i poruszasz o $1% wolniej; każda plama utrzymuje się przez $2."
+ecr_book_mut_frostbound_no_ice: "Na tym serwerze nie pozostawia lodu."
+ecr_book_mut_mudbound: "Pozostawia na swojej drodze gęste błoto. W błocie poruszasz się o $1% wolniej, a efekt utrzymuje się jeszcze przez $2 po wyjściu. Każda plama pozostaje przez $3."
+ecr_book_mut_mudbound_none: "Na tym serwerze nie pozostawia błota."
+ecr_book_mut_corrodent: "Jego ataki sprawiają, że twój pancerz traci wytrzymałość $1 razy szybciej. Tarcze zużywają się w normalnym tempie."
+ecr_book_mut_cloning: "Gdy zbliży się do ciebie na $1 m i szykuje do walki, zostawia na miejscu nieszkodliwą kopię i walczy dalej niewidzialne. Ujawnia się, gdy trafi cię pierwszy raz albo gdy zabijesz kopię. $2"
+ecr_book_mut_cloning_late: "Gdy zbliży się do ciebie na $1 m i szykuje do walki, zostawia na miejscu nieszkodliwą kopię i walczy dalej niewidzialne. Ujawnia się po pierwszym trafieniu lub zabiciu kopii, a po $2 pokazuje się również samo. $3"
+ecr_book_mut_cloning_once: "Raz w ciągu życia."
+ecr_book_mut_cloning_times: "$1 razy w ciągu życia."
+ecr_book_mut_piercing: "Jego ataki ignorują $1% twojego pancerza."
+ecr_book_mut_howling: "Gdy zaczyna cię atakować, wyje, przywołując $1 najbliższych sprzymierzonych stworzeń w promieniu $2 m. Powtarza to co $3 podczas walki. Nie przywołuje bossów."
+ecr_book_mut_binding: "Pozostawia splątane korzenie co $1 m; każda plama utrzymuje się przez $2. Wejdź w nie, a unieruchomią cię na $3 („Unieruchomienie” — nadal możesz się obracać, blokować i atakować), po czym uwolnią cię na $4."
+ecr_book_mut_flamebound: "Pozostawia płonące podłoże; każda plama utrzymuje się przez $1. Stanie w ogniu podpala cię i zadaje $2 obrażeń od ognia na sekundę; gwiazdki zwiększają obrażenia. Odporność na ogień i mokry stan pomagają, pancerz nie."
+
+# Compendium: Boss aspects page
+ecr_book_aspects_topic: "Elitarne stworzenia: aspekty bossów"
+ecr_book_aspects_off: "Aspekty bossów są wyłączone na tym serwerze — każdy boss walczy tak jak w podstawowej wersji gry."
+ecr_book_aspects_intro: "Boss przywołany przy ołtarzu może otrzymać aspekt, który zmienia przebieg walki. Nazwa aspektu pojawia się przed nazwą bossa. Ołtarz pokazuje aspekt przed przywołaniem, a jego wybór co jakiś czas się zmienia. Aspekt utrudnia walkę, ale zwiększa zdobywane łupy."
+ecr_book_loot: "Łup x$1"
+
+# Hel's hall
+ecr_arena_hel: "Hel"
+hud_ecr_arena_begin: "Rozpocznij próbę"
+msg_ecr_arena_river: "Rzeka Hel zabiera cię ze sobą."
+
+# Helgrind, Hel's gate
+piece_ecr_helgrind: "Helgrind"
+piece_ecr_helgrind_description: "Brama Hel prowadząca do jej sali i miejsca próby. Przejdź przez nią, aby wejść do środka; wir na końcu korytarza za bramą pozwoli ci wrócić tutaj."
+ecr_helgrind_open: "Przejdź do sali Hel"
+ecr_helgrind_closed: "Brama Hel jest zamknięta."
+
+# Hel's Trial: the line under the minimap ($1 the biome, $2 the wave, then creatures left or seconds, then souls)
+ecr_arena_name: "Próba Hel"
+ecr_arena_line: "Próba Hel — $1, fala $2 — pozostało: $3 — dusze: $4"
+ecr_arena_countdown: "Próba Hel — $1 — pierwsza fala za $2"
+ecr_arena_break_line: "Próba Hel — $1, fala $2 oczyszczona — następna fala za $3 — dusze: $4"
+ecr_arena_recall_line: "Próba Hel — $1, fala $2 — pozostało: $3, przywołanie za $4 — dusze: $5"
+# A rest's line ($1) with who is ready after it ($2: ecr_arena_ready_hint or ecr_arena_ready_mine)
+ecr_arena_line_ready: "$1 — $2"
+ecr_arena_ready_hint: "F: gotowość ($1/$2)"
+ecr_arena_ready_mine: "(gotowość) $1/$2"
+
+# Hel's Trial: centre messages
+ecr_arena_started: "Hel budzi się. Próba się rozpoczyna!"
+ecr_arena_boss: "Hel zsyła: $1!"
+ecr_arena_ended: "Próba Hel zakończona na fali $1: zabójstwa — $2, dusze — $3."
+ecr_arena_cleared: "Fala $1 ukończona. Następna za $2 s."
+ecr_arena_cleared_first: "Fala $1 ukończona. Następna za $2 s. Hel wypłaci nagrodę po zakończeniu próby."
+ecr_arena_wave_done: "Fala $1 ukończona."
+ecr_arena_recall: "Hel zaznacza na mapie ostatnich poległych. Przywoła ich za $1 s."
+ecr_arena_spared: "Hel oszczędza twoje umiejętności i ekwipunek."
+ecr_arena_ready_vote: "Gotowi: $1 z $2"
+ecr_arena_all_ready: "Wszyscy gotowi — nadchodzą umarli!"
+ecr_arena_call_hint: "Przywołaj następną falę"
+ecr_arena_called: "$1 przywołuje następną falę!"
+ecr_arena_boss_waits: "Hel czeka, aż $1 polegnie."
+# The end and the reward again in the chat window: $1 the trial's name (coloured), $2 the message
+ecr_arena_chat_line: "$1: $2"
+
+# Hel's Trial: the reward (the end message and Hel's hover while a trial runs)
+ecr_arena_reward: "Hel nagradza cię: $1."
+ecr_arena_reward_now: "Aktualne nagrody: $1"
+ecr_arena_reward_none: "na razie brak"
+# A named item given more than once: $1 the item, $2 how many
+ecr_arena_reward_item: "$1 x$2"
+# The reward's parts one after another: $1 the parts so far, $2 the next
+ecr_arena_reward_list: "$1, $2"
+ecr_arena_reward_coins: "$1 monet"
+ecr_arena_reward_runes: "$1 run"
+ecr_arena_reward_essence: "$1 esencji"
+ecr_arena_reward_xp: "+$1% PD umiejętności"
+
+# Hel's Anvil
+ecr_arena_anvil: "Kowadło Hel"
+ecr_arena_anvil_repair: "Napraw ekwipunek ($1 dusz)"
+ecr_arena_anvil_poor: "Za mało dusz ($1)"
+ecr_arena_anvil_cold: "Kowadło stygnie, gdy nadchodzą umarli"
+ecr_arena_anvil_done: "Kowadło Hel naprawia twój ekwipunek za $1 dusz."
+ecr_arena_anvil_nothing: "Żaden z twoich przedmiotów nie wymaga naprawy."
+
+# Raids: the Raiders Chest, the messages as a raid starts and ends, the line under the minimap, and the death recap.
+# $1, $2 ... are values the mod fills in (names, numbers, key hints). "$1 raid" names a raid after its creature.
+
+# The Raiders Chest
+piece_ecr_raiderschest: "Skrzynia najazdów"
+piece_ecr_raiderschest_description: "Okuta żelazem skrzynia z rogiem wojennym na wieku. Włóż do niej złoto i zadmij w róg: najeźdźcy przyjdą po łup, a pokonanie ich pozwoli odzyskać złoto i zdobyć więcej. Im więcej złota postawisz, tym trudniejszy będzie najazd i tym bogatsze łupy. Można użyć tylko we własnej bazie, raz dziennie."
+hud_ecr_raid_sound: "Rozpocznij najazd"
+ecr_raid_horn: "Róg wojenny"
+
+# The Raiders Chest's hover ($1 of the stake line is the coins, $2 the difficulty)
+ecr_raid_coins_one: "$1 moneta"
+ecr_raid_coins_many: "$1 monet"
+ecr_raid_stake_line: "$1 — najazd: $2 (zwrot monet x$3, łupy x$4)"
+ecr_raid_empty: "Włóż złote monety, aby rozpocząć najazd."
+ecr_raid_hold_to_stop: "Przytrzymaj $1, aby przerwać najazd (złoto najeźdźców przepada)"
+ecr_raid_stopping: "Przerywanie najazdu... $1%"
+ecr_raid_locked: "Skrzynia najazdów jest zablokowana podczas ataku. Przytrzymaj przycisk, aby przerwać najazd."
+
+# Why no raid is sounded
+ecr_raid_off: "Najazdy ze skrzyni są wyłączone na tym serwerze."
+ecr_raid_not_in_base: "Nie jesteś w bazie — najazd wymaga bazy, którą można zaatakować."
+ecr_raid_resting: "Róg musi odpocząć; gotowy za $1"
+ecr_raid_game_raid_near: "W pobliżu trwa już inny najazd."
+ecr_raid_chest_raid_near: "W promieniu 200 m trwa już inny najazd."
+ecr_raid_in_use: "Ktoś ma otwartą skrzynię najazdów."
+ecr_raid_no_gold: "Bez złota nie ma najazdu."
+ecr_raid_moved: "Skrzynia najazdów właśnie zmieniła właściciela. Spróbuj ponownie."
+ecr_raid_no_host: "Nie można rozpocząć najazdu w tym miejscu."
+ecr_raid_not_owner: "Tylko właściciel tej maszyny może rozpocząć tutaj najazd."
+ecr_raid_already_on: "Tutaj już trwa najazd."
+ecr_raid_none_unlocked: "W tym świecie nie odblokowano jeszcze żadnego najazdu."
+
+# A raid starts and ends ($1 the raid's creature, $2 the difficulty)
+ecr_raid_started: "Najeźdźcy ruszają po twoje złoto!\nNajazd $1 ($2)"
+ecr_raid_won: "Najazd $1 odparty! Złoto znów jest twoje."
+ecr_raid_robbed: "Skrzynia najazdów została zniszczona — najeźdźcy uciekają ze złotem."
+ecr_raid_stopped: "Najazd $1 przerwany. Najeźdźcy giną, a złoto przepada."
+ecr_raid_abandoned: "Najazd przerwany — najeźdźcy odchodzą ze złotem."
+ecr_raid_timed_out: "Czas minął — najeźdźcy odchodzą ze złotem."
+
+# The raid's line under the minimap ($1 the raid's creature, $2 the difficulty; times as m:ss)
+ecr_raid_line_countdown: "Najazd $1 ($2) — pierwsza fala za $3"
+ecr_raid_line_break: "Najazd $1 ($2) — fala $3 z $4 za $5 — $6"
+ecr_raid_line_wave: "Najazd $1 ($2) — fala $3 z $4 — pozostało: $5 — $6"
+
+# Raid difficulty
+ecr_raid_band_trivial: "Banalny"
+ecr_raid_band_fair: "Umiarkowany"
+ecr_raid_band_hard: "Trudny"
+ecr_raid_band_brutal: "Okrutny"
+ecr_raid_band_deadly: "Śmiertelny"
+
+# Death recap: the window
+ecr_recap_topic: "Podsumowanie śmierci"
+ecr_recap_play: "Odtwórz"
+ecr_recap_pause: "Pauza"
+ecr_recap_none: "Brak zgonów"
+ecr_recap_none_help: "Informacje o zgonach są przechowywane do zamknięcia gry. Klawisz $1 otwiera i zamyka to okno."
+ecr_recap_no_video: "Brak nagrania tego zgonu: nagrywanie było wyłączone ($1 w pliku .cfg) albo nie można było go wykonać."
+
+# Death recap: the killer, the summary and the hit rows
+ecr_recap_died: "Śmierć: $1"
+ecr_recap_killed_by: "Zabity przez: $1"
+ecr_recap_killed_by_how: "Zabity przez: $1 $2"
+ecr_recap_when: "Dzień $1, $2"
+ecr_recap_no_hits: "brak zarejestrowanych trafień"
+ecr_recap_damage: "$1 obrażeń w ciągu $2 s"
+ecr_recap_damage_shares: "$1 obrażeń w ciągu $2 s: $3"
+ecr_recap_share: "$1 $2%"
+ecr_recap_part: "$1 $2"
+ecr_recap_hp: "Zdrowie $1/$2"
+
+# Death recap: the line at the top left after a death ($2 the recap key)
+ecr_recap_notice_killed: "Zabito cię: $1. $2: podsumowanie śmierci"
+ecr_recap_notice_died: "Śmierć: $1. $2: podsumowanie śmierci"
+
+# Death recap: how a hit came
+ecr_recap_type_hit: "uderzenie"
+ecr_recap_type_ranged: "atak dystansowy"
+ecr_recap_type_burning: "płonięcie"
+ecr_recap_type_poison: "trucizna"
+ecr_recap_type_freezing: "zamrożenie"
+ecr_recap_type_fall: "upadek"
+ecr_recap_type_drowning: "utonięcie"
+ecr_recap_type_edge_of_world: "krawędź świata"
+ecr_recap_type_falling_tree: "spadające drzewo"
+ecr_recap_type_falling_building: "walący się budynek"
+ecr_recap_type_ship: "statek"
+ecr_recap_type_boiling_sea: "wrzące morze"
+ecr_recap_type_lava: "lawa"
+ecr_recap_type_cinder_fire: "ogień żaru"
+ecr_recap_type_water: "woda"
+ecr_recap_type_smoke: "dym"
+ecr_recap_type_impact: "uderzenie"
+ecr_recap_type_cart: "wózek"
+ecr_recap_type_self: "własne działanie"
+ecr_recap_type_turret: "wieżyczka"
+ecr_recap_type_stalagtite: "stalaktyt"
+ecr_recap_type_catapult: "katapulta"
+ecr_recap_type_incinerator: "spalarka"
+ecr_recap_type_drawbridge: "most zwodzony"
+ecr_recap_type_unknown: "nieznane"
+
+# Death recap: damage types
+ecr_recap_type_true: "bezpośrednie"
+ecr_recap_type_blunt: "obuchowe"
+ecr_recap_type_slash: "cięte"
+ecr_recap_type_pierce: "kłute"
+ecr_recap_type_chop: "rąbane"
+ecr_recap_type_pickaxe: "od kilofa"
+ecr_recap_type_fire: "ogień"
+ecr_recap_type_frost: "mróz"
+ecr_recap_type_lightning: "błyskawice"
+ecr_recap_type_spirit: "duchowe"

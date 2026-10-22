@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.31.2
+
+- Polish translation, used while the game's language is Polish.
+
 ## 3.31.1
 
 - Fixed: a creature another mod tames (a summon) loses this mod's stars too while `15 - Tamed` Stars is false.
