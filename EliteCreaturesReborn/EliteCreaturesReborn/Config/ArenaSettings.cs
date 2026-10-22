@@ -6,7 +6,7 @@ namespace EliteCreaturesReborn.Config
     /// The arena's one setting (features/arena.md section 5): whether Hel's hall stands over the world centre and Hel's
     /// Trial can be run there. Like the raids' switch (<see cref="RaidSettings"/>) it changes the game, so it is not a
     /// player's own: <see cref="Rules.ServerLock"/> registers it with the mod's Charter, and while the server binds its
-    /// players (the rule file's `lock to server`) the server's value holds for every player. A change arrives as the
+    /// players (the .cfg's `Lock to server`) the server's value holds for every player. A change arrives as the
     /// entry's SettingChanged, from the .cfg's hot reload or from the server; the hall (Arena/Hall) builds and removes
     /// itself on it. Everything else about the arena is a fixed number in the code.
     /// </summary>
@@ -32,7 +32,7 @@ namespace EliteCreaturesReborn.Config
                 + "the swirl at the end of the hall's gate passage; 'elite arena' (admin) takes you in and out too. With "
                 + "false there is no hall, Helgrind leaves the hammer and gates already built stay closed, 'elite arena' "
                 + "says the arena is off, and arena creatures still in the world vanish. Set on the server: while it "
-                + "binds its players (the rule file's 'lock to server'), the server's value holds for everyone.");
+                + "binds its players ('Lock to server' in 1 - General), the server's value holds for everyone.");
         }
     }
 }

@@ -29,12 +29,12 @@ namespace EliteCreaturesReborn.Config
                 + "level the game gave it before this mod's roll (one that appeared before this setting existed has none "
                 + "kept and counts as plain), with the game's health, damage, look and loot for it, and its young take their parent's "
                 + "level the game's way. Its stars from this mod come back when this is true again. Set on the server: "
-                + "while it binds its players (the rule file's 'lock to server'), the server's value holds for everyone.");
+                + "while it binds its players ('Lock to server' in 1 - General), the server's value holds for everyone.");
             Mutations = config.Bind(Section, "Mutations", true,
                 "Tamed creatures keep their mutations. With false a tamed creature carries none (a Thieving one drops "
                 + "what it stole) and its young inherit none. Its mutation comes back when this is true again; young "
-                + "born meanwhile have none. Set on the server: while it binds its players (the rule file's 'lock to "
-                + "server'), the server's value holds for everyone.");
+                + "born meanwhile have none. Set on the server: while it binds its players ('Lock to "
+                + "server' in 1 - General), the server's value holds for everyone.");
         }
     }
 }

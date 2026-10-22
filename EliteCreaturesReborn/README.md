@@ -67,10 +67,11 @@ Each pays extra loot.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put
-`EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `creature stars: false`.
+`EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `Creature stars` to false.
 
 ## Configuration
-`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` and `BepInEx/config/creature_rules.yml` (the rules). Both apply without a restart; the server's bind every player.
+`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` (difficulty, mutations on/off, respawning and every switch, also in a
+configuration manager) and `BepInEx/config/creature_rules.yml` (the tables). Both apply without a restart; the server's bind every player.
 Console: `elite tier`, `damage`, `deaths` for everyone; other `elite` commands for admins. Details:
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/EliteCreaturesReborn/translations/English.yml) as `EliteCreaturesReborn.translations.<Language>.yml` in `BepInEx/config`.

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using EliteCreaturesReborn.Config;
 using EliteCreaturesReborn.Traits;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -29,11 +30,9 @@ namespace EliteCreaturesReborn.Rules
             {
                 return result;
             }
-            RuleSet set = ReadTopLevel(root, result);
-            ReadMutationEnabled(set, root, result);
+            RuleSet set = ReadSettings(root, result);
             ReadDefaults(set, root, result);
             ReadBosses(set, root, result);
-            ReadRespawning(set, root, result);
             ReadWorld(set, root, result);
             ReadLoot(set, root, result);
             ReadCreatures(set, root, result);
@@ -41,16 +40,29 @@ namespace EliteCreaturesReborn.Rules
             return Finish(set, result);
         }
 
-        // The single lines at the top of the file.
-        private static RuleSet ReadTopLevel(YamlMappingNode root, Result result)
+        // The single switches live in the .cfg (Config/RuleSettings.cs): the server's values while it binds. A line the
+        // file still holds for one of them is ignored.
+        private static RuleSet ReadSettings(YamlMappingNode root, Result result)
         {
-            return new RuleSet
+            foreach (string key in RuleMigration.MovedKeys)
             {
-                Difficulty = ReadDifficulty(root, result),
-                CreatureStars = YamlRead.Bool(root, "creature stars", true, result.Errors),
-                LockToServer = YamlRead.Bool(root, "lock to server", true, result.Errors),
-                MaxMutations = Math.Max(0, YamlRead.Int(root, "max mutations", 1, result.Errors)),
+                if (YamlRead.Child(root, key) is YamlNode node)
+                {
+                    YamlRead.AddError(result.Warnings, node, $"'{key}' is set in the .cfg now; this line is ignored");
+                }
+            }
+            RuleSet set = new RuleSet
+            {
+                Difficulty = RuleSettings.CurrentDifficulty,
+                CreatureStars = RuleSettings.StarsOn,
+                MaxMutations = RuleSettings.MutationCap,
+                Respawn = RespawnSettings.Rules(),
             };
+            foreach (Mutation mutation in MutationCatalog.InOrder)
+            {
+                set.MutationEnabled[mutation] = MutationSettings.IsOn(mutation);
+            }
+            return set;
         }
 
         // The steps that need the whole file read: the star fallback for unlisted biomes, Extreme's longer star lines.
@@ -60,23 +72,6 @@ namespace EliteCreaturesReborn.Rules
             PadStarPower(set);
             result.Rules = set;
             return result;
-        }
-
-        // features/difficulty.md: the `difficulty:` line at the top; none = Custom, so a file from before 3.14 plays as before.
-        private static Difficulty ReadDifficulty(YamlMappingNode root, Result result)
-        {
-            YamlNode? node = YamlRead.Child(root, "difficulty");
-            if (node == null)
-            {
-                return Difficulty.Custom;
-            }
-            string? text = YamlRead.Scalar(root, "difficulty");
-            if (DifficultyNames.TryParse(text, out Difficulty difficulty))
-            {
-                return difficulty;
-            }
-            YamlRead.AddError(result.Errors, node, $"'{text}' is not a difficulty: {DifficultyNames.Choices}");
-            return Difficulty.Custom;
         }
 
         // Extreme rolls up to 8 stars: star power lines written for five continue by the built-in steps.
@@ -103,7 +98,7 @@ namespace EliteCreaturesReborn.Rules
             }
         }
 
-        private static YamlMappingNode? LoadRoot(string text, List<string> errors)
+        internal static YamlMappingNode? LoadRoot(string text, List<string> errors)
         {
             try
             {
@@ -126,35 +121,6 @@ namespace EliteCreaturesReborn.Rules
             return null;
         }
 
-        private static void ReadMutationEnabled(RuleSet set, YamlMappingNode root, Result result)
-        {
-            foreach (Mutation mutation in MutationCatalog.InOrder)
-            {
-                set.MutationEnabled[mutation] = MutationCatalog.OnByDefault(mutation);
-            }
-            if (!(YamlRead.Child(root, "mutations enabled") is YamlMappingNode map))
-            {
-                return;
-            }
-            foreach (KeyValuePair<YamlNode, YamlNode> pair in map.Children)
-            {
-                string name = (pair.Key as YamlScalarNode)?.Value ?? "";
-                Mutation? mutation = MutationCatalog.FromName(name);
-                if (mutation == null)
-                {
-                    YamlRead.AddError(result.Errors, pair.Key, $"'{name}' is not a mutation");
-                }
-                else if (YamlRead.TryBool(pair.Value, out bool value))
-                {
-                    set.MutationEnabled[mutation.Value] = value;
-                }
-                else
-                {
-                    YamlRead.AddError(result.Errors, pair.Value, $"'{name}' should be true or false");
-                }
-            }
-        }
-
         private static void ReadDefaults(RuleSet set, YamlMappingNode root, Result result)
         {
             set.Defaults = RuleDefaults.Baseline();
@@ -170,15 +136,6 @@ namespace EliteCreaturesReborn.Rules
             if (YamlRead.Child(root, "bosses") is YamlMappingNode block)
             {
                 BossOverlay.Apply(set.Boss, block, result.Errors, result.Warnings);
-            }
-        }
-
-        private static void ReadRespawning(RuleSet set, YamlMappingNode root, Result result)
-        {
-            set.Respawn = new RespawnRules();
-            if (YamlRead.Child(root, "respawning") is YamlMappingNode block)
-            {
-                RespawnOverlay.Apply(set.Respawn, block, result.Errors);
             }
         }
 

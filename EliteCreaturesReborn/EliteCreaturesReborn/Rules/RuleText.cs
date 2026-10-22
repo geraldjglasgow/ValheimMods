@@ -16,47 +16,8 @@ namespace EliteCreaturesReborn.Rules
 # Percentages are 0-100. Lists by star count start at 0 stars; past the end the
 # last entry repeats. Biome names: Meadows, BlackForest, Swamp, Mountain, Plains,
 # Mistlands, AshLands, DeepNorth, Ocean.
-
-# How hard creatures get as the world's bosses fall: Easy, Medium, Hard, Very Hard
-# or Extreme. Custom uses the biomes' star and mutation rows below with the world
-# tier boosts instead; a file without this line is Custom.
-difficulty: Medium
-
-# false: creatures (not bosses) get no stars from this mod and keep the stars the
-# game or another mod gave them; they still roll mutations, at the 0-star chance.
-creature stars: true
-
-# Connected players use the server's copy of this file.
-lock to server: true
-
-# Most mutations one creature can carry. 0 = no cap.
-max mutations: 1
-
-# false turns a mutation off everywhere.
-mutations enabled:
-  Mad: true
-  Bloated: true
-  Cloaked: true
-  Splintering: true
-  Leeching: true
-  Warding: true
-  Plated: true
-  Miasmic: true
-  Devouring: true
-  Thieving: true
-  Gilded: true
-  Blinking: true
-  Relentless: true
-  Juggernaut: true
-  Screecher: true
-  Frostbound: true
-  Mudbound: true
-  Corrodent: true
-  Cloning: true
-  Piercing: false
-  Howling: false
-  Binding: false
-  Flamebound: true
+# The difficulty, creature stars, the lock, max mutations, each mutation's on/off
+# and respawning are set in gglasgow.elitecreaturesreborn.cfg (sections 1 to 3).
 
 defaults:
   # How much stronger a mutation is on a large star (worth 5).
@@ -101,20 +62,6 @@ defaults:
     Mudbound:    { trail life: 10, patch radius: 1.5, patch spacing: 1.5, slow: 40, trail effect: vfx_blobtar_death }
     Corrodent:   { durability: 3 }
     Cloning:     { times: 1, range: 12, decoy life: 20, cooldown: 30, reveal effect: vfx_spawn_small, reveal sound: sfx_spawn, vanish effect: vfx_odin_despawn }
-
-# Bringing back the creatures the game places only once. Days are world days
-# (30 real minutes). Only creatures and dungeon chest contents come back, never
-# buildings, nests, rocks or pickables.
-respawning:
-  # Places out in the world: Fuling and Draugr villages, ruins, towers, camps.
-  camps: false
-  camp days: 5
-  # Inside dungeons, behind a loading door: crypts, caves, mines.
-  dungeons: false
-  dungeon days: 7
-  # Dungeon chests refill only once fully emptied.
-  dungeon loot: false
-  dungeon loot days: 14
 
 " + WorldRuleText.Block + BossRuleText.Block + @"# mode: Vanilla (drops untouched), Scaled (quantities times the star drops line),
 # Rolled (the drop table rolled again per star) or Curated (only the creatures: rules).

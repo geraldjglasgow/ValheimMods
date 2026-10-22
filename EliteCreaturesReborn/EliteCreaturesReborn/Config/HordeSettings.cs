@@ -7,7 +7,7 @@ namespace EliteCreaturesReborn.Config
     /// The horde's four settings (features/horde.md): more creatures in the wild, each weaker. Requested on Discord; the
     /// user chose an on/off and three multipliers. They change the game, so like the raids' and the arena's switches they
     /// are not a player's own: <see cref="Rules.ServerLock"/> registers them with the mod's Charter, and while the server
-    /// binds its players (the rule file's `lock to server`) the server's values hold for every player. The loot share is
+    /// binds its players (the .cfg's `Lock to server`) the server's values hold for every player. The loot share is
     /// no setting: a horde creature drops 1 / the spawn multiplier of its own loot, so the extra creatures pay no extra.
     /// </summary>
     public static class HordeSettings
@@ -40,7 +40,7 @@ namespace EliteCreaturesReborn.Config
                 + "no extra. Each one still rolls its own stars and mutations. Bosses, the game's raids, this mod's raids "
                 + "and arena, creature spawners in camps and dungeons, and tamed creatures are left as they are. A "
                 + "creature's health follows a change the next time it loads; its attack and loot at once. Set on the "
-                + "server: while it binds its players (the rule file's 'lock to server'), the server's values hold for "
+                + "server: while it binds its players ('Lock to server' in 1 - General), the server's values hold for "
                 + "everyone.");
             SpawnMultiplier = config.Bind(Section, "Spawn Multiplier", 2f, new ConfigDescription(
                 "How many times as many creatures the world spawns while Horde is on: group sizes and the most of each kind "

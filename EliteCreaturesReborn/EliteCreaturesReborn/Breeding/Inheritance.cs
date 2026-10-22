@@ -11,9 +11,9 @@ namespace EliteCreaturesReborn.Breeding
     /// The inheritance roll, and nothing else - no ZDO, no game objects. Stars are drawn with equal odds from 0 up to
     /// the stronger parent's, so a line only holds its strength if the player keeps the good ones. The mutation is one
     /// of the parents' own, picked at random from both, whenever either has one (at the rule file's chance, 100 by
-    /// default); a mutation switched off in `mutations enabled` is never passed on, and neither is one the species' body
+    /// default); a mutation switched off in the .cfg (`2 - Mutations`) is never passed on, and neither is one the species' body
     /// rules out (Gilded and Relentless for a large kind, <see cref="BodySize.Barred"/>), which a parent rolled before
-    /// that rule may still carry. A newborn never rolls anything new. With `creature stars: false`, or a tame's stars off
+    /// that rule may still carry. A newborn never rolls anything new. With Creature stars false (the .cfg), or a tame's stars off
     /// (`15 - Tamed`, since a newborn of tamed parents is tamed too), it inherits no stars of this mod: it keeps the level
     /// the game gives it, its parent's. With a tame's mutations off it inherits none.
     /// </summary>

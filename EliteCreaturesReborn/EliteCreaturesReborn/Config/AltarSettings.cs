@@ -24,7 +24,7 @@ namespace EliteCreaturesReborn.Config
                 + "aspect from what the rule file lets that boss roll. Either can stay on Random, which rolls at every "
                 + "shift as before; a choice stays on the altar for every player until someone changes it. The fight pays "
                 + "for the stars and aspect it has, chosen or rolled. With false the altar rolls everything and nobody "
-                + "can choose. Set on the server: while it binds its players (the rule file's 'lock to server'), the "
+                + "can choose. Set on the server: while it binds its players ('Lock to server' in 1 - General), the "
                 + "server's value holds for everyone.");
         }
     }

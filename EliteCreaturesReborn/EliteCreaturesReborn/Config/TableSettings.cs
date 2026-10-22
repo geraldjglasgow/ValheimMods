@@ -22,8 +22,8 @@ namespace EliteCreaturesReborn.Config
             RenderingTable = config.Bind(Section, "Rendering Table", true,
                 "The Rendering Table is in the hammer (Crafting): it renders a creature trophy into ores or ingredients "
                 + "of the trophy's biome, or five of one biome into a Forge idol of that biome's tier. With false it is "
-                + "not, and a table already built renders nothing. Set on the server: while it binds its players (the "
-                + "rule file's 'lock to server'), the server's value holds for everyone.");
+                + "not, and a table already built renders nothing. Set on the server: while it binds its players ("
+                + "'Lock to server' in 1 - General), the server's value holds for everyone.");
         }
     }
 }

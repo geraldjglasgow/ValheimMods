@@ -3,7 +3,10 @@ using YamlDotNet.RepresentationModel;
 
 namespace EliteCreaturesReborn.Rules
 {
-    /// <summary>Reads the file's top-level <c>respawning</c> block onto the defaults; anything omitted keeps its own.</summary>
+    /// <summary>
+    /// Reads an old rule file's top-level <c>respawning</c> block onto the given rules, anything omitted keeping its own,
+    /// for the hand-over to the .cfg (<see cref="RuleMigration"/>).
+    /// </summary>
     internal static class RespawnOverlay
     {
         public static void Apply(RespawnRules rules, YamlMappingNode block, List<string> errors)

@@ -5,8 +5,9 @@ namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
     /// Watches the rule file the way ConfigReload watches the .cfg: a slow poll of the file's write time and size on
-    /// the main thread, no file watcher. When the file changes it re-reads it and lets the server lock re-mirror and
-    /// re-push. A reload never takes the game down - a bad file is reported and the last good rules stay in force.
+    /// the main thread, no file watcher. When the file changes it re-reads it and lets the server lock re-push. A changed
+    /// .cfg setting the rules copy (<see cref="Config.RuleSettings"/>) reads them again the next frame. A reload never
+    /// takes the game down - a bad file is reported and the last good rules stay in force.
     /// </summary>
     public sealed class RuleReload : MonoBehaviour
     {
@@ -24,6 +25,10 @@ namespace EliteCreaturesReborn.Rules
 
         private void Poll()
         {
+            if (Config.RuleSettings.TakeChanged())
+            {
+                ServerLock.OnSettingsChanged();
+            }
             _timer += Time.deltaTime;
             if (_timer < IntervalSeconds)
             {

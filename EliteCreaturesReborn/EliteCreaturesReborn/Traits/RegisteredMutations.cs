@@ -8,7 +8,7 @@ namespace EliteCreaturesReborn.Traits
     /// <summary>
     /// ECR's own limits on the mutations another mod fixed for a creature (<see cref="Registrations"/>): its kind's bars
     /// (no Cloaked Deathsquito), its body's (no Gilded or Relentless on a large creature, <see cref="BodySize"/>) and the
-    /// rule file's `mutations enabled`. A refused mutation is left out and the rest are kept; each refusal is logged once
+    /// .cfg's `2 - Mutations`. A refused mutation is left out and the rest are kept; each refusal is logged once
     /// per prefab and mutation, with its reason, the way `elite spawn` words a skipped word. Checked at every roll, on the
     /// owner, because the rule file can change after the registration; the API asks the same question when the
     /// registration is made, to report it back (<see cref="Refusal"/>).
@@ -50,7 +50,7 @@ namespace EliteCreaturesReborn.Traits
             {
                 return "its body is large: no Gilded or Relentless on large creatures";
             }
-            return rules.IsEnabled(mutation) ? null : "it is switched off in `mutations enabled`";
+            return rules.IsEnabled(mutation) ? null : "it is switched off in the .cfg (2 - Mutations)";
         }
 
         private static int Bit(Mutation mutation) => 1 << (int)mutation;

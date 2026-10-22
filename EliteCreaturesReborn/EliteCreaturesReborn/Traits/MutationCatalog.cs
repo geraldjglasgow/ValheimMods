@@ -4,7 +4,7 @@ namespace EliteCreaturesReborn.Traits
 {
     /// <summary>
     /// The static facts about each mutation: the display word that goes in a creature's name, the default star colour,
-    /// and whether a rule file that does not name it in `mutations enabled` has it on. Tunable per-mutation numbers
+    /// and whether it is on by default (the .cfg's `2 - Mutations`). Tunable per-mutation numbers
     /// live in the config classes, not here.
     /// </summary>
     public static class MutationCatalog
@@ -20,8 +20,8 @@ namespace EliteCreaturesReborn.Traits
         };
 
         /// <summary>
-        /// On unless the rule file says otherwise. Piercing, Howling and Binding start off: a server owner turns them on
-        /// in `mutations enabled`, and a rule file written before they existed leaves them off.
+        /// On unless the .cfg says otherwise. Piercing, Howling and Binding start off: a server owner turns them on in
+        /// `2 - Mutations`, and a rule file written before they existed left them off.
         /// </summary>
         public static bool OnByDefault(Mutation mutation) =>
             mutation != Mutation.Piercing && mutation != Mutation.Howling && mutation != Mutation.Binding;

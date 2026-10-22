@@ -7,7 +7,7 @@ namespace EliteCreaturesReborn.Commands
 {
     /// <summary>
     /// <c>elite spawn &lt;prefab&gt; &lt;stars&gt; [mutation...]</c>: makes exactly that creature and bypasses EVERYTHING -
-    /// the star distribution, the mutation chances, <c>max mutations</c> and the glyph limit - so a rule can be checked
+    /// the star distribution, the mutation chances, Max mutations and the glyph limit - so a rule can be checked
     /// in ten seconds. A boss takes one aspect word instead of mutations (<c>elite spawn Bonemass 2 Twin</c>), and its
     /// twin or phantom copies arrive with it exactly as they would from the altar. Bountiful also takes the aspect words
     /// after it as its extras (<c>elite spawn gd_king 2 Bountiful Enraged Mending</c>), or rolls them from the boss's

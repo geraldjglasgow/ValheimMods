@@ -4,12 +4,14 @@ using EliteCreaturesReborn.Util;
 namespace EliteCreaturesReborn.Config
 {
     /// <summary>
-    /// The .cfg holds only what the rule file does not: per-player display preferences, none of which the server ever
-    /// locks, because they change only what one player sees. Everything that changes what the game does - star chances,
-    /// star power, mutation chances and power, and the lock switch itself - lives in the YAML rule file instead. The
-    /// exceptions are the raids', the arena's and the altar choice's on/off, the horde's four settings and what tamed
-    /// creatures keep (<see cref="RaidSettings"/>, <see cref="ArenaSettings"/>, <see cref="AltarSettings"/>,
-    /// <see cref="HordeSettings"/>, <see cref="TamedSettings"/>), which their specs put in the .cfg and the server binds.
+    /// The .cfg holds the per-player display preferences, none of which the server ever locks, because they change only
+    /// what one player sees, and the game's single switches, which the server binds: the lock, the difficulty, creature
+    /// stars, the mutation cap, each mutation's on/off and respawning (<see cref="RuleSettings"/>,
+    /// <see cref="MutationSettings"/>, <see cref="RespawnSettings"/>, so a configuration manager shows them), and the
+    /// raids', the arena's and the altar choice's on/off, the horde's four settings and what tamed creatures keep
+    /// (<see cref="RaidSettings"/>, <see cref="ArenaSettings"/>, <see cref="AltarSettings"/>, <see cref="HordeSettings"/>,
+    /// <see cref="TamedSettings"/>). The tables - star chances, star power, mutation chances and power, tiers, loot -
+    /// live in the YAML rule file.
     /// </summary>
     public static class Configuration
     {
@@ -36,6 +38,26 @@ namespace EliteCreaturesReborn.Config
 
         public static void BindAll(ConfigFile config)
         {
+            RuleSettings.Bind(config);
+            MutationSettings.Bind(config);
+            RespawnSettings.Bind(config);
+            BindDisplay(config);
+            BindNameplate(config);
+            BindBoardAndTier(config);
+            BindHints(config);
+            PaletteSettings.Bind(config);
+            Recap.RecapSettings.Bind(config);
+            RaidSettings.Bind(config);
+            ArenaSettings.Bind(config);
+            HordeSettings.Bind(config);
+            AltarSettings.Bind(config);
+            TamedSettings.Bind(config);
+            TableSettings.Bind(config);
+            BindDiagnostics(config);
+        }
+
+        private static void BindDisplay(ConfigFile config)
+        {
             ShowTraitNames = config.Bind(Display, "Show trait names", true,
                 "Prepend each mutation's word to a creature's name. Client side; never locked.");
             ColouredStars = config.Bind(Display, "Coloured stars", true,
@@ -49,18 +71,6 @@ namespace EliteCreaturesReborn.Config
                     + "turn the hazard off - the poison and the blast still hurt you exactly the same, you just cannot "
                     + "see them coming. Client side; never locked.",
                     new AcceptableValueRange<float>(0f, 1f)));
-            BindNameplate(config);
-            BindBoardAndTier(config);
-            BindHints(config);
-            PaletteSettings.Bind(config);
-            Recap.RecapSettings.Bind(config);
-            RaidSettings.Bind(config);
-            ArenaSettings.Bind(config);
-            HordeSettings.Bind(config);
-            AltarSettings.Bind(config);
-            TamedSettings.Bind(config);
-            TableSettings.Bind(config);
-            BindDiagnostics(config);
         }
 
         // What a creature's nameplate draws beside its name: the star glyphs, and the icons of what a Thieving creature

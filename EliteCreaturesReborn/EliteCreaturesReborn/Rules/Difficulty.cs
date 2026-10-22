@@ -1,9 +1,9 @@
 namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
-    /// The rule file's <c>difficulty:</c> line (features/difficulty.md). <see cref="Custom"/> is the file's own per-biome
-    /// star and mutation rows with the world tier's boosts, and what a file with no line gets, so an existing server
-    /// keeps playing as before. The five presets replace those rows with one shape: a biome's star cap, star odds and
+    /// The .cfg's Difficulty (features/difficulty.md). <see cref="Custom"/> is the rule file's own per-biome
+    /// star and mutation rows with the world tier's boosts, and what a rule file with no `difficulty:` line moved over
+    /// as, so an existing server keeps playing as before. The five presets replace those rows with one shape: a biome's star cap, star odds and
     /// mutation rate follow how many bosses the world has killed and how many of them came after that biome.
     /// </summary>
     public enum Difficulty
@@ -37,7 +37,7 @@ namespace EliteCreaturesReborn.Rules
             }
         }
 
-        /// <summary>The rule file's and the console's word for it, always English: "Very Hard".</summary>
+        /// <summary>The console's and the log's word for it, always English: "Very Hard".</summary>
         public static string Name(Difficulty difficulty) => difficulty == Difficulty.VeryHard ? "Very Hard" : difficulty.ToString();
 
         /// <summary>Its name in the player's language, for the compendium (<c>ecr_difficulty_&lt;difficulty&gt;</c>).</summary>

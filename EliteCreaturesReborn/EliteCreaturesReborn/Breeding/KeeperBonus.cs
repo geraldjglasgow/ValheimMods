@@ -10,7 +10,7 @@ namespace EliteCreaturesReborn.Breeding
     /// that mod writes the int <see cref="StarUpKey"/> (1) on the pregnant parent's ZDO just before the game's birth call
     /// and clears it right after, on the same machine this birth runs on. The newborn then gets that many stars more than
     /// its inheritance roll, up to one above the stronger parent. When that cap leaves no room, the key is set to 0, which
-    /// tells GrindstoneSkills no star was added; with `creature stars: false` or a tame's stars off (`15 - Tamed`) it is
+    /// tells GrindstoneSkills no star was added; with Creature stars false (the .cfg) or a tame's stars off (`15 - Tamed`) it is
     /// always declined, since this mod adds no stars. Only the key name is shared: neither mod references the other, and
     /// without GrindstoneSkills the key is never set.
     /// </summary>

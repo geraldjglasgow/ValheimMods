@@ -4,13 +4,21 @@ The store page (`README.md`) keeps one line per feature and links here. The sect
 unchanged on 2026-09-30: what each mutation and boss aspect does, the fields of the rule file `creature_rules.yml`,
 respawning, and the console commands with their arguments. Design notes are in `features/`.
 
+The single switches are in the .cfg (`gglasgow.elitecreaturesreborn.cfg`), so a configuration manager shows them:
+`1 - General` (`Lock to server`, `Difficulty`, `Creature stars`, `Max mutations`), `2 - Mutations` (one on/off per
+mutation) and `3 - Respawning`. They were the rule file's `lock to server`, `difficulty`, `creature stars`,
+`max mutations`, `mutations enabled` and `respawning` until a player asked to see them in game (2026-10-22). A rule
+file that still holds them hands them to the .cfg once at start (a file with no `difficulty:` line as Custom, as it
+played) and keeps its old text as `creature_rules.yml.bak`; a line put back later is ignored with a warning. All of
+them are synced from the server and held by `Lock to server` (`Config/RuleSettings.cs`, `Rules/RuleMigration.cs`).
+
 ## Difficulty
 
-The first setting in `creature_rules.yml`, `difficulty:`, picks how many stars and mutations creatures get as the
-world's bosses fall: `Easy`, `Medium`, `Hard`, `Very Hard` or `Extreme`. A new rule file starts on Medium. A file
-without the line (any file written before 3.14.0) is `Custom`: the biomes' own `star chances` and `mutation chance`
-rows with the world tier's `star boost` and `mutation boost`, exactly as before. `elite tier` shows the difficulty
-and what it gives the biome you stand in.
+`Difficulty` in the .cfg (`1 - General`) picks how many stars and mutations creatures get as the world's bosses fall:
+`Easy`, `Medium`, `Hard`, `VeryHard` or `Extreme`. A new install starts on Medium. `Custom` plays the rule file's
+own per-biome `star chances` and `mutation chance` rows with the world tier's `star boost` and `mutation boost`; a
+rule file from before 3.14.0, which had no `difficulty:` line, moves over as Custom, exactly as it played.
+`elite tier` shows the difficulty and what it gives the biome you stand in.
 
 On every difficulty the biome you're entering is the gentlest. A biome you've cleared gets harder with every boss
 killed after it, so by the end of the game the Meadows is the hardest place, not the Deep North. Biomes you haven't
@@ -19,7 +27,7 @@ world tier.
 
 **The game's World Difficulty** (its combat setting, Very Easy to Very Hard) is separate and stacks: it still changes
 how hard enemies hit and how hard players hit them, but its extra star chance (`Game.m_enemyLevelUpRate`) does nothing,
-because creatures are kept at the game's level 1 and roll this mod's stars. With `creature stars: false` the game's
+because creatures are kept at the game's level 1 and roll this mod's stars. With `Creature stars` false the game's
 stars, that star chance included, apply as usual.
 
 **Stars.** The most stars a creature can have:
@@ -49,15 +57,15 @@ leans it 5% further, and Very Hard and Extreme lean further with every boss kill
 
 A mutated creature carries one mutation, picked by its biome's leanings: the biome's `mutation chance` and
 `mutation chances` rows (and the creature's own entry under `creatures:`), so the Swamp still breeds Miasmic and the
-Ashlands Bloated, and `mutations enabled` still wins. `max mutations` and the world tier boosts apply to Custom only.
+Ashlands Bloated, and `2 - Mutations` still wins. `Max mutations` and the world tier boosts apply to Custom only.
 
 **6 to 8 stars** happen only on Extreme. The `star power` lines have nine entries; a file whose lines stop at five
 stars continues them by the built-in steps (an 8-star creature has about 1.5 times a 5-star's health and 1.4 times its damage).
 
 ## Creature stars off
 
-`creature stars: false` at the top of `creature_rules.yml` (a file from before 3.17.0 has no line: add it) turns this
-mod's creature stars off, for playing beside another mod that gives creatures stars, such as Path of Valheim:
+`Creature stars` false in the .cfg (`1 - General`) turns this mod's creature stars off, for playing beside another
+mod that gives creatures stars, such as Path of Valheim:
 
 - Creatures roll no stars here and keep the stars the game or the other mod gave them, with the game's own health,
   damage, loot, look and nameplate stars for them. The `star power` lines, the star `drops` line and the extra rolls
@@ -74,11 +82,11 @@ says when creature stars are off, and `elite inspect` shows the game's stars: th
 
 ## Tamed creatures
 
-`15 - Tamed` in the .cfg (`Config/TamedSettings.cs`; both true by default, synced from the server and held by the rule
-file's `lock to server`) decides what a tamed creature keeps (the user, 2026-10-19):
+`15 - Tamed` in the .cfg (`Config/TamedSettings.cs`; both true by default, synced from the server and held by
+`Lock to server`) decides what a tamed creature keeps (the user, 2026-10-19):
 
 - **Stars** false: a tame has the game's stars only - the level the game, a spawner or another mod gave it before this
-  mod's roll, with the game's health, damage, look, nameplate badges and loot for it, as under `creature stars: false`.
+  mod's roll, with the game's health, damage, look, nameplate badges and loot for it, as with `Creature stars` false.
   A fresh roll keeps that level in the ZDO (`ecr_game_level`, only above 1) before setting level 1; a creature that
   appeared before this existed has none kept and is level 1. Its young take no stars of this mod: the game passes the
   parent's level on, and GrindstoneSkills' better-offspring star is declined.
@@ -105,8 +113,7 @@ it as before. It lasts until the game closes or the player logs out.
 ## Mutations
 
 Twenty-three, one per creature by default, each with its own colour and its own name on the nameplate. Piercing,
-Howling and Binding start switched off: set them to `true` under `mutations enabled` (a rule file written before them
-has no line for them and leaves them off; Flamebound, which starts on, rolls in such a file too).
+Howling and Binding start switched off: set them to `true` in the .cfg's `2 - Mutations`.
 
 | Mutation | What it does |
 | --- | --- |
@@ -143,7 +150,7 @@ trolls, bears, lox, golems, Fuling berserkers, Seeker soldiers, Morgen, Gjall an
 
 `mutation power` in the rule file sets how strong each mutation is, in named fields rather than positional
 numbers. A field marked (enhanced) is multiplied by `large star power` on a large star; a cost field never is.
-Any mutation can also be switched off entirely with `mutations enabled`, regardless of its chance curves.
+Any mutation can also be switched off entirely in the .cfg's `2 - Mutations`, regardless of its chance curves.
 
 - **Mad** - `move`/`attack speed` multipliers (enhanced); `health` multiplier, its cost
 - **Bloated** - `health` multiplier (enhanced); `delay` seconds from death to the blast, 1.5 by default; the blast goes
@@ -387,7 +394,7 @@ creatures:
 `mutation power` changes only the fields it names. `mutation chances` replaces the named mutation's curve.
 `mutation chance` replaces the creature's default curve, but any mutation with its own curve in the biome (or in
 `defaults`, like Devouring and Gilded) keeps it, so set that mutation to `[0]` under `mutation chances` to stop it.
-`mutations enabled` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
+`2 - Mutations` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
 entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with six: Troll,
 Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
 never Cloaked, Bat sets Mad and Cloaked to `[0]`, so bats are never either, and Gjall sets Cloaked to `[0]` (a
@@ -401,16 +408,16 @@ Splintering dummy split into copies that each dismantled for the full cost), and
 
 ## Respawning
 
-Most creatures guarding a place are placed by the game once, through a spawner that never fires again. Under
-`respawning:` in the rule file, cleared camps and dungeons can fill up again, and emptied dungeon chests can refill,
+Most creatures guarding a place are placed by the game once, through a spawner that never fires again. With
+`3 - Respawning` in the .cfg, cleared camps and dungeons can fill up again, and emptied dungeon chests can refill,
 each on its own timer in world days (a world day is 30 real minutes at the game's default speed). All three are off
 by default, so clearing a camp or a dungeon stays worth doing.
 
-- **Camps** (`camps`, `camp days` 5) are every such place out in the world: Fuling and Draugr villages, Greydwarf and
+- **Camps** (`Camps`, `Camp days` 5) are every such place out in the world: Fuling and Draugr villages, Greydwarf and
   skeleton ruins, Swamp huts, Mistlands dvergr outposts, Ashlands fortresses, drake nests, tar pits and the like.
-- **Dungeons** (`dungeons`, `dungeon days` 7) are the interiors entered through a door with a loading screen: Burial
+- **Dungeons** (`Dungeons`, `Dungeon days` 7) are the interiors entered through a door with a loading screen: Burial
   Chambers, Sunken Crypts, Frost Caves, Infested Mines and the like.
-- **Dungeon loot** (`dungeon loot`, `dungeon loot days` 14) refills a dungeon chest from its own loot table once it
+- **Dungeon loot** (`Dungeon loot`, `Dungeon loot days` 14) refills a dungeon chest from its own loot table once it
   has been fully emptied, never topping up one still being looted. Its clock starts the first time it is seen with
   the switch on. Chests out in the world are never refilled.
 
@@ -519,8 +526,8 @@ no coins.
 
 The chest stays locked while the raid is on. What raiders dropped before the end is the players' to keep; one caught
 while walking off drops only its own loot. `11 - Raids` / `Raiders Chest` (on) puts the chest in the hammer; off, a
-chest already built is an ordinary coin chest. It is synced from the server and held by the rule file's
-`lock to server`. Design in `features/raids.md`.
+chest already built is an ordinary coin chest. It is synced from the server and held by `Lock to server`.
+Design in `features/raids.md`.
 
 ## Rendering Table
 
@@ -553,7 +560,7 @@ used on the table from the hotbar renders that one. Boss trophies are never take
 Ingredients are the biome's creature parts and plants (`Rendering/RenderTiers.cs` has every list). Hildir's quest
 trophies, the Bog Witch's Kvastur and other mods' trophies are never taken. What does not fit in the inventory drops at
 the player's feet. `16 - Rendering Table` / `Rendering Table` (on) puts the table in the hammer; off, a table already
-built renders nothing. It is synced from the server and held by the rule file's `lock to server`.
+built renders nothing. It is synced from the server and held by `Lock to server`.
 
 ## Horde
 
@@ -565,7 +572,7 @@ Each still rolls its own stars and mutations. Wild means made by the world's spa
 by Splintering), tagged in its ZDO whatever the setting, so turning the horde on or off reaches creatures already out
 there: health on their next load, attack and loot at once. Bosses, the game's raids, this mod's raids and arena,
 creature spawners in camps and dungeons, command spawns and tamed creatures are left as they are. All four settings
-are synced from the server and held by the rule file's `lock to server`. Design in `features/horde.md`.
+are synced from the server and held by `Lock to server`. Design in `features/horde.md`.
 
 ## Arena: Hel's hall
 

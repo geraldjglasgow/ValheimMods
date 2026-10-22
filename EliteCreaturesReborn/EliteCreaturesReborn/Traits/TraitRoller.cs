@@ -9,12 +9,12 @@ namespace EliteCreaturesReborn.Traits
     /// Rolls a fresh creature's traits from its rules - its biome's, with its own `creatures:` entry's mutation keys on
     /// top (<see cref="RuleSet.For(Heightmap.Biome, string)"/>): a star count drawn from the biome's star-chance
     /// distribution, then every enabled mutation rolled independently at its own biome-and-star chance. A creature
-    /// that fails every roll is plain; one that passes several carries several. `max mutations` caps the set. The world
+    /// that fails every roll is plain; one that passes several carries several. Max mutations (the .cfg) caps the set. The world
     /// tier leans both rolls: its star boost multiplies each star count's weight once per star, and its mutation boost
     /// multiplies every mutation chance, so a hardened world keeps each biome's character but pushes it upward. A large
     /// creature never rolls Gilded or Relentless (<see cref="BodySize.Barred"/>): they are left out before the dice, so
     /// its chance at every other mutation is unchanged. That is the Custom difficulty; under a preset the roll is
-    /// <see cref="PresetRoller"/>'s instead. With `creature stars: false` neither draws stars: every creature rolls its
+    /// <see cref="PresetRoller"/>'s instead. With Creature stars false (the .cfg) neither draws stars: every creature rolls its
     /// mutations as a 0-star one, and keeps whatever level the game or another mod gave it.
     /// </summary>
     public static class TraitRoller
@@ -31,7 +31,7 @@ namespace EliteCreaturesReborn.Traits
             return new CreatureTraits(stars, mask) { Tier = tier };
         }
 
-        /// <summary>True when a creature may roll it: on in `mutations enabled` and not barred by its body.</summary>
+        /// <summary>True when a creature may roll it: on in the .cfg (`2 - Mutations`) and not barred by its body.</summary>
         internal static bool MayRoll(Mutation mutation, RuleSet ruleSet, int barred) =>
             ruleSet.IsEnabled(mutation) && (barred & (1 << (int)mutation)) == 0;
 

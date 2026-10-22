@@ -23,6 +23,7 @@ namespace EliteCreaturesReborn.Rules
         public static void Initialise()
         {
             EnsureExists();
+            RuleMigration.Run(Path);
             Load();
         }
 
@@ -58,6 +59,9 @@ namespace EliteCreaturesReborn.Rules
             Stamp();
             return Adopt(text);
         }
+
+        /// <summary>Parses the text already held again, for a changed .cfg setting the rules copy; false keeps the last good.</summary>
+        public static bool Reparse() => Adopt(LocalText);
 
         private static bool Adopt(string text)
         {

@@ -13,18 +13,18 @@ namespace EliteCreaturesReborn.Rules
     /// </summary>
     public sealed class RuleSet
     {
-        /// <summary>The <c>difficulty:</c> line; Custom (the file's own rows) when the file has none.</summary>
+        /// <summary>The .cfg's Difficulty; Custom plays the file's own rows.</summary>
         public Difficulty Difficulty = Difficulty.Custom;
 
-        public bool LockToServer = true;
+        /// <summary>The .cfg's Max mutations; 0 for no cap.</summary>
         public int MaxMutations = 1;
         public BiomeRules Defaults = new BiomeRules();
 
-        /// <summary>The <c>creature stars:</c> line. False: creatures roll no stars and keep the game's level.</summary>
+        /// <summary>The .cfg's Creature stars. False: creatures roll no stars and keep the game's level.</summary>
         public bool CreatureStars = true;
 
-        /// <summary>Per-mutation on/off switch. An entry missing here (an old file, an unlisted mutation) takes the
-        /// mutation's own default (<see cref="MutationCatalog.OnByDefault"/>).</summary>
+        /// <summary>Per-mutation on/off switch, the .cfg's `2 - Mutations`. An entry missing here takes the mutation's own
+        /// default (<see cref="MutationCatalog.OnByDefault"/>).</summary>
         public readonly Dictionary<Mutation, bool> MutationEnabled = new Dictionary<Mutation, bool>();
 
         public bool IsEnabled(Mutation mutation) =>
@@ -33,7 +33,8 @@ namespace EliteCreaturesReborn.Rules
         /// <summary>The boss table. One for the whole world: boss stars do not follow a biome or the world's pressure.</summary>
         public BossRules Boss = new BossRules();
 
-        /// <summary>How camps, dungeons and dungeon loot repopulate. One set of timers for the whole world.</summary>
+        /// <summary>How camps, dungeons and dungeon loot repopulate, the .cfg's `3 - Respawning`. One set of timers for the
+        /// whole world.</summary>
         public RespawnRules Respawn = new RespawnRules();
 
         /// <summary>The world tier: which boss defeats raise it and how much each tier boosts stars and mutations.</summary>
@@ -63,7 +64,7 @@ namespace EliteCreaturesReborn.Rules
 
         /// <summary>
         /// True when a creature with no stars of this mod keeps the level the game (or another mod) gave it: this mod's
-        /// stars are off for its kind - `creature stars: false`, or `stars: false` under `bosses:` for a boss. Such a
+        /// stars are off for its kind - Creature stars false (the .cfg), or `stars: false` under `bosses:` for a boss. Such a
         /// creature is never put back to level 1, and the star power lines do not touch it; the game's level does.
         /// </summary>
         public bool KeepsLevel(int stars, bool isBoss) => stars == 0 && !(isBoss ? Boss.Enabled : CreatureStars);

@@ -7,29 +7,27 @@ using HarmonyLib;
 namespace EliteCreaturesReborn.Rules
 {
     /// <summary>
-    /// Binds every connected player to the server's rule file through Charter. The server mirrors the file's `lock to
-    /// server` into Charter's binding switch and pushes the file's text as an article; a bound player adopts that text
-    /// and ignores its own, and gets its own back the moment it disconnects. Charter also refuses a player whose mod
-    /// version does not match. This class owns the decision of which rule set is active; it never parses YAML itself.
-    /// The .cfg's gameplay settings, the raids' Raiders Chest (<see cref="RaidSettings"/>), the Arena
-    /// (<see cref="ArenaSettings"/>), the Altar Choice (<see cref="AltarSettings"/>), the horde's four
-    /// (<see cref="HordeSettings"/>), what tamed creatures keep (<see cref="TamedSettings"/>) and the Rendering Table
-    /// (<see cref="TableSettings"/>), ride the same binding as
-    /// clauses: while the server binds, their values hold for every player.
+    /// Binds every connected player to the server's rule file through Charter. The .cfg's 'Lock to server' is Charter's
+    /// binding switch; the server pushes the file's text as an article, a bound player adopts that text and ignores its
+    /// own, and gets its own back the moment it disconnects. Charter also refuses a player whose mod version does not
+    /// match. This class owns the decision of which rule set is active; it never parses YAML itself. The .cfg's gameplay
+    /// settings ride the same binding as clauses, so while the server binds their values hold for every player: the
+    /// rules' switches (<see cref="RuleSettings"/>, <see cref="MutationSettings"/>, <see cref="RespawnSettings"/>), the
+    /// raids' Raiders Chest (<see cref="RaidSettings"/>), the Arena (<see cref="ArenaSettings"/>), the Altar Choice
+    /// (<see cref="AltarSettings"/>), the horde's four (<see cref="HordeSettings"/>), what tamed creatures keep
+    /// (<see cref="TamedSettings"/>) and the Rendering Table (<see cref="TableSettings"/>).
     /// </summary>
     internal static class ServerLock
     {
         private const string ArticleName = "creature_rules";
         private static Charter.Charter _charter = null!;
         private static Article<string> _rules = null!;
-        private static ConfigEntry<bool> _binding = null!;
 
-        public static void Setup(ConfigFile config, string guid, string title, string version)
+        public static void Setup(string guid, string title, string version)
         {
             _charter = new Charter.Charter(guid, title, version, oldestAccepted: null, mandatory: true);
-            _binding = config.Bind("1 - General", "Lock to server", true,
-                "Mirrors the rule file's 'lock to server'. The server governs this; a player's own copy is ignored while bound.");
-            _charter.Binding(_binding);
+            _charter.Binding(RuleSettings.LockToServer);
+            RuleClauses();
             _charter.Clause(RaidSettings.RaidersChest);
             _charter.Clause(ArenaSettings.Arena);
             _charter.Clause(AltarSettings.Choice);
@@ -43,9 +41,26 @@ namespace EliteCreaturesReborn.Rules
             _rules = new Article<string>(_charter, ArticleName, RuleFile.LocalText);
             _rules.Changed += () => Guard("rule push", Recompute);
             _charter.BindingChanged += () => Guard("binding change", OnBindingChanged);
-            MirrorBinding();
             Publish();
             Recompute();
+        }
+
+        // The rule file's old single switches, now in the .cfg.
+        private static void RuleClauses()
+        {
+            _charter.Clause(RuleSettings.DifficultyChoice);
+            _charter.Clause(RuleSettings.CreatureStars);
+            _charter.Clause(RuleSettings.MaxMutations);
+            foreach (ConfigEntry<bool> entry in MutationSettings.All)
+            {
+                _charter.Clause(entry);
+            }
+            _charter.Clause(RespawnSettings.Camps);
+            _charter.Clause(RespawnSettings.CampDays);
+            _charter.Clause(RespawnSettings.Dungeons);
+            _charter.Clause(RespawnSettings.DungeonDays);
+            _charter.Clause(RespawnSettings.DungeonLoot);
+            _charter.Clause(RespawnSettings.DungeonLootDays);
         }
 
         public static void Install(Harmony harmony) => Charter.Charter.Install(harmony);
@@ -56,12 +71,28 @@ namespace EliteCreaturesReborn.Rules
         /// </summary>
         public static bool RulesArrived => _charter == null || _charter.Received;
 
-        /// <summary>Called after this machine's own file reloads: the server re-mirrors the lock and re-pushes the text.</summary>
+        /// <summary>Called after this machine's own file reloads: the server re-pushes the text.</summary>
         public static void OnLocalReloaded()
         {
-            MirrorBinding();
             Publish();
             Recompute();
+        }
+
+        /// <summary>
+        /// A .cfg setting the rules copy changed (an edit, a reload, a steward's amendment, the server's push): the rules
+        /// are read again with it. On a bound player the push carries the server's value, so the server's text is.
+        /// </summary>
+        public static void OnSettingsChanged()
+        {
+            if (_charter == null)
+            {
+                return;
+            }
+            if (_charter.IsAuthor)
+            {
+                RuleFile.Reparse();
+            }
+            Guard("setting change", Recompute);
         }
 
         private static void OnBindingChanged()
@@ -71,14 +102,6 @@ namespace EliteCreaturesReborn.Rules
                 RuleFile.Load();
             }
             Recompute();
-        }
-
-        private static void MirrorBinding()
-        {
-            if (_charter.IsAuthor)
-            {
-                _binding.Value = RuleFile.Local.LockToServer;
-            }
         }
 
         private static void Publish()

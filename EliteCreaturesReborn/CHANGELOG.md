@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.32.0
+
+- `Lock to server`, `Difficulty`, `Creature stars`, `Max mutations`, each mutation's on/off and respawning moved from `creature_rules.yml` into the .cfg, so a configuration manager shows them.
+- An existing rule file hands its values over once by itself and keeps its old text as `creature_rules.yml.bak`.
+
 ## 3.31.3
 
 - Fixed: built training dummies get no stars or mutations, so a Splintering one no longer splits into extra dummies to dismantle (#36).
