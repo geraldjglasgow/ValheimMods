@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -54,10 +55,10 @@ namespace EarthWright.Preview
 
         private static void DrawBadge(float x, float y, float width, float scale)
         {
-            if (badgeFor != Language.Version)
+            if (badgeFor != Lang.Version)
             {
-                badgeFor = Language.Version;
-                badge = Language.Localize("$ew_preview_locked");
+                badgeFor = Lang.Version;
+                badge = Lang.Get("ew_preview_locked");
                 badgeShadow = HudStyles.Plain(badge);
             }
             float height = HudStyles.Height(HudStyles.Badge, badge, width);

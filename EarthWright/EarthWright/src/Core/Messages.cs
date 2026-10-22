@@ -1,6 +1,6 @@
 namespace EarthWright.Core
 {
-    /// <summary>Messages through the game's HUD, localized through <see cref="Language"/>. Safe before the HUD exists.</summary>
+    /// <summary>Messages through the game's HUD, $tokens localized through <see cref="TokenText"/>. Safe before the HUD exists.</summary>
     public static class Messages
     {
         public static void Center(string text) => Show(MessageHud.MessageType.Center, text);
@@ -11,7 +11,7 @@ namespace EarthWright.Core
         {
             if (MessageHud.instance == null || string.IsNullOrEmpty(text))
                 return;
-            MessageHud.instance.ShowMessage(type, Language.Localize(text));
+            MessageHud.instance.ShowMessage(type, TokenText.Localize(text));
         }
     }
 }

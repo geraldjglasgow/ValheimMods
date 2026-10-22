@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -32,11 +33,11 @@ namespace EarthWright.Preview
             int newDistance = far ? Mathf.RoundToInt(PreviewFrame.Distance * 10f) : -1;
             int newReach = far ? Mathf.RoundToInt(PreviewFrame.Reach * 10f) : -1;
             string newReason = PreviewStatus.FirstReason;
-            if (HudText.Revision == revision && Language.Version == language && newDistance == distance && newReach == reach
+            if (HudText.Revision == revision && Lang.Version == language && newDistance == distance && newReach == reach
                 && newReason == reason && CursorReadout.Text == readout)
                 return;
             revision = HudText.Revision;
-            language = Language.Version;
+            language = Lang.Version;
             distance = newDistance;
             reach = newReach;
             reason = newReason;
@@ -50,7 +51,7 @@ namespace EarthWright.Preview
             shadows.Clear();
             if (distance >= 0)
                 Add(string.Format(CultureInfo.InvariantCulture, "<color=#b8b8b8>{0} ({1:0.0} m / {2:0.0} m)</color>",
-                    Language.Localize("$ew_preview_outofreach"), distance / 10f, reach / 10f));
+                    Lang.Get("ew_preview_outofreach"), distance / 10f, reach / 10f));
             if (!string.IsNullOrEmpty(reason) && !Mentions(module, reason))
                 Add("<color=#ff5a4a>" + reason + "</color>");
             foreach (string line in module)

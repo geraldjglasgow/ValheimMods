@@ -8,7 +8,8 @@ namespace EarthWright.Menu
     /// <summary>
     /// The current binding of a key setting as short text for a description ("Ctrl+Z", "Alt", "[", "Middle mouse").
     /// The setting is read by section and key from the plugin's config file, whatever type it was bound with
-    /// (a KeyboardShortcut or a plain KeyCode); a setting that does not exist shows its default.
+    /// (a KeyboardShortcut or a plain KeyCode); a setting that does not exist shows its default. Names that are words
+    /// (arrows, mouse buttons) are $tokens, translated where the description is shown; key caps stay as printed.
     /// </summary>
     public static class KeyText
     {
@@ -18,10 +19,11 @@ namespace EarthWright.Menu
             { KeyCode.LeftShift, "Shift" }, { KeyCode.RightShift, "Shift" },
             { KeyCode.LeftAlt, "Alt" }, { KeyCode.RightAlt, "Alt" },
             { KeyCode.LeftBracket, "[" }, { KeyCode.RightBracket, "]" },
-            { KeyCode.LeftArrow, "Left" }, { KeyCode.RightArrow, "Right" },
-            { KeyCode.UpArrow, "Up" }, { KeyCode.DownArrow, "Down" },
+            { KeyCode.LeftArrow, "$ew_menu_key_left" }, { KeyCode.RightArrow, "$ew_menu_key_right" },
+            { KeyCode.UpArrow, "$ew_menu_key_up" }, { KeyCode.DownArrow, "$ew_menu_key_down" },
             { KeyCode.PageUp, "PgUp" }, { KeyCode.PageDown, "PgDn" },
-            { KeyCode.Mouse0, "Left mouse" }, { KeyCode.Mouse1, "Right mouse" }, { KeyCode.Mouse2, "Middle mouse" },
+            { KeyCode.Mouse0, "$ew_menu_key_mouse_left" }, { KeyCode.Mouse1, "$ew_menu_key_mouse_right" },
+            { KeyCode.Mouse2, "$ew_menu_key_mouse_middle" },
             { KeyCode.Backspace, "Backspace" }, { KeyCode.Return, "Enter" },
         };
 

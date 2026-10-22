@@ -13,7 +13,6 @@ namespace EarthWright.Gear
         public static void Initialize(SyncedConfiguration synced)
         {
             GearSettings.Bind(synced);
-            GearWords.Register();
             LevelCaps.Install();
             LevelGate.Install();
             // Logged, never thrown: a failure here must not break the game's own database wake-up.

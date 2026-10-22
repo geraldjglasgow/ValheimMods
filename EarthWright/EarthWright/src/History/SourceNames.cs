@@ -3,6 +3,7 @@ using System.Linq;
 using EarthWright.Actions;
 using EarthWright.Core;
 using EarthWright.Menu;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.History
@@ -34,11 +35,11 @@ namespace EarthWright.History
             if (source.StartsWith(CommandPrefix))
                 return "ew " + source.Substring(CommandPrefix.Length);
             if (source.StartsWith(Snapshots.SourcePrefix))
-                return Language.Format(HistoryWords.SnapshotSource, source.Substring(Snapshots.SourcePrefix.Length));
+                return Lang.Format(HistoryWords.SnapshotSource, source.Substring(Snapshots.SourcePrefix.Length));
             if (source == ResetSource)
-                return Language.Localize(HistoryWords.ResetSource);
+                return Lang.Get(HistoryWords.ResetSource);
             string pieceName = PieceName(source) ?? PieceName(SpecialEntry(source));
-            return string.IsNullOrEmpty(pieceName) ? source : Language.Localize(pieceName);
+            return string.IsNullOrEmpty(pieceName) ? source : TokenText.Localize(pieceName);
         }
 
         /// <summary>The id of the entry whose special key this is ("ramp" gives the ramp entry), or null.</summary>

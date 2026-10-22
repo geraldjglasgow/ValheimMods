@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using EarthWright.Actions;
-using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 
 namespace EarthWright.Costs
 {
@@ -28,16 +28,16 @@ namespace EarthWright.Costs
         public static CostLine For(CostContext ctx)
         {
             if (FreeBuild.On)
-                return new CostLine { Text = Colour(Language.Localize(CostWords.Free), Green) };
+                return new CostLine { Text = Colour(Lang.Get(CostWords.Free), Green) };
             WorkCost cost = WorkCost.Of(ctx, EstimateOf(ctx));
             List<string> parts = new List<string>();
             string station = AddStation(ctx, parts);
             if (!StaminaCost.IsVanilla(ctx) && cost.Stamina > 0f)
-                parts.Add(Language.Localize(CostWords.Stamina) + " " + cost.Stamina.ToString("0.#"));
+                parts.Add(Lang.Get(CostWords.Stamina) + " " + cost.Stamina.ToString("0.#"));
             Bill total = cost.Items.Total;
             AddItems(ctx.Player.GetInventory(), total, parts);
             string items = Affordability.ShortOf(ctx.Player, total);
-            string text = parts.Count > 0 ? Language.Localize(CostWords.Cost) + ": " + string.Join("   ", parts) : null;
+            string text = parts.Count > 0 ? Lang.Get(CostWords.Cost) + ": " + string.Join("   ", parts) : null;
             return new CostLine { Text = text, ShortReason = station ?? items };
         }
 
@@ -62,7 +62,7 @@ namespace EarthWright.Costs
             string missing = StationRule.Missing(ctx);
             if (missing == null)
                 return null;
-            string reason = CostWords.Format(CostWords.NeedStation, Language.Localize(missing));
+            string reason = Lang.Format(CostWords.NeedStation, Localization.instance.Localize(missing));
             parts.Add(Colour(reason, Red));
             return reason;
         }
@@ -72,7 +72,7 @@ namespace EarthWright.Costs
             foreach (BillLine line in bill.Lines)
             {
                 int have = Bill.Have(inventory, line);
-                string part = Language.Localize(line.Name) + " " + have + "/" + line.Amount;
+                string part = Localization.instance.Localize(line.Name) + " " + have + "/" + line.Amount;
                 parts.Add(have < line.Amount ? Colour(part, Red) : part);
             }
         }

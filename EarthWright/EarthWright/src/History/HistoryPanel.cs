@@ -1,4 +1,5 @@
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.History
@@ -16,9 +17,9 @@ namespace EarthWright.History
         private static void Draw()
         {
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button(Language.Format(HistoryWords.UndoButton, Timeline.Undo.Count.ToString())))
+            if (GUILayout.Button(Lang.Format(HistoryWords.UndoButton, Timeline.Undo.Count)))
                 UndoActions.Show(UndoActions.Undo);
-            if (GUILayout.Button(Language.Format(HistoryWords.RedoButton, Timeline.Redo.Count.ToString())))
+            if (GUILayout.Button(Lang.Format(HistoryWords.RedoButton, Timeline.Redo.Count)))
                 UndoActions.Show(UndoActions.Redo);
             GUILayout.EndHorizontal();
         }

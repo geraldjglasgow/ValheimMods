@@ -1,5 +1,6 @@
 using EarthWright.Core;
 using HarmonyLib;
+using Translations;
 
 namespace EarthWright.Protection
 {
@@ -80,7 +81,7 @@ namespace EarthWright.Protection
 
         private static void OnReply(string text)
         {
-            string shown = Language.Localize(text);
+            string shown = LangWire.Read(text);
             if (global::Console.instance != null)
                 global::Console.instance.AddString("EarthWright: " + shown);
             Messages.TopLeft(shown);

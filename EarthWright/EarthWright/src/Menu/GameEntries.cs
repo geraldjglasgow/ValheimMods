@@ -4,16 +4,18 @@ using EarthWright.Actions;
 
 namespace EarthWright.Menu
 {
-    /// <summary>One of the game's own terrain entries: its toggle label and EarthWright's description of what it does now.</summary>
+    /// <summary>
+    /// One of the game's own terrain entries: its toggle label and the keys of EarthWright's description of what it does
+    /// now (words in translations/English.yml).
+    /// </summary>
     public sealed class GameEntry
     {
         public string Id;
         public string Label;
         public ToolFamily Tool;
-        public string EnglishDescription;
 
-        /// <summary>The description while the entry does not change the height (paved road and cultivate can be set to paint only).</summary>
-        public string EnglishFlatDescription;
+        /// <summary>The entry has a second description for while it does not change the height (paved road and cultivate can be set to paint only).</summary>
+        public bool HasFlatDescription;
 
         public string DescriptionKey => "ew_menu_game_" + Id + "_desc";
 
@@ -38,31 +40,21 @@ namespace EarthWright.Menu
 
         private static IEnumerable<GameEntry> HoeEntries()
         {
-            yield return Entry("mud_road_v2", "Level Ground", ToolFamily.Hoe,
-                "Levels the ground inside the brush toward the target height: your feet, the aimed point while Shift is held, or a locked or exact height. The level style decides how far each swing goes.");
-            yield return Entry("raise_v2", "Raise Ground", ToolFamily.Hoe,
-                "Raises the ground inside the brush by the set amount. Repeated swings add up to the raise limit.");
-            yield return Entry("path_v2", "Pathen", ToolFamily.Hoe,
-                "Paints a dirt path inside the brush without changing the height.");
-            GameEntry paved = Entry("paved_road_v2", "Paved Road", ToolFamily.Hoe,
-                "Levels the ground inside the brush toward the target height and paves it.");
-            paved.EnglishFlatDescription = "Paves the ground inside the brush without changing its height.";
-            yield return paved;
+            yield return Entry("mud_road_v2", "Level Ground", ToolFamily.Hoe);
+            yield return Entry("raise_v2", "Raise Ground", ToolFamily.Hoe);
+            yield return Entry("path_v2", "Pathen", ToolFamily.Hoe);
+            yield return Entry("paved_road_v2", "Paved Road", ToolFamily.Hoe, flat: true);
         }
 
         private static IEnumerable<GameEntry> CultivatorEntries()
         {
-            GameEntry cultivate = Entry("cultivate_v2", "Cultivate", ToolFamily.Cultivator,
-                "Evens out the ground inside the brush and tills it for planting.");
-            cultivate.EnglishFlatDescription = "Tills the ground inside the brush for planting without changing its height.";
-            yield return cultivate;
-            yield return Entry("replant_v2", "Replant", ToolFamily.Cultivator,
-                "Brings the grass back inside the brush: removes dirt, paving and tilled soil.");
+            yield return Entry("cultivate_v2", "Cultivate", ToolFamily.Cultivator, flat: true);
+            yield return Entry("replant_v2", "Replant", ToolFamily.Cultivator);
         }
 
-        private static GameEntry Entry(string id, string label, ToolFamily tool, string description)
+        private static GameEntry Entry(string id, string label, ToolFamily tool, bool flat = false)
         {
-            return new GameEntry { Id = id, Label = label, Tool = tool, EnglishDescription = description };
+            return new GameEntry { Id = id, Label = label, Tool = tool, HasFlatDescription = flat };
         }
     }
 }

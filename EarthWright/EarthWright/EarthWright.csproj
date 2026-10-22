@@ -5,7 +5,7 @@
     <AssemblyName>EarthWright</AssemblyName>
     <RootNamespace>EarthWright</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.4.2</Version>
+    <Version>0.5.0</Version>
     <Product>EarthWright</Product>
     <Description>EarthWright: terraforming for Valheim's hoe and cultivator</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -39,12 +39,16 @@
     <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
     <ProjectReference Include="$(ModLibsPath)\ItemCopies\ItemCopies.csproj" />
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Embedded default YAML files and icons: EarthWright.config.<file> and EarthWright.assets.<file> -->
     <EmbeddedResource Include="config\*.yml" LogicalName="EarthWright.config.%(Filename)%(Extension)" />
     <EmbeddedResource Include="assets\*.png" LogicalName="EarthWright.assets.%(Filename)%(Extension)" />
+    <!-- The words, read by the Translations library as EarthWright.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="EarthWright.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

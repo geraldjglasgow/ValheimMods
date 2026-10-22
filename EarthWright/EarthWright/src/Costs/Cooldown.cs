@@ -1,6 +1,7 @@
 using System.Linq;
 using EarthWright.Actions;
 using EarthWright.Terrain;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Costs
@@ -26,7 +27,7 @@ namespace EarthWright.Costs
         public static string Waiting()
         {
             float remaining = Remaining;
-            return remaining > 0f ? CostWords.Format(CostWords.Wait, remaining.ToString("0.0")) : null;
+            return remaining > 0f ? Lang.Format(CostWords.Wait, remaining.ToString("0.0")) : null;
         }
 
         /// <summary>Starts the wait. <paramref name="paidWork"/>: a special entry's work paid through CostApi.</summary>

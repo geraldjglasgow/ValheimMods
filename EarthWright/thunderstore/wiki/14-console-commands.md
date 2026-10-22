@@ -21,13 +21,10 @@ EarthWright has one console command, `ew` (also `earthwright`), with subcommands
 | `ew forestry [radius]` | Clears trees, logs and stumps around you (default 10 m). |
 | `ew debris [radius]` | Clears rocks, logs, loose stones, branches and flint around you (default 10 m); ore only while `Clear Ore Deposits` is on. |
 | `ew zone list` | Shows the admin zone mode and every zone. |
-| `ew language` | Shows your game language and how many texts are translated. |
-| `ew language write` | Writes the English texts to `BepInEx/config/EarthWright.Language.English.yml` as a template for translators. |
-| `ew language reload` | Applies a changed translation file. |
 
 `ew forestry` and `ew debris` need `Clearing Enabled` on the server and a hoe or cultivator in your hand, cost what a click of Clear objects costs, and follow the clearing mode. See [Clearing and Reset](wiki:Clearing and Reset).
 
-Snapshots and the undo history are described in [Undo and Snapshots](wiki:Undo and Snapshots); translation files in [YAML Files](wiki:YAML Files).
+Snapshots and the undo history are described in [Undo and Snapshots](wiki:Undo and Snapshots).
 
 ## Admins
 

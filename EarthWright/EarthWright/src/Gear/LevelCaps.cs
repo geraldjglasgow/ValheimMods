@@ -62,7 +62,7 @@ namespace EarthWright.Gear
                 need = Mathf.Max(need, RequiredLevel(shape.Value.ToString()));
             if (style.HasValue && style.Value != LevelStyle.Ease)
                 need = Mathf.Max(need, RequiredLevel(style.Value.ToString()));
-            return need > HeldTool.Level ? GearWords.LevelLocked + " " + need : null;
+            return need > HeldTool.Level ? GearWords.LevelLocked(need) : null;
         }
 
         /// <summary>Lower case without a leading "ew_", so "ew_lower", "Lower" and "lower" are the same feature.</summary>

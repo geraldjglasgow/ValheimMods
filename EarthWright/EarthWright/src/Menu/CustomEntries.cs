@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using EarthWright.Actions;
-using EarthWright.Core;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace EarthWright.Menu
 {
     /// <summary>
     /// The custom menu entries of EarthWright.Entries*.yml. The file set is synced: the server's file reaches every player
-    /// and edits are hot reloaded, and every machine then registers the same actions and words and rebuilds the same
-    /// entry prefabs (<see cref="CustomPrefabs"/>, on the next frame through <see cref="MenuRefresh"/>).
+    /// and edits are hot reloaded, and every machine then registers the same actions and rebuilds the same entry prefabs
+    /// (<see cref="CustomPrefabs"/>, on the next frame through <see cref="MenuRefresh"/>). An entry's name and description
+    /// go onto its piece as the file writes them, never through the word list.
     /// </summary>
     public static class CustomEntries
     {
@@ -29,7 +30,7 @@ namespace EarthWright.Menu
             synced.AddYaml(new YamlFileSet("EarthWright.Entries*.yml", "earthwright_entries", () => new CustomEntriesModel(), Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(CustomEntries).Assembly, Resource),
-                EditorLabel = () => Language.Localize(MenuWords.EditEntries),
+                EditorLabel = () => Lang.Get(MenuWords.EditEntries),
             });
         }
 

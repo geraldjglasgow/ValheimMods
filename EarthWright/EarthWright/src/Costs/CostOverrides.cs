@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using EarthWright.Core;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace EarthWright.Costs
@@ -23,7 +23,7 @@ namespace EarthWright.Costs
             Files = synced.AddYaml(new YamlFileSet("EarthWright.Costs*.yml", "earthwright_costs", () => new CostsModel(), Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(CostOverrides).Assembly, Resource),
-                EditorLabel = () => Language.Localize(CostWords.Edit),
+                EditorLabel = () => Lang.Get(CostWords.Edit),
             });
         }
 

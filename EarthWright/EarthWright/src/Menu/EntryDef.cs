@@ -20,10 +20,6 @@ namespace EarthWright.Menu
         /// <summary>The embedded icon's name: EarthWright.assets.menu_&lt;Icon&gt;.png.</summary>
         public string Icon;
 
-        public string EnglishName;
-
-        public string EnglishDescription;
-
         public ToolAction Action;
 
         public HintKind[] Hints;
@@ -34,8 +30,10 @@ namespace EarthWright.Menu
         /// <summary>The id without the "ew_" prefix, used in word keys.</summary>
         public string Short => Id.StartsWith("ew_") ? Id.Substring(3) : Id;
 
+        /// <summary>The key of the entry's name in translations/English.yml ("ew_menu_lower").</summary>
         public string NameKey => "ew_menu_" + Short;
 
+        /// <summary>The key of the entry's description ("ew_menu_lower_desc").</summary>
         public string DescriptionKey => "ew_menu_" + Short + "_desc";
     }
 }

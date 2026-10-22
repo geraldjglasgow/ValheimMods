@@ -1,6 +1,7 @@
 using EarthWright.Core;
 using HarmonyLib;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +32,7 @@ namespace EarthWright.Preview
             button.onClick.AddListener(OnClick);
             TMP_Text label = copy.GetComponentInChildren<TMP_Text>(true);
             if (label != null)
-                label.text = Language.Localize("$ew_preview_menu_button");
+                label.text = Lang.Get("ew_preview_menu_button");
         }
 
         private static void OnClick()

@@ -45,7 +45,7 @@ namespace EarthWright.Menu
             if (!GeneralSettings.Active)
                 return originals[entry.Id];
             ToolAction action = ActionCatalog.ById(entry.Id);
-            if (entry.EnglishFlatDescription != null && !GameEntryBehaviour.Levels(entry.Id))
+            if (entry.HasFlatDescription && !GameEntryBehaviour.Levels(entry.Id))
                 return Compose("$" + entry.FlatDescriptionKey, action);
             return Compose("$" + entry.DescriptionKey, action);
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.History
@@ -21,7 +22,7 @@ namespace EarthWright.History
             for (int i = 0; i < steps; i++)
             {
                 bool done = action(out string message);
-                args.Context.AddString(Language.Localize(message));
+                args.Context.AddString(TokenText.Localize(message));
                 if (i == steps - 1 || !done)
                     Messages.Center(message);
                 if (!done)
@@ -34,7 +35,7 @@ namespace EarthWright.History
             if (args.Length > 2 && args[2].ToLowerInvariant() == "clear")
             {
                 Timeline.Clear();
-                args.Context.AddString(Language.Localize(HistoryWords.Cleared));
+                args.Context.AddString(Lang.Get(HistoryWords.Cleared));
                 return;
             }
             args.Context.AddString($"EarthWright undo history: {Timeline.Undo.Count} to undo, {Timeline.Redo.Count} to redo (at most {HistorySettings.Size.Value} each).");

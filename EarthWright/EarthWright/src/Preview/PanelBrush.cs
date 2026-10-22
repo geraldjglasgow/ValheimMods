@@ -1,7 +1,7 @@
 using EarthWright.Actions;
 using EarthWright.Brush;
-using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -21,7 +21,7 @@ namespace EarthWright.Preview
             ToolAction action = BrushState.Active ? BrushState.Action : null;
             if (action == null)
             {
-                GUILayout.Label(Language.Localize("$ew_preview_panel_noentry"));
+                GUILayout.Label(Lang.Get("ew_preview_panel_noentry"));
                 return;
             }
             BrushValues values = BrushMemory.For(action);
@@ -80,7 +80,7 @@ namespace EarthWright.Preview
             return true;
         }
 
-        /// <summary>A Brush word as a field label with its unit.</summary>
-        private static string Label(string token) => Language.Localize(token) + " (m)";
+        /// <summary>A Brush word as a field label with its unit (the panel localizes it).</summary>
+        private static string Label(string token) => token + " (m)";
     }
 }

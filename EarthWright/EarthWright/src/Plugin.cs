@@ -22,16 +22,16 @@ using SyncedConfig;
 namespace EarthWright
 {
     /// <summary>
-    /// Plugin entry. Every module has an Initialize(SyncedConfiguration) that binds its settings, registers its YAML
-    /// files, words, console subcommands, guards and event handlers; patches are applied per class afterwards, and
-    /// Guard.Install goes last.
+    /// Plugin entry. The words (translations/English.yml) are installed first; then every module has an
+    /// Initialize(SyncedConfiguration) that binds its settings, registers its YAML files, console subcommands, guards and
+    /// event handlers; patches are applied per class afterwards, and Guard.Install goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "milkyteam.earthwright";
         public const string PluginName = "EarthWright";
-        public const string PluginVersion = "0.4.2";
+        public const string PluginVersion = "0.5.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -42,10 +42,11 @@ namespace EarthWright
             Instance = this;
             Log = Logger;
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
+            Harmony harmony = new Harmony(PluginGuid);
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "EarthWright", Logger);
             InitializeModules();
             WireModules();
 
-            Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.
@@ -56,7 +57,7 @@ namespace EarthWright
             Guard.Install(harmony, Logger, Assembly.GetExecutingAssembly());
         }
 
-        /// <summary>Every module binds its settings and registers its words and hooks, in section order.</summary>
+        /// <summary>Every module binds its settings and registers its hooks, in section order.</summary>
         private static void InitializeModules()
         {
             CoreModule.Initialize(Synced);

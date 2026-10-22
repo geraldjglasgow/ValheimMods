@@ -55,7 +55,7 @@ namespace EarthWright.Menu
 
         private static string ToggleDescription(EntryDef def)
         {
-            string text = $"Lists EarthWright's '{def.EnglishName}' entry in the {Tool(def.Tool)} menu. Off removes it for every player.";
+            string text = $"Lists EarthWright's '{def.Label}' entry in the {Tool(def.Tool)} menu. Off removes it for every player.";
             if (def.Id == "ew_clear")
                 text += " The entry also needs clearing to be switched on in section 5.";
             if (def.Action.AdminOnly)

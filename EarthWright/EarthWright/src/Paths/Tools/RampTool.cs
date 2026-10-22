@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using EarthWright.Actions;
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Paths
@@ -51,7 +52,7 @@ namespace EarthWright.Paths
             if (points.Count == 0)
                 return false;
             points.RemoveAt(points.Count - 1);
-            Messages.TopLeft(PathWords.Text("removed"));
+            Messages.TopLeft(Lang.Get("ew_paths_removed"));
             PathSession.MarkDirty();
             return true;
         }
@@ -68,11 +69,11 @@ namespace EarthWright.Paths
         {
             if (points.Count == 1 && CentreLine.Flat(points[0], point) < PathChecks.MinLength)
             {
-                Messages.Center(PathWords.Text("too_short"));
+                Messages.Center(Lang.Get("ew_paths_too_short"));
                 return;
             }
             points.Add(point);
-            Messages.TopLeft(PathWords.Text(points.Count == 1 ? "start_set" : "end_set"));
+            Messages.TopLeft(Lang.Get(points.Count == 1 ? "ew_paths_start_set" : "ew_paths_end_set"));
             PathSession.MarkDirty();
         }
 
@@ -81,7 +82,7 @@ namespace EarthWright.Paths
             if (!PathCommit.Commit(Draft(cursor), action, PathSelection.RampKey))
                 return;
             points.Clear();
-            Messages.TopLeft(PathWords.Text("built"));
+            Messages.TopLeft(Lang.Get("ew_paths_built"));
             PathSession.MarkDirty();
         }
 

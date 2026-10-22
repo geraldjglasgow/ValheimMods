@@ -3,6 +3,7 @@ using System.IO;
 using EarthWright.Core;
 using HarmonyLib;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace EarthWright.Protection
@@ -40,7 +41,7 @@ namespace EarthWright.Protection
             Set = synced.AddYaml(new YamlFileSet(FileName, FileSyncKey, () => new ZoneFile(), model => Apply((ZoneFile)model))
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(ZoneBook).Assembly, "EarthWright.config." + FileName),
-                EditorLabel = () => "Edit admin zones",
+                EditorLabel = () => Lang.Get("ew_protect_yaml_edit"),
             });
         }
 

@@ -13,7 +13,6 @@ namespace EarthWright.Clearing
         public static void Initialize(SyncedConfiguration synced)
         {
             ClearingSettings.Bind(synced);
-            ClearingWords.Register();
             ResetKeys.Initialize();
             SurvivalFollowUp.Initialize();
             ClearQueue.Initialize();

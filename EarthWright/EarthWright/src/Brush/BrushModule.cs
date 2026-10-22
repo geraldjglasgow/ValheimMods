@@ -19,7 +19,6 @@ namespace EarthWright.Brush
             TargetSettings.Bind(synced);
             ControlSettings.Bind(synced);
             BrushRules.Register(synced);
-            BrushWords.Register();
             TargetState.Reset();
             ForgetOnChange();
             Ticker.OnUpdate("EarthWright brush", BrushTick.Update);

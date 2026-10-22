@@ -56,6 +56,7 @@ game's limits.
 described in the file and applies without a restart; the server's values bind every player, keys and display options
 stay your own. Console: `ew help`; all commands with arguments:
 https://github.com/geraldjglasgow/ValheimMods/blob/main/EarthWright/CLAUDE.md#console-commands
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EarthWright/EarthWright/translations/English.yml) as `EarthWright.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

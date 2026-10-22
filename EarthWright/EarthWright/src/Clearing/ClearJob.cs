@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using EarthWright.Core;
+using Translations;
 
 namespace EarthWright.Clearing
 {
@@ -31,19 +32,19 @@ namespace EarthWright.Clearing
             List<string> lines = new List<string>();
             if (plan.Refusal != null)
             {
-                lines.Add(Language.Localize(plan.Refusal));
+                lines.Add(TokenText.Localize(plan.Refusal));
                 return lines;
             }
             if (cleared > 0)
-                lines.Add(ClearingWords.Format(ClearingWords.Done, cleared));
+                lines.Add(Lang.Format(ClearingWords.Done, cleared));
             if (plan.Warded > 0)
-                lines.Add(ClearingWords.Format(ClearingWords.Warded, plan.Warded));
+                lines.Add(Lang.Format(ClearingWords.Warded, plan.Warded));
             if (plan.NeedAxe > 0)
-                lines.Add(ClearingWords.Format(ClearingWords.NeedAxe, plan.NeedAxe));
+                lines.Add(Lang.Format(ClearingWords.NeedAxe, plan.NeedAxe));
             if (plan.NeedPickaxe > 0)
-                lines.Add(ClearingWords.Format(ClearingWords.NeedPickaxe, plan.NeedPickaxe));
+                lines.Add(Lang.Format(ClearingWords.NeedPickaxe, plan.NeedPickaxe));
             if (lines.Count == 0)
-                lines.Add(ClearingWords.Format(ClearingWords.Nothing));
+                lines.Add(Lang.Get(ClearingWords.Nothing));
             return lines;
         }
     }

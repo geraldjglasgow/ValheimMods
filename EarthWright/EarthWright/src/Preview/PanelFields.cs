@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -8,7 +9,8 @@ namespace EarthWright.Preview
     /// <summary>
     /// IMGUI building blocks of the panel: a typed number field that keeps what the player is typing while it has the
     /// keyboard (and otherwise shows the live value, so re-clamping by the brush shows at once), choice grids with
-    /// localized captions, headings, and the panel's opaque window style.
+    /// localized captions, headings, and the panel's opaque window style. Labels and captions are $tokens (or plain text),
+    /// localized once per language and kept, since the panel is drawn several times a frame.
     /// </summary>
     internal static class PanelFields
     {
@@ -17,6 +19,8 @@ namespace EarthWright.Preview
 
         private static readonly Dictionary<string, string> typing = new Dictionary<string, string>();
         private static readonly Dictionary<string, string[]> captions = new Dictionary<string, string[]>();
+        private static readonly Dictionary<string, string> words = new Dictionary<string, string>();
+        private static int wordsFor = -1;
         private static GUIStyle window;
         private static GUIStyle heading;
         private static Texture2D background;
@@ -30,7 +34,7 @@ namespace EarthWright.Preview
             if (!focused)
                 typing.Remove(name);
             GUILayout.BeginHorizontal();
-            GUILayout.Label(Language.Localize(labelToken), GUILayout.Width(LabelWidth));
+            GUILayout.Label(Text(labelToken), GUILayout.Width(LabelWidth));
             GUI.SetNextControlName(name);
             string edited = GUILayout.TextField(shown, GUILayout.Width(FieldWidth));
             GUILayout.EndHorizontal();
@@ -58,29 +62,53 @@ namespace EarthWright.Preview
         /// <summary>A labelled grid of choices; returns the selected index.</summary>
         public static int Choice(string labelToken, int selected, string[] captionTokens, int columns)
         {
-            GUILayout.Label(Language.Localize(labelToken));
+            GUILayout.Label(Text(labelToken));
             return GUILayout.SelectionGrid(selected, Localized(captionTokens), columns);
         }
 
-        /// <summary>The captions localized once per set (the game's language does not change while playing).</summary>
+        /// <summary>The captions localized once per set and language.</summary>
         private static string[] Localized(string[] tokens)
         {
+            Forget();
             string key = string.Join("|", tokens);
-            if (!captions.TryGetValue(key, out string[] words) || Localization.instance == null)
+            if (!captions.TryGetValue(key, out string[] shown) || Localization.m_instance == null)
             {
-                words = new string[tokens.Length];
+                shown = new string[tokens.Length];
                 for (int i = 0; i < tokens.Length; i++)
-                    words[i] = Language.Localize(tokens[i]);
-                if (Localization.instance != null)
-                    captions[key] = words;
+                    shown[i] = TokenText.Localize(tokens[i]);
+                if (Localization.m_instance != null)
+                    captions[key] = shown;
             }
-            return words;
+            return shown;
+        }
+
+        /// <summary>A label in the current language, localized once per language.</summary>
+        private static string Text(string token)
+        {
+            Forget();
+            if (!words.TryGetValue(token, out string text) || Localization.m_instance == null)
+            {
+                text = TokenText.Localize(token);
+                if (Localization.m_instance != null)
+                    words[token] = text;
+            }
+            return text;
+        }
+
+        /// <summary>Drops the localized labels and captions after a change of language.</summary>
+        private static void Forget()
+        {
+            if (wordsFor == Lang.Version)
+                return;
+            wordsFor = Lang.Version;
+            words.Clear();
+            captions.Clear();
         }
 
         public static void Heading(string token)
         {
             GUILayout.Space(6f);
-            GUILayout.Label(Language.Localize(token), HeadingStyle);
+            GUILayout.Label(Text(token), HeadingStyle);
         }
 
         public static GUIStyle HeadingStyle => heading ?? (heading = new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold, richText = true });

@@ -11,7 +11,6 @@ namespace EarthWright.Terrain
     {
         public static void Initialize(SyncedConfiguration synced)
         {
-            Refusals.Initialize();
             EditAnswers.Initialize();
             SaveThrottle.Initialize();
             LiveEstimate.Initialize();

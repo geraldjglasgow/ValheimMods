@@ -14,7 +14,6 @@ namespace EarthWright.Menu
         public static void Initialize(SyncedConfiguration synced)
         {
             MenuSettings.Bind(synced);
-            MenuWords.Register();
             foreach (EntryDef def in EntryDefs.All)
                 ActionCatalog.Register(def.Action);
             CustomEntries.Register(synced);

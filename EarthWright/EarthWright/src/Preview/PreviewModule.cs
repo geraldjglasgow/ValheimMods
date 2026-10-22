@@ -16,7 +16,6 @@ namespace EarthWright.Preview
         {
             PreviewSettings.Bind(synced);
             HudSettings.Bind(synced);
-            PreviewWords.Register();
             Keys.PanelTyping = () => PanelWindow.Typing;
             Ticker.OnUpdate("EarthWright preview frame", PreviewFrame.Update);
             Ticker.OnUpdate("EarthWright ghost visuals", GhostVisuals.Update);

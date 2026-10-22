@@ -1,6 +1,7 @@
 using EarthWright.Actions;
 using EarthWright.Core;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace EarthWright.Brush
@@ -24,7 +25,7 @@ namespace EarthWright.Brush
             Files = synced.AddYaml(new YamlFileSet("EarthWright.Brushes*.yml", "earthwright_brushes", () => new BrushRulesModel(), Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(BrushRules).Assembly, Resource),
-                EditorLabel = () => "Edit brush sizes",
+                EditorLabel = () => Lang.Get("ew_brush_yaml_edit"),
             });
         }
 

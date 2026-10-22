@@ -79,7 +79,7 @@ parallel by one agent each. An agent owns its folder and may change only its own
 | Brush | Brush agent | brush values and keys, scroll capture, zoom block, target height modes, ghost, repeat, gamepad |
 | Preview | Preview agent | outline, grid, 3D volume, HUD text, hints, locked badge, world grid overlay, piece highlight, dust, panel |
 | Paths | Paths agent | ramp entry (3 clicks, profiles), quick ramp, road entry (waypoints), slope colours, HUD |
-| History | History agent | undo/redo, grouping, commands, snapshots; `Core/Language.cs` translation files |
+| History | History agent | undo/redo, grouping, commands, snapshots |
 | Costs | Costs agent | stamina, durability, resources, stations, volume costs, radius factors, cooldown, free build, cost HUD |
 | Clearing | Clearing agent | reset keys and commands, clear objects entry, survival clearing, Groundbreaker, admin `ew terrain` |
 | Protection | Protection agent | wards over the brush, no-build, dungeons, admin zones, terrain lock, admin entries, combat lock, limit override |
@@ -95,7 +95,7 @@ parallel by one agent each. An agent owns its folder and may change only its own
 - `Actions`: `ToolAction`, `ActionCatalog.Register/For/ById/Current/All`, `SpecialActions.Register(key, ISpecialAction)`,
   `EditFactory.Build(action)`, `PlacementHook.SkipPlacedEffect`.
 - `Brush`: `BrushState` (read by all, written by Brush), `BrushCaps.LevelMaxRadius/LevelUnlocks` (set by Gear).
-- `Core`: `Sections`, `GeneralSettings.Active`, `Language.Add/Localize`, `Messages`, `Keys.Pressed/Held`,
+- `Core`: `Sections`, `GeneralSettings.Active`, `TokenText.Localize`, `Messages`, `Keys.Pressed/Held`,
   `Command.Add(name, usage, handler, adminOnly)`, `HudText.Set(key, text, order)`, `HintText.Set`,
   `PreviewStatus.Report(key, reason)`, `PanelSections.Add`, `GameReady.OnObjectDb/OnScene`, `LocalTool`, `Side`,
   `Ticker.OnUpdate/OnGui`, `Safe`.
@@ -236,8 +236,9 @@ preferences (colours, HUD, keys, dust) are local.
 
 ### 12. Multiplayer and config
 - Required everywhere (**Decision**, above); Charter checks versions and syncs; the .cfg and YAML hot reload.
-- Languages: English built in; `EarthWright.Language.<Language>.yml` files next to the cfg override it, picked by the
-  game's language; `ew language write` dumps the English template for translators (History agent).
+- Languages: the words are `translations/English.yml`, embedded and served by the shared Translations library; a
+  translator copies it as `EarthWright.translations.<Language>.yml` (in `BepInEx/config` or under `BepInEx/plugins`),
+  picked by the game's language and read again when the language changes.
 
 ### 13. Cultivator extras (Gear agent, Extras folder)
 - Till entry (Menu) and square cultivate (shape key); seeds and saplings snap to a grid (spacing setting, toggle key);
@@ -293,7 +294,8 @@ in its own section. YAML files: `EarthWright.Brushes.yml` (Brush), `EarthWright.
 - Multiplayer first: terrain changes only through `Dispatcher`; object changes by the ZDO owner (claim ownership or
   use the object's own RPC); everything visible to one player that affects others is visible to everyone.
 - Settings through `Plugin.Synced` / the `SyncedConfiguration` passed to Initialize: gameplay synced (default),
-  personal display and keys `synced: false`. Words with `Language.Add("ew_<module>_...", "English")`.
+  personal display and keys `synced: false`. Words in `translations/English.yml` as `ew_<module>_...` keys, used with
+  `Lang.Token` (a $token for texts the game or `TokenText` localizes), `Lang.Get` and `Lang.Format` ($1, $2 ...).
 - Never read another mod's source, DLL, config or README. The game's decompiled source is in the session scratch
   folder; never decompile into the repository.
 - Comments: a summary on every class saying what it is and why; comments explain intent, not the obvious.

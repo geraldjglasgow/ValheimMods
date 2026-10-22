@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 
 namespace EarthWright.Core
 {
@@ -38,10 +39,10 @@ namespace EarthWright.Core
             {
                 if (first == null)
                     return null;
-                if (localized == null || localizedFor != Language.Version)
+                if (localized == null || localizedFor != Lang.Version)
                 {
                     localized = TokenText.Localize(first);
-                    localizedFor = Language.Version;
+                    localizedFor = Lang.Version;
                 }
                 return localized;
             }

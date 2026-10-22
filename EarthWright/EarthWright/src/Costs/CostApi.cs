@@ -1,6 +1,7 @@
 using EarthWright.Actions;
 using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 
 namespace EarthWright.Costs
 {
@@ -69,7 +70,7 @@ namespace EarthWright.Costs
         private static void Refuse(string reason)
         {
             Messages.Center(reason);
-            if (reason == Language.Localize(CostWords.NoStamina) && Hud.instance != null)
+            if (reason == Lang.Get(CostWords.NoStamina) && Hud.instance != null)
                 Hud.instance.StaminaBarEmptyFlash();
         }
     }

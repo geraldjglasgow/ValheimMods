@@ -1,4 +1,5 @@
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.History
@@ -27,7 +28,7 @@ namespace EarthWright.History
             else if (verb == "restore" && name.Length > 0)
                 Restore(args, name);
             else if (verb == "delete" && name.Length > 0)
-                args.Context.AddString(Snapshots.Delete(name) ? $"Snapshot {name} deleted." : Language.Format(HistoryWords.SnapshotMissing, name));
+                args.Context.AddString(Snapshots.Delete(name) ? $"Snapshot {name} deleted." : Lang.Format(HistoryWords.SnapshotMissing, name));
             else
                 args.Context.AddString(Usage);
         }
@@ -49,10 +50,10 @@ namespace EarthWright.History
                     + "(ew snapshot delete <name>) or use a smaller radius.");
                 return;
             }
-            string saved = Language.Format(HistoryWords.SnapshotSaved, name, snapshot.Points.ToString());
+            string saved = Lang.Format(HistoryWords.SnapshotSaved, name, snapshot.Points);
             args.Context.AddString(saved + $" (radius {radius:0.#} m)");
             if (partial)
-                args.Context.AddString(Language.Localize(HistoryWords.SnapshotPartial));
+                args.Context.AddString(Lang.Get(HistoryWords.SnapshotPartial));
             Messages.Center(saved);
         }
 
@@ -70,11 +71,11 @@ namespace EarthWright.History
             Snapshot snapshot = Snapshots.Find(name);
             if (snapshot == null)
             {
-                args.Context.AddString(Language.Format(HistoryWords.SnapshotMissing, name));
+                args.Context.AddString(Lang.Format(HistoryWords.SnapshotMissing, name));
                 return;
             }
             string message = Outcome(Snapshots.Restore(snapshot), name);
-            args.Context.AddString(Language.Localize(message));
+            args.Context.AddString(TokenText.Localize(message));
             Messages.Center(message);
         }
 
@@ -87,8 +88,8 @@ namespace EarthWright.History
             if (outcome.Left.Count > 0)
                 return HistoryWords.Partly;
             if (outcome.Sent == 0)
-                return Language.Format(HistoryWords.SnapshotSame, name);
-            return Language.Format(HistoryWords.SnapshotRestored, name);
+                return Lang.Format(HistoryWords.SnapshotSame, name);
+            return Lang.Format(HistoryWords.SnapshotRestored, name);
         }
 
         private static void List(Terminal.ConsoleEventArgs args)

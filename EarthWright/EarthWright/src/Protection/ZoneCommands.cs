@@ -91,7 +91,7 @@ namespace EarthWright.Protection
 
         private static void Print(Terminal.ConsoleEventArgs args, string text)
         {
-            args.Context.AddString("EarthWright: " + Language.Localize(text));
+            args.Context.AddString("EarthWright: " + TokenText.Localize(text));
         }
     }
 }

@@ -2,6 +2,7 @@ using EarthWright.Actions;
 using EarthWright.Core;
 using EarthWright.Costs;
 using EarthWright.Terrain;
+using Translations;
 
 namespace EarthWright.Clearing
 {
@@ -35,14 +36,14 @@ namespace EarthWright.Clearing
             string refusal = player == null ? NoPlayer : SwitchedOff();
             if (refusal != null)
             {
-                args.Context.AddString("EarthWright: " + Language.Localize(refusal));
+                args.Context.AddString("EarthWright: " + TokenText.Localize(refusal));
                 return;
             }
             float typed = CommandInput.Number(args, 2, ClearingSettings.ResetAroundRadius.Value);
             float radius = ClearingSettings.TerrainRadius(typed, Side.LocalIsAdmin);
             bool sent = Dispatcher.Submit(ResetEdits.Around(player.transform.position, radius, ResetEdits.CommandSource));
             args.Context.AddString(sent
-                ? "EarthWright: " + ClearingWords.Format(ClearingWords.ResetAround, ClearingWords.Metres(radius))
+                ? "EarthWright: " + Lang.Format(ClearingWords.ResetAround, ClearingWords.Metres(radius))
                 : "EarthWright: the reset was refused (the reason is shown on screen).");
         }
 
@@ -52,7 +53,7 @@ namespace EarthWright.Clearing
             string refusal = Refusal(player);
             if (refusal != null)
             {
-                args.Context.AddString("EarthWright: " + Language.Localize(refusal));
+                args.Context.AddString("EarthWright: " + TokenText.Localize(refusal));
                 return;
             }
             bool admin = Side.LocalIsAdmin;

@@ -1,3 +1,5 @@
+using Translations;
+
 namespace EarthWright.Paths
 {
     /// <summary>
@@ -17,20 +19,21 @@ namespace EarthWright.Paths
             if (length < MinLength)
             {
                 plan.TooShort = true;
-                plan.Problem = PathWords.Text("too_short");
+                plan.Problem = Lang.Get("ew_paths_too_short");
                 return;
             }
             if (length > PathSettings.MaxLength.Value)
             {
                 plan.TooLong = true;
-                plan.Problem = PathWords.Format("too_long", length, PathSettings.MaxLength.Value);
+                plan.Problem = Lang.Format("ew_paths_too_long", PathWords.Number(length, "0"),
+                    PathWords.Number(PathSettings.MaxLength.Value, "0"));
                 return;
             }
             float max = PathSettings.MaxSlopeValue;
             if (plan.MaxSlope > max)
-                plan.Problem = PathWords.Format("too_steep", plan.MaxSlope, max);
+                plan.Problem = Lang.Format("ew_paths_too_steep", PathWords.Number(plan.MaxSlope, "0"), PathWords.Number(max, "0"));
             else if (plan.MaxSlope > PathSettings.WarningSlope.Value)
-                plan.Warning = PathWords.Format("steep_warning", PathSettings.WarningSlope.Value);
+                plan.Warning = Lang.Format("ew_paths_steep_warning", PathWords.Number(PathSettings.WarningSlope.Value, "0"));
         }
 
         /// <summary>Size, loaded ground and height limits, after the vertices were planned.</summary>
@@ -38,12 +41,12 @@ namespace EarthWright.Paths
         {
             int cap = PathSettings.MaxPoints.Value;
             if (plan.Problem == null && plan.PointCount > cap)
-                plan.Problem = PathWords.Format("too_big", plan.PointCount, cap);
+                plan.Problem = Lang.Format("ew_paths_too_big", plan.PointCount, cap);
             if (plan.Problem == null && plan.Unloaded > 0)
-                plan.Problem = PathWords.Text("unloaded");
+                plan.Problem = Lang.Get("ew_paths_unloaded");
             int past = PathLimits.Mark(plan);
             if (past > 0 && PathSettings.RefusePastLimit.Value)
-                plan.LimitProblem = PathWords.Format("past_limit", past);
+                plan.LimitProblem = Lang.Format("ew_paths_past_limit", past);
         }
     }
 }

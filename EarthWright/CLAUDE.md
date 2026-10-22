@@ -2,7 +2,7 @@
 
 Terraforming for Valheim's hoe and cultivator: brush size, shapes and edges, exact target heights,
 level/raise/lower/smooth/paint/reset, ramps and curved roads, undo, costs, height limits, protection, new menu
-entries. The log line `Loading [EarthWright 0.4.2]` confirms the version. Built on 2026-09-27 from the user's
+entries. The log line `Loading [EarthWright 0.5.0]` confirms the version. Built on 2026-09-27 from the user's
 feature list (`SPEC.md`, gitignored) and the game's own code, by a main session and ten module agents following
 `PLAN.md`, which holds the design, the feature map and the judgement calls. This file is the code map, the patched
 methods, the network names and the in-game test checklist.
@@ -47,13 +47,13 @@ Rules that apply to every change:
 
 | Folder | What it holds |
 | --- | --- |
-| `Core/` | settings section 0, `Command` (`ew`), `Keys` (on the Hotkeys library), `PrefabNames` (cached names), `Language` + `LanguageFiles` + `WordList` (translations), `Messages`, `HudText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
+| `Core/` | settings section 0, `Command` (`ew`), `Keys` (on the Hotkeys library), `PrefabNames` (cached names), `TokenText` (localizes texts with $tokens and numbers token by token), `Messages`, `HudText`, `PreviewStatus`, `PanelSections`, `GameReady`, `LocalTool`, `Side`, `Ticker`, `Safe` |
 | `Terrain/` | edit model (`TerrainEdit`, `BrushStroke`, `VertexSet`, wire), `Dispatcher`, `OwnerHandler`, `SaveThrottle`, `ServerRelay`, `Refusals`, `EditGuards`/`EditEvents`, `TerrainRead` + `VertexSampler` (vertex reads; the sampler finds each heightmap and compiler once per pass); `LiveEstimate` (the brush click's estimate, shared by the preview and the cost line); the engine (`Engine*`, `Math/Footprint`, `HeightView`, `ChangeBuffer`, `PaintOps`, `SlopeRelax`), limits (`HeightLimits`, `Limit*`, `EngineBaseHeights`), `ew limits` |
 | `Actions/` | `ToolAction`, `ActionCatalog`, `VanillaActions` (the game's six entries), `SpecialActions`, `EditFactory`, `PlacementHook` |
 | `Brush/` | `BrushState` (read by all), values and memory per entry, keys, wheel capture, target height modes, ghost placement ("no silent blocks"), repeat, hard level, game key guards, HUD lines, `BrushCaps` |
 | `Preview/` | outline, changed points, volume, ghost ring, piece highlight, world grid, HUD overlay, cursor readout, dust, the F6 panel and Esc button |
 | `Paths/` | ramp and road tools: geometry (pure), planning, commit, preview, HUD |
-| `History/` | undo/redo recorder and restorer, pruning, snapshots, `ew undo/redo/history/snapshot/language` |
+| `History/` | undo/redo recorder and restorer, pruning, snapshots, `ew undo/redo/history/snapshot` |
 | `Costs/` | stamina, wear, materials, stations, volume stone, cooldown, free build, cost line, `CostApi` |
 | `Clearing/` | reset keys, clear and groundbreaker entries, survival clearing, `ew reset/forestry/debris/pieces/terrain` |
 | `Protection/` | guards (wards, no-build, dungeons, tools switch, lock, admin entries, zones, combat), `ObjectRules`, zones (file, RPC, commands, panel), dig exceptions, admin routing |
@@ -75,7 +75,13 @@ Seams between modules: `BrushCaps` (level radius, unlocks, entry refusal), `Undo
 - YAML sets (pattern, sync key): `EarthWright.Brushes*.yml` `earthwright_brushes`, `EarthWright.Costs*.yml`
   `earthwright_costs`, `EarthWright.Entries*.yml` `earthwright_entries`, `EarthWright.Limits*.yml`
   `earthwright_limits`, `EarthWright.Zones.yml` `ew.zones.file` (server data, written back by the server).
-- Prefabs: menu pieces `ew_*`, custom entries `ew_custom_<id>` (no items of its own). Words `ew_*`.
+- Prefabs: menu pieces `ew_*`, custom entries `ew_custom_<id>` (no items of its own).
+- Words: keys `ew_<module>_...` in `EarthWright/translations/English.yml`, embedded and served by the Translations
+  library (installed first in `Plugin.Awake`). A translation is `EarthWright.translations.<Language>.yml` in
+  `BepInEx/config` or under `BepInEx/plugins`. Each module keeps its tokens in a `*Words` class (`Lang.Token`); a text
+  with values is one key with `$1`, `$2` ... filled by `Lang.Format`; the zone server's replies travel as
+  `LangWire` messages. Menu entry names and descriptions use computed keys (`ew_menu_<id>`, `ew_menu_<id>_desc`,
+  `ew_menu_game_<prefab>_desc`). Custom entries' texts come from `EarthWright.Entries.yml` and are shown as written.
 - No ZDO keys of its own: terrain lives in the game's compiler ZDO (`s_TCData`).
 
 ## Console commands
@@ -85,7 +91,7 @@ are in `PLAN.md`, "Default controls".
 
 `ew help` lists them. `ew on` / `ew off` switch EarthWright for you (also typed in chat as `/ew off`). `ew reset
 [radius]`, `ew undo`, `ew redo`, `ew history`, `ew snapshot save|restore|list|delete <name> [radius]`, `ew limits`,
-`ew zone ...`, `ew language write|reload`, `ew reload` (admin). Clearing: `ew forestry [radius]`, `ew debris
+`ew zone ...`, `ew reload` (admin). Clearing: `ew forestry [radius]`, `ew debris
 [radius]`, and for admins `ew pieces [radius]` and `ew terrain <op> ...` (level, raise, lower, min, max, band,
 offset, slope, remove, reset, paint; filters for a share of the points, skipping ground under buildings, and
 including or ignoring objects). `ew terrain help` lists the options.
@@ -106,7 +112,8 @@ Admin zones (limit terraforming to them): `ew zone add <name> <radius> [player]`
 | Brush | `GameCamera.UpdateCamera` | prefix + postfix (gamepad zoom) |
 | Brush | `KeyHints.Update` | prefix (F9 does not switch the gamepad layout) |
 | Brush | `Player.Update` | prefix + finalizer (debug-mode Z/B/K/L quiet on brush keys) |
-| Core | `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `ZNetScene.Awake`, `Terminal.InitTerminal`, `Localization.SetupLanguage` | postfix |
+| Core | `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `ZNetScene.Awake`, `Terminal.InitTerminal` | postfix |
+| Translations (library) | `Localization.SetupLanguage` | postfix, installed by hand by `Lang.Install` (the words) |
 | Costs | `Player.TryPlacePiece` | scope prefix + finalizer (+ postfix) |
 | Costs | `Player.HaveStamina`, `Player.HaveRequirements`, `Player.ConsumeResources` | prefix |
 | Costs | `Player.GetBuildStamina`, `Player.GetPlaceDurability` | postfix |
@@ -158,7 +165,7 @@ checked against the decompiled game only.
 
 Single player first, then a dedicated server with an admin (A) and a player (B). Nothing below has been run in game.
 
-1. Load: `Loading [EarthWright 0.4.2]`, no failed patches, no exceptions; `ew help` lists the subcommands.
+1. Load: `Loading [EarthWright 0.5.0]`, no failed patches, no exceptions; `ew help` lists the subcommands.
 2. Hoe menu: the game's four entries, then Lower, Smooth, Paint, Reset, Ramp, Road, Groundbreaker (Clear only with
    Clearing Enabled; Terraform only for admins); icons; search finds "lower"; cultivator shows Till and Uproot.
 3. Brush: Alt+wheel and `[`/`]` resize without zooming; B cycles values; N shapes; arrows rotate; I grid; O edge;

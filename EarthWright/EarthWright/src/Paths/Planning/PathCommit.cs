@@ -3,6 +3,7 @@ using EarthWright.Brush;
 using EarthWright.Core;
 using EarthWright.Costs;
 using EarthWright.Terrain;
+using Translations;
 
 namespace EarthWright.Paths
 {
@@ -35,12 +36,12 @@ namespace EarthWright.Paths
         /// <summary>Plans and checks the draft: the edit ready to send, or null and the reason.</summary>
         private static TerrainEdit Prepare(PathDraft draft, ToolAction action, string source, out string reason)
         {
-            reason = BrushCaps.LevelUnlocks(source) ? null : PathWords.Text("level_locked");
+            reason = BrushCaps.LevelUnlocks(source) ? null : Lang.Get("ew_paths_level_locked");
             if (reason != null)
                 return null;
             // The plan's limit check already used the admin override when it is held (the same rule the building hook applies).
             PathPlan plan = PathPlanner.Plan(draft);
-            reason = plan.FirstProblem ?? (plan.Vertices.Count == 0 ? PathWords.Text("nothing") : null);
+            reason = plan.FirstProblem ?? (plan.Vertices.Count == 0 ? Lang.Get("ew_paths_nothing") : null);
             if (reason != null)
                 return null;
             TerrainEdit edit = EditFor(plan, action, source);

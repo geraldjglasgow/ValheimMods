@@ -1,7 +1,7 @@
 using System;
 using EarthWright.Actions;
 using EarthWright.Brush;
-using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -26,7 +26,7 @@ namespace EarthWright.Preview
             if (PanelFields.Float("target", "$ew_preview_target_height", BrushState.TargetHeight, out float typed, "0.00"))
                 TargetState.SetFixed(TargetState.Mode == TargetSource.Exact ? TargetSource.Exact : TargetSource.Locked, typed);
             bool locked = TargetState.IsFixed;
-            if (GUILayout.Toggle(locked, Language.Localize("$ew_preview_lock")) != locked)
+            if (GUILayout.Toggle(locked, Lang.Get("ew_preview_lock")) != locked)
                 ToggleLock(locked);
             int current = Array.IndexOf(Modes, TargetState.Mode);
             int chosen = PanelFields.Choice("$ew_preview_source", current, Captions(), 3);

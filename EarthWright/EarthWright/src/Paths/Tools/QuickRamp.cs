@@ -1,6 +1,7 @@
 using EarthWright.Actions;
 using EarthWright.Core;
 using EarthWright.Menu;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Paths
@@ -38,12 +39,12 @@ namespace EarthWright.Paths
         {
             if (!Allowed)
             {
-                Messages.Center(PathWords.Text("quick_off"));
+                Messages.Center(Lang.Get("ew_paths_quick_off"));
                 return;
             }
             PathDraft draft = Draft();
             if (draft != null && PathCommit.Commit(draft, RampAction(), PathSelection.RampKey))
-                Messages.TopLeft(PathWords.Text("built"));
+                Messages.TopLeft(Lang.Get("ew_paths_built"));
         }
 
         /// <summary>The ramp entry's action (its costs, cooldown and protection rules apply), or null when there is none.</summary>

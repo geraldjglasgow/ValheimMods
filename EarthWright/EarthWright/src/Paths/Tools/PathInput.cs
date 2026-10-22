@@ -1,6 +1,7 @@
 using EarthWright.Actions;
 using EarthWright.Brush;
 using EarthWright.Core;
+using Translations;
 
 namespace EarthWright.Paths
 {
@@ -46,7 +47,7 @@ namespace EarthWright.Paths
         {
             RampProfile next = ProfileCurve.Next(PathSettings.Profile.Value);
             PathSettings.Profile.Value = next;
-            Messages.TopLeft(PathWords.Format("profile", PathWords.ProfileName(next)));
+            Messages.TopLeft(Lang.Format("ew_paths_profile", PathWords.ProfileName(next)));
             PathSession.MarkDirty();
         }
     }

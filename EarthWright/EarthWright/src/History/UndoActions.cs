@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EarthWright.Core;
+using Translations;
 
 namespace EarthWright.History
 {
@@ -69,8 +70,8 @@ namespace EarthWright.History
             if (outcome.Left.Count > 0)
                 return HistoryWords.Partly;
             if (outcome.Sent == 0)
-                return Language.Format(HistoryWords.Unchanged, step.Describe());
-            return Language.Format(done, step.Describe());
+                return Lang.Format(HistoryWords.Unchanged, step.Describe());
+            return Lang.Format(done, step.Describe());
         }
     }
 }

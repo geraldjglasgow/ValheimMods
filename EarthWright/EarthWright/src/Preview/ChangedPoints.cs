@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -78,9 +79,10 @@ namespace EarthWright.Preview
             }
             StringBuilder text = new StringBuilder();
             if (estimate.Vertices > 0)
-                text.Append(string.Format(CultureInfo.InvariantCulture, "{0} $ew_preview_points, +{1:0.0} m³ / −{2:0.0} m³", estimate.Vertices, estimate.Raised, estimate.Lowered));
+                text.Append(Lang.Format("ew_preview_points", estimate.Vertices))
+                    .Append(string.Format(CultureInfo.InvariantCulture, ", +{0:0.0} m³ / −{1:0.0} m³", estimate.Raised, estimate.Lowered));
             if (estimate.PaintCells > 0)
-                text.Append(text.Length > 0 ? " · " : "").Append(estimate.PaintCells).Append(" $ew_preview_cells");
+                text.Append(text.Length > 0 ? " · " : "").Append(Lang.Format("ew_preview_cells", estimate.PaintCells));
             if (estimate.HitLimit)
                 text.Append(" · <color=#ff5577>$ew_preview_limit</color>");
             HudText.Set(HudKey, text.ToString(), 50);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using EarthWright.Brush;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Paths
@@ -47,7 +48,7 @@ namespace EarthWright.Paths
             }
             view.Plan = draft != null ? PathPlanner.Plan(draft) : null;
             string profile = PathWords.ProfileName(PathSettings.Profile.Value);
-            view.Title = PathWords.Format(view.Ghostly ? "title_quick" : "title_ramp", profile);
+            view.Title = Lang.Format(view.Ghostly ? "ew_paths_title_quick" : "ew_paths_title_ramp", profile);
             view.Next = RampNext(tool.Count);
             return view;
         }
@@ -65,18 +66,21 @@ namespace EarthWright.Paths
                 view.TentativeFrom = tool.Waypoints[tool.Count - 1];
                 view.TentativeTo = PathSelection.WithHeight(cursor);
             }
-            view.Title = PathWords.Format("title_road", tool.Count);
-            view.Next = PathWords.Format("next_road", KeyName(PathSettings.CarveKey), KeyName(PathSettings.CarvePavedKey), KeyName(PathSettings.RemoveKey));
+            view.Title = Lang.Format("ew_paths_title_road", tool.Count);
+            view.Next = Lang.Format("ew_paths_next_road", KeyName(PathSettings.CarveKey), KeyName(PathSettings.CarvePavedKey),
+                KeyName(PathSettings.RemoveKey));
             return view;
         }
 
         private static string RampNext(int count)
         {
             if (count == 0)
-                return QuickRamp.Allowed ? PathWords.Format("next_start", KeyName(PathSettings.QuickRampKey)) : PathWords.Text("next_start_plain");
+                return QuickRamp.Allowed
+                    ? Lang.Format("ew_paths_next_start", KeyName(PathSettings.QuickRampKey))
+                    : Lang.Get("ew_paths_next_start_plain");
             if (count == 1)
-                return PathWords.Format("next_end", KeyName(PathSettings.RemoveKey));
-            return PathWords.Format("next_build", KeyName(PathSettings.OneSideModifier), KeyName(PathSettings.BlendEndsModifier),
+                return Lang.Format("ew_paths_next_end", KeyName(PathSettings.RemoveKey));
+            return Lang.Format("ew_paths_next_build", KeyName(PathSettings.OneSideModifier), KeyName(PathSettings.BlendEndsModifier),
                 KeyName(ControlSettings.ShapeKey), KeyName(PathSettings.RemoveKey));
         }
 

@@ -1,6 +1,7 @@
 using BepInEx.Configuration;
 using EarthWright.Core;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace EarthWright.Terrain
@@ -35,7 +36,7 @@ namespace EarthWright.Terrain
             Files = synced.AddYaml(new YamlFileSet("EarthWright.Limits*.yml", "earthwright_limits", () => new LimitsModel(), ApplyYaml)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(LimitSettings).Assembly, DefaultResource),
-                EditorLabel = () => "Edit height limits per biome",
+                EditorLabel = () => Lang.Get("ew_terrain_yaml_edit"),
             });
         }
 

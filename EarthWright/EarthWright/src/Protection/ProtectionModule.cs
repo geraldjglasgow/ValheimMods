@@ -22,7 +22,6 @@ namespace EarthWright.Protection
         public static void Initialize(SyncedConfiguration synced)
         {
             ProtectionSettings.Bind(synced);
-            ProtectionWords.Register();
             ZoneBook.Initialize(synced);
             ZoneCommands.Register();
             ProtectionGuards.Register();

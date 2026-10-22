@@ -107,6 +107,7 @@ namespace EarthWright.Protection
             entry.Value = values[(index + 1) % values.Length];
         }
 
-        private static string L(string text) => Language.Localize(text);
+        // The game's localization keeps the texts it translated, so drawing the panel every frame allocates nothing new.
+        private static string L(string text) => Localization.instance.Localize(text);
     }
 }

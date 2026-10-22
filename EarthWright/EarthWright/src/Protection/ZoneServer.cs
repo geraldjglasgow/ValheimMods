@@ -9,8 +9,8 @@ namespace EarthWright.Protection
     /// <summary>
     /// Server side of zone changes. The request has already been checked against the server's admin list
     /// (<see cref="ZoneRpc"/>). A change rewrites EarthWright.Zones.yml through the YAML hub, which validates it, writes
-    /// it back to disk and applies it again; applying publishes the new zones to every player. The reply is a line of
-    /// $tokens and values that the requesting admin's machine localizes.
+    /// it back to disk and applies it again; applying publishes the new zones to every player. The reply is a $token or a
+    /// Translations wire message (a key and its values) that the requesting admin's machine reads in its own language.
     /// </summary>
     public static class ZoneServer
     {
@@ -29,7 +29,7 @@ namespace EarthWright.Protection
             else
                 zones.Add(zone);
             Save(zones);
-            return (index >= 0 ? ZoneWords.Replaced : ZoneWords.Added) + " " + zone.Describe();
+            return index >= 0 ? ZoneWords.Replaced(zone.Describe()) : ZoneWords.Added(zone.Describe());
         }
 
         public static string Remove(string name)
@@ -37,9 +37,9 @@ namespace EarthWright.Protection
             List<AdminZone> zones = new List<AdminZone>(ZoneBook.FileZones);
             int removed = zones.RemoveAll(z => z.NameIs(name));
             if (removed == 0)
-                return ZoneWords.Unknown + " '" + name + "'";
+                return ZoneWords.Unknown(name);
             Save(zones);
-            return ZoneWords.Removed + " " + name;
+            return ZoneWords.Removed(name);
         }
 
         /// <summary>

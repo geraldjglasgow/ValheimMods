@@ -180,10 +180,6 @@ zones:
 
 ## Translation files
 
-EarthWright's texts are English by default. A file `EarthWright.Language.<Language>.yml`, where `<Language>` is the game's language name (German, French, Spanish, Russian, Polish, Portuguese_Brazilian, Chinese, Japanese ...), replaces them key by key while the game runs in that language. Files are read from the plugin's folder and then from `BepInEx/config`, which wins.
+EarthWright's texts are English by default. To translate them, save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EarthWright/EarthWright/translations/English.yml) as `EarthWright.translations.<Language>.yml` in `BepInEx/config`, where `<Language>` is the game's language name (German, French, Spanish, Russian, Polish, Portuguese_Brazilian, Chinese, Japanese ...), and translate the texts in quotes. Keep the keys, the `$1` `$2` placeholders and `\n`, and keep each text on one line. Leave out what you do not translate; it stays English. The file is read at start and whenever the game's language changes; a translation pack may also ship it anywhere under `BepInEx/plugins`.
 
-1. `ew language write` writes `EarthWright.Language.English.yml` with every text into `BepInEx/config`.
-2. Copy it to `EarthWright.Language.<Language>.yml` and translate the texts on the right. Keep the keys, the `$1` `$2` placeholders and any `<color>` tags. Leave out what you do not translate; it stays English.
-3. `ew language reload` applies the file without a restart.
-
-While the game is in English the written English file itself replaces the built-in texts, so delete it when you are done. Custom entries' texts come from `EarthWright.Entries.yml` as written.
+Custom entries' texts come from `EarthWright.Entries.yml` as written.

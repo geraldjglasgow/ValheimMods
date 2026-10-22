@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- Translations: every word you read is in `translations/English.yml`; an `EarthWright.translations.<Language>.yml` in `BepInEx/config` translates it.
+- Translation files are now named `EarthWright.translations.<Language>.yml`; the `ew language` commands are gone.
+- Zone replies from the server show in each admin's own language.
+
 ## 0.4.2
 
 - Fixed: players on a slow connection with many mods are no longer refused when joining a server.

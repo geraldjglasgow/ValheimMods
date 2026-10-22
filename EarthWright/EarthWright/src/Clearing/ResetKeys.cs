@@ -2,6 +2,7 @@ using System.Linq;
 using BepInEx.Configuration;
 using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Clearing
@@ -43,7 +44,7 @@ namespace EarthWright.Clearing
             Player player = LocalTool.Player;
             float radius = ClearingSettings.ResetAroundRadius.Value;
             if (Dispatcher.Submit(ResetEdits.Around(player.transform.position, radius)))
-                Messages.TopLeft(ClearingWords.Format(ClearingWords.ResetAround, ClearingWords.Metres(radius)));
+                Messages.TopLeft(Lang.Format(ClearingWords.ResetAround, ClearingWords.Metres(radius)));
         }
     }
 }

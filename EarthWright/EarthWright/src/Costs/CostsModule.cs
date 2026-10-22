@@ -15,7 +15,6 @@ namespace EarthWright.Costs
     {
         public static void Initialize(SyncedConfiguration synced)
         {
-            CostWords.Register();
             CostSettings.Bind(synced);
             MaterialSettings.Bind(synced);
             CostOverrides.Register(synced);

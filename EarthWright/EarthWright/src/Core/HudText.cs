@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 
 namespace EarthWright.Core
 {
@@ -54,11 +55,11 @@ namespace EarthWright.Core
         /// <summary>The current lines, in order, localized. The list is shared: read it, do not keep or change it.</summary>
         public static List<string> Current()
         {
-            if (!dirty && localizedFor == Language.Version)
+            if (!dirty && localizedFor == Lang.Version)
                 return current;
-            bool relocalize = localizedFor != Language.Version;
+            bool relocalize = localizedFor != Lang.Version;
             dirty = false;
-            localizedFor = Language.Version;
+            localizedFor = Lang.Version;
             Order();
             current.Clear();
             foreach (Line line in ordered)

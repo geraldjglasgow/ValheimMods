@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Terrain
@@ -46,11 +47,10 @@ namespace EarthWright.Terrain
         private static int nextId;
         private static float nextPrune;
 
-        public static string NotDelivered { get; private set; } = "$ew_refused_notdelivered";
+        public static string NotDelivered { get; } = Lang.Token("ew_refused_notdelivered");
 
         internal static void Initialize()
         {
-            NotDelivered = Language.Add("ew_refused_notdelivered", "The ground changed hands before your edit arrived; try again");
             Ticker.OnUpdate("EarthWright edit retries", Tick);
         }
 

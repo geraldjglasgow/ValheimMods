@@ -1,4 +1,5 @@
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -64,7 +65,7 @@ namespace EarthWright.Preview
             Matrix4x4 matrix = GUI.matrix;
             GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1f));
             Place(scale);
-            rect = GUILayout.Window(WindowId, rect, Draw, Language.Localize("$ew_preview_panel_title"), PanelFields.WindowStyle, GUILayout.Width(Width));
+            rect = GUILayout.Window(WindowId, rect, Draw, Lang.Get("ew_preview_panel_title"), PanelFields.WindowStyle, GUILayout.Width(Width));
             rect.x = Mathf.Clamp(rect.x, 0f, Mathf.Max(0f, Screen.width / scale - rect.width));
             rect.y = Mathf.Clamp(rect.y, 0f, Mathf.Max(0f, Screen.height / scale - TitleHeight));
             GUI.matrix = matrix;
@@ -133,9 +134,9 @@ namespace EarthWright.Preview
         {
             GUILayout.BeginHorizontal();
             if (Plugin.Synced != null && Plugin.Synced.IsLocked)
-                GUILayout.Label("<color=#ffb84d>" + Language.Localize("$ew_preview_locked") + "</color>", PanelFields.HeadingStyle);
+                GUILayout.Label("<color=#ffb84d>" + Lang.Get("ew_preview_locked") + "</color>", PanelFields.HeadingStyle);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button(Language.Localize("$ew_preview_close"), GUILayout.Width(80f)))
+            if (GUILayout.Button(Lang.Get("ew_preview_close"), GUILayout.Width(80f)))
                 Close();
             GUILayout.EndHorizontal();
         }

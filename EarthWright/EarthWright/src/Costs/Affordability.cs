@@ -1,4 +1,4 @@
-using EarthWright.Core;
+using Translations;
 
 namespace EarthWright.Costs
 {
@@ -16,7 +16,7 @@ namespace EarthWright.Costs
             if (index < 0)
                 return null;
             BillLine line = bill.Lines[index];
-            return CostWords.Format(CostWords.Short, Language.Localize(line.Name), Bill.Have(inventory, line).ToString(), line.Amount.ToString());
+            return Lang.Format(CostWords.Short, Localization.instance.Localize(line.Name), Bill.Have(inventory, line).ToString(), line.Amount.ToString());
         }
 
         /// <summary>Everything a use needs, checked in the order a player fixes them: station, stamina, tool, items.</summary>
@@ -26,11 +26,11 @@ namespace EarthWright.Costs
                 return null;
             string station = StationRule.Missing(ctx);
             if (station != null)
-                return CostWords.Format(CostWords.NeedStation, Language.Localize(station));
+                return Lang.Format(CostWords.NeedStation, Localization.instance.Localize(station));
             if (StaminaShort(ctx, cost.Stamina))
-                return Language.Localize(CostWords.NoStamina);
+                return Lang.Get(CostWords.NoStamina);
             if (ToolBroken(ctx, cost.Wear))
-                return Language.Localize(CostWords.Broken);
+                return Lang.Get(CostWords.Broken);
             return ShortOf(ctx.Player, cost.Items.Total);
         }
 

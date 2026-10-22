@@ -1,16 +1,11 @@
-using EarthWright.Core;
+using Translations;
 
 namespace EarthWright.Gear
 {
-    /// <summary>The Gear module's English words; the tokens are what the refusals carry.</summary>
+    /// <summary>The Gear module's words (English in translations/English.yml).</summary>
     public static class GearWords
     {
-        /// <summary>Followed by the level number: "Your tool needs level 3".</summary>
-        public static string LevelLocked { get; private set; } = "$ew_gear_level_locked";
-
-        public static void Register()
-        {
-            LevelLocked = Language.Add("ew_gear_level_locked", "Your tool needs level");
-        }
+        /// <summary>"Your tool needs level 3": the refusal of a feature the held tool's level does not unlock yet.</summary>
+        public static string LevelLocked(int level) => Lang.Format("ew_gear_level_locked", level);
     }
 }

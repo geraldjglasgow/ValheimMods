@@ -13,7 +13,6 @@ namespace EarthWright.Extras
         public static void Initialize(SyncedConfiguration synced)
         {
             ExtrasSettings.Bind(synced);
-            ExtrasWords.Register();
             SpecialActions.Register("uproot", new UprootAction());
             Ticker.OnUpdate("EarthWright road travel", RoadTravel.Update);
             Ticker.OnUpdate("EarthWright seed grid", SeedGrid.Update);

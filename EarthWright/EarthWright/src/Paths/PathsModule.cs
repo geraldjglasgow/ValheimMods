@@ -15,7 +15,6 @@ namespace EarthWright.Paths
         public static void Initialize(SyncedConfiguration synced)
         {
             PathSettings.Bind(synced);
-            PathWords.Register();
             SpecialActions.Register(PathSelection.RampKey, RampTool.Instance);
             SpecialActions.Register(PathSelection.RoadKey, RoadTool.Instance);
             UndoHooks.AddFirst(() => Safe.Call("EarthWright paths undo", PathSession.RemoveLastPoint, false));

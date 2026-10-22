@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using EarthWright.Actions;
 using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Paths
@@ -31,11 +32,11 @@ namespace EarthWright.Paths
             Vector3 point = PathSelection.WithHeight(PathSelection.CursorOr(ghostPosition));
             if (waypoints.Count > 0 && CentreLine.Flat(waypoints[waypoints.Count - 1], point) < MinSpacing)
             {
-                Messages.Center(PathWords.Text("waypoint_close"));
+                Messages.Center(Lang.Get("ew_paths_waypoint_close"));
                 return;
             }
             waypoints.Add(point);
-            Messages.TopLeft(PathWords.Format("waypoint", waypoints.Count));
+            Messages.TopLeft(Lang.Format("ew_paths_waypoint", waypoints.Count));
             PathSession.MarkDirty();
         }
 
@@ -52,13 +53,13 @@ namespace EarthWright.Paths
         {
             if (waypoints.Count < 2)
             {
-                Messages.Center(PathWords.Text("need_two"));
+                Messages.Center(Lang.Get("ew_paths_need_two"));
                 return;
             }
             if (!PathCommit.Commit(Draft(paved), action, PathSelection.RoadKey))
                 return;
             waypoints.Clear();
-            Messages.TopLeft(PathWords.Text("carved"));
+            Messages.TopLeft(Lang.Get("ew_paths_carved"));
             PathSession.MarkDirty();
         }
 
@@ -68,7 +69,7 @@ namespace EarthWright.Paths
             if (waypoints.Count == 0)
                 return false;
             waypoints.RemoveAt(waypoints.Count - 1);
-            Messages.TopLeft(PathWords.Text("removed"));
+            Messages.TopLeft(Lang.Get("ew_paths_removed"));
             PathSession.MarkDirty();
             return true;
         }

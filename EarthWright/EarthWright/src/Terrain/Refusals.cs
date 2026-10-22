@@ -1,4 +1,5 @@
 using EarthWright.Core;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Terrain
@@ -11,15 +12,10 @@ namespace EarthWright.Terrain
     {
         public const string RefusedRpc = "EW_EditRefused";
 
-        public static string NotAdmin { get; private set; } = "$ew_refused_notadmin";
+        public static string NotAdmin { get; } = Lang.Token("ew_refused_notadmin");
 
         private static ZRoutedRpc registeredOn;
         private static float lastShown = -10f;
-
-        internal static void Initialize()
-        {
-            NotAdmin = Language.Add("ew_refused_notadmin", "Only an admin can do that");
-        }
 
         public static void EnsureRegistered()
         {

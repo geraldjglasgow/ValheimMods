@@ -2,6 +2,7 @@ using System.Globalization;
 using EarthWright.Brush;
 using EarthWright.Core;
 using EarthWright.Terrain;
+using Translations;
 using UnityEngine;
 
 namespace EarthWright.Preview
@@ -50,13 +51,13 @@ namespace EarthWright.Preview
             int target = BrushState.Active && TargetHeight.Used(BrushState.Action) ? Centimetres(BrushState.TargetHeight - ground) : NoTarget;
             int groundCm = Centimetres(ground);
             if (Text != null && tile == shownTile && groundCm == shownGround && edited == shownEdited && target == shownTarget
-                && shownFor == Language.Version)
+                && shownFor == Lang.Version)
                 return;
             shownTile = tile;
             shownGround = groundCm;
             shownEdited = edited;
             shownTarget = target;
-            shownFor = Language.Version;
+            shownFor = Lang.Version;
             Text = TokenText.Localize(Describe(tile, groundCm, edited, target));
         }
 

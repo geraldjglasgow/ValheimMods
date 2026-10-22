@@ -1,5 +1,6 @@
 using EarthWright.Brush;
 using EarthWright.Core;
+using Translations;
 
 namespace EarthWright.Paths
 {
@@ -26,10 +27,12 @@ namespace EarthWright.Paths
             PathPlan plan = view.Plan != null && !view.Plan.TooShort ? view.Plan : null;
             HudText.Set(SummaryKey, Summary(view.Title, plan), Order);
             HudText.Set(StatsKey, plan != null ? Stats(plan) : null, Order + 1);
-            HudText.Set(HeightKey, PathSelection.UsesSetHeight ? PathWords.Format("hud_set_height", BrushState.TargetHeight) : null, Order + 2);
+            HudText.Set(HeightKey, PathSelection.UsesSetHeight ? SetHeight() : null, Order + 2);
             HudText.Set(ProblemKey, ProblemLine(plan, workProblem), Order + 3);
             HudText.Set(NextKey, view.Next, Order + 4);
         }
+
+        private static string SetHeight() => Lang.Format("ew_paths_hud_set_height", PathWords.Number(BrushState.TargetHeight, "0.00"));
 
         public static void Clear()
         {
@@ -47,12 +50,14 @@ namespace EarthWright.Paths
         {
             if (plan == null)
                 return title;
-            return title + ": " + PathWords.Format("hud_shape", plan.Line.Length, plan.Line.Rise, plan.Draft.Shape.Width);
+            return title + ": " + Lang.Format("ew_paths_hud_shape", PathWords.Number(plan.Line.Length, "0.0"),
+                PathWords.Number(plan.Line.Rise, "+0.0;-0.0;0.0"), PathWords.Number(plan.Draft.Shape.Width, "0.0"));
         }
 
         private static string Stats(PathPlan plan)
         {
-            return PathWords.Format("hud_stats", plan.MaxSlope, plan.MeanSlope, plan.PointCount, PathWords.PaintName(plan.Draft.Paint));
+            return Lang.Format("ew_paths_hud_stats", PathWords.Number(plan.MaxSlope, "0"), PathWords.Number(plan.MeanSlope, "0"),
+                plan.PointCount, PathWords.PaintName(plan.Draft.Paint));
         }
 
         /// <summary>The plan's (or protection's or the cost's) reason in red unless the preview's reason line shows it already, else the warning in yellow.</summary>
