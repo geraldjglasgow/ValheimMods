@@ -4,6 +4,7 @@ using PackPanel.Panels;
 using PackPanel.Slots;
 using PlateColumn;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -96,8 +97,8 @@ namespace PackPanel.Ring
                 return;
             unwritten = false;
             string text = waiting.Count == 1
-                ? string.Format(Language.Localize(Words.KeyNew), Language.Localize(waiting[0]))
-                : string.Format(Language.Localize(Words.KeysNew), waiting.Count);
+                ? Lang.Format("packpanel_keynew", Localization.instance.Localize(waiting[0]))
+                : Lang.Format("packpanel_keysnew", waiting.Count);
             TMP_Text label = box.GetComponentInChildren<TMP_Text>(true);
             label.text = text;
             ((RectTransform)box).sizeDelta = new Vector2(label.GetPreferredValues(text).x + 16f, Height);

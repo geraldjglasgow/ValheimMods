@@ -1,0 +1,119 @@
+# PackPanel - English words
+#
+# To translate: copy this file as PackPanel.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the mod), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# Slot captions (an empty slot's name)
+packpanel_head: "Head"
+packpanel_chest: "Chest"
+packpanel_legs: "Legs"
+packpanel_feet: "Feet"
+packpanel_back: "Back"
+packpanel_backpack: "Backpack"
+packpanel_utility: "Utility"
+packpanel_trinket: "Trinket"
+packpanel_food: "Food"
+packpanel_mead: "Mead"
+packpanel_ammo: "Ammo"
+packpanel_coins: "Coins"
+packpanel_keys: "Keys"
+packpanel_tackle: "Tackle"
+packpanel_bait: "Bait"
+
+# Slot panel tabs
+packpanel_tab_gear: "Gear"
+packpanel_tab_consumables: "Consumables"
+
+# Slot messages ($1: how many items)
+packpanel_wrongslot: "That does not go in that slot"
+packpanel_noroomoff: "No room in your inventory to take that off"
+packpanel_dropped: "No room for $1 items: dropped at your feet"
+
+# Food Key and Mead Slot keys
+packpanel_nothingtoeat: "Nothing in your food slots can be eaten now"
+packpanel_meadslotempty: "That mead slot is empty"
+
+# Key ring (keynew $1: the key's name; keysnew $1: how many)
+packpanel_keyring: "Key ring"
+packpanel_nokeysheld: "You carry no keys"
+packpanel_notakey: "Only keys go on the key ring"
+packpanel_keynew: "$1 went onto your key ring"
+packpanel_keysnew: "$1 new keys went onto your key ring"
+
+# Stat sheet headings
+packpanel_stat_resistances: "Resistances"
+packpanel_stat_gear: "Gear bonuses"
+packpanel_stat_epicloot: "Epic Loot"
+packpanel_stat_elitecrafting: "EliteCrafting"
+packpanel_stat_offence: "Offence"
+packpanel_stat_defence: "Defence"
+packpanel_stat_resources: "Health and stamina"
+packpanel_stat_movement: "Movement"
+packpanel_stat_skills: "Skills"
+packpanel_stat_other: "Other"
+
+# Stat sheet tooltips (each line's breakdown)
+packpanel_tip_base: "Base"
+packpanel_tip_other: "Other effects"
+packpanel_tip_nothing: "Nothing you wear or carry gives this"
+packpanel_tip_effect: "An effect"
+packpanel_tip_carry: "Carry weight"
+packpanel_tip_world: "World modifier"
+packpanel_tip_heaviest: "Heaviest"
+packpanel_tip_missinghealth: "Missing health"
+packpanel_tip_parryarmor: "Block armor on a parry"
+packpanel_tip_skill: "Skill"
+packpanel_tip_capped: "Over the cap: the game applies less than the sum"
+
+# Backpacks: each pack's name and look (the first sentence of its description)
+packpanel_backpack_deerhide: "Deerhide Satchel"
+packpanel_backpack_deerhide_look: "A small satchel of deer hide, patched with leather scraps."
+packpanel_backpack_trollhide: "Trollhide Backpack"
+packpanel_backpack_trollhide_look: "A roomy pack of troll leather under a ragged hide flap."
+packpanel_backpack_rootbound: "Rootbound Pack"
+packpanel_backpack_rootbound_look: "Bog leather in a frame of woven roots, its seams sealed with guck."
+packpanel_backpack_wolfpelt: "Wolfpelt Pack"
+packpanel_backpack_wolfpelt_look: "Dark leather under a shaggy wolf pelt, fastened with silver."
+packpanel_backpack_lox: "Lox Hauler"
+packpanel_backpack_lox_look: "A black metal frame hauling a load wrapped in lox fur."
+packpanel_backpack_carapace: "Carapace Pack"
+packpanel_backpack_carapace_look: "Scale hide armoured with carapace plates, stitched with blue jute."
+packpanel_backpack_asksvin: "Asksvin Pack"
+packpanel_backpack_asksvin_look: "Scaled asksvin hide with glowing flametal fittings."
+packpanel_backpack_moosehide: "Moosehide Pack"
+packpanel_backpack_moosehide_look: "Heavy moose hide with a winter fur ruff, gold fittings and antler toggles."
+# A pack's description: $1 its look, $2 what it gives (one of the two lines under it)
+packpanel_backpack_describe: "$1 Put it in your Backpack slot to wear it: $2 while it is on your back. Taking it off drops what does not fit. Upgrade it at its station: each level slows you less and lightens what it holds."
+# $1 inventory slots; $2 carry weight
+packpanel_backpack_gives_slots: "+$1 inventory slots"
+packpanel_backpack_gives_slots_carry: "+$1 inventory slots and +$2 carry weight"
+# A pack whose slots go through portals: $1 the description above
+packpanel_backpack_describe_portal: "$1 What its slots hold may go through portals, if the server allows it."
+packpanel_backpack_load: "Weight of items in it"
+packpanel_backpack_noroom: "No room in your inventory to take the backpack off"
+
+# Tackleboxes: each box's name and look (the first sentence of its description)
+packpanel_tacklebox_driftwood: "Driftwood Tacklebox"
+packpanel_tacklebox_driftwood_look: "A plain wooden box covered in furs."
+packpanel_tacklebox_finewood: "Finewood Tacklebox"
+packpanel_tacklebox_finewood_look: "A fine wood box wrapped in troll leather, with bronze corners and clasp."
+packpanel_tacklebox_carapace: "Carapace Tacklebox"
+packpanel_tacklebox_carapace_look: "A Yggdrasil wood box coated in carapace plates."
+packpanel_tacklebox_flametal: "Flametal Tacklebox"
+packpanel_tacklebox_flametal_look: "A flametal box covered in asksvin hide."
+# A box's description: $1 its look, $2 how many cells (one of the two lines under it)
+packpanel_tacklebox_describe: "$1 Put it in your Tacklebox slot and right click it there to open it: $2 for bait, which the fishing rod takes first. Right click a bait in it to fish with that one."
+packpanel_tacklebox_one_cell: "one cell"
+packpanel_tacklebox_cells: "$1 cells"
+packpanel_tacklebox_full: "The tacklebox is full"
+
+# With EliteCrafting: the backpacks' item class and the Deep Pockets inscription
+packpanel_class_backpack: "Backpacks"
+packpanel_affix_deep_pockets: "Deep Pockets"
+# EliteCrafting reads this key by its name ($1: how many slots)
+ecf_affix_deep_pockets_line: "+$1 inventory slots"

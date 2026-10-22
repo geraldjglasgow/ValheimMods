@@ -63,7 +63,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 [/list]
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/milkyteam.packpanel.cfg, plus PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml ([url=https://github.com/geraldjglasgow/ValheimMods/blob/main/PackPanel/CLAUDE.md#backpack-and-tacklebox-yaml-files]format[/url]). Every setting is described in the file and applies without a restart; the server's values bind every player, except your look and keys.
+BepInEx/config/milkyteam.packpanel.cfg, plus PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml ([url=https://github.com/geraldjglasgow/ValheimMods/blob/main/PackPanel/CLAUDE.md#backpack-and-tacklebox-yaml-files]format[/url]). Every setting is described in the file and applies without a restart; the server's values bind every player, except your look and keys. Translate: save a copy of [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/PackPanel/PackPanel/translations/English.yml]English.yml[/url] as PackPanel.translations.<Language>.yml in BepInEx/config.
 
 [size=4][b]Links[/b][/size]
 Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]

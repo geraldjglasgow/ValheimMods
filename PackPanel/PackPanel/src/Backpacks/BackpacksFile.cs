@@ -30,7 +30,7 @@ namespace PackPanel.Backpacks
             foreach (BackpackKind kind in BackpackCatalog.All)
                 kind.Stats = read.Stats.TryGetValue(kind.Id, out BackpackStats stats) ? stats : kind.Defaults;
             Crafting.CraftRecipes.RefreshAll();
-            BackpackWords.DescribeAll();
+            Crafting.CraftedWords.WriteAll();
             Plugin.Log.LogInfo($"PackPanel: backpacks applied, {read.Stats.Count} set in the file.");
         }
     }

@@ -1,4 +1,4 @@
-using PackPanel.Core;
+using Translations;
 
 namespace PackPanel.Panels
 {
@@ -46,18 +46,18 @@ namespace PackPanel.Panels
         }
 
         /// <summary>The heading over a group: Epic Loot's name, then the group's.</summary>
-        public static string Title(Group group) => Words.StatEpicLoot + " · " + Word(group);
+        public static string Title(Group group) => Lang.Get("packpanel_stat_epicloot") + " · " + Word(group);
 
         private static string Word(Group group)
         {
             switch (group)
             {
-                case Group.Offence: return Words.StatOffence;
-                case Group.Defence: return Words.StatDefence;
-                case Group.Resources: return Words.StatResources;
-                case Group.Movement: return Words.StatMovement;
-                case Group.Skills: return Words.StatSkills;
-                default: return Words.StatOther;
+                case Group.Offence: return Lang.Get("packpanel_stat_offence");
+                case Group.Defence: return Lang.Get("packpanel_stat_defence");
+                case Group.Resources: return Lang.Get("packpanel_stat_resources");
+                case Group.Movement: return Lang.Get("packpanel_stat_movement");
+                case Group.Skills: return Lang.Get("packpanel_stat_skills");
+                default: return Lang.Get("packpanel_stat_other");
             }
         }
     }

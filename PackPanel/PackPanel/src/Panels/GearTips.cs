@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using Translations;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -94,7 +95,7 @@ namespace PackPanel.Panels
                 sum += value;
             }
             float rest = player.GetEquipmentModifierPlusSE(index) - sum;
-            return Mathf.Abs(rest) >= 0.001f ? tip.Part(StatTipWords.Other, Format(index, rest)).ToString() : tip.ToString();
+            return Mathf.Abs(rest) >= 0.001f ? tip.Part(Lang.Get("packpanel_tip_other"), Format(index, rest)).ToString() : tip.ToString();
         }
 
         /// <summary>As the sheet shows the modifier: a percentage, or from index 10 on a plain number.</summary>

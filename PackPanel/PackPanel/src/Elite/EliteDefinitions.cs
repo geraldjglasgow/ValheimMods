@@ -13,6 +13,7 @@ namespace PackPanel.Elite
         /// <summary>The extra slots a pack's inscriptions give: an item-scope effect EliteCrafting rolls and sums, PackPanel applies.</summary>
         public const string SlotsEffect = "pack_slots";
 
+        /// <summary>The Deep Pockets inscription; its tooltip line is the word <c>ecf_affix_deep_pockets_line</c> (English.yml).</summary>
         public const string DeepPocketsId = "deep_pockets";
 
         /// <summary>EliteCrafting's item-data keys all start with this (its <c>item-data.md</c>); nothing else of it is read here.</summary>

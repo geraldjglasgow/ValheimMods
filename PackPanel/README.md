@@ -55,6 +55,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 https://github.com/geraldjglasgow/ValheimMods/blob/main/PackPanel/CLAUDE.md#backpack-and-tacklebox-yaml-files). Every
 setting is described in the file and applies without a restart; the server's values bind every player, except your
 look and keys.
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/PackPanel/PackPanel/translations/English.yml) as `PackPanel.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

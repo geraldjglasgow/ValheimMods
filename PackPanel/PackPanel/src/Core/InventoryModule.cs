@@ -8,6 +8,7 @@ using PackPanel.Ring;
 using PackPanel.Slots;
 using PackPanel.Tackle;
 using SyncedConfig;
+using Translations;
 
 namespace PackPanel.Core
 {
@@ -28,11 +29,7 @@ namespace PackPanel.Core
             InventorySettings.Bind(synced);
             TimberFrame.Initialize();
             GamePanelTheme.Initialize();
-            Words.Register();
-            BackpackWords.Register();
-            TackleboxWords.Register();
-            Consume.ConsumeWords.Register();
-            Panels.StatTipWords.Register();
+            CraftedWords.Install();
             BackpacksFile.Initialize(synced);
             TackleboxesFile.Initialize(synced);
             CraftRecipes.Watch();
@@ -44,6 +41,7 @@ namespace PackPanel.Core
             InventorySettings.Enabled.SettingChanged += (sender, args) => PanelSize.Refresh();   // the brown look goes with it
             InventorySettings.SlotLabels.SettingChanged += (sender, args) => SlotElements.Invalidate();
             InventorySettings.SlotIcons.SettingChanged += (sender, args) => SlotElements.Invalidate();
+            Lang.Changed += SlotElements.Invalidate;   // the slot captions in the new language
         }
 
         /// <summary>Called every frame of the local player (<see cref="PlayerTick"/>): applies a layout change waiting from the settings.</summary>

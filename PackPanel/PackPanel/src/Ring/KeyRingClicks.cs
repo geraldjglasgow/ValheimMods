@@ -1,6 +1,7 @@
 using HarmonyLib;
 using PackPanel.Core;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Ring
 {
@@ -26,7 +27,7 @@ namespace PackPanel.Ring
             Vector2i cell = KeyRing.CellOf(gui.m_dragItem);
             if (cell.x < 0)
             {
-                Messages.Center(Words.NotAKey);
+                Messages.Center(Lang.Get("packpanel_notakey"));
                 return;
             }
             ItemDrop.ItemData there = InventoryState.Player.GetInventory().GetItemAt(cell.x, cell.y);

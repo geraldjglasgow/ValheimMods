@@ -1,7 +1,7 @@
 using System;
-using PackPanel.Core;
 using PatchGuard;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -34,23 +34,24 @@ namespace PackPanel.Panels
         {
             float each = (width - Between) / 2f;
             Vector2 at = new Vector2(SlotPanel.Pad, -SlotPanel.Pad);
-            Set(Find(gui, panel, "gear", Words.GearTab, () => SlotTabs.Show(SlotTab.Gear)), at, each, plan.Tab == SlotTab.Gear, true);
+            Set(Find(gui, panel, "gear", () => SlotTabs.Show(SlotTab.Gear)), "packpanel_tab_gear", at, each, plan.Tab == SlotTab.Gear, true);
             at.x += each + Between;
-            Button consumables = Find(gui, panel, "consumables", Words.ConsumablesTab, () => SlotTabs.Show(SlotTab.Consumables));
-            Set(consumables, at, each, plan.Tab == SlotTab.Consumables, plan.HasConsumables);
+            Button consumables = Find(gui, panel, "consumables", () => SlotTabs.Show(SlotTab.Consumables));
+            Set(consumables, "packpanel_tab_consumables", at, each, plan.Tab == SlotTab.Consumables, plan.HasConsumables);
         }
 
         private static string NameOf(string id) => "PackPanel_tab_" + id;
 
-        private static Button Find(InventoryGui gui, RectTransform panel, string id, string word, Action click)
+        private static Button Find(InventoryGui gui, RectTransform panel, string id, Action click)
         {
             Transform found = panel.Find(NameOf(id));
             if (found != null)
                 return found.GetComponent<Button>();
-            return gui.m_takeAllButton != null ? Make(gui, panel, id, word, click) : null;
+            return gui.m_takeAllButton != null ? Make(gui, panel, id, click) : null;
         }
 
-        private static void Set(Button button, Vector2 at, float width, bool lit, bool usable)
+        /// <summary>Placed, lit or dimmed, and captioned again each time, so a change of language shows.</summary>
+        private static void Set(Button button, string key, Vector2 at, float width, bool lit, bool usable)
         {
             if (button == null)
                 return;
@@ -65,10 +66,13 @@ namespace PackPanel.Panels
                 image.color = lit ? Lit : Dim;
             TMP_Text text = button.GetComponentInChildren<TMP_Text>(true);
             if (text != null)
+            {
+                text.text = Lang.Get(key);
                 text.color = lit ? LitText : DimText;
+            }
         }
 
-        private static Button Make(InventoryGui gui, RectTransform panel, string id, string word, Action click)
+        private static Button Make(InventoryGui gui, RectTransform panel, string id, Action click)
         {
             GameObject go = Object.Instantiate(gui.m_takeAllButton.gameObject, panel);
             go.name = NameOf(id);
@@ -78,7 +82,7 @@ namespace PackPanel.Panels
             button.onClick = new Button.ButtonClickedEvent();
             button.onClick.AddListener(() => Guard.Run("slot panel button " + id, click));
             button.navigation = new Navigation { mode = Navigation.Mode.None };
-            Caption(go, word);
+            Caption(go);
             return button;
         }
 
@@ -99,12 +103,11 @@ namespace PackPanel.Panels
                 Object.DestroyImmediate(localize);
         }
 
-        private static void Caption(GameObject go, string word)
+        private static void Caption(GameObject go)
         {
             TMP_Text text = go.GetComponentInChildren<TMP_Text>(true);
             if (text == null)
                 return;
-            text.text = Language.Localize(word);
             text.enableAutoSizing = true;
             text.fontSizeMin = 9f;
             text.fontSizeMax = 16f;

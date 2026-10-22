@@ -1,4 +1,3 @@
-using PackPanel.Core;
 using PlateColumn;
 using TMPro;
 using UnityEngine;
@@ -54,8 +53,8 @@ namespace PackPanel.Panels
             TMP_Text value = row.GetChild(1).GetComponent<TMP_Text>();
             Style(label, line.Heading ? HeadingSize : Size, line.Heading ? HeadingColour : LabelColour, true);
             Style(value, Size, ValueColour, false);
-            label.text = Language.Localize(line.Heading ? "<uppercase>" + line.Label + "</uppercase>" : line.Label);
-            value.text = Language.Localize(line.Value);
+            label.text = Localization.instance.Localize(line.Heading ? "<uppercase>" + line.Label + "</uppercase>" : line.Label);
+            value.text = Localization.instance.Localize(line.Value);
             Tip(row, line);
             float valueWidth = line.Value.Length > 0 ? value.GetPreferredValues().x : 0f;
             float labelWidth = Mathf.Max(MinLabelWidth, width - (valueWidth > 0f ? valueWidth + ValueGap : 0f));
@@ -105,7 +104,7 @@ namespace PackPanel.Panels
         {
             UITooltip tip = row.GetComponent<UITooltip>();
             if (tip != null)
-                tip.Set(line.Tip != null ? Language.Localize(line.Label) : "", line.Tip ?? "");
+                tip.Set(line.Tip != null ? Localization.instance.Localize(line.Label) : "", line.Tip ?? "");
         }
 
         private static void Text(RectTransform row, string name, TMP_FontAsset font)

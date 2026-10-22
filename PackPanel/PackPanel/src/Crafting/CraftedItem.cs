@@ -73,7 +73,7 @@ namespace PackPanel.Crafting
             }
             catch (Exception e)
             {
-                Plugin.Log.LogWarning($"the {kind.Name}'s icon could not be read: {e.Message}");
+                Plugin.Log.LogWarning($"{kind.Id}'s icon could not be read: {e.Message}");
             }
             return null;
         }

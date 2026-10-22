@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using PackPanel.Core;
+using Translations;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -18,7 +18,7 @@ namespace PackPanel.Panels
 
         public TipText Part(string source, string amount)
         {
-            Line().Append(Language.Localize(source)).Append(": <color=orange>").Append(amount).Append("</color>");
+            Line().Append(Localization.instance.Localize(source)).Append(": <color=orange>").Append(amount).Append("</color>");
             return this;
         }
 
@@ -26,18 +26,18 @@ namespace PackPanel.Panels
         {
             if (!Empty)
                 text.Append('\n');
-            Line().Append("<color=#C9A46B>").Append(Language.Localize(title)).Append("</color>");
+            Line().Append("<color=#C9A46B>").Append(Localization.instance.Localize(title)).Append("</color>");
             return this;
         }
 
         /// <summary>What the named parts leave of the total, as "Other effects", when it is at least half a unit.</summary>
         public TipText Rest(float rest, System.Func<float, string> format)
         {
-            return Mathf.Abs(rest) >= 0.5f ? Part(StatTipWords.Other, format(rest)) : this;
+            return Mathf.Abs(rest) >= 0.5f ? Part(Lang.Get("packpanel_tip_other"), format(rest)) : this;
         }
 
         /// <summary>The breakdown, or the "nothing gives this" line when no part was named.</summary>
-        public override string ToString() => Empty ? Language.Localize(StatTipWords.Nothing) : text.ToString();
+        public override string ToString() => Empty ? Lang.Get("packpanel_tip_nothing") : text.ToString();
 
         private StringBuilder Line() => Empty ? text : text.Append('\n');
 
@@ -59,6 +59,6 @@ namespace PackPanel.Panels
 
         /// <summary>A status effect's own name, or "An effect" for the game's unnamed ones.</summary>
         public static string EffectName(StatusEffect effect) =>
-            string.IsNullOrEmpty(effect.m_name) ? StatTipWords.Effect : effect.m_name;
+            string.IsNullOrEmpty(effect.m_name) ? Lang.Get("packpanel_tip_effect") : effect.m_name;
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using PackPanel.Core;
 using PackPanel.Panels;
 using PackPanel.Worn;
+using Translations;
 
 namespace PackPanel.Layout
 {
@@ -97,7 +98,7 @@ namespace PackPanel.Layout
             foreach (ItemDrop.ItemData item in overflow)
                 player.DropItem(player.GetInventory(), item, item.m_stack);
             if (overflow.Count > 0)
-                player.Message(MessageHud.MessageType.Center, string.Format(Language.Localize(Words.Dropped), overflow.Count));
+                player.Message(MessageHud.MessageType.Center, Lang.Format("packpanel_dropped", overflow.Count));
             return overflow.Count;
         }
     }

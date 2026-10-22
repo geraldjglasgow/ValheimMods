@@ -14,7 +14,7 @@ namespace PackPanel.Panels
     /// every frame). No outline: on the game's font material an outline swallowed the letters. Children of the element,
     /// so they go where the element goes and die with it when the grid rebuilds. Slot Labels off hides the name, Slot
     /// Icons off the icon (asked on GitHub 2026-10-07: the names off, the drawings kept); the icon alone sits in the
-    /// middle of the slot. A change of either sets every hint again (<see cref="SlotElements.Invalidate"/>).
+    /// middle of the slot. A change of either, or of the language, sets every hint again (<see cref="SlotElements.Invalidate"/>).
     /// </summary>
     public static class SlotLabels
     {
@@ -26,7 +26,7 @@ namespace PackPanel.Panels
         private static readonly List<InventoryElement> captioned = new List<InventoryElement>();
         private static readonly List<Transform> hints = new List<Transform>();
 
-        public static string TextFor(Slot slot) => Language.Localize(Words.Caption(slot.Kind));
+        public static string TextFor(Slot slot) => Words.Caption(slot.Kind);
 
         /// <summary>Whether an empty slot shows anything at all: its name, its icon or both.</summary>
         public static bool Shown => InventorySettings.SlotLabels.Value || InventorySettings.SlotIcons.Value;

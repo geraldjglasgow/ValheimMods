@@ -2,6 +2,7 @@ using System;
 using HarmonyLib;
 using PackPanel.Core;
 using PackPanel.Worn;
+using Translations;
 
 namespace PackPanel.Slots
 {
@@ -31,7 +32,7 @@ namespace PackPanel.Slots
             bool dragging = __instance.m_dragGo != null;
             if (dragging && !SlotDrop.Allowed(grid.GetInventory(), __instance.m_dragInventory, __instance.m_dragItem, __instance.m_dragAmount, pos))
             {
-                Messages.Center(Words.WrongSlot);
+                Messages.Center(Lang.Get("packpanel_wrongslot"));
                 return false;
             }
             if (!InventoryState.Active)

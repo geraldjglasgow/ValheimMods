@@ -11,8 +11,8 @@ namespace PackPanel.Backpacks
     /// </summary>
     public sealed class BackpackKind : CraftedKind
     {
-        public BackpackKind(string id, string word, string name, string look, float weight, BackpackStats defaults)
-            : base(id, "backpack", word, name, look, weight)
+        public BackpackKind(string id, string word, float weight, BackpackStats defaults)
+            : base(id, "backpack", word, weight)
         {
             Defaults = defaults;
             Stats = defaults;

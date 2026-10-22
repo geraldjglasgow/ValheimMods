@@ -4,19 +4,17 @@ namespace PackPanel.Crafting
 {
     /// <summary>
     /// One of PackPanel's own crafted items, a backpack or a tacklebox: its item prefab name (the name ZNetScene and ObjectDB
-    /// know it by, and its key in the item's YAML file), its group and word (its $packpanel_ words and icon), its English
-    /// name and look, its item weight and its recipe. The item is set when ZNetScene wakes; a kind whose model is missing
-    /// from its bundle keeps it null and is left out.
+    /// know it by, and its key in the item's YAML file), its group and word (its $packpanel_ words and icon: its name and
+    /// look are in <c>translations/English.yml</c>), its item weight and its recipe. The item is set when ZNetScene wakes;
+    /// a kind whose model is missing from its bundle keeps it null and is left out.
     /// </summary>
     public abstract class CraftedKind
     {
-        protected CraftedKind(string id, string group, string word, string name, string look, float weight)
+        protected CraftedKind(string id, string group, string word, float weight)
         {
             Id = id;
             Group = group;
             Word = word;
-            Name = name;
-            Look = look;
             Weight = weight;
         }
 
@@ -28,10 +26,6 @@ namespace PackPanel.Crafting
 
         /// <summary>The short word in its $packpanel_ words and its icon, "trollhide".</summary>
         public string Word { get; }
-
-        public string Name { get; }
-
-        public string Look { get; }
 
         public float Weight { get; }
 
@@ -54,8 +48,15 @@ namespace PackPanel.Crafting
         /// <summary>The bundle's prefab of the model: the AssetWorkshop asset, "packpanel_trollhide_backpack".</summary>
         public string Asset => "packpanel_" + Snake(Id.Substring("PackPanel_".Length));
 
-        public string Token => $"$packpanel_{Group}_{Word}";
+        /// <summary>The key of its name, "packpanel_backpack_trollhide"; its item's shared name is the token of it.</summary>
+        public string Key => $"packpanel_{Group}_{Word}";
 
+        public string Token => "$" + Key;
+
+        /// <summary>The key of its look, the first sentence of its description.</summary>
+        public string LookKey => Key + "_look";
+
+        /// <summary>Its description's word, made from the words and its numbers at runtime (<see cref="CraftedWords"/>).</summary>
         public string DescriptionToken => Token + "_description";
 
         public string IconResource => $"PackPanel.assets.{Group}_{Word}.png";

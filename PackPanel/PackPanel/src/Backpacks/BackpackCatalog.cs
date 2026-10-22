@@ -19,21 +19,21 @@ namespace PackPanel.Backpacks
 
         public static IReadOnlyList<BackpackKind> All { get; } = new List<BackpackKind>
         {
-            new BackpackKind("PackPanel_DeerhideSatchel", "deerhide", "Deerhide Satchel", "A small satchel of deer hide, patched with leather scraps.", 2f,
+            new BackpackKind("PackPanel_DeerhideSatchel", "deerhide", 2f,
                 new BackpackStats("piece_workbench", 2, "DeerHide:10, LeatherScraps:8", 4, 0f, false)),
-            new BackpackKind(TrollhideId, "trollhide", "Trollhide Backpack", "A roomy pack of troll leather under a ragged hide flap.", 4f,
+            new BackpackKind(TrollhideId, "trollhide", 4f,
                 new BackpackStats("forge", 1, "TrollHide:20, Bronze:2", 4, 50f, false)),
-            new BackpackKind("PackPanel_RootboundPack", "rootbound", "Rootbound Pack", "Bog leather in a frame of woven roots, its seams sealed with guck.", 5f,
+            new BackpackKind("PackPanel_RootboundPack", "rootbound", 5f,
                 new BackpackStats("forge", 2, "Iron:5, Root:10, Guck:4", 8, 50f, false)),
-            new BackpackKind("PackPanel_WolfpeltPack", "wolfpelt", "Wolfpelt Pack", "Dark leather under a shaggy wolf pelt, fastened with silver.", 5f,
+            new BackpackKind("PackPanel_WolfpeltPack", "wolfpelt", 5f,
                 new BackpackStats("forge", 3, "WolfPelt:12, Silver:6", 8, 100f, false)),
-            new BackpackKind("PackPanel_LoxHauler", "lox", "Lox Hauler", "A black metal frame hauling a load wrapped in lox fur.", 6f,
+            new BackpackKind("PackPanel_LoxHauler", "lox", 6f,
                 new BackpackStats("forge", 4, "LoxPelt:8, BlackMetal:8, LinenThread:12", 12, 100f, false)),
-            new BackpackKind("PackPanel_CarapacePack", "carapace", "Carapace Pack", "Scale hide armoured with carapace plates, stitched with blue jute.", 6f,
+            new BackpackKind("PackPanel_CarapacePack", "carapace", 6f,
                 new BackpackStats("blackforge", 1, "Carapace:12, ScaleHide:8, JuteBlue:6", 12, 150f, false)),
-            new BackpackKind("PackPanel_AsksvinPack", "asksvin", "Asksvin Pack", "Scaled asksvin hide with glowing flametal fittings.", 6f,
+            new BackpackKind("PackPanel_AsksvinPack", "asksvin", 6f,
                 new BackpackStats("blackforge", 2, "AskHide:10, FlametalNew:6, MorgenSinew:4", 16, 150f, false)),
-            new BackpackKind("PackPanel_MoosehidePack", "moosehide", "Moosehide Pack", "Heavy moose hide with a winter fur ruff, gold fittings and antler toggles.", 7f,
+            new BackpackKind("PackPanel_MoosehidePack", "moosehide", 7f,
                 new BackpackStats("blackforge", 4, "MooseHide:10, MooseSinew:4, Gold:5", 16, 200f, true)),
         };
 

@@ -9,8 +9,8 @@ namespace PackPanel.Tackle
     /// </summary>
     public sealed class TackleboxKind : CraftedKind
     {
-        public TackleboxKind(string id, string word, string name, string look, float weight, TackleboxStats defaults)
-            : base(id, "tacklebox", word, name, look, weight)
+        public TackleboxKind(string id, string word, float weight, TackleboxStats defaults)
+            : base(id, "tacklebox", word, weight)
         {
             Defaults = defaults;
             Stats = defaults;

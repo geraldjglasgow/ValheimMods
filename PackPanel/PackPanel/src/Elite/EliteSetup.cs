@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using EliteCraftingLink;
 using PackPanel.Backpacks;
-using PackPanel.Core;
 
 namespace PackPanel.Elite
 {
@@ -12,8 +11,10 @@ namespace PackPanel.Elite
     /// (soft dependency): the backpack item class with the eight packs and their item levels (the catalog lists them by
     /// biome, Meadows 1 to Deep North 8), the <c>pack_slots</c> effect and the Deep Pockets inscription
     /// (<see cref="DeepPockets"/> applies it), six of EliteCrafting's inscriptions added to the class's pool, the worn
-    /// pack as equipment (<see cref="WornPackLink"/>) and the words. Registrations are code: every peer that runs both
-    /// mods makes the same ones, the dedicated server included, and the server's EliteCrafting files still override them.
+    /// pack as equipment (<see cref="WornPackLink"/>). Registrations are code: every peer that runs both mods makes the
+    /// same ones, the dedicated server included, and the server's EliteCrafting files still override them. The words are
+    /// in <c>translations/English.yml</c>: the class's and the inscription's names, and the inscription's tooltip sentence
+    /// under the key EliteCrafting looks for in the game's localization, <c>ecf_affix_deep_pockets_line</c> ($1 the value).
     /// </summary>
     public static class EliteSetup
     {
@@ -21,7 +22,6 @@ namespace PackPanel.Elite
         {
             if (!CraftingLink.Present)
                 return;
-            RegisterWords();
             List<string> refused = new List<string>();
             Expect(CraftingClasses.RegisterItemClass(EliteDefinitions.ClassJson), "the backpack class", refused);
             Expect(CraftingClasses.ClaimItems(EliteDefinitions.ClassId, PackIds()), "the backpacks' class", refused);
@@ -33,17 +33,6 @@ namespace PackPanel.Elite
             WornPackLink.Register(refused);
             Plugin.Log.LogInfo($"EliteCrafting {CraftingLink.PluginVersion}: backpacks are a class of their own"
                 + (refused.Count > 0 ? $", refused: {string.Join(", ", refused)} (see EliteCrafting's log)" : ""));
-        }
-
-        /// <summary>
-        /// The class's and the inscription's names, and the inscription's tooltip sentence under the key EliteCrafting looks
-        /// for (<c>ecf_affix_&lt;id&gt;_line</c>, in the game's localization, $1 the value).
-        /// </summary>
-        private static void RegisterWords()
-        {
-            Language.Add("packpanel_class_backpack", "Backpacks");
-            Language.Add("packpanel_affix_deep_pockets", "Deep Pockets");
-            Language.Add("ecf_affix_" + EliteDefinitions.DeepPocketsId + "_line", "+$1 inventory slots");
         }
 
         private static string[] PackIds()

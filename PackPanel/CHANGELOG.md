@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.0
+
+- Translations: every word you read is in `translations/English.yml`; a `PackPanel.translations.<Language>.yml` in `BepInEx/config` translates it.
+
 ## 0.16.1
 
 - Fixed: players on a slow connection with many mods are no longer refused when joining a server.

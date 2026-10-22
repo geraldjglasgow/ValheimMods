@@ -1,6 +1,9 @@
 namespace PackPanel.Core
 {
-    /// <summary>Messages through the game's HUD, localized through <see cref="Language"/>. Safe before the HUD exists.</summary>
+    /// <summary>
+    /// Messages through the game's HUD, which localizes any $token left in them. The mod's own words come in already in the
+    /// player's language (<see cref="Translations.Lang"/>). Safe before the HUD exists.
+    /// </summary>
     public static class Messages
     {
         public static void Center(string text) => Show(MessageHud.MessageType.Center, text);
@@ -11,7 +14,7 @@ namespace PackPanel.Core
         {
             if (MessageHud.instance == null || string.IsNullOrEmpty(text))
                 return;
-            MessageHud.instance.ShowMessage(type, Language.Localize(text));
+            MessageHud.instance.ShowMessage(type, text);
         }
     }
 }

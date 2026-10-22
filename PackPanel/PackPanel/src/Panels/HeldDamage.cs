@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -81,7 +82,7 @@ namespace PackPanel.Panels
                 Source(tip, ammo, type, own, "+");
             float health = HealthFactor(player, attack);
             if (!Mathf.Approximately(health, 1f))
-                tip.Part(StatTipWords.MissingHealth, "x" + health.ToString("0.##"));
+                tip.Part(Lang.Get("packpanel_tip_missinghealth"), "x" + health.ToString("0.##"));
             Effects(player, weapon.m_shared.m_skillType, type, tip);
             player.GetSkills().GetRandomSkillRange(out float min, out float max, weapon.m_shared.m_skillType);
             tip.Part(HeldTips.SkillLabel(player, weapon.m_shared.m_skillType), "x" + min.ToString("0.00") + "-" + max.ToString("0.00"));

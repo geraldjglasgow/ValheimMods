@@ -33,7 +33,7 @@ namespace PackPanel.Tackle
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.LogError($"the {kind.Name} could not be built and is not in the game: {e.Message}");
+                    Plugin.Log.LogError($"the {kind.Id} could not be built and is not in the game: {e.Message}");
                 }
             }
             CraftRecipes.Install(ObjectDB.instance);
@@ -44,7 +44,7 @@ namespace PackPanel.Tackle
             GameObject model = CraftedModels.Model(Bundle, kind);
             Material look = CraftedModels.Look(scene, model);
             kind.Item = CraftedItem.Build(scene.GetPrefab(CraftedItem.BaseItem), CraftedModels.Dressed(model, "model", look), kind);
-            Plugin.Log.LogInfo($"{kind.Name} ready: {kind.Id}");
+            Plugin.Log.LogInfo($"{kind.Id} ready");
         }
     }
 }

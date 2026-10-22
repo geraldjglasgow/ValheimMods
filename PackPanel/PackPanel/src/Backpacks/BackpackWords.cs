@@ -1,42 +1,31 @@
 using System.Globalization;
-using PackPanel.Core;
+using Translations;
 
 namespace PackPanel.Backpacks
 {
     /// <summary>
-    /// The backpacks' $packpanel_backpack_ words: each pack's name and its description, which says what it gives (so it is
-    /// written again when the backpacks file changes), the message when there is no room to take a pack off, and the
-    /// tooltip's line for what items in a pack weigh (<see cref="BackpackTooltip"/>).
+    /// Each backpack's description, which says what it gives, so it is made from the words and the backpacks file's
+    /// numbers: its look, where it is worn, its slots and carry weight, and the portal line for a pack that has one.
+    /// <see cref="Crafting.CraftedWords"/> writes it again when the file or the language changes. The packs' names and
+    /// the other backpack words are in <c>translations/English.yml</c>.
     /// </summary>
     public static class BackpackWords
     {
-        public static string NoRoom { get; private set; }
-
-        public static string Load { get; private set; } = "$packpanel_backpack_load";
-
-        public static void Register()
-        {
-            foreach (BackpackKind kind in BackpackCatalog.All)
-                Language.Add(kind.Token.Substring(1), kind.Name);
-            NoRoom = Language.Add("packpanel_backpack_noroom", "No room in your inventory to take the backpack off");
-            Load = Language.Add("packpanel_backpack_load", "Weight of items in it");
-            DescribeAll();
-        }
-
         public static void DescribeAll()
         {
             foreach (BackpackKind kind in BackpackCatalog.All)
-                Language.Add(kind.DescriptionToken.Substring(1), Describe(kind));
+                Lang.Add(kind.DescriptionToken, Describe(kind));
         }
 
         private static string Describe(BackpackKind kind)
         {
             BackpackStats stats = kind.Stats;
-            string gives = $"+{stats.Slots} inventory slots";
-            if (stats.Carry > 0f)
-                gives += $" and +{stats.Carry.ToString("0", CultureInfo.InvariantCulture)} carry weight";
-            string portal = stats.Portal ? " What its slots hold may go through portals, if the server allows it." : "";
-            return $"{kind.Look} Put it in your Backpack slot to wear it: {gives} while it is on your back. Taking it off drops what does not fit. Upgrade it at its station: each level slows you less and lightens what it holds.{portal}";
+            string carry = stats.Carry.ToString("0", CultureInfo.InvariantCulture);
+            string gives = stats.Carry > 0f
+                ? Lang.Format("packpanel_backpack_gives_slots_carry", stats.Slots, carry)
+                : Lang.Format("packpanel_backpack_gives_slots", stats.Slots);
+            string text = Lang.Format("packpanel_backpack_describe", Lang.Get(kind.LookKey), gives);
+            return stats.Portal ? Lang.Format("packpanel_backpack_describe_portal", text) : text;
         }
     }
 }

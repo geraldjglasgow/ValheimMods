@@ -1,6 +1,7 @@
 using Hotkeys;
 using PackPanel.Core;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Consume
 {
@@ -24,7 +25,7 @@ namespace PackPanel.Consume
             if ((!food && slot < 0) || !Ready(player))
                 return;
             if (food && SlotMeals.TakeAll(player, SlotKind.Food) == 0)
-                Messages.Center(ConsumeWords.NothingToEat);
+                Messages.Center(Lang.Get("packpanel_nothingtoeat"));
             if (slot >= 0)
                 MeadSlotKeys.Drink(player, slot);
         }

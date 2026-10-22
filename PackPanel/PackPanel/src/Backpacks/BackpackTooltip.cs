@@ -1,5 +1,6 @@
 using System.Globalization;
 using HarmonyLib;
+using Translations;
 
 namespace PackPanel.Backpacks
 {
@@ -28,7 +29,7 @@ namespace PackPanel.Backpacks
         {
             string speed = (BackpackLevels.Speed(level) * 100f).ToString("+0;-0;0", CultureInfo.InvariantCulture);
             string load = (BackpackLevels.Load(level) * 100f).ToString("0", CultureInfo.InvariantCulture);
-            return $"\n$item_movement_modifier: <color=orange>{speed}%</color>\n{BackpackWords.Load}: <color=orange>{load}%</color>";
+            return $"\n$item_movement_modifier: <color=orange>{speed}%</color>\n{Lang.Token("packpanel_backpack_load")}: <color=orange>{load}%</color>";
         }
     }
 }

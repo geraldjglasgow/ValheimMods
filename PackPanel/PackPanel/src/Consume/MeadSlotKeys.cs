@@ -5,6 +5,7 @@ using HarmonyLib;
 using Hotkeys;
 using PackPanel.Core;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Consume
 {
@@ -41,7 +42,7 @@ namespace PackPanel.Consume
             Inventory inventory = player.GetInventory();
             ItemDrop.ItemData item = inventory.GetItemAt(cell.x, cell.y);
             if (item == null)
-                Messages.Center(ConsumeWords.SlotEmpty);
+                Messages.Center(Lang.Get("packpanel_meadslotempty"));
             else
                 player.UseItem(inventory, item, true);
         }

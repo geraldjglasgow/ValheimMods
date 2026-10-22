@@ -6,7 +6,7 @@
     <RootNamespace>PackPanel</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.16.1</Version>
+    <Version>0.17.0</Version>
     <Product>PackPanel</Product>
     <Description>PackPanel: a bigger inventory, labelled slots, backpacks and a new look for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -43,6 +43,8 @@
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
     <!-- EliteCrafting's public API bound by reflection: nothing of EliteCrafting is referenced (src/Elite) -->
     <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -116,6 +118,8 @@
   <ItemGroup>
     <!-- Default YAML files, written next to the .cfg when none exists. Add a file to config/ and it is embedded. -->
     <EmbeddedResource Include="config\*.yml" LogicalName="PackPanel.config.%(Filename)%(Extension)" />
+    <!-- The words, read by the Translations library as PackPanel.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="PackPanel.translations.%(Filename)%(Extension)" />
     <!-- UI images, decoded at runtime by PlateColumn's EmbeddedSprite. Keep them small: the in-game size, not the source. -->
     <EmbeddedResource Include="assets\*.png" LogicalName="PackPanel.assets.%(Filename)%(Extension)" />
     <!-- The backpacks' and the tackleboxes' models (AssetWorkshop packpanel_*), one asset bundle per platform each. -->

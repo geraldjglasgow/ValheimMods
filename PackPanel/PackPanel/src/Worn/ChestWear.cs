@@ -3,6 +3,7 @@ using HarmonyLib;
 using PackPanel.Backpacks;
 using PackPanel.Core;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Worn
 {
@@ -41,7 +42,7 @@ namespace PackPanel.Worn
             ItemDrop.ItemData there = own.GetItemAt(cell.x, cell.y);
             if (there != null && !GearOut.HasRoom(own, kind))
             {
-                Messages.Center(Words.NoRoomOff);
+                Messages.Center(Lang.Get("packpanel_noroomoff"));
                 return;
             }
             if (there != null)

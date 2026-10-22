@@ -16,13 +16,13 @@ namespace PackPanel.Tackle
 
         public static IReadOnlyList<TackleboxKind> All { get; } = new List<TackleboxKind>
         {
-            new TackleboxKind("PackPanel_DriftwoodTacklebox", "driftwood", "Driftwood Tacklebox", "A plain wooden box covered in furs.", 2f,
+            new TackleboxKind("PackPanel_DriftwoodTacklebox", "driftwood", 2f,
                 new TackleboxStats("piece_workbench", 2, "Wood:10, LeatherScraps:10, DeerHide:5", 1)),
-            new TackleboxKind("PackPanel_FinewoodTacklebox", "finewood", "Finewood Tacklebox", "A fine wood box wrapped in troll leather, with bronze corners and clasp.", 3f,
+            new TackleboxKind("PackPanel_FinewoodTacklebox", "finewood", 3f,
                 new TackleboxStats("piece_workbench", 3, "PackPanel_DriftwoodTacklebox:1, FineWood:10, TrollHide:10, Bronze:2", 2)),
-            new TackleboxKind("PackPanel_CarapaceTacklebox", "carapace", "Carapace Tacklebox", "A Yggdrasil wood box coated in carapace plates.", 3f,
+            new TackleboxKind("PackPanel_CarapaceTacklebox", "carapace", 3f,
                 new TackleboxStats("blackforge", 1, "PackPanel_FinewoodTacklebox:1, Carapace:10, YggdrasilWood:10", 6)),
-            new TackleboxKind("PackPanel_FlametalTacklebox", "flametal", "Flametal Tacklebox", "A flametal box covered in asksvin hide.", 4f,
+            new TackleboxKind("PackPanel_FlametalTacklebox", "flametal", 4f,
                 new TackleboxStats("blackforge", 3, "PackPanel_CarapaceTacklebox:1, FlametalNew:5, AskHide:10", 8)),
         };
 

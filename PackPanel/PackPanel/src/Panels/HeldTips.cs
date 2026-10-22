@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -55,7 +56,7 @@ namespace PackPanel.Panels
         public static string Stamina(Player player, ItemDrop.ItemData weapon, float cost)
         {
             Attack attack = weapon.m_shared.m_attack;
-            TipText tip = new TipText().Part(StatTipWords.Base, cost.ToString("0.#"));
+            TipText tip = new TipText().Part(Lang.Get("packpanel_tip_base"), cost.ToString("0.#"));
             float gear = GearModifier(player, attack);
             if (Mathf.Abs(gear) >= 0.005f)
                 tip.Part(Player.s_equipmentModifierTooltips[attack.m_isHomeItem ? 1 : 4], TipText.Percent(gear));
@@ -71,7 +72,7 @@ namespace PackPanel.Panels
 
         /// <summary>A cost the skill alone lowers (eitr, health): the base, then the skill's cut.</summary>
         public static string Cost(Player player, ItemDrop.ItemData weapon, float cost) =>
-            Skill(player, weapon.m_shared.m_skillType, new TipText().Part(StatTipWords.Base, cost.ToString("0.#")), -SkillCut).ToString();
+            Skill(player, weapon.m_shared.m_skillType, new TipText().Part(Lang.Get("packpanel_tip_base"), cost.ToString("0.#")), -SkillCut).ToString();
 
         public static string Block(Player player, ItemDrop.ItemData item)
         {
@@ -98,7 +99,7 @@ namespace PackPanel.Panels
                     tip.Part(TipText.EffectName(effect), TipText.Percent(bonus - 1f));
             }
             float armour = item.GetBlockPower(player.GetSkillFactor(Skills.SkillType.Blocking)) * ParryBonus(player, item);
-            return tip.Part(StatTipWords.ParryArmour, TipText.Whole(armour)).ToString();
+            return tip.Part(Lang.Get("packpanel_tip_parryarmor"), TipText.Whole(armour)).ToString();
         }
 
         /// <summary>The skill's part at the player's level: <paramref name="atHundred"/> of the value at skill 100.</summary>
@@ -112,7 +113,7 @@ namespace PackPanel.Panels
         public static string SkillLabel(Player player, Skills.SkillType skill)
         {
             if (skill == Skills.SkillType.None)
-                return StatTipWords.Skill;
+                return Lang.Get("packpanel_tip_skill");
             return "$skill_" + skill.ToString().ToLowerInvariant() + " " + Mathf.FloorToInt(player.GetSkillLevel(skill));
         }
     }

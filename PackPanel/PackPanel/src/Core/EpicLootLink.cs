@@ -61,7 +61,7 @@ namespace PackPanel.Core
         /// <summary>The effect as Epic Loot words it, with the total in it; the type's name when it has no words.</summary>
         public static string Line(string type, float value)
         {
-            string format = Language.Localize(DisplayText(type));
+            string format = Localization.instance.Localize(DisplayText(type));
             if (string.IsNullOrEmpty(format) || format.StartsWith("["))
                 return Spaced(type) + " " + value.ToString("0.#");
             try

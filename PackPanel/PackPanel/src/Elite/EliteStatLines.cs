@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using EliteCraftingLink;
-using PackPanel.Core;
 using PackPanel.Panels;
+using Translations;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
@@ -51,17 +51,17 @@ namespace PackPanel.Elite
                     if (source is YamlMappingNode map)
                         tip.Part(Field(map, "item"), Field(map, "value"));
             if (Field(entry, "capped") == "true")
-                tip.Heading(StatTipWords.Capped);
+                tip.Heading(Lang.Get("packpanel_tip_capped"));
             return tip.ToString();
         }
 
         private static string Title(string category)
         {
-            string group = category == "offense" ? Words.StatOffence
-                : category == "defense" ? Words.StatDefence
-                : category == "utility" ? Words.Utility
-                : Words.StatOther;
-            return Words.StatEliteCrafting + " · " + group;
+            string group = category == "offense" ? Lang.Get("packpanel_stat_offence")
+                : category == "defense" ? Lang.Get("packpanel_stat_defence")
+                : category == "utility" ? Lang.Get("packpanel_utility")
+                : Lang.Get("packpanel_stat_other");
+            return Lang.Get("packpanel_stat_elitecrafting") + " · " + group;
         }
 
         private static List<YamlMappingNode> Entries(Player player)

@@ -98,12 +98,12 @@ namespace PackPanel.Crafting
             recipe.m_enabled = kind.Craftable && station != null;
             recipe.m_craftingStation = station;
             recipe.m_minStationLevel = kind.Recipe.Level;
-            Piece.Requirement[] cost = CostText.Parse(db, kind.Recipe.Cost, kind.Name);
-            recipe.m_resources = cost.Length > 0 ? cost : CostText.Parse(db, kind.DefaultRecipe.Cost, kind.Name);
+            Piece.Requirement[] cost = CostText.Parse(db, kind.Recipe.Cost, kind.Id);
+            recipe.m_resources = cost.Length > 0 ? cost : CostText.Parse(db, kind.DefaultRecipe.Cost, kind.Id);
             if (kind is BackpackKind)
                 BackpackLevels.PriceUpgrades(recipe.m_resources);
             if (station == null)
-                Plugin.Log.LogWarning($"{kind.Name}: no crafting station named \"{kind.Recipe.Station}\"; it cannot be crafted");
+                Plugin.Log.LogWarning($"{kind.Id}: no crafting station named \"{kind.Recipe.Station}\"; it cannot be crafted");
         }
 
         private static CraftingStation Station(ObjectDB db, string name)

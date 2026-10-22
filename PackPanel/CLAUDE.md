@@ -12,7 +12,8 @@ methods, the names, the decisions and the in-game test checklist.
 Rules that apply to every change:
 
 - Clean room as in `../CLAUDE.md`. Own names everywhere: GUID `milkyteam.packpanel`, config `milkyteam.packpanel.cfg`,
-  YAML `PackPanel.Backpacks.yml` and `PackPanel.Tackleboxes.yml`, words `$packpanel_*`, custom data and ZDO keys
+  YAML `PackPanel.Backpacks.yml` and `PackPanel.Tackleboxes.yml`, words `$packpanel_*` (in
+  `PackPanel/translations/English.yml`, see "Words" under "Network and file names"), custom data and ZDO keys
   `PackPanel.<name>`, prefabs and GameObjects `PackPanel_<Name>`, Charter articles `packpanel_backpacks` and
   `packpanel_tackleboxes`, the model bundles `packpanel_backpacks` and `packpanel_tackleboxes` with the ValheimAssets
   assets `packpanel_<pack>` and `packpanel_<box>_tacklebox`.
@@ -102,7 +103,7 @@ upgraded into a plain one).
   (name `$packpanel_affix_deep_pockets` "Deep Pockets", prefix, family `charms_fortune`, category utility, best on
   `backpack` only, ladder `{ count: 4, from: 1, min: 1, max: 4 }`: +1 at item level 1, +2 at 3, +3 at 6, +4 at 8); its
   tooltip sentence under the key EliteCrafting looks for, `ecf_affix_deep_pockets_line` "+$1 inventory slots" (it asks
-  the game's localization for `ecf_affix_<id>_line`; PackPanel's `Language.Add` puts it there); EliteCrafting's own
+  the game's localization for `ecf_affix_<id>_line`; PackPanel's `translations/English.yml` puts it there); EliteCrafting's own
   `broad_back` and `pack_mule` (best fit) and `lightened`, `gossamer`, `magpie`, `harvester` (allowed) in the class's
   pool; the equipment provider `packpanel` and an item-changed listener (`Elite/WornPackLink`). The ids `deep_pockets`
   and `pack_slots` are the user's, not `packpanel_` ones: an EliteCrafting YAML entry with the same id would win (it
@@ -154,7 +155,8 @@ upgraded into a plain one).
 ```
 PackPanel/PackPanel/src/Elite/
   EliteDefinitions.cs   the ids and the JSON of the class, effect and inscription, the pool additions
-  EliteSetup.cs         Register (Plugin.Awake): words, class, claims, levels, effect, inscription, pools, the link
+  EliteSetup.cs         Register (Plugin.Awake): class, claims, levels, effect, inscription, pools, the link (the
+                        words are in translations/English.yml)
   WornPackLink.cs       the equipment provider (the worn pack and the extra worn utilities), InvalidatePlayer on a
                         change, the item-changed listener
   EliteStatLines.cs     the stat sheet's EliteCrafting sections (GetPlayerInscriptionsJson), each line's per-item tip
@@ -185,7 +187,7 @@ PackPanel/PackPanel/src/
     InventorySettings.cs    sections 1. Inventory, 2. Slots, 5. Look (the key ring, backpacks and tacklebox bind 3., 4.
                             and 6.)
     InventoryState.cs       the local player and its layout; Manages(inventory), SlotAt, CellsOf, ItemIn, BlockedCells
-    Words.cs                the $packpanel_ words: slot captions, the key ring's words, the messages
+    Words.cs                the slot captions' keys (the other words are read where they show, with Lang)
     PlayerTick.cs           Player.Update postfix: the waiting layout change, the worn backpack's slots, the
                             tacklebox's cells, pruning extra utilities
     WearGate.cs             when PlayerTick checks the backpack, tacklebox and Auto Equip: on an inventory change or a
@@ -196,8 +198,7 @@ PackPanel/PackPanel/src/
                             (SeparateBoots, BootsChanged): the Feet slot
     AaaCraftingLink.cs      AAA Crafting present (GUID in the chainloader): the crafting panel keeps its size
     EpicLootLink.cs         Epic Loot's active effects, totals and display texts through its public API, by reflection
-    Language.cs, Messages.cs, ItemNames.cs   words to the game's localization, HUD messages, prefab names (read
-                            once per drop prefab)
+    Messages.cs, ItemNames.cs   HUD messages, prefab names (read once per drop prefab)
   Layout/
     InventoryLayout.cs      width, main rows (a worn pack's included), backpack slots and blocked cells, the ordered
                             slots; slot k is cell (k % width, mainRows + k / width); the record 1|W|R|ids
@@ -217,8 +218,8 @@ PackPanel/PackPanel/src/
     CarryWeight.cs          Base Carry Weight and the worn pack's carry: Player.GetMaxCarryWeight postfix
   Consume/                  the Food Key and the Mead Slot keys (section 2. Slots, per player) and the Food and Mead
                             bar (5. Look, per player)
-    ConsumeSettings.cs, ConsumeWords.cs   the keys (Z, Left Alt + 1..5; the YAML editor registered with the Hotkeys
-                            library's Typing), the "nothing to eat" and "mead slot empty" words
+    ConsumeSettings.cs      the keys (Z, Left Alt + 1..5; the YAML editor registered with the Hotkeys library's
+                            Typing)
     ConsumeKeys.cs          PlayerTick: a press outside the inventory (Player.TakeInput) and build mode
                             (Player.InPlaceMode) eats from the Food slots or drinks from one Mead slot
     MeadSlotKeys.cs         a Mead Slot key drinks its one slot's mead (Humanoid.UseItem, the game's messages);
@@ -298,7 +299,7 @@ PackPanel/PackPanel/src/
                             applying sets the stats, the recipes and the words
     Backpack.cs, BackpackSettings.cs, BackpackWords.cs   the worn pack (Backpack slot of a layout; the local player's;
                             the slots for the next layout from the recorded one), the ZDO key; section 4. Backpacks;
-                            names, descriptions (what the pack gives, rewritten on change), message
+                            descriptions (what the pack gives, made from the words and the file's numbers)
     BackpackPrefab.cs       ZNetScene.Awake (BundlePrefabs.NetPrefabs): each model of the bundle, the item
                             (Crafting/CraftedItem) and the worn copy; registered in ZNetScene and ObjectDB (ItemPrefabs)
     BackpackWear.cs         the local player's frame: re-layout when the worn pack or its slots changed, the ZDO key
@@ -319,8 +320,10 @@ PackPanel/PackPanel/src/
     BackpackTooltip.cs      ItemData.GetTooltip postfix: the level's movement and weight lines (the next level's in
                             the upgrade tab)
   Crafting/                 what the backpacks and the tackleboxes share
-    CraftedKind.cs, CraftStats.cs   a crafted item: prefab id, group and word (its words, icon, bundle asset), English
-                            name and look, weight, the item; station, level and cost
+    CraftedKind.cs, CraftStats.cs   a crafted item: prefab id, group and word (its word keys: name, look and
+                            description; icon, bundle asset), weight, the item; station, level and cost
+    CraftedWords.cs         the descriptions written into the words (Lang.Add) at start, when an item file applies
+                            and on every change of language
     CraftRecipes.cs, CostText.cs   ObjectDB.Awake and CopyOtherDB postfixes: one Recipe per crafted item in every
                             database, refreshed on every change; the cost text as requirements (own items from their
                             catalogs, so a recipe that takes the one before holds)
@@ -336,8 +339,7 @@ PackPanel/PackPanel/src/
     TackleboxesModel.cs, TackleboxesFile.cs   PackPanel.Tackleboxes*.yml (article packpanel_tackleboxes): per box
                             overrides; applying sets the stats, the recipes and the words
     Tacklebox.cs, TackleboxSettings.cs, TackleboxWords.cs   the box in the Tacklebox slot of a layout, the cells for the
-                            next layout from the recorded one; section 6. Tacklebox; names, descriptions, captions,
-                            message
+                            next layout from the recorded one; section 6. Tacklebox; descriptions (how many cells)
     TackleboxPrefab.cs      ZNetScene.Awake: each box's item from the bundle packpanel_tackleboxes
     TackleboxWear.cs        the local player's frame: re-layout when the box or its cells changed
     TackleRules.cs          what a box takes: bait (ammo of the FishingRod's ammo type) and Tackle Items
@@ -388,7 +390,7 @@ PackPanel/PackPanel/src/
                             write; the sheet as lines with sections and a change key
     SheetLines.cs, GearStatLines.cs, EffectGroups.cs   everything it lists; the game's numbers (its getters and words);
                             Epic Loot's effects grouped by words in their type names
-    StatTips.cs, GearTips.cs, TipText.cs, StatTipWords.cs   each line's breakdown for its hover tooltip: health,
+    StatTips.cs, GearTips.cs, TipText.cs   each line's breakdown for its hover tooltip: health,
                             stamina, eitr, armour, carry weight; movement, durability, resistances, modifiers
     HeldStatLines.cs, HeldItems.cs   a section per weapon or shield in hand (sheathed ones too): damage, attack costs,
                             knockback, backstab; the blocker's block armour, block force, parry, block modifiers
@@ -414,6 +416,8 @@ PackPanel/PackPanel/src/
                             Image.OnEnable postfix)
     TimberBackground.cs, TimberFrame.cs, TimberCoordinates.cs   the timber wallpaper aligned to the screen and the rim
 PackPanel/PackPanel/config/ the embedded default PackPanel.Backpacks.yml and PackPanel.Tackleboxes.yml
+PackPanel/PackPanel/translations/ English.yml, every player-facing word (embedded; see "Words" under "Network and file
+                            names")
 PackPanel/PackPanel/assets/ embedded images: panel.png, cell.png, button*.png, icon_<slot>.png, ring_*.png (painted by
                             skin_art.py next to them: `python skin_art.py <out folder>`, then copy the PNGs here; never
                             write preview.png into this folder since every PNG here is embedded), timber_*.png
@@ -448,7 +452,8 @@ postfix `Inventory.GetBoundItems`, `Inventory.GetHotbar`, `Humanoid.UnequipItem`
 `Player.UpdateModifiers`, `Humanoid.GetEquipmentWeight`, `Humanoid.UpdateEquipment`, `InventoryGrid.UpdateGui`,
 `InventoryGui.UpdateContainer`, `Player.Update`, `Player.UseHotbarItem` (prefix: skipped while a Mead Slot key's modifier is held), `Player.GetMaxCarryWeight` (Base Carry Weight; any player, only the
 local one's matters), `Hud.Update` (private; one postfix, `Core/HudTick`: the Food and Mead bar, Weight Under Minimap and the inventory warm-up), `InventoryGui.UpdateInventoryWeight` (postfix: the weight box's
-text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words),
+text stacked as weight over capacity, `WeightDisplay`), `Localization.SetupLanguage` (the words; patched by hand by the
+merged Translations library),
 `UnityEngine.UI.Image.OnEnable` (Panel Theme: a newly shown wood panel is themed on the next frame). The backpacks:
 prefix `Humanoid.UseItem` (local player, from the inventory screen), `Inventory.IsTeleportable` (the local player's
 inventory, Backpack Portal Pass only); postfix
@@ -579,17 +584,33 @@ tackleboxes:
   PlateColumn boxes `..._packpanel_armor` (the HUD copy of the armour box) and `..._packpanel_weight`.
 - Files next to the cfg: `PackPanel.Backpacks.yml`, `PackPanel.Tackleboxes.yml`.
 - Charter articles: `packpanel_backpacks`, `packpanel_tackleboxes`, plus the cfg sync of the shared libraries.
-- Localization keys: `$packpanel_head`, `_chest`, `_legs`, `_feet`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`, `_ammo`,
-  `_coins`, `_wrongslot`, `_dropped`, `_noroomoff`, the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings
-  `_stat_resistances`, `_stat_gear`, `_stat_epicloot`, `_stat_elitecrafting`, `_stat_offence`, `_stat_defence`, `_stat_resources`,
-  `_stat_movement`, `_stat_skills`, `_stat_other`, and for the key ring `_keys`,
-  `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, for the consume keys `_nothingtoeat`, `_meadslotempty` (`_nothingtodrink` went with the Mead Key), for the stat breakdowns `_tip_base`, `_tip_other`,
-  `_tip_nothing`, `_tip_effect`, `_tip_carry`, `_tip_world`, `_tip_heaviest`, `_tip_missinghealth`, `_tip_parryarmor`, `_tip_skill`, `_tip_capped` (the stat sheet uses the game's own `$item_`, `$inventory_` and `$se_` words); backpacks
-  `$packpanel_backpack_<word>` and `$packpanel_backpack_<word>_description` for deerhide, trollhide, rootbound,
-  wolfpelt, lox, carapace, asksvin and moosehide, and `$packpanel_backpack_noroom`; the tacklebox `$packpanel_tackle`
-  (the slot's caption), `$packpanel_bait` (a cell's), `$packpanel_tacklebox_full`, and
-  `$packpanel_tacklebox_<word>` and `$packpanel_tacklebox_<word>_description` for driftwood, finewood, carapace and
-  flametal.
+- Words: every word a player reads from PackPanel is in `PackPanel/translations/English.yml` (flat `key: "text"`, one
+  line each, `$1`, `$2` ... for values), embedded and read by the shared Translations library (`Lang.Install` first in
+  `Plugin.Awake`). A translator copies it as `PackPanel.translations.<Language>.yml` into `BepInEx/config` (or ships it
+  under `BepInEx/plugins`); keys left out stay English. Code reads `Lang.Get("packpanel_...")` for text shown as is,
+  `Lang.Format(key, values)` for text with values, `Lang.Token(key)` where the game localizes the text itself (the key
+  ring's tooltip, the backpack tooltip's cached line). Keys, all kept from before the library: the slot captions
+  `$packpanel_head`, `_chest`, `_legs`, `_feet`, `_back`, `_backpack`, `_utility`, `_trinket`, `_food`, `_mead`,
+  `_ammo`, `_coins`, `_keys`, `_tackle`, `_bait` (`Core/Words`), the messages `_wrongslot`, `_dropped`, `_noroomoff`,
+  the tabs `_tab_gear`, `_tab_consumables`, the stat sheet's headings `_stat_resistances`, `_stat_gear`,
+  `_stat_epicloot`, `_stat_elitecrafting`, `_stat_offence`, `_stat_defence`, `_stat_resources`, `_stat_movement`,
+  `_stat_skills`, `_stat_other`, the key ring's `_keyring`, `_nokeysheld`, `_notakey`, `_keynew`, `_keysnew`, the
+  consume keys' `_nothingtoeat`, `_meadslotempty`, the stat breakdowns' `_tip_base`, `_tip_other`, `_tip_nothing`,
+  `_tip_effect`, `_tip_carry`, `_tip_world`, `_tip_heaviest`, `_tip_missinghealth`, `_tip_parryarmor`, `_tip_skill`,
+  `_tip_capped` (the stat sheet's lines use the game's own `$item_`, `$inventory_`, `$skill_` and `$se_` words); each
+  pack's name `$packpanel_backpack_<word>` and look `_look` (deerhide, trollhide, rootbound, wolfpelt, lox, carapace,
+  asksvin, moosehide), `$packpanel_backpack_load`, `_noroom`; each box's name `$packpanel_tacklebox_<word>` and look
+  `_look` (driftwood, finewood, carapace, flametal), `$packpanel_tacklebox_full`; with EliteCrafting
+  `$packpanel_class_backpack`, `$packpanel_affix_deep_pockets` and EliteCrafting's key `ecf_affix_deep_pockets_line`.
+- Descriptions: `$packpanel_backpack_<word>_description` and `$packpanel_tacklebox_<word>_description` (the items'
+  `m_description` tokens) are not in the YAML: `Crafting/CraftedWords` builds them with `Lang.Add` from the look and
+  the templates `packpanel_backpack_describe` (with `_gives_slots` or `_gives_slots_carry`, and `_describe_portal` for
+  a pack with `portal: true`) and `packpanel_tacklebox_describe` (with `_one_cell` or `_cells`), filled with the item
+  files' numbers; again when a file applies and on every change of language (`Lang.Changed`, its own writes ignored).
+- Left English on purpose: log lines, the .cfg's sections, keys and descriptions, the YAML files' keys and validation
+  messages, the YAML editor's "Edit backpacks"/"Edit tackleboxes" buttons, the `pack_slots` effect's description handed
+  to EliteCrafting's API, Epic Loot's effect type names where Epic Loot gives no words, and every published name
+  (custom data keys, GameObject names, the `EE_Boots_` prefix, config entries read through the chainloader).
 - No RPC, no console command.
 
 ## Decisions
@@ -701,7 +722,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   finalizer (`EquipPatches.Break`) hold `WornPlacement.OnTakenOff` back; `GearKeep`'s guards skip it while broken and put
   it on again once repaired. A broken piece the player takes off (armour at 0 durability stays worn) moves out as any.
   Backpacks: their slot was already worn by lying there (`BackpackEquip.Sync`); right click on the worn pack with no
-  room says so and leaves it on (`BackpackWords.NoRoom`, with or without Auto Equip), and a pack right clicked in a
+  room says so and leaves it on (`packpanel_backpack_noroom`, with or without Auto Equip), and a pack right clicked in a
   chest swaps in like armour. Off: no chest right click, no wearing of what lies unworn in a slot, and a piece taken
   off with a full grid stays in its slot unworn.
 - Worn utilities (three by default, up to five): the game has one `m_utilityItem`. The others are a list on the local
@@ -1231,7 +1252,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.16.1]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.17.0]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;
@@ -1377,7 +1398,8 @@ screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's 
     and the panel keeps its size; the key ring's pop-up still hangs under the panel. Back to Gear. With an item picked
     up, click the other tab and drop it in a slot there: it lands (nothing falls on the ground). The gamepad's B, Y and
     X do nothing to the tabs (the take-all key is not on them). `Food Slots`, `Mead Slots` and `Ammo Slots` all 0:
-    Consumables is greyed and the panel stays on Gear. Change the game's language: the captions stay the tabs' words.
+    Consumables is greyed and the panel stays on Gear. Change the game's language: the tabs keep their own words, in
+    the new language, as do the slot captions, the stat sheet and the key ring's tooltip.
 35. Stat sheet: a dark inset with round corners, small text (12), no value out of line with its label. Health, Stamina
     and Armour match the HUD bars and the armour box; eat an eitr
     food: Eitr appears.

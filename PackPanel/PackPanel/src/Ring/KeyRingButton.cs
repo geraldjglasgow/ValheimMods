@@ -4,6 +4,7 @@ using PackPanel.Look;
 using PackPanel.Panels;
 using PackPanel.Slots;
 using TMPro;
+using Translations;
 using UnityEngine;
 
 namespace PackPanel.Ring
@@ -105,7 +106,10 @@ namespace PackPanel.Ring
             shownCounts = (int[])counts.Clone();
         }
 
-        /// <summary>The tooltip: every key held and how many, in ring order; written only when it changed.</summary>
+        /// <summary>
+        /// The tooltip: every key held and how many, in ring order; written only when it changed. Words go in as $tokens,
+        /// which the tooltip localizes when it shows, so they follow a change of language.
+        /// </summary>
         private static void ShowList(InventoryGui gui, int[] counts)
         {
             StringBuilder text = new StringBuilder();
@@ -115,11 +119,11 @@ namespace PackPanel.Ring
                 if (key != null)
                     text.Append(text.Length > 0 ? "\n" : "").Append(key.m_shared.m_name).Append(": <color=orange>").Append(counts[number]).Append("</color>");
             }
-            string list = text.Length > 0 ? text.ToString() : Words.NoKeysHeld;
+            string list = text.Length > 0 ? text.ToString() : Lang.Token("packpanel_nokeysheld");
             if (list == shownList)
                 return;
             shownList = list;
-            button.m_tooltip.Set(Words.KeyRing, list, gui.m_playerGrid.m_tooltipAnchor);
+            button.m_tooltip.Set(Lang.Token("packpanel_keyring"), list, gui.m_playerGrid.m_tooltipAnchor);
         }
 
         private static InventoryElement Make(InventoryGui gui, RectTransform panel)

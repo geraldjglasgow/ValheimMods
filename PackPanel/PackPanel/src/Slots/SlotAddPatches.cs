@@ -1,5 +1,6 @@
 using HarmonyLib;
 using PackPanel.Core;
+using Translations;
 
 namespace PackPanel.Slots
 {
@@ -22,7 +23,7 @@ namespace PackPanel.Slots
             {
                 if (SlotDrop.Allowed(__instance.GetInventory(), fromInventory, item, amount, pos))
                     return true;
-                Messages.Center(Words.WrongSlot);
+                Messages.Center(Lang.Get("packpanel_wrongslot"));
                 __result = false;
                 return false;
             }

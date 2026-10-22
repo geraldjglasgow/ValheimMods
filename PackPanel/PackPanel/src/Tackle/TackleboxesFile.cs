@@ -31,7 +31,7 @@ namespace PackPanel.Tackle
             foreach (TackleboxKind kind in TackleboxCatalog.All)
                 kind.Stats = read.Stats.TryGetValue(kind.Id, out TackleboxStats stats) ? stats : kind.Defaults;
             CraftRecipes.RefreshAll();
-            TackleboxWords.DescribeAll();
+            CraftedWords.WriteAll();
             Plugin.Log.LogInfo($"PackPanel: tackleboxes applied, {read.Stats.Count} set in the file.");
         }
     }

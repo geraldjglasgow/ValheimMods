@@ -16,8 +16,9 @@ using SyncedConfig;
 namespace PackPanel
 {
     /// <summary>
-    /// Plugin entry. <see cref="InventoryModule"/> binds the settings, registers the backpacks' and tackleboxes' YAML
-    /// files and the words; with EliteCrafting present (loaded first, soft dependency) the backpacks are registered with
+    /// Plugin entry. The words (<c>translations/English.yml</c>, the Translations library) go in first; then
+    /// <see cref="InventoryModule"/> binds the settings, registers the backpacks' and tackleboxes' YAML files and writes
+    /// their descriptions; with EliteCrafting present (loaded first, soft dependency) the backpacks are registered with
     /// it (<see cref="EliteSetup"/>); patches are applied per class afterwards, the backpacks' and tackleboxes' prefabs
     /// hook ZNetScene, Guard.Install goes last.
     /// </summary>
@@ -28,7 +29,7 @@ namespace PackPanel
     {
         public const string PluginGuid = "milkyteam.packpanel";
         public const string PluginName = "PackPanel";
-        public const string PluginVersion = "0.16.1";
+        public const string PluginVersion = "0.17.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -39,13 +40,14 @@ namespace PackPanel
         {
             Instance = this;
             Log = Logger;
+            Harmony harmony = new Harmony(PluginGuid);
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "PackPanel", Logger);
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             LockConfiguration = Synced.BindLocking("General", "Lock Configuration", true,
                 "[Server Only] Clients cannot change synced settings while connected to a server that has this on.");
             InventoryModule.Initialize(Synced);
             EliteSetup.Register();
 
-            Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);
             BackpackPrefab.Install(harmony);
             TackleboxPrefab.Install(harmony);

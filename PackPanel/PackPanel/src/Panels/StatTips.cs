@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace PackPanel.Panels
@@ -26,7 +27,7 @@ namespace PackPanel.Panels
         {
             TipText tip = new TipText();
             if (start > 0f)
-                tip.Part(StatTipWords.Base, TipText.Whole(start));
+                tip.Part(Lang.Get("packpanel_tip_base"), TipText.Whole(start));
             float sum = start;
             foreach (Player.Food food in player.m_foods)
             {
@@ -64,9 +65,9 @@ namespace PackPanel.Panels
 
         public static string Weight(Player player)
         {
-            TipText tip = new TipText().Heading(StatTipWords.CarryWeight);
+            TipText tip = new TipText().Heading(Lang.Get("packpanel_tip_carry"));
             float sum = player.m_maxCarryWeight;
-            tip.Part(StatTipWords.Base, TipText.Whole(sum));
+            tip.Part(Lang.Get("packpanel_tip_base"), TipText.Whole(sum));
             foreach (StatusEffect effect in player.GetSEMan().GetStatusEffects())
             {
                 if (!(effect is SE_Stats stats) || Mathf.Abs(stats.m_addMaxCarryWeight) < 0.5f)
@@ -76,7 +77,7 @@ namespace PackPanel.Panels
             }
             float rate = Game.m_carryWeightRate;
             if (!Mathf.Approximately(rate, 1f))
-                tip.Part(StatTipWords.World, "x" + rate.ToString("0.##"));
+                tip.Part(Lang.Get("packpanel_tip_world"), "x" + rate.ToString("0.##"));
             tip.Rest(player.GetMaxCarryWeight() - sum * rate, TipText.Signed);
             Heaviest(player, tip);
             return tip.ToString();
@@ -90,11 +91,11 @@ namespace PackPanel.Panels
             if (items.Count == 0)
                 return;
             items.Sort((a, b) => b.GetWeight().CompareTo(a.GetWeight()));
-            tip.Heading(StatTipWords.Heaviest);
+            tip.Heading(Lang.Get("packpanel_tip_heaviest"));
             for (int i = 0; i < items.Count && i < HeaviestShown; i++)
             {
                 ItemDrop.ItemData item = items[i];
-                string name = item.m_stack > 1 ? PackPanel.Core.Language.Localize(item.m_shared.m_name) + " x" + item.m_stack : item.m_shared.m_name;
+                string name = item.m_stack > 1 ? Localization.instance.Localize(item.m_shared.m_name) + " x" + item.m_stack : item.m_shared.m_name;
                 tip.Part(name, TipText.Whole(item.GetWeight()));
             }
         }

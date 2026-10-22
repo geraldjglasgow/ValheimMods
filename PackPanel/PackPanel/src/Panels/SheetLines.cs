@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using PackPanel.Core;
 using PackPanel.Elite;
+using Translations;
 
 namespace PackPanel.Panels
 {
@@ -23,9 +24,9 @@ namespace PackPanel.Panels
                 return;
             GearStatLines.Core(player, sheet);
             HeldStatLines.Fill(player, sheet);
-            sheet.Section(Words.StatResistances);
+            sheet.Section(Lang.Get("packpanel_stat_resistances"));
             GearStatLines.Resistances(player, sheet);
-            sheet.Section(Words.StatGear);
+            sheet.Section(Lang.Get("packpanel_stat_gear"));
             GearStatLines.Modifiers(player, sheet);
             if (EpicLootLink.ActiveTypes(player, types))
                 foreach (EffectGroups.Group group in EffectGroups.Order)

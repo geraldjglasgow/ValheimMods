@@ -1,115 +1,36 @@
-using PackPanel.Backpacks;
-using PackPanel.Ring;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Core
 {
-    /// <summary>The $packpanel_ words: the slot captions, the slot panel's tabs, the key ring's words and the messages.</summary>
+    /// <summary>
+    /// The slot captions, in the player's language: each slot kind's $packpanel_ word (<c>translations/English.yml</c>).
+    /// The mod's other words are read where they are shown, with <see cref="Lang"/>.
+    /// </summary>
     public static class Words
     {
-        public static string Head { get; private set; }
-        public static string Chest { get; private set; }
-        public static string Legs { get; private set; }
-        public static string Feet { get; private set; }
-        public static string Back { get; private set; }
-        public static string Backpack { get; private set; }
-        public static string Utility { get; private set; }
-        public static string Trinket { get; private set; }
-        public static string Food { get; private set; }
-        public static string Mead { get; private set; }
-        public static string Ammo { get; private set; }
-        public static string Coins { get; private set; }
-        public static string Keys { get; private set; }
-        public static string KeyRing { get; private set; }
-        public static string NoKeysHeld { get; private set; }
-        public static string NotAKey { get; private set; }
-        public static string KeyNew { get; private set; }
-        public static string KeysNew { get; private set; }
-        public static string WrongSlot { get; private set; }
-        public static string Dropped { get; private set; }
-        public static string NoRoomOff { get; private set; }
-        public static string GearTab { get; private set; }
-        public static string ConsumablesTab { get; private set; }
-        public static string StatResistances { get; private set; }
-        public static string StatGear { get; private set; }
-        public static string StatEpicLoot { get; private set; }
-        public static string StatEliteCrafting { get; private set; }
-        public static string StatOffence { get; private set; }
-        public static string StatDefence { get; private set; }
-        public static string StatResources { get; private set; }
-        public static string StatMovement { get; private set; }
-        public static string StatSkills { get; private set; }
-        public static string StatOther { get; private set; }
-
-        public static void Register()
-        {
-            RegisterCaptions();
-            KeyRing = Language.Add("packpanel_keyring", "Key ring");
-            NoKeysHeld = Language.Add("packpanel_nokeysheld", "You carry no keys");
-            NotAKey = Language.Add("packpanel_notakey", "Only keys go on the key ring");
-            KeyNew = Language.Add("packpanel_keynew", "{0} went onto your key ring");
-            KeysNew = Language.Add("packpanel_keysnew", "{0} new keys went onto your key ring");
-            WrongSlot = Language.Add("packpanel_wrongslot", "That does not go in that slot");
-            Dropped = Language.Add("packpanel_dropped", "No room for {0} items: dropped at your feet");
-            NoRoomOff = Language.Add("packpanel_noroomoff", "No room in your inventory to take that off");
-            GearTab = Language.Add("packpanel_tab_gear", "Gear");
-            ConsumablesTab = Language.Add("packpanel_tab_consumables", "Consumables");
-            RegisterStats();
-        }
-
-        /// <summary>The slot captions.</summary>
-        private static void RegisterCaptions()
-        {
-            Head = Language.Add("packpanel_head", "Head");
-            Chest = Language.Add("packpanel_chest", "Chest");
-            Legs = Language.Add("packpanel_legs", "Legs");
-            Feet = Language.Add("packpanel_feet", "Feet");
-            Back = Language.Add("packpanel_back", "Back");
-            Backpack = Language.Add("packpanel_backpack", "Backpack");
-            Utility = Language.Add("packpanel_utility", "Utility");
-            Trinket = Language.Add("packpanel_trinket", "Trinket");
-            Food = Language.Add("packpanel_food", "Food");
-            Mead = Language.Add("packpanel_mead", "Mead");
-            Ammo = Language.Add("packpanel_ammo", "Ammo");
-            Coins = Language.Add("packpanel_coins", "Coins");
-            Keys = Language.Add("packpanel_keys", "Keys");
-        }
-
-        /// <summary>The stat sheet's headings.</summary>
-        private static void RegisterStats()
-        {
-            StatResistances = Language.Add("packpanel_stat_resistances", "Resistances");
-            StatGear = Language.Add("packpanel_stat_gear", "Gear bonuses");
-            StatEpicLoot = Language.Add("packpanel_stat_epicloot", "Epic Loot");
-            StatEliteCrafting = Language.Add("packpanel_stat_elitecrafting", "EliteCrafting");
-            StatOffence = Language.Add("packpanel_stat_offence", "Offence");
-            StatDefence = Language.Add("packpanel_stat_defence", "Defence");
-            StatResources = Language.Add("packpanel_stat_resources", "Health and stamina");
-            StatMovement = Language.Add("packpanel_stat_movement", "Movement");
-            StatSkills = Language.Add("packpanel_stat_skills", "Skills");
-            StatOther = Language.Add("packpanel_stat_other", "Other");
-        }
-
         /// <summary>The caption of a slot kind.</summary>
-        public static string Caption(SlotKind kind)
+        public static string Caption(SlotKind kind) => Lang.Get(CaptionKey(kind));
+
+        private static string CaptionKey(SlotKind kind)
         {
             switch (kind)
             {
-                case SlotKind.Head: return Head;
-                case SlotKind.Chest: return Chest;
-                case SlotKind.Legs: return Legs;
-                case SlotKind.Feet: return Feet;
-                case SlotKind.Back: return Back;
-                case SlotKind.Backpack: return Backpack;
-                case SlotKind.Utility: return Utility;
-                case SlotKind.Trinket: return Trinket;
-                case SlotKind.Food: return Food;
-                case SlotKind.Mead: return Mead;
-                case SlotKind.Ammo: return Ammo;
-                case SlotKind.Key: return Keys;
-                case SlotKind.Tacklebox: return Tackle.TackleboxWords.Tacklebox;
-                case SlotKind.Tackle: return Tackle.TackleboxWords.Bait;
-                default: return Coins;
+                case SlotKind.Head: return "packpanel_head";
+                case SlotKind.Chest: return "packpanel_chest";
+                case SlotKind.Legs: return "packpanel_legs";
+                case SlotKind.Feet: return "packpanel_feet";
+                case SlotKind.Back: return "packpanel_back";
+                case SlotKind.Backpack: return "packpanel_backpack";
+                case SlotKind.Utility: return "packpanel_utility";
+                case SlotKind.Trinket: return "packpanel_trinket";
+                case SlotKind.Food: return "packpanel_food";
+                case SlotKind.Mead: return "packpanel_mead";
+                case SlotKind.Ammo: return "packpanel_ammo";
+                case SlotKind.Key: return "packpanel_keys";
+                case SlotKind.Tacklebox: return "packpanel_tackle";
+                case SlotKind.Tackle: return "packpanel_bait";
+                default: return "packpanel_coins";
             }
         }
     }

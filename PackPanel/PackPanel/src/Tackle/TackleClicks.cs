@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using HarmonyLib;
 using PackPanel.Core;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Tackle
 {
@@ -26,7 +27,7 @@ namespace PackPanel.Tackle
             Vector2i cell = Target(grid.GetInventory(), __instance.m_dragItem);
             if (cell.x < 0)
             {
-                Messages.Center(TackleboxWords.Full);
+                Messages.Center(Lang.Get("packpanel_tacklebox_full"));
                 return false;
             }
             pos = cell;

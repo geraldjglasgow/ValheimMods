@@ -3,6 +3,7 @@ using HarmonyLib;
 using PackPanel.Core;
 using PackPanel.Layout;
 using PackPanel.Slots;
+using Translations;
 
 namespace PackPanel.Backpacks
 {
@@ -51,7 +52,7 @@ namespace PackPanel.Backpacks
             Vector2i cell = MainCells.FindEmptyOffPack(inventory, InventoryState.Layout);
             if (cell.x < 0)
             {
-                Messages.Center(BackpackWords.NoRoom);
+                Messages.Center(Lang.Get("packpanel_backpack_noroom"));
                 return;
             }
             item.m_gridPos = cell;
