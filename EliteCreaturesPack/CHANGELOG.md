@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.4
+
+- Polish translation, used while the game's language is Polish.
+
 ## 0.12.3
 
 - Fixed: the Crypt Executioner swings only where its axe reaches, so its slam, sweep and spin hit again (#38).

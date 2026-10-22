@@ -1,0 +1,96 @@
+# Elite Creatures Pack - Polish words (Polski), 2026-10-22
+#
+# Used while the game's language is Polish. The keys are the ones in English.yml beside this file; a key left out
+# stays English.
+
+# The kraken
+enemy_ecp_kraken: "Kraken"
+se_ecp_inked: "Zalane atramentem"
+se_ecp_inked_tooltip: "Atrament w twoich oczach."
+item_ecp_krakenbeak: "Dziób Krakena"
+item_ecp_krakenbeak_description: "Zakrzywiony dziób Krakena — ciemny róg z bursztynową krawędzią, zdolną rozciąć kadłub statku. Kowal mógłby oprawić go w tarczę."
+item_ecp_krakenmeat: "Surowe macki Krakena"
+item_ecp_krakenmeat_description: "Gruby kawałek ramienia Krakena, wraz z przyssawkami. Upiecz go na żelaznym ruszcie do gotowania."
+item_ecp_krakenmeatcooked: "Pieczone macki Krakena"
+item_ecp_krakenmeatcooked_description: "Przypieczona macka o wyrazistym smaku i zwartej konsystencji. Doda sił wioślarzom nawet podczas najdłuższej nocy."
+item_ecp_shieldkraken: "Tarcza Krakena"
+item_ecp_shieldkraken_description: "Szlachetne drewno i srebro oplatają dziób Krakena. Sparuj nią cios, a dziób odda uderzenie."
+
+# The Crypt Executioner
+enemy_ecp_headsman: "Kryptowy Egzekutor"
+# Its attacks (never shown)
+item_ecp_headsman_slam: "Topór egzekutora"
+item_ecp_headsman_scrape: "Topór egzekutora"
+item_ecp_headsman_spin: "Topór egzekutora"
+item_ecp_headsman_hurl: "Topór egzekutora"
+item_ecp_headsman_spinthrow: "Topór egzekutora"
+item_ecp_headsman_rear: "Topór egzekutora"
+# The players' greataxe and its axehead
+item_ecp_executionergreataxe: "Wielki topór egzekutora"
+item_ecp_executionergreataxe_description: "Wielki topór Kryptowego Egzekutora, którego trzonek połączono z kręgów. Broń tnie, obraca się dookoła, a następnie spada z góry; po ostatnim ciosie długo dochodzi się do siebie."
+item_ecp_executioneraxehead: "Głowica topora egzekutora"
+item_ecp_executioneraxehead_description: "Kostna głowica topora Kryptowego Egzekutora. Osadź ją na trzonku z kolców przy stole warsztatowym, a znów będzie gotowa do walki."
+
+# The Rime Giant
+enemy_ecp_rimegiant: "Lodowy olbrzym"
+# Its attacks
+item_ecp_rimegiant_sweep: "Lodowa pięść"
+item_ecp_rimegiant_slam: "Lawina"
+item_ecp_rimegiant_throw: "Lodowy głaz"
+
+# The crypt mimic (while it sleeps it shows the game's own chest words)
+enemy_ecp_cryptmimic: "Kryptowy naśladowca"
+item_ecp_cryptmimic_bite: "Ugryzienie naśladowcy"
+
+# The Greydwarf Slinger
+enemy_ecp_greydwarfslinger: "Miotacz greydwarfów"
+item_ecp_slinger_shot: "Kamień z procy"
+
+# The arsenal skeletons
+enemy_ecp_skeletoncutthroat: "Szkieletowy rzezimieszek"
+enemy_ecp_skeletonswordsman: "Szkieletowy szermierz"
+enemy_ecp_skeletonaxeman: "Szkieletowy topornik"
+enemy_ecp_skeletonbonebreaker: "Szkieletowy łamacz kości"
+enemy_ecp_skeletonspearman: "Szkieletowy włócznik"
+enemy_ecp_skeletonhalberdier: "Szkieletowy halabardnik"
+enemy_ecp_skeletonbowman: "Szkieletowy łucznik"
+# The bone weapons
+item_ecp_bonedagger: "Kostny sztylet"
+item_ecp_bonedagger_description: "Jego ostrze wykonano z pojedynczego kręgu, a rękojeść z szeregu mniejszych. Szybki, cichy i bezlitosny."
+item_ecp_bonesword: "Kostny miecz"
+item_ecp_bonesword_description: "Ostrze z kości z kręgosłupem biegnącym przez środek, kręgiem pełniącym funkcję jelca i kolejnymi kręgami tworzącymi rękojeść."
+item_ecp_boneaxe: "Kostny topór"
+item_ecp_boneaxe_description: "Kostne ostrze osadzone w kręgu i zamocowane na trzonku z kręgosłupa. Rozcina zarówno ciało, jak i drewno."
+item_ecp_bonemace: "Kostna maczuga"
+item_ecp_bonemace_description: "Zbiór kręgów osadzonych na trzonku z kręgosłupa. Wystarczająco ciężka, by zmiażdżyć wszystko, co napotka."
+item_ecp_bonespear: "Kostna włócznia"
+item_ecp_bonespear_description: "Dolną część drzewca tworzą długie kości, górną — kręgosłup, a grot wykonano z płaskiej kości."
+item_ecp_boneatgeir: "Kostny atgeir"
+item_ecp_boneatgeir_description: "Połączenie długich kości i kręgosłupa, zakończone zakrzywionym kostnym ostrzem i haczykowatym kłem. Trzyma nieumarłych na dystans."
+item_ecp_bonebow: "Kostny łuk"
+item_ecp_bonebow_description: "Żebra tworzą ramiona łuku, a kręgosłup — uchwyt. Zmarli potrafią się nim posługiwać; ty też dasz radę."
+# The spine and the bone arrows
+item_ecp_spine: "Kręgosłup"
+item_ecp_spine_description: "Fragment starego kręgosłupa, wciąż twardy jak kamień. Szkielety budują wokół niego swoje bronie."
+item_ecp_arrowbone: "Kostna strzała"
+item_ecp_arrowbone_description: "Drzewce z kości zakończone zaostrzonym kręgiem. Lepsza niż drewniana, ale gorsza od krzemiennej."
+# The Skeleton Crossbowman and the Bone Crossbow
+enemy_ecp_skeletoncrossbowman: "Szkieletowy kusznik"
+item_ecp_skeletoncrossbow: "Kusza"
+item_ecp_bonecrossbow: "Kostna kusza"
+item_ecp_bonecrossbow_description: "Kusza z kości, wykonana tak, jak robią to nieumarli: kość udowa służy za łoże, kręgosłup za cięciwę, a żebra za ramiona. Uderza jak maczuga, niezależnie od użytego bełtu."
+item_ecp_boltboneblunt: "Tępy kostny bełt"
+item_ecp_boltboneblunt_description: "Bełt do kostnej kuszy wykonany z kości, z tępym grotem i bez lotek. Miażdży kości zamiast je przebijać."
+# The Bone Ballista
+piece_ecp_boneballista: "Kostna balista"
+piece_ecp_boneballista_description: "Mała balista z kości, której ramiona wykonano z dwóch kręgosłupów. Przytrzymaj przycisk, aby wycelować i strzelić. Broń przeładowuje się kostnymi pociskami, które masz przy sobie, i obraca o 45 stopni w każdą stronę."
+item_ecp_bonemissile: "Kostny pocisk"
+item_ecp_bonemissile_description: "Pocisk do kostnej balisty: długie kostne drzewce z kłem w roli grotu i kostnymi płytkami pełniącymi funkcję lotek."
+# The Bone Ballista's hover: its name, then "(loaded)" or "(empty)", then [E] Hold or Let go
+hud_ecp_bal_hold: "Przytrzymaj"
+hud_ecp_bal_letgo: "Puść"
+hud_ecp_bal_loaded: "załadowana"
+hud_ecp_bal_empty: "pusta"
+# The Bone Ballista's messages to its holder
+msg_ecp_bal_nomissiles: "Brak kostnych pocisków"
+msg_ecp_bal_behind: "Stań za balistą, aby ją obsługiwać"
