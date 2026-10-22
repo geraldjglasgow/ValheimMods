@@ -30,17 +30,17 @@ namespace Wayfare.SeaGates
         private static bool Answerable =>
             SeaGateScan.Seeded || !WayfareConfig.Enabled.Value || !WayfareConfig.SeaGatesEnabled.Value;
 
-        /// <summary>Null when the jump is granted, otherwise the denial token to send back.</summary>
+        /// <summary>Null when the jump is granted, otherwise the key of the denial reason to send back.</summary>
         private static string Evaluate(long sender, long sourceId, long destId, ZDOID shipId, out ZDO destAnchor, out ZDO destPartner)
         {
             destAnchor = null;
             destPartner = null;
             if (!WayfareConfig.Enabled.Value || !WayfareConfig.SeaGatesEnabled.Value)
-                return SeaGateGrant.DeniedClosed;
+                return SeaGateWords.DeniedClosed;
             if (TeleportGate.Blocked(out string blockedReason))
                 return blockedReason;
             if (!SeaGateIndex.TryFindOnServer(sourceId, out _, out _))
-                return SeaGateGrant.DeniedClosed;
+                return SeaGateWords.DeniedClosed;
             if (destId == sourceId)
                 return SeaGateWords.DeniedGone;
             // A gate with no side deep enough to exit on is never paired, but a ship must never be sent to one.
@@ -82,7 +82,7 @@ namespace Wayfare.SeaGates
         {
             if (PortalAccess.MayTarget(destAnchor, playerId, isAdmin))
                 return null;
-            return PortalFields.GetMode(destAnchor) == PortalMode.Admin ? SeaGateGrant.DeniedAdmin : SeaGateGrant.DeniedPrivate;
+            return PortalFields.GetMode(destAnchor) == PortalMode.Admin ? SeaGateWords.DeniedAdmin : SeaGateWords.DeniedPrivate;
         }
     }
 }

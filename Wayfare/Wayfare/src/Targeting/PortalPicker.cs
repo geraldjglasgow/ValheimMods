@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 using Wayfare.Core;
@@ -34,7 +35,7 @@ namespace Wayfare.Targeting
                 return;
             if (!PortalFields.HasName(portal.m_nview.GetZDO()))
             {
-                player.Message(MessageHud.MessageType.Center, Words.PickerUnnamed);
+                player.Message(MessageHud.MessageType.Center, Lang.Get(Words.PickerUnnamed));
                 return;
             }
             if (window == null)
@@ -52,7 +53,7 @@ namespace Wayfare.Targeting
             chosen = ZDOID.None;
             PortalRegistry.Refresh(); // a portal built since the last check shows once the server answers
             Refill();
-            window.Show(Words.PickerTopic, Words.PickerGo);
+            window.Show(Lang.Get(Words.PickerTopic), Lang.Get(Words.PickerGo));
         }
 
         public static void Close()
@@ -128,7 +129,7 @@ namespace Wayfare.Targeting
             if (labels == null)
             {
                 chosen = ZDOID.None;
-                dropdown.AddOptions(new List<string> { Localization.instance.Localize(Words.PickerNone) });
+                dropdown.AddOptions(new List<string> { Lang.Get(Words.PickerNone) });
                 return;
             }
             dropdown.AddOptions(labels);

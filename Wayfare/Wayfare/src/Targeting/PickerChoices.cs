@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
+using Wayfare.Core;
 using Wayfare.Portals;
 
 namespace Wayfare.Targeting
@@ -47,7 +49,9 @@ namespace Wayfare.Targeting
 
         private static string Distance(float metres)
         {
-            return metres < 1000f ? Mathf.RoundToInt(metres) + " m" : (metres / 1000f).ToString("0.0") + " km";
+            if (metres < 1000f)
+                return Lang.Format(Words.DistanceMetres, Mathf.RoundToInt(metres));
+            return Lang.Format(Words.DistanceKilometres, (metres / 1000f).ToString("0.0"));
         }
     }
 }

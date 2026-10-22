@@ -73,7 +73,7 @@ namespace Wayfare.SeaGates
             into.Add(new DepthSample(surface, depth, side, depth >= minDepth));
         }
 
-        /// <summary>The verdict token for the water between the pillars, or null when it is deep enough everywhere: no
+        /// <summary>The verdict's key for the water between the pillars, or null when it is deep enough everywhere: no
         /// water at all when every spot is dry, else too shallow, with the shallowest depth found.</summary>
         public static string SpanProblem(List<DepthSample> samples, out float shallowest)
         {

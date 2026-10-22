@@ -62,10 +62,11 @@ namespace Wayfare.Targeting
                 Minimap.instance.SetMapMode(Minimap.MapMode.Small);
         }
 
-        public static void Deny(string localizedReasonToken)
+        /// <summary>The server's refusal, in this player's language.</summary>
+        public static void Deny(string reason)
         {
             if (Player.m_localPlayer != null)
-                Player.m_localPlayer.Message(MessageHud.MessageType.Center, localizedReasonToken);
+                Player.m_localPlayer.Message(MessageHud.MessageType.Center, reason);
         }
     }
 

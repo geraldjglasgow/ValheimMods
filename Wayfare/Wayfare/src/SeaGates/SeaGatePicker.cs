@@ -1,7 +1,7 @@
 using HarmonyLib;
 using MapClicks;
+using Translations;
 using UnityEngine;
-using Wayfare.Core;
 using Wayfare.Targeting;
 
 namespace Wayfare.SeaGates
@@ -18,13 +18,6 @@ namespace Wayfare.SeaGates
     public static class SeaGatePicker
     {
         private const float ResendSeconds = 1f;
-
-        private static readonly string HelmHint = Language.Add("wf_sg_picker_hint",
-            "Click a sea gate to sail there. Close the map to sail on. The crew sees your pointer.");
-        private static readonly string CrewHint = Language.Add("wf_sg_picker_crew",
-            "{0} at the helm picks the sea gate. The crew sees your pointer.");
-        private static readonly string Helmsman = Language.Add("wf_sg_helmsman", "The helmsman");
-        private static readonly string HelmPicks = Language.Add("wf_sg_helm_picks", "Only the helmsman picks the sea gate");
 
         private static long sourceId;
         private static int closedStop;     // the last stop whose map this player closed
@@ -135,12 +128,12 @@ namespace Wayfare.SeaGates
             ShipControlls controls = AtHelm ? null : Ship.m_shipControlls;
             long user = controls != null ? controls.GetUser() : 0L;
             Player helmsman = user != 0L ? Player.GetPlayer(user) : null;
-            if (hint != null && AtHelm == hintAtHelm && user == hintUser && helmsman == hintHelmsman && Language.Revision == hintRevision)
+            if (hint != null && AtHelm == hintAtHelm && user == hintUser && helmsman == hintHelmsman && Lang.Version == hintRevision)
                 return hint;
             hintAtHelm = AtHelm;
             hintUser = user;
             hintHelmsman = helmsman;
-            hintRevision = Language.Revision;
+            hintRevision = Lang.Version;
             hint = HintText(helmsman);
             return hint;
         }
@@ -148,9 +141,9 @@ namespace Wayfare.SeaGates
         private static string HintText(Player helmsman)
         {
             if (AtHelm)
-                return Localization.instance.Localize(HelmHint);
-            string name = helmsman != null ? helmsman.GetPlayerName() : Localization.instance.Localize(Helmsman);
-            return string.Format(Localization.instance.Localize(CrewHint), name);
+                return Lang.Get(SeaGateWords.PickerHelmHint);
+            string name = helmsman != null ? helmsman.GetPlayerName() : Lang.Get(SeaGateWords.Helmsman);
+            return Lang.Format(SeaGateWords.PickerCrewHint, name);
         }
 
         /// <summary>The player left the large map (Escape, the map key, the inventory): the helmsman's ship sails on;
@@ -187,7 +180,7 @@ namespace Wayfare.SeaGates
             if (!Active || !SeaGateMapIcons.TryHit(screenPos, out long gateId))
                 return false;
             if (!AtHelm && Player.m_localPlayer != null)
-                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, HelmPicks);
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, Lang.Get(SeaGateWords.HelmPicks));
             else if (gateId != sourceId)
                 IconClick.Hold(() => Pick(gateId));
             return true;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 using Wayfare.Core;
 
@@ -73,7 +74,7 @@ namespace Wayfare.SeaGates
         {
             Player player = Player.m_localPlayer;
             if (player != null && Vector3.Distance(player.transform.position, position) <= AnnounceDistance)
-                player.Message(MessageHud.MessageType.Center, SeaGateWords.Paired);
+                player.Message(MessageHud.MessageType.Center, Lang.Get(SeaGateWords.Paired));
         }
 
         /// <summary>Owner side of <see cref="SeaGateFields.PairRpc"/> on the existing pillar. The request can arrive

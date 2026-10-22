@@ -195,7 +195,7 @@ namespace Wayfare.SeaGates
             if (!Steady(found, ref fallbackReadySince))
                 return false;
             Land(p, pos, rot);
-            p.Message(MessageHud.MessageType.Center, SeaGateWords.Fallback);
+            p.Message(MessageHud.MessageType.Center, Translations.Lang.Get(SeaGateWords.Fallback));
             return true;
         }
 

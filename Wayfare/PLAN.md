@@ -94,7 +94,8 @@ Two different actions need two different authorities, and neither is "trust the 
   `GetServerPeerID()`), which is the single authoritative party for the whole session on both a dedicated server and
   a hosted game, and already holds every ZDO regardless of who currently owns it for replication. The server checks
   mode + owner + admin status and replies `wf_TeleportGranted` (with the destination position/rotation) or
-  `wf_TeleportDenied` (with a reason) directly to the requesting peer. On single player / a listening host the
+  `wf_TeleportDenied` (with the reason as a `LangWire` word, so the player reads it in their own language) directly
+  to the requesting peer. On single player / a listening host the
   server is the same process, so the RPC resolves synchronously with no network round trip
   (`ZRoutedRpc.InvokeRoutedRPC` special-cases `targetPeerID == m_id`).
 - The requesting **client** performs the actual teleport itself, on grant, by calling `Player.TeleportTo(pos, rot,
@@ -156,11 +157,14 @@ exercised on every server start, not just as an edge case).
 
 ```
 Wayfare/Wayfare/src/
-  Plugin.cs                     entry: WayfareConfig.Initialize, Harmony.PatchAll, Synced.Finish, Guard.Install
+  Plugin.cs                     entry: WayfareConfig.Initialize, Harmony.PatchAll, Lang.Install, Synced.Finish,
+                                Guard.Install
   Core/
     WayfareConfig.cs             SyncedConfiguration bindings (General, Map, Favourites sections), PortalsOn, InMode
     TeleportMode.cs              the Teleport Mode enum: Map, TargetTeleport, Default
-    Language.cs                  $wf_ words, Localization.SetupLanguage postfix
+    Words.cs                     the keys of the portal words (sea gates: SeaGates/SeaGateWords.cs)
+    (words)                      the Translations library (ValheimModLibs): every word a player sees is in
+                                 Wayfare/Wayfare/translations/English.yml, read with Lang.Get/Format/Token
     (hotkeys)                    the Hotkeys library (ValheimModLibs): fires while W is held, nothing while typing
   Portals/
     PortalDiscovery.cs            Game.Awake postfix: TeleportWorld-component scan into PortalPrefabHash
@@ -197,6 +201,7 @@ Wayfare/Wayfare/src/
     JumpScreen.cs                 Screen Only When Loading: no teleport screen into a loaded area, a faster fade
     JumpPatches.cs                Player.UpdateTeleport prefix, Player.TeleportTo postfix, Hud.UpdateBlackScreen prefix
 Wayfare/Wayfare/config/           (none yet - no YAML needed, cfg-only)
+Wayfare/Wayfare/translations/     English.yml: the words, embedded; a translation is Wayfare.translations.<Language>.yml
 ```
 
 ## Own names
@@ -206,7 +211,9 @@ Wayfare/Wayfare/config/           (none yet - no YAML needed, cfg-only)
 - RPCs: `wf_RequestSetMode` (routed, to the server), `wf_SetMode` (on the portal's `ZNetView`, from the server
   only), `wf_RequestTeleport` / `wf_TeleportGranted` / `wf_TeleportDenied` (routed, `ZRoutedRpc`).
 - Player custom data: `Wayfare.favourites`.
-- Localization keys: `$wf_*`.
+- Word keys: `wf_*` (`wf_sg_*` for sea gates), in `translations/English.yml`, read through the Translations library;
+  the game sees them as `$wf_*` tokens (piece name and description, the crew's refusals). Text the server sends a
+  player travels as words, never in the server's language.
 - Console: none added - nothing in the spec needs one, and Wayfare's state is either visible on the map itself or
   server-enforced, unlike Lockstep/OpenKeep's admin-facing commands.
 
@@ -356,7 +363,8 @@ that nobody may die or be lost at sea in a jump: every step below exists for tha
    which takes it only from the helmsman's machine and only for this stop, writes `wf_sg_picked` and asks the server:
    `wf_SeaGateRequest` (source gate id, picked gate id, ship). The server checks both gates exist and are paired,
    access to the picked gate for the helmsman and `NoPortals`, then replies `wf_SeaGateGrant` (both destination pillar
-   positions, which sides are usable) or `wf_SeaGateDeny` (with the picked gate). A denial is told to the crew and
+   positions, which sides are usable) or `wf_SeaGateDeny` (with the picked gate and the reason's word key). A denial
+   is told to the crew (as the word's `$` token, which each crew client words in its own language) and
    clears the pick, the map stays open. Closing the map sends a pick of 0: the ship sails on with its speed and is
    not stopped by that gate again until it has left the 30 m zone or its centre has crossed (`wf_sg_sailon`,
    `wf_sg_sailside`, kept in the ZDO so a new owner knows). Leaving the helm or switching sea gates off sails on too.
@@ -429,7 +437,7 @@ that nobody may die or be lost at sea in a jump: every step below exists for tha
 ```
 Wayfare/Wayfare/src/SeaGates/
   foundation   SeaGateFields (keys, ids, RPC names), GateGeometry, SeaGateRegistry (loaded gates), JumpOrder,
-               SeaGateWords, SeaGateDriver (per-frame ticks)
+               SeaGateWords (word keys), SeaGateDriver (per-frame ticks)
   pillar       SeaGatePiece, SeaGatePieceRecipe, SeaGateFooting, SeaGatePillar, SeaGatePillarHover
   pairing      SeaGatePairing, SeaGatePairRules, SeaGateDepth, SeaGatePreview, SeaGatePreviewLine
   surface      SeaGateSurface, SeaGateSurfaceView/Frame/Template/Effect/Fit/Particles/Sheet/Look

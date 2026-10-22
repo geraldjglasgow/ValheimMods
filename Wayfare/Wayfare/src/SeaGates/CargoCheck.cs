@@ -32,15 +32,16 @@ namespace Wayfare.SeaGates
                 zdo.Set(SeaGateFields.HeavyKey, heavy);
         }
 
-        /// <summary>Ship owner: true when the ship may not jump because of what it or its crew carries.</summary>
-        public static bool Blocked(Ship ship, out string reasonToken)
+        /// <summary>Ship owner: true when the ship may not jump because of what it or its crew carries;
+        /// <paramref name="reasonKey"/> is the key of the word that says so.</summary>
+        public static bool Blocked(Ship ship, out string reasonKey)
         {
-            reasonToken = null;
+            reasonKey = null;
             if (ship == null || WayfareConfig.AllowRestrictedCargo.Value)
                 return false;
             if (ContainersTeleportable(ship) && CrewTeleportable(ship))
                 return false;
-            reasonToken = SeaGateWords.DeniedCargo;
+            reasonKey = SeaGateWords.DeniedCargo;
             return true;
         }
 

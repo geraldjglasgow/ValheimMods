@@ -33,7 +33,9 @@ namespace Wayfare.SeaGates
     /// owner's client asks (<see cref="RequestRpc"/>, routed to the server, never to a pillar's owner); the server
     /// decides (<see cref="SeaGateGrantServer"/>) and answers with a grant or a denial, which this client keeps per
     /// source gate for <see cref="LifeSeconds"/>. Answers are taken only from the server, so no other client can forge
-    /// one. The latest answer wins: a grant clears the gate's denial and a denial clears its grant.</summary>
+    /// one. The latest answer wins: a grant clears the gate's denial and a denial clears its grant. A denial carries the
+    /// key of its reason (<see cref="SeaGateWords"/>), never text: this client only passes it on to the crew
+    /// (<see cref="JumpChoice.TellCrew"/>), whose clients each word it in their own language.</summary>
     public static class SeaGateGrant
     {
         public const string RequestRpc = "wf_SeaGateRequest";
@@ -45,12 +47,6 @@ namespace Wayfare.SeaGates
 
         // At most one request per gate in this time, while an answer is on its way.
         private const float RequestGapSeconds = 2f;
-
-        // Here rather than with the server code: these fields initialise on every machine (EnsureRegistered reads
-        // this class's statics), so a client knows the words the server sends it.
-        internal static readonly string DeniedClosed = Language.Add("wf_sg_denied_closed", "This sea gate is closed");
-        internal static readonly string DeniedPrivate = Language.Add("wf_sg_denied_private", "Only the destination gate's owner may sail there");
-        internal static readonly string DeniedAdmin = Language.Add("wf_sg_denied_admin", "Only a server admin may sail to the destination gate");
 
         private static readonly Dictionary<long, JumpGrant> grants = new Dictionary<long, JumpGrant>();
         private static readonly Dictionary<long, Denial> denials = new Dictionary<long, Denial>();
@@ -99,14 +95,14 @@ namespace Wayfare.SeaGates
             return false;
         }
 
-        /// <summary>The denial token for a jump from this gate to that one, received in the last 10 seconds, or null;
-        /// read once.</summary>
+        /// <summary>The denial reason's key for a jump from this gate to that one, received in the last 10 seconds, or
+        /// null; read once.</summary>
         public static string TakeDenial(long sourceGateId, long destId)
         {
             if (!denials.TryGetValue(sourceGateId, out Denial denial) || denial.DestId != destId)
                 return null;
             denials.Remove(sourceGateId);
-            return Time.time - denial.At < LifeSeconds ? denial.Token : null;
+            return Time.time - denial.At < LifeSeconds ? denial.Key : null;
         }
 
         /// <summary>Forgets this gate's answers and pending request, for a new pick.</summary>
@@ -138,9 +134,9 @@ namespace Wayfare.SeaGates
             ZRoutedRpc.instance.InvokeRoutedRPC(target, GrantRpc, pkg);
         }
 
-        internal static void SendDenial(long target, long sourceId, long destId, string reasonToken)
+        internal static void SendDenial(long target, long sourceId, long destId, string reasonKey)
         {
-            ZRoutedRpc.instance.InvokeRoutedRPC(target, DenyRpc, sourceId, destId, reasonToken);
+            ZRoutedRpc.instance.InvokeRoutedRPC(target, DenyRpc, sourceId, destId, reasonKey);
         }
 
         private static void OnGrant(long sender, ZPackage pkg)
@@ -153,24 +149,24 @@ namespace Wayfare.SeaGates
             denials.Remove(grant.SourceId);
         }
 
-        private static void OnDeny(long sender, long sourceId, long destId, string reasonToken)
+        private static void OnDeny(long sender, long sourceId, long destId, string reasonKey)
         {
             if (!SenderIdentity.IsFromServer(sender))
                 return;
-            denials[sourceId] = new Denial(destId, reasonToken, Time.time);
+            denials[sourceId] = new Denial(destId, reasonKey, Time.time);
             grants.Remove(sourceId);
         }
 
         private readonly struct Denial
         {
             public readonly long DestId;
-            public readonly string Token;
+            public readonly string Key;
             public readonly float At;
 
-            public Denial(long destId, string token, float at)
+            public Denial(long destId, string key, float at)
             {
                 DestId = destId;
-                Token = token;
+                Key = key;
                 At = at;
             }
         }

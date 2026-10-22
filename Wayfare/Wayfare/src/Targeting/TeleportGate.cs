@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 using Wayfare.Core;
 using Wayfare.Portals;
@@ -9,7 +10,8 @@ namespace Wayfare.Targeting
     /// (<c>ZRoutedRpc.InvokeRoutedRPC</c> with no explicit target routes to it), never to the target portal's own
     /// ZDO owner - a portal is usually owned by some other player's machine, and trusting that machine to police
     /// every other player's access would let a malicious owner wave through (or block) requests on its own say-so.
-    /// The server is the one party both sides already trust for the whole session.</summary>
+    /// The server is the one party both sides already trust for the whole session. A refusal goes back as its word
+    /// (<see cref="LangWire"/>), so the player reads it in their own language.</summary>
     public static class TeleportGate
     {
         public const string RequestRpc = "wf_RequestTeleport";
@@ -53,7 +55,7 @@ namespace Wayfare.Targeting
             ZRoutedRpc.instance.InvokeRoutedRPC(sender, GrantedRpc, targetId, targetZdo.GetPosition(), targetZdo.GetRotation());
         }
 
-        /// <summary>Null when the request is granted, otherwise the localised denial reason token to send back.</summary>
+        /// <summary>Null when the request is granted, otherwise the key of the denial reason to send back.</summary>
         private static string Evaluate(long sender, ZDOID sourceId, ZDOID targetId)
         {
             if (!WayfareConfig.PortalsOn)
@@ -72,6 +74,8 @@ namespace Wayfare.Targeting
             return null;
         }
 
+        /// <summary>Whether portal travel is blocked now (the no-portals world key, or a boss fight under the boss
+        /// portal rule); <paramref name="reason"/> is the key of the word that says so.</summary>
         internal static bool Blocked(out string reason)
         {
             reason = Words.DeniedBlocked;
@@ -91,9 +95,9 @@ namespace Wayfare.Targeting
             return PortalFields.GetMode(targetZdo) == PortalMode.Admin ? Words.DeniedAdmin : Words.DeniedPrivate;
         }
 
-        private static void Deny(long sender, ZDOID targetId, string reasonToken)
+        private static void Deny(long sender, ZDOID targetId, string reasonKey)
         {
-            ZRoutedRpc.instance.InvokeRoutedRPC(sender, DeniedRpc, targetId, reasonToken);
+            ZRoutedRpc.instance.InvokeRoutedRPC(sender, DeniedRpc, targetId, LangWire.Message(reasonKey));
         }
 
         private static void OnGranted(long sender, ZDOID targetId, Vector3 targetPos, Quaternion targetRot)
@@ -102,10 +106,10 @@ namespace Wayfare.Targeting
                 PortalTravel.Granted(targetPos, targetRot);
         }
 
-        private static void OnDenied(long sender, ZDOID targetId, string reasonToken)
+        private static void OnDenied(long sender, ZDOID targetId, string reason)
         {
             if (SenderIdentity.IsFromServer(sender))
-                TargetingSession.Deny(reasonToken);
+                TargetingSession.Deny(LangWire.Read(reason));
         }
     }
 

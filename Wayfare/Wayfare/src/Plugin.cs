@@ -19,7 +19,7 @@ namespace Wayfare
     {
         public const string PluginGuid = "com.Wayfare";
         public const string PluginName = "Wayfare";
-        public const string PluginVersion = "0.4.1";
+        public const string PluginVersion = "0.5.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -29,11 +29,11 @@ namespace Wayfare
             Log = Logger;
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             WayfareConfig.Initialize(Synced);
-            Words.Touch();
-            SeaGateWords.Touch();
 
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            // The player-facing words, in the game's language (translations/English.yml and any translation files).
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "Wayfare", Logger);
             JumpSpeed.Install(harmony);
             IconClick.Install(harmony);
             GameWindow.Install(harmony);

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- Translations: every word you read is in `translations/English.yml`; a `Wayfare.translations.<Language>.yml` in `BepInEx/config` translates it.
+- Portal and sea gate refusals from the server show in each player's own language.
+
 ## 0.4.1
 
 - Fixed: players on a slow connection with many mods are no longer refused when joining a server.

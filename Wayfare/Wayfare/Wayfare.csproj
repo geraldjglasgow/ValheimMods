@@ -5,7 +5,7 @@
     <AssemblyName>Wayfare</AssemblyName>
     <RootNamespace>Wayfare</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.4.1</Version>
+    <Version>0.5.0</Version>
     <Product>Wayfare</Product>
     <Description>Wayfare: map-based portal targeting for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -40,6 +40,13 @@
     <ProjectReference Include="$(ModLibsPath)\MapClicks\MapClicks.csproj" />
     <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
     <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The words, read by the Translations library as Wayfare.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="Wayfare.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

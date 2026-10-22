@@ -1,5 +1,6 @@
 using HarmonyLib;
 using MapClicks;
+using Translations;
 using Wayfare.Core;
 
 namespace Wayfare.Targeting
@@ -40,7 +41,7 @@ namespace Wayfare.Targeting
                 return true;
             bool on = PlayerFavourites.Toggle(hit);
             if (Player.m_localPlayer != null)
-                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, on ? Words.Favourited : Words.Unfavourited);
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, Lang.Get(on ? Words.Favourited : Words.Unfavourited));
             return false;
         }
     }

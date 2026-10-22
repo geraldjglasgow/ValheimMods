@@ -48,8 +48,8 @@ namespace Wayfare.SeaGates
             return new PairCheck(candidate, true, sides, SeaGateWords.PairOk);
         }
 
-        private static PairCheck Fail(SeaGatePillar candidate, string reasonToken, float value = 0f, float limit = 0f) =>
-            new PairCheck(candidate, false, 0, reasonToken, value, limit);
+        private static PairCheck Fail(SeaGatePillar candidate, string reasonKey, float value = 0f, float limit = 0f) =>
+            new PairCheck(candidate, false, 0, reasonKey, value, limit);
 
         /// <summary>Width and height against the candidate; Ok (with no reason) when both pass.</summary>
         private static PairCheck PlaceCheck(Vector3 position, SeaGatePillar candidate)

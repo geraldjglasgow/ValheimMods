@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 using Wayfare.Core;
@@ -14,10 +15,8 @@ namespace Wayfare.Targeting
     {
         private const float RingOverhang = 0.2f;
 
-        private static readonly LocalWord youAreHere = new LocalWord(Words.YouAreHere);
-
-        /// <summary>"You are here" in the player's language, localized once per language: an icon is kept and reused.</summary>
-        public static string YouAreHere => youAreHere.Text;
+        /// <summary>"You are here" in the player's language, read when drawn: an icon is kept and reused.</summary>
+        public static string YouAreHere => Lang.Get(Words.YouAreHere);
 
         public RectTransform Root;
         public Image Image;
@@ -125,7 +124,7 @@ namespace Wayfare.Targeting
         private static Text MakeHere(RectTransform parent)
         {
             Text here = MakeText(parent, below: false);
-            here.text = Localization.instance != null ? Localization.instance.Localize(Words.YouAreHere) : "You are here";
+            here.text = YouAreHere;
             here.fontSize = 11;
             here.fontStyle = FontStyle.Bold;
             here.color = IconFactory.HereRed;

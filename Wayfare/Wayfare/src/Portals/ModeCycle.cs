@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using Wayfare.Core;
 
 namespace Wayfare.Portals
@@ -43,7 +44,7 @@ namespace Wayfare.Portals
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
             if (!PortalAccess.MayCycle(zdo, playerId, isAdmin))
             {
-                player.Message(MessageHud.MessageType.Center, Words.NotOwner);
+                player.Message(MessageHud.MessageType.Center, Lang.Get(Words.NotOwner));
                 return;
             }
             PortalMode next = PortalAccess.NextMode(PortalFields.GetMode(zdo), isAdmin);
@@ -106,6 +107,7 @@ namespace Wayfare.Portals
             }
         }
 
+        /// <summary>The key of a mode's name (<see cref="Words"/>).</summary>
         public static string ModeLabel(PortalMode mode)
         {
             switch (mode)

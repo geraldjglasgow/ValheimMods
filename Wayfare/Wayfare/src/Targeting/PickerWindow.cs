@@ -73,13 +73,13 @@ namespace Wayfare.Targeting
             button.onClick.AddListener(onClick);
         }
 
-        /// <summary>Shown with its words localized now, so a language changed since the last time shows.</summary>
-        public void Show(string topicToken, string goToken)
+        /// <summary>Shown with its words as read now, so a language changed since the last time shows.</summary>
+        public void Show(string topicText, string goLabel)
         {
             if (topic != null)
-                topic.text = Localization.instance.Localize(topicToken);
+                topic.text = topicText;
             if (goText != null)
-                goText.text = Localization.instance.Localize(goToken);
+                goText.text = goLabel;
             gameObject.SetActive(true);
         }
 

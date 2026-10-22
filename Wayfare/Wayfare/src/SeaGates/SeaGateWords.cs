@@ -1,39 +1,44 @@
-using Wayfare.Core;
-
 namespace Wayfare.SeaGates
 {
-    /// <summary>The sea gate words. A module that needs one more adds it in its own file with
-    /// <see cref="Language.Add"/>, so parallel work never edits this file at the same time.</summary>
+    /// <summary>The keys of the sea gate words, whose English is in <c>translations/English.yml</c> and whose text comes
+    /// from <see cref="Translations.Lang"/> where it is shown. Keys, never text: a pairing verdict and a refusal travel as
+    /// their key (a refusal to the crew as the key's <c>$</c> token, which every crew client localizes in its own
+    /// language), so nothing is worded before the player who reads it.</summary>
     public static class SeaGateWords
     {
-        public static readonly string PillarName = Language.Add("wf_sg_pillar", "Sea Gate Pillar");
-        public static readonly string PillarDescription = Language.Add("wf_sg_pillar_desc",
-            "Build two on the shore or in shallow water, 10 to 15 m apart with water between them: a portal for ships opens between them.");
-        public static readonly string DefaultName = Language.Add("wf_sg_default_name", "Sea gate");
+        public const string PillarName = "wf_sg_pillar";
+        public const string PillarDescription = "wf_sg_pillar_desc";
+        public const string DefaultName = "wf_sg_default_name";
 
-        public static readonly string Unpaired = Language.Add("wf_sg_unpaired", "Not paired: build a second pillar 10 to 15 m away across the water");
-        public static readonly string HoverRename = Language.Add("wf_sg_hover_rename", "Name");
-        public static readonly string HoverSailIn = Language.Add("wf_sg_hover_sailin", "Sail in with someone at the helm to pick any sea gate");
+        public const string Unpaired = "wf_sg_unpaired";
+        public const string HoverRename = "wf_sg_hover_rename";
+        public const string HoverSailIn = "wf_sg_hover_sailin";
+        public const string RenameTopic = "wf_sg_rename";
+        public const string NotOwner = "wf_sg_notowner";
 
-        public static readonly string RenameTopic = Language.Add("wf_sg_rename", "Name this sea gate");
+        public const string PairOk = "wf_sg_pair_ok";
+        public const string PairTooFar = "wf_sg_pair_far";
+        public const string PairTooClose = "wf_sg_pair_close";
+        public const string PairHeight = "wf_sg_pair_height";
+        public const string PairNoWater = "wf_sg_pair_nowater";
+        public const string PairShallow = "wf_sg_pair_shallow";
+        public const string PairTooDeep = "wf_sg_pair_deep";
+        public const string Paired = "wf_sg_paired";
+        public const string FixHint = "wf_sg_fix_hint";
 
-        public static readonly string PairOk = Language.Add("wf_sg_pair_ok", "Pairs with this pillar");
-        public static readonly string PairTooFar = Language.Add("wf_sg_pair_far", "Too far from the other pillar: {0} m, at most {1} m");
-        public static readonly string PairTooClose = Language.Add("wf_sg_pair_close", "Too close to the other pillar: {0} m, at least {1} m");
-        public static readonly string PairHeight = Language.Add("wf_sg_pair_height", "{0} m higher or lower than the other pillar, at most {1} m");
-        public static readonly string PairNoWater = Language.Add("wf_sg_pair_nowater", "No water between the pillars");
-        public static readonly string PairShallow = Language.Add("wf_sg_pair_shallow", "Too shallow at the red marks: {0} m deep, a ship needs {1} m");
-        public static readonly string PairTooDeep = Language.Add("wf_sg_pair_deep", "Too deep for a pillar: {0} m under water, at most {1} m");
-        public static readonly string Paired = Language.Add("wf_sg_paired", "The sea gate is open");
-        public static readonly string FixHint = Language.Add("wf_sg_fix_hint", "Fix it and the gate opens by itself");
+        public const string PickerHelmHint = "wf_sg_picker_hint";
+        public const string PickerCrewHint = "wf_sg_picker_crew";
+        public const string Helmsman = "wf_sg_helmsman";
+        public const string HelmPicks = "wf_sg_helm_picks";
 
-        public static readonly string DeniedGone = Language.Add("wf_sg_denied_gone", "The destination sea gate is gone");
-        public static readonly string DeniedCargo = Language.Add("wf_sg_denied_cargo", "Ore and other restricted cargo can't pass through a sea gate");
-        public static readonly string DeniedNotReady = Language.Add("wf_sg_denied_notready", "The sea gate wasn't ready: sail through again");
-        public static readonly string DeniedNoHelmsman = Language.Add("wf_sg_denied_nohelm", "A ship passes through a sea gate only with someone at the helm");
+        public const string DeniedClosed = "wf_sg_denied_closed";
+        public const string DeniedPrivate = "wf_sg_denied_private";
+        public const string DeniedAdmin = "wf_sg_denied_admin";
+        public const string DeniedGone = "wf_sg_denied_gone";
+        public const string DeniedCargo = "wf_sg_denied_cargo";
+        public const string DeniedNotReady = "wf_sg_denied_notready";
+        public const string DeniedNoHelmsman = "wf_sg_denied_nohelm";
 
-        public static readonly string Fallback = Language.Add("wf_sg_fallback", "The ship didn't arrive in time: you were set ashore by the gate");
-
-        public static void Touch() => _ = PillarName;
+        public const string Fallback = "wf_sg_fallback";
     }
 }

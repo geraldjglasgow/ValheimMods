@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 using Wayfare.Core;
 using Wayfare.Portals;
@@ -13,8 +14,6 @@ namespace Wayfare.SeaGates
     /// the map (<see cref="SeaGatePicker"/>).</summary>
     public sealed class SeaGatePillar : MonoBehaviour, Hoverable, Interactable, TextReceiver
     {
-        private static readonly string NotOwner = Language.Add("wf_sg_notowner", "You don't own this sea gate");
-
         public ZNetView View { get; private set; }
 
         public ZDO Zdo => View != null && View.IsValid() ? View.GetZDO() : null;
@@ -46,7 +45,7 @@ namespace Wayfare.SeaGates
 
         public string GetHoverText() => SeaGatePillarHover.Text(this, On);
 
-        public string GetHoverName() => SeaGateWords.PillarName;
+        public string GetHoverName() => Lang.Token(SeaGateWords.PillarName);
 
         public float GetHoverOffset() => 0f;
 
@@ -59,7 +58,7 @@ namespace Wayfare.SeaGates
             LoadedGate gate = SeaGateRegistry.GateOf(this);
             if (gate == null)
             {
-                player.Message(MessageHud.MessageType.Center, SeaGateWords.Unpaired);
+                player.Message(MessageHud.MessageType.Center, Lang.Get(SeaGateWords.Unpaired));
                 return true;
             }
             if (!PrivateArea.CheckAccess(transform.position))
@@ -72,7 +71,7 @@ namespace Wayfare.SeaGates
             if (alt)
                 Cycle(gate.Anchor);
             else if (TextInput.instance != null)
-                TextInput.instance.RequestText(this, SeaGateWords.RenameTopic, SeaGatePickerEdits.NameLimit);
+                TextInput.instance.RequestText(this, Lang.Get(SeaGateWords.RenameTopic), SeaGatePickerEdits.NameLimit);
             return true;
         }
 
@@ -102,7 +101,7 @@ namespace Wayfare.SeaGates
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
             if (anchor != null && PortalAccess.MayCycle(anchor, player.GetPlayerID(), isAdmin))
                 return true;
-            player.Message(MessageHud.MessageType.Center, NotOwner);
+            player.Message(MessageHud.MessageType.Center, Lang.Get(SeaGateWords.NotOwner));
             return false;
         }
 

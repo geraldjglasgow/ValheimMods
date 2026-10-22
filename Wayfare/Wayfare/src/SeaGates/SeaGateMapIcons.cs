@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 using Wayfare.Core;
@@ -34,7 +35,6 @@ namespace Wayfare.SeaGates
 
         private static readonly Dictionary<long, Icon> icons = new Dictionary<long, Icon>();
         private static readonly HashSet<long> seen = new HashSet<long>();   // reused every frame
-        private static readonly LocalWord defaultName = new LocalWord(SeaGateWords.DefaultName);
         private static float requestedAt = float.NegativeInfinity;
         private static bool showing;
 
@@ -119,7 +119,7 @@ namespace Wayfare.SeaGates
                 icon.ShownSprite = sprite;
                 icon.Image.sprite = sprite;
             }
-            icon.Label.text = string.IsNullOrEmpty(name) ? defaultName.Text : name;
+            icon.Label.text = string.IsNullOrEmpty(name) ? Lang.Get(SeaGateWords.DefaultName) : name;
             icon.Label.color = isSource ? SourceLabel : Color.white;
             if (isSource)
                 OnTop(icon.Root);

@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -133,8 +134,8 @@ namespace Wayfare.SeaGates
 
         private static void Configure(Piece piece, ZNetScene scene)
         {
-            piece.m_name = SeaGateWords.PillarName;
-            piece.m_description = SeaGateWords.PillarDescription;
+            piece.m_name = Lang.Token(SeaGateWords.PillarName);
+            piece.m_description = Lang.Token(SeaGateWords.PillarDescription);
             piece.m_category = Piece.PieceCategory.Misc;
             piece.m_enabled = true;
             piece.m_waterPiece = false;

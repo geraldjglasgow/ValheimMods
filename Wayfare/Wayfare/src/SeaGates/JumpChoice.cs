@@ -1,5 +1,5 @@
+using Translations;
 using UnityEngine;
-using Wayfare.Core;
 
 namespace Wayfare.SeaGates
 {
@@ -69,14 +69,14 @@ namespace Wayfare.SeaGates
 
         /// <summary>Back to sailing with the stored speed, sail and rudder; no stop in this gate again until the ship
         /// has left it or crossed it (<see cref="JumpCrossing"/>).</summary>
-        private static void SailOn(Ship ship, ZDO zdo, string reasonToken)
+        private static void SailOn(Ship ship, ZDO zdo, string reasonKey)
         {
             zdo.Set(SeaGateFields.SailOnKey, zdo.GetLong(SeaGateFields.StopGateKey, 0L));
             zdo.Set(SeaGateFields.SailOnSideKey, zdo.GetInt(SeaGateFields.StopSideKey, 0));
             zdo.Set(SeaGateFields.StateKey, (int)JumpState.None);
             ShipFreeze.Release(ship, zdo.GetFloat(SeaGateFields.SpeedKey, 0f));
-            if (reasonToken != null)
-                TellCrew(ship, 0L, reasonToken);
+            if (reasonKey != null)
+                TellCrew(ship, 0L, reasonKey);
         }
 
         /// <summary>Owner side of <see cref="SeaGateFields.PickRpc"/>: the helmsman picked a gate, or 0 to sail on.</summary>
@@ -117,9 +117,12 @@ namespace Wayfare.SeaGates
         }
 
         /// <summary>Everyone aboard but <paramref name="skipPlayerId"/>: <c>Player.Message</c> shows it here for the
-        /// local player and sends the player's own "Message" RPC to the client that owns any other.</summary>
-        internal static void TellCrew(Ship ship, long skipPlayerId, string token)
+        /// local player and sends the player's own "Message" RPC to the client that owns any other. The word goes as its
+        /// <c>$</c> token, which each client's message line localizes, so every crew member reads it in their own
+        /// language.</summary>
+        internal static void TellCrew(Ship ship, long skipPlayerId, string key)
         {
+            string token = Lang.Token(key);
             foreach (Player player in ship.m_players)
             {
                 if (player != null && (skipPlayerId == 0L || player.GetPlayerID() != skipPlayerId))

@@ -1,5 +1,6 @@
 using System.Globalization;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 using Wayfare.Core;
 
@@ -34,8 +35,7 @@ namespace Wayfare.SeaGates
         /// <summary>The reason text for a base standing <paramref name="depth"/> metres under water.</summary>
         public static string Describe(float depth)
         {
-            string text = Localization.instance != null ? Localization.instance.Localize(SeaGateWords.PairTooDeep) : SeaGateWords.PairTooDeep;
-            return string.Format(text, Metres(depth), Metres(MaxDepth));
+            return Lang.Format(SeaGateWords.PairTooDeep, Metres(depth), Metres(MaxDepth));
         }
 
         internal static void Check(Player player)

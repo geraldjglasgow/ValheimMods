@@ -1,38 +1,34 @@
 namespace Wayfare.Core
 {
-    /// <summary>Every localisation token Wayfare defines. Touch <see cref="Touch"/> once, early, so the static
-    /// initializers register every word with <see cref="Language"/> before the language is first set up.</summary>
+    /// <summary>The keys of the portal words, whose English is in <c>translations/English.yml</c> and whose text comes
+    /// from <see cref="Translations.Lang"/> where it is shown. Keys, never text: a refusal travels as its key (the
+    /// server's to the asking client as a <see cref="Translations.LangWire"/> message), so each player reads it in their
+    /// own language. The sea gate words are in <see cref="SeaGates.SeaGateWords"/>.</summary>
     public static class Words
     {
-        public static readonly string ModePublic = Language.Add("wf_mode_public", "Public");
-        public static readonly string ModePrivate = Language.Add("wf_mode_private", "Private");
-        public static readonly string ModeAdmin = Language.Add("wf_mode_admin", "Admin");
+        public const string ModePublic = "wf_mode_public";
+        public const string ModePrivate = "wf_mode_private";
+        public const string ModeAdmin = "wf_mode_admin";
 
-        public static readonly string HoverCycle = Language.Add("wf_hover_cycle", "Cycle access mode: {0}");
+        public const string HoverCycle = "wf_hover_cycle";
+        public const string NotOwner = "wf_notowner";
 
-        public static readonly string ModeSet = Language.Add("wf_mode_set", "Portal access set to {0}");
-        public static readonly string NotOwner = Language.Add("wf_notowner", "You don't own this portal");
+        public const string DeniedPrivate = "wf_denied_private";
+        public const string DeniedAdmin = "wf_denied_admin";
+        public const string DeniedBlocked = "wf_denied_blocked";
+        public const string DeniedGeneric = "wf_denied_generic";
 
-        public static readonly string DeniedPrivate = Language.Add("wf_denied_private", "Only the portal's owner may target it");
-        public static readonly string DeniedAdmin = Language.Add("wf_denied_admin", "Only a server admin may target this portal");
-        public static readonly string DeniedBlocked = Language.Add("wf_denied_blocked", "Portal travel is blocked here");
-        public static readonly string DeniedGeneric = Language.Add("wf_denied_generic", "You may not target that portal");
+        public const string Favourited = "wf_favourited";
+        public const string Unfavourited = "wf_unfavourited";
+        public const string UnnamedPortal = "wf_unnamed_portal";
 
-        public static readonly string Favourited = Language.Add("wf_favourited", "Added to favourites");
-        public static readonly string Unfavourited = Language.Add("wf_unfavourited", "Removed from favourites");
+        public const string YouAreHere = "wf_you_are_here";
 
-        public static readonly string TargetingHint = Language.Add("wf_targeting_hint", "Click a portal to travel there");
-        public static readonly string YouAreHere = Language.Add("wf_you_are_here", "You are here");
-
-        public static readonly string PickerTopic = Language.Add("wf_picker_topic", "Teleport to");
-        public static readonly string PickerGo = Language.Add("wf_picker_go", "Teleport");
-        public static readonly string PickerNone = Language.Add("wf_picker_none", "No other named portal");
-        public static readonly string PickerUnnamed = Language.Add("wf_picker_unnamed", "Name this portal to connect it");
-
-        public static void Touch()
-        {
-            // Referencing any field above is enough to run the static initializers.
-            _ = ModePublic;
-        }
+        public const string PickerTopic = "wf_picker_topic";
+        public const string PickerGo = "wf_picker_go";
+        public const string PickerNone = "wf_picker_none";
+        public const string PickerUnnamed = "wf_picker_unnamed";
+        public const string DistanceMetres = "wf_distance_m";
+        public const string DistanceKilometres = "wf_distance_km";
     }
 }

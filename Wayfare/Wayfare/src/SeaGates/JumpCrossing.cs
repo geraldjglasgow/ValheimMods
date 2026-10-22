@@ -86,7 +86,7 @@ namespace Wayfare.SeaGates
             return GateGeometry.SideOf(local.z) != centreSide && Mathf.Abs(local.z) >= through && gate.WithinSpan(local.x);
         }
 
-        /// <summary>Null when the ship stopped for its helmsman to choose, otherwise the reason token to show the crew.</summary>
+        /// <summary>Null when the ship stopped for its helmsman to choose, otherwise the key of the reason to tell the crew.</summary>
         private static string Attempt(Ship ship, LoadedGate gate, int entrySide, bool helm)
         {
             if (!helm)

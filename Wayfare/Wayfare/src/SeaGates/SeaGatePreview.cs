@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 using Wayfare.Core;
 
@@ -32,13 +33,13 @@ namespace Wayfare.SeaGates
 
         // The reason as last described, and what it was described from.
         private static string reason;
-        private static string reasonToken;
+        private static string reasonKey;
         private static float reasonValue;
         private static float reasonLimit;
         private static int reasonRevision = -1;
 
         /// <summary>The last verdict's reason as a player reads it (<see cref="PairCheck.Describe"/>), the same string
-        /// until its token, its numbers or the language change.</summary>
+        /// until its key, its numbers or the language change.</summary>
         internal static string Reason => reason ?? "";
 
         /// <summary>Called after the game updated the local player's placement ghost. Guarded here because the same
@@ -111,14 +112,14 @@ namespace Wayfare.SeaGates
 
         private static void Describe(PairCheck check)
         {
-            if (reason != null && check.ReasonToken == reasonToken && check.Value == reasonValue && check.Limit == reasonLimit &&
-                Language.Revision == reasonRevision)
+            if (reason != null && check.ReasonKey == reasonKey && check.Value == reasonValue && check.Limit == reasonLimit &&
+                Lang.Version == reasonRevision)
                 return;
             reason = check.Describe();
-            reasonToken = check.ReasonToken;
+            reasonKey = check.ReasonKey;
             reasonValue = check.Value;
             reasonLimit = check.Limit;
-            reasonRevision = Language.Revision;
+            reasonRevision = Lang.Version;
         }
 
         /// <summary>The ghost while it is a shown pillar ghost in build mode, else null. Whether a ghost is a pillar is

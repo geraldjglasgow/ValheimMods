@@ -1,4 +1,4 @@
-using Wayfare.Core;
+using Translations;
 using Wayfare.Portals;
 
 namespace Wayfare.SeaGates
@@ -11,8 +11,6 @@ namespace Wayfare.SeaGates
     public static class SeaGatePillarHover
     {
         private const string UseKey = "[<color=yellow><b>$KEY_Use</b></color>] ";
-
-        private static readonly LocalWord pillarName = new LocalWord(SeaGateWords.PillarName);
 
         // The paired text last built, and what it was built from.
         private static string builtName;
@@ -32,7 +30,7 @@ namespace Wayfare.SeaGates
             if (Localization.instance == null)
                 return "";
             if (!seaGatesOn || pillar == null || !pillar.IsValid)
-                return pillarName.Text;
+                return Lang.Get(SeaGateWords.PillarName);
             LoadedGate gate = SeaGateRegistry.GateOf(pillar);
             if (gate == null)
                 return UnpairedText(pillar);
@@ -47,8 +45,8 @@ namespace Wayfare.SeaGates
                 return built;
             builtName = name;
             builtCycle = cycle;
-            built = Shown(name) + "\n" + Localize(SeaGateWords.HoverSailIn) + "\n" + Localize(UseKey + SeaGateWords.HoverRename) +
-                    "\n" + cycle;
+            built = Shown(name) + "\n" + Lang.Get(SeaGateWords.HoverSailIn) + "\n" + Localization.instance.Localize(UseKey) +
+                    Lang.Get(SeaGateWords.HoverRename) + "\n" + cycle;
             return built;
         }
 
@@ -61,32 +59,30 @@ namespace Wayfare.SeaGates
             int kind = check.Candidate == null ? 0 : check.Ok ? 1 : 2;
             string reason = kind == 2 ? SeaGatePreview.Reason : null;
             if (unpaired != null && pillar == unpairedFor && kind == unpairedKind && ReferenceEquals(reason, unpairedReason) &&
-                Language.Revision == unpairedRevision)
+                Lang.Version == unpairedRevision)
                 return unpaired;
             unpairedFor = pillar;
             unpairedKind = kind;
             unpairedReason = reason;
-            unpairedRevision = Language.Revision;
-            unpaired = pillarName.Text + "\n" + UnpairedLines(kind, reason);
+            unpairedRevision = Lang.Version;
+            unpaired = Lang.Get(SeaGateWords.PillarName) + "\n" + UnpairedLines(kind, reason);
             return unpaired;
         }
 
         private static string UnpairedLines(int kind, string reason)
         {
             if (kind == 0)
-                return Localize(SeaGateWords.Unpaired);
+                return Lang.Get(SeaGateWords.Unpaired);
             if (kind == 1)
-                return Localize(SeaGateWords.PairOk);
-            return reason + "\n" + Localize(SeaGateWords.FixHint);
+                return Lang.Get(SeaGateWords.PairOk);
+            return reason + "\n" + Lang.Get(SeaGateWords.FixHint);
         }
 
         /// <summary>A gate name as a player typed it, or the default name when it has none.</summary>
         private static string Shown(string name)
         {
             string plain = string.IsNullOrEmpty(name) ? "" : name.RemoveRichTextTags().Trim();
-            return plain.Length > 0 ? plain : Localize(SeaGateWords.DefaultName);
+            return plain.Length > 0 ? plain : Lang.Get(SeaGateWords.DefaultName);
         }
-
-        private static string Localize(string text) => Localization.instance.Localize(text);
     }
 }

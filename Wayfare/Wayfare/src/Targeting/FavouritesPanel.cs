@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
+using Wayfare.Core;
 using Wayfare.Portals;
 
 namespace Wayfare.Targeting
@@ -11,7 +13,8 @@ namespace Wayfare.Targeting
     /// and remade every frame never sees both the press and the release of a click. They are refilled in place only
     /// when what they show changes - the portal snapshot (<see cref="PortalRegistry.Version"/>: the server's list
     /// arriving, a rename, a mode change that hides a portal), the favourite set (<see cref="PlayerFavourites.Version"/>),
-    /// or the player and their admin rights (the map icons' access rule). Scrolling slides the rows, never remakes them.</summary>
+    /// the player and their admin rights (the map icons' access rule), or the language (<see cref="Lang.Version"/>, for an
+    /// unnamed portal's row). Scrolling slides the rows, never remakes them.</summary>
     public static class FavouritesPanel
     {
         private const float RowHeight = 26f;
@@ -35,6 +38,7 @@ namespace Wayfare.Targeting
         private static int shownFavourites = -1;
         private static long shownPlayer;
         private static bool shownAdmin;
+        private static int shownWords = -1;
 
         public static void Tick()
         {
@@ -109,19 +113,21 @@ namespace Wayfare.Targeting
         }
 
         /// <summary>Refills the rows when one of the inputs they are drawn from has changed since the last fill, and
-        /// does nothing otherwise - a compare of four numbers per frame.</summary>
+        /// does nothing otherwise - a compare of five numbers per frame.</summary>
         private static void RefreshIfChanged()
         {
             long playerId = Player.m_localPlayer.GetPlayerID();
             bool isAdmin = ZNet.instance != null && ZNet.instance.LocalPlayerIsAdminOrHost();
             int portals = PortalRegistry.Version;
             int favourites = PlayerFavourites.Version;
-            if (portals == shownPortals && favourites == shownFavourites && playerId == shownPlayer && isAdmin == shownAdmin)
+            if (portals == shownPortals && favourites == shownFavourites && playerId == shownPlayer && isAdmin == shownAdmin &&
+                Lang.Version == shownWords)
                 return;
             shownPortals = portals;
             shownFavourites = favourites;
             shownPlayer = playerId;
             shownAdmin = isAdmin;
+            shownWords = Lang.Version;
             Show(Collect(playerId, isAdmin));
         }
 
@@ -147,7 +153,7 @@ namespace Wayfare.Targeting
                 if (i == rows.Count)
                     rows.Add(BuildRow(i));
                 rows[i].Target = favourites[i].Id;
-                rows[i].Label.text = string.IsNullOrEmpty(favourites[i].Tag) ? "(unnamed portal)" : favourites[i].Tag;
+                rows[i].Label.text = string.IsNullOrEmpty(favourites[i].Tag) ? Lang.Get(Words.UnnamedPortal) : favourites[i].Tag;
             }
             DestroyRows(favourites.Count);
             ScrollBy(0f);

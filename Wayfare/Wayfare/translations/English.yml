@@ -1,0 +1,75 @@
+# Wayfare - English words
+#
+# To translate: copy this file as Wayfare.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the mod), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# Portal access modes: the Alt+E line on a portal's (and a sea gate pillar's) hover text, $1 is the mode
+wf_mode_public: "Public"
+wf_mode_private: "Private"
+wf_mode_admin: "Admin"
+wf_hover_cycle: "Cycle access mode: $1"
+wf_notowner: "You don't own this portal"
+
+# The map while choosing a destination: the portal you stand at, right click to favourite, the favourites list
+wf_you_are_here: "You are here"
+wf_favourited: "Added to favourites"
+wf_unfavourited: "Removed from favourites"
+wf_unnamed_portal: "(unnamed portal)"
+
+# Why the server refused a teleport
+wf_denied_private: "Only the portal's owner may target it"
+wf_denied_admin: "Only a server admin may target this portal"
+wf_denied_blocked: "Portal travel is blocked here"
+wf_denied_generic: "You may not target that portal"
+
+# The Teleport Mode TargetTeleport window: its title, its button, the list of portals with their distance ($1)
+wf_picker_topic: "Teleport to"
+wf_picker_go: "Teleport"
+wf_picker_none: "No other named portal"
+wf_picker_unnamed: "Name this portal to connect it"
+wf_distance_m: "$1 m"
+wf_distance_km: "$1 km"
+
+# Sea gates: the pillar in the build menu, its hover text, its name box
+wf_sg_pillar: "Sea Gate Pillar"
+wf_sg_pillar_desc: "Build two on the shore or in shallow water, 10 to 15 m apart with water between them: a portal for ships opens between them."
+wf_sg_default_name: "Sea gate"
+wf_sg_hover_sailin: "Sail in with someone at the helm to pick any sea gate"
+wf_sg_hover_rename: "Name"
+wf_sg_rename: "Name this sea gate"
+wf_sg_notowner: "You don't own this sea gate"
+
+# Sea gates: pairing two pillars, on the hover text and over the water; $1 is what was measured, $2 the limit (metres)
+wf_sg_unpaired: "Not paired: build a second pillar 10 to 15 m away across the water"
+wf_sg_pair_ok: "Pairs with this pillar"
+wf_sg_pair_far: "Too far from the other pillar: $1 m, at most $2 m"
+wf_sg_pair_close: "Too close to the other pillar: $1 m, at least $2 m"
+wf_sg_pair_height: "$1 m higher or lower than the other pillar, at most $2 m"
+wf_sg_pair_nowater: "No water between the pillars"
+wf_sg_pair_shallow: "Too shallow at the red marks: $1 m deep, a ship needs $2 m"
+wf_sg_pair_deep: "Too deep for a pillar: $1 m under water, at most $2 m"
+wf_sg_fix_hint: "Fix it and the gate opens by itself"
+wf_sg_paired: "The sea gate is open"
+
+# Sea gates: the map while a ship waits in a gate; $1 is the helmsman's name, or the helmsman word below
+wf_sg_picker_hint: "Click a sea gate to sail there. Close the map to sail on. The crew sees your pointer."
+wf_sg_picker_crew: "$1 at the helm picks the sea gate. The crew sees your pointer."
+wf_sg_helmsman: "The helmsman"
+wf_sg_helm_picks: "Only the helmsman picks the sea gate"
+
+# Sea gates: why a ship could not jump, told to the crew
+wf_sg_denied_nohelm: "A ship passes through a sea gate only with someone at the helm"
+wf_sg_denied_cargo: "Ore and other restricted cargo can't pass through a sea gate"
+wf_sg_denied_closed: "This sea gate is closed"
+wf_sg_denied_gone: "The destination sea gate is gone"
+wf_sg_denied_private: "Only the destination gate's owner may sail there"
+wf_sg_denied_admin: "Only a server admin may sail to the destination gate"
+wf_sg_denied_notready: "The sea gate wasn't ready: sail through again"
+
+# Sea gates: a jump that did not finish in time
+wf_sg_fallback: "The ship didn't arrive in time: you were set ashore by the gate"
