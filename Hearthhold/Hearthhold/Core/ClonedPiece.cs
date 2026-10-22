@@ -36,7 +36,11 @@ namespace Hearthhold
 
         public string PrefabName { get; }
         public int Hash { get; }
+
+        /// <summary>The piece's name, a <c>$token</c> (<c>Lang.Token</c>) the game translates where it shows it.</summary>
         public string DisplayName { get; }
+
+        /// <summary>The piece's description, a <c>$token</c> like <see cref="DisplayName"/>.</summary>
         public string Description { get; }
 
         /// <summary>Adds the feature's own components and changes to the fresh copy, once.</summary>
@@ -84,7 +88,7 @@ namespace Hearthhold
             GameObject original = scene.GetPrefab(source);
             if (original == null || original.GetComponent<Piece>() == null)
             {
-                Hearthhold.Log.LogWarning($"The game's {source} was not found: there is no {DisplayName}.");
+                Hearthhold.Log.LogWarning($"The game's {source} was not found: there is no {PrefabName}.");
                 return;
             }
             GameObject copy = UnityEngine.Object.Instantiate(original, Holder.transform, false);

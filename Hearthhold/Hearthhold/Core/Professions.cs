@@ -1,3 +1,5 @@
+using Translations;
+
 namespace Hearthhold
 {
     /// <summary>
@@ -17,27 +19,29 @@ namespace Hearthhold
 
         public static int FloorOf(StarSource source) => source == StarSource.Forage ? 3 : 2;
 
+        /// <summary>The profession's name in the player's language.</summary>
         public static string Name(StarSource source)
         {
             switch (source)
             {
-                case StarSource.Forage: return "Botanist";
-                case StarSource.Crop: return "Tiller";
-                case StarSource.Meat: return "Rancher";
-                case StarSource.Fillet: return "Angler";
-                default: return "Gourmet";
+                case StarSource.Forage: return Lang.Get("hh_profession_botanist");
+                case StarSource.Crop: return Lang.Get("hh_profession_tiller");
+                case StarSource.Meat: return Lang.Get("hh_profession_rancher");
+                case StarSource.Fillet: return Lang.Get("hh_profession_angler");
+                default: return Lang.Get("hh_profession_gourmet");
             }
         }
 
+        /// <summary>What the profession does, in the player's language.</summary>
         public static string Description(StarSource source)
         {
             switch (source)
             {
-                case StarSource.Forage: return "Wild picks, honey and sap are always gold.";
-                case StarSource.Crop: return "Crops you harvest are at least silver.";
-                case StarSource.Meat: return "Meat from creatures you kill is at least silver.";
-                case StarSource.Fillet: return "Raw fish you clean is at least silver.";
-                default: return "Dishes and meads you make are at least silver.";
+                case StarSource.Forage: return Lang.Get("hh_profession_botanist_desc");
+                case StarSource.Crop: return Lang.Get("hh_profession_tiller_desc");
+                case StarSource.Meat: return Lang.Get("hh_profession_rancher_desc");
+                case StarSource.Fillet: return Lang.Get("hh_profession_angler_desc");
+                default: return Lang.Get("hh_profession_gourmet_desc");
             }
         }
     }

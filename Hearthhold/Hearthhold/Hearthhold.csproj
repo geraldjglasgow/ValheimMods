@@ -5,7 +5,7 @@
     <AssemblyName>Hearthhold</AssemblyName>
     <RootNamespace>Hearthhold</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Product>Hearthhold</Product>
     <Description>Hearthhold: Stardew Valley style quality stars for Valheim food</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -36,6 +36,13 @@
     <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The words, read by the Translations library as Hearthhold.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="Hearthhold.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

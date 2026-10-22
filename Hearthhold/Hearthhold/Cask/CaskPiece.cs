@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace Hearthhold
@@ -11,10 +12,8 @@ namespace Hearthhold
     /// </summary>
     public static class CaskPiece
     {
-        public const string DisplayName = "Aging Cask";
-        public const string Description = "Meads and wines stored inside gain a star every 2 days, up to gold.";
-
-        public static readonly ClonedPiece Piece = new ClonedPiece(CaskKeys.Prefab, "piece_chest_barrel", DisplayName, Description,
+        public static readonly ClonedPiece Piece = new ClonedPiece(CaskKeys.Prefab, "piece_chest_barrel",
+            Lang.Token("hh_piece_aging_cask"), Lang.Token("hh_piece_aging_cask_desc"),
             ("FineWood", 10), ("BronzeNails", 10), ("Resin", 5))
         {
             Dress = DressCopy,
@@ -28,7 +27,7 @@ namespace Hearthhold
                 Hearthhold.Log.LogWarning("The game's barrel has no container: the Aging Cask ages nothing.");
                 return;
             }
-            container.m_name = DisplayName;
+            container.m_name = Piece.DisplayName;
             container.gameObject.AddComponent<AgingCask>();
         }
 

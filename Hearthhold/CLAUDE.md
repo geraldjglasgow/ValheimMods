@@ -98,9 +98,24 @@ discount, the killer's Husbandry level, the dawn trigger itself, a dedicated ser
   GrindstoneSkills, clears quality scaling).
 - `Fortune/`, `Sources/` (picks, hives, sap, creature drops), `Kitchen/` (stations, crafting, fermenter), `Eating/`,
   `Shipping/`, `Friendship/`, `Cask/`.
+- `translations/English.yml`: every word a player sees (below).
+
+## Words (translations)
+
+Every word a player sees comes from `Hearthhold/translations/English.yml` (keys `hh_...`, embedded) through the shared
+Translations library (`Lang.Install` in the plugin's Awake); a translator copies it as
+`Hearthhold.translations.<Language>.yml`. Code reads `Lang.Get`/`Lang.Format` (sentences with `$1`, `$2` ...) at use;
+the two pieces' names and descriptions are `$hh_...` tokens (`Lang.Token`) the game translates where it shows them.
+Cached text (the friendship lines, the trader hover, the crate's value line) is rebuilt when `Lang.Version` changes.
+Nothing travels as text: the crate's sale RPC carries numbers that each player words in their own language, and the
+fortune is worked out on every machine. Stars themselves are GrindstoneSkills' to draw. English on purpose: log lines,
+the `.cfg`, the `fortune` command's help and its "off on this server" reply (F5 console), the game's own eat message
+(rewritten by `FoodMessage` with game tokens only) and the skill names passed to GrindstoneSkills' API.
+`Professions.Name`/`Description` have words but no caller yet.
 
 ## Rules
 
-Methods at most 24 lines, classes at most 300 (workspace rule). Every key starts with `hearthhold_`. Check the game's
+Methods at most 24 lines, classes at most 300 (workspace rule). Every stored or sent key (ZDO, RPC, custom data,
+prefab) starts with `hearthhold_`; every word key starts with `hh_`. Check the game's
 own code (decompiled into the scratch folder) before patching; prefer prefixes and postfixes; never break another mod's
 patch on the same method (GrindstoneSkills patches cooking stations, fermenters, crafting and pickables too).

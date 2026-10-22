@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace Hearthhold
@@ -16,8 +17,8 @@ namespace Hearthhold
 
         private static bool watching;
 
-        public static readonly ClonedPiece Piece = new ClonedPiece(ShippingKeys.Prefab, Source, "Shipping Crate",
-            "What you leave in it is bought at dawn for coins. Starred food pays more.", ("Wood", 10), ("Resin", 4))
+        public static readonly ClonedPiece Piece = new ClonedPiece(ShippingKeys.Prefab, Source,
+            Lang.Token("hh_piece_shipping_crate"), Lang.Token("hh_piece_shipping_crate_desc"), ("Wood", 10), ("Resin", 4))
         {
             Dress = DressCopy,
             Buildable = () => On,
@@ -34,7 +35,7 @@ namespace Hearthhold
                 Hearthhold.Log.LogWarning($"The game's {Source} has no container: the Shipping Crate cannot sell.");
                 return;
             }
-            container.m_name = "Shipping Crate";
+            container.m_name = Piece.DisplayName;
             container.m_width = Width;
             container.m_height = Height;
             copy.AddComponent<ShippingCrate>();

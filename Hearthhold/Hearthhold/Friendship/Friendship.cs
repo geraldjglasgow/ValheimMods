@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace Hearthhold
@@ -15,7 +16,8 @@ namespace Hearthhold
         public const int MaxPoints = PointsPerHeart * MaxHearts;
         public const int PercentPerHeart = 1;
 
-        private static readonly string[] lines = BuildLines();
+        private static string[] lines;
+        private static int linesVersion = -1;
 
         public static bool On => Settings.TraderFriendship != null && Settings.TraderFriendship.Value;
 
@@ -47,16 +49,28 @@ namespace Hearthhold
             return total / PointsPerHeart;
         }
 
-        /// <summary>The friendship as one line, e.g. "Friendship 3/10, 3% off"; built once per heart count.</summary>
-        public static string Line(int hearts) => lines[Mathf.Clamp(hearts, 0, MaxHearts)];
+        /// <summary>
+        /// The friendship as one line in the player's language, e.g. "Friendship 3/10, 3% off"; built once per heart
+        /// count and again when the words change.
+        /// </summary>
+        public static string Line(int hearts)
+        {
+            if (lines == null || linesVersion != Lang.Version)
+            {
+                lines = BuildLines();
+                linesVersion = Lang.Version;
+            }
+            return lines[Mathf.Clamp(hearts, 0, MaxHearts)];
+        }
 
         private static string[] BuildLines()
         {
             string[] built = new string[MaxHearts + 1];
             for (int hearts = 0; hearts <= MaxHearts; hearts++)
             {
-                string off = hearts > 0 ? $", {hearts * PercentPerHeart}% off" : "";
-                built[hearts] = $"Friendship {hearts}/{MaxHearts}{off}";
+                built[hearts] = hearts > 0
+                    ? Lang.Format("hh_friendship_off", hearts, MaxHearts, hearts * PercentPerHeart)
+                    : Lang.Format("hh_friendship", hearts, MaxHearts);
             }
             return built;
         }

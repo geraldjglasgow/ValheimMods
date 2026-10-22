@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 
 namespace Hearthhold
 {
@@ -53,9 +54,9 @@ namespace Hearthhold
             int stars = Stars.Get(item);
             int day = EnvMan.instance.GetDay();
             if (stars < 1)
-                player.Message(MessageHud.MessageType.Center, $"{info.DisplayName} only accepts starred food as a gift.");
+                player.Message(MessageHud.MessageType.Center, Lang.Format("hh_gift_plain", info.DisplayName));
             else if (Friendship.LastGiftDay(player, info) == day)
-                player.Message(MessageHud.MessageType.Center, "Come back tomorrow.");
+                player.Message(MessageHud.MessageType.Center, Lang.Get("hh_gift_tomorrow"));
             else
                 Accept(info, player, item, stars, day);
             return true;
@@ -63,11 +64,11 @@ namespace Hearthhold
 
         private static void Accept(TraderInfo info, Player player, ItemDrop.ItemData item, int stars, int day)
         {
-            string dish = Stars.TierName(stars) + " " + Localization.instance.Localize(item.m_shared.m_name);
+            string dish = Localization.instance.Localize(item.m_shared.m_name);
             if (!player.GetInventory().RemoveItem(item, 1))
                 return;
             int hearts = Friendship.AddGift(player, info, BasePoints + PointsPerStar * stars, day);
-            string line = $"{info.DisplayName} likes the {dish}. {Friendship.Line(hearts)}";
+            string line = Lang.Format("hh_gift_liked", info.DisplayName, Stars.TierName(stars), dish, Friendship.Line(hearts));
             player.Message(MessageHud.MessageType.Center, line);
         }
     }

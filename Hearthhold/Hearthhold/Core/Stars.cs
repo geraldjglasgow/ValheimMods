@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace Hearthhold
@@ -10,7 +11,7 @@ namespace Hearthhold
     {
         public const int Max = 3;
 
-        private static readonly string[] tierNames = { "Plain", "Bronze", "Silver", "Gold" };
+        private static readonly string[] tierKeys = { "hh_tier_plain", "hh_tier_bronze", "hh_tier_silver", "hh_tier_gold" };
 
         public static int Get(ItemDrop.ItemData item) => GrindstoneLink.GetStars(item);
 
@@ -35,6 +36,7 @@ namespace Hearthhold
         /// <summary>The stars as coloured glyphs, "" for none.</summary>
         public static string Text(int stars) => GrindstoneLink.StarText(stars);
 
-        public static string TierName(int stars) => tierNames[Mathf.Clamp(stars, 0, Max)];
+        /// <summary>The tier's name in the player's language: Plain, Bronze, Silver or Gold.</summary>
+        public static string TierName(int stars) => Lang.Get(tierKeys[Mathf.Clamp(stars, 0, Max)]);
     }
 }

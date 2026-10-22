@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 
 namespace Hearthhold
 {
@@ -9,7 +10,8 @@ namespace Hearthhold
     /// </summary>
     public static class CaskHover
     {
-        public const string Rule = "Meads and wines gain a star every 2 days";
+        /// <summary>The rule in the player's language: "Meads and wines gain a star every 2 days".</summary>
+        public static string Rule => Lang.Get("hh_cask_rule");
 
         /// <summary>The rule, plus "Next star in N days" for the slot closest to its next star.</summary>
         public static string Line(List<CaskRecord> records, double now, EnvMan env)
@@ -24,7 +26,7 @@ namespace Hearthhold
             if (soonest == double.MaxValue || env.m_dayLengthSec <= 0)
                 return Rule;
             double days = System.Math.Max(0.0, soonest) / env.m_dayLengthSec;
-            return $"{Rule}\nNext star in {days:0.0} days";
+            return Rule + "\n" + Lang.Format("hh_cask_next_star", days.ToString("0.0"));
         }
 
         [HarmonyPatch(typeof(Container), nameof(Container.GetHoverText))]

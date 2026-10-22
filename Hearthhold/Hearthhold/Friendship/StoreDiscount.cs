@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 
 namespace Hearthhold
 {
@@ -103,7 +104,8 @@ namespace Hearthhold
                 return;
             TraderInfo info = TraderInfo.Of(trader);
             if (Friendship.DiscountPercent(player, info) > 0)
-                player.Message(MessageHud.MessageType.TopLeft, $"{info.DisplayName}: {Friendship.Line(Friendship.Hearts(player, info))}");
+                player.Message(MessageHud.MessageType.TopLeft,
+                    Lang.Format("hh_store_friendship", info.DisplayName, Friendship.Line(Friendship.Hearts(player, info))));
         }
     }
 }

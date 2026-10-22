@@ -1,6 +1,6 @@
 {
     "name": "Hearthhold",
-    "version_number": "0.1.1",
+    "version_number": "0.2.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/Hearthhold",
     "description": "Stardew style quality stars for food: forage, crops, meat, fish, dishes and meads come bronze, silver or gold. Daily fortune, professions, a shipping crate, trader friendship and an aging cask. Needs GrindstoneSkills.",
     "dependencies": [

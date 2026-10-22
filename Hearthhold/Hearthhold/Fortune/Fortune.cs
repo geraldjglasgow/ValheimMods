@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 
 namespace Hearthhold
@@ -20,7 +21,8 @@ namespace Hearthhold
         }
 
         private static readonly float[] levels = { -10f, -5f, 0f, 5f, 10f };
-        private static readonly string[] names = { "Ill-omened", "Poor", "Fair", "Good", "Blessed" };
+        private static readonly string[] nameKeys =
+            { "hh_fortune_ill_omened", "hh_fortune_poor", "hh_fortune_fair", "hh_fortune_good", "hh_fortune_blessed" };
 
         private static int cachedDay = -1;
         private static int cachedSeed;
@@ -50,16 +52,18 @@ namespace Hearthhold
             return cachedKind;
         }
 
-        public static string Name(Kind kind) => names[(int)kind];
+        /// <summary>The fortune's name in the player's language: Ill-omened, Poor, Fair, Good or Blessed.</summary>
+        public static string Name(Kind kind) => Lang.Get(nameKeys[(int)kind]);
 
         public static float LevelsOf(Kind kind) => levels[(int)kind];
 
-        /// <summary>The fortune as one line, e.g. "Good fortune today: star rolls +5".</summary>
+        /// <summary>The fortune as one line in the player's language, e.g. "Good fortune today: star rolls +5".</summary>
         public static string Line(Kind kind)
         {
             float value = LevelsOf(kind);
-            string effect = value == 0f ? "star rolls as usual" : $"star rolls {(value > 0f ? "+" : "")}{value:0}";
-            return $"{Name(kind)} fortune today: {effect}";
+            if (value == 0f)
+                return Lang.Format("hh_fortune_line_usual", Name(kind));
+            return Lang.Format("hh_fortune_line", Name(kind), $"{(value > 0f ? "+" : "")}{value:0}");
         }
     }
 }

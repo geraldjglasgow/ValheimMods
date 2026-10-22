@@ -1,4 +1,5 @@
 using System;
+using Translations;
 using UnityEngine;
 
 namespace Hearthhold
@@ -9,7 +10,8 @@ namespace Hearthhold
     /// the game's morning, 15% into it) with the day stored in the ZDO; when a dawn has passed it sells once, however many
     /// days were missed, and stores the day. A new crate stores the day when first seen. Never sells while open or
     /// before the container has loaded its latest items; it simply tries again on the next check. While the switch is
-    /// off it only keeps the day current, so turning it on sells at the next dawn, not at once.
+    /// off it only keeps the day current, so turning it on sells at the next dawn, not at once. A sale travels as numbers
+    /// (items, coins) and each player within range words it in their own language.
     /// </summary>
     public sealed class ShippingCrate : MonoBehaviour
     {
@@ -86,7 +88,7 @@ namespace Hearthhold
                 return;
             if (Vector3.Distance(player.transform.position, view.transform.position) > MessageRange)
                 return;
-            MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, $"The Shipping Crate sold {items} items for {coins} coins");
+            MessageHud.instance.ShowMessage(MessageHud.MessageType.TopLeft, Lang.Format("hh_crate_sold", items, coins));
         }
     }
 }

@@ -1,0 +1,71 @@
+# Hearthhold - English words
+#
+# To translate: copy this file as Hearthhold.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the mod), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# Daily Fortune: the day's fortune, told top-left on arrival and each new day ($1 the fortune's name, $2 like +5 or -10)
+hh_fortune_ill_omened: "Ill-omened"
+hh_fortune_poor: "Poor"
+hh_fortune_fair: "Fair"
+hh_fortune_good: "Good"
+hh_fortune_blessed: "Blessed"
+hh_fortune_line: "$1 fortune today: star rolls $2"
+hh_fortune_line_usual: "$1 fortune today: star rolls as usual"
+
+# Star tiers: 0 to 3 stars (the stars themselves are drawn by GrindstoneSkills)
+hh_tier_plain: "Plain"
+hh_tier_bronze: "Bronze"
+hh_tier_silver: "Silver"
+hh_tier_gold: "Gold"
+
+# Starred food and mead tooltips, e.g. "Silver: +20% health and stamina (60 / 24), lasts 20% longer (36m)"
+# $1 in a tip is the tier name, the stats list ("health and stamina (60 / 24)") is built from the words above it
+hh_stat_health: "health"
+hh_stat_stamina: "stamina"
+hh_stat_eitr: "eitr"
+hh_list_two: "$1 and $2"
+hh_list_three: "$1, $2 and $3"
+hh_stats: "$1 ($2)"
+hh_tip_food: "$1: +$2% $3, lasts $4% longer ($5)"
+hh_tip_restore: "$1: restores $2% more $3"
+hh_tip_lasting: "$1: lasts $2% longer ($3)"
+
+# Professions, for level 100 in a skill
+hh_profession_botanist: "Botanist"
+hh_profession_botanist_desc: "Wild picks, honey and sap are always gold."
+hh_profession_tiller: "Tiller"
+hh_profession_tiller_desc: "Crops you harvest are at least silver."
+hh_profession_rancher: "Rancher"
+hh_profession_rancher_desc: "Meat from creatures you kill is at least silver."
+hh_profession_angler: "Angler"
+hh_profession_angler_desc: "Raw fish you clean is at least silver."
+hh_profession_gourmet: "Gourmet"
+hh_profession_gourmet_desc: "Dishes and meads you make are at least silver."
+
+# Shipping Crate: the piece, its hover and the dawn sale ($1 items, $2 coins)
+hh_piece_shipping_crate: "Shipping Crate"
+hh_piece_shipping_crate_desc: "What you leave in it is bought at dawn for coins. Starred food pays more."
+hh_crate_hover: "Sells at dawn: starred food pays more"
+hh_crate_at_dawn: "At dawn: $1 items for $2 coins"
+hh_crate_last_sale: "Last sale: $1 items for $2 coins"
+hh_crate_sold: "The Shipping Crate sold $1 items for $2 coins"
+
+# Aging Cask: the piece and its hover ($1 days, like 1.5)
+hh_piece_aging_cask: "Aging Cask"
+hh_piece_aging_cask_desc: "Meads and wines stored inside gain a star every 2 days, up to gold."
+hh_cask_rule: "Meads and wines gain a star every 2 days"
+hh_cask_next_star: "Next star in $1 days"
+
+# Trader friendship: the hover line ($1 hearts of $2, $3 percent off), gifts and the store greeting
+# In a gift or store line $1 is the trader's name; in a liked gift $2 is the tier, $3 the dish, $4 the friendship line
+hh_friendship: "Friendship $1/$2"
+hh_friendship_off: "Friendship $1/$2, $3% off"
+hh_gift_plain: "$1 only accepts starred food as a gift."
+hh_gift_tomorrow: "Come back tomorrow."
+hh_gift_liked: "$1 likes the $2 $3. $4"
+hh_store_friendship: "$1: $2"

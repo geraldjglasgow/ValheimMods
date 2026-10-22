@@ -39,6 +39,7 @@ Needed on the server and every client, with GrindstoneSkills. Install with r2mod
 ## Configuration
 `BepInEx/config/com.Hearthhold.cfg` holds three switches: Daily Fortune, Shipping Crate and Trader Friendship. They
 apply without a restart, and the server's values bind every player (`Lock Configuration`).
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/Hearthhold/Hearthhold/translations/English.yml) as `Hearthhold.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

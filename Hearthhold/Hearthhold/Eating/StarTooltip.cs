@@ -1,5 +1,6 @@
 using System.Text;
 using HarmonyLib;
+using Translations;
 
 namespace Hearthhold
 {
@@ -38,10 +39,9 @@ namespace Hearthhold
                 return;
             float bonus = EatBonus.Food(stars);
             float duration = EatBonus.Duration(stars);
-            Label(stars).Append('+').Append(EatBonus.Percent(bonus)).Append("% ");
-            StatLine.Values(text, shared.m_food, shared.m_foodStamina, shared.m_foodEitr, 1f + bonus);
-            text.Append(", lasts ").Append(EatBonus.Percent(duration)).Append("% longer (")
-                .Append(ItemDrop.ItemData.GetDurationString(shared.m_foodBurnTime * (1f + duration))).Append(')');
+            string stats = StatLine.Values(shared.m_food, shared.m_foodStamina, shared.m_foodEitr, 1f + bonus);
+            string time = ItemDrop.ItemData.GetDurationString(shared.m_foodBurnTime * (1f + duration));
+            Line(Lang.Format("hh_tip_food", Label(stars), EatBonus.Percent(bonus), stats, EatBonus.Percent(duration), time));
         }
 
         private static void MeadLine(StatusEffect effect, int stars)
@@ -55,19 +55,20 @@ namespace Hearthhold
 
         private static void Restore(SE_Stats stats, float bonus, int stars)
         {
-            Label(stars).Append("restores ").Append(EatBonus.Percent(bonus)).Append("% more ");
             float stamina = stats.m_staminaUpFront + (stats.m_staminaOverTimeIsFraction ? 0f : stats.m_staminaOverTime);
             float health = stats.m_healthUpFront + stats.m_healthOverTime;
-            StatLine.Values(text, health, stamina, stats.m_eitrUpFront + stats.m_eitrOverTime, 1f + bonus);
+            string values = StatLine.Values(health, stamina, stats.m_eitrUpFront + stats.m_eitrOverTime, 1f + bonus);
+            Line(Lang.Format("hh_tip_restore", Label(stars), EatBonus.Percent(bonus), values));
         }
 
         private static void Lasting(float ttl, float bonus, int stars)
         {
-            Label(stars).Append("lasts ").Append(EatBonus.Percent(bonus)).Append("% longer (")
-                .Append(ItemDrop.ItemData.GetDurationString(ttl * (1f + bonus))).Append(')');
+            string time = ItemDrop.ItemData.GetDurationString(ttl * (1f + bonus));
+            Line(Lang.Format("hh_tip_lasting", Label(stars), EatBonus.Percent(bonus), time));
         }
 
-        private static StringBuilder Label(int stars) =>
-            text.Append("\n<color=orange>").Append(Stars.TierName(stars)).Append("</color>: ");
+        private static void Line(string line) => text.Append('\n').Append(line);
+
+        private static string Label(int stars) => "<color=orange>" + Stars.TierName(stars) + "</color>";
     }
 }
