@@ -27,6 +27,12 @@ only where the axe lands ("I only want the little circle as the hitbox"), in the
 ("only the axehead circle should be doing damage"), so standing close in to its body is safe. The slam's wind-up
 (raise and cock, clip 0 to 1.05 s) plays 1.35 times faster ("needs to be a bit faster"); knockback halved (slam 45,
 the rest 30).
+
+**It swings only where the axe reaches** (GitHub #38, 2026-10-22): the AI kept the old 3 m / 4 m ranges, stopped
+there and missed every swing. Measured in game at the base size, the blade's edge gets 1.24 m from its centre in the
+slam, 1.07 m in the sweep and 1.42 m in the spin (`HeadsmanAttacks.Shape.Reach`); each move now starts only within that
+plus `Axe Head Radius`, less 0.3 m. A player standing still was hit 14 times in 15, against 0 in 15 before. Standing
+against its body is not safe from the spin: its ring reaches a body that touches it.
 3. **Spin.** Winds up to the right and spins a full turn with the axe held out flat; the weight carries it past,
    it staggers to catch its balance and straightens.
 4. **Overhead throw** (target out of melee range). Axe up over the head, cocked back, thrown overhand straight at the

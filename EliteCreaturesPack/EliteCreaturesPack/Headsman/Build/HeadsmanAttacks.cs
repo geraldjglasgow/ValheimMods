@@ -9,7 +9,7 @@ namespace EliteCreaturesPack.Headsman
     /// The Crypt Executioner's six attacks, items only it carries: copies of the Skeleton's sword (so its hit effects and
     /// the game's AI handling stay the game's), the sword's model taken off (the kit's greataxe is what shows), each
     /// setting its own clip's trigger. The game's AI picks among them by their ranges and intervals: the slam, the ground
-    /// scrape and the spin within reach; the two throws only from further off (their least range); the rear strike only
+    /// scrape and the spin only where the blade reaches (<see cref="Shape.Reach"/>); the two throws only from further off (their least range); the rear strike only
     /// when its target is behind (an inverted angle check) and two or more foes are near (<see cref="HeadsmanRear"/>).
     /// The slam, the low sweep (the scrape) and the spin do not hit through the game's sweep from the body: the axe head
     /// does (<see cref="HeadsmanCut"/>), with these items' damage and push. Damage follows the settings.
@@ -25,13 +25,23 @@ namespace EliteCreaturesPack.Headsman
             public Attack.AttackType Type;
             public float Range, Angle, AiRange, AiRangeMin, Interval, MaxAngle = 20f;
             public bool Behind;
+
+            /// <summary>
+            /// For a move the axe head hits with: how far from the creature's centre its blade's edge gets while it cuts,
+            /// measured in game at <see cref="HeadsmanCreature.Size"/>. The AI starts the move only within this plus the
+            /// axe head's radius, so it never swings at a foe its blade cannot touch (GitHub #38).
+            /// </summary>
+            public float Reach;
         }
+
+        /// <summary>Taken off the reach for the foe's angle off the swing and a step it takes during the wind-up.</summary>
+        private const float Leeway = 0.3f;
 
         private static readonly Shape[] Shapes =
         {
-            new Shape { Move = HeadsmanMoves.Slam, Key = "slam", Type = Attack.AttackType.None, AiRange = 3f, Interval = 4f },
-            new Shape { Move = HeadsmanMoves.Scrape, Key = "scrape", Type = Attack.AttackType.None, AiRange = 4f, Interval = 8f, MaxAngle = 30f },
-            new Shape { Move = HeadsmanMoves.Spin, Key = "spin", Type = Attack.AttackType.None, AiRange = 3f, Interval = 10f, MaxAngle = 180f },
+            new Shape { Move = HeadsmanMoves.Slam, Key = "slam", Type = Attack.AttackType.None, Reach = 1.24f, Interval = 4f },
+            new Shape { Move = HeadsmanMoves.Scrape, Key = "scrape", Type = Attack.AttackType.None, Reach = 1.07f, Interval = 8f, MaxAngle = 30f },
+            new Shape { Move = HeadsmanMoves.Spin, Key = "spin", Type = Attack.AttackType.None, Reach = 1.42f, Interval = 10f, MaxAngle = 180f },
             new Shape { Move = HeadsmanMoves.Hurl, Key = "hurl", Type = Attack.AttackType.Projectile, AiRange = 22f, AiRangeMin = 7f, Interval = 14f, MaxAngle = 12f },
             new Shape { Move = HeadsmanMoves.SpinThrow, Key = "spinthrow", Type = Attack.AttackType.Projectile, AiRange = 22f, AiRangeMin = 7f, Interval = 14f, MaxAngle = 12f },
             new Shape { Move = HeadsmanMoves.Rear, Key = "rear", Type = Attack.AttackType.Horizontal, Range = 3.2f, Angle = 360f, AiRange = 3.2f, Interval = 8f, MaxAngle = 120f, Behind = true },
@@ -106,6 +116,17 @@ namespace EliteCreaturesPack.Headsman
             };
             shared.m_damages = new HitData.DamageTypes { m_slash = slash };
             shared.m_attackForce = shared.m_name == "$item_ecp_headsman_slam" ? 45f : 30f;
+            AimAtReach(shared);
+        }
+
+        /// <summary>A move the axe head hits with starts only where its blade reaches, the setting's radius included.</summary>
+        private static void AimAtReach(ItemDrop.ItemData.SharedData shared)
+        {
+            Shape? shape = System.Array.Find(Shapes, s => "$item_ecp_headsman_" + s.Key == shared.m_name);
+            if (shape != null && shape.Reach > 0f)
+            {
+                shared.m_aiAttackRange = shape.Reach + HeadsmanSettings.AxeRadius - Leeway;
+            }
         }
 
         /// <summary>After a settings change: the prefabs' attacks and every loaded Executioner's own copies of them.</summary>

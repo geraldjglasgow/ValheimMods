@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.3
+
+- Fixed: the Crypt Executioner swings only where its axe reaches, so its slam, sweep and spin hit again (#38).
+- `Axe Head Radius` also sets how far off it starts those swings.
+
 ## 0.12.2
 
 - Vietnamese translation updated by QuânKha (Zono) [VLHM].

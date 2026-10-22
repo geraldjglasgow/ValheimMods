@@ -37,7 +37,7 @@ namespace EliteCreaturesPack.Headsman
         public static float RearDamage => rear.Value;
         public static int Summons => summons.Value;
 
-        /// <summary>Metres round the blade's edge that the slam and the spin hit.</summary>
+        /// <summary>Metres round the blade's edge that the slam, the sweep and the spin hit; also how far off they start.</summary>
         public static float AxeRadius => axeRadius.Value;
 
         /// <summary>How many times faster than its clip the slam's wind-up plays.</summary>
@@ -71,7 +71,8 @@ namespace EliteCreaturesPack.Headsman
                 "Slash damage of the low sweep across its front, where the axe head passes.", acceptableValues: Settings.Range(0f, 1000f));
             spin = config.Bind(Section, "Spin Damage", 50f, "Slash damage of the spin, where its axe head passes.", acceptableValues: Settings.Range(0f, 1000f));
             axeRadius = config.Bind(Section, "Axe Head Radius", 0.5f,
-                "Metres round the blade's edge that hit in the slam (where the axe lands) and the spin (the ring the head draws; inside it is safe).",
+                "Metres round the blade's edge that hit in the slam, the sweep and the spin. It also sets how far off it starts them: "
+                + "only where the blade plus this reaches, so a larger value hits from further away.",
                 acceptableValues: Settings.Range(0.1f, 2f));
             windup = config.Bind(Section, "Slam Windup Speed", 1.35f,
                 "How much faster than its animation the slam is raised and cocked before it comes down (1 = as animated).",

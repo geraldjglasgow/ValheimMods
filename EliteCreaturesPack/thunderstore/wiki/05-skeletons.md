@@ -42,9 +42,9 @@ A skeleton headsman, a quarter taller than the rest, with a bone greataxe. A min
 
 | Move | When | Damage | Answer |
 | --- | --- | --- | --- |
-| Slam | Within 3 m | 60 slash | Only the axe head hits: sidestep where it lands. Hard knockback. |
-| Ground sweep | Within 4 m | 35 slash | Across its front, right to left. |
-| Spin | Within 3 m | 50 slash | Stand close in to its body: only the axe head's ring hits. It staggers after. |
+| Slam | Close in, where its axe reaches | 60 slash | Only the axe head hits: step back or sidestep before it lands. Hard knockback. |
+| Ground sweep | Close in, where its axe reaches | 35 slash | Across its front, right to left. |
+| Spin | Close in, where its axe reaches | 50 slash | Its axe head's ring hits all round it: back off or block. It staggers after. |
 | Axe throw (overhand or spinning) | 7 to 22 m away | 55 slash | Dodge sideways or block. |
 | Rear strike | Behind it, with two or more foes near | 55 slash | Mind its back when fighting as a group. |
 
@@ -81,7 +81,7 @@ A skeleton headsman, a quarter taller than the rest, with a bone greataxe. A min
 | Slam Damage | 60 | Slash damage of the slam |
 | Sweep Damage | 35 | Slash damage of the ground sweep |
 | Spin Damage | 50 | Slash damage of the spin |
-| Axe Head Radius | 0.5 | Metres round the blade that hit in the slam, sweep and spin |
+| Axe Head Radius | 0.5 | Metres round the blade that hit in the slam, sweep and spin; larger also starts them from further off |
 | Slam Windup Speed | 1.35 | How much faster than animated the slam winds up |
 | Throw Damage | 55 | Slash damage of a thrown axe |
 | Rear Strike Damage | 55 | Slash damage of the strike behind it |

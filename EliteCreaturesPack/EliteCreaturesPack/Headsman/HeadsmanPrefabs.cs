@@ -75,7 +75,7 @@ namespace EliteCreaturesPack.Headsman
         private static GameObject? Weapon(Humanoid? skeleton, string name) =>
             skeleton?.m_randomWeapon.FirstOrDefault(item => item != null && item.name == name);
 
-        /// <summary>After a settings change: attack damage, health and the axehead's chance for new ones, the spawner's return time.</summary>
+        /// <summary>After a settings change: attack damage and reach, health and the axehead's chance for new ones, the spawner's return time.</summary>
         private static void Reapply()
         {
             HeadsmanAttacks.ApplyToAll();
