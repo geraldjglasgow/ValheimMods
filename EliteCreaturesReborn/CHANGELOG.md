@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.31.3
+
+- Fixed: built training dummies get no stars or mutations, so a Splintering one no longer splits into extra dummies to dismantle (#36).
+
 ## 3.31.2
 
 - Polish translation, used while the game's language is Polish.

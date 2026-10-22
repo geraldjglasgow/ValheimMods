@@ -8,9 +8,9 @@ using PatchGuard;
 namespace EliteCreaturesReborn.Patches
 {
     /// <summary>
-    /// Gives every non-player creature an <see cref="EliteController"/> as it wakes. The controller does the rest on
-    /// its own first frame - by then any spawner has already set the vanilla star level, so nothing is lost. Players
-    /// are filtered inside the controller, and a boss resolves there on the boss table, so this stays a cheap attach.
+    /// Gives every creature an <see cref="EliteController"/> as it wakes, except players and what players build
+    /// (<see cref="PlayerBuilt"/>). The controller does the rest on its own first frame - by then any spawner has already
+    /// set the vanilla star level, so nothing is lost. A boss resolves there on the boss table, so this stays a cheap attach.
     /// A creature the world's own spawning is making right now is tagged wild here, for the horde (<see cref="WildSpawn"/>).
     /// </summary>
     [HarmonyPatch(typeof(Character), "Awake")]
@@ -21,7 +21,7 @@ namespace EliteCreaturesReborn.Patches
 
         private static void Attach(Character character)
         {
-            if (character.IsPlayer() || character.GetComponent<EliteController>() != null)
+            if (character.IsPlayer() || PlayerBuilt.Is(character) || character.GetComponent<EliteController>() != null)
             {
                 return;
             }

@@ -395,7 +395,9 @@ player's report 2026-10-15: one high in the air could not be seen from the groun
 whatever the file says (a rule in the mod, not the file), and one a world saved Cloaked loads without it. Likewise a
 creature that releases creatures as it dies is never Splintering (`Traits/DeathBrood.cs`, read from its prefab: a
 creature among its death effects, its ragdoll's removal effects or its drops; the Oozer, a player's report 2026-10-13),
-and one saved Splintering loads without it.
+and one saved Splintering loads without it. A creature players build (the game's training dummy, or anything that is
+also a piece) is never touched at all: no stars, no mutations (`Runtime/PlayerBuilt.cs`; GitHub #36, 2026-10-22: a
+Splintering dummy split into copies that each dismantled for the full cost), and one that rolled before loads plain.
 
 ## Respawning
 
