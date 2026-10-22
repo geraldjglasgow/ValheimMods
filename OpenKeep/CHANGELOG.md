@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.0
+
+- Translations: every word you read is in `translations/English.yml`; an `OpenKeep.translations.<Language>.yml` in `BepInEx/config` translates it.
+
 ## 5.0.1
 
 - Fixed: players on a slow connection with many mods are no longer refused when joining a server.

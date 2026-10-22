@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Blueprints.Sites;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -42,7 +43,7 @@ namespace OpenKeep.Blueprints
             {
                 SiteState s = run != null && run.Site != null ? run.Site.State : null;
                 Blueprint bp = s?.Blueprint;
-                return bp == null ? null : BlueprintWords.Format(BlueprintWords.Progress, s.Name, s.BuiltCount, bp.Pieces.Count);
+                return bp == null ? null : Lang.Format(BlueprintWords.Progress, s.Name, s.BuiltCount, bp.Pieces.Count);
             }
         }
 

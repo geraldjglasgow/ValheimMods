@@ -4,6 +4,7 @@ using HarmonyLib;
 using OpenKeep.Core;
 using PatchGuard;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -141,7 +142,7 @@ namespace OpenKeep.Store
             TMP_Text text = go.GetComponentInChildren<TMP_Text>(true);
             if (text == null)
                 return;
-            text.text = Language.Localize(word);
+            text.text = Lang.Get(word);
             text.enableAutoSizing = true;
             text.fontSizeMax = Mathf.Max(12f, Mathf.Min(text.fontSize, 16f));
             text.fontSizeMin = 9f;

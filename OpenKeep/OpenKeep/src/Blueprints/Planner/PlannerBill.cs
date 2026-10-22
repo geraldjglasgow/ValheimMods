@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Planner
 {
@@ -15,12 +15,12 @@ namespace OpenKeep.Blueprints.Planner
         public static string Describe(Blueprint bp, IEnumerable<int> pieces, int most)
         {
             if (BlueprintSettings.FreeMaterials)
-                return Language.Localize(PlannerWords.Free);
+                return Lang.Get(PlannerWords.Free);
             Dictionary<string, int> amounts = Needed(bp, pieces);
             if (amounts.Count == 0)
                 return null;
             List<string> parts = amounts.OrderByDescending(a => a.Value).Take(most)
-                .Select(a => Language.Localize(a.Key) + " " + a.Value).ToList();
+                .Select(a => Localization.instance.Localize(a.Key) + " " + a.Value).ToList();
             if (amounts.Count > most)
                 parts.Add("+" + (amounts.Count - most));
             return string.Join(", ", parts);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenKeep.Blueprints.Sites;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Planner
 {
@@ -24,19 +25,19 @@ namespace OpenKeep.Blueprints.Planner
             List<int> pieces = NotQueued(queue, PlannerSelection.Unbuilt());
             if (pieces.Count == 0)
             {
-                Messages.Center(PlannerWords.NothingNew);
+                Messages.Center(Lang.Get(PlannerWords.NothingNew));
                 PlannerSelection.Clear();
                 return;
             }
             if (queue.Count >= MaxEntries)
             {
-                Messages.Center(BlueprintWords.Format(PlannerWords.QueueFull, MaxEntries));
+                Messages.Center(Lang.Format(PlannerWords.QueueFull, MaxEntries));
                 return;
             }
             string name = NewName(queue, PlannerSelection.Smart ? PlannerWords.HouseName : PlannerWords.SelectionName);
             queue.Add(new SiteSelection { Name = name, Pieces = pieces });
             Send(site, queue);
-            Messages.Center(BlueprintWords.Format(PlannerWords.Queued, name, pieces.Count));
+            Messages.Center(Lang.Format(PlannerWords.Queued, name, pieces.Count));
             PlannerSelection.Clear();
         }
 
@@ -77,11 +78,11 @@ namespace OpenKeep.Blueprints.Planner
         }
 
         /// <summary>"Selection 3": the number is the entry's place, raised until no other entry has the name.</summary>
-        private static string NewName(List<SiteSelection> queue, string token)
+        private static string NewName(List<SiteSelection> queue, string key)
         {
             for (int n = queue.Count + 1; ; n++)
             {
-                string name = BlueprintWords.Format(token, n);
+                string name = Lang.Format(key, n);
                 if (!queue.Exists(s => s.Name == name))
                     return name;
             }

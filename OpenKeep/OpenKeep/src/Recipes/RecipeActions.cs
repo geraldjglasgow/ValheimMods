@@ -1,7 +1,7 @@
-using OpenKeep.Core;
 using OpenKeep.Salvage;
 using OpenKeep.Tracker;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,6 +22,7 @@ namespace OpenKeep.Recipes
         private static Button track;
         private static TMP_Text trackLabel;
         private static string trackWord;
+        private static int trackLanguage = -1;
         private static string trackText = "";
         private static Button star;
         private static Image starIcon;
@@ -66,16 +67,17 @@ namespace OpenKeep.Recipes
         }
 
         /// <summary>
-        /// The label is localized only when it changes between Track and Untrack (this runs every frame), and written
-        /// again whenever something else (the game's relocalizing) changed it.
+        /// The label is localized only when it changes between Track and Untrack or the language changes (this runs
+        /// every frame), and written again whenever something else (the game's relocalizing) changed it.
         /// </summary>
         private static float PlaceTrack(Recipe recipe, int quality, float x)
         {
             string word = TrackerList.IsTracked(recipe, quality) ? TrackerWords.Untrack : TrackerWords.Track;
-            if (word != trackWord)
+            if (word != trackWord || Lang.Version != trackLanguage)
             {
                 trackWord = word;
-                trackText = Language.Localize(word);
+                trackLanguage = Lang.Version;
+                trackText = Lang.Get(word);
             }
             if (trackLabel != null && trackLabel.text != trackText)
                 trackLabel.text = trackText;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Copy
@@ -17,7 +18,7 @@ namespace OpenKeep.Blueprints.Copy
         {
             if (!BlueprintSettings.Enabled)
             {
-                Messages.Center(BlueprintWords.Disabled);
+                Messages.Center(Lang.Get(BlueprintWords.Disabled));
                 return;
             }
             Piece aimed = CopyAim.Pick();
@@ -26,11 +27,11 @@ namespace OpenKeep.Blueprints.Copy
             List<FixPiece> group = CopyHover.Take(aimed, mode, building);
             if (group.Count == 0)
             {
-                Messages.Center(CopyWords.AimHint);
+                Messages.Center(Lang.Get(CopyWords.AimHint));
                 return;
             }
             int changed = CopySelection.Toggle(group);
-            Messages.Center(BlueprintWords.Format(changed > 0 ? CopyWords.Added : CopyWords.Removed, Mathf.Abs(changed), CopySelection.Count));
+            Messages.Center(Lang.Format(changed > 0 ? CopyWords.Added : CopyWords.Removed, Mathf.Abs(changed), CopySelection.Count));
         }
     }
 }

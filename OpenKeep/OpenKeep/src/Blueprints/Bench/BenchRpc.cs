@@ -1,5 +1,6 @@
 using HarmonyLib;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Bench
 {
@@ -43,14 +44,14 @@ namespace OpenKeep.Blueprints.Bench
         /// <summary>The answer came from the server (the only machine that answers bench requests).</summary>
         public static bool FromServer(long sender) => ZRoutedRpc.instance != null && sender == ZRoutedRpc.instance.GetServerPeerID();
 
-        /// <summary>Server: a message for the asking player, a word with up to two values, shown in their language.</summary>
+        /// <summary>Server: a message for the asking player, a word (sent as its token) with up to two values, shown in their language.</summary>
         public static void Tell(long target, string word, string a = "", string b = "") =>
-            ZRoutedRpc.instance.InvokeRoutedRPC(target, Say, word, a ?? "", b ?? "");
+            ZRoutedRpc.instance.InvokeRoutedRPC(target, Say, Lang.Token(word), a ?? "", b ?? "");
 
         private static void OnSay(long sender, string word, string a, string b)
         {
             if (FromServer(sender) && word.StartsWith("$ok_"))
-                Messages.TopLeft(BlueprintWords.Format(word, a, b));
+                Messages.TopLeft(Lang.Format(word, a, b));
         }
 
         private static void Guard(string what, System.Action action) => BlueprintSafe.Run("OpenKeep blueprint bench " + what, action);

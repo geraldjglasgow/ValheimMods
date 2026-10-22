@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints
 {
@@ -205,7 +206,7 @@ namespace OpenKeep.Blueprints
             error = BlueprintFiles.CheckName(name);
             string path = PathOf(Join(CurrentFolder, name));
             if (error == null && File.Exists(path))
-                error = BlueprintWords.Format(BlueprintWords.Exists, Join(CurrentFolder, name));
+                error = Lang.Format(BlueprintWords.Exists, Join(CurrentFolder, name));
             if (error != null)
                 return false;
             bp.Name = name;

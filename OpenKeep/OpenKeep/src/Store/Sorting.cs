@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenKeep.Core;
 using OpenKeep.Shared;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -23,7 +24,7 @@ namespace OpenKeep.Store
             int stacks = Sort(inventory, item => Pinned(player, item), MainGrid.FirstRow(player, inventory), MainGrid.Rows(player, inventory),
                 PackPanelGrid.BlockedCells(player, inventory));
             if (!quiet)
-                Messages.Center(StoreWords.Format(StoreWords.Sorted, stacks));
+                Messages.Center(Lang.Format(StoreWords.Sorted, stacks));
         }
 
         public static void SortOpenContainer()
@@ -51,7 +52,7 @@ namespace OpenKeep.Store
                 ContainerScan.Save(container);
             }
             if (!quiet)
-                Messages.Center(StoreWords.Format(StoreWords.Sorted, stacks));
+                Messages.Center(Lang.Format(StoreWords.Sorted, stacks));
         }
 
         /// <summary>"Viewing only" for a chest the player views, "The chest cannot be changed right now" for one

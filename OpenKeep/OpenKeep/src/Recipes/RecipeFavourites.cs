@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Recipes
 {
@@ -35,8 +36,8 @@ namespace OpenKeep.Recipes
             if (!on)
                 keys.Remove(key);
             Write(keys);
-            string name = Language.Localize(recipe.m_item.m_itemData.m_shared.m_name);
-            Messages.Center(RecipeWords.Format(on ? RecipeWords.FavouriteOn : RecipeWords.FavouriteOff, name));
+            string name = Localization.instance.Localize(recipe.m_item.m_itemData.m_shared.m_name);
+            Messages.Center(Lang.Format(on ? RecipeWords.FavouriteOn : RecipeWords.FavouriteOff, name));
         }
 
         /// <summary>Favourites only on or off; refused, with a hint, while there is no favourite to show.</summary>
@@ -66,7 +67,7 @@ namespace OpenKeep.Recipes
             }
             if (!UnifiedPopup.IsAvailable())
                 return;
-            string text = RecipeWords.Format(RecipeWords.ClearAsk, count);
+            string text = Lang.Format(RecipeWords.ClearAsk, count);
             UnifiedPopup.Push(new YesNoPopup(RecipeWords.OnlyTopic, text, Clear, UnifiedPopup.Pop));
         }
 

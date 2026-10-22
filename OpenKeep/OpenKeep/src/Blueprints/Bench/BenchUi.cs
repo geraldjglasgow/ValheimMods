@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -110,7 +111,7 @@ namespace OpenKeep.Blueprints.Bench
         {
             Title = BenchCopies.Text(crafting.Find("topic").GetComponent<TMP_Text>(), Window, "Title", 32f, TextAlignmentOptions.Center);
             BenchCopies.Place(Title.rectTransform, 0f, -14f, Width, 46f);
-            Title.text = Core.Language.Localize(BenchWords.Name);
+            Title.text = Lang.Get(BenchWords.Name);
             Transform braid = crafting.Find("BraidLineHorisontalMedium");
             if (braid == null)
                 return;

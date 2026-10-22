@@ -1,5 +1,6 @@
 using HarmonyLib;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -62,7 +63,7 @@ namespace OpenKeep.Blueprints
         public static void StartPath(string path, bool folder)
         {
             if (!string.IsNullOrEmpty(path))
-                NamePrompt.Ask(BlueprintWords.RenameTopic, BlueprintLibrary.Leaf(path), BlueprintFiles.NameLimit, typed => Done(path, folder, typed));
+                NamePrompt.Ask(Lang.Get(BlueprintWords.RenameTopic), BlueprintLibrary.Leaf(path), BlueprintFiles.NameLimit, typed => Done(path, folder, typed));
         }
 
         private static void Done(string path, bool folder, string typed)
@@ -70,7 +71,7 @@ namespace OpenKeep.Blueprints
             if (BlueprintFiles.Rename(path, folder, typed, out string to, out string error))
             {
                 BlueprintMenu.Moved(path, to);
-                Messages.Center(BlueprintWords.Format(BlueprintWords.Renamed, path, to));
+                Messages.Center(Lang.Format(BlueprintWords.Renamed, path, to));
             }
             else if (error != null)
                 Messages.Center(error);

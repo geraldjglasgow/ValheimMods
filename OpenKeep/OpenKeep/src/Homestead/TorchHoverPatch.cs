@@ -1,7 +1,7 @@
 using System.Linq;
 using BepInEx.Configuration;
 using HarmonyLib;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Homestead
@@ -21,7 +21,7 @@ namespace OpenKeep.Homestead
             if (string.IsNullOrEmpty(__result))
                 return;
             if (TorchSwitch.OutForDay(__instance))
-                __result += "\n" + Language.Localize(TorchFeature.NightfallWord);
+                __result += "\n" + Lang.Get(TorchFeature.NightfallWord);
             __result += SwitchLine(__instance);
         }
 
@@ -33,7 +33,7 @@ namespace OpenKeep.Homestead
             if (!PrivateArea.CheckAccess(fire.transform.position, 0f, false))
                 return "";
             string action = TorchKeep.IsKept(fire.m_nview.GetZDO()) ? TorchFeature.NightOnlyWord : TorchFeature.KeepLitWord;
-            return $"\n[<color=yellow><b>{Label(key)}</b></color>] {Language.Localize(action)}";
+            return $"\n[<color=yellow><b>{Label(key)}</b></color>] {Lang.Get(action)}";
         }
 
         /// <summary>Modifiers first, as the README writes keys ("LeftAlt + O"); BepInEx's own text puts the main key first.</summary>

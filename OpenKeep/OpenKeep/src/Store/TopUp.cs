@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -32,7 +33,7 @@ namespace OpenKeep.Store
                     units += batch.Moved;
             }
             if (units > 0 || !waiting)
-                Messages.Center(units > 0 ? StoreWords.Format(StoreWords.ToppedUp, units) : StoreWords.Nothing);
+                Messages.Center(units > 0 ? Lang.Format(StoreWords.ToppedUp, units) : StoreWords.Nothing);
         }
 
         /// <summary>The free units per kind over the inventory's partial stacks.</summary>

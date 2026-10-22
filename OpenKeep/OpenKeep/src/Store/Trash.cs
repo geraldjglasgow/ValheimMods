@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OpenKeep.Core;
 using OpenKeep.Salvage;
 using OpenKeep.Shared;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -27,7 +28,7 @@ namespace OpenKeep.Store
             if (item == null || Refused(gui, player, inventory, item))
                 return;
             int amount = item.m_stack;
-            Confirm(StoreWords.Format(StoreWords.TrashAsk, Label(ItemNames.DisplayName(item), amount)), () => Destroy(gui, inventory, item, amount));
+            Confirm(Lang.Format(StoreWords.TrashAsk, Label(ItemNames.DisplayName(item), amount)), () => Destroy(gui, inventory, item, amount));
         }
 
         public static void TrashDragged(InventoryGui gui)
@@ -44,7 +45,7 @@ namespace OpenKeep.Store
             int amount = Math.Min(gui.m_dragAmount, item.m_stack);
             if (Refused(gui, player, inventory, item))
                 return;
-            Confirm(StoreWords.Format(StoreWords.TrashAsk, Label(ItemNames.DisplayName(item), amount)), () =>
+            Confirm(Lang.Format(StoreWords.TrashAsk, Label(ItemNames.DisplayName(item), amount)), () =>
             {
                 gui.SetupDragItem(null, null, 1);
                 Destroy(gui, inventory, item, amount);
@@ -70,7 +71,7 @@ namespace OpenKeep.Store
                 Messages.Center(StoreWords.NoJunk);
                 return;
             }
-            Confirm(StoreWords.Format(StoreWords.DestroyJunkAsk, junk.Count), () =>
+            Confirm(Lang.Format(StoreWords.DestroyJunkAsk, junk.Count), () =>
             {
                 gui.SetupDragItem(null, null, 1);
                 foreach (ItemDrop.ItemData item in junk)
@@ -92,7 +93,7 @@ namespace OpenKeep.Store
             if (blocker == null)
                 return false;
             if (blocker.Length > 0)
-                Messages.Center(StoreWords.Format(blocker, ItemNames.DisplayName(item)));
+                Messages.Center(Lang.Format(blocker, ItemNames.DisplayName(item)));
             return true;
         }
 
@@ -108,7 +109,7 @@ namespace OpenKeep.Store
                 action();
                 return;
             }
-            string header = Language.Localize(StoreWords.Trash);
+            string header = Lang.Get(StoreWords.Trash);
             UnifiedPopup.Push(new YesNoPopup(header, text, () =>
             {
                 UnifiedPopup.Pop();
@@ -135,13 +136,13 @@ namespace OpenKeep.Store
             if (container == null && amount >= item.m_stack && StoreSettings.TrashUsesSalvage.Value && SalvageActions.CanSalvage(item))
             {
                 if (SalvageActions.Salvage(player, item))
-                    Messages.Center(StoreWords.Format(StoreWords.Salvaged, label));
+                    Messages.Center(Lang.Format(StoreWords.Salvaged, label));
                 return;
             }
             inventory.RemoveItem(item, amount);
             if (container != null)
                 ContainerScan.Save(container);
-            Messages.Center(StoreWords.Format(StoreWords.Trashed, label));
+            Messages.Center(Lang.Format(StoreWords.Trashed, label));
         }
 
         /// <summary>
@@ -164,7 +165,7 @@ namespace OpenKeep.Store
                 if (arrived <= 0)
                     return;
                 inventory.RemoveItem(name, arrived, quality, false);
-                Messages.Center(StoreWords.Format(StoreWords.Trashed, Label(display, arrived)));
+                Messages.Center(Lang.Format(StoreWords.Trashed, Label(display, arrived)));
             });
         }
 

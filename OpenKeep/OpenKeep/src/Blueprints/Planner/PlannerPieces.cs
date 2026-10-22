@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using OpenKeep.Blueprints.Sites;
-using OpenKeep.Core;
 
 namespace OpenKeep.Blueprints.Planner
 {
@@ -32,7 +31,7 @@ namespace OpenKeep.Blueprints.Planner
                 return "";
             string prefab = bp.Pieces[index].Prefab;
             Piece piece = MaterialBill.PieceOf(prefab);
-            return piece != null ? Language.Localize(piece.m_name) : prefab;
+            return piece != null ? Localization.instance.Localize(piece.m_name) : prefab;
         }
     }
 }

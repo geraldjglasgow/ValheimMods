@@ -1,5 +1,6 @@
 using OpenKeep.Core;
 using Splatform;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Sites
@@ -36,7 +37,7 @@ namespace OpenKeep.Blueprints.Sites
             site.State.SetGroundStone(plan.Work.StoneNeeded - plan.Work.StoneRemoved);
             go.GetComponent<Piece>()?.SetCreator(player.GetPlayerID(), PlatformManager.DistributionPlatform.LocalUser.PlatformUserID);
             BuildUndo.Begin(site, plan.Blueprint, plan.Frame);
-            Messages.Center(BlueprintWords.Format(SiteWords.Placed, plan.Blueprint.Name));
+            Messages.Center(Lang.Format(SiteWords.Placed, plan.Blueprint.Name));
             Plugin.Log.LogInfo($"OpenKeep: construction site {plan.Blueprint.Name} placed at {plan.Frame.Origin} yaw {plan.Frame.Yaw:0} " +
                 $"({plan.Blueprint.Pieces.Count} pieces, ground stone {plan.Work.StoneNeeded - plan.Work.StoneRemoved})");
             return true;
@@ -46,13 +47,13 @@ namespace OpenKeep.Blueprints.Sites
         private static string Refusal(SitePlan plan)
         {
             if (SitePrefab.Prefab == null)
-                return Language.Localize(SiteWords.NoPrefab);
+                return Lang.Get(SiteWords.NoPrefab);
             Rect mine = PieceRect(plan.Blueprint, plan.Frame);
             foreach (SiteMarker other in SiteMarker.Loaded)
             {
                 Blueprint bp = other != null ? other.State?.Blueprint : null;
                 if (bp != null && PieceRect(bp, other.State.Frame).Overlaps(mine))
-                    return BlueprintWords.Format(SiteWords.Overlaps, other.State.Name);
+                    return Lang.Format(SiteWords.Overlaps, other.State.Name);
             }
             return null;
         }

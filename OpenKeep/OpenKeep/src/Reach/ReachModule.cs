@@ -1,10 +1,10 @@
-using OpenKeep.Core;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Reach
 {
-    /// <summary>Entry point of the Reach module: binds its settings, registers its YAML files and language words.</summary>
+    /// <summary>Entry point of the Reach module: binds its settings and registers its YAML files.</summary>
     public static class ReachModule
     {
         public const string Resource = "OpenKeep.config.OpenKeep.Reach.yml";
@@ -17,21 +17,8 @@ namespace OpenKeep.Reach
             Files = synced.AddYaml(new YamlFileSet("OpenKeep.Reach*.yml", "openkeep_reach", () => new ReachModel(), ReachRules.Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(ReachModule).Assembly, Resource),
-                EditorLabel = () => "Edit reach rules",
+                EditorLabel = () => Lang.Get("ok_reach_edit"),
             });
-            Words();
-        }
-
-        private static void Words()
-        {
-            Language.Add("ok_fromstorage", "From storage");
-            Language.Add("ok_reach", "OpenKeep reach");
-            Language.Add("ok_on", "on");
-            Language.Add("ok_off", "off");
-            Language.Add("ok_pulled", "Pulled from storage:");
-            Language.Add("ok_nothingtopull", "Nothing to pull from storage");
-            Language.Add("ok_nofit", "The materials from storage do not fit in the inventory");
-            Language.Add("ok_reach_wait", "Fetching the materials from storage, try again");
         }
     }
 }

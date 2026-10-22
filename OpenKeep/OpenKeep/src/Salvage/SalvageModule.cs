@@ -1,9 +1,10 @@
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Salvage
 {
-    /// <summary>Entry point of the Salvage module: binds its settings, registers its YAML files and language words.</summary>
+    /// <summary>Entry point of the Salvage module: binds its settings and registers its YAML files.</summary>
     public static class SalvageModule
     {
         public const string Resource = "OpenKeep.config.OpenKeep.Salvage.yml";
@@ -16,9 +17,8 @@ namespace OpenKeep.Salvage
             Files = synced.AddYaml(new YamlFileSet("OpenKeep.Salvage*.yml", "openkeep_salvage", () => new SalvageModel(), Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(SalvageModule).Assembly, Resource),
-                EditorLabel = () => Core.Language.Localize(SalvageWords.Edit),
+                EditorLabel = () => Lang.Get(SalvageWords.Edit),
             });
-            SalvageWords.Register();
         }
 
         private static void Apply(YamlModel model)

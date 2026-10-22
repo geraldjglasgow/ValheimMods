@@ -1,6 +1,7 @@
 using System;
 using OpenKeep.Core;
 using OpenKeep.Shared;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -77,7 +78,7 @@ namespace OpenKeep.Store
         private void Report()
         {
             if (Moved > 0)
-                Messages.Center(StoreWords.Format(word, Moved, StoreTargets.Name(container)));
+                Messages.Center(Lang.Format(word, Moved, StoreTargets.Name(container)));
         }
     }
 }

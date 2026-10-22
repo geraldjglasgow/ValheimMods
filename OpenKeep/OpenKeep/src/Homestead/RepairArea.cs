@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Homestead
 {
@@ -59,7 +60,7 @@ namespace OpenKeep.Homestead
             if (tally.Repaired == 1)
                 Messages.TopLeft(RepairFeature.RepairedOne);
             else if (tally.Repaired > 1)
-                Messages.TopLeft(string.Format(Language.Localize(RepairFeature.RepairedMany), tally.Repaired));
+                Messages.TopLeft(Lang.Format(RepairFeature.RepairedMany, tally.Repaired));
             if (tally.Touching > 0)
                 Plugin.Log.LogInfo($"OpenKeep: area repair around {Utils.GetPrefabName(centre.gameObject)}: {tally}");
         }

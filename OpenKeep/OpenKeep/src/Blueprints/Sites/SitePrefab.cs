@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Sites
@@ -69,7 +70,7 @@ namespace OpenKeep.Blueprints.Sites
         {
             if (piece == null)
                 return;
-            piece.m_name = SiteWords.MarkerName;
+            piece.m_name = Lang.Token(SiteWords.MarkerName);
             piece.m_description = "";
             piece.m_canBeRemoved = false;
             piece.m_resources = new Piece.Requirement[0];

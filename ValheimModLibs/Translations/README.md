@@ -44,5 +44,6 @@ many words they translated.
   `Lang.Version` changes.
 
 Merged into the consuming mod with ILRepack like every library here (it uses YamlDotNet, which the mod merges too).
-Consumers: EliteCreaturesReborn, EliteCreaturesPack, GrindstoneSkills. EliteCrafting's `Text/Words` and EarthWright's `Core/Language`
-are older copies of the same idea and are to move onto it.
+Consumers: EliteCreaturesReborn, EliteCreaturesPack, GrindstoneSkills, OpenKeep, PackPanel, EarthWright, Wayfare,
+EliteEquipment, EliteBuildingPieces, Hearthhold, Party, ShipConfig, Lockstep, FeastMaster. EliteCrafting's
+`Text/Words` is an older copy of the same idea (the same file names) and is to move onto it.

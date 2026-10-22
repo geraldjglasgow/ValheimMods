@@ -1,4 +1,3 @@
-using OpenKeep.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +20,7 @@ namespace OpenKeep.Mimir
             Button button = Frame(gui, parent, "filter_" + filter, x);
             Icon((RectTransform)button.transform, filter);
             button.onClick.AddListener(() => MimirSearch.Pick(filter));
-            Tooltip(button.gameObject, gui, Language.Localize(MimirFilters.Word(filter)));
+            Tooltip(button.gameObject, gui, MimirFilters.Word(filter));
             Label(gui, (RectTransform)button.transform, "count", "", CountSize, TextAlignmentOptions.BottomRight);
             return button;
         }
@@ -31,7 +30,7 @@ namespace OpenKeep.Mimir
             Button button = Frame(gui, parent, "filter_starred", x);
             Label(gui, (RectTransform)button.transform, "star", "<color=" + Gold + ">★</color>", 20f, TextAlignmentOptions.Center);
             button.onClick.AddListener(MimirSearch.ToggleStarred);
-            Tooltip(button.gameObject, gui, Language.Localize("$ok_mimir_filter_starred"));
+            Tooltip(button.gameObject, gui, "$ok_mimir_filter_starred");
             Label(gui, (RectTransform)button.transform, "count", "", CountSize, TextAlignmentOptions.BottomRight);
             return button;
         }

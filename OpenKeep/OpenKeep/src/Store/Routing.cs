@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -24,7 +25,7 @@ namespace OpenKeep.Store
             Container target = FindTarget(nearby, item);
             if (target == null)
             {
-                Messages.Center(StoreWords.Format(StoreWords.NoRoute, name));
+                Messages.Center(Lang.Format(StoreWords.NoRoute, name));
                 return;
             }
             Overflow.Send(player, item, item.m_stack, target, nearby, sent => Report(sent, SentWords(sent, name)), StoreTargets.OpenTarget);
@@ -42,10 +43,10 @@ namespace OpenKeep.Store
             target = target ?? Holder(nearby, item);
             if (target == null || StoreRules.Refuses(target, item))
             {
-                Messages.Center(StoreWords.Format(StoreWords.NoRoute, name));
+                Messages.Center(Lang.Format(StoreWords.NoRoute, name));
                 return;
             }
-            Overflow.Send(player, item, 1, target, nearby, sent => Report(sent, StoreWords.Format(StoreWords.StoredOne, name)));
+            Overflow.Send(player, item, 1, target, nearby, sent => Report(sent, Lang.Format(StoreWords.StoredOne, name)));
         }
 
         /// <summary>
@@ -58,8 +59,8 @@ namespace OpenKeep.Store
                 return "";
             string first = StoreTargets.Name(sent.Took[0]);
             if (sent.Took.Count == 1)
-                return StoreWords.Format(StoreWords.Routed, name, first);
-            return StoreWords.Format(StoreWords.RoutedMore, name, first, sent.Took.Count - 1);
+                return Lang.Format(StoreWords.Routed, name, first);
+            return Lang.Format(StoreWords.RoutedMore, name, first, sent.Took.Count - 1);
         }
 
         /// <summary>The message at the end of a route: the success words, else "Nothing to move" unless a shared chest's refusal was just said.</summary>
@@ -77,7 +78,7 @@ namespace OpenKeep.Store
             if (blocker == null)
                 return false;
             if (blocker.Length > 0)
-                Messages.Center(StoreWords.Format(blocker, ItemNames.DisplayName(item)));
+                Messages.Center(Lang.Format(blocker, ItemNames.DisplayName(item)));
             return true;
         }
 

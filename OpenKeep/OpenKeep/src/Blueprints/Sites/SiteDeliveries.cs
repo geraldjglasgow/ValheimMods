@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Sites
@@ -109,7 +110,7 @@ namespace OpenKeep.Blueprints.Sites
             {
                 request.Late = true;
                 request.SentAt = now;
-                Messages.Center(SiteWords.NoAnswer);
+                Messages.Center(Lang.Get(SiteWords.NoAnswer));
                 return;
             }
             pending.Remove(request.Id);

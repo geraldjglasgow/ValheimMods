@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using OpenKeep.Core;
 
 namespace OpenKeep.Recipes
 {
@@ -84,7 +83,7 @@ namespace OpenKeep.Recipes
         /// <summary>The item's name in the game's language and its prefab name, lower case.</summary>
         private static string ItemText(ItemDrop item)
         {
-            string shown = Language.Localize(item.m_itemData.m_shared.m_name);
+            string shown = Localization.instance.Localize(item.m_itemData.m_shared.m_name);
             return (shown + "\n" + item.name).ToLowerInvariant();
         }
     }

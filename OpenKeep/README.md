@@ -59,6 +59,7 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 ## Configuration
 `BepInEx/config/milkyteam.openkeep.cfg` and seven `OpenKeep.*.yml` files. Every setting is described in the file and
 applies without a restart; the server's values bind every player. Console: `openkeep help`.
+Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/OpenKeep/OpenKeep/translations/English.yml) as `OpenKeep.translations.<Language>.yml` in `BepInEx/config`.
 
 ## Links
 Discord: https://discord.gg/Q2sMPGQ4T3

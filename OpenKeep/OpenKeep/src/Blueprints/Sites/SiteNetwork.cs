@@ -1,5 +1,6 @@
 using HarmonyLib;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Sites
@@ -38,7 +39,7 @@ namespace OpenKeep.Blueprints.Sites
         {
             Player player = Player.m_localPlayer;
             if (player != null && Vector3.Distance(player.transform.position, at) <= CrewRange)
-                Messages.Center(BlueprintWords.Format(BlueprintWords.Done, name, pieces));
+                Messages.Center(Lang.Format(BlueprintWords.Done, name, pieces));
         }
     }
 

@@ -1,8 +1,8 @@
 using System;
-using OpenKeep.Core;
 using PatchGuard;
 using PlateColumn;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -110,7 +110,7 @@ namespace OpenKeep.Store
         private static void Word(TMP_Text word, RectTransform wood)
         {
             Inside(word.rectTransform, wood, Pad, wood.rect.height - Pad - WordHeight);
-            word.text = Language.Localize(StoreWords.Trash);
+            word.text = Lang.Get(StoreWords.Trash);
             word.alignment = TextAlignmentOptions.Center;
             word.textWrappingMode = TextWrappingModes.NoWrap;
             word.enableAutoSizing = true;

@@ -94,7 +94,19 @@ namespace OpenKeep.Mimir
             }
         }
 
-        /// <summary>The button's tooltip word, "$ok_mimir_filter_food" and so on (<see cref="MimirModule"/>).</summary>
-        public static string Word(MimirFilter filter) => "$ok_mimir_filter_" + filter.ToString().ToLowerInvariant();
+        /// <summary>The button's tooltip word, "$ok_mimir_filter_food" and so on (translations/English.yml).</summary>
+        public static string Word(MimirFilter filter)
+        {
+            switch (filter)
+            {
+                case MimirFilter.Food: return "$ok_mimir_filter_food";
+                case MimirFilter.Meads: return "$ok_mimir_filter_meads";
+                case MimirFilter.Equipment: return "$ok_mimir_filter_equipment";
+                case MimirFilter.Wood: return "$ok_mimir_filter_wood";
+                case MimirFilter.Metal: return "$ok_mimir_filter_metal";
+                case MimirFilter.Trophies: return "$ok_mimir_filter_trophies";
+                default: return "$ok_mimir_filter_other";
+            }
+        }
     }
 }

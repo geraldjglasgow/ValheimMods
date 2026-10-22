@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Reach
@@ -56,7 +56,7 @@ namespace OpenKeep.Reach
 
         public static string Line(Func<ItemDrop.ItemData, bool> accepts)
         {
-            return "\n" + Language.Localize("$ok_fromstorage") + " " + ReachCount.CountMatching(accepts);
+            return "\n" + Lang.Format("ok_fromstorage", ReachCount.CountMatching(accepts));
         }
 
         /// <summary>What the switch's station accepts through that switch, or null for a switch that adds nothing

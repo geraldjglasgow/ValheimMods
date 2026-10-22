@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Reach
 {
@@ -20,7 +21,7 @@ namespace OpenKeep.Reach
         {
             bool off = !ReachRules.PlayerOff;
             ReachRules.SetPlayerOff(off);
-            Messages.Center("$ok_reach: " + (off ? "$ok_off" : "$ok_on"));
+            Messages.Center(Lang.Format("ok_reach", Lang.Get(off ? "ok_off" : "ok_on")));
         }
     }
 }

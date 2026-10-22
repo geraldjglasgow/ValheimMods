@@ -1,5 +1,5 @@
-using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,7 +47,7 @@ namespace OpenKeep.BuildCamera
         {
             shownKey = key;
             string missing = CameraNeeds.Describe(player, CameraSettings.PickupNeedsResting, CameraSettings.PickupMinComfort) ?? "";
-            label.text = Language.Localize(CameraModule.PickupNeeds) + ": " + missing;
+            label.text = Lang.Format(CameraModule.PickupNeeds, missing);
             Vector2 size = label.GetPreferredValues(label.text);
             panel.sizeDelta = size + Vector2.one * (2f * Padding);
         }

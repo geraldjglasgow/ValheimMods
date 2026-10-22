@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -137,12 +138,12 @@ namespace OpenKeep.Blueprints
             Anchor? anchor = Aim();
             if (!anchor.HasValue)
             {
-                Messages.Center(BlueprintWords.Aim);
+                Messages.Center(Lang.Get(BlueprintWords.Aim));
                 return false;
             }
             pin = anchor;
             pinnedName = BlueprintMenu.NameOf(Player.m_localPlayer?.GetSelectedPiece());
-            Messages.Center(BlueprintWords.Pinned);
+            Messages.Center(Lang.Get(BlueprintWords.Pinned));
             return true;
         }
 
@@ -178,7 +179,7 @@ namespace OpenKeep.Blueprints
                 return false;
             pin = null;
             if (!quiet)
-                Messages.Center(BlueprintWords.Unpinned);
+                Messages.Center(Lang.Get(BlueprintWords.Unpinned));
             return true;
         }
 

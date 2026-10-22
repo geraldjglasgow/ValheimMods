@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Sites
 {
@@ -26,11 +27,11 @@ namespace OpenKeep.Blueprints.Sites
         {
             if (!MayAsk(site, player))
             {
-                player.Message(MessageHud.MessageType.Center, BlueprintWords.Format(SiteWords.NotYours, site.State.CreatorName));
+                player.Message(MessageHud.MessageType.Center, Lang.Format(SiteWords.NotYours, site.State.CreatorName));
                 return;
             }
             Request(site.View.GetZDO().m_uid);
-            player.Message(MessageHud.MessageType.Center, BlueprintWords.Format(SiteWords.TakenDown, site.State.Name));
+            player.Message(MessageHud.MessageType.Center, Lang.Format(SiteWords.TakenDown, site.State.Name));
         }
 
         /// <summary>The local player made the site or is an admin (the server checks again).</summary>
@@ -53,7 +54,7 @@ namespace OpenKeep.Blueprints.Sites
                 return;
             if (!SiteRights.MayTakeDown(sender, zdo))
             {
-                ZRoutedRpc.instance.InvokeRoutedRPC(sender, "ShowMessage", (int)MessageHud.MessageType.Center, SiteWords.Refused);
+                ZRoutedRpc.instance.InvokeRoutedRPC(sender, "ShowMessage", (int)MessageHud.MessageType.Center, Lang.Token(SiteWords.Refused));
                 return;
             }
             long owner = zdo.GetOwner();

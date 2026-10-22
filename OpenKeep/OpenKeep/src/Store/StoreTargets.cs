@@ -112,7 +112,7 @@ namespace OpenKeep.Store
         public static string Name(Container container)
         {
             Inventory inventory = container != null ? container.GetInventory() : null;
-            return inventory != null ? Language.Localize(inventory.GetName()) : "";
+            return inventory != null ? Localization.instance.Localize(inventory.GetName()) : "";
         }
     }
 }

@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Shared
 {
@@ -51,15 +52,15 @@ namespace OpenKeep.Shared
         {
             ZNetView view = container != null ? container.m_nview : null;
             string name = view != null && view.IsValid() ? view.GetZDO().GetString(UserHash, "") : "";
-            return string.IsNullOrEmpty(name) ? Language.Localize(SharedWords.Someone) : name;
+            return string.IsNullOrEmpty(name) ? Lang.Get(SharedWords.Someone) : name;
         }
 
         /// <summary>The panel title of a viewed container: "&lt;chest name&gt; (in use by &lt;player&gt;)".</summary>
         public static string Title(Container container)
         {
             Inventory inventory = container != null ? container.GetInventory() : null;
-            string name = inventory != null ? Language.Localize(inventory.GetName()) : "";
-            return name + " (" + Language.Localize(SharedWords.InUse) + " " + UserName(container) + ")";
+            string name = inventory != null ? Localization.instance.Localize(inventory.GetName()) : "";
+            return Lang.Format(SharedWords.InUse, name, UserName(container));
         }
     }
 }

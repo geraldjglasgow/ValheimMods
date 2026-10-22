@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Copy
@@ -36,7 +37,7 @@ namespace OpenKeep.Blueprints.Copy
             if (Input.GetKeyDown(ClearKey) && CopySelection.Count > 0)
             {
                 CopySelection.Clear();
-                Messages.Center(CopyWords.Cleared);
+                Messages.Center(Lang.Get(CopyWords.Cleared));
             }
             if (ChatEnter.Pressed && CopySelection.Count > 0)
             {

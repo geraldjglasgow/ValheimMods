@@ -1,5 +1,6 @@
 using HarmonyLib;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Planner
@@ -42,7 +43,7 @@ namespace OpenKeep.Blueprints.Planner
             if (Input.GetKeyDown(ClearKey) && PlannerSelection.Count > 0)
             {
                 PlannerSelection.Clear();
-                Messages.Center(PlannerWords.Cleared);
+                Messages.Center(Lang.Get(PlannerWords.Cleared));
             }
             if ((Input.GetKeyDown(QueueKey) || Input.GetKeyDown(QueuePadKey)) && PlannerSelection.Count > 0)
             {

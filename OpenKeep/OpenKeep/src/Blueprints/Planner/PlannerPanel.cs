@@ -1,5 +1,5 @@
 using OpenKeep.Blueprints.Sites;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Planner
@@ -61,7 +61,7 @@ namespace OpenKeep.Blueprints.Planner
             Matrix4x4 matrix = GUI.matrix;
             GUI.matrix = Matrix4x4.Scale(new Vector3(scale, scale, 1f));
             Rect rect = Docked(scale);
-            GUILayout.Window(WindowId, rect, Draw, Language.Localize(PlannerWords.PanelTitle), PanelStyles.Window,
+            GUILayout.Window(WindowId, rect, Draw, Lang.Get(PlannerWords.PanelTitle), PanelStyles.Window,
                 GUILayout.Width(rect.width), GUILayout.Height(rect.height));
             GUI.matrix = matrix;
         }
@@ -77,11 +77,11 @@ namespace OpenKeep.Blueprints.Planner
         private static void Draw(int id)
         {
             if (PanelModel.Site == null)
-                GUILayout.Label(BlueprintWords.Format(PlannerWords.PanelNoSite, SiteRange), PanelStyles.Grey);
+                GUILayout.Label(Lang.Format(PlannerWords.PanelNoSite, SiteRange), PanelStyles.Grey);
             else
                 DrawSite();
             GUILayout.FlexibleSpace();
-            GUILayout.Label(Language.Localize(PlannerWords.PanelKeys), PanelStyles.Grey);
+            GUILayout.Label(Lang.Get(PlannerWords.PanelKeys), PanelStyles.Grey);
         }
 
         private static void DrawSite()
@@ -90,7 +90,7 @@ namespace OpenKeep.Blueprints.Planner
             GUILayout.Label(PanelModel.Progress, PanelStyles.Text);
             if (PanelModel.Rows.Count == 0)
             {
-                GUILayout.Label(Language.Localize(PlannerWords.PanelEmpty), PanelStyles.Grey);
+                GUILayout.Label(Lang.Get(PlannerWords.PanelEmpty), PanelStyles.Grey);
                 hoveredRow = -1;
                 return;
             }
@@ -131,13 +131,13 @@ namespace OpenKeep.Blueprints.Planner
         {
             SiteMarker shown = PanelModel.Site;
             GUI.enabled = i > 0;
-            if (GUILayout.Button(Language.Localize(PlannerWords.Up), GUILayout.Width(ButtonWidth)))
+            if (GUILayout.Button(Lang.Get(PlannerWords.Up), GUILayout.Width(ButtonWidth)))
                 QueueEdits.Move(shown, i, -1, row.Name);
             GUI.enabled = i < PanelModel.Rows.Count - 1;
-            if (GUILayout.Button(Language.Localize(PlannerWords.Down), GUILayout.Width(ButtonWidth)))
+            if (GUILayout.Button(Lang.Get(PlannerWords.Down), GUILayout.Width(ButtonWidth)))
                 QueueEdits.Move(shown, i, 1, row.Name);
             GUI.enabled = true;
-            if (GUILayout.Button(Language.Localize(PlannerWords.Remove), GUILayout.Width(RemoveWidth)))
+            if (GUILayout.Button(Lang.Get(PlannerWords.Remove), GUILayout.Width(RemoveWidth)))
                 QueueEdits.Remove(shown, i, row.Name);
         }
     }

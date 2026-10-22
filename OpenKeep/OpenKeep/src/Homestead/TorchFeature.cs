@@ -1,10 +1,9 @@
-using OpenKeep.Core;
 using SyncedConfig;
 
 namespace OpenKeep.Homestead
 {
     /// <summary>
-    /// Torches lit only at night: binds the keys of section 8 and the words. The switch runs in the fire's own tick
+    /// Torches lit only at night: binds the keys of section 8 and names the words. The switch runs in the fire's own tick
     /// (<see cref="TorchPatch"/>) and reads the settings there, so a change applies within two seconds without a handler;
     /// the keep-lit key is polled in <see cref="TorchKeyPatch"/> and handled by the fire's owner (<see cref="TorchKeep"/>).
     /// </summary>
@@ -17,18 +16,13 @@ namespace OpenKeep.Homestead
         public const string KeepLitWord = "$ok_torch_keeplit";
         public const string NightOnlyWord = "$ok_torch_nightonly";
 
-        /// <summary>The centre message after the key: kept lit, or back on the schedule.</summary>
+        /// <summary>The centre message after the key ($1 the torch's name): kept lit, or back on the schedule.</summary>
         public const string KeptWord = "$ok_torch_kept";
         public const string ScheduledWord = "$ok_torch_scheduled";
 
         public static void Initialize(SyncedConfiguration synced)
         {
             TorchSettings.Bind(synced);
-            Language.Add("ok_torch_nightfall", "Lights at nightfall");
-            Language.Add("ok_torch_keeplit", "Keep lit");
-            Language.Add("ok_torch_nightonly", "Light at night only");
-            Language.Add("ok_torch_kept", "kept lit day and night");
-            Language.Add("ok_torch_scheduled", "lit at night only");
         }
     }
 }

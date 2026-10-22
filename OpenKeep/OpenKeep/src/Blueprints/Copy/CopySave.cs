@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Copy
@@ -26,7 +27,7 @@ namespace OpenKeep.Blueprints.Copy
         public static void Ask()
         {
             yaw = BlueprintCapture.FacingYaw();
-            asking = NamePrompt.Ask(CopyWords.NameTopic, DefaultName(), NameLimit, Save);
+            asking = NamePrompt.Ask(Lang.Get(CopyWords.NameTopic), DefaultName(), NameLimit, Save);
         }
 
         /// <summary>Per frame, whatever the tool shows: notices the name box closing (confirmed, Esc, or gone with the HUD).</summary>
@@ -47,16 +48,16 @@ namespace OpenKeep.Blueprints.Copy
             if (bp == null)
             {
                 CopySelection.Clear();
-                Messages.Center(CopyWords.Gone);
+                Messages.Center(Lang.Get(CopyWords.Gone));
                 return;
             }
             string error = Write(bp, name);
             if (error != null)
             {
-                Messages.Center(BlueprintWords.Format(CopyWords.Refused, error));
+                Messages.Center(Lang.Format(CopyWords.Refused, error));
                 return;
             }
-            Messages.Center(BlueprintWords.Format(CopyWords.Saved, name, bp.Pieces.Count));
+            Messages.Center(Lang.Format(CopyWords.Saved, name, bp.Pieces.Count));
             CopySelection.Clear();
         }
 
@@ -80,7 +81,7 @@ namespace OpenKeep.Blueprints.Copy
             string folder = Path.Combine(BlueprintLibrary.Folder, BlueprintLibrary.CurrentFolder ?? "");
             for (int n = 1; ; n++)
             {
-                string name = BlueprintWords.Format(CopyWords.DefaultName, n);
+                string name = Lang.Format(CopyWords.DefaultName, n);
                 if (!File.Exists(Path.Combine(folder, name + ".json")))
                     return name;
             }

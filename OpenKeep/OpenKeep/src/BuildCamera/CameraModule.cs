@@ -1,4 +1,3 @@
-using OpenKeep.Core;
 using SyncedConfig;
 
 namespace OpenKeep.BuildCamera
@@ -16,21 +15,17 @@ namespace OpenKeep.BuildCamera
     {
         public const string Section = "11. Build Camera";
 
-        public static string NoStation { get; private set; }
-        public static string EntryNeeds { get; private set; }
-        public static string PickupNeeds { get; private set; }
-        public static string Resting { get; private set; }
-        public static string Comfort { get; private set; }
+        // The keys of the camera's words; their English is in translations/English.blueprints.yml.
+        public const string NoStation = "ok_cam_nostation";
+        public const string EntryNeeds = "ok_cam_needs";
+        public const string PickupNeeds = "ok_cam_pickupneeds";
+        public const string Resting = "ok_cam_resting";
+        public const string Comfort = "ok_cam_comfort";
 
         public static void Initialize(SyncedConfiguration synced)
         {
             CameraSettings.Bind(synced);
             CameraPrefs.Bind(synced);
-            NoStation = Language.Add("ok_cam_nostation", "The build camera works only near a crafting station");
-            EntryNeeds = Language.Add("ok_cam_needs", "The build camera needs");
-            PickupNeeds = Language.Add("ok_cam_pickupneeds", "Camera pickup needs");
-            Resting = Language.Add("ok_cam_resting", "Resting");
-            Comfort = Language.Add("ok_cam_comfort", "comfort {0} (you have {1})");
         }
     }
 }

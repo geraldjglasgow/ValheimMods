@@ -23,6 +23,10 @@ Rules that still apply to every change:
   everywhere: GUID `milkyteam.openkeep`, config `milkyteam.openkeep.cfg`, YAML `OpenKeep.<Module>.yml`, words
   `$ok_*`, command `openkeep`, custom data `OpenKeep.<name>`, ZDO keys and RPC names `OpenKeep.<name>` /
   `OpenKeep_<Name>`, Charter article names `openkeep_<module>`. No compatibility layer for any other mod's files.
+- Words. Every word a player sees is in `OpenKeep/translations/English.yml` (embedded), read through the Translations
+  library (`Lang.Get`, `Lang.Format` with `$1`..`$n`, `Lang.Token` for names the game localizes); `Lang.Install` runs in
+  `Plugin.Awake` before the modules. The `*Words` classes hold the keys only. Logs, console output, .cfg and YAML text
+  stay English. A translation is `OpenKeep.translations.<Language>.yml` in `BepInEx/config`.
 - Verify every patched signature against a fresh `ilspycmd` decompile of the game's own assemblies
   (`assembly_valheim.dll`, `assembly_utils.dll`, `assembly_guiutils.dll`) in the scratchpad, never in a repository,
   and read the method body so the patch fits ownership, RPCs and save paths.
@@ -75,7 +79,7 @@ OpenKeep/OpenKeep/src/
     PruneMark.cs            when a per-object table is pruned: once it doubled since the last prune
     SceneSafe.cs            ZNetScene.Awake postfix work that logs and swallows a throw (a throw there stops the world loading)
     RenamedKeys.cs          Carry: a renamed cfg key takes the old line's value from BepInEx's orphaned entries
-    Messages.cs, Language.cs   centre and top-left messages; $ok_ words (Localization.SetupLanguage postfix)
+    Messages.cs             centre and top-left messages (the game's MessageHud localizes $tokens)
     Command.cs              the openkeep console command (Terminal.InitTerminal postfix)
     PackPanelLink.cs        PackPanel present (GUID in the chainloader), its config entries, LaysOutInventory
     PackPanelGrid.cs        PackPanel.mainGrid from the character's custom data: rows, blocked cells, InSlot
@@ -404,9 +408,9 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings, registers its YAML set and its words), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.0.1]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings and registers its YAML set), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.1.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
-    BlueprintsModule.cs     binds the settings, words, the Sites, Planner and Copy modules, adds BlueprintRunner
+    BlueprintsModule.cs     binds the settings, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
     BlueprintTab.cs, BlueprintPieceList.cs, BlueprintTabPatches.cs   the "Blueprints" tab of the game's build menu
                             (BuildUi): a copy of its last tab with its own piece list, shown while on and the hammer
@@ -2347,7 +2351,7 @@ Mímir's Chest (2026-10-06, never run in game yet):
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 5.0.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 5.1.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` is written and `OpenKeep.Containers.yml`
    lists every container prefab commented out (chests, `VikingShip`, `Cart`); with an edited file, a container of a
    mod installed afterwards is appended at its end on the next world load, and nothing else in the file changes.

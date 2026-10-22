@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -71,7 +72,7 @@ namespace OpenKeep.Blueprints
             if (category.HasValue && !table.m_categories.Contains(category.Value))
             {
                 table.m_categories.Add(category.Value);
-                table.m_categoryLabels.Add(BlueprintWords.Tab);
+                table.m_categoryLabels.Add(Lang.Token(BlueprintWords.Tab));
             }
         }
 

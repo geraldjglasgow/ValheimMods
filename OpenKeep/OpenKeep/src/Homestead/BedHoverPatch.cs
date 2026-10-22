@@ -1,5 +1,4 @@
 using HarmonyLib;
-using OpenKeep.Core;
 
 namespace OpenKeep.Homestead
 {
@@ -18,7 +17,7 @@ namespace OpenKeep.Homestead
                 return;
             if (!BedChecks.IsLocal(__instance) || __instance.IsCurrent())
                 return;
-            __result = __result.Replace(Language.Localize("$piece_bed_setspawn"), Language.Localize("$piece_bed_sleep"));
+            __result = __result.Replace(Localization.instance.Localize("$piece_bed_setspawn"), Localization.instance.Localize("$piece_bed_sleep"));
         }
     }
 }

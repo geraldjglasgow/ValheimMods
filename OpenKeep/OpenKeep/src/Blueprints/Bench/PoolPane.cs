@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Bench
 {
@@ -47,9 +48,9 @@ namespace OpenKeep.Blueprints.Bench
         /// <summary>The local player may change this part (theirs, or they are an admin); the server checks again.</summary>
         public static bool MayChange(long owner) => owner != 0L && (owner == Me || Admin);
 
-        public string Header => Language.Localize(BenchWords.Pool);
+        public string Header => Lang.Get(BenchWords.Pool);
 
-        public string Location => Owner == 0L ? Language.Localize(BenchWords.Players) : BenchPaneView.Trail(NameOf(Owner), Folder);
+        public string Location => Owner == 0L ? Lang.Get(BenchWords.Players) : BenchPaneView.Trail(NameOf(Owner), Folder);
 
         public List<BenchEntry> Entries { get; } = new List<BenchEntry>();
 
@@ -96,7 +97,7 @@ namespace OpenKeep.Blueprints.Bench
 
         private static BenchEntry Line(BenchOwner owner)
         {
-            string you = owner.Id == Me ? " " + Language.Localize(BenchWords.You) : "";
+            string you = owner.Id == Me ? " " + Lang.Get(BenchWords.You) : "";
             return new BenchEntry
             {
                 Kind = BenchKind.Owner, Owner = owner.Id, Name = owner.Name,
@@ -143,7 +144,7 @@ namespace OpenKeep.Blueprints.Bench
         {
             long owner = Owner;
             string at = Folder;
-            NamePrompt.Ask(Language.Localize(BlueprintWords.NewFolderTopic), "", BlueprintFiles.NameLimit, name =>
+            NamePrompt.Ask(Lang.Get(BlueprintWords.NewFolderTopic), "", BlueprintFiles.NameLimit, name =>
             {
                 string path = BlueprintFiles.Target(name, at, out string error);
                 if (error != null)
@@ -158,7 +159,7 @@ namespace OpenKeep.Blueprints.Bench
             if ((entry.Kind != BenchKind.Folder && entry.Kind != BenchKind.Blueprint) || !MayChange(Owner))
                 return;
             long owner = Owner;
-            NamePrompt.Ask(Language.Localize(BlueprintWords.RenameTopic), BlueprintLibrary.Leaf(entry.Path), BlueprintFiles.NameLimit, typed =>
+            NamePrompt.Ask(Lang.Get(BlueprintWords.RenameTopic), BlueprintLibrary.Leaf(entry.Path), BlueprintFiles.NameLimit, typed =>
             {
                 string to = BlueprintFiles.Target(typed, BlueprintLibrary.Parent(entry.Path), out string error);
                 if (error != null)
@@ -173,7 +174,7 @@ namespace OpenKeep.Blueprints.Bench
             List<BenchEntry> picked = Selection.Of(Entries).Where(e => MayChange(OwnerOf(e))).ToList();
             if (picked.Count == 0)
                 return;
-            BenchConfirm.Ask(BenchWords.Remove, BlueprintWords.Format(BenchWords.RemoveAsk, BenchConfirm.Names(picked)), () =>
+            BenchConfirm.Ask(BenchWords.Remove, Lang.Format(BenchWords.RemoveAsk, BenchConfirm.Names(picked)), () =>
             {
                 foreach (BenchEntry entry in picked)
                     ZRoutedRpc.instance?.InvokeRoutedRPC(BenchRpc.Remove, OwnerOf(entry), entry.Path, entry.Kind != BenchKind.Blueprint);

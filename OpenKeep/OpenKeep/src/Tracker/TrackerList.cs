@@ -3,6 +3,7 @@ using System.Linq;
 using OpenKeep.Batch;
 using OpenKeep.Core;
 using OpenKeep.Recipes;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Tracker
@@ -67,12 +68,12 @@ namespace OpenKeep.Tracker
             }
             if (Entries.Count >= TrackerSettings.MaxTracked.Value)
             {
-                Messages.Center(TrackerWords.Format(TrackerWords.Full, TrackerSettings.MaxTracked.Value));
+                Messages.Center(Lang.Format(TrackerWords.Full, TrackerSettings.MaxTracked.Value));
                 return;
             }
             Entries.Add(new TrackedRecipe(RecipeKeys.Of(recipe), quality, StartAmount(recipe, quality), RecipeNeeds.AtUpgrader));
             Save();
-            Messages.Center(TrackerWords.Format(TrackerWords.Tracking, DisplayName(recipe, quality)));
+            Messages.Center(Lang.Format(TrackerWords.Tracking, DisplayName(recipe, quality)));
         }
 
         public static void Remove(int index)
@@ -84,7 +85,7 @@ namespace OpenKeep.Tracker
             Save();
             Recipe recipe = entry.Recipe;
             if (recipe != null)
-                Messages.Center(TrackerWords.Format(TrackerWords.Untracked, DisplayName(recipe, entry.Quality)));
+                Messages.Center(Lang.Format(TrackerWords.Untracked, DisplayName(recipe, entry.Quality)));
         }
 
         /// <summary>One step (-1 or 1) of an entry's amount; with Shift to the next multiple of ten.</summary>
@@ -113,14 +114,14 @@ namespace OpenKeep.Tracker
             }
             Entries.RemoveAt(index);
             Save();
-            Messages.TopLeft(TrackerWords.Format(TrackerWords.Made, DisplayName(recipe, quality)));
+            Messages.TopLeft(Lang.Format(TrackerWords.Made, DisplayName(recipe, quality)));
         }
 
         /// <summary>The item's name in the game's language, with the level for an upgrade.</summary>
         public static string DisplayName(Recipe recipe, int quality)
         {
-            string name = Language.Localize(recipe.m_item.m_itemData.m_shared.m_name);
-            return quality > 1 ? TrackerWords.Format(TrackerWords.Upgrade, name, quality) : name;
+            string name = Localization.instance.Localize(recipe.m_item.m_itemData.m_shared.m_name);
+            return quality > 1 ? Lang.Format(TrackerWords.Upgrade, name, quality) : name;
         }
 
         private static int StartAmount(Recipe recipe, int quality)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -103,7 +104,7 @@ namespace OpenKeep.Blueprints.Bench
             if (label != null)
             {
                 label.color = colours != null ? colours.m_defaultColor : label.color;
-                label.text = Core.Language.Localize(word);
+                label.text = Lang.Get(word);
                 label.enableAutoSizing = false;
                 label.fontSize = 17f;
                 label.textWrappingMode = TextWrappingModes.NoWrap;

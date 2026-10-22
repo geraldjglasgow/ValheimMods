@@ -1,3 +1,4 @@
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,7 +42,7 @@ namespace OpenKeep.Blueprints.Tab
         public static void Describe(string folder)
         {
             if (tooltip != null)
-                tooltip.m_text = BlueprintWords.Format(BlueprintWords.NewFolderDescription, BlueprintEntries.Shown(folder));
+                tooltip.m_text = Lang.Format(BlueprintWords.NewFolderDescription, BlueprintEntries.Shown(folder));
         }
 
         /// <summary>The menu's key badge copied with nothing inside and no layout of its own; a plain dark square without it.</summary>
@@ -85,8 +86,8 @@ namespace OpenKeep.Blueprints.Tab
                 return null;
             UITooltip made = badge.AddComponent<UITooltip>();
             made.m_tooltipPrefab = source.m_tooltipPrefab;
-            made.m_topic = BlueprintWords.NewFolderName;
-            made.m_text = BlueprintWords.Format(BlueprintWords.NewFolderDescription, BlueprintEntries.Shown(BlueprintLibrary.CurrentFolder));
+            made.m_topic = Lang.Token(BlueprintWords.NewFolderName);
+            made.m_text = Lang.Format(BlueprintWords.NewFolderDescription, BlueprintEntries.Shown(BlueprintLibrary.CurrentFolder));
             return made;
         }
 

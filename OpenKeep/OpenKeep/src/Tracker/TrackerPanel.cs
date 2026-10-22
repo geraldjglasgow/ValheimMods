@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -132,7 +133,7 @@ namespace OpenKeep.Tracker
             background.color = new Color(0f, 0f, 0f, TrackerSettings.BackgroundOpacity.Value);
             title.font = TrackerStyle.Font;
             title.fontSize = TrackerStyle.Size * 0.8f;
-            title.text = Core.Language.Localize(TrackerWords.Title);
+            title.text = Lang.Get(TrackerWords.Title);
         }
 
         /// <summary>The title row is the drag handle: plain text that catches the pointer.</summary>

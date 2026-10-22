@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -30,7 +31,7 @@ namespace OpenKeep.Blueprints
             if (plan.Target.Touching.Count == 0)
             {
                 plan.Work = new GroundWork();
-                plan.Problem = Language.Localize(BlueprintWords.FixNothing);
+                plan.Problem = Lang.Get(BlueprintWords.FixNothing);
                 return plan;
             }
             Rect touched = plan.Target.Area;
@@ -45,16 +46,16 @@ namespace OpenKeep.Blueprints
         private string FirstProblem(Player player)
         {
             if (!BlueprintSettings.Enabled)
-                return Language.Localize(BlueprintWords.Disabled);
+                return Lang.Get(BlueprintWords.Disabled);
             if (Work.Unloaded > 0)
-                return Language.Localize(BlueprintWords.Unloaded);
+                return Lang.Get(BlueprintWords.Unloaded);
             if (Work.Points.Count == 0)
-                return Language.Localize(BlueprintWords.FixFine);
+                return Lang.Get(BlueprintWords.FixFine);
             string protection = SiteProtection.Reason(Start.transform.position, Area, Work, Target.Under);
             if (protection != null)
-                return Language.Localize(protection);
+                return Lang.Get(protection);
             string lacking = Bill.Shortfall(player);
-            return lacking != null ? BlueprintWords.Format(BlueprintWords.Lacking, lacking) : null;
+            return lacking != null ? Lang.Format(BlueprintWords.Lacking, lacking) : null;
         }
 
         /// <summary>Clears what stands on moving ground, pays the stone, sends the ground and keeps it for Alt+Z.</summary>
@@ -64,7 +65,7 @@ namespace OpenKeep.Blueprints
             Bill.Charge(player);
             int compilers = GroundWriter.Send(Work);
             GroundUndo.Record(Work, fix: true);
-            Messages.Center(BlueprintWords.Format(BlueprintWords.FixDone, TouchingCount, Work.Cut.ToString("0"), Work.Fill.ToString("0")));
+            Messages.Center(Lang.Format(BlueprintWords.FixDone, TouchingCount, Work.Cut.ToString("0"), Work.Fill.ToString("0")));
             Plugin.Log.LogInfo($"OpenKeep: fixed the ground of {Building.Count} pieces ({TouchingCount} touching): {cleared} objects cleared, " +
                 $"{Work.Points.Count} ground points sent to {compilers} terrain compilers");
         }

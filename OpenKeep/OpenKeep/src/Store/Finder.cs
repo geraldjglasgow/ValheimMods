@@ -1,6 +1,7 @@
 using System;
 using BepInEx.Configuration;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -27,7 +28,7 @@ namespace OpenKeep.Store
                 containers++;
                 LinkMarker.Create(player, container, name + " x" + count, seconds);
             }
-            Messages.Center(containers > 0 ? StoreWords.Format(StoreWords.Found, name, containers) : StoreWords.Format(StoreWords.NotFound, name));
+            Messages.Center(containers > 0 ? Lang.Format(StoreWords.Found, name, containers) : Lang.Format(StoreWords.NotFound, name));
         }
 
         public static float LinkSeconds()

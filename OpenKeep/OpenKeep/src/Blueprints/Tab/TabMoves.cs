@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Tab
 {
@@ -24,7 +25,7 @@ namespace OpenKeep.Blueprints.Tab
             TabPicks.Clear();
             BlueprintMenu.Refresh();
             if (moved > 0)
-                Messages.Center(BlueprintWords.Format(BlueprintWords.Moved, moved, Shown(folder)));
+                Messages.Center(Lang.Format(BlueprintWords.Moved, moved, Shown(folder)));
         }
 
         /// <summary>Moves one entry into the folder; a refusal is shown at the top left. True when it moved.</summary>
@@ -40,7 +41,7 @@ namespace OpenKeep.Blueprints.Tab
                 return true;
             }
             if (error != null)
-                Messages.TopLeft(BlueprintWords.Format(BlueprintWords.MoveRefused, BlueprintLibrary.Leaf(from), error));
+                Messages.TopLeft(Lang.Format(BlueprintWords.MoveRefused, BlueprintLibrary.Leaf(from), error));
             return false;
         }
 

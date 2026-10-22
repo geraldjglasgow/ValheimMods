@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints
 {
@@ -30,7 +31,7 @@ namespace OpenKeep.Blueprints
         private static void OnClick(Player player)
         {
             if (!BlueprintSettings.Enabled)
-                Messages.Center(BlueprintWords.Disabled);
+                Messages.Center(Lang.Get(BlueprintWords.Disabled));
             else if (!BlueprintSession.Pinned)
                 BlueprintSession.Pin();
             else
@@ -53,7 +54,7 @@ namespace OpenKeep.Blueprints
         private static string Unreadable()
         {
             string error = BlueprintLibrary.Error;
-            return error != null ? BlueprintWords.Format(BlueprintWords.Unreadable, error) : BlueprintWords.NoBlueprints;
+            return error != null ? Lang.Format(BlueprintWords.Unreadable, error) : Lang.Get(BlueprintWords.NoBlueprints);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Reach
 {
@@ -77,7 +78,7 @@ namespace OpenKeep.Reach
             string name = sample.m_shared.m_name;
             int stack = Math.Max(1, sample.m_shared.m_maxStackSize);
             int moved = ReachPull.Move(user.GetInventory(), item => ReachCount.Matches(item, name, -1, true) && accepts(item), stack);
-            Messages.Center(moved > 0 ? $"$ok_pulled {moved} {name}" : "$inventory_full");
+            Messages.Center(moved > 0 ? Lang.Format("ok_pulled", moved, name) : "$inventory_full");
             return moved > 0;
         }
 

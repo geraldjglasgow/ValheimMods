@@ -1,4 +1,4 @@
-using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Tab
 {
@@ -41,8 +41,8 @@ namespace OpenKeep.Blueprints.Tab
         private static string LabelOf(Piece piece)
         {
             if (BlueprintMenu.IsGhosts(piece))
-                return Language.Localize(GhostSwitch.Shown ? BlueprintWords.GhostsShownBand : BlueprintWords.GhostsHiddenBand);
-            return TabPicks.Pickable(piece) ? Language.Localize(piece.m_name) : null;
+                return Lang.Get(GhostSwitch.Shown ? BlueprintWords.GhostsShownBand : BlueprintWords.GhostsHiddenBand);
+            return TabPicks.Pickable(piece) ? Localization.instance.Localize(piece.m_name) : null;
         }
 
         private static TabMark.State StateOf(Piece piece) => TabPicks.Contains(piece) ? TabMark.State.Picked : TabMark.State.None;

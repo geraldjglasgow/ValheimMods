@@ -1,5 +1,4 @@
 using HarmonyLib;
-using OpenKeep.Core;
 
 namespace OpenKeep.Carts
 {
@@ -12,7 +11,7 @@ namespace OpenKeep.Carts
         {
             if (!CartsSettings.CartWorkbench.Value || __instance.GetComponent<CraftingStation>() == null)
                 return;
-            __result += Language.Localize("\n[<color=yellow><b>$KEY_AltPlace + $KEY_Use</b></color>] $ok_cartcraft");
+            __result += Localization.instance.Localize("\n[<color=yellow><b>$KEY_AltPlace + $KEY_Use</b></color>] $ok_cartcraft");
         }
     }
 }

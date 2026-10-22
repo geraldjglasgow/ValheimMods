@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Capacity
@@ -61,7 +61,7 @@ namespace OpenKeep.Capacity
                 extra.Append('\n').Append(fill);
             foreach (string line in ContentLines(inventory, maxLines))
                 extra.Append('\n').Append(line);
-            return extra.Length == 0 ? "" : Language.Localize(extra.ToString());
+            return extra.Length == 0 ? "" : Localization.instance.Localize(extra.ToString());
         }
 
         private static bool CanSee(Container container)
@@ -81,8 +81,8 @@ namespace OpenKeep.Capacity
             int total = Mathf.Max(1, inventory.GetWidth() * inventory.GetHeight());
             switch (CapacitySettings.HoverFill.Value)
             {
-                case HoverFill.Fraction: return $"{used} / {total} $ok_slots";
-                case HoverFill.Percent: return $"{Mathf.RoundToInt(100f * used / total)}% $ok_full";
+                case HoverFill.Fraction: return Lang.Format("ok_slots", used, total);
+                case HoverFill.Percent: return Lang.Format("ok_full", Mathf.RoundToInt(100f * used / total));
                 default: return null;
             }
         }
@@ -96,7 +96,7 @@ namespace OpenKeep.Capacity
                 lines.Add($"{pair.Key} x {pair.Value}");
             int more = counts.Count - lines.Count;
             if (more > 0)
-                lines.Add($"$ok_and {more} $ok_more");
+                lines.Add(Lang.Format("ok_more", more));
             return lines;
         }
 

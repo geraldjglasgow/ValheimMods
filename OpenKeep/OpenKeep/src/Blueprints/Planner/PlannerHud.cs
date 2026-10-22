@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using OpenKeep.Blueprints.Sites;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Planner
 {
@@ -26,12 +27,12 @@ namespace OpenKeep.Blueprints.Planner
             List<string> lines = new List<string>();
             SiteState state = site != null ? site.State : null;
             if (state?.Blueprint != null)
-                lines.Add("<b>" + BlueprintWords.Format(PlannerWords.SiteTitle, state.Name, state.BuiltCount, state.Blueprint.Pieces.Count) + "</b>");
-            lines.Add(PlannerAim.Any ? AimLine() : BlueprintHud.Coloured(Language.Localize(PlannerWords.AimHint), BlueprintHud.Grey));
+                lines.Add("<b>" + Lang.Format(PlannerWords.SiteTitle, state.Name, state.BuiltCount, state.Blueprint.Pieces.Count) + "</b>");
+            lines.Add(PlannerAim.Any ? AimLine() : BlueprintHud.Coloured(Lang.Get(PlannerWords.AimHint), BlueprintHud.Grey));
             if (PlannerSelection.Count > 0)
                 lines.Add(SelectionLine());
             if (!panelShowing)
-                lines.Add(Language.Localize(PlannerWords.Keys));
+                lines.Add(Lang.Get(PlannerWords.Keys));
             BlueprintHud.Set(Block, lines);
         }
 
@@ -42,13 +43,13 @@ namespace OpenKeep.Blueprints.Planner
             SiteMarker site = PlannerAim.Site;
             int piece = PlannerAim.Piece;
             string name = PlannerPieces.Name(site.State.Blueprint, piece);
-            string line = BlueprintWords.Format(PlannerSelection.Contains(site, piece) ? PlannerWords.AimingSelected : PlannerWords.Aiming, name);
+            string line = Lang.Format(PlannerSelection.Contains(site, piece) ? PlannerWords.AimingSelected : PlannerWords.Aiming, name);
             if (PlannerKeys.HouseType)
-                line += "  " + BlueprintWords.Format(PlannerWords.HouseTypePreview, PlannerGroup.InHouse(site, piece).Count);
+                line += "  " + Lang.Format(PlannerWords.HouseTypePreview, PlannerGroup.InHouse(site, piece).Count);
             else if (PlannerKeys.SameType)
-                line += "  " + BlueprintWords.Format(PlannerWords.SameTypePreview, PlannerGroup.Of(site, piece).Count);
+                line += "  " + Lang.Format(PlannerWords.SameTypePreview, PlannerGroup.Of(site, piece).Count);
             else if (PlannerKeys.Shift)
-                line += "  " + BlueprintWords.Format(PlannerWords.HousePreview, PlannerHouse.Of(site, piece).Count);
+                line += "  " + Lang.Format(PlannerWords.HousePreview, PlannerHouse.Of(site, piece).Count);
             return line;
         }
 
@@ -60,9 +61,9 @@ namespace OpenKeep.Blueprints.Planner
                 return selectionLine;
             List<int> left = PlannerSelection.Unbuilt();
             List<int> builds = left.Count == 0 ? left : SiteOrder.WithSupports(site.State, left);
-            string materials = left.Count == 0 ? Language.Localize(PlannerWords.SelectionBuilt)
-                : PlannerBill.Describe(site.State.Blueprint, builds, MostMaterials) ?? Language.Localize(PlannerWords.Free);
-            selectionLine = BlueprintWords.Format(PlannerWords.SelectionLine, PlannerSelection.Count, materials,
+            string materials = left.Count == 0 ? Lang.Get(PlannerWords.SelectionBuilt)
+                : PlannerBill.Describe(site.State.Blueprint, builds, MostMaterials) ?? Lang.Get(PlannerWords.Free);
+            selectionLine = Lang.Format(PlannerWords.SelectionLine, PlannerSelection.Count, materials,
                 PlannerWords.SupportsNote(builds.Count - left.Count));
             selectionVersion = PlannerSelection.Version;
             selectionRevision = revision;

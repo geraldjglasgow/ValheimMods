@@ -1,6 +1,6 @@
 using GUIFramework;
-using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -186,7 +186,7 @@ namespace OpenKeep.Mimir
             input.onDeselect = new TMP_InputField.SelectionEvent();
             input.OnInputSubmit = new OnInputSubmitEvent();
             input.characterLimit = 40;
-            input.VirtualKeyboardTitle = Language.Localize("$ok_mimir_search");
+            input.VirtualKeyboardTitle = Lang.Get("$ok_mimir_search");
             input.SetTextWithoutNotify("");
             input.onValueChanged.AddListener(_ => applyAt = Time.unscaledTime + Debounce);
             input.onEndEdit.AddListener(_ => Ended(input));
@@ -214,7 +214,7 @@ namespace OpenKeep.Mimir
             if (input.placeholder is TMP_Text placeholder)
             {
                 placeholder.fontSize = FontSize;
-                placeholder.text = Language.Localize("$ok_mimir_search");
+                placeholder.text = Lang.Get("$ok_mimir_search");
             }
         }
     }

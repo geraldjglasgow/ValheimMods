@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Translations;
 
 namespace OpenKeep.Blueprints.Bench
 {
@@ -40,8 +41,11 @@ namespace OpenKeep.Blueprints.Bench
             int parts = package.ReadInt();
             byte[] packed = inbox.Add(sender + "|" + path, part, parts, package.ReadByteArray());
             if (packed != null)
-                ZRoutedRpc.instance.InvokeRoutedRPC(sender, BenchRpc.PutDone, path, Store(sender, path, packed) ?? "");
+                ZRoutedRpc.instance.InvokeRoutedRPC(sender, BenchRpc.PutDone, path, Answer(Store(sender, path, packed)));
         }
+
+        /// <summary>A stored file's answer: nothing, or the reason's word as its token, read in the player's language.</summary>
+        private static string Answer(string refused) => refused != null ? Lang.Token(refused) : "";
 
         /// <summary>Stores a whole shared file; null when stored, else the reason's word.</summary>
         private static string Store(long sender, string path, byte[] packed)

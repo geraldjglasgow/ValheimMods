@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Bench
 {
@@ -34,9 +35,9 @@ namespace OpenKeep.Blueprints.Bench
         /// <summary>The folder shown ("" the top), kept while the game runs.</summary>
         public string Folder { get; private set; } = "";
 
-        public string Header => Language.Localize(BenchWords.Yours);
+        public string Header => Lang.Get(BenchWords.Yours);
 
-        public string Location => BenchPaneView.Trail(Language.Localize(BlueprintWords.Tab), Folder);
+        public string Location => BenchPaneView.Trail(Lang.Get(BlueprintWords.Tab), Folder);
 
         public List<BenchEntry> Entries { get; } = new List<BenchEntry>();
 
@@ -75,10 +76,10 @@ namespace OpenKeep.Blueprints.Bench
 
         private void NewFolder()
         {
-            NamePrompt.Ask(Language.Localize(BlueprintWords.NewFolderTopic), "", BlueprintFiles.NameLimit, name =>
+            NamePrompt.Ask(Lang.Get(BlueprintWords.NewFolderTopic), "", BlueprintFiles.NameLimit, name =>
             {
                 if (BlueprintFiles.CreateFolder(Folder, name, out string path, out string error))
-                    Messages.TopLeft(BlueprintWords.Format(BlueprintWords.FolderMade, path));
+                    Messages.TopLeft(Lang.Format(BlueprintWords.FolderMade, path));
                 else
                     Messages.TopLeft(error);
                 BlueprintLibrary.Rescan();
@@ -89,7 +90,7 @@ namespace OpenKeep.Blueprints.Bench
         {
             if (entry.Kind != BenchKind.Folder && entry.Kind != BenchKind.Blueprint)
                 return;
-            NamePrompt.Ask(Language.Localize(BlueprintWords.RenameTopic), BlueprintLibrary.Leaf(entry.Path), BlueprintFiles.NameLimit,
+            NamePrompt.Ask(Lang.Get(BlueprintWords.RenameTopic), BlueprintLibrary.Leaf(entry.Path), BlueprintFiles.NameLimit,
                 typed => Move(entry, typed, false));
         }
 
@@ -102,11 +103,11 @@ namespace OpenKeep.Blueprints.Bench
                 if (!folder)
                     BlueprintMenu.Moved(entry.Path, to);
                 if (!quiet)
-                    Messages.TopLeft(BlueprintWords.Format(BlueprintWords.Renamed, entry.Path, to));
+                    Messages.TopLeft(Lang.Format(BlueprintWords.Renamed, entry.Path, to));
                 return true;
             }
             if (error != null)
-                Messages.TopLeft(BlueprintWords.Format(BlueprintWords.MoveRefused, entry.Label, error));
+                Messages.TopLeft(Lang.Format(BlueprintWords.MoveRefused, entry.Label, error));
             return false;
         }
 
@@ -115,7 +116,7 @@ namespace OpenKeep.Blueprints.Bench
             List<BenchEntry> picked = Selection.Of(Entries);
             if (picked.Count == 0)
                 return;
-            BenchConfirm.Ask(BenchWords.Delete, BlueprintWords.Format(BenchWords.DeleteAsk, BenchConfirm.Names(picked)), () => Delete(picked));
+            BenchConfirm.Ask(BenchWords.Delete, Lang.Format(BenchWords.DeleteAsk, BenchConfirm.Names(picked)), () => Delete(picked));
         }
 
         private void Delete(List<BenchEntry> picked)
@@ -130,7 +131,7 @@ namespace OpenKeep.Blueprints.Bench
             }
             Selection.Clear();
             if (deleted > 0)
-                Messages.TopLeft(BlueprintWords.Format(BenchWords.Deleted, BenchConfirm.Names(picked)));
+                Messages.TopLeft(Lang.Format(BenchWords.Deleted, BenchConfirm.Names(picked)));
         }
 
         public bool Accepts(IBenchPane from, BenchEntry onto) => onto == null || onto.Holds;
@@ -157,14 +158,14 @@ namespace OpenKeep.Blueprints.Bench
             }
             Selection.Clear();
             if (moved > 0)
-                Messages.TopLeft(BlueprintWords.Format(BlueprintWords.Moved, moved, BlueprintEntries.Shown(into)));
+                Messages.TopLeft(Lang.Format(BlueprintWords.Moved, moved, BlueprintEntries.Shown(into)));
         }
 
         private void ShareSelected()
         {
             List<(string, string)> files = SharePairs(Selection.Of(Entries), BenchWindow.Pool.ShareFolder);
             if (files.Count == 0)
-                Messages.TopLeft(Language.Localize(BenchWords.NothingToShare));
+                Messages.TopLeft(Lang.Get(BenchWords.NothingToShare));
             BenchShare.Share(files);
         }
 

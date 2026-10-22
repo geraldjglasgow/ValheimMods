@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Bench
@@ -103,6 +104,7 @@ namespace OpenKeep.Blueprints.Bench
                 Answer(path, string.IsNullOrEmpty(word) ? null : word);
         }
 
+        /// <summary>One file answered: stored, or refused with the reason's word (its second value, the share limit, is for ok_bench_full).</summary>
         private static void Answer(string path, string refused)
         {
             answered++;
@@ -110,7 +112,7 @@ namespace OpenKeep.Blueprints.Bench
             if (refused == null)
                 shared++;
             else if (firstRefusal == null)
-                firstRefusal = BlueprintWords.Format(refused, path);
+                firstRefusal = Lang.Format(refused, path, BenchLimits.MaxPerPlayer);
             if (!Busy)
                 Report();
         }
@@ -119,7 +121,7 @@ namespace OpenKeep.Blueprints.Bench
         {
             waiting.Clear();
             parts.Clear();
-            firstRefusal = Language.Localize(BenchWords.NoAnswer);
+            firstRefusal = Lang.Get(BenchWords.NoAnswer);
             answered = sent;
             Report();
         }
@@ -130,11 +132,11 @@ namespace OpenKeep.Blueprints.Bench
             int refusals = sent - shared;
             List<string> lines = new List<string>();
             if (shared > 0)
-                lines.Add(BlueprintWords.Format(BenchWords.Shared, shared));
+                lines.Add(Lang.Format(BenchWords.Shared, shared));
             if (firstRefusal != null)
                 lines.Add(firstRefusal);
             if (refusals > 1)
-                lines.Add(BlueprintWords.Format(BenchWords.MoreRefused, refusals - 1));
+                lines.Add(Lang.Format(BenchWords.MoreRefused, refusals - 1));
             Messages.TopLeft(string.Join("\n", lines));
             sent = answered = shared = 0;
             firstRefusal = null;

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using OpenKeep.Blueprints.Sites;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Planner
@@ -18,12 +19,12 @@ namespace OpenKeep.Blueprints.Planner
         {
             if (!BlueprintSettings.Enabled)
             {
-                Messages.Center(BlueprintWords.Disabled);
+                Messages.Center(Lang.Get(BlueprintWords.Disabled));
                 return;
             }
             if (!PlannerAim.Pick(out SiteMarker site, out int piece))
             {
-                Messages.Center(PlannerWords.AimHint);
+                Messages.Center(Lang.Get(PlannerWords.AimHint));
                 return;
             }
             if (PlannerKeys.SameType)
@@ -46,7 +47,7 @@ namespace OpenKeep.Blueprints.Planner
             int changed = PlannerSelection.ToggleGroup(site, group, smart: false);
             string words = inHouse ? (changed > 0 ? PlannerWords.HouseTypeAdded : PlannerWords.HouseTypeRemoved)
                 : changed > 0 ? PlannerWords.SameTypeAdded : PlannerWords.SameTypeRemoved;
-            Messages.Center(BlueprintWords.Format(words, Mathf.Abs(changed)));
+            Messages.Center(Lang.Format(words, Mathf.Abs(changed)));
         }
 
         private static void PickHouse(SiteMarker site, int piece)
@@ -58,7 +59,7 @@ namespace OpenKeep.Blueprints.Planner
                 return;
             }
             int changed = PlannerSelection.ToggleHouse(site, house);
-            Messages.Center(BlueprintWords.Format(changed > 0 ? PlannerWords.HouseAdded : PlannerWords.HouseRemoved, Mathf.Abs(changed)));
+            Messages.Center(Lang.Format(changed > 0 ? PlannerWords.HouseAdded : PlannerWords.HouseRemoved, Mathf.Abs(changed)));
         }
     }
 }

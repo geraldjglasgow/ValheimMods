@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -77,8 +78,8 @@ namespace OpenKeep.Blueprints.Bench
 
         private static void Configure(Piece piece, GameObject workbench)
         {
-            piece.m_name = BenchWords.Name;
-            piece.m_description = BenchWords.Description;
+            piece.m_name = Lang.Token(BenchWords.Name);
+            piece.m_description = Lang.Token(BenchWords.Description);
             piece.m_category = Piece.PieceCategory.Crafting;
             piece.m_enabled = true;
             piece.m_craftingStation = workbench.GetComponent<CraftingStation>();

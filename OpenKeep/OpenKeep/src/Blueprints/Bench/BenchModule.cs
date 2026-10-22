@@ -16,7 +16,6 @@ namespace OpenKeep.Blueprints.Bench
     {
         public static void Initialize()
         {
-            BenchWords.Register();
             SiteHooks.OnUpdate("OpenKeep blueprint bench", BenchSession.Tick);
             // Installed once per merged copy whoever asks first (the Site planner does too).
             GameWindow.Install(new Harmony(Plugin.PluginGuid + ".bench"));

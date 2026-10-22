@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Bench
@@ -20,11 +21,11 @@ namespace OpenKeep.Blueprints.Bench
         {
             if (!Valid)
                 return "";
-            string action = BlueprintSettings.Enabled ? "[<color=yellow><b>$KEY_Use</b></color>] $piece_use" : BlueprintWords.Disabled;
-            return Language.Localize(BenchWords.Name + "\n" + action);
+            string action = BlueprintSettings.Enabled ? "[<color=yellow><b>$KEY_Use</b></color>] $piece_use" : Lang.Get(BlueprintWords.Disabled);
+            return Localization.instance.Localize(Lang.Get(BenchWords.Name) + "\n" + action);
         }
 
-        public string GetHoverName() => Language.Localize(BenchWords.Name);
+        public string GetHoverName() => Lang.Get(BenchWords.Name);
 
         public float GetHoverOffset() => 0f;
 
@@ -34,7 +35,7 @@ namespace OpenKeep.Blueprints.Bench
                 return false;
             if (!BlueprintSettings.Enabled)
             {
-                Messages.Center(Language.Localize(BlueprintWords.Disabled));
+                Messages.Center(Lang.Get(BlueprintWords.Disabled));
                 return false;
             }
             if (!PrivateArea.CheckAccess(transform.position))

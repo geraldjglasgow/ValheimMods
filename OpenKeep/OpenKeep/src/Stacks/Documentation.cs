@@ -59,7 +59,7 @@ namespace OpenKeep.Stacks
         {
             ItemDrop.ItemData.SharedData shared = prefab.m_itemData.m_shared;
             ItemValue vanilla = VanillaValues.Remember(prefab.name, shared);
-            string display = Language.Localize(shared.m_name ?? "").Replace('\t', ' ').Replace('\n', ' ');
+            string display = Localization.instance.Localize(shared.m_name ?? "").Replace('\t', ' ').Replace('\n', ' ');
             return string.Join("\t", prefab.name, display, shared.m_itemType.ToString(),
                 vanilla.Stack.ToString(), Number(vanilla.Weight), shared.m_maxStackSize.ToString(), Number(shared.m_weight));
         }

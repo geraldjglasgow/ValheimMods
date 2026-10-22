@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Bench
 {
@@ -12,7 +12,7 @@ namespace OpenKeep.Blueprints.Bench
         {
             if (!UnifiedPopup.IsAvailable())
                 return;
-            UnifiedPopup.Push(new YesNoPopup(Language.Localize(headerWord), text, () =>
+            UnifiedPopup.Push(new YesNoPopup(Lang.Get(headerWord), text, () =>
             {
                 UnifiedPopup.Pop();
                 BlueprintSafe.Run("OpenKeep blueprint bench", yes);

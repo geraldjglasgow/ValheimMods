@@ -72,7 +72,7 @@ Needed on the server and every client. Install BepInExPack for Valheim, then put
 [/list]
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/milkyteam.openkeep.cfg and seven OpenKeep.*.yml files. Every setting is described in the file and applies without a restart; the server's values bind every player. Console: [b]openkeep help[/b].
+BepInEx/config/milkyteam.openkeep.cfg and seven OpenKeep.*.yml files. Every setting is described in the file and applies without a restart; the server's values bind every player. Console: [b]openkeep help[/b]. Translate: save a copy of [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/OpenKeep/OpenKeep/translations/English.yml]English.yml[/url] as OpenKeep.translations.<Language>.yml in BepInEx/config.
 
 [size=4][b]Links[/b][/size]
 Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]

@@ -35,7 +35,7 @@ namespace OpenKeep.Core
         /// <summary>The localized shared name.</summary>
         public static string DisplayName(ItemDrop.ItemData item)
         {
-            return item != null && item.m_shared != null ? Language.Localize(item.m_shared.m_name) : "";
+            return item != null && item.m_shared != null ? Localization.instance.Localize(item.m_shared.m_name) : "";
         }
 
         /// <summary>Same shared name: the identity the game uses when stacking.</summary>

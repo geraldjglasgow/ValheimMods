@@ -1,11 +1,11 @@
-using OpenKeep.Core;
 using PatchGuard;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Capacity
 {
-    /// <summary>Entry point of the Capacity module: binds its settings, registers its YAML files and language words.</summary>
+    /// <summary>Entry point of the Capacity module: binds its settings and registers its YAML files.</summary>
     public static class CapacityModule
     {
         public const string DefaultResource = "OpenKeep.config.OpenKeep.Containers.yml";
@@ -22,14 +22,10 @@ namespace OpenKeep.Capacity
             Set = synced.AddYaml(new YamlFileSet("OpenKeep.Containers*.yml", "openkeep_containers", () => new ContainersModel(), ApplyYaml)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(CapacityModule).Assembly, DefaultResource),
-                EditorLabel = () => "Edit container sizes",
+                EditorLabel = () => Lang.Get("ok_containers_edit"),
             });
             CapacitySettings.Enabled.SettingChanged += Guard.Wrap("capacity switch", (_, _) => ContainerSizes.ApplyAll());
             StationsFile.Initialize(synced);
-            Language.Add("ok_slots", "slots");
-            Language.Add("ok_full", "full");
-            Language.Add("ok_and", "and");
-            Language.Add("ok_more", "more");
         }
 
         private static void ApplyYaml(YamlModel model)

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -59,18 +59,18 @@ namespace OpenKeep.Blueprints
             Piece piece = entry.GetComponent<Piece>();
             bool shown = GhostSwitch.Shown;
             piece.m_icon = BlueprintIcons.Get(shown ? BlueprintIcons.GhostsShown : BlueprintIcons.GhostsHidden);
-            piece.m_description = Language.Localize(shown ? BlueprintWords.GhostsShownDescription : BlueprintWords.GhostsHiddenDescription);
+            piece.m_description = Lang.Token(shown ? BlueprintWords.GhostsShownDescription : BlueprintWords.GhostsHiddenDescription);
             return entry;
         }
 
         /// <summary>A folder as players read it: its path, or "the top folder".</summary>
-        public static string Shown(string folder) => string.IsNullOrEmpty(folder) ? Language.Localize(BlueprintWords.TopFolder) : folder;
+        public static string Shown(string folder) => string.IsNullOrEmpty(folder) ? Lang.Get(BlueprintWords.TopFolder) : folder;
 
         private static GameObject Tool(string prefabName, string name, string description, string icon)
         {
             if (!tools.TryGetValue(prefabName, out GameObject entry) || entry == null)
             {
-                tools[prefabName] = entry = Make(prefabName, name, Language.Localize(description), BlueprintIcons.Get(icon));
+                tools[prefabName] = entry = Make(prefabName, Lang.Token(name), Lang.Token(description), BlueprintIcons.Get(icon));
                 kinds[entry] = prefabName;
             }
             return entry;
@@ -81,7 +81,7 @@ namespace OpenKeep.Blueprints
         {
             if (blueprints.TryGetValue(path, out GameObject entry) && entry != null)
                 return entry;
-            string word = Language.Add(WordKey(path), Title(BlueprintLibrary.Leaf(path)));
+            string word = Lang.Add(WordKey(path), Title(BlueprintLibrary.Leaf(path)));
             entry = Make(BlueprintPrefix + Plain(path) + "_" + Hash(path), word, "", BlueprintIcons.Get(BlueprintIcons.Blueprint));
             kinds[entry] = BlueprintPrefix;
             blueprints[path] = entry;
@@ -122,11 +122,11 @@ namespace OpenKeep.Blueprints
         private static string BlueprintDescription(Blueprint bp)
         {
             if (bp == null)
-                return BlueprintWords.Format(BlueprintWords.Unreadable, BlueprintLibrary.Error ?? "");
-            string size = BlueprintWords.Format(BlueprintWords.EntrySize, bp.Pieces.Count,
+                return Lang.Format(BlueprintWords.Unreadable, BlueprintLibrary.Error ?? "");
+            string size = Lang.Format(BlueprintWords.EntrySize, bp.Pieces.Count,
                 BlueprintWords.Metres(bp.PieceBounds.width), BlueprintWords.Metres(bp.PieceBounds.height));
-            string water = bp.HasWater ? "\n" + Language.Localize(BlueprintWords.EntryWater) : "";
-            return bp.Description + "\n\n" + size + water + "\n\n" + Language.Localize(BlueprintWords.EntryKeys);
+            string water = bp.HasWater ? "\n" + Lang.Get(BlueprintWords.EntryWater) : "";
+            return bp.Description + "\n\n" + size + water + "\n\n" + Lang.Get(BlueprintWords.EntryKeys);
         }
 
         /// <summary>The inactive parent of every entry, kept across scenes.</summary>

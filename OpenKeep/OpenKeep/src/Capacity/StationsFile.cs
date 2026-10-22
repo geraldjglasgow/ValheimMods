@@ -1,5 +1,6 @@
 using PatchGuard;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Capacity
@@ -20,7 +21,7 @@ namespace OpenKeep.Capacity
             Set = synced.AddYaml(new YamlFileSet("OpenKeep.Stations*.yml", "openkeep_stations", () => new StationsModel(), Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(StationsFile).Assembly, DefaultResource),
-                EditorLabel = () => "Edit station capacities",
+                EditorLabel = () => Lang.Get("ok_stations_edit"),
             });
             CapacitySettings.Enabled.SettingChanged += Guard.Wrap("station capacity switch", (_, _) => StationCapacities.ApplyAll());
         }

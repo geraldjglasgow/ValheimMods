@@ -17,7 +17,6 @@ namespace OpenKeep.Blueprints
         public static void Initialize(SyncedConfiguration synced)
         {
             BlueprintSettings.Bind(synced);
-            BlueprintWords.Register();
             Sites.SitesModule.Initialize(synced);
             Planner.PlannerModule.Initialize(synced);
             Copy.CopyModule.Initialize(synced);

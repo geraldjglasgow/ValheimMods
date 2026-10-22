@@ -28,8 +28,8 @@ using SyncedConfig;
 namespace OpenKeep
 {
     /// <summary>
-    /// Plugin entry. Every module has an Initialize(SyncedConfiguration) that binds its settings, registers its
-    /// YAML files and its language words; patches are applied per class afterwards, Guard.Install goes last.
+    /// Plugin entry. Every module has an Initialize(SyncedConfiguration) that binds its settings and registers its
+    /// YAML files; the words come from translations/English.yml; patches are applied per class afterwards, Guard.Install goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency(EliteCraftingLink.CraftingLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
@@ -37,7 +37,7 @@ namespace OpenKeep
     {
         public const string PluginGuid = "milkyteam.openkeep";
         public const string PluginName = "OpenKeep";
-        public const string PluginVersion = "5.0.1";
+        public const string PluginVersion = "5.1.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -51,9 +51,11 @@ namespace OpenKeep
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             LockConfiguration = Synced.BindLocking("General", "Lock Configuration", true,
                 "[Server Only] Clients cannot change synced settings while connected to a server that has this on.");
+            Harmony harmony = new Harmony(PluginGuid);
+            // The words: English embedded from translations\, another language from the game's setting and its files.
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), PluginName, Logger);
             InitializeModules();
 
-            Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);
             StacksModule.HookSpawns(harmony);
             AreaLoader.Install(harmony, text => Log.LogInfo("OpenKeep: " + text));
@@ -67,7 +69,7 @@ namespace OpenKeep
             Guard.Install(harmony, Logger, Assembly.GetExecutingAssembly());
         }
 
-        /// <summary>Every module binds its settings, registers its YAML files and its words. Order is the spec's.</summary>
+        /// <summary>Every module binds its settings and registers its YAML files. Order is the spec's.</summary>
         private static void InitializeModules()
         {
             CoreModule.Initialize(Synced);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Homestead
 {
@@ -30,8 +31,8 @@ namespace OpenKeep.Homestead
             if (repaired == 0)
                 return;
             gui.UpdateCraftingPanel();
-            Messages.Center(repaired == 1 ? StationRepairFeature.RepairedOne : string.Format(Language.Localize(StationRepairFeature.RepairedMany), repaired));
-            Plugin.Log.LogInfo($"OpenKeep: opening {Language.Localize(station.m_name)} repaired {repaired} items");
+            Messages.Center(repaired == 1 ? StationRepairFeature.RepairedOne : Lang.Format(StationRepairFeature.RepairedMany, repaired));
+            Plugin.Log.LogInfo($"OpenKeep: opening {Localization.instance.Localize(station.m_name)} repaired {repaired} items");
         }
 
         /// <summary>The setting is on, the station is the local player's current one, the game shows its repair button there and something is due.</summary>

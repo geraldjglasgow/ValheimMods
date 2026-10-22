@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Signs
@@ -42,11 +43,11 @@ namespace OpenKeep.Signs
         {
             ZDO zdo = container.m_nview.GetZDO();
             if (SignLinks.NoSign(zdo))
-                return Language.Localize("$ok_signs_optedout");
+                return Lang.Get("$ok_signs_optedout");
             ZDO sign = SignLinks.LinkedSign(zdo);
             if (sign == null)
-                return Language.Localize("$ok_signs_nosign");
-            return Language.Localize(SignWriter.MayWrite(sign) ? "$ok_signs_sign" : "$ok_signs_playertext");
+                return Lang.Get("$ok_signs_nosign");
+            return Lang.Get(SignWriter.MayWrite(sign) ? "$ok_signs_sign" : "$ok_signs_playertext");
         }
 
         private static void Reset(Terminal.ConsoleEventArgs args)
@@ -65,13 +66,13 @@ namespace OpenKeep.Signs
                 SignLinks.SetNoSign(zdo, false);
                 count++;
             }
-            args.Context.AddString("OpenKeep: " + string.Format(Language.Localize("$ok_signs_reset"), count));
+            args.Context.AddString("OpenKeep: " + Lang.Format("$ok_signs_reset", count));
         }
 
         private static void Rewrite(Terminal.ConsoleEventArgs args)
         {
             int count = SignRefresh.RewriteAll();
-            args.Context.AddString("OpenKeep: " + string.Format(Language.Localize("$ok_signs_rewritten"), count));
+            args.Context.AddString("OpenKeep: " + Lang.Format("$ok_signs_rewritten", count));
         }
 
         private static bool Valid(Container container)

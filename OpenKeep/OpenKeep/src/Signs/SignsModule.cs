@@ -1,11 +1,11 @@
-using OpenKeep.Core;
 using PatchGuard;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Signs
 {
-    /// <summary>Entry point of the Signs module: binds its settings, registers its YAML files and language words.</summary>
+    /// <summary>Entry point of the Signs module: binds its settings and registers its YAML files.</summary>
     public static class SignsModule
     {
         public const string DefaultResource = "OpenKeep.config.OpenKeep.Signs.yml";
@@ -19,7 +19,7 @@ namespace OpenKeep.Signs
             Set = synced.AddYaml(new YamlFileSet("OpenKeep.Signs*.yml", "openkeep_signs", () => new SignsModel(), ApplyYaml)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(SignsModule).Assembly, DefaultResource),
-                EditorLabel = () => "Edit sign rules",
+                EditorLabel = () => Lang.Get("ok_signs_edit"),
             });
             SignsSettings.Enabled.SettingChanged += Guard.Wrap("signs switch", (_, _) => SignRefresh.Switched());
             SignsSettings.Height.SettingChanged += Guard.Wrap("signs layout", (_, _) => SignRefresh.RulesChanged());
@@ -28,17 +28,6 @@ namespace OpenKeep.Signs
             SignsSettings.MaxItems.SettingChanged += Guard.Wrap("signs text", (_, _) => SignRefresh.RulesChanged());
             SignsSettings.MaxCharacters.SettingChanged += Guard.Wrap("signs text", (_, _) => SignRefresh.RulesChanged());
             SignsSettings.EmptyText.SettingChanged += Guard.Wrap("signs text", (_, _) => SignRefresh.RulesChanged());
-            Words();
-        }
-
-        private static void Words()
-        {
-            Language.Add("ok_signs_sign", "sign");
-            Language.Add("ok_signs_playertext", "player text");
-            Language.Add("ok_signs_nosign", "no sign");
-            Language.Add("ok_signs_optedout", "opted out");
-            Language.Add("ok_signs_reset", "Signs allowed again on {0} containers.");
-            Language.Add("ok_signs_rewritten", "{0} signs rewritten.");
         }
 
         private static void ApplyYaml(YamlModel model)

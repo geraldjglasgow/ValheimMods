@@ -3,11 +3,12 @@ using HarmonyLib;
 using ItemCopies;
 using PatchGuard;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Stacks
 {
-    /// <summary>Entry point of the Stacks module: binds its settings, registers its YAML files and language words.</summary>
+    /// <summary>Entry point of the Stacks module: binds its settings and registers its YAML files.</summary>
     public static class StacksModule
     {
         public const string DefaultResource = "OpenKeep.config.OpenKeep.Stacks.yml";
@@ -24,7 +25,7 @@ namespace OpenKeep.Stacks
             Set = synced.AddYaml(new YamlFileSet("OpenKeep.Stacks*.yml", "openkeep_stacks", () => new StacksModel(), ApplyYaml)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(StacksModule).Assembly, DefaultResource),
-                EditorLabel = () => "Edit stacks and weights",
+                EditorLabel = () => Lang.Get("ok_stacks_edit"),
             });
             HookSettings(synced);
         }

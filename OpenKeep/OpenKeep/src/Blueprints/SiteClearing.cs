@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -38,7 +39,7 @@ namespace OpenKeep.Blueprints
                 cleared++;
             }
             if (cleared > 0 || warded > 0)
-                Messages.TopLeft(BlueprintWords.Format(BlueprintWords.Cleared, cleared, warded));
+                Messages.TopLeft(Lang.Format(BlueprintWords.Cleared, cleared, warded));
             return cleared;
         }
 

@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -50,7 +51,7 @@ namespace OpenKeep.Salvage
             if (!enabled)
                 return;
             if (label != null)
-                label.text = Core.Language.Localize(SalvageWords.Salvage);
+                label.text = Lang.Get(SalvageWords.Salvage);
             Button.interactable = !Active;
             Place(gui);
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Sites
 {
@@ -36,7 +37,7 @@ namespace OpenKeep.Blueprints.Sites
             string refusal = Refusal(site, player, out SiteParcel parcel);
             if (refusal != null)
             {
-                player.Message(MessageHud.MessageType.Center, Language.Localize(refusal));
+                player.Message(MessageHud.MessageType.Center, Lang.Get(refusal));
                 return;
             }
             if (TryHere(site, parcel))
@@ -65,10 +66,10 @@ namespace OpenKeep.Blueprints.Sites
                 parcel.Keep();
             else
                 parcel.Refund();
-            Messages.Center(taken ? BlueprintWords.Format(SiteWords.Delivered, SiteCosts.Describe(parcel.Given, 8)) : SiteWords.NotDelivered);
+            Messages.Center(taken ? Lang.Format(SiteWords.Delivered, SiteCosts.Describe(parcel.Given, 8)) : Lang.Get(SiteWords.NotDelivered));
         }
 
-        /// <summary>Why nothing is handed over, or null with <paramref name="parcel"/> taken out of the inventory.</summary>
+        /// <summary>The key of why nothing is handed over, or null with <paramref name="parcel"/> taken out of the inventory.</summary>
         private static string Refusal(SiteMarker site, Player player, out SiteParcel parcel)
         {
             parcel = null;

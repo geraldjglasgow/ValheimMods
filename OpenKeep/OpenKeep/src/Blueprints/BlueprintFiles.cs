@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Translations;
 
 namespace OpenKeep.Blueprints
 {
@@ -20,7 +21,7 @@ namespace OpenKeep.Blueprints
         {
             bool bad = string.IsNullOrWhiteSpace(name) || name != name.Trim() || name == "." || name == ".."
                 || name.EndsWith(".") || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0;
-            return bad ? BlueprintWords.Format(BlueprintWords.BadName, name ?? "") : null;
+            return bad ? Lang.Format(BlueprintWords.BadName, name ?? "") : null;
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace OpenKeep.Blueprints
             string full = BlueprintLibrary.FullPath(path);
             if (Directory.Exists(full))
             {
-                error = BlueprintWords.Format(BlueprintWords.Exists, path);
+                error = Lang.Format(BlueprintWords.Exists, path);
                 return false;
             }
             return Run(() => Directory.CreateDirectory(full), out error);
@@ -93,11 +94,11 @@ namespace OpenKeep.Blueprints
         private static string Refusal(string from, string to, bool folder)
         {
             if (folder && to.StartsWith(from + "/", StringComparison.OrdinalIgnoreCase))
-                return BlueprintWords.Format(BlueprintWords.IntoItself, from);
+                return Lang.Format(BlueprintWords.IntoItself, from);
             bool caseOnly = string.Equals(from, to, StringComparison.OrdinalIgnoreCase);
             bool taken = folder ? Directory.Exists(BlueprintLibrary.FullPath(to)) || File.Exists(BlueprintLibrary.FullPath(to))
                 : File.Exists(BlueprintLibrary.PathOf(to));
-            return taken && !caseOnly ? BlueprintWords.Format(BlueprintWords.Exists, to) : null;
+            return taken && !caseOnly ? Lang.Format(BlueprintWords.Exists, to) : null;
         }
 
         /// <summary>Moves through a temporary name, so a change of case alone also works on Windows.</summary>

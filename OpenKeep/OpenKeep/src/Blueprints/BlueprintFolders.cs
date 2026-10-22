@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints
 {
@@ -22,13 +23,13 @@ namespace OpenKeep.Blueprints
         public static void AskNewFolder()
         {
             string parent = BlueprintLibrary.CurrentFolder;
-            NamePrompt.Ask(BlueprintWords.NewFolderTopic, "", BlueprintFiles.NameLimit, name => Made(parent, name));
+            NamePrompt.Ask(Lang.Get(BlueprintWords.NewFolderTopic), "", BlueprintFiles.NameLimit, name => Made(parent, name));
         }
 
         private static void Made(string parent, string name)
         {
             if (BlueprintFiles.CreateFolder(parent, name, out string path, out string error))
-                Messages.Center(BlueprintWords.Format(BlueprintWords.FolderMade, path));
+                Messages.Center(Lang.Format(BlueprintWords.FolderMade, path));
             else
                 Messages.Center(error);
             BlueprintLibrary.Rescan();

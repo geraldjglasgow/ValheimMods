@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints
 {
@@ -40,7 +41,7 @@ namespace OpenKeep.Blueprints
             Tab.TabMemory.Load();
             Tab.TabMemory.GhostsShown = !Tab.TabMemory.GhostsShown;
             Player.m_localPlayer?.PlayButtonSound();
-            Messages.TopLeft(Shown ? BlueprintWords.GhostsOn : BlueprintWords.GhostsOff);
+            Messages.TopLeft(Lang.Get(Shown ? BlueprintWords.GhostsOn : BlueprintWords.GhostsOff));
             BlueprintEntries.Ghosts();
             BlueprintTab.Redraw();
         }

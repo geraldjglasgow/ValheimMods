@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Bench
@@ -132,9 +133,9 @@ namespace OpenKeep.Blueprints.Bench
         {
             List<string> lines = new List<string>();
             if (took > 0)
-                lines.Add(BlueprintWords.Format(BenchWords.Took, took, BlueprintEntries.Shown(into)));
+                lines.Add(Lang.Format(BenchWords.Took, took, BlueprintEntries.Shown(into)));
             if (failed > 0)
-                lines.Add(BlueprintWords.Format(BenchWords.NotTaken, failed));
+                lines.Add(Lang.Format(BenchWords.NotTaken, failed));
             Messages.TopLeft(string.Join("\n", lines));
             took = failed = 0;
             destinations.Clear();

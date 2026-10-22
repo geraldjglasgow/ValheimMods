@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -81,9 +81,9 @@ namespace OpenKeep.Tracker
         {
             CraftingStation station = recipe.GetRequiredStation(tracked.Quality);
             if (station != null)
-                Note(root, TrackerWords.Format(TrackerWords.Station, Language.Localize(station.m_name), recipe.GetRequiredStationLevel(tracked.Quality)));
+                Note(root, Lang.Format(TrackerWords.Station, Localization.instance.Localize(station.m_name), recipe.GetRequiredStationLevel(tracked.Quality)));
             if (recipe.m_requireOnlyOneIngredient)
-                Note(root, Language.Localize(TrackerWords.AnyOne));
+                Note(root, Lang.Get(TrackerWords.AnyOne));
         }
 
         private void Note(Transform root, string text)
@@ -101,7 +101,7 @@ namespace OpenKeep.Tracker
             row.padding = new RectOffset(Mathf.RoundToInt(size * 0.4f), 0, 0, 0);
             TrackerUi.Icon(row.transform, requirement.m_resItem.m_itemData.GetIcon(), size * 1.25f);
             TMP_Text label = TrackerUi.Text(row.transform, "name", size * 0.9f, TextAlignmentOptions.MidlineLeft);
-            label.text = Language.Localize(requirement.m_resItem.m_itemData.m_shared.m_name);
+            label.text = Localization.instance.Localize(requirement.m_resItem.m_itemData.m_shared.m_name);
             TrackerUi.Flexible(label, size * 9f);
             TMP_Text count = TrackerUi.Text(row.transform, "count", size * 0.9f, TextAlignmentOptions.MidlineRight);
             TrackerUi.Short(count, size * 3f);

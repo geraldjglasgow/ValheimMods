@@ -1,5 +1,5 @@
-using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Homestead
@@ -29,8 +29,8 @@ namespace OpenKeep.Homestead
             if (seconds == shownSeconds)
                 return;
             shownSeconds = seconds;
-            text.text = string.Format(Figures, seconds) + "\n" + Language.Localize(BedFeature.ChoiceNearest) + "\n"
-                + Language.Localize(BedFeature.ChoiceClick) + "\n" + Language.Localize(BedFeature.ChoiceKeys);
+            text.text = string.Format(Figures, seconds) + "\n" + Lang.Get(BedFeature.ChoiceNearest) + "\n"
+                + Lang.Get(BedFeature.ChoiceClick) + "\n" + Lang.Get(BedFeature.ChoiceKeys);
         }
 
         public static void Hide()

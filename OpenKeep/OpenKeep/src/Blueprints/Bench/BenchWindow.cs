@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Bench
@@ -87,12 +88,12 @@ namespace OpenKeep.Blueprints.Bench
         private static string Status()
         {
             if (BenchShare.Busy)
-                return BlueprintWords.Format(BenchWords.Sharing, BenchShare.Left);
+                return Lang.Format(BenchWords.Sharing, BenchShare.Left);
             if (BenchTake.Busy)
-                return BlueprintWords.Format(BenchWords.Taking, BenchTake.Left);
+                return Lang.Format(BenchWords.Taking, BenchTake.Left);
             if (!BenchPool.Loaded)
-                return Language.Localize(BenchPool.Silent ? BenchWords.NoAnswer : BenchWords.Asking);
-            return Language.Localize(BenchWords.Hint);
+                return Lang.Get(BenchPool.Silent ? BenchWords.NoAnswer : BenchWords.Asking);
+            return Lang.Get(BenchWords.Hint);
         }
     }
 }

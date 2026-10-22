@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenKeep.Core;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Sites
@@ -103,7 +102,7 @@ namespace OpenKeep.Blueprints.Sites
             if (amounts.Count == 0)
                 return null;
             List<string> parts = amounts.OrderByDescending(a => a.Value).Take(most)
-                .Select(a => $"{Language.Localize(SharedName(a.Key) ?? a.Key)} {a.Value}").ToList();
+                .Select(a => $"{Localization.instance.Localize(SharedName(a.Key) ?? a.Key)} {a.Value}").ToList();
             if (amounts.Count > most)
                 parts.Add($"+{amounts.Count - most}");
             return string.Join(", ", parts);

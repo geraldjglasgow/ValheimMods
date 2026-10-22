@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
-using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.BuildCamera
 {
@@ -23,10 +23,10 @@ namespace OpenKeep.BuildCamera
                 return null;
             List<string> parts = new List<string>();
             if (MissesResting(player, resting))
-                parts.Add(Language.Localize(CameraModule.Resting));
+                parts.Add(Lang.Get(CameraModule.Resting));
             int have = player.GetComfortLevel();
             if (have < comfort.Value)
-                parts.Add(string.Format(Language.Localize(CameraModule.Comfort), comfort.Value, have));
+                parts.Add(Lang.Format(CameraModule.Comfort, comfort.Value, have));
             return string.Join(", ", parts);
         }
 

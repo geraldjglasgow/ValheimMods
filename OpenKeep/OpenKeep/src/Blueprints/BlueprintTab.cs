@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -70,7 +71,7 @@ namespace OpenKeep.Blueprints
             int tab = index;
             made.onClick.AddListener(() => BlueprintSafe.Run("OpenKeep blueprints tab", () => menu.SelectPieceList(tab)));
             foreach (TMP_Text text in copy.GetComponentsInChildren<TMP_Text>(true))
-                text.text = Core.Language.Localize(BlueprintWords.Tab);
+                text.text = Lang.Get(BlueprintWords.Tab);
             return made;
         }
 

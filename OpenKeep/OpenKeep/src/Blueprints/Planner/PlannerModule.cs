@@ -9,7 +9,7 @@ namespace OpenKeep.Blueprints.Planner
     /// Entry point of the Site planner (SPEC-Blueprints.md, section 2): with the hammer's Blueprints tab Site planner entry
     /// selected, the crosshair picks ghost pieces of construction sites; a click selects a piece, Shift + click the
     /// whole house around it, Enter queues the selection as the site's next build order, Backspace clears it and K
-    /// opens the queue panel. Registers the words, the click, the per-frame and OnGUI work, the queue RPC on every site
+    /// opens the queue panel. Registers the click, the per-frame and OnGUI work, the queue RPC on every site
     /// marker and the panel as a game window (WindowInput: free cursor, no attacks or mouse look, Esc closes). No
     /// settings of its own: the keys are fixed (<see cref="PlannerKeys"/>), the switch is the Blueprints one.
     /// </summary>
@@ -17,7 +17,6 @@ namespace OpenKeep.Blueprints.Planner
     {
         public static void Initialize(SyncedConfiguration synced)
         {
-            PlannerWords.Register();
             SiteHooks.PlannerClick = PlannerClicks.OnClick;
             SiteHooks.OnUpdate("OpenKeep site planner", PlannerSession.Tick);
             SiteHooks.OnGui("OpenKeep site planner panel", PlannerPanel.OnGui, () => PlannerPanel.Showing);

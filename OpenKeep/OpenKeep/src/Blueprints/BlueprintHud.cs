@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -28,16 +28,16 @@ namespace OpenKeep.Blueprints
         {
             List<string> lines = new List<string>
             {
-                "<b>" + BlueprintWords.Format(BlueprintWords.Title, bp.Name, bp.Pieces.Count,
+                "<b>" + Lang.Format(BlueprintWords.Title, bp.Name, bp.Pieces.Count,
                     BlueprintWords.Metres(bp.PieceBounds.width), BlueprintWords.Metres(bp.PieceBounds.height)) + "</b>",
             };
             bool current = plan != null && plan.Blueprint == bp;
             if (current)
                 AddPlan(lines, plan);
             if (outlineOnly)
-                lines.Add(Coloured(Language.Localize(BlueprintWords.Outline), Grey));
+                lines.Add(Coloured(Lang.Get(BlueprintWords.Outline), Grey));
             lines.Add(current && plan.Problem != null ? Coloured(plan.Problem, Red)
-                : Language.Localize(pinned ? BlueprintWords.Pinned : BlueprintWords.ClickToPin));
+                : Lang.Get(pinned ? BlueprintWords.Pinned : BlueprintWords.ClickToPin));
             Set(BlueprintBlock, lines);
         }
 
@@ -45,8 +45,8 @@ namespace OpenKeep.Blueprints
         {
             string floor = BlueprintWords.Metres(plan.Frame.Ground);
             lines.Add(plan.WaterMoved
-                ? BlueprintWords.Format(BlueprintWords.GroundWater, floor, BlueprintWords.Metres(WaterRule.Sea))
-                : BlueprintWords.Format(BlueprintWords.Ground, floor));
+                ? Lang.Format(BlueprintWords.GroundWater, floor, BlueprintWords.Metres(WaterRule.Sea))
+                : Lang.Format(BlueprintWords.Ground, floor));
             AddGround(lines, plan.Work, plan.Bill);
         }
 
@@ -54,23 +54,23 @@ namespace OpenKeep.Blueprints
         public static void AddGround(List<string> lines, GroundWork w, MaterialBill bill)
         {
             if (w.Cut > 0.5f || w.Fill > 0.5f)
-                lines.Add(BlueprintWords.Format(BlueprintWords.Earth, w.Cut.ToString("0"), BlueprintWords.Metres(w.MaxCut), bill.GroundRemoved,
+                lines.Add(Lang.Format(BlueprintWords.Earth, w.Cut.ToString("0"), BlueprintWords.Metres(w.MaxCut), bill.GroundRemoved,
                     w.Fill.ToString("0"), BlueprintWords.Metres(w.MaxFill), bill.GroundNeeded));
             if (w.Limited > 0)
-                lines.Add(Coloured(BlueprintWords.Format(BlueprintWords.Limited, w.Limited), Grey));
+                lines.Add(Coloured(Lang.Format(BlueprintWords.Limited, w.Limited), Grey));
             string summary = bill.Summary();
             if (bill.Free)
-                lines.Add(Language.Localize(BlueprintWords.Free));
+                lines.Add(Lang.Get(BlueprintWords.Free));
             else if (summary != null || bill.StoneBack > 0)
-                lines.Add(BlueprintWords.Format(BlueprintWords.Materials, summary ?? "-") +
-                    (bill.StoneBack > 0 ? "  " + BlueprintWords.Format(BlueprintWords.StoneBack, bill.StoneBack) : ""));
+                lines.Add(Lang.Format(BlueprintWords.Materials, summary ?? "-") +
+                    (bill.StoneBack > 0 ? "  " + Lang.Format(BlueprintWords.StoneBack, bill.StoneBack) : ""));
         }
 
         /// <summary>No blueprint to show: the selected file unreadable, or no ground under the crosshair.</summary>
         public static void ShowEmpty(string error, bool noBlueprint)
         {
-            string text = error != null ? BlueprintWords.Format(BlueprintWords.Unreadable, error)
-                : Language.Localize(noBlueprint ? BlueprintWords.NoBlueprints : BlueprintWords.Aim);
+            string text = error != null ? Lang.Format(BlueprintWords.Unreadable, error)
+                : Lang.Get(noBlueprint ? BlueprintWords.NoBlueprints : BlueprintWords.Aim);
             Set(BlueprintBlock, new List<string> { Coloured(text, error != null ? Red : Grey) });
         }
 

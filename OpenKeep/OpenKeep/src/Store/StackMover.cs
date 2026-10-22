@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -31,7 +32,7 @@ namespace OpenKeep.Store
         /// <summary>The centre message of a move action: "Moved n stacks" or "Nothing to move".</summary>
         public static void Report(int stacks)
         {
-            Messages.Center(stacks > 0 ? StoreWords.Format(StoreWords.Moved, stacks) : StoreWords.Nothing);
+            Messages.Center(stacks > 0 ? Lang.Format(StoreWords.Moved, stacks) : StoreWords.Nothing);
         }
 
         /// <summary>

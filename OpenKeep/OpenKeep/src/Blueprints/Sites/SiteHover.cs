@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Sites
@@ -44,26 +44,26 @@ namespace OpenKeep.Blueprints.Sites
             SiteState s = site.State;
             Blueprint bp = s?.Blueprint;
             if (bp == null)
-                return Language.Localize(SiteWords.MarkerName);
+                return Lang.Get(SiteWords.MarkerName);
             List<string> lines = new List<string>
             {
-                "<b>" + BlueprintWords.Format(SiteWords.Title, s.Name, s.CreatorName) + "</b>",
-                BlueprintWords.Format(SiteWords.BuiltCount, s.BuiltCount, bp.Pieces.Count),
+                "<b>" + Lang.Format(SiteWords.Title, s.Name, s.CreatorName) + "</b>",
+                Lang.Format(SiteWords.BuiltCount, s.BuiltCount, bp.Pieces.Count),
             };
             if (!BlueprintSettings.FreeMaterials)
                 lines.Add(Needs(SiteNeeds.Missing(site)));
-            lines.Add(Language.Localize(HowItBuilds()));
-            lines.Add(Language.Localize(Key.Replace("$1", "$KEY_Use") + SiteWords.Deliver));
+            lines.Add(Lang.Get(HowItBuilds()));
+            lines.Add(Localization.instance.Localize(Key.Replace("$1", "$KEY_Use") + Lang.Get(SiteWords.Deliver)));
             Player player = Player.m_localPlayer;
             if (player != null && SiteTakeDown.MayAsk(site, player))
-                lines.Add(Language.Localize(Key.Replace("$1", AltUse()) + SiteWords.TakeDown));
+                lines.Add(Localization.instance.Localize(Key.Replace("$1", AltUse()) + Lang.Get(SiteWords.TakeDown)));
             return string.Join("\n", lines);
         }
 
         private static string Needs(Dictionary<string, int> missing)
         {
             string text = SiteCosts.Describe(missing, 5);
-            return text == null ? Language.Localize(SiteWords.HasAll) : BlueprintWords.Format(SiteWords.Needed, text);
+            return text == null ? Lang.Get(SiteWords.HasAll) : Lang.Format(SiteWords.Needed, text);
         }
 
         private static string HowItBuilds()

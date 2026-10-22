@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.BuildCamera
@@ -52,13 +53,13 @@ namespace OpenKeep.BuildCamera
         {
             if (!CameraArea.Contains(player.transform.position))
             {
-                Messages.Center(CameraModule.NoStation);
+                Messages.Center(Lang.Get(CameraModule.NoStation));
                 return;
             }
             string missing = CameraNeeds.Describe(player, CameraSettings.EntryNeedsResting, CameraSettings.EntryMinComfort);
             if (missing != null)
             {
-                Messages.Center(Language.Localize(CameraModule.EntryNeeds) + ": " + missing);
+                Messages.Center(Lang.Format(CameraModule.EntryNeeds, missing));
                 return;
             }
             Transform view = GameCamera.instance.transform;

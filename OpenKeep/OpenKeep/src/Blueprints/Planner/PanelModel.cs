@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Blueprints.Sites;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Planner
@@ -71,7 +71,7 @@ namespace OpenKeep.Blueprints.Planner
             if (state?.Blueprint == null)
                 return;
             revision = state.Zdo.DataRevision;
-            Progress = BlueprintWords.Format(PlannerWords.Progress, state.BuiltCount, state.Blueprint.Pieces.Count);
+            Progress = Lang.Format(PlannerWords.Progress, state.BuiltCount, state.Blueprint.Pieces.Count);
             List<List<int>> builds = SiteOrder.ByEntry(state);
             for (int k = 0; k < state.Queue.Count; k++)
                 Rows.Add(Row(state, state.Queue[k], k < builds.Count ? builds[k] : new List<int>()));
@@ -81,10 +81,10 @@ namespace OpenKeep.Blueprints.Planner
         private static PanelRow Row(SiteState state, SiteSelection entry, List<int> builds)
         {
             if (builds.Count == 0)
-                return new PanelRow { Name = entry.Name, Sizes = Language.Localize(PlannerWords.RowDone), Materials = "", Unbuilt = builds };
+                return new PanelRow { Name = entry.Name, Sizes = Lang.Get(PlannerWords.RowDone), Materials = "", Unbuilt = builds };
             int own = PlannerPieces.Unbuilt(state, entry.Pieces).Count;
-            string sizes = BlueprintWords.Format(PlannerWords.RowSizes, entry.Pieces.Count, own) + PlannerWords.SupportsNote(builds.Count - own);
-            string materials = PlannerBill.Describe(state.Blueprint, builds, MostMaterials) ?? Language.Localize(PlannerWords.Free);
+            string sizes = Lang.Format(PlannerWords.RowSizes, entry.Pieces.Count, own) + PlannerWords.SupportsNote(builds.Count - own);
+            string materials = PlannerBill.Describe(state.Blueprint, builds, MostMaterials) ?? Lang.Get(PlannerWords.Free);
             return new PanelRow { Name = entry.Name, Sizes = sizes, Materials = materials, Unbuilt = builds };
         }
     }

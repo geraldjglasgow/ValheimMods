@@ -15,7 +15,6 @@ namespace OpenKeep.Shared
         public static void Initialize(SyncedConfiguration synced)
         {
             SharedSettings.Bind(synced);
-            SharedWords.Register();
         }
     }
 }

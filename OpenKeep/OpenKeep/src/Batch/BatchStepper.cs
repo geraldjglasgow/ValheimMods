@@ -1,4 +1,3 @@
-using OpenKeep.Core;
 using PatchGuard;
 using TMPro;
 using UnityEngine;
@@ -67,7 +66,7 @@ namespace OpenKeep.Batch
             more.interactable = selected && BatchAmount.CanStepUp(player);
             // The game adds " x 5" to Craft while Shift is held; the stepper shows the amount, so Craft stays Craft.
             if (selected)
-                craftLabel.text = Language.Localize("$inventory_craftbutton");
+                craftLabel.text = Localization.instance.Localize("$inventory_craftbutton");
         }
 
         private static void Show(bool show)

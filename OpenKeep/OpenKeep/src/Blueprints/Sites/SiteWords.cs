@@ -1,63 +1,32 @@
-using OpenKeep.Core;
-
 namespace OpenKeep.Blueprints.Sites
 {
     /// <summary>
-    /// The words of the construction sites (keys <c>ok_site_*</c>). Texts with numbers carry $1, $2 placeholders that
-    /// <see cref="BlueprintWords.Format"/> fills.
+    /// The keys of the construction sites' words (<c>ok_site_*</c>). Their English is in
+    /// <c>translations/English.blueprints.yml</c>; texts with values carry $1, $2 placeholders for <c>Lang.Format</c>.
     /// </summary>
     public static class SiteWords
     {
-        public static string MarkerName { get; private set; }
-        public static string Title { get; private set; }
-        public static string BuiltCount { get; private set; }
-        public static string Needed { get; private set; }
-        public static string HasAll { get; private set; }
-        public static string Deliver { get; private set; }
-        public static string TakeDown { get; private set; }
-        public static string PieceByPiece { get; private set; }
-        public static string AllAtOnce { get; private set; }
-        public static string FreeBuild { get; private set; }
-        public static string Placed { get; private set; }
-        public static string Delivered { get; private set; }
-        public static string NotDelivered { get; private set; }
-        public static string NoAnswer { get; private set; }
-        public static string NothingToGive { get; private set; }
-        public static string NothingNeeded { get; private set; }
-        public static string NotYours { get; private set; }
-        public static string TakenDown { get; private set; }
-        public static string Refused { get; private set; }
-        public static string NoPrefab { get; private set; }
-        public static string Overlaps { get; private set; }
+        public const string MarkerName = "ok_site";
+        public const string Title = "ok_site_title";
+        public const string BuiltCount = "ok_site_built";
+        public const string Needed = "ok_site_needed";
+        public const string HasAll = "ok_site_hasall";
+        public const string Deliver = "ok_site_deliver";
+        public const string TakeDown = "ok_site_takedown";
+        public const string PieceByPiece = "ok_site_piecebypiece";
+        public const string AllAtOnce = "ok_site_allatonce";
+        public const string FreeBuild = "ok_site_free";
 
-        public static void Register()
-        {
-            MarkerName = Language.Add("ok_site", "Construction site");
-            Title = Language.Add("ok_site_title", "$1 (construction site of $2)");
-            BuiltCount = Language.Add("ok_site_built", "Built $1 of $2 pieces");
-            Needed = Language.Add("ok_site_needed", "Still needed: $1");
-            HasAll = Language.Add("ok_site_hasall", "Everything it needs is here");
-            Deliver = Language.Add("ok_site_deliver", "Hand over materials");
-            TakeDown = Language.Add("ok_site_takedown", "Take the site down (its materials are handed back)");
-            PieceByPiece = Language.Add("ok_site_piecebypiece", "Builds piece by piece as materials come in");
-            AllAtOnce = Language.Add("ok_site_allatonce", "Builds all at once when everything is here");
-            FreeBuild = Language.Add("ok_site_free", "Builds at once, without materials");
-            AddMessages();
-        }
-
-        private static void AddMessages()
-        {
-            Placed = Language.Add("ok_site_placed", "Construction site $1 placed: hand it the materials (E on its post)");
-            Delivered = Language.Add("ok_site_delivered", "Handed over: $1");
-            NotDelivered = Language.Add("ok_site_notdelivered", "The site did not take the materials; they are back with you");
-            NoAnswer = Language.Add("ok_site_noanswer", "The site did not answer yet; the materials come back if it never takes them");
-            NothingToGive = Language.Add("ok_site_nothingtogive", "You carry nothing this site still needs");
-            NothingNeeded = Language.Add("ok_site_nothingneeded", "This site has everything it needs");
-            NotYours = Language.Add("ok_site_notyours", "Only $1 or an admin can take this site down");
-            TakenDown = Language.Add("ok_site_takendown", "$1 taken down: its materials lie at its post");
-            Refused = Language.Add("ok_site_refused", "Only the site's builder or an admin can take it down");
-            NoPrefab = Language.Add("ok_site_noprefab", "The construction site post is missing in this game");
-            Overlaps = Language.Add("ok_site_overlaps", "The construction site $1 already covers part of this spot");
-        }
+        public const string Placed = "ok_site_placed";
+        public const string Delivered = "ok_site_delivered";
+        public const string NotDelivered = "ok_site_notdelivered";
+        public const string NoAnswer = "ok_site_noanswer";
+        public const string NothingToGive = "ok_site_nothingtogive";
+        public const string NothingNeeded = "ok_site_nothingneeded";
+        public const string NotYours = "ok_site_notyours";
+        public const string TakenDown = "ok_site_takendown";
+        public const string Refused = "ok_site_refused";
+        public const string NoPrefab = "ok_site_noprefab";
+        public const string Overlaps = "ok_site_overlaps";
     }
 }

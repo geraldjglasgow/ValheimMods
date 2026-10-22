@@ -1,7 +1,7 @@
 using GUIFramework;
-using OpenKeep.Core;
 using OpenKeep.Salvage;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -183,7 +183,7 @@ namespace OpenKeep.Recipes
             input.onDeselect = new TMP_InputField.SelectionEvent();
             input.OnInputSubmit = new OnInputSubmitEvent();
             input.characterLimit = 40;
-            input.VirtualKeyboardTitle = RecipeWords.SearchTopic;
+            input.VirtualKeyboardTitle = Lang.Get(RecipeWords.SearchTopic);
             input.SetTextWithoutNotify("");
             input.onValueChanged.AddListener(_ => rebuildAt = Time.unscaledTime + Debounce);
             input.onEndEdit.AddListener(_ => Ended(input));
@@ -212,7 +212,7 @@ namespace OpenKeep.Recipes
             if (input.placeholder is TMP_Text placeholder)
             {
                 placeholder.fontSize = FontSize;
-                placeholder.text = Language.Localize(RecipeWords.Search);
+                placeholder.text = Lang.Get(RecipeWords.Search);
             }
         }
 

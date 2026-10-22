@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Store
 {
@@ -54,19 +55,19 @@ namespace OpenKeep.Store
         public static void ToggleItemWithMessage(ItemDrop.ItemData item)
         {
             bool on = ToggleItem(item);
-            Messages.Center(StoreWords.Format(on ? StoreWords.FavouriteOn : StoreWords.FavouriteOff, ItemNames.DisplayName(item)));
+            Messages.Center(Lang.Format(on ? StoreWords.FavouriteOn : StoreWords.FavouriteOff, ItemNames.DisplayName(item)));
         }
 
         public static void ToggleSlotWithMessage(Vector2i pos)
         {
             bool on = ToggleSlot(pos);
-            Messages.Center(StoreWords.Format(on ? StoreWords.SlotOn : StoreWords.SlotOff, (pos.x + 1) + "," + (pos.y + 1)));
+            Messages.Center(Lang.Format(on ? StoreWords.SlotOn : StoreWords.SlotOff, (pos.x + 1) + "," + (pos.y + 1)));
         }
 
         public static void ToggleJunkWithMessage(ItemDrop.ItemData item)
         {
             bool on = ToggleJunk(item);
-            Messages.Center(StoreWords.Format(on ? StoreWords.JunkOn : StoreWords.JunkOff, ItemNames.DisplayName(item)));
+            Messages.Center(Lang.Format(on ? StoreWords.JunkOn : StoreWords.JunkOff, ItemNames.DisplayName(item)));
         }
 
         private static string Id(ItemDrop.ItemData item) => ItemNames.PrefabName(item);

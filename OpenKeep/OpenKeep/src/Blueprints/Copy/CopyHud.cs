@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints.Copy
@@ -24,8 +25,8 @@ namespace OpenKeep.Blueprints.Copy
             List<string> lines = new List<string>
             {
                 "<b>" + SelectionLine() + "</b>",
-                CopyAim.Piece != null ? AimLine(CopyAim.Piece) : BlueprintHud.Coloured(Language.Localize(CopyWords.AimHint), BlueprintHud.Grey),
-                Language.Localize(CopyWords.Keys),
+                CopyAim.Piece != null ? AimLine(CopyAim.Piece) : BlueprintHud.Coloured(Lang.Get(CopyWords.AimHint), BlueprintHud.Grey),
+                Lang.Get(CopyWords.Keys),
             };
             BlueprintHud.Set(Block, lines);
         }
@@ -46,17 +47,17 @@ namespace OpenKeep.Blueprints.Copy
         private static string Describe(float yaw)
         {
             if (CopySelection.Count == 0)
-                return Language.Localize(CopyWords.TitleEmpty);
+                return Lang.Get(CopyWords.TitleEmpty);
             Vector2 size = CopyFootprint.Of(CopySelection.Boxes, yaw);
             string across = BlueprintWords.Metres(size.x), deep = BlueprintWords.Metres(size.y);
             int buildings = CopySelection.Buildings;
-            return buildings == 1 ? BlueprintWords.Format(CopyWords.TitleOne, CopySelection.Count, across, deep)
-                : BlueprintWords.Format(CopyWords.Title, CopySelection.Count, buildings, across, deep);
+            return buildings == 1 ? Lang.Format(CopyWords.TitleOne, CopySelection.Count, across, deep)
+                : Lang.Format(CopyWords.Title, CopySelection.Count, buildings, across, deep);
         }
 
         private static string AimLine(Piece piece)
         {
-            string line = BlueprintWords.Format(CopyWords.Aiming, Language.Localize(piece.m_name));
+            string line = Lang.Format(CopyWords.Aiming, Localization.instance.Localize(piece.m_name));
             string action = Action();
             return action != null ? line + "  -  " + action : line;
         }
@@ -71,11 +72,11 @@ namespace OpenKeep.Blueprints.Copy
             switch (CopyHover.Mode)
             {
                 case CopyMode.Piece:
-                    return Language.Localize(drops ? CopyWords.DropPiece : CopyWords.TakePiece);
+                    return Lang.Get(drops ? CopyWords.DropPiece : CopyWords.TakePiece);
                 case CopyMode.SameType:
-                    return BlueprintWords.Format(drops ? CopyWords.DropGroup : CopyWords.TakeGroup, count);
+                    return Lang.Format(drops ? CopyWords.DropGroup : CopyWords.TakeGroup, count);
                 case CopyMode.BuildingType:
-                    return BlueprintWords.Format(drops ? CopyWords.DropType : CopyWords.TakeType, count);
+                    return Lang.Format(drops ? CopyWords.DropType : CopyWords.TakeType, count);
                 default:
                     return BuildingAction(count, drops);
             }
@@ -85,9 +86,9 @@ namespace OpenKeep.Blueprints.Copy
         private static string BuildingAction(int count, bool drops)
         {
             if (drops)
-                return BlueprintWords.Format(CopyWords.DropBuilding, count);
+                return Lang.Format(CopyWords.DropBuilding, count);
             int adds = CopyHover.Adds;
-            return adds < count ? BlueprintWords.Format(CopyWords.TakeRest, adds, count) : BlueprintWords.Format(CopyWords.TakeBuilding, count);
+            return adds < count ? Lang.Format(CopyWords.TakeRest, adds, count) : Lang.Format(CopyWords.TakeBuilding, count);
         }
     }
 }

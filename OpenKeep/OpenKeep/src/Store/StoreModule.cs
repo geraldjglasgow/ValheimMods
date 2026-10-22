@@ -1,12 +1,12 @@
 using System.IO;
-using OpenKeep.Core;
 using PatchGuard;
 using SyncedConfig;
+using Translations;
 using YamlConfig;
 
 namespace OpenKeep.Store
 {
-    /// <summary>Entry point of the Store module: binds its settings, registers its YAML files and language words.</summary>
+    /// <summary>Entry point of the Store module: binds its settings and registers its YAML files.</summary>
     public static class StoreModule
     {
         public const string Resource = "OpenKeep.config.OpenKeep.Store.yml";
@@ -20,9 +20,8 @@ namespace OpenKeep.Store
             Files = synced.AddYaml(new YamlFileSet("OpenKeep.Store*.yml", "openkeep_store", () => new StoreModel(), Apply)
             {
                 DefaultContent = SyncedConfiguration.EmbeddedResource(typeof(StoreModule).Assembly, Resource),
-                EditorLabel = () => Language.Localize(StoreWords.Edit),
+                EditorLabel = () => Lang.Get(StoreWords.Edit),
             });
-            StoreWords.Register();
             StoreSettings.ButtonRowOffset.SettingChanged += Guard.Wrap("store button row offset", (_, _) => PanelButtons.Reposition());
         }
 

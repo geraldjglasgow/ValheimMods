@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +22,7 @@ namespace OpenKeep.Salvage
                 return;
             TMP_Text buttonText = gui.m_craftButton.GetComponentInChildren<TMP_Text>();
             if (buttonText != null)
-                buttonText.text = Language.Localize(SalvageWords.Salvage);
+                buttonText.text = Lang.Get(SalvageWords.Salvage);
             ItemDrop.ItemData item = SalvageList.Selected;
             if (item == null)
             {
@@ -37,7 +38,7 @@ namespace OpenKeep.Salvage
         private static void ShowEmpty(InventoryGui gui)
         {
             gui.m_recipeDecription.enabled = true;
-            gui.m_recipeDecription.text = Language.Localize(SalvageWords.Empty);
+            gui.m_recipeDecription.text = Lang.Get(SalvageWords.Empty);
             gui.m_craftButton.interactable = false;
             UITooltip tip = gui.m_craftButton.GetComponent<UITooltip>();
             if (tip != null)
@@ -53,7 +54,7 @@ namespace OpenKeep.Salvage
             gui.m_recipeName.enabled = true;
             gui.m_recipeName.text = ItemNames.DisplayName(item) + (item.m_stack > 1 ? $" x{item.m_stack}" : "");
             gui.m_recipeDecription.enabled = true;
-            gui.m_recipeDecription.text = Language.Localize(ItemDrop.ItemData.GetTooltip(item, item.m_quality, false, Game.m_worldLevel));
+            gui.m_recipeDecription.text = Localization.instance.Localize(ItemDrop.ItemData.GetTooltip(item, item.m_quality, false, Game.m_worldLevel));
         }
 
         private static void ShowReturns(InventoryGui gui, List<SalvageReturn> returns)
@@ -82,7 +83,7 @@ namespace OpenKeep.Salvage
             amount.gameObject.SetActive(true);
             icon.sprite = entry.Item.m_itemData.GetIcon();
             icon.color = Color.white;
-            string label = Language.Localize(entry.Name);
+            string label = Localization.instance.Localize(entry.Name);
             name.text = label;
             amount.text = entry.IsCertain ? entry.Amount.ToString() : entry.ChanceText;
             amount.color = Color.white;
@@ -102,9 +103,9 @@ namespace OpenKeep.Salvage
             if (tip == null)
                 return;
             if (blocker != null)
-                tip.m_text = Language.Localize(blocker);
+                tip.m_text = Lang.Get(blocker);
             else
-                tip.m_text = fits ? "" : Language.Localize("$inventory_full");
+                tip.m_text = fits ? "" : Localization.instance.Localize("$inventory_full");
         }
     }
 }

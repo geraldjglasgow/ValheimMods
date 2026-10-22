@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Shared
@@ -122,7 +123,7 @@ namespace OpenKeep.Shared
                     continue;
                 element.m_icon.color = colour;
                 if (element == hovered && element.m_tooltip != null)
-                    element.m_tooltip.Set(element.m_tooltip.m_topic, element.m_tooltip.m_text + "\n" + touch.Name + " " + SharedWords.Moving, grid.m_tooltipAnchor);
+                    element.m_tooltip.Set(element.m_tooltip.m_topic, element.m_tooltip.m_text + "\n" + Lang.Format(SharedWords.Moving, touch.Name), grid.m_tooltipAnchor);
             }
         }
 

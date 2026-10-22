@@ -1,5 +1,5 @@
 using System.Linq;
-using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -44,20 +44,20 @@ namespace OpenKeep.Blueprints
         private static string FirstProblem(SitePlan plan, Player player, bool needMaterials)
         {
             if (!BlueprintSettings.Enabled)
-                return Language.Localize(BlueprintWords.Disabled);
+                return Lang.Get(BlueprintWords.Disabled);
             if (plan.Bill.Missing.Count > 0)
-                return BlueprintWords.Format(BlueprintWords.Missing, string.Join(", ", plan.Bill.Missing.Take(5)));
+                return Lang.Format(BlueprintWords.Missing, string.Join(", ", plan.Bill.Missing.Take(5)));
             if (plan.Work.Unloaded > 0)
-                return Language.Localize(BlueprintWords.Unloaded);
+                return Lang.Get(BlueprintWords.Unloaded);
             if (plan.InTheWay > 0)
-                return BlueprintWords.Format(BlueprintWords.InTheWay, plan.InTheWay);
+                return Lang.Format(BlueprintWords.InTheWay, plan.InTheWay);
             string protection = SiteProtection.Reason(plan);
             if (protection != null)
-                return Language.Localize(protection);
+                return Lang.Get(protection);
             if (plan.Bill.Unlearned.Count > 0)
-                return BlueprintWords.Format(BlueprintWords.Unlearned, string.Join(", ", plan.Bill.Unlearned.Take(5).Select(n => Localization.instance.Localize(n))));
+                return Lang.Format(BlueprintWords.Unlearned, string.Join(", ", plan.Bill.Unlearned.Take(5).Select(n => Localization.instance.Localize(n))));
             string lacking = needMaterials ? plan.Bill.Shortfall(player) : null;
-            return lacking != null ? BlueprintWords.Format(BlueprintWords.Lacking, lacking) : null;
+            return lacking != null ? Lang.Format(BlueprintWords.Lacking, lacking) : null;
         }
 
         /// <summary>Player-built pieces whose pivot lies within the blueprint's pieces' frame rectangle (plus a metre).</summary>

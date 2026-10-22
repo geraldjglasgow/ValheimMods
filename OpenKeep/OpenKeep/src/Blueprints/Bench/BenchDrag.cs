@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -95,7 +96,7 @@ namespace OpenKeep.Blueprints.Bench
             if (pane.Model.Accepts(source, onto))
                 BlueprintSafe.Run("OpenKeep blueprint bench drop", () => pane.Model.Drop(source, entries, onto));
             else if (source is LibraryPane && pane.Model is PoolPane)
-                Messages.TopLeft(Language.Localize(BenchWords.OnlyOwn));
+                Messages.TopLeft(Lang.Get(BenchWords.OnlyOwn));
         }
 
         public static void End()

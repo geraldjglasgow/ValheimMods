@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -35,7 +36,7 @@ namespace OpenKeep.Blueprints
             if (start == null)
             {
                 GroundOutline.Hide();
-                BlueprintHud.Set(BlueprintHud.FixBlock, new List<string> { BlueprintHud.Coloured(Language.Localize(BlueprintWords.FixAim), BlueprintHud.Grey) });
+                BlueprintHud.Set(BlueprintHud.FixBlock, new List<string> { BlueprintHud.Coloured(Lang.Get(BlueprintWords.FixAim), BlueprintHud.Grey) });
                 return;
             }
             Refresh(start, player);
@@ -67,11 +68,11 @@ namespace OpenKeep.Blueprints
         {
             if (plan == null)
                 return;
-            List<string> lines = new List<string> { "<b>" + BlueprintWords.Format(BlueprintWords.FixTitle, plan.Building.Count, plan.TouchingCount) + "</b>" };
+            List<string> lines = new List<string> { "<b>" + Lang.Format(BlueprintWords.FixTitle, plan.Building.Count, plan.TouchingCount) + "</b>" };
             if (plan.TouchingCount > 0)
                 BlueprintHud.AddGround(lines, plan.Work, plan.Bill);
             lines.Add(plan.Problem != null ? BlueprintHud.Coloured(plan.Problem, BlueprintHud.Red)
-                : Language.Localize(Pinned ? BlueprintWords.FixPinned : BlueprintWords.FixClick));
+                : Lang.Get(Pinned ? BlueprintWords.FixPinned : BlueprintWords.FixClick));
             BlueprintHud.Set(BlueprintHud.FixBlock, lines);
         }
 
@@ -81,7 +82,7 @@ namespace OpenKeep.Blueprints
             if (pinned == null)
             {
                 pinned = GroundFixBuilding.Aimed();
-                Messages.Center(pinned != null ? BlueprintWords.FixPinned : BlueprintWords.FixAim);
+                Messages.Center(Lang.Get(pinned != null ? BlueprintWords.FixPinned : BlueprintWords.FixAim));
                 return;
             }
             GroundFixPlan now = GroundFixPlan.Make(pinned, player);
@@ -103,7 +104,7 @@ namespace OpenKeep.Blueprints
             if (Input.GetKeyDown(BlueprintRules.ReleaseKey) && pinned != null)
             {
                 pinned = null;
-                Messages.Center(BlueprintWords.Unpinned);
+                Messages.Center(Lang.Get(BlueprintWords.Unpinned));
             }
             if (BlueprintKeys.Alt && Input.GetKeyDown(KeyCode.Z))
                 Undo();
@@ -112,7 +113,7 @@ namespace OpenKeep.Blueprints
         private static void Undo()
         {
             int back = GroundUndo.LastWasFix ? GroundUndo.Restore() : 0;
-            Messages.Center(back > 0 ? BlueprintWords.Format(BlueprintWords.FixUndone, back) : BlueprintWords.FixNoUndo);
+            Messages.Center(back > 0 ? Lang.Format(BlueprintWords.FixUndone, back) : Lang.Get(BlueprintWords.FixNoUndo));
             plan = null;
         }
 

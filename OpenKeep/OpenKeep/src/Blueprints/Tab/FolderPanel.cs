@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Blueprints.Tab
 {
@@ -109,6 +109,6 @@ namespace OpenKeep.Blueprints.Tab
 
         /// <summary>A folder as the panel and the breadcrumb show it: "Blueprints" for the top, else its name made readable.</summary>
         public static string NameOf(string folder) =>
-            string.IsNullOrEmpty(folder) ? Language.Localize(BlueprintWords.Tab) : BlueprintEntries.Title(BlueprintLibrary.Leaf(folder));
+            string.IsNullOrEmpty(folder) ? Lang.Get(BlueprintWords.Tab) : BlueprintEntries.Title(BlueprintLibrary.Leaf(folder));
     }
 }

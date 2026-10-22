@@ -1,4 +1,3 @@
-using OpenKeep.Core;
 using SyncedConfig;
 
 namespace OpenKeep.Homestead
@@ -13,14 +12,12 @@ namespace OpenKeep.Homestead
         /// <summary>The centre message after opening a station repaired one item.</summary>
         public const string RepairedOne = "$ok_autorepair_one";
 
-        /// <summary>The same with a count ({0}) of two or more.</summary>
+        /// <summary>The same with a count ($1) of two or more.</summary>
         public const string RepairedMany = "$ok_autorepair_many";
 
         public static void Initialize(SyncedConfiguration synced)
         {
             StationRepairSettings.Bind(synced);
-            Language.Add("ok_autorepair_one", "Repaired 1 item");
-            Language.Add("ok_autorepair_many", "Repaired {0} items");
         }
     }
 }

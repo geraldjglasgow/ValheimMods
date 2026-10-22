@@ -20,7 +20,7 @@ namespace OpenKeep.Blueprints
             return Reason(plan.Frame.Origin, area, plan.Work, point => InPieces(point, plan));
         }
 
-        /// <summary>The reason a site is protected, or null. <paramref name="building"/> says where pieces stand.</summary>
+        /// <summary>The key of the reason a site is protected, or null. <paramref name="building"/> says where pieces stand.</summary>
         public static string Reason(Vector3 origin, Rect area, GroundWork work, Func<Vector3, bool> building)
         {
             if (Character.InInterior(origin))

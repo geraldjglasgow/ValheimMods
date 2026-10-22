@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>5.0.1</Version>
+    <Version>5.1.0</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -49,6 +49,8 @@
     <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
     <!-- BundlePrefabs: Mímir's Chest's model and icon, an embedded bundle per platform -->
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -134,6 +136,8 @@
   <ItemGroup>
     <!-- Default YAML files, written next to the .cfg when none exists. Add a file to config/ and it is embedded. -->
     <EmbeddedResource Include="config\*.yml" LogicalName="OpenKeep.config.%(Filename)%(Extension)" />
+    <!-- The words, read by the Translations library as OpenKeep.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="OpenKeep.translations.%(Filename)%(Extension)" />
     <!-- UI images, decoded at runtime through the game's ImageConversion (StowSprites.Decode, by reflection: the
          module targets netstandard 2.1). Keep them small: the in-game size, not the source. -->
     <EmbeddedResource Include="assets\*.png" LogicalName="OpenKeep.assets.%(Filename)%(Extension)" />

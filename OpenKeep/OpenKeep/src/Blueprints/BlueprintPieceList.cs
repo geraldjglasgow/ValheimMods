@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Blueprints
@@ -11,7 +12,7 @@ namespace OpenKeep.Blueprints
     /// </summary>
     public sealed class BlueprintPieceList : IPieceList
     {
-        public string DisplayName => BlueprintWords.Tab;
+        public string DisplayName => Lang.Token(BlueprintWords.Tab);
 
         public bool ShowTags => true;
 

@@ -1,5 +1,5 @@
-using OpenKeep.Core;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -60,9 +60,19 @@ namespace OpenKeep.Mimir
             TMP_Text label = go.GetComponentInChildren<TMP_Text>(true);
             if (label == null)
                 return;
-            label.text = Language.Localize("$ok_mimir_sort_" + mode.ToString().ToLowerInvariant());
+            label.text = Lang.Get(Word(mode));
             label.enableAutoSizing = false;
             label.fontSize = 15f;
+        }
+
+        private static string Word(MimirSortMode.Mode mode)
+        {
+            switch (mode)
+            {
+                case MimirSortMode.Mode.Name: return "ok_mimir_sort_name";
+                case MimirSortMode.Mode.Stars: return "ok_mimir_sort_stars";
+                default: return "ok_mimir_sort_type";
+            }
         }
 
         /// <summary>Every frame while a Mímir's Chest is open: lights its order.</summary>

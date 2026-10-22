@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using OpenKeep.Core;
+using Translations;
 
 namespace OpenKeep.Salvage
 {
@@ -78,12 +79,8 @@ namespace OpenKeep.Salvage
         /// <summary>"Salvaged Iron sword x2: 6 Iron, 2 Wood" with $tokens left for the message to localize.</summary>
         public static string Summary(ItemDrop.ItemData item, List<SalvageReturn> returns)
         {
-            StringBuilder text = new StringBuilder();
-            text.Append(SalvageWords.Done).Append(' ').Append(item.m_shared.m_name);
-            if (item.m_stack > 1)
-                text.Append(" x").Append(item.m_stack);
-            text.Append(": ").Append(ReturnList(returns));
-            return text.ToString();
+            string name = item.m_stack > 1 ? item.m_shared.m_name + " x" + item.m_stack : item.m_shared.m_name;
+            return Lang.Format(SalvageWords.Done, name, ReturnList(returns));
         }
 
         /// <summary>"6 $item_iron, 2 $item_wood, 1 $ecf_stone_awakening (25%)".</summary>

@@ -1,4 +1,5 @@
 using OpenKeep.Core;
+using Translations;
 using UnityEngine;
 
 namespace OpenKeep.Homestead
@@ -56,7 +57,7 @@ namespace OpenKeep.Homestead
             if (!view.HasOwner())
                 view.ClaimOwnership();
             view.InvokeRPC(RpcName, keep);
-            Messages.Center(fire.m_name + ": " + (keep ? TorchFeature.KeptWord : TorchFeature.ScheduledWord));
+            Messages.Center(Lang.Format(keep ? TorchFeature.KeptWord : TorchFeature.ScheduledWord, fire.m_name));
         }
 
         /// <summary>On the owner (a stale request after an owner change is dropped, as the game's fire RPCs do).</summary>
