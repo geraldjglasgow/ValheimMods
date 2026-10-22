@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.1
+
+- Polish translation, used while the game's language is Polish.
+
 ## 0.19.0
 
 - Translations: every word you read is in `translations/English.yml`; a `GrindstoneSkills.translations.<Language>.yml` in `BepInEx/config` translates it.
