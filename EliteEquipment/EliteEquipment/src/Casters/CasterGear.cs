@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Casters
@@ -21,7 +22,8 @@ namespace EliteEquipment.Casters
 
     /// <summary>
     /// One caster item (features/casters.md, "Items (Meadows numbers)"): its prefab, the game item it is a copy of, the
-    /// workshop model (bundle and asset) it wears, its words, the eitr it gives while worn or wielded, its armour and its
+    /// workshop model (bundle and asset) it wears, its word (translations/English.yml: the name, and the description as the
+    /// word + "_desc"), the eitr it gives while worn or wielded, its armour and its
     /// recipe, crafted beside <see cref="RecipeBeside"/> (same station and level). <see cref="Item"/> is the built prefab.
     /// </summary>
     public sealed class GearPiece
@@ -31,8 +33,6 @@ namespace EliteEquipment.Casters
         public string Bundle;
         public string Asset;
         public string Word;
-        public string Name;
-        public string Description;
         public float Eitr;
         public float Armour;
         /// <summary>A wand's heal power at quality 1, and its bolt's pierce and spirit (each).</summary>
@@ -47,8 +47,8 @@ namespace EliteEquipment.Casters
 
         public GameObject Item;
 
-        public string Token => "$" + Word;
-        public string DescriptionToken => "$" + Word + "_desc";
+        public string Token => Lang.Token(Word);
+        public string DescriptionToken => Lang.Token(Word + "_desc");
     }
 
     /// <summary>The caster gear built so far (the Meadows', and the Black Forest's wand) and the numbers the spells read from it.</summary>
@@ -69,11 +69,7 @@ namespace EliteEquipment.Casters
         public static readonly GearPiece Wand = new GearPiece
         {
             Prefab = "EE_Wand_Meadows", Base = "Club", Bundle = "ee_wand_meadows", Asset = "ee_wand_meadows",
-            Word = "ee_wand_meadows", Name = "Gnarled Wand", Eitr = 10f, HealPower = 15f, Bolt = 6f, RecipeBeside = "AxeFlint",
-            Description = "A crooked branch with a bead of amber resin, holding two spells. Left mouse fires a small spirit bolt " +
-                "for eitr (hold to charge it, up to +30% damage at 3 s); right mouse casts the first spell, right mouse held " +
-                "and left mouse the second. A caster does not block: right mouse held and jump blinks. Set the spells with the " +
-                "Spellbook button in the inventory.",
+            Word = "ee_wand_meadows", Eitr = 10f, HealPower = 15f, Bolt = 6f, RecipeBeside = "AxeFlint",
             Cost = new[] { new GearCost("Wood", 5, 2), new GearCost("Resin", 3, 1), new GearCost("Feathers", 2, 1), new GearCost("Dandelion", 3, 1) },
         };
 
@@ -84,10 +80,7 @@ namespace EliteEquipment.Casters
         public static readonly GearPiece Greywood = new GearPiece
         {
             Prefab = "EE_Wand_BlackForest", Base = "Club", Bundle = "ee_wand_blackforest", Asset = "ee_wand_blackforest",
-            Word = "ee_wand_blackforest", Name = "Greywood Wand", Eitr = 15f, HealPower = 25f, Bolt = 7f, RecipeBeside = "MaceBronze",
-            Description = "Fine wood bound in bronze, a greydwarf's eye caged at its head, holding two spells. Left mouse fires a " +
-                "spirit bolt for eitr (hold to charge it); right mouse casts the first spell, right mouse held and left mouse " +
-                "the second. Set the spells with the Spellbook button in the inventory.",
+            Word = "ee_wand_blackforest", Eitr = 15f, HealPower = 25f, Bolt = 7f, RecipeBeside = "MaceBronze",
             Cost = new[] { new GearCost("FineWood", 4, 2), new GearCost("Bronze", 2, 1), new GearCost("GreydwarfEye", 6, 3) },
         };
 
@@ -96,9 +89,7 @@ namespace EliteEquipment.Casters
         public static readonly GearPiece Focus = new GearPiece
         {
             Prefab = "EE_Focus_Meadows", Base = "ShieldWood", Bundle = "ee_focus_meadows", Asset = "ee_focus_meadows",
-            Word = "ee_focus_meadows", Name = "Raven Fetish", RecipeBeside = "ShieldWood",
-            Description = "A small wooden ward with a raven fetish of feathers and flint lashed to its face. Held on the off " +
-                "hand, it quickens eitr and strengthens a wand's healing.",
+            Word = "ee_focus_meadows", RecipeBeside = "ShieldWood",
             Cost = new[] { new GearCost("Feathers", 4, 2), new GearCost("LeatherScraps", 3, 1), new GearCost("Flint", 2, 1) },
         };
 

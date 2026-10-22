@@ -1,4 +1,5 @@
 using EliteEquipment.Core;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Shields
@@ -6,8 +7,8 @@ namespace EliteEquipment.Shields
     /// <summary>
     /// One new shield: its kind (buckler or round), its prefab and the workshop model it wears, the game item it is copied
     /// from (block and bash sounds, effects, quality levels, equip timing), the game shield of its biome (station, station
-    /// level, repair station and upgrade kits come from that shield's recipe), its name word and its numbers. The item is
-    /// made once per process.
+    /// level, repair station and upgrade kits come from that shield's recipe), its name word (translations/English.yml: the
+    /// asset's name, and its description as that + "_desc") and its numbers. The item is made once per process.
     /// </summary>
     public sealed class ShieldSet
     {
@@ -22,8 +23,6 @@ namespace EliteEquipment.Shields
         /// texture, metal and shine); null when the model wears its own bake on the base item's material.
         /// </summary>
         public string Look;
-        public string Name;
-        public string Description;
         public float Block;
         public float Deflection;
         public float DeflectionPerLevel;
@@ -38,7 +37,9 @@ namespace EliteEquipment.Shields
         public GameObject Item;
 
         /// <summary>The name word, "$" and the workshop asset's name ("$ee_buckler_wood", "$ee_shield_bronze").</summary>
-        public string Token => "$" + Word;
+        public string Token => Lang.Token(Word);
+
+        public string DescriptionToken => Lang.Token(Word + "_desc");
 
         public string Word => Asset;
     }

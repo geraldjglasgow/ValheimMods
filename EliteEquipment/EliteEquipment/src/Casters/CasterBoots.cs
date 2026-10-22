@@ -6,10 +6,10 @@ namespace EliteEquipment.Casters
     /// Every set's trousers split like every leggings while EliteEquipment's <c>1. Boots / Separate Boots</c> is on (user,
     /// 2026-10-11: "all equipment made works with EliteEquipment, so the boots and pants need to be separated"): each set's
     /// trousers are registered with its boots as a pair that brings its own parts (<see cref="BootSets.AddOwn"/>): the boots,
-    /// <see cref="RobeSet.BootsName"/>, are the trousers' own <c>boots</c> mesh, with the set's workshop icons and the
-    /// trousers' paint cut where the boots begin. The boots system then makes the boots item (<c>EE_Boots_Seer&lt;Tier&gt;</c>,
-    /// PackPanel's feet slot takes the prefix), hides them on the trousers, splits stats, weight and recipe 80/20, and draws
-    /// the worn pair. Without the split the trousers keep them. The trousers' eitr follows the split here
+    /// named by the word <c>ee_boots_seer&lt;tier&gt;</c>, are the trousers' own <c>boots</c> mesh, with the set's workshop
+    /// icons and the trousers' paint cut where the boots begin. The boots system then makes the boots item
+    /// (<c>EE_Boots_Seer&lt;Tier&gt;</c>, PackPanel's feet slot takes the prefix), hides them on the trousers, splits stats,
+    /// weight and recipe 80/20, and draws the worn pair. Without the split the trousers keep them. The trousers' eitr follows the split here
     /// (<see cref="EitrShare"/>).
     /// </summary>
     public static class CasterBoots
@@ -35,7 +35,7 @@ namespace EliteEquipment.Casters
         {
             string bundle = set.Trousers.Bundle;
             string asset = "ee_seer_" + set.Tier;
-            BootSets.AddOwn(set.BootsKey, set.Trousers.Prefab, set.BootsName,
+            BootSets.AddOwn(set.BootsKey, set.Trousers.Prefab,
                 CasterBundles.Sprite(bundle, asset + "_boots_icon"),
                 CasterBundles.Sprite(bundle, asset + "_trousers_split_icon"),
                 CasterBundles.Texture(bundle, asset + "_trousers_legs_split"),

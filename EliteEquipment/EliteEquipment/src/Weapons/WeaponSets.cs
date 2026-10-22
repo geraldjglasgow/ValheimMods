@@ -33,37 +33,37 @@ namespace EliteEquipment.Weapons
             Dual("Carapace", "SpearCarapace", "carapacespear", "SpearCarapace", Hit(slash: 122, chop: 72), P("YggdrasilWood", 8), P("Carapace", 16, 8), P("Mandible", 2, 1)),
             Dual("Bloodgold", "AxeGold", "Model", "AxeGold", Hit(slash: 158, chop: 88), P("Gold", 30, 15), P("Frostwood", 15, 5), P("MoldAxe", 1)),
 
-            Fist("ee_fist_flint", "Flint Knuckles", "Flint shards lashed to a wooden knuckle bar.", "KnifeFlint", "knife", "AxeFlint", Hit(blunt: 14), P("Wood", 4, 2), P("Flint", 6, 3), P("LeatherScraps", 4, 2)),
-            Fist("ee_fist_iron", "Iron Claws", "Three hooked iron claws on each hand.", "SwordIron", Sword, "SwordIron", Hit(slash: 42), P("Wood", 2), P("Iron", 20, 10), P("LeatherScraps", 6, 3)),
-            Fist("ee_fist_flametal", "Flametal Claws", "Barbed flametal claws, red at the tips.", "ShieldFlametal", "default", "THSwordSlayer", Hit(slash: 100), P("FlametalNew", 20, 10), P("AskHide", 4, 2), P("MorgenSinew", 2, 1)),
+            Fist("ee_fist_flint", "KnifeFlint", "knife", "AxeFlint", Hit(blunt: 14), P("Wood", 4, 2), P("Flint", 6, 3), P("LeatherScraps", 4, 2)),
+            Fist("ee_fist_iron", "SwordIron", Sword, "SwordIron", Hit(slash: 42), P("Wood", 2), P("Iron", 20, 10), P("LeatherScraps", 6, 3)),
+            Fist("ee_fist_flametal", "ShieldFlametal", "default", "THSwordSlayer", Hit(slash: 100), P("FlametalNew", 20, 10), P("AskHide", 4, 2), P("MorgenSinew", 2, 1)),
 
-            Held("ee_knife_iron", "Iron Dagger", "A broad iron dagger, the iron sword's short brother.", "KnifeSilver", "SwordIron", Sword, "SwordIron", Hit(slash: 18, pierce: 18), P("Wood", 2, 1), P("Iron", 10, 5), P("LeatherScraps", 2, 1)),
-            Held("ee_knife_flametal", "Flametal Dagger", "A toothed flametal seax.", "KnifeBlackMetal", "THSwordSlayer", "default", "SpearSplitner", Hit(slash: 60, pierce: 60), P("Blackwood", 4), P("FlametalNew", 10, 5), P("AskHide", 2, 1)),
-            Held("ee_atgeir_silver", "Silver Atgeir", "A silver glaive with a curling fang.", "AtgeirBlackmetal", "SwordSilver", Sword, "SwordSilver", Hit(pierce: 85, spirit: 15), P("Wood", 10), P("Silver", 30, 15), P("Iron", 4, 2), P("LeatherScraps", 3, 1)),
-            Held("ee_atgeir_flametal", "Flametal Atgeir", "A jagged flametal blade on a charred haft.", "AtgeirBlackmetal", "SpearSplitner", "default", "SpearSplitner", Hit(pierce: 150), P("Blackwood", 10), P("FlametalNew", 30, 15), P("AskHide", 4, 2)),
-            Trail(Held("ee_axe_silver", "Silver Axe", "A bearded silver axe with a scroll on its back.", "AxeBlackMetal", "ShieldSilver", "model", "SwordSilver", Hit(slash: 80, chop: 55, spirit: 15), P("Wood", 4), P("Silver", 20, 10), P("Iron", 2, 1), P("LeatherScraps", 2, 1)), new Vector3(0.24f, 0f, 0.50f), new Vector3(0.25f, 0f, 0.78f)),
-            Trail(Held("ee_axe_flametal", "Flametal Axe", "A toothed flametal axe with a back spike.", "AxeBlackMetal", "ShieldFlametal", "default", "SpearSplitner", Hit(slash: 140, chop: 80), P("Blackwood", 4), P("FlametalNew", 20, 10), P("AskHide", 2, 1)), new Vector3(0.26f, 0f, 0.48f), new Vector3(0.27f, 0f, 0.80f)),
-            Trail(Held("ee_battleaxe_flametal", "Flametal Greataxe", "A broad flametal greataxe with flame-hooked edges.", "BattleaxeBlackmetal", "AxeBerzerkr", "default", "THSwordSlayer", Hit(slash: 160, chop: 60), P("Blackwood", 10), P("FlametalNew", 30, 15), P("AskHide", 5, 3)), new Vector3(0.20f, 0f, 1.00f), new Vector3(0.43f, 0f, 1.40f)),
-            Held("ee_bow_blackmetal", "Black Metal Bow", "A black metal recurve with hooked blades on its limbs.", "BowDraugrFang", "AtgeirBlackmetal", "default", "SwordBlackmetal", Hit(pierce: 60), P("FineWood", 10, 5), P("BlackMetal", 15, 8), P("LinenThread", 10, 5)),
-            Throw(Held("ee_spear_blackmetal", "Black Metal Spear", "A barbed black metal spear.", "SpearWolfFang", "AtgeirBlackmetal", "default", "SwordBlackmetal", Hit(pierce: 95), P("FineWood", 10, 5), P("BlackMetal", 10, 5), P("LinenThread", 4, 2)), new Vector3(0f, 0f, -0.854f), new Vector3(0f, 180f, 0f)),
+            Held("ee_knife_iron", "KnifeSilver", "SwordIron", Sword, "SwordIron", Hit(slash: 18, pierce: 18), P("Wood", 2, 1), P("Iron", 10, 5), P("LeatherScraps", 2, 1)),
+            Held("ee_knife_flametal", "KnifeBlackMetal", "THSwordSlayer", "default", "SpearSplitner", Hit(slash: 60, pierce: 60), P("Blackwood", 4), P("FlametalNew", 10, 5), P("AskHide", 2, 1)),
+            Held("ee_atgeir_silver", "AtgeirBlackmetal", "SwordSilver", Sword, "SwordSilver", Hit(pierce: 85, spirit: 15), P("Wood", 10), P("Silver", 30, 15), P("Iron", 4, 2), P("LeatherScraps", 3, 1)),
+            Held("ee_atgeir_flametal", "AtgeirBlackmetal", "SpearSplitner", "default", "SpearSplitner", Hit(pierce: 150), P("Blackwood", 10), P("FlametalNew", 30, 15), P("AskHide", 4, 2)),
+            Trail(Held("ee_axe_silver", "AxeBlackMetal", "ShieldSilver", "model", "SwordSilver", Hit(slash: 80, chop: 55, spirit: 15), P("Wood", 4), P("Silver", 20, 10), P("Iron", 2, 1), P("LeatherScraps", 2, 1)), new Vector3(0.24f, 0f, 0.50f), new Vector3(0.25f, 0f, 0.78f)),
+            Trail(Held("ee_axe_flametal", "AxeBlackMetal", "ShieldFlametal", "default", "SpearSplitner", Hit(slash: 140, chop: 80), P("Blackwood", 4), P("FlametalNew", 20, 10), P("AskHide", 2, 1)), new Vector3(0.26f, 0f, 0.48f), new Vector3(0.27f, 0f, 0.80f)),
+            Trail(Held("ee_battleaxe_flametal", "BattleaxeBlackmetal", "AxeBerzerkr", "default", "THSwordSlayer", Hit(slash: 160, chop: 60), P("Blackwood", 10), P("FlametalNew", 30, 15), P("AskHide", 5, 3)), new Vector3(0.20f, 0f, 1.00f), new Vector3(0.43f, 0f, 1.40f)),
+            Held("ee_bow_blackmetal", "BowDraugrFang", "AtgeirBlackmetal", "default", "SwordBlackmetal", Hit(pierce: 60), P("FineWood", 10, 5), P("BlackMetal", 15, 8), P("LinenThread", 10, 5)),
+            Throw(Held("ee_spear_blackmetal", "SpearWolfFang", "AtgeirBlackmetal", "default", "SwordBlackmetal", Hit(pierce: 95), P("FineWood", 10, 5), P("BlackMetal", 10, 5), P("LinenThread", 4, 2)), new Vector3(0f, 0f, -0.854f), new Vector3(0f, 180f, 0f)),
         };
 
-        private static WeaponSet Held(string asset, string name, string text, string game, string look, string part, string beside, HitData.DamageTypes damage, params RecipePart[] cost) =>
-            new WeaponSet { Prefab = "EE_" + asset.Substring(3), Asset = asset, Name = name, Description = text, Base = game, Look = look, LookPart = part, Beside = beside, Damage = damage, Cost = cost };
+        private static WeaponSet Held(string asset, string game, string look, string part, string beside, HitData.DamageTypes damage, params RecipePart[] cost) =>
+            new WeaponSet { Prefab = "EE_" + asset.Substring(3), Asset = asset, Base = game, Look = look, LookPart = part, Beside = beside, Damage = damage, Cost = cost };
 
         private static WeaponSet Greatsword(string tier, string sword, string part, HitData.DamageTypes damage, params RecipePart[] cost) =>
-            Held("ee_greatsword_" + Key(tier), tier + " Greatsword", $"A long {tier.ToLowerInvariant()} blade for two hands.", "THSwordKrom", sword, part, sword, damage, cost);
+            Held("ee_greatsword_" + Key(tier), "THSwordKrom", sword, part, sword, damage, cost);
 
         private static WeaponSet Dual(string tier, string look, string part, string beside, HitData.DamageTypes damage, params RecipePart[] cost)
         {
-            WeaponSet set = Held("ee_dualaxes_" + Key(tier), tier + " Dual Axes", $"A pair of {tier.ToLowerInvariant()} axes, one for each hand.", "AxeBerzerkr", look, part, beside, damage, cost);
+            WeaponSet set = Held("ee_dualaxes_" + Key(tier), "AxeBerzerkr", look, part, beside, damage, cost);
             set.Kind = WeaponKind.Dual;
             return set;
         }
 
-        private static WeaponSet Fist(string asset, string name, string text, string look, string part, string beside, HitData.DamageTypes damage, params RecipePart[] cost)
+        private static WeaponSet Fist(string asset, string look, string part, string beside, HitData.DamageTypes damage, params RecipePart[] cost)
         {
-            WeaponSet set = Held(asset, name, text, "FistFenrirClaw", look, part, beside, damage, cost);
+            WeaponSet set = Held(asset, "FistFenrirClaw", look, part, beside, damage, cost);
             set.Kind = WeaponKind.Fist;
             return set;
         }

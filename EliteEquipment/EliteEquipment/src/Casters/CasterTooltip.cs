@@ -1,10 +1,11 @@
 using HarmonyLib;
+using Translations;
 
 namespace EliteEquipment.Casters
 {
     /// <summary>
     /// The caster numbers in an item's tooltip, after the game's own lines: a wand's heal power (at the quality shown) and
-    /// eitr, the focus's heal power, a robe piece's eitr. Words stay tokens; the game localizes the whole tooltip.
+    /// eitr, the focus's heal power, a robe piece's eitr. Each line is one word with its value as $1.
     /// </summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip),
         typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float), typeof(int), typeof(bool))]
@@ -18,23 +19,23 @@ namespace EliteEquipment.Casters
             if (CasterGearWorn.IsWand(item))
             {
                 float power = HealPower.Base(item, qualityLevel);
-                __result += Line(CasterWords.HealPower, power.ToString("0.#"))
-                    + Line(CasterWords.EitrBonus, "+" + CasterGearWorn.WandPiece(item).Eitr);
+                __result += Line("ee_heal_power", power.ToString("0.#"))
+                    + Line("ee_eitr_bonus", "+" + CasterGearWorn.WandPiece(item).Eitr);
             }
             else if (CasterGearWorn.IsFocus(item))
             {
-                __result += Line(CasterWords.HealPower, "+" + CasterGear.FocusHealPower);
+                __result += Line("ee_heal_power", "+" + CasterGear.FocusHealPower);
             }
             else
             {
                 foreach (GearPiece piece in CasterGear.Robes)
                 {
                     if (item.m_shared.m_name == piece.Token)
-                        __result += Line(CasterWords.EitrBonus, "+" + piece.Eitr);
+                        __result += Line("ee_eitr_bonus", "+" + piece.Eitr);
                 }
             }
         }
 
-        private static string Line(string word, string value) => "\n" + word + ": <color=orange>" + value + "</color>";
+        private static string Line(string key, string value) => "\n" + Lang.Format(key, "<color=orange>" + value + "</color>");
     }
 }

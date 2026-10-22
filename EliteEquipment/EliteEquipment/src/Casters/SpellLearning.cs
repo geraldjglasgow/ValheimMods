@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Translations;
 
 namespace EliteEquipment.Casters
 {
@@ -20,15 +21,15 @@ namespace EliteEquipment.Casters
             __result = false;
             if (!CastersSettings.On)
                 return false;
-            string name = Core.Language.Localize(spell.Token);
+            string name = Lang.Get(spell.Token);
             if (KnownSpells.Learn(__instance, spell))
             {
                 inventory.RemoveOneItem(item);
-                __instance.Message(MessageHud.MessageType.Center, string.Format(Core.Language.Localize(CasterWords.Learned), name));
+                __instance.Message(MessageHud.MessageType.Center, Lang.Format("ee_spell_learned", name));
             }
             else
             {
-                __instance.Message(MessageHud.MessageType.Center, string.Format(Core.Language.Localize(CasterWords.AlreadyKnown), name));
+                __instance.Message(MessageHud.MessageType.Center, Lang.Format("ee_spell_known", name));
             }
             return false;
         }

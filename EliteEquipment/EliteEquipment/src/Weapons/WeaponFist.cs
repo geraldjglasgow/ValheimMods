@@ -21,7 +21,7 @@ namespace EliteEquipment.Weapons
             MeshFilter ours = model.transform.Find("model")?.GetComponentInChildren<MeshFilter>(true);
             if (skin == null || ours == null)
             {
-                Plugin.Log.LogWarning($"EliteEquipment: the {set.Name} is missing a part (attach_skin or model); it keeps the game's look");
+                Plugin.Log.LogWarning($"EliteEquipment: the {set.Prefab} is missing a part (attach_skin or model); it keeps the game's look");
                 return;
             }
             skin.sharedMesh = Held(skin.sharedMesh, ours.sharedMesh, set.Asset);

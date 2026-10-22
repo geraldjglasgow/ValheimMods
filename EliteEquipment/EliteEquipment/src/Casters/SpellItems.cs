@@ -1,4 +1,5 @@
 using BundlePrefabs;
+using Translations;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
@@ -21,7 +22,7 @@ namespace EliteEquipment.Casters
             Look(item, CasterBundles.Prefab(CasterBundles.Spells, "ee_spell_scroll"));
             SharedData shared = item.GetComponent<ItemDrop>().m_itemData.m_shared;
             shared.m_name = spell.ItemToken;
-            shared.m_description = CasterWords.SpellItemDescription + "\n\n" + spell.DescriptionToken;
+            shared.m_description = Lang.Token("ee_spellitem_desc") + "\n\n" + spell.DescriptionToken;
             shared.m_variants = 0;
             CasterItemLook.Icon(shared, CasterBundles.Sprite(CasterBundles.Spells, spell.ItemIcon));
             NoFood(shared);

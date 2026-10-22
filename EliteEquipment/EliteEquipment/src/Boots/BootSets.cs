@@ -1,14 +1,15 @@
 using System.Collections.Generic;
-using EliteEquipment.Core;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Boots
 {
     /// <summary>
     /// The 20 leggings the workshop split (every player leggings of the game as of 2026-10-06, Deep North included; the
-    /// workshop's <c>Assets/Gear/SeparatedLegArmor/NativeSplit_v001</c>) and their boots' English names, made from the leggings' own
-    /// ("Iron Greaves" gives "Iron Boots", "Trousers of Ask" gives "Boots of Ask"; light cloth sets wear shoes). Items are
-    /// told apart by their name token, which every live copy of an item carries.
+    /// workshop's <c>Assets/Gear/SeparatedLegArmor/NativeSplit_v001</c>). The boots' names are the words
+    /// <c>ee_boots_&lt;key&gt;</c> in translations/English.yml, made from the leggings' own ("Iron Greaves" gives "Iron
+    /// Boots", "Trousers of Ask" gives "Boots of Ask"; light cloth sets wear shoes). Items are told apart by their name
+    /// token, which every live copy of an item carries.
     /// </summary>
     public static class BootSets
     {
@@ -23,32 +24,32 @@ namespace EliteEquipment.Boots
 
         public static IReadOnlyList<BootSet> All => all;
 
-        /// <summary>Registers the sets and their words; called once from <see cref="BootsModule"/>.</summary>
+        /// <summary>Registers the sets; called once from <see cref="BootsModule"/>.</summary>
         public static void Initialize()
         {
             if (initialized)
                 return;
             initialized = true;
-            Add("Rag", "ArmorRagsLegs", "Rag Shoes");
-            Add("Leather", "ArmorLeatherLegs", "Leather Boots");
-            Add("TrollLeather", "ArmorTrollLeatherLegs", "Troll Leather Boots");
-            Add("Bronze", "ArmorBronzeLegs", "Bronze Plate Boots");
-            Add("Bear", "ArmorBerserkerLegs", "Boots of the Bear");
-            Add("Iron", "ArmorIronLegs", "Iron Boots");
-            Add("Root", "ArmorRootLegs", "Root Boots");
-            Add("Fenris", "ArmorFenringLegs", "Fenris Boots");
-            Add("Wolf", "ArmorWolfLegs", "Wolf Hide Boots");
-            Add("Vilebone", "ArmorBerserkerUndeadLegs", "Vilebone Boots");
-            Add("Lox", "ArmorLoxLegs", "Lox Fur Boots");
-            Add("Padded", "ArmorPaddedGreaves", "Padded Boots");
-            Add("Carapace", "ArmorCarapaceLegs", "Carapace Boots");
-            Add("EitrWeave", "ArmorMageLegs", "Eitr-weave Shoes");
-            Add("Ask", "ArmorAshlandsMediumlegs", "Boots of Ask");
-            Add("Flametal", "ArmorFlametalLegs", "Flametal Boots");
-            Add("Embla", "ArmorMageLegs_Ashlands", "Shoes of Embla");
-            Add("Protector", "ArmorDeepNorthHeavylegs", "Boots of the Protector");
-            Add("Caller", "ArmorDeepNorthMagelegs", "Shoes of the Caller");
-            Add("Vanguard", "ArmorDeepNorthMediumlegs", "Boots of the Vanguard");
+            Add("Rag", "ArmorRagsLegs");
+            Add("Leather", "ArmorLeatherLegs");
+            Add("TrollLeather", "ArmorTrollLeatherLegs");
+            Add("Bronze", "ArmorBronzeLegs");
+            Add("Bear", "ArmorBerserkerLegs");
+            Add("Iron", "ArmorIronLegs");
+            Add("Root", "ArmorRootLegs");
+            Add("Fenris", "ArmorFenringLegs");
+            Add("Wolf", "ArmorWolfLegs");
+            Add("Vilebone", "ArmorBerserkerUndeadLegs");
+            Add("Lox", "ArmorLoxLegs");
+            Add("Padded", "ArmorPaddedGreaves");
+            Add("Carapace", "ArmorCarapaceLegs");
+            Add("EitrWeave", "ArmorMageLegs");
+            Add("Ask", "ArmorAshlandsMediumlegs");
+            Add("Flametal", "ArmorFlametalLegs");
+            Add("Embla", "ArmorMageLegs_Ashlands");
+            Add("Protector", "ArmorDeepNorthHeavylegs");
+            Add("Caller", "ArmorDeepNorthMagelegs");
+            Add("Vanguard", "ArmorDeepNorthMediumlegs");
         }
 
         /// <summary>True for any copy of a boots item, by its name token.</summary>
@@ -81,13 +82,14 @@ namespace EliteEquipment.Boots
         /// <summary>
         /// Registers a pair that brings its own parts (the casters' Deerhide Trousers and their foot wraps): the leggings
         /// prefab of a mod's own, made before the boots are (its worn skin keeps the boots as renderers named
-        /// <c>boots*</c>), the boots' English name, and its icons and ankle-cut paint (any may be null). Call before the game
+        /// <c>boots*</c>), and its icons and ankle-cut paint (any may be null); the boots' name is the word
+        /// <c>ee_boots_&lt;key&gt;</c> (lower case) in translations/English.yml. Call before the game
         /// loads a world; the boots are made when the leggings first appear in the game's lists. Returns the set, or the one
         /// already registered for that key.
         /// </summary>
-        public static BootSet AddOwn(string key, string legs, string name, Sprite bootsIcon, Sprite pantsIcon, Texture2D paint, Texture2D bump)
+        public static BootSet AddOwn(string key, string legs, Sprite bootsIcon, Sprite pantsIcon, Texture2D paint, Texture2D bump)
         {
-            BootSet set = all.Find(s => s.Key == key) ?? Add(key, legs, name, own: true);
+            BootSet set = all.Find(s => s.Key == key) ?? Add(key, legs, own: true);
             set.OwnBootsIcon = bootsIcon;
             set.OwnPantsIcon = pantsIcon;
             set.OwnPaint = paint;
@@ -95,9 +97,9 @@ namespace EliteEquipment.Boots
             return set;
         }
 
-        private static BootSet Add(string key, string legs, string name, bool own = false)
+        private static BootSet Add(string key, string legs, bool own = false)
         {
-            string token = Language.Add("ee_boots_" + key.ToLowerInvariant(), name);
+            string token = Lang.Token("ee_boots_" + key.ToLowerInvariant());
             var set = new BootSet(key, legs, token, own);
             all.Add(set);
             byToken[token] = set;

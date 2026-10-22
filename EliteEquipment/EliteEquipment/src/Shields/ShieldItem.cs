@@ -30,13 +30,13 @@ namespace EliteEquipment.Shields
         private static void Describe(SharedData shared, ShieldSet set, AssetBundle bundle)
         {
             shared.m_name = set.Token;
-            shared.m_description = set.Token + "_desc";
+            shared.m_description = set.DescriptionToken;
             shared.m_variants = 0;
             Sprite icon = bundle.LoadAsset<Sprite>(set.Asset + "_icon");
             if (icon != null)
                 shared.m_icons = new[] { icon };
             else
-                Plugin.Log.LogWarning($"EliteEquipment: the bundle has no {set.Asset}_icon; the {set.Name} shows the {set.Base} icon");
+                Plugin.Log.LogWarning($"EliteEquipment: the bundle has no {set.Asset}_icon; the {set.Prefab} shows the {set.Base} icon");
         }
 
         private static void Stats(SharedData shared, ShieldSet set)

@@ -20,56 +20,48 @@ namespace EliteEquipment.Shields
     public static class ShieldSets
     {
         private const string MetalBase = "ShieldIronBuckler";
-        private const string Parries = " Blocks less than a shield, parries far better.";
 
         public static readonly IReadOnlyList<ShieldSet> All = new List<ShieldSet>
         {
             new ShieldSet
             {
                 Kind = ShieldKind.Buckler, Prefab = "EE_BucklerWood", Asset = "ee_buckler_wood", Base = "ShieldWood", Shield = "ShieldWood",
-                Name = "Wood Buckler", Description = "A small wooden buckler bound in rawhide." + Parries,
                 Block = 4f, Deflection = 20f, DeflectionPerLevel = 0f, Weight = 3f, Durability = 200f, Gloss = 0.1f, MetalGloss = 0f,
                 Cost = new[] { new RecipePart("Wood", 8, 4), new RecipePart("LeatherScraps", 4, 2), new RecipePart("Resin", 2, 1) },
             },
             new ShieldSet
             {
                 Kind = ShieldKind.Round, Prefab = "EE_ShieldBronze", Asset = "ee_shield_bronze", Base = "ShieldBanded", Shield = "ShieldBronzeBuckler",
-                Name = "Bronze Shield", Description = "A round shield of planks in a bronze rim, with a bronze boss. Sturdier than wood.",
                 Block = 30f, Deflection = 30f, DeflectionPerLevel = 5f, Weight = 5f, Durability = 200f, Gloss = 0.2f, MetalGloss = 0.62f,
                 Cost = new[] { new RecipePart("Wood", 10, 5), new RecipePart("Bronze", 8, 4) },
             },
             new ShieldSet
             {
                 Kind = ShieldKind.Buckler, Prefab = "EE_BucklerSilver", Asset = "ee_buckler_silver", Base = MetalBase, Shield = "ShieldSilver", Look = "ShieldSilver",
-                Name = "Silver Buckler", Description = "Fine wood in a band of silver, a silver wolf's head at its heart." + Parries,
                 Block = 45f, Deflection = 30f, DeflectionPerLevel = 5f, Weight = 4f, Durability = 200f, Gloss = 0.29f, MetalGloss = 0.65f,
                 Cost = new[] { new RecipePart("Silver", 10, 5), new RecipePart("FineWood", 4, 1) },
             },
             new ShieldSet
             {
                 Kind = ShieldKind.Tower, Prefab = "EE_TowerSilver", Asset = "ee_tower_silver", Base = "ShieldIronTower", Shield = "ShieldSilver", Look = "ShieldSilver",
-                Name = "Silver Tower Shield", Description = "A tall board of fine wood in a silver frame, a silver wolf's head at its brow. Slow, but it stops almost anything.",
                 Block = 78f, Deflection = 125f, DeflectionPerLevel = 5f, Weight = 5f, Durability = 200f, Gloss = 0.29f, MetalGloss = 0.65f,
                 Cost = new[] { new RecipePart("FineWood", 15, 10), new RecipePart("Silver", 10, 5) },
             },
             new ShieldSet
             {
                 Kind = ShieldKind.Buckler, Prefab = "EE_BucklerBlackmetal", Asset = "ee_buckler_blackmetal", Base = MetalBase, Shield = "ShieldBlackmetal", Look = "ShieldBlackmetal",
-                Name = "Black Metal Buckler", Description = "A black metal buckler hung on chain." + Parries,
                 Block = 61f, Deflection = 40f, DeflectionPerLevel = 5f, Weight = 4f, Durability = 200f, Gloss = 0.19f, MetalGloss = 0.65f,
                 Cost = new[] { new RecipePart("BlackMetal", 10, 5), new RecipePart("FineWood", 4, 1), new RecipePart("Chain", 2, 1) },
             },
             new ShieldSet
             {
                 Kind = ShieldKind.Tower, Prefab = "EE_TowerCarapace", Asset = "ee_tower_carapace", Base = "ShieldBlackmetalTower", Shield = "ShieldCarapace", Look = "ShieldCarapace",
-                Name = "Carapace Tower Shield", Description = "Overlapping carapace plates in a tall kite. Slow, but it stops almost anything.",
                 Block = 122f, Deflection = 150f, DeflectionPerLevel = 5f, Weight = 5f, Durability = 250f, Gloss = 0.5f, MetalGloss = 0f,
                 Cost = new[] { new RecipePart("Carapace", 25, 12), new RecipePart("ScaleHide", 5, 3), new RecipePart("Eitr", 10, 3) },
             },
             new ShieldSet
             {
                 Kind = ShieldKind.Buckler, Prefab = "EE_BucklerFlametal", Asset = "ee_buckler_flametal", Base = MetalBase, Shield = "ShieldFlametal",
-                Name = "Flametal Buckler", Description = "A flametal buckler over blackwood, still warm from the forge." + Parries,
                 Block = 83f, Deflection = 40f, DeflectionPerLevel = 5f, Weight = 4f, Durability = 300f, Gloss = 0.26f, MetalGloss = 0.77f,
                 Cost = new[] { new RecipePart("FlametalNew", 10, 5), new RecipePart("Blackwood", 4, 1), new RecipePart("AskHide", 2, 1) },
             },

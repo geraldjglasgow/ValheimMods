@@ -1,4 +1,5 @@
 using EliteEquipment.Core;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Weapons
@@ -14,7 +15,8 @@ namespace EliteEquipment.Weapons
     /// <summary>
     /// One new weapon: the game weapon it is copied from (attacks, animations, stamina, speed, effects, trail), the game
     /// item whose own material its model wears (its UVs lie on that item's atlas), the game weapon its recipe sits beside,
-    /// its name and its damage (per-level damage is the base's, scaled by the same ratio). Made once per process.
+    /// its name word (translations/English.yml: the asset's name, and its description as that + "_desc") and its damage
+    /// (per-level damage is the base's, scaled by the same ratio). Made once per process.
     /// </summary>
     public sealed class WeaponSet
     {
@@ -25,8 +27,6 @@ namespace EliteEquipment.Weapons
         public string Beside;
         public string Look;
         public string LookPart;
-        public string Name;
-        public string Description;
         public HitData.DamageTypes Damage;
         public RecipePart[] Cost;
 
@@ -43,6 +43,8 @@ namespace EliteEquipment.Weapons
         public GameObject Item;
         public GameObject Projectile;
 
-        public string Token => "$" + Asset;
+        public string Token => Lang.Token(Asset);
+
+        public string DescriptionToken => Lang.Token(Asset + "_desc");
     }
 }

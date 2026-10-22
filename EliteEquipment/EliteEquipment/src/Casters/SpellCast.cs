@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Casters
@@ -44,7 +45,7 @@ namespace EliteEquipment.Casters
                     return true;
                 Casting = Loadout.In(Player.m_localPlayer, CasterGearWorn.Wand(__instance), CasterControls.Slot);
                 if (Casting == null)
-                    return Refuse(CasterWords.NothingReady, ref __result);
+                    return Refuse(Lang.Get("ee_spell_none_ready"), ref __result);
                 locked = Casting.Kind == SpellKind.Heal ? HealTarget.Current : null;
                 return true;
             }

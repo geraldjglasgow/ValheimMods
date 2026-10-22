@@ -1,6 +1,6 @@
 {
     "name": "EliteEquipment",
-    "version_number": "0.3.2",
+    "version_number": "0.4.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/EliteEquipment",
     "description": "Boots split from every leggings, the bucklers, shields and 22 weapons the game is missing, and a caster class with wands, robes and spells. Required on server and all clients.",
     "dependencies": [

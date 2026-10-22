@@ -92,7 +92,7 @@ namespace EliteEquipment.Casters
             foreach (GearPiece piece in CasterGear.Robes)
                 Make(piece, () => RobeItems.Build(piece, Need(prefabs, piece.Base), Need(prefabs, "HelmetMage")));
             foreach (FoodPiece food in CasterFood.All)
-                Safe(food.Name, () => food.Item = FoodItems.Build(food, Need(prefabs, food.Base)));
+                Safe(food.Prefab, () => food.Item = FoodItems.Build(food, Need(prefabs, food.Base)));
             foreach (Spell spell in Spells.All)
             {
                 if (!spell.KnownByAll)
@@ -134,7 +134,7 @@ namespace EliteEquipment.Casters
                 yield return bolt;
         }
 
-        private static void Make(GearPiece piece, Func<GameObject> build) => Safe(piece.Name, () => piece.Item = build());
+        private static void Make(GearPiece piece, Func<GameObject> build) => Safe(piece.Prefab, () => piece.Item = build());
 
         private static GameObject Need(List<GameObject> prefabs, string name) =>
             Find(prefabs, name) ?? throw new InvalidOperationException($"the game has no {name}");

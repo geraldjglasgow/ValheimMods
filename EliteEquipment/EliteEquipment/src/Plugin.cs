@@ -14,8 +14,9 @@ using SyncedConfig;
 namespace EliteEquipment
 {
     /// <summary>
-    /// Plugin entry. Every feature has an Initialize(SyncedConfiguration) that binds its settings and registers its words;
-    /// patches are applied per class afterwards, Guard.Install goes last.
+    /// Plugin entry. The words (translations/English.yml) are installed first; every feature has an
+    /// Initialize(SyncedConfiguration) that binds its settings; patches are applied per class afterwards, Guard.Install
+    /// goes last.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency(EliteCraftingLink.CraftingLink.Guid, BepInDependency.DependencyFlags.SoftDependency)]
@@ -23,7 +24,7 @@ namespace EliteEquipment
     {
         public const string PluginGuid = "milkyteam.eliteequipment";
         public const string PluginName = "EliteEquipment";
-        public const string PluginVersion = "0.3.2";
+        public const string PluginVersion = "0.4.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -35,12 +36,14 @@ namespace EliteEquipment
             Synced = new SyncedConfiguration(this, Logger, PluginName, PluginVersion);
             LockConfiguration = Synced.BindLocking("General", "Lock Configuration", true,
                 "[Server Only] Clients cannot change synced settings while connected to a server that has this on.");
+
+            Harmony harmony = new Harmony(PluginGuid);
+            // The player-facing words, in the game's language (translations/English.yml and any translation files).
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "EliteEquipment", Logger);
             BootsModule.Initialize(Synced);
             ShieldsModule.Initialize(Synced);
             WeaponsModule.Initialize(Synced);
             CastersModule.Initialize(Synced);
-
-            Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);
 
             // Writes the .cfg, hot reloads it on edit; Charter pushes reloaded values to clients.

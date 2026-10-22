@@ -17,7 +17,7 @@ namespace EliteEquipment.Weapons
             Transform attach = item.transform.Find(Holder);
             if (attach == null)
             {
-                Plugin.Log.LogWarning($"EliteEquipment: the {set.Base} copy has no {Holder}; the {set.Name} shows the game's model");
+                Plugin.Log.LogWarning($"EliteEquipment: the {set.Base} copy has no {Holder}; the {set.Prefab} shows the game's model");
                 return;
             }
             WeaponParts.RemoveGameModel(attach);

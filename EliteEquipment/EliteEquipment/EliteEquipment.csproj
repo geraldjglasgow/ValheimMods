@@ -6,7 +6,7 @@
     <RootNamespace>EliteEquipment</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.3.2</Version>
+    <Version>0.4.0</Version>
     <Product>EliteEquipment</Product>
     <Description>EliteEquipment: boots split from the leggings, new shields and weapons, and a caster class</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -47,6 +47,8 @@
     <ProjectReference Include="$(ModLibsPath)\EliteCraftingLink\EliteCraftingLink.csproj" />
     <!-- LocalEffects: the casters' cast and heal effects, local cosmetic copies of the game's -->
     <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -135,6 +137,8 @@
     <!-- Their icons (NativeSplit_v001/Icons/v001/64): EliteEquipment.assets.boots.boots_<set>.png and pants_<set>.png; and
          the rag shoes' own paint (Revisions/Rag_v002): EliteEquipment.assets.boots.paint_boots_rag.png -->
     <EmbeddedResource Include="assets\boots\*.png" LogicalName="EliteEquipment.assets.boots.%(Filename)%(Extension)" />
+    <!-- The words, read by the Translations library as EliteEquipment.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="EliteEquipment.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BundlePrefabs;
+using Translations;
 using UnityEngine;
 
 using Object = UnityEngine.Object;
@@ -21,7 +22,6 @@ namespace EliteEquipment.Boots
     /// </summary>
     public static class BootsItem
     {
-        private const string Description = "$ee_boots_desc";
         // The part of a leggings icon the boots are cut from: its lower part, where the game draws the feet.
         private static readonly Rect IconPart = new Rect(0f, 0f, 1f, 0.42f);
 
@@ -91,7 +91,7 @@ namespace EliteEquipment.Boots
         {
             SharedData own = legs.GetComponent<ItemDrop>().m_itemData.m_shared;
             shared.m_name = set.Token;
-            shared.m_description = Description;
+            shared.m_description = Lang.Token("ee_boots_desc");
             shared.m_armorMaterial = null;
             shared.m_equipStatusEffect = null;
             shared.m_damageModifiers = new List<HitData.DamageModPair>();

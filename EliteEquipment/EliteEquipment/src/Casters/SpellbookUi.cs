@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,8 @@ namespace EliteEquipment.Casters
     /// The Spellbook's parts, made from the game's own (<see cref="CasterUiCopies"/>) the first time a wand is in hand with
     /// the inventory open: a Spellbook button under the player's inventory, and a window beside it (shown and hidden with
     /// the inventory, which already frees the cursor): the crafting panel's background and title, the wand's two slots
-    /// as hotbar slots, the known spells as recipe rows, and a text for the picked slot's spell.
+    /// as hotbar slots, the known spells as recipe rows, and a text for the picked slot's spell. The labels' words are
+    /// put in again when the language changes (<see cref="Relabel"/>).
     /// </summary>
     public static class SpellbookUi
     {
@@ -28,6 +30,8 @@ namespace EliteEquipment.Casters
         public static readonly GameObject[] Slots = new GameObject[Loadout.Slots];
         public static readonly List<GameObject> Rows = new List<GameObject>();
 
+        private static readonly List<KeyValuePair<TMP_Text, string>> labels = new List<KeyValuePair<TMP_Text, string>>();
+        private static int labelled = -1;
         private static InventoryGui gui;
 
         /// <summary>Makes the parts when missing; false while the game's inventory screen or hotbar is not there to copy from.</summary>
@@ -40,6 +44,7 @@ namespace EliteEquipment.Casters
             if (gui == null || gui.m_player == null || gui.m_crafting == null || gui.m_craftButton == null
                 || gui.m_recipeElementPrefab == null || hotbar == null || hotbar.m_elementPrefab == null)
                 return false;
+            labels.Clear();
             MakeButton(toggle);
             MakeWindow(hotbar, pickSlot);
             return true;
@@ -56,9 +61,28 @@ namespace EliteEquipment.Casters
             return row.gameObject;
         }
 
+        /// <summary>Puts the labels' words and the slots' buttons in again when the language changed since they were set.</summary>
+        public static void Relabel()
+        {
+            if (labelled == Lang.Version)
+                return;
+            labelled = Lang.Version;
+            foreach (KeyValuePair<TMP_Text, string> label in labels)
+            {
+                if (label.Key != null)
+                    label.Key.text = Lang.Get(label.Value);
+            }
+            for (int i = 0; i < Slots.Length; i++)
+            {
+                if (Slots[i] != null)
+                    SpellBar.Label(Slots[i].transform.Find("binding")?.GetComponent<TMP_Text>(), i);
+            }
+        }
+
         private static void MakeButton(Action toggle)
         {
-            OpenButton = CasterUiCopies.Button(gui.m_craftButton, gui.m_player, "EE_SpellbookButton", CasterWords.Spellbook, toggle);
+            OpenButton = CasterUiCopies.Button(gui.m_craftButton, gui.m_player, "EE_SpellbookButton", Lang.Get("ee_spellbook"), toggle);
+            labels.Add(new KeyValuePair<TMP_Text, string>(OpenButton.GetComponentInChildren<TMP_Text>(true), "ee_spellbook"));
             CasterUiCopies.Place((RectTransform)OpenButton.transform, 0f, -(gui.m_player.rect.height + 6f), 170f, 40f);
             OpenButton.gameObject.SetActive(false);
         }
@@ -70,11 +94,11 @@ namespace EliteEquipment.Casters
             Window.anchoredPosition = new Vector2(560f, 60f);
             Window.sizeDelta = new Vector2(Width, Height);
             Backdrop();
-            Label(CasterWords.Spellbook, -14f, 30f, TextAlignmentOptions.Center);
-            Label(CasterWords.Prepared, -62f, 20f, TextAlignmentOptions.MidlineLeft);
+            Label("ee_spellbook", -14f, 30f, TextAlignmentOptions.Center);
+            Label("ee_spellbook_prepared", -62f, 20f, TextAlignmentOptions.MidlineLeft);
             for (int i = 0; i < Loadout.Slots; i++)
                 Slots[i] = Slot(hotbar, i, pickSlot);
-            Label(CasterWords.Known, -178f, 20f, TextAlignmentOptions.MidlineLeft);
+            Label("ee_spellbook_known", -178f, 20f, TextAlignmentOptions.MidlineLeft);
             Detail = CasterUiCopies.Text(gui.m_recipeDecription != null ? gui.m_recipeDecription : gui.m_recipeName, Window, "Detail", 16f, TextAlignmentOptions.TopLeft);
             Detail.textWrappingMode = TextWrappingModes.Normal;
             CasterUiCopies.Place(Detail.rectTransform, Side, -(Height - 110f), Width - 2f * Side, 96f);
@@ -91,11 +115,12 @@ namespace EliteEquipment.Casters
                 CasterUiCopies.Fill((RectTransform)CasterUiCopies.Copy(background, Window, "Bkg").transform, 0f);
         }
 
-        private static void Label(string word, float y, float size, TextAlignmentOptions align)
+        private static void Label(string key, float y, float size, TextAlignmentOptions align)
         {
             TMP_Text source = gui.m_crafting.Find("topic")?.GetComponent<TMP_Text>() ?? gui.m_recipeName;
             TMP_Text text = CasterUiCopies.Text(source, Window, "Label", size, align);
-            text.text = Core.Language.Localize(word);
+            text.text = Lang.Get(key);
+            labels.Add(new KeyValuePair<TMP_Text, string>(text, key));
             CasterUiCopies.Place(text.rectTransform, Side, y, Width - 2f * Side, size + 16f);
         }
 

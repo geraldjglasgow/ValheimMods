@@ -27,16 +27,17 @@ Rules that still apply to every change:
 ## Layout
 
 ```
+EliteEquipment/EliteEquipment/translations/
+  English.yml               every player-facing word (ee_* keys), read by the Translations library (see "Words")
 EliteEquipment/EliteEquipment/src/
-  Plugin.cs                 entry: Lock Configuration, each module's Initialize (Boots, Shields, Weapons, Casters),
-                            patches per class, Synced.Finish, Guard.Install last
+  Plugin.cs                 entry: Lock Configuration, the words (Translations.Lang.Install), each module's Initialize
+                            (Boots, Shields, Weapons, Casters), patches per class, Synced.Finish, Guard.Install last
   Core/
-    Language.cs             the ee_* words, handed to the game's localization (Localization.SetupLanguage postfix)
     InventoryChanges.cs     the count of every Inventory.Changed (prefix); WornBoots keeps its answer on it
     RecipeBeside.cs         a recipe placed beside a game item's (its station, level, upgrade kit); Shields, Weapons
     GameIcons.cs            the game's own items' icons swapped for remade ones and back (ItemCopies); Shields, Weapons
   Boots/                    section 1, Boots: the game's 20 leggings split into leggings and boots
-    BootsModule.cs, BootsSettings.cs   1. Boots / Separate Boots (on by default), the ee_boots_* words
+    BootsModule.cs, BootsSettings.cs   1. Boots / Separate Boots (on by default)
     BootSet.cs, BootSets.cs the 20 sets: key (the split's too), game leggings, EE_Boots_<Key>, name token; lookups
                             (the boots by token, prefab hash; the leggings by prefab name, hash and name token);
                             `AddOwn`: a pair that brings its own parts (a mod's own leggings whose worn skin keeps the
@@ -145,10 +146,24 @@ postfix `VisEquipment.AttachArmor` (private: the 20 leggings' skins on players d
 postfix `Humanoid.SetupVisEquipment` and `VisEquipment.UpdateEquipmentVisuals` (private: the worn pair, the body's
 leg paint and the fitted leggings' check on every client); postfix `VisEquipment.SetLegEquipped` (private: fitted
 leggings put on or taken off when the leggings change); postfix `VisEquipment.SetChestEquipped` (private: a new chest
-drawn in over fitted leggings at once). Core: prefix `Inventory.Changed` (private: the change count), postfix
-`Localization.SetupLanguage` (the words). Shields, Weapons and Casters: their patches are listed in their notes (each
-builds its items in prefixes on `ZNetScene.Awake`, `ObjectDB.Awake` and `CopyOtherDB`, the casters' at `Priority.High` so
-the seer's trousers are in the lists before the boots look for them).
+drawn in over fitted leggings at once). Core: prefix `Inventory.Changed` (private: the change count); the Translations
+library adds its own postfix on `Localization.SetupLanguage` (the words). Shields, Weapons and Casters: their patches are
+listed in their notes (each builds its items in prefixes on `ZNetScene.Awake`, `ObjectDB.Awake` and `CopyOtherDB`, the
+casters' at `Priority.High` so the seer's trousers are in the lists before the boots look for them).
+
+## Words
+
+Every player-facing word is in `EliteEquipment/translations/English.yml`, embedded and read by the workspace's
+Translations library (`Translations.Lang.Install` in `Plugin.Awake`, before the modules); a translation is that file
+copied as `EliteEquipment.translations.<Language>.yml` (BepInEx/config or anywhere under BepInEx/plugins). Item, status
+effect and set names stay `$ee_*` tokens on the prefabs (`Lang.Token`), so the game translates them at display time;
+text the mod shows itself (the Spellbook, the spell bar's buttons, messages, tooltip lines) comes from `Lang.Get` and
+`Lang.Format` (`$1` for a value). Keys: each item's or piece's word key and `_desc` (the tables hold the key: shields'
+and weapons' asset name, `GearPiece.Word`, `FoodPiece.Word`), spells `ee_spell_<key>`, `_desc` and `ee_spellitem_<key>`,
+robe sets `ee_seer_<tier>_set` and `_set_tip`, boots `ee_boots_<key>` (lower case; the seer's `ee_boots_seer<tier>`).
+The Spellbook's labels and the spell bar's buttons are put in again when the language changes (`Lang.Version`). Prefab
+names, config sections and keys, log lines and the .cfg descriptions stay English: PackPanel finds the boots by the
+`EE_Boots_` prefix and reads `1. Boots / Separate Boots`. A new item or text gets its key in the YAML in the same change.
 
 ## Config sections and keys
 
@@ -405,7 +420,7 @@ and key), `2. Shields` (`Shields` true), `3. Weapons` (`Weapons` true), `4. Cast
 
 Never run in game as EliteEquipment (the boots ran in game as OpenKeep's section 16). With PackPanel for the Feet slot:
 
-1. Log shows `Loading [EliteEquipment 0.3.2]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
+1. Log shows `Loading [EliteEquipment 0.4.0]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
    Separate Boots = true`. With OpenKeep too, neither log mentions the other's boots.
 2. At a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron Boots 4 at the forge (the
    game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.

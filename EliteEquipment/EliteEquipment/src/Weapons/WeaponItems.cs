@@ -74,7 +74,7 @@ namespace EliteEquipment.Weapons
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.LogError($"EliteEquipment: the {set.Name} could not be made and is not in the game: {e}");
+                    Plugin.Log.LogError($"EliteEquipment: the {set.Prefab} could not be made and is not in the game: {e}");
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace EliteEquipment.Weapons
             GameObject game = Find(prefabs, set.Base);
             if (game == null || game.GetComponent<ItemDrop>() == null)
             {
-                Plugin.Log.LogWarning($"EliteEquipment: the game's {set.Base} was not found: there is no {set.Name}");
+                Plugin.Log.LogWarning($"EliteEquipment: the game's {set.Base} was not found: there is no {set.Prefab}");
                 return;
             }
             set.Item = WeaponItem.Build(set, game, Find(prefabs, set.Look), bundle);

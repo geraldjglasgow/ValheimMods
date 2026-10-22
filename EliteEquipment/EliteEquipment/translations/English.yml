@@ -1,0 +1,251 @@
+# EliteEquipment - English words
+#
+# To translate: copy this file as EliteEquipment.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the mod), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it).
+
+# Boots: the boots split from each of the game's leggings (the trousers keep the game's own name)
+ee_boots_rag: "Rag Shoes"
+ee_boots_leather: "Leather Boots"
+ee_boots_trollleather: "Troll Leather Boots"
+ee_boots_bronze: "Bronze Plate Boots"
+ee_boots_bear: "Boots of the Bear"
+ee_boots_iron: "Iron Boots"
+ee_boots_root: "Root Boots"
+ee_boots_fenris: "Fenris Boots"
+ee_boots_wolf: "Wolf Hide Boots"
+ee_boots_vilebone: "Vilebone Boots"
+ee_boots_lox: "Lox Fur Boots"
+ee_boots_padded: "Padded Boots"
+ee_boots_carapace: "Carapace Boots"
+ee_boots_eitrweave: "Eitr-weave Shoes"
+ee_boots_ask: "Boots of Ask"
+ee_boots_flametal: "Flametal Boots"
+ee_boots_embla: "Shoes of Embla"
+ee_boots_protector: "Boots of the Protector"
+ee_boots_caller: "Shoes of the Caller"
+ee_boots_vanguard: "Boots of the Vanguard"
+ee_boots_desc: "Boots split from the matching leggings: a fifth of their armour, weight and stats, worn on the feet. They count towards the leggings' set."
+
+# Boots: putting a pair on while the server has the split off
+ee_boots_off: "Boots are switched off on this world"
+
+# Shields: name, then description
+ee_buckler_wood: "Wood Buckler"
+ee_buckler_wood_desc: "A small wooden buckler bound in rawhide. Blocks less than a shield, parries far better."
+ee_shield_bronze: "Bronze Shield"
+ee_shield_bronze_desc: "A round shield of planks in a bronze rim, with a bronze boss. Sturdier than wood."
+ee_buckler_silver: "Silver Buckler"
+ee_buckler_silver_desc: "Fine wood in a band of silver, a silver wolf's head at its heart. Blocks less than a shield, parries far better."
+ee_tower_silver: "Silver Tower Shield"
+ee_tower_silver_desc: "A tall board of fine wood in a silver frame, a silver wolf's head at its brow. Slow, but it stops almost anything."
+ee_buckler_blackmetal: "Black Metal Buckler"
+ee_buckler_blackmetal_desc: "A black metal buckler hung on chain. Blocks less than a shield, parries far better."
+ee_tower_carapace: "Carapace Tower Shield"
+ee_tower_carapace_desc: "Overlapping carapace plates in a tall kite. Slow, but it stops almost anything."
+ee_buckler_flametal: "Flametal Buckler"
+ee_buckler_flametal_desc: "A flametal buckler over blackwood, still warm from the forge. Blocks less than a shield, parries far better."
+
+# Weapons: greatswords
+ee_greatsword_bronze: "Bronze Greatsword"
+ee_greatsword_bronze_desc: "A long bronze blade for two hands."
+ee_greatsword_iron: "Iron Greatsword"
+ee_greatsword_iron_desc: "A long iron blade for two hands."
+ee_greatsword_silver: "Silver Greatsword"
+ee_greatsword_silver_desc: "A long silver blade for two hands."
+ee_greatsword_blackmetal: "Black Metal Greatsword"
+ee_greatsword_blackmetal_desc: "A long black metal blade for two hands."
+
+# Weapons: dual axes
+ee_dualaxes_bronze: "Bronze Dual Axes"
+ee_dualaxes_bronze_desc: "A pair of bronze axes, one for each hand."
+ee_dualaxes_iron: "Iron Dual Axes"
+ee_dualaxes_iron_desc: "A pair of iron axes, one for each hand."
+ee_dualaxes_silver: "Silver Dual Axes"
+ee_dualaxes_silver_desc: "A pair of silver axes, one for each hand."
+ee_dualaxes_blackmetal: "Black Metal Dual Axes"
+ee_dualaxes_blackmetal_desc: "A pair of black metal axes, one for each hand."
+ee_dualaxes_carapace: "Carapace Dual Axes"
+ee_dualaxes_carapace_desc: "A pair of carapace axes, one for each hand."
+ee_dualaxes_bloodgold: "Bloodgold Dual Axes"
+ee_dualaxes_bloodgold_desc: "A pair of bloodgold axes, one for each hand."
+
+# Weapons: knuckles and claws
+ee_fist_flint: "Flint Knuckles"
+ee_fist_flint_desc: "Flint shards lashed to a wooden knuckle bar."
+ee_fist_iron: "Iron Claws"
+ee_fist_iron_desc: "Three hooked iron claws on each hand."
+ee_fist_flametal: "Flametal Claws"
+ee_fist_flametal_desc: "Barbed flametal claws, red at the tips."
+
+# Weapons: daggers, atgeirs, axes, the greataxe, the bow and the spear
+ee_knife_iron: "Iron Dagger"
+ee_knife_iron_desc: "A broad iron dagger, the iron sword's short brother."
+ee_knife_flametal: "Flametal Dagger"
+ee_knife_flametal_desc: "A toothed flametal seax."
+ee_atgeir_silver: "Silver Atgeir"
+ee_atgeir_silver_desc: "A silver glaive with a curling fang."
+ee_atgeir_flametal: "Flametal Atgeir"
+ee_atgeir_flametal_desc: "A jagged flametal blade on a charred haft."
+ee_axe_silver: "Silver Axe"
+ee_axe_silver_desc: "A bearded silver axe with a scroll on its back."
+ee_axe_flametal: "Flametal Axe"
+ee_axe_flametal_desc: "A toothed flametal axe with a back spike."
+ee_battleaxe_flametal: "Flametal Greataxe"
+ee_battleaxe_flametal_desc: "A broad flametal greataxe with flame-hooked edges."
+ee_bow_blackmetal: "Black Metal Bow"
+ee_bow_blackmetal_desc: "A black metal recurve with hooked blades on its limbs."
+ee_spear_blackmetal: "Black Metal Spear"
+ee_spear_blackmetal_desc: "A barbed black metal spear."
+
+# Casters: the wands and the focus (name, then description)
+ee_wand_meadows: "Gnarled Wand"
+ee_wand_meadows_desc: "A crooked branch with a bead of amber resin, holding two spells. Left mouse fires a small spirit bolt for eitr (hold to charge it, up to +30% damage at 3 s); right mouse casts the first spell, right mouse held and left mouse the second. A caster does not block: right mouse held and jump blinks. Set the spells with the Spellbook button in the inventory."
+ee_wand_blackforest: "Greywood Wand"
+ee_wand_blackforest_desc: "Fine wood bound in bronze, a greydwarf's eye caged at its head, holding two spells. Left mouse fires a spirit bolt for eitr (hold to charge it); right mouse casts the first spell, right mouse held and left mouse the second. Set the spells with the Spellbook button in the inventory."
+ee_focus_meadows: "Raven Fetish"
+ee_focus_meadows_desc: "A small wooden ward with a raven fetish of feathers and flint lashed to its face. Held on the off hand, it quickens eitr and strengthens a wand's healing."
+
+# Casters: lines added to a wand's, the focus's and a robe piece's tooltip ($1 is the number)
+ee_heal_power: "Heal power: $1"
+ee_eitr_bonus: "Eitr: $1"
+
+# Casters: the Spellbook (its button in the inventory, its window) and the spell bar's buttons
+ee_spellbook: "Spellbook"
+ee_spellbook_prepared: "Held ready"
+ee_spellbook_known: "Known spells"
+ee_spellbook_hint: "Click a slot, then a spell to put it there; click the picked slot again to empty it. Right mouse casts slot 1; hold right mouse and click left mouse for slot 2."
+ee_spellbook_cost: "$1 eitr"
+ee_spell_key_first: "RMB"
+ee_spell_key_second: "RMB+LMB"
+
+# Casters: casting with an empty slot
+ee_spell_none_ready: "No spell in that slot: open the Spellbook in the inventory"
+
+# Casters: the spells (name, then description; the chants' names are also their status effects')
+ee_spell_mend: "Mend"
+ee_spell_mend_desc: "Heals the friend you aim near within 30 m (the gold marker shows who), or yourself when no friend is marked, by the wand's heal power."
+ee_spell_hearthsong: "Hearthsong"
+ee_spell_hearthsong_desc: "A chant: everyone within 10 m, you too, regains health 50% faster for 60 s."
+ee_spell_swiftness: "Stag's Swiftness"
+ee_spell_swiftness_desc: "A chant: everyone within 10 m, you too, moves 10% faster and runs on 20% less stamina for 60 s."
+
+# Casters: the spell scrolls (Eikthyr drops Stag's Swiftness) and learning from one ($1 is the spell's name)
+ee_spellitem_hearthsong: "Spell: Hearthsong"
+ee_spellitem_swiftness: "Spell: Stag's Swiftness"
+ee_spellitem_desc: "Burnt runes on a strip of hide. Use it to learn the spell for good; a wand can then hold it ready."
+ee_spell_learned: "You learned $1"
+ee_spell_known: "You already know $1"
+
+# Casters: the Seer's robes of the Meadows (set name, its bonus, the three pieces, the split boots)
+ee_seer_meadows_set: "Deerhide Vestments"
+ee_seer_meadows_set_tip: "Mend costs 25% less eitr."
+ee_seer_meadows_hood: "Deerhide Hood"
+ee_seer_meadows_hood_desc: "A seer's deep hood of soft deer hide, draped over the shoulders."
+ee_seer_meadows_robe: "Deerhide Robe"
+ee_seer_meadows_robe_desc: "A seer's long robe of deer hide, split for striding, runes stitched at the hem."
+ee_seer_meadows_trousers: "Deerhide Trousers"
+ee_seer_meadows_trousers_desc: "Deer-hide trousers ending in wrapped feet."
+ee_boots_seermeadows: "Deerhide Foot Wraps"
+
+# Casters: the Seer's robes of the Black Forest
+ee_seer_blackforest_set: "Mossweave"
+ee_seer_blackforest_set_tip: "Chants last 50% longer."
+ee_seer_blackforest_hood: "Mossweave Hood"
+ee_seer_blackforest_hood_desc: "A troll-hide hood with a crest of lichen."
+ee_seer_blackforest_robe: "Mossweave Robe"
+ee_seer_blackforest_robe_desc: "A slate troll-hide robe under a mantle of moss, thistle runes on every leaf of its hem."
+ee_seer_blackforest_trousers: "Mossweave Trousers"
+ee_seer_blackforest_trousers_desc: "Troll-hide trousers ending in wrapped feet."
+ee_boots_seerblackforest: "Mossweave Foot Wraps"
+
+# Casters: the Seer's robes of the Swamp
+ee_seer_swamp_set: "Rootweave"
+ee_seer_swamp_set_tip: "Poison resistant."
+ee_seer_swamp_hood: "Rootweave Hat"
+ee_seer_swamp_hood_desc: "A crooked witch's hat woven of bark and roots, a blood-red cord at its band."
+ee_seer_swamp_robe: "Rootweave Tunic"
+ee_seer_swamp_robe_desc: "A knee-length bark tunic, its shoulders plated with ancient bark and girded with woven roots."
+ee_seer_swamp_trousers: "Rootweave Trousers"
+ee_seer_swamp_trousers_desc: "Trousers wound with roots, ending in wrapped feet."
+ee_boots_seerswamp: "Rootweave Foot Wraps"
+
+# Casters: the Seer's robes of the Mountains
+ee_seer_mountains_set: "Wolfwool"
+ee_seer_mountains_set_tip: "Frost resistant."
+ee_seer_mountains_hood: "Wolfwool Hat"
+ee_seer_mountains_hood_desc: "A round hat of wolf fur over felt, studded with silver runes."
+ee_seer_mountains_robe: "Wolfwool Coat"
+ee_seer_mountains_robe_desc: "A heavy wool coat with a broad collar of wolf pelt, silver clasps and fang charms."
+ee_seer_mountains_trousers: "Wolfwool Trousers"
+ee_seer_mountains_trousers_desc: "Dark wool trousers and fur-cuffed boots."
+ee_boots_seermountains: "Wolfwool Boots"
+
+# Casters: the Seer's robes of the Plains
+ee_seer_plains_set: "Sunweave"
+ee_seer_plains_set_tip: "Your heals also restore 10 stamina."
+ee_seer_plains_hood: "Sunweave Hat"
+ee_seer_plains_hood_desc: "A broad-brimmed linen hat with a sun-gold band and a black-metal sun disc."
+ee_seer_plains_robe: "Sunweave Robe"
+ee_seer_plains_robe_desc: "Layered linen robes with sun-gold borders and a lox pelt over one shoulder."
+ee_seer_plains_trousers: "Sunweave Trousers"
+ee_seer_plains_trousers_desc: "Lox-leather trousers and fur-cuffed boots."
+ee_boots_seerplains: "Sunweave Boots"
+
+# Casters: the Seer's robes of the Mistlands
+ee_seer_mistlands_set: "Mistweave"
+ee_seer_mistlands_set_tip: "Blood Magic +15."
+ee_seer_mistlands_hood: "Mistweave Circlet"
+ee_seer_mistlands_hood_desc: "A low circlet of chitin plates set with a pale eitr stone."
+ee_seer_mistlands_robe: "Mistweave Robe"
+ee_seer_mistlands_robe_desc: "A mist-dyed robe with a fan collar, carapace shoulders and a plated girdle."
+ee_seer_mistlands_trousers: "Mistweave Trousers"
+ee_seer_mistlands_trousers_desc: "Indigo trousers and carapace-capped boots."
+ee_boots_seermistlands: "Mistweave Boots"
+
+# Casters: the Seer's robes of the Ashlands
+ee_seer_ashlands_set: "Emberweave"
+ee_seer_ashlands_set_tip: "Fire resistant, Blood Magic +20."
+ee_seer_ashlands_hood: "Emberweave Crown"
+ee_seer_ashlands_hood_desc: "A tall crown of flametal plates with a fan of celestial feathers."
+ee_seer_ashlands_robe: "Emberweave Robe"
+ee_seer_ashlands_robe_desc: "A floor-length robe of scaled asksvin hide under a collar of celestial feathers."
+ee_seer_ashlands_trousers: "Emberweave Trousers"
+ee_seer_ashlands_trousers_desc: "Scaled greaves and flametal-shod boots."
+ee_boots_seerashlands: "Emberweave Boots"
+
+# Casters: the eitr foods of the Meadows and the Black Forest (name, then description)
+ee_food_dandelionmash: "Dandelion Mash"
+ee_food_dandelionmash_desc: "Dandelion greens and flowers mashed with honey and mushroom. Little to fill you, but eitr for the wand."
+ee_food_candiedthistle: "Candied Thistle"
+ee_food_candiedthistle_desc: "Thistle heads glazed in honey. A sweet bite on the trail, a little of everything."
+ee_food_glowcapbroth: "Glowcap Broth"
+ee_food_glowcapbroth_desc: "Yellow mushrooms simmered with thistle and carrot until they glow faintly. Seers drink it before a long night."
+ee_food_seersporridge: "Seer's Porridge"
+ee_food_seersporridge_desc: "Thick blueberry porridge with thistle and a drizzle of honey. It keeps the mind clear for hours."
+
+# Casters: the eitr foods of the Swamp
+ee_food_turnipcrisps: "Turnip Crisps"
+ee_food_turnipcrisps_desc: "Thin turnip slices fried crisp, a thistle sprig on top. A snack for the bog road."
+ee_food_blooddraught: "Blood Draught"
+ee_food_blooddraught_desc: "A thick red draught of bloodbag, thistle and turnip. It tastes of iron and keeps the eitr flowing."
+ee_food_mirestew: "Mire Stew"
+ee_food_mirestew_desc: "A murky stew of turnip, bloodbag and yellow mushroom. It looks like the swamp and works like a charm."
+
+# Casters: the eitr foods of the Mountains
+ee_food_glaciertea: "Glacier Tea"
+ee_food_glaciertea_desc: "Onion and honey steeped with a freeze gland, frost on the rim. Clears the head on the high slopes."
+ee_food_wolfheartstew: "Wolfheart Stew"
+ee_food_wolfheartstew_desc: "Wolf meat and onions stewed with freeze glands. A hunter's meal that leaves a cold fire behind the eyes."
+
+# Casters: the eitr foods of the Plains
+ee_food_candiedcloudberries: "Candied Cloudberries"
+ee_food_candiedcloudberries_desc: "Cloudberries glazed in honey. A sweet handful of everything."
+ee_food_loxmarrowbroth: "Lox Marrow Broth"
+ee_food_loxmarrowbroth_desc: "A creamy broth boiled from a lox bone, with barley and cloudberries."
+ee_food_sunbarleyporridge: "Sunbarley Porridge"
+ee_food_sunbarleyporridge_desc: "Golden barley porridge with cloudberries and honey. A seer's breakfast under the open sky."

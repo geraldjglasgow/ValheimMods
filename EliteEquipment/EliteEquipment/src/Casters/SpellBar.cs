@@ -1,4 +1,5 @@
 using TMPro;
+using Translations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ namespace EliteEquipment.Casters
     /// The spell bar: while a wand is drawn, the wand's two spells under the hotbar, drawn with the game's own hotbar slot
     /// (<c>HotkeyBar.m_elementPrefab</c>: frame, icon, the key label), each labelled with its button (RMB, RMB+LMB) and its
     /// eitr cost where the hotbar shows a stack. Made under the hotbar on the local machine the first time a wand is drawn;
-    /// refreshed only when the wand, its loadout or the known spells change.
+    /// refreshed only when the wand, its loadout, the known spells or the language change.
     /// </summary>
     public static class SpellBar
     {
@@ -21,6 +22,7 @@ namespace EliteEquipment.Casters
         private static ItemDrop.ItemData shownWand;
         private static string shownLoadout;
         private static int shownKnown = -1;
+        private static int shownWords = -1;
 
         public static void Tick()
         {
@@ -43,9 +45,9 @@ namespace EliteEquipment.Casters
         {
             wand.m_customData.TryGetValue(Loadout.SlotsKey, out string loadout);
             int known = player.m_customData.TryGetValue(KnownSpells.Key, out string text) ? text.Length : 0;
-            if (wand == shownWand && loadout == shownLoadout && known == shownKnown)
+            if (wand == shownWand && loadout == shownLoadout && known == shownKnown && Lang.Version == shownWords)
                 return false;
-            (shownWand, shownLoadout, shownKnown) = (wand, loadout, known);
+            (shownWand, shownLoadout, shownKnown, shownWords) = (wand, loadout, known, Lang.Version);
             return true;
         }
 
@@ -53,8 +55,10 @@ namespace EliteEquipment.Casters
         {
             for (int i = 0; i < Loadout.Slots; i++)
             {
-                if (slots[i] != null)
-                    Show(slots[i], Loadout.In(player, wand, i), player);
+                if (slots[i] == null)
+                    continue;
+                Show(slots[i], Loadout.In(player, wand, i), player);
+                Label(slots[i].transform.Find("binding")?.GetComponent<TMP_Text>(), i);
             }
         }
 

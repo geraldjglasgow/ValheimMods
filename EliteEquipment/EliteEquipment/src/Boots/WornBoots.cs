@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EliteEquipment.Core;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Boots
@@ -83,7 +84,7 @@ namespace EliteEquipment.Boots
                 return false;
             if (fresh && !BootsSettings.On)
             {
-                humanoid.Message(MessageHud.MessageType.Center, "$ee_boots_off");
+                humanoid.Message(MessageHud.MessageType.Center, Lang.Get("ee_boots_off"));
                 return false;
             }
             if (humanoid.InAttack() || humanoid.InDodge())

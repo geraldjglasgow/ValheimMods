@@ -66,16 +66,16 @@ namespace EliteEquipment.Casters
             return text;
         }
 
-        /// <summary>A copy of a game button (or any element with a Button) with a fresh click and a label, when it has one.</summary>
-        public static Button Button(Component source, Transform parent, string name, string word, Action click)
+        /// <summary>A copy of a game button (or any element with a Button) with a fresh click and a label text, when it has one.</summary>
+        public static Button Button(Component source, Transform parent, string name, string text, Action click)
         {
             ButtonTextColor colours = source.GetComponent<ButtonTextColor>();
             GameObject go = Copy(source, parent, name);
             TMP_Text label = go.GetComponentInChildren<TMP_Text>(true);
-            if (label != null && word != null)
+            if (label != null && text != null)
             {
                 label.color = colours != null ? colours.m_defaultColor : label.color;
-                label.text = Core.Language.Localize(word);
+                label.text = text;
             }
             Button button = go.GetComponent<Button>() ?? go.AddComponent<Button>();
             button.onClick = new Button.ButtonClickedEvent();

@@ -22,7 +22,7 @@ namespace EliteEquipment.Weapons
             Transform left = model.transform.Find("left");
             if (skin == null || right == null || left == null)
             {
-                Plugin.Log.LogWarning($"EliteEquipment: the {set.Name} is missing a part (attach_skin, model or left); it keeps the game's look");
+                Plugin.Log.LogWarning($"EliteEquipment: the {set.Prefab} is missing a part (attach_skin, model or left); it keeps the game's look");
                 return;
             }
             skin.sharedMesh = Held(skin.sharedMesh, model.transform, right, left, set.Asset);

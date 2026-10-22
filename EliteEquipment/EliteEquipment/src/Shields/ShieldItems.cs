@@ -75,7 +75,7 @@ namespace EliteEquipment.Shields
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.LogError($"EliteEquipment: the {set.Name} could not be made and is not in the game: {e}");
+                    Plugin.Log.LogError($"EliteEquipment: the {set.Prefab} could not be made and is not in the game: {e}");
                 }
             }
         }
@@ -85,12 +85,12 @@ namespace EliteEquipment.Shields
             GameObject game = Find(prefabs, set.Base);
             if (game == null || game.GetComponent<ItemDrop>() == null)
             {
-                Plugin.Log.LogWarning($"EliteEquipment: the game's {set.Base} was not found: there is no {set.Name}");
+                Plugin.Log.LogWarning($"EliteEquipment: the game's {set.Base} was not found: there is no {set.Prefab}");
                 return;
             }
             GameObject look = set.Look != null ? Find(prefabs, set.Look) : null;
             if (set.Look != null && look == null)
-                Plugin.Log.LogWarning($"EliteEquipment: the game's {set.Look} was not found: the {set.Name} wears its own look");
+                Plugin.Log.LogWarning($"EliteEquipment: the game's {set.Look} was not found: the {set.Prefab} wears its own look");
             set.Item = ShieldItem.Build(set, game, look, bundle);
         }
 

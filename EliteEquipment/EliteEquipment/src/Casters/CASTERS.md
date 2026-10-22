@@ -20,7 +20,7 @@ start with medows first completely". Built as an AssetLab bench (section 3 there
 | Turnip Crisps, Blood Draught, Mire Stew (Swamp, cauldron beside Turnip Stew); Glacier Tea, Wolfheart Stew (Mountains, beside Onion Soup); Candied Cloudberries, Lox Marrow Broth, Sunbarley Porridge (Plains, beside Blood Pudding): the features table's numbers | `EE_Food_<Name>` | snacks `BoarJerky`, drinks and broths `CarrotSoup`, stews and porridge `TurnipStew` | `ee_food_swamp`, `ee_food_mountains`, `ee_food_plains` (models by ChatGPT, bundled 2026-10-11) |
 
 Status effects `EE_SE_Hearthsong`, `EE_SE_Swiftness`, `EE_SE_SeerMeadowsSet`. Words `$ee_wand_*`, `$ee_focus_*`,
-`$ee_seer_*`, `$ee_spell*`. Player custom data `EliteEquipment.spells` (known spells); item custom data
+`$ee_seer_*`, `$ee_spell*`, `$ee_food_*`, all in `translations/English.yml` (the mod's CLAUDE.md, "Words"). Player custom data `EliteEquipment.spells` (known spells); item custom data
 `EliteEquipment.loadout` on each wand (two slots). Routed RPC `EliteEquipment_CasterFx` (effects to
 the players near). Setting `4. Casters` / `Wands and Spells`, **off by default** (user, 2026-10-09): to test, set
 `Wands and Spells = true` under `[4. Casters]` in `milkyteam.eliteequipment.cfg` (it hot reloads; on in LocalTesting).
@@ -29,7 +29,8 @@ bar, Spellbook, highlight or tooltip lines; items already made stay.
 
 ## Code map
 
-- `CastersModule` (Initialize, Install), `CastersSettings`, `CasterWords`, `CasterSafe` (log once, never throw).
+- `CastersModule` (Initialize, Install), `CastersSettings`, `CasterWords` (the slot buttons' words), `CasterSafe` (log
+  once, never throw).
 - Data: `Spell`, `Spells` (Mend, Hearthsong, Stag's Swiftness), `CasterGear` (items, numbers, recipes).
 - Food: `CasterFood` (data), `FoodItems` (the dish copy).
 - Prefabs: `CasterItems` (ZNetScene.Awake / ObjectDB.Awake / CopyOtherDB prefixes; scene postfix: bolt look, Eikthyr

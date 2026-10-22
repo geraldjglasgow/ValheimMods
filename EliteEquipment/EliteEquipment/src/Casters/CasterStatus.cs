@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Translations;
 using UnityEngine;
 
 namespace EliteEquipment.Casters
@@ -68,7 +69,7 @@ namespace EliteEquipment.Casters
 
         private static void Bonus(RobeSet set)
         {
-            SE_Stats effect = Make(set.BonusName, "$" + set.SetWord, "$" + set.SetWord + "_tip", Spells.Mend.Icon, 0f);
+            SE_Stats effect = Make(set.BonusName, Lang.Token(set.SetWord), Lang.Token(set.SetWord + "_tip"), Spells.Mend.Icon, 0f);
             set.Bonus?.Invoke(effect);
             set.SetBonus = effect;
             made.Add(effect);

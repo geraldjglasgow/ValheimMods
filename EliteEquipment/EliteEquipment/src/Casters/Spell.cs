@@ -1,3 +1,4 @@
+using Translations;
 
 namespace EliteEquipment.Casters
 {
@@ -12,9 +13,10 @@ namespace EliteEquipment.Casters
     }
 
     /// <summary>
-    /// One spell (features/casters.md): its key (saved on characters and wands, never renamed), words, icon in the
-    /// <c>ee_spells_meadows</c> bundle, eitr cost, kind, a chant's status effect, and the colour of its effects. A spell
-    /// other than Mend is learned from its item (<see cref="Item"/>).
+    /// One spell (features/casters.md): its key (saved on characters and wands, never renamed; its words in
+    /// translations/English.yml are <c>ee_spell_&lt;key&gt;</c>, <c>_desc</c> and the item's
+    /// <c>ee_spellitem_&lt;key&gt;</c>), icon in the <c>ee_spells_meadows</c> bundle, eitr cost, kind, a chant's status
+    /// effect, and the colour of its effects. A spell other than Mend is learned from its item (<see cref="Item"/>).
     /// </summary>
     public sealed class Spell
     {
@@ -22,8 +24,6 @@ namespace EliteEquipment.Casters
         public const float ChantSeconds = 60f;
 
         public string Key;
-        public string Name;
-        public string Description;
         public string Icon;
         public float Eitr;
         public SpellKind Kind;
@@ -45,9 +45,9 @@ namespace EliteEquipment.Casters
         public string Item;
         public string ItemIcon;
 
-        public string Token => "$ee_spell_" + Key;
-        public string DescriptionToken => "$ee_spell_" + Key + "_desc";
-        public string ItemToken => "$ee_spellitem_" + Key;
+        public string Token => Lang.Token("ee_spell_" + Key);
+        public string DescriptionToken => Lang.Token("ee_spell_" + Key + "_desc");
+        public string ItemToken => Lang.Token("ee_spellitem_" + Key);
         public bool KnownByAll => Item == null;
     }
 }

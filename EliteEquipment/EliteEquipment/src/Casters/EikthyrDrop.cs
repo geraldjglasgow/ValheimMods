@@ -21,7 +21,7 @@ namespace EliteEquipment.Casters
             CharacterDrop drops = scene.GetPrefab(Boss)?.GetComponent<CharacterDrop>();
             if (item == null || drops == null)
             {
-                Plugin.Log.LogWarning($"EliteEquipment: {Boss} drops no {Spells.Swiftness.Name} (boss or item missing)");
+                Plugin.Log.LogWarning($"EliteEquipment: {Boss} drops no {Spells.Swiftness.Item} (boss or item missing)");
                 return;
             }
             drops.m_drops.RemoveAll(d => d.m_prefab == item);

@@ -17,7 +17,7 @@ namespace EliteEquipment.Weapons
         {
             Material borrowed = look != null ? GameMaterials.Borrow(look, set.LookPart) : null;
             if (borrowed == null)
-                Plugin.Log.LogWarning($"EliteEquipment: no {set.Look}/{set.LookPart} material for the {set.Name}; it draws untextured");
+                Plugin.Log.LogWarning($"EliteEquipment: no {set.Look}/{set.LookPart} material for the {set.Prefab}; it draws untextured");
             return borrowed != null ? GameMaterials.Unstyled(borrowed) : null;
         }
 
