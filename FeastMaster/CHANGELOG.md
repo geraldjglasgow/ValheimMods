@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.8.0
+
+- Translations: every word you read is in `translations/English.yml`; a `FeastMaster.translations.<Language>.yml` in `BepInEx/config` translates it.
+
 ## 4.7.6
 
 - Fixed: players on a slow connection with many mods are no longer refused when joining a server.

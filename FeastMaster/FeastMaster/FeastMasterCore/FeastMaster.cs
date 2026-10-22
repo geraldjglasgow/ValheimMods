@@ -12,7 +12,7 @@ namespace FeastMaster
     {
         public const string PluginGuid = "com.FeastMaster";
         public const string PluginName = "FeastMaster";
-        public const string PluginVersion = "4.7.6";
+        public const string PluginVersion = "4.8.0";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
@@ -30,6 +30,8 @@ namespace FeastMaster
 
             // Each patch class is installed only while a setting it serves is changed, see PatchSwitch.
             Harmony harmony = new Harmony(PluginGuid);
+            // The player-facing words, in the game's language (translations/English.yml and any translation files).
+            Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "FeastMaster", Logger);
             // New world items and items entering an inventory carry their own shared data copy; once a food value is
             // changed, the values are written into it (ItemValues.HookSpawns, through ChangedRules).
             ItemValues.UseHarmony(harmony);

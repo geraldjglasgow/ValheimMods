@@ -14,7 +14,7 @@ Rules that still apply to every change:
   mods. Migrating FeastMaster's own renamed entries is allowed (`ConfigMigration`).
 - Verify every patched signature against a fresh `ilspycmd` decompile of the game's own assemblies
   (`assembly_valheim.dll`; `Localization` lives in `assembly_guiutils.dll`) in the scratchpad, never in a repository.
-- **A default means untouched.** Every patch class except the config-binding hooks and the tooltip words has a
+- **A default means untouched.** Every patch class except the config-binding hooks has a
   static `Prepare()` that is true only while a setting it reads differs from its default (`Customized.Any`);
   `PatchSwitch` installs the class only then and removes it when the setting goes back, so FeastMaster at its
   defaults changes nothing in the game or in other mods. A new patch class gets a `Prepare()` in the same change.
@@ -98,23 +98,27 @@ FeastMaster/FeastMaster/FeastMasterCore/
   GameplayRules.cs        Eat Again At (Food.CanEatAgain), skill gain (Skills.RaiseSkill), Drowning Damage
   WorldRates.cs           world rate overrides (Game.UpdateWorldRates postfix, refresh on setting change)
   Fermenting.cs           Fermentation Time (Fermenter.GetStatus) and Batch Yield (DelayedTap)
-  Display.cs              hidden HUD numbers, Food Timers, the Vigor / Eitr Vigor tooltip lines, the localization words
+  Display.cs              hidden HUD numbers, Food Timers, the Vigor / Eitr Vigor tooltip lines
+FeastMaster/FeastMaster/translations/
+  English.yml             the player-facing words (the tooltip lines' tokens), read by the Translations library
 ```
 
 Startup order in `Awake`: `FeastMasterData.Initialize`, `Settings.Initialize`, `ItemValues.HookConfig`,
-`WorldRates.HookConfig`, the `PatchSwitch` hooks on `SettingChanged` / `ConfigReloaded`, `PatchSwitch.Initialize`
-(the patch classes wanted now), `Synced.Finish`, the `Loading [FeastMaster x.y.z]` line, `Guard.Install` last.
+`WorldRates.HookConfig`, the `PatchSwitch` hooks on `SettingChanged` / `ConfigReloaded`, `Lang.Install` (the words),
+`PatchSwitch.Initialize` (the patch classes wanted now), `Synced.Finish`, the `Loading [FeastMaster x.y.z]` line,
+`Guard.Install` last.
 
 ## Patched game methods
 
 Every method below is patched only while a setting its patch class reads is changed (see `PatchSwitch`), except
-`ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `ZNetScene.Awake` (config binding) and `Localization.SetupLanguage` (own
-words only), which are always patched, and ItemCopies' postfixes on `ItemDrop.Awake` and `Inventory.AddItem`, put on
-once a food value is first changed and left on (a flag test while every food value is at its default).
+`ObjectDB.Awake`, `ObjectDB.CopyOtherDB` and `ZNetScene.Awake` (config binding), which are always patched, the
+Translations library's postfix on `Localization.SetupLanguage` (own words only, always on, outside `PatchSwitch`), and
+ItemCopies' postfixes on `ItemDrop.Awake` and `Inventory.AddItem`, put on once a food value is first changed and left
+on (a flag test while every food value is at its default).
 
 Postfix: `Attack.GetAttackStamina`, `Hud.Awake` (food slots), `Feast.GetStackPercentige` (capped at 1), `ZNetScene.Awake` (`Priority.Last`, binds the station and feast food sections), `Fish.GetStaminaUse`, `Game.UpdateWorldRates`, `Hud.UpdateHealth`,
 `Hud.UpdateStamina`, `Hud.UpdateEitr`, `Hud.UpdateFood`, `ItemDrop.ItemData.GetTooltip` (static, six
-parameters), `Localization.SetupLanguage`, `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `Player.Food.CanEatAgain`,
+parameters), `ObjectDB.Awake`, `ObjectDB.CopyOtherDB`, `Player.Food.CanEatAgain`,
 `Player.GetBuildStamina`, `Player.GetDodgeStaminaUse`, `Player.GetTotalFoodValue` (`ref float stamina`),
 `Player.OnSwimming` (stroke timer), `SEMan.ModifyStaminaRegen` (the rules, and a `Priority.Last` one keeping the
 multiplier inside UpdateStats), `SEMan.ModifyEitrRegen`.
@@ -148,7 +152,9 @@ names features only. Renames from 3.3.x with migration: `General/Lock Configurat
 in the 4.1.0 changelog): `Continuous Food Healing`, `Count Food Stamina Only` and `Regen Per Extra Stamina Point`,
 whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migration: section `9. Fermenter` to
 `9. Kitchen` (same keys). Localization keys: `$fm_vigor` ("Vigor"), `$fm_vigor_regen` ("stamina regen"),
-`$fm_eitr_vigor` ("Eitr Vigor"), `$fm_eitr_vigor_regen` ("eitr regen").
+`$fm_eitr_vigor` ("Eitr Vigor"), `$fm_eitr_vigor_regen` ("eitr regen"), in `translations/English.yml`; new player-facing
+words get an `fm_` key there. A translation is `FeastMaster.translations.<Language>.yml` (the Translations library,
+`ValheimModLibs/Translations/README.md`). The .cfg descriptions and log lines stay English.
 
 ## Decisions where the spec was silent
 
@@ -211,8 +217,9 @@ whose former per-10-points value is divided by 10. Renamed in 4.3.0 with migrati
   everything. `ItemValues.Tick` applies what was marked on the next frame: the changed foods in one batched
   `Copies.Apply` walk, the changed meads, or one `ApplyAll`. Charter writes a server's values one entry at a time on
   joining, so K differing values cost one walk of the items rather than K.
-- `Localization.AddWord` is private and the dictionary is cleared on every language setup, so the words are added
-  in a postfix of `SetupLanguage` (assembly_guiutils, publicized).
+- The game clears its word table on every language setup, so the words are written again after each one: the
+  Translations library does it (its own `SetupLanguage` postfix, installed by `Lang.Install`, not a `PatchSwitch`
+  class), with the player's translation file over the embedded English.
 - Fermenter settings are one global value each, not per mead or per barrel: `Fermentation Time` is absolute seconds
   (0 = the barrel's own, so modded barrels keep theirs), `Batch Yield` replaces every recipe's count (0 = the
   recipe's own). The barrel keeps only its start time in the ZDO and GetStatus compares at read time, so a changed

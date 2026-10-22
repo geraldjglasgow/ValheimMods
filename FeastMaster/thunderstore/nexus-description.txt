@@ -61,7 +61,7 @@ Configure every food and mead, and how health, stamina and eitr regenerate and d
 Needed on the server and every client. Install BepInExPack for Valheim, then put FeastMaster.dll in BepInEx/plugins (or use a mod manager). A mod that also changes the number of food slots conflicts with Food Slots; use one of them.
 
 [size=4][b]Configuration[/b][/size]
-BepInEx/config/com.FeastMaster.cfg. Every setting is described in the file and applies without a restart; the server's values bind every player, display settings stay your own. Console: [b]charter status[/b] shows whether the server binds your settings.
+BepInEx/config/com.FeastMaster.cfg. Every setting is described in the file and applies without a restart; the server's values bind every player, display settings stay your own. Console: [b]charter status[/b] shows whether the server binds your settings. Translate: save a copy of [url=https://github.com/geraldjglasgow/ValheimMods/blob/main/FeastMaster/FeastMaster/translations/English.yml]English.yml[/url] as FeastMaster.translations.<Language>.yml in BepInEx/config.
 
 [size=4][b]Links[/b][/size]
 Discord: [url=https://discord.gg/Q2sMPGQ4T3]discord.gg/Q2sMPGQ4T3[/url]

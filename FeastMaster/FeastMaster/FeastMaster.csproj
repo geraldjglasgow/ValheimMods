@@ -5,7 +5,7 @@
     <AssemblyName>FeastMaster</AssemblyName>
     <RootNamespace>FeastMaster</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>4.7.6</Version>
+    <Version>4.8.0</Version>
     <Product>FeastMaster</Product>
     <Description>FeastMaster: configure food and mead values in Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -37,6 +37,13 @@
     <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\ItemCopies\ItemCopies.csproj" />
+    <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
+    <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The words, read by the Translations library as FeastMaster.translations.<Language>[.<part>].yml -->
+    <EmbeddedResource Include="translations\*.yml" LogicalName="FeastMaster.translations.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

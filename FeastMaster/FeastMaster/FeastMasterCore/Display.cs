@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
 using TMPro;
+using Translations;
 using UnityEngine;
 
 namespace FeastMaster
@@ -82,6 +83,7 @@ namespace FeastMaster
     /// <summary>
     /// Adds "Vigor: +X% stamina regen" and "Eitr Vigor: +X% eitr regen" to a food's tooltip after the game's regen
     /// line (or the duration line when the food has no regen), in the orange the game uses for its own regen line.
+    /// The words are tokens (translations/English.yml), translated by the game when it shows the tooltip.
     /// </summary>
     [HarmonyPatch(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.GetTooltip),
         typeof(ItemDrop.ItemData), typeof(int), typeof(bool), typeof(float), typeof(int), typeof(bool))]
@@ -113,7 +115,7 @@ namespace FeastMaster
         {
             if (percent == 0f)
                 return "";
-            return $"\n${key}: <color=orange>{percent.ToString("+0.#;-0.#")}% ${unitKey}</color>";
+            return $"\n{Lang.Token(key)}: <color=orange>{percent.ToString("+0.#;-0.#")}% {Lang.Token(unitKey)}</color>";
         }
 
         private static bool IsFood(ItemDrop.ItemData.SharedData shared)
@@ -131,23 +133,6 @@ namespace FeastMaster
                 return tooltip.Length;
             int end = tooltip.IndexOf('\n', start);
             return end < 0 ? tooltip.Length : end;
-        }
-    }
-
-    /// <summary>
-    /// Registers the English words behind the tooltip tokens. The game clears its dictionary on every language
-    /// setup, so the words are added again after each one.
-    /// </summary>
-    [HarmonyPatch(typeof(Localization), nameof(Localization.SetupLanguage))]
-    public static class VigorWordsPatch
-    {
-        [HarmonyPostfix]
-        public static void Postfix(Localization __instance)
-        {
-            __instance.AddWord(VigorTooltipPatch.VigorKey, "Vigor");
-            __instance.AddWord(VigorTooltipPatch.VigorUnitKey, "stamina regen");
-            __instance.AddWord(VigorTooltipPatch.EitrVigorKey, "Eitr Vigor");
-            __instance.AddWord(VigorTooltipPatch.EitrVigorUnitKey, "eitr regen");
         }
     }
 }
