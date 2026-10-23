@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- Russian translation, used while the game's language is Russian.
+
 ## 0.5.0
 
 - Translations: every word you read is in `translations/English.yml`; an `EarthWright.translations.<Language>.yml` in `BepInEx/config` translates it.
