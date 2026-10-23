@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.3
+
+- Russian translation, used while the game's language is Russian.
+
 ## 0.11.2
 
 - Brazilian Portuguese translation, by Yoroshiro, used while the game's language is Portuguese (Brazilian).
