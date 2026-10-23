@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.33.1
+
+- Russian translation, used while the game's language is Russian.
+
 ## 3.33.0
 
 - Rendering Table: only a boss trophy makes a Forge idol; other trophies give ores or ingredients.
