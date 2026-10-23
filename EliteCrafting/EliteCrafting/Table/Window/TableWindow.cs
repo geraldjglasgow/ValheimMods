@@ -30,6 +30,10 @@ namespace EliteCrafting.Tables.Window
 
         public static bool IsOpen => _table != null;
 
+        // Whether the window still holds a table, destroyed (Unity's == null) or not: a table removed or broken while
+        // open must still close the window, or its panel stays over the crafting panel on every later screen.
+        private static bool Held => !ReferenceEquals(_table, null);
+
         /// <summary>Whether this machine has this table open (the owner refuses everyone else meanwhile).</summary>
         public static bool IsOpenAt(RuneTable table) => _table != null && _table == table;
 
@@ -88,7 +92,7 @@ namespace EliteCrafting.Tables.Window
 
         private static void Close(bool fading)
         {
-            if (_table == null)
+            if (!Held)
             {
                 return;
             }
@@ -128,7 +132,7 @@ namespace EliteCrafting.Tables.Window
         /// <summary>Every frame the inventory screen is up: closes when the table can no longer be used, redraws when needed.</summary>
         public static void Tick()
         {
-            if (_table == null)
+            if (!Held)
             {
                 return;
             }
@@ -139,7 +143,7 @@ namespace EliteCrafting.Tables.Window
                 return;
             }
             _panel!.Follow();
-            if (!_owned && _table.Store.Writable)
+            if (!_owned && _table!.Store.Writable)
             {
                 _owned = true;
                 _dirty = true;

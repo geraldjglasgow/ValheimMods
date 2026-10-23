@@ -13,8 +13,9 @@ namespace EliteCrafting.Text
     /// <summary>
     /// Every player-facing word (localization.md). English ships embedded as flat YAML maps, one file per feature area:
     /// <c>translations/English.&lt;area&gt;.yml</c> (key without <c>$</c> → text), all loaded, so each area adds its
-    /// own words in its own file and nobody edits another's. A player's <c>EliteCrafting.translations.&lt;Language&gt;.yml</c>
-    /// in the config folder overrides English per key. Handed to the game's localization on every language setup and
+    /// own words in its own file and nobody edits another's. Shipped translations are embedded the same way
+    /// (<c>translations/&lt;Language&gt;.&lt;area&gt;.yml</c>, the game's language name) and a player's
+    /// <c>EliteCrafting.translations.&lt;Language&gt;.yml</c> in the config folder overrides both per key. Handed to the game's localization on every language setup and
     /// at plugin Awake; the game's cache (which also stores misses) is evicted afterwards.
     /// </summary>
     public static class Words
@@ -66,10 +67,14 @@ namespace EliteCrafting.Text
             return words.Length == 0 ? loc.Localize(text) : loc.Localize(text, words);
         }
 
-        /// <summary>Installs English, then the player's own file for the language, into the game's localization.</summary>
+        /// <summary>Installs English, the shipped translation, then the player's own file for the language.</summary>
         internal static void Install(global::Localization loc, string language)
         {
             foreach (KeyValuePair<string, string> word in English)
+            {
+                loc.AddWord(word.Key, word.Value);
+            }
+            foreach (KeyValuePair<string, string> word in Shipped(language))
             {
                 loc.AddWord(word.Key, word.Value);
             }
@@ -92,6 +97,21 @@ namespace EliteCrafting.Text
             {
                 Log.Error($"a Words.Changed handler threw: {e}");
             }
+        }
+
+        // The embedded files of the language, every area; none for English, which is already in.
+        private static Dictionary<string, string> Shipped(string language)
+        {
+            Dictionary<string, string> words = new Dictionary<string, string>(StringComparer.Ordinal);
+            if (string.IsNullOrEmpty(language) || language == "English")
+            {
+                return words;
+            }
+            foreach (string resource in Embedded.Names($"EliteCrafting.translations.{language}.", ".yml"))
+            {
+                Merge(words, Embedded.Text(resource) ?? "", resource);
+            }
+            return words;
         }
 
         private static Dictionary<string, string> PlayerFile(string language)

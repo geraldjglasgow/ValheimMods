@@ -1,4 +1,6 @@
+using System;
 using EliteCrafting.Config;
+using EliteCrafting.Core;
 using EliteCrafting.Tables.Window;
 using UnityEngine;
 
@@ -36,7 +38,21 @@ namespace EliteCrafting.Tables
             WearNTear wear = GetComponent<WearNTear>();
             if (wear != null)
             {
-                wear.m_onDestroyed += () => RuneStash.DropAll(Store, transform.position);
+                wear.m_onDestroyed += DropStash;
+            }
+        }
+
+        // Inside WearNTear.Destroy, after the cost was refunded and before the table is removed: a throw here would
+        // leave the table standing and refund it again on every removal.
+        private void DropStash()
+        {
+            try
+            {
+                RuneStash.DropAll(Store, transform.position);
+            }
+            catch (Exception e)
+            {
+                Log.Error($"the Rune Table's runes could not be dropped: {e}");
             }
         }
 

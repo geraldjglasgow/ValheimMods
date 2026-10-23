@@ -1,0 +1,13 @@
+# EliteCrafting - the five runes' names and descriptions. Owned by the Stones area (the code's word for a rune); its
+# refusal and feedback messages ($ecf_msg_...) are in English.stones_ui.yml.
+
+ecf_stone_awakening: "Runa do Despertar"
+ecf_stone_awakening_desc: "Desperta um item Normal: ele se torna Mágico com duas inscrições."
+ecf_stone_recasting: "Runa de Forja Nova"
+ecf_stone_recasting_desc: "Reforja um item Mágico: ambas as inscrições são substituídas por duas novas. Ele continua Mágico."
+ecf_stone_ascension: "Runa de Ascensão"
+ecf_stone_ascension_desc: "Torna um item Mágico em Raro e adiciona uma terceira inscrição."
+ecf_stone_cleansing: "Runa de Purificação"
+ecf_stone_cleansing_desc: "Limpa um item Mágico ou Raro de volta para Normal. Todas as inscrições são perdidas. Não pode ser desfeito."
+ecf_stone_serpent: "Runa Selada"
+ecf_stone_serpent_desc: "Corrompe um item Mágico ou Raro e depois o sela permanentemente: ele continua como está, ganha mais uma inscrição (uma 3ª em Mágicos, uma 4ª em Raros) ou tem todas as inscrições jogadas novamente (reroll). Nenhuma outra runa funcionará nele novamente."

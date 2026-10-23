@@ -1,0 +1,64 @@
+# EliteCrafting - the Rune Table: the piece, its window, the essences. Owned by the Table area.
+
+ecf_table_name: "Mesa Rúnica"
+ecf_table_desc: "Armazena runas, consome troféus como essência e aplica runas nos seus equipamentos, guiada por uma essência."
+ecf_table_off: "A Mesa Rúnica está desativada neste servidor."
+
+ecf_table_tab_inscribe: "Inscrever"
+ecf_table_tab_sacrifice: "Sacrificar"
+
+ecf_table_label_rune: "Runa"
+ecf_table_label_essence: "Essência"
+ecf_table_pool: "Essência na mesa: $1"
+
+ecf_table_inscribe: "Inscrever"
+ecf_table_sacrifice: "Sacrificar"
+ecf_table_sacrifice_all: "Sacrificar todos os troféus"
+ecf_table_store_all: "Armazenar tudo"
+
+ecf_table_no_gear: "Nenhum equipamento"
+ecf_table_no_gear_desc: "As armas, armaduras, escudos, ferramentas e patuás que você carrega aparecem aqui. Escolha um, uma runa e, se quiser, uma essência."
+ecf_table_gear_line: "$1 · nível do item $2 ($3)"
+ecf_table_plain: "Um item comum: sem inscrições ainda."
+ecf_table_no_steer: "A essência só funciona em conjunto com a Runa de Ascensão."
+ecf_table_pick_essence: "Escolha uma essência para direcionar a nova inscrição para uma de seu próprio tipo ($1 essência neste item), ou nenhuma para uma rolagem comum."
+ecf_table_steer: "Com $1 a nova inscrição será uma de seu tipo: $2 das $3 que este item pode rolar. Custa $4 de essência."
+ecf_table_steer_none: "Nenhuma das inscrições de $1 pode ser rolada neste item: escolha outra essência ou outro item."
+ecf_table_steer_magic_only: "A Runa de Ascensão só funciona em itens Mágicos. O que $1 pode conceder a este tipo de item:"
+ecf_table_rune_counts: "Na mesa: $1\nNo seu inventário: $2\nShift + clique aqui para retirar algumas. Ctrl + clique em uma no seu inventário para colocá-la."
+
+ecf_table_no_trophies: "Nenhum troféu"
+ecf_table_no_trophies_desc: "Os troféus de criaturas que você carrega aparecem aqui. Sacrificados na mesa, cada um adiciona essência à reserva: mais quanto mais avançado for o bioma da criatura, e o valor máximo para chefes."
+ecf_table_trophy_worth: "Cada um concede $1 de essência."
+ecf_table_trophy_all: "Você carrega $1: todos eles juntos concedem $2. Segure Shift para sacrificar todos eles."
+ecf_table_trophy_boss: "Um troféu de chefe também desbloqueia um poder do Renegado no altar. Sacrificar todos os troféus não afetará o de chefe."
+ecf_table_sacrificed: "+$1 de essência"
+ecf_table_taken: "$1 retirado da Mesa Rúnica"
+ecf_table_take_noroom: "Sem espaço no seu inventário"
+ecf_table_stored: "$1 armazenado na Mesa Rúnica"
+
+ecf_table_level_1: "Prados"
+ecf_table_level_2: "Floresta Negra"
+ecf_table_level_3: "Pântano"
+ecf_table_level_4: "Montanhas"
+ecf_table_level_5: "Planícies"
+ecf_table_level_6: "Terras das Névoas"
+ecf_table_level_7: "Terras das Cinzas"
+ecf_table_level_8: "Norte Profundo"
+
+ecf_essence_beast: "Fera"
+ecf_essence_stone: "Pedra"
+ecf_essence_spirit: "Espírito"
+ecf_essence_grave: "Tumba"
+
+ecf_msg_table_lost: "A Mesa Rúnica não está mais ao seu alcance. Abra-a novamente."
+ecf_msg_not_enough_essence: "Essência insuficiente: isto necessita de $1."
+
+ecf_essence_item: "Essência"
+ecf_essence_item_desc: "A essência de uma criatura, extraída de seu troféu na Mesa Rúnica. Usada com a Runa de Ascensão para escolher qual será a nova inscrição."
+ecf_essence_elemental: "Elemental"
+
+ecf_table_pill_rolls: "Rola de $1 a $2 neste item ($3 a $4)"
+ecf_table_pill_prefix: "Prefixo"
+ecf_table_pill_suffix: "Sufixo"
+ecf_table_pill_more: "+$1 mais"

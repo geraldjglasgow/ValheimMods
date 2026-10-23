@@ -142,7 +142,9 @@ namespace EliteCrafting.Tables
             }
         }
 
-        // One model for every state: the table shows no worn or broken look, as several of the game's small pieces.
+        // One model for every state: the table shows no worn or broken look, as several of the game's small pieces. No
+        // fragment roots: they were the stripped models, and breaking a destroyed one threw before the table was removed,
+        // so it stayed and paid its cost back on every removal (player report 2026-10-22).
         private static void Point(WearNTear? wear, GameObject placed)
         {
             if (wear == null)
@@ -153,6 +155,7 @@ namespace EliteCrafting.Tables
             wear.m_worn = placed;
             wear.m_broken = placed;
             wear.m_wet = null;
+            wear.m_fragmentRoots = null;
         }
     }
 }

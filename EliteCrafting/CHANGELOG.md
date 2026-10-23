@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.11.2
+
+- Brazilian Portuguese translation, by Yoroshiro, used while the game's language is Portuguese (Brazilian).
+- Fixed: removing a Rune Table no longer leaves it standing and refunds its cost again.
+- Fixed: a Rune Table removed or broken while its window is open closes the window.
+
 ## 0.11.1
 
 - Fixed: players on a slow connection with many mods are no longer refused when joining a server.

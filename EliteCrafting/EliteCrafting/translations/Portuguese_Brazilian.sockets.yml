@@ -1,0 +1,70 @@
+# EliteCrafting - sockets and gems (sockets.md): the Dvergr Chisel and the eleven gems, their refusals, feedback, the
+# replace dialog and the tooltip lines. Key without the $ -> text. $1, $2, $3 are the game's placeholders, filled with
+# already-localized words.
+
+ecf_stone_dvergr_chisel: "Formão Dvergr"
+ecf_stone_dvergr_chisel_desc: "Abre de um a três soquetes em uma arma, cajado, peça de armadura, escudo ou mochila que não possua nenhum, ocorrendo dois ou três com mais frequência em itens Raros. As gemas entram nos soquetes."
+
+ecf_stone_gem_surtr: "Gema de Surtr"
+ecf_stone_gem_surtr_desc: "Colocada em um soquete. Arma: adiciona dano de fogo. Cajado: dano elemental. Armadura, escudo ou mochila: menos dano de fogo recebido. O tier dela é rolado para o item."
+ecf_stone_gem_ymir: "Gema de Ymir"
+ecf_stone_gem_ymir_desc: "Colocada em um soquete. Arma: adiciona dano de gelo. Cajado: menor custo de eitr. Armadura, escudo ou mochila: menos dano de gelo recebido. O tier dela é rolado para o item."
+ecf_stone_gem_thor: "Gema de Thor"
+ecf_stone_gem_thor_desc: "Colocada em um soquete. Arma: adiciona dano de raio. Cajado: raio em cadeia. Armadura, escudo ou mochila: menos dano de raio recebido. O tier dela é rolado para o item."
+ecf_stone_gem_nidhogg: "Gema de Nidhogg"
+ecf_stone_gem_nidhogg_desc: "Colocada em um soquete. Arma: adiciona dano de veneno. Cajado: maior duração de dano contínuo. Armadura, escudo ou mochila: menos dano de veneno recebido. O tier dela é rolado para o item."
+ecf_stone_gem_hel: "Gema de Hel"
+ecf_stone_gem_hel_desc: "Colocada em um soquete. Arma: adiciona dano espiritual. Cajado: eitr ao abater. Armadura, escudo ou mochila: menos dano espiritual recebido. O tier dela é rolado para o item."
+ecf_stone_gem_tyr: "Gema de Tyr"
+ecf_stone_gem_tyr_desc: "Colocada em um soquete. Arma: mais dano físico. Cajado: invocações mais fortes. Armadura, escudo ou mochila: menos atordoamento. O tier dela é rolado para o item."
+ecf_stone_gem_freyja: "Gema de Freyja"
+ecf_stone_gem_freyja_desc: "Colocada em um soquete. Arma: roubo de vida. Cajado: menor custo de vida. Armadura, escudo ou mochila: mais vida. O tier dela é rolado para o item."
+ecf_stone_gem_odin: "Gema de Odin"
+ecf_stone_gem_odin_desc: "Colocada em um soquete. Arma: roubo de eitr. Cajado: regeneração de eitr. Armadura, escudo ou mochila: mais eitr. O tier dela é rolado para o item."
+ecf_stone_gem_skadi: "Gema de Skadi"
+ecf_stone_gem_skadi_desc: "Colocada em um soquete. Arma: roubo de vigor. Cajado: invocações mais resistentes. Armadura, escudo ou mochila: mais vigor. O tier dela é rolado para o item."
+ecf_stone_gem_heimdall: "Gema de Heimdall"
+ecf_stone_gem_heimdall_desc: "Colocada em um soquete. Arma: chance de acerto crítico. Cajado: conjuração mais rápida. Armadura, escudo ou mochila: chance de evitar golpes. O tier dela é rolado para o item."
+ecf_stone_gem_sleipnir: "Gema de Sleipnir"
+ecf_stone_gem_sleipnir_desc: "Colocada em um soquete de armadura, escudo ou mochila: movimentação mais rápida. Não serve para armas ou cajados. O tier dela é rolado para o item."
+
+# refusals: the gem or chisel is kept, the item unchanged
+ecf_msg_gems_off: "Gemas e soquetes estão desativados neste servidor."
+ecf_msg_no_socket_here: "Apenas armas, cajados, armaduras, escudos e mochilas aceitam soquetes."
+ecf_msg_has_sockets: "Este item já possui soquetes."
+ecf_msg_gem_no_socket: "Este item não possui soquetes."
+ecf_msg_gem_wrong_item: "$1 não serve neste item."
+ecf_msg_sockets_full: "Todos os soquetes deste item estão cheios."
+
+# feedback on success
+ecf_msg_socket_cut: "Um soquete foi aberto em $1."
+ecf_msg_sockets_cut: "$2 soquetes foram abertos em $1."
+ecf_msg_gem_socketed: "$1 colocado em $2: $3"
+ecf_msg_gem_replaced: "$1 substitui a gema no soquete $2: $3"
+
+# the replace dialog: $1 the new gem in the title; $1 the socket number, $2 what it holds, $3 the new gem in the body
+ecf_ui_gem_replace_title: "Substituir uma gema por $1?"
+ecf_ui_gem_replace_body: "O soquete $1 contém $2.\nDeseja substituí-la por $3? A gema antiga será perdida."
+
+# tooltip lines: $1 the gem, $2 its stat
+ecf_ui_socket_gem: "$1: $2"
+ecf_ui_socket_empty: "Soquete vazio"
+ecf_ui_socket_unreadable: "Soquete (ilegível)"
+
+# the Rune Table's Sockets tab
+ecf_table_tab_sockets: "Soquetes"
+ecf_table_label_stone: "Formão e gemas"
+ecf_table_label_socket: "Soquetes (escolha um para substituir sua gema)"
+ecf_table_set_gem: "Colocar gema"
+ecf_table_cut_socket: "Abrir soquetes"
+ecf_table_socket_n: "Soquete $1"
+ecf_table_no_socket_gear: "Nenhum equipamento"
+ecf_table_no_socket_gear_desc: "As armas, cajados, armaduras, escudos e mochilas que você carrega aparecem aqui. Escolha um e, em seguida, selecione o Formão Dvergr ou uma gema do seu inventário."
+ecf_table_no_sockets: "Nenhum soquete ainda."
+ecf_table_chisel_cuts: "abre soquetes neste item: um $1%, dois $2%, três $3%."
+ecf_table_chisel_has: "este item já possui soquetes; o formão só abre espaços em um item que não tenha nenhum."
+ecf_table_gem_no_fit: "não serve neste item."
+ecf_table_gem_gives: "concede $1 aqui, rolado entre T$2 e T$3 neste nível de item."
+ecf_table_gem_needs_socket: "Este item precisa de um soquete primeiro."
+ecf_table_gem_replaces: "Substitui a gema no soquete $1, que será perdida."
+ecf_table_gem_pick_socket: "Todos os soquetes estão cheios: escolha o que deseja substituir abaixo."

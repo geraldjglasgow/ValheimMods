@@ -68,6 +68,7 @@ It must end with 0 errors before you hand back. Output: `dist/EliteCrafting.dll`
 | `Sockets/` | Sockets | which bases take sockets and what each gem gives (`GemCatalog`), the gem's roll, sockets on drops, the switch; `features/sockets.md` |
 | `Localization/` | spine | `Words` (namespace `EliteCrafting.Text`) |
 | `translations/English.<area>.yml` | each area its own file | English words, key without `$` → text |
+| `translations/<Language>.<area>.yml` | translators | shipped translations (the game's language name, e.g. `Portuguese_Brazilian`), over English |
 | `config/*.yml` | spine | embedded default YAML (see below) |
 
 ## Rules for parallel agents
@@ -537,7 +538,7 @@ Open the console with F5. Everything is under one command, `ecraft`. Output is E
 | `BepInEx/config/EliteCrafting_inscriptions.yml` | Every inscription: effect, prefix or suffix, item classes, category, tier ladder, weights, caps |
 | `BepInEx/config/EliteCrafting_economy.yml` | Rarities, colors and prefix/suffix limits, rolling rules, runes, item classes, item levels, biomes and drop tables (creatures, bosses, chests, Elite Creatures Reborn) |
 | `EliteCrafting_inscriptions_<anything>.yml`, `EliteCrafting_economy_<anything>.yml` | Your own additions, read after the main file in name order; they change only what they name |
-| `EliteCrafting.translations.<Language>.yml` | Your own words for a language, key to text, over the built-in English |
+| `EliteCrafting.translations.<Language>.yml` | Your own words for a language, key to text, over the built-in words |
 
 The main YAML files are written once with the full defaults and never rewritten, except that a main file from an older
 format (inscriptions before format 4, economy before format 3) is renamed to `<name>.v<old format>.bak` (`.v3.bak` for
